@@ -22,9 +22,43 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEST
-#define QOR_PP_H_TEST
+#ifndef QOR_PP_H_TESTFACTORY
+#define QOR_PP_H_TESTFACTORY
 
-#include "factory.h"
+#include <iostream>
 
-#endif//QOR_PP_H_TEST
+namespace qor{ namespace test
+{
+    std::string const version { "0.1 based on YAFFUT 1.1" };
+
+
+    class Factory final
+    {
+    private:
+        
+    public:
+		//--------------------------------------------------------------------------------
+    	static Factory& Instance()
+		{
+			static Factory instance;
+			return instance;
+		}
+
+        int main(int argc, const char* argv[])
+        {
+            if (argc > 1 && (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help"))
+            {
+                std::cout << "QOR Test - Derived from YAFFUT.\n"
+                    << "Version " << version << std::endl
+                    << std::flush;
+                return 0;
+            }
+            std::cout << argv[1];
+            return 0;
+        }
+
+    };
+
+}}//qor::test
+
+#endif//QOR_PP_H_TESTFACTORY
