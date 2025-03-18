@@ -37,7 +37,7 @@ namespace qor{ namespace test
     private:
         
     public:
-		//--------------------------------------------------------------------------------
+		
     	static Factory& Instance()
 		{
 			static Factory instance;
