@@ -1,3 +1,9 @@
+Querysoft Open Runtime (QOR) Copyright Querysoft Limited 2013-2019
+
+
+Portions licensed under the following Boost license:
+====================================================
+
 Boost Software License - Version 1.0 - August 17th, 2003
 
 Permission is hereby granted, free of charge, to any person or organization
@@ -21,3 +27,8 @@ SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
 FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+
+NOTE: Expect additional licenses as more existing work is adapted to be included in the QOR
+source works will be selected to be compatible with the above Boost License terms to the greatest extend possible.
+They will inevitably have there own terms including reproducing their licenses here.
