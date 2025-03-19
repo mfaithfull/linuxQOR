@@ -30,6 +30,7 @@
 #define qor_pp_message(x) qor_pp_do_pragma(message ("Message - " #x))
 
 qor_pp_message(Compiling with GCC 9.4.0)
+
 namespace qor { namespace compiler {
 
     class GCC9_4_0

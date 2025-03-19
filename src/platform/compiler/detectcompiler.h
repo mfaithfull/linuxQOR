@@ -30,6 +30,8 @@
 #ifndef QOR_PP_H_DETECTCOMPILER
 #define QOR_PP_H_DETECTCOMPILER
 
+#include "compilers.h"
+
 #if defined __clang__ && !defined(__CUDACC__) && !defined(__ibmxl__)
 #   define qor_pp_compiler qor_pp_compiler_clang
 #   define qor_pp_compiler_root_folder clang

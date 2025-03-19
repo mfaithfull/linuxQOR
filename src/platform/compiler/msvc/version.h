@@ -22,12 +22,19 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_PREPROCESSOR
-#define QOR_PP_H_PREPROCESSOR
+#ifndef QOR_PP_H_MSVC_VERSION
+#define QOR_PP_H_MSVC_VERSION
 
-//The QOR preprocessor library is a port of the Boost preprocessor library
-//Small modifications and additions have been made, mostly cosmetic. BOOST_PP... macros become qor_pp...
+//#include "msvc.h"
 
-#include "library.hpp"
+#define qor_pp_msvc_version
 
-#endif//QOR_PP_H_PREPROCESSOR
+#define qor_pp_compiler_patch_version   
+#define qor_pp_compiler_minor_version   
+#define qor_pp_compiler_version         
+#define qor_pp_compiler_version_folder  qor_pp_compiler_version
+#define qor_pp_compiler_name            "Microsoft Visual C++"
+#define qor_pp_compiler_folder          
+#define qor_pp_compiler_header          
+
+#endif//QOR_PP_H_MSVC_VERSION

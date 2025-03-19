@@ -79,12 +79,12 @@ namespace qor { namespace test
             m_start = clock();
         }
 
-        void TestCaseStarting(const TestCaseInfo& info)
+        void TestCaseStarting(const TestCase& info)
         {
             std::cout << std::endl << info.m_At << info.m_Name << std::flush;
         }
 
-        void TestCaseEnded(const TestCaseInfo& info)
+        void TestCaseEnded(const TestCase& info)
         {
             if(info.m_Passed)
             {

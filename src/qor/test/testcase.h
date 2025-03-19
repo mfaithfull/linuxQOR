@@ -29,9 +29,10 @@
 #include "testfunc.h"
 
 namespace qor { namespace test {
-    struct TestCaseInfo
+
+    struct TestCase
     {
-        TestCaseInfo(std::string name, std::string location, TestFunc f) : 
+        TestCase(std::string name, std::string location, TestFunc f) : 
         m_Name(name), m_At(location), m_Func(f), m_Index(-1), m_Passed(false){}
 
         std::string m_Name;

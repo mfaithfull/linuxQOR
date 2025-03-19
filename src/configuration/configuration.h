@@ -22,12 +22,17 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+/*The root internal header file for the entire QOR project
+* This should be the first include in every translation unit
+* It will become the PCH root include
+*/
+
 #ifndef QOR_PP_H_CONFIGURATION
 #define QOR_PP_H_CONFIGURATION
 
-#include "../platform/compiler/compilers.h"
 #undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
+#include "../platform/compiler/detectcompiler.h"	//Detect which compiler toolchain is being used
+#include "../macros/preprocessor.h"					//Setup the pre-processor definitions
+#include "../platform/compiler/compilerpaths.h"		//Determine which headers will be included to match the compiler in use
+
 #endif//QOR_PP_H_CONFIGURATION

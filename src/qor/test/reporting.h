@@ -34,8 +34,8 @@ namespace qor { namespace test
     {
         virtual int FailCount() = 0;
         virtual void TestRunStarting() = 0;
-        virtual void TestCaseStarting(const TestCaseInfo& info) = 0;
-        virtual void TestCaseEnded(const TestCaseInfo& info) = 0;
+        virtual void TestCaseStarting(const TestCase& info) = 0;
+        virtual void TestCaseEnded(const TestCase& info) = 0;
         virtual void TestRunEnded() = 0;
         virtual void LogFailure(const std::string s) = 0;
     };

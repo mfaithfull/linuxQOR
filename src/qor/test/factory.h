@@ -39,7 +39,7 @@ namespace qor{ namespace test
     {
     private:
 
-        std::list<TestCaseInfo> m_Tests;
+        std::list<TestCase> m_Tests;
         int m_registeredCount;
 
         Factory() : m_registeredCount(0) 
@@ -79,7 +79,7 @@ namespace qor{ namespace test
         {
             struct PredicateAll
             {
-                bool operator()(const TestCaseInfo&) {return true;}
+                bool operator()(const TestCase&) {return true;}
             };
             PredicateAll matchAll;
             Run(matchAll, reporter);
@@ -109,7 +109,7 @@ namespace qor{ namespace test
 
                 PredicateName(std::string s) : m_Name(s) {}
                 
-                bool operator()(const TestCaseInfo& info)
+                bool operator()(const TestCase& info)
                 {
                     return (info.m_Name == m_Name || EqualsSuiteName(m_Name, info.m_Name));
                 }
@@ -127,7 +127,7 @@ namespace qor{ namespace test
                 
                 PredicateIndex(int index) :searchIndex(index) {}
 
-                bool operator()(const TestCaseInfo& info)
+                bool operator()(const TestCase& info)
                 {
                     return (info.m_Index == searchIndex);
                 }
@@ -140,9 +140,9 @@ namespace qor{ namespace test
         template <typename Predicate>
         void Run(Predicate& canRun, Reporting& reporter)
         {
-            for (std::list<TestCaseInfo>::iterator it = m_Tests.begin(); it != m_Tests.end(); ++it)
+            for (std::list<TestCase>::iterator it = m_Tests.begin(); it != m_Tests.end(); ++it)
             {
-                TestCaseInfo info = *it;
+                TestCase info = *it;
                 if (canRun(info))
                 {
                     RunTestCase(info, reporter);
@@ -150,7 +150,7 @@ namespace qor{ namespace test
             }
         }
 
-        void RunTestCase(TestCaseInfo& info, Reporting& reporter)
+        void RunTestCase(TestCase& info, Reporting& reporter)
         {
             try
             {
