@@ -22,12 +22,11 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#ifndef QOR_PP_H_TESTFUNC
+#define QOR_PP_H_TESTFUNC
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+namespace qor { namespace test {
+		typedef void (*TestFunc) (void);
+}}//qor::test
+
+#endif//QOR_PP_H_TESTFUNC

@@ -22,12 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#ifndef QOR_PP_H_TESTCASE
+#define QOR_PP_H_TESTCASE
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+#include <string>
+#include "testfunc.h"
+
+namespace qor { namespace test {
+    struct TestCaseInfo
+    {
+        TestCaseInfo(std::string name, std::string location, TestFunc f) : 
+        m_Name(name), m_At(location), m_Func(f), m_Index(-1), m_Passed(false){}
+
+        std::string m_Name;
+        std::string m_At;
+        TestFunc m_Func;
+        int m_Index;
+        bool m_Passed;
+    };
+}}
+#endif//QOR_PP_H_TESTCASE

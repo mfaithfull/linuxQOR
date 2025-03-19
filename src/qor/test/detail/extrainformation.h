@@ -22,12 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#ifndef QOR_PP_H_TESTDETAIL_EXTRAINFORMATION
+#define QOR_PP_H_TESTDETAIL_EXTRAINFORMATION
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+#include "../../../platform/compiler/compiler.h"
+
+namespace qor{ namespace test { namespace detail {
+
+		//--------------------------------------------------------------------------------
+		template <typename Expected, typename Actual, bool has_extra = false>
+		struct extra_information
+		{
+			static void print(std::ostringstream& os, const Expected& e, const Actual& a) 
+			{
+			}
+		};
+
+		//--------------------------------------------------------------------------------
+		template <typename Expected, typename Actual>
+		struct extra_information<Expected, Actual, true>
+		{
+			static void print(std::ostringstream& os, const Expected& e, const Actual& a)
+			{
+				os << "\nexpected: " << "(" << ::qor::compiler::demangle<Expected>() << ") " << e
+					<< " != actual: " << "(" << ::qor::compiler::demangle<Actual>() << ") " << a;
+			}
+		};
+
+}}}//qor::test::detail
+
+#endif//QOR_PP_H_TESTDETAIL_EXTRAINFORMATION

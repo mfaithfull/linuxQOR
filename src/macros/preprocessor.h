@@ -22,12 +22,17 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+//Header for the preprocessor library
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+#ifndef QOR_PP_H_PREPROCESSOR
+#define QOR_PP_H_PREPROCESSOR
+
+//The QOR preprocessor library is a port of the Boost preprocessor library
+//Small modifications and additions have been made, mostly cosmetic. BOOST_PP... macros become qor_pp...
+
+#include "library.hpp"
+#if qor_pp_variadics
+//#	include "vmd/vmd.hpp"
+#endif
+
+#endif//QOR_PP_H_PREPROCESSOR

@@ -22,12 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#ifndef QOR_PP_H_COMPILERS
+#define QOR_PP_H_COMPILERS
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+#define qor_pp_compiler_msvc        0x01
+#define qor_pp_compiler_gcc         0x0A
+#define qor_pp_compiler_clang       0x07
+//NOTE: Add new compiler support here
+
+#endif//QOR_PP_H_COMPILERS

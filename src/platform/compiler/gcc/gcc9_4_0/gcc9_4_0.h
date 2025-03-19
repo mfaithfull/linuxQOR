@@ -22,12 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#include <string>
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+#define qor_pp_do_pragma(x) _Pragma (#x)
+#define qor_pp_todo(x) qor_pp_do_pragma(message ("TODO - " #x))
+#define qor_pp_warning(x) qor_pp_do_pragma(warning ("Warning - " #x))
+#define qor_pp_message(x) qor_pp_do_pragma(message ("Message - " #x))
+
+qor_pp_message(Compiling with GCC 9.4.0)
+namespace qor { namespace compiler {
+
+    class GCC9_4_0
+    {
+    public:
+
+        template< typename T>
+        static std::string demangle()
+        {
+            std::string name(typeid(T).name());
+            //demangle here;
+            return name;
+        }
+    };
+
+    typedef GCC9_4_0 CompilerBase;
+}}//qor::compiler

@@ -19,3 +19,18 @@ We'll use old fashioned portable include guards of the form
 //...
 #endif//QOR_PP_H_TEST
 
+In order for qor_test to report the names of types it needs to demangle them which is a compiler specific function.
+Therefore we need to delve into compiler detection and abstraction early on.
+This in turn mens we need some preprocessor library basics like qor_pp_stringize and qor_pp_cat for which we'll use the Boost preprocessor library as a source
+The compiler detection can also be sourced from Boost
+
+The basic methid is to determine which Compiler is in use. 
+Set a macro based on that
+Use the macro to form a path to the files supporting that compiler and include them
+This relies on
+#include A_MACRO_THAT_EXPANDS_TO_A_VALID_INCLUDE_PATH_STRING
+working which fortunately it does as long as the expansion is correct.
+
+We also need the fundamental configuration.h header which will be included everywhere and from which we'll eventually get the PCH
+All translation units will include configuration.h first and configuration.h will define all the global constants for the project, including macros
+

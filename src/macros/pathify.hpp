@@ -22,12 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#ifndef QOR_PP_H_PREPROCESSOR_PATHIFY
+#define QOR_PP_H_PREPROCESSOR_PATHIFY
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+#include "config/config.hpp"
+#include "stringize.hpp"
+
+//qor_pp_pathify
+
+#define qor_pp_pathify(_X,_Y) qor_pp_stringize(_X/_Y)
+#define qor_pp_pathify3(_X,_Y,_Z) qor_pp_stringize(_X/_Y/_Z)
+#define qor_pp_pathify4(_X,_Y,_Z,_A) qor_pp_stringize(_X/_Y/_Z/_A)
+#define qor_pp_pathify5(_X,_Y,_Z,_A,_B) qor_pp_stringize(_X/_Y/_Z/_A/_B)
+#define qor_pp_pathify6(_X,_Y,_Z,_A,_B,_C) qor_pp_stringize(_X/_Y/_Z/_A/_B/_C)
+#define qor_pp_pathify7(_X,_Y,_Z,_A,_B,_C,_D) qor_pp_stringize(_X/_Y/_Z/_A/_B/_C/_D)
+
+
+#endif//QOR_PP_H_PREPROCESSOR_PATHIFY

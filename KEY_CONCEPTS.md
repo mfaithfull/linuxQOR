@@ -59,9 +59,9 @@ How about something even simpler. Software managing it's own memory?
 Well we have garbage collection. A terrible cop out but better than nothing. 
 This is definitely an area where we need to do better.
 
-How about software porting itself different operating systems and architectures?#
+How about software porting itself to different operating systems and architectures?#
 
-Hmm. We could definitely do better there. apple spent a fortune writing an emulator for PowerPC to run on x86 and just a few years later they've spent another fortune on an emulator for x86 to run on ARM and that's all within their own closed ecosystem on a single operating system they completely control.
+Hmm. We could definitely do better there. Apple spent a fortune writing an emulator for PowerPC to run on x86 and just a few years later they've spent another fortune on an emulator for x86 to run on ARM and that's all within their own closed ecosystem on a single operating system they completely control.
 
 How about software connecting itself together?
 Libraries linking at compile time. Dynamic libraries wiring up interface at load time. Signals and delegates and internal lock free message queues connecting components at runtime. RPC and service busses and Kafka and internet protocols connecting outside the process boundary.

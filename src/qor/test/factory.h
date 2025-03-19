@@ -26,6 +26,9 @@
 #define QOR_PP_H_TESTFACTORY
 
 #include <iostream>
+#include <sstream>
+#include "basicreporting.h"
+#include "failure.h"
 
 namespace qor{ namespace test
 {
@@ -35,6 +38,18 @@ namespace qor{ namespace test
     class Factory final
     {
     private:
+
+        std::list<TestCaseInfo> m_Tests;
+        int m_registeredCount;
+
+        Factory() : m_registeredCount(0) 
+        {
+        }
+
+        static bool EqualsSuiteName(std::string const& name, std::string const& s)
+        {
+            return (s.find(name) != std::string::npos);
+        }
         
     public:
 		
@@ -46,15 +61,112 @@ namespace qor{ namespace test
 
         int main(int argc, const char* argv[])
         {
-            if (argc > 1 && (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help"))
+            argc--;	argv++; //Skip executable name, arg 0
+            std::cout << "QOR Test - Derived from YAFFUT.\n" << "Version " << version << std::endl << std::flush;
+            BasicReporting reporter;
+            ExecuteTests(argv,argc,reporter);
+            return reporter.FailCount();
+        }
+
+        void ExecuteTests(const char** args, int argumentcount, Reporting& reporter)
+        {
+            reporter.TestRunStarting();
+            argumentcount == 0 ? ExecuteAllTests(reporter) : ExecuteMatchingTests(args, argumentcount, reporter);
+            reporter.TestRunEnded();
+        }
+
+        void ExecuteAllTests( Reporting& reporter)
+        {
+            struct PredicateAll
             {
-                std::cout << "QOR Test - Derived from YAFFUT.\n"
-                    << "Version " << version << std::endl
-                    << std::flush;
-                return 0;
+                bool operator()(const TestCaseInfo&) {return true;}
+            };
+            PredicateAll matchAll;
+            Run(matchAll, reporter);
+        }
+
+        void ExecuteMatchingTests(const char** args, int argumentcount, Reporting& reporter)
+        {
+            for (int i = 0; i < argumentcount; ++i)
+            {
+                int n;
+                if ((std::istringstream(args[i]) >> n).fail())
+                {
+                    ExecuteMatchOnName(args[i], reporter);
+                }
+                else
+                {
+                    ExecuteMatchOnIndex(n, reporter);
+                }
             }
-            std::cout << argv[1];
-            return 0;
+        }
+
+        void ExecuteMatchOnName(const char* name, Reporting& reporter)
+        {
+            struct PredicateName
+            {
+                std::string m_Name;
+
+                PredicateName(std::string s) : m_Name(s) {}
+                
+                bool operator()(const TestCaseInfo& info)
+                {
+                    return (info.m_Name == m_Name || EqualsSuiteName(m_Name, info.m_Name));
+                }
+            };
+
+            PredicateName pred(name);
+            Run(pred, reporter);
+        }
+
+        void ExecuteMatchOnIndex(int index, Reporting& reporter)
+        {
+            struct PredicateIndex
+            {
+                int searchIndex;
+                
+                PredicateIndex(int index) :searchIndex(index) {}
+
+                bool operator()(const TestCaseInfo& info)
+                {
+                    return (info.m_Index == searchIndex);
+                }
+            };
+
+            PredicateIndex pred(index);
+            Run(pred, reporter);
+        }
+
+        template <typename Predicate>
+        void Run(Predicate& canRun, Reporting& reporter)
+        {
+            for (std::list<TestCaseInfo>::iterator it = m_Tests.begin(); it != m_Tests.end(); ++it)
+            {
+                TestCaseInfo info = *it;
+                if (canRun(info))
+                {
+                    RunTestCase(info, reporter);
+                }
+            }
+        }
+
+        void RunTestCase(TestCaseInfo& info, Reporting& reporter)
+        {
+            try
+            {
+                reporter.TestCaseStarting(info);
+                info.m_Func(); //executes the test 
+                info.m_Passed = true;
+            }
+            catch (const qor::test::failure& f)
+            {
+                reporter.LogFailure(f.what());
+            }
+            catch (...)
+            {
+                reporter.LogFailure("unknown exception");
+            }
+            reporter.TestCaseEnded(info);
         }
 
     };

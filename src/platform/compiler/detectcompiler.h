@@ -22,12 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+/*  Compiler detection based on code from Boost
+    Including this file will define two macros
+    qor_pp_compiler as an arbitrary nuber representing the commpiler
+    qor_pp_compiler_root_folder as a name that can be used to form part of a path*/
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+#ifndef QOR_PP_H_DETECTCOMPILER
+#define QOR_PP_H_DETECTCOMPILER
+
+#if defined __clang__ && !defined(__CUDACC__) && !defined(__ibmxl__)
+#   define qor_pp_compiler qor_pp_compiler_clang
+#   define qor_pp_compiler_root_folder clang
+#elif defined __GNUC__ && !defined(__ibmxl__)
+#   define qor_pp_compiler qor_pp_compiler_gcc
+#   define qor_pp_compiler_root_folder gcc
+//Note: Add new compiler support here
+#elif defined _MSC_VER
+#   define qor_pp_compiler qor_pp_compiler_msvc
+#   define qor_pp_compiler_root_folder msvc
+#endif
+
+// Attempt to generate an error if we don't recognise the compiler:
+#	ifndef qor_pp_compiler
+#		error "Unknown compiler - Please add support for your compiler at the 'NOTE: Add new compiler support here' marked points "
+#	endif
+
+#endif//QOR_PP_H_DETECTCOMPILER

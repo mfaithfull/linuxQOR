@@ -22,12 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#include "../../configuration/configuration.h"
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+#ifndef NDEBUG
+#   define qor_pp_compiler_reportconfig     1
+#   define qor_pp_compiler_reportdefecits   1
+#endif
+
+#include "compiler.h"
+
+#ifdef qor_pp_intrinsics_header
+#endif
+
+namespace qor{ namespace compiler {
+
+    const char* Compiler::Name()
+    {
+        return qor_pp_compiler_name;
+    }
+
+    static const Compiler theCompiler;
+
+    const Compiler* TheCompiler()
+    {
+        return &theCompiler;
+    }
+
+}}//qor::compiler

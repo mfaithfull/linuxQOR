@@ -22,12 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#include <string>
+#include qor_pp_compiler_include
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+namespace qor { namespace compiler {
+
+    class Compiler : public CompilerBase
+    {
+    public:
+        virtual ~Compiler() = default;
+
+        const char* Name();
+    };
+
+    const Compiler* TheCompiler();
+
+    template <typename T>
+    static std::string demangle()
+    {
+        return TheCompiler()->demangle<T>();
+    }
+
+    
+}}//qor::compiler

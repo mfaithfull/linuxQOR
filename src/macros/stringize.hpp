@@ -22,12 +22,46 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#ifndef QOR_PP_H_PREPROCESSOR_STRINGIZE
+#define QOR_PP_H_PREPROCESSOR_STRINGIZE
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+#include "config/config.hpp"
+#include "cat.hpp"
+
+//qor_pp_stringize
+#
+# if qor_pp_config_flags() & qor_pp_config_msvc()
+#   define qor_pp_stringize(text) qor_pp_stringize_a((text))
+#   define qor_pp_stringize_a(arg) qor_pp_stringize_i arg
+# elif qor_pp_config_flags() & qor_pp_config_mwcc()
+#   define qor_pp_stringize(text) qor_pp_stringize_oo((text))
+#   define qor_pp_stringize_oo(par) qor_pp_stringize_i ## par
+# else
+#   define qor_pp_stringize(text) qor_pp_stringize_i(text)
+# endif
+#
+# define qor_pp_stringize_i(text) #text
+#
+
+// qor_pp_quotify
+# if qor_pp_config_flags() & qor_pp_config_msvc()
+#   define qor_pp_quotify(text) qor_pp_quotify_a((text))
+#   define qor_pp_quotify_a(arg) QOR_PP_QUOTIFY_I arg
+# elif qor_pp_config_flags() & qor_pp_config_mwcc()
+#   define qor_pp_quotify(text) qor_pp_quotify_oo((text))
+#   define qor_pp_quotify_oo(par) qor_pp_quotify_i ## par
+# else
+#    define qor_pp_quotify(text) qor_pp_quotify_i(text)
+# endif
+#
+# define qor_pp_quotify_i(text) qor_pp_cat('\'',qor_pp_cat(text, '\''))
+
+//qor_pp_stringquote
+# ifdef qor_pp_use_quotify
+#	define qor_pp_stringquote qor_pp_quotify
+# else
+#	define qor_pp_stringquote qor_pp_stringize
+# endif
+
+
+#endif//QOR_PP_H_PREPROCESSOR_STRINGIZE

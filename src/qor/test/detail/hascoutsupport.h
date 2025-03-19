@@ -22,12 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#ifndef QOR_PP_H_TESTDETAIL_HASCOUTSUPPORT
+#define QOR_PP_H_TESTDETAIL_HASCOUTSUPPORT
 
-#include "../platform/compiler/compilers.h"
-#undef qor_pp_compiler
-#include "../platform/compiler/detectcompiler.h"
-#include "../macros/preprocessor.h"
-#include "../platform/compiler/compilerpaths.h"
-#endif//QOR_PP_H_CONFIGURATION
+namespace qor { namespace test { namespace detail {
+
+    typedef char yes;
+    typedef char(&no)[2];
+    struct any_t
+    {
+        template<class T> any_t(const T&);
+    };
+
+    no operator << (const any_t&, const any_t&);
+    no operator >> (const any_t&, const any_t&);
+
+    template <class T> yes check(T const&);
+
+    no check(no);
+
+    template<typename streamtype, typename T>
+    struct has_cout_support
+    {
+        static streamtype& stream;
+        static T& x;
+        static const bool value = sizeof(check(stream << x)) == sizeof(yes);
+    };
+    
+}}}//qor::test::detail
+
+#endif//QOR_PP_H_TESTDETAIL_HASCOUTSUPPORT
