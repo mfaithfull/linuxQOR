@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include <string>
+#include <cxxabi.h>
 
 #define qor_pp_do_pragma(x) _Pragma (#x)
 #define qor_pp_todo(x) qor_pp_do_pragma(message ("TODO - " #x))
@@ -35,16 +36,46 @@ namespace qor { namespace compiler {
 
     class GCC9_4_0
     {
-    public:
+    private:
 
+        std::string static inline interpret_demangle_result(int status, std::string& result)
+        {
+            switch (status)
+            {
+            case 0:
+                return result;
+            break;
+            case 1:
+                result = "No result from demangler";
+            break;
+            case -1:
+                result = "memory allocation failure in demangler";
+            break;
+            case -2:
+                result = "MANGLED_NAME is not a valid name under the C++ ABI mangling rules";
+            break;
+            case -3:
+                result = "One of the arguments is invalid";
+            break;
+            default:
+                result = "Incomprehensible demangler status";
+            break;
+            } 
+        }
+
+    public:
+    
         template< typename T>
         static std::string demangle()
         {
-            std::string name(typeid(T).name());
-            //demangle here;
-            return name;
+            int status = 1;
+            char* demangled = abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, &status);
+            std::string result(demangled);
+            free(demangled);
+            return interpret_demangle_result(status, result);
         }
     };
 
     typedef GCC9_4_0 CompilerBase;
+
 }}//qor::compiler

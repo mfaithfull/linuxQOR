@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_COMPILER
+#define QOR_PP_H_COMPILER
+
 #include <string>
 #include qor_pp_compiler_include
 
@@ -49,3 +52,5 @@ namespace qor { namespace compiler {
 
     
 }}//qor::compiler
+
+#endif//QOR_PP_H_COMPILER

@@ -22,37 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TESTMACROS
-#define QOR_PP_H_TESTMACROS
+#include "../src/configuration/configuration.h"
+#include "../src/platform/compiler/compiler.h"
+#include "../src/qor/test/test.h"
 
-#define qor_pp_test_case(_CASE) \
-static void _CASE();\
-qor::test::AutoReg autoReg##_CASE(#_CASE, qor_pp_compiler_at, &_CASE);\
-static void _CASE()
+using namespace qor;
+using namespace qor::test;
 
-#define qor_pp_test_suite_case(_SUITE, _CASE)\
-struct _CASE: public qor::test::Test<_SUITE, _CASE>{ _CASE(); };\
-static void _SUITE##_CASE() {_CASE();}\
-qor::test::AutoReg autoReg##_CASE(qor_pp_stringize(_SUITE::_CASE), qor_pp_compiler_at, &_SUITE##_CASE);\
-_CASE::_CASE()
+struct CompilerTestSuite
+{
+	CompilerTestSuite()
+	{
+		//setup
+	}
 
-#define qor_pp_test_equal(e,a) \
-qor::test::equal (e ,a , qor_pp_compiler_at, "qor_pp_test_equal(" #e " == " #a ") failed ")
+	~CompilerTestSuite()
+	{
+		//teardown
+	}
+};
 
-#define qor_pp_test_unequal(e,a) \
-qor::test::unequal (e, a, qor_pp_compiler_at, "qor_pp_test_unequal(" #e " != " #a ") failed ")
+qor_pp_test_suite_case(CompilerTestSuite, DemangleIsNotEmpty)
+{
+    std::string unmangled(qor::compiler::demangle<CompilerTestSuite>());    
+	unequal(unmangled, "", qor_pp_compiler_at);
+}
 
-#define qor_pp_test_check(e) \
-qor::test::check (e, qor_pp_compiler_at, "qor_pp_test_check(" #e ") failed ")
-
-#define qor_pp_test_fail(s) qor::test::fail (s, qor_pp_compiler_at);
-
-#define qor_pp_test_assert_throw(s, e) \
-try { \
-    s; \
-		throw qor::test::failure (qor_pp_compiler_at,  #s " failed to throw");\
-} \
-catch(const e&)\
-{}
-
-#endif//QOR_PP_H_TESTMACROS
+qor_pp_test_suite_case(CompilerTestSuite, DemangleReturnsClassName)
+{
+    std::string unmangled(qor::compiler::demangle<CompilerTestSuite>());    
+    equal("CompilerTestSuite", unmangled, qor_pp_compiler_at);
+}
