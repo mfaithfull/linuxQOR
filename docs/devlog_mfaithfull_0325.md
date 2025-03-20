@@ -34,3 +34,9 @@ working which fortunately it does as long as the expansion is correct.
 We also need the fundamental configuration.h header which will be included everywhere and from which we'll eventually get the PCH
 All translation units will include configuration.h first and configuration.h will define all the global constants for the project, including macros
 
+Everything in now on main. At head development from now on, at least for the foreseable
+
+Working towards a makefile for the tests, much as I loath make and makefiles, it's the shortest path.
+
+Test suite builds and passes 1 self test. First minor milestone reached.
+

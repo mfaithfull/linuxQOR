@@ -28,7 +28,6 @@
 using namespace qor;
 using namespace qor::test;
 
-//------------------------------------------------------------------------------
 qor_pp_test_case(Check_true)
 {
 	qor_pp_test_check(true); //does not throw

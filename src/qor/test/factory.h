@@ -59,6 +59,12 @@ namespace qor{ namespace test
 			return instance;
 		}
 
+        void Register(TestCase acase)
+        {
+            acase.m_Index = m_registeredCount++;
+            m_Tests.emplace_back(acase);
+        }
+
         int main(int argc, const char* argv[])
         {
             argc--;	argv++; //Skip executable name, arg 0

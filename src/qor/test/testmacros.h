@@ -22,30 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include <string>
-#include qor_pp_compiler_include
+#ifndef QOR_PP_H_TESTMACROS
+#define QOR_PP_H_TESTMACROS
 
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
+#define qor_pp_test_case(_CASE) \
+static void _CASE();\
+qor::test::AutoReg autoReg##_CASE(#_CASE, qor_pp_compiler_at, &_CASE);\
+static void _CASE()
 
-namespace qor { namespace compiler {
+#define qor_pp_test_suite(_SUITE, _CASE)\
+struct _CASE: public qor::test::Test<_SUITE, _CASE>{ _CASE(); }\
+static void _SUITE##_CASE() {_CASE();}\
+qor::test::AutoReg autoReg##_CASE(qor_pp_stringize(_SUITE::_CASE), qor_pp_compiler_at, &_SUITE##_CASE);\
+_CASE::_CASE()
 
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
+#define qor_pp_test_equal(e,a) \
+qor::test::equal (e ,a , qor_pp_compiler_at, "qor_pp_test_equal(" #e " == " #a ") failed ")
 
-        const char* Name();
-    };
+#define qor_pp_test_unequal(e,a) \
+qor::test::unequal (e, a, qor_pp_compiler_at, "qor_pp_test_unequal(" #e " != " #a ") failed ")
 
-    const Compiler* TheCompiler();
+#define qor_pp_test_check(e) \
+qor::test::check (e, qor_pp_compiler_at, "qor_pp_test_check(" #e ") failed ")
 
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
+#define qor_pp_test_fail(s) qor::test::fail (s, qor_pp_compiler_at);
 
-    
-}}//qor::compiler
+#define qor_pp_test_assert_throw(s, e) \
+try { \
+    s; \
+		throw qor::test::failure (qor_pp_compiler_at,  #s " failed to throw");\
+} \
+catch(const e&)\
+{}
+
+#endif//QOR_PP_H_TESTMACROS

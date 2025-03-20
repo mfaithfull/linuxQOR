@@ -22,30 +22,21 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include <string>
-#include qor_pp_compiler_include
+#ifndef QOR_PP_H_TESTAUTOREG
+#define QOR_PP_H_TESTAUTOREG
 
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
+#include "factory.h"
 
-namespace qor { namespace compiler {
+namespace qor {	namespace test {
 
-    class Compiler : public CompilerBase
+    struct AutoReg
     {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
+        AutoReg(std::string name, const char* at, TestFunc f)
+        {
+            Factory::Instance().Register(TestCase(name, std::string(at), f));
+        }
     };
 
-    const Compiler* TheCompiler();
+}}//qor::test
 
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-
-    
-}}//qor::compiler
+#endif//QOR_PP_H_TESTAUTOREG
