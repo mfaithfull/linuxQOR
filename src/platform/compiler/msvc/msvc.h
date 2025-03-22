@@ -22,4 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+/*Define here the things that are intrinsic to all MSVC compilers and specific to
+MSVC compilers. Anything specific to a subset of MSVC versions or common to all
+compilers should be elsewhere.
+*/
+
 #define qor_pp_compiler_at __FILE__ "(" qor_pp_stringize(__LINE__)") : "

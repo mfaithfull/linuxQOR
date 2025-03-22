@@ -22,34 +22,51 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_MSVC_VERSION
-#define QOR_PP_H_MSVC_VERSION
+#ifndef QOR_PP_H_MSVC21
+#define QOR_PP_H_MSVC21
 
-#include "msvc.h"
+#include <string>
 
-#define qor_pp_compiler_version _MSC_VER        
+namespace qor { namespace compiler {
 
-#if(qor_pp_compiler_version < 1931)
-#error Unsupported Microsoft compiler version. Please update your compiler.
-#else
-#   ifdef qor_pp_compiler_reportconfig
-#	    define qor_pp_compiler_message(_X) __pragma( message( _X ) )
-#   else
-#	    define qor_pp_compiler_message(_X)
-#   endif
+    class MSVCCompiler21
+    {
 
-#	define qor_pp_compiler_version_folder vs2022
-#	define qor_pp_compiler_name "Visual Studio 2022, VC 21"
-#	define qor_pp_compiler_folder qor_pp_cat(qor_pp_compiler_root_folder,/vs2022)
-#	define qor_pp_compiler_header msvc21.h
-    qor_pp_compiler_message( qor_pp_compiler_name ": " qor_pp_stringize(qor_pp_compiler_version) )
+    public:
+    
+        MSVCCompiler21() = default;
+        virtual ~MSVCCompiler21() = default;
 
-#endif
+        template< typename T>
+        static std::string demangle()
+        {
+            std::string name(typeid(T).name());
+            const std::string struct_prefix("struct ");
+            const std::string class_prefix("class ");
+            const std::string ptr_postfix(" *");
 
-#if(qor_pp_compiler_version < 1944)
-    qor_pp_compiler_message( "Compiler version is supprted." )
-#else
-    qor_pp_compiler_message( "Compiler version is untested. Proceed at your own risk" )
-#endif
+            std::string::size_type at = name.find(struct_prefix);
+            if (at != std::string::npos) 
+            { 
+                name.erase(at, struct_prefix.size()); 
+            }
+            at = name.find(class_prefix);
+            if (at != std::string::npos) 
+            { 
+                name.erase(at, class_prefix.size()); 
+            }
+            at = name.find(ptr_postfix);
+            if (at != std::string::npos) 
+            { 
+                name.erase(at, ptr_postfix.size()); 
+            }
+            return name;
+        }
 
-#endif//QOR_PP_H_MSVC_VERSION
+    };
+
+    typedef MSVCCompiler21 CompilerBase;
+
+}}//qor::compiler
+
+#endif//QOR_PP_H_MSVC21

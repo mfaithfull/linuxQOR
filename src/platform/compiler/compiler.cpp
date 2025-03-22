@@ -24,11 +24,6 @@
 
 #include "../../configuration/configuration.h"
 
-#ifndef NDEBUG
-#   define qor_pp_compiler_reportconfig     1
-#   define qor_pp_compiler_reportdefecits   1
-#endif
-
 #include "compiler.h"
 
 #ifdef qor_pp_intrinsics_header
