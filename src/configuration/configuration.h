@@ -32,7 +32,10 @@
 
 //NOTE: Set preprocessor options for how the build proceeds here or predef them in the
 //build script
-#define qor_pp_compiler_reportconfig
+#ifndef NDEBUG
+#   define qor_pp_compiler_reportconfig
+#   define qor_pp_compiler_reportdefecits
+#endif
 
 #undef qor_pp_compiler
 #include "../platform/compiler/detectcompiler.h"	//Detect which compiler toolchain is being used
