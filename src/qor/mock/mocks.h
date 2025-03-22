@@ -49,7 +49,7 @@
 */
 
 #ifndef qor_pp_mock_debugbreak
-#define qor_pp_mock_debugbreak qor_pp_compiler_debugbreak
+#   define qor_pp_mock_debugbreak qor_pp_compiler_debugbreak
 #endif
 
 #ifndef qor_pp_mock_extra_destructor
@@ -59,13 +59,13 @@
 #endif
 
 #ifndef qor_pp_mock_dontcare_name
-#define qor_pp_mock_dontcare_name _
+#   define qor_pp_mock_dontcare_name _
 #endif
 
 #ifndef qor_pp_mock_virt_func_limit
-#define qor_pp_mock_virt_func_limit 1024
+#   define qor_pp_mock_virt_func_limit 1024
 #elif qor_pp_mock_virt_func_limit > 1024
-#error Adjust the code to support more than 1024 virtual functions before setting the VIRT_FUNC_LIMIT above 1024
+#   error Adjust the code to support more than 1024 virtual functions before setting the qor_pp_mock_virt_func_limit above 1024
 #endif
 
 #include "detail/replace.h"

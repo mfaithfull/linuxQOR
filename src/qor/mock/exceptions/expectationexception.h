@@ -29,8 +29,6 @@
 #ifndef QOR_PP_H_TESTMOCK_EXPECTATIONEXCEPTION
 #define QOR_PP_H_TESTMOCK_EXPECTATIONEXCEPTION
 
-//#include "baseexception.h"
-
 namespace qor{ namespace mock{
 
     class ExpectationException : public BaseException 

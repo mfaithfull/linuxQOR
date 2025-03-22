@@ -35,9 +35,7 @@ namespace qor { namespace mock {
                 
         struct RegistrationType
         {
-            RegistrationType(unsigned int min, unsigned int max) : minimum(min), maximum(max) 
-            {
-            }
+            RegistrationType(unsigned int min, unsigned int max) : minimum(min), maximum(max) {}
 
             unsigned int minimum;
             unsigned int maximum;

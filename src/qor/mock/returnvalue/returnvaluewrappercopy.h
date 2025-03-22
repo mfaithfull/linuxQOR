@@ -30,7 +30,6 @@
 #define QOR_PP_H_TESTMOCK_RETURNVALUEWRAPPERCOPY
 
 #include <functional>
-//#include "returnvaluewrapper.h"
 
 namespace qor{ namespace mock{
 

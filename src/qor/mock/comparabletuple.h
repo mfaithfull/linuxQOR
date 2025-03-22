@@ -30,7 +30,6 @@
 #define QOR_PP_H_TESTMOCK_COMPARABLETUPLE
 
 #include <tuple>
-//#include "parameters/assigner.h"
 
 namespace qor{ namespace mock{
 

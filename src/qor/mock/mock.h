@@ -29,9 +29,6 @@
 #ifndef QOR_PP_H_TESTMOCK_MOCK
 #define QOR_PP_H_TESTMOCK_MOCK
 
-//#include "rttiinfo.h"
-//#include "typedestructable.h"
-//#include "detail/func_index.h"
 #include<memory>
 #include<map>
 #include<vector>

@@ -30,8 +30,6 @@
 #define QOR_PP_H_TESTMOCK_NORESULTSETUPEXCEPTION
 
 #include <sstream>
-//#include "baseexception.h"
-//#include "../repository/mockrepository.h"
 
 #ifdef LINUX_TARGET
 #include <execinfo.h>

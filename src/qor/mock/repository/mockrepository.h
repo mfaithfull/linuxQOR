@@ -34,14 +34,6 @@
 #include <map>
 #include <memory>
 
-/*
-#include "../call.h"
-#include "../tcall.h"
-#include "../mock.h"
-#include "../detail/defaultreporter.h"
-#include "../memberwrapper.h"
-*/
-
 namespace qor{ namespace mock{
 
     class MockRepository
@@ -350,7 +342,6 @@ namespace qor{ namespace mock{
             }
         }
 
-        
         void VerifyPartial(base_mock* obj)
         {
             for (auto& i : expectations)

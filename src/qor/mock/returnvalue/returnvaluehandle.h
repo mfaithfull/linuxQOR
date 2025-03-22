@@ -29,8 +29,6 @@
 #ifndef QOR_PP_H_TESTMOCK_RETURNVALUEHANDLE
 #define QOR_PP_H_TESTMOCK_RETURNVALUEHANDLE
 
-//#include "returnvaluewrapper.h"
-
 namespace qor{ namespace mock{
     
     template <typename T>

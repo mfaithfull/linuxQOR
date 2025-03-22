@@ -29,15 +29,11 @@
 #ifndef QOR_PP_H_TESTMOCK_EXCEPTIONHOLDERIMPL
 #define QOR_PP_H_TESTMOCK_EXCEPTIONHOLDERIMPL
 
-//#include "exceptionholder.h"
-//#include "exceptionwrapper.h"
-
 namespace qor{ namespace mock{
 
     template <typename T>
     ExceptionHolder* ExceptionHolder::Create(T ex)
     {
-        //TODO: Consider if we need to do anything about this raw allocation?
         return new ExceptionWrapper<T>(ex);
     }
 

@@ -30,8 +30,6 @@
 #define QOR_PP_H_TESTMOCK_MOCKIMPL
 
 #include <tuple>
-//#include "mock.h"
-//#include "repository/mockrepository.h"
 
 namespace qor{ namespace mock{
 

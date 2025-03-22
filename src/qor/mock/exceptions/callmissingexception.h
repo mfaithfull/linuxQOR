@@ -30,8 +30,6 @@
 #define QOR_PP_H_TESTMOCK_CALLMISSINGEXCEPTION
 
 #include <sstream>
-//#include "baseexception.h"
-//#include "../repository/mockrepository.h"
 
 namespace qor{ namespace mock{
 

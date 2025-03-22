@@ -29,9 +29,6 @@
 #ifndef QOR_PP_H_TESTMOCK_ASSIGNSINGLE
 #define QOR_PP_H_TESTMOCK_ASSIGNSINGLE
 
-//#include "inparam.h"
-//#include "outparam.h"
-
 namespace qor{ namespace mock{
 
     template <typename A, typename B>

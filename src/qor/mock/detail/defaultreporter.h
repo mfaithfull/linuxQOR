@@ -30,14 +30,6 @@
 #define QOR_PP_H_TESTMOCK_DETAIL_DEFAULTREPORTER
 
 #include <functional>
-/*
-#include "../exceptions/callmissingexception.h"
-#include "../exceptions/expectationexception.h"
-#include "../exceptions/notimplementedexception.h"
-#include "../exceptions/zombiemockexception.h"
-#include "../exceptions/noresultsetupexception.h"
-#include "reporter.h"
-*/
 
 namespace qor{ namespace mock{ namespace detail {
 

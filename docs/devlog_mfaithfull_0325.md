@@ -45,3 +45,4 @@ Sketched in the QOR Mock header library based on HippoMocks. It builds cleanly b
 Now I need to abstract out the Compiler, OS and Architecture dependencies into those libraries but first need to wrap it in some tests to make sure it continues to operate as it gets refactored.
 
 
+Interesting to note that GCC doesn't generate type information for classes with missing function implementations but it does all the compilation if the missing function isn't referenced.

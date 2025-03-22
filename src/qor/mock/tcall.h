@@ -29,10 +29,6 @@
 #ifndef QOR_PP_H_TESTMOCK_TCALL
 #define QOR_PP_H_TESTMOCK_TCALL
 
-//#include "returnvalue/returnvaluehandle.h"
-//#include "returnvalue/returnvaluewrappercopy.h"
-//#include "comparabletuple.h"
-
 namespace qor{ namespace mock{
     
     template <typename Y, typename... Args>

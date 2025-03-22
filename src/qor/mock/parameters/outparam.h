@@ -29,8 +29,6 @@
 #ifndef QOR_PP_H_TESTMOCK_OUTPARAM
 #define QOR_PP_H_TESTMOCK_OUTPARAM
 
-//#include "dontcare.h"
-
 namespace qor { namespace mock {
 
     template <typename T>

@@ -30,7 +30,6 @@
 #define QOR_PP_H_TESTMOCKREPORTER
 
 #include <string>
-//#include "../repository/mockrepository.h"
 
 namespace qor{ namespace mock{
     

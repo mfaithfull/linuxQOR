@@ -29,8 +29,6 @@
 #ifndef QOR_PP_H_TESTMOCK_INVOKE
 #define QOR_PP_H_TESTMOCK_INVOKE
 
-//#include "detail/callimpl.h"
-
 namespace qor{ namespace mock{
 
     template <typename F, typename Tuple>

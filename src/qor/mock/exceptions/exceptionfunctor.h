@@ -30,7 +30,6 @@
 #define QOR_PP_H_TESTMOCK_EXCEPTIONFUNCTOR
 
 #include <functional>
-//#include "exceptionholder.h"
 
 namespace qor{ namespace mock{
 

@@ -25,12 +25,17 @@
 #include <string>
 #include <cxxabi.h>
 
-#define qor_pp_do_pragma(x) _Pragma (#x)
-#define qor_pp_todo(x) qor_pp_do_pragma(message ("TODO - " #x))
-#define qor_pp_warning(x) qor_pp_do_pragma(warning ("Warning - " #x))
-#define qor_pp_message(x) qor_pp_do_pragma(message ("Message - " #x))
+#define qor_pp_compiler_do_pragma(x) _Pragma (#x)
+#ifdef qor_pp_compiler_reportconfig
+#   define qor_pp_compiler_todo(x) qor_pp_compiler_do_pragma(message ("TODO - " #x))
+#   define qor_pp_compiler_message(x) qor_pp_compiler_do_pragma(message ("Message - " #x))
+#else
+#   define qor_pp_compiler_todo(_X)
+#   define qor_pp_compiler_message(_X)
+#endif
+#   define qor_pp_compiler_warning(x) qor_pp_compiler_do_pragma(warning ("Warning - " #x))
 
-qor_pp_message(Compiling with GCC 9.4.0)
+qor_pp_compiler_message(Compiling with GCC 9.4.0)
 
 namespace qor { namespace compiler {
 

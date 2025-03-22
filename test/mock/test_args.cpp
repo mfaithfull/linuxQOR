@@ -22,34 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/mock/mocks.h"
 
-#ifndef QOR_PP_H_TESTMOCK_MEMBERWRAPPER
-#define QOR_PP_H_TESTMOCK_MEMBERWRAPPER
+using namespace qor;
+using namespace qor::test;
 
-namespace qor{ namespace mock{
-    
-    template <typename A>
-    class MemberWrap : public TypeDestructable
-    {
-    private:
-        A* member;
+class IB 
+{
+public:
 
-    public:
-        
-        MemberWrap(A* mem) : member(mem)
-        {
-            new (member) A();
-        }
+	virtual ~IB() {}
 
-        virtual ~MemberWrap()
-        {
-            member->~A();
-        }
-    };
+	virtual void f(int){};
+	virtual void g(int) = 0;
+};
 
-}}//qor::mock
+qor_pp_test_case (checkArgumentsAccepted)
+{
+	MockRepository mocks;
+	IB *iamock = mocks.Mock<IB>();
+	mocks.ExpectCall(iamock, IB::f).With(1);
+	mocks.ExpectCall(iamock, IB::g).With(2);
+	iamock->f(1);
+	iamock->g(2);
+}
 
-#endif//QOR_PP_H_TESTMOCK_MEMBERWRAPPER
+qor_pp_test_case (checkArgumentsChecked)
+{
+	MockRepository mocks;
+	IB *iamock = mocks.Mock<IB>();
+	mocks.ExpectCall(iamock, IB::f).With(1);
+	mocks.ExpectCall(iamock, IB::g).With(1);
+	bool exceptionCaught = false;
+	try 
+	{
+		iamock->f(2);
+	}
+	catch (qor::mock::ExpectationException)
+	{
+		exceptionCaught = true;
+	}
+	qor_pp_test_check(exceptionCaught);
+	mocks.reset();
+}
+

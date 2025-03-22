@@ -29,9 +29,6 @@
 #ifndef QOR_PP_H_TESTMOCK_MOCKREPOSITORYIMPL
 #define QOR_PP_H_TESTMOCK_MOCKREPOSITORYIMPL
 
-//#include "mockrepository.h"
-//#include "../mockimpl.h"
-
 namespace qor{ namespace mock{
 
     template <typename Z>

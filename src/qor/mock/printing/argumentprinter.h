@@ -44,6 +44,13 @@ namespace qor{ namespace mock{
                 os << std::get<index>(t);
                 argumentPrinter<index + 1, limit, Tuple>::Print(os, t);
             }
+
+            static void Print(std::wostream& os, const Tuple& t)
+            {
+                if (index != 0) os << ",";
+                os << std::get<index>(t);
+                argumentPrinter<index + 1, limit, Tuple>::Print(os, t);
+            }
         };
         
         template <int limit, typename Tuple>
@@ -52,10 +59,22 @@ namespace qor{ namespace mock{
             static void Print(std::ostream&, const Tuple&)
             {
             }
+
+            static void Print(std::wostream&, const Tuple&)
+            {
+            }
         };
 
         template <typename... Args>
         void printTuple(std::ostream& os, const std::tuple<Args...>& tuple)
+        {
+            os << "(";
+            argumentPrinter<0, sizeof...(Args), std::tuple<Args...>>::Print(os, tuple);
+            os << ")";
+        }
+
+        template <typename... Args>
+        void printTuple(std::wostream& os, const std::tuple<Args...>& tuple)
         {
             os << "(";
             argumentPrinter<0, sizeof...(Args), std::tuple<Args...>>::Print(os, tuple);

@@ -56,4 +56,5 @@ namespace qor { namespace mock {
     }
 
 }}//qor::mock
+
 #endif//QOR_PP_H_MOCKREVERSE
