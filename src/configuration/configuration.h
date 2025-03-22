@@ -30,6 +30,10 @@
 #ifndef QOR_PP_H_CONFIGURATION
 #define QOR_PP_H_CONFIGURATION
 
+//NOTE: Set preprocessor options for how the build proceeds here or predef them in the
+//build script
+#define qor_pp_compiler_reportconfig
+
 #undef qor_pp_compiler
 #include "../platform/compiler/detectcompiler.h"	//Detect which compiler toolchain is being used
 #include "../macros/preprocessor.h"					//Setup the pre-processor definitions

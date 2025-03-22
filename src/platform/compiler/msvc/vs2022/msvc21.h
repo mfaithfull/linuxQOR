@@ -22,34 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_MSVC_VERSION
-#define QOR_PP_H_MSVC_VERSION
+#ifndef QOR_PP_H_MSVC21
+#define QOR_PP_H_MSVC21
 
-#include "msvc.h"
+namespace qor { namespace compiler {
 
-#define qor_pp_compiler_version _MSC_VER        
+    class MSVCCompiler21
+    {
 
-#if(qor_pp_compiler_version < 1931)
-#error Unsupported Microsoft compiler version. Please update your compiler.
-#else
-#   ifdef qor_pp_compiler_reportconfig
-#	    define qor_pp_compiler_message(_X) __pragma( message( _X ) )
-#   else
-#	    define qor_pp_compiler_message(_X)
-#   endif
+    public:
+    
+        MSVCCompiler21() = default;
+        virtual ~MSVCCompiler21() = default;
 
-#	define qor_pp_compiler_version_folder vs2022
-#	define qor_pp_compiler_name "Visual Studio 2022, VC 21"
-#	define qor_pp_compiler_folder qor_pp_cat(qor_pp_compiler_root_folder,/vs2022)
-#	define qor_pp_compiler_header msvc21.h
-    qor_pp_compiler_message( qor_pp_compiler_name ": " qor_pp_stringize(qor_pp_compiler_version) )
+        template< typename T>
+        static std::string demangle()
+        {
+            std::string mangled = typeid(T).name();
+            return mangled;
+        }
 
-#endif
+    };
 
-#if(qor_pp_compiler_version < 1944)
-    qor_pp_compiler_message( "Compiler version is supprted." )
-#else
-    qor_pp_compiler_message( "Compiler version is untested. Proceed at your own risk" )
-#endif
+    typedef MSVCCompiler21 CompilerBase;
 
-#endif//QOR_PP_H_MSVC_VERSION
+}}//qor::compiler
+
+#endif//QOR_PP_H_MSVC21
