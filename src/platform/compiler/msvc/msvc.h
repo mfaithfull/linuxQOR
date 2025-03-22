@@ -28,3 +28,21 @@ compilers should be elsewhere.
 */
 
 #define qor_pp_compiler_at __FILE__ "(" qor_pp_stringize(__LINE__)") : "
+
+#ifdef _WIN64
+#   define WINCALL
+#else
+#   define WINCALL __stdcall
+#endif
+
+extern "C" __declspec(dllimport) int WINCALL IsDebuggerPresent();
+extern "C" __declspec(dllimport) void WINCALL DebugBreak();
+#define qor_pp_compiler_debugbreak(e) if (IsDebuggerPresent()) DebugBreak(); else (void)0
+
+#ifdef __EDG__
+static constexpr int function_base = 3;
+static constexpr int function_stride = 2;
+#else
+static constexpr int function_base = 0;
+static constexpr int function_stride = 1;
+#endif

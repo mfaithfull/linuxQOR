@@ -40,3 +40,8 @@ Working towards a makefile for the tests, much as I loath make and makefiles, it
 
 Test suite builds and passes 1 self test. First minor milestone reached.
 
+Sketched in the QOR Mock header library based on HippoMocks. It builds cleanly but is still scratch code.
+
+Now I need to abstract out the Compiler, OS and Architecture dependencies into those libraries but first need to wrap it in some tests to make sure it continues to operate as it gets refactored.
+
+
