@@ -22,10 +22,59 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_RETURNVALUEWRAPPERCOPY
+#define QOR_PP_H_TESTMOCK_RETURNVALUEWRAPPERCOPY
 
-#define qor_pp_compiler_extra_destructor
+#include <functional>
+//#include "returnvaluewrapper.h"
+
+namespace qor{ namespace mock{
+
+    template <typename X> struct no_cref 
+    { 
+        typedef X type; 
+    };
+
+    
+    template <typename X> 
+    struct no_cref<const X&> 
+    { 
+        typedef X type; 
+    };
+
+
+    template <class Y, class RY>
+    class ReturnValueWrapperCopy : public ReturnValueWrapper<Y>
+    {
+    public:
+        typename no_cref<Y>::type rv;
+
+        ReturnValueWrapperCopy(RY retValue) : rv(retValue) {}
+
+        virtual Y value() 
+        { 
+            return rv; 
+        };
+    };
+
+    template <class Y, class RY>
+    class ReturnValueWrapperCopy<Y, std::reference_wrapper<RY>> : public ReturnValueWrapper<Y>
+    {
+    public:
+        typename std::reference_wrapper<RY> rv;
+        
+        ReturnValueWrapperCopy(std::reference_wrapper<RY> retValue) : rv(retValue) {}
+
+        virtual Y value() 
+        { 
+            return rv; 
+        };
+    };
+
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_RETURNVALUEWRAPPERCOPY

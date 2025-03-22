@@ -22,10 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_DETAIL_CALLIMPL
+#define QOR_PP_H_TESTMOCK_DETAIL_CALLIMPL
 
-#define qor_pp_compiler_extra_destructor
+namespace qor{ namespace mock{ namespace detail {
+
+    template <typename F, typename Tuple, bool Done, int Total, int... N>
+    struct call_impl
+    {
+        static typename F::result_type call(F f, Tuple&& t)
+        {
+            return call_impl<F, Tuple, Total == 1 + sizeof...(N), Total, N..., sizeof...(N)>::call(f, std::forward<Tuple>(t));
+        }
+    };
+
+    template <typename F, typename Tuple, int Total, int... N>
+    struct call_impl<F, Tuple, true, Total, N...>
+    {        
+        static typename F::result_type call(F f, Tuple&& t)
+        {
+            return f(std::get<N>(std::forward<Tuple>(t))...);
+        }
+    };
+
+}}}//qor::mock::detail
+
+#endif//QOR_PP_H_TESTMOCK_DETAIL_CALLIMPL

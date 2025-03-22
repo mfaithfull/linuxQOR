@@ -22,10 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_OUTPARAM
+#define QOR_PP_H_TESTMOCK_OUTPARAM
 
-#define qor_pp_compiler_extra_destructor
+//#include "dontcare.h"
+
+namespace qor { namespace mock {
+
+    template <typename T>
+    struct OutParam : public DontCare
+    {
+        T value;
+
+        explicit OutParam(T val) : value(val){}
+
+    };
+
+    template <typename T>
+    OutParam<T> Out(T t) 
+    { 
+        return OutParam<T>(t); 
+    }
+
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_OUTPARAM

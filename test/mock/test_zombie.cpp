@@ -22,10 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/mock/mocks.h"
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+class IZombie 
+{
+public:
 
-#define qor_pp_compiler_extra_destructor
+	virtual ~IZombie() {}
+
+	virtual void a() = 0;
+};
+
+//------------------------------------------------------------------------------
+qor_pp_test_case (checkZombieCallsAreReported)
+{
+	bool exceptionCaught = false;
+	MockRepository mocks;
+	IZombie *iamock = mocks.Mock<IZombie>();
+	mocks.ExpectCall(iamock, IZombie::a);
+	mocks.ExpectCallDestructor(iamock);
+	iamock->a();
+	delete iamock;
+	try
+	{
+		iamock->a();
+	}
+	catch(qor::mock::ZombieMockException &)
+	{
+		exceptionCaught = true;
+	}
+	qor_pp_test_check(exceptionCaught);
+}

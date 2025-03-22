@@ -22,10 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_RTTIINFO
+#define QOR_PP_H_TESTMOCK_RTTIINFO
 
-#define qor_pp_compiler_extra_destructor
+namespace qor{ namespace mock{
+    
+    struct RttiInfo
+    {
+        void* baseRttiInfoType;
+        const char* typeName;
+        const std::type_info* baseClassName;
+
+        RttiInfo(const std::type_info& base, const std::type_info& actualType)
+        {
+            RttiInfo* baseR = (RttiInfo*)&base;
+            baseRttiInfoType = baseR->baseRttiInfoType; // Single-inheritance
+            typeName = baseR->typeName;                 // Mock<T> class
+            baseClassName = &actualType;                // that now inherits from actualType.
+        }
+    };
+
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_RTTIINFO

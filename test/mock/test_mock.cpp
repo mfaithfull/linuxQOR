@@ -22,10 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/mock/mocks.h"
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+class IA 
+{
+public:
 
-#define qor_pp_compiler_extra_destructor
+	virtual ~IA() {}
+	virtual void f() {}
+	virtual void g() = 0;
+};
+
+
+qor_pp_test_case (checkBaseCase)
+{
+	MockRepository mocks;
+	IA *iamock = mocks.Mock<IA>();
+	mocks.ExpectCall(iamock, IA::f);
+	mocks.ExpectCall(iamock, IA::g);
+	iamock->f();
+	iamock->g();
+}

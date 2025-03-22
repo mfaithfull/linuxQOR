@@ -22,10 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_REGISTRATIONTYPE
+#define QOR_PP_H_TESTMOCK_REGISTRATIONTYPE
 
-#define qor_pp_compiler_extra_destructor
+#include <limits>
+
+namespace qor { namespace mock {
+                
+        struct RegistrationType
+        {
+            RegistrationType(unsigned int min, unsigned int max) : minimum(min), maximum(max) 
+            {
+            }
+
+            unsigned int minimum;
+            unsigned int maximum;
+        };
+        
+        inline bool operator==(RegistrationType const& rhs, RegistrationType const& lhs)
+        {
+            return rhs.minimum == lhs.minimum && rhs.maximum == lhs.maximum;
+        }
+
+        const RegistrationType Any = RegistrationType(1, (std::numeric_limits<unsigned int>::max)());
+        const RegistrationType Never = RegistrationType((std::numeric_limits<unsigned int>::min)(), (std::numeric_limits<unsigned int>::min)());
+        const RegistrationType Once = RegistrationType(1, 1);        
+
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_REGISTRATIONTYPE

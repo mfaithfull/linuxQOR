@@ -22,10 +22,50 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_NORESULTSETUPEXCEPTION
+#define QOR_PP_H_TESTMOCK_NORESULTSETUPEXCEPTION
 
-#define qor_pp_compiler_extra_destructor
+#include <sstream>
+//#include "baseexception.h"
+//#include "../repository/mockrepository.h"
+
+#ifdef LINUX_TARGET
+#include <execinfo.h>
+#endif
+
+namespace qor{ namespace mock{
+
+    class NoResultSetUpException : public BaseException 
+    {
+    public:
+        NoResultSetUpException(MockRepository& repo, const std::string& args, const char* funcName)
+        {
+            std::stringstream text;
+            text << "No result set up on call to " << funcName << args << std::endl << repo;
+
+    #ifdef LINUX_TARGET
+            void* stacktrace[256];
+            size_t size = backtrace(stacktrace, sizeof(stacktrace));
+            if (size > 0)
+            {
+                text << "Stackdump:" << std::endl;
+                char** symbols = backtrace_symbols(stacktrace, size);
+                for (size_t i = 0; i < size; i = i + 1)
+                {
+                    text << symbols[i] << std::endl;
+                }
+                free(symbols);
+            }
+    #endif
+
+            txt = text.str();
+        }
+    };
+
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_NORESULTSETUPEXCEPTION

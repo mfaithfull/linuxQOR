@@ -22,10 +22,25 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_EXCEPTIONHOLDERIMPL
+#define QOR_PP_H_TESTMOCK_EXCEPTIONHOLDERIMPL
 
-#define qor_pp_compiler_extra_destructor
+//#include "exceptionholder.h"
+//#include "exceptionwrapper.h"
+
+namespace qor{ namespace mock{
+
+    template <typename T>
+    ExceptionHolder* ExceptionHolder::Create(T ex)
+    {
+        //TODO: Consider if we need to do anything about this raw allocation?
+        return new ExceptionWrapper<T>(ex);
+    }
+
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_EXCEPTIONHOLDERIMPL

@@ -61,6 +61,7 @@ namespace qor { namespace compiler {
                 result = "Incomprehensible demangler status";
             break;
             } 
+            return result;
         }
 
     public:

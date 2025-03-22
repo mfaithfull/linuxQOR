@@ -33,7 +33,7 @@
 #define qor_pp_compiler_minor_version   qor_pp_cat(__GNUC_MINOR__,qor_pp_compiler_patch_version)
 #define qor_pp_compiler_version         qor_pp_cat(gcc,qor_pp_cat(__GNUC__,qor_pp_cat(_, qor_pp_compiler_minor_version)))
 #define qor_pp_compiler_version_folder  qor_pp_compiler_version
-#define qor_pp_compiler_name            "Gnu C++ "qor_pp_stringize(__GNUC__)"."qor_pp_stringize(__GNUC_MINOR__)"."qor_pp_stringize(__GNUC_PATCHLEVEL__)
+#define qor_pp_compiler_name            "Gnu C++ " qor_pp_stringize(__GNUC__) "." qor_pp_stringize(__GNUC_MINOR__) "." qor_pp_stringize(__GNUC_PATCHLEVEL__)
 #define qor_pp_compiler_folder          qor_pp_cat(qor_pp_compiler_root_folder,/qor_pp_compiler_version_folder)
 #define qor_pp_compiler_header          qor_pp_compiler_version.h
 

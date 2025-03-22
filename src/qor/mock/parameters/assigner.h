@@ -22,10 +22,31 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_ASSIGNER
+#define QOR_PP_H_TESTMOCK_ASSIGNER
 
-#define qor_pp_compiler_extra_destructor
+namespace qor{ namespace mock{
+    
+    template <int index, int limit, typename ArgTuple, typename Tuple>
+    struct assigner
+    {
+        static void Assign(ArgTuple& arg, Tuple& t) 
+        {
+            assignTo(std::get<index>(arg), std::get<index>(t));
+            assigner<index + 1, limit, ArgTuple&, Tuple&>::Assign(arg, t);
+        }
+    };
+
+    template <int limit, typename ArgTuple, typename Tuple>
+    struct assigner<limit, limit, ArgTuple, Tuple>
+    {
+        static void Assign(ArgTuple&, Tuple&){}
+    };
+
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_ASSIGNER

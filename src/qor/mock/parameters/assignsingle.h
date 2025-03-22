@@ -22,10 +22,57 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_ASSIGNSINGLE
+#define QOR_PP_H_TESTMOCK_ASSIGNSINGLE
 
-#define qor_pp_compiler_extra_destructor
+//#include "inparam.h"
+//#include "outparam.h"
+
+namespace qor{ namespace mock{
+
+    template <typename A, typename B>
+    struct assign_single
+    {
+        void operator()(A, B){}
+    };
+
+    template <typename A, typename B>
+    struct assign_single<InParam<A>&, B&>
+    {
+        void operator()(InParam<A> a, B b)
+        {
+            *a.value = b;
+        }
+    };
+
+    template <typename A, typename B>
+    struct assign_single<OutParam<A>&, B&>
+    {
+        void operator()(OutParam<A> a, B& b) 
+        {
+            b = a.value;
+        }
+    };
+
+    template <typename A, typename B>
+    struct assign_single<OutParam<A>&, B*&>
+    {
+        void operator()(OutParam<A> a, B*& b) 
+        {
+            *b = a.value;
+        }
+    };
+
+    template <typename A, typename B>
+    void assignTo(A& a, B& b)
+    {
+        assign_single<A&, B&>()(a, b);
+    }
+
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_ASSIGNSINGLE

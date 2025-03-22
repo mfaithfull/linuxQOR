@@ -22,10 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_MOCKREVERSE
+#define QOR_PP_H_MOCKREVERSE
 
-#define qor_pp_compiler_extra_destructor
+namespace qor { namespace mock {
+
+    template<typename T>
+    struct reversed_container
+    {
+        T& container;
+    };
+
+    template <typename T>
+    auto begin(reversed_container<T> container) -> decltype(container.container.rbegin()) 
+    { 
+        return container.container.rbegin(); 
+    }
+
+    template <typename T>
+    auto end(reversed_container<T> container) -> decltype(container.container.rend()) 
+    { 
+        return container.container.rend(); 
+    }
+
+    template <typename T>
+    reversed_container<T> reverse_order(T& container) 
+    { 
+        return { container }; 
+    }
+
+}}//qor::mock
+#endif//QOR_PP_H_MOCKREVERSE

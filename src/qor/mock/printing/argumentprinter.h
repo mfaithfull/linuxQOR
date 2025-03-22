@@ -22,10 +22,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_ARGUMENTPRINTER
+#define QOR_PP_H_TESTMOCK_ARGUMENTPRINTER
 
-#define qor_pp_compiler_extra_destructor
+#include <iostream>
+#include <tuple>
+
+namespace qor{ namespace mock{
+
+        template <int index, int limit, typename Tuple>
+        struct argumentPrinter
+        {
+
+            static void Print(std::ostream& os, const Tuple& t)
+            {
+                if (index != 0) os << ",";
+                os << std::get<index>(t);
+                argumentPrinter<index + 1, limit, Tuple>::Print(os, t);
+            }
+        };
+        
+        template <int limit, typename Tuple>
+        struct argumentPrinter<limit, limit, Tuple>
+        {
+            static void Print(std::ostream&, const Tuple&)
+            {
+            }
+        };
+
+        template <typename... Args>
+        void printTuple(std::ostream& os, const std::tuple<Args...>& tuple)
+        {
+            os << "(";
+            argumentPrinter<0, sizeof...(Args), std::tuple<Args...>>::Print(os, tuple);
+            os << ")";
+        }
+
+    }//mock
+}//qor
+
+#endif//QOR_PP_H_TESTMOCK_ARGUMENTPRINTER

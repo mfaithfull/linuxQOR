@@ -22,10 +22,41 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_BASEMOCK
+#define QOR_PP_H_TESTMOCK_BASEMOCK
 
-#define qor_pp_compiler_extra_destructor
+namespace qor { namespace mock {
+
+    class base_mock
+    {
+    public:
+
+        void destroy()
+        {
+            unwriteVft();
+            delete this;
+        }
+
+        virtual ~base_mock(){}
+
+        void* rewriteVft(void* newVf)
+        {
+            void* oldVf = *(void**)this;
+            *(void**)this = newVf;
+            return oldVf;
+        }
+
+        void unwriteVft()
+        {
+            *(void**)this = (*(void***)this)[qor_pp_mock_virt_func_limit + 1];
+        }
+
+    };
+    
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_BASEMOCK

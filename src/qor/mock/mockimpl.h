@@ -22,10 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
-#define qor_pp_compiler_debugbreak(e)
+//Derived from HippoMocks
+//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
+//under GNU LGPL v2.1
 
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
+#ifndef QOR_PP_H_TESTMOCK_MOCKIMPL
+#define QOR_PP_H_TESTMOCK_MOCKIMPL
 
-#define qor_pp_compiler_extra_destructor
+#include <tuple>
+//#include "mock.h"
+//#include "repository/mockrepository.h"
+
+namespace qor{ namespace mock{
+
+    template <typename T>
+    template <int X>
+    void mock<T>::mockedDestructor(int)
+    {
+        std::tuple<> argT;
+        repo->DoVoidExpectation(this, translateX(X), argT);
+        repo->VerifyPartial(this);
+        isZombie = true;
+    }
+
+}}//qor::mock
+
+#endif//QOR_PP_H_TESTMOCK_MOCKIMPL
