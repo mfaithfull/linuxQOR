@@ -77,7 +77,7 @@ namespace qor{ namespace mock{
         return *call;
     }
 
-#if defined(_MSC_VER) && !defined(_WIN64)
+#if (qor_pp_os_target == qor_pp_os_windows) && !defined(qor_pp_os_64bit)
 
     // Support for COM, see declarations
     template <int X, typename Z2, typename Y, typename Z, typename... Args>
@@ -97,7 +97,7 @@ namespace qor{ namespace mock{
     }
 #endif
 
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#ifdef qor_pp_mock_cfuncsupport
 
     template <int X, typename Y, typename... Args>
     TCall<Y, Args...>& MockRepository::RegisterExpect_(Y(*func)(Args...), RegistrationType expect, const char* funcName, const char* fileName, unsigned long lineNo)
@@ -110,7 +110,7 @@ namespace qor{ namespace mock{
         return *call;
     }
 
-#if defined(_MSC_VER) && !defined(_WIN64)
+#if (qor_pp_os_target == qor_pp_os_windows) && !defined(qor_pp_os_64bit)
 
     template <int X, typename Y, typename... Args>
     TCall<Y, Args...>& MockRepository::RegisterExpect_(Y(__stdcall* func)(Args...), RegistrationType expect, const char* funcName, const char* fileName, unsigned long lineNo)

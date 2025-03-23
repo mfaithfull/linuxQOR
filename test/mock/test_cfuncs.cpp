@@ -29,7 +29,7 @@
 using namespace qor;
 using namespace qor::test;
 
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#ifdef qor_pp_mock_cfuncsupport
 
 int a()
 {
@@ -64,7 +64,7 @@ qor_pp_test_case(ExpectCallOverridesNeverCall)
 }
 
 
-#	ifdef _WIN32
+#	if(qor_pp_os_target == qor_pp_os_windows)
 #		include <windows.h>
 qor_pp_test_case (checkCanMockGetSystemTime) 
 {

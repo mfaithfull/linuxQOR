@@ -58,7 +58,7 @@ public:
 };
 
 // TODO: MSVC implementation incomplete
-#ifndef _MSC_VER
+#if (qor_pp_compiler != qor_pp_compiler_msvc)
 
 qor_pp_test_case (checkCanDynamicCastAround)
 {

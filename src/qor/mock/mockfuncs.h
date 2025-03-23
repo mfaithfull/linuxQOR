@@ -60,7 +60,7 @@ namespace qor{ namespace mock{
             return MockRepoInstanceHolder<0>::instance->template DoExpectation<Y>(nullptr, std::pair<int, int>(0, X), argT);
         }
 
-#ifdef _MSC_VER
+#if (qor_pp_os_target == qor_pp_os_windows)
         
         template <int X, typename... Args>
         Y __stdcall stdcallexpectation(Args... args)
@@ -77,7 +77,7 @@ namespace qor{ namespace mock{
             return myRepo->template DoExpectation<Y>(realMock, realMock->translateX(X), argT);
         }
 
-#if defined(_MSC_VER) && !defined(_WIN64)
+#if (qor_pp_os_target == qor_pp_os_windows) && !defined(qor_pp_os_64bit)
         
         template <int X, typename... Args>
         static Y __stdcall static_stdcallexpectation(Args... args)
@@ -119,7 +119,7 @@ namespace qor{ namespace mock{
             MockRepoInstanceHolder<0>::instance->DoVoidExpectation(nullptr, std::pair<int, int>(0, X), argT);
         }
 
-#ifdef _MSC_VER
+#if (qor_pp_os_target == qor_pp_os_windows)
         
         template <int X, typename... Args>
         void __stdcall stdcallexpectation(Args... args)
@@ -136,7 +136,7 @@ namespace qor{ namespace mock{
             myRepo->DoVoidExpectation(this, mock<Z>::translateX(X), argT);
         }
 
-#if defined(_MSC_VER) && !defined(_WIN64)
+#if (qor_pp_os_target == qor_pp_os_windows) && !defined(qor_pp_os_64bit)
         
         template <int X, typename... Args>
         static void __stdcall static_stdcallexpectation(Args... args)

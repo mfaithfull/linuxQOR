@@ -29,37 +29,26 @@
 #ifndef QOR_PP_H_MOCKREPLACE
 #define QOR_PP_H_MOCKREPLACE
 
-
-#if defined(_M_IX86) || defined(__i386__) || defined(i386) || defined(_X86_) || defined(__THW_INTEL) ||  defined(__x86_64__) || defined(_M_X64)
-#	define SOME_X86
-#elif defined(arm) || defined(__arm__) || defined(ARM) || defined(_ARM_) || defined(__aarch64__)
-#	define SOME_ARM
-#endif
-
-#if defined(__x86_64__) || defined(_M_X64)
-#	define CMOCK_FUNC_PLATFORMIS64BIT
-#endif
-
-#ifdef SOME_X86
-#	if defined(_MSC_VER) && (defined(_WIN32) || defined(_WIN64))
-#		define _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
-#	elif defined(__linux__) && defined(__GNUC__)
-#		define _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
-#	elif defined(__APPLE__)
-#		define _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#if (qor_pp_arch_target == qor_pp_arch_anyX86)
+#	if (qor_pp_compiler == qor_pp_compiler_msvc) && (qor_pp_os_target == qor_pp_os_windows)
+#		define qor_pp_mock_cfuncsupport
+#	elif (qor_pp_os_target == qor_pp_os_linux) && (qor_pp_compiler == qor_pp_compiler_gcc)
+#		define qor_pp_mock_cfuncsupport
+#	elif defined(qor_pp_os_target == qor_pp_os_mac)
+#		define qor_pp_mock_cfuncsupport
 #	endif
-#elif defined(SOME_ARM) && defined(__GNUC__)
-#	define _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#elif (qor_pp_arch_target == qor_pp_arch_anyARM) && (qor_pp_compiler == qor_pp_compiler_gcc)
+#	define qor_pp_mock_cfuncsupport
 extern "C" void __clear_cache(char* beg, char* end);		// This clear-cache is *required*. The tests will fail if you remove it.
 #endif
 
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#ifdef qor_pp_mock_cfuncsupport
 
 #  include <memory.h>
 
-#ifdef _WIN32
+#if (qor_pp_os_target == qor_pp_os_windows)
 // De-windows.h-ified import to avoid including that file.
-#	ifdef _WIN64
+#	ifdef qor_pp_os_64bit
 extern "C" __declspec(dllimport) int WINCALL VirtualProtect(void* func, unsigned long long byteCount, unsigned long flags, unsigned long* oldFlags);
 #	else
 extern "C" __declspec(dllimport) int WINCALL VirtualProtect(void* func, unsigned long byteCount, unsigned long flags, unsigned long* oldFlags);
@@ -75,7 +64,7 @@ namespace qor
 	//--------------------------------------------------------------------------------
 	namespace mock 
 	{
-#ifdef _WIN32        
+#if (qor_pp_os_target == qor_pp_os_windows)        
 		//--------------------------------------------------------------------------------
 		class Unprotect
 		{
@@ -147,15 +136,15 @@ namespace qor
 			{
 				Unprotect _allow_write(origFunc, sizeof(backupData));
 				memcpy(backupData, origFunc, sizeof(backupData));
-#ifdef SOME_X86
-#	ifdef CMOCK_FUNC_PLATFORMIS64BIT
+#if (qor_pp_arch_target == qor_pp_arch_anyX86)
+#	ifdef qor_pp_arch_is_64bit
 				if (llabs((long long)origFunc - (long long)replacement) < 0x80000000LL) 
 				{
 #	endif
 					* (unsigned char*)origFunc = 0xE9;
 					e9ptrsize_t temp_address = (e9ptrsize_t)(horrible_cast<intptr_t>(replacement) - horrible_cast<intptr_t>(origFunc) - sizeof(e9ptrsize_t) - 1);
 					memcpy((e9ptrsize_t*)(horrible_cast<intptr_t>(origFunc) + 1), &temp_address, sizeof(e9ptrsize_t));
-#   ifdef CMOCK_FUNC_PLATFORMIS64BIT
+#   ifdef qor_pp_arch_is_64bit
 				}
 				else 
 				{
@@ -169,7 +158,7 @@ namespace qor
 					*(long long*)(horrible_cast<intptr_t>(origFunc) + 6) = (long long)(horrible_cast<intptr_t>(replacement));
 				}
 #	endif
-#elif defined(SOME_ARM)
+#elif (qor_pp_arch_target == qor_pp_arch_anyARM)
 				unsigned int* rawptr = (unsigned int*)((intptr_t)(origFunc) & (~3));
 				if ((intptr_t)origFunc & 1) 
 				{
@@ -192,7 +181,7 @@ namespace qor
 			{
 				Unprotect _allow_write(origFunc, sizeof(backupData));
 				memcpy(origFunc, backupData, sizeof(backupData));
-#ifdef SOME_ARM
+#if (qor_pp_arch_target == qor_pp_arch_anyARM)
 				unsigned int* rawptr = (unsigned int*)((intptr_t)(origFunc) & (~3));
 				__clear_cache((char*)rawptr, (char*)rawptr + 16);
 #endif
@@ -202,7 +191,7 @@ namespace qor
 	}//mock
 }//qor
 
-# endif//_HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+# endif//qor_pp_mock_cfuncsupport
 
 
 #endif//QOR_PP_H_MOCKREPLACE

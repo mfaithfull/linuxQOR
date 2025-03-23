@@ -44,7 +44,3 @@ Pre compiled headers (PCHs)? Yes, heavily. Both to speed up builds and to prepar
 
 A note not to confuse C++ modules (A technology we aren't using yet) with QOR modules. 
 The QOR module terminonolgy will be used heavily to refer to what are .DLL(s) in Windows, .so(s) in Linux, runtime loadable libraries.
-
-
-
-

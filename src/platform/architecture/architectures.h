@@ -28,7 +28,6 @@
 #define qor_pp_arch_anyX86      0x01
 #define qor_pp_arch_anyARM      0x02
 #define qor_pp_arch_anyRISCV    0x04
-
 //NOTE: Add new architecture support here
 
 #endif//QOR_PP_H_ARCHITECTURES

@@ -27,13 +27,23 @@
 
 #include "architectures.h"
 
+#undef qor_pp_arch_is_64bit
 #ifndef qor_pp_arch_target
-//TODO: Actual architecture detection
+#   if defined(_M_IX86) || defined(__i386__) || defined(i386) || defined(_X86_) || defined(__THW_INTEL) ||  defined(__x86_64__) || defined(_M_X64)
+#       define qor_pp_arch_target   qor_pp_arch_anyX86
+#   elif defined(arm) || defined(__arm__) || defined(ARM) || defined(_ARM_) || defined(__aarch64__)
+#       define qor_pp_arch_target   qor_pp_arch_anyARM
+#   endif
 #endif//qor_pp_arch_target
 
 #if (qor_pp_arch_target == qor_pp_arch_anyX86)
 #   define qor_pp_arch_root_folder x86
-qor_pp_compiler_message( "Build targetting x86 hardware." )
+#   if (defined (__x86_64__) || defined (_M_X64))
+#       define qor_pp_arch_is_64bit
+qor_pp_compiler_message( "Build targetting 64 bit x86 hardware." )
+#   else
+qor_pp_compiler_message( "Build targetting 32 bit x86 hardware." )
+#   endif
 #elif (qor_pp_arch_target == qor_pp_arch_anyARM)
 #   define qor_pp_arch_root_folder arm
 qor_pp_compiler_message( "Build targetting ARM hardware." )

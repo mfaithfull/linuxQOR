@@ -42,6 +42,9 @@
 #elif defined _MSC_VER
 #   define qor_pp_compiler qor_pp_compiler_msvc
 #   define qor_pp_compiler_root_folder msvc
+#elif defined __EDG__
+#   define qor_pp_compiler qor_pp_compiler_edg
+#   define qor_pp_compiler_root_folder edg
 #endif
 
 // Attempt to generate an error if we don't recognise the compiler:

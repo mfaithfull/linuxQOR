@@ -41,7 +41,7 @@ namespace qor{ namespace mock{
     private:
         friend inline std::ostream& operator<<(std::ostream& os, const MockRepository& repo);
         std::vector<base_mock*> mocks;
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#ifdef qor_pp_mock_cfuncsupport
         std::vector<std::unique_ptr<Replace>> staticReplaces;
 #endif
         std::map<void (*)(), int> staticFuncMap;
@@ -80,8 +80,8 @@ namespace qor{ namespace mock{
         }
 
     public:
-#ifdef _MSC_VER
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#if (qor_pp_os_target == qor_pp_os_windows)
+#ifdef qor_pp_mock_cfuncsupport
 #define OnCallFunc(func) RegisterExpect_<__COUNTER__>(&func, qor::mock:: Any, #func, __FILE__, __LINE__)
 #define ExpectCallFunc(func) RegisterExpect_<__COUNTER__>(&func, qor::mock:: Once, #func, __FILE__, __LINE__)
 #define NeverCallFunc(func) RegisterExpect_<__COUNTER__>(&func, qor::mock:: Never, #func, __FILE__, __LINE__)
@@ -101,7 +101,7 @@ namespace qor{ namespace mock{
 #define ExpectCallDestructor(obj) RegisterExpectDestructor<__COUNTER__>(obj, qor::mock:: Once, __FILE__, __LINE__)
 #define NeverCallDestructor(obj) RegisterExpectDestructor<__COUNTER__>(obj, qor::mock:: Never, __FILE__, __LINE__)
 #else
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#ifdef qor_pp_mock_cfuncsupport
 #define OnCallFunc(func) RegisterExpect_<__LINE__>(&func, qor::mock:: Any, #func, __FILE__, __LINE__)
 #define ExpectCallFunc(func) RegisterExpect_<__LINE__>(&func, qor::mock:: Once, #func, __FILE__, __LINE__)
 #define NeverCallFunc(func) RegisterExpect_<__LINE__>(&func, qor::mock:: Never, #func, __FILE__, __LINE__)
@@ -134,11 +134,11 @@ namespace qor{ namespace mock{
         template <int X, typename Z2>
         TCall<void>& RegisterExpectDestructor(Z2* mck, RegistrationType expect, const char* fileName, unsigned long lineNo);
 
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#ifdef qor_pp_mock_cfuncsupport
         template <int X, typename Y, typename... Args>
         TCall<Y, Args...>& RegisterExpect_(Y(*func)(Args...), RegistrationType expect, const char* functionName, const char* fileName, unsigned long lineNo);
 
-#if defined(_MSC_VER) && !defined(_WIN64)
+#if (qor_pp_os_target == qor_pp_os_windows) && !defined(qor_pp_os_64bit)
         template <int X, typename Y, typename... Args>
         TCall<Y, Args...>& RegisterExpect_(Y(__stdcall* func)(Args...), RegistrationType expect, const char* functionName, const char* fileName, unsigned long lineNo);
 #endif
@@ -168,7 +168,7 @@ namespace qor{ namespace mock{
             return RegisterExpect_<X>(mck, (Y(Z::*)(Args...))(func), expect, functionName, fileName, lineNo);
         }
 
-#if defined(_MSC_VER) && !defined(_WIN64)
+#if (qor_pp_os_target == qor_pp_os_windows) && !defined(qor_pp_os_64bit)
         // COM only support - you can duplicate this for cdecl and fastcall if you want to, but those are not as common as COM.
         template <int X, typename Z2, typename Y, typename Z, typename... Args>
         TCall<Y, Args...>& RegisterExpect_(Z2* mck, Y(__stdcall Z::* func)(Args...), RegistrationType expect, const char* functionName, const char* fileName, unsigned long lineNo);
@@ -198,7 +198,7 @@ namespace qor{ namespace mock{
         template <typename Z>
         void BasicRegisterExpect(mock<Z>* zMock, int baseOffset, int funcIndex, void (base_mock::* func)(), int X);
 
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#ifdef qor_pp_mock_cfuncsupport
         
         int BasicStaticRegisterExpect(void (*func)(), void (*fp)(), int X)
         {
@@ -283,10 +283,7 @@ namespace qor{ namespace mock{
         }
 
         
-        ~MockRepository()
-#if !defined(_MSC_VER) || _MSC_VER > 1800
-            noexcept(false)
-#endif
+        ~MockRepository() noexcept(false)
         {
             if (!std::uncaught_exceptions())
             {
@@ -299,7 +296,7 @@ namespace qor{ namespace mock{
                     reset();
                     for (auto& i : mocks)
                         i->destroy();
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#ifdef qor_pp_mock_cfuncsupport
                     staticReplaces.clear();
 #endif
                     Reporter* reporter = MockRepoInstanceHolder<0>::reporter;
@@ -313,7 +310,7 @@ namespace qor{ namespace mock{
             reset();
             for (auto& i : mocks)
                 i->destroy();
-#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
+#ifdef qor_pp_mock_cfuncsupport
             staticReplaces.clear();
 #endif
             Reporter* reporter = MockRepoInstanceHolder<0>::reporter;

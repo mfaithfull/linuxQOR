@@ -30,7 +30,7 @@
 using namespace qor;
 using namespace qor::test;
 
-#ifdef _MSC_VER
+#if (qor_pp_os_target == qor_pp_os_windows)
 
 #include <atlbase.h>
 #include <atlcom.h>

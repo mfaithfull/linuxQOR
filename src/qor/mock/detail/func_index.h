@@ -296,7 +296,7 @@ namespace qor{ namespace mock{
         virtual ~func_index() {}
     };
 
-#ifdef _MSC_VER		
+#if (qor_pp_compiler == qor_pp_compiler_msvc)
     template <int s>
     int virtual_function_index(unsigned char* func)
     {
@@ -306,13 +306,13 @@ namespace qor{ namespace mock{
         }
         else
         {
-#ifdef _WIN64
+#ifdef qor_pp_os_64bit
             func++; // Add one to the pointer to skip the REX prefix used to access 64-bit registers.
 #endif
             switch (*(unsigned int*)func)
             { // mov ecx, this; jump [eax + v/Ib/Iw]
             case 0x20ff018b: return 0;
-#ifdef _WIN32
+#if (qor_pp_os_target == qor_pp_os_windows)
             case 0x0424448b:
                 if (func[7] == 0x20)
                     return 0;
@@ -330,7 +330,7 @@ namespace qor{ namespace mock{
     template <typename T>
     std::pair<int, int> virtual_index(T t)
     {
-#if defined(__GNUG__)
+#if (qor_pp_compiler == qor_pp_compiler_gcc)
         union {
             T t;
             struct
@@ -340,7 +340,7 @@ namespace qor{ namespace mock{
             } u;
         } conv = {};
         conv.t = t;
-#if defined(SOME_ARM)
+#if (qor_pp_arch_target == qor_pp_arch_anyARM)
         // ARM ABI says the bit is in baseoffs instead, and that the value is shifted left 1.
         // This because valid ARM pointers may have the LSB set, so the "is virtual" bit had to be moved.
         if (conv.u.baseoffs & 1)
@@ -351,7 +351,7 @@ namespace qor{ namespace mock{
             return std::pair<int, int>(conv.u.baseoffs / sizeof(void*), conv.u.value / sizeof(void*));
 #endif
 
-#elif defined(_MSC_VER)
+#elif (qor_pp_compiler == qor_pp_compiler_msvc)
         union {
             T t;
             struct
@@ -365,7 +365,7 @@ namespace qor{ namespace mock{
         int value = virtual_function_index<0>((unsigned char*)conv.u.value);
         if (value != -1)
             return std::pair<int, int>((int)(conv.u.baseoffs / sizeof(void*)), value);
-#elif defined(__EDG__)
+#elif (qor_pp_compiler == qor_pp_compiler_edg)
         union {
             T t;
             struct {
@@ -379,7 +379,7 @@ namespace qor{ namespace mock{
         if (conv.u.vindex != 0)
             return std::pair<int, int>((conv.u.delta + conv.u.vtordisp) / sizeof(void*), conv.u.vindex * 2 + 1);
 #else
-#	error No virtual indexing found for this compiler! Please contact the maintainers of HippoMocks
+#	error No virtual indexing found for this compiler! Please contact the maintainers of QOR
 #endif
 
         return std::pair<int, int>(-1, 0);
@@ -389,7 +389,7 @@ namespace qor{ namespace mock{
     template <typename T, typename U>
     T getNonvirtualMemberFunctionAddress(U u)
     {
-#ifdef __EDG__
+#if (qor_pp_compiler == qor_pp_compiler_edg)
         // Edison Design Group C++ frontend (Comeau, Portland Group, Greenhills, etc)
         union {
             struct {
@@ -400,10 +400,6 @@ namespace qor{ namespace mock{
             U u;
         } conv;
 #else
-#	ifdef _MSC_VER
-#		pragma warning(push)
-#		pragma warning(disable: 4121)  // MSVC 2013/2015/2017 think this union has a misaligned member.
-#	endif
         // Visual Studio, GCC, others
         union {
             struct {
@@ -411,9 +407,6 @@ namespace qor{ namespace mock{
             } mfp_structure;
             U u;
         } conv;
-#	ifdef _MSC_VER
-#		pragma warning(pop)
-#	endif
 #endif
         conv.u = u;
         return conv.mfp_structure.t;

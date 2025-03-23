@@ -29,7 +29,7 @@
 #ifndef QOR_PP_H_TESTMOCK_COMSUPPORT
 #define QOR_PP_H_TESTMOCK_COMSUPPORT
 
-#ifdef _MSC_VER
+#if (qor_pp_os_target == qor_pp_os_windows)
 
 #   include <winerror.h>
 #   include <guiddef.h>
@@ -75,6 +75,6 @@ namespace qor{ namespace mock{
 
 }}//qor::mock
 
-#endif//_MSC_VER
+#endif
 
 #endif//QOR_PP_H_TESTMOCK_COMSUPPORT
