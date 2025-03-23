@@ -22,28 +22,59 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*The root internal header file for the entire QOR project
-* This should be the first include in every translation unit
-* It will become the PCH root include
-*/
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/mock/mocks.h"
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+using namespace qor;
+using namespace qor::test;
 
-#include "../platform/os/systems.h"
-#include "../platform/architecture/architectures.h"
+class IAA 
+{ 
+public:
 
-//NOTE: Set preprocessor options for how the build proceeds here or predef them in the build script
-#ifndef NDEBUG
-#   define qor_pp_compiler_reportconfig             //Choose to get output during compilation indicating configurations chosen and detected
-#   define qor_pp_compiler_reportdefecits           //Choose to get output during compilation of features unavailable in the toolchain
-#endif
-//#define qor_pp_os_target qor_pp_os_windows          //Define the target Operating System
-#define qor_pp_arch_target qor_pp_arch_anyX86       //Define the target hardware architecture
+    virtual int f(int a, int b, int c) 
+	{ 
+		(void)a; (void)b; (void)c; return 0; 
+	}
+};
 
+bool allEven(int a, int b, int c) 
+{ 
+	return (a % 2 == 0) && (b % 2 == 0) && (c % 2 == 0); 
+}
 
-#include "../platform/compiler/detecttoolchain.h"           //Detect the preprocessor/compiler/linker/loader toolchain and configure for it
-#include "../platform/architecture/detectarchitecture.h"    //Determine the target arch by defaulting to the host arch if the target hasn't been predefined
-#include "../platform/os/detectos.h"                        //Determine the target OS by defaulting to the host OS if the target hasn't been predefined
+bool oeo(int a, int b, int c) 
+{ 
+	return (a % 2 == 1) && (b % 2 == 0) && (c % 2 == 1); 
+}
 
-#endif//QOR_PP_H_CONFIGURATION
+bool eod(int a, int b, int) 
+{ 
+	return (a % 2 == 0) && (b % 2 == 1); 
+}
+
+bool never(int, int, int) 
+{ 
+	return false; 
+}
+
+qor_pp_test_case (checkFilterIsApplied)
+{
+	MockRepository mocks;
+	IAA *iamock = mocks.Mock<IAA>();
+	mocks.OnCall(iamock, IAA::f).Return(4);
+	mocks.OnCall(iamock, IAA::f).Match(never).Return(3);
+	mocks.OnCall(iamock, IAA::f).Match(eod).Return(2);
+	mocks.OnCall(iamock, IAA::f).Match(oeo).Return(1);
+	mocks.OnCall(iamock, IAA::f).Match(allEven).Return(5);
+	qor_pp_test_equal(5, iamock->f(0, 0, 0));
+	qor_pp_test_equal(4, iamock->f(0, 0, 1));
+	qor_pp_test_equal(2, iamock->f(0, 1, 0));
+	qor_pp_test_equal(2, iamock->f(0, 1, 1));
+	qor_pp_test_equal(4, iamock->f(1, 0, 0));
+	qor_pp_test_equal(1, iamock->f(1, 0, 1));
+	qor_pp_test_equal(4, iamock->f(1, 1, 0));
+	qor_pp_test_equal(4, iamock->f(1, 1, 1));
+}
+

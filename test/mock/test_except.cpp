@@ -26,126 +26,119 @@
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/mock/mocks.h"
 
-class IA 
+using namespace qor;
+using namespace qor::test;
+
+class IE 
 {
 public:
 
-	virtual ~IA() {}
-	virtual void f() {}
-	virtual void g() = 0;
+    virtual ~IE() {}
+
+	virtual int f() 
+	{ 
+		return 0; 
+	}
+
+	virtual std::string g() = 0;
 };
 
-
-qor_pp_test_case (checkBaseCase)
+qor_pp_test_case (checkPrimitiveExceptionAcceptedAndThrown)
 {
 	MockRepository mocks;
-	IA *iamock = mocks.Mock<IA>();
-	mocks.ExpectCall(iamock, IA::f);
-	mocks.ExpectCall(iamock, IA::g);
-	iamock->f();
-	iamock->g();
+	IE *iamock = mocks.Mock<IE>();
+	mocks.ExpectCall(iamock, IE::f).Throw(42);
+	bool exceptionCaught = false;
+	try 
+	{
+		iamock->f();
+	}
+	catch(int a)
+	{
+		qor_pp_test_check(a == 42);
+		exceptionCaught = true;
+	}
+	qor_pp_test_check(exceptionCaught);
 }
 
-qor_pp_test_case (checkMultiCall)
+class SomeException : public std::exception 
 {
+private:
+	const char *text;
+public:
+
+	SomeException(const char *txt) : text(txt) {}
+
+	const char *what() const throw() 
+	{ 
+		return text; 
+	}
+};
+
+qor_pp_test_case (checkThrowFuncWorks)
+{
+	const char *sText = "someText";
 	MockRepository mocks;
-	IA *iamock = mocks.Mock<IA>();
-	mocks.ExpectCall(iamock, IA::f);
-	mocks.ExpectCall(iamock, IA::g);
-	mocks.ExpectCall(iamock, IA::f);
-	iamock->f();
-	iamock->g();
-	iamock->f();
-}
-
-qor_pp_test_case (checkMultiCallNotCalled)
-{
+	IE *iamock = mocks.Mock<IE>();
+	mocks.ExpectCall(iamock, IE::f).ThrowFunc([&]{ throw SomeException(sText); });
 	bool exceptionCaught = false;
-	try {
-		MockRepository mocks;
-		IA *iamock = mocks.Mock<IA>();
-		mocks.ExpectCall(iamock, IA::f);
-		mocks.ExpectCall(iamock, IA::g);
-		mocks.ExpectCall(iamock, IA::f);
-		iamock->f();
-		iamock->g();
-	}
-	catch (qor::mock::CallMissingException &) 
+	try 
 	{
+		iamock->f();
+	}
+	catch(SomeException &a)
+	{
+		qor_pp_test_check(a.what() == sText);
 		exceptionCaught = true;
 	}
 	qor_pp_test_check(exceptionCaught);
 }
 
-qor_pp_test_case (checkMultiCallWrongOrder)
+qor_pp_test_case (checkClassTypeExceptionWithContent)
 {
+	const char *sText = "someText";
 	MockRepository mocks;
-	IA *iamock = mocks.Mock<IA>();
-	mocks.ExpectCall(iamock, IA::f);
-	mocks.ExpectCall(iamock, IA::g);
-	mocks.ExpectCall(iamock, IA::f);
-	iamock->f();
+	IE *iamock = mocks.Mock<IE>();
+	mocks.ExpectCall(iamock, IE::f).Throw(SomeException(sText));
 	bool exceptionCaught = false;
-	try {
+	try 
+	{
 		iamock->f();
 	}
-	catch (qor::mock::ExpectationException &) 
+	catch(SomeException &a)
 	{
-		exceptionCaught = true;
-	}
-	qor_pp_test_check(exceptionCaught);
-	mocks.reset();
-}
-
-qor_pp_test_case (checkExpectationsNotCompleted)
-{
-	bool exceptionCaught = false;
-	try {
-		MockRepository mocks;
-		IA *iamock = mocks.Mock<IA>();
-		mocks.ExpectCall(iamock, IA::f);
-		mocks.ExpectCall(iamock, IA::g);
-		iamock->f();
-	}
-	catch (qor::mock::CallMissingException &) 
-	{
+		qor_pp_test_check(a.what() == sText);
 		exceptionCaught = true;
 	}
 	qor_pp_test_check(exceptionCaught);
 }
 
-qor_pp_test_case (checkOvercompleteExpectations)
+qor_pp_test_case(checkMockRepoVerifyDoesNotThrowDuringException)
 {
 	bool exceptionCaught = false;
-	try {
+	try
+	{
 		MockRepository mocks;
-		IA *iamock = mocks.Mock<IA>();
-		mocks.ExpectCall(iamock, IA::f);
-		mocks.ExpectCall(iamock, IA::g);
-		iamock->f();
-		iamock->g();
-		iamock->f();
+		IE *iamock = mocks.Mock<IE>();
+		mocks.ExpectCall(iamock, IE::f);
 	}
-	catch (qor::mock::ExpectationException &) 
+	catch (qor::mock::CallMissingException &)
+	{
+		exceptionCaught = true;
+	}
+	qor_pp_test_check(exceptionCaught);
+	exceptionCaught = false;
+	try
+	{
+		MockRepository mocks;
+		IE *iamock = mocks.Mock<IE>();
+		mocks.ExpectCall(iamock, IE::f);
+		throw 42;
+	}
+	catch (int)
 	{
 		exceptionCaught = true;
 	}
 	qor_pp_test_check(exceptionCaught);
 }
 
-qor_pp_test_case (checkExpectationsAreInOrder)
-{
-	bool exceptionCaught = false;
-	try {
-		MockRepository mocks;
-		IA *iamock = mocks.Mock<IA>();
-		mocks.ExpectCall(iamock, IA::f);
-		mocks.ExpectCall(iamock, IA::g);
-		iamock->g();
-	}
-	catch (qor::mock::ExpectationException &) 
-	{
-		exceptionCaught = true;
-	}
-	qor_pp_test_check(exceptionCaught);
-}

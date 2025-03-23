@@ -22,28 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*The root internal header file for the entire QOR project
-* This should be the first include in every translation unit
-* It will become the PCH root include
-*/
+#ifndef QOR_PP_H_DETECTARCHITECTURE
+#define QOR_PP_H_DETECTARCHITECTURE
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#include "architectures.h"
 
-#include "../platform/os/systems.h"
-#include "../platform/architecture/architectures.h"
+#ifndef qor_pp_arch_target
+//TODO: Actual architecture detection
+#endif//qor_pp_arch_target
 
-//NOTE: Set preprocessor options for how the build proceeds here or predef them in the build script
-#ifndef NDEBUG
-#   define qor_pp_compiler_reportconfig             //Choose to get output during compilation indicating configurations chosen and detected
-#   define qor_pp_compiler_reportdefecits           //Choose to get output during compilation of features unavailable in the toolchain
+#if (qor_pp_arch_target == qor_pp_arch_anyX86)
+#   define qor_pp_arch_root_folder x86
+qor_pp_compiler_message( "Build targetting x86 hardware." )
+#elif (qor_pp_arch_target == qor_pp_arch_anyARM)
+#   define qor_pp_arch_root_folder arm
+qor_pp_compiler_message( "Build targetting ARM hardware." )
+#elif (qor_pp_arch_target == qor_pp_os_mac)
+#   define qor_pp_arch_root_folder riscv
+qor_pp_compiler_message( "Build targetting RISC-V hardware." )
+#else
+#   error Target architecture not defined or detected. Define qor_pp_arch_target in your build settings
 #endif
-//#define qor_pp_os_target qor_pp_os_windows          //Define the target Operating System
-#define qor_pp_arch_target qor_pp_arch_anyX86       //Define the target hardware architecture
 
-
-#include "../platform/compiler/detecttoolchain.h"           //Detect the preprocessor/compiler/linker/loader toolchain and configure for it
-#include "../platform/architecture/detectarchitecture.h"    //Determine the target arch by defaulting to the host arch if the target hasn't been predefined
-#include "../platform/os/detectos.h"                        //Determine the target OS by defaulting to the host OS if the target hasn't been predefined
-
-#endif//QOR_PP_H_CONFIGURATION
+#endif//QOR_PP_H_DETECTARCHITECTURE

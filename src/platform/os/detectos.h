@@ -22,28 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*The root internal header file for the entire QOR project
-* This should be the first include in every translation unit
-* It will become the PCH root include
-*/
+#ifndef QOR_PP_H_DETECTOS
+#define QOR_PP_H_DETECTOS
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#include "systems.h"
 
-#include "../platform/os/systems.h"
-#include "../platform/architecture/architectures.h"
+#ifndef qor_pp_os_target
 
-//NOTE: Set preprocessor options for how the build proceeds here or predef them in the build script
-#ifndef NDEBUG
-#   define qor_pp_compiler_reportconfig             //Choose to get output during compilation indicating configurations chosen and detected
-#   define qor_pp_compiler_reportdefecits           //Choose to get output during compilation of features unavailable in the toolchain
+#   ifdef __linux__
+#       define qor_pp_os_target qor_pp_os_linux
+#   elif (defined _WIN32 || defined _WIN64)
+#       define qor_pp_os_target qor_pp_os_windows
+#   elif (defined __APPLE__)
+#       define qor_pp_os_target qor_pp_os_mac
+#   elif (defined __ANDROID__)
+#       error Target operating system Android detected but not supported
+#   elif (defined __FreeBSD__)
+#       error Target operating system Free BSD detected but not supported
+#   else
+#       error Target operating system could not be detected from host. Please define qor_pp_os_target in your build system
+//NOTE: Add additional OS detection here - see:https://sourceforge.net/p/predef/wiki/OperatingSystems/
+#   endif
+
+#endif//qor_pp_os_target
+
+#if (qor_pp_os_target == qor_pp_os_linux)
+#   define qor_pp_os_root_folder linux
+qor_pp_compiler_message( "Build targetting Linux Operating Systems." )
+#elif (qor_pp_os_target == qor_pp_os_windows)
+#   define qor_pp_os_root_folder windows
+qor_pp_compiler_message( "Build targetting Windows Operating Systems." )
+#elif (qor_pp_os_target == qor_pp_os_mac)
+#   define qor_pp_os_root_folder mac
+qor_pp_compiler_message( "Build targetting Mac Operating Systems." )
 #endif
-//#define qor_pp_os_target qor_pp_os_windows          //Define the target Operating System
-#define qor_pp_arch_target qor_pp_arch_anyX86       //Define the target hardware architecture
 
-
-#include "../platform/compiler/detecttoolchain.h"           //Detect the preprocessor/compiler/linker/loader toolchain and configure for it
-#include "../platform/architecture/detectarchitecture.h"    //Determine the target arch by defaulting to the host arch if the target hasn't been predefined
-#include "../platform/os/detectos.h"                        //Determine the target OS by defaulting to the host OS if the target hasn't been predefined
-
-#endif//QOR_PP_H_CONFIGURATION
+#endif//QOR_PP_H_OS

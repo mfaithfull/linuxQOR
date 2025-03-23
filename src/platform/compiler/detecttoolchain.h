@@ -22,28 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*The root internal header file for the entire QOR project
-* This should be the first include in every translation unit
-* It will become the PCH root include
-*/
+#ifndef QOR_PP_H_DETECTTOOLCHAIN
+#define QOR_PP_H_DETECTTOOLCHAIN
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+#undef qor_pp_compiler                      //Don't allow the compiler to be pre-defined. It is whatever is really in use at the time
+#include "detectcompiler.h"	                //Detect which compiler toolchain is being used
+#include "../../macros/preprocessor.h"		//Setup the pre-processor definitions
+#include "compilerpaths.h"		            //Determine which headers will be included to match the compiler in use
 
-#include "../platform/os/systems.h"
-#include "../platform/architecture/architectures.h"
-
-//NOTE: Set preprocessor options for how the build proceeds here or predef them in the build script
-#ifndef NDEBUG
-#   define qor_pp_compiler_reportconfig             //Choose to get output during compilation indicating configurations chosen and detected
-#   define qor_pp_compiler_reportdefecits           //Choose to get output during compilation of features unavailable in the toolchain
-#endif
-//#define qor_pp_os_target qor_pp_os_windows          //Define the target Operating System
-#define qor_pp_arch_target qor_pp_arch_anyX86       //Define the target hardware architecture
-
-
-#include "../platform/compiler/detecttoolchain.h"           //Detect the preprocessor/compiler/linker/loader toolchain and configure for it
-#include "../platform/architecture/detectarchitecture.h"    //Determine the target arch by defaulting to the host arch if the target hasn't been predefined
-#include "../platform/os/detectos.h"                        //Determine the target OS by defaulting to the host OS if the target hasn't been predefined
-
-#endif//QOR_PP_H_CONFIGURATION
+#endif//QOR_PP_H_DETECTTOOLCHAIN

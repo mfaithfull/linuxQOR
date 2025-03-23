@@ -22,28 +22,56 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*The root internal header file for the entire QOR project
-* This should be the first include in every translation unit
-* It will become the PCH root include
-*/
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/mock/mocks.h"
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+using namespace qor;
+using namespace qor::test;
 
-#include "../platform/os/systems.h"
-#include "../platform/architecture/architectures.h"
+class IC 
+{
+public:
+    virtual ~IC() {}
+    virtual void f(std::string ) {}
+    virtual void g(std::string s) = 0;
+};
+    
+qor_pp_test_case (checkClassArgumentsAccepted)
+{
+    MockRepository mocks;
+    IC *iamock = mocks.Mock<IC>();
+    mocks.OnCall(iamock, IC::f).With("hi");
+    mocks.OnCall(iamock, IC::g).With("bye");
+    iamock->f("hi");
+    iamock->g("bye");
+}
 
-//NOTE: Set preprocessor options for how the build proceeds here or predef them in the build script
-#ifndef NDEBUG
-#   define qor_pp_compiler_reportconfig             //Choose to get output during compilation indicating configurations chosen and detected
-#   define qor_pp_compiler_reportdefecits           //Choose to get output during compilation of features unavailable in the toolchain
-#endif
-//#define qor_pp_os_target qor_pp_os_windows          //Define the target Operating System
-#define qor_pp_arch_target qor_pp_arch_anyX86       //Define the target hardware architecture
+qor_pp_test_case (checkClassArgumentsChecked)
+{
+    MockRepository mocks;
+    IC *iamock = mocks.Mock<IC>();
+    mocks.OnCall(iamock, IC::f).With("hi");
+    mocks.OnCall(iamock, IC::g).With("bye");
+    bool exceptionCaught = false;
+    try 
+    {
+        iamock->f("bye");
+    }
+    catch (qor::mock::ExpectationException)
+    {
+        exceptionCaught = true;
+    }
+    qor_pp_test_check(exceptionCaught);
+    mocks.reset();
+}
 
-
-#include "../platform/compiler/detecttoolchain.h"           //Detect the preprocessor/compiler/linker/loader toolchain and configure for it
-#include "../platform/architecture/detectarchitecture.h"    //Determine the target arch by defaulting to the host arch if the target hasn't been predefined
-#include "../platform/os/detectos.h"                        //Determine the target OS by defaulting to the host OS if the target hasn't been predefined
-
-#endif//QOR_PP_H_CONFIGURATION
+qor_pp_test_case (checkClassArgumentsIgnored)
+{
+    MockRepository mocks;
+    IC *iamock = mocks.Mock<IC>();
+    mocks.OnCall(iamock, IC::f);
+    iamock->f("bye");
+}
+    
+    

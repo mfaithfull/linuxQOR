@@ -22,28 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*The root internal header file for the entire QOR project
-* This should be the first include in every translation unit
-* It will become the PCH root include
-*/
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/mock/mocks.h"
 
-#ifndef QOR_PP_H_CONFIGURATION
-#define QOR_PP_H_CONFIGURATION
+using namespace qor;
+using namespace qor::test;
 
-#include "../platform/os/systems.h"
-#include "../platform/architecture/architectures.h"
+class BaseA 
+{
+public:
+	virtual void a() = 0;
+};
 
-//NOTE: Set preprocessor options for how the build proceeds here or predef them in the build script
-#ifndef NDEBUG
-#   define qor_pp_compiler_reportconfig             //Choose to get output during compilation indicating configurations chosen and detected
-#   define qor_pp_compiler_reportdefecits           //Choose to get output during compilation of features unavailable in the toolchain
-#endif
-//#define qor_pp_os_target qor_pp_os_windows          //Define the target Operating System
-#define qor_pp_arch_target qor_pp_arch_anyX86       //Define the target hardware architecture
+class BaseB 
+{ 
+public:
+	virtual void b() = 0;
+};
 
+class ClassC : public BaseA, public BaseB 
+{ 
+public:
+	virtual void c() = 0;
+};
 
-#include "../platform/compiler/detecttoolchain.h"           //Detect the preprocessor/compiler/linker/loader toolchain and configure for it
-#include "../platform/architecture/detectarchitecture.h"    //Determine the target arch by defaulting to the host arch if the target hasn't been predefined
-#include "../platform/os/detectos.h"                        //Determine the target OS by defaulting to the host OS if the target hasn't been predefined
-
-#endif//QOR_PP_H_CONFIGURATION
+qor_pp_test_case (checkMICallsWork)
+{
+	MockRepository mocks;
+	ClassC *iamock = mocks.Mock<ClassC>();
+	mocks.ExpectCall(iamock, ClassC::a);
+	mocks.ExpectCall(iamock, ClassC::c);
+	mocks.ExpectCall(iamock, ClassC::b);
+	iamock->a();
+	iamock->c();
+	iamock->b();
+}
