@@ -6,5 +6,5 @@ add_subdirectory(mock)
 
 add_executable(QORTest test_main.cpp test_test.cpp test_compiler.cpp 
 mock/test_mock.cpp mock/test_isvirtual.cpp mock/test_args.cpp
-mock/test_zombie.cpp)
+mock/test_array.cpp mock/test_cfuncs.cpp mock/test_zombie.cpp)
 target_link_libraries(QORTest QORCompiler)

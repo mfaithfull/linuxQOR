@@ -22,37 +22,61 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/mock/mocks.h"
 
-#ifndef QOR_PP_H_TESTMOCK_PRINTARG
-#define QOR_PP_H_TESTMOCK_PRINTARG
+using namespace qor;
+using namespace qor::test;
 
-namespace qor{ namespace mock{
+#ifdef _HIPPOMOCKS__ENABLE_CFUNC_MOCKING_SUPPORT
 
-        template <typename T>
-        struct printArg
-        {
-            static inline void print(std::ostream& os, T arg, bool withComma)
-            {
-                if (withComma)
-                {
-                    os << ",";
-                }
-                os << arg;
-            }
+int a()
+{
+  return 1;
+}
 
-            static inline void print(std::wostream& os, T arg, bool withComma)
-            {
-                if (withComma)
-                {
-                    os << ",";
-                }
-                os << arg;
-            }
-        };
+qor_pp_test_case (checkFunctionReplacedAndChecked)
+{
+	qor_pp_test_equal(a(), 1);
+	MockRepository mocks;
+	mocks.ExpectCallFunc(a).Return(2);
+	qor_pp_test_equal(a(), 2);
+}
 
-}}//qor::mock
+qor_pp_test_case (checkFunctionReturnedToOriginal)
+{
+	{
+		qor_pp_test_equal(a(), 1);
+		MockRepository mocks;
+		mocks.ExpectCallFunc(a).Return(2);
+		qor_pp_test_equal(a(), 2);
+	}
+	qor_pp_test_equal(a(), 1);
+}
 
-#endif//QOR_PP_H_TESTMOCK_PRINTARG
+qor_pp_test_case(ExpectCallOverridesNeverCall)
+{
+    MockRepository mocks;
+    mocks.NeverCallFunc(a);
+    mocks.ExpectCallFunc(a).Return(42);
+    a();
+}
+
+
+#	ifdef _WIN32
+#		include <windows.h>
+qor_pp_test_case (checkCanMockGetSystemTime) 
+{
+	MockRepository mocks;
+	SYSTEMTIME outtime;
+	outtime.wDay = 1;
+	SYSTEMTIME systime;
+	systime.wDay = 0;
+	mocks.ExpectCallFunc(GetSystemTime).With(Out(outtime));
+	GetSystemTime(&systime);
+	qor_pp_test_equal(systime.wDay, 1);
+}
+#	endif
+
+#endif

@@ -22,37 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/mock/mocks.h"
 
-#ifndef QOR_PP_H_TESTMOCK_PRINTARG
-#define QOR_PP_H_TESTMOCK_PRINTARG
+using namespace qor;
+using namespace qor::test;
 
-namespace qor{ namespace mock{
+class IArrayArgs 
+{
+public:
 
-        template <typename T>
-        struct printArg
-        {
-            static inline void print(std::ostream& os, T arg, bool withComma)
-            {
-                if (withComma)
-                {
-                    os << ",";
-                }
-                os << arg;
-            }
+	virtual ~IArrayArgs() {}
 
-            static inline void print(std::wostream& os, T arg, bool withComma)
-            {
-                if (withComma)
-                {
-                    os << ",";
-                }
-                os << arg;
-            }
-        };
+	virtual void f(std::string) {}
 
-}}//qor::mock
+	virtual void g(std::wstring) = 0;
+};
 
-#endif//QOR_PP_H_TESTMOCK_PRINTARG
+qor_pp_test_case (checkArrayArgumentsAccepted)
+{
+	MockRepository mocks;
+	IArrayArgs *iamock = mocks.Mock<IArrayArgs>();
+	mocks.ExpectCall(iamock, IArrayArgs::f).With("Hello");
+	mocks.ExpectCall(iamock, IArrayArgs::g).With(L"World");
+	iamock->f("Hello");
+	iamock->g(L"World");
+}

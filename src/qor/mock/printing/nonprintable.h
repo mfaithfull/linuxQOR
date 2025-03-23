@@ -44,6 +44,12 @@ namespace qor{ namespace mock {
         return os;
     }
 
+    inline std::wostream& operator << (std::wostream& os, NotPrintable const&)
+    {
+        os << "???";
+        return os;
+    }
+    
 }}//qor::mock
 
 #endif//QOR_PP_H_TESTMOCK_NOTPRINTABLE
