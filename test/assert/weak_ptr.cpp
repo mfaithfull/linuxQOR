@@ -22,33 +22,45 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#include "../../src/configuration/configuration.h"
+#include <memory>
+#include "../../src/qor/assert/assertcc.h"
+#include "../../src/qor/test/test.h"
 
-#include <exception>
-#include <string>
+using namespace qor;
+using namespace qor::test;
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+struct WeakPtrSubjectTests
+{
+};
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
+qor_pp_test_suite_case(WeakPtrSubjectTests, IsExpired) 
+{
+  std::weak_ptr<int> p;
+  assertThat(p).isExpired();
+}
 
-namespace qor{ namespace mock{
+qor_pp_test_suite_case(WeakPtrSubjectTests, IsNotExpired) 
+{
+  auto sp = std::make_shared<int>(1);
+  std::weak_ptr<int> p = sp;
+  assertThat(p).isNotExpired();
+}
 
-    class BaseException : public qor_pp_mock_baseexception
-    {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
-    protected:
-        std::string txt;
-    };    
+qor_pp_test_suite_case(WeakPtrSubjectTests, Value) 
+{
+  auto p = std::make_unique<int>(3);
+  assertThat(p).hasValueThat().isEqualTo(3);
+  assertThat(p).isNotNull();
+}
 
-}}//qor::mock
-
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+qor_pp_test_suite_case(WeakPtrSubjectTests, Value2) 
+{
+  std::shared_ptr<int> p0 = std::make_shared<int>(5);
+  std::weak_ptr<int> wp = p0;
+  assertThat(wp).isNotExpired().value().isEqualTo(5);
+}

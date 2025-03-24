@@ -65,7 +65,7 @@ namespace qor{ namespace mock{
 
         void print(std::wostream& os) const override
         {
-            printTuple(os, *this);
+            printTupleW(os, *this);
         }
 
         bool equals(const std::tuple<Args...>& rhs) override

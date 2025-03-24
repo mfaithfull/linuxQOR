@@ -22,33 +22,51 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#ifndef QOR_PP_H_ASSERT_SUBJECT_BASE
+#define QOR_PP_H_ASSERT_SUBJECT_BASE
 
-#include <exception>
-#include <string>
+namespace assertcc{ namespace subject{
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+/*Base class that holds shared information between the subject classes and the
+   propositoin mixins.
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
+   The subject class will intilize the Base superclass and the proposition
+   classes will use the functions to retrive the data. Virtual inheritance is
+   used to avoid the diamond issue.
+*/
+class Base {
+    private:
+  
+        const char* d_file; //The source file of the assert_that statement was called in.
+        const int d_line;/// The line number in the file the assert_that statement is on.
+        const bool d_failOnError;/// A flag to determine whether a test stops at the error or continues.
 
-namespace qor{ namespace mock{
-
-    class BaseException : public qor_pp_mock_baseexception
-    {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
     protected:
-        std::string txt;
-    };    
 
-}}//qor::mock
+        const char* getFile() const 
+        { 
+            return d_file; 
+        }
 
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+        int getLine() const 
+        { 
+            return d_line; 
+        }
+
+        bool getFailOnError() const 
+        { 
+            return d_failOnError; 
+        }
+
+    public:
+
+        Base(const bool failOnError, const char* file, int line): d_file(file), d_line(line), d_failOnError(failOnError) {}
+};
+
+}}//assertcc::subject
+
+#endif//QOR_PP_H_ASSERT_SUBJECT_BASE

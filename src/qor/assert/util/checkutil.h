@@ -22,33 +22,35 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
+#pragma once
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#include <initializer_list>
 
-#include <exception>
-#include <string>
+namespace assertcc {
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+namespace util {
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
+struct CheckUtil {
+  template <template <typename...> typename List, typename T>
+  static bool checkIsInRange(List<T>& r, const T& value) {
+    for (const auto& e : r) {
+      if (value == e) return true;
+    }
+    return false;
+  }
 
-namespace qor{ namespace mock{
+  template <typename T>
+  static bool checkIsInRange(std::initializer_list<T> r, const T& value) {
+    for (const auto& e : r) {
+      if (value == e) return true;
+    }
+    return false;
+  }
+};
 
-    class BaseException : public qor_pp_mock_baseexception
-    {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
-    protected:
-        std::string txt;
-    };    
+}  // namespace util
 
-}}//qor::mock
-
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+}  // namespace assertcc

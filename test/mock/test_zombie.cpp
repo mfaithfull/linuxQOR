@@ -26,6 +26,9 @@
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/mock/mocks.h"
 
+using namespace qor;
+using namespace qor::test;
+
 class IZombie 
 {
 public:
@@ -35,7 +38,6 @@ public:
 	virtual void a() = 0;
 };
 
-//------------------------------------------------------------------------------
 qor_pp_test_case (checkZombieCallsAreReported)
 {
 	bool exceptionCaught = false;

@@ -22,33 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
+#pragma once
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#include "../proposition/comparingpropositions.h"
+#include "../proposition/isequaltopropositions.h"
+#include "../proposition/isinpropositions.h"
+#include "../proposition/stdfloatingpropositions.h"
+#include "base.h"
 
-#include <exception>
-#include <string>
+namespace assertcc{ namespace subject{
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+template <typename T>
+class FloatingSubject : public virtual Base,
+                        public proposition::FloatingPropositions<FloatingSubject<T>, T>,
+                        public proposition::IsInPropositions<FloatingSubject<T>, T>,
+                        public proposition::ComparisonPropositions<FloatingSubject<T>, T> 
+{
+    const T d_value;
+    T d_tolerance;
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
+protected:
+    const T* getValue() const override 
+    { 
+        return &d_value; 
+    }
 
-namespace qor{ namespace mock{
+    const T* getTolerance() const override 
+    { 
+        return &d_tolerance; 
+    }
 
-    class BaseException : public qor_pp_mock_baseexception
+public:
+
+    FloatingSubject(const bool failOnError, const char* file, int line, const T v) : Base(failOnError, file, line), d_value(v), d_tolerance(std::numeric_limits<T>::epsilon()) {}
+
+    FloatingSubject& isWithin(const T& tolerance) 
     {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
-    protected:
-        std::string txt;
-    };    
+        d_tolerance = tolerance;
+        return *this;
+    }
+};
 
-}}//qor::mock
-
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+}}//assertcc::subject

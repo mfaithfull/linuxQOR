@@ -58,140 +58,128 @@ extern "C" __declspec(dllimport) int WINCALL VirtualProtect(void* func, unsigned
 #	endif
 #endif
 
-//--------------------------------------------------------------------------------
-namespace qor 
-{
-	//--------------------------------------------------------------------------------
-	namespace mock 
-	{
+namespace qor { namespace mock{
+
 #if (qor_pp_os_target == qor_pp_os_windows)        
-		//--------------------------------------------------------------------------------
-		class Unprotect
+		
+	class Unprotect
+	{
+	public:
+
+		Unprotect(void* location, size_t byteCount) : origFunc(location) , byteCount(byteCount)
 		{
-		public:
-
-			//--------------------------------------------------------------------------------
-			Unprotect(void* location, size_t byteCount) : origFunc(location) , byteCount(byteCount)
-			{
-				VirtualProtect(origFunc, byteCount, PAGE_EXECUTE_READWRITE, &oldprotect);
-			}
-
-			//--------------------------------------------------------------------------------
-			~Unprotect()
-			{
-				unsigned long dontcare;
-				VirtualProtect(origFunc, byteCount, oldprotect, &dontcare);
-			}
-
-		private:
-			void* origFunc;
-			size_t byteCount;
-			unsigned long oldprotect;
-		};
-#  else
-#   include <sys/mman.h>
-#   include <stdint.h>
-		//--------------------------------------------------------------------------------
-		class Unprotect
-		{
-		public:
-			Unprotect(void* location, size_t count)
-				: origFunc((intptr_t)location& (~0xFFF))
-				, byteCount(count + ((intptr_t)location - origFunc))
-			{
-				mprotect((void*)origFunc, this->byteCount, PROT_READ | PROT_WRITE | PROT_EXEC);
-			};
-			~Unprotect()
-			{
-				mprotect((void*)origFunc, byteCount, PROT_READ | PROT_EXEC);
-			}
-		private:
-			intptr_t origFunc;
-			int byteCount;
-		};
-#  endif
-
-		typedef unsigned int e9ptrsize_t;
-
-		//--------------------------------------------------------------------------------
-		template <typename T, typename U>
-		T horrible_cast(U u)
-		{
-			union { T t; U u; } un;
-			un.u = u;
-			return un.t;
+			VirtualProtect(origFunc, byteCount, PAGE_EXECUTE_READWRITE, &oldprotect);
 		}
 
-		//--------------------------------------------------------------------------------
-		class Replace
+		~Unprotect()
 		{
-		private:
-			void* origFunc;
-			char backupData[16]; // typical use is 5 for 32-bit and 14 for 64-bit code.
-		public:
+			unsigned long dontcare;
+			VirtualProtect(origFunc, byteCount, oldprotect, &dontcare);
+		}
 
-			//--------------------------------------------------------------------------------
-			template <typename T>
-			Replace(T funcptr, T replacement) : origFunc(horrible_cast<void*>(funcptr))
-			{
-				Unprotect _allow_write(origFunc, sizeof(backupData));
-				memcpy(backupData, origFunc, sizeof(backupData));
+	private:
+		void* origFunc;
+		size_t byteCount;
+		unsigned long oldprotect;
+	};
+#else
+#   include <sys/mman.h>
+#   include <stdint.h>
+
+	class Unprotect
+	{
+	public:
+		Unprotect(void* location, size_t count)
+			: origFunc((intptr_t)location& (~0xFFF))
+			, byteCount(count + ((intptr_t)location - origFunc))
+		{
+			mprotect((void*)origFunc, this->byteCount, PROT_READ | PROT_WRITE | PROT_EXEC);
+		};
+		~Unprotect()
+		{
+			mprotect((void*)origFunc, byteCount, PROT_READ | PROT_EXEC);
+		}
+	private:
+		intptr_t origFunc;
+		int byteCount;
+	};
+#  endif
+
+	typedef unsigned int e9ptrsize_t;
+
+	template <typename T, typename U>
+	T horrible_cast(U u)
+	{
+		union { T t; U u; } un;
+		un.u = u;
+		return un.t;
+	}
+
+	class Replace
+	{
+	private:
+		void* origFunc;
+		char backupData[16]; // typical use is 5 for 32-bit and 14 for 64-bit code.
+	public:
+
+		template <typename T>
+		Replace(T funcptr, T replacement) : origFunc(horrible_cast<void*>(funcptr))
+		{
+			Unprotect _allow_write(origFunc, sizeof(backupData));
+			memcpy(backupData, origFunc, sizeof(backupData));
 #if (qor_pp_arch_target == qor_pp_arch_anyX86)
 #	ifdef qor_pp_arch_is_64bit
-				if (llabs((long long)origFunc - (long long)replacement) < 0x80000000LL) 
-				{
+			if (llabs((long long)origFunc - (long long)replacement) < 0x80000000LL) 
+			{
 #	endif
-					* (unsigned char*)origFunc = 0xE9;
-					e9ptrsize_t temp_address = (e9ptrsize_t)(horrible_cast<intptr_t>(replacement) - horrible_cast<intptr_t>(origFunc) - sizeof(e9ptrsize_t) - 1);
-					memcpy((e9ptrsize_t*)(horrible_cast<intptr_t>(origFunc) + 1), &temp_address, sizeof(e9ptrsize_t));
+				* (unsigned char*)origFunc = 0xE9;
+				e9ptrsize_t temp_address = (e9ptrsize_t)(horrible_cast<intptr_t>(replacement) - horrible_cast<intptr_t>(origFunc) - sizeof(e9ptrsize_t) - 1);
+				memcpy((e9ptrsize_t*)(horrible_cast<intptr_t>(origFunc) + 1), &temp_address, sizeof(e9ptrsize_t));
 #   ifdef qor_pp_arch_is_64bit
-				}
-				else 
-				{
-					unsigned char* func = (unsigned char*)origFunc;
-					func[0] = 0xFF; // jmp (rip + imm32)
-					func[1] = 0x25;
-					func[2] = 0x00; // imm32 of 0, so immediately after the instruction
-					func[3] = 0x00;
-					func[4] = 0x00;
-					func[5] = 0x00;
-					*(long long*)(horrible_cast<intptr_t>(origFunc) + 6) = (long long)(horrible_cast<intptr_t>(replacement));
-				}
+			}
+			else 
+			{
+				unsigned char* func = (unsigned char*)origFunc;
+				func[0] = 0xFF; // jmp (rip + imm32)
+				func[1] = 0x25;
+				func[2] = 0x00; // imm32 of 0, so immediately after the instruction
+				func[3] = 0x00;
+				func[4] = 0x00;
+				func[5] = 0x00;
+				*(long long*)(horrible_cast<intptr_t>(origFunc) + 6) = (long long)(horrible_cast<intptr_t>(replacement));
+			}
 #	endif
 #elif (qor_pp_arch_target == qor_pp_arch_anyARM)
-				unsigned int* rawptr = (unsigned int*)((intptr_t)(origFunc) & (~3));
-				if ((intptr_t)origFunc & 1) 
-				{
-					rawptr[0] = 0x6800A001;
-					rawptr[1] = 0x46874687;
-					rawptr[2] = (intptr_t)replacement;
-				}
-				else 
-				{
-					rawptr[0] = 0xE59FF000;
-					rawptr[1] = (intptr_t)replacement;
-					rawptr[2] = (intptr_t)replacement;
-				}
-				__clear_cache((char*)rawptr, (char*)rawptr + 16);
-#endif
-			}
-
-			//--------------------------------------------------------------------------------
-			~Replace()
+			unsigned int* rawptr = (unsigned int*)((intptr_t)(origFunc) & (~3));
+			if ((intptr_t)origFunc & 1) 
 			{
-				Unprotect _allow_write(origFunc, sizeof(backupData));
-				memcpy(origFunc, backupData, sizeof(backupData));
-#if (qor_pp_arch_target == qor_pp_arch_anyARM)
-				unsigned int* rawptr = (unsigned int*)((intptr_t)(origFunc) & (~3));
-				__clear_cache((char*)rawptr, (char*)rawptr + 16);
-#endif
+				rawptr[0] = 0x6800A001;
+				rawptr[1] = 0x46874687;
+				rawptr[2] = (intptr_t)replacement;
 			}
-		};
+			else 
+			{
+				rawptr[0] = 0xE59FF000;
+				rawptr[1] = (intptr_t)replacement;
+				rawptr[2] = (intptr_t)replacement;
+			}
+			__clear_cache((char*)rawptr, (char*)rawptr + 16);
+#endif
+		}
 
-	}//mock
-}//qor
+		~Replace()
+		{
+			Unprotect _allow_write(origFunc, sizeof(backupData));
+			memcpy(origFunc, backupData, sizeof(backupData));
+#if (qor_pp_arch_target == qor_pp_arch_anyARM)
+			unsigned int* rawptr = (unsigned int*)((intptr_t)(origFunc) & (~3));
+			__clear_cache((char*)rawptr, (char*)rawptr + 16);
+#endif
+		}
+	};
+
+}}//qor::mock
 
 # endif//qor_pp_mock_cfuncsupport
-
 
 #endif//QOR_PP_H_MOCKREPLACE

@@ -22,33 +22,50 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#pragma once
 
-#include <exception>
-#include <string>
+#include <memory.h>
+#include "../subject/base.h"
+#include "../util/failmessage.h"
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+namespace assertcc{ namespace proposition{
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
-
-namespace qor{ namespace mock{
-
-    class BaseException : public qor_pp_mock_baseexception
+    template <typename T, typename U>
+    class IsNullPropositions : public virtual subject::Base 
     {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
     protected:
-        std::string txt;
-    };    
+        virtual const U* getValue() const = 0;
 
-}}//qor::mock
+    public:
 
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+        T& isNull() 
+        {
+            if (*getValue()) 
+            {
+                util::FailMessage::create()
+                .file(getFile())
+                .line(getLine())
+                .fact("pointer to be null")
+                .fact("Got", *getValue());
+            }
+            return *dynamic_cast<T*>(this);
+        }
+
+        T& isNotNull() {
+            if (!*getValue()) 
+            {
+                util::FailMessage::create()
+                .file(getFile())
+                .line(getLine())
+                .fact("pointer to not be null")
+                .fact("Got", *getValue());
+            }
+            return *dynamic_cast<T*>(this);
+        }
+    };
+
+}}//assertcc::proposition

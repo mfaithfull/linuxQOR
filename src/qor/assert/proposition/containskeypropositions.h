@@ -22,33 +22,53 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#pragma once
 
-#include <exception>
-#include <string>
+#include <memory.h>
+#include "../subject/base.h"
+#include "../util/failmessage.h"
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+namespace assertcc {
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
+namespace proposition {
 
-namespace qor{ namespace mock{
+template <typename T, typename U>
+class ContainsKeyPropositions : public virtual subject::Base {
+ protected:
+  virtual const U* getValue() const = 0;
 
-    class BaseException : public qor_pp_mock_baseexception
-    {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
-    protected:
-        std::string txt;
-    };    
+ public:
+  template <typename Key>
+  T& containsKey(const Key key) {
+    auto iter = getValue()->find(key);
+    if (iter == getValue()->end()) {
+      util::FailMessage::create()
+          .file(getFile())
+          .line(getLine())
+          .fact("to contain the key ", key)
+          .fact("Got", *getValue());
+    }
+    return *dynamic_cast<T*>(this);
+  }
 
-}}//qor::mock
+  template <typename Key>
+  T& doesNotContainKey(const Key key) {
+    auto iter = getValue()->find(key);
+    if (iter != getValue()->end()) {
+      util::FailMessage::create()
+          .file(getFile())
+          .line(getLine())
+          .fact("to not contain the key ", key)
+          .fact("Got", *getValue());
+    }
+    return *dynamic_cast<T*>(this);
+  }
+};
 
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+}  // namespace proposition
+
+}  // namespace assertcc

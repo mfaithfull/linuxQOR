@@ -29,25 +29,23 @@
 
 namespace qor{ namespace test { namespace detail {
 
-		//--------------------------------------------------------------------------------
-		template <typename Expected, typename Actual, bool has_extra = false>
-		struct extra_information
+	template <typename Expected, typename Actual, bool has_extra = false>
+	struct extra_information
+	{
+		static void print(std::ostringstream& os, const Expected& e, const Actual& a) 
 		{
-			static void print(std::ostringstream& os, const Expected& e, const Actual& a) 
-			{
-			}
-		};
-
-		//--------------------------------------------------------------------------------
-		template <typename Expected, typename Actual>
-		struct extra_information<Expected, Actual, true>
+		}
+	};
+	
+	template <typename Expected, typename Actual>
+	struct extra_information<Expected, Actual, true>
+	{
+		static void print(std::ostringstream& os, const Expected& e, const Actual& a)
 		{
-			static void print(std::ostringstream& os, const Expected& e, const Actual& a)
-			{
-				os << "\nexpected: " << "(" << ::qor::compiler::demangle<Expected>() << ") " << e
-					<< " != actual: " << "(" << ::qor::compiler::demangle<Actual>() << ") " << a;
-			}
-		};
+			os << "\nexpected: " << "(" << ::qor::compiler::demangle<Expected>() << ") " << e
+				<< " != actual: " << "(" << ::qor::compiler::demangle<Actual>() << ") " << a;
+		}
+	};
 
 }}}//qor::test::detail
 

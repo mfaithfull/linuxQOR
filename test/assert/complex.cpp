@@ -22,33 +22,54 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#include "../../src/configuration/configuration.h"
 
-#include <exception>
-#include <string>
+#include <complex>
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
+using namespace qor;
+using namespace qor::test;
 
-namespace qor{ namespace mock{
+struct ComplexTests {};
 
-    class BaseException : public qor_pp_mock_baseexception
-    {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
-    protected:
-        std::string txt;
-    };    
+qor_pp_test_suite_case(ComplexTests, IsEqualTo) {
+  std::complex<int> a(1, 2);
+  std::complex<int> b(1, 2);
+  assertThat(a).isEqualTo(b);
+}
 
-}}//qor::mock
+qor_pp_test_suite_case(ComplexTests, IsNotEqualTo) {
+  std::complex<int> a(1, 2);
+  std::complex<int> b(3, 2);
+  expectThat(a).isNotEqualTo(b);
+}
 
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+/*
+qor_pp_test_suite_case(ComplexTests, IsNotEqualTo_Failure) {
+  std::complex<int> a(1, 2);
+  std::complex<int> b(1, 23);
+  assertThat(a).isNotEqualTo(3).isNotEqualTo(b);
+  EXPECT_FATAL_FAILURE(assertThat(std::complex<int>(1, 2)).isNotEqualTo(std::complex<int>(1, 2)),
+                       "");
+}*/
+
+qor_pp_test_suite_case(ComplexTests, IsIn) {
+  std::complex<int> a(1, 2);
+  assertThat(a).isIn({std::complex<int>(1, 2), std::complex<int>(2, 3)});
+  std::vector<std::complex<int>> v{
+      std::complex<int>(1, 2), std::complex<int>(2, 2), std::complex<int>(2, 3)};
+  assertThat(a).isIn(v);
+}
+
+qor_pp_test_suite_case(ComplexTests, IsNotIn) {
+  int a = 10;
+  assertThat(a).isNotIn({1, 2, 3});
+  std::vector<int> v{1, 2, 3};
+  assertThat(a).isNotIn<std::vector>(v);
+}

@@ -52,7 +52,6 @@ public:
 	virtual void f16(int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int) {}
 };
 
-//------------------------------------------------------------------------------
 qor_pp_test_case (checkArgCount16SupportedAndWorking)
 {
 	MockRepository mocks;

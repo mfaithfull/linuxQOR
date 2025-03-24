@@ -22,33 +22,58 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
 
-#include <exception>
-#include <string>
+using namespace qor;
+using namespace qor::test;
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+struct BoolSubjectTests{};
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
+qor_pp_test_suite_case(BoolSubjectTests, IsTrue) {
+  bool b = true;
+  assertThat(b).isTrue();
+  assertThat(true).isTrue();
+}
 
-namespace qor{ namespace mock{
+qor_pp_test_suite_case(BoolSubjectTests, ExpectIsTrue) {
+  bool b = true;
+  expectThat(b).isTrue();
+  expectThat(true).isTrue();
+}
 
-    class BaseException : public qor_pp_mock_baseexception
-    {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
-    protected:
-        std::string txt;
-    };    
+qor_pp_test_suite_case(BoolSubjectTests, IsFalse) {
+  bool b = false;
+  assertThat(b).isFalse();
+  assertThat(false).isFalse();
+}
 
-}}//qor::mock
+qor_pp_test_suite_case(BoolSubjectTests, CanAssertTrueAndFalse) {
+  bool b0 = true;
+  assertThat(b0).isTrue();
+  bool b1 = false;
+  assertThat(b1).isFalse();
+  assertThat(true).isTrue();
+  assertThat(false).isFalse();
+}
 
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+qor_pp_test_suite_case(BoolSubjectTests, NotEqualTo) {
+  bool b0 = true;
+  bool b1 = false;
+  assertThat(b0).isNotEqualTo(b1).isNotEqualTo(false);
+  assertThat(b1).isNotEqualTo(b0).isNotEqualTo(true);
+}
+
+qor_pp_test_suite_case(BoolSubjectTests, EqualTo) {
+  bool b0 = true;
+  bool b1 = true;
+  assertThat(b0).isEqualTo(b1).isEqualTo(true);
+  assertThat(b1).isEqualTo(b1).isEqualTo(true);
+  assertThat(true).isEqualTo(true);
+  assertThat(false).isEqualTo(false);
+}

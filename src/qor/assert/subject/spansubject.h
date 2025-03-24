@@ -22,33 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
+#pragma once
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#if __cplusplus > 201703L
 
-#include <exception>
-#include <string>
+#include <span>
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
+#include "../proposition/hassizepropositions.h"
+#include "../proposition/isemptypropositions.h"
+#include "base.h"
+
+namespace assertcc{ namespace subject{
+
+template <typename T>
+class SpanSubject : public virtual Base,
+                    public proposition::HasSizePropositions<SpanSubject<T>, T> public proposition::
+                        IsEmptyPropositions<SpanSubject<T>, T> {
+  const T d_value;
+
+ protected:
+  const T* getValue() const override { return &d_value; }
+
+ public:
+  SpanSubject(const bool failOnError, const char* file, int line, const T& v)
+      : Base(failOnError, file, line), d_value(v) {}
+};
+
+}  // namespace subject
+
+}  // namespace assertcc
+
 #endif
-
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
-
-namespace qor{ namespace mock{
-
-    class BaseException : public qor_pp_mock_baseexception
-    {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
-    protected:
-        std::string txt;
-    };    
-
-}}//qor::mock
-
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION

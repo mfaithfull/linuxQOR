@@ -22,33 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#ifndef QOR_PP_H_ASSERT_ADL
+#define QOR_PP_H_ASSERT_ADL
 
-#include <exception>
-#include <string>
+namespace assertcc {
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+    /**
+        This class serves for the compiler to locate the assert_that_internal
+       functions using argument dependent lookup.
+    
+        Without this currently Clang 10 will not compile the code. GCC 10 will
+       compile the code due to a bug.
+    
+        https://clang.llvm.org/compatibility.html#dep_lookup
+    */
+    class Adl {};
+    
+}  // namespace assertcc
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
-
-namespace qor{ namespace mock{
-
-    class BaseException : public qor_pp_mock_baseexception
-    {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
-    protected:
-        std::string txt;
-    };    
-
-}}//qor::mock
-
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#endif//QOR_PP_H_ASSERT_ADL

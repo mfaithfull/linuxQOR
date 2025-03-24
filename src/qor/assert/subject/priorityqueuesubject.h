@@ -22,33 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from HippoMocks
-//Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans, Peter Bindels
-//under GNU LGPL v2.1
+//Derived from assertcc
+//Copyright 2021 Sean Nash
+//under BSD 3 clause license
+#pragma once
 
-#ifndef QOR_PP_H_TESTMOCK_BASEEXCEPTION
-#define QOR_PP_H_TESTMOCK_BASEEXCEPTION
+#include <stack>
 
-#include <exception>
-#include <string>
+#include "../proposition/hassizepropositions.h"
+#include "../proposition/isemptypropositions.h"
+#include "base.h"
 
-#ifndef qor_pp_mock_baseexception
-#define qor_pp_mock_baseexception std::exception
-#endif
+namespace assertcc{ namespace subject{
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
+template <typename T>
+class PriorityQueueSubject : public virtual Base,
+                             public proposition::HasSizePropositions<PriorityQueueSubject<T>, T>,
+                             public proposition::IsEmptyPropositions<PriorityQueueSubject<T>, T> {
+  const T d_value;
 
-namespace qor{ namespace mock{
+ protected:
+  const T* getValue() const override { return &d_value; }
 
-    class BaseException : public qor_pp_mock_baseexception
-    {
-    public:
-        ~BaseException() throw() {}
-        const char* what() const throw() { return txt.c_str(); }
-    protected:
-        std::string txt;
-    };    
+ public:
+  PriorityQueueSubject(const bool failOnError, const char* file, int line, const T& v)
+      : Base(failOnError, file, line), d_value(v) {}
+};
 
-}}//qor::mock
+}  // namespace subject
 
-#endif//QOR_PP_H_TESTMOCK_BASEEXCEPTION
+}  // namespace assertcc
