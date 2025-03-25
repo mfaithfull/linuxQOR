@@ -26,9 +26,11 @@
 //Copyright 2021 Sean Nash
 //under BSD 3 clause license
 
-#pragma once
+#ifndef QOR_PP_H_ASSERT_ISINPROPOSITION
+#define QOR_PP_H_ASSERT_ISINPROPOSITION
 
 #include <memory.h>
+
 #include "../subject/base.h"
 #include "../util/failmessage.h"
 
@@ -93,6 +95,18 @@ class IsInPropositions : public virtual subject::Base
   }
 
   template< template <typename...> typename List >
+  T& isIn(List<U> r) {
+    if (!checkIsInRange(r, *getValue())) {
+      util::FailMessage::create()
+          .file(getFile())
+          .line(getLine())
+          .fact("is in range", r.begin(), r.end())
+          .fact("Got", *getValue());
+    }
+    return *dynamic_cast<T*>(this);
+  }
+
+  template< template <typename...> typename List >
   T& isNotIn(List<U> r) {
     if (checkIsInRange(r, *getValue())) {
       util::FailMessage::create()
@@ -108,3 +122,5 @@ class IsInPropositions : public virtual subject::Base
 }  // namespace proposition
 
 }  // namespace assertcc
+
+#endif//QOR_PP_H_ASSERT_ISINPROPOSITION

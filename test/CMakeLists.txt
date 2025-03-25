@@ -18,5 +18,7 @@ mock/test_filter.cpp mock/test_exception_quality.cpp mock/test_except.cpp
 mock/test_dynamic_cast.cpp mock/test_dontcare.cpp mock/test_do.cpp
 mock/test_cv_funcs.cpp mock/test_constref_params.cpp
 mock/test_com_support_stdcall.cpp mock/test_zombie.cpp
-assert/bool.cpp assert/complex.cpp assert/weak_ptr.cpp)
+assert/bool.cpp assert/complex.cpp assert/double.cpp assert/float.cpp
+assert/int.cpp assert/iterators.cpp assert/map.cpp 
+assert/weak_ptr.cpp)
 target_link_libraries(QORTest QORCompiler)

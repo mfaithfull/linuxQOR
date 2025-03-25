@@ -115,7 +115,7 @@ class IteratorsSubject {
   }
 
   IntegralSubject<std::size_t> hasSizeThat() {
-    int sz = std::distance(d_begin, d_end);
+    size_t sz = std::distance(d_begin, d_end);
     return IntegralSubject<std::size_t>(d_failOnError, d_file, d_line, sz);
   }
 };

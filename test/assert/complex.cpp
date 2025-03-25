@@ -33,22 +33,26 @@
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/assert/assertcc.h"
 
-using namespace qor;
-using namespace qor::test;
+namespace test_complex {
 
-struct ComplexTests {};
+    using namespace qor;
+    using namespace qor::test;
 
-qor_pp_test_suite_case(ComplexTests, IsEqualTo) {
-  std::complex<int> a(1, 2);
-  std::complex<int> b(1, 2);
-  assertThat(a).isEqualTo(b);
-}
+    struct ComplexTests {};
 
-qor_pp_test_suite_case(ComplexTests, IsNotEqualTo) {
-  std::complex<int> a(1, 2);
-  std::complex<int> b(3, 2);
-  expectThat(a).isNotEqualTo(b);
-}
+    qor_pp_test_suite_case(ComplexTests, IsEqualTo) 
+    {
+        std::complex<int> a(1, 2);
+        std::complex<int> b(1, 2);
+        assertThat(a).isEqualTo(b);
+    }
+
+    qor_pp_test_suite_case(ComplexTests, IsNotEqualTo) 
+    {
+        std::complex<int> a(1, 2);
+        std::complex<int> b(3, 2);
+        expectThat(a).isNotEqualTo(b);
+    }
 
 /*
 qor_pp_test_suite_case(ComplexTests, IsNotEqualTo_Failure) {
@@ -59,17 +63,20 @@ qor_pp_test_suite_case(ComplexTests, IsNotEqualTo_Failure) {
                        "");
 }*/
 
-qor_pp_test_suite_case(ComplexTests, IsIn) {
-  std::complex<int> a(1, 2);
-  assertThat(a).isIn({std::complex<int>(1, 2), std::complex<int>(2, 3)});
-  std::vector<std::complex<int>> v{
-      std::complex<int>(1, 2), std::complex<int>(2, 2), std::complex<int>(2, 3)};
-  assertThat(a).isIn(v);
-}
+    qor_pp_test_suite_case(ComplexTests, IsIn) 
+    {
+        std::complex<int> a(1, 2);
+        assertThat(a).isIn({std::complex<int>(1, 2), std::complex<int>(2, 3)});
+        std::vector<std::complex<int>> v{ std::complex<int>(1, 2), std::complex<int>(2, 2), std::complex<int>(2, 3) };
+        assertThat(a).isIn(v);
+    }
 
-qor_pp_test_suite_case(ComplexTests, IsNotIn) {
-  int a = 10;
-  assertThat(a).isNotIn({1, 2, 3});
-  std::vector<int> v{1, 2, 3};
-  assertThat(a).isNotIn<std::vector>(v);
-}
+    qor_pp_test_suite_case(ComplexTests, IsNotIn) 
+    {
+        int a = 10;
+        assertThat(a).isNotIn({1, 2, 3});
+        std::vector<int> v{1, 2, 3};
+        assertThat(a).isNotIn<std::vector>(v);
+    }
+
+}//test_complex

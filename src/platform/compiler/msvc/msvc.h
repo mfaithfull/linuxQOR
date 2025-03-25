@@ -46,3 +46,5 @@ static constexpr int function_stride = 2;
 static constexpr int function_base = 0;
 static constexpr int function_stride = 1;
 #endif
+
+#define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING

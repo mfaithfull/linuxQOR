@@ -27,3 +27,144 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_float {
+
+    using namespace qor;
+    using namespace qor::test;
+
+    struct Float {};
+
+    qor_pp_test_suite_case(Float, IsNan) 
+    {
+        float number0 = std::numeric_limits<float>::quiet_NaN();
+        assertThat(number0).isNan();
+        float number1 = std::numeric_limits<float>::signaling_NaN();
+        assertThat(number1).isNan();
+        //TODO: EXPECT_FATAL_FAILURE(assertThat(2.2).isNan(), "");
+    }
+
+    qor_pp_test_suite_case(Float, IsNotNan) 
+    {
+        float number0 = 1.2f;
+        assertThat(number0).isNotNan();
+        //TODO: EXPECT_FATAL_FAILURE(assertThat(std::numeric_limits<float>::signaling_NaN()).isNotNan(), "");
+    }
+
+    qor_pp_test_suite_case(Float, IsFinite) 
+    {
+        float number0 = 2.3f;
+        assertThat(number0).isFinite();
+        //TODO: EXPECT_FATAL_FAILURE(assertThat(std::numeric_limits<float>::signaling_NaN()).isFinite(), "");
+    }
+
+    qor_pp_test_suite_case(Float, IsNotFinite) 
+    {
+        float number0 = std::numeric_limits<float>::signaling_NaN();
+        assertThat(number0).isNotFinite();
+        //TODO: EXPECT_FATAL_FAILURE(assertThat(1.2).isNotFinite(), "");
+    }
+
+    qor_pp_test_suite_case(Float, IsPositiveInfinity) 
+    {
+        volatile float x = 0;
+        float number0 = 1.0f / x;
+        assertThat(number0).isPositiveInfinity();
+    }
+
+    qor_pp_test_suite_case(Float, isNegativeInfinity) 
+    {
+        volatile float x = 0;
+        float number0 = (-1.0f) / x;
+        assertThat(number0).isNegativeInfinity();
+    }
+
+    qor_pp_test_suite_case(Float, isZero) 
+    {
+        float number0 = 0.0f;
+        assertThat(number0).isZero();
+    }
+
+    qor_pp_test_suite_case(Float, isNotZero) 
+    {
+        float number0 = 0.3f;
+        assertThat(number0).isNotZero();
+    }
+
+    qor_pp_test_suite_case(Float, EqualTo) 
+    {
+        float a = 1.0f;
+        float b = 1.0f;
+        assertThat(a).isEqualTo(1).isEqualTo(b);
+    }
+
+    qor_pp_test_suite_case(Float, ExpectEqualTo) 
+    {
+        float a = 1.0f;
+        float b = 1.0f;
+        expectThat(a).isEqualTo(1).isEqualTo(b);
+    }
+
+    qor_pp_test_suite_case(Float, IsWithIn) 
+    {
+        float a = 1.0f;
+        float b = 2.0f;
+        assertThat(a).isWithin(1.0).isEqualTo(b);
+    }
+
+    qor_pp_test_suite_case(Float, NotEqualTo) 
+    {
+        float a = 1.0f;
+        float b = 2.0f;
+        assertThat(a).isNotEqualTo(3).isNotEqualTo(b);
+        //TODO: EXPECT_FATAL_FAILURE(assertThat(1).isNotEqualTo(1), "");
+    }
+
+    qor_pp_test_suite_case(Float, IsIn) 
+    {
+        float a = 1.0f;
+        assertThat(a).isIn({1.0, 2.0, 3.0});
+        std::vector<float> v{1.0, 2.0, 3.0};
+        assertThat(a).isIn(v);
+    }
+
+    qor_pp_test_suite_case(Float, IsNotIn) 
+    {
+        float a = 12.0;
+        assertThat(a).isNotIn({1.0, 2.0, 3.0});
+        std::vector<float> v{1.0, 2.0, 3.0};
+        assertThat(a).isNotIn<std::vector>(v);
+    }
+
+    qor_pp_test_suite_case(Float, GreaterThan) 
+    {
+        float a = 10;
+        assertThat(a).isGreaterThan(5.0);
+        assertThat(11.0).isGreaterThan(5.0);
+    }
+
+    qor_pp_test_suite_case(Float, LessThan) 
+    {
+        float a = 1;
+        assertThat(a).isLessThan(5);
+        assertThat(2).isLessThan(5);
+    }
+
+    qor_pp_test_suite_case(Float, IsAtLeast) 
+    {
+        int a = 10;
+        assertThat(a).isAtLeast(5).isAtLeast(10);
+        assertThat(11).isAtLeast(5).isAtLeast(11);
+    }
+
+    qor_pp_test_suite_case(Float, isAtMost) 
+    {
+        float a = 1.2f;
+        assertThat(a).isAtMost(10.0f).isAtMost(1.3f);
+        assertThat(3.0f).isAtMost(5.0f).isAtMost(3.5f);
+    }
+
+}

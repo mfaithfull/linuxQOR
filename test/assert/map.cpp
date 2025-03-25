@@ -27,3 +27,74 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <map>
+#include <string>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_map {
+
+    using namespace qor;
+    using namespace qor::test;
+
+    struct MapTests {};
+
+    qor_pp_test_suite_case(MapTests, IsEmpty) 
+    {
+        std::map<int, int> x{};
+        assertThat(x).isEmpty();
+    }
+
+    qor_pp_test_suite_case(MapTests, IsNotEmpty) 
+    {
+        std::map<int, int> x{{1, 2}, {2, 3}};
+        assertThat(x).isNotEmpty();
+    }
+
+    qor_pp_test_suite_case(MapTests, IsEqual) 
+    {
+        std::map<int, int> x{{1, 2}, {2, 3}};
+        std::map<int, int> y{{1, 2}, {2, 3}};
+        assertThat(x).isEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(MapTests, IsNotEqual) 
+    {
+        std::map<int, int> x{{1, 2}, {2, 4}};
+        std::map<int, int> y{{1, 2}, {2, 3}};
+        assertThat(x).isNotEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(MapTests, HasSize) 
+    {
+        std::map<int, int> x{{1, 2}, {2, 4}};
+        assertThat(x).hasSizeThat().isEqualTo(2);
+    }
+
+    qor_pp_test_suite_case(MapTests, ContainsEntry) 
+    {
+        std::map<std::string, int> x{{"a", 1}, {"b", 2}};
+        assertThat(x).containsEntry("a", 1).containsEntry("b", 2);
+    }
+
+    qor_pp_test_suite_case(MapTests, DoesNotContainsEntry) 
+    {
+        std::map<std::string, int> x{{"a", 1}, {"b", 2}};
+        assertThat(x).doesNotContainEntry("a", 2).doesNotContainEntry("c", 3);
+    }
+
+    qor_pp_test_suite_case(MapTests, ContainsKey) 
+    {
+        std::map<std::string, int> x{{"a", 1}, {"b", 2}};
+        assertThat(x).containsKey("a").containsKey("b");
+    }
+
+    qor_pp_test_suite_case(MapTests, DoesNotContainsKey) 
+    {
+        std::map<std::string, int> x{{"a", 1}, {"b", 2}};
+        assertThat(x).doesNotContainKey("d");
+    }
+
+}//test_map

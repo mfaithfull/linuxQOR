@@ -27,3 +27,73 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_int {
+
+    using namespace qor;
+    using namespace qor::test;
+
+    struct IntTests {};
+
+    qor_pp_test_suite_case(IntTests, IsEqualTo) 
+    {
+        int a = 1;
+        int b = 1;
+        assertThat(a).isEqualTo(1).isEqualTo(b);
+    }
+
+    qor_pp_test_suite_case(IntTests, IsNotEqualTo) 
+    {
+        int a = 1;
+        int b = 2;
+        assertThat(a).isNotEqualTo(3).isNotEqualTo(b);
+        //TODO: EXPECT_FATAL_FAILURE(assertThat(1).isNotEqualTo(1), "");
+    }
+
+    qor_pp_test_suite_case(IntTests, IsIn) 
+    {
+        int a = 1;
+        assertThat(a).isIn({1, 2, 3});
+        std::vector<int> v{1, 2, 3};
+        assertThat(a).isIn(v);
+    }
+
+    qor_pp_test_suite_case(IntTests, IsNotIn) 
+    {
+        int a = 10;
+        assertThat(a).isNotIn({1, 2, 3});
+        std::vector<int> v{1, 2, 3};
+        assertThat(a).isNotIn<std::vector>(v);
+    }
+
+    qor_pp_test_suite_case(IntTests, IsGreaterThan) 
+    {
+        int a = 10;
+        assertThat(a).isGreaterThan(5);
+        assertThat(11).isGreaterThan(5);
+    }
+
+    qor_pp_test_suite_case(IntTests, IsLessThan) 
+    {
+        int a = 1;
+        assertThat(a).isLessThan(5);
+        assertThat(2).isLessThan(5);
+    }
+
+    qor_pp_test_suite_case(IntTests, IsAtLeast) 
+    {
+        int a = 10;
+        assertThat(a).isAtLeast(5).isAtLeast(10);
+        assertThat(11).isAtLeast(5).isAtLeast(11);
+    }
+
+    qor_pp_test_suite_case(IntTests, isAtMost) 
+    {
+        int a = 1;
+        assertThat(a).isAtMost(10).isAtMost(1);
+        assertThat(3).isAtMost(5).isAtMost(3);
+    }
+}
