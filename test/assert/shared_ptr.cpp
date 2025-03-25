@@ -27,3 +27,54 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <memory>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_shared_ptr
+{
+    using namespace qor;
+    using namespace qor::test;
+
+    struct SharedPtr {};
+
+    qor_pp_test_suite_case(SharedPtr, IsNull) 
+    {
+        std::shared_ptr<int> p;
+        assertThat(p).isNull();
+    }
+
+    qor_pp_test_suite_case(SharedPtr, ExpectIsNull) 
+    {
+        std::shared_ptr<int> p;
+        expectThat(p).isNull();
+    }
+
+    qor_pp_test_suite_case(SharedPtr, IsNotNull) 
+    {
+        auto p = std::make_shared<int>(2);
+        assertThat(p).isNotNull();
+    }
+
+    qor_pp_test_suite_case(SharedPtr, Value) 
+    {
+        auto p = std::make_shared<int>(2);
+        assertThat(p).hasValueThat().isEqualTo(2);
+    }
+
+    qor_pp_test_suite_case(SharedPtr, NotEqual) 
+    {
+        auto p = std::make_shared<int>(1);
+        auto q = std::make_shared<int>(1);
+        assertThat(p).isNotEqualTo(q);
+    }
+
+    qor_pp_test_suite_case(SharedPtr, IsEqualTo) 
+    {
+        auto p = std::make_shared<int>(1);
+        assertThat(p).isEqualTo(p);
+    }
+
+}

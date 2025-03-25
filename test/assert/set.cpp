@@ -27,3 +27,55 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <set>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_sets {
+
+    using namespace qor;
+    using namespace qor::test;
+
+    struct SetTests {};
+
+    qor_pp_test_suite_case(SetTests, IsEmpty) 
+    {
+        std::set<int> x{};
+        assertThat(x).isEmpty();
+    }
+
+    qor_pp_test_suite_case(SetTests, ExpectisEmpty) 
+    {
+        std::set<int> x{};
+        expectThat(x).isEmpty();
+    }
+
+    qor_pp_test_suite_case(SetTests, IsNotEmpty) 
+    {
+        std::set<int> x{1, 2, 3};
+        assertThat(x).isNotEmpty();
+    }
+
+    qor_pp_test_suite_case(SetTests, IsEqual) 
+    {
+        std::set<int> x{1, 2, 3};
+        std::set<int> y{1, 2, 3};
+        assertThat(x).isEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(SetTests, IsNotEqual) 
+    {
+        std::set<int> x{1, 2, 3};
+        std::set<int> y{11, 22, 33};
+        assertThat(x).isNotEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(SetTests, Size) 
+    {
+        std::set<int> x{1, 2, 3};
+        assertThat(x).hasSizeThat().isEqualTo(3);
+    }
+
+}//test_sets

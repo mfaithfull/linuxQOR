@@ -19,6 +19,8 @@ mock/test_dynamic_cast.cpp mock/test_dontcare.cpp mock/test_do.cpp
 mock/test_cv_funcs.cpp mock/test_constref_params.cpp
 mock/test_com_support_stdcall.cpp mock/test_zombie.cpp
 assert/bool.cpp assert/complex.cpp assert/double.cpp assert/float.cpp
-assert/int.cpp assert/iterators.cpp assert/map.cpp 
-assert/weak_ptr.cpp)
+assert/int.cpp assert/iterators.cpp assert/map.cpp assert/multimap.cpp
+assert/optional.cpp assert/pointers.cpp assert/priority_queue.cpp
+assert/set.cpp assert/shared_ptr.cpp assert/span.cpp
+assert/stack.cpp assert/string.cpp assert/weak_ptr.cpp)
 target_link_libraries(QORTest QORCompiler)

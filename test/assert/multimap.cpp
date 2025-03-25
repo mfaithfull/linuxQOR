@@ -27,3 +27,49 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <map>
+#include <string>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_multimap {
+
+    using namespace qor;
+    using namespace qor::test;
+
+    struct MultiMapTests {};
+
+    qor_pp_test_suite_case(MultiMapTests, isEmpty) 
+    {
+        std::multimap<int, int> x{};
+        assertThat(x).isEmpty();
+    }
+
+    qor_pp_test_suite_case(MultiMapTests, IsNotEmpty) 
+    {
+        std::multimap<int, int> x{{1, 2}, {2, 3}};
+        assertThat(x).isNotEmpty();
+    }
+
+    qor_pp_test_suite_case(MultiMapTests, IsEqual) 
+    {
+        std::multimap<int, int> x{{1, 2}, {2, 3}};
+        std::multimap<int, int> y{{1, 2}, {2, 3}};
+        assertThat(x).isEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(MultiMapTests, IsNotEqual) 
+    {
+        std::multimap<int, int> x{{1, 2}, {2, 4}};
+        std::multimap<int, int> y{{1, 2}, {2, 3}};
+        assertThat(x).isNotEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(MultiMapTests, HasSize) 
+    {
+        std::multimap<int, int> x{{1, 2}, {2, 4}};
+        assertThat(x).hasSizeThat().isEqualTo(2);
+    }
+}

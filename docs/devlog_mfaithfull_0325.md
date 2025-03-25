@@ -44,5 +44,12 @@ Sketched in the QOR Mock header library based on HippoMocks. It builds cleanly b
 
 Now I need to abstract out the Compiler, OS and Architecture dependencies into those libraries but first need to wrap it in some tests to make sure it continues to operate as it gets refactored.
 
-
 Interesting to note that GCC doesn't generate type information for classes with missing function implementations but it does all the compilation if the missing function isn't referenced.
+
+Porting in assertcc a fluent assertions library. This will give us tests with nice assertions and mocking
+When all the tests are in place for this. There are two ways we could go.
+
+More header only libraries for delegates, factories and references
+
+Start on the QOR module system so that we can build delf describing, runtime loadable, versioned, modules. Maybe ones that test themselves.
+

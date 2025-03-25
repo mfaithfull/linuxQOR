@@ -27,3 +27,49 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <string>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_span
+{
+#if __cpp_lib_span > 202002L
+
+    using namespace qor;
+    using namespace qor::test;
+
+    struct SpanTests {};
+
+    qor_pp_test_suite_case(SpanTests, isEmpty) 
+    {
+        std::vector<int> data{};
+        std::span<int> view(data);
+        assertThat(view).isEmpty();
+    }
+
+    qor_pp_test_suite_case(SpanTests, ExpectIsEmpty) 
+    {
+        std::vector<int> data{};
+        std::span<int> view(data);
+        expectThat(view).isEmpty();
+    }
+
+    qor_pp_test_suite_case(SpanTests, isNotEmpty) 
+    {
+        std::vector<int> data{1, 2, 3};
+        std::span<int> view(data);
+        assertThat(view).isNotEmpty();
+    }
+
+    qor_pp_test_suite_case(SpanTests, Size) 
+    {
+        std::vector<int> data{1, 2, 3};
+        std::span<int> view(data);
+        assertThat(view).hasSize().isEqualTo(3);
+    }
+
+#endif
+
+}//span_tests

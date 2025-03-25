@@ -27,3 +27,61 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <stack>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_stack
+{
+    using namespace qor;
+    using namespace qor::test;
+
+    struct StackTests {};
+
+    qor_pp_test_suite_case(StackTests, IsEmpty) 
+    {
+        std::stack<int, std::deque<int>> x{};
+        assertThat(x).isEmpty();
+    }
+
+    qor_pp_test_suite_case(StackTests, ExpectIsEmpty) 
+    {
+        std::stack<int, std::deque<int>> x{};
+        assertThat(x).isEmpty();
+    }
+
+    qor_pp_test_suite_case(StackTests, IsNotEmpty) 
+    {
+        std::deque<int> q{1, 2, 3};
+        std::stack<int, std::deque<int>> x{q};
+        assertThat(x).isNotEmpty();
+    }
+
+    qor_pp_test_suite_case(StackTests, IsEqual) 
+    {
+        std::deque<int> q1{1, 2, 3};
+        std::stack<int, std::deque<int>> x{q1};
+        std::deque<int> q2{1, 2, 3};
+        std::stack<int, std::deque<int>> y{q2};
+        assertThat(x).isEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(StackTests, IsNotEqual) 
+    {
+        std::deque<int> q1{1, 2, 3, 4};
+        std::stack<int, std::deque<int>> x{q1};
+        std::deque<int> q2{1, 2, 3};
+        std::stack<int, std::deque<int>> y{q2};
+        assertThat(x).isNotEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(StackTests, Size) 
+    {
+        std::deque<int> q1{1, 2, 3, 4};
+        std::stack<int, std::deque<int>> x{q1};
+        assertThat(x).hasSizeThat().isEqualTo(4);
+    }
+
+}//test_stack

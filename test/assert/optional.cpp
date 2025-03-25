@@ -27,3 +27,67 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <optional>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_optional {
+
+    using namespace qor;
+    using namespace qor::test;
+
+    struct OptionalTests {};
+
+    qor_pp_test_suite_case(OptionalTests, isPresent) 
+    {
+        std::optional<int> o{1};
+        assertThat(o).isPresent();
+    }
+
+    qor_pp_test_suite_case(OptionalTests, ExpectIsPresent) 
+    {
+        std::optional<int> o{1};
+        expectThat(o).isPresent();
+    }
+
+    qor_pp_test_suite_case(OptionalTests, IsEmpty) 
+    {
+        std::optional<int> o{};
+        assertThat(o).isEmpty();
+    }
+
+    qor_pp_test_suite_case(OptionalTests, Contains) 
+    {
+        std::optional<int> o{1};
+        assertThat(o).contains(1);
+    }
+
+    qor_pp_test_suite_case(OptionalTests, DoesNotContain) 
+    {
+        std::optional<int> o{1};
+        assertThat(o).doesNotContain(2);
+    }
+
+    qor_pp_test_suite_case(OptionalTests, Value) 
+    {
+        std::optional<int> o{1};
+        assertThat(o).hasValueThat().isEqualTo(1);
+    }
+
+    qor_pp_test_suite_case(OptionalTests, IsEqualTo) 
+    {
+        std::optional<int> x{1};
+        std::optional<int> y{1};
+        assertThat(x).isEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(OptionalTests, IsNotEqualTo) 
+    {
+        std::optional<int> x{1};
+        std::optional<int> y{3};
+        assertThat(x).isNotEqualTo(y);
+    }
+
+}//test_optional

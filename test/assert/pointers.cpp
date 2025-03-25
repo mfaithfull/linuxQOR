@@ -27,3 +27,54 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <memory>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_pointers {
+
+    using namespace qor;
+    using namespace qor::test;
+
+    struct PointerTests {};
+
+    qor_pp_test_suite_case(PointerTests, IsNull) 
+    {
+        const char* p = nullptr;
+        assertThat(p).isNull();
+    }
+
+    qor_pp_test_suite_case(PointerTests, ExpectIsNull) 
+    {
+        const char* p = nullptr;
+        expectThat(p).isNull();
+    }
+
+    qor_pp_test_suite_case(PointerTests, IsNotNull) 
+    {
+        const char* p = "Message";
+        assertThat(p).isNotNull();
+    }
+
+    qor_pp_test_suite_case(PointerTests, Value) 
+    {
+        const char* p = "a";
+        assertThat(p).hasValueThat().isEqualTo('a');
+    }
+
+    qor_pp_test_suite_case(PointerTests, IsNotEqual) 
+    {
+        auto p = std::make_unique<int>(1);
+        auto q = std::make_unique<int>(1);
+        assertThat(p.get()).isNotEqualTo(q.get());
+    }
+
+    qor_pp_test_suite_case(PointerTests, IsEqualTo) 
+    {
+        const char* p = "a";
+        assertThat(p).isEqualTo(p);
+    }
+
+}//test_pointers
