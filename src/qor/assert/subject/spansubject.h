@@ -27,7 +27,7 @@
 //under BSD 3 clause license
 #pragma once
 
-#if __cplusplus > 201703L
+#if __cpp_lib_span > 202002L
 
 #include <span>
 

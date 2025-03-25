@@ -35,8 +35,8 @@
 
 //NOTE: Set preprocessor options for how the build proceeds here or predef them in the build script
 #ifndef NDEBUG
-#   define qor_pp_compiler_reportconfig             //Choose to get output during compilation indicating configurations chosen and detected
-#   define qor_pp_compiler_reportdefecits           //Choose to get output during compilation of features unavailable in the toolchain
+//#   define qor_pp_compiler_reportconfig             //Choose to get output during compilation indicating configurations chosen and detected
+//#   define qor_pp_compiler_reportdefecits           //Choose to get output during compilation of features unavailable in the toolchain
 #endif
 //#define qor_pp_os_target qor_pp_os_windows          //Define the target Operating System
 //#define qor_pp_arch_target qor_pp_arch_anyX86       //Define the target hardware architecture

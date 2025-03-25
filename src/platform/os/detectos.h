@@ -48,7 +48,7 @@
 
 #if (qor_pp_os_target == qor_pp_os_linux)
 #   define qor_pp_os_root_folder linux
-qor_pp_compiler_message( "Build targetting Linux Operating Systems." )
+//qor_pp_compiler_message( "Build targetting Linux Operating Systems." )
 #elif (qor_pp_os_target == qor_pp_os_windows)
 
 #   define qor_pp_os_root_folder windows

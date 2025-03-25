@@ -33,7 +33,9 @@
 #include <queue>
 #include <set>
 #include <stack>
+#if __cpp_lib_span > 202002L
 #include <span>
+#endif
 #include <unordered_map>
 #include <unordered_set>
 
@@ -97,7 +99,7 @@ std::ostream& operator<<(std::ostream& os, const std::priority_queue<T, Containe
   return os;
 }
 
-#if __cplusplus > 201703L
+#if __cpp_lib_span > 202002L
 
 template <typename T, std::size_t Extent>
 std::ostream& operator<<(std::ostream& os, const std::span<T, Extent> data) {
