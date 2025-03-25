@@ -40,7 +40,8 @@
 #   define qor_pp_arch_root_folder x86
 #   if (defined (__x86_64__) || defined (_M_X64))
 #       define qor_pp_arch_is_64bit
-qor_pp_compiler_message( "Build targetting 64 bit x86 hardware." )
+//TODO: For reasons unknown the following line breaks GCC 9.4.0 blowing up the compile
+//qor_pp_compiler_message( "Build targetting 64 bit x86 hardware." )
 #   else
 qor_pp_compiler_message( "Build targetting 32 bit x86 hardware." )
 #   endif

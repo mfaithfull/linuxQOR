@@ -4,7 +4,7 @@ set(CMAKE_CXX_COMPILE_OPTIONS_RTTI)
 set(CMAKE_CXX_RTTI ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a")
 add_subdirectory(mock)
 
 add_executable(QORTest test_main.cpp test_test.cpp test_compiler.cpp 

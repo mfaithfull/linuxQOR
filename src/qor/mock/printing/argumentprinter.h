@@ -34,25 +34,25 @@
 
 namespace qor{ namespace mock{
 
+    template<typename T>
+    static inline std::ostream& output(std::ostream& os, unsigned int& arg, const T& t)
+    {
+        (++arg > 1) ? (os << ",") : (os << "");
+        (os << t);            
+        return os;
+    }
+
+    template<>
+    inline std::ostream& output(std::ostream& os, unsigned int& arg, const wchar_t*const& t)
+    {
+        (++arg > 1) ? (os << ",") : (os << "");
+        (os << (char)t[0] << (char)t[1]);            
+        return os;
+    }
+
     template <int index, int limit, typename Tuple>
     struct argumentPrinter
     {
-
-        template<typename T>
-        static std::ostream& output(std::ostream& os, unsigned int& arg, const T& t)
-        {
-            (++arg > 1) ? (os << ",") : (os << "");
-            (os << t);            
-            return os;
-        }
-
-        template<>
-        static std::ostream& output(std::ostream& os, unsigned int& arg, const wchar_t*const& t)
-        {
-            (++arg > 1) ? (os << ",") : (os << "");
-            (os << (char)t[0] << (char)t[1]);            
-            return os;
-        }
 
         static void Print(std::ostream& os, const Tuple& t)
         {

@@ -67,7 +67,7 @@ namespace qor{ namespace mock{
         BasicRegisterExpect(reinterpret_cast<mock<Z2> *>(mck),
             0, funcIndex,
             reinterpret_cast<void (base_mock::*)()>(member), X);
-#ifdef EXTRA_DESTRUCTOR
+#ifdef qor_pp_compiler_extra_destructor
         BasicRegisterExpect(reinterpret_cast<mock<Z2> *>(mck),
             0, funcIndex + 1,
             reinterpret_cast<void (base_mock::*)()>(member), X);
