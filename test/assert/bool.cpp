@@ -37,43 +37,43 @@ struct BoolSubjectTests{};
 
 qor_pp_test_suite_case(BoolSubjectTests, IsTrue) {
   bool b = true;
-  assertThat(b).isTrue();
-  assertThat(true).isTrue();
+  qor_pp_assert_that(b).isTrue();
+  qor_pp_assert_that(true).isTrue();
 }
 
 qor_pp_test_suite_case(BoolSubjectTests, ExpectIsTrue) {
   bool b = true;
-  expectThat(b).isTrue();
-  expectThat(true).isTrue();
+  qor_pp_expect_that(b).isTrue();
+  qor_pp_expect_that(true).isTrue();
 }
 
 qor_pp_test_suite_case(BoolSubjectTests, IsFalse) {
   bool b = false;
-  assertThat(b).isFalse();
-  assertThat(false).isFalse();
+  qor_pp_assert_that(b).isFalse();
+  qor_pp_assert_that(false).isFalse();
 }
 
 qor_pp_test_suite_case(BoolSubjectTests, CanAssertTrueAndFalse) {
   bool b0 = true;
-  assertThat(b0).isTrue();
+  qor_pp_assert_that(b0).isTrue();
   bool b1 = false;
-  assertThat(b1).isFalse();
-  assertThat(true).isTrue();
-  assertThat(false).isFalse();
+  qor_pp_assert_that(b1).isFalse();
+  qor_pp_assert_that(true).isTrue();
+  qor_pp_assert_that(false).isFalse();
 }
 
 qor_pp_test_suite_case(BoolSubjectTests, NotEqualTo) {
   bool b0 = true;
   bool b1 = false;
-  assertThat(b0).isNotEqualTo(b1).isNotEqualTo(false);
-  assertThat(b1).isNotEqualTo(b0).isNotEqualTo(true);
+  qor_pp_assert_that(b0).isNotEqualTo(b1).isNotEqualTo(false);
+  qor_pp_assert_that(b1).isNotEqualTo(b0).isNotEqualTo(true);
 }
 
 qor_pp_test_suite_case(BoolSubjectTests, EqualTo) {
   bool b0 = true;
   bool b1 = true;
-  assertThat(b0).isEqualTo(b1).isEqualTo(true);
-  assertThat(b1).isEqualTo(b1).isEqualTo(true);
-  assertThat(true).isEqualTo(true);
-  assertThat(false).isEqualTo(false);
+  qor_pp_assert_that(b0).isEqualTo(b1).isEqualTo(true);
+  qor_pp_assert_that(b1).isEqualTo(b1).isEqualTo(true);
+  qor_pp_assert_that(true).isEqualTo(true);
+  qor_pp_assert_that(false).isEqualTo(false);
 }

@@ -42,7 +42,7 @@ namespace test_user_subject
     using namespace qor::test;
 
     struct UserSubjectTests{};
-    
+
     class Foo 
     {
     public:
@@ -100,26 +100,26 @@ namespace test_user_subject
     {
         Foo a{1};
         Foo b{1};
-        assertThat(a).isEqualTo(b);
+        qor_pp_assert_that(a).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(UserSubjectTests, ExpectIsEqual) 
     {
         Foo a{1};
         Foo b{1};
-        expectThat(a).isEqualTo(b);
+        qor_pp_expect_that(a).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(UserSubjectTests, isNotEqual) 
     {
         Foo a{1};
         Foo b{2};
-        assertThat(a).isNotEqualTo(b);
+        qor_pp_assert_that(a).isNotEqualTo(b);
     }
 
     qor_pp_test_suite_case(UserSubjectTests, Contains42) 
     {
         Foo a{42};
-        assertThat(a).contains42();
+        qor_pp_assert_that(a).contains42();
     }
 }//test_user_subject

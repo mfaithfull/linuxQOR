@@ -43,51 +43,51 @@ namespace test_optional {
     qor_pp_test_suite_case(OptionalTests, isPresent) 
     {
         std::optional<int> o{1};
-        assertThat(o).isPresent();
+        qor_pp_assert_that(o).isPresent();
     }
 
     qor_pp_test_suite_case(OptionalTests, ExpectIsPresent) 
     {
         std::optional<int> o{1};
-        expectThat(o).isPresent();
+        qor_pp_expect_that(o).isPresent();
     }
 
     qor_pp_test_suite_case(OptionalTests, IsEmpty) 
     {
         std::optional<int> o{};
-        assertThat(o).isEmpty();
+        qor_pp_assert_that(o).isEmpty();
     }
 
     qor_pp_test_suite_case(OptionalTests, Contains) 
     {
         std::optional<int> o{1};
-        assertThat(o).contains(1);
+        qor_pp_assert_that(o).contains(1);
     }
 
     qor_pp_test_suite_case(OptionalTests, DoesNotContain) 
     {
         std::optional<int> o{1};
-        assertThat(o).doesNotContain(2);
+        qor_pp_assert_that(o).doesNotContain(2);
     }
 
     qor_pp_test_suite_case(OptionalTests, Value) 
     {
         std::optional<int> o{1};
-        assertThat(o).hasValueThat().isEqualTo(1);
+        qor_pp_assert_that(o).hasValueThat().isEqualTo(1);
     }
 
     qor_pp_test_suite_case(OptionalTests, IsEqualTo) 
     {
         std::optional<int> x{1};
         std::optional<int> y{1};
-        assertThat(x).isEqualTo(y);
+        qor_pp_assert_that(x).isEqualTo(y);
     }
 
     qor_pp_test_suite_case(OptionalTests, IsNotEqualTo) 
     {
         std::optional<int> x{1};
         std::optional<int> y{3};
-        assertThat(x).isNotEqualTo(y);
+        qor_pp_assert_that(x).isNotEqualTo(y);
     }
 
 }//test_optional

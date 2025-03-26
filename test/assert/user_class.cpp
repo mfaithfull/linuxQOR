@@ -69,20 +69,20 @@ namespace test_user_class
     {
         A a{1};
         A b{1};
-        assertThat(a).isEqualTo(b);
+        qor_pp_assert_that(a).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(UserClassTests, ExpectIsEqual) 
     {
         A a{1};
         A b{1};
-        expectThat(a).isEqualTo(b);
+        qor_pp_expect_that(a).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(UserClassTests, IsNotEqual) 
     {
         A a{1};
         A b{2};
-        assertThat(a).isNotEqualTo(b);
+        qor_pp_assert_that(a).isNotEqualTo(b);
     }
 }//test_user_class

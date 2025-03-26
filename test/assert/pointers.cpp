@@ -43,38 +43,38 @@ namespace test_pointers {
     qor_pp_test_suite_case(PointerTests, IsNull) 
     {
         const char* p = nullptr;
-        assertThat(p).isNull();
+        qor_pp_assert_that(p).isNull();
     }
 
     qor_pp_test_suite_case(PointerTests, ExpectIsNull) 
     {
         const char* p = nullptr;
-        expectThat(p).isNull();
+        qor_pp_expect_that(p).isNull();
     }
 
     qor_pp_test_suite_case(PointerTests, IsNotNull) 
     {
         const char* p = "Message";
-        assertThat(p).isNotNull();
+        qor_pp_assert_that(p).isNotNull();
     }
 
     qor_pp_test_suite_case(PointerTests, Value) 
     {
         const char* p = "a";
-        assertThat(p).hasValueThat().isEqualTo('a');
+        qor_pp_assert_that(p).hasValueThat().isEqualTo('a');
     }
 
     qor_pp_test_suite_case(PointerTests, IsNotEqual) 
     {
         auto p = std::make_unique<int>(1);
         auto q = std::make_unique<int>(1);
-        assertThat(p.get()).isNotEqualTo(q.get());
+        qor_pp_assert_that(p.get()).isNotEqualTo(q.get());
     }
 
     qor_pp_test_suite_case(PointerTests, IsEqualTo) 
     {
         const char* p = "a";
-        assertThat(p).isEqualTo(p);
+        qor_pp_assert_that(p).isEqualTo(p);
     }
 
 }//test_pointers

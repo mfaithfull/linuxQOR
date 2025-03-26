@@ -43,94 +43,94 @@ namespace test_string
     qor_pp_test_suite_case(StringTests, isEmpty) 
     {
         std::string x{""};
-        assertThat(x).isEmpty();
+        qor_pp_assert_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(StringTests, ExpectisEmpty) 
     {
         std::string x{""};
-        expectThat(x).isEmpty();
+        qor_pp_expect_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(StringTests, isNotEmpty) 
     {
         std::string x{"hello"};
-        assertThat(x).isNotEmpty();
+        qor_pp_assert_that(x).isNotEmpty();
     }
 
     qor_pp_test_suite_case(StringTests, isEqual) 
     {
         std::string x{"hello"};
         std::string y{"hello"};
-        assertThat(x).isEqualTo(y);
-        assertThat(x).isEqualTo("hello");
+        qor_pp_assert_that(x).isEqualTo(y);
+        qor_pp_assert_that(x).isEqualTo("hello");
     }
 
     qor_pp_test_suite_case(StringTests, isNotEqual) 
     {
         std::string x{"hello"};
         std::string y{"sdgfifgh"};
-        assertThat(x).isNotEqualTo(y);
+        qor_pp_assert_that(x).isNotEqualTo(y);
     }
 
     qor_pp_test_suite_case(StringTests, HasSize) 
     {
         std::string str{"hello"};
-        assertThat(str).hasSize(5);
+        qor_pp_assert_that(str).hasSize(5);
     }
 
     qor_pp_test_suite_case(StringTests, HasSizeThat) 
     {
         std::string str{"hello"};
-        assertThat(str).hasSizeThat().isEqualTo(5);
+        qor_pp_assert_that(str).hasSizeThat().isEqualTo(5);
     }
 
     qor_pp_test_suite_case(StringTests, Contains) 
     {
         std::string str{"hello"};
-        assertThat(str).contains("el");
+        qor_pp_assert_that(str).contains("el");
     }
 
     qor_pp_test_suite_case(StringTests, DoesNotContain) 
     {
         std::string str{"hello"};
-        assertThat(str).doesNotContain("ABC");
+        qor_pp_assert_that(str).doesNotContain("ABC");
     }
 
     qor_pp_test_suite_case(StringTests, StartsWith) 
     {
         std::string str{"hello"};
-        assertThat(str).startsWith("hel");
+        qor_pp_assert_that(str).startsWith("hel");
     }
 
     qor_pp_test_suite_case(StringTests, EndsWith) 
     {
         std::string str{"hello"};
-        assertThat(str).endsWith("llo");
+        qor_pp_assert_that(str).endsWith("llo");
     }
 
     qor_pp_test_suite_case(StringTests, ContainsMatch) 
     {
         std::string str{"hello"};
-        assertThat(str).containsMatch("l.o");
+        qor_pp_assert_that(str).containsMatch("l.o");
     }
 
     qor_pp_test_suite_case(StringTests, DoesNotContainsMatch) 
     {
         std::string str{"hello"};
-        assertThat(str).doesNotContainMatch("z.o");
+        qor_pp_assert_that(str).doesNotContainMatch("z.o");
     }
 
     qor_pp_test_suite_case(StringTests, Matches) 
     {
         std::string str{"hello"};
-        assertThat(str).matches("hel.o");
+        qor_pp_assert_that(str).matches("hel.o");
     }
 
     qor_pp_test_suite_case(StringTests, DoesNotMatch) 
     {
         std::string str{"hello"};
-        assertThat(str).doesNotMatch("z.o");
+        qor_pp_assert_that(str).doesNotMatch("z.o");
     }
 
 }//test_string

@@ -53,3 +53,6 @@ More header only libraries for delegates, factories and references
 
 Start on the QOR module system so that we can build delf describing, runtime loadable, versioned, modules. Maybe ones that test themselves.
 
+Decided to start on the QOR module system. A few more integrated docs added first to help with what belong where in the project structure.
+
+Added a GUID class as the first item in a library of basic data structures.

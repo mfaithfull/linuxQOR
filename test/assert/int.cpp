@@ -42,58 +42,58 @@ namespace test_int {
     {
         int a = 1;
         int b = 1;
-        assertThat(a).isEqualTo(1).isEqualTo(b);
+        qor_pp_assert_that(a).isEqualTo(1).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(IntTests, IsNotEqualTo) 
     {
         int a = 1;
         int b = 2;
-        assertThat(a).isNotEqualTo(3).isNotEqualTo(b);
-        //TODO: EXPECT_FATAL_FAILURE(assertThat(1).isNotEqualTo(1), "");
+        qor_pp_assert_that(a).isNotEqualTo(3).isNotEqualTo(b);
+        //TODO: EXPECT_FATAL_FAILURE(qor_pp_assert_that(1).isNotEqualTo(1), "");
     }
 
     qor_pp_test_suite_case(IntTests, IsIn) 
     {
         int a = 1;
-        assertThat(a).isIn({1, 2, 3});
+        qor_pp_assert_that(a).isIn({1, 2, 3});
         std::vector<int> v{1, 2, 3};
-        assertThat(a).isIn(v);
+        qor_pp_assert_that(a).isIn(v);
     }
 
     qor_pp_test_suite_case(IntTests, IsNotIn) 
     {
         int a = 10;
-        assertThat(a).isNotIn({1, 2, 3});
+        qor_pp_assert_that(a).isNotIn({1, 2, 3});
         std::vector<int> v{1, 2, 3};
-        assertThat(a).isNotIn<std::vector>(v);
+        qor_pp_assert_that(a).isNotIn<std::vector>(v);
     }
 
     qor_pp_test_suite_case(IntTests, IsGreaterThan) 
     {
         int a = 10;
-        assertThat(a).isGreaterThan(5);
-        assertThat(11).isGreaterThan(5);
+        qor_pp_assert_that(a).isGreaterThan(5);
+        qor_pp_assert_that(11).isGreaterThan(5);
     }
 
     qor_pp_test_suite_case(IntTests, IsLessThan) 
     {
         int a = 1;
-        assertThat(a).isLessThan(5);
-        assertThat(2).isLessThan(5);
+        qor_pp_assert_that(a).isLessThan(5);
+        qor_pp_assert_that(2).isLessThan(5);
     }
 
     qor_pp_test_suite_case(IntTests, IsAtLeast) 
     {
         int a = 10;
-        assertThat(a).isAtLeast(5).isAtLeast(10);
-        assertThat(11).isAtLeast(5).isAtLeast(11);
+        qor_pp_assert_that(a).isAtLeast(5).isAtLeast(10);
+        qor_pp_assert_that(11).isAtLeast(5).isAtLeast(11);
     }
 
     qor_pp_test_suite_case(IntTests, isAtMost) 
     {
         int a = 1;
-        assertThat(a).isAtMost(10).isAtMost(1);
-        assertThat(3).isAtMost(5).isAtMost(3);
+        qor_pp_assert_that(a).isAtMost(10).isAtMost(1);
+        qor_pp_assert_that(3).isAtMost(5).isAtMost(3);
     }
 }

@@ -44,39 +44,39 @@ namespace test_complex {
     {
         std::complex<int> a(1, 2);
         std::complex<int> b(1, 2);
-        assertThat(a).isEqualTo(b);
+        qor_pp_assert_that(a).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(ComplexTests, IsNotEqualTo) 
     {
         std::complex<int> a(1, 2);
         std::complex<int> b(3, 2);
-        expectThat(a).isNotEqualTo(b);
+        qor_pp_expect_that(a).isNotEqualTo(b);
     }
 
 /*
 qor_pp_test_suite_case(ComplexTests, IsNotEqualTo_Failure) {
   std::complex<int> a(1, 2);
   std::complex<int> b(1, 23);
-  assertThat(a).isNotEqualTo(3).isNotEqualTo(b);
-  EXPECT_FATAL_FAILURE(assertThat(std::complex<int>(1, 2)).isNotEqualTo(std::complex<int>(1, 2)),
+  qor_pp_assert_that(a).isNotEqualTo(3).isNotEqualTo(b);
+  EXPECT_FATAL_FAILURE(qor_pp_assert_that(std::complex<int>(1, 2)).isNotEqualTo(std::complex<int>(1, 2)),
                        "");
 }*/
 
     qor_pp_test_suite_case(ComplexTests, IsIn) 
     {
         std::complex<int> a(1, 2);
-        assertThat(a).isIn({std::complex<int>(1, 2), std::complex<int>(2, 3)});
+        qor_pp_assert_that(a).isIn({std::complex<int>(1, 2), std::complex<int>(2, 3)});
         std::vector<std::complex<int>> v{ std::complex<int>(1, 2), std::complex<int>(2, 2), std::complex<int>(2, 3) };
-        assertThat(a).isIn(v);
+        qor_pp_assert_that(a).isIn(v);
     }
 
     qor_pp_test_suite_case(ComplexTests, IsNotIn) 
     {
         int a = 10;
-        assertThat(a).isNotIn({1, 2, 3});
+        qor_pp_assert_that(a).isNotIn({1, 2, 3});
         std::vector<int> v{1, 2, 3};
-        assertThat(a).isNotIn<std::vector>(v);
+        qor_pp_assert_that(a).isNotIn<std::vector>(v);
     }
 
 }//test_complex

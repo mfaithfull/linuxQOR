@@ -43,39 +43,39 @@ namespace test_unordered_set
     qor_pp_test_suite_case(UnordredSetTests, IsEmpty) 
     {
         std::unordered_set<int> x{};
-        assertThat(x).isEmpty();
+        qor_pp_assert_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(UnordredSetTests, ExpectisEmpty) 
     {
         std::unordered_set<int> x{};
-        expectThat(x).isEmpty();
+        qor_pp_expect_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(UnordredSetTests, IsNotEmpty) 
     {
         std::unordered_set<int> x{1, 2, 3};
-        assertThat(x).isNotEmpty();
+        qor_pp_assert_that(x).isNotEmpty();
     }
 
     qor_pp_test_suite_case(UnordredSetTests, IsEqual) 
     {
         std::unordered_set<int> x{1, 2, 3};
         std::unordered_set<int> y{1, 2, 3};
-        assertThat(x).isEqualTo(y);
+        qor_pp_assert_that(x).isEqualTo(y);
     }
 
     qor_pp_test_suite_case(UnordredSetTests, IsNotEqual) 
     {
         std::unordered_set<int> x{1, 2, 3};
         std::unordered_set<int> y{11, 22, 33};
-        assertThat(x).isNotEqualTo(y);
+        qor_pp_assert_that(x).isNotEqualTo(y);
     }
 
     qor_pp_test_suite_case(UnordredSetTests, HasSize) 
     {
         std::unordered_set<int> x{1, 2, 3};
-        assertThat(x).hasSizeThat().isEqualTo(3);
+        qor_pp_assert_that(x).hasSizeThat().isEqualTo(3);
     }
 
 }//test_unordered_set

@@ -42,7 +42,7 @@ namespace qor{ namespace mock{
             text << "Function called on mock that has already been destroyed!" << std::endl;
             text << repo;
 
-#ifdef LINUX_TARGET
+#if(qor_pp_os_target == qor_pp_os_linux)
             void* stacktrace[256];
             size_t size = backtrace(stacktrace, sizeof(stacktrace));
             if (size > 0)

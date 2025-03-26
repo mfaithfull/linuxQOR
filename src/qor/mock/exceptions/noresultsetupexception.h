@@ -31,8 +31,8 @@
 
 #include <sstream>
 
-#ifdef LINUX_TARGET
-#include <execinfo.h>
+#if(qor_pp_os_target == qor_pp_os_linux)
+#   include <execinfo.h>
 #endif
 
 namespace qor{ namespace mock{
@@ -45,7 +45,7 @@ namespace qor{ namespace mock{
             std::stringstream text;
             text << "No result set up on call to " << funcName << args << std::endl << repo;
 
-    #ifdef LINUX_TARGET
+#if(qor_pp_os_target == qor_pp_os_linux)
             void* stacktrace[256];
             size_t size = backtrace(stacktrace, sizeof(stacktrace));
             if (size > 0)
@@ -58,7 +58,7 @@ namespace qor{ namespace mock{
                 }
                 free(symbols);
             }
-    #endif
+#endif
 
             txt = text.str();
         }

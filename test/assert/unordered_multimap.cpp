@@ -43,39 +43,39 @@ namespace test_unordered_multimap
     qor_pp_test_suite_case(UnorderedMultiMapSubjectTests, isEmpty) 
     {
         std::unordered_multimap<int, int> x{};
-        assertThat(x).isEmpty();
+        qor_pp_assert_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(UnorderedMultiMapSubjectTests, ExpectisEmpty) 
     {
         std::unordered_multimap<int, int> x{};
-        expectThat(x).isEmpty();
+        qor_pp_expect_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(UnorderedMultiMapSubjectTests, IsNotEmpty) 
     {
         std::unordered_multimap<int, int> x{{1, 2}, {2, 3}};
-        assertThat(x).isNotEmpty();
+        qor_pp_assert_that(x).isNotEmpty();
     }
 
     qor_pp_test_suite_case(UnorderedMultiMapSubjectTests, IsEqual) 
     {
         std::unordered_multimap<int, int> x{{1, 2}, {2, 3}};
         std::unordered_multimap<int, int> y{{1, 2}, {2, 3}};
-        assertThat(x).isEqualTo(y);
+        qor_pp_assert_that(x).isEqualTo(y);
     }
 
     qor_pp_test_suite_case(UnorderedMultiMapSubjectTests, IsNotEqual) 
     {
         std::unordered_multimap<int, int> x{{1, 2}, {2, 4}};
         std::unordered_multimap<int, int> y{{1, 2}, {2, 3}};
-        assertThat(x).isNotEqualTo(y);
+        qor_pp_assert_that(x).isNotEqualTo(y);
     }
 
     qor_pp_test_suite_case(UnorderedMultiMapSubjectTests, HasSize) 
     {
         std::unordered_multimap<int, int> x{{1, 2}, {2, 4}};
-        assertThat(x).hasSizeThat().isEqualTo(2);
+        qor_pp_assert_that(x).hasSizeThat().isEqualTo(2);
     }
 
 }//test_unordered_multimap

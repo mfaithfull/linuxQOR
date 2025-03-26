@@ -43,38 +43,38 @@ namespace test_shared_ptr
     qor_pp_test_suite_case(SharedPtr, IsNull) 
     {
         std::shared_ptr<int> p;
-        assertThat(p).isNull();
+        qor_pp_assert_that(p).isNull();
     }
 
     qor_pp_test_suite_case(SharedPtr, ExpectIsNull) 
     {
         std::shared_ptr<int> p;
-        expectThat(p).isNull();
+        qor_pp_expect_that(p).isNull();
     }
 
     qor_pp_test_suite_case(SharedPtr, IsNotNull) 
     {
         auto p = std::make_shared<int>(2);
-        assertThat(p).isNotNull();
+        qor_pp_assert_that(p).isNotNull();
     }
 
     qor_pp_test_suite_case(SharedPtr, Value) 
     {
         auto p = std::make_shared<int>(2);
-        assertThat(p).hasValueThat().isEqualTo(2);
+        qor_pp_assert_that(p).hasValueThat().isEqualTo(2);
     }
 
     qor_pp_test_suite_case(SharedPtr, NotEqual) 
     {
         auto p = std::make_shared<int>(1);
         auto q = std::make_shared<int>(1);
-        assertThat(p).isNotEqualTo(q);
+        qor_pp_assert_that(p).isNotEqualTo(q);
     }
 
     qor_pp_test_suite_case(SharedPtr, IsEqualTo) 
     {
         auto p = std::make_shared<int>(1);
-        assertThat(p).isEqualTo(p);
+        qor_pp_assert_that(p).isEqualTo(p);
     }
 
 }

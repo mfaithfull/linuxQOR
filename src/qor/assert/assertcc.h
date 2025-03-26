@@ -29,6 +29,25 @@
 #ifndef QOR_PP_H_ASSERTCC
 #define QOR_PP_H_ASSERTCC
 
+#include <array>
+#include <deque>
+#include <forward_list>
+#include <initializer_list>
+#include <list>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <complex>
+#include <vector>
+#include <optional>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+#include <queue>
+
 #include "adl.h"
 #include "subject/boolsubject.h"
 #include "subject/complexsubject.h"
@@ -50,29 +69,9 @@
 #include "subject/uniqueptrsubject.h"
 #include "subject/weakptrsubject.h"
 #include "../test/test.h"
-//#include "gtest/gtest.h"
 
-#include <array>
-#include <deque>
-#include <forward_list>
-#include <initializer_list>
-#include <list>
-#include <sstream>
-#include <stack>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <complex>
-#include <vector>
-#include <optional>
-#include <map>
-#include <unordered_map>
-#include <set>
-#include <unordered_set>
-#include <queue>
-
-#define assertThat(x) assertcc::assert_that_internal(assertcc::Adl(), true, __FILE__, __LINE__, x)
-#define expectThat(x) assertcc::assert_that_internal(assertcc::Adl(), false, __FILE__, __LINE__, x)
+#define qor_pp_assert_that(x) assertcc::assert_that_internal(assertcc::Adl(), true, __FILE__, __LINE__, x)
+#define qor_pp_expect_that(x) assertcc::assert_that_internal(assertcc::Adl(), false, __FILE__, __LINE__, x)
 
 namespace assertcc {
 

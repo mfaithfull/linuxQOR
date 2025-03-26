@@ -41,26 +41,26 @@ struct WeakPtrSubjectTests
 qor_pp_test_suite_case(WeakPtrSubjectTests, IsExpired) 
 {
   std::weak_ptr<int> p;
-  assertThat(p).isExpired();
+  qor_pp_assert_that(p).isExpired();
 }
 
 qor_pp_test_suite_case(WeakPtrSubjectTests, IsNotExpired) 
 {
   auto sp = std::make_shared<int>(1);
   std::weak_ptr<int> p = sp;
-  assertThat(p).isNotExpired();
+  qor_pp_assert_that(p).isNotExpired();
 }
 
 qor_pp_test_suite_case(WeakPtrSubjectTests, Value) 
 {
   auto p = std::make_unique<int>(3);
-  assertThat(p).hasValueThat().isEqualTo(3);
-  assertThat(p).isNotNull();
+  qor_pp_assert_that(p).hasValueThat().isEqualTo(3);
+  qor_pp_assert_that(p).isNotNull();
 }
 
 qor_pp_test_suite_case(WeakPtrSubjectTests, Value2) 
 {
   std::shared_ptr<int> p0 = std::make_shared<int>(5);
   std::weak_ptr<int> wp = p0;
-  assertThat(wp).isNotExpired().value().isEqualTo(5);
+  qor_pp_assert_that(wp).isNotExpired().value().isEqualTo(5);
 }

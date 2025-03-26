@@ -46,28 +46,28 @@ namespace test_span
     {
         std::vector<int> data{};
         std::span<int> view(data);
-        assertThat(view).isEmpty();
+        qor_pp_assert_that(view).isEmpty();
     }
 
     qor_pp_test_suite_case(SpanTests, ExpectIsEmpty) 
     {
         std::vector<int> data{};
         std::span<int> view(data);
-        expectThat(view).isEmpty();
+        qor_pp_expect_that(view).isEmpty();
     }
 
     qor_pp_test_suite_case(SpanTests, isNotEmpty) 
     {
         std::vector<int> data{1, 2, 3};
         std::span<int> view(data);
-        assertThat(view).isNotEmpty();
+        qor_pp_assert_that(view).isNotEmpty();
     }
 
     qor_pp_test_suite_case(SpanTests, Size) 
     {
         std::vector<int> data{1, 2, 3};
         std::span<int> view(data);
-        assertThat(view).hasSize().isEqualTo(3);
+        qor_pp_assert_that(view).hasSize().isEqualTo(3);
     }
 
 #endif

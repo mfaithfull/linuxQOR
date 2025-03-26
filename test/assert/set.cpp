@@ -43,39 +43,39 @@ namespace test_sets {
     qor_pp_test_suite_case(SetTests, IsEmpty) 
     {
         std::set<int> x{};
-        assertThat(x).isEmpty();
+        qor_pp_assert_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(SetTests, ExpectisEmpty) 
     {
         std::set<int> x{};
-        expectThat(x).isEmpty();
+        qor_pp_expect_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(SetTests, IsNotEmpty) 
     {
         std::set<int> x{1, 2, 3};
-        assertThat(x).isNotEmpty();
+        qor_pp_assert_that(x).isNotEmpty();
     }
 
     qor_pp_test_suite_case(SetTests, IsEqual) 
     {
         std::set<int> x{1, 2, 3};
         std::set<int> y{1, 2, 3};
-        assertThat(x).isEqualTo(y);
+        qor_pp_assert_that(x).isEqualTo(y);
     }
 
     qor_pp_test_suite_case(SetTests, IsNotEqual) 
     {
         std::set<int> x{1, 2, 3};
         std::set<int> y{11, 22, 33};
-        assertThat(x).isNotEqualTo(y);
+        qor_pp_assert_that(x).isNotEqualTo(y);
     }
 
     qor_pp_test_suite_case(SetTests, Size) 
     {
         std::set<int> x{1, 2, 3};
-        assertThat(x).hasSizeThat().isEqualTo(3);
+        qor_pp_assert_that(x).hasSizeThat().isEqualTo(3);
     }
 
 }//test_sets

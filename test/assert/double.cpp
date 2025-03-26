@@ -41,130 +41,130 @@ namespace test_double {
     qor_pp_test_suite_case(DoubleTests, IsNan) 
     {
         double number0 = std::numeric_limits<double>::quiet_NaN();
-        assertThat(number0).isNan();
+        qor_pp_assert_that(number0).isNan();
         double number1 = std::numeric_limits<double>::signaling_NaN();
-        assertThat(number1).isNan();
-        //TODO: EXPECT_FATAL_FAILURE(assertThat(2.2).isNan(), "");
+        qor_pp_assert_that(number1).isNan();
+        //TODO: EXPECT_FATAL_FAILURE(qor_pp_assert_that(2.2).isNan(), "");
     }
 
     qor_pp_test_suite_case(DoubleTests, IsNotNan) 
     {
         double number0 = 1.2;
-        assertThat(number0).isNotNan();
-        //TODO:  EXPECT_FATAL_FAILURE(assertThat(std::numeric_limits<double>::signaling_NaN()).isNotNan(), "");
+        qor_pp_assert_that(number0).isNotNan();
+        //TODO:  EXPECT_FATAL_FAILURE(qor_pp_assert_that(std::numeric_limits<double>::signaling_NaN()).isNotNan(), "");
     }
 
     qor_pp_test_suite_case(DoubleTests, IsFinite) 
     {
         double number0 = 2.3;
-        assertThat(number0).isFinite();
-        //TODO: EXPECT_FATAL_FAILURE(assertThat(std::numeric_limits<double>::signaling_NaN()).isFinite(), "");
+        qor_pp_assert_that(number0).isFinite();
+        //TODO: EXPECT_FATAL_FAILURE(qor_pp_assert_that(std::numeric_limits<double>::signaling_NaN()).isFinite(), "");
     }
 
     qor_pp_test_suite_case(DoubleTests, IsNotFinite) 
     {
         double number0 = std::numeric_limits<double>::signaling_NaN();
-        assertThat(number0).isNotFinite();
-        //TODO: EXPECT_FATAL_FAILURE(assertThat(1.2).isNotFinite(), "");
+        qor_pp_assert_that(number0).isNotFinite();
+        //TODO: EXPECT_FATAL_FAILURE(qor_pp_assert_that(1.2).isNotFinite(), "");
     }
 
     qor_pp_test_suite_case(DoubleTests, IsPositiveInfinity) 
     {
         volatile double x = 0;
         double number0 = 1.0 / x;
-        assertThat(number0).isPositiveInfinity();
+        qor_pp_assert_that(number0).isPositiveInfinity();
     }
 
     qor_pp_test_suite_case(DoubleTests, isNegativeInfinity) 
     {
         volatile double x = 0;
         double number0 = (-1.0) / x;
-        assertThat(number0).isNegativeInfinity();
+        qor_pp_assert_that(number0).isNegativeInfinity();
     }
 
     qor_pp_test_suite_case(DoubleTests, isZero) 
     {
         double number0 = 0.0;
-        assertThat(number0).isZero();
+        qor_pp_assert_that(number0).isZero();
     }
 
     qor_pp_test_suite_case(DoubleTests, isNotZero) 
     {
         double number0 = 0.3;
-        assertThat(number0).isNotZero();
+        qor_pp_assert_that(number0).isNotZero();
     }
 
     qor_pp_test_suite_case(DoubleTests, IsEqualTo) 
     {
         double a = 1.0;
         double b = 1.0;
-        assertThat(a).isEqualTo(1).isEqualTo(b);
+        qor_pp_assert_that(a).isEqualTo(1).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(DoubleTests, IsExpectEqualTo) 
     {
         double a = 1.0;
         double b = 1.0;
-        expectThat(a).isEqualTo(1).isEqualTo(b);
+        qor_pp_expect_that(a).isEqualTo(1).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(DoubleTests, IsWithIn) 
     {
         double a = 1.0;
         double b = 2.0;
-        assertThat(a).isWithin(1.0).isEqualTo(b);
+        qor_pp_assert_that(a).isWithin(1.0).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(DoubleTests, IsNotEqualTo) 
     {
         double a = 1.0;
         double b = 2.0;
-        assertThat(a).isNotEqualTo(3).isNotEqualTo(b);
-        //TODO: EXPECT_FATAL_FAILURE(assertThat(1).isNotEqualTo(1), "");
+        qor_pp_assert_that(a).isNotEqualTo(3).isNotEqualTo(b);
+        //TODO: EXPECT_FATAL_FAILURE(qor_pp_assert_that(1).isNotEqualTo(1), "");
     }
 
     qor_pp_test_suite_case(DoubleTests, IsIn) 
     {
         double a = 1.0;
-        assertThat(a).isIn({1.0, 2.0, 3.0});
+        qor_pp_assert_that(a).isIn({1.0, 2.0, 3.0});
         std::vector<double> v{1.0, 2.0, 3.0};
-        assertThat(a).isIn<std::vector>(v);
+        qor_pp_assert_that(a).isIn<std::vector>(v);
     }
 
     qor_pp_test_suite_case(DoubleTests, IsNotIn) 
     {
         double a = 12.0;
-        assertThat(a).isNotIn({1.0, 2.0, 3.0});
+        qor_pp_assert_that(a).isNotIn({1.0, 2.0, 3.0});
         std::vector<double> v{1.0, 2.0, 3.0};
-        assertThat(a).isNotIn<std::vector>(v);
+        qor_pp_assert_that(a).isNotIn<std::vector>(v);
     }
 
     qor_pp_test_suite_case(DoubleTests, IsGreaterThan) 
     {
         double a = 10;
-        assertThat(a).isGreaterThan(5.0);
-        assertThat(11.0).isGreaterThan(5.0);
+        qor_pp_assert_that(a).isGreaterThan(5.0);
+        qor_pp_assert_that(11.0).isGreaterThan(5.0);
     }
 
     qor_pp_test_suite_case(DoubleTests, IsLessThan) 
     {
         double a = 1;
-        assertThat(a).isLessThan(5);
-        assertThat(2).isLessThan(5);
+        qor_pp_assert_that(a).isLessThan(5);
+        qor_pp_assert_that(2).isLessThan(5);
     }
 
     qor_pp_test_suite_case(DoubleTests, IsAtLeast) 
     {
         int a = 10;
-        assertThat(a).isAtLeast(5).isAtLeast(10);
-        assertThat(11).isAtLeast(5).isAtLeast(11);
+        qor_pp_assert_that(a).isAtLeast(5).isAtLeast(10);
+        qor_pp_assert_that(11).isAtLeast(5).isAtLeast(11);
     }
 
     qor_pp_test_suite_case(DoubleTests, IsAtMost) 
     {
         double a = 1.2;
-        assertThat(a).isAtMost(10.0).isAtMost(1.3);
-        assertThat(3.0).isAtMost(5.0).isAtMost(3.5);
+        qor_pp_assert_that(a).isAtMost(10.0).isAtMost(1.3);
+        qor_pp_assert_that(3.0).isAtMost(5.0).isAtMost(3.5);
     }
 
 }//test_double

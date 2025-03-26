@@ -43,47 +43,47 @@ namespace test_unique_ptr
     qor_pp_test_suite_case(UniquePtrSubjectTests, IsNull) 
     {
         std::unique_ptr<int> p;
-        assertThat(p).isNull();
+        qor_pp_assert_that(p).isNull();
     }
 
     qor_pp_test_suite_case(UniquePtrSubjectTests, ExpectIsNull) 
     {
         std::unique_ptr<int> p;
-        expectThat(p).isNull();
+        qor_pp_expect_that(p).isNull();
     }
 
     qor_pp_test_suite_case(UniquePtrSubjectTests, IsNotNull) 
     {
         auto p = std::make_unique<int>(3);
-        assertThat(p).isNotNull();
-        assertThat(p).isNotNull();
+        qor_pp_assert_that(p).isNotNull();
+        qor_pp_assert_that(p).isNotNull();
     }
 
     qor_pp_test_suite_case(UniquePtrSubjectTests, Value) 
     {
         auto p = std::make_unique<int>(3);
-        assertThat(p).hasValueThat().isEqualTo(3);
-        assertThat(p).isNotNull();
+        qor_pp_assert_that(p).hasValueThat().isEqualTo(3);
+        qor_pp_assert_that(p).isNotNull();
     }
 
     qor_pp_test_suite_case(UniquePtrSubjectTests, NotEqual) 
     {
         auto p = std::make_unique<int>(1);
         auto q = std::make_unique<int>(1);
-        assertThat(p).isNotEqualTo(q);
-        assertThat(p).isNotEqualTo(q);
+        qor_pp_assert_that(p).isNotEqualTo(q);
+        qor_pp_assert_that(p).isNotEqualTo(q);
     }
 
     qor_pp_test_suite_case(UniquePtrSubjectTests, EqualTo) 
     {
         auto p = std::make_unique<int>(1);
-        assertThat(p).isEqualTo(p);
+        qor_pp_assert_that(p).isEqualTo(p);
     }
 
     qor_pp_test_suite_case(UniquePtrSubjectTests, ExpectEqualTo) 
     {
         auto p = std::make_unique<int>(1);
-        expectThat(p).isEqualTo(p);
+        qor_pp_expect_that(p).isEqualTo(p);
     }
 
 }//test_uniqur_ptr

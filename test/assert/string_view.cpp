@@ -43,34 +43,34 @@ namespace test_stringview
     qor_pp_test_suite_case(StringView, isEmpty) 
     {
         std::string_view sv;
-        assertThat(sv).isEmpty();
+        qor_pp_assert_that(sv).isEmpty();
     }
 
     qor_pp_test_suite_case(StringView, ExpectIsEmpty) 
     {
         std::string_view sv;
-        expectThat(sv).isEmpty();
+        qor_pp_expect_that(sv).isEmpty();
     }
 
     qor_pp_test_suite_case(StringView, isNotEmpty) 
     {
         std::string str{"Hello World!"};
         std::string_view sv(str);
-        assertThat(sv).isNotEmpty();
+        qor_pp_assert_that(sv).isNotEmpty();
     }
 
     qor_pp_test_suite_case(StringView, Size) 
     {
         std::string str{"123456"};
         std::string_view sv(str);
-        assertThat(sv).hasSizeThat().isEqualTo(6);
+        qor_pp_assert_that(sv).hasSizeThat().isEqualTo(6);
     }
 
     qor_pp_test_suite_case(StringView, HasSize) 
     {
         std::string str{"hello"};
         std::string_view sv(str);
-        assertThat(sv).hasLength(5);
+        qor_pp_assert_that(sv).hasLength(5);
     }
 
 }//test_stringview

@@ -44,32 +44,32 @@ namespace test_multimap {
     qor_pp_test_suite_case(MultiMapTests, isEmpty) 
     {
         std::multimap<int, int> x{};
-        assertThat(x).isEmpty();
+        qor_pp_assert_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(MultiMapTests, IsNotEmpty) 
     {
         std::multimap<int, int> x{{1, 2}, {2, 3}};
-        assertThat(x).isNotEmpty();
+        qor_pp_assert_that(x).isNotEmpty();
     }
 
     qor_pp_test_suite_case(MultiMapTests, IsEqual) 
     {
         std::multimap<int, int> x{{1, 2}, {2, 3}};
         std::multimap<int, int> y{{1, 2}, {2, 3}};
-        assertThat(x).isEqualTo(y);
+        qor_pp_assert_that(x).isEqualTo(y);
     }
 
     qor_pp_test_suite_case(MultiMapTests, IsNotEqual) 
     {
         std::multimap<int, int> x{{1, 2}, {2, 4}};
         std::multimap<int, int> y{{1, 2}, {2, 3}};
-        assertThat(x).isNotEqualTo(y);
+        qor_pp_assert_that(x).isNotEqualTo(y);
     }
 
     qor_pp_test_suite_case(MultiMapTests, HasSize) 
     {
         std::multimap<int, int> x{{1, 2}, {2, 4}};
-        assertThat(x).hasSizeThat().isEqualTo(2);
+        qor_pp_assert_that(x).hasSizeThat().isEqualTo(2);
     }
 }

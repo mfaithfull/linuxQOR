@@ -31,8 +31,8 @@
 
 #include <sstream>
 
-#ifdef LINUX_TARGET
-#include <execinfo.h>
+#if(qor_pp_os_target == qor_pp_os_linux)
+#   include <execinfo.h>
 #endif
 
 namespace qor{ namespace mock{
@@ -46,7 +46,7 @@ namespace qor{ namespace mock{
             text << "Function called without expectation!" << std::endl;
             text << repo;
 
-#ifdef LINUX_TARGET
+#if(qor_pp_os_target == qor_pp_os_linux)
             void* stacktrace[256];
             size_t size = backtrace(stacktrace, sizeof(stacktrace));
             if (size > 0)

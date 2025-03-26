@@ -22,66 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Derived from assertcc
-//Copyright 2021 Sean Nash
-//under BSD 3 clause license
-
 #include "../../src/configuration/configuration.h"
-
-#include <stack>
-
 #include "../../src/qor/test/test.h"
+#include "../../src/qor/mock/mocks.h"
 #include "../../src/qor/assert/assertcc.h"
 
-namespace test_stack
-{
-    using namespace qor;
-    using namespace qor::test;
+#include "../../src/qor/datastructures/guid.h"
 
-    struct StackTests {};
+using namespace qor;
+using namespace qor::test;
 
-    qor_pp_test_suite_case(StackTests, IsEmpty) 
+namespace test_guid {
+
+    qor_pp_test_case (canStackGUID)
     {
-        std::stack<int, std::deque<int>> x{};
-        qor_pp_assert_that(x).isEmpty();
+        GUID g;
+        qor_pp_assert_that(&g).isNotEqualTo(nullptr);
     }
 
-    qor_pp_test_suite_case(StackTests, ExpectIsEmpty) 
+    qor_pp_test_case (canStackinitialiseGUID)
     {
-        std::stack<int, std::deque<int>> x{};
-        qor_pp_assert_that(x).isEmpty();
+        GUID g = {0x00000001, 0x0001, 0x0001, { 0x01, 0x03, 0x03, 0x04, 0x05, 0x06, 0x07, 0x8}};
+        qor_pp_assert_that(g == GUID({0x00000001, 0x0001, 0x0001, { 0x01, 0x03, 0x03, 0x04, 0x05, 0x06, 0x07, 0x8}}));
     }
 
-    qor_pp_test_suite_case(StackTests, IsNotEmpty) 
+    qor_pp_test_case (canConstExprinitialiseGUID)
     {
-        std::deque<int> q{1, 2, 3};
-        std::stack<int, std::deque<int>> x{q};
-        qor_pp_assert_that(x).isNotEmpty();
+        constexpr GUID guid = {0x00000001, 0x0001, 0x0002, { 0x01, 0x03, 0x03, 0x04, 0x05, 0x06, 0x07, 0x8}};
+        const GUID* luid = &guid;
+        qor_pp_assert_that(*luid == GUID({0x00000001, 0x0001, 0x0002, { 0x01, 0x03, 0x03, 0x04, 0x05, 0x06, 0x07, 0x8}}));
     }
 
-    qor_pp_test_suite_case(StackTests, IsEqual) 
+    qor_pp_test_case (GUIdComparison)
     {
-        std::deque<int> q1{1, 2, 3};
-        std::stack<int, std::deque<int>> x{q1};
-        std::deque<int> q2{1, 2, 3};
-        std::stack<int, std::deque<int>> y{q2};
-        qor_pp_assert_that(x).isEqualTo(y);
+        constexpr GUID guid = {0x00000001, 0x0001, 0x0002, { 0x01, 0x03, 0x03, 0x04, 0x05, 0x06, 0x07, 0x8}};
+        qor_pp_assert_that(guid != null_guid);
+        qor_pp_assert_that(guid > null_guid);
     }
 
-    qor_pp_test_suite_case(StackTests, IsNotEqual) 
-    {
-        std::deque<int> q1{1, 2, 3, 4};
-        std::stack<int, std::deque<int>> x{q1};
-        std::deque<int> q2{1, 2, 3};
-        std::stack<int, std::deque<int>> y{q2};
-        qor_pp_assert_that(x).isNotEqualTo(y);
-    }
-
-    qor_pp_test_suite_case(StackTests, Size) 
-    {
-        std::deque<int> q1{1, 2, 3, 4};
-        std::stack<int, std::deque<int>> x{q1};
-        qor_pp_assert_that(x).hasSizeThat().isEqualTo(4);
-    }
-
-}//test_stack
+}//test_guid

@@ -43,27 +43,27 @@ namespace test_priorityqueue {
     qor_pp_test_suite_case(PriorityQueueTests, IsEmpty) 
     {
         std::priority_queue<int, std::vector<int>, std::less<int>> x{};
-        assertThat(x).isEmpty();
+        qor_pp_assert_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(PriorityQueueTests, ExpectIsEmpty) 
     {
         std::priority_queue<int, std::vector<int>, std::less<int>> x{};
-        expectThat(x).isEmpty();
+        qor_pp_expect_that(x).isEmpty();
     }
 
     qor_pp_test_suite_case(PriorityQueueTests, IsNotEmpty) 
     {
         std::vector<int> v1{1, 2, 3, 4};
         std::priority_queue<int, std::vector<int>, std::less<int>> x(v1.begin(), v1.end());
-        assertThat(x).isNotEmpty();
+        qor_pp_assert_that(x).isNotEmpty();
     }
 
     qor_pp_test_suite_case(PriorityQueueTests, HasSize) 
     {
         std::vector<int> v1{1, 2, 3, 4, 5};
         std::priority_queue<int, std::vector<int>, std::less<int>> x(v1.begin(), v1.end());
-        assertThat(x).hasSizeThat().isEqualTo(5);
+        qor_pp_assert_that(x).hasSizeThat().isEqualTo(5);
     }
 
 }//test_priorityqueue
