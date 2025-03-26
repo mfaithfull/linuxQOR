@@ -22,5 +22,8 @@ assert/bool.cpp assert/complex.cpp assert/double.cpp assert/float.cpp
 assert/int.cpp assert/iterators.cpp assert/map.cpp assert/multimap.cpp
 assert/optional.cpp assert/pointers.cpp assert/priority_queue.cpp
 assert/set.cpp assert/shared_ptr.cpp assert/span.cpp
-assert/stack.cpp assert/string.cpp assert/weak_ptr.cpp)
+assert/stack.cpp assert/string.cpp assert/string_view.cpp 
+assert/unique_ptr.cpp assert/unordered_map.cpp assert/unordered_multimap.cpp 
+assert/unordered_set.cpp assert/user_class.cpp assert/user_subject.cpp 
+assert/weak_ptr.cpp)
 target_link_libraries(QORTest QORCompiler)

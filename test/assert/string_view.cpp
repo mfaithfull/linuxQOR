@@ -27,3 +27,50 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <string>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_stringview
+{
+    using namespace qor;
+    using namespace qor::test;
+
+    struct StringView {};
+
+    qor_pp_test_suite_case(StringView, isEmpty) 
+    {
+        std::string_view sv;
+        assertThat(sv).isEmpty();
+    }
+
+    qor_pp_test_suite_case(StringView, ExpectIsEmpty) 
+    {
+        std::string_view sv;
+        expectThat(sv).isEmpty();
+    }
+
+    qor_pp_test_suite_case(StringView, isNotEmpty) 
+    {
+        std::string str{"Hello World!"};
+        std::string_view sv(str);
+        assertThat(sv).isNotEmpty();
+    }
+
+    qor_pp_test_suite_case(StringView, Size) 
+    {
+        std::string str{"123456"};
+        std::string_view sv(str);
+        assertThat(sv).hasSizeThat().isEqualTo(6);
+    }
+
+    qor_pp_test_suite_case(StringView, HasSize) 
+    {
+        std::string str{"hello"};
+        std::string_view sv(str);
+        assertThat(sv).hasLength(5);
+    }
+
+}//test_stringview

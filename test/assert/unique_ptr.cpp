@@ -27,3 +27,63 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <memory>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_unique_ptr
+{
+    using namespace qor;
+    using namespace qor::test;
+
+    struct UniquePtrSubjectTests {};
+
+    qor_pp_test_suite_case(UniquePtrSubjectTests, IsNull) 
+    {
+        std::unique_ptr<int> p;
+        assertThat(p).isNull();
+    }
+
+    qor_pp_test_suite_case(UniquePtrSubjectTests, ExpectIsNull) 
+    {
+        std::unique_ptr<int> p;
+        expectThat(p).isNull();
+    }
+
+    qor_pp_test_suite_case(UniquePtrSubjectTests, IsNotNull) 
+    {
+        auto p = std::make_unique<int>(3);
+        assertThat(p).isNotNull();
+        assertThat(p).isNotNull();
+    }
+
+    qor_pp_test_suite_case(UniquePtrSubjectTests, Value) 
+    {
+        auto p = std::make_unique<int>(3);
+        assertThat(p).hasValueThat().isEqualTo(3);
+        assertThat(p).isNotNull();
+    }
+
+    qor_pp_test_suite_case(UniquePtrSubjectTests, NotEqual) 
+    {
+        auto p = std::make_unique<int>(1);
+        auto q = std::make_unique<int>(1);
+        assertThat(p).isNotEqualTo(q);
+        assertThat(p).isNotEqualTo(q);
+    }
+
+    qor_pp_test_suite_case(UniquePtrSubjectTests, EqualTo) 
+    {
+        auto p = std::make_unique<int>(1);
+        assertThat(p).isEqualTo(p);
+    }
+
+    qor_pp_test_suite_case(UniquePtrSubjectTests, ExpectEqualTo) 
+    {
+        auto p = std::make_unique<int>(1);
+        expectThat(p).isEqualTo(p);
+    }
+
+}//test_uniqur_ptr

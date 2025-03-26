@@ -27,3 +27,55 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include <unordered_map>
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_unordered_map
+{
+    using namespace qor;
+    using namespace qor::test;
+
+    struct UnorderedMapSubjectTests {};
+
+    qor_pp_test_suite_case(UnorderedMapSubjectTests, isEmpty) 
+    {
+        std::unordered_map<int, int> x{};
+        assertThat(x).isEmpty();
+    }
+
+    qor_pp_test_suite_case(UnorderedMapSubjectTests, ExpectisEmpty) 
+    {
+        std::unordered_map<int, int> x{};
+        expectThat(x).isEmpty();
+    }
+
+    qor_pp_test_suite_case(UnorderedMapSubjectTests, isNotEmpty) 
+    {
+        std::unordered_map<int, int> x{{1, 2}, {2, 3}};
+        assertThat(x).isNotEmpty();
+    }
+
+    qor_pp_test_suite_case(UnorderedMapSubjectTests, isEqual) 
+    {
+        std::unordered_map<int, int> x{{1, 2}, {2, 3}};
+        std::unordered_map<int, int> y{{1, 2}, {2, 3}};
+        assertThat(x).isEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(UnorderedMapSubjectTests, isNotEqual) 
+    {
+        std::unordered_map<int, int> x{{1, 2}, {2, 4}};
+        std::unordered_map<int, int> y{{1, 2}, {2, 3}};
+        assertThat(x).isNotEqualTo(y);
+    }
+
+    qor_pp_test_suite_case(UnorderedMapSubjectTests, Size) 
+    {
+        std::unordered_map<int, int> x{{1, 2}, {2, 4}};
+        assertThat(x).hasSizeThat().isEqualTo(2);
+    }
+
+}//test_unordered_map

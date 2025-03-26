@@ -27,3 +27,62 @@
 //under BSD 3 clause license
 
 #include "../../src/configuration/configuration.h"
+
+#include "../../src/qor/assert/adl.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assertcc.h"
+
+namespace test_user_class
+{
+
+    using namespace qor;
+    using namespace qor::test;
+
+    struct UserClassTests{};
+
+    class A 
+    {
+        public:
+        int x;
+        bool operator==(const A& rhs) const { return x == rhs.x; }
+    };
+
+    std::ostream& operator<<(std::ostream& os, const A& a) 
+    {
+        os << "[A " << a.x << " ]";
+        return os;
+    }
+}
+
+namespace assertcc 
+{
+    auto assert_that_internal( Adl dummy, const bool failOnError, const char* file, int line, const test_user_class::A& v) 
+    {
+        // v needs to be a reference otherwise UserClassTests will store a reference to a temporary
+        return assertcc::subject::GenericSubject(false, file, line, v);
+    }
+}//assertcc
+
+namespace test_user_class
+{
+    qor_pp_test_suite_case(UserClassTests, IsEqual) 
+    {
+        A a{1};
+        A b{1};
+        assertThat(a).isEqualTo(b);
+    }
+
+    qor_pp_test_suite_case(UserClassTests, ExpectIsEqual) 
+    {
+        A a{1};
+        A b{1};
+        expectThat(a).isEqualTo(b);
+    }
+
+    qor_pp_test_suite_case(UserClassTests, IsNotEqual) 
+    {
+        A a{1};
+        A b{2};
+        assertThat(a).isNotEqualTo(b);
+    }
+}//test_user_class
