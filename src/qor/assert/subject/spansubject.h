@@ -27,7 +27,7 @@
 //under BSD 3 clause license
 #pragma once
 
-#if __cpp_lib_span > 202002L
+#if __cpp_lib_span >= 202002L
 
 #include <span>
 
@@ -37,22 +37,23 @@
 
 namespace assertcc{ namespace subject{
 
-template <typename T>
-class SpanSubject : public virtual Base,
-                    public proposition::HasSizePropositions<SpanSubject<T>, T> public proposition::
-                        IsEmptyPropositions<SpanSubject<T>, T> {
-  const T d_value;
+    template <typename T>
+    class SpanSubject : public virtual Base, public proposition::HasSizePropositions<SpanSubject<T>, T>, public proposition::IsEmptyPropositions<SpanSubject<T>, T> 
+    {
+        const T d_value;
 
- protected:
-  const T* getValue() const override { return &d_value; }
+    protected:
 
- public:
-  SpanSubject(const bool failOnError, const char* file, int line, const T& v)
-      : Base(failOnError, file, line), d_value(v) {}
-};
+        const T* getValue() const override 
+        { 
+            return &d_value; 
+        }
 
-}  // namespace subject
+    public:
 
-}  // namespace assertcc
+        SpanSubject(const bool failOnError, const char* file, int line, const T& v): Base(failOnError, file, line), d_value(v) {}
+    };
+
+}}//assertcc::subject
 
 #endif

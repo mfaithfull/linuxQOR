@@ -35,7 +35,7 @@
 
 namespace test_span
 {
-#if __cpp_lib_span > 202002L
+#if __cpp_lib_span >= 202002L
 
     using namespace qor;
     using namespace qor::test;
@@ -67,7 +67,7 @@ namespace test_span
     {
         std::vector<int> data{1, 2, 3};
         std::span<int> view(data);
-        qor_pp_assert_that(view).hasSize().isEqualTo(3);
+        qor_pp_assert_that(view).hasSize(3);
     }
 
 #endif

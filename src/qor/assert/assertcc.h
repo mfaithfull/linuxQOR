@@ -265,7 +265,7 @@ namespace assertcc {
         return subject::PriorityQueueSubject(failOnError, file, line, v);
     }
 
-#if __cpp_lib_span > 202002L
+#if __cpp_lib_span >= 202002L
 
     template <typename T, std::size_t Extent>
     auto assert_that_internal(
