@@ -30,7 +30,7 @@
 
 #include "../../src/qor/assert/adl.h"
 #include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assertcc.h"
+#include "../../src/qor/assert/assert.h"
 #include "../../src/qor/assert/proposition/isequaltopropositions.h"
 #include "../../src/qor/assert/subject/base.h"
 #include "../../src/qor/assert/util/failmessage.h"
@@ -56,7 +56,7 @@ namespace test_user_subject
         return os;
     }
 
-    class FooSubject : public virtual assertcc::subject::Base, public assertcc::proposition::IsEqualToPropositions<FooSubject, Foo> 
+    class FooSubject : public virtual qor::assert::subject::Base, public qor::assert::proposition::IsEqualToPropositions<FooSubject, Foo> 
     {
         const Foo& d_value;
 
@@ -75,7 +75,7 @@ namespace test_user_subject
         {
             if (getValue()->x != 42) 
             {
-                assertcc::util::FailMessage::create()
+                qor::assert::util::FailMessage::create()
                 .file(getFile())
                 .line(getLine())
                 .fact("Expected the value to be equal to 42")
@@ -86,13 +86,13 @@ namespace test_user_subject
     };
 }//test_user_subject
 
-namespace assertcc 
+namespace qor{ namespace assert
 {
     auto assert_that_internal( Adl dummy, const bool failOnError, const char* file, int line, const test_user_subject::Foo& foo) 
     { // v needs to be a reference otherwise GenericSubject  will store a reference to a temporary
         return test_user_subject::FooSubject(false, file, line, foo);
     }
-}//assertcc
+}}//qor::assert
 
 namespace test_user_subject
 {

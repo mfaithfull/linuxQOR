@@ -35,7 +35,7 @@
 #include "../proposition/isemptypropositions.h"
 #include "base.h"
 
-namespace assertcc{ namespace subject{
+namespace qor{ namespace assert{ namespace subject{
 
     template <typename T>
     class SpanSubject : public virtual Base, public proposition::HasSizePropositions<SpanSubject<T>, T>, public proposition::IsEmptyPropositions<SpanSubject<T>, T> 
@@ -54,6 +54,6 @@ namespace assertcc{ namespace subject{
         SpanSubject(const bool failOnError, const char* file, int line, const T& v): Base(failOnError, file, line), d_value(v) {}
     };
 
-}}//assertcc::subject
+}}}//qor::assert::subject
 
 #endif

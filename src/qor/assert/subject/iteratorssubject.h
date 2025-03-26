@@ -38,9 +38,7 @@
 #include "../util/checkutil.h"
 #include "../util/failmessage.h"
 
-namespace assertcc {
-
-namespace subject {
+namespace qor{ namespace assert{ namespace subject{
 
 template <typename T>
 class IteratorsSubject {
@@ -120,6 +118,4 @@ class IteratorsSubject {
   }
 };
 
-}  // namespace subject
-
-}  // namespace assertcc
+}}}//qor::assert::subject

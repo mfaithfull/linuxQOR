@@ -32,9 +32,7 @@
 #include "../subject/base.h"
 #include "../util/failmessage.h"
 
-namespace assertcc {
-
-namespace proposition {
+namespace qor{ namespace assert{ namespace proposition{
 
 template <typename T, typename U>
 class ContainsKeyPropositions : public virtual subject::Base {
@@ -69,6 +67,4 @@ class ContainsKeyPropositions : public virtual subject::Base {
   }
 };
 
-}  // namespace proposition
-
-}  // namespace assertcc
+}}}//qor::assert::proposition

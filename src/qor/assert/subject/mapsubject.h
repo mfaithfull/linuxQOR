@@ -39,7 +39,7 @@
 #include "../proposition/isequaltopropositions.h"
 #include "base.h"
 
-namespace assertcc{ namespace subject{
+namespace qor{ namespace assert{ namespace subject{
 
 template <typename T>
 class MapSubject : public virtual Base,
@@ -87,6 +87,4 @@ class MapSubject : public virtual Base,
   }
 };
 
-}  // namespace subject
-
-}  // namespace assertcc
+}}}//qor::assert::subject

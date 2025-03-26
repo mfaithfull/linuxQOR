@@ -33,7 +33,7 @@
 #include "../proposition/isequaltopropositions.h"
 #include "base.h"
 
-namespace assertcc{ namespace subject{
+namespace qor{ namespace assert{ namespace subject{
 
 template <typename C>
 class SetSubject : public virtual Base,
@@ -50,6 +50,4 @@ class SetSubject : public virtual Base,
   const C* getValue() const override { return &d_value; }
 };
 
-}  // namespace subject
-
-}  // namespace assertcc
+}}}//qor::assert::subject

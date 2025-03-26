@@ -30,7 +30,7 @@
 
 #include "../../src/qor/assert/adl.h"
 #include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assertcc.h"
+#include "../../src/qor/assert/assert.h"
 
 namespace test_user_class
 {
@@ -54,14 +54,14 @@ namespace test_user_class
     }
 }
 
-namespace assertcc 
-{
+namespace qor{ namespace assert{
+
     auto assert_that_internal( Adl dummy, const bool failOnError, const char* file, int line, const test_user_class::A& v) 
     {
         // v needs to be a reference otherwise UserClassTests will store a reference to a temporary
-        return assertcc::subject::GenericSubject(false, file, line, v);
+        return subject::GenericSubject(false, file, line, v);
     }
-}//assertcc
+}}//qor::assert
 
 namespace test_user_class
 {

@@ -33,7 +33,7 @@
 #include "../subject/integralsubject.h"
 #include "../util/failmessage.h"
 
-namespace assertcc{ namespace proposition{
+namespace qor{ namespace assert{ namespace proposition{
 
     template <typename T, typename U>
     class HasSizePropositions : public virtual subject::Base 
@@ -63,4 +63,4 @@ namespace assertcc{ namespace proposition{
 
     };
 
-}}//assertcc::proposition
+}}}//qor::assert::proposition

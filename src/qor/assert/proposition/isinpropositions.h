@@ -34,7 +34,7 @@
 #include "../subject/base.h"
 #include "../util/failmessage.h"
 
-namespace assertcc{ namespace proposition{
+namespace qor{ namespace assert{ namespace proposition{
 
 template <typename T, typename U>
 class IsInPropositions : public virtual subject::Base 
@@ -119,8 +119,6 @@ class IsInPropositions : public virtual subject::Base
   }
 };
 
-}  // namespace proposition
-
-}  // namespace assertcc
+}}}//qor::assert::proposition
 
 #endif//QOR_PP_H_ASSERT_ISINPROPOSITION

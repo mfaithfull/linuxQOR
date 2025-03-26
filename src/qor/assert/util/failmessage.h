@@ -35,7 +35,7 @@
 #include "prettyprint.h"
 #include "../../test/failure.h"
 
-namespace assertcc { namespace util {
+namespace qor{ namespace assert { namespace util {
 
     class FailMessage 
     {
@@ -118,4 +118,4 @@ namespace assertcc { namespace util {
         }
     };
     
-}}//namespace assertcc::util
+}}}//qor::assert::util

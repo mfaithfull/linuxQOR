@@ -32,7 +32,7 @@
 #include "base.h"
 #include "../util/failmessage.h"
 
-namespace assertcc{ namespace subject{
+namespace qor{ namespace assert{ namespace subject{
 
 class BoolSubject : public virtual Base, public proposition::IsEqualToPropositions<BoolSubject, bool> 
 {
@@ -44,11 +44,12 @@ class BoolSubject : public virtual Base, public proposition::IsEqualToPropositio
 
  public:
 
-  BoolSubject(const bool failOnError, const char* file, int line, const bool v)
-      : Base(failOnError, file, line), d_value(v) {}
+  BoolSubject(const bool failOnError, const char* file, int line, const bool v) : Base(failOnError, file, line), d_value(v) {}
 
-  BoolSubject& isTrue() {
-    if (d_value != true) {
+  BoolSubject& isTrue() 
+  {
+    if (d_value != true) 
+	{
       util::FailMessage::create()
           .file(getFile())
           .line(getLine())
@@ -58,8 +59,10 @@ class BoolSubject : public virtual Base, public proposition::IsEqualToPropositio
     return *this;
   }
 
-  BoolSubject& isFalse() {
-    if (d_value != false) {
+  BoolSubject& isFalse() 
+  {
+    if (d_value != false) 
+	{
       util::FailMessage::create()
           .file(getFile())
           .line(getLine())
@@ -70,4 +73,4 @@ class BoolSubject : public virtual Base, public proposition::IsEqualToPropositio
   }
 };
 
-}}//assertcc::subject
+}}}//qor::assert::subject

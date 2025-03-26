@@ -31,11 +31,11 @@
 #include <memory.h>
 
 #include "../adl.h"
-#include "../assertcc.h"
+#include "../assert.h"
 #include "../subject/base.h"
 #include "../util/failmessage.h"
 
-namespace assertcc{ namespace proposition{
+namespace qor{ namespace assert{ namespace proposition{
 
     template <typename U>
     class HasValueThatPropositions : public virtual subject::Base 
@@ -49,8 +49,8 @@ namespace assertcc{ namespace proposition{
         auto hasValueThat() 
         {
             return assert_that_internal(
-            assertcc::Adl(), getFailOnError(), getFile(), getLine(), **getValue());
+            qor::assert::Adl(), getFailOnError(), getFile(), getLine(), **getValue());
         }
     };
 
-}}//assertcc::proposition
+}}}//qor::assert::proposition

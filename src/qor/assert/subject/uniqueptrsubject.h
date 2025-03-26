@@ -35,7 +35,7 @@
 #include "../proposition/isnullpropositions.h"
 #include "base.h"
 
-namespace assertcc{ namespace subject{
+namespace qor{ namespace assert{ namespace subject{
 
 template <typename T>
 class UniquePtrSubject : public virtual Base,
@@ -52,6 +52,4 @@ class UniquePtrSubject : public virtual Base,
       : Base(failOnError, file, line), d_value(v) {}
 };
 
-}  // namespace subject
-
-}  // namespace assertcc
+}}}//qor::assert::subject

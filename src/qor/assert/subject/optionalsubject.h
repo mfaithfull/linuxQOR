@@ -35,7 +35,7 @@
 #include "../proposition/hasvaluethatpropositions.h"
 #include "base.h"
 
-namespace assertcc{ namespace subject{
+namespace qor{ namespace assert{ namespace subject{
 
 template <typename T>
 class OptionalSubject : public virtual Base,
@@ -76,6 +76,4 @@ class OptionalSubject : public virtual Base,
   }
 };
 
-}  // namespace subject
-
-}  // namespace assertcc
+}}}//qor::assert::subject

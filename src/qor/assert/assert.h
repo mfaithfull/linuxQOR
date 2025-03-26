@@ -70,12 +70,12 @@
 #include "subject/weakptrsubject.h"
 #include "../test/test.h"
 
-#define qor_pp_assert_that(x) assertcc::assert_that_internal(assertcc::Adl(), true, __FILE__, __LINE__, x)
-#define qor_pp_expect_that(x) assertcc::assert_that_internal(assertcc::Adl(), false, __FILE__, __LINE__, x)
+#define qor_pp_assert_that(x) qor::assert::assert_that_internal(qor::assert::Adl(), true, __FILE__, __LINE__, x)
+#define qor_pp_expect_that(x) qor::assert::assert_that_internal(qor::assert::Adl(), false, __FILE__, __LINE__, x)
 
-namespace assertcc {
+namespace qor{ namespace assert{
 
-    template <typename T, typename std::enable_if<std::is_same<T, bool>::value>::type* = nullptr>
+    template <typename T, typename ::std::enable_if<::std::is_same<T, bool>::value>::type* = nullptr>
     auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, T v) 
     {
         return subject::BoolSubject(failOnError, file, line, v);
@@ -90,8 +90,7 @@ namespace assertcc {
     }
 
     template <typename T>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::complex<T> v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::complex<T> v) 
     {
         return subject::ComplexSubject(failOnError, file, line, v);
     }
@@ -103,43 +102,37 @@ namespace assertcc {
     }
 
     template <typename T, size_t N>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::array<T, N>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::array<T, N>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T, typename A>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::vector<T, A>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::vector<T, A>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T, typename A>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::list<T, A>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::list<T, A>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T, typename A>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::deque<T, A>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::deque<T, A>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T, typename A>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::forward_list<T, A>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::forward_list<T, A>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::optional<T> v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::optional<T> v) 
     {
         return subject::OptionalSubject(failOnError, file, line, v);
     }
@@ -151,22 +144,19 @@ namespace assertcc {
     }
 
     template <typename T>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::shared_ptr<T> v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::shared_ptr<T> v) 
     {
         return subject::SharedPtrSubject(failOnError, file, line, v);
     }
 
     template <typename T, typename Deleter>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::unique_ptr<T, Deleter>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::unique_ptr<T, Deleter>& v) 
     {
         return subject::UniquePtrSubject(failOnError, file, line, v);
     }
 
     template <typename T>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::weak_ptr<T>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::weak_ptr<T>& v) 
     {
         return subject::WeakPtrSubject(failOnError, file, line, v);
     }
@@ -212,8 +202,7 @@ namespace assertcc {
     }
 
     template <typename Key, typename Compare, typename Allocator>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::set<Key, Compare, Allocator>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::set<Key, Compare, Allocator>& v) 
     {
         return subject::SetSubject(failOnError, file, line, v);
     }
@@ -249,8 +238,7 @@ namespace assertcc {
     }
 
     template <typename E, typename C>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::stack<E, C>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::stack<E, C>& v) 
     {
         return subject::StackSubject(failOnError, file, line, v);
     }
@@ -268,14 +256,13 @@ namespace assertcc {
 #if __cpp_lib_span >= 202002L
 
     template <typename T, std::size_t Extent>
-    auto assert_that_internal(
-        Adl dummy, bool failOnError, const char* file, int line, std::span<T, Extent>& v) 
+    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::span<T, Extent>& v) 
     {
         return subject::SpanSubject(failOnError, file, line, v);
     }
 
 #endif
 
-}//assertcc
+}}//qor::assert
 
 #endif//QOR_PP_H_ASSERTCC

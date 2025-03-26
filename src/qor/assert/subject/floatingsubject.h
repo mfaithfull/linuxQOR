@@ -33,7 +33,7 @@
 #include "../proposition/stdfloatingpropositions.h"
 #include "base.h"
 
-namespace assertcc{ namespace subject{
+namespace qor{ namespace assert{ namespace subject{
 
 template <typename T>
 class FloatingSubject : public virtual Base,
@@ -66,4 +66,4 @@ public:
     }
 };
 
-}}//assertcc::subject
+}}}//qor::assert::subject

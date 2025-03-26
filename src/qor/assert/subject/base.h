@@ -29,44 +29,45 @@
 #ifndef QOR_PP_H_ASSERT_SUBJECT_BASE
 #define QOR_PP_H_ASSERT_SUBJECT_BASE
 
-namespace assertcc{ namespace subject{
+namespace qor{ namespace assert{ namespace subject{
 
-/*Base class that holds shared information between the subject classes and the
-   propositoin mixins.
+    /*Base class that holds shared information between the subject classes and the
+    propositoin mixins.
 
-   The subject class will intilize the Base superclass and the proposition
-   classes will use the functions to retrive the data. Virtual inheritance is
-   used to avoid the diamond issue.
-*/
-class Base {
-    private:
-  
-        const char* d_file; //The source file of the assert_that statement was called in.
-        const int d_line;/// The line number in the file the assert_that statement is on.
-        const bool d_failOnError;/// A flag to determine whether a test stops at the error or continues.
+    The subject class will intilize the Base superclass and the proposition
+    classes will use the functions to retrive the data. Virtual inheritance is
+    used to avoid the diamond issue.
+    */
+    class Base 
+    {
+        private:
+    
+            const char* d_file; //The source file of the assert_that statement was called in.
+            const int d_line;/// The line number in the file the assert_that statement is on.
+            const bool d_failOnError;/// A flag to determine whether a test stops at the error or continues.
 
-    protected:
+        protected:
 
-        const char* getFile() const 
-        { 
-            return d_file; 
-        }
+            const char* getFile() const 
+            { 
+                return d_file; 
+            }
 
-        int getLine() const 
-        { 
-            return d_line; 
-        }
+            int getLine() const 
+            { 
+                return d_line; 
+            }
 
-        bool getFailOnError() const 
-        { 
-            return d_failOnError; 
-        }
+            bool getFailOnError() const 
+            { 
+                return d_failOnError; 
+            }
 
-    public:
+        public:
 
-        Base(const bool failOnError, const char* file, int line): d_file(file), d_line(line), d_failOnError(failOnError) {}
-};
+            Base(const bool failOnError, const char* file, int line): d_file(file), d_line(line), d_failOnError(failOnError) {}
+    };
 
-}}//assertcc::subject
+}}}//qor::assert::subject
 
 #endif//QOR_PP_H_ASSERT_SUBJECT_BASE

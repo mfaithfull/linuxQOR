@@ -31,7 +31,7 @@
 #include <set>
 
 #include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assertcc.h"
+#include "../../src/qor/assert/assert.h"
 
 namespace test_sets {
 

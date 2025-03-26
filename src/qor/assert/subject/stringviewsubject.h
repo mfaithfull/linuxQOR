@@ -34,7 +34,7 @@
 #include "../proposition/isemptypropositions.h"
 #include "base.h"
 
-namespace assertcc{ namespace subject{
+namespace qor{ namespace assert{ namespace subject{
 
 template <typename T>
 class StringViewSubject : public virtual Base,
@@ -51,6 +51,4 @@ class StringViewSubject : public virtual Base,
       : Base(failOnError, file, line), d_value(v) {}
 };
 
-}  // namespace subject
-
-}  // namespace assertcc
+}}}//qor::assert::subject

@@ -31,12 +31,11 @@
 #include "../subject/base.h"
 #include "../util/failmessage.h"
 
-namespace assertcc {
-
-namespace proposition {
+namespace qor{ namespace assert{ namespace proposition{
 
 template <typename T, typename U>
-class ComparisonPropositions : public virtual subject::Base {
+class ComparisonPropositions : public virtual subject::Base 
+{
  protected:
   virtual const U* getValue() const = 0;
 
@@ -86,6 +85,4 @@ class ComparisonPropositions : public virtual subject::Base {
   }
 };
 
-}  // namespace proposition
-
-}  // namespace assertcc
+}}}//qor::assert::proposition

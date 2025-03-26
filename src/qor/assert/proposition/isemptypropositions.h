@@ -32,10 +32,10 @@
 #include "../subject/base.h"
 #include "../util/failmessage.h"
 
-namespace assertcc{ namespace proposition{
+namespace qor{ namespace assert{ namespace proposition{
 
     template <typename T, typename U>
-    class IsEmptyPropositions : public virtual subject::Base 
+    class IsEmptyPropositions : public virtual qor::assert::subject::Base 
     {
         protected:
         virtual const U* getValue() const = 0;
@@ -68,4 +68,4 @@ namespace assertcc{ namespace proposition{
         }
     };
 
-}}//assertcc::proposition
+}}}//qor::assert::proposition

@@ -29,7 +29,7 @@
 #ifndef QOR_PP_H_ASSERT_ADL
 #define QOR_PP_H_ASSERT_ADL
 
-namespace assertcc {
+namespace qor{ namespace assert{
 
     /**
         This class serves for the compiler to locate the assert_that_internal
@@ -42,6 +42,6 @@ namespace assertcc {
     */
     class Adl {};
     
-}  // namespace assertcc
+}}//qor::assert
 
 #endif//QOR_PP_H_ASSERT_ADL
