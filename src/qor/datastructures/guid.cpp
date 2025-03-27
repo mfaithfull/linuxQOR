@@ -22,43 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_GUID
-#define QOR_PP_H_GUID
-
-#include "../../platform/compiler/compiler.h"
-#include <stdint.h>
+#include "../../configuration/configuration.h"
+#include <string>
+#include "guid.h"
 
 namespace qor{
-    
-    struct GUID;
-    bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
 
-	struct GUID //A structure for globally unique identification
+	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
+    {
+		return (
+			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
+			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
+			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
+			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
+    }
+    
+	bool operator < (const GUID& guidOne, const GUID& guidOther)
 	{
-		uint32_t Data1;
-		uint16_t Data2;
-		uint16_t Data3;
-		uint8_t Data4[8];
+		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
+	}
 
-		bool operator == (const GUID& guidOther) const
-        {
-            return IsEqualGUID(*this, guidOther) ? true : false;
-        }
-    
-		bool operator != (const GUID& guidOther) const
-        {
-            return !IsEqualGUID(*this, guidOther) ? true : false;
-        }
-
-    } const;
-
-    constexpr GUID null_guid = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
-
-	typedef const GUID IID;
-
-	bool operator < (const GUID& guidOne, const GUID& guidOther);
-    bool operator > (const GUID& guidOne, const GUID& guidOther);
-
+    bool operator > (const GUID& guidOne, const GUID& guidOther)
+	{
+		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
+	}
 }//qor
-
-#endif//QOR_PP_H_GUID

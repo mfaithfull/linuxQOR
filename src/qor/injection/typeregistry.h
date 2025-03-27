@@ -22,43 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_GUID
-#define QOR_PP_H_GUID
+#ifndef QOR_PP_H_TYPEREGISTRY
+#define QOR_PP_H_TYPEREGISTRY
 
-#include "../../platform/compiler/compiler.h"
-#include <stdint.h>
+#include <map>
+#include "../datastructures/guid.h"
 
 namespace qor{
-    
-    struct GUID;
-    bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
 
-	struct GUID //A structure for globally unique identification
+    class TypeRegistry final
 	{
-		uint32_t Data1;
-		uint16_t Data2;
-		uint16_t Data3;
-		uint8_t Data4[8];
 
-		bool operator == (const GUID& guidOther) const
-        {
-            return IsEqualGUID(*this, guidOther) ? true : false;
-        }
-    
-		bool operator != (const GUID& guidOther) const
-        {
-            return !IsEqualGUID(*this, guidOther) ? true : false;
-        }
+	public:
 
-    } const;
+		inline TypeRegistry() noexcept = default;
 
-    constexpr GUID null_guid = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
+		inline ~TypeRegistry() noexcept = default;
 
-	typedef const GUID IID;
+		//Register a mapping between a class ID and a factory for creating instances
+		inline void Register(GUID classID, void* factory)
+		{
+			m_regMap.insert(std::pair< GUID, void* >(classID, factory));
+		}
+		
+		//Remove a class id and its factory from the class registry
+		inline void Unregister(GUID classID)
+		{
+			m_regMap.erase(m_regMap.find(classID));
+		}
 
-	bool operator < (const GUID& guidOne, const GUID& guidOther);
-    bool operator > (const GUID& guidOne, const GUID& guidOther);
+		//Get the factory for creating instances of a class by ID
+		inline void* GetFactory(GUID classID)
+		{
+			auto it = m_regMap.find(classID);
+			return (it != m_regMap.end()) ? it->second : nullptr;//ObjectContextBase::NullContext();
+		}
+
+	private:
+
+		std::multimap< GUID, void* > m_regMap;		//A map from class identifiers to factories for creating instances
+
+	};
 
 }//qor
 
-#endif//QOR_PP_H_GUID
+
+#endif//QOR_PP_H_TYPEREGISTRY

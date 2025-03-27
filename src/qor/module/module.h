@@ -22,43 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_GUID
-#define QOR_PP_H_GUID
+#ifndef QOR_PP_H_MODULE
+#define QOR_PP_H_MODULE
 
-#include "../../platform/compiler/compiler.h"
-#include <stdint.h>
+#include "library.h"
 
 namespace qor{
     
-    struct GUID;
-    bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
+	class Module : public Library
+    {
+    public:
 
-	struct GUID //A structure for globally unique identification
-	{
-		uint32_t Data1;
-		uint16_t Data2;
-		uint16_t Data3;
-		uint8_t Data4[8];
+        Module( const char* name, const char* version);
+        virtual ~Module() noexcept;		
 
-		bool operator == (const GUID& guidOther) const
-        {
-            return IsEqualGUID(*this, guidOther) ? true : false;
-        }
-    
-		bool operator != (const GUID& guidOther) const
-        {
-            return !IsEqualGUID(*this, guidOther) ? true : false;
-        }
+		virtual bool RegisterLibrary( Library* pLibrary );			                                //Register a static library as part of this module
+		virtual void UnregisterLibrary( Library* pLibrary );		                                //Unregister a static library from this module
+		//virtual void StaticLibraryList( void( pCallback )( Library*, void* ), void* pContext );	    //Visit the items on the static library list
+		//virtual const char* Version(void);      						                            //Return the version
 
-    } const;
+    protected:
 
-    constexpr GUID null_guid = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
-
-	typedef const GUID IID;
-
-	bool operator < (const GUID& guidOne, const GUID& guidOther);
-    bool operator > (const GUID& guidOne, const GUID& guidOther);
+        Library* m_pStaticLibraryList;
+	
+        Module() = delete;
+        Module(const Module&) = delete;
+        Module& operator = (const Module&) = delete;
+    };
 
 }//qor
 
-#endif//QOR_PP_H_GUID
+//--------------------------------------------------------------------------------
+//Each and every module that includes this header must provide a ThisModule function 
+//returning its module representation object.
+extern qor::Module& ThisModule();
+
+#endif//QOR_PP_H_MODULE

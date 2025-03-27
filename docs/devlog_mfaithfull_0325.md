@@ -56,3 +56,11 @@ Start on the QOR module system so that we can build delf describing, runtime loa
 Decided to start on the QOR module system. A few more integrated docs added first to help with what belong where in the project structure.
 
 Added a GUID class as the first item in a library of basic data structures.
+
+qor_datastructures and qor_host are now separate libraries to prevent multiply defined symbols and we have our first element of the Framework.
+
+The QOR Framework is the actual application building blocks, like and application class, startup up, main loops, state machines etc. 
+Most of these will be larger scale, smaller number of instances, longer lived, objects like pipelines of GUIs
+
+The Host is part of the Framework. There wil be only one, a singleton, and it will get linked into the main executable.
+We need this early on because the Host will own the application wide type registry that will support our dependency injection model.

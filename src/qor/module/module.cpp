@@ -22,43 +22,62 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_GUID
-#define QOR_PP_H_GUID
+#include "../../configuration/configuration.h"
 
-#include "../../platform/compiler/compiler.h"
-#include <stdint.h>
+#include "module.h"
+#include "../../framework/host/host.h"
 
 namespace qor{
-    
-    struct GUID;
-    bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
-
-	struct GUID //A structure for globally unique identification
+	
+    Module::Module( const char* name, const char* version) : Library( name, version, false), m_pStaticLibraryList( nullptr )
 	{
-		uint32_t Data1;
-		uint16_t Data2;
-		uint16_t Data3;
-		uint8_t Data4[8];
+		framework::Host& host = framework::Host::Instance();
+		host.ModuleRegistry().Register(this);
+	}
+	
+	Module::~Module() noexcept
+	{
+		framework::Host& host = framework::Host::Instance();
+		host.ModuleRegistry().Unregister(this);
+	}
 
-		bool operator == (const GUID& guidOther) const
-        {
-            return IsEqualGUID(*this, guidOther) ? true : false;
-        }
-    
-		bool operator != (const GUID& guidOther) const
-        {
-            return !IsEqualGUID(*this, guidOther) ? true : false;
-        }
-
-    } const;
-
-    constexpr GUID null_guid = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
-
-	typedef const GUID IID;
-
-	bool operator < (const GUID& guidOne, const GUID& guidOther);
-    bool operator > (const GUID& guidOne, const GUID& guidOther);
+	bool Module::RegisterLibrary( Library* pLibrary )
+	{
+		if (pLibrary)
+		{
+			if (m_pStaticLibraryList == nullptr)
+			{
+				m_pStaticLibraryList = pLibrary;
+			}
+			else
+			{
+				m_pStaticLibraryList->Append(pLibrary);
+			}
+		}
+		return pLibrary != nullptr;
+	}
+	
+	void Module::UnregisterLibrary( Library* pLibrary )
+	{
+		Library* pSearch = m_pStaticLibraryList;
+		if (pSearch == pLibrary)
+		{
+			m_pStaticLibraryList = const_cast<Library*>(pLibrary->Next());
+		}
+		else
+		{
+			while (pSearch != nullptr)
+			{
+				if (pSearch->Next() == pLibrary)
+				{
+					pSearch->SetNext(pLibrary->Next());
+				}
+                else
+                {
+                    pSearch = const_cast<Library*>(pSearch->Next());
+                }
+			}
+		}
+	}
 
 }//qor
-
-#endif//QOR_PP_H_GUID

@@ -22,43 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_GUID
-#define QOR_PP_H_GUID
+#ifndef QOR_PP_H_FRAMEWORK_HOST
+#define QOR_PP_H_FRAMEWORK_HOST
 
-#include "../../platform/compiler/compiler.h"
-#include <stdint.h>
+#include "../../qor/injection/typeregistry.h"
+#include "../../qor/module/moduleregistry.h"
 
-namespace qor{
-    
-    struct GUID;
-    bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
+namespace qor{ namespace framework{
 
-	struct GUID //A structure for globally unique identification
-	{
-		uint32_t Data1;
-		uint16_t Data2;
-		uint16_t Data3;
-		uint8_t Data4[8];
+    class Host
+    {
+    private:
 
-		bool operator == (const GUID& guidOther) const
-        {
-            return IsEqualGUID(*this, guidOther) ? true : false;
-        }
-    
-		bool operator != (const GUID& guidOther) const
-        {
-            return !IsEqualGUID(*this, guidOther) ? true : false;
-        }
+        TypeRegistry m_TypeReg;
+        ModuleRegistry m_ModuleReg;
 
-    } const;
+    public:
 
-    constexpr GUID null_guid = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
+        static Host& Instance();
+        TypeRegistry& TypeRegistry();
+        ModuleRegistry& ModuleRegistry();
 
-	typedef const GUID IID;
+    };
 
-	bool operator < (const GUID& guidOne, const GUID& guidOther);
-    bool operator > (const GUID& guidOne, const GUID& guidOther);
+}}//qor::framework
 
-}//qor
-
-#endif//QOR_PP_H_GUID
+#endif//QOR_PP_H_FRAMEWORK_HOST

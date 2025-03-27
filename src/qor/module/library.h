@@ -22,43 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_GUID
-#define QOR_PP_H_GUID
-
-#include "../../platform/compiler/compiler.h"
-#include <stdint.h>
+#ifndef QOR_PP_H_LIBRARY
+#define QOR_PP_H_LIBRARY
 
 namespace qor{
     
-    struct GUID;
-    bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
+	class Library
+    {
+    public:
 
-	struct GUID //A structure for globally unique identification
-	{
-		uint32_t Data1;
-		uint16_t Data2;
-		uint16_t Data3;
-		uint8_t Data4[8];
+        Library( const char* name, const char* version, bool bRegister = true);
+        virtual ~Library() noexcept;
+		const char* Name( void ) const;
+        virtual const char* Version(void) const;
 
-		bool operator == (const GUID& guidOther) const
-        {
-            return IsEqualGUID(*this, guidOther) ? true : false;
-        }
-    
-		bool operator != (const GUID& guidOther) const
-        {
-            return !IsEqualGUID(*this, guidOther) ? true : false;
-        }
+        void Append( const Library* pLast );                //Append to the end of the chain
+		const Library* Next() const;                        //Get the next library in the chain
+		void SetNext(const Library* pNext);					//Set the next library in the chain
 
-    } const;
+	protected:
 
-    constexpr GUID null_guid = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
-
-	typedef const GUID IID;
-
-	bool operator < (const GUID& guidOne, const GUID& guidOther);
-    bool operator > (const GUID& guidOne, const GUID& guidOther);
+		const char* m_Name;							        //The internal library name, not necessarily related to any file name
+        const char* m_Version;
+        const Library* m_pNext;								//Pointer to next static library forming a chain
+		//bool m_bRegistered;								//Is this library registered with the containing shared library or executable module
+	
+	private:
+	
+        Library(const Library&) = delete;
+        Library& operator = (const Library&) = delete;
+    };
 
 }//qor
 
-#endif//QOR_PP_H_GUID
+#endif//QOR_PP_H_LIBRARY

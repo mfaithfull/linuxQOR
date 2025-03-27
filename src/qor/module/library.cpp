@@ -22,43 +22,60 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_GUID
-#define QOR_PP_H_GUID
+#include "../../configuration/configuration.h"
 
-#include "../../platform/compiler/compiler.h"
-#include <stdint.h>
+#include "library.h"
 
 namespace qor{
-    
-    struct GUID;
-    bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
-
-	struct GUID //A structure for globally unique identification
+	
+	Library::Library( const char* name, const char* version, bool bRegister) : m_Name(name), m_Version(version), m_pNext(nullptr)
 	{
-		uint32_t Data1;
-		uint16_t Data2;
-		uint16_t Data3;
-		uint8_t Data4[8];
+		if(bRegister)
+		{
+			//TODO: register this library into the chain of the owning module
+		}
+	}
+	
+	Library::~Library() noexcept
+	{
+	}
 
-		bool operator == (const GUID& guidOther) const
-        {
-            return IsEqualGUID(*this, guidOther) ? true : false;
-        }
-    
-		bool operator != (const GUID& guidOther) const
-        {
-            return !IsEqualGUID(*this, guidOther) ? true : false;
-        }
+	const char* Library::Name() const
+	{
+		return m_Name;
+	}
 
-    } const;
+	const char* Library::Version() const
+	{
+		return m_Version;
+	}
+		
+	const Library* Library::Next() const
+	{
+		return m_pNext;
+	}
+	
+	void Library::SetNext(const Library* pNext)
+	{
+		m_pNext = pNext;
+	}
 
-    constexpr GUID null_guid = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
+	void Library::Append( const Library* pLast )
+	{
+		Library* pEnd = this;
 
-	typedef const GUID IID;
+		while( pEnd->m_pNext != nullptr && pEnd != pLast )
+		{
+			pEnd = const_cast<Library*>(pEnd->m_pNext);
+		}
 
-	bool operator < (const GUID& guidOne, const GUID& guidOther);
-    bool operator > (const GUID& guidOne, const GUID& guidOther);
+		if( pEnd != pLast )
+		{
+			pEnd->m_pNext = pLast;
+		}
+	}
 
 }//qor
 
-#endif//QOR_PP_H_GUID
+static qor::Library qor_module("Querysoft Open Runtime: Module Library", 
+    qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);

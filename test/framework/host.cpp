@@ -22,43 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_GUID
-#define QOR_PP_H_GUID
+#include "../../src/configuration/configuration.h"
+#include "../../src/framework/host/host.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assert.h"
 
-#include "../../platform/compiler/compiler.h"
-#include <stdint.h>
+using namespace qor;
+using namespace qor::test;
+using namespace qor::framework;
 
-namespace qor{
-    
-    struct GUID;
-    bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
+struct HostTestSuite{};
 
-	struct GUID //A structure for globally unique identification
-	{
-		uint32_t Data1;
-		uint16_t Data2;
-		uint16_t Data3;
-		uint8_t Data4[8];
+qor_pp_test_suite_case(HostTestSuite, canGetHostInstance)
+{
+    Host& host = Host::Instance();
+    qor_pp_assert_that(&Host::Instance() == &host);
+}
 
-		bool operator == (const GUID& guidOther) const
-        {
-            return IsEqualGUID(*this, guidOther) ? true : false;
-        }
-    
-		bool operator != (const GUID& guidOther) const
-        {
-            return !IsEqualGUID(*this, guidOther) ? true : false;
-        }
-
-    } const;
-
-    constexpr GUID null_guid = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
-
-	typedef const GUID IID;
-
-	bool operator < (const GUID& guidOne, const GUID& guidOther);
-    bool operator > (const GUID& guidOne, const GUID& guidOther);
-
-}//qor
-
-#endif//QOR_PP_H_GUID
+qor_pp_test_suite_case(HostTestSuite, canGetTypeRegistry)
+{
+    Host& host = Host::Instance();
+    auto registry = host.TypeRegistry();
+    qor_pp_assert_that(&registry).isNotNull();
+}
