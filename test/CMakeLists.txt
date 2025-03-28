@@ -26,6 +26,7 @@ assert/stack.cpp assert/string.cpp assert/string_view.cpp
 assert/unique_ptr.cpp assert/unordered_map.cpp assert/unordered_multimap.cpp 
 assert/unordered_set.cpp assert/user_class.cpp assert/user_subject.cpp 
 assert/weak_ptr.cpp datastructures/guid.cpp
-framework/host.cpp)
+framework/host.cpp
+profiling/test_profiling.cpp)
 
 target_link_libraries(QORTest QORCompiler qor_datastructures qor_host qor_module )
