@@ -25,6 +25,7 @@
 #include "../../configuration/configuration.h"
 
 #include "library.h"
+#include "module.h"
 
 namespace qor{
 	
@@ -32,7 +33,7 @@ namespace qor{
 	{
 		if(bRegister)
 		{
-			//TODO: register this library into the chain of the owning module
+			ThisModule().RegisterLibrary(this); //Register this library into the chain of the owning module
 		}
 	}
 	
@@ -77,5 +78,10 @@ namespace qor{
 
 }//qor
 
-static qor::Library qor_module("Querysoft Open Runtime: Module Library", 
+static qor::Library _qor_module("Querysoft Open Runtime: Module Library", 
     qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+
+qor::Library& qor_module()
+{
+	return _qor_module;
+}

@@ -26,5 +26,10 @@
 #include "guid.h"
 #include "../module/library.h"
 
-static qor::Library qor_datastructues("Querysoft Open Runtime: Data Structures Library", 
+static qor::Library _qor_datastructures("Querysoft Open Runtime: Data Structures Library", 
     qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+
+qor::Library& qor_datastructures()
+{
+    return _qor_datastructures;
+}

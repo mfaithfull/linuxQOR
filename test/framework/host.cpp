@@ -45,3 +45,24 @@ qor_pp_test_suite_case(HostTestSuite, canGetTypeRegistry)
     auto registry = host.TypeRegistry();
     qor_pp_assert_that(&registry).isNotNull();
 }
+
+qor_pp_test_suite_case(HostTestSuite, modulesAreRegistered)
+{
+    Host& host = Host::Instance();
+    auto registry = host.ModuleRegistry();
+    qor_pp_assert_that(&registry).isNotNull();
+}
+
+qor_pp_test_suite_case(HostTestSuite, modulesCanBeiteratedWithLibraries)
+{
+    Host& host = Host::Instance();
+    std::cout << std::endl;
+    host.ModuleRegistry().VisitModules([](Module* pModule){
+        std::cout << "Module: " << pModule->Name();
+        std::cout << " Version: " << pModule->Version() << std::endl;
+        pModule->VisitLibraries([](Library* pLibrary){
+            std::cout << "Library: " << pLibrary->Name();
+            std::cout << " Version: " << pLibrary->Version() << std::endl;
+        });
+    });    
+}

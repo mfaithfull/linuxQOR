@@ -38,8 +38,14 @@ namespace qor{
 
 		virtual bool RegisterLibrary( Library* pLibrary );			                                //Register a static library as part of this module
 		virtual void UnregisterLibrary( Library* pLibrary );		                                //Unregister a static library from this module
-		//virtual void StaticLibraryList( void( pCallback )( Library*, void* ), void* pContext );	    //Visit the items on the static library list
-		//virtual const char* Version(void);      						                            //Return the version
+
+        inline void VisitLibraries( void(f)(Library*))
+        {
+            for(Library* it = m_pStaticLibraryList; it != nullptr; it = const_cast<Library*>(it->Next()))
+            {
+                f(it);
+            }
+        }
 
     protected:
 

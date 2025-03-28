@@ -25,7 +25,8 @@
 #ifndef QOR_PP_H_MODULEREGISTRY
 #define QOR_PP_H_MODULEREGISTRY
 
-#include <map>
+#include <vector>
+#include <algorithm>
 #include "../datastructures/guid.h"
 #include "module.h"
 
@@ -40,14 +41,28 @@ namespace qor{
 
 		inline ~ModuleRegistry() noexcept = default;
 
-		inline void Register(Module* pModule)
+		inline void Register(Module& module)
 		{
+            m_Modules.push_back(&module);
 		}
 		
-		inline void Unregister(Module* pModule)
+		inline void Unregister(Module& module)
 		{
+            auto it =  std::find(m_Modules.begin(), m_Modules.end(), &module);
+            if(it != m_Modules.end())
+            {
+                m_Modules.erase(it);
+            }
 		}
 
+        inline void VisitModules( void(f)(Module*))
+        {
+            std::for_each( m_Modules.begin(), m_Modules.end(), f );
+        }
+
+    private:
+
+        std::vector<Module*> m_Modules;
 	};
 
 }//qor

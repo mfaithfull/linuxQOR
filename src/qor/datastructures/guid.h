@@ -25,8 +25,11 @@
 #ifndef QOR_PP_H_GUID
 #define QOR_PP_H_GUID
 
-#include "../../platform/compiler/compiler.h"
 #include <stdint.h>
+#include "../../platform/compiler/compiler.h"
+#include "../module/library.h"
+
+extern qor::Library& qor_datastructures();
 
 namespace qor{
     

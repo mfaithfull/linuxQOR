@@ -25,5 +25,10 @@
 #include "../../configuration/configuration.h"
 #include "../../qor/module/library.h"
 
-static qor::Library qor_datastructues("Querysoft Open Runtime: Host Library", 
+qor::Library _qor_host("Querysoft Open Runtime: Host Library", 
     qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+
+qor::Library& qor_host()
+{
+    return _qor_host;
+}

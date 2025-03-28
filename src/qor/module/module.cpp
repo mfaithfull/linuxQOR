@@ -32,13 +32,13 @@ namespace qor{
     Module::Module( const char* name, const char* version) : Library( name, version, false), m_pStaticLibraryList( nullptr )
 	{
 		framework::Host& host = framework::Host::Instance();
-		host.ModuleRegistry().Register(this);
+		host.ModuleRegistry().Register(*this);
 	}
 	
 	Module::~Module() noexcept
 	{
 		framework::Host& host = framework::Host::Instance();
-		host.ModuleRegistry().Unregister(this);
+		host.ModuleRegistry().Unregister(*this);
 	}
 
 	bool Module::RegisterLibrary( Library* pLibrary )

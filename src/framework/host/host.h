@@ -28,6 +28,10 @@
 #include "../../qor/injection/typeregistry.h"
 #include "../../qor/module/moduleregistry.h"
 
+extern qor::Library& qor_module();
+extern qor::Library& qor_datastructures();
+extern qor::Library& qor_host();
+
 namespace qor{ namespace framework{
 
     class Host
@@ -36,6 +40,8 @@ namespace qor{ namespace framework{
 
         TypeRegistry m_TypeReg;
         ModuleRegistry m_ModuleReg;
+
+        Host();
 
     public:
 

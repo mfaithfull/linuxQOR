@@ -27,6 +27,10 @@
 
 namespace qor{ namespace framework{
 
+    Host::Host()
+    {
+    }
+
     Host& Host::Instance()
     {
         static Host _theHost;

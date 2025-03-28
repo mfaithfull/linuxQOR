@@ -64,3 +64,5 @@ Most of these will be larger scale, smaller number of instances, longer lived, o
 
 The Host is part of the Framework. There wil be only one, a singleton, and it will get linked into the main executable.
 We need this early on because the Host will own the application wide type registry that will support our dependency injection model.
+
+Implemented the self assembling module system for static libraries and executables. Dynamic libraries are next.
