@@ -33,12 +33,12 @@ namespace qor{ namespace framework{
         return _theHost;
     }
 
-    TypeRegistry& Host::TypeRegistry()
+    TypeRegistry& Host::Types()
     {
         return m_TypeReg;
     }
 
-    ModuleRegistry& Host::ModuleRegistry()
+    ModuleRegistry& Host::Modules()
     {
         return m_ModuleReg;
     }

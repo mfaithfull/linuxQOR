@@ -42,6 +42,6 @@ qor_pp_test_suite_case(HostTestSuite, canGetHostInstance)
 qor_pp_test_suite_case(HostTestSuite, canGetTypeRegistry)
 {
     Host& host = Host::Instance();
-    auto registry = host.TypeRegistry();
+    auto registry = host.Types();
     qor_pp_assert_that(&registry).isNotNull();
 }

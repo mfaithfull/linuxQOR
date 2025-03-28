@@ -40,8 +40,8 @@ namespace qor{ namespace framework{
     public:
 
         static Host& Instance();
-        TypeRegistry& TypeRegistry();
-        ModuleRegistry& ModuleRegistry();
+        TypeRegistry& Types();
+        ModuleRegistry& Modules();
 
     };
 
