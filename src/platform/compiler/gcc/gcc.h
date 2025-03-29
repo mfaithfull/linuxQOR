@@ -29,3 +29,6 @@ static constexpr int function_base = 0;
 static constexpr int function_stride = 1;
 
 #define qor_pp_compiler_extra_destructor
+
+#define qor_pp_export			__declspec(dllexport)
+#define qor_pp_import			__declspec(dllimport)

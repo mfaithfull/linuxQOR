@@ -48,3 +48,6 @@ static constexpr int function_stride = 1;
 #endif
 
 #define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING
+
+#define qor_pp_export			__declspec(dllexport)
+#define qor_pp_import			__declspec(dllimport)
