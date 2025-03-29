@@ -54,7 +54,7 @@ namespace qor{
             template< typename... _p >
             static R* Allocate(size_t count, _p... p1)
             {
-                return allocator_of<R>::type::Allocate(count, p1...);
+                return allocator_of<R>::type::template Allocate<R>(count, p1...);
             }
         };        
 

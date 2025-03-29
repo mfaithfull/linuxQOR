@@ -25,20 +25,28 @@
 #include "../../configuration/configuration.h"
 
 #include "module.h"
-#include "../../framework/host/host.h"
+//#include "../../framework/host/host.h"
+
+namespace qor{ namespace framework{
+//	class qor_pp_import Host;
+	qor_pp_import Module* TheHost();
+}}
 
 namespace qor{
 	
-    Module::Module( const char* name, const char* version) : Library( name, version, false), m_pStaticLibraryList( nullptr )
+    Module::Module( const char* name, const char* version, bool _register) : Library( name, version, false), m_pStaticLibraryList( nullptr ), m_TypeReg(nullptr), m_ModuleReg(nullptr)
 	{
-		framework::Host& host = framework::Host::Instance();
-		host.Modules().Register(this);
+		if(_register)
+		{
+			Module* phost = framework::TheHost();
+			phost->RegisterModule(this);
+		}
 	}
 	
 	Module::~Module() noexcept
 	{
-		framework::Host& host = framework::Host::Instance();
-		host.Modules().Unregister(this);
+		Module* phost = framework::TheHost();
+		phost->UnregisterModule(this);
 	}
 
 	bool Module::RegisterLibrary( Library* pLibrary )
@@ -79,5 +87,26 @@ namespace qor{
 			}
 		}
 	}
+
+	void Module::RegisterModule( Module* pModule)
+	{
+
+	}
+
+	void Module::UnregisterModule( Module* pModule)
+	{
+
+	}
+
+	TypeRegistry<int>* Module::Types()
+    {
+        return m_TypeReg;
+    }
+
+    ModuleRegistry* Module::Modules()
+    {
+        return m_ModuleReg;
+    }
+
 
 }//qor

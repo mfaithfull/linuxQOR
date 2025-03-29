@@ -24,34 +24,38 @@
 
 #include "../../configuration/configuration.h"
 #include "host.h"
+#include "../../qor/module/moduleregistry.h"
+
+namespace {
+    static qor::ModuleRegistry _theModuleRegistry;
+}
 
 namespace qor{ namespace framework{
 
-    Host::Host()
+    Host::Host() : Module( "Querysoft Open Runtime: Host Module", qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__, false)
     {
+        m_ModuleReg = &_theModuleRegistry;
+        m_ModuleReg->Register(*this);
     }
 
-    Host& Host::Instance()
+    Module& Host::Instance()
     {
-        static Host _theHost;
-        return _theHost;
-    }
-
-    TypeRegistry& Host::Types()
-    {
-        return m_TypeReg;
-    }
-
-    ModuleRegistry& Host::Modules()
-    {
-        return m_ModuleReg;
+        return *(TheHost());
     }
     
-}}//qor::framework
+    Module* TheHost()
+    {
+        return &(ThisModule());
+    }
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORRuntimeModule("Querysoft Open Runtime: Executable Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
-	return QORRuntimeModule;
-}
+	void Host::RegisterModule( Module* pModule)
+	{
+        m_ModuleReg->Register(*pModule);
+	}
+
+	void Host::UnregisterModule( Module* pModule)
+	{
+        m_ModuleReg->Unregister(*pModule);
+	}
+
+}}//qor::framework

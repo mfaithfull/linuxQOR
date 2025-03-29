@@ -27,16 +27,14 @@
 
 #include <stdint.h>
 #include "../../platform/compiler/compiler.h"
-#include "../module/library.h"
-
-extern qor::Library& qor_datastructures();
 
 namespace qor{
     
     struct GUID;
-    bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
+    
+    bool qor_pp_module_interface(QOR_DATASTRUCTURES) IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
 
-	struct GUID //A structure for globally unique identification
+	struct qor_pp_module_interface(QOR_DATASTRUCTURES) GUID //A structure for globally unique identification
 	{
 		uint32_t Data1;
 		uint16_t Data2;
@@ -59,8 +57,8 @@ namespace qor{
 
 	typedef const GUID IID;
 
-	bool operator < (const GUID& guidOne, const GUID& guidOther);
-    bool operator > (const GUID& guidOne, const GUID& guidOther);
+	qor_pp_module_interface(QOR_DATASTRUCTURES) bool operator < (const GUID& guidOne, const GUID& guidOther);
+    qor_pp_module_interface(QOR_DATASTRUCTURES) bool operator > (const GUID& guidOne, const GUID& guidOther);
 
 }//qor
 

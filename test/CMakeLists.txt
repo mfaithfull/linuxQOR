@@ -31,4 +31,6 @@ profiling/test_profiling.cpp
 factory/test_factory.cpp
 reference/test_ref.cpp)
 
-target_link_libraries(QORTest QORCompiler qor_datastructures qor_host qor_module )
+target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
+
+target_link_libraries(QORTest QORCompiler qor_host qor_datastructures )

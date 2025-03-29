@@ -26,6 +26,7 @@
 #include "../../src/framework/host/host.h"
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/assert/assert.h"
+#include "../../src/qor/module/moduleregistry.h"
 
 using namespace qor;
 using namespace qor::test;
@@ -35,29 +36,29 @@ struct HostTestSuite{};
 
 qor_pp_test_suite_case(HostTestSuite, canGetHostInstance)
 {
-    Host& host = Host::Instance();
+    Module& host = Host::Instance();
     qor_pp_assert_that(&Host::Instance() == &host);
 }
 
 qor_pp_test_suite_case(HostTestSuite, canGetTypeRegistry)
 {
-    Host& host = Host::Instance();
+    Module& host = Host::Instance();
     auto registry = host.Types();
     qor_pp_assert_that(&registry).isNotNull();
 }
 
 qor_pp_test_suite_case(HostTestSuite, modulesAreRegistered)
 {
-    Host& host = Host::Instance();
-    auto registry = host.ModuleRegistry();
+    Module& host = Host::Instance();
+    auto registry = host.Modules();
     qor_pp_assert_that(&registry).isNotNull();
 }
 
 qor_pp_test_suite_case(HostTestSuite, modulesCanBeiteratedWithLibraries)
 {
-    Host& host = Host::Instance();
+    Module& host = Host::Instance();
     std::cout << std::endl;
-    host.ModuleRegistry().VisitModules([](Module* pModule){
+    host.Modules()->VisitModules([](Module* pModule){
         std::cout << "Module: " << pModule->Name();
         std::cout << " Version: " << pModule->Version() << std::endl;
         pModule->VisitLibraries([](Library* pLibrary){

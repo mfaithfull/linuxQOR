@@ -25,31 +25,28 @@
 #ifndef QOR_PP_H_FRAMEWORK_HOST
 #define QOR_PP_H_FRAMEWORK_HOST
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include "../../qor/module/module.h"
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
 
 namespace qor{ namespace framework{
 
-    class Host
+    qor_pp_module_interface(QOR_PP_HOST)Module* TheHost();
+
+    class qor_pp_module_interface(QOR_PP_HOST) Host : public qor::Module
     {
-    private:
-
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
-
-        Host();
 
     public:
 
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
+        Host();
+
+        static Module& Instance();
+
+        virtual void RegisterModule( Module* pModule);
+        virtual void UnregisterModule( Module* pModule);
 
     };
+
+    
 
 }}//qor::framework
 
