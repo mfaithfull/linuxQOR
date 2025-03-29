@@ -22,39 +22,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
+#ifndef QOR_PP_H_REFERENCE_NEW
+#define QOR_PP_H_REFERENCE_NEW
 
-#include <string>
-#include qor_pp_compiler_include
-
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
-
-namespace qor { namespace compiler {
-
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-    
-}}//qor::compiler
-
+#include "src/qor/reference/reference.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/instance/instance.h"
+#include "src/qor/instance/default.h"
 
 namespace qor{
-    typedef uint8_t byte;
+
+	template< typename T >
+	ref_of<T>::type new_ref()
+	{
+		return instancer_of<T>::type::template Instance<T>(1);
+	}
+
+	
+	template< typename T, typename... _p >
+	ref_of<T>::type new_ref(_p&&... p1)
+	{
+		return instancer_of<T>::type::template Instance<T>(1, std::forward<_p&&>(p1)...);
+	}
+
+	template< typename T >
+	ref_of<T>::type new_array_ref(size_t count)
+	{
+		return instancer_of<T>::type::template Instance<T>(count);
+	}
+	
+	template< typename T, typename... _p >
+	ref_of<T>::type new_array_ref(size_t count, _p&&... p1)
+	{
+		return instancer_of<T>::type::template Instance<T>(count, std::forward<_p&&>(p1)...);
+	}
+
+	template< typename T>
+	void internal_del_ref(T* p)
+	{
+		instancer_of<T>::type::template Release<T>(p, 1);
+	}
+
 }//qor
 
-#endif//QOR_PP_H_COMPILER
+#endif//QOR_PP_H_REFERENCE_NEW

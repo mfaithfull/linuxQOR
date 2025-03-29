@@ -22,39 +22,53 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
+#ifndef QOR_PP_H_TYPEIDENTITY
+#define QOR_PP_H_TYPEIDENTITY
 
-#include <string>
-#include qor_pp_compiler_include
+#include <typeinfo>
+#include <typeindex>
 
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
-
-namespace qor { namespace compiler {
-
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-    
-}}//qor::compiler
-
+#include "src/platform/compiler/compiler.h"
+#include "src/qor/datastructures/guid.h"
 
 namespace qor{
-    typedef uint8_t byte;
+
+    template<typename T>
+    struct id_of
+    {
+        constexpr index = std::type_index(typeid(T));
+    };
+
+    template<typename T>
+    struct name_of
+    {
+        std::string name()
+        {
+            return compiler::demangle<T>();
+        }
+    };
+
+    template<typename T>
+    struct guid_of
+    {
+        GUID guid()
+        {
+            return null_guid;
+        }
+    };
+
+//Preprocessor macro shorthand for declaring a guid_of template specialisation
+#   define qor_pp_declare_guid_of(_CLASS,_GUID)\
+    template<> struct guid_of< _CLASS >\
+    {\
+        GUID guid()\
+        {\
+            return _GUID;\
+        }\
+    };
+
+//Example: qor_pp_declare_guid_of(IFeature, {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}});
+
 }//qor
 
-#endif//QOR_PP_H_COMPILER
+#endif//QOR_PP_H_TYPEIDENTITY

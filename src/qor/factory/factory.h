@@ -22,39 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
-
-#include <string>
-#include qor_pp_compiler_include
-
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
-
-namespace qor { namespace compiler {
-
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-    
-}}//qor::compiler
-
+#ifndef QOR_PP_H_FACTORY
+#define QOR_PP_H_FACTORY
 
 namespace qor{
-    typedef uint8_t byte;
+
+    template< class T > class InternalFactory;
+
+    template<typename T>
+    struct factory_of
+    {
+        typedef InternalFactory< T > type;
+    };
+
 }//qor
 
-#endif//QOR_PP_H_COMPILER
+//Preprocessor macro shorthand for declaring a factory_of specialisation
+#   define qor_pp_declare_factory_of(_CLASS,_FACTORY)\
+template<> struct qor::factory_of< _CLASS >\
+{\
+    typedef qor::_FACTORY< _CLASS > type;\
+};
+
+//Example: qor_pp_declare_factory_of(IFeature, ExternalFactory);
+
+#endif//QOR_PP_H_FACTORY

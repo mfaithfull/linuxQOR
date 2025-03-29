@@ -22,39 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
+#ifndef QOR_PP_H_MEMORY_DEFAULTSOURCE
+#define QOR_PP_H_MEMORY_DEFAULTSOURCE
 
-#include <string>
-#include qor_pp_compiler_include
-
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
-
-namespace qor { namespace compiler {
-
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-    
-}}//qor::compiler
-
+#include <cstdint>
+#include <stddef.h>
 
 namespace qor{
-    typedef uint8_t byte;
+
+    class DefaultSource final
+    {
+    public:
+        static inline uint8_t* Source(size_t byteCount)
+        {
+            return new uint8_t[byteCount];
+        }
+
+        static inline void Free(uint8_t* memory, size_t ignored)
+        {
+            delete[] memory;
+        }
+
+    private:
+
+        DefaultSource() = delete;
+        ~DefaultSource() = delete;
+        DefaultSource(const DefaultSource & src) = delete;
+        DefaultSource& operator = (const DefaultSource & src) = delete;
+
+    };
+
 }//qor
 
-#endif//QOR_PP_H_COMPILER
+#endif//QOR_PP_H_MEMORY_DEFAULTSOURCE

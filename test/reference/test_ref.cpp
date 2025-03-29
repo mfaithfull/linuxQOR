@@ -22,39 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
+#include "src/configuration/configuration.h"
 
-#include <string>
-#include qor_pp_compiler_include
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
 
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
+#include "src/qor/reference/newref.h"
 
-namespace qor { namespace compiler {
+using namespace qor;
+using namespace qor::test;
 
-    class Compiler : public CompilerBase
+
+struct ReferenceTestSuite{};
+
+class Test_Biscuit
+{
+private:
+    int m_i;
+
+public:
+
+    Test_Biscuit() : m_i(0)
     {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
     }
-    
-}}//qor::compiler
 
+    Test_Biscuit(int i) : m_i(i)
+    {
+    }
 
-namespace qor{
-    typedef uint8_t byte;
-}//qor
+    ~Test_Biscuit()
+    {
+    }
 
-#endif//QOR_PP_H_COMPILER
+    int Value()
+    {
+        return m_i;
+    }
+};
+
+qor_pp_declare_factory_of(Test_Biscuit, InternalFactory);
+
+qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
+{
+    auto ref = qor::new_ref<Test_Biscuit>();
+    qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
+}
+

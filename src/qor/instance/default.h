@@ -22,39 +22,59 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
+#ifndef QOR_PP_H_INSTANCE_DEFAULT
+#define QOR_PP_H_INSTANCE_DEFAULT
 
-#include <string>
-#include qor_pp_compiler_include
+#include <stddef.h>
 
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
+#include "src/qor/reference/reference.h"
+#include "src/qor/factory/factory.h"
 
-namespace qor { namespace compiler {
-
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-    
-}}//qor::compiler
-
+//The purpose of an instancer is to determine whether to give out an existing instance
+//a new instance or perhaps a recycled instance or to refuse the request.
 
 namespace qor{
-    typedef uint8_t byte;
+
+    template<typename T> struct factory_of;
+    
+    //The default instancer gives out unconstrained freshly constructed instance references from the per type factory
+	class DefaultInstancer final
+	{
+	public:
+
+		template< class T >
+		static inline void Release(T* pt, size_t uiCount = 1)
+		{
+			factory_of<T>::type::Destruct(pt, uiCount);
+		}
+
+		template< class T >
+		static inline void TearDown(T* pt, size_t uiCount = 1)
+		{
+			factory_of<T>::type::TearDown(pt, uiCount);
+		}
+		        
+		template< class T >
+		static inline auto Instance(size_t uiCount = 1)
+		{
+			return factory_of<T>::type::Construct(uiCount);
+		}
+		
+		template< class T, typename... _p >
+		static inline auto Instance(size_t uiCount, _p&&... p1)
+		{
+			return factory_of<T>::type::Build(uiCount, p1...);
+		}
+
+	private:
+
+		DefaultInstancer() = delete;
+		~DefaultInstancer() = delete;
+	};
+
 }//qor
 
-#endif//QOR_PP_H_COMPILER
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/factory/externalfactory.h"
+
+#endif//QOR_PP_H_INSTANCE_DEFAULT

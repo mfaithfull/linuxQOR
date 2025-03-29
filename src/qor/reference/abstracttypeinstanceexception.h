@@ -22,39 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
+#ifndef QOR_PP_H_ABSTRACTTYPEINSTANCEEXCEPTION
+#define QOR_PP_H_ABSTRACTTYPEINSTANCEEXCEPTION
 
-#include <string>
-#include qor_pp_compiler_include
-
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
-
-namespace qor { namespace compiler {
-
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-    
-}}//qor::compiler
-
+#include <stdexcept>
 
 namespace qor{
-    typedef uint8_t byte;
+
+	class abstracttypeinstanceexception : public std::logic_error
+	{
+	public:
+		using base_type = std::logic_error;
+
+		explicit memoryexception(const std::string& message) : base_type(message.c_str())
+		{
+		}
+
+		explicit memoryexception(const char* message) : base_type(message)
+		{
+		}
+	};
+
 }//qor
 
-#endif//QOR_PP_H_COMPILER
+#endif//QOR_PP_H_ABSTRACTTYPEINSTANCEEXCEPTION

@@ -22,39 +22,25 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
-
-#include <string>
-#include qor_pp_compiler_include
-
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
-
-namespace qor { namespace compiler {
-
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-    
-}}//qor::compiler
+#ifndef QOR_PP_H_SYNC_NULLSECTION
+#define QOR_PP_H_SYNC_NULLSECTION
 
 
 namespace qor{
-    typedef uint8_t byte;
+		
+		class NullSection //: public ISyncObject
+		{
+		public:
+
+			NullSection() = default;
+			virtual ~NullSection() = default;
+
+			virtual void Acquire(void){}
+
+            virtual void Release(void){}
+
+        };
+
 }//qor
 
-#endif//QOR_PP_H_COMPILER
+#endif//QOR_PP_H_SYNC_NULLSECTION

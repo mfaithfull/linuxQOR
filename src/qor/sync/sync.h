@@ -22,39 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
+#ifndef QOR_PP_H_SYNC
+#define QOR_PP_H_SYNC
 
-#include <string>
-#include qor_pp_compiler_include
-
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
-
-namespace qor { namespace compiler {
-
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-    
-}}//qor::compiler
-
+#include "nullsection.h"
 
 namespace qor{
-    typedef uint8_t byte;
+
+    template<typename T>
+    struct sync_of
+    {
+        typedef NullSection type;
+    };
+
 }//qor
 
-#endif//QOR_PP_H_COMPILER
+//Preprocessor macro shorthand for declaring a factory_of specialisation
+#   define qor_pp_declare_sync_of(_CLASS,_SYNC)\
+template<> struct qor::sync_of< _CLASS >\
+{\
+    typedef qor::_SYNC type;\
+};
+
+//Example: qor_pp_declare_factory_of(SharedDataHolder, Mutex);
+
+#endif//QOR_PP_H_SYNC

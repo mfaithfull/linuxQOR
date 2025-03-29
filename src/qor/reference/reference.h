@@ -22,39 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
+#ifndef QOR_PP_H_REFERENCE
+#define QOR_PP_H_REFERENCE
 
-#include <string>
-#include qor_pp_compiler_include
-
-#ifndef qor_pp_compiler_at
-#   error Compiler support must provide a definition for qor_pp_compiler_at
-#endif
-
-namespace qor { namespace compiler {
-
-    class Compiler : public CompilerBase
-    {
-    public:
-        virtual ~Compiler() = default;
-
-        const char* Name();
-    };
-
-    const Compiler* TheCompiler();
-
-    template <typename T>
-    static std::string demangle()
-    {
-        return TheCompiler()->demangle<T>();
-    }
-    
-}}//qor::compiler
-
+#include "ref.h"
+//#include "lref.h"
+//#include "comref.h"
+//#include "sref.h"
+//#include "poolref.h"
+//#include "flyerref.h"
 
 namespace qor{
-    typedef uint8_t byte;
+
+    template<typename T>
+    struct ref_of
+    {
+        typedef Ref<T> type;
+    };
+
 }//qor
 
-#endif//QOR_PP_H_COMPILER
+//Preprocessor macro shorthand for declaring a ref_of specialisation
+#   define qor_pp_declare_ref_of(_CLASS,_REF)\
+template<> struct qor::ref_of< _CLASS >\
+{\
+    typedef qor::_REF< _CLASS > type;\
+};
+
+//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
+
+#endif//QOR_PP_H_FACTORY
