@@ -46,6 +46,8 @@
 #include "../platform/architecture/detectarchitecture.h"    //Determine the target arch by defaulting to the host arch if the target hasn't been predefined
 #include "../platform/os/detectos.h"                        //Determine the target OS by defaulting to the host OS if the target hasn't been predefined
 
+#define qor_pp_module_interface( _X ) qor_pp_if(qor_pp_is_empty(_X), qor_pp_import, qor_pp_export)
+
 #define qor_pp_ver_major 0
 #define qor_pp_ver_minor 0
 #define qor_pp_ver_patch 0
