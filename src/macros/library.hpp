@@ -26,7 +26,11 @@
 #define QOR_PP_H_PREPROCESSOR_LIBRARY
 
 #include "cat.hpp"
+#include "control.hpp"
+#include "facilities.hpp"
+#include "logical.hpp"
 #include "pathify.hpp"
+#include "punctuation.hpp"
 #include "stringize.hpp"
 
 #endif//QOR_PP_H_PREPROCESSOR_LIBRARY
