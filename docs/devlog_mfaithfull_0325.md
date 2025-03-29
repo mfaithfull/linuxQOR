@@ -66,3 +66,7 @@ The Host is part of the Framework. There wil be only one, a singleton, and it wi
 We need this early on because the Host will own the application wide type registry that will support our dependency injection model.
 
 Implemented the self assembling module system for static libraries and executables. Dynamic libraries are next.
+
+Module stitching is now operational for static and dynamic libraries. It requires a small amount of boiler plate in the final executable but this can likely be removed in favout of linking it with a tiny static exebootstrap library
+
+Type Registration may need to be moved to its own module as the host module is the root dynamic dependency and can't contain data types from QOR modules.
