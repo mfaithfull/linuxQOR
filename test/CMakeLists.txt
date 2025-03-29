@@ -30,8 +30,9 @@ assert/weak_ptr.cpp datastructures/guid.cpp
 framework/host.cpp
 profiling/test_profiling.cpp
 factory/test_factory.cpp
-reference/test_ref.cpp)
+reference/test_ref.cpp
+objectcontext/test_objectcontext.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
-target_link_libraries(QORTest QORCompiler qor_host qor_datastructures )
+target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext )
