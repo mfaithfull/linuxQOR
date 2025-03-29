@@ -22,28 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#ifndef QOR_PP_H_REFERENCE
+#define QOR_PP_H_REFERENCE
+
+#include "ref.h"
+//#include "lref.h"
+//#include "comref.h"
+//#include "sref.h"
+//#include "poolref.h"
+//#include "flyerref.h"
 
 namespace qor{
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
+    template<typename T>
+    struct ref_of
     {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
-    }
-    
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
+        typedef Ref<T> type;
+    };
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
 }//qor
+
+//Preprocessor macro shorthand for declaring a ref_of specialisation
+#   define qor_pp_declare_ref_of(_CLASS,_REF)\
+template<> struct qor::ref_of< _CLASS >\
+{\
+    typedef qor::_REF< _CLASS > type;\
+};
+
+//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
+
+#endif//QOR_PP_H_FACTORY

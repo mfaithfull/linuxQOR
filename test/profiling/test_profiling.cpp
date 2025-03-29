@@ -22,28 +22,51 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#include "../../src/configuration/configuration.h"
 
-namespace qor{
+#include <chrono>
+#include <thread>
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
+#include "../../src/framework/host/host.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assert.h"
+#include "../../src/qor/profiling/profiling.h"
+
+using namespace qor;
+using namespace qor::test;
+using namespace std::chrono_literals;
+
+struct ProfilingTestSuite{
+
+    void Delay()
     {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
+        std::this_thread::sleep_for(128ms);
     }
-    
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
+};
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
-}//qor
+class Test_ProfileReporter : public ProfileReceiver
+{
+public:
+
+    std::chrono::duration<int64_t, std::milli> m_recordedDuration;
+
+    virtual void Profile(const std::chrono::duration<int64_t, std::milli> durationMilliseconds)
+    {
+        m_recordedDuration = durationMilliseconds;
+        std::cout << " - Profile time: " << durationMilliseconds.count() << "ms";
+    }
+};
+
+#include qor_pp_profile_begin
+
+qor_pp_test_suite_case(ProfilingTestSuite, canProfileFunction)
+{
+    Test_ProfileReporter reporter;
+    {
+        FunctionProfiler profiler(dynamic_cast<ProfileReceiver*>(&reporter), qor_pp_profile_enabled);
+        Delay();
+    }
+    qor_pp_assert_that(reporter.m_recordedDuration >= 128ms).isTrue();
+}
+
+#include qor_pp_profile_end

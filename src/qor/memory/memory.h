@@ -22,28 +22,54 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#ifndef QOR_PP_H_MEMORY
+#define QOR_PP_H_MEMORY
+
+#include "src/platform/compiler/compiler.h"
+#include "defaultsource.h"
 
 namespace qor{
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
+    template<typename T>
+    struct source_of
     {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
-    }
-    
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
+        typedef DefaultSource type;
+    };
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
 }//qor
+
+//Preprocessor macro shorthand for declaring a source_of specialisation
+#   define qor_pp_declare_source_of(_CLASS,_SOURCE)\
+template<> struct qor::source_of< _CLASS >\
+{\
+    typedef qor::_SOURCE type;\
+};
+//Example: qor_pp_declare_source_of(MyClass, DefaultSource);
+
+
+#include "debugallocator.h"
+#include "releaseallocator.h"
+
+namespace qor{
+
+    template<typename T>
+    struct allocator_of
+    {
+#   ifndef NDEBUG
+        typedef DebugAllocator type;
+#   else
+        typedef ReleaseAllocator type;
+#   endif
+    };
+
+}//qor
+
+//Preprocessor macro shorthand for declaring a allocator_of specialisation
+#   define qor_pp_declare_allocator_of(_CLASS,_ALLOCATOR)\
+template<> struct qor::allocator_of< _CLASS >\
+{\
+    typedef qor::_ALLOCATOR type;\
+};
+//Example: qor_pp_declare_allocator_of(Biscuits, SpecialAllocator);
+
+#endif//QOR_PP_H_MEMORY

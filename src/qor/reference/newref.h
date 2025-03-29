@@ -22,28 +22,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#ifndef QOR_PP_H_REFERENCE_NEW
+#define QOR_PP_H_REFERENCE_NEW
+
+#include "src/qor/reference/reference.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/instance/instance.h"
+#include "src/qor/instance/default.h"
 
 namespace qor{
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
-    {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
-    }
-    
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
+	template< typename T >
+	ref_of<T>::type new_ref()
 	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
+		return instancer_of<T>::type::template Instance<T>(1);
 	}
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
+	
+	template< typename T, typename... _p >
+	ref_of<T>::type new_ref(_p&&... p1)
 	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
+		return instancer_of<T>::type::template Instance<T>(1, std::forward<_p&&>(p1)...);
 	}
+
+	template< typename T >
+	ref_of<T>::type new_array_ref(size_t count)
+	{
+		return instancer_of<T>::type::template Instance<T>(count);
+	}
+	
+	template< typename T, typename... _p >
+	ref_of<T>::type new_array_ref(size_t count, _p&&... p1)
+	{
+		return instancer_of<T>::type::template Instance<T>(count, std::forward<_p&&>(p1)...);
+	}
+
+	template< typename T>
+	void internal_del_ref(T* p)
+	{
+		instancer_of<T>::type::template Release<T>(p, 1);
+	}
+
 }//qor
+
+#endif//QOR_PP_H_REFERENCE_NEW

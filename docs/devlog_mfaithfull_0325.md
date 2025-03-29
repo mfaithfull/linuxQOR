@@ -65,6 +65,9 @@ Most of these will be larger scale, smaller number of instances, longer lived, o
 The Host is part of the Framework. There wil be only one, a singleton, and it will get linked into the main executable.
 We need this early on because the Host will own the application wide type registry that will support our dependency injection model.
 
+Had a go at adding smart references. Requires a lot of things to be in place to get it working but Ref<T> is up and testable.
+
+
 Implemented the self assembling module system for static libraries and executables. Dynamic libraries are next.
 
 Module stitching is now operational for static and dynamic libraries. It requires a small amount of boiler plate in the final executable but this can likely be removed in favout of linking it with a tiny static exebootstrap library

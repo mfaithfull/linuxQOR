@@ -22,28 +22,59 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#ifndef QOR_PP_H_INSTANCE_DEFAULT
+#define QOR_PP_H_INSTANCE_DEFAULT
+
+#include <stddef.h>
+
+#include "src/qor/reference/reference.h"
+#include "src/qor/factory/factory.h"
+
+//The purpose of an instancer is to determine whether to give out an existing instance
+//a new instance or perhaps a recycled instance or to refuse the request.
 
 namespace qor{
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
-    {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
-    }
+    template<typename T> struct factory_of;
     
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
+    //The default instancer gives out unconstrained freshly constructed instance references from the per type factory
+	class DefaultInstancer final
 	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
+	public:
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
+		template< class T >
+		static inline void Release(T* pt, size_t uiCount = 1)
+		{
+			factory_of<T>::type::Destruct(pt, uiCount);
+		}
+
+		template< class T >
+		static inline void TearDown(T* pt, size_t uiCount = 1)
+		{
+			factory_of<T>::type::TearDown(pt, uiCount);
+		}
+		        
+		template< class T >
+		static inline auto Instance(size_t uiCount = 1)
+		{
+			return factory_of<T>::type::Construct(uiCount);
+		}
+		
+		template< class T, typename... _p >
+		static inline auto Instance(size_t uiCount, _p&&... p1)
+		{
+			return factory_of<T>::type::Build(uiCount, p1...);
+		}
+
+	private:
+
+		DefaultInstancer() = delete;
+		~DefaultInstancer() = delete;
+	};
+
 }//qor
+
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/factory/externalfactory.h"
+
+#endif//QOR_PP_H_INSTANCE_DEFAULT

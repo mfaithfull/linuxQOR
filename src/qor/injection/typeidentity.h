@@ -22,28 +22,53 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#ifndef QOR_PP_H_TYPEIDENTITY
+#define QOR_PP_H_TYPEIDENTITY
+
+#include <typeinfo>
+#include <typeindex>
+
+#include "src/platform/compiler/compiler.h"
+#include "src/qor/datastructures/guid.h"
 
 namespace qor{
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
+    template<typename T>
+    struct id_of
     {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
-    }
-    
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
+        constexpr index = std::type_index(typeid(T));
+    };
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
+    template<typename T>
+    struct name_of
+    {
+        std::string name()
+        {
+            return compiler::demangle<T>();
+        }
+    };
+
+    template<typename T>
+    struct guid_of
+    {
+        GUID guid()
+        {
+            return null_guid;
+        }
+    };
+
+//Preprocessor macro shorthand for declaring a guid_of template specialisation
+#   define qor_pp_declare_guid_of(_CLASS,_GUID)\
+    template<> struct guid_of< _CLASS >\
+    {\
+        GUID guid()\
+        {\
+            return _GUID;\
+        }\
+    };
+
+//Example: qor_pp_declare_guid_of(IFeature, {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}});
+
 }//qor
+
+#endif//QOR_PP_H_TYPEIDENTITY

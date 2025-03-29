@@ -22,28 +22,24 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#ifndef QOR_PP_H_PROFILERECEIVER
+#define QOR_PP_H_PROFILERECEIVER
 
-namespace qor{
+#include <chrono>
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
-    {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
-    }
-    
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
+namespace qor {
+
+	class ProfileReceiver
 	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
+        public:
+
+		ProfileReceiver() = default;
+		virtual ~ProfileReceiver() = default;
+
+		virtual void Profile(const std::chrono::duration<int64_t, std::milli>) = 0;
+	};
+
 }//qor
+
+#endif//QOR_PP_H_PROFILERECEIVER

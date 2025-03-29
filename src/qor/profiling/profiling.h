@@ -22,28 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#ifndef QOR_PP_H_PROFILING
+#define QOR_PP_H_PROFILING
 
-namespace qor{
+#ifdef qor_pp_profiling_enabled
+#   define qor_pp_profiling_object FunctionProfiler
+#else
+#   define qor_pp_profiling_object NullProfiler
+#endif
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
-    {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
-    }
-    
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
+#define qor_pp_profile_enabled false
+#define qor_pp_profile_begin "src/qor/profiling/profile_enable.inl"
+#define qor_pp_profile_end "src/qor/profiling/profile_disable.inl"
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
-}//qor
+#include "nullprofiler.h"
+#include "functionprofiler.h"
+
+#endif//QOR_PP_H_PROFILING

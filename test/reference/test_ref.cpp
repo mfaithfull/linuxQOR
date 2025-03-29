@@ -22,28 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#include "src/configuration/configuration.h"
 
-namespace qor{
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
+#include "src/qor/reference/newref.h"
+
+using namespace qor;
+using namespace qor::test;
+
+
+struct ReferenceTestSuite{};
+
+class Test_Biscuit
+{
+private:
+    int m_i;
+
+public:
+
+    Test_Biscuit() : m_i(0)
     {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
     }
-    
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
-}//qor
+    Test_Biscuit(int i) : m_i(i)
+    {
+    }
+
+    ~Test_Biscuit()
+    {
+    }
+
+    int Value()
+    {
+        return m_i;
+    }
+};
+
+qor_pp_declare_factory_of(Test_Biscuit, InternalFactory);
+
+qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
+{
+    auto ref = qor::new_ref<Test_Biscuit>();
+    qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
+}
+

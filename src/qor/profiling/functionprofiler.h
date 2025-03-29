@@ -22,28 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#ifndef QOR_PP_H_FUNCTIONPROFILER
+#define QOR_PP_H_FUNCTIONPROFILER
 
-namespace qor{
+#include <chrono>
+#include "src/platform/compiler/compiler.h"
+#include "src/qor/profiling/profilereceiver.h"
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
-    {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
-    }
+namespace qor {
     
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
+	class FunctionProfiler
 	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
+	public:
+
+		FunctionProfiler(ProfileReceiver* receiver, bool enabled)  : m_Receviver(receiver), m_bProfileEnabled(enabled), m_startTime(std::chrono::high_resolution_clock::now()){};
+		
+        ~FunctionProfiler()
+        {
+            if (m_bProfileEnabled && m_Receviver)
+            {
+                m_Receviver->Profile( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_startTime) );
+            }
+        }    
+
+	private:
+		bool m_bProfileEnabled;
+		std::chrono::high_resolution_clock::time_point m_startTime;
+		ProfileReceiver* m_Receviver;
+	};
+
 }//qor
+
+#endif//QOR_PP_H_FUNCTIONPROFILER

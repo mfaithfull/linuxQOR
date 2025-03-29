@@ -22,28 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <cstring>
-#include "guid.h"
+#ifndef QOR_PP_H_MEMORY_DEFAULTSOURCE
+#define QOR_PP_H_MEMORY_DEFAULTSOURCE
+
+#include <cstdint>
+#include <stddef.h>
 
 namespace qor{
 
-	bool IsEqualGUID(const GUID& rguid1, const GUID& rguid2)
+    class DefaultSource final
     {
-		return (
-			((uint32_t*)&rguid1)[0] == ((uint32_t*)&rguid2)[0] &&
-			((uint32_t*)&rguid1)[1] == ((uint32_t*)&rguid2)[1] &&
-			((uint32_t*)&rguid1)[2] == ((uint32_t*)&rguid2)[2] &&
-			((uint32_t*)&rguid1)[3] == ((uint32_t*)&rguid2)[3]);
-    }
-    
-	bool operator < (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) < 0 ? true : false;
-	}
+    public:
+        static inline uint8_t* Source(size_t byteCount)
+        {
+            return new uint8_t[byteCount];
+        }
 
-    bool operator > (const GUID& guidOne, const GUID& guidOther)
-	{
-		return strncmp((const char*)(&guidOne), (const char*)(&guidOther), sizeof(GUID)) > 0 ? true : false;
-	}
+        static inline void Free(uint8_t* memory, size_t ignored)
+        {
+            delete[] memory;
+        }
+
+    private:
+
+        DefaultSource() = delete;
+        ~DefaultSource() = delete;
+        DefaultSource(const DefaultSource & src) = delete;
+        DefaultSource& operator = (const DefaultSource & src) = delete;
+
+    };
+
 }//qor
+
+#endif//QOR_PP_H_MEMORY_DEFAULTSOURCE
