@@ -23,12 +23,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "../../configuration/configuration.h"
-#include "../../qor/module/library.h"
+#include "host.h"
 
-qor::Library _qor_host("Querysoft Open Runtime: Host Library", 
-    qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
-
-qor::Library& qor_host()
+qor::Module& ThisModule(void)
 {
-    return _qor_host;
+	static qor::framework::Host host;
+	return host;
 }
