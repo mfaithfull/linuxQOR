@@ -23,13 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "../../configuration/configuration.h"
-#include "guid.h"
-#include "../module/library.h"
+#include "../module/module.h"
 
-static qor::Library _qor_datastructures("Querysoft Open Runtime: Data Structures Library", 
-    qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
-
-qor::Library& qor_datastructures()
+qor::Module& ThisModule(void)
 {
-    return _qor_datastructures;
+	static qor::Module QORRuntimeModule("Querysoft Open Runtime: Data Structures Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORRuntimeModule;
 }

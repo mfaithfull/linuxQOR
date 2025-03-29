@@ -26,14 +26,18 @@
 #define QOR_PP_H_MODULE
 
 #include "library.h"
+#include "../../qor/injection/typeregistry.h"
 
 namespace qor{
     
+    template< class IDType > class TypeRegistry;
+    class ModuleRegistry;
+
 	class Module : public Library
     {
     public:
 
-        Module( const char* name, const char* version);
+        Module( const char* name, const char* version, bool _register = true);
         virtual ~Module() noexcept;		
 
 		virtual bool RegisterLibrary( Library* pLibrary );			                                //Register a static library as part of this module
@@ -47,6 +51,12 @@ namespace qor{
             }
         }
 
+        virtual void RegisterModule( Module* pModule);
+        virtual void UnregisterModule( Module* pModule);
+
+        TypeRegistry<int>* Types();
+        ModuleRegistry* Modules();
+
     protected:
 
         Library* m_pStaticLibraryList;
@@ -54,6 +64,10 @@ namespace qor{
         Module() = delete;
         Module(const Module&) = delete;
         Module& operator = (const Module&) = delete;
+
+        TypeRegistry<int>* m_TypeReg;
+        ModuleRegistry* m_ModuleReg;
+
     };
 
 }//qor

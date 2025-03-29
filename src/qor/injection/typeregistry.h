@@ -26,11 +26,12 @@
 #define QOR_PP_H_TYPEREGISTRY
 
 #include <map>
-#include "../datastructures/guid.h"
+//#include "../datastructures/guid.h"
 
 namespace qor{
 
-    class TypeRegistry final
+	template< class IDType >
+    class qor_pp_export TypeRegistry final
 	{
 
 	public:
@@ -40,19 +41,19 @@ namespace qor{
 		inline ~TypeRegistry() noexcept = default;
 
 		//Register a mapping between a class ID and a factory for creating instances
-		inline void Register(GUID classID, void* factory)
+		inline void Register(IDType classID, void* factory)
 		{
-			m_regMap.insert(std::pair< GUID, void* >(classID, factory));
+			m_regMap.insert(std::pair< IDType, void* >(classID, factory));
 		}
 		
 		//Remove a class id and its factory from the class registry
-		inline void Unregister(GUID classID)
+		inline void Unregister(IDType classID)
 		{
 			m_regMap.erase(m_regMap.find(classID));
 		}
 
 		//Get the factory for creating instances of a class by ID
-		inline void* GetFactory(GUID classID)
+		inline void* GetFactory(IDType classID)
 		{
 			auto it = m_regMap.find(classID);
 			return (it != m_regMap.end()) ? it->second : nullptr;//ObjectContextBase::NullContext();
@@ -60,7 +61,7 @@ namespace qor{
 
 	private:
 
-		std::multimap< GUID, void* > m_regMap;		//A map from class identifiers to factories for creating instances
+		std::multimap< IDType, void* > m_regMap;		//A map from class identifiers to factories for creating instances
 
 	};
 

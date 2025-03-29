@@ -27,12 +27,11 @@
 
 #include <vector>
 #include <algorithm>
-#include "../datastructures/guid.h"
 #include "module.h"
 
 namespace qor{
 
-    class ModuleRegistry final
+    class qor_pp_export ModuleRegistry final
 	{
 
 	public:
