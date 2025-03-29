@@ -35,7 +35,8 @@
 
 namespace qor{
 
-    extern void FillInDbgInfo(uint32_t& uiLine, const char** pszFile);
+    //TODO: work out how to get the real allocation site info and write this function so it works
+    //extern void FillInDbgInfo(uint32_t& uiLine, const char** pszFile);
 
     class DebugAllocator final
     {
@@ -63,7 +64,7 @@ namespace qor{
             pInfo->pBackRef = nullptr;
             pInfo->uiLine = __LINE__;
             pInfo->szFile = __FILE__;
-
+            //FillInDbgInfo
             pMem += sizeof(dbgInfo);
             return pMem;
         }
