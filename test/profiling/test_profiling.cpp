@@ -22,35 +22,51 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#include "../../src/configuration/configuration.h"
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include <chrono>
+#include <thread>
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+#include "../../src/framework/host/host.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assert.h"
+#include "../../src/qor/profiling/profiling.h"
 
-namespace qor{ namespace framework{
+using namespace qor;
+using namespace qor::test;
+using namespace std::chrono_literals;
 
-    class Host
+struct ProfilingTestSuite{
+
+    void Delay()
     {
-    private:
+        std::this_thread::sleep_for(128ms);
+    }
+};
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+class Test_ProfileReporter : public ProfileReceiver
+{
+public:
 
-        Host();
+    std::chrono::duration<int64_t, std::milli> m_recordedDuration;
 
-    public:
+    virtual void Profile(const std::chrono::duration<int64_t, std::milli> durationMilliseconds)
+    {
+        m_recordedDuration = durationMilliseconds;
+        std::cout << " - Profile time: " << durationMilliseconds.count() << "ms";
+    }
+};
 
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
+#include qor_pp_profile_begin
 
-    };
+qor_pp_test_suite_case(ProfilingTestSuite, canProfileFunction)
+{
+    Test_ProfileReporter reporter;
+    {
+        FunctionProfiler profiler(dynamic_cast<ProfileReceiver*>(&reporter), qor_pp_profile_enabled);
+        Delay();
+    }
+    qor_pp_assert_that(reporter.m_recordedDuration >= 128ms).isTrue();
+}
 
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#include qor_pp_profile_end

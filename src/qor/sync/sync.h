@@ -22,35 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_SYNC
+#define QOR_PP_H_SYNC
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include "nullsection.h"
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor{
 
-namespace qor{ namespace framework{
-
-    class Host
+    template<typename T>
+    struct sync_of
     {
-    private:
-
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
-
-        Host();
-
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
+        typedef NullSection type;
     };
 
-}}//qor::framework
+}//qor
 
-#endif//QOR_PP_H_FRAMEWORK_HOST
+//Preprocessor macro shorthand for declaring a factory_of specialisation
+#   define qor_pp_declare_sync_of(_CLASS,_SYNC)\
+template<> struct qor::sync_of< _CLASS >\
+{\
+    typedef qor::_SYNC type;\
+};
+
+//Example: qor_pp_declare_factory_of(SharedDataHolder, Mutex);
+
+#endif//QOR_PP_H_SYNC

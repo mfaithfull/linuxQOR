@@ -22,35 +22,59 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_INSTANCE_DEFAULT
+#define QOR_PP_H_INSTANCE_DEFAULT
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include <stddef.h>
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+#include "src/qor/reference/reference.h"
+#include "src/qor/factory/factory.h"
 
-namespace qor{ namespace framework{
+//The purpose of an instancer is to determine whether to give out an existing instance
+//a new instance or perhaps a recycled instance or to refuse the request.
 
-    class Host
-    {
-    private:
+namespace qor{
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+    template<typename T> struct factory_of;
+    
+    //The default instancer gives out unconstrained freshly constructed instance references from the per type factory
+	class DefaultInstancer final
+	{
+	public:
 
-        Host();
+		template< class T >
+		static inline void Release(T* pt, size_t uiCount = 1)
+		{
+			factory_of<T>::type::Destruct(pt, uiCount);
+		}
 
-    public:
+		template< class T >
+		static inline void TearDown(T* pt, size_t uiCount = 1)
+		{
+			factory_of<T>::type::TearDown(pt, uiCount);
+		}
+		        
+		template< class T >
+		static inline auto Instance(size_t uiCount = 1)
+		{
+			return factory_of<T>::type::Construct(uiCount);
+		}
+		
+		template< class T, typename... _p >
+		static inline auto Instance(size_t uiCount, _p&&... p1)
+		{
+			return factory_of<T>::type::Build(uiCount, p1...);
+		}
 
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
+	private:
 
-    };
+		DefaultInstancer() = delete;
+		~DefaultInstancer() = delete;
+	};
 
-}}//qor::framework
+}//qor
 
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/factory/externalfactory.h"
+
+#endif//QOR_PP_H_INSTANCE_DEFAULT

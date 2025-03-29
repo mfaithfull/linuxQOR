@@ -53,7 +53,7 @@ namespace qor{
             return !IsEqualGUID(*this, guidOther) ? true : false;
         }
 
-    } const;
+    };
 
     constexpr GUID null_guid = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
 

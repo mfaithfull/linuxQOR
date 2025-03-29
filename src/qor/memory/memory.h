@@ -22,35 +22,54 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_MEMORY
+#define QOR_PP_H_MEMORY
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include "src/platform/compiler/compiler.h"
+#include "defaultsource.h"
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor{
 
-namespace qor{ namespace framework{
-
-    class Host
+    template<typename T>
+    struct source_of
     {
-    private:
-
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
-
-        Host();
-
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
+        typedef DefaultSource type;
     };
 
-}}//qor::framework
+}//qor
 
-#endif//QOR_PP_H_FRAMEWORK_HOST
+//Preprocessor macro shorthand for declaring a source_of specialisation
+#   define qor_pp_declare_source_of(_CLASS,_SOURCE)\
+template<> struct qor::source_of< _CLASS >\
+{\
+    typedef qor::_SOURCE type;\
+};
+//Example: qor_pp_declare_source_of(MyClass, DefaultSource);
+
+
+#include "debugallocator.h"
+#include "releaseallocator.h"
+
+namespace qor{
+
+    template<typename T>
+    struct allocator_of
+    {
+#   ifndef NDEBUG
+        typedef DebugAllocator type;
+#   else
+        typedef ReleaseAllocator type;
+#   endif
+    };
+
+}//qor
+
+//Preprocessor macro shorthand for declaring a allocator_of specialisation
+#   define qor_pp_declare_allocator_of(_CLASS,_ALLOCATOR)\
+template<> struct qor::allocator_of< _CLASS >\
+{\
+    typedef qor::_ALLOCATOR type;\
+};
+//Example: qor_pp_declare_allocator_of(Biscuits, SpecialAllocator);
+
+#endif//QOR_PP_H_MEMORY

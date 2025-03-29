@@ -22,35 +22,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_REFERENCE_NEW
+#define QOR_PP_H_REFERENCE_NEW
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include "src/qor/reference/reference.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/instance/instance.h"
+#include "src/qor/instance/default.h"
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor{
 
-namespace qor{ namespace framework{
+	template< typename T >
+	ref_of<T>::type new_ref()
+	{
+		return instancer_of<T>::type::template Instance<T>(1);
+	}
 
-    class Host
-    {
-    private:
+	
+	template< typename T, typename... _p >
+	ref_of<T>::type new_ref(_p&&... p1)
+	{
+		return instancer_of<T>::type::template Instance<T>(1, std::forward<_p&&>(p1)...);
+	}
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+	template< typename T >
+	ref_of<T>::type new_array_ref(size_t count)
+	{
+		return instancer_of<T>::type::template Instance<T>(count);
+	}
+	
+	template< typename T, typename... _p >
+	ref_of<T>::type new_array_ref(size_t count, _p&&... p1)
+	{
+		return instancer_of<T>::type::template Instance<T>(count, std::forward<_p&&>(p1)...);
+	}
 
-        Host();
+	template< typename T>
+	void internal_del_ref(T* p)
+	{
+		instancer_of<T>::type::template Release<T>(p, 1);
+	}
 
-    public:
+}//qor
 
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#endif//QOR_PP_H_REFERENCE_NEW

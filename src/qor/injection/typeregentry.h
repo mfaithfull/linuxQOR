@@ -22,35 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_TYPEREGENTRY
+#define QOR_PP_H_TYPEREGENTRY
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+namespace qor {
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
-
-namespace qor{ namespace framework{
-
-    class Host
+    template< class T>
+    class TypeRegEntry
     {
-    private:
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+        TypeRegEntry()
+        {
+            //Register the target type
+        }
 
-        Host();
-
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
+        ~TypeRegEntry()
+        {
+            //Unregister the target type
+        }
 
     };
 
-}}//qor::framework
+}//qor
 
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#endif//QOR_PP_H_TYPEREGENTRY

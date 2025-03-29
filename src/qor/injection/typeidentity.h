@@ -22,35 +22,53 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_TYPEIDENTITY
+#define QOR_PP_H_TYPEIDENTITY
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include <typeinfo>
+#include <typeindex>
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+#include "src/platform/compiler/compiler.h"
+#include "src/qor/datastructures/guid.h"
 
-namespace qor{ namespace framework{
+namespace qor{
 
-    class Host
+    template<typename T>
+    struct id_of
     {
-    private:
-
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
-
-        Host();
-
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
+        constexpr index = std::type_index(typeid(T));
     };
 
-}}//qor::framework
+    template<typename T>
+    struct name_of
+    {
+        std::string name()
+        {
+            return compiler::demangle<T>();
+        }
+    };
 
-#endif//QOR_PP_H_FRAMEWORK_HOST
+    template<typename T>
+    struct guid_of
+    {
+        GUID guid()
+        {
+            return null_guid;
+        }
+    };
+
+//Preprocessor macro shorthand for declaring a guid_of template specialisation
+#   define qor_pp_declare_guid_of(_CLASS,_GUID)\
+    template<> struct guid_of< _CLASS >\
+    {\
+        GUID guid()\
+        {\
+            return _GUID;\
+        }\
+    };
+
+//Example: qor_pp_declare_guid_of(IFeature, {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}});
+
+}//qor
+
+#endif//QOR_PP_H_TYPEIDENTITY

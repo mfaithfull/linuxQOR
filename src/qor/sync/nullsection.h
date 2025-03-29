@@ -22,35 +22,25 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_SYNC_NULLSECTION
+#define QOR_PP_H_SYNC_NULLSECTION
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor{
+		
+		class NullSection //: public ISyncObject
+		{
+		public:
 
-namespace qor{ namespace framework{
+			NullSection() = default;
+			virtual ~NullSection() = default;
 
-    class Host
-    {
-    private:
+			virtual void Acquire(void){}
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+            virtual void Release(void){}
 
-        Host();
+        };
 
-    public:
+}//qor
 
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#endif//QOR_PP_H_SYNC_NULLSECTION

@@ -49,8 +49,12 @@ namespace qor { namespace compiler {
     {
         return TheCompiler()->demangle<T>();
     }
-
     
 }}//qor::compiler
+
+
+namespace qor{
+    typedef uint8_t byte;
+}//qor
 
 #endif//QOR_PP_H_COMPILER

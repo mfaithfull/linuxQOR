@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "../../configuration/configuration.h"
-#include <string>
+#include <cstring>
 #include "guid.h"
 
 namespace qor{

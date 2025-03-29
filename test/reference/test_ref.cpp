@@ -22,35 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#include "src/configuration/configuration.h"
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+#include "src/qor/reference/newref.h"
 
-namespace qor{ namespace framework{
+using namespace qor;
+using namespace qor::test;
 
-    class Host
+
+struct ReferenceTestSuite{};
+
+class Test_Biscuit
+{
+private:
+    int m_i;
+
+public:
+
+    Test_Biscuit() : m_i(0)
     {
-    private:
+    }
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+    Test_Biscuit(int i) : m_i(i)
+    {
+    }
 
-        Host();
+    ~Test_Biscuit()
+    {
+    }
 
-    public:
+    int Value()
+    {
+        return m_i;
+    }
+};
 
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
+qor_pp_declare_factory_of(Test_Biscuit, InternalFactory);
 
-    };
+qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
+{
+    auto ref = qor::new_ref<Test_Biscuit>();
+    qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
+}
 
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_HOST

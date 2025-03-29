@@ -22,35 +22,24 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_PROFILERECEIVER
+#define QOR_PP_H_PROFILERECEIVER
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include <chrono>
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor {
 
-namespace qor{ namespace framework{
+	class ProfileReceiver
+	{
 
-    class Host
-    {
-    private:
+        public:
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+		ProfileReceiver() = default;
+		virtual ~ProfileReceiver() = default;
 
-        Host();
+		virtual void Profile(const std::chrono::duration<int64_t, std::milli>) = 0;
+	};
 
-    public:
+}//qor
 
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#endif//QOR_PP_H_PROFILERECEIVER

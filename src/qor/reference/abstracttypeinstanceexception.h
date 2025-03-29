@@ -22,35 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_ABSTRACTTYPEINSTANCEEXCEPTION
+#define QOR_PP_H_ABSTRACTTYPEINSTANCEEXCEPTION
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include <stdexcept>
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor{
 
-namespace qor{ namespace framework{
+	class abstracttypeinstanceexception : public std::logic_error
+	{
+	public:
+		using base_type = std::logic_error;
 
-    class Host
-    {
-    private:
+		explicit memoryexception(const std::string& message) : base_type(message.c_str())
+		{
+		}
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+		explicit memoryexception(const char* message) : base_type(message)
+		{
+		}
+	};
 
-        Host();
+}//qor
 
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#endif//QOR_PP_H_ABSTRACTTYPEINSTANCEEXCEPTION

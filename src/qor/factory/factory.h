@@ -22,35 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_FACTORY
+#define QOR_PP_H_FACTORY
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+namespace qor{
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+    template< class T > class InternalFactory;
 
-namespace qor{ namespace framework{
-
-    class Host
+    template<typename T>
+    struct factory_of
     {
-    private:
-
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
-
-        Host();
-
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
+        typedef InternalFactory< T > type;
     };
 
-}}//qor::framework
+}//qor
 
-#endif//QOR_PP_H_FRAMEWORK_HOST
+//Preprocessor macro shorthand for declaring a factory_of specialisation
+#   define qor_pp_declare_factory_of(_CLASS,_FACTORY)\
+template<> struct qor::factory_of< _CLASS >\
+{\
+    typedef qor::_FACTORY< _CLASS > type;\
+};
+
+//Example: qor_pp_declare_factory_of(IFeature, ExternalFactory);
+
+#endif//QOR_PP_H_FACTORY

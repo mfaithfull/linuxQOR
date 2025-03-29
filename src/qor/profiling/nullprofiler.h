@@ -22,35 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_NULLPROFILER
+#define QOR_PP_H_NULLPROFILER
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include "src/qor/profiling/profilereceiver.h"
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor {
+    
+	class NullProfiler
+	{
 
-namespace qor{ namespace framework{
+	public:
 
-    class Host
-    {
-    private:
+		constexpr NullProfiler(ProfileReceiver*, bool) {}
+		~NullProfiler() = default;
+	};
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+}//qor
 
-        Host();
-
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#endif//QOR_PP_H_NULLPROFILER

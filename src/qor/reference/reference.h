@@ -22,35 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_REFERENCE
+#define QOR_PP_H_REFERENCE
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include "ref.h"
+//#include "lref.h"
+//#include "comref.h"
+//#include "sref.h"
+//#include "poolref.h"
+//#include "flyerref.h"
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor{
 
-namespace qor{ namespace framework{
-
-    class Host
+    template<typename T>
+    struct ref_of
     {
-    private:
-
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
-
-        Host();
-
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
+        typedef Ref<T> type;
     };
 
-}}//qor::framework
+}//qor
 
-#endif//QOR_PP_H_FRAMEWORK_HOST
+//Preprocessor macro shorthand for declaring a ref_of specialisation
+#   define qor_pp_declare_ref_of(_CLASS,_REF)\
+template<> struct qor::ref_of< _CLASS >\
+{\
+    typedef qor::_REF< _CLASS > type;\
+};
+
+//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
+
+#endif//QOR_PP_H_FACTORY

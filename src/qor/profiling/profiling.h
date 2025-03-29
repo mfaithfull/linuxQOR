@@ -22,35 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_PROFILING
+#define QOR_PP_H_PROFILING
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#ifdef qor_pp_profiling_enabled
+#   define qor_pp_profiling_object FunctionProfiler
+#else
+#   define qor_pp_profiling_object NullProfiler
+#endif
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+#define qor_pp_profile_enabled false
+#define qor_pp_profile_begin "src/qor/profiling/profile_enable.inl"
+#define qor_pp_profile_end "src/qor/profiling/profile_disable.inl"
 
-namespace qor{ namespace framework{
+#include "nullprofiler.h"
+#include "functionprofiler.h"
 
-    class Host
-    {
-    private:
-
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
-
-        Host();
-
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#endif//QOR_PP_H_PROFILING

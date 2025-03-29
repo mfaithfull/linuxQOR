@@ -22,35 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_FUNCTIONPROFILER
+#define QOR_PP_H_FUNCTIONPROFILER
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include <chrono>
+#include "src/platform/compiler/compiler.h"
+#include "src/qor/profiling/profilereceiver.h"
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor {
+    
+	class FunctionProfiler
+	{
 
-namespace qor{ namespace framework{
+	public:
 
-    class Host
-    {
-    private:
+		FunctionProfiler(ProfileReceiver* receiver, bool enabled)  : m_Receviver(receiver), m_bProfileEnabled(enabled), m_startTime(std::chrono::high_resolution_clock::now()){};
+		
+        ~FunctionProfiler()
+        {
+            if (m_bProfileEnabled && m_Receviver)
+            {
+                m_Receviver->Profile( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_startTime) );
+            }
+        }    
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
+	private:
+		bool m_bProfileEnabled;
+		std::chrono::high_resolution_clock::time_point m_startTime;
+		ProfileReceiver* m_Receviver;
+	};
 
-        Host();
+}//qor
 
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
-
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#endif//QOR_PP_H_FUNCTIONPROFILER

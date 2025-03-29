@@ -22,35 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_HOST
-#define QOR_PP_H_FRAMEWORK_HOST
+#ifndef QOR_PP_H_MEMORY_DEFAULTSOURCE
+#define QOR_PP_H_MEMORY_DEFAULTSOURCE
 
-#include "../../qor/injection/typeregistry.h"
-#include "../../qor/module/moduleregistry.h"
+#include <cstdint>
+#include <stddef.h>
 
-extern qor::Library& qor_module();
-extern qor::Library& qor_datastructures();
-extern qor::Library& qor_host();
+namespace qor{
 
-namespace qor{ namespace framework{
-
-    class Host
+    class DefaultSource final
     {
+    public:
+        static inline uint8_t* Source(size_t byteCount)
+        {
+            return new uint8_t[byteCount];
+        }
+
+        static inline void Free(uint8_t* memory, size_t ignored)
+        {
+            delete[] memory;
+        }
+
     private:
 
-        TypeRegistry m_TypeReg;
-        ModuleRegistry m_ModuleReg;
-
-        Host();
-
-    public:
-
-        static Host& Instance();
-        TypeRegistry& Types();
-        ModuleRegistry& Modules();
+        DefaultSource() = delete;
+        ~DefaultSource() = delete;
+        DefaultSource(const DefaultSource & src) = delete;
+        DefaultSource& operator = (const DefaultSource & src) = delete;
 
     };
 
-}}//qor::framework
+}//qor
 
-#endif//QOR_PP_H_FRAMEWORK_HOST
+#endif//QOR_PP_H_MEMORY_DEFAULTSOURCE
