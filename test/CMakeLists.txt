@@ -28,4 +28,6 @@ assert/unordered_set.cpp assert/user_class.cpp assert/user_subject.cpp
 assert/weak_ptr.cpp datastructures/guid.cpp
 framework/host.cpp)
 
-target_link_libraries(QORTest QORCompiler qor_datastructures qor_module qor_host)
+target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
+
+target_link_libraries(QORTest QORCompiler qor_host qor_datastructures )
