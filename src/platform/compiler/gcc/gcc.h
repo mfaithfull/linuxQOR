@@ -30,5 +30,5 @@ static constexpr int function_stride = 1;
 
 #define qor_pp_compiler_extra_destructor
 
-#define qor_pp_export			__declspec(dllexport)
-#define qor_pp_import			__declspec(dllimport)
+#define qor_pp_export __attribute__((__visibility__("default")))
+#define qor_pp_import

@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "../../configuration/configuration.h"
-
+#include "src/platform/compiler/compiler.h"
 #include "library.h"
 #include "module.h"
 

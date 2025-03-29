@@ -45,7 +45,6 @@ namespace qor{
 		const char* m_Name;							        //The internal library name, not necessarily related to any file name
         const char* m_Version;
         const Library* m_pNext;								//Pointer to next static library forming a chain
-		//bool m_bRegistered;								//Is this library registered with the containing shared library or executable module
 	
 	private:
 	

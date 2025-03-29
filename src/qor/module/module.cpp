@@ -23,12 +23,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "../../configuration/configuration.h"
-
+#include "src/platform/compiler/compiler.h"
 #include "module.h"
-//#include "../../framework/host/host.h"
 
 namespace qor{ namespace framework{
-//	class qor_pp_import Host;
 	qor_pp_import Module* TheHost();
 }}
 
@@ -88,15 +86,9 @@ namespace qor{
 		}
 	}
 
-	void Module::RegisterModule( Module* pModule)
-	{
+	void Module::RegisterModule( Module* pModule){}
 
-	}
-
-	void Module::UnregisterModule( Module* pModule)
-	{
-
-	}
+	void Module::UnregisterModule( Module* pModule){}
 
 	TypeRegistry<int>* Module::Types()
     {
@@ -107,6 +99,5 @@ namespace qor{
     {
         return m_ModuleReg;
     }
-
 
 }//qor

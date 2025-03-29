@@ -72,9 +72,6 @@ namespace qor{
 
 }//qor
 
-//--------------------------------------------------------------------------------
-//Each and every module that includes this header must provide a ThisModule function 
-//returning its module representation object.
-extern qor::Module& ThisModule();
+extern qor::Module& ThisModule();       //Each and every module that includes this header must provide a ThisModule function returning its module representation object.
 
 #endif//QOR_PP_H_MODULE

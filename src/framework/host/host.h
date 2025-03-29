@@ -46,8 +46,6 @@ namespace qor{ namespace framework{
 
     };
 
-    
-
 }}//qor::framework
 
 #endif//QOR_PP_H_FRAMEWORK_HOST
