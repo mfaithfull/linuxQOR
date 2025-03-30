@@ -22,28 +22,19 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYNC
-#define QOR_PP_H_SYNC
-
-#include "nullsection.h"
+#include "src/configuration/configuration.h"
+#include "mutex.h"
 
 namespace qor{
 
-    template<typename T>
-    struct sync_of
+    void Mutex::Acquire()
     {
-        typedef NullSection type;
-    };
+        m_Impl.lock();
+    }
 
+    void Mutex::Release()
+    {
+        m_Impl.unlock();
+    }
+        
 }//qor
-
-//Preprocessor macro shorthand for declaring a sync_of specialisation
-#   define qor_pp_declare_sync_of(_CLASS,_SYNC)\
-    template<> struct qor::sync_of< _CLASS >\
-    {\
-        typedef qor::_SYNC type;\
-    };
-
-//Example: qor_pp_declare_sync_of(SharedDataHolder, Mutex);
-
-#endif//QOR_PP_H_SYNC

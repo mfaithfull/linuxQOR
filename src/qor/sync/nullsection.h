@@ -25,21 +25,22 @@
 #ifndef QOR_PP_H_SYNC_NULLSECTION
 #define QOR_PP_H_SYNC_NULLSECTION
 
+#include "syncobject.h"
 
 namespace qor{
 		
-		class NullSection //: public ISyncObject
-		{
-		public:
+	class NullSection : public SyncObject
+	{
+	public:
 
-			NullSection() = default;
-			virtual ~NullSection() = default;
+		NullSection() = default;
+		virtual ~NullSection() = default;
 
-			virtual void Acquire(void){}
+		virtual void Acquire(void){}
 
-            virtual void Release(void){}
+		virtual void Release(void){}
 
-        };
+	};
 
 }//qor
 

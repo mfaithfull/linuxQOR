@@ -22,28 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYNC
-#define QOR_PP_H_SYNC
+#include "../../configuration/configuration.h"
+#include "../module/module.h"
 
-#include "nullsection.h"
-
-namespace qor{
-
-    template<typename T>
-    struct sync_of
-    {
-        typedef NullSection type;
-    };
-
-}//qor
-
-//Preprocessor macro shorthand for declaring a sync_of specialisation
-#   define qor_pp_declare_sync_of(_CLASS,_SYNC)\
-    template<> struct qor::sync_of< _CLASS >\
-    {\
-        typedef qor::_SYNC type;\
-    };
-
-//Example: qor_pp_declare_sync_of(SharedDataHolder, Mutex);
-
-#endif//QOR_PP_H_SYNC
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Synchronisation Primitives Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

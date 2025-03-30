@@ -22,28 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYNC
-#define QOR_PP_H_SYNC
+#ifndef QOR_PP_H_SYNC_RECURSIVEMUTEX
+#define QOR_PP_H_SYNC_RECURSIVEMUTEX
 
-#include "nullsection.h"
+#include <mutex>
+#include "syncobject.h"
 
 namespace qor{
 
-    template<typename T>
-    struct sync_of
+    class RecursiveMutex : public SyncObject
     {
-        typedef NullSection type;
+    public:
+
+        RecursiveMutex() = default;
+        virtual ~RecursiveMutex() = default;
+
+        virtual void Acquire();
+        virtual void Release();
+
+    private:
+
+        std::recursive_mutex m_Impl;
     };
 
 }//qor
 
-//Preprocessor macro shorthand for declaring a sync_of specialisation
-#   define qor_pp_declare_sync_of(_CLASS,_SYNC)\
-    template<> struct qor::sync_of< _CLASS >\
-    {\
-        typedef qor::_SYNC type;\
-    };
-
-//Example: qor_pp_declare_sync_of(SharedDataHolder, Mutex);
-
-#endif//QOR_PP_H_SYNC
+#endif//QOR_PP_H_SYNC_RECURSIVEMUTEX

@@ -22,28 +22,53 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYNC
-#define QOR_PP_H_SYNC
+#ifndef QOR_PP_H_SYNC_LOCK
+#define QOR_PP_H_SYNC_LOCK
 
-#include "nullsection.h"
+#include "syncobject.h"
 
 namespace qor{
-
-    template<typename T>
-    struct sync_of
+		
+    class Lock
     {
-        typedef NullSection type;
+        friend class Key;
+
+    public:
+
+        Lock(SyncObject& SyncObject) : m_SyncObject(SyncObject)
+        {
+            m_SyncObject.Acquire();
+        }
+
+        ~Lock()
+        {
+            m_SyncObject.Release();
+        }
+
+    private:
+
+        SyncObject& m_SyncObject;
+    };
+
+    class Key
+    {
+    public:
+
+        Key(Lock& lock) : m_Lock(lock)
+        {
+            m_Lock.m_SyncObject.Release();
+        }
+
+        ~Key()
+        {
+            m_Lock.m_SyncObject.Acquire();
+        }        
+
+    private:
+
+        Lock& m_Lock;
     };
 
 }//qor
 
-//Preprocessor macro shorthand for declaring a sync_of specialisation
-#   define qor_pp_declare_sync_of(_CLASS,_SYNC)\
-    template<> struct qor::sync_of< _CLASS >\
-    {\
-        typedef qor::_SYNC type;\
-    };
-
-//Example: qor_pp_declare_sync_of(SharedDataHolder, Mutex);
-
-#endif//QOR_PP_H_SYNC
+#endif//QOR_PP_H_SYNC_LOCK
