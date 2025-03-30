@@ -5,7 +5,7 @@ set(CMAKE_CXX_RTTI ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a")
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-threadsafe-statics -fvisibility=hidden")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-threadsafe-statics -fvisibility=hidden")
 add_subdirectory(mock)
 
 add_executable(QORTest test_main.cpp test_test.cpp test_compiler.cpp 
@@ -32,7 +32,8 @@ profiling/test_profiling.cpp
 factory/test_factory.cpp
 reference/test_ref.cpp
 objectcontext/test_objectcontext.cpp
-observer/test_chainlink.cpp observer/test_observer.cpp)
+observer/test_chainlink.cpp observer/test_observer.cpp
+delegate/test_delegate.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 

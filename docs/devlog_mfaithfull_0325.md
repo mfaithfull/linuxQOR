@@ -67,9 +67,12 @@ We need this early on because the Host will own the application wide type regist
 
 Had a go at adding smart references. Requires a lot of things to be in place to get it working but Ref<T> is up and testable.
 
-
 Implemented the self assembling module system for static libraries and executables. Dynamic libraries are next.
 
 Module stitching is now operational for static and dynamic libraries. It requires a small amount of boiler plate in the final executable but this can likely be removed in favout of linking it with a tiny static exebootstrap library
 
 Type Registration may need to be moved to its own module as the host module is the root dynamic dependency and can't contain data types from QOR modules.
+
+The next big step is threads which could reasonably be part of the 'everywhere' libraries or the framework but we'll put them in the framework as the intention is that they be used as stuctural elements by top level applications.
+One more everywhere tool to do first which is delegates, the corallary to observers
+
