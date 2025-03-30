@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-set(CMAKE_CXX_COMPILE_OPTIONS_RTTI)
-set(CMAKE_CXX_RTTI ON)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-threadsafe-statics -fvisibility=hidden")
 add_subdirectory(mock)
@@ -33,8 +29,9 @@ factory/test_factory.cpp
 reference/test_ref.cpp
 objectcontext/test_objectcontext.cpp
 observer/test_chainlink.cpp observer/test_observer.cpp
-delegate/test_delegate.cpp)
+delegate/test_delegate.cpp
+framework/test_thread.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
-target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext )
+target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext qor_thread)

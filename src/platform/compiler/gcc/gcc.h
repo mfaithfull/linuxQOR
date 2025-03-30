@@ -32,3 +32,4 @@ static constexpr int function_stride = 1;
 
 #define qor_pp_export __attribute__((__visibility__("default")))
 #define qor_pp_import
+#define qor_pp_thread_local     __thread
