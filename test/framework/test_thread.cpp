@@ -45,14 +45,52 @@ class Worker : public Thread
     }
 };
 
+class IntrospectiveWorker : public Thread
+{
+    public:
+
+    virtual void Run()
+    {
+        const CurrentThread& worker_thread_in_progress = CurrentThread::GetCurrent();
+        auto id = worker_thread_in_progress.GetID();
+        worker_thread_in_progress.Sleep(1);
+        worker_thread_in_progress.Yield();
+        worker_thread_in_progress.Context();
+        std::cout << " Worker thread " << id << " has done it's job.";
+    }
+};
+
+class SelfAwareWorker : public Thread
+{
+    public:
+
+    virtual void Run()
+    {
+        ThreadContext& context = CurrentThread::GetCurrent().Context();
+        std::cout << " Worker thread has access to its mutable context.";
+    }
+};
+
 qor_pp_test_suite_case(ThreadTestSuite, canDefaultConstructThread)
 {
     Thread defaultThread;
     qor_pp_assert_that(&defaultThread).isNotNull();
 }
 
-qor_pp_test_suite_case(ThreadTestSuite, canRunDerivedthreadType)
+qor_pp_test_suite_case(ThreadTestSuite, canRunDerivedThreadType)
 {
     auto worker = new_ref<Worker>();
+    worker->Join();
+}
+
+qor_pp_test_suite_case(ThreadTestSuite, canAccessImmutableThreadContextFromWithinThread)
+{
+    auto worker = new_ref<IntrospectiveWorker>();
+    worker->Join();
+}
+
+qor_pp_test_suite_case(ThreadTestSuite, canAccessMmutableThreadContextFromWithinThread)
+{
+    auto worker = new_ref<SelfAwareWorker>();
     worker->Join();
 }

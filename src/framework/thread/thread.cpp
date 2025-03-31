@@ -74,13 +74,24 @@ namespace qor{ namespace framework{
 
 	void Thread::Setup()
 	{
-		m_pCurrent = new CurrentThread();
-		Run();
+		try
+		{
+			CurrentThread threadScopedState;
+			Run();				
+		}
+		catch(const std::exception& e)
+		{
+			//std::cerr << e.what() << '\n';
+		}
+		catch(...)
+		{
+			//something worse
+		}
 	}
 
 	void Thread::CleanUp()
 	{
-		delete m_pCurrent;
+		
 	}
 
 }}//qor::framework

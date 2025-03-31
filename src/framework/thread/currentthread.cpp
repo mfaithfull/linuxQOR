@@ -43,22 +43,22 @@ namespace qor{ namespace framework{
         t_pCurrentThread = pThread;
     }
 
-    std::thread::id CurrentThread::GetID(void)
+    std::thread::id CurrentThread::GetID() const
     {
         return std::this_thread::get_id();
     }
 
-	void CurrentThread::Sleep(unsigned long ulMilliseconds)
+	void CurrentThread::Sleep(unsigned long ulMilliseconds) const
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(ulMilliseconds));
 	}
 
-    void CurrentThread::Yield()
+    void CurrentThread::Yield() const
 	{		
 		std::this_thread::yield();
 	}
 
-    ThreadContext& CurrentThread::Context()
+    ThreadContext& CurrentThread::Context() const
     {
         return m_Context;
     }

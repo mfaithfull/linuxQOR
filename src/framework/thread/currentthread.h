@@ -48,28 +48,28 @@ namespace qor{ namespace framework{
         CurrentThread& operator=(ThreadContext const& src) = delete;
 		~CurrentThread(){};
 
-        std::thread::id GetID(void);
+        std::thread::id GetID(void) const;
 
 		template <class _Clock, class _Duration>
-		void SleepUntil(const std::chrono::time_point<_Clock, _Duration>& timePoint)
+		void SleepUntil(const std::chrono::time_point<_Clock, _Duration>& timePoint) const
 		{
 			std::this_thread::sleep_until(timePoint);
 		}
 
 		template <class _Rep, class _Period>
-		void SleepFor(const std::chrono::duration<_Rep, _Period>& timePeriod)
+		void SleepFor(const std::chrono::duration<_Rep, _Period>& timePeriod) const
 		{
 			std::this_thread::sleep_for(timePeriod);
 		}
 
-        void Sleep(unsigned long ulMilliseconds);
-        void Yield();
+        void Sleep(unsigned long ulMilliseconds) const;
+        void Yield() const;
 
-        ThreadContext& Context();
+        ThreadContext& Context() const;
 
     private:
 
-        ThreadContext m_Context;
+        mutable ThreadContext m_Context;
         CurrentThread(){};
         void SetCurrent(CurrentThread* pThread);
     };
