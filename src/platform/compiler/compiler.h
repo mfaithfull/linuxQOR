@@ -26,6 +26,7 @@
 #define QOR_PP_H_COMPILER
 
 #include <string>
+#include <cstdint>
 #include qor_pp_compiler_include
 
 #ifndef qor_pp_compiler_at
