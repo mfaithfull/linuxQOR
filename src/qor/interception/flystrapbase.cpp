@@ -22,45 +22,55 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
-#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#include "src/configuration/configuration.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/newref.h"
+#include "flystrapbase.h"
 
-#include <thread>
-#include <vector>
+//Approximately a 'point cut' base class in AOP terminology
 
-#include "src/platform/compiler/compiler.h"
-#include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/thread/flyermap.h"
+namespace qor {
 
-namespace qor{ namespace framework{
+    FlyStrapBase::FlyStrapBase() : tflink< FlyStrapBase* >( this )
+	{
+	}
 
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext
-    {
+	void FlyStrapBase::BeforeStrapOn( FlyStrapBase* /*pStrap*/ )
+	{
+		//default implementation does nothing
+	}
 
-    public:
+	void FlyStrapBase::StrapOn( FlyStrapBase* pStrap )
+	{
+		BeforeStrapOn( pStrap );
+		Append( pStrap );
+		AfterStrapOn( pStrap );
+	}
 
-        ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext();
+	void FlyStrapBase::AfterStrapOn( FlyStrapBase* /*pStrap*/ )
+	{
+		//default implementation does nothing
+	}
 
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
+	void FlyStrapBase::UnStrap()
+	{
+		//default implementation does nothing
+	}
 
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
-		{
-			return m_FlyerMap;
-		}
+	void FlyStrapBase::OnDeactivate()
+	{
+		//default implementation does nothing
+	}
 
-    private:
+	void FlyStrapBase::OnReactivate()
+	{
+		//default implementation does nothing
+	}
 
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;
-        std::vector< void* > m_aThreadLocalStorage;
-        FlyerMap m_FlyerMap;
+	void FlyStrapBase::OnActivate()
+	{
+		//default implementation does nothing
+	}
 
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT
+}//qor

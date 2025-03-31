@@ -22,45 +22,56 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
-#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#ifndef QOR_PP_H_FLYSTRAP
+#define QOR_PP_H_FLYSTRAP
 
-#include <thread>
-#include <vector>
+#include "flystrapbase.h"
+#include "callcontext.h"
 
-#include "src/platform/compiler/compiler.h"
-#include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/thread/flyermap.h"
+namespace qor {
 
-namespace qor{ namespace framework{
+    class qor_pp_module_interface(QOR_INTERCEPTION) FlyStrap : public FlyStrapBase
+	{
+	public:
 
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext
-    {
+        FlyStrap();
+        FlyStrap( FlyStrapBase* );
+		virtual ~FlyStrap() = default;
 
-    public:
+		virtual bool PreCondition( CallContext* pCall, IFunctionContext* pFunction );		
+		virtual bool OnAssignmentCondition( CallContext* pCall );
+		virtual bool PostCondition( CallContext* pCall );
+		virtual bool Pre( CallContext* pCall, IFunctionContext* pFunction );
+		virtual bool OnReturnAssignment( CallContext* pCall );
+		virtual bool OnReturn( CallContext* pCall );
+		virtual bool Post( CallContext* pCall );
 
-        ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext();
-
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
-
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
+		template< class T > void Strap()
 		{
-			return m_FlyerMap;
+			FlyStrapBase* pJoinPoint = nullptr;
+            auto lookup = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Lookup( guid_of<T>::guid() );
+						
+			if (!lookup.IsNull())
+			{
+				typename ref_of< T >::type pInstance(lookup);
+				if(!pInstance.IsNull())
+				{
+					pJoinPoint = const_cast< FlyStrapBase* >( pInstance.template As<const FlyStrapBase>() );
+				}
+			}
+
+			if( pJoinPoint )
+			{
+				pJoinPoint->StrapOn( this );
+			}
 		}
 
-    private:
+		bool CallPre( CallContext* pCall, IFunctionContext* pFunction );
+		bool CallOnReturnAssignment( CallContext* pCall );
+		bool CallPost( CallContext* pCall );
 
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;
-        std::vector< void* > m_aThreadLocalStorage;
-        FlyerMap m_FlyerMap;
+	};
 
-    };
+}//qor
 
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#endif//QOR_PP_H_FLYSTRAP

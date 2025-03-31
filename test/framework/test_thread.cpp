@@ -26,8 +26,11 @@
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/assert/assert.h"
 #include "../../src/qor/module/moduleregistry.h"
-#include "../../src/qor/reference/newref.h"
+#include "../../src/qor/injection/typeidentity.h"
+#include "../../src/qor/objectcontext/objectcontextbase.h"
+#include "../../src/framework/thread/currentthread.h"
 #include "../../src/framework/thread/thread.h"
+#include "../../src/qor/reference/newref.h"
 
 using namespace qor;
 using namespace qor::test;

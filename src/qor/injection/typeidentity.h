@@ -36,13 +36,16 @@ namespace qor{
     template<typename T>
     struct id_of
     {
-        constexpr index = std::type_index(typeid(T));
+        static constexpr std::type_index id()
+        {
+            return std::type_index(typeid(T));
+        }
     };
 
     template<typename T>
     struct name_of
     {
-        std::string name()
+        static std::string name()
         {
             return compiler::demangle<T>();
         }
@@ -51,9 +54,9 @@ namespace qor{
     template<typename T>
     struct guid_of
     {
-        GUID guid()
+        static const GUID* guid()
         {
-            return null_guid;
+            return &null_guid;
         }
     };
 
@@ -61,13 +64,15 @@ namespace qor{
 #   define qor_pp_declare_guid_of(_CLASS,_GUID)\
     template<> struct guid_of< _CLASS >\
     {\
-        GUID guid()\
+        static const GUID* guid()\
         {\
-            return _GUID;\
+            return &_GUID;\
         }\
     };
 
-//Example: qor_pp_declare_guid_of(IFeature, {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}});
+//Example: 
+//constexpr FeatureGUID = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
+//qor_pp_declare_guid_of(IFeature, FeatureGUID);
 
 }//qor
 

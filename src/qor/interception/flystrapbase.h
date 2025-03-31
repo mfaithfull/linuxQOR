@@ -22,45 +22,45 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
-#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#ifndef QOR_PP_H_FLYSTRAPBASE
+#define QOR_PP_H_FLYSTRAPBASE
 
-#include <thread>
-#include <vector>
+#include "src/qor/datastructures/tflink.h"
+#include "flyer.h"
 
-#include "src/platform/compiler/compiler.h"
-#include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/thread/flyermap.h"
+//Approximately a 'point cut' base class in AOP terminology
 
-namespace qor{ namespace framework{
+namespace qor {
 
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext
-    {
+    class qor_pp_module_interface(QOR_INTERCEPTION) FlyStrapBase : public tflink< FlyStrapBase* >
+	{
+	public:
 
-    public:
+		FlyStrapBase();
+		virtual ~FlyStrapBase() = default;
+		void StrapOn( FlyStrapBase* pStrap );		
+		virtual void UnStrap( void );
+		virtual void OnDeactivate( void );
+		virtual void OnReactivate( void );
+		virtual void OnActivate( void );
 
-        ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext();
-
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
-
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
+		template< class TFSDerived > TFSDerived* Next( TFSDerived* pdummy = nullptr )
 		{
-			return m_FlyerMap;
+			TFSDerived* pNext = pdummy;
+			if( m_pNext )
+			{
+				pNext = dynamic_cast< TFSDerived* >( m_pNext->Item() );
+			}
+			return pNext;
 		}
 
-    private:
+	protected:
 
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;
-        std::vector< void* > m_aThreadLocalStorage;
-        FlyerMap m_FlyerMap;
+		virtual void BeforeStrapOn( FlyStrapBase* pStrap );
+		virtual void AfterStrapOn( FlyStrapBase* pStrap );
 
-    };
+	};
 
-}}//qor::framework
+}//qor
 
-#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#endif//QOR_PP_H_FLYSTRAPBASE

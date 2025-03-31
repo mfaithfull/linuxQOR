@@ -27,7 +27,9 @@
 
 namespace qor {
 
+#ifndef QOR_PP_H_IFUNCTIONCONTEXT
     class qor_pp_module_interface(QOR_INTERCEPTION) IFunctionContext;
+#endif
 
     class qor_pp_module_interface(QOR_INTERCEPTION) ICallContext
     {
@@ -35,9 +37,6 @@ namespace qor {
 
         ICallContext() = default;
         virtual ~ICallContext() = default;
-
-//    protected:
-
         virtual void CallMade(IFunctionContext*) = 0;
         virtual void CallCompleted(void) = 0;
         virtual void OnReturnAssignment(void) = 0;

@@ -22,45 +22,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
-#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#ifndef QOR_PP_H_CALLINTERCEPTOR
+#define QOR_PP_H_CALLINTERCEPTOR
 
-#include <thread>
-#include <vector>
+#include "src/framework/thread/thread.h"
+#include "src/qor/objectcontext/objectcontext.h"
+#include "src/qor/reference/flyerref.h"
+#include "src/qor/reference/reference.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/datastructures/guid.h"
+#include "callcontext.h"
+#include "flyer.h"
+#include "flystrapbase.h"
 
-#include "src/platform/compiler/compiler.h"
-#include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/thread/flyermap.h"
+namespace qor {
 
-namespace qor{ namespace framework{
+    constexpr GUID CallInterceptorGUID = {0x00000001, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
+    class qor_pp_module_interface(QOR_INTERCEPTION) CallInterceptor;
 
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext
+    template<> struct ref_of< CallInterceptor >
     {
-
-    public:
-
-        ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext();
-
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
-
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
-		{
-			return m_FlyerMap;
-		}
-
-    private:
-
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;
-        std::vector< void* > m_aThreadLocalStorage;
-        FlyerMap m_FlyerMap;
-
+        typedef qor::FlyerRef< CallInterceptor > type;
     };
 
-}}//qor::framework
+    template<> struct guid_of< CallInterceptor >
+    {
+        static const GUID* guid()
+        {
+            return &CallInterceptorGUID;            
+        }
+    };
 
-#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT
+    class qor_pp_module_interface(QOR_INTERCEPTION) CallInterceptor : public Flyer< CallInterceptor, FlyStrapBase >
+    {
+		CallInterceptor();
+		virtual ~CallInterceptor();
+		virtual void CallMade( CallContext* pCall, IFunctionContext* pFunction );
+		virtual void OnReturnAssignment( CallContext* pCall );
+		virtual void OnReturn(CallContext* pCall);
+		virtual void CallCompleted( CallContext* pCall );
+    };
+
+}//qor
+
+#endif//QOR_PP_H_CALLINTERCEPTOR

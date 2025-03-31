@@ -22,45 +22,56 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
-#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#ifndef QOR_PP_H_TFLINK
+#define QOR_PP_H_TFLINK
 
-#include <thread>
-#include <vector>
-
+#include <stdint.h>
 #include "src/platform/compiler/compiler.h"
-#include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/thread/flyermap.h"
 
-namespace qor{ namespace framework{
+namespace qor{
+    
+	template< class T >
+	class tflink
+	{
+	public:	
 
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext
-    {
-
-    public:
-
-        ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext();
-
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
-
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
+		tflink()
 		{
-			return m_FlyerMap;
+			m_pNext = nullptr;
 		}
 
-    private:
+		tflink( T _t ) : m_Item( _t )
+		{
+			m_pNext = nullptr;
+		}
+		
+		//A slow but simple append implementation.
+		//Appending to any item in the list always appends at the end.
+		void Append(tflink< T >* ptNext )
+		{
+			tflink< T >* pEnd = this;
 
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;
-        std::vector< void* > m_aThreadLocalStorage;
-        FlyerMap m_FlyerMap;
+			while( pEnd->m_pNext != nullptr )
+			{
+				pEnd = pEnd->m_pNext;
+			}
 
-    };
+			pEnd->m_pNext = ptNext;
+		}
 
-}}//qor::framework
+		T& Item()
+		{
+			return m_Item;
+		}
 
-#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT
+		T m_Item;
+
+	protected:
+
+		tflink< T >* m_pNext;
+		
+	};
+
+}//qor
+
+#endif//QOR_PP_H_TFLINK

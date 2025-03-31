@@ -30,7 +30,7 @@
 //#include "comref.h"
 //#include "sref.h"
 //#include "poolref.h"
-//#include "flyerref.h"
+#include "flyerref.h"
 
 namespace qor{
 

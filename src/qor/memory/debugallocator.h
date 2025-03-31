@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <stddef.h>
+#include <cstring>
 
 #include "src/platform/compiler/compiler.h"
 #include "memoryexception.h"
@@ -114,7 +115,7 @@ namespace qor{
                     pT->~T();
                     pT++;
                 }
-                memset(pMem, 0xFD, allocSize);
+                std::memset(pMem, 0xFD, allocSize);
                 source_of< T >::type::Free(pMem, allocSize);
             }
         }

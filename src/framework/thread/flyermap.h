@@ -22,45 +22,65 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
-#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#ifndef QOR_PP_H_FLYERMAP
+#define QOR_PP_H_FLYERMAP
 
-#include <thread>
-#include <vector>
+#include <map>
 
 #include "src/platform/compiler/compiler.h"
-#include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/thread/flyermap.h"
+#include "src/qor/objectcontext/objectcontextbase.h"
+#include "src/qor/datastructures/guid.h"
 
 namespace qor{ namespace framework{
 
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext
+    class qor_pp_module_interface(QOR_THREAD) FlyerMap final
     {
-
     public:
+    
+        FlyerMap() = default;
+        ~FlyerMap() = default;
 
-        ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext();
+        ObjectContextBase& GetByClassID( const GUID* classID )
+        {
+            auto it = m_Map.find(*classID);
+            return it != m_Map.end() ? it->second : ObjectContextBase::NullContext();
+        }
 
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
+        ObjectContextBase Configure(const GUID* classID, ObjectContextBase context)
+        {
+            ObjectContextBase result;
+            auto it = m_Map.find(*classID);
+            if( it != m_Map.end());
+            {
+                result = it->second;
+                m_Map.erase(it);
+            }
+            m_Map.insert(std::make_pair(*classID, context));
+            return result;
+        }
 
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
+        void Unconfigure(const GUID* classID, ObjectContextBase context)
+        {
+            m_Map.erase(m_Map.find(*classID));
+            m_Map.insert(std::make_pair(*classID, context));
+        }
+
+        ObjectContextBase Lookup(const GUID* classID)
 		{
-			return m_FlyerMap;
+			ObjectContextBase result;
+			auto it = m_Map.find(*classID);
+			if (it != m_Map.end())
+			{
+				result = it->second;
+			}
+			return result;
 		}
 
     private:
 
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;
-        std::vector< void* > m_aThreadLocalStorage;
-        FlyerMap m_FlyerMap;
-
+        std::map< GUID, ObjectContextBase > m_Map;
     };
 
 }}//qor::framework
 
-#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#endif//QOR_PP_H_FLYERMAP

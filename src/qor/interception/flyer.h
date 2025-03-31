@@ -22,45 +22,57 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
-#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#ifndef QOR_PP_H_FLYER
+#define QOR_PP_H_FLYER
 
-#include <thread>
-#include <vector>
+#include "src/framework/thread/thread.h"
+#include "src/qor/objectcontext/objectcontext.h"
 
-#include "src/platform/compiler/compiler.h"
-#include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/thread/flyermap.h"
+namespace qor {
 
-namespace qor{ namespace framework{
-
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext
+    template< class T, class baseT >
+    class Flyer : public baseT
     {
-
     public:
 
-        ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext();
+        Flyer() : m_pPrevious( nullptr ){}
+        virtual ~Flyer() = default;
 
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
+        bool Push()
+        {
+            typename ref_of< T >::type instance( dynamic_cast<T*>(this) );
+            const GUID* luid = guid_of<T>::guid();
+            ObjectContext< T > wrapper(instance);
 
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
+            ObjectContextBase prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
+
+            if(!prev.IsNull() /*&& !instance.IsNull()*/)
+			{
+                typename ref_of< T >::type refPrevious(prev);
+				instance().m_pPrevious = refPrevious;
+            }
+            return true;
+        }
+
+		bool Pop()
 		{
-			return m_FlyerMap;
+			typename ref_of< T >::type instance(dynamic_cast<T*>(this));
+			//if (!instance.IsNull())
+			{
+                const GUID* luid = guid_of<T>::guid();
+                ObjectContext< T > wrapper(dynamic_cast<T*>(instance().m_pPrevious));
+				framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, wrapper);
+				return true;
+			}
+			return false;
 		}
 
-    private:
+    protected:
 
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;
-        std::vector< void* > m_aThreadLocalStorage;
-        FlyerMap m_FlyerMap;
-
+        typedef baseT base_type;
+        baseT* m_pPrevious;
     };
 
-}}//qor::framework
+}//qor
 
-#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#endif//QOR_PP_H_FLYER

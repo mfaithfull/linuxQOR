@@ -77,7 +77,28 @@ namespace qor
                 detail::SharedRef< T >(count, p1...)
             )->_Ref();
         }
+    };
 
+    template< class T >
+    struct factoryFunctor< T, FlyerRef< T > >
+    {
+        static void Destruct(size_t count, T* pt)
+        {
+            framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(
+                guid_of<T>::guid(), ObjectContext<T>(pt->m_pPrevious)
+            );
+        }
+
+        static FlyerRef< T > Construct(size_t)
+        {
+            ObjectContextBase context = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Lookup(guid_of<T>::guid());            
+            if (!context.IsNull())
+            {
+                FlyerRef< T > pCurrent(context);
+                return pCurrent;
+            }
+            return FlyerRef< T >();
+        }
     };
 
 
