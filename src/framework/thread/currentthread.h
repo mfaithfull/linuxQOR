@@ -22,65 +22,58 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "thread.h"
+#ifndef QOR_PP_H_FRAMEWORK_CURRENTTHREAD
+#define QOR_PP_H_FRAMEWORK_CURRENTTHREAD
+
+#include <thread>
+
+#include "src/platform/compiler/compiler.h"
+#include "threadcontext.h"
 
 namespace qor{ namespace framework{
 
-	Thread::Thread() : m_std_thread(
-		Delegate<void(void)>::Create<Thread, &Thread::Setup>(this)
-	), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
-	{	
-	}
+    class qor_pp_module_interface(QOR_PP_THREAD) CurrentThread;
 
-    Thread::~Thread()
-	{
-	}
+    extern qor_pp_thread_local CurrentThread* t_pCurrentThread;
 
-	std::thread::id Thread::GetID()
-	{
-		return m_std_thread.get_id();
-	}
+    class qor_pp_module_interface(QOR_PP_THREAD) CurrentThread
+    {
+        friend class qor_pp_module_interface(QOR_PP_THREAD) Thread;
 
-    void Thread::Detach(void)
-	{
-		m_std_thread.detach();
-	}
+    public:
 
-    std::stop_source Thread::GetStopSource(void)
-	{		
-		return m_std_thread.get_stop_source();
-	}
+        static const CurrentThread& GetCurrent(void);
 
-    std::stop_token Thread::GetStopToken()
-	{		
-		return m_std_thread.get_stop_token();
-	}
+        CurrentThread(const ThreadContext & src) = delete;
+        CurrentThread& operator=(ThreadContext const& src) = delete;
+		~CurrentThread(){};
 
-    void Thread::Join(void)
-	{
-		m_std_thread.join();				
-	}
+        std::thread::id GetID(void);
 
-    bool Thread::Joinable(void)
-	{
-		return m_std_thread.joinable();		
-	}
+		template <class _Clock, class _Duration>
+		void SleepUntil(const std::chrono::time_point<_Clock, _Duration>& timePoint)
+		{
+			std::this_thread::sleep_until(timePoint);
+		}
 
-    bool Thread::RequestStop()
-	{
-		return m_std_thread.request_stop();
-	}
+		template <class _Rep, class _Period>
+		void SleepFor(const std::chrono::duration<_Rep, _Period>& timePeriod)
+		{
+			std::this_thread::sleep_for(timePeriod);
+		}
 
-	void Thread::Setup()
-	{
-		m_pCurrent = new CurrentThread();
-		Run();
-	}
+        void Sleep(unsigned long ulMilliseconds);
+        void Yield();
 
-	void Thread::CleanUp()
-	{
-		delete m_pCurrent;
-	}
+        ThreadContext& Context();
+
+    private:
+
+        ThreadContext m_Context;
+        CurrentThread(){};
+        void SetCurrent(CurrentThread* pThread);
+    };
 
 }}//qor::framework
+
+#endif//QOR_PP_H_FRAMEWORK_CURRENTTHREAD

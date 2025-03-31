@@ -22,65 +22,43 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "thread.h"
+#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+
+#include <thread>
+#include <vector>
+
+#include "src/platform/compiler/compiler.h"
 
 namespace qor{ namespace framework{
 
-	Thread::Thread() : m_std_thread(
-		Delegate<void(void)>::Create<Thread, &Thread::Setup>(this)
-	), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
-	{	
-	}
+    class qor_pp_module_interface(QOR_PP_THREAD) ThreadContext
+    {
 
-    Thread::~Thread()
-	{
-	}
+    public:
 
-	std::thread::id Thread::GetID()
-	{
-		return m_std_thread.get_id();
-	}
+        ThreadContext();
+		ThreadContext(const ThreadContext & src) = delete;
+		ThreadContext& operator=(ThreadContext const& src) = delete;
+		~ThreadContext();
+/*
+		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
+		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
 
-    void Thread::Detach(void)
-	{
-		m_std_thread.detach();
-	}
+		inline FlyerMap& FlyerMap(void)    //Flyer type-instance map
+		{
+			return m_FlyerMap;
+		}
+*/
+    private:
 
-    std::stop_source Thread::GetStopSource(void)
-	{		
-		return m_std_thread.get_stop_source();
-	}
+//        IFunctionContext* m_pRootContext;
+//        IFunctionContext* m_pCurrentContext;
+        std::vector< void* > m_aThreadLocalStorage;
+//        FlyerMap m_FlyerMap;
 
-    std::stop_token Thread::GetStopToken()
-	{		
-		return m_std_thread.get_stop_token();
-	}
-
-    void Thread::Join(void)
-	{
-		m_std_thread.join();				
-	}
-
-    bool Thread::Joinable(void)
-	{
-		return m_std_thread.joinable();		
-	}
-
-    bool Thread::RequestStop()
-	{
-		return m_std_thread.request_stop();
-	}
-
-	void Thread::Setup()
-	{
-		m_pCurrent = new CurrentThread();
-		Run();
-	}
-
-	void Thread::CleanUp()
-	{
-		delete m_pCurrent;
-	}
+    };
 
 }}//qor::framework
+
+#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT

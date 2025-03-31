@@ -29,64 +29,38 @@
 #include <thread>
 
 #include "src/platform/compiler/compiler.h"
+#include "currentthread.h"
+#include "src/qor/delegate/delegate.h"
 
 namespace qor{ namespace framework{
-
-    class qor_pp_module_interface(QOR_PP_THREAD) Thread;
-
-    extern qor_pp_thread_local Thread* t_pCurrentThread;//Per thread object pointer to track per thread data
 
     class qor_pp_module_interface(QOR_PP_THREAD) Thread
     {
 
     public:
 
-        static Thread& GetCurrent(void);
-        static Thread& GetMain(void);
-        static const Thread* This(void);
-
         Thread();
 		Thread(const Thread & src) = delete;
 		Thread& operator=(Thread const& src) = delete;
-		~Thread();
+		virtual ~Thread();
 
-        std::thread::id Getstdid(void)
-		{
-			return m_std_id;
-		}
+		std::thread::id GetID();		
+		void Detach();
+		std::stop_source GetStopSource();
+		std::stop_token GetStopToken();
+		void Join();
+		bool Joinable();
+		bool RequestStop();
 
-        void Sleep(unsigned long ulMilliseconds);
+		virtual void Run(){}
 
-        template <class _Clock, class _Duration>
-		void SleepUntil(const std::chrono::time_point<_Clock, _Duration>& timePoint)
-		{
-			std::this_thread::sleep_until(timePoint);
-		}
-
-		template <class _Rep, class _Period>
-		void SleepFor(const std::chrono::duration<_Rep, _Period>& timePeriod)
-		{
-			std::this_thread::sleep_for(timePeriod);
-		}
-
-		std::thread::id GetID(void);		
-		void Detach(void);
-		std::stop_source GetStopSource(void);
-		std::stop_token GetStopToken(void);
-		void Join(void);
-		bool Joinable(void);
-		bool RequestStop(void);
-		void Yield();
-
-    private:
-
-        static Thread* m_spMainThread;
-
-        std::thread::id m_std_id;
+    private:	
+		void Setup();
+		void CleanUp();
+		
+		CurrentThread* m_pCurrent;
         std::jthread m_std_thread;
-
-        void SetCurrent(Thread* pThread);
-
+		std::stop_callback< Delegate<void(void)> > m_callback;
     };
 
 }}//qor::framework

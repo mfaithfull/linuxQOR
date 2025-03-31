@@ -26,6 +26,7 @@
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/assert/assert.h"
 #include "../../src/qor/module/moduleregistry.h"
+#include "../../src/qor/reference/newref.h"
 #include "../../src/framework/thread/thread.h"
 
 using namespace qor;
@@ -34,8 +35,24 @@ using namespace qor::framework;
 
 struct ThreadTestSuite{};
 
-qor_pp_test_suite_case(ThreadTestSuite, canDefaultConstructTread)
+class Worker : public Thread
+{
+    public:
+
+    virtual void Run()
+    {
+        std::cout << " Worker thread executing.";
+    }
+};
+
+qor_pp_test_suite_case(ThreadTestSuite, canDefaultConstructThread)
 {
     Thread defaultThread;
     qor_pp_assert_that(&defaultThread).isNotNull();
+}
+
+qor_pp_test_suite_case(ThreadTestSuite, canRunDerivedthreadType)
+{
+    auto worker = new_ref<Worker>();
+    worker->Join();
 }

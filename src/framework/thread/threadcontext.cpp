@@ -23,64 +23,18 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "thread.h"
+#include "threadcontext.h"
 
 namespace qor{ namespace framework{
 
-	Thread::Thread() : m_std_thread(
-		Delegate<void(void)>::Create<Thread, &Thread::Setup>(this)
-	), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
-	{	
-	}
+    ThreadContext::ThreadContext()
+    {
 
-    Thread::~Thread()
-	{
-	}
+    }
 
-	std::thread::id Thread::GetID()
-	{
-		return m_std_thread.get_id();
-	}
+    ThreadContext::~ThreadContext()
+    {
 
-    void Thread::Detach(void)
-	{
-		m_std_thread.detach();
-	}
-
-    std::stop_source Thread::GetStopSource(void)
-	{		
-		return m_std_thread.get_stop_source();
-	}
-
-    std::stop_token Thread::GetStopToken()
-	{		
-		return m_std_thread.get_stop_token();
-	}
-
-    void Thread::Join(void)
-	{
-		m_std_thread.join();				
-	}
-
-    bool Thread::Joinable(void)
-	{
-		return m_std_thread.joinable();		
-	}
-
-    bool Thread::RequestStop()
-	{
-		return m_std_thread.request_stop();
-	}
-
-	void Thread::Setup()
-	{
-		m_pCurrent = new CurrentThread();
-		Run();
-	}
-
-	void Thread::CleanUp()
-	{
-		delete m_pCurrent;
-	}
+    }
 
 }}//qor::framework

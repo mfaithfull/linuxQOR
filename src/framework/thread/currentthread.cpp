@@ -23,64 +23,44 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "thread.h"
+#include "src/framework/thread/currentthread.h"
 
 namespace qor{ namespace framework{
 
-	Thread::Thread() : m_std_thread(
-		Delegate<void(void)>::Create<Thread, &Thread::Setup>(this)
-	), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
-	{	
-	}
+    qor_pp_thread_local CurrentThread* t_pCurrentThread = nullptr;
 
-    Thread::~Thread()
+	const CurrentThread& CurrentThread::GetCurrent()
 	{
+		if (t_pCurrentThread == nullptr)
+		{
+			t_pCurrentThread = new CurrentThread;
+		}
+        return *t_pCurrentThread;
 	}
 
-	std::thread::id Thread::GetID()
+    void SetCurrent(CurrentThread* pThread)
+    {
+        t_pCurrentThread = pThread;
+    }
+
+    std::thread::id CurrentThread::GetID(void)
+    {
+        return std::this_thread::get_id();
+    }
+
+	void CurrentThread::Sleep(unsigned long ulMilliseconds)
 	{
-		return m_std_thread.get_id();
+		std::this_thread::sleep_for(std::chrono::milliseconds(ulMilliseconds));
 	}
 
-    void Thread::Detach(void)
-	{
-		m_std_thread.detach();
-	}
-
-    std::stop_source Thread::GetStopSource(void)
+    void CurrentThread::Yield()
 	{		
-		return m_std_thread.get_stop_source();
+		std::this_thread::yield();
 	}
 
-    std::stop_token Thread::GetStopToken()
-	{		
-		return m_std_thread.get_stop_token();
-	}
-
-    void Thread::Join(void)
-	{
-		m_std_thread.join();				
-	}
-
-    bool Thread::Joinable(void)
-	{
-		return m_std_thread.joinable();		
-	}
-
-    bool Thread::RequestStop()
-	{
-		return m_std_thread.request_stop();
-	}
-
-	void Thread::Setup()
-	{
-		m_pCurrent = new CurrentThread();
-		Run();
-	}
-
-	void Thread::CleanUp()
-	{
-		delete m_pCurrent;
-	}
+    ThreadContext& CurrentThread::Context()
+    {
+        return m_Context;
+    }
 
 }}//qor::framework
