@@ -76,3 +76,4 @@ Type Registration may need to be moved to its own module as the host module is t
 The next big step is threads which could reasonably be part of the 'everywhere' libraries or the framework but we'll put them in the framework as the intention is that they be used as stuctural elements by top level applications.
 One more everywhere tool to do first which is delegates, the corallary to observers
 
+Last day of March and we've hit the wall with the native GCC on Ubuntu 20.04. Normal service will resume after and upgrade to GCC 13 or a new Arch based system, whichever works.
