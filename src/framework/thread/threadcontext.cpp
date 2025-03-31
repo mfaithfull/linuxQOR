@@ -27,7 +27,7 @@
 
 namespace qor{ namespace framework{
 
-    ThreadContext::ThreadContext()
+    ThreadContext::ThreadContext() : m_pRootContext(nullptr), m_pCurrentContext(nullptr)
     {
 
     }
@@ -35,6 +35,29 @@ namespace qor{ namespace framework{
     ThreadContext::~ThreadContext()
     {
 
+    }
+
+    IFunctionContext* ThreadContext::RegisterFunctionContext(IFunctionContext * pFContext)
+    {
+		IFunctionContext* pParent = m_pCurrentContext;
+		m_pCurrentContext = pFContext;
+		if (pParent == nullptr)
+		{
+			m_pRootContext = m_pCurrentContext;
+		}
+		return pParent;
+    }
+    
+    void ThreadContext::UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent)
+    {
+		if (m_pCurrentContext == m_pRootContext)
+		{
+			m_pCurrentContext = nullptr;
+		}
+		else
+		{
+			m_pCurrentContext = pParent;
+		}		
     }
 
 }}//qor::framework

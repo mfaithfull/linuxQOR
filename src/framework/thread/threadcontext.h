@@ -29,10 +29,11 @@
 #include <vector>
 
 #include "src/platform/compiler/compiler.h"
+#include "src/qor/interception/ifunctioncontext.h"
 
 namespace qor{ namespace framework{
 
-    class qor_pp_module_interface(QOR_PP_THREAD) ThreadContext
+    class qor_pp_module_interface(QOR_THREAD) ThreadContext
     {
 
     public:
@@ -41,10 +42,10 @@ namespace qor{ namespace framework{
 		ThreadContext(const ThreadContext & src) = delete;
 		ThreadContext& operator=(ThreadContext const& src) = delete;
 		~ThreadContext();
-/*
+
 		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
 		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
-
+/*
 		inline FlyerMap& FlyerMap(void)    //Flyer type-instance map
 		{
 			return m_FlyerMap;
@@ -52,8 +53,8 @@ namespace qor{ namespace framework{
 */
     private:
 
-//        IFunctionContext* m_pRootContext;
-//        IFunctionContext* m_pCurrentContext;
+        IFunctionContext* m_pRootContext;
+        IFunctionContext* m_pCurrentContext;
         std::vector< void* > m_aThreadLocalStorage;
 //        FlyerMap m_FlyerMap;
 

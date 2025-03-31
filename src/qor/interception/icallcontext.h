@@ -22,47 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREAD
-#define QOR_PP_H_FRAMEWORK_THREAD
+#ifndef QOR_PP_H_ICALLCONTEXT
+#define QOR_PP_H_ICALLCONTEXT
 
-#include <chrono>
-#include <thread>
+namespace qor {
 
-#include "src/platform/compiler/compiler.h"
-#include "currentthread.h"
-#include "src/qor/delegate/delegate.h"
+    class qor_pp_module_interface(QOR_INTERCEPTION) IFunctionContext;
 
-namespace qor{ namespace framework{
-
-    class qor_pp_module_interface(QOR_THREAD) Thread
+    class qor_pp_module_interface(QOR_INTERCEPTION) ICallContext
     {
-
     public:
 
-        Thread();
-		Thread(const Thread & src) = delete;
-		Thread& operator=(Thread const& src) = delete;
-		virtual ~Thread();
+        ICallContext() = default;
+        virtual ~ICallContext() = default;
 
-		std::thread::id GetID();		
-		void Detach();
-		std::stop_source GetStopSource();
-		std::stop_token GetStopToken();
-		void Join();
-		bool Joinable();
-		bool RequestStop();
+//    protected:
 
-		virtual void Run(){}
+        virtual void CallMade(IFunctionContext*) = 0;
+        virtual void CallCompleted(void) = 0;
+        virtual void OnReturnAssignment(void) = 0;
+        virtual void OnReturn(void) = 0;
 
-    private:	
-		void Setup();
-		void CleanUp();
-		
-		CurrentThread* m_pCurrent;
-        std::jthread m_std_thread;
-		std::stop_callback< Delegate<void(void)> > m_callback;
     };
+}//qor
 
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_THREAD
+#endif//QOR_PP_H_ICALLCONTEXT

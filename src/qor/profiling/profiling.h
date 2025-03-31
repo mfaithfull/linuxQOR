@@ -31,6 +31,10 @@
 #   define qor_pp_profiling_object NullProfiler
 #endif
 
+#ifndef qor_pp_coverage_enabled
+#   define qor_pp_coverage_enabled false
+#endif//
+
 #define qor_pp_profile_enabled false
 #define qor_pp_profile_begin "src/qor/profiling/profile_enable.inl"
 #define qor_pp_profile_end "src/qor/profiling/profile_disable.inl"

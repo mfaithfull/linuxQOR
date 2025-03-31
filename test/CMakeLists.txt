@@ -30,8 +30,9 @@ reference/test_ref.cpp
 objectcontext/test_objectcontext.cpp
 observer/test_chainlink.cpp observer/test_observer.cpp
 delegate/test_delegate.cpp
-framework/test_thread.cpp)
+framework/test_thread.cpp
+interception/test_functioncontext.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
-target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext qor_thread)
+target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext qor_thread qor_interception)

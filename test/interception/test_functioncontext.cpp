@@ -22,47 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREAD
-#define QOR_PP_H_FRAMEWORK_THREAD
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assert.h"
+#include "../../src/qor/module/module.h"
+#include "../../src/qor/interception/functioncontext.h"
 
-#include <chrono>
-#include <thread>
+using namespace qor;
+using namespace qor::test;
 
-#include "src/platform/compiler/compiler.h"
-#include "currentthread.h"
-#include "src/qor/delegate/delegate.h"
+struct FunctionContextTestSuite{};
 
-namespace qor{ namespace framework{
+qor_pp_test_suite_case(FunctionContextTestSuite, canInstantiateAFunctionContext)
+{
+    qor_pp_ofcontext;
+}
 
-    class qor_pp_module_interface(QOR_THREAD) Thread
-    {
+void canChainNonMemberFunctionContext()
+{
+    qor_pp_fcontext;
 
-    public:
+    std::cout << " " << _FContext_.GetParent()->Module() << ":" << _FContext_.GetParent()->File() << ":" << _FContext_.GetParent()->Name() << ":" << _FContext_.GetParent()->Line() << std::endl;
+    std::cout << " " << _FContext_.Module() << ":" << _FContext_.File() << ":" << _FContext_.Name() << ":" << _FContext_.Line() << std::endl;
+}
 
-        Thread();
-		Thread(const Thread & src) = delete;
-		Thread& operator=(Thread const& src) = delete;
-		virtual ~Thread();
+qor_pp_test_suite_case(FunctionContextTestSuite, canInterrogateFunctionContext)
+{
+    qor_pp_ofcontext;    
+    std::cout << std::endl << _FContext_.Module() << ":" << _FContext_.File() << ":" << _FContext_.Name() << ":" << _FContext_.Line() << std::endl;
 
-		std::thread::id GetID();		
-		void Detach();
-		std::stop_source GetStopSource();
-		std::stop_token GetStopToken();
-		void Join();
-		bool Joinable();
-		bool RequestStop();
-
-		virtual void Run(){}
-
-    private:	
-		void Setup();
-		void CleanUp();
-		
-		CurrentThread* m_pCurrent;
-        std::jthread m_std_thread;
-		std::stop_callback< Delegate<void(void)> > m_callback;
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_THREAD
+    canChainNonMemberFunctionContext();
+}

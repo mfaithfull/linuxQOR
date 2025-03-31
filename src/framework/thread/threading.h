@@ -33,7 +33,7 @@
 
 namespace qor{ namespace framework{
 
-    class qor_pp_module_interface(QOR_PP_THREAD) Threading
+    class qor_pp_module_interface(QOR_THREAD) Threading
     {
 
     public:

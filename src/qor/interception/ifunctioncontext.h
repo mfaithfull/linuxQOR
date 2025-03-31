@@ -22,47 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREAD
-#define QOR_PP_H_FRAMEWORK_THREAD
+#ifndef QOR_PP_H_IFUNCTIONCONTEXT
+#define QOR_PP_H_IFUNCTIONCONTEXT
 
-#include <chrono>
-#include <thread>
+#include "src/qor/objectcontext/objectcontextbase.h"
 
-#include "src/platform/compiler/compiler.h"
-#include "currentthread.h"
-#include "src/qor/delegate/delegate.h"
+namespace qor {
 
-namespace qor{ namespace framework{
+    class qor_pp_module_interface(QOR_INTERCEPTION) ICallContext;
 
-    class qor_pp_module_interface(QOR_THREAD) Thread
+    class qor_pp_module_interface(QOR_INTERCEPTION) IFunctionContext
     {
-
     public:
 
-        Thread();
-		Thread(const Thread & src) = delete;
-		Thread& operator=(Thread const& src) = delete;
-		virtual ~Thread();
+        IFunctionContext() = default;
+        virtual ~IFunctionContext() = default;
 
-		std::thread::id GetID();		
-		void Detach();
-		std::stop_source GetStopSource();
-		std::stop_token GetStopToken();
-		void Join();
-		bool Joinable();
-		bool RequestStop();
+    //protected:
 
-		virtual void Run(){}
+        virtual unsigned int Lock() = 0;
+        virtual unsigned int Unlock() = 0;
+        virtual bool Locked() const = 0;
+        virtual ICallContext* GetCallContext(void) = 0;
+        virtual IFunctionContext* GetParent() const = 0;
+        virtual void SetParent(IFunctionContext* pParent) = 0;
+        virtual unsigned int TraceDepth() = 0;
+        virtual const char* File(void) const = 0;
+        virtual const char* Name(void) const = 0;
+        virtual unsigned int Line(void) const = 0;
+        virtual ObjectContextBase ObjectContext(void) const = 0;
+        virtual const char* Module(void) const = 0;
 
-    private:	
-		void Setup();
-		void CleanUp();
-		
-		CurrentThread* m_pCurrent;
-        std::jthread m_std_thread;
-		std::stop_callback< Delegate<void(void)> > m_callback;
     };
+}//qor
 
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_THREAD
+#endif//QOR_PP_H_IFUNCTIONCONTEXT

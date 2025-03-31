@@ -89,7 +89,7 @@ qor_pp_test_suite_case(ThreadTestSuite, canAccessImmutableThreadContextFromWithi
     worker->Join();
 }
 
-qor_pp_test_suite_case(ThreadTestSuite, canAccessMmutableThreadContextFromWithinThread)
+qor_pp_test_suite_case(ThreadTestSuite, canAccessMutableThreadContextFromWithinThread)
 {
     auto worker = new_ref<SelfAwareWorker>();
     worker->Join();

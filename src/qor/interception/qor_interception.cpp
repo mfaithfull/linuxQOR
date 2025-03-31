@@ -22,47 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREAD
-#define QOR_PP_H_FRAMEWORK_THREAD
+#include "../../configuration/configuration.h"
+#include "../module/module.h"
 
-#include <chrono>
-#include <thread>
-
-#include "src/platform/compiler/compiler.h"
-#include "currentthread.h"
-#include "src/qor/delegate/delegate.h"
-
-namespace qor{ namespace framework{
-
-    class qor_pp_module_interface(QOR_THREAD) Thread
-    {
-
-    public:
-
-        Thread();
-		Thread(const Thread & src) = delete;
-		Thread& operator=(Thread const& src) = delete;
-		virtual ~Thread();
-
-		std::thread::id GetID();		
-		void Detach();
-		std::stop_source GetStopSource();
-		std::stop_token GetStopToken();
-		void Join();
-		bool Joinable();
-		bool RequestStop();
-
-		virtual void Run(){}
-
-    private:	
-		void Setup();
-		void CleanUp();
-		
-		CurrentThread* m_pCurrent;
-        std::jthread m_std_thread;
-		std::stop_callback< Delegate<void(void)> > m_callback;
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_THREAD
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Interception Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}
