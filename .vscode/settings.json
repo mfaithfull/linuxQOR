@@ -87,6 +87,9 @@
         "fstream": "cpp",
         "shared_mutex": "cpp",
         "typeindex": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "variant": "cpp"
     }
 }
