@@ -36,7 +36,7 @@ namespace qor{ namespace framework{
     class qor_pp_module_interface(QOR_THREAD) FlyerMap final
     {
     public:
-    
+
         FlyerMap() = default;
         ~FlyerMap() = default;
 
@@ -49,11 +49,14 @@ namespace qor{ namespace framework{
         ObjectContextBase Configure(const GUID* classID, ObjectContextBase context)
         {
             ObjectContextBase result;
-            auto it = m_Map.find(*classID);
-            if( it != m_Map.end());
+            if(m_Map.size() > 0)
             {
-                result = it->second;
-                m_Map.erase(it);
+                auto it = m_Map.find(*classID);
+                if( it != m_Map.end());
+                {
+                    result = it->second;
+                    m_Map.erase(*classID);
+                }
             }
             m_Map.insert(std::make_pair(*classID, context));
             return result;
@@ -62,7 +65,10 @@ namespace qor{ namespace framework{
         void Unconfigure(const GUID* classID, ObjectContextBase context)
         {
             m_Map.erase(m_Map.find(*classID));
-            m_Map.insert(std::make_pair(*classID, context));
+            if(!context.IsNull())
+            {
+                m_Map.insert(std::make_pair(*classID, context));
+            }
         }
 
         ObjectContextBase Lookup(const GUID* classID)

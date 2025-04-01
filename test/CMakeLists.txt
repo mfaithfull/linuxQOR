@@ -31,7 +31,8 @@ objectcontext/test_objectcontext.cpp
 observer/test_chainlink.cpp observer/test_observer.cpp
 delegate/test_delegate.cpp
 framework/test_thread.cpp
-interception/test_functioncontext.cpp)
+interception/test_functioncontext.cpp interception/test_callinterceptor.cpp
+interception/test_functioncontextlock.cpp interception/test_parameters.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 

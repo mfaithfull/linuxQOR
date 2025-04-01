@@ -22,51 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FLYER
-#define QOR_PP_H_FLYER
+#ifndef QOR_PP_H_INTERCEPTION_PARAMETER_REGISTER
+#define QOR_PP_H_INTERCEPTION_PARAMETER_REGISTER
 
-#include "src/framework/thread/thread.h"
-#include "src/qor/objectcontext/objectcontext.h"
+#include "src/platform/compiler/compiler.h"
+#include "src/qor/interception/functioncontextlock.h"
 
 namespace qor {
 
-    template< class T, class baseT >
-    class Flyer : public baseT
+    struct qor_pp_module_interface(QOR_INTERCEPTION) ParamRegister
     {
-    public:
-
-        Flyer() : m_pPrevious( nullptr ){}
-        virtual ~Flyer() = default;
-
-        bool Push()
+        template< typename T >ParamRegister(T* pParam)
         {
-            typename ref_of< T >::type instance( dynamic_cast<T*>(this) );
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(instance);
-
-            ObjectContextBase prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
-
-            if(!prev.IsNull())
-			{                
-				m_pPrevious = prev;
-            }
-            return true;
+            FunctionContextLock fcl;
+            dynamic_cast<CallContext*>(fcl.CallContextPtr())->Register(*pParam);
         }
-
-		bool Pop()
-		{
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(dynamic_cast<T*>(m_pPrevious));
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, wrapper);
-			return true;
-		}
-
-    protected:
-
-        typedef baseT base_type;
-        baseT* m_pPrevious;
     };
 
 }//qor
 
-#endif//QOR_PP_H_FLYER
+#endif//QOR_PP_H_INTERCEPTION_PARAMETER_REGISTER

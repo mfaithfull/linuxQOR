@@ -129,12 +129,12 @@ namespace qor{
 
 		bool IsNull(void) const
 		{
-			return m_p == nullptr || (m_p->IsNull());
+			return m_p == nullptr;
 		}
 
 		bool IsNotNull(void) const
 		{
-			return m_p != nullptr && (!m_p->IsNull());
+			return m_p != nullptr;
 		}
 
 		bool IsOwner(void) const

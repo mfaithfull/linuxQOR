@@ -40,8 +40,6 @@ namespace qor {
 
 		inline void Clear(void);
 
-	protected:
-
 		void* m_p;
 	};
 
@@ -52,13 +50,35 @@ namespace qor {
         template< class T >
         class ParameterPass : public ParameterBase
         {
+        public:
+		
+            ParameterPass(T& _t) : ParameterBase()
+			{
+				m_p = &_t;//Capture the parameter reference on construction
+			}
 
+			ParameterPass(const ParameterBase& src) : ParameterBase(src){}
+
+			ParameterPass(const ParameterPass& src) : ParameterBase(src){}
+
+			ParameterPass& operator = (const ParameterPass& src)
+			{
+				ParameterBase::operator=(src);
+				return *this;
+			}
+
+			virtual ~ParameterPass() = default;
+		
+			T& ParamterRef() 	//Access to the parameter reference
+			{
+				return *(reinterpret_cast<T*>(m_p));
+			}
         };
 
         template< typename T > void qor_pp_forceinline Register(T& _t)
         {
             ParameterPass< T > paramt(_t);
-            OutOflineRegistration(paramt);
+            OutOfLineRegistration(paramt);
         }
 
         template< typename T > void qor_pp_forceinline RegisterReturn(T& _t)
@@ -70,15 +90,14 @@ namespace qor {
         CallContext(/*const IThread* pThreadContext*/);
         virtual ~CallContext();
 
-    protected:
-
         virtual void CallMade(IFunctionContext*);
         virtual void CallCompleted(void);
         virtual void OnReturnAssignment(void);
         virtual void OnReturn(void);
+    
 		ParameterBase* Parameters(void);						//Access to the array of registered parameters
 		ParameterBase* ReturnValue(void);						//Access to the return value
-
+    
 		void qor_pp_noinline OutOfLineRegistration(ParameterBase& Param);
 		ParameterBase m_aParameters[10];
 		ParameterBase m_ReturnValue;							//Return value

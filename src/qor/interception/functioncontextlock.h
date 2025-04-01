@@ -22,51 +22,35 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FLYER
-#define QOR_PP_H_FLYER
+#ifndef QOR_PP_H_INTERCEPTION_FC_LOCK
+#define QOR_PP_H_INTERCEPTION_FC_LOCK
 
-#include "src/framework/thread/thread.h"
-#include "src/qor/objectcontext/objectcontext.h"
+#include "functioncontext.h"
 
 namespace qor {
 
-    template< class T, class baseT >
-    class Flyer : public baseT
+    class qor_pp_module_interface(QOR_INTERCEPTION) FunctionContextLock
     {
     public:
 
-        Flyer() : m_pPrevious( nullptr ){}
-        virtual ~Flyer() = default;
+        FunctionContextLock();
+        ~FunctionContextLock();
 
-        bool Push()
-        {
-            typename ref_of< T >::type instance( dynamic_cast<T*>(this) );
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(instance);
+        CallContext* CallContextPtr(void);
+        CallContext* ParentCallContextPtr(void);
+        unsigned long Level(void);
 
-            ObjectContextBase prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
+    private:
 
-            if(!prev.IsNull())
-			{                
-				m_pPrevious = prev;
-            }
-            return true;
-        }
+        FunctionContextLock(const FunctionContextLock&);
+        FunctionContextLock& operator=(const FunctionContextLock&);
 
-		bool Pop()
-		{
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(dynamic_cast<T*>(m_pPrevious));
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, wrapper);
-			return true;
-		}
-
-    protected:
-
-        typedef baseT base_type;
-        baseT* m_pPrevious;
+        CallContext* m_pCallContext;
+        CallContext* m_pParentCallContext;
+        IFunctionContext* m_pFunctionContext;
+        unsigned long m_ulLevel;
     };
 
 }//qor
 
-#endif//QOR_PP_H_FLYER
+#endif//QOR_PP_H_INTERCEPTION_FC_LOCK

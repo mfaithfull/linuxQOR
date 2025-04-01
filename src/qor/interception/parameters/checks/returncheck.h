@@ -22,51 +22,53 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FLYER
-#define QOR_PP_H_FLYER
-
-#include "src/framework/thread/thread.h"
-#include "src/qor/objectcontext/objectcontext.h"
+#ifndef QOR_PP_H_INTERCEPTION_PARAMETER_CHECKS_RETURNCHECK
+#define QOR_PP_H_INTERCEPTION_PARAMETER_CHECKS_RETURNCHECK
 
 namespace qor {
 
-    template< class T, class baseT >
-    class Flyer : public baseT
+    template< typename TValue >
+    class ReturnCheckBase
     {
     public:
 
-        Flyer() : m_pPrevious( nullptr ){}
-        virtual ~Flyer() = default;
+        ReturnCheckBase() = default;
+        virtual ~ReturnCheckBase() = default;
 
-        bool Push()
+        virtual bool Test(TValue& value)
         {
-            typename ref_of< T >::type instance( dynamic_cast<T*>(this) );
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(instance);
-
-            ObjectContextBase prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
-
-            if(!prev.IsNull())
-			{                
-				m_pPrevious = prev;
-            }
-            return true;
+            return false;
         }
 
-		bool Pop()
-		{
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(dynamic_cast<T*>(m_pPrevious));
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, wrapper);
-			return true;
-		}
+        virtual void DefaultInit(TValue& value)
+        {
+        }
 
-    protected:
+        static void Check(TValue& value, ReturnCheckBase* pInstance)
+        {
+            if (!pInstance->Test(value))
+            {
+                //TODO: maybe raise an issue
+            }
+        }
 
-        typedef baseT base_type;
-        baseT* m_pPrevious;
+        static void Init(TValue& value, ReturnCheckBase* pInstance)
+        {
+            pInstance->DefaultInit(value);
+        }
+    };
+
+    template< typename TValue >
+    class NoReturnCheck : public ReturnCheckBase< TValue >
+    {
+    public:
+
+        virtual bool Test(TValue& value)
+        {
+            return true;
+        }
     };
 
 }//qor
 
-#endif//QOR_PP_H_FLYER
+#endif//QOR_PP_H_INTERCEPTION_PARAMETER_CHECKS_RETURNCHECK

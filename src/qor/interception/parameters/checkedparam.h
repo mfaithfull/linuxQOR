@@ -22,51 +22,46 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FLYER
-#define QOR_PP_H_FLYER
+#ifndef QOR_PP_H_INTERCEPTION_CHECKED_PARAMETER
+#define QOR_PP_H_INTERCEPTION_CHECKED_PARAMETER
 
-#include "src/framework/thread/thread.h"
-#include "src/qor/objectcontext/objectcontext.h"
+#include "paramregister.h"
+#include "checks/nocheck.h"
 
 namespace qor {
 
-    template< class T, class baseT >
-    class Flyer : public baseT
+    template< class T, class Check = NoCheck >
+    class CheckedParam : public ParamRegister
     {
     public:
+        
+        typedef CheckedParam< T, Check > type;
 
-        Flyer() : m_pPrevious( nullptr ){}
-        virtual ~Flyer() = default;
-
-        bool Push()
+        CheckedParam(T param) : ParamRegister(&m_Param), m_Param(param)
         {
-            typename ref_of< T >::type instance( dynamic_cast<T*>(this) );
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(instance);
-
-            ObjectContextBase prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
-
-            if(!prev.IsNull())
-			{                
-				m_pPrevious = prev;
-            }
-            return true;
+            Check::Check(m_Param);
         }
-
-		bool Pop()
-		{
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(dynamic_cast<T*>(m_pPrevious));
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, wrapper);
-			return true;
-		}
+        
+        operator T()
+        {
+            return m_Param;
+        }
+        
+        T& operator &()
+        {
+            return m_Param;
+        }
+        
+        T* operator ->()
+        {
+            return &m_Param;
+        }
 
     protected:
 
-        typedef baseT base_type;
-        baseT* m_pPrevious;
+        T m_Param;
     };
 
 }//qor
 
-#endif//QOR_PP_H_FLYER
+#endif//QOR_PP_H_INTERCEPTION_CHECKED_PARAMETER

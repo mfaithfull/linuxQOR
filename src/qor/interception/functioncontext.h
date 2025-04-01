@@ -44,7 +44,7 @@
 namespace qor
 {
 	//--------------------------------------------------------------------------------
-	class qor_pp_module_interface(QOR_INTERCEPTION) FunctionContext : public ProfileReceiver, IFunctionContext
+	class qor_pp_module_interface(QOR_INTERCEPTION) FunctionContext : public ProfileReceiver, public IFunctionContext
 	{
 
 	public:

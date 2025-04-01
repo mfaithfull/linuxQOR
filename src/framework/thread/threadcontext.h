@@ -52,6 +52,11 @@ namespace qor{ namespace framework{
 			return m_FlyerMap;
 		}
 
+		inline IFunctionContext* FunctionContext()
+		{
+			return m_pCurrentContext;
+		}
+
     private:
 
         IFunctionContext* m_pRootContext;

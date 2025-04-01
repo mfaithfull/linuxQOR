@@ -22,51 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FLYER
-#define QOR_PP_H_FLYER
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assert.h"
+#include "../../src/qor/module/module.h"
+#include "../../src/qor/interception/functioncontextlock.h"
 
-#include "src/framework/thread/thread.h"
-#include "src/qor/objectcontext/objectcontext.h"
+using namespace qor;
+using namespace qor::test;
 
-namespace qor {
+struct FunctionContextLockTestSuite{};
 
-    template< class T, class baseT >
-    class Flyer : public baseT
-    {
-    public:
+qor_pp_test_suite_case(FunctionContextLockTestSuite, canInstantiateAFunctionContextLock)
+{
+    qor_pp_ofcontext;
+    FunctionContextLock fcl;
+}
 
-        Flyer() : m_pPrevious( nullptr ){}
-        virtual ~Flyer() = default;
-
-        bool Push()
-        {
-            typename ref_of< T >::type instance( dynamic_cast<T*>(this) );
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(instance);
-
-            ObjectContextBase prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
-
-            if(!prev.IsNull())
-			{                
-				m_pPrevious = prev;
-            }
-            return true;
-        }
-
-		bool Pop()
-		{
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(dynamic_cast<T*>(m_pPrevious));
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, wrapper);
-			return true;
-		}
-
-    protected:
-
-        typedef baseT base_type;
-        baseT* m_pPrevious;
-    };
-
-}//qor
-
-#endif//QOR_PP_H_FLYER

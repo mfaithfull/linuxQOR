@@ -29,7 +29,9 @@
 
 namespace qor {
 
+#ifndef QOR_PP_H_ICALLCONTEXT
     class qor_pp_module_interface(QOR_INTERCEPTION) ICallContext;
+#endif
 
     class qor_pp_module_interface(QOR_INTERCEPTION) IFunctionContext
     {

@@ -94,7 +94,7 @@ namespace qor
             ObjectContextBase context = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Lookup(guid_of<T>::guid());            
             if (!context.IsNull())
             {
-                FlyerRef< T > pCurrent(context);
+                FlyerRef< T > pCurrent(context.operator T*());
                 return pCurrent;
             }
             return FlyerRef< T >();

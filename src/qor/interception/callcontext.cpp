@@ -24,6 +24,8 @@
 
 #include "../../configuration/configuration.h"
 #include "callcontext.h"
+#include "callinterceptor.h"
+#include "src/qor/reference/newref.h"
 
 namespace qor{
 
@@ -43,88 +45,65 @@ namespace qor{
 		m_p = nullptr;
 	}
 
-	CallContext::CallContext(/*const IThread* pThreadContext*/) //: m_threadContext(pThreadContext)
+	CallContext::CallContext()
 	{
 		m_ucParamCount = 0;
 	}
 
-	//--------------------------------------------------------------------------------
 	CallContext::~CallContext()
 	{
 		//Cleanup();
 	}
 
-	//--------------------------------------------------------------------------------
 	void CallContext::CallMade(IFunctionContext* pCalledContext)
 	{
 		//Execution has reached the context of the callee
-		//typename reference_type< CallInterceptor >::type ptrInterceptor = new_ref< CallInterceptor >();
-		//if (!ptrInterceptor.IsNull())
-		//{
-		//	ptrInterceptor->CallMade(this, pCalledContext);
-		//}
+		typename ref_of< CallInterceptor >::type ptrInterceptor = new_ref< CallInterceptor >();
+		if (!ptrInterceptor.IsNull())
+		{
+			ptrInterceptor->CallMade(this, pCalledContext);
+		}
 	}
 
-	//--------------------------------------------------------------------------------
 	void CallContext::OnReturnAssignment()
 	{
-		//typename reference_type< CallInterceptor >::type ptrInterceptor = new_ref< CallInterceptor >();
-		//if (!ptrInterceptor.IsNull())
-		//{
-			//ptrInterceptor->OnReturnAssignment(this);
-		//}
+		typename ref_of< CallInterceptor >::type ptrInterceptor = new_ref< CallInterceptor >();
+		if (!ptrInterceptor.IsNull())
+		{
+			ptrInterceptor->OnReturnAssignment(this);
+		}
 	}
 
-	//--------------------------------------------------------------------------------
 	void CallContext::OnReturn()
 	{
-		//reference_type< CallInterceptor >::type ptrInterceptor = new_ref< CallInterceptor >();
-		//if (!ptrInterceptor.IsNull())
-		//{
-			//ptrInterceptor->OnReturn(this);
-		//}
+		typename ref_of< CallInterceptor >::type ptrInterceptor = new_ref< CallInterceptor >();
+		if (!ptrInterceptor.IsNull())
+		{
+			ptrInterceptor->OnReturn(this);
+		}
 	}
 
-	//--------------------------------------------------------------------------------
 	void CallContext::CallCompleted()
 	{
 		//Execution of the callee is winding up in preparation for returning
-		//reference_type< CallInterceptor >::type ptrInterceptor = new_ref< CallInterceptor >();
-		//if (!ptrInterceptor.IsNull())
-		//{
-			//ptrInterceptor->CallCompleted(this);
-		//}
+		typename ref_of< CallInterceptor >::type ptrInterceptor = new_ref< CallInterceptor >();
+		if (!ptrInterceptor.IsNull())
+		{
+			ptrInterceptor->CallCompleted(this);
+		}
 	}
 
-	//--------------------------------------------------------------------------------
 	ParameterBase* CallContext::Parameters(void)
 	{
 		return m_aParameters;	//Access to the list of registered parameters
 	}
 
-	//--------------------------------------------------------------------------------
 	ParameterBase* CallContext::ReturnValue(void)
 	{
 		return &m_ReturnValue;
 	}
 
-	//--------------------------------------------------------------------------------
-	//void CallContext::Cleanup()
-	//{
-		//m_ReturnValue.Clear();
-		//m_ucParamCount = 0;
-		//if (m_threadContext != nullptr)
-		//{
-			/*
-			if (m_threadContext->FunctionContext())
-			{
-				m_threadContext->FunctionContext()->Unlock();
-			}
-			*/
-		//}
-	//}
 
-	//--------------------------------------------------------------------------------
 	void CallContext::OutOfLineRegistration(ParameterBase& Param)
 	{
 		if (m_ucParamCount < 9)
@@ -134,4 +113,3 @@ namespace qor{
 	}
 
 }//qor
-

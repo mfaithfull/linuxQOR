@@ -22,51 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FLYER
-#define QOR_PP_H_FLYER
+#include "src/configuration/configuration.h"
 
-#include "src/framework/thread/thread.h"
-#include "src/qor/objectcontext/objectcontext.h"
+#include "functioncontextlock.h"
+#include "src/framework/thread/currentthread.h"
 
 namespace qor {
 
-    template< class T, class baseT >
-    class Flyer : public baseT
+    FunctionContextLock::FunctionContextLock() : m_pFunctionContext(nullptr), m_pParentCallContext(nullptr), m_pCallContext(nullptr), m_ulLevel((unsigned long)-1)
     {
-    public:
-
-        Flyer() : m_pPrevious( nullptr ){}
-        virtual ~Flyer() = default;
-
-        bool Push()
+        m_pFunctionContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
+        if (m_pFunctionContext)
         {
-            typename ref_of< T >::type instance( dynamic_cast<T*>(this) );
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(instance);
-
-            ObjectContextBase prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
-
-            if(!prev.IsNull())
-			{                
-				m_pPrevious = prev;
+            m_ulLevel = m_pFunctionContext->Lock();
+            m_pCallContext = dynamic_cast<CallContext*>(m_pFunctionContext->GetCallContext());
+            if (m_pFunctionContext->GetParent())
+            {
+                m_pParentCallContext = dynamic_cast<CallContext*>(m_pFunctionContext->GetParent()->GetCallContext());
             }
-            return true;
         }
+    }
+    
+    CallContext* FunctionContextLock::CallContextPtr(void)
+    {
+        return m_pCallContext;
+    }
 
-		bool Pop()
-		{
-            const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(dynamic_cast<T*>(m_pPrevious));
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, wrapper);
-			return true;
-		}
-
-    protected:
-
-        typedef baseT base_type;
-        baseT* m_pPrevious;
-    };
+    CallContext* FunctionContextLock::ParentCallContextPtr(void)
+    {
+        return m_pParentCallContext;
+    }
+    
+    unsigned long FunctionContextLock::Level(void)
+    {
+        return m_ulLevel;
+    }
+    
+    FunctionContextLock::~FunctionContextLock()
+    {
+        if (m_pFunctionContext != nullptr)
+        {
+            m_pFunctionContext->Unlock();
+        }
+    }
 
 }//qor
-
-#endif//QOR_PP_H_FLYER

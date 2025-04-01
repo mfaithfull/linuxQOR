@@ -22,48 +22,70 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_CALLINTERCEPTOR
-#define QOR_PP_H_CALLINTERCEPTOR
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assert.h"
+#include "../../src/qor/module/module.h"
+#include "../../src/qor/interception/functioncontext.h"
+#include "../../src/qor/interception/callinterceptor.h"
 
-#include "src/framework/thread/thread.h"
-#include "src/qor/objectcontext/objectcontext.h"
-#include "src/qor/reference/flyerref.h"
-#include "src/qor/reference/reference.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/datastructures/guid.h"
-#include "callcontext.h"
-#include "flyer.h"
-#include "flystrapbase.h"
+using namespace qor;
+using namespace qor::test;
 
-namespace qor {
+struct CallInterceptorTestSuite{};
 
-    constexpr GUID CallInterceptorGUID = {0x00000001, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
-    class qor_pp_module_interface(QOR_INTERCEPTION) CallInterceptor;
-
-    template<> struct ref_of< CallInterceptor >
+class CallCounter : public CallInterceptor
+{
+public:
+    CallCounter() : callCount(0), callCompletedCount(0)
     {
-        typedef qor::FlyerRef< CallInterceptor > type;
-    };
 
-    template<> struct guid_of< CallInterceptor >
+    }
+
+    void CallMade( CallContext* pCall, IFunctionContext* pFunction )
     {
-        static const GUID* guid()
-        {
-            return &CallInterceptorGUID;            
-        }
-    };
+        callCount++;
+    }
 
-    class qor_pp_module_interface(QOR_INTERCEPTION) CallInterceptor : public Flyer< CallInterceptor, FlyStrapBase >
+    virtual void CallCompleted( CallContext* pCall )
     {
-    public:
-		CallInterceptor();
-		virtual ~CallInterceptor();
-		virtual void CallMade( CallContext* pCall, IFunctionContext* pFunction );
-		virtual void OnReturnAssignment( CallContext* pCall );
-		virtual void OnReturn(CallContext* pCall);
-		virtual void CallCompleted( CallContext* pCall );
-    };
+        callCompletedCount++;
+    }
 
-}//qor
+    uint64_t callCount;
+    uint64_t callCompletedCount;
+};
 
-#endif//QOR_PP_H_CALLINTERCEPTOR
+qor_pp_test_suite_case(CallInterceptorTestSuite, canInstantiateACallInterceptor)
+{
+    CallInterceptor CI;
+    qor_pp_assert_that(&CI).isNotNull();
+}
+
+int getAValue()
+{
+    qor_pp_fcontext;
+    return 3;
+}
+
+int getBValue()
+{
+    qor_pp_fcontext;
+    return 5;
+}
+
+int addValues(int a, int b)
+{
+    qor_pp_fcontext;
+    return a + b;
+}
+
+qor_pp_test_suite_case(CallInterceptorTestSuite, canInterceptCalls)
+{
+    qor_pp_fcontext;
+    CallCounter counter;
+    int result = addValues(getAValue(), getBValue());
+    qor_pp_assert_that(result).isEqualTo(8);
+    qor_pp_assert_that(counter.callCount).isEqualTo(3);
+    qor_pp_assert_that(counter.callCompletedCount).isEqualTo(3);
+}

@@ -53,7 +53,9 @@ namespace qor{
         template< typename T>
         operator T* () const
 		{
-            return (dynamic_cast< ObjectPointer< T >* >(m_p))->operator->();
+			ObjectPointer< T >* op = dynamic_cast< ObjectPointer< T >* >(m_p);
+			return op ? op->operator T *() : nullptr;
+            //return (dynamic_cast< ObjectPointer< T >* >(m_p))->operator->();
 		}
 
 		static ObjectContextBase& NullContext(void);
