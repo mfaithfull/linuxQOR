@@ -29,7 +29,7 @@ factory/test_factory.cpp
 reference/test_ref.cpp
 objectcontext/test_objectcontext.cpp
 observer/test_chainlink.cpp observer/test_observer.cpp
-delegate/test_delegate.cpp
+delegate/test_delegate.cpp delegate/test_multicastdelegate.cpp
 framework/test_thread.cpp
 interception/test_functioncontext.cpp interception/test_callinterceptor.cpp
 interception/test_functioncontextlock.cpp interception/test_parameters.cpp)

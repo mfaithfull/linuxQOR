@@ -191,4 +191,4 @@ namespace qor {
 
 }//qor
 
-#endif//QOR_PP_H_DELEGAT
+#endif//QOR_PP_H_DELEGATE
