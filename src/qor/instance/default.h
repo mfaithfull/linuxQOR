@@ -49,12 +49,6 @@ namespace qor{
 		}
 
 		template< class T >
-		static inline void TearDown(T* pt, size_t uiCount = 1)
-		{
-			factory_of<T>::type::TearDown(pt, uiCount);
-		}
-		        
-		template< class T >
 		static inline auto Instance(size_t uiCount = 1)
 		{
 			return factory_of<T>::type::Construct(uiCount);
@@ -63,7 +57,7 @@ namespace qor{
 		template< class T, typename... _p >
 		static inline auto Instance(size_t uiCount, _p&&... p1)
 		{
-			return factory_of<T>::type::Build(uiCount, p1...);
+			return factory_of<T>::type::Construct(uiCount, p1...);
 		}
 
 	private:

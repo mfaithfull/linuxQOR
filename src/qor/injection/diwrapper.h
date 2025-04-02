@@ -22,58 +22,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TYPEIDENTITY
-#define QOR_PP_H_TYPEIDENTITY
+#ifndef QOR_PP_H_INJECTION_DIWRAPPER
+#define QOR_PP_H_INJECTION_DIWRAPPER
 
-#include <typeinfo>
-#include <typeindex>
-
-#include "src/platform/compiler/compiler.h"
-#include "src/qor/datastructures/guid.h"
+#define qor_pp_did(INTERFACE, PARAM) DIWrapper<INTERFACE> PARAM = DIWrapper<INTERFACE>()
+#define qor_pp_dii(INTERFACE, PARAM) DIWrapper<INTERFACE> PARAM
 
 namespace qor{
 
-    template<typename T>
-    struct id_of
-    {
-        static constexpr std::type_index id()
-        {
-            return std::type_index(typeid(T));
-        }
-    };
+	template<typename Interface>
+	class DIWrapper final
+	{
+	private:
 
-    template<typename T>
-    struct name_of
-    {
-        static std::string name()
-        {
-            return compiler::demangle<T>();
-        }
-    };
+		typename ref_of<Interface>::type m_instance;
 
-    template<typename T>
-    struct guid_of
-    {
-        static const GUID* guid()
-        {
-            return &null_guid;
-        }
-    };
+	public:
 
-//Preprocessor macro shorthand for declaring a guid_of template specialisation
-#   define qor_pp_declare_guid_of(_CLASS,_GUID)\
-    template<> struct qor::guid_of< _CLASS >\
-    {\
-        static const GUID* guid()\
-        {\
-            return &_GUID;\
-        }\
-    };
+		template< typename... _p >
+		DIWrapper(_p&&... p1)
+		{
+			m_instance = new_ref<Interface>(std::forward<_p&&>(p1)...);
+		}
 
-//Example: 
-//constexpr FeatureGUID = {0x00000000, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
-//qor_pp_declare_guid_of(IFeature, FeatureGUID);
+		DIWrapper(typename ref_of<Interface>::type p1)
+		{
+			m_instance = p1;
+		}
+
+		~DIWrapper() = default;
+
+		operator typename ref_of<Interface>::type() const
+		{
+			return m_instance;
+		}
+
+		typename ref_of<Interface>::type operator() (void) const
+		{
+			return m_instance;
+		}
+	};
 
 }//qor
 
-#endif//QOR_PP_H_TYPEIDENTITY
+#endif//QOR_PP_H_INJECTION_DIWRAPPER

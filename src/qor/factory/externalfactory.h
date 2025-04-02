@@ -25,14 +25,14 @@
 #ifndef QOR_PP_H_EXTERNALFACTORY
 #define QOR_PP_H_EXTERNALFACTORY
 
-#include <new>
-
-//The purpose of a factory is create and dispose of instances of a type.
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
 
 namespace qor
 {
+    //Gets the internal factory for the implementation of T, from the type registry, and defers to it.
     template< class T >
-    class ExternalFactory final
+    class ExternalFactory final 
     {
     private:
 
@@ -41,67 +41,51 @@ namespace qor
 
     public:
 
+        typedef IndirectFactory<T>* reg_entry_ptr_t;
+
         static void Destruct(T* pt, size_t count = 1)
         {
-            if(count == 1)
-            {
-                delete pt;
-            }
-            else
-            {
-                delete [] pt;
-            }
+            ObjectContextBase Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
+			if (Registration.IsNull())
+			{
+				throw std::logic_error("Template ID Factory cannot Destruct an unregistered class.");
+			}
+			else
+			{
+                IndirectFactory<T>* pFactory = Registration;
+				return pFactory->Destruct(pt,count);
+			}
         }
         
-        static void TearDown(T* pt, size_t count = 1)
+        static typename ref_of<T>::type Construct(size_t count = 1)
         {
-            if(count == 1)
+            ObjectContextBase Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
+            if(Registration.IsNull())
             {
-                delete pt;
+                throw std::logic_error("Template ID Factory cannot Construct an unregistered class.");
             }
             else
             {
-                for( size_t del = 0; del < count; del++)
-                {
-                    (pt+del)->~T();
-                }
-
-                uint8_t* pMem = reinterpret_cast<uint8_t*>(pt);
-                delete pMem;
-            }
+                IndirectFactory<T>* pFactory = Registration;
+                return pFactory->Construct(count).template AsRef<T>();
+            }            
         }
 
-        static T* Construct(size_t count = 1)
-        {
-            if(count == 1)
-            {
-                return new T();
-            }
-            else
-            {
-                T* result = new T[count];
-                return result;
-            }
-        }
+		template< typename... _p >
+		static typename ref_of<T>::type Construct(size_t count, _p&&... p1)
+		{
+			ObjectContextBase Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
+			if (Registration.IsNull())
+			{
+				throw std::logic_error("Template ID Factory cannot Construct an unregistered class.");
+			}
+			else
+			{
+                IndirectFactory<T>* pFactory = Registration;
+                return pFactory->Construct(count, p1...);
+			}
+		}
 
-        template< typename... _p >
-        static T* Build(size_t count, _p&&... p1)
-        {
-            if(count == 1)
-            {
-                return new T(p1...);
-            }
-            else
-            {
-                uint8_t* pMem = new uint8_t(sizeof(T)* count);                
-                T* result = reinterpret_cast<T*>(pMem);
-                for( size_t init = 0; init < count; init++)
-                {
-                    new(result + init)T(p1...);
-                }
-                return result;
-            }
-        }
     };
 }//qor
 

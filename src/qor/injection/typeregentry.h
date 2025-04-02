@@ -25,23 +25,94 @@
 #ifndef QOR_PP_H_TYPEREGENTRY
 #define QOR_PP_H_TYPEREGENTRY
 
+#include "typeregistry.h"
+#include "src/qor/reference/reference.h"
+
 namespace qor {
 
-    template< class T>
-    class TypeRegEntry
+    template<class I>
+    class IndirectFactory   //This is what gets registered in the TypeRegistry but the real type may be one of the derived types below
     {
-
-        TypeRegEntry()
+    public:
+        virtual ref_of<I>::type Construct(size_t count = 1) const
         {
-            //Register the target type
+            return InternalFactory<I>::Construct(count);
+        }
+
+        virtual void Destruct( I* pt, size_t count = 1) const
+        {
+            InternalFactory<I>::Destruct(pt, count);
+        }
+    };
+
+    template<class I, typename... _p>
+    class IndirectFactorywithParams : public IndirectFactory<I>
+    {
+    public:
+        virtual ref_of<I>::type Construct(size_t count, _p&&... p1) const
+        {
+            return InternalFactory<I>::template Construct<_p...>(count, p1...);
+        }
+    };
+
+
+    template<class T, class I = T, typename... _p>
+    class TypeRegEntryWithParams : public IndirectFactorywithParams<I, _p...>
+    {
+    public:
+
+        inline TypeRegEntryWithParams()
+        {
+            TheTypeRegistry()->Register( *(guid_of<I>::guid()), ObjectContext< IndirectFactory<I> >(dynamic_cast< IndirectFactory<I>* >(this)));
+        }
+
+        ~TypeRegEntryWithParams()
+        {
+            TheTypeRegistry()->Unregister( *(guid_of<I>::guid()));
+        }
+
+        virtual ref_of<I>::type Construct(size_t count, _p&&... p1) const
+        {
+            return InternalFactory<T>::template Construct<_p...>(count, p1...).template AsRef<I>();
+        }
+
+        virtual ref_of<I>::type Construct(size_t count = 1) const
+        {
+            return InternalFactory<T>::Construct(count).template AsRef<I>();
+        }
+
+        virtual void Destruct( I* pt, size_t count = 1) const
+        {
+            InternalFactory<T>::Destruct(pt, count);
+        }
+    };
+
+    template<class T, class I = T>
+    class TypeRegEntry : public IndirectFactory<I>
+    {
+    public:
+
+        inline TypeRegEntry()
+        {
+            TheTypeRegistry()->Register( *(guid_of<I>::guid()), ObjectContext< IndirectFactory<I> >(dynamic_cast< IndirectFactory<I>* >(this)));
         }
 
         ~TypeRegEntry()
         {
-            //Unregister the target type
+            TheTypeRegistry()->Unregister( *(guid_of<I>::guid()));
         }
 
+        virtual ref_of<I>::type Construct(size_t count = 1) const
+        {
+            return InternalFactory<T>::Construct(count).template AsRef<I>();
+        }
+
+        virtual void Destruct( I* pt, size_t count = 1) const
+        {
+            InternalFactory<T>::Destruct(dynamic_cast<T*>(pt), count);
+        }
     };
+
 
 }//qor
 
