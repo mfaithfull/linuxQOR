@@ -32,13 +32,13 @@
 
 namespace qor{ namespace framework{
 
-    class qor_pp_module_interface(QOR_PP_THREAD) CurrentThread;
+    class qor_pp_module_interface(QOR_THREAD) CurrentThread;
 
     extern qor_pp_thread_local CurrentThread* t_pCurrentThread;
 
-    class qor_pp_module_interface(QOR_PP_THREAD) CurrentThread
+    class qor_pp_module_interface(QOR_THREAD) CurrentThread
     {
-        friend class qor_pp_module_interface(QOR_PP_THREAD) Thread;
+        friend class qor_pp_module_interface(QOR_THREAD) Thread;
 
     public:
 

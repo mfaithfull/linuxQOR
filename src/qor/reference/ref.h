@@ -42,7 +42,7 @@ namespace qor{
         struct AllocateOnlyConcreteTypesFunctor
         {				
             template< typename... _p >
-            static R* Allocate(uint32_t uiCount, _p... pq)
+            static R* Allocate(size_t count, _p... pq)
             {
                 return nullptr;
             }
@@ -74,10 +74,10 @@ namespace qor{
 		public:
 			
 			template< typename... _p >
-			SharedRef(uint32_t uiCount, _p&&... p1) : m_p(nullptr), m_ulRefCount(0), m_Section()
+			SharedRef(size_t count, _p&&... p1) : m_p(nullptr), m_ulRefCount(0), m_Section()
 			{
 				//This is where the underlying raw object gets allocated iff its type is constructable
-				m_p = AllocateOnlyConcreteTypesFunctor<R, is_abstract::value>::template Allocate<_p...>(uiCount, std::forward<_p>(p1)...);
+				m_p = AllocateOnlyConcreteTypesFunctor<R, is_abstract::value>::template Allocate<_p...>(count, std::forward<_p>(p1)...);
 				if (m_p != nullptr)
 				{
 					//Insert a link to this into the new objects allocated space so that from the object this shared reference can be found
@@ -97,11 +97,11 @@ namespace qor{
     
 
 			//The same as above but for default constructed target types
-			SharedRef(uint32_t uiCount) : m_p(nullptr), m_ulRefCount(0), m_Section()
+			SharedRef(size_t count) : m_p(nullptr), m_ulRefCount(0), m_Section()
 			{
                 if(!is_abstract::value)
                 {
-    				m_p = AllocateConcreteType(uiCount);
+    				m_p = AllocateConcreteType(count);
                 }
 
 				if (m_p != nullptr)

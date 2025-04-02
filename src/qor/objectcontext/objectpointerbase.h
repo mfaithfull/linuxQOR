@@ -29,7 +29,7 @@ namespace qor {
 
     //Wraps a void pointer as an object and provides an unsafe cast to any type
     //Don't use it unless you know 100% what the real type is
-    class ObjectPointerBase
+    class qor_pp_module_interface(QOR_OBJECTCONTEXT) ObjectPointerBase
     {
     public:
     

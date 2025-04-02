@@ -52,7 +52,7 @@ namespace qor{ namespace framework{
             if(m_Map.size() > 0)
             {
                 auto it = m_Map.find(*classID);
-                if( it != m_Map.end());
+                if( it != m_Map.end())
                 {
                     result = it->second;
                     m_Map.erase(*classID);
