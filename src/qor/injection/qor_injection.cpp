@@ -22,41 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
-#include "../../src/framework/host/host.h"
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/qor/module/moduleregistry.h"
+#include "../../configuration/configuration.h"
+#include "../module/module.h"
 
-using namespace qor;
-using namespace qor::test;
-using namespace qor::framework;
-
-struct HostTestSuite{};
-
-qor_pp_test_suite_case(HostTestSuite, canGetHostInstance)
+qor::Module& ThisModule(void)
 {
-    Module& host = Host::Instance();
-    qor_pp_assert_that(&Host::Instance() == &host);
-}
-
-qor_pp_test_suite_case(HostTestSuite, modulesAreRegistered)
-{
-    Module& host = Host::Instance();
-    auto registry = host.Modules();
-    qor_pp_assert_that(&registry).isNotNull();
-}
-
-qor_pp_test_suite_case(HostTestSuite, modulesCanBeiteratedWithLibraries)
-{
-    Module& host = Host::Instance();
-    std::cout << std::endl;
-    host.Modules()->VisitModules([](Module* pModule){
-        std::cout << "Module: " << pModule->Name();
-        std::cout << " Version: " << pModule->Version() << std::endl;
-        pModule->VisitLibraries([](Library* pLibrary){
-            std::cout << "Library: " << pLibrary->Name();
-            std::cout << " Version: " << pLibrary->Version() << std::endl;
-        });
-    });    
+	static qor::Module QORModule("Querysoft Open Runtime: Dependency Injection Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
 }

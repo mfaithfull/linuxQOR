@@ -26,12 +26,15 @@
 #define QOR_PP_H_TYPEREGISTRY
 
 #include <map>
-//#include "../datastructures/guid.h"
+#include "src/qor/datastructures/guid.h"
+#include "src/qor/objectcontext/objectcontext.h"
 
 namespace qor{
 
-	template< class IDType >
-    class qor_pp_export TypeRegistry final
+	class qor_pp_module_interface(QOR_INJECTION) TypeRegistry;
+	qor_pp_module_interface(QOR_INJECTION) TypeRegistry* TheTypeRegistry();
+
+    class qor_pp_module_interface(QOR_INJECTION) TypeRegistry final
 	{
 
 	public:
@@ -40,28 +43,26 @@ namespace qor{
 
 		inline ~TypeRegistry() noexcept = default;
 
-		//Register a mapping between a class ID and a factory for creating instances
-		inline void Register(IDType classID, void* factory)
+		inline void Register(GUID classID, ObjectContextBase factory)
 		{
-			m_regMap.insert(std::pair< IDType, void* >(classID, factory));
+			m_regMap.insert(std::pair< GUID, ObjectContextBase >(classID, factory));
 		}
 		
-		//Remove a class id and its factory from the class registry
-		inline void Unregister(IDType classID)
+		inline void Unregister(GUID classID)
 		{
 			m_regMap.erase(m_regMap.find(classID));
 		}
 
 		//Get the factory for creating instances of a class by ID
-		inline void* GetFactory(IDType classID)
+		inline ObjectContextBase GetFactory(GUID classID)
 		{
 			auto it = m_regMap.find(classID);
-			return (it != m_regMap.end()) ? it->second : nullptr;//ObjectContextBase::NullContext();
+			return (it != m_regMap.end()) ? it->second : ObjectContextBase::NullContext();
 		}
 
 	private:
 
-		std::multimap< IDType, void* > m_regMap;		//A map from class identifiers to factories for creating instances
+		std::multimap< GUID, ObjectContextBase > m_regMap;		//A map from class identifiers to factories for creating instances
 
 	};
 
