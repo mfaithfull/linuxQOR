@@ -33,13 +33,13 @@ using namespace qor::test;
 struct MulticastDelegateTestSuite{};
 
 
-class DelegateTestTarget1 
+class MulticastDelegateTestTarget1 
 {
     public:
     void InstanceFunction(int, char, const char*) {}
 };
 
-class DelegateTestTarget2 
+class MulticastDelegateTestTarget2 
 {
     public:
         void InstanceFunction(int, char, const char*) {}
@@ -52,21 +52,21 @@ qor_pp_test_suite_case(MulticastDelegateTestSuite, canDefaultConstructMulticastD
 
 qor_pp_test_suite_case(MulticastDelegateTestSuite, canConstructMulticastDelegateOnMemberFunction)
 {
-    DelegateTestTarget1 target1;
-    DelegateTestTarget2 target2;
+    MulticastDelegateTestTarget1 target1;
+    MulticastDelegateTestTarget2 target2;
       
     MulticastDelegate<void(int, char, const char*)> d;
-    d += Delegate<void(int, char, const char*)>::Create<DelegateTestTarget1, &DelegateTestTarget1::InstanceFunction>(&target1);
-    d += Delegate<void(int, char, const char*)>::Create<DelegateTestTarget2, &DelegateTestTarget2::InstanceFunction>(&target2);
+    d += Delegate<void(int, char, const char*)>::Create<MulticastDelegateTestTarget1, &MulticastDelegateTestTarget1::InstanceFunction>(&target1);
+    d += Delegate<void(int, char, const char*)>::Create<MulticastDelegateTestTarget2, &MulticastDelegateTestTarget2::InstanceFunction>(&target2);
 }
 
 qor_pp_test_suite_case(MulticastDelegateTestSuite, canCallMulticastDelegateOnMemberFunction)
 {
-    DelegateTestTarget1 target1;
-    DelegateTestTarget2 target2;
+    MulticastDelegateTestTarget1 target1;
+    MulticastDelegateTestTarget2 target2;
       
     MulticastDelegate<void(int, char, const char*)> d;
-    d+= Delegate<void(int, char, const char*)>::Create<DelegateTestTarget1, &DelegateTestTarget1::InstanceFunction>(&target1);
-    d+= Delegate<void(int, char, const char*)>::Create<DelegateTestTarget2, &DelegateTestTarget2::InstanceFunction>(&target2);
+    d+= Delegate<void(int, char, const char*)>::Create<MulticastDelegateTestTarget1, &MulticastDelegateTestTarget1::InstanceFunction>(&target1);
+    d+= Delegate<void(int, char, const char*)>::Create<MulticastDelegateTestTarget2, &MulticastDelegateTestTarget2::InstanceFunction>(&target2);
     d(0, 'A', "Instance method call");
 }

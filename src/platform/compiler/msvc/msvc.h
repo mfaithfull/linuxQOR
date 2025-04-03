@@ -52,6 +52,6 @@ static constexpr int function_stride = 1;
 #define qor_pp_export			__declspec(dllexport)
 #define qor_pp_import			__declspec(dllimport)
 #define qor_pp_thread_local     __declspec(thread)
-#define qor_pp_forceinline		__declspec( __forceinline )
+#define qor_pp_forceinline		inline
 #define qor_pp_noinline			__declspec(noinline)
 #define qpr_pp_funcsig          __FUNCSIG__

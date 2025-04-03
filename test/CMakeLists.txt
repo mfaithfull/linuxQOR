@@ -23,14 +23,11 @@ assert/stack.cpp assert/string.cpp assert/string_view.cpp
 assert/unique_ptr.cpp assert/unordered_map.cpp assert/unordered_multimap.cpp 
 assert/unordered_set.cpp assert/user_class.cpp assert/user_subject.cpp 
 assert/weak_ptr.cpp datastructures/guid.cpp
-framework/host.cpp
-profiling/test_profiling.cpp
-factory/test_factory.cpp
-reference/test_ref.cpp
+framework/host.cpp profiling/test_profiling.cpp
+factory/test_factory.cpp reference/test_ref.cpp
 objectcontext/test_objectcontext.cpp
 observer/test_chainlink.cpp observer/test_observer.cpp
-delegate/test_delegate.cpp delegate/test_multicastdelegate.cpp
-framework/test_thread.cpp
+delegate/test_delegate.cpp delegate/test_multicastdelegate.cpp framework/test_thread.cpp
 interception/test_functioncontext.cpp interception/test_callinterceptor.cpp
 interception/test_functioncontextlock.cpp interception/test_parameters.cpp
 injection/test_injection.cpp singleton/test_singleton.cpp singleton/test_threadsingleton.cpp)
