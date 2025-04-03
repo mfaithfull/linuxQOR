@@ -29,7 +29,7 @@
 
 namespace qor{
 		
-    class Lock
+    class qor_pp_module_interface(QOR_SYNC) Lock
     {
         friend class Key;
 

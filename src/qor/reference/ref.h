@@ -42,7 +42,7 @@ namespace qor{
         struct AllocateOnlyConcreteTypesFunctor
         {				
             template< typename... _p >
-            static R* Allocate(uint32_t uiCount, _p... pq)
+            static R* Allocate(size_t count, _p... pq)
             {
                 return nullptr;
             }
@@ -74,10 +74,10 @@ namespace qor{
 		public:
 			
 			template< typename... _p >
-			SharedRef(uint32_t uiCount, _p&&... p1) : m_p(nullptr), m_ulRefCount(0), m_Section()
+			SharedRef(size_t count, _p&&... p1) : m_p(nullptr), m_ulRefCount(0), m_Section()
 			{
 				//This is where the underlying raw object gets allocated iff its type is constructable
-				m_p = AllocateOnlyConcreteTypesFunctor<R, is_abstract::value>::template Allocate<_p...>(uiCount, std::forward<_p>(p1)...);
+				m_p = AllocateOnlyConcreteTypesFunctor<R, is_abstract::value>::template Allocate<_p...>(count, std::forward<_p>(p1)...);
 				if (m_p != nullptr)
 				{
 					//Insert a link to this into the new objects allocated space so that from the object this shared reference can be found
@@ -97,11 +97,11 @@ namespace qor{
     
 
 			//The same as above but for default constructed target types
-			SharedRef(uint32_t uiCount) : m_p(nullptr), m_ulRefCount(0), m_Section()
+			SharedRef(size_t count) : m_p(nullptr), m_ulRefCount(0), m_Section()
 			{
                 if(!is_abstract::value)
                 {
-    				m_p = AllocateConcreteType(uiCount);
+    				m_p = AllocateConcreteType(count);
                 }
 
 				if (m_p != nullptr)
@@ -150,12 +150,13 @@ namespace qor{
 				return ulResult;
 			}
 			
-			unsigned long Release(void) const
+			unsigned long Release(void)
 			{
 				Lock();
-				unsigned long ulResult = --m_ulRefCount;
+				unsigned long ulResult = m_ulRefCount > 0 ? --m_ulRefCount : 0;
 				Unlock();
-				if (ulResult <= 0)
+
+				if (ulResult == 0)
 				{
 					InternalRelease();
 				}
@@ -163,7 +164,7 @@ namespace qor{
 			}
 			
 			//When the reference count hits zero
-			void InternalRelease(void) const
+			void InternalRelease(void)
 			{
 				Lock();
 				internal_del_ref<R>(m_p);
@@ -171,6 +172,12 @@ namespace qor{
 				Unlock();
 				//Self delete this shared reference. This must be safe as no non shared references exist when the reference count is zero
 				source_of< R >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
+			}
+
+			//Never call this unless you know the real object has gone for good.
+			void Reset(void)
+			{
+				m_p = nullptr;				
 			}
 			
 			void Lock() const
@@ -349,7 +356,7 @@ namespace qor{
 		{
 			if (m_p)
 			{
-				m_p->Release();
+				(const_cast<detail::SharedRef<T>*>(m_p))->Release();
 			}
 			m_p = nullptr;
 		}
@@ -358,9 +365,28 @@ namespace qor{
 		{
 			if (m_p != nullptr)
 			{
-				m_p->Release();
+				(const_cast<detail::SharedRef<T>*>(m_p))->Release();
 			}
+			m_p = nullptr;
 			return *this;
+		}
+
+		Ref<T>& Reset()
+		{
+			if (m_p != nullptr)
+			{
+				(const_cast<detail::SharedRef<T>*>(m_p))->Reset();
+			}
+			m_p = nullptr;
+			return *this;
+		}
+
+		void Attach(T* pt)
+		{
+			if( m_p->ptr() == nullptr)
+			{
+				m_p->Attach(pt);
+			}
 		}
 
 		template< class TDerived >

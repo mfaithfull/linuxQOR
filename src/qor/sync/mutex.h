@@ -30,7 +30,7 @@
 
 namespace qor{
 
-    class Mutex : public SyncObject
+    class qor_pp_module_interface(QOR_SYNC) Mutex : public SyncObject
     {
     public:
 

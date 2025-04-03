@@ -29,7 +29,7 @@
 
 namespace qor{
 		
-    class NullLock
+    class qor_pp_module_interface(QOR_SYNC) NullLock
     {
     public:
 

@@ -49,7 +49,7 @@ class IsEqualToPropositions : public virtual subject::Base
       util::FailMessage::create()
           .file(getFile())
           .line(getLine())
-          .fact("not equal to", other)
+          .fact(" not equal to", other)
           .fact("Got", *getValue());
     }
     return *dynamic_cast<T*>(this);
@@ -62,7 +62,7 @@ class IsEqualToPropositions : public virtual subject::Base
       util::FailMessage::create()
           .file(getFile())
           .line(getLine())
-          .fact("not equal to", other)
+          .fact(" not equal to", other)
           .fact("Got", *getValue());
     }
     return *dynamic_cast<T*>(this);

@@ -30,7 +30,7 @@
 
 namespace qor{
 
-    class RecursiveMutex : public SyncObject
+    class qor_pp_module_interface(QOR_SYNC) RecursiveMutex : public SyncObject
     {
     public:
 

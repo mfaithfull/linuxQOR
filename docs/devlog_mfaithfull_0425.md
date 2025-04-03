@@ -17,3 +17,9 @@ Thread Pool
 Signals
 
 Reflection...
+
+
+Multicast delgates and most of DI are done. ExternalFactory registrations with additional constructor parameters need more work if they're required.
+
+Research into pfr indicates that it's what we need for reflection and can be extracted from Boost without issues.
+

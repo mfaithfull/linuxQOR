@@ -33,6 +33,7 @@ namespace qor{
     class DefaultSource final
     {
     public:
+    
         static inline uint8_t* Source(size_t byteCount)
         {
             return new uint8_t[byteCount];

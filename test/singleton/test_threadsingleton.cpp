@@ -22,24 +22,57 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYNC_OBJECT
-#define QOR_PP_H_SYNC_OBJECT
+#include "../../src/configuration/configuration.h"
+
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assert.h"
+
+#include "src/qor/objectcontext/objectcontextbase.h"
+#include "src/framework/thread/currentthread.h"
+#include "../../src/qor/injection/typeidentity.h"
+#include "../../src/qor/factory/factory.h"
+#include "../../src/qor/instance/instance.h"
+#include "../../src/qor/reference/ref.h"
+#include "../../src/qor/reference/newref.h"
+#include "../../src/qor/instance/threadsingleton.h"
+
+using namespace qor;
+using namespace qor::test;
 
 
-namespace qor{
-		
-    class qor_pp_module_interface(QOR_SYNC) SyncObject
+struct ThreadSingletonTestSuite{};
+
+class Test_ThreadSingleton
+{
+private:
+    int m_i;
+
+public:
+
+    Test_ThreadSingleton() : m_i(0){}
+
+    Test_ThreadSingleton(int i) : m_i(i){}
+
+    ~Test_ThreadSingleton(){}
+
+    int Value()
     {
-    public:
+        return m_i;
+    }
+};
 
-        SyncObject() = default;
-        virtual ~SyncObject() = default;
+qor_pp_declare_instancer_of(Test_ThreadSingleton, ThreadSingletonInstancer);
+qor_pp_implement_thread_singleton(Test_ThreadSingleton);
 
-        virtual void Acquire(void) = 0;
-        virtual void Release(void) = 0;
+qor_pp_test_suite_case(ThreadSingletonTestSuite, canCreateThreadSingleton)
+{
+    auto ref = new_ref<Test_ThreadSingleton>();
+    qor_pp_assert_that( &(ref()) ).isNotNull();
+}
 
-    };
-
-}//qor
-
-#endif//QOR_PP_H_SYNC_OBJECT
+qor_pp_test_suite_case(ThreadSingletonTestSuite, checkThreadSingletonBehaviour)
+{
+    auto ref1 = new_ref<Test_ThreadSingleton>();
+    auto ref2 = new_ref<Test_ThreadSingleton>();
+    qor_pp_assert_that( ref1 == ref2 ).isTrue();
+}

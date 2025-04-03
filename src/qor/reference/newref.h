@@ -38,11 +38,11 @@ namespace qor{
 		return instancer_of<T>::type::template Instance<T>(1);
 	}
 
-	
 	template< typename T, typename... _p >
 	ref_of<T>::type new_ref(_p&&... p1)
 	{
-		return instancer_of<T>::type::template Instance<T>(1, std::forward<_p&&>(p1)...);
+		constexpr size_t default_count = 1;
+		return instancer_of<T>::type::template Instance<T>(default_count, std::forward<_p&&>(p1)...);
 	}
 
 	template< typename T >

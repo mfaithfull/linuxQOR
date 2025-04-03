@@ -33,8 +33,8 @@ delegate/test_delegate.cpp delegate/test_multicastdelegate.cpp
 framework/test_thread.cpp
 interception/test_functioncontext.cpp interception/test_callinterceptor.cpp
 interception/test_functioncontextlock.cpp interception/test_parameters.cpp
-injection/test_injection.cpp)
+injection/test_injection.cpp singleton/test_singleton.cpp singleton/test_threadsingleton.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
-target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext qor_thread qor_interception qor_injection)
+target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext qor_thread qor_interception qor_injection qor_sync)

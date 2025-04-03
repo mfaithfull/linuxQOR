@@ -70,11 +70,11 @@ namespace qor
         }
 
         template< typename... _p >
-        static Ref< T > Construct(uint32_t count, _p... p1)
+        static Ref< T > Construct(size_t count, _p&&... p1)
         {
             return (
                 new(source_of< detail::SharedRef< T > >::type::Source(sizeof(detail::SharedRef< T >)))
-                detail::SharedRef< T >(count, p1...)
+                detail::SharedRef< T >(count, std::forward<_p>(p1)...)
             )->_Ref();
         }
     };
@@ -125,7 +125,7 @@ namespace qor
         template< typename... _p >
         static ref_of<T>::type Construct(size_t count, _p&&... p1)
         {
-			return factoryFunctor< T, typename ref_of<T>::type >::template Construct<_p...>(count, p1...);
+			return factoryFunctor< T, typename ref_of<T>::type >::template Construct<_p...>(count, std::forward<_p>(p1)...);
         }
 
     };
