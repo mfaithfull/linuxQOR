@@ -30,7 +30,8 @@ observer/test_chainlink.cpp observer/test_observer.cpp
 delegate/test_delegate.cpp delegate/test_multicastdelegate.cpp framework/test_thread.cpp
 interception/test_functioncontext.cpp interception/test_callinterceptor.cpp
 interception/test_functioncontextlock.cpp interception/test_parameters.cpp
-injection/test_injection.cpp singleton/test_singleton.cpp singleton/test_threadsingleton.cpp)
+injection/test_injection.cpp singleton/test_singleton.cpp singleton/test_threadsingleton.cpp
+issue/test_issue.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 

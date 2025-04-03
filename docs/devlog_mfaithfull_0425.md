@@ -23,3 +23,7 @@ Multicast delgates and most of DI are done. ExternalFactory registrations with a
 
 Research into pfr indicates that it's what we need for reflection and can be extracted from Boost without issues.
 
+Singletons are up and threaded singletons as well, yay modern C++.
+Pools will require some kind of plugin strategy for scaling/sizing and blocking requests. not there yet.
+
+Added a very basic issue module
