@@ -22,33 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_REFERENCE
-#define QOR_PP_H_REFERENCE
+#ifndef QOR_PP_H_ERROR_SEVERITY
+#define QOR_PP_H_ERROR_SEVERITY
 
-#include "ref.h"
-//#include "lref.h"
-//#include "comref.h"
-//#include "sref.h"
-//#include "poolref.h"
-#include "flyerref.h"
+namespace qor{ 
 
-namespace qor{
-
-    template<typename T>
-    struct ref_of
+    enum class Severity
     {
-        typedef Ref<T> type;
+        Note = 0,
+        Warning,
+        Continuable_Error,
+        Serious_Error,
+        Fatal_Error
     };
 
 }//qor
 
-//Preprocessor macro shorthand for declaring a ref_of specialisation
-#   define qor_pp_declare_ref_of(_CLASS,_REF)\
-template<> struct ref_of< _CLASS >\
-{\
-    typedef _REF< _CLASS > type;\
-};
-
-//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
-
-#endif//QOR_PP_H_FACTORY
+#endif//QOR_PP_H_ERROR_SEVERITY

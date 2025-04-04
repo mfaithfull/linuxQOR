@@ -22,33 +22,54 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_REFERENCE
-#define QOR_PP_H_REFERENCE
-
-#include "ref.h"
-//#include "lref.h"
-//#include "comref.h"
-//#include "sref.h"
-//#include "poolref.h"
-#include "flyerref.h"
+#include "src/configuration/configuration.h"
+#include "error.h"
+#include "handler.h"
 
 namespace qor{
 
-    template<typename T>
-    struct ref_of
+    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
     {
-        typedef Ref<T> type;
-    };
+    }
+
+    Fatal& Fatal::operator = (const Fatal& src)
+    {
+        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
+        return *this;
+    }
+    
+    void Fatal::Handle()
+    {
+        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
+        if(!pFatalHandler.IsNull())
+        {
+            pFatalHandler->Handle(*this);
+            Resolve(false);
+        }
+        else
+        {
+            auto pHandler = new_ref< IssueHandler<SeverityIssue> >();
+            if(!pHandler.IsNull())
+            {
+                pHandler->Handle(*this);
+            }
+            Resolve(false);
+        }
+    }
+        
+    void Fatal::Escalate()
+    {
+        std::terminate();
+    }
+    
+    void Fatal::Ignore()
+    {
+        Escalate();//Can't ignore fatal issues.
+    }
+
+    void fatal(const std::string& message)
+    {
+        issue<Fatal, const std::string&>(message);
+    }
 
 }//qor
-
-//Preprocessor macro shorthand for declaring a ref_of specialisation
-#   define qor_pp_declare_ref_of(_CLASS,_REF)\
-template<> struct ref_of< _CLASS >\
-{\
-    typedef _REF< _CLASS > type;\
-};
-
-//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
-
-#endif//QOR_PP_H_FACTORY

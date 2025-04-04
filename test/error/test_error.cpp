@@ -22,33 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_REFERENCE
-#define QOR_PP_H_REFERENCE
+#include "../../src/configuration/configuration.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assert.h"
+#include "../../src/qor/module/module.h"
+#include "../../src/qor/error/error.h"
+#include "../../src/qor/error/handler.h"
 
-#include "ref.h"
-//#include "lref.h"
-//#include "comref.h"
-//#include "sref.h"
-//#include "poolref.h"
-#include "flyerref.h"
+using namespace qor;
+using namespace qor::test;
 
-namespace qor{
+struct ErrorTestSuite{};
 
-    template<typename T>
-    struct ref_of
+class SeriousHandler : public qor::IssueHandler<qor::Serious>
+{
+    public:
+    virtual bool Handle(Serious& issue)
     {
-        typedef Ref<T> type;
-    };
-
-}//qor
-
-//Preprocessor macro shorthand for declaring a ref_of specialisation
-#   define qor_pp_declare_ref_of(_CLASS,_REF)\
-template<> struct ref_of< _CLASS >\
-{\
-    typedef _REF< _CLASS > type;\
+        return true;
+    }
 };
 
-//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
+qor_pp_test_suite_case(ErrorTestSuite, canRaiseASeriousError)
+{
+    SeriousHandler serious_handler;
 
-#endif//QOR_PP_H_FACTORY
+    serious( "A serious error occured." );
+
+    qor_pp_assert_that( true ).isTrue();
+}

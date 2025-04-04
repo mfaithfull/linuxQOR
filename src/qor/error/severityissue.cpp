@@ -22,33 +22,40 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_REFERENCE
-#define QOR_PP_H_REFERENCE
+#include "src/configuration/configuration.h"
 
-#include "ref.h"
-//#include "lref.h"
-//#include "comref.h"
-//#include "sref.h"
-//#include "poolref.h"
-#include "flyerref.h"
+#include "severityissue.h"
+#include "src/framework/thread/currentthread.h"
+#include "error.h"
+#include "handler.h"
 
-namespace qor{
+namespace qor{ 
 
-    template<typename T>
-    struct ref_of
+    SeverityIssue::SeverityIssue(Severity s, const std::string& message) : Issue()
     {
-        typedef Ref<T> type;
-    };
+        auto pContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
+        m_when = new_ref<When>();
+        if(pContext != nullptr)
+        {
+            m_where = new_ref<Where>(pContext->File(), pContext->Line(), pContext->Name(), pContext->ObjectContext());
+        }
+        m_what = new_ref<SeverityWhat>(message, s);
+    }
+
+    SeverityIssue& SeverityIssue::operator = (const SeverityIssue& src)
+    {
+        Issue<SeverityWhat>::operator = (src);
+        return *this;
+    }
+
+    void SeverityIssue::Handle(void)
+    {
+        auto pHandler = new_ref< IssueHandler<SeverityIssue> >();
+        if(!pHandler.IsNull())
+        {
+            Resolve(pHandler->Handle(*this));
+        }
+
+    }
 
 }//qor
-
-//Preprocessor macro shorthand for declaring a ref_of specialisation
-#   define qor_pp_declare_ref_of(_CLASS,_REF)\
-template<> struct ref_of< _CLASS >\
-{\
-    typedef _REF< _CLASS > type;\
-};
-
-//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
-
-#endif//QOR_PP_H_FACTORY

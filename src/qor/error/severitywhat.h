@@ -22,33 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_REFERENCE
-#define QOR_PP_H_REFERENCE
+#ifndef QOR_PP_H_ERROR_SEVERITYWHAT
+#define QOR_PP_H_ERROR_SEVERITYWHAT
 
-#include "ref.h"
-//#include "lref.h"
-//#include "comref.h"
-//#include "sref.h"
-//#include "poolref.h"
-#include "flyerref.h"
+#include "src/qor/issue/what.h"
+#include "severity.h"
 
-namespace qor{
+namespace qor{ 
 
-    template<typename T>
-    struct ref_of
+    class qor_pp_module_interface(QOR_ISSUE) SeverityWhat : public What
     {
-        typedef Ref<T> type;
+    public:
+
+        SeverityWhat(const std::string& what, Severity severity) : What(what), m_severity(severity)
+        {
+        }
+
+        virtual ~SeverityWhat() noexcept = default;
+    protected:
+
+        Severity m_severity;
     };
 
 }//qor
 
-//Preprocessor macro shorthand for declaring a ref_of specialisation
-#   define qor_pp_declare_ref_of(_CLASS,_REF)\
-template<> struct ref_of< _CLASS >\
-{\
-    typedef _REF< _CLASS > type;\
-};
-
-//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
-
-#endif//QOR_PP_H_FACTORY
+#endif//QOR_PP_H_ERROR_SEVERITYWHAT

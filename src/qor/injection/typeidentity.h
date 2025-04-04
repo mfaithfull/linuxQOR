@@ -62,7 +62,7 @@ namespace qor{
 
 //Preprocessor macro shorthand for declaring a guid_of template specialisation
 #   define qor_pp_declare_guid_of(_CLASS,_GUID)\
-    template<> struct qor::guid_of< _CLASS >\
+    template<> struct guid_of< _CLASS >\
     {\
         static const GUID* guid()\
         {\

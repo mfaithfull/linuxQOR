@@ -28,6 +28,7 @@
 #include <iosfwd>		// std::basic_ostream
 #include <string>
 #include "src/framework/thread/currentthread.h"
+#include "src/qor/module/module.h"
 
 namespace qor{ 
 

@@ -22,33 +22,40 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_REFERENCE
-#define QOR_PP_H_REFERENCE
+#ifndef QOR_PP_H_ERROR_SEVERITYISSUE
+#define QOR_PP_H_ERROR_SEVERITYISSUE
 
-#include "ref.h"
-//#include "lref.h"
-//#include "comref.h"
-//#include "sref.h"
-//#include "poolref.h"
-#include "flyerref.h"
+#include "src/qor/issue/issue.h"
+#include "severity.h"
+#include "severitywhat.h"
 
-namespace qor{
+namespace qor{ 
 
-    template<typename T>
-    struct ref_of
+    class qor_pp_module_interface(QOR_ISSUE) SeverityIssue : public Issue<SeverityWhat>
     {
-        typedef Ref<T> type;
+    public:
+
+        SeverityIssue(Severity s, const std::string& message);
+        virtual ~SeverityIssue() noexcept = default;
+        SeverityIssue& operator = (const SeverityIssue& src);
+        virtual void Handle(void);   
+    };
+
+    template<Severity S>
+    class SeverityTemplateIssue : public SeverityIssue
+    {
+    public:
+        SeverityTemplateIssue(const std::string& message) : SeverityIssue(S, message) {}
+        virtual ~SeverityTemplateIssue() noexcept = default;
+        SeverityTemplateIssue& operator = (const SeverityTemplateIssue& src)
+        {
+            SeverityIssue::operator=(src);
+            return *this;
+        }
+        const Severity GetSeverity() const { return S; }
+
     };
 
 }//qor
 
-//Preprocessor macro shorthand for declaring a ref_of specialisation
-#   define qor_pp_declare_ref_of(_CLASS,_REF)\
-template<> struct ref_of< _CLASS >\
-{\
-    typedef _REF< _CLASS > type;\
-};
-
-//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
-
-#endif//QOR_PP_H_FACTORY
+#endif//QOR_PP_H_ERROR_SEVERITYISSUE

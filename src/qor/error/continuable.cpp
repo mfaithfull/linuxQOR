@@ -22,33 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_REFERENCE
-#define QOR_PP_H_REFERENCE
-
-#include "ref.h"
-//#include "lref.h"
-//#include "comref.h"
-//#include "sref.h"
-//#include "poolref.h"
-#include "flyerref.h"
+#include "src/configuration/configuration.h"
+#include "error.h"
 
 namespace qor{
 
-    template<typename T>
-    struct ref_of
+    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
     {
-        typedef Ref<T> type;
-    };
+    }
 
+    Continuable& Continuable::operator = (const Continuable& src)
+    {
+        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
+        return *this;
+    }
+
+    void Continuable::Escalate(void)
+    {
+        throw(*this);
+    }
+
+    void continuable(const std::string& message)
+    {
+        issue<Continuable, const std::string&>(message);
+    }
+    
 }//qor
-
-//Preprocessor macro shorthand for declaring a ref_of specialisation
-#   define qor_pp_declare_ref_of(_CLASS,_REF)\
-template<> struct ref_of< _CLASS >\
-{\
-    typedef _REF< _CLASS > type;\
-};
-
-//Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
-
-#endif//QOR_PP_H_FACTORY
