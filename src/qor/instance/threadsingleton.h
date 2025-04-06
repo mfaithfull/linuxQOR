@@ -42,7 +42,7 @@ namespace qor{
         class ThreadInstanceHolder final
         {
         public:
-            ThreadInstanceHolder() {}
+            constexpr ThreadInstanceHolder() {}
 
             ~ThreadInstanceHolder()
             {
@@ -79,13 +79,12 @@ namespace qor{
                 if(bInitialised)
                 {
                     factory_of<T>::type::Destruct(theRef);
-                    theRef.Reset();
                 }
             }
 
         public:
-            static thread_local ref_of<T>::type theRef;
-            static thread_local bool bInitialised;
+            static qor_pp_thread_local ref_of<T>::type theRef;
+            static qor_pp_thread_local bool bInitialised;
         };
         
     }//detail
@@ -128,7 +127,7 @@ namespace qor{
 }//qor
 
 #define qor_pp_implement_thread_singleton(_CLASS)\
-template<> thread_local bool qor::detail::ThreadInstanceHolder<_CLASS>::bInitialised = false;\
-template<> thread_local ref_of<_CLASS>::type qor::detail::ThreadInstanceHolder<_CLASS>::theRef(nullptr);\
+template<> qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<_CLASS>::bInitialised = false;\
+template<> qor_pp_thread_local ref_of<_CLASS>::type qor::detail::ThreadInstanceHolder<_CLASS>::theRef;\
 
 #endif//QOR_PP_H_INSTANCE_SINGLETON

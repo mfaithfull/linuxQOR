@@ -61,8 +61,11 @@ public:
     }
 };
 
+template<> qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<Test_ThreadSingleton>::bInitialised = false;
+template<> thread_local typename ref_of<Test_ThreadSingleton>::type qor::detail::ThreadInstanceHolder<Test_ThreadSingleton>::theRef = qor::ThreadSingletonInstancer::template Instance<Test_ThreadSingleton>(1);
+
 qor_pp_declare_instancer_of(Test_ThreadSingleton, ThreadSingletonInstancer);
-qor_pp_implement_thread_singleton(Test_ThreadSingleton);
+//qor_pp_implement_thread_singleton(Test_ThreadSingleton);
 
 qor_pp_test_suite_case(ThreadSingletonTestSuite, canCreateThreadSingleton)
 {
