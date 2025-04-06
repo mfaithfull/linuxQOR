@@ -5,3 +5,4 @@ Copy-Item -Path cmakebuild/src/qor/sync/Debug/* -Destination cmakebuild/test/Deb
 Copy-Item -Path cmakebuild/src/framework/thread/Debug/* -Destination cmakebuild/test/Debug
 Copy-Item -Path cmakebuild/src/qor/interception/Debug/* -Destination cmakebuild/test/Debug
 Copy-Item -Path cmakebuild/src/qor/injection/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/framework/signals/Debug/* -Destination cmakebuild/test/Debug
