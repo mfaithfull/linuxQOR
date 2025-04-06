@@ -31,7 +31,8 @@ delegate/test_delegate.cpp delegate/test_multicastdelegate.cpp framework/test_th
 interception/test_functioncontext.cpp interception/test_callinterceptor.cpp
 interception/test_functioncontextlock.cpp interception/test_parameters.cpp
 injection/test_injection.cpp singleton/test_singleton.cpp singleton/test_threadsingleton.cpp
-issue/test_issue.cpp error/test_error.cpp framework/test_signals.cpp)
+issue/test_issue.cpp error/test_error.cpp framework/test_signals.cpp
+reflection/test_reflection.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
