@@ -48,15 +48,15 @@ qor_pp_test_suite_case(RelectionTestSuite, canDoReflection101)
 {
     some_person val{"Edgar Allan Poe", 1809};
 
-    std::cout << pfr::get<0>(val)                // No macro!
-        << " was born in " << pfr::get<1>(val);  // Works with any aggregate initializables!
+    std::cout << qor_reflection::get<0>(val)                // No macro!
+        << " was born in " << qor_reflection::get<1>(val);  // Works with any aggregate initializables!
 
-    std::cout << pfr::io(val);                   // Outputs: {"Edgar Allan Poe", 1809}    
+    std::cout << qor_reflection::io(val);                   // Outputs: {"Edgar Allan Poe", 1809}    
     qor_pp_assert_that(true).isTrue();
 }
 
-constexpr std::string_view n1 = pfr::get_name<0, some_person>(); // returns "some_integer"
-constexpr std::string_view n2 = pfr::get_name<1, some_person>(); // returns "c"
+constexpr std::string_view n1 = qor_reflection::get_name<0, some_person>(); // returns "some_integer"
+constexpr std::string_view n2 = qor_reflection::get_name<1, some_person>(); // returns "c"
 
 qor_pp_test_suite_case(RelectionTestSuite, canGetNamesbyReflection)
 {
@@ -67,8 +67,8 @@ qor_pp_test_suite_case(RelectionTestSuite, canGetNamesbyReflection)
 qor_pp_test_suite_case(RelectionTestSuite, canGetFieldsByIndex)
 {
     foo f {777, '!'};
-    auto& r1 = pfr::get<0>(f); // accessing field with index 0, returns reference to `foo::some_integer`
-    auto& r2 = pfr::get<1>(f); // accessing field with index 1, returns reference to `foo::c`
+    auto& r1 = qor_reflection::get<0>(f); // accessing field with index 0, returns reference to `foo::some_integer`
+    auto& r2 = qor_reflection::get<1>(f); // accessing field with index 1, returns reference to `foo::c`
 
     qor_pp_assert_that(r1).isEqualTo(777);
     qor_pp_assert_that(r2).isEqualTo('!');

@@ -40,7 +40,7 @@
 #   pragma clang diagnostic ignored "-Wundefined-var-template"
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 // This class has external linkage while T has not sure.
 template <class T>
@@ -55,15 +55,15 @@ extern const wrapper<T> do_not_use_PFR_with_local_types;
 
 // For returning non default constructible types, it's exclusively used in member name retrieval.
 //
-// Neither std::declval nor pfr::detail::unsafe_declval are usable there.
-// This takes advantage of C++20 features, while pfr::detail::unsafe_declval works
+// Neither std::declval nor qor_reflection::detail::unsafe_declval are usable there.
+// This takes advantage of C++20 features, while qor_reflection::detail::unsafe_declval works
 // with the former standards.
 template <class T>
 constexpr const T& fake_object() noexcept {
     return do_not_use_PFR_with_local_types<T>.value;
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #ifdef __clang__
 #   pragma clang diagnostic pop

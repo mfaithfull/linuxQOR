@@ -35,7 +35,7 @@
 #include "config.h"
 #include "sequence_tuple.h"
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 template <class T, std::size_t I>
 constexpr auto get_name() noexcept {
@@ -66,6 +66,6 @@ constexpr void for_each_field_with_name(T&& /* value */, F&& /* func */) {
     );
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_CORENAME14_DISABLED

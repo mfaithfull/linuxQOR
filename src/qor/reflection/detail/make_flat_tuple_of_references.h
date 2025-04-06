@@ -45,7 +45,7 @@ import std;
 #include "make_integer_sequence.h"
 
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 template <std::size_t Index>
 using size_t_ = std::integral_constant<std::size_t, Index >;
@@ -121,6 +121,6 @@ constexpr auto make_flat_tuple_of_references(TupleOrUserType& t, const Getter& g
     );
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_MAKEFLATTUPLEOFREFERENCES

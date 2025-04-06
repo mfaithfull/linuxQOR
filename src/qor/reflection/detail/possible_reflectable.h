@@ -41,7 +41,7 @@ import std;
 #include <type_traits> // for std::is_aggregate
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 ///////////////////// Returns false when the type exactly wasn't be reflectable
 template <class T, class WhatFor>
@@ -71,6 +71,6 @@ constexpr bool possible_reflectable(int) noexcept {
 
 #endif
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_POSSIBLEREFLECTABLE

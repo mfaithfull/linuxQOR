@@ -137,11 +137,11 @@
 
 #ifndef qor_pp_refl_core_name_parsing
 #   if defined(_MSC_VER) && !defined(__clang__)
-#       define qor_pp_refl_core_name_parsing (sizeof("auto __cdecl pfr::detail::name_of_field_impl<") - 1, sizeof(">(void) noexcept") - 1, backward("->"))
+#       define qor_pp_refl_core_name_parsing (sizeof("auto __cdecl qor_reflection::detail::name_of_field_impl<") - 1, sizeof(">(void) noexcept") - 1, backward("->"))
 #   elif defined(__clang__)
-#       define qor_pp_refl_core_name_parsing (sizeof("auto pfr::detail::name_of_field_impl() [MsvcWorkaround = ") - 1, sizeof("}]") - 1, backward("."))
+#       define qor_pp_refl_core_name_parsing (sizeof("auto qor_reflection::detail::name_of_field_impl() [MsvcWorkaround = ") - 1, sizeof("}]") - 1, backward("."))
 #   elif defined(__GNUC__)
-#       define qor_pp_refl_core_name_parsing (sizeof("consteval auto pfr::detail::name_of_field_impl() [with MsvcWorkaround = ") - 1, sizeof(")]") - 1, backward("::"))
+#       define qor_pp_refl_core_name_parsing (sizeof("consteval auto qor_reflection::detail::name_of_field_impl() [with MsvcWorkaround = ") - 1, sizeof(")]") - 1, backward("::"))
 #   else
 // Default parser for other platforms... Just skip nothing!
 #       define qor_pp_refl_core_name_parsing (0, 0, "")

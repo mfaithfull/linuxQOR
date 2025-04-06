@@ -43,12 +43,12 @@ import std;
 
 #include "sequence_tuple.h"
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
     template <std::size_t I, std::size_t N>
     struct equal_impl {
         template <class T, class U>
         constexpr static bool cmp(const T& v1, const U& v2) noexcept {
-            return ::pfr::detail::sequence_tuple::get<I>(v1) == ::pfr::detail::sequence_tuple::get<I>(v2)
+            return ::qor_reflection::detail::sequence_tuple::get<I>(v1) == ::qor_reflection::detail::sequence_tuple::get<I>(v2)
                 && equal_impl<I + 1, N>::cmp(v1, v2);
         }
     };
@@ -65,7 +65,7 @@ namespace pfr { namespace detail {
     struct not_equal_impl {
         template <class T, class U>
         constexpr static bool cmp(const T& v1, const U& v2) noexcept {
-            return ::pfr::detail::sequence_tuple::get<I>(v1) != ::pfr::detail::sequence_tuple::get<I>(v2)
+            return ::qor_reflection::detail::sequence_tuple::get<I>(v1) != ::qor_reflection::detail::sequence_tuple::get<I>(v2)
                 || not_equal_impl<I + 1, N>::cmp(v1, v2);
         }
     };
@@ -214,7 +214,7 @@ namespace pfr { namespace detail {
     struct hash_impl {
         template <class T>
         constexpr static std::size_t compute(const T& val) noexcept {
-            std::size_t h = detail::compute_hash( ::pfr::detail::sequence_tuple::get<I>(val), 1L );
+            std::size_t h = detail::compute_hash( ::qor_reflection::detail::sequence_tuple::get<I>(val), 1L );
             detail::hash_combine(h, hash_impl<I + 1, N>::compute(val) );
             return h;
         }
@@ -244,11 +244,11 @@ namespace pfr { namespace detail {
         return visitor_t::cmp(detail::tie_as_tuple(x), detail::tie_as_tuple(y));
 #else
         bool result = true;
-        ::pfr::detail::for_each_field_dispatcher(
+        ::qor_reflection::detail::for_each_field_dispatcher(
             x,
             [&result, &y](const auto& lhs) {
                 constexpr std::size_t fields_count_rhs_ = detail::fields_count<std::remove_reference_t<U>>();
-                ::pfr::detail::for_each_field_dispatcher(
+                ::qor_reflection::detail::for_each_field_dispatcher(
                     y,
                     [&result, &lhs](const auto& rhs) {
                         result = visitor_t::cmp(lhs, rhs);
@@ -263,6 +263,6 @@ namespace pfr { namespace detail {
 #endif
     }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_FUNCTIONAL

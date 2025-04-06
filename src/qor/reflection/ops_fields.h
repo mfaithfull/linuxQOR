@@ -49,13 +49,13 @@
 ///
 ///     comparable_struct s1 {0, 1};
 ///     comparable_struct s2 {0, 2};
-///     assert(pfr::lt_fields(s1, s2));
+///     assert(qor_reflection::lt_fields(s1, s2));
 /// \endcode
 ///
 /// \podops for other ways to define operators and more details.
 ///
 /// \b Synopsis:
-namespace pfr {
+namespace qor_reflection {
 
 qor_pp_refl_begin_module_export
 
@@ -129,17 +129,17 @@ qor_pp_refl_begin_module_export
     /// \returns combined hash of all the fields
     template <class T>
     std::size_t hash_fields(const T& x) {
-        constexpr std::size_t fields_count_val = pfr::detail::fields_count<std::remove_reference_t<T>>();
+        constexpr std::size_t fields_count_val = qor_reflection::detail::fields_count<std::remove_reference_t<T>>();
 #if qor_pp_refl_use_cpp17 || qor_pp_refl_use_loophole
         return detail::hash_impl<0, fields_count_val>::compute(detail::tie_as_tuple(x));
 #else
         std::size_t result = 0;
-        ::pfr::detail::for_each_field_dispatcher(
+        ::qor_reflection::detail::for_each_field_dispatcher(
             x,
             [&result](const auto& lhs) {
                 // We can not reuse `fields_count_val` in lambda because compilers had issues with
                 // passing constexpr variables into lambdas. Computing is again is the most portable solution.
-                constexpr std::size_t fields_count_val_lambda = pfr::detail::fields_count<std::remove_reference_t<T>>();
+                constexpr std::size_t fields_count_val_lambda = qor_reflection::detail::fields_count<std::remove_reference_t<T>>();
                 result = detail::hash_impl<0, fields_count_val_lambda>::compute(lhs);
             },
             detail::make_index_sequence<fields_count_val>{}
@@ -151,6 +151,6 @@ qor_pp_refl_begin_module_export
 
 qor_pp_refl_end_module_export
 
-} // namespace pfr
+} // namespace qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_OPSFIELDS

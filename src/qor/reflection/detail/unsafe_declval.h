@@ -40,7 +40,7 @@ import std;
 #include <type_traits>
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 // This function serves as a link-time assert. If linker requires it, then
 // `unsafe_declval()` is used at runtime.
@@ -59,6 +59,6 @@ constexpr T unsafe_declval() noexcept {
     return static_cast<T>(*ptr);
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_UNSAFEDECLVAL

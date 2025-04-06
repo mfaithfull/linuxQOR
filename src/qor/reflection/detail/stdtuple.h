@@ -43,13 +43,13 @@ import std;
 
 #include "sequence_tuple.h"
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 template <class T, std::size_t... I>
 constexpr auto make_stdtuple_from_tietuple(const T& t, std::index_sequence<I...>) {
     (void)t;  // workaround for MSVC 14.1 `warning C4100: 't': unreferenced formal parameter`
     return std::make_tuple(
-        pfr::detail::sequence_tuple::get<I>(t)...
+        qor_reflection::detail::sequence_tuple::get<I>(t)...
     );
 }
 
@@ -57,7 +57,7 @@ template <class T, std::size_t... I>
 constexpr auto make_stdtiedtuple_from_tietuple(const T& t, std::index_sequence<I...>) noexcept {
     (void)t;  // workaround for MSVC 14.1 `warning C4100: 't': unreferenced formal parameter`
     return std::tie(
-        pfr::detail::sequence_tuple::get<I>(t)...
+        qor_reflection::detail::sequence_tuple::get<I>(t)...
     );
 }
 
@@ -66,13 +66,13 @@ constexpr auto make_conststdtiedtuple_from_tietuple(const T& t, std::index_seque
     (void)t;  // workaround for MSVC 14.1 `warning C4100: 't': unreferenced formal parameter`
     return std::tuple<
         std::add_lvalue_reference_t<std::add_const_t<
-            std::remove_reference_t<decltype(pfr::detail::sequence_tuple::get<I>(t))>
+            std::remove_reference_t<decltype(qor_reflection::detail::sequence_tuple::get<I>(t))>
         >>...
     >(
-        pfr::detail::sequence_tuple::get<I>(t)...
+        qor_reflection::detail::sequence_tuple::get<I>(t)...
     );
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_STDTUPLE

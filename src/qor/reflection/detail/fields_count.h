@@ -54,7 +54,7 @@ import std;
 #   pragma clang diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 ///////////////////// min without including <algorithm>
 constexpr std::size_t min_of_size_t(std::size_t a, std::size_t b) noexcept {
@@ -478,7 +478,7 @@ constexpr std::size_t fields_count() noexcept {
     return result;
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #ifdef __clang__
 #   pragma clang diagnostic pop

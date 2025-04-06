@@ -49,7 +49,7 @@
 ///
 /// \b Synopsis:
 
-namespace pfr {
+namespace qor_reflection {
 
 qor_pp_refl_begin_module_export
 
@@ -59,8 +59,8 @@ qor_pp_refl_begin_module_export
 /// \code
 ///     struct my_struct { int i, short s; };
 ///
-///     assert(pfr::get_name<0, my_struct>() == "i");
-///     assert(pfr::get_name<1, my_struct>() == "s");
+///     assert(qor_reflection::get_name<0, my_struct>() == "i");
+///     assert(qor_reflection::get_name<1, my_struct>() == "s");
 /// \endcode
 template <std::size_t I, class T>
 constexpr
@@ -84,13 +84,13 @@ get_name() noexcept {
 /// \b Example:
 /// \code
 ///     struct my_struct { int i, short s; };
-///     std::array<std::string_view, 2> a = pfr::names_as_array<my_struct>();
+///     std::array<std::string_view, 2> a = qor_reflection::names_as_array<my_struct>();
 ///     assert(a[0] == "i");
 /// \endcode
 template <class T>
 constexpr
 #ifdef qor_pp_doxygen_invoked
-std::array<std::string_view, pfr::tuple_size_v<T>>
+std::array<std::string_view, qor_reflection::tuple_size_v<T>>
 #else
 auto
 #endif
@@ -121,11 +121,11 @@ names_as_array() noexcept {
 /// \endcode
 template <class T, class F>
 constexpr void for_each_field_with_name(T&& value, F&& func) {
-    return pfr::detail::for_each_field_with_name(std::forward<T>(value), std::forward<F>(func));
+    return qor_reflection::detail::for_each_field_with_name(std::forward<T>(value), std::forward<F>(func));
 }
 
 qor_pp_refl_end_module_export
 
-} // namespace pfr
+} // namespace qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_CORENAME

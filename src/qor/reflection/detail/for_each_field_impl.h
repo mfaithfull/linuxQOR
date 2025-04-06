@@ -43,7 +43,7 @@ import std;
 #include "sequence_tuple.h"
 #include "rvalue_t.h"
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 template <std::size_t Index>
 using size_t_ = std::integral_constant<std::size_t, Index >;
@@ -89,7 +89,7 @@ constexpr void for_each_field_impl(T& t, F&& f, std::index_sequence<I...>, std::
 }
 #endif
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_FOREACHFIELDIMPL

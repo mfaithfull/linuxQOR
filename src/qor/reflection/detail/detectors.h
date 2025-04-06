@@ -41,7 +41,7 @@ import std;
 #include <type_traits>
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 ///////////////////// `value` is true if Detector<Tleft, Tright> does not compile (SFINAE)
     struct can_not_apply{};
 
@@ -92,6 +92,6 @@ namespace pfr { namespace detail {
     template <class S, class T> can_not_apply istreamable_detector_msvc_helper(int);
     template <class S, class T> using istreamable_detector = decltype(istreamable_detector_msvc_helper<S,T>(1L));
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_DETECTORS

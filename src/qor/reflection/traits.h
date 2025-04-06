@@ -42,7 +42,7 @@
 ///
 /// \b Synopsis:
 
-namespace pfr {
+namespace qor_reflection {
 
 qor_pp_refl_begin_module_export
 
@@ -51,7 +51,7 @@ qor_pp_refl_begin_module_export
 ///
 /// \b Example:
 /// \code
-///     namespace pfr {
+///     namespace qor_reflection {
 ///         template<class All> struct is_reflectable<A, All> : std::false_type {};       // 'A' won't be interpreted as reflectable everywhere
 ///         template<> struct is_reflectable<B, boost_fusion_tag> : std::false_type {};   // 'B' won't be interpreted as reflectable in only Boost Fusion
 ///     }}
@@ -60,21 +60,21 @@ qor_pp_refl_begin_module_export
 template<class T, class WhatFor>
 struct is_reflectable { /*  does not have 'value' because value is unknown */ };
 
-// these specs can't be inherited from 'std::integral_constant< bool, pfr::is_reflectable<T, WhatFor>::value >',
+// these specs can't be inherited from 'std::integral_constant< bool, qor_reflection::is_reflectable<T, WhatFor>::value >',
 // because it will break the sfinae-friendliness
 template<class T, class WhatFor>
-struct is_reflectable<const T, WhatFor> : pfr::is_reflectable<T, WhatFor> {};
+struct is_reflectable<const T, WhatFor> : qor_reflection::is_reflectable<T, WhatFor> {};
 
 template<class T, class WhatFor>
-struct is_reflectable<volatile T, WhatFor> : pfr::is_reflectable<T, WhatFor> {};
+struct is_reflectable<volatile T, WhatFor> : qor_reflection::is_reflectable<T, WhatFor> {};
 
 template<class T, class WhatFor>
-struct is_reflectable<const volatile T, WhatFor> : pfr::is_reflectable<T, WhatFor> {};
+struct is_reflectable<const volatile T, WhatFor> : qor_reflection::is_reflectable<T, WhatFor> {};
 
 /// Checks the input type for the potential to be reflected.
 /// Specialize is_reflectable if you disagree with is_implicitly_reflectable's default decision.
 template<class T, class WhatFor>
-using is_implicitly_reflectable = std::integral_constant< bool, pfr::detail::possible_reflectable<T, WhatFor>(1L) >;
+using is_implicitly_reflectable = std::integral_constant< bool, qor_reflection::detail::possible_reflectable<T, WhatFor>(1L) >;
 
 /// Checks the input type for the potential to be reflected.
 /// Specialize is_reflectable if you disagree with is_implicitly_reflectable_v's default decision.
@@ -83,6 +83,6 @@ constexpr bool is_implicitly_reflectable_v = is_implicitly_reflectable<T, WhatFo
 
 qor_pp_refl_end_module_export
 
-} // namespace pfr
+} // namespace qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_TRAITS

@@ -50,13 +50,13 @@
 ///
 ///     std::unordered_set<
 ///         my_struct,
-///         pfr::hash<>,
-///         pfr::equal_to<>
+///         qor_reflection::hash<>,
+///         qor_reflection::equal_to<>
 ///     > my_set;
 /// \endcode
 ///
 /// \b Synopsis:
-namespace pfr {
+namespace qor_reflection {
 
 qor_pp_refl_begin_module_export
 
@@ -66,7 +66,7 @@ qor_pp_refl_begin_module_export
 template <class T = void> struct equal_to {
     /// \return \b true if each field of \b x equals the field with same index of \b y.
     bool operator()(const T& x, const T& y) const {
-        return pfr::eq(x, y);
+        return qor_reflection::eq(x, y);
     }
 
 #ifdef qor_pp_doxygen_invoked
@@ -83,7 +83,7 @@ template <class T = void> struct equal_to {
 template <> struct equal_to<void> {
     template <class T, class U>
     bool operator()(const T& x, const U& y) const {
-        return pfr::eq(x, y);
+        return qor_reflection::eq(x, y);
     }
 
     typedef std::true_type is_transparent;
@@ -94,7 +94,7 @@ template <> struct equal_to<void> {
 template <class T = void> struct not_equal {
     /// \return \b true if at least one field \b x not equals the field with same index of \b y.
     bool operator()(const T& x, const T& y) const {
-        return pfr::ne(x, y);
+        return qor_reflection::ne(x, y);
     }
 
 #ifdef qor_pp_doxygen_invoked
@@ -111,7 +111,7 @@ template <class T = void> struct not_equal {
 template <> struct not_equal<void> {
     template <class T, class U>
     bool operator()(const T& x, const U& y) const {
-        return pfr::ne(x, y);
+        return qor_reflection::ne(x, y);
     }
 
     typedef std::true_type is_transparent;
@@ -122,7 +122,7 @@ template <> struct not_equal<void> {
 template <class T = void> struct greater {
     /// \return \b true if field of \b x greater than the field with same index of \b y and all previous fields of \b x equal to the same fields of \b y.
     bool operator()(const T& x, const T& y) const {
-        return pfr::gt(x, y);
+        return qor_reflection::gt(x, y);
     }
 
 #ifdef qor_pp_doxygen_invoked
@@ -139,7 +139,7 @@ template <class T = void> struct greater {
 template <> struct greater<void> {
     template <class T, class U>
     bool operator()(const T& x, const U& y) const {
-        return pfr::gt(x, y);
+        return qor_reflection::gt(x, y);
     }
 
     typedef std::true_type is_transparent;
@@ -150,7 +150,7 @@ template <> struct greater<void> {
 template <class T = void> struct less {
     /// \return \b true if field of \b x less than the field with same index of \b y and all previous fields of \b x equal to the same fields of \b y.
     bool operator()(const T& x, const T& y) const {
-        return pfr::lt(x, y);
+        return qor_reflection::lt(x, y);
     }
 
 #ifdef qor_pp_doxygen_invoked
@@ -167,7 +167,7 @@ template <class T = void> struct less {
 template <> struct less<void> {
     template <class T, class U>
     bool operator()(const T& x, const U& y) const {
-        return pfr::lt(x, y);
+        return qor_reflection::lt(x, y);
     }
 
     typedef std::true_type is_transparent;
@@ -179,7 +179,7 @@ template <class T = void> struct greater_equal {
     /// \return \b true if field of \b x greater than the field with same index of \b y and all previous fields of \b x equal to the same fields of \b y;
     /// or if each field of \b x equals the field with same index of \b y.
     bool operator()(const T& x, const T& y) const {
-        return pfr::ge(x, y);
+        return qor_reflection::ge(x, y);
     }
 
 #ifdef qor_pp_doxygen_invoked
@@ -196,7 +196,7 @@ template <class T = void> struct greater_equal {
 template <> struct greater_equal<void> {
     template <class T, class U>
     bool operator()(const T& x, const U& y) const {
-        return pfr::ge(x, y);
+        return qor_reflection::ge(x, y);
     }
 
     typedef std::true_type is_transparent;
@@ -208,7 +208,7 @@ template <class T = void> struct less_equal {
     /// \return \b true if field of \b x less than the field with same index of \b y and all previous fields of \b x equal to the same fields of \b y;
     /// or if each field of \b x equals the field with same index of \b y.
     bool operator()(const T& x, const T& y) const {
-        return pfr::le(x, y);
+        return qor_reflection::le(x, y);
     }
 
 #ifdef qor_pp_doxygen_invoked
@@ -225,7 +225,7 @@ template <class T = void> struct less_equal {
 template <> struct less_equal<void> {
     template <class T, class U>
     bool operator()(const T& x, const U& y) const {
-        return pfr::le(x, y);
+        return qor_reflection::le(x, y);
     }
 
     typedef std::true_type is_transparent;
@@ -237,12 +237,12 @@ template <> struct less_equal<void> {
 template <class T> struct hash {
     /// \return hash value of \b x.
     std::size_t operator()(const T& x) const {
-        return pfr::hash_value(x);
+        return qor_reflection::hash_value(x);
     }
 };
 
 qor_pp_refl_end_module_export
 
-} // namespace pfr
+} // namespace qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_FUNCTORS

@@ -42,7 +42,7 @@ import std;
 #include <cstddef>
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 #if qor_pp_refl_use_std_make_integral_sequence == 0
 
@@ -112,6 +112,6 @@ using make_index_sequence = make_integer_sequence<std::size_t, N>;
 template <typename... T>
 using index_sequence_for = make_index_sequence<sizeof...(T)>;
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_MAKEINTEGERSEQUENCE

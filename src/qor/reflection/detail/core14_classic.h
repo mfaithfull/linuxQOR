@@ -58,7 +58,7 @@ import std;
 #   pragma clang diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 ///////////////////// General utility stuff
 
@@ -593,7 +593,7 @@ auto tie_as_flat_tuple(T& lvalue) noexcept {
     using tuple_type = internal_tuple_with_same_alignment_t<type>;
 
     offset_based_getter<type, tuple_type> getter;
-    return pfr::detail::make_flat_tuple_of_references(lvalue, getter, size_t_<0>{}, size_t_<tuple_type::size_v>{});
+    return qor_reflection::detail::make_flat_tuple_of_references(lvalue, getter, size_t_<0>{}, size_t_<tuple_type::size_v>{});
 }
 
 template <class T>
@@ -603,10 +603,10 @@ auto tie_as_tuple(T& val) noexcept {
         "====================> Boost.PFR: For safety reasons it is forbidden to reflect unions. See `Reflection of unions` section in the docs for more info."
     );
     static_assert(
-        pfr::detail::is_flat_refelectable<T>( detail::make_index_sequence<pfr::detail::fields_count<T>()>{} ),
+        qor_reflection::detail::is_flat_refelectable<T>( detail::make_index_sequence<qor_reflection::detail::fields_count<T>()>{} ),
         "====================> Boost.PFR: Not possible in C++14 to represent that type without loosing information. Change type definition or enable C++17"
     );
-    return pfr::detail::tie_as_flat_tuple(val);
+    return qor_reflection::detail::tie_as_flat_tuple(val);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -658,7 +658,7 @@ struct next_step {
 
     template <class Field>
     operator Field() const {
-         pfr::detail::for_each_field_in_depth(
+         qor_reflection::detail::for_each_field_in_depth(
              t,
              std::forward<F>(f),
              IndexSeq{},
@@ -685,21 +685,21 @@ void for_each_field_in_depth(T& lvalue, F&& f, std::index_sequence<>, identity<F
 
     offset_based_getter<std::remove_cv_t<std::remove_reference_t<T>>, tuple_type> getter;
     std::forward<F>(f)(
-        pfr::detail::make_flat_tuple_of_references(lvalue, getter, size_t_<0>{}, size_t_<sizeof...(Fields)>{})
+        qor_reflection::detail::make_flat_tuple_of_references(lvalue, getter, size_t_<0>{}, size_t_<sizeof...(Fields)>{})
     );
 }
 
 template <class T, class F, std::size_t... I>
 void for_each_field_dispatcher_1(T& t, F&& f, std::index_sequence<I...>, std::true_type /*is_flat_refelectable*/) {
     std::forward<F>(f)(
-        pfr::detail::tie_as_flat_tuple(t)
+        qor_reflection::detail::tie_as_flat_tuple(t)
     );
 }
 
 
 template <class T, class F, std::size_t... I>
 void for_each_field_dispatcher_1(T& t, F&& f, std::index_sequence<I...>, std::false_type /*is_flat_refelectable*/) {
-    pfr::detail::for_each_field_in_depth(
+    qor_reflection::detail::for_each_field_in_depth(
         t,
         std::forward<F>(f),
         std::index_sequence<I...>{}
@@ -730,6 +730,6 @@ void for_each_field_dispatcher(T& t, F&& f, std::index_sequence<I...>) {
 #   pragma clang diagnostic pop
 #endif
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_CORE14_CLASSIC

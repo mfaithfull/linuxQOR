@@ -49,13 +49,13 @@
 ///     // ...
 ///
 ///     comparable_struct s1 {0, 1, "Hello", false, 6,7,8,9,10,11};
-///     std::cout << pfr::io(s1);  // Outputs: {0, 1, H, e, l, l, o, , , 0, 6, 7, 8, 9, 10, 11}
+///     std::cout << qor_reflection::io(s1);  // Outputs: {0, 1, H, e, l, l, o, , , 0, 6, 7, 8, 9, 10, 11}
 /// \endcode
 ///
 /// \podops for other ways to define operators and more details.
 ///
 /// \b Synopsis:
-namespace pfr {
+namespace qor_reflection {
 
 namespace detail {
 
@@ -95,7 +95,7 @@ qor_pp_refl_begin_module_export
 
 template <class Char, class Traits, class T>
 enable_not_ostreamable_t<std::basic_ostream<Char, Traits>, T> operator<<(std::basic_ostream<Char, Traits>& out, io_impl<T>&& x) {
-    return out << pfr::io_fields(std::forward<T>(x.value));
+    return out << qor_reflection::io_fields(std::forward<T>(x.value));
 }
 
 template <class Char, class Traits, class T>
@@ -105,7 +105,7 @@ enable_ostreamable_t<std::basic_ostream<Char, Traits>, T> operator<<(std::basic_
 
 template <class Char, class Traits, class T>
 enable_not_istreamable_t<std::basic_istream<Char, Traits>, T> operator>>(std::basic_istream<Char, Traits>& in, io_impl<T>&& x) {
-    return in >> pfr::io_fields(std::forward<T>(x.value));
+    return in >> qor_reflection::io_fields(std::forward<T>(x.value));
 }
 
 template <class Char, class Traits, class T>
@@ -127,7 +127,7 @@ qor_pp_refl_begin_module_export
 ///     my_struct x;
 ///     std::stringstream ss;
 ///     ss << "{ 12, 13 }";
-///     ss >> pfr::io(x);
+///     ss >> qor_reflection::io(x);
 ///     assert(x.i == 12);
 ///     assert(x.s == 13);
 /// \endcode
@@ -140,6 +140,6 @@ auto io(T&& value) noexcept {
 
 qor_pp_refl_end_module_export
 
-} // namespace pfr
+} // namespace qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_IO

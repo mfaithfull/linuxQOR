@@ -62,7 +62,7 @@ import std;
 #endif
 
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 // tag<T,N> generates friend declarations and helps with overload resolution.
 // There are two types: one with the auto return type, which is the way we read types later.
@@ -84,13 +84,13 @@ struct fn_def_lref {
         // To workaround the issue, we check that the type U is movable, and move it in that case.
         using no_extents_t = std::remove_all_extents_t<U>;
         return static_cast< std::conditional_t<std::is_move_constructible<no_extents_t>::value, no_extents_t&&, no_extents_t&> >(
-            pfr::detail::unsafe_declval<no_extents_t&>()
+            qor_reflection::detail::unsafe_declval<no_extents_t&>()
         );
     }
 };
 template <class T, class U, std::size_t N, bool B>
 struct fn_def_rref {
-    friend auto loophole(tag<T,N>) { return std::move(pfr::detail::unsafe_declval< std::remove_all_extents_t<U>& >()); }
+    friend auto loophole(tag<T,N>) { return std::move(qor_reflection::detail::unsafe_declval< std::remove_all_extents_t<U>& >()); }
 };
 
 
@@ -170,7 +170,7 @@ auto tie_as_tuple_loophole_impl(T& lvalue) noexcept {
     >::type;
     using tuple_type = typename loophole_type_list::type;
 
-    return pfr::detail::make_flat_tuple_of_references(
+    return qor_reflection::detail::make_flat_tuple_of_references(
         lvalue,
         offset_based_getter<type, tuple_type>{},
         size_t_<0>{},
@@ -184,7 +184,7 @@ auto tie_as_tuple(T& val) noexcept {
         !std::is_union<T>::value,
         "====================> Boost.PFR: For safety reasons it is forbidden to reflect unions. See `Reflection of unions` section in the docs for more info."
     );
-    return pfr::detail::tie_as_tuple_loophole_impl(
+    return qor_reflection::detail::tie_as_tuple_loophole_impl(
         val
     );
 }
@@ -196,11 +196,11 @@ void for_each_field_dispatcher(T& t, F&& f, std::index_sequence<I...>) {
         "====================> Boost.PFR: For safety reasons it is forbidden to reflect unions. See `Reflection of unions` section in the docs for more info."
     );
     std::forward<F>(f)(
-        pfr::detail::tie_as_tuple_loophole_impl(t)
+        qor_reflection::detail::tie_as_tuple_loophole_impl(t)
     );
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 
 #ifdef __clang__

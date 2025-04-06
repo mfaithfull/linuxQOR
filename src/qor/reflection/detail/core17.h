@@ -37,7 +37,7 @@
 #include "for_each_field_impl.h"
 #include "rvalue_t.h"
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 #ifndef _MSC_VER // MSVC fails to compile the following code, but compiles the structured bindings in core17_generated.hpp
 struct do_not_define_std_tuple_size_for_me {
@@ -76,8 +76,8 @@ constexpr auto tie_as_tuple(T& val) noexcept {
     !std::is_union<T>::value,
     "====================> Boost.PFR: For safety reasons it is forbidden to reflect unions. See `Reflection of unions` section in the docs for more info."
   );
-  typedef size_t_<pfr::detail::fields_count<T>()> fields_count_tag;
-  return pfr::detail::tie_as_tuple(val, fields_count_tag{});
+  typedef size_t_<qor_reflection::detail::fields_count<T>()> fields_count_tag;
+  return qor_reflection::detail::tie_as_tuple(val, fields_count_tag{});
 }
 
 template <class T, class F, std::size_t... I>
@@ -91,6 +91,6 @@ constexpr void for_each_field_dispatcher(T& t, F&& f, std::index_sequence<I...>)
     );
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_CORE17

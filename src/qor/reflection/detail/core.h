@@ -34,8 +34,8 @@
 
 #include "config.h"
 
-// Each core provides `pfr::detail::tie_as_tuple` and
-// `pfr::detail::for_each_field_dispatcher` functions.
+// Each core provides `qor_reflection::detail::tie_as_tuple` and
+// `qor_reflection::detail::for_each_field_dispatcher` functions.
 //
 // The whole PFR library is build on top of those two functions.
 #if qor_pp_refl_use_cpp17

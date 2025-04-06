@@ -40,7 +40,7 @@ import std;
 #include <cstddef>
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 ///////////////////// Array that has the constexpr
 template <std::size_t N>
@@ -101,6 +101,6 @@ constexpr std::size_t get(const size_array<N>& a) noexcept {
     return a.data[I];
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_SIZEARRAY

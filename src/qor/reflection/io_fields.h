@@ -54,11 +54,11 @@
 ///     };
 ///
 ///     std::ostream& operator<<(std::ostream& os, const my_struct& x) {
-///         return os << pfr::io_fields(x);  // Equivalent to: os << "{ " << x.i << " ," <<  x.s << " }"
+///         return os << qor_reflection::io_fields(x);  // Equivalent to: os << "{ " << x.i << " ," <<  x.s << " }"
 ///     }
 ///
 ///     std::istream& operator>>(std::istream& is, my_struct& x) {
-///         return is >> pfr::io_fields(x);  // Equivalent to: is >> "{ " >> x.i >> " ," >>  x.s >> " }"
+///         return is >> qor_reflection::io_fields(x);  // Equivalent to: is >> "{ " >> x.i >> " ," >>  x.s >> " }"
 ///     }
 /// \endcode
 ///
@@ -66,7 +66,7 @@
 ///
 /// \b Synopsis:
 
-namespace pfr {
+namespace qor_reflection {
 
 namespace detail {
 
@@ -79,17 +79,17 @@ struct io_fields_impl {
 template <class Char, class Traits, class T>
 std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& out, io_fields_impl<const T&>&& x) {
     const T& value = x.value;
-    constexpr std::size_t fields_count_val = pfr::detail::fields_count<T>();
+    constexpr std::size_t fields_count_val = qor_reflection::detail::fields_count<T>();
     out << '{';
 #if qor_pp_refl_use_cpp17 || qor_pp_refl_use_loophole
     detail::print_impl<0, fields_count_val>::print(out, detail::tie_as_tuple(value));
 #else
-    ::pfr::detail::for_each_field_dispatcher(
+    ::qor_reflection::detail::for_each_field_dispatcher(
         value,
         [&out](const auto& val) {
             // We can not reuse `fields_count_val` in lambda because compilers had issues with
             // passing constexpr variables into lambdas. Computing is again is the most portable solution.
-            constexpr std::size_t fields_count_val_lambda = pfr::detail::fields_count<T>();
+            constexpr std::size_t fields_count_val_lambda = qor_reflection::detail::fields_count<T>();
             detail::print_impl<0, fields_count_val_lambda>::print(out, val);
         },
         detail::make_index_sequence<fields_count_val>{}
@@ -107,7 +107,7 @@ std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& o
 template <class Char, class Traits, class T>
 std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& in, io_fields_impl<T&>&& x) {
     T& value = x.value;
-    constexpr std::size_t fields_count_val = pfr::detail::fields_count<T>();
+    constexpr std::size_t fields_count_val = qor_reflection::detail::fields_count<T>();
 
     const auto prev_exceptions = in.exceptions();
     in.exceptions( typename std::basic_istream<Char, Traits>::iostate(0) );
@@ -120,12 +120,12 @@ std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& i
 #if qor_pp_refl_use_cpp17 || qor_pp_refl_use_loophole
     detail::read_impl<0, fields_count_val>::read(in, detail::tie_as_tuple(value));
 #else
-    ::pfr::detail::for_each_field_dispatcher(
+    ::qor_reflection::detail::for_each_field_dispatcher(
         value,
         [&in](const auto& val) {
             // We can not reuse `fields_count_val` in lambda because compilers had issues with
             // passing constexpr variables into lambdas. Computing is again is the most portable solution.
-            constexpr std::size_t fields_count_val_lambda = pfr::detail::fields_count<T>();
+            constexpr std::size_t fields_count_val_lambda = qor_reflection::detail::fields_count<T>();
             detail::read_impl<0, fields_count_val_lambda>::read(in, val);
         },
         detail::make_index_sequence<fields_count_val>{}
@@ -145,13 +145,13 @@ qor_pp_refl_begin_module_export
 
 template <class Char, class Traits, class T>
 std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& in, io_fields_impl<const T&>&& ) {
-    static_assert(sizeof(T) && false, "====================> Boost.PFR: Attempt to use istream operator on a pfr::io_fields wrapped type T with const qualifier.");
+    static_assert(sizeof(T) && false, "====================> Boost.PFR: Attempt to use istream operator on a qor_reflection::io_fields wrapped type T with const qualifier.");
     return in;
 }
 
 template <class Char, class Traits, class T>
 std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& in, io_fields_impl<T>&& ) {
-    static_assert(sizeof(T) && false, "====================> Boost.PFR: Attempt to use istream operator on a pfr::io_fields wrapped temporary of type T.");
+    static_assert(sizeof(T) && false, "====================> Boost.PFR: Attempt to use istream operator on a qor_reflection::io_fields wrapped temporary of type T.");
     return in;
 }
 
@@ -171,15 +171,15 @@ qor_pp_refl_begin_module_export
 ///     };
 ///
 ///     std::ostream& operator<<(std::ostream& os, const my_struct& x) {
-///         return os << pfr::io_fields(x);  // Equivalent to: os << "{ " << x.i << " ," <<  x.s << " }"
+///         return os << qor_reflection::io_fields(x);  // Equivalent to: os << "{ " << x.i << " ," <<  x.s << " }"
 ///     }
 ///
 ///     std::istream& operator>>(std::istream& is, my_struct& x) {
-///         return is >> pfr::io_fields(x);  // Equivalent to: is >> "{ " >> x.i >> " ," >>  x.s >> " }"
+///         return is >> qor_reflection::io_fields(x);  // Equivalent to: is >> "{ " >> x.i >> " ," >>  x.s >> " }"
 ///     }
 /// \endcode
 ///
-/// Input and output streaming operators for `pfr::io_fields` are symmetric, meaning that you get the original value by streaming it and
+/// Input and output streaming operators for `qor_reflection::io_fields` are symmetric, meaning that you get the original value by streaming it and
 /// reading back if each fields streaming operator is symmetric.
 ///
 /// \customio
@@ -190,6 +190,6 @@ auto io_fields(T&& value) noexcept {
 
 qor_pp_refl_end_module_export
 
-} // namespace pfr
+} // namespace qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_IOFIELDS

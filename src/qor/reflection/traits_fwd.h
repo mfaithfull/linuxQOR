@@ -34,7 +34,7 @@
 
 #include "detail/config.h"
 
-namespace pfr {
+namespace qor_reflection {
 
 qor_pp_refl_begin_module_export
 
@@ -43,7 +43,7 @@ struct is_reflectable;
 
 qor_pp_refl_end_module_export
 
-} // namespace pfr
+} // namespace qor_reflection
 
 
 #endif//QOR_PP_H_REFLECTION_TRAITSFWD

@@ -46,12 +46,12 @@ import std;
 #include <tuple>
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 /// \brief A `std::tuple` capable of de-structuring assignment used to support
 /// a tie of multiple lvalue references to fields of an aggregate T.
 ///
-/// \sa pfr::tie_from_structure
+/// \sa qor_reflection::tie_from_structure
 template <typename... Elements>
 struct tie_from_structure_tuple : std::tuple<Elements&...> {
     using base = std::tuple<Elements&...>;
@@ -67,6 +67,6 @@ struct tie_from_structure_tuple : std::tuple<Elements&...> {
     }
 };
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_TIEFROMSTRUCTTUPLE

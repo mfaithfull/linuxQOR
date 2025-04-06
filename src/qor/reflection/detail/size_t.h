@@ -31,12 +31,12 @@
 #define QOR_PP_H_REFLECTION_DETAIL_SIZET
 #pragma once
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 ///////////////////// General utility stuff
 template <std::size_t Index>
 using size_t_ = std::integral_constant<std::size_t, Index >;
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_SIZET

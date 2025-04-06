@@ -51,13 +51,13 @@
 ///
 ///     comparable_struct s1 {0, 1, "Hello", false, 6,7,8,9,10,11};
 ///     comparable_struct s2 {0, 1, "Hello", false, 6,7,8,9,10,11111};
-///     assert(pfr::lt(s1, s2));
+///     assert(qor_reflection::lt(s1, s2));
 /// \endcode
 ///
 /// \podops for other ways to define operators and more details.
 ///
 /// \b Synopsis:
-namespace pfr {
+namespace qor_reflection {
 
 namespace detail {
 
@@ -108,7 +108,7 @@ qor_pp_refl_begin_module_export
 /// \returns true if lhs is equal to rhs; false otherwise
 template <class T, class U>
 constexpr detail::enable_not_eq_comp_t<T, U> eq(const T& lhs, const U& rhs) noexcept {
-    return pfr::eq_fields(lhs, rhs);
+    return qor_reflection::eq_fields(lhs, rhs);
 }
 
 /// \overload eq
@@ -123,7 +123,7 @@ constexpr detail::enable_eq_comp_t<T, U> eq(const T& lhs, const U& rhs) {
 /// \returns true if lhs is not equal to rhs; false otherwise
 template <class T, class U>
 constexpr detail::enable_not_ne_comp_t<T, U> ne(const T& lhs, const U& rhs) noexcept {
-    return pfr::ne_fields(lhs, rhs);
+    return qor_reflection::ne_fields(lhs, rhs);
 }
 
 /// \overload ne
@@ -138,7 +138,7 @@ constexpr detail::enable_ne_comp_t<T, U> ne(const T& lhs, const U& rhs) {
 /// \returns true if lhs is less than rhs; false otherwise
 template <class T, class U>
 constexpr detail::enable_not_lt_comp_t<T, U> lt(const T& lhs, const U& rhs) noexcept {
-    return pfr::lt_fields(lhs, rhs);
+    return qor_reflection::lt_fields(lhs, rhs);
 }
 
 /// \overload lt
@@ -153,7 +153,7 @@ constexpr detail::enable_lt_comp_t<T, U> lt(const T& lhs, const U& rhs) {
 /// \returns true if lhs is greater than rhs; false otherwise
 template <class T, class U>
 constexpr detail::enable_not_gt_comp_t<T, U> gt(const T& lhs, const U& rhs) noexcept {
-    return pfr::gt_fields(lhs, rhs);
+    return qor_reflection::gt_fields(lhs, rhs);
 }
 
 /// \overload gt
@@ -168,7 +168,7 @@ constexpr detail::enable_gt_comp_t<T, U> gt(const T& lhs, const U& rhs) {
 /// \returns true if lhs is less or equal to rhs; false otherwise
 template <class T, class U>
 constexpr detail::enable_not_le_comp_t<T, U> le(const T& lhs, const U& rhs) noexcept {
-    return pfr::le_fields(lhs, rhs);
+    return qor_reflection::le_fields(lhs, rhs);
 }
 
 /// \overload le
@@ -183,7 +183,7 @@ constexpr detail::enable_le_comp_t<T, U> le(const T& lhs, const U& rhs) {
 /// \returns true if lhs is greater or equal to rhs; false otherwise
 template <class T, class U>
 constexpr detail::enable_not_ge_comp_t<T, U> ge(const T& lhs, const U& rhs) noexcept {
-    return pfr::ge_fields(lhs, rhs);
+    return qor_reflection::ge_fields(lhs, rhs);
 }
 
 /// \overload ge
@@ -198,7 +198,7 @@ constexpr detail::enable_ge_comp_t<T, U> ge(const T& lhs, const U& rhs) {
 /// \returns std::size_t with hash of the value
 template <class T>
 constexpr detail::enable_not_hashable_t<T> hash_value(const T& value) noexcept {
-    return pfr::hash_fields(value);
+    return qor_reflection::hash_fields(value);
 }
 
 /// \overload hash_value
@@ -209,6 +209,6 @@ constexpr detail::enable_hashable_t<T> hash_value(const T& value) {
 
 qor_pp_refl_end_module_export
 
-} // namespace pfr
+} // namespace qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_OPS

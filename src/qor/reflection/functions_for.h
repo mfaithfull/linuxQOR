@@ -94,22 +94,22 @@
 /// \endcode
 
 #define PFR_FUNCTIONS_FOR(T)                                                                                                          \
-    qor_pp_refl_maybe_unused inline bool operator==(const T& lhs, const T& rhs) { return ::pfr::eq_fields(lhs, rhs); }                 \
-    qor_pp_refl_maybe_unused inline bool operator!=(const T& lhs, const T& rhs) { return ::pfr::ne_fields(lhs, rhs); }                 \
-    qor_pp_refl_maybe_unused inline bool operator< (const T& lhs, const T& rhs) { return ::pfr::lt_fields(lhs, rhs); }                 \
-    qor_pp_refl_maybe_unused inline bool operator> (const T& lhs, const T& rhs) { return ::pfr::gt_fields(lhs, rhs); }                 \
-    qor_pp_refl_maybe_unused inline bool operator<=(const T& lhs, const T& rhs) { return ::pfr::le_fields(lhs, rhs); }                 \
-    qor_pp_refl_maybe_unused inline bool operator>=(const T& lhs, const T& rhs) { return ::pfr::ge_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator==(const T& lhs, const T& rhs) { return ::qor_reflection::eq_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator!=(const T& lhs, const T& rhs) { return ::qor_reflection::ne_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator< (const T& lhs, const T& rhs) { return ::qor_reflection::lt_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator> (const T& lhs, const T& rhs) { return ::qor_reflection::gt_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator<=(const T& lhs, const T& rhs) { return ::qor_reflection::le_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator>=(const T& lhs, const T& rhs) { return ::qor_reflection::ge_fields(lhs, rhs); }                 \
     template <class Char, class Traits>                                                                                                     \
     qor_pp_refl_maybe_unused inline ::std::basic_ostream<Char, Traits>& operator<<(::std::basic_ostream<Char, Traits>& out, const T& value) { \
-        return out << ::pfr::io_fields(value);                                                                                       \
+        return out << ::qor_reflection::io_fields(value);                                                                                       \
     }                                                                                                                                       \
     template <class Char, class Traits>                                                                                                     \
     qor_pp_refl_maybe_unused inline ::std::basic_istream<Char, Traits>& operator>>(::std::basic_istream<Char, Traits>& in, T& value) {        \
-        return in >> ::pfr::io_fields(value);                                                                                        \
+        return in >> ::qor_reflection::io_fields(value);                                                                                        \
     }                                                                                                                                       \
     qor_pp_refl_maybe_unused inline std::size_t hash_value(const T& v) {                                                                      \
-        return ::pfr::hash_fields(v);                                                                                                \
+        return ::qor_reflection::hash_fields(v);                                                                                                \
     }                                                                                                                                       \
 /**/
 

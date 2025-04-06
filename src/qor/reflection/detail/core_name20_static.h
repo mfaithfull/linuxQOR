@@ -50,7 +50,7 @@ import std;
 #include <memory> // for std::addressof
 #endif
 
-namespace pfr { namespace detail {
+namespace qor_reflection { namespace detail {
 
 struct core_name_skip {
     std::size_t size_at_begin;
@@ -264,12 +264,12 @@ constexpr auto tie_as_names_tuple() noexcept {
 
 template <class T, class F>
 constexpr void for_each_field_with_name(T&& value, F&& func) {
-    return pfr::detail::for_each_field(
+    return qor_reflection::detail::for_each_field(
         std::forward<T>(value),
         [f = std::forward<F>(func)](auto&& field, auto index) mutable {
             using IndexType = decltype(index);
             using FieldType = decltype(field);
-            constexpr auto name = pfr::detail::get_name<std::remove_reference_t<T>, IndexType::value>();
+            constexpr auto name = qor_reflection::detail::get_name<std::remove_reference_t<T>, IndexType::value>();
             if constexpr (std::is_invocable_v<F, std::string_view, FieldType, IndexType>) {
                 f(name, std::forward<FieldType>(field), index);
             } else {
@@ -278,6 +278,6 @@ constexpr void for_each_field_with_name(T&& value, F&& func) {
         });
 }
 
-}} // namespace pfr::detail
+}} // namespace qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_CORENAME20_STATIC
