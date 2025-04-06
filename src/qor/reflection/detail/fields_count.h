@@ -408,7 +408,7 @@ constexpr std::size_t fields_count() noexcept {
         "====================> Boost.PFR: Attempt to get fields count on a reference. This is not allowed because that could hide an issue and different library users expect different behavior in that case."
     );
 
-#if PFR_HAS_GUARANTEED_COPY_ELISION
+#if qor_pp_refl_has_guaranteed_copy_elision
     constexpr bool type_fields_are_move_constructible = true;
 #else
     constexpr bool type_fields_are_move_constructible =
@@ -422,7 +422,7 @@ constexpr std::size_t fields_count() noexcept {
         type_fields_are_move_constructible,
         "====================> Boost.PFR: Type and each field in the type must be copy constructible (or move constructible and move assignable)."
     );
-#endif  // #if !PFR_HAS_GUARANTEED_COPY_ELISION
+#endif  // #if !qor_pp_refl_has_guaranteed_copy_elision
 
     constexpr bool type_is_not_polymorphic = !std::is_polymorphic<type>::value;
     static_assert(
@@ -443,7 +443,7 @@ constexpr std::size_t fields_count() noexcept {
 #endif
 
 // Can't use the following. See the non_std_layout.cpp test.
-//#if !PFR_USE_CPP17
+//#if !qor_pp_refl_use_cpp17
 //    static_assert(
 //        std::is_standard_layout<type>::value,   // Does not return `true` for structs that have non standard layout members.
 //        "Type must be aggregate initializable."

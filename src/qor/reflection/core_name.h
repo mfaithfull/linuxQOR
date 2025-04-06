@@ -51,7 +51,7 @@
 
 namespace pfr {
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 /// \brief Returns name of a field with index `I` in \aggregate `T`.
 ///
@@ -64,7 +64,7 @@ PFR_BEGIN_MODULE_EXPORT
 /// \endcode
 template <std::size_t I, class T>
 constexpr
-#ifdef PFR_DOXYGEN_INVOKED
+#ifdef qor_pp_doxygen_invoked
 std::string_view
 #else
 auto
@@ -89,7 +89,7 @@ get_name() noexcept {
 /// \endcode
 template <class T>
 constexpr
-#ifdef PFR_DOXYGEN_INVOKED
+#ifdef qor_pp_doxygen_invoked
 std::array<std::string_view, pfr::tuple_size_v<T>>
 #else
 auto
@@ -124,7 +124,7 @@ constexpr void for_each_field_with_name(T&& value, F&& func) {
     return pfr::detail::for_each_field_with_name(std::forward<T>(value), std::forward<F>(func));
 }
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace pfr
 

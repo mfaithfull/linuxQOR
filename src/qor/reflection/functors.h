@@ -58,7 +58,7 @@
 /// \b Synopsis:
 namespace pfr {
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 ///////////////////// Comparisons
 
@@ -69,7 +69,7 @@ template <class T = void> struct equal_to {
         return pfr::eq(x, y);
     }
 
-#ifdef PFR_DOXYGEN_INVOKED
+#ifdef qor_pp_doxygen_invoked
     /// This typedef exists only if T \b is void
     typedef std::true_type is_transparent;
 
@@ -97,7 +97,7 @@ template <class T = void> struct not_equal {
         return pfr::ne(x, y);
     }
 
-#ifdef PFR_DOXYGEN_INVOKED
+#ifdef qor_pp_doxygen_invoked
     /// This typedef exists only if T \b is void
     typedef std::true_type is_transparent;
 
@@ -125,7 +125,7 @@ template <class T = void> struct greater {
         return pfr::gt(x, y);
     }
 
-#ifdef PFR_DOXYGEN_INVOKED
+#ifdef qor_pp_doxygen_invoked
     /// This typedef exists only if T \b is void
     typedef std::true_type is_transparent;
 
@@ -153,7 +153,7 @@ template <class T = void> struct less {
         return pfr::lt(x, y);
     }
 
-#ifdef PFR_DOXYGEN_INVOKED
+#ifdef qor_pp_doxygen_invoked
     /// This typedef exists only if T \b is void
     typedef std::true_type is_transparent;
 
@@ -182,7 +182,7 @@ template <class T = void> struct greater_equal {
         return pfr::ge(x, y);
     }
 
-#ifdef PFR_DOXYGEN_INVOKED
+#ifdef qor_pp_doxygen_invoked
     /// This typedef exists only if T \b is void
     typedef std::true_type is_transparent;
 
@@ -211,7 +211,7 @@ template <class T = void> struct less_equal {
         return pfr::le(x, y);
     }
 
-#ifdef PFR_DOXYGEN_INVOKED
+#ifdef qor_pp_doxygen_invoked
     /// This typedef exists only if T \b is void
     typedef std::true_type is_transparent;
 
@@ -241,7 +241,7 @@ template <class T> struct hash {
     }
 };
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace pfr
 

@@ -49,7 +49,7 @@ constexpr decltype(is_reflectable<T, WhatFor>::value) possible_reflectable(long)
     return is_reflectable<T, WhatFor>::value;
 }
 
-#if PFR_ENABLE_IMPLICIT_REFLECTION
+#if qor_pp_refl_enable_implicit_reflection
 
 template <class T, class WhatFor>
 constexpr bool possible_reflectable(int) noexcept {

@@ -81,7 +81,7 @@ std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& o
     const T& value = x.value;
     constexpr std::size_t fields_count_val = pfr::detail::fields_count<T>();
     out << '{';
-#if PFR_USE_CPP17 || PFR_USE_LOOPHOLE
+#if qor_pp_refl_use_cpp17 || qor_pp_refl_use_loophole
     detail::print_impl<0, fields_count_val>::print(out, detail::tie_as_tuple(value));
 #else
     ::pfr::detail::for_each_field_dispatcher(
@@ -117,7 +117,7 @@ std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& i
     in >> parenthis;
     if (parenthis != '{') in.setstate(std::basic_istream<Char, Traits>::failbit);
 
-#if PFR_USE_CPP17 || PFR_USE_LOOPHOLE
+#if qor_pp_refl_use_cpp17 || qor_pp_refl_use_loophole
     detail::read_impl<0, fields_count_val>::read(in, detail::tie_as_tuple(value));
 #else
     ::pfr::detail::for_each_field_dispatcher(
@@ -141,7 +141,7 @@ std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& i
     return in;
 }
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 template <class Char, class Traits, class T>
 std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& in, io_fields_impl<const T&>&& ) {
@@ -155,11 +155,11 @@ std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& i
     return in;
 }
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace detail
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 /// IO manipulator to read/write \aggregate `value` field-by-field.
 ///
@@ -188,7 +188,7 @@ auto io_fields(T&& value) noexcept {
     return detail::io_fields_impl<T>{std::forward<T>(value)};
 }
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace pfr
 

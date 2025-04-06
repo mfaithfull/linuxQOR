@@ -44,7 +44,7 @@
 #pragma once
 
 #include "config.h"
-#if !PFR_USE_CPP17
+#if !qor_pp_refl_use_cpp17
 #   error C++17 is required for this header.
 #endif
 

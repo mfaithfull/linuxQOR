@@ -46,7 +46,7 @@
 /// \b Synopsis:
 namespace pfr {
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 /// Has a static const member variable `value` that contains fields count in a T.
 /// Works for any T that satisfies \aggregate.
@@ -69,7 +69,7 @@ using tuple_size = detail::size_t_< pfr::detail::fields_count<T>() >;
 template <class T>
 constexpr std::size_t tuple_size_v = tuple_size<T>::value;
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace pfr
 

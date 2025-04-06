@@ -101,7 +101,7 @@ namespace detail {
     >;
 } // namespace detail
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 /// \brief Compares lhs and rhs for equality using their own comparison and conversion operators; if no operators available returns \forcedlink{eq_fields}(lhs, rhs).
 ///
@@ -207,7 +207,7 @@ constexpr detail::enable_hashable_t<T> hash_value(const T& value) {
     return std::hash<T>{}(value);
 }
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace pfr
 

@@ -44,7 +44,7 @@ import std;
 
 namespace pfr { namespace detail {
 
-#if PFR_USE_STD_MAKE_INTEGRAL_SEQUENCE == 0
+#if qor_pp_refl_use_std_make_integral_sequence == 0
 
 #ifdef __has_builtin
 #   if __has_builtin(__make_integer_seq)
@@ -99,12 +99,12 @@ template <typename T, T N>
 using make_integer_sequence = typename make_integer_sequence_impl<T, N>::type;
 
 #endif // !defined PFR_USE_MAKE_INTEGER_SEQ_BUILTIN
-#else // PFR_USE_STD_MAKE_INTEGRAL_SEQUENCE == 1
+#else // qor_pp_refl_use_std_make_integral_sequence == 1
 
 template <typename T, T N>
 using make_integer_sequence = std::make_integer_sequence<T, N>;
 
-#endif // PFR_USE_STD_MAKE_INTEGRAL_SEQUENCE == 1
+#endif // qor_pp_refl_use_std_make_integral_sequence == 1
 
 template <std::size_t N>
 using make_index_sequence = make_integer_sequence<std::size_t, N>;

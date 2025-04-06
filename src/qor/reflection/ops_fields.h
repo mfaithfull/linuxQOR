@@ -57,7 +57,7 @@
 /// \b Synopsis:
 namespace pfr {
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
     /// Does a field-by-field equality comparison.
     ///
@@ -130,7 +130,7 @@ PFR_BEGIN_MODULE_EXPORT
     template <class T>
     std::size_t hash_fields(const T& x) {
         constexpr std::size_t fields_count_val = pfr::detail::fields_count<std::remove_reference_t<T>>();
-#if PFR_USE_CPP17 || PFR_USE_LOOPHOLE
+#if qor_pp_refl_use_cpp17 || qor_pp_refl_use_loophole
         return detail::hash_impl<0, fields_count_val>::compute(detail::tie_as_tuple(x));
 #else
         std::size_t result = 0;
@@ -149,7 +149,7 @@ PFR_BEGIN_MODULE_EXPORT
 #endif
     }
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace pfr
 

@@ -38,9 +38,9 @@
 // `pfr::detail::for_each_field_dispatcher` functions.
 //
 // The whole PFR library is build on top of those two functions.
-#if PFR_USE_CPP17
+#if qor_pp_refl_use_cpp17
 #   include "core17.h"
-#elif PFR_USE_LOOPHOLE
+#elif qor_pp_refl_use_loophole
 #   include "core14_loophole.h"
 #else
 #   include "core14_classic.h"

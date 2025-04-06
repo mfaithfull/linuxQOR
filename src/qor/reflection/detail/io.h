@@ -42,7 +42,7 @@ import std;
 #include <iomanip>
 
 #if defined(__has_include)
-#   if __has_include(<string_view>) && PFR_USE_CPP17
+#   if __has_include(<string_view>) && qor_pp_refl_use_cpp17
 #       include <string_view>
 #   endif
 #endif
@@ -56,7 +56,7 @@ inline auto quoted_helper(const std::string& s) noexcept {
 }
 
 #if defined(__has_include)
-#   if __has_include(<string_view>) && PFR_USE_CPP17
+#   if __has_include(<string_view>) && qor_pp_refl_use_cpp17
 template <class CharT, class Traits>
 inline auto quoted_helper(std::basic_string_view<CharT, Traits> s) noexcept {
     return std::quoted(s);

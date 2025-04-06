@@ -54,7 +54,7 @@ constexpr bool do_structured_bindings_work() noexcept { // *********************
     * It looks like your compiler or Standard Library can not handle C++17
     * structured bindings.
     *
-    * Workaround: Define PFR_USE_CPP17 to 0
+    * Workaround: Define qor_pp_refl_use_cpp17 to 0
     * It will disable the C++17 features for Boost.PFR library.
     *
     * Sorry for the inconvenience caused.

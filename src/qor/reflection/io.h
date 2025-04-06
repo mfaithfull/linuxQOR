@@ -91,7 +91,7 @@ struct io_impl {
     T value;
 };
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 template <class Char, class Traits, class T>
 enable_not_ostreamable_t<std::basic_ostream<Char, Traits>, T> operator<<(std::basic_ostream<Char, Traits>& out, io_impl<T>&& x) {
@@ -113,11 +113,11 @@ enable_istreamable_t<std::basic_istream<Char, Traits>, T> operator>>(std::basic_
     return in >> x.value;
 }
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace detail
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 /// IO manipulator to read/write \aggregate `value` using its IO stream operators or using \forcedlink{io_fields} if operators are not available.
 ///
@@ -138,7 +138,7 @@ auto io(T&& value) noexcept {
     return detail::io_impl<T>{std::forward<T>(value)};
 }
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace pfr
 

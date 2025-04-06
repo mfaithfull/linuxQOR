@@ -34,16 +34,16 @@
 
 #include "../config.h"
 
-#if !PFR_ENABLED
+#if !qor_pp_refl_enabled
 
 #error Boost.PFR library is not supported in your environment.             \
        Try one of the possible solutions:                                  \
-       1. try to take away an '-DPFR_ENABLED=0', if it exists        \
+       1. try to take away an '-Dqor_pp_refl_enabled=0', if it exists        \
        2. enable C++14;                                                    \
        3. enable C++17;                                                    \
        4. update your compiler;                                            \
-       or disable this error by '-DPFR_ENABLED=1' if you really know what are you doing.
+       or disable this error by '-Dqor_pp_refl_enabled=1' if you really know what are you doing.
 
-#endif // !PFR_ENABLED
+#endif // !qor_pp_refl_enabled
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_CONFIG

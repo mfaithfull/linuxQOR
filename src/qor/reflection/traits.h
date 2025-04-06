@@ -44,7 +44,7 @@
 
 namespace pfr {
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 /// Has a static const member variable `value` when it is known that type T can or can't be reflected using Boost.PFR; otherwise, there is no member variable.
 /// Every user may (and in some difficult cases - should) specialize is_reflectable on his own.
@@ -81,7 +81,7 @@ using is_implicitly_reflectable = std::integral_constant< bool, pfr::detail::pos
 template<class T, class WhatFor>
 constexpr bool is_implicitly_reflectable_v = is_implicitly_reflectable<T, WhatFor>::value;
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace pfr
 

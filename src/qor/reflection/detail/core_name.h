@@ -39,7 +39,7 @@
 //
 // The whole functional of extracting field's names is build on top of those
 // two functions.
-#if PFR_CORE_NAME_ENABLED
+#if qor_pp_refl_name_enabled
 #include "core_name20_static.h"
 #else
 #include "core_name14_disabled.h"

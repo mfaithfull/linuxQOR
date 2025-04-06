@@ -52,7 +52,7 @@
 
 namespace pfr {
 
-PFR_BEGIN_MODULE_EXPORT
+qor_pp_refl_begin_module_export
 
 /// \brief Returns reference or const reference to a field with index `I` in \aggregate `val`.
 /// Overload taking the type `U` returns reference or const reference to a field
@@ -77,14 +77,14 @@ constexpr decltype(auto) get(const T& val) noexcept {
 /// \overload get
 template <std::size_t I, class T>
 constexpr decltype(auto) get(T& val
-#if !PFR_USE_CPP17
+#if !qor_pp_refl_use_cpp17
     , std::enable_if_t<std::is_assignable<T, T>::value>* = nullptr
 #endif
 ) noexcept {
     return detail::sequence_tuple::get<I>( detail::tie_as_tuple(val) );
 }
 
-#if !PFR_USE_CPP17
+#if !qor_pp_refl_use_cpp17
 /// \overload get
 template <std::size_t I, class T>
 constexpr auto get(T&, std::enable_if_t<!std::is_assignable<T, T>::value>* = nullptr) noexcept {
@@ -111,14 +111,14 @@ constexpr const U& get(const T& val) noexcept {
 /// \overload get
 template <class U, class T>
 constexpr U& get(T& val
-#if !PFR_USE_CPP17
+#if !qor_pp_refl_use_cpp17
     , std::enable_if_t<std::is_assignable<T, T>::value>* = nullptr
 #endif
 ) noexcept {
     return detail::sequence_tuple::get_by_type_impl<U&>( detail::tie_as_tuple(val) );
 }
 
-#if !PFR_USE_CPP17
+#if !qor_pp_refl_use_cpp17
 /// \overload get
 template <class U, class T>
 constexpr U& get(T&, std::enable_if_t<!std::is_assignable<T, T>::value>* = nullptr) noexcept {
@@ -201,7 +201,7 @@ constexpr auto structure_tie(const T& val) noexcept {
 /// \overload structure_tie
 template <class T>
 constexpr auto structure_tie(T& val
-#if !PFR_USE_CPP17
+#if !qor_pp_refl_use_cpp17
     , std::enable_if_t<std::is_assignable<T, T>::value>* = nullptr
 #endif
 ) noexcept {
@@ -211,7 +211,7 @@ constexpr auto structure_tie(T& val
     );
 }
 
-#if !PFR_USE_CPP17
+#if !qor_pp_refl_use_cpp17
 /// \overload structure_tie
 template <class T>
 constexpr auto structure_tie(T&, std::enable_if_t<!std::is_assignable<T, T>::value>* = nullptr) noexcept {
@@ -268,7 +268,7 @@ constexpr detail::tie_from_structure_tuple<Elements...> tie_from_structure(Eleme
     return detail::tie_from_structure_tuple<Elements...>(args...);
 }
 
-PFR_END_MODULE_EXPORT
+qor_pp_refl_end_module_export
 
 } // namespace pfr
 

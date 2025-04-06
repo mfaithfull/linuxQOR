@@ -60,7 +60,7 @@ struct core_name_skip {
 
     consteval std::string_view apply(std::string_view sv) const noexcept {
         // We use std::min here to make the compiler diagnostic shorter and
-        // cleaner in case of misconfigured PFR_CORE_NAME_PARSING
+        // cleaner in case of misconfigured qor_pp_refl_core_name_parsing
         sv.remove_prefix((std::min)(size_at_begin, sv.size()));
         sv.remove_suffix((std::min)(size_at_end, sv.size()));
         if (until_runtime.empty()) {
@@ -128,11 +128,11 @@ consteval auto name_of_field_impl() noexcept {
         "that outputs the whole function signature including non-type template parameters."
     );
 
-    constexpr auto skip = detail::make_core_name_skip PFR_CORE_NAME_PARSING;
+    constexpr auto skip = detail::make_core_name_skip qor_pp_refl_core_name_parsing;
     static_assert(skip.size_at_begin + skip.size_at_end + skip.until_runtime.size() < sv.size(),
         "====================> Boost.PFR: Field reflection parser configured in a wrong way. "
         "It attempts to skip more chars than available. "
-        "Please define PFR_CORE_NAME_PARSING to correct values. See documentation section "
+        "Please define qor_pp_refl_core_name_parsing to correct values. See documentation section "
         "'Limitations and Configuration' for more information."
     );
     constexpr auto fn = skip.apply(sv);
@@ -140,7 +140,7 @@ consteval auto name_of_field_impl() noexcept {
         !fn.empty(),
         "====================> Boost.PFR: Extraction of field name is misconfigured for your compiler. "
         "It skipped all the input, leaving the field name empty. "
-        "Please define PFR_CORE_NAME_PARSING to correct values. See documentation section "
+        "Please define qor_pp_refl_core_name_parsing to correct values. See documentation section "
         "'Limitations and Configuration' for more information."
     );
     auto res = std::array<char, fn.size()+1>{};
@@ -199,7 +199,7 @@ consteval auto name_of_field() noexcept {
         } == "size_at_begin",
         "====================> Boost.PFR: Extraction of field name is misconfigured for your compiler. "
         "It does not return the proper field name. "
-        "Please define PFR_CORE_NAME_PARSING to correct values. See documentation section "
+        "Please define qor_pp_refl_core_name_parsing to correct values. See documentation section "
         "'Limitations and Configuration' for more information."
     );
 
@@ -237,8 +237,8 @@ constexpr std::string_view get_name() noexcept {
         "====================> Boost.PFR: It is impossible to extract name from old C array since it doesn't have named members"
     );
     static_assert(
-        sizeof(T) && PFR_USE_CPP17,
-        "====================> Boost.PFR: Extraction of field's names is allowed only when the PFR_USE_CPP17 macro enabled."
+        sizeof(T) && qor_pp_refl_use_cpp17,
+        "====================> Boost.PFR: Extraction of field's names is allowed only when the qor_pp_refl_use_cpp17 macro enabled."
    );
 
    return stored_name_of_field<T, I>.data();
@@ -255,8 +255,8 @@ constexpr auto tie_as_names_tuple() noexcept {
         "====================> Boost.PFR: It is impossible to extract name from old C array since it doesn't have named members"
     );
     static_assert(
-        sizeof(T) && PFR_USE_CPP17,
-        "====================> Boost.PFR: Extraction of field's names is allowed only when the PFR_USE_CPP17 macro enabled."
+        sizeof(T) && qor_pp_refl_use_cpp17,
+        "====================> Boost.PFR: Extraction of field's names is allowed only when the qor_pp_refl_use_cpp17 macro enabled."
     );
 
     return detail::tie_as_names_tuple_impl<T>(detail::make_index_sequence<detail::fields_count<T>()>{});

@@ -94,21 +94,21 @@
 /// \endcode
 
 #define PFR_FUNCTIONS_FOR(T)                                                                                                          \
-    PFR_MAYBE_UNUSED inline bool operator==(const T& lhs, const T& rhs) { return ::pfr::eq_fields(lhs, rhs); }                 \
-    PFR_MAYBE_UNUSED inline bool operator!=(const T& lhs, const T& rhs) { return ::pfr::ne_fields(lhs, rhs); }                 \
-    PFR_MAYBE_UNUSED inline bool operator< (const T& lhs, const T& rhs) { return ::pfr::lt_fields(lhs, rhs); }                 \
-    PFR_MAYBE_UNUSED inline bool operator> (const T& lhs, const T& rhs) { return ::pfr::gt_fields(lhs, rhs); }                 \
-    PFR_MAYBE_UNUSED inline bool operator<=(const T& lhs, const T& rhs) { return ::pfr::le_fields(lhs, rhs); }                 \
-    PFR_MAYBE_UNUSED inline bool operator>=(const T& lhs, const T& rhs) { return ::pfr::ge_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator==(const T& lhs, const T& rhs) { return ::pfr::eq_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator!=(const T& lhs, const T& rhs) { return ::pfr::ne_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator< (const T& lhs, const T& rhs) { return ::pfr::lt_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator> (const T& lhs, const T& rhs) { return ::pfr::gt_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator<=(const T& lhs, const T& rhs) { return ::pfr::le_fields(lhs, rhs); }                 \
+    qor_pp_refl_maybe_unused inline bool operator>=(const T& lhs, const T& rhs) { return ::pfr::ge_fields(lhs, rhs); }                 \
     template <class Char, class Traits>                                                                                                     \
-    PFR_MAYBE_UNUSED inline ::std::basic_ostream<Char, Traits>& operator<<(::std::basic_ostream<Char, Traits>& out, const T& value) { \
+    qor_pp_refl_maybe_unused inline ::std::basic_ostream<Char, Traits>& operator<<(::std::basic_ostream<Char, Traits>& out, const T& value) { \
         return out << ::pfr::io_fields(value);                                                                                       \
     }                                                                                                                                       \
     template <class Char, class Traits>                                                                                                     \
-    PFR_MAYBE_UNUSED inline ::std::basic_istream<Char, Traits>& operator>>(::std::basic_istream<Char, Traits>& in, T& value) {        \
+    qor_pp_refl_maybe_unused inline ::std::basic_istream<Char, Traits>& operator>>(::std::basic_istream<Char, Traits>& in, T& value) {        \
         return in >> ::pfr::io_fields(value);                                                                                        \
     }                                                                                                                                       \
-    PFR_MAYBE_UNUSED inline std::size_t hash_value(const T& v) {                                                                      \
+    qor_pp_refl_maybe_unused inline std::size_t hash_value(const T& v) {                                                                      \
         return ::pfr::hash_fields(v);                                                                                                \
     }                                                                                                                                       \
 /**/
