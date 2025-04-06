@@ -42,7 +42,7 @@ namespace qor{
         struct AllocateOnlyConcreteTypesFunctor
         {				
             template< typename... _p >
-            static R* Allocate(size_t count, _p... pq)
+            static R* Allocate(size_t count, _p&&... pq)
             {
                 return nullptr;
             }
@@ -52,9 +52,9 @@ namespace qor{
         struct AllocateOnlyConcreteTypesFunctor<R, false>
         {				
             template< typename... _p >
-            static R* Allocate(size_t count, _p... p1)
+            static R* Allocate(size_t count, _p&&... p1)
             {
-                return allocator_of<R>::type::template Allocate<R>(count, p1...);
+                return allocator_of<R>::type::template Allocate<R>(count, std::forward<_p>(p1)...);
             }
         };        
 
@@ -263,9 +263,7 @@ namespace qor{
 
 		typedef detail::SharedRef<T> _tInternalRef;
 
-		Ref() : m_p(nullptr)
-		{
-		}
+		constexpr Ref() : m_p(nullptr) {}
 
 		Ref(const detail::SharedRef<T>* pt) : m_p(pt)
 		{
@@ -427,7 +425,7 @@ namespace qor{
 		}
 
 		template< class TDerived, typename... _p >
-		bool Configure(_p... p1)
+		bool Configure(_p&&... p1)
 		{
 			return const_cast<detail::SharedRef<T>*>(m_p)->Configure(std::forward<_p>(p1)...);
 		}
