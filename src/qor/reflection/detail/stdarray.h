@@ -34,7 +34,7 @@
 
 #include "config.h"
 
-#ifdef PFR_HAS_STD_MODULE
+#ifdef qor_pp_refl_has_std_module
 import std;
 #else
 #include <utility> // metaprogramming stuff
@@ -47,22 +47,23 @@ import std;
 
 namespace qor_reflection { namespace detail {
 
-template <class... Types>
-constexpr auto make_stdarray(const Types&... t) noexcept {
-    return std::array<std::common_type_t<Types...>, sizeof...(Types)>{t...};
-}
+    template <class... Types>
+    constexpr auto make_stdarray(const Types&... t) noexcept 
+    {
+        return std::array<std::common_type_t<Types...>, sizeof...(Types)>{t...};
+    }
 
-template <class T, std::size_t... I>
-constexpr auto make_stdarray_from_tietuple(const T& t, std::index_sequence<I...>, int) noexcept {
-    return detail::make_stdarray(
-        qor_reflection::detail::sequence_tuple::get<I>(t)...
-    );
-}
+    template <class T, std::size_t... I>
+    constexpr auto make_stdarray_from_tietuple(const T& t, std::index_sequence<I...>, int) noexcept 
+    {
+        return detail::make_stdarray( qor_reflection::detail::sequence_tuple::get<I>(t)... );
+    }
 
-template <class T>
-constexpr auto make_stdarray_from_tietuple(const T&, std::index_sequence<>, long) noexcept {
-    return std::array<std::nullptr_t, 0>{};
-}
+    template <class T>
+    constexpr auto make_stdarray_from_tietuple(const T&, std::index_sequence<>, long) noexcept 
+    {
+        return std::array<std::nullptr_t, 0>{};
+    }
 
 }} // namespace qor_reflection::detail
 

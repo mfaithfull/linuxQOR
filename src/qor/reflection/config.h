@@ -35,7 +35,7 @@
 #include <type_traits> // to get non standard platform macro definitions (__GLIBCXX__ for example)
 #endif
 
-// Contains all the macros that describe Boost.PFR configuration, like qor_pp_refl_enabled
+// Contains all the macros that describe QOR Reflection configuration, like qor_pp_refl_enabled
 //
 // This header file doesn't require C++14 Standard and supports all C++ compilers, even pre C++14 compilers (C++11, C++03...).
 

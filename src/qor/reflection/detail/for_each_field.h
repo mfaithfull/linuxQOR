@@ -34,7 +34,7 @@
 
 #include "config.h"
 
-#ifdef PFR_HAS_STD_MODULE
+#ifdef qor_pp_refl_has_std_module
 import std;
 #else
 #include <type_traits>      // metaprogramming stuff
@@ -47,29 +47,30 @@ import std;
 
 namespace qor_reflection { namespace detail {
 
-template <class T, class F>
-constexpr void for_each_field(T&& value, F&& func) {
-    constexpr std::size_t fields_count_val = qor_reflection::detail::fields_count<std::remove_reference_t<T>>();
+    template <class T, class F>
+    constexpr void for_each_field(T&& value, F&& func) 
+    {
+        constexpr std::size_t fields_count_val = qor_reflection::detail::fields_count<std::remove_reference_t<T>>();
 
-    ::qor_reflection::detail::for_each_field_dispatcher(
-        value,
-        [f = std::forward<F>(func)](auto&& t) mutable {
-            // MSVC related workaround. Its lambdas do not capture constexprs.
-            constexpr std::size_t fields_count_val_in_lambda
-                = qor_reflection::detail::fields_count<std::remove_reference_t<T>>();
+        ::qor_reflection::detail::for_each_field_dispatcher(
+            value,
+            [f = std::forward<F>(func)](auto&& t) mutable 
+            {
+                // MSVC related workaround. Its lambdas do not capture constexprs.
+                constexpr std::size_t fields_count_val_in_lambda
+                    = qor_reflection::detail::fields_count<std::remove_reference_t<T>>();
 
-            ::qor_reflection::detail::for_each_field_impl(
-                t,
-                std::forward<F>(f),
-                detail::make_index_sequence<fields_count_val_in_lambda>{},
-                std::is_rvalue_reference<T&&>{}
-            );
-        },
-        detail::make_index_sequence<fields_count_val>{}
-    );
-}
+                ::qor_reflection::detail::for_each_field_impl(
+                    t,
+                    std::forward<F>(f),
+                    detail::make_index_sequence<fields_count_val_in_lambda>{},
+                    std::is_rvalue_reference<T&&>{}
+                );
+            },
+            detail::make_index_sequence<fields_count_val>{}
+        );
+    }
 
-}} // namespace qor_reflection::detail
-
+}}//qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_FOREACHFIELD

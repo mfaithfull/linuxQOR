@@ -34,7 +34,7 @@
 
 #include "config.h"
 
-#ifdef PFR_HAS_STD_MODULE
+#ifdef qor_pp_refl_has_std_module
 import std;
 #else
 #include <functional>
@@ -42,18 +42,20 @@ import std;
 #endif
 
 namespace qor_reflection { namespace detail {
-///////////////////// `value` is true if Detector<Tleft, Tright> does not compile (SFINAE)
+
+    ///////////////////// `value` is true if Detector<Tleft, Tright> does not compile (SFINAE)
     struct can_not_apply{};
 
     template <template <class, class> class Detector, class Tleft, class Tright>
-    struct not_appliable {
+    struct not_appliable 
+    {
         static constexpr bool value = std::is_same<
             Detector<Tleft, Tright>,
             can_not_apply
         >::value;
     };
 
-///////////////////// Detectors for different operators
+    ///////////////////// Detectors for different operators
     template <class S, class T> auto comp_eq_detector_msvc_helper(long) -> decltype(std::declval<S>() == std::declval<T>());
     template <class S, class T> can_not_apply comp_eq_detector_msvc_helper(int);
     template <class T1, class T2> using comp_eq_detector = decltype(comp_eq_detector_msvc_helper<T1,T2>(1L));
@@ -92,6 +94,6 @@ namespace qor_reflection { namespace detail {
     template <class S, class T> can_not_apply istreamable_detector_msvc_helper(int);
     template <class S, class T> using istreamable_detector = decltype(istreamable_detector_msvc_helper<S,T>(1L));
 
-}} // namespace qor_reflection::detail
+}}//qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_DETECTORS

@@ -140,14 +140,14 @@ namespace qor_reflection { namespace detail {
         template <class Char, class Traits, class T>
         std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& in, io_fields_impl<const T&>&& ) 
         {
-            static_assert(sizeof(T) && false, "====================> Boost.PFR: Attempt to use istream operator on a qor_reflection::io_fields wrapped type T with const qualifier.");
+            static_assert(sizeof(T) && false, "====================> QOR Reflection: Attempt to use istream operator on a qor_reflection::io_fields wrapped type T with const qualifier.");
             return in;
         }
 
         template <class Char, class Traits, class T>
         std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& in, io_fields_impl<T>&& ) 
         {
-            static_assert(sizeof(T) && false, "====================> Boost.PFR: Attempt to use istream operator on a qor_reflection::io_fields wrapped temporary of type T.");
+            static_assert(sizeof(T) && false, "====================> QOR Reflection: Attempt to use istream operator on a qor_reflection::io_fields wrapped temporary of type T.");
             return in;
         }
 

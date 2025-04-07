@@ -40,7 +40,7 @@
 #include "../tuple_size.h"
 #include "make_integer_sequence.h"
 
-#ifdef PFR_HAS_STD_MODULE
+#ifdef qor_pp_refl_has_std_module
 import std;
 #else
 #include <tuple>
@@ -48,25 +48,26 @@ import std;
 
 namespace qor_reflection { namespace detail {
 
-/// \brief A `std::tuple` capable of de-structuring assignment used to support
-/// a tie of multiple lvalue references to fields of an aggregate T.
-///
-/// \sa qor_reflection::tie_from_structure
-template <typename... Elements>
-struct tie_from_structure_tuple : std::tuple<Elements&...> {
-    using base = std::tuple<Elements&...>;
-    using base::base;
+    // A `std::tuple` capable of de-structuring assignment used to support
+    // a tie of multiple lvalue references to fields of an aggregate T.
 
-    template <typename T>
-    constexpr tie_from_structure_tuple& operator= (T const& t) {
-        base::operator=(
-            detail::make_stdtiedtuple_from_tietuple(
-                detail::tie_as_tuple(t),
-                detail::make_index_sequence<tuple_size_v<T>>()));
-        return *this;
-    }
-};
+    template <typename... Elements>
+    struct tie_from_structure_tuple : std::tuple<Elements&...> 
+    {
+        using base = std::tuple<Elements&...>;
+        using base::base;
 
-}} // namespace qor_reflection::detail
+        template <typename T>
+        constexpr tie_from_structure_tuple& operator= (T const& t) 
+        {
+            base::operator=(
+                detail::make_stdtiedtuple_from_tietuple(
+                    detail::tie_as_tuple(t),
+                    detail::make_index_sequence<tuple_size_v<T>>()));
+            return *this;
+        }
+    };
+
+}}//qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_TIEFROMSTRUCTTUPLE

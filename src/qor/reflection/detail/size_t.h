@@ -33,10 +33,10 @@
 
 namespace qor_reflection { namespace detail {
 
-///////////////////// General utility stuff
-template <std::size_t Index>
-using size_t_ = std::integral_constant<std::size_t, Index >;
+    ///////////////////// General utility stuff
+    template <std::size_t Index>
+    using size_t_ = std::integral_constant<std::size_t, Index >;
 
-}} // namespace qor_reflection::detail
+}} //qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_SIZET

@@ -36,7 +36,7 @@
 
 #if !qor_pp_refl_enabled
 
-#error Boost.PFR library is not supported in your environment.             \
+#error QOR Reflection library is not supported in your environment.             \
        Try one of the possible solutions:                                  \
        1. try to take away an '-Dqor_pp_refl_enabled=0', if it exists        \
        2. enable C++14;                                                    \

@@ -37,7 +37,7 @@
 #include "detail/functional.h"
 
 // Contains functors that are close to the Standard Library ones.
-// Each functor calls corresponding Boost.PFR function from ops.h
+// Each functor calls corresponding QOR Reflection function from ops.h
 //
 //     #include <pfr/functors.hpp>
 //     struct my_struct {      // No operators defined for that structure

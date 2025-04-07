@@ -32,7 +32,7 @@
 
 #pragma once
 
-#ifdef PFR_HAS_STD_MODULE
+#ifdef qor_pp_refl_has_std_module
 import std;
 #else
 #include <type_traits>
@@ -49,16 +49,16 @@ import std;
 
 namespace qor_reflection { namespace detail {
 
-/// Binds to rvalues only, no copying allowed.
-template <class T
-#ifdef PFR_DETAIL_STRICT_RVALUE_TESTING
-    , class = std::enable_if_t<std::is_rvalue_reference<T&&>::value>
+    // Binds to rvalues only, no copying allowed.
+    template <class T
+#ifdef qor_pp_refl_detail_strict_rvalue_testing
+        , class = std::enable_if_t<std::is_rvalue_reference<T&&>::value>
 #endif
->
-using rvalue_t = T&&;
+    >
+    using rvalue_t = T&&;
 
-/// Binds to mutable lvalues only
+    // Binds to mutable lvalues only
 
-}} // namespace qor_reflection::detail
+}} //qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_RVALUET

@@ -37,35 +37,37 @@
 
 namespace qor_reflection { namespace detail {
 
-template <class T, std::size_t I>
-constexpr auto get_name() noexcept {
-    static_assert(
-        sizeof(T) && false,
-        "====================> Boost.PFR: Field's names extracting functionality requires C++20."
-    );
+    template <class T, std::size_t I>
+    constexpr auto get_name() noexcept 
+    {
+        static_assert(
+            sizeof(T) && false,
+            "====================> QOR Reflection: Field's names extracting functionality requires C++20."
+        );
 
-    return nullptr;
-}
+        return nullptr;
+    }
 
-template <class T>
-constexpr auto tie_as_names_tuple() noexcept {
-    static_assert(
-        sizeof(T) && false,
-        "====================> Boost.PFR: Field's names extracting functionality requires C++20."
-    );
+    template <class T>
+    constexpr auto tie_as_names_tuple() noexcept 
+    {
+        static_assert(
+            sizeof(T) && false,
+            "====================> QOR Reflection: Field's names extracting functionality requires C++20."
+        );
 
-    return detail::sequence_tuple::make_sequence_tuple();
-}
+        return detail::sequence_tuple::make_sequence_tuple();
+    }
 
+    template <class T, class F>
+    constexpr void for_each_field_with_name(T&& /* value */, F&& /* func */) 
+    {
+        static_assert(
+            sizeof(T) && false,
+            "====================> QOR Reflection: Field's names extracting functionality requires C++20."
+        );
+    }
 
-template <class T, class F>
-constexpr void for_each_field_with_name(T&& /* value */, F&& /* func */) {
-    static_assert(
-        sizeof(T) && false,
-        "====================> Boost.PFR: Field's names extracting functionality requires C++20."
-    );
-}
-
-}} // namespace qor_reflection::detail
+}}//qor_reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_CORENAME14_DISABLED

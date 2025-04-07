@@ -51,7 +51,7 @@
 #include "sequence_tuple.h"
 #include "size_t.h"
 
-#ifdef PFR_HAS_STD_MODULE
+#ifdef qor_pp_refl_has_std_module
 import std;
 #else
 #include <type_traits> // for std::conditional_t, std::is_reference
@@ -94,7 +94,7 @@ constexpr auto tie_as_tuple(T& /*val*/, size_t_<0>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<1>, std::enable_if_t<std::is_class< std::remove_cv_t<T> >::value>* = nullptr) noexcept {
-  auto& [a] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
   return ::qor_reflection::detail::make_tuple_of_references(detail::workaround_cast<T, decltype(a)>(a));
 }
 
@@ -107,13 +107,13 @@ constexpr auto tie_as_tuple(T& val, size_t_<1>, std::enable_if_t<!std::is_class<
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<2>) noexcept {
-  auto& [a,b] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
   return ::qor_reflection::detail::make_tuple_of_references(detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b));
 }
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<3>) noexcept {
-  auto& [a,b,c] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c)
@@ -122,7 +122,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<3>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<4>) noexcept {
-  auto& [a,b,c,d] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -132,7 +132,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<4>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<5>) noexcept {
-  auto& [a,b,c,d,e] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -142,7 +142,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<5>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<6>) noexcept {
-  auto& [a,b,c,d,e,f] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -152,7 +152,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<6>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<7>) noexcept {
-  auto& [a,b,c,d,e,f,g] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -163,7 +163,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<7>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<8>) noexcept {
-  auto& [a,b,c,d,e,f,g,h] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -174,7 +174,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<8>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<9>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -185,7 +185,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<9>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<10>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -197,7 +197,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<10>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<11>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -209,7 +209,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<11>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<12>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -221,7 +221,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<12>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<13>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -234,7 +234,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<13>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<14>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -247,7 +247,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<14>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<15>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -260,7 +260,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<15>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<16>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -274,7 +274,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<16>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<17>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -288,7 +288,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<17>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<18>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -302,7 +302,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<18>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<19>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -317,7 +317,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<19>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<20>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -332,7 +332,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<20>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<21>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -347,7 +347,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<21>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<22>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -363,7 +363,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<22>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<23>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -379,7 +379,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<23>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<24>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -395,7 +395,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<24>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<25>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -412,7 +412,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<25>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<26>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -429,7 +429,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<26>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<27>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -446,7 +446,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<27>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<28>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -464,7 +464,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<28>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<29>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -482,7 +482,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<29>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<30>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -500,7 +500,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<30>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<31>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -519,7 +519,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<31>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<32>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -538,7 +538,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<32>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<33>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -557,7 +557,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<33>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<34>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -577,7 +577,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<34>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<35>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -597,7 +597,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<35>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<36>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -617,7 +617,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<36>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<37>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -638,7 +638,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<37>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<38>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -659,7 +659,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<38>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<39>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -680,7 +680,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<39>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<40>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -702,7 +702,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<40>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<41>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -724,7 +724,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<41>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<42>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -746,7 +746,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<42>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<43>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -769,7 +769,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<43>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<44>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -792,7 +792,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<44>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<45>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -815,7 +815,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<45>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<46>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -839,7 +839,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<46>) noexcept {
 
 template <class T>
 constexpr auto tie_as_tuple(T& val, size_t_<47>) noexcept {
-  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  auto& [a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -866,7 +866,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<48>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -893,7 +893,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<49>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -921,7 +921,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<50>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -949,7 +949,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<51>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -977,7 +977,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<52>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1006,7 +1006,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<53>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1035,7 +1035,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<54>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1064,7 +1064,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<55>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1094,7 +1094,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<56>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1124,7 +1124,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<57>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1154,7 +1154,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<58>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1185,7 +1185,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<59>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1216,7 +1216,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<60>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1247,7 +1247,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<61>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1279,7 +1279,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<62>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1311,7 +1311,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<63>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1343,7 +1343,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<64>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1376,7 +1376,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<65>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1409,7 +1409,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<66>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1442,7 +1442,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<67>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1476,7 +1476,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<68>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1510,7 +1510,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<69>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1544,7 +1544,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<70>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1579,7 +1579,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<71>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1614,7 +1614,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<72>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1649,7 +1649,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<73>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1685,7 +1685,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<74>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1721,7 +1721,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<75>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1757,7 +1757,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<76>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1794,7 +1794,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<77>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1831,7 +1831,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<78>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1868,7 +1868,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<79>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1906,7 +1906,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<80>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1944,7 +1944,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<81>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -1982,7 +1982,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<82>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2021,7 +2021,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<83>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2060,7 +2060,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<84>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2099,7 +2099,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<85>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2139,7 +2139,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<86>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2179,7 +2179,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<87>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2219,7 +2219,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<88>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2260,7 +2260,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<89>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2301,7 +2301,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<90>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2342,7 +2342,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<91>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2384,7 +2384,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<92>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2426,7 +2426,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<93>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2468,7 +2468,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<94>) noexcept {
   auto& [
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2512,7 +2512,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<95>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2556,7 +2556,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<96>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2600,7 +2600,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<97>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2645,7 +2645,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<98>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2690,7 +2690,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<99>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2735,7 +2735,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<100>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2781,7 +2781,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<101>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2827,7 +2827,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<102>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2873,7 +2873,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<103>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2920,7 +2920,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<104>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -2967,7 +2967,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<105>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3014,7 +3014,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<106>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3062,7 +3062,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<107>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3110,7 +3110,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<108>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3158,7 +3158,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<109>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3207,7 +3207,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<110>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3256,7 +3256,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<111>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3305,7 +3305,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<112>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3355,7 +3355,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<113>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3405,7 +3405,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<114>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3455,7 +3455,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<115>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3506,7 +3506,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<116>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3557,7 +3557,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<117>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3608,7 +3608,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<118>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3660,7 +3660,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<119>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3712,7 +3712,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<120>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3764,7 +3764,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<121>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3817,7 +3817,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<122>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3870,7 +3870,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<123>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3923,7 +3923,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<124>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -3977,7 +3977,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<125>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4031,7 +4031,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<126>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4085,7 +4085,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<127>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4140,7 +4140,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<128>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4195,7 +4195,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<129>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4250,7 +4250,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<130>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4306,7 +4306,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<131>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4362,7 +4362,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<132>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4418,7 +4418,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<133>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4475,7 +4475,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<134>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4532,7 +4532,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<135>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4589,7 +4589,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<136>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4647,7 +4647,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<137>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4705,7 +4705,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<138>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4763,7 +4763,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<139>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4822,7 +4822,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<140>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4881,7 +4881,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<141>) noexcept {
     a,b,c,d,e,f,g,h,j,k,l,m,n,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W,X,Y,Z,
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -4941,7 +4941,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<142>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5002,7 +5002,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<143>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5063,7 +5063,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<144>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5124,7 +5124,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<145>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5186,7 +5186,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<146>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5248,7 +5248,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<147>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5310,7 +5310,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<148>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5373,7 +5373,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<149>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5436,7 +5436,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<150>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5499,7 +5499,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<151>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5563,7 +5563,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<152>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5627,7 +5627,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<153>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5691,7 +5691,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<154>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5756,7 +5756,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<155>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5821,7 +5821,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<156>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5886,7 +5886,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<157>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -5952,7 +5952,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<158>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6018,7 +6018,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<159>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6084,7 +6084,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<160>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6151,7 +6151,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<161>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6218,7 +6218,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<162>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6285,7 +6285,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<163>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6353,7 +6353,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<164>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6421,7 +6421,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<165>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6489,7 +6489,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<166>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6558,7 +6558,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<167>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6627,7 +6627,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<168>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6696,7 +6696,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<169>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6766,7 +6766,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<170>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6836,7 +6836,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<171>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6906,7 +6906,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<172>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -6977,7 +6977,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<173>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7048,7 +7048,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<174>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7119,7 +7119,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<175>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7191,7 +7191,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<176>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7263,7 +7263,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<177>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7335,7 +7335,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<178>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7408,7 +7408,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<179>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7481,7 +7481,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<180>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7554,7 +7554,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<181>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7628,7 +7628,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<182>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7702,7 +7702,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<183>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7776,7 +7776,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<184>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7851,7 +7851,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<185>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -7926,7 +7926,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<186>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8001,7 +8001,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<187>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8077,7 +8077,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<188>) noexcept {
     aa,ab,ac,ad,ae,af,ag,ah,aj,ak,al,am,an,ap,aq,ar,as,at,au,av,aw,ax,ay,az,aA,aB,aC,aD,aE,aF,aG,aH,aJ,aK,aL,aM,aN,aP,aQ,aR,aS,aU,aV,aW,aX,aY,aZ,
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8154,7 +8154,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<189>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8231,7 +8231,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<190>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8309,7 +8309,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<191>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8387,7 +8387,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<192>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc,dd
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8465,7 +8465,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<193>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc,dd,de
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8544,7 +8544,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<194>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc,dd,de,df
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8623,7 +8623,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<195>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc,dd,de,df,dg
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8702,7 +8702,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<196>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc,dd,de,df,dg,dh
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8782,7 +8782,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<197>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc,dd,de,df,dg,dh,dj
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8862,7 +8862,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<198>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc,dd,de,df,dg,dh,dj,dk
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -8942,7 +8942,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<199>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc,dd,de,df,dg,dh,dj,dk,dl
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -9023,7 +9023,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<200>) noexcept {
     ba,bb,bc,bd,be,bf,bg,bh,bj,bk,bl,bm,bn,bp,bq,br,bs,bt,bu,bv,bw,bx,by,bz,bA,bB,bC,bD,bE,bF,bG,bH,bJ,bK,bL,bM,bN,bP,bQ,bR,bS,bU,bV,bW,bX,bY,bZ,
     ca,cb,cc,cd,ce,cf,cg,ch,cj,ck,cl,cm,cn,cp,cq,cr,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cJ,cK,cL,cM,cN,cP,cQ,cR,cS,cU,cV,cW,cX,cY,cZ,
     da,db,dc,dd,de,df,dg,dh,dj,dk,dl,dm
-  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> Boost.PFR: User-provided type is not a SimpleAggregate.
+  ] = const_cast<std::remove_cv_t<T>&>(val); // ====================> QOR Reflection: User-provided type is not a SimpleAggregate.
 
   return ::qor_reflection::detail::make_tuple_of_references(
     detail::workaround_cast<T, decltype(a)>(a),detail::workaround_cast<T, decltype(b)>(b),detail::workaround_cast<T, decltype(c)>(c),
@@ -9100,7 +9100,7 @@ constexpr auto tie_as_tuple(T& val, size_t_<200>) noexcept {
 template <class T, std::size_t I>
 constexpr void tie_as_tuple(T& /*val*/, size_t_<I>) noexcept {
   static_assert(sizeof(T) && false,
-                "====================> Boost.PFR: Too many fields in a structure T. Regenerate include/pfr/detail/core17_generated.hpp file for appropriate count of fields. For example: `python ./misc/generate_cpp17.py 300 > include/pfr/detail/core17_generated.hpp`");
+                "====================> QOR Reflection: Too many fields in a structure T. Regenerate include/pfr/detail/core17_generated.hpp file for appropriate count of fields. For example: `python ./misc/generate_cpp17.py 300 > include/pfr/detail/core17_generated.hpp`");
 }
 
 }} // namespace qor_reflection::detail

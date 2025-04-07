@@ -35,7 +35,7 @@
 #include "config.h"
 #include "../traits_fwd.h"
 
-#ifdef PFR_HAS_STD_MODULE
+#ifdef qor_pp_refl_has_std_module
 import std;
 #else
 #include <type_traits> // for std::is_aggregate
@@ -43,31 +43,34 @@ import std;
 
 namespace qor_reflection { namespace detail {
 
-///////////////////// Returns false when the type exactly wasn't be reflectable
-template <class T, class WhatFor>
-constexpr decltype(is_reflectable<T, WhatFor>::value) possible_reflectable(long) noexcept {
-    return is_reflectable<T, WhatFor>::value;
-}
+    ///////////////////// Returns false when the type exactly wasn't be reflectable
+    template <class T, class WhatFor>
+    constexpr decltype(is_reflectable<T, WhatFor>::value) possible_reflectable(long) noexcept 
+    {
+        return is_reflectable<T, WhatFor>::value;
+    }
 
 #if qor_pp_refl_enable_implicit_reflection
 
-template <class T, class WhatFor>
-constexpr bool possible_reflectable(int) noexcept {
+    template <class T, class WhatFor>
+    constexpr bool possible_reflectable(int) noexcept 
+    {
 #   if  defined(__cpp_lib_is_aggregate)
-    using type = std::remove_cv_t<T>;
-    return std::is_aggregate<type>();
+        using type = std::remove_cv_t<T>;
+        return std::is_aggregate<type>();
 #   else
-    return true;
+        return true;
 #   endif
-}
+    }
 
 #else
 
-template <class T, class WhatFor>
-constexpr bool possible_reflectable(int) noexcept {
-    // negative answer here won't change behaviour in PFR-dependent libraries(like Fusion)
-    return false;
-}
+    template <class T, class WhatFor>
+    constexpr bool possible_reflectable(int) noexcept 
+    {
+        // negative answer here won't change behaviour in PFR-dependent libraries(like Fusion)
+        return false;
+    }
 
 #endif
 

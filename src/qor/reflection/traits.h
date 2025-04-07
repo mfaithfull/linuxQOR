@@ -43,7 +43,7 @@ namespace qor_reflection {
 
 qor_pp_refl_begin_module_export
 
-    // Has a static const member variable `value` when it is known that type T can or can't be reflected using Boost.PFR; otherwise, there is no member variable.
+    // Has a static const member variable `value` when it is known that type T can or can't be reflected using QOR Reflection; otherwise, there is no member variable.
     // Every user may (and in some difficult cases - should) specialize is_reflectable on his own.
 
     //     namespace qor_reflection {

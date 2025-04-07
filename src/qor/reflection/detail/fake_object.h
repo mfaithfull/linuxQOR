@@ -42,32 +42,33 @@
 
 namespace qor_reflection { namespace detail {
 
-// This class has external linkage while T has not sure.
-template <class T>
-struct wrapper {
-    const T value;
-};
+    // This class has external linkage while T has not sure.
+    template <class T>
+    struct wrapper 
+    {
+        const T value;
+    };
 
-// This variable servers as a link-time assert.
-// If linker requires it, then `fake_object()` is used at runtime.
-template <class T>
-extern const wrapper<T> do_not_use_PFR_with_local_types;
+    // This variable servers as a link-time assert.
+    // If linker requires it, then `fake_object()` is used at runtime.
+    template <class T>
+    extern const wrapper<T> do_not_use_qor_reflection_with_local_types;
 
-// For returning non default constructible types, it's exclusively used in member name retrieval.
-//
-// Neither std::declval nor qor_reflection::detail::unsafe_declval are usable there.
-// This takes advantage of C++20 features, while qor_reflection::detail::unsafe_declval works
-// with the former standards.
-template <class T>
-constexpr const T& fake_object() noexcept {
-    return do_not_use_PFR_with_local_types<T>.value;
-}
+    // For returning non default constructible types, it's exclusively used in member name retrieval.
+    //
+    // Neither std::declval nor qor_reflection::detail::unsafe_declval are usable there.
+    // This takes advantage of C++20 features, while qor_reflection::detail::unsafe_declval works
+    // with the former standards.
+    template <class T>
+    constexpr const T& fake_object() noexcept 
+    {
+        return do_not_use_qor_reflection_with_local_types<T>.value;
+    }
 
-}} // namespace qor_reflection::detail
+}}//qor_reflection::detail
 
 #ifdef __clang__
 #   pragma clang diagnostic pop
 #endif
-
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_FAKE_OBJECT

@@ -84,7 +84,7 @@ namespace qor_reflection {
     template <std::size_t I, class T>
     constexpr auto get(T&, std::enable_if_t<!std::is_assignable<T, T>::value>* = nullptr) noexcept 
     {
-        static_assert(sizeof(T) && false, "====================> Boost.PFR: Calling qor_reflection::get on non const non assignable type is allowed only in C++17");
+        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor_reflection::get on non const non assignable type is allowed only in C++17");
         return 0;
     }
 #endif
@@ -119,7 +119,7 @@ namespace qor_reflection {
     template <class U, class T>
     constexpr U& get(T&, std::enable_if_t<!std::is_assignable<T, T>::value>* = nullptr) noexcept 
     {
-        static_assert(sizeof(T) && false, "====================> Boost.PFR: Calling qor_reflection::get on non const non assignable type is allowed only in C++17");
+        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor_reflection::get on non const non assignable type is allowed only in C++17");
         return 0;
     }
 #endif
@@ -205,7 +205,7 @@ namespace qor_reflection {
     template <class T>
     constexpr auto structure_tie(T&, std::enable_if_t<!std::is_assignable<T, T>::value>* = nullptr) noexcept 
     {
-        static_assert(sizeof(T) && false, "====================> Boost.PFR: Calling qor_reflection::structure_tie on non const non assignable type is allowed only in C++17");
+        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor_reflection::structure_tie on non const non assignable type is allowed only in C++17");
         return 0;
     }
 #endif
@@ -214,7 +214,7 @@ namespace qor_reflection {
     template <class T>
     constexpr auto structure_tie(T&&, std::enable_if_t< std::is_rvalue_reference<T&&>::value>* = nullptr) noexcept 
     {
-        static_assert(sizeof(T) && false, "====================> Boost.PFR: Calling qor_reflection::structure_tie on rvalue references is forbidden");
+        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor_reflection::structure_tie on rvalue references is forbidden");
         return 0;
     }
 
