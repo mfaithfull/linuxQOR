@@ -31,3 +31,16 @@ Added a very basic issue module
 Signals added without custom memory managemetn integration. std allocators and deleters are weird anyway and their use here seems to be inconsistent. I can't find any way to map std:unique_ptr and std::shared_ptr internal allocations into our memory mangement without mismatched deletes that at best have slicing problems.
 
 Added pfr, the reflection library from Boost in as a raw port. Namespace, messages etc to be fixed but the tests pass so refactoring is now plausible.
+
+Refactored pfr into qor_reflection
+
+At this point the bulk of the core qor is written. There are a lot of extension points. 
+We could add:
+Intrusive references
+Pooled instancing
+Threaded memory (This is in progress)
+External Factory support for constructor parameters
+Serialization on top of qor_reflection (This is a definite)
+Support for I18n and formatting of internal messages (This is also definitely required)
+
+However to build actual applications, even simple tools, we need Framework modules for workflows, pipelines, roles, features and actual applications so these are more likely to be next
