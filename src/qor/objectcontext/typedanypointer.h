@@ -22,58 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OBJECTCONTEXTBASE
-#define QOR_PP_H_OBJECTCONTEXTBASE
+#ifndef QOR_PP_H_TYPEDANYPOINTER
+#define QOR_PP_H_TYPEDANYPOINTER
 
-#include "src/qor/objectcontext/objectpointer.h"
-#include "src/platform/compiler/compiler.h"
+#include <stdexcept>
+
+#include "src/qor/objectcontext/unsafeanypointer.h"
 
 namespace qor{
 
-    //A type erased container for a typed pointer to anything
-    class qor_pp_module_interface(QOR_OBJECTCONTEXT) ObjectContextBase
+    template< class T >
+    class TypedAnyPointer : public UnsafeAnyPointer
     {
     public:
 
-        template< typename T > ObjectContextBase(const T* pt)
-        {
-            m_p = new (m_backing)ObjectPointer< T >(pt);
+        TypedAnyPointer() : UnsafeAnyPointer(){}
+        
+        TypedAnyPointer( const T* pt ) : UnsafeAnyPointer( const_cast<void*>( reinterpret_cast< const void*>(pt))){}
+
+        TypedAnyPointer(const TypedAnyPointer& src) : UnsafeAnyPointer(reinterpret_cast<void*>(src.m_p)){}
+
+        TypedAnyPointer& operator = (const TypedAnyPointer& src)
+        { 
+            UnsafeAnyPointer::operator=(src);
+            return *this;
         }
 
-		ObjectContextBase();
-		ObjectContextBase(const ObjectContextBase& src);
-		ObjectContextBase& operator = (const ObjectContextBase& src);
-		virtual ~ObjectContextBase();
+        virtual ~TypedAnyPointer() = default;
 
-		inline bool IsNull() const
-		{
-			return (m_p == nullptr || m_p->IsNull());
-		}
+        operator T*() const
+        {
+            return reinterpret_cast<T*>(m_p);
+        }
 
-        template< typename T>
-        operator T* () const
-		{
-			ObjectPointer< T >* op = dynamic_cast< ObjectPointer< T >* >(m_p);
-			return op ? op->operator T *() : nullptr;
-            //return (dynamic_cast< ObjectPointer< T >* >(m_p))->operator->();
-		}
-
-		static ObjectContextBase& NullContext(void);
-		static ObjectContextBase nullContext;
-
-    protected:
-
-		ObjectPointerBase* m_p;
-
-	private:
-
-		typedef ObjectPointer< ObjectContextBase > ObjectContextBasePointer;
-		byte m_backing[sizeof(ObjectContextBasePointer) + sizeof(double)];
-
-		byte* Local_memcpy(byte* s1, const byte* s2, size_t n);
-		void Clear(void);
+        T* operator -> () const
+        {
+            if( IsNull() )
+            {
+                throw std::logic_error("Null reference exception: TypedAnyPointer must point to an object to be used.");
+            }
+            return reinterpret_cast<T*>(m_p);
+        }
     };
 
 }//qor
 
-#endif//QOR_PP_H_OBJECTCONTEXTBASE
+#endif//QOR_PP_H_TYPEDANYPOINTER

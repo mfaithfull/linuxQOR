@@ -28,7 +28,7 @@
 
 namespace qor {
 
-	FunctionContext::FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool bCoverage, ObjectContextBase ObjContext) : m_ObjContext(ObjContext)
+	FunctionContext::FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool bCoverage, AnyObject ObjContext) : m_ObjContext(ObjContext)
 		, m_uiLocked(0)
 		, m_TraceDepth(1)
 		, m_szFuncName(szFuncName)
@@ -161,7 +161,7 @@ namespace qor {
 		return m_szFuncName;
 	}
 
-	ObjectContextBase FunctionContext::ObjectContext() const
+	AnyObject FunctionContext::TypedAny() const
 	{
 		return m_ObjContext;
 	}

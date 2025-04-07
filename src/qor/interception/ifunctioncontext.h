@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_IFUNCTIONCONTEXT
 #define QOR_PP_H_IFUNCTIONCONTEXT
 
-#include "src/qor/objectcontext/objectcontextbase.h"
+#include "src/qor/objectcontext/anyobject.h"
 
 namespace qor {
 
@@ -52,7 +52,7 @@ namespace qor {
         virtual const char* File(void) const = 0;
         virtual const char* Name(void) const = 0;
         virtual unsigned int Line(void) const = 0;
-        virtual ObjectContextBase ObjectContext(void) const = 0;
+        virtual AnyObject TypedAny(void) const = 0;
         virtual const char* Module(void) const = 0;
 
     };

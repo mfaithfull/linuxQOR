@@ -22,27 +22,40 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_ABSTRACTTYPEINSTANCEEXCEPTION
-#define QOR_PP_H_ABSTRACTTYPEINSTANCEEXCEPTION
+#ifndef QOR_PP_H_TYPEDANY
+#define QOR_PP_H_TYPEDANY
 
-#include <stdexcept>
+#include "src/qor/objectcontext/anyobject.h"
 
 namespace qor{
 
-	class abstracttypeinstanceexception : public std::logic_error
-	{
-	public:
-		using base_type = std::logic_error;
+    //a type aware container for a pointer to anything
+    template< class T >
+    class TypedAny : public AnyObject
+    {
+    public:
 
-		explicit memoryexception(const std::string& message) : base_type(message.c_str())
+        TypedAny(const T* pt) : AnyObject(pt){}
+
+        virtual ~TypedAny() = default;
+
+        template< typename U > constexpr bool IsTypeTarget(const U*) const
+        {
+            return false;
+        }
+
+        constexpr bool IsTypeTarget(const T*) const
+        {
+            return true;
+        }
+
+        operator T* () const
 		{
+            return (dynamic_cast< TypedAnyPointer< T >* >(m_p))->operator->();
 		}
 
-		explicit memoryexception(const char* message) : base_type(message)
-		{
-		}
-	};
+    };
 
 }//qor
 
-#endif//QOR_PP_H_ABSTRACTTYPEINSTANCEEXCEPTION
+#endif//QOR_PP_H_TYPEDANY

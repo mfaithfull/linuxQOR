@@ -26,7 +26,7 @@
 #define QOR_PP_H_CALLINTERCEPTOR
 
 #include "src/framework/thread/thread.h"
-#include "src/qor/objectcontext/objectcontext.h"
+#include "src/qor/objectcontext/typedany.h"
 #include "src/qor/reference/flyerref.h"
 #include "src/qor/reference/reference.h"
 #include "src/qor/injection/typeidentity.h"

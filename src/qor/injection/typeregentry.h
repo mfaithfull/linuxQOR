@@ -63,7 +63,7 @@ namespace qor {
 
         inline TypeRegEntryWithParams()
         {
-            TheTypeRegistry()->Register( *(guid_of<I>::guid()), ObjectContext< IndirectFactory<I> >(dynamic_cast< IndirectFactory<I>* >(this)));
+            TheTypeRegistry()->Register( *(guid_of<I>::guid()), TypedAny< IndirectFactory<I> >(dynamic_cast< IndirectFactory<I>* >(this)));
         }
 
         ~TypeRegEntryWithParams()
@@ -94,7 +94,7 @@ namespace qor {
 
         inline TypeRegEntry()
         {
-            TheTypeRegistry()->Register( *(guid_of<I>::guid()), ObjectContext< IndirectFactory<I> >(dynamic_cast< IndirectFactory<I>* >(this)));
+            TheTypeRegistry()->Register( *(guid_of<I>::guid()), TypedAny< IndirectFactory<I> >(dynamic_cast< IndirectFactory<I>* >(this)));
         }
 
         ~TypeRegEntry()

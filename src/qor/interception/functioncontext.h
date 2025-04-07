@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FUNCTIONCONTEXT
 #define QOR_PP_H_FUNCTIONCONTEXT
 
-#include "src/qor/objectcontext/objectcontextbase.h"
+#include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/profiling/profiling.h"
 #include "src/qor/profiling/profilereceiver.h"
 #include "src/qor/interception/ifunctioncontext.h"
@@ -38,7 +38,7 @@
 #define qor_pp_fcontext qor::FunctionContext _FContext_(qpr_pp_funcsig, __FILE__, __LINE__, ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled)
 
 //Use this in member functions
-#define qor_pp_ofcontext qor::FunctionContext _FContext_(qpr_pp_funcsig, __FILE__, __LINE__, ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled, qor::ObjectContextBase(this))
+#define qor_pp_ofcontext qor::FunctionContext _FContext_(qpr_pp_funcsig, __FILE__, __LINE__, ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled, qor::AnyObject(this))
 
 //--------------------------------------------------------------------------------
 namespace qor
@@ -50,7 +50,7 @@ namespace qor
 	public:
 
 		FunctionContext();
-		FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool bCoverage, ObjectContextBase ObjContext = ObjectContextBase::NullContext());
+		FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool bCoverage, AnyObject ObjContext = AnyObject::NullObject());
 		virtual ~FunctionContext();
 		bool Locked() const;
 		virtual unsigned int Lock();
@@ -63,7 +63,7 @@ namespace qor
 		virtual IFunctionContext* GetParent() const;
 		virtual void SetParent(IFunctionContext* pParent);
 		virtual unsigned int TraceDepth();
-		ObjectContextBase ObjectContext(void) const;
+		AnyObject TypedAny(void) const;
 		virtual const char* Module(void) const;
         virtual void Profile(const std::chrono::duration<int64_t, std::milli>);
 
@@ -76,7 +76,7 @@ namespace qor
 		const char* m_szFile;
 		const char* m_szModule;
 		IFunctionContext* m_pParent;
-		ObjectContextBase m_ObjContext;
+		AnyObject m_ObjContext;
 		unsigned int m_uiLine;
 		//IThread* m_pThread;
 		CallContext m_CallContext;

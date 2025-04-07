@@ -27,7 +27,7 @@
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/assert/assert.h"
 
-#include "../../src/qor/objectcontext/objectcontext.h"
+#include "../../src/qor/objectcontext/typedany.h"
 
 using namespace qor;
 using namespace qor::test;
@@ -41,7 +41,7 @@ qor_pp_test_suite_case(ObjectContextTestSuite, canStoreAndRetrieveintPointerInOb
 {
     int i = 987;
     int* pi = &i;
-    ObjectPointer<int> objpint(pi);
+    TypedAnyPointer<int> objpint(pi);
 
     auto r = *objpint;
 
@@ -49,7 +49,7 @@ qor_pp_test_suite_case(ObjectContextTestSuite, canStoreAndRetrieveintPointerInOb
     qor_pp_assert_that(objpint.operator int *()).isEqualTo(pi);
 }
 
-SpecificType* RetrieveTypedPointerFromUntypedObjectContext( ObjectContextBase& UntypedObjectContext )
+SpecificType* RetrieveTypedPointerFromUntypedObjectContext( AnyObject& UntypedObjectContext )
 {
     SpecificType* pResult = UntypedObjectContext;
 
@@ -60,7 +60,7 @@ qor_pp_test_suite_case(ObjectContextTestSuite, canStoreAndRetrieveTypedObjectInO
 {
     SpecificType* pRealObject = new SpecificType();
 
-    ObjectContext<SpecificType> TypedObjectContext(pRealObject);
+    TypedAny<SpecificType> TypedObjectContext(pRealObject);
     qor_pp_assert_that(TypedObjectContext.IsNull()).isFalse();
 
     UnrelatedType* pU = nullptr;
@@ -81,7 +81,7 @@ qor_pp_test_suite_case(ObjectContextTestSuite, canStoreAndRetrieveTypedObjectInU
 {
     SpecificType* pRealObject = new SpecificType();
 
-    ObjectContextBase UntypedObjectContext(pRealObject);
+    AnyObject UntypedObjectContext(pRealObject);
     qor_pp_assert_that(UntypedObjectContext.IsNull()).isFalse();
 
     SpecificType* wp = RetrieveTypedPointerFromUntypedObjectContext(UntypedObjectContext);

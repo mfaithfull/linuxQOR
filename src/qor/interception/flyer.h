@@ -26,7 +26,7 @@
 #define QOR_PP_H_FLYER
 
 #include "src/framework/thread/thread.h"
-#include "src/qor/objectcontext/objectcontext.h"
+#include "src/qor/objectcontext/typedany.h"
 
 namespace qor {
 
@@ -42,9 +42,9 @@ namespace qor {
         {
             typename ref_of< T >::type instance( dynamic_cast<T*>(this) );
             const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(instance);
+            TypedAny< T > wrapper(instance);
 
-            ObjectContextBase prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
+            AnyObject prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
 
             if(!prev.IsNull())
 			{                
@@ -56,7 +56,7 @@ namespace qor {
 		bool Pop()
 		{
             const GUID* luid = guid_of<T>::guid();
-            ObjectContext< T > wrapper(dynamic_cast<T*>(m_pPrevious));
+            TypedAny< T > wrapper(dynamic_cast<T*>(m_pPrevious));
         	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, wrapper);
 			return true;
 		}

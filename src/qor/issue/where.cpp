@@ -62,7 +62,7 @@ namespace qor{
         m_thread = ss.str();
     }
 
-    Where::Where(const char* szFile, const unsigned int uiLine, const char* szFunction, const ObjectContextBase& ObjContext)
+    Where::Where(const char* szFile, const unsigned int uiLine, const char* szFunction, const AnyObject& ObjContext)
     {
         m_inException = false;
         m_file = szFile;
@@ -133,12 +133,12 @@ namespace qor{
         m_file = szFile;
     }
 
-    ObjectContextBase& Where::GetObjectContext(void)
+    AnyObject& Where::GetObjectContext(void)
     {
-        return m_inInstance ? m_objContext : ObjectContextBase::NullContext();
+        return m_inInstance ? m_objContext : AnyObject::NullObject();
     }
 
-    void Where::SetObjectContext(const ObjectContextBase& ObjContext)
+    void Where::SetObjectContext(const AnyObject& ObjContext)
     {
         m_objContext = ObjContext;
         m_inInstance = true;

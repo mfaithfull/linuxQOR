@@ -27,7 +27,7 @@
 
 #include <map>
 #include "src/qor/datastructures/guid.h"
-#include "src/qor/objectcontext/objectcontext.h"
+#include "src/qor/objectcontext/typedany.h"
 
 namespace qor{
 
@@ -43,9 +43,9 @@ namespace qor{
 
 		inline ~TypeRegistry() noexcept = default;
 
-		inline void Register(GUID classID, ObjectContextBase factory)
+		inline void Register(GUID classID, AnyObject factory)
 		{
-			m_regMap.insert(std::pair< GUID, ObjectContextBase >(classID, factory));
+			m_regMap.insert(std::pair< GUID, AnyObject >(classID, factory));
 		}
 		
 		inline void Unregister(GUID classID)
@@ -54,15 +54,15 @@ namespace qor{
 		}
 
 		//Get the factory for creating instances of a class by ID
-		inline ObjectContextBase GetFactory(GUID classID)
+		inline AnyObject GetFactory(GUID classID)
 		{
 			auto it = m_regMap.find(classID);
-			return (it != m_regMap.end()) ? it->second : ObjectContextBase::NullContext();
+			return (it != m_regMap.end()) ? it->second : AnyObject::NullObject();
 		}
 
 	private:
 
-		std::multimap< GUID, ObjectContextBase > m_regMap;		//A map from class identifiers to factories for creating instances
+		std::multimap< GUID, AnyObject > m_regMap;		//A map from class identifiers to factories for creating instances
 
 	};
 

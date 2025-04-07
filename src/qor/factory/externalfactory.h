@@ -45,7 +45,7 @@ namespace qor
 
         static void Destruct(T* pt, size_t count = 1)
         {
-            ObjectContextBase Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
+            AnyObject Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
 			if (Registration.IsNull())
 			{
 				throw std::logic_error("Template ID Factory cannot Destruct an unregistered class.");
@@ -59,7 +59,7 @@ namespace qor
         
         static typename ref_of<T>::type Construct(size_t count = 1)
         {
-            ObjectContextBase Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
+            AnyObject Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
             if(Registration.IsNull())
             {
                 throw std::logic_error("Template ID Factory cannot Construct an unregistered class.");
@@ -74,7 +74,7 @@ namespace qor
 		template< typename... _p >
 		static typename ref_of<T>::type Construct(size_t count, _p&&... p1)
 		{
-			ObjectContextBase Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
+			AnyObject Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
 			if (Registration.IsNull())
 			{
 				throw std::logic_error("Template ID Factory cannot Construct an unregistered class.");

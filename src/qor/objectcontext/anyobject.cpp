@@ -22,40 +22,74 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OBJECTCONTEXT
-#define QOR_PP_H_OBJECTCONTEXT
+#include "src/configuration/configuration.h"
 
-#include "src/qor/objectcontext/objectcontextbase.h"
+#include <string.h>
+#include "anyobject.h"
 
-namespace qor{
 
-    //a type aware container for a pointer to anything
-    template< class T >
-    class ObjectContext : public ObjectContextBase
-    {
-    public:
+namespace qor {
 
-        ObjectContext(const T* pt) : ObjectContextBase(pt){}
+    AnyObject AnyObject::nullObject;
 
-        virtual ~ObjectContext() = default;
+    AnyObject& AnyObject::NullObject()
+	{
+		return AnyObject::nullObject;
+	}
 
-        template< typename U > constexpr bool IsTypeTarget(const U*) const
-        {
-            return false;
-        }
+	AnyObject::AnyObject()
+	{
+		m_p = nullptr;
+		Clear();
+	}
 
-        constexpr bool IsTypeTarget(const T*) const
-        {
-            return true;
-        }
+    AnyObject::AnyObject(const AnyObject& src)
+	{
+		*this = src;
+	}
 
-        operator T* () const
+    AnyObject& AnyObject::operator = (const AnyObject& src)
+	{
+		if (src.m_p != nullptr)
 		{
-            return (dynamic_cast< ObjectPointer< T >* >(m_p))->operator->();
+			Local_memcpy(m_backing, src.m_backing, (sizeof(ObjectContextBasePointer) + sizeof(double)));
+			m_p = reinterpret_cast<UnsafeAnyPointer*>(m_backing + (reinterpret_cast<byte*>(src.m_p) - src.m_backing));
+		}
+		else
+		{
+			m_p = nullptr;
+			Clear();
+		}
+		return *this;
+	}
+
+    AnyObject::~AnyObject()
+	{
+		if (m_p)
+		{
+			m_p->~UnsafeAnyPointer();
+		}
+	}
+
+	byte* AnyObject::Local_memcpy(byte* s1, const byte* s2, size_t n)
+	{
+		byte* p1 = s1;
+		byte* p2 = const_cast<byte*>(s2);
+
+		while (n > 0)
+		{
+			*p1 = *p2;
+			p1++;
+			p2++;
+			n--;
 		}
 
-    };
+		return s1;
+	}
+	
+	void AnyObject::Clear(void)
+	{
+		memset(m_backing, 0, sizeof(ObjectContextBasePointer) + sizeof(double));
+	}
 
 }//qor
-
-#endif//QOR_PP_H_OBJECTCONTEXT

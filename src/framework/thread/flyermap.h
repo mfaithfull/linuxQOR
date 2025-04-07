@@ -28,7 +28,7 @@
 #include <map>
 
 #include "src/platform/compiler/compiler.h"
-#include "src/qor/objectcontext/objectcontextbase.h"
+#include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/datastructures/guid.h"
 
 namespace qor{ namespace framework{
@@ -40,15 +40,15 @@ namespace qor{ namespace framework{
         FlyerMap() = default;
         ~FlyerMap() = default;
 
-        ObjectContextBase& GetByClassID( const GUID* classID )
+        AnyObject& GetByClassID( const GUID* classID )
         {
             auto it = m_Map.find(*classID);
-            return it != m_Map.end() ? it->second : ObjectContextBase::NullContext();
+            return it != m_Map.end() ? it->second : AnyObject::NullObject();
         }
 
-        ObjectContextBase Configure(const GUID* classID, ObjectContextBase context)
+        AnyObject Configure(const GUID* classID, AnyObject context)
         {
-            ObjectContextBase result;
+            AnyObject result;
             if(m_Map.size() > 0)
             {
                 auto it = m_Map.find(*classID);
@@ -62,7 +62,7 @@ namespace qor{ namespace framework{
             return result;
         }
 
-        void Unconfigure(const GUID* classID, ObjectContextBase context)
+        void Unconfigure(const GUID* classID, AnyObject context)
         {
             m_Map.erase(m_Map.find(*classID));
             if(!context.IsNull())
@@ -71,9 +71,9 @@ namespace qor{ namespace framework{
             }
         }
 
-        ObjectContextBase Lookup(const GUID* classID)
+        AnyObject Lookup(const GUID* classID)
 		{
-			ObjectContextBase result;
+			AnyObject result;
 			auto it = m_Map.find(*classID);
 			if (it != m_Map.end())
 			{
@@ -84,7 +84,7 @@ namespace qor{ namespace framework{
 
     private:
 
-        std::map< GUID, ObjectContextBase > m_Map;
+        std::map< GUID, AnyObject > m_Map;
     };
 
 }}//qor::framework

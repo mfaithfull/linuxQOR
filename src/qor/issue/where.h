@@ -37,7 +37,7 @@ namespace qor{
     public:
         Where();
         Where(const char* szFile, const unsigned int uiLine, const char* szFunction);
-        Where( const char* szFile, const unsigned int uiLine, const char* szFunction, const ObjectContextBase& ObjContext);
+        Where( const char* szFile, const unsigned int uiLine, const char* szFunction, const AnyObject& ObjContext);
         Where(const Where&);
         Where& operator = (const Where&);
         virtual ~Where() noexcept = default;
@@ -48,8 +48,8 @@ namespace qor{
         const unsigned int GetLine(void) const;
         void SetFunction(const char* pszFunction);
         const char* GetFunction(void) const;
-        ObjectContextBase& GetObjectContext(void);
-        void SetObjectContext(const ObjectContextBase& ObjContext);
+        AnyObject& GetObjectContext(void);
+        void SetObjectContext(const AnyObject& ObjContext);
         const std::string GetThreadContext(void);
         void SetThreadContext(const std::string threadId);
         const Module* GetModuleContext(void) const;
@@ -65,7 +65,7 @@ namespace qor{
         unsigned int m_line;
         const char* m_function;
         const char* m_file;
-        ObjectContextBase m_objContext;
+        AnyObject m_objContext;
         std::string m_thread;
         const Module* m_moduleContext;
         //const HostProcess* m_processContext;

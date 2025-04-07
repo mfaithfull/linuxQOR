@@ -22,49 +22,57 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OBJECTPOINTERBASE
-#define QOR_PP_H_OBJECTPOINTERBASE
+#ifndef QOR_PP_H_ANYOBJECT
+#define QOR_PP_H_ANYOBJECT
 
-namespace qor {
+#include "src/qor/objectcontext/typedanypointer.h"
+#include "src/platform/compiler/compiler.h"
 
-    //Wraps a void pointer as an object and provides an unsafe cast to any type
-    //Don't use it unless you know 100% what the real type is
-    class qor_pp_module_interface(QOR_OBJECTCONTEXT) ObjectPointerBase
+namespace qor{
+
+    //A type erased container for a typed pointer to anything
+    class qor_pp_module_interface(QOR_OBJECTCONTEXT) AnyObject
     {
     public:
-    
-        ObjectPointerBase(const ObjectPointerBase& src)
+
+        template< typename T > AnyObject(const T* pt)
         {
-            *this = src;
+            m_p = new (m_backing)TypedAnyPointer< T >(pt);
         }
 
-        ObjectPointerBase(void* p = nullptr) : m_p(p) {}
+		AnyObject();
+		AnyObject(const AnyObject& src);
+		AnyObject& operator = (const AnyObject& src);
+		virtual ~AnyObject();
 
-        virtual ~ObjectPointerBase()
-        {
-            m_p = nullptr;
-        }
+		inline bool IsNull() const
+		{
+			return (m_p == nullptr || m_p->IsNull());
+		}
 
-        ObjectPointerBase& operator = (const ObjectPointerBase& src)
-        {
-            m_p = src.m_p;
-            return *this;
-        }
+        template< typename T>
+        operator T* () const
+		{
+			TypedAnyPointer< T >* op = dynamic_cast< TypedAnyPointer< T >* >(m_p);
+			return op ? op->operator T *() : nullptr;
+		}
 
-        template< class T > operator T*() const
-        {
-            return reinterpret_cast<T*>(m_p);
-        }
-
-        bool IsNull() const
-        {
-            return m_p == nullptr ? true : false;
-        }
+		static AnyObject& NullObject(void);
+		static AnyObject nullObject;
 
     protected:
 
-        void* m_p;
+		UnsafeAnyPointer* m_p;
+
+	private:
+
+		typedef TypedAnyPointer< AnyObject > ObjectContextBasePointer;
+		byte m_backing[sizeof(ObjectContextBasePointer) + sizeof(double)];
+
+		byte* Local_memcpy(byte* s1, const byte* s2, size_t n);
+		void Clear(void);
     };
+
 }//qor
 
-#endif//QOR_PP_H_OBJECTPOINTERBASE
+#endif//QOR_PP_H_ANYOBJECT

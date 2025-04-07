@@ -22,74 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-
-#include <string.h>
-#include "objectcontextbase.h"
-
+#ifndef QOR_PP_H_UNSAFEANYPOINTER
+#define QOR_PP_H_UNSAFEANYPOINTER
 
 namespace qor {
 
-    ObjectContextBase ObjectContextBase::nullContext;
+    //Wraps a void pointer as an object and provides an unsafe cast to any type
+    //Don't use it unless you know 100% what the real type is
+    class qor_pp_module_interface(QOR_OBJECTCONTEXT) UnsafeAnyPointer
+    {
+    public:
+    
+        UnsafeAnyPointer(const UnsafeAnyPointer& src)
+        {
+            *this = src;
+        }
 
-    ObjectContextBase& ObjectContextBase::NullContext()
-	{
-		return ObjectContextBase::nullContext;
-	}
+        UnsafeAnyPointer(void* p = nullptr) : m_p(p) {}
 
-	ObjectContextBase::ObjectContextBase()
-	{
-		m_p = nullptr;
-		Clear();
-	}
+        virtual ~UnsafeAnyPointer()
+        {
+            m_p = nullptr;
+        }
 
-    ObjectContextBase::ObjectContextBase(const ObjectContextBase& src)
-	{
-		*this = src;
-	}
+        UnsafeAnyPointer& operator = (const UnsafeAnyPointer& src)
+        {
+            m_p = src.m_p;
+            return *this;
+        }
 
-    ObjectContextBase& ObjectContextBase::operator = (const ObjectContextBase& src)
-	{
-		if (src.m_p != nullptr)
-		{
-			Local_memcpy(m_backing, src.m_backing, (sizeof(ObjectContextBasePointer) + sizeof(double)));
-			m_p = reinterpret_cast<ObjectPointerBase*>(m_backing + (reinterpret_cast<byte*>(src.m_p) - src.m_backing));
-		}
-		else
-		{
-			m_p = nullptr;
-			Clear();
-		}
-		return *this;
-	}
+        template< class T > operator T*() const
+        {
+            return reinterpret_cast<T*>(m_p);
+        }
 
-    ObjectContextBase::~ObjectContextBase()
-	{
-		if (m_p)
-		{
-			m_p->~ObjectPointerBase();
-		}
-	}
+        bool IsNull() const
+        {
+            return m_p == nullptr ? true : false;
+        }
 
-	byte* ObjectContextBase::Local_memcpy(byte* s1, const byte* s2, size_t n)
-	{
-		byte* p1 = s1;
-		byte* p2 = const_cast<byte*>(s2);
+    protected:
 
-		while (n > 0)
-		{
-			*p1 = *p2;
-			p1++;
-			p2++;
-			n--;
-		}
-
-		return s1;
-	}
-	
-	void ObjectContextBase::Clear(void)
-	{
-		memset(m_backing, 0, sizeof(ObjectContextBasePointer) + sizeof(double));
-	}
-
+        void* m_p;
+    };
 }//qor
+
+#endif//QOR_PP_H_UNSAFEANYPOINTER
