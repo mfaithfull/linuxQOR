@@ -36,14 +36,13 @@
 
 namespace qor_reflection {
 
-qor_pp_refl_begin_module_export
+    qor_pp_refl_begin_module_export
 
-template<class T, class WhatFor>
-struct is_reflectable;
+    template<class T, class WhatFor>
+    struct is_reflectable;
 
-qor_pp_refl_end_module_export
+    qor_pp_refl_end_module_export
 
-} // namespace qor_reflection
-
+}//qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_TRAITSFWD

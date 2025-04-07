@@ -35,10 +35,9 @@
 #include <type_traits> // to get non standard platform macro definitions (__GLIBCXX__ for example)
 #endif
 
-/// \file pfr/config.hpp
-/// Contains all the macros that describe Boost.PFR configuration, like qor_pp_refl_enabled
-///
-/// \note This header file doesn't require C++14 Standard and supports all C++ compilers, even pre C++14 compilers (C++11, C++03...).
+// Contains all the macros that describe Boost.PFR configuration, like qor_pp_refl_enabled
+//
+// This header file doesn't require C++14 Standard and supports all C++ compilers, even pre C++14 compilers (C++11, C++03...).
 
 // Reminder:
 //  * MSVC++ 14.2 _MSC_VER == 1927 <- Loophole is known to work (Visual Studio ????)

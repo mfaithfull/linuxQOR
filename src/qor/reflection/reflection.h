@@ -43,5 +43,4 @@
 #include "traits_fwd.h"
 #include "traits.h"
 
-
 #endif//QOR_PP_H_REFLECTION

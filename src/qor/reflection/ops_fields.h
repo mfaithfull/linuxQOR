@@ -36,99 +36,101 @@
 #include "core.h"
 #include "detail/functional.h"
 
-/// \file pfr/ops_fields.hpp
-/// Contains field-by-fields comparison and hash functions.
-///
-/// \b Example:
-/// \code
-///     #include <pfr/ops_fields.hpp>
-///     struct comparable_struct {      // No operators defined for that structure
-///         int i; short s;
-///     };
-///     // ...
-///
-///     comparable_struct s1 {0, 1};
-///     comparable_struct s2 {0, 2};
-///     assert(qor_reflection::lt_fields(s1, s2));
-/// \endcode
-///
-/// \podops for other ways to define operators and more details.
-///
-/// \b Synopsis:
+// Contains field-by-fields comparison and hash functions.
+//
+//     #include <pfr/ops_fields.hpp>
+//     struct comparable_struct {      // No operators defined for that structure
+//         int i; short s;
+//     };
+//     // ...
+//
+//     comparable_struct s1 {0, 1};
+//     comparable_struct s2 {0, 2};
+//     assert(qor_reflection::lt_fields(s1, s2));
+//
+//  ops for other ways to define operators and more details.
+//
+
 namespace qor_reflection {
 
-qor_pp_refl_begin_module_export
+    qor_pp_refl_begin_module_export
 
-    /// Does a field-by-field equality comparison.
-    ///
-    /// \returns `L == R && tuple_size_v<T> == tuple_size_v<U>`, where `L` and
-    /// `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
+    // Does a field-by-field equality comparison.
+    //
+    // returns `L == R && tuple_size_v<T> == tuple_size_v<U>`, where `L` and
+    // `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
     // `rhs` respectively; `N` is `std::min(tuple_size_v<T>, tuple_size_v<U>)`.
     template <class T, class U>
-    constexpr bool eq_fields(const T& lhs, const U& rhs) noexcept {
+    constexpr bool eq_fields(const T& lhs, const U& rhs) noexcept 
+    {
         return detail::binary_visit<detail::equal_impl>(lhs, rhs);
     }
 
-
-    /// Does a field-by-field inequality comparison.
-    ///
-    /// \returns `L != R || tuple_size_v<T> != tuple_size_v<U>`, where `L` and
-    /// `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
+    // Does a field-by-field inequality comparison.
+    //
+    // returns `L != R || tuple_size_v<T> != tuple_size_v<U>`, where `L` and
+    // `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
     // `rhs` respectively; `N` is `std::min(tuple_size_v<T>, tuple_size_v<U>)`.
     template <class T, class U>
-    constexpr bool ne_fields(const T& lhs, const U& rhs) noexcept {
+    constexpr bool ne_fields(const T& lhs, const U& rhs) noexcept 
+    {
         return detail::binary_visit<detail::not_equal_impl>(lhs, rhs);
     }
 
-    /// Does a field-by-field greter comparison.
-    ///
-    /// \returns `L > R || (L == R && tuple_size_v<T> > tuple_size_v<U>)`, where `L` and
-    /// `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
+    // Does a field-by-field greter comparison.
+    //
+    // returns `L > R || (L == R && tuple_size_v<T> > tuple_size_v<U>)`, where `L` and
+    // `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
     // `rhs` respectively; `N` is `std::min(tuple_size_v<T>, tuple_size_v<U>)`.
     template <class T, class U>
-    constexpr bool gt_fields(const T& lhs, const U& rhs) noexcept {
+    constexpr bool gt_fields(const T& lhs, const U& rhs) noexcept 
+    {
         return detail::binary_visit<detail::greater_impl>(lhs, rhs);
     }
 
 
-    /// Does a field-by-field less comparison.
-    ///
-    /// \returns `L < R || (L == R && tuple_size_v<T> < tuple_size_v<U>)`, where `L` and
-    /// `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
+    // Does a field-by-field less comparison.
+    //
+    // returns `L < R || (L == R && tuple_size_v<T> < tuple_size_v<U>)`, where `L` and
+    // `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
     // `rhs` respectively; `N` is `std::min(tuple_size_v<T>, tuple_size_v<U>)`.
     template <class T, class U>
-    constexpr bool lt_fields(const T& lhs, const U& rhs) noexcept {
+    constexpr bool lt_fields(const T& lhs, const U& rhs) noexcept 
+    {
         return detail::binary_visit<detail::less_impl>(lhs, rhs);
     }
 
 
-    /// Does a field-by-field greater equal comparison.
-    ///
-    /// \returns `L > R || (L == R && tuple_size_v<T> >= tuple_size_v<U>)`, where `L` and
-    /// `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
+    // Does a field-by-field greater equal comparison.
+    //
+    // returns `L > R || (L == R && tuple_size_v<T> >= tuple_size_v<U>)`, where `L` and
+    // `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
     // `rhs` respectively; `N` is `std::min(tuple_size_v<T>, tuple_size_v<U>)`.
     template <class T, class U>
-    constexpr bool ge_fields(const T& lhs, const U& rhs) noexcept {
+    constexpr bool ge_fields(const T& lhs, const U& rhs) noexcept 
+    {
         return detail::binary_visit<detail::greater_equal_impl>(lhs, rhs);
     }
 
 
-    /// Does a field-by-field less equal comparison.
-    ///
-    /// \returns `L < R || (L == R && tuple_size_v<T> <= tuple_size_v<U>)`, where `L` and
-    /// `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
+    // Does a field-by-field less equal comparison.
+    //
+    // returns `L < R || (L == R && tuple_size_v<T> <= tuple_size_v<U>)`, where `L` and
+    // `R` are the results of calling `std::tie` on first `N` fields of `lhs` and
     // `rhs` respectively; `N` is `std::min(tuple_size_v<T>, tuple_size_v<U>)`.
     template <class T, class U>
-    constexpr bool le_fields(const T& lhs, const U& rhs) noexcept {
+    constexpr bool le_fields(const T& lhs, const U& rhs) noexcept 
+    {
         return detail::binary_visit<detail::less_equal_impl>(lhs, rhs);
     }
 
 
-    /// Does a field-by-field hashing.
-    ///
-    /// \returns combined hash of all the fields
+    // Does a field-by-field hashing.
+    //
+    // returns combined hash of all the fields
     template <class T>
-    std::size_t hash_fields(const T& x) {
+    std::size_t hash_fields(const T& x) 
+    {
         constexpr std::size_t fields_count_val = qor_reflection::detail::fields_count<std::remove_reference_t<T>>();
 #if qor_pp_refl_use_cpp17 || qor_pp_refl_use_loophole
         return detail::hash_impl<0, fields_count_val>::compute(detail::tie_as_tuple(x));
@@ -149,8 +151,8 @@ qor_pp_refl_begin_module_export
 #endif
     }
 
-qor_pp_refl_end_module_export
+    qor_pp_refl_end_module_export
 
-} // namespace qor_reflection
+}//qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_OPSFIELDS

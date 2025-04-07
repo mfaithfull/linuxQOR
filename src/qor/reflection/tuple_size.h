@@ -36,41 +36,30 @@
 
 #include <type_traits>
 #include <utility>      // metaprogramming stuff
-
 #include "detail/sequence_tuple.h"
 #include "detail/fields_count.h"
 
-/// \file pfr/tuple_size.hpp
-/// Contains tuple-like interfaces to get fields count \forcedlink{tuple_size}, \forcedlink{tuple_size_v}.
-///
-/// \b Synopsis:
+// Contains tuple-like interfaces to get fields count
+
 namespace qor_reflection {
 
-qor_pp_refl_begin_module_export
+    qor_pp_refl_begin_module_export
 
-/// Has a static const member variable `value` that contains fields count in a T.
-/// Works for any T that satisfies \aggregate.
-///
-/// \b Example:
-/// \code
-///     std::array<int, qor_reflection::tuple_size<my_structure>::value > a;
-/// \endcode
-template <class T>
-using tuple_size = detail::size_t_< qor_reflection::detail::fields_count<T>() >;
+    // Has a static const member variable `value` that contains fields count in a T.
+    // Works for any T that satisfies \aggregate.
+    //     std::array<int, qor_reflection::tuple_size<my_structure>::value > a;
+    template <class T>
+    using tuple_size = detail::size_t_< qor_reflection::detail::fields_count<T>() >;
 
 
-/// `tuple_size_v` is a template variable that contains fields count in a T and
-/// works for any T that satisfies \aggregate.
-///
-/// \b Example:
-/// \code
-///     std::array<int, qor_reflection::tuple_size_v<my_structure> > a;
-/// \endcode
-template <class T>
-constexpr std::size_t tuple_size_v = tuple_size<T>::value;
+    // `tuple_size_v` is a template variable that contains fields count in a T and
+    // works for any T that satisfies \aggregate.
+    //     std::array<int, qor_reflection::tuple_size_v<my_structure> > a;
+    template <class T>
+    constexpr std::size_t tuple_size_v = tuple_size<T>::value;
 
-qor_pp_refl_end_module_export
+    qor_pp_refl_end_module_export
 
-} // namespace qor_reflection
+}//qor_reflection
 
 #endif//QOR_PP_H_REFLECTION_TUPLESIZE
