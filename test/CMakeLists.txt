@@ -32,8 +32,8 @@ interception/test_functioncontext.cpp interception/test_callinterceptor.cpp
 interception/test_functioncontextlock.cpp interception/test_parameters.cpp
 injection/test_injection.cpp singleton/test_singleton.cpp singleton/test_threadsingleton.cpp
 issue/test_issue.cpp error/test_error.cpp framework/test_signals.cpp
-reflection/test_reflection.cpp)
+reflection/test_reflection.cpp framework/test_pipeline.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
-target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals)
+target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals qor_pipeline)

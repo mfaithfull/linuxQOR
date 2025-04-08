@@ -90,6 +90,7 @@
         "mutex": "cpp",
         "numbers": "cpp",
         "semaphore": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "test_pipeline": "cpp"
     }
 }
