@@ -44,3 +44,6 @@ Serialization on top of qor_reflection (This is a definite)
 Support for I18n and formatting of internal messages (This is also definitely required)
 
 However to build actual applications, even simple tools, we need Framework modules for workflows, pipelines, roles, features and actual applications so these are more likely to be next
+
+Simple Pipelines and even simpler workflows are now implemented. We'll need compound pipelines and compound workflows sooner or later and parallel execution as well. That will come when it's got a motivating use case.
+
