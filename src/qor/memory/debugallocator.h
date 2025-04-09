@@ -104,10 +104,20 @@ namespace qor{
                 byte* pMem = reinterpret_cast<byte*>(pT) - sizeof(dbgInfo);
                 dbgInfo* pInfo = reinterpret_cast<dbgInfo*>(pMem);
                 size_t allocSize = sizeof(dbgInfo) + (pInfo->Count * sizeof(T));
-                if (allocSize != pInfo->Size)
+                if (allocSize > pInfo->Size)
                 {
-                    throw memoryexception("Size of item at %X being freed %u does not match byte count allocated %u.");
+                    memoryexception a("Size of item at %X being freed %u is larger than the byte count allocated %u.");
                 }
+                //if (allocSize != pInfo->Size)
+                //{
+                    //memoryexception a("Size of item at %X being freed %u does not match byte count allocated %u.");
+                    //throw memoryexception("Size of item at %X being freed %u does not match byte count allocated %u.");
+                    /*This is not necessarily an error. If a pointer to base is being deleted and the vtable has been done properly
+                    i.e. all detructors are virtual then pT->~T() will call the crrect derived destrcutor below and all the memory
+                    in the allocated will be freed by the free at the Source level even though the size passed in abbove in incorrect.
+                    More research into detecting slicing and guaranteeing balanced alloc and free is still needed
+                    */
+                //}
                 for (size_t element = 0; element < pInfo->Count; element++)
                 {
                     pT->~T();

@@ -45,11 +45,12 @@ namespace qor{ namespace workflow{
     {
         switch(evt)
         {
-            case Enter:
-            case Suspend:
+            case Transition::Enter:
+            case Transition::Tick:
+            case Transition::Suspend:
             break;
-            case Resume:
-            case Leave:
+            case Transition::Resume:
+            case Transition::Leave:
             m_complete = true;            
         }
     }
@@ -60,6 +61,11 @@ namespace qor{ namespace workflow{
         m_StateStack.push(newstate);
         newstate(Enter);
     }
+
+    void Workflow::Tick(){}
+    void Workflow::Suspend(){}
+    void Workflow::Resume(){}
+    void Workflow::Leave(){}
 
     state_t Workflow::CurrentState()
     {
@@ -74,7 +80,7 @@ namespace qor{ namespace workflow{
     {
 		state_t currentState = CurrentState();
 
-        currentState(Leave);
+        currentState(Transition::Leave);
 		m_StateStack.pop();		
 		m_StateStack.push(newstate);
     }
@@ -82,7 +88,7 @@ namespace qor{ namespace workflow{
     void Workflow::PushState(state_t newstate)
     {
 		state_t currentState = CurrentState();
-		currentState(Suspend);
+		currentState(Transition::Suspend);
 		
 		m_StateStack.push(newstate);
 		newstate(Enter);		
@@ -91,12 +97,12 @@ namespace qor{ namespace workflow{
     void Workflow::PopState()
     {
 		state_t currentState = CurrentState();
-		currentState(Leave);
+		currentState(Transition::Leave);
         m_StateStack.pop();		
         if(!IsComplete())
         {
     		currentState = CurrentState();
-	    	currentState(Resume);
+	    	currentState(Transition::Resume);
         }
     }
 
@@ -114,14 +120,14 @@ namespace qor{ namespace workflow{
     {
         switch(t)
         {
-            case Enter:
+            case Transition::Enter:
+            case Transition::Tick:            
+            case Transition::Suspend:
             break;
-            case Suspend:
-            break;
-            case Resume:
+            case Transition::Resume:
                 PopState();
             break;
-            case Leave:
+            case Transition::Leave:
             break;
         }
     }

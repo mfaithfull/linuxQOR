@@ -27,6 +27,7 @@
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/assert/assert.h"
 #include "../../src/framework/workflow/workflow.h"
+#include "../../src/framework/workflow/compound_workflow.h"
 
 using namespace qor;
 using namespace qor::test;
@@ -41,18 +42,18 @@ class ExampleWorkflow : public Workflow
     {
         switch(t)
         {
-            case Enter:
+            case Transition::Enter:
                 std::cout << " initial workflow state entered.";
                 PushState(state_t::Create<ExampleWorkflow, &ExampleWorkflow::State1>(this));
             break;
-            case Suspend:
+            case Transition::Suspend:
                 std::cout << " initial workflow state suspended.";
             break;
-            case Resume:
+            case Transition::Resume:
                 std::cout << " initial workflow state resumed.";
                 PopState();
             break;
-            case Leave:
+            case Transition::Leave:
                 std::cout << " initial workflow state completed.";
                 m_complete = true;
             break;
@@ -63,18 +64,18 @@ class ExampleWorkflow : public Workflow
     {
         switch(t)
         {
-            case Enter:
+            case Transition::Enter:
                 std::cout << " workflow state1 entered.";
                 PopState();
             break;
-            case Suspend:
+            case Transition::Suspend:
                 std::cout << " workflow state1 suspended.";
             break;
-            case Resume:
+            case Transition::Resume:
                 std::cout << " workflow state1 resumed.";
                 PopState();
             break;
-            case Leave:
+            case Transition::Leave:
                 std::cout << " workflow state1 completed.";            
             break;
         }
@@ -87,4 +88,11 @@ qor_pp_test_suite_case(WorkflowTestSuite, canDoSimpleWorkflow)
     ExampleWorkflow test_workflow;
     test_workflow.Start();
     qor_pp_assert_that(test_workflow.IsComplete()).isTrue();
+}
+
+qor_pp_test_suite_case(WorkflowTestSuite, canDoCompoundWorkflow)
+{    
+    CompoundWorkflow test_compound;
+    test_compound.SetInitialWorkflow( new_ref<ExampleWorkflow>().AsRef<IWorkflow>() );    
+    test_compound.Start();
 }

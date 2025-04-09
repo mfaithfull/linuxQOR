@@ -22,52 +22,24 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_WORKFLOW
-#define QOR_PP_H_FRAMEWORK_WORKFLOW
-
-#include <stack>
-#include "iworkflow.h"
-#include "src/qor/delegate/delegate.h"
+#ifndef QOR_PP_H_WORKFLOW_INTERFFACE
+#define QOR_PP_H_WORKFLOW_INTERFFACE
 
 namespace qor{ namespace workflow{
 
-    enum Transition
-    {
-        Enter,
-        Tick,
-        Suspend,
-        Resume,
-        Leave
-    };
-
-    typedef Delegate<void(Transition)> state_t;
-
-    class qor_pp_module_interface(QOR_WORKFLOW) Workflow : public IWorkflow
+    class IWorkflow
     {
     public:
 
-        Workflow();
-        virtual ~Workflow() = default;
-        Workflow(const Workflow& src);
-        Workflow& operator = (const Workflow& src);
-        virtual void Start();
-        virtual void Tick();
-        virtual void Suspend();
-        virtual void Resume();
-        virtual void Leave();
-        bool IsComplete() const;
-    protected:
-        virtual void InitialStateHandler(Transition t);
-        void DefaultHandle(Transition t);
-        state_t CurrentState();
-        void SetState(state_t state);
-        void PushState(state_t state);
-        void PopState();        
-        state_t GetInitialState();
-        bool m_complete;
-        std::stack< state_t > m_StateStack;
+        IWorkflow() = default;
+        virtual ~IWorkflow() = default;
+        virtual void Start() = 0;
+        virtual void Tick() = 0;
+        virtual void Suspend() = 0;
+        virtual void Resume() = 0;
+        virtual void Leave() = 0;        
     };
 
 }}//qor::workflow
 
-#endif//QOR_PP_H_FRAMEWORK_WORKFLOW
+#endif//QOR_PP_H_WORKFLOW_INTERFFACE

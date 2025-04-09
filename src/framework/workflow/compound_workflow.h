@@ -22,52 +22,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_WORKFLOW
-#define QOR_PP_H_FRAMEWORK_WORKFLOW
+#ifndef QOR_PP_H_WORKFLOW_COMPOUND
+#define QOR_PP_H_WORKFLOW_COMPOUND
 
-#include <stack>
-#include "iworkflow.h"
-#include "src/qor/delegate/delegate.h"
+#include "workflow.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/reference.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/newref.h"
 
 namespace qor{ namespace workflow{
 
-    enum Transition
-    {
-        Enter,
-        Tick,
-        Suspend,
-        Resume,
-        Leave
-    };
-
-    typedef Delegate<void(Transition)> state_t;
-
-    class qor_pp_module_interface(QOR_WORKFLOW) Workflow : public IWorkflow
+    class qor_pp_module_interface(QOR_WORKFLOW) CompoundWorkflow : public IWorkflow
     {
     public:
 
-        Workflow();
-        virtual ~Workflow() = default;
-        Workflow(const Workflow& src);
-        Workflow& operator = (const Workflow& src);
-        virtual void Start();
+        CompoundWorkflow();
+        virtual ~CompoundWorkflow() = default;
+        CompoundWorkflow( const CompoundWorkflow& src );
+        CompoundWorkflow& operator = (const CompoundWorkflow& src );
+
+        virtual void Start();        
         virtual void Tick();
         virtual void Suspend();
         virtual void Resume();
-        virtual void Leave();
-        bool IsComplete() const;
+        virtual void Leave();        
+
+        void SetInitialWorkflow(ref_of<IWorkflow>::type);
+        
     protected:
-        virtual void InitialStateHandler(Transition t);
-        void DefaultHandle(Transition t);
-        state_t CurrentState();
-        void SetState(state_t state);
-        void PushState(state_t state);
-        void PopState();        
-        state_t GetInitialState();
-        bool m_complete;
-        std::stack< state_t > m_StateStack;
+
+        ref_of<IWorkflow>::type CurrentWorkflow();
+        void SetWorkflow(ref_of<IWorkflow>::type workflow);
+        void PushWorkflow(ref_of<IWorkflow>::type workflow);
+        void PopWorkflow();
+        ref_of<IWorkflow>::type GetInitialWorkflow();
+        
+        
+        std::stack< ref_of<IWorkflow>::type > m_WorkflowStack;
+        ref_of<IWorkflow>::type m_InitialWorkflow;
     };
 
 }}//qor::workflow
 
-#endif//QOR_PP_H_FRAMEWORK_WORKFLOW
+#endif//QOR_PP_H_WORKFLOW_COMPOUND
