@@ -22,27 +22,44 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_INSTANCE
-#define QOR_PP_H_INSTANCE
 
-namespace qor{
+#include "src/configuration/configuration.h"
 
-    class DefaultInstancer;
+#include "role.h"
 
-    template<typename T>
-    struct instancer_of
+namespace qor{ namespace framework{
+
+    void Role::Setup()
     {
-        typedef DefaultInstancer type;
-    };
+        for(auto feature: m_mapFeatures)
+        {
+            feature.second->Setup();
+        }
+    }
 
-}//qor
+    void Role::Shutdown()
+    {
+        for(auto feature: m_mapFeatures)
+        {
+            feature.second->Shutdown();
+        }
+        m_mapFeatures.clear();
+    }
 
-//Preprocessor macro shorthand for declaring a instancer_of specialisation
-#   define qor_pp_declare_instancer_of(_CLASS,_INSTANCER)\
-template<> struct instancer_of< _CLASS >\
-{\
-    typedef _INSTANCER type;\
-};
-//Example: qor_pp_declare_instancer_of(LimitedResource, PoolInstancer);
+    ref_of<IFeature>::type Role::GetFeature(const GUID* id)
+    {
+        auto it = m_mapFeatures.find(*id);
+        if( it != m_mapFeatures.end())
+        {
+            return (*it).second.Clone();
+        }
+        return ref_of<IFeature>::type(nullptr);
+    }
 
-#endif//QOR_PP_H_INSTANCE
+    void Role::AddFeature(const GUID* id, ref_of<IFeature>::type feature)
+    {
+        m_mapFeatures.insert(std::make_pair(*id, feature));
+    }
+
+}}//qor::framework
+

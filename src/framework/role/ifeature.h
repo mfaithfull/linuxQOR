@@ -22,27 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_INSTANCE
-#define QOR_PP_H_INSTANCE
+#ifndef QOR_PP_H_ROLE_FEATURE_INTERFFACE
+#define QOR_PP_H_ROLE_FEATURE_INTERFFACE
 
-namespace qor{
+#include "src/qor/injection/typeidentity.h"
 
-    class DefaultInstancer;
+namespace qor{ namespace framework{
 
-    template<typename T>
-    struct instancer_of
+    class IFeature
     {
-        typedef DefaultInstancer type;
+    public:
+
+        IFeature() = default;
+        virtual ~IFeature() = default;
+        virtual void Setup() = 0;
+        virtual void Shutdown() = 0;
     };
 
-}//qor
+}}//qor::framework
 
-//Preprocessor macro shorthand for declaring a instancer_of specialisation
-#   define qor_pp_declare_instancer_of(_CLASS,_INSTANCER)\
-template<> struct instancer_of< _CLASS >\
-{\
-    typedef _INSTANCER type;\
-};
-//Example: qor_pp_declare_instancer_of(LimitedResource, PoolInstancer);
-
-#endif//QOR_PP_H_INSTANCE
+#endif//QOR_PP_H_ROLE_FEATURE_INTERFFACE

@@ -22,27 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_INSTANCE
-#define QOR_PP_H_INSTANCE
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-namespace qor{
-
-    class DefaultInstancer;
-
-    template<typename T>
-    struct instancer_of
-    {
-        typedef DefaultInstancer type;
-    };
-
-}//qor
-
-//Preprocessor macro shorthand for declaring a instancer_of specialisation
-#   define qor_pp_declare_instancer_of(_CLASS,_INSTANCER)\
-template<> struct instancer_of< _CLASS >\
-{\
-    typedef _INSTANCER type;\
-};
-//Example: qor_pp_declare_instancer_of(LimitedResource, PoolInstancer);
-
-#endif//QOR_PP_H_INSTANCE
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Application Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

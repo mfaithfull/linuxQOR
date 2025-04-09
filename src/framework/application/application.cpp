@@ -22,27 +22,60 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_INSTANCE
-#define QOR_PP_H_INSTANCE
+#include "src/configuration/configuration.h"
+#include "application.h"
 
-namespace qor{
+namespace qor{ namespace framework{
 
-    class DefaultInstancer;
-
-    template<typename T>
-    struct instancer_of
+    Application& Application::SetRole(ref_of<IRole>::type role)
     {
-        typedef DefaultInstancer type;
-    };
+        m_Role = role;
+        return *this;
+    }
 
-}//qor
+    ref_of<IRole>::type Application::GetRole()
+    {
+        return m_Role;
+    }
 
-//Preprocessor macro shorthand for declaring a instancer_of specialisation
-#   define qor_pp_declare_instancer_of(_CLASS,_INSTANCER)\
-template<> struct instancer_of< _CLASS >\
-{\
-    typedef _INSTANCER type;\
-};
-//Example: qor_pp_declare_instancer_of(LimitedResource, PoolInstancer);
+    Application& Application::SetWorkflow( ref_of<workflow::IWorkflow>::type workflow)
+    {
+        m_Workflow = workflow;
+        return *this;
+    }
 
-#endif//QOR_PP_H_INSTANCE
+    ref_of<workflow::IWorkflow>::type Application::GetWorkflow()
+    {
+        return m_Workflow;        
+    }
+    
+    std::string& Application::Name()
+    {
+        return m_Name;
+    }
+
+    int Application::Run( ref_of<workflow::IWorkflow>::type workflow )
+    {
+        SetWorkflow(workflow);
+        return Run();
+    }
+
+    int Application::Run()
+    {
+        if(m_Role.IsNotNull())
+        {
+            m_Role->Setup();
+        }
+        if(m_Workflow.IsNotNull())
+        {
+            m_Workflow->Start();
+        }
+
+        if(m_Role.IsNotNull())
+        {
+            m_Role->Shutdown();
+        }
+        return 0;
+    }
+
+}}//qor::framework

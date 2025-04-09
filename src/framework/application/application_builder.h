@@ -22,27 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_INSTANCE
-#define QOR_PP_H_INSTANCE
+#ifndef QOR_PP_H_APPLICATION_BUILDER
+#define QOR_PP_H_APPLICATION_BUILDER
 
-namespace qor{
+#include "application.h"
 
-    class DefaultInstancer;
+namespace qor{ namespace framework{
 
-    template<typename T>
-    struct instancer_of
+    class qor_pp_module_interface(QOR_APPLICATION) AppBuilder
     {
-        typedef DefaultInstancer type;
+    public:
+
+        AppBuilder();
+        virtual ~AppBuilder() = default;
+
+        ref_of<Application>::type Build(const std::string name, const int argc = 0, const char** argv = nullptr, const char** env = nullptr);
+
     };
+}}//qor::framework
 
-}//qor
-
-//Preprocessor macro shorthand for declaring a instancer_of specialisation
-#   define qor_pp_declare_instancer_of(_CLASS,_INSTANCER)\
-template<> struct instancer_of< _CLASS >\
-{\
-    typedef _INSTANCER type;\
-};
-//Example: qor_pp_declare_instancer_of(LimitedResource, PoolInstancer);
-
-#endif//QOR_PP_H_INSTANCE
+#endif//QOR_PP_H_APPLICATION_BUILDER

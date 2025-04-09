@@ -23,67 +23,30 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "../../src/configuration/configuration.h"
-
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/assert/assert.h"
-
-#include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/thread/currentthread.h"
+#include "../../src/framework/thread/currentthread.h"
+#include "../../src/qor/objectcontext/anyobject.h"
 #include "../../src/qor/injection/typeidentity.h"
-#include "../../src/qor/factory/factory.h"
-#include "../../src/qor/instance/instance.h"
-#include "../../src/qor/reference/ref.h"
 #include "../../src/qor/reference/newref.h"
-#include "../../src/qor/instance/singleton.h"
+#include "../../src/framework/application/application_builder.h"
+#include "../../src/framework/role/role.h"
+#include "../../src/framework/workflow/compound_workflow.h"
 
 using namespace qor;
 using namespace qor::test;
+using namespace qor::framework;
+using namespace qor::workflow;
 
 
-struct SingletonTestSuite{};
+struct ApplicationTestSuite{};
 
-class Test_Singleton
+qor_pp_test_suite_case(ApplicationTestSuite, canBuildAnApplication)
 {
-private:
-    int m_i;
+    int result = AppBuilder().Build("QOR Test Application")->
+    SetRole(new_ref<Role>().AsRef<IRole>()).
+    SetWorkflow(new_ref<Workflow>().AsRef<IWorkflow>()).
+    Run();
 
-public:
-
-    Test_Singleton() : m_i(0){}
-
-    Test_Singleton(int i) : m_i(i){}
-
-    ~Test_Singleton(){}
-
-    int Value()
-    {
-        return m_i;
-    }
-};
-
-namespace qor{ qor_pp_declare_instancer_of(Test_Singleton, SingletonInstancer); }
-
-qor_pp_test_suite_case(SingletonTestSuite, canCreateSingleSingleton)
-{
-    auto ref = new_ref<Test_Singleton>();
-    qor_pp_assert_that( &(ref()) ).isNotNull();
-}
-
-qor_pp_test_suite_case(SingletonTestSuite, twoSingletonRefsReferToSameObject)
-{
-    auto ref1 = new_ref<Test_Singleton>();
-    auto ref2 = new_ref<Test_Singleton>();
-
-    qor_pp_assert_that( ref1 == ref2 ).isTrue();
-}
-
-qor_pp_test_suite_case(SingletonTestSuite, SingletonCantBeReleasedAndReacquiredWithNewInstance)
-{
-    
-    {
-        auto ref1 = new_ref<Test_Singleton>(4);
-    }
-
-    auto ref2 = new_ref<Test_Singleton>(9);
-    qor_pp_assert_that( ref2().Value() ).isEqualTo(0);
+    qor_pp_assert_that( result ).isEqualTo(0);
 }

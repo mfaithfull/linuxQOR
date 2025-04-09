@@ -403,6 +403,15 @@ namespace qor{
 			return Ref< TDerived >();
 		}
 
+		Ref< T > Clone()
+		{
+			if(m_p)
+			{
+				return Ref<T>(m_p);
+			}
+			return Ref< T > ();
+		}
+
 		bool IsNull(void) const
 		{
 			return m_p == nullptr || (m_p->IsNull());

@@ -22,27 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_INSTANCE
-#define QOR_PP_H_INSTANCE
+#ifndef QOR_PP_H_APPLICATION
+#define QOR_PP_H_APPLICATION
 
-namespace qor{
+#include <string>
 
-    class DefaultInstancer;
+#include "src/framework/role/irole.h"
+#include "src/framework/workflow/iworkflow.h"
+#include "src/qor/instance/singleton.h"
 
-    template<typename T>
-    struct instancer_of
+namespace qor{ namespace framework{
+
+    class qor_pp_module_interface(QOR_APPLICATION) Application
     {
-        typedef DefaultInstancer type;
+    public:
+
+        Application() = default;
+        virtual ~Application() = default;
+
+        Application& SetRole( ref_of<IRole>::type role);
+        ref_of<IRole>::type GetRole();
+        Application& SetWorkflow( ref_of<workflow::IWorkflow>::type workflow);
+        ref_of<workflow::IWorkflow>::type GetWorkflow();
+        std::string& Name();
+
+        int Run();
+        int Run( ref_of<workflow::IWorkflow>::type workflow );
+
+    private:
+
+        std::string m_Name;
+        ref_of<IRole>::type m_Role;
+        ref_of<workflow::IWorkflow>::type m_Workflow;
+
     };
+}
+    qor_pp_declare_instancer_of(framework::Application, SingletonInstancer);
+}//qor::framework
 
-}//qor
-
-//Preprocessor macro shorthand for declaring a instancer_of specialisation
-#   define qor_pp_declare_instancer_of(_CLASS,_INSTANCER)\
-template<> struct instancer_of< _CLASS >\
-{\
-    typedef _INSTANCER type;\
-};
-//Example: qor_pp_declare_instancer_of(LimitedResource, PoolInstancer);
-
-#endif//QOR_PP_H_INSTANCE
+#endif//QOR_PP_H_APPLICATION
