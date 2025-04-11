@@ -1,0 +1,1 @@
+This folder is to contain QOR components that extend the Framework

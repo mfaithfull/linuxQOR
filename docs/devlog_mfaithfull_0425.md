@@ -47,3 +47,8 @@ However to build actual applications, even simple tools, we need Framework modul
 
 Simple Pipelines and even simpler workflows are now implemented. We'll need compound pipelines and compound workflows sooner or later and parallel execution as well. That will come when it's got a motivating use case.
 
+Roles and the beggining on Features added as well as their Application singleton container.
+
+Added a component for a command line option parser. Still very rough atm and more complicated than I'd like it to be. However we need to be able to pass parameters into simple programs to make then useful and this is the traditional way to do it.
+
+

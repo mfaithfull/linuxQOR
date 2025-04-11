@@ -5,7 +5,4 @@ set(CMAKE_CXX_RTTI ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(platform)
-add_subdirectory(framework)
-add_subdirectory(qor)
-add_subdirectory(components)
+add_subdirectory(optionparser)
