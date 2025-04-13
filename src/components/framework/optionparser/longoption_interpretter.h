@@ -33,12 +33,13 @@
 
 namespace qor{ namespace components{ namespace optparser {
 
+    //Helper to match long options
     class LongOptInterpretter
     {
     public:
 
-        LongOptInterpretter(char*& pArgument, char*& nextChar, ShortOptInterpretter& shortinterpretter, arg_iter& it, bool& RaiseErrors, int& OptionOption) : 
-        m_pArgument(pArgument), m_pNextChar(nextChar), shortOptionInterpretter(shortinterpretter), itArgument(it), m_RaiseErrors(RaiseErrors), m_OptionOption(OptionOption)
+        LongOptInterpretter(Context& optionsContext, ShortOptInterpretter& shortinterpretter, arg_iter& it ) : 
+        m_optionsContext(optionsContext), shortOptionInterpretter(shortinterpretter), itArgument(it)
         {        
             m_LongOptionIndex = 0;
             m_LongOnly = false;   
@@ -89,15 +90,15 @@ namespace qor{ namespace components{ namespace optparser {
             int n_options = 0;
             int option_index = 0;
     
-            for (nameend = m_pNextChar; *nameend && *nameend != '='; nameend++)
+            for (nameend = m_optionsContext.m_pNextChar; *nameend && *nameend != '='; nameend++)
                 /* Do nothing.  */;
     
-            namelen = nameend - m_pNextChar;
+            namelen = nameend - m_optionsContext.m_pNextChar;
     
             // First look for an exact match, counting the options as a side effect.
             for (p = m_pLongOptions, n_options = 0; p->name; p++, n_options++)
             {
-                if (!strncmp(p->name, m_pNextChar, namelen) && namelen == strlen(p->name))
+                if (!strncmp(p->name, m_optionsContext.m_pNextChar, namelen) && namelen == strlen(p->name))
                 {	// Exact match found.	
                     pfound = p;
                     option_index = n_options;
@@ -123,14 +124,14 @@ namespace qor{ namespace components{ namespace optparser {
             int indfound = -1;
             for (p = m_pLongOptions, option_index = 0; p->name; p++, option_index++)
             {
-                if (!strncmp(p->name, m_pNextChar, namelen))
+                if (!strncmp(p->name, m_optionsContext.m_pNextChar, namelen))
                 {
                     HandleLongOptionAbbreviation(pfound, p, indfound, option_index, ambig_set, ambig_fallback, ambig_malloced, n_options);
                 }
             }
             if (ambig_set || ambig_fallback)
             {
-                if (m_RaiseErrors)
+                if (m_optionsContext.m_RaiseErrors)
                 {
                     if (ambig_fallback)
                     {
@@ -156,9 +157,9 @@ namespace qor{ namespace components{ namespace optparser {
                 {
                     free(ambig_set);
                 }
-                m_pNextChar += strlen(m_pNextChar);
+                m_optionsContext.m_pNextChar += strlen(m_optionsContext.m_pNextChar);
                 itArgument.Next();
-                m_OptionOption = 0;
+                m_optionsContext.m_OptionOption = 0;
                 return true;
             }
             option_index = indfound;
@@ -176,7 +177,7 @@ namespace qor{ namespace components{ namespace optparser {
             {	// Second or later nonexact match found.
                 if (!ambig_fallback)
                 {
-                    if (!m_RaiseErrors)
+                    if (!m_optionsContext.m_RaiseErrors)
                     {
                         // Don't waste effort tracking the ambig set if we're not going to print it anyway.
                         ambig_fallback = 1;
@@ -210,15 +211,15 @@ namespace qor{ namespace components{ namespace optparser {
         {
             // Can't find it as a long option.  If this is not getopt_long_only,
             //or the option starts with '--' or is not a valid short option, then it's an error.
-            if (!m_LongOnly || itArgument.Arg()[1] == '-' || shortOptionInterpretter.Find(*m_pNextChar) == nullptr)
+            if (!m_LongOnly || itArgument.Arg()[1] == '-' || shortOptionInterpretter.Find(*m_optionsContext.m_pNextChar) == nullptr)
             {
-                if (m_RaiseErrors)
+                if (m_optionsContext.m_RaiseErrors)
                 {
                     //fprintf(stderr, _ATXT("%s: unrecognized option '%s%s'\n"), m_argv[0], prefix, m_pNextChar);
                 }
-                m_pNextChar = nullptr;
+                m_optionsContext.m_pNextChar = nullptr;
                 itArgument.Next();
-                m_OptionOption = 0;
+                m_optionsContext.m_OptionOption = 0;
                 return '?';
             }
             // Otherwise interpret it as a short option.
@@ -228,7 +229,7 @@ namespace qor{ namespace components{ namespace optparser {
         int ConsumeLongOption(char* nameend, const Option* pfound, int option_index, const char* prefix)
         {
             itArgument.Next();
-            m_pNextChar = nullptr;
+            m_optionsContext.m_pNextChar = nullptr;
             if (*nameend && CheckForLongOptionArgumentDisallowed(nameend, pfound, prefix))
             {
                 return '?';
@@ -253,15 +254,15 @@ namespace qor{ namespace components{ namespace optparser {
             bool bResult = false;
             if (itArgument.NotAtEnd())
             {
-                m_pArgument = itArgument.NextArg();
+                m_optionsContext.m_pArgument = itArgument.NextArg();
             }
             else
             {
-                if (m_RaiseErrors)
+                if (m_optionsContext.m_RaiseErrors)
                 {
                     //fprintf(stderr, _ATXT("%s: option '%s%s' requires an argument\n"), m_argv[0], prefix, pfound->name);
                 }
-                m_OptionOption = pfound->val;
+                m_optionsContext.m_OptionOption = pfound->val;
                 bResult = true;
             }
             return bResult;
@@ -272,15 +273,15 @@ namespace qor{ namespace components{ namespace optparser {
             bool bResult = false;
             if (pfound->has_arg)
             {
-                m_pArgument = nameend + 1;
+                m_optionsContext.m_pArgument = nameend + 1;
             }
             else
             {
-                if (m_RaiseErrors)
+                if (m_optionsContext.m_RaiseErrors)
                 {
                     //fprintf(stderr, _ATXT("%s: option '%s%s' doesn't allow an argument\n"), m_argv[0], prefix, pfound->name);
                 }
-                m_OptionOption = pfound->val;
+                m_optionsContext.m_OptionOption = pfound->val;
                 return true;
             }
             return bResult;
@@ -288,12 +289,9 @@ namespace qor{ namespace components{ namespace optparser {
             
     private:
 
-        char*& m_pArgument;
-        char*& m_pNextChar;
+        Context& m_optionsContext;
         ShortOptInterpretter& shortOptionInterpretter;
         arg_iter& itArgument;
-        bool& m_RaiseErrors;
-        int& m_OptionOption;
 
         bool m_LongOnly;
         const Option* m_pLongOptions;        

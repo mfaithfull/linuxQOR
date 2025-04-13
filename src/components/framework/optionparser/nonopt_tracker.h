@@ -29,6 +29,8 @@
 
 namespace qor{ namespace components{ namespace optparser {
 
+    //Keeps track of any non option parameters, juggling them to the end of the list
+    //Augments the functionality of the argument iterator
     class NonOptTracker
     {
         public:

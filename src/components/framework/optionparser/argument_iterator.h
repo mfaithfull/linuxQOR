@@ -26,18 +26,27 @@
 #define QOR_PP_H_OPTIONPARSER_ARGITERATOR
 
 #include <stdlib.h>
-
-#include "ioptionable.h"
-#include "context.h"
 #include <string.h>
 
 namespace qor{ namespace components{ namespace optparser {
 
-    struct arg_iter
+    //Manages the walk through the elements of argv parameter as passed to main
+    class arg_iter
     {
+    private:
+
         int m_Index;
         char** m_argv;
         int m_argc;
+
+    public:
+
+        arg_iter()
+        {
+            m_Index = 0;
+            m_argv = nullptr;
+            m_argc = 0;
+        }
 
         int IsEmpty()
         {

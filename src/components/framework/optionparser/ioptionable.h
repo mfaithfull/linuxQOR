@@ -29,7 +29,7 @@
 
 namespace qor{ namespace components{ namespace optparser {
 
-    //Implement this interface to be able to get command line options pass to your application
+    //Implement this interface to be able to get command line options passed to your application
     class IOptionable
 	{
 	public:

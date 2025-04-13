@@ -26,28 +26,18 @@
 #define QOR_PP_H_OPTIONPARSER_CONTEXT
 
 #include "option.h"
-#include "nonopt_tracker.h"
-#include "shortoption_interpretter.h"
-#include "longoption_interpretter.h"
 
 namespace qor{ namespace components{ namespace optparser {
 
     struct Context
     {
-		arg_iter itArgument;
-		//int m_Index;
 		int m_Error;
 		int m_OptionOption;
 		char* m_pArgument;
-		bool Initialized;// True if the internal members have been initialized.
+		bool Initialized;
 		char* m_pNextChar;
-		enum Ordering m_Ordering;// See Ordering above.
-		//int m_FirstNonOpt;//'first_nonopt' is the index in ARGV of the first non-options that have been skipped
-		//int m_LastNonOpt;//'last_nonopt' is the index after the last of them.
-		//int m_argc;
-		//char** m_argv;
+		enum Ordering m_Ordering;
 		bool m_RaiseErrors;
-		//const char* m_ShortOptionSet;
     };
 
 }}}//qor::components::optparser

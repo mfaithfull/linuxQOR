@@ -36,6 +36,7 @@ namespace qor{ namespace components{ namespace optparser {
         RETURN_IN_ORDER
     };
 
+    //Helper to decode a short option set
     class ShortOptInterpretter
     {
 

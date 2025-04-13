@@ -28,8 +28,11 @@
 #include <stdlib.h>
 
 #include "ioptionable.h"
+#include "shortoption_interpretter.h"
 #include "context.h"
-#include "src/framework/workflow/workflow.h"
+#include "nonopt_tracker.h"
+#include "longoption_interpretter.h"
+
 #include <string.h>
 
 namespace qor{ namespace components{ namespace optparser {
@@ -48,13 +51,7 @@ namespace qor{ namespace components{ namespace optparser {
         NonOptTracker nonOpts;
         ShortOptInterpretter shortOptionInterpretter;
         LongOptInterpretter longOptioninterpretter;
-		int m_Error;
-		int m_OptionOption;
-		char* m_pArgument;
-		bool Initialized;
-		char* m_pNextChar;
-		enum Ordering m_Ordering;
-		bool m_RaiseErrors;
+		Context m_optionsContext;
 
 		bool ParseNextOption(int& result);
 		bool HandleEndOfOptions(int& result);

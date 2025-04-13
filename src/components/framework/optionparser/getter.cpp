@@ -32,16 +32,16 @@ using namespace qor;
 namespace qor{ namespace components{ namespace optparser {
 
 	OptionGetter::OptionGetter(const int argc, char** argv) : nonOpts(itArgument), 
-    longOptioninterpretter(m_pArgument, m_pNextChar, shortOptionInterpretter, itArgument, m_RaiseErrors, m_OptionOption)
+    longOptioninterpretter(m_optionsContext, shortOptionInterpretter, itArgument)
 	{
         itArgument.Init(argc,argv);
-		m_pArgument = nullptr;
-		m_Error = 1;
-		m_OptionOption = '?';
-		Initialized = false;
-		m_pNextChar = nullptr;
-		m_Ordering = REQUIRE_ORDER;
-		m_RaiseErrors = true;
+		m_optionsContext.m_pArgument = nullptr;
+		m_optionsContext.m_Error = 1;
+		m_optionsContext.m_OptionOption = '?';
+		m_optionsContext.Initialized = false;
+		m_optionsContext.m_pNextChar = nullptr;
+		m_optionsContext.m_Ordering = REQUIRE_ORDER;
+		m_optionsContext.m_RaiseErrors = true;
 	}
 
 	void OptionGetter::SetOptions(const char* shortOptions, Option* longOptions)
@@ -56,8 +56,8 @@ namespace qor{ namespace components{ namespace optparser {
 		int c;
 		while ((c = Internal(longOnly, posixCompliant)) != -1)
 		{
-			(c == 0) ? optionable.ReceiveLongOption(longOptioninterpretter.GetName(), m_pArgument) :
-				(m_pArgument ? optionable.ReceiveOptionParameter(c, m_pArgument) : optionable.ReceiveOptionSwitch(c));
+			(c == 0) ? optionable.ReceiveLongOption(longOptioninterpretter.GetName(), m_optionsContext.m_pArgument) :
+				(m_optionsContext.m_pArgument ? optionable.ReceiveOptionParameter(c, m_optionsContext.m_pArgument) : optionable.ReceiveOptionSwitch(c));
 		}
 		while (itArgument.NotAtEnd())
 		{
@@ -74,21 +74,21 @@ namespace qor{ namespace components{ namespace optparser {
 		{
 			result = -1;
 		}
-		m_pArgument = nullptr;
-		if (itArgument.Index() == 0 || !Initialized)
+		m_optionsContext.m_pArgument = nullptr;
+		if (itArgument.Index() == 0 || !m_optionsContext.Initialized)
 		{
             nonOpts.Init();
-			m_pNextChar = nullptr;
-			Initialized = true;
-			m_Ordering = shortOptionInterpretter.DetermineOptionOrdering(posixlyCorrect);
+			m_optionsContext.m_pNextChar = nullptr;
+			m_optionsContext.Initialized = true;
+			m_optionsContext.m_Ordering = shortOptionInterpretter.DetermineOptionOrdering(posixlyCorrect);
 		}
 		else if (shortOptionInterpretter.DashOrPlus())
 		{
             shortOptionInterpretter.Next();
 		}
-		m_RaiseErrors = shortOptionInterpretter.Colon() ? 0 : m_Error;
+		m_optionsContext.m_RaiseErrors = shortOptionInterpretter.Colon() ? 0 : m_optionsContext.m_Error;
 
-		if (!((m_pNextChar == nullptr || *m_pNextChar == '\0') && ParseNextOption(result)))
+		if (!((m_optionsContext.m_pNextChar == nullptr || *m_optionsContext.m_pNextChar == '\0') && ParseNextOption(result)))
 		{
 			result = ParseNextShortOption();
 		}
@@ -100,7 +100,7 @@ namespace qor{ namespace components{ namespace optparser {
 	{
 		nonOpts.ParseNextOption();
 
-		if (m_Ordering == PERMUTE)
+		if (m_optionsContext.m_Ordering == PERMUTE)
 		{
             nonOpts.Permute();
 		}
@@ -122,7 +122,7 @@ namespace qor{ namespace components{ namespace optparser {
 		else
 		{
 			// It is not a long option.  Skip the initial punctuation.
-			m_pNextChar = itArgument.Arg() + 1;
+			m_optionsContext.m_pNextChar = itArgument.Arg() + 1;
 			return false;
 		}
 	}
@@ -136,13 +136,13 @@ namespace qor{ namespace components{ namespace optparser {
 
 	bool OptionGetter::HandleNonOption(int& result)
 	{
-		if (m_Ordering == REQUIRE_ORDER)
+		if (m_optionsContext.m_Ordering == REQUIRE_ORDER)
 		{
 			result = -1;
 		}
 		else
 		{
-			m_pArgument = itArgument.NextArg();
+			m_optionsContext.m_pArgument = itArgument.NextArg();
 			result = 1;
 		}
 		return true;
@@ -153,7 +153,7 @@ namespace qor{ namespace components{ namespace optparser {
 		if (itArgument.AtLongOption())
 		{
 			// "--foo" is always a long option.  The special option "--" was handled above.
-			m_pNextChar = itArgument.Arg() + 2;
+			m_optionsContext.m_pNextChar = itArgument.Arg() + 2;
 			result = longOptioninterpretter.ProcessLongOption("--");
 			return true;
 		}
@@ -170,7 +170,7 @@ namespace qor{ namespace components{ namespace optparser {
 		if (longOptioninterpretter.IsLongOnly() && (itArgument.Arg()[2] || ! shortOptionInterpretter.Find(itArgument.Arg()[1])))
 		{
 			int code;
-			m_pNextChar = itArgument.Arg() + 1;
+			m_optionsContext.m_pNextChar = itArgument.Arg() + 1;
 			code = longOptioninterpretter.ProcessLongOption("-");
 			if (code != -1)
 			{
@@ -184,20 +184,20 @@ namespace qor{ namespace components{ namespace optparser {
 	char OptionGetter::ParseNextShortOption()
 	{
 		// Look at and handle the next short option-character.
-		char c = *m_pNextChar++;
+		char c = *m_optionsContext.m_pNextChar++;
 		const char* temp = shortOptionInterpretter.Find(c);
 		// Increment 'm_Index' when we start to process its last character.
-		if (*m_pNextChar == '\0')
+		if (*m_optionsContext.m_pNextChar == '\0')
 		{
             itArgument.Inc();
 		}
 		if (temp == nullptr || c == ':' || c == ';')
 		{
-			if (m_RaiseErrors)
+			if (m_optionsContext.m_RaiseErrors)
 			{
 				//fprintf(stderr, _ATXT("%s: invalid option -- '%c'\n"), m_argv[0], c);
 			}
-			m_OptionOption = c;
+			m_optionsContext.m_OptionOption = c;
 			return '?';
 		}
 		// Convenience. Treat POSIX -W foo same as long option --foo
@@ -215,64 +215,64 @@ namespace qor{ namespace components{ namespace optparser {
 	int OptionGetter::ParseSpecialWCase(char& c)
 	{
 		// This is an option that requires an argument.
-		if (*m_pNextChar != '\0')
+		if (*m_optionsContext.m_pNextChar != '\0')
 		{
-			m_pArgument = m_pNextChar;
+			m_optionsContext.m_pArgument = m_optionsContext.m_pNextChar;
 		}
 		else if (itArgument.AtEnd())
 		{
-			if (m_RaiseErrors)
+			if (m_optionsContext.m_RaiseErrors)
 			{
 				//fprintf(stderr, _ATXT("%s: option requires an argument -- '%c'\n"), m_argv[0], c);
 			}
-			m_OptionOption = c;
+			m_optionsContext.m_OptionOption = c;
 			c = shortOptionInterpretter.ColonQuestion();// m_ShortOptionSet[0] == ':' ? ':' : '?';
 			return c;
 		}
 		else
 		{
-			m_pArgument = itArgument.Arg();
+			m_optionsContext.m_pArgument = itArgument.Arg();
 		}
-		m_pNextChar = m_pArgument;
-		m_pArgument = nullptr;
+		m_optionsContext.m_pNextChar = m_optionsContext.m_pArgument;
+		m_optionsContext.m_pArgument = nullptr;
 		return longOptioninterpretter.ProcessLongOption("-W ");
 	}
 
 	void OptionGetter::ParseRequiredArgumentCase(char& c)
 	{
-		if (*m_pNextChar != '\0')
+		if (*m_optionsContext.m_pNextChar != '\0')
 		{
-			m_pArgument = m_pNextChar;// If we end this ARGV-element by taking the rest as an arg, we must advance to the next element now.
+			m_optionsContext.m_pArgument = m_optionsContext.m_pNextChar;// If we end this ARGV-element by taking the rest as an arg, we must advance to the next element now.
             itArgument.Next();
 		}
 		else if (itArgument.AtEnd())
 		{
-			if (m_RaiseErrors)
+			if (m_optionsContext.m_RaiseErrors)
 			{
 				//fprintf(stderr, _ATXT("%s: option requires an argument -- '%c'\n"), m_argv[0], c);
 			}
-			m_OptionOption = c;
+			m_optionsContext.m_OptionOption = c;
 			c = shortOptionInterpretter.ColonQuestion();// m_ShortOptionSet[0] == ':' ? ':' : '?';
 		}
 		else
 		{
-			m_pArgument = itArgument.NextArg();
+			m_optionsContext.m_pArgument = itArgument.NextArg();
 		}
-		m_pNextChar = nullptr;
+		m_optionsContext.m_pNextChar = nullptr;
 	}
 
 	void OptionGetter::ParseOptionalArgumentCase()
 	{
-		if (*m_pNextChar != '\0')
+		if (*m_optionsContext.m_pNextChar != '\0')
 		{
-			m_pArgument = m_pNextChar;
+			m_optionsContext.m_pArgument = m_optionsContext.m_pNextChar;
             itArgument.Inc();
 		}
 		else
 		{
-			m_pArgument = nullptr;
+			m_optionsContext.m_pArgument = nullptr;
 		}
-		m_pNextChar = nullptr;
+		m_optionsContext.m_pNextChar = nullptr;
 	}
 
 }}}//qor::components::optparser
