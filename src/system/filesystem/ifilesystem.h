@@ -22,51 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
+#define QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "../../src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
-
-using namespace qor;
-using namespace qor::test;
+#include "src/qor/instance/singleton.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/factory/externalfactory.h"
 
 
-struct ReferenceTestSuite{};
+namespace qor{ namespace system{
 
-class Test_Biscuit
-{
-private:
-    int m_i;
-
-public:
-
-    Test_Biscuit() : m_i(0)
+    class IFileSystem
     {
-    }
+    public:
 
-    Test_Biscuit(int i) : m_i(i)
-    {
-    }
+        IFileSystem() = default;
+        virtual ~IFileSystem() noexcept = default;
 
-    ~Test_Biscuit()
-    {
-    }
+        virtual void Setup() {}
+        virtual void Shutdown() {}
+        
+    };
+    
+    }//system
+    qor_pp_declare_instancer_of(system::IFileSystem, SingletonInstancer);
+    qor_pp_declare_factory_of(system::IFileSystem, ExternalFactory);
+    constexpr GUID IFileSystemGUID = {0x3474967c, 0x0be1, 0x417d, { 0xab, 0x71, 0xd0, 0x21, 0x10, 0x16, 0x0e, 0x9f}};
+    qor_pp_declare_guid_of(system::IFileSystem,IFileSystemGUID);
 
-    int Value()
-    {
-        return m_i;
-    }
-};
+}//qor
 
-namespace qor{ qor_pp_declare_factory_of(Test_Biscuit, InternalFactory); }
-
-qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
-{
-    auto ref = qor::new_ref<Test_Biscuit>();
-    qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
-}
-
+#endif//QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE

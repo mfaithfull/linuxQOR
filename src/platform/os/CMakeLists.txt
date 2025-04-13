@@ -1,4 +1,11 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-add_subdirectory(windows)
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+    message(STATUS "Targetting Windows")
+    add_subdirectory(windows)
+endif()
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    message(STATUS "Targetting Linux")
+    add_subdirectory(linux)
+endif()

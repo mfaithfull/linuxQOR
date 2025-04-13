@@ -39,9 +39,9 @@ namespace qor{
 
 //Preprocessor macro shorthand for declaring a factory_of specialisation
 #   define qor_pp_declare_factory_of(_CLASS,_FACTORY)\
-template<> struct qor::factory_of< _CLASS >\
+template<> struct factory_of< _CLASS >\
 {\
-    typedef qor::_FACTORY< _CLASS > type;\
+    typedef _FACTORY< _CLASS > type;\
 };
 
 //Example: qor_pp_declare_factory_of(IFeature, ExternalFactory);

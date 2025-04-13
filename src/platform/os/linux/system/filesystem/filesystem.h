@@ -22,51 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM
+#define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "../../src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
+#include "src/system/filesystem/ifilesystem.h"
 
-using namespace qor;
-using namespace qor::test;
-
-
-struct ReferenceTestSuite{};
-
-class Test_Biscuit
+namespace qor
 {
-private:
-    int m_i;
-
-public:
-
-    Test_Biscuit() : m_i(0)
-    {
-    }
-
-    Test_Biscuit(int i) : m_i(i)
-    {
-    }
-
-    ~Test_Biscuit()
-    {
-    }
-
-    int Value()
-    {
-        return m_i;
-    }
-};
-
-namespace qor{ qor_pp_declare_factory_of(Test_Biscuit, InternalFactory); }
-
-qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
-{
-    auto ref = qor::new_ref<Test_Biscuit>();
-    qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
+    bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFileSystem();//Declaration must match the one in src/system/filesystem/filesystem.h
 }
 
+namespace qor{ namespace nslinux{ namespace system{
+
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileSystem : public qor::system::IFileSystem
+    {
+    public:
+        FileSystem() = default;
+        virtual ~FileSystem() noexcept = default;
+
+        virtual void Setup();
+        virtual void Shutdown();
+    };
+
+}}}//qor::nslinux::system
+
+#endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM

@@ -23,50 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "../../src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
-
-using namespace qor;
-using namespace qor::test;
-
-
-struct ReferenceTestSuite{};
-
-class Test_Biscuit
+qor::Module& ThisModule(void)
 {
-private:
-    int m_i;
-
-public:
-
-    Test_Biscuit() : m_i(0)
-    {
-    }
-
-    Test_Biscuit(int i) : m_i(i)
-    {
-    }
-
-    ~Test_Biscuit()
-    {
-    }
-
-    int Value()
-    {
-        return m_i;
-    }
-};
-
-namespace qor{ qor_pp_declare_factory_of(Test_Biscuit, InternalFactory); }
-
-qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
-{
-    auto ref = qor::new_ref<Test_Biscuit>();
-    qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Filesystem Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
 }
-

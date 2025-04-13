@@ -34,10 +34,11 @@ injection/test_injection.cpp singleton/test_singleton.cpp singleton/test_threads
 issue/test_issue.cpp error/test_error.cpp framework/test_signals.cpp
 reflection/test_reflection.cpp framework/test_pipeline.cpp
 framework/test_workflow.cpp application/test_application.cpp
-components/test_optionparser.cpp)
+components/test_optionparser.cpp
+system/test_filesystem.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
-qor_pipeline qor_workflow qor_role qor_application qor_optionparser)
+qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem linq_filesystem)

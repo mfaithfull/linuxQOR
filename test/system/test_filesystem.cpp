@@ -22,51 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#include "../../src/configuration/configuration.h"
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/framework/thread/currentthread.h"
+#include "../../src/qor/test/test.h"
+#include "../../src/qor/assert/assert.h"
+#include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "../../src/qor/injection/typeidentity.h"
+#include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "src/system/filesystem/filesystem.h"
 
 using namespace qor;
 using namespace qor::test;
+using namespace qor::system;
 
 
-struct ReferenceTestSuite{};
+struct FileSystemTestSuite{};
+bool requiresFileSystem = qor::ImplementsIFileSystem();
 
-class Test_Biscuit
-{
-private:
-    int m_i;
-
-public:
-
-    Test_Biscuit() : m_i(0)
-    {
-    }
-
-    Test_Biscuit(int i) : m_i(i)
-    {
-    }
-
-    ~Test_Biscuit()
-    {
-    }
-
-    int Value()
-    {
-        return m_i;
-    }
-};
-
-namespace qor{ qor_pp_declare_factory_of(Test_Biscuit, InternalFactory); }
-
-qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
-{
-    auto ref = qor::new_ref<Test_Biscuit>();
-    qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
+qor_pp_test_suite_case(FileSystemTestSuite, canCreatefileSytemInstance)
+{    
+    auto ref = new_ref<FileSystem>();
+    qor_pp_assert_that( &(ref()) ).isNotNull();
 }
-

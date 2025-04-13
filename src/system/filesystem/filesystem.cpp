@@ -23,50 +23,16 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "../../src/qor/injection/typeidentity.h"
 #include "src/qor/reference/newref.h"
+#include "filesystem.h"
 
-using namespace qor;
-using namespace qor::test;
+namespace qor{ namespace system{
 
-
-struct ReferenceTestSuite{};
-
-class Test_Biscuit
-{
-private:
-    int m_i;
-
-public:
-
-    Test_Biscuit() : m_i(0)
+    FileSystem::FileSystem()
     {
+        m_pimpl = new_ref<IFileSystem>();
     }
 
-    Test_Biscuit(int i) : m_i(i)
-    {
-    }
-
-    ~Test_Biscuit()
-    {
-    }
-
-    int Value()
-    {
-        return m_i;
-    }
-};
-
-namespace qor{ qor_pp_declare_factory_of(Test_Biscuit, InternalFactory); }
-
-qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
-{
-    auto ref = qor::new_ref<Test_Biscuit>();
-    qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
-}
-
+}}//qor::system

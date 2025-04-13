@@ -72,7 +72,7 @@ public:
     }
 };
 
-qor_pp_declare_factory_of(Test_Widget, InternalFactory);
+namespace qor{qor_pp_declare_factory_of(Test_Widget, InternalFactory);}
 
 qor_pp_test_suite_case(FactoryTestSuite, defaultSinlgeItemConstructionAndDestruction)
 {

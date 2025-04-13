@@ -49,6 +49,9 @@ Simple Pipelines and even simpler workflows are now implemented. We'll need comp
 
 Roles and the beggining on Features added as well as their Application singleton container.
 
-Added a component for a command line option parser. Still very rough atm and more complicated than I'd like it to be. However we need to be able to pass parameters into simple programs to make then useful and this is the traditional way to do it.
+Added a component for a command line option parser. Still very rough atm and more complicated than I'd like it to be. However we need to be able to pass parameters into simple programs to make them useful and this is the traditional way to do it.
+
+Added the first System module, FileSystem which will have separate implementations for Linux and Windows. I don't consider std::filesystem to be complete or good enough on its own yet.
+The pimpl pattern used here will be typical. The system module defines an interface, IFileSystem which is implemented by the platform specific library. The system module uses that platform specific implementation through an internal smart reference.
 
 

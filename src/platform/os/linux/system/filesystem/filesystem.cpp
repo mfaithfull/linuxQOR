@@ -24,49 +24,29 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "../../src/qor/injection/typeidentity.h"
+#include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "filesystem.h"
 
-using namespace qor;
-using namespace qor::test;
-
-
-struct ReferenceTestSuite{};
-
-class Test_Biscuit
-{
-private:
-    int m_i;
-
-public:
-
-    Test_Biscuit() : m_i(0)
+namespace qor{
+    bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFileSystem() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileSystem requirement. 
     {
+        return true;
+    }
+}//qor
+
+namespace qor{ namespace nslinux{ namespace system{
+
+    void FileSystem::Setup()
+    {
+
     }
 
-    Test_Biscuit(int i) : m_i(i)
+    void FileSystem::Shutdown()
     {
+
     }
 
-    ~Test_Biscuit()
-    {
-    }
-
-    int Value()
-    {
-        return m_i;
-    }
-};
-
-namespace qor{ qor_pp_declare_factory_of(Test_Biscuit, InternalFactory); }
-
-qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
-{
-    auto ref = qor::new_ref<Test_Biscuit>();
-    qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
-}
-
+}}}//qor::nslinux::system

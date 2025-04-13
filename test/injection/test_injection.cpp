@@ -68,8 +68,8 @@ class AlternateImplementation : public ConstructByID
 };
 
 static constexpr GUID ConstructByIDGuid = {0x15c5b0a2,0xb429,0x44f4,0xa1,0x42,0x78,0x8b,0x13,0x6b,0x3b,0x80};
-namespace qor{ qor_pp_declare_guid_of(ConstructByID,ConstructByIDGuid) }
-qor_pp_declare_factory_of(ConstructByID, ExternalFactory)
+namespace qor{ qor_pp_declare_guid_of(ConstructByID,ConstructByIDGuid)
+qor_pp_declare_factory_of(ConstructByID, ExternalFactory) }
 
 qor_pp_test_suite_case(InjectionTestSuite, canRegisterTypeFactoryByID)
 {
