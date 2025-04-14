@@ -41,6 +41,12 @@ namespace qor{ namespace system{
 
         virtual void Setup() {}
         virtual void Shutdown() {}
+
+        std::string PathSeparator() { return "/"; }
+        std::string SelfIndicator() { return "."; }
+        std::string ParentIndicator() { return ".."; }
+        std::string RootIndicator() { return "/"; }
+        unsigned short MaxElementLength() { return 256; }
         
     };
     

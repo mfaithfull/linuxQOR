@@ -22,49 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
+#include "src/configuration/configuration.h"
 
-#include <filesystem>
-#include "ifilesystem.h"
 #include "root.h"
-#include "file.h"
-
-namespace qor
-{
-    bool qor_pp_import ImplementsIFileSystem();//All libraries providing an implementation of IFileSystem also need to export this function so that the linker can find them
-}
 
 namespace qor{ namespace system{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileSystem
+    Root::Root() : m_path()
     {
-    public:
+    }
 
-        FileSystem();
-        virtual ~FileSystem() noexcept = default;
-
-        virtual void Setup();
-        virtual void Shutdown();
-
-        const Root& GetRoot();
-        Path CurrentPath();
-        void CurrentPath(Path& path);
-
-        ref_of<File>::type OpenFile();
-        bool CopyFile();
-        bool DeleteFile();
-        bool MoveFile();
-
-        std::filesystem::space_info Space(const Path& path);
-        Path TempFolder();
-
-    private:
-
-        ref_of<IFileSystem>::type m_pimpl;
-        Root m_root;
-    };
+    void Root::Setup()
+    {
+        m_path = Path().RootIndicator();
+    }
     
-}}//qor::system
+    class Path Root::operator / (const std::string folder) const
+    {
+        class Path path;
+        path /= Indicator();
+        path /= folder;
+        return path;
+    }
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
+    class Path Root::Path() const
+    {
+        return m_path;
+    }
+
+    const std::string Root::Indicator() const
+    {
+        return m_path.RootIndicator();
+    }
+
+}}//qor::system

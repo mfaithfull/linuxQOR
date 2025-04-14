@@ -27,12 +27,77 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "filesystem.h"
+#include "path.h"
 
 namespace qor{ namespace system{
 
     FileSystem::FileSystem()
     {
         m_pimpl = new_ref<IFileSystem>();
+    }
+
+    void FileSystem::Setup()
+    {
+        if(m_pimpl.IsNotNull())
+        {
+            Path::s_separator = m_pimpl().PathSeparator();
+            Path::s_selfIndicator = m_pimpl().SelfIndicator();
+            Path::s_parentIndicator = m_pimpl().ParentIndicator();
+            Path::s_maxElementLength = m_pimpl().MaxElementLength();
+            Path::s_rootIndicator = m_pimpl().RootIndicator();
+        }
+        m_root.Setup();
+    }
+
+    void FileSystem::Shutdown(){}
+
+    const Root& FileSystem::GetRoot()
+    {
+        return m_root;
+    }
+
+    Path FileSystem::CurrentPath()
+    {
+        std::filesystem::path stdpath = std::filesystem::current_path();
+        Path currentPath(stdpath.string());
+        return currentPath;
+    }
+
+    void FileSystem::CurrentPath(Path& path)
+    {
+        std::filesystem::current_path(path);
+    }
+
+    ref_of<File>::type FileSystem::OpenFile()
+    {
+        ref_of<File>::type result;
+        return result;
+    }
+
+    bool FileSystem::CopyFile()
+    {
+        return false;
+    }
+
+    bool FileSystem::DeleteFile()
+    {
+        return false;
+    }
+
+    bool FileSystem::MoveFile()
+    {
+        return false;
+    }
+
+    std::filesystem::space_info Space(const Path& path)
+    {
+        return std::filesystem::space(path);
+    }
+
+    Path FileSystem::TempFolder()
+    {
+        Path tempPath(std::filesystem::temp_directory_path());
+        return tempPath;
     }
 
 }}//qor::system

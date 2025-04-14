@@ -31,6 +31,7 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/system/filesystem/filesystem.h"
+#include "src/system/filesystem/folder.h"
 
 using namespace qor;
 using namespace qor::test;
@@ -44,4 +45,30 @@ qor_pp_test_suite_case(FileSystemTestSuite, canCreatefileSytemInstance)
 {    
     auto ref = new_ref<FileSystem>();
     qor_pp_assert_that( &(ref()) ).isNotNull();
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, canGetRootFolder)
+{    
+    auto fileSystem = new_ref<FileSystem>();
+    fileSystem().Setup();
+    Folder rootFolder(fileSystem().GetRoot().Path());
+
+    std::cout << rootFolder.Path().ToString();
+    qor_pp_assert_that( rootFolder.Path().ToString().empty() ).isFalse();
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolder)
+{
+    auto fileSystem = new_ref<FileSystem>();
+    fileSystem().Setup();
+    Folder currentFolder(fileSystem().CurrentPath());
+    std::cout << std::endl;
+    currentFolder.Enumerate( [](FileIndex& i) ->bool {
+        if(i.IsRegularFile())
+        {
+            std::cout << i.ToString() << std::endl;
+        }
+        return true;
+    });
+    qor_pp_assert_that(true).isTrue();
 }

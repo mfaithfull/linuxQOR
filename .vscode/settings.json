@@ -91,6 +91,7 @@
         "numbers": "cpp",
         "semaphore": "cpp",
         "variant": "cpp",
-        "test_pipeline": "cpp"
+        "test_pipeline": "cpp",
+        "codecvt": "cpp"
     }
 }

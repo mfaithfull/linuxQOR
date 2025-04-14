@@ -22,49 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
+#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE
 
-#include <filesystem>
-#include "ifilesystem.h"
-#include "root.h"
-#include "file.h"
-
-namespace qor
-{
-    bool qor_pp_import ImplementsIFileSystem();//All libraries providing an implementation of IFileSystem also need to export this function so that the linker can find them
-}
+#include <string>
+#include "path.h"
 
 namespace qor{ namespace system{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileSystem
-    {
-    public:
+    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
 
-        FileSystem();
-        virtual ~FileSystem() noexcept = default;
+    class qor_pp_module_interface(QOR_FILESYSTEM) File
+	{
+	public:
 
-        virtual void Setup();
-        virtual void Shutdown();
+        File(const File& src);
+        File(FileIndex& index);
+        File& operator = (const File&);
+        virtual ~File();     
+        
+        int64_t GetPosition();
+        int64_t SetPosition(int64_t newPosition);
+        bool IsOpen();
+        bool Flush();
+        unsigned long GetType();
+        bool SetEOF();
+        bool SupportsPosition();
 
-        const Root& GetRoot();
-        Path CurrentPath();
-        void CurrentPath(Path& path);
+    protected:
 
-        ref_of<File>::type OpenFile();
-        bool CopyFile();
-        bool DeleteFile();
-        bool MoveFile();
-
-        std::filesystem::space_info Space(const Path& path);
-        Path TempFolder();
-
-    private:
-
-        ref_of<IFileSystem>::type m_pimpl;
-        Root m_root;
+        //ref_of<IFile>::type m_pimpl;
     };
-    
+
 }}//qor::system
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
+#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE

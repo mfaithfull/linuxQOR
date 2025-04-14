@@ -22,49 +22,65 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
+#include "src/configuration/configuration.h"
 
 #include <filesystem>
-#include "ifilesystem.h"
-#include "root.h"
-#include "file.h"
-
-namespace qor
-{
-    bool qor_pp_import ImplementsIFileSystem();//All libraries providing an implementation of IFileSystem also need to export this function so that the linker can find them
-}
+#include "folder.h"
 
 namespace qor{ namespace system{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileSystem
+    Folder::Folder(const Folder& src)
     {
-    public:
+        *this = src;
+    }
 
-        FileSystem();
-        virtual ~FileSystem() noexcept = default;
+    Folder::Folder(const class Path& path) : m_path(path) {}
 
-        virtual void Setup();
-        virtual void Shutdown();
+    Folder& Folder::operator = (const Folder& src)
+    {
+        if(&src != this)
+        {
+            m_path = src.m_path;
+        }   
+        return *this;     
+    }
 
-        const Root& GetRoot();
-        Path CurrentPath();
-        void CurrentPath(Path& path);
+    void Folder::Create(class Path& newFolder)
+    {
+        std::filesystem::create_directory(newFolder);
+    }
 
-        ref_of<File>::type OpenFile();
-        bool CopyFile();
-        bool DeleteFile();
-        bool MoveFile();
+    void Folder::Copy( class Path& destinationParent )
+    {
+        std::filesystem::copy_file(m_path.operator std::filesystem::__cxx11::path(), destinationParent);
+    }
 
-        std::filesystem::space_info Space(const Path& path);
-        Path TempFolder();
+    void Folder::Delete()
+    {
+        std::filesystem::remove_all(m_path);
+    }
 
-    private:
+    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
+    {
+        for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
+        {
+            FileIndex item(dir_entry);
+            if( !f(item) )
+            {
+                break;
+            }
+        }
+    }
 
-        ref_of<IFileSystem>::type m_pimpl;
-        Root m_root;
-    };
-    
+    void Folder::CreateSymLinkTo(class Path& target)
+    {
+        std::filesystem::create_symlink(target, m_path);
+    }
+
+    class Path Folder::Path()
+    {
+        return m_path;
+    }
+
+
 }}//qor::system
-
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM

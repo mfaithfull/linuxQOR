@@ -22,49 +22,69 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
+#include "src/configuration/configuration.h"
 
-#include <filesystem>
-#include "ifilesystem.h"
-#include "root.h"
 #include "file.h"
-
-namespace qor
-{
-    bool qor_pp_import ImplementsIFileSystem();//All libraries providing an implementation of IFileSystem also need to export this function so that the linker can find them
-}
 
 namespace qor{ namespace system{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileSystem
+    File::File(const File& src)
     {
-    public:
+        *this = src;
+    }
 
-        FileSystem();
-        virtual ~FileSystem() noexcept = default;
+    File::File(FileIndex& index)//open mode including sharing and access
+    {
 
-        virtual void Setup();
-        virtual void Shutdown();
+    }
 
-        const Root& GetRoot();
-        Path CurrentPath();
-        void CurrentPath(Path& path);
+    File& File::operator = (const File& src)
+    {
+        if(&src != this)
+        {
 
-        ref_of<File>::type OpenFile();
-        bool CopyFile();
-        bool DeleteFile();
-        bool MoveFile();
+        }
+        return *this;
+    }
 
-        std::filesystem::space_info Space(const Path& path);
-        Path TempFolder();
+    File::~File()
+    {
 
-    private:
-
-        ref_of<IFileSystem>::type m_pimpl;
-        Root m_root;
-    };
+    }
     
-}}//qor::system
+    int64_t File::GetPosition()
+    {
+        return 0;
+    }
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
+    int64_t File::SetPosition(int64_t newPosition)
+    {
+        return 0;
+    }
+
+    bool File::IsOpen()
+    {
+        return false;
+    }
+
+    bool File::Flush()
+    {
+        return false;
+    }
+
+    unsigned long File::GetType()
+    {
+        return 0;
+    }
+
+    bool File::SetEOF()
+    {
+        return false;
+    }
+
+    bool File::SupportsPosition()
+    {
+        return false;
+    }
+
+}}//qor::system
