@@ -22,41 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "currentthread.h"
+#include "src/system/filesystem/ifilesystem.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
+#include "src/qor/reference/newref.h"
 
-#include "src/qor/instance/singleton.h"
-#include "src/qor/factory/factory.h"
-#include "src/qor/factory/externalfactory.h"
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Thread Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-
-namespace qor{ namespace system{
-
-    class IFileSystem
-    {
-    public:
-
-        IFileSystem() = default;
-        virtual ~IFileSystem() noexcept = default;
-
-        virtual void Setup() {}
-        virtual void Shutdown() {}
-
-        std::string PathSeparator() { return "/"; }
-        std::string SelfIndicator() { return "."; }
-        std::string ParentIndicator() { return ".."; }
-        std::string RootIndicator() { return "/"; }
-        unsigned short MaxElementLength() { return 256; }
-        
-    };
-    
-    }//qor::system
-    
-    qor_pp_declare_instancer_of(system::IFileSystem, SingletonInstancer);
-    qor_pp_declare_factory_of(system::IFileSystem, ExternalFactory);
-    constexpr GUID IFileSystemGUID = {0x3474967c, 0x0be1, 0x417d, { 0xab, 0x71, 0xd0, 0x21, 0x10, 0x16, 0x0e, 0x9f}};
-    qor_pp_declare_guid_of(system::IFileSystem,IFileSystemGUID);
-
-}//qor
-
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
+	static qor::TypeRegEntry< qor::nslinux::framework::CurrentThread, qor::framework::ICurrentThread > reg;  //Register the Linux specific implementation of ICurrentThread
+	return QORModule;
+}

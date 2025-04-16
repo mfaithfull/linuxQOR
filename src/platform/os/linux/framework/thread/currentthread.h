@@ -22,41 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
+#ifndef QOR_PP_H_OS_LINUX_FRAMEWORK_CURRENTTHREAD
+#define QOR_PP_H_OS_LINUX_FRAMEWORK_CURRENTTHREAD
 
-#include "src/qor/instance/singleton.h"
-#include "src/qor/factory/factory.h"
-#include "src/qor/factory/externalfactory.h"
+#include "src/framework/thread/icurrentthread.h"
 
+namespace qor
+{
+    bool qor_pp_module_interface(QOR_LINUXTHREAD) ImplementsICurrentThread();//Declaration must match the one in src/framework/thread/thread.h
+}
 
-namespace qor{ namespace system{
+namespace qor{ namespace nslinux{ namespace framework{
 
-    class IFileSystem
+    class qor_pp_module_interface(QOR_LINUXTHREAD) CurrentThread : public qor::framework::ICurrentThread
     {
     public:
+        CurrentThread() = default;
+        virtual ~CurrentThread() noexcept = default;
 
-        IFileSystem() = default;
-        virtual ~IFileSystem() noexcept = default;
-
-        virtual void Setup() {}
-        virtual void Shutdown() {}
-
-        std::string PathSeparator() { return "/"; }
-        std::string SelfIndicator() { return "."; }
-        std::string ParentIndicator() { return ".."; }
-        std::string RootIndicator() { return "/"; }
-        unsigned short MaxElementLength() { return 256; }
-        
+        virtual bool SetPriority(ICurrentThread::Priority priority);
+        virtual std::optional<ICurrentThread::Priority> GetPriority() const;
+        virtual bool SetName(const std::string& name);
+        virtual std::optional<std::string> GetName();
+        virtual bool SetAffinity(const std::vector<bool>& affinity);
+        virtual std::optional<std::vector<bool>> GetAffinity();
     };
-    
-    }//qor::system
-    
-    qor_pp_declare_instancer_of(system::IFileSystem, SingletonInstancer);
-    qor_pp_declare_factory_of(system::IFileSystem, ExternalFactory);
-    constexpr GUID IFileSystemGUID = {0x3474967c, 0x0be1, 0x417d, { 0xab, 0x71, 0xd0, 0x21, 0x10, 0x16, 0x0e, 0x9f}};
-    qor_pp_declare_guid_of(system::IFileSystem,IFileSystemGUID);
 
-}//qor
+}}}//qor::nslinux::framework
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
+#endif//QOR_PP_H_OS_LINUX_FRAMEWORK_CURRENTTHREAD

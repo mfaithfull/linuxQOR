@@ -22,41 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
-
-#include "src/qor/instance/singleton.h"
-#include "src/qor/factory/factory.h"
-#include "src/qor/factory/externalfactory.h"
+#ifndef QOR_PP_H_OS_LINUX_FRAMEWORK_PROCESS
+#define QOR_PP_H_OS_LINUX_FRAMEWORK_PROCESS
 
 
-namespace qor{ namespace system{
+#include "src/framework/thread/icurrentprocess.h"
 
-    class IFileSystem
+namespace qor{
+    bool qor_pp_module_interface(QOR_LINUXPROCESS) ImplementsICurrentProcess();
+}
+
+namespace qor{ namespace nslinux{ namespace framework{
+
+    class qor_pp_module_interface(QOR_LINUXPROCESS) CurrentProcess : public qor::framework::ICurrentProcess
     {
     public:
+        
+        CurrentProcess() = default;
+        virtual ~CurrentProcess() noexcept = default;
 
-        IFileSystem() = default;
-        virtual ~IFileSystem() noexcept = default;
+        std::optional<std::vector<bool>> GetAffinity();
+        bool SetAffinity(const std::vector<bool>& affinity);
+        std::optional<qor::framework::ICurrentProcess::Priority> GetPriority();
+        bool SetPriority(const qor::framework::ICurrentProcess::Priority priority);
 
-        virtual void Setup() {}
-        virtual void Shutdown() {}
-
-        std::string PathSeparator() { return "/"; }
-        std::string SelfIndicator() { return "."; }
-        std::string ParentIndicator() { return ".."; }
-        std::string RootIndicator() { return "/"; }
-        unsigned short MaxElementLength() { return 256; }
+    private:
         
     };
-    
-    }//qor::system
-    
-    qor_pp_declare_instancer_of(system::IFileSystem, SingletonInstancer);
-    qor_pp_declare_factory_of(system::IFileSystem, ExternalFactory);
-    constexpr GUID IFileSystemGUID = {0x3474967c, 0x0be1, 0x417d, { 0xab, 0x71, 0xd0, 0x21, 0x10, 0x16, 0x0e, 0x9f}};
-    qor_pp_declare_guid_of(system::IFileSystem,IFileSystemGUID);
 
-}//qor
+}}}//qor::nslinux::framework
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
+#endif//QOR_PP_H_OS_LINUX_FRAMEWORK_PROCESS
