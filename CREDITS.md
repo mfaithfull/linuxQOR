@@ -11,7 +11,7 @@ https://github.com/mrAtari/yaffut
 qor_mock is forked from HippoMocks
 https://www.hippomocks.com/
 
-qor_refelction is fored from the no boost dependent implementation of pfr
+qor_refelction is forked from the non boost dependent implementation of pfr
 https://github.com/apolukhin/pfr_non_boost
 
 qor_objectcontext is inspired by Henney's Any / Boost.Any
@@ -25,5 +25,7 @@ The rculist in qor_datastructres and the whole of qor_signals is forked from Cop
 https://github.com/copperspice/cs_signal
 
 
+The thread pool implementation in qor_thread is adapted from BS thread_pool.
+https://github.com/bshoshany/thread-pool
 
 

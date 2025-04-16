@@ -29,6 +29,13 @@
 
 #include "src/platform/compiler/compiler.h"
 #include "threadcontext.h"
+#include "icurrentthread.h"
+#include "pool/types.h"
+
+namespace qor
+{
+    bool qor_pp_import ImplementsICurrentThread();//All libraries providing an implementation of ICurrentThread also need to export this function so that the linker can find them
+}
 
 namespace qor{ namespace framework{
 
@@ -39,13 +46,13 @@ namespace qor{ namespace framework{
     class qor_pp_module_interface(QOR_THREAD) CurrentThread
     {
         friend class qor_pp_module_interface(QOR_THREAD) Thread;
-
+        template <opt_t> friend class thread_pool;
     public:
 
-        static const CurrentThread& GetCurrent(void);
+        static const CurrentThread& GetCurrent();
 
-        CurrentThread(const ThreadContext & src) = delete;
-        CurrentThread& operator=(ThreadContext const& src) = delete;
+        CurrentThread(const CurrentThread & src) = delete;
+        CurrentThread& operator=(CurrentThread const& src) = delete;
 		~CurrentThread(){};
 
         std::thread::id GetID(void) const;
@@ -67,8 +74,39 @@ namespace qor{ namespace framework{
 
         ThreadContext& Context() const;
 
+        virtual bool SetPriority(ICurrentThread::Priority priority) const;
+        virtual std::optional<ICurrentThread::Priority> GetPriority() const;
+        virtual bool SetName(const std::string& name) const;
+        virtual std::optional<std::string> GetName() const;
+        virtual bool SetAffinity(const std::vector<bool>& affinity) const;
+        virtual std::optional<std::vector<bool>> GetAffinity() const;
+
+        std::optional<void*> GetPool() const noexcept
+        {
+            return parent_pool;
+        }
+
+        std::optional<std::size_t> GetPoolIndex() const noexcept
+        {
+            return pool_index;
+        }
+
     private:
 
+        static CurrentThread& GetMutableCurrent();
+
+        void SetPool(std::optional<void*> pool)
+        {
+            parent_pool = pool;
+        }
+
+        void SetIndex(std::optional<std::size_t> index)
+        {
+            pool_index = index;
+        }
+
+        inline static thread_local std::optional<std::size_t> pool_index = std::nullopt;
+        inline static thread_local std::optional<void*> parent_pool = std::nullopt;
         mutable ThreadContext m_Context;
         CurrentThread(){};
         void SetCurrent(CurrentThread* pThread);

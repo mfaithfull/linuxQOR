@@ -57,7 +57,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, canGetRootFolder)
     qor_pp_assert_that( rootFolder.Path().ToString().empty() ).isFalse();
 }
 
-qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolder)
+qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolderRegularFiles)
 {
     auto fileSystem = new_ref<FileSystem>();
     fileSystem().Setup();
@@ -72,3 +72,4 @@ qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolder)
     });
     qor_pp_assert_that(true).isTrue();
 }
+

@@ -94,6 +94,25 @@ Portions licensed under the following 2 clause BSD license:
 *
 ***********************************************************************/
 
+Portions licensed under the following license:
+/**
+ * ██████  ███████       ████████ ██   ██ ██████  ███████  █████  ██████          ██████   ██████   ██████  ██
+ * ██   ██ ██      ██ ██    ██    ██   ██ ██   ██ ██      ██   ██ ██   ██         ██   ██ ██    ██ ██    ██ ██
+ * ██████  ███████          ██    ███████ ██████  █████   ███████ ██   ██         ██████  ██    ██ ██    ██ ██
+ * ██   ██      ██ ██ ██    ██    ██   ██ ██   ██ ██      ██   ██ ██   ██         ██      ██    ██ ██    ██ ██
+ * ██████  ███████          ██    ██   ██ ██   ██ ███████ ██   ██ ██████  ███████ ██       ██████   ██████  ███████
+ *
+ * @file BS_thread_pool.hpp
+ * @author Barak Shoshany (baraksh@gmail.com) (https://baraksh.com/)
+ * @version 5.0.0
+ * @date 2024-12-19
+ * @copyright Copyright (c) 2024 Barak Shoshany. Licensed under the MIT license. If you found this project useful, please consider starring it on GitHub! If you use this library in software of any kind, please provide a link to the GitHub repository https://github.com/bshoshany/thread-pool in the source code and documentation. If you use this library in published research, please cite it as follows: Barak Shoshany, "A C++17 Thread Pool for High-Performance Scientific Computing", doi:10.1016/j.softx.2024.101687, SoftwareX 26 (2024) 101687, arXiv:2105.00613
+ *
+ * @brief `thread_pool`: a fast, lightweight, modern, and easy-to-use C++17/C++20/C++23 thread pool library. This header file contains the entire library, and is the only file needed to use the library.
+ */
+
+
+
 
 NOTE: Expect additional licenses as more existing work is adapted to be included in the QOR
 source works will be selected to be compatible with the above Boost License terms to the greatest extend possible.

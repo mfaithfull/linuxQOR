@@ -92,6 +92,7 @@
         "semaphore": "cpp",
         "variant": "cpp",
         "test_pipeline": "cpp",
-        "codecvt": "cpp"
+        "codecvt": "cpp",
+        "future": "cpp"
     }
 }

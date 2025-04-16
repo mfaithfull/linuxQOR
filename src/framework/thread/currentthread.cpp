@@ -24,12 +24,24 @@
 
 #include "src/configuration/configuration.h"
 #include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 
 namespace qor{ namespace framework{
 
     qor_pp_thread_local CurrentThread* t_pCurrentThread = nullptr;
+    template<> qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<framework::ICurrentThread>::bInitialised = false;
+    template<> thread_local typename ref_of<framework::ICurrentThread>::type qor::detail::ThreadInstanceHolder<framework::ICurrentThread>::theRef = qor::ThreadSingletonInstancer::template Instance<framework::ICurrentThread>(1);
 
 	const CurrentThread& CurrentThread::GetCurrent()
+	{
+		if (t_pCurrentThread == nullptr)
+		{
+			t_pCurrentThread = new CurrentThread;
+		}
+        return *t_pCurrentThread;
+	}
+
+	CurrentThread& CurrentThread::GetMutableCurrent()
 	{
 		if (t_pCurrentThread == nullptr)
 		{
@@ -61,6 +73,36 @@ namespace qor{ namespace framework{
     ThreadContext& CurrentThread::Context() const
     {
         return m_Context;
+    }
+
+    bool CurrentThread::SetPriority(ICurrentThread::Priority priority) const
+    {
+        return new_ref<ICurrentThread>()().SetPriority(priority);
+    }
+
+    std::optional<ICurrentThread::Priority> CurrentThread::GetPriority() const
+    {
+        return new_ref<ICurrentThread>()().GetPriority();
+    }
+
+    bool CurrentThread::SetName(const std::string& name) const
+    {
+        return new_ref<ICurrentThread>()().SetName(name);
+    }
+
+    std::optional<std::string> CurrentThread::GetName() const
+    {
+        return new_ref<ICurrentThread>()().GetName();
+    }
+
+    bool CurrentThread::SetAffinity(const std::vector<bool>& affinity) const
+    {
+        return new_ref<ICurrentThread>()().SetAffinity(affinity);
+    }
+
+    std::optional<std::vector<bool>> CurrentThread::GetAffinity() const
+    {
+        return new_ref<ICurrentThread>()().GetAffinity();
     }
 
 }}//qor::framework
