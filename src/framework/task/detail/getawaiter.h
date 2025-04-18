@@ -22,41 +22,46 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*Define here the things that are intrinsic to all MSVC compilers and specific to
-MSVC compilers. Anything specific to a subset of MSVC versions or common to all
-compilers should be elsewhere.
-*/
+#ifndef QOR_PP_H_FRAMEWORK_TASK_DETAIL_GETAWAITER
+#define QOR_PP_H_FRAMEWORK_TASK_DETAIL_GETAWAITER
 
-#define qor_pp_compiler_at __FILE__ "(" qor_pp_stringize(__LINE__)") : "
+#include <coroutine>
 
-#ifdef _WIN64
-#   define WINCALL
-#else
-#   define WINCALL __stdcall
-#endif
+#include "isawaiter.h"
+#include "src/qor/objectcontext/any.h"
 
-extern "C" __declspec(dllimport) int WINCALL IsDebuggerPresent();
-extern "C" __declspec(dllimport) void WINCALL DebugBreak();
-#define qor_pp_compiler_debugbreak(e) if (IsDebuggerPresent()) DebugBreak(); else (void)0
+namespace qor{	namespace detail{
 
-#ifdef __EDG__
-static constexpr int function_base = 3;
-static constexpr int function_stride = 2;
-#else
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
-#endif
+    template<typename T>
+    auto get_awaiter_impl(T&& value, int)
+        noexcept(noexcept(static_cast<T&&>(value).operator co_await()))
+        -> decltype(static_cast<T&&>(value).operator co_await())
+    {
+        return static_cast<T&&>(value).operator co_await();
+    }
 
-#define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING
+    template<typename T>
+    auto get_awaiter_impl(T&& value, long)
+        noexcept(noexcept(operator co_await(static_cast<T&&>(value))))
+        -> decltype(operator co_await(static_cast<T&&>(value)))
+    {
+        return operator co_await(static_cast<T&&>(value));
+    }
 
-#define qor_pp_export			__declspec(dllexport)
-#define qor_pp_import			__declspec(dllimport)
-#define qor_pp_thread_local     __declspec(thread)
-#define qor_pp_forceinline		inline
-#define qor_pp_noinline			__declspec(noinline)
-#define qpr_pp_funcsig          __FUNCSIG__
-#define qor_pp_allocator        __declspec(allocator)
+    template<typename T, std::enable_if_t<qor::detail::is_awaiter<T&&>::value, int> = 0>
+    T&& get_awaiter_impl(T&& value, qor::detail::any) noexcept
+    {
+        return static_cast<T&&>(value);
+    }
 
-#define qor_pp_assume(X)        __assume(X)
+    template<typename T>
+    auto get_awaiter(T&& value)
+        noexcept(noexcept(detail::get_awaiter_impl(static_cast<T&&>(value), 123)))
+        -> decltype(detail::get_awaiter_impl(static_cast<T&&>(value), 123))
+    {
+        return detail::get_awaiter_impl(static_cast<T&&>(value), 123);
+    }
 
-#define qor_pp_cpu_cache_line   std::hardware_destructive_interference_size
+}}//qor::detail
+
+#endif//QOR_PP_H_FRAMEWORK_TASK_DETAIL_GETAWAITER

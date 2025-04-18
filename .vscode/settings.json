@@ -93,6 +93,7 @@
         "variant": "cpp",
         "test_pipeline": "cpp",
         "codecvt": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "cinttypes": "cpp"
     }
 }

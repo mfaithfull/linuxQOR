@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <chrono>
 #include <condition_variable>
+#include <coroutine>
 #include <cstddef>
 #include <cstdint>
 #include <functional>
@@ -69,7 +70,6 @@
 #include "pool/multi_future.h"
 #include "pool/blocks.h"
 #include "pool/native_extensions.h"
-//#include "pool/this_thread.h"
 #include "currentthread.h"
 #include "pool/common_index_type.h"
 
@@ -618,6 +618,20 @@ namespace qor { namespace framework{
             waiting = false;
             return status;
         }
+
+        auto schedule() 
+        {
+          struct Awaiter : std::suspend_always 
+          {
+              thread_pool &tpool;
+              Awaiter(thread_pool &pool) : tpool{pool} {}
+              void await_suspend(std::coroutine_handle<> handle) 
+              {
+                  tpool.detach_task([handle, this]() { handle.resume(); });
+              }
+          };
+          return Awaiter{*this};
+        }  
 
     private:
             

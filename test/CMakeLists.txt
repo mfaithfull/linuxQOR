@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "-fcoroutines")
+endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-threadsafe-statics -fvisibility=hidden")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
 add_subdirectory(mock)
 
 add_executable(QORTest test_main.cpp test_test.cpp test_compiler.cpp 
@@ -35,11 +41,29 @@ issue/test_issue.cpp error/test_error.cpp framework/test_signals.cpp
 reflection/test_reflection.cpp framework/test_pipeline.cpp
 framework/test_workflow.cpp application/test_application.cpp
 components/test_optionparser.cpp
-system/test_filesystem.cpp framework/test_threadpool.cpp)
+system/test_filesystem.cpp framework/test_threadpool.cpp
+system/test_asyncio.cpp framework/task/asyncautoresetevent_tests.cpp
+framework/task/asyncgenerator_tests.cpp
+framework/task/asynclatch_tests.cpp
+framework/task/asyncmanualresetevent_tests.cpp
+framework/task/asyncmutex_tests.cpp
+framework/task/cancellationtoken_tests.cpp
+framework/task/counted.cpp
+framework/task/generator_tests.cpp
+framework/task/multiproducersequencer_tests.cpp
+framework/task/recursivegenerator_tests.cpp
+framework/task/sequencebarrier_tests.cpp
+framework/task/sharedtask_tests.cpp
+framework/task/singleconsumerasyncautoresetevent_tests.cpp
+framework/task/singleproducersequencer_tests.cpp
+framework/task/syncwait_tests.cpp
+framework/task/task_tests.cpp
+framework/task/whenallready_tests.cpp
+framework/task/whenalltests.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
-linq_filesystem linq_thread linq_process)
+linq_filesystem linq_thread linq_process uring qor_task)

@@ -22,41 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*Define here the things that are intrinsic to all MSVC compilers and specific to
-MSVC compilers. Anything specific to a subset of MSVC versions or common to all
-compilers should be elsewhere.
-*/
+#ifndef QOR_PP_H_SYNC_LIGHTWEIGHTMANUALRESETEVENT
+#define QOR_PP_H_SYNC_LIGHTWEIGHTMANUALRESETEVENT
 
-#define qor_pp_compiler_at __FILE__ "(" qor_pp_stringize(__LINE__)") : "
+# include <mutex>
+# include <condition_variable>
 
-#ifdef _WIN64
-#   define WINCALL
-#else
-#   define WINCALL __stdcall
-#endif
+//prefer a platform specific variant over this not so lightweight platfrom generic version
 
-extern "C" __declspec(dllimport) int WINCALL IsDebuggerPresent();
-extern "C" __declspec(dllimport) void WINCALL DebugBreak();
-#define qor_pp_compiler_debugbreak(e) if (IsDebuggerPresent()) DebugBreak(); else (void)0
+namespace qor{ namespace detail{
 
-#ifdef __EDG__
-static constexpr int function_base = 3;
-static constexpr int function_stride = 2;
-#else
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
-#endif
+    class qor_pp_module_interface(QOR_SYNC) lightweight_manual_reset_event
+    {
+    public:
 
-#define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING
+        lightweight_manual_reset_event(bool initiallySet = false);
 
-#define qor_pp_export			__declspec(dllexport)
-#define qor_pp_import			__declspec(dllimport)
-#define qor_pp_thread_local     __declspec(thread)
-#define qor_pp_forceinline		inline
-#define qor_pp_noinline			__declspec(noinline)
-#define qpr_pp_funcsig          __FUNCSIG__
-#define qor_pp_allocator        __declspec(allocator)
+        ~lightweight_manual_reset_event();
 
-#define qor_pp_assume(X)        __assume(X)
+        void set() noexcept;
 
-#define qor_pp_cpu_cache_line   std::hardware_destructive_interference_size
+        void reset() noexcept;
+
+        void wait() noexcept;
+
+    private:
+
+        // For platforms that don't have a native futex
+        // or manual reset event we can just use a std::mutex
+        // and std::condition_variable to perform the wait.
+        // Not so lightweight, but should be portable to all platforms.
+        std::mutex m_mutex;
+        std::condition_variable m_cv;
+        bool m_isSet;
+
+    };
+
+}}//qor::detail
+
+#endif//QOR_PP_H_SYNC_LIGHTWEIGHTMANUALRESETEVENT

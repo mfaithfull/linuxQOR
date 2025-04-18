@@ -22,41 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*Define here the things that are intrinsic to all MSVC compilers and specific to
-MSVC compilers. Anything specific to a subset of MSVC versions or common to all
-compilers should be elsewhere.
-*/
+#ifndef QOR_PP_H_SYNC_SEQUENCETRAITS
+#define QOR_PP_H_SYNC_SEQUENCETRAITS
 
-#define qor_pp_compiler_at __FILE__ "(" qor_pp_stringize(__LINE__)") : "
+#include <type_traits>
 
-#ifdef _WIN64
-#   define WINCALL
-#else
-#   define WINCALL __stdcall
-#endif
+namespace qor{ namespace detail{
 
-extern "C" __declspec(dllimport) int WINCALL IsDebuggerPresent();
-extern "C" __declspec(dllimport) void WINCALL DebugBreak();
-#define qor_pp_compiler_debugbreak(e) if (IsDebuggerPresent()) DebugBreak(); else (void)0
+    template<typename SEQUENCE>
+	struct sequence_traits
+	{
+		using value_type = SEQUENCE;
+		using difference_type = std::make_signed_t<SEQUENCE>;
+		using size_type = std::make_unsigned_t<SEQUENCE>;
 
-#ifdef __EDG__
-static constexpr int function_base = 3;
-static constexpr int function_stride = 2;
-#else
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
-#endif
+		static constexpr value_type initial_sequence = static_cast<value_type>(-1);
 
-#define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING
+		static constexpr difference_type difference(value_type a, value_type b)
+		{
+			return static_cast<difference_type>(a - b);
+		}
 
-#define qor_pp_export			__declspec(dllexport)
-#define qor_pp_import			__declspec(dllimport)
-#define qor_pp_thread_local     __declspec(thread)
-#define qor_pp_forceinline		inline
-#define qor_pp_noinline			__declspec(noinline)
-#define qpr_pp_funcsig          __FUNCSIG__
-#define qor_pp_allocator        __declspec(allocator)
+		static constexpr bool precedes(value_type a, value_type b)
+		{
+			return difference(a, b) < 0;
+		}
+	};
 
-#define qor_pp_assume(X)        __assume(X)
+}}//qor::detail
 
-#define qor_pp_cpu_cache_line   std::hardware_destructive_interference_size
+#endif//QOR_PP_H_SYNC_SEQUENCETRAITS

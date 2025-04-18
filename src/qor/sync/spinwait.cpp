@@ -22,41 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-/*Define here the things that are intrinsic to all MSVC compilers and specific to
-MSVC compilers. Anything specific to a subset of MSVC versions or common to all
-compilers should be elsewhere.
-*/
+#include "src/configuration/configuration.h"
 
-#define qor_pp_compiler_at __FILE__ "(" qor_pp_stringize(__LINE__)") : "
+#include <thread>
 
-#ifdef _WIN64
-#   define WINCALL
-#else
-#   define WINCALL __stdcall
-#endif
+#include "spinwait.h"
 
-extern "C" __declspec(dllimport) int WINCALL IsDebuggerPresent();
-extern "C" __declspec(dllimport) void WINCALL DebugBreak();
-#define qor_pp_compiler_debugbreak(e) if (IsDebuggerPresent()) DebugBreak(); else (void)0
+namespace{ namespace local {
+        constexpr std::uint32_t yield_threshold = 10;
+}}//::local
+    
+namespace qor{
 
-#ifdef __EDG__
-static constexpr int function_base = 3;
-static constexpr int function_stride = 2;
-#else
-static constexpr int function_base = 0;
-static constexpr int function_stride = 1;
-#endif
+    spin_wait::spin_wait() noexcept
+    {
+        reset();
+    }
 
-#define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING
+    bool spin_wait::next_spin_will_yield() const noexcept
+    {
+        return m_count >= local::yield_threshold;
+    }
 
-#define qor_pp_export			__declspec(dllexport)
-#define qor_pp_import			__declspec(dllimport)
-#define qor_pp_thread_local     __declspec(thread)
-#define qor_pp_forceinline		inline
-#define qor_pp_noinline			__declspec(noinline)
-#define qpr_pp_funcsig          __FUNCSIG__
-#define qor_pp_allocator        __declspec(allocator)
+    void spin_wait::reset() noexcept
+    {
+        static const std::uint32_t initialCount = std::thread::hardware_concurrency() > 1 ? 0 : local::yield_threshold;
+        m_count = initialCount;
+    }
 
-#define qor_pp_assume(X)        __assume(X)
+    void spin_wait::spin_one() noexcept
+    {
+        if (next_spin_will_yield())
+        {
+            std::this_thread::yield();
+        }
 
-#define qor_pp_cpu_cache_line   std::hardware_destructive_interference_size
+        ++m_count;
+        if (m_count == 0)
+        {
+            // Don't wrap around to zero as this would go back to
+            // busy-waiting.
+            m_count = local::yield_threshold;
+        }
+    }
+
+}//qor

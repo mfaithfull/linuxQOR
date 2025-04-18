@@ -37,3 +37,7 @@ static constexpr int function_stride = 1;
 #define qor_pp_noinline			__attribute__ ((noinline))
 #define qpr_pp_funcsig          __PRETTY_FUNCTION__
 #define qor_pp_allocator        
+
+#define qor_pp_assume(X)        
+
+#define qor_pp_cpu_cache_line   64
