@@ -31,11 +31,11 @@
 
 namespace qor{	namespace detail{
 
-	class when_all_counter
+	class WhenAllCounter
 	{
 	public:
 
-		when_all_counter(std::size_t count) noexcept
+		WhenAllCounter(std::size_t count) noexcept
 			: m_count(count + 1)
 			, m_awaitingCoroutine(nullptr)
 		{}

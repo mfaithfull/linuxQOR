@@ -42,15 +42,15 @@ struct CancellationtokenTestSuite{};
 
 qor_pp_test_suite_case(CancellationtokenTestSuite, default_cancellation_token_is_not_cancellable)
 {
-	cancellation_token t;
+	CancellationToken t;
 	qor_pp_assert_that(!t.is_cancellation_requested());
 	qor_pp_assert_that(!t.can_be_cancelled());
 }
 
 qor_pp_test_suite_case(CancellationtokenTestSuite, calling_request_cancellation_on_cancellation_source_updates_cancellation_token)
 {
-	cancellation_source s;
-	cancellation_token t = s.token();
+	CancellationSource s;
+	CancellationToken t = s.token();
 	qor_pp_assert_that(t.can_be_cancelled());
 	qor_pp_assert_that(!t.is_cancellation_requested());
 	s.request_cancellation();
@@ -60,9 +60,9 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, calling_request_cancellation_
 
 qor_pp_test_suite_case(CancellationtokenTestSuite, cancellation_token_cant_be_cancelled_when_last_cancellation_source_destructed)
 {
-	cancellation_token t;
+	CancellationToken t;
 	{
-		cancellation_source s;
+		CancellationSource s;
 		t = s.token();
 		qor_pp_assert_that(t.can_be_cancelled());
 	}
@@ -72,9 +72,9 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, cancellation_token_cant_be_ca
 
 qor_pp_test_suite_case(CancellationtokenTestSuite, can_be_cancelled_when_last_cancellation_source_destructed_if_cancellation_already_requested)
 {
-	cancellation_token t;
+	CancellationToken t;
 	{
-		cancellation_source s;
+		CancellationSource s;
 		t = s.token();
 		qor_pp_assert_that(t.can_be_cancelled());
 		s.request_cancellation();
@@ -86,11 +86,11 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, can_be_cancelled_when_last_ca
 
 qor_pp_test_suite_case(CancellationtokenTestSuite, registration_when_cancellation_not_yet_requested)
 {
-	cancellation_source s;
+	CancellationSource s;
 
 	bool callbackExecuted = false;
 	{
-		cancellation_registration callbackRegistration(
+		CancellationRegistration callbackRegistration(
 			s.token(),
 			[&] { callbackExecuted = true; });
 	}
@@ -98,7 +98,7 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, registration_when_cancellatio
 	qor_pp_assert_that(!callbackExecuted);
 
 	{
-		cancellation_registration callbackRegistration(
+		CancellationRegistration callbackRegistration(
 			s.token(),
 			[&] { callbackExecuted = true; });
 
@@ -112,8 +112,8 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, registration_when_cancellatio
 
 qor_pp_test_suite_case(CancellationtokenTestSuite, throw_if_cancellation_requested)
 {
-	cancellation_source s;
-	cancellation_token t = s.token();
+	CancellationSource s;
+	CancellationToken t = s.token();
 
 	t.throw_if_cancellation_requested();
 
@@ -124,11 +124,11 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, throw_if_cancellation_request
 
 qor_pp_test_suite_case(CancellationtokenTestSuite, registration_called_immediately_when_cancellation_already_requested)
 {
-	cancellation_source s;
+	CancellationSource s;
 	s.request_cancellation();
 
 	bool executed = false;
-	cancellation_registration r{ s.token(), [&] { executed = true; } };
+	CancellationRegistration r{ s.token(), [&] { executed = true; } };
 	qor_pp_assert_that(executed);
 }
 
@@ -136,31 +136,31 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, register_many_callbacks)
 /*	"this checks the code-path that allocates the next chunk of entries "
 	"in the internal data-structres, which occurs on 17th callback"*/
 {
-	cancellation_source s;
+	CancellationSource s;
 	auto t = s.token();
 
 	int callbackExecutionCount = 0;
 	auto callback = [&] { ++callbackExecutionCount; };
 
 	// Allocate enough to require a second chunk to be allocated.
-	cancellation_registration r1{ t, callback };
-	cancellation_registration r2{ t, callback };
-	cancellation_registration r3{ t, callback };
-	cancellation_registration r4{ t, callback };
-	cancellation_registration r5{ t, callback };
-	cancellation_registration r6{ t, callback };
-	cancellation_registration r7{ t, callback };
-	cancellation_registration r8{ t, callback };
-	cancellation_registration r9{ t, callback };
-	cancellation_registration r10{ t, callback };
-	cancellation_registration r11{ t, callback };
-	cancellation_registration r12{ t, callback };
-	cancellation_registration r13{ t, callback };
-	cancellation_registration r14{ t, callback };
-	cancellation_registration r15{ t, callback };
-	cancellation_registration r16{ t, callback };
-	cancellation_registration r17{ t, callback };
-	cancellation_registration r18{ t, callback };
+	CancellationRegistration r1{ t, callback };
+	CancellationRegistration r2{ t, callback };
+	CancellationRegistration r3{ t, callback };
+	CancellationRegistration r4{ t, callback };
+	CancellationRegistration r5{ t, callback };
+	CancellationRegistration r6{ t, callback };
+	CancellationRegistration r7{ t, callback };
+	CancellationRegistration r8{ t, callback };
+	CancellationRegistration r9{ t, callback };
+	CancellationRegistration r10{ t, callback };
+	CancellationRegistration r11{ t, callback };
+	CancellationRegistration r12{ t, callback };
+	CancellationRegistration r13{ t, callback };
+	CancellationRegistration r14{ t, callback };
+	CancellationRegistration r15{ t, callback };
+	CancellationRegistration r16{ t, callback };
+	CancellationRegistration r17{ t, callback };
+	CancellationRegistration r18{ t, callback };
 
 	s.request_cancellation();
 
@@ -172,35 +172,35 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, concurrent_registration_and_c
 	// Just check this runs and terminates without crashing.
 	for (int i = 0; i < 100; ++i)
 	{
-		cancellation_source source;
+		CancellationSource source;
 
 		std::thread waiter1{ [token = source.token()]
 		{
 			std::atomic<bool> cancelled = false;
 			while (!cancelled)
 			{
-				cancellation_registration registration{ token, [&]
+				CancellationRegistration registration{ token, [&]
 				{
 					cancelled = true;
 				} };
 
-				cancellation_registration reg0{ token, [] {} };
-				cancellation_registration reg1{ token, [] {} };
-				cancellation_registration reg2{ token, [] {} };
-				cancellation_registration reg3{ token, [] {} };
-				cancellation_registration reg4{ token, [] {} };
-				cancellation_registration reg5{ token, [] {} };
-				cancellation_registration reg6{ token, [] {} };
-				cancellation_registration reg7{ token, [] {} };
-				cancellation_registration reg8{ token, [] {} };
-				cancellation_registration reg9{ token, [] {} };
-				cancellation_registration reg10{ token, [] {} };
-				cancellation_registration reg11{ token, [] {} };
-				cancellation_registration reg12{ token, [] {} };
-				cancellation_registration reg13{ token, [] {} };
-				cancellation_registration reg14{ token, [] {} };
-				cancellation_registration reg15{ token, [] {} };
-				cancellation_registration reg17{ token, [] {} };
+				CancellationRegistration reg0{ token, [] {} };
+				CancellationRegistration reg1{ token, [] {} };
+				CancellationRegistration reg2{ token, [] {} };
+				CancellationRegistration reg3{ token, [] {} };
+				CancellationRegistration reg4{ token, [] {} };
+				CancellationRegistration reg5{ token, [] {} };
+				CancellationRegistration reg6{ token, [] {} };
+				CancellationRegistration reg7{ token, [] {} };
+				CancellationRegistration reg8{ token, [] {} };
+				CancellationRegistration reg9{ token, [] {} };
+				CancellationRegistration reg10{ token, [] {} };
+				CancellationRegistration reg11{ token, [] {} };
+				CancellationRegistration reg12{ token, [] {} };
+				CancellationRegistration reg13{ token, [] {} };
+				CancellationRegistration reg14{ token, [] {} };
+				CancellationRegistration reg15{ token, [] {} };
+				CancellationRegistration reg17{ token, [] {} };
 
 				std::this_thread::yield();
 			}
@@ -211,28 +211,28 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, concurrent_registration_and_c
 			std::atomic<bool> cancelled = false;
 			while (!cancelled)
 			{
-				cancellation_registration registration{ token, [&]
+				CancellationRegistration registration{ token, [&]
 				{
 					cancelled = true;
 				} };
 
-				cancellation_registration reg0{ token, [] {} };
-				cancellation_registration reg1{ token, [] {} };
-				cancellation_registration reg2{ token, [] {} };
-				cancellation_registration reg3{ token, [] {} };
-				cancellation_registration reg4{ token, [] {} };
-				cancellation_registration reg5{ token, [] {} };
-				cancellation_registration reg6{ token, [] {} };
-				cancellation_registration reg7{ token, [] {} };
-				cancellation_registration reg8{ token, [] {} };
-				cancellation_registration reg9{ token, [] {} };
-				cancellation_registration reg10{ token, [] {} };
-				cancellation_registration reg11{ token, [] {} };
-				cancellation_registration reg12{ token, [] {} };
-				cancellation_registration reg13{ token, [] {} };
-				cancellation_registration reg14{ token, [] {} };
-				cancellation_registration reg15{ token, [] {} };
-				cancellation_registration reg16{ token, [] {} };
+				CancellationRegistration reg0{ token, [] {} };
+				CancellationRegistration reg1{ token, [] {} };
+				CancellationRegistration reg2{ token, [] {} };
+				CancellationRegistration reg3{ token, [] {} };
+				CancellationRegistration reg4{ token, [] {} };
+				CancellationRegistration reg5{ token, [] {} };
+				CancellationRegistration reg6{ token, [] {} };
+				CancellationRegistration reg7{ token, [] {} };
+				CancellationRegistration reg8{ token, [] {} };
+				CancellationRegistration reg9{ token, [] {} };
+				CancellationRegistration reg10{ token, [] {} };
+				CancellationRegistration reg11{ token, [] {} };
+				CancellationRegistration reg12{ token, [] {} };
+				CancellationRegistration reg13{ token, [] {} };
+				CancellationRegistration reg14{ token, [] {} };
+				CancellationRegistration reg15{ token, [] {} };
+				CancellationRegistration reg16{ token, [] {} };
 
 				std::this_thread::yield();
 			}
@@ -243,28 +243,28 @@ qor_pp_test_suite_case(CancellationtokenTestSuite, concurrent_registration_and_c
 			std::atomic<bool> cancelled = false;
 			while (!cancelled)
 			{
-				cancellation_registration registration{ token, [&]
+				CancellationRegistration registration{ token, [&]
 				{
 					cancelled = true;
 				} };
 
-				cancellation_registration reg0{ token, [] {} };
-				cancellation_registration reg1{ token, [] {} };
-				cancellation_registration reg2{ token, [] {} };
-				cancellation_registration reg3{ token, [] {} };
-				cancellation_registration reg4{ token, [] {} };
-				cancellation_registration reg5{ token, [] {} };
-				cancellation_registration reg6{ token, [] {} };
-				cancellation_registration reg7{ token, [] {} };
-				cancellation_registration reg8{ token, [] {} };
-				cancellation_registration reg9{ token, [] {} };
-				cancellation_registration reg10{ token, [] {} };
-				cancellation_registration reg11{ token, [] {} };
-				cancellation_registration reg12{ token, [] {} };
-				cancellation_registration reg13{ token, [] {} };
-				cancellation_registration reg14{ token, [] {} };
-				cancellation_registration reg15{ token, [] {} };
-				cancellation_registration reg16{ token, [] {} };
+				CancellationRegistration reg0{ token, [] {} };
+				CancellationRegistration reg1{ token, [] {} };
+				CancellationRegistration reg2{ token, [] {} };
+				CancellationRegistration reg3{ token, [] {} };
+				CancellationRegistration reg4{ token, [] {} };
+				CancellationRegistration reg5{ token, [] {} };
+				CancellationRegistration reg6{ token, [] {} };
+				CancellationRegistration reg7{ token, [] {} };
+				CancellationRegistration reg8{ token, [] {} };
+				CancellationRegistration reg9{ token, [] {} };
+				CancellationRegistration reg10{ token, [] {} };
+				CancellationRegistration reg11{ token, [] {} };
+				CancellationRegistration reg12{ token, [] {} };
+				CancellationRegistration reg13{ token, [] {} };
+				CancellationRegistration reg14{ token, [] {} };
+				CancellationRegistration reg15{ token, [] {} };
+				CancellationRegistration reg16{ token, [] {} };
 
 				std::this_thread::yield();
 			}
@@ -286,7 +286,7 @@ qor_pp_test_suite_case(CancellationtokenTestSuite,  registration_single_threaded
 {
 	struct batch
 	{
-		batch(cancellation_token t)
+		batch(CancellationToken t)
 			: r0(t, [] {})
 			, r1(t, [] {})
 			, r2(t, [] {})
@@ -299,19 +299,19 @@ qor_pp_test_suite_case(CancellationtokenTestSuite,  registration_single_threaded
 			, r9(t, [] {})
 		{}
 
-		cancellation_registration r0;
-		cancellation_registration r1;
-		cancellation_registration r2;
-		cancellation_registration r3;
-		cancellation_registration r4;
-		cancellation_registration r5;
-		cancellation_registration r6;
-		cancellation_registration r7;
-		cancellation_registration r8;
-		cancellation_registration r9;
+		CancellationRegistration r0;
+		CancellationRegistration r1;
+		CancellationRegistration r2;
+		CancellationRegistration r3;
+		CancellationRegistration r4;
+		CancellationRegistration r5;
+		CancellationRegistration r6;
+		CancellationRegistration r7;
+		CancellationRegistration r8;
+		CancellationRegistration r9;
 	};
 
-	cancellation_source s;
+	CancellationSource s;
 
 	constexpr int iterationCount = 100'000;
 
@@ -319,7 +319,7 @@ qor_pp_test_suite_case(CancellationtokenTestSuite,  registration_single_threaded
 
 	for (int i = 0; i < iterationCount; ++i)
 	{
-		cancellation_registration r{ s.token(), [] {} };
+		CancellationRegistration r{ s.token(), [] {} };
 	}
 
 	auto end = std::chrono::high_resolution_clock::now();

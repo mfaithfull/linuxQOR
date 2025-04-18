@@ -40,17 +40,17 @@ using namespace qor::test;
 
 struct RecursiveGeneratorTestSuite{};
 
-//using recursive_generator;
+//using RecursiveGenerator;
 
 qor_pp_test_suite_case(RecursiveGeneratorTestSuite, default_constructed_recursive_generator_is_empty)
 {
-	recursive_generator<std::uint32_t> ints;
+	RecursiveGenerator<std::uint32_t> ints;
 	qor_pp_assert_that(ints.begin() == ints.end());
 }
 
 qor_pp_test_suite_case(RecursiveGeneratorTestSuite, non_recursive_use_of_recursive_generator)
 {
-	auto f = []() -> recursive_generator<float>
+	auto f = []() -> RecursiveGenerator<float>
 	{
 		co_yield 1.0f;
 		co_yield 2.0f;
@@ -69,7 +69,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, throw_before_first_yield)
 {
 	class MyException : public std::exception {};
 
-	auto f = []() -> recursive_generator<std::uint32_t>
+	auto f = []() -> RecursiveGenerator<std::uint32_t>
 	{
 		throw MyException{};
 		co_return;
@@ -91,7 +91,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, throw_after_first_yield)
 {
 	class MyException : public std::exception {};
 
-	auto f = []() -> recursive_generator<std::uint32_t>
+	auto f = []() -> RecursiveGenerator<std::uint32_t>
 	{
 		co_yield 1;
 		throw MyException{};
@@ -116,7 +116,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, generator_doesnt_start_execu
 	bool reachedA = false;
 	bool reachedB = false;
 	bool reachedC = false;
-	auto f = [&]() -> recursive_generator<std::uint32_t>
+	auto f = [&]() -> RecursiveGenerator<std::uint32_t>
 	{
 		reachedA = true;
 		co_yield 1;
@@ -144,7 +144,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, recursive_destroying_generat
 {
 	bool destructed = false;
 	bool completed = false;
-	auto f = [&]() -> recursive_generator<std::uint32_t>
+	auto f = [&]() -> RecursiveGenerator<std::uint32_t>
 	{
 		auto onExit = on_scope_exit([&]
 		{
@@ -170,7 +170,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, recursive_destroying_generat
 
 qor_pp_test_suite_case(RecursiveGeneratorTestSuite, simple_recursive_yield)
 {
-	auto f = [](int n, auto& f) -> recursive_generator<const std::uint32_t>
+	auto f = [](int n, auto& f) -> RecursiveGenerator<const std::uint32_t>
 	{
 		co_yield n;
 		if (n > 0)
@@ -216,12 +216,12 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, simple_recursive_yield)
 
 qor_pp_test_suite_case(RecursiveGeneratorTestSuite, nested_yield_that_yields_nothing)
 {
-	auto f = []() -> recursive_generator<std::uint32_t>
+	auto f = []() -> RecursiveGenerator<std::uint32_t>
 	{
 		co_return;
 	};
 
-	auto g = [&f]() -> recursive_generator<std::uint32_t>
+	auto g = [&f]() -> RecursiveGenerator<std::uint32_t>
 	{
 		co_yield 1;
 		co_yield f();
@@ -241,7 +241,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, exception_thrown_from_recurs
 {
 	class SomeException : public std::exception {};
 
-	auto f = [](std::uint32_t depth, auto&& f) -> recursive_generator<std::uint32_t>
+	auto f = [](std::uint32_t depth, auto&& f) -> RecursiveGenerator<std::uint32_t>
 	{
 		if (depth == 1u)
 		{
@@ -274,7 +274,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, exceptions_thrown_from_neste
 {
 	class SomeException : public std::exception {};
 
-	auto f = [](std::uint32_t depth, auto&& f) -> recursive_generator<std::uint32_t>
+	auto f = [](std::uint32_t depth, auto&& f) -> RecursiveGenerator<std::uint32_t>
 	{
 		if (depth == 4u)
 		{
@@ -348,7 +348,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, exceptions_thrown_from_neste
 
 namespace
 {
-	recursive_generator<std::uint32_t> iterate_range(std::uint32_t begin, std::uint32_t end)
+	RecursiveGenerator<std::uint32_t> iterate_range(std::uint32_t begin, std::uint32_t end)
 	{
 		if ((end - begin) <= 10u)
 		{
@@ -403,7 +403,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, usage_in_standard_algorithms
 
 namespace
 {
-	recursive_generator<int> range(int start, int end)
+	RecursiveGenerator<int> range(int start, int end)
 	{
 		while (start < end)
 		{
@@ -411,7 +411,7 @@ namespace
 		}
 	}
 
-	recursive_generator<int> range_chunks(int start, int end, int runLength, int stride)
+	RecursiveGenerator<int> range_chunks(int start, int end, int runLength, int stride)
 	{
 		while (start < end)
 		{
@@ -424,7 +424,7 @@ namespace
 qor_pp_test_suite_case(RecursiveGeneratorTestSuite, recursive_fmap_operator)
 {
 	// 0, 1, 2, 3, 4, 10, 11, 12, 13, 14, 20, 21, 22, 23, 24
-	generator<int> gen = range_chunks(0, 30, 5, 10)
+	Generator<int> gen = range_chunks(0, 30, 5, 10)
 		| fmap([](int x) { return x * 3; });
 
 	auto it = gen.begin();

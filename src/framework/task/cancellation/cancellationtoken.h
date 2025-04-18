@@ -27,35 +27,35 @@
 
 namespace qor
 {
-	class cancellation_source;
-	class cancellation_registration;
+	class CancellationSource;
+	class CancellationRegistration;
 
 	namespace detail
 	{
-		class cancellation_state;
+		class CancellationState;
 	}
 
-	class qor_pp_module_interface(QOR_TASK) cancellation_token
+	class qor_pp_module_interface(QOR_TASK) CancellationToken
 	{
 	public:
 
 		/// Construct to a cancellation token that can't be cancelled.
-		cancellation_token() noexcept;
+		CancellationToken() noexcept;
 
 		/// Copy another cancellation token.
 		///
 		/// New token will refer to the same underlying state.
-		cancellation_token(const cancellation_token& other) noexcept;
+		CancellationToken(const CancellationToken& other) noexcept;
 
-		cancellation_token(cancellation_token&& other) noexcept;
+		CancellationToken(CancellationToken&& other) noexcept;
 
-		~cancellation_token();
+		~CancellationToken();
 
-		cancellation_token& operator=(const cancellation_token& other) noexcept;
+		CancellationToken& operator=(const CancellationToken& other) noexcept;
 
-		cancellation_token& operator=(cancellation_token&& other) noexcept;
+		CancellationToken& operator=(CancellationToken&& other) noexcept;
 
-		void swap(cancellation_token& other) noexcept;
+		void swap(CancellationToken& other) noexcept;
 
 		/// Query if it is possible that this operation will be cancelled
 		/// or not.
@@ -65,7 +65,7 @@ namespace qor
 		bool can_be_cancelled() const noexcept;
 
 		/// Query if some thread has requested cancellation on an associated
-		/// cancellation_source object.
+		/// CancellationSource object.
 		bool is_cancellation_requested() const noexcept;
 
 		/// Throws operation_cancelled exception if cancellation
@@ -74,16 +74,16 @@ namespace qor
 
 	private:
 
-		friend class cancellation_source;
-		friend class cancellation_registration;
+		friend class CancellationSource;
+		friend class CancellationRegistration;
 
-		cancellation_token(detail::cancellation_state* state) noexcept;
+		CancellationToken(detail::CancellationState* state) noexcept;
 
-		detail::cancellation_state* m_state;
+		detail::CancellationState* m_state;
 
 	};
 
-	inline void swap(cancellation_token& a, cancellation_token& b) noexcept
+	inline void swap(CancellationToken& a, CancellationToken& b) noexcept
 	{
 		a.swap(b);
 	}

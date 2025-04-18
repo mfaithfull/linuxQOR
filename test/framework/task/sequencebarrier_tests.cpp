@@ -64,7 +64,7 @@ qor_pp_test_suite_case(SequenceBarrierTestSuite, constructing_with_initial_seque
 
 qor_pp_test_suite_case(SequenceBarrierTestSuite, wait_until_published_single_threaded)
 {
-	inline_scheduler scheduler;
+	InlineScheduler scheduler;
 
 	SequenceBarrier<std::uint32_t> barrier;
 	bool reachedA = false;
@@ -114,7 +114,7 @@ qor_pp_test_suite_case(SequenceBarrierTestSuite, wait_until_published_single_thr
 
 qor_pp_test_suite_case(SequenceBarrierTestSuite, wait_until_published_multiple_awaiters)
 {
-	inline_scheduler scheduler;
+	InlineScheduler scheduler;
 
 	SequenceBarrier<std::uint32_t> barrier;
 	bool reachedA = false;

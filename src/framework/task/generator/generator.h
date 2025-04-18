@@ -35,12 +35,12 @@
 namespace qor{
 
 	template<typename T>
-	class generator;
+	class Generator;
 
 	namespace detail{
 
 		template<typename T>
-		class generator_promise
+		class GeneratorPromise
 		{
 		public:
 
@@ -48,9 +48,9 @@ namespace qor{
 			using reference_type = std::conditional_t<std::is_reference_v<T>, T, T&>;
 			using pointer_type = value_type*;
 
-			generator_promise() = default;
+			GeneratorPromise() = default;
 
-			generator<T> get_return_object() noexcept;
+			Generator<T> get_return_object() noexcept;
 
 			constexpr std::suspend_always initial_suspend() const noexcept 
 			{ 
@@ -89,7 +89,7 @@ namespace qor{
 				return static_cast<reference_type>(*m_value);
 			}
 
-			// Don't allow any use of 'co_await' inside the generator coroutine.
+			// Don't allow any use of 'co_await' inside the Generator coroutine.
 			template<typename U>
 			std::suspend_never await_transform(U&& value) = delete;
 
@@ -113,16 +113,16 @@ namespace qor{
 		template<typename T>
 		class generator_iterator
 		{
-			using coroutine_handle = std::coroutine_handle<generator_promise<T>>;
+			using coroutine_handle = std::coroutine_handle<GeneratorPromise<T>>;
 
 		public:
 
 			using iterator_category = std::input_iterator_tag;
 			// What type should we use for counting elements of a potentially infinite sequence?
 			using difference_type = std::ptrdiff_t;
-			using value_type = typename generator_promise<T>::value_type;
-			using reference = typename generator_promise<T>::reference_type;
-			using pointer = typename generator_promise<T>::pointer_type;
+			using value_type = typename GeneratorPromise<T>::value_type;
+			using reference = typename GeneratorPromise<T>::reference_type;
+			using pointer = typename GeneratorPromise<T>::pointer_type;
 
 			// Iterator needs to be default-constructible to satisfy the Range concept.
 			generator_iterator() noexcept : m_coroutine(nullptr) {}
@@ -183,23 +183,23 @@ namespace qor{
 	}
 
 	template<typename T>
-	class [[nodiscard]] generator
+	class [[nodiscard]] Generator
 	{
 	public:
 
-		using promise_type = detail::generator_promise<T>;
+		using promise_type = detail::GeneratorPromise<T>;
 		using iterator = detail::generator_iterator<T>;
 
-		generator() noexcept : m_coroutine(nullptr)	{}
+		Generator() noexcept : m_coroutine(nullptr)	{}
 
-		generator(generator&& other) noexcept : m_coroutine(other.m_coroutine)
+		Generator(Generator&& other) noexcept : m_coroutine(other.m_coroutine)
 		{
 			other.m_coroutine = nullptr;
 		}
 
-		generator(const generator& other) = delete;
+		Generator(const Generator& other) = delete;
 
-		~generator()
+		~Generator()
 		{
 			if (m_coroutine)
 			{
@@ -207,7 +207,7 @@ namespace qor{
 			}
 		}
 
-		generator& operator=(generator other) noexcept
+		Generator& operator=(Generator other) noexcept
 		{
 			swap(other);
 			return *this;
@@ -232,23 +232,23 @@ namespace qor{
 			return detail::generator_sentinel{};
 		}
 
-		void swap(generator& other) noexcept
+		void swap(Generator& other) noexcept
 		{
 			std::swap(m_coroutine, other.m_coroutine);
 		}
 
 	private:
 
-		friend class detail::generator_promise<T>;
+		friend class detail::GeneratorPromise<T>;
 
-		explicit generator(std::coroutine_handle<promise_type> coroutine) noexcept : m_coroutine(coroutine) {}
+		explicit Generator(std::coroutine_handle<promise_type> coroutine) noexcept : m_coroutine(coroutine) {}
 
 		std::coroutine_handle<promise_type> m_coroutine;
 
 	};
 
 	template<typename T>
-	void swap(generator<T>& a, generator<T>& b)
+	void swap(Generator<T>& a, Generator<T>& b)
 	{
 		a.swap(b);
 	}
@@ -256,15 +256,15 @@ namespace qor{
 	namespace detail
 	{
 		template<typename T>
-		generator<T> generator_promise<T>::get_return_object() noexcept
+		Generator<T> GeneratorPromise<T>::get_return_object() noexcept
 		{
-			using coroutine_handle = std::coroutine_handle<generator_promise<T>>;
-			return generator<T>{ coroutine_handle::from_promise(*this) };
+			using coroutine_handle = std::coroutine_handle<GeneratorPromise<T>>;
+			return Generator<T>{ coroutine_handle::from_promise(*this) };
 		}
 	}
 
 	template<typename FUNC, typename T>
-	generator<std::invoke_result_t<FUNC&, typename generator<T>::iterator::reference>> fmap(FUNC func, generator<T> source)
+	Generator<std::invoke_result_t<FUNC&, typename Generator<T>::iterator::reference>> fmap(FUNC func, Generator<T> source)
 	{
 		for (auto&& value : source)
 		{

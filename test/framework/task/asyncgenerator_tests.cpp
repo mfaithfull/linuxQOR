@@ -44,8 +44,8 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, default_constructed_async_genera
 {
 	sync_wait([]() -> task<>
 	{
-		// Iterating over default-constructed async_generator just gives an empty sequence.
-		async_generator<int> g;
+		// Iterating over default-constructed AsyncGenerator just gives an empty sequence.
+		AsyncGenerator<int> g;
 		auto it = co_await g.begin();
 		qor_pp_assert_that(it == g.end()).isTrue();
 	}());
@@ -55,7 +55,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, async_generator_doesnt_start_if_
 {
 	bool startedExecution = false;
 	{
-		auto gen = [&]() -> async_generator<int>
+		auto gen = [&]() -> AsyncGenerator<int>
 		{
 			startedExecution = true;
 			co_yield 1;
@@ -70,7 +70,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, enumerate_sequence_of_1_value)
 	sync_wait([]() -> task<>
 	{
 		bool startedExecution = false;
-		auto makeGenerator = [&]() -> async_generator<std::uint32_t>
+		auto makeGenerator = [&]() -> AsyncGenerator<std::uint32_t>
 		{
 			startedExecution = true;
 			co_yield 1;
@@ -94,7 +94,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, enumerate_sequence_of_multiple_v
 	sync_wait([]() -> task<>
 	{
 		bool startedExecution = false;
-		auto makeGenerator = [&]() -> async_generator<std::uint32_t>
+		auto makeGenerator = [&]() -> AsyncGenerator<std::uint32_t>
 		{
 			startedExecution = true;
 			co_yield 1;
@@ -160,7 +160,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, destructors_of_values_in_scope_a
 		bool aDestructed = false;
 		bool bDestructed = false;
 
-		auto makeGenerator = [&](set_to_true_on_destruction a) -> async_generator<std::uint32_t>
+		auto makeGenerator = [&](set_to_true_on_destruction a) -> AsyncGenerator<std::uint32_t>
 		{
 			set_to_true_on_destruction b(&bDestructed);
 			co_yield 1;
@@ -191,7 +191,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, async_producer_with_async_consum
 	SingleConsumerEvent p3;
 	SingleConsumerEvent c1;
 
-	auto produce = [&]() -> async_generator<std::uint32_t>
+	auto produce = [&]() -> AsyncGenerator<std::uint32_t>
 	{
 		co_await p1;
 		co_yield 1;
@@ -204,14 +204,14 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, async_producer_with_async_consum
 
 	auto consume = [&]() -> task<>
 	{
-		auto generator = produce();
-		auto it = co_await generator.begin();
+		auto Generator = produce();
+		auto it = co_await Generator.begin();
 		qor_pp_assert_that(*it == 1u);
 		(void)co_await ++it;
 		qor_pp_assert_that(*it == 2u);
 		co_await c1;
 		(void)co_await ++it;
-		qor_pp_assert_that(it == generator.end());
+		qor_pp_assert_that(it == Generator.end());
 		consumerFinished = true;
 	};
 
@@ -234,7 +234,7 @@ class TestException {};
 qor_pp_test_suite_case(AsyncGeneratorTestSuite, exception_thrown_before_first_yield_is_rethrown_from_begin_operation)
 {
 	
-	auto gen = [](bool shouldThrow) -> async_generator<std::uint32_t>
+	auto gen = [](bool shouldThrow) -> AsyncGenerator<std::uint32_t>
 	{
 		if (shouldThrow)
 		{
@@ -252,7 +252,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, exception_thrown_before_first_yi
 qor_pp_test_suite_case(AsyncGeneratorTestSuite, exception_thrown_after_first_yield_is_rethrown_from_increment_operator)
 {
 	class TestException {};
-	auto gen = [](bool shouldThrow) -> async_generator<std::uint32_t>
+	auto gen = [](bool shouldThrow) -> AsyncGenerator<std::uint32_t>
 	{
 		co_yield 1;
 		if (shouldThrow)
@@ -273,7 +273,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, exception_thrown_after_first_yie
 qor_pp_test_suite_case(AsyncGeneratorTestSuite, large_number_of_synchronous_completions_doesnt_result_in_stack_overflow)
 {
 
-	auto makeSequence = [](SingleConsumerEvent& event) -> async_generator<std::uint32_t>
+	auto makeSequence = [](SingleConsumerEvent& event) -> AsyncGenerator<std::uint32_t>
 	{
 		for (std::uint32_t i = 0; i < 1'000'000u; ++i)
 		{
@@ -282,7 +282,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, large_number_of_synchronous_comp
 		}
 	};
 
-	auto consumer = [](async_generator<std::uint32_t> sequence) -> task<>
+	auto consumer = [](AsyncGenerator<std::uint32_t> sequence) -> task<>
 	{
 		std::uint32_t expected = 0;
 		for (auto iter = co_await sequence.begin(); iter != sequence.end(); co_await ++iter)
@@ -316,10 +316,10 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, large_number_of_synchronous_comp
 
 qor_pp_test_suite_case(AsyncGeneratorTestSuite, test_fmap)
 {
-	//using async_generator;
+	//using AsyncGenerator;
 	//using fmap;
 
-	auto iota = [](int count) -> async_generator<int>
+	auto iota = [](int count) -> AsyncGenerator<int>
 	{
 		for (int i = 0; i < count; ++i)
 		{

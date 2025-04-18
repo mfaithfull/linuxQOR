@@ -33,15 +33,15 @@
 namespace qor{	namespace detail{
 
 	template<typename TASK_CONTAINER>
-	class when_all_ready_awaitable;
+	class WhenAllReadyAwaitable;
 
 	template<>
-	class when_all_ready_awaitable<std::tuple<>>
+	class WhenAllReadyAwaitable<std::tuple<>>
 	{
 	public:
 
-		constexpr when_all_ready_awaitable() noexcept {}
-		explicit constexpr when_all_ready_awaitable(std::tuple<>) noexcept {}
+		constexpr WhenAllReadyAwaitable() noexcept {}
+		explicit constexpr WhenAllReadyAwaitable(std::tuple<>) noexcept {}
 
 		constexpr bool await_ready() const noexcept { return true; }
 		void await_suspend(std::coroutine_handle<>) noexcept {}
@@ -50,21 +50,21 @@ namespace qor{	namespace detail{
 	};
 
 	template<typename... TASKS>
-	class when_all_ready_awaitable<std::tuple<TASKS...>>
+	class WhenAllReadyAwaitable<std::tuple<TASKS...>>
 	{
 	public:
 
-		explicit when_all_ready_awaitable(TASKS&&... tasks)
+		explicit WhenAllReadyAwaitable(TASKS&&... tasks)
 			noexcept(std::conjunction_v<std::is_nothrow_move_constructible<TASKS>...>)
 			: m_counter(sizeof...(TASKS))
 			, m_tasks(std::move(tasks)...) {}
 
-		explicit when_all_ready_awaitable(std::tuple<TASKS...>&& tasks)
+		explicit WhenAllReadyAwaitable(std::tuple<TASKS...>&& tasks)
 			noexcept(std::is_nothrow_move_constructible_v<std::tuple<TASKS...>>)
 			: m_counter(sizeof...(TASKS))
 			, m_tasks(std::move(tasks)) {}
 
-		when_all_ready_awaitable(when_all_ready_awaitable&& other) noexcept
+		WhenAllReadyAwaitable(WhenAllReadyAwaitable&& other) noexcept
 			: m_counter(sizeof...(TASKS))
 			, m_tasks(std::move(other.m_tasks)) {}
 
@@ -72,7 +72,7 @@ namespace qor{	namespace detail{
 		{
 			struct awaiter
 			{
-				awaiter(when_all_ready_awaitable& awaitable) noexcept
+				awaiter(WhenAllReadyAwaitable& awaitable) noexcept
 					: m_awaitable(awaitable)
 				{}
 
@@ -93,7 +93,7 @@ namespace qor{	namespace detail{
 
 			private:
 
-				when_all_ready_awaitable& m_awaitable;
+				WhenAllReadyAwaitable& m_awaitable;
 
 			};
 
@@ -104,7 +104,7 @@ namespace qor{	namespace detail{
 		{
 			struct awaiter
 			{
-				awaiter(when_all_ready_awaitable& awaitable) noexcept
+				awaiter(WhenAllReadyAwaitable& awaitable) noexcept
 					: m_awaitable(awaitable)
 				{}
 
@@ -125,7 +125,7 @@ namespace qor{	namespace detail{
 
 			private:
 
-				when_all_ready_awaitable& m_awaitable;
+				WhenAllReadyAwaitable& m_awaitable;
 
 			};
 
@@ -153,27 +153,27 @@ namespace qor{	namespace detail{
 			};
 		}
 
-		when_all_counter m_counter;
+		WhenAllCounter m_counter;
 		std::tuple<TASKS...> m_tasks;
 
 	};
 
 	template<typename TASK_CONTAINER>
-	class when_all_ready_awaitable
+	class WhenAllReadyAwaitable
 	{
 	public:
 
-		explicit when_all_ready_awaitable(TASK_CONTAINER&& tasks) noexcept
+		explicit WhenAllReadyAwaitable(TASK_CONTAINER&& tasks) noexcept
 			: m_counter(tasks.size())
 			, m_tasks(std::forward<TASK_CONTAINER>(tasks)) {}
 
-		when_all_ready_awaitable(when_all_ready_awaitable&& other)
+		WhenAllReadyAwaitable(WhenAllReadyAwaitable&& other)
 			noexcept(std::is_nothrow_move_constructible_v<TASK_CONTAINER>)
 			: m_counter(other.m_tasks.size())
 			, m_tasks(std::move(other.m_tasks)) {}
 
-		when_all_ready_awaitable(const when_all_ready_awaitable&) = delete;
-		when_all_ready_awaitable& operator=(const when_all_ready_awaitable&) = delete;
+		WhenAllReadyAwaitable(const WhenAllReadyAwaitable&) = delete;
+		WhenAllReadyAwaitable& operator=(const WhenAllReadyAwaitable&) = delete;
 
 		auto operator co_await() & noexcept
 		{
@@ -181,7 +181,7 @@ namespace qor{	namespace detail{
 			{
 			public:
 
-				awaiter(when_all_ready_awaitable& awaitable) : m_awaitable(awaitable) {}
+				awaiter(WhenAllReadyAwaitable& awaitable) : m_awaitable(awaitable) {}
 
 				bool await_ready() const noexcept
 				{
@@ -200,7 +200,7 @@ namespace qor{	namespace detail{
 
 			private:
 
-				when_all_ready_awaitable& m_awaitable;
+				WhenAllReadyAwaitable& m_awaitable;
 
 			};
 
@@ -214,7 +214,7 @@ namespace qor{	namespace detail{
 			{
 			public:
 
-				awaiter(when_all_ready_awaitable& awaitable)
+				awaiter(WhenAllReadyAwaitable& awaitable)
 					: m_awaitable(awaitable)
 				{}
 
@@ -235,7 +235,7 @@ namespace qor{	namespace detail{
 
 			private:
 
-				when_all_ready_awaitable& m_awaitable;
+				WhenAllReadyAwaitable& m_awaitable;
 
 			};
 
@@ -259,7 +259,7 @@ namespace qor{	namespace detail{
 			return m_counter.try_await(awaitingCoroutine);
 		}
 
-		when_all_counter m_counter;
+		WhenAllCounter m_counter;
 		TASK_CONTAINER m_tasks;
 
 	};

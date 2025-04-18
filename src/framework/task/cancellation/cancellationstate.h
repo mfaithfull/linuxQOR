@@ -33,41 +33,41 @@
 
 namespace qor{	namespace detail{
 
-	struct cancellation_registration_state;
+	struct CancellationRegistrationState;
 
-	class qor_pp_module_interface(QOR_TASK) cancellation_state
+	class qor_pp_module_interface(QOR_TASK) CancellationState
 	{
 	public:
 
-		/// Allocates a new cancellation_state object.
+		/// Allocates a new CancellationState object.
 		///
 		/// \throw std::bad_alloc
 		/// If there was insufficient memory to allocate one.
-		static cancellation_state* create();
+		static CancellationState* create();
 
-		~cancellation_state();
+		~CancellationState();
 
-		/// Increment the reference count of cancellation_token and
-		/// cancellation_registration objects referencing this state.
+		/// Increment the reference count of CancellationToken and
+		/// CancellationRegistration objects referencing this state.
 		void add_token_ref() noexcept;
 
-		/// Decrement the reference count of cancellation_token and
-		/// cancellation_registration objects referencing this state.
+		/// Decrement the reference count of CancellationToken and
+		/// CancellationRegistration objects referencing this state.
 		void release_token_ref() noexcept;
 
-		/// Increment the reference count of cancellation_source objects.
+		/// Increment the reference count of CancellationSource objects.
 		void add_source_ref() noexcept;
 
 		/// Decrement the reference count of cancellation_souce objects.
 		///
-		/// The cancellation_state will no longer be cancellable once the
-		/// cancellation_source ref count reaches zero.
+		/// The CancellationState will no longer be cancellable once the
+		/// CancellationSource ref count reaches zero.
 		void release_source_ref() noexcept;
 
-		/// Query if the cancellation_state can have cancellation requested.
+		/// Query if the CancellationState can have cancellation requested.
 		///
 		/// \return
-		/// Returns true if there are no more references to a cancellation_source
+		/// Returns true if there are no more references to a CancellationSource
 		/// object.
 		bool can_be_cancelled() const noexcept;
 
@@ -78,7 +78,7 @@ namespace qor{	namespace detail{
 		/// registered callbacks.
 		void request_cancellation();
 
-		/// Try to register the cancellation_registration as a callback to be executed
+		/// Try to register the CancellationRegistration as a callback to be executed
 		/// when cancellation is requested.
 		///
 		/// \return
@@ -87,18 +87,18 @@ namespace qor{	namespace detail{
 		///
 		/// \throw std::bad_alloc
 		/// If callback was unable to be registered due to insufficient memory.
-		bool try_register_callback(cancellation_registration* registration);
+		bool try_register_callback(CancellationRegistration* registration);
 
 		/// Deregister a callback previously registered successfully in a call to try_register_callback().
 		///
 		/// If the callback is currently being executed on another
 		/// thread that is concurrently calling request_cancellation()
 		/// then this call will block until the callback has finished executing.
-		void deregister_callback(cancellation_registration* registration) noexcept;
+		void deregister_callback(CancellationRegistration* registration) noexcept;
 
 	private:
 
-		cancellation_state() noexcept;
+		CancellationState() noexcept;
 
 		bool is_cancellation_notification_complete() const noexcept;
 
@@ -112,11 +112,11 @@ namespace qor{	namespace detail{
 		// A value that has:
 		// - bit 0 - indicates whether cancellation has been requested.
 		// - bit 1 - indicates whether cancellation notification is complete.
-		// - bits 2-32 - ref-count for cancellation_source instances.
-		// - bits 33-63 - ref-count for cancellation_token/cancellation_registration instances.
+		// - bits 2-32 - ref-count for CancellationSource instances.
+		// - bits 33-63 - ref-count for CancellationToken/CancellationRegistration instances.
 		std::atomic<std::uint64_t> m_state;
 
-		std::atomic<cancellation_registration_state*> m_registrationState;
+		std::atomic<CancellationRegistrationState*> m_registrationState;
 
 	};
 

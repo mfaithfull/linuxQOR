@@ -6,9 +6,9 @@
 #define CPPCORO_RESUME_ON_HPP_INCLUDED
 
 #include <cppcoro/task.hpp>
-#include <cppcoro/async_generator.hpp>
-#include <cppcoro/awaitable_traits.hpp>
-#include <cppcoro/detail/get_awaiter.hpp>
+#include <cppcoro/AsyncGenerator.hpp>
+#include <cppcoro/awaitable_of.hpp>
+#include <cppcoro/detail/GetAwaiter.hpp>
 
 #include <exception>
 #include <type_traits>
@@ -40,7 +40,7 @@ namespace cppcoro
 	template<
 		typename SCHEDULER,
 		typename AWAITABLE,
-		typename AWAIT_RESULT = detail::remove_rvalue_reference_t<typename awaitable_traits<AWAITABLE>::await_result_t>,
+		typename AWAIT_RESULT = detail::remove_rvalue_reference_t<typename awaitable_of<AWAITABLE>::await_result_t>,
 		std::enable_if_t<!std::is_void_v<AWAIT_RESULT>, int> = 0>
 	auto resume_on(SCHEDULER& scheduler, AWAITABLE awaitable)
 		-> task<AWAIT_RESULT>
@@ -55,7 +55,7 @@ namespace cppcoro
 			// in the awaiter that would otherwise be a temporary
 			// and destructed before the value could be returned.
 
-			auto&& awaiter = detail::get_awaiter(static_cast<AWAITABLE&&>(awaitable));
+			auto&& awaiter = detail::GetAwaiter(static_cast<AWAITABLE&&>(awaitable));
 
 			auto&& result = co_await static_cast<decltype(awaiter)>(awaiter);
 
@@ -86,7 +86,7 @@ namespace cppcoro
 	template<
 		typename SCHEDULER,
 		typename AWAITABLE,
-		typename AWAIT_RESULT = detail::remove_rvalue_reference_t<typename awaitable_traits<AWAITABLE>::await_result_t>,
+		typename AWAIT_RESULT = detail::remove_rvalue_reference_t<typename awaitable_of<AWAITABLE>::await_result_t>,
 		std::enable_if_t<std::is_void_v<AWAIT_RESULT>, int> = 0>
 	auto resume_on(SCHEDULER& scheduler, AWAITABLE awaitable)
 		-> task<>
@@ -115,7 +115,7 @@ namespace cppcoro
 	}
 
 	template<typename SCHEDULER, typename T>
-	async_generator<T> resume_on(SCHEDULER& scheduler, async_generator<T> source)
+	AsyncGenerator<T> resume_on(SCHEDULER& scheduler, AsyncGenerator<T> source)
 	{
 		for (auto iter = co_await source.begin(); iter != source.end(); co_await ++iter)
 		{

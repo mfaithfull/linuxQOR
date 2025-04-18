@@ -37,7 +37,7 @@ namespace qor{	namespace detail{
 		template<typename FUNC, typename AWAITABLE>
 		class fmap_awaiter
 		{
-			using awaiter_t = typename awaitable_traits<AWAITABLE&&>::awaiter_t;
+			using awaiter_t = typename awaitable_of<AWAITABLE&&>::awaiter_t;
             FUNC&& m_func;
             awaiter_t m_awaiter;
 
@@ -46,9 +46,9 @@ namespace qor{	namespace detail{
 			fmap_awaiter(FUNC&& func, AWAITABLE&& awaitable)
 				noexcept(
 					std::is_nothrow_move_constructible_v<awaiter_t> &&
-					noexcept(detail::get_awaiter(static_cast<AWAITABLE&&>(awaitable))))
+					noexcept(detail::GetAwaiter(static_cast<AWAITABLE&&>(awaitable))))
 				: m_func(static_cast<FUNC&&>(func))
-				, m_awaiter(detail::get_awaiter(static_cast<AWAITABLE&&>(awaitable))){}
+				, m_awaiter(detail::GetAwaiter(static_cast<AWAITABLE&&>(awaitable))){}
 
 			decltype(auto) await_ready()
 				noexcept(noexcept(static_cast<awaiter_t&&>(m_awaiter).await_ready()))

@@ -3,7 +3,7 @@
 // Licenced under MIT license. See LICENSE.txt for details.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <cppcoro/schedule_on.hpp>
+#include <cppcoro/ScheduleOn.hpp>
 #include <cppcoro/resume_on.hpp>
 #include <cppcoro/io_service.hpp>
 #include <cppcoro/sync_wait.hpp>
@@ -18,7 +18,7 @@
 
 TEST_SUITE_BEGIN("schedule/resume_on");
 
-TEST_CASE_FIXTURE(io_service_fixture, "schedule_on task<> function")
+TEST_CASE_FIXTURE(io_service_fixture, "ScheduleOn task<> function")
 {
 	auto mainThreadId = std::this_thread::get_id();
 
@@ -35,7 +35,7 @@ TEST_CASE_FIXTURE(io_service_fixture, "schedule_on task<> function")
 	{
 		qor_pp_assert_that(std::this_thread::get_id() == mainThreadId);
 
-		co_await schedule_on(io_service(), start());
+		co_await ScheduleOn(io_service(), start());
 
 		// TODO: Uncomment this check once the implementation of task<T>
 		// guarantees that the continuation will resume on the same thread
@@ -51,13 +51,13 @@ TEST_CASE_FIXTURE(io_service_fixture, "schedule_on task<> function")
 	}());
 }
 
-TEST_CASE_FIXTURE(io_service_fixture, "schedule_on async_generator<> function")
+TEST_CASE_FIXTURE(io_service_fixture, "ScheduleOn AsyncGenerator<> function")
 {
 	auto mainThreadId = std::this_thread::get_id();
 
 	std::thread::id ioThreadId;
 
-	auto makeSequence = [&]() -> async_generator<int>
+	auto makeSequence = [&]() -> AsyncGenerator<int>
 	{
 		ioThreadId = std::this_thread::get_id();
 		qor_pp_assert_that(ioThreadId != mainThreadId);
@@ -84,7 +84,7 @@ TEST_CASE_FIXTURE(io_service_fixture, "schedule_on async_generator<> function")
 	{
 		qor_pp_assert_that(std::this_thread::get_id() == mainThreadId);
 
-		auto seq = schedule_on(io_service(), makeSequence());
+		auto seq = ScheduleOn(io_service(), makeSequence());
 
 		int expected = 1;
 		for (auto iter = co_await seq.begin(); iter != seq.end(); co_await ++iter)
@@ -94,7 +94,7 @@ TEST_CASE_FIXTURE(io_service_fixture, "schedule_on async_generator<> function")
 
 			// Transfer exection back to main thread before
 			// awaiting next item in the loop to chck that
-			// the generator is resumed on io_service() thread.
+			// the Generator is resumed on io_service() thread.
 			co_await otherIoService.schedule();
 		}
 
@@ -138,14 +138,14 @@ constexpr bool isMsvc15_4X86Optimised =
 
 // Disable under MSVC 15.4 X86 Optimised due to presumed compiler bug that causes
 // an access violation. Seems to be fixed under MSVC 15.5.
-TEST_CASE_FIXTURE(io_service_fixture, "resume_on async_generator<> function"
+TEST_CASE_FIXTURE(io_service_fixture, "resume_on AsyncGenerator<> function"
 	* doctest::skip{ isMsvc15_4X86Optimised })
 {
 	auto mainThreadId = std::this_thread::get_id();
 
 	std::thread::id ioThreadId;
 
-	auto makeSequence = [&]() -> async_generator<int>
+	auto makeSequence = [&]() -> AsyncGenerator<int>
 	{
 		co_await io_service().schedule();
 
@@ -203,7 +203,7 @@ TEST_CASE_FIXTURE(io_service_fixture, "resume_on async_generator<> function"
 	}()));
 }
 
-TEST_CASE_FIXTURE(io_service_fixture, "schedule_on task<> pipe syntax")
+TEST_CASE_FIXTURE(io_service_fixture, "ScheduleOn task<> pipe syntax")
 {
 	auto mainThreadId = std::this_thread::get_id();
 
@@ -219,12 +219,12 @@ TEST_CASE_FIXTURE(io_service_fixture, "schedule_on task<> pipe syntax")
 		return x * 3;
 	};
 
-	qor_pp_assert_that(sync_wait(makeTask() | schedule_on(io_service())) == 123);
+	qor_pp_assert_that(sync_wait(makeTask() | ScheduleOn(io_service())) == 123);
 
-	// Shouldn't matter where in sequence schedule_on() appears since it applies
+	// Shouldn't matter where in sequence ScheduleOn() appears since it applies
 	// at the start of the pipeline (ie. before first task starts).
-	qor_pp_assert_that(sync_wait(makeTask() | schedule_on(io_service()) | fmap(triple)) == 369);
-	qor_pp_assert_that(sync_wait(makeTask() | fmap(triple) | schedule_on(io_service())) == 369);
+	qor_pp_assert_that(sync_wait(makeTask() | ScheduleOn(io_service()) | fmap(triple)) == 369);
+	qor_pp_assert_that(sync_wait(makeTask() | fmap(triple) | ScheduleOn(io_service())) == 369);
 }
 
 TEST_CASE_FIXTURE(io_service_fixture, "resume_on task<> pipe syntax")

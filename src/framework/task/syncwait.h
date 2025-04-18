@@ -36,7 +36,7 @@ namespace qor
 {
 	template<typename AWAITABLE>
 	auto sync_wait(AWAITABLE&& awaitable)
-		-> typename awaitable_traits<AWAITABLE&&>::await_result_t
+		-> typename awaitable_of<AWAITABLE&&>::await_result_t
 	{
 		auto task = detail::make_sync_wait_task(std::forward<AWAITABLE>(awaitable));
 		detail::LightManualResetEvent event;

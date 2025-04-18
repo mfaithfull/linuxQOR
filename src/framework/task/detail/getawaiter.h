@@ -33,7 +33,7 @@
 namespace qor{	namespace detail{
 
     template<typename T>
-    auto get_awaiter_impl(T&& value, int)
+    auto GetAwaiterImpl(T&& value, int)
         noexcept(noexcept(static_cast<T&&>(value).operator co_await()))
         -> decltype(static_cast<T&&>(value).operator co_await())
     {
@@ -41,7 +41,7 @@ namespace qor{	namespace detail{
     }
 
     template<typename T>
-    auto get_awaiter_impl(T&& value, long)
+    auto GetAwaiterImpl(T&& value, long)
         noexcept(noexcept(operator co_await(static_cast<T&&>(value))))
         -> decltype(operator co_await(static_cast<T&&>(value)))
     {
@@ -49,17 +49,17 @@ namespace qor{	namespace detail{
     }
 
     template<typename T, std::enable_if_t<qor::detail::is_awaiter<T&&>::value, int> = 0>
-    T&& get_awaiter_impl(T&& value, qor::detail::any) noexcept
+    T&& GetAwaiterImpl(T&& value, qor::detail::any) noexcept
     {
         return static_cast<T&&>(value);
     }
 
     template<typename T>
-    auto get_awaiter(T&& value)
-        noexcept(noexcept(detail::get_awaiter_impl(static_cast<T&&>(value), 123)))
-        -> decltype(detail::get_awaiter_impl(static_cast<T&&>(value), 123))
+    auto GetAwaiter(T&& value)
+        noexcept(noexcept(detail::GetAwaiterImpl(static_cast<T&&>(value), 123)))
+        -> decltype(detail::GetAwaiterImpl(static_cast<T&&>(value), 123))
     {
-        return detail::get_awaiter_impl(static_cast<T&&>(value), 123);
+        return detail::GetAwaiterImpl(static_cast<T&&>(value), 123);
     }
 
 }}//qor::detail

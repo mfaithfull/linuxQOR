@@ -29,11 +29,11 @@
 
 namespace qor
 {
-	class inline_scheduler
+	class InlineScheduler
 	{
 	public:
 
-		inline_scheduler() noexcept = default;
+		InlineScheduler() noexcept = default;
 
 		std::suspend_never schedule() const noexcept
 		{

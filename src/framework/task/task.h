@@ -489,7 +489,7 @@ namespace qor
 
 	template<typename AWAITABLE>
 	auto make_task(AWAITABLE awaitable)
-		-> task<detail::remove_rvalue_reference_t<typename awaitable_traits<AWAITABLE>::await_result_t>>
+		-> task<detail::remove_rvalue_reference_t<typename awaitable_of<AWAITABLE>::await_result_t>>
 	{
 		co_return co_await static_cast<AWAITABLE&&>(awaitable);
 	}

@@ -26,8 +26,8 @@ namespace qor
 	[[nodiscard]]
 	qor_pp_forceinline auto when_all_ready(AWAITABLES&&... awaitables)
 	{
-		return detail::when_all_ready_awaitable<std::tuple<detail::when_all_task<
-			typename awaitable_traits<detail::unwrap_reference_t<std::remove_reference_t<AWAITABLES>>>::await_result_t>...>>(
+		return detail::WhenAllReadyAwaitable<std::tuple<detail::WhenAllTask<
+			typename awaitable_of<detail::unwrap_reference_t<std::remove_reference_t<AWAITABLES>>>::await_result_t>...>>(
 				std::make_tuple(detail::make_when_all_task(std::forward<AWAITABLES>(awaitables))...));
 	}
 
@@ -35,10 +35,10 @@ namespace qor
 
 	template<
 		typename AWAITABLE,
-		typename RESULT = typename awaitable_traits<detail::unwrap_reference_t<AWAITABLE>>::await_result_t>
+		typename RESULT = typename awaitable_of<detail::unwrap_reference_t<AWAITABLE>>::await_result_t>
 	[[nodiscard]] auto when_all_ready(std::vector<AWAITABLE> awaitables)
 	{
-		std::vector<detail::when_all_task<RESULT>> tasks;
+		std::vector<detail::WhenAllTask<RESULT>> tasks;
 
 		tasks.reserve(awaitables.size());
 
@@ -47,7 +47,7 @@ namespace qor
 			tasks.emplace_back(detail::make_when_all_task(std::move(awaitable)));
 		}
 
-		return detail::when_all_ready_awaitable<std::vector<detail::when_all_task<RESULT>>>(
+		return detail::WhenAllReadyAwaitable<std::vector<detail::WhenAllTask<RESULT>>>(
 			std::move(tasks));
 	}
 }

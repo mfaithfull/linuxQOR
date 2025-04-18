@@ -31,7 +31,7 @@
 
 namespace qor {
 
-	cancellation_registration::~cancellation_registration()
+	CancellationRegistration::~CancellationRegistration()
 	{
 		if (m_state != nullptr)
 		{
@@ -40,7 +40,7 @@ namespace qor {
 		}
 	}
 
-	void cancellation_registration::register_callback(cancellation_token&& token)
+	void CancellationRegistration::register_callback(CancellationToken&& token)
 	{
 		auto* state = token.m_state;
 		if (state != nullptr && state->can_be_cancelled())

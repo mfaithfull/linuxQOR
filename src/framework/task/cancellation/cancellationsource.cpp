@@ -31,11 +31,11 @@
 
 namespace qor{
 
-	cancellation_source::cancellation_source() : m_state(detail::cancellation_state::create())
+	CancellationSource::CancellationSource() : m_state(detail::CancellationState::create())
 	{
 	}
 
-	cancellation_source::cancellation_source(const cancellation_source& other) noexcept : m_state(other.m_state)
+	CancellationSource::CancellationSource(const CancellationSource& other) noexcept : m_state(other.m_state)
 	{
 		if (m_state != nullptr)
 		{
@@ -43,12 +43,12 @@ namespace qor{
 		}
 	}
 
-	cancellation_source::cancellation_source(cancellation_source&& other) noexcept : m_state(other.m_state)
+	CancellationSource::CancellationSource(CancellationSource&& other) noexcept : m_state(other.m_state)
 	{
 		other.m_state = nullptr;
 	}
 
-	cancellation_source::~cancellation_source()
+	CancellationSource::~CancellationSource()
 	{
 		if (m_state != nullptr)
 		{
@@ -56,7 +56,7 @@ namespace qor{
 		}
 	}
 
-	cancellation_source& cancellation_source::operator=(const cancellation_source& other) noexcept
+	CancellationSource& CancellationSource::operator=(const CancellationSource& other) noexcept
 	{
 		if (m_state != other.m_state)
 		{
@@ -76,7 +76,7 @@ namespace qor{
 		return *this;
 	}
 
-	cancellation_source& cancellation_source::operator=(cancellation_source&& other) noexcept
+	CancellationSource& CancellationSource::operator=(CancellationSource&& other) noexcept
 	{
 		if (this != &other)
 		{
@@ -92,17 +92,17 @@ namespace qor{
 		return *this;
 	}
 
-	bool cancellation_source::can_be_cancelled() const noexcept
+	bool CancellationSource::can_be_cancelled() const noexcept
 	{
 		return m_state != nullptr;
 	}
 
-	cancellation_token cancellation_source::token() const noexcept
+	CancellationToken CancellationSource::token() const noexcept
 	{
-		return cancellation_token(m_state);
+		return CancellationToken(m_state);
 	}
 
-	void cancellation_source::request_cancellation()
+	void CancellationSource::request_cancellation()
 	{
 		if (m_state != nullptr)
 		{
@@ -110,7 +110,7 @@ namespace qor{
 		}
 	}
 
-	bool cancellation_source::is_cancellation_requested() const noexcept
+	bool CancellationSource::is_cancellation_requested() const noexcept
 	{
 		return m_state != nullptr && m_state->is_cancellation_requested();
 	}

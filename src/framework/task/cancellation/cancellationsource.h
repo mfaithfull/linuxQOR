@@ -27,37 +27,37 @@
 
 namespace qor
 {
-	class cancellation_token;
+	class CancellationToken;
 
 	namespace detail
 	{
-		class cancellation_state;
+		class CancellationState;
 	}
 
-	class qor_pp_module_interface(QOR_TASK) cancellation_source
+	class qor_pp_module_interface(QOR_TASK) CancellationSource
 	{
 	public:
 
 		/// Construct to a new cancellation source.
-		cancellation_source();
+		CancellationSource();
 
 		/// Create a new reference to the same underlying cancellation
 		/// source as \p other.
-		cancellation_source(const cancellation_source& other) noexcept;
+		CancellationSource(const CancellationSource& other) noexcept;
 
-		cancellation_source(cancellation_source&& other) noexcept;
+		CancellationSource(CancellationSource&& other) noexcept;
 
-		~cancellation_source();
+		~CancellationSource();
 
-		cancellation_source& operator=(const cancellation_source& other) noexcept;
+		CancellationSource& operator=(const CancellationSource& other) noexcept;
 
-		cancellation_source& operator=(cancellation_source&& other) noexcept;
+		CancellationSource& operator=(CancellationSource&& other) noexcept;
 
 		/// Query if this cancellation source can be cancelled.
 		///
 		/// A cancellation source object will not be cancellable if it has
-		/// previously been moved into another cancellation_source instance
-		/// or was copied from a cancellation_source that was not cancellable.
+		/// previously been moved into another CancellationSource instance
+		/// or was copied from a CancellationSource that was not cancellable.
 		bool can_be_cancelled() const noexcept;
 
 		/// Obtain a cancellation token that can be used to query if
@@ -65,12 +65,12 @@ namespace qor
 		///
 		/// The cancellation token can be passed into functions that you
 		/// may want to later be able to request cancellation.
-		cancellation_token token() const noexcept;
+		CancellationToken token() const noexcept;
 
 		/// Request cancellation of operations that were passed an associated
 		/// cancellation token.
 		///
-		/// Any cancellation callback registered via a cancellation_registration
+		/// Any cancellation callback registered via a CancellationRegistration
 		/// object will be called inside this function by the first thread to
 		/// call this method.
 		///
@@ -78,12 +78,12 @@ namespace qor
 		void request_cancellation();
 
 		/// Query if some thread has called 'request_cancellation()' on this
-		/// cancellation_source.
+		/// CancellationSource.
 		bool is_cancellation_requested() const noexcept;
 
 	private:
 
-		detail::cancellation_state* m_state;
+		detail::CancellationState* m_state;
 
 	};
 

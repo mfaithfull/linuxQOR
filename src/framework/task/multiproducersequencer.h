@@ -455,7 +455,7 @@ namespace qor
 				m_scheduleOperation.construct(m_scheduler.schedule());
 				m_isScheduleOperationCreated = true;
 
-				m_scheduleAwaiter.construct(detail::get_awaiter(
+				m_scheduleAwaiter.construct(detail::GetAwaiter(
 					static_cast<schedule_operation&&>(*m_scheduleOperation)));
 				m_isScheduleAwaiterCreated = true;
 
@@ -496,7 +496,7 @@ namespace qor
 		SCHEDULER& m_scheduler;
 		// Can't use std::optional<T> here since T could be a reference.
 		detail::manual_lifetime<schedule_operation> m_scheduleOperation;
-		detail::manual_lifetime<typename awaitable_traits<schedule_operation>::awaiter_t> m_scheduleAwaiter;
+		detail::manual_lifetime<typename awaitable_of<schedule_operation>::awaiter_t> m_scheduleAwaiter;
 		bool m_isScheduleOperationCreated = false;
 		bool m_isScheduleAwaiterCreated = false;
 

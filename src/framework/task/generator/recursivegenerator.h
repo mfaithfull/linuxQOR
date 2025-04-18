@@ -36,7 +36,7 @@
 namespace qor
 {
 	template<typename T>
-	class [[nodiscard]] recursive_generator
+	class [[nodiscard]] RecursiveGenerator
 	{
 	public:
 
@@ -55,7 +55,7 @@ namespace qor
 
 			auto get_return_object() noexcept
 			{
-				return recursive_generator<T>{ *this };
+				return RecursiveGenerator<T>{ *this };
 			}
 
 			std::suspend_always initial_suspend() noexcept
@@ -87,12 +87,12 @@ namespace qor
 				return {};
 			}
 
-			auto yield_value(recursive_generator&& generator) noexcept
+			auto yield_value(RecursiveGenerator&& Generator) noexcept
 			{
-				return yield_value(generator);
+				return yield_value(Generator);
 			}
 
-			auto yield_value(recursive_generator& generator) noexcept
+			auto yield_value(RecursiveGenerator& Generator) noexcept
 			{
 				struct awaitable
 				{
@@ -117,16 +117,16 @@ namespace qor
 					promise_type* m_childPromise;
 				};
 
-				if (generator.m_promise != nullptr)
+				if (Generator.m_promise != nullptr)
 				{
-					m_root->m_parentOrLeaf = generator.m_promise;
-					generator.m_promise->m_root = m_root;
-					generator.m_promise->m_parentOrLeaf = this;
-					generator.m_promise->resume();
+					m_root->m_parentOrLeaf = Generator.m_promise;
+					Generator.m_promise->m_root = m_root;
+					Generator.m_promise->m_parentOrLeaf = this;
+					Generator.m_promise->resume();
 
-					if (!generator.m_promise->is_complete())
+					if (!Generator.m_promise->is_complete())
 					{
-						return awaitable{ generator.m_promise };
+						return awaitable{ Generator.m_promise };
 					}
 
 					m_root->m_parentOrLeaf = this;
@@ -135,7 +135,7 @@ namespace qor
 				return awaitable{ nullptr };
 			}
 
-			// Don't allow any use of 'co_await' inside the recursive_generator coroutine.
+			// Don't allow any use of 'co_await' inside the RecursiveGenerator coroutine.
 			template<typename U>
 			std::suspend_never await_transform(U&& value) = delete;
 
@@ -190,26 +190,26 @@ namespace qor
 
 			promise_type* m_root;
 
-			// If this is the promise of the root generator then this field
+			// If this is the promise of the root Generator then this field
 			// is a pointer to the leaf promise.
 			// For non-root generators this is a pointer to the parent promise.
 			promise_type* m_parentOrLeaf;
 
 		};
 
-		recursive_generator() noexcept : m_promise(nullptr)	{}
+		RecursiveGenerator() noexcept : m_promise(nullptr)	{}
 
-		recursive_generator(promise_type& promise) noexcept : m_promise(&promise) {}
+		RecursiveGenerator(promise_type& promise) noexcept : m_promise(&promise) {}
 
-		recursive_generator(recursive_generator&& other) noexcept : m_promise(other.m_promise)
+		RecursiveGenerator(RecursiveGenerator&& other) noexcept : m_promise(other.m_promise)
 		{
 			other.m_promise = nullptr;
 		}
 
-		recursive_generator(const recursive_generator& other) = delete;
-		recursive_generator& operator=(const recursive_generator& other) = delete;
+		RecursiveGenerator(const RecursiveGenerator& other) = delete;
+		RecursiveGenerator& operator=(const RecursiveGenerator& other) = delete;
 
-		~recursive_generator()
+		~RecursiveGenerator()
 		{
 			if (m_promise != nullptr)
 			{
@@ -217,7 +217,7 @@ namespace qor
 			}
 		}
 
-		recursive_generator& operator=(recursive_generator&& other) noexcept
+		RecursiveGenerator& operator=(RecursiveGenerator&& other) noexcept
 		{
 			if (this != &other)
 			{
@@ -317,7 +317,7 @@ namespace qor
 			return iterator(nullptr);
 		}
 
-		void swap(recursive_generator& other) noexcept
+		void swap(RecursiveGenerator& other) noexcept
 		{
 			std::swap(m_promise, other.m_promise);
 		}
@@ -331,15 +331,15 @@ namespace qor
 	};
 
 	template<typename T>
-	void swap(recursive_generator<T>& a, recursive_generator<T>& b) noexcept
+	void swap(RecursiveGenerator<T>& a, RecursiveGenerator<T>& b) noexcept
 	{
 		a.swap(b);
 	}
 
-	// Note: When applying fmap operator to a recursive_generator we just yield a non-recursive
-	// generator since we generally won't be using the result in a recursive context.
+	// Note: When applying fmap operator to a RecursiveGenerator we just yield a non-recursive
+	// Generator since we generally won't be using the result in a recursive context.
 	template<typename FUNC, typename T>
-	generator<std::invoke_result_t<FUNC&, typename recursive_generator<T>::iterator::reference>> fmap(FUNC func, recursive_generator<T> source)
+	Generator<std::invoke_result_t<FUNC&, typename RecursiveGenerator<T>::iterator::reference>> fmap(FUNC func, RecursiveGenerator<T> source)
 	{
 		for (auto&& value : source)
 		{

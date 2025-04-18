@@ -42,7 +42,7 @@ namespace qor
 
 	template<
 		typename AWAITABLE,
-		typename RESULT = typename awaitable_traits<detail::unwrap_reference_t<AWAITABLE>>::await_result_t,
+		typename RESULT = typename awaitable_of<detail::unwrap_reference_t<AWAITABLE>>::await_result_t,
 		std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
 	[[nodiscard]]
 	auto when_all(std::vector<AWAITABLE> awaitables)
@@ -57,7 +57,7 @@ namespace qor
 
 	template<
 		typename AWAITABLE,
-		typename RESULT = typename awaitable_traits<detail::unwrap_reference_t<AWAITABLE>>::await_result_t,
+		typename RESULT = typename awaitable_of<detail::unwrap_reference_t<AWAITABLE>>::await_result_t,
 		std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
 	[[nodiscard]]
 	auto when_all(std::vector<AWAITABLE> awaitables)

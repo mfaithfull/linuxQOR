@@ -35,41 +35,39 @@
 namespace qor
 {
 	template<typename SCHEDULER>
-	struct schedule_on_transform
+	struct ScheduleOnTransform
 	{
-		explicit schedule_on_transform(SCHEDULER& scheduler) noexcept
-			: scheduler(scheduler)
-		{}
+		explicit ScheduleOnTransform(SCHEDULER& scheduler) noexcept : scheduler(scheduler) {}
 
 		SCHEDULER& scheduler;
 	};
 
 	template<typename SCHEDULER>
-	schedule_on_transform<SCHEDULER> schedule_on(SCHEDULER& scheduler)
+	ScheduleOnTransform<SCHEDULER> ScheduleOn(SCHEDULER& scheduler)
 	{
-		return schedule_on_transform<SCHEDULER>{ scheduler };
+		return ScheduleOnTransform<SCHEDULER>{ scheduler };
 	}
 
 	template<typename T, typename SCHEDULER>
-	decltype(auto) operator|(T&& value, schedule_on_transform<SCHEDULER> transform)
+	decltype(auto) operator|(T&& value, ScheduleOnTransform<SCHEDULER> transform)
 	{
-		return schedule_on(transform.scheduler, std::forward<T>(value));
+		return ScheduleOn(transform.scheduler, std::forward<T>(value));
 	}
 
 	template<typename SCHEDULER, typename AWAITABLE>
-	auto schedule_on(SCHEDULER& scheduler, AWAITABLE awaitable)
-		-> task<detail::remove_rvalue_reference_t<typename awaitable_traits<AWAITABLE>::await_result_t>>
+	auto ScheduleOn(SCHEDULER& scheduler, AWAITABLE awaitable)
+		-> task<detail::remove_rvalue_reference_t<typename awaitable_of<AWAITABLE>::await_result_t>>
 	{
 		co_await scheduler.schedule();
 		co_return co_await std::move(awaitable);
 	}
 
 	template<typename T, typename SCHEDULER>
-	async_generator<T> schedule_on(SCHEDULER& scheduler, async_generator<T> source)
+	AsyncGenerator<T> ScheduleOn(SCHEDULER& scheduler, AsyncGenerator<T> source)
 	{
 		// Transfer exection to the scheduler before the implicit calls to
 		// 'co_await begin()' or subsequent calls to `co_await iterator::operator++()`
-		// below. This ensures that all calls to the generator's coroutine_handle<>::resume()
+		// below. This ensures that all calls to the Generator's coroutine_handle<>::resume()
 		// are executed on the execution context of the scheduler.
 		co_await scheduler.schedule();
 

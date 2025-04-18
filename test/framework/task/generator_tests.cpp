@@ -43,13 +43,13 @@ struct GeneratorTestSuite{};
 
 qor_pp_test_suite_case(GeneratorTestSuite, default_constructed_generator_is_empty_sequence)
 {
-	generator<int> ints;
+	Generator<int> ints;
 	qor_pp_assert_that(ints.begin() == ints.end());
 }
 
 qor_pp_test_suite_case(GeneratorTestSuite, generator_of_arithmetic_type_returns_by_copy)
 {
-	auto f = []() -> generator<float>
+	auto f = []() -> Generator<float>
 	{
 		co_yield 1.0f;
 		co_yield 2.0f;
@@ -67,7 +67,7 @@ qor_pp_test_suite_case(GeneratorTestSuite, generator_of_arithmetic_type_returns_
 
 qor_pp_test_suite_case(GeneratorTestSuite, generator_of_reference_returns_by_reference)
 {
-	auto f = [](float& value) -> generator<float&>
+	auto f = [](float& value) -> Generator<float&>
 	{
 		co_yield value;
 	};
@@ -84,7 +84,7 @@ qor_pp_test_suite_case(GeneratorTestSuite, generator_of_reference_returns_by_ref
 
 qor_pp_test_suite_case(GeneratorTestSuite, generator_of_const_type)
 {
-	auto fib = []() -> generator<const std::uint64_t>
+	auto fib = []() -> Generator<const std::uint64_t>
 	{
 		std::uint64_t a = 0, b = 1;
 		while (true)
@@ -142,12 +142,12 @@ qor_pp_test_suite_case(GeneratorTestSuite, value_category_of_fmap_matches_refere
         }
     };
 
-    consume([]() -> generator<int> { co_yield 123; }() | fmap(checkIsLvalue));
-    consume([]() -> generator<const int> { co_yield 123; }() | fmap(checkIsConstLvalue));
-    consume([]() -> generator<int&> { co_yield 123; }() | fmap(checkIsLvalue));
-    consume([]() -> generator<const int&> { co_yield 123; }() | fmap(checkIsConstLvalue));
-    consume([]() -> generator<int&&> { co_yield 123; }() | fmap(checkIsRvalue));
-    consume([]() -> generator<const int&&> { co_yield 123; }() | fmap(checkIsConstRvalue));
+    consume([]() -> Generator<int> { co_yield 123; }() | fmap(checkIsLvalue));
+    consume([]() -> Generator<const int> { co_yield 123; }() | fmap(checkIsConstLvalue));
+    consume([]() -> Generator<int&> { co_yield 123; }() | fmap(checkIsLvalue));
+    consume([]() -> Generator<const int&> { co_yield 123; }() | fmap(checkIsConstLvalue));
+    consume([]() -> Generator<int&&> { co_yield 123; }() | fmap(checkIsRvalue));
+    consume([]() -> Generator<const int&&> { co_yield 123; }() | fmap(checkIsConstRvalue));
 }
 
 qor_pp_test_suite_case(GeneratorTestSuite, generator_doesnt_start_until_its_called)
@@ -155,7 +155,7 @@ qor_pp_test_suite_case(GeneratorTestSuite, generator_doesnt_start_until_its_call
 	bool reachedA = false;
 	bool reachedB = false;
 	bool reachedC = false;
-	auto f = [&]() -> generator<int>
+	auto f = [&]() -> Generator<int>
 	{
 		reachedA = true;
 		co_yield 1;
@@ -183,7 +183,7 @@ qor_pp_test_suite_case(GeneratorTestSuite, destroying_generator_before_completio
 {
 	bool destructed = false;
 	bool completed = false;
-	auto f = [&]() -> generator<int>
+	auto f = [&]() -> Generator<int>
 	{
 		auto onExit = on_scope_exit([&]
 		{
@@ -212,7 +212,7 @@ qor_pp_test_suite_case(GeneratorTestSuite, generator_throwing_before_yielding_fi
 {
 	class X {};
 
-	auto g = []() -> generator<int>
+	auto g = []() -> Generator<int>
 	{
 		throw X{};
 		co_return;
@@ -232,7 +232,7 @@ qor_pp_test_suite_case(GeneratorTestSuite, generator_throwing_after_first_elemen
 {
 	class X {};
 
-	auto g = []() -> generator<int>
+	auto g = []() -> Generator<int>
 	{
 		co_yield 1;
 		throw X{};
@@ -256,7 +256,7 @@ namespace
 	auto concat(FIRST&& first, SECOND&& second)
 	{
 		using value_type = std::remove_reference_t<decltype(*first.begin())>;
-		return [](FIRST first, SECOND second) -> generator<value_type>
+		return [](FIRST first, SECOND second) -> Generator<value_type>
 		{
 			for (auto&& x : first) co_yield x;
 			for (auto&& y : second) co_yield y;
@@ -286,7 +286,7 @@ qor_pp_test_suite_case(GeneratorTestSuite, safe_capture_of_r_value_reference_arg
 
 namespace
 {
-	generator<int> range(int start, int end)
+	Generator<int> range(int start, int end)
 	{
 		for (; start < end; ++start)
 		{
@@ -297,7 +297,7 @@ namespace
 
 qor_pp_test_suite_case(GeneratorTestSuite, fmap_operator)
 {
-	generator<int> gen = range(0, 5)
+	Generator<int> gen = range(0, 5)
 		| fmap([](int x) { return x * 3; });
 
 	auto it = gen.begin();
@@ -312,7 +312,7 @@ qor_pp_test_suite_case(GeneratorTestSuite, fmap_operator)
 namespace
 {
 	template<std::size_t window, typename Range>
-	generator<const double> low_pass(Range rng)
+	Generator<const double> low_pass(Range rng)
 	{
 		auto it = std::begin(rng);
 		const auto itEnd = std::end(rng);

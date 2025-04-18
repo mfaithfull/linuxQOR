@@ -36,19 +36,19 @@
 namespace qor{	namespace detail{
 
 	template<typename TASK_CONTAINER>
-	class when_all_ready_awaitable;
+	class WhenAllReadyAwaitable;
 
 	template<typename RESULT>
-	class when_all_task;
+	class WhenAllTask;
 
 	template<typename RESULT>
-	class when_all_task_promise final
+	class WhenAllTaskPromise final
 	{
 	public:
 
-		using coroutine_handle_t = std::coroutine_handle<when_all_task_promise<RESULT>>;
+		using coroutine_handle_t = std::coroutine_handle<WhenAllTaskPromise<RESULT>>;
 
-		when_all_task_promise() noexcept {}
+		WhenAllTaskPromise() noexcept {}
 
 		auto get_return_object() noexcept
 		{
@@ -110,17 +110,17 @@ namespace qor{	namespace detail{
 			class awaiter
 			{
 			public:
-				awaiter(when_all_task_promise* promise) noexcept : m_promise(promise) {}
+				awaiter(WhenAllTaskPromise* promise) noexcept : m_promise(promise) {}
 				bool await_ready() noexcept {
 					return true;
 				}
 				void await_suspend(std::coroutine_handle<>) noexcept {}
-				when_all_task_promise& await_resume() noexcept
+				WhenAllTaskPromise& await_resume() noexcept
 				{
 					return *m_promise;
 				}
 			private:
-				when_all_task_promise* m_promise;
+				WhenAllTaskPromise* m_promise;
 			};
 			return awaiter{ this };
 		}
@@ -133,7 +133,7 @@ namespace qor{	namespace detail{
 			return final_suspend();
 		}
 
-		void start(when_all_counter& counter) noexcept
+		void start(WhenAllCounter& counter) noexcept
 		{
 			m_counter = &counter;
 			coroutine_handle_t::from_promise(*this).resume();
@@ -161,20 +161,20 @@ namespace qor{	namespace detail{
 			}
 		}
 
-		when_all_counter* m_counter;
+		WhenAllCounter* m_counter;
 		std::exception_ptr m_exception;
 		std::add_pointer_t<RESULT> m_result;
 
 	};
 
 	template<>
-	class when_all_task_promise<void> final
+	class WhenAllTaskPromise<void> final
 	{
 	public:
 
-		using coroutine_handle_t = std::coroutine_handle<when_all_task_promise<void>>;
+		using coroutine_handle_t = std::coroutine_handle<WhenAllTaskPromise<void>>;
 
-		when_all_task_promise() noexcept
+		WhenAllTaskPromise() noexcept
 		{}
 
 		auto get_return_object() noexcept
@@ -216,7 +216,7 @@ namespace qor{	namespace detail{
 		{
 		}
 
-		void start(when_all_counter& counter) noexcept
+		void start(WhenAllCounter& counter) noexcept
 		{
 			m_counter = &counter;
 			coroutine_handle_t::from_promise(*this).resume();
@@ -232,35 +232,35 @@ namespace qor{	namespace detail{
 
 	private:
 
-		when_all_counter* m_counter;
+		WhenAllCounter* m_counter;
 		std::exception_ptr m_exception;
 
 	};
 
 	template<typename RESULT>
-	class when_all_task final
+	class WhenAllTask final
 	{
 	public:
 
-		using promise_type = when_all_task_promise<RESULT>;
+		using promise_type = WhenAllTaskPromise<RESULT>;
 
 		using coroutine_handle_t = typename promise_type::coroutine_handle_t;
 
-		when_all_task(coroutine_handle_t coroutine) noexcept
+		WhenAllTask(coroutine_handle_t coroutine) noexcept
 			: m_coroutine(coroutine)
 		{}
 
-		when_all_task(when_all_task&& other) noexcept
+		WhenAllTask(WhenAllTask&& other) noexcept
 			: m_coroutine(std::exchange(other.m_coroutine, coroutine_handle_t{}))
 		{}
 
-		~when_all_task()
+		~WhenAllTask()
 		{
 			if (m_coroutine) m_coroutine.destroy();
 		}
 
-		when_all_task(const when_all_task&) = delete;
-		when_all_task& operator=(const when_all_task&) = delete;
+		WhenAllTask(const WhenAllTask&) = delete;
+		WhenAllTask& operator=(const WhenAllTask&) = delete;
 
 		decltype(auto) result() &
 		{
@@ -301,9 +301,9 @@ namespace qor{	namespace detail{
 	private:
 
 		template<typename TASK_CONTAINER>
-		friend class when_all_ready_awaitable;
+		friend class WhenAllReadyAwaitable;
 
-		void start(when_all_counter& counter) noexcept
+		void start(WhenAllCounter& counter) noexcept
 		{
 			m_coroutine.promise().start(counter);
 		}
@@ -314,9 +314,9 @@ namespace qor{	namespace detail{
 
 	template<
 		typename AWAITABLE,
-		typename RESULT = typename awaitable_traits<AWAITABLE&&>::await_result_t,
+		typename RESULT = typename awaitable_of<AWAITABLE&&>::await_result_t,
 		std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
-	when_all_task<RESULT> make_when_all_task(AWAITABLE awaitable)
+	WhenAllTask<RESULT> make_when_all_task(AWAITABLE awaitable)
 	{
 #if CPPCORO_COMPILER_MSVC
 		// HACK: Workaround another bug in MSVC where the expression 'co_yield co_await x' seems
@@ -324,7 +324,7 @@ namespace qor{	namespace detail{
 		// The coroutine seems to be resuming the 'co_await' after the 'co_yield'
 		// rather than before the 'co_yield'.
 		// This bug is present in VS 2017.7 and VS 2017.8.
-		auto& promise = co_await when_all_task_promise<RESULT>::get_promise;
+		auto& promise = co_await WhenAllTaskPromise<RESULT>::get_promise;
 		co_await promise.yield_value(co_await std::forward<AWAITABLE>(awaitable));
 #else
 		co_yield co_await static_cast<AWAITABLE&&>(awaitable);
@@ -333,18 +333,18 @@ namespace qor{	namespace detail{
 
 	template<
 		typename AWAITABLE,
-		typename RESULT = typename awaitable_traits<AWAITABLE&&>::await_result_t,
+		typename RESULT = typename awaitable_of<AWAITABLE&&>::await_result_t,
 		std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
-	when_all_task<void> make_when_all_task(AWAITABLE awaitable)
+	WhenAllTask<void> make_when_all_task(AWAITABLE awaitable)
 	{
 		co_await static_cast<AWAITABLE&&>(awaitable);
 	}
 
 	template<
 		typename AWAITABLE,
-		typename RESULT = typename awaitable_traits<AWAITABLE&>::await_result_t,
+		typename RESULT = typename awaitable_of<AWAITABLE&>::await_result_t,
 		std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
-	when_all_task<RESULT> make_when_all_task(std::reference_wrapper<AWAITABLE> awaitable)
+	WhenAllTask<RESULT> make_when_all_task(std::reference_wrapper<AWAITABLE> awaitable)
 	{
 #if CPPCORO_COMPILER_MSVC
 		// HACK: Workaround another bug in MSVC where the expression 'co_yield co_await x' seems
@@ -352,7 +352,7 @@ namespace qor{	namespace detail{
 		// The coroutine seems to be resuming the 'co_await' after the 'co_yield'
 		// rather than before the 'co_yield'.
 		// This bug is present in VS 2017.7 and VS 2017.8.
-		auto& promise = co_await when_all_task_promise<RESULT>::get_promise;
+		auto& promise = co_await WhenAllTaskPromise<RESULT>::get_promise;
 		co_await promise.yield_value(co_await awaitable.get());
 #else
 		co_yield co_await awaitable.get();
@@ -361,9 +361,9 @@ namespace qor{	namespace detail{
 
 	template<
 		typename AWAITABLE,
-		typename RESULT = typename awaitable_traits<AWAITABLE&>::await_result_t,
+		typename RESULT = typename awaitable_of<AWAITABLE&>::await_result_t,
 		std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
-	when_all_task<void> make_when_all_task(std::reference_wrapper<AWAITABLE> awaitable)
+	WhenAllTask<void> make_when_all_task(std::reference_wrapper<AWAITABLE> awaitable)
 	{
 		co_await awaitable.get();
 	}

@@ -36,18 +36,18 @@
 namespace qor{	namespace detail{
 
 		template<typename RESULT>
-		class sync_wait_task;
+		class SyncWaitTask;
 
 		template<typename RESULT>
-		class sync_wait_task_promise final
+		class SyncWaitTaskPromise final
 		{
-			using coroutine_handle_t = std::coroutine_handle<sync_wait_task_promise<RESULT>>;
+			using coroutine_handle_t = std::coroutine_handle<SyncWaitTaskPromise<RESULT>>;
 
 		public:
 
 			using reference = RESULT&&;
 
-			sync_wait_task_promise() noexcept {}
+			SyncWaitTaskPromise() noexcept {}
 
 			void start(detail::LightManualResetEvent& event)
 			{
@@ -121,13 +121,13 @@ namespace qor{	namespace detail{
 		};
 
 		template<>
-		class sync_wait_task_promise<void>
+		class SyncWaitTaskPromise<void>
 		{
-			using coroutine_handle_t = std::coroutine_handle<sync_wait_task_promise<void>>;
+			using coroutine_handle_t = std::coroutine_handle<SyncWaitTaskPromise<void>>;
 
 		public:
 
-			sync_wait_task_promise() noexcept
+			SyncWaitTaskPromise() noexcept
 			{}
 
 			void start(detail::LightManualResetEvent& event)
@@ -188,25 +188,25 @@ namespace qor{	namespace detail{
 		};
 
 		template<typename RESULT>
-		class sync_wait_task final
+		class SyncWaitTask final
 		{
 		public:
 
-			using promise_type = sync_wait_task_promise<RESULT>;
+			using promise_type = SyncWaitTaskPromise<RESULT>;
 
 			using coroutine_handle_t = std::coroutine_handle<promise_type>;
 
-			sync_wait_task(coroutine_handle_t coroutine) noexcept : m_coroutine(coroutine) {}
+			SyncWaitTask(coroutine_handle_t coroutine) noexcept : m_coroutine(coroutine) {}
 
-			sync_wait_task(sync_wait_task&& other) noexcept : m_coroutine(std::exchange(other.m_coroutine, coroutine_handle_t{})) {}
+			SyncWaitTask(SyncWaitTask&& other) noexcept : m_coroutine(std::exchange(other.m_coroutine, coroutine_handle_t{})) {}
 
-			~sync_wait_task()
+			~SyncWaitTask()
 			{
 				if (m_coroutine) m_coroutine.destroy();
 			}
 
-			sync_wait_task(const sync_wait_task&) = delete;
-			sync_wait_task& operator=(const sync_wait_task&) = delete;
+			SyncWaitTask(const SyncWaitTask&) = delete;
+			SyncWaitTask& operator=(const SyncWaitTask&) = delete;
 
 			void start(LightManualResetEvent& event) noexcept
 			{
@@ -226,18 +226,18 @@ namespace qor{	namespace detail{
 
 		template<
 			typename AWAITABLE,
-			typename RESULT = typename awaitable_traits<AWAITABLE&&>::await_result_t,
+			typename RESULT = typename awaitable_of<AWAITABLE&&>::await_result_t,
 			std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
-		sync_wait_task<RESULT> make_sync_wait_task(AWAITABLE&& awaitable)
+		SyncWaitTask<RESULT> make_sync_wait_task(AWAITABLE&& awaitable)
 		{
 			co_yield co_await std::forward<AWAITABLE>(awaitable);
 		}
 
 		template<
 			typename AWAITABLE,
-			typename RESULT = typename awaitable_traits<AWAITABLE&&>::await_result_t,
+			typename RESULT = typename awaitable_of<AWAITABLE&&>::await_result_t,
 			std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
-		sync_wait_task<void> make_sync_wait_task(AWAITABLE&& awaitable)
+		SyncWaitTask<void> make_sync_wait_task(AWAITABLE&& awaitable)
 		{
 			co_await std::forward<AWAITABLE>(awaitable);
 		}

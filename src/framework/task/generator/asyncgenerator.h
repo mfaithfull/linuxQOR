@@ -38,22 +38,22 @@
 namespace qor
 {
 	template<typename T>
-	class async_generator;
+	class AsyncGenerator;
 
 #if CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
 
 	namespace detail
 	{
 		template<typename T>
-		class async_generator_iterator;
-		class async_generator_yield_operation;
-		class async_generator_advance_operation;
+		class AsyncGeneratorIterator;
+		class AsyncGeneratorYieldOperation;
+		class AsyncGeneratorAdvanceOperation;
 
-		class async_generator_promise_base
+		class AsyncGeneratorPromiseBase
 		{
 		public:
 
-			async_generator_promise_base() noexcept
+			AsyncGeneratorPromiseBase() noexcept
 				: m_exception(nullptr)
 			{
 				// Other variables left intentionally uninitialised as they're
@@ -61,15 +61,15 @@ namespace qor
 				// have been initialised.
 			}
 
-			async_generator_promise_base(const async_generator_promise_base& other) = delete;
-			async_generator_promise_base& operator=(const async_generator_promise_base& other) = delete;
+			AsyncGeneratorPromiseBase(const AsyncGeneratorPromiseBase& other) = delete;
+			AsyncGeneratorPromiseBase& operator=(const AsyncGeneratorPromiseBase& other) = delete;
 
 			std::suspend_always initial_suspend() const noexcept
 			{
 				return {};
 			}
 
-			async_generator_yield_operation final_suspend() noexcept;
+			AsyncGeneratorYieldOperation final_suspend() noexcept;
 
 			void unhandled_exception() noexcept
 			{
@@ -80,7 +80,7 @@ namespace qor
 			{
 			}
 
-			/// Query if the generator has reached the end of the sequence.
+			/// Query if the Generator has reached the end of the sequence.
 			///
 			/// Only valid to call after resuming from an awaited advance operation.
 			/// i.e. Either a begin() or iterator::operator++() operation.
@@ -99,12 +99,12 @@ namespace qor
 
 		protected:
 
-			async_generator_yield_operation internal_yield_value() noexcept;
+			AsyncGeneratorYieldOperation internal_yield_value() noexcept;
 
 		private:
 
-			friend class async_generator_yield_operation;
-			friend class async_generator_advance_operation;
+			friend class AsyncGeneratorYieldOperation;
+			friend class AsyncGeneratorAdvanceOperation;
 
 			std::exception_ptr m_exception;
 
@@ -115,11 +115,11 @@ namespace qor
 			void* m_currentValue;
 		};
 
-		class async_generator_yield_operation final
+		class AsyncGeneratorYieldOperation final
 		{
 		public:
 
-			async_generator_yield_operation(std::coroutine_handle<> consumer) noexcept
+			AsyncGeneratorYieldOperation(std::coroutine_handle<> consumer) noexcept
 				: m_consumer(consumer)
 			{}
 
@@ -142,28 +142,28 @@ namespace qor
 
 		};
 
-		inline async_generator_yield_operation async_generator_promise_base::final_suspend() noexcept
+		inline AsyncGeneratorYieldOperation AsyncGeneratorPromiseBase::final_suspend() noexcept
 		{
 			m_currentValue = nullptr;
 			return internal_yield_value();
 		}
 
-		inline async_generator_yield_operation async_generator_promise_base::internal_yield_value() noexcept
+		inline AsyncGeneratorYieldOperation AsyncGeneratorPromiseBase::internal_yield_value() noexcept
 		{
-			return async_generator_yield_operation{ m_consumerCoroutine };
+			return AsyncGeneratorYieldOperation{ m_consumerCoroutine };
 		}
 
-		class async_generator_advance_operation
+		class AsyncGeneratorAdvanceOperation
 		{
 		protected:
 
-			async_generator_advance_operation(std::nullptr_t) noexcept
+			AsyncGeneratorAdvanceOperation(std::nullptr_t) noexcept
 				: m_promise(nullptr)
 				, m_producerCoroutine(nullptr)
 			{}
 
-			async_generator_advance_operation(
-				async_generator_promise_base& promise,
+			AsyncGeneratorAdvanceOperation(
+				AsyncGeneratorPromiseBase& promise,
 				std::coroutine_handle<> producerCoroutine) noexcept
 				: m_promise(std::addressof(promise))
 				, m_producerCoroutine(producerCoroutine)
@@ -183,13 +183,13 @@ namespace qor
 
 		protected:
 
-			async_generator_promise_base* m_promise;
+			AsyncGeneratorPromiseBase* m_promise;
 			std::coroutine_handle<> m_producerCoroutine;
 
 		};
 
 		template<typename T>
-		class async_generator_promise final : public async_generator_promise_base
+		class async_generator_promise final : public AsyncGeneratorPromiseBase
 		{
 			using value_type = std::remove_reference_t<T>;
 
@@ -197,15 +197,15 @@ namespace qor
 
 			async_generator_promise() noexcept = default;
 
-			async_generator<T> get_return_object() noexcept;
+			AsyncGenerator<T> get_return_object() noexcept;
 
-			async_generator_yield_operation yield_value(value_type& value) noexcept
+			AsyncGeneratorYieldOperation yield_value(value_type& value) noexcept
 			{
 				m_currentValue = std::addressof(value);
 				return internal_yield_value();
 			}
 
-			async_generator_yield_operation yield_value(value_type&& value) noexcept
+			AsyncGeneratorYieldOperation yield_value(value_type&& value) noexcept
 			{
 				return yield_value(value);
 			}
@@ -218,15 +218,15 @@ namespace qor
 		};
 
 		template<typename T>
-		class async_generator_promise<T&&> final : public async_generator_promise_base
+		class async_generator_promise<T&&> final : public AsyncGeneratorPromiseBase
 		{
 		public:
 
 			async_generator_promise() noexcept = default;
 
-			async_generator<T> get_return_object() noexcept;
+			AsyncGenerator<T> get_return_object() noexcept;
 
-			async_generator_yield_operation yield_value(T&& value) noexcept
+			AsyncGeneratorYieldOperation yield_value(T&& value) noexcept
 			{
 				m_currentValue = std::addressof(value);
 				return internal_yield_value();
@@ -240,25 +240,25 @@ namespace qor
 		};
 
 		template<typename T>
-		class async_generator_increment_operation final : public async_generator_advance_operation
+		class async_generator_increment_operation final : public AsyncGeneratorAdvanceOperation
 		{
 		public:
 
-			async_generator_increment_operation(async_generator_iterator<T>& iterator) noexcept
-				: async_generator_advance_operation(iterator.m_coroutine.promise(), iterator.m_coroutine)
+			async_generator_increment_operation(AsyncGeneratorIterator<T>& iterator) noexcept
+				: AsyncGeneratorAdvanceOperation(iterator.m_coroutine.promise(), iterator.m_coroutine)
 				, m_iterator(iterator)
 			{}
 
-			async_generator_iterator<T>& await_resume();
+			AsyncGeneratorIterator<T>& await_resume();
 
 		private:
 
-			async_generator_iterator<T>& m_iterator;
+			AsyncGeneratorIterator<T>& m_iterator;
 
 		};
 
 		template<typename T>
-		class async_generator_iterator final
+		class AsyncGeneratorIterator final
 		{
 			using promise_type = async_generator_promise<T>;
 			using handle_type = std::coroutine_handle<promise_type>;
@@ -273,11 +273,11 @@ namespace qor
 			using reference = std::add_lvalue_reference_t<T>;
 			using pointer = std::add_pointer_t<value_type>;
 
-			async_generator_iterator(std::nullptr_t) noexcept
+			AsyncGeneratorIterator(std::nullptr_t) noexcept
 				: m_coroutine(nullptr)
 			{}
 
-			async_generator_iterator(handle_type coroutine) noexcept
+			AsyncGeneratorIterator(handle_type coroutine) noexcept
 				: m_coroutine(coroutine)
 			{}
 
@@ -291,12 +291,12 @@ namespace qor
 				return m_coroutine.promise().value();
 			}
 
-			bool operator==(const async_generator_iterator& other) const noexcept
+			bool operator==(const AsyncGeneratorIterator& other) const noexcept
 			{
 				return m_coroutine == other.m_coroutine;
 			}
 
-			bool operator!=(const async_generator_iterator& other) const noexcept
+			bool operator!=(const AsyncGeneratorIterator& other) const noexcept
 			{
 				return !(*this == other);
 			}
@@ -310,12 +310,12 @@ namespace qor
 		};
 
 		template<typename T>
-		async_generator_iterator<T>& async_generator_increment_operation<T>::await_resume()
+		AsyncGeneratorIterator<T>& async_generator_increment_operation<T>::await_resume()
 		{
 			if (m_promise->finished())
 			{
 				// Update iterator to end()
-				m_iterator = async_generator_iterator<T>{ nullptr };
+				m_iterator = AsyncGeneratorIterator<T>{ nullptr };
 				m_promise->rethrow_if_unhandled_exception();
 			}
 
@@ -323,7 +323,7 @@ namespace qor
 		}
 
 		template<typename T>
-		class async_generator_begin_operation final : public async_generator_advance_operation
+		class async_generator_begin_operation final : public AsyncGeneratorAdvanceOperation
 		{
 			using promise_type = async_generator_promise<T>;
 			using handle_type = std::coroutine_handle<promise_type>;
@@ -331,33 +331,33 @@ namespace qor
 		public:
 
 			async_generator_begin_operation(std::nullptr_t) noexcept
-				: async_generator_advance_operation(nullptr)
+				: AsyncGeneratorAdvanceOperation(nullptr)
 			{}
 
 			async_generator_begin_operation(handle_type producerCoroutine) noexcept
-				: async_generator_advance_operation(producerCoroutine.promise(), producerCoroutine)
+				: AsyncGeneratorAdvanceOperation(producerCoroutine.promise(), producerCoroutine)
 			{}
 
 			bool await_ready() const noexcept
 			{
-				return m_promise == nullptr || async_generator_advance_operation::await_ready();
+				return m_promise == nullptr || AsyncGeneratorAdvanceOperation::await_ready();
 			}
 
-			async_generator_iterator<T> await_resume()
+			AsyncGeneratorIterator<T> await_resume()
 			{
 				if (m_promise == nullptr)
 				{
-					// Called begin() on the empty generator.
-					return async_generator_iterator<T>{ nullptr };
+					// Called begin() on the empty Generator.
+					return AsyncGeneratorIterator<T>{ nullptr };
 				}
 				else if (m_promise->finished())
 				{
 					// Completed without yielding any values.
 					m_promise->rethrow_if_unhandled_exception();
-					return async_generator_iterator<T>{ nullptr };
+					return AsyncGeneratorIterator<T>{ nullptr };
 				}
 
-				return async_generator_iterator<T>{
+				return AsyncGeneratorIterator<T>{
 					handle_type::from_promise(*static_cast<promise_type*>(m_promise))
 				};
 			}
@@ -365,28 +365,28 @@ namespace qor
 	}
 
 	template<typename T>
-	class [[nodiscard]] async_generator
+	class [[nodiscard]] AsyncGenerator
 	{
 	public:
 
 		using promise_type = detail::async_generator_promise<T>;
-		using iterator = detail::async_generator_iterator<T>;
+		using iterator = detail::AsyncGeneratorIterator<T>;
 
-		async_generator() noexcept
+		AsyncGenerator() noexcept
 			: m_coroutine(nullptr)
 		{}
 
-		explicit async_generator(promise_type& promise) noexcept
+		explicit AsyncGenerator(promise_type& promise) noexcept
 			: m_coroutine(std::coroutine_handle<promise_type>::from_promise(promise))
 		{}
 
-		async_generator(async_generator&& other) noexcept
+		AsyncGenerator(AsyncGenerator&& other) noexcept
 			: m_coroutine(other.m_coroutine)
 		{
 			other.m_coroutine = nullptr;
 		}
 
-		~async_generator()
+		~AsyncGenerator()
 		{
 			if (m_coroutine)
 			{
@@ -394,15 +394,15 @@ namespace qor
 			}
 		}
 
-		async_generator& operator=(async_generator&& other) noexcept
+		AsyncGenerator& operator=(AsyncGenerator&& other) noexcept
 		{
-			async_generator temp(std::move(other));
+			AsyncGenerator temp(std::move(other));
 			swap(temp);
 			return *this;
 		}
 
-		async_generator(const async_generator&) = delete;
-		async_generator& operator=(const async_generator&) = delete;
+		AsyncGenerator(const AsyncGenerator&) = delete;
+		AsyncGenerator& operator=(const AsyncGenerator&) = delete;
 
 		auto begin() noexcept
 		{
@@ -419,7 +419,7 @@ namespace qor
 			return iterator{ nullptr };
 		}
 
-		void swap(async_generator& other) noexcept
+		void swap(AsyncGenerator& other) noexcept
 		{
 			using std::swap;
 			swap(m_coroutine, other.m_coroutine);
@@ -432,7 +432,7 @@ namespace qor
 	};
 
 	template<typename T>
-	void swap(async_generator<T>& a, async_generator<T>& b) noexcept
+	void swap(AsyncGenerator<T>& a, AsyncGenerator<T>& b) noexcept
 	{
 		a.swap(b);
 	}
@@ -440,9 +440,9 @@ namespace qor
 	namespace detail
 	{
 		template<typename T>
-		async_generator<T> async_generator_promise<T>::get_return_object() noexcept
+		AsyncGenerator<T> async_generator_promise<T>::get_return_object() noexcept
 		{
-			return async_generator<T>{ *this };
+			return AsyncGenerator<T>{ *this };
 		}
 	}
 #else // !CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
@@ -450,15 +450,15 @@ namespace qor
 	namespace detail
 	{
 		template<typename T>
-		class async_generator_iterator;
-		class async_generator_yield_operation;
-		class async_generator_advance_operation;
+		class AsyncGeneratorIterator;
+		class AsyncGeneratorYieldOperation;
+		class AsyncGeneratorAdvanceOperation;
 
-		class async_generator_promise_base
+		class AsyncGeneratorPromiseBase
 		{
 		public:
 
-			async_generator_promise_base() noexcept
+			AsyncGeneratorPromiseBase() noexcept
 				: m_state(state::value_ready_producer_suspended)
 				, m_exception(nullptr)
 			{
@@ -467,15 +467,15 @@ namespace qor
 				// have been initialised.
 			}
 
-			async_generator_promise_base(const async_generator_promise_base& other) = delete;
-			async_generator_promise_base& operator=(const async_generator_promise_base& other) = delete;
+			AsyncGeneratorPromiseBase(const AsyncGeneratorPromiseBase& other) = delete;
+			AsyncGeneratorPromiseBase& operator=(const AsyncGeneratorPromiseBase& other) = delete;
 
 			std::suspend_always initial_suspend() const noexcept
 			{
 				return {};
 			}
 
-			async_generator_yield_operation final_suspend() noexcept;
+			AsyncGeneratorYieldOperation final_suspend() noexcept;
 
 			void unhandled_exception() noexcept
 			{
@@ -489,7 +489,7 @@ namespace qor
 
 			void return_void() noexcept {}
 
-			/// Query if the generator has reached the end of the sequence.
+			/// Query if the Generator has reached the end of the sequence.
 			///
 			/// Only valid to call after resuming from an awaited advance operation.
 			/// i.e. Either a begin() or iterator::operator++() operation.
@@ -506,7 +506,7 @@ namespace qor
 				}
 			}
 
-			/// Request that the generator cancel generation of new items.
+			/// Request that the Generator cancel generation of new items.
 			///
 			/// \return
 			/// Returns true if the request was completed synchronously and the associated
@@ -519,12 +519,12 @@ namespace qor
 			{
 				const auto previousState = m_state.exchange(state::cancelled, std::memory_order_acq_rel);
 
-				// Not valid to destroy async_generator<T> object if consumer coroutine still suspended
+				// Not valid to destroy AsyncGenerator<T> object if consumer coroutine still suspended
 				// in a co_await for next item.
 				assert(previousState != state::value_not_ready_consumer_suspended);
 
 				// A coroutine should only ever be cancelled once, from the destructor of the
-				// owning async_generator<T> object.
+				// owning AsyncGenerator<T> object.
 				assert(previousState != state::cancelled);
 
 				return previousState == state::value_ready_producer_suspended;
@@ -532,12 +532,12 @@ namespace qor
 
 		protected:
 
-			async_generator_yield_operation internal_yield_value() noexcept;
+			AsyncGeneratorYieldOperation internal_yield_value() noexcept;
 
 		private:
 
-			friend class async_generator_yield_operation;
-			friend class async_generator_advance_operation;
+			friend class AsyncGeneratorYieldOperation;
+			friend class AsyncGeneratorAdvanceOperation;
 
 			// State transition diagram
 			//   VNRCA - value_not_ready_consumer_active
@@ -556,7 +556,7 @@ namespace qor
 			//                 |      +----+     +---+             |
 			//                 |           |     |                 |
 			//                 |           V     V                 V
-			//                 +--------> cancelled         ~async_generator()
+			//                 +--------> cancelled         ~AsyncGenerator()
 			//
 			// [C] - Consumer performs this transition
 			// [P] - Producer performs this transition
@@ -580,13 +580,13 @@ namespace qor
 			void* m_currentValue;
 		};
 
-		class async_generator_yield_operation final
+		class AsyncGeneratorYieldOperation final
 		{
-			using state = async_generator_promise_base::state;
+			using state = AsyncGeneratorPromiseBase::state;
 
 		public:
 
-			async_generator_yield_operation(async_generator_promise_base& promise, state initialState) noexcept
+			AsyncGeneratorYieldOperation(AsyncGeneratorPromiseBase& promise, state initialState) noexcept
 				: m_promise(promise)
 				, m_initialState(initialState) {}
 
@@ -600,17 +600,17 @@ namespace qor
 			void await_resume() noexcept {}
 
 		private:
-			async_generator_promise_base& m_promise;
+			AsyncGeneratorPromiseBase& m_promise;
 			state m_initialState;
 		};
 
-		inline async_generator_yield_operation async_generator_promise_base::final_suspend() noexcept
+		inline AsyncGeneratorYieldOperation AsyncGeneratorPromiseBase::final_suspend() noexcept
 		{
 			m_currentValue = nullptr;
 			return internal_yield_value();
 		}
 
-		inline async_generator_yield_operation async_generator_promise_base::internal_yield_value() noexcept
+		inline AsyncGeneratorYieldOperation AsyncGeneratorPromiseBase::internal_yield_value() noexcept
 		{
 			state currentState = m_state.load(std::memory_order_acquire);
 			assert(currentState != state::value_ready_producer_active);
@@ -637,10 +637,10 @@ namespace qor
 				currentState = m_state.load(std::memory_order_acquire);
 			}
 
-			return async_generator_yield_operation{ *this, currentState };
+			return AsyncGeneratorYieldOperation{ *this, currentState };
 		}
 
-		inline bool async_generator_yield_operation::await_suspend(
+		inline bool AsyncGeneratorYieldOperation::await_suspend(
 			std::coroutine_handle<> producer) noexcept
 		{
 			state currentState = m_initialState;
@@ -706,7 +706,7 @@ namespace qor
 
 			assert(currentState == state::cancelled);
 
-			// async_generator object has been destroyed and we're now at a
+			// AsyncGenerator object has been destroyed and we're now at a
 			// co_yield/co_return suspension point so we can just destroy
 			// the coroutine.
 			producer.destroy();
@@ -714,18 +714,18 @@ namespace qor
 			return true;
 		}
 
-		class async_generator_advance_operation
+		class AsyncGeneratorAdvanceOperation
 		{
-			using state = async_generator_promise_base::state;
+			using state = AsyncGeneratorPromiseBase::state;
 
 		protected:
 
-			async_generator_advance_operation(std::nullptr_t) noexcept
+			AsyncGeneratorAdvanceOperation(std::nullptr_t) noexcept
 				: m_promise(nullptr)
 				, m_producerCoroutine(nullptr) {}
 
-			async_generator_advance_operation(
-				async_generator_promise_base& promise,
+			AsyncGeneratorAdvanceOperation(
+				AsyncGeneratorPromiseBase& promise,
 				std::coroutine_handle<> producerCoroutine) noexcept
 				: m_promise(std::addressof(promise))
 				, m_producerCoroutine(producerCoroutine)
@@ -805,7 +805,7 @@ namespace qor
 
 		protected:
 
-			async_generator_promise_base* m_promise;
+			AsyncGeneratorPromiseBase* m_promise;
 			std::coroutine_handle<> m_producerCoroutine;
 
 		private:
@@ -815,7 +815,7 @@ namespace qor
 		};
 
 		template<typename T>
-		class async_generator_promise final : public async_generator_promise_base
+		class async_generator_promise final : public AsyncGeneratorPromiseBase
 		{
 			using value_type = std::remove_reference_t<T>;
 
@@ -823,15 +823,15 @@ namespace qor
 
 			async_generator_promise() noexcept = default;
 
-			async_generator<T> get_return_object() noexcept;
+			AsyncGenerator<T> get_return_object() noexcept;
 
-			async_generator_yield_operation yield_value(value_type& value) noexcept
+			AsyncGeneratorYieldOperation yield_value(value_type& value) noexcept
 			{
 				m_currentValue = std::addressof(value);
 				return internal_yield_value();
 			}
 
-			async_generator_yield_operation yield_value(value_type&& value) noexcept
+			AsyncGeneratorYieldOperation yield_value(value_type&& value) noexcept
 			{
 				return yield_value(value);
 			}
@@ -844,15 +844,15 @@ namespace qor
 		};
 
 		template<typename T>
-		class async_generator_promise<T&&> final : public async_generator_promise_base
+		class async_generator_promise<T&&> final : public AsyncGeneratorPromiseBase
 		{
 		public:
 
 			async_generator_promise() noexcept = default;
 
-			async_generator<T> get_return_object() noexcept;
+			AsyncGenerator<T> get_return_object() noexcept;
 
-			async_generator_yield_operation yield_value(T&& value) noexcept
+			AsyncGeneratorYieldOperation yield_value(T&& value) noexcept
 			{
 				m_currentValue = std::addressof(value);
 				return internal_yield_value();
@@ -866,24 +866,24 @@ namespace qor
 		};
 
 		template<typename T>
-		class async_generator_increment_operation final : public async_generator_advance_operation
+		class async_generator_increment_operation final : public AsyncGeneratorAdvanceOperation
 		{
 		public:
 
-			async_generator_increment_operation(async_generator_iterator<T>& iterator) noexcept
-				: async_generator_advance_operation(iterator.m_coroutine.promise(), iterator.m_coroutine)
+			async_generator_increment_operation(AsyncGeneratorIterator<T>& iterator) noexcept
+				: AsyncGeneratorAdvanceOperation(iterator.m_coroutine.promise(), iterator.m_coroutine)
 				, m_iterator(iterator) {}
 
-			async_generator_iterator<T>& await_resume();
+			AsyncGeneratorIterator<T>& await_resume();
 
 		private:
 
-			async_generator_iterator<T>& m_iterator;
+			AsyncGeneratorIterator<T>& m_iterator;
 
 		};
 
 		template<typename T>
-		class async_generator_iterator final
+		class AsyncGeneratorIterator final
 		{
 			using promise_type = async_generator_promise<T>;
 			using handle_type = std::coroutine_handle<promise_type>;
@@ -898,9 +898,9 @@ namespace qor
 			using reference = std::add_lvalue_reference_t<T>;
 			using pointer = std::add_pointer_t<value_type>;
 
-			async_generator_iterator(std::nullptr_t) noexcept : m_coroutine(nullptr) {}
+			AsyncGeneratorIterator(std::nullptr_t) noexcept : m_coroutine(nullptr) {}
 
-			async_generator_iterator(handle_type coroutine) noexcept : m_coroutine(coroutine) {}
+			AsyncGeneratorIterator(handle_type coroutine) noexcept : m_coroutine(coroutine) {}
 
 			async_generator_increment_operation<T> operator++() noexcept
 			{
@@ -912,12 +912,12 @@ namespace qor
 				return m_coroutine.promise().value();
 			}
 
-			bool operator==(const async_generator_iterator& other) const noexcept
+			bool operator==(const AsyncGeneratorIterator& other) const noexcept
 			{
 				return m_coroutine == other.m_coroutine;
 			}
 
-			bool operator!=(const async_generator_iterator& other) const noexcept
+			bool operator!=(const AsyncGeneratorIterator& other) const noexcept
 			{
 				return !(*this == other);
 			}
@@ -931,12 +931,12 @@ namespace qor
 		};
 
 		template<typename T>
-		async_generator_iterator<T>& async_generator_increment_operation<T>::await_resume()
+		AsyncGeneratorIterator<T>& async_generator_increment_operation<T>::await_resume()
 		{
 			if (m_promise->finished())
 			{
 				// Update iterator to end()
-				m_iterator = async_generator_iterator<T>{ nullptr };
+				m_iterator = AsyncGeneratorIterator<T>{ nullptr };
 				m_promise->rethrow_if_unhandled_exception();
 			}
 
@@ -944,38 +944,38 @@ namespace qor
 		}
 
 		template<typename T>
-		class async_generator_begin_operation final : public async_generator_advance_operation
+		class async_generator_begin_operation final : public AsyncGeneratorAdvanceOperation
 		{
 			using promise_type = async_generator_promise<T>;
 			using handle_type = std::coroutine_handle<promise_type>;
 
 		public:
 
-			async_generator_begin_operation(std::nullptr_t) noexcept : async_generator_advance_operation(nullptr) {}
+			async_generator_begin_operation(std::nullptr_t) noexcept : AsyncGeneratorAdvanceOperation(nullptr) {}
 
 			async_generator_begin_operation(handle_type producerCoroutine) noexcept
-				: async_generator_advance_operation(producerCoroutine.promise(), producerCoroutine) {}
+				: AsyncGeneratorAdvanceOperation(producerCoroutine.promise(), producerCoroutine) {}
 
 			bool await_ready() const noexcept
 			{
-				return m_promise == nullptr || async_generator_advance_operation::await_ready();
+				return m_promise == nullptr || AsyncGeneratorAdvanceOperation::await_ready();
 			}
 
-			async_generator_iterator<T> await_resume()
+			AsyncGeneratorIterator<T> await_resume()
 			{
 				if (m_promise == nullptr)
 				{
-					// Called begin() on the empty generator.
-					return async_generator_iterator<T>{ nullptr };
+					// Called begin() on the empty Generator.
+					return AsyncGeneratorIterator<T>{ nullptr };
 				}
 				else if (m_promise->finished())
 				{
 					// Completed without yielding any values.
 					m_promise->rethrow_if_unhandled_exception();
-					return async_generator_iterator<T>{ nullptr };
+					return AsyncGeneratorIterator<T>{ nullptr };
 				}
 
-				return async_generator_iterator<T>{
+				return AsyncGeneratorIterator<T>{
 					handle_type::from_promise(*static_cast<promise_type*>(m_promise))
 				};
 			}
@@ -983,23 +983,23 @@ namespace qor
 	}
 
 	template<typename T>
-	class async_generator
+	class AsyncGenerator
 	{
 	public:
 
 		using promise_type = detail::async_generator_promise<T>;
-		using iterator = detail::async_generator_iterator<T>;
+		using iterator = detail::AsyncGeneratorIterator<T>;
 
-		async_generator() noexcept : m_coroutine(nullptr) {}
+		AsyncGenerator() noexcept : m_coroutine(nullptr) {}
 
-		explicit async_generator(promise_type& promise) noexcept : m_coroutine(std::coroutine_handle<promise_type>::from_promise(promise)) {}
+		explicit AsyncGenerator(promise_type& promise) noexcept : m_coroutine(std::coroutine_handle<promise_type>::from_promise(promise)) {}
 
-		async_generator(async_generator&& other) noexcept : m_coroutine(other.m_coroutine)
+		AsyncGenerator(AsyncGenerator&& other) noexcept : m_coroutine(other.m_coroutine)
 		{
 			other.m_coroutine = nullptr;
 		}
 
-		~async_generator()
+		~AsyncGenerator()
 		{
 			if (m_coroutine)
 			{
@@ -1010,15 +1010,15 @@ namespace qor
 			}
 		}
 
-		async_generator& operator=(async_generator&& other) noexcept
+		AsyncGenerator& operator=(AsyncGenerator&& other) noexcept
 		{
-			async_generator temp(std::move(other));
+			AsyncGenerator temp(std::move(other));
 			swap(temp);
 			return *this;
 		}
 
-		async_generator(const async_generator&) = delete;
-		async_generator& operator=(const async_generator&) = delete;
+		AsyncGenerator(const AsyncGenerator&) = delete;
+		AsyncGenerator& operator=(const AsyncGenerator&) = delete;
 
 		auto begin() noexcept
 		{
@@ -1035,7 +1035,7 @@ namespace qor
 			return iterator{ nullptr };
 		}
 
-		void swap(async_generator& other) noexcept
+		void swap(AsyncGenerator& other) noexcept
 		{
 			using std::swap;
 			swap(m_coroutine, other.m_coroutine);
@@ -1048,7 +1048,7 @@ namespace qor
 	};
 
 	template<typename T>
-	void swap(async_generator<T>& a, async_generator<T>& b) noexcept
+	void swap(AsyncGenerator<T>& a, AsyncGenerator<T>& b) noexcept
 	{
 		a.swap(b);
 	}
@@ -1056,19 +1056,19 @@ namespace qor
 	namespace detail
 	{
 		template<typename T>
-		async_generator<T> async_generator_promise<T>::get_return_object() noexcept
+		AsyncGenerator<T> async_generator_promise<T>::get_return_object() noexcept
 		{
-			return async_generator<T>{ *this };
+			return AsyncGenerator<T>{ *this };
 		}
 	}
 #endif // !CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
 
 	template<typename FUNC, typename T>
-	async_generator<std::invoke_result_t<FUNC&, decltype(*std::declval<typename async_generator<T>::iterator&>())>> fmap(FUNC func, async_generator<T> source)
+	AsyncGenerator<std::invoke_result_t<FUNC&, decltype(*std::declval<typename AsyncGenerator<T>::iterator&>())>> fmap(FUNC func, AsyncGenerator<T> source)
 	{
 		static_assert(
 			!std::is_reference_v<FUNC>,
-			"Passing by reference to async_generator<T> coroutine is unsafe. "
+			"Passing by reference to AsyncGenerator<T> coroutine is unsafe. "
 			"Use std::ref or std::cref to explicitly pass by reference.");
 
 		// Explicitly hand-coding the loop here rather than using range-based
