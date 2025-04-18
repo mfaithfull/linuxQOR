@@ -34,15 +34,13 @@
 
 namespace qor
 {
-	class async_scope
+	class AsyncScope
 	{
 	public:
 
-		async_scope() noexcept
-			: m_count(1u)
-		{}
+		AsyncScope() noexcept : m_count(1u) {}
 
-		~async_scope()
+		~AsyncScope()
 		{
 			// scope must be co_awaited before it destructs.
 			assert(m_continuation);
@@ -51,7 +49,7 @@ namespace qor
 		template<typename AWAITABLE>
 		void spawn(AWAITABLE&& awaitable)
 		{
-			[](async_scope* scope, std::decay_t<AWAITABLE> awaitable) -> oneway_task
+			[](AsyncScope* scope, std::decay_t<AWAITABLE> awaitable) -> oneway_task
 			{
 				scope->on_work_started();
 				auto decrementOnCompletion = on_scope_exit([scope] { scope->on_work_finished(); });
@@ -63,9 +61,9 @@ namespace qor
 		{
 			class awaiter
 			{
-				async_scope* m_scope;
+				AsyncScope* m_scope;
 			public:
-				awaiter(async_scope* scope) noexcept : m_scope(scope) {}
+				awaiter(AsyncScope* scope) noexcept : m_scope(scope) {}
 
 				bool await_ready() noexcept
 				{

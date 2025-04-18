@@ -34,23 +34,23 @@ namespace{ namespace local {
     
 namespace qor{
 
-    spin_wait::spin_wait() noexcept
+    SpinWait::SpinWait() noexcept
     {
         reset();
     }
 
-    bool spin_wait::next_spin_will_yield() const noexcept
+    bool SpinWait::next_spin_will_yield() const noexcept
     {
         return m_count >= local::yield_threshold;
     }
 
-    void spin_wait::reset() noexcept
+    void SpinWait::reset() noexcept
     {
         static const std::uint32_t initialCount = std::thread::hardware_concurrency() > 1 ? 0 : local::yield_threshold;
         m_count = initialCount;
     }
 
-    void spin_wait::spin_one() noexcept
+    void SpinWait::spin_one() noexcept
     {
         if (next_spin_will_yield())
         {

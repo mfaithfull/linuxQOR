@@ -95,7 +95,7 @@ qor_pp_test_suite_case(SharedTaskTestSuite, result_is_destroyed_when_last_refere
 
 qor_pp_test_suite_case(SharedTaskTestSuite, shared_task_multiple_awaiters)
 {
-	single_consumer_event event;
+	SingleConsumerEvent event;
 	bool startedExecution = false;
 	auto produce = [&]() -> shared_task<int>
 	{
@@ -213,7 +213,7 @@ qor_pp_test_suite_case(SharedTaskTestSuite, make_shared_task_of_void)
 
 qor_pp_test_suite_case(SharedTaskTestSuite, shared_task_void_fmap_operator)
 {
-	single_consumer_event event;
+	SingleConsumerEvent event;
 	int value = 0;
 
 	auto setNumber = [&]() -> shared_task<>
@@ -242,7 +242,7 @@ qor_pp_test_suite_case(SharedTaskTestSuite, shared_task_void_fmap_operator)
 
 qor_pp_test_suite_case(SharedTaskTestSuite, shared_task_T_fmap_operator)
 {
-	single_consumer_event event;
+	SingleConsumerEvent event;
 
 	auto getNumber = [&]() -> shared_task<int>
 	{

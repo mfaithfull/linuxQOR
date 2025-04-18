@@ -50,15 +50,15 @@ struct SequenceBarrierTestSuite{};
 
 qor_pp_test_suite_case(SequenceBarrierTestSuite, default_construction)
 {
-	sequence_barrier<std::uint32_t> barrier;
-	qor_pp_assert_that(barrier.last_published() == sequence_traits<std::uint32_t>::initial_sequence);
+	SequenceBarrier<std::uint32_t> barrier;
+	qor_pp_assert_that(barrier.last_published() == sequence_of<std::uint32_t>::initial_sequence);
 	barrier.publish(3);
 	qor_pp_assert_that(barrier.last_published() == 3);
 }
 
 qor_pp_test_suite_case(SequenceBarrierTestSuite, constructing_with_initial_sequence_number)
 {
-	sequence_barrier<std::uint64_t> barrier{ 100 };
+	SequenceBarrier<std::uint64_t> barrier{ 100 };
 	qor_pp_assert_that(barrier.last_published() == 100);
 }
 
@@ -66,7 +66,7 @@ qor_pp_test_suite_case(SequenceBarrierTestSuite, wait_until_published_single_thr
 {
 	inline_scheduler scheduler;
 
-	sequence_barrier<std::uint32_t> barrier;
+	SequenceBarrier<std::uint32_t> barrier;
 	bool reachedA = false;
 	bool reachedB = false;
 	bool reachedC = false;
@@ -116,7 +116,7 @@ qor_pp_test_suite_case(SequenceBarrierTestSuite, wait_until_published_multiple_a
 {
 	inline_scheduler scheduler;
 
-	sequence_barrier<std::uint32_t> barrier;
+	SequenceBarrier<std::uint32_t> barrier;
 	bool reachedA = false;
 	bool reachedB = false;
 	bool reachedC = false;
@@ -168,8 +168,8 @@ qor_pp_test_suite_case(SequenceBarrierTestSuite, sbts_multi_threaded_usage_singl
 {
 	thread_pool<> tp;
 
-	sequence_barrier<std::size_t> writeBarrier;
-	sequence_barrier<std::size_t> readBarrier;
+	SequenceBarrier<std::size_t> writeBarrier;
+	SequenceBarrier<std::size_t> readBarrier;
 
 	constexpr std::size_t iterationCount = 1'000'000;
 
@@ -207,7 +207,7 @@ qor_pp_test_suite_case(SequenceBarrierTestSuite, sbts_multi_threaded_usage_singl
 		std::size_t available = readBarrier.last_published() + bufferSize;
 		for (std::size_t nextToWrite = 0; nextToWrite <= iterationCount; ++nextToWrite)
 		{
-			if (sequence_traits<std::size_t>::precedes(available, nextToWrite))
+			if (sequence_of<std::size_t>::precedes(available, nextToWrite))
 			{
 				available = co_await readBarrier.wait_until_published(nextToWrite - bufferSize, tp) + bufferSize;
 			}

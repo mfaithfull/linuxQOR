@@ -39,7 +39,7 @@ namespace qor
 		-> typename awaitable_traits<AWAITABLE&&>::await_result_t
 	{
 		auto task = detail::make_sync_wait_task(std::forward<AWAITABLE>(awaitable));
-		detail::lightweight_manual_reset_event event;
+		detail::LightManualResetEvent event;
 		task.start(event);
 		event.wait();
 		return task.result();

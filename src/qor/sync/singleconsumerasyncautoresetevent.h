@@ -32,11 +32,11 @@
 
 namespace qor
 {
-	class single_consumer_async_auto_reset_event
+	class SingleConsumerAsyncAutoResetEvent
 	{
 	public:
 
-		single_consumer_async_auto_reset_event(bool initiallySet = false) noexcept : m_state(initiallySet ? this : nullptr) {}
+		SingleConsumerAsyncAutoResetEvent(bool initiallySet = false) noexcept : m_state(initiallySet ? this : nullptr) {}
 
 		void set() noexcept
 		{
@@ -66,7 +66,7 @@ namespace qor
 			{
 			public:
 
-				awaiter(const single_consumer_async_auto_reset_event& event) noexcept : m_event(event) {}
+				awaiter(const SingleConsumerAsyncAutoResetEvent& event) noexcept : m_event(event) {}
 
 				bool await_ready() const noexcept { return false; }
 				
@@ -98,7 +98,7 @@ namespace qor
 
 			private:
 
-				const single_consumer_async_auto_reset_event& m_event;
+				const SingleConsumerAsyncAutoResetEvent& m_event;
 				std::coroutine_handle<> m_awaitingCoroutine;
 			};
 

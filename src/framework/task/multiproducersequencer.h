@@ -71,13 +71,13 @@ namespace qor
 	/// owned by a particular writer. Concurrent writers can publish items out of
 	/// order so that one writer does not hold up other writers until the ring
 	/// buffer fills up.
-	template< typename SEQUENCE = std::size_t, typename TRAITS = detail::sequence_traits<SEQUENCE>>
+	template< typename SEQUENCE = std::size_t, typename TRAITS = detail::sequence_of<SEQUENCE>>
 	class multi_producer_sequencer
 	{
 	public:
 
 		multi_producer_sequencer(
-			const sequence_barrier<SEQUENCE, TRAITS>& consumerBarrier,
+			const SequenceBarrier<SEQUENCE, TRAITS>& consumerBarrier,
 			std::size_t bufferSize,
 			SEQUENCE initialSequence = TRAITS::initial_sequence);
 
@@ -178,7 +178,7 @@ namespace qor
 # pragma warning(disable : 4324) // C4324: structure was padded due to alignment specifier
 #endif
 
-		const sequence_barrier<SEQUENCE, TRAITS>& m_consumerBarrier;
+		const SequenceBarrier<SEQUENCE, TRAITS>& m_consumerBarrier;
 		const std::size_t m_sequenceMask;
 		const std::unique_ptr<std::atomic<SEQUENCE>[]> m_published;
 
@@ -200,7 +200,7 @@ namespace qor
 	public:
 
 		multi_producer_sequencer_claim_awaiter(
-			const sequence_barrier<SEQUENCE, TRAITS>& consumerBarrier,
+			const SequenceBarrier<SEQUENCE, TRAITS>& consumerBarrier,
 			std::size_t bufferSize,
 			const sequence_range<SEQUENCE, TRAITS>& claimedRange,
 			SCHEDULER& scheduler) noexcept
@@ -279,7 +279,7 @@ namespace qor
 	public:
 
 		multi_producer_sequencer_claim_one_awaiter(
-			const sequence_barrier<SEQUENCE, TRAITS>& consumerBarrier,
+			const SequenceBarrier<SEQUENCE, TRAITS>& consumerBarrier,
 			std::size_t bufferSize,
 			SEQUENCE claimedSequence,
 			SCHEDULER& scheduler) noexcept
@@ -504,7 +504,7 @@ namespace qor
 
 	template<typename SEQUENCE, typename TRAITS>
 	multi_producer_sequencer<SEQUENCE, TRAITS>::multi_producer_sequencer(
-		const sequence_barrier<SEQUENCE, TRAITS>& consumerBarrier,
+		const SequenceBarrier<SEQUENCE, TRAITS>& consumerBarrier,
 		std::size_t bufferSize,
 		SEQUENCE initialSequence)
 		: m_consumerBarrier(consumerBarrier)
@@ -774,7 +774,7 @@ namespace qor
 			// Note also, that we are assuming that the last-known published sequence is
 			// not going to advance more than buffer_size() ahead of targetSequence since
 			// there is at least one consumer that won't be resumed and so thus can't
-			// publish the sequence number it's waiting for to its sequence_barrier and so
+			// publish the sequence number it's waiting for to its SequenceBarrier and so
 			// producers won't be able to claim its slot in the buffer.
 			//
 			// TODO: Check whether we can weaken the memory order here to just use 'seq_cst' on the

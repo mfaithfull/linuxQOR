@@ -49,7 +49,7 @@ namespace qor{	namespace detail{
 
 			sync_wait_task_promise() noexcept {}
 
-			void start(detail::lightweight_manual_reset_event& event)
+			void start(detail::LightManualResetEvent& event)
 			{
 				m_event = &event;
 				coroutine_handle_t::from_promise(*this).resume();
@@ -114,7 +114,7 @@ namespace qor{	namespace detail{
 
 		private:
 
-			detail::lightweight_manual_reset_event* m_event;
+			detail::LightManualResetEvent* m_event;
 			std::remove_reference_t<RESULT>* m_result;
 			std::exception_ptr m_exception;
 
@@ -130,7 +130,7 @@ namespace qor{	namespace detail{
 			sync_wait_task_promise() noexcept
 			{}
 
-			void start(detail::lightweight_manual_reset_event& event)
+			void start(detail::LightManualResetEvent& event)
 			{
 				m_event = &event;
 				coroutine_handle_t::from_promise(*this).resume();
@@ -182,7 +182,7 @@ namespace qor{	namespace detail{
 
 		private:
 
-			detail::lightweight_manual_reset_event* m_event;
+			detail::LightManualResetEvent* m_event;
 			std::exception_ptr m_exception;
 
 		};
@@ -208,7 +208,7 @@ namespace qor{	namespace detail{
 			sync_wait_task(const sync_wait_task&) = delete;
 			sync_wait_task& operator=(const sync_wait_task&) = delete;
 
-			void start(lightweight_manual_reset_event& event) noexcept
+			void start(LightManualResetEvent& event) noexcept
 			{
 				m_coroutine.promise().start(event);
 			}

@@ -35,16 +35,11 @@ namespace qor
 	{
 	public:
 
-		scoped_lambda(FUNC&& func)
-			: m_func(std::forward<FUNC>(func))
-			, m_cancelled(false)
-		{}
+		scoped_lambda(FUNC&& func) : m_func(std::forward<FUNC>(func)) , m_cancelled(false) {}
 
 		scoped_lambda(const scoped_lambda& other) = delete;
 
-		scoped_lambda(scoped_lambda&& other)
-			: m_func(std::forward<FUNC>(other.m_func))
-			, m_cancelled(other.m_cancelled)
+		scoped_lambda(scoped_lambda&& other) : m_func(std::forward<FUNC>(other.m_func)) , m_cancelled(other.m_cancelled)
 		{
 			other.cancel();
 		}
@@ -83,19 +78,11 @@ namespace qor
 	{
 	public:
 
-		conditional_scoped_lambda(FUNC&& func)
-			: m_func(std::forward<FUNC>(func))
-			, m_uncaughtExceptionCount(std::uncaught_exceptions())
-			, m_cancelled(false)
-		{}
+		conditional_scoped_lambda(FUNC&& func) : m_func(std::forward<FUNC>(func)) , m_uncaughtExceptionCount(std::uncaught_exceptions()) , m_cancelled(false) {}
 
 		conditional_scoped_lambda(const conditional_scoped_lambda& other) = delete;
 
-		conditional_scoped_lambda(conditional_scoped_lambda&& other)
-			noexcept(std::is_nothrow_move_constructible<FUNC>::value)
-			: m_func(std::forward<FUNC>(other.m_func))
-			, m_uncaughtExceptionCount(other.m_uncaughtExceptionCount)
-			, m_cancelled(other.m_cancelled)
+		conditional_scoped_lambda(conditional_scoped_lambda&& other) noexcept(std::is_nothrow_move_constructible<FUNC>::value) : m_func(std::forward<FUNC>(other.m_func)) , m_uncaughtExceptionCount(other.m_uncaughtExceptionCount) , m_cancelled(other.m_cancelled)
 		{
 			other.cancel();
 		}

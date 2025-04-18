@@ -29,12 +29,12 @@
 
 namespace qor
 {
-	class spin_mutex
+	class SpinMutex
 	{
 	public:
 
 		/// Initialise the mutex to the unlocked state.
-		spin_mutex() noexcept;
+		SpinMutex() noexcept;
 
 		/// Attempt to lock the mutex without blocking
 		///

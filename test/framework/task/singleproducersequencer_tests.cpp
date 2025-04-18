@@ -55,7 +55,7 @@ qor_pp_test_suite_case(SingleProducerSequencerTestSuite, multi_threaded_usage_si
 
 	constexpr std::size_t bufferSize = 256;
 
-	sequence_barrier<std::size_t> readBarrier;
+	SequenceBarrier<std::size_t> readBarrier;
 	single_producer_sequencer<std::size_t> sequencer(readBarrier, bufferSize);
 
 	constexpr std::size_t iterationCount = 1'000'000;

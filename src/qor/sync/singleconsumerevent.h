@@ -41,17 +41,16 @@ namespace qor
 	///
 	/// Callers must ensure that only one coroutine is executing a
 	/// co_await statement at any point in time.
-	class single_consumer_event
+	class SingleConsumerEvent
 	{
 	public:
 
-		/// \brief
 		/// Construct a new event, initialising to either 'set' or 'not set' state.
 		///
 		/// \param initiallySet
 		/// If true then initialises the event to the 'set' state.
 		/// Otherwise, initialised the event to the 'not set' state.
-		single_consumer_event(bool initiallySet = false) noexcept : m_state(initiallySet ? state::set : state::not_set) {}
+		SingleConsumerEvent(bool initiallySet = false) noexcept : m_state(initiallySet ? state::set : state::not_set) {}
 
 		/// Query if this event has been set.
 		bool is_set() const noexcept
@@ -59,7 +58,6 @@ namespace qor
 			return m_state.load(std::memory_order_acquire) == state::set;
 		}
 
-		/// \brief
 		/// Transition this event to the 'set' state if it is not already set.
 		///
 		/// If there was a coroutine awaiting the event then it will be resumed
@@ -73,7 +71,6 @@ namespace qor
 			}
 		}
 
-		/// \brief
 		/// Transition this event to the 'non set' state if it was in the set state.
 		void reset() noexcept
 		{
@@ -81,7 +78,6 @@ namespace qor
 			m_state.compare_exchange_strong(oldState, state::not_set, std::memory_order_relaxed);
 		}
 
-		/// \brief
 		/// Wait until the event becomes set.
 		///
 		/// If the event is already set then the awaiting coroutine will not be suspended
@@ -94,7 +90,7 @@ namespace qor
 			{
 			public:
 
-				awaiter(single_consumer_event& event) : m_event(event) {}
+				awaiter(SingleConsumerEvent& event) : m_event(event) {}
 
 				bool await_ready() const noexcept
 				{
@@ -117,7 +113,7 @@ namespace qor
 
 			private:
 
-				single_consumer_event& m_event;
+				SingleConsumerEvent& m_event;
 
 			};
 

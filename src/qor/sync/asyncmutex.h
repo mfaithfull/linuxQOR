@@ -148,12 +148,9 @@ namespace qor
 	{
 	public:
 
-		explicit AsyncMutexLock(AsyncMutex& mutex, std::adopt_lock_t) noexcept
-			: m_mutex(&mutex)
-		{}
+		explicit AsyncMutexLock(AsyncMutex& mutex, std::adopt_lock_t) noexcept : m_mutex(&mutex) {}
 
-		AsyncMutexLock(AsyncMutexLock&& other) noexcept
-			: m_mutex(other.m_mutex)
+		AsyncMutexLock(AsyncMutexLock&& other) noexcept : m_mutex(other.m_mutex)
 		{
 			other.m_mutex = nullptr;
 		}

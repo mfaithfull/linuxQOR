@@ -30,7 +30,7 @@
 namespace qor{ namespace detail{
 
     template<typename SEQUENCE>
-	struct sequence_traits
+	struct sequence_of
 	{
 		using value_type = SEQUENCE;
 		using difference_type = std::make_signed_t<SEQUENCE>;

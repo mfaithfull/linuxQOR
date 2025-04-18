@@ -186,10 +186,10 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, destructors_of_values_in_scope_a
 
 qor_pp_test_suite_case(AsyncGeneratorTestSuite, async_producer_with_async_consumer)
 {
-	single_consumer_event p1;
-	single_consumer_event p2;
-	single_consumer_event p3;
-	single_consumer_event c1;
+	SingleConsumerEvent p1;
+	SingleConsumerEvent p2;
+	SingleConsumerEvent p3;
+	SingleConsumerEvent c1;
 
 	auto produce = [&]() -> async_generator<std::uint32_t>
 	{
@@ -273,7 +273,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, exception_thrown_after_first_yie
 qor_pp_test_suite_case(AsyncGeneratorTestSuite, large_number_of_synchronous_completions_doesnt_result_in_stack_overflow)
 {
 
-	auto makeSequence = [](single_consumer_event& event) -> async_generator<std::uint32_t>
+	auto makeSequence = [](SingleConsumerEvent& event) -> async_generator<std::uint32_t>
 	{
 		for (std::uint32_t i = 0; i < 1'000'000u; ++i)
 		{
@@ -294,7 +294,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, large_number_of_synchronous_comp
 		qor_pp_assert_that(expected == 1'000'000u);
 	};
 
-	auto unblocker = [](single_consumer_event& event) -> task<>
+	auto unblocker = [](SingleConsumerEvent& event) -> task<>
 	{
 		// Should have processed the first 500'000 elements synchronously with consumer driving
 		// iteraction before producer suspends and thus consumer suspends.
@@ -306,7 +306,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, large_number_of_synchronous_comp
 		co_return;
 	};
 
-	single_consumer_event event;
+	SingleConsumerEvent event;
 
 	sync_wait(
 		when_all_ready(

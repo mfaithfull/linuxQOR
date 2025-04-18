@@ -107,7 +107,7 @@ namespace
 	task<std::uint64_t> consumer(
 		thread_pool<>& tp,
 		const multi_producer_sequencer<std::size_t>& sequencer,
-		sequence_barrier<std::size_t>& readBarrier,
+		SequenceBarrier<std::size_t>& readBarrier,
 		const std::uint64_t buffer[],
 		std::uint32_t producerCount)
 	{
@@ -152,7 +152,7 @@ qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_batch_sing
 	constexpr std::size_t batchSize = 10;
 	constexpr std::size_t bufferSize = 16384;
 
-	sequence_barrier<std::size_t> readBarrier;
+	SequenceBarrier<std::size_t> readBarrier;
 	multi_producer_sequencer<std::size_t> sequencer(readBarrier, bufferSize);
 
 	constexpr std::uint64_t iterationCount = 1'000'000;
@@ -196,7 +196,7 @@ qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_single_sin
 
 	constexpr std::size_t bufferSize = 16384;
 
-	sequence_barrier<std::size_t> readBarrier;
+	SequenceBarrier<std::size_t> readBarrier;
 	multi_producer_sequencer<std::size_t> sequencer(readBarrier, bufferSize);
 
 	constexpr std::uint64_t iterationCount = 1'000'000;

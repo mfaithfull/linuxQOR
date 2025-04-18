@@ -32,13 +32,13 @@
 
 namespace qor{ namespace detail{
 
-    class qor_pp_module_interface(QOR_SYNC) lightweight_manual_reset_event
+    class qor_pp_module_interface(QOR_SYNC) LightManualResetEvent
     {
     public:
 
-        lightweight_manual_reset_event(bool initiallySet = false);
+        LightManualResetEvent(bool initiallySet = false);
 
-        ~lightweight_manual_reset_event();
+        ~LightManualResetEvent();
 
         void set() noexcept;
 

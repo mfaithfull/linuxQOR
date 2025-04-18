@@ -57,12 +57,12 @@ namespace qor
 	///
 	/// See the LMAX Disruptor pattern for more background:
 	/// https://lmax-exchange.github.io/disruptor/files/Disruptor-1.0.pdf
-	template< typename SEQUENCE = std::size_t, typename TRAITS = detail::sequence_traits<SEQUENCE> >
-	class sequence_barrier
+	template< typename SEQUENCE = std::size_t, typename TRAITS = detail::sequence_of<SEQUENCE> >
+	class SequenceBarrier
 	{
 		static_assert(
 			std::is_integral_v<SEQUENCE>,
-			"sequence_barrier requires an integral sequence type");
+			"SequenceBarrier requires an integral sequence type");
 
 		using awaiter_t = sequence_barrier_wait_operation_base<SEQUENCE, TRAITS>;
 
@@ -70,12 +70,12 @@ namespace qor
 
 		/// Construct a sequence barrier with the specified initial sequence number
 		/// as the initial value 'last_published()'.
-		sequence_barrier(SEQUENCE initialSequence = TRAITS::initial_sequence) noexcept
+		SequenceBarrier(SEQUENCE initialSequence = TRAITS::initial_sequence) noexcept
 			: m_lastPublished(initialSequence)
 			, m_awaiters(nullptr)
 		{}
 
-		~sequence_barrier()
+		~SequenceBarrier()
 		{
 			// Shouldn't be destructing a sequence barrier if there are still waiters.
 			assert(m_awaiters.load(std::memory_order_relaxed) == nullptr);
@@ -157,7 +157,7 @@ namespace qor
 	public:
 
 		explicit sequence_barrier_wait_operation_base(
-			const sequence_barrier<SEQUENCE, TRAITS>& barrier,
+			const SequenceBarrier<SEQUENCE, TRAITS>& barrier,
 			SEQUENCE targetSequence) noexcept
 			: m_barrier(barrier)
 			, m_targetSequence(targetSequence)
@@ -192,7 +192,7 @@ namespace qor
 
 	protected:
 
-		friend class sequence_barrier<SEQUENCE, TRAITS>;
+		friend class SequenceBarrier<SEQUENCE, TRAITS>;
 
 		void resume() noexcept
 		{
@@ -205,7 +205,7 @@ namespace qor
 
 		virtual void resume_impl() noexcept = 0;
 
-		const sequence_barrier<SEQUENCE, TRAITS>& m_barrier;
+		const SequenceBarrier<SEQUENCE, TRAITS>& m_barrier;
 		const SEQUENCE m_targetSequence;
 		SEQUENCE m_lastKnownPublished;
 		sequence_barrier_wait_operation_base* m_next;
@@ -221,7 +221,7 @@ namespace qor
 
 	public:
 		sequence_barrier_wait_operation(
-			const sequence_barrier<SEQUENCE, TRAITS>& barrier,
+			const SequenceBarrier<SEQUENCE, TRAITS>& barrier,
 			SEQUENCE targetSequence,
 			SCHEDULER& scheduler) noexcept
 			: sequence_barrier_wait_operation_base<SEQUENCE, TRAITS>(barrier, targetSequence)
@@ -314,7 +314,7 @@ namespace qor
 	template<typename SEQUENCE, typename TRAITS>
 	template<typename SCHEDULER>
 	[[nodiscard]]
-	sequence_barrier_wait_operation<SEQUENCE, TRAITS, SCHEDULER> sequence_barrier<SEQUENCE, TRAITS>::wait_until_published(
+	sequence_barrier_wait_operation<SEQUENCE, TRAITS, SCHEDULER> SequenceBarrier<SEQUENCE, TRAITS>::wait_until_published(
 		SEQUENCE targetSequence,
 		SCHEDULER& scheduler) const noexcept
 	{
@@ -322,7 +322,7 @@ namespace qor
 	}
 
 	template<typename SEQUENCE, typename TRAITS>
-	void sequence_barrier<SEQUENCE, TRAITS>::publish(SEQUENCE sequence) noexcept
+	void SequenceBarrier<SEQUENCE, TRAITS>::publish(SEQUENCE sequence) noexcept
 	{
 		m_lastPublished.store(sequence, std::memory_order_seq_cst);
 
@@ -395,7 +395,7 @@ namespace qor
 	}
 
 	template<typename SEQUENCE, typename TRAITS>
-	void sequence_barrier<SEQUENCE, TRAITS>::add_awaiter(awaiter_t* awaiter) const noexcept
+	void SequenceBarrier<SEQUENCE, TRAITS>::add_awaiter(awaiter_t* awaiter) const noexcept
 	{
 		SEQUENCE targetSequence = awaiter->m_targetSequence;
 		awaiter_t* awaitersToRequeue = awaiter;

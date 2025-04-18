@@ -51,7 +51,7 @@ struct SingleConsumerAsyncAutoResetEventTestSuite{};
 
 qor_pp_test_suite_case(SingleConsumerAsyncAutoResetEventTestSuite, single_waiter)
 {
-	single_consumer_async_auto_reset_event event;
+	SingleConsumerAsyncAutoResetEvent event;
 
 	bool started = false;
 	bool finished = false;
@@ -83,7 +83,7 @@ qor_pp_test_suite_case(SingleConsumerAsyncAutoResetEventTestSuite, scaare_multi_
 
 	sync_wait([&]() -> task<>
 	{
-		single_consumer_async_auto_reset_event valueChangedEvent;
+		SingleConsumerAsyncAutoResetEvent valueChangedEvent;
 
 		std::atomic<int> value;
 

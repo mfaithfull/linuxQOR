@@ -76,7 +76,7 @@ qor_pp_test_suite_case(TaskTestSuite, awaiting_task_that_completes_asynchronousl
 {
 	bool reachedBeforeEvent = false;
 	bool reachedAfterEvent = false;
-	single_consumer_event event;
+	SingleConsumerEvent event;
 	auto f = [&]() -> task<>
 	{
 		reachedBeforeEvent = true;
@@ -218,7 +218,7 @@ qor_pp_test_suite_case(TaskTestSuite, task_void_fmap_pipe_operator)
 {
 	//using fmap;
 
-	single_consumer_event event;
+	SingleConsumerEvent event;
 
 	auto f = [&]() -> task<>
 	{

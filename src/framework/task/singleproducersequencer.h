@@ -36,7 +36,7 @@ namespace qor{
 	template<typename SEQUENCE, typename TRAITS, typename SCHEDULER>
 	class single_producer_sequencer_claim_operation;
 
-	template< typename SEQUENCE = std::size_t, typename TRAITS = detail::sequence_traits<SEQUENCE> >
+	template< typename SEQUENCE = std::size_t, typename TRAITS = detail::sequence_of<SEQUENCE> >
 	class single_producer_sequencer
 	{
 	public:
@@ -44,7 +44,7 @@ namespace qor{
 		using size_type = typename sequence_range<SEQUENCE, TRAITS>::size_type;
 
 		single_producer_sequencer(
-			const sequence_barrier<SEQUENCE, TRAITS>& consumerBarrier,
+			const SequenceBarrier<SEQUENCE, TRAITS>& consumerBarrier,
 			std::size_t bufferSize,
 			SEQUENCE initialSequence = TRAITS::initial_sequence) noexcept
 			: m_consumerBarrier(consumerBarrier)
@@ -144,13 +144,13 @@ namespace qor{
 # pragma warning(disable : 4324) // C4324: structure was padded due to alignment specifier
 #endif
 
-		const sequence_barrier<SEQUENCE, TRAITS>& m_consumerBarrier;
+		const SequenceBarrier<SEQUENCE, TRAITS>& m_consumerBarrier;
 		const std::size_t m_bufferSize;
 
 		alignas(qor_pp_cpu_cache_line)
 		SEQUENCE m_nextToClaim;
 
-		sequence_barrier<SEQUENCE, TRAITS> m_producerBarrier;
+		SequenceBarrier<SEQUENCE, TRAITS> m_producerBarrier;
 
 #if CPPCORO_COMPILER_MSVC
 # pragma warning(pop)

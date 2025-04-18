@@ -29,11 +29,11 @@
 
 namespace qor{
 
-    class spin_wait
+    class SpinWait
 	{
 	public:
 
-		spin_wait() noexcept;
+		SpinWait() noexcept;
 		bool next_spin_will_yield() const noexcept;
 		void spin_one() noexcept;
 		void reset() noexcept;

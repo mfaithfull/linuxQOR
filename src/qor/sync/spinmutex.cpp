@@ -30,19 +30,19 @@
 
 namespace qor{
 
-	spin_mutex::spin_mutex() noexcept
+	SpinMutex::SpinMutex() noexcept
 		: m_isLocked(false)
 	{
 	}
 
-	bool spin_mutex::try_lock() noexcept
+	bool SpinMutex::try_lock() noexcept
 	{
 		return !m_isLocked.exchange(true, std::memory_order_acquire);
 	}
 
-	void spin_mutex::lock() noexcept
+	void SpinMutex::lock() noexcept
 	{
-		spin_wait wait;
+		SpinWait wait;
 		while (!try_lock())
 		{
 			while (m_isLocked.load(std::memory_order_relaxed))
@@ -52,7 +52,7 @@ namespace qor{
 		}
 	}
 
-	void spin_mutex::unlock() noexcept
+	void SpinMutex::unlock() noexcept
 	{
 		m_isLocked.store(false, std::memory_order_release);
 	}

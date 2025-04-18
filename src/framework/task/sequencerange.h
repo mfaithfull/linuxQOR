@@ -32,7 +32,7 @@
 
 namespace qor{
 
-	template<typename SEQUENCE, typename TRAITS = detail::sequence_traits<SEQUENCE>>
+	template<typename SEQUENCE, typename TRAITS = detail::sequence_of<SEQUENCE>>
 	class sequence_range
 	{
 	public:
