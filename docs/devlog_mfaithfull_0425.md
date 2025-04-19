@@ -54,6 +54,8 @@ Added a component for a command line option parser. Still very rough atm and mor
 Added the first System module, FileSystem which will have separate implementations for Linux and Windows. I don't consider std::filesystem to be complete or good enough on its own yet.
 The pimpl pattern used here will be typical. The system module defines an interface, IFileSystem which is implemented by the platform specific library. The system module uses that platform specific implementation through an internal smart reference.
 
-Got diverted into async IO. Adding a zoo of new synchronisation objects to support coroutines from Lewis Baker's cppcoro repo
+Got diverted into async IO. Adding a zoo of new synchronisation objects to support coroutines from Lewis Baker's cppcoro 
 
+Performant Sync and Async file IO commonised across Windows and Linux looks possible now with liburing on Linux and a portable technique for handle async tasks using coroutines
+However the Filesystem modules are a major undertaking. This is going to take some time to get even approximately right because everything is OS specific and also has to be common so needs to be be developed 2.5 times and the .5 is the hardest due to needing a common abstraction that doesn't loose information compared with what it's abstracting.
 

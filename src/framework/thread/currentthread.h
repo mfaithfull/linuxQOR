@@ -30,7 +30,6 @@
 #include "src/platform/compiler/compiler.h"
 #include "threadcontext.h"
 #include "icurrentthread.h"
-#include "pool/types.h"
 
 namespace qor
 {
@@ -39,6 +38,8 @@ namespace qor
 
 namespace qor{ namespace framework{
 
+    using opt_t = std::uint8_t;                                         //The type used for the bitmask template parameter of the thread pool.
+    template <opt_t> class ThreadPool;                                 //forward declare ThreadPool class
     class qor_pp_module_interface(QOR_THREAD) CurrentThread;
 
     extern qor_pp_thread_local CurrentThread* t_pCurrentThread;
@@ -46,7 +47,7 @@ namespace qor{ namespace framework{
     class qor_pp_module_interface(QOR_THREAD) CurrentThread
     {
         friend class qor_pp_module_interface(QOR_THREAD) Thread;
-        template <opt_t> friend class thread_pool;
+        template <opt_t> friend class ThreadPool;
     public:
 
         static const CurrentThread& GetCurrent();

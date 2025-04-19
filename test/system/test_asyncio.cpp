@@ -235,7 +235,7 @@ private:
     io_uring_sqe* sqe_;
 };
 
-class ThreadPool 
+class TestThreadPool 
 {
     public:
 
@@ -243,8 +243,8 @@ class ThreadPool
       {
         struct Awaiter : std::suspend_always 
         {
-            thread_pool<tp::pause|tp::priority|tp::wait_deadlock_checks> &tpool;
-            Awaiter(thread_pool<tp::pause|tp::priority|tp::wait_deadlock_checks> &pool) : tpool{pool} {}
+            ThreadPool<tp::pause|tp::priority|tp::wait_deadlock_checks> &tpool;
+            Awaiter(ThreadPool<tp::pause|tp::priority|tp::wait_deadlock_checks> &pool) : tpool{pool} {}
             void await_suspend(std::coroutine_handle<> handle) 
             {
                 tpool.detach_task([handle, this]() { handle.resume(); });
@@ -256,7 +256,7 @@ class ThreadPool
       size_t numUnfinishedTasks() const { return pool_.get_tasks_total(); }
     
     private:
-      thread_pool<tp::pause|tp::priority|tp::wait_deadlock_checks> pool_;
+      ThreadPool<tp::pause|tp::priority|tp::wait_deadlock_checks> pool_;
 };
 
 int consumeCQEntries(IOUring &uring) 
@@ -292,7 +292,7 @@ std::vector<Result> gatherResults(const std::vector<Task> &tasks) {
     return results;
 }
 
-Task parseOBJFile(IOUring &uring, const ReadOnlyFile &file, ThreadPool &pool) {
+Task parseOBJFile(IOUring &uring, const ReadOnlyFile &file, TestThreadPool &pool) {
     std::vector<char> buff(file.size());
     int status = co_await ReadFileAwaitable(uring, file, buff);
     co_await pool.schedule();
@@ -313,7 +313,7 @@ Task parseOBJFile(IOUring &uring, const ReadOnlyFile &file, ThreadPool &pool) {
 std::vector<Result> coroutines_pool(const std::vector<ReadOnlyFile> &files) 
 {
     IOUring uring{files.size()};
-    ThreadPool pool;
+    TestThreadPool pool;
     std::vector<Task> tasks;
     tasks.reserve(files.size());
     for (const auto &file : files) {

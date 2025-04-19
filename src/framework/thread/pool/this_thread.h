@@ -30,19 +30,19 @@ namespace qor { namespace framework{
     //A class used to obtain information about the current thread and, if native extensions are enabled, set its priority and affinity.
     class [[nodiscard]] this_thread
     {
-        template <opt_t> friend class thread_pool;
+        template <opt_t> friend class ThreadPool;
 
     public:
 
-        //Get the index of the current thread. If this thread belongs to a `thread_pool` object, the return value will be an index in the range `[0, N)` where `N == thread_pool::get_thread_count()`. Otherwise, for example if this thread is the main thread or an independent thread not in any pools, `std::nullopt` will be returned.
+        //Get the index of the current thread. If this thread belongs to a `ThreadPool` object, the return value will be an index in the range `[0, N)` where `N == ThreadPool::get_thread_count()`. Otherwise, for example if this thread is the main thread or an independent thread not in any pools, `std::nullopt` will be returned.
         //return A `std::optional` object, optionally containing a thread index.
         [[nodiscard]] static std::optional<std::size_t> get_index() noexcept
         {
             return my_index;
         }
 
-        //Get a pointer to the thread pool that owns the current thread. If this thread belongs to a `thread_pool` object, the return value will be a `void` pointer to that object. Otherwise, for example if this thread is the main thread or an independent thread not in any pools, `std::nullopt` will be returned.
-        //return An `std::optional` object, optionally containing a pointer to a thread pool. Note that this will be a `void` pointer, so it must be cast to the desired instantiation of the `thread_pool` template in order to use any member functions.
+        //Get a pointer to the thread pool that owns the current thread. If this thread belongs to a `ThreadPool` object, the return value will be a `void` pointer to that object. Otherwise, for example if this thread is the main thread or an independent thread not in any pools, `std::nullopt` will be returned.
+        //return An `std::optional` object, optionally containing a pointer to a thread pool. Note that this will be a `void` pointer, so it must be cast to the desired instantiation of the `ThreadPool` template in order to use any member functions.
         [[nodiscard]] static std::optional<void*> get_pool() noexcept
         {
             return my_pool;

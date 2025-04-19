@@ -75,7 +75,7 @@
 
 namespace qor { namespace framework{
 
-    //An enumeration of flags to be used in the bitmask template parameter of `qor::thread_pool` to enable optional features.
+    //An enumeration of flags to be used in the bitmask template parameter of `qor::ThreadPool` to enable optional features.
     enum tp : opt_t
     {
         none = 0,                      //No optional features enabled.
@@ -85,7 +85,7 @@ namespace qor { namespace framework{
     };
     
 #ifdef __cpp_exceptions
-    //An exception that will be thrown by `wait()`, `wait_for()`, and `wait_until()` if the user tries to call them from within a thread of the same pool, which would result in a deadlock. Only used if the flag `tp::wait_deadlock_checks` is enabled in the template parameter of `thread_pool`.
+    //An exception that will be thrown by `wait()`, `wait_for()`, and `wait_until()` if the user tries to call them from within a thread of the same pool, which would result in a deadlock. Only used if the flag `tp::wait_deadlock_checks` is enabled in the template parameter of `ThreadPool`.
     struct wait_deadlock : public std::runtime_error
     {
         wait_deadlock() : std::runtime_error("wait_deadlock") {};
@@ -93,7 +93,7 @@ namespace qor { namespace framework{
 #endif
 
     template <opt_t OptFlags = tp::none>
-    class [[nodiscard]] thread_pool
+    class [[nodiscard]] ThreadPool
     {
     public:
         
@@ -105,26 +105,26 @@ namespace qor { namespace framework{
         static_assert(!wait_deadlock_checks_enabled, "Wait deadlock checks cannot be enabled if exception handling is disabled.");
 #endif
 
-        thread_pool() : thread_pool(0, [] {}) {}       //Construct a new thread pool. The number of threads will be the total number of hardware threads available, as reported by the implementation. This is usually determined by the number of cores in the CPU. If a core is hyperthreaded, it will count as two threads.
-        explicit thread_pool(const std::size_t num_threads) : thread_pool(num_threads, [] {}) {}       //Construct a new thread pool with the specified number of threads.
+        ThreadPool() : ThreadPool(0, [] {}) {}       //Construct a new thread pool. The number of threads will be the total number of hardware threads available, as reported by the implementation. This is usually determined by the number of cores in the CPU. If a core is hyperthreaded, it will count as two threads.
+        explicit ThreadPool(const std::size_t num_threads) : ThreadPool(num_threads, [] {}) {}       //Construct a new thread pool with the specified number of threads.
         
         template <qor_pp_threadpool_init_func_concept(F)>      //Construct a new thread pool with the specified initialization function.
-        explicit thread_pool(F&& init) : thread_pool(0, std::forward<F>(init)) {}
+        explicit ThreadPool(F&& init) : ThreadPool(0, std::forward<F>(init)) {}
 
         template <qor_pp_threadpool_init_func_concept(F)>      // Construct a new thread pool with the specified number of threads and initialization function.
-        thread_pool(const std::size_t num_threads, F&& init)
+        ThreadPool(const std::size_t num_threads, F&& init)
         {
             create_threads(num_threads, std::forward<F>(init));
         }
 
         // The copy and move constructors and assignment operators are deleted. The thread pool cannot be copied or moved.
-        thread_pool(const thread_pool&) = delete;
-        thread_pool(thread_pool&&) = delete;
-        thread_pool& operator=(const thread_pool&) = delete;
-        thread_pool& operator=(thread_pool&&) = delete;
+        ThreadPool(const ThreadPool&) = delete;
+        ThreadPool(ThreadPool&&) = delete;
+        ThreadPool& operator=(const ThreadPool&) = delete;
+        ThreadPool& operator=(ThreadPool&&) = delete;
 
         //Destruct the thread pool. Waits for all tasks to complete, then destroys all threads. If a cleanup function was set, it will run in each thread right before it is destroyed. Note that if the pool is paused, then any tasks still in the queue will never be executed.
-        ~thread_pool() noexcept
+        ~ThreadPool() noexcept
         {
 #ifdef __cpp_exceptions
             try
@@ -245,7 +245,7 @@ namespace qor { namespace framework{
         {
             std::vector<thread_t::native_handle_type> native_handles(thread_count);
             for (std::size_t i = 0; i < thread_count; ++i)
-                native_handles[i] = threads[i].native_handle();
+                native_handles[i] = threads[i].stdThread().native_handle();
             return native_handles;
         }
 
@@ -282,7 +282,7 @@ namespace qor { namespace framework{
         {
             std::vector<thread_t::id> thread_ids(thread_count);
             for (std::size_t i = 0; i < thread_count; ++i)
-                thread_ids[i] = threads[i].get_id();
+                thread_ids[i] = threads[i].stdThread().get_id();
             return thread_ids;
         }
 
@@ -623,8 +623,8 @@ namespace qor { namespace framework{
         {
           struct Awaiter : std::suspend_always 
           {
-              thread_pool &tpool;
-              Awaiter(thread_pool &pool) : tpool{pool} {}
+              ThreadPool &tpool;
+              Awaiter(ThreadPool &pool) : tpool{pool} {}
               void await_suspend(std::coroutine_handle<> handle) 
               {
                   tpool.detach_task([handle, this]() { handle.resume(); });
@@ -671,8 +671,8 @@ namespace qor { namespace framework{
         {
             if (num_threads > 0)
                 return num_threads;
-            if (thread_t::hardware_concurrency() > 0)
-                return thread_t::hardware_concurrency();
+            if (thread_t::std_thread_t::hardware_concurrency() > 0)
+                return thread_t::std_thread_t::hardware_concurrency();
             return 1;
         }
 

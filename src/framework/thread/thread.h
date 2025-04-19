@@ -27,6 +27,7 @@
 
 #include <chrono>
 #include <thread>
+#include <type_traits>
 
 #include "src/platform/compiler/compiler.h"
 #include "currentthread.h"
@@ -39,11 +40,38 @@ namespace qor{ namespace framework{
 
     public:
 
+		typedef std::jthread std_thread_t;
+		typedef std::jthread::native_handle_type native_handle_type;
+		typedef std::jthread::id id;
+
         Thread();
 		Thread(const Thread & src) = delete;
-		Thread& operator=(Thread const& src) = delete;
-		virtual ~Thread();
 
+		Thread(Thread&& other) : m_std_thread(std::move(other.m_std_thread)), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
+		{
+			std::swap(m_pCurrent, other.m_pCurrent);
+		}
+
+		virtual ~Thread();
+	
+		Thread&	operator=(const Thread&) = delete;
+	
+		Thread&	operator=(Thread&& other) noexcept
+		{
+			Thread(std::move(other)).swap(*this);
+			return *this;
+		}
+	
+		void swap(Thread& other) noexcept
+		{
+			std::swap(m_std_thread, other.m_std_thread);
+			std::swap(m_pCurrent, other.m_pCurrent);
+		}
+	
+
+		template<typename _Callable, typename... _Args,	typename = std::enable_if_t<!std::is_same_v<std::remove_cvref_t<_Callable>,Thread>>>
+	 	explicit Thread(_Callable&& __f, _Args&&... __args) : m_std_thread(std::forward<_Callable>(__f), std::forward<_Args>(__args)...), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) ) { }
+		
 		std::thread::id GetID();		
 		void Detach();
 		std::stop_source GetStopSource();
@@ -51,9 +79,10 @@ namespace qor{ namespace framework{
 		void Join();
 		bool Joinable();
 		bool RequestStop();
+		std::jthread& stdThread();
 
 		virtual void Run(){}
-
+		
     private:	
 		void Setup();
 		void CleanUp();

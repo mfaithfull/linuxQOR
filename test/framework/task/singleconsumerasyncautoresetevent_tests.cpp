@@ -79,7 +79,7 @@ qor_pp_test_suite_case(SingleConsumerAsyncAutoResetEventTestSuite, single_waiter
 
 qor_pp_test_suite_case(SingleConsumerAsyncAutoResetEventTestSuite, scaare_multi_threaded)
 {
-	thread_pool<> tp;
+	ThreadPool<> tp;
 
 	sync_wait([&]() -> task<>
 	{

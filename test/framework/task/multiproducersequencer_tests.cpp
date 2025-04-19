@@ -52,7 +52,7 @@ struct MultiProducerSequencerTestSuite{};
 namespace
 {
 	task<> one_at_a_time_producer(
-		thread_pool<>& tp,
+		ThreadPool<>& tp,
 		multi_producer_sequencer<std::size_t>& sequencer,
 		std::uint64_t buffer[],
 		std::uint64_t iterationCount)
@@ -78,7 +78,7 @@ namespace
 	}
 
 	task<> batch_producer(
-		thread_pool<>& tp,
+		ThreadPool<>& tp,
 		multi_producer_sequencer<std::size_t>& sequencer,
 		std::uint64_t buffer[],
 		std::uint64_t iterationCount,
@@ -105,7 +105,7 @@ namespace
 	}
 
 	task<std::uint64_t> consumer(
-		thread_pool<>& tp,
+		ThreadPool<>& tp,
 		const multi_producer_sequencer<std::size_t>& sequencer,
 		SequenceBarrier<std::size_t>& readBarrier,
 		const std::uint64_t buffer[],
@@ -142,7 +142,7 @@ namespace
 
 qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_batch_single_consumer)
 {
-	thread_pool<> tp;
+	ThreadPool<> tp;
 //	static_thread_pool tp{ 3 };
 
 	// Allow time for threads to start up.
@@ -187,7 +187,7 @@ qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_batch_sing
 
 qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_single_single_consumer)
 {
-	thread_pool<> tp;
+	ThreadPool<> tp;
 	//static_thread_pool tp{ 3 };
 
 	// Allow time for threads to start up.

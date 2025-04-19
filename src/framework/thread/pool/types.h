@@ -26,11 +26,12 @@
 #define QOR_PP_H_FRAMEWORK_THREADPOOL_TYPES
 
 #include <functional>
+#include "src/framework/thread/thread.h"
 
 namespace qor { namespace framework{
 
     using opt_t = std::uint8_t;                                         //The type used for the bitmask template parameter of the thread pool.
-    template <opt_t> class thread_pool;                                 //forward declare thread_pool class
+    template <opt_t> class ThreadPool;                                 //forward declare ThreadPool class
 #ifdef __cpp_lib_move_only_function
     template <typename... S>                                            //The template to use to store functions in the task queue and other places. In C++23 and later we use `std::move_only_function`.
     using function_t = std::move_only_function<S...>;
@@ -39,7 +40,7 @@ namespace qor { namespace framework{
     using function_t = std::function<S...>;
 #endif
     using task_t = function_t<void()>;                                  //The type of tasks in the task queue.
-    using thread_t = std::jthread;                                      //The type of threads to use. In C++20 and later we use `std::jthread`.
+    using thread_t = Thread;                                            //The type of threads to use.
 
 }}//qor::framework    
 

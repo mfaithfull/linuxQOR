@@ -87,7 +87,7 @@ qor_pp_test_suite_case(SyncWaitTestSuite, sync_wait_multiple_threads)
 	// which will sometimes complete before this thread calls event.wait()
 	// inside sync_wait(). Thus we're roughly testing the thread-safety of
 	// sync_wait().
-	thread_pool<> tp{ 1 };
+	ThreadPool<> tp{ 1 };
 
 	int value = 0;
 	auto createLazyTask = [&]() -> task<int>

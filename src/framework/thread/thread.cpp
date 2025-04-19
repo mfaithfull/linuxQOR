@@ -72,6 +72,11 @@ namespace qor{ namespace framework{
 		return m_std_thread.request_stop();
 	}
 
+	std::jthread& Thread::stdThread()
+	{
+		return m_std_thread;
+	}
+
 	void Thread::Setup()
 	{
 		try
