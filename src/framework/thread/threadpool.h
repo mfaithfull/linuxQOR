@@ -63,13 +63,11 @@
     #include <semaphore>
 #endif
 #include <stop_token>
-#include "pool/version.h"
 #include "pool/types.h"
 #include "pool/pr_task.h"
 #include "pool/concepts.h"
-#include "pool/multi_future.h"
+#include "pool/multifuture.h"
 #include "pool/blocks.h"
-#include "pool/native_extensions.h"
 #include "currentthread.h"
 #include "pool/common_index_type.h"
 
@@ -118,7 +116,7 @@ namespace qor { namespace framework{
 #endif
         }
 
-        //Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The block function takes two arguments, the start and end of the block, so that it is only called once per block, but it is up to the user make sure the block function correctly deals with all the indices in each block. Does not return a `multi_future`, so the user must use `wait()` or some other method to ensure that the loop finishes executing, otherwise bad things will happen.
+        //Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The block function takes two arguments, the start and end of the block, so that it is only called once per block, but it is up to the user make sure the block function correctly deals with all the indices in each block. Does not return a `MultiFuture`, so the user must use `wait()` or some other method to ensure that the loop finishes executing, otherwise bad things will happen.
         //T1 The type of the first index. Should be a signed or unsigned integer.
         //T2 The type of the index after the last index. Should be a signed or unsigned integer.
         //F The type of the function to loop through.
@@ -133,7 +131,7 @@ namespace qor { namespace framework{
             if (static_cast<T>(index_after_last) > static_cast<T>(first_index))
             {
                 const std::shared_ptr<std::decay_t<F>> block_ptr = std::make_shared<std::decay_t<F>>(std::forward<F>(block));
-                const blocks blks(static_cast<T>(first_index), static_cast<T>(index_after_last), num_blocks ? num_blocks : thread_count);
+                const Blocks blks(static_cast<T>(first_index), static_cast<T>(index_after_last), num_blocks ? num_blocks : thread_count);
                 for (std::size_t blk = 0; blk < blks.get_num_blocks(); ++blk)
                 {
                     PostTask(
@@ -146,7 +144,7 @@ namespace qor { namespace framework{
             }
         }
 
-        // Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The loop function takes one argument, the loop index, so that it is called many times per block. Does not return a `multi_future`, so the user must use `wait()` or some other method to ensure that the loop finishes executing, otherwise bad things will happen.
+        // Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The loop function takes one argument, the loop index, so that it is called many times per block. Does not return a `MultiFuture`, so the user must use `wait()` or some other method to ensure that the loop finishes executing, otherwise bad things will happen.
         // T1 The type of the first index. Should be a signed or unsigned integer.
         // T2 The type of the index after the last index. Should be a signed or unsigned integer.
         // F The type of the function to loop through.
@@ -161,7 +159,7 @@ namespace qor { namespace framework{
             if (static_cast<T>(index_after_last) > static_cast<T>(first_index))
             {
                 const std::shared_ptr<std::decay_t<F>> loop_ptr = std::make_shared<std::decay_t<F>>(std::forward<F>(loop));
-                const blocks blks(static_cast<T>(first_index), static_cast<T>(index_after_last), num_blocks ? num_blocks : thread_count);
+                const Blocks blks(static_cast<T>(first_index), static_cast<T>(index_after_last), num_blocks ? num_blocks : thread_count);
                 for (std::size_t blk = 0; blk < blks.get_num_blocks(); ++blk)
                 {
                     PostTask(
@@ -175,7 +173,7 @@ namespace qor { namespace framework{
             }
         }
 
-        //Submit a sequence of tasks enumerated by indices to the queue, with the specified priority. The sequence function takes one argument, the task index, and will be called once per index. Does not return a `multi_future`, so the user must use `wait()` or some other method to ensure that the sequence finishes executing, otherwise bad things will happen.
+        //Submit a sequence of tasks enumerated by indices to the queue, with the specified priority. The sequence function takes one argument, the task index, and will be called once per index. Does not return a `MultiFuture`, so the user must use `wait()` or some other method to ensure that the sequence finishes executing, otherwise bad things will happen.
         // T1 The type of the first index. Should be a signed or unsigned integer.
         // T2 The type of the index after the last index. Should be a signed or unsigned integer.
         // F The type of the function used to define the sequence.
@@ -335,25 +333,25 @@ namespace qor { namespace framework{
             }
         }
 
-        // Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The block function takes two arguments, the start and end of the block, so that it is only called once per block, but it is up to the user make sure the block function correctly deals with all the indices in each block. Returns a `multi_future` that contains the futures for all of the blocks.
+        // Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The block function takes two arguments, the start and end of the block, so that it is only called once per block, but it is up to the user make sure the block function correctly deals with all the indices in each block. Returns a `MultiFuture` that contains the futures for all of the blocks.
         // T1 The type of the first index. Should be a signed or unsigned integer.
         // T2 The type of the index after the last index. Should be a signed or unsigned integer.
         // F The type of the function to loop through.
         // R The return type of the function to loop through (can be `void`).
         // first_index The first index in the loop.
-        // index_after_last The index after the last index in the loop. The loop will iterate from `first_index` to `(index_after_last - 1)` inclusive. In other words, it will be equivalent to `for (T i = first_index; i < index_after_last; ++i)`. Note that if `index_after_last <= first_index`, no blocks will be submitted, and an empty `multi_future` will be returned.
+        // index_after_last The index after the last index in the loop. The loop will iterate from `first_index` to `(index_after_last - 1)` inclusive. In other words, it will be equivalent to `for (T i = first_index; i < index_after_last; ++i)`. Note that if `index_after_last <= first_index`, no blocks will be submitted, and an empty `MultiFuture` will be returned.
         // block A function that will be called once per block. Should take exactly two arguments: the first index in the block and the index after the last index in the block. `block(start, end)` should typically involve a loop of the form `for (T i = start; i < end; ++i)`.
         // num_blocks The maximum number of blocks to split the loop into. The default is 0, which means the number of blocks will be equal to the number of threads in the pool.
         // priority The priority of the tasks. Should be between -128 and +127 (a signed 8-bit integer). The default is 0. Only taken into account if the flag `tp::priority` is enabled in the template parameter, otherwise has no effect.
-        // A `multi_future` that can be used to wait for all the blocks to finish. If the block function returns a value, the `multi_future` can also be used to obtain the values returned by each block.
+        // A `MultiFuture` that can be used to wait for all the blocks to finish. If the block function returns a value, the `MultiFuture` can also be used to obtain the values returned by each block.
         template <typename T1, typename T2, typename T = common_index_type_t<T1, T2>, typename F, typename R = std::invoke_result_t<std::decay_t<F>, T, T>>
-        [[nodiscard]] multi_future<R> SubmitBlocks(const T1 first_index, const T2 index_after_last, F&& block, const std::size_t num_blocks = 0, const priority_t priority = 0)
+        [[nodiscard]] MultiFuture<R> SubmitBlocks(const T1 first_index, const T2 index_after_last, F&& block, const std::size_t num_blocks = 0, const priority_t priority = 0)
         {
             if (static_cast<T>(index_after_last) > static_cast<T>(first_index))
             {
                 const std::shared_ptr<std::decay_t<F>> block_ptr = std::make_shared<std::decay_t<F>>(std::forward<F>(block));
-                const blocks blks(static_cast<T>(first_index), static_cast<T>(index_after_last), num_blocks ? num_blocks : thread_count);
-                multi_future<R> future;
+                const Blocks blks(static_cast<T>(first_index), static_cast<T>(index_after_last), num_blocks ? num_blocks : thread_count);
+                MultiFuture<R> future;
                 future.reserve(blks.get_num_blocks());
                 for (std::size_t blk = 0; blk < blks.get_num_blocks(); ++blk)
                 {
@@ -369,24 +367,24 @@ namespace qor { namespace framework{
             return {};
         }
 
-        // Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The loop function takes one argument, the loop index, so that it is called many times per block. It must have no return value. Returns a `multi_future` that contains the futures for all of the blocks.
+        // Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The loop function takes one argument, the loop index, so that it is called many times per block. It must have no return value. Returns a `MultiFuture` that contains the futures for all of the blocks.
         // T1 The type of the first index. Should be a signed or unsigned integer.
         // T2 The type of the index after the last index. Should be a signed or unsigned integer.
         // F The type of the function to loop through.
         // first_index The first index in the loop.
-        // index_after_last The index after the last index in the loop. The loop will iterate from `first_index` to `(index_after_last - 1)` inclusive. In other words, it will be equivalent to `for (T i = first_index; i < index_after_last; ++i)`. Note that if `index_after_last <= first_index`, no tasks will be submitted, and an empty `multi_future` will be returned.
+        // index_after_last The index after the last index in the loop. The loop will iterate from `first_index` to `(index_after_last - 1)` inclusive. In other words, it will be equivalent to `for (T i = first_index; i < index_after_last; ++i)`. Note that if `index_after_last <= first_index`, no tasks will be submitted, and an empty `MultiFuture` will be returned.
         // loop The function to loop through. Will be called once per index, many times per block. Should take exactly one argument: the loop index. It cannot have a return value.
         // num_blocks The maximum number of blocks to split the loop into. The default is 0, which means the number of blocks will be equal to the number of threads in the pool.
         // priority The priority of the tasks. Should be between -128 and +127 (a signed 8-bit integer). The default is 0. Only taken into account if the flag `tp::priority` is enabled in the template parameter, otherwise has no effect.
-        // return A `multi_future` that can be used to wait for all the blocks to finish.
+        // return A `MultiFuture` that can be used to wait for all the blocks to finish.
         template <typename T1, typename T2, typename T = common_index_type_t<T1, T2>, typename F>
-        [[nodiscard]] multi_future<void> SubmitLoop(const T1 first_index, const T2 index_after_last, F&& loop, const std::size_t num_blocks = 0, const priority_t priority = 0)
+        [[nodiscard]] MultiFuture<void> SubmitLoop(const T1 first_index, const T2 index_after_last, F&& loop, const std::size_t num_blocks = 0, const priority_t priority = 0)
         {
             if (static_cast<T>(index_after_last) > static_cast<T>(first_index))
             {
                 const std::shared_ptr<std::decay_t<F>> loop_ptr = std::make_shared<std::decay_t<F>>(std::forward<F>(loop));
-                const blocks blks(static_cast<T>(first_index), static_cast<T>(index_after_last), num_blocks ? num_blocks : thread_count);
-                multi_future<void> future;
+                const Blocks blks(static_cast<T>(first_index), static_cast<T>(index_after_last), num_blocks ? num_blocks : thread_count);
+                MultiFuture<void> future;
                 future.reserve(blks.get_num_blocks());
                 for (std::size_t blk = 0; blk < blks.get_num_blocks(); ++blk)
                 {
@@ -403,23 +401,23 @@ namespace qor { namespace framework{
             return {};
         }
 
-        // Submit a sequence of tasks enumerated by indices to the queue, with the specified priority. The sequence function takes one argument, the task index, and will be called once per index. Returns a `multi_future` that contains the futures for all of the tasks.
+        // Submit a sequence of tasks enumerated by indices to the queue, with the specified priority. The sequence function takes one argument, the task index, and will be called once per index. Returns a `MultiFuture` that contains the futures for all of the tasks.
         // T1 The type of the first index. Should be a signed or unsigned integer.
         // T2 The type of the index after the last index. Should be a signed or unsigned integer.
         // F The type of the function used to define the sequence.
         // R The return type of the function used to define the sequence (can be `void`).
         // first_index The first index in the sequence.
-        // index_after_last The index after the last index in the sequence. The sequence will iterate from `first_index` to `(index_after_last - 1)` inclusive. In other words, it will be equivalent to `for (T i = first_index; i < index_after_last; ++i)`. Note that if `index_after_last <= first_index`, no tasks will be submitted, and an empty `multi_future` will be returned.
+        // index_after_last The index after the last index in the sequence. The sequence will iterate from `first_index` to `(index_after_last - 1)` inclusive. In other words, it will be equivalent to `for (T i = first_index; i < index_after_last; ++i)`. Note that if `index_after_last <= first_index`, no tasks will be submitted, and an empty `MultiFuture` will be returned.
         // sequence The function used to define the sequence. Will be called once per index. Should take exactly one argument, the index.
         // priority The priority of the tasks. Should be between -128 and +127 (a signed 8-bit integer). The default is 0. Only taken into account if the flag `tp::priority` is enabled in the template parameter, otherwise has no effect.
-        // return A `multi_future` that can be used to wait for all the tasks to finish. If the sequence function returns a value, the `multi_future` can also be used to obtain the values returned by each task.
+        // return A `MultiFuture` that can be used to wait for all the tasks to finish. If the sequence function returns a value, the `MultiFuture` can also be used to obtain the values returned by each task.
         template <typename T1, typename T2, typename T = common_index_type_t<T1, T2>, typename F, typename R = std::invoke_result_t<std::decay_t<F>, T>>
-        [[nodiscard]] multi_future<R> SubmitSequence(const T1 first_index, const T2 index_after_last, F&& sequence, const priority_t priority = 0)
+        [[nodiscard]] MultiFuture<R> SubmitSequence(const T1 first_index, const T2 index_after_last, F&& sequence, const priority_t priority = 0)
         {
             if (static_cast<T>(index_after_last) > static_cast<T>(first_index))
             {
                 const std::shared_ptr<std::decay_t<F>> sequence_ptr = std::make_shared<std::decay_t<F>>(std::forward<F>(sequence));
-                multi_future<R> future;
+                MultiFuture<R> future;
                 future.reserve(static_cast<std::size_t>(static_cast<T>(index_after_last) > static_cast<T>(first_index)));
                 for (T i = static_cast<T>(first_index); i < static_cast<T>(index_after_last); ++i)
                 {

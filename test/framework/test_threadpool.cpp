@@ -1429,13 +1429,13 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectly
     check(caught);
 }
 
-//Check that exceptions are forwarded correctly by `multi_future`.
+//Check that exceptions are forwarded correctly by `MultiFuture`.
 qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectlyByMultiFuture)
 {
     ThreadPool pool;
-    //sync_out.println("Checking that exceptions are forwarded correctly by multi_future...");
+    //sync_out.println("Checking that exceptions are forwarded correctly by MultiFuture...");
     bool caught = false;
-    multi_future<void> future;
+    MultiFuture<void> future;
     future.push_back(pool.SubmitTask(throws));
     future.push_back(pool.SubmitTask(throws));
     try

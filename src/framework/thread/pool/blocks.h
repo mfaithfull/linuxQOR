@@ -30,11 +30,11 @@ namespace qor { namespace framework{
     //A helper template to divide a range into blocks. Used by `PostBlocks()`, `SubmitBlocks()`, `PostLoop()`, and `SubmitLoop()`.
     //T The type of the indices. Should be a signed or unsigned integer.
     template <typename T>
-    class [[nodiscard]] blocks
+    class [[nodiscard]] Blocks
     {
     public:
         
-        blocks(const T first_index_, const T index_after_last_, const std::size_t num_blocks_) noexcept : first_index(first_index_), index_after_last(index_after_last_), num_blocks(num_blocks_)
+        Blocks(const T first_index_, const T index_after_last_, const std::size_t num_blocks_) noexcept : first_index(first_index_), index_after_last(index_after_last_), num_blocks(num_blocks_)
         {
             if (index_after_last > first_index)
             {

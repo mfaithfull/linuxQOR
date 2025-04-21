@@ -29,13 +29,13 @@ namespace qor { namespace framework{
 
     //A helper template to facilitate waiting for and/or getting the results of multiple futures at once.
     template <typename T>
-    class [[nodiscard]] multi_future : public std::vector<std::future<T>>
+    class [[nodiscard]] MultiFuture : public std::vector<std::future<T>>
     {
     public:
         
         using std::vector<std::future<T>>::vector;      // Inherit all constructors from the base class `std::vector`
 
-        //Get the results from all the futures stored in this `multi_future`, rethrowing any stored exceptions.
+        //Get the results from all the futures stored in this `MultiFuture`, rethrowing any stored exceptions.
         //If the futures return `void`, this function returns `void` as well. Otherwise, it returns a vector containing the results.
         [[nodiscard]] std::conditional_t<std::is_void_v<T>, void, std::vector<T>> get()
         {
@@ -55,7 +55,7 @@ namespace qor { namespace framework{
             }
         }
 
-        //Check how many of the futures stored in this `multi_future` are ready.
+        //Check how many of the futures stored in this `MultiFuture` are ready.
         //return The number of ready futures.
         [[nodiscard]] std::size_t ready_count() const
         {
@@ -68,7 +68,7 @@ namespace qor { namespace framework{
             return count;
         }
 
-        //Check if all the futures stored in this `multi_future` are valid.
+        //Check if all the futures stored in this `MultiFuture` are valid.
         //return `true` if all futures are valid, `false` if at least one of the futures is not valid.
         [[nodiscard]] bool valid() const noexcept
         {
@@ -80,7 +80,7 @@ namespace qor { namespace framework{
             return is_valid;
         }
 
-        //Wait for all the futures stored in this `multi_future`.
+        //Wait for all the futures stored in this `MultiFuture`.
         void wait() const
         {
             for (const std::future<T>& future : *this)
@@ -89,7 +89,7 @@ namespace qor { namespace framework{
             }
         }
 
-        //Wait for all the futures stored in this `multi_future`, but stop waiting after the specified duration has passed. This function first waits for the first future for the desired duration. If that future is ready before the duration expires, this function waits for the second future for whatever remains of the duration. It continues similarly until the duration expires.
+        //Wait for all the futures stored in this `MultiFuture`, but stop waiting after the specified duration has passed. This function first waits for the first future for the desired duration. If that future is ready before the duration expires, this function waits for the second future for whatever remains of the duration. It continues similarly until the duration expires.
         //R An arithmetic type representing the number of ticks to wait.
         //P A `std::ratio` representing the length of each tick in seconds.
         //return `true` if all futures have been waited for before the duration expired, `false` otherwise.
@@ -108,7 +108,7 @@ namespace qor { namespace framework{
             return true;
         }
 
-        //Wait for all the futures stored in this `multi_future`, but stop waiting after the specified time point has been reached. This function first waits for the first future until the desired time point. If that future is ready before the time point is reached, this function waits for the second future until the desired time point. It continues similarly until the time point is reached.
+        //Wait for all the futures stored in this `MultiFuture`, but stop waiting after the specified time point has been reached. This function first waits for the first future until the desired time point. If that future is ready before the time point is reached, this function waits for the second future until the desired time point. It continues similarly until the time point is reached.
         //C The type of the clock used to measure time.
         //D An `std::chrono::duration` type used to indicate the time point.
         //timeout_time The time point at which to stop waiting.
