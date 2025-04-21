@@ -117,7 +117,7 @@
         bool try_acquire_until(const std::chrono::time_point<Clock, Duration>& abs_time)
         {
             std::unique_lock lock(mutex);
-            if (!cv.wait_until(lock, abs_time,
+            if (!cv.WaitUntil(lock, abs_time,
                     [this]
                     {
                         return counter > 0;

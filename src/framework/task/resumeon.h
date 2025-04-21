@@ -50,7 +50,7 @@ namespace cppcoro
 		try
 		{
 			// We manually get the awaiter here so that we can keep
-			// it alive across the call to `scheduler.schedule()`
+			// it alive across the call to `scheduler.Schedule()`
 			// just in case the result is a reference to a value
 			// in the awaiter that would otherwise be a temporary
 			// and destructed before the value could be returned.
@@ -60,11 +60,11 @@ namespace cppcoro
 			auto&& result = co_await static_cast<decltype(awaiter)>(awaiter);
 
 			// Flag as rescheduled before scheduling in case it is the
-			// schedule() operation that throws an exception as we don't
+			// Schedule() operation that throws an exception as we don't
 			// want to attempt to schedule twice if scheduling fails.
 			rescheduled = true;
 
-			co_await scheduler.schedule();
+			co_await scheduler.Schedule();
 
 			co_return static_cast<decltype(result)>(result);
 		}
@@ -77,7 +77,7 @@ namespace cppcoro
 		// of an exception.
 		if (!rescheduled)
 		{
-			co_await scheduler.schedule();
+			co_await scheduler.Schedule();
 		}
 
 		std::rethrow_exception(ex);
@@ -101,12 +101,12 @@ namespace cppcoro
 			ex = std::current_exception();
 		}
 
-		// NOTE: We're assuming that `schedule()` operation is noexcept
+		// NOTE: We're assuming that `Schedule()` operation is noexcept
 		// here. If it were to throw what would we do if 'ex' was non-null?
 		// Presumably we'd treat it the same as throwing an exception while
 		// unwinding and call std::terminate()?
 
-		co_await scheduler.schedule();
+		co_await scheduler.Schedule();
 
 		if (ex)
 		{
@@ -120,7 +120,7 @@ namespace cppcoro
 		for (auto iter = co_await source.begin(); iter != source.end(); co_await ++iter)
 		{
 			auto& value = *iter;
-			co_await scheduler.schedule();
+			co_await scheduler.Schedule();
 			co_yield value;
 		}
 	}

@@ -26,13 +26,14 @@
 #define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM
 
 #include "src/system/filesystem/ifilesystem.h"
+#include "src/system/filesystem/fileindex.h"
 
 namespace qor
 {
     bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFileSystem();//Declaration must match the one in src/system/filesystem/filesystem.h
 }
 
-namespace qor{ namespace nslinux{ namespace system{
+namespace qor{ namespace nslinux{ 
 
     class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileSystem : public qor::system::IFileSystem
     {
@@ -42,8 +43,22 @@ namespace qor{ namespace nslinux{ namespace system{
 
         virtual void Setup();
         virtual void Shutdown();
+
+        /*enumerate directory entries
+        create, delete, rename, move and open files and folders
+        setup symlinks, hardlinks and or whatever is supported
+        report quotas and available spaces
+        manage access, ownership, status, times of files
+                
+        consider whether we need a separate directory entry file object if we want to be able to mess with dirents, probably.*/
+
+        virtual ref_of<system::File>::type CreateFile(const system::FileIndex& index, const int withFlags) const;        
+        virtual ref_of<system::File>::type OpenFile(const system::FileIndex& index, const int openFor, const int withFlags) const;
+        virtual bool DeleteFile(const system::FileIndex& index) const;
+
+        void SyncToSystem() const;
     };
 
-}}}//qor::nslinux::system
+}}//qor::nslinux
 
 #endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM

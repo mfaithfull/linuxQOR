@@ -58,7 +58,7 @@ namespace qor
 	auto ScheduleOn(SCHEDULER& scheduler, AWAITABLE awaitable)
 		-> task<detail::remove_rvalue_reference_t<typename awaitable_of<AWAITABLE>::await_result_t>>
 	{
-		co_await scheduler.schedule();
+		co_await scheduler.Schedule();
 		co_return co_await std::move(awaitable);
 	}
 
@@ -69,7 +69,7 @@ namespace qor
 		// 'co_await begin()' or subsequent calls to `co_await iterator::operator++()`
 		// below. This ensures that all calls to the Generator's coroutine_handle<>::resume()
 		// are executed on the execution context of the scheduler.
-		co_await scheduler.schedule();
+		co_await scheduler.Schedule();
 
 		const auto itEnd = source.end();
 		auto it = co_await source.begin();
@@ -77,7 +77,7 @@ namespace qor
 		{
 			co_yield *it;
 
-			co_await scheduler.schedule();
+			co_await scheduler.Schedule();
 
 			(void)co_await ++it;
 		}

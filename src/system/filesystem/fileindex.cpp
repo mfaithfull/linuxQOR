@@ -145,8 +145,7 @@ namespace qor{ namespace system{
         return m_dirent.path();
     }
 
-    ref_of<File>::type FileIndex::Open()
-    /*IFile::Mode mode = IFile::Mode::OpenOrCreate, IFile::Access access = IFile::Access::ReadWriteAccess, IFile::Share share = IFile::ShareNone*/
+    ref_of<File>::type FileIndex::Open(const int openFor, const int withFlags, const int inMode)    
     {
         ref_of<File>::type result;
         return result;

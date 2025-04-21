@@ -51,14 +51,15 @@ namespace qor{ namespace system{
         Path CurrentPath();
         void CurrentPath(Path& path);
 
+        ref_of<File>::type CreateFile(const FileIndex& index, const int withFlags) const;
+        bool DeleteFile(const FileIndex& index) const;
         ref_of<File>::type OpenFile();
         bool CopyFile();
-        bool DeleteFile();
         bool MoveFile();
 
         std::filesystem::space_info Space(const Path& path);
         Path TempFolder();
-
+                
     private:
 
         ref_of<IFileSystem>::type m_pimpl;

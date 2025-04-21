@@ -41,6 +41,8 @@ namespace qor{ namespace system{
         File& operator = (const File&);
         virtual ~File();     
         
+        virtual int ChangeMode(unsigned int mode);
+
         int64_t GetPosition();
         int64_t SetPosition(int64_t newPosition);
         bool IsOpen();
@@ -50,6 +52,8 @@ namespace qor{ namespace system{
         bool SupportsPosition();
 
     protected:
+
+        File();
 
         //ref_of<IFile>::type m_pimpl;
     };

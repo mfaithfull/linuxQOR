@@ -38,7 +38,7 @@ qor::Module& ThisModule(void)
 	static qor::Module QORModule("Querysoft Open Runtime: Linux FileSystem Module", 
         qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-	static qor::TypeRegEntry< qor::nslinux::system::FileSystem, qor::system::IFileSystem > reg;  //Register the Linux specific implementation of IFileSystem
+	static qor::TypeRegEntry< qor::nslinux::FileSystem, qor::system::IFileSystem > reg;  //Register the Linux specific implementation of IFileSystem
 
 	return QORModule;
 }

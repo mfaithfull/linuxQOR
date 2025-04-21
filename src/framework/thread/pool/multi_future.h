@@ -94,7 +94,7 @@ namespace qor { namespace framework{
         //P A `std::ratio` representing the length of each tick in seconds.
         //return `true` if all futures have been waited for before the duration expired, `false` otherwise.
         template <typename R, typename P>
-        bool wait_for(const std::chrono::duration<R, P>& duration) const
+        bool WaitFor(const std::chrono::duration<R, P>& duration) const
         {
             const std::chrono::time_point<std::chrono::steady_clock> start_time = std::chrono::steady_clock::now();
             for (const std::future<T>& future : *this)
@@ -114,11 +114,11 @@ namespace qor { namespace framework{
         //timeout_time The time point at which to stop waiting.
         //return `true` if all futures have been waited for before the time point was reached, `false` otherwise.
         template <typename C, typename D>
-        bool wait_until(const std::chrono::time_point<C, D>& timeout_time) const
+        bool WaitUntil(const std::chrono::time_point<C, D>& timeout_time) const
         {
             for (const std::future<T>& future : *this)
             {
-                future.wait_until(timeout_time);
+                future.WaitUntil(timeout_time);
                 if (timeout_time < std::chrono::steady_clock::now())
                 {
                     return false;

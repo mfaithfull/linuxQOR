@@ -28,6 +28,8 @@
 
 namespace qor{ namespace system{
 
+    File::File(){}
+
     File::File(const File& src)
     {
         *this = src;
@@ -50,6 +52,11 @@ namespace qor{ namespace system{
     File::~File()
     {
 
+    }
+
+    int File::ChangeMode(unsigned int mode)
+    {
+        return -1;
     }
     
     int64_t File::GetPosition()

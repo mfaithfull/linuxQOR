@@ -29,6 +29,10 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "filesystem.h"
+#include "file.h"
+
+#include <unistd.h>
+#include <fcntl.h>
 
 namespace qor{
     bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFileSystem() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileSystem requirement. 
@@ -37,16 +41,39 @@ namespace qor{
     }
 }//qor
 
-namespace qor{ namespace nslinux{ namespace system{
+namespace qor{ namespace nslinux{ 
 
     void FileSystem::Setup()
     {
-
     }
 
     void FileSystem::Shutdown()
     {
-
+        SyncToSystem();
     }
 
-}}}//qor::nslinux::system
+    void FileSystem::SyncToSystem() const
+    {
+        sync();
+    }
+
+    ref_of<system::File>::type FileSystem::CreateFile(const system::FileIndex& index, int withFlags) const
+    {
+        int flags = withFlags |= WithFlags::Create | WithFlags::Truncate;
+        auto ref = OpenFile(index, OpenFor::WriteOnly, flags);
+        ref->ChangeMode(Owner_Read | Owner_Write);
+        return ref;
+    }
+
+    ref_of<system::File>::type FileSystem::OpenFile(const system::FileIndex& index, int openFor, int withFlags) const
+    {        
+        return new_ref<File>(index, openFor, withFlags).template AsRef<system::File>();
+    }
+
+    bool FileSystem::DeleteFile(const system::FileIndex& index) const
+    {
+        int result = unlink(index.ToString().c_str());
+        return result != -1 ? true : false;
+    }
+    ////int openat(int fd, index.ToString().c_str(), int oflag, ...);
+}}//qor::nslinux

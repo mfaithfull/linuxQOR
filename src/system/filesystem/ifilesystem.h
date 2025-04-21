@@ -28,13 +28,60 @@
 #include "src/qor/instance/singleton.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/factory/externalfactory.h"
-
+#include "fileindex.h"
 
 namespace qor{ namespace system{
 
-    class IFileSystem
+    class qor_pp_module_interface(QOR_FILESYSTEM) IFileSystem
     {
     public:
+
+        enum OpenFor
+        {
+            Exec = 1,
+            ReadOnly = 2,
+            ReadWrite = 4,
+            Search = 8,
+            WriteOnly = 16,
+        };
+
+        enum WithFlags
+        {
+            Append = 1 << 0,
+            CloseExec = 1 << 1,
+            CloseFork = 1 << 2,
+            Create = 1 << 3,
+            Directory = 1 << 4,
+            DSync = 1 << 5,
+            Exclusive = 1 << 6,
+            NoCTTY = 1 << 7,
+            NoFollow = 1 << 8,
+            NonBlock = 1 << 9,
+            RSync = 1 << 10,
+            Sync = 1 << 11,
+            Truncate = 1 << 12,
+            TTYInit = 1 << 13,
+            TempFile = 1 << 14,
+        };
+
+        enum ShareMode
+        {
+            SetUserIDOnExecution    =04000,
+            SetGroupIDOnExecution   =02000,
+            DirRestrictedDelFlag    =01000,
+            Owner_ReadWiteExecute   = 0700,
+            Owner_Read              = 0400,
+            Owner_Write             = 0200,
+            Owner_Execute           = 0100,
+            Group_ReadWriteExecute  =  070,
+            Group_Read              =  040,
+            Group_Write             =  020,
+            Group_Execute           =  010,
+            Other_ReadWriteExecute  =   07,
+            Other_Read              =   04,
+            Other_Write             =   02,
+            Other_Execute           =   01
+        };
 
         IFileSystem() = default;
         virtual ~IFileSystem() noexcept = default;
@@ -47,6 +94,25 @@ namespace qor{ namespace system{
         std::string ParentIndicator() { return ".."; }
         std::string RootIndicator() { return "/"; }
         unsigned short MaxElementLength() { return 256; }
+        
+        virtual ref_of<File>::type CreateFile(const FileIndex& index, const int withFlags) const 
+        {
+            ref_of<File>::type result;
+            return result;
+
+        }
+
+        virtual ref_of<File>::type OpenFile(const FileIndex& index, const int openFor, const int withFlags) const
+        {
+            ref_of<File>::type result;
+            return result;
+
+        }        
+
+        virtual bool DeleteFile(const FileIndex& index) const
+        {
+            return false;
+        }
         
     };
     

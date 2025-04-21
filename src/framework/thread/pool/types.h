@@ -30,8 +30,7 @@
 
 namespace qor { namespace framework{
 
-    using opt_t = std::uint8_t;                                         //The type used for the bitmask template parameter of the thread pool.
-    template <opt_t> class ThreadPool;                                 //forward declare ThreadPool class
+    class ThreadPool;                                                   //forward declare ThreadPool class
 #ifdef __cpp_lib_move_only_function
     template <typename... S>                                            //The template to use to store functions in the task queue and other places. In C++23 and later we use `std::move_only_function`.
     using function_t = std::move_only_function<S...>;

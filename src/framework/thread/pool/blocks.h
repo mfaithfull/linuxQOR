@@ -27,7 +27,7 @@
 
 namespace qor { namespace framework{
 
-    //A helper template to divide a range into blocks. Used by `detach_blocks()`, `submit_blocks()`, `detach_loop()`, and `submit_loop()`.
+    //A helper template to divide a range into blocks. Used by `PostBlocks()`, `SubmitBlocks()`, `PostLoop()`, and `SubmitLoop()`.
     //T The type of the indices. Should be a signed or unsigned integer.
     template <typename T>
     class [[nodiscard]] blocks

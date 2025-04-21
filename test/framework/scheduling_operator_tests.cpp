@@ -95,7 +95,7 @@ TEST_CASE_FIXTURE(io_service_fixture, "ScheduleOn AsyncGenerator<> function")
 			// Transfer exection back to main thread before
 			// awaiting next item in the loop to chck that
 			// the Generator is resumed on io_service() thread.
-			co_await otherIoService.schedule();
+			co_await otherIoService.Schedule();
 		}
 
 		otherIoService.stop();
@@ -147,7 +147,7 @@ TEST_CASE_FIXTURE(io_service_fixture, "resume_on AsyncGenerator<> function"
 
 	auto makeSequence = [&]() -> AsyncGenerator<int>
 	{
-		co_await io_service().schedule();
+		co_await io_service().Schedule();
 
 		ioThreadId = std::this_thread::get_id();
 
@@ -157,11 +157,11 @@ TEST_CASE_FIXTURE(io_service_fixture, "resume_on AsyncGenerator<> function"
 
 		co_yield 2;
 
-		co_await io_service().schedule();
+		co_await io_service().Schedule();
 
 		co_yield 3;
 
-		co_await io_service().schedule();
+		co_await io_service().Schedule();
 
 		co_return;
 	};
@@ -190,7 +190,7 @@ TEST_CASE_FIXTURE(io_service_fixture, "resume_on AsyncGenerator<> function"
 			// awaiting next element.
 			if (value == 2)
 			{
-				co_await io_service().schedule();
+				co_await io_service().Schedule();
 			}
 		}
 

@@ -68,6 +68,16 @@ namespace qor{ namespace system{
         std::filesystem::current_path(path);
     }
 
+    ref_of<File>::type FileSystem::CreateFile(const FileIndex& index, const int withFlags) const
+    {
+        return m_pimpl().CreateFile(index, withFlags);
+    }
+
+    bool FileSystem::DeleteFile(const FileIndex& index) const
+    {
+        return m_pimpl().DeleteFile(index);
+    }
+
     ref_of<File>::type FileSystem::OpenFile()
     {
         ref_of<File>::type result;
@@ -79,10 +89,6 @@ namespace qor{ namespace system{
         return false;
     }
 
-    bool FileSystem::DeleteFile()
-    {
-        return false;
-    }
 
     bool FileSystem::MoveFile()
     {

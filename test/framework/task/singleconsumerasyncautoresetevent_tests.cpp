@@ -79,7 +79,7 @@ qor_pp_test_suite_case(SingleConsumerAsyncAutoResetEventTestSuite, single_waiter
 
 qor_pp_test_suite_case(SingleConsumerAsyncAutoResetEventTestSuite, scaare_multi_threaded)
 {
-	ThreadPool<> tp;
+	ThreadPool tp;
 
 	sync_wait([&]() -> task<>
 	{
@@ -99,7 +99,7 @@ qor_pp_test_suite_case(SingleConsumerAsyncAutoResetEventTestSuite, scaare_multi_
 
 		auto modifier = [&](int count) -> task<int>
 		{
-			co_await tp.schedule();
+			co_await tp.Schedule();
 			for (int i = 0; i < count; ++i)
 			{
 				value.fetch_add(1, std::memory_order_relaxed);

@@ -62,7 +62,8 @@ namespace qor{ namespace system{
         std::filesystem::file_status Status() const;
         std::filesystem::file_status SymLinkStatus() const;
         std::string ToString() const;
-        ref_of<File>::type Open(/*IFile::Mode mode = IFile::Mode::OpenOrCreate, IFile::Access access = IFile::Access::ReadWriteAccess, IFile::Share share = IFile::ShareNone*/);
+        ref_of<File>::type Create(const int openFor, const int withFlags, const int inMode);
+        ref_of<File>::type Open(const int openFor, const int withFlags, const int inMode);
 
     private:
 

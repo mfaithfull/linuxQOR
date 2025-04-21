@@ -30,11 +30,11 @@ namespace qor { namespace framework{
     //A class used to obtain information about the current thread and, if native extensions are enabled, set its priority and affinity.
     class [[nodiscard]] this_thread
     {
-        template <opt_t> friend class ThreadPool;
+        friend class ThreadPool;
 
     public:
 
-        //Get the index of the current thread. If this thread belongs to a `ThreadPool` object, the return value will be an index in the range `[0, N)` where `N == ThreadPool::get_thread_count()`. Otherwise, for example if this thread is the main thread or an independent thread not in any pools, `std::nullopt` will be returned.
+        //Get the index of the current thread. If this thread belongs to a `ThreadPool` object, the return value will be an index in the range `[0, N)` where `N == ThreadPool::GetThreadCount()`. Otherwise, for example if this thread is the main thread or an independent thread not in any pools, `std::nullopt` will be returned.
         //return A `std::optional` object, optionally containing a thread index.
         [[nodiscard]] static std::optional<std::size_t> get_index() noexcept
         {

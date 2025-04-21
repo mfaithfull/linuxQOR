@@ -640,8 +640,7 @@ namespace qor
 			return AsyncGeneratorYieldOperation{ *this, currentState };
 		}
 
-		inline bool AsyncGeneratorYieldOperation::await_suspend(
-			std::coroutine_handle<> producer) noexcept
+		inline bool AsyncGeneratorYieldOperation::await_suspend(std::coroutine_handle<> producer) noexcept
 		{
 			state currentState = m_initialState;
 			if (currentState == state::value_not_ready_consumer_active)

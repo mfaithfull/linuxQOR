@@ -35,7 +35,7 @@ namespace qor
 
 		InlineScheduler() noexcept = default;
 
-		std::suspend_never schedule() const noexcept
+		std::suspend_never Schedule() const noexcept
 		{
 			return {};
 		}

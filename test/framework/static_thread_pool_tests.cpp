@@ -39,10 +39,10 @@ TEST_CASE("run one task")
 
 	sync_wait([&]() -> task<void>
 	{
-		co_await threadPool.schedule();
+		co_await threadPool.Schedule();
 		if (std::this_thread::get_id() == initiatingThreadId)
 		{
-			FAIL("schedule() did not switch threads");
+			FAIL("Schedule() did not switch threads");
 		}
 	}());
 }
@@ -53,7 +53,7 @@ TEST_CASE("launch many tasks remotely")
 
 	auto makeTask = [&]() -> task<>
 	{
-		co_await threadPool.schedule();
+		co_await threadPool.Schedule();
 	};
 
 	std::vector<task<>> tasks;
@@ -70,7 +70,7 @@ task<std::uint64_t> sum_of_squares(
 	std::uint32_t end,
 	static_thread_pool& tp)
 {
-	co_await tp.schedule();
+	co_await tp.Schedule();
 
 	auto count = end - start;
 	if (count > 1000)
@@ -166,8 +166,8 @@ task<void> for_each_async(SCHEDULER& scheduler, RANGE& range, FUNC func)
 	using reference_type = decltype(*range.begin());
 
 	// TODO: Use awaiter_t here instead. This currently assumes that
-	// result of scheduler.schedule() doesn't have an operator co_await().
-	using schedule_operation = decltype(scheduler.schedule());
+	// result of scheduler.Schedule() doesn't have an operator co_await().
+	using schedule_operation = decltype(scheduler.Schedule());
 
 	struct work_operation
 	{
@@ -180,7 +180,7 @@ task<void> for_each_async(SCHEDULER& scheduler, RANGE& range, FUNC func)
 			: m_forkJoin(forkJoin)
 			, m_func(func)
 			, m_value(static_cast<reference_type&&>(value))
-			, m_scheduleOp(scheduler.schedule())
+			, m_scheduleOp(scheduler.Schedule())
 		{
 		}
 
@@ -208,7 +208,7 @@ task<void> for_each_async(SCHEDULER& scheduler, RANGE& range, FUNC func)
 		void await_resume() noexcept {}
 	};
 
-	co_await scheduler.schedule();
+	co_await scheduler.Schedule();
 
 	fork_join_operation forkJoin;
 

@@ -407,7 +407,7 @@ namespace qor
 	class multi_producer_sequencer_wait_operation :
 		public multi_producer_sequencer_wait_operation_base<SEQUENCE, TRAITS>
 	{
-		using schedule_operation = decltype(std::declval<SCHEDULER&>().schedule());
+		using schedule_operation = decltype(std::declval<SCHEDULER&>().Schedule());
 
 	public:
 
@@ -452,7 +452,7 @@ namespace qor
 		{
 			try
 			{
-				m_scheduleOperation.construct(m_scheduler.schedule());
+				m_scheduleOperation.construct(m_scheduler.Schedule());
 				m_isScheduleOperationCreated = true;
 
 				m_scheduleAwaiter.construct(detail::GetAwaiter(
@@ -486,7 +486,7 @@ namespace qor
 			{
 				// Ignore failure to reschedule and resume inline?
 				// Should we catch the exception and rethrow from await_resume()?
-				// Or should we require that 'co_await scheduler.schedule()' is noexcept?
+				// Or should we require that 'co_await scheduler.Schedule()' is noexcept?
 			}
 
 			// Resume outside the catch-block.

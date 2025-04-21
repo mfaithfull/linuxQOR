@@ -73,3 +73,11 @@ qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolderRegularFile
     qor_pp_assert_that(true).isTrue();
 }
 
+qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFile)
+{
+    auto fileSystem = new_ref<FileSystem>();
+    fileSystem().Setup();
+    FileIndex newIndex(fileSystem().CurrentPath(), "TestTemp");
+    auto refFile = fileSystem().CreateFile(newIndex, IFileSystem::WithFlags::NonBlock);
+    fileSystem().DeleteFile(newIndex);
+}

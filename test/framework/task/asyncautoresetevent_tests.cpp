@@ -127,7 +127,7 @@ qor_pp_test_suite_case(AsyncAutoResetEventTestSuite, testMultiThreaded)
 
 		auto startWaiter = [&]() -> task<>
 		{
-			co_await tp.schedule();
+			co_await tp.Schedule();
 			co_await event;
 			++value;
 			event.set();
@@ -135,7 +135,7 @@ qor_pp_test_suite_case(AsyncAutoResetEventTestSuite, testMultiThreaded)
 
 		auto startSignaller = [&]() -> task<>
 		{
-			co_await tp.schedule();
+			co_await tp.Schedule();
 			value = 5;
 			event.set();
 		};

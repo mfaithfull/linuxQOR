@@ -76,7 +76,7 @@ namespace cppcoro
 				[&](auto h) { return h == m_noop; }));
 		}
 
-		schedule_operation schedule() noexcept
+		schedule_operation Schedule() noexcept
 		{
 			return schedule_operation{ *this };
 		}

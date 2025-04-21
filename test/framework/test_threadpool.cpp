@@ -43,16 +43,16 @@ struct ThreadPoolTestSuite{};
 bool requiresICurrentThread = qor::ImplementsICurrentThread();
 bool requiresICurrentProcess = qor::ImplementsICurrentProcess();
 
-std::vector<std::thread::id> obtain_unique_threads(ThreadPool<>& pool)
+std::vector<std::thread::id> obtain_unique_threads(ThreadPool& pool)
 {
-    const std::size_t num_tasks = pool.get_thread_count() * 2;
+    const std::size_t num_tasks = pool.GetThreadCount() * 2;
     std::vector<std::thread::id> thread_ids(num_tasks);
     std::atomic<std::size_t> total_count = 0;
     counting_semaphore sem(0);
     for (std::thread::id& tid : thread_ids)
     {
-        pool.detach_task(
-            [&total_count, &tid, &sem, thread_count = pool.get_thread_count(), num_tasks]
+        pool.PostTask(
+            [&total_count, &tid, &sem, thread_count = pool.GetThreadCount(), num_tasks]
             {
                 tid = std::this_thread::get_id();
                 if (++total_count == thread_count)
@@ -60,7 +60,7 @@ std::vector<std::thread::id> obtain_unique_threads(ThreadPool<>& pool)
                 sem.acquire();
             });
     }
-    pool.wait();
+    pool.Wait();
     std::sort(thread_ids.begin(), thread_ids.end());
     const std::vector<std::thread::id>::iterator last = std::unique(thread_ids.begin(), thread_ids.end());
     thread_ids.erase(last, thread_ids.end());
@@ -69,14 +69,14 @@ std::vector<std::thread::id> obtain_unique_threads(ThreadPool<>& pool)
 
 qor_pp_test_suite_case(ThreadPoolTestSuite, canConstructThreadPool)
 {
-    ThreadPool pool;
+    ThreadPool pool(std::thread::hardware_concurrency());
     ////sync_out.println("Checking that the thread pool reports a number of threads equal to the hardware concurrency...");
-    qor_pp_assert_that(pool.get_thread_count()).isEqualTo(std::thread::hardware_concurrency());
+    qor_pp_assert_that(pool.GetThreadCount()).isEqualTo(std::thread::hardware_concurrency());
     ////sync_out.println("Checking that the manually counted number of unique thread IDs is equal to the reported number of threads...");
     const std::vector<std::thread::id> unique_threads = obtain_unique_threads(pool);
-    qor_pp_assert_that(unique_threads.size()).isEqualTo(pool.get_thread_count());;
-    ////sync_out.println("Checking that the unique thread IDs obtained are the same as those reported by get_thread_ids()...");
-    std::vector<std::thread::id> threads_from_pool = pool.get_thread_ids();
+    qor_pp_assert_that(unique_threads.size()).isEqualTo(pool.GetThreadCount());;
+    ////sync_out.println("Checking that the unique thread IDs obtained are the same as those reported by GetThreadIds()...");
+    std::vector<std::thread::id> threads_from_pool = pool.GetThreadIds();
     std::sort(threads_from_pool.begin(), threads_from_pool.end());
     qor_pp_assert_that(threads_from_pool == unique_threads).isTrue();
 
@@ -85,16 +85,16 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, canConstructThreadPool)
 qor_pp_test_suite_case(ThreadPoolTestSuite, confirmResetWorks)
 {
     ThreadPool pool;
-    pool.reset(static_cast<std::size_t>(std::thread::hardware_concurrency()) * 2);
+    pool.Reset(static_cast<std::size_t>(std::thread::hardware_concurrency()) * 2);
     ////sync_out.println("Checking that after reset() the thread pool reports a number of threads equal to double the hardware concurrency...");
-    qor_pp_assert_that(std::thread::hardware_concurrency() * 2 == pool.get_thread_count()).isTrue();
+    qor_pp_assert_that(std::thread::hardware_concurrency() * 2 == pool.GetThreadCount()).isTrue();
     ////sync_out.println("Checking that after reset() the manually counted number of unique thread IDs is equal to the reported number of threads...");
-    qor_pp_assert_that(pool.get_thread_count() == obtain_unique_threads(pool).size()).isTrue();
-    pool.reset(std::thread::hardware_concurrency());
+    qor_pp_assert_that(pool.GetThreadCount() == obtain_unique_threads(pool).size()).isTrue();
+    pool.Reset(std::thread::hardware_concurrency());
     ////sync_out.println("Checking that after a second reset() the thread pool reports a number of threads equal to the hardware concurrency...");
-    qor_pp_assert_that(std::thread::hardware_concurrency() == pool.get_thread_count()).isTrue();
+    qor_pp_assert_that(std::thread::hardware_concurrency() == pool.GetThreadCount()).isTrue();
     ////sync_out.println("Checking that after a second reset() the manually counted number of unique thread IDs is equal to the reported number of threads...");
-    qor_pp_assert_that(pool.get_thread_count() == obtain_unique_threads(pool).size()).isTrue();
+    qor_pp_assert_that(pool.GetThreadCount() == obtain_unique_threads(pool).size()).isTrue();
 }
 
 //Check if the expected result has been obtained, report the result, and keep count of the total number of successes and failures.
@@ -201,7 +201,7 @@ private:
     bool moved = false;
 }; 
 
-//Check that detach_task() or submit_task() work.
+//Check that PostTask() or SubmitTask() work.
 void check_task(const std::string_view which_func)
 {
     ThreadPool pool;
@@ -212,14 +212,14 @@ void check_task(const std::string_view which_func)
         {
             flag = true;
         };
-        if (which_func == "detach_task()")
+        if (which_func == "PostTask()")
         {
-            pool.detach_task(func);
-            pool.wait();
+            pool.PostTask(func);
+            pool.Wait();
         }
         else
         {
-            pool.submit_task(func).wait();
+            pool.SubmitTask(func).wait();
         }
         check(flag);
     }
@@ -230,18 +230,18 @@ void check_task(const std::string_view which_func)
         {
             flag_ = true;
         };
-        if (which_func == "detach_task()")
+        if (which_func == "PostTask()")
         {
-            pool.detach_task(
+            pool.PostTask(
                 [&func, &flag]
                 {
                     func(flag);
                 });
-            pool.wait();
+            pool.Wait();
         }
         else
         {
-            pool.submit_task(
+            pool.SubmitTask(
                     [&func, &flag]
                     {
                         func(flag);
@@ -258,18 +258,18 @@ void check_task(const std::string_view which_func)
         {
             flag1_ = flag2_ = true;
         };
-        if (which_func == "detach_task()")
+        if (which_func == "PostTask()")
         {
-            pool.detach_task(
+            pool.PostTask(
                 [&func, &flag1, &flag2]
                 {
                     func(flag1, flag2);
                 });
-            pool.wait();
+            pool.Wait();
         }
         else
         {
-            pool.submit_task(
+            pool.SubmitTask(
                     [&func, &flag1, &flag2]
                     {
                         func(flag1, flag2);
@@ -278,33 +278,33 @@ void check_task(const std::string_view which_func)
         }
         check(flag1 && flag2);
     }
-    if (which_func == "submit_task()")
+    if (which_func == "SubmitTask()")
     {
-        //sync_out.println("Checking that submit_task() works for a function with no arguments and a return value...");
+        //sync_out.println("Checking that SubmitTask() works for a function with no arguments and a return value...");
         {
             bool flag = false;
             const auto func = [&flag]
             {
                 return (flag = true);
             };
-            std::future<bool> flag_future = pool.submit_task(func);
+            std::future<bool> flag_future = pool.SubmitTask(func);
             check(flag_future.get() && flag);
         }
-        //sync_out.println("Checking that submit_task() works for a function with one argument and a return value...");
+        //sync_out.println("Checking that SubmitTask() works for a function with one argument and a return value...");
         {
             bool flag = false;
             const auto func = [](bool& flag_)
             {
                 return (flag_ = true);
             };
-            std::future<bool> flag_future = pool.submit_task(
+            std::future<bool> flag_future = pool.SubmitTask(
                 [&func, &flag]
                 {
                     return func(flag);
                 });
             check(flag_future.get() && flag);
         }
-        //sync_out.println("Checking that submit_task() works for a function with two arguments and a return value...");
+        //sync_out.println("Checking that SubmitTask() works for a function with two arguments and a return value...");
         {
             bool flag1 = false;
             bool flag2 = false;
@@ -312,7 +312,7 @@ void check_task(const std::string_view which_func)
             {
                 return (flag1_ = flag2_ = true);
             };
-            std::future<bool> flag_future = pool.submit_task(
+            std::future<bool> flag_future = pool.SubmitTask(
                 [&func, &flag1, &flag2]
                 {
                     return func(flag1, flag2);
@@ -329,14 +329,14 @@ void check_task(const std::string_view which_func)
             copied = detect.get_copied();
             moved = detect.get_moved();
         };
-        if (which_func == "detach_task()")
+        if (which_func == "PostTask()")
         {
-            pool.detach_task(std::move(test_copy));
-            pool.wait();
+            pool.PostTask(std::move(test_copy));
+            pool.Wait();
         }
         else
         {
-            pool.submit_task(std::move(test_copy)).wait();
+            pool.SubmitTask(std::move(test_copy)).wait();
         }
         check(!copied && moved);
     }
@@ -350,18 +350,18 @@ void check_task(const std::string_view which_func)
                 if (++passed_by_value != 1)
                     static_cast<void>(0);
             };
-            if (which_func == "detach_task()")
+            if (which_func == "PostTask()")
             {
-                pool.detach_task(
+                pool.PostTask(
                     [&func_value, pbv = pass_me_by_value]
                     {
                         func_value(pbv);
                     });
-                pool.wait();
+                pool.Wait();
             }
             else
             {
-                pool.submit_task(
+                pool.SubmitTask(
                         [&func_value, pbv = pass_me_by_value]
                         {
                             func_value(pbv);
@@ -377,18 +377,18 @@ void check_task(const std::string_view which_func)
             {
                 ++passed_by_ref;
             };
-            if (which_func == "detach_task()")
+            if (which_func == "PostTask()")
             {
-                pool.detach_task(
+                pool.PostTask(
                     [&func_ref, &pass_me_by_ref]
                     {
                         func_ref(pass_me_by_ref);
                     });
-                pool.wait();
+                pool.Wait();
             }
             else
             {
-                pool.submit_task(
+                pool.SubmitTask(
                         [&func_ref, &pass_me_by_ref]
                         {
                             func_ref(pass_me_by_ref);
@@ -406,20 +406,20 @@ void check_task(const std::string_view which_func)
                 sem.acquire();
                 check(passed_by_cref == 1);
             };
-            if (which_func == "detach_task()")
+            if (which_func == "PostTask()")
             {
-                pool.detach_task(
+                pool.PostTask(
                     [&func_cref, &pass_me_by_cref = std::as_const(pass_me_by_cref)]
                     {
                         func_cref(pass_me_by_cref);
                     });
                 ++pass_me_by_cref;
                 sem.release();
-                pool.wait();
+                pool.Wait();
             }
             else
             {
-                const std::future<void> future = pool.submit_task(
+                const std::future<void> future = pool.SubmitTask(
                     [&func_cref, &pass_me_by_cref = std::as_const(pass_me_by_cref)]
                     {
                         func_cref(pass_me_by_cref);
@@ -437,7 +437,7 @@ void check_task(const std::string_view which_func)
 class [[nodiscard]] flag_class
 {
 public:
-    explicit flag_class(ThreadPool<>& pool_) : pool(&pool_) {}
+    explicit flag_class(ThreadPool& pool_) : pool(&pool_) {}
 
     void set_flag_no_args()
     {
@@ -466,29 +466,29 @@ public:
 
     void detach_test_flag_no_args()
     {
-        pool->detach_task(
+        pool->PostTask(
             [this]
             {
                 set_flag_no_args();
             });
-        pool->wait();
+        pool->Wait();
         check(get_flag());
     }
 
     void detach_test_flag_one_arg()
     {
-        pool->detach_task(
+        pool->PostTask(
             [this]
             {
                 set_flag_one_arg(true);
             });
-        pool->wait();
+        pool->Wait();
         check(get_flag());
     }
 
     void submit_test_flag_no_args()
     {
-        pool->submit_task(
+        pool->SubmitTask(
                 [this]
                 {
                     set_flag_no_args();
@@ -499,7 +499,7 @@ public:
 
     void submit_test_flag_one_arg()
     {
-        pool->submit_task(
+        pool->SubmitTask(
                 [this]
                 {
                     set_flag_one_arg(true);
@@ -510,7 +510,7 @@ public:
 
     void submit_test_flag_no_args_return()
     {
-        std::future<bool> flag_future = pool->submit_task(
+        std::future<bool> flag_future = pool->SubmitTask(
             [this]
             {
                 return set_flag_no_args_return();
@@ -520,7 +520,7 @@ public:
 
     void submit_test_flag_one_arg_return()
     {
-        std::future<bool> flag_future = pool->submit_task(
+        std::future<bool> flag_future = pool->SubmitTask(
             [this]
             {
                 return set_flag_one_arg_return(true);
@@ -530,38 +530,38 @@ public:
 
 private:
     bool flag = false;
-    ThreadPool<>* pool;
+    ThreadPool* pool;
 };
 
 qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctions)
 {
     ThreadPool pool;
-    //sync_out.println("Checking that detach_task() works for a member function with no arguments or return value...");
+    //sync_out.println("Checking that PostTask() works for a member function with no arguments or return value...");
     {
         flag_class flag(pool);
-        pool.detach_task(
+        pool.PostTask(
             [&flag]
             {
                 flag.set_flag_no_args();
             });
-        pool.wait();
+        pool.Wait();
         check(flag.get_flag());
     }
-    //sync_out.println("Checking that detach_task() works for a member function with one argument and no return value...");
+    //sync_out.println("Checking that PostTask() works for a member function with one argument and no return value...");
     {
         flag_class flag(pool);
-        pool.detach_task(
+        pool.PostTask(
             [&flag]
             {
                 flag.set_flag_one_arg(true);
             });
-        pool.wait();
+        pool.Wait();
         check(flag.get_flag());
     }
-    //sync_out.println("Checking that submit_task() works for a member function with no arguments or return value...");
+    //sync_out.println("Checking that SubmitTask() works for a member function with no arguments or return value...");
     {
         flag_class flag(pool);
-        pool.submit_task(
+        pool.SubmitTask(
                 [&flag]
                 {
                     flag.set_flag_no_args();
@@ -569,10 +569,10 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctions)
             .wait();
         check(flag.get_flag());
     }
-    //sync_out.println("Checking that submit_task() works for a member function with one argument and no return value...");
+    //sync_out.println("Checking that SubmitTask() works for a member function with one argument and no return value...");
     {
         flag_class flag(pool);
-        pool.submit_task(
+        pool.SubmitTask(
                 [&flag]
                 {
                     flag.set_flag_one_arg(true);
@@ -580,20 +580,20 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctions)
             .wait();
         check(flag.get_flag());
     }
-    //sync_out.println("Checking that submit_task() works for a member function with no arguments and a return value...");
+    //sync_out.println("Checking that SubmitTask() works for a member function with no arguments and a return value...");
     {
         flag_class flag(pool);
-        std::future<bool> flag_future = pool.submit_task(
+        std::future<bool> flag_future = pool.SubmitTask(
             [&flag]
             {
                 return flag.set_flag_no_args_return();
             });
         check(flag_future.get() && flag.get_flag());
     }
-    //sync_out.println("Checking that submit_task() works for a member function with one argument and a return value...");
+    //sync_out.println("Checking that SubmitTask() works for a member function with one argument and a return value...");
     {
         flag_class flag(pool);
-        std::future<bool> flag_future = pool.submit_task(
+        std::future<bool> flag_future = pool.SubmitTask(
             [&flag]
             {
                 return flag.set_flag_one_arg_return(true);
@@ -605,32 +605,32 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctions)
 qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctionsOnInstance)
 {
     ThreadPool pool;
-    //sync_out.println("Checking that detach_task() works within an object for a member function with no arguments or return value...");
+    //sync_out.println("Checking that PostTask() works within an object for a member function with no arguments or return value...");
     {
         flag_class flag(pool);
         flag.detach_test_flag_no_args();
     }
-    //sync_out.println("Checking that detach_task() works within an object for a member function with one argument and no return value...");
+    //sync_out.println("Checking that PostTask() works within an object for a member function with one argument and no return value...");
     {
         flag_class flag(pool);
         flag.detach_test_flag_one_arg();
     }
-    //sync_out.println("Checking that submit_task() works within an object for a member function with no arguments or return value...");
+    //sync_out.println("Checking that SubmitTask() works within an object for a member function with no arguments or return value...");
     {
         flag_class flag(pool);
         flag.submit_test_flag_no_args();
     }
-    //sync_out.println("Checking that submit_task() works within an object for a member function with one argument and no return value...");
+    //sync_out.println("Checking that SubmitTask() works within an object for a member function with one argument and no return value...");
     {
         flag_class flag(pool);
         flag.submit_test_flag_one_arg();
     }
-    //sync_out.println("Checking that submit_task() works within an object for a member function with no arguments and a return value...");
+    //sync_out.println("Checking that SubmitTask() works within an object for a member function with no arguments and a return value...");
     {
         flag_class flag(pool);
         flag.submit_test_flag_no_args_return();
     }
-    //sync_out.println("Checking that submit_task() works within an object for a member function with one argument and a return value...");
+    //sync_out.println("Checking that SubmitTask() works within an object for a member function with one argument and a return value...");
     {
         flag_class flag(pool);
         flag.submit_test_flag_one_arg_return();
@@ -665,19 +665,19 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, callableTypesAreExecuted)
     ThreadPool pool;
 
     //sync_out.println("Checking normal function...");
-    pool.submit_task(normal_func).wait();
+    pool.SubmitTask(normal_func).wait();
     check(check_callables_flag);
 
     //sync_out.println("Checking function pointer...");
     check_callables_flag = false;
     void (*const func_ptr)() = normal_func;
-    pool.submit_task(func_ptr).wait();
+    pool.SubmitTask(func_ptr).wait();
     check(check_callables_flag);
 
     //sync_out.println("Checking pointer to static member function...");
     check_callables_flag = false;
     auto member_func_ptr = has_member_function::member_function;
-    pool.submit_task(member_func_ptr).wait();
+    pool.SubmitTask(member_func_ptr).wait();
     check(check_callables_flag);
 
     //sync_out.println("Checking lambda expression...");
@@ -686,7 +686,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, callableTypesAreExecuted)
     {
         check_callables_flag = true;
     };
-    pool.submit_task(lambda).wait();
+    pool.SubmitTask(lambda).wait();
     check(check_callables_flag);
 
     //sync_out.println("Checking std::function...");
@@ -695,7 +695,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, callableTypesAreExecuted)
     {
         check_callables_flag = true;
     };
-    pool.submit_task(function).wait();
+    pool.SubmitTask(function).wait();
     check(check_callables_flag);
 
 #ifdef __cpp_lib_move_only_function
@@ -705,7 +705,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, callableTypesAreExecuted)
     {
         check_callables_flag = true;
     };
-    pool.submit_task(std::move(move_only_function)).wait();
+    pool.SubmitTask(std::move(move_only_function)).wait();
     check(check_callables_flag);
 #else
     //sync_out.println("Note: std::move_only_function not available, skipping the corresponding test.");
@@ -717,13 +717,13 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, callableTypesAreExecuted)
     {
         flag = true;
     };
-    pool.submit_task(std::bind(lambda_for_bind, std::ref(check_callables_flag))).wait();
+    pool.SubmitTask(std::bind(lambda_for_bind, std::ref(check_callables_flag))).wait();
     check(check_callables_flag);
 
     //sync_out.println("Checking functor...");
     check_callables_flag = false;
     const functor functor_instance;
-    pool.submit_task(functor_instance).wait();
+    pool.SubmitTask(functor_instance).wait();
     check(check_callables_flag);
 }
 
@@ -737,11 +737,11 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitWorks)
 {
     constexpr std::chrono::milliseconds sleep_time(10);
     ThreadPool pool;
-    const std::size_t num_tasks = pool.get_thread_count() * 10;
+    const std::size_t num_tasks = pool.GetThreadCount() * 10;
     std::vector<std::atomic<bool>> flags(num_tasks);
     for (std::size_t i = 0; i < num_tasks; ++i)
     {
-        pool.detach_task(
+        pool.PostTask(
             [&flags, i, sleep_time]
             {
                 std::this_thread::sleep_for(sleep_time);
@@ -749,7 +749,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitWorks)
             });
     }
     //sync_out.println("Waiting for tasks...");
-    pool.wait();
+    pool.Wait();
     check(all_flags_set(flags));
 }
 
@@ -761,7 +761,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitBlocks)
     ThreadPool pool;
     binary_semaphore sem(0);
     //sync_out.println("Checking that wait() correctly blocks all external threads that call it...");
-    pool.detach_task(
+    pool.PostTask(
         [&sem]
         {
             //sync_out.println("Task submitted to pool 1 and waiting to be released...");
@@ -773,13 +773,13 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitBlocks)
     const auto waiting_task = [&flags, &pool](const std::size_t task_num)
     {
         //sync_out.println("Task ", task_num, " submitted to pool 2 and waiting for pool 1's task to finish...");
-        pool.wait();
+        pool.Wait();
         //sync_out.println("Task ", task_num, " finished waiting.");
         flags[task_num] = true;
     };
     for (std::size_t i = 0; i < num_waiting_tasks; ++i)
     {
-        temp_pool.detach_task(
+        temp_pool.PostTask(
             [&waiting_task, i]
             {
                 waiting_task(i);
@@ -788,7 +788,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitBlocks)
     std::this_thread::sleep_for(sleep_time);
     check(no_flags_set(flags));
     sem.release();
-    temp_pool.wait();
+    temp_pool.Wait();
     check(all_flags_set(flags));
 }
 
@@ -797,19 +797,19 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, wait_forWorks)
     constexpr std::chrono::milliseconds long_sleep_time(250);
     constexpr std::chrono::milliseconds short_sleep_time(10);
     ThreadPool pool;
-    //sync_out.println("Checking that wait_for() works...");
+    //sync_out.println("Checking that WaitFor() works...");
     std::atomic<bool> done = false;
-    pool.detach_task(
+    pool.PostTask(
         [&done, long_sleep_time]
         {
             std::this_thread::sleep_for(long_sleep_time);
             done = true;
         });
     //sync_out.println("Task that lasts ", long_sleep_time.count(), "ms submitted. Waiting for ", short_sleep_time.count(), "ms...");
-    pool.wait_for(short_sleep_time);
+    pool.WaitFor(short_sleep_time);
     check(!done);
     //sync_out.println("Waiting for ", long_sleep_time.count() * 2, "ms...");
-    pool.wait_for(long_sleep_time * 2);
+    pool.WaitFor(long_sleep_time * 2);
     check(done);
 }
 
@@ -818,9 +818,9 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, wait_untilWorks)
     constexpr std::chrono::milliseconds long_sleep_time(250);
     constexpr std::chrono::milliseconds short_sleep_time(10);
     ThreadPool pool;
-    //sync_out.println("Checking that wait_until() works...");
+    //sync_out.println("Checking that WaitUntil() works...");
     std::atomic<bool> done = false;
-    pool.detach_task(
+    pool.PostTask(
         [&done, long_sleep_time]
         {
             std::this_thread::sleep_for(long_sleep_time);
@@ -828,10 +828,10 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, wait_untilWorks)
         });
     const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     //sync_out.println("Task that lasts ", long_sleep_time.count(), "ms submitted. Waiting until ", short_sleep_time.count(), "ms from submission time...");
-    pool.wait_until(now + short_sleep_time);
+    pool.WaitUntil(now + short_sleep_time);
     check(!done);
     //sync_out.println("Waiting until ", long_sleep_time.count() * 2, "ms from submission time...");
-    pool.wait_until(now + long_sleep_time * 2);
+    pool.WaitUntil(now + long_sleep_time * 2);
     check(done);
 }
 
@@ -845,7 +845,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitMultipleCallDoesntDeadlock)
     constexpr std::size_t n_waiting_tasks = 1000;
     //sync_out.println("Checking for deadlocks when waiting for tasks...");
     ThreadPool pool(1);
-    pool.detach_task(
+    pool.PostTask(
         [sleep_time]
         {
             std::this_thread::sleep_for(sleep_time);
@@ -853,10 +853,10 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitMultipleCallDoesntDeadlock)
     std::atomic<std::size_t> count = 0;
     for (std::size_t j = 0; j < n_waiting_tasks; ++j)
     {
-        check_wait_multiple_deadlock_pool.detach_task(
+        check_wait_multiple_deadlock_pool.PostTask(
             [&pool, &count]
             {
-                pool.wait();
+                pool.Wait();
                 ++count;
             });
     }
@@ -864,7 +864,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitMultipleCallDoesntDeadlock)
     while (true)
     {
         const std::size_t old_count = count;
-        check_wait_multiple_deadlock_pool.wait_for(sleep_time * 2);
+        check_wait_multiple_deadlock_pool.WaitFor(sleep_time * 2);
         if (count == n_waiting_tasks)
         {
             //sync_out.println("All waiting tasks successfully finished!");
@@ -884,7 +884,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitMultipleCallDoesntDeadlock)
 
 #ifdef __cpp_exceptions
 // An auxiliary thread pool used by check_wait_self_deadlock(). It's a global variable so that the program will not get stuck upon destruction of this pool if a deadlock actually occurs.
-ThreadPool<tp::wait_deadlock_checks> check_wait_self_deadlock_pool;
+ThreadPool check_wait_self_deadlock_pool;
 
 //Check that calling wait() from within a thread of the same pool throws an exception instead of creating a deadlock.
 qor_pp_test_suite_case(ThreadPoolTestSuite, waitOnSelfTriggerDeadlockException)
@@ -892,19 +892,19 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitOnSelfTriggerDeadlockException)
     constexpr std::chrono::milliseconds sleep_time(100);
     //sync_out.println("Checking for deadlocks when waiting from within a thread of the same pool...");
     std::atomic<bool> passed = false;
-    check_wait_self_deadlock_pool.detach_task(
+    check_wait_self_deadlock_pool.PostTask(
         [&passed]
         {
             try
             {
-                check_wait_self_deadlock_pool.wait();
+                check_wait_self_deadlock_pool.Wait();
             }
             catch (const wait_deadlock&)
             {
                 passed = true;
             }
         });
-    check_wait_self_deadlock_pool.wait_for(sleep_time);
+    check_wait_self_deadlock_pool.WaitFor(sleep_time);
     check(passed);
 }
 #endif
@@ -913,8 +913,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitOnSelfTriggerDeadlockException)
 // Functions to verify loop parallelization
 // ========================================
 
-//Check that detach_loop() or submit_loop() work for a specific range of indices split over a specific number of tasks, with no return value.
-bool check_loop_no_return(ThreadPool<>& pool, const std::int64_t random_start, const std::int64_t random_end, const std::size_t num_tasks, const std::string_view which_func)
+//Check that PostLoop() or SubmitLoop() work for a specific range of indices split over a specific number of tasks, with no return value.
+bool check_loop_no_return(ThreadPool& pool, const std::int64_t random_start, const std::int64_t random_end, const std::size_t num_tasks, const std::string_view which_func)
 {
     //sync_out.println("Verifying that ", which_func, " from ", random_start, " to ", random_end, " with ", num_tasks, num_tasks == 1 ? " task" : " tasks", " modifies all indices exactly once...");
     const std::size_t num_indices = static_cast<std::size_t>(random_end - random_start);
@@ -927,14 +927,14 @@ bool check_loop_no_return(ThreadPool<>& pool, const std::int64_t random_start, c
         else
             ++flags[static_cast<std::size_t>(idx - random_start)];
     };
-    if (which_func == "detach_loop()")
+    if (which_func == "PostLoop()")
     {
-        pool.detach_loop(random_start, random_end, loop, num_tasks);
-        pool.wait();
+        pool.PostLoop(random_start, random_end, loop, num_tasks);
+        pool.Wait();
     }
     else
     {
-        pool.submit_loop(random_start, random_end, loop, num_tasks).wait();
+        pool.SubmitLoop(random_start, random_end, loop, num_tasks).wait();
     }
     if (indices_out_of_range)
     {
@@ -944,7 +944,7 @@ bool check_loop_no_return(ThreadPool<>& pool, const std::int64_t random_start, c
     return all_flags_equal(flags, 1);
 }
 
-//Check that detach_loop() and submit_loop() work using several different random values for the range of indices and number of tasks.
+//Check that PostLoop() and SubmitLoop() work using several different random values for the range of indices and number of tasks.
 qor_pp_test_suite_case(ThreadPoolTestSuite, loopWorks)
 {
     constexpr std::int64_t range = 1000000;
@@ -953,32 +953,32 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, loopWorks)
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
-        check(check_loop_no_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.get_thread_count()), "detach_loop()"));
+        check(check_loop_no_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.GetThreadCount()), "PostLoop()"));
     }
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
-        check(check_loop_no_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.get_thread_count()), "submit_loop()"));
+        check(check_loop_no_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.GetThreadCount()), "SubmitLoop()"));
     }
-    //sync_out.println("Verifying that detach_loop() with identical start and end indices does nothing...");
+    //sync_out.println("Verifying that PostLoop() with identical start and end indices does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::int64_t index = random(-range, range);
         //sync_out.println("Range: ", index, " to ", index);
-        pool.detach_loop(index, index,
+        pool.PostLoop(index, index,
             [&count](const std::int64_t)
             {
                 ++count;
             });
-        pool.wait();
+        pool.Wait();
         check(count == 0);
     }
-    //sync_out.println("Verifying that submit_loop() with identical start and end indices does nothing...");
+    //sync_out.println("Verifying that SubmitLoop() with identical start and end indices does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::int64_t index = random(-range, range);
         //sync_out.println("Range: ", index, " to ", index);
-        pool.submit_loop(index, index,
+        pool.SubmitLoop(index, index,
                 [&count](const std::int64_t)
                 {
                     ++count;
@@ -986,25 +986,25 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, loopWorks)
             .wait();
         check(count == 0);
     }
-    //sync_out.println("Verifying that detach_loop() with end index smaller than the start index does nothing...");
+    //sync_out.println("Verifying that PostLoop() with end index smaller than the start index does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
         //sync_out.println("Range: ", indices.second, " to ", indices.first);
-        pool.detach_loop(indices.second, indices.first,
+        pool.PostLoop(indices.second, indices.first,
             [&count](const std::int64_t)
             {
                 ++count;
             });
-        pool.wait();
+        pool.Wait();
         check(count == 0);
     }
-    //sync_out.println("Verifying that submit_loop() with end index smaller than the start index does nothing...");
+    //sync_out.println("Verifying that SubmitLoop() with end index smaller than the start index does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
         //sync_out.println("Range: ", indices.second, " to ", indices.first);
-        pool.submit_loop(indices.second, indices.first,
+        pool.SubmitLoop(indices.second, indices.first,
                 [&count](const std::int64_t)
                 {
                     ++count;
@@ -1012,20 +1012,20 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, loopWorks)
             .wait();
         check(count == 0);
     }
-    //sync_out.println("Trying detach_loop() with a number of tasks larger than the number of indices:");
+    //sync_out.println("Trying PostLoop() with a number of tasks larger than the number of indices:");
     {
         const std::int64_t start = random(-range, range);
-        check(check_loop_no_return(pool, start, start + random<std::int64_t>(0, static_cast<std::int64_t>(pool.get_thread_count() * 2)), random<std::size_t>(pool.get_thread_count() * 2, pool.get_thread_count() * 4), "detach_loop()"));
+        check(check_loop_no_return(pool, start, start + random<std::int64_t>(0, static_cast<std::int64_t>(pool.GetThreadCount() * 2)), random<std::size_t>(pool.GetThreadCount() * 2, pool.GetThreadCount() * 4), "PostLoop()"));
     }
-    //sync_out.println("Trying submit_loop() with a number of tasks larger than the number of indices:");
+    //sync_out.println("Trying SubmitLoop() with a number of tasks larger than the number of indices:");
     {
         const std::int64_t start = random(-range, range);
-        check(check_loop_no_return(pool, start, start + random<std::int64_t>(0, static_cast<std::int64_t>(pool.get_thread_count() * 2)), random<std::size_t>(pool.get_thread_count() * 2, pool.get_thread_count() * 4), "submit_loop()"));
+        check(check_loop_no_return(pool, start, start + random<std::int64_t>(0, static_cast<std::int64_t>(pool.GetThreadCount() * 2)), random<std::size_t>(pool.GetThreadCount() * 2, pool.GetThreadCount() * 4), "SubmitLoop()"));
     }
 }
 
-//Check that detach_blocks() or submit_blocks() work for a specific range of indices split over a specific number of tasks, with no return value.
-bool check_blocks_no_return(ThreadPool<>& pool, const std::int64_t random_start, const std::int64_t random_end, const std::size_t num_tasks, const std::string_view which_func)
+//Check that PostBlocks() or SubmitBlocks() work for a specific range of indices split over a specific number of tasks, with no return value.
+bool check_blocks_no_return(ThreadPool& pool, const std::int64_t random_start, const std::int64_t random_end, const std::size_t num_tasks, const std::string_view which_func)
 {
     //sync_out.println("Verifying that ", which_func, " from ", random_start, " to ", random_end, " with ", num_tasks, num_tasks == 1 ? " task" : " tasks", " modifies all indices exactly once...");
     const std::size_t num_indices = static_cast<std::size_t>(random_end - random_start);
@@ -1043,14 +1043,14 @@ bool check_blocks_no_return(ThreadPool<>& pool, const std::int64_t random_start,
                 ++flags[static_cast<std::size_t>(i - random_start)];
         }
     };
-    if (which_func == "detach_blocks()")
+    if (which_func == "PostBlocks()")
     {
-        pool.detach_blocks(random_start, random_end, loop, num_tasks);
-        pool.wait();
+        pool.PostBlocks(random_start, random_end, loop, num_tasks);
+        pool.Wait();
     }
     else
     {
-        pool.submit_blocks(random_start, random_end, loop, num_tasks).wait();
+        pool.SubmitBlocks(random_start, random_end, loop, num_tasks).wait();
     }
     if (indices_out_of_range)
     {
@@ -1060,10 +1060,10 @@ bool check_blocks_no_return(ThreadPool<>& pool, const std::int64_t random_start,
     return all_flags_equal(flags, 1);
 }
 
-//Check that submit_blocks() works for a specific range of indices split over a specific number of tasks, with a return value.
-void check_blocks_return(ThreadPool<>& pool, const std::int64_t random_start, const std::int64_t random_end, const std::size_t num_tasks)
+//Check that SubmitBlocks() works for a specific range of indices split over a specific number of tasks, with a return value.
+void check_blocks_return(ThreadPool& pool, const std::int64_t random_start, const std::int64_t random_end, const std::size_t num_tasks)
 {
-    //sync_out.println("Verifying that submit_blocks() from ", random_start, " to ", random_end, " with ", num_tasks, num_tasks == 1 ? " task" : " tasks", " correctly sums all indices...");
+    //sync_out.println("Verifying that SubmitBlocks() from ", random_start, " to ", random_end, " with ", num_tasks, num_tasks == 1 ? " task" : " tasks", " correctly sums all indices...");
     const auto loop = [](const std::int64_t start, const std::int64_t end)
     {
         std::int64_t total = 0;
@@ -1071,14 +1071,14 @@ void check_blocks_return(ThreadPool<>& pool, const std::int64_t random_start, co
             total += i;
         return total;
     };
-    const std::vector<std::int64_t> sums_vector = pool.submit_blocks(random_start, random_end, loop, num_tasks).get();
+    const std::vector<std::int64_t> sums_vector = pool.SubmitBlocks(random_start, random_end, loop, num_tasks).get();
     std::int64_t sum = 0;
     for (const std::int64_t partial_sum : sums_vector)
         sum += partial_sum;
     check(std::abs(random_start - random_end) * (random_start + random_end - 1) / 2, sum);
 }
 
-//Check that detach_blocks() and submit_blocks() work using several different random values for the range of indices and number of tasks.
+//Check that PostBlocks() and SubmitBlocks() work using several different random values for the range of indices and number of tasks.
 qor_pp_test_suite_case(ThreadPoolTestSuite, blocksWorks)
 {
     constexpr std::int64_t range = 1000000;
@@ -1087,37 +1087,37 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, blocksWorks)
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
-        check(check_blocks_no_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.get_thread_count()), "detach_blocks()"));
+        check(check_blocks_no_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.GetThreadCount()), "PostBlocks()"));
     }
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
-        check(check_blocks_no_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.get_thread_count()), "submit_blocks()"));
+        check(check_blocks_no_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.GetThreadCount()), "SubmitBlocks()"));
     }
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
-        check_blocks_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.get_thread_count()));
+        check_blocks_return(pool, indices.first, indices.second, random<std::size_t>(1, pool.GetThreadCount()));
     }
-    //sync_out.println("Verifying that detach_blocks() with identical start and end indices does nothing...");
+    //sync_out.println("Verifying that PostBlocks() with identical start and end indices does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::int64_t index = random(-range, range);
         //sync_out.println("Range: ", index, " to ", index);
-        pool.detach_blocks(index, index,
+        pool.PostBlocks(index, index,
             [&count](const std::int64_t, const std::int64_t)
             {
                 ++count;
             });
-        pool.wait();
+        pool.Wait();
         check(count == 0);
     }
-    //sync_out.println("Verifying that submit_blocks() with identical start and end indices does nothing...");
+    //sync_out.println("Verifying that SubmitBlocks() with identical start and end indices does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::int64_t index = random(-range, range);
         //sync_out.println("Range: ", index, " to ", index);
-        pool.submit_blocks(index, index,
+        pool.SubmitBlocks(index, index,
                 [&count](const std::int64_t, const std::int64_t)
                 {
                     ++count;
@@ -1125,25 +1125,25 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, blocksWorks)
             .wait();
         check(count == 0);
     }
-    //sync_out.println("Verifying that detach_blocks() with end index smaller than the start index does nothing...");
+    //sync_out.println("Verifying that PostBlocks() with end index smaller than the start index does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
         //sync_out.println("Range: ", indices.second, " to ", indices.first);
-        pool.detach_blocks(indices.second, indices.first,
+        pool.PostBlocks(indices.second, indices.first,
             [&count](const std::int64_t, const std::int64_t)
             {
                 ++count;
             });
-        pool.wait();
+        pool.Wait();
         check(count == 0);
     }
-    //sync_out.println("Verifying that submit_blocks() with end index smaller than the start index does nothing...");
+    //sync_out.println("Verifying that SubmitBlocks() with end index smaller than the start index does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
         //sync_out.println("Range: ", indices.second, " to ", indices.first);
-        pool.submit_blocks(indices.second, indices.first,
+        pool.SubmitBlocks(indices.second, indices.first,
                 [&count](const std::int64_t, const std::int64_t)
                 {
                     ++count;
@@ -1151,15 +1151,15 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, blocksWorks)
             .wait();
         check(count == 0);
     }
-    //sync_out.println("Trying detach_blocks() with a number of tasks larger than the number of indices:");
+    //sync_out.println("Trying PostBlocks() with a number of tasks larger than the number of indices:");
     {
         const std::int64_t start = random(-range, range);
-        check(check_blocks_no_return(pool, start, start + random<std::int64_t>(0, static_cast<std::int64_t>(pool.get_thread_count() * 2)), random<std::size_t>(pool.get_thread_count() * 2, pool.get_thread_count() * 4), "detach_blocks()"));
+        check(check_blocks_no_return(pool, start, start + random<std::int64_t>(0, static_cast<std::int64_t>(pool.GetThreadCount() * 2)), random<std::size_t>(pool.GetThreadCount() * 2, pool.GetThreadCount() * 4), "PostBlocks()"));
     }
-    //sync_out.println("Trying submit_blocks() with a number of tasks larger than the number of indices:");
+    //sync_out.println("Trying SubmitBlocks() with a number of tasks larger than the number of indices:");
     {
         const std::int64_t start = random(-range, range);
-        check(check_blocks_no_return(pool, start, start + random<std::int64_t>(0, static_cast<std::int64_t>(pool.get_thread_count() * 2)), random<std::size_t>(pool.get_thread_count() * 2, pool.get_thread_count() * 4), "submit_blocks()"));
+        check(check_blocks_no_return(pool, start, start + random<std::int64_t>(0, static_cast<std::int64_t>(pool.GetThreadCount() * 2)), random<std::size_t>(pool.GetThreadCount() * 2, pool.GetThreadCount() * 4), "SubmitBlocks()"));
     }
 }
 
@@ -1167,8 +1167,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, blocksWorks)
 // Functions to verify sequence parallelization
 // ============================================
 
-//Check that detach_sequence() or submit_sequence() work for a specific range of indices, with no return value.
-bool check_sequence_no_return(ThreadPool<>& pool, const std::int64_t random_start, const std::int64_t random_end, const std::string_view which_func)
+//Check that PostSequence() or SubmitSequence() work for a specific range of indices, with no return value.
+bool check_sequence_no_return(ThreadPool& pool, const std::int64_t random_start, const std::int64_t random_end, const std::string_view which_func)
 {
     //sync_out.println("Verifying that ", which_func, " from ", random_start, " to ", random_end, " modifies all indices exactly once...");
     const std::size_t num_indices = static_cast<std::size_t>(random_end - random_start);
@@ -1181,14 +1181,14 @@ bool check_sequence_no_return(ThreadPool<>& pool, const std::int64_t random_star
         else
             ++flags[static_cast<std::size_t>(index - random_start)];
     };
-    if (which_func == "detach_sequence()")
+    if (which_func == "PostSequence()")
     {
-        pool.detach_sequence(random_start, random_end, sequence);
-        pool.wait();
+        pool.PostSequence(random_start, random_end, sequence);
+        pool.Wait();
     }
     else
     {
-        pool.submit_sequence(random_start, random_end, sequence).wait();
+        pool.SubmitSequence(random_start, random_end, sequence).wait();
     }
     if (indices_out_of_range)
     {
@@ -1198,15 +1198,15 @@ bool check_sequence_no_return(ThreadPool<>& pool, const std::int64_t random_star
     return all_flags_equal(flags, 1);
 }
 
-//Check that submit_sequence() works for a specific range of indices, with a return value.
-void check_sequence_return(ThreadPool<>& pool, const std::int64_t random_start, const std::int64_t random_end)
+//Check that SubmitSequence() works for a specific range of indices, with a return value.
+void check_sequence_return(ThreadPool& pool, const std::int64_t random_start, const std::int64_t random_end)
 {
-    //sync_out.println("Verifying that submit_sequence() from ", random_start, " to ", random_end, " correctly sums all squares of indices...");
+    //sync_out.println("Verifying that SubmitSequence() from ", random_start, " to ", random_end, " correctly sums all squares of indices...");
     const auto sequence = [](const std::int64_t index)
     {
         return index * index;
     };
-    const std::vector<std::int64_t> sums_vector = pool.submit_sequence(random_start, random_end, sequence).get();
+    const std::vector<std::int64_t> sums_vector = pool.SubmitSequence(random_start, random_end, sequence).get();
     std::int64_t sum = 0;
     for (const std::int64_t partial_sum : sums_vector)
         sum += partial_sum;
@@ -1216,7 +1216,7 @@ void check_sequence_return(ThreadPool<>& pool, const std::int64_t random_start, 
     check(correct_sum, sum);
 }
 
-//Check that detach_sequence() and submit_sequence() work using several different random values for the range of indices.
+//Check that PostSequence() and SubmitSequence() work using several different random values for the range of indices.
 qor_pp_test_suite_case(ThreadPoolTestSuite, sequenceWorks)
 {
     constexpr std::int64_t range = 1000;
@@ -1225,37 +1225,37 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, sequenceWorks)
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
-        check(check_sequence_no_return(pool, indices.first, indices.second, "detach_sequence()"));
+        check(check_sequence_no_return(pool, indices.first, indices.second, "PostSequence()"));
     }
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
-        check(check_sequence_no_return(pool, indices.first, indices.second, "submit_sequence()"));
+        check(check_sequence_no_return(pool, indices.first, indices.second, "SubmitSequence()"));
     }
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
         check_sequence_return(pool, indices.first, indices.second);
     }
-    //sync_out.println("Verifying that detach_sequence() with identical start and end indices does nothing...");
+    //sync_out.println("Verifying that PostSequence() with identical start and end indices does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::int64_t index = random(-range, range);
         //sync_out.println("Range: ", index, " to ", index);
-        pool.detach_sequence(index, index,
+        pool.PostSequence(index, index,
             [&count](const std::int64_t)
             {
                 ++count;
             });
-        pool.wait();
+        pool.Wait();
         check(count == 0);
     }
-    //sync_out.println("Verifying that submit_sequence() with identical start and end indices does nothing...");
+    //sync_out.println("Verifying that SubmitSequence() with identical start and end indices does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::int64_t index = random(-range, range);
         //sync_out.println("Range: ", index, " to ", index);
-        pool.submit_sequence(index, index,
+        pool.SubmitSequence(index, index,
                 [&count](const std::int64_t)
                 {
                     ++count;
@@ -1263,25 +1263,25 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, sequenceWorks)
             .wait();
         check(count == 0);
     }
-    //sync_out.println("Verifying that detach_sequence() with end index smaller than the start index does nothing...");
+    //sync_out.println("Verifying that PostSequence() with end index smaller than the start index does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
         //sync_out.println("Range: ", indices.second, " to ", indices.first);
-        pool.detach_sequence(indices.second, indices.first,
+        pool.PostSequence(indices.second, indices.first,
             [&count](const std::int64_t)
             {
                 ++count;
             });
-        pool.wait();
+        pool.Wait();
         check(count == 0);
     }
-    //sync_out.println("Verifying that submit_sequence() with end index smaller than the start index does nothing...");
+    //sync_out.println("Verifying that SubmitSequence() with end index smaller than the start index does nothing...");
     {
         std::atomic<std::size_t> count = 0;
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
         //sync_out.println("Range: ", indices.second, " to ", indices.first);
-        pool.submit_sequence(indices.second, indices.first,
+        pool.SubmitSequence(indices.second, indices.first,
                 [&count](const std::int64_t)
                 {
                     ++count;
@@ -1306,7 +1306,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, monitoringWorks)
     counting_semaphore sem(0);
     for (std::size_t i = 0; i < num_threads * 3; ++i)
     {
-        pool.detach_task(
+        pool.PostTask(
             [i, &sem]
             {
                 sem.acquire();
@@ -1315,39 +1315,39 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, monitoringWorks)
     }
     std::this_thread::sleep_for(sleep_time);
     //sync_out.println("After submission, should have: ", num_threads * 3, " tasks total, ", num_threads, " tasks running, ", num_threads * 2, " tasks queued...");
-    //sync_out.print("Result: ", pool.get_tasks_total(), " tasks total, ", pool.get_tasks_running(), " tasks running, ", pool.get_tasks_queued(), " tasks queued ");
-    check(pool.get_tasks_total() == num_threads * 3 && pool.get_tasks_running() == num_threads && pool.get_tasks_queued() == num_threads * 2);
+    //sync_out.print("Result: ", pool.GetTotalCountOfTasks(), " tasks total, ", pool.GetCountOfTasksRunning(), " tasks running, ", pool.GetCountOfTasksQueued(), " tasks queued ");
+    check(pool.GetTotalCountOfTasks() == num_threads * 3 && pool.GetCountOfTasksRunning() == num_threads && pool.GetCountOfTasksQueued() == num_threads * 2);
     sem.release(static_cast<std::ptrdiff_t>(num_threads));
     std::this_thread::sleep_for(sleep_time);
     //sync_out.println("After releasing ", num_threads, " tasks, should have: ", num_threads * 2, " tasks total, ", num_threads, " tasks running, ", num_threads, " tasks queued...");
-    //sync_out.print("Result: ", pool.get_tasks_total(), " tasks total, ", pool.get_tasks_running(), " tasks running, ", pool.get_tasks_queued(), " tasks queued ");
-    check(pool.get_tasks_total() == num_threads * 2 && pool.get_tasks_running() == num_threads && pool.get_tasks_queued() == num_threads);
+    //sync_out.print("Result: ", pool.GetTotalCountOfTasks(), " tasks total, ", pool.GetCountOfTasksRunning(), " tasks running, ", pool.GetCountOfTasksQueued(), " tasks queued ");
+    check(pool.GetTotalCountOfTasks() == num_threads * 2 && pool.GetCountOfTasksRunning() == num_threads && pool.GetCountOfTasksQueued() == num_threads);
     sem.release(static_cast<std::ptrdiff_t>(num_threads));
     std::this_thread::sleep_for(sleep_time);
     //sync_out.println("After releasing ", num_threads, " more tasks, should have: ", num_threads, " tasks total, ", num_threads, " tasks running, ", 0, " tasks queued...");
-    //sync_out.print("Result: ", pool.get_tasks_total(), " tasks total, ", pool.get_tasks_running(), " tasks running, ", pool.get_tasks_queued(), " tasks queued ");
-    check(pool.get_tasks_total() == num_threads && pool.get_tasks_running() == num_threads && pool.get_tasks_queued() == 0);
+    //sync_out.print("Result: ", pool.GetTotalCountOfTasks(), " tasks total, ", pool.GetCountOfTasksRunning(), " tasks running, ", pool.GetCountOfTasksQueued(), " tasks queued ");
+    check(pool.GetTotalCountOfTasks() == num_threads && pool.GetCountOfTasksRunning() == num_threads && pool.GetCountOfTasksQueued() == 0);
     sem.release(static_cast<std::ptrdiff_t>(num_threads));
     std::this_thread::sleep_for(sleep_time);
     //sync_out.println("After releasing the final ", num_threads, " tasks, should have: ", 0, " tasks total, ", 0, " tasks running, ", 0, " tasks queued...");
-    //sync_out.print("Result: ", pool.get_tasks_total(), " tasks total, ", pool.get_tasks_running(), " tasks running, ", pool.get_tasks_queued(), " tasks queued ");
-    check(pool.get_tasks_total() == 0 && pool.get_tasks_running() == 0 && pool.get_tasks_queued() == 0);
+    //sync_out.print("Result: ", pool.GetTotalCountOfTasks(), " tasks total, ", pool.GetCountOfTasksRunning(), " tasks running, ", pool.GetCountOfTasksQueued(), " tasks queued ");
+    check(pool.GetTotalCountOfTasks() == 0 && pool.GetCountOfTasksRunning() == 0 && pool.GetCountOfTasksQueued() == 0);
 }
 
 //Check that pausing works.
 qor_pp_test_suite_case(ThreadPoolTestSuite, pausingWorks)
 {
     constexpr std::chrono::milliseconds sleep_time(200);
-    ThreadPool<tp::pause> pool;
+    ThreadPool pool;
     //sync_out.println("Checking that the pool correctly reports that it is not paused after construction...");
-    check(!pool.is_paused());
+    check(!pool.IsPaused());
     //sync_out.println("Pausing pool.");
-    pool.pause();
+    pool.Pause();
     //sync_out.println("Checking that the pool correctly reports that it is paused...");
-    check(pool.is_paused());
+    check(pool.IsPaused());
     //sync_out.println("Submitting task and waiting.");
     std::atomic<bool> flag = false;
-    pool.detach_task(
+    pool.PostTask(
         [&flag]
         {
             flag = true;
@@ -1357,15 +1357,15 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, pausingWorks)
     //sync_out.println("Verifying that the task has not been executed...");
     check(!flag);
     //sync_out.println("Unpausing pool and waiting.");
-    pool.unpause();
+    pool.Unpause();
     std::this_thread::sleep_for(sleep_time);
     //sync_out.println("Verifying that the task has been executed...");
     check(flag);
     //sync_out.println("Checking that the pool correctly reports that it is not paused...");
-    check(!pool.is_paused());
+    check(!pool.IsPaused());
 }
 
-//Check that purge() works.
+//Check that Purge() works.
 qor_pp_test_suite_case(ThreadPoolTestSuite, purgingWorks)
 {
     constexpr std::chrono::milliseconds long_sleep_time(200);
@@ -1376,7 +1376,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, purgingWorks)
     std::vector<std::atomic<bool>> flags(num_tasks);
     for (std::size_t i = 0; i < num_tasks; ++i)
     {
-        pool.detach_task(
+        pool.PostTask(
             [&flags, i, long_sleep_time]
             {
                 std::this_thread::sleep_for(long_sleep_time);
@@ -1386,8 +1386,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, purgingWorks)
     }
     std::this_thread::sleep_for(short_sleep_time);
     //sync_out.println("Purging the pool and waiting for tasks...");
-    pool.purge();
-    pool.wait();
+    pool.Purge();
+    pool.Wait();
     //sync_out.println("Checking that only the first task was executed...");
     flags[0] = !flags[0];
     check(no_flags_set(flags));
@@ -1411,13 +1411,13 @@ void throws()
     throw test_exception();
 };
 
-//Check that exceptions are forwarded correctly by submit_task().
+//Check that exceptions are forwarded correctly by SubmitTask().
 qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectly)
 {
     ThreadPool pool;
-    //sync_out.println("Checking that exceptions are forwarded correctly by submit_task()...");
+    //sync_out.println("Checking that exceptions are forwarded correctly by SubmitTask()...");
     bool caught = false;
-    std::future<void> future = pool.submit_task(throws);
+    std::future<void> future = pool.SubmitTask(throws);
     try
     {
         future.get();
@@ -1436,8 +1436,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectly
     //sync_out.println("Checking that exceptions are forwarded correctly by multi_future...");
     bool caught = false;
     multi_future<void> future;
-    future.push_back(pool.submit_task(throws));
-    future.push_back(pool.submit_task(throws));
+    future.push_back(pool.SubmitTask(throws));
+    future.push_back(pool.SubmitTask(throws));
     try
     {
         future.get();
@@ -1455,7 +1455,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectly
 // =====================================
 
 //Check that parallelized vector operations work as expected by calculating the sum of two randomized vectors of a specific size in two ways, single-threaded and multithreaded, and comparing the results.
-bool check_vector_of_size(ThreadPool<>& pool, const std::size_t vector_size, const std::size_t num_tasks)
+bool check_vector_of_size(ThreadPool& pool, const std::size_t vector_size, const std::size_t num_tasks)
 {
     constexpr std::int64_t value_range = 1000000;
     std::vector<std::int64_t> vector_1(vector_size);
@@ -1470,7 +1470,7 @@ bool check_vector_of_size(ThreadPool<>& pool, const std::size_t vector_size, con
     for (std::size_t i = 0; i < vector_size; ++i)
         sum_single[i] = vector_1[i] + vector_2[i];
     std::vector<std::int64_t> sum_multi(vector_size);
-    pool.submit_blocks(
+    pool.SubmitBlocks(
             0, vector_size,
             [&sum_multi, &vector_1, &vector_2](const std::size_t start, const std::size_t end)
             {
@@ -1494,7 +1494,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, vectorsWork)
     constexpr std::size_t repeats = 10;
     ThreadPool pool;
     for (std::size_t i = 0; i < repeats; ++i)
-        check(check_vector_of_size(pool, random<std::size_t>(0, size_range), random<std::size_t>(1, pool.get_thread_count())));
+        check(check_vector_of_size(pool, random<std::size_t>(0, size_range), random<std::size_t>(1, pool.GetThreadCount())));
 }
 
 // =================================
@@ -1510,8 +1510,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
     constexpr std::chrono::milliseconds sleep_time(200);
     constexpr std::size_t num_tasks = 10;
     // Set the pool to have only 1 thread, so it can only run 1 task at a time. This will ensure the tasks will be executed in priority order.
-    ThreadPool<tp::priority | tp::pause> pool(1);
-    pool.pause();
+    ThreadPool pool(1);
+    pool.Pause();
 
     // Create a shuffled lists of priorities.
     std::vector<priority_t> priorities;
@@ -1529,35 +1529,35 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
     const auto execute_task_priority = [&execution_order, &exec_mutex](const priority_t priority)
     {
         const std::scoped_lock lock(exec_mutex);
-        //sync_out.println("Task with priority ", static_cast<rand_priority_t>(priority), " executed.");
+        std::cout << "Task with priority " << static_cast<rand_priority_t>(priority) << " executed.\n" ;
         execution_order.push_back(priority);
     };
-    const std::vector<std::string_view> functions = {"detach_task", "submit_task", "detach_sequence", "submit_sequence", "detach_loop", "submit_loop", "detach_blocks", "submit_blocks"};
+    const std::vector<std::string_view> functions = {"PostTask", "SubmitTask", "PostSequence", "SubmitSequence", "PostLoop", "SubmitLoop", "PostBlocks", "SubmitBlocks"};
     for (const priority_t priority : priorities)
     {
         const std::string_view func = functions[random<std::size_t>(0, functions.size() - 1)];
         //sync_out.println("Launching ", func, "() with priority ", static_cast<rand_priority_t>(priority), "...");
-        if (func == "detach_task")
+        if (func == "PostTask")
         {
-            pool.detach_task(
+            pool.PostTask(
                 [priority, &execute_task_priority]
                 {
                     execute_task_priority(priority);
                 },
                 priority);
         }
-        else if (func == "submit_task")
+        else if (func == "SubmitTask")
         {
-            std::ignore = pool.submit_task(
+            std::ignore = pool.SubmitTask(
                 [priority, &execute_task_priority]
                 {
                     execute_task_priority(priority);
                 },
                 priority);
         }
-        else if (func == "detach_sequence")
+        else if (func == "PostSequence")
         {
-            pool.detach_sequence(
+            pool.PostSequence(
                 0, 1,
                 [priority, &execute_task_priority](std::int64_t)
                 {
@@ -1565,9 +1565,9 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
                 },
                 priority);
         }
-        else if (func == "submit_sequence")
+        else if (func == "SubmitSequence")
         {
-            std::ignore = pool.submit_sequence(
+            std::ignore = pool.SubmitSequence(
                 0, 1,
                 [priority, &execute_task_priority](std::int64_t)
                 {
@@ -1575,9 +1575,9 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
                 },
                 priority);
         }
-        else if (func == "detach_loop")
+        else if (func == "PostLoop")
         {
-            pool.detach_loop(
+            pool.PostLoop(
                 0, 1,
                 [priority, &execute_task_priority](std::int64_t)
                 {
@@ -1585,9 +1585,9 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
                 },
                 0, priority);
         }
-        else if (func == "submit_loop")
+        else if (func == "SubmitLoop")
         {
-            std::ignore = pool.submit_loop(
+            std::ignore = pool.SubmitLoop(
                 0, 1,
                 [priority, &execute_task_priority](std::int64_t)
                 {
@@ -1595,9 +1595,9 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
                 },
                 0, priority);
         }
-        else if (func == "detach_blocks")
+        else if (func == "PostBlocks")
         {
-            pool.detach_blocks(
+            pool.PostBlocks(
                 0, 1,
                 [priority, &execute_task_priority](std::int64_t, std::int64_t)
                 {
@@ -1605,9 +1605,9 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
                 },
                 0, priority);
         }
-        else if (func == "submit_blocks")
+        else if (func == "SubmitBlocks")
         {
-            std::ignore = pool.submit_blocks(
+            std::ignore = pool.SubmitBlocks(
                 0, 1,
                 [priority, &execute_task_priority](std::int64_t, std::int64_t)
                 {
@@ -1620,8 +1620,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
     // Unpause the pool so the tasks can be executed, then check that they were executed in the correct order.
     //sync_out.println("Checking execution order...");
     std::this_thread::sleep_for(sleep_time);
-    pool.unpause();
-    pool.wait();
+    pool.Unpause();
+    pool.Wait();
     std::sort(priorities.rbegin(), priorities.rend());
     check(execution_order == priorities);
 }
@@ -1634,10 +1634,10 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
 qor_pp_test_suite_case(ThreadPoolTestSuite, initAndIndexWork)
 {
     //sync_out.println("Comparing thread indices reported by get_index() using an initialization function passed to reset():");
-    std::vector<std::atomic<std::size_t>> thread_indices(std::thread::hardware_concurrency());
+    std::vector<std::atomic<std::size_t>> thread_indices(std::max(1u,std::thread::hardware_concurrency() - 1));
     std::atomic<bool> correct = true;
-    ThreadPool pool;
-    pool.reset(
+    ThreadPool pool(std::max(1u,std::thread::hardware_concurrency() - 1));
+    pool.Reset(
         [&thread_indices, &correct](std::size_t idx)
         {
             const std::optional<std::size_t> reported_idx = CurrentThread::GetCurrent().GetPoolIndex();
@@ -1646,7 +1646,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, initAndIndexWork)
             else
                 correct = false;
         });
-    pool.wait();
+    pool.Wait();
     //sync_out.println("Checking that all reported indices have values...");
     check(correct);
     correct = true;
@@ -1678,12 +1678,12 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, initAndIndexWork)
 //Check that thread cleanup functions work.
 qor_pp_test_suite_case(ThreadPoolTestSuite, cleanupWorks)
 {
-    //sync_out.println("Comparing thread indices reported by get_index() using a cleanup function passed to set_cleanup_func():");
-    std::vector<std::atomic<std::size_t>> thread_indices(std::thread::hardware_concurrency());
+    //sync_out.println("Comparing thread indices reported by get_index() using a cleanup function passed to SetCleanupFunction():");
+    std::vector<std::atomic<std::size_t>> thread_indices(std::thread::hardware_concurrency()/2);
     std::atomic<bool> correct = true;
     {
-        ThreadPool pool;
-        pool.set_cleanup_func(
+        ThreadPool pool(std::thread::hardware_concurrency()/2);
+        pool.SetCleanupFunction(
             [&thread_indices, &correct](std::size_t idx)
             {
                 const std::optional<std::size_t> reported_idx = CurrentThread::GetCurrent().GetPoolIndex();
@@ -1712,8 +1712,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, cleanupWorks)
 qor_pp_test_suite_case(ThreadPoolTestSuite, GetPoolWorks)
 {
     //sync_out.println("Checking that all threads report the correct pool...");
-    std::vector<std::atomic<void*>> thread_pool_ptrs1(std::thread::hardware_concurrency());
-    std::vector<std::atomic<void*>> thread_pool_ptrs2(std::thread::hardware_concurrency());
+    std::vector<std::atomic<void*>> thread_pool_ptrs1(std::thread::hardware_concurrency()/2);
+    std::vector<std::atomic<void*>> thread_pool_ptrs2(std::thread::hardware_concurrency()/2);
     const auto store_pointers = [](std::vector<std::atomic<void*>>& ptrs)
     {
         const auto ptr = CurrentThread::GetCurrent().GetPool();
@@ -1722,19 +1722,19 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, GetPoolWorks)
         else
             check(false);
     };
-    ThreadPool pool1(
+    ThreadPool pool1( std::thread::hardware_concurrency()/2,
         [&thread_pool_ptrs1, &store_pointers]
         {
             store_pointers(thread_pool_ptrs1);
         });
-    ThreadPool pool2(
+    ThreadPool pool2( std::thread::hardware_concurrency()/2,
         [&thread_pool_ptrs2, &store_pointers]
         {
             store_pointers(thread_pool_ptrs2);
         });
-    pool1.wait();
-    pool2.wait();
-    const auto check_pointers = [](const std::vector<std::atomic<void*>>& ptrs, const ThreadPool<>& pool)
+    pool1.Wait();
+    pool2.Wait();
+    const auto check_pointers = [](const std::vector<std::atomic<void*>>& ptrs, const ThreadPool& pool)
     {
         check(all_flags_equal(ptrs, (void*)&pool));
     };
@@ -1790,24 +1790,24 @@ private:
 void check_copy(const std::string_view which_func)
 {
     ThreadPool pool;
-    const std::size_t num_tasks = pool.get_thread_count() * 10;
+    const std::size_t num_tasks = pool.GetThreadCount() * 10;
     //sync_out.println("Checking ", which_func, "...");
     std::atomic<std::size_t> copied = 0;
     std::atomic<std::size_t> moved = 0;
     auto task = [detect = count_copy_move(&copied, &moved)](auto&&...) {};
-    if (which_func == "detach_blocks()")
-        pool.detach_blocks(0, num_tasks, std::move(task), num_tasks);
-    else if (which_func == "detach_loop()")
-        pool.detach_loop(0, num_tasks, std::move(task));
-    else if (which_func == "detach_sequence()")
-        pool.detach_sequence(0, num_tasks, std::move(task));
-    else if (which_func == "submit_blocks()")
-        std::ignore = pool.submit_blocks(0, num_tasks, std::move(task), num_tasks);
-    else if (which_func == "submit_loop()")
-        std::ignore = pool.submit_loop(0, num_tasks, std::move(task));
-    else if (which_func == "submit_sequence()")
-        std::ignore = pool.submit_sequence(0, num_tasks, std::move(task));
-    pool.wait();
+    if (which_func == "PostBlocks()")
+        pool.PostBlocks(0, num_tasks, std::move(task), num_tasks);
+    else if (which_func == "PostLoop()")
+        pool.PostLoop(0, num_tasks, std::move(task));
+    else if (which_func == "PostSequence()")
+        pool.PostSequence(0, num_tasks, std::move(task));
+    else if (which_func == "SubmitBlocks()")
+        std::ignore = pool.SubmitBlocks(0, num_tasks, std::move(task), num_tasks);
+    else if (which_func == "SubmitLoop()")
+        std::ignore = pool.SubmitLoop(0, num_tasks, std::move(task));
+    else if (which_func == "SubmitSequence()")
+        std::ignore = pool.SubmitSequence(0, num_tasks, std::move(task));
+    pool.Wait();
     //sync_out.println("Copy count: ");
     check(0, copied.load()); // Note: Move count will be unpredictable if priority is on, so we don't check it.
 }
@@ -1815,12 +1815,12 @@ void check_copy(const std::string_view which_func)
 // Check, for all member functions which parallelize loops or sequences of tasks, that the callable object does not get copied in the process.
 qor_pp_test_suite_case(ThreadPoolTestSuite, CopyAllWorks)
 {
-    check_copy("detach_blocks()");
-    check_copy("detach_loop()");
-    check_copy("detach_sequence()");
-    check_copy("submit_blocks()");
-    check_copy("submit_loop()");
-    check_copy("submit_sequence()");
+    check_copy("PostBlocks()");
+    check_copy("PostLoop()");
+    check_copy("PostSequence()");
+    check_copy("SubmitBlocks()");
+    check_copy("SubmitLoop()");
+    check_copy("SubmitSequence()");
 }
 
 // A class used to detect if an object was destructed prematurely.
@@ -1851,7 +1851,7 @@ void check_shared_ptr(const std::string_view which_func)
 {
     ThreadPool pool;
     constexpr std::chrono::milliseconds sleep_time(10);
-    const std::size_t num_tasks = pool.get_thread_count() * 10;
+    const std::size_t num_tasks = pool.GetThreadCount() * 10;
     std::atomic<bool> object_exists = false;
     std::atomic<std::size_t> uses_before_destruct = 0;
     std::atomic<std::size_t> uses_after_destruct = 0;
@@ -1866,21 +1866,21 @@ void check_shared_ptr(const std::string_view which_func)
             else
                 ++uses_after_destruct;
         };
-        if (which_func == "detach_blocks()")
-            pool.detach_blocks(0, num_tasks, std::move(task), num_tasks);
-        else if (which_func == "detach_loop()")
-            pool.detach_loop(0, num_tasks, std::move(task));
-        else if (which_func == "detach_sequence()")
-            pool.detach_sequence(0, num_tasks, std::move(task));
-        else if (which_func == "submit_blocks()")
-            std::ignore = pool.submit_blocks(0, num_tasks, std::move(task), num_tasks);
-        else if (which_func == "submit_loop()")
-            std::ignore = pool.submit_loop(0, num_tasks, std::move(task));
-        else if (which_func == "submit_sequence()")
-            std::ignore = pool.submit_sequence(0, num_tasks, std::move(task));
+        if (which_func == "PostBlocks()")
+            pool.PostBlocks(0, num_tasks, std::move(task), num_tasks);
+        else if (which_func == "PostLoop()")
+            pool.PostLoop(0, num_tasks, std::move(task));
+        else if (which_func == "PostSequence()")
+            pool.PostSequence(0, num_tasks, std::move(task));
+        else if (which_func == "SubmitBlocks()")
+            std::ignore = pool.SubmitBlocks(0, num_tasks, std::move(task), num_tasks);
+        else if (which_func == "SubmitLoop()")
+            std::ignore = pool.SubmitLoop(0, num_tasks, std::move(task));
+        else if (which_func == "SubmitSequence()")
+            std::ignore = pool.SubmitSequence(0, num_tasks, std::move(task));
         ptr.reset();
     }
-    pool.wait();
+    pool.Wait();
     std::this_thread::sleep_for(sleep_time);
     //sync_out.println("Uses before destruct:");
     check(num_tasks, uses_before_destruct.load());
@@ -1891,12 +1891,12 @@ void check_shared_ptr(const std::string_view which_func)
 // Check, for all member functions which parallelize loops or sequences of tasks, that if a task that captures a shared pointer is submitted, the pointer is correctly shared between all the iterations of the task.
 qor_pp_test_suite_case(ThreadPoolTestSuite, SharedPtrAllWorks)
 {
-    check_shared_ptr("detach_blocks()");
-    check_shared_ptr("detach_loop()");
-    check_shared_ptr("detach_sequence()");
-    check_shared_ptr("submit_blocks()");
-    check_shared_ptr("submit_loop()");
-    check_shared_ptr("submit_sequence()");
+    check_shared_ptr("PostBlocks()");
+    check_shared_ptr("PostLoop()");
+    check_shared_ptr("PostSequence()");
+    check_shared_ptr("SubmitBlocks()");
+    check_shared_ptr("SubmitLoop()");
+    check_shared_ptr("SubmitSequence()");
 }
 
 // Check that a task is destructed immediately after it executes, and therefore does not artificially extend the lifetime of any captured objects.
@@ -1907,7 +1907,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, TaskDestructionWorks)
     std::atomic<bool> object_exists = false;
     {
         const std::shared_ptr<detect_destruct> ptr = std::make_shared<detect_destruct>(&object_exists);
-        pool.submit_task([ptr] {}).wait();
+        pool.SubmitTask([ptr] {}).wait();
     }
     std::this_thread::sleep_for(sleep_time);
     check(!object_exists);
@@ -1948,7 +1948,7 @@ void check_deadlock(const F&& task)
     constexpr std::chrono::milliseconds sleep_time(200);
     constexpr std::size_t tries = 10000;
     std::size_t try_n = 0;
-    check_deadlock_pool.detach_task(
+    check_deadlock_pool.PostTask(
         [&try_n, &task]
         {
             do
@@ -1959,7 +1959,7 @@ void check_deadlock(const F&& task)
     while (true)
     {
         const std::size_t old_try_n = try_n;
-        check_deadlock_pool.wait_for(sleep_time);
+        check_deadlock_pool.WaitFor(sleep_time);
         if (try_n == tries)
         {
             //sync_out.println("Successfully finished all tries!");
@@ -2078,7 +2078,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessPriorities)
 qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadPriorities)
 {
     ThreadPool pool;
-    pool.detach_task(
+    pool.PostTask(
         []
         {
             //sync_out.println("Checking OS thread priorities for pool threads...");
@@ -2196,7 +2196,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessAffinity)
 qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadAffinity)
 {
     ThreadPool pool;
-    pool.detach_task(
+    pool.PostTask(
         []
         {
             // Since the thread affinity must be a subset of the process affinity, we first set its affinity to all CPUs if it wasn't already.
