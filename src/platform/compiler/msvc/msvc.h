@@ -60,3 +60,7 @@ static constexpr int function_stride = 1;
 #define qor_pp_assume(X)        __assume(X)
 
 #define qor_pp_cpu_cache_line   std::hardware_destructive_interference_size
+
+//Disable this annoyance for now as this is a development library intended to be built by the 'end' user against whaetver STL they have
+#pragma warning( disable : 4251 ) // class ... needs to have dll-interface to be used by clients of class ..
+#pragma warning( disable : 4275 ) //non dll-interface class ... used as base for dll-interface class

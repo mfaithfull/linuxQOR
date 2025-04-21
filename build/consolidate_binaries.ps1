@@ -6,3 +6,15 @@ Copy-Item -Path cmakebuild/src/framework/thread/Debug/* -Destination cmakebuild/
 Copy-Item -Path cmakebuild/src/qor/interception/Debug/* -Destination cmakebuild/test/Debug
 Copy-Item -Path cmakebuild/src/qor/injection/Debug/* -Destination cmakebuild/test/Debug
 Copy-Item -Path cmakebuild/src/framework/signals/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/qor/issue/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/qor/error/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/framework/pipeline/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/framework/workflow/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/framework/role/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/framework/application/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/framework/task/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/system/filesystem/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/components/framework/optionparser/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/platform/os/windows/system/filesystem/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/platform/os/windows/framework/thread/Debug/* -Destination cmakebuild/test/Debug
+Copy-Item -Path cmakebuild/src/platform/os/windows/framework/process/Debug/* -Destination cmakebuild/test/Debug

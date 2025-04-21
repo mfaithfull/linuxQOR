@@ -23,64 +23,21 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "currentprocess.h"
+#include "src/system/filesystem/ifilesystem.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
+#include "src/qor/reference/newref.h"
 
-#include <filesystem>
-#include "folder.h"
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Process Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-namespace qor{ namespace system{
-
-    Folder::Folder(const Folder& src)
-    {
-        *this = src;
-    }
-
-    Folder::Folder(const class Path& path) : m_path(path) {}
-
-    Folder& Folder::operator = (const Folder& src)
-    {
-        if(&src != this)
-        {
-            m_path = src.m_path;
-        }   
-        return *this;     
-    }
-
-    void Folder::Create(class Path& newFolder)
-    {
-        std::filesystem::create_directory(newFolder);
-    }
-
-    void Folder::Copy( class Path& destinationParent )
-    {
-        std::filesystem::copy_file(m_path.operator std::filesystem::path(), destinationParent);
-    }
-
-    void Folder::Delete()
-    {
-        std::filesystem::remove_all(m_path);
-    }
-
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
-    {
-        for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
-        {
-            FileIndex item(dir_entry);
-            if( !f(item) )
-            {
-                break;
-            }
-        }
-    }
-
-    void Folder::CreateSymLinkTo(class Path& target)
-    {
-        std::filesystem::create_symlink(target, m_path);
-    }
-
-    class Path Folder::Path()
-    {
-        return m_path;
-    }
-
-
-}}//qor::system
+	static qor::TypeRegEntry< qor::nsWindows::framework::CurrentProcess, qor::framework::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
+	return QORModule;
+}

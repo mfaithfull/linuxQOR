@@ -2054,7 +2054,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessPriorities)
         //sync_out.print("Obtaining new OS process priority ");
         check(new_priority.has_value());
     #ifdef _WIN32
-        if (priority != os_process_priority::realtime)
+        if (priority != ICurrentProcess::Priority::realtime)
             check(os_process_priority_name(priority), os_process_priority_name(new_priority));
         else
             check_root(os_process_priority_name(priority), os_process_priority_name(new_priority));
@@ -2068,7 +2068,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessPriorities)
     // Set the priority back to normal after the test ends. This will fail on Linux if not root.
     //sync_out.println("Setting priority back to normal...");
     #ifdef _WIN32
-    check(new_ref<ICurrentProcess>()().SetPriority(os_process_priority::normal));
+    check(new_ref<ICurrentProcess>()().SetPriority(ICurrentProcess::Priority::normal));
     #else
     check_root(new_ref<ICurrentProcess>()().SetPriority(ICurrentProcess::Priority::normal));
     #endif

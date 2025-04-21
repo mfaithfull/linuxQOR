@@ -26,7 +26,9 @@
 
 #include <cassert>
 #include <cstdlib>
+#if (qor_pp_os_target == qor_pp_os_linux)
 #include <bits/c++config.h>
+#endif
 
 #include "src/platform/compiler/compiler.h"
 #include "cancellationstate.h"

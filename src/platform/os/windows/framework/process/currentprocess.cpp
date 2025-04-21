@@ -24,63 +24,40 @@
 
 #include "src/configuration/configuration.h"
 
-#include <filesystem>
-#include "folder.h"
+#include <errno.h>
+#include <optional>
+#include <vector>
+#include <format>
+#include "src/qor/error/error.h"
+#include "currentprocess.h"
 
-namespace qor{ namespace system{
-
-    Folder::Folder(const Folder& src)
+namespace qor {
+    bool qor_pp_module_interface(QOR_WINDOWSPROCESS) ImplementsICurrentProcess() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileSystem requirement. 
     {
-        *this = src;
+        return true;
+    }
+}
+
+namespace qor{ namespace nsWindows{ namespace framework{
+
+    std::optional<std::vector<bool>> CurrentProcess::GetAffinity()
+    {
+        return std::nullopt;
     }
 
-    Folder::Folder(const class Path& path) : m_path(path) {}
-
-    Folder& Folder::operator = (const Folder& src)
+    bool CurrentProcess::SetAffinity(const std::vector<bool>& affinity)
     {
-        if(&src != this)
-        {
-            m_path = src.m_path;
-        }   
-        return *this;     
+        return false;
     }
 
-    void Folder::Create(class Path& newFolder)
+    std::optional<qor::framework::ICurrentProcess::Priority> CurrentProcess::GetPriority()
     {
-        std::filesystem::create_directory(newFolder);
+        return std::nullopt;
     }
 
-    void Folder::Copy( class Path& destinationParent )
+    bool CurrentProcess::SetPriority(const qor::framework::ICurrentProcess::Priority priority)
     {
-        std::filesystem::copy_file(m_path.operator std::filesystem::path(), destinationParent);
+        return false;
     }
 
-    void Folder::Delete()
-    {
-        std::filesystem::remove_all(m_path);
-    }
-
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
-    {
-        for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
-        {
-            FileIndex item(dir_entry);
-            if( !f(item) )
-            {
-                break;
-            }
-        }
-    }
-
-    void Folder::CreateSymLinkTo(class Path& target)
-    {
-        std::filesystem::create_symlink(target, m_path);
-    }
-
-    class Path Folder::Path()
-    {
-        return m_path;
-    }
-
-
-}}//qor::system
+}}}//qor::nsWindows::framework

@@ -22,65 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_COMPONENTS_MEMTHREAD
+#define QOR_PP_H_COMPONENTS_MEMTHREAD
 
-#include <filesystem>
-#include "folder.h"
+#include <stdint.h>
 
-namespace qor{ namespace system{
+#include "src/platform/compiler/compiler.h"
+#include "src/framework/thread/thread.h"
 
-    Folder::Folder(const Folder& src)
+namespace qor{ namespace compponents{
+
+    class qor_pp_module_interface(QOR_MEMTHREAD) MemoryThread : public framework::Thread
     {
-        *this = src;
-    }
+        public:
 
-    Folder::Folder(const class Path& path) : m_path(path) {}
+		MemoryThread();
+		MemoryThread(const MemoryThread & src) = delete;
+		MemoryThread& operator=(MemoryThread const& src) = delete;
+		virtual ~MemoryThread() = default;
 
-    Folder& Folder::operator = (const Folder& src)
-    {
-        if(&src != this)
-        {
-            m_path = src.m_path;
-        }   
-        return *this;     
-    }
+        //memory::IMemoryHeap* SmallObjectHeap(void) const;
+		//memory::IMemoryHeap* FastHeap(void) const;
 
-    void Folder::Create(class Path& newFolder)
-    {
-        std::filesystem::create_directory(newFolder);
-    }
+	private:
 
-    void Folder::Copy( class Path& destinationParent )
-    {
-        std::filesystem::copy_file(m_path.operator std::filesystem::path(), destinationParent);
-    }
+		//memory::IMemoryHeap* m_FastHeap;
+		//memory::IMemoryHeap* m_SmallObjectHeap;
+    };
 
-    void Folder::Delete()
-    {
-        std::filesystem::remove_all(m_path);
-    }
+}}//qor::componenets
 
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
-    {
-        for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
-        {
-            FileIndex item(dir_entry);
-            if( !f(item) )
-            {
-                break;
-            }
-        }
-    }
-
-    void Folder::CreateSymLinkTo(class Path& target)
-    {
-        std::filesystem::create_symlink(target, m_path);
-    }
-
-    class Path Folder::Path()
-    {
-        return m_path;
-    }
-
-
-}}//qor::system
+#endif//QOR_PP_H_COMPONENTS_MEMTHREAD

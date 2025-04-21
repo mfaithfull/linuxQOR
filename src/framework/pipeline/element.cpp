@@ -28,7 +28,7 @@
 
 namespace qor{ namespace pipeline{
 
-    Element::Element(){}
+    Element::Element() : m_parent(nullptr), m_buffer(nullptr) {}
 
     Element::Element( const Element& src )
     {

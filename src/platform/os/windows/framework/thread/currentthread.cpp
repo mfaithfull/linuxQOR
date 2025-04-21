@@ -24,63 +24,51 @@
 
 #include "src/configuration/configuration.h"
 
-#include <filesystem>
-#include "folder.h"
+#include <optional>
 
-namespace qor{ namespace system{
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "currentthread.h"
 
-    Folder::Folder(const Folder& src)
+namespace qor{ 
+    bool qor_pp_module_interface(QOR_WINDOWSTHREAD) ImplementsICurrentThread() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsICurrentThread requirement. 
     {
-        *this = src;
+        return true;
+    }
+}
+
+namespace qor{ namespace nsWindows{ namespace framework{
+
+    bool CurrentThread::SetPriority(ICurrentThread::Priority priority)
+    {
+        return false;
     }
 
-    Folder::Folder(const class Path& path) : m_path(path) {}
-
-    Folder& Folder::operator = (const Folder& src)
+    std::optional< qor::framework::ICurrentThread::Priority > CurrentThread::GetPriority() const
     {
-        if(&src != this)
-        {
-            m_path = src.m_path;
-        }   
-        return *this;     
+        return std::nullopt;
     }
 
-    void Folder::Create(class Path& newFolder)
+    bool CurrentThread::SetName(const std::string& name)
     {
-        std::filesystem::create_directory(newFolder);
+        return false;
     }
 
-    void Folder::Copy( class Path& destinationParent )
+    std::optional<std::string> CurrentThread::GetName()
     {
-        std::filesystem::copy_file(m_path.operator std::filesystem::path(), destinationParent);
+        return std::nullopt;
     }
 
-    void Folder::Delete()
+    bool CurrentThread::SetAffinity(const std::vector<bool>& affinity)
     {
-        std::filesystem::remove_all(m_path);
+        return false;
     }
 
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
+    std::optional<std::vector<bool>> CurrentThread::GetAffinity()
     {
-        for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
-        {
-            FileIndex item(dir_entry);
-            if( !f(item) )
-            {
-                break;
-            }
-        }
+        return std::nullopt;
     }
 
-    void Folder::CreateSymLinkTo(class Path& target)
-    {
-        std::filesystem::create_symlink(target, m_path);
-    }
-
-    class Path Folder::Path()
-    {
-        return m_path;
-    }
-
-
-}}//qor::system
+}}}//qor::nsWindows::framework

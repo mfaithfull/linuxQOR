@@ -141,8 +141,8 @@ namespace qor{ namespace system{
     }
 
     std::string FileIndex::ToString() const
-    {
-        return m_dirent.path();
+    {        
+        return m_dirent.path().generic_string();
     }
 
     ref_of<File>::type FileIndex::Open(const int openFor, const int withFlags, const int inMode)    

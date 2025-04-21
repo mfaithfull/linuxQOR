@@ -93,16 +93,12 @@ qor_pp_test_suite_case(DelegateTestSuite, canCallDelegateOnConstMemberFunction)
 
 qor_pp_test_suite_case(DelegateTestSuite, canConstructDelegateOnStatictMemberFunction)
 {
-    DelegateTestTarget target;
-      
     Delegate<double(int, char, const char*)> d;
     auto dFunc = decltype(d)::Create<&DelegateTestTarget::StaticFunction>();
 }
 
 qor_pp_test_suite_case(DelegateTestSuite, canCallDelegateOnStatictMemberFunction)
 {
-    DelegateTestTarget target;
-      
     Delegate<double(int, char, const char*)> d;
     auto dFunc = decltype(d)::Create<&DelegateTestTarget::StaticFunction>();
     qor_pp_assert_that(dFunc(2, 'C', "Static function call")).isEqualTo(0.3);

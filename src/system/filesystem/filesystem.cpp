@@ -102,7 +102,7 @@ namespace qor{ namespace system{
 
     Path FileSystem::TempFolder()
     {
-        Path tempPath(std::filesystem::temp_directory_path());
+        Path tempPath(std::filesystem::temp_directory_path().generic_string());
         return tempPath;
     }
 

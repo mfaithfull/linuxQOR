@@ -23,64 +23,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include "fastsource.h"
 
-#include <filesystem>
-#include "folder.h"
-
-namespace qor{ namespace system{
-
-    Folder::Folder(const Folder& src)
-    {
-        *this = src;
-    }
-
-    Folder::Folder(const class Path& path) : m_path(path) {}
-
-    Folder& Folder::operator = (const Folder& src)
-    {
-        if(&src != this)
-        {
-            m_path = src.m_path;
-        }   
-        return *this;     
-    }
-
-    void Folder::Create(class Path& newFolder)
-    {
-        std::filesystem::create_directory(newFolder);
-    }
-
-    void Folder::Copy( class Path& destinationParent )
-    {
-        std::filesystem::copy_file(m_path.operator std::filesystem::path(), destinationParent);
-    }
-
-    void Folder::Delete()
-    {
-        std::filesystem::remove_all(m_path);
-    }
-
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
-    {
-        for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
-        {
-            FileIndex item(dir_entry);
-            if( !f(item) )
-            {
-                break;
-            }
-        }
-    }
-
-    void Folder::CreateSymLinkTo(class Path& target)
-    {
-        std::filesystem::create_symlink(target, m_path);
-    }
-
-    class Path Folder::Path()
-    {
-        return m_path;
-    }
+namespace qor{ namespace memory {
 
 
-}}//qor::system
+
+}}//qor::memory

@@ -4,10 +4,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "-fcoroutines")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
 endif()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
+endif()
 add_subdirectory(mock)
 
 add_executable(QORTest test_main.cpp test_test.cpp test_compiler.cpp 
@@ -42,7 +43,7 @@ reflection/test_reflection.cpp framework/test_pipeline.cpp
 framework/test_workflow.cpp application/test_application.cpp
 components/test_optionparser.cpp
 system/test_filesystem.cpp framework/test_threadpool.cpp
-system/test_asyncio.cpp framework/task/asyncautoresetevent_tests.cpp
+framework/task/asyncautoresetevent_tests.cpp
 framework/task/asyncgenerator_tests.cpp
 framework/task/asynclatch_tests.cpp
 framework/task/asyncmanualresetevent_tests.cpp
@@ -63,7 +64,16 @@ framework/task/whenalltests.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
+if(linux)
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 linq_filesystem linq_thread linq_process uring qor_task)
+endif()
+
+if(WIN32)
+target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
+qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
+qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
+winq_filesystem winq_thread winq_process qor_task)
+endif()

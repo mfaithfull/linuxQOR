@@ -43,6 +43,11 @@ namespace qor{ namespace framework{
 
     extern qor_pp_thread_local CurrentThread* t_pCurrentThread;
 
+#ifdef QOR_THREAD   //Anything other than the qor_thread library doesn't need to know about these
+    extern qor_pp_thread_local std::optional<std::size_t> pool_index;
+    extern qor_pp_thread_local std::optional<void*> parent_pool;
+#endif
+
     class qor_pp_module_interface(QOR_THREAD) CurrentThread
     {
         friend class qor_pp_module_interface(QOR_THREAD) Thread;
@@ -80,33 +85,16 @@ namespace qor{ namespace framework{
         virtual std::optional<std::string> GetName() const;
         virtual bool SetAffinity(const std::vector<bool>& affinity) const;
         virtual std::optional<std::vector<bool>> GetAffinity() const;
-
-        std::optional<void*> GetPool() const noexcept
-        {
-            return parent_pool;
-        }
-
-        std::optional<std::size_t> GetPoolIndex() const noexcept
-        {
-            return pool_index;
-        }
+        std::optional<void*> GetPool() const noexcept;
+        std::optional<std::size_t> GetPoolIndex() const noexcept;
 
     private:
 
         static CurrentThread& GetMutableCurrent();
 
-        void SetPool(std::optional<void*> pool)
-        {
-            parent_pool = pool;
-        }
+        void SetPool(std::optional<void*> pool);
+        void SetIndex(std::optional<std::size_t> index);
 
-        void SetIndex(std::optional<std::size_t> index)
-        {
-            pool_index = index;
-        }
-
-        inline static thread_local std::optional<std::size_t> pool_index = std::nullopt;
-        inline static thread_local std::optional<void*> parent_pool = std::nullopt;
         mutable ThreadContext m_Context;
         CurrentThread(){};
         void SetCurrent(CurrentThread* pThread);

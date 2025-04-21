@@ -94,6 +94,7 @@
         "test_pipeline": "cpp",
         "codecvt": "cpp",
         "future": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "filesystem": "cpp"
     }
 }

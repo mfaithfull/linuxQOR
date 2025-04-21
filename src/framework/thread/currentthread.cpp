@@ -26,11 +26,43 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
+namespace qor{
+#if(qor_pp_compiler == qor_pp_compiler_msvc)
+    bool qor::detail::ThreadInstanceHolder<class qor::framework::ICurrentThread>::bInitialised = false;
+    ref_of<framework::ICurrentThread>::type qor::detail::ThreadInstanceHolder<framework::ICurrentThread>::theRef;// = qor::ThreadSingletonInstancer::template Instance<framework::ICurrentThread>(1);
+#endif
+}
+
 namespace qor{ namespace framework{
 
     qor_pp_thread_local CurrentThread* t_pCurrentThread = nullptr;
+    qor_pp_thread_local std::optional<std::size_t> pool_index = std::nullopt;
+    qor_pp_thread_local std::optional<void*> parent_pool = std::nullopt;
+
+#if(qor_pp_compiler == qor_pp_compiler_gcc)
     template<> qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<framework::ICurrentThread>::bInitialised = false;
     template<> thread_local typename ref_of<framework::ICurrentThread>::type qor::detail::ThreadInstanceHolder<framework::ICurrentThread>::theRef = qor::ThreadSingletonInstancer::template Instance<framework::ICurrentThread>(1);
+#endif
+
+    std::optional<void*> CurrentThread::GetPool() const noexcept
+    {
+        return parent_pool;
+    }
+
+    std::optional<std::size_t> CurrentThread::GetPoolIndex() const noexcept
+    {
+        return pool_index;
+    }
+
+    void CurrentThread::SetPool(std::optional<void*> pool)
+    {
+        parent_pool = pool;
+    }
+
+    void CurrentThread::SetIndex(std::optional<std::size_t> index)
+    {
+        pool_index = index;
+    }
 
 	const CurrentThread& CurrentThread::GetCurrent()
 	{

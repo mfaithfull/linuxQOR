@@ -158,11 +158,11 @@ qor_pp_test_suite_case(PipelineTestSuite, readNoiseFromNoiseSource)
 	NoiseSource noiseSource;
 	noiseSource.SetBuffer(&Buffer);
 
-	unsigned long ulResult = 0;
-	noiseSource.Read(ulResult, 32);
+	size_t Result = 0;
+	noiseSource.Read(Result, 32);
 
-	qor::byte* pData = Buffer.ReadRequest(ulResult);
-	for (size_t i = 0; i < ulResult; i++)
+	qor::byte* pData = Buffer.ReadRequest(Result);
+	for (size_t i = 0; i < Result; i++)
 	{
 		std::cout << pData[i];
 	}

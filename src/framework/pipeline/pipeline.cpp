@@ -24,63 +24,28 @@
 
 #include "src/configuration/configuration.h"
 
-#include <filesystem>
-#include "folder.h"
+#include "pipeline.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace pipeline{
 
-    Folder::Folder(const Folder& src)
+    void Pipeline::Run(void)
     {
-        *this = src;
+
     }
 
-    Folder::Folder(const class Path& path) : m_path(path) {}
-
-    Folder& Folder::operator = (const Folder& src)
+    bool Pipeline::Pump(void)
     {
-        if(&src != this)
-        {
-            m_path = src.m_path;
-        }   
-        return *this;     
+        return false;
     }
 
-    void Folder::Create(class Path& newFolder)
+    bool Pipeline::Pump(size_t& numberOfUnitsPumped, size_t numberOfUnitsToPump)
     {
-        std::filesystem::create_directory(newFolder);
+        return false;
     }
-
-    void Folder::Copy( class Path& destinationParent )
+    
+    void Pipeline::InsertFilter(Filter* pFilter, FilterPos Pos)
     {
-        std::filesystem::copy_file(m_path.operator std::filesystem::path(), destinationParent);
+
     }
+}}//qor::pipeline
 
-    void Folder::Delete()
-    {
-        std::filesystem::remove_all(m_path);
-    }
-
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
-    {
-        for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
-        {
-            FileIndex item(dir_entry);
-            if( !f(item) )
-            {
-                break;
-            }
-        }
-    }
-
-    void Folder::CreateSymLinkTo(class Path& target)
-    {
-        std::filesystem::create_symlink(target, m_path);
-    }
-
-    class Path Folder::Path()
-    {
-        return m_path;
-    }
-
-
-}}//qor::system

@@ -22,65 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_COMPONENTS_MEM_FASTSOURCE
+#define QOR_PP_H_COMPONENTS_MEM_FASTSOURCE
 
-#include <filesystem>
-#include "folder.h"
+#include <stdint.h>
 
-namespace qor{ namespace system{
+#include "src/platform/compiler/compiler.h"
 
-    Folder::Folder(const Folder& src)
+namespace qor{ namespace memory{
+
+    class qor_pp_module_interface(QOR_FASTSOURCE) FastSource
     {
-        *this = src;
-    }
+    public:
 
-    Folder::Folder(const class Path& path) : m_path(path) {}
+        static void* Source(size_t byteCount);
+        static void Free(void * pMemory, size_t byteCount);
 
-    Folder& Folder::operator = (const Folder& src)
-    {
-        if(&src != this)
-        {
-            m_path = src.m_path;
-        }   
-        return *this;     
-    }
+    private:
 
-    void Folder::Create(class Path& newFolder)
-    {
-        std::filesystem::create_directory(newFolder);
-    }
+        FastSource() = delete;
+        ~FastSource() = delete;
+        FastSource(const FastSource & src) = delete;
+        FastSource& operator = (const FastSource & src) = delete;
+    };
 
-    void Folder::Copy( class Path& destinationParent )
-    {
-        std::filesystem::copy_file(m_path.operator std::filesystem::path(), destinationParent);
-    }
+}}//qor::memory
 
-    void Folder::Delete()
-    {
-        std::filesystem::remove_all(m_path);
-    }
-
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
-    {
-        for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
-        {
-            FileIndex item(dir_entry);
-            if( !f(item) )
-            {
-                break;
-            }
-        }
-    }
-
-    void Folder::CreateSymLinkTo(class Path& target)
-    {
-        std::filesystem::create_symlink(target, m_path);
-    }
-
-    class Path Folder::Path()
-    {
-        return m_path;
-    }
-
-
-}}//qor::system
+#endif//QOR_PP_H_COMPONENTS_MEM_FASTSOURCE

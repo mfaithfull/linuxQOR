@@ -71,7 +71,6 @@ namespace qor{ namespace components{ namespace optparser {
             int bottom = m_FirstNonOpt;
             int middle = m_LastNonOpt;
             int top = m_it.Index();
-            char* tem;
             /* Exchange the shorter segment with the far end of the longer segment.
                That puts the shorter segment into the right place.
                It leaves the longer segment in the right place overall,

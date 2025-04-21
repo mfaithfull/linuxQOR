@@ -26,6 +26,7 @@
 
 #include <thread>
 #include <ostream>
+#include <chrono>
 
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"

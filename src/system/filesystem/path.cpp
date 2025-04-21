@@ -52,7 +52,7 @@ namespace qor{ namespace system{
 
     Path Path::Parent() const
     {
-        Path parent(m_path.parent_path());
+        Path parent(m_path.parent_path().generic_string());
         return parent;
     }
 
@@ -100,19 +100,19 @@ namespace qor{ namespace system{
 
     Path Path::RootName()
     {
-        Path root(m_path.root_name());
+        Path root(m_path.root_name().generic_string());
         return root;
     }
 
     Path Path::RootDirectory()
     {
-        Path dir(m_path.root_directory());
+        Path dir(m_path.root_directory().generic_string());
         return dir;
     }
 
     Path Path::RelativePath()
     {
-        Path relative(m_path.relative_path());
+        Path relative(m_path.relative_path().generic_string());
         return relative;
     }
 
