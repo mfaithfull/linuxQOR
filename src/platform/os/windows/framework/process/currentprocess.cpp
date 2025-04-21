@@ -31,6 +31,9 @@
 #include "src/qor/error/error.h"
 #include "currentprocess.h"
 
+#include <windows.h>
+#include <processthreadsapi.h>
+
 namespace qor {
     bool qor_pp_module_interface(QOR_WINDOWSPROCESS) ImplementsICurrentProcess() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileSystem requirement. 
     {
@@ -42,22 +45,92 @@ namespace qor{ namespace nsWindows{ namespace framework{
 
     std::optional<std::vector<bool>> CurrentProcess::GetAffinity()
     {
-        return std::nullopt;
+        DWORD_PTR process_mask = 0;
+        DWORD_PTR system_mask = 0;
+        if (GetProcessAffinityMask(GetCurrentProcess(), &process_mask, &system_mask) == 0)
+        {
+            return std::nullopt;
+        }
+#ifdef __cpp_lib_int_pow2
+        const std::size_t num_cpus = static_cast<std::size_t>(std::bit_width(system_mask));
+#else
+        std::size_t num_cpus = 0;
+        if (system_mask != 0)
+        {
+            num_cpus = 1;
+            while ((system_mask >>= 1U) != 0U)
+                ++num_cpus;
+        }
+#endif
+        std::vector<bool> affinity(num_cpus);
+        for (std::size_t i = 0; i < num_cpus; ++i)
+        {
+            affinity[i] = ((process_mask & (1ULL << i)) != 0ULL);
+        }
+        return affinity;     
     }
 
     bool CurrentProcess::SetAffinity(const std::vector<bool>& affinity)
     {
-        return false;
+        DWORD_PTR process_mask = 0;
+        for (std::size_t i = 0; i < std::min<std::size_t>(affinity.size(), sizeof(DWORD_PTR) * 8); ++i)
+            process_mask |= (affinity[i] ? (1ULL << i) : 0ULL);
+        return SetProcessAffinityMask(GetCurrentProcess(), process_mask) != 0;
     }
 
     std::optional<qor::framework::ICurrentProcess::Priority> CurrentProcess::GetPriority()
     {
-        return std::nullopt;
+        const DWORD OSPriority = GetPriorityClass(GetCurrentProcess());
+        if (OSPriority == 0)
+        {
+            return std::nullopt;
+        }
+
+        switch(OSPriority)
+        {
+            case IDLE_PRIORITY_CLASS:
+            return qor::framework::ICurrentProcess::Priority::idle;
+            case BELOW_NORMAL_PRIORITY_CLASS:
+            return qor::framework::ICurrentProcess::Priority::below_normal;
+            case NORMAL_PRIORITY_CLASS:
+            return qor::framework::ICurrentProcess::Priority::normal;
+            case ABOVE_NORMAL_PRIORITY_CLASS:
+            return qor::framework::ICurrentProcess::Priority::above_normal;
+            case HIGH_PRIORITY_CLASS:
+            return qor::framework::ICurrentProcess::Priority::high;
+            case REALTIME_PRIORITY_CLASS:
+            return qor::framework::ICurrentProcess::Priority::realtime;
+        }
+
+        return qor::framework::ICurrentProcess::Priority::normal;
     }
 
     bool CurrentProcess::SetPriority(const qor::framework::ICurrentProcess::Priority priority)
     {
-        return false;
+        DWORD OSPriority = NORMAL_PRIORITY_CLASS;
+        switch(priority)
+        {
+            case qor::framework::ICurrentProcess::Priority::idle:
+            OSPriority = IDLE_PRIORITY_CLASS;
+            break;
+            case qor::framework::ICurrentProcess::Priority::below_normal:
+            OSPriority = BELOW_NORMAL_PRIORITY_CLASS;
+            break;
+            case qor::framework::ICurrentProcess::Priority::normal:
+            OSPriority = IDLE_PRIORITY_CLASS;
+            break;
+            case qor::framework::ICurrentProcess::Priority::above_normal:
+            OSPriority = ABOVE_NORMAL_PRIORITY_CLASS;
+            break;
+            case qor::framework::ICurrentProcess::Priority::high:
+            OSPriority = HIGH_PRIORITY_CLASS;
+            break;
+            case qor::framework::ICurrentProcess::Priority::realtime:
+            OSPriority = REALTIME_PRIORITY_CLASS;
+            break;
+        }
+
+        return SetPriorityClass(GetCurrentProcess(), OSPriority) != 0;
     }
 
 }}}//qor::nsWindows::framework

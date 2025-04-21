@@ -37,7 +37,6 @@ using namespace qor;
 using namespace qor::test;
 using namespace qor::system;
 
-
 struct FileSystemTestSuite{};
 bool requiresFileSystem = qor::ImplementsIFileSystem();
 

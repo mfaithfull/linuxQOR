@@ -31,6 +31,11 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "currentthread.h"
+#include <bit>
+#include <windows.h>
+#include <processthreadsapi.h>
+//#include <WinBase.h>
+#include <stringapiset.h>
 
 namespace qor{ 
     bool qor_pp_module_interface(QOR_WINDOWSTHREAD) ImplementsICurrentThread() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsICurrentThread requirement. 
@@ -43,32 +48,147 @@ namespace qor{ namespace nsWindows{ namespace framework{
 
     bool CurrentThread::SetPriority(ICurrentThread::Priority priority)
     {
-        return false;
+        int OSPriority = THREAD_PRIORITY_NORMAL;
+        switch(priority)
+        {
+            case ICurrentThread::Priority::above_normal:
+            OSPriority = THREAD_PRIORITY_ABOVE_NORMAL;
+            break;
+            case ICurrentThread::Priority::below_normal:
+            OSPriority = THREAD_PRIORITY_BELOW_NORMAL;
+            break;
+            case ICurrentThread::Priority::highest:
+            OSPriority = THREAD_PRIORITY_HIGHEST;
+            break;
+            case ICurrentThread::Priority::idle:
+            OSPriority = THREAD_PRIORITY_IDLE;
+            break;
+            case ICurrentThread::Priority::lowest:
+            OSPriority = THREAD_PRIORITY_LOWEST;
+            break;
+            case ICurrentThread::Priority::normal:
+            OSPriority = THREAD_PRIORITY_NORMAL;
+            break;
+            case ICurrentThread::Priority::realtime:
+            OSPriority = THREAD_PRIORITY_TIME_CRITICAL;
+            break;
+        }
+        return SetThreadPriority(GetCurrentThread(), static_cast<int>(OSPriority)) != 0;
     }
 
     std::optional< qor::framework::ICurrentThread::Priority > CurrentThread::GetPriority() const
     {
-        return std::nullopt;
+        const int priority = GetThreadPriority(GetCurrentThread());
+
+        switch(priority)
+        {
+            case THREAD_PRIORITY_ABOVE_NORMAL:
+                return ICurrentThread::Priority::above_normal;
+            case THREAD_PRIORITY_BELOW_NORMAL:
+                return ICurrentThread::Priority::below_normal;
+            case THREAD_PRIORITY_HIGHEST:
+                return ICurrentThread::Priority::highest;
+            case THREAD_PRIORITY_IDLE:
+            return ICurrentThread::Priority::idle;
+            case THREAD_PRIORITY_LOWEST:
+                return ICurrentThread::Priority::lowest;
+            case THREAD_PRIORITY_NORMAL:
+                return ICurrentThread::Priority::normal;
+            case THREAD_PRIORITY_TIME_CRITICAL:
+                return ICurrentThread::Priority::realtime;
+            default:
+               return std::nullopt;
+        }        
     }
 
     bool CurrentThread::SetName(const std::string& name)
     {
-        return false;
+        // On Windows thread names are wide strings, so we need to convert them from normal strings.
+        const int size = MultiByteToWideChar(CP_UTF8, 0, name.data(), -1, nullptr, 0);
+        if (size == 0)
+        {
+            return false;
+        }
+        std::wstring wide(static_cast<std::size_t>(size), 0);
+        if (MultiByteToWideChar(CP_UTF8, 0, name.data(), -1, wide.data(), size) == 0)
+        {
+            return false;
+        }
+        const HRESULT hr = SetThreadDescription(GetCurrentThread(), wide.data());
+        return SUCCEEDED(hr);
     }
 
     std::optional<std::string> CurrentThread::GetName()
     {
-        return std::nullopt;
+        // On Windows thread names are wide strings, so we need to convert them to normal strings.
+        PWSTR data = nullptr;
+        const HRESULT hr = GetThreadDescription(GetCurrentThread(), &data);
+        if (FAILED(hr))
+        {
+            return std::nullopt;
+        }
+        if (data == nullptr)
+        {
+            return std::nullopt;
+        }
+        const int size = WideCharToMultiByte(CP_UTF8, 0, data, -1, nullptr, 0, nullptr, nullptr);
+        if (size == 0)
+        {
+            LocalFree(data);
+            return std::nullopt;
+        }
+        std::string name(static_cast<std::size_t>(size) - 1, 0);
+        const int result = WideCharToMultiByte(CP_UTF8, 0, data, -1, name.data(), size, nullptr, nullptr);
+        LocalFree(data);
+        if (result == 0)
+        {
+            return std::nullopt;
+        }
+        return name;
     }
 
     bool CurrentThread::SetAffinity(const std::vector<bool>& affinity)
     {
-        return false;
+        DWORD_PTR thread_mask = 0;
+        for (std::size_t i = 0; i < std::min<std::size_t>(affinity.size(), sizeof(DWORD_PTR) * 8); ++i)
+        {
+            thread_mask |= (affinity[i] ? (1ULL << i) : 0ULL);
+        }
+        return SetThreadAffinityMask(GetCurrentThread(), thread_mask) != 0;
     }
 
     std::optional<std::vector<bool>> CurrentThread::GetAffinity()
     {
-        return std::nullopt;
+        // Windows does not have a `GetThreadAffinityMask()` function, but `SetThreadAffinityMask()` returns the previous affinity mask, so we can use that to get the current affinity and then restore it. It's a bit of a hack, but it works. Since the thread affinity must be a subset of the process affinity, we use the process affinity as the temporary value.
+        DWORD_PTR process_mask = 0;
+        DWORD_PTR system_mask = 0;
+        if (GetProcessAffinityMask(GetCurrentProcess(), &process_mask, &system_mask) == 0)
+        {
+            return std::nullopt;
+        }
+        const DWORD_PTR previous_mask = SetThreadAffinityMask(GetCurrentThread(), process_mask);
+        if (previous_mask == 0)
+        {
+            return std::nullopt;
+        }
+        SetThreadAffinityMask(GetCurrentThread(), previous_mask);
+#ifdef __cpp_lib_int_pow2
+        const std::size_t num_cpus = static_cast<std::size_t>(std::bit_width(system_mask));
+#else
+        std::size_t num_cpus = 0;
+        if (system_mask != 0)
+        {
+            num_cpus = 1;
+            while ((system_mask >>= 1U) != 0U)
+                ++num_cpus;
+        }
+#endif
+        std::vector<bool> affinity(num_cpus);
+        for (std::size_t i = 0; i < num_cpus; ++i)
+        {
+            affinity[i] = ((previous_mask & (1ULL << i)) != 0ULL);
+        }
+        return affinity;
     }
 
 }}}//qor::nsWindows::framework

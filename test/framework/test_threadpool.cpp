@@ -2121,7 +2121,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadPriorities)
 qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadNames)
 {
     //sync_out.println("Checking OS thread names...");
-    const std::string name = "BS_thread_pool";
+    const std::string name = "ThreadPool";
     //sync_out.println("Setting main thread name to \"", name, "\"...");
     check(CurrentThread::GetCurrent().SetName(name));
     //sync_out.println("Obtaining new OS thread name...");

@@ -24,10 +24,21 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "filesystem.h"
+#include "src/system/filesystem/ifilesystem.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
+#include "src/qor/reference/newref.h"
 
 qor::Module& ThisModule(void)
 {
 	static qor::Module QORModule("Querysoft Open Runtime: Windows Filesystem Module", 
         qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+
+		static qor::TypeRegEntry< qor::nsWindows::FileSystem, qor::system::IFileSystem > reg;  //Register the Windows specific implementation of IFileSystem
+
 	return QORModule;
 }
