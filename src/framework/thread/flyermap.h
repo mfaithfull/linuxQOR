@@ -38,7 +38,10 @@ namespace qor{ namespace framework{
     public:
 
         FlyerMap() = default;
-        ~FlyerMap() = default;
+        ~FlyerMap()
+        {
+            m_Map.erase(m_Map.cbegin(), m_Map.cend());
+        }
 
         AnyObject& GetByClassID( const GUID* classID )
         {

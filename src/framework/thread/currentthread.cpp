@@ -73,6 +73,21 @@ namespace qor{ namespace framework{
         return *t_pCurrentThread;
 	}
 
+    void CurrentThread::Init()
+    {
+        t_pCurrentThread = nullptr;
+    }
+
+    void CurrentThread::Destroy()
+    {
+        if (t_pCurrentThread)
+        {
+            delete t_pCurrentThread;
+            t_pCurrentThread = nullptr;
+        }
+    }
+
+
 	CurrentThread& CurrentThread::GetMutableCurrent()
 	{
 		if (t_pCurrentThread == nullptr)

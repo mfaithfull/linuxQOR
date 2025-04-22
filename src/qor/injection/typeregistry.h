@@ -41,7 +41,10 @@ namespace qor{
 
 		inline TypeRegistry() noexcept = default;
 
-		inline ~TypeRegistry() noexcept = default;
+		inline ~TypeRegistry()
+		{
+			m_regMap.erase(m_regMap.cbegin(), m_regMap.cend());
+		}
 
 		inline void Register(GUID classID, AnyObject factory)
 		{

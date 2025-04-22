@@ -397,10 +397,8 @@ namespace qor
 			return *this;
 		}
 
-		/// \brief
-		/// Query if the task result is complete.
-		///
-		/// Awaiting a task that is ready is guaranteed not to block/suspend.
+		// Query if the task result is complete.
+		// Awaiting a task that is ready is guaranteed not to block/suspend.
 		bool is_ready() const noexcept
 		{
 			return !m_coroutine || m_coroutine.done();
@@ -446,9 +444,8 @@ namespace qor
 			return awaitable{ m_coroutine };
 		}
 
-		/// \brief
-		/// Returns an awaitable that will await completion of the task without
-		/// attempting to retrieve the result.
+		// Returns an awaitable that will await completion of the task without
+		// attempting to retrieve the result.
 		auto when_ready() const noexcept
 		{
 			struct awaitable : awaitable_base

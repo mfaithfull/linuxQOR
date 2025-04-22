@@ -66,11 +66,8 @@ namespace qor{
 		///
 		/// \throw std::bad_alloc
 		/// If registration failed due to insufficient memory available.
-		template<
-			typename FUNC,
-			typename = std::enable_if_t<std::is_constructible_v<std::function<void()>, FUNC&&>>>
-		CancellationRegistration(CancellationToken token, FUNC&& callback)
-			: m_callback(std::forward<FUNC>(callback))
+		template< typename FUNC, typename = std::enable_if_t<std::is_constructible_v<std::function<void()>, FUNC&&>>>
+		CancellationRegistration(CancellationToken token, FUNC&& callback) : m_callback(std::forward<FUNC>(callback))
 		{
 			register_callback(std::move(token));
 		}

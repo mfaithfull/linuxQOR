@@ -49,7 +49,8 @@ namespace qor{ namespace framework{
 
 		Thread(Thread&& other) : m_std_thread(std::move(other.m_std_thread)), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
 		{
-			std::swap(m_pCurrent, other.m_pCurrent);
+			m_pCurrent = other.m_pCurrent;
+			other.m_pCurrent = nullptr;			
 		}
 
 		virtual ~Thread();
@@ -58,14 +59,15 @@ namespace qor{ namespace framework{
 	
 		Thread&	operator=(Thread&& other) noexcept
 		{
-			Thread(std::move(other)).swap(*this);
+			other.swap(*this);
 			return *this;
 		}
 	
 		void swap(Thread& other) noexcept
 		{
 			std::swap(m_std_thread, other.m_std_thread);
-			std::swap(m_pCurrent, other.m_pCurrent);
+			m_pCurrent = other.m_pCurrent;
+			other.m_pCurrent = nullptr;
 		}
 	
 

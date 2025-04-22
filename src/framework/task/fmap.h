@@ -44,28 +44,21 @@ namespace qor{	namespace detail{
 		public:
 
 			fmap_awaiter(FUNC&& func, AWAITABLE&& awaitable)
-				noexcept(
-					std::is_nothrow_move_constructible_v<awaiter_t> &&
-					noexcept(detail::GetAwaiter(static_cast<AWAITABLE&&>(awaitable))))
-				: m_func(static_cast<FUNC&&>(func))
-				, m_awaiter(detail::GetAwaiter(static_cast<AWAITABLE&&>(awaitable))){}
+				noexcept( std::is_nothrow_move_constructible_v<awaiter_t> && noexcept(detail::GetAwaiter(static_cast<AWAITABLE&&>(awaitable))))
+				: m_func(static_cast<FUNC&&>(func)) , m_awaiter(detail::GetAwaiter(static_cast<AWAITABLE&&>(awaitable))) {}
 
-			decltype(auto) await_ready()
-				noexcept(noexcept(static_cast<awaiter_t&&>(m_awaiter).await_ready()))
+			decltype(auto) await_ready() noexcept(noexcept(static_cast<awaiter_t&&>(m_awaiter).await_ready()))
 			{
 				return static_cast<awaiter_t&&>(m_awaiter).await_ready();
 			}
 
 			template<typename PROMISE>
-			decltype(auto) await_suspend(std::coroutine_handle<PROMISE> coro)
-				noexcept(noexcept(static_cast<awaiter_t&&>(m_awaiter).await_suspend(std::move(coro))))
+			decltype(auto) await_suspend(std::coroutine_handle<PROMISE> coro) noexcept(noexcept(static_cast<awaiter_t&&>(m_awaiter).await_suspend(std::move(coro))))
 			{
 				return static_cast<awaiter_t&&>(m_awaiter).await_suspend(std::move(coro));
 			}
 
-			template<
-				typename AWAIT_RESULT = decltype(std::declval<awaiter_t>().await_resume()),
-				std::enable_if_t<std::is_void_v<AWAIT_RESULT>, int> = 0>
+			template< typename AWAIT_RESULT = decltype(std::declval<awaiter_t>().await_resume()), std::enable_if_t<std::is_void_v<AWAIT_RESULT>, int> = 0>
 			decltype(auto) await_resume()
 				noexcept(noexcept(std::invoke(static_cast<FUNC&&>(m_func))))
 			{
@@ -73,11 +66,8 @@ namespace qor{	namespace detail{
 				return std::invoke(static_cast<FUNC&&>(m_func));
 			}
 
-			template<
-				typename AWAIT_RESULT = decltype(std::declval<awaiter_t>().await_resume()),
-				std::enable_if_t<!std::is_void_v<AWAIT_RESULT>, int> = 0>
-			decltype(auto) await_resume()
-				noexcept(noexcept(std::invoke(static_cast<FUNC&&>(m_func), static_cast<awaiter_t&&>(m_awaiter).await_resume())))
+			template< typename AWAIT_RESULT = decltype(std::declval<awaiter_t>().await_resume()), std::enable_if_t<!std::is_void_v<AWAIT_RESULT>, int> = 0>
+			decltype(auto) await_resume() noexcept(noexcept(std::invoke(static_cast<FUNC&&>(m_func), static_cast<awaiter_t&&>(m_awaiter).await_resume())))
 			{
 				return std::invoke(
 					static_cast<FUNC&&>(m_func),
@@ -90,20 +80,12 @@ namespace qor{	namespace detail{
 		{
 			static_assert(!std::is_lvalue_reference_v<FUNC>);
 			static_assert(!std::is_lvalue_reference_v<AWAITABLE>);
+
 		public:
 
-			template<
-				typename FUNC_ARG,
-				typename AWAITABLE_ARG,
-				std::enable_if_t<
-					std::is_constructible_v<FUNC, FUNC_ARG&&> &&
-					std::is_constructible_v<AWAITABLE, AWAITABLE_ARG&&>, int> = 0>
-			explicit fmap_awaitable(FUNC_ARG&& func, AWAITABLE_ARG&& awaitable)
-				noexcept(
-					std::is_nothrow_constructible_v<FUNC, FUNC_ARG&&> &&
-					std::is_nothrow_constructible_v<AWAITABLE, AWAITABLE_ARG&&>)
-				: m_func(static_cast<FUNC_ARG&&>(func))
-				, m_awaitable(static_cast<AWAITABLE_ARG&&>(awaitable)){}
+			template< typename FUNC_ARG, typename AWAITABLE_ARG, std::enable_if_t< std::is_constructible_v<FUNC, FUNC_ARG&&> && std::is_constructible_v<AWAITABLE, AWAITABLE_ARG&&>, int> = 0>
+			explicit fmap_awaitable(FUNC_ARG&& func, AWAITABLE_ARG&& awaitable) noexcept( std::is_nothrow_constructible_v<FUNC, FUNC_ARG&&> && std::is_nothrow_constructible_v<AWAITABLE, AWAITABLE_ARG&&>)
+				: m_func(static_cast<FUNC_ARG&&>(func)) , m_awaitable(static_cast<AWAITABLE_ARG&&>(awaitable)){}
 
 			auto operator co_await() const &
 			{
@@ -117,9 +99,7 @@ namespace qor{	namespace detail{
 
 			auto operator co_await() &&
 			{
-				return fmap_awaiter<FUNC&&, AWAITABLE&&>(
-					static_cast<FUNC&&>(m_func),
-					static_cast<AWAITABLE&&>(m_awaitable));
+				return fmap_awaiter<FUNC&&, AWAITABLE&&>( static_cast<FUNC&&>(m_func), static_cast<AWAITABLE&&>(m_awaitable));
 			}
 
 		private:
@@ -145,8 +125,7 @@ namespace qor{	namespace detail{
 		return detail::fmap_awaitable<
 			std::remove_cv_t<std::remove_reference_t<FUNC>>,
 			std::remove_cv_t<std::remove_reference_t<AWAITABLE>>>(
-			std::forward<FUNC>(func),
-			std::forward<AWAITABLE>(awaitable));
+				std::forward<FUNC>(func), std::forward<AWAITABLE>(awaitable));
 	}
 
 	template<typename FUNC>

@@ -40,8 +40,7 @@ namespace qor{ namespace detail {
     // which is an extension supported by Clang which is not yet part of
     // the C++ coroutines TS.
     template<typename T>
-    struct is_valid_await_suspend_return_value : std::disjunction<
-        std::is_void<T>, std::is_same<T, bool>, is_coroutine_handle<T>>{};
+    struct is_valid_await_suspend_return_value : std::disjunction< std::is_void<T>, std::is_same<T, bool>, is_coroutine_handle<T>>{};
 
     template<typename T, typename = std::void_t<>>
     struct is_awaiter : std::false_type {};
@@ -51,14 +50,10 @@ namespace qor{ namespace detail {
     // a coroutine_handle<void>. This may result in a false-result for some
     // types which are only awaitable within a certain context.
     template<typename T>
-    struct is_awaiter<T, std::void_t<
-        decltype(std::declval<T>().await_ready()),
-        decltype(std::declval<T>().await_suspend(std::declval<std::coroutine_handle<>>())),
+    struct is_awaiter<T, std::void_t< decltype(std::declval<T>().await_ready()), 
+        decltype(std::declval<T>().await_suspend(std::declval<std::coroutine_handle<>>())), 
         decltype(std::declval<T>().await_resume())>> :
-        std::conjunction<
-            std::is_constructible<bool, decltype(std::declval<T>().await_ready())>,
-            detail::is_valid_await_suspend_return_value<
-                decltype(std::declval<T>().await_suspend(std::declval<std::coroutine_handle<>>()))>> {};
+        std::conjunction< std::is_constructible<bool, decltype(std::declval<T>().await_ready())>, detail::is_valid_await_suspend_return_value< decltype(std::declval<T>().await_suspend(std::declval<std::coroutine_handle<>>()))>> {};
 
 }}//qor::detail
 

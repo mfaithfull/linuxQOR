@@ -35,10 +35,7 @@ namespace qor{	namespace detail{
 	{
 	public:
 
-		WhenAllCounter(std::size_t count) noexcept
-			: m_count(count + 1)
-			, m_awaitingCoroutine(nullptr)
-		{}
+		WhenAllCounter(std::size_t count) noexcept : m_count(count + 1) , m_awaitingCoroutine(nullptr) {}
 
 		bool is_ready() const noexcept
 		{

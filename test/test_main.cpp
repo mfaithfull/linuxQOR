@@ -1,6 +1,7 @@
 #include "../src/configuration/configuration.h"
 #include "../src/qor/test/test.h"
 #include "../src/qor/module/module.h"
+#include "src/framework/thread/currentthread.h"
 
 int main(int argc, const char** argv, char** env)
 {	

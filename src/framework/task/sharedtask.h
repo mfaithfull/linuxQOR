@@ -56,7 +56,10 @@ namespace qor{
 
 			struct final_awaiter
 			{
-				bool await_ready() const noexcept { return false; }
+				bool await_ready() const noexcept 
+				{ 
+					return false; 
+				}
 
 				template<typename PROMISE>
 				void await_suspend(std::coroutine_handle<PROMISE> h) noexcept
@@ -94,11 +97,17 @@ namespace qor{
 			shared_task_promise_base() noexcept
 				: m_refCount(1)
 				, m_waiters(&this->m_waiters)				
-				, m_exception(nullptr)
-			{}
+				, m_exception(nullptr){}
 
-			std::suspend_always initial_suspend() noexcept { return {}; }
-			final_awaiter final_suspend() noexcept { return {}; }
+			std::suspend_always initial_suspend() noexcept 
+			{ 
+				return {}; 
+			}
+
+			final_awaiter final_suspend() noexcept 
+			{ 
+				return {}; 
+			}
 
 			void unhandled_exception() noexcept
 			{
@@ -118,8 +127,7 @@ namespace qor{
 
 			/// Decrement the reference count.
 			///
-			/// \return
-			/// true if successfully detached, false if this was the last
+			/// return true if successfully detached, false if this was the last
 			/// reference to the coroutine, in which case the caller must
 			/// call destroy() on the coroutine handle.
 			bool try_detach() noexcept
@@ -239,9 +247,7 @@ namespace qor{
 
 			shared_task<T> get_return_object() noexcept;
 
-			template<
-				typename VALUE,
-				typename = std::enable_if_t<std::is_convertible_v<VALUE&&, T>>>
+			template< typename VALUE, typename = std::enable_if_t<std::is_convertible_v<VALUE&&, T>>>
 			void return_value(VALUE&& value)
 				noexcept(std::is_nothrow_constructible_v<T, VALUE&&>)
 			{
@@ -272,8 +278,7 @@ namespace qor{
 
 			shared_task<void> get_return_object() noexcept;
 
-			void return_void() noexcept
-			{}
+			void return_void() noexcept {}
 
 			void result()
 			{
@@ -326,9 +331,7 @@ namespace qor{
 			std::coroutine_handle<promise_type> m_coroutine;
 			detail::shared_task_waiter m_waiter;
 
-			awaitable_base(std::coroutine_handle<promise_type> coroutine) noexcept
-				: m_coroutine(coroutine)
-			{}
+			awaitable_base(std::coroutine_handle<promise_type> coroutine) noexcept : m_coroutine(coroutine) {}
 
 			bool await_ready() const noexcept
 			{
@@ -511,8 +514,7 @@ namespace qor{
 	}
 
 	template<typename AWAITABLE>
-	auto make_shared_task(AWAITABLE awaitable)
-		-> shared_task<detail::remove_rvalue_reference_t<typename awaitable_of<AWAITABLE>::await_result_t>>
+	auto make_shared_task(AWAITABLE awaitable) -> shared_task<detail::remove_rvalue_reference_t<typename awaitable_of<AWAITABLE>::await_result_t>>
 	{
 		co_return co_await static_cast<AWAITABLE&&>(awaitable);
 	}

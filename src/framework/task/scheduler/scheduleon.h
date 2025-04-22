@@ -55,8 +55,7 @@ namespace qor
 	}
 
 	template<typename SCHEDULER, typename AWAITABLE>
-	auto ScheduleOn(SCHEDULER& scheduler, AWAITABLE awaitable)
-		-> task<detail::remove_rvalue_reference_t<typename awaitable_of<AWAITABLE>::await_result_t>>
+	auto ScheduleOn(SCHEDULER& scheduler, AWAITABLE awaitable) -> task<detail::remove_rvalue_reference_t<typename awaitable_of<AWAITABLE>::await_result_t>>
 	{
 		co_await scheduler.Schedule();
 		co_return co_await std::move(awaitable);

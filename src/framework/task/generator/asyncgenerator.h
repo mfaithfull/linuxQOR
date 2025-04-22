@@ -459,8 +459,7 @@ namespace qor
 		public:
 
 			AsyncGeneratorPromiseBase() noexcept
-				: m_state(state::value_ready_producer_suspended)
-				, m_exception(nullptr)
+				: m_state(state::value_ready_producer_suspended), m_exception(nullptr)
 			{
 				// Other variables left intentionally uninitialised as they're
 				// only referenced in certain states by which time they should

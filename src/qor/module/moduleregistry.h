@@ -38,7 +38,10 @@ namespace qor{
 
 		inline ModuleRegistry() noexcept = default;
 
-		inline ~ModuleRegistry() noexcept = default;
+        inline ~ModuleRegistry()
+        {
+            m_Modules.erase(m_Modules.cbegin(), m_Modules.cend());
+        }
 
 		inline void Register(Module& module)
 		{

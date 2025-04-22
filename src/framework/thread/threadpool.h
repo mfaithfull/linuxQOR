@@ -102,7 +102,7 @@ namespace qor { namespace framework{
         ThreadPool& operator=(ThreadPool&&) = delete;
 
         ~ThreadPool() noexcept                                                                          //Destruct the thread pool. Waits for all tasks to complete, then destroys all threads. If a cleanup function was set, it will run in each thread right before it is destroyed. Note that if the pool is paused, then any tasks still in the queue will never be executed.
-        {
+        {            
 #ifdef __cpp_exceptions
             try
             {
@@ -114,6 +114,10 @@ namespace qor { namespace framework{
             {
             }
 #endif
+            while(tasks.size())
+            {
+                tasks.pop();
+            }
         }
 
         //Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The block function takes two arguments, the start and end of the block, so that it is only called once per block, but it is up to the user make sure the block function correctly deals with all the indices in each block. Does not return a `MultiFuture`, so the user must use `wait()` or some other method to ensure that the loop finishes executing, otherwise bad things will happen.
@@ -613,7 +617,9 @@ namespace qor { namespace framework{
                     [this, i]
                     (const std::stop_token& stop_token)
                     {
+                        CurrentThread::Init();
                         Worker(stop_token, i);
+                        CurrentThread::Destroy();
                     }
                 );
             }

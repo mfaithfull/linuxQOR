@@ -50,8 +50,7 @@ namespace qor{
 			: m_consumerBarrier(consumerBarrier)
 			, m_bufferSize(bufferSize)
 			, m_nextToClaim(initialSequence + 1)
-			, m_producerBarrier(initialSequence)
-		{}
+			, m_producerBarrier(initialSequence) {}
 
 		/// Claim a slot in the ring buffer asynchronously.
 		///
@@ -169,8 +168,7 @@ namespace qor{
 				sequencer.m_consumerBarrier,
 				static_cast<SEQUENCE>(sequencer.m_nextToClaim - sequencer.m_bufferSize),
 				scheduler)
-			, m_sequencer(sequencer)
-		{}
+			, m_sequencer(sequencer) {}
 
 		bool await_ready() const noexcept
 		{
@@ -208,8 +206,7 @@ namespace qor{
 				static_cast<SEQUENCE>(sequencer.m_nextToClaim - sequencer.m_bufferSize),
 				scheduler)
 			, m_sequencer(sequencer)
-			, m_count(count)
-		{}
+			, m_count(count) {}
 
 		bool await_ready() const noexcept
 		{

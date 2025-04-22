@@ -90,6 +90,8 @@ namespace qor{ namespace framework{
 
     private:
 
+        static void Init();
+        static void Destroy();
         static CurrentThread& GetMutableCurrent();
 
         void SetPool(std::optional<void*> pool);

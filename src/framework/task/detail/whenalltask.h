@@ -312,10 +312,7 @@ namespace qor{	namespace detail{
 
 	};
 
-	template<
-		typename AWAITABLE,
-		typename RESULT = typename awaitable_of<AWAITABLE&&>::await_result_t,
-		std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
+	template< typename AWAITABLE, typename RESULT = typename awaitable_of<AWAITABLE&&>::await_result_t, std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
 	WhenAllTask<RESULT> make_when_all_task(AWAITABLE awaitable)
 	{
 #if CPPCORO_COMPILER_MSVC
@@ -331,19 +328,13 @@ namespace qor{	namespace detail{
 #endif
 	}
 
-	template<
-		typename AWAITABLE,
-		typename RESULT = typename awaitable_of<AWAITABLE&&>::await_result_t,
-		std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
+	template< typename AWAITABLE, typename RESULT = typename awaitable_of<AWAITABLE&&>::await_result_t, std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
 	WhenAllTask<void> make_when_all_task(AWAITABLE awaitable)
 	{
 		co_await static_cast<AWAITABLE&&>(awaitable);
 	}
 
-	template<
-		typename AWAITABLE,
-		typename RESULT = typename awaitable_of<AWAITABLE&>::await_result_t,
-		std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
+	template< typename AWAITABLE, typename RESULT = typename awaitable_of<AWAITABLE&>::await_result_t, std::enable_if_t<!std::is_void_v<RESULT>, int> = 0>
 	WhenAllTask<RESULT> make_when_all_task(std::reference_wrapper<AWAITABLE> awaitable)
 	{
 #if CPPCORO_COMPILER_MSVC
@@ -359,10 +350,7 @@ namespace qor{	namespace detail{
 #endif
 	}
 
-	template<
-		typename AWAITABLE,
-		typename RESULT = typename awaitable_of<AWAITABLE&>::await_result_t,
-		std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
+	template< typename AWAITABLE, typename RESULT = typename awaitable_of<AWAITABLE&>::await_result_t, std::enable_if_t<std::is_void_v<RESULT>, int> = 0>
 	WhenAllTask<void> make_when_all_task(std::reference_wrapper<AWAITABLE> awaitable)
 	{
 		co_await awaitable.get();

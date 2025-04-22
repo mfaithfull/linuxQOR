@@ -60,11 +60,8 @@ namespace qor{	namespace detail{
 
 	struct cancellation_registration_result
 	{
-		cancellation_registration_result(
-			CancellationRegistrationListChunk* chunk,
-			std::uint32_t entryIndex)
-			: m_chunk(chunk)
-			, m_entryIndex(entryIndex){}
+		cancellation_registration_result(CancellationRegistrationListChunk* chunk, std::uint32_t entryIndex)
+			: m_chunk(chunk), m_entryIndex(entryIndex){}
 
 		CancellationRegistrationListChunk* m_chunk;
 		std::uint32_t m_entryIndex;
@@ -75,8 +72,7 @@ namespace qor{	namespace detail{
 		static CancellationRegistrationState* allocate();
 		static void free(CancellationRegistrationState* list) noexcept;
 
-		cancellation_registration_result add_registration(
-			CancellationRegistration* registration);
+		cancellation_registration_result add_registration(CancellationRegistration* registration);
 
 		std::thread::id m_notificationThreadId;
 
@@ -90,8 +86,8 @@ namespace qor{	namespace detail{
 	CancellationRegistrationListChunk::allocate(std::uint32_t entryCount)
 	{
 		auto* chunk = static_cast<CancellationRegistrationListChunk*>(std::malloc(
-			sizeof(CancellationRegistrationListChunk) +
-			(entryCount - 1) * sizeof(CancellationRegistrationListChunk::m_entries[0])));
+			sizeof(CancellationRegistrationListChunk) + (entryCount - 1) * sizeof(CancellationRegistrationListChunk::m_entries[0])));
+
 		if (chunk == nullptr)
 		{
 			throw std::bad_alloc{};
@@ -109,14 +105,12 @@ namespace qor{	namespace detail{
 		return chunk;
 	}
 
-	void CancellationRegistrationListChunk::free(
-		CancellationRegistrationListChunk* chunk) noexcept
+	void CancellationRegistrationListChunk::free(CancellationRegistrationListChunk* chunk) noexcept
 	{
 		std::free(chunk);
 	}
 
-	cancellation_registration_list*
-	cancellation_registration_list::allocate()
+	cancellation_registration_list* cancellation_registration_list::allocate()
 	{
 		constexpr std::uint32_t initialChunkSize = 16;
 
@@ -149,8 +143,7 @@ namespace qor{	namespace detail{
 		std::free(list);
 	}
 
-	CancellationRegistrationState*
-	CancellationRegistrationState::allocate()
+	CancellationRegistrationState* CancellationRegistrationState::allocate()
 	{
 		constexpr std::uint32_t maxListCount = 16;
 
@@ -188,9 +181,7 @@ namespace qor{	namespace detail{
 		std::free(state);
 	}
 
-	cancellation_registration_result
-	CancellationRegistrationState::add_registration(
-		CancellationRegistration* registration)
+	cancellation_registration_result CancellationRegistrationState::add_registration(CancellationRegistration* registration)
 	{
 		// Pick a list to add to based on the current thread to reduce the
 		// chance of contention with multiple threads concurrently registering
@@ -570,8 +561,7 @@ namespace qor{	namespace detail{
 			// no other thread will have written to the CancellationRegistration record
 			// so we can safely read from the record without synchronisation.
 			auto* oldValue = registration;
-			const bool deregisteredSuccessfully =
-				entry.compare_exchange_strong(oldValue, nullptr, std::memory_order_relaxed);
+			const bool deregisteredSuccessfully = entry.compare_exchange_strong(oldValue, nullptr, std::memory_order_relaxed);
 			if (deregisteredSuccessfully)
 			{
 				return false;
@@ -635,9 +625,6 @@ namespace qor{	namespace detail{
 		}
 	}
 
-	CancellationState::CancellationState() noexcept
-		: m_state(cancellation_source_ref_increment)
-		, m_registrationState(nullptr)
-	{
-	}
+	CancellationState::CancellationState() noexcept : m_state(cancellation_source_ref_increment), m_registrationState(nullptr) {}
+
 }}//qor::detail

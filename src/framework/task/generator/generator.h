@@ -34,8 +34,7 @@
 
 namespace qor{
 
-	template<typename T>
-	class Generator;
+	template<typename T> class Generator;
 
 	namespace detail{
 

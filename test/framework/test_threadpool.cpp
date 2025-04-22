@@ -879,6 +879,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitMultipleCallDoesntDeadlock)
         }
         //sync_out.println(count, " tasks out of ", n_waiting_tasks, " finished waiting...");
     }
+    pool.Wait();//
     check(passed);
 }
 
@@ -1666,13 +1667,13 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, initAndIndexWork)
     check(!main_idx.has_value());
 
     //sync_out.println("Verifying that the index of an independent thread has no value...");
-    std::thread test_thread(
+    Thread test_thread(
         []
         {
             const std::optional<std::size_t> ind_idx = CurrentThread::GetCurrent().GetPoolIndex();
             check(!ind_idx.has_value());
         });
-    test_thread.join();
+    test_thread.Join();
 }
 
 //Check that thread cleanup functions work.
@@ -1747,13 +1748,13 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, GetPoolWorks)
     }
     {
         //sync_out.println("Verifying that the pool pointer of an independent thread has no value...");
-        std::thread test_thread(
+        Thread test_thread(
             []
             {
                 const auto ptr = CurrentThread::GetCurrent().GetPool();
                 check(!ptr.has_value());
             });
-        test_thread.join();
+        test_thread.Join();
     }
 }
 

@@ -114,4 +114,5 @@ namespace qor{
 	{
 		return m_state != nullptr && m_state->is_cancellation_requested();
 	}
+
 }//qor

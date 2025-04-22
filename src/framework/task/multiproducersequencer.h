@@ -404,8 +404,7 @@ namespace qor
 	};
 
 	template<typename SEQUENCE, typename TRAITS, typename SCHEDULER>
-	class multi_producer_sequencer_wait_operation :
-		public multi_producer_sequencer_wait_operation_base<SEQUENCE, TRAITS>
+	class multi_producer_sequencer_wait_operation : public multi_producer_sequencer_wait_operation_base<SEQUENCE, TRAITS>
 	{
 		using schedule_operation = decltype(std::declval<SCHEDULER&>().Schedule());
 
