@@ -64,7 +64,10 @@ framework/task/whenalltests.cpp
 components/threadmemory/test_threadheap.cpp
 components/threadmemory/test_stackpage.cpp
 components/threadmemory/test_fastbucket.cpp
-components/threadmemory/test_fastheap.cpp)
+components/threadmemory/test_fastheap.cpp
+components/threadmemory/test_smallobjectpage.cpp
+components/threadmemory/test_smallobjectbucket.cpp
+components/threadmemory/test_smallobjectheap.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
