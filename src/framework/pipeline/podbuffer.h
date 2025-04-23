@@ -113,7 +113,7 @@ namespace qor{ namespace pipeline{
             pod_t* pResult = 0;
             if (itemCount > WriteCapacity())
             {
-                itemCount = static_cast<size_t>(WriteCapacity());
+                itemCount = WriteCapacity();
             }
 
             if (itemCount > 0)
@@ -137,10 +137,9 @@ namespace qor{ namespace pipeline{
 
         virtual void SetCapacity(size_t itemCount)
         {
-            //The one and only but of memory management;
+            //The one and only bit of memory management;
             delete[] m_pAllocation;
             m_pAllocation = (itemCount > 0) ? new pod_t[itemCount] : nullptr;
-
             Buffer::SetCapacity(itemCount);
         }
 

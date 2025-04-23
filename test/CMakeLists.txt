@@ -60,7 +60,11 @@ framework/task/singleproducersequencer_tests.cpp
 framework/task/syncwait_tests.cpp
 framework/task/task_tests.cpp
 framework/task/whenallready_tests.cpp
-framework/task/whenalltests.cpp)
+framework/task/whenalltests.cpp
+components/threadmemory/test_threadheap.cpp
+components/threadmemory/test_stackpage.cpp
+components/threadmemory/test_fastbucket.cpp
+components/threadmemory/test_fastheap.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
@@ -68,12 +72,12 @@ if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
-linq_filesystem linq_thread linq_process uring qor_task)
+linq_filesystem linq_thread linq_process uring qor_task qor_threadmemory)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
-winq_filesystem winq_thread winq_process qor_task)
+winq_filesystem winq_thread winq_process qor_task qor_threadmemory)
 endif()

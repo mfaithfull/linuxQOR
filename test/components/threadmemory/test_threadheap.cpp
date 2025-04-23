@@ -22,30 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_MEM_FASTSOURCE
-#define QOR_PP_H_COMPONENTS_MEM_FASTSOURCE
+#include "src/configuration/configuration.h"
 
-#include <stdint.h>
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
 
-#include "src/platform/compiler/compiler.h"
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/instance/instance.h"
+#include "src/qor/reference/ref.h"
+#include "src/qor/reference/newref.h"
+#include "src/qor/instance/threadsingleton.h"
+#include "src/components/qor/threadmemory/threadheap/threadheap.h"
 
-namespace qor{ namespace memory{
+using namespace qor;
+using namespace qor::test;
+using namespace qor::components::threadmemory;
 
-    class qor_pp_module_interface(QOR_FASTSOURCE) FastSource
-    {
-    public:
+struct ThreadHeapTestSuite{};
 
-        static void* Source(size_t byteCount);
-        static void Free(void * pMemory, size_t byteCount);
+qor_pp_test_suite_case(ThreadHeapTestSuite, canAllocateAndFreeFromThreadHeap)
+{
+    const size_t size = 480;
+    byte* memory = new_ref<ThreadHeap>()->Allocate(size);
+    memset(memory, 0x54, size);
+    qor_pp_assert_that(memory[size-1] == 0x54);
+    new_ref<ThreadHeap>()->Free(memory);
+}
 
-    private:
 
-        FastSource() = delete;
-        ~FastSource() = delete;
-        FastSource(const FastSource & src) = delete;
-        FastSource& operator = (const FastSource & src) = delete;
-    };
-
-}}//qor::memory
-
-#endif//QOR_PP_H_COMPONENTS_MEM_FASTSOURCE

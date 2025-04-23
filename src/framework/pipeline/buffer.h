@@ -29,11 +29,11 @@
 
 namespace qor{ namespace pipeline{
 
-    //This provides most of the logic for simple buffer management without any anctual allocation
+    //This provides most of the logic for simple buffer management without any actual allocation
     //Derive a class from it to add actual memory to the buffer in unit sizes.
     //As this is intended for a pipeline it presumes one writer and one reader that follow one
     //another through the buffer.
-    //Both Writes and reads are two step, they reserve space, then attempt to read or write it
+    //Both Writes and reads are three step, they reserve space, then attempt to read or write it
     //Then acknowledge how much they have read or written.
     //This allows for failure and unreliable device interaction without courrupting the buffer
     class qor_pp_module_interface(QOR_PIPELINE) Buffer

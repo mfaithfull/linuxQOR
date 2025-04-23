@@ -69,11 +69,6 @@ namespace qor{ namespace system{
         return 0;
     }
 
-    bool File::IsOpen()
-    {
-        return false;
-    }
-
     bool File::Flush()
     {
         return false;

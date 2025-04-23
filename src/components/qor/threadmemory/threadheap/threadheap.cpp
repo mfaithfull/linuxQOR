@@ -23,10 +23,42 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "fastsource.h"
-
-namespace qor{ namespace memory {
 
 
+#include "threadheap.h"
 
-}}//qor::memory
+using namespace qor;
+
+#if(qor_pp_compiler == qor_pp_compiler_gcc)
+template<> qor_pp_export qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>::bInitialised = false;
+template<> qor_pp_export thread_local typename qor::ref_of<qor::components::threadmemory::ThreadHeap>::type qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>::theRef = qor::ThreadSingletonInstancer::template Instance<qor::components::threadmemory::ThreadHeap>(1);
+#endif
+
+#if(qor_pp_compiler == qor_pp_compiler_msvc)
+    bool qor::detail::ThreadInstanceHolder<class qor::components::threadmemory::ThreadHeap>::bInitialised = false;
+    ref_of<qor::components::threadmemory::ThreadHeap>::type qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>::theRef
+#endif
+
+namespace qor{ namespace components{ namespace threadmemory{
+
+    ThreadHeap::ThreadHeap()
+    {
+        //On GNU Linux the system heap has a per thread arena already so the ThreadHeap is just the heap
+    }
+
+    ThreadHeap::~ThreadHeap()
+    {
+
+    }
+
+    byte* ThreadHeap::Allocate(size_t byteCount)
+    {
+        return new byte[byteCount];
+    }
+
+    void ThreadHeap::Free(byte* allocation)
+    {
+        delete [] allocation;
+    }
+
+}}}//qor::components::threadmemory

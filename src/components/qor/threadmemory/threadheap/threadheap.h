@@ -22,41 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#ifndef QOR_PP_H_COMPONENT_THREADMEMORY_HEAP
+#define QOR_PP_H_COMPONENT_THREADMEMORY_HEAP
 
-#include <string>
-#include "path.h"
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/instance/instance.h"
+#include "src/qor/reference/ref.h"
+#include "src/qor/reference/newref.h"
+#include "src/qor/instance/threadsingleton.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace components{ namespace threadmemory{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
+    class qor_pp_module_interface(QOR_THREADMEMORY) ThreadHeap
+    {
+    public:
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File
-	{
-	public:
+        ThreadHeap();
+        ~ThreadHeap();
 
-        File(const File& src);
-        File(FileIndex& index);
-        File& operator = (const File&);
-        virtual ~File();     
-        
-        virtual int ChangeMode(unsigned int mode);
+        byte* Allocate(size_t byteCount);
+        void Free(byte* allocation);
 
-        bool SupportsPosition();
-        int64_t GetPosition();
-        int64_t SetPosition(int64_t newPosition);
-        bool Flush();
-        unsigned long GetType();
-        bool SetEOF();
+    private:
 
-    protected:
-
-        File();
-
-        //ref_of<IFile>::type m_pimpl;
+        //ref_of<IPrivateHeap>::type m_pimpl;
     };
 
-}}//qor::system
+}}}//qor::components::threadmemory
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+namespace qor{ qor_pp_declare_instancer_of(components::threadmemory::ThreadHeap, ThreadSingletonInstancer);}
+
+#endif//QOR_PP_H_COMPONENT_THREADMEMORY_HEAP

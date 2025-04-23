@@ -22,41 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#include "src/configuration/configuration.h"
 
-#include <string>
-#include "path.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
 
-namespace qor{ namespace system{
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/instance/instance.h"
+#include "src/qor/reference/ref.h"
+#include "src/qor/reference/newref.h"
+#include "src/qor/instance/threadsingleton.h"
+#include "src/components/qor/threadmemory/fastheap/fastheap.h"
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
+using namespace qor;
+using namespace qor::test;
+using namespace qor::components::threadmemory;
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File
-	{
-	public:
+struct FastHeapTestSuite{};
 
-        File(const File& src);
-        File(FileIndex& index);
-        File& operator = (const File&);
-        virtual ~File();     
-        
-        virtual int ChangeMode(unsigned int mode);
+template<unsigned int I>
+struct TestBlob
+{
 
-        bool SupportsPosition();
-        int64_t GetPosition();
-        int64_t SetPosition(int64_t newPosition);
-        bool Flush();
-        unsigned long GetType();
-        bool SetEOF();
+    int data [I] = {};
+    std::string sometext;
+};
 
-    protected:
-
-        File();
-
-        //ref_of<IFile>::type m_pimpl;
-    };
-
-}}//qor::system
-
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+qor_pp_test_suite_case(FastHeapTestSuite, canAllocateAndFreeFastHeap)
+{
+    const size_t size = 480;
+    const size_t number = 1000;
+    auto fh = new_ref<FastHeap>();
+    byte* memory[number];
+    for(size_t count = 0; count < number; ++count)
+    {
+        memory[count] = reinterpret_cast<byte*>(fh->Allocate(size));
+        memset(memory[count], 0x54, size);
+    }
+    qor_pp_assert_that(memory[number-1][size-1] == 0x54);
+    for(size_t count = 0; count < number; ++count)
+    {
+        fh->Free(reinterpret_cast<void*>(memory[count]), size);
+    }    
+}

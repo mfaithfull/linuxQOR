@@ -22,41 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#ifndef QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP_STACKPAGE
+#define QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP_STACKPAGE
 
-#include <string>
-#include "path.h"
+#include "src/platform/compiler/compiler.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace components{ namespace threadmemory{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
+    class qor_pp_module_interface(QOR_THREADMEMORY) StackPage final
+    {
+    public:
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File
-	{
-	public:
+        static constexpr size_t c_pageSize = 1024 * 64; //64K pages
 
-        File(const File& src);
-        File(FileIndex& index);
-        File& operator = (const File&);
-        virtual ~File();     
-        
-        virtual int ChangeMode(unsigned int mode);
+        void* operator new(size_t sz);
+        void operator delete(void*);
 
-        bool SupportsPosition();
-        int64_t GetPosition();
-        int64_t SetPosition(int64_t newPosition);
-        bool Flush();
-        unsigned long GetType();
-        bool SetEOF();
+        StackPage(size_t PageUnits = 1);
+        ~StackPage();
+        size_t TotalSizeBytes() const;
+        size_t AllocatedByteCount() const;
+        size_t AllocatedItemsCount(void) const;
+        void SetSize(size_t pageUnits);
+        StackPage* Next() const;
+        StackPage* Previous() const;
+        void SetNext(StackPage* next);
+        void SetPrevious(StackPage* prev);
+        void Initialise();
+        void* Allocate(size_t byteCount);
+        bool Free(void* memory, size_t byteCount);
 
-    protected:
+    private:
 
-        File();
-
-        //ref_of<IFile>::type m_pimpl;
+        byte* Push(size_t byteCount);
+        byte* Pop(size_t byteCount);
+        byte* m_memoryBase;
+        size_t m_pageUnits;
+        byte* m_ToS;
+        StackPage* m_next;
+        StackPage* m_prev;
+        size_t m_items;
     };
 
-}}//qor::system
+}}}//qor::components::threadmemory
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#endif//QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP_STACKPAGE

@@ -22,5 +22,41 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "memorythread.h"
+#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE_INTERFACE
+#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE_INTERFACE
+
+#include <vector>
+#include "src/qor/reference/newref.h"
+
+namespace qor{ namespace system{
+
+    class qor_pp_module_interface(QOR_FILESYSTEM) IFile
+	{
+	public:
+
+        enum Type
+        {
+            Unknown
+        };
+
+        virtual bool SupportsPosition();
+        virtual uint64_t GetPosition();
+        virtual uint64_t SetPosition(uint64_t newPosition);
+        virtual uint64_t SetPositionRelative(int64_t offset);
+        virtual void Truncate(uint64_t length);
+        virtual void Reserve(uint64_t length);
+        virtual uint64_t GetSize();
+        virtual void Flush();
+        virtual Type GetType();
+        virtual ref_of<IFile>::type ReOpen()
+        virtual int GetStatus();
+        virtual void SetStatus(int);
+        //virtual std::vector<ref_of<Property>::type> GetInformation();
+        //virtual void SetInformation(std::vector<ref_of<Property>::type>& properties);
+        virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
+        virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
+    };
+
+}}//qor::system
+
+#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE_INTERFACE

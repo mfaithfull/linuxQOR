@@ -22,41 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include <string>
-#include "path.h"
-
-namespace qor{ namespace system{
-
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
-
-    class qor_pp_module_interface(QOR_FILESYSTEM) File
-	{
-	public:
-
-        File(const File& src);
-        File(FileIndex& index);
-        File& operator = (const File&);
-        virtual ~File();     
-        
-        virtual int ChangeMode(unsigned int mode);
-
-        bool SupportsPosition();
-        int64_t GetPosition();
-        int64_t SetPosition(int64_t newPosition);
-        bool Flush();
-        unsigned long GetType();
-        bool SetEOF();
-
-    protected:
-
-        File();
-
-        //ref_of<IFile>::type m_pimpl;
-    };
-
-}}//qor::system
-
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Thread Memory Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

@@ -22,41 +22,45 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#ifndef QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP
+#define QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP
 
-#include <string>
-#include "path.h"
+#include "src/platform/compiler/compiler.h"
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/instance/instance.h"
+#include "src/qor/reference/ref.h"
+#include "src/qor/reference/newref.h"
+#include "src/qor/instance/threadsingleton.h"
+#include "fastbucket.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace components{ namespace threadmemory{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
+    class qor_pp_module_interface(QOR_THREADMEMORY) FastHeap final
+    {
+    public:
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File
-	{
-	public:
+        static constexpr size_t sc_rootBuckets = 16;
 
-        File(const File& src);
-        File(FileIndex& index);
-        File& operator = (const File&);
-        virtual ~File();     
-        
-        virtual int ChangeMode(unsigned int mode);
+        void* Allocate(size_t byteCount);
+        void Free(void* allocation, size_t byteCount);
+        size_t TotalBytesAllocated() const;
 
-        bool SupportsPosition();
-        int64_t GetPosition();
-        int64_t SetPosition(int64_t newPosition);
-        bool Flush();
-        unsigned long GetType();
-        bool SetEOF();
+    private:
 
-    protected:
+        FastBucket* Bucket(size_t byteCount);
 
-        File();
+        FastBucket m_initialPages[sc_rootBuckets];
+        size_t m_totalAlloc;
+        size_t m_peakAlloc;
+        size_t m_allocIndex;
 
-        //ref_of<IFile>::type m_pimpl;
     };
 
-}}//qor::system
+}}}//qor::components::threadmemory
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+namespace qor{ qor_pp_declare_instancer_of(components::threadmemory::FastHeap, ThreadSingletonInstancer);}
+
+#endif//QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP

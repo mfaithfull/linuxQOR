@@ -22,34 +22,45 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_MEMTHREAD
-#define QOR_PP_H_COMPONENTS_MEMTHREAD
-
-#include <stdint.h>
+#ifndef QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP_BUCKET
+#define QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP_BUCKET
 
 #include "src/platform/compiler/compiler.h"
-#include "src/framework/thread/thread.h"
+#include "stackpage.h"
 
-namespace qor{ namespace compponents{
+namespace qor{ namespace components{ namespace threadmemory{
 
-    class qor_pp_module_interface(QOR_MEMTHREAD) MemoryThread : public framework::Thread
+    class qor_pp_module_interface(QOR_THREADMEMORY) FastBucket final
     {
-        public:
+    public:
 
-		MemoryThread();
-		MemoryThread(const MemoryThread & src) = delete;
-		MemoryThread& operator=(MemoryThread const& src) = delete;
-		virtual ~MemoryThread() = default;
+        void* operator new(size_t sz);
+        void operator delete(void*);
 
-        //memory::IMemoryHeap* SmallObjectHeap(void) const;
-		//memory::IMemoryHeap* FastHeap(void) const;
+        FastBucket(size_t pageUnits = 1);
+        ~FastBucket();
+        size_t PageSize(void) const;
+        size_t AllocatedItems(void) const;
+        size_t AllocatedPages(void) const;
+        size_t AllocatedSpace(void) const;
+        void SetSize(size_t pageUnits);
+        void Initialise();
+        void* Allocate(size_t byteCount);
+        bool Free(void* memory, size_t byteCount);
 
-	private:
+    private:
 
-		//memory::IMemoryHeap* m_FastHeap;
-		//memory::IMemoryHeap* m_SmallObjectHeap;
+        void PushPage(void);
+        void PopPage(void);
+
+        size_t m_pageUnits;
+        StackPage* m_basePage;
+        StackPage* m_ToSPage;
+        size_t m_items;
+        size_t m_pages;
+
     };
 
-}}//qor::componenets
+}}}//qor::components::threadmemory
 
-#endif//QOR_PP_H_COMPONENTS_MEMTHREAD
+#endif//QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP_BUCKET
