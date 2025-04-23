@@ -64,7 +64,7 @@ namespace qor
 
         static Ref< T > Construct(size_t count)
         {
-            void* pMem = source_of< detail::SharedRef< T > >::type::Source(sizeof(detail::SharedRef< T >));
+            void* pMem = source_of< Ref< T > >::type::Source(sizeof(detail::SharedRef< T >));
             detail::SharedRef< T >* pShared = new(pMem) detail::SharedRef< T >(count);
             return pShared->_Ref();
         }
@@ -73,7 +73,7 @@ namespace qor
         static Ref< T > Construct(size_t count, _p&&... p1)
         {
             return (
-                new(source_of< detail::SharedRef< T > >::type::Source(sizeof(detail::SharedRef< T >)))
+                new(source_of< Ref< T > >::type::Source(sizeof(detail::SharedRef< T >)))
                 detail::SharedRef< T >(count, std::forward<_p>(p1)...)
             )->_Ref();
         }

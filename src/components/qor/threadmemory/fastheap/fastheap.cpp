@@ -41,6 +41,20 @@ template<> qor_pp_export thread_local typename qor::ref_of<qor::components::thre
 
 namespace qor{ namespace components{ namespace threadmemory{
 
+    FastHeap::FastHeap()
+    {
+        m_allocIndex = 0;
+        m_totalAlloc = 0;
+        m_peakAlloc = 0;
+
+        size_t BucketSize = 1;
+        for (size_t Bucket = 0; Bucket < sc_rootBuckets; Bucket++)
+        {
+            m_initialPages[Bucket].SetSize(BucketSize);
+            BucketSize *= sc_powerScale;
+        }
+    }
+
     void* FastHeap::Allocate(size_t byteCount)
     {
         FastBucket* bucket = Bucket(byteCount);
@@ -79,9 +93,9 @@ namespace qor{ namespace components{ namespace threadmemory{
     {
         size_t basePage = 0;
         FastBucket* bucket = &m_initialPages[basePage];
-        while ((basePage++ < sc_rootBuckets) && ((byteCount * 7) > bucket->PageSize()))
+        while ((basePage < sc_rootBuckets) && ((byteCount * 7) > bucket->PageSize()))
         {
-            bucket = &m_initialPages[basePage];
+            bucket = &m_initialPages[++basePage];
         }
         if (basePage < sc_rootBuckets)
         {

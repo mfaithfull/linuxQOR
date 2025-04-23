@@ -24,9 +24,6 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
@@ -36,47 +33,18 @@
 #include "src/qor/reference/newref.h"
 #include "src/qor/instance/threadsingleton.h"
 #include "src/components/qor/threadmemory/fastheap/fastheap.h"
-#include "src/components/qor/threadmemory/fastsource.h"
+#include "fastsource.h"
 
-using namespace qor;
-using namespace qor::test;
-using namespace qor::components::threadmemory;
+namespace qor{ namespace components{ namespace threadmemory{
 
-struct FastHeapTestSuite{};
-
-struct TestBlob
-{
-    int data [9357] = {};
-    std::string sometext;
-};
-
-namespace qor{ 
-    qor_pp_declare_source_of(TestBlob, FastSource) 
-    qor_pp_declare_source_of(typename ref_of<TestBlob>::type, FastSource) 
-}
-
-qor_pp_test_suite_case(FastHeapTestSuite, canAllocateAndFreeFastHeap)
-{
-    const size_t size = 480;
-    const size_t number = 1000;
-    auto fh = new_ref<FastHeap>();
-    byte* memory[number];
-    for(size_t count = 0; count < number; ++count)
+    byte* FastSource::Source(size_t byteCount)
     {
-        memory[count] = reinterpret_cast<byte*>(fh->Allocate(size));
-        memset(memory[count], 0x54, size);
+        return reinterpret_cast<byte*>(new_ref<FastHeap>()->Allocate(byteCount));
     }
-    qor_pp_assert_that(memory[number-1][size-1] == 0x54);
-    for(size_t count = 0; count < number; ++count)
-    {
-        fh->Free(reinterpret_cast<void*>(memory[count]), size);
-    }
-    qor_pp_assert_that(fh->TotalBytesAllocated()).isEqualTo(0);
-}
 
-qor_pp_test_suite_case(FastHeapTestSuite, canAutoAllocateAndFreeFromFastHeapByTrait)
-{
-    ref_of<TestBlob>::type ref = new_ref<TestBlob>();
-    auto fh = new_ref<FastHeap>();
-    qor_pp_assert_that(fh->TotalBytesAllocated()).isAtLeast(sizeof(TestBlob));
-}
+    void FastSource::Free(byte* memory, size_t byteCount)
+    {
+        new_ref<FastHeap>()->Free(memory, byteCount);
+    }
+
+}}}//qor::components::threadmemory

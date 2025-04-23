@@ -171,7 +171,7 @@ namespace qor{
 				m_p = nullptr;//drop our pointer to it
 				Unlock();
 				//Self delete this shared reference. This must be safe as no non shared references exist when the reference count is zero
-				source_of< R >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
+				source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
 			}
 
 			//Never call this unless you know the real object has gone for good.

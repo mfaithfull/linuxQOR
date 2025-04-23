@@ -22,54 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_MEMORY
-#define QOR_PP_H_MEMORY
+#ifndef QOR_PP_H_COMPONENTS_QOR_THREADMEMORY_FASTSOURCE
+#define QOR_PP_H_COMPONENTS_QOR_THREADMEMORY_FASTSOURCE
 
-#include "src/platform/compiler/compiler.h"
-#include "defaultsource.h"
+#include <cstdint>
+#include <stddef.h>
 
-namespace qor{
+namespace qor{ namespace components{ namespace threadmemory{
 
-    template<typename T>
-    struct source_of
+    class qor_pp_module_interface(QOR_THREADMEMORY) FastSource final
     {
-        typedef DefaultSource type;
+    public:
+    
+        static byte* Source(size_t byteCount);
+        static void Free(byte* memory, size_t byteCount);
+
+    private:
+
+        FastSource() = delete;
+        ~FastSource() = delete;
+        FastSource(const FastSource & src) = delete;
+        FastSource& operator = (const FastSource & src) = delete;
+
     };
 
-}//qor
+}}}//qor::components::threadmemory
 
-//Preprocessor macro shorthand for declaring a source_of specialisation
-#   define qor_pp_declare_source_of(_CLASS,_SOURCE)\
-template<> struct source_of< _CLASS >\
-{\
-    typedef _SOURCE type;\
-};
-//Example: qor_pp_declare_source_of(MyClass, DefaultSource);
-
-
-#include "debugallocator.h"
-#include "releaseallocator.h"
-
-namespace qor{
-
-    template<typename T>
-    struct allocator_of
-    {
-#   ifndef NDEBUG
-        typedef DebugAllocator type;
-#   else
-        typedef ReleaseAllocator type;
-#   endif
-    };
-
-}//qor
-
-//Preprocessor macro shorthand for declaring a allocator_of specialisation
-#   define qor_pp_declare_allocator_of(_CLASS,_ALLOCATOR)\
-template<> struct qor::allocator_of< _CLASS >\
-{\
-    typedef qor::_ALLOCATOR type;\
-};
-//Example: qor_pp_declare_allocator_of(Biscuits, SpecialAllocator);
-
-#endif//QOR_PP_H_MEMORY
+#endif//QOR_PP_H_COMPONENTS_QOR_THREADMEMORY_FASTSOURCE

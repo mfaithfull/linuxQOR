@@ -42,8 +42,11 @@ namespace qor{ namespace components{ namespace threadmemory{
     {
     public:
 
-        static constexpr size_t sc_rootBuckets = 16;
+        static constexpr size_t sc_rootBuckets = 8;
+        static constexpr size_t sc_powerScale = 2;
 
+        FastHeap();
+        ~FastHeap() = default;
         void* Allocate(size_t byteCount);
         void Free(void* allocation, size_t byteCount);
         size_t TotalBytesAllocated() const;

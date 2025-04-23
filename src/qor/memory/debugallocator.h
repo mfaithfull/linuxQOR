@@ -57,14 +57,17 @@ namespace qor{
         {
             size_t allocSize = sizeof(dbgInfo) + (count * sizeof(T));
             byte* pMem = source_of< T >::type::Source(allocSize);
-            dbgInfo* pInfo = reinterpret_cast<dbgInfo*>(pMem);
-            pInfo->Count = count;
-            pInfo->Size = allocSize;
-            pInfo->uiLine = __LINE__;
-            pInfo->szFile = __FILE__;
-            pInfo->pBackRef = nullptr;
-            //FillInDbgInfo
-            pMem += sizeof(dbgInfo);
+            if(pMem)
+            {
+                dbgInfo* pInfo = reinterpret_cast<dbgInfo*>(pMem);
+                pInfo->Count = count;
+                pInfo->Size = allocSize;
+                pInfo->uiLine = __LINE__;
+                pInfo->szFile = __FILE__;
+                pInfo->pBackRef = nullptr;
+                //FillInDbgInfo
+                pMem += sizeof(dbgInfo);
+            }
             return pMem;
         }
 
@@ -75,7 +78,7 @@ namespace qor{
         {
             byte* pMem = RawAllocate<T>(count);
             T* pResult = reinterpret_cast<T*>(pMem);
-            for (size_t element = 0; element < count; element++)
+            for (size_t element = 0; pMem && element < count; element++)
             {
                 new(pMem)T();
                 pMem += sizeof(T);
@@ -88,7 +91,7 @@ namespace qor{
         {
             byte* pMem = RawAllocate<T>(count);
             T* pResult = reinterpret_cast<T*>(pMem);
-            for (size_t element = 0; element < count; element++)
+            for (size_t element = 0; pMem && element < count; element++)
             {
                 new(pMem)T(std::forward<_p>(p1)...);
                 pMem += sizeof(T);
