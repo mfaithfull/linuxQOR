@@ -70,6 +70,7 @@ std::vector<std::thread::id> obtain_unique_threads(ThreadPool& pool)
 qor_pp_test_suite_case(ThreadPoolTestSuite, canConstructThreadPool)
 {
     ThreadPool pool(std::thread::hardware_concurrency());
+    pool.Setup();
     ////sync_out.println("Checking that the thread pool reports a number of threads equal to the hardware concurrency...");
     qor_pp_assert_that(pool.GetThreadCount()).isEqualTo(std::thread::hardware_concurrency());
     ////sync_out.println("Checking that the manually counted number of unique thread IDs is equal to the reported number of threads...");
@@ -85,6 +86,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, canConstructThreadPool)
 qor_pp_test_suite_case(ThreadPoolTestSuite, confirmResetWorks)
 {
     ThreadPool pool;
+    pool.Setup();
     pool.Reset(static_cast<std::size_t>(std::thread::hardware_concurrency()) * 2);
     ////sync_out.println("Checking that after reset() the thread pool reports a number of threads equal to double the hardware concurrency...");
     qor_pp_assert_that(std::thread::hardware_concurrency() * 2 == pool.GetThreadCount()).isTrue();
@@ -205,6 +207,7 @@ private:
 void check_task(const std::string_view which_func)
 {
     ThreadPool pool;
+    pool.Setup();
     //sync_out.println("Checking that ", which_func, " works for a function with no arguments or return value...");
     {
         bool flag = false;
@@ -536,6 +539,7 @@ private:
 qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctions)
 {
     ThreadPool pool;
+    pool.Setup();
     //sync_out.println("Checking that PostTask() works for a member function with no arguments or return value...");
     {
         flag_class flag(pool);
@@ -605,6 +609,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctions)
 qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctionsOnInstance)
 {
     ThreadPool pool;
+    pool.Setup();
     //sync_out.println("Checking that PostTask() works within an object for a member function with no arguments or return value...");
     {
         flag_class flag(pool);
@@ -663,7 +668,7 @@ struct has_member_function
 qor_pp_test_suite_case(ThreadPoolTestSuite, callableTypesAreExecuted)
 {
     ThreadPool pool;
-
+    pool.Setup();
     //sync_out.println("Checking normal function...");
     pool.SubmitTask(normal_func).wait();
     check(check_callables_flag);
@@ -737,6 +742,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitWorks)
 {
     constexpr std::chrono::milliseconds sleep_time(10);
     ThreadPool pool;
+    pool.Setup();
     const std::size_t num_tasks = pool.GetThreadCount() * 10;
     std::vector<std::atomic<bool>> flags(num_tasks);
     for (std::size_t i = 0; i < num_tasks; ++i)
@@ -759,6 +765,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitBlocks)
     constexpr std::chrono::milliseconds sleep_time(100);
     constexpr std::size_t num_waiting_tasks = 4;
     ThreadPool pool;
+    pool.Setup();
     binary_semaphore sem(0);
     //sync_out.println("Checking that wait() correctly blocks all external threads that call it...");
     pool.PostTask(
@@ -769,6 +776,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitBlocks)
             //sync_out.println("Task released.");
         });
     ThreadPool temp_pool(num_waiting_tasks);
+    temp_pool.Setup();
     std::vector<std::atomic<bool>> flags(num_waiting_tasks);
     const auto waiting_task = [&flags, &pool](const std::size_t task_num)
     {
@@ -797,6 +805,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, wait_forWorks)
     constexpr std::chrono::milliseconds long_sleep_time(250);
     constexpr std::chrono::milliseconds short_sleep_time(10);
     ThreadPool pool;
+    pool.Setup();
     //sync_out.println("Checking that WaitFor() works...");
     std::atomic<bool> done = false;
     pool.PostTask(
@@ -818,6 +827,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, wait_untilWorks)
     constexpr std::chrono::milliseconds long_sleep_time(250);
     constexpr std::chrono::milliseconds short_sleep_time(10);
     ThreadPool pool;
+    pool.Setup();
     //sync_out.println("Checking that WaitUntil() works...");
     std::atomic<bool> done = false;
     pool.PostTask(
@@ -843,8 +853,10 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitMultipleCallDoesntDeadlock)
 {
     constexpr std::chrono::milliseconds sleep_time(500);
     constexpr std::size_t n_waiting_tasks = 1000;
+    check_wait_multiple_deadlock_pool.Setup();
     //sync_out.println("Checking for deadlocks when waiting for tasks...");
     ThreadPool pool(1);
+    pool.Setup();
     pool.PostTask(
         [sleep_time]
         {
@@ -892,6 +904,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitOnSelfTriggerDeadlockException)
 {
     constexpr std::chrono::milliseconds sleep_time(100);
     //sync_out.println("Checking for deadlocks when waiting from within a thread of the same pool...");
+    check_wait_self_deadlock_pool.Setup();
     std::atomic<bool> passed = false;
     check_wait_self_deadlock_pool.PostTask(
         [&passed]
@@ -951,6 +964,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, loopWorks)
     constexpr std::int64_t range = 1000000;
     constexpr std::size_t repeats = 10;
     ThreadPool pool;
+    pool.Setup();
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
@@ -1085,6 +1099,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, blocksWorks)
     constexpr std::int64_t range = 1000000;
     constexpr std::size_t repeats = 10;
     ThreadPool pool;
+    pool.Setup();
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
@@ -1223,6 +1238,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, sequenceWorks)
     constexpr std::int64_t range = 1000;
     constexpr std::size_t repeats = 10;
     ThreadPool pool;
+    pool.Setup();
     for (std::size_t i = 0; i < repeats; ++i)
     {
         const std::pair<std::int64_t, std::int64_t> indices = random_pair(-range, range);
@@ -1303,6 +1319,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, monitoringWorks)
     const std::size_t num_threads = std::min<std::size_t>(std::thread::hardware_concurrency(), 4);
     //sync_out.println("Creating pool with ", num_threads, " threads.");
     ThreadPool pool(num_threads);
+    pool.Setup();
     //sync_out.println("Submitting ", num_threads * 3, " tasks.");
     counting_semaphore sem(0);
     for (std::size_t i = 0; i < num_threads * 3; ++i)
@@ -1340,6 +1357,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, pausingWorks)
 {
     constexpr std::chrono::milliseconds sleep_time(200);
     ThreadPool pool;
+    pool.Setup();
     //sync_out.println("Checking that the pool correctly reports that it is not paused after construction...");
     check(!pool.IsPaused());
     //sync_out.println("Pausing pool.");
@@ -1373,6 +1391,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, purgingWorks)
     constexpr std::chrono::milliseconds short_sleep_time(100);
     constexpr std::size_t num_tasks = 10;
     ThreadPool pool(1);
+    pool.Setup();
     //sync_out.println("Submitting ", num_tasks, " tasks to the pool.");
     std::vector<std::atomic<bool>> flags(num_tasks);
     for (std::size_t i = 0; i < num_tasks; ++i)
@@ -1416,6 +1435,7 @@ void throws()
 qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectly)
 {
     ThreadPool pool;
+    pool.Setup();
     //sync_out.println("Checking that exceptions are forwarded correctly by SubmitTask()...");
     bool caught = false;
     std::future<void> future = pool.SubmitTask(throws);
@@ -1434,6 +1454,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectly
 qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectlyByMultiFuture)
 {
     ThreadPool pool;
+    pool.Setup();
     //sync_out.println("Checking that exceptions are forwarded correctly by MultiFuture...");
     bool caught = false;
     MultiFuture<void> future;
@@ -1494,6 +1515,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, vectorsWork)
     constexpr std::size_t size_range = 1000000;
     constexpr std::size_t repeats = 10;
     ThreadPool pool;
+    pool.Setup();
     for (std::size_t i = 0; i < repeats; ++i)
         check(check_vector_of_size(pool, random<std::size_t>(0, size_range), random<std::size_t>(1, pool.GetThreadCount())));
 }
@@ -1512,6 +1534,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
     constexpr std::size_t num_tasks = 10;
     // Set the pool to have only 1 thread, so it can only run 1 task at a time. This will ensure the tasks will be executed in priority order.
     ThreadPool pool(1);
+    pool.Setup();
     pool.Pause();
 
     // Create a shuffled lists of priorities.
@@ -1693,6 +1716,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, cleanupWorks)
                 else
                     correct = false;
             });
+        pool.Setup();
     }
     //sync_out.println("Checking that all reported indices have values...");
     check(correct);
@@ -1733,6 +1757,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, GetPoolWorks)
         {
             store_pointers(thread_pool_ptrs2);
         });
+    pool1.Setup();
+    pool2.Setup();
     pool1.Wait();
     pool2.Wait();
     const auto check_pointers = [](const std::vector<std::atomic<void*>>& ptrs, const ThreadPool& pool)
@@ -1791,6 +1817,7 @@ private:
 void check_copy(const std::string_view which_func)
 {
     ThreadPool pool;
+    pool.Setup();
     const std::size_t num_tasks = pool.GetThreadCount() * 10;
     //sync_out.println("Checking ", which_func, "...");
     std::atomic<std::size_t> copied = 0;
@@ -1851,6 +1878,7 @@ private:
 void check_shared_ptr(const std::string_view which_func)
 {
     ThreadPool pool;
+    pool.Setup();
     constexpr std::chrono::milliseconds sleep_time(10);
     const std::size_t num_tasks = pool.GetThreadCount() * 10;
     std::atomic<bool> object_exists = false;
@@ -1905,6 +1933,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, TaskDestructionWorks)
 {
     constexpr std::chrono::milliseconds sleep_time(20);
     ThreadPool pool;
+    pool.Setup();
     std::atomic<bool> object_exists = false;
     {
         const std::shared_ptr<detect_destruct> ptr = std::make_shared<detect_destruct>(&object_exists);
@@ -1949,6 +1978,7 @@ void check_deadlock(const F&& task)
     constexpr std::chrono::milliseconds sleep_time(200);
     constexpr std::size_t tries = 10000;
     std::size_t try_n = 0;
+    check_deadlock_pool.Setup();
     check_deadlock_pool.PostTask(
         [&try_n, &task]
         {
@@ -2079,6 +2109,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessPriorities)
 qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadPriorities)
 {
     ThreadPool pool;
+    pool.Setup();
     pool.PostTask(
         []
         {
@@ -2197,6 +2228,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessAffinity)
 qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadAffinity)
 {
     ThreadPool pool;
+    pool.Setup();
     pool.PostTask(
         []
         {

@@ -22,21 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#ifndef QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIN
+#define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIN
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Thread Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#include "src/framework/pipeline/source.h"
 
-	static qor::TypeRegEntry< qor::framework::ThreadPool, qor::framework::ThreadPool > reg;
+namespace qor{ namespace components{ 
 
-	return QORModule;
-}
+    class qor_pp_module_interface(QOR_STDINSOURCE) StdInSource : public pipeline::Source
+    {
+    public:
+
+        StdInSource();
+        virtual ~StdInSource() = default;
+
+        virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
+
+    protected:
+
+        virtual bool Write(size_t unitsToWrite);
+    };
+
+}}//qor::components
+
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIN

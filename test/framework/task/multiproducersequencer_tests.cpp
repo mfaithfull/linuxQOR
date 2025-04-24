@@ -142,7 +142,8 @@ namespace
 
 qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_batch_single_consumer)
 {
-	ThreadPool tp;
+	ThreadPool tp{3};
+	tp.Setup();
 //	static_thread_pool tp{ 3 };
 
 	// Allow time for threads to start up.
@@ -188,6 +189,7 @@ qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_batch_sing
 qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_single_single_consumer)
 {
 	ThreadPool tp;
+	tp.Setup();
 	//static_thread_pool tp{ 3 };
 
 	// Allow time for threads to start up.

@@ -23,20 +23,32 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#include <stdio.h>
+#include "stdinsource.h"
+#include "src/framework/pipeline/sink.h"
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Thread Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+namespace qor{ namespace components{ 
 
-	static qor::TypeRegEntry< qor::framework::ThreadPool, qor::framework::ThreadPool > reg;
+    StdInSource::StdInSource()
+    {
+    }
 
-	return QORModule;
-}
+    bool StdInSource::Read(size_t& unitsRead, size_t unitsToRead)
+    {
+        unitsRead = fread(GetBuffer()->WriteRequest(unitsToRead), GetBuffer()->GetUnitSize(), unitsToRead, stdin);
+        return unitsRead > 0 ? Write(unitsRead) : false;
+    }
+
+    bool StdInSource::Write(size_t unitsToWrite)
+    {
+        GetBuffer()->WriteAcknowledge(unitsToWrite);
+        if( GetFlowMode() == Push )
+        {
+            size_t numberOfUnitsWritten = 0;
+            ActualSink()->Write(numberOfUnitsWritten, unitsToWrite);
+            return numberOfUnitsWritten > 0 ? true : false;
+        }
+        return true;
+    }
+
+}}//qor::components

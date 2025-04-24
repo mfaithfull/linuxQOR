@@ -118,6 +118,7 @@ qor_pp_test_suite_case(AsyncAutoResetEventTestSuite, testMultipleWaiters)
 qor_pp_test_suite_case(AsyncAutoResetEventTestSuite, testMultiThreaded)
 {
 	ThreadPool tp;
+	tp.Setup();
 
 	auto run = [&]() -> task<>
 	{

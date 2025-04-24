@@ -40,7 +40,7 @@ namespace qor{ namespace framework{
         virtual void Shutdown();
         virtual void AddFeature( const GUID* id, ref_of<IFeature>::type feature);
         virtual ref_of<IFeature>::type GetFeature(const GUID* id);
-  
+
     protected:
 
         std::map<GUID, ref_of<IFeature>::type > m_mapFeatures;

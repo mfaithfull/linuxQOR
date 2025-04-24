@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-add_library(qor_thread SHARED qor_thread.cpp currentthread.cpp thread.cpp threadcontext.cpp)
+add_library(qor_thread SHARED qor_thread.cpp currentthread.cpp thread.cpp threadcontext.cpp threadpool.cpp)
 find_package(Threads REQUIRED)
 if(THREADS_HAVE_PTHREAD_ARG)
   target_compile_options(qor_thread PUBLIC "-pthread")

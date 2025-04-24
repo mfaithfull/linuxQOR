@@ -70,6 +70,7 @@
 #include "pool/blocks.h"
 #include "currentthread.h"
 #include "pool/common_index_type.h"
+#include "src/framework/role/ifeature.h"
 
 namespace qor { namespace framework{
 
@@ -78,47 +79,42 @@ namespace qor { namespace framework{
         wait_deadlock() : std::runtime_error("wait_deadlock") {};
     };
 
-    class qor_pp_module_interface(QOR_THREAD) ThreadPool
+    class qor_pp_module_interface(QOR_THREAD) ThreadPool : public IFeature
     {
     public:
         
         bool wait_deadlock_checks_enabled = true;                                                       //A flag indicating whether wait deadlock checks are enabled.
 
-        ThreadPool() : ThreadPool(0, [] {}) {}                                                          //Construct a new thread pool. The number of threads will be derived from total number of hardware threads available, as reported by the implementation. This is usually determined by the number of cores in the CPU. If a core is hyperthreaded, it will count as two threads.
-        explicit ThreadPool(const std::size_t num_threads) : ThreadPool(num_threads, [] {}) {}          //Construct a new thread pool with the specified number of threads.
+        ThreadPool()                                                                                    //Construct a new thread pool. The number of threads will be derived from total number of hardware threads available, as reported by the implementation. This is usually determined by the number of cores in the CPU. If a core is hyperthreaded, it will count as two threads.
+        {
+            SetThreadCount(0);
+            SetInitFunction([] {});
+        }
+
+        explicit ThreadPool(const std::size_t num_threads)                                              //Construct a new thread pool with the specified number of threads.
+        {
+            SetThreadCount(num_threads);
+            SetInitFunction([] {});
+        }
         
         template <qor_pp_threadpool_init_func_concept(F)>                                               //Construct a new thread pool with the specified initialization function.
-        explicit ThreadPool(F&& init) : ThreadPool(0, std::forward<F>(init)) {}
+        explicit ThreadPool(F&& init)
+        {
+            SetThreadCount(0);
+            SetInitFunction(std::forward<F>(init));
+        }
 
         template <qor_pp_threadpool_init_func_concept(F)>                                               // Construct a new thread pool with the specified number of threads and initialization function.
         ThreadPool(const std::size_t num_threads, F&& init)
         {
-            CreateThreads(num_threads, std::forward<F>(init));
+            SetInitFunction(std::forward<F>(init));
+            SetThreadCount(num_threads);
         }
 
-        ThreadPool(const ThreadPool&) = delete;                                                         // The copy and move constructors and assignment operators are deleted. The thread pool cannot be copied or moved.
-        ThreadPool(ThreadPool&&) = delete;
-        ThreadPool& operator=(const ThreadPool&) = delete;
-        ThreadPool& operator=(ThreadPool&&) = delete;
+        virtual void Setup();
+        virtual void Shutdown();
+        virtual ~ThreadPool() noexcept ;                                                                //Destruct the thread pool. Waits for all tasks to complete, then destroys all threads. If a cleanup function was set, it will run in each thread right before it is destroyed. Note that if the pool is paused, then any tasks still in the queue will never be executed.
 
-        ~ThreadPool() noexcept                                                                          //Destruct the thread pool. Waits for all tasks to complete, then destroys all threads. If a cleanup function was set, it will run in each thread right before it is destroyed. Note that if the pool is paused, then any tasks still in the queue will never be executed.
-        {            
-#ifdef __cpp_exceptions
-            try
-            {
-#endif
-                Wait();
-#ifdef __cpp_exceptions
-            }
-            catch (...)
-            {
-            }
-#endif
-            while(tasks.size())
-            {
-                tasks.pop();
-            }
-        }
 
         //Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The block function takes two arguments, the start and end of the block, so that it is only called once per block, but it is up to the user make sure the block function correctly deals with all the indices in each block. Does not return a `MultiFuture`, so the user must use `wait()` or some other method to ensure that the loop finishes executing, otherwise bad things will happen.
         //T1 The type of the first index. Should be a signed or unsigned integer.
@@ -248,10 +244,7 @@ namespace qor { namespace framework{
             return tasks_running + tasks.size();
         }
 
-        [[nodiscard]] std::size_t GetThreadCount() const noexcept
-        {
-            return thread_count;
-        }
+        std::size_t GetThreadCount() const noexcept;
 
         //Get a vector containing the unique identifiers for each of the pool's threads, as obtained by `std::thread::get_id()` (or `std::jthread::get_id()` in C++20 and later).
         //return The unique thread identifiers.
@@ -259,7 +252,9 @@ namespace qor { namespace framework{
         {
             std::vector<thread_t::id> thread_ids(thread_count);
             for (std::size_t i = 0; i < thread_count; ++i)
+            {
                 thread_ids[i] = threads[i].stdThread().get_id();
+            }
             return thread_ids;
         }
 
@@ -488,7 +483,7 @@ namespace qor { namespace framework{
             return future;
         }
 
-        // Unpause the pool. The workers will resume retrieving new tasks out of the queue. Only enabled if the flag `BS:tp::pause` is enabled in the template parameter.
+        // Unpause the pool. The workers will resume retrieving new tasks out of the queue. 
         void Unpause()
         {
             {
@@ -502,13 +497,13 @@ namespace qor { namespace framework{
         // throws `wait_deadlock` if called from within a thread of the same pool, which would result in a deadlock. Only enabled if the flag `BS:tp::wait_deadlock_checks` is enabled in the template parameter.
         void Wait()
         {
-    #ifdef __cpp_exceptions
+#ifdef __cpp_exceptions
             if (wait_deadlock_checks_enabled)
             {
                 if (CurrentThread::GetCurrent().GetPool() == this)
                     throw wait_deadlock();
             }
-    #endif
+#endif
             std::unique_lock tasks_lock(tasks_mutex);
             waiting = true;
             tasks_done_cv.wait(tasks_lock,
@@ -577,22 +572,22 @@ namespace qor { namespace framework{
 
         auto Schedule() 
         {
-          struct Awaiter : std::suspend_always 
-          {
-              ThreadPool &tpool;
-              Awaiter(ThreadPool &pool) : tpool{pool} {}
-              void await_suspend(std::coroutine_handle<> handle) 
-              {
-                  tpool.PostTask([handle, this]() { handle.resume(); });
-              }
-          };
-          return Awaiter{*this};
+            struct Awaiter : std::suspend_always 
+            {
+                ThreadPool &tpool;
+                Awaiter(ThreadPool &pool) : tpool{pool} {}
+                void await_suspend(std::coroutine_handle<> handle) 
+                {
+                    tpool.PostTask([handle, this]() { handle.resume(); });
+                }
+            };
+            return Awaiter{*this};
         }  
 
     private:
             
         template <typename F>
-        void CreateThreads(const std::size_t num_threads, F&& init)
+        void SetInitFunction(F&& init)
         {
             if constexpr (std::is_invocable_v<F, std::size_t>)
             {
@@ -605,100 +600,26 @@ namespace qor { namespace framework{
                     init();
                 };
             }
-            thread_count = DetermineThreadCount(num_threads);
-            threads = std::make_unique<thread_t[]>(thread_count);
-            {
-                const std::scoped_lock tasks_lock(tasks_mutex);
-                tasks_running = thread_count;
-            }
-            for (std::size_t i = 0; i < thread_count; ++i)
-            {
-                threads[i] = thread_t(
-                    [this, i]
-                    (const std::stop_token& stop_token)
-                    {
-                        CurrentThread::Init();
-                        Worker(stop_token, i);
-                        CurrentThread::Destroy();
-                    }
-                );
-            }
         }
+        void SetThreadCount(const std::size_t num_threads);
+        void CreateThreads();
+        static std::size_t DetermineThreadCount(const std::size_t num_threads) noexcept;
+        task_t PopTask();
 
-        [[nodiscard]] static std::size_t DetermineThreadCount(const std::size_t num_threads) noexcept
-        {
-            if (num_threads > 0)
-                return num_threads;
-            if (thread_t::std_thread_t::hardware_concurrency() > 2)
-                return 1 + ( thread_t::std_thread_t::hardware_concurrency() - 2 );
-            if (thread_t::std_thread_t::hardware_concurrency() > 0)
-                return 1 + ( thread_t::std_thread_t::hardware_concurrency() - 1 );
-            return 1;
-        }
-
-        [[nodiscard]] task_t PopTask()
-        {
-            task_t task;
-            task = std::move(const_cast<pr_task&>(tasks.top()).task);
-            tasks.pop();
-            return task;
-        }
-
-        //Reset the pool with a new number of threads and a new initialization function. This member function implements the actual reset, while the public member function `reset()` also handles the case where the pool is paused.
         template <typename F>
-        void ResetPool(const std::size_t num_threads, F&& init)
+        void ResetPool(const std::size_t num_threads, F&& init)                                         //Reset the pool with a new number of threads and a new initialization function. This member function implements the actual reset, while the public member function `reset()` also handles the case where the pool is paused.
         {
             Wait();
-            CreateThreads(num_threads, std::forward<F>(init));
+            SetInitFunction(std::forward<F>(init));
+            SetThreadCount(num_threads);
+            CreateThreads();
         }
-
-        //A worker function to be assigned to each thread in the pool. Waits until it is notified by `PostTask()` that a task is available, and then retrieves the task from the queue and executes it. Once the task finishes, the worker notifies `wait()` in case it is waiting.
-        //idx The index of this thread.
-        void Worker(const std::stop_token &stop_token, const std::size_t idx)
-        {
-            CurrentThread::GetMutableCurrent().SetPool(this);
-            CurrentThread::GetMutableCurrent().SetIndex(idx);
-            init_func(idx);
-            while (true)
-            {
-                std::unique_lock tasks_lock(tasks_mutex);
-                --tasks_running;
-                if (waiting && (tasks_running == 0) && ( paused || tasks.empty()))
-                {
-                    tasks_done_cv.notify_all();
-                }
-                //tasks_lock is unlocked by the wait here
-                task_available_cv.wait(tasks_lock , stop_token,
-                    [this]
-                    {
-                        return !( paused || tasks.empty());
-                    });
-                //tasks_lock is relocked by the wait before here
-                if (stop_token.stop_requested())
-                {
-                    break;
-                }
-                {
-                    task_t task = PopTask(); // NOLINT(misc-const-correctness) In C++23 this cannot be const since `std::move_only_function::operator()` is not a const member function.
-                    ++tasks_running;
-                    tasks_lock.unlock();
-    #ifdef __cpp_exceptions
-                    try
-                    {
-    #endif
-                        task();
-    #ifdef __cpp_exceptions
-                    }
-                    catch (...)
-                    {
-                    }
-    #endif
-                }
-            }
-            cleanup_func(idx);
-            CurrentThread::GetMutableCurrent().SetIndex(std::nullopt);
-            CurrentThread::GetMutableCurrent().SetPool(std::nullopt);
-        }
+        
+        void Worker(const std::stop_token &stop_token, const std::size_t idx);                          //A worker function to be assigned to each thread in the pool. Waits until it is notified by `PostTask()` that a task is available, and then retrieves the task from the queue and executes it. Once the task finishes, the worker notifies `wait()` in case it is waiting.
+        ThreadPool(const ThreadPool&) = delete;                                                         // The copy and move constructors and assignment operators are deleted. The thread pool cannot be copied or moved.
+        ThreadPool(ThreadPool&&) = delete;
+        ThreadPool& operator=(const ThreadPool&) = delete;
+        ThreadPool& operator=(ThreadPool&&) = delete;
 
         function_t<void(std::size_t)> cleanup_func = [](std::size_t) {};        //A cleanup function to run in each thread right before it is destroyed, which will happen when the pool is destructed or reset. The function must have no return value, and can either take one argument, the thread index of type `std::size_t`, or zero arguments. The cleanup function must not throw any exceptions, as that will result in program termination. Any exceptions must be handled explicitly within the function. The default is an empty function, i.e., no cleanup will be performed.
         function_t<void(std::size_t)> init_func = [](std::size_t) {};           //An initialization function to run in each thread before it starts executing any submitted tasks. The function must have no return value, and can either take one argument, the thread index of type `std::size_t`, or zero arguments. It will be executed exactly once per thread, when the thread is first constructed. The initialization function must not throw any exceptions, as that will result in program termination. Any exceptions must be handled explicitly within the function. The default is an empty function, i.e., no initialization will be performed.
@@ -717,6 +638,11 @@ namespace qor { namespace framework{
     template <std::ptrdiff_t LeastMaxValue = std::counting_semaphore<>::max()>
     using counting_semaphore = std::counting_semaphore<LeastMaxValue>;
 
-}}//qor::framework
+    }//qor::framework
+
+    constexpr GUID ThreadPoolGUID = {0x4c2a287e, 0x3c52, 0x4b91, {0x94, 0xe8, 0xf8, 0x25, 0x8e, 0xc6, 0x37, 0xeb}};
+    qor_pp_declare_guid_of(framework::ThreadPool, ThreadPoolGUID)
+    qor_pp_declare_factory_of(framework::ThreadPool, ExternalFactory)
+}//qor
 
 #endif // QOR_PP_H_FRAMEWORK_THREADPOOL

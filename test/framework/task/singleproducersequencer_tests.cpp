@@ -52,6 +52,7 @@ struct SingleProducerSequencerTestSuite{};
 qor_pp_test_suite_case(SingleProducerSequencerTestSuite, multi_threaded_usage_single_consumer)
 {
 	ThreadPool tp;
+	tp.Setup();
 
 	constexpr std::size_t bufferSize = 256;
 

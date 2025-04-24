@@ -34,6 +34,7 @@
 #include "../../src/framework/workflow/compound_workflow.h"
 #include "src/system/system/system.h"
 #include "src/system/filesystem/filesystem.h"
+#include "src/framework/thread/threadpool.h"
 
 using namespace qor;
 using namespace qor::test;
@@ -47,7 +48,23 @@ qor_pp_test_suite_case(ApplicationTestSuite, canBuildAnApplication)
 {
     int result = AppBuilder().Build("QOR Test Application")->
         AddSubSystem<FileSystem>().
-        SetRole<Role>().
+        SetRole<Role>(
+            [](ref_of<IRole>::type role)
+            {
+                role->template AddFeature<ThreadPool>(
+                    [](ref_of<IFeature>::type feature)
+                    {
+                        ref_of<ThreadPool>::type threadPool = feature.template AsRef<ThreadPool>();
+                        threadPool->SetCleanupFunction(
+                            []()
+                            {
+                                std::cout << "Cleaning up pool thread.\n";
+                            }
+                        );
+                    }
+                );
+            }
+        ).
         RunWorkflow<Workflow>();
 
     qor_pp_assert_that( result ).isEqualTo(0);

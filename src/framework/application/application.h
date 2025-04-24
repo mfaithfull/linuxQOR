@@ -49,6 +49,14 @@ namespace qor{ namespace framework{
             return SetRole( new_ref<TRole>().template AsRef<IRole>() );
         }
 
+        template<class TRole, typename TConfigureRole>
+        Application& SetRole(TConfigureRole&& config_function)
+        {
+            auto role = new_ref<TRole>().template AsRef<IRole>();
+            config_function(role);
+            return SetRole(role);
+        }
+
         ref_of<IRole>::type GetRole();
         Application& SetWorkflow( ref_of<workflow::IWorkflow>::type workflow);
         ref_of<workflow::IWorkflow>::type GetWorkflow();

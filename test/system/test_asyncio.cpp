@@ -239,6 +239,11 @@ class TestThreadPool
 {
     public:
 
+      TestThreadPool()
+      {
+        pool_.Setup();
+      }
+      
       auto Schedule() 
       {
         struct Awaiter : std::suspend_always 

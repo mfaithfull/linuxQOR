@@ -167,6 +167,7 @@ qor_pp_test_suite_case(SequenceBarrierTestSuite, wait_until_published_multiple_a
 qor_pp_test_suite_case(SequenceBarrierTestSuite, sbts_multi_threaded_usage_single_consumer)
 {
 	ThreadPool tp;
+	tp.Setup();
 
 	SequenceBarrier<std::size_t> writeBarrier;
 	SequenceBarrier<std::size_t> readBarrier;

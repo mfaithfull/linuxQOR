@@ -44,6 +44,21 @@ namespace qor{ namespace framework{
         virtual void Shutdown() = 0;
         virtual void AddFeature( const GUID* id, ref_of<IFeature>::type feature) = 0;
         virtual ref_of<IFeature>::type GetFeature(const GUID* id) = 0;
+
+        template< class TFeature >
+        void AddFeature()
+        {
+            AddFeature( guid_of<TFeature>::guid(), new_ref<TFeature>().template AsRef<IFeature>());
+        }
+
+        template< class TFeature, typename feature_config_func>
+        void AddFeature(feature_config_func&& configure)
+        {
+			ref_of<IFeature>::type feature = new_ref<TFeature>().template AsRef<IFeature>();
+			configure(feature);
+            AddFeature( guid_of<TFeature>::guid(), feature);
+        }
+
     };
 
 }}//qor::framework
