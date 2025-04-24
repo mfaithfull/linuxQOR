@@ -22,28 +22,61 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYNC
-#define QOR_PP_H_SYNC
+#include "src/configuration/configuration.h"
 
-#include "nullsection.h"
+#include "system.h"
 
-namespace qor{
-
-    template<typename T>
-    struct sync_of
+namespace qor{ 
+    
+    qor_pp_module_interface(QOR_SYSTEM) ref_of<system::System>::type TheSystem()
     {
-        typedef NullSection type;
-    };
+        return new_ref<system::System>();
+    }
 
-}//qor
+    namespace system{
 
-//Preprocessor macro shorthand for declaring a sync_of specialisation
-#   define qor_pp_declare_sync_of(_CLASS,_SYNC)\
-    template<> struct sync_of< _CLASS >\
-    {\
-        typedef _SYNC type;\
-    };
+    System::System() : setupCompleted(false) {}
 
-//Example: qor_pp_declare_sync_of(SharedDataHolder, Mutex);
+    void System::Setup()
+    {
+        if(!setupCompleted)
+        {
+            for( auto it : m_mapSubsystems)
+            {
+                it.second().Setup();
+            }    
+        }
+        setupCompleted = true;
+    }
 
-#endif//QOR_PP_H_SYNC
+    void System::Shutdown()
+    {
+        for( auto it : m_mapSubsystems)
+        {
+            it.second().Shutdown();            
+        }
+
+        m_mapSubsystems.clear();
+    }
+
+    void System::AddSubsystem( const GUID* id, ref_of<ISubsystem>::type subsystem)
+    {
+        m_mapSubsystems.insert(std::make_pair(*id, subsystem));
+        if(setupCompleted)
+        {
+            subsystem->Setup(); //Late initialisation of sub system
+        }
+    }
+
+    ref_of<ISubsystem>::type System::GetSubsystem(const GUID* id)
+    {
+        ref_of<ISubsystem>::type result;
+        auto it = m_mapSubsystems.find(*id);
+        if( it != m_mapSubsystems.end())
+        {
+            result = it->second;
+        }
+        return result;
+    }
+
+}}//qor::system

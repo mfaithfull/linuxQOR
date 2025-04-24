@@ -22,28 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYNC
-#define QOR_PP_H_SYNC
+#ifndef QOR_PP_H_SYSTEM_SUBSYSTEM_INTERFACE
+#define QOR_PP_H_SYSTEM_SUBSYSTEM_INTERFACE
 
-#include "nullsection.h"
+namespace qor{ namespace system{
 
-namespace qor{
-
-    template<typename T>
-    struct sync_of
+    class qor_pp_module_interface(QOR_SYSTEM) ISubsystem
     {
-        typedef NullSection type;
+    public:
+
+        ISubsystem() = default;
+        virtual ~ISubsystem() = default;
+
+        virtual void Setup(){};
+        virtual void Shutdown(){};
+
+     private:
+
+        ISubsystem(const ISubsystem&) = delete;
+        ISubsystem& operator = (const ISubsystem&) = delete;
+
     };
 
-}//qor
+}}//qor::system
 
-//Preprocessor macro shorthand for declaring a sync_of specialisation
-#   define qor_pp_declare_sync_of(_CLASS,_SYNC)\
-    template<> struct sync_of< _CLASS >\
-    {\
-        typedef _SYNC type;\
-    };
-
-//Example: qor_pp_declare_sync_of(SharedDataHolder, Mutex);
-
-#endif//QOR_PP_H_SYNC
+#endif//QOR_PP_H_SYSTEM_SUBSYSTEM_INTERFACE

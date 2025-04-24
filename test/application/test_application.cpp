@@ -32,21 +32,23 @@
 #include "../../src/framework/application/application_builder.h"
 #include "../../src/framework/role/role.h"
 #include "../../src/framework/workflow/compound_workflow.h"
+#include "src/system/system/system.h"
+#include "src/system/filesystem/filesystem.h"
 
 using namespace qor;
 using namespace qor::test;
 using namespace qor::framework;
 using namespace qor::workflow;
-
+using namespace qor::system;
 
 struct ApplicationTestSuite{};
 
 qor_pp_test_suite_case(ApplicationTestSuite, canBuildAnApplication)
 {
     int result = AppBuilder().Build("QOR Test Application")->
-    SetRole(new_ref<Role>().AsRef<IRole>()).
-    SetWorkflow(new_ref<Workflow>().AsRef<IWorkflow>()).
-    Run();
+        AddSubSystem<FileSystem>().
+        SetRole<Role>().
+        RunWorkflow<Workflow>();
 
     qor_pp_assert_that( result ).isEqualTo(0);
 }

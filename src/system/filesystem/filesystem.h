@@ -29,6 +29,7 @@
 #include "ifilesystem.h"
 #include "root.h"
 #include "file.h"
+#include "src/system/system/isubsystem.h"
 
 namespace qor
 {
@@ -37,7 +38,7 @@ namespace qor
 
 namespace qor{ namespace system{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileSystem
+    class qor_pp_module_interface(QOR_FILESYSTEM) FileSystem : public ISubsystem
     {
     public:
 
@@ -66,6 +67,10 @@ namespace qor{ namespace system{
         Root m_root;
     };
     
-}}//qor::system
+    }//qor::system
+    
+    constexpr GUID FileSystemGUID = {0x3eea49d1, 0x3bc7, 0x429b, {0xb8, 0x0a, 0x70, 0xe3, 0xcf, 0x87, 0x05, 0xe0}};
+    qor_pp_declare_guid_of(system::FileSystem,FileSystemGUID);
+}//qor
 
 #endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM

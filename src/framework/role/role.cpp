@@ -26,11 +26,13 @@
 #include "src/configuration/configuration.h"
 
 #include "role.h"
+#include "src/system/system/system.h"
 
 namespace qor{ namespace framework{
 
     void Role::Setup()
     {
+        TheSystem()->Setup();
         for(auto feature: m_mapFeatures)
         {
             feature.second->Setup();
@@ -44,6 +46,7 @@ namespace qor{ namespace framework{
             feature.second->Shutdown();
         }
         m_mapFeatures.clear();
+        TheSystem()->Shutdown();
     }
 
     ref_of<IFeature>::type Role::GetFeature(const GUID* id)

@@ -30,6 +30,7 @@
 #include "src/framework/role/irole.h"
 #include "src/framework/workflow/iworkflow.h"
 #include "src/qor/instance/singleton.h"
+#include "src/system/system/system.h"
 
 namespace qor{ namespace framework{
 
@@ -41,15 +42,45 @@ namespace qor{ namespace framework{
         virtual ~Application() = default;
 
         Application& SetRole( ref_of<IRole>::type role);
+
+        template<class TRole>
+        Application& SetRole()
+        {
+            return SetRole( new_ref<TRole>().template AsRef<IRole>() );
+        }
+
         ref_of<IRole>::type GetRole();
         Application& SetWorkflow( ref_of<workflow::IWorkflow>::type workflow);
         ref_of<workflow::IWorkflow>::type GetWorkflow();
         std::string& Name();
 
-        int Run();
-        int Run( ref_of<workflow::IWorkflow>::type workflow );
+        template<class TSubsystem>
+		Application& AddSubSystem()
+		{
+            TheSystem()->template AddSubsystem<TSubsystem>();
+			return *this;
+		}
+        
+        int RunWorkflow( ref_of<workflow::IWorkflow>::type workflow );
+
+        template< class TWorkflow >
+		int RunWorkflow()
+		{
+			auto workflow = new_ref<TWorkflow>();
+			return RunWorkflow(workflow.template AsRef<workflow::IWorkflow>());
+		}
+
+        template< class TWorkflow, typename config_func >
+		int RunWorkflow(config_func configureworkflowAction)
+		{
+			auto workflow = new_ref<TWorkflow>();
+			configureworkflowAction(workflow.template AsRef<workflow::IWorkflow>());
+			return RunWorkflow(workflow.template AsRef<workflow::IWorkflow>());
+		}
 
     private:
+
+        int RunWorkflowInternal();
 
         std::string m_Name;
         ref_of<IRole>::type m_Role;

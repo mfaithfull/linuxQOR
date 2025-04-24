@@ -56,6 +56,36 @@ The pimpl pattern used here will be typical. The system module defines an interf
 
 Got diverted into async IO. Adding a zoo of new synchronisation objects to support coroutines from Lewis Baker's cppcoro 
 
-Performant Sync and Async file IO commonised across Windows and Linux looks possible now with liburing on Linux and a portable technique for handle async tasks using coroutines
+Performant Sync and Async file IO commonised across Windows and Linux looks possible now with liburing on Linux and a portable technique for handling async tasks using coroutines
 However the Filesystem modules are a major undertaking. This is going to take some time to get even approximately right because everything is OS specific and also has to be common so needs to be be developed 2.5 times and the .5 is the hardest due to needing a common abstraction that doesn't loose information compared with what it's abstracting.
+
+
+Took an opportunity back on Windows catching things up to start bringing in the thread memory stuff. There are now 3 thread specific memory sources to allocate from. 
+The basic Thread Heap which for now is just the normal heap which is already thread specific to an extent on Linux. The Windows variant isn't implemented yet but will be completely thread isolated.
+The 'Fast' heap which is a hybrid of an arena allocator and a stack. This is best for large up front allocations and chunky objects with stack like lifetime profiles. Asset loading , Sessions, profiles...
+The 'Small Object' heap which is also a hybrid stack, arena and bitmap allocator. This is best for flyweights, strings, short lived data models and small (< a few KBytes) objects with unpredicatable and overlapping lifetimes.
+
+New Source classes are provided so a simple 
+
+namespace qor{ 
+    qor_pp_declare_source_of(MyType, SmallObjectSource) 
+}
+
+is enough to get you a thread locally allocated MyType. This works with the singleton and default instancers, existing factories and of course flyers are already thread local and stack based so they're unaffected.
+
+What about the reference to an object. That too has a heap allocated part as well as the stack allocated object that you interact with. The heap allocated part can now also be made thread local, avoiding the global heap and expensive locks altogether.
+
+namespace qor{
+    qor_pp_declare_source_of(typename ref_of<MyType>::type, SmallObjectSource) 
+}
+
+will tell the smart reference system to allocate the shared heap based element of a reference to MyType from the SmallObjectSource which is backed by the Fast Heap which is in turned backed by the Thread Heap.
+Long running processes could run, memory stable as far as the OS is concerned, for hours never hitting the kernel or a mutex for memory allocation or release.
+This is of course not free. We trade space for performance with the SmallObject heap being ~ 65% dense and Fast Heap varying from much lower to higher depending on the distribution curve of the size of your objects.
+If you need to look after every byte then these are probably not the allocators you're looking for. If you need what they provide they're available as optional components.
+
+
+Polished the Application a little and hooked it up the the singleton for the OS wrapper.
+remember to provide The##### functions for genuinely global singletons so tha they are owned by the single module that declares them. use TheSystem() to access the System object from anywhere.
+
 

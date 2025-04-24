@@ -54,13 +54,13 @@ namespace qor{ namespace framework{
         return m_Name;
     }
 
-    int Application::Run( ref_of<workflow::IWorkflow>::type workflow )
+    int Application::RunWorkflow( ref_of<workflow::IWorkflow>::type workflow )
     {
         SetWorkflow(workflow);
-        return Run();
+        return RunWorkflowInternal();
     }
 
-    int Application::Run()
+    int Application::RunWorkflowInternal()
     {
         if(m_Role.IsNotNull())
         {
