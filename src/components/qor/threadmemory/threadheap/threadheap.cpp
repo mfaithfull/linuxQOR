@@ -36,7 +36,7 @@ namespace qor {
 
 using namespace qor;
 
-qor_pp_thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap> ThreadInstanceHolderThreadHeap;
+thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap> ThreadInstanceHolderThreadHeap;
 
 qor_pp_export qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>* GetCurrentThreadHeap()
 {
