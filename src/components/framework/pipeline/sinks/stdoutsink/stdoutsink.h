@@ -22,31 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_ERROR_SEVERITYWHAT
-#define QOR_PP_H_ERROR_SEVERITYWHAT
+#ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOUT
+#define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOUT
 
-#include "src/qor/issue/what.h"
-#include "severity.h"
+#include "src/framework/pipeline/sink.h"
 
-namespace qor{ 
+namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_ISSUE) SeverityWhat : public What
+    class qor_pp_module_interface(QOR_STDINSOURCE) StdOutSink : public pipeline::Sink
     {
     public:
 
-        SeverityWhat(const ref_of<SeverityWhat>::type& src) : What(src()), m_severity(src->m_severity)
-        {}
+        StdOutSink();
+        virtual ~StdOutSink() = default;
 
-        SeverityWhat(const std::string& what, Severity severity) : What(what), m_severity(severity)
-        {
-        }
+        virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
 
-        virtual ~SeverityWhat() noexcept = default;
     protected:
 
-        Severity m_severity;
+        virtual bool Read(size_t& unitsRead, size_t unitsToRead);
     };
 
-}//qor
+}}//qor::components
 
-#endif//QOR_PP_H_ERROR_SEVERITYWHAT
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOUT

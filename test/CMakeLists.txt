@@ -68,7 +68,8 @@ components/threadmemory/test_fastheap.cpp
 components/threadmemory/test_smallobjectpage.cpp
 components/threadmemory/test_smallobjectbucket.cpp
 components/threadmemory/test_smallobjectheap.cpp
-components/pipeline/test_stdinsource.cpp)
+components/pipeline/test_stdinsource.cpp
+components/pipeline/test_stdoutsink.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 
@@ -76,12 +77,12 @@ if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
-linq_filesystem linq_thread linq_process uring qor_task qor_threadmemory qor_system qor_stdinsource)
+linq_filesystem linq_thread linq_process uring qor_task qor_threadmemory qor_system qor_stdinsource qor_stdoutsink)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
-winq_filesystem winq_thread winq_process qor_task qor_threadmemory qor_system qor_stdinsource)
+winq_filesystem winq_thread winq_process qor_task qor_threadmemory qor_system qor_stdinsource qor_stdoutsink)
 endif()

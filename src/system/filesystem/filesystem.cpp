@@ -40,11 +40,11 @@ namespace qor{ namespace system{
     {
         if(m_pimpl.IsNotNull())
         {
-            Path::s_separator = m_pimpl().PathSeparator();
-            Path::s_selfIndicator = m_pimpl().SelfIndicator();
-            Path::s_parentIndicator = m_pimpl().ParentIndicator();
-            Path::s_maxElementLength = m_pimpl().MaxElementLength();
-            Path::s_rootIndicator = m_pimpl().RootIndicator();
+            Path::s_separator = m_pimpl->PathSeparator();
+            Path::s_selfIndicator = m_pimpl->SelfIndicator();
+            Path::s_parentIndicator = m_pimpl->ParentIndicator();
+            Path::s_maxElementLength = m_pimpl->MaxElementLength();
+            Path::s_rootIndicator = m_pimpl->RootIndicator();
         }
         m_root.Setup();
     }
@@ -70,12 +70,12 @@ namespace qor{ namespace system{
 
     ref_of<File>::type FileSystem::CreateFile(const FileIndex& index, const int withFlags) const
     {
-        return m_pimpl().CreateFile(index, withFlags);
+        return m_pimpl->CreateFile(index, withFlags);
     }
 
     bool FileSystem::DeleteFile(const FileIndex& index) const
     {
-        return m_pimpl().DeleteFile(index);
+        return m_pimpl->DeleteFile(index);
     }
 
     ref_of<File>::type FileSystem::OpenFile()

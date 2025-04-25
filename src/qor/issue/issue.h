@@ -46,9 +46,9 @@ namespace qor{
         {
             if(&src != this)
             {
-                m_what = new_ref<WhatT>(src.m_what());
-                m_when = new_ref<When>(src.m_when());
-                m_where = new_ref<Where>(src.m_where());
+                m_what = new_ref<WhatT>(src.m_what);
+                m_when = new_ref<When>(src.m_when);
+                m_where = new_ref<Where>(src.m_where);
             }
             return *this;
         }

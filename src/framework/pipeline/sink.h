@@ -57,10 +57,19 @@ namespace qor{ namespace pipeline{
         virtual bool IsSink();
 
     protected:
+        virtual void SetSink(Element*){};
 
         Element* m_source;
         Source* ActualSource();
 
+    };
+
+    class qor_pp_module_interface(QOR_PIPELINE) NullSink : public Sink
+    {
+    public:
+        NullSink() : Sink() {}
+        virtual ~NullSink() = default;
+        virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );
     };
 
 }}//qor::pipeline

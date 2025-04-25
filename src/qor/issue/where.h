@@ -39,6 +39,7 @@ namespace qor{
         Where(const char* szFile, const unsigned int uiLine, const char* szFunction);
         Where( const char* szFile, const unsigned int uiLine, const char* szFunction, const AnyObject& ObjContext);
         Where(const Where&);
+        Where(const ref_of<Where>::type&);
         Where& operator = (const Where&);
         virtual ~Where() noexcept = default;
 

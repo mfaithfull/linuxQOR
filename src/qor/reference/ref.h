@@ -146,13 +146,13 @@ namespace qor{
 			{
 				Lock();
 				unsigned long ulResult = ++m_ulRefCount;
-				Unlock();
+				//Unlock();
 				return ulResult;
 			}
 			
 			unsigned long Release(void)
 			{
-				Lock();
+				//Lock();
 				unsigned long ulResult = m_ulRefCount > 0 ? --m_ulRefCount : 0;
 				Unlock();
 

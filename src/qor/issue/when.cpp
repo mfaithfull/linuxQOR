@@ -39,6 +39,11 @@ namespace qor {
         *this = src;
     }
 
+    When::When(const ref_of<When>::type& src)
+    {
+        *this = src();
+    }
+
     When& When::operator = (const When& src)
     {
         if (&src != this)

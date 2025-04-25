@@ -22,31 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_ERROR_SEVERITYWHAT
-#define QOR_PP_H_ERROR_SEVERITYWHAT
+#include "src/configuration/configuration.h"
 
-#include "src/qor/issue/what.h"
-#include "severity.h"
+#include "stdoutsink.h"
+#include "src/framework/pipeline/source.h"
 
-namespace qor{ 
+namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_ISSUE) SeverityWhat : public What
+    StdOutSink::StdOutSink()
     {
-    public:
+    }
 
-        SeverityWhat(const ref_of<SeverityWhat>::type& src) : What(src()), m_severity(src->m_severity)
-        {}
+    bool StdOutSink::Write(size_t& unitsWritten, size_t unitsToWrite)
+    {
+        bool bResult = false;
+        size_t unitsAvailable = GetBuffer() ? GetBuffer()->ReadCapacity() : 0;
 
-        SeverityWhat(const std::string& what, Severity severity) : What(what), m_severity(severity)
+        if(unitsAvailable < unitsToWrite)
         {
+            size_t newUnits = 0;
+            Read(newUnits, unitsToWrite - unitsAvailable);
+            unitsAvailable += newUnits;
         }
 
-        virtual ~SeverityWhat() noexcept = default;
-    protected:
+        byte* pData = reinterpret_cast<byte*>(GetBuffer()->ReadRequest(unitsAvailable));
+        size_t unitSize = GetBuffer()->GetUnitSize();							        //The Buffer knows the Unit size in bytes
+        unitsWritten = fwrite(pData, unitSize, unitsAvailable,stdout);        
+        GetBuffer()->ReadAcknowledge(unitsWritten);							            //Update the source buffer reading point. That part of the buffer can be reused as we're done reading it.
+        return unitsWritten > 0 ? true : false;
+    }
 
-        Severity m_severity;
-    };
+    bool StdOutSink::Read(size_t& unitsRead, size_t unitsToRead)
+    {
+        return ( GetFlowMode() == Push || ( ActualSource()->Read(unitsRead, unitsToRead) && unitsRead > 0) );
+    }
 
-}//qor
-
-#endif//QOR_PP_H_ERROR_SEVERITYWHAT
+}}//qor::components

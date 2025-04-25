@@ -34,37 +34,44 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/pipeline/pipeline.h"
 #include "src/framework/pipeline/podbuffer.h"
+#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
 #include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/pipeline/source.h"
 
 using namespace qor;
 using namespace qor::test;
 using namespace qor::pipeline;
 using namespace qor::components;
 
-struct StdInSourceTestSuite{};
+struct StdOutSinkTestSuite{};
 
-qor_pp_test_suite_case(StdInSourceTestSuite, testCompilesWithqor_stdinsourceLinked)
+qor_pp_test_suite_case(StdOutSinkTestSuite, testCompilesWithqor_stdoutsinkLinked)
 {    
     qor_pp_assert_that(true).isTrue();
 }
 
-qor_pp_test_suite_case(StdInSourceTestSuite, canInstancestdinsource)
+qor_pp_test_suite_case(StdOutSinkTestSuite, canInstancestdoutsink)
 {    
-    auto source = new_ref<StdInSource>();
-    qor_pp_assert_that(source.IsNotNull()).isTrue();
+    auto sink = new_ref<StdOutSink>();
+    qor_pp_assert_that(sink.IsNotNull()).isTrue();
 }
 /*
-qor_pp_test_suite_case(StdInSourceTestSuite, canReadFromstdinsource)
+qor_pp_test_suite_case(StdOutSinkTestSuite, canWriteToStdOutSink)
 {    
     ByteBuffer buffer(1024);
-    NullSink sink;
-    StdInSource source;    
-    source.SetBuffer(&buffer);
+    StdOutSink sink;
+    StdInSource source;
     source.SetSink(&sink);
-    size_t unitsRead = 0;
-    size_t unitsToRead = 1;
-    bool result = source.Read(unitsRead, unitsToRead);
-    qor_pp_assert_that(result).isTrue();  
+    source.SetBuffer(&buffer);
+    sink.SetBuffer(&buffer);
+    sink.SetSource(&source);
+    size_t unitsWritten = 0;
+    size_t unitsToWrite = 10;
+    while( sink.Write(unitsWritten, unitsToWrite) && unitsToWrite > 0)
+    {
+        unitsToWrite -= unitsWritten;
+        unitsWritten = 0;
+    }
+    qor_pp_assert_that(unitsToWrite).isEqualTo(0);
 }
 */

@@ -43,7 +43,7 @@ namespace qor{
         {
             for( auto it : m_mapSubsystems)
             {
-                it.second().Setup();
+                it.second->Setup();
             }    
         }
         setupCompleted = true;
@@ -53,7 +53,7 @@ namespace qor{
     {
         for( auto it : m_mapSubsystems)
         {
-            it.second().Shutdown();            
+            it.second->Shutdown();            
         }
 
         m_mapSubsystems.clear();

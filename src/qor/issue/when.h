@@ -26,6 +26,7 @@
 #define QOR_PP_H_ISSUE_WHEN
 
 #include <chrono>
+#include "src/qor/reference/reference.h"
 
 namespace qor{ 
 
@@ -34,6 +35,7 @@ namespace qor{
     public:
         When();
         When(const When&);
+        When(const ref_of<When>::type&);
         When& operator = (const When&);
         virtual ~When() noexcept = default;
 

@@ -89,11 +89,11 @@ namespace qor{ namespace system{
         virtual void Setup() {}
         virtual void Shutdown() {}
 
-        std::string PathSeparator() { return "/"; }
-        std::string SelfIndicator() { return "."; }
-        std::string ParentIndicator() { return ".."; }
-        std::string RootIndicator() { return "/"; }
-        unsigned short MaxElementLength() { return 256; }
+        virtual std::string PathSeparator() const { return "/"; }
+        virtual std::string SelfIndicator() const { return "."; }
+        virtual std::string ParentIndicator() const { return ".."; }
+        virtual std::string RootIndicator() const { return "/"; }
+        virtual unsigned short MaxElementLength() const { return 256; }
         
         virtual ref_of<File>::type CreateFile(const FileIndex& index, const int withFlags) const 
         {

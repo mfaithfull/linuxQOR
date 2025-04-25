@@ -22,31 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_ERROR_SEVERITYWHAT
-#define QOR_PP_H_ERROR_SEVERITYWHAT
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include "src/qor/issue/what.h"
-#include "severity.h"
-
-namespace qor{ 
-
-    class qor_pp_module_interface(QOR_ISSUE) SeverityWhat : public What
-    {
-    public:
-
-        SeverityWhat(const ref_of<SeverityWhat>::type& src) : What(src()), m_severity(src->m_severity)
-        {}
-
-        SeverityWhat(const std::string& what, Severity severity) : What(what), m_severity(severity)
-        {
-        }
-
-        virtual ~SeverityWhat() noexcept = default;
-    protected:
-
-        Severity m_severity;
-    };
-
-}//qor
-
-#endif//QOR_PP_H_ERROR_SEVERITYWHAT
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Standard Output Sink Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

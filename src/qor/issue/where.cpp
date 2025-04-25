@@ -81,6 +81,11 @@ namespace qor{
         *this = src;
     }
 
+    Where::Where(const ref_of<Where>::type& src)
+    {
+        *this = src();
+    }
+
     Where& Where::operator = (const Where& src)
     {
         if (&src != this)

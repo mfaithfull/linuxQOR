@@ -124,32 +124,32 @@ namespace qor{ namespace framework{
 
     bool CurrentThread::SetPriority(ICurrentThread::Priority priority) const
     {
-        return new_ref<ICurrentThread>()().SetPriority(priority);
+        return new_ref<ICurrentThread>()->SetPriority(priority);
     }
 
     std::optional<ICurrentThread::Priority> CurrentThread::GetPriority() const
     {
-        return new_ref<ICurrentThread>()().GetPriority();
+        return new_ref<ICurrentThread>()->GetPriority();
     }
 
     bool CurrentThread::SetName(const std::string& name) const
     {
-        return new_ref<ICurrentThread>()().SetName(name);
+        return new_ref<ICurrentThread>()->SetName(name);
     }
 
     std::optional<std::string> CurrentThread::GetName() const
     {
-        return new_ref<ICurrentThread>()().GetName();
+        return new_ref<ICurrentThread>()->GetName();
     }
 
     bool CurrentThread::SetAffinity(const std::vector<bool>& affinity) const
     {
-        return new_ref<ICurrentThread>()().SetAffinity(affinity);
+        return new_ref<ICurrentThread>()->SetAffinity(affinity);
     }
 
     std::optional<std::vector<bool>> CurrentThread::GetAffinity() const
     {
-        return new_ref<ICurrentThread>()().GetAffinity();
+        return new_ref<ICurrentThread>()->GetAffinity();
     }
 
 }}//qor::framework
