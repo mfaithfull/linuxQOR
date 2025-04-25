@@ -80,7 +80,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, canConstructThreadPool)
     std::vector<std::thread::id> threads_from_pool = pool.GetThreadIds();
     std::sort(threads_from_pool.begin(), threads_from_pool.end());
     qor_pp_assert_that(threads_from_pool == unique_threads).isTrue();
-
+    pool.Shutdown();
 }
 
 qor_pp_test_suite_case(ThreadPoolTestSuite, confirmResetWorks)
@@ -97,6 +97,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, confirmResetWorks)
     qor_pp_assert_that(std::thread::hardware_concurrency() == pool.GetThreadCount()).isTrue();
     ////sync_out.println("Checking that after a second reset() the manually counted number of unique thread IDs is equal to the reported number of threads...");
     qor_pp_assert_that(pool.GetThreadCount() == obtain_unique_threads(pool).size()).isTrue();
+    pool.Shutdown();
 }
 
 //Check if the expected result has been obtained, report the result, and keep count of the total number of successes and failures.
@@ -433,6 +434,7 @@ void check_task(const std::string_view which_func)
             }
         }
     }
+    pool.Shutdown();
 }
 
 //A class to facilitate checking that member functions of different types have been successfully submitted.
@@ -604,6 +606,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctions)
             });
         check(flag_future.get() && flag.get_flag());
     }
+
+    pool.Shutdown();
 }
 
 qor_pp_test_suite_case(ThreadPoolTestSuite, canSubmitMemerFunctionsOnInstance)
@@ -730,6 +734,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, callableTypesAreExecuted)
     const functor functor_instance;
     pool.SubmitTask(functor_instance).wait();
     check(check_callables_flag);
+    pool.Shutdown();
 }
 
 // =====================================
@@ -757,6 +762,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitWorks)
     //sync_out.println("Waiting for tasks...");
     pool.Wait();
     check(all_flags_set(flags));
+    pool.Shutdown();
 }
 
 //Check that wait() correctly blocks all external threads that call it.
@@ -798,6 +804,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitBlocks)
     sem.release();
     temp_pool.Wait();
     check(all_flags_set(flags));
+    temp_pool.Shutdown();
+    pool.Shutdown();
 }
 
 qor_pp_test_suite_case(ThreadPoolTestSuite, wait_forWorks)
@@ -820,6 +828,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, wait_forWorks)
     //sync_out.println("Waiting for ", long_sleep_time.count() * 2, "ms...");
     pool.WaitFor(long_sleep_time * 2);
     check(done);
+    pool.Shutdown();
 }
 
 qor_pp_test_suite_case(ThreadPoolTestSuite, wait_untilWorks)
@@ -843,6 +852,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, wait_untilWorks)
     //sync_out.println("Waiting until ", long_sleep_time.count() * 2, "ms from submission time...");
     pool.WaitUntil(now + long_sleep_time * 2);
     check(done);
+    pool.Shutdown();
 }
 
 // An auxiliary thread pool used by check_wait_multiple_deadlock(). It's a global variable so that the program will not get stuck upon destruction of this pool if a deadlock actually occurs.
@@ -893,6 +903,8 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitMultipleCallDoesntDeadlock)
     }
     pool.Wait();//
     check(passed);
+    pool.Shutdown();
+    check_wait_multiple_deadlock_pool.Shutdown();
 }
 
 #ifdef __cpp_exceptions
@@ -920,6 +932,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, waitOnSelfTriggerDeadlockException)
         });
     check_wait_self_deadlock_pool.WaitFor(sleep_time);
     check(passed);
+    check_wait_self_deadlock_pool.Shutdown();
 }
 #endif
 
@@ -1177,6 +1190,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, blocksWorks)
         const std::int64_t start = random(-range, range);
         check(check_blocks_no_return(pool, start, start + random<std::int64_t>(0, static_cast<std::int64_t>(pool.GetThreadCount() * 2)), random<std::size_t>(pool.GetThreadCount() * 2, pool.GetThreadCount() * 4), "SubmitBlocks()"));
     }
+    pool.Shutdown();
 }
 
 // ============================================
@@ -1306,6 +1320,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, sequenceWorks)
             .wait();
         check(count == 0);
     }
+    pool.Shutdown();
 }
 
 // ===============================================
@@ -1350,6 +1365,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, monitoringWorks)
     //sync_out.println("After releasing the final ", num_threads, " tasks, should have: ", 0, " tasks total, ", 0, " tasks running, ", 0, " tasks queued...");
     //sync_out.print("Result: ", pool.GetTotalCountOfTasks(), " tasks total, ", pool.GetCountOfTasksRunning(), " tasks running, ", pool.GetCountOfTasksQueued(), " tasks queued ");
     check(pool.GetTotalCountOfTasks() == 0 && pool.GetCountOfTasksRunning() == 0 && pool.GetCountOfTasksQueued() == 0);
+    pool.Shutdown();
 }
 
 //Check that pausing works.
@@ -1382,6 +1398,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, pausingWorks)
     check(flag);
     //sync_out.println("Checking that the pool correctly reports that it is not paused...");
     check(!pool.IsPaused());
+    pool.Shutdown();
 }
 
 //Check that Purge() works.
@@ -1411,6 +1428,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, purgingWorks)
     //sync_out.println("Checking that only the first task was executed...");
     flags[0] = !flags[0];
     check(no_flags_set(flags));
+    pool.Shutdown();
 }
 
 #ifdef __cpp_exceptions
@@ -1448,6 +1466,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectly
         caught = true;
     }
     check(caught);
+    pool.Shutdown();
 }
 
 //Check that exceptions are forwarded correctly by `MultiFuture`.
@@ -1469,6 +1488,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkExceptionsAreForwardedCorrectly
         caught = true;
     }
     check(caught);
+    pool.Shutdown();
 }
 #endif
 
@@ -1518,6 +1538,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, vectorsWork)
     pool.Setup();
     for (std::size_t i = 0; i < repeats; ++i)
         check(check_vector_of_size(pool, random<std::size_t>(0, size_range), random<std::size_t>(1, pool.GetThreadCount())));
+    pool.Shutdown();
 }
 
 // =================================
@@ -1648,6 +1669,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, priorityWorks)
     pool.Wait();
     std::sort(priorities.rbegin(), priorities.rend());
     check(execution_order == priorities);
+    pool.Shutdown();
 }
 
 // =======================================================================
@@ -1697,6 +1719,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, initAndIndexWork)
             check(!ind_idx.has_value());
         });
     test_thread.Join();
+    pool.Shutdown();
 }
 
 //Check that thread cleanup functions work.
@@ -1717,6 +1740,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, cleanupWorks)
                     correct = false;
             });
         pool.Setup();
+        pool.Shutdown();
     }
     //sync_out.println("Checking that all reported indices have values...");
     check(correct);
@@ -1838,6 +1862,7 @@ void check_copy(const std::string_view which_func)
     pool.Wait();
     //sync_out.println("Copy count: ");
     check(0, copied.load()); // Note: Move count will be unpredictable if priority is on, so we don't check it.
+    pool.Shutdown();
 }
 
 // Check, for all member functions which parallelize loops or sequences of tasks, that the callable object does not get copied in the process.
@@ -1915,6 +1940,7 @@ void check_shared_ptr(const std::string_view which_func)
     check(num_tasks, uses_before_destruct.load());
     //sync_out.println("Uses after destruct:");
     check(0, uses_after_destruct.load());
+    pool.Shutdown();
 }
 
 // Check, for all member functions which parallelize loops or sequences of tasks, that if a task that captures a shared pointer is submitted, the pointer is correctly shared between all the iterations of the task.
@@ -1941,6 +1967,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, TaskDestructionWorks)
     }
     std::this_thread::sleep_for(sleep_time);
     check(!object_exists);
+    pool.Shutdown();
 }
 
 // Check that the type trait `common_index_type` works as expected.
@@ -2006,6 +2033,7 @@ void check_deadlock(const F&& task)
         //sync_out.println("Finished ", try_n, " tries out of ", tries, "...");
     }
     check(passed);
+    check_deadlock_pool.Shutdown();
 }
 
 // ====================================
@@ -2147,6 +2175,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadPriorities)
             check_root(CurrentThread::GetCurrent().SetPriority(ICurrentThread::Priority::normal));
     #endif
         });
+    pool.Shutdown();
 }
 
 //Check that getting and setting OS thread names works.
@@ -2278,6 +2307,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadAffinity)
             if (initial_process_affinity.has_value())
                 new_ref<ICurrentProcess>()().SetAffinity(*initial_process_affinity);
         });
+    pool.Shutdown();
 }
 
 template <typename... T>

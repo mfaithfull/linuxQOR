@@ -34,9 +34,9 @@ namespace qor{ namespace framework{
 
     void ThreadPool::Shutdown()
     {
-        Pause();
         Wait();
         Purge();
+        threads = {};
     }
 
     ThreadPool::~ThreadPool() noexcept                                                                          //Destruct the thread pool. Waits for all tasks to complete, then destroys all threads. If a cleanup function was set, it will run in each thread right before it is destroyed. Note that if the pool is paused, then any tasks still in the queue will never be executed.

@@ -27,17 +27,33 @@
 
 #include "threadheap.h"
 
+namespace qor {
+    bool qor_pp_module_interface(QOR_THREADMEMORY) ImplementsThreadHeap()
+    {
+        return true;
+    }
+}
+
 using namespace qor;
 
-#if(qor_pp_compiler == qor_pp_compiler_gcc)
-template<> qor_pp_export qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>::bInitialised = false;
-template<> qor_pp_export thread_local typename qor::ref_of<qor::components::threadmemory::ThreadHeap>::type qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>::theRef = qor::ThreadSingletonInstancer::template Instance<qor::components::threadmemory::ThreadHeap>(1);
-#endif
+qor_pp_thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap> ThreadInstanceHolderThreadHeap;
 
-#if(qor_pp_compiler == qor_pp_compiler_msvc)
-    bool qor::detail::ThreadInstanceHolder<class qor::components::threadmemory::ThreadHeap>::bInitialised = false;
-    ref_of<qor::components::threadmemory::ThreadHeap>::type qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>::theRef
-#endif
+qor_pp_export qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>* GetCurrentThreadHeap()
+{
+    return &ThreadInstanceHolderThreadHeap;
+}
+
+namespace qor {
+    namespace detail {
+
+        template<>
+        ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>* theThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>()
+        {
+            return GetCurrentThreadHeap();
+        }
+    }
+}
+
 
 namespace qor{ namespace components{ namespace threadmemory{
 

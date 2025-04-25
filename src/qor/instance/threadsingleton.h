@@ -38,11 +38,16 @@ namespace qor{
 
     namespace detail {
 
+        template <class T> class ThreadInstanceHolder;
+        
+        template<typename T>
+        ThreadInstanceHolder<T>* theThreadInstanceHolder();
+       
         template <class T>    
         class ThreadInstanceHolder final
         {
         public:
-            constexpr ThreadInstanceHolder() {}
+            constexpr ThreadInstanceHolder() : bInitialised(false) {}
 
             ~ThreadInstanceHolder()
             {
@@ -53,22 +58,22 @@ namespace qor{
                 }
             }
 
-            typename ref_of<T>::type Instance(size_t count)
+            typename ref_of<T>::type Instance()
             {
-                if( !bInitialised )
-                {                
-                    theRef = factory_of<T>::type::Construct(count);
+                if (!bInitialised)
+                {
+                    theRef = factory_of<T>::type::Construct();
                     bInitialised = true;
                 }
                 return theRef;
             }
 
-            template<typename... _p >
-            typename ref_of<T>::type Instance(size_t count, _p&&... p1)
+            template< class T, typename... _p >
+            static inline auto Instance(size_t uiCount, _p&&... p1)
             {
-                if( !bInitialised )
-                {                
-                    theRef = factory_of<T>::type::Construct(count, p1...);
+                if (!bInitialised)
+                {
+                    theRef = factory_of<T>::type::Construct(uiCount, std::forward<_p>(p1)...);
                     bInitialised = true;
                 }
                 return theRef;
@@ -79,12 +84,13 @@ namespace qor{
                 if(bInitialised)
                 {
                     factory_of<T>::type::Destruct(theRef);
+                    bInitialised = false;
                 }
             }
 
         public:
-            static qor_pp_thread_local ref_of<T>::type theRef;
-            static qor_pp_thread_local bool bInitialised;
+            ref_of<T>::type theRef;
+            bool bInitialised;
         };
         
     }//detail
@@ -96,38 +102,27 @@ namespace qor{
 		template< class T >
 		static inline void Release(T* pt, size_t count = 1)
 		{
-			Holder<T>().Release();
+            detail::theThreadInstanceHolder<T>()->Release();
 		}
 
 		template< class T >
 		static inline auto Instance(size_t count = 1)
 		{
-            return Holder<T>().Instance(count);
+            return detail::theThreadInstanceHolder<T>()->Instance();
 		}
 
         template< class T, typename... _p >
 		static inline auto Instance(size_t uiCount, _p&&... p1)
 		{
-			return Holder<T>().Instance(uiCount, std::forward<_p>(p1)...);
+			return detail::theThreadInstanceHolder<T>()->Instance(uiCount, std::forward<_p>(p1)...);
 		}
 		
 	private:
 
-        template< class T>
-        static detail::ThreadInstanceHolder<T>& Holder()
-        {
-            static detail::ThreadInstanceHolder<T> holder;
-            return holder;
-        }
-
         ThreadSingletonInstancer() = delete;
 		~ThreadSingletonInstancer() = delete;
-	};
+	};    
 
 }//qor
-
-#define qor_pp_implement_thread_singleton(_CLASS)\
-template<> qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<_CLASS>::bInitialised = false;\
-template<> qor_pp_thread_local ref_of<_CLASS>::type qor::detail::ThreadInstanceHolder<_CLASS>::theRef;\
 
 #endif//QOR_PP_H_INSTANCE_SINGLETON

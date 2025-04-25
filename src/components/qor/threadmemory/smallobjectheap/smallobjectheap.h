@@ -71,5 +71,7 @@ namespace qor{ namespace components{ namespace threadmemory{
 
 namespace qor{ qor_pp_declare_instancer_of(components::threadmemory::SmallObjectHeap, ThreadSingletonInstancer);}
 
+qor_pp_module_interface(QOR_THREADMEMORY) qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap>* GetCurrentSmallObjectHeap();
+
 #endif//QOR_PP_H_COMPONENT_THREADMEMORY_SMALLOBJECTHEAP
 

@@ -48,12 +48,13 @@ namespace qor
             AnyObject Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
 			if (Registration.IsNull())
 			{
-				throw std::logic_error("Template ID Factory cannot Destruct an unregistered class.");
+				//throw std::logic_error("Template ID Factory cannot Destruct an unregistered class.");
+                InternalFactory<T>::Destruct(pt, count);
 			}
 			else
 			{
                 IndirectFactory<T>* pFactory = Registration;
-				return pFactory->Destruct(pt,count);
+				pFactory->Destruct(pt,count);
 			}
         }
         

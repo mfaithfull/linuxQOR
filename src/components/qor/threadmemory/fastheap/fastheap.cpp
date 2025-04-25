@@ -29,15 +29,23 @@
 
 using namespace qor;
 
-#if(qor_pp_compiler == qor_pp_compiler_gcc)
-template<> qor_pp_export qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<qor::components::threadmemory::FastHeap>::bInitialised = false;
-template<> qor_pp_export thread_local typename qor::ref_of<qor::components::threadmemory::FastHeap>::type qor::detail::ThreadInstanceHolder<qor::components::threadmemory::FastHeap>::theRef = qor::ThreadSingletonInstancer::template Instance<qor::components::threadmemory::FastHeap>(1);
-#endif
 
-#if(qor_pp_compiler == qor_pp_compiler_msvc)
-    bool qor::detail::ThreadInstanceHolder<class qor::components::threadmemory::FastHeap>::bInitialised = false;
-    ref_of<qor::components::threadmemory::FastHeap>::type qor::detail::ThreadInstanceHolder<qor::components::threadmemory::FastHeap>::theRef
-#endif
+qor_pp_thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::FastHeap> ThreadInstanceHolderFastHeap;
+
+qor_pp_export qor::detail::ThreadInstanceHolder<components::threadmemory::FastHeap>* GetFastHeapHolder()
+{
+    return &ThreadInstanceHolderFastHeap;
+}
+
+namespace qor { namespace detail {
+
+        template<>
+        ThreadInstanceHolder<components::threadmemory::FastHeap>* theThreadInstanceHolder<components::threadmemory::FastHeap>()
+        {
+            return GetFastHeapHolder();
+        }
+}}
+
 
 namespace qor{ namespace components{ namespace threadmemory{
 
@@ -53,6 +61,11 @@ namespace qor{ namespace components{ namespace threadmemory{
             m_initialPages[Bucket].SetSize(BucketSize);
             BucketSize *= sc_powerScale;
         }
+    }
+
+    FastHeap::~FastHeap()
+    {
+
     }
 
     void* FastHeap::Allocate(size_t byteCount)

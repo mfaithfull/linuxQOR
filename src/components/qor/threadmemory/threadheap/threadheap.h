@@ -34,6 +34,11 @@
 #include "src/qor/reference/newref.h"
 #include "src/qor/instance/threadsingleton.h"
 
+namespace qor
+{
+    bool qor_pp_module_interface(QOR_THREADMEMORY) ImplementsThreadHeap();
+}
+
 namespace qor{ namespace components{ namespace threadmemory{
 
     class qor_pp_module_interface(QOR_THREADMEMORY) ThreadHeap
@@ -46,13 +51,12 @@ namespace qor{ namespace components{ namespace threadmemory{
         byte* Allocate(size_t byteCount);
         void Free(byte* allocation);
 
-    private:
-
-        //ref_of<IPrivateHeap>::type m_pimpl;
     };
 
 }}}//qor::components::threadmemory
 
 namespace qor{ qor_pp_declare_instancer_of(components::threadmemory::ThreadHeap, ThreadSingletonInstancer);}
+
+qor_pp_module_interface(QOR_THREADMEMORY) qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>* GetCurrentThreadHeap();    
 
 #endif//QOR_PP_H_COMPONENT_THREADMEMORY_HEAP

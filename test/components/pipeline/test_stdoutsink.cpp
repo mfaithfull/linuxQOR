@@ -55,7 +55,7 @@ qor_pp_test_suite_case(StdOutSinkTestSuite, canInstancestdoutsink)
     auto sink = new_ref<StdOutSink>();
     qor_pp_assert_that(sink.IsNotNull()).isTrue();
 }
-/*
+
 qor_pp_test_suite_case(StdOutSinkTestSuite, canWriteToStdOutSink)
 {    
     ByteBuffer buffer(1024);
@@ -74,4 +74,3 @@ qor_pp_test_suite_case(StdOutSinkTestSuite, canWriteToStdOutSink)
     }
     qor_pp_assert_that(unitsToWrite).isEqualTo(0);
 }
-*/

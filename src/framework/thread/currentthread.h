@@ -41,7 +41,6 @@ namespace qor{ namespace framework{
     class ThreadPool;                                                   //forward declare ThreadPool class
     class qor_pp_module_interface(QOR_THREAD) CurrentThread;
 
-    extern qor_pp_thread_local CurrentThread* t_pCurrentThread;
 
 #ifdef QOR_THREAD   //Anything other than the qor_thread library doesn't need to know about these
     extern qor_pp_thread_local std::optional<std::size_t> pool_index;
@@ -55,7 +54,7 @@ namespace qor{ namespace framework{
     public:
 
         static const CurrentThread& GetCurrent();
-
+        CurrentThread() {};
         CurrentThread(const CurrentThread & src) = delete;
         CurrentThread& operator=(CurrentThread const& src) = delete;
 		~CurrentThread(){};
@@ -98,8 +97,6 @@ namespace qor{ namespace framework{
         void SetIndex(std::optional<std::size_t> index);
 
         mutable ThreadContext m_Context;
-        CurrentThread(){};
-        void SetCurrent(CurrentThread* pThread);
     };
 
 }}//qor::framework

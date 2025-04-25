@@ -27,22 +27,38 @@
 #include "src/qor/reference/newref.h"
 
 namespace qor{
-#if(qor_pp_compiler == qor_pp_compiler_msvc)
-    bool qor::detail::ThreadInstanceHolder<class qor::framework::ICurrentThread>::bInitialised = false;
-    ref_of<framework::ICurrentThread>::type qor::detail::ThreadInstanceHolder<framework::ICurrentThread>::theRef;// = qor::ThreadSingletonInstancer::template Instance<framework::ICurrentThread>(1);
-#endif
-}
+    
+    namespace detail {
+        qor_pp_thread_local ThreadInstanceHolder<framework::ICurrentThread> ThreadInstanceHolderCurrentPlatformThread;
+        qor_pp_thread_local ThreadInstanceHolder<framework::CurrentThread> ThreadInstanceHolderCurrentThread;
+        
+        qor_pp_export ThreadInstanceHolder<framework::ICurrentThread>* GetCurrentPlatformThreadHolder()
+        {
+            return &ThreadInstanceHolderCurrentPlatformThread;
+        }
 
-namespace qor{ namespace framework{
+        qor_pp_export ThreadInstanceHolder<framework::CurrentThread>* GetCurrentThreadHolder()
+        {
+            return &ThreadInstanceHolderCurrentThread;
+        }
 
-    qor_pp_thread_local CurrentThread* t_pCurrentThread = nullptr;
+        template<>
+        ThreadInstanceHolder<framework::ICurrentThread>* theThreadInstanceHolder<framework::ICurrentThread>()
+        {
+            return GetCurrentPlatformThreadHolder();
+        }
+
+        template<>
+        ThreadInstanceHolder<framework::CurrentThread>* theThreadInstanceHolder<framework::CurrentThread>()
+        {
+            return GetCurrentThreadHolder();
+        }
+    }
+
+    namespace framework{
+
     qor_pp_thread_local std::optional<std::size_t> pool_index = std::nullopt;
     qor_pp_thread_local std::optional<void*> parent_pool = std::nullopt;
-
-#if(qor_pp_compiler == qor_pp_compiler_gcc)
-    template<> qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<framework::ICurrentThread>::bInitialised = false;
-    template<> thread_local typename ref_of<framework::ICurrentThread>::type qor::detail::ThreadInstanceHolder<framework::ICurrentThread>::theRef = qor::ThreadSingletonInstancer::template Instance<framework::ICurrentThread>(1);
-#endif
 
     std::optional<void*> CurrentThread::GetPool() const noexcept
     {
@@ -66,41 +82,23 @@ namespace qor{ namespace framework{
 
 	const CurrentThread& CurrentThread::GetCurrent()
 	{
-		if (t_pCurrentThread == nullptr)
-		{
-			t_pCurrentThread = new CurrentThread;
-		}
-        return *t_pCurrentThread;
+        return detail::GetCurrentThreadHolder()->Instance().operator const qor::framework::CurrentThread &();
 	}
 
     void CurrentThread::Init()
     {
-        t_pCurrentThread = nullptr;
     }
 
     void CurrentThread::Destroy()
     {
-        if (t_pCurrentThread)
-        {
-            delete t_pCurrentThread;
-            t_pCurrentThread = nullptr;
-        }
     }
 
 
 	CurrentThread& CurrentThread::GetMutableCurrent()
 	{
-		if (t_pCurrentThread == nullptr)
-		{
-			t_pCurrentThread = new CurrentThread;
-		}
-        return *t_pCurrentThread;
+        return detail::GetCurrentThreadHolder()->Instance()();
 	}
 
-    void SetCurrent(CurrentThread* pThread)
-    {
-        t_pCurrentThread = pThread;
-    }
 
     std::thread::id CurrentThread::GetID() const
     {

@@ -36,34 +36,37 @@
 #include "src/qor/instance/threadsingleton.h"
 #include "fastbucket.h"
 
-namespace qor{ namespace components{ namespace threadmemory{
+namespace qor { namespace components { namespace threadmemory {
 
-    class qor_pp_module_interface(QOR_THREADMEMORY) FastHeap final
-    {
-    public:
+        class qor_pp_module_interface(QOR_THREADMEMORY) FastHeap final
+        {
+        public:
 
-        static constexpr size_t sc_rootBuckets = 8;
-        static constexpr size_t sc_powerScale = 2;
+            static constexpr size_t sc_rootBuckets = 8;
+            static constexpr size_t sc_powerScale = 2;
 
-        FastHeap();
-        ~FastHeap() = default;
-        void* Allocate(size_t byteCount);
-        void Free(void* allocation, size_t byteCount);
-        size_t TotalBytesAllocated() const;
+            FastHeap();
+            ~FastHeap();
+            void* Allocate(size_t byteCount);
+            void Free(void* allocation, size_t byteCount);
+            size_t TotalBytesAllocated() const;
 
-    private:
+        private:
 
-        FastBucket* Bucket(size_t byteCount);
+            FastBucket* Bucket(size_t byteCount);
 
-        FastBucket m_initialPages[sc_rootBuckets];
-        size_t m_totalAlloc;
-        size_t m_peakAlloc;
-        size_t m_allocIndex;
+            FastBucket m_initialPages[sc_rootBuckets];
+            size_t m_totalAlloc;
+            size_t m_peakAlloc;
+            size_t m_allocIndex;
 
-    };
+        };
 
-}}}//qor::components::threadmemory
+    }}//qor::components::threadmemory
 
-namespace qor{ qor_pp_declare_instancer_of(components::threadmemory::FastHeap, ThreadSingletonInstancer);}
+    qor_pp_declare_instancer_of(components::threadmemory::FastHeap, ThreadSingletonInstancer);    
+}//qor
+
+qor_pp_module_interface(QOR_THREADMEMORY) qor::detail::ThreadInstanceHolder<qor::components::threadmemory::FastHeap>* GetFastHeapHolder();
 
 #endif//QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP

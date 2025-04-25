@@ -61,17 +61,27 @@ public:
     }
 };
 
-#if(qor_pp_compiler == qor_pp_compiler_gcc)
-template<> qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<Test_ThreadSingleton>::bInitialised = false;
-template<> thread_local typename ref_of<Test_ThreadSingleton>::type qor::detail::ThreadInstanceHolder<Test_ThreadSingleton>::theRef = qor::ThreadSingletonInstancer::template Instance<Test_ThreadSingleton>(1);
-#endif
 
-#if(qor_pp_compiler == qor_pp_compiler_msvc)
-    bool qor::detail::ThreadInstanceHolder<class Test_ThreadSingleton>::bInitialised = false;
-    qor::Ref<class Test_ThreadSingleton> qor::detail::ThreadInstanceHolder<class Test_ThreadSingleton>::theRef;// = qor::ThreadSingletonInstancer::template Instance<Test_ThreadSingleton>(1);
-#endif
+qor_pp_thread_local qor::detail::ThreadInstanceHolder<Test_ThreadSingleton> ThreadInstanceHolderTestSingleton;
 
 namespace qor{ qor_pp_declare_instancer_of(Test_ThreadSingleton, ThreadSingletonInstancer);}
+
+qor_pp_export qor::detail::ThreadInstanceHolder<Test_ThreadSingleton>* GetCurrentTestSingleton()
+{
+    return &ThreadInstanceHolderTestSingleton;
+}
+
+namespace qor {
+    namespace detail {
+
+        template<>
+        ThreadInstanceHolder<Test_ThreadSingleton>* theThreadInstanceHolder<Test_ThreadSingleton>()
+        {
+            return GetCurrentTestSingleton();
+        }
+    }
+}
+
 
 
 qor_pp_test_suite_case(ThreadSingletonTestSuite, canCreateThreadSingleton)

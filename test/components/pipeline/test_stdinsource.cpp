@@ -54,7 +54,7 @@ qor_pp_test_suite_case(StdInSourceTestSuite, canInstancestdinsource)
     auto source = new_ref<StdInSource>();
     qor_pp_assert_that(source.IsNotNull()).isTrue();
 }
-/*
+
 qor_pp_test_suite_case(StdInSourceTestSuite, canReadFromstdinsource)
 {    
     ByteBuffer buffer(1024);
@@ -67,4 +67,3 @@ qor_pp_test_suite_case(StdInSourceTestSuite, canReadFromstdinsource)
     bool result = source.Read(unitsRead, unitsToRead);
     qor_pp_assert_that(result).isTrue();  
 }
-*/

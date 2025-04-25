@@ -81,10 +81,7 @@ namespace qor{ namespace framework{
 	{
 		try
 		{
-			CurrentThread threadScopedState;
-			t_pCurrentThread = &threadScopedState;
 			Run();			
-			t_pCurrentThread = nullptr;
 		}
 		catch(const std::exception& e)
 		{
@@ -98,11 +95,6 @@ namespace qor{ namespace framework{
 
 	void Thread::CleanUp()
 	{
-		if (t_pCurrentThread)
-		{
-			delete t_pCurrentThread;
-		}
-		t_pCurrentThread = nullptr;
 	}
 
 }}//qor::framework

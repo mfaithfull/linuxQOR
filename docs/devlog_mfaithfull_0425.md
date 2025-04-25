@@ -89,3 +89,7 @@ Polished the Application a little and hooked it up the the singleton for the OS 
 remember to provide The##### functions for genuinely global singletons so tha they are owned by the single module that declares them. use TheSystem() to access the System object from anywhere.
 
 
+I'd forgotted what pain thread local singletons are on MSVC. Got them working there again although not without changing how they work to a less elegant solution under GCC. 
+That remains to be tested.
+
+Threadpool memory cleanup improved so threads in global pools are not left hanging around when the pool is done with. Wouldn't happen under 'normal' usage but who's ever seen 'normal' usage in the real world.

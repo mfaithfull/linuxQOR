@@ -37,11 +37,21 @@
 #include "src/qor/instance/threadsingleton.h"
 #include "src/components/qor/threadmemory/threadheap/threadheap.h"
 
+namespace qor { namespace detail {
+
+    template<>
+    ThreadInstanceHolder<components::threadmemory::ThreadHeap>* theThreadInstanceHolder<components::threadmemory::ThreadHeap>()
+    {
+        return ::GetCurrentThreadHeap();
+    }
+}}//qor::detail
+
 using namespace qor;
 using namespace qor::test;
 using namespace qor::components::threadmemory;
 
 struct ThreadHeapTestSuite{};
+bool requiresThreadHeap = qor::ImplementsThreadHeap();
 
 qor_pp_test_suite_case(ThreadHeapTestSuite, canAllocateAndFreeFromThreadHeap)
 {

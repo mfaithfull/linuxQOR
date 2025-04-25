@@ -29,15 +29,24 @@
 
 using namespace qor;
 
-#if(qor_pp_compiler == qor_pp_compiler_gcc)
-template<> qor_pp_export qor_pp_thread_local bool qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap>::bInitialised = false;
-template<> qor_pp_export thread_local typename qor::ref_of<qor::components::threadmemory::SmallObjectHeap>::type qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap>::theRef = qor::ThreadSingletonInstancer::template Instance<qor::components::threadmemory::SmallObjectHeap>(1);
-#endif
 
-#if(qor_pp_compiler == qor_pp_compiler_msvc)
-    bool qor::detail::ThreadInstanceHolder<class qor::components::threadmemory::SmallObjectHeap>::bInitialised = false;
-    ref_of<qor::components::threadmemory::SmallObjectHeap>::type qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap>::theRef
-#endif
+qor_pp_thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap> ThreadInstanceHolderSmallObjectHeap;
+
+qor_pp_export qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap>* GetCurrentSmallObjectHeap()
+{
+    return &ThreadInstanceHolderSmallObjectHeap;
+}
+
+namespace qor {
+    namespace detail {
+
+        template<>
+        ThreadInstanceHolder<components::threadmemory::SmallObjectHeap>* theThreadInstanceHolder<components::threadmemory::SmallObjectHeap>()
+        {
+            return GetCurrentSmallObjectHeap();
+        }
+    }
+}
 
 namespace qor{ namespace components{ namespace threadmemory{
 
@@ -86,7 +95,7 @@ namespace qor{ namespace components{ namespace threadmemory{
         }
         else
         {
-            throw memoryexception( "The Small Object Heap has ru out of space.");
+            throw memoryexception( "The Small Object Heap has run out of space.");
         }
         return memory;
     }

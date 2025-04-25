@@ -38,6 +38,17 @@
 #include "src/components/qor/threadmemory/smallobjectheap/smallobjectheap.h"
 #include "src/components/qor/threadmemory/smallobjectsource.h"
 
+namespace qor {
+    namespace detail {
+
+        template<>
+        ThreadInstanceHolder<components::threadmemory::SmallObjectHeap>* theThreadInstanceHolder<components::threadmemory::SmallObjectHeap>()
+        {
+            return GetCurrentSmallObjectHeap();
+        }
+    }
+}
+
 using namespace qor;
 using namespace qor::test;
 using namespace qor::components::threadmemory;

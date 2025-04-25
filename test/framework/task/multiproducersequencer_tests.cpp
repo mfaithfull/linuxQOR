@@ -184,6 +184,7 @@ qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_batch_sing
 		producerCount * std::uint64_t(iterationCount) * std::uint64_t(iterationCount + 1) / 2;
 
 	qor_pp_assert_that(result == expectedResult);
+	tp.Shutdown();
 }
 
 qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_single_single_consumer)
@@ -229,5 +230,6 @@ qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_single_sin
 		producerCount * std::uint64_t(iterationCount) * std::uint64_t(iterationCount + 1) / 2;
 
 	qor_pp_assert_that(result == expectedResult);
+	tp.Shutdown();
 }
 

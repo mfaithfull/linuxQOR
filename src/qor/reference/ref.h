@@ -345,6 +345,15 @@ namespace qor{
 			return m_p->ptr();
 		}
 
+		operator const T& () const
+		{
+			if (m_p == nullptr)
+			{
+				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
+			}
+			return const_cast<const T&>(*(m_p->ptr()));
+		}
+
 		~Ref()
 		{
 			Dispose();
