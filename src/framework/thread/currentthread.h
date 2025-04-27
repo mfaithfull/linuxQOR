@@ -57,7 +57,7 @@ namespace qor{ namespace framework{
         CurrentThread() {};
         CurrentThread(const CurrentThread & src) = delete;
         CurrentThread& operator=(CurrentThread const& src) = delete;
-		~CurrentThread(){};
+		~CurrentThread() noexcept = default;
 
         std::thread::id GetID(void) const;
 

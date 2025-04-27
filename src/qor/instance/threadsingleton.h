@@ -49,7 +49,7 @@ namespace qor{
         public:
             constexpr ThreadInstanceHolder() : bInitialised(false) {}
 
-            ~ThreadInstanceHolder()
+            ~ThreadInstanceHolder() noexcept
             {
                 if(bInitialised)
                 {
@@ -68,8 +68,8 @@ namespace qor{
                 return theRef;
             }
 
-            template< class T, typename... _p >
-            static inline auto Instance(size_t uiCount, _p&&... p1)
+            template< typename... _p >
+            inline auto Instance(size_t uiCount, _p&&... p1)
             {
                 if (!bInitialised)
                 {

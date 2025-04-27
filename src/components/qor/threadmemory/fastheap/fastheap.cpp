@@ -30,7 +30,7 @@
 using namespace qor;
 
 
-qor_pp_thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::FastHeap> ThreadInstanceHolderFastHeap;
+thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::FastHeap> ThreadInstanceHolderFastHeap;
 
 qor_pp_export qor::detail::ThreadInstanceHolder<components::threadmemory::FastHeap>* GetFastHeapHolder()
 {

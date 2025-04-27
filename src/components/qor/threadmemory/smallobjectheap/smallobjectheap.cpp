@@ -30,7 +30,7 @@
 using namespace qor;
 
 
-qor_pp_thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap> ThreadInstanceHolderSmallObjectHeap;
+thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap> ThreadInstanceHolderSmallObjectHeap;
 
 qor_pp_export qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap>* GetCurrentSmallObjectHeap()
 {

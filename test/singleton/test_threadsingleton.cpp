@@ -62,7 +62,7 @@ public:
 };
 
 
-qor_pp_thread_local qor::detail::ThreadInstanceHolder<Test_ThreadSingleton> ThreadInstanceHolderTestSingleton;
+thread_local qor::detail::ThreadInstanceHolder<Test_ThreadSingleton> ThreadInstanceHolderTestSingleton;
 
 namespace qor{ qor_pp_declare_instancer_of(Test_ThreadSingleton, ThreadSingletonInstancer);}
 

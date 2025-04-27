@@ -29,8 +29,8 @@
 namespace qor{
     
     namespace detail {
-        qor_pp_thread_local ThreadInstanceHolder<framework::ICurrentThread> ThreadInstanceHolderCurrentPlatformThread;
-        qor_pp_thread_local ThreadInstanceHolder<framework::CurrentThread> ThreadInstanceHolderCurrentThread;
+        thread_local ThreadInstanceHolder<framework::ICurrentThread> ThreadInstanceHolderCurrentPlatformThread;
+        thread_local ThreadInstanceHolder<framework::CurrentThread> ThreadInstanceHolderCurrentThread;
         
         qor_pp_export ThreadInstanceHolder<framework::ICurrentThread>* GetCurrentPlatformThreadHolder()
         {
