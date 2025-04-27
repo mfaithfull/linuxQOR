@@ -129,58 +129,6 @@ qor_pp_test_suite_case(PropertyTestSuite, canMakeAVectorValue)
     }
 }
 
-/*
-template <std::size_t I, std::size_t N>
-struct PropertyGenerator
-{
-    template< class T, class R>
-    static void Generate(PropertyVector& container, const T& value, const R& org_val)
-    {
-        auto val = qor_reflection::detail::sequence_tuple::get<I>(value);
-        auto c = qor_reflection::get_name<I, R>();
-        std::string name(c);
-        Property prop(PropertyName(name.c_str()));
-        prop.SetValue(PropertyValue().Set(val));
-        container.emplace_back(prop);
-        PropertyGenerator<I + 1, N>::Generate(container, value, org_val);
-    }
-};
-
-template <std::size_t I>
-struct PropertyGenerator<I, I>
-{
-    template <class T, class R> static void Generate(PropertyVector& container, const T& value, const R& org_val) noexcept {}
-};
-*/
-
-//template< class T >
-//T ToStruct(const Property& model)
-//{
-//    T result;
-//    qor_reflection::for_each_field_with_name(result, [&model](std::string_view name, auto& value, std::size_t i) 
-//        {
-//            if (model.GetType() == PVT_Vector)
-//            {
-//                using VT = std::remove_reference<decltype(value)>::type;
-//                auto v = model.GetVector();
-//
-//                auto it = std::find_if(v.cbegin(), v.cend(), [name, value](const Property& prop)->bool 
-//                    {
-//                        return strncmp(prop.GetName().c_str(), name.data(), name.length()) == 0;
-//                    }
-//                );
-//                if (it != v.end())
-//                {
-//                    auto propval = it->Value();
-//                    value = propval.Get<VT>();
-//                }
-//            }
-//        }
-//    );
-//
-//    return result;
-//}
-
 qor_pp_test_suite_case(PropertyTestSuite, canBuildPropertyModelFromStruct)
 {
     TestPerson person{ "charlie", "06/08/1988", 10745 };

@@ -27,9 +27,12 @@
 
 #include "propertyname.h"
 #include "propertyvalue.h"
-#include "propertygenerator.h"
+#include "src/qor/reflection/reflection.h"
 
 namespace qor {
+
+	template <std::size_t I, std::size_t N>
+    struct PropertyGenerator;
 
 	class qor_pp_module_interface(QOR_PROPERTY) Property : public PropertyBase
 	{
@@ -87,7 +90,7 @@ namespace qor {
 			constexpr std::size_t fieldCount = qor_reflection::detail::fields_count<T>();
 			Property result(PropertyName(typeid(T).name()));
 			PropertyVector fields;
-			qor::PropertyGenerator<0, fieldCount>::Generate(fields, qor_reflection::detail::tie_as_tuple(t), t);
+			PropertyGenerator<0, fieldCount>::Generate(fields, qor_reflection::detail::tie_as_tuple(t), t);
 			result.SetValue(PropertyValue().Set(fields));
 			return result;
 		}
@@ -111,7 +114,7 @@ namespace qor {
 						if (it != v.end())
 						{
 							auto propval = it->Value();
-							value = propval.Get<VT>();
+							value = propval.template Get<VT>();
 						}
 					}
 				}
@@ -125,5 +128,7 @@ namespace qor {
 	};
 
 }//qor
+
+#include "propertygenerator.h"
 
 #endif//QOR_PP_H_PROPERTY
