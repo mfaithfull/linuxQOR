@@ -70,3 +70,6 @@ Copy-Item -Path .\out\build\x64-Debug\src\components\framework\pipeline\sinks\st
 Copy-Item -Path .\out\build\x64-Debug\src\system\system\*.dll -Destination .\out\build\x64-Debug\test -Force
 Copy-Item -Path .\out\build\x64-Debug\src\system\system\*.lib -Destination .\out\build\x64-Debug\test -Force
 Copy-Item -Path .\out\build\x64-Debug\src\system\system\*.pdb -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\qor\property\*.dll -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\qor\property\*.lib -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\qor\property\*.pdb -Destination .\out\build\x64-Debug\test -Force
