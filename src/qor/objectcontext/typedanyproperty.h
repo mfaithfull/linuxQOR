@@ -38,9 +38,15 @@ namespace qor {
 
         TypedAnyProperty() : UnsafeAnyProperty(sizeof(T), nullptr) {}
 
-        TypedAnyProperty(const T& t) : UnsafeAnyProperty(sizeof(T), reinterpret_cast<void*>(const_cast<T*>(& t))) {}
+        TypedAnyProperty(const T& t) : UnsafeAnyProperty(sizeof(T)) 
+        {
+            new (Ptr())T(t);
+        }
 
-        TypedAnyProperty(const TypedAnyProperty& src) : UnsafeAnyProperty(sizeof(T), reinterpret_cast<void*>(src.Ptr())) {}
+        TypedAnyProperty(const TypedAnyProperty& src) : UnsafeAnyProperty(sizeof(T)) 
+        {
+            new (Ptr())T(src.Get());          
+        }
 
         TypedAnyProperty& operator = (const TypedAnyProperty& src)
         {

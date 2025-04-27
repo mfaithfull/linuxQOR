@@ -40,6 +40,12 @@ namespace qor {
 
         UnsafeAnyProperty() : m_internalCopy(nullptr) {}
 
+        UnsafeAnyProperty(size_t size)
+        {
+            m_internalCopy = new byte[size];
+            memset(m_internalCopy, 0, size);
+        }
+
         UnsafeAnyProperty(size_t size, void* data)
         {
             m_internalCopy = new byte[size];
