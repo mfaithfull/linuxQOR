@@ -36,7 +36,7 @@ namespace qor {
     {
     public:
 
-        TypedAnyProperty() : UnsafeAnyProperty(sizeof(T), nullptr) {}
+        TypedAnyProperty() : UnsafeAnyProperty(sizeof(T)) {}
 
         TypedAnyProperty(const T& t) : UnsafeAnyProperty(sizeof(T)) 
         {
@@ -50,17 +50,19 @@ namespace qor {
 
         TypedAnyProperty& operator = (const TypedAnyProperty& src)
         {
-            UnsafeAnyProperty::operator=(src);
-            return *this;
+            return operator=(src.Get());
         }
 
         TypedAnyProperty& operator = (const T& src)
         {
-            Set(reinterpret_cast<void*>(const_cast<T*>(&src)));
+            *(reinterpret_cast<T*>(m_internalCopy)) = src;
             return *this;
         }
 
-        virtual ~TypedAnyProperty() = default;
+        virtual ~TypedAnyProperty()
+        {
+            (reinterpret_cast<T*>(m_internalCopy))->~T();
+        }
 
         operator T () const
         {

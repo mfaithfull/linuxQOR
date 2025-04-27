@@ -46,35 +46,6 @@ namespace qor {
             memset(m_internalCopy, 0, size);
         }
 
-        UnsafeAnyProperty(size_t size, void* data)
-        {
-            m_internalCopy = new byte[size];
-            if (data)
-            {
-                memcpy(m_internalCopy, data, size);
-            }
-            else
-            {
-                memset(m_internalCopy, 0, size);
-            }
-        }
-
-        UnsafeAnyProperty(size_t size, const UnsafeAnyProperty & src) : m_internalCopy(new byte[size])
-        {
-            memcpy(m_internalCopy, src.m_internalCopy, size);
-        }
-
-        UnsafeAnyProperty& operator = (const UnsafeAnyProperty& src)
-        {
-            if (&src != this)
-            {
-                delete m_internalCopy;
-                m_internalCopy = new byte[Size()];
-                memcpy(m_internalCopy, src.m_internalCopy, Size());
-            }
-            return *this;
-        }
-
         virtual ~UnsafeAnyProperty()
         {
             delete m_internalCopy;
@@ -116,11 +87,6 @@ namespace qor {
         }
 
     protected:
-
-        void Set(void* p)
-        {
-            memcpy(m_internalCopy, p, Size());
-        }
 
         byte* m_internalCopy;
         
