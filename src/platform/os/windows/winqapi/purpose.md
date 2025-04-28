@@ -1,0 +1,1 @@
+Intends to provide access to the Win32 API in a safe and secure manner.

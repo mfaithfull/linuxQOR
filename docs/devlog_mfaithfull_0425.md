@@ -93,3 +93,7 @@ I'd forgotted what pain thread local singletons are on MSVC. Got them working th
 That remains to be tested.
 
 Threadpool memory cleanup improved so threads in global pools are not left hanging around when the pool is done with. Wouldn't happen under 'normal' usage but who's ever seen 'normal' usage in the real world.
+
+Prepping for expansion towards terminal support. The awkward Windows Console will come first as it's the lowest uncommon denominator. Then probably XTerm as the next most primitive.
+The goal is to support a common port of Public Domain Curses, Qurses which will in turn act as a minimal fallback rendering target for a portable UI system.
+
