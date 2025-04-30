@@ -22,60 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/qor/module/module.h"
-#include "../../src/qor/issue/issue.h"
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "console.h"
+#include "src/system/filesystem/ifilesystem.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
+#include "src/qor/reference/newref.h"
 
-using namespace qor;
-using namespace qor::test;
-
-struct IssueTestSuite{};
-
-enum class Category
+qor::Module& ThisModule(void)
 {
-    Top = 1,
-    Up,
-    Down,
-    Strange,
-    Charm,
-    Bottom
-};
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Console Module",
+		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-class CategoryIssue : public qor::Issue<qor::What>
-{
-public:
-
-    CategoryIssue(Category q)
-    {
-        m_q = q;
-    }
-
-    virtual ~CategoryIssue() noexcept = default;
-    
-    virtual void Handle(void) const
-    {
-        Resolve( m_q == Category::Charm );
-    }
-
-    virtual void Escalate(void) const
-    {
-        qor::issue<CategoryIssue, Category>(Category::Charm);
-    }
-private:
-
-    Category m_q;
-};
-
-void raise_category_issue(const Category& q)
-{
-    qor::issue<CategoryIssue, const Category&>(q);
-}
-
-qor_pp_test_suite_case(IssueTestSuite, canConstructACategoryIssue)
-{
-    raise_category_issue( Category::Strange );
-
-    qor_pp_assert_that( true ).isTrue();
+	static qor::TypeRegEntry< qor::nsLinux::Console, qor::components::IConsole> reg;  //Register the Linux specific implementation of IConsole
+	return QORModule;
 }

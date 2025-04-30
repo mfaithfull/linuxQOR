@@ -22,60 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/qor/module/module.h"
-#include "../../src/qor/issue/issue.h"
+#ifndef QOR_PP_H_OS_LINUX_COMPONENTS_CONSOLE
+#define QOR_PP_H_OS_LINUX_COMPONENTS_CONSOLE
 
-using namespace qor;
-using namespace qor::test;
+#include "src/components/framework/console/iconsole.h"
+//#include "src/platform/os/windows/system/filesystem/file.h"
 
-struct IssueTestSuite{};
-
-enum class Category
+namespace qor
 {
-    Top = 1,
-    Up,
-    Down,
-    Strange,
-    Charm,
-    Bottom
-};
+	bool qor_pp_module_interface(QOR_LINCONSOLE) ImplementsIConsole();
+}
 
-class CategoryIssue : public qor::Issue<qor::What>
-{
-public:
+namespace qor { namespace nsLinux {
 
-    CategoryIssue(Category q)
-    {
-        m_q = q;
-    }
+	class qor_pp_module_interface(QOR_LINCONSOLE) Console : public components::IConsole
+	{
+	public:
 
-    virtual ~CategoryIssue() noexcept = default;
+		Console();
+
+		~Console() {}
+
+		void SetOut(int fileHandle);
+		void SetIn(int fileHandle);
+		void SetErr(int fileHandle);
+		void ResetOut();
+		void ResetIn();
+		void ResetErr();
+
+		virtual void WriteLine(string_t& output);
+		virtual string_t ReadLine();
+		virtual char_t ReadChar();
+		virtual void WriteChar(char_t c);
+
+	private:
+
+		bool m_redirected;
+		void* m_outFile;
+		void* m_inFile;
+		void* m_errFile;		
+		
+	};
     
-    virtual void Handle(void) const
-    {
-        Resolve( m_q == Category::Charm );
-    }
+}}//qor::nsLinux
 
-    virtual void Escalate(void) const
-    {
-        qor::issue<CategoryIssue, Category>(Category::Charm);
-    }
-private:
-
-    Category m_q;
-};
-
-void raise_category_issue(const Category& q)
-{
-    qor::issue<CategoryIssue, const Category&>(q);
-}
-
-qor_pp_test_suite_case(IssueTestSuite, canConstructACategoryIssue)
-{
-    raise_category_issue( Category::Strange );
-
-    qor_pp_assert_that( true ).isTrue();
-}
+#endif//QOR_PP_H_OS_LINUX_COMPONENTS_CONSOLE

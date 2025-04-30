@@ -22,60 +22,40 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/qor/module/module.h"
-#include "../../src/qor/issue/issue.h"
+#include "src/configuration/configuration.h"
 
-using namespace qor;
-using namespace qor::test;
+#include "console.h"
+#include "src/qor/error/error.h"
 
-struct IssueTestSuite{};
+namespace qor {
+	bool qor_pp_module_interface(QOR_LINCONSOLE) ImplementsIConsole() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIConsole requirement. 
+	{
+		return true;
+	}
+}//qor
 
-enum class Category
-{
-    Top = 1,
-    Up,
-    Down,
-    Strange,
-    Charm,
-    Bottom
-};
+namespace qor { namespace nsLinux {
 
-class CategoryIssue : public qor::Issue<qor::What>
-{
-public:
+	Console::Console() : m_redirected(false)
+	{
+	}
 
-    CategoryIssue(Category q)
-    {
-        m_q = q;
-    }
+	string_t Console::ReadLine()
+	{
+		return string_t();
+	}
 
-    virtual ~CategoryIssue() noexcept = default;
-    
-    virtual void Handle(void) const
-    {
-        Resolve( m_q == Category::Charm );
-    }
+	char_t Console::ReadChar()
+	{
+		return 0;
+	}
 
-    virtual void Escalate(void) const
-    {
-        qor::issue<CategoryIssue, Category>(Category::Charm);
-    }
-private:
+	void Console::WriteChar(char_t c)
+	{
+	}
 
-    Category m_q;
-};
+	void Console::WriteLine(string_t& output)
+	{
+	}
 
-void raise_category_issue(const Category& q)
-{
-    qor::issue<CategoryIssue, const Category&>(q);
-}
-
-qor_pp_test_suite_case(IssueTestSuite, canConstructACategoryIssue)
-{
-    raise_category_issue( Category::Strange );
-
-    qor_pp_assert_that( true ).isTrue();
-}
+}}//qor::nsLinux

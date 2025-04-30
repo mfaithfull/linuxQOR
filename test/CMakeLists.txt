@@ -79,7 +79,7 @@ target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_object
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_task qor_threadmemory qor_system qor_stdinsource qor_stdoutsink qor_property qor_console
-linq_filesystem linq_thread linq_process uring )
+linq_filesystem linq_thread linq_process uring linq_console)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
