@@ -23,28 +23,43 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "error.h"
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/instance/instance.h"
+#include "src/qor/reference/ref.h"
+#include "src/qor/reference/newref.h"
+#include "iconsole.h"
+#include "console.h"
+#include <iostream>
 
-namespace qor{
+namespace qor { namespace components {
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
+    Console::Console()
     {
+        m_pimpl = new_ref<IConsole>();
     }
 
-    Continuable& Continuable::operator = (const Continuable& src)
+    string_t Console::ReadLine()
     {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
+        return m_pimpl->ReadLine();
     }
 
-    void Continuable::Escalate(void) const
+    void Console::WriteLine(string_t line)
     {
-        throw(*this);
-    }
-
-    void continuable(const std::string& message)
-    {
-        issue<Continuable, const std::string&>(message);
+        std::cout.write(reinterpret_cast<const char*>(line.c_str()), line.size());
     }
     
-}//qor
+    char_t Console::ReadChar()
+    {
+        return m_pimpl->ReadChar();
+    }
+    
+    void Console::WriteChar(char_t c)
+    {
+        std::cout.write(reinterpret_cast<char*>(&c), 1);
+    }
+
+}}//qor::components
+

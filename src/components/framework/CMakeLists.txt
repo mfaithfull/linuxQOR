@@ -7,3 +7,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(optionparser)
 add_subdirectory(pipeline)
+add_subdirectory(console)

@@ -49,6 +49,12 @@ static constexpr int function_stride = 1;
 
 #define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING
 
+//Calling conventions
+#define qor_pp_compiler_callcon						__cdecl
+#define qor_pp_compiler_stdcallconvention			__stdcall
+#define qor_pp_compiler_thiscall					//explicit __thiscall not supported? not sure why you'd need it anyway?
+#define qor_pp_compiler_fastcall					__fastcall
+
 #define qor_pp_export			__declspec(dllexport)
 #define qor_pp_import			__declspec(dllimport)
 #define qor_pp_thread_local     __declspec(thread)

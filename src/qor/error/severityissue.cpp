@@ -31,7 +31,7 @@
 
 namespace qor{ 
 
-    SeverityIssue::SeverityIssue(Severity s, const std::string& message) : Issue()
+    Error::Error(Severity s, const std::string& message) : Issue()
     {
         auto pContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
         m_when = new_ref<When>();
@@ -42,15 +42,15 @@ namespace qor{
         m_what = new_ref<SeverityWhat>(message, s);
     }
 
-    SeverityIssue& SeverityIssue::operator = (const SeverityIssue& src)
+    Error& Error::operator = (const Error& src)
     {
         Issue<SeverityWhat>::operator = (src);
         return *this;
     }
 
-    void SeverityIssue::Handle(void)
+    void Error::Handle(void) const
     {
-        auto pHandler = new_ref< IssueHandler<SeverityIssue> >();
+        auto pHandler = new_ref< IssueHandler<Error> >();
         if(!pHandler.IsNull())
         {
             Resolve(pHandler->Handle(*this));

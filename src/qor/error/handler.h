@@ -50,7 +50,7 @@ namespace qor{
 
 		virtual ~BaseIssueHandler(){}
 
-        virtual bool Handle(Issue<What>& issue)
+        virtual bool Handle(const Issue<What>& issue) const
         {
             return false;//false here means failure to resovle the issue
         }        
@@ -71,15 +71,15 @@ namespace qor{
             Flyer< IssueHandler<T>, BaseIssueHandler >::Pop();
         }
 
-        virtual bool Handle(T& Issue)
+        virtual bool Handle(const T& Issue) const
         {
             return false;//false here means failure to resovle the issue
         }        
     };    
 
     constexpr GUID SeverityIssueHandlerGUID = {0x88a20115, 0xb7cb, 0x4a45, { 0xa8, 0x8a, 0x72, 0xa3, 0x1b, 0x61, 0x0a, 0x3d}};
-    qor_pp_declare_guid_of(IssueHandler<SeverityIssue>,SeverityIssueHandlerGUID)
-    qor_pp_declare_ref_of(IssueHandler<SeverityIssue>,FlyerRef);
+    qor_pp_declare_guid_of(IssueHandler<Error>,SeverityIssueHandlerGUID)
+    qor_pp_declare_ref_of(IssueHandler<Error>,FlyerRef);
 
     template<class T> struct ref_of< IssueHandler<T> >
     {

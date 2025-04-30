@@ -29,14 +29,20 @@
 
 namespace qor{ namespace framework{
 
-    class IFeature
+    class qor_pp_module_interface(QOR_ROLE) IFeature
     {
     public:
 
         IFeature() = default;
         virtual ~IFeature() = default;
-        virtual void Setup() = 0;
-        virtual void Shutdown() = 0;
+
+        virtual void Setup() {};
+        virtual void Shutdown() {};
+
+    private:
+
+        IFeature(const IFeature&) = delete;
+        IFeature& operator = (const IFeature&) = delete;
     };
 
 }}//qor::framework

@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #ifndef QOR_PP_H_COMPILER
-#define QOR_PP_H_COMPILER
+#define QOR_PP_H_COMPILER       
 
 #include <string>
 #include <cstdint>

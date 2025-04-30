@@ -30,6 +30,12 @@ static constexpr int function_stride = 1;
 
 #define qor_pp_compiler_extra_destructor
 
+//Calling conventions
+#define qor_pp_compiler_callcon						__attribute__ ((cdecl))
+#define qor_pp_compiler_stdcallconvention			__attribute__ ((stdcall)
+#define qor_pp_compiler_thiscall					__attribute__ ((thiscall))
+#define qor_pp_compiler_fastcall					__attribute__ ((fastcall))
+
 #define qor_pp_export           __attribute__((__visibility__("default")))
 #define qor_pp_import
 #define qor_pp_thread_local     __thread

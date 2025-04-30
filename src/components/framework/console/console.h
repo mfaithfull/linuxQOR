@@ -22,29 +22,44 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE
 
-namespace qor{
+#include "src/framework/role/ifeature.h"
+#include "iconsole.h"
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
-    {
-    }
+namespace qor
+{
+    bool qor_pp_import ImplementsIConsole();//All libraries providing an implementation of IConsole also need to export this function so that the linker can find them
+}
 
-    Continuable& Continuable::operator = (const Continuable& src)
-    {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
-    }
+namespace qor { namespace components {
 
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
+        class qor_pp_module_interface(QOR_CONSOLE) Console : public framework::IFeature
+        {
+        public:
 
-    void continuable(const std::string& message)
-    {
-        issue<Continuable, const std::string&>(message);
-    }
-    
+            Console();
+            ~Console() noexcept = default;
+
+            virtual void Setup() {}
+            virtual void Shutdown() {}
+
+            string_t ReadLine();
+            void WriteLine(string_t line);
+            char_t ReadChar();
+            void WriteChar(char_t c);
+
+        private:
+
+            ref_of<IConsole>::type m_pimpl;
+        };
+
+    }//qor::components
+
+    constexpr GUID ConsoleGUID = { 0xc4277aad, 0x3a81, 0x4f19, {0xba, 0x77, 0x2d, 0xaa, 0xa1, 0x1a, 0x9f, 0x0a} };
+    qor_pp_declare_guid_of(components::Console, ConsoleGUID);
+
 }//qor
+
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE

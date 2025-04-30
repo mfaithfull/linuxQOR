@@ -35,9 +35,9 @@ namespace qor{
         Fatal(const std::string& message);
         virtual ~Fatal() noexcept = default;
         Fatal& operator = (const Fatal& src);
-        virtual void Handle();
-        virtual void Escalate();
-        virtual void Ignore();
+        virtual void Handle() const;
+        virtual void Escalate() const;
+        virtual void Ignore() const;
     };
 
     qor_pp_module_interface(QOR_ERROR) void fatal(const std::string& message);
@@ -48,9 +48,9 @@ namespace qor{
         Serious(const std::string& message);
         virtual ~Serious() noexcept = default;
         Serious& operator = (const Serious& src);
-        virtual void Handle();
-        virtual void Escalate();
-        virtual void Ignore();
+        virtual void Handle() const;
+        virtual void Escalate() const;
+        virtual void Ignore() const;
     };
 
     qor_pp_module_interface(QOR_ERROR) void serious(const std::string& message);
@@ -61,7 +61,7 @@ namespace qor{
         Continuable(const std::string& message);
         virtual ~Continuable() noexcept = default;
         Continuable& operator = (const Continuable& src);
-        virtual void Escalate();
+        virtual void Escalate() const;
     };
 
     qor_pp_module_interface(QOR_ERROR) void continuable(const std::string& message);
@@ -72,7 +72,7 @@ namespace qor{
         Warning(const std::string& message);
         virtual ~Warning() noexcept = default;
         Warning& operator = (const Warning& src);
-        virtual void Escalate();
+        virtual void Escalate() const;
     };
 
     qor_pp_module_interface(QOR_ERROR) void warning(const std::string& message);
@@ -83,7 +83,7 @@ namespace qor{
         Note(const std::string& message);
         virtual ~Note() noexcept = default;
         Note& operator = (const Note& src);
-        virtual void Escalate() {}
+        virtual void Escalate() const {}
     };
 
     qor_pp_module_interface(QOR_ERROR) void note(const std::string& message);

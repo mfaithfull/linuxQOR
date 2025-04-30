@@ -22,29 +22,50 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE_INTERFACE
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE_INTERFACE
 
-namespace qor{
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/instance/singleton.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/factory/externalfactory.h"
+#include "src/qor/reference/reference.h"
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
-    {
-    }
+namespace qor { namespace components {
 
-    Continuable& Continuable::operator = (const Continuable& src)
-    {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
-    }
+        class qor_pp_module_interface(QOR_CONSOLE) IConsole
+        {
+        public:
 
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
+            IConsole() = default;
+            virtual ~IConsole() noexcept = default;
 
-    void continuable(const std::string& message)
-    {
-        issue<Continuable, const std::string&>(message);
-    }
-    
+            virtual void Setup() {}
+            virtual void Shutdown() {}
+
+            virtual string_t ReadLine()
+            {
+                return string_t();
+            }
+
+            virtual void WriteLine(string_t line){}
+            
+            virtual char_t ReadChar()
+            {
+                return 0;
+            }
+
+            virtual void WriteChar(char_t c) {}
+
+        };
+
+    }//qor::components
+
+    qor_pp_declare_instancer_of(components::IConsole, SingletonInstancer);
+    qor_pp_declare_factory_of(components::IConsole, ExternalFactory);
+    constexpr GUID IConsoleGUID = { 0xcbcea0af, 0x9f81, 0x4644, { 0x88, 0x5d, 0x61, 0x80, 0x8a, 0x25, 0x48, 0x56} };
+    qor_pp_declare_guid_of(components::IConsole, IConsoleGUID);
+
 }//qor
+
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE_INTERFACE

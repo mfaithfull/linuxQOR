@@ -30,6 +30,8 @@
 #ifndef QOR_PP_H_CONFIGURATION
 #define QOR_PP_H_CONFIGURATION
 
+#include <string>
+
 #include "../platform/os/systems.h"
 #include "../platform/architecture/architectures.h"
 
@@ -51,5 +53,13 @@
 #define qor_pp_ver_major 0
 #define qor_pp_ver_minor 0
 #define qor_pp_ver_patch 0
+
+#ifdef qor_pp_unicode
+typedef char16_t char_t;
+#else
+typedef char char_t;
+#endif
+
+typedef std::basic_string<char> string_t;
 
 #endif//QOR_PP_H_CONFIGURATION

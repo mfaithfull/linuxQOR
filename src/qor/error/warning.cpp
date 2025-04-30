@@ -37,7 +37,7 @@ namespace qor{
         return *this;
     }
 
-    void Warning::Escalate(void)
+    void Warning::Escalate(void) const
     {
         continuable("Warning ignored: {0}");
     }

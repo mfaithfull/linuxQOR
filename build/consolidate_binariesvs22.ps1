@@ -73,3 +73,16 @@ Copy-Item -Path .\out\build\x64-Debug\src\system\system\*.pdb -Destination .\out
 Copy-Item -Path .\out\build\x64-Debug\src\qor\property\*.dll -Destination .\out\build\x64-Debug\test -Force
 Copy-Item -Path .\out\build\x64-Debug\src\qor\property\*.lib -Destination .\out\build\x64-Debug\test -Force
 Copy-Item -Path .\out\build\x64-Debug\src\qor\property\*.pdb -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\platform\os\windows\components\wincon\*.dll -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\platform\os\windows\components\wincon\*.lib -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\platform\os\windows\components\wincon\*.pdb -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\platform\os\windows\common\*.dll -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\platform\os\windows\common\*.lib -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\platform\os\windows\common\*.pdb -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\platform\os\windows\winqapi\*.dll -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\platform\os\windows\winqapi\*.lib -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\platform\os\windows\winqapi\*.pdb -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\components\framework\console\*.dll -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\components\framework\console\*.lib -Destination .\out\build\x64-Debug\test -Force
+Copy-Item -Path .\out\build\x64-Debug\src\components\framework\console\*.pdb -Destination .\out\build\x64-Debug\test -Force
+

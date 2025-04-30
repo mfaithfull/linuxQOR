@@ -5,4 +5,6 @@ add_subdirectory(sharedbootstrap)
 add_subdirectory(system)
 add_subdirectory(framework)
 add_subdirectory(winqapi)
+add_subdirectory(components)
+add_subdirectory(common)
 

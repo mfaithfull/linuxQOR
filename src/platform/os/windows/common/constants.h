@@ -22,29 +22,18 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
+#ifndef QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
+#define QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
 
-namespace qor{
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
-    {
-    }
+#define Invalid_Handle_Value ((void* const)(size_t)(-1))
 
-    Continuable& Continuable::operator = (const Continuable& src)
-    {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
-    }
+namespace qor{ namespace nsWindows {
 
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
+	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
+	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
+	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
 
-    void continuable(const std::string& message)
-    {
-        issue<Continuable, const std::string&>(message);
-    }
-    
-}//qor
+}}//qor::nsWindows
+
+#endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS

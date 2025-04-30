@@ -38,7 +38,7 @@ namespace qor{
         return *this;
     }
     
-    void Serious::Handle()
+    void Serious::Handle() const
     {
         auto pSeriousHandler = new_ref< IssueHandler<Serious> >();
         if(!pSeriousHandler.IsNull())
@@ -47,7 +47,7 @@ namespace qor{
         }
         else
         {
-            auto pHandler = new_ref< IssueHandler<SeverityIssue> >();
+            auto pHandler = new_ref< IssueHandler<Error> >();
             if(!pHandler.IsNull())
             {
                 Resolve(pHandler->Handle(*this));
@@ -59,12 +59,12 @@ namespace qor{
         }
     }
 
-    void Serious::Escalate()
+    void Serious::Escalate() const
     {
         throw(this);
     }
     
-    void Serious::Ignore()
+    void Serious::Ignore() const
     {
         warning("Ignoring a serious issue. Extreme caution advided! {0}");
     }

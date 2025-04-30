@@ -31,25 +31,29 @@
 
 namespace qor{ 
 
-    class qor_pp_module_interface(QOR_ISSUE) SeverityIssue : public Issue<SeverityWhat>
+    class qor_pp_module_interface(QOR_ISSUE) Error : public Issue<SeverityWhat>
     {
     public:
 
-        SeverityIssue(Severity s, const std::string& message);
-        virtual ~SeverityIssue() noexcept = default;
-        SeverityIssue& operator = (const SeverityIssue& src);
-        virtual void Handle(void);   
+        Error(Severity s, const std::string& message);
+        virtual ~Error() noexcept = default;
+        Error& operator = (const Error & src);
+        virtual void Handle() const;
+        virtual void Catch() const
+        {
+            Handle();
+        }
     };
 
     template<Severity S>
-    class SeverityTemplateIssue : public SeverityIssue
+    class SeverityTemplateIssue : public Error
     {
     public:
-        SeverityTemplateIssue(const std::string& message) : SeverityIssue(S, message) {}
+        SeverityTemplateIssue(const std::string& message) : Error(S, message) {}
         virtual ~SeverityTemplateIssue() noexcept = default;
         SeverityTemplateIssue& operator = (const SeverityTemplateIssue& src)
         {
-            SeverityIssue::operator=(src);
+            Error::operator=(src);
             return *this;
         }
         const Severity GetSeverity() const { return S; }

@@ -38,7 +38,7 @@ namespace qor{
         return *this;
     }
     
-    void Fatal::Handle()
+    void Fatal::Handle() const
     {
         auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
         if(!pFatalHandler.IsNull())
@@ -48,7 +48,7 @@ namespace qor{
         }
         else
         {
-            auto pHandler = new_ref< IssueHandler<SeverityIssue> >();
+            auto pHandler = new_ref< IssueHandler<Error> >();
             if(!pHandler.IsNull())
             {
                 pHandler->Handle(*this);
@@ -57,12 +57,12 @@ namespace qor{
         }
     }
         
-    void Fatal::Escalate()
+    void Fatal::Escalate() const
     {
         std::terminate();
     }
     
-    void Fatal::Ignore()
+    void Fatal::Ignore() const
     {
         Escalate();//Can't ignore fatal issues.
     }

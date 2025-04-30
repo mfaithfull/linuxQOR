@@ -67,9 +67,9 @@ namespace qor{
         {
             return *(m_what.template As<WhatT>());
         }       
-        virtual void Handle(void) = 0;
+        virtual void Handle(void) const = 0;
 
-        virtual void Resolve(bool bHandled)
+        virtual void Resolve(bool bHandled) const
         {
             if(!bHandled)
             {
@@ -77,13 +77,13 @@ namespace qor{
             }
         }
         
-        virtual void Catch()
+        virtual void Catch() const
         {
             Handle();
         }
-        virtual void Escalate(void) = 0;
+        virtual void Escalate(void) const = 0;
         
-        virtual void Ignore(){}
+        virtual void Ignore() const {}
 
     protected:
 
