@@ -52,9 +52,10 @@ namespace qor{ namespace nslinux{
                 
         consider whether we need a separate directory entry file object if we want to be able to mess with dirents, probably.*/
 
-        virtual ref_of<system::File>::type CreateFile(const system::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<system::File>::type OpenFile(const system::FileIndex& index, const int openFor, const int withFlags) const;
-        virtual bool DeleteFile(const system::FileIndex& index) const;
+        virtual ref_of<system::File>::type Create(const system::FileIndex& index, const int withFlags) const;
+        virtual ref_of<system::File>::type Open(const system::FileIndex& index, const int openFor, const int withFlags) const;        
+        virtual bool Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
+        virtual bool Rename(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
 
         void SyncToSystem() const;
     };

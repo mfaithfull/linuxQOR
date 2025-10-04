@@ -80,47 +80,47 @@ namespace qor{ namespace system{
         return true;
     }
 
-    bool FileIndex::IsBlockFile()
+    bool FileIndex::IsBlockFile() const
     {
         return std::filesystem::is_block_file(m_dirent.path());
     }
 
-    bool FileIndex::IsCharacterFile()
+    bool FileIndex::IsCharacterFile() const
     {
         return std::filesystem::is_character_file(m_dirent.path());
     }
 
-    bool FileIndex::IsDirectory()
+    bool FileIndex::IsDirectory() const
     {
         return std::filesystem::is_directory(m_dirent.path());
     }
 
-    bool FileIndex::IsFIFO()
+    bool FileIndex::IsFIFO() const
     {
         return std::filesystem::is_fifo(m_dirent.path());
     }
 
-    bool FileIndex::IsOther()
+    bool FileIndex::IsOther() const
     {
         return std::filesystem::is_other(m_dirent.path());
     }
 
-    bool FileIndex::IsRegularFile()
+    bool FileIndex::IsRegularFile() const
     {
         return std::filesystem::is_regular_file(m_dirent.path());
     }
 
-    bool FileIndex::IsSocket()
+    bool FileIndex::IsSocket() const
     {
         return std::filesystem::is_socket(m_dirent.path());
     }
 
-    bool FileIndex::IsSymLink()
+    bool FileIndex::IsSymLink() const
     {
         return std::filesystem::is_symlink(m_dirent.path());
     }
 
-    std::uintmax_t FileIndex::Size()
+    std::uintmax_t FileIndex::Size() const
     {
         return std::filesystem::file_size(m_dirent.path());
     }
@@ -145,6 +145,11 @@ namespace qor{ namespace system{
         return m_dirent.path().generic_string();
     }
 
+    Path FileIndex::GetPath() const
+    {
+        return Path(m_dirent.path().generic_string());
+    }
+    
     ref_of<File>::type FileIndex::Open(const int openFor, const int withFlags, const int inMode)    
     {
         ref_of<File>::type result;

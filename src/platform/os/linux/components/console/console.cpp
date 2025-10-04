@@ -24,6 +24,10 @@
 
 #include "src/configuration/configuration.h"
 
+#include <iostream>
+#include <termios.h>
+#include <unistd.h>
+
 #include "console.h"
 #include "src/qor/error/error.h"
 
@@ -36,26 +40,53 @@ namespace qor {
 
 namespace qor { namespace nsLinux {
 
-	Console::Console() : m_redirected(false)
+	Console::Console()
+	{		
+		m_termiosBackup.resize(sizeof(termios));
+		int tcgresult = tcgetattr(STDIN_FILENO, reinterpret_cast<termios*>(m_termiosBackup.begin().operator->()));
+		termios term;
+		memcpy(&term, m_termiosBackup.begin().operator->(), sizeof(termios));
+		term.c_lflag &= (~ICANON);
+
+		int tcsresult = tcsetattr(STDIN_FILENO, TCSAFLUSH, &term);		
+	}
+
+	Console::~Console()
 	{
+		//restore cooked/raw mode
+		int tcsresult = tcsetattr(STDIN_FILENO, TCSANOW, reinterpret_cast<termios*>(m_termiosBackup.begin().operator->()));
 	}
 
 	string_t Console::ReadLine()
 	{
-		return string_t();
+        string_t result;
+        char_t c = 0;
+        do
+        {
+            std::cin.read(&c, 1);
+            result.push_back(c);
+        } while (c != 0x0A);
+                
+		result.resize(result.size() - 1);
+		return result;
 	}
 
 	char_t Console::ReadChar()
 	{
-		return 0;
+        char_t c;
+        std::cin.get(c);
+		return c;
 	}
 
 	void Console::WriteChar(char_t c)
 	{
+        std::cout.write(&c, 1);
 	}
 
 	void Console::WriteLine(string_t& output)
 	{
+        std::cout.write(output.data(), output.size());
+        std::cout.write("\n", 1);
 	}
 
 }}//qor::nsLinux

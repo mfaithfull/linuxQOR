@@ -50,6 +50,12 @@ namespace qor{ namespace system{
         return *this;
     }
 
+    Path Path::operator / (const std::string& folder)
+    {
+        Path newPath(m_path);
+        return newPath /= folder;
+    }
+
     Path Path::Parent() const
     {
         Path parent(m_path.parent_path().generic_string());
@@ -154,6 +160,11 @@ namespace qor{ namespace system{
     bool Path::IsRelative()
     {
         return m_path.is_relative();
+    }
+
+    bool Path::IsSamePath(const Path& compare) const
+    {
+        return m_path.compare(compare.m_path) == 0 ? true : false;
     }
 
 }}//qor::system

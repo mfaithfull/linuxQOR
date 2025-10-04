@@ -28,7 +28,7 @@
 #include <filesystem>
 #include "ifilesystem.h"
 #include "root.h"
-#include "file.h"
+#include "file/file.h"
 #include "src/system/system/isubsystem.h"
 
 namespace qor
@@ -52,11 +52,14 @@ namespace qor{ namespace system{
         Path CurrentPath();
         void CurrentPath(Path& path);
 
-        ref_of<File>::type CreateFile(const FileIndex& index, const int withFlags) const;
-        bool DeleteFile(const FileIndex& index) const;
-        ref_of<File>::type OpenFile();
-        bool CopyFile();
-        bool MoveFile();
+        ref_of<File>::type Create(const FileIndex& index, const int withFlags) const;
+        std::optional<Folder> Create(const Path& path) const;
+        ref_of<File>::type Open(const FileIndex& index, const int openFor, const int withFlags) const;
+        bool Delete(const FileIndex& index) const;
+        bool Delete(const Path& path) const;
+        bool Copy(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
+        bool Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
+        bool Rename(system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
 
         std::filesystem::space_info Space(const Path& path);
         Path TempFolder();

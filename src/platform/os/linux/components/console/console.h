@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_OS_LINUX_COMPONENTS_CONSOLE
 #define QOR_PP_H_OS_LINUX_COMPONENTS_CONSOLE
 
+#include <vector>
+
 #include "src/components/framework/console/iconsole.h"
 //#include "src/platform/os/windows/system/filesystem/file.h"
 
@@ -40,15 +42,7 @@ namespace qor { namespace nsLinux {
 	public:
 
 		Console();
-
-		~Console() {}
-
-		void SetOut(int fileHandle);
-		void SetIn(int fileHandle);
-		void SetErr(int fileHandle);
-		void ResetOut();
-		void ResetIn();
-		void ResetErr();
+		~Console();
 
 		virtual void WriteLine(string_t& output);
 		virtual string_t ReadLine();
@@ -57,13 +51,10 @@ namespace qor { namespace nsLinux {
 
 	private:
 
-		bool m_redirected;
-		void* m_outFile;
-		void* m_inFile;
-		void* m_errFile;		
-		
+		std::vector<byte> m_termiosBackup;
+	
 	};
-    
+
 }}//qor::nsLinux
 
 #endif//QOR_PP_H_OS_LINUX_COMPONENTS_CONSOLE

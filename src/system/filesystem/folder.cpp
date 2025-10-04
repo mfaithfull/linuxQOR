@@ -50,14 +50,21 @@ namespace qor{ namespace system{
         std::filesystem::create_directory(newFolder);
     }
 
-    void Folder::Copy( class Path& destinationParent )
+    bool Folder::Copy( class Path& destParent )
     {
-        std::filesystem::copy_file(m_path.operator std::filesystem::path(), destinationParent);
+        return std::filesystem::copy_file(m_path.operator std::filesystem::path(), destParent);
     }
 
-    void Folder::Delete()
+    bool Folder::Move( class Path& destParent)
+    {
+        std::filesystem::rename(m_path.operator const std::filesystem::__cxx11::path(), destParent.operator const std::filesystem::__cxx11::path());
+        return true;
+    }
+
+    bool Folder::Delete()
     {
         std::filesystem::remove_all(m_path);
+        return std::filesystem::remove(m_path);
     }
 
     void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
@@ -81,6 +88,5 @@ namespace qor{ namespace system{
     {
         return m_path;
     }
-
 
 }}//qor::system

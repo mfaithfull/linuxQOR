@@ -38,11 +38,13 @@ namespace qor{ namespace system{
         Folder(const Folder& src);
         Folder(const class Path& path);
         Folder& operator = (const Folder&);
-        ~Folder() = default;     
+        virtual ~Folder() = default;
         
         static void Create(class Path& newFolder);
-        void Copy( class Path& destinationParent );
-        void Delete();
+        bool Copy( class Path& destParent );
+        bool Move( class Path& destParent);
+        bool Rename( const string_t& name);
+        bool Delete();
         void Enumerate( const std::function <bool (FileIndex&)>& f );
         void CreateSymLinkTo( class Path& target);
         class Path Path();

@@ -22,41 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FOLDER
+#define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FOLDER
 
-#include <string>
-#include "path.h"
+#include "src/system/filesystem/folder.h"
 
-namespace qor{ namespace system{
+//All types on this interface must be portable
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
+namespace qor{ namespace nslinux{ 
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File
-	{
-	public:
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) Folder : public system::Folder
+    {
+    public:
 
-        File(const File& src);
-        File(FileIndex& index);
-        File& operator = (const File&);
-        virtual ~File();     
+        Folder(const Folder& src) : system::Folder(src)
+        {
+        }
+
+        Folder(const class system::Path& path) : system::Folder(path)
+        {
+
+        }
         
-        virtual int ChangeMode(unsigned int mode);
+        Folder& operator = (const Folder& src)
+        {
+            return *this;
+        }
 
-        bool SupportsPosition();
-        int64_t GetPosition();
-        int64_t SetPosition(int64_t newPosition);
-        bool Flush();
-        unsigned long GetType();
-        bool SetEOF();
+        virtual ~Folder() = default;
 
-    protected:
+    private:
 
-        File();
-
-        //ref_of<IFile>::type m_pimpl;
     };
+}}//qor::nslinux
 
-}}//qor::system
+#endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FOLDER
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE

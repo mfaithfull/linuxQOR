@@ -68,31 +68,44 @@ namespace qor{ namespace system{
         std::filesystem::current_path(path);
     }
 
-    ref_of<File>::type FileSystem::CreateFile(const FileIndex& index, const int withFlags) const
+    ref_of<File>::type FileSystem::Create(const FileIndex& index, const int withFlags) const
     {
-        return m_pimpl->CreateFile(index, withFlags);
+        return m_pimpl->Create(index, withFlags);
     }
 
-    bool FileSystem::DeleteFile(const FileIndex& index) const
+    std::optional<Folder> FileSystem::Create(const Path& path) const
     {
-        return m_pimpl->DeleteFile(index);
+        return m_pimpl->MakeDir(path);
     }
 
-    ref_of<File>::type FileSystem::OpenFile()
+    bool FileSystem::Delete(const FileIndex& index) const
     {
-        ref_of<File>::type result;
-        return result;
+        return m_pimpl->Delete(index);
     }
 
-    bool FileSystem::CopyFile()
+    bool FileSystem::Delete(const Path& path) const
     {
-        return false;
+        return m_pimpl->RemoveDir(path);
     }
 
-
-    bool FileSystem::MoveFile()
+    ref_of<File>::type FileSystem::Open(const FileIndex& index, const int openFor, const int withFlags) const
     {
-        return false;
+        return m_pimpl->Open(index, openFor, withFlags);
+    }
+
+    bool FileSystem::Copy(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+    {
+        return srcIndex.Copy(destIndex);
+    }
+
+    bool FileSystem::Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+    {
+        return srcIndex.Move(destIndex);
+    }
+
+    bool FileSystem::Rename(system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+    {
+        return srcIndex.Rename(destIndex);
     }
 
     std::filesystem::space_info Space(const Path& path)

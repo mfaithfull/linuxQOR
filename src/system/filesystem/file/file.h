@@ -22,42 +22,41 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE
 
-#include "root.h"
+#include <string>
+#include "../path.h"
 
 namespace qor{ namespace system{
 
-    Root::Root() : m_path()
-    {
-    }
+    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
 
-    void Root::Setup()
-    {
-        m_path = Path().RootIndicator();
-    }
-    
-    class Path Root::operator / (const std::string folder) const
-    {
-        class Path path = m_path;
-        path /= folder;
-        return path;
-    }
+    class qor_pp_module_interface(QOR_FILESYSTEM) File
+	{
+	public:
 
-    class Path Root::Path() const
-    {
-        return m_path;
-    }
+        File(const File& src);
+        File(FileIndex& index);
+        File& operator = (const File&);
+        virtual ~File();     
+        
+        virtual int ChangeMode(unsigned int mode);
 
-    class Folder Root::Folder() const
-    {
-        class Folder result(m_path);
-        return result;
-    }
+        bool SupportsPosition();
+        int64_t GetPosition();
+        int64_t SetPosition(int64_t newPosition);
+        bool Flush();
+        unsigned long GetType();
+        bool SetEOF();
 
-    const std::string Root::Indicator() const
-    {
-        return m_path.RootIndicator();
-    }
+    protected:
+
+        File();
+
+        //ref_of<IFile>::type m_pimpl;
+    };
 
 }}//qor::system
+
+#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE

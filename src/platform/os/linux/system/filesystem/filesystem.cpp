@@ -30,6 +30,7 @@
 #include "src/qor/reference/newref.h"
 #include "filesystem.h"
 #include "file.h"
+#include "folder.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -57,23 +58,46 @@ namespace qor{ namespace nslinux{
         sync();
     }
 
-    ref_of<system::File>::type FileSystem::CreateFile(const system::FileIndex& index, int withFlags) const
+    ref_of<system::File>::type FileSystem::Create(const system::FileIndex& index, int withFlags) const
     {
-        int flags = withFlags |= WithFlags::Create | WithFlags::Truncate;
-        auto ref = OpenFile(index, OpenFor::WriteOnly, flags);
+        int flags = withFlags |= WithFlags::CreateNew | WithFlags::Truncate;
+        auto ref = Open(index, OpenFor::WriteOnly, flags);
         ref->ChangeMode(Owner_Read | Owner_Write);
         return ref;
     }
 
-    ref_of<system::File>::type FileSystem::OpenFile(const system::FileIndex& index, int openFor, int withFlags) const
+    ref_of<system::File>::type FileSystem::Open(const system::FileIndex& index, int openFor, int withFlags) const
     {        
         return new_ref<File>(index, openFor, withFlags).template AsRef<system::File>();
     }
 
-    bool FileSystem::DeleteFile(const system::FileIndex& index) const
+    bool FileSystem::Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
     {
-        int result = unlink(index.ToString().c_str());
-        return result != -1 ? true : false;
+        if(destIndex.IsDirectory())
+        {
+            //MoveToFolder(srcIndex, destIndex);
+        }
+        else if( !srcIndex.IsDirectory())
+        {
+            if(srcIndex.GetPath().IsSamePath(destIndex.GetPath()))
+            {
+                return rename(srcIndex.ToString().c_str(), destIndex.ToString().c_str()) == 0 ? true : false;
+            }
+            else
+            {
+                //MoveFileToFile(srcIndex, destIndex);
+                //remove(destIndex.ToString().c_str());
+            }
+        }
+        
+        //Can't move a folder to a file
+        return false;
     }
+
+    bool FileSystem::Rename(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+    {
+        return rename(srcIndex.ToString().c_str(), destIndex.ToString().c_str()) == 0 ? true : false;
+    }
+
     ////int openat(int fd, index.ToString().c_str(), int oflag, ...);
 }}//qor::nslinux

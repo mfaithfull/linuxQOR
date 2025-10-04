@@ -25,10 +25,12 @@
 #ifndef QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
 #define QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
 
+#include <optional>
 #include "src/qor/instance/singleton.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/factory/externalfactory.h"
 #include "fileindex.h"
+#include "folder.h"
 
 namespace qor{ namespace system{
 
@@ -50,7 +52,7 @@ namespace qor{ namespace system{
             Append = 1 << 0,
             CloseExec = 1 << 1,
             CloseFork = 1 << 2,
-            Create = 1 << 3,
+            CreateNew = 1 << 3,
             Directory = 1 << 4,
             DSync = 1 << 5,
             Exclusive = 1 << 6,
@@ -95,25 +97,65 @@ namespace qor{ namespace system{
         virtual std::string RootIndicator() const { return "/"; }
         virtual unsigned short MaxElementLength() const { return 256; }
         
-        virtual ref_of<File>::type CreateFile(const FileIndex& index, const int withFlags) const 
+        virtual ref_of<File>::type Create(const FileIndex& index, const int withFlags) const 
         {
             ref_of<File>::type result;
             return result;
-
         }
 
-        virtual ref_of<File>::type OpenFile(const FileIndex& index, const int openFor, const int withFlags) const
+        virtual std::optional<Folder> MakeDir(const Path& path) const 
+        {
+            std::optional<Folder> folder;
+            if(std::filesystem::create_directory(path))
+            {
+                folder.emplace(Folder(path));                
+            }
+            return folder;
+        }
+
+        virtual std::optional<Folder> NewFolder(const Path& path) const 
+        {
+            return MakeDir(path);
+        }
+
+        virtual ref_of<File>::type Open(const FileIndex& index, const int openFor, const int withFlags) const
         {
             ref_of<File>::type result;
             return result;
 
         }        
 
-        virtual bool DeleteFile(const FileIndex& index) const
+        virtual bool Delete(const FileIndex& index) const
         {
+            return std::filesystem::remove(index.GetPath());
+        }
+
+        virtual bool RemoveDir(const Path& path) const
+        {
+            return std::filesystem::remove(path);
+        }
+
+        virtual bool DeleteFolder(const Path& path) const
+        {
+            return RemoveDir(path);
+        }
+
+        virtual bool Copy(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+        {
+            std::filesystem::copy(srcIndex.GetPath(), destIndex.GetPath());
+            return true;
+        }
+
+        virtual bool Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+        {            
             return false;
         }
-        
+
+        virtual bool Rename(system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+        {
+            std::filesystem::rename(srcIndex.GetPath(), destIndex.GetPath());
+            return true;
+        }
     };
     
     }//qor::system

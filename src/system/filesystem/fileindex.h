@@ -29,7 +29,7 @@
 #include <filesystem>
 #include "path.h"
 #include "src/qor/reference/reference.h"
-#include "file.h"
+#include "file/file.h"
 
 namespace qor{ namespace system{
 
@@ -49,22 +49,23 @@ namespace qor{ namespace system{
         bool Move(const FileIndex & Destination) const;
         bool Rename( const FileIndex & Destination );
         bool Resize( std::uintmax_t newSize );
-        bool IsBlockFile();
-        bool IsCharacterFile();
-        bool IsDirectory();
-        bool IsFIFO();
-        bool IsOther();
-        bool IsRegularFile();
-        bool IsSocket();
-        bool IsSymLink();
-        std::uintmax_t Size();
+        bool IsBlockFile() const;
+        bool IsCharacterFile() const;
+        bool IsDirectory() const;
+        bool IsFIFO() const;
+        bool IsOther() const;
+        bool IsRegularFile() const;
+        bool IsSocket() const;
+        bool IsSymLink() const;
+        std::uintmax_t Size() const;
         std::filesystem::file_time_type LastWriteTime() const;
         std::filesystem::file_status Status() const;
         std::filesystem::file_status SymLinkStatus() const;
         std::string ToString() const;
+        Path GetPath(void) const;
         ref_of<File>::type Create(const int openFor, const int withFlags, const int inMode);
         ref_of<File>::type Open(const int openFor, const int withFlags, const int inMode);
-
+        
     private:
 
         FileIndex();

@@ -28,6 +28,7 @@
 #include <string>
 
 #include "path.h"
+#include "folder.h"
 
 namespace qor{ namespace system{
 
@@ -40,7 +41,7 @@ namespace qor{ namespace system{
         void Setup();
         class Path operator / (const std::string folder) const;
         class Path Path() const;
-
+        class Folder Folder() const;
         const std::string Indicator() const;
 
     private:
