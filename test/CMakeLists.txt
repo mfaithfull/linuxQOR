@@ -70,7 +70,7 @@ components/threadmemory/test_smallobjectbucket.cpp
 components/threadmemory/test_smallobjectheap.cpp
 components/pipeline/test_stdinsource.cpp
 components/pipeline/test_stdoutsink.cpp property/test_property.cpp 
-components/console/test_console.cpp)
+components/console/test_console.cpp components/console/test_consoleui.cpp)
 
 target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
 

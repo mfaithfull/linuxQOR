@@ -38,4 +38,4 @@ Q.	What makes the QOR special?
 A.	The modular architecture and Aspect Oriented approach of the QOR mean it's easier to adapt to new platforms than other frameworks.
 	The Aspect separation of the QOR means even the simplest applications can take advantage of advanced interception techniques and the integrated unit test framework with minimal effort.
 	The QOR uses advanced C++ techniques so that you don't have to. It allows you to do as much or as little memory and object lifetime management as you want to.
-	The QOR is designed to be extended. It is modular even at the sub-Object level so you can replace just the parts you want without re-writing or duplicating thousands of lines of code.
+	The QOR is designed to be extended. It is modular so you can replace just the parts you want without re-writing or duplicating thousands of lines of code.

@@ -38,3 +38,13 @@
 # CMake
 /cmakebuild
 /out/build/x64-Debug
+/build/src
+/build/test
+/build/x64
+/build/.cmake
+/build/CMakeFiles
+/build/*.vcxproj
+/build/*.vcxproj.filters
+/build/*.cmake
+/build/CMake*
+
