@@ -42,19 +42,18 @@ namespace qor { namespace nsLinux {
 
 	Console::Console()
 	{		
-		m_termiosBackup.resize(sizeof(termios));
-		int tcgresult = tcgetattr(STDIN_FILENO, reinterpret_cast<termios*>(m_termiosBackup.begin().operator->()));
-		termios term;
-		memcpy(&term, m_termiosBackup.begin().operator->(), sizeof(termios));
-		term.c_lflag &= (~ICANON);
-
-		int tcsresult = tcsetattr(STDIN_FILENO, TCSAFLUSH, &term);		
+		int tcgresult = tcgetattr(STDIN_FILENO, &m_termiosBackup);
+		CheckCLibResult(tcgresult);
+		m_termiosBackup.c_lflag &= (~ICANON);
+		int tcsresult = tcsetattr(STDIN_FILENO, TCSAFLUSH, &m_termiosBackup);		
+		CheckCLibResult(tcsresult);
 	}
 
 	Console::~Console()
 	{
 		//restore cooked/raw mode
-		int tcsresult = tcsetattr(STDIN_FILENO, TCSANOW, reinterpret_cast<termios*>(m_termiosBackup.begin().operator->()));
+		int tcsresult = tcsetattr(STDIN_FILENO, TCSANOW, &m_termiosBackup);
+		CheckCLibResult(tcsresult);
 	}
 
 	string_t Console::ReadLine()
@@ -64,29 +63,60 @@ namespace qor { namespace nsLinux {
         do
         {
             std::cin.read(&c, 1);
-            result.push_back(c);
+			if (!std::cin.good()) 
+			{
+				serious("std::cin bad status.");
+				break;
+			}
+			else
+			{
+	            result.push_back(c);
+			}
         } while (c != 0x0A);
                 
-		result.resize(result.size() - 1);
+		if (!result.empty() && result.back() == 0x0A) 
+		{
+			result.resize(result.size() - 1);
+		}
 		return result;
 	}
 
 	char_t Console::ReadChar()
 	{
-        char_t c;
+        char_t c = 0;
         std::cin.get(c);
+		if (!std::cin.good())
+		{
+			serious("std::cin status bad.");
+		}
 		return c;
 	}
 
 	void Console::WriteChar(char_t c)
 	{
         std::cout.write(&c, 1);
+		if(!std::cout.good())
+		{
+			serious("std::cout status bad.");
+		}
 	}
 
 	void Console::WriteLine(string_t& output)
 	{
         std::cout.write(output.data(), output.size());
+		if (!std::cout.good()) 
+		{
+			serious("std::cout status bad.");
+		}
         std::cout.write("\n", 1);
+		if (!std::cout.good()) 
+		{
+			serious("std::cout status bad.");
+		}
+		else
+		{
+			std::cout.flush();
+		}
 	}
 
 }}//qor::nsLinux

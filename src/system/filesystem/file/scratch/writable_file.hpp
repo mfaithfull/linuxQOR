@@ -23,7 +23,7 @@ namespace cppcoro
 
 		/// Write some data to the file.
 		///
-		/// Writes \a byteCount bytes from the file starting at \a offset
+		/// Writes \a byteCount bytes to the file starting at \a offset
 		/// into the specified \a buffer.
 		///
 		/// \param offset

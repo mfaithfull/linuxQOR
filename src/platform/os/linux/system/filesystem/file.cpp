@@ -50,7 +50,7 @@ namespace qor{ namespace nslinux{
     File::File(const system::FileIndex& direntry, int openFor, int withFlags) : m_fd(-1) 
     {
         int mode = 0;
-        if( withFlags | (system::IFileSystem::WithFlags::CreateNew | system::IFileSystem::WithFlags::TempFile) != 0)
+        if( withFlags & (system::IFileSystem::WithFlags::CreateNew | system::IFileSystem::WithFlags::TempFile) != 0)
         {
             mode |= (( (openFor & system::IFileSystem::OpenFor::Exec) != 0) ? 1 : 0);
             mode |= (( (openFor & (system::IFileSystem::OpenFor::ReadOnly | system::IFileSystem::OpenFor::ReadWrite)) != 0) ? 4 : 0);

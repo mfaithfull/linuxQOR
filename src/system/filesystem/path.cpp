@@ -50,9 +50,9 @@ namespace qor{ namespace system{
         return *this;
     }
 
-    Path Path::operator / (const std::string& folder)
+    Path Path::operator / (const std::string& folder) const
     {
-        Path newPath(m_path);
+        Path newPath(*this);
         return newPath /= folder;
     }
 

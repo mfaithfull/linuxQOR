@@ -26,9 +26,11 @@
 #define QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
 
 #include <optional>
+#include <filesystem>
 #include "src/qor/instance/singleton.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/factory/externalfactory.h"
+#include "src/qor/error/error.h"
 #include "fileindex.h"
 #include "folder.h"
 
@@ -106,9 +108,15 @@ namespace qor{ namespace system{
         virtual std::optional<Folder> MakeDir(const Path& path) const 
         {
             std::optional<Folder> folder;
-            if(std::filesystem::create_directory(path))
+            try{
+                if(std::filesystem::create_directory(path))
+                {
+                    folder.emplace(Folder(path));                
+                }
+            }
+            catch(std::filesystem::filesystem_error& fse)
             {
-                folder.emplace(Folder(path));                
+                continuable(fse.what());
             }
             return folder;
         }
@@ -127,12 +135,27 @@ namespace qor{ namespace system{
 
         virtual bool Delete(const FileIndex& index) const
         {
-            return std::filesystem::remove(index.GetPath());
+            try{
+                return std::filesystem::remove(index.GetPath());
+            }
+            catch(std::filesystem::filesystem_error& fse)
+            {
+                continuable(fse.what());
+            }
+            return false;
         }
 
         virtual bool RemoveDir(const Path& path) const
         {
-            return std::filesystem::remove(path);
+            try
+            {
+                return std::filesystem::remove(path);
+            }
+            catch(std::filesystem::filesystem_error& fse)
+            {
+                continuable(fse.what());
+            }
+            return false;            
         }
 
         virtual bool DeleteFolder(const Path& path) const
@@ -142,8 +165,17 @@ namespace qor{ namespace system{
 
         virtual bool Copy(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
         {
-            std::filesystem::copy(srcIndex.GetPath(), destIndex.GetPath());
-            return true;
+            try
+            {
+                std::filesystem::copy(srcIndex.GetPath(), destIndex.GetPath());
+                return true;
+            }
+            catch(std::filesystem::filesystem_error& fse)
+            {
+                continuable(fse.what());
+            }
+
+            return false;
         }
 
         virtual bool Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
@@ -153,8 +185,16 @@ namespace qor{ namespace system{
 
         virtual bool Rename(system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
         {
-            std::filesystem::rename(srcIndex.GetPath(), destIndex.GetPath());
-            return true;
+            try
+            {
+                std::filesystem::rename(srcIndex.GetPath(), destIndex.GetPath());
+                return true;
+            }
+            catch(std::filesystem::filesystem_error& fse)
+            {
+                continuable(fse.what());
+            }
+            return false;
         }
     };
     

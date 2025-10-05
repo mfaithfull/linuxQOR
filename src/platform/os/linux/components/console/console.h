@@ -51,7 +51,7 @@ namespace qor { namespace nsLinux {
 
 	private:
 
-		std::vector<byte> m_termiosBackup;
+		termios m_termiosBackup;
 	
 	};
 

@@ -41,7 +41,7 @@ namespace qor{ namespace system{
         virtual ~Path() = default;
 
         Path& operator /= (const std::string& folder);
-        Path operator / (const std::string& folder);
+        Path operator / (const std::string& folder) const;
 
         Path Parent() const;
         const std::string Separator() const;

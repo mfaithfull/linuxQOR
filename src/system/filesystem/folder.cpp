@@ -26,6 +26,7 @@
 
 #include <filesystem>
 #include "folder.h"
+#include "src/qor/error/error.h"
 
 namespace qor{ namespace system{
 
@@ -57,8 +58,16 @@ namespace qor{ namespace system{
 
     bool Folder::Move( class Path& destParent)
     {
-        std::filesystem::rename(m_path.operator const std::filesystem::__cxx11::path(), destParent.operator const std::filesystem::__cxx11::path());
-        return true;
+        try
+        {
+            std::filesystem::rename(m_path.operator const std::filesystem::__cxx11::path(), destParent.operator const std::filesystem::__cxx11::path());
+            return true;
+        }
+        catch(std::filesystem::filesystem_error& fse)
+        {
+            continuable(fse.what());
+        }
+        return false;
     }
 
     bool Folder::Delete()

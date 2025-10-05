@@ -15,7 +15,7 @@
 # include <cppcoro/detail/win32.hpp>
 #endif
 
-#include <experimental/filesystem>
+#include <filesystem>
 
 namespace cppcoro
 {

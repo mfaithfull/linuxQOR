@@ -48,7 +48,7 @@ namespace qor{ namespace system{
         virtual uint64_t GetSize();
         virtual void Flush();
         virtual Type GetType();
-        virtual ref_of<IFile>::type ReOpen()
+        virtual ref_of<IFile>::type ReOpen();
         virtual int GetStatus();
         virtual void SetStatus(int);
         //virtual std::vector<ref_of<Property>::type> GetInformation();
