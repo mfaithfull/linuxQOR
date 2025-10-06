@@ -27,7 +27,7 @@
 #include "clibresult.h"
 
 namespace qor
-{
+{    
     std::map<int, const char*> CLibResult::error_map = 
     {
         {EPERM, "Operation not permitted"},
@@ -46,7 +46,9 @@ namespace qor
         {ENOMEM, "Out of memory"},
         {EACCES, "Permission denied"},
         {EFAULT, "Bad address"},
+#if defined ENOTBLK
         {ENOTBLK, "Block device required"},
+#endif
         {EBUSY, "Device or resource busy"},
         {EEXIST, "File exists"},
         {EXDEV, "Cross-device link"},
@@ -77,59 +79,131 @@ namespace qor
         {EWOULDBLOCK, "Operation would block"},
         {ENOMSG, "No message of desired type"},
         {EIDRM, "Identifier removed"},
+#if defined ECHRNG
         {ECHRNG, "Channel number out of range"},
+#endif
+#if defined EL2NSYNC
         {EL2NSYNC, "Level 2 not synchronized"},
+#endif
+#if defined EL3HLT
         {EL3HLT, "Level 3 halted"},
+#endif
+#if defined EL3RST
         {EL3RST, "Level 3 reset"},
+#endif
+#if defined ELNRNG
         {ELNRNG, "Link number out of range"},
+#endif
+#if defined EUNATCH
         {EUNATCH, "Protocol driver not attached"},
+#endif
+#if defined ENOCSI
         {ENOCSI, "No CSI structure available"},
+#endif
+#if defined EL2HLT
         {EL2HLT, "Level 2 halted"},
+#endif
+#if defined EBADE
         {EBADE, "Invalid exchange"},
+#endif
+#if defined EBADR
         {EBADR, "Invalid request descriptor"},
+#endif
+#if defined EXFULL
         {EXFULL, "Exchange full"},
+#endif
+#if defined ENOANO
         {ENOANO, "No anode"},
+#endif
+#if defined EBADRQC
         {EBADRQC, "Invalid request code"},
+#endif
+#if defined EBADSLT
         {EBADSLT, "Invalid slot"},
+#endif
         {EDEADLOCK, "File locking deadlock error"},
+#if defined EBFONT
         {EBFONT, "Bad font file format"},
+#endif
         {ENOSTR, "Device not a stream"},
         {ENODATA, "No data available"},
         {ETIME, "Timer expired"},
         {ENOSR, "Out of streams resources"},
+#if defined ENONET
         {ENONET, "Machine is not on the network"},
+#endif
+#if defined ENOPKG
         {ENOPKG, "Package not installed"},
+#endif
+#if defined EREMOTE
         {EREMOTE, "Object is remote"},
+#endif
         {ENOLINK, "Link has been severed"},
+#if defined EADV
         {EADV, "Advertise error"},
+#endif
+#if defined ESRMNT
         {ESRMNT, "Srmount error"},
+#endif
+#if defined ECOMM
         {ECOMM, "Communication error on send"},
+#endif
         {EPROTO, "Protocol error"},
+#if defined EMULTIHOP
         {EMULTIHOP, "Multihop attempted"},
+#endif
+#if defined EDOTDOT
         {EDOTDOT, "RFS specific error"},
+#endif
         {EBADMSG, "Not a data message"},
         {EOVERFLOW, "Value too large for defined data type"},
+#if defined ENOTUNIQ
         {ENOTUNIQ, "Name not unique on network"},
+#endif
+#if defined EBADFD
         {EBADFD, "File descriptor in bad state"},
+#endif
+#if defined EREMCHG
         {EREMCHG, "Remote address changed"},
+#endif
+#if defined ELIBACC
         {ELIBACC, "Can not access a needed shared library"},
+#endif
+#if defined ELIBBAD
         {ELIBBAD, "Accessing a corrupted shared library"},
+#endif
+#if defined ELIBSCN
         {ELIBSCN, ".lib section in a.out corrupted"},
+#endif
+#if defined ELIBMAX
         {ELIBMAX, "Attempting to link in too many shared libraries"},
+#endif
+#if defined ELIBEXEC
         {ELIBEXEC, "Cannot exec a shared library directly"},
+#endif
         {EILSEQ, "Illegal byte sequence"},
+#if defined ERESTART
         {ERESTART, "Interrupted system call should be restarted"},
+#endif
+#if defined ESTRPIPE
         {ESTRPIPE, "Streams pipe error"},
+#endif
+#if defined EUSERS
         {EUSERS, "Too many users"},
+#endif
         {ENOTSOCK, "Socket operation on non-socket"},
         {EDESTADDRREQ, "Destination address required"},
         {EMSGSIZE, "Message too long"},
         {EPROTOTYPE, "Protocol wrong type for socket"},
         {ENOPROTOOPT, "Protocol not available"},
         {EPROTONOSUPPORT, "Protocol not supported"},
+#if defined ESOCKTNOSUPPORT
         {ESOCKTNOSUPPORT, "Socket type not supported"},
+#endif
         {EOPNOTSUPP, "Operation not supported on transport endpoint"},
+#if defined EPFNOSUPPORT
         {EPFNOSUPPORT, "Protocol family not supported"},
+#endif
         {EAFNOSUPPORT, "Address family not supported by protocol"},
         {EADDRINUSE, "Address already in use"},
         {EADDRNOTAVAIL, "Cannot assign requested address"},
@@ -141,27 +215,57 @@ namespace qor
         {ENOBUFS, "No buffer space available"},
         {EISCONN, "Transport endpoint is already connected"},
         {ENOTCONN, "Transport endpoint is not connected"},
+#if defined ESHUTDOWN
         {ESHUTDOWN, "Cannot send after transport endpoint shutdown"},
+#endif
+#if defined ETOOMANYREFS
         {ETOOMANYREFS, "Too many references: cannot splice"},
+#endif
         {ETIMEDOUT, "Connection timed out"},
         {ECONNREFUSED, "Connection refused"},
         {EHOSTUNREACH, "No route to host"},
         {EALREADY, "Operation already in progress"},
         {EINPROGRESS, "Operation now in progress"},
+#if defined ESTALE
         {ESTALE, "Stale file handle"},
+#endif
+#if defined EUCLEAN
         {EUCLEAN, "Structure needs cleaning"},
+#endif
+#if defined ENOTNAM
         {ENOTNAM, "Not a XENIX named type file"},
+#endif
+#if defined ENAVAIL
         {ENAVAIL, "No XENIX semaphores available"},
+#endif
+#if defined EISNAM
         {EISNAM, "Is a named type file"},
+#endif
+#if defined EREMOTEIO
         {EREMOTEIO, "Remote I/O error"},
+#endif
+#if defined EDQUOT
         {EDQUOT, "Quota exceeded"},
+#endif
+#if defined ENOMEDIUM
         {ENOMEDIUM, "No medium found"},
+#endif
+#if defined EMEDIUMTYPE
         {EMEDIUMTYPE, "Wrong medium type"},
+#endif
         {ECANCELED, "Operation canceled"},
+#if defined ENOKEY
         {ENOKEY, "Required key not available"},
+#endif
+#if defined EKEYEXPIRED
         {EKEYEXPIRED, "Key has expired"},
+#endif
+#if defined EKEYREVOKED
         {EKEYREVOKED, "Key has been revoked"},
+#endif
+#if defined EKEYREJECTED
         {EKEYREJECTED, "Key was rejected by service"},
+#endif
         {EOWNERDEAD, "Owner died"},
         {ENOTRECOVERABLE, "State not recoverable"}
     };    

@@ -12,7 +12,7 @@
 # ifndef QOR_PREPROCESSOR_PUNCTUATION_HPP
 # define QOR_PREPROCESSOR_PUNCTUATION_HPP
 #
-//# include <configuration/preprocessor/punctuation/comma.hpp>
+# include "punctuation/comma.hpp"
 //# include <configuration/preprocessor/punctuation/comma_if.hpp>
 # include "punctuation/is_begin_parens.hpp"
 //# include <configuration/preprocessor/punctuation/paren.hpp>

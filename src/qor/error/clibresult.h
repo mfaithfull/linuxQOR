@@ -104,6 +104,8 @@ namespace qor{
             }
         }
 
+#pragma warning(push)
+#pragma warning(disable: 4996)
         std::string GetErrorMessage() 
         {
             auto it = error_map.find(m_result);
@@ -118,7 +120,7 @@ namespace qor{
             }
             return "Unknown error";
         }
-
+#pragma warning(pop)
         int m_result;
         static std::map<int, const char*> error_map;
     };
