@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include <cerrno>
 #include "clibresult.h"
 
 namespace qor
@@ -39,7 +40,9 @@ namespace qor
         {ENOEXEC, "Exec format error"},
         {EBADF, "Bad file number"},
         {ECHILD, "No child processes"},
+#if EWOULDBLOCK != EAGAIN        
         {EAGAIN, "Try again"},
+#endif
         {ENOMEM, "Out of memory"},
         {EACCES, "Permission denied"},
         {EFAULT, "Bad address"},
@@ -63,7 +66,9 @@ namespace qor
         {EPIPE, "Broken pipe"},
         {EDOM, "Math argument out of domain of func"},
         {ERANGE, "Math result not representable"},
+#if EDEADLOCK != EDEADLK
         {EDEADLK, "Resource deadlock would occur"},
+#endif        
         {ENAMETOOLONG, "File name too long"},
         {ENOLCK, "No record locks available"},
         {ENOSYS, "Function not implemented"},

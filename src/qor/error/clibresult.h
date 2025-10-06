@@ -27,7 +27,6 @@
 
 #include <string>
 #include <cstring>
-#include <cerrno>
 #include <map>
 #include "error.h"
 
@@ -36,13 +35,14 @@ namespace qor{
     {
     public:
 
-        CLibResult() : m_result(0)
-        {                
+        CLibResult() : m_result(errno)
+        {   
+            Check();             
         }
 
         CLibResult(int i) : m_result(i)
         {
-            Check();                
+            Check();           
         }
 
         CLibResult(const CLibResult& src) : m_result(src.m_result)
@@ -83,6 +83,15 @@ namespace qor{
         std::string AsString()
         {
             return GetErrorMessage();
+        }
+
+        bool static IndicatesFaliure(int result)
+        {
+            if(result !=0 )
+            {
+                return true;
+            }
+            return false;
         }
 
     private:
