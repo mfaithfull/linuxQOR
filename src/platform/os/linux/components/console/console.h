@@ -26,7 +26,7 @@
 #define QOR_PP_H_OS_LINUX_COMPONENTS_CONSOLE
 
 #include <vector>
-
+#include <termios.h>
 #include "src/components/framework/console/iconsole.h"
 //#include "src/platform/os/windows/system/filesystem/file.h"
 

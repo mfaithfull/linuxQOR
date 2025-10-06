@@ -30,6 +30,7 @@
 
 #include "console.h"
 #include "src/qor/error/error.h"
+#include "src/qor/error/clibresult.h"
 
 namespace qor {
 	bool qor_pp_module_interface(QOR_LINCONSOLE) ImplementsIConsole() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIConsole requirement. 
@@ -41,19 +42,18 @@ namespace qor {
 namespace qor { namespace nsLinux {
 
 	Console::Console()
-	{		
-		int tcgresult = tcgetattr(STDIN_FILENO, &m_termiosBackup);
-		CheckCLibResult(tcgresult);
-		m_termiosBackup.c_lflag &= (~ICANON);
-		int tcsresult = tcsetattr(STDIN_FILENO, TCSAFLUSH, &m_termiosBackup);		
-		CheckCLibResult(tcsresult);
+	{	
+		termios t;	
+		CLibResult tcgresult = tcgetattr(STDIN_FILENO, &t);
+		m_termiosBackup = t;
+		t.c_lflag &= (~ICANON);
+		CLibResult tcsresult = tcsetattr(STDIN_FILENO, TCSAFLUSH, &t);		
 	}
 
 	Console::~Console()
 	{
 		//restore cooked/raw mode
-		int tcsresult = tcsetattr(STDIN_FILENO, TCSANOW, &m_termiosBackup);
-		CheckCLibResult(tcsresult);
+		CLibResult tcsresult = tcsetattr(STDIN_FILENO, TCSANOW, &m_termiosBackup);
 	}
 
 	string_t Console::ReadLine()

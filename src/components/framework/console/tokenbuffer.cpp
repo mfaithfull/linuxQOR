@@ -25,6 +25,7 @@
 
 #include "src/configuration/configuration.h"
 
+#include <cstring>
 #include "tokenbuffer.h"
 
 namespace qor { namespace components {
