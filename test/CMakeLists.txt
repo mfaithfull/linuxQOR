@@ -42,7 +42,7 @@ issue/test_issue.cpp error/test_error.cpp framework/test_signals.cpp
 reflection/test_reflection.cpp framework/test_pipeline.cpp
 framework/test_workflow.cpp application/test_application.cpp
 components/test_optionparser.cpp
-system/test_filesystem.cpp framework/test_threadpool.cpp
+platform/test_filesystem.cpp framework/test_threadpool.cpp
 framework/task/asyncautoresetevent_tests.cpp
 framework/task/asyncgenerator_tests.cpp
 framework/task/asynclatch_tests.cpp
@@ -78,7 +78,7 @@ if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
-qor_task qor_threadmemory qor_system qor_stdinsource qor_stdoutsink qor_property qor_console
+qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
 linq_filesystem linq_thread linq_process uring linq_console)
 endif()
 
@@ -86,6 +86,6 @@ if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
-qor_task qor_threadmemory qor_system qor_stdinsource qor_stdoutsink qor_property qor_console
+qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
 qor_winapi winq_filesystem winq_thread winq_process winq_console winq_common)
 endif()

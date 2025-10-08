@@ -24,78 +24,69 @@
 
 #include "src/configuration/configuration.h"
 
-#include <filesystem>
-#include "folder.h"
-#include "src/qor/error/error.h"
+#include "file.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
-    Folder::Folder(const Folder& src)
+    File::File(){}
+
+    File::File(const File& src)
     {
         *this = src;
     }
 
-    Folder::Folder(const class Path& path) : m_path(path) {}
+    File::File(FileIndex& index)//open mode including sharing and access
+    {
 
-    Folder& Folder::operator = (const Folder& src)
+    }
+
+    File& File::operator = (const File& src)
     {
         if(&src != this)
         {
-            m_path = src.m_path;
-        }   
-        return *this;     
-    }
 
-    void Folder::Create(class Path& newFolder)
-    {
-        std::filesystem::create_directory(newFolder);
-    }
-
-    bool Folder::Copy( class Path& destParent )
-    {
-        return std::filesystem::copy_file(m_path.operator std::filesystem::path(), destParent);
-    }
-
-    bool Folder::Move( class Path& destParent)
-    {
-        try
-        {
-            std::filesystem::rename(m_path.operator const std::filesystem::__cxx11::path(), destParent.operator const std::filesystem::__cxx11::path());
-            return true;
         }
-        catch(std::filesystem::filesystem_error& fse)
-        {
-            continuable(fse.what());
-        }
+        return *this;
+    }
+
+    File::~File()
+    {
+
+    }
+
+    int File::ChangeMode(unsigned int mode)
+    {
+        return -1;
+    }
+    
+    int64_t File::GetPosition()
+    {
+        return 0;
+    }
+
+    int64_t File::SetPosition(int64_t newPosition)
+    {
+        return 0;
+    }
+
+    bool File::Flush()
+    {
         return false;
     }
 
-    bool Folder::Delete()
+    unsigned long File::GetType()
     {
-        std::filesystem::remove_all(m_path);
-        return std::filesystem::remove(m_path);
+        return 0;
     }
 
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
+    bool File::SetEOF()
     {
-        for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
-        {
-            FileIndex item(dir_entry);
-            if( !f(item) )
-            {
-                break;
-            }
-        }
+        return false;
     }
 
-    void Folder::CreateSymLinkTo(class Path& target)
+    bool File::SupportsPosition()
     {
-        std::filesystem::create_symlink(target, m_path);
+        return false;
     }
 
-    class Path Folder::Path()
-    {
-        return m_path;
-    }
-
-}}//qor::system
+}}//qor::platform

@@ -27,7 +27,7 @@
 #include <filesystem>
 #include "fileindex.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
     FileIndex::FileIndex(const Path & path, const std::string& fileName) : m_dirent(std::filesystem::path(path.ToString(fileName))){}
 
@@ -156,4 +156,4 @@ namespace qor{ namespace system{
         return result;
     }
 
-}}//qor::system
+}}//qor::platform

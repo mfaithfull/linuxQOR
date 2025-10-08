@@ -22,34 +22,61 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_ROOT
-#define QOR_PP_H_SYSTEM_FILESYSTEM_ROOT
+#include "src/configuration/configuration.h"
 
-#include <string>
+#include "platform.h"
 
-#include "path.h"
-#include "folder.h"
-
-namespace qor{ namespace system{
-
-    class qor_pp_module_interface(QOR_FILESYSTEM) Root
-    {
-    public:
-
-        Root();
-        virtual ~Root() = default;
-        void Setup();
-        class Path operator / (const std::string folder) const;
-        class Path Path() const;
-        class Folder Folder() const;
-        const std::string Indicator() const;
-
-    private:
-
-        class Path m_path;
-
-    };
+namespace qor{ 
     
-}}//qor::system
+    qor_pp_module_interface(QOR_PLATFORM) ref_of<platform::Platform>::type ThePlatform()
+    {
+        return new_ref<platform::Platform>();
+    }
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_ROOT
+    namespace platform{
+
+    Platform::Platform() : setupCompleted(false) {}
+
+    void Platform::Setup()
+    {
+        if(!setupCompleted)
+        {
+            for( auto it : m_mapSubsystems)
+            {
+                it.second->Setup();
+            }    
+        }
+        setupCompleted = true;
+    }
+
+    void Platform::Shutdown()
+    {
+        for( auto it : m_mapSubsystems)
+        {
+            it.second->Shutdown();            
+        }
+
+        m_mapSubsystems.clear();
+    }
+
+    void Platform::AddSubsystem( const GUID* id, ref_of<ISubsystem>::type subsystem)
+    {
+        m_mapSubsystems.insert(std::make_pair(*id, subsystem));
+        if(setupCompleted)
+        {
+            subsystem->Setup(); //Late initialisation of sub system
+        }
+    }
+
+    ref_of<ISubsystem>::type Platform::GetSubsystem(const GUID* id)
+    {
+        ref_of<ISubsystem>::type result;
+        auto it = m_mapSubsystems.find(*id);
+        if( it != m_mapSubsystems.end())
+        {
+            result = it->second;
+        }
+        return result;
+    }
+
+}}//qor::platform

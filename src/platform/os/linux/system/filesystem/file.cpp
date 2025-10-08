@@ -29,7 +29,7 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "file.h"
-#include "src/system/filesystem/ifilesystem.h"
+#include "src/platform/filesystem/ifilesystem.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -47,14 +47,14 @@ namespace qor{ namespace nslinux{
         int m_fd = fcntl(src.m_fd, F_DUPFD, 0);
     }
 
-    File::File(const system::FileIndex& direntry, int openFor, int withFlags) : m_fd(-1) 
+    File::File(const platform::FileIndex& direntry, int openFor, int withFlags) : m_fd(-1) 
     {
         int mode = 0;
-        if( withFlags & (system::IFileSystem::WithFlags::CreateNew | system::IFileSystem::WithFlags::TempFile) != 0)
+        if( withFlags & (platform::IFileSystem::WithFlags::CreateNew | platform::IFileSystem::WithFlags::TempFile) != 0)
         {
-            mode |= (( (openFor & system::IFileSystem::OpenFor::Exec) != 0) ? 1 : 0);
-            mode |= (( (openFor & (system::IFileSystem::OpenFor::ReadOnly | system::IFileSystem::OpenFor::ReadWrite)) != 0) ? 4 : 0);
-            mode |= (( (openFor & (system::IFileSystem::OpenFor::WriteOnly | system::IFileSystem::OpenFor::ReadWrite)) != 0) ? 2 : 0);
+            mode |= (( (openFor & platform::IFileSystem::OpenFor::Exec) != 0) ? 1 : 0);
+            mode |= (( (openFor & (platform::IFileSystem::OpenFor::ReadOnly | platform::IFileSystem::OpenFor::ReadWrite)) != 0) ? 4 : 0);
+            mode |= (( (openFor & (platform::IFileSystem::OpenFor::WriteOnly | platform::IFileSystem::OpenFor::ReadWrite)) != 0) ? 2 : 0);
         }
 
         int oflags = 0;
@@ -62,13 +62,13 @@ namespace qor{ namespace nslinux{
         {
             /*case OpenFor::Exec:
                 oflags |= O_EXEC;*/
-            case system::IFileSystem::OpenFor::ReadOnly:
+            case platform::IFileSystem::OpenFor::ReadOnly:
                 oflags |= O_RDONLY;
                 break;
-            case system::IFileSystem::OpenFor::WriteOnly:
+            case platform::IFileSystem::OpenFor::WriteOnly:
                 oflags |= O_WRONLY;
                 break;
-            case system::IFileSystem::OpenFor::ReadWrite:
+            case platform::IFileSystem::OpenFor::ReadWrite:
                 oflags |= O_RDWR;
                 break;
             /*case OpenFor::Search:
@@ -78,77 +78,77 @@ namespace qor{ namespace nslinux{
                 //Raise an error for invalid access mode
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::Append ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::Append ) != 0 )
         {
             oflags |= O_APPEND;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::CloseExec ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::CloseExec ) != 0 )
         {
             oflags |= O_CLOEXEC;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::CloseFork ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::CloseFork ) != 0 )
         {
             //oflags |= O_CLOFORK;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::CreateNew ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::CreateNew ) != 0 )
         {
             oflags |= O_CREAT;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::Directory ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::Directory ) != 0 )
         {
             oflags |= O_DIRECTORY;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::DSync ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::DSync ) != 0 )
         {
             oflags |= O_DSYNC;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::Exclusive ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::Exclusive ) != 0 )
         {
             oflags |= O_EXCL;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::NoCTTY ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::NoCTTY ) != 0 )
         {
             oflags |= O_NOCTTY;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::NoFollow ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::NoFollow ) != 0 )
         {
             oflags |= O_NOFOLLOW;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::NonBlock ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::NonBlock ) != 0 )
         {
             oflags |= O_NONBLOCK;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::RSync ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::RSync ) != 0 )
         {
             oflags |= O_RSYNC;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::Sync ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::Sync ) != 0 )
         {
             oflags |= O_SYNC;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::Truncate ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::Truncate ) != 0 )
         {
             oflags |= O_TRUNC;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::TTYInit ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::TTYInit ) != 0 )
         {
             //oflags |= O_TTY_INIT;
         }
 
-        if( ( withFlags & system::IFileSystem::WithFlags::TempFile ) != 0 )
+        if( ( withFlags & platform::IFileSystem::WithFlags::TempFile ) != 0 )
         {
             oflags |= O_TMPFILE;
         }
@@ -180,10 +180,10 @@ namespace qor{ namespace nslinux{
         return posix_fadvise(m_fd, offset, length, advise);            
     }
 
-    ref_of<system::File>::type File::Duplicate()
+    ref_of<platform::File>::type File::Duplicate()
     {
         int fd = fcntl(m_fd, F_DUPFD, 0);
-        return new_ref<File>(fd).template AsRef<system::File>();
+        return new_ref<File>(fd).template AsRef<platform::File>();
     }
 
     int File::GetStatus()

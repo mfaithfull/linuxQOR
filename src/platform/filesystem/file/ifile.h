@@ -22,13 +22,13 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE_INTERFACE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE_INTERFACE
+#ifndef QOR_PP_H_PLATFORM_FILESYSTEM_FILE_INTERFACE
+#define QOR_PP_H_PLATFORM_FILESYSTEM_FILE_INTERFACE
 
 #include <vector>
 #include "src/qor/reference/newref.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) IFile
 	{
@@ -57,6 +57,6 @@ namespace qor{ namespace system{
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
     };
 
-}}//qor::system
+}}//qor::platform
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE_INTERFACE
+#endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILE_INTERFACE

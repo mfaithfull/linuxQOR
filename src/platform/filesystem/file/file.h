@@ -22,13 +22,13 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#ifndef QOR_PP_H_PLATFORM_FILESYSTEM_FILE
+#define QOR_PP_H_PLATFORM_FILESYSTEM_FILE
 
 #include <string>
 #include "../path.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
 
@@ -57,6 +57,6 @@ namespace qor{ namespace system{
         //ref_of<IFile>::type m_pimpl;
     };
 
-}}//qor::system
+}}//qor::platform
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILE
+#endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILE

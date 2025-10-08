@@ -22,37 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FOLDER
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FOLDER
+#include "src/configuration/configuration.h"
 
-#include <functional>
-#include "path.h"
-#include "fileindex.h"
+#include "root.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) Folder
-	{
-	public:
+    Root::Root() : m_path()
+    {
+    }
 
-        Folder(const Folder& src);
-        Folder(const class Path& path);
-        Folder& operator = (const Folder&);
-        virtual ~Folder() = default;
-        
-        static void Create(class Path& newFolder);
-        bool Copy( class Path& destParent );
-        bool Move( class Path& destParent);
-        bool Rename( const string_t& name);
-        bool Delete();
-        void Enumerate( const std::function <bool (FileIndex&)>& f );
-        void CreateSymLinkTo( class Path& target);
-        class Path Path();
-    protected:
+    void Root::Setup()
+    {
+        m_path = Path().RootIndicator();
+    }
+    
+    class Path Root::operator / (const std::string folder) const
+    {
+        class Path path = m_path;
+        path /= folder;
+        return path;
+    }
 
-        class Path m_path;
-    };
+    class Path Root::Path() const
+    {
+        return m_path;
+    }
 
-}}//qor::system
+    class Folder Root::Folder() const
+    {
+        class Folder result(m_path);
+        return result;
+    }
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FOLDER
+    const std::string Root::Indicator() const
+    {
+        return m_path.RootIndicator();
+    }
+
+}}//qor::platform

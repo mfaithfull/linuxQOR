@@ -32,15 +32,15 @@
 #include "../../src/framework/application/application_builder.h"
 #include "../../src/framework/role/role.h"
 #include "../../src/framework/workflow/compound_workflow.h"
-#include "src/system/system/system.h"
-#include "src/system/filesystem/filesystem.h"
+#include "src/platform/platform.h"
+#include "src/platform/filesystem/filesystem.h"
 #include "src/framework/thread/threadpool.h"
 
 using namespace qor;
 using namespace qor::test;
 using namespace qor::framework;
 using namespace qor::workflow;
-using namespace qor::system;
+using namespace qor::platform;
 
 struct ApplicationTestSuite{};
 

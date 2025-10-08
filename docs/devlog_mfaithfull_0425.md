@@ -86,7 +86,7 @@ If you need to look after every byte then these are probably not the allocators 
 
 
 Polished the Application a little and hooked it up the the singleton for the OS wrapper.
-remember to provide The##### functions for genuinely global singletons so tha they are owned by the single module that declares them. use TheSystem() to access the System object from anywhere.
+remember to provide The##### functions for genuinely global singletons so tha they are owned by the single module that declares them. use ThePlatform() to access the Platform object from anywhere.
 
 
 I'd forgotted what pain thread local singletons are on MSVC. Got them working there again although not without changing how they work to a less elegant solution under GCC. 

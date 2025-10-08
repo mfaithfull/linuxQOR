@@ -30,7 +30,7 @@
 #include "src/framework/role/irole.h"
 #include "src/framework/workflow/iworkflow.h"
 #include "src/qor/instance/singleton.h"
-#include "src/system/system/system.h"
+#include "src/platform/platform.h"
 
 namespace qor{ namespace framework{
 
@@ -65,7 +65,7 @@ namespace qor{ namespace framework{
         template<class TSubsystem>
 		Application& AddSubSystem()
 		{
-            TheSystem()->template AddSubsystem<TSubsystem>();
+            ThePlatform()->template AddSubsystem<TSubsystem>();
 			return *this;
 		}
         

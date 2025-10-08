@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM
 #define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM
 
-#include "src/system/filesystem/ifilesystem.h"
-#include "src/system/filesystem/fileindex.h"
+#include "src/platform/filesystem/ifilesystem.h"
+#include "src/platform/filesystem/fileindex.h"
 
 namespace qor
 {
@@ -35,7 +35,7 @@ namespace qor
 
 namespace qor{ namespace nslinux{ 
 
-    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileSystem : public qor::system::IFileSystem
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileSystem : public qor::platform::IFileSystem
     {
     public:
         FileSystem() = default;
@@ -52,10 +52,10 @@ namespace qor{ namespace nslinux{
                 
         consider whether we need a separate directory entry file object if we want to be able to mess with dirents, probably.*/
 
-        virtual ref_of<system::File>::type Create(const system::FileIndex& index, const int withFlags) const;
-        virtual ref_of<system::File>::type Open(const system::FileIndex& index, const int openFor, const int withFlags) const;        
-        virtual bool Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
-        virtual bool Rename(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
+        virtual ref_of<platform::File>::type Create(const platform::FileIndex& index, const int withFlags) const;
+        virtual ref_of<platform::File>::type Open(const platform::FileIndex& index, const int openFor, const int withFlags) const;        
+        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
+        virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
 
         void SyncToSystem() const;
     };

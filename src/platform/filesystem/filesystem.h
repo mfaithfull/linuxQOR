@@ -22,21 +22,21 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
+#ifndef QOR_PP_H_PLATFORM_FILESYSTEM_FILESYSTEM
+#define QOR_PP_H_PLATFORM_FILESYSTEM_FILESYSTEM
 
 #include <filesystem>
 #include "ifilesystem.h"
 #include "root.h"
 #include "file/file.h"
-#include "src/system/system/isubsystem.h"
+#include "src/platform/isubsystem.h"
 
 namespace qor
 {
     bool qor_pp_import ImplementsIFileSystem();//All libraries providing an implementation of IFileSystem also need to export this function so that the linker can find them
 }
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) FileSystem : public ISubsystem
     {
@@ -57,9 +57,9 @@ namespace qor{ namespace system{
         ref_of<File>::type Open(const FileIndex& index, const int openFor, const int withFlags) const;
         bool Delete(const FileIndex& index) const;
         bool Delete(const Path& path) const;
-        bool Copy(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
-        bool Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
-        bool Rename(system::FileIndex& srcIndex, const system::FileIndex& destIndex) const;
+        bool Copy(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
+        bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
+        bool Rename(platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
 
         std::filesystem::space_info Space(const Path& path);
         Path TempFolder();
@@ -70,10 +70,10 @@ namespace qor{ namespace system{
         Root m_root;
     };
     
-    }//qor::system
+    }//qor::platform
     
     constexpr GUID FileSystemGUID = {0x3eea49d1, 0x3bc7, 0x429b, {0xb8, 0x0a, 0x70, 0xe3, 0xcf, 0x87, 0x05, 0xe0}};
-    qor_pp_declare_guid_of(system::FileSystem,FileSystemGUID);
+    qor_pp_declare_guid_of(platform::FileSystem,FileSystemGUID);
 }//qor
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILESYSTEM
+#endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILESYSTEM

@@ -58,7 +58,7 @@ namespace qor{ namespace nslinux{
         sync();
     }
 
-    ref_of<system::File>::type FileSystem::Create(const system::FileIndex& index, int withFlags) const
+    ref_of<platform::File>::type FileSystem::Create(const platform::FileIndex& index, int withFlags) const
     {
         int flags = withFlags |= WithFlags::CreateNew | WithFlags::Truncate;
         auto ref = Open(index, OpenFor::WriteOnly, flags);
@@ -66,12 +66,12 @@ namespace qor{ namespace nslinux{
         return ref;
     }
 
-    ref_of<system::File>::type FileSystem::Open(const system::FileIndex& index, int openFor, int withFlags) const
+    ref_of<platform::File>::type FileSystem::Open(const platform::FileIndex& index, int openFor, int withFlags) const
     {        
-        return new_ref<File>(index, openFor, withFlags).template AsRef<system::File>();
+        return new_ref<File>(index, openFor, withFlags).template AsRef<platform::File>();
     }
 
-    bool FileSystem::Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+    bool FileSystem::Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
     {
         if(destIndex.IsDirectory())
         {
@@ -94,7 +94,7 @@ namespace qor{ namespace nslinux{
         return false;
     }
 
-    bool FileSystem::Rename(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+    bool FileSystem::Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
     {
         return rename(srcIndex.ToString().c_str(), destIndex.ToString().c_str()) == 0 ? true : false;
     }

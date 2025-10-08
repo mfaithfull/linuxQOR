@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_FILEINDEX
-#define QOR_PP_H_SYSTEM_FILESYSTEM_FILEINDEX
+#ifndef QOR_PP_H_PLATFORM_FILESYSTEM_FILEINDEX
+#define QOR_PP_H_PLATFORM_FILESYSTEM_FILEINDEX
 
 #include <string>
 #include <filesystem>
@@ -31,7 +31,7 @@
 #include "src/qor/reference/reference.h"
 #include "file/file.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex
 	{
@@ -73,6 +73,6 @@ namespace qor{ namespace system{
         std::filesystem::directory_entry m_dirent;
     };
 
-}}//qor::system
+}}//qor::platform
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_FILEINDEX
+#endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILEINDEX

@@ -25,21 +25,21 @@
 #ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FOLDER
 #define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FOLDER
 
-#include "src/system/filesystem/folder.h"
+#include "src/platform/filesystem/folder.h"
 
 //All types on this interface must be portable
 
 namespace qor{ namespace nslinux{ 
 
-    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) Folder : public system::Folder
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) Folder : public platform::Folder
     {
     public:
 
-        Folder(const Folder& src) : system::Folder(src)
+        Folder(const Folder& src) : platform::Folder(src)
         {
         }
 
-        Folder(const class system::Path& path) : system::Folder(path)
+        Folder(const class platform::Path& path) : platform::Folder(path)
         {
 
         }

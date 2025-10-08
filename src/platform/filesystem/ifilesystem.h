@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
-#define QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
+#ifndef QOR_PP_H_PLATFORM_FILESYSTEM_INTERFACE
+#define QOR_PP_H_PLATFORM_FILESYSTEM_INTERFACE
 
 #include <optional>
 #include <filesystem>
@@ -34,7 +34,7 @@
 #include "fileindex.h"
 #include "folder.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) IFileSystem
     {
@@ -163,7 +163,7 @@ namespace qor{ namespace system{
             return RemoveDir(path);
         }
 
-        virtual bool Copy(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+        virtual bool Copy(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
         {
             try
             {
@@ -178,12 +178,12 @@ namespace qor{ namespace system{
             return false;
         }
 
-        virtual bool Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
         {            
             return false;
         }
 
-        virtual bool Rename(system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+        virtual bool Rename(platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
         {
             try
             {
@@ -198,13 +198,13 @@ namespace qor{ namespace system{
         }
     };
     
-    }//qor::system
+    }//qor::platform
     
-    qor_pp_declare_instancer_of(system::IFileSystem, SingletonInstancer);
-    qor_pp_declare_factory_of(system::IFileSystem, ExternalFactory);
+    qor_pp_declare_instancer_of(platform::IFileSystem, SingletonInstancer);
+    qor_pp_declare_factory_of(platform::IFileSystem, ExternalFactory);
     constexpr GUID IFileSystemGUID = {0x3474967c, 0x0be1, 0x417d, { 0xab, 0x71, 0xd0, 0x21, 0x10, 0x16, 0x0e, 0x9f}};
-    qor_pp_declare_guid_of(system::IFileSystem,IFileSystemGUID);
+    qor_pp_declare_guid_of(platform::IFileSystem,IFileSystemGUID);
 
 }//qor
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_INTERFACE
+#endif//QOR_PP_H_PLATFORM_FILESYSTEM_INTERFACE

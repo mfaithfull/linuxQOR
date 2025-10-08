@@ -29,7 +29,7 @@
 #include "filesystem.h"
 #include "path.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
     FileSystem::FileSystem()
     {
@@ -93,17 +93,17 @@ namespace qor{ namespace system{
         return m_pimpl->Open(index, openFor, withFlags);
     }
 
-    bool FileSystem::Copy(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+    bool FileSystem::Copy(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
     {
         return srcIndex.Copy(destIndex);
     }
 
-    bool FileSystem::Move(const system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+    bool FileSystem::Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
     {
         return srcIndex.Move(destIndex);
     }
 
-    bool FileSystem::Rename(system::FileIndex& srcIndex, const system::FileIndex& destIndex) const
+    bool FileSystem::Rename(platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
     {
         return srcIndex.Rename(destIndex);
     }
@@ -119,4 +119,4 @@ namespace qor{ namespace system{
         return tempPath;
     }
 
-}}//qor::system
+}}//qor::platform

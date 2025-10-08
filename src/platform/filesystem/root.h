@@ -22,42 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_PLATFORM_FILESYSTEM_ROOT
+#define QOR_PP_H_PLATFORM_FILESYSTEM_ROOT
 
-#include "root.h"
+#include <string>
 
-namespace qor{ namespace system{
+#include "path.h"
+#include "folder.h"
 
-    Root::Root() : m_path()
+namespace qor{ namespace platform{
+
+    class qor_pp_module_interface(QOR_FILESYSTEM) Root
     {
-    }
+    public:
 
-    void Root::Setup()
-    {
-        m_path = Path().RootIndicator();
-    }
+        Root();
+        virtual ~Root() = default;
+        void Setup();
+        class Path operator / (const std::string folder) const;
+        class Path Path() const;
+        class Folder Folder() const;
+        const std::string Indicator() const;
+
+    private:
+
+        class Path m_path;
+
+    };
     
-    class Path Root::operator / (const std::string folder) const
-    {
-        class Path path = m_path;
-        path /= folder;
-        return path;
-    }
+}}//qor::platform
 
-    class Path Root::Path() const
-    {
-        return m_path;
-    }
-
-    class Folder Root::Folder() const
-    {
-        class Folder result(m_path);
-        return result;
-    }
-
-    const std::string Root::Indicator() const
-    {
-        return m_path.RootIndicator();
-    }
-
-}}//qor::system
+#endif//QOR_PP_H_PLATFORM_FILESYSTEM_ROOT

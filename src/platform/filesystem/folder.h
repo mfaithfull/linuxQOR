@@ -22,23 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "filesystem.h"
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#ifndef QOR_PP_H_PLATFORM_FILESYSTEM_FOLDER
+#define QOR_PP_H_PLATFORM_FILESYSTEM_FOLDER
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Linux FileSystem Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#include <functional>
+#include "path.h"
+#include "fileindex.h"
 
-	static qor::TypeRegEntry< qor::nslinux::FileSystem, qor::platform::IFileSystem > reg;  //Register the Linux specific implementation of IFileSystem
+namespace qor{ namespace platform{
 
-	return QORModule;
-}
+    class qor_pp_module_interface(QOR_FILESYSTEM) Folder
+	{
+	public:
+
+        Folder(const Folder& src);
+        Folder(const class Path& path);
+        Folder& operator = (const Folder&);
+        virtual ~Folder() = default;
+        
+        static void Create(class Path& newFolder);
+        bool Copy( class Path& destParent );
+        bool Move( class Path& destParent);
+        bool Rename( const string_t& name);
+        bool Delete();
+        void Enumerate( const std::function <bool (FileIndex&)>& f );
+        void CreateSymLinkTo( class Path& target);
+        class Path Path();
+    protected:
+
+        class Path m_path;
+    };
+
+}}//qor::platform
+
+#endif//QOR_PP_H_PLATFORM_FILESYSTEM_FOLDER

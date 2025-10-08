@@ -26,7 +26,7 @@
 
 #include "path.h"
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
     std::string Path::s_rootIndicator;
     std::string Path::s_selfIndicator;
@@ -167,4 +167,4 @@ namespace qor{ namespace system{
         return m_path.compare(compare.m_path) == 0 ? true : false;
     }
 
-}}//qor::system
+}}//qor::platform

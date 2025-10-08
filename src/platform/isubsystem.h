@@ -22,71 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_PLATFORM_SUBSYSTEM_INTERFACE
+#define QOR_PP_H_PLATFORM_SUBSYSTEM_INTERFACE
 
-#include "file.h"
+namespace qor{ namespace platform{
 
-namespace qor{ namespace system{
-
-    File::File(){}
-
-    File::File(const File& src)
+    class qor_pp_module_interface(QOR_PLATFORM) ISubsystem
     {
-        *this = src;
-    }
+    public:
 
-    File::File(FileIndex& index)//open mode including sharing and access
-    {
+        ISubsystem() = default;
+        virtual ~ISubsystem() = default;
 
-    }
+        virtual void Setup(){};
+        virtual void Shutdown(){};
 
-    File& File::operator = (const File& src)
-    {
-        if(&src != this)
-        {
+     private:
 
-        }
-        return *this;
-    }
+        ISubsystem(const ISubsystem&) = delete;
+        ISubsystem& operator = (const ISubsystem&) = delete;
 
-    File::~File()
-    {
+    };
 
-    }
+}}//qor::platform
 
-    int File::ChangeMode(unsigned int mode)
-    {
-        return -1;
-    }
-    
-    int64_t File::GetPosition()
-    {
-        return 0;
-    }
-
-    int64_t File::SetPosition(int64_t newPosition)
-    {
-        return 0;
-    }
-
-    bool File::Flush()
-    {
-        return false;
-    }
-
-    unsigned long File::GetType()
-    {
-        return 0;
-    }
-
-    bool File::SetEOF()
-    {
-        return false;
-    }
-
-    bool File::SupportsPosition()
-    {
-        return false;
-    }
-
-}}//qor::system
+#endif//QOR_PP_H_PLATFORM_SUBSYSTEM_INTERFACE

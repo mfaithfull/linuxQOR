@@ -30,12 +30,12 @@
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/system/filesystem/filesystem.h"
-#include "src/system/filesystem/folder.h"
+#include "src/platform/filesystem/filesystem.h"
+#include "src/platform/filesystem/folder.h"
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::system;
+using namespace qor::platform;
 
 struct FileSystemTestSuite{};
 bool requiresFileSystem = qor::ImplementsIFileSystem();

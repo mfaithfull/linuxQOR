@@ -22,13 +22,13 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_FILESYSTEM_PATH
-#define QOR_PP_H_SYSTEM_FILESYSTEM_PATH
+#ifndef QOR_PP_H_PLATFORM_FILESYSTEM_PATH
+#define QOR_PP_H_PLATFORM_FILESYSTEM_PATH
 
 #include <string>
 #include <filesystem>
 
-namespace qor{ namespace system{
+namespace qor{ namespace platform{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) Path
     {
@@ -91,6 +91,6 @@ namespace qor{ namespace system{
 
     };
     
-}}//qor::system
+}}//qor::platform
 
-#endif//QOR_PP_H_SYSTEM_FILESYSTEM_PATH
+#endif//QOR_PP_H_PLATFORM_FILESYSTEM_PATH

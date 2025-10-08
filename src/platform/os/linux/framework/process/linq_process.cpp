@@ -26,7 +26,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
 #include "currentprocess.h"
-#include "src/system/filesystem/ifilesystem.h"
+#include "src/platform/filesystem/ifilesystem.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/factory/internalfactory.h"
 #include "src/qor/injection/typeregistry.h"

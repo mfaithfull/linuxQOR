@@ -22,28 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYSTEM_SUBSYSTEM_INTERFACE
-#define QOR_PP_H_SYSTEM_SUBSYSTEM_INTERFACE
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-namespace qor{ namespace system{
-
-    class qor_pp_module_interface(QOR_SYSTEM) ISubsystem
-    {
-    public:
-
-        ISubsystem() = default;
-        virtual ~ISubsystem() = default;
-
-        virtual void Setup(){};
-        virtual void Shutdown(){};
-
-     private:
-
-        ISubsystem(const ISubsystem&) = delete;
-        ISubsystem& operator = (const ISubsystem&) = delete;
-
-    };
-
-}}//qor::system
-
-#endif//QOR_PP_H_SYSTEM_SUBSYSTEM_INTERFACE
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Platform Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

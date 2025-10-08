@@ -25,27 +25,27 @@
 #ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILE
 #define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILE
 
-#include "src/system/filesystem/file/file.h"
-#include "src/system/filesystem/fileindex.h"
-#include "src/system/filesystem/path.h"
+#include "src/platform/filesystem/file/file.h"
+#include "src/platform/filesystem/fileindex.h"
+#include "src/platform/filesystem/path.h"
 
 //All types on this interface must be portable
 
 namespace qor{ namespace nslinux{ 
 
-    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) File : public system::File
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) File : public platform::File
     {
     public:
         //anything we do with an fd that takes effect within the context of the file rather than the owning filesystem
 
         File(const File& src);
-        File(const system::Path& path, const std::string& fileName, int openFor, int withFlags) : File(system::FileIndex(path,fileName),openFor,withFlags) {}
-        File(const system::FileIndex& direntry, int openFor, int withFlags);
+        File(const platform::Path& path, const std::string& fileName, int openFor, int withFlags) : File(platform::FileIndex(path,fileName),openFor,withFlags) {}
+        File(const platform::FileIndex& direntry, int openFor, int withFlags);
         File(int fd);
         ~File();
         int ChangeAccess(unsigned int mode);
         int AdviseOnUsage(off_t offset, off_t length, int advise);
-        ref_of<system::File>::type Duplicate();
+        ref_of<platform::File>::type Duplicate();
         int GetStatus();
         int GetDescriptor() const;
         int GetDescriptorMode();
