@@ -44,25 +44,16 @@ namespace qor { namespace nsLinux {
 	Console::Console()
 	{	
 		termios t;	
-		if(CLibResult::IndicatesFaliure(tcgetattr(STDIN_FILENO, &t)))
-		{
-			CLibResult tcgetattr_ErrorHandler;
-		}
+		CLibResult tcgetattr_ErrorHandler(tcgetattr(STDIN_FILENO, &t));
 		m_termiosBackup = t;
 		t.c_lflag &= (~ICANON);
-		if(CLibResult::IndicatesFaliure(tcsetattr(STDIN_FILENO, TCSAFLUSH, &t)))
-		{
-			CLibResult tcsetattr_ErrorHandler;
-		}
+		CLibResult tcsetattr_ErrorHandler(tcsetattr(STDIN_FILENO, TCSAFLUSH, &t));
 	}
 
 	Console::~Console()
 	{
 		//restore cooked/raw mode
-		if(CLibResult::IndicatesFaliure(tcsetattr(STDIN_FILENO, TCSANOW, &m_termiosBackup)))
-		{
-			CLibResult tcsetattr_ErrorHandler;
-		}
+		CLibResult tcsetattr_ErrorHandler(tcsetattr(STDIN_FILENO, TCSANOW, &m_termiosBackup));
 	}
 
 	string_t Console::ReadLine()

@@ -27,14 +27,12 @@
 
 #include "src/framework/signals/signal.h"
 #include "src/qor/sync/syncobject.h"
+#include "src/framework/pipeline/element.h"
 
 namespace qor{ namespace pipeline{
 
-    class qor_pp_module_interface(QOR_PIPELINE) ConnectionPool;
-
-    class qor_pp_module_interface(QOR_PIPELINE) Plug : public SignalBase
+    class qor_pp_module_interface(QOR_PIPELINE) Plug : public virtual Element, public SignalBase
     {
-        friend class qor_pp_module_interface(QOR_PIPELINE) ConnectionPool;
 
     public:
 
@@ -43,8 +41,12 @@ namespace qor{ namespace pipeline{
         qor_pp_signal_func DisconnectedSignal();
         qor_pp_signal_func DisconnectionErrorSignal();
 
-        Plug(ConnectionPool* pool = nullptr);
+        Plug();
         virtual ~Plug();
+
+        virtual void SetSink(Element* ignored){};
+        virtual void SetSource(Element* ignored){};
+
         virtual bool Connect();
         virtual void Disconnect();
         virtual bool HandlePendingConnectionResult(bool connected);
@@ -64,7 +66,6 @@ namespace qor{ namespace pipeline{
     private:
 
         SyncObject* m_syncobject;
-        ConnectionPool* m_pool;
     };
 
 }}//qor::pipeline

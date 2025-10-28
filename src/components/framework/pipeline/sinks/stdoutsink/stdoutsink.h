@@ -29,7 +29,7 @@
 
 namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_STDINSOURCE) StdOutSink : public pipeline::Sink
+    class qor_pp_module_interface(QOR_STDOUTSINK) StdOutSink : public pipeline::Sink
     {
     public:
 

@@ -28,6 +28,10 @@
 
 namespace qor{ namespace pipeline{
 
+    Pipeline::Pipeline() : Filter() 
+    {        
+    }
+
     void Pipeline::Run(void)
     {
 

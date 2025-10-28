@@ -46,9 +46,7 @@ namespace qor{ namespace pipeline{
         Pipeline( const Pipeline& src );
         Pipeline& operator = (const Pipeline& src);
 
-        Pipeline(Connection* SourceConnection, 
-            Connection* SinkConnection, 
-            Element::FlowMode flowmode = Element::FlowMode::Pull) : m_flowmode(flowmode)
+        Pipeline(Connection* SourceConnection, Connection* SinkConnection, Element::FlowMode flowmode = Element::FlowMode::Pull) : m_flowmode(flowmode)
         {
             SetSink(SinkConnection->GetSink());
             SetSource(SourceConnection->GetSource());

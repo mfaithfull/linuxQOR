@@ -3,7 +3,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 add_library(qor_host SHARED host.cpp host_module.cpp)
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-threadsafe-statics -fvisibility=hidden")
-target_compile_definitions(qor_host PUBLIC -DQOR_PP_HOST)
+target_compile_definitions(qor_host PRIVATE -DQOR_PP_HOST)
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     target_link_libraries(qor_host qor_module winqsharedbootstrap)
 endif()

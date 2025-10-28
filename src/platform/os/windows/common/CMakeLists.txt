@@ -10,5 +10,5 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
 endif()
 
-target_compile_definitions(winq_common PUBLIC -DQOR_WINCOMMON)
+target_compile_definitions(winq_common PRIVATE -DQOR_WINCOMMON)
 target_link_libraries(winq_common qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread qor_interception qor_winapi winqsharedbootstrap)

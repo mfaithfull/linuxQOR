@@ -29,7 +29,7 @@
 #include <filesystem>
 #include "path.h"
 #include "src/qor/reference/reference.h"
-#include "file/file.h"
+#include "file/ifile.h"
 
 namespace qor{ namespace platform{
 
@@ -37,6 +37,7 @@ namespace qor{ namespace platform{
 	{
 	public:
 
+        FileIndex();
         FileIndex(const Path & Path, const std::string& FileName);
         FileIndex(const std::filesystem::directory_entry& dirent);
         FileIndex(const FileIndex&);
@@ -63,13 +64,10 @@ namespace qor{ namespace platform{
         std::filesystem::file_status SymLinkStatus() const;
         std::string ToString() const;
         Path GetPath(void) const;
-        ref_of<File>::type Create(const int openFor, const int withFlags, const int inMode);
-        ref_of<File>::type Open(const int openFor, const int withFlags, const int inMode);
+        ref_of<IFile>::type Create(const int openFor, const int withFlags, const int inMode);
+        ref_of<IFile>::type Open(const int openFor, const int withFlags, const int inMode);
         
     private:
-
-        FileIndex();
-
         std::filesystem::directory_entry m_dirent;
     };
 

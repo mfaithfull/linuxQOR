@@ -35,13 +35,11 @@ namespace qor{ namespace platform{
     std::string Path::s_separator;
 
     Path::Path() : m_path()
-    {
-        
+    {        
     }
 
     Path::Path(const std::string& path) : m_path(path)
     {
-
     }
     
     Path& Path::operator /= (const std::string& folder)
@@ -104,60 +102,60 @@ namespace qor{ namespace platform{
         m_path.clear();
     }
 
-    Path Path::RootName()
+    Path Path::RootName() const
     {
         Path root(m_path.root_name().generic_string());
         return root;
     }
 
-    Path Path::RootDirectory()
+    Path Path::RootDirectory() const
     {
         Path dir(m_path.root_directory().generic_string());
         return dir;
     }
 
-    Path Path::RelativePath()
+    Path Path::RelativePath() const
     {
         Path relative(m_path.relative_path().generic_string());
         return relative;
     }
 
-    bool Path::IsEmpty()
+    bool Path::IsEmpty() const
     {
         return m_path.empty();
     }
 
-    bool Path::HasRootPath()
+    bool Path::HasRootPath() const
     {
         return m_path.has_root_path();
     }
 
-    bool Path::HasRootName()
+    bool Path::HasRootName() const
     {
         return m_path.has_root_name();
     }
 
-    bool Path::HasRootDirectory()
+    bool Path::HasRootDirectory() const
     {
         return m_path.has_root_directory();
     }
 
-    bool Path::HasRelativePath()
+    bool Path::HasRelativePath() const
     {
         return m_path.has_relative_path();
     }
 
-    bool Path::HasParentPath()
+    bool Path::HasParentPath() const
     {
         return m_path.has_parent_path();
     }
 
-    bool Path::IsAbsolute()
+    bool Path::IsAbsolute() const
     {
         return m_path.is_absolute();
     }
 
-    bool Path::IsRelative()
+    bool Path::IsRelative() const
     {
         return m_path.is_relative();
     }

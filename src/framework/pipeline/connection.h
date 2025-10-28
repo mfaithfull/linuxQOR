@@ -31,15 +31,12 @@
 
 namespace qor{ namespace pipeline{
 
-    class qor_pp_module_interface(QOR_PIPELINE) ConnectionPool;
-
     class qor_pp_module_interface(QOR_PIPELINE) Connection : public Plug
     {
     public:
 
-        Connection(ConnectionPool* pool = nullptr) : Plug(pool), m_async(false), m_writable(true), m_readable(true)
+        Connection() : Plug(), m_async(false), m_writable(true), m_readable(true)
         {
-
         }
 
         virtual ~Connection() = default;

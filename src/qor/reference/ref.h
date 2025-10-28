@@ -78,6 +78,7 @@ namespace qor{
 			{
 				//This is where the underlying raw object gets allocated iff its type is constructable
 				m_p = AllocateOnlyConcreteTypesFunctor<R, is_abstract::value>::template Allocate<_p...>(count, std::forward<_p>(p1)...);
+
 				if (m_p != nullptr)
 				{
 					//Insert a link to this into the new objects allocated space so that from the object this shared reference can be found

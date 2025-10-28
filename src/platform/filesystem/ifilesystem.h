@@ -28,6 +28,7 @@
 #include <optional>
 #include <filesystem>
 #include "src/qor/instance/singleton.h"
+#include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/error/error.h"
@@ -51,6 +52,7 @@ namespace qor{ namespace platform{
 
         enum WithFlags
         {
+            None = 0,
             Append = 1 << 0,
             CloseExec = 1 << 1,
             CloseFork = 1 << 2,
@@ -98,103 +100,13 @@ namespace qor{ namespace platform{
         virtual std::string ParentIndicator() const { return ".."; }
         virtual std::string RootIndicator() const { return "/"; }
         virtual unsigned short MaxElementLength() const { return 256; }
-        
-        virtual ref_of<File>::type Create(const FileIndex& index, const int withFlags) const 
-        {
-            ref_of<File>::type result;
-            return result;
-        }
-
-        virtual std::optional<Folder> MakeDir(const Path& path) const 
-        {
-            std::optional<Folder> folder;
-            try{
-                if(std::filesystem::create_directory(path))
-                {
-                    folder.emplace(Folder(path));                
-                }
-            }
-            catch(std::filesystem::filesystem_error& fse)
-            {
-                continuable(fse.what());
-            }
-            return folder;
-        }
-
-        virtual std::optional<Folder> NewFolder(const Path& path) const 
-        {
-            return MakeDir(path);
-        }
-
-        virtual ref_of<File>::type Open(const FileIndex& index, const int openFor, const int withFlags) const
-        {
-            ref_of<File>::type result;
-            return result;
-
-        }        
-
-        virtual bool Delete(const FileIndex& index) const
-        {
-            try{
-                return std::filesystem::remove(index.GetPath());
-            }
-            catch(std::filesystem::filesystem_error& fse)
-            {
-                continuable(fse.what());
-            }
-            return false;
-        }
-
-        virtual bool RemoveDir(const Path& path) const
-        {
-            try
-            {
-                return std::filesystem::remove(path);
-            }
-            catch(std::filesystem::filesystem_error& fse)
-            {
-                continuable(fse.what());
-            }
-            return false;            
-        }
-
-        virtual bool DeleteFolder(const Path& path) const
-        {
-            return RemoveDir(path);
-        }
-
-        virtual bool Copy(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
-        {
-            try
-            {
-                std::filesystem::copy(srcIndex.GetPath(), destIndex.GetPath());
-                return true;
-            }
-            catch(std::filesystem::filesystem_error& fse)
-            {
-                continuable(fse.what());
-            }
-
-            return false;
-        }
-
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
-        {            
-            return false;
-        }
-
-        virtual bool Rename(platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
-        {
-            try
-            {
-                std::filesystem::rename(srcIndex.GetPath(), destIndex.GetPath());
-                return true;
-            }
-            catch(std::filesystem::filesystem_error& fse)
-            {
-                continuable(fse.what());
-            }
-            return false;
+        virtual ref_of<IFile>::type Create(const FileIndex& index, const int withFlags) const { ref_of<IFile>::type noresult; return noresult;}
+        virtual ref_of<IFile>::type Open(const FileIndex& index, const int openFor, const int withFlags) const {ref_of<IFile>::type noresult; return noresult;}
+        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const {return false;}
+        virtual Path CurrentPath() const {
+            std::filesystem::path stdpath = std::filesystem::current_path();
+            Path currentPath(stdpath.string());
+            return currentPath;
         }
     };
     

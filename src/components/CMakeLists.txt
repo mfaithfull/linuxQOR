@@ -7,3 +7,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(framework)
 add_subdirectory(qor)
+add_subdirectory(protocols)
+add_subdirectory(network)

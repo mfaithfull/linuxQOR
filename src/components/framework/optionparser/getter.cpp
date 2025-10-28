@@ -30,11 +30,11 @@
 using namespace qor;
 
 namespace qor{ namespace components{ namespace optparser {
-
-	OptionGetter::OptionGetter(const int argc, char** argv) : nonOpts(itArgument), 
+	
+	OptionGetter::OptionGetter(const int argc, const char** argv) : nonOpts(itArgument), 
     longOptioninterpretter(m_optionsContext, shortOptionInterpretter, itArgument)
 	{
-        itArgument.Init(argc,argv);
+        itArgument.Init(argc, (char**)argv);
 		m_optionsContext.m_pArgument = nullptr;
 		m_optionsContext.m_Error = 1;
 		m_optionsContext.m_OptionOption = '?';
@@ -42,6 +42,16 @@ namespace qor{ namespace components{ namespace optparser {
 		m_optionsContext.m_pNextChar = nullptr;
 		m_optionsContext.m_Ordering = REQUIRE_ORDER;
 		m_optionsContext.m_RaiseErrors = true;
+	}
+
+	OptionGetter::OptionGetter(const int argc, const char** argv, const char* shortOptions, Option* longOptions) : OptionGetter(argc, argv)
+	{
+		SetOptions(shortOptions, longOptions);
+	}
+
+	OptionGetter::OptionGetter(const int argc, const char** argv, IOptionable& optionable, bool longOnly, bool posixCompliant, int option_index) : OptionGetter(argc, argv, optionable.ProvideShortOptionString(), optionable.ProvideLongOptions())
+	{
+		GetOptions(optionable, longOnly, posixCompliant, option_index);
 	}
 
 	void OptionGetter::SetOptions(const char* shortOptions, Option* longOptions)
@@ -67,7 +77,7 @@ namespace qor{ namespace components{ namespace optparser {
 
 	int OptionGetter::Internal(bool longOnly, bool posixlyCorrect)
 	{
-		int result;
+		int result = -1;
         longOptioninterpretter.SetLongOnly(longOnly);
 
 		if (itArgument.IsEmpty())
@@ -88,7 +98,7 @@ namespace qor{ namespace components{ namespace optparser {
 		}
 		m_optionsContext.m_RaiseErrors = shortOptionInterpretter.Colon() ? 0 : m_optionsContext.m_Error;
 
-		if (!((m_optionsContext.m_pNextChar == nullptr || *m_optionsContext.m_pNextChar == '\0') && ParseNextOption(result)))
+		if (!(m_optionsContext.m_pNextChar == nullptr) && !(*m_optionsContext.m_pNextChar == '\0') && ParseNextOption(result))
 		{
 			result = ParseNextShortOption();
 		}

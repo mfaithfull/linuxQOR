@@ -82,8 +82,9 @@ namespace qor
 			}
 			else
 			{
-                IndirectFactory<T>* pFactory = Registration;
-                return pFactory->Construct(count, p1...);
+                IndirectFactory<T>* pBaseFactory = Registration;
+                IndirectFactorywithParams<T, _p...>* pFactory = dynamic_cast<IndirectFactorywithParams<T, _p...>*>(pBaseFactory);
+                return pFactory->Construct(count, p1...).template AsRef<T>();
 			}
 		}
 

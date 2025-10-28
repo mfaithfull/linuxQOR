@@ -33,11 +33,10 @@ namespace qor{ namespace workflow{
 
         IWorkflow() = default;
         virtual ~IWorkflow() = default;
-        virtual void Start() = 0;
-        virtual void Tick() = 0;
-        virtual void Suspend() = 0;
-        virtual void Resume() = 0;
-        virtual void Leave() = 0;        
+
+        virtual int Run() = 0;
+        virtual bool IsComplete() const = 0;
+
     };
 
 }}//qor::workflow

@@ -26,21 +26,21 @@
 #define QOR_PP_H_FRAMEWORK_WORKFLOW
 
 #include <stack>
+#include <functional>
 #include "iworkflow.h"
 #include "src/qor/delegate/delegate.h"
 
 namespace qor{ namespace workflow{
 
-    enum Transition
-    {
-        Enter,
-        Tick,
-        Suspend,
-        Resume,
-        Leave
-    };
+    class qor_pp_module_interface(QOR_WORKFLOW) Workflow;
 
-    typedef Delegate<void(Transition)> state_t;
+    struct State
+    {
+        std::function<void(Workflow*)> Enter;
+        std::function<void(Workflow*)> Suspend;
+        std::function<void(Workflow*)> Resume;
+        std::function<void(Workflow*)> Leave;
+    };
 
     class qor_pp_module_interface(QOR_WORKFLOW) Workflow : public IWorkflow
     {
@@ -50,22 +50,32 @@ namespace qor{ namespace workflow{
         virtual ~Workflow() = default;
         Workflow(const Workflow& src);
         Workflow& operator = (const Workflow& src);
-        virtual void Start();
-        virtual void Tick();
-        virtual void Suspend();
-        virtual void Resume();
-        virtual void Leave();
-        bool IsComplete() const;
-    protected:
-        virtual void InitialStateHandler(Transition t);
-        void DefaultHandle(Transition t);
-        state_t CurrentState();
-        void SetState(state_t state);
-        void PushState(state_t state);
+        virtual int Run();
+        virtual bool IsComplete() const;
+        void SetInitialState(State state);
+        
+        void SetState(State state);
+        void PushState(State state);
         void PopState();        
-        state_t GetInitialState();
+        void SetComplete();
+        void SetResult(int result);
+        
+    protected:
+    
+        virtual void Enter(Workflow*);
+        virtual void Suspend(Workflow*);
+        virtual void Resume(Workflow*);
+        virtual void Leave(Workflow*);
+
+        State GetInitialState();
+        State CurrentState();
+        State CreateDefaultState();
+
+    private:
+        int m_result;
         bool m_complete;
-        std::stack< state_t > m_StateStack;
+        State m_initialState;
+        std::stack< State > m_StateStack;
     };
 
 }}//qor::workflow

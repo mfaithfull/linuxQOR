@@ -28,30 +28,35 @@
 
 namespace qor{ namespace platform{
 
-    File::File(){}
+    static ref_of<IFile>::type Open(const FileIndex& index, int openFor, int withFlags)
+    {        
+        return new_ref<IFile>(index, openFor, withFlags);
+    }
 
-    File::File(const File& src)
+    File::File()
+    {
+    }
+
+    File::File(const File& src) : m_index(src.m_index)
     {
         *this = src;
     }
 
-    File::File(FileIndex& index)//open mode including sharing and access
+    File::File(const FileIndex& index) : m_index(index)//open mode including sharing and access
     {
-
     }
 
     File& File::operator = (const File& src)
     {
         if(&src != this)
         {
-
+            m_index = src.m_index;
         }
         return *this;
     }
 
     File::~File()
-    {
-
+    {//derived class owns platform specific resource and handles close in its destructor
     }
 
     int File::ChangeMode(unsigned int mode)
@@ -59,24 +64,23 @@ namespace qor{ namespace platform{
         return -1;
     }
     
-    int64_t File::GetPosition()
+    uint64_t File::GetPosition()
     {
         return 0;
     }
 
-    int64_t File::SetPosition(int64_t newPosition)
+    uint64_t File::SetPosition(uint64_t newPosition)
     {
         return 0;
     }
 
-    bool File::Flush()
-    {
-        return false;
+    void File::Flush()
+    {        
     }
 
-    unsigned long File::GetType()
+    IFile::Type File::GetType()
     {
-        return 0;
+        return Unknown;
     }
 
     bool File::SetEOF()
@@ -87,6 +91,53 @@ namespace qor{ namespace platform{
     bool File::SupportsPosition()
     {
         return false;
+    }
+
+    uint64_t File::SetPositionRelative(int64_t offset)
+    {
+        return 0;
+    }
+
+    void File::Truncate(uint64_t length)
+    {
+
+    }
+
+    void File::Reserve(uint64_t length)
+    {
+
+    }
+
+    uint64_t File::GetSize()
+    {
+        return std::filesystem::file_size(m_index.GetPath());
+    }
+
+    ref_of<IFile>::type File::ReOpen()
+    {
+        ref_of<IFile>::type newfile;
+        return newfile;
+    }
+
+    std::filesystem::file_status File::GetStatus()
+    {
+        std::filesystem::file_status status = std::filesystem::status(m_index.GetPath());
+        return status;
+    }
+
+    void File::SetStatus(int)
+    {
+        
+    }
+
+    int64_t File::Read(byte* buffer, size_t byteCount, int64_t offset)
+    {
+        return 0;
+    }
+
+    int64_t File::Write(byte* buffer, size_t byteCount, int64_t offset)
+    {
+        return 0;
     }
 
 }}//qor::platform

@@ -54,17 +54,17 @@ namespace qor{ namespace platform{
         std::string ToString(std::string FileName) const;
 
         void Clear();
-        Path RootName();
-        Path RootDirectory();
-        Path RelativePath();
-        bool IsEmpty();
-        bool HasRootPath();
-        bool HasRootName();
-        bool HasRootDirectory();
-        bool HasRelativePath();
-        bool HasParentPath();
-        bool IsAbsolute();
-        bool IsRelative();
+        Path RootName() const;
+        Path RootDirectory() const;
+        Path RelativePath() const;
+        bool IsEmpty() const;
+        bool HasRootPath() const;
+        bool HasRootName() const;
+        bool HasRootDirectory() const;
+        bool HasRelativePath() const;
+        bool HasParentPath() const;
+        bool IsAbsolute() const;
+        bool IsRelative() const;
         bool IsSamePath(const Path& Compare) const;
 
         operator std::filesystem::path()

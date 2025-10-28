@@ -53,8 +53,9 @@ namespace qor{ namespace pipeline{
         virtual bool IsBuffered();
         virtual bool IsSource();
         virtual bool IsSink();
-        void SetBuffer(Buffer* buffer);
+        virtual void SetBuffer(Buffer* buffer);
         Buffer* GetBuffer();
+        virtual bool HasBuffer();
         virtual void SetSource(Element* source) = 0;
         virtual Element* GetSource();
         virtual bool HasSource();

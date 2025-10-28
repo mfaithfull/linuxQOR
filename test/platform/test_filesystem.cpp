@@ -22,16 +22,19 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
+#include "src/configuration/configuration.h"
 
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
+#include <filesystem>
+
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/platform/filesystem/filesystem.h"
 #include "src/platform/filesystem/folder.h"
+#include "src/framework/pipeline/podbuffer.h"
 
 using namespace qor;
 using namespace qor::test;
@@ -77,7 +80,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFile)
     auto fileSystem = new_ref<FileSystem>();
     fileSystem().Setup();
     FileIndex newIndex(fileSystem().CurrentPath(), "TestTemp");
-    auto refFile = fileSystem().Create(newIndex, IFileSystem::WithFlags::NonBlock);
+    auto refFile = fileSystem().Create(newIndex, IFileSystem::WithFlags::CreateNew);
     fileSystem().Delete(newIndex);
 }
 
@@ -88,5 +91,56 @@ qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFolder)
     Path currentPath(fileSystem().CurrentPath());
     Path testPath = currentPath / "TestFolder";
     auto refFile = fileSystem().Create(testPath);
-    fileSystem().Delete(testPath);
+    fileSystem().DeleteFolder(testPath);
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, openAndWriteToANewFile)
+{
+    auto fileSystem = new_ref<FileSystem>();
+    fileSystem().Setup();
+    FileIndex newIndex(fileSystem().CurrentPath(), "testfile2.txt");
+    {
+        auto refFile = fileSystem().Create(newIndex, IFileSystem::WithFlags::CreateNew);
+        refFile->Flush();
+        auto status = refFile->GetStatus();        
+        auto fileType = refFile->GetType();
+        static const char* message = "Content written to a file!";
+        size_t len = strlen(message);
+        refFile->Write((byte*)message, len);        
+    }
+    
+    fileSystem().Delete(newIndex);
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, writeAndReadBackFileContents)
+{
+    auto fileSystem = new_ref<FileSystem>();
+    fileSystem().Setup();
+    FileIndex newIndex(fileSystem().CurrentPath(), "testfile3.txt");
+    {
+        static const char* message = "{\
+\"name\": \"John Doe\",\
+\"age\": 30,\
+\"isStudent\": false\
+}";
+        {
+            auto refFile = fileSystem().Create(newIndex, IFileSystem::WithFlags::CreateNew);
+            size_t len = strlen(message);
+            refFile->Write((byte*)message, len);
+        }
+
+        {
+            auto refReadFile = fileSystem().Open(newIndex, IFileSystem::OpenFor::ReadOnly, IFileSystem::WithFlags::Exclusive);
+            auto size = refReadFile->GetSize();
+            pipeline::PODBuffer<byte> byteBuffer;
+            byteBuffer.SetCapacity(size);
+
+            size_t& byteCount = size;
+            byte* address = byteBuffer.WriteRequest(byteCount);
+            auto bytesRead = refReadFile->Read(address, byteCount);
+            qor_pp_assert_that(memcmp(address, message, bytesRead) == 0).isTrue();
+        }
+
+    }
+    fileSystem().Delete(newIndex);
 }

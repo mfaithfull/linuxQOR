@@ -68,6 +68,14 @@ namespace qor{ namespace pipeline{
         Sink* ActualSink();
     };
 
+    class qor_pp_module_interface(QOR_PIPELINE) NullSource : public Source
+    {
+    public:
+        NullSource() : Source() {}
+        virtual ~NullSource() = default;
+        virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
+    };
+
 }}//qor::pipeline
 
 #endif//QOR_PP_H_PIPELINE_SOURCE

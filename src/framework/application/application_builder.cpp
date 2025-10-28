@@ -35,7 +35,9 @@ namespace qor{ namespace framework{
 
     ref_of<Application>::type AppBuilder::Build(const std::string name, const int argc, const char** argv, const char** env)
     {
-        return new_ref<Application>();
+        auto application = new_ref<Application>();
+        application->Name() = name;
+        return application;
     }
     
 }}//qor::framework

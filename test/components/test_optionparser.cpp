@@ -145,7 +145,7 @@ qor_pp_test_suite_case(OptionParserTestSuite, canRetrieveOptionalPrameters)
 {
     const char* args[] = {"the program name goes here", "-a", "-b", "--create", "fog", "--file", "C:\\data\\somename.duf", "-2", "-d6"};
     TestOptionable testOptionable;
-    optparser::OptionGetter optionGetter(9, const_cast<char**>(args));
+    optparser::OptionGetter optionGetter(9, args);
     optionGetter.SetOptions(testOptionable.ProvideShortOptionString(), testOptionable.ProvideLongOptions());
     optionGetter.GetOptions(testOptionable, false, false);
 }

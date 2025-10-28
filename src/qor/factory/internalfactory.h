@@ -123,7 +123,7 @@ namespace qor
         }
 
         template< typename... _p >
-        static ref_of<T>::type Construct(size_t count, _p&&... p1)
+        static ref_of<T>::type Construct(size_t count, _p... p1)
         {
 			return factoryFunctor< T, typename ref_of<T>::type >::template Construct<_p...>(count, std::forward<_p>(p1)...);
         }

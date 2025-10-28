@@ -27,34 +27,45 @@
 
 #include <string>
 #include "../path.h"
+#include "ifile.h"
+#include "src/platform/filesystem/fileindex.h"
+#include "src/platform/filesystem/ifilesystem.h"
 
 namespace qor{ namespace platform{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
-
-    class qor_pp_module_interface(QOR_FILESYSTEM) File
+    class qor_pp_module_interface(QOR_FILESYSTEM) File : public IFile
 	{
 	public:
 
+        File();
         File(const File& src);
-        File(FileIndex& index);
+        File(const FileIndex& index);
         File& operator = (const File&);
         virtual ~File();     
         
         virtual int ChangeMode(unsigned int mode);
-
-        bool SupportsPosition();
-        int64_t GetPosition();
-        int64_t SetPosition(int64_t newPosition);
-        bool Flush();
-        unsigned long GetType();
+        
         bool SetEOF();
 
-    protected:
+        virtual bool SupportsPosition();
+        virtual uint64_t GetPosition();
+        virtual uint64_t SetPosition(uint64_t newPosition);
+        virtual uint64_t SetPositionRelative(int64_t offset);
+        virtual void Truncate(uint64_t length);
+        virtual void Reserve(uint64_t length);
+        virtual uint64_t GetSize();
+        virtual void Flush();
+        virtual Type GetType();
+        virtual ref_of<IFile>::type ReOpen();
+        virtual std::filesystem::file_status GetStatus();
+        virtual void SetStatus(int);
+        virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
+        virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
 
-        File();
+        static ref_of<IFile>::type Open(const FileIndex& index, int openFor, int withFlags);
+    private:
 
-        //ref_of<IFile>::type m_pimpl;
+        FileIndex m_index;
     };
 
 }}//qor::platform

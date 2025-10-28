@@ -5,5 +5,5 @@ add_library(qor_interception SHARED qor_interception.cpp callcontext.cpp functio
  flystrapbase.cpp flystrap.cpp callinterceptor.cpp functioncontextlock.cpp
  parameters/return.cpp)
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-threadsafe-statics -fvisibility=hidden")
-target_compile_definitions(qor_interception PUBLIC -DQOR_INTERCEPTION)
+target_compile_definitions(qor_interception PRIVATE -DQOR_INTERCEPTION)
 target_link_libraries(qor_interception qor_module qor_host qor_objectcontext qor_thread)

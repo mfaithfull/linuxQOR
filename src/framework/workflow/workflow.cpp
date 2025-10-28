@@ -28,87 +28,120 @@
 
 namespace qor{ namespace workflow{
 
-    Workflow::Workflow() : m_complete(false)
+    Workflow::Workflow() : m_complete(true), m_initialState(CreateDefaultState()), m_result(0)
     {
     }
 
     Workflow::Workflow(const Workflow& src)
     {
+        *this = src;
     }
 
     Workflow& Workflow::operator = (const Workflow& src)
     {
+        m_complete = src.m_complete;
+        m_StateStack = src.m_StateStack;
+        m_initialState = src.m_initialState;
         return *this;
     }
 
-    void Workflow::InitialStateHandler(Transition evt)
+    State Workflow::CreateDefaultState()
     {
-        switch(evt)
+        struct State def = 
         {
-            case Transition::Enter:
-            case Transition::Tick:
-            case Transition::Suspend:
-            break;
-            case Transition::Resume:
-            case Transition::Leave:
-            m_complete = true;            
+            .Enter = std::bind(&Workflow::Enter, this, this),
+            .Suspend = std::bind(&Workflow::Suspend, this, this),
+            .Resume = std::bind(&Workflow::Resume, this, this),
+            .Leave = std::bind(&Workflow::Leave, this, this)
+        };
+
+        return def;
+    }
+
+    int Workflow::Run()
+    {   
+        m_complete = false;     
+        while(!IsComplete())
+        {
+            CurrentState().Enter(this);
         }
+        while(!m_StateStack.empty())
+        {
+            PopState();
+        }
+        return m_result;
     }
 
-    void Workflow::Start()
+    void Workflow::Enter(Workflow* w)
     {
-        auto newstate = GetInitialState();
-        m_StateStack.push(newstate);
-        newstate(Enter);
+        w->m_complete = true;
     }
+    
+    void Workflow::Suspend(Workflow*){}
+    
+    void Workflow::Resume(Workflow*){}
 
-    void Workflow::Tick(){}
-    void Workflow::Suspend(){}
-    void Workflow::Resume(){}
-    void Workflow::Leave(){}
+    void Workflow::Leave(Workflow*){}
 
-    state_t Workflow::CurrentState()
+    State Workflow::CurrentState()
     {
-        if( !IsComplete() && !m_StateStack.empty() )
+        if( !m_StateStack.empty() )
         {
             return m_StateStack.top();
         }
-        return state_t::Create<Workflow, &Workflow::InitialStateHandler>(this);
+        return CreateDefaultState();
     }
 
-    void Workflow::SetState(state_t newstate)
+    State Workflow::GetInitialState()
     {
-		state_t currentState = CurrentState();
-
-        currentState(Transition::Leave);
-		m_StateStack.pop();		
-		m_StateStack.push(newstate);
+        return m_initialState;
     }
 
-    void Workflow::PushState(state_t newstate)
+    void Workflow::SetInitialState(State newState)
     {
-		state_t currentState = CurrentState();
-		currentState(Transition::Suspend);
-		
-		m_StateStack.push(newstate);
-		newstate(Enter);		
+        if(m_StateStack.empty())
+        {
+            m_initialState = newState;
+            m_StateStack.push(newState);
+            m_complete = false;
+        }
+    }
+
+    void Workflow::SetState(State newState)
+    {
+        if(!m_StateStack.empty())
+        {
+    		State currentState = CurrentState();
+            currentState.Leave(this);
+		    m_StateStack.pop();
+        }
+		m_StateStack.push(newState);
+    }
+
+    void Workflow::PushState(State newState)
+    {
+        if(!m_StateStack.empty())
+        {
+    		State currentState = CurrentState();
+	    	currentState.Suspend(this);
+        }
+		m_StateStack.push(newState);
+		newState.Enter(this);		
     }
 
     void Workflow::PopState()
     {
-		state_t currentState = CurrentState();
-		currentState(Transition::Leave);
-        m_StateStack.pop();		
-        if(!IsComplete())
+        if(!m_StateStack.empty())
         {
-    		currentState = CurrentState();
-	    	currentState(Transition::Resume);
+    		State currentState = CurrentState();
+	    	currentState.Leave(this);
+            m_StateStack.pop();		
+            if(!m_StateStack.empty())
+            {
+           		currentState = CurrentState();
+    	        currentState.Resume(this);
+            }
         }
-    }
-
-    state_t Workflow::GetInitialState()
-    {
-        return state_t::Create<Workflow, &Workflow::InitialStateHandler>(this);
     }
 
     bool Workflow::IsComplete() const
@@ -116,20 +149,14 @@ namespace qor{ namespace workflow{
         return m_complete;
     }
 
-    void Workflow::DefaultHandle(Transition t)
+    void Workflow::SetComplete()
     {
-        switch(t)
-        {
-            case Transition::Enter:
-            case Transition::Tick:            
-            case Transition::Suspend:
-            break;
-            case Transition::Resume:
-                PopState();
-            break;
-            case Transition::Leave:
-            break;
-        }
+        m_complete = true;
+    }
+
+    void Workflow::SetResult(int result)
+    {
+        m_result = result;
     }
 
 }}//qor::workflow

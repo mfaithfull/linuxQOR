@@ -48,7 +48,7 @@ namespace qor{ namespace pipeline{
         qor_pp_signal(DisconnectionErrorSignal);
     }
 
-    Plug::Plug(ConnectionPool* pool) : m_syncobject(0), m_pool(pool)
+    Plug::Plug() : m_syncobject(nullptr)
     {
         m_connected = false;
     }

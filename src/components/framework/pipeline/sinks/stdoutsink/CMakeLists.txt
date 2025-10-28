@@ -9,5 +9,5 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
 endif()
 
-target_compile_definitions(qor_stdoutsink PUBLIC -DQOR_STDOUTSINK)
+target_compile_definitions(qor_stdoutsink PRIVATE -DQOR_STDOUTSINK)
 target_link_libraries(qor_stdoutsink qor_module qor_datastructures qor_objectcontext qor_signals qor_pipeline)

@@ -49,7 +49,7 @@ namespace qor {
     class IndirectFactorywithParams : public IndirectFactory<I>
     {
     public:
-        virtual ref_of<I>::type Construct(size_t count, _p&&... p1) const
+        virtual ref_of<I>::type Construct(size_t count, _p... p1) const
         {
             return InternalFactory<I>::template Construct<_p...>(count, p1...);
         }
@@ -71,7 +71,7 @@ namespace qor {
             TheTypeRegistry()->Unregister( *(guid_of<I>::guid()));
         }
 
-        virtual ref_of<I>::type Construct(size_t count, _p&&... p1) const
+        virtual ref_of<I>::type Construct(size_t count, _p... p1) const
         {
             return InternalFactory<T>::template Construct<_p...>(count, p1...).template AsRef<I>();
         }
@@ -83,7 +83,7 @@ namespace qor {
 
         virtual void Destruct( I* pt, size_t count = 1) const
         {
-            InternalFactory<T>::Destruct(pt, count);
+            InternalFactory<T>::Destruct(dynamic_cast<T*>(pt), count);
         }
     };
 

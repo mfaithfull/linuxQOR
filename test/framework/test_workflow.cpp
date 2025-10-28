@@ -27,7 +27,6 @@
 #include "../../src/qor/test/test.h"
 #include "../../src/qor/assert/assert.h"
 #include "../../src/framework/workflow/workflow.h"
-#include "../../src/framework/workflow/compound_workflow.h"
 
 using namespace qor;
 using namespace qor::test;
@@ -36,63 +35,47 @@ using namespace qor::workflow;
 
 struct WorkflowTestSuite{};
 
-class ExampleWorkflow : public Workflow
-{
-    void InitialStateHandler(Transition t)
-    {
-        switch(t)
-        {
-            case Transition::Enter:
-                std::cout << " initial workflow state entered.";
-                PushState(state_t::Create<ExampleWorkflow, &ExampleWorkflow::State1>(this));
-            break;
-            case Transition::Suspend:
-                std::cout << " initial workflow state suspended.";
-            break;
-            case Transition::Resume:
-                std::cout << " initial workflow state resumed.";
-                PopState();
-            break;
-            case Transition::Leave:
-                std::cout << " initial workflow state completed.";
-                m_complete = true;
-            break;
-        }
+State state1 {
+    .Enter = [](Workflow* w)->void{
+        std::cout << " workflow state1 entered.";
+        w->PopState();
+    },
+    .Suspend = [](Workflow* w)->void{
+        std::cout << " workflow state1 suspended.";
+    },
+    .Resume = [](Workflow* w)->void{
+        std::cout << " workflow state1 resumed.";
+        w->PopState();
+    },
+    .Leave = [](Workflow* w)->void{
+        std::cout << " workflow state1 completed.";            
     }
-
-    void State1(Transition t)
-    {
-        switch(t)
-        {
-            case Transition::Enter:
-                std::cout << " workflow state1 entered.";
-                PopState();
-            break;
-            case Transition::Suspend:
-                std::cout << " workflow state1 suspended.";
-            break;
-            case Transition::Resume:
-                std::cout << " workflow state1 resumed.";
-                PopState();
-            break;
-            case Transition::Leave:
-                std::cout << " workflow state1 completed.";            
-            break;
-        }
-    }
-
 };
+
+State initialState {
+    .Enter = [](Workflow* w)->void{
+        std::cout << " initial workflow state entered.";
+        w->PushState(state1);
+    },
+    .Suspend = [](Workflow* w)->void{
+        std::cout << " initial workflow state suspended.";
+    },
+    .Resume = [](Workflow* w)->void{
+        std::cout << " initial workflow state resumed.";
+        w->PopState();
+    },
+    .Leave = [](Workflow* w)->void{
+        std::cout << " initial workflow state completed.";
+        w->SetComplete();
+    }
+};
+
 
 qor_pp_test_suite_case(WorkflowTestSuite, canDoSimpleWorkflow)
 {    
-    ExampleWorkflow test_workflow;
-    test_workflow.Start();
+    Workflow test_workflow;
+    test_workflow.SetInitialState(initialState);
+    test_workflow.Run();
     qor_pp_assert_that(test_workflow.IsComplete()).isTrue();
 }
 
-qor_pp_test_suite_case(WorkflowTestSuite, canDoCompoundWorkflow)
-{    
-    CompoundWorkflow test_compound;
-    test_compound.SetInitialWorkflow( new_ref<ExampleWorkflow>().AsRef<IWorkflow>() );    
-    test_compound.Start();
-}

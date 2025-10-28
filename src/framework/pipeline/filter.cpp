@@ -39,7 +39,8 @@ namespace qor{ namespace pipeline{
     {
         if(&src != this)
         {
-
+            Source::operator = (src);
+            Sink::operator = (src);
         }
         return *this;
     }

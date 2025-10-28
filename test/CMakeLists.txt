@@ -70,16 +70,20 @@ components/threadmemory/test_smallobjectbucket.cpp
 components/threadmemory/test_smallobjectheap.cpp
 components/pipeline/test_stdinsource.cpp
 components/pipeline/test_stdoutsink.cpp property/test_property.cpp 
-components/console/test_console.cpp components/console/test_consoleui.cpp)
+components/console/test_console.cpp components/console/test_consoleui.cpp
+components/pipeline/test_ifstreamsource.cpp
+components/pipeline/test_ofstreamsink.cpp
+platform/test_network.cpp)
 
-target_compile_definitions(QORTest PUBLIC -DQOR_PP_EXECUTABLE)
+target_compile_definitions(QORTest PRIVATE -DQOR_PP_EXECUTABLE)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
-linq_filesystem linq_thread linq_process uring linq_console)
+linq_filesystem linq_thread linq_process uring linq_console qor_stdfstreamconnector 
+qor_stdifstreamsource qor_stdofstreamsink qor_sockets linqor_sockets)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
@@ -87,5 +91,6 @@ target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_object
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
-qor_winapi winq_filesystem winq_thread winq_process winq_console winq_common)
+qor_winapi winq_filesystem winq_thread winq_process winq_console winq_common qor_stdfstreamconnector 
+qor_stdifstreamsource qor_stdofstreamsink qor_sockets)
 endif()

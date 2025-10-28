@@ -95,7 +95,7 @@ namespace qor{ namespace pipeline{
     }
 
     bool NullSink::Write(size_t& unitsWritten, size_t unitsToWrite)
-    {            
+    {
         GetBuffer()->ReadRequest(unitsToWrite);
         unitsWritten = unitsToWrite;
         GetBuffer()->ReadAcknowledge(unitsWritten);        

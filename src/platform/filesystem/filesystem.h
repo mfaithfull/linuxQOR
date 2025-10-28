@@ -52,11 +52,14 @@ namespace qor{ namespace platform{
         Path CurrentPath();
         void CurrentPath(Path& path);
 
-        ref_of<File>::type Create(const FileIndex& index, const int withFlags) const;
+        ref_of<IFile>::type Create(const FileIndex& index, const int withFlags) const;
         std::optional<Folder> Create(const Path& path) const;
-        ref_of<File>::type Open(const FileIndex& index, const int openFor, const int withFlags) const;
+        std::optional<Folder> MakeDir(const Path& path) const;
+        std::optional<Folder> NewFolder(const Path& path) const;
+        ref_of<IFile>::type Open(const FileIndex& index, const int openFor, const int withFlags) const;
         bool Delete(const FileIndex& index) const;
-        bool Delete(const Path& path) const;
+        bool RemoveDir(const Path& path) const;
+        bool DeleteFolder(const Path& path) const;
         bool Copy(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
         bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
         bool Rename(platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;

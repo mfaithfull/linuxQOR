@@ -41,7 +41,9 @@ namespace qor{ namespace components{ namespace optparser {
 	{
 	public:
 
-		OptionGetter(const int argc, char** argv);
+		OptionGetter(const int argc, const char** argv);
+		OptionGetter(const int argc, const char** argv, const char* shortOptions, Option* longOptions);
+		OptionGetter(const int argc, const char** argv, IOptionable& optionable, bool longOnly = false, bool posixCompliant = false, int option_index = 0);
 		void SetOptions(const char* shortOptions, Option * longOptions);
 		void GetOptions(IOptionable& optionable, bool longOnly = false, bool posixCompliant = false, int option_index = 0);
 

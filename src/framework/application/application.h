@@ -29,8 +29,11 @@
 
 #include "src/framework/role/irole.h"
 #include "src/framework/workflow/iworkflow.h"
+#include "src/qor/module/module.h"
+#include "src/framework/thread/currentthread.h"
 #include "src/qor/instance/singleton.h"
 #include "src/platform/platform.h"
+#include "irunable.h"
 
 namespace qor{ namespace framework{
 
@@ -86,6 +89,11 @@ namespace qor{ namespace framework{
 			return RunWorkflow(workflow.template AsRef<workflow::IWorkflow>());
 		}
 
+        int Run( ref_of<IRunable>::type runable )
+        {
+            return runable->Run();
+        }
+
     private:
 
         int RunWorkflowInternal();
@@ -97,6 +105,7 @@ namespace qor{ namespace framework{
     };
 }
     qor_pp_declare_instancer_of(framework::Application, SingletonInstancer);
+    
 }//qor::framework
 
 #endif//QOR_PP_H_APPLICATION

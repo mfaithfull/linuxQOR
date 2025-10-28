@@ -62,20 +62,21 @@ namespace qor{ namespace framework{
 
     int Application::RunWorkflowInternal()
     {
+        int result = -1;
         if(m_Role.IsNotNull())
         {
             m_Role->Setup();
         }
         if(m_Workflow.IsNotNull())
         {
-            m_Workflow->Start();
+            result = m_Workflow->Run();
         }
 
         if(m_Role.IsNotNull())
         {
             m_Role->Shutdown();
         }
-        return 0;
+        return result;
     }
 
 }}//qor::framework

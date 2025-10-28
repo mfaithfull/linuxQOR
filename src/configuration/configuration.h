@@ -49,6 +49,14 @@
 #include "../platform/os/detectos.h"                        //Determine the target OS by defaulting to the host OS if the target hasn't been predefined
 
 #define qor_pp_module_interface( _X ) qor_pp_if(qor_pp_is_empty(_X), qor_pp_import, qor_pp_export)
+#define qor_pp_module_requires(_X) \
+bool qor_pp_cat(requires,_X) = qor::qor_pp_cat(Implements,_X)();
+
+#define qor_pp_module_will_provide(_M, _X)
+namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(); }
+
+#define qor_pp_module_provide(_M, _X) \
+namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(){ return true; } }//qor
 
 #define qor_pp_ver_major 0
 #define qor_pp_ver_minor 0

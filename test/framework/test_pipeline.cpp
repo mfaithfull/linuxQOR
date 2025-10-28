@@ -116,28 +116,38 @@ public:
 
     NoiseSource() : Source(){}
     virtual ~NoiseSource() = default;
+
+    virtual size_t ReadBytes(byte* buffer, size_t bytesToRead)
+    {
+        for (unsigned int i = 0; i < bytesToRead; i++)
+        {
+            buffer[i] = Next() % 256;
+        }
+        return bytesToRead;
+    }
+
     virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1)
     {
-        byte* pBuffer = GetBuffer()->WriteRequest(unitsToRead);
-
-        for (unsigned int i = 0; i < unitsToRead; i++)
+        Buffer* unitBuffer = GetBuffer();
+        if(unitBuffer)
         {
-            pBuffer[i] = Next() % 256;
-        }
-        unitsRead = unitsToRead;
-        GetBuffer()->WriteAcknowledge(unitsRead);
-        OnReadSuccess(unitsRead);
+            size_t unitSize = unitBuffer->GetUnitSize();
+            byte* space = GetBuffer()->WriteRequest(unitsToRead);
+            size_t bytesRead = ReadBytes(space, unitsToRead * unitSize);
+            unitsRead = bytesRead / unitSize;
+            unitBuffer->WriteAcknowledge(unitsRead);
+            OnReadSuccess(unitsRead);
 
-        if (GetFlowMode() == Push)
-        {
-            size_t unitsWritten = 0;
-            ActualSink()->Write(unitsWritten, unitsRead);
-            return unitsWritten > 0 ? true : false;
-        }
-        
+            if (GetFlowMode() == Push)
+            {
+                size_t unitsWritten = 0;
+                ActualSink()->Write(unitsWritten, unitsRead);
+                return unitsWritten > 0 ? true : false;
+            }
+        }        
         return true;
     }
-    virtual bool IsAtEnd() { return false;}
+    virtual bool IsAtEnd() {return false;}
 
 protected:
 
@@ -146,7 +156,7 @@ protected:
         return m_rnd();
     }
 
-    private:
+private:
 
     std::random_device m_rnd;
 

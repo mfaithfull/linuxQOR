@@ -33,12 +33,10 @@ struct CompilerTestSuite
 {
 	CompilerTestSuite()
 	{
-		//setup
 	}
 
 	~CompilerTestSuite()
 	{
-		//teardown
 	}
 };
 

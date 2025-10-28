@@ -29,6 +29,8 @@
 
 namespace qor{ namespace platform{
 
+    FileIndex::FileIndex() : m_dirent() {}
+    
     FileIndex::FileIndex(const Path & path, const std::string& fileName) : m_dirent(std::filesystem::path(path.ToString(fileName))){}
 
     FileIndex::FileIndex(const std::filesystem::directory_entry& dirent) : m_dirent(dirent) {}
@@ -150,9 +152,15 @@ namespace qor{ namespace platform{
         return Path(m_dirent.path().generic_string());
     }
     
-    ref_of<File>::type FileIndex::Open(const int openFor, const int withFlags, const int inMode)    
+    ref_of<IFile>::type Create(const int openFor, const int withFlags, const int inMode)
     {
-        ref_of<File>::type result;
+        ref_of<IFile>::type result;
+        return result;
+    }
+
+    ref_of<IFile>::type FileIndex::Open(const int openFor, const int withFlags, const int inMode)    
+    {
+        ref_of<IFile>::type result;
         return result;
     }
 

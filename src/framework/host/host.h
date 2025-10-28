@@ -41,8 +41,8 @@ namespace qor{ namespace framework{
 
         static Module& Instance();
 
-        virtual void RegisterModule( Module* pModule);
-        virtual void UnregisterModule( Module* pModule);
+        virtual void RegisterModule(Module* pModule);
+        virtual void UnregisterModule(Module* pModule);
 
     };
 

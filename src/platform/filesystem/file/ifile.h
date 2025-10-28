@@ -26,9 +26,18 @@
 #define QOR_PP_H_PLATFORM_FILESYSTEM_FILE_INTERFACE
 
 #include <vector>
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/factory/externalfactory.h"
+#include "src/qor/error/error.h"
 #include "src/qor/reference/newref.h"
 
+//All libraries providing an implementation of IFile also need to export this function so that the linker can find them
+namespace qor{ bool qor_pp_import ImplementsIFile();}
+
 namespace qor{ namespace platform{
+
+    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
 
     class qor_pp_module_interface(QOR_FILESYSTEM) IFile
 	{
@@ -39,24 +48,32 @@ namespace qor{ namespace platform{
             Unknown
         };
 
-        virtual bool SupportsPosition();
-        virtual uint64_t GetPosition();
-        virtual uint64_t SetPosition(uint64_t newPosition);
-        virtual uint64_t SetPositionRelative(int64_t offset);
-        virtual void Truncate(uint64_t length);
-        virtual void Reserve(uint64_t length);
-        virtual uint64_t GetSize();
-        virtual void Flush();
-        virtual Type GetType();
-        virtual ref_of<IFile>::type ReOpen();
-        virtual int GetStatus();
-        virtual void SetStatus(int);
+        IFile(){}
+        IFile(const FileIndex& index, int openFor, int withFlags){}
+        virtual bool SupportsPosition(){ return false; }
+        virtual uint64_t GetPosition(){ return 0; }
+        virtual uint64_t SetPosition(uint64_t newPosition){return 0;}
+        virtual uint64_t SetPositionRelative(int64_t offset){return 0;}
+        virtual void Truncate(uint64_t length){}
+        virtual void Reserve(uint64_t length){}
+        virtual uint64_t GetSize(){return 0;}
+        virtual void Flush(){}
+        virtual Type GetType(){return Unknown;}
+        virtual ref_of<IFile>::type ReOpen(){ ref_of<IFile>::type result; return result;}
+        virtual std::filesystem::file_status GetStatus(){return std::filesystem::file_status();}
+        virtual void SetStatus(int){}
+        virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1){return 0;}
+        virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1){return 0;}
         //virtual std::vector<ref_of<Property>::type> GetInformation();
         //virtual void SetInformation(std::vector<ref_of<Property>::type>& properties);
-        virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
-        virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
     };
 
-}}//qor::platform
+    }//platform
+
+    qor_pp_declare_factory_of(platform::IFile, ExternalFactory);    
+    constexpr GUID IFileGUID = {0xee642d7a, 0x621f, 0x40d0, {0xb1, 0xf3, 0x40, 0xbb, 0xde, 0x20, 0x49, 0x05}};
+    qor_pp_declare_guid_of(platform::IFile,IFileGUID);
+
+}//qor
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILE_INTERFACE

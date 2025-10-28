@@ -84,6 +84,11 @@ namespace qor{ namespace pipeline{
         return m_buffer;
     }
 
+    bool Element::HasBuffer()
+    {
+        return m_buffer != nullptr;
+    }
+
     Element* Element::GetSource()
     {
         return nullptr;

@@ -85,7 +85,7 @@ namespace qor{
             return GetErrorMessage();
         }
 
-        bool static IndicatesFaliure(int result)
+        bool static IndicatesFailure(int result)
         {
             if(result !=0 )
             {

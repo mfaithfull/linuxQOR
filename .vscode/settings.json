@@ -95,6 +95,13 @@
         "codecvt": "cpp",
         "future": "cpp",
         "cinttypes": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "cerrno": "cpp",
+        "ranges": "cpp",
+        "buffer": "cpp",
+        "executor": "cpp",
+        "io_context": "cpp",
+        "netfwd": "cpp",
+        "socket": "cpp"
     }
 }
