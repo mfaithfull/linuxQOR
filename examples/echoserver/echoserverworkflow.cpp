@@ -33,25 +33,30 @@
 
 #include "src/configuration/configuration.h"
 #include "src/framework/pipeline/podbuffer.h"
+#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/task/syncwait.h"
 #include "echoserverworkflow.h"
 #include "echoserverapp.h"
 
-
 using namespace qor;
+using namespace qor::framework;
 using namespace qor::workflow;
 using namespace qor::pipeline;
 using namespace qor::platform;
 using namespace qor::components::optparser;
 
-bool requiresFileSystem = ImplementsSockets();
+qor_pp_module_requires(Sockets)
+qor_pp_module_requires(AsyncIOService)
 
 EchoServerWorkflow::EchoServerWorkflow() : 
-    setup(CreateDefaultState()), 
-    listen(CreateDefaultState()),
-    accept(CreateDefaultState()),
-    echo(CreateDefaultState())
+    setup(this), 
+    bind(this),
+    listen(this),
+    accept(this),
+    echo(this),
+    disconnect(this)
 {
-    setup.Enter = [this](Workflow* workflow)->void
+    setup.Enter = [this]()->void
     {
         auto sockets_subsystem = ThePlatform()->GetSubsystem<network::Sockets>().AsRef<network::Sockets>();
 
@@ -64,50 +69,73 @@ EchoServerWorkflow::EchoServerWorkflow() :
         context.server_address.SetPort(12345);
         context.server_address.SetIPV4Address(0,0,0,0);
 
-        workflow->SetState(listen);
+        SetState(bind);
     };
 
-    listen.Enter = [this](Workflow* workflow)->void
+    bind.Enter = [this]()->void
     {
-        if( context.server_socket->Bind(context.server_address) < 0 ||
-            context.server_socket->Listen(1) < 0)
+        if( context.server_socket->Bind(context.server_address) < 0 )
         {
-            std::cout << "can't listen on socket: " << strerror(errno) << "\n";
-            
-            workflow->SetResult(EXIT_FAILURE);
-            workflow->SetComplete();
+            std::cout << "can't bind to socket: " << strerror(errno) << "\n";
+            SetResult(EXIT_FAILURE);
+            SetComplete();
         }
         else
         {
-            workflow->SetState(accept);
+            SetState(listen);
         }
     };
 
-    accept.Enter = [this](Workflow* workflow)->void
+    listen.Enter = [this]()->void
     {
-        context.client_socket = context.server_socket->Accept(context.client_address);        
-        context.client_socket->SetNonBlocking(true);
-        workflow->SetState(echo);
-    };
-
-    echo.Enter = [this](Workflow* workflow)->void
-    {
-        char buf[4];
-        while(size_t n = context.client_socket->Receive(buf, sizeof buf,0))
+        if( context.server_socket->Listen(1) < 0)
         {
-            for(size_t o{}, w(1); o != n && 0 < w; o += w)
-            {
-                w = context.client_socket->Send(buf + o, n - o);
-            }
+            std::cout << "can't listen on socket: " << strerror(errno) << "\n";
+            
+            SetResult(EXIT_FAILURE);
+            SetComplete();
         }
-        workflow->SetResult(EXIT_SUCCESS);
-        workflow->SetComplete();
+        else
+        {
+            SetState(accept);
+        }
     };
 
-    echo.Leave = [this](Workflow* workflow)->void
+    accept.Enter = [this]()->void
+    {
+        context.client_socket = context.server_socket->Accept(context.client_address);
+        //TODO: Instead of Pushing a state onto the linear stack we should spawn a new workflow in a task and add it to a when_all that closes the server
+        PushState(echo);
+    };
+
+    echo.Enter = [this]()->void
+    {
+        char buf[256];
+
+        auto application = new_ref<EchoServerApp>();
+        auto ioAwaiter = application->GetRole()->GetFeature(guid_of<AsyncIOService>::guid()).AsRef<AsyncIOService>();
+
+        auto result = sync_wait(context.client_socket->AsyncReceive(ioAwaiter->Context(), buf, 256, nullptr));
+        int32_t n = result.status_code;
+
+        for(size_t o{}, w(1); 0 < n && o != n && 0 < w; o += w)
+        {
+            w = context.client_socket->Send(buf + o, n - o);
+        }
+
+        if(memcmp(buf, "close",4)==0)
+        {
+            context.server_socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
+            SetResult(EXIT_SUCCESS);
+            SetComplete();
+        }                
+        SetState(disconnect);
+    };
+
+    disconnect.Enter = [this]()->void
     {
         context.client_socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
-        context.server_socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
+        PopState();
     };
 
     SetInitialState(setup);

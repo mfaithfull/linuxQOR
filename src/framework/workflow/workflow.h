@@ -34,12 +34,19 @@ namespace qor{ namespace workflow{
 
     class qor_pp_module_interface(QOR_WORKFLOW) Workflow;
 
-    struct State
+    class qor_pp_module_interface(QOR_WORKFLOW) State
     {
-        std::function<void(Workflow*)> Enter;
-        std::function<void(Workflow*)> Suspend;
-        std::function<void(Workflow*)> Resume;
-        std::function<void(Workflow*)> Leave;
+    public:
+        std::function<void(void)> Enter;
+        std::function<void(void)> Suspend;
+        std::function<void(void)> Resume;
+        std::function<void(void)> Leave;
+
+        State(Workflow* workflow);
+
+    private:
+
+        Workflow* m_Workflow;
     };
 
     class qor_pp_module_interface(QOR_WORKFLOW) Workflow : public IWorkflow
@@ -60,16 +67,13 @@ namespace qor{ namespace workflow{
         void SetComplete();
         void SetResult(int result);
         
-    protected:
-    
-        virtual void Enter(Workflow*);
-        virtual void Suspend(Workflow*);
-        virtual void Resume(Workflow*);
-        virtual void Leave(Workflow*);
+        virtual void Enter();
+        virtual void Suspend();
+        virtual void Resume();
+        virtual void Leave();
 
         State GetInitialState();
         State CurrentState();
-        State CreateDefaultState();
 
     private:
         int m_result;

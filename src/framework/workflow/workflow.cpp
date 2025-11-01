@@ -28,11 +28,19 @@
 
 namespace qor{ namespace workflow{
 
-    Workflow::Workflow() : m_complete(true), m_initialState(CreateDefaultState()), m_result(0)
+    State::State(Workflow* workflow) : m_Workflow(workflow)
+    {
+        Enter = std::bind(&Workflow::Enter, workflow);
+        Suspend = std::bind(&Workflow::Suspend, workflow);
+        Resume = std::bind(&Workflow::Resume, workflow);
+        Leave = std::bind(&Workflow::Leave, workflow);
+    }
+
+    Workflow::Workflow() : m_complete(true), m_initialState(this), m_result(0)
     {
     }
 
-    Workflow::Workflow(const Workflow& src)
+    Workflow::Workflow(const Workflow& src) : Workflow()
     {
         *this = src;
     }
@@ -45,25 +53,12 @@ namespace qor{ namespace workflow{
         return *this;
     }
 
-    State Workflow::CreateDefaultState()
-    {
-        struct State def = 
-        {
-            .Enter = std::bind(&Workflow::Enter, this, this),
-            .Suspend = std::bind(&Workflow::Suspend, this, this),
-            .Resume = std::bind(&Workflow::Resume, this, this),
-            .Leave = std::bind(&Workflow::Leave, this, this)
-        };
-
-        return def;
-    }
-
     int Workflow::Run()
     {   
         m_complete = false;     
         while(!IsComplete())
         {
-            CurrentState().Enter(this);
+            CurrentState().Enter();
         }
         while(!m_StateStack.empty())
         {
@@ -72,16 +67,16 @@ namespace qor{ namespace workflow{
         return m_result;
     }
 
-    void Workflow::Enter(Workflow* w)
+    void Workflow::Enter()
     {
-        w->m_complete = true;
+        m_complete = true;
     }
     
-    void Workflow::Suspend(Workflow*){}
+    void Workflow::Suspend(){}
     
-    void Workflow::Resume(Workflow*){}
+    void Workflow::Resume(){}
 
-    void Workflow::Leave(Workflow*){}
+    void Workflow::Leave(){}
 
     State Workflow::CurrentState()
     {
@@ -89,7 +84,7 @@ namespace qor{ namespace workflow{
         {
             return m_StateStack.top();
         }
-        return CreateDefaultState();
+        return State(this);
     }
 
     State Workflow::GetInitialState()
@@ -112,7 +107,7 @@ namespace qor{ namespace workflow{
         if(!m_StateStack.empty())
         {
     		State currentState = CurrentState();
-            currentState.Leave(this);
+            currentState.Leave();
 		    m_StateStack.pop();
         }
 		m_StateStack.push(newState);
@@ -123,10 +118,10 @@ namespace qor{ namespace workflow{
         if(!m_StateStack.empty())
         {
     		State currentState = CurrentState();
-	    	currentState.Suspend(this);
+	    	currentState.Suspend();
         }
 		m_StateStack.push(newState);
-		newState.Enter(this);		
+		newState.Enter();		
     }
 
     void Workflow::PopState()
@@ -134,12 +129,12 @@ namespace qor{ namespace workflow{
         if(!m_StateStack.empty())
         {
     		State currentState = CurrentState();
-	    	currentState.Leave(this);
+	    	currentState.Leave();
             m_StateStack.pop();		
             if(!m_StateStack.empty())
             {
            		currentState = CurrentState();
-    	        currentState.Resume(this);
+    	        currentState.Resume();
             }
         }
     }

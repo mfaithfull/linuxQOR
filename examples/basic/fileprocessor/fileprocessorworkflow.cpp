@@ -36,9 +36,9 @@ using namespace qor::components::optparser;
 
 bool requiresFileSystem = ImplementsIFileSystem();
 
-FileProcessorWorkflow::FileProcessorWorkflow() : state0(CreateDefaultState())
+FileProcessorWorkflow::FileProcessorWorkflow() : state0(this)
 {
-    state0.Enter = [](Workflow* w)->void{
+    state0.Enter = [this]()->void{
         
         ref_of<FileProcessorApp>::type application = new_ref<FileProcessorApp>();    
         std::string filename = application->GetFileName();
@@ -55,9 +55,9 @@ FileProcessorWorkflow::FileProcessorWorkflow() : state0(CreateDefaultState())
         auto bytesRead = refReadFile->Read(address, byteCount);
     };
 
-    state0.Leave = [](Workflow* w)->void{
+    state0.Leave = [this]()->void{
 
-        w->SetComplete();
+        SetComplete();
     };
 
     SetInitialState(state0);

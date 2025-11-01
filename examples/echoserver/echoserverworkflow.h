@@ -28,6 +28,7 @@
 #include "src/framework/workflow/workflow.h"
 #include "src/platform/network/sockets.h"
 #include "src/platform/network/socket.h"
+#include "src/framework/asyncioservice/asyncioservice.h"
 
 class EchoServerContext
 {
@@ -49,9 +50,11 @@ public:
 private:
 
     qor::workflow::State setup;
+    qor::workflow::State bind;
     qor::workflow::State listen;
     qor::workflow::State accept;
     qor::workflow::State echo;
+    qor::workflow::State disconnect;
     EchoServerContext context;
 };
 
