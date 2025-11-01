@@ -25,12 +25,15 @@
 #include "src/configuration/configuration.h"
 #include "src/framework/thread/thread.h"
 #include "socket.h"
-
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <fcntl.h>
 #include <poll.h>
+#include "src/platform/os/linux/framework/asyncioservice/asyncioservice.h"
+#include "src/platform/os/linux/framework/asyncioservice/iouringservice/readop.h"
+
+using namespace qor::nslinux::framework;
 
 namespace qor{ namespace nslinux{
 
@@ -127,9 +130,10 @@ namespace qor{ namespace nslinux{
         return ::setsockopt(m_sock, level, optname, optval, optlen);
     }
  
-    int32_t Socket::AsyncReceive(char* pBuffer, int32_t iLen, void* pSyncObject)
+    qor::framework::IOTask Socket::AsyncReceive(qor::framework::AbstractIOWaiter& ioWaiter, char* pBuffer, int32_t iLen, void* pSyncObject)
     {
-        return -1;
+        return ioWaiter.Read(m_sock, (byte*)pBuffer, iLen);
+        //co_await pool.Schedule();
     }
  
     int32_t Socket::Receive(char* buf, int32_t len, int32_t flags)

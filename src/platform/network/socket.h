@@ -32,6 +32,7 @@
 #include "src/qor/factory/externalfactory.h"
 #include "address.h"
 #include "socketdefs.h"
+#include "src/framework/asyncioservice/asyncioservice.h"
 
 namespace qor{ namespace network{
 
@@ -53,7 +54,7 @@ namespace qor{ namespace network{
         virtual int32_t GetSockName(Address& Address);
         virtual int32_t GetSockOpt(int32_t iLevel, int32_t iOptName, char* pOptVal, int32_t* pOptLen);
         virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen);
-        virtual int32_t AsyncReceive(char* pBuffer, int32_t iLen, void* pSyncObject);
+        virtual qor::framework::IOTask AsyncReceive(framework::AbstractIOWaiter& ioWaiter, char* pBuffer, int32_t iLen, void* pSyncObject);
         virtual int32_t Receive(char* buf, int32_t len, int32_t flags);
         virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, Address& From);
         virtual int32_t AsyncSend(char* Buffer, int32_t iLen, void* pSyncObject);

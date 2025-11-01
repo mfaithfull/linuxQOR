@@ -81,10 +81,11 @@ namespace qor{ namespace network{
         return -1;
     }
 
-    int32_t Socket::AsyncReceive(char* pBuffer, int32_t iLen, void* pSyncObject)
+    qor::framework::IOTask Socket::AsyncReceive(framework::AbstractIOWaiter& ioWaiter, char* pBuffer, int32_t iLen, void* pSyncObject)
     {
         //Provide an override implementation specific to your platform
-        return -1;
+        qor::framework::AsyncIOResult result;
+        co_return result;
     }
 
     int32_t Socket::Receive(char* buf, int32_t len, int32_t flags)

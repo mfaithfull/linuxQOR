@@ -11,4 +11,5 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 target_compile_definitions(linqor_sockets PRIVATE -DLINQOR_SOCKETS)
-target_link_libraries(linqor_sockets qor_sockets qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform)
+target_link_libraries(linqor_sockets qor_sockets qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform
+linqor_asyncioservice)
