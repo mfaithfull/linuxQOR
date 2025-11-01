@@ -60,6 +60,7 @@ namespace qor{ namespace framework{
             return SetRole(role);
         }
 
+        Application& SetRole();
         ref_of<IRole>::type GetRole();
         Application& SetWorkflow( ref_of<workflow::IWorkflow>::type workflow);
         ref_of<workflow::IWorkflow>::type GetWorkflow();

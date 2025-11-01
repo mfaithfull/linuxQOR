@@ -640,9 +640,6 @@ namespace qor { namespace framework{
 
     }//qor::framework
 
-    //constexpr GUID ThreadPoolGUID = {0x4c2a287e, 0x3c52, 0x4b91, {0x94, 0xe8, 0xf8, 0x25, 0x8e, 0xc6, 0x37, 0xeb}};
-    //qor_pp_declare_guid_of(framework::ThreadPool, ThreadPoolGUID)
-    //qor_pp_declare_factory_of(framework::ThreadPool, ExternalFactory)
 }//qor
 
 #endif // QOR_PP_H_FRAMEWORK_THREADPOOL

@@ -24,6 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "application.h"
+#include "src/framework/role/role.h"
 
 namespace qor{ namespace framework{
 
@@ -31,6 +32,11 @@ namespace qor{ namespace framework{
     {
         m_Role = role;
         return *this;
+    }
+
+    Application& Application::SetRole()
+    {
+        return SetRole<Role>();
     }
 
     ref_of<IRole>::type Application::GetRole()

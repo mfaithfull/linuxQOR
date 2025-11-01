@@ -22,48 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-
 #include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include "role.h"
-#include "src/platform/platform.h"
-
-namespace qor{ namespace framework{
-
-    void Role::Setup()
-    {
-        ThePlatform()->Setup();
-        for(auto feature: m_mapFeatures)
-        {
-            feature.second->Setup();
-        }
-    }
-
-    void Role::Shutdown()
-    {
-        for (auto feature = m_mapFeatures.rbegin(); feature != m_mapFeatures.rend(); ++feature) 
-        {
-            feature->second->Shutdown();
-        }
-        m_mapFeatures.clear();
-        ThePlatform()->Shutdown();
-    }
-
-    ref_of<IFeature>::type Role::GetFeature(const GUID* id)
-    {
-        auto it = m_mapFeatures.find(*id);
-        if( it != m_mapFeatures.end())
-        {
-            return (*it).second.Clone();
-        }
-        return ref_of<IFeature>::type(nullptr);
-    }
-
-    void Role::AddFeature(const GUID* id, ref_of<IFeature>::type feature)
-    {
-        feature->m_Role = this;
-        m_mapFeatures.insert(std::make_pair(*id, feature));
-    }
-
-}}//qor::framework
-
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Asychronous IO Service Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

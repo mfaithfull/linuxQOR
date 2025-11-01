@@ -161,11 +161,8 @@ namespace qor
 				m_resultType = result_type::exception;
 			}
 
-			template<
-				typename VALUE,
-				typename = std::enable_if_t<std::is_convertible_v<VALUE&&, T>>>
-			void return_value(VALUE&& value)
-				noexcept(std::is_nothrow_constructible_v<T, VALUE&&>)
+			template< typename VALUE, typename = std::enable_if_t<std::is_convertible_v<VALUE&&, T>>>
+			void return_value(VALUE&& value) noexcept(std::is_nothrow_constructible_v<T, VALUE&&>)
 			{
 				::new (static_cast<void*>(std::addressof(m_value))) T(std::forward<VALUE>(value));
 				m_resultType = result_type::value;
@@ -189,10 +186,7 @@ namespace qor
 			// cause the value to be copied to a temporary. This breaks the
 			// sync_wait() implementation.
 			// See https://github.com/lewissbaker/cppcoro/issues/40#issuecomment-326864107
-			using rvalue_type = std::conditional_t<
-				std::is_arithmetic_v<T> || std::is_pointer_v<T>,
-				T,
-				T&&>;
+			using rvalue_type = std::conditional_t<std::is_arithmetic_v<T> || std::is_pointer_v<T>,T,T&&>;
 
 			rvalue_type result() &&
 			{
