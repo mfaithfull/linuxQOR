@@ -35,46 +35,64 @@ using namespace qor::workflow;
 
 struct WorkflowTestSuite{};
 
-State state1 {
-    .Enter = [](Workflow* w)->void{
-        std::cout << " workflow state1 entered.";
-        w->PopState();
-    },
-    .Suspend = [](Workflow* w)->void{
-        std::cout << " workflow state1 suspended.";
-    },
-    .Resume = [](Workflow* w)->void{
-        std::cout << " workflow state1 resumed.";
-        w->PopState();
-    },
-    .Leave = [](Workflow* w)->void{
-        std::cout << " workflow state1 completed.";            
-    }
-};
+class TestWorkflow : public Workflow
+{
+public:
 
-State initialState {
-    .Enter = [](Workflow* w)->void{
-        std::cout << " initial workflow state entered.";
-        w->PushState(state1);
-    },
-    .Suspend = [](Workflow* w)->void{
-        std::cout << " initial workflow state suspended.";
-    },
-    .Resume = [](Workflow* w)->void{
-        std::cout << " initial workflow state resumed.";
-        w->PopState();
-    },
-    .Leave = [](Workflow* w)->void{
-        std::cout << " initial workflow state completed.";
-        w->SetComplete();
-    }
-};
+    TestWorkflow() : initialState(this), state1(this)
+    {
+        initialState.Enter = [this]()->void{
+            std::cout << " initial workflow state entered.";
+            PushState(state1);
+        };
 
+        initialState.Suspend = [this]()->void{
+            std::cout << " initial workflow state suspended.";
+        };
+
+        initialState.Resume = [this]()->void{
+            std::cout << " initial workflow state resumed.";
+            PopState();
+        };
+
+        initialState.Leave = [this]()->void{
+            std::cout << " initial workflow state completed.";
+            SetComplete();
+        };
+
+        state1.Enter = [this]()->void{
+            std::cout << " workflow state1 entered.";
+            PopState();
+        };
+
+        state1.Suspend = [this]()->void{
+            std::cout << " workflow state1 suspended.";
+        };
+
+        state1.Resume = [this]()->void{
+            std::cout << " workflow state1 resumed.";
+            PopState();
+        };
+
+        state1.Leave = [this]()->void{
+            std::cout << " workflow state1 completed.";            
+        };
+
+        SetInitialState(initialState);
+    }
+
+    virtual ~TestWorkflow() = default;
+
+private:
+
+    State initialState;
+    State state1;
+
+};
 
 qor_pp_test_suite_case(WorkflowTestSuite, canDoSimpleWorkflow)
 {    
-    Workflow test_workflow;
-    test_workflow.SetInitialState(initialState);
+    Workflow test_workflow;    
     test_workflow.Run();
     qor_pp_assert_that(test_workflow.IsComplete()).isTrue();
 }
