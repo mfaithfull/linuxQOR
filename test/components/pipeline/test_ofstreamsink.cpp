@@ -71,8 +71,14 @@ qor_pp_test_suite_case(stdofstreamTestSuite, canSetupstdofstreamSink)
     sink.SetSource(&source);
     sink.SetPlug(&connector);
 
+    auto fileSystem = new_ref<platform::FileSystem>();
+    fileSystem().Setup();
+    platform::FileIndex file(fileSystem().CurrentPath(), "output.json");
+    connector.SetFile(file);
+    connector.Connect();
+
     size_t unitsWritten = 0;
-    size_t unitsToWrite = 1;
+    size_t unitsToWrite = 0;
     bool result = sink.Write(unitsWritten, unitsToWrite);
     qor_pp_assert_that(result).isTrue();  
 }

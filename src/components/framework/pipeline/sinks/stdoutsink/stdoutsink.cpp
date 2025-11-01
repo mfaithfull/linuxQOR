@@ -35,26 +35,40 @@ namespace qor{ namespace components{
 
     bool StdOutSink::Write(size_t& unitsWritten, size_t unitsToWrite)
     {
-        bool bResult = false;
-        size_t unitsAvailable = GetBuffer() ? GetBuffer()->ReadCapacity() : 0;
-
-        if(unitsAvailable < unitsToWrite)
-        {
-            size_t newUnits = 0;
-            Read(newUnits, unitsToWrite - unitsAvailable);
-            unitsAvailable += newUnits;
-        }
-
-        byte* pData = reinterpret_cast<byte*>(GetBuffer()->ReadRequest(unitsAvailable));
-        size_t unitSize = GetBuffer()->GetUnitSize();							        //The Buffer knows the Unit size in bytes
-        unitsWritten = fwrite(pData, unitSize, unitsAvailable,stdout);        
-        GetBuffer()->ReadAcknowledge(unitsWritten);							            //Update the source buffer reading point. That part of the buffer can be reused as we're done reading it.
-        return unitsWritten > 0 ? true : false;
+        return Pull(unitsWritten, unitsToWrite) ? Push(unitsWritten, unitsWritten) : false;
     }
 
-    bool StdOutSink::Read(size_t& unitsRead, size_t unitsToRead)
+    //pull the requested amount of data from the stream
+    bool StdOutSink::Pull(size_t& unitsWritten, size_t unitsToWrite)
     {
-        return ( GetFlowMode() == Push || ( ActualSource()->Read(unitsRead, unitsToRead) && unitsRead > 0) );
+        if( GetFlowMode() == FlowMode::Pull )
+        {
+            return (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0)) ? true : false;
+        }
+        return true;
     }
 
+    //push the requested amount of data out of the door
+    bool StdOutSink::Push(size_t& unitsWritten, size_t unitsToWrite)
+    {
+        pipeline::Buffer* buffer = GetBuffer();
+        if(buffer)
+        {
+            byte* pData = reinterpret_cast<byte*>(buffer->ReadRequest(unitsToWrite));
+            size_t unitSize = buffer->GetUnitSize();							        //The Buffer knows the Unit size in bytes
+            size_t bytesWritten = fwrite(pData, unitSize, unitsToWrite, stdout);
+            if( bytesWritten > 0 )
+            {
+                unitsWritten = bytesWritten / buffer->GetUnitSize();
+                buffer->ReadAcknowledge(unitsWritten);
+                OnWriteSuccess(unitsWritten);
+            }
+            else //EOD?
+            {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
 }}//qor::components

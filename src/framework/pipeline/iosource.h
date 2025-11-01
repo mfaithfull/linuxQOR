@@ -43,10 +43,9 @@ namespace qor{ namespace pipeline{
         virtual Element* GetPlug();
         virtual bool HasPlug();
 
-        virtual size_t ReadBytes(byte* space, size_t bytesToRead) = 0;
-
     protected:
         
+        virtual size_t ReadBytes(byte* space, size_t bytesToRead) = 0;
         bool Pull(size_t& unitsRead, size_t unitsToRead);
         bool Push(size_t& unitsRead, size_t unitsToRead);
         Plug* ActualPlug();
@@ -76,9 +75,9 @@ namespace qor{ namespace pipeline{
             }
         }
 
-        virtual size_t ReadBytes(byte* space, size_t bytesToRead) = 0;
-
     protected:
+
+        virtual size_t ReadBytes(byte* space, size_t bytesToRead) = 0;
         
         PlugType* m_Connector;
     };

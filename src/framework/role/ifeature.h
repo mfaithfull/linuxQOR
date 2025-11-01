@@ -29,8 +29,11 @@
 
 namespace qor{ namespace framework{
 
+    class IRole;
+
     class qor_pp_module_interface(QOR_ROLE) IFeature
     {
+        friend class Role;
     public:
 
         IFeature() = default;
@@ -39,8 +42,11 @@ namespace qor{ namespace framework{
         virtual void Setup() {};
         virtual void Shutdown() {};
 
-    private:
+    protected:
 
+        IRole* m_Role;
+
+    private:
         IFeature(const IFeature&) = delete;
         IFeature& operator = (const IFeature&) = delete;
     };

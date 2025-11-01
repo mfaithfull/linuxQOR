@@ -38,9 +38,11 @@ namespace qor{ namespace components{
 
         virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
 
-    protected:
+    private:
+        
+        bool Pull(size_t& unitsWritten, size_t unitstoWrite);
+        bool Push(size_t& unitsWritten, size_t unitstoWrite);
 
-        virtual bool Read(size_t& unitsRead, size_t unitsToRead);
     };
 
 }}//qor::components

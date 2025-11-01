@@ -50,6 +50,10 @@ namespace qor{ namespace pipeline{
         if(source->IsSource())
         {
             m_source = source;
+            if(!m_source->HasSink())
+            {
+                m_source->SetSink(this);
+            }
         }
     }
 
@@ -65,7 +69,14 @@ namespace qor{ namespace pipeline{
 
     void Filter::SetSink(Element* sink)
     {
-        m_sink = sink;
+        if(sink->IsSink())
+        {
+            m_sink = sink;
+            if(!m_sink->HasSource())
+            {
+                m_sink->SetSource(this);
+            }
+        }
     }
 
     Element* Filter::GetSink()
@@ -87,5 +98,90 @@ namespace qor{ namespace pipeline{
     {
         return true;
     }
+
+    bool Filter::Pump(size_t& unitsPumped, size_t unitsToPump)
+    {    
+        bool working = true;    
+        while(working && unitsToPump > 0)
+        {
+            size_t unitsPumpedAtOnce = 0;
+            if(GetFlowMode() == FlowMode::Pull)
+            {
+                working = ActualSink()->Write(unitsPumpedAtOnce, unitsToPump);
+            }
+            else
+            {
+                working = ActualSource()->Read(unitsPumpedAtOnce, unitsToPump);
+            }
+            unitsToPump -= unitsPumpedAtOnce;
+            unitsPumped += unitsPumpedAtOnce;
+        };
+        return working;
+    }
+
+    bool Filter::Read(size_t& unitsRead, size_t unitsToRead)
+    {
+        return ActualSource()->Read(unitsRead, unitsToRead) ? 
+        (
+            (GetFlowMode() == FlowMode::Pull) ? 
+                (ReadFilter(unitsRead, unitsRead)): true
+        ) : false;
+
+        //return Pump(unitsRead,unitsToRead, std::bind(&Filter::ReadFilter, this, unitsRead, unitsToRead));
+    }
+
+    bool Filter::Write(size_t& unitsWritten, size_t unitsToWrite)
+    {
+        return Pull(unitsWritten, unitsToWrite) ? 
+        (
+            WriteFilter(unitsWritten, unitsWritten) ? 
+                ActualSink()->Write(unitsWritten, unitsToWrite) : false
+        ) : false;
+
+        //return Pump(unitsWritten,unitsToWrite, std::bind(&Filter::WriteFilter, this, unitsWritten, unitsToWrite));
+    }
+
+    bool Filter::Pull(size_t& unitsRead, size_t unitsToRead)
+    {
+        return (GetFlowMode() == FlowMode::Pull) ? ActualSource()->Read(unitsRead, unitsToRead) : true;
+    }
+
+    bool Filter::Push(size_t& unitsWritten, size_t unitsToWrite)
+    {
+        return (GetFlowMode() == FlowMode::Push) ? ActualSink()->Write(unitsWritten, unitsToWrite) : true;
+    }
+
+    bool Filter::Pump(size_t& unitsPumped, size_t unitsToPump, std::function<bool(size_t&, size_t)> filterFn)
+    {
+        if(GetFlowMode() == FlowMode::Pull)
+        {
+            return Pull(unitsPumped, unitsToPump) ? 
+            (
+                filterFn(unitsPumped, unitsPumped) ? 
+                    Push(unitsPumped,unitsPumped) : false
+            ) : false;
+        }
+        else
+        {
+            return filterFn(unitsPumped, unitsPumped) ? 
+            (
+                Push(unitsPumped, unitsToPump) ? 
+                    Pull(unitsPumped, unitsToPump) : false
+            ) : false;
+        }
+    }
+
+    bool Filter::ReadFilter(size_t& unitsProcessed, size_t unitsToProcess)
+    {
+        unitsProcessed = unitsToProcess;
+        return true;
+    }
+
+    bool Filter::WriteFilter(size_t& unitsProcessed, size_t unitsToProcess)
+    {
+        unitsProcessed = unitsToProcess;
+        return true;
+    }
+
 
 }}//qor::pipeline

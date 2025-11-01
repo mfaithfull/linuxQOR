@@ -61,6 +61,7 @@ namespace qor{ namespace framework{
 
     void Role::AddFeature(const GUID* id, ref_of<IFeature>::type feature)
     {
+        feature->m_Role = this;
         m_mapFeatures.insert(std::make_pair(*id, feature));
     }
 

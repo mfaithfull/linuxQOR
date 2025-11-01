@@ -23,45 +23,41 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <stdio.h>
-#include "stdinsource.h"
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/pipeline/copyfilter.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ 
 
-    bool StdInSource::Read(size_t& unitsRead, size_t unitsToRead)
+    bool CopyFilter::ReadFilter(size_t& unitsProcessed, size_t unitsToProcess)
     {
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
+        return Copy(unitsProcessed, unitsToProcess);
     }
 
-    bool StdInSource::Pull(size_t& unitsRead, size_t unitsToRead)
+    bool CopyFilter::WriteFilter(size_t& unitsProcessed, size_t unitsToProcess)
     {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
+        return Copy(unitsProcessed, unitsToProcess);
+    }
+
+    bool CopyFilter::Copy(size_t& unitsProcessed, size_t unitsToProcess)
+    {
+        auto sourceBuffer = ActualSource()->GetBuffer();
+        auto sinkBuffer = ActualSink()->GetBuffer();
+        if(sourceBuffer && sinkBuffer && unitsToProcess)
         {
-            unitsRead = fread(GetBuffer()->WriteRequest(unitsToRead), GetBuffer()->GetUnitSize(), unitsToRead, stdin);
-            if(unitsRead > 0)
-            {
-                buffer->WriteAcknowledge(unitsRead);
-                OnReadSuccess(unitsRead);
-            }
-            else //EOF
-            {
-                OnEndOfData();
-            }
-            return true;
+            byte* space = sinkBuffer->WriteRequest(unitsToProcess);
+            byte* data = sourceBuffer->ReadRequest(unitsToProcess);
+            Process(space, data, unitsToProcess, sourceBuffer->GetUnitSize(), sinkBuffer->GetUnitSize());
+            sinkBuffer->WriteAcknowledge(unitsToProcess);
+            sourceBuffer->ReadAcknowledge(unitsToProcess);
+            unitsProcessed = unitsToProcess;
+            return unitsProcessed > 0 ? true : false;
         }
         return false;
     }
 
-    bool StdInSource::Push(size_t& unitsRead, size_t unitsToRead)
-    {        
-        if( GetFlowMode() == FlowMode::Push )
-        {
-            ActualSink()->Write(unitsRead, unitsToRead);
-            return unitsRead > 0 ? true : false;
-        }
+    bool CopyFilter::Process( byte* dest, byte* source, size_t sourceUnits, size_t sourceUnitSize, size_t destUnitSize)
+    {
+        memcpy(dest, source, sourceUnits * sourceUnitSize);
         return true;
     }
 
-}}//qor::components
+}}//qor::pipeline

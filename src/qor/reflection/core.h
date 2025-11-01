@@ -89,20 +89,17 @@ namespace qor_reflection {
     }
 #endif
 
-
     template <std::size_t I, class T>
     constexpr auto get(T&& val, std::enable_if_t< std::is_rvalue_reference<T&&>::value>* = nullptr) noexcept 
     {
         return std::move(detail::sequence_tuple::get<I>( detail::tie_as_tuple(val) ));
     }
 
-
     template <class U, class T>
     constexpr const U& get(const T& val) noexcept 
     {
         return detail::sequence_tuple::get_by_type_impl<const U&>( detail::tie_as_tuple(val) );
     }
-
 
     template <class U, class T>
     constexpr U& get(T& val

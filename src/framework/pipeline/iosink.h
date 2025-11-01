@@ -37,7 +37,7 @@ namespace qor{ namespace pipeline{
         iosink_base();
         virtual ~iosink_base() = default;
 
-        virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
+        virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );
         
         virtual void SetPlug(Element* pPlug);
         virtual Element* GetPlug();
@@ -47,8 +47,8 @@ namespace qor{ namespace pipeline{
 
     protected:
         
-        bool Pull(size_t& unitsRead, size_t unitsToRead);
-        bool Push(size_t& unitsRead, size_t unitsToRead);
+        bool Pull(size_t& unitsWritten, size_t unitsToWrite);
+        bool Push(size_t& unitsWritten, size_t unitsToWrite);
         Plug* ActualPlug();
 
         Element* m_plug;

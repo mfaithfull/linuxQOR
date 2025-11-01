@@ -115,7 +115,7 @@
 #   if  defined(__cpp_lib_is_aggregate)
 #       define qor_pp_refl_enable_implicit_reflection 1
 #   else
-// There is no way to detect potential ability to be reflectable without std::is_aggregare
+// There is no way to detect potential ability to be reflectable without std::is_aggregate
 #       define qor_pp_refl_enable_implicit_reflection 0
 #   endif
 #endif

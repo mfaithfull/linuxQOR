@@ -23,45 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <stdio.h>
-#include "stdinsource.h"
-#include "src/framework/pipeline/sink.h"
+#include "src/qor/module/module.h"
 
-namespace qor{ namespace components{ 
-
-    bool StdInSource::Read(size_t& unitsRead, size_t unitsToRead)
-    {
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
-    }
-
-    bool StdInSource::Pull(size_t& unitsRead, size_t unitsToRead)
-    {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
-        {
-            unitsRead = fread(GetBuffer()->WriteRequest(unitsToRead), GetBuffer()->GetUnitSize(), unitsToRead, stdin);
-            if(unitsRead > 0)
-            {
-                buffer->WriteAcknowledge(unitsRead);
-                OnReadSuccess(unitsRead);
-            }
-            else //EOF
-            {
-                OnEndOfData();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    bool StdInSource::Push(size_t& unitsRead, size_t unitsToRead)
-    {        
-        if( GetFlowMode() == FlowMode::Push )
-        {
-            ActualSink()->Write(unitsRead, unitsToRead);
-            return unitsRead > 0 ? true : false;
-        }
-        return true;
-    }
-
-}}//qor::components
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Base64 Encode Filter Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

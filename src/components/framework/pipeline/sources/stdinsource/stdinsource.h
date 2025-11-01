@@ -33,14 +33,15 @@ namespace qor{ namespace components{
     {
     public:
 
-        StdInSource();
+        StdInSource() = default;
         virtual ~StdInSource() = default;
 
         virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
 
-    protected:
+    private:
 
-        virtual bool Write(size_t unitsToWrite);
+        bool Pull(size_t& unitsRead, size_t unitsToRead);
+        bool Push(size_t& unitsWritten, size_t unitsToWrite);
     };
 
 }}//qor::components

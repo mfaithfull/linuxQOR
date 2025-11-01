@@ -62,11 +62,10 @@ namespace qor{ namespace pipeline{
         virtual void SetSink(Element* sink) = 0;
         virtual Element* GetSink();
         virtual bool HasSink();
-        FlowMode GetFlowMode();
+        virtual FlowMode GetFlowMode();
+        virtual void SetFlowMode(FlowMode flowmode);
 
     protected:
-
-        void SetFlowMode(FlowMode flowmode);
 
         Element* m_parent;// The owning element or pipeline
         Buffer* m_buffer;

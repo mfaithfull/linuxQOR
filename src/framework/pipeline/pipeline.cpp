@@ -42,11 +42,6 @@ namespace qor{ namespace pipeline{
         return false;
     }
 
-    bool Pipeline::Pump(size_t& numberOfUnitsPumped, size_t numberOfUnitsToPump)
-    {
-        return false;
-    }
-    
     void Pipeline::InsertFilter(Filter* pFilter, FilterPos Pos)
     {
 

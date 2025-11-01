@@ -28,7 +28,7 @@
 #include "src/framework/pipeline/sink.h"
 #include "src/components/framework/pipeline/connectors/fileconnector/fileconnector.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace components{
 
     class qor_pp_module_interface(QOR_FILESINK) FileSink : public pipeline::Sink
     {

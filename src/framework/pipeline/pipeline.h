@@ -52,20 +52,51 @@ namespace qor{ namespace pipeline{
             SetSource(SourceConnection->GetSource());
         }
 
-        Element::FlowMode GetFlowMode()
+        void SetSource(Element* source)
         {
-            return (m_parent != nullptr) ? m_parent->GetFlowMode() : m_flowmode;
+            if(source && source->IsSource())
+            {
+                m_source = source;
+                m_source->SetParent(this);
+            }
         }
 
-        void SetMode(FlowMode flowmode)
+        void SetSink(Element* sink)
         {
-            m_flowmode = flowmode;
+            if(sink && sink->IsSink())
+            {
+                m_sink = sink;
+                m_sink->SetParent(this);
+            }
+        }
+
+        virtual Element::FlowMode GetFlowMode()
+        {
+            auto pipelineparent = dynamic_cast<Pipeline*>(GetParent());
+            return (pipelineparent != nullptr) ? pipelineparent->GetFlowMode() : m_flowmode;
+        }
+
+        void SetFlowMode(Element::FlowMode flowmode)
+        {
+            auto pipelineparent = dynamic_cast<Pipeline*>(GetParent());
+            if(pipelineparent != nullptr)
+            {
+                pipelineparent->SetFlowMode(flowmode);
+            }
+            else
+            {
+                m_flowmode = flowmode;
+            }
         }
 
         virtual void Run(void);
         bool Pump(void);
 
-        virtual bool Pump(size_t& numberOfUnitsPumped, size_t numberOfUnitsToPump = 1);
+        virtual bool Pump(size_t& unitsPumped, size_t unitsToPump)
+        {
+            return Filter::Pump(unitsPumped, unitsToPump);
+        }
+
         virtual void InsertFilter(Filter* pFilter, FilterPos Pos = BeforeSink);
 
     protected:

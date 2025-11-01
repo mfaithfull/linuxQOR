@@ -36,8 +36,7 @@ namespace qor{ namespace components{
 
         stdofstreamSink() = default;
         virtual ~stdofstreamSink() = default;
-        virtual size_t WriteBytes(byte* data, size_t bytesToWrite);        
-
+        virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
     };
 
 }}//qor::components

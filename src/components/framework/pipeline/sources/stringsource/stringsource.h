@@ -22,46 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include <stdio.h>
-#include "stdinsource.h"
-#include "src/framework/pipeline/sink.h"
+#ifndef QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STRING
+#define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STRING
+
+#include <string>
+#include "src/framework/pipeline/iosource.h"
 
 namespace qor{ namespace components{ 
 
-    bool StdInSource::Read(size_t& unitsRead, size_t unitsToRead)
+    class qor_pp_module_interface(QOR_STRINGSOURCE) StringSource : public pipeline::Source
     {
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
-    }
 
-    bool StdInSource::Pull(size_t& unitsRead, size_t unitsToRead)
-    {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
-        {
-            unitsRead = fread(GetBuffer()->WriteRequest(unitsToRead), GetBuffer()->GetUnitSize(), unitsToRead, stdin);
-            if(unitsRead > 0)
-            {
-                buffer->WriteAcknowledge(unitsRead);
-                OnReadSuccess(unitsRead);
-            }
-            else //EOF
-            {
-                OnEndOfData();
-            }
-            return true;
-        }
-        return false;
-    }
+    public:
 
-    bool StdInSource::Push(size_t& unitsRead, size_t unitsToRead)
-    {        
-        if( GetFlowMode() == FlowMode::Push )
-        {
-            ActualSink()->Write(unitsRead, unitsToRead);
-            return unitsRead > 0 ? true : false;
-        }
-        return true;
-    }
+        StringSource();
+        virtual ~StringSource() = default;
+
+        virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
+
+        void SetData(const std::string& data);
+
+    protected:
+
+        size_t Read(char* space, size_t charsToRead);
+        bool Pull(size_t& unitsRead, size_t unitsToRead);
+        bool Push(size_t& unitsRead, size_t unitsToRead);
+
+        std::string m_data;
+        std::string::iterator m_it;
+    };
 
 }}//qor::components
+
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIFSTREAM

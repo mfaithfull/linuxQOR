@@ -54,14 +54,7 @@ namespace qor{ namespace pipeline{
 
     bool iosource_base::Read(size_t& unitsRead, size_t unitsToRead)
     {        
-        switch( GetFlowMode() )
-        {
-            case FlowMode::Pull:
-                return Pull(unitsRead, unitsToRead);
-            case FlowMode::Push:
-                return Push(unitsRead, unitsToRead);
-        }
-        return false;
+        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
     }
 
     //pull the requested amount of data from the stream
@@ -90,34 +83,12 @@ namespace qor{ namespace pipeline{
     //push the requested amount of data up the pipeline
     bool iosource_base::Push(size_t& unitsRead, size_t unitsToRead)
     {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
+        if( GetFlowMode() == FlowMode::Push )
         {
-            size_t availableBytes = buffer->ReadCapacity();
-            if(availableBytes < buffer->GetUnitSize() * unitsToRead )
-            {
-                size_t extraUnitsToRead = unitsToRead - (availableBytes / buffer->GetUnitSize());
-                size_t extraUnitsRead = 0;
-                do
-                {
-                    if(Pull(extraUnitsRead, extraUnitsToRead))
-                    {
-                        extraUnitsToRead -= extraUnitsRead;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }while(extraUnitsToRead > 0);
-            }
+            return ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0) ? true : false;
 
-            byte* data = buffer->ReadRequest(unitsToRead);
-            
-            size_t numberOfUnitsWritten = 0;
-            ActualSink()->Write(numberOfUnitsWritten, unitsToRead);
-            return numberOfUnitsWritten > 0 ? true : false;
         }
-        return false;
+        return true;
     }
 
 }}//qor::components

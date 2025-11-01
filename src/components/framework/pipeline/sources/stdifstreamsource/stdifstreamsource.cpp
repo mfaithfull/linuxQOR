@@ -29,10 +29,6 @@
 
 namespace qor{ namespace components{ 
 
-    stdifstreamSource::stdifstreamSource() : pipeline::iosource<stdifstreamConnector>()
-    {
-    }
-
     size_t stdifstreamSource::ReadBytes(byte* space, size_t bytesToRead)
     {
         size_t result = 0;
@@ -40,6 +36,10 @@ namespace qor{ namespace components{
         {
             m_Connector->Stream().read(reinterpret_cast<std::ifstream::char_type*>(space), bytesToRead);
             result = m_Connector->Stream().gcount();
+        }
+        else
+        {
+            //TODO: No connection
         }
         return result;
     }

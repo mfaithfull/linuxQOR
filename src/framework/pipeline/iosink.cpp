@@ -54,78 +54,41 @@ namespace qor{ namespace pipeline{
 
     bool iosink_base::Write(size_t& unitsWritten, size_t unitsToWrite)
     {        
-        switch( GetFlowMode() )
-        {
-            case FlowMode::Pull:
-                return Pull(unitsWritten, unitsToWrite);
-            case FlowMode::Push:
-                return Push(unitsWritten, unitsToWrite);
-        }
-        return false;
+        return (unitsToWrite == 0 || Pull(unitsWritten, unitsToWrite)) ? Push(unitsWritten, unitsWritten) : false;
     }
 
     //pull the requested amount of data from the stream
     bool iosink_base::Pull(size_t& unitsWritten, size_t unitsToWrite)
     {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
-        {
-            size_t availableBytes = buffer->ReadCapacity();
-            if(availableBytes < buffer->GetUnitSize() * unitsToWrite )
-            {
-                size_t extraUnitsToRead = unitsToWrite - (availableBytes / buffer->GetUnitSize());
-                size_t extraUnitsRead = 0;
-                do
-                {
-                    if(ActualSource()->Read(extraUnitsRead, extraUnitsToRead))
-                    {
-                        extraUnitsToRead -= extraUnitsRead;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }while(extraUnitsToRead > 0);
-            }
-
-            byte* data = buffer->ReadRequest(unitsToWrite);
-            size_t bytesWritten = WriteBytes(data, buffer->GetUnitSize() * unitsToWrite);
-            if(bytesWritten > 0)
-            {
-                unitsWritten = bytesWritten / buffer->GetUnitSize();
-                buffer->ReadAcknowledge(unitsWritten);
-                OnWriteSuccess(unitsWritten);
-            }
-            else //EOF
-            {
-                //OnEndOfData();
-            }
-            return true;
-        }
-        return false;
+        return GetFlowMode() == FlowMode::Pull ? 
+        (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0 || unitsToWrite == 0) ? true : false) : true;
     }
 
-    //push the requested amount of data up the pipeline
+    //push the requested amount of data out of the door
     bool iosink_base::Push(size_t& unitsWritten, size_t unitsToWrite)
     {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
+        if(unitsToWrite > 0)
         {
-            byte* data = buffer->ReadRequest(unitsToWrite);
-            size_t bytesWritten = WriteBytes(data, buffer->GetUnitSize() * unitsToWrite);
-            if(bytesWritten > 0)
+            pipeline::Buffer* buffer = GetBuffer();
+            if(buffer)
             {
-                unitsWritten = bytesWritten / buffer->GetUnitSize();
-                buffer->ReadAcknowledge(unitsWritten);
-                OnWriteSuccess(unitsWritten);
+                byte* data = buffer->ReadRequest(unitsToWrite);
+                size_t bytesWritten = WriteBytes(data, buffer->GetUnitSize() * unitsToWrite);
+                if(bytesWritten > 0)
+                {
+                    unitsWritten = bytesWritten / buffer->GetUnitSize();
+                    buffer->ReadAcknowledge(unitsWritten);
+                    OnWriteSuccess(unitsWritten);
+                }
+                else //EOF?
+                {
+                    return false;
+                }
+                return true;
             }
-            else //EOF
-            {
-                //OnEndOfData();
-            }
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
 }}//qor::components

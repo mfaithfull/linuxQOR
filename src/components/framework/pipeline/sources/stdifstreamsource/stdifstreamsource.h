@@ -32,10 +32,39 @@ namespace qor{ namespace components{
 
     class qor_pp_module_interface(QOR_STDIFSTREAMSOURCE) stdifstreamSource : public pipeline::iosource< stdifstreamConnector >
     {
+        //Base
+        //virtual bool      Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
+        //virtual void      SetPlug(Element* pPlug);
+        //virtual Element*  GetPlug();
+        //virtual bool      HasPlug();
+        //virtual void      SetSink(Element* pSink);
+        //virtual void      SetSource(Element* source);
+        //virtual Element*  GetSink(void);
+        //virtual bool      HasSink(void);
+        //virtual bool      Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1) = 0;
+        //virtual void      OnReadSuccess(size_t unitsRead);
+        //virtual void      OnReadError(size_t error, size_t unitsRead);
+        //virtual void      OnEndOfData();
+        //Element*          GetParent(void);
+        //void              SetParent(Element* parent);
+        //virtual bool      IsBuffered();
+        //virtual bool      IsSource();
+        //virtual bool      IsSink();
+        //virtual void      SetBuffer(Buffer* buffer);
+        //Buffer*           GetBuffer();
+        //virtual bool      HasBuffer();        
+        //virtual Element*  GetSource();
+        //virtual bool      HasSource();        
+        //FlowMode          GetFlowMode();
+        //void              SetFlowMode(FlowMode flowmode);
+
     public:
 
-        stdifstreamSource();
+        stdifstreamSource() = default;
         virtual ~stdifstreamSource() = default;
+
+    protected:
+
         virtual size_t ReadBytes(byte* space, size_t bytesToRead);
     };
 

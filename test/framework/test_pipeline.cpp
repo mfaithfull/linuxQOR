@@ -22,19 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
+#include "src/configuration/configuration.h"
 
 #include <random>
 
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/framework/pipeline/pipeline.h"
-#include "../../src/framework/pipeline/podbuffer.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
+#include "src/framework/pipeline/pipeline.h"
+#include "src/framework/pipeline/podbuffer.h"
+#include "src/framework/pipeline/copyfilter.h"
+#include "src/framework/pipeline/iosource.h"
+#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
+#include "src/components/framework/pipeline/sources/stringsource/stringsource.h"
+#include "src/components/framework/pipeline/filters/base64encodefilter/base64encodefilter.h"
+#include "src/components/framework/pipeline/filters/base64decodefilter/base64decodefilter.h"
+#include "src/components/framework/pipeline/sinks/stringsink/stringsink.h"
 
 using namespace qor;
 using namespace qor::test;
 using namespace qor::pipeline;
-
+using namespace qor::components;
 
 struct PipelineTestSuite{};
 
@@ -110,11 +117,11 @@ qor_pp_test_suite_case(PipelineTestSuite, wrapAllowsEndlessUse)
     qor_pp_assert_that(result).isEqualTo(12);
 }
 
-class NoiseSource : public qor::pipeline::Source
+class NoiseSource : public qor::pipeline::iosource_base
 {
 public:
 
-    NoiseSource() : Source(){}
+    NoiseSource() = default;
     virtual ~NoiseSource() = default;
 
     virtual size_t ReadBytes(byte* buffer, size_t bytesToRead)
@@ -125,7 +132,7 @@ public:
         }
         return bytesToRead;
     }
-
+/*
     virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1)
     {
         Buffer* unitBuffer = GetBuffer();
@@ -147,6 +154,7 @@ public:
         }        
         return true;
     }
+        */
     virtual bool IsAtEnd() {return false;}
 
 protected:
@@ -176,4 +184,184 @@ qor_pp_test_suite_case(PipelineTestSuite, readNoiseFromNoiseSource)
 	{
 		std::cout << pData[i];
 	}
+    Buffer.ReadAcknowledge(Result);
+}
+
+qor_pp_test_suite_case(PipelineTestSuite, copyFilter)
+{
+    ByteBuffer InBuffer(32);
+    NoiseSource noiseSource;
+    noiseSource.SetBuffer(&InBuffer);
+
+    ByteBuffer OutBuffer(32);
+    StdOutSink sink;
+    sink.SetBuffer(&OutBuffer);
+
+    CopyFilter filter;
+    filter.SetSink(&sink);
+    filter.SetSource(&noiseSource);
+
+    size_t unitsPumped = 0;
+    filter.Pump(unitsPumped, 56);
+}
+
+qor_pp_test_suite_case(PipelineTestSuite, copyFilterInPushMode)
+{
+    Pipeline PushedPipe;
+    PushedPipe.SetFlowMode(Element::FlowMode::Push);
+    
+    ByteBuffer InBuffer(32);
+    NoiseSource noiseSource;
+    noiseSource.SetFlowMode(Element::FlowMode::Push);
+    noiseSource.SetBuffer(&InBuffer);    
+    noiseSource.SetParent(&PushedPipe);
+
+    ByteBuffer OutBuffer(32);
+    StdOutSink sink;
+    sink.SetFlowMode(Element::FlowMode::Push);
+    sink.SetBuffer(&OutBuffer);
+    sink.SetParent(&PushedPipe);
+
+    CopyFilter filter;
+    filter.SetFlowMode(Element::FlowMode::Push);
+    filter.SetParent(&PushedPipe);
+    filter.SetSink(&sink);
+    filter.SetSource(&noiseSource);
+
+    PushedPipe.SetSource(&filter);
+    PushedPipe.SetSink(&filter);
+
+    size_t unitsPumped = 0;
+    PushedPipe.Pump(unitsPumped, (size_t)56);
+}
+
+qor_pp_test_suite_case(PipelineTestSuite, validateStringSource)
+{
+    std::string testData = "Mary had a little lamb. The lamb was white as snow.";
+    
+    Pipeline testStringSource;
+    testStringSource.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer Buffer(128);
+
+    StdOutSink sink;
+    sink.SetParent(&testStringSource);
+    sink.SetBuffer(&Buffer);    
+
+    StringSource stringSource;
+    stringSource.SetBuffer(&Buffer);
+    stringSource.SetParent(&testStringSource);
+    stringSource.SetData(testData);
+    stringSource.SetSink(&sink);
+
+    sink.SetSource(&stringSource);
+
+    testStringSource.SetSource(&stringSource);
+    testStringSource.SetSink(&sink);
+
+    size_t unitsPumped = 0;
+    testStringSource.Pump(unitsPumped, testData.length());
+}
+
+qor_pp_test_suite_case(PipelineTestSuite, testBase64EncodeFilter)
+{
+    std::string testData = "Mary had a little lamb. The lamb was white as snow.";
+    
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer InBuffer(128);
+    ByteBuffer OutBuffer(200);
+
+    StdOutSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&OutBuffer);    
+
+    StringSource source;
+    source.SetBuffer(&InBuffer);
+    source.SetParent(&testPipeline);
+    source.SetData(testData);
+
+    Base64EncodeFilter filter;
+    filter.SetFlowMode(Element::FlowMode::Push);
+    filter.SetParent(&testPipeline);
+    filter.SetSink(&sink);
+    filter.SetSource(&source);
+    
+    testPipeline.SetSource(&filter);
+    testPipeline.SetSink(&filter);
+
+    size_t unitsPumped = 0;
+    testPipeline.Pump(unitsPumped, testData.length());
+}
+
+qor_pp_test_suite_case(PipelineTestSuite, validateStringSink)
+{
+    std::string testData = "Mary had a little lamb. The lamb was white as snow.";
+    
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer Buffer(128);
+
+    StringSink stringSink;
+    stringSink.SetParent(&testPipeline);
+    stringSink.SetBuffer(&Buffer);    
+
+    StringSource source;
+    source.SetBuffer(&Buffer);
+    source.SetData(testData);
+    source.SetSink(&stringSink);
+
+    stringSink.SetSource(&source);
+
+    testPipeline.SetSource(&source);
+    testPipeline.SetSink(&stringSink);
+
+    size_t unitsPumped = 0;
+    testPipeline.Pump(unitsPumped, testData.length());
+}
+
+qor_pp_test_suite_case(PipelineTestSuite, testBase64DecodeFilter)
+{
+    std::string testData = "Mary had a little lamb. The lamb was white as snow.";
+    
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer InBuffer(128);
+    ByteBuffer EncodedBuffer(200);
+    ByteBuffer OutBuffer(128);
+
+    StringSource source;
+    source.SetBuffer(&InBuffer);
+    source.SetParent(&testPipeline);
+    source.SetData(testData);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&OutBuffer);    
+
+    Base64EncodeFilter encodeFilter;
+    encodeFilter.SetBuffer(&EncodedBuffer);
+    encodeFilter.SetFlowMode(Element::FlowMode::Push);
+    encodeFilter.SetParent(&testPipeline);    
+    encodeFilter.SetSource(&source);
+
+    Base64DecodeFilter decodeFilter;
+    decodeFilter.SetBuffer(&EncodedBuffer);
+    decodeFilter.SetFlowMode(Element::FlowMode::Push);
+    decodeFilter.SetParent(&testPipeline);    
+    decodeFilter.SetSource(&encodeFilter);
+
+    encodeFilter.SetSink(&decodeFilter);
+    decodeFilter.SetSink(&sink);
+    
+    testPipeline.SetSource(&decodeFilter);
+    testPipeline.SetSink(&decodeFilter);
+
+    size_t unitsPumped = 0;
+    testPipeline.Pump(unitsPumped, testData.length());
+    std::string output = sink.GetData();
+    qor_pp_assert_that(output).isEqualTo(testData);
 }

@@ -24,24 +24,38 @@
 
 #include "src/configuration/configuration.h"
 #include <stdio.h>
-#include "stdinsource.h"
+#include "stringsource.h"
 #include "src/framework/pipeline/sink.h"
 
 namespace qor{ namespace components{ 
 
-    bool StdInSource::Read(size_t& unitsRead, size_t unitsToRead)
+    StringSource::StringSource()
     {
+        m_data = "";
+        m_it = m_data.begin();
+    }
+
+    void StringSource::SetData(const std::string& data)
+    {
+        m_data = data;
+        m_it = m_data.begin();
+    }
+
+    bool StringSource::Read(size_t& unitsRead, size_t unitsToRead)
+    {        
         return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
     }
 
-    bool StdInSource::Pull(size_t& unitsRead, size_t unitsToRead)
+    bool StringSource::Pull(size_t& unitsRead, size_t unitsToRead)
     {
         pipeline::Buffer* buffer = GetBuffer();
         if(buffer)
         {
-            unitsRead = fread(GetBuffer()->WriteRequest(unitsToRead), GetBuffer()->GetUnitSize(), unitsToRead, stdin);
-            if(unitsRead > 0)
+            byte* space = buffer->WriteRequest(unitsToRead);            
+            size_t charsRead = Read((char*)space, (buffer->GetUnitSize() * unitsToRead) / sizeof(char));
+            if(charsRead > 0)
             {
+                unitsRead = (charsRead * sizeof(char)) / buffer->GetUnitSize();
                 buffer->WriteAcknowledge(unitsRead);
                 OnReadSuccess(unitsRead);
             }
@@ -54,12 +68,22 @@ namespace qor{ namespace components{
         return false;
     }
 
-    bool StdInSource::Push(size_t& unitsRead, size_t unitsToRead)
-    {        
+    size_t StringSource::Read(char* space, size_t charsToRead)
+    {
+        size_t charsRead = 0;
+        while(m_it != m_data.end() && charsRead < charsToRead)
+        {
+            space[charsRead++] = *m_it++;
+        }
+        return charsRead;
+    }
+
+        //push the requested amount of data up the pipeline
+    bool StringSource::Push(size_t& unitsRead, size_t unitsToRead)
+    {
         if( GetFlowMode() == FlowMode::Push )
         {
-            ActualSink()->Write(unitsRead, unitsToRead);
-            return unitsRead > 0 ? true : false;
+            return ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0) ? true : false;
         }
         return true;
     }

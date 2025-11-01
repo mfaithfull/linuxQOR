@@ -22,22 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_STREAM
-#define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_STREAM
+#ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STRING
+#define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STRING
 
-//All types on this interface must be portable
+#include <string>
+#include "src/framework/pipeline/sink.h"
 
-namespace qor{ namespace nslinux{ 
+namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) Stream
+    class qor_pp_module_interface(QOR_STRINGSINK) StringSink : public pipeline::Sink
     {
     public:
 
-    private:
+        StringSink() = default;
+        virtual ~StringSink() = default;
 
-        void* m_FILE;   //pointer to the OS specific opaque stream control block
+        virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );
+        std::string GetData();
+
+    protected:
+
+        bool Pull(size_t& unitsWritten, size_t unitsToWrite);
+        bool Push(size_t& unitsWritten, size_t unitsToWrite);
+        virtual size_t Write(byte* data, size_t bytesToWrite);
+
+        std::string m_data;
     };
 
-}}//qor::nslinux
+}}//qor::components
 
-#endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_STREAM
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STRING

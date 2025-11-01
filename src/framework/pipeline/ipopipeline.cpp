@@ -23,45 +23,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <stdio.h>
-#include "stdinsource.h"
-#include "src/framework/pipeline/sink.h"
 
-namespace qor{ namespace components{ 
+#include "ipopipeline.h"
 
-    bool StdInSource::Read(size_t& unitsRead, size_t unitsToRead)
-    {
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
-    }
+namespace qor{ namespace pipeline{
 
-    bool StdInSource::Pull(size_t& unitsRead, size_t unitsToRead)
-    {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
-        {
-            unitsRead = fread(GetBuffer()->WriteRequest(unitsToRead), GetBuffer()->GetUnitSize(), unitsToRead, stdin);
-            if(unitsRead > 0)
-            {
-                buffer->WriteAcknowledge(unitsRead);
-                OnReadSuccess(unitsRead);
-            }
-            else //EOF
-            {
-                OnEndOfData();
-            }
-            return true;
-        }
-        return false;
-    }
+}}//qor::pipeline
 
-    bool StdInSource::Push(size_t& unitsRead, size_t unitsToRead)
-    {        
-        if( GetFlowMode() == FlowMode::Push )
-        {
-            ActualSink()->Write(unitsRead, unitsToRead);
-            return unitsRead > 0 ? true : false;
-        }
-        return true;
-    }
-
-}}//qor::components

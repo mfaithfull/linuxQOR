@@ -22,46 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include <stdio.h>
-#include "stdinsource.h"
-#include "src/framework/pipeline/sink.h"
+#ifndef QOR_PP_H_PIPELINE_COPYFILTER
+#define QOR_PP_H_PIPELINE_COPYFILTER
 
-namespace qor{ namespace components{ 
+#include "filter.h"
 
-    bool StdInSource::Read(size_t& unitsRead, size_t unitsToRead)
+namespace qor{ namespace pipeline{
+
+    class qor_pp_module_interface(QOR_PIPELINE) CopyFilter : public Filter
     {
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
-    }
+    public:
 
-    bool StdInSource::Pull(size_t& unitsRead, size_t unitsToRead)
-    {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
-        {
-            unitsRead = fread(GetBuffer()->WriteRequest(unitsToRead), GetBuffer()->GetUnitSize(), unitsToRead, stdin);
-            if(unitsRead > 0)
-            {
-                buffer->WriteAcknowledge(unitsRead);
-                OnReadSuccess(unitsRead);
-            }
-            else //EOF
-            {
-                OnEndOfData();
-            }
-            return true;
-        }
-        return false;
-    }
+        CopyFilter() = default;
+        virtual ~CopyFilter() = default;
 
-    bool StdInSource::Push(size_t& unitsRead, size_t unitsToRead)
-    {        
-        if( GetFlowMode() == FlowMode::Push )
-        {
-            ActualSink()->Write(unitsRead, unitsToRead);
-            return unitsRead > 0 ? true : false;
-        }
-        return true;
-    }
+        virtual bool ReadFilter(size_t& unitsProcessed, size_t unitsToProcess);
+        virtual bool WriteFilter(size_t& unitsProcessed, size_t unitsToProcess);
+        virtual bool Process( byte* dest, byte* source, size_t sourceUnits, size_t sourceUnitSize, size_t destUnitSize);
+        
+    protected:
 
-}}//qor::components
+        bool Copy(size_t& unitsProcessed, size_t unitsToProcess);
+        
+    };
+
+}}//qor::pipeline
+
+#endif//QOR_PP_H_PIPELINE_COPYFILTER

@@ -89,9 +89,9 @@ namespace qor{ namespace pipeline{
             //The count available to write is the total count - the reserved count
             size_t result = m_allocationCount - static_cast<size_t>(m_writeEnd - m_readBegin);
             //A single write can't wrap so restrict it to the number of elements left till the wrap
-            if(AddressOf(m_writeEnd) + result > EndOfBuffer())
+            if(AddressOf(m_writeBegin) + result > EndOfBuffer())
             {
-                result = EndOfBuffer() - AddressOf(m_writeEnd);
+                result = EndOfBuffer() - AddressOf(m_writeBegin);
             }
             return result;
         }
@@ -111,14 +111,14 @@ namespace qor{ namespace pipeline{
         virtual byte* WriteRequest(size_t& itemCount)
         {
             pod_t* pResult = 0;
-            if (itemCount > WriteCapacity())
+            if (itemCount == 0 || itemCount > WriteCapacity())
             {
                 itemCount = WriteCapacity();
             }
 
             if (itemCount > 0)
             {
-                pResult = AddressOf(m_writeEnd);
+                pResult = AddressOf(m_writeBegin);
                 m_writeEnd += itemCount;
             }
             return reinterpret_cast<byte*>(pResult);

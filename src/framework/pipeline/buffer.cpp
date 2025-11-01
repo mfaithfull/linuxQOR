@@ -88,6 +88,7 @@ namespace qor{ namespace pipeline{
         }
 
         m_readBegin += itemCount;
+        m_readEnd = m_readBegin;
         return ReadCapacity();
     }
 
@@ -110,6 +111,7 @@ namespace qor{ namespace pipeline{
         }
 
         m_writeBegin += itemCount;
+        m_writeEnd = m_writeBegin;
         return WriteCapacity();
     }
 
