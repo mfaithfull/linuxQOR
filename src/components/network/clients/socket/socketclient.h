@@ -68,7 +68,7 @@ namespace qor{ namespace components{ namespace network{
         virtual void SetReadTimeout(time_t sec, time_t usec = 0);
         virtual void SetWriteTimeout(time_t sec, time_t usec = 0);
         virtual void SetMaxTimeout(time_t msec);
-        //virtual void SetSocketOptions(SocketOptions socket_options);        
+        
         template <class Rep, class Period>
         void SetConnectionTimeout(const std::chrono::duration<Rep, Period> &duration)
         {
@@ -214,7 +214,6 @@ namespace qor{ namespace components{ namespace network{
         bool keep_alive_ = false;
         bool m_TCPNoDelay = false;//CPPHTTPLIB_TCP_NODELAY;
         bool m_IPv6Only = false;//CPPHTTPLIB_IPV6_V6ONLY;
-        //SocketOptions socket_options_ = nullptr;
         std::string m_Interface;
         std::string m_ProxyHost;
         int m_ProxyPort = -1;

@@ -521,6 +521,9 @@ namespace qor{ namespace components{ namespace network{
 
         ContentProviderWithoutLength get_multipart_content_provider( const std::string &boundary, const protocols::http::UploadFormDataItems &items, const protocols::http::FormDataProviderItems &provider_items) const;
 
+
+        bool ReadResponseLine(const protocols::http::Request &req, protocols::http::Response &res) const; 
+
         // Default headers
         protocols::http::Headers default_headers_;
 

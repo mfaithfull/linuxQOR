@@ -25,6 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include <assert.h>
+#include <regex>
 #include "protohttpclient.h"
 #include "src/components/protocols/http/multipart.h"
 
@@ -966,6 +967,56 @@ namespace qor{ namespace components{ namespace network{
         return path_with_query;
     }
 
+
+    bool ProtoHTTPClient::ReadResponseLine(const protocols::http::Request &req, protocols::http::Response &res) const 
+    {
+        /*
+        std::array<char, 2048> buf{};
+        detail::stream_line_reader line_reader(strm, buf.data(), buf.size());
+
+        if (!line_reader.getline()) 
+        { 
+            return false; 
+        }
+
+    #ifdef CPPHTTPLIB_ALLOW_LF_AS_LINE_TERMINATOR
+        thread_local const std::regex re("(HTTP/1\\.[01]) (\\d{3})(?: (.*?))?\r?\n");
+    #else
+        thread_local const std::regex re("(HTTP/1\\.[01]) (\\d{3})(?: (.*?))?\r\n");
+    #endif
+
+        std::cmatch m;
+        if (!std::regex_match(line_reader.ptr(), m, re)) 
+        {
+            return req.method == "CONNECT";
+        }
+        res.version = std::string(m[1]);
+        res.status = std::stoi(std::string(m[2]));
+        res.reason = std::string(m[3]);
+
+        // Ignore '100 Continue'
+        while (res.status == protocols::http::StatusCode::Continue_100) 
+        {
+            if (!line_reader.getline()) 
+            { 
+                return false; 
+            } // CRLF
+            if (!line_reader.getline()) 
+            { 
+                return false; 
+            } // next response line
+
+            if (!std::regex_match(line_reader.ptr(), m, re)) 
+            { 
+                return false; 
+            }
+            res.version = std::string(m[1]);
+            res.status = std::stoi(std::string(m[2]));
+            res.reason = std::string(m[3]);
+        }
+        */
+        return true;
+    }
 
     bool ProtoHTTPClient::process_request(void* strm, protocols::http::Request &req, protocols::http::Response &res, bool close_connection, Error &error)
     {
