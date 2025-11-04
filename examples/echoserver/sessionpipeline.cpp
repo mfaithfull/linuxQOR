@@ -48,3 +48,5 @@ SessionPipeline::SessionPipeline(
     SetSink(m_socketSink, &m_outputBuffer);
     m_socketSessionConnector->Connect();
 }
+
+//marked for auto reiveew 04/11/2025
