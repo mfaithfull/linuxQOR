@@ -72,13 +72,13 @@ namespace qor{ namespace nslinux{
         memcpy(addressinfo.address.sa.sa_data, info.ai_addr->sa_data, info.ai_addrlen);
     }
 
-    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol)
+    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol) const
     {
-        ref_of<network::Socket>::type socket = new_ref<network::Socket>(AF, Type, Protocol);
+        ref_of<network::Socket>::type socket = new_ref<Socket>(AF, Type, Protocol).AsRef<network::Socket>();
         return socket;
     }
 
-    int Sockets::GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results)
+    int Sockets::GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results) const
     {
         struct addrinfo hintinfo;
         AddressInfoToLinux(hints, hintinfo);

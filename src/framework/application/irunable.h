@@ -29,7 +29,7 @@
 
 namespace qor{ namespace framework{
 
-    class qor_pp_module_interface(QOR_APPLICATION) IRunable
+    class IRunable
     {
     public:
 
@@ -39,7 +39,7 @@ namespace qor{ namespace framework{
         virtual int Run(void) = 0;
     };
 
-    class qor_pp_module_interface(QOR_APPLICATION) RunableFunc : public IRunable
+    class RunableFunc : public IRunable
     {
     public:
 

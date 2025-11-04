@@ -83,11 +83,20 @@ namespace qor{
 				{
 					//Insert a link to this into the new objects allocated space so that from the object this shared reference can be found
 					int** ppBack = ((int**)m_p) - 1;
-					*ppBack = (int*)(this);					
+					*ppBack = (int*)(this);
 				}
 				else
 				{
 					throw new std::logic_error("Cannot make an instance of an abstract type.");
+				}
+			}
+
+			SharedRef(R* pr) : m_p(pr), m_ulRefCount(0), m_Section()
+			{
+				if(m_p != nullptr)
+				{
+					int** ppBack = ((int**)m_p) - 1;
+					*ppBack = (int*)(this);
 				}
 			}
 

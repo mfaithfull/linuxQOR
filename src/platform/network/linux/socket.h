@@ -42,20 +42,23 @@ namespace qor{ namespace nslinux{
         Socket(int sock);
         Socket(const Socket& src);
         Socket(const network::sockets::eAddressFamily& AF, const network::sockets::eType& Type, const network::sockets::eProtocol& Protocol);
-        virtual ~Socket();
+        virtual ~Socket();        
 
         virtual int32_t Bind(const network::Address& Address);
+        virtual int32_t Bind(const qor::framework::AsyncIOInterface& ioContext, const network::Address& Address);
         virtual int32_t Listen(int32_t iBacklog);
+        virtual int32_t Listen(const qor::framework::AsyncIOInterface& ioContext, int32_t iBacklog);
         virtual ref_of<network::Socket>::type Accept(network::Address& Address);
+        virtual qor::framework::IOTask AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket);
         virtual int32_t Connect(const network::Address& Address);
         virtual int32_t GetPeerName(network::Address& Address);
         virtual int32_t GetSockName(network::Address& Address);
         virtual int32_t GetSockOpt(int32_t iLevel, int32_t iOptName, char* pOptVal, int32_t* pOptLen);
         virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen);
-        virtual qor::framework::IOTask AsyncReceive(qor::framework::AbstractIOWaiter& ioWaiter, char* pBuffer, int32_t iLen, void* pSyncObject);
+        virtual qor::framework::IOTask AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
         virtual int32_t Receive(char* buf, int32_t len, int32_t flags);
         virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, network::Address& From);
-        virtual int32_t AsyncSend(char* Buffer, int32_t iLen, void* pSyncObject);
+        virtual qor::framework::IOTask AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
         virtual int32_t Send(const char* Buffer, int32_t iLen);
         virtual int32_t SendTo(const char* Buffer, int32_t iLen, int32_t iFlags, const network::Address& To);
         virtual int32_t Shutdown(network::sockets::eShutdown how);
@@ -76,9 +79,6 @@ namespace qor{ namespace nslinux{
         static network::sockets::eType TypeFromLinux(int type);
         static int ProtocolToLinux(const network::sockets::eProtocol& Protocol);
         static network::sockets::eProtocol ProtocolFromLinux(int protocol);
-
-    protected:
-        int m_sock;
 
     private:
 

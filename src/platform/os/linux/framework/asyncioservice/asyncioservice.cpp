@@ -25,16 +25,13 @@
 #include "src/configuration/configuration.h"
 
 #include "asyncioservice.h"
-//#include "readop.h"
 
 qor_pp_module_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOService)
 
 namespace qor{ namespace nslinux{ namespace framework{
 
-    bool AsyncIOService::TryProcessOneEvent(bool waitForEvent)
-    {
-        int eventsProcessed = m_IOUringService.TryProcessEvents(m_Concurrency);        
-        return !IsStopRequested();
+    AsyncIOService::AsyncIOService()
+    {        
     }
 
 }}}//qor::nslinux::framework

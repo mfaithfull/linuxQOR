@@ -45,8 +45,8 @@ namespace qor{ namespace network{
         virtual void Setup();
         virtual void Shutdown();
 
-        virtual ref_of<Socket>::type CreateSocket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol);
-        virtual int GetAddressInfo(const std::string& node, const std::string& service, const AddressInfo& hints, std::vector<AddressInfo>& results);
+        virtual ref_of<Socket>::type CreateSocket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol) const;
+        virtual int GetAddressInfo(const std::string& node, const std::string& service, const AddressInfo& hints, std::vector<AddressInfo>& results) const;
 
     private:
 

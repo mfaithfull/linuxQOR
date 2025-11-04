@@ -26,10 +26,6 @@
 #define QOR_PP_H_REFERENCE
 
 #include "ref.h"
-//#include "lref.h"
-//#include "comref.h"
-//#include "sref.h"
-//#include "poolref.h"
 #include "flyerref.h"
 
 namespace qor{
@@ -50,5 +46,7 @@ template<> struct ref_of< _CLASS >\
 };
 
 //Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
+
+#define r$(_X) ref_of<##_X##>::type
 
 #endif//QOR_PP_H_FACTORY

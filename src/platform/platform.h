@@ -57,9 +57,9 @@ namespace qor{ namespace platform{
         void AddSubsystem( const GUID* id, ref_of<ISubsystem>::type subsystem);
 
         template< class T >
-        ref_of<ISubsystem>::type GetSubsystem()
+        ref_of<T>::type GetSubsystem()
         {
-            return GetSubsystem(guid_of<T>::guid());
+            return GetSubsystem(guid_of<T>::guid()).template AsRef<T>();
         }
 
         ref_of<ISubsystem>::type GetSubsystem(const GUID* id);

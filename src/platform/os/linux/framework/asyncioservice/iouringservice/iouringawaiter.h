@@ -34,9 +34,10 @@ namespace qor{ namespace nslinux{ namespace framework{
     struct qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) IOUringAwaiter
     {
         IOUring::SQE entry;
+        IOUring* m_ring;
         qor::framework::AsyncIORequest requestData;
         
-        IOUringAwaiter(IOUring::SQE& sqe) : entry(sqe) {}
+        IOUringAwaiter(IOUring::SQE& sqe, IOUring* ring) : entry(sqe), m_ring(ring) {}
 
         bool await_ready() 
         { 
@@ -47,6 +48,7 @@ namespace qor{ namespace nslinux{ namespace framework{
         {
             requestData.handle = handle;
             entry.SetData(&requestData);
+            m_ring->RemoteSubmit();
         }
 
         int await_resume() 

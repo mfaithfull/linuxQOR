@@ -25,18 +25,15 @@
 #include <iostream>
 #include <optional>
 #include <stdexcept>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <poll.h>
 
 #include "src/configuration/configuration.h"
 #include "src/framework/pipeline/podbuffer.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
 #include "src/framework/task/syncwait.h"
-#include "echoserverworkflow.h"
+#include "src/framework/thread/threadpool.h"
 #include "echoserverapp.h"
+#include "serverworkflow.h"
+#include "clientsessionworkflow.h"
 
 using namespace qor;
 using namespace qor::framework;
@@ -44,41 +41,42 @@ using namespace qor::workflow;
 using namespace qor::pipeline;
 using namespace qor::platform;
 using namespace qor::components::optparser;
+using namespace qor::network;
+using namespace qor::network::sockets;
 
-qor_pp_module_requires(Sockets)
-qor_pp_module_requires(AsyncIOService)
-
-EchoServerWorkflow::EchoServerWorkflow() : 
+ServerWorkflow::ServerWorkflow() : 
     setup(this), 
     bind(this),
     listen(this),
-    accept(this),
-    echo(this),
-    disconnect(this)
+    accept(this)
 {
+    auto application = weak_ref<EchoServerApp>();
+    m_io = application->GetRole()->GetFeature<AsyncIOService>();
+    m_threadPool = application->GetRole()->GetFeature<ThreadPool>();
+    m_sockets = ThePlatform()->GetSubsystem<Sockets>();
+
     setup.Enter = [this]()->void
     {
-        auto sockets_subsystem = ThePlatform()->GetSubsystem<network::Sockets>().AsRef<network::Sockets>();
-
-        context.server_socket = sockets_subsystem->CreateSocket(
-            network::sockets::eAddressFamily::AF_INet, 
-            network::sockets::eType::Sock_Stream, 
-            network::sockets::eProtocol::IPProto_IP);        
-
-        context.server_address.sa_family = network::sockets::eAddressFamily::AF_INet;
-        context.server_address.SetPort(12345);
-        context.server_address.SetIPV4Address(0,0,0,0);
+        m_ioContext = m_io->Context();
+        m_ioSharedContext = m_io->SharedContext();
+        m_serverSocket = m_sockets->CreateSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP);
+        m_serverAddress.sa_family = eAddressFamily::AF_INet;
+        m_serverAddress.SetPort(12345);
+        m_serverAddress.SetIPV4Address(0,0,0,0);
 
         SetState(bind);
     };
 
     bind.Enter = [this]()->void
     {
-        if( context.server_socket->Bind(context.server_address) < 0 )
+        auto result = m_serverSocket->Bind(/*m_ioContext,*/ m_serverAddress);
+
+        if( result < 0 )
         {
-            std::cout << "can't bind to socket: " << strerror(errno) << "\n";
+            std::cout << "can't bind to socket: " << strerror(result) << "\n";
+            m_ioContext.Dispose();
             SetResult(EXIT_FAILURE);
-            SetComplete();
+            SetComplete();            
         }
         else
         {
@@ -88,10 +86,12 @@ EchoServerWorkflow::EchoServerWorkflow() :
 
     listen.Enter = [this]()->void
     {
-        if( context.server_socket->Listen(1) < 0)
+        auto result = m_serverSocket->Listen(/*m_ioContext,*/ 2);
+
+        if( result < 0)
         {
-            std::cout << "can't listen on socket: " << strerror(errno) << "\n";
-            
+            std::cout << "can't listen on socket: " << strerror(result) << "\n";
+            m_ioContext.Dispose();
             SetResult(EXIT_FAILURE);
             SetComplete();
         }
@@ -103,39 +103,20 @@ EchoServerWorkflow::EchoServerWorkflow() :
 
     accept.Enter = [this]()->void
     {
-        context.client_socket = context.server_socket->Accept(context.client_address);
-        //TODO: Instead of Pushing a state onto the linear stack we should spawn a new workflow in a task and add it to a when_all that closes the server
-        PushState(echo);
-    };
-
-    echo.Enter = [this]()->void
-    {
-        char buf[256];
-
-        auto application = new_ref<EchoServerApp>();
-        auto ioAwaiter = application->GetRole()->GetFeature(guid_of<AsyncIOService>::guid()).AsRef<AsyncIOService>();
-
-        auto result = sync_wait(context.client_socket->AsyncReceive(ioAwaiter->Context(), buf, 256, nullptr));
-        int32_t n = result.status_code;
-
-        for(size_t o{}, w(1); 0 < n && o != n && 0 < w; o += w)
+        Address ClientAddress;
+        auto ClientSocket = m_serverSocket->Accept(m_ioContext, ClientAddress);
+        
+        if(!ClientSocket->IsAlive())
         {
-            w = context.client_socket->Send(buf + o, n - o);
+            std::cout << "failed to accept client connection: " << strerror(errno) << "\n";
         }
-
-        if(memcmp(buf, "close",4)==0)
+        else
         {
-            context.server_socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
-            SetResult(EXIT_SUCCESS);
-            SetComplete();
-        }                
-        SetState(disconnect);
-    };
-
-    disconnect.Enter = [this]()->void
-    {
-        context.client_socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
-        PopState();
+            std::cout << "Accepted client connection\n";
+            m_threadPool->PostTask([this, ClientSocket, ClientAddress](){
+                new_ref<ClientSessionWorkflow>(m_ioSharedContext, ClientSocket, ClientAddress)->Run();
+            });
+        }
     };
 
     SetInitialState(setup);

@@ -64,8 +64,6 @@ namespace qor{ namespace platform{
         virtual void SetStatus(int){}
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1){return 0;}
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1){return 0;}
-        //virtual std::vector<ref_of<Property>::type> GetInformation();
-        //virtual void SetInformation(std::vector<ref_of<Property>::type>& properties);
     };
 
     }//platform

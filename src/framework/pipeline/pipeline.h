@@ -52,6 +52,15 @@ namespace qor{ namespace pipeline{
             SetSource(SourceConnection->GetSource());
         }
 
+        void SetSource(Element* source, Buffer* buffer)
+        {
+            if(buffer && source && source->IsSource())
+            {
+                source->SetBuffer(buffer);
+            }
+            SetSource(source);
+        }
+
         void SetSource(Element* source)
         {
             if(source && source->IsSource())
@@ -59,6 +68,15 @@ namespace qor{ namespace pipeline{
                 m_source = source;
                 m_source->SetParent(this);
             }
+        }
+
+        void SetSink(Element* sink, Buffer* buffer)
+        {
+            if(buffer && sink && sink->IsSink())
+            {
+                sink->SetBuffer(buffer);
+            }
+            SetSink(sink);
         }
 
         void SetSink(Element* sink)

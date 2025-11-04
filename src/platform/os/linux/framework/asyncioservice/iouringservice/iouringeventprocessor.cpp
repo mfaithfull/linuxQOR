@@ -24,50 +24,39 @@
 
 #include "src/configuration/configuration.h"
 
-#include "iouringservice.h"
+#include "iouringeventprocessor.h"
 #include "src/platform/os/linux/framework/asyncioservice/asyncioservice.h"
 #include "src/qor/error/error.h"
 
+qor_pp_module_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOEventProcessor)
+
 namespace qor{ namespace nslinux{ namespace framework{
 
-int IOUringService::ConsumeCQEntries() 
-{
-    int processed{0};
-    io_uring_cqe *cqe;
-    unsigned head;
-    io_uring_for_each_cqe(uring.get(), head, cqe) 
+    int IOUringEventProcessor::Event()
     {
-        auto *request_data = static_cast<qor::framework::AsyncIORequest*>(io_uring_cqe_get_data(cqe));
-        request_data->statusCode = cqe->res;
-        request_data->handle.resume();
-        ++processed;
-    }
-    io_uring_cq_advance(uring.get(), processed);
-    return processed;
-}
-
-int IOUringService::TryProcessEvents(unsigned short scale)
-{
-    //TODO: Maybe use IORING_SETUP_SINGLE_ISSUER|IORING_SETUP_DEFER_TASKRUN when setting up the ring 
-    io_uring_cqe *temp;
-    __kernel_timespec ts{ .tv_sec = 0, .tv_nsec = 1000000 / (1 << scale) };
-    sigset_t sigmask;
-    memset(&sigmask, sizeof(sigset_t), 0);
-    int result = io_uring_submit_and_wait_timeout(uring.get(), &temp, (1 << scale), &ts, &sigmask);
-    
-    if(result > 0) 
-    {
-        return uring.ConsumeCQEntries(temp, result);        
-    }
-    else
-    {
-        if(result == 0 || result == -ETIME || result == -EINTR)
+        io_uring_cqe *temp = nullptr;
+        __kernel_timespec ts{ .tv_sec = 0, .tv_nsec = 1000000 /*/ (1 << scale)*/ };
+        sigset_t sigmask;
+        memset(&sigmask, sizeof(sigset_t), 0);        
+        int result = io_uring_submit_and_wait_timeout(uring.get(), &temp, uring.ExpectationCount(), &ts, &sigmask);
+        
+        if(result > 0 && temp != nullptr) 
         {
-            return 0;
+            return uring.ConsumeCQEntries(temp, result);
         }
-        serious("IOUring error");
+        else if (result < 0)
+        {
+            if(result == 0 || result == -ETIME || result == -EINTR)
+            {
+                return 0;
+            }
+            serious("IOUring error");
+        }
+        else
+        {
+            return uring.ConsumeCQEntriesNonBlocking();
+        }
+        return result;
     }
-    return result;
-}
 
 }}}//qor::nslinux::framework

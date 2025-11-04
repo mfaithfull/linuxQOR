@@ -31,17 +31,18 @@
 
 namespace qor{ namespace nslinux{ namespace framework{
 
-    IOUring::IOUring(size_t queue_size) 
+    IOUring::IOUring(size_t queue_size)  : sem(0)
     {
+        m_ExpectationCount = 0;
         if (auto s = io_uring_queue_init(queue_size, &m_ring, 0); s < 0) 
         {
             throw std::runtime_error("error: " + std::to_string(s));
         }
     }
 
-    IOUring::SQE IOUring::GetSQE()
+    IOUring::SQE IOUring::GetSQE() const
     {
-        IOUring::SQE sqe( io_uring_get_sqe(&m_ring));
+        IOUring::SQE sqe( io_uring_get_sqe(const_cast<io_uring*>(&m_ring)));
         return sqe;
     }
 
@@ -75,14 +76,46 @@ namespace qor{ namespace nslinux{ namespace framework{
         return processed;
     }
     
-    void IOUring::Submit()
+    void IOUring::Submit() const
     {
-        io_uring_submit(&m_ring);
+        io_uring_submit(const_cast<io_uring*>(&m_ring));
+    }
+
+    void IOUring::RemoteSubmit()
+    {
+        m_ExpectationCount.fetch_add(1, std::memory_order_relaxed);
+        sem.release(1);
+        /*
+        while(trigger.is_set())
+        {            
+        }
+        trigger.set();
+        */
+    }
+
+    unsigned int IOUring::ExpectationCount() const
+    {
+        return m_ExpectationCount.load(std::memory_order_acquire);
     }
 
     IOUring::~IOUring() 
     { 
         io_uring_queue_exit(&m_ring); 
+    }
+
+    void IOUring::SQE::PrepareAccept(int fd, struct sockaddr *addr, socklen_t *addrlen, int flags)
+    {
+        io_uring_prep_accept(m_, fd, addr, addrlen, flags);
+    }
+
+    void IOUring::SQE::PrepareBind(int fd, struct sockaddr *addr, socklen_t addrlen)
+    {
+        io_uring_prep_bind(m_, fd, addr, addrlen);
+    }
+
+    void IOUring::SQE::PrepareListen(int fd, int backlog)
+    {
+        io_uring_prep_listen(m_, fd, backlog);
     }
 
     void IOUring::SQE::PrepareRead(int fd, byte* buffer, size_t byteCount, off_t offset)
@@ -105,6 +138,11 @@ namespace qor{ namespace nslinux{ namespace framework{
         io_uring_prep_writev(m_, fd, iovecs, nr_vecs, offset);
     }
 
+    void IOUring::SQE::PrepareSend(int fd, const byte* buffer, size_t len, int flags)
+    {
+        io_uring_prep_send(m_, fd, buffer, len, flags);
+    }
+
     void IOUring::SQE::SetData(void* data)
     {
         io_uring_sqe_set_data(m_, data);
@@ -122,10 +160,14 @@ namespace qor{ namespace nslinux{ namespace framework{
 
     int IOUring::ConsumeCQEntries()
     {
-        return ForEachCQE( [](IOUring::CQE& cqe){
+        return ForEachCQE( [this](IOUring::CQE& cqe){
             auto *request_data = static_cast<qor::framework::AsyncIORequest*>(cqe.GetData());
-            request_data->statusCode = cqe.GetResult();
-            request_data->handle.resume();
+            if(request_data)
+            {
+                request_data->statusCode = cqe.GetResult();
+                request_data->handle.resume();
+                m_ExpectationCount.fetch_sub(1, std::memory_order_relaxed);
+            }
         });
     }
     
@@ -147,15 +189,23 @@ namespace qor{ namespace nslinux{ namespace framework{
         for(; index < count; ++index )
         {
             auto *request_data = static_cast<qor::framework::AsyncIORequest*>(io_uring_cqe_get_data(cqe));
-            request_data->statusCode = cqe->res;
-            request_data->handle.resume();
-            ++processed;
-            ++cqe;
+            if(request_data)
+            {
+                request_data->statusCode = cqe->res;
+                request_data->handle.resume();
+                m_ExpectationCount.fetch_sub(1, std::memory_order_relaxed);
+                ++processed;
+                ++cqe;
+            }
+            else
+            {
+                ++processed;
+                ++cqe;
+            }
         };
         CQAdvance(processed);
         return processed;
     }
-
 
 }}}//qor::nslinux::framework
 

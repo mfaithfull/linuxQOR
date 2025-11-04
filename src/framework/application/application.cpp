@@ -39,7 +39,7 @@ namespace qor{ namespace framework{
         return SetRole<Role>();
     }
 
-    ref_of<IRole>::type Application::GetRole()
+    ref_of<IRole>::type Application::GetRole() const
     {
         return m_Role;
     }
@@ -50,7 +50,7 @@ namespace qor{ namespace framework{
         return *this;
     }
 
-    ref_of<workflow::IWorkflow>::type Application::GetWorkflow()
+    ref_of<workflow::IWorkflow>::type Application::GetWorkflow() const
     {
         return m_Workflow;        
     }

@@ -9,9 +9,10 @@
 #include "src/framework/pipeline/pipeline.h"
 #include "src/platform/network/sockets.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/qor/instance/pool.h"
 
 #include "echoserverapp.h"
-#include "echoserverworkflow.h"
+#include "serverworkflow.h"
 
 using namespace qor;
 using namespace qor::platform;
@@ -21,6 +22,9 @@ using namespace qor::pipeline;
 using namespace qor::network;
 
 #define appName "Echo Server"
+
+qor_pp_module_requires(Sockets)
+qor_pp_module_requires(AsyncIOService)
 
 int main(const int argc, const char** argv, char**)
 {	
@@ -34,14 +38,17 @@ int main(const int argc, const char** argv, char**)
     )->SetRole<Role>(                                   //What features it has
         [](ref_of<IRole>::type role)
         {
-            role->AddFeature<ThreadPool>();
-            role->AddFeature<AsyncIOService>([](ref_of<IFeature>::type feature)->void
+            role->AddFeature<ThreadPool>([](ref_of<ThreadPool>::type threadPool)->void
             {
-                auto ioService = feature.AsRef<AsyncIOService>();
-                ioService->SetConcurrency(2);
+                threadPool->SetThreadCount(5);
+            });
+            role->AddFeature<AsyncIOService>([](ref_of<AsyncIOService>::type ioService)->void
+            {
+                PoolInstancer::SetPoolSize<AsyncIOContext>(2);
+                //ioService->SetConcurrency(0);
             });
         }
-    ).RunWorkflow<EchoServerWorkflow>();                //What it does
+    ).RunWorkflow<ServerWorkflow>();                    //What it does
 }
 
 qor_pp_implement_module(appName)

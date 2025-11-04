@@ -27,41 +27,26 @@
  
 #include <atomic>
 #include <coroutine>
+#include "src/framework/thread/currentthread.h"
 #include "src/qor/instance/singleton.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"
+#include "src/qor/reference/newref.h"
 #include "src/framework/role/ifeature.h"
-#include "src/framework/task/task.h"
+#include "src/platform/network/address.h"
+#include "src/framework/thread/threadpool.h"
+#include "asynciotypes.h"
+#include "asyncioeventprocessor.h"
+#include "asyncioinitiator.h"
+#include "asynciocontext.h"
+#include "sharedasynciocontext.h"
 
 namespace qor{ bool qor_pp_import ImplementsAsyncIOService();}
 
 namespace qor { namespace framework{
   
-    struct AsyncIOResult 
-    {
-        int status_code{0};
-        std::string file;//TODO: carry owner pointer instead
-    };
-
-    using IOTask = task<AsyncIOResult>;
-
-    struct AsyncIORequest 
-    {
-        std::coroutine_handle<> handle;
-        int statusCode{-1};
-    };
-
-    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) AbstractIOWaiter
-    {
-    public:
-
-        AbstractIOWaiter() = default;
-        virtual ~AbstractIOWaiter() noexcept = default;
-        virtual IOTask Read(int fd, byte* buffer, size_t len) = 0;
-    };
-
-    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOService : public IFeature, public AbstractIOWaiter
+    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOService : public IFeature
     {
     public:
 
@@ -77,35 +62,32 @@ namespace qor { namespace framework{
         virtual void Setup();
         virtual void Shutdown();
 
-        void Stop() noexcept;
-        void Reset();
-        uint64_t ProcessEvents();
-        void NotifyWorkStarted() noexcept;
-        void NotifyWorkFinished() noexcept;
-        bool IsStopRequested() const noexcept;
+        ref_of<AsyncIOContext>::type Context() const
+        {
+            return new_ref<AsyncIOContext>(m_threadPool);
+        }
 
-        AbstractIOWaiter& Context() { return *this; }
+        ref_of<SharedAsyncIOContext>::type SharedContext() const
+        {
+            return new_ref<SharedAsyncIOContext>(m_threadPool);
+        }
 
-        virtual IOTask Read(int fd, byte* buffer, size_t len);
-        
     private:        
 
-		static constexpr std::uint32_t stop_requested_flag = 1;
-		static constexpr std::uint32_t active_thread_count_increment = 2;
+        ref_of<ThreadPool>::type m_threadPool;
+
+		//static constexpr std::uint32_t stop_requested_flag = 1;
+		//static constexpr std::uint32_t active_thread_count_increment = 2;
 
 		// Bit 0: stop_requested_flag
 		// Bit 1-31: count of active threads currently running the event loop
-		std::atomic<std::uint32_t> m_threadState;
-        std::atomic<std::uint32_t> m_workCount;
+		//std::atomic<std::uint32_t> m_threadState;
+        //std::atomic<std::uint32_t> m_workCount;
 
     protected:
 
-        unsigned short m_Concurrency;
+        //unsigned short m_Concurrency;
         
-        bool TryEnterEventLoop() noexcept;
-        virtual bool TryProcessOneEvent(bool waitForEvent);
-        void ExitEventLoop() noexcept;
-        void PostWakeUpEvent() noexcept;
     };
     } //framework
 

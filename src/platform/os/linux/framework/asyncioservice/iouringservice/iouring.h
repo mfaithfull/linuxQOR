@@ -28,8 +28,10 @@
 #include <liburing.h>
 #include <functional>
 #include <system_error>
+#include <semaphore>
 
 #include "src/platform/compiler/compiler.h"
+#include "src/qor/sync/asyncmanualresetevent.h"
 
 namespace qor{ namespace nslinux{ namespace framework{
 
@@ -77,13 +79,17 @@ namespace qor{ namespace nslinux{ namespace framework{
         {
         public:
 
-            SQE(io_uring_sqe* _) : m_(_) {}
+            SQE(const io_uring_sqe* _) : m_(const_cast<io_uring_sqe*>(_)) {}
 
+            void SetData(void* data);
+            void PrepareAccept(int fd, struct sockaddr *addr, socklen_t *addrlen, int flags);
+            void PrepareBind(int fd, struct sockaddr *addr, socklen_t addrlen);
+            void PrepareListen(int fd, int backlog);
             void PrepareRead(int fd, byte* buffer, size_t byteCount, off_t offset);
             void PrepareReadV(int fd,const iovec* iovecs, unsigned int nr_vecs, off_t offset);
             void PrepareWrite(int fd, const byte* buffer, size_t byteCount, off_t offset);
             void PrepareWriteV(int fd, const iovec* iovecs, unsigned int nr_vecs, off_t offset);
-            void SetData(void* data);
+            void PrepareSend(int fd, const byte* buffer, size_t len, int flags);
 
         private:
             io_uring_sqe* m_;
@@ -101,8 +107,9 @@ namespace qor{ namespace nslinux{ namespace framework{
             return &m_ring;
         }
 
-        void Submit();
-        SQE GetSQE();
+        void Submit() const;
+        void RemoteSubmit();
+        SQE GetSQE() const;
         CQEIterator CQEIteratorInit();
         void CQAdvance(unsigned int nr);
         int Peek(IOUring::CQE& temp);
@@ -110,11 +117,14 @@ namespace qor{ namespace nslinux{ namespace framework{
         int ConsumeCQEntries();
         int ConsumeCQEntriesNonBlocking();
         int ConsumeCQEntries(io_uring_cqe* entries, size_t count);
+        unsigned int ExpectationCount() const;
         
+        //AsyncManualResetEvent trigger;
+        std::counting_semaphore<256> sem;
     private:
 
         struct io_uring m_ring;
-               
+        std::atomic<unsigned int> m_ExpectationCount;
     };
 
 }}}//qor::nslinux::framework

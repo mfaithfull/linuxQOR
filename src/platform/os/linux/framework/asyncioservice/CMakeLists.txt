@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 add_library(linqor_asyncioservice SHARED linqor_asyncioservice.cpp asyncioservice.cpp 
-iouringservice/iouringservice.cpp iouringservice/iouring.cpp)
+iouringservice/iouring.cpp iouringservice/iouringeventprocessor.cpp iouringservice/iouringinitiator.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-threadsafe-statics -fvisibility=hidden")
 

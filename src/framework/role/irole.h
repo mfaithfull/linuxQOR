@@ -55,8 +55,14 @@ namespace qor{ namespace framework{
         void AddFeature(feature_config_func&& configure)
         {
 			ref_of<IFeature>::type feature = new_ref<TFeature>().template AsRef<IFeature>();
-			configure(feature);
+			configure(feature.template AsRef<TFeature>());
             AddFeature( guid_of<TFeature>::guid(), feature);
+        }
+
+        template< class TFeature >
+        ref_of<TFeature>::type GetFeature()
+        {
+            return GetFeature(guid_of<TFeature>::guid()).template AsRef<TFeature>();
         }
 
     };

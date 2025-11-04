@@ -52,9 +52,8 @@ qor_pp_test_suite_case(ApplicationTestSuite, canBuildAnApplication)
             [](ref_of<IRole>::type role)
             {
                 role->template AddFeature<ThreadPool>(
-                    [](ref_of<IFeature>::type feature)
+                    [](ref_of<ThreadPool>::type threadPool)
                     {
-                        ref_of<ThreadPool>::type threadPool = feature.template AsRef<ThreadPool>();
                         threadPool->SetCleanupFunction(
                             []()
                             {

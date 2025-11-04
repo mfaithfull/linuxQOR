@@ -39,16 +39,17 @@ namespace qor{ namespace nslinux{
 
     Socket::Socket()
     {
-        m_sock = network::Socket::Invalid_Socket;
+        m_fd = network::Socket::Invalid_Socket;
     }
 
-    Socket::Socket(int sock) : m_sock(sock)
+    Socket::Socket(int sock)
     {
+        m_fd = sock;
     }
 
     Socket::Socket(const Socket& src)
     {
-        m_sock = ::fcntl(src.m_sock, F_DUPFD, 0);
+        m_fd = ::fcntl(src.m_fd, F_DUPFD, 0);
     }
 
     Socket::Socket(const network::sockets::eAddressFamily& AF, const network::sockets::eType& Type, const network::sockets::eProtocol& Protocol)
@@ -56,26 +57,48 @@ namespace qor{ namespace nslinux{
         int domain = AddressFamilyToLinux(AF);        
         int type = TypeToLinux(Type, AF == network::sockets::eAddressFamily::AF_Unix ? true : false);
         int protocol = ProtocolToLinux(Protocol);
-        m_sock = ::socket(domain, type, protocol);
+        m_fd = ::socket(domain, type, protocol);
     }
     
     Socket::~Socket()
     {
-        ::close(m_sock);
+        ::close(m_fd);
     }
     
+    int32_t Socket::Bind(const qor::framework::AsyncIOInterface& ioContext, const network::Address& Address)
+    {
+        return sync_wait([this,&ioContext,Address]() -> task<qor::framework::AsyncIOResult>
+	    {
+            return ioContext.Bind(this, Address);
+        }()).status_code;
+    }
+    
+    int32_t Socket::Listen(const qor::framework::AsyncIOInterface& ioContext, int32_t backlog)
+    {
+        return sync_wait([this,&ioContext,backlog]() -> task<qor::framework::AsyncIOResult>
+	    {
+            return ioContext.Listen(this, backlog);
+        }()).status_code;
+    }
+
+    qor::framework::IOTask Socket::AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket)
+    {
+        return ioContext.Accept(this, Address, Socket);
+    }
+
     int32_t Socket::Bind(const network::Address& Address)
     {
-        sockaddr_in addr;
+        sockaddr_in addr;        
+        memset(&addr, 0, sizeof(struct sockaddr_in));
         addr.sin_family = Address.sa_family;
         addr.sin_addr.s_addr = Address.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = Address.sa.IPAddress.sin_port;                
-        return ::bind(m_sock, (struct sockaddr *)&addr, sizeof(addr));
+        return ::bind(m_fd, (struct sockaddr *)&addr, 16);
     }
-    
+
     int32_t Socket::Listen(int32_t iBacklog)
     {
-        return ::listen(m_sock, iBacklog);
+        return ::listen(m_fd, iBacklog);
     }
  
     ref_of<network::Socket>::type Socket::Accept(network::Address& Address)
@@ -83,7 +106,7 @@ namespace qor{ namespace nslinux{
         ref_of<network::Socket>::type newsocket;
         sockaddr addr;
         socklen_t len = 0;
-        int iresult = ::accept(m_sock, &addr, &len);
+        int iresult = ::accept(m_fd, &addr, &len);
         if(iresult == -1)
         {
             //TODO:Raise error
@@ -103,47 +126,46 @@ namespace qor{ namespace nslinux{
         addr.sin_addr.s_addr = Address.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = Address.sa.IPAddress.sin_port;
         socklen_t len = sizeof(addr);
-        return ::connect(m_sock, (const sockaddr*)&addr, len);
+        return ::connect(m_fd, (const sockaddr*)&addr, len);
     }
  
     int32_t Socket::GetPeerName(network::Address& Address)
     {
         sockaddr addr;
         socklen_t len;
-        return ::getpeername(m_sock, &addr, &len);
+        return ::getpeername(m_fd, &addr, &len);
     }
  
     int32_t Socket::GetSockName(network::Address& Address)
     {
         sockaddr addr;
         socklen_t len;
-        return ::getsockname(m_sock, &addr, &len);
+        return ::getsockname(m_fd, &addr, &len);
     }
  
     int32_t Socket::GetSockOpt(int32_t level, int32_t optname, char* optval, int32_t* len)
     {
-        return ::getsockopt(m_sock, level, optname, optval, (socklen_t*)&len);
+        return ::getsockopt(m_fd, level, optname, optval, (socklen_t*)&len);
     }
  
     int32_t Socket::SetSockOpt(int32_t level, int32_t optname, const char* optval, int32_t optlen)
     {
-        return ::setsockopt(m_sock, level, optname, optval, optlen);
+        return ::setsockopt(m_fd, level, optname, optval, optlen);
     }
  
-    qor::framework::IOTask Socket::AsyncReceive(qor::framework::AbstractIOWaiter& ioWaiter, char* pBuffer, int32_t iLen, void* pSyncObject)
+    qor::framework::IOTask Socket::AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
     {
-        return ioWaiter.Read(m_sock, (byte*)pBuffer, iLen);
-        //co_await pool.Schedule();
+        return ioContext.Read(this, (byte*)pBuffer, iLen);
     }
  
     int32_t Socket::Receive(char* buf, int32_t len, int32_t flags)
     {
-        return ::recv(m_sock, buf, len, flags);
+        return ::recv(m_fd, buf, len, flags);
     }
 
     int32_t Socket::Peek(char* buf, int32_t len)
     {
-        return ::recv(m_sock, buf, len, MSG_PEEK);
+        return ::recv(m_fd, buf, len, MSG_PEEK);
     }
     
     int32_t Socket::ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, network::Address& From)
@@ -153,17 +175,17 @@ namespace qor{ namespace nslinux{
         addr.sin_addr.s_addr = From.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = From.sa.IPAddress.sin_port;
         socklen_t socklen = sizeof(addr);
-        return ::recvfrom(m_sock, Buffer, iLen, iFlags, (sockaddr*)&addr, &socklen);
+        return ::recvfrom(m_fd, Buffer, iLen, iFlags, (sockaddr*)&addr, &socklen);
     }
  
-    int32_t Socket::AsyncSend(char* Buffer, int32_t iLen, void* pSyncObject)
+    qor::framework::IOTask Socket::AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
     {
-        return -1;
+        return ioContext.Send(this, (byte*)Buffer, iLen, 0);
     }
- 
+
     int32_t Socket::Send(const char* Buffer, int32_t iLen)
     {
-        return ::send(m_sock, Buffer, iLen, 0);
+        return ::send(m_fd, Buffer, iLen, 0);
     }
  
     int32_t Socket::SendTo(const char* Buffer, int32_t len, int32_t flags, const network::Address& To)
@@ -172,7 +194,7 @@ namespace qor{ namespace nslinux{
         addr.sin_family = To.sa_family;
         addr.sin_addr.s_addr = To.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = To.sa.IPAddress.sin_port;
-        return ::sendto(m_sock, Buffer, len, flags, (sockaddr*)&addr, len);
+        return ::sendto(m_fd, Buffer, len, flags, (sockaddr*)&addr, len);
     }
  
     int32_t Socket::Shutdown(network::sockets::eShutdown how)
@@ -181,12 +203,12 @@ namespace qor{ namespace nslinux{
         iHow = ( how & network::sockets::eShutdown::ShutdownRead ) ? SHUT_RD : iHow;
         iHow = ( how & network::sockets::eShutdown::ShutdownWrite ) ? SHUT_WR : iHow;
         iHow = ( how & network::sockets::eShutdown::ShutdownReadWrite ) ? SHUT_RDWR : iHow;
-        return ::shutdown(m_sock, iHow);
+        return ::shutdown(m_fd, iHow);
     }
  
     std::size_t Socket::ID(void)
     {
-        return m_sock;
+        return m_fd;
     }
  
     int32_t Socket::GetLastError(void)
@@ -196,14 +218,14 @@ namespace qor{ namespace nslinux{
 
     bool Socket::SetNonBlocking(bool nonBlocking)
     {
-        auto flags = ::fcntl(m_sock, F_GETFL, 0);
-        return fcntl(m_sock, F_SETFL, nonBlocking ? (flags | O_NONBLOCK) : (flags & (~O_NONBLOCK))) == 0 ? true : false;
+        auto flags = ::fcntl(m_fd, F_GETFL, 0);
+        return fcntl(m_fd, F_SETFL, nonBlocking ? (flags | O_NONBLOCK) : (flags & (~O_NONBLOCK))) == 0 ? true : false;
     }
 
     ssize_t Socket::PollWaitForInput(time_t sec, time_t usec)
     {
         struct pollfd pfd;
-        pfd.fd = m_sock;
+        pfd.fd = m_fd;
         pfd.events = POLLIN;
         auto timeout = static_cast<int>(sec * 1000 + usec / 1000);
         return handle_EINTR([&]() { return ::poll(&pfd, 1, timeout); });
@@ -212,7 +234,7 @@ namespace qor{ namespace nslinux{
     ssize_t Socket::PollWaitForOutput(time_t sec, time_t usec)
     {
         struct pollfd pfd;
-        pfd.fd = m_sock;
+        pfd.fd = m_fd;
         pfd.events = POLLOUT;
         auto timeout = static_cast<int>(sec * 1000 + usec / 1000);
         return handle_EINTR([&]() { return ::poll(&pfd, 1, timeout); });
@@ -231,7 +253,7 @@ namespace qor{ namespace nslinux{
             return false;
         }
         char buf[1];
-        return ::recv(m_sock,&buf[0], sizeof(buf),MSG_PEEK) > 0;
+        return ::recv(m_fd,&buf[0], sizeof(buf),MSG_PEEK) > 0;
     }
 
     bool Socket::SetRecvTimeout(time_t readTimeoutSec, time_t readTimeoutuSec)

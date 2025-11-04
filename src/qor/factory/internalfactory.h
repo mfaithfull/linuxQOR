@@ -77,6 +77,14 @@ namespace qor
                 detail::SharedRef< T >(count, std::forward<_p>(p1)...)
             )->_Ref();
         }
+
+        static Ref< T > ConstructFromExisting(T* pt)
+        {
+            return (
+                new(source_of< Ref<T> >::type::Source(sizeof(detail::SharedRef< T >)))
+                detail::SharedRef< T >(pt)
+            )->_Ref();
+        }
     };
 
     template< class T >
@@ -128,6 +136,10 @@ namespace qor
 			return factoryFunctor< T, typename ref_of<T>::type >::template Construct<_p...>(count, std::forward<_p>(p1)...);
         }
 
+        static ref_of<T>::type ConstructFromExisting(T* pt)
+        {
+            return factoryFunctor< T, typename ref_of<T>::type >::ConstructFromExisting(pt);
+        }
     };
 }//qor
 

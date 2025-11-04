@@ -28,16 +28,21 @@
 #include "src/platform/filesystem/ifilesystem.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"
 #include "src/qor/reference/newref.h"
 #include "asyncioservice.h"
+#include "iouringservice/iouringeventprocessor.h"
+#include "iouringservice/iouringinitiator.h"
 
 qor::Module& ThisModule(void)
 {
 	static qor::Module QORModule("Querysoft Open Runtime: Linux Async IO Service Module", 
         qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-	static qor::TypeRegEntry< qor::nslinux::framework::AsyncIOService, qor::framework::AsyncIOService > reg;  //Register the Linux specific implementation of AsyncIOService
+	//Register the Linux specific implementations
+	static qor::TypeRegEntry< qor::nslinux::framework::AsyncIOService, qor::framework::AsyncIOService > regAsyncIOService;
+	static qor::TypeRegEntry< qor::nslinux::framework::IOUringEventProcessor, qor::framework::AsyncIOEventProcessor > regAsyncIOEventProcessor;
+	static qor::TypeRegEntry< qor::nslinux::framework::IOUringInitiator, qor::framework::AsyncIOInitiator > regAsyncIOInitiator;
+
 	return QORModule;
 }

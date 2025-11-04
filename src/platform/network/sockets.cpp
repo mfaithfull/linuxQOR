@@ -38,13 +38,13 @@ namespace qor{ namespace network{
     {
     }
 
-    ref_of<Socket>::type Sockets::CreateSocket(sockets::eAddressFamily AF, sockets::eType Type, sockets::eProtocol Protocol)
+    ref_of<Socket>::type Sockets::CreateSocket(sockets::eAddressFamily AF, sockets::eType Type, sockets::eProtocol Protocol) const
     {
         ref_of<Socket>::type nulref;
         return nulref;
     }
 
-    int Sockets::GetAddressInfo(const std::string& node, const std::string& service, const AddressInfo& hints, std::vector<AddressInfo>& results)
+    int Sockets::GetAddressInfo(const std::string& node, const std::string& service, const AddressInfo& hints, std::vector<AddressInfo>& results) const
     {
         return -1;
     }

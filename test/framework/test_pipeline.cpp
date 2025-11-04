@@ -132,29 +132,7 @@ public:
         }
         return bytesToRead;
     }
-/*
-    virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1)
-    {
-        Buffer* unitBuffer = GetBuffer();
-        if(unitBuffer)
-        {
-            size_t unitSize = unitBuffer->GetUnitSize();
-            byte* space = GetBuffer()->WriteRequest(unitsToRead);
-            size_t bytesRead = ReadBytes(space, unitsToRead * unitSize);
-            unitsRead = bytesRead / unitSize;
-            unitBuffer->WriteAcknowledge(unitsRead);
-            OnReadSuccess(unitsRead);
 
-            if (GetFlowMode() == Push)
-            {
-                size_t unitsWritten = 0;
-                ActualSink()->Write(unitsWritten, unitsRead);
-                return unitsWritten > 0 ? true : false;
-            }
-        }        
-        return true;
-    }
-        */
     virtual bool IsAtEnd() {return false;}
 
 protected:

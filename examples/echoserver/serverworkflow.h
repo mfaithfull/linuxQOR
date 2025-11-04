@@ -22,30 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_WORKFLOW
-#define QOR_PP_H_EXAMPLES_ECHOSERVER_WORKFLOW
+#ifndef QOR_PP_H_EXAMPLES_SERVER_WORKFLOW
+#define QOR_PP_H_EXAMPLES_SERVER_WORKFLOW
 
 #include "src/framework/workflow/workflow.h"
 #include "src/platform/network/sockets.h"
 #include "src/platform/network/socket.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
 
-class EchoServerContext
+class ServerWorkflow : public qor::workflow::Workflow
 {
 public:
 
-    qor::ref_of<qor::network::Socket>::type server_socket;
-    qor::network::Address server_address;
-    qor::ref_of<qor::network::Socket>::type client_socket;
-    qor::network::Address client_address;
-};
-
-class EchoServerWorkflow : public qor::workflow::Workflow
-{
-public:
-
-    EchoServerWorkflow();
-    virtual ~EchoServerWorkflow() = default;    
+    ServerWorkflow();
+    virtual ~ServerWorkflow() = default;    
 
 private:
 
@@ -53,9 +43,16 @@ private:
     qor::workflow::State bind;
     qor::workflow::State listen;
     qor::workflow::State accept;
-    qor::workflow::State echo;
-    qor::workflow::State disconnect;
-    EchoServerContext context;
+
+    const qor::framework::AsyncIOService* m_io;
+    qor::framework::ThreadPool* m_threadPool;
+    const qor::network::Sockets* m_sockets;
+
+    qor::ref_of<qor::network::Socket>::type m_serverSocket;
+    qor::ref_of<qor::framework::AsyncIOContext>::type m_ioContext;
+    qor::ref_of<qor::framework::SharedAsyncIOContext>::type m_ioSharedContext;
+    qor::network::Address m_serverAddress;
+
 };
 
-#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_WORKFLOW
+#endif//QOR_PP_H_EXAMPLES_SERVER_WORKFLOW

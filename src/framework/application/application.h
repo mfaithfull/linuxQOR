@@ -61,9 +61,9 @@ namespace qor{ namespace framework{
         }
 
         Application& SetRole();
-        ref_of<IRole>::type GetRole();
+        ref_of<IRole>::type GetRole() const;
         Application& SetWorkflow( ref_of<workflow::IWorkflow>::type workflow);
-        ref_of<workflow::IWorkflow>::type GetWorkflow();
+        ref_of<workflow::IWorkflow>::type GetWorkflow() const;
         std::string& Name();
 
         template<class TSubsystem>

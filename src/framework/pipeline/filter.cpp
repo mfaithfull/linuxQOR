@@ -99,6 +99,18 @@ namespace qor{ namespace pipeline{
         return true;
     }
 
+    bool Filter::PumpSome(size_t& unitsPumped, size_t unitsToPump)
+    {    
+        if(GetFlowMode() == FlowMode::Pull)
+        {
+            return ActualSink()->Write(unitsPumped, unitsToPump);
+        }
+        else
+        {
+            return ActualSource()->Read(unitsPumped, unitsToPump);
+        }
+    }
+
     bool Filter::Pump(size_t& unitsPumped, size_t unitsToPump)
     {    
         bool working = true;    
@@ -127,7 +139,6 @@ namespace qor{ namespace pipeline{
                 (ReadFilter(unitsRead, unitsRead)): true
         ) : false;
 
-        //return Pump(unitsRead,unitsToRead, std::bind(&Filter::ReadFilter, this, unitsRead, unitsToRead));
     }
 
     bool Filter::Write(size_t& unitsWritten, size_t unitsToWrite)
@@ -138,7 +149,6 @@ namespace qor{ namespace pipeline{
                 ActualSink()->Write(unitsWritten, unitsToWrite) : false
         ) : false;
 
-        //return Pump(unitsWritten,unitsToWrite, std::bind(&Filter::WriteFilter, this, unitsWritten, unitsToWrite));
     }
 
     bool Filter::Pull(size_t& unitsRead, size_t unitsToRead)

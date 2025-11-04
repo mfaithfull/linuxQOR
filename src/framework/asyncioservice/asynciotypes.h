@@ -22,30 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE_IOURINGSERVICE
-#define QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE_IOURINGSERVICE
+#ifndef QOR_PP_H_FRAMEWORK_ASYNCIOTYPES
+#define QOR_PP_H_FRAMEWORK_ASYNCIOTYPES
+ 
+#include <coroutine>
+#include "src/framework/task/task.h"
+#include "src/platform/io/iodescriptor.h"
 
-#include "iouring.h"
-
-namespace qor{ namespace nslinux{ namespace framework{
-
-    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) IOUringService
+namespace qor { namespace framework{
+  
+    struct AsyncIOResult 
     {
-    public:
-        
-        IOUringService() : uring(128) {}
-        virtual ~IOUringService() noexcept = default;
-
-        virtual int TryProcessEvents(unsigned short scale);
-
-        IOUring& Ring(){ return uring; }
-
-    private:
-
-        int ConsumeCQEntries();
-        IOUring uring;
+        int status_code{0};
+        platform::IODescriptor* ioObject;
     };
 
-}}}//qor::nslinux::framework
+    using IOTask = task<AsyncIOResult>;
 
-#endif//QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE_IOURINGSERVICE
+    struct AsyncIORequest 
+    {
+        std::coroutine_handle<> handle;
+        int statusCode{-1};
+    };
+
+}}//qor::framework
+
+#endif//QOR_PP_H_FRAMEWORK_ASYNCIOTYPES

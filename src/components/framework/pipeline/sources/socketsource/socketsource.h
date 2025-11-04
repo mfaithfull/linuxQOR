@@ -32,11 +32,6 @@ namespace qor{ namespace components{
 
     class qor_pp_module_interface(QOR_SOCKETSOURCE) SocketSource : public pipeline::iosource<SocketClientConnector>
     {
-        //Base
-        //virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
-        //virtual void SetPlug(Element* pPlug);
-        //virtual Element* GetPlug();
-        //virtual bool HasPlug();
     
     public:
 

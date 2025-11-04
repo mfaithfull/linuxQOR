@@ -30,56 +30,44 @@
 #include "src/qor/sync/onscopeexit.h"
 #include "src/framework/role/role.h"
 #include "src/framework/thread/threadpool.h"
+#include "src/platform/network/socket.h"
 
 namespace qor { namespace framework{
 
-    AsyncIOService::AsyncIOService() : m_threadState(0), m_workCount(0), m_Concurrency(0)
+    AsyncIOService::AsyncIOService()// : m_threadState(0), m_workCount(0), m_Concurrency(0)
     {
 
     }
 
     AsyncIOService::~AsyncIOService()
     {
-        assert(m_threadState.load(std::memory_order_relaxed) < active_thread_count_increment);
+        //assert(m_threadState.load(std::memory_order_relaxed) < active_thread_count_increment);
     }
-
+/*
     void AsyncIOService::SetConcurrency(unsigned short concurrency)
     {
         m_Concurrency = concurrency;
     }
-
+*/
     void AsyncIOService::Setup()
     {
-		try
-		{   
-            auto poolFeature = m_Role->GetFeature(guid_of<ThreadPool>::guid()).AsRef<ThreadPool>();
-			for (std::uint32_t i = 0; i < ( 1 << m_Concurrency); ++i)
-			{
-                poolFeature->PostTask([this] { ProcessEvents(); });
-			}
-		}
-		catch (...)
-		{
-			Stop();
-			throw;
-		}
+        m_threadPool = m_Role->GetFeature<ThreadPool>();
     }
     
     void AsyncIOService::Shutdown()
     {
-        Stop();
     }
-
-    uint64_t AsyncIOService::ProcessEvents()
+/*
+    uint64_t AsyncIOService::ProcessEvents(IOEventProcessor* eventProcessor)
     {
         uint64_t eventCount = 0;
         if (TryEnterEventLoop())
         {
             auto exitLoop = on_scope_exit([&] { ExitEventLoop(); });
 
-            constexpr bool waitForEvent = true;
-            while (!IsStopRequested() && TryProcessOneEvent(waitForEvent))
+            while (!IsStopRequested())
             {
+                eventProcessor->TryProcessEvents(m_Concurrency);
                 ++eventCount;
             }
         }
@@ -114,7 +102,7 @@ namespace qor { namespace framework{
                     activeThreadCount > 0;
                     --activeThreadCount)
             {
-                PostWakeUpEvent();
+                //PostWakeUpEvent();
             }
         }
     }
@@ -126,7 +114,6 @@ namespace qor { namespace framework{
         // Check that there were no active threads running the event loop.
         assert(oldState == stop_requested_flag);
     }
-
 
     bool AsyncIOService::TryEnterEventLoop() noexcept
     {
@@ -144,11 +131,6 @@ namespace qor { namespace framework{
         return true;
     }
 
-    bool AsyncIOService::TryProcessOneEvent(bool waitForEvent)
-    {
-       return false;
-    }
-
     void AsyncIOService::ExitEventLoop() noexcept
     {
 	    m_threadState.fetch_sub(active_thread_count_increment, std::memory_order_relaxed);
@@ -158,10 +140,5 @@ namespace qor { namespace framework{
     {
 
     }
-
-    IOTask AsyncIOService::Read(int fd, byte* buffer, size_t len)
-    {
-        AsyncIOResult result{.status_code = -1, .file = ""};
-        co_return result;
-    }
+*/
 }}//qor::framework

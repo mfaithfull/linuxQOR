@@ -42,7 +42,7 @@ FileProcessorWorkflow::FileProcessorWorkflow() : state0(this)
         
         ref_of<FileProcessorApp>::type application = new_ref<FileProcessorApp>();    
         std::string filename = application->GetFileName();
-        auto filesystem = ThePlatform()->GetSubsystem(guid_of<FileSystem>::guid()).AsRef<FileSystem>();
+        auto filesystem = ThePlatform()->GetSubsystem<FileSystem>();
         FileIndex newIndex(filesystem->CurrentPath(), "source.txt");
 
         auto refReadFile = filesystem->Open(newIndex, IFileSystem::OpenFor::ReadOnly, IFileSystem::WithFlags::Exclusive);

@@ -17,8 +17,8 @@ public:
 private:
 
     qor::workflow::State setup;
-    qor::workflow::State input;
     qor::workflow::State connect;
+    qor::workflow::State input;    
     qor::workflow::State send;
     qor::workflow::State receive;
     qor::workflow::State output;

@@ -33,32 +33,39 @@
 #include "address.h"
 #include "socketdefs.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/platform/io/iodescriptor.h"
 
 namespace qor{ namespace network{
 
-    class qor_pp_module_interface(QOR_SOCKETS) Socket
+    class qor_pp_module_interface(QOR_SOCKETS) Socket : public platform::IODescriptor
     {
     public:
 
         static constexpr int Invalid_Socket = -1;
         
-        Socket() = default;
+        Socket();
         virtual ~Socket() = default;
         Socket(const sockets::eAddressFamily& AF, const sockets::eType& Type, const sockets::eProtocol& Protocol);
 
-        virtual int32_t Bind(const Address& Address);
+        virtual int32_t Bind(const Address& Address);                
+        virtual int32_t Bind(const framework::AsyncIOInterface& ioContext, const Address& Address);
         virtual int32_t Listen(int32_t iBacklog);
+        virtual int32_t Listen(const framework::AsyncIOInterface& ioContext, int32_t iBacklog);
         virtual ref_of<Socket>::type Accept(Address& Address);
+                ref_of<Socket>::type Accept(const framework::AsyncIOInterface& ioContext, Address& Address);
+        virtual framework::IOTask AcceptAsync(const framework::AsyncIOInterface& ioContext, Address& Address, Socket* Socket);
         virtual int32_t Connect(const Address& Address);
         virtual int32_t GetPeerName(Address& Address);
         virtual int32_t GetSockName(Address& Address);
         virtual int32_t GetSockOpt(int32_t iLevel, int32_t iOptName, char* pOptVal, int32_t* pOptLen);
-        virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen);
-        virtual qor::framework::IOTask AsyncReceive(framework::AbstractIOWaiter& ioWaiter, char* pBuffer, int32_t iLen, void* pSyncObject);
+        virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen);        
         virtual int32_t Receive(char* buf, int32_t len, int32_t flags);
-        virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, Address& From);
-        virtual int32_t AsyncSend(char* Buffer, int32_t iLen, void* pSyncObject);
+                int32_t Receive(const framework::AsyncIOInterface& ioContext, char* Buffer, int32_t iLen);
+        virtual qor::framework::IOTask AsyncReceive(const framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
+        virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, Address& From);        
         virtual int32_t Send(const char* Buffer, int32_t iLen);
+                int32_t Send(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
+        virtual qor::framework::IOTask AsyncSend(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
         virtual int32_t SendTo(const char* Buffer, int32_t iLen, int32_t iFlags, const Address& To);
         virtual int32_t Shutdown(sockets::eShutdown how);
         virtual std::size_t ID(void);

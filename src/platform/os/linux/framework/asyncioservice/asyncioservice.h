@@ -33,10 +33,17 @@
 #include <poll.h>
 #include <coroutine>
 #include "src/framework/asyncioservice/asyncioservice.h"
-#include "iouringservice/iouringservice.h"
+#include "iouringservice/iouringeventprocessor.h"
 #include "iouringservice/readop.h"
+#include "iouringservice/listenop.h"
+#include "iouringservice/bindop.h"
+#include "iouringservice/acceptop.h"
+#include "src/platform/network/socket.h"
+#include "src/framework/asyncioservice/asyncioeventprocessor.h"
 
 qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOService)
+qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOEventProcessor)
+qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOInitiator)
 
 namespace qor{ namespace nslinux{ namespace framework{
 
@@ -44,24 +51,9 @@ namespace qor{ namespace nslinux{ namespace framework{
     {
     public:
         
-        AsyncIOService() = default;
+        AsyncIOService();
         virtual ~AsyncIOService() noexcept = default;
 
-        virtual qor::framework::IOTask Read(int fd, byte* buffer, size_t len)
-        {
-            int status = co_await ReadOperation(m_IOUringService.Ring(), fd, buffer, len);
-            qor::framework::AsyncIOResult result{.status_code = status, .file = ""};
-            co_return result;
-        }
-
-    protected:
-
-        IOUringService m_IOUringService;
-
-        virtual bool TryProcessOneEvent(bool waitForEvent);
-
-    private:
-        
     };
 
 }}}//qor::nslinux::framework

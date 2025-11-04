@@ -116,6 +116,24 @@ namespace qor { namespace framework{
         virtual ~ThreadPool() noexcept ;                                                                //Destruct the thread pool. Waits for all tasks to complete, then destroys all threads. If a cleanup function was set, it will run in each thread right before it is destroyed. Note that if the pool is paused, then any tasks still in the queue will never be executed.
 
 
+        template <typename F>
+        void SetInitFunction(F&& init)
+        {
+            if constexpr (std::is_invocable_v<F, std::size_t>)
+            {
+                init_func = std::forward<F>(init);
+            }
+            else
+            {
+                init_func = [init = std::forward<F>(init)](std::size_t)
+                {
+                    init();
+                };
+            }
+        }
+        
+        void SetThreadCount(const std::size_t num_threads);
+
         //Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The block function takes two arguments, the start and end of the block, so that it is only called once per block, but it is up to the user make sure the block function correctly deals with all the indices in each block. Does not return a `MultiFuture`, so the user must use `wait()` or some other method to ensure that the loop finishes executing, otherwise bad things will happen.
         //T1 The type of the first index. Should be a signed or unsigned integer.
         //T2 The type of the index after the last index. Should be a signed or unsigned integer.
@@ -586,22 +604,6 @@ namespace qor { namespace framework{
 
     private:
             
-        template <typename F>
-        void SetInitFunction(F&& init)
-        {
-            if constexpr (std::is_invocable_v<F, std::size_t>)
-            {
-                init_func = std::forward<F>(init);
-            }
-            else
-            {
-                init_func = [init = std::forward<F>(init)](std::size_t)
-                {
-                    init();
-                };
-            }
-        }
-        void SetThreadCount(const std::size_t num_threads);
         void CreateThreads();
         static std::size_t DetermineThreadCount(const std::size_t num_threads) noexcept;
         task_t PopTask();

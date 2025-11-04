@@ -10,19 +10,19 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
 endif()
 
-add_executable(echoserver echoserver_main.cpp echoserverapp.cpp echoserverworkflow.cpp)
+add_executable(echoserver echoserver_main.cpp echoserverapp.cpp serverworkflow.cpp clientsessionworkflow.cpp sessionpipeline.cpp echoprotocol.cpp)
 
 target_compile_definitions(echoserver PRIVATE -DQOR_PP_EXECUTABLE)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(echoserver qor_module qor_host QORCompiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_pipeline qor_error qor_sockets
-qor_asyncioservice
+qor_asyncioservice qor_socketsessionconnector qor_socketsource qor_socketsink
 linqor_sockets linqor_asyncioservice)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(echoserver qor_module qor_host QORCompiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_pipeline qor_error qor_sockets
-qor_asyncioservice)
+qor_asyncioservice qor_socketsessionconnector qor_socketsource qor_socketsink)
 endif()

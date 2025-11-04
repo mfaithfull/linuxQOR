@@ -31,7 +31,6 @@
 #include "src/platform/network/addressinfo.h"
 #include "src/framework/pipeline/connection.h"
 
-
 namespace qor{ namespace components{ 
 
     class qor_pp_module_interface(QOR_CLIENTSOCKETCONNECTOR) SocketClientConnector : public pipeline::Plug
@@ -58,7 +57,6 @@ namespace qor{ namespace components{
         }
 
         bool ConnectToAddress( const std::string &host, const std::string &ip, int port, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec = 0 );
-
         bool SetNonBlocking(bool nonBlocking);
 
 	protected:
