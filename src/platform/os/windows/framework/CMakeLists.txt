@@ -3,3 +3,4 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 add_subdirectory(thread)
 add_subdirectory(process)
+add_subdirectory(asyncioservice)

@@ -11,4 +11,5 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 target_compile_definitions(qor_asyncioservice PRIVATE -DQOR_ASYNCIOSERVICE)
-target_link_libraries(qor_asyncioservice qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_task)
+target_link_libraries(qor_asyncioservice qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread
+qor_task qor_role)

@@ -32,7 +32,8 @@
 #include "src/qor/factory/externalfactory.h"
 #include "address.h"
 #include "socketdefs.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/asyncioservice/asynciotypes.h"
+#include "src/framework/asyncioservice/asynciointerface.h"
 #include "src/platform/io/iodescriptor.h"
 
 namespace qor{ namespace network{

@@ -25,20 +25,22 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
-#include "filesystem.h"
-#include "src/system/filesystem/ifilesystem.h"
+#include "src/platform/filesystem/ifilesystem.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"
 #include "src/qor/reference/newref.h"
+#include "asyncioservice.h"
 
 qor::Module& ThisModule(void)
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Filesystem Module", 
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Async IO Service Module", 
         qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-		static qor::TypeRegEntry< qor::nsWindows::FileSystem, qor::system::IFileSystem > reg;  //Register the Windows specific implementation of IFileSystem
+	//Register the Windows specific implementations
+	static qor::TypeRegEntry< qor::nswindows::framework::AsyncIOService, qor::framework::AsyncIOService > regAsyncIOService;
+	//static qor::TypeRegEntry< qor::nswindows::framework::IOUringEventProcessor, qor::framework::AsyncIOEventProcessor > regAsyncIOEventProcessor;
+	//static qor::TypeRegEntry< qor::nswindows::framework::IOUringInitiator, qor::framework::AsyncIOInitiator > regAsyncIOInitiator;
 
 	return QORModule;
 }

@@ -22,22 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "currentprocess.h"
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#ifndef QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKETS
+#define QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKETS
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Process Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#include "src/platform/network/sockets.h"
 
-	static qor::TypeRegEntry< qor::nsWindows::framework::CurrentProcess, qor::framework::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
-	return QORModule;
-}
+qor_pp_module_will_provide(WINQOR_SOCKETS,Sockets)
+
+namespace qor{ namespace nswindows{
+
+    class qor_pp_module_interface(WINQOR_SOCKETS) Sockets : public network::Sockets
+    {
+    public:
+
+        Sockets() = default;
+        virtual ~Sockets() = default;
+        virtual ref_of<network::Socket>::type CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol) const;
+        virtual int GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results) const;
+
+    private:        
+
+        Sockets(const Sockets&) = delete;
+        Sockets& operator = (const Sockets&) = delete;
+    };
+
+}}//qor::nswindows
+
+#endif//QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKETS

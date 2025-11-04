@@ -60,7 +60,7 @@ namespace qor{ namespace platform{
     {
         try
         {
-            std::filesystem::rename(m_path.operator const std::filesystem::__cxx11::path(), destParent.operator const std::filesystem::__cxx11::path());
+            std::filesystem::rename(m_path.operator const std::filesystem::path(), destParent.operator const std::filesystem::path());
             return true;
         }
         catch(std::filesystem::filesystem_error& fse)

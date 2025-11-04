@@ -22,22 +22,35 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "currentprocess.h"
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Process Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#include <vector>
+#include <coroutine>
+#include "src/framework/asyncioservice/asyncioservice.h"
+#include "iouringservice/iouringeventprocessor.h"
+#include "iouringservice/readop.h"
+#include "iouringservice/listenop.h"
+#include "iouringservice/bindop.h"
+#include "iouringservice/acceptop.h"
+#include "src/platform/network/socket.h"
+#include "src/framework/asyncioservice/asyncioeventprocessor.h"
 
-	static qor::TypeRegEntry< qor::nsWindows::framework::CurrentProcess, qor::framework::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
-	return QORModule;
-}
+qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOService)
+//qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOEventProcessor)
+//qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOInitiator)
+
+namespace qor{ namespace nswindows{ namespace framework{
+
+    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) AsyncIOService : public qor::framework::AsyncIOService
+    {
+    public:
+        
+        AsyncIOService();
+        virtual ~AsyncIOService() noexcept = default;
+
+    };
+
+}}}//qor::nswindows::framework
+
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE

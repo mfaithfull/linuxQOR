@@ -24,51 +24,14 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
-#include "filesystem.h"
-#include "file.h"
+#include "asyncioservice.h"
 
-#include <fcntl.h>
+qor_pp_module_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOService)
 
-namespace qor{
-    bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileSystem requirement. 
-    {
-        return true;
-    }
-}//qor
+namespace qor{ namespace nswindows{ namespace framework{
 
-namespace qor{ namespace nsWindows{ 
-
-    void FileSystem::Setup()
-    {
-    }
-
-    void FileSystem::Shutdown()
-    {
-    }
-
-    void FileSystem::SyncToSystem() const
-    {
-    }
-
-    ref_of<system::File>::type FileSystem::CreateFile(const system::FileIndex& index, int withFlags) const
-    {
-        ref_of<system::File>::type nullref;
-        return nullref;
-    }
-
-    ref_of<system::File>::type FileSystem::OpenFile(const system::FileIndex& index, int openFor, int withFlags) const
+    AsyncIOService::AsyncIOService()
     {        
-        ref_of<system::File>::type nullref;
-        return nullref;
     }
 
-    bool FileSystem::DeleteFile(const system::FileIndex& index) const
-    {
-        return false;
-    }
-    
-}}//qor::nsWindows
+}}}//qor::nswindows::framework

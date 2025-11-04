@@ -43,8 +43,8 @@ namespace qor{ namespace pipeline{
 
         Pipeline();
         virtual ~Pipeline() = default;
-        Pipeline( const Pipeline& src );
-        Pipeline& operator = (const Pipeline& src);
+        Pipeline( const Pipeline& src ) = delete;
+        //Pipeline& operator = (const Pipeline& src);
 
         Pipeline(Connection* SourceConnection, Connection* SinkConnection, Element::FlowMode flowmode = Element::FlowMode::Pull) : m_flowmode(flowmode)
         {

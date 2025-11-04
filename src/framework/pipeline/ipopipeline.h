@@ -34,7 +34,7 @@ namespace qor{ namespace pipeline{
     {
     public:
 
-        IPO() = default;
+        IPO() : Pipeline(){};
         virtual ~IPO() = default;
 
         virtual bool Process(size_t& unitsProcessed, size_t unitstoProcess = 1) = 0;

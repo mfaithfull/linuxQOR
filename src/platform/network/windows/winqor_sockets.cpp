@@ -25,19 +25,23 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
-#include "currentprocess.h"
-#include "src/platform/filesystem/ifilesystem.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/factory/internalfactory.h"
 #include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#include "src/platform/network/sockets.h"
+
+#include "sockets.h"
+#include "socket.h"
 
 qor::Module& ThisModule(void)
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Process Module", 
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Sockets Module", 
         qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-	static qor::TypeRegEntry< qor::nsWindows::framework::CurrentProcess, qor::framework::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
+	//Register the Windows specific implementations provided by this module
+	static qor::TypeRegEntry< qor::nswindows::Sockets, qor::network::Sockets > regSockets;
+	static qor::TypeRegEntryWithParams< qor::nswindows::Socket, qor::network::Socket, const qor::network::sockets::eAddressFamily&, const qor::network::sockets::eType&, const qor::network::sockets::eProtocol& > regSocket;
+
 	return QORModule;
 }

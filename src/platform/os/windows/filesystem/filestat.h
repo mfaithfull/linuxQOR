@@ -22,22 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "currentprocess.h"
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#ifndef QOR_PP_H_PLATFORM_WINDOWS_FILESYSTEM_FILESTAT
+#define QOR_PP_H_PLATFORM_WINDOWS_FILESYSTEM_FILESTAT
 
-qor::Module& ThisModule(void)
+#include "src/platform/filesystem/filestat.h"
+
+namespace qor
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Process Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
-
-	static qor::TypeRegEntry< qor::nsWindows::framework::CurrentProcess, qor::framework::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
-	return QORModule;
+    bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileStat();//Declaration must match the one in src/system/filesystem/filestat.h
 }
+
+namespace qor{ namespace nswindows{ 
+
+    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileStat : public qor::platform::IFileStat
+    {
+    public:
+        FileStat();
+        FileStat(platform::FileIndex& fileindex);
+        virtual ~FileStat() noexcept = default;
+
+        virtual bool IsValid();
+        virtual bool IsFile();
+        virtual bool IsDir();
+        virtual bool IsCharacter();
+        virtual bool IsBlock();
+
+    protected:
+
+        struct stat m_st;
+        bool m_IsValid;
+    };
+
+}}//qor::nswindows
+
+#endif//QOR_PP_H_PLATFORM_WINDOWS_FILESYSTEM_FILESTAT

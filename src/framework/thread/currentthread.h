@@ -74,7 +74,7 @@ namespace qor{ namespace framework{
 		}
 
         void Sleep(unsigned long ulMilliseconds) const;
-        void Yield() const;
+        void _Yield() const;
 
         ThreadContext& Context() const;
 

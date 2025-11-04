@@ -23,21 +23,51 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "currentprocess.h"
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Process Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#include "filestat.h"
 
-	static qor::TypeRegEntry< qor::nsWindows::framework::CurrentProcess, qor::framework::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
-	return QORModule;
-}
+//Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileStat requirement. 
+namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileStat() { return true; } }//qor
+
+namespace qor{ namespace nswindows{ 
+    
+    FileStat::FileStat() : IFileStat(), m_IsValid(false)
+    {
+    }
+
+    FileStat::FileStat(platform::FileIndex& fileindex) : IFileStat(fileindex)
+    {
+        m_IsValid = false;
+        int statresult = ::stat(fileindex.GetPath().ToString().c_str(), &m_st);
+        if(statresult != -1)
+        {
+            m_IsValid = true;
+        }
+    }
+
+    bool FileStat::IsValid()
+    {
+        return m_IsValid;
+    }
+
+    bool FileStat::IsFile()
+    {
+        return false;
+    }
+    
+    bool FileStat::IsDir()
+    {
+        return false;
+    }
+
+    bool FileStat::IsCharacter()
+    {
+        return false;
+    }
+
+    bool FileStat::IsBlock()
+    {
+        return false;
+    }
+
+}}//qor::nswindows

@@ -14,3 +14,4 @@ target_compile_definitions(qor_sockets PRIVATE -DQOR_SOCKETS)
 target_link_libraries(qor_sockets qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform)
 
 add_subdirectory(linux)
+add_subdirectory(windows)

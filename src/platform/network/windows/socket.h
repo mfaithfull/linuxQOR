@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_PLATFORM_NETWORK_LINUX_SOCKET
-#define QOR_PP_H_PLATFORM_NETWORK_LINUX_SOCKET
+#ifndef QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKET
+#define QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKET
 
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/reference/newref.h"
@@ -32,9 +32,9 @@
 #include "src/platform/network/socket.h"
 #include "src/platform/network/sockets.h"
 
-namespace qor{ namespace nslinux{
+namespace qor{ namespace nswindows{
 
-    class qor_pp_module_interface(LINQOR_SOCKETS) Socket : public network::Socket
+    class qor_pp_module_interface(WINQOR_SOCKETS) Socket : public network::Socket
     {
     public:
 
@@ -102,8 +102,8 @@ namespace qor{ namespace nslinux{
         ssize_t PollWaitForOutput(time_t sec, time_t usec);
     };
     
-    }//qor::nslinux
+    }//qor::nswindows
         
 }//qor
 
-#endif//QOR_PP_H_PLATFORM_NETWORK_LINUX_SOCKET
+#endif//QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKET

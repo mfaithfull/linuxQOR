@@ -14,15 +14,17 @@ add_executable(echoserver echoserver_main.cpp echoserverapp.cpp serverworkflow.c
 
 target_compile_definitions(echoserver PRIVATE -DQOR_PP_EXECUTABLE)
 
-if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(echoserver qor_module qor_host QORCompiler qor_datastructures qor_objectcontext
+set(portable_libraries qor_module qor_host QORCompiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_pipeline qor_error qor_sockets
-qor_asyncioservice qor_socketsessionconnector qor_socketsource qor_socketsink
-linqor_sockets linqor_asyncioservice)
+qor_asyncioservice qor_socketsessionconnector qor_socketsource qor_socketsink)
+
+if(CMAKE_SYSTEM_NAME MATCHES Linux)
+set(os_libraries linqor_sockets linqor_asyncioservice)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(echoserver qor_module qor_host QORCompiler qor_datastructures qor_objectcontext
-qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_pipeline qor_error qor_sockets
-qor_asyncioservice qor_socketsessionconnector qor_socketsource qor_socketsink)
+set(os_libraries winqor_sockets winqor_asyncioservice)
 endif()
+
+target_link_libraries(echoserver ${portable_libraries} ${os_libraries})
+

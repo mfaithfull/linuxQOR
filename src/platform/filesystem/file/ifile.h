@@ -33,7 +33,9 @@
 #include "src/qor/reference/newref.h"
 
 //All libraries providing an implementation of IFile also need to export this function so that the linker can find them
-namespace qor{ bool qor_pp_import ImplementsIFile();}
+namespace qor{
+    bool qor_pp_if(qor_pp_is_empty(QOR_FILESYSTEM), qor_pp_export, qor_pp_import) ImplementsIFile(void);
+}
 
 namespace qor{ namespace platform{
 

@@ -22,7 +22,7 @@ linqor_sockets linq_console)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(echoserver qor_module qor_host QORCompiler qor_datastructures qor_objectcontext
+target_link_libraries(echoclient qor_module qor_host QORCompiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_optionparser qor_pipeline qor_error qor_sockets
 qor_console)
 endif()

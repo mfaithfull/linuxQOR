@@ -27,6 +27,10 @@
 
 #include "asynciotypes.h"
 
+namespace qor { namespace network {
+    class qor_pp_module_interface(QOR_SOCKETS) Socket;
+}}//qor::network
+
 namespace qor { namespace framework{
   
     class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOInterface
