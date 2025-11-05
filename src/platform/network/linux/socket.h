@@ -34,7 +34,7 @@
 
 namespace qor{ namespace nslinux{
 
-    class qor_pp_module_interface(QOR_SOCKETS) Socket : public network::Socket
+    class qor_pp_module_interface(LINQOR_SOCKETS) Socket : public network::Socket
     {
     public:
 

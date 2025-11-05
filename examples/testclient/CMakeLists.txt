@@ -3,26 +3,23 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
-endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-endif()
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-add_executable(testclient testclient_main.cpp)
+set(target testclient)
 
-target_compile_definitions(testclient PRIVATE -DQOR_PP_EXECUTABLE)
+add_executable(${target} testclient_main.cpp)
+
+target_compile_definitions(${target} PRIVATE -DQOR_PP_EXECUTABLE)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(testclient qor_module qor_host QORCompiler qor_datastructures qor_objectcontext
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_error qor_sockets qor_socketclient
 qor_httpclient qor_pipeline qor_socketsink qor_socketsource
 linqor_sockets linq_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(testclient qor_module qor_host QORCompiler qor_datastructures qor_objectcontext
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_error qor_sockets qor_socketclient
 qor_httpclient qor_pipeline qor_socketsink qor_socketsource)
 endif()

@@ -1,3 +1,4 @@
+
 // Copyright Querysoft Limited 2008 - 2025
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -22,23 +23,52 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "filesystem.h"
-#include "src/system/filesystem/ifilesystem.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPED
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPED
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Filesystem Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#include <system_error>
+#include <coroutine>
+#include <utility>
+#include <cstdint>
 
-		static qor::TypeRegEntry< qor::nsWindows::FileSystem, qor::system::IFileSystem > reg;  //Register the Windows specific implementation of IFileSystem
+struct _OVERLAPPED;
 
-	return QORModule;
-}
+namespace qor { namespace nswindows { namespace framework {
+
+#if (qor_pp_compiler == qor_pp_compiler_msvc)
+#	pragma warning(push)
+#	pragma warning(disable : 4201) // Non-standard anonymous struct/union
+#endif
+
+	using handle_t = void*;
+	using ulongptr_t = std::uintptr_t;
+	using longptr_t = std::intptr_t;
+	using dword_t = unsigned long;
+	using socket_t = std::uintptr_t;
+	using ulong_t = unsigned long;
+
+	/// Structure needs to correspond exactly to the builtin
+	/// _OVERLAPPED structure from Windows.h.
+	struct overlapped
+	{
+		ulongptr_t Internal;
+		ulongptr_t InternalHigh;
+		union
+		{
+			struct
+			{
+				dword_t Offset;
+				dword_t OffsetHigh;
+			};
+			void* Pointer;
+		};
+		handle_t hEvent;
+	};
+
+#if (qor_pp_compiler == qor_pp_compiler_msvc)
+#	pragma warning(pop)
+#endif
+
+}}}//qor::nswindows::framework
+
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPED

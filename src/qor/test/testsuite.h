@@ -55,7 +55,7 @@ namespace qor{ namespace test{
 
     inline void equal(double e, double a, const char* at = "", const char* expr = "")
     {
-        double max = std::abs(std::max(e, a));
+        double max = std::abs(std::max<double>(e, a));
         max = max < 1.0 ? 1.0 : max;
         if (std::abs(e - a) > std::numeric_limits<double>::epsilon() * max)
         {

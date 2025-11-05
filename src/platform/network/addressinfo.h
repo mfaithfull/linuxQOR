@@ -30,7 +30,7 @@
 
 namespace qor{ namespace network{
 
-    struct qor_pp_module_interface(QOR_SOCKETS) addrinfo_flags
+    struct addrinfo_flags
     {
         addrinfo_flags() : value(0){}
         addrinfo_flags(int v) : value(v){}
@@ -153,7 +153,7 @@ namespace qor{ namespace network{
         }
     };
 
-    class qor_pp_module_interface(QOR_SOCKETS) AddressInfo
+    class AddressInfo
     {
     public:
 

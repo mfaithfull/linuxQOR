@@ -86,10 +86,7 @@ qor_pp_test_suite_case(stdifstreamTestSuite, canSetupstdifstreamReader)
     std::string strResult;
     reader.ReadAll(unitsRead, [&strResult](byte* data, size_t byteCount) -> size_t
         {
-            char tmpBuffer[byteCount + 1];
-            memcpy(tmpBuffer, (char*)(data), byteCount);
-            tmpBuffer[byteCount] = '\0';
-            std::string temp = tmpBuffer;
+            std::string temp((const char*)data, byteCount);
             strResult = strResult + temp;
             return byteCount;
         });

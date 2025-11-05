@@ -110,7 +110,7 @@ namespace qor{
 		std::this_thread::sleep_for(std::chrono::milliseconds(ulMilliseconds));
 	}
 
-    void CurrentThread::Yield() const
+    void CurrentThread::_Yield() const
 	{		
 		std::this_thread::yield();
 	}

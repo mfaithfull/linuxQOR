@@ -57,7 +57,7 @@ class IntrospectiveWorker : public Thread
         const CurrentThread& worker_thread_in_progress = CurrentThread::GetCurrent();
         auto id = worker_thread_in_progress.GetID();
         worker_thread_in_progress.Sleep(1);
-        worker_thread_in_progress.Yield();
+        worker_thread_in_progress._Yield();
         worker_thread_in_progress.Context();
         std::cout << " Worker thread " << id << " has done it's job.";
     }

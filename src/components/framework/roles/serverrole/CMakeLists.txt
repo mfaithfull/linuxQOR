@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-add_library(qor_serverrole SHARED qor_serverrole.cpp serverrole.cpp)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
-endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-endif()
+set(target qor_serverrole)
 
-target_compile_definitions(qor_serverrole PRIVATE -DQOR_SERVERROLE)
-target_link_libraries(qor_serverrole qor_module qor_datastructures qor_objectcontext qor_role)
+add_library(${target} SHARED qor_serverrole.cpp serverrole.cpp)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+
+target_compile_definitions(${target} PRIVATE -DQOR_SERVERROLE)
+target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_role)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

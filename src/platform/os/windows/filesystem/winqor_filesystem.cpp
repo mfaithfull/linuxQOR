@@ -22,34 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_SYSTEM_FILESYSTEM_FILESYSTEM
-#define QOR_PP_H_OS_WINDOWS_SYSTEM_FILESYSTEM_FILESYSTEM
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/platform/filesystem/ifilesystem.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
+#include "src/qor/reference/newref.h"
+#include "src/platform/filesystem/filestat.h"
 
-#include "src/system/filesystem/ifilesystem.h"
-#include "src/system/filesystem/fileindex.h"
+#include <sys/stat.h>
+#include "filesystem.h"
+#include "filestat.h"
+#include "file.h"
 
-namespace qor
+qor::Module& ThisModule(void)
 {
-    bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem();//Declaration must match the one in src/system/filesystem/filesystem.h
+	static qor::Module QORModule("Querysoft Open Runtime: Windows FileSystem Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+
+	//Register the Windows specific implementations
+	static qor::TypeRegEntry< qor::nswindows::FileSystem, qor::platform::IFileSystem > regIFileSystem;  
+	static qor::TypeRegEntry< qor::nswindows::FileStat, qor::platform::IFileStat > regIFileStat;
+	static qor::TypeRegEntryWithParams< qor::nswindows::File, qor::platform::IFile, const qor::platform::FileIndex&, int, int > regIFile;
+	return QORModule;
 }
-
-namespace qor{ namespace nsWindows{
-
-    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::system::IFileSystem
-    {
-    public:
-
-        FileSystem() = default;
-        virtual ~FileSystem() noexcept = default;
-
-        virtual void Setup();
-        virtual void Shutdown();
-        virtual ref_of<system::File>::type CreateFile(const system::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<system::File>::type OpenFile(const system::FileIndex& index, const int openFor, const int withFlags) const;
-        virtual bool DeleteFile(const system::FileIndex& index) const;
-        void SyncToSystem() const;
-    };
-
-}}//qor::nsWindows
-
-#endif//QOR_PP_H_OS_WINDOWS_SYSTEM_FILESYSTEM_FILESYSTEM

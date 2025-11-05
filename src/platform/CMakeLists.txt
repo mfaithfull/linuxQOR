@@ -1,22 +1,19 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-set(CMAKE_CXX_COMPILE_OPTIONS_RTTI)
-set(CMAKE_CXX_RTTI ON)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(qor_platform SHARED qor_platform.cpp platform.cpp)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
-endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-endif()
+set(target qor_platform)
 
-target_compile_definitions(qor_platform PRIVATE -DQOR_PLATFORM)
-target_link_libraries(qor_platform qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread)
+add_library(${target} SHARED qor_platform.cpp platform.cpp)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+
+target_compile_definitions(${target} PRIVATE -DQOR_PLATFORM)
+target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 
 add_subdirectory(compiler)
 add_subdirectory(os)
 add_subdirectory(filesystem)
 add_subdirectory(network)
+

@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-add_library(qor_socketsessionconnector SHARED qor_socketsessionconnector.cpp socketsessionconnector.cpp)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
-endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-endif()
+set(target qor_socketsessionconnector)
 
-target_compile_definitions(qor_socketsessionconnector PRIVATE -DQOR_SESSIONSOCKETCONNECTOR)
-target_link_libraries(qor_socketsessionconnector qor_module qor_datastructures qor_objectcontext qor_thread qor_signals qor_pipeline qor_platform qor_sockets qor_asyncioservice)
+add_library(${target} SHARED qor_socketsessionconnector.cpp socketsessionconnector.cpp)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+
+target_compile_definitions(${target} PRIVATE -DQOR_SESSIONSOCKETCONNECTOR)
+target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_thread qor_signals qor_pipeline qor_platform qor_sockets qor_asyncioservice)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

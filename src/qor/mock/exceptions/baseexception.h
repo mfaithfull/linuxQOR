@@ -36,7 +36,7 @@
 #define qor_pp_mock_baseexception std::exception
 #endif
 
-#define qor_pp_mock_raiseexception(e)   { qor_pp_compiler_debugbreak(e); if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
+#define qor_pp_mock_raiseexception(e)   { /*qor_pp_compiler_debugbreak(e);*/ if(std::uncaught_exceptions() > 0) latentException = [=, &repo]{ throw e; }; else throw e; }
 
 namespace qor{ namespace mock{
 

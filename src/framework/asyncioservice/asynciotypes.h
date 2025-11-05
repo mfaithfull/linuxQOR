@@ -33,7 +33,11 @@ namespace qor { namespace framework{
   
     struct AsyncIOResult 
     {
-        int status_code{0};
+        union
+        {
+            int status_code;
+            unsigned long long result{ 0 };
+        };
         platform::IODescriptor* ioObject;
     };
 

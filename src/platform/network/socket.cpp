@@ -26,6 +26,7 @@
 #include "src/framework/thread/thread.h"
 #include "socket.h"
 #include "src/framework/asyncioservice/asynciotypes.h"
+#include "src/framework/task/syncwait.h"
 
 namespace qor{ namespace network{
 

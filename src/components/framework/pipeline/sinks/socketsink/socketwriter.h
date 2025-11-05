@@ -26,7 +26,6 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINK_SOCKETWRITER
 
 #include <functional>
-#include <arpa/inet.h>
 #include "src/framework/pipeline/pipeline.h"
 #include "src/framework/pipeline/podbuffer.h"
 #include "src/framework/pipeline/sink.h"
@@ -112,20 +111,20 @@ namespace qor{ namespace components{
     template<>
     uint16_t SocketWriter::HToN(const uint16_t& s)
     {
-        return ::htons(s);
+        return s;//TODO ::htons(s);
     }
 
     template<>
     uint32_t SocketWriter::HToN(const uint32_t& s)
     {
-        return ::htonl(s);
+        return s;//TODO::htonl(s);
     }
 
     template<>
     uint64_t SocketWriter::HToN(const uint64_t& s)
     {
 
-        return ((uint64_t)htonl(s & 0xFFFFFFFF) << 32LL) | htonl(s >> 32);
+        return s;//TODO((uint64_t)htonl(s & 0xFFFFFFFF) << 32LL) | htonl(s >> 32);
     }
 
 }}//qor::components

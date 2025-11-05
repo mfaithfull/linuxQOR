@@ -23,10 +23,13 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
-#include <arpa/inet.h>
 #include "src/framework/thread/thread.h"
 #include "address.h"
+
+#ifdef WIN32
+#   include <winsock.h>
+#undef SetPort
+#endif
 
 namespace qor{ namespace network{
 

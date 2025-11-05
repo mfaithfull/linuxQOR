@@ -24,7 +24,15 @@
 
 #include "src/configuration/configuration.h"
 
-#include <arpa/inet.h>
+#ifdef __linux__
+#   include <arpa/inet.h>
+#endif
+#ifdef WIN32
+#   include <winsock.h>
+#undef SetPort
+#undef min
+#undef max
+#endif
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
 #include "src/qor/injection/typeidentity.h"
