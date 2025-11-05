@@ -27,7 +27,6 @@
 
 #include "src/components/framework/console/iconsole.h"
 #include "consolehelper.h"
-#include "src/platform/os/windows/filesystem/file.h"
 
 namespace qor
 {

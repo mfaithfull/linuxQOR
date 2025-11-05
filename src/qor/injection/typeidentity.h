@@ -36,7 +36,11 @@ namespace qor{
     template<typename T>
     struct id_of
     {
+#if(qor_pp_compiler == qor_pp_compiler_clang)
+        static std::type_index id()
+#else
         static constexpr std::type_index id()
+#endif
         {
             return std::type_index(typeid(T));
         }

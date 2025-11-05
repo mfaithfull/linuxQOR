@@ -47,6 +47,4 @@ template<> struct ref_of< _CLASS >\
 
 //Example: qor_pp_declare_ref_of(ErrorHandler, flyerref);
 
-#define r$(_X) ref_of<##_X##>::type
-
 #endif//QOR_PP_H_FACTORY

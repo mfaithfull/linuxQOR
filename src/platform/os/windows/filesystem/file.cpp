@@ -44,7 +44,7 @@ namespace qor{ namespace nswindows{
     {
     }
 
-    File::File(const platform::FileIndex& direntry, int openFor, int withFlags) : m_fd(-1) , platform::File(direntry) 
+    File::File(const platform::FileIndex& direntry, int openFor, int withFlags) : platform::File(direntry) 
     {
     }
 

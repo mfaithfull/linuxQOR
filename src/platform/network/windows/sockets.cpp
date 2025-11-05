@@ -23,6 +23,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
@@ -39,21 +43,21 @@ namespace qor{ namespace nswindows{
         //TODO:
     }
 
-    void AddressInfoToWindows(const network::AddressInfo& addressinfo, addrinfo& info)
+    void AddressInfoToWindows(const network::AddressInfo& addressinfo, ADDRINFOA& info)
     {
         memset(&info, 0, sizeof(struct addrinfo));
-        AddressInfoFlagsToLinux( addressinfo.flags, info.ai_flags);
-        info.ai_family = Socket::AddressFamilyToLinux(addressinfo.family);
-        info.ai_socktype = Socket::TypeToLinux(addressinfo.socktype, false);
-        info.ai_protocol = Socket::ProtocolToLinux(addressinfo.protocol);
+        AddressInfoFlagsToWindows( addressinfo.flags, info.ai_flags);
+        info.ai_family = Socket::AddressFamilyToWindows(addressinfo.family);
+        info.ai_socktype = Socket::TypeToWindows(addressinfo.socktype, false);
+        info.ai_protocol = Socket::ProtocolToWindows(addressinfo.protocol);
     }
 
     void AddressInfoFromWindows(const addrinfo& info, network::AddressInfo& addressinfo)
     {
         addressinfo.flags = info.ai_flags;
-        addressinfo.socktype = Socket::TypeFromLinux(info.ai_socktype);
-        addressinfo.protocol = Socket::ProtocolFromLinux(info.ai_protocol);
-        addressinfo.family = Socket::AddressFamilyFromLinux(info.ai_family);
+        addressinfo.socktype = Socket::TypeFromWindows(info.ai_socktype);
+        addressinfo.protocol = Socket::ProtocolFromWindows(info.ai_protocol);
+        addressinfo.family = Socket::AddressFamilyFromWindows(info.ai_family);
         addressinfo.canonname = info.ai_canonname == nullptr ? "" : std::string(info.ai_canonname);
         addressinfo.address.sa_family = addressinfo.family;
         memcpy(addressinfo.address.sa.sa_data, info.ai_addr->sa_data, info.ai_addrlen);
@@ -75,8 +79,7 @@ namespace qor{ namespace nswindows{
         auto result = ::getaddrinfo(node.empty() ? nullptr : node.c_str(), service.empty() ? nullptr : service.c_str(), &hintinfo, &res);
         
         if(result != 0)
-        {
-            res_init();            
+        {      
             return -1;
         }
 
@@ -93,7 +96,7 @@ namespace qor{ namespace nswindows{
          
             network::AddressInfo resultAddressInfo;
 
-            AddressInfoFromLinux(*rp, resultAddressInfo);
+            AddressInfoFromWindows(*rp, resultAddressInfo);
             
             results.emplace_back(resultAddressInfo);
         }

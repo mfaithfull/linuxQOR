@@ -124,10 +124,7 @@ namespace qor{ namespace components{
         std::string strText;
         ReadAll(unitsRead, [&strText](byte* data, size_t byteCount) -> size_t
         {
-            char tmpBuffer[byteCount + 1];
-            memcpy(tmpBuffer, (char*)(data), byteCount);
-            tmpBuffer[byteCount] = '\0';
-            std::string temp = tmpBuffer;
+            std::string temp((const char*)data,byteCount);
             strText = strText + temp;
             return byteCount;
         });

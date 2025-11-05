@@ -73,33 +73,13 @@ namespace qor{ namespace nswindows{
         virtual bool SetTCPNoDelay(bool nodelay);
         virtual bool SetIPv6Only(bool ipv6only);
 
-        static int AddressFamilyToLinux(const network::sockets::eAddressFamily& AF);
-        static network::sockets::eAddressFamily AddressFamilyFromLinux(int domain);
-        static int TypeToLinux(const network::sockets::eType& Type, bool closeOnExec);
-        static network::sockets::eType TypeFromLinux(int type);
-        static int ProtocolToLinux(const network::sockets::eProtocol& Protocol);
-        static network::sockets::eProtocol ProtocolFromLinux(int protocol);
+        static int AddressFamilyToWindows(const network::sockets::eAddressFamily& AF);
+        static network::sockets::eAddressFamily AddressFamilyFromWindows(int domain);
+        static int TypeToWindows(const network::sockets::eType& Type, bool closeOnExec);
+        static network::sockets::eType TypeFromWindows(int type);
+        static int ProtocolToWindows(const network::sockets::eProtocol& Protocol);
+        static network::sockets::eProtocol ProtocolFromWindows(int protocol);
 
-    private:
-
-        template <typename T> inline ssize_t handle_EINTR(T fn) 
-        {
-            ssize_t res = 0;
-            while (true) 
-            {
-                res = fn();
-                if (res < 0 && errno == EINTR) 
-                {
-                    std::this_thread::sleep_for(std::chrono::microseconds{1});
-                    continue;
-                }
-                break;
-            }
-            return res;
-        }
-
-        ssize_t PollWaitForInput(time_t sec, time_t usec);
-        ssize_t PollWaitForOutput(time_t sec, time_t usec);
     };
     
     }//qor::nswindows

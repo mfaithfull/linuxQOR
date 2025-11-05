@@ -22,24 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
-#include "asyncioservice.h"
+#ifndef QOR_PP_H_CLANG_VERSION
+#define QOR_PP_H_CLANG_VERSION
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Async IO Service Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#include "clang.h"
 
-	//Register the Windows specific implementations
-	static qor::TypeRegEntry< qor::nswindows::framework::AsyncIOService, qor::framework::AsyncIOService > regAsyncIOService;
-	//static qor::TypeRegEntry< qor::nswindows::framework::IOUringEventProcessor, qor::framework::AsyncIOEventProcessor > regAsyncIOEventProcessor;
-	//static qor::TypeRegEntry< qor::nswindows::framework::IOUringInitiator, qor::framework::AsyncIOInitiator > regAsyncIOInitiator;
+#define qor_pp_compiler_version _MSC_VER        
 
-	return QORModule;
-}
+#if(qor_pp_compiler_version < 1931)
+#error Unsupported compiler version. Please update your compiler.
+#else
+#   ifdef qor_pp_compiler_reportconfig
+#	    define qor_pp_compiler_message(_X) __pragma( message( _X ) )
+#   else
+#	    define qor_pp_compiler_message(_X)
+#   endif
+
+#	define qor_pp_compiler_version_folder recent
+#	define qor_pp_compiler_name "recent clang"
+#	define qor_pp_compiler_folder qor_pp_cat(qor_pp_compiler_root_folder,/recent)
+#	define qor_pp_compiler_header recentclang.h
+    qor_pp_compiler_message( qor_pp_compiler_name ": " qor_pp_stringize(qor_pp_compiler_version) )
+
+#endif
+
+#if(qor_pp_compiler_version < 1944)
+    qor_pp_compiler_message( "Compiler version is supprted." )
+#else
+    qor_pp_compiler_message( "Compiler version is untested. Proceed at your own risk" )
+#endif
+
+#endif//QOR_PP_H_CLANG_VERSION

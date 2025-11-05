@@ -12,4 +12,4 @@ endif()
 
 target_compile_definitions(winq_console PRIVATE -DQOR_WINCONSOLE)
 target_link_libraries(winq_console qor_module qor_host qor_datastructures qor_objectcontext qor_injection qor_error qor_issue qor_winapi winq_common 
-winqsharedbootstrap qor_filesystem winqor_filesystem)
+winqsharedbootstrap qor_filesystem)

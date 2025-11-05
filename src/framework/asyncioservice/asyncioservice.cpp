@@ -30,7 +30,6 @@
 #include "src/qor/sync/onscopeexit.h"
 #include "src/framework/role/role.h"
 #include "src/framework/thread/threadpool.h"
-#include "src/platform/network/socket.h"
 
 namespace qor { namespace framework{
 

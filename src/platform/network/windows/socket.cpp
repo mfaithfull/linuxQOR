@@ -23,10 +23,15 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#undef SetPort
+#undef min
+#undef max
 #include "src/framework/thread/thread.h"
 #include "socket.h"
 #include "src/platform/os/windows/framework/asyncioservice/asyncioservice.h"
-#include "src/platform/os/windows/framework/asyncioservice/iouringservice/readop.h"
 
 using namespace qor::nswindows::framework;
 
@@ -44,20 +49,20 @@ namespace qor{ namespace nswindows{
 
     Socket::Socket(const Socket& src)
     {
-        m_fd = ::fcntl(src.m_fd, F_DUPFD, 0);
+        //m_fd = ::fcntl(src.m_fd, F_DUPFD, 0);
     }
 
     Socket::Socket(const network::sockets::eAddressFamily& AF, const network::sockets::eType& Type, const network::sockets::eProtocol& Protocol)
     {
-        int domain = AddressFamilyToLinux(AF);        
-        int type = TypeToLinux(Type, AF == network::sockets::eAddressFamily::AF_Unix ? true : false);
-        int protocol = ProtocolToLinux(Protocol);
-        m_fd = ::socket(domain, type, protocol);
+        int domain = AddressFamilyToWindows(AF);        
+        int type = TypeToWindows(Type, AF == network::sockets::eAddressFamily::AF_Unix ? true : false);
+        int protocol = ProtocolToWindows(Protocol);
+        //m_fd = ::socket(domain, type, protocol);
     }
     
     Socket::~Socket()
     {
-        ::close(m_fd);
+        //::close(m_fd);
     }
     
     int32_t Socket::Bind(const qor::framework::AsyncIOInterface& ioContext, const network::Address& Address)
@@ -84,7 +89,7 @@ namespace qor{ namespace nswindows{
     int32_t Socket::Bind(const network::Address& Address)
     {
         sockaddr_in addr;        
-        memset(&addr, 0, sizeof(struct sockaddr_in));
+        memset(&addr, 0, sizeof(sockaddr_in));
         addr.sin_family = Address.sa_family;
         addr.sin_addr.s_addr = Address.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = Address.sa.IPAddress.sin_port;                
@@ -101,7 +106,7 @@ namespace qor{ namespace nswindows{
         ref_of<network::Socket>::type newsocket;
         sockaddr addr;
         socklen_t len = 0;
-        int iresult = ::accept(m_fd, &addr, &len);
+        SOCKET iresult = ::accept(m_fd, &addr, &len);
         if(iresult == -1)
         {
             //TODO:Raise error
@@ -194,10 +199,10 @@ namespace qor{ namespace nswindows{
  
     int32_t Socket::Shutdown(network::sockets::eShutdown how)
     {
-        int iHow = 0;
+        int iHow = 0;/*
         iHow = ( how & network::sockets::eShutdown::ShutdownRead ) ? SHUT_RD : iHow;
         iHow = ( how & network::sockets::eShutdown::ShutdownWrite ) ? SHUT_WR : iHow;
-        iHow = ( how & network::sockets::eShutdown::ShutdownReadWrite ) ? SHUT_RDWR : iHow;
+        iHow = ( how & network::sockets::eShutdown::ShutdownReadWrite ) ? SHUT_RDWR : iHow;*/
         return ::shutdown(m_fd, iHow);
     }
  
@@ -213,31 +218,13 @@ namespace qor{ namespace nswindows{
 
     bool Socket::SetNonBlocking(bool nonBlocking)
     {
-        auto flags = ::fcntl(m_fd, F_GETFL, 0);
-        return fcntl(m_fd, F_SETFL, nonBlocking ? (flags | O_NONBLOCK) : (flags & (~O_NONBLOCK))) == 0 ? true : false;
+        //auto flags = ::fcntl(m_fd, F_GETFL, 0);
+        return false;//fcntl(m_fd, F_SETFL, nonBlocking ? (flags | O_NONBLOCK) : (flags & (~O_NONBLOCK))) == 0 ? true : false;
     }
-
-    ssize_t Socket::PollWaitForInput(time_t sec, time_t usec)
-    {
-        struct pollfd pfd;
-        pfd.fd = m_fd;
-        pfd.events = POLLIN;
-        auto timeout = static_cast<int>(sec * 1000 + usec / 1000);
-        return handle_EINTR([&]() { return ::poll(&pfd, 1, timeout); });
-    }
-
-    ssize_t Socket::PollWaitForOutput(time_t sec, time_t usec)
-    {
-        struct pollfd pfd;
-        pfd.fd = m_fd;
-        pfd.events = POLLOUT;
-        auto timeout = static_cast<int>(sec * 1000 + usec / 1000);
-        return handle_EINTR([&]() { return ::poll(&pfd, 1, timeout); });
-    }
-
 
     bool Socket::IsAlive()
     {        
+        /*
         const auto val = PollWaitForInput(0, 0);
         if (val == 0) 
         {
@@ -249,6 +236,8 @@ namespace qor{ namespace nswindows{
         }
         char buf[1];
         return ::recv(m_fd,&buf[0], sizeof(buf),MSG_PEEK) > 0;
+        */
+       return false;
     }
 
     bool Socket::SetRecvTimeout(time_t readTimeoutSec, time_t readTimeoutuSec)
@@ -271,8 +260,11 @@ namespace qor{ namespace nswindows{
 
     bool Socket::SetTCPNoDelay(bool nodelay)
     {
+        /*
         int noDelayOpt = nodelay ? 1 : 0;
         return SetSockOpt(SOL_TCP, TCP_NODELAY, (const char*)&noDelayOpt, sizeof(int)) == 0;
+        */
+       return false;
     }
 
     bool Socket::SetIPv6Only(bool ipv6Only)

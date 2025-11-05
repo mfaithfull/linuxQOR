@@ -11,7 +11,17 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 target_compile_definitions(qor_sockets PRIVATE -DQOR_SOCKETS)
-target_link_libraries(qor_sockets qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform)
+set(portable_libraries qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform)
+
+if(CMAKE_SYSTEM_NAME MATCHES Linux)
+set(os_libraries)
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES Windows)
+set(os_libraries ws2_32)
+endif()
+
+target_link_libraries(qor_sockets ${portable_libraries} ${os_libraries})
 
 add_subdirectory(linux)
 add_subdirectory(windows)

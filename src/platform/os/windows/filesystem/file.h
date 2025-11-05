@@ -81,7 +81,6 @@ namespace qor{ namespace nswindows{
         static void Check_close_Result(int result);
         static void ErrorOnOpen(int err);
 
-        int m_fd;
     };
 }}//qor::nswindows
 

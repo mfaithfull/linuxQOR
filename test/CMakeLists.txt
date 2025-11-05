@@ -94,5 +94,5 @@ qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesyst
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
 qor_winapi winqor_filesystem winq_thread winq_process winq_console winq_common qor_stdfstreamconnector 
 qor_stdifstreamsource qor_stdofstreamsink qor_sockets
-qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter) 
+qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter winqor_sockets) 
 endif()

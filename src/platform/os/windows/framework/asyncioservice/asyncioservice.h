@@ -28,17 +28,11 @@
 #include <vector>
 #include <coroutine>
 #include "src/framework/asyncioservice/asyncioservice.h"
-#include "iouringservice/iouringeventprocessor.h"
-#include "iouringservice/readop.h"
-#include "iouringservice/listenop.h"
-#include "iouringservice/bindop.h"
-#include "iouringservice/acceptop.h"
-#include "src/platform/network/socket.h"
 #include "src/framework/asyncioservice/asyncioeventprocessor.h"
 
-qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOService)
-//qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOEventProcessor)
-//qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOInitiator)
+qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOService)
+//qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOEventProcessor)
+//qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOInitiator)
 
 namespace qor{ namespace nswindows{ namespace framework{
 
