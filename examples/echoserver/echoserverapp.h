@@ -56,4 +56,3 @@ namespace qor{ qor_pp_declare_instancer_of(EchoServerApp, SingletonInstancer); }
 
 #endif//QOR_PP_H_EXAMPLES_ECHOSERVER_APP
 
-//marked for auto reiveew 04/11/2025

@@ -81,5 +81,3 @@ ClientSessionWorkflow::ClientSessionWorkflow(
 
     SetInitialState(connected);
 }
-
-//marked for auto reiveew 04/11/2025

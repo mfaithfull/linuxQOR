@@ -56,6 +56,4 @@ private:
 
 };
 
-#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_SESSIONPIPELINE
-
-//marked for auto reiveew 04/11/2025
+#endif // QOR_PP_H_EXAMPLES_ECHOSERVER_SESSIONPIPELINE
