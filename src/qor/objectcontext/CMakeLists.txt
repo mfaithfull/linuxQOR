@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-add_library(qor_objectcontext SHARED qor_objectcontext.cpp anyobject.cpp)
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-threadsafe-statics -fvisibility=hidden")
-target_compile_definitions(qor_objectcontext PRIVATE -DQOR_OBJECTCONTEXT)
-target_link_libraries(qor_objectcontext qor_module qor_host)
+set(target qor_objectcontext)
+
+add_library(${target} SHARED qor_objectcontext.cpp anyobject.cpp)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+
+target_compile_definitions(${target} PRIVATE -DQOR_OBJECTCONTEXT)
+target_link_libraries(${target} qor_module qor_host)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

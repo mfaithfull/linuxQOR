@@ -3,12 +3,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
-endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-endif()
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 add_subdirectory(mock)
 
 add_executable(QORTest test_main.cpp test_test.cpp test_compiler.cpp 
@@ -78,7 +73,7 @@ platform/test_network.cpp)
 target_compile_definitions(QORTest PRIVATE -DQOR_PP_EXECUTABLE)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
+target_link_libraries(QORTest qor_compiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
@@ -88,7 +83,7 @@ qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(QORTest QORCompiler qor_host qor_datastructures qor_objectcontext 
+target_link_libraries(QORTest qor_compiler qor_host qor_datastructures qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console

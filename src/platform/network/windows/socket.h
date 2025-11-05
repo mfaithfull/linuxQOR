@@ -80,6 +80,12 @@ namespace qor{ namespace nswindows{
         static int ProtocolToWindows(const network::sockets::eProtocol& Protocol);
         static network::sockets::eProtocol ProtocolFromWindows(int protocol);
 
+        bool skip_completion_on_success() noexcept { return m_skipCompletionOnSuccess; }
+
+    private:
+
+        bool m_skipCompletionOnSuccess;
+
     };
     
     }//qor::nswindows

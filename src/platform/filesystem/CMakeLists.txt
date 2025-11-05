@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-add_library(qor_filesystem SHARED qor_filesystem.cpp filesystem.cpp path.cpp root.cpp fileindex.cpp folder.cpp file/file.cpp)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
-endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-endif()
-target_compile_definitions(qor_filesystem PRIVATE -DQOR_FILESYSTEM)
-target_link_libraries(qor_filesystem qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform qor_error)
+set(target qor_filesystem)
+
+add_library(${target} SHARED qor_filesystem.cpp filesystem.cpp path.cpp root.cpp fileindex.cpp folder.cpp file/file.cpp)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+
+target_compile_definitions(${target} PRIVATE -DQOR_FILESYSTEM)
+target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform qor_error)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

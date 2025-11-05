@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-add_library(winqor_asyncioservice SHARED winqor_asyncioservice.cpp asyncioservice.cpp)
+set(target winqor_asyncioservice)
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
-endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-endif()
+add_library(${target} SHARED winqor_asyncioservice.cpp asyncioservice.cpp "iocpinitiator.h" "iocpeventprocessor.h" "readop.h" "iocpawaiter.h" "listenop.h" "bindop.h" "acceptop.h" "sendop.h" "iocpinitiator.cpp" "iocpeventprocessor.cpp" "overlappedoperationcancellable.h" "overlappedoperationbase.h" "iostate.h" "overlapped.h" "overlappedoperation.h" "socketacceptimpl.cpp" "connectop.h" "socketconnectimpl.cpp" "disconnectop.h" "socketdisconnectimpl.cpp" "recvfromop.h" "socketrecvfromimpl.cpp" "recvop.h" "socketrecvimpl.cpp" "socketsendimpl.cpp" "sendtoop.h" "socketsendtoimpl.cpp" "wsabuffer.h")
 
-target_compile_definitions(winqor_asyncioservice PRIVATE -DQOR_WINDOWSASYNCIOSERVICE)
-target_link_libraries(winqor_asyncioservice qor_module qor_host qor_datastructures qor_objectcontext qor_injection qor_asyncioservice qor_error)
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+
+target_compile_definitions(${target} PRIVATE -DQOR_WINDOWSASYNCIOSERVICE)
+target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_injection 
+qor_asyncioservice qor_error qor_sockets Mswsock)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

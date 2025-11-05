@@ -26,7 +26,6 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SOURCE_SOCKETREADER
 
 #include <functional>
-#include <arpa/inet.h>
 #include "src/framework/pipeline/pipeline.h"
 #include "src/framework/pipeline/podbuffer.h"
 #include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"

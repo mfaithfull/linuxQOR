@@ -30,6 +30,7 @@
 #include "src/qor/injection/typeregentry.h"
 #include "src/qor/reference/newref.h"
 #include "asyncioservice.h"
+#include "iocpinitiator.h"
 
 qor::Module& ThisModule(void)
 {
@@ -38,8 +39,8 @@ qor::Module& ThisModule(void)
 
 	//Register the Windows specific implementations
 	static qor::TypeRegEntry< qor::nswindows::framework::AsyncIOService, qor::framework::AsyncIOService > regAsyncIOService;
-	//static qor::TypeRegEntry< qor::nswindows::framework::IOUringEventProcessor, qor::framework::AsyncIOEventProcessor > regAsyncIOEventProcessor;
-	//static qor::TypeRegEntry< qor::nswindows::framework::IOUringInitiator, qor::framework::AsyncIOInitiator > regAsyncIOInitiator;
+	static qor::TypeRegEntry< qor::nswindows::framework::IOCPEventProcessor, qor::framework::AsyncIOEventProcessor > regAsyncIOEventProcessor;
+	static qor::TypeRegEntry< qor::nswindows::framework::IOCPInitiator, qor::framework::AsyncIOInitiator > regAsyncIOInitiator;
 
 	return QORModule;
 }

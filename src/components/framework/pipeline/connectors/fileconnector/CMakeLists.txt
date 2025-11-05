@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-add_library(qor_fileconnector SHARED qor_fileconnector.cpp fileconnector.cpp)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
-endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-endif()
+set(target qor_fileconnector)
 
-target_compile_definitions(qor_fileconnector PRIVATE -DQOR_FILECONNECTOR)
-target_link_libraries(qor_fileconnector qor_module qor_datastructures qor_objectcontext qor_signals qor_pipeline qor_filesystem)
+add_library(${target} SHARED qor_fileconnector.cpp fileconnector.cpp)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+
+target_compile_definitions(${target} PRIVATE -DQOR_FILECONNECTOR)
+target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_signals qor_pipeline qor_filesystem)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

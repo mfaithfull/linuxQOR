@@ -31,8 +31,8 @@
 #include "src/framework/asyncioservice/asyncioeventprocessor.h"
 
 qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOService)
-//qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOEventProcessor)
-//qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOInitiator)
+qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOEventProcessor)
+qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOInitiator)
 
 namespace qor{ namespace nswindows{ namespace framework{
 

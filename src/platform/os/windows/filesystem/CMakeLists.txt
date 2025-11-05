@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-add_library(winqor_filesystem SHARED winqor_filesystem.cpp filesystem.cpp filestat.cpp file.cpp)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fno-threadsafe-statics -fvisibility=hidden")
-endif()
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-endif()
-target_compile_definitions(winqor_filesystem PRIVATE -DQOR_WINDOWSFILESYSTEM)
-target_link_libraries(winqor_filesystem qor_module qor_host qor_datastructures qor_objectcontext qor_injection qor_filesystem)
+set(target winqor_filesystem)
+
+add_library(${target} SHARED winqor_filesystem.cpp filesystem.cpp filestat.cpp file.cpp)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+
+target_compile_definitions(${target} PRIVATE -DQOR_WINDOWSFILESYSTEM)
+target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_injection qor_filesystem)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
