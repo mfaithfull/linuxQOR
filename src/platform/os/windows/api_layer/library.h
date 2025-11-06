@@ -22,22 +22,65 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "console.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#include <excpt.h>
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Console Module",
-		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+namespace qor { namespace nswindows { namespace api {
 
-	//Register the Windows specific implementation of IConsole
-	static qor::TypeRegEntry< qor::nswindows::Console, qor::components::IConsole> reg;
-	return QORModule;
-}
+	class Library
+	{
+	public:
+
+		typedef int(*DefProc)(void);//Default procedure pointer type
+
+		static unsigned long StructuredExceptionFilterFunction(unsigned long exceptionCode)
+		{
+			return EXCEPTION_EXECUTE_HANDLER;
+		}
+
+		static void StructuredExceptionHandler()
+		{
+		}
+
+		template< typename ret, class ...MethodArgs >
+		static ret Call(const DefProc pProc, MethodArgs... args)
+		{
+			typedef ret(*fPtr)(MethodArgs...);
+
+			fPtr FP = reinterpret_cast<fPtr>(pProc);
+
+			if (FP == nullptr)
+			{
+				throw("Missing library function.");
+			}
+			__try
+			{
+				return (FP)(std::forward< MethodArgs >(args)...);
+			}
+			__except(StructuredExceptionFilterFunction(GetExceptionCode()))
+			{
+				StructuredExceptionHandler();
+			}
+			ret _{};
+			return _;
+		}
+
+		template< class ...MethodArgs  >
+		static void voidCall(const DefProc pProc, MethodArgs... args)
+		{
+			typedef void(*fPtr)(MethodArgs...);
+
+			fPtr FP = reinterpret_cast<fPtr>(pProc);
+
+			if (FP != nullptr)
+			{
+				(FP)(std::forward< MethodArgs >(args)...);
+			}
+			else
+			{
+				throw("Missing library function.");
+			}
+		}
+
+	};
+
+}}}//qor::nswindows::api

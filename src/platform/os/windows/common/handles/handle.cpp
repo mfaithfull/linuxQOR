@@ -27,11 +27,11 @@
 #include "src/qor/error/error.h"
 
 #include "src/platform/os/windows/common/constants.h"
-#include "src/platform/os/windows/winqapi/kernel/kernel32.h"
+#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-using namespace qor::winapi;
+using namespace qor::nswindows::api;
 
-namespace qor { namespace nsWindows {
+namespace qor { namespace nswindows {
 
 	Handle::Handle() : m_h(Invalid_Handle_Value), m_needsClose(false) {}
 	
@@ -187,4 +187,4 @@ namespace qor { namespace nsWindows {
 		return nullptr;
 	}
 
-}}//qor::nsWindows
+}}//qor::nswindows

@@ -27,7 +27,7 @@
 
 #include "handle.h"
 
-namespace qor { namespace nsWindows {
+namespace qor { namespace nswindows {
 
 		template< class T >
 		class TypedHandle : public Handle
@@ -119,6 +119,6 @@ namespace qor { namespace nsWindows {
 		};
 
 	}
-}//qor::nsWindows
+}//qor::nswindows
 
 #endif//QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_TYPED_HANDLE

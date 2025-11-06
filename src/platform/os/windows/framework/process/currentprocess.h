@@ -32,7 +32,7 @@ namespace qor{
     bool qor_pp_module_interface(QOR_WINDOWSPROCESS) ImplementsICurrentProcess();
 }
 
-namespace qor{ namespace nsWindows{ namespace framework{
+namespace qor{ namespace nswindows{ namespace framework{
 
     class qor_pp_module_interface(QOR_WINDOWSPROCESS) CurrentProcess : public qor::framework::ICurrentProcess
     {
@@ -48,6 +48,6 @@ namespace qor{ namespace nsWindows{ namespace framework{
         
     };
 
-}}}//qor::nsWindows::framework
+}}}//qor::nswindows::framework
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_PROCESS

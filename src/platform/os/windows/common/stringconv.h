@@ -22,22 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "console.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#ifndef QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_STRINGCONV
+#define QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_STRINGCONV
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Console Module",
-		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#include <string>
 
-	//Register the Windows specific implementation of IConsole
-	static qor::TypeRegEntry< qor::nswindows::Console, qor::components::IConsole> reg;
-	return QORModule;
-}
+namespace qor { namespace nswindows {
+
+#if ( qor_pp_unicode )
+
+	qor_pp_module_interface(QOR_WINCOMMON) std::wstring to_tstring(const char* data);
+#else
+    qor_pp_module_interface(QOR_WINCOMMON) std::string to_tstring(const char* source);
+#endif
+
+}}//qor::nswindows
+
+#endif//QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_STRINGCONV

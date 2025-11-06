@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_HANDLE_HANDLE
 #define QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_HANDLE_HANDLE
 
-namespace qor { namespace nsWindows {
+namespace qor { namespace nswindows {
 
 	//class over a Windows Handle
 	class qor_pp_module_interface(QOR_WINCOMMON) Handle
@@ -82,6 +82,6 @@ namespace qor { namespace nsWindows {
 		bool m_needsClose;
 	};
 
-}}//qor::nsWindows
+}}//qor::nswindows
 
 #endif//QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_HANDLE_HANDLE

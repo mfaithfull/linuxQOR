@@ -30,6 +30,7 @@
 #ifndef QOR_PP_H_CONFIGURATION
 #define QOR_PP_H_CONFIGURATION
 
+#define qor_pp_unicode 1
 #include <string>
 
 #include "../platform/os/systems.h"

@@ -87,7 +87,7 @@ target_link_libraries(QORTest qor_compiler qor_host qor_datastructures qor_objec
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
-qor_winapi winqor_filesystem winq_thread winq_process winq_console winq_common qor_stdfstreamconnector 
+winqor_api_kernel winqor_api_winsock2 winqor_filesystem winqor_thread winqor_process winqor_console winqor_common qor_stdfstreamconnector 
 qor_stdifstreamsource qor_stdofstreamsink qor_sockets
 qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter winqor_sockets) 
 endif()

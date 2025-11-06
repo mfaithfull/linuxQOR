@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
+add_subdirectory(api_layer)
 add_subdirectory(sharedbootstrap)
 add_subdirectory(framework)
-add_subdirectory(winqapi)
 add_subdirectory(components)
 add_subdirectory(common)
 add_subdirectory(filesystem)
+

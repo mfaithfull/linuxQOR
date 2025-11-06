@@ -44,7 +44,7 @@ namespace qor{
     }
 }
 
-namespace qor{ namespace nsWindows{ namespace framework{
+namespace qor{ namespace nswindows{ namespace framework{
 
     bool CurrentThread::SetPriority(ICurrentThread::Priority priority)
     {
@@ -191,4 +191,4 @@ namespace qor{ namespace nsWindows{ namespace framework{
         return affinity;
     }
 
-}}}//qor::nsWindows::framework
+}}}//qor::nswindows::framework

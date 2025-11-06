@@ -28,12 +28,12 @@
 
 #define Invalid_Handle_Value ((void* const)(size_t)(-1))
 
-namespace qor{ namespace nsWindows {
+namespace qor{ namespace nswindows {
 
 	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
 	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
 	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
 
-}}//qor::nsWindows
+}}//qor::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS

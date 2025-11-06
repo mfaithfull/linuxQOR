@@ -29,10 +29,10 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
-#include "../common/wqreturncheck.h"
-#include "../common/wqlibrary.h"
+#include "../returncheck.h"
+#include "../library.h"
 
-namespace qor { namespace winapi {
+namespace qor { namespace nswindows { namespace api {
 
 	BOOL Kernel32::AddConsoleAlias(LPTSTR Source, LPTSTR Target, LPTSTR ExeName)
 	{
@@ -46,7 +46,7 @@ namespace qor { namespace winapi {
 		qor_pp_unref(ExeName);
 		qor_pp_unref(Target);
 		qor_pp_unref(Source);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "AddConsoleAlias", "Windows XP" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "AddConsoleAlias", "Windows XP" );
 #	endif
 		return bResult;
 	}
@@ -66,7 +66,7 @@ namespace qor { namespace winapi {
 		bResult = ::AttachConsole(dwProcessId);
 #	else
 		qor_pp_unref(dwProcessId);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "AttachConsole", "Windows XP" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "AttachConsole", "Windows XP" );
 #	endif
 		return bResult;
 	}
@@ -127,7 +127,7 @@ namespace qor { namespace winapi {
 		qor_pp_unref(TargetBufferLength);
 		qor_pp_unref(lpTargetBuffer);
 		qor_pp_unref(lpSource);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAlias", "Windows XP" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAlias", "Windows XP" );
 #	endif
 		return dwResult;
 	}
@@ -143,7 +143,7 @@ namespace qor { namespace winapi {
 		qor_pp_unref(lpExeName);
 		qor_pp_unref(AliasBufferLength);
 		qor_pp_unref(lpAliasBuffer);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAliases", "Windows XP" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAliases", "Windows XP" );
 #	endif
 		return dwResult;
 	}
@@ -158,7 +158,7 @@ namespace qor { namespace winapi {
 		//dwResult = ::GetConsoleAliasesLength( lpExeName );
 #	else
 		qor_pp_unref(lpExeName);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAliasesLength", "Windows XP" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAliasesLength", "Windows XP" );
 #	endif
 		return dwResult;
 	}
@@ -173,7 +173,7 @@ namespace qor { namespace winapi {
 #	else
 		qor_pp_unref(ExeNameBufferLength);
 		qor_pp_unref(lpExeNameBuffer);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAliasExes", "Windows XP" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAliasExes", "Windows XP" );
 #	endif
 		return dwResult;
 	}
@@ -186,7 +186,7 @@ namespace qor { namespace winapi {
 		qor_pp_useswinapi( kernel32,GetConsoleAliasExesLength);
 		dwResult = Library::Call< DWORD >(pFunc);
 #	else
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAliasExesLength", "Windows XP" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleAliasExesLength", "Windows XP" );
 #	endif
 		return dwResult;
 	}
@@ -212,7 +212,7 @@ namespace qor { namespace winapi {
 		bResult = ::GetConsoleDisplayMode(lpModeFlags);
 #	else
 		qor_pp_unref(lpModeFlags);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleDisplayMode", "Windows XP" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleDisplayMode", "Windows XP" );
 #	endif
 		return bResult;
 	}
@@ -226,12 +226,12 @@ namespace qor { namespace winapi {
 		Result = Library::Call< COORD, HANDLE, DWORD >(pFunc, hConsoleOutput, nFont);
 		if (Result.X == 0 && Result.Y == 0)
 		{
-			continuable(_TXT("Windows API error: No data returned"));
+			continuable("Windows API error: No data returned");
 		}
 #	else
 		qor_pp_unref(nFont);
 		qor_pp_unref(hConsoleOutput);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleFontSize", "Windows XP" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleFontSize", "Windows XP" );
 #	endif
 		return Result;
 	}
@@ -245,7 +245,7 @@ namespace qor { namespace winapi {
 		bResult = Library::Call< BOOL, ::PCONSOLE_HISTORY_INFO >(pFunc, lpConsoleHistoryInfo);
 #	else
 		qor_pp_unref(lpConsoleHistoryInfo);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("GetConsoleHistoryInfo", "Windows Vista" );
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("GetConsoleHistoryInfo", "Windows Vista" );
 #	endif
 		return bResult;
 	}
@@ -270,17 +270,17 @@ namespace qor { namespace winapi {
 			DWORD dwError = Kernel32::GetLastError();
 			if (dwError == ERROR_SUCCESS)
 			{
-				continuable(_TXT("Windows API Buffer not big enough"));
+				continuable("Windows API Buffer not big enough");
 			}
 			else
 			{
-				continuable(_TXT("Windows API error"));
+				continuable("Windows API error");
 			}
 		}
 #	else
 		qor_pp_unref(nSize);
 		qor_pp_unref(lpConsoleTitle);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( APIName.c_str(), _T("Windows Vista"), 0));
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( APIName.c_str(), _T("Windows Vista"), 0));
 #	endif
 		return dwResult;
 	}
@@ -300,7 +300,7 @@ namespace qor { namespace winapi {
 #	else
 		qor_pp_unref(dwProcessCount);
 		qor_pp_unref(lpdwProcessList);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleProcessList", "Windows XP");
+		continuable("Windows API error:");//<error::CWindowsAPIRequiresVersion>( "GetConsoleProcessList", "Windows XP");
 #	endif
 		return dwResult;
 	}
@@ -330,7 +330,7 @@ namespace qor { namespace winapi {
 		bResult = Library::Call< BOOL, ::PCONSOLE_SELECTION_INFO >(pFunc, lpConsoleSelectionInfo);
 #	else
 		qor_pp_unref(lpConsoleSelectionInfo);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("GetConsoleSelectionInfo", "Windows 2000");
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("GetConsoleSelectionInfo", "Windows 2000");
 #	endif
 		return bResult;
 	}
@@ -344,11 +344,11 @@ namespace qor { namespace winapi {
 			DWORD dwError = Kernel32::GetLastError();
 			if (dwError == ERROR_SUCCESS)
 			{
-				continuable(_TXT("Windows API Buffer not big enough"));
+				continuable("Windows API Buffer not big enough");
 			}
 			else
 			{
-				continuable(_TXT("Windows API error"));
+				continuable("Windows API error");
 			}
 		}
 		return dwResult;
@@ -361,7 +361,7 @@ namespace qor { namespace winapi {
 #	if ( _WIN32_WINNT >= 0x0500 )
 		hWnd = ::GetConsoleWindow();
 #	else
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleWindow", "Windows 2000");
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetConsoleWindow", "Windows 2000");
 #	endif
 		return hWnd;
 	}
@@ -377,7 +377,7 @@ namespace qor { namespace winapi {
 		qor_pp_unref(lpConsoleCurrentFont);
 		qor_pp_unref(bMaximumWindow);
 		qor_pp_unref(hConsoleOutput);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetCurrentConsoleFont", "Windows 2000");
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetCurrentConsoleFont", "Windows 2000");
 #	endif
 		return bResult;
 	}
@@ -393,7 +393,7 @@ namespace qor { namespace winapi {
 		qor_pp_unref(lpConsoleCurrentFontEx);
 		qor_pp_unref(bMaximumWindow);
 		qor_pp_unref(hConsoleOutput);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetCurrentConsoleFontEx", "Windows Vista");
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "GetCurrentConsoleFontEx", "Windows Vista");
 #	endif
 		return bResult;
 	}
@@ -405,7 +405,7 @@ namespace qor { namespace winapi {
 		Result = ::GetLargestConsoleWindowSize(hConsoleOutput);
 		if (Result.X == 0 && Result.Y == 0)
 		{
-			continuable(_TXT("Windows API error: No data returned"));
+			continuable("Windows API error: No data returned");
 		}
 		return Result;
 	}
@@ -430,12 +430,12 @@ namespace qor { namespace winapi {
 		HANDLE h = ::GetStdHandle(nStdHandle);
 		if (h == INVALID_HANDLE_VALUE)
 		{
-			continuable(_TXT("Windows API error: No data returned"));
+			continuable("Windows API error: No data returned");
 		}
 #ifndef _WINDOWS	//It's normal for this to fail if there is no Console
 		else if (h == 0 && (nStdHandle != (unsigned long)-11))
 		{
-			continuable(_TXT("Windows API error: No data returned"));
+			continuable("Windows API error: No data returned");
 		}
 #endif
 		return h;
@@ -542,7 +542,7 @@ namespace qor { namespace winapi {
 		qor_pp_unref(lpNewScreenBufferDimensions);
 		qor_pp_unref(dwFlags);
 		qor_pp_unref(hConsoleOutput);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "SetConsoleDisplayMode", "Windows XP");
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "SetConsoleDisplayMode", "Windows XP");
 #	endif
 		return bResult;
 	}
@@ -556,7 +556,7 @@ namespace qor { namespace winapi {
 		bResult = Library::Call< BOOL, ::PCONSOLE_HISTORY_INFO >(pFunc, lpConsoleHistoryInfo);
 #	else
 		qor_pp_unref(lpConsoleHistoryInfo);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "SetConsoleHistoryInfo", "Windows Vista");
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "SetConsoleHistoryInfo", "Windows Vista");
 #	endif
 		return bResult;
 	}
@@ -578,7 +578,7 @@ namespace qor { namespace winapi {
 #	else
 		qor_pp_unref(lpConsoleScreenBufferInfoEx);
 		qor_pp_unref(hConsoleOutput);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "SetConsoleScreenBufferInfoEx", "Windows Vista");
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>( "SetConsoleScreenBufferInfoEx", "Windows Vista");
 #	endif
 		return bResult;
 	}
@@ -622,7 +622,7 @@ namespace qor { namespace winapi {
 		qor_pp_unref(lpConsoleCurrentFontEx);
 		qor_pp_unref(bMaximumWindow);
 		qor_pp_unref(hConsoleOutput);
-		continuable(_TXT("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("SetCurrentConsoleFontEx", "Windows Vista");
+		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("SetCurrentConsoleFontEx", "Windows Vista");
 #	endif
 		return bResult;
 	}
@@ -689,4 +689,4 @@ namespace qor { namespace winapi {
 		return dwResult;
 	}
 
-}}//qor::winqapi
+}}}//qor::nswindows::api

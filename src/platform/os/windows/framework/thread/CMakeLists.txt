@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-set(target winq_thread)
+set(target winqor_thread)
 
 add_library(${target} SHARED winq_thread.cpp currentthread.cpp)
 

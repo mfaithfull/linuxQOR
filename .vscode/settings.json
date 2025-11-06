@@ -102,6 +102,8 @@
         "executor": "cpp",
         "io_context": "cpp",
         "netfwd": "cpp",
-        "socket": "cpp"
+        "socket": "cpp",
+        "resumable": "cpp",
+        "source_location": "cpp"
     }
 }

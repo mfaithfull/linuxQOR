@@ -32,6 +32,7 @@
 #include "src/qor/reference/newref.h"
 #include "src/platform/network/windows/sockets.h"
 #include "src/platform/network/windows/socket.h"
+#include "src/qor/error/error.h"
 
 qor_pp_module_provide(WINQOR_SOCKETS,Sockets)
 
@@ -67,6 +68,25 @@ namespace qor{ namespace nswindows{
     {
         ref_of<network::Socket>::type socket = new_ref<Socket>(AF, Type, Protocol).AsRef<network::Socket>();
         return socket;
+    }
+
+    void Sockets::Setup()
+    {
+        WORD wVersionRequested;
+        WSADATA wsaData;
+        int err;        
+        wVersionRequested = MAKEWORD(2, 2);
+
+        err = WSAStartup(wVersionRequested, &wsaData);
+        if (err != 0) 
+        {
+            serious("Could not find a suitable Windows sockets library.");
+        }
+    }
+
+    void Sockets::Shutdown()
+    {
+        int err = WSACleanup();
     }
 
     int Sockets::GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results) const

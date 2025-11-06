@@ -29,12 +29,13 @@
 #include "consolehelper.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
-#include "src/platform/os/windows/winqapi/kernel/kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
+#include "src/platform/os/windows/api_layer/kernel/kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
+#include "src/platform/os/windows/common/stringconv.h"
 #include "src/platform/os/windows/common/constants.h"
 
-using namespace qor::winapi;
+using namespace qor::nswindows::api;
 
-namespace qor { namespace nsWindows {
+namespace qor { namespace nswindows {
 
 	ConsoleHelper::ConsoleHelper()
 	{
@@ -52,7 +53,7 @@ namespace qor { namespace nsWindows {
 		bool result = false;
 		try
 		{
-			result = Kernel32::AddConsoleAlias(source.data(), target.data(), exeName.data());
+			result = Kernel32::AddConsoleAlias(to_tstring(source.c_str()).data(), to_tstring(target.c_str()).data(), to_tstring(exeName.c_str()).data());
 		}
 		catch (const Error& error)
 		{
@@ -147,7 +148,7 @@ namespace qor { namespace nsWindows {
 		unsigned long result = 0;
 		try
 		{
-			result = Kernel32::GetConsoleAlias(source.data(), target.data(), static_cast<DWORD>(target.size()), exeName.data());
+			result = Kernel32::GetConsoleAlias(to_tstring(source.c_str()).data(), to_tstring(target.c_str()).data(), static_cast<DWORD>(target.size()), to_tstring(exeName.c_str()).data());
 		}
 		catch (const Error& error)
 		{
@@ -166,7 +167,7 @@ namespace qor { namespace nsWindows {
 		unsigned long result = 0;
 		try
 		{
-			result = Kernel32::GetConsoleAliases(aliases.data(), static_cast<DWORD>(aliases.size()), exeName.data());
+			result = Kernel32::GetConsoleAliases(to_tstring(aliases.c_str()).data(), static_cast<DWORD>(aliases.size()), to_tstring(exeName.c_str()).data());
 		}
 		catch (const Error& error)
 		{
@@ -185,7 +186,7 @@ namespace qor { namespace nsWindows {
 		unsigned long result = 0;
 		try
 		{
-			result = Kernel32::GetConsoleAliasesLength(exeName.data());
+			result = Kernel32::GetConsoleAliasesLength(to_tstring(exeName.c_str()).data());
 		}
 		catch (const Error& error)
 		{
@@ -204,7 +205,7 @@ namespace qor { namespace nsWindows {
 		unsigned long result = 0;
 		try
 		{
-			result = Kernel32::GetConsoleAliasExes(nameBuffer.data(), static_cast<DWORD>(nameBuffer.size()));
+			result = Kernel32::GetConsoleAliasExes(to_tstring(nameBuffer.c_str()).data(), static_cast<DWORD>(nameBuffer.size()));
 		}
 		catch (const Error& error)
 		{
@@ -283,7 +284,7 @@ namespace qor { namespace nsWindows {
 		unsigned long result = 0;
 		try
 		{
-			result = Kernel32::GetConsoleOriginalTitle(consoleTitle.data(), static_cast<DWORD>(consoleTitle.size()));
+			result = Kernel32::GetConsoleOriginalTitle(to_tstring(consoleTitle.c_str()).data(), static_cast<DWORD>(consoleTitle.size()));
 		}
 		catch (const Error& error)
 		{
@@ -308,7 +309,7 @@ namespace qor { namespace nsWindows {
 		unsigned long result = 0;
 		try
 		{
-			result = Kernel32::GetConsoleTitle(consoleTitle.data(), static_cast<DWORD>(consoleTitle.size()));
+			result = Kernel32::GetConsoleTitle(to_tstring(consoleTitle.c_str()).data(), static_cast<DWORD>(consoleTitle.size()));
 		}
 		catch (const Error& error)
 		{
@@ -411,7 +412,7 @@ namespace qor { namespace nsWindows {
 		bool result = false;
 		try
 		{
-			result = Kernel32::SetConsoleTitle(consoleTitle.c_str());
+			result = Kernel32::SetConsoleTitle(to_tstring(consoleTitle.c_str()).c_str());
 		}
 		catch (const Error& error)
 		{

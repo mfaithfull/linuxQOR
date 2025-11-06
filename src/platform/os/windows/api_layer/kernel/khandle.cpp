@@ -29,10 +29,10 @@
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
-#include "../common/wqreturncheck.h"
-#include "../common/wqlibrary.h"
+#include "../returncheck.h"
+#include "../library.h"
 
-namespace qor {namespace winapi {
+namespace qor { namespace nswindows { namespace api {
 
 	BOOL Kernel32::CloseHandle(HANDLE hObject)
 	{
@@ -41,7 +41,6 @@ namespace qor {namespace winapi {
 		return bResult;
 	}
 
-	//--------------------------------------------------------------------------------
 	BOOL Kernel32::DuplicateHandle(HANDLE hSourceProcessHandle, HANDLE hSourceHandle, HANDLE hTargetProcessHandle, LPHANDLE lpTargetHandle, DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwOptions)
 	{
 		qor_pp_fcontext;
@@ -49,7 +48,6 @@ namespace qor {namespace winapi {
 		return bResult;
 	}
 
-	//--------------------------------------------------------------------------------
 	BOOL Kernel32::GetHandleInformation(HANDLE hObject, LPDWORD lpdwFlags)
 	{
 		qor_pp_fcontext;
@@ -57,7 +55,6 @@ namespace qor {namespace winapi {
 		return bResult;
 	}
 
-	//--------------------------------------------------------------------------------
 	BOOL Kernel32::SetHandleInformation(HANDLE hObject, DWORD dwMask, DWORD dwFlags)
 	{
 		qor_pp_fcontext;
@@ -65,5 +62,4 @@ namespace qor {namespace winapi {
 		return bResult;
 	}
 
-
-}}//qor::winapi
+}}}//qor::nswindows::api

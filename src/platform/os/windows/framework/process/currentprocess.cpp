@@ -41,7 +41,7 @@ namespace qor {
     }
 }
 
-namespace qor{ namespace nsWindows{ namespace framework{
+namespace qor{ namespace nswindows{ namespace framework{
 
     std::optional<std::vector<bool>> CurrentProcess::GetAffinity()
     {
@@ -133,4 +133,4 @@ namespace qor{ namespace nsWindows{ namespace framework{
         return SetPriorityClass(GetCurrentProcess(), OSPriority) != 0;
     }
 
-}}}//qor::nsWindows::framework
+}}}//qor::nswindows::framework

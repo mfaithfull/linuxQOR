@@ -23,11 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 //Defines the entry point for a DLL.
-#include "../../../../configuration/configuration.h"
+#include "src/configuration/configuration.h"
 
 #if( qor_pp_os_target == qor_pp_os_windows)
 
-#include "../../../../qor/module/module.h"
+#include "src/qor/module/module.h"
 
 extern "C" __declspec(dllexport) int __stdcall DllMain(void* /*hModule*/, unsigned long ul_reason_for_call, void* /*lpReserved*/)
 {
@@ -48,7 +48,4 @@ extern "C" __declspec(dllexport) int __stdcall DllMain(void* /*hModule*/, unsign
 }
 
 #endif
-//[[nodiscard]] void* force_dllmain_import(void)
-//{
-//	return &DllMain;
-//}
+

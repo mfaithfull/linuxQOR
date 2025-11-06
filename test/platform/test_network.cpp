@@ -28,7 +28,7 @@
 #   include <arpa/inet.h>
 #endif
 #ifdef WIN32
-#   include <winsock.h>
+#   include <winsock2.h>
 #undef SetPort
 #undef min
 #undef max

@@ -23,12 +23,31 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows API Module",
-		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#include "ws2.h"
+#include "../kernel/kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
+#include "../library.h"
+#include "errorcheck.h"
 
-	return QORModule;
-}
+namespace qor { namespace nswindows { namespace api {
+
+    void WSALastErrorHandler()
+    {
+        int wsaLastError = WS2::WSAGetLastError();
+
+        wchar_t *s = NULL;
+        FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, wsaLastError, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&s, 0, NULL);
+
+        const int size = WideCharToMultiByte(CP_UTF8, 0, s, -1, nullptr, 0, nullptr, nullptr);
+        if (size == 0)
+        {
+            LocalFree(s);
+            return;
+        }
+        std::string errorDescription(static_cast<std::size_t>(size) - 1, 0);
+        const int result = WideCharToMultiByte(CP_UTF8, 0, s, -1, errorDescription.data(), size, nullptr, nullptr);
+        LocalFree(s);
+        continuable(errorDescription);
+    }
+
+}}}//qor::nswindows::api

@@ -29,10 +29,8 @@
 
 #include "src/platform/os/windows/common/handles/handle.h"
 
-//#include "src/components/console/iconsole.h"
-
-//This is edge of the nsWindows namespace. No Windows specific types are allowed here.
-namespace qor { namespace nsWindows {
+//This is edge of the nswindows namespace. No Windows specific types are allowed here.
+namespace qor { namespace nswindows {
 
 	struct Coord
 	{
@@ -109,6 +107,6 @@ namespace qor { namespace nsWindows {
 
 	};
 
-}}//qor::nsWindows
+}}//qor::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMPONENTS_CONSOLEHELPER

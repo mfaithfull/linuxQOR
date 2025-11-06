@@ -23,21 +23,32 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "console.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#include "stringconv.h"
+#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Console Module",
-		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+namespace qor { namespace nswindows {
 
-	//Register the Windows specific implementation of IConsole
-	static qor::TypeRegEntry< qor::nswindows::Console, qor::components::IConsole> reg;
-	return QORModule;
-}
+#if ( qor_pp_unicode )
+
+	qor_pp_export std::wstring to_tstring(const char* data)
+	{
+        const int size = MultiByteToWideChar(CP_UTF8, 0, data, -1, nullptr, 0);//TODO: route this call through a proper wrapper
+        if (size == 0)
+        {
+            return std::wstring(L"");
+        }
+        std::wstring wide(static_cast<std::size_t>(size), 0);
+        if (MultiByteToWideChar(CP_UTF8, 0, data, -1, wide.data(), size) == 0)//TODO: route this call through a proper wrapper
+        {
+            return std::wstring(L"");
+        }
+		return wide;
+	}
+#else
+	qor_pp_export std::string to_tstring(char* source)
+	{
+		return std::string(source);
+	}
+#endif
+
+}}//qor::nswindows

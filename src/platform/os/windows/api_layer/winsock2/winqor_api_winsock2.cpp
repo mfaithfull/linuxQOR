@@ -24,20 +24,11 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "console.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
 
 qor::Module& ThisModule(void)
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Console Module",
+	static qor::Module QORModule("Querysoft Open Runtime: Windows API Winsock2 Module",
 		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-	//Register the Windows specific implementation of IConsole
-	static qor::TypeRegEntry< qor::nswindows::Console, qor::components::IConsole> reg;
 	return QORModule;
 }

@@ -24,14 +24,15 @@
 
 #include "src/configuration/configuration.h"
 
+#include "src/framework/thread/thread.h"
+#include "socket.h"
+#include "src/platform/os/windows/framework/asyncioservice/asyncioservice.h"
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #undef SetPort
 #undef min
 #undef max
-#include "src/framework/thread/thread.h"
-#include "socket.h"
-#include "src/platform/os/windows/framework/asyncioservice/asyncioservice.h"
 
 using namespace qor::nswindows::framework;
 
@@ -39,17 +40,17 @@ namespace qor{ namespace nswindows{
 
     Socket::Socket()
     {
-        m_fd = network::Socket::Invalid_Socket;
+        m_handle = network::Socket::Invalid_Socket;
     }
 
     Socket::Socket(int sock)
     {
-        m_fd = sock;
+        m_handle = sock;
     }
 
     Socket::Socket(const Socket& src)
     {
-        //m_fd = ::fcntl(src.m_fd, F_DUPFD, 0);
+        m_handle = src.m_handle;
     }
 
     Socket::Socket(const network::sockets::eAddressFamily& AF, const network::sockets::eType& Type, const network::sockets::eProtocol& Protocol)
@@ -57,12 +58,14 @@ namespace qor{ namespace nswindows{
         int domain = AddressFamilyToWindows(AF);        
         int type = TypeToWindows(Type, AF == network::sockets::eAddressFamily::AF_Unix ? true : false);
         int protocol = ProtocolToWindows(Protocol);
-        //m_fd = ::socket(domain, type, protocol);
+        WSAPROTOCOL_INFO protocolInfo;
+        unsigned long flags = WSA_FLAG_OVERLAPPED;
+        m_handle = WSASocket(domain, type, protocol, nullptr, 0, flags);
     }
     
     Socket::~Socket()
     {
-        //::close(m_fd);
+        closesocket(m_handle);
     }
     
     int32_t Socket::Bind(const qor::framework::AsyncIOInterface& ioContext, const network::Address& Address)
@@ -93,12 +96,12 @@ namespace qor{ namespace nswindows{
         addr.sin_family = Address.sa_family;
         addr.sin_addr.s_addr = Address.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = Address.sa.IPAddress.sin_port;                
-        return ::bind(m_fd, (struct sockaddr *)&addr, 16);
+        return ::bind(m_handle, (struct sockaddr *)&addr, 16);
     }
 
     int32_t Socket::Listen(int32_t iBacklog)
     {
-        return ::listen(m_fd, iBacklog);
+        return ::listen(m_handle, iBacklog);
     }
  
     ref_of<network::Socket>::type Socket::Accept(network::Address& Address)
@@ -106,7 +109,7 @@ namespace qor{ namespace nswindows{
         ref_of<network::Socket>::type newsocket;
         sockaddr addr;
         socklen_t len = 0;
-        SOCKET iresult = ::accept(m_fd, &addr, &len);
+        SOCKET iresult = ::accept(m_handle, &addr, &len);
         if(iresult == -1)
         {
             //TODO:Raise error
@@ -133,24 +136,24 @@ namespace qor{ namespace nswindows{
     {
         sockaddr addr;
         socklen_t len;
-        return ::getpeername(m_fd, &addr, &len);
+        return ::getpeername(m_handle, &addr, &len);
     }
  
     int32_t Socket::GetSockName(network::Address& Address)
     {
         sockaddr addr;
         socklen_t len;
-        return ::getsockname(m_fd, &addr, &len);
+        return ::getsockname(m_handle, &addr, &len);
     }
  
     int32_t Socket::GetSockOpt(int32_t level, int32_t optname, char* optval, int32_t* len)
     {
-        return ::getsockopt(m_fd, level, optname, optval, (socklen_t*)&len);
+        return ::getsockopt(m_handle, level, optname, optval, (socklen_t*)&len);
     }
  
     int32_t Socket::SetSockOpt(int32_t level, int32_t optname, const char* optval, int32_t optlen)
     {
-        return ::setsockopt(m_fd, level, optname, optval, optlen);
+        return ::setsockopt(m_handle, level, optname, optval, optlen);
     }
  
     qor::framework::IOTask Socket::AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
@@ -160,12 +163,12 @@ namespace qor{ namespace nswindows{
  
     int32_t Socket::Receive(char* buf, int32_t len, int32_t flags)
     {
-        return ::recv(m_fd, buf, len, flags);
+        return ::recv(m_handle, buf, len, flags);
     }
 
     int32_t Socket::Peek(char* buf, int32_t len)
     {
-        return ::recv(m_fd, buf, len, MSG_PEEK);
+        return ::recv(m_handle, buf, len, MSG_PEEK);
     }
     
     int32_t Socket::ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, network::Address& From)
@@ -199,45 +202,45 @@ namespace qor{ namespace nswindows{
  
     int32_t Socket::Shutdown(network::sockets::eShutdown how)
     {
-        int iHow = 0;/*
-        iHow = ( how & network::sockets::eShutdown::ShutdownRead ) ? SHUT_RD : iHow;
-        iHow = ( how & network::sockets::eShutdown::ShutdownWrite ) ? SHUT_WR : iHow;
-        iHow = ( how & network::sockets::eShutdown::ShutdownReadWrite ) ? SHUT_RDWR : iHow;*/
-        return ::shutdown(m_fd, iHow);
+        int iHow = 0;
+        iHow = ( how & network::sockets::eShutdown::ShutdownRead ) ? SD_RECEIVE : iHow;
+        iHow = ( how & network::sockets::eShutdown::ShutdownWrite ) ? SD_SEND : iHow;
+        iHow = ( (how & network::sockets::eShutdown::ShutdownReadWrite) == 
+            network::sockets::eShutdown::ShutdownReadWrite) ? SD_BOTH : iHow;
+        return ::shutdown(m_handle, iHow);
     }
  
     std::size_t Socket::ID(void)
     {
-        return m_fd;
+        return m_handle;
     }
  
     int32_t Socket::GetLastError(void)
     {
-        return -1;
+        return WSAGetLastError();
     }
 
     bool Socket::SetNonBlocking(bool nonBlocking)
     {
-        //auto flags = ::fcntl(m_fd, F_GETFL, 0);
-        return false;//fcntl(m_fd, F_SETFL, nonBlocking ? (flags | O_NONBLOCK) : (flags & (~O_NONBLOCK))) == 0 ? true : false;
+        u_long mode = 1;  // 1 to enable non-blocking socket
+        return ioctlsocket(m_handle, FIONBIO, &mode) == 0 ? true : false;
     }
 
     bool Socket::IsAlive()
     {        
-        /*
-        const auto val = PollWaitForInput(0, 0);
-        if (val == 0) 
+        WSAPOLLFD fdArray[1];
+        fdArray[0] = {
+            .fd = m_handle,
+            .events = POLLIN | POLLOUT,
+            .revents = 0,
+        };
+
+        int result = WSAPoll(fdArray,1,0);
+        if (result > 0) 
         {
             return true;
         } 
-        else if (val < 0 && errno == EBADF) 
-        {
-            return false;
-        }
-        char buf[1];
-        return ::recv(m_fd,&buf[0], sizeof(buf),MSG_PEEK) > 0;
-        */
-       return false;
+        return false;
     }
 
     bool Socket::SetRecvTimeout(time_t readTimeoutSec, time_t readTimeoutuSec)
@@ -260,11 +263,9 @@ namespace qor{ namespace nswindows{
 
     bool Socket::SetTCPNoDelay(bool nodelay)
     {
-        /*
         int noDelayOpt = nodelay ? 1 : 0;
-        return SetSockOpt(SOL_TCP, TCP_NODELAY, (const char*)&noDelayOpt, sizeof(int)) == 0;
-        */
-       return false;
+        return SetSockOpt(IPPROTO_TCP, TCP_NODELAY, (const char*)&noDelayOpt, sizeof(int)) == 0;
+        return false;
     }
 
     bool Socket::SetIPv6Only(bool ipv6Only)
