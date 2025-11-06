@@ -52,8 +52,7 @@ public:
 
 };
 
-namespace qor{
-    qor_pp_declare_instancer_of(EchoServerApp, SingletonInstancer);
-}
+namespace qor{ qor_pp_declare_instancer_of(EchoServerApp, SingletonInstancer); }
 
 #endif//QOR_PP_H_EXAMPLES_ECHOSERVER_APP
+

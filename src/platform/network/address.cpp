@@ -31,6 +31,10 @@
 #undef SetPort
 #endif
 
+#if(qor_pp_os_target == qor_pp_os_linux)
+#   include <arpa/inet.h>
+#endif
+
 namespace qor{ namespace network{
 
     Address::Address()

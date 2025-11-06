@@ -40,3 +40,4 @@ int EchoProtocol::Run(void)
     m_copyFilter.PumpSome(unitsPumped, maxEchoSize);
     return unitsPumped;
 }
+
