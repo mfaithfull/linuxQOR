@@ -42,6 +42,7 @@ namespace qor { namespace framework{
         virtual ~AsyncIOInterface() = default;
 
         virtual inline IOTask Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const = 0;
+        virtual inline IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
         virtual inline IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
         virtual inline IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog) const = 0;
         virtual inline IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const = 0;

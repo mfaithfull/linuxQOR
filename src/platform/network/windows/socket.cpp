@@ -155,7 +155,7 @@ namespace qor{ namespace network{ namespace nswindows{
  
     qor::framework::IOTask Socket::AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
     {
-        return ioContext.Read(this, (byte*)pBuffer, iLen);
+        return ioContext.Recv(this, (byte*)pBuffer, iLen);
     }
  
     int32_t Socket::Receive(char* buf, int32_t len, int32_t flags)

@@ -102,7 +102,7 @@ namespace qor { namespace framework { namespace nswindows {
         {
             sockaddr addr;
             int len = 0;
-            co_await m_eventProcessor->Schedule();
+            //co_await m_eventProcessor->Schedule();
             int status = co_await SocketAcceptOperation(ioDescriptor, new_socket);
 
             co_return qor::framework::AsyncIOResult{

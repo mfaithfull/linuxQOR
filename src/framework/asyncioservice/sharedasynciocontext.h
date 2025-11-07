@@ -68,6 +68,11 @@ namespace qor { namespace framework{
                 return m_sharedContext.m_context->Send(ioDescriptor, buffer, len, flags);
             }
 
+            virtual inline IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+            {
+                return m_sharedContext.m_context->Recv(ioDescriptor, buffer, len);
+            }
+
             virtual inline IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
             {
                 return m_sharedContext.m_context->Read(ioDescriptor, buffer, len);

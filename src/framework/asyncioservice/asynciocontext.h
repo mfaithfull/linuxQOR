@@ -55,6 +55,11 @@ namespace qor { namespace framework{
             return m_initiator->Send(ioDescriptor, buffer, len, flags);
         }
 
+        virtual inline IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        {
+            return m_initiator->Recv(ioDescriptor, buffer, len);
+        }
+
         virtual inline IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
         {
             return m_initiator->Read(ioDescriptor, buffer, len);

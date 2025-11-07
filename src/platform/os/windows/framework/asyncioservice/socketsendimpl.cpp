@@ -41,7 +41,7 @@ namespace qor { namespace framework { namespace nswindows {
 		// it may be possible that the operation will complete immediately
 		// on another thread and then destroy the socket before we get a
 		// chance to read it.
-		const bool skipCompletionOnSuccess = true;//TODO: m_socket.skip_completion_on_success();
+		const bool skipCompletionOnSuccess = false;//TODO: m_socket.skip_completion_on_success();
 
 		DWORD numberOfBytesSent = 0;
 		int result = ::WSASend(
