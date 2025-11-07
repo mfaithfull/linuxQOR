@@ -34,7 +34,7 @@
 //Export this trivial function so the linker will pull in this library to fulfil the ImplementsIFile requirement.
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFile() { return true; } }//qor
 
-namespace qor{ namespace nswindows{    
+namespace qor{ namespace platform { namespace nswindows{    
 
     File::File(){}
     
@@ -205,4 +205,4 @@ namespace qor{ namespace nswindows{
     {
     }
     
-}}//qor::nslinux
+}}}//qor::platform::nswindows

@@ -30,14 +30,6 @@
 
 qor_pp_module_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOEventProcessor)
 
-namespace qor {
-    namespace nswindows {
-        namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
-            int IOCPEventProcessor::Event()
-            {
-                return 0;
-            }
-        }
-    }
-}//qor::nswindows::framework
+}}}//qor::framework::nswindows

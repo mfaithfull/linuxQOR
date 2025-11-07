@@ -66,7 +66,7 @@ namespace qor { namespace nswindows { namespace api {
 		
 		virtual bool Test(TNumeric& value)
 		{
-			return (value == 0) ? false : true;
+			return (value == 0) ? true : false;
 		}
 
 		virtual void DefaultInit(TNumeric& value)
@@ -117,6 +117,5 @@ namespace qor { namespace nswindows { namespace api {
 		}
 
 	};
-
 
 }}}//qor:nswindows::api

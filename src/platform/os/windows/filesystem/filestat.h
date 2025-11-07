@@ -32,7 +32,7 @@ namespace qor
     bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileStat();//Declaration must match the one in src/system/filesystem/filestat.h
 }
 
-namespace qor{ namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{
 
     class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileStat : public qor::platform::IFileStat
     {
@@ -53,6 +53,6 @@ namespace qor{ namespace nswindows{
         bool m_IsValid;
     };
 
-}}//qor::nswindows
+}}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_PLATFORM_WINDOWS_FILESYSTEM_FILESTAT

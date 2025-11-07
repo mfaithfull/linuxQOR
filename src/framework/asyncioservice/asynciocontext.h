@@ -48,6 +48,8 @@ namespace qor { namespace framework{
         virtual void Inflate();
         virtual void Deflate();
 
+        virtual bool Enroll(platform::IODescriptor& ioDescriptor) const;
+
         virtual inline IOTask Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
         {
             return m_initiator->Send(ioDescriptor, buffer, len, flags);

@@ -27,7 +27,7 @@
 
 #include <string>
 
-namespace qor { namespace nswindows {
+namespace qor { namespace platform { namespace nswindows {
 
 #if ( qor_pp_unicode )
 
@@ -36,6 +36,6 @@ namespace qor { namespace nswindows {
     qor_pp_module_interface(QOR_WINCOMMON) std::string to_tstring(const char* source);
 #endif
 
-}}//qor::nswindows
+}}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_STRINGCONV

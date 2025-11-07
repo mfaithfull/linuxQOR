@@ -22,30 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_READOP
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_READOP
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/interception/functioncontext.h"
+#include "src/qor/error/error.h"
 
-#include <system_error>
-#include <coroutine>
-#include "iocpawaiter.h"
+//Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
+#include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
+#include "../returncheck.h"
+#include "../library.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace nswindows { namespace api {
 
-    class ReadOperation
+    DWORD Kernel32::WaitForMultipleObjectsEx(DWORD nCount, const void**lpHandles, BOOL bWaitAll, DWORD dwMilliseconds, BOOL bAlertable)
     {
-    public:
+        qor_pp_fcontext;
 
-        ReadOperation(int fd, byte* buffer, int32_t len)
+        DWORD result = ::WaitForMultipleObjectsEx(nCount, (const HANDLE*)lpHandles, bWaitAll, dwMilliseconds, bAlertable);
+
+        if(result == WAIT_FAILED)
         {
+            //TODO:Go lookup the problem
         }
+        return result;
+    }
 
-        auto operator co_await()
-        {
-            return IOCPAwaiter{};
-        }
-
-    };
-
-}}}//qor::nswindows::framework
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_READOP
+}}}//qor::nswindows::api

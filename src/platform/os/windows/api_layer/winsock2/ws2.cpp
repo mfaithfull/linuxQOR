@@ -48,6 +48,20 @@ namespace qor { namespace nswindows { namespace api {
 		return Result;
 	}
 
+	BOOL WS2::AcceptEx(SOCKET sListenSocket, SOCKET sAcceptSocket, PVOID lpOutputBuffer, DWORD dwReceiveDataLength, DWORD dwLocalAddressLength, DWORD dwRemoteAddressLength, LPDWORD lpdwBytesReceived, LPOVERLAPPED lpOverlapped)
+	{
+		qor_pp_fcontext;
+		CheckReturn< BOOL, TCheckWinsockFailureValue< BOOL, FALSE> >::TType Result;
+		Result = ::AcceptEx(sListenSocket, sAcceptSocket, lpOutputBuffer, dwReceiveDataLength, dwLocalAddressLength, dwRemoteAddressLength, lpdwBytesReceived, lpOverlapped);
+		return Result;
+	}
+
+	VOID WS2::GetAcceptExSockaddrs(PVOID lpOutputBuffer, DWORD dwReceiveDataLength, DWORD dwLocalAddressLength, DWORD dwRemoteAddressLength, sockaddr **LocalSockaddr, LPINT LocalSockaddrLength, sockaddr **RemoteSockaddr, LPINT RemoteSockaddrLength)
+	{
+		qor_pp_fcontext;
+		::GetAcceptExSockaddrs(lpOutputBuffer, dwReceiveDataLength, dwLocalAddressLength, dwRemoteAddressLength, LocalSockaddr, LocalSockaddrLength, RemoteSockaddr, RemoteSockaddrLength);
+	}
+
 	int WS2::bind( SOCKET s, const sockaddr* name, int namelen )
 	{
 		qor_pp_fcontext;

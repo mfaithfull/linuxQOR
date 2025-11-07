@@ -100,7 +100,7 @@ namespace qor { namespace nswindows { namespace api {
 		bResult = ::GetModuleHandleEx(dwFlags, lpModuleName, phModule);
 #	else
 		qor_pp_unref3(dwFlags, lpModuleName, phModule);
-		continuable("Windows API error:"));
+		continuable("Windows API error:");
 #	endif
 		return bResult;
 	}
@@ -113,7 +113,7 @@ namespace qor { namespace nswindows { namespace api {
 		dwResult = ::GetDllDirectory(nBufferLength, lpBuffer);
 #	else
 		qor_pp_unref2(nBufferLength, lpBuffer);
-		continuable("Windows API error:"));
+		continuable("Windows API error:");
 #	endif
 		return dwResult;
 	}
@@ -126,7 +126,7 @@ namespace qor { namespace nswindows { namespace api {
 		bResult = ::SetDllDirectory(lpPathName);
 #	else
 		qor_pp_unref(lpPathName);
-		continuable("Windows API error:"));
+		continuable("Windows API error:");
 #	endif
 		return bResult;
 	}

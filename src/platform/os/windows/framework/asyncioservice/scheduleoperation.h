@@ -1,3 +1,4 @@
+
 // Copyright Querysoft Limited 2008 - 2025
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -22,34 +23,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_BINDOP
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_BINDOP
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_SCHEDULEOPERATION
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_SCHEDULEOPERATION
 
-#include <system_error>
 #include <coroutine>
-#include "iocpawaiter.h"
 
-namespace qor {
-    namespace nswindows {
-        namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
-            class BindOperation
-            {
-            public:
+    class IOService;
 
-                BindOperation(int fd, byte* buffer, int32_t len)
-                {
-                }
+    class ScheduleOperation
+    {
+    public:
 
-                auto operator co_await()
-                {
-                    return IOCPAwaiter{};
-                }
+        ScheduleOperation(IOService& service) noexcept : m_service(service)
+        {}
 
-            };
-
+        bool await_ready() const noexcept
+        {
+            return false;
         }
-    }
-}//qor::nswindows::framework
 
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_BINDOP
+        void await_suspend(std::coroutine_handle<> awaiter) noexcept;
+
+        void await_resume() const noexcept {}
+
+    private:
+
+        friend class IOService;
+        friend class TimedScheduleOperation;
+        friend class TimerThreadState;
+
+        IOService& m_service;
+        std::coroutine_handle<> m_awaiter;
+        ScheduleOperation* m_next;
+    };
+
+}}}//qor::framework::nswindows
+
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_SCHEDULEOPERATION

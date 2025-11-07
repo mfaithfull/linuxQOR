@@ -33,7 +33,7 @@
 
 #include "recvop.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
 	bool SocketRecvOperationImpl::try_start(win32_overlapped_operation_base& operation) noexcept
 	{
@@ -82,4 +82,4 @@ namespace qor { namespace nswindows { namespace framework {
 		(void)::CancelIoEx(reinterpret_cast<HANDLE>(m_socket->m_handle),operation.get_overlapped());
 	}
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows

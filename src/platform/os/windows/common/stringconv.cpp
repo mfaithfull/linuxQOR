@@ -26,7 +26,7 @@
 #include "stringconv.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-namespace qor { namespace nswindows {
+namespace qor { namespace platform { namespace nswindows {
 
 #if ( qor_pp_unicode )
 
@@ -51,4 +51,4 @@ namespace qor { namespace nswindows {
 	}
 #endif
 
-}}//qor::nswindows
+}}}//qor::platform::nswindows

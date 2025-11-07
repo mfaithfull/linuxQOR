@@ -35,7 +35,7 @@ namespace qor
     bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem();
 }
 
-namespace qor{ namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ 
 
     class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::platform::IFileSystem
     {
@@ -54,6 +54,6 @@ namespace qor{ namespace nswindows{
         void SyncToSystem() const;
     };
 
-}}//qor::nswindows
+}}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM

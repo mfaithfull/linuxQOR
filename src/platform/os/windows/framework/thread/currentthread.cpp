@@ -34,7 +34,6 @@
 #include <bit>
 #include <windows.h>
 #include <processthreadsapi.h>
-//#include <WinBase.h>
 #include <stringapiset.h>
 
 namespace qor{ 
@@ -44,7 +43,7 @@ namespace qor{
     }
 }
 
-namespace qor{ namespace nswindows{ namespace framework{
+namespace qor{ namespace framework{ namespace nswindows{
 
     bool CurrentThread::SetPriority(ICurrentThread::Priority priority)
     {
@@ -191,4 +190,4 @@ namespace qor{ namespace nswindows{ namespace framework{
         return affinity;
     }
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows

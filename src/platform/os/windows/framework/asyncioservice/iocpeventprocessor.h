@@ -27,8 +27,10 @@
 
 #include <chrono>
 #include "src/framework/asyncioservice/asyncioeventprocessor.h"
+#include "ioservice.h"
+#include "scheduleoperation.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
     class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPEventProcessor : public qor::framework::AsyncIOEventProcessor
     {
@@ -39,38 +41,31 @@ namespace qor { namespace nswindows { namespace framework {
 
         virtual int Run()
         {
-            if (m_StopRequested)
-            {
-                return 0;
-            }
-
-            while (!m_StopRequested)
-            {
-                //if (uring.sem.try_acquire_for(std::chrono::seconds(1)))
-                //{
-                    int result = 0;
-                    while (!m_StopRequested && result == 0)
-                    {
-                        result = Event();
-                    }
-                //}
-            }
+            uint64_t eventCount = m_service.ProcessEvents();
             return 0;
         }
 
         virtual void Stop()
         {
-            m_StopRequested = true;
-            //uring.sem.release(1);
-            //sleep(1);
-            //uring.sem.try_acquire_for(std::chrono::seconds(2));
+            m_service.Stop();
+        }
+
+        ScheduleOperation Schedule()
+        {
+            return m_service.Schedule();
+        }
+
+        virtual bool Enroll(platform::IODescriptor& ioDescriptor) const
+        {
+            return m_service.Enroll(ioDescriptor);
         }
 
     private:
 
-        virtual int Event();
+        IOService m_service;
+        
     };
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPEVENTPROCESSOR

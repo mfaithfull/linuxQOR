@@ -38,9 +38,9 @@ qor::Module& ThisModule(void)
         qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
 	//Register the Windows specific implementations
-	static qor::TypeRegEntry< qor::nswindows::framework::AsyncIOService, qor::framework::AsyncIOService > regAsyncIOService;
-	static qor::TypeRegEntry< qor::nswindows::framework::IOCPEventProcessor, qor::framework::AsyncIOEventProcessor > regAsyncIOEventProcessor;
-	static qor::TypeRegEntry< qor::nswindows::framework::IOCPInitiator, qor::framework::AsyncIOInitiator > regAsyncIOInitiator;
+	static qor::TypeRegEntry< qor::framework::nswindows::AsyncIOService, qor::framework::AsyncIOService > regAsyncIOService;
+	static qor::TypeRegEntry< qor::framework::nswindows::IOCPEventProcessor, qor::framework::AsyncIOEventProcessor > regAsyncIOEventProcessor;
+	static qor::TypeRegEntry< qor::framework::nswindows::IOCPInitiator, qor::framework::AsyncIOInitiator > regAsyncIOInitiator;
 
 	return QORModule;
 }

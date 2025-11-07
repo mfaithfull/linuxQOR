@@ -22,38 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPAWAITER
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPAWAITER
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERTHREADSTATE
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERTHREADSTATE
 
-#include <coroutine>
-#include "src/framework/asyncioservice/asyncioservice.h"
+#include <chrono>
+#include "src/framework/thread/thread.h"
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "waitabletimerevent.h"
+#include "autoresetevent.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
-    struct qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPAwaiter
+    class TimedScheduleOperation;
+    class TimerThreadState final
     {
-        qor::framework::AsyncIORequest requestData;
+    public:
 
-        IOCPAwaiter(){}
+        TimerThreadState();
+        ~TimerThreadState();
+        TimerThreadState(const TimerThreadState& other) = delete;
+        TimerThreadState& operator=(const TimerThreadState& other) = delete;
 
-        bool await_ready()
-        {
-            return false;
-        }
+        void RequestTimerCancellation() noexcept;
+        void Run() noexcept;
+        void WakeUpTimerThread() noexcept;
 
-        void await_suspend(std::coroutine_handle<> handle) noexcept
-        {
-            requestData.handle = handle;
-            //entry.SetData(&requestData);
-            //m_ring->RemoteSubmit();
-        }
+        ref_of<AutoResetEvent>::type m_wakeUpEvent;
+        ref_of<WaitableTimerEvent>::type m_waitableTimerEvent;
 
-        int await_resume()
-        {
-            return requestData.statusCode;
-        }
+        std::atomic<TimedScheduleOperation*> m_newlyQueuedTimers;
+        std::atomic<bool> m_timerCancellationRequested;
+        std::atomic<bool> m_shutDownRequested;
+
+        Thread m_thread;
+
     };
+    
+}}}//qor::framework//nswindows
 
-}}}//qor::nswindows::framework
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPAWAITER
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERQUEUE

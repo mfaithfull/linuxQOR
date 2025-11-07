@@ -30,7 +30,7 @@
 #include <coroutine>
 #include "overlapped.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
 	struct io_state : overlapped
 	{
@@ -60,6 +60,6 @@ namespace qor { namespace nswindows { namespace framework {
 		callback_type* m_callback;
 	};
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_IOSTATE

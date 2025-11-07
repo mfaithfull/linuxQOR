@@ -34,7 +34,10 @@ namespace qor { namespace nswindows { namespace api {
     void WSALastErrorHandler()
     {
         int wsaLastError = WS2::WSAGetLastError();
-
+        if(wsaLastError == ERROR_IO_PENDING)
+        {
+            return;
+        }
         wchar_t *s = NULL;
         FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, wsaLastError, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&s, 0, NULL);
 

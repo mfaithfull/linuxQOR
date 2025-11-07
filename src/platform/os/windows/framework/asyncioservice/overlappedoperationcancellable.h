@@ -34,7 +34,7 @@
 #include "src/framework/task/cancellation/cancellationregistration.h"
 #include "src/framework/task/cancellation/operationcancelled.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
 	template<typename OPERATION>
 	class win32_overlapped_operation_cancellable : protected win32_overlapped_operation_base
@@ -273,6 +273,6 @@ namespace qor { namespace nswindows { namespace framework {
 		std::coroutine_handle<> m_awaitingCoroutine;
 
 	};
-}}}
+}}}//qor::framework::windows
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPEDOPERATIONCANCELLABLE

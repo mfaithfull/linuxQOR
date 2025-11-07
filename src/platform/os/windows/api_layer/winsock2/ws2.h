@@ -52,16 +52,14 @@ typedef struct in_addr
 
 #include <winsock2.h>
 #include <Ws2tcpip.h>
-//#include <mswsock.h>
 #if		( _WIN32_WINNT == 0x0500 )
 #	include <WSPiApi.h>
 #endif//( _WIN32_WINNT == 0x0500 )
 #include <Ws2spi.h>
 #undef WIN32_NO_STATUS
+#include <MSWSock.h>
 #define _WINSOCKAPI_
 #include <string.h>
-//#include "../kernel/kernel32.h"
-//#include "../runtimeextension/wqdynamiclibrary.h"
 
 #ifdef	__MINGW32__
 typedef addrinfo ADDRINFOA, *PADDRINFOA;
@@ -253,6 +251,8 @@ namespace qor { namespace nswindows { namespace api {
         ~WS2()= default;
 
         static SOCKET accept(SOCKET s, sockaddr* addr, int* addrlen);
+        static BOOL AcceptEx(SOCKET sListenSocket, SOCKET sAcceptSocket, PVOID lpOutputBuffer, DWORD dwReceiveDataLength, DWORD dwLocalAddressLength, DWORD dwRemoteAddressLength, LPDWORD lpdwBytesReceived, LPOVERLAPPED lpOverlapped);
+        static VOID GetAcceptExSockaddrs(PVOID lpOutputBuffer, DWORD dwReceiveDataLength, DWORD dwLocalAddressLength, DWORD dwRemoteAddressLength, sockaddr **LocalSockaddr, LPINT LocalSockaddrLength, sockaddr **RemoteSockaddr, LPINT RemoteSockaddrLength);
         static int bind(SOCKET s, const sockaddr* name, int namelen);
         static int closesocket(SOCKET s);
         static int connect(SOCKET s, const sockaddr* name, int namelen);

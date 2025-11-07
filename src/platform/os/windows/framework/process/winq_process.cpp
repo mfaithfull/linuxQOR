@@ -38,6 +38,6 @@ qor::Module& ThisModule(void)
 	static qor::Module QORModule("Querysoft Open Runtime: Windows Process Module", 
         qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-	static qor::TypeRegEntry< qor::nswindows::framework::CurrentProcess, qor::framework::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
+	static qor::TypeRegEntry< qor::framework::nswindows::CurrentProcess, qor::framework::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
 	return QORModule;
 }

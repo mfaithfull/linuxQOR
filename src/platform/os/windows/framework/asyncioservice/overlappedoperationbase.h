@@ -30,7 +30,7 @@
 #include "iostate.h"
 #include "wsabuffer.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
 	class win32_overlapped_operation_base : protected io_state
 	{
@@ -79,6 +79,6 @@ namespace qor { namespace nswindows { namespace framework {
 
 	};
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPEDOPERATIONBASE

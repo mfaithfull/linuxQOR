@@ -34,7 +34,7 @@
 #include "connectop.h"
 #include "src/platform/network/windows/addresshelpers.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
 	bool socket_connect_operation_impl::try_start( win32_overlapped_operation_base& operation) noexcept
 	{
@@ -67,7 +67,7 @@ namespace qor { namespace nswindows { namespace framework {
 		const bool skipCompletionOnSuccess = true;//TODO: m_socket.skip_completion_on_success();
 
 		SOCKADDR_STORAGE remoteSockaddrStorage;
-		const int sockaddrNameLength = ip_endpoint_to_sockaddr( m_remoteEndPoint, std::ref(remoteSockaddrStorage));
+		const int sockaddrNameLength = qor::network::nswindows::ip_endpoint_to_sockaddr( m_remoteEndPoint, std::ref(remoteSockaddrStorage));
 
 		DWORD bytesSent = 0;
 		const BOOL ok = connectExPtr(
@@ -183,4 +183,4 @@ namespace qor { namespace nswindows { namespace framework {
 		}
 	}
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows

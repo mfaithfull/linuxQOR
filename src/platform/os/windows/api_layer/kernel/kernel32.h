@@ -186,6 +186,12 @@ namespace qor { namespace nswindows { namespace api {
 		static BOOL WriteConsoleOutputAttribute(HANDLE hConsoleOutput, const WORD * lpAttribute, DWORD nLength, ::COORD dwWriteCoord, LPDWORD lpNumberOfAttrsWritten);
 		static BOOL WriteConsoleOutputCharacter(HANDLE hConsoleOutput, LPCTSTR lpCharacter, DWORD nLength, ::COORD dwWriteCoord, LPDWORD lpNumberOfCharsWritten);
 		static DWORD CtrlRoutine(LPVOID lpParameter);
+
+		//IO
+		static BOOL CancelIoEx( HANDLE hFile, LPOVERLAPPED lpOverlapped );
+
+		//Sync API
+		static DWORD WaitForMultipleObjectsEx(DWORD nCount, const void** lpHandles, BOOL bWaitAll, DWORD dwMilliseconds, BOOL bAlertable);
 	};
 
 }}}//qor::nswindows::api

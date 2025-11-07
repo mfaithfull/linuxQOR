@@ -34,8 +34,9 @@
 #include "src/platform/os/windows/common/constants.h"
 
 using namespace qor::nswindows::api;
+using namespace qor::platform::nswindows;
 
-namespace qor { namespace nswindows {
+namespace qor { namespace components { namespace nswindows {
 
 	ConsoleHelper::ConsoleHelper()
 	{
@@ -457,4 +458,4 @@ namespace qor { namespace nswindows {
 		return result;
 	}
 
-}}//qor::winapi
+}}}//qor::components::windows

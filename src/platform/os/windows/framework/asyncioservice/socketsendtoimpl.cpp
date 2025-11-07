@@ -34,7 +34,7 @@
 #include "sendtoop.h"
 #include "src/platform/network/windows/addresshelpers.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
 	bool socket_send_to_operation_impl::try_start( win32_overlapped_operation_base& operation) noexcept
 	{
@@ -45,7 +45,7 @@ namespace qor { namespace nswindows { namespace framework {
 		const bool skipCompletionOnSuccess = true;//TODO: m_socket.skip_completion_on_success();
 
 		SOCKADDR_STORAGE destinationAddress;
-		const int destinationLength = ip_endpoint_to_sockaddr(m_destination, std::ref(destinationAddress));
+		const int destinationLength = qor::network::nswindows::ip_endpoint_to_sockaddr(m_destination, std::ref(destinationAddress));
 
 		DWORD numberOfBytesSent = 0;
 		int result = ::WSASendTo(
@@ -88,4 +88,4 @@ namespace qor { namespace nswindows { namespace framework {
 			operation.get_overlapped());
 	}
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows

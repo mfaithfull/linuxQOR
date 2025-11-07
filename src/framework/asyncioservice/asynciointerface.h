@@ -47,7 +47,7 @@ namespace qor { namespace framework{
         virtual inline IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const = 0;
         virtual inline IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const = 0;
         virtual inline int AcceptEx(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const = 0;
-
+        virtual inline bool Enroll(platform::IODescriptor& ioDescriptor) const = 0;
     };
 
     }//framework

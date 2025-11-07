@@ -58,6 +58,11 @@ namespace qor { namespace framework{
                 //m_sharedContext.m_access.Release();
             }
 
+            virtual inline bool Enroll(platform::IODescriptor& ioDescriptor) const
+            {
+                return m_sharedContext.m_context->Enroll(ioDescriptor);
+            }
+
             virtual inline IOTask Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
             {
                 return m_sharedContext.m_context->Send(ioDescriptor, buffer, len, flags);

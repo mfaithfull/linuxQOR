@@ -30,14 +30,10 @@
 
 using namespace qor::nswindows::api;
 
-namespace qor {
-	bool qor_pp_module_interface(QOR_WINCONSOLE) ImplementsIConsole() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIConsole requirement. 
-	{
-		return true;
-	}
-}//qor
+//Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIConsole requirement. 
+namespace qor { bool qor_pp_module_interface(QOR_WINCONSOLE) ImplementsIConsole() {return true;} }//qor
 
-namespace qor { namespace nswindows {
+namespace qor { namespace components{ namespace nswindows {
 
 	Console::Console() : m_redirected(false), m_allocated(false)
 	{
@@ -154,4 +150,4 @@ namespace qor { namespace nswindows {
 		}
 	}
 
-}}//qor::nswindows
+}}}//qor::components::nswindows

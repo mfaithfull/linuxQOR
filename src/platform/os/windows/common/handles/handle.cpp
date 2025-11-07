@@ -31,7 +31,7 @@
 
 using namespace qor::nswindows::api;
 
-namespace qor { namespace nswindows {
+namespace qor { namespace platform { namespace nswindows {
 
 	Handle::Handle() : m_h(Invalid_Handle_Value), m_needsClose(false) {}
 	
@@ -187,4 +187,4 @@ namespace qor { namespace nswindows {
 		return nullptr;
 	}
 
-}}//qor::nswindows
+}}}//qor::platform::nswindows

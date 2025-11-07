@@ -35,7 +35,7 @@ namespace qor{ namespace network{
         m_objectType = guid_of<Socket>::guid();
     }
 
-    Socket::Socket(const sockets::eAddressFamily& AF, const sockets::eType& Type, const sockets::eProtocol& Protocol)
+    Socket::Socket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol)
     {
     }
 
@@ -47,13 +47,17 @@ namespace qor{ namespace network{
     }
 
     ref_of<Socket>::type Socket::Accept(const framework::AsyncIOInterface& ioContext, Address& ClientAddress)
-    {
-        ref_of<network::Socket>::type clientSocket = new_ref<network::Socket>();
+    {        
+        ref_of<network::Socket>::type clientSocket = new_ref<network::Socket>(
+            network::sockets::eAddressFamily::AF_INet, 
+            network::sockets::eType::Sock_Stream, 
+            network::sockets::eProtocol::IPProto_IP);
 
         auto result = sync_wait([this,&ioContext,&ClientAddress,clientSocket]() -> task<framework::AsyncIOResult>
 	    {
             return AcceptAsync(ioContext, ClientAddress, clientSocket);
         }());
+        ioContext.Enroll(clientSocket());
         return clientSocket;
     }
         

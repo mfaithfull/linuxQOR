@@ -29,14 +29,10 @@
 
 qor_pp_module_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOInitiator)
 
-namespace qor {
-    namespace nswindows {
-        namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
-            IOCPInitiator::IOCPInitiator()
-            {
+    IOCPInitiator::IOCPInitiator()
+    {
 
-            }
-        }
     }
-}//qor::nswindows::framework
+}}}//qor::framework::nswindows

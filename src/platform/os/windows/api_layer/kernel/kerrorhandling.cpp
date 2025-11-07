@@ -46,13 +46,13 @@ namespace qor { namespace nswindows { namespace api {
 		qor_pp_fcontext;
 		USHORT usResult = 0;
 #ifdef	__MINGW32__
-		continuable("Windows API error:"));//<error::CAPINotImplementedInMinGW>("RtlCaptureStackBackTrace");
+		continuable("Windows API error:");
 #else
 #	if ( _WIN32_WINNT > 0x0501 )
 		usResult = ::CaptureStackBackTrace(FramesToSkip, FramesToCapture, BackTrace, BackTraceHash);
 #	else
 		qor_pp_unref4(BackTraceHash, BackTrace, FramesToCapture, FramesToSkip);
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("RtlCaptureStackBackTrace", "Windows XP");
+		continuable("Windows API error:");
 #	endif
 #endif
 		return usResult;
@@ -75,13 +75,13 @@ namespace qor { namespace nswindows { namespace api {
 	{
 		qor_pp_fcontext;
 #ifdef	__MINGW32__
-		continuable("Windows API error:"));//<error::CAPINotImplementedInMinGW>("GetErrorMode");
+		continuable("Windows API error:");
 		return 0;
 #else
 #	if ( _WIN32_WINNT >= 0x0600 )
 		return ::GetErrorMode();
 #	else
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("GetErrorMode", "Windows Vista");
+		continuable("Windows API error:");
 		return 0;
 #	endif
 #endif
@@ -102,7 +102,7 @@ namespace qor { namespace nswindows { namespace api {
 		pResult = ::RtlLookupFunctionEntry(ControlPC, ImageBase, TargetGp);
 #	else
 		qor_pp_unref3(TargetGp, ImageBase, ControlPC);
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("RtlLookupFunctionEntry", "Windows XP 64 bit edition");
+		continuable("Windows API error:");
 #	endif
 		return pResult;
 	}
@@ -117,7 +117,7 @@ namespace qor { namespace nswindows { namespace api {
 		pResult = ::RtlPcToFileHeader(PcValue, BaseOfImage);
 #	else
 		qor_pp_unref2(BaseOfImage, PcValue);
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("RtlPcToFileHeader", "Windows Server 2003 64-Bit edition ");
+		continuable("Windows API error:");
 #	endif
 		return pResult;
 	}
@@ -147,13 +147,13 @@ namespace qor { namespace nswindows { namespace api {
 		qor_pp_fcontext;
 		CheckReturn< HRESULT, LongSuccessCheck >::TType hr;
 #ifdef	__MINGW32__
-		continuable("Windows API error:"));//<error::CAPINotImplementedInMinGW>("WerGetFlags");
+		continuable("Windows API error:");
 #else
 #	if ( _WIN32_WINNT >= 0x0600 && NTDDI_VERSION >= NTDDI_VISTASP1 )
 		hr = ::WerGetFlags(hProcess, pdwFlags);
 #	else
 		qor_pp_unref2(pdwFlags, hProcess);
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("WerGetFlags", "Windows Vista Service Pack 1");
+		continuable("Windows API error:");
 #	endif
 #endif
 		return hr;
@@ -164,13 +164,13 @@ namespace qor { namespace nswindows { namespace api {
 		qor_pp_fcontext;
 		CheckReturn< HRESULT, LongSuccessCheck >::TType hr;
 #ifdef	__MINGW32__
-		continuable("Windows API error:"));//<error::CAPINotImplementedInMinGW>("WerRegisterFile");
+		continuable("Windows API error:");
 #else
 #	if ( _WIN32_WINNT >= 0x0600 && NTDDI_VERSION >= NTDDI_VISTASP1 )
 		hr = ::WerRegisterFile(pwzFile, regFileType, dwFlags);
 #	else
 		qor_pp_unref3(dwFlags, regFileType, pwzFile);
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("WerRegisterFile", "Windows Vista Service Pack 1");
+		continuable("Windows API error:");
 #	endif
 #endif
 		return hr;
@@ -181,13 +181,13 @@ namespace qor { namespace nswindows { namespace api {
 		qor_pp_fcontext;
 		CheckReturn< HRESULT, LongSuccessCheck >::TType hr;
 #ifdef	__MINGW32__
-		continuable("Windows API error:"));//<error::CAPINotImplementedInMinGW>("WerRegisterMemoryBlock");
+		continuable("Windows API error:");
 #else
 #	if ( _WIN32_WINNT >= 0x0600 && NTDDI_VERSION >= NTDDI_VISTASP1 )
 		hr = ::WerRegisterMemoryBlock(pvAddress, dwSize);
 #	else
 		qor_pp_unref2(dwSize, pvAddress);
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("WerRegisterMemoryBlock", "Windows Vista Service Pack 1");
+		continuable("Windows API error:");
 #	endif
 #endif
 		return hr;
@@ -198,13 +198,13 @@ namespace qor { namespace nswindows { namespace api {
 		qor_pp_fcontext;
 		CheckReturn< HRESULT, LongSuccessCheck >::TType hr;
 #ifdef	__MINGW32__
-		continuable("Windows API error:"));//<error::CAPINotImplementedInMinGW>("WerSetFlags");
+		continuable("Windows API error:");
 #else
 #	if ( _WIN32_WINNT >= 0x0600 && NTDDI_VERSION >= NTDDI_VISTASP1 )
 		hr = ::WerSetFlags(dwFlags);
 #	else
 		qor_pp_unref(dwFlags);
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("WerSetFlags", "Windows Vista Service Pack 1");
+		continuable("Windows API error:");
 #	endif
 #endif
 		return hr;
@@ -215,13 +215,13 @@ namespace qor { namespace nswindows { namespace api {
 		qor_pp_fcontext;
 		CheckReturn< HRESULT, LongSuccessCheck >::TType hr;
 #ifdef	__MINGW32__
-		continuable("Windows API error:"));//<error::CAPINotImplementedInMinGW>("WerUnregisterFile");
+		continuable("Windows API error:");
 #else
 #	if ( _WIN32_WINNT >= 0x0600 && NTDDI_VERSION >= NTDDI_VISTASP1 )
 		hr = ::WerUnregisterFile(pwzFilePath);
 #	else
 		qor_pp_unref(pwzFilePath);
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("WerUnregisterFile", "Windows Vista Service Pack 1");
+		continuable("Windows API error:");
 #	endif
 #endif
 		return hr;
@@ -232,13 +232,13 @@ namespace qor { namespace nswindows { namespace api {
 		qor_pp_fcontext;
 		CheckReturn< HRESULT, LongSuccessCheck >::TType hr;
 #ifdef	__MINGW32__
-		continuable("Windows API error:"));//<error::CAPINotImplementedInMinGW>("WerUnregisterMemoryBlock");
+		continuable("Windows API error:");
 #else
 #	if ( _WIN32_WINNT >= 0x0600 && NTDDI_VERSION >= NTDDI_VISTASP1 )
 		hr = ::WerUnregisterMemoryBlock(pvAddress);
 #	else
 		qor_pp_unref(pvAddress);
-		continuable("Windows API error:"));//<error::CWindowsAPIRequiresVersion>("WerUnregisterMemoryBlock", "Windows Vista Service Pack 1");
+		continuable("Windows API error:");
 #	endif
 #endif
 		return hr;

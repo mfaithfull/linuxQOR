@@ -35,7 +35,7 @@
 
 #include "src/platform/network/ipendpoint.h"
 
-namespace qor { namespace nswindows {
+namespace qor { namespace network { namespace nswindows {
 
 	inline network::IPEndpoint sockaddr_to_ip_endpoint(const sockaddr& address) noexcept
 	{
@@ -99,6 +99,6 @@ namespace qor { namespace nswindows {
 		}
 	}
 
-}}//qor::nswindows
+}}}//qor::network::nswindows
 
 #endif//QOR_PP_H_PLATFORM_NETWORK_WINDOWS_ADDRESSHELPERS

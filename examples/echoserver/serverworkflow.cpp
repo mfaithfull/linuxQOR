@@ -59,10 +59,10 @@ ServerWorkflow::ServerWorkflow() :
     {
         m_ioContext = m_io->Context();
         m_ioSharedContext = m_io->SharedContext();
-        m_serverSocket = m_sockets->CreateSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP);
+        m_serverSocket = m_sockets->CreateAsyncSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP, m_ioContext);
         m_serverAddress.sa_family = eAddressFamily::AF_INet;
         m_serverAddress.SetPort(12345);
-        m_serverAddress.SetIPV4Address(0,0,0,0);
+        m_serverAddress.SetIPV4Address(127,0,0,1);
 
         SetState(bind);
     };

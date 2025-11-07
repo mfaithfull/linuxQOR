@@ -38,6 +38,6 @@ qor::Module& ThisModule(void)
 		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
 	//Register the Windows specific implementation of IConsole
-	static qor::TypeRegEntry< qor::nswindows::Console, qor::components::IConsole> reg;
+	static qor::TypeRegEntry< qor::components::nswindows::Console, qor::components::IConsole> reg;
 	return QORModule;
 }

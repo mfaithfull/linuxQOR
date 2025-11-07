@@ -27,98 +27,97 @@
 
 #include "handle.h"
 
-namespace qor { namespace nswindows {
+namespace qor { namespace platform { namespace nswindows {
 
-		template< class T >
-		class TypedHandle : public Handle
+	template< class T >
+	class TypedHandle : public Handle
+	{
+	public:
+
+		TypedHandle() : Handle(), m_object(nullptr) {}
+
+		TypedHandle(void* h) : Handle(h), m_object(nullptr) {}
+		
+		TypedHandle(int h) : Handle(int), m_object(nullptr) {}
+
+		TypedHandle(void* h, T* object) : Handle(h), m_object(nullptr)
 		{
-		public:
+			Attach(object);
+		}
+		
+		virtual ~TypedHandle()
+		{
+			Detach();
+		}
 
-			TypedHandle() : Handle(), m_object(nullptr) {}
+		TypedHandle(const TypedHandle& src)
+		{
+			*this = src;
+			return *this;
+		}
 
-			TypedHandle(void* h) : Handle(h), m_object(nullptr) {}
-			
-			TypedHandle(int h) : Handle(int), m_object(nullptr) {}
-
-			TypedHandle(void* h, T* object) : Handle(h), m_object(nullptr)
+		TypedHandle& operator = (TypedHandle&& src)			
+		{
+			if (&src != this)
 			{
-				Attach(object);
+				Handle::operator = (src);
+				m_object = src.m_object;
+				src.m_object = nullptr;
 			}
-			
-			virtual ~TypedHandle()
-			{
-				Detach();
-			}
+			return *this;
+		}
 
-			TypedHandle(const TypedHandle& src)
+		TypedHandle& operator = (const TypedHandle& src)
+		{
+			if (&src != this)
 			{
-				*this = src;
-				return *this;
+				Handle::operator = (src);
+				m_object = src.m_object;
 			}
+			return *this;
+		}
 
-			TypedHandle& operator = (TypedHandle&& src)			
-			{
-				if (&src != this)
-				{
-					Handle::operator = (src);
-					m_object = src.m_object;
-					src.m_object = nullptr;
-				}
-				return *this;
-			}
+		TypedHandle Clone(void* sourceProcessHandle, void* targetProcessHandle, unsigned long desiredAccess, bool inheritHandle, unsigned long options)
+		{
+			TypedHandle h(Handle::Clone(sourceProcessHandle, targetProcessHandle, desiredAccess, inheritHandle, options))
+			h.Attach(m_object);
+			return h;
+		}
+		
+		virtual void Attach(void* object)
+		{
+			Detach();
+			m_object = object;
+		}
 
-			TypedHandle& operator = (const TypedHandle& src)
-			{
-				if (&src != this)
-				{
-					Handle::operator = (src);
-					m_object = src.m_object;
-				}
-				return *this;
-			}
+		virtual void* Detach(void)
+		{
+			void* result = m_object;
+			m_object = nullptr;
+			return result;
+		}
+		
+		virtual T* Object(void) const
+		{
+			return m_object;
+		}
 
-			TypedHandle Clone(void* sourceProcessHandle, void* targetProcessHandle, unsigned long desiredAccess, bool inheritHandle, unsigned long options)
-			{
-				TypedHandle h(Handle::Clone(sourceProcessHandle, targetProcessHandle, desiredAccess, inheritHandle, options))
-				h.Attach(m_object);
-				return h;
-			}
-			
-			virtual void Attach(void* object)
-			{
-				Detach();
-				m_object = object;
-			}
+		bool operator == (const TypedHandle& cmp) const
+		{
+			return (m_object == cmp.m_object || m_h == cmp.m_h) ? true : false;
+		}
 
-			virtual void* Detach(void)
-			{
-				void* result = m_object;
-				m_object = nullptr;
-				return result;
-			}
-			
-			virtual T* Object(void) const
-			{
-				return m_object;
-			}
+		bool operator < (const TypedHandle& cmp) const
+		{
+			return Handle::operator < (cmp);
+		}
 
-			bool operator == (const TypedHandle& cmp) const
-			{
-				return (m_object == cmp.m_object || m_h == cmp.m_h) ? true : false;
-			}
+	protected:
 
-			bool operator < (const TypedHandle& cmp) const
-			{
-				return Handle::operator < (cmp);
-			}
+		T* m_object;
+		void* m_object;
+	};
 
-		protected:
-
-			T* m_object;
-			void* m_object;
-		};
-
-	}
-}//qor::nswindows
+}}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_TYPED_HANDLE

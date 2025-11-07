@@ -29,7 +29,11 @@
 
 qor_pp_module_will_provide(WINQOR_SOCKETS,Sockets)
 
-namespace qor{ namespace nswindows{
+namespace qor{ namespace framework {
+    class AsyncIOContext;
+}}//qor::framework
+
+namespace qor{ namespace network { namespace nswindows{
 
     class qor_pp_module_interface(WINQOR_SOCKETS) Sockets : public network::Sockets
     {
@@ -42,6 +46,7 @@ namespace qor{ namespace nswindows{
         virtual void Shutdown();
 
         virtual ref_of<network::Socket>::type CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol) const;
+        virtual ref_of<network::Socket>::type CreateAsyncSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, qor::framework::AsyncIOContext* ioContext) const;
         virtual int GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results) const;
 
     private:        
@@ -50,6 +55,6 @@ namespace qor{ namespace nswindows{
         Sockets& operator = (const Sockets&) = delete;
     };
 
-}}//qor::nswindows
+}}}//qor::network::nswindows
 
 #endif//QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKETS
