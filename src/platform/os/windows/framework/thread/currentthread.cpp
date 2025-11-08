@@ -34,15 +34,10 @@
 #include <bit>
 #include <windows.h>
 #include <processthreadsapi.h>
-//#include <WinBase.h>
 #include <stringapiset.h>
 
-namespace qor{ 
-    bool qor_pp_module_interface(QOR_WINDOWSTHREAD) ImplementsICurrentThread() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsICurrentThread requirement. 
-    {
-        return true;
-    }
-}
+//Implement this trivial function so the linker will pull in this library to fulfil the ImplementsICurrentThread requirement. 
+namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSTHREAD) ImplementsICurrentThread() {return true;} }
 
 namespace qor{ namespace nsWindows{ namespace framework{
 

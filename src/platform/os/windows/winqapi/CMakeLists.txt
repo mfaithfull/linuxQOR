@@ -3,7 +3,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target qor_winapi)
 
-add_library(${target} SHARED qor_winapi.cpp kernel/kconsole.cpp  kernel/kerrorhandling.cpp kernel/kdll.cpp "kernel/khandle.cpp")
+add_library(${target} SHARED qor_winapi.cpp kernel/kconsole.cpp kernel/kerrorhandling.cpp kernel/kdll.cpp "kernel/khandle.cpp")
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

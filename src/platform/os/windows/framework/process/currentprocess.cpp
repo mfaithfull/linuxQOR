@@ -34,12 +34,8 @@
 #include <windows.h>
 #include <processthreadsapi.h>
 
-namespace qor {
-    bool qor_pp_module_interface(QOR_WINDOWSPROCESS) ImplementsICurrentProcess() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsICurrentProcess requirement. 
-    {
-        return true;
-    }
-}
+//Implement this trivial function so the linker will pull in this library to fulfil the ImplementsICurrentProcess requirement. 
+namespace qor { bool qor_pp_module_interface(QOR_WINDOWSPROCESS) ImplementsICurrentProcess() {return true;} }
 
 namespace qor{ namespace nsWindows{ namespace framework{
 
