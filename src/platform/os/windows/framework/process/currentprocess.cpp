@@ -37,7 +37,7 @@
 //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsICurrentProcess requirement. 
 namespace qor { bool qor_pp_module_interface(QOR_WINDOWSPROCESS) ImplementsICurrentProcess() {return true;} }
 
-namespace qor{ namespace nsWindows{ namespace framework{
+namespace qor{ namespace framework{ namespace nswindows{
 
     std::optional<std::vector<bool>> CurrentProcess::GetAffinity()
     {
@@ -129,4 +129,4 @@ namespace qor{ namespace nsWindows{ namespace framework{
         return SetPriorityClass(GetCurrentProcess(), OSPriority) != 0;
     }
 
-}}}//qor::nsWindows::framework
+}}}//qor::framework::nswindows

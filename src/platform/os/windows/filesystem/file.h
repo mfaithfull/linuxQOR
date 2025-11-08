@@ -33,7 +33,7 @@
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFile(); }
 
 //All types on this interface must be portable
-namespace qor{ namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ 
 
     class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) File : public platform::File
     {
@@ -82,7 +82,7 @@ namespace qor{ namespace nswindows{
         static void ErrorOnOpen(int err);
 
     };
-}}//qor::nswindows
+}}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_WINDOWS_FILESYSTEM_FILE
 

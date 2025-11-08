@@ -22,16 +22,25 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-namespace qor { namespace winapi {
+#include <excpt.h>
 
-	//------------------------------------------------------------------------------
-	class qor_pp_module_interface(QOR_WINAPI) Library
+namespace qor { namespace nswindows { namespace api {
+
+	class Library
 	{
 	public:
 
 		typedef int(*DefProc)(void);//Default procedure pointer type
 
-		//------------------------------------------------------------------------------
+		static unsigned long StructuredExceptionFilterFunction(unsigned long exceptionCode)
+		{
+			return EXCEPTION_EXECUTE_HANDLER;
+		}
+
+		static void StructuredExceptionHandler()
+		{
+		}
+
 		template< typename ret, class ...MethodArgs >
 		static ret Call(const DefProc pProc, MethodArgs... args)
 		{
@@ -39,36 +48,39 @@ namespace qor { namespace winapi {
 
 			fPtr FP = reinterpret_cast<fPtr>(pProc);
 
-			if (FP != nullptr)
+			if (FP == nullptr)
+			{
+				throw("Missing library function.");
+			}
+			__try
 			{
 				return (FP)(std::forward< MethodArgs >(args)...);
 			}
-			else
+			__except(StructuredExceptionFilterFunction(GetExceptionCode()))
 			{
-				serious("Missing library function.");
+				StructuredExceptionHandler();
 			}
+			ret _{};
+			return _;
 		}
-		/*
-		//------------------------------------------------------------------------------
-		static void voidCallvoid(const DefProc pProc)
+
+		template< class ...MethodArgs  >
+		static void voidCall(const DefProc pProc, MethodArgs... args)
 		{
-			typedef void(qor_pp_compiler_stdcallconvention* fPtr)(void);
+			typedef void(*fPtr)(MethodArgs...);
 
 			fPtr FP = reinterpret_cast<fPtr>(pProc);
 
-			if (FP != 0)
+			if (FP != nullptr)
 			{
-				(FP)();
+				(FP)(std::forward< MethodArgs >(args)...);
 			}
 			else
 			{
-				//nsCodeQOR::CError::Raise(winqapi::MISSING_LIBRARY_FUNCTION, winqapi::ErrorDomainPtr(), nsCodeQOR::CError::ERR_LVL_CONTINUE);
+				throw("Missing library function.");
 			}
 		}
 
-		//------------------------------------------------------------------------------
-
-		*/
 	};
 
-}}//qor::winapi
+}}}//qor::nswindows::api

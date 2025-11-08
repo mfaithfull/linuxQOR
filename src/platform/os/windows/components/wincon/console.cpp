@@ -26,18 +26,14 @@
 
 #include "console.h"
 #include "src/qor/error/error.h"
-#include "src/platform/os/windows/winqapi/kernel/kernel32.h"
+#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-using namespace qor::winapi;
+using namespace qor::nswindows::api;
 
-namespace qor {
-	bool qor_pp_module_interface(QOR_WINCONSOLE) ImplementsIConsole() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIConsole requirement. 
-	{
-		return true;
-	}
-}//qor
+//Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIConsole requirement. 
+namespace qor { bool qor_pp_module_interface(QOR_WINCONSOLE) ImplementsIConsole() {return true;} }//qor
 
-namespace qor { namespace nsWindows {
+namespace qor { namespace components{ namespace nswindows {
 
 	Console::Console() : m_redirected(false), m_allocated(false)
 	{
@@ -154,4 +150,4 @@ namespace qor { namespace nsWindows {
 		}
 	}
 
-}}//qor::nsWindows
+}}}//qor::components::nswindows

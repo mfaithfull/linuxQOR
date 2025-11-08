@@ -40,8 +40,8 @@ qor::Module& ThisModule(void)
         qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
 	//Register the Windows specific implementations provided by this module
-	static qor::TypeRegEntry< qor::nswindows::Sockets, qor::network::Sockets > regSockets;
-	static qor::TypeRegEntryWithParams< qor::nswindows::Socket, qor::network::Socket, const qor::network::sockets::eAddressFamily&, const qor::network::sockets::eType&, const qor::network::sockets::eProtocol& > regSocket;
+	static qor::TypeRegEntry< qor::network::nswindows::Sockets, qor::network::Sockets > regSockets;
+	static qor::TypeRegEntryWithParams< qor::network::nswindows::Socket, qor::network::Socket, qor::network::sockets::eAddressFamily&, qor::network::sockets::eType&, qor::network::sockets::eProtocol& > regSocket;
 
 	return QORModule;
 }

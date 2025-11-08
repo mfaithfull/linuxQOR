@@ -22,30 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_READOP
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_READOP
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include <system_error>
-#include <coroutine>
-#include "iocpawaiter.h"
-
-namespace qor { namespace nswindows { namespace framework {
-
-    class ReadOperation
-    {
-    public:
-
-        ReadOperation(int fd, byte* buffer, int32_t len)
-        {
-        }
-
-        auto operator co_await()
-        {
-            return IOCPAwaiter{};
-        }
-
-    };
-
-}}}//qor::nswindows::framework
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_READOP
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Parser Component", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

@@ -37,7 +37,7 @@
 //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileSystem requirement. 
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem() { return true; } }//qor
 
-namespace qor{ namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{
 
     void FileSystem::Setup()
     {
@@ -94,4 +94,4 @@ namespace qor{ namespace nswindows{
         return rename(srcIndex.ToString().c_str(), destIndex.ToString().c_str()) == 0 ? true : false;
     }
 
-}}//qor::nswindows
+}}}//qor::platform::nswindows

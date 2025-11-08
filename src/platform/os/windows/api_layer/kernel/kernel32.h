@@ -25,6 +25,11 @@
 #ifndef QOR_PP_H_OS_WINDOWS_API_KERNEL
 #define QOR_PP_H_OS_WINDOWS_API_KERNEL
 
+#if qor_pp_unicode
+#	define UNICODE 1
+#	define _UNICODE 1
+#endif
+
 #include <Windows.h>
 
 //Conditionally bring in extra headers on versions where they are supported
@@ -33,7 +38,6 @@
 #include <WerAPI.h>
 #endif
 #endif//__MINGW32__
-
 
 
 //Definitions to patch up old versions of Windows headers with the types needed so our interface can remain consistent even if not all of it is operational.
@@ -47,32 +51,29 @@ typedef enum _WER_REGISTER_FILE_TYPE
 #endif
 
 
-
 //Local definitions for dealing with Windows API
-#define _ATXT( _X ) ( _X )
+#define _ATXT( _X ) ( #_X )
 #define _AC( X ) ((char8_t)(_X))
-#define _WTXT( _X ) ( L##_X )
+#define _WTXT( _X ) ( L#_X )
 #define _WC( _X ) ((char16_t)(_X))
 
 #if ( qor_pp_unicode )
-typedef wchar_t TCHAR;
 #	define _TXT( _X ) ( _WTXT( _X ) )
 #	define _C( _X ) _WC( _X )
-typedef String16 String;
+//typedef String16 String;
 #else
-typedef char TCHAR;
 #	define _TXT( _X ) ( _ATXT( _X ) )
 #	define _C( _X ) _AC( _X )
 #endif
 
-#define qor_pp_useswinapi( _MODULE, _NAME ) static const Library::DefProc pFunc = reinterpret_cast< Library::DefProc>( Kernel32::GetProcAddress( reinterpret_cast< ::HMODULE >( Kernel32::GetModuleHandle(qor_pp_stringize(_MODULE)) ), qor_pp_stringize(_NAME) ) )
-#ifdef qor_pp_unicode
+#define qor_pp_useswinapi( _MODULE, _NAME ) static const Library::DefProc pFunc = reinterpret_cast< Library::DefProc>( Kernel32::GetProcAddress( reinterpret_cast< ::HMODULE >( Kernel32::GetModuleHandle(_TXT(_MODULE)) ), _ATXT(_NAME) ) )
+#if ( qor_pp_unicode )
 #	define qor_pp_useswinapiAW( _MODULE, _NAME ) qor_pp_useswinapi( _MODULE, _NAME##W )
 #else
 #	define qor_pp_useswinapiAW( _MODULE, _NAME ) qor_pp_useswinapi( _MODULE, _NAME##A )
 #endif
 
-namespace qor { namespace winapi {
+namespace qor { namespace nswindows { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPI) Kernel32
 	{
@@ -185,7 +186,14 @@ namespace qor { namespace winapi {
 		static BOOL WriteConsoleOutputAttribute(HANDLE hConsoleOutput, const WORD * lpAttribute, DWORD nLength, ::COORD dwWriteCoord, LPDWORD lpNumberOfAttrsWritten);
 		static BOOL WriteConsoleOutputCharacter(HANDLE hConsoleOutput, LPCTSTR lpCharacter, DWORD nLength, ::COORD dwWriteCoord, LPDWORD lpNumberOfCharsWritten);
 		static DWORD CtrlRoutine(LPVOID lpParameter);
+
+		//IO
+		static BOOL CancelIoEx( HANDLE hFile, LPOVERLAPPED lpOverlapped );
+
+		//Sync API
+		static DWORD WaitForMultipleObjectsEx(DWORD nCount, const void** lpHandles, BOOL bWaitAll, DWORD dwMilliseconds, BOOL bAlertable);
 	};
-}}//qor::winapi
+
+}}}//qor::nswindows::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_KERNEL

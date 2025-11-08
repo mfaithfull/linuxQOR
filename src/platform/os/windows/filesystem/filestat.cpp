@@ -29,7 +29,7 @@
 //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileStat requirement. 
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileStat() { return true; } }//qor
 
-namespace qor{ namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{
     
     FileStat::FileStat() : IFileStat(), m_IsValid(false)
     {
@@ -70,4 +70,4 @@ namespace qor{ namespace nswindows{
         return false;
     }
 
-}}//qor::nswindows
+}}}//qor::platform::nswindows

@@ -37,6 +37,7 @@ qor::Module& ThisModule(void)
 	static qor::Module QORModule("Querysoft Open Runtime: Windows Console Module",
 		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-	static qor::TypeRegEntry< qor::nsWindows::Console, qor::components::IConsole> reg;  //Register the Windows specific implementation of IConsole
+	//Register the Windows specific implementation of IConsole
+	static qor::TypeRegEntry< qor::components::nswindows::Console, qor::components::IConsole> reg;
 	return QORModule;
 }

@@ -27,13 +27,20 @@
 
 
 #define Invalid_Handle_Value ((void* const)(size_t)(-1))
+#define Infinite_Timeout            0xFFFFFFFF  // Infinite timeout
 
-namespace qor{ namespace nsWindows {
+#define Success                    0L
+
+#define Status_Wait0        ((unsigned long)0x00000000L)
+#define Wait_Failed 		((unsigned long)0xFFFFFFFF)
+#define Wait_Object0       	((Status_Wait0 ) + 0 )
+
+namespace qor{ namespace platform { namespace nswindows {
 
 	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
 	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
 	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
 
-}}//qor::nsWindows
+}}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS

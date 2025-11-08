@@ -33,7 +33,7 @@
 
 #include "sendop.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
 	bool SocketSendOperationImpl::try_start(win32_overlapped_operation_base& operation) noexcept
 	{
@@ -41,7 +41,7 @@ namespace qor { namespace nswindows { namespace framework {
 		// it may be possible that the operation will complete immediately
 		// on another thread and then destroy the socket before we get a
 		// chance to read it.
-		const bool skipCompletionOnSuccess = true;//TODO: m_socket.skip_completion_on_success();
+		const bool skipCompletionOnSuccess = false;//TODO: m_socket.skip_completion_on_success();
 
 		DWORD numberOfBytesSent = 0;
 		int result = ::WSASend(
@@ -81,4 +81,4 @@ namespace qor { namespace nswindows { namespace framework {
 		(void)::CancelIoEx( reinterpret_cast<HANDLE>(m_socket->m_handle), operation.get_overlapped());
 	}
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows

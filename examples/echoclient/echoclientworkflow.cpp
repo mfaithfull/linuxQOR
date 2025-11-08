@@ -71,6 +71,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         if(m_Input == "close")
         {
             m_Console->WriteLine("Shutting down\n");
+            m_ClientSocket->Shutdown(ShutdownReadWrite);
             SetResult(EXIT_SUCCESS);
             SetComplete();
             PopState();

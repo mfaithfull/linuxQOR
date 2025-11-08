@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-set(target winq_common)
+set(target winqor_common)
 
-add_library(${target} SHARED winq_common.cpp handles/handle.cpp "constants.h" "handles/typedhandle.h")
+add_library(${target} SHARED winq_common.cpp handles/handle.cpp constants.h handles/typedhandle.h stringconv.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE -DQOR_WINCOMMON)
-target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread qor_interception qor_winapi winqsharedbootstrap)
+target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
+qor_interception winqor_api_kernel winqor_sharedbootstrap)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

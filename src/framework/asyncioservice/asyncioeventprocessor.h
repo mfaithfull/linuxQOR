@@ -33,6 +33,7 @@
 #include "src/qor/sync/asyncmanualresetevent.h"
 #include "src/framework/task/task.h"
 #include "src/framework/task/syncwait.h"
+#include "src/platform/io/iodescriptor.h"
 
 namespace qor { namespace framework{
   
@@ -53,6 +54,8 @@ namespace qor { namespace framework{
 
         virtual void Stop() { m_StopRequested = true; }
         virtual void Reset() { m_StopRequested = false;}
+
+        virtual bool Enroll(platform::IODescriptor& ioDescriptor) const {return false;}
 
     protected:
 

@@ -32,7 +32,7 @@
 #include "src/platform/network/socket.h"
 #include "src/platform/network/sockets.h"
 
-namespace qor{ namespace nswindows{
+namespace qor{ namespace network{ namespace nswindows{
 
     class qor_pp_module_interface(WINQOR_SOCKETS) Socket : public network::Socket
     {
@@ -41,7 +41,7 @@ namespace qor{ namespace nswindows{
         Socket();
         Socket(int sock);
         Socket(const Socket& src);
-        Socket(const network::sockets::eAddressFamily& AF, const network::sockets::eType& Type, const network::sockets::eProtocol& Protocol);
+        Socket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol);
         virtual ~Socket();        
 
         virtual int32_t Bind(const network::Address& Address);
@@ -88,8 +88,6 @@ namespace qor{ namespace nswindows{
 
     };
     
-    }//qor::nswindows
-        
-}//qor
+}}}//qor::network::windows
 
 #endif//QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKET

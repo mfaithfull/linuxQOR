@@ -60,6 +60,14 @@ namespace qor{ namespace nslinux{ namespace framework{
             };
         }
 
+        virtual qor::framework::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        {
+            co_return qor::framework::AsyncIOResult{
+                .status_code = co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len),
+                .ioObject = ioDescriptor
+            };
+        }
+
         virtual qor::framework::IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
         {
             co_return qor::framework::AsyncIOResult{

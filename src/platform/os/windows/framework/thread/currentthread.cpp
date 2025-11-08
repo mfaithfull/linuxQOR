@@ -39,7 +39,7 @@
 //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsICurrentThread requirement. 
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSTHREAD) ImplementsICurrentThread() {return true;} }
 
-namespace qor{ namespace nsWindows{ namespace framework{
+namespace qor{ namespace framework{ namespace nswindows{
 
     bool CurrentThread::SetPriority(ICurrentThread::Priority priority)
     {
@@ -186,4 +186,4 @@ namespace qor{ namespace nsWindows{ namespace framework{
         return affinity;
     }
 
-}}}//qor::nsWindows::framework
+}}}//qor::framework::nswindows

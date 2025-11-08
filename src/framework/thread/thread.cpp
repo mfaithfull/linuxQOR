@@ -83,8 +83,9 @@ namespace qor{ namespace framework{
 		{
 			Run();			
 		}
-		catch(const std::exception& e)
+		catch(const std::exception&)
 		{
+			//TODO:
 			//std::cerr << e.what() << '\n';
 		}
 		catch(...)

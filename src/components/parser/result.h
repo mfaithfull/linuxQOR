@@ -22,34 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_BINDOP
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_BINDOP
+#ifndef QOR_PP_H_COMPONENTS_PARSER_RESULT
+#define QOR_PP_H_COMPONENTS_PARSER_RESULT
 
-#include <system_error>
-#include <coroutine>
-#include "iocpawaiter.h"
+#include "tokens.h"
 
-namespace qor {
-    namespace nswindows {
-        namespace framework {
+namespace qor { namespace components { namespace parser {
 
-            class BindOperation
-            {
-            public:
+    class Result
+    {
+    public:
 
-                BindOperation(int fd, byte* buffer, int32_t len)
-                {
-                }
+        enum eResultCode
+        {
+            MORE_DATA,
+            FAILURE,
+            SUCCESS,
+        };
 
-                auto operator co_await()
-                {
-                    return IOCPAwaiter{};
-                }
+        eResultCode code;
+        uint16_t first;
+        size_t length;
+        eToken token;
+    };
+}}}//qor::components::parser
 
-            };
-
-        }
-    }
-}//qor::nswindows::framework
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_BINDOP
+#endif//QOR_PP_H_COMPONENTS_PARSER_RESULT

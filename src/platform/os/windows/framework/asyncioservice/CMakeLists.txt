@@ -3,12 +3,15 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target winqor_asyncioservice)
 
-add_library(${target} SHARED winqor_asyncioservice.cpp asyncioservice.cpp "iocpinitiator.h" "iocpeventprocessor.h" "readop.h" "iocpawaiter.h" "listenop.h" "bindop.h" "acceptop.h" "sendop.h" "iocpinitiator.cpp" "iocpeventprocessor.cpp" "overlappedoperationcancellable.h" "overlappedoperationbase.h" "iostate.h" "overlapped.h" "overlappedoperation.h" "socketacceptimpl.cpp" "connectop.h" "socketconnectimpl.cpp" "disconnectop.h" "socketdisconnectimpl.cpp" "recvfromop.h" "socketrecvfromimpl.cpp" "recvop.h" "socketrecvimpl.cpp" "socketsendimpl.cpp" "sendtoop.h" "socketsendtoimpl.cpp" "wsabuffer.h")
+add_library(${target} SHARED winqor_asyncioservice.cpp asyncioservice.cpp iocpinitiator.cpp iocpeventprocessor.cpp socketacceptimpl.cpp
+socketconnectimpl.cpp socketdisconnectimpl.cpp socketrecvfromimpl.cpp
+socketrecvimpl.cpp socketsendimpl.cpp sendtoop.h socketsendtoimpl.cpp ioservice.cpp scheduleoperation.cpp
+timedscheduleoperation.cpp timerqueue.cpp timerthreadstate.cpp iocompletionport.cpp waitabletimerevent.cpp autoresetevent.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE -DQOR_WINDOWSASYNCIOSERVICE)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_injection 
-qor_asyncioservice qor_error qor_sockets Mswsock)
+qor_asyncioservice qor_error qor_sockets winqor_common winqor_api_winsock2)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

@@ -33,7 +33,7 @@ namespace qor
 	bool qor_pp_module_interface(QOR_WINCONSOLE) ImplementsIConsole();
 }
 
-namespace qor { namespace nsWindows {
+namespace qor { namespace components { namespace nswindows {
 
 	class qor_pp_module_interface(QOR_WINCONSOLE) Console : public components::IConsole
 	{
@@ -184,6 +184,6 @@ Writes the current line terminator to the standard output stream.
 WriteLine(String, Object, Object, Object)	
 Writes the text representation of the specified objects, followed by the current line terminator, to the standard output stream using the specified format information.*/
 	};
-}}//qor::nsWindows
+}}}//qor::components::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMPONENTS_CONSOLE

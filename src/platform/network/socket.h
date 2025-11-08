@@ -46,7 +46,7 @@ namespace qor{ namespace network{
         
         Socket();
         virtual ~Socket() = default;
-        Socket(const sockets::eAddressFamily& AF, const sockets::eType& Type, const sockets::eProtocol& Protocol);
+        Socket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol);
 
         virtual int32_t Bind(const Address& Address);                
         virtual int32_t Bind(const framework::AsyncIOInterface& ioContext, const Address& Address);

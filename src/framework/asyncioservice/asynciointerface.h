@@ -42,12 +42,13 @@ namespace qor { namespace framework{
         virtual ~AsyncIOInterface() = default;
 
         virtual inline IOTask Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const = 0;
+        virtual inline IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
         virtual inline IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
         virtual inline IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog) const = 0;
         virtual inline IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const = 0;
         virtual inline IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const = 0;
         virtual inline int AcceptEx(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const = 0;
-
+        virtual inline bool Enroll(platform::IODescriptor& ioDescriptor) const = 0;
     };
 
     }//framework

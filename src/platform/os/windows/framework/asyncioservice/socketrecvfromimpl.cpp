@@ -34,7 +34,7 @@
 #include "recvfromop.h"
 #include "src/platform/network/windows/addresshelpers.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
 	bool socket_recv_from_operation_impl::try_start( win32_overlapped_operation_base& operation) noexcept
 	{
@@ -108,8 +108,7 @@ namespace qor { namespace nswindows { namespace framework {
 
 		return std::make_tuple(
 			static_cast<std::size_t>(operation.m_numberOfBytesTransferred),
-			sockaddr_to_ip_endpoint(
-				*reinterpret_cast<SOCKADDR*>(&m_sourceSockaddrStorage)));
+			qor::network::nswindows::sockaddr_to_ip_endpoint(*reinterpret_cast<SOCKADDR*>(&m_sourceSockaddrStorage)));
 	}
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows

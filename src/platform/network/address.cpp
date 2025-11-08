@@ -27,7 +27,7 @@
 #include "address.h"
 
 #ifdef WIN32
-#   include <mswsock.h.h>
+#   include <winsock2.h>
 #undef SetPort
 #endif
 

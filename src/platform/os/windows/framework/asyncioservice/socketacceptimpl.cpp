@@ -26,14 +26,14 @@
 #include "src/configuration/configuration.h"
 
 #include <system_error>
-# include <WinSock2.h>
-# include <WS2tcpip.h>
-# include <MSWSock.h>
-# include <Windows.h>
-
 #include "acceptop.h"
 
-namespace qor { namespace nswindows { namespace framework {
+#include "src/platform/os/windows/api_layer/winsock2/ws2.h"
+#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
+
+using namespace qor::nswindows::api;
+
+namespace qor { namespace framework { namespace nswindows {
 
 	bool SocketAcceptOperationImpl::try_start( win32_overlapped_operation_base& operation) noexcept
 	{
@@ -46,10 +46,10 @@ namespace qor { namespace nswindows { namespace framework {
 		// it may be possible that the operation will complete immediately
 		// on another thread and then destroy the socket before we get a
 		// chance to read it.
-		const bool skipCompletionOnSuccess = true;//TODO: m_listeningSocket.skip_completion_on_success();
+		const bool skipCompletionOnSuccess = false;//TODO: m_listeningSocket.skip_completion_on_success();
 
 		DWORD bytesReceived = 0;
-		BOOL ok = ::AcceptEx(
+		BOOL ok = WS2::AcceptEx(
 			m_listeningSocket->m_handle,
 			m_acceptingSocket->m_handle,
 			m_addressBuffer,
@@ -61,7 +61,7 @@ namespace qor { namespace nswindows { namespace framework {
 
 		if (!ok)
 		{
-			int errorCode = ::WSAGetLastError();
+			int errorCode = WS2::WSAGetLastError();
 			if (errorCode != ERROR_IO_PENDING)
 			{
 				operation.m_errorCode = static_cast<DWORD>(errorCode);
@@ -79,7 +79,7 @@ namespace qor { namespace nswindows { namespace framework {
 
 	void SocketAcceptOperationImpl::cancel( win32_overlapped_operation_base& operation) noexcept
 	{
-		(void)::CancelIoEx( reinterpret_cast<HANDLE>(m_listeningSocket->m_handle), operation.get_overlapped());
+		(void)Kernel32::CancelIoEx( reinterpret_cast<HANDLE>(m_listeningSocket->m_handle), operation.get_overlapped());
 	}
 
 	int SocketAcceptOperationImpl::get_result( win32_overlapped_operation_base& operation)
@@ -99,7 +99,7 @@ namespace qor { namespace nswindows { namespace framework {
 		INT localSockaddrLength;
 		INT remoteSockaddrLength;
 
-		::GetAcceptExSockaddrs(
+		WS2::GetAcceptExSockaddrs(
 			m_addressBuffer,
 			0,
 			sizeof(m_addressBuffer) / 2,
@@ -117,7 +117,7 @@ namespace qor { namespace nswindows { namespace framework {
 			// to ensure that ::shutdown() and ::setsockopt() calls work on the
 			// accepted socket.
 			SOCKET listenSocket = m_listeningSocket->m_handle;
-			const int result = ::setsockopt(
+			const int result = WS2::setsockopt(
 				m_acceptingSocket->m_handle,
 				SOL_SOCKET,
 				SO_UPDATE_ACCEPT_CONTEXT,
@@ -126,7 +126,7 @@ namespace qor { namespace nswindows { namespace framework {
 
 			if (result == SOCKET_ERROR)
 			{
-				const int errorCode = ::WSAGetLastError();
+				const int errorCode = WS2::WSAGetLastError();
 				throw std::system_error{
 					errorCode,
 					std::system_category(),
@@ -137,4 +137,4 @@ namespace qor { namespace nswindows { namespace framework {
 		return operation.m_errorCode;
 	}
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows

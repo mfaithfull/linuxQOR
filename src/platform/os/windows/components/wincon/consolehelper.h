@@ -29,10 +29,8 @@
 
 #include "src/platform/os/windows/common/handles/handle.h"
 
-//#include "src/components/console/iconsole.h"
-
-//This is edge of the nsWindows namespace. No Windows specific types are allowed here.
-namespace qor { namespace nsWindows {
+//This is edge of the nswindows namespace. No Windows specific types are allowed here.
+namespace qor { namespace components { namespace nswindows {
 
 	struct Coord
 	{
@@ -99,16 +97,16 @@ namespace qor { namespace nsWindows {
 		unsigned long GetTitle(std::string& consoleTitle);
 		//COSWindow::ref_type GetWindow();
 		unsigned long GetNumberOfMouseButtons();
-		Handle GetStdHandle(StdHandles stdHandle);
+		platform::nswindows::Handle GetStdHandle(StdHandles stdHandle);
 		//bool SetCP(const CCodePage& codePage);
 		bool SetCtrlHandler(CtrlHandlerCallback handlerRoutine, bool add);
 		//bool SetHistoryInfo(const ConsoleHistoryInfo& consoleHistoryInfo);
 		//bool SetOutputCP(const CCodePage& codePage);
 		bool SetTitle(std::string& consoleTitle);
-		bool SetStdHandle(StdHandles stdHandle, Handle & hHandle);
+		bool SetStdHandle(StdHandles stdHandle, platform::nswindows::Handle & hHandle);
 
 	};
 
-}}//qor::nsWindows
+}}}//qor::components::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMPONENTS_CONSOLEHELPER

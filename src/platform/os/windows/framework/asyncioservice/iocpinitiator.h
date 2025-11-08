@@ -33,15 +33,12 @@
 #undef max
 #include "iocpeventprocessor.h"
 #include "src/framework/asyncioservice/asyncioinitiator.h"
-#include "readop.h"
 #include "recvop.h"
-#include "listenop.h"
-#include "bindop.h"
 #include "acceptop.h"
 #include "sendop.h"
 #include "src/platform/network/socket.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
     class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPInitiator : public qor::framework::AsyncIOInitiator
     {
@@ -53,6 +50,11 @@ namespace qor { namespace nswindows { namespace framework {
         virtual void ConnectToProcessor(qor::framework::AsyncIOEventProcessor * processor)
         {
             m_eventProcessor = dynamic_cast<IOCPEventProcessor*>(processor);
+        }
+
+        virtual bool RequiresBackgroundProcessor()
+        {
+            return true;
         }
 
         virtual qor::framework::IOTask Send(platform::IODescriptor * ioDescriptor, const byte * buffer, size_t len, int flags) const
@@ -89,11 +91,7 @@ namespace qor { namespace nswindows { namespace framework {
 
         virtual qor::framework::IOTask Bind(platform::IODescriptor * ioDescriptor, const network::Address & Address) const
         {
-            sockaddr_in addr;
-            memset(&addr, 0, sizeof(struct sockaddr_in));
-            addr.sin_family = Address.sa_family;
-            addr.sin_addr.s_addr = Address.sa.IPAddress.sin_addr.S_un.S_addr;
-            addr.sin_port = Address.sa.IPAddress.sin_port;
+            //Windows doesn't provide async bind
             co_return qor::framework::AsyncIOResult{
                 .status_code = -1,//co_await BindOperation(*m_Ring, ioDescriptor->m_fd, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)),
                 .ioObject = ioDescriptor
@@ -104,11 +102,11 @@ namespace qor { namespace nswindows { namespace framework {
         {
             sockaddr addr;
             int len = 0;
-            int socket_number = co_await SocketAcceptOperation(ioDescriptor, new_socket);
+            //co_await m_eventProcessor->Schedule();
+            int status = co_await SocketAcceptOperation(ioDescriptor, new_socket);
 
-            new_socket->m_fd = socket_number;
             co_return qor::framework::AsyncIOResult{
-                .status_code = socket_number,
+                .status_code = status,
                 .ioObject = ioDescriptor
             };
         }
@@ -118,6 +116,6 @@ namespace qor { namespace nswindows { namespace framework {
         IOCPEventProcessor* m_eventProcessor;
     };
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPINITIATOR

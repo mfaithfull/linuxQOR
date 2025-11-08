@@ -33,7 +33,7 @@
 #include "src/platform/network/socket.h"
 #include "src/platform/network/ipendpoint.h"
 
-namespace qor { namespace nswindows { namespace framework {
+namespace qor { namespace framework { namespace nswindows {
 
 	class socket_send_to_operation_impl
 	{
@@ -109,6 +109,6 @@ namespace qor { namespace nswindows { namespace framework {
 
 	};
 
-}}}//qor::nswindows::framework
+}}}//qor::framework::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_SENDTOOP

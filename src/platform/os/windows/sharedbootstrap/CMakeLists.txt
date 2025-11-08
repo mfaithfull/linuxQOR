@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
-set(target winqsharedbootstrap)
+set(target winqor_sharedbootstrap)
 
-add_library(winqsharedbootstrap winqsharedbootstrap.cpp)
+add_library(winqor_sharedbootstrap winqsharedbootstrap.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

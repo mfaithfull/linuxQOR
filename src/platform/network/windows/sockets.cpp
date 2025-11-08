@@ -24,18 +24,21 @@
 
 #include "src/configuration/configuration.h"
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
-
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/platform/network/windows/sockets.h"
 #include "src/platform/network/windows/socket.h"
+#include "src/qor/error/error.h"
+#include "src/framework/asyncioservice/asynciocontext.h"
+
+#include "src/platform/os/windows/api_layer/winsock2/ws2.h"
 
 qor_pp_module_provide(WINQOR_SOCKETS,Sockets)
 
-namespace qor{ namespace nswindows{
+using namespace qor::nswindows::api;
+
+namespace qor{ namespace network{ namespace nswindows{
 
     void AddressInfoFlagsToWindows(const network::addrinfo_flags& flags, int& out)
     {
@@ -69,6 +72,35 @@ namespace qor{ namespace nswindows{
         return socket;
     }
 
+    ref_of<network::Socket>::type Sockets::CreateAsyncSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, qor::framework::AsyncIOContext* ioContext) const
+    {
+        ref_of<network::Socket>::type socket = CreateSocket(AF,Type,Protocol); 
+        if( ioContext != nullptr)
+        {
+            ioContext->Enroll(socket());
+        }
+        return socket;
+    }
+
+    void Sockets::Setup()
+    {
+        WORD wVersionRequested;
+        WSADATA wsaData;
+        int err;        
+        wVersionRequested = MAKEWORD(2, 2);
+
+        err = WS2::WSAStartup(wVersionRequested, &wsaData);
+        if (err != 0) 
+        {
+            serious("Could not find a suitable Windows sockets library.");
+        }
+    }
+
+    void Sockets::Shutdown()
+    {
+        int err = WS2::WSACleanup();
+    }
+
     int Sockets::GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results) const
     {
         struct addrinfo hintinfo;
@@ -76,7 +108,7 @@ namespace qor{ namespace nswindows{
 
         struct addrinfo *res = nullptr;
 
-        auto result = ::getaddrinfo(node.empty() ? nullptr : node.c_str(), service.empty() ? nullptr : service.c_str(), &hintinfo, &res);
+        auto result = WS2::getaddrinfo(node.empty() ? nullptr : node.c_str(), service.empty() ? nullptr : service.c_str(), &hintinfo, &res);
         
         if(result != 0)
         {      
@@ -101,7 +133,8 @@ namespace qor{ namespace nswindows{
             results.emplace_back(resultAddressInfo);
         }
 
-        ::freeaddrinfo(res);
+        WS2::freeaddrinfo(res);
         return results.size();
     }
-}}//qor::nswindows
+
+}}}//qor::network::nswindows

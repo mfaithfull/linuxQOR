@@ -48,6 +48,11 @@ namespace qor { namespace framework{
         {            
         }
 
+        virtual bool RequiresBackgroundProcessor()
+        {
+            return true;
+        }
+
         virtual IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
         {
             co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
@@ -72,6 +77,12 @@ namespace qor { namespace framework{
         {
             co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
         }
+
+        virtual IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        {
+            co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
+        }
+
     };
 
     }//framework

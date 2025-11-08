@@ -34,10 +34,18 @@
 
 namespace qor { namespace framework{
 
+    bool AsyncIOContext::Enroll(platform::IODescriptor& ioDescriptor) const
+    {
+        return m_processor->Enroll(ioDescriptor);
+    }
+
     AsyncIOContext::AsyncIOContext(ref_of<ThreadPool>::type threadPool) : m_threadPool(threadPool)
     {
         m_initiator = new_ref<AsyncIOInitiator>();
-        m_processor = new_ref<AsyncIOEventProcessor>();
+        if(m_initiator->RequiresBackgroundProcessor())
+        {
+            m_processor = new_ref<AsyncIOEventProcessor>();
+        }
         m_initiator->ConnectToProcessor(m_processor);
         Inflate();
     }
@@ -48,17 +56,23 @@ namespace qor { namespace framework{
 
     void AsyncIOContext::Inflate()
     {
-        m_processor->Reset();
-        m_processorResult = m_threadPool->SubmitTask( [this]()
+        if(m_processor.IsNotNull())
         {
-            return m_processor->Run();
-        });
+            m_processor->Reset();
+            m_processorResult = m_threadPool->SubmitTask( [this]()
+            {
+                return m_processor->Run();
+            });
+        }
     }
 
     void AsyncIOContext::Deflate()
     {
-        m_processor->Stop();
-        m_processorResult.get();        
+        if(m_processor.IsNotNull())
+        {
+            m_processor->Stop();
+            m_processorResult.get();
+        }
     }
 
 
@@ -67,7 +81,7 @@ namespace qor { namespace framework{
         auto acceptTask = [&]() -> task<AsyncIOResult>
         {
             co_await m_threadPool->Schedule();
-            co_await m_initiator->Accept(ioDescriptor, Address, Socket);
+            m_initiator->Accept(ioDescriptor, Address, Socket);
         };
         return sync_wait(acceptTask()).status_code;
     }
