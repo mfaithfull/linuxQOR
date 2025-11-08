@@ -27,12 +27,16 @@
 #include "src/platform/filesystem/filesystem.h"
 #include "fileprocessorworkflow.h"
 #include "fileprocessorapp.h"
+#include "src/components/parser/parser.h"
+#include "src/components/parser/state.h"
+#include "src/components/parser/context.h"
 
 using namespace qor;
 using namespace qor::workflow;
 using namespace qor::pipeline;
 using namespace qor::platform;
 using namespace qor::components::optparser;
+using namespace qor::components::parser;
 
 bool requiresFileSystem = ImplementsIFileSystem();
 
@@ -52,10 +56,17 @@ FileProcessorWorkflow::FileProcessorWorkflow() : state0(this)
 
         size_t& byteCount = size;
         byte* address = byteBuffer.WriteRequest(byteCount);
-        auto bytesRead = refReadFile->Read(address, byteCount);
-    };
+        size_t bytesRead = refReadFile->Read(address, byteCount);
 
-    state0.Leave = [this]()->void{
+        
+        Parser testParser;
+        Context testContext;
+        testContext.m_octetStream = byteBuffer.ReadRequest(bytesRead);
+        testContext.m_position = 0;
+        testContext.m_size = bytesRead;
+        AcceptAll testState(&testParser, &testContext);
+        testParser.SetInitialState(testState);
+        testParser.Run();
 
         SetComplete();
     };

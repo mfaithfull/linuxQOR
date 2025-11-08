@@ -435,8 +435,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::ReadConsole(HANDLE hConsoleInput, void* lpBuffer, DWORD nNumberOfCharsToRead, LPDWORD lpNumberOfCharsRead, ::PCONSOLE_READCONSOLE_CONTROL pReadcontrol)
 	{
 		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::ReadConsole(hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, pReadcontrol);
-		return bResult;
+		return ::ReadConsole(hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, pReadcontrol);		
 	}
 
 	BOOL Kernel32::ReadConsoleInput(HANDLE hConsoleInput, ::PINPUT_RECORD lpBuffer, DWORD nLength, LPDWORD lpNumberOfEventsRead)
