@@ -43,7 +43,7 @@ public:
     {
         initialState.Enter = [this]()->void{
             std::cout << " initial workflow state entered.";
-            PushState(state1);
+            PushState(&state1);
         };
 
         initialState.Suspend = [this]()->void{
@@ -78,7 +78,7 @@ public:
             std::cout << " workflow state1 completed.";            
         };
 
-        SetInitialState(initialState);
+        SetInitialState(&initialState);
     }
 
     virtual ~TestWorkflow() = default;

@@ -30,6 +30,7 @@
 #include "src/components/parser/parser.h"
 #include "src/components/parser/state.h"
 #include "src/components/parser/context.h"
+#include "src/components/parser/json.h"
 
 using namespace qor;
 using namespace qor::workflow;
@@ -37,17 +38,18 @@ using namespace qor::pipeline;
 using namespace qor::platform;
 using namespace qor::components::optparser;
 using namespace qor::components::parser;
+using namespace qor::components::parser::json;
 
 bool requiresFileSystem = ImplementsIFileSystem();
 
 FileProcessorWorkflow::FileProcessorWorkflow() : state0(this)
 {
     state0.Enter = [this]()->void{
-        
+                
         ref_of<FileProcessorApp>::type application = new_ref<FileProcessorApp>();    
         std::string filename = application->GetFileName();
         auto filesystem = ThePlatform()->GetSubsystem<FileSystem>();
-        FileIndex newIndex(filesystem->CurrentPath(), "source.txt");
+        FileIndex newIndex(filesystem->CurrentPath(), "output.json");
 
         auto refReadFile = filesystem->Open(newIndex, IFileSystem::OpenFor::ReadOnly, IFileSystem::WithFlags::Exclusive);
         auto size = refReadFile->GetSize();
@@ -57,19 +59,22 @@ FileProcessorWorkflow::FileProcessorWorkflow() : state0(this)
         size_t& byteCount = size;
         byte* address = byteBuffer.WriteRequest(byteCount);
         size_t bytesRead = refReadFile->Read(address, byteCount);
-
+        byteBuffer.WriteAcknowledge(bytesRead);
         
-        Parser testParser;
-        Context testContext;
-        testContext.m_octetStream = byteBuffer.ReadRequest(bytesRead);
-        testContext.m_position = 0;
-        testContext.m_size = bytesRead;
-        AcceptAll testState(&testParser, &testContext);
-        testParser.SetInitialState(testState);
+        Parser testParser;        
+        ref_of<Context>::type testContext = new_ref<Context>();
+        testContext->m_octetStream = byteBuffer.ReadRequest(bytesRead);
+        testContext->m_position = 0;
+        testContext->m_size = bytesRead;
+        testParser.SetContext(testContext);
+
+        object objectState(&testParser);
+        AcceptAll testState(&testParser);
+        testParser.SetInitialState(&objectState);
         testParser.Run();
 
         SetComplete();
     };
 
-    SetInitialState(state0);
+    SetInitialState(&state0);
 }

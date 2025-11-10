@@ -25,7 +25,11 @@
 #ifndef QOR_PP_H_COMPONENTS_PARSER_PARSER
 #define QOR_PP_H_COMPONENTS_PARSER_PARSER
 
+#include <stack>
+
 #include "src/framework/workflow/workflow.h"
+#include "context.h"
+#include "result.h"
 
 namespace qor { namespace components { namespace parser {
 
@@ -34,8 +38,25 @@ namespace qor { namespace components { namespace parser {
     
     public:
 
-        //context
-        //settable initial state which is what we're trying to parse
+        class Context* Context()
+        {
+            return m_context;
+        }
+
+        void PushResult(const Result& result)
+        {
+            m_results.emplace(result);
+        }
+
+        void SetContext(ref_of<class Context>::type context)
+        {
+            m_context = context;
+        }
+
+    private:
+
+        ref_of<class Context>::type m_context;
+        std::stack<Result> m_results;
     };
 
 }}}//qor::components::parser

@@ -24,75 +24,308 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <iostream>
+
 #include "src/platform/compiler/compiler.h"
 #include "state.h"
 #include "context.h"
+#include "parser.h"
 
 namespace qor { namespace components { namespace parser {
 
-    ParserState::ParserState(workflow::Workflow* workflow, Context* context) : workflow::State(workflow), m_context(context)
+    ParserState::ParserState(Parser* parser, uint64_t token) : workflow::State(parser)
+    {
+        m_parent = nullptr;
+        m_result.code = Result::MORE_DATA;
+        m_result.length = 0;
+        m_token = token;
+
+        /*
+        Enter = [this]()
+        {
+            std::cout << "Looking for " << m_token << " at " << Context()->GetPosition();
+        };*/
+
+        Leave = [this]()
+        {
+            if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
+            {
+                auto it = tokenNames.find(m_result.token);
+                if(it != tokenNames.end())
+                {
+                    std::cout << "Found " << it->second << " at " << m_result.m_position << " length " << m_result.length << " first char " << (char)(m_result.first) <<std::endl;
+                }
+                else
+                {
+                    std::cout << "Found " << m_result.token << " at " << m_result.m_position << " length " << m_result.length << " first char " << (char)(m_result.first) << std::endl;
+                }
+            }
+        };
+    }
+
+    void ParserState::Reset()
     {
         m_result.code = Result::MORE_DATA;
+        m_result.first = 0;
+        m_result.m_position = 0;
         m_result.length = 0;
     }
 
-    AcceptAll::AcceptAll(workflow::Workflow* workflow, Context* context) : ParserState(workflow, m_context)
+    Context* ParserState::Context()
+    {
+        return dynamic_cast<Parser*>(m_Workflow)->Context();
+    }
+
+    workflow::Workflow* ParserState::Workflow()
+    {
+        return dynamic_cast<workflow::Workflow*>(m_Workflow);
+    }
+
+    Parser* ParserState::GetParser()
+    {
+        return dynamic_cast<Parser*>(m_Workflow);
+    }
+    
+    AcceptAll::AcceptAll(Parser* parser) : ParserState(parser)
     {        
         Enter = [this]()
         {
             byte* data = nullptr;
-            if(m_context->GetOctet(data))
+            m_result.code = Result::SUCCESS;
+            if(Context()->GetOctet(data))
             {
                 m_result.first = *data;
-                m_context->ConsumeOctet();
-                m_result.token = eToken::Octet;
+                m_result.m_position = Context()->GetPosition();
+                Context()->ConsumeOctet();
+                m_result.token = static_cast<uint64_t>(eToken::Octet);
                 ++m_result.length;
             }
+            else
+            {
+                m_Workflow->PopState();
+            }
+        };
+    }
+
+    OneOfARange::OneOfARange(Parser* parser, byte firstOctet, byte lastOctet, uint64_t token) : ParserState(parser, token),
+        m_first(firstOctet), m_last(lastOctet)
+    {
+        Enter = [this]()
+        {
+            //std::cout << "Looking for octet between" << m_first << " and " << m_last << " at " << Context()->GetPosition() << std::endl;
+
+            byte* data = nullptr;
+            if(Context()->GetOctet(data) && (*data >= m_first && *data <= m_last) )
+            {
+                m_result.first = *data;
+                m_result.m_position = Context()->GetPosition();
+                Context()->ConsumeOctet();
+                m_result.token = m_token;
+                ++m_result.length;              
+                //std::cout << "Found: " << (char)(*data) << std::endl;
+                m_result.code = Result::SUCCESS;
+            }
+            else
+            {
+                //std::cout << "Trying to parse: " << (char)(*data) << std::endl;
+                m_result.m_position = Context()->GetPosition();
+                m_result.code = Result::FAILURE;
+                m_result.length = 0;
+            }
+            Workflow()->PopState();
+        };
+    }
+
+    Specific::Specific(Parser* parser, byte matchingOctet, uint64_t token) : ParserState(parser,token),
+        m_matchingOctet(matchingOctet)
+    {
+        Enter = [this]()
+        {
+            //std::cout << "Looking for " << m_matchingOctet << " at " << Context()->GetPosition() << std::endl;
+
+            byte* data = nullptr;
+            if(Context()->GetOctet(data) && *data == m_matchingOctet)
+            {
+                m_result.first = *data;
+                m_result.m_position = Context()->GetPosition();
+                Context()->ConsumeOctet();
+                m_result.token = m_token;
+                m_result.length = 1;
+                //std::cout << "Found: " << (char)(*data) << std::endl;        
+                m_result.code = Result::SUCCESS;
+            }
+            else if(data)
+            {
+                //std::cout << "Trying to parse: " << (char)(*data) << std::endl;
+                m_result.code = Result::FAILURE;
+                m_result.m_position = Context()->GetPosition();
+                m_result.length = 0;
+            }
+            Workflow()->PopState();
+        };
+    }
+
+    CHAR::CHAR(Parser* parser) : OneOfARange(parser, 0x01, 0x7F, static_cast<uint64_t>(eToken::Char)){}
+
+    AnyOneOf::AnyOneOf(Parser* parser, ParserState* head, ParserState* tail, uint64_t token) : ParserState(parser,token),
+        m_head(head), m_tail(tail), m_internalState(0)
+    {
+        Enter = [this]()
+        {
+            m_internalState = 0;
+            //std::cout << "Looking for head at " << Context()->GetPosition() << std::endl;
+            Workflow()->PushState(m_head);
+        };
+
+        Resume = [this]()
+        {
+            switch(m_internalState)
+            {
+            case 0:
+                if(m_head->m_result.code == Result::SUCCESS)
+                {
+                    m_result.code = Result::SUCCESS;
+                    m_result.first = m_head->m_result.first;
+                    m_result.length = m_head->m_result.length;
+                    m_result.token = m_token;
+                    m_result.m_position = m_head->m_result.m_position;
+                    Workflow()->PopState();
+                }
+                else
+                {
+                    m_internalState = 1;
+                    //std::cout << "Looking for tail at " << Context()->GetPosition() << std::endl;
+                    Workflow()->PushState(m_tail);
+                }
+                break;
+            case 1:
+                if(m_tail->m_result.code == Result::SUCCESS)
+                {
+                    m_result.code = Result::SUCCESS;
+                    m_result.first = m_tail->m_result.first;
+                    m_result.length = m_tail->m_result.length;
+                    m_result.token = m_token;
+                    m_result.m_position = m_tail->m_result.m_position;
+                    Workflow()->PopState();
+                }
+                else
+                {
+                    m_result.m_position = m_head->m_result.m_position;
+                    m_result.code = Result::FAILURE;
+                    Workflow()->PopState();
+                }                
+                break;
+            }
+        };
+    }
+
+    Optional::Optional(Parser* parser, ParserState* head, uint64_t token) : ParserState(parser,token),
+        m_head(head), m_first(true)
+    {
+        Enter = [this]()
+        {
+            //std::cout << "Looking for optional item at " << Context()->GetPosition() << std::endl;
+            Workflow()->PushState(m_head);
+        };
+
+        Resume = [this]()
+        {
             m_result.code = Result::SUCCESS;
+            m_result.length = 0;             
+            if(m_head->m_result.code == Result::SUCCESS && m_head->m_result.length > 0)
+            {
+                m_result.first = m_head->m_result.first;
+                m_result.length += m_head->m_result.length;
+                m_result.token = m_head->m_result.token;                
+            }
+            m_result.m_position = m_head->m_result.m_position;
+            Workflow()->PopState();
         };
     }
 
-    OneOfARange::OneOfARange(workflow::Workflow* workflow, Context* context, byte firstOctet, byte lastOctet, eToken token) : ParserState(workflow,context),
-        m_first(firstOctet), m_last(lastOctet), m_token(token)
+    ZeroOrMore::ZeroOrMore(Parser* parser, ParserState* head, uint64_t token) : ParserState(parser,token),
+        m_head(head), m_first(true)
     {
-        Enter = [workflow, this, context]()
+        Enter = [this]()
         {
-            byte* data = nullptr;
-            if(context->GetOctet(data) && (*data >= m_first && *data <= m_last) )
+            m_first = true;
+            m_result.length = 0;
+            Workflow()->PushState(m_head);
+        };
+
+        Resume = [this]()
+        {
+            m_result.code = Result::SUCCESS;                
+            m_result.token = m_token;
+            if(m_head->m_result.code == Result::SUCCESS)
             {
-                m_result.first = *data;
-                context->ConsumeOctet();
-                m_result.token = m_token;
-                ++m_result.length;                    
-                m_result.code = Result::SUCCESS;
+                if(m_first)
+                {
+                    m_result.first = m_head->m_result.first;
+                    m_result.m_position = m_head->m_result.m_position;
+                    m_first = false;
+                }
+                m_result.length += m_head->m_result.length;
+                m_head->Reset();
+                Workflow()->PushState(m_head);
             }
             else
             {
-                m_result.code = Result::FAILURE;
+                m_result.m_position = m_head->m_result.m_position;
+                Workflow()->PopState();
             }
-            workflow->PopState();
         };
     }
 
-    Specific::Specific(workflow::Workflow* workflow, Context* context, byte matchingOctet, eToken token) : ParserState(workflow,context),
-        m_matchingOctet(matchingOctet), m_token(token)
+
+    Sequence::Sequence(Parser* parser, ParserState* head, ParserState* tail, uint64_t token) : ParserState(parser,token),
+        m_head(head), m_tail(tail), m_internalState(0)
     {
-        Enter = [workflow, this, context]()
+        Enter = [this]()
         {
-            byte* data = nullptr;
-            if(context->GetOctet(data) && *data == m_matchingOctet)
+            m_internalState = 0;
+            Workflow()->PushState(m_head);
+        };
+
+        Resume = [this]()
+        {
+            switch(m_internalState)
             {
-                m_result.first = *data;
-                context->ConsumeOctet();
-                m_result.token = m_token;
-                ++m_result.length;                    
-                m_result.code = Result::SUCCESS;
+            case 0:
+                if(m_head->m_result.code != Result::SUCCESS)
+                {
+                    m_result.code = m_head->m_result.code;
+                    m_result.length = 0;
+                    m_result.m_position = m_head->m_result.m_position;
+                    //std::cout << "Sequence failed at " << Context()->GetPosition() << std::endl;
+                    Workflow()->PopState();
+                }
+                else
+                {
+                    m_result.first = m_head->m_result.first;
+                    m_result.length = m_head->m_result.length;                        
+                    m_result.m_position = m_head->m_result.m_position;
+                    m_internalState = 1;
+                    Workflow()->PushState(m_tail);
+                }
+                break;
+            case 1:
+                if(m_tail->m_result.code == Result::SUCCESS)
+                {
+                    m_result.code = Result::SUCCESS;
+                    m_result.length = m_head->m_result.length + m_tail->m_result.length;
+                    m_result.token = m_token;
+                    Workflow()->PopState();
+                }
+                else
+                {
+                    m_result.code = Result::FAILURE;
+                    m_result.length = 0;
+                    Workflow()->PopState();
+                }
+                break;
             }
-            else
-            {
-                m_result.code = Result::FAILURE;
-            }
-            workflow->PopState();
         };
     }
 

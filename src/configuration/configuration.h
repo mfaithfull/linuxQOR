@@ -63,7 +63,7 @@ namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(){ ret
 #define qor_pp_ver_minor 0
 #define qor_pp_ver_patch 0
 
-#ifdef qor_pp_unicode
+#if (qor_pp_unicode && (qor_pp_os_target == qor_pp_os_windows))
 typedef char16_t char_t;
 #else
 typedef char char_t;

@@ -22,5 +22,9 @@ target_link_libraries(${target} ${portable_libraries} ${os_libraries})
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 
-add_subdirectory(linux)
-add_subdirectory(windows)
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")    
+    add_subdirectory(windows)
+endif()
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")    
+    add_subdirectory(linux)
+endif()

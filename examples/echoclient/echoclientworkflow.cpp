@@ -25,7 +25,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
     {
         m_Console = new_ref<Console>();
         m_ResponseBuffer.SetCapacity(1024);
-        SetState(connect);
+        SetState(&connect);
     };
 
     connect.Enter = [this]()->void
@@ -45,7 +45,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         m_Console->WriteLine("Connecting to server @ 127.0.0.1:12345\n");
         if(m_ClientSocket->Connect(m_ServerAddress) == 0)
         {
-            SetState(input);
+            SetState(&input);
         }
         else
         {
@@ -62,7 +62,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         m_Input = m_Console->ReadLine();
         if(!m_Input.empty())
         {
-            PushState(send);
+            PushState(&send);
         }
     };
 
@@ -93,7 +93,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
                 break;
             }
         }
-        SetState(receive);
+        SetState(&receive);
     };
 
     receive.Enter = [this]()->void
@@ -105,7 +105,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         if(n > 0 && n <= requestSize)
         {
             m_ResponseBuffer.WriteAcknowledge(n);
-            SetState(output);
+            SetState(&output);
         }
         else
         {
@@ -127,5 +127,5 @@ EchoClientWorkflow::EchoClientWorkflow() :
         PopState();
     };
 
-    SetInitialState(setup);
+    SetInitialState(&setup);
 }

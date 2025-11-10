@@ -36,7 +36,7 @@ namespace qor{ namespace workflow{
         Leave = std::bind(&Workflow::Leave, workflow);
     }
 
-    Workflow::Workflow() : m_complete(true), m_initialState(this), m_result(0)
+    Workflow::Workflow() : m_complete(true), m_initialState(nullptr), m_result(0)
     {
     }
 
@@ -58,7 +58,7 @@ namespace qor{ namespace workflow{
         m_complete = false;     
         while(!IsComplete())
         {
-            CurrentState().Enter();
+            CurrentState()->Enter();
         }
         while(!m_StateStack.empty())
         {
@@ -78,63 +78,85 @@ namespace qor{ namespace workflow{
 
     void Workflow::Leave(){}
 
-    State Workflow::CurrentState()
+    State* Workflow::CurrentState()
     {
         if( !m_StateStack.empty() )
         {
             return m_StateStack.top();
         }
-        return State(this);
+        return nullptr;
     }
 
-    State Workflow::GetInitialState()
+    State* Workflow::GetInitialState()
     {
         return m_initialState;
     }
 
-    void Workflow::SetInitialState(State newState)
+    void Workflow::SetInitialState(State* initialState)
     {
         if(m_StateStack.empty())
         {
-            m_initialState = newState;
-            m_StateStack.push(newState);
+            m_initialState = initialState;
+            m_StateStack.push(initialState);
             m_complete = false;
         }
     }
 
-    void Workflow::SetState(State newState)
+    void Workflow::SetState(State* newState)
     {
-        if(!m_StateStack.empty())
+        if(newState)
         {
-    		State currentState = CurrentState();
-            currentState.Leave();
-		    m_StateStack.pop();
+            if(!m_StateStack.empty())
+            {
+                State* currentState = CurrentState();
+                if(currentState)
+                {
+                    currentState->Leave();
+                }
+                m_StateStack.pop();
+            }
+            m_StateStack.push(newState);
         }
-		m_StateStack.push(newState);
     }
 
-    void Workflow::PushState(State newState)
+    void Workflow::PushState(State* newState)
     {
-        if(!m_StateStack.empty())
+        if(newState)
         {
-    		State currentState = CurrentState();
-	    	currentState.Suspend();
+            if(!m_StateStack.empty())
+            {
+                State* currentState = CurrentState();
+                if(currentState)
+                {
+                    currentState->Suspend();
+                }
+            }
+            m_StateStack.push(newState);
+            newState->Enter();
         }
-		m_StateStack.push(newState);
-		newState.Enter();		
     }
 
     void Workflow::PopState()
     {
         if(!m_StateStack.empty())
         {
-    		State currentState = CurrentState();
-	    	currentState.Leave();
+    		State* currentState = CurrentState();
+            if(currentState)
+            {
+    	    	currentState->Leave();
+            }
             m_StateStack.pop();		
             if(!m_StateStack.empty())
             {
            		currentState = CurrentState();
-    	        currentState.Resume();
+                if(currentState)
+                {
+        	        currentState->Resume();
+                }
+            }
+            else
+            {
+                SetComplete();
             }
         }
     }

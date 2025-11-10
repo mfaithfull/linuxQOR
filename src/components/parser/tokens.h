@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_COMPONENTS_PARSER_TOKENS
 #define QOR_PP_H_COMPONENTS_PARSER_TOKENS
 
+#include <map>
+
 namespace qor { namespace components { namespace parser {
 
     enum class eToken : uint64_t
@@ -46,7 +48,29 @@ namespace qor { namespace components { namespace parser {
         Bit,
         Char,
         Alpha,
+
+        Max,
     };
+
+    static const std::map<const uint64_t, const std::string> tokenNames = {{
+        {static_cast< const uint64_t>(eToken::Lexical), "Lexical"},
+        {static_cast< const uint64_t>(eToken::Octet), "Octet"},
+        {static_cast< const uint64_t>(eToken::CarriageReturn), "CarriageReturn"},
+        {static_cast< const uint64_t>(eToken::LineFeed), "LineFeed"},
+        {static_cast< const uint64_t>(eToken::HorizontalTab), "HorizontalTab"},
+        {static_cast< const uint64_t>(eToken::DoubleQuote), "DoubleQuote"},
+        {static_cast< const uint64_t>(eToken::Space), "Space"},
+        {static_cast< const uint64_t>(eToken::Digit), "Digit"},
+        {static_cast< const uint64_t>(eToken::VisibleChar), "VisibleChar"},
+        {static_cast< const uint64_t>(eToken::Control), "Control"},
+        {static_cast< const uint64_t>(eToken::HexDigit), "HexDigit"},
+        {static_cast< const uint64_t>(eToken::WhiteSpace), "WhiteSpace"},
+        {static_cast< const uint64_t>(eToken::LinearWhiteSpace), "LinearWhiteSpace"},
+        {static_cast< const uint64_t>(eToken::CarriageReturnLineFeed), "CarriageReturnLineFeed"},
+        {static_cast< const uint64_t>(eToken::Bit), "Bit"},
+        {static_cast< const uint64_t>(eToken::Char), "Char"},
+        {static_cast< const uint64_t>(eToken::Alpha), "Alpha"},
+    }};
 
 }}}//qor::components::parser
 

@@ -1,9 +1,12 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
 
 set(target qor_parser)
 
-add_library(${target} SHARED qor_parser.cpp state.cpp parser.cpp context.cpp)
+add_library(${target} SHARED qor_parser.cpp state.cpp parser.cpp context.cpp json.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

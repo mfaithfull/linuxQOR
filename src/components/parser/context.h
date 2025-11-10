@@ -42,6 +42,7 @@ namespace qor { namespace components { namespace parser {
 
         bool GetOctet(byte*& data);
         bool ConsumeOctet();
+        size_t GetPosition();
 
         byte* m_octetStream;
         size_t m_position;

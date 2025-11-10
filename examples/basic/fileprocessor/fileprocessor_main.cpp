@@ -9,6 +9,7 @@
 
 #include "fileprocessorapp.h"
 #include "fileprocessorworkflow.h"
+#include <sys/resource.h>
 
 using namespace qor;
 using namespace qor::platform;
@@ -19,6 +20,24 @@ using namespace qor::components::optparser;
 
 int main(const int argc, const char** argv, char**)
 {	
+    const rlim_t kStackSize = 32 * 1024 * 1024;   // min stack size = 32 MB
+    struct rlimit rl;
+    int result;
+
+    result = getrlimit(RLIMIT_STACK, &rl);
+    if (result == 0)
+    {
+        if (rl.rlim_cur < kStackSize)
+        {
+            rl.rlim_cur = kStackSize;
+            result = setrlimit(RLIMIT_STACK, &rl);
+            if (result != 0)
+            {
+                fprintf(stderr, "setrlimit returned result = %d\n", result);
+            }
+        }
+    }
+
     ThePlatform()->AddSubsystem<FileSystem>();
     return AppBuilder().Build<FileProcessorApp>(appName, 
         [](ref_of<FileProcessorApp>::type app, const int argc, const char** argv, const char** env)

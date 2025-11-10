@@ -25,6 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PARSER_RESULT
 #define QOR_PP_H_COMPONENTS_PARSER_RESULT
 
+#include <cstdint>
 #include "tokens.h"
 
 namespace qor { namespace components { namespace parser {
@@ -43,7 +44,8 @@ namespace qor { namespace components { namespace parser {
         eResultCode code;
         uint16_t first;
         size_t length;
-        eToken token;
+        size_t m_position;
+        uint64_t token;
     };
 }}}//qor::components::parser
 

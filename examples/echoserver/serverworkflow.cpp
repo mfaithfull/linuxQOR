@@ -64,7 +64,7 @@ ServerWorkflow::ServerWorkflow() :
         m_serverAddress.SetPort(12345);
         m_serverAddress.SetIPV4Address(127,0,0,1);
 
-        SetState(bind);
+        SetState(&bind);
     };
 
     bind.Enter = [this]()->void
@@ -80,7 +80,7 @@ ServerWorkflow::ServerWorkflow() :
         }
         else
         {
-            SetState(listen);
+            SetState(&listen);
         }
     };
 
@@ -97,7 +97,7 @@ ServerWorkflow::ServerWorkflow() :
         }
         else
         {
-            SetState(accept);
+            SetState(&accept);
         }
     };
 
@@ -119,6 +119,6 @@ ServerWorkflow::ServerWorkflow() :
         }
     };
 
-    SetInitialState(setup);
+    SetInitialState(&setup);
 }
 

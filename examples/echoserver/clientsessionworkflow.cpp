@@ -59,14 +59,14 @@ ClientSessionWorkflow::ClientSessionWorkflow(
         m_protocol = new_ref<EchoProtocol>(m_pipeline.AsRef<Pipeline>());
 
         std::cout << "Servicing a connected client\n";
-        SetState(echo);
+        SetState(&echo);
     };
 
     echo.Enter = [this]()->void
     {        
         if(m_protocol->Run() == 0)
         {
-            SetState(disconnect);
+            SetState(&disconnect);
         }
     };
 
@@ -79,5 +79,5 @@ ClientSessionWorkflow::ClientSessionWorkflow(
         PopState();
     };
 
-    SetInitialState(connected);
+    SetInitialState(&connected);
 }

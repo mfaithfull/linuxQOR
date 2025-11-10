@@ -28,6 +28,11 @@
 
 namespace qor { namespace components { namespace parser {
 
+    size_t Context::GetPosition()
+    {
+        return m_position;
+    }
+    
     bool Context::ConsumeOctet()
     {
         ++m_position;

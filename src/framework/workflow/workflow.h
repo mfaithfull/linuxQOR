@@ -43,8 +43,9 @@ namespace qor{ namespace workflow{
         std::function<void(void)> Leave;
 
         State(Workflow* workflow);
+        virtual ~State() = default;
 
-    private:
+    protected:
 
         Workflow* m_Workflow;
     };
@@ -59,10 +60,10 @@ namespace qor{ namespace workflow{
         Workflow& operator = (const Workflow& src);
         virtual int Run();
         virtual bool IsComplete() const;
-        void SetInitialState(State state);
+        void SetInitialState(State* state);
         
-        void SetState(State state);
-        void PushState(State state);
+        void SetState(State* state);
+        void PushState(State* state);
         void PopState();        
         void SetComplete();
         void SetResult(int result);
@@ -72,14 +73,14 @@ namespace qor{ namespace workflow{
         virtual void Resume();
         virtual void Leave();
 
-        State GetInitialState();
-        State CurrentState();
+        State* GetInitialState();
+        State* CurrentState();
 
     private:
         int m_result;
         bool m_complete;
-        State m_initialState;
-        std::stack< State > m_StateStack;
+        State* m_initialState;
+        std::stack< State* > m_StateStack;
     };
 
 }}//qor::workflow

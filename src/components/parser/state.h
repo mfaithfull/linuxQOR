@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_COMPONENTS_PARSER_STATE
 #define QOR_PP_H_COMPONENTS_PARSER_STATE
 
+#include <iostream>
+#include "src/platform/compiler/compiler.h"
 #include "src/framework/workflow/workflow.h"
 #include "result.h"
 #include "node.h"
@@ -32,294 +34,230 @@
 
 namespace qor { namespace components { namespace parser {
 
+    class Parser;
     class Context;
 
     class qor_pp_module_interface(QOR_PARSER) ParserState : public workflow::State
     {
     public:
 
-        ParserState(workflow::Workflow* workflow, Context* context);
-
+        ParserState(Parser* parser, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        virtual ~ParserState() = default;
+        virtual void Reset();
         Result m_result;
 
     protected:
         
-        Context* m_context;
+        class Context* Context();
+        workflow::Workflow* Workflow();
+        class Parser* GetParser();
         Node* m_parent;
+        uint64_t m_token;
     };
 
     class qor_pp_module_interface(QOR_PARSER) AcceptAll : public ParserState
     {
     public:
 
-        AcceptAll(workflow::Workflow* workflow, Context* context);
-
+        AcceptAll(Parser* parser);
+        virtual ~AcceptAll() = default;
     };
 
-    class Specific : public ParserState
+    class qor_pp_module_interface(QOR_PARSER) Specific : public ParserState
     {
     public:
 
-        Specific(workflow::Workflow* workflow, Context* context, byte matchingOctet, eToken token);
+        Specific(Parser* parser, byte matchingOctet, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        virtual ~Specific() = default;
     private:
         byte m_matchingOctet;
-        eToken m_token;
     };
 
-    class CR : public Specific
-    { public: CR(workflow::Workflow* workflow, Context* context) : Specific(workflow, context, 0x0D, eToken::CarriageReturn){} };
+    class qor_pp_module_interface(QOR_PARSER) CR : public Specific
+    { public: CR(Parser* parser) : Specific(parser, 0x0D, static_cast<uint64_t>(eToken::CarriageReturn)){} 
+        virtual ~CR() = default;
+    };
 
-    class LF : public Specific
-    { public: LF(workflow::Workflow* workflow, Context* context) : Specific(workflow, context, 0x0A, eToken::LineFeed){} };
+    class qor_pp_module_interface(QOR_PARSER) LF : public Specific
+    { public: LF(Parser* parser) : Specific(parser, 0x0A, static_cast<uint64_t>(eToken::LineFeed)){} 
+        virtual ~LF() = default;
+    };
 
-    class HTAB : public Specific
-    { public: HTAB(workflow::Workflow* workflow, Context* context) : Specific(workflow, context, 0x09, eToken::HorizontalTab){} };
+    class qor_pp_module_interface(QOR_PARSER) HTAB : public Specific
+    { public: HTAB(Parser* parser) : Specific(parser, 0x09, static_cast<uint64_t>(eToken::HorizontalTab)){} 
+        virtual ~HTAB() = default;
+    };
 
-    class DQUOTE : public Specific
-    { public: DQUOTE(workflow::Workflow* workflow, Context* context) : Specific(workflow, context, 0x22, eToken::DoubleQuote){} };
+    class qor_pp_module_interface(QOR_PARSER) DQUOTE : public Specific
+    { public: DQUOTE(Parser* parser) : Specific(parser, 0x22, static_cast<uint64_t>(eToken::DoubleQuote)){} 
+        virtual ~DQUOTE() = default;
+    };
 
-    class SP : public Specific
-    { public: SP(workflow::Workflow* workflow, Context* context) : Specific(workflow, context, 0x20, eToken::Space){} };
+    class qor_pp_module_interface(QOR_PARSER) SP : public Specific
+    { public: SP(Parser* parser) : Specific(parser, 0x20, static_cast<uint64_t>(eToken::Space)){} 
+        virtual ~SP() = default;
+    };
 
-    class OneOfARange : public ParserState
+    class qor_pp_module_interface(QOR_PARSER) OneOfARange : public ParserState
     {
     public:
 
-        OneOfARange(workflow::Workflow* workflow, Context* context, byte firstOctet, byte lastOctet, eToken token);
-
+        OneOfARange(Parser* parser, byte firstOctet, byte lastOctet, uint64_t token);
+        virtual ~OneOfARange() = default;
     private:
         byte m_first;
         byte m_last;
-        eToken m_token;
     };
 
-    class DIGIT : public OneOfARange
-    { public: DIGIT(workflow::Workflow* workflow, Context* context) : OneOfARange(workflow, context, 0x30, 0x39, eToken::Digit){} };
+    class qor_pp_module_interface(QOR_PARSER) DIGIT : public OneOfARange
+    { public: DIGIT(Parser* parser) : OneOfARange(parser, 0x30, 0x39, static_cast<uint64_t>(eToken::Digit)){} 
+        virtual ~DIGIT() = default;
+    };
 
-    class VCHAR : public OneOfARange
-    { public: VCHAR(workflow::Workflow* workflow, Context* context) : OneOfARange(workflow, context, 0x21, 0x7e, eToken::VisibleChar){} };
+    class qor_pp_module_interface(QOR_PARSER) VCHAR : public OneOfARange
+    { public: VCHAR(Parser* parser) : OneOfARange(parser, 0x21, 0x7e, static_cast<uint64_t>(eToken::VisibleChar)){} 
+        virtual ~VCHAR() = default;
+    };
 
-
-    class AnyOneOf : public ParserState
+    class qor_pp_module_interface(QOR_PARSER) AnyOneOf : public ParserState
     {
     public:
 
-        AnyOneOf(workflow::Workflow* workflow, Context* context, const ParserState& head, const ParserState& tail, eToken token) : ParserState(workflow,context),
-            m_head(head), m_tail(tail), m_token(token), m_internalState(0)
-        {
-            Enter = [workflow, this, context]()
-            {
-                workflow->PushState(m_head);
-            };
-
-            Resume = [workflow, this, context]()
-            {
-                switch(m_internalState)
-                {
-                case 0:
-                    if(m_head.m_result.code == Result::SUCCESS)
-                    {
-                        m_result.code = Result::SUCCESS;
-                        m_result.first = m_head.m_result.first;
-                        m_result.length = m_head.m_result.length;
-                        m_result.token = m_token;
-                        workflow->PopState();
-                    }
-                    else
-                    {
-                        m_internalState = 1;
-                        workflow->PushState(m_tail);                            
-                    }
-                    break;
-                case 1:
-                    if(m_tail.m_result.code == Result::SUCCESS)
-                    {
-                        m_result.code = Result::SUCCESS;
-                        m_result.first = m_tail.m_result.first;
-                        m_result.length = m_tail.m_result.length;
-                        m_result.token = m_token;
-                        workflow->PopState();
-                    }
-                    else
-                    {
-                        m_result.code = Result::FAILURE;
-                        workflow->PopState();
-                    }
-                    break;
-                }
-            };
-        }
+        AnyOneOf(Parser* parser, ParserState* head, ParserState* tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        virtual ~AnyOneOf() = default;
 
     private:
         
         unsigned int m_internalState;
-        ParserState m_head;
-        ParserState m_tail;
-        eToken m_token;
+        ParserState* m_head;
+        ParserState* m_tail;
     };
 
-    class CTL : public AnyOneOf
-    { public : CTL(workflow::Workflow* workflow, Context* context) : 
-        AnyOneOf(workflow, context, 
-            OneOfARange(workflow, context, 0x00, 0x1f, eToken::Lexical), 
-            Specific(workflow, context, 0x7f, eToken::Lexical),
-            eToken::Control
+    class qor_pp_module_interface(QOR_PARSER) CTL : public AnyOneOf
+    { public : CTL(Parser* parser) : 
+        AnyOneOf(parser, 
+            new OneOfARange(parser, 0x00, 0x1f, static_cast<uint64_t>(eToken::Lexical)), 
+            new Specific(parser, 0x7f, static_cast<uint64_t>(eToken::Lexical)),
+            static_cast<uint64_t>(eToken::Control)
         ){} 
+
+        virtual ~CTL() = default;
     };
 
-    class HEXDIGIT : public AnyOneOf
-    { public : HEXDIGIT(workflow::Workflow* workflow, Context* context) :
-        AnyOneOf(workflow, context,
-            DIGIT(workflow, context),
-            OneOfARange(workflow, context, 'A', 'F', eToken::Lexical),
-            eToken::HexDigit
+    class qor_pp_module_interface(QOR_PARSER) HEXDIGIT : public AnyOneOf
+    { public : HEXDIGIT(Parser* parser) :
+        AnyOneOf(parser,
+            new DIGIT(parser),
+            new OneOfARange(parser, 'A', 'F', static_cast<uint64_t>(eToken::Lexical)),
+            static_cast<uint64_t>(eToken::HexDigit)
         ){}
+        virtual ~HEXDIGIT() = default;
     };
 
-    class WSP : public AnyOneOf
-    { public: WSP(workflow::Workflow* workflow, Context* context) :
-        AnyOneOf(workflow, context,
-            SP(workflow, context),
-            HTAB(workflow, context),
-            eToken::WhiteSpace
+    class qor_pp_module_interface(QOR_PARSER) WSP : public AnyOneOf
+    { public: WSP(Parser* parser) :
+        AnyOneOf(parser,
+            new SP(parser),
+            new HTAB(parser),
+            static_cast<uint64_t>(eToken::WhiteSpace)
         ){}
+        virtual ~WSP() = default;
     };
 
-    class ZeroOrMore : public ParserState
+
+    class qor_pp_module_interface(QOR_PARSER) Optional : public ParserState
     {
     public:
 
-        ZeroOrMore(workflow::Workflow* workflow, Context* context, const ParserState& head, eToken token) : ParserState(workflow,context),
-            m_head(head), m_token(token), m_first(true)
+        Optional(Parser* parser, ParserState* head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        
+        virtual ~Optional()
         {
-            Enter = [workflow, this, context]()
-            {
-                workflow->PushState(m_head);
-            };
-
-            Resume = [workflow, this, context]()
-            {
-                m_result.code = Result::SUCCESS;                
-                m_result.token = m_token;
-                if(m_head.m_result.code == Result::SUCCESS)
-                {
-                    if(m_first)
-                    {
-                        m_result.first = m_head.m_result.first;
-                        m_first = false;
-                    }
-                    m_result.length += m_head.m_result.length;
-                    //TODO: reset head
-                    workflow->PushState(m_head);
-                }
-                else
-                {
-                    workflow->PopState();
-                }
-            };
+            delete m_head;
         }
 
     private:
         
-        ParserState m_head;
+        ParserState* m_head;
         bool m_first;
-        eToken m_token;
     };
 
-    class Sequence : public ParserState
+    class qor_pp_module_interface(QOR_PARSER) ZeroOrMore : public ParserState
     {
     public:
 
-        Sequence(workflow::Workflow* workflow, Context* context, const ParserState& head, const ParserState& tail, eToken token) : ParserState(workflow,context),
-            m_head(head), m_tail(tail), m_token(token), m_internalState(0)
+        ZeroOrMore(Parser* parser, ParserState* head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        virtual ~ZeroOrMore()
         {
-            Enter = [workflow, this, context]()
-            {
-                workflow->PushState(m_head);
-            };
-
-            Resume = [workflow, this, context]()
-            {
-                switch(m_internalState)
-                {
-                case 0:
-                    if(m_head.m_result.code != Result::SUCCESS)
-                    {
-                        m_result.code = m_head.m_result.code;
-                        m_result.length = 0;
-                        workflow->PopState();
-                    }
-                    else
-                    {
-                        m_result.first = m_head.m_result.first;
-                        m_result.length += m_head.m_result.length;                        
-                        m_internalState = 1;
-                        workflow->PushState(m_tail);                            
-                    }
-                    break;
-                case 1:
-                    if(m_tail.m_result.code == Result::SUCCESS)
-                    {
-                        m_result.length += m_tail.m_result.length;   
-                        m_result.token = m_token;                                             
-                        workflow->PopState();
-                    }
-                    else
-                    {
-                        m_result.code = Result::FAILURE;
-                        workflow->PopState();
-                    }
-                    break;
-                }
-            };
+            delete m_head;
         }
 
+    private:
+        
+        ParserState* m_head;
+        bool m_first;
+    };
+
+    class qor_pp_module_interface(QOR_PARSER) Sequence : public ParserState
+    {
+    public:
+
+        Sequence(Parser* parser, ParserState* head, ParserState* tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        virtual ~Sequence()
+        {
+            delete m_tail;
+            delete m_head;
+        };
+        
     private:
         
         unsigned int m_internalState;
-        ParserState m_head;
-        ParserState m_tail;
-        eToken m_token;
+        ParserState* m_head;
+        ParserState* m_tail;
     };
 
-    class CRLF : public Sequence
-    { public : CRLF(workflow::Workflow* workflow, Context* context) :
-        Sequence(workflow, context, CR(workflow, context), LF(workflow, context), eToken::CarriageReturnLineFeed){}
+    class qor_pp_module_interface(QOR_PARSER) CRLF : public Sequence
+    { public : CRLF(Parser* parser) :
+        Sequence(parser, new CR(parser), new LF(parser), static_cast<uint64_t>(eToken::CarriageReturnLineFeed)){}
+        virtual ~CRLF() = default;
     };
 
-    class LWSP : public ZeroOrMore
-    { public : LWSP(workflow::Workflow* workflow, Context* context) :
-        ZeroOrMore(workflow, context,
-            AnyOneOf(workflow, context,
-                WSP(workflow, context),
-                CRLF(workflow, context),
-                eToken::Lexical
+    class qor_pp_module_interface(QOR_PARSER) LWSP : public ZeroOrMore
+    { public : LWSP(Parser* parser) :
+        ZeroOrMore(parser,
+            new AnyOneOf(parser,
+                new WSP(parser),
+                new CRLF(parser),
+                static_cast<uint64_t>(eToken::Lexical)
             ),
-            eToken::LinearWhiteSpace
+            static_cast<uint64_t>(eToken::LinearWhiteSpace)
         ){}
+        virtual ~LWSP() = default;
     };
 
-    class BIT : public AnyOneOf
-    { public : BIT(workflow::Workflow* workflow, Context* context) :
-        AnyOneOf(workflow, context,
-            Specific(workflow, context, '0', eToken::Lexical),
-            Specific(workflow, context, '1', eToken::Lexical),
-            eToken::Bit
+    class qor_pp_module_interface(QOR_PARSER) BIT : public AnyOneOf
+    { public : BIT(Parser* parser) :
+        AnyOneOf(parser,
+            new Specific(parser, '0', static_cast<uint64_t>(eToken::Lexical)),
+            new Specific(parser, '1', static_cast<uint64_t>(eToken::Lexical)),
+            static_cast<uint64_t>(eToken::Bit)
         ){}
+        virtual ~BIT() = default;
     };
 
-    class CHAR : public OneOfARange
-    { public : CHAR(workflow::Workflow* workflow, Context* context) :
-        OneOfARange(workflow, context, 0x01, 0x7F, eToken::Char){}
+    class qor_pp_module_interface(QOR_PARSER) CHAR : public OneOfARange
+    { public : CHAR(Parser* parser);
+        virtual ~CHAR() = default;
     };
 
-    class ALPHA : public AnyOneOf
-    { public: ALPHA(workflow::Workflow* workflow, Context* context) :
-        AnyOneOf(workflow, context,
-            OneOfARange(workflow, context, 0x41, 0x5A, eToken::Lexical),
-            OneOfARange(workflow, context, 0x61, 0x7A, eToken::Lexical),
-            eToken::Alpha
+    class qor_pp_module_interface(QOR_PARSER) ALPHA : public AnyOneOf
+    { public: ALPHA(Parser* parser) :
+        AnyOneOf(parser,
+            new OneOfARange(parser, 0x41, 0x5A, static_cast<uint64_t>(eToken::Lexical)),
+            new OneOfARange(parser, 0x61, 0x7A, static_cast<uint64_t>(eToken::Lexical)),
+            static_cast<uint64_t>(eToken::Alpha)
         ){}
+        virtual ~ALPHA() = default;
     };
 
 }}}//qor::components::parser
