@@ -28,13 +28,13 @@
 
 namespace qor { namespace components{ namespace json{
 
-    std::string Object::ToString()
+    std::string Object::ToString() const
     {
         std::stringstream buffer;
         buffer << "{";
         if(!m_members.empty())
         {
-            for(auto it = m_members.begin(), it2 = it+1; it2 != m_members.end(); ++it, ++it2)
+            for(auto it = m_members.begin(), it2 = std::next(it); it2 != m_members.end(); ++it, ++it2)
             {
                 buffer << (*it)->ToString();
                 buffer << ",";

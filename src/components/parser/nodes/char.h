@@ -50,6 +50,6 @@ namespace qor { namespace components{ namespace parser{
         char m_value;
     };
 
-}}}//qor::components::json
+}}}//qor::components::parser
 
 #endif//QOR_PP_H_COMPONENTS_PARSER_NODES_CHAR

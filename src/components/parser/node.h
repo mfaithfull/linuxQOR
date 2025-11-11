@@ -40,12 +40,12 @@ namespace qor { namespace components { namespace parser {
 
         virtual ~Node() = default;
 
-        uint64_t GetToken()
+        uint64_t GetToken() const
         {
             return m_token;
         }
 
-        virtual std::string ToString() {return "<anonymous node>";}
+        virtual std::string ToString() const {return "<anonymous node>";}
 
     private:
         

@@ -29,7 +29,7 @@
 
 namespace qor { namespace components{ namespace json{
 
-    std::string String::ToString()
+    std::string String::ToString() const
     {
         std::stringstream buffer;
         buffer << "\"" << m_value << "\"";

@@ -39,11 +39,12 @@ namespace qor { namespace components{ namespace json{
         virtual ~Member() = default;
 
         Value& GetValue() {return m_value;}
+        const Value& GetValue() const {return m_value;}
         
         std::string GetName() {return m_name;};
         void SetName(const std::string& name) { m_name = name;}
 
-        virtual std::string ToString();
+        virtual std::string ToString() const override;
 
     private:
 

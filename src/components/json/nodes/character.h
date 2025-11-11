@@ -42,7 +42,7 @@ namespace qor { namespace components{ namespace json{
 
         char GetValue() {return m_value;}
 
-        virtual std::string ToString() { return std::string(&m_value,1); };
+        virtual std::string ToString() const override { return std::string(&m_value,1); };
         
     private:
         char m_value;

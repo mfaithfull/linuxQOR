@@ -24,15 +24,20 @@
 
 #include "src/configuration/configuration.h"
 #include <sstream>
+#include <charconv>
 #include "number.h"
 
 namespace qor { namespace components{ namespace json{
 
-    std::string Number::ToString()
+    std::string Number::ToString() const
     {
-        std::stringstream buffer;
-        buffer << m_value;
-        return buffer.str();
+        char buffer[32];
+        auto [ptr, ec] = std::to_chars(buffer, buffer + sizeof(buffer), m_value);
+        if (ec == std::errc()) {
+            return std::string(buffer, ptr);
+        }
+        
+        return "NaN";
     }
 
 }}}//qor::components::json

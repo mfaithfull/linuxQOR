@@ -68,7 +68,7 @@ namespace qor { namespace components{ namespace json{
         
         void SetType(ValueType vt) { m_type = vt; }
 
-        virtual std::string ToString();
+        virtual std::string ToString() const override;
 
     private:
 

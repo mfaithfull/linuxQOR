@@ -26,6 +26,7 @@
 #define QOR_PP_H_COMPONENTS_JSON_MINUS
 
 #include "src/components/parser/node.h"
+#include "../parser.h"
 
 namespace qor { namespace components{ namespace json{
 

@@ -36,7 +36,7 @@ namespace qor { namespace components{ namespace json{
         Array(): Node(static_cast<uint64_t>(parser::jsonToken::array)){};
         virtual ~Array() = default;
 
-        virtual std::string ToString();
+        virtual std::string ToString() const override;
 
         std::vector<ref_of<Value>::type> m_values;
 

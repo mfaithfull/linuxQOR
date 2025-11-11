@@ -86,7 +86,10 @@ namespace qor { namespace components { namespace parser {
     { public : HEXDIGIT(Parser* parser) :
         AnyOneOf(parser,
             new_ref<DIGIT>(parser).AsRef<ParserState>(),
-            new_ref<OneOfARange>(parser, 'A', 'F', static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(),
+            new_ref<AnyOneOf>(parser,
+                new_ref<OneOfARange>(parser, 'A', 'F', static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(),
+                new_ref<OneOfARange>(parser, 'a', 'f', static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>()
+            ).AsRef<ParserState>(),
             static_cast<uint64_t>(eToken::HexDigit)
         ){}
         virtual ~HEXDIGIT() = default;

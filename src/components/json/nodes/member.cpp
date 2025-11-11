@@ -28,7 +28,7 @@
 
 namespace qor { namespace components{ namespace json{
 
-    std::string Member::ToString()
+    std::string Member::ToString() const
     {
         std::stringstream buffer;
         buffer << "\"" << m_name << "\"" << ":" << m_value.ToString();        

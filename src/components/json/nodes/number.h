@@ -40,7 +40,7 @@ namespace qor { namespace components{ namespace json{
         double GetValue() {return m_value;}
         void SetValue(const double& value){ m_value = value;}
 
-        virtual std::string ToString();
+        virtual std::string ToString() const override;
         
     private:
 

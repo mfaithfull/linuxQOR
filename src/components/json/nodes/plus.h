@@ -25,6 +25,9 @@
 #ifndef QOR_PP_H_COMPONENTS_JSON_PLUS
 #define QOR_PP_H_COMPONENTS_JSON_PLUS
 
+#include "src/components/parser/node.h"
+#include "../parser.h"
+
 namespace qor { namespace components{ namespace json{
 
     class Plus : public components::parser::Node

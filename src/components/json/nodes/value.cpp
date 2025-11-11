@@ -27,7 +27,7 @@
 
 namespace qor { namespace components{ namespace json{
 
-    std::string Value::ToString()
+    std::string Value::ToString() const
     {
         switch(m_type)
         {

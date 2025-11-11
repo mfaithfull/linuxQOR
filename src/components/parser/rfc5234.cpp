@@ -63,6 +63,7 @@ namespace qor { namespace components { namespace parser {
     {
         unsigned int bitVal = m_result.first == '0' ? 0 : 
         (m_result.first == '1' ? 1 : 0);
+        GetParser()->PushNode(new_ref<Digit>(bitVal).AsRef<Node>());
     }
 
     void CHAR::Emit()

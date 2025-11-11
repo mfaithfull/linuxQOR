@@ -27,6 +27,7 @@
 
 #include <string>
 #include "src/components/parser/node.h"
+#include "../parser.h"
 
 namespace qor { namespace components{ namespace json{
 
@@ -35,7 +36,7 @@ namespace qor { namespace components{ namespace json{
     public:
         _E() : Node(static_cast<uint64_t>(parser::jsonToken::_e)){};
         virtual ~_E() = default;
-        virtual std::string ToString() { return "e"; };
+        virtual std::string ToString() const override { return "e"; };
     };
 
 }}}//qor::components::json

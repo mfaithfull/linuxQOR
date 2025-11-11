@@ -27,6 +27,7 @@
 
 #include <string>
 #include "src/components/parser/node.h"
+#include "../parser.h"
 
 namespace qor { namespace components{ namespace json{
 
