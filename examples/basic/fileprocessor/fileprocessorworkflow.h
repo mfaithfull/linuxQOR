@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_EXAMPLES_FILEPROCESSOR_WORKFLOW
 #define QOR_PP_H_EXAMPLES_FILEPROCESSOR_WORKFLOW
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 #include "src/framework/workflow/workflow.h"
 
 class FileProcessorWorkflow : public qor::workflow::Workflow
@@ -36,7 +38,7 @@ public:
 
 private:
 
-    qor::workflow::State state0;
+    qor::ref_of<qor::workflow::State>::type state0;
 };
 
 #endif//QOR_PP_H_EXAMPLES_FILEPROCESSOR_WORKFLOW

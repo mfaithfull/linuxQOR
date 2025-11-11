@@ -79,7 +79,7 @@ qor_pp_test_suite_case(PropertyTestSuite, canMakeAPropertyVector)
     account.SetValue(PropertyValue().Set(TypedAnyProperty<int>(3456)));
 
     Property name(PropertyName("Name"));
-    name.SetValue(PropertyValue().Set(TypedAnyProperty<std::string>("John Smoth")));
+    name.SetValue(PropertyValue().Set(TypedAnyProperty<std::string>("John Smith")));
 
     fields.emplace_back(account);
     fields.emplace_back(name);

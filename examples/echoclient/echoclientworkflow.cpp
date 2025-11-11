@@ -14,21 +14,21 @@ using namespace qor::network::sockets;
 qor_pp_module_requires(IConsole)
 
 EchoClientWorkflow::EchoClientWorkflow() : 
-    setup(this),
-    connect(this),
-    input(this),    
-    send(this),
-    receive(this),
-    output(this)
+    setup(new_ref<qor::workflow::State>(this)),
+    connect(new_ref<qor::workflow::State>(this)),
+    input(new_ref<qor::workflow::State>(this)),    
+    send(new_ref<qor::workflow::State>(this)),
+    receive(new_ref<qor::workflow::State>(this)),
+    output(new_ref<qor::workflow::State>(this))
 {    
-    setup.Enter = [this]()->void
+    setup->Enter = [this]()->void
     {
         m_Console = new_ref<Console>();
         m_ResponseBuffer.SetCapacity(1024);
-        SetState(&connect);
+        SetState(connect);
     };
 
-    connect.Enter = [this]()->void
+    connect->Enter = [this]()->void
     {
         auto sockets_subsystem = ThePlatform()->GetSubsystem<Sockets>();
 
@@ -45,7 +45,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         m_Console->WriteLine("Connecting to server @ 127.0.0.1:12345\n");
         if(m_ClientSocket->Connect(m_ServerAddress) == 0)
         {
-            SetState(&input);
+            SetState(input);
         }
         else
         {
@@ -56,17 +56,17 @@ EchoClientWorkflow::EchoClientWorkflow() :
         }
     };
 
-    input.Enter = [this]()->void
+    input->Enter = [this]()->void
     {            
         m_Console->WriteLine("\nReady:");
         m_Input = m_Console->ReadLine();
         if(!m_Input.empty())
         {
-            PushState(&send);
+            PushState(send);
         }
     };
 
-    input.Resume = [this]()->void
+    input->Resume = [this]()->void
     {
         if(m_Input == "close")
         {
@@ -78,7 +78,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         } 
     };
 
-    send.Enter = [this]()->void
+    send->Enter = [this]()->void
     {        
         for(size_t o{}, w(1); o != m_Input.length() && 0 < w; o += w)
         {
@@ -93,10 +93,10 @@ EchoClientWorkflow::EchoClientWorkflow() :
                 break;
             }
         }
-        SetState(&receive);
+        SetState(receive);
     };
 
-    receive.Enter = [this]()->void
+    receive->Enter = [this]()->void
     {
         size_t requestSize = 0;
         byte* buffer = m_ResponseBuffer.WriteRequest(requestSize);
@@ -105,7 +105,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         if(n > 0 && n <= requestSize)
         {
             m_ResponseBuffer.WriteAcknowledge(n);
-            SetState(&output);
+            SetState(output);
         }
         else
         {
@@ -117,7 +117,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         }
     };
 
-    output.Enter = [this]()->void
+    output->Enter = [this]()->void
     {
         size_t requestSize = m_ResponseBuffer.ReadCapacity();
         byte* buffer = m_ResponseBuffer.ReadRequest(requestSize);
@@ -127,5 +127,5 @@ EchoClientWorkflow::EchoClientWorkflow() :
         PopState();
     };
 
-    SetInitialState(&setup);
+    SetInitialState(setup);
 }

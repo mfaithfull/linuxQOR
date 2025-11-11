@@ -30,7 +30,7 @@
 #include "src/components/parser/parser.h"
 #include "src/components/parser/state.h"
 #include "src/components/parser/context.h"
-#include "src/components/parser/json.h"
+#include "src/components/json/parser.h"
 
 using namespace qor;
 using namespace qor::workflow;
@@ -38,18 +38,19 @@ using namespace qor::pipeline;
 using namespace qor::platform;
 using namespace qor::components::optparser;
 using namespace qor::components::parser;
-using namespace qor::components::parser::json;
+using namespace qor::components::json::parser;
 
 bool requiresFileSystem = ImplementsIFileSystem();
 
-FileProcessorWorkflow::FileProcessorWorkflow() : state0(this)
+
+FileProcessorWorkflow::FileProcessorWorkflow() : state0(new_ref<qor::workflow::State>(this))
 {
-    state0.Enter = [this]()->void{
+    state0->Enter = [this]()->void{
                 
         ref_of<FileProcessorApp>::type application = new_ref<FileProcessorApp>();    
         std::string filename = application->GetFileName();
         auto filesystem = ThePlatform()->GetSubsystem<FileSystem>();
-        FileIndex newIndex(filesystem->CurrentPath(), "output.json");
+        FileIndex newIndex(filesystem->CurrentPath(), "large_output.json");
 
         auto refReadFile = filesystem->Open(newIndex, IFileSystem::OpenFor::ReadOnly, IFileSystem::WithFlags::Exclusive);
         auto size = refReadFile->GetSize();
@@ -68,13 +69,16 @@ FileProcessorWorkflow::FileProcessorWorkflow() : state0(this)
         testContext->m_size = bytesRead;
         testParser.SetContext(testContext);
 
-        object objectState(&testParser);
-        AcceptAll testState(&testParser);
-        testParser.SetInitialState(&objectState);
+        ref_of<object>::type objectState = new_ref<object>(&testParser);
+        testParser.SetInitialState(objectState.AsRef<qor::workflow::State>());
         testParser.Run();
 
-        SetComplete();
+        auto finalNode = testParser.PopNode();
+
+        std::cout << finalNode->ToString();
+
+         SetComplete();
     };
 
-    SetInitialState(&state0);
+    SetInitialState(state0);
 }

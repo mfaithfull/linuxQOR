@@ -36,10 +36,6 @@ namespace qor { namespace components { namespace parser {
     {
     public:
 
-        //Position
-        //Current Node
-        //Access to Pipeline
-
         bool GetOctet(byte*& data);
         bool ConsumeOctet();
         size_t GetPosition();

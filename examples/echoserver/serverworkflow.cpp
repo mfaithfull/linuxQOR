@@ -45,17 +45,17 @@ using namespace qor::network;
 using namespace qor::network::sockets;
 
 ServerWorkflow::ServerWorkflow() : 
-    setup(this), 
-    bind(this),
-    listen(this),
-    accept(this)
+    setup(new_ref<workflow::State>(this)), 
+    bind(new_ref<workflow::State>(this)),
+    listen(new_ref<workflow::State>(this)),
+    accept(new_ref<workflow::State>(this))
 {
     auto application = weak_ref<EchoServerApp>();
     m_io = application->GetRole()->GetFeature<AsyncIOService>();
     m_threadPool = application->GetRole()->GetFeature<ThreadPool>();
     m_sockets = ThePlatform()->GetSubsystem<Sockets>();
 
-    setup.Enter = [this]()->void
+    setup->Enter = [this]()->void
     {
         m_ioContext = m_io->Context();
         m_ioSharedContext = m_io->SharedContext();
@@ -64,10 +64,10 @@ ServerWorkflow::ServerWorkflow() :
         m_serverAddress.SetPort(12345);
         m_serverAddress.SetIPV4Address(127,0,0,1);
 
-        SetState(&bind);
+        SetState(bind);
     };
 
-    bind.Enter = [this]()->void
+    bind->Enter = [this]()->void
     {
         auto result = m_serverSocket->Bind(/*m_ioContext,*/ m_serverAddress);
 
@@ -80,11 +80,11 @@ ServerWorkflow::ServerWorkflow() :
         }
         else
         {
-            SetState(&listen);
+            SetState(listen);
         }
     };
 
-    listen.Enter = [this]()->void
+    listen->Enter = [this]()->void
     {
         auto result = m_serverSocket->Listen(/*m_ioContext,*/ 2);
 
@@ -97,11 +97,11 @@ ServerWorkflow::ServerWorkflow() :
         }
         else
         {
-            SetState(&accept);
+            SetState(accept);
         }
     };
 
-    accept.Enter = [this]()->void
+    accept->Enter = [this]()->void
     {
         Address ClientAddress;
         auto ClientSocket = m_serverSocket->Accept(m_ioContext, ClientAddress);
@@ -119,6 +119,6 @@ ServerWorkflow::ServerWorkflow() :
         }
     };
 
-    SetInitialState(&setup);
+    SetInitialState(setup);
 }
 

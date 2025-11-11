@@ -25,15 +25,33 @@
 #ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
 #define QOR_PP_H_COMPONENTS_PARSER_NODE
 
+#include <cstdint>
+#include <string>
+
 namespace qor { namespace components { namespace parser {
 
     class Node
     {
     public:
 
-        //Token
-        //Children
+        Node(uint64_t token) : m_token(token)
+        {
+        }
+
+        virtual ~Node() = default;
+
+        uint64_t GetToken()
+        {
+            return m_token;
+        }
+
+        virtual std::string ToString() {return "<anonymous node>";}
+
+    private:
+        
+        uint64_t m_token;        
     };
+
 }}}//qor::components::parser
 
 #endif//QOR_PP_H_COMPONENTS_PARSER_NODE

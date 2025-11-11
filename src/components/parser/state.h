@@ -27,6 +27,8 @@
 
 #include <iostream>
 #include "src/platform/compiler/compiler.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 #include "src/framework/workflow/workflow.h"
 #include "result.h"
 #include "node.h"
@@ -48,7 +50,10 @@ namespace qor { namespace components { namespace parser {
 
     protected:
         
-        class Context* Context();
+        virtual void Prepare();
+        virtual void Emit();
+        virtual void Fail();
+        class Context* GetContext();
         workflow::Workflow* Workflow();
         class Parser* GetParser();
         Node* m_parent;
@@ -73,31 +78,6 @@ namespace qor { namespace components { namespace parser {
         byte m_matchingOctet;
     };
 
-    class qor_pp_module_interface(QOR_PARSER) CR : public Specific
-    { public: CR(Parser* parser) : Specific(parser, 0x0D, static_cast<uint64_t>(eToken::CarriageReturn)){} 
-        virtual ~CR() = default;
-    };
-
-    class qor_pp_module_interface(QOR_PARSER) LF : public Specific
-    { public: LF(Parser* parser) : Specific(parser, 0x0A, static_cast<uint64_t>(eToken::LineFeed)){} 
-        virtual ~LF() = default;
-    };
-
-    class qor_pp_module_interface(QOR_PARSER) HTAB : public Specific
-    { public: HTAB(Parser* parser) : Specific(parser, 0x09, static_cast<uint64_t>(eToken::HorizontalTab)){} 
-        virtual ~HTAB() = default;
-    };
-
-    class qor_pp_module_interface(QOR_PARSER) DQUOTE : public Specific
-    { public: DQUOTE(Parser* parser) : Specific(parser, 0x22, static_cast<uint64_t>(eToken::DoubleQuote)){} 
-        virtual ~DQUOTE() = default;
-    };
-
-    class qor_pp_module_interface(QOR_PARSER) SP : public Specific
-    { public: SP(Parser* parser) : Specific(parser, 0x20, static_cast<uint64_t>(eToken::Space)){} 
-        virtual ~SP() = default;
-    };
-
     class qor_pp_module_interface(QOR_PARSER) OneOfARange : public ParserState
     {
     public:
@@ -109,76 +89,36 @@ namespace qor { namespace components { namespace parser {
         byte m_last;
     };
 
-    class qor_pp_module_interface(QOR_PARSER) DIGIT : public OneOfARange
-    { public: DIGIT(Parser* parser) : OneOfARange(parser, 0x30, 0x39, static_cast<uint64_t>(eToken::Digit)){} 
-        virtual ~DIGIT() = default;
-    };
-
-    class qor_pp_module_interface(QOR_PARSER) VCHAR : public OneOfARange
-    { public: VCHAR(Parser* parser) : OneOfARange(parser, 0x21, 0x7e, static_cast<uint64_t>(eToken::VisibleChar)){} 
-        virtual ~VCHAR() = default;
-    };
-
     class qor_pp_module_interface(QOR_PARSER) AnyOneOf : public ParserState
     {
     public:
 
-        AnyOneOf(Parser* parser, ParserState* head, ParserState* tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
-        virtual ~AnyOneOf() = default;
+        AnyOneOf(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+
+        virtual ~AnyOneOf()
+        {
+        }
 
     private:
         
         unsigned int m_internalState;
-        ParserState* m_head;
-        ParserState* m_tail;
+        ref_of<ParserState>::type m_head;
+        ref_of<ParserState>::type m_tail;
     };
-
-    class qor_pp_module_interface(QOR_PARSER) CTL : public AnyOneOf
-    { public : CTL(Parser* parser) : 
-        AnyOneOf(parser, 
-            new OneOfARange(parser, 0x00, 0x1f, static_cast<uint64_t>(eToken::Lexical)), 
-            new Specific(parser, 0x7f, static_cast<uint64_t>(eToken::Lexical)),
-            static_cast<uint64_t>(eToken::Control)
-        ){} 
-
-        virtual ~CTL() = default;
-    };
-
-    class qor_pp_module_interface(QOR_PARSER) HEXDIGIT : public AnyOneOf
-    { public : HEXDIGIT(Parser* parser) :
-        AnyOneOf(parser,
-            new DIGIT(parser),
-            new OneOfARange(parser, 'A', 'F', static_cast<uint64_t>(eToken::Lexical)),
-            static_cast<uint64_t>(eToken::HexDigit)
-        ){}
-        virtual ~HEXDIGIT() = default;
-    };
-
-    class qor_pp_module_interface(QOR_PARSER) WSP : public AnyOneOf
-    { public: WSP(Parser* parser) :
-        AnyOneOf(parser,
-            new SP(parser),
-            new HTAB(parser),
-            static_cast<uint64_t>(eToken::WhiteSpace)
-        ){}
-        virtual ~WSP() = default;
-    };
-
 
     class qor_pp_module_interface(QOR_PARSER) Optional : public ParserState
     {
     public:
 
-        Optional(Parser* parser, ParserState* head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        Optional(Parser* parser, ref_of<ParserState>::type head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
         
         virtual ~Optional()
         {
-            delete m_head;
         }
 
     private:
         
-        ParserState* m_head;
+        ref_of<ParserState>::type m_head;
         bool m_first;
     };
 
@@ -186,15 +126,15 @@ namespace qor { namespace components { namespace parser {
     {
     public:
 
-        ZeroOrMore(Parser* parser, ParserState* head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        ZeroOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+
         virtual ~ZeroOrMore()
         {
-            delete m_head;
         }
 
     private:
         
-        ParserState* m_head;
+        ref_of<ParserState>::type m_head;
         bool m_first;
     };
 
@@ -202,62 +142,81 @@ namespace qor { namespace components { namespace parser {
     {
     public:
 
-        Sequence(Parser* parser, ParserState* head, ParserState* tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        Sequence(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+
         virtual ~Sequence()
         {
-            delete m_tail;
-            delete m_head;
         };
         
     private:
         
         unsigned int m_internalState;
-        ParserState* m_head;
-        ParserState* m_tail;
+        ref_of<ParserState>::type m_head;
+        ref_of<ParserState>::type m_tail;
     };
 
-    class qor_pp_module_interface(QOR_PARSER) CRLF : public Sequence
-    { public : CRLF(Parser* parser) :
-        Sequence(parser, new CR(parser), new LF(parser), static_cast<uint64_t>(eToken::CarriageReturnLineFeed)){}
-        virtual ~CRLF() = default;
-    };
+    template<class T>
+    class deferred : public ParserState
+    {
+    public:
 
-    class qor_pp_module_interface(QOR_PARSER) LWSP : public ZeroOrMore
-    { public : LWSP(Parser* parser) :
-        ZeroOrMore(parser,
-            new AnyOneOf(parser,
-                new WSP(parser),
-                new CRLF(parser),
-                static_cast<uint64_t>(eToken::Lexical)
-            ),
-            static_cast<uint64_t>(eToken::LinearWhiteSpace)
-        ){}
-        virtual ~LWSP() = default;
-    };
+        deferred(Parser* parser) : ParserState(parser)
+        {            
+            Enter = [this]()
+            {
+                m_p = new_ref<T>(GetParser());
+                m_p->Enter();
+                if(m_p.IsNotNull())
+                {
+                    m_result = m_p->m_result;
+                }
+            };
 
-    class qor_pp_module_interface(QOR_PARSER) BIT : public AnyOneOf
-    { public : BIT(Parser* parser) :
-        AnyOneOf(parser,
-            new Specific(parser, '0', static_cast<uint64_t>(eToken::Lexical)),
-            new Specific(parser, '1', static_cast<uint64_t>(eToken::Lexical)),
-            static_cast<uint64_t>(eToken::Bit)
-        ){}
-        virtual ~BIT() = default;
-    };
+            Resume = [this]()
+            {
+                if(m_p.IsNotNull())
+                {
+                    m_result = m_p->m_result;
+                    m_p->Resume();
+                    if(m_p.IsNotNull())
+                    {
+                        m_result = m_p->m_result;
+                    }
+                }
+            };
 
-    class qor_pp_module_interface(QOR_PARSER) CHAR : public OneOfARange
-    { public : CHAR(Parser* parser);
-        virtual ~CHAR() = default;
-    };
+            Suspend = [this]()
+            {
+                if(m_p.IsNotNull())
+                {
+                    m_p->Suspend();
+                    if(m_p.IsNotNull())
+                    {
+                        m_result = m_p->m_result;
+                    }
+                }
+            };
 
-    class qor_pp_module_interface(QOR_PARSER) ALPHA : public AnyOneOf
-    { public: ALPHA(Parser* parser) :
-        AnyOneOf(parser,
-            new OneOfARange(parser, 0x41, 0x5A, static_cast<uint64_t>(eToken::Lexical)),
-            new OneOfARange(parser, 0x61, 0x7A, static_cast<uint64_t>(eToken::Lexical)),
-            static_cast<uint64_t>(eToken::Alpha)
-        ){}
-        virtual ~ALPHA() = default;
+            Leave = [this]()
+            {
+                if(m_p.IsNotNull())
+                {
+                    m_p->Leave();
+                    if(m_p.IsNotNull())
+                    {
+                        m_result = m_p->m_result;
+                    }
+                }
+            };
+        }
+
+        virtual ~deferred()
+        {
+        }
+
+    private:
+
+        ref_of<T>::type m_p;
     };
 
 }}}//qor::components::parser

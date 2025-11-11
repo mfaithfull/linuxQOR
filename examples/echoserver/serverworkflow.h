@@ -39,10 +39,10 @@ public:
 
 private:
 
-    qor::workflow::State setup;
-    qor::workflow::State bind;
-    qor::workflow::State listen;
-    qor::workflow::State accept;
+    qor::ref_of<qor::workflow::State>::type setup;
+    qor::ref_of<qor::workflow::State>::type bind;
+    qor::ref_of<qor::workflow::State>::type listen;
+    qor::ref_of<qor::workflow::State>::type accept;
 
     const qor::framework::AsyncIOService* m_io;
     qor::framework::ThreadPool* m_threadPool;

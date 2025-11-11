@@ -47,6 +47,7 @@ namespace qor { namespace components { namespace parser {
         size_t m_position;
         uint64_t token;
     };
+    
 }}}//qor::components::parser
 
 #endif//QOR_PP_H_COMPONENTS_PARSER_RESULT

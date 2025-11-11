@@ -41,25 +41,15 @@ namespace qor { namespace components { namespace parser {
         m_result.length = 0;
         m_token = token;
 
-        /*
-        Enter = [this]()
-        {
-            std::cout << "Looking for " << m_token << " at " << Context()->GetPosition();
-        };*/
-
         Leave = [this]()
         {
-            if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
+            if(m_result.code != Result::SUCCESS)
             {
-                auto it = tokenNames.find(m_result.token);
-                if(it != tokenNames.end())
-                {
-                    std::cout << "Found " << it->second << " at " << m_result.m_position << " length " << m_result.length << " first char " << (char)(m_result.first) <<std::endl;
-                }
-                else
-                {
-                    std::cout << "Found " << m_result.token << " at " << m_result.m_position << " length " << m_result.length << " first char " << (char)(m_result.first) << std::endl;
-                }
+                Fail();
+            }
+            else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
+            {
+                Emit();
             }
         };
     }
@@ -72,9 +62,9 @@ namespace qor { namespace components { namespace parser {
         m_result.length = 0;
     }
 
-    Context* ParserState::Context()
+    Context* ParserState::GetContext()
     {
-        return dynamic_cast<Parser*>(m_Workflow)->Context();
+        return dynamic_cast<Parser*>(m_Workflow)->GetContext();
     }
 
     workflow::Workflow* ParserState::Workflow()
@@ -87,17 +77,34 @@ namespace qor { namespace components { namespace parser {
         return dynamic_cast<Parser*>(m_Workflow);
     }
     
+    void ParserState::Prepare()
+    {        
+        //Default leaf states don't require a prepare step
+    }
+    
+    void ParserState::Emit()
+    {
+        //Default leaf states emit a leaf node which is just a token
+        GetParser()->PushNode(new_ref<Node>(m_token));
+    }
+
+    void ParserState::Fail()
+    {        
+        //Must undo anything done in Prepare
+    }
+    
     AcceptAll::AcceptAll(Parser* parser) : ParserState(parser)
     {        
         Enter = [this]()
-        {
+        {            
+            Prepare();
             byte* data = nullptr;
             m_result.code = Result::SUCCESS;
-            if(Context()->GetOctet(data))
+            if(GetContext()->GetOctet(data))
             {
                 m_result.first = *data;
-                m_result.m_position = Context()->GetPosition();
-                Context()->ConsumeOctet();
+                m_result.m_position = GetContext()->GetPosition();
+                GetContext()->ConsumeOctet();
                 m_result.token = static_cast<uint64_t>(eToken::Octet);
                 ++m_result.length;
             }
@@ -113,23 +120,21 @@ namespace qor { namespace components { namespace parser {
     {
         Enter = [this]()
         {
-            //std::cout << "Looking for octet between" << m_first << " and " << m_last << " at " << Context()->GetPosition() << std::endl;
+            Prepare();
 
             byte* data = nullptr;
-            if(Context()->GetOctet(data) && (*data >= m_first && *data <= m_last) )
+            if(GetContext()->GetOctet(data) && (*data >= m_first && *data <= m_last) )
             {
                 m_result.first = *data;
-                m_result.m_position = Context()->GetPosition();
-                Context()->ConsumeOctet();
+                m_result.m_position = GetContext()->GetPosition();
+                GetContext()->ConsumeOctet();
                 m_result.token = m_token;
                 ++m_result.length;              
-                //std::cout << "Found: " << (char)(*data) << std::endl;
                 m_result.code = Result::SUCCESS;
             }
             else
             {
-                //std::cout << "Trying to parse: " << (char)(*data) << std::endl;
-                m_result.m_position = Context()->GetPosition();
+                m_result.m_position = GetContext()->GetPosition();
                 m_result.code = Result::FAILURE;
                 m_result.length = 0;
             }
@@ -142,40 +147,36 @@ namespace qor { namespace components { namespace parser {
     {
         Enter = [this]()
         {
-            //std::cout << "Looking for " << m_matchingOctet << " at " << Context()->GetPosition() << std::endl;
+            Prepare();
 
             byte* data = nullptr;
-            if(Context()->GetOctet(data) && *data == m_matchingOctet)
+            if(GetContext()->GetOctet(data) && *data == m_matchingOctet)
             {
                 m_result.first = *data;
-                m_result.m_position = Context()->GetPosition();
-                Context()->ConsumeOctet();
+                m_result.m_position = GetContext()->GetPosition();
+                GetContext()->ConsumeOctet();
                 m_result.token = m_token;
                 m_result.length = 1;
-                //std::cout << "Found: " << (char)(*data) << std::endl;        
                 m_result.code = Result::SUCCESS;
             }
             else if(data)
             {
-                //std::cout << "Trying to parse: " << (char)(*data) << std::endl;
                 m_result.code = Result::FAILURE;
-                m_result.m_position = Context()->GetPosition();
+                m_result.m_position = GetContext()->GetPosition();
                 m_result.length = 0;
             }
             Workflow()->PopState();
         };
     }
 
-    CHAR::CHAR(Parser* parser) : OneOfARange(parser, 0x01, 0x7F, static_cast<uint64_t>(eToken::Char)){}
-
-    AnyOneOf::AnyOneOf(Parser* parser, ParserState* head, ParserState* tail, uint64_t token) : ParserState(parser,token),
+    AnyOneOf::AnyOneOf(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser,token),
         m_head(head), m_tail(tail), m_internalState(0)
     {
         Enter = [this]()
         {
+            Prepare();
             m_internalState = 0;
-            //std::cout << "Looking for head at " << Context()->GetPosition() << std::endl;
-            Workflow()->PushState(m_head);
+            Workflow()->PushState(m_head.AsRef<workflow::State>());
         };
 
         Resume = [this]()
@@ -195,8 +196,7 @@ namespace qor { namespace components { namespace parser {
                 else
                 {
                     m_internalState = 1;
-                    //std::cout << "Looking for tail at " << Context()->GetPosition() << std::endl;
-                    Workflow()->PushState(m_tail);
+                    Workflow()->PushState(m_tail.AsRef<workflow::State>());
                 }
                 break;
             case 1:
@@ -220,13 +220,13 @@ namespace qor { namespace components { namespace parser {
         };
     }
 
-    Optional::Optional(Parser* parser, ParserState* head, uint64_t token) : ParserState(parser,token),
+    Optional::Optional(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser,token),
         m_head(head), m_first(true)
     {
         Enter = [this]()
         {
-            //std::cout << "Looking for optional item at " << Context()->GetPosition() << std::endl;
-            Workflow()->PushState(m_head);
+            Prepare();
+            Workflow()->PushState(m_head.AsRef<workflow::State>());
         };
 
         Resume = [this]()
@@ -244,14 +244,15 @@ namespace qor { namespace components { namespace parser {
         };
     }
 
-    ZeroOrMore::ZeroOrMore(Parser* parser, ParserState* head, uint64_t token) : ParserState(parser,token),
+    ZeroOrMore::ZeroOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser,token),
         m_head(head), m_first(true)
     {
         Enter = [this]()
         {
+            Prepare();
             m_first = true;
             m_result.length = 0;
-            Workflow()->PushState(m_head);
+            Workflow()->PushState(m_head.AsRef<workflow::State>());
         };
 
         Resume = [this]()
@@ -268,7 +269,7 @@ namespace qor { namespace components { namespace parser {
                 }
                 m_result.length += m_head->m_result.length;
                 m_head->Reset();
-                Workflow()->PushState(m_head);
+                Workflow()->PushState(m_head.AsRef<workflow::State>());
             }
             else
             {
@@ -279,26 +280,26 @@ namespace qor { namespace components { namespace parser {
     }
 
 
-    Sequence::Sequence(Parser* parser, ParserState* head, ParserState* tail, uint64_t token) : ParserState(parser,token),
+    Sequence::Sequence(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser,token),
         m_head(head), m_tail(tail), m_internalState(0)
     {
         Enter = [this]()
         {
+            Prepare();
             m_internalState = 0;
-            Workflow()->PushState(m_head);
+            Workflow()->PushState(m_head.AsRef<workflow::State>());
         };
 
         Resume = [this]()
         {
             switch(m_internalState)
             {
-            case 0:
+            case 0://head
                 if(m_head->m_result.code != Result::SUCCESS)
                 {
                     m_result.code = m_head->m_result.code;
                     m_result.length = 0;
                     m_result.m_position = m_head->m_result.m_position;
-                    //std::cout << "Sequence failed at " << Context()->GetPosition() << std::endl;
                     Workflow()->PopState();
                 }
                 else
@@ -307,10 +308,10 @@ namespace qor { namespace components { namespace parser {
                     m_result.length = m_head->m_result.length;                        
                     m_result.m_position = m_head->m_result.m_position;
                     m_internalState = 1;
-                    Workflow()->PushState(m_tail);
+                    Workflow()->PushState(m_tail.AsRef<workflow::State>());
                 }
                 break;
-            case 1:
+            case 1://tail
                 if(m_tail->m_result.code == Result::SUCCESS)
                 {
                     m_result.code = Result::SUCCESS;

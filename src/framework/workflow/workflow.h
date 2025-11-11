@@ -27,6 +27,8 @@
 
 #include <stack>
 #include <functional>
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 #include "iworkflow.h"
 #include "src/qor/delegate/delegate.h"
 
@@ -60,10 +62,10 @@ namespace qor{ namespace workflow{
         Workflow& operator = (const Workflow& src);
         virtual int Run();
         virtual bool IsComplete() const;
-        void SetInitialState(State* state);
+        void SetInitialState(ref_of<State>::type state);
         
-        void SetState(State* state);
-        void PushState(State* state);
+        void SetState(ref_of<State>::type state);
+        void PushState(ref_of<State>::type state);
         void PopState();        
         void SetComplete();
         void SetResult(int result);
@@ -73,14 +75,14 @@ namespace qor{ namespace workflow{
         virtual void Resume();
         virtual void Leave();
 
-        State* GetInitialState();
-        State* CurrentState();
+        ref_of<State>::type GetInitialState() const;
+        ref_of<State>::type CurrentState();
 
     private:
         int m_result;
         bool m_complete;
-        State* m_initialState;
-        std::stack< State* > m_StateStack;
+        ref_of<State>::type m_initialState;
+        std::stack< ref_of<State>::type > m_StateStack;
     };
 
 }}//qor::workflow

@@ -43,9 +43,9 @@ public:
 
 private:
 
-    qor::workflow::State connected;
-    qor::workflow::State echo;
-    qor::workflow::State disconnect;
+    qor::ref_of<qor::workflow::State>::type connected;
+    qor::ref_of<qor::workflow::State>::type echo;
+    qor::ref_of<qor::workflow::State>::type disconnect;
 
     qor::ref_of<qor::framework::SharedAsyncIOContext>::type m_ioSharedContext;
     qor::ref_of<qor::network::Socket>::type m_socket;

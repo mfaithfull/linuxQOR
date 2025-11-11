@@ -6,12 +6,12 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 set(target qor_parser)
 
-add_library(${target} SHARED qor_parser.cpp state.cpp parser.cpp context.cpp json.cpp)
+add_library(${target} SHARED qor_parser.cpp state.cpp parser.cpp context.cpp rfc5234.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE -DQOR_PARSER)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_thread qor_sync qor_injection 
-qor_workflow qor_pipeline)
+qor_workflow qor_pipeline qor_property)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

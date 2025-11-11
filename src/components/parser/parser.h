@@ -30,6 +30,7 @@
 #include "src/framework/workflow/workflow.h"
 #include "context.h"
 #include "result.h"
+#include "node.h"
 
 namespace qor { namespace components { namespace parser {
 
@@ -38,14 +39,28 @@ namespace qor { namespace components { namespace parser {
     
     public:
 
-        class Context* Context()
+        Context* GetContext() const
         {
             return m_context;
         }
 
-        void PushResult(const Result& result)
+        void PushNode(ref_of<Node>::type node)
         {
-            m_results.emplace(result);
+            if(node.IsNotNull())
+            {
+                m_nodes.push(node);
+            }
+        }
+
+        ref_of<Node>::type PopNode()
+        {
+            ref_of<Node>::type result;
+            if(!m_nodes.empty())
+            {
+                result = m_nodes.top();
+                m_nodes.pop();
+            }
+            return result;
         }
 
         void SetContext(ref_of<class Context>::type context)
@@ -56,7 +71,7 @@ namespace qor { namespace components { namespace parser {
     private:
 
         ref_of<class Context>::type m_context;
-        std::stack<Result> m_results;
+        std::stack<ref_of<Node>::type> m_nodes;
     };
 
 }}}//qor::components::parser

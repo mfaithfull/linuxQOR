@@ -39,54 +39,54 @@ class TestWorkflow : public Workflow
 {
 public:
 
-    TestWorkflow() : initialState(this), state1(this)
+    TestWorkflow() : initialState(new_ref<State>(this)), state1(new_ref<State>(this))
     {
-        initialState.Enter = [this]()->void{
+        initialState->Enter = [this]()->void{
             std::cout << " initial workflow state entered.";
-            PushState(&state1);
+            PushState(state1);
         };
 
-        initialState.Suspend = [this]()->void{
+        initialState->Suspend = [this]()->void{
             std::cout << " initial workflow state suspended.";
         };
 
-        initialState.Resume = [this]()->void{
+        initialState->Resume = [this]()->void{
             std::cout << " initial workflow state resumed.";
             PopState();
         };
 
-        initialState.Leave = [this]()->void{
+        initialState->Leave = [this]()->void{
             std::cout << " initial workflow state completed.";
             SetComplete();
         };
 
-        state1.Enter = [this]()->void{
+        state1->Enter = [this]()->void{
             std::cout << " workflow state1 entered.";
             PopState();
         };
 
-        state1.Suspend = [this]()->void{
+        state1->Suspend = [this]()->void{
             std::cout << " workflow state1 suspended.";
         };
 
-        state1.Resume = [this]()->void{
+        state1->Resume = [this]()->void{
             std::cout << " workflow state1 resumed.";
             PopState();
         };
 
-        state1.Leave = [this]()->void{
+        state1->Leave = [this]()->void{
             std::cout << " workflow state1 completed.";            
         };
 
-        SetInitialState(&initialState);
+        SetInitialState(initialState);
     }
 
     virtual ~TestWorkflow() = default;
 
 private:
 
-    State initialState;
-    State state1;
+    ref_of<State>::type initialState;
+    ref_of<State>::type state1;
 
 };
 

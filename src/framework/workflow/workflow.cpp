@@ -78,7 +78,7 @@ namespace qor{ namespace workflow{
 
     void Workflow::Leave(){}
 
-    State* Workflow::CurrentState()
+    ref_of<State>::type Workflow::CurrentState()
     {
         if( !m_StateStack.empty() )
         {
@@ -87,14 +87,14 @@ namespace qor{ namespace workflow{
         return nullptr;
     }
 
-    State* Workflow::GetInitialState()
+    ref_of<State>::type Workflow::GetInitialState() const
     {
         return m_initialState;
     }
 
-    void Workflow::SetInitialState(State* initialState)
+    void Workflow::SetInitialState(ref_of<State>::type initialState)//weak pointer
     {
-        if(m_StateStack.empty())
+        if(initialState && m_StateStack.empty())
         {
             m_initialState = initialState;
             m_StateStack.push(initialState);
@@ -102,13 +102,13 @@ namespace qor{ namespace workflow{
         }
     }
 
-    void Workflow::SetState(State* newState)
+    void Workflow::SetState(ref_of<State>::type newState)
     {
         if(newState)
         {
             if(!m_StateStack.empty())
             {
-                State* currentState = CurrentState();
+                ref_of<State>::type currentState = CurrentState();
                 if(currentState)
                 {
                     currentState->Leave();
@@ -119,13 +119,13 @@ namespace qor{ namespace workflow{
         }
     }
 
-    void Workflow::PushState(State* newState)
+    void Workflow::PushState(ref_of<State>::type newState)
     {
         if(newState)
         {
             if(!m_StateStack.empty())
             {
-                State* currentState = CurrentState();
+                ref_of<State>::type currentState = CurrentState();
                 if(currentState)
                 {
                     currentState->Suspend();
@@ -140,7 +140,7 @@ namespace qor{ namespace workflow{
     {
         if(!m_StateStack.empty())
         {
-    		State* currentState = CurrentState();
+    		ref_of<State>::type currentState = CurrentState();
             if(currentState)
             {
     	    	currentState->Leave();

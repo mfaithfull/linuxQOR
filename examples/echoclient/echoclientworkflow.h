@@ -16,12 +16,12 @@ public:
 
 private:
 
-    qor::workflow::State setup;
-    qor::workflow::State connect;
-    qor::workflow::State input;    
-    qor::workflow::State send;
-    qor::workflow::State receive;
-    qor::workflow::State output;
+    qor::ref_of<qor::workflow::State>::type setup;
+    qor::ref_of<qor::workflow::State>::type connect;
+    qor::ref_of<qor::workflow::State>::type input;    
+    qor::ref_of<qor::workflow::State>::type send;
+    qor::ref_of<qor::workflow::State>::type receive;
+    qor::ref_of<qor::workflow::State>::type output;
 
     qor::ref_of<qor::components::Console>::type m_Console;
     std::string m_Input;

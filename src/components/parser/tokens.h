@@ -26,6 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PARSER_TOKENS
 
 #include <map>
+#include <string>
 
 namespace qor { namespace components { namespace parser {
 
@@ -52,24 +53,24 @@ namespace qor { namespace components { namespace parser {
         Max,
     };
 
-    static const std::map<const uint64_t, const std::string> tokenNames = {{
-        {static_cast< const uint64_t>(eToken::Lexical), "Lexical"},
-        {static_cast< const uint64_t>(eToken::Octet), "Octet"},
-        {static_cast< const uint64_t>(eToken::CarriageReturn), "CarriageReturn"},
-        {static_cast< const uint64_t>(eToken::LineFeed), "LineFeed"},
-        {static_cast< const uint64_t>(eToken::HorizontalTab), "HorizontalTab"},
-        {static_cast< const uint64_t>(eToken::DoubleQuote), "DoubleQuote"},
-        {static_cast< const uint64_t>(eToken::Space), "Space"},
-        {static_cast< const uint64_t>(eToken::Digit), "Digit"},
-        {static_cast< const uint64_t>(eToken::VisibleChar), "VisibleChar"},
-        {static_cast< const uint64_t>(eToken::Control), "Control"},
-        {static_cast< const uint64_t>(eToken::HexDigit), "HexDigit"},
-        {static_cast< const uint64_t>(eToken::WhiteSpace), "WhiteSpace"},
-        {static_cast< const uint64_t>(eToken::LinearWhiteSpace), "LinearWhiteSpace"},
-        {static_cast< const uint64_t>(eToken::CarriageReturnLineFeed), "CarriageReturnLineFeed"},
-        {static_cast< const uint64_t>(eToken::Bit), "Bit"},
-        {static_cast< const uint64_t>(eToken::Char), "Char"},
-        {static_cast< const uint64_t>(eToken::Alpha), "Alpha"},
+    inline const std::map<uint64_t, std::string> tokenNames = {{
+        {static_cast< uint64_t>(eToken::Lexical), "Lexical"},
+        {static_cast< uint64_t>(eToken::Octet), "Octet"},
+        {static_cast< uint64_t>(eToken::CarriageReturn), "CarriageReturn"},
+        {static_cast< uint64_t>(eToken::LineFeed), "LineFeed"},
+        {static_cast< uint64_t>(eToken::HorizontalTab), "HorizontalTab"},
+        {static_cast< uint64_t>(eToken::DoubleQuote), "DoubleQuote"},
+        {static_cast< uint64_t>(eToken::Space), "Space"},
+        {static_cast< uint64_t>(eToken::Digit), "Digit"},
+        {static_cast< uint64_t>(eToken::VisibleChar), "VisibleChar"},
+        {static_cast< uint64_t>(eToken::Control), "Control"},
+        {static_cast< uint64_t>(eToken::HexDigit), "HexDigit"},
+        {static_cast< uint64_t>(eToken::WhiteSpace), "WhiteSpace"},
+        {static_cast< uint64_t>(eToken::LinearWhiteSpace), "LinearWhiteSpace"},
+        {static_cast< uint64_t>(eToken::CarriageReturnLineFeed), "CarriageReturnLineFeed"},
+        {static_cast< uint64_t>(eToken::Bit), "Bit"},
+        {static_cast< uint64_t>(eToken::Char), "Char"},
+        {static_cast< uint64_t>(eToken::Alpha), "Alpha"},
     }};
 
 }}}//qor::components::parser
