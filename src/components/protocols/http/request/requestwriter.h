@@ -30,7 +30,7 @@
 #include "src/framework/pipeline/podbuffer.h"
 #include "src/framework/pipeline/sink.h"
 #include "request.h"
-#include "error.h"
+#include "../error.h"
 
 namespace qor { namespace components { namespace protocols { namespace http { 
 

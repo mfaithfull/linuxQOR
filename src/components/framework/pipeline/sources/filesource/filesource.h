@@ -22,27 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#ifndef QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_FILE
+#define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_FILE
 
-#include <string>
+#include "src/framework/pipeline/iosource.h"
+#include "src/components/framework/pipeline/connectors/fileconnector/fileconnector.h"
 
-#include "../request/request.h"
+namespace qor{ namespace components{ 
 
-namespace qor { namespace components { namespace protocols { namespace http { namespace detail {
-
-    class MatcherBase 
+    class qor_pp_module_interface(QOR_FILESOURCE) FileSource : public pipeline::iosource<FileConnector>
     {
+    
     public:
-        MatcherBase(std::string pattern) : pattern_(pattern) {}
-        virtual ~MatcherBase() = default;
-        const std::string& pattern() const { return pattern_; }
-        virtual bool match(Request& request) const = 0; // Match request path and populate its matches
 
-    private:
-    std::string pattern_;
+        FileSource() = default;
+        virtual ~FileSource() = default;
+
+    protected:
+
+        virtual size_t ReadBytes(byte* data, size_t bytesToRead);
+       
     };
 
-}}}}}//qor::components::protocols::http::detail
+}}//qor::components
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_FILE

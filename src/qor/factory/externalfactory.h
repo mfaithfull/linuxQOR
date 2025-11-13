@@ -84,7 +84,14 @@ namespace qor
 			{
                 IndirectFactory<T>* pBaseFactory = Registration;
                 IndirectFactorywithParams<T, _p...>* pFactory = dynamic_cast<IndirectFactorywithParams<T, _p...>*>(pBaseFactory);
-                return pFactory->Construct(count, p1...).template AsRef<T>();
+                if(pFactory == nullptr)
+                {
+                    throw std::logic_error("Couldn't find a factory with matching parameters.");
+                }
+                else
+                {
+                    return pFactory->Construct(count, p1...).template AsRef<T>();
+                }
 			}
 		}
 

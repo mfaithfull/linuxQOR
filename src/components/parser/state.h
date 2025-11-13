@@ -56,7 +56,6 @@ namespace qor { namespace components { namespace parser {
         class Context* GetContext();
         workflow::Workflow* Workflow();
         class Parser* GetParser();
-        Node* m_parent;
         uint64_t m_token;
     };
 
@@ -104,6 +103,23 @@ namespace qor { namespace components { namespace parser {
         unsigned int m_internalState;
         ref_of<ParserState>::type m_head;
         ref_of<ParserState>::type m_tail;
+    };
+
+    class qor_pp_module_interface(QOR_PARSER) AnyOneOfSet : public ParserState
+    {
+    public:
+
+        AnyOneOfSet(Parser* parser, std::vector<ref_of<ParserState>::type>* set, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+
+        virtual ~AnyOneOfSet()
+        {
+            delete m_set;
+        }
+
+    private:
+        
+        std::vector<ref_of<ParserState>::type>* m_set;
+        std::vector<ref_of<ParserState>::type>::iterator m_it;
     };
 
     class qor_pp_module_interface(QOR_PARSER) Optional : public ParserState

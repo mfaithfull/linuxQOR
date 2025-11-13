@@ -22,27 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#ifndef QOR_PP_H_PIPELINE_LINEREADER
+#define QOR_PP_H_PIPELINE_LINEREADER
 
-#include <string>
+#include "src/framework/pipeline/filter.h"
 
-#include "../request/request.h"
+namespace qor{ namespace components{
 
-namespace qor { namespace components { namespace protocols { namespace http { namespace detail {
-
-    class MatcherBase 
+    class qor_pp_module_interface(QOR_LINEREADER) LineReader : public pipeline::Filter
     {
     public:
-        MatcherBase(std::string pattern) : pattern_(pattern) {}
-        virtual ~MatcherBase() = default;
-        const std::string& pattern() const { return pattern_; }
-        virtual bool match(Request& request) const = 0; // Match request path and populate its matches
 
-    private:
-    std::string pattern_;
+        LineReader() = default;
+        virtual ~LineReader() = default;
+
+        virtual bool ReadFilter(size_t& unitsProcessed, size_t unitsToProcess);
+        virtual bool WriteFilter(size_t& unitsProcessed, size_t unitsToProcess);
+        virtual bool ReadUpToLineEnd(size_t& unitsProcessed, size_t unitsToProcess);
+                
     };
 
-}}}}}//qor::components::protocols::http::detail
+}}//qor::pipeline
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#endif//QOR_PP_H_PIPELINE_LINEREADER

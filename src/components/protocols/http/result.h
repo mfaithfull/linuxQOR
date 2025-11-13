@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESULT
 
 #include "error.h"
-#include "response.h"
+#include "response/response.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

@@ -22,27 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#ifndef QOR_PP_H_COMPONENTS_HTTP_FIELD_CONTENT
+#define QOR_PP_H_COMPONENTS_HTTP_FIELD_CONTENT
+
+#include "src/configuration/configuration.h"
 
 #include <string>
+#include "src/components/parser/parser.h"
+#include "src/components/protocols/http/fields/fieldparser.h"
 
-#include "../request/request.h"
+namespace qor { namespace components { namespace protocols { namespace http {
 
-namespace qor { namespace components { namespace protocols { namespace http { namespace detail {
-
-    class MatcherBase 
+    class FieldContent : public components::parser::Node
     {
     public:
-        MatcherBase(std::string pattern) : pattern_(pattern) {}
-        virtual ~MatcherBase() = default;
-        const std::string& pattern() const { return pattern_; }
-        virtual bool match(Request& request) const = 0; // Match request path and populate its matches
+
+        FieldContent() : Node(static_cast<uint64_t>(httpFieldToken::token))
+        {            
+        }
+
+        virtual ~FieldContent() = default;
+
+        std::string GetValue() { return m_value; }
+        void SetValue(const std::string& contentValue ) {m_value = contentValue;};
+
+        virtual std::string ToString() const override;
 
     private:
-    std::string pattern_;
+        std::string m_value;
     };
 
-}}}}}//qor::components::protocols::http::detail
+}}}}//qor::components::protocols::http
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#endif//QOR_PP_H_COMPONENTS_HTTP_FIELD_CONTENT

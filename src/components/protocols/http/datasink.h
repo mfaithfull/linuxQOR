@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DATASINK
 
 #include <vector>
-#include "forms.h"
+#include "forms/forms.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

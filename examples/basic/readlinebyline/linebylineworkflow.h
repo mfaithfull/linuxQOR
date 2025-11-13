@@ -22,22 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_FORMSDATAPROVIDER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_FORMSDATAPROVIDER
+#ifndef QOR_PP_H_EXAMPLES_LINEBYLINE_WORKFLOW
+#define QOR_PP_H_EXAMPLES_LINEBYLINE_WORKFLOW
 
-#include "contentprovider.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/framework/workflow/workflow.h"
 
-namespace qor { namespace components { namespace protocols { namespace http {
+class LineByLineWorkflow : public qor::workflow::Workflow
+{
+public:
 
-    struct FormDataProvider 
-    {
-        std::string name;
-        ContentProviderWithoutLength provider;
-        std::string filename;
-        std::string content_type;
-    };
+    LineByLineWorkflow();
+    virtual ~LineByLineWorkflow() = default;    
 
-}}}}
+private:
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_FORMSDATAPROVIDER
+    qor::ref_of<qor::workflow::State>::type state0;
+};
 
+#endif//#ifndef QOR_PP_H_EXAMPLES_LINEBYLINE_WORKFLOW

@@ -25,8 +25,8 @@
 
 #include "src/configuration/configuration.h"
 #include "response.h"
-#include "fields/fields.h"
-#include "contentprovideradapter.h"
+#include "../fields/fields.h"
+#include "../contentprovideradapter.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

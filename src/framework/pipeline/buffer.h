@@ -51,9 +51,9 @@ namespace qor{ namespace pipeline{
         virtual byte* ReadRequest(size_t& itemCount) = 0;
         virtual void SetCapacity(size_t itemCount);
         size_t Capacity() const;
-        size_t ReadAcknowledge(size_t& itemCount);
-        size_t ReadReject(size_t& itemCount);
-        size_t WriteAcknowledge(size_t& itemCount);
+        virtual size_t ReadAcknowledge(size_t& itemCount);
+        virtual size_t ReadReject(size_t& itemCount);
+        virtual size_t WriteAcknowledge(size_t& itemCount);
         size_t GetUnitSize() const;
 
     protected:

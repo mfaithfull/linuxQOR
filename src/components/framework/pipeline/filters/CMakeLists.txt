@@ -7,3 +7,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(base64decodefilter)
 add_subdirectory(base64encodefilter)
+add_subdirectory(linereader)

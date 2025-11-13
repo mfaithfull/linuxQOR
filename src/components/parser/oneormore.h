@@ -22,27 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#ifndef QOR_PP_H_COMPONENTS_PARSER_ONEORMORE
+#define QOR_PP_H_COMPONENTS_PARSER_ONEORMORE
 
-#include <string>
+#include "state.h"
 
-#include "../request/request.h"
+namespace qor { namespace components { namespace parser {
 
-namespace qor { namespace components { namespace protocols { namespace http { namespace detail {
-
-    class MatcherBase 
+    class qor_pp_module_interface(QOR_PARSER) OneOrMore : public ParserState
     {
     public:
-        MatcherBase(std::string pattern) : pattern_(pattern) {}
-        virtual ~MatcherBase() = default;
-        const std::string& pattern() const { return pattern_; }
-        virtual bool match(Request& request) const = 0; // Match request path and populate its matches
+
+        OneOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+
+        virtual ~OneOrMore() = default;
 
     private:
-    std::string pattern_;
+        
+        ref_of<ParserState>::type m_head;
+        bool m_first;
     };
 
-}}}}}//qor::components::protocols::http::detail
+}}}//qor::components::parser
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#endif//QOR_PP_H_COMPONENTS_PARSER_ONEORMORE

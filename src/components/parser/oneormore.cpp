@@ -24,52 +24,50 @@
 
 #include "src/configuration/configuration.h"
 
-#include "stdoutsink.h"
-#include "src/framework/pipeline/source.h"
+#include "src/platform/compiler/compiler.h"
+#include "oneormore.h"
+#include "context.h"
+#include "parser.h"
 
-namespace qor{ namespace components{ 
+namespace qor { namespace components { namespace parser {
 
-    StdOutSink::StdOutSink()
+    OneOrMore::OneOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser,token),
+        m_head(head), m_first(true)
     {
-    }
-
-    bool StdOutSink::Write(size_t& unitsWritten, size_t unitsToWrite)
-    {
-        return Pull(unitsWritten, unitsToWrite) ? Push(unitsWritten, unitsWritten) : false;
-    }
-
-    //pull the requested amount of data from the stream
-    bool StdOutSink::Pull(size_t& unitsWritten, size_t unitsToWrite)
-    {
-        if( GetFlowMode() == FlowMode::Pull )
+        Enter = [this]()
         {
-            return (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0)) ? true : false;
-        }
-        return true;
+            Prepare();
+            m_first = true;
+            m_result.length = 0;
+            Workflow()->PushState(m_head.AsRef<workflow::State>());
+        };
+
+        Resume = [this]()
+        {            
+            if(m_head->m_result.code == Result::SUCCESS)
+            {
+                if(m_first)
+                {
+                    m_result.first = m_head->m_result.first;
+                    m_result.m_position = m_head->m_result.m_position;
+                    m_first = false;
+                }
+                m_result.code = Result::SUCCESS;
+                m_result.token = m_token;
+                m_result.length += m_head->m_result.length;
+                m_head->Reset();
+                Workflow()->PushState(m_head.AsRef<workflow::State>());
+            }
+            else
+            {
+                if(m_first)
+                {
+                    m_result.code = Result::FAILURE;
+                    m_result.m_position = m_head->m_result.m_position;
+                }
+                Workflow()->PopState();
+            }
+        };
     }
 
-    //push the requested amount of data out of the door
-    bool StdOutSink::Push(size_t& unitsWritten, size_t unitsToWrite)
-    {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
-        {
-            byte* pData = reinterpret_cast<byte*>(buffer->ReadRequest(unitsToWrite));
-            size_t unitSize = buffer->GetUnitSize();							        //The Buffer knows the Unit size in bytes
-            size_t bytesWritten = fwrite(pData, unitSize, unitsToWrite, stdout);
-            if( bytesWritten > 0 )
-            {
-                unitsWritten = bytesWritten / buffer->GetUnitSize();
-                buffer->ReadAcknowledge(unitsWritten);
-                OnWriteSuccess(unitsWritten);
-                fflush(stdout);
-            }
-            else //EOD?
-            {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-}}//qor::components
+}}}//qor::components::parser

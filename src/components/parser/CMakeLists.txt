@@ -6,7 +6,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 set(target qor_parser)
 
-add_library(${target} SHARED qor_parser.cpp state.cpp parser.cpp context.cpp rfc5234.cpp)
+add_library(${target} SHARED qor_parser.cpp state.cpp parser.cpp context.cpp rfc5234.cpp oneormore.cpp anyoneofset.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

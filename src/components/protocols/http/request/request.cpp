@@ -25,7 +25,7 @@
 
 #include "src/configuration/configuration.h"
 #include "request.h"
-#include "fields/fields.h"
+#include "../fields/fields.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

@@ -22,27 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_FORMSDATAPROVIDER
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_FORMSDATAPROVIDER
 
-#include <string>
+#include "../contentprovider.h"
 
-#include "../request/request.h"
+namespace qor { namespace components { namespace protocols { namespace http {
 
-namespace qor { namespace components { namespace protocols { namespace http { namespace detail {
-
-    class MatcherBase 
+    struct FormDataProvider 
     {
-    public:
-        MatcherBase(std::string pattern) : pattern_(pattern) {}
-        virtual ~MatcherBase() = default;
-        const std::string& pattern() const { return pattern_; }
-        virtual bool match(Request& request) const = 0; // Match request path and populate its matches
-
-    private:
-    std::string pattern_;
+        std::string name;
+        ContentProviderWithoutLength provider;
+        std::string filename;
+        std::string content_type;
     };
 
-}}}}}//qor::components::protocols::http::detail
+}}}}
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_FORMSDATAPROVIDER
+

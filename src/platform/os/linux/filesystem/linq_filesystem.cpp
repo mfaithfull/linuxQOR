@@ -46,6 +46,6 @@ qor::Module& ThisModule(void)
 	//Register the Linux specific implementations
 	static qor::TypeRegEntry< qor::nslinux::FileSystem, qor::platform::IFileSystem > regIFileSystem;  
 	static qor::TypeRegEntry< qor::nslinux::FileStat, qor::platform::IFileStat > regIFileStat;
-	static qor::TypeRegEntryWithParams< qor::nslinux::File, qor::platform::IFile, const qor::platform::FileIndex&, int, int > regIFile;
+	static qor::TypeRegEntryWithParams< qor::nslinux::File, qor::platform::IFile, qor::platform::FileIndex&, int&, int& > regIFile;
 	return QORModule;
 }

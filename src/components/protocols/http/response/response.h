@@ -25,10 +25,10 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSE
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSE
 
-#include "headers.h"
+#include "../headers.h"
 #include "status.h"
-#include "contentprovider.h"
-#include "contentreader.h"
+#include "../contentprovider.h"
+#include "../contentreader.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

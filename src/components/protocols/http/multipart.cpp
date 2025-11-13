@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "forms.h"
+#include "forms/forms.h"
 #include "datasink.h"
 #include "text/randomstring.h"
 #include "multipart.h"

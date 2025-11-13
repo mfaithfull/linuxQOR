@@ -22,27 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSESERVER
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSESERVER
 
-#include <string>
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/framework/application/irunable.h"
+#include "src/framework/pipeline/pipeline.h"
 
-#include "../request/request.h"
+template<class Req, class Resp>
+class RequestResponseServerProtocol : public qor::framework::IRunable
+{
+public:
 
-namespace qor { namespace components { namespace protocols { namespace http { namespace detail {
+    RequestResponseClientProtocol(qor::ref_of<qor::pipeline::Pipeline>::type pipeline) : m_pipeline(pipeline)
+    {}
+    virtual ~RequestResponseClientProtocol() noexcept = default;
+    virtual int Run(void);
+        
+protected:
 
-    class MatcherBase 
-    {
-    public:
-        MatcherBase(std::string pattern) : pattern_(pattern) {}
-        virtual ~MatcherBase() = default;
-        const std::string& pattern() const { return pattern_; }
-        virtual bool match(Request& request) const = 0; // Match request path and populate its matches
+    qor::ref_of<Req>::type m_request;
+    qor::ref_of<Resp>::type m_response;
+    qor::ref_of<qor::pipeline::Pipeline>::type m_pipeline;
+};
 
-    private:
-    std::string pattern_;
-    };
+#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSESERVER
 
-}}}}}//qor::components::protocols::http::detail
-
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER

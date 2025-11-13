@@ -27,12 +27,12 @@
 
 #include <string>
 #include <chrono>
-#include "text/utils.h"
-#include "headers.h"
-#include "forms.h"
-#include "ranges.h"
-#include "contentprovider.h"
-#include "contentreader.h"
+#include "../text/utils.h"
+#include "../headers.h"
+#include "../forms/forms.h"
+#include "../ranges.h"
+#include "../contentprovider.h"
+#include "../contentreader.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

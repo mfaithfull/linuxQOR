@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_CONTENTREADER
 
 #include <vector>
-#include "formsdataprovider.h"
+#include "forms/formsdataprovider.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

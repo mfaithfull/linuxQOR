@@ -22,27 +22,25 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+#include "src/configuration/configuration.h"
 
-#include <string>
+#include "filesource.h"
+#include "src/framework/pipeline/sink.h"
 
-#include "../request/request.h"
+namespace qor{ namespace components{ 
 
-namespace qor { namespace components { namespace protocols { namespace http { namespace detail {
-
-    class MatcherBase 
+    size_t FileSource::ReadBytes(byte* space, size_t bytesToRead)
     {
-    public:
-        MatcherBase(std::string pattern) : pattern_(pattern) {}
-        virtual ~MatcherBase() = default;
-        const std::string& pattern() const { return pattern_; }
-        virtual bool match(Request& request) const = 0; // Match request path and populate its matches
+        size_t result = 0;
+        if(m_Connector && m_Connector->IsConnected())
+        {
+            result = m_Connector->File()->Read(space, bytesToRead, 0);
+        }
+        else
+        {
+            //TODO: No connection
+        }
+        return result;
+    }
 
-    private:
-    std::string pattern_;
-    };
-
-}}}}}//qor::components::protocols::http::detail
-
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_DETAIL_MATCHER
+}}//qor::components

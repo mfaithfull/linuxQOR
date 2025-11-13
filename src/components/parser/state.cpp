@@ -36,7 +36,6 @@ namespace qor { namespace components { namespace parser {
 
     ParserState::ParserState(Parser* parser, uint64_t token) : workflow::State(parser)
     {
-        m_parent = nullptr;
         m_result.code = Result::MORE_DATA;
         m_result.length = 0;
         m_token = token;

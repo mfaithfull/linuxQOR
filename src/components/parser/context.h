@@ -44,7 +44,6 @@ namespace qor { namespace components { namespace parser {
         size_t m_position;
         size_t m_size;
 
-        ref_of<pipeline::Pipeline>::type m_Pipeline;
     };
 
 }}}//qor::components::parser

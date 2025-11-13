@@ -104,15 +104,15 @@ namespace qor { namespace components { namespace json { namespace parser {
     class qor_pp_module_interface(QOR_JSON) unescaped : public components::parser::AnyOneOf
     {
     public: unescaped(components::parser::Parser* parser) :
-        components::parser::AnyOneOf(parser,
-            new_ref<components::parser::OneOfARange>(parser, 0x20, 0x21, static_cast<uint64_t>(components::parser::eToken::Lexical)).AsRef<components::parser::ParserState>(),
-            new_ref<components::parser::AnyOneOf>(parser,
-                new_ref<components::parser::OneOfARange>(parser, 0x23, 0x5B, static_cast<uint64_t>(components::parser::eToken::Lexical)).AsRef<components::parser::ParserState>(),
-                new_ref<components::parser::OneOfARange>(parser, 0x5D, 0x10FFFF, static_cast<uint64_t>(components::parser::eToken::Lexical)).AsRef<components::parser::ParserState>(),
-                static_cast<uint64_t>(components::parser::eToken::Lexical)
-            ).AsRef<components::parser::ParserState>(),
-            static_cast<uint64_t>(jsonToken::unescaped)
-        ){}
+                components::parser::AnyOneOf(parser,
+                    new_ref<components::parser::OneOfARange>(parser, 0x20, 0x21, static_cast<uint64_t>(components::parser::eToken::Lexical)).AsRef<components::parser::ParserState>(),
+                    new_ref<components::parser::AnyOneOf>(parser,
+                        new_ref<components::parser::OneOfARange>(parser, 0x23, 0x5B, static_cast<uint64_t>(components::parser::eToken::Lexical)).AsRef<components::parser::ParserState>(),
+                        new_ref<components::parser::OneOfARange>(parser, 0x5D, 0x10FFFF, static_cast<uint64_t>(components::parser::eToken::Lexical)).AsRef<components::parser::ParserState>(),
+                        static_cast<uint64_t>(components::parser::eToken::Lexical)
+                    ).AsRef<components::parser::ParserState>(),
+                    static_cast<uint64_t>(jsonToken::unescaped))
+            {}
 
         virtual ~unescaped() = default;
         virtual void Emit(){};//Emit nothing
