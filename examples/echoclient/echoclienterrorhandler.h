@@ -22,66 +22,55 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_PARSER
-#define QOR_PP_H_COMPONENTS_PARSER_PARSER
+#ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_ERRORHANDLER
+#define QOR_PP_H_EXAMPLES_ECHOCLIENT_ERRORHANDLER
 
-#include <stack>
+#include <iostream>
 
-#include "src/framework/workflow/workflow.h"
-#include "context.h"
-#include "result.h"
-#include "node.h"
+#include "src/qor/error/error.h"
+#include "src/qor/error/handler.h"
 
-namespace qor { namespace components { namespace parser {
-
-    class Parser : public workflow::Workflow
-    {
+class ErrorHandler : public qor::IssueHandler<qor::Error>
+{
+public:
     
-    public:
-
-        Parser() : workflow::Workflow()
+    virtual bool Handle(const qor::Error& error) const
+    {
+        switch (error.what().GetSeverity())
         {
-        }
-
-        Parser(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context)
-        {
-        }
-
-        Context* GetContext() const
-        {
-            return m_context;
-        }
-
-        void PushNode(ref_of<Node>::type node)
-        {
-            if(node.IsNotNull())
+        case qor::Severity::Note:
             {
-                m_nodes.push(node);
+                std::cout << "Note: " << error.what().Content() << std::endl;
+                return true;
             }
-        }
-
-        ref_of<Node>::type PopNode()
-        {
-            ref_of<Node>::type result;
-            if(!m_nodes.empty())
+            break;
+        case qor::Severity::Warning:
             {
-                result = m_nodes.top();
-                m_nodes.pop();
+                std::cout << "Warning: " << error.what().Content() << std::endl;
+                return true;
             }
-            return result;
+            break;
+        case qor::Severity::Continuable_Error:
+            {
+                std::cout << "Continuable Error: " << error.what().Content() << std::endl;
+                return true;
+            }
+            break;
+        case qor::Severity::Serious_Error:
+            {
+                std::cout << "Serious Error: " << error.what().Content() << std::endl;
+                return false;
+            }
+            break;
+        case qor::Severity::Fatal_Error:
+            {
+                std::cout << "Fatal Error: " << error.what().Content() << std::endl;
+                return false;
+            }
+            break;
         }
+        return false;
+    }
+};
 
-        void SetContext(ref_of<class Context>::type context)
-        {
-            m_context = context;
-        }
-
-    private:
-
-        ref_of<class Context>::type m_context;
-        std::stack<ref_of<Node>::type> m_nodes;
-    };
-
-}}}//qor::components::parser
-
-#endif//QOR_PP_H_COMPONENTS_PARSER_PARSER
+#endif//QOR_PP_H_EXAMPLES_ECHOCLIENT_ERRORHANDLER

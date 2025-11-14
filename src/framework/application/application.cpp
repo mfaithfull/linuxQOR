@@ -73,9 +73,11 @@ namespace qor{ namespace framework{
         {
             m_Role->Setup();
         }
+        
         if(m_Workflow.IsNotNull())
         {
             result = m_Workflow->Run();
+            m_Workflow.Dispose();
         }
 
         if(m_Role.IsNotNull())

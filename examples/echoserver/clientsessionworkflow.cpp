@@ -41,24 +41,22 @@ using namespace qor::components;
 
 ClientSessionWorkflow::ClientSessionWorkflow(
     ref_of<qor::framework::SharedAsyncIOContext>::type sharedContext,
-    ref_of<Socket>::type socket, 
-    const Address& address) : 
+    ref_of<Socket>::type socket) : 
     connected(new_ref<workflow::State>(this)),
     echo(new_ref<workflow::State>(this)),
     disconnect(new_ref<workflow::State>(this)),
     m_socket(socket),
-    m_address(address),
     m_ioSharedContext(sharedContext)
 {
     connected->Enter = [this]()->void
     {
         auto ioSession = m_ioSharedContext->GetSession();
-        if(ioSession.IsNull()){ std::cout << "Out of IO Contexts. IO will proceed sychronously.\n"; }
+        if(ioSession.IsNull()){ std::cout << "Out of IO Contexts. IO will proceed sychronously." << std::endl; }
 
         m_pipeline = new_ref<SessionPipeline>(m_socket, ioSession);
         m_protocol = new_ref<EchoProtocol>(m_pipeline.AsRef<Pipeline>());
 
-        std::cout << "Servicing a connected client\n";
+        std::cout << "Servicing a connected client." << std::endl;
         SetState(echo);
     };
 
@@ -72,7 +70,7 @@ ClientSessionWorkflow::ClientSessionWorkflow(
 
     disconnect->Enter = [this]()->void
     {
-        std::cout << "Disconnecting at client request\n";
+        std::cout << "Disconnecting at client request" << std::endl;
         m_socket->Shutdown(eShutdown::ShutdownReadWrite);
         SetResult(EXIT_SUCCESS);
         SetComplete();

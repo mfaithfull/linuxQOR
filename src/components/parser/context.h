@@ -36,10 +36,18 @@ namespace qor { namespace components { namespace parser {
     {
     public:
 
+        Context() : m_octetStream(nullptr), m_position(0), m_size(0)
+        {}
+
+        Context(byte* data, size_t itemCount) : m_octetStream(data), m_position(0), m_size(itemCount)
+        {}
+
         bool GetOctet(byte*& data);
         bool ConsumeOctet();
         size_t GetPosition();
 
+    private:
+    
         byte* m_octetStream;
         size_t m_position;
         size_t m_size;

@@ -22,59 +22,16 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
-#define QOR_PP_H_COMPONENTS_PARSER_NODE
+#include "src/configuration/configuration.h"
+#include "echoresponsepipeline.h"
 
-#include <cstdint>
-#include <string>
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
-
-namespace qor { namespace components { namespace parser {
-
-    class Node
-    {
-    public:
-
-        Node(uint64_t token) : m_token(token)
-        {
-        }
-
-        virtual ~Node() = default;
-
-        uint64_t GetToken() const
-        {
-            return m_token;
-        }
-
-        virtual std::string ToString() const {return "<anonymous node>";}
-
-    private:
-        
-        uint64_t m_token;        
-    };
-
-    template<class T>
-    class NodeAdapter : public Node
-    {
-    public:
-
-        NodeAdapter(uint64_t token) : Node(token)
-        {            
-        }
-
-        virtual ~NodeAdapter() = default;
-
-        ref_of<T>::type GetObject()
-        {
-            return m_t;
-        }
-
-    protected:
-
-        ref_of<T>::type m_t;
-    };
-
-}}}//qor::components::parser
-
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODE
+EchoResponsePipeline::EchoResponsePipeline(qor::ref_of<qor::components::SocketClientConnector>::type connector) : m_socketConnector(connector)
+{
+    m_socketSource.SetBuffer(&m_filter);
+    m_stdOutsink.SetBuffer(&m_filter);
+    m_socketConnector->SetSource(&m_socketSource);
+    m_socketSource.SetPlug(m_socketConnector);
+    m_stdOutsink.SetSource(&m_socketSource);
+    SetSource(&m_socketSource);
+    SetSink(&m_stdOutsink);
+}

@@ -33,7 +33,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class Field : public components::parser::Node
+    class qor_pp_module_interface(QOR_HTTP) Field : public components::parser::Node
     {
     public:
 
@@ -46,7 +46,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         void SetName(const std::string& name ) {m_name = name;};
         void SetContent(const std::string& content ) {m_content = content;};
 
-        virtual std::string ToString() const override;
+        //virtual std::string ToString() const override;
 
     private:
 

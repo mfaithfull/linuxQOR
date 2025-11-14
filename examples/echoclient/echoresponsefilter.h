@@ -22,59 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
-#define QOR_PP_H_COMPONENTS_PARSER_NODE
+#ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORESPONSEFILTER
+#define QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORESPONSEFILTER
 
-#include <cstdint>
-#include <string>
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/framework/pipeline/inlinefilter.h"
+#include "echoresponseparser.h"
+#include "nodes/responsenode.h"
+#include "echoresponse.h"
 
-namespace qor { namespace components { namespace parser {
+class EchoResponseFilter : public qor::pipeline::InlineFilter<qor::byte>
+{
+public:
 
-    class Node
-    {
-    public:
+    EchoResponseFilter(size_t itemCount = 0) : 
+        qor::pipeline::InlineFilter<qor::byte>(itemCount){}
 
-        Node(uint64_t token) : m_token(token)
-        {
-        }
+    virtual ~EchoResponseFilter() = default;
 
-        virtual ~Node() = default;
+    qor::ref_of<EchoResponse>::type Parse(qor::byte* data, size_t& itemCount);
+    virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount);
 
-        uint64_t GetToken() const
-        {
-            return m_token;
-        }
+};
 
-        virtual std::string ToString() const {return "<anonymous node>";}
-
-    private:
-        
-        uint64_t m_token;        
-    };
-
-    template<class T>
-    class NodeAdapter : public Node
-    {
-    public:
-
-        NodeAdapter(uint64_t token) : Node(token)
-        {            
-        }
-
-        virtual ~NodeAdapter() = default;
-
-        ref_of<T>::type GetObject()
-        {
-            return m_t;
-        }
-
-    protected:
-
-        ref_of<T>::type m_t;
-    };
-
-}}}//qor::components::parser
-
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODE
+#endif//QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORESPONSEFILTER

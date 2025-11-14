@@ -407,7 +407,7 @@ namespace qor{
 		}
 
 		template< class TDerived >
-		TDerived* As(void)
+		TDerived* As(void) const
 		{
 			return m_p ? dynamic_cast< TDerived* >(m_p->ptr()) : nullptr;
 		}

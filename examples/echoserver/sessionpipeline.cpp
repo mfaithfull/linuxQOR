@@ -26,13 +26,15 @@
 #include "sessionpipeline.h"
 
 using namespace qor;
+using namespace qor::network;
 using namespace qor::components;
+using namespace qor::framework;
 
 SessionPipeline::SessionPipeline(
-        qor::ref_of<qor::network::Socket>::type socket, 
-        qor::ref_of<qor::framework::SharedAsyncIOContext::Session>::type session) : 
-        m_inputBuffer(16384),
-        m_outputBuffer(16384),
+        ref_of<Socket>::type socket, 
+        ref_of<SharedAsyncIOContext::Session>::type session) : 
+        m_inputBuffer(ioBufferSize),
+        m_outputBuffer(ioBufferSize),
         m_socket(socket), 
         m_ioSession(session)
 {
@@ -48,5 +50,3 @@ SessionPipeline::SessionPipeline(
     SetSink(m_socketSink, &m_outputBuffer);
     m_socketSessionConnector->Connect();
 }
-
-//marked for auto reiveew 04/11/2025

@@ -34,7 +34,6 @@ public:
 
         EchoServerApp() = default;
         virtual ~EchoServerApp() = default;
-
         
         //IOptionable interface
         virtual const char* ProvideShortOptionString();

@@ -42,7 +42,7 @@ qor::Module& ThisModule(void)
 
 	//Register the Linux specific implementations provided by this module
 	static qor::TypeRegEntry< qor::nslinux::Sockets, qor::network::Sockets > regSockets;
-	static qor::TypeRegEntryWithParams< qor::nslinux::Socket, qor::network::Socket, const qor::network::sockets::eAddressFamily&, const qor::network::sockets::eType&, const qor::network::sockets::eProtocol& > regSocket;
+	static qor::TypeRegEntryWithParams< qor::nslinux::Socket, qor::network::Socket, qor::network::sockets::eAddressFamily&, qor::network::sockets::eType&, qor::network::sockets::eProtocol& > regSocket;
 
 	return QORModule;
 }

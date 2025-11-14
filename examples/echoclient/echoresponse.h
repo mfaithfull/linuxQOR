@@ -22,59 +22,31 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
-#define QOR_PP_H_COMPONENTS_PARSER_NODE
+#ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORESPONSE
+#define QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORESPONSE
 
-#include <cstdint>
 #include <string>
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
 
-namespace qor { namespace components { namespace parser {
+class EchoResponse
+{
+public:
 
-    class Node
+    EchoResponse() = default;
+    virtual ~EchoResponse() = default;
+
+    void SetValue(const std::string& value)
     {
-    public:
+        m_response = value;
+    }
 
-        Node(uint64_t token) : m_token(token)
-        {
-        }
-
-        virtual ~Node() = default;
-
-        uint64_t GetToken() const
-        {
-            return m_token;
-        }
-
-        virtual std::string ToString() const {return "<anonymous node>";}
-
-    private:
-        
-        uint64_t m_token;        
-    };
-
-    template<class T>
-    class NodeAdapter : public Node
+    std::string GetValue() const
     {
-    public:
+        return m_response;
+    }
 
-        NodeAdapter(uint64_t token) : Node(token)
-        {            
-        }
+private:
 
-        virtual ~NodeAdapter() = default;
+    std::string m_response;
+};
 
-        ref_of<T>::type GetObject()
-        {
-            return m_t;
-        }
-
-    protected:
-
-        ref_of<T>::type m_t;
-    };
-
-}}}//qor::components::parser
-
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODE
+#endif//QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORESPONSE

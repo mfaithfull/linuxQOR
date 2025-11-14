@@ -79,7 +79,8 @@ namespace qor{ namespace framework{
 		int RunWorkflow()
 		{
 			auto workflow = new_ref<TWorkflow>();
-			return RunWorkflow(workflow.template AsRef<workflow::IWorkflow>());
+			int result = RunWorkflow(workflow.template AsRef<workflow::IWorkflow>());
+            return result;
 		}
 
         template< class TWorkflow, typename config_func >

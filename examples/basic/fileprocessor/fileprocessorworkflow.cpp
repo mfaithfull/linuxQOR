@@ -62,12 +62,7 @@ FileProcessorWorkflow::FileProcessorWorkflow() : state0(new_ref<qor::workflow::S
         size_t bytesRead = refReadFile->Read(address, byteCount);
         byteBuffer.WriteAcknowledge(bytesRead);
         
-        Parser testParser;        
-        ref_of<Context>::type testContext = new_ref<Context>();
-        testContext->m_octetStream = byteBuffer.ReadRequest(bytesRead);
-        testContext->m_position = 0;
-        testContext->m_size = bytesRead;
-        testParser.SetContext(testContext);
+        Parser testParser(new_ref<Context>(byteBuffer.ReadRequest(bytesRead), bytesRead));
 
         ref_of<object>::type objectState = new_ref<object>(&testParser);
         testParser.SetInitialState(objectState.AsRef<qor::workflow::State>());

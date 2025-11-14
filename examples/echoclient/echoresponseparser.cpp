@@ -22,59 +22,52 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
-#define QOR_PP_H_COMPONENTS_PARSER_NODE
+#include "src/configuration/configuration.h"
+#include "nodes/responsenode.h"
+#include "src/qor/error/error.h"
 
-#include <cstdint>
-#include <string>
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
+using namespace qor;
+using namespace qor::components::parser;
 
-namespace qor { namespace components { namespace parser {
+void response::Prepare()
+{
+    GetParser()->PushNode(new_ref<ResponseNode>().template AsRef<Node>());
+}
 
-    class Node
+void response::Emit()
+{
+    std::string responseValue;
+    auto node = GetParser()->PopNode();
+    while(node.IsNotNull() && node->GetToken() != m_token)
     {
-    public:
-
-        Node(uint64_t token) : m_token(token)
-        {
-        }
-
-        virtual ~Node() = default;
-
-        uint64_t GetToken() const
-        {
-            return m_token;
-        }
-
-        virtual std::string ToString() const {return "<anonymous node>";}
-
-    private:
+        uint64_t token = node->GetToken();
         
-        uint64_t m_token;        
-    };
-
-    template<class T>
-    class NodeAdapter : public Node
-    {
-    public:
-
-        NodeAdapter(uint64_t token) : Node(token)
-        {            
-        }
-
-        virtual ~NodeAdapter() = default;
-
-        ref_of<T>::type GetObject()
+        if(token == static_cast<uint64_t>(echoResponseToken::responseChar))
         {
-            return m_t;
+            auto characterNode = node.AsRef<Char>();
+            char c = characterNode->GetValue();
+            responseValue = std::string(&c,1) + responseValue;
+        }
+        else
+        {
+            auto f = echoResponseTokenNames.find(token);
+            std::string tokenName;
+            if(f != echoResponseTokenNames.end())
+            {
+                tokenName = f->second;
+            }
+
+            std::cout << "Emitting a response expected responseChar found: " << tokenName << std::endl;
+            serious("Response parsing failed.");
         }
 
-    protected:
+        node = GetParser()->PopNode();
+    }
 
-        ref_of<T>::type m_t;
-    };
-
-}}}//qor::components::parser
-
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODE
+    if(node.IsNotNull())
+    {
+        auto responseNode = node.AsRef<ResponseNode>();
+        responseNode->GetObject()->SetValue(responseValue);
+        GetParser()->PushNode(node);
+    }
+}

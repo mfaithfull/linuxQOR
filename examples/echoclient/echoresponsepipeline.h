@@ -22,59 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
-#define QOR_PP_H_COMPONENTS_PARSER_NODE
+#ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_RESPONSEPIPELINE
+#define QOR_PP_H_EXAMPLES_ECHOCLIENT_RESPONSEPIPELINE
 
-#include <cstdint>
-#include <string>
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
+#include "src/framework/pipeline/pipeline.h"
+#include "src/framework/pipeline/podbuffer.h"
+#include "src/components/framework/pipeline/sources/socketsource/socketsource.h"
+#include "src/components/framework/pipeline/sinks/socketsink/socketsink.h"
+#include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
+#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
+#include "echorequest.h"
+#include "echoresponse.h"
+#include "echoresponseparser.h"
+#include "echoresponsefilter.h"
 
-namespace qor { namespace components { namespace parser {
+class EchoResponsePipeline : public qor::pipeline::Pipeline
+{
+public:
 
-    class Node
-    {
-    public:
+    EchoResponsePipeline(qor::ref_of<qor::components::SocketClientConnector>::type connector);
+    virtual ~EchoResponsePipeline() = default;
 
-        Node(uint64_t token) : m_token(token)
-        {
-        }
+private:
 
-        virtual ~Node() = default;
+    EchoResponseFilter m_filter;
+    qor::components::StdOutSink m_stdOutsink;
+    qor::components::SocketSource m_socketSource;
+    qor::ref_of<qor::components::SocketClientConnector>::type m_socketConnector;
+};
 
-        uint64_t GetToken() const
-        {
-            return m_token;
-        }
-
-        virtual std::string ToString() const {return "<anonymous node>";}
-
-    private:
-        
-        uint64_t m_token;        
-    };
-
-    template<class T>
-    class NodeAdapter : public Node
-    {
-    public:
-
-        NodeAdapter(uint64_t token) : Node(token)
-        {            
-        }
-
-        virtual ~NodeAdapter() = default;
-
-        ref_of<T>::type GetObject()
-        {
-            return m_t;
-        }
-
-    protected:
-
-        ref_of<T>::type m_t;
-    };
-
-}}}//qor::components::parser
-
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODE
+#endif // QOR_PP_H_EXAMPLES_ECHOCLIENT_RESPONSEPIPELINE

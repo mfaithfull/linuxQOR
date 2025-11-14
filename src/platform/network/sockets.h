@@ -46,8 +46,7 @@ namespace qor{ namespace network{
         virtual void Setup();
         virtual void Shutdown();
 
-        virtual ref_of<Socket>::type CreateSocket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol) const;
-        virtual ref_of<Socket>::type CreateAsyncSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, qor::framework::AsyncIOContext* ioContext) const;
+        virtual ref_of<Socket>::type CreateSocket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol, qor::framework::AsyncIOContext* ioContext = nullptr) const;
         virtual int GetAddressInfo(const std::string& node, const std::string& service, const AddressInfo& hints, std::vector<AddressInfo>& results) const;
 
     private:

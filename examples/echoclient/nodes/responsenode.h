@@ -22,59 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
-#define QOR_PP_H_COMPONENTS_PARSER_NODE
+#ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_NODES_RESPONSE
+#define QOR_PP_H_EXAMPLES_ECHOCLIENT_NODES_RESPONSE
 
-#include <cstdint>
 #include <string>
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "src/components/parser/parser.h"
+#include "../echoresponseparser.h"
+#include "../echoresponse.h"
 
-namespace qor { namespace components { namespace parser {
+class ResponseNode : public qor::components::parser::NodeAdapter<EchoResponse>
+{
+public:
 
-    class Node
+    ResponseNode() : qor::components::parser::NodeAdapter<EchoResponse>(static_cast<uint64_t>(echoResponseToken::response))
     {
-    public:
+        m_t = qor::new_ref<EchoResponse>();
+    }
 
-        Node(uint64_t token) : m_token(token)
-        {
-        }
-
-        virtual ~Node() = default;
-
-        uint64_t GetToken() const
-        {
-            return m_token;
-        }
-
-        virtual std::string ToString() const {return "<anonymous node>";}
-
-    private:
-        
-        uint64_t m_token;        
-    };
-
-    template<class T>
-    class NodeAdapter : public Node
+    ResponseNode(qor::ref_of<EchoResponse>::type response) : qor::components::parser::NodeAdapter<EchoResponse>(static_cast<uint64_t>(echoResponseToken::response))
     {
-    public:
+        m_t = response;
+    }
 
-        NodeAdapter(uint64_t token) : Node(token)
-        {            
-        }
+    virtual ~ResponseNode() = default;
 
-        virtual ~NodeAdapter() = default;
+};
 
-        ref_of<T>::type GetObject()
-        {
-            return m_t;
-        }
-
-    protected:
-
-        ref_of<T>::type m_t;
-    };
-
-}}}//qor::components::parser
-
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODE
+#endif//QOR_PP_H_EXAMPLES_ECHOCLIENT_NODES_RESPONSE

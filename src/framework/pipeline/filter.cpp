@@ -99,6 +99,16 @@ namespace qor{ namespace pipeline{
         return true;
     }
 
+    size_t Filter::PumpSome()
+    {
+        size_t unitsPumped = 0;
+        size_t unitsToPump = GetFlowMode() == FlowMode::Pull ?
+        ActualSink()->GetBuffer()->WriteCapacity() : 
+        ActualSource()->GetBuffer()->WriteCapacity();
+        PumpSome(unitsPumped, unitsToPump);
+        return unitsPumped;
+    }
+
     bool Filter::PumpSome(size_t& unitsPumped, size_t unitsToPump)
     {    
         if(GetFlowMode() == FlowMode::Pull)

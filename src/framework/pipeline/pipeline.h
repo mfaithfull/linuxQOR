@@ -117,6 +117,12 @@ namespace qor{ namespace pipeline{
 
         virtual void InsertFilter(Filter* pFilter, FilterPos Pos = BeforeSink);
 
+        virtual void ResetStream(size_t streamSize = 0)
+        {
+            ActualSink()->GetBuffer()->Reset(streamSize);
+            ActualSource()->GetBuffer()->Reset(streamSize);
+        }
+        
     protected:
 
         FlowMode m_flowmode;

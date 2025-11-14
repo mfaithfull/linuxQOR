@@ -45,7 +45,6 @@ int main(const int argc, const char** argv, char**)
             role->AddFeature<AsyncIOService>([](ref_of<AsyncIOService>::type ioService)->void
             {
                 PoolInstancer::SetPoolSize<AsyncIOContext>(2);
-                //ioService->SetConcurrency(0);
             });
         }
     ).RunWorkflow<ServerWorkflow>();                    //What it does

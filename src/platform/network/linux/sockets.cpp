@@ -72,9 +72,13 @@ namespace qor{ namespace nslinux{
         memcpy(addressinfo.address.sa.sa_data, info.ai_addr->sa_data, info.ai_addrlen);
     }
 
-    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol) const
+    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, qor::framework::AsyncIOContext* ioContext) const
     {
         ref_of<network::Socket>::type socket = new_ref<Socket>(AF, Type, Protocol).AsRef<network::Socket>();
+        if( ioContext != nullptr)
+        {
+            ioContext->Enroll(socket());
+        }
         return socket;
     }
 

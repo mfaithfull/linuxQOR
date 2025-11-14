@@ -47,6 +47,7 @@ namespace qor{ namespace pipeline{
         virtual bool HasSource();        
         virtual bool IsSource();
         virtual bool IsSink();
+        virtual size_t PumpSome();
         virtual bool PumpSome(size_t& unitsPumped, size_t maxUnitsToPump);
         virtual bool Pump(size_t& unitsPumped, size_t unitsToPump);
         virtual bool Pump(size_t& unitsPumped, size_t unitsToPump, std::function<bool(size_t&, size_t)> filterFn);

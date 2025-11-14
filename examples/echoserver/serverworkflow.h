@@ -39,20 +39,18 @@ public:
 
 private:
 
-    qor::ref_of<qor::workflow::State>::type setup;
     qor::ref_of<qor::workflow::State>::type bind;
     qor::ref_of<qor::workflow::State>::type listen;
     qor::ref_of<qor::workflow::State>::type accept;
 
+    const qor::network::Sockets* m_sockets;
     const qor::framework::AsyncIOService* m_io;
     qor::framework::ThreadPool* m_threadPool;
-    const qor::network::Sockets* m_sockets;
-
-    qor::ref_of<qor::network::Socket>::type m_serverSocket;
+        
     qor::ref_of<qor::framework::AsyncIOContext>::type m_ioContext;
     qor::ref_of<qor::framework::SharedAsyncIOContext>::type m_ioSharedContext;
     qor::network::Address m_serverAddress;
-
+    qor::ref_of<qor::network::Socket>::type m_serverSocket;
 };
 
 #endif//QOR_PP_H_EXAMPLES_SERVER_WORKFLOW

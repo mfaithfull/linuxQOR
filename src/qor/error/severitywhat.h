@@ -42,6 +42,12 @@ namespace qor{
         }
 
         virtual ~SeverityWhat() noexcept = default;
+
+        Severity GetSeverity() const
+        {
+            return m_severity;
+        }
+        
     protected:
 
         Severity m_severity;

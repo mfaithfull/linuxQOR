@@ -37,8 +37,8 @@ public:
 
     ClientSessionWorkflow(
         qor::ref_of<qor::framework::SharedAsyncIOContext>::type sharedContext,
-        qor::ref_of<qor::network::Socket>::type socket, 
-        const qor::network::Address& address);
+        qor::ref_of<qor::network::Socket>::type socket);
+        
     virtual ~ClientSessionWorkflow() = default;    
 
 private:
@@ -49,7 +49,6 @@ private:
 
     qor::ref_of<qor::framework::SharedAsyncIOContext>::type m_ioSharedContext;
     qor::ref_of<qor::network::Socket>::type m_socket;
-    qor::network::Address m_address;
     qor::ref_of<SessionPipeline>::type m_pipeline;
     qor::ref_of<EchoProtocol>::type m_protocol;
 };

@@ -33,7 +33,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class Token : public components::parser::Node
+    class qor_pp_module_interface(QOR_HTTP) Token : public components::parser::Node
     {
     public:
 
@@ -46,7 +46,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         const std::string& GetValue() const { return m_value; }
         void SetValue(const std::string& tokenValue ) {m_value = tokenValue;};
 
-        virtual std::string ToString() const override;
+        //virtual std::string ToString() const override;
 
     private:
         std::string m_value;

@@ -44,36 +44,30 @@ using namespace qor::components::optparser;
 using namespace qor::network;
 using namespace qor::network::sockets;
 
-ServerWorkflow::ServerWorkflow() : 
-    setup(new_ref<workflow::State>(this)), 
+ServerWorkflow::ServerWorkflow() :     
     bind(new_ref<workflow::State>(this)),
     listen(new_ref<workflow::State>(this)),
     accept(new_ref<workflow::State>(this))
 {
-    auto application = weak_ref<EchoServerApp>();
-    m_io = application->GetRole()->GetFeature<AsyncIOService>();
-    m_threadPool = application->GetRole()->GetFeature<ThreadPool>();
-    m_sockets = ThePlatform()->GetSubsystem<Sockets>();
 
-    setup->Enter = [this]()->void
+    bind->Enter = [this]()->void
     {
+        auto application = weak_ref<EchoServerApp>();
+        m_io = application->GetRole()->GetFeature<AsyncIOService>();
+        m_threadPool = application->GetRole()->GetFeature<ThreadPool>();
+        m_sockets = ThePlatform()->GetSubsystem<Sockets>();
         m_ioContext = m_io->Context();
         m_ioSharedContext = m_io->SharedContext();
-        m_serverSocket = m_sockets->CreateAsyncSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP, m_ioContext);
+        m_serverSocket = m_sockets->CreateSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP, m_ioContext);
         m_serverAddress.sa_family = eAddressFamily::AF_INet;
         m_serverAddress.SetPort(12345);
         m_serverAddress.SetIPV4Address(127,0,0,1);
 
-        SetState(bind);
-    };
-
-    bind->Enter = [this]()->void
-    {
-        auto result = m_serverSocket->Bind(/*m_ioContext,*/ m_serverAddress);
+        auto result = m_serverSocket->Bind(m_serverAddress);
 
         if( result < 0 )
         {
-            std::cout << "can't bind to socket: " << strerror(result) << "\n";
+            std::cout << "Can't bind to socket: " << strerror(result) << std::endl;
             m_ioContext.Dispose();
             SetResult(EXIT_FAILURE);
             SetComplete();            
@@ -86,17 +80,18 @@ ServerWorkflow::ServerWorkflow() :
 
     listen->Enter = [this]()->void
     {
-        auto result = m_serverSocket->Listen(/*m_ioContext,*/ 2);
+        auto result = m_serverSocket->Listen(2);
 
         if( result < 0)
         {
-            std::cout << "can't listen on socket: " << strerror(result) << "\n";
+            std::cout << "Can't listen on socket: " << strerror(result) << std::endl;
             m_ioContext.Dispose();
             SetResult(EXIT_FAILURE);
             SetComplete();
         }
         else
         {
+            std::cout << "Echo server listening on port: 12345..." << std::endl;
             SetState(accept);
         }
     };
@@ -108,17 +103,17 @@ ServerWorkflow::ServerWorkflow() :
         
         if(!ClientSocket->IsAlive())
         {
-            std::cout << "failed to accept client connection: " << strerror(errno) << "\n";
+            std::cout << "Failed to accept client connection: " << strerror(errno) << std::endl;
         }
         else
         {
-            std::cout << "Accepted client connection\n";
-            m_threadPool->PostTask([this, ClientSocket, ClientAddress](){
-                new_ref<ClientSessionWorkflow>(m_ioSharedContext, ClientSocket, ClientAddress)->Run();
+            std::cout << "Accepted client connection." << std::endl;
+            m_threadPool->PostTask(
+                [this, ClientSocket](){
+                new_ref<ClientSessionWorkflow>(m_ioSharedContext, ClientSocket)->Run();
             });
         }
     };
 
-    SetInitialState(setup);
+    SetInitialState(bind);
 }
-

@@ -22,59 +22,44 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
-#define QOR_PP_H_COMPONENTS_PARSER_NODE
+#include "src/configuration/configuration.h"
+#include "echoresponsefilter.h"
+#include "src/qor/error/error.h"
 
-#include <cstdint>
-#include <string>
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
+using namespace qor;
+using namespace qor::components;
+using namespace qor::components::parser;
+using namespace qor::workflow;
 
-namespace qor { namespace components { namespace parser {
+void EchoResponseFilter::Filter(byte* space, byte* data, size_t& itemCount)
+{
+    EchoResponse response = Parse(data, itemCount);
 
-    class Node
+    std::string output = response.GetValue();
+
+    if(output == "quit")
     {
-    public:
+        continuable("user wants to quit");
+    }
 
-        Node(uint64_t token) : m_token(token)
-        {
-        }
-
-        virtual ~Node() = default;
-
-        uint64_t GetToken() const
-        {
-            return m_token;
-        }
-
-        virtual std::string ToString() const {return "<anonymous node>";}
-
-    private:
-        
-        uint64_t m_token;        
-    };
-
-    template<class T>
-    class NodeAdapter : public Node
+    size_t outputSize = output.size();
+    if(outputSize > itemCount)
     {
-    public:
+        outputSize = itemCount;
+    }
+    memcpy(space, output.data(), outputSize);
+    itemCount = outputSize;
+}
 
-        NodeAdapter(uint64_t token) : Node(token)
-        {            
-        }
+ref_of<EchoResponse>::type EchoResponseFilter::Parse(byte* data, size_t& itemCount)
+{
+    Parser echoResponseParser(new_ref<Context>(data, itemCount));
+    ref_of<response>::type responseState = new_ref<response>(&echoResponseParser);
 
-        virtual ~NodeAdapter() = default;
+    echoResponseParser.SetInitialState(responseState.AsRef<State>());
+    echoResponseParser.Run();
+    
+    auto responseNode = echoResponseParser.PopNode().template AsRef<ResponseNode>();
+    return responseNode->GetObject();
+}
 
-        ref_of<T>::type GetObject()
-        {
-            return m_t;
-        }
-
-    protected:
-
-        ref_of<T>::type m_t;
-    };
-
-}}}//qor::components::parser
-
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODE
