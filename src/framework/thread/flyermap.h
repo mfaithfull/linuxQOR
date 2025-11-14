@@ -40,7 +40,7 @@ namespace qor{ namespace framework{
         FlyerMap() = default;
         ~FlyerMap()
         {
-            m_Map.erase(m_Map.cbegin(), m_Map.cend());
+            m_Map.clear();
         }
 
         AnyObject& GetByClassID( const GUID* classID )
@@ -72,7 +72,7 @@ namespace qor{ namespace framework{
                 auto it = m_Map.find(*classID);
                 if(it != m_Map.end())
                 {
-                    m_Map.erase(m_Map.find(*classID));
+                    m_Map.erase(it);
                     if(!context.IsNull())
                     {
                         m_Map.insert(std::make_pair(*classID, context));
