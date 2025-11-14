@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHOREQUEST
 #define QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHOREQUEST
 
+#include <string>
+
 class EchoRequest
 {
 public:

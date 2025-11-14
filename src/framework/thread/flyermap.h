@@ -67,13 +67,16 @@ namespace qor{ namespace framework{
 
         void Unconfigure(const GUID* classID, AnyObject context)
         {
-            auto it = m_Map.find(*classID);
-            if(it != m_Map.end())
+            if(classID)
             {
-                m_Map.erase(m_Map.find(*classID));
-                if(!context.IsNull())
+                auto it = m_Map.find(*classID);
+                if(it != m_Map.end())
                 {
-                    m_Map.insert(std::make_pair(*classID, context));
+                    m_Map.erase(m_Map.find(*classID));
+                    if(!context.IsNull())
+                    {
+                        m_Map.insert(std::make_pair(*classID, context));
+                    }
                 }
             }
         }

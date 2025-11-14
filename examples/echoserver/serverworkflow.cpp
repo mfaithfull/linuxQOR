@@ -103,7 +103,7 @@ ServerWorkflow::ServerWorkflow() :
         
         if(!ClientSocket->IsAlive())
         {
-            std::cout << "Failed to accept client connection: " << strerror(errno) << std::endl;
+            std::cout << "Failed to accept client connection: " << std::endl;
         }
         else
         {

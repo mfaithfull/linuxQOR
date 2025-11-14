@@ -40,31 +40,31 @@ public:
         {
         case qor::Severity::Note:
             {
-                std::cout << "Note: " << error.what().Content() << std::endl;
+                std::cerr << "Note: " << error.what().Content() << std::endl;
                 return true;
             }
             break;
         case qor::Severity::Warning:
             {
-                std::cout << "Warning: " << error.what().Content() << std::endl;
+                std::cerr << "Warning: " << error.what().Content() << std::endl;
                 return true;
             }
             break;
         case qor::Severity::Continuable_Error:
             {
-                std::cout << "Continuable Error: " << error.what().Content() << std::endl;
+                std::cerr << "Continuable Error: " << error.what().Content() << std::endl;
                 return true;
             }
             break;
         case qor::Severity::Serious_Error:
             {
-                std::cout << "Serious Error: " << error.what().Content() << std::endl;
+                std::cerr << "Serious Error: " << error.what().Content() << std::endl;
                 return false;
             }
             break;
         case qor::Severity::Fatal_Error:
             {
-                std::cout << "Fatal Error: " << error.what().Content() << std::endl;
+                std::cerr << "Fatal Error: " << error.what().Content() << std::endl;
                 return false;
             }
             break;

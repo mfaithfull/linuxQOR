@@ -65,14 +65,14 @@ namespace qor { namespace components { namespace parser {
 
         virtual ~NodeAdapter() = default;
 
-        ref_of<T>::type GetObject()
+        typename ref_of<T>::type GetObject()
         {
             return m_t;
         }
 
     protected:
 
-        ref_of<T>::type m_t;
+        typename ref_of<T>::type m_t;
     };
 
 }}}//qor::components::parser

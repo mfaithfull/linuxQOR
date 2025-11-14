@@ -36,7 +36,7 @@ void response::Prepare()
 
 void response::Emit()
 {
-    std::string responseValue;
+    std::vector<char> chars;
     auto node = GetParser()->PopNode();
     while(node.IsNotNull() && node->GetToken() != m_token)
     {
@@ -46,7 +46,7 @@ void response::Emit()
         {
             auto characterNode = node.AsRef<Char>();
             char c = characterNode->GetValue();
-            responseValue = std::string(&c,1) + responseValue;
+            chars.push_back(c);
         }
         else
         {
@@ -66,6 +66,7 @@ void response::Emit()
 
     if(node.IsNotNull())
     {
+        std::string responseValue(chars.rbegin(), chars.rend());
         auto responseNode = node.AsRef<ResponseNode>();
         responseNode->GetObject()->SetValue(responseValue);
         GetParser()->PushNode(node);

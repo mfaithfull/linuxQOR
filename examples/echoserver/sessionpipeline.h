@@ -45,7 +45,7 @@ public:
 
 private:
 
-    const size_t ioBufferSize = 16348;
+    const size_t m_ioBufferSize = 16384;
     qor::ref_of<qor::network::Socket>::type m_socket;
     qor::ref_of<qor::framework::SharedAsyncIOContext::Session>::type m_ioSession;
     qor::ref_of<qor::components::SocketSessionConnector>::type m_socketSessionConnector;

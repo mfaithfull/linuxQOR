@@ -53,17 +53,17 @@ namespace qor{
             return *this;
         }
 
-        virtual When& when(void) const
+        virtual const When& when(void) const
         {
             return *(m_when.template As<When>());
         }
 
-        virtual Where& where(void) const
+        virtual const Where& where(void) const
         {
             return *(m_where.template As<Where>());
         }
 
-        virtual WhatT& what(void) const
+        virtual const WhatT& what(void) const
         {
             return *(m_what.template As<WhatT>());
         }       

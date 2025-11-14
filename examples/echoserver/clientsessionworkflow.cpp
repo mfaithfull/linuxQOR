@@ -51,7 +51,7 @@ ClientSessionWorkflow::ClientSessionWorkflow(
     connected->Enter = [this]()->void
     {
         auto ioSession = m_ioSharedContext->GetSession();
-        if(ioSession.IsNull()){ std::cout << "Out of IO Contexts. IO will proceed sychronously." << std::endl; }
+        if(ioSession.IsNull()){ std::cout << "Out of IO contexts. IO will proceed synchronously." << std::endl; }
 
         m_pipeline = new_ref<SessionPipeline>(m_socket, ioSession);
         m_protocol = new_ref<EchoProtocol>(m_pipeline.AsRef<Pipeline>());
@@ -70,7 +70,7 @@ ClientSessionWorkflow::ClientSessionWorkflow(
 
     disconnect->Enter = [this]()->void
     {
-        std::cout << "Disconnecting at client request" << std::endl;
+        std::cout << "Disconnecting at client request." << std::endl;
         m_socket->Shutdown(eShutdown::ShutdownReadWrite);
         SetResult(EXIT_SUCCESS);
         SetComplete();
