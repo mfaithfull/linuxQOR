@@ -50,9 +50,9 @@ namespace qor { namespace components { namespace protocols { namespace http {
         {static_cast< const uint64_t>(httpFieldToken::obs_text), "obs_text"},
         {static_cast< const uint64_t>(httpFieldToken::field_vchar), "field_vchar"},
         {static_cast< const uint64_t>(httpFieldToken::field_content), "field_content"},
-        {static_cast< const uint64_t>(httpFieldToken::field_content), "tchar"},
-        {static_cast< const uint64_t>(httpFieldToken::field_content), "field"},
-        {static_cast< const uint64_t>(httpFieldToken::field_content), "token"},
+        {static_cast< const uint64_t>(httpFieldToken::tchar), "tchar"},
+        {static_cast< const uint64_t>(httpFieldToken::field), "field"},
+        {static_cast< const uint64_t>(httpFieldToken::token), "token"},
     }};
 
     class qor_pp_module_interface(QOR_HTTP) obs_text : public components::parser::OneOfARange

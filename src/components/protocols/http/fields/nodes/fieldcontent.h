@@ -43,7 +43,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
         virtual ~FieldContent() = default;
 
-        std::string GetValue() { return m_value; }
+        const std::string& GetValue() const { return m_value; }
         void SetValue(const std::string& contentValue ) {m_value = contentValue;};
 
         virtual std::string ToString() const override;

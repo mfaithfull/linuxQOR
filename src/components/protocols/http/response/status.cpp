@@ -33,7 +33,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         switch (status) 
         {
             case StatusCode::Continue_100: return "Continue";
-            case StatusCode::SwitchingProtocol_101: return "Switching Protocol";
+            case StatusCode::SwitchingProtocol_101: return "Switching Protocols";
             case StatusCode::Processing_102: return "Processing";
             case StatusCode::EarlyHints_103: return "Early Hints";
             case StatusCode::OK_200: return "OK";

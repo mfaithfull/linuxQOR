@@ -26,6 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_FORMSDATAPROVIDER
 
 #include "../contentprovider.h"
+#include <string>
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

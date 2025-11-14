@@ -39,7 +39,12 @@ namespace qor { namespace components { namespace parser {
             Prepare();
             m_result.length = 0;
             m_it = m_set->begin();
-            Workflow()->PushState((*m_it).AsRef<workflow::State>());
+            if (m_it != m_set->end()) {
+                Workflow()->PushState((*m_it).AsRef<workflow::State>());
+            } else {
+                m_result.code = Result::FAILURE;
+                m_result.length = 0;
+            }
         };
 
         Resume = [this]()
@@ -56,6 +61,7 @@ namespace qor { namespace components { namespace parser {
             }
             else
             {
+                m_it++;
                 if(m_it == m_set->end())
                 {
                     m_result.m_position = parserState->m_result.m_position;
@@ -63,8 +69,7 @@ namespace qor { namespace components { namespace parser {
                     m_result.code = Result::FAILURE;
                 }
                 else
-                {
-                    m_it++;
+                {                    
                     Workflow()->PushState((*m_it).AsRef<workflow::State>());
                 }
             }

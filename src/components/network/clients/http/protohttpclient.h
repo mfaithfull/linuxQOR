@@ -28,15 +28,15 @@
 #include <mutex>
 #include <cassert>
 #include "src/components/protocols/http/result.h"
-#include "src/components/protocols/http/response.h"
+#include "src/components/protocols/http/response/response.h"
 #include "src/components/protocols/http/headers.h"
 #include "src/components/protocols/http/datasink.h"
-#include "src/components/protocols/http/forms.h"
-#include "src/components/protocols/http/request.h"
+#include "src/components/protocols/http/forms/forms.h"
+#include "src/components/protocols/http/request/request.h"
 #include "src/components/protocols/http/error.h"
 #include "src/components/protocols/http/contentprovideradapter.h"
-#include "src/components/protocols/http/requestwriter.h"
-#include "src/components/protocols/http/responsereader.h"
+#include "src/components/protocols/http/request/requestwriter.h"
+#include "src/components/protocols/http/response/responsereader.h"
 #include "src/components/network/clients/http/text.h"
 
 #include "src/components/network/clients/itransportclient.h"

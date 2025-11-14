@@ -44,7 +44,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     protected:
 
-        virtual bool Write(size_t& unitsWritten, size_t unitstoWrite) {return false;}
+        virtual bool Write(size_t& unitsWritten, size_t unitsToWrite) {return false;}
         virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1) {return false;}
         
         pipeline::NullSink m_sink;

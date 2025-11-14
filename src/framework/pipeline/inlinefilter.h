@@ -69,7 +69,7 @@ namespace qor{ namespace pipeline{
 
         virtual size_t ReadCapacity()
         {
-            return m_sinkBuffer.WriteCapacity();
+            return m_sinkBuffer.ReadCapacity();
         }
 
         virtual byte* WriteRequest(size_t& itemCount)
@@ -100,7 +100,7 @@ namespace qor{ namespace pipeline{
 
         virtual size_t WriteAcknowledge(size_t& itemCount)
         {            
-            size_t initialWriteCapacity = m_sourceBuffer.WriteAcknowledge(itemCount);            
+            m_sourceBuffer.WriteAcknowledge(itemCount);            
             //Process data to sink buffer
             pod_t* data = m_sourceBuffer.ReadRequest(itemCount);
             DoFilter(data, itemCount);
