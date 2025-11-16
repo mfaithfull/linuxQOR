@@ -37,9 +37,4 @@ namespace qor{
         return *this;
     }
     
-    void note(const std::string& message)
-    {
-        issue<Note, const std::string&>(message);
-    }
-
 }//qor

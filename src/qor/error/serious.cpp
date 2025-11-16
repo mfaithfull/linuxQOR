@@ -66,12 +66,7 @@ namespace qor{
     
     void Serious::Ignore() const
     {
-        warning("Ignoring a serious issue. Extreme caution advided! {0}");
-    }
-
-    void serious(const std::string& message)
-    {
-        issue<Serious, const std::string&>(message);
+        warning("Ignoring a serious issue. Extreme caution advided! {0}", m_what->Content());
     }
 
 }//qor

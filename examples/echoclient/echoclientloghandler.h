@@ -27,19 +27,18 @@
 
 #include "src/components/framework/loghandler/loghandler.h"
 
-class LogHandler : public qor::components::LogHandler
+class ClientLogHandler : public qor::components::LogHandler
 {
 public:
 
-    LogHandler();
-    LogHandler(qor::log::Level legLevel);
-    virtual ~LogHandler() noexcept {}
+    ClientLogHandler(qor::log::Level logLevel = qor::log::Level::Impactful);
+    virtual ~ClientLogHandler() noexcept {}
 
 protected:
 
     virtual std::string WhereText(const char* module, const char* file, const char* function, int line, const std::string& exceptionText, const std::string& instanceText, const std::string& threadText) const;
     virtual std::string InstanceText(bool inInstance, const qor::AnyObject& any) const;
-    virtual std::string InExcpetionText(bool inExcpetion) const;
+    virtual std::string InExceptionText(bool inExcpetion) const;
     virtual std::string MessageText(const std::string_view& level, const std::string& what, const std::string& where, 
     const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const;
 

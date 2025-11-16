@@ -25,6 +25,12 @@
 #include <iostream>
 
 #include "src/configuration/configuration.h"
+#include "src/qor/interception/functioncontext.h"
+#include "src/qor/log/debug.h"
+#include "src/qor/log/informative.h"
+#include "src/qor/log/impactful.h"
+#include "src/qor/log/important.h"
+#include "src/qor/log/imperative.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
 #include "src/framework/task/syncwait.h"
 #include "echoserverapp.h"
@@ -48,20 +54,25 @@ ClientSessionWorkflow::ClientSessionWorkflow(
     m_socket(socket),
     m_ioSharedContext(sharedContext)
 {
+    qor_pp_ofcontext;
+
     connected->Enter = [this]()->void
     {
+        qor_pp_ofcontext;
+        qor::log::inform("Servicing a connected client.");
+
         auto ioSession = m_ioSharedContext->GetSession();
-        if(ioSession.IsNull()){ std::cout << "Out of IO contexts. IO will proceed synchronously." << std::endl; }
+        if(ioSession.IsNull()){ warning("Out of IO contexts. IO will proceed synchronously.");}
 
         m_pipeline = new_ref<SessionPipeline>(m_socket, ioSession);
         m_protocol = new_ref<EchoProtocol>(m_pipeline.AsRef<Pipeline>());
-
-        std::cout << "Servicing a connected client." << std::endl;
+        
         SetState(echo);
     };
 
     echo->Enter = [this]()->void
-    {        
+    {
+        qor_pp_ofcontext;  
         if(m_protocol->Run() == 0)
         {
             SetState(disconnect);
@@ -70,7 +81,8 @@ ClientSessionWorkflow::ClientSessionWorkflow(
 
     disconnect->Enter = [this]()->void
     {
-        std::cout << "Disconnecting at client request." << std::endl;
+        qor_pp_ofcontext;
+        qor::log::inform("Disconnecting client.");
         m_socket->Shutdown(eShutdown::ShutdownReadWrite);
         SetResult(EXIT_SUCCESS);
         SetComplete();

@@ -38,8 +38,7 @@ namespace qor{
         {}
 
         SeverityWhat(const std::string& what, Severity severity) : What(what), m_severity(severity)
-        {
-        }
+        {}
 
         virtual ~SeverityWhat() noexcept = default;
 

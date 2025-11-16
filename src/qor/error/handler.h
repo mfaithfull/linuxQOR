@@ -42,6 +42,7 @@ namespace qor{
     constexpr GUID BaseIssueHandlerGUID = {0x48467945, 0xfbae, 0x4a8d, { 0xb2, 0xbb, 0xd0, 0x50, 0x10, 0xde, 0x94, 0x02}};
     qor_pp_declare_guid_of(BaseIssueHandler,BaseIssueHandlerGUID);
     qor_pp_declare_ref_of(BaseIssueHandler,FlyerRef);
+    
     class qor_pp_module_interface(QOR_ISSUE) BaseIssueHandler
     {
     public:
@@ -52,7 +53,7 @@ namespace qor{
 
         virtual bool Handle(const Issue<What>& issue) const
         {
-            return false;//false here means failure to resovle the issue
+            return false;//false here means failure to resolve the issue
         }        
     };
     

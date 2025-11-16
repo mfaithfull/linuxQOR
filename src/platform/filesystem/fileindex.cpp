@@ -48,6 +48,12 @@ namespace qor{ namespace platform{
         }
         return *this;
     }
+
+    void FileIndex::Set(const Path & path, const std::string& fileName)
+    {
+        std::filesystem::directory_entry dirent(std::filesystem::path(path.ToString(fileName)));
+        m_dirent = dirent;
+    }
     
     bool FileIndex::Exists(void) const
     {

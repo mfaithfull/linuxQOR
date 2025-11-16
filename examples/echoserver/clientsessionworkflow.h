@@ -30,6 +30,7 @@
 #include "src/platform/network/socket.h"
 #include "sessionpipeline.h"
 #include "echoprotocol.h"
+#include "errorhandler.h"
 
 class ClientSessionWorkflow : public qor::workflow::Workflow
 {
@@ -39,9 +40,11 @@ public:
         qor::ref_of<qor::framework::SharedAsyncIOContext>::type sharedContext,
         qor::ref_of<qor::network::Socket>::type socket);
         
-    virtual ~ClientSessionWorkflow() = default;    
+    virtual ~ClientSessionWorkflow() = default;
 
 private:
+
+    ErrorHandler m_errorHandler;
 
     qor::ref_of<qor::workflow::State>::type connected;
     qor::ref_of<qor::workflow::State>::type echo;

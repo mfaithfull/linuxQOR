@@ -23,23 +23,52 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "error.h"
+#include "nodes/requestnode.h"
+#include "src/qor/error/error.h"
 
-namespace qor{
+using namespace qor;
+using namespace qor::components::parser;
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
+void request::Prepare()
+{
+    GetParser()->PushNode(new_ref<RequestNode>().template AsRef<Node>());
+}
+
+void request::Emit()
+{
+    std::vector<char> chars;
+    auto node = GetParser()->PopNode();
+    while(node.IsNotNull() && node->GetToken() != m_token)
     {
+        uint64_t token = node->GetToken();
+        
+        if(token == static_cast<uint64_t>(echoRequestToken::requestChar))
+        {
+            auto characterNode = node.AsRef<Char>();
+            char c = characterNode->GetValue();
+            chars.push_back(c);
+        }
+        else
+        {
+            auto f = echoRequestTokenNames.find(token);
+            std::string tokenName;
+            if(f != echoRequestTokenNames.end())
+            {
+                tokenName = f->second;
+            }
+
+            std::cout << "Emitting a request expected requestChar found: " << tokenName << std::endl;
+            serious("Request parsing failed.");
+        }
+
+        node = GetParser()->PopNode();
     }
 
-    Continuable& Continuable::operator = (const Continuable& src)
+    if(node.IsNotNull())
     {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
+        std::string requestValue(chars.rbegin(), chars.rend());
+        auto requestNode = node.AsRef<RequestNode>();
+        requestNode->GetObject()->SetValue(requestValue);
+        GetParser()->PushNode(node);
     }
-
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
-    
-}//qor
+}

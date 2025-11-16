@@ -66,6 +66,7 @@ namespace qor{ namespace platform{
 
         std::filesystem::space_info Space(const Path& path);
         Path TempFolder();
+        Path ApplicationLogPath();
                 
     private:
 

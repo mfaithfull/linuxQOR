@@ -98,7 +98,7 @@ namespace qor{
             Handle();
         }
 
-        virtual void Escalate(void) const {}
+        virtual void Escalate(void) const = 0;
         
         virtual void Ignore() const {}
 

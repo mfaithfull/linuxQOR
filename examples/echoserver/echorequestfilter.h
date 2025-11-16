@@ -22,24 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
+#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUESTFILTER
+#define QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUESTFILTER
 
-namespace qor{
+#include "src/framework/pipeline/inlinefilter.h"
+//#include "echorequestparser.h"
+#include "nodes/requestnode.h"
+#include "echorequest.h"
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
-    {
-    }
+class EchoRequestFilter : public qor::pipeline::InlineFilter<qor::byte>
+{
+public:
 
-    Continuable& Continuable::operator = (const Continuable& src)
-    {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
-    }
+    EchoRequestFilter(size_t itemCount = 0) : 
+        qor::pipeline::InlineFilter<qor::byte>(itemCount){}
 
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
-    
-}//qor
+    virtual ~EchoRequestFilter() = default;
+
+    qor::ref_of<EchoRequest>::type Parse(qor::byte* data, size_t& itemCount);
+    virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount);
+
+};
+
+#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUESTFILTER

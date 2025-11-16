@@ -33,8 +33,6 @@ using namespace qor::framework;
 SessionPipeline::SessionPipeline(
         ref_of<Socket>::type socket, 
         ref_of<SharedAsyncIOContext::Session>::type session) : 
-        m_inputBuffer(m_ioBufferSize),
-        m_outputBuffer(m_ioBufferSize),
         m_socket(socket), 
         m_ioSession(session)
 {
@@ -43,10 +41,10 @@ SessionPipeline::SessionPipeline(
 
     m_socketSource = new_ref<SocketSessionSource>();
     m_socketSource->SetPlug(m_socketSessionConnector);
-    SetSource(m_socketSource, &m_inputBuffer);
+    SetSource(m_socketSource, &m_filter);
 
     m_socketSink = new_ref<SocketSessionSink>();
     m_socketSink->SetPlug(m_socketSessionConnector);
-    SetSink(m_socketSink, &m_outputBuffer);
+    SetSink(m_socketSink, &m_filter);
     m_socketSessionConnector->Connect();
 }

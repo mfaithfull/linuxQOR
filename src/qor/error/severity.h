@@ -36,6 +36,14 @@ namespace qor{
         Fatal_Error
     };
 
+    constexpr std::string_view SeverityNames[] = {
+        "Note",
+        "Warning",
+        "Continuable",
+        "Serious",
+        "Fatal"
+    };
+
 }//qor
 
 #endif//QOR_PP_H_ERROR_SEVERITY

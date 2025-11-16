@@ -23,23 +23,43 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "error.h"
 
-namespace qor{
+#include <iostream>
+#include <format>
+#include "src/qor/error/error.h"
+#include "serverloghandler.h"
+#include "src/components/framework/logaggregator/logaggregator.h"
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
-    {
-    }
+ServerLogHandler::ServerLogHandler(qor::log::Level logLevel) : qor::components::LogHandler(logLevel)
+{
+}
 
-    Continuable& Continuable::operator = (const Continuable& src)
-    {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
-    }
+std::string ServerLogHandler::WhereText(const char* module, const char* file, const char* function, int line, const std::string& exceptionText, const std::string& instanceText, const std::string& threadText) const
+{
+    return std::format("Module: {0}| File: {1}| Function: {2}| Line: {3}| {4}| {5}| Thread: {6}", 
+        module, 
+        file, 
+        function, 
+        line,
+        exceptionText,
+        instanceText,
+        threadText);
 
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
-    
-}//qor
+}
+
+std::string ServerLogHandler::InstanceText(bool inInstance, const qor::AnyObject& any) const
+{
+    return inInstance ?
+        std::format("Object at: {0}", any.Ptr()->operator void*()) : 
+        "Free function";
+}
+
+std::string ServerLogHandler::InExceptionText(bool inException) const
+{
+    return inException ? "Exceptional flow" : "Normal flow";
+}
+
+std::string ServerLogHandler::MessageText(const std::string_view& level, const std::string& what, const std::string& where, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const
+{
+    return std::format("{0}:{3}|{2} \"{1}\"\n",level, what, where, when);
+}

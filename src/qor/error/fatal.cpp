@@ -67,9 +67,4 @@ namespace qor{
         Escalate();//Can't ignore fatal issues.
     }
 
-    void fatal(const std::string& message)
-    {
-        issue<Fatal, const std::string&>(message);
-    }
-
 }//qor

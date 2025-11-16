@@ -39,7 +39,7 @@ public:
         m_request = value;
     }
 
-    std::string GetValue()
+    const std::string& GetValue() const
     {
         return m_request;
     }

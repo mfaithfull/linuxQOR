@@ -25,6 +25,7 @@
 #ifndef QOR_PP_H_ERROR_ERROR
 #define QOR_PP_H_ERROR_ERROR
 
+#include <format>
 #include "severityissue.h"
 
 namespace qor{ 
@@ -40,7 +41,17 @@ namespace qor{
         virtual void Ignore() const;
     };
 
-    qor_pp_module_interface(QOR_ERROR) void fatal(const std::string& message);
+    template< typename... _p >
+    void fatal(const std::string& message, _p&&... p1)
+    {
+        issue<Fatal, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+    }
+
+    inline void fatal(const std::string& message)
+    {
+        issue<Fatal, const std::string&>(message);
+    }    
+
 
     class qor_pp_module_interface(QOR_ERROR) Serious : public SeverityTemplateIssue<Severity::Serious_Error>
     {
@@ -52,8 +63,17 @@ namespace qor{
         virtual void Escalate() const;
         virtual void Ignore() const;
     };
+    
+    template< typename... _p >
+    void serious(const std::string& message, _p&&... p1)
+    {
+        issue<Serious, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+    }
 
-    qor_pp_module_interface(QOR_ERROR) void serious(const std::string& message);
+    inline void serious(const std::string& message)
+    {
+        issue<Serious, const std::string&>(message);
+    }    
 
     class qor_pp_module_interface(QOR_ERROR) Continuable : public SeverityTemplateIssue<Severity::Continuable_Error>
     {
@@ -63,8 +83,18 @@ namespace qor{
         Continuable& operator = (const Continuable& src);
         virtual void Escalate() const;
     };
+    
+    template< typename... _p >
+    void continuable(const std::string& message, _p&&... p1)
+    {
+        issue<Continuable, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+    }
 
-    qor_pp_module_interface(QOR_ERROR) void continuable(const std::string& message);
+    inline void continuable(const std::string& message)
+    {
+        issue<Continuable, const std::string&>(message);
+    }    
+
 
     class qor_pp_module_interface(QOR_ERROR) Warning : public SeverityTemplateIssue<Severity::Warning>
     {
@@ -74,8 +104,18 @@ namespace qor{
         Warning& operator = (const Warning& src);
         virtual void Escalate() const;
     };
+    
+    template< typename... _p >
+    void warning(const std::string& message, _p&&... p1)
+    {
+        issue<Warning, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+    }
 
-    qor_pp_module_interface(QOR_ERROR) void warning(const std::string& message);
+    inline void warning(const std::string& message)
+    {
+        issue<Warning, const std::string&>(message);
+    }    
+
 
     class qor_pp_module_interface(QOR_ERROR) Note : public SeverityTemplateIssue<Severity::Note>
     {
@@ -86,7 +126,16 @@ namespace qor{
         virtual void Escalate() const {}
     };
 
-    qor_pp_module_interface(QOR_ERROR) void note(const std::string& message);
+    template< typename... _p >
+    void note(const std::string& message, _p&&... p1)
+    {
+        issue<Note, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+    }
+
+    inline void note(const std::string& message)
+    {
+        issue<Note, const std::string&>(message);
+    }    
 
 }//qor
 

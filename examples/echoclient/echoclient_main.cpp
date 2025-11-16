@@ -55,12 +55,12 @@ qor_pp_module_requires(IFileSystem)
 int main(const int argc, const char** argv, char**)
 {
     ErrorHandler errorHandler;
-    ::LogHandler logHandler(Level::Debug);
+    ClientLogHandler logHandler;
     ThePlatform()->AddSubsystem<Sockets>();
     ThePlatform()->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build(appName)->
-        SetRole<Role>(        
+        SetRole<Role>(
             [&logHandler](ref_of<IRole>::type role)
             {
                 role->AddFeature<ThreadPool>(

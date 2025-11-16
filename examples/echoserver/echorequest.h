@@ -22,24 +22,31 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
+#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUEST
+#define QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUEST
 
-namespace qor{
+#include <string>
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
+class EchoRequest
+{
+public:
+
+    EchoRequest() = default;
+    virtual ~EchoRequest() = default;
+
+    void SetValue(const std::string& value)
     {
+        m_request = value;
     }
 
-    Continuable& Continuable::operator = (const Continuable& src)
+    const std::string& GetValue() const
     {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
-    }
-
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
+        return m_request;
     }
     
-}//qor
+private:
+
+    std::string m_request;
+};
+
+#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUEST

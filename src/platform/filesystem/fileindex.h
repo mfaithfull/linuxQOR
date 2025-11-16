@@ -44,6 +44,7 @@ namespace qor{ namespace platform{
         FileIndex& operator = (const FileIndex&);
         virtual ~FileIndex() = default;
 
+        void Set(const Path & path, const std::string& fileName);
         bool Exists(void) const;
         bool Copy(const FileIndex & Destination, std::filesystem::copy_options copyOptions = std::filesystem::copy_options::none) const;
         bool Delete() const;

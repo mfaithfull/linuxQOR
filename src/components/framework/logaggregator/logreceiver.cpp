@@ -53,24 +53,32 @@ namespace qor { namespace components{
     {
         auto filesystem = ThePlatform()->GetSubsystem<FileSystem>();
 
+        FileIndex pathIndex(path,"");
+        if(!pathIndex.Exists())
+        {
+            filesystem->MakeDir(path);
+        }
         std::string strFileName;
         FileIndex index;
         size_t fileSize = 0;
         do
         {
             strFileName = std::format("{0}{1}.log",fileNamePrefix, m_logRollNumber);
-            FileIndex index(path, strFileName);
+            index.Set(path, strFileName);
         }while(index.Exists() && (++m_logRollNumber < m_logRollLimit) && ((fileSize += index.Size()) < m_totalSizeLimit));
      
         FileIndex logFileIndex(path, strFileName);
 
-        m_refLogFile = filesystem->Open(logFileIndex, 
-            IFileSystem::OpenFor::ReadWrite, logFileIndex.Exists() ? IFileSystem::WithFlags::Append :
-            IFileSystem::WithFlags::CreateNew | IFileSystem::WithFlags::Exclusive
-        );
-        if(m_refLogFile.IsNotNull())
         {
-            m_writeToFileSystem = true;
+            std::lock_guard<std::mutex> lock(m_mutex);
+            m_refLogFile = filesystem->Open(logFileIndex, 
+                IFileSystem::OpenFor::ReadWrite, logFileIndex.Exists() ? IFileSystem::WithFlags::Append :
+                IFileSystem::WithFlags::CreateNew | IFileSystem::WithFlags::Exclusive
+            );
+            if(m_refLogFile.IsNotNull())
+            {
+                m_writeToFileSystem = true;
+            }
         }
     }
 

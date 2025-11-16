@@ -30,16 +30,11 @@
 #include "src/components/framework/logaggregator/logaggregator.h"
 #include "src/qor/reflection/reflection.h"
 
-
-LogHandler::LogHandler(qor::log::Level logLevel) : qor::components::LogHandler(logLevel)
+ClientLogHandler::ClientLogHandler(qor::log::Level logLevel) : qor::components::LogHandler(logLevel)
 {
 }
 
-LogHandler::LogHandler() : LogHandler(qor::log::Level::Debug)
-{
-}
-
-std::string LogHandler::WhereText(const char* module, const char* file, const char* function, int line, const std::string& exceptionText, const std::string& instanceText, const std::string& threadText) const
+std::string ClientLogHandler::WhereText(const char* module, const char* file, const char* function, int line, const std::string& exceptionText, const std::string& instanceText, const std::string& threadText) const
 {
     return std::format("Module: {0}, File: {1}, Function: {2}, Line: {3} with runtime context, {4}, {5} on thread {6}", 
         module, 
@@ -51,19 +46,19 @@ std::string LogHandler::WhereText(const char* module, const char* file, const ch
         threadText);
 }
 
-std::string LogHandler::InstanceText(bool inInstance, const qor::AnyObject& any) const
+std::string ClientLogHandler::InstanceText(bool inInstance, const qor::AnyObject& any) const
 {
     return inInstance ?
         std::format("on an instance of an object at {0}", any.Ptr()->operator void*()) : 
         "in a free function or lambda";
 }
 
-std::string LogHandler::InExcpetionText(bool inExcpetion) const
+std::string ClientLogHandler::InExceptionText(bool inException) const
 {
-    return inExcpetion ? "inside an exception handler" : "outside any exception handler";
+    return inException ? "inside an exception handler" : "outside any exception handler";
 }
 
-std::string LogHandler::MessageText(const std::string_view& level, const std::string& what, const std::string& where, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const
+std::string ClientLogHandler::MessageText(const std::string_view& level, const std::string& what, const std::string& where, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const
 {
     return std::format("{0}: \"{1}\" \nLogged from {2} at time {3}",level, what, where, when);
 }

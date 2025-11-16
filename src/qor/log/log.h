@@ -39,6 +39,7 @@ namespace qor{ namespace log {
         virtual ~Log() noexcept = default;
         Log& operator = (const Log & src);
         virtual void Handle();
+        virtual void Escalate() const {/*nothing to do. Can't escalate a Log issue*/}
     };
 
     template<Level S>
@@ -47,6 +48,13 @@ namespace qor{ namespace log {
     public:
         
         LevelTemplateIssue(const std::string& message) : Log(S, message) {}
+        LevelTemplateIssue(const LevelTemplateIssue& src) : Log(src) {} 
+        LevelTemplateIssue(LevelTemplateIssue&& src) noexcept : Log(src) {}
+        LevelTemplateIssue& operator=(LevelTemplateIssue&& src) noexcept 
+        {
+            Log::operator = (src);
+            return *this;
+        }
         
         virtual ~LevelTemplateIssue() noexcept = default;
 

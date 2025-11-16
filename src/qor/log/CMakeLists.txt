@@ -8,7 +8,7 @@ impactful.cpp informative.cpp imperative.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_LOG)
+target_compile_definitions(${target} PRIVATE QOR_LOG)
 target_link_libraries(${target} qor_issue qor_module qor_host qor_thread qor_interception)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

@@ -56,9 +56,23 @@ namespace qor{ namespace network{
         sa.IPAddress.sin_addr.S_un.b.s_b4 = d;
     }
 
+    std::string Address::GetIPV4Address() const
+    {
+        return std::format("{0}.{1}.{2}.{3}", 
+            sa.IPAddress.sin_addr.S_un.b.s_b1,
+            sa.IPAddress.sin_addr.S_un.b.s_b2,
+            sa.IPAddress.sin_addr.S_un.b.s_b3,
+            sa.IPAddress.sin_addr.S_un.b.s_b4);
+    }
+
     void Address::SetPort(unsigned short port)
     {
         sa.IPAddress.sin_port = ::htons(static_cast<uint16_t>(port));
+    }
+
+    unsigned short Address::GetPort() const
+    {
+        return ::ntohs(sa.IPAddress.sin_port);
     }
     
 }}//qor::network

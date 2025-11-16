@@ -22,24 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
+#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_NODES_REQUEST
+#define QOR_PP_H_EXAMPLES_ECHOSERVER_NODES_REQUEST
 
-namespace qor{
+#include <string>
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/components/parser/parser.h"
+#include "../echorequestparser.h"
+#include "../echorequest.h"
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
+class RequestNode : public qor::components::parser::NodeAdapter<EchoRequest>
+{
+public:
+
+    RequestNode() : qor::components::parser::NodeAdapter<EchoRequest>(static_cast<uint64_t>(echoRequestToken::request))
     {
+        m_t = qor::new_ref<EchoRequest>();
     }
 
-    Continuable& Continuable::operator = (const Continuable& src)
+    RequestNode(qor::ref_of<EchoRequest>::type request) : qor::components::parser::NodeAdapter<EchoRequest>(static_cast<uint64_t>(echoRequestToken::request))
     {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
+        m_t = request;
     }
 
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
-    
-}//qor
+    virtual ~RequestNode() = default;
+
+};
+
+#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_NODES_REQUEST

@@ -182,4 +182,9 @@ namespace qor{ namespace platform{
         return tempPath;
     }
 
+    Path FileSystem::ApplicationLogPath()
+    {
+        return m_pimpl->ApplicationLogPath();
+    }
+
 }}//qor::platform

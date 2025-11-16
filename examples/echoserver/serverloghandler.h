@@ -22,24 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
+#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_LOGHANDLER
+#define QOR_PP_H_EXAMPLES_ECHOSERVER_LOGHANDLER
 
-namespace qor{
+#include "src/components/framework/loghandler/loghandler.h"
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
-    {
-    }
+class ServerLogHandler : public qor::components::LogHandler
+{
+public:
 
-    Continuable& Continuable::operator = (const Continuable& src)
-    {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
-    }
+    ServerLogHandler(qor::log::Level logLevel = qor::log::Level::Impactful);
+    virtual ~ServerLogHandler() noexcept {}
 
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
-    
-}//qor
+protected:
+
+    virtual std::string WhereText(const char* module, const char* file, const char* function, int line, const std::string& exceptionText, const std::string& instanceText, const std::string& threadText) const;
+    virtual std::string InstanceText(bool inInstance, const qor::AnyObject& any) const;
+    virtual std::string InExceptionText(bool inExcpetion) const;
+    virtual std::string MessageText(const std::string_view& level, const std::string& what, const std::string& where, 
+    const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const;
+
+};
+
+#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_LOGHANDLER

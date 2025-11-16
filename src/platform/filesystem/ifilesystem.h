@@ -108,6 +108,10 @@ namespace qor{ namespace platform{
             Path currentPath(stdpath.string());
             return currentPath;
         }
+        virtual Path ApplicationLogPath() const 
+        {
+            return CurrentPath();
+        }
     };
     
     }//qor::platform

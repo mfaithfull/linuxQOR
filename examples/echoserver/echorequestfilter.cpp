@@ -23,23 +23,43 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "error.h"
+#include "echorequestfilter.h"
+#include "src/qor/error/error.h"
 
-namespace qor{
+using namespace qor;
+using namespace qor::components;
+using namespace qor::components::parser;
+using namespace qor::workflow;
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
+void EchoRequestFilter::Filter(byte* space, byte* data, size_t& itemCount)
+{
+    EchoRequest request = Parse(data, itemCount);
+
+    std::string input = request.GetValue();
+
+    if(input == "quit")
     {
+        fatal("user wants to quit");
     }
 
-    Continuable& Continuable::operator = (const Continuable& src)
+    size_t inputSize = input.size();
+    if(inputSize > itemCount)
     {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
+        inputSize = itemCount;
     }
+    memcpy(space, input.data(), inputSize);
+    itemCount = inputSize;
+}
 
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
+ref_of<EchoRequest>::type EchoRequestFilter::Parse(byte* data, size_t& itemCount)
+{
+    Parser echoRequestParser(new_ref<Context>(data, itemCount));
+    ref_of<request>::type requestState = new_ref<request>(&echoRequestParser);
+
+    echoRequestParser.SetInitialState(requestState.AsRef<State>());
+    echoRequestParser.Run();
     
-}//qor
+    auto requestNode = echoRequestParser.PopNode().template AsRef<RequestNode>();
+    return requestNode->GetObject();
+}
+

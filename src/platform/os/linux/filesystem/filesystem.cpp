@@ -100,4 +100,9 @@ namespace qor{ namespace nslinux{
     }
 
     ////int openat(int fd, index.ToString().c_str(), int oflag, ...);
+
+    platform::Path FileSystem::ApplicationLogPath() const
+    {
+        return platform::Path("/var/log/");
+    }
 }}//qor::nslinux

@@ -28,6 +28,7 @@
 #include <optional>
 #include "src/platform/filesystem/ifilesystem.h"
 #include "src/platform/filesystem/fileindex.h"
+//#include "src/platform/filesystem/path.h"
 
 namespace qor
 {
@@ -59,6 +60,8 @@ namespace qor{ namespace nslinux{
         virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
 
         void SyncToSystem() const;
+        virtual platform::Path ApplicationLogPath() const;
+
     };
 
 }}//qor::nslinux

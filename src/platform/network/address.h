@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_PLATFORM_NETWORK_ADDRESS
 #define QOR_PP_H_PLATFORM_NETWORK_ADDRESS
 
+#include <string>
+
 namespace qor{ namespace network{
 
 #pragma pack(push,1)
@@ -39,6 +41,8 @@ namespace qor{ namespace network{
         Address(unsigned short AddressFamily);
         
         void SetIPV4Address(unsigned char a, unsigned char b, unsigned char c, unsigned char d);
+        std::string GetIPV4Address() const;
+        unsigned short GetPort() const;
         void SetPort(unsigned short port);
         
         unsigned short sa_family;

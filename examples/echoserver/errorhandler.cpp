@@ -24,49 +24,52 @@
 
 #include "src/configuration/configuration.h"
 
-#include <cassert>
 #include <iostream>
 
-#include "logaggregator.h"
-#include "src/framework/role/role.h"
-#include "src/framework/thread/threadpool.h"
+#include "errorhandler.h"
+#include "serverloghandler.h"
 
-qor_pp_module_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
+bool ErrorHandler::Handle(const qor::Error& error)
+{
+    auto severity = error.what().GetSeverity();
+    auto severityString = qor::SeverityNames[(int)severity];
 
-namespace qor { namespace components{
-
-    LogAggregatorService::LogAggregatorService()
+    switch (error.what().GetSeverity())
     {
-    }
-
-    LogAggregatorService::~LogAggregatorService() noexcept
-    {
-    }
-
-    void LogAggregatorService::Setup()
-    {
-        m_threadPool = m_Role->GetFeature<framework::ThreadPool>();
-        
-        if(m_threadPool.IsNotNull())
-        {
-            m_threadPool->SubmitTask(
-                [this]()
-                {
-                    return m_receiver.Listen();
-                }
-            );
+    case qor::Severity::Note:
+        {            
+            std::cerr << "Note: " << error.what().Content() << std::endl;
+            return true;
         }
+        break;
+    case qor::Severity::Warning:
+        {
+            qor::log::inform("{0}: {1}",severityString, error.what().Content());
+            std::cerr << "Warning: " << error.what().Content() << std::endl;
+            return true;
+        }
+        break;
+    case qor::Severity::Continuable_Error:
+        {
+            qor::log::inform("{0}: {1}",severityString, error.what().Content());
+            std::cerr << "Continuable Error: " << error.what().Content() << std::endl;
+            return true;
+        }
+        break;
+    case qor::Severity::Serious_Error:
+        {
+            qor::log::impact("{0}: {1}",severityString, error.what().Content());
+            std::cerr << "Serious Error: " << error.what().Content() << std::endl;
+            return false;
+        }
+        break;
+    case qor::Severity::Fatal_Error:
+        {
+            qor::log::imperative("{0}: {1}",severityString, error.what().Content());
+            std::cerr << "Fatal Error: " << error.what().Content() << std::endl;
+            return false;
+        }
+        break;
     }
-    
-    void LogAggregatorService::Shutdown()
-    {
-        m_receiver.Stop();
-    }
-
-    LogReceiver& LogAggregatorService::Receiver()
-    {
-        return m_receiver;
-    }
-
-}}//qor::components
-	
+    return false;
+}

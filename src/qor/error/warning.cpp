@@ -39,12 +39,7 @@ namespace qor{
 
     void Warning::Escalate(void) const
     {
-        continuable("Warning ignored: {0}");
-    }
-
-    void warning(const std::string& message)
-    {
-        issue<Warning, const std::string&>(message);
+        continuable("Warning ignored: {0}", m_what->Content());
     }
 
 }//qor

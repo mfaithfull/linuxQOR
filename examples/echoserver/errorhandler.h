@@ -22,24 +22,17 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
+#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_ERRORHANDLER
+#define QOR_PP_H_EXAMPLES_ECHOSERVER_ERRORHANDLER
 
-namespace qor{
+#include "src/qor/error/error.h"
+#include "src/qor/error/handler.h"
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message)
-    {
-    }
-
-    Continuable& Continuable::operator = (const Continuable& src)
-    {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
-        return *this;
-    }
-
-    void Continuable::Escalate(void) const
-    {
-        throw(*this);
-    }
+class ErrorHandler : public qor::IssueHandler<qor::Error>
+{
+public:
     
-}//qor
+    virtual bool Handle(const qor::Error& error);
+};
+
+#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_ERRORHANDLER

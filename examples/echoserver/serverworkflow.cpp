@@ -27,6 +27,12 @@
 #include <stdexcept>
 
 #include "src/configuration/configuration.h"
+#include "src/qor/interception/functioncontext.h"
+#include "src/qor/log/debug.h"
+#include "src/qor/log/informative.h"
+#include "src/qor/log/impactful.h"
+#include "src/qor/log/important.h"
+#include "src/qor/log/imperative.h"
 #include "src/framework/pipeline/podbuffer.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
 #include "src/framework/task/syncwait.h"
@@ -49,9 +55,10 @@ ServerWorkflow::ServerWorkflow() :
     listen(new_ref<workflow::State>(this)),
     accept(new_ref<workflow::State>(this))
 {
-
+    qor_pp_ofcontext;
     bind->Enter = [this]()->void
     {
+        qor_pp_ofcontext;
         auto application = weak_ref<EchoServerApp>();
         m_io = application->GetRole()->GetFeature<AsyncIOService>();
         m_threadPool = application->GetRole()->GetFeature<ThreadPool>();
@@ -67,47 +74,50 @@ ServerWorkflow::ServerWorkflow() :
 
         if( result < 0 )
         {
-            std::cout << "Can't bind to socket: " << strerror(result) << std::endl;
-            m_ioContext.Dispose();
+            qor::log::imperative("Can't bind to socket: {0}", strerror(result));
+            //m_ioContext.Dispose();
             SetResult(EXIT_FAILURE);
             SetComplete();            
         }
         else
         {
+            qor::log::inform("Bound port {0}", m_serverAddress.GetPort());
             SetState(listen);
         }
     };
 
     listen->Enter = [this]()->void
     {
+        qor_pp_ofcontext;
         auto result = m_serverSocket->Listen(2);
 
         if( result < 0)
         {
-            std::cout << "Can't listen on socket: " << strerror(result) << std::endl;
-            m_ioContext.Dispose();
+            qor::log::imperative("Can't listen on socket: {0}", strerror(result));
+            //m_ioContext.Dispose();
             SetResult(EXIT_FAILURE);
             SetComplete();
         }
         else
         {
-            std::cout << "Echo server listening on port: 12345..." << std::endl;
+            qor::log::inform("Echo server listening on port: {0}...", m_serverAddress.GetPort());
             SetState(accept);
         }
     };
 
     accept->Enter = [this]()->void
     {
+        qor_pp_ofcontext;
         Address ClientAddress;
         auto ClientSocket = m_serverSocket->Accept(m_ioContext, ClientAddress);
         
         if(!ClientSocket->IsAlive())
         {
-            std::cout << "Failed to accept client connection: " << std::endl;
+            qor::log::impact("Failed to accept client connection.");
         }
         else
         {
-            std::cout << "Accepted client connection." << std::endl;
+            qor::log::inform("Accepted client connection: {0}", ClientAddress.GetIPV4Address());
             m_threadPool->PostTask(
                 [this, ClientSocket](){
                 new_ref<ClientSessionWorkflow>(m_ioSharedContext, ClientSocket)->Run();

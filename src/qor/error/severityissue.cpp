@@ -37,7 +37,7 @@ namespace qor{
         m_when = new_ref<When>();
         if(pContext != nullptr)
         {
-            m_where = new_ref<Where>(pContext->File(), pContext->Line(), pContext->Name(), pContext->TypedAny());
+            m_where = new_ref<Where>(pContext->File(), pContext->Line(), pContext->Name(), pContext->TypedAny(), pContext->Module());
         }
         m_what = new_ref<SeverityWhat>(message, s);
     }
@@ -55,7 +55,6 @@ namespace qor{
         {
             Resolve(pHandler->Handle(*this));
         }
-
     }
 
 }//qor
