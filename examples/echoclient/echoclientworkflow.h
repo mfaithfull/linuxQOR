@@ -45,7 +45,6 @@ public:
 private:
 
     const size_t maxEchoSize = 1024;
-    ErrorHandler m_errorHandler;                    //First so it is initialised first and available during the initialisation of everything else
 
     qor::ref_of<qor::workflow::State>::type connect;    
     qor::ref_of<qor::workflow::State>::type send;

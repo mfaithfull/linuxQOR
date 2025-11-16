@@ -33,21 +33,15 @@
 
 namespace qor { namespace framework{
 
-    AsyncIOService::AsyncIOService()// : m_threadState(0), m_workCount(0), m_Concurrency(0)
+    AsyncIOService::AsyncIOService()
     {
 
     }
 
     AsyncIOService::~AsyncIOService()
     {
-        //assert(m_threadState.load(std::memory_order_relaxed) < active_thread_count_increment);
     }
-/*
-    void AsyncIOService::SetConcurrency(unsigned short concurrency)
-    {
-        m_Concurrency = concurrency;
-    }
-*/
+
     void AsyncIOService::Setup()
     {
         m_threadPool = m_Role->GetFeature<ThreadPool>();
@@ -56,88 +50,5 @@ namespace qor { namespace framework{
     void AsyncIOService::Shutdown()
     {
     }
-/*
-    uint64_t AsyncIOService::ProcessEvents(IOEventProcessor* eventProcessor)
-    {
-        uint64_t eventCount = 0;
-        if (TryEnterEventLoop())
-        {
-            auto exitLoop = on_scope_exit([&] { ExitEventLoop(); });
 
-            while (!IsStopRequested())
-            {
-                eventProcessor->TryProcessEvents(m_Concurrency);
-                ++eventCount;
-            }
-        }
-
-        return eventCount;
-    }
-
-    void AsyncIOService::NotifyWorkStarted() noexcept
-    {
-        m_workCount.fetch_add(1, std::memory_order_relaxed);
-    }
-
-    void AsyncIOService::NotifyWorkFinished() noexcept
-    {
-        if (m_workCount.fetch_sub(1, std::memory_order_relaxed) == 1)
-        {
-            Stop();
-        }
-    }
-
-    bool AsyncIOService::IsStopRequested() const noexcept
-    {
-        return (m_threadState.load(std::memory_order_acquire) & stop_requested_flag) != 0;
-    }
-
-    void AsyncIOService::Stop() noexcept
-    {
-        const auto oldState = m_threadState.fetch_or(stop_requested_flag, std::memory_order_release);
-        if ((oldState & stop_requested_flag) == 0)
-        {
-            for (auto activeThreadCount = oldState / active_thread_count_increment;
-                    activeThreadCount > 0;
-                    --activeThreadCount)
-            {
-                //PostWakeUpEvent();
-            }
-        }
-    }
-
-    void AsyncIOService::Reset()
-    {
-        const auto oldState = m_threadState.fetch_and(~stop_requested_flag, std::memory_order_relaxed);
-
-        // Check that there were no active threads running the event loop.
-        assert(oldState == stop_requested_flag);
-    }
-
-    bool AsyncIOService::TryEnterEventLoop() noexcept
-    {
-        auto currentState = m_threadState.load(std::memory_order_relaxed);
-        do
-        {
-            if ((currentState & stop_requested_flag) != 0)
-            {
-                return false;
-            }
-        } while (!m_threadState.compare_exchange_weak( currentState,
-            currentState + active_thread_count_increment,
-            std::memory_order_relaxed));
-
-        return true;
-    }
-
-    void AsyncIOService::ExitEventLoop() noexcept
-    {
-	    m_threadState.fetch_sub(active_thread_count_increment, std::memory_order_relaxed);
-    }
-
-    void AsyncIOService::PostWakeUpEvent() noexcept
-    {
-
-    }
-*/
 }}//qor::framework

@@ -39,7 +39,7 @@ namespace qor{
         m_line = 0;
         m_function = "Unknown";
         m_file = "Unknown";
-        m_moduleContext = &(ThisModule());
+        m_moduleContext = ThisModule().Name();
         //m_processContext = HostProcess::ThisProcess();
         std::stringstream ss;
         ss << framework::CurrentThread::GetCurrent().GetID();
@@ -48,32 +48,40 @@ namespace qor{
         m_inException = false;
     }
 
-    Where::Where(const char* szFile, const unsigned int uiLine, const char* szFunction)
+    Where::Where(const char* szFile, const unsigned int uiLine, const char* szFunction, const char* module)
     {
         m_inInstance = false;
         m_inException = false;
         m_file = szFile;
         m_line = uiLine;
         SetFunction(szFunction);
-        m_moduleContext = &(ThisModule());
+        m_moduleContext = module == nullptr ? ThisModule().Name() : module;
         //m_processContext = HostProcess::ThisProcess();
         std::stringstream ss;
         ss << framework::CurrentThread::GetCurrent().GetID();
         m_thread = ss.str();
     }
 
-    Where::Where(const char* szFile, const unsigned int uiLine, const char* szFunction, const AnyObject& ObjContext)
+    Where::Where(const char* szFile, const unsigned int uiLine, const char* szFunction, const AnyObject& ObjContext, const char* module)
     {
         m_inException = false;
         m_file = szFile;
         m_line = uiLine;
         SetFunction(szFunction);
-        m_moduleContext = &(ThisModule());
+        m_moduleContext = module == nullptr ? ThisModule().Name() : module;
         SetObjectContext(ObjContext);
         //m_processContext = HostProcess::ThisProcess();
-        std::stringstream ss;
-        ss << framework::CurrentThread::GetCurrent().GetID();
-        m_thread = ss.str();
+        std::optional<std::string> maybeName = framework::CurrentThread::GetCurrent().GetName();
+        if(maybeName.has_value())
+        {
+            m_thread = maybeName.value();
+        }
+        else
+        {
+            std::stringstream ss;
+            ss << framework::CurrentThread::GetCurrent().GetID();
+            m_thread = ss.str();
+        }
     }
 
     Where::Where(const Where& src)
@@ -138,7 +146,7 @@ namespace qor{
         m_file = szFile;
     }
 
-    AnyObject& Where::GetObjectContext(void)
+    const AnyObject& Where::GetObjectContext(void) const
     {
         return m_inInstance ? m_objContext : AnyObject::NullObject();
     }
@@ -149,7 +157,7 @@ namespace qor{
         m_inInstance = true;
     }
 
-    const std::string Where::GetThreadContext(void)
+    const std::string Where::GetThreadContext(void) const
     {
         return m_thread;
     }
@@ -159,12 +167,12 @@ namespace qor{
         m_thread = threadId;
     }
 
-    const Module* Where::GetModuleContext(void) const
+    const char* Where::GetModuleContext(void) const
     {
         return m_moduleContext;
     }
 
-    void Where::SetModuleContext(const Module* pModuleContext)
+    void Where::SetModuleContext(const char* pModuleContext)
     {
         m_moduleContext = pModuleContext;
     }

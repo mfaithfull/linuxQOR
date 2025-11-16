@@ -23,53 +23,42 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "error.h"
-#include "handler.h"
+#include "echoclienterrorhandler.h"
 
-namespace qor{
-
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
+bool ErrorHandler::Handle(const qor::Error& error)
+{
+    switch (error.what().GetSeverity())
     {
-    }
-
-    Fatal& Fatal::operator = (const Fatal& src)
-    {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
-        return *this;
-    }
-    
-    void Fatal::Handle()
-    {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
+    case qor::Severity::Note:
         {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
+            std::cerr << "Note: " << error.what().Content() << std::endl;
+            return true;
         }
-        else
+        break;
+    case qor::Severity::Warning:
         {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
+            std::cerr << "Warning: " << error.what().Content() << std::endl;
+            return true;
         }
+        break;
+    case qor::Severity::Continuable_Error:
+        {
+            std::cerr << "Continuable Error: " << error.what().Content() << std::endl;
+            return true;
+        }
+        break;
+    case qor::Severity::Serious_Error:
+        {
+            std::cerr << "Serious Error: " << error.what().Content() << std::endl;
+            return false;
+        }
+        break;
+    case qor::Severity::Fatal_Error:
+        {
+            std::cerr << "Fatal Error: " << error.what().Content() << std::endl;
+            return false;
+        }
+        break;
     }
-        
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
-    }
-
-    void fatal(const std::string& message)
-    {
-        issue<Fatal, const std::string&>(message);
-    }
-
-}//qor
+    return false;
+}

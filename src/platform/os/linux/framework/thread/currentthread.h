@@ -29,7 +29,7 @@
 
 namespace qor
 {
-    bool qor_pp_module_interface(QOR_LINUXTHREAD) ImplementsICurrentThread();//Declaration must match the one in src/framework/thread/thread.h
+    bool qor_pp_module_interface(QOR_LINUXTHREAD) ImplementsICurrentThread();
 }
 
 namespace qor{ namespace nslinux{ namespace framework{

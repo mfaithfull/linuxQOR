@@ -22,54 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
-#include "handler.h"
+#ifndef QOR_PP_H_LOG_LEVELWHAT
+#define QOR_PP_H_LOG_LEVELWHAT
 
-namespace qor{
+#include "src/qor/issue/what.h"
+#include "level.h"
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
-    {
-    }
+namespace qor{ namespace log {
 
-    Fatal& Fatal::operator = (const Fatal& src)
+    class qor_pp_module_interface(QOR_LOG) LevelWhat : public What
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
-        return *this;
-    }
-    
-    void Fatal::Handle()
-    {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
+    public:
+
+        LevelWhat(const ref_of<LevelWhat>::type& src) : What(src()), m_level(src->m_level)
+        {}
+
+        LevelWhat(const std::string& what, Level level) : What(what), m_level(level)
         {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
         }
-        else
+
+        virtual ~LevelWhat() noexcept = default;
+
+        Level GetLevel() const
         {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
+            return m_level;
         }
-    }
         
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
-    }
+    protected:
 
-    void fatal(const std::string& message)
-    {
-        issue<Fatal, const std::string&>(message);
-    }
+        Level m_level;
+    };
 
-}//qor
+}}//qor::log
+
+#endif//QOR_PP_H_LOG_LEVELWHAT

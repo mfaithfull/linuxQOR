@@ -8,6 +8,6 @@ add_library(${target} SHARED qor_role.cpp role.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE -DQOR_ROLE)
-target_link_libraries(${target} qor_module qor_thread qor_datastructures qor_objectcontext qor_sync qor_platform)
+target_link_libraries(${target} qor_module qor_thread qor_datastructures qor_objectcontext qor_sync qor_platform qor_error)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

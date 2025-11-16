@@ -60,7 +60,7 @@ namespace qor{
 		static AnyObject& NullObject(void);
 		static AnyObject nullObject;
 
-		UnsafeAnyPointer* Ptr()
+		const UnsafeAnyPointer* Ptr() const
 		{
 			return m_p;
 		}

@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_ERROR_FATAL
-#define QOR_PP_H_ERROR_FATAL
+#ifndef QOR_PP_H_ERROR_ERROR
+#define QOR_PP_H_ERROR_ERROR
 
 #include "severityissue.h"
 
@@ -35,7 +35,7 @@ namespace qor{
         Fatal(const std::string& message);
         virtual ~Fatal() noexcept = default;
         Fatal& operator = (const Fatal& src);
-        virtual void Handle() const;
+        virtual void Handle();
         virtual void Escalate() const;
         virtual void Ignore() const;
     };
@@ -48,7 +48,7 @@ namespace qor{
         Serious(const std::string& message);
         virtual ~Serious() noexcept = default;
         Serious& operator = (const Serious& src);
-        virtual void Handle() const;
+        virtual void Handle();
         virtual void Escalate() const;
         virtual void Ignore() const;
     };
@@ -90,4 +90,4 @@ namespace qor{
 
 }//qor
 
-#endif//QOR_PP_H_ERROR_FATAL
+#endif//QOR_PP_H_ERROR_ERROR

@@ -22,54 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
-#include "handler.h"
+#ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_LOGHANDLER
+#define QOR_PP_H_EXAMPLES_ECHOCLIENT_LOGHANDLER
 
-namespace qor{
+#include "src/components/framework/loghandler/loghandler.h"
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
-    {
-    }
+class LogHandler : public qor::components::LogHandler
+{
+public:
 
-    Fatal& Fatal::operator = (const Fatal& src)
-    {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
-        return *this;
-    }
-    
-    void Fatal::Handle()
-    {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
-        {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
-        }
-        else
-        {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
-        }
-    }
-        
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
-    }
+    LogHandler();
+    LogHandler(qor::log::Level legLevel);
+    virtual ~LogHandler() noexcept {}
 
-    void fatal(const std::string& message)
-    {
-        issue<Fatal, const std::string&>(message);
-    }
+protected:
 
-}//qor
+    virtual std::string WhereText(const char* module, const char* file, const char* function, int line, const std::string& exceptionText, const std::string& instanceText, const std::string& threadText) const;
+    virtual std::string InstanceText(bool inInstance, const qor::AnyObject& any) const;
+    virtual std::string InExcpetionText(bool inExcpetion) const;
+    virtual std::string MessageText(const std::string_view& level, const std::string& what, const std::string& where, 
+    const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const;
+
+};
+
+#endif//QOR_PP_H_EXAMPLES_ECHOCLIENT_LOGHANDLER

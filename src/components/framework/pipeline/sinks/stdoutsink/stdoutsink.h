@@ -34,7 +34,7 @@ namespace qor{ namespace components{
     public:
 
         StdOutSink();
-        virtual ~StdOutSink() = default;
+        virtual ~StdOutSink();
 
         virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
 

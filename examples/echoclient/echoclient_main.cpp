@@ -27,23 +27,58 @@
 #include "src/platform/platform.h"
 #include "src/platform/network/sockets.h"
 #include "src/framework/application/application_builder.h"
+#include "src/framework/role/role.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/platform/filesystem/filesystem.h"
+#include "src/platform/filesystem/path.h"
 
+#include "echoclienterrorhandler.h"
+#include "echoclientloghandler.h"
 #include "echoclientworkflow.h"
 
 using namespace qor;
 using namespace qor::framework;
 using namespace qor::network;
+using namespace qor::log;
+using namespace qor::components;
+using namespace qor::platform;
 
 #define appName "Echo Client"
 
 qor_pp_implement_module(appName)
+qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(Sockets)
+qor_pp_module_requires(LogAggregatorService)
+qor_pp_module_requires(IFileSystem)
 
 int main(const int argc, const char** argv, char**)
 {
+    ErrorHandler errorHandler;
+    ::LogHandler logHandler(Level::Debug);
     ThePlatform()->AddSubsystem<Sockets>();
+    ThePlatform()->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build(appName)->
-        SetRole().
-        RunWorkflow<EchoClientWorkflow>();
+        SetRole<Role>(        
+            [&logHandler](ref_of<IRole>::type role)
+            {
+                role->AddFeature<ThreadPool>(
+                    [](ref_of<ThreadPool>::type threadPool)->void
+                    {
+                        threadPool->SetThreadCount(3);
+                        CurrentThread::GetCurrent().SetName("[Main thread]");
+                    }
+                );
+                role->AddFeature<LogAggregatorService>(
+                    [&logHandler](ref_of<LogAggregatorService>::type logAggregator)->void
+                    {
+                        qor::connect(logHandler, &qor::components::LogHandler::forward, 
+                            logAggregator->Receiver(), &qor::components::LogReceiver::ReceiveLog, qor::ConnectionKind::QueuedConnection);
+                        logAggregator->Receiver().WriteToFileSystem(qor::platform::Path("/var/log/echoclient"), "echoclient");
+                        logAggregator->Receiver().WriteToStandardOutput(false);
+                    }
+                );
+            }
+        ).RunWorkflow<EchoClientWorkflow>();
 }

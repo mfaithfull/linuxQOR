@@ -71,7 +71,7 @@ namespace qor{
             Flyer< IssueHandler<T>, BaseIssueHandler >::Pop();
         }
 
-        virtual bool Handle(const T& Issue) const
+        virtual bool Handle(const T& Issue)
         {
             return false;//false here means failure to resovle the issue
         }        

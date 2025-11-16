@@ -54,7 +54,7 @@ public:
 
     virtual ~CategoryIssue() noexcept = default;
     
-    virtual void Handle(void) const
+    virtual void Handle(void)
     {
         Resolve( m_q == Category::Charm );
     }

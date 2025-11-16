@@ -22,54 +22,31 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
-#include "handler.h"
+#ifndef QOR_PP_H_LOG_LEVEL
+#define QOR_PP_H_LOG_LEVEL
 
-namespace qor{
+#include <string_view>
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
-    {
-    }
+namespace qor{ namespace log {
 
-    Fatal& Fatal::operator = (const Fatal& src)
+    enum class Level
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
-        return *this;
-    }
-    
-    void Fatal::Handle()
-    {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
-        {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
-        }
-        else
-        {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
-        }
-    }
-        
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
-    }
+        Debug = 0,      //Everything
+        Informative,    //Things that are done, normal flow, completions, opens, closes
+        Important,      //Things that are unexpected or off the happy path, missing resources, exceptions, failures
+        Impactful,      //Things that will change the flow of control and functional outcomes, exceptions, serious errors
+        Imperative,     //Things that will cause a program to start or stop including Fatal errors
+        end
+    };
 
-    void fatal(const std::string& message)
-    {
-        issue<Fatal, const std::string&>(message);
-    }
+    constexpr std::string_view LevelNames[] = {
+        "Debug",
+        "Informative",
+        "Important",
+        "Impactful",
+        "Imperative"
+    };
 
-}//qor
+}}//qor::log
+
+#endif//QOR_PP_H_LOG_LEVEL

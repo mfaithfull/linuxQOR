@@ -22,54 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
-#include "handler.h"
+#ifndef QOR_PP_H_LOG_IMPORTANT
+#define QOR_PP_H_LOG_IMPORTANT
 
-namespace qor{
+#include "log.h"
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
-    {
-    }
+namespace qor{ namespace log {
 
-    Fatal& Fatal::operator = (const Fatal& src)
+    class qor_pp_module_interface(QOR_LOG) Important : 
+        public LevelTemplateIssue<Level::Important>
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
-        return *this;
-    }
-    
-    void Fatal::Handle()
+    public:
+        Important(const std::string& message);
+        virtual ~Important() noexcept = default;
+        Important& operator = (const Important& src);
+        virtual void Handle();
+    };
+
+    template< typename... _p >
+    void important(const std::string& message, _p&&... p1)
     {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
-        {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
-        }
-        else
-        {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
-        }
-    }
-        
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
+        issue<Important, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
     }
 
-    void fatal(const std::string& message)
+    inline void important(const std::string& message)
     {
-        issue<Fatal, const std::string&>(message);
+        issue<Important, const std::string&>(message);
     }
 
-}//qor
+}}//qor::log
+
+#endif//QOR_PP_H_LOG_IMPORTANT

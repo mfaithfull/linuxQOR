@@ -34,43 +34,7 @@ class ErrorHandler : public qor::IssueHandler<qor::Error>
 {
 public:
     
-    virtual bool Handle(const qor::Error& error) const
-    {
-        switch (error.what().GetSeverity())
-        {
-        case qor::Severity::Note:
-            {
-                std::cerr << "Note: " << error.what().Content() << std::endl;
-                return true;
-            }
-            break;
-        case qor::Severity::Warning:
-            {
-                std::cerr << "Warning: " << error.what().Content() << std::endl;
-                return true;
-            }
-            break;
-        case qor::Severity::Continuable_Error:
-            {
-                std::cerr << "Continuable Error: " << error.what().Content() << std::endl;
-                return true;
-            }
-            break;
-        case qor::Severity::Serious_Error:
-            {
-                std::cerr << "Serious Error: " << error.what().Content() << std::endl;
-                return false;
-            }
-            break;
-        case qor::Severity::Fatal_Error:
-            {
-                std::cerr << "Fatal Error: " << error.what().Content() << std::endl;
-                return false;
-            }
-            break;
-        }
-        return false;
-    }
+    virtual bool Handle(const qor::Error& error);
 };
 
 #endif//QOR_PP_H_EXAMPLES_ECHOCLIENT_ERRORHANDLER

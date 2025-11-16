@@ -23,53 +23,37 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "error.h"
+#include "src/qor/error/error.h"
+#include "log.h"
 #include "handler.h"
 
-namespace qor{
+namespace qor{ namespace log {
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
+    Debug::Debug(const std::string& message) : LevelTemplateIssue<Level::Debug>(message)
     {
     }
 
-    Fatal& Fatal::operator = (const Fatal& src)
+    Debug& Debug::operator = (const Debug& src)
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
+        LevelTemplateIssue<Level::Debug>::operator = (src);
         return *this;
     }
     
-    void Fatal::Handle()
+    void Debug::Handle()
     {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
+        auto debugHandler = new_ref< IssueHandler<Debug> >();
+        if(!debugHandler.IsNull())
         {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
+            debugHandler->Handle(*this);
         }
         else
         {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
+            auto logHandler = new_ref< IssueHandler<Log> >();
+            if(!logHandler.IsNull())
             {
-                pHandler->Handle(*this);
+                logHandler->Handle(*this);
             }
-            Resolve(false);
         }
     }
         
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
-    }
-
-    void fatal(const std::string& message)
-    {
-        issue<Fatal, const std::string&>(message);
-    }
-
-}//qor
+}}//qor::log

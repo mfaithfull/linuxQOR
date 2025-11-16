@@ -22,54 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
-#include "handler.h"
+#ifndef QOR_PP_H_LOG_IMPACTFUL
+#define QOR_PP_H_LOG_IMPACTFUL
 
-namespace qor{
+#include "log.h"
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
-    {
-    }
+namespace qor{ namespace log {
 
-    Fatal& Fatal::operator = (const Fatal& src)
+    class qor_pp_module_interface(QOR_LOG) Impactful : 
+        public LevelTemplateIssue<Level::Impactful>
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
-        return *this;
-    }
-    
-    void Fatal::Handle()
+    public:
+        Impactful(const std::string& message);
+        virtual ~Impactful() noexcept = default;
+        Impactful& operator = (const Impactful& src);
+        virtual void Handle();
+    };
+
+    template< typename... _p >
+    void impact(const std::string& message, _p&&... p1)
     {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
-        {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
-        }
-        else
-        {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
-        }
-    }
-        
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
+        issue<Impactful, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
     }
 
-    void fatal(const std::string& message)
+    inline void impact(const std::string& message)
     {
-        issue<Fatal, const std::string&>(message);
+        issue<Impactful, const std::string&>(message);
     }
 
-}//qor
+}}//qor::log
+
+#endif//QOR_PP_H_LOG_IMPACTFUL

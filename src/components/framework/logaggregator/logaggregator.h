@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE
-#define QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE
+#ifndef QOR_PP_H_COMPONENTS_LOGAGGREGATOR
+#define QOR_PP_H_COMPONENTS_LOGAGGREGATOR
  
 #include <atomic>
 #include <coroutine>
@@ -34,56 +34,44 @@
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/role/ifeature.h"
-#include "src/platform/network/address.h"
 #include "src/framework/thread/threadpool.h"
-#include "asynciotypes.h"
-#include "asyncioeventprocessor.h"
-#include "asyncioinitiator.h"
-#include "asynciocontext.h"
-#include "sharedasynciocontext.h"
+#include "logreceiver.h"
 
-namespace qor{ bool qor_pp_import ImplementsAsyncIOService();}
+namespace qor{ bool qor_pp_import ImplementsLogAggregatorService();}
+qor_pp_module_will_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
 
-namespace qor { namespace framework{
+namespace qor { namespace components{
   
-    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOService : public IFeature
+    class qor_pp_module_interface(QOR_LOGAGGREGATOR) LogAggregatorService : public framework::IFeature
     {
     public:
 
-        AsyncIOService();
-        virtual ~AsyncIOService();
+        LogAggregatorService();
+        virtual ~LogAggregatorService() noexcept;
 
-		AsyncIOService(AsyncIOService&& other) = delete;
-		AsyncIOService(const AsyncIOService& other) = delete;
-		AsyncIOService& operator=(AsyncIOService&& other) = delete;
-		AsyncIOService& operator=(const AsyncIOService& other) = delete;
+		LogAggregatorService(LogAggregatorService&& other) = delete;
+		LogAggregatorService(const LogAggregatorService& other) = delete;
+		LogAggregatorService& operator=(LogAggregatorService&& other) = delete;
+		LogAggregatorService& operator=(const LogAggregatorService& other) = delete;
 
-        void SetConcurrency(unsigned short concurrency);
         virtual void Setup();
         virtual void Shutdown();
 
-        ref_of<AsyncIOContext>::type Context() const
-        {
-            return new_ref<AsyncIOContext>(m_threadPool);
-        }
+        LogReceiver& Receiver();
 
-        ref_of<SharedAsyncIOContext>::type SharedContext() const
-        {
-            return new_ref<SharedAsyncIOContext>(m_threadPool);
-        }
+    private:
+    
+        ref_of<qor::framework::ThreadPool>::type m_threadPool;
+        LogReceiver m_receiver;        
 
-    private:        
-
-        ref_of<ThreadPool>::type m_threadPool;
-        
     };
-    } //framework
+    } //components
 
-    qor_pp_declare_instancer_of(framework::AsyncIOService, SingletonInstancer);
-    qor_pp_declare_factory_of(framework::AsyncIOService, ExternalFactory);
-    constexpr GUID AsyncIOServiceGUID = {0x6201abca, 0xf405, 0x4709, {0xa9, 0x86, 0x26, 0x82, 0xeb, 0x66, 0xfd, 0xc6}};
-    qor_pp_declare_guid_of(framework::AsyncIOService,AsyncIOServiceGUID);
+    qor_pp_declare_instancer_of(components::LogAggregatorService, SingletonInstancer);
+    qor_pp_declare_factory_of(components::LogAggregatorService, ExternalFactory);
+    constexpr GUID LogAggregatorServiceGUID = {0x490c8af7, 0x35ee, 0x4011, {0xbf, 0xc4, 0xd8, 0x64, 0x51, 0x80, 0xe1, 0xbd}};
+    qor_pp_declare_guid_of(components::LogAggregatorService,LogAggregatorServiceGUID);
 
 }//qor
 
-#endif//QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE
+#endif//QOR_PP_H_COMPONENTS_LOGAGGREGATOR

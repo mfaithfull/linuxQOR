@@ -22,12 +22,17 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include <iostream>
-
 #include "src/configuration/configuration.h"
+#include <iostream>
 #include "echoclientworkflow.h"
 #include "src/platform/platform.h"
 #include "src/components/framework/console/console.h"
+#include "src/qor/interception/functioncontext.h"
+#include "src/qor/log/debug.h"
+#include "src/qor/log/informative.h"
+#include "src/qor/log/impactful.h"
+#include "src/qor/log/important.h"
+#include "src/qor/log/imperative.h"
 
 using namespace qor;
 using namespace qor::workflow;
@@ -40,20 +45,24 @@ EchoClientWorkflow::EchoClientWorkflow() :
     send(new_ref<qor::workflow::State>(this)),
     receive(new_ref<qor::workflow::State>(this))
 {    
+    qor_pp_ofcontext;
+    qor::log::debug("Constructing an echo client workflow at address {0}.", (void*)(this));
+
     connect->Enter = [this]()->void
     {
+        qor_pp_ofcontext;
         m_connector = new_ref<qor::components::SocketClientConnector>();
         m_requestPipeline = new_ref<EchoRequestPipeline>(m_connector);
         m_responsePipeline = new_ref<EchoResponsePipeline>(m_connector);
 
         if( m_connector->ConnectToAddress("localhost", "127.0.0.1", 12345, qor::network::sockets::eAddressFamily::AF_INet, 0, false, false) )
         { 
-            std::cout << "Connected to server on 12345 @ localhost" << std::endl;
+            qor::log::inform("Connected to server on 12345 @ localhost");
             SetState(send); 
         }
         else
         {
-            std::cout << "Failed to connect to server on 12345 @ localhost: " << strerror(errno) << std::endl;
+            qor::log::impact("Failed to connect to server on 12345 @ localhost: {}", strerror(errno));
             SetResult(EXIT_FAILURE);
             SetComplete();
         }
@@ -61,6 +70,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
 
     send->Enter = [this]()->void
     {        
+        qor_pp_ofcontext;
         m_requestPipeline->ResetStream(maxEchoSize);
         if(m_requestPipeline->PumpSome() > 0)
         {
@@ -70,14 +80,16 @@ EchoClientWorkflow::EchoClientWorkflow() :
 
     receive->Enter = [this]()->void
     {
+        qor_pp_ofcontext;
         m_responsePipeline->ResetStream(maxEchoSize);
         if(m_responsePipeline->PumpSome() > 0)
         {
+            qor::log::important("Echo received.");
             SetResult(EXIT_SUCCESS);            
         }
         else
         {
-            std::cout << "Failed to receive from server:" << strerror(errno) << std::endl;
+            qor::log::imperative("Failed to receive from server: {0}", strerror(errno));
             SetResult(EXIT_FAILURE);            
         }
         SetComplete();

@@ -48,7 +48,7 @@ namespace qor{
         return *this;
     }
 
-    void Error::Handle(void) const
+    void Error::Handle(void)
     {
         auto pHandler = new_ref< IssueHandler<Error> >();
         if(!pHandler.IsNull())

@@ -30,7 +30,7 @@
 
 namespace qor{ 
 
-    class qor_pp_module_interface(QOR_ISSUE) SeverityWhat : public What
+    class qor_pp_module_interface(QOR_ERROR) SeverityWhat : public What
     {
     public:
 

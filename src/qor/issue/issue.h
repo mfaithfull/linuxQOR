@@ -58,16 +58,32 @@ namespace qor{
             return *(m_when.template As<When>());
         }
 
+        bool HasWhen() const
+        {
+            return m_when.IsNotNull();
+        }
+
         virtual const Where& where(void) const
         {
             return *(m_where.template As<Where>());
+        }
+
+        bool HasWhere() const
+        {
+            return m_where.IsNotNull();
         }
 
         virtual const WhatT& what(void) const
         {
             return *(m_what.template As<WhatT>());
         }       
-        virtual void Handle(void) const = 0;
+
+        bool HasWhat() const
+        {
+            return m_what.IsNotNull();
+        }
+
+        virtual void Handle(void) = 0;
 
         virtual void Resolve(bool bHandled) const
         {
@@ -77,11 +93,12 @@ namespace qor{
             }
         }
         
-        virtual void Catch() const
+        virtual void Catch()
         {
             Handle();
         }
-        virtual void Escalate(void) const = 0;
+
+        virtual void Escalate(void) const {}
         
         virtual void Ignore() const {}
 

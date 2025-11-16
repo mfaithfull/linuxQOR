@@ -33,6 +33,11 @@ namespace qor{ namespace components{
     {
     }
 
+    StdOutSink::~StdOutSink()
+    {
+        fflush(stdout);
+    }
+
     bool StdOutSink::Write(size_t& unitsWritten, size_t unitsToWrite)
     {
         return Pull(unitsWritten, unitsToWrite) ? Push(unitsWritten, unitsWritten) : false;
@@ -61,8 +66,7 @@ namespace qor{ namespace components{
             {
                 unitsWritten = bytesWritten / buffer->GetUnitSize();
                 buffer->ReadAcknowledge(unitsWritten);
-                OnWriteSuccess(unitsWritten);
-                fflush(stdout);
+                OnWriteSuccess(unitsWritten);                
             }
             else //EOD?
             {

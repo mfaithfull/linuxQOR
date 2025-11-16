@@ -22,54 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
-#include "handler.h"
+#ifndef QOR_PP_H_LOG_IMPERATIVE
+#define QOR_PP_H_LOG_IMPERATIVE
 
-namespace qor{
+#include "log.h"
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
-    {
-    }
+namespace qor{ namespace log {
 
-    Fatal& Fatal::operator = (const Fatal& src)
+    class qor_pp_module_interface(QOR_LOG) Imperative : 
+        public LevelTemplateIssue<Level::Imperative>
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
-        return *this;
-    }
-    
-    void Fatal::Handle()
+    public:
+        Imperative(const std::string& message);
+        virtual ~Imperative() noexcept = default;
+        Imperative& operator = (const Imperative& src);
+        virtual void Handle();
+    };
+
+    template< typename... _p >
+    void imperative(const std::string& message, _p&&... p1)
     {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
-        {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
-        }
-        else
-        {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
-        }
-    }
-        
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
+        issue<Imperative, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
     }
 
-    void fatal(const std::string& message)
+    inline void imperative(const std::string& message)
     {
-        issue<Fatal, const std::string&>(message);
+        issue<Imperative, const std::string&>(message);
     }
 
-}//qor
+}}//qor::log
+
+#endif//QOR_PP_H_LOG_IMPERATIVE

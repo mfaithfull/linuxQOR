@@ -22,11 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE
-#define QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE
+#ifndef QOR_PP_H_COMPONENTS_LOGRECEIVER
+#define QOR_PP_H_COMPONENTS_LOGRECEIVER
  
 #include <atomic>
 #include <coroutine>
+#include "src/qor/error/error.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/instance/singleton.h"
 #include "src/qor/factory/factory.h"
@@ -34,56 +35,46 @@
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/role/ifeature.h"
-#include "src/platform/network/address.h"
 #include "src/framework/thread/threadpool.h"
-#include "asynciotypes.h"
-#include "asyncioeventprocessor.h"
-#include "asyncioinitiator.h"
-#include "asynciocontext.h"
-#include "sharedasynciocontext.h"
+#include "src/framework/signals/signal.h"
+#include "src/components/framework/loghandler/loghandler.h"
+#include "src/platform/filesystem/filesystem.h"
+#include "src/platform/filesystem/path.h"
 
-namespace qor{ bool qor_pp_import ImplementsAsyncIOService();}
-
-namespace qor { namespace framework{
+namespace qor { namespace components{
   
-    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOService : public IFeature
+    class qor_pp_module_interface(QOR_LOGAGGREGATOR) LogReceiver : public SlotBase
     {
     public:
 
-        AsyncIOService();
-        virtual ~AsyncIOService();
+        LogReceiver();
+        virtual ~LogReceiver() noexcept = default;
 
-		AsyncIOService(AsyncIOService&& other) = delete;
-		AsyncIOService(const AsyncIOService& other) = delete;
-		AsyncIOService& operator=(AsyncIOService&& other) = delete;
-		AsyncIOService& operator=(const AsyncIOService& other) = delete;
+        void Stop();
+        void ReceiveLog(const std::string& logEntry);
+        void Listen();
 
-        void SetConcurrency(unsigned short concurrency);
-        virtual void Setup();
-        virtual void Shutdown();
-
-        ref_of<AsyncIOContext>::type Context() const
-        {
-            return new_ref<AsyncIOContext>(m_threadPool);
-        }
-
-        ref_of<SharedAsyncIOContext>::type SharedContext() const
-        {
-            return new_ref<SharedAsyncIOContext>(m_threadPool);
-        }
+        void WriteToStandardOutput(bool write = true);
+        void WriteToFileSystem(platform::Path path, const std::string& fileNamePrefix);
+        void WriteToPipeline(bool write = true);
 
     private:        
 
-        ref_of<ThreadPool>::type m_threadPool;
-        
+        virtual void queueSlot(PendingSlot data, ConnectionKind type) override;
+        std::deque<PendingSlot> m_array;
+        std::mutex m_mutex;
+        std::condition_variable m_alarm;        
+        bool m_running;
+        bool m_writeToStandardOutput;
+        bool m_writeToFileSystem;
+        bool m_writeToPipeline;
+
+        unsigned int m_logRollLimit;
+        unsigned int m_logRollNumber;
+        size_t m_totalSizeLimit;
+        size_t m_fileSizeLimit;
+        qor::ref_of<qor::platform::IFile>::type m_refLogFile;
     };
-    } //framework
+}}//qor::components
 
-    qor_pp_declare_instancer_of(framework::AsyncIOService, SingletonInstancer);
-    qor_pp_declare_factory_of(framework::AsyncIOService, ExternalFactory);
-    constexpr GUID AsyncIOServiceGUID = {0x6201abca, 0xf405, 0x4709, {0xa9, 0x86, 0x26, 0x82, 0xeb, 0x66, 0xfd, 0xc6}};
-    qor_pp_declare_guid_of(framework::AsyncIOService,AsyncIOServiceGUID);
-
-}//qor
-
-#endif//QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE
+#endif//QOR_PP_H_COMPONENTS_LOGRECEIVER

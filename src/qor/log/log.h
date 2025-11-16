@@ -22,54 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "error.h"
-#include "handler.h"
+#ifndef QOR_PP_H_LOG_LEVELISSUE
+#define QOR_PP_H_LOG_LEVELISSUE
 
-namespace qor{
+#include "src/qor/issue/issue.h"
+#include "level.h"
+#include "levelwhat.h"
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
-    {
-    }
+namespace qor{ namespace log {
 
-    Fatal& Fatal::operator = (const Fatal& src)
+    class qor_pp_module_interface(QOR_LOG) Log : public Issue<LevelWhat>
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
-        return *this;
-    }
-    
-    void Fatal::Handle()
+    public:
+
+        Log(Level s, const std::string& message);
+        virtual ~Log() noexcept = default;
+        Log& operator = (const Log & src);
+        virtual void Handle();
+    };
+
+    template<Level S>
+    class LevelTemplateIssue : public Log
     {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
-        {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
-        }
-        else
-        {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
-        }
-    }
+    public:
         
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
-    }
+        LevelTemplateIssue(const std::string& message) : Log(S, message) {}
+        
+        virtual ~LevelTemplateIssue() noexcept = default;
 
-    void fatal(const std::string& message)
-    {
-        issue<Fatal, const std::string&>(message);
-    }
+        LevelTemplateIssue& operator = (const LevelTemplateIssue& src)
+        {
+            Log::operator=(src);
+            return *this;
+        }
+        const Level GetLevel() const { return S; }
+    };
 
-}//qor
+}}//qor::log
+
+#endif//QOR_PP_H_LOG_LEVELISSUE

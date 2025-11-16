@@ -31,15 +31,15 @@
 
 namespace qor{ 
 
-    class qor_pp_module_interface(QOR_ISSUE) Error : public Issue<SeverityWhat>
+    class qor_pp_module_interface(QOR_ERROR) Error : public Issue<SeverityWhat>
     {
     public:
 
         Error(Severity s, const std::string& message);
         virtual ~Error() noexcept = default;
         Error& operator = (const Error & src);
-        virtual void Handle() const;
-        virtual void Catch() const
+        virtual void Handle();
+        virtual void Catch()
         {
             Handle();
         }

@@ -23,53 +23,37 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "error.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/error/error.h"
+#include "log.h"
 #include "handler.h"
 
-namespace qor{
+namespace qor{ namespace log {
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
+    Log::Log(Level l, const std::string& message) : Issue()
     {
+        auto context = framework::CurrentThread::GetCurrent().Context().FunctionContext();
+        m_when = new_ref<When>();
+        if(context != nullptr)
+        {
+            m_where = new_ref<Where>(context->File(), context->Line(), context->Name(), context->TypedAny(),context->Module());            
+        }
+        m_what = new_ref<LevelWhat>(message,l);
     }
 
-    Fatal& Fatal::operator = (const Fatal& src)
+    Log& Log::operator = (const Log& src)
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
+        Issue<LevelWhat>::operator = (src);
         return *this;
     }
-    
-    void Fatal::Handle()
+
+    void Log::Handle(void)
     {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
+        auto logHandler = new_ref< IssueHandler<Log> >();
+        if(!logHandler.IsNull())
         {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
-        }
-        else
-        {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
+            logHandler->Handle(*this);
         }
     }
-        
-    void Fatal::Escalate() const
-    {
-        std::terminate();
-    }
-    
-    void Fatal::Ignore() const
-    {
-        Escalate();//Can't ignore fatal issues.
-    }
 
-    void fatal(const std::string& message)
-    {
-        issue<Fatal, const std::string&>(message);
-    }
-
-}//qor
+}}//qor::log

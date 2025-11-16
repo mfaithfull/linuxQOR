@@ -27,6 +27,7 @@
 
 #include "role.h"
 #include "src/platform/platform.h"
+#include "src/qor/error/error.h"
 
 namespace qor{ namespace framework{
 
@@ -61,8 +62,15 @@ namespace qor{ namespace framework{
 
     void Role::AddFeature(const GUID* id, ref_of<IFeature>::type feature)
     {
-        feature->m_Role = this;
-        m_mapFeatures.insert(std::make_pair(*id, feature));
+        if(feature.IsNotNull())
+        {
+            feature->m_Role = this;
+            m_mapFeatures.insert(std::make_pair(*id, feature));
+        }
+        else
+        {
+            serious("Failed to add feature {0} to role.");
+        }
     }
 
 }}//qor::framework

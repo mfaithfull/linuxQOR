@@ -38,7 +38,7 @@ namespace qor{
         return *this;
     }
     
-    void Serious::Handle() const
+    void Serious::Handle()
     {
         auto pSeriousHandler = new_ref< IssueHandler<Serious> >();
         if(!pSeriousHandler.IsNull())

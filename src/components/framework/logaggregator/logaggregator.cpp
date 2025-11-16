@@ -23,53 +23,50 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "error.h"
-#include "handler.h"
 
-namespace qor{
+#include <cassert>
+#include <iostream>
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message)
+#include "logaggregator.h"
+#include "src/framework/role/role.h"
+#include "src/framework/thread/threadpool.h"
+
+qor_pp_module_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
+
+namespace qor { namespace components{
+
+    LogAggregatorService::LogAggregatorService()
     {
     }
 
-    Fatal& Fatal::operator = (const Fatal& src)
+    LogAggregatorService::~LogAggregatorService() noexcept
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
-        return *this;
     }
-    
-    void Fatal::Handle()
+
+    void LogAggregatorService::Setup()
     {
-        auto pFatalHandler = new_ref< IssueHandler<Fatal> >();
-        if(!pFatalHandler.IsNull())
-        {
-            pFatalHandler->Handle(*this);
-            Resolve(false);
-        }
-        else
-        {
-            auto pHandler = new_ref< IssueHandler<Error> >();
-            if(!pHandler.IsNull())
-            {
-                pHandler->Handle(*this);
-            }
-            Resolve(false);
-        }
-    }
+        m_threadPool = m_Role->GetFeature<framework::ThreadPool>();
         
-    void Fatal::Escalate() const
-    {
-        std::terminate();
+        if(m_threadPool.IsNotNull())
+        {
+            m_threadPool->SubmitTask( 
+                [this]()
+                {
+                    return m_receiver.Listen();
+                }
+            );
+        }
     }
     
-    void Fatal::Ignore() const
+    void LogAggregatorService::Shutdown()
     {
-        Escalate();//Can't ignore fatal issues.
+        m_receiver.Stop();
     }
 
-    void fatal(const std::string& message)
+    LogReceiver& LogAggregatorService::Receiver()
     {
-        issue<Fatal, const std::string&>(message);
+        return m_receiver;
     }
 
-}//qor
+}}//qor::components
+	

@@ -36,8 +36,8 @@ namespace qor{
     {
     public:
         Where();
-        Where(const char* szFile, const unsigned int uiLine, const char* szFunction);
-        Where( const char* szFile, const unsigned int uiLine, const char* szFunction, const AnyObject& ObjContext);
+        Where(const char* szFile, const unsigned int uiLine, const char* szFunction, const char* module = nullptr);
+        Where( const char* szFile, const unsigned int uiLine, const char* szFunction, const AnyObject& ObjContext, const char* module = nullptr);
         Where(const Where&);
         Where(const ref_of<Where>::type&);
         Where& operator = (const Where&);
@@ -49,12 +49,12 @@ namespace qor{
         const unsigned int GetLine(void) const;
         void SetFunction(const char* pszFunction);
         const char* GetFunction(void) const;
-        AnyObject& GetObjectContext(void);
+        const AnyObject& GetObjectContext(void) const;
         void SetObjectContext(const AnyObject& ObjContext);
-        const std::string GetThreadContext(void);
+        const std::string GetThreadContext(void) const;
         void SetThreadContext(const std::string threadId);
-        const Module* GetModuleContext(void) const;
-        void SetModuleContext(const Module* pModuleContext);
+        const char* GetModuleContext(void) const;
+        void SetModuleContext(const char* pModuleContext);
         //const HostProcess* GetProcessContext(void) const;
         //void SetProcessContext(const HostProcess* pProcessContext);
         bool GetInException(void) const;
@@ -68,7 +68,7 @@ namespace qor{
         const char* m_file;
         AnyObject m_objContext;
         std::string m_thread;
-        const Module* m_moduleContext;
+        const char* m_moduleContext;
         //const HostProcess* m_processContext;
         bool m_inException;
         bool m_inInstance;
