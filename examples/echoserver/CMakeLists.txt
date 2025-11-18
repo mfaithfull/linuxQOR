@@ -6,7 +6,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 set(target echoserver)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-add_executable(${target} echoserver_main.cpp echoserverapp.cpp serverworkflow.cpp clientsessionworkflow.cpp sessionpipeline.cpp echoprotocol.cpp
+add_executable(${target} echoserver_main.cpp echoserverapp.cpp serverworkflow.cpp clientsessionworkflow.cpp sessionpipeline.cpp
  errorhandler.cpp serverloghandler.cpp echorequestparser.cpp echorequestfilter.cpp)
 
 target_compile_definitions(${target} PRIVATE -DQOR_PP_EXECUTABLE)

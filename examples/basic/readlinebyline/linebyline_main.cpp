@@ -16,7 +16,7 @@ using namespace qor::framework;
 
 int main(const int argc, const char** argv, char**)
 {	
-    ThePlatform()->AddSubsystem<FileSystem>();
+    ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
     return AppBuilder().Build<Application>(appName)->
         SetRole<Role>([](ref_of<IRole>::type role)
         {

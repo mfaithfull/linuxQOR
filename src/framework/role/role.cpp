@@ -33,7 +33,7 @@ namespace qor{ namespace framework{
 
     void Role::Setup()
     {
-        ThePlatform()->Setup();
+        ThePlatform(qor_shared)->Setup();
         for(auto feature: m_mapFeatures)
         {
             feature.second->Setup();
@@ -47,7 +47,7 @@ namespace qor{ namespace framework{
             feature->second->Shutdown();
         }
         m_mapFeatures.clear();
-        ThePlatform()->Shutdown();
+        ThePlatform(qor_shared)->Shutdown();
     }
 
     ref_of<IFeature>::type Role::GetFeature(const GUID* id)

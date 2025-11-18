@@ -2102,14 +2102,14 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessPriorities)
         //sync_out.print("Setting OS process priority to ", os_process_priority_name(priority), ' ');
         // On Windows we should be able to set all the priorities even as non-admin; realtime will "succeed" but actually set the priority to high. On Linux, only root can increase the priority beyond normal.
     #ifdef _WIN32
-        check(new_ref<ICurrentProcess>()().SetPriority(priority));
+        check(new_ref<ICurrentProcess>()()().SetPriority(priority));
     #else
         if (priority >= ICurrentProcess::Priority::normal)
-            check(new_ref<ICurrentProcess>()().SetPriority(priority));
+            check(new_ref<ICurrentProcess>()()().SetPriority(priority));
         else
-            check_root(new_ref<ICurrentProcess>()().SetPriority(priority));
+            check_root(new_ref<ICurrentProcess>()()().SetPriority(priority));
     #endif
-        const std::optional<ICurrentProcess::Priority> new_priority = new_ref<ICurrentProcess>()().GetPriority();
+        const std::optional<ICurrentProcess::Priority> new_priority = new_ref<ICurrentProcess>()()().GetPriority();
         //sync_out.print("Obtaining new OS process priority ");
         check(new_priority.has_value());
     #ifdef _WIN32
@@ -2127,9 +2127,9 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessPriorities)
     // Set the priority back to normal after the test ends. This will fail on Linux if not root.
     //sync_out.println("Setting priority back to normal...");
     #ifdef _WIN32
-    check(new_ref<ICurrentProcess>()().SetPriority(ICurrentProcess::Priority::normal));
+    check(new_ref<ICurrentProcess>()()().SetPriority(ICurrentProcess::Priority::normal));
     #else
-    check_root(new_ref<ICurrentProcess>()().SetPriority(ICurrentProcess::Priority::normal));
+    check_root(new_ref<ICurrentProcess>()()().SetPriority(ICurrentProcess::Priority::normal));
     #endif
 }
 
@@ -2218,7 +2218,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessAffinity)
     //sync_out.println("Checking OS process affinity...");
 
     //sync_out.print("Obtaining initial process affinity ");
-    const std::optional<std::vector<bool>> initial_affinity = new_ref<ICurrentProcess>()().GetAffinity();
+    const std::optional<std::vector<bool>> initial_affinity = new_ref<ICurrentProcess>()()().GetAffinity();
     check(initial_affinity.has_value());
     //sync_out.println("Initial affinity is: ", affinity_to_string(initial_affinity));
     const std::size_t num_bits = initial_affinity.has_value() ? initial_affinity->size() : std::thread::hardware_concurrency();
@@ -2226,9 +2226,9 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessAffinity)
     //sync_out.print("Setting affinity to CPU 1 only ");
     std::vector<bool> cpu_1_in(num_bits, false);
     cpu_1_in[0] = true;
-    check(new_ref<ICurrentProcess>()().SetAffinity(cpu_1_in));
+    check(new_ref<ICurrentProcess>()()().SetAffinity(cpu_1_in));
     //sync_out.print("Obtaining new affinity ");
-    const std::optional<std::vector<bool>> cpu_1_out = new_ref<ICurrentProcess>()().GetAffinity();
+    const std::optional<std::vector<bool>> cpu_1_out = new_ref<ICurrentProcess>()()().GetAffinity();
     check(cpu_1_out.has_value());
     check(affinity_to_string(cpu_1_in), affinity_to_string(cpu_1_out));
 
@@ -2236,18 +2236,18 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessAffinity)
     std::vector<bool> alternating_in(num_bits, false);
     for (std::size_t i = 0; i < num_bits; ++i)
         alternating_in[i] = (i % 2 == 1);
-    check(new_ref<ICurrentProcess>()().SetAffinity(alternating_in));
+    check(new_ref<ICurrentProcess>()()().SetAffinity(alternating_in));
     //sync_out.print("Obtaining new affinity ");
-    const std::optional<std::vector<bool>> alternating_out = new_ref<ICurrentProcess>()().GetAffinity();
+    const std::optional<std::vector<bool>> alternating_out = new_ref<ICurrentProcess>()()().GetAffinity();
     check(alternating_out.has_value());
     check(affinity_to_string(alternating_in), affinity_to_string(alternating_out));
 
     if (initial_affinity.has_value())
     {
         //sync_out.print("Setting affinity back to initial value ");
-        check(new_ref<ICurrentProcess>()().SetAffinity(*initial_affinity));
+        check(new_ref<ICurrentProcess>()()().SetAffinity(*initial_affinity));
         //sync_out.print("Obtaining new affinity ");
-        const std::optional<std::vector<bool>> initial_out = new_ref<ICurrentProcess>()().GetAffinity();
+        const std::optional<std::vector<bool>> initial_out = new_ref<ICurrentProcess>()()().GetAffinity();
         check(initial_out.has_value());
         check(affinity_to_string(initial_affinity), affinity_to_string(initial_out));
     }
@@ -2262,10 +2262,10 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadAffinity)
         []
         {
             // Since the thread affinity must be a subset of the process affinity, we first set its affinity to all CPUs if it wasn't already.
-            const std::optional<std::vector<bool>> initial_process_affinity = new_ref<ICurrentProcess>()().GetAffinity();
+            const std::optional<std::vector<bool>> initial_process_affinity = new_ref<ICurrentProcess>()()().GetAffinity();
             const std::size_t num_process_bits = initial_process_affinity.has_value() ? initial_process_affinity->size() : std::thread::hardware_concurrency();
             const std::vector<bool> all_enabled(num_process_bits, true);
-            new_ref<ICurrentProcess>()().SetAffinity(all_enabled);
+            new_ref<ICurrentProcess>()()().SetAffinity(all_enabled);
 
             //sync_out.println("Checking OS thread affinity for pool threads...");
 
@@ -2305,7 +2305,7 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSThreadAffinity)
             }
 
             if (initial_process_affinity.has_value())
-                new_ref<ICurrentProcess>()().SetAffinity(*initial_process_affinity);
+                new_ref<ICurrentProcess>()()().SetAffinity(*initial_process_affinity);
         });
     pool.Shutdown();
 }

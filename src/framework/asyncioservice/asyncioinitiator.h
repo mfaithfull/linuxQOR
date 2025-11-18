@@ -53,36 +53,40 @@ namespace qor { namespace framework{
             return true;
         }
 
-        virtual IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
+        virtual IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address)
         {
             co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
         }
 
-        virtual IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog) const
+        virtual IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog)
         {
             co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
         }
 
-        virtual IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
+        virtual IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket)
         {
             co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
         }
 
-        virtual IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
             co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
         }
 
-        virtual IOTask Send(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags) const
+        virtual IOTask Send(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
         {
             co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
         }
 
-        virtual IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
             co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
         }
 
+        virtual IOTask Shutdown(platform::IODescriptor* ioDescriptor, int how)
+        {
+            co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
+        }
     };
 
     }//framework

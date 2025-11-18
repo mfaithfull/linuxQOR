@@ -44,7 +44,7 @@
 namespace qor
 {
 	//--------------------------------------------------------------------------------
-	class qor_pp_module_interface(QOR_INTERCEPTION) FunctionContext : public ProfileReceiver, public IFunctionContext
+	class qor_pp_module_interface(QOR_INTERCEPTION) FunctionContext : public IProfileReceiver, public IFunctionContext
 	{
 
 	public:
@@ -65,10 +65,10 @@ namespace qor
 		virtual unsigned int TraceDepth();
 		AnyObject TypedAny(void) const;
 		virtual const char* Module(void) const;
-        virtual void Profile(const std::chrono::duration<int64_t, std::milli>);
+        virtual void Profile(const std::chrono::duration<int64_t, std::milli>, IFunctionContext* fContext);
 
 	protected:
-
+		
 		bool m_bTraceCalls;
 		unsigned int m_uiLocked;
 		unsigned int m_TraceDepth;
@@ -79,15 +79,14 @@ namespace qor
 		AnyObject m_ObjContext;
 		unsigned int m_uiLine;
 		//IThread* m_pThread;
-		CallContext m_CallContext;
-		qor_pp_profiling_object m_Profiler;
+		CallContext m_CallContext;		
+		qor_pp_profiling_object m_Profiler;	
 
 		virtual void Init();
 
 	private:
 		
-		//void operator delete(void*, void*) noexcept = delete;
-		void* operator new(size_t, void*) noexcept = delete;
+		void* operator new(size_t, void*) noexcept = delete;	//prevent accidental heap allocation
 	};
 
 }//qor

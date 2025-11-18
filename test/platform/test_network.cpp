@@ -54,7 +54,7 @@ bool requiresSockets = qor::ImplementsSockets();
 qor_pp_test_suite_case(NetworkTestSuite, canCreateSocketsInstance)
 {    
     auto ref = new_ref<Sockets>();
-    qor_pp_assert_that( &(ref()) ).isNotNull();
+    qor_pp_assert_that( &(ref()()) ).isNotNull();
 }
 
 qor_pp_test_suite_case(NetworkTestSuite, canSetupSocketsInstance)

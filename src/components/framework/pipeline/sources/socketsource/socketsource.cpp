@@ -31,7 +31,7 @@ namespace qor{ namespace components{
 
     size_t SocketSource::ReadBytes(byte* space, size_t bytesToRead)
     {
-        size_t result = 0;
+        int32_t result = 0;
         if(m_Connector && m_Connector->IsConnected())
         {
             result = m_Connector->m_Socket->Receive((char*)space, bytesToRead, 0);
@@ -39,6 +39,10 @@ namespace qor{ namespace components{
         else
         {
             //TODO: No connection
+        }
+        if( result == -1)
+        {
+            return 0;
         }
         return result;
     }

@@ -69,7 +69,7 @@ namespace qor{ namespace framework{
         template<class TSubsystem>
 		Application& AddSubSystem()
 		{
-            ThePlatform()->template AddSubsystem<TSubsystem>();
+            ThePlatform(qor_shared)->template AddSubsystem<TSubsystem>();
 			return *this;
 		}
         

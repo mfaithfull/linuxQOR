@@ -14,12 +14,12 @@ target_compile_definitions(${target} PRIVATE -DQOR_PP_EXECUTABLE)
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_error qor_sockets qor_socketclient
-qor_httpclient qor_pipeline qor_socketsink qor_socketsource
+qor_httpclient qor_pipeline qor_socketsink qor_socketsource qor_log
 linqor_sockets linq_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_error qor_sockets qor_socketclient
-qor_httpclient qor_pipeline qor_socketsink qor_socketsource)
+qor_httpclient qor_pipeline qor_socketsink qor_socketsource qor_log)
 endif()

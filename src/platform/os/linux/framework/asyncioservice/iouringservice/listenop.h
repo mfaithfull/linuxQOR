@@ -35,7 +35,7 @@ namespace qor{ namespace nslinux{ namespace framework{
     {
         public:
 
-        ListenOperation(const IOUring &uring, int fd , int backlog) : m_sqe(uring.GetSQE())
+        ListenOperation(IOUring &uring, int fd , int backlog) : m_sqe(uring.GetSQE())
         {
             m_sqe.PrepareListen(fd, backlog);
             m_ring = const_cast<IOUring*>(&uring);

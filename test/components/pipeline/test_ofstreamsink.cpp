@@ -72,8 +72,8 @@ qor_pp_test_suite_case(stdofstreamTestSuite, canSetupstdofstreamSink)
     sink.SetPlug(&connector);
 
     auto fileSystem = new_ref<platform::FileSystem>();
-    fileSystem().Setup();
-    platform::FileIndex file(fileSystem().CurrentPath(), "output.json");
+    fileSystem->Setup();
+    platform::FileIndex file(fileSystem->CurrentPath(), "output.json");
     connector.SetFile(file);
     connector.Connect();
 

@@ -39,7 +39,10 @@
 #include "bindop.h"
 #include "acceptop.h"
 #include "sendop.h"
+#include "shutdownop.h"
+#include "recvop.h"
 #include "src/platform/network/socket.h"
+#include "src/qor/log/informative.h"
 
 namespace qor{ namespace nslinux{ namespace framework{
 
@@ -52,40 +55,52 @@ namespace qor{ namespace nslinux{ namespace framework{
 
         virtual void ConnectToProcessor(qor::framework::AsyncIOEventProcessor* processor);
 
-        virtual qor::framework::IOTask Send(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags) const
+        virtual qor::framework::IOTask Send(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
         {
+            //log::inform("Pending a send on {0}", ioDescriptor->m_fd);
+            m_Ring->m_guard.lock();
+            int result = co_await SendOperation(*m_Ring, ioDescriptor->m_fd, buffer, len, flags);
+            //log::inform("Send happened for {0}", ioDescriptor->m_fd);
             co_return qor::framework::AsyncIOResult{
-                .status_code = co_await SendOperation(*m_Ring, ioDescriptor->m_fd, buffer, len, flags),
+                .status_code = result,
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual qor::framework::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
+            //log::inform("Pending a receive on {0}", ioDescriptor->m_fd);
+            m_Ring->m_guard.lock();
+            int result = co_await RecvOperation(*m_Ring, ioDescriptor->m_fd, buffer, len);
+            
+            //log::inform("Receive happened for {0}", ioDescriptor->m_fd);
             co_return qor::framework::AsyncIOResult{
-                .status_code = co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len),
+                .status_code = result,
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual qor::framework::IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
+            m_Ring->m_guard.lock();
             co_return qor::framework::AsyncIOResult{
                 .status_code = co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len), 
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog) const
+        virtual qor::framework::IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog)
         {
+            m_Ring->m_guard.lock();
             co_return qor::framework::AsyncIOResult{
                 .status_code = co_await ListenOperation(*m_Ring, ioDescriptor->m_fd, 0),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
+        virtual qor::framework::IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address)
         {
+            m_Ring->m_guard.lock();
             sockaddr_in addr;        
             memset(&addr, 0, sizeof(struct sockaddr_in));
             addr.sin_family = Address.sa_family;
@@ -97,10 +112,11 @@ namespace qor{ namespace nslinux{ namespace framework{
             };
         }
 
-        virtual qor::framework::IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* new_socket) const
+        virtual qor::framework::IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* new_socket)
         {            
             sockaddr addr;
             socklen_t len = 0;
+            m_Ring->m_guard.lock();
             int socket_number = co_await AcceptOperation(*m_Ring, ioDescriptor->m_fd, &addr, &len, 0);
 
             new_socket->m_fd = socket_number;
@@ -110,9 +126,19 @@ namespace qor{ namespace nslinux{ namespace framework{
             };
         }
 
+        virtual qor::framework::IOTask Shutdown(platform::IODescriptor* ioDescriptor, int how)
+        {
+            m_Ring->m_guard.lock();
+            co_await ShutdownOperation(*m_Ring, ioDescriptor->m_fd, how);
+            co_return qor::framework::AsyncIOResult{
+                .status_code = 0,
+                .ioObject = ioDescriptor
+            };
+        }
+
     protected:
 
-        const IOUring* m_Ring;
+        IOUring* m_Ring;
     };
 
 }}}//qor::nslinux::framework

@@ -42,10 +42,11 @@ public:
     SessionPipeline(
         qor::ref_of<qor::network::Socket>::type socket, 
         qor::ref_of<qor::framework::SharedAsyncIOContext::Session>::type session);
-    virtual ~SessionPipeline() = default;    
+    virtual ~SessionPipeline();
 
 private:
 
+    const size_t m_ioBufferSize = 1024;
     EchoRequestFilter m_filter;
     qor::ref_of<qor::network::Socket>::type m_socket;
     qor::ref_of<qor::framework::SharedAsyncIOContext::Session>::type m_ioSession;

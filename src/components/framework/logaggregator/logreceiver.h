@@ -63,7 +63,7 @@ namespace qor { namespace components{
         virtual void queueSlot(PendingSlot data, ConnectionKind type) override;
         std::deque<PendingSlot> m_array;
         std::mutex m_mutex;
-        std::condition_variable m_alarm;        
+        std::condition_variable m_alarm;      
         bool m_running;
         bool m_writeToStandardOutput;
         bool m_writeToFileSystem;

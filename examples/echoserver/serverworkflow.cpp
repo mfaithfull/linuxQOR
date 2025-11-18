@@ -62,7 +62,7 @@ ServerWorkflow::ServerWorkflow() :
         auto application = weak_ref<EchoServerApp>();
         m_io = application->GetRole()->GetFeature<AsyncIOService>();
         m_threadPool = application->GetRole()->GetFeature<ThreadPool>();
-        m_sockets = ThePlatform()->GetSubsystem<Sockets>();
+        m_sockets = ThePlatform(qor_shared)->GetSubsystem<Sockets>();
         m_ioContext = m_io->Context();
         m_ioSharedContext = m_io->SharedContext();
         m_serverSocket = m_sockets->CreateSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP, m_ioContext);
@@ -75,7 +75,6 @@ ServerWorkflow::ServerWorkflow() :
         if( result < 0 )
         {
             qor::log::imperative("Can't bind to socket: {0}", strerror(result));
-            //m_ioContext.Dispose();
             SetResult(EXIT_FAILURE);
             SetComplete();            
         }
@@ -94,7 +93,6 @@ ServerWorkflow::ServerWorkflow() :
         if( result < 0)
         {
             qor::log::imperative("Can't listen on socket: {0}", strerror(result));
-            //m_ioContext.Dispose();
             SetResult(EXIT_FAILURE);
             SetComplete();
         }
@@ -117,9 +115,10 @@ ServerWorkflow::ServerWorkflow() :
         }
         else
         {
-            qor::log::inform("Accepted client connection: {0}", ClientAddress.GetIPV4Address());
+            qor::log::inform("Accepted client connection: {0}:{1}", ClientSocket->m_fd, ClientAddress.GetIPV4Address());
             m_threadPool->PostTask(
                 [this, ClientSocket](){
+                CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));
                 new_ref<ClientSessionWorkflow>(m_ioSharedContext, ClientSocket)->Run();
             });
         }

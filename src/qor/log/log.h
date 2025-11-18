@@ -36,6 +36,7 @@ namespace qor{ namespace log {
     public:
 
         Log(Level s, const std::string& message);
+        Log(Level s, const std::string& message, IFunctionContext* fContext);
         virtual ~Log() noexcept = default;
         Log& operator = (const Log & src);
         virtual void Handle();
@@ -47,7 +48,7 @@ namespace qor{ namespace log {
     {
     public:
         
-        LevelTemplateIssue(const std::string& message) : Log(S, message) {}
+        LevelTemplateIssue(const std::string& message, IFunctionContext* fContext = nullptr) : Log(S, message, fContext) {}
         LevelTemplateIssue(const LevelTemplateIssue& src) : Log(src) {} 
         LevelTemplateIssue(LevelTemplateIssue&& src) noexcept : Log(src) {}
         LevelTemplateIssue& operator=(LevelTemplateIssue&& src) noexcept 

@@ -47,7 +47,7 @@ public:
     EchoResponsePipeline(qor::ref_of<qor::components::SocketClientConnector>::type connector);
     virtual ~EchoResponsePipeline() = default;
 
-private:
+private:    //socket -> |filter| -> stdout
 
     EchoResponseFilter m_filter;
     qor::components::StdOutSink m_stdOutsink;

@@ -30,6 +30,7 @@
 #include "logaggregator.h"
 #include "src/framework/role/role.h"
 #include "src/framework/thread/threadpool.h"
+#include "src/framework/thread/currentthread.h"
 
 qor_pp_module_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
 
@@ -52,6 +53,7 @@ namespace qor { namespace components{
             m_threadPool->SubmitTask(
                 [this]()
                 {
+                    qor::framework::CurrentThread::GetCurrent().SetName("Log Aggregator");
                     return m_receiver.Listen();
                 }
             );

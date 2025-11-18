@@ -36,15 +36,26 @@ SessionPipeline::SessionPipeline(
         m_socket(socket), 
         m_ioSession(session)
 {
+    m_filter.SetCapacity(m_ioBufferSize);
     m_socketSessionConnector = new_ref<SocketSessionConnector>(m_socket, m_ioSession);
     SetFlowMode(Element::FlowMode::Push);
 
     m_socketSource = new_ref<SocketSessionSource>();
     m_socketSource->SetPlug(m_socketSessionConnector);
     SetSource(m_socketSource, &m_filter);
-
+    
     m_socketSink = new_ref<SocketSessionSink>();
     m_socketSink->SetPlug(m_socketSessionConnector);
     SetSink(m_socketSink, &m_filter);
+
+    m_socketSource->SetSink(m_socketSink);
+    m_socketSink->SetSource(m_socketSource);
+    GetSink()->GetBuffer()->SetCapacity(m_ioBufferSize);
+    GetSource()->GetBuffer()->SetCapacity(m_ioBufferSize);
     m_socketSessionConnector->Connect();
+}
+
+SessionPipeline::~SessionPipeline()
+{
+    m_socketSessionConnector->Disconnect();
 }

@@ -41,6 +41,20 @@ namespace qor{ namespace log {
         m_what = new_ref<LevelWhat>(message,l);
     }
 
+    Log::Log(Level l, const std::string& message, IFunctionContext* fContext) : Issue()
+    {
+        if(fContext == nullptr)
+        {
+            fContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
+        }
+        m_when = new_ref<When>();
+        if(fContext != nullptr)
+        {
+            m_where = new_ref<Where>(fContext->File(), fContext->Line(), fContext->Name(), fContext->TypedAny(),fContext->Module());            
+        }
+        m_what = new_ref<LevelWhat>(message,l);
+    }
+
     Log& Log::operator = (const Log& src)
     {
         Issue<LevelWhat>::operator = (src);

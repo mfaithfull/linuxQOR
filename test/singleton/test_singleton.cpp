@@ -66,7 +66,7 @@ namespace qor{ qor_pp_declare_instancer_of(Test_Singleton, SingletonInstancer); 
 qor_pp_test_suite_case(SingletonTestSuite, canCreateSingleSingleton)
 {
     auto ref = new_ref<Test_Singleton>();
-    qor_pp_assert_that( &(ref()) ).isNotNull();
+    qor_pp_assert_that( &(ref()()) ).isNotNull();
 }
 
 qor_pp_test_suite_case(SingletonTestSuite, twoSingletonRefsReferToSameObject)
@@ -85,5 +85,5 @@ qor_pp_test_suite_case(SingletonTestSuite, SingletonCantBeReleasedAndReacquiredW
     }
 
     auto ref2 = new_ref<Test_Singleton>(9);
-    qor_pp_assert_that( ref2().Value() ).isEqualTo(0);
+    qor_pp_assert_that( ref2->Value() ).isEqualTo(0);
 }

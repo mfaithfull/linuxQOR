@@ -62,7 +62,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         }
         else
         {
-            qor::log::impact("Failed to connect to server on 12345 @ localhost: {}", strerror(errno));
+            qor::log::impact("Failed to connect to server on 12345 @ localhost: {0}", strerror(errno));
             SetResult(EXIT_FAILURE);
             SetComplete();
         }

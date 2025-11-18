@@ -77,7 +77,7 @@ namespace qor{ namespace nslinux{
         ref_of<network::Socket>::type socket = new_ref<Socket>(AF, Type, Protocol).AsRef<network::Socket>();
         if( ioContext != nullptr)
         {
-            ioContext->Enroll(socket());
+            ioContext->Enroll(socket()());
         }
         return socket;
     }

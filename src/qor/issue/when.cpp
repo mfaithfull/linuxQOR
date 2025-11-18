@@ -41,7 +41,7 @@ namespace qor {
 
     When::When(const ref_of<When>::type& src)
     {
-        *this = src();
+        m_timePoint = src->m_timePoint;
     }
 
     When& When::operator = (const When& src)

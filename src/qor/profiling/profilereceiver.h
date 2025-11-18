@@ -27,18 +27,52 @@
 
 #include <chrono>
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/objectcontext/typedany.h"
+#include "src/qor/reference/flyerref.h"
+#include "src/qor/reference/reference.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/datastructures/guid.h"
+#include "src/qor/interception/callcontext.h"
+#include "src/qor/interception/flyer.h"
+#include "src/qor/interception/flystrapbase.h"
+#include "src/qor/log/log.h"
+#include "src/qor/log/informative.h"
+
 namespace qor {
 
-	class ProfileReceiver
+	struct IProfileReceiver
+	{	
+		virtual void Profile(const std::chrono::duration<int64_t, std::milli>, IFunctionContext*) = 0;
+	};
+
+	class ProfileReceiver : public Flyer< ProfileReceiver, IProfileReceiver >
 	{
 
-        public:
+     public:
 
-		ProfileReceiver() = default;
-		virtual ~ProfileReceiver() = default;
+        ProfileReceiver()
+        {
+            Flyer< ProfileReceiver, IProfileReceiver >::Push();
+        }
 
-		virtual void Profile(const std::chrono::duration<int64_t, std::milli>) = 0;
+		virtual ~ProfileReceiver()
+        {
+            Flyer< ProfileReceiver, IProfileReceiver >::Pop();
+        }
+
+		virtual void Profile(const std::chrono::duration<int64_t, std::milli> duration, IFunctionContext* fContext)
+		{
+		    issue<log::Informative, const std::string&>(std::format("Profile: {0}", duration), fContext);
+
+			//log::inform("Profile: {0}", duration);
+		}
 	};
+
+    constexpr GUID ProfileReceiverGUID = {0x3078ff1b, 0x54d0, 0x44ee, {0x92, 0x7b, 0xac, 0x3f, 0xcf, 0x26, 0xb1, 0x6b}};
+    qor_pp_declare_guid_of(ProfileReceiver,ProfileReceiverGUID)
+    qor_pp_declare_ref_of(ProfileReceiver,FlyerRef);
+
 
 }//qor
 

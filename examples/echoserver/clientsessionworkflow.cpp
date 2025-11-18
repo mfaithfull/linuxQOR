@@ -25,6 +25,10 @@
 #include <iostream>
 
 #include "src/configuration/configuration.h"
+
+#include "src/qor/profiling/profiling.h"
+//#include qor_pp_profile_begin
+
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/log/debug.h"
 #include "src/qor/log/informative.h"
@@ -32,6 +36,7 @@
 #include "src/qor/log/important.h"
 #include "src/qor/log/imperative.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/components/framework/logaggregator/logaggregator.h"
 #include "src/framework/task/syncwait.h"
 #include "echoserverapp.h"
 #include "clientsessionworkflow.h"
@@ -48,32 +53,39 @@ using namespace qor::components;
 ClientSessionWorkflow::ClientSessionWorkflow(
     ref_of<qor::framework::SharedAsyncIOContext>::type sharedContext,
     ref_of<Socket>::type socket) : 
+    m_logHandler(log::Level::Debug),
     connected(new_ref<workflow::State>(this)),
     echo(new_ref<workflow::State>(this)),
     disconnect(new_ref<workflow::State>(this)),
     m_socket(socket),
     m_ioSharedContext(sharedContext)
 {
+    
     qor_pp_ofcontext;
+    m_logHandler.WriteToStandardOutput(false);
+    auto application = new_ref<EchoServerApp>();
+    auto logAggregator = application(qor_shared).GetRole()->GetFeature<LogAggregatorService>();
+    qor::connect(m_logHandler, &qor::components::LogHandler::forward, 
+        logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog, 
+        qor::ConnectionKind::QueuedConnection);
 
     connected->Enter = [this]()->void
     {
         qor_pp_ofcontext;
-        qor::log::inform("Servicing a connected client.");
+        qor::log::inform("Servicing a connected client {0}", m_socket->m_fd);
 
         auto ioSession = m_ioSharedContext->GetSession();
         if(ioSession.IsNull()){ warning("Out of IO contexts. IO will proceed synchronously.");}
 
         m_pipeline = new_ref<SessionPipeline>(m_socket, ioSession);
-        m_protocol = new_ref<EchoProtocol>(m_pipeline.AsRef<Pipeline>());
-        
         SetState(echo);
     };
 
     echo->Enter = [this]()->void
     {
         qor_pp_ofcontext;  
-        if(m_protocol->Run() == 0)
+        size_t unitsPumped = 0;
+        if(!m_pipeline->PumpSome(unitsPumped, maxEchoSize) || unitsPumped == 0)
         {
             SetState(disconnect);
         }
@@ -82,12 +94,23 @@ ClientSessionWorkflow::ClientSessionWorkflow(
     disconnect->Enter = [this]()->void
     {
         qor_pp_ofcontext;
-        qor::log::inform("Disconnecting client.");
-        m_socket->Shutdown(eShutdown::ShutdownReadWrite);
+        qor::log::inform("Disconnecting client {0}", m_socket->m_fd);
         SetResult(EXIT_SUCCESS);
         SetComplete();
         PopState();
     };
 
+//#include qor_pp_profile_end
+
     SetInitialState(connected);
+}
+
+ClientSessionWorkflow::~ClientSessionWorkflow()
+{
+    auto application = weak_ref<EchoServerApp>();
+    auto logAggregator = application->GetRole()->GetFeature<LogAggregatorService>();
+    qor::disconnect(m_logHandler, &qor::components::LogHandler::forward, 
+        logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog);
+
+    CurrentThread::GetCurrent().SetName("pool");//reset the thread name as we're about to hand it back to the pool
 }

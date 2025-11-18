@@ -41,7 +41,7 @@ namespace qor{ namespace nslinux{ namespace framework{
         IOUringEventProcessor* eventProcessor = dynamic_cast<IOUringEventProcessor*>(processor);
         if(eventProcessor)
         {
-            m_Ring = &(eventProcessor->Ring());
+            m_Ring = const_cast<IOUring*>(&(eventProcessor->Ring()));
         }
     }
 

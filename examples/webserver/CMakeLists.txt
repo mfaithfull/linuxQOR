@@ -14,7 +14,7 @@ target_compile_definitions(${target} PRIVATE -DQOR_PP_EXECUTABLE)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
-qor_application qor_thread qor_role qor_workflow qor_platform qor_sockets linqor_sockets)
+qor_application qor_thread qor_role qor_workflow qor_platform qor_sockets qor_log linqor_sockets)
 # qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 #qor_pipeline   qor_optionparser 
 #qor_filesystem qor_task qor_threadmemory qor_platform qor_property 

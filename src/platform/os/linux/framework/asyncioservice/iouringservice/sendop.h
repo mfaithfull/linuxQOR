@@ -35,10 +35,10 @@ namespace qor{ namespace nslinux{ namespace framework{
     {
         public:
 
-        SendOperation(const IOUring &uring, int fd, const byte* buffer, size_t len, int flags) : m_sqe(uring.GetSQE())
+        SendOperation(IOUring &uring, int fd, const byte* buffer, size_t len, int flags) : m_sqe(uring.GetSQE())
         {
             m_sqe.PrepareSend(fd, buffer, len, flags);
-            m_ring = const_cast<IOUring*>(&uring);
+            m_ring = &uring;
         }
         
         auto operator co_await() 

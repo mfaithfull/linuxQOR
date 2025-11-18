@@ -57,7 +57,7 @@ namespace qor{ namespace network{
 	    {
             return AcceptAsync(ioContext, ClientAddress, clientSocket);
         }());
-        ioContext.Enroll(clientSocket());
+        ioContext.Enroll(clientSocket()());
         return clientSocket;
     }
         
@@ -121,19 +121,18 @@ namespace qor{ namespace network{
         return -1;
     }
 
-    qor::framework::IOTask Socket::AsyncReceive(const framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
+    task<int32_t> Socket::AsyncReceive(const framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
     {
-        //Provide an override implementation specific to your platform
-        qor::framework::AsyncIOResult result;
-        co_return result;
+        //Provide an override implementation specific to your platform        
+        return []()->task<int32_t>
+        {
+            co_return -1;
+        }();
     }
 
-    int32_t Socket::Receive(const framework::AsyncIOInterface& ioContext, char* Buffer, int32_t iLen)
+    task<int32_t> Socket::Receive(const framework::AsyncIOInterface& ioContext, char* Buffer, int32_t iLen)
     {
-        return sync_wait([this,&ioContext,Buffer,iLen]() -> task<framework::AsyncIOResult>
-	    {
-            return AsyncReceive(ioContext, Buffer, iLen);
-        }()).status_code;
+        return AsyncReceive(ioContext, Buffer, iLen);
     }
 
     int32_t Socket::Receive(char* buf, int32_t len, int32_t flags)
@@ -148,19 +147,20 @@ namespace qor{ namespace network{
         return -1;
     }
 
-    qor::framework::IOTask Socket::AsyncSend(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+    task<int32_t> Socket::AsyncSend(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
     {
         //Provide an override implementation specific to your platform
         qor::framework::AsyncIOResult result;
-        co_return result;
+        return []()->task<int32_t>
+        {
+            co_return -1;
+        }();
+
     }
 
-    int32_t Socket::Send(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+    task<int32_t> Socket::Send(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
     {
-        return sync_wait([this,&ioContext,Buffer,iLen]() -> task<framework::AsyncIOResult>
-	    {
-            return AsyncSend(ioContext, Buffer, iLen);
-        }()).status_code;
+        return AsyncSend(ioContext, Buffer, iLen);
     }
 
     int32_t Socket::Send(const char* Buffer, int32_t iLen)
@@ -179,6 +179,20 @@ namespace qor{ namespace network{
     {
         //Provide an override implementation specific to your platform
         return -1;
+    }
+
+    task<int32_t> Socket::Shutdown(const framework::AsyncIOInterface& ioContext, sockets::eShutdown how)
+    {
+        return AsyncShutdown(ioContext, how);
+    }
+
+    task<int32_t> Socket::AsyncShutdown(const framework::AsyncIOInterface& ioContext, sockets::eShutdown how)
+    {
+        //Provide an override implementation specific to your platform
+        return []()->task<int32_t>
+        {
+            co_return -1;
+        }();
     }
 
     std::size_t Socket::ID(void)

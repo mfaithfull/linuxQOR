@@ -28,10 +28,11 @@
 
 #include "iouring.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/qor/log/informative.h"
 
 namespace qor{ namespace nslinux{ namespace framework{
 
-    IOUring::IOUring(size_t queue_size)  : sem(0)
+    IOUring::IOUring(size_t queue_size)
     {
         m_ExpectationCount = 0;
         if (auto s = io_uring_queue_init(queue_size, &m_ring, 0); s < 0) 
@@ -40,8 +41,9 @@ namespace qor{ namespace nslinux{ namespace framework{
         }
     }
 
-    IOUring::SQE IOUring::GetSQE() const
+    IOUring::SQE IOUring::GetSQE()
     {
+        std::unique_lock<std::recursive_mutex> lock(m_guard);
         IOUring::SQE sqe( io_uring_get_sqe(const_cast<io_uring*>(&m_ring)));
         return sqe;
     }
@@ -84,13 +86,8 @@ namespace qor{ namespace nslinux{ namespace framework{
     void IOUring::RemoteSubmit()
     {
         m_ExpectationCount.fetch_add(1, std::memory_order_relaxed);
-        sem.release(1);
-        /*
-        while(trigger.is_set())
-        {            
-        }
-        trigger.set();
-        */
+        //sem.release(1);
+        m_cond.notify_one();
     }
 
     unsigned int IOUring::ExpectationCount() const
@@ -100,11 +97,12 @@ namespace qor{ namespace nslinux{ namespace framework{
 
     IOUring::~IOUring() 
     { 
+        std::unique_lock<std::recursive_mutex> lock(m_guard);
         io_uring_queue_exit(&m_ring); 
     }
 
     void IOUring::SQE::PrepareAccept(int fd, struct sockaddr *addr, socklen_t *addrlen, int flags)
-    {
+    {        
         io_uring_prep_accept(m_, fd, addr, addrlen, flags);
     }
 
@@ -143,6 +141,16 @@ namespace qor{ namespace nslinux{ namespace framework{
         io_uring_prep_send(m_, fd, buffer, len, flags);
     }
 
+    void IOUring::SQE::PrepareRecv(int fd, byte* buffer, size_t byteCount, int flags)
+    {
+        io_uring_prep_recv(m_, fd, buffer, byteCount, flags);
+    }
+
+    void IOUring::SQE::PrepareShutdown(int fd, int how)
+    {
+        io_uring_prep_shutdown(m_, fd, how);
+    }
+
     void IOUring::SQE::SetData(void* data)
     {
         io_uring_sqe_set_data(m_, data);
@@ -160,13 +168,16 @@ namespace qor{ namespace nslinux{ namespace framework{
 
     int IOUring::ConsumeCQEntries()
     {
+        std::unique_lock<std::recursive_mutex> lock(m_guard);
         return ForEachCQE( [this](IOUring::CQE& cqe){
             auto *request_data = static_cast<qor::framework::AsyncIORequest*>(cqe.GetData());
             if(request_data)
             {
                 request_data->statusCode = cqe.GetResult();
+                //log::inform("Got a {0} resuming.", request_data->statusCode);
                 request_data->handle.resume();
                 m_ExpectationCount.fetch_sub(1, std::memory_order_relaxed);
+                //log::inform("{m_ExpectationCount} more expected result.", m_ExpectationCount.load());
             }
         });
     }
@@ -182,6 +193,7 @@ namespace qor{ namespace nslinux{ namespace framework{
 
     int IOUring::ConsumeCQEntries(io_uring_cqe* entries, size_t count)
     {
+        std::unique_lock<std::recursive_mutex> lock(m_guard);
         unsigned int processed{0};
 
         io_uring_cqe* cqe = entries;
@@ -192,13 +204,16 @@ namespace qor{ namespace nslinux{ namespace framework{
             if(request_data)
             {
                 request_data->statusCode = cqe->res;
+                //log::inform("Got a {0} resuming.", request_data->statusCode);
                 request_data->handle.resume();
                 m_ExpectationCount.fetch_sub(1, std::memory_order_relaxed);
+                //log::inform("{m_ExpectationCount} more expected result.", m_ExpectationCount.load());
                 ++processed;
                 ++cqe;
             }
             else
             {
+                log::inform("No associated request data {0}", cqe->res);
                 ++processed;
                 ++cqe;
             }

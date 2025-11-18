@@ -34,7 +34,7 @@ namespace qor{ namespace log {
     {
     public:
 
-        LevelWhat(const ref_of<LevelWhat>::type& src) : What(src()), m_level(src->m_level)
+        LevelWhat(const ref_of<LevelWhat>::type& src) : What(src->Content()), m_level(src->m_level)
         {}
 
         LevelWhat(const std::string& what, Level level) : What(what), m_level(level)

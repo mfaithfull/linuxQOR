@@ -79,7 +79,7 @@ qor_pp_test_suite_case(FactoryTestSuite, defaultSinlgeItemConstructionAndDestruc
     {
         auto p = qor::factory_of<Test_Widget>::type::Construct();
 
-        qor_pp_assert_that(&(p())).isNotNull();
+        qor_pp_assert_that(&(p()())).isNotNull();
         qor_pp_assert_that(global_widget_count).isEqualTo(1);
     }
     qor_pp_assert_that(global_widget_count).isEqualTo(0);
@@ -90,7 +90,7 @@ qor_pp_test_suite_case(FactoryTestSuite, defaultMultiItemConstructionAndDestruct
     {
         auto p = qor::factory_of<Test_Widget>::type::Construct(2);
 
-        qor_pp_assert_that(&(p())).isNotNull();
+        qor_pp_assert_that(&(p()())).isNotNull();
         qor_pp_assert_that(global_widget_count).isEqualTo(2);
     }
     qor_pp_assert_that(global_widget_count).isEqualTo(0);
@@ -101,7 +101,7 @@ qor_pp_test_suite_case(FactoryTestSuite, SinlgeItemBuildAndTearDown)
     {
         auto p = qor::factory_of<Test_Widget>::type::Construct(1, 123);
 
-        qor_pp_assert_that(&(p())).isNotNull();
+        qor_pp_assert_that(&(p()())).isNotNull();
         qor_pp_assert_that(global_widget_count).isEqualTo(1);
         qor_pp_assert_that(p->Value()).isEqualTo(123);
     }
@@ -113,7 +113,7 @@ qor_pp_test_suite_case(FactoryTestSuite, MultiItembuildAndTearDown)
     {
         auto p = qor::factory_of<Test_Widget>::type::Construct(2, 456);
 
-        qor_pp_assert_that(&(p())).isNotNull();
+        qor_pp_assert_that(&(p()())).isNotNull();
         qor_pp_assert_that(global_widget_count).isEqualTo(2);
         qor_pp_assert_that(p[0].Value()).isEqualTo(456);
         qor_pp_assert_that(p[1].Value()).isEqualTo(456);

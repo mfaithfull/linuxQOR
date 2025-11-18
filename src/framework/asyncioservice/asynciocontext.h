@@ -34,6 +34,7 @@
 #include "src/framework/task/syncwait.h"
 #include "src/framework/thread/threadpool.h"
 #include "asynciointerface.h"
+#include "src/qor/log/informative.h"
 
 namespace qor { namespace framework{
   
@@ -50,19 +51,31 @@ namespace qor { namespace framework{
 
         virtual bool Enroll(platform::IODescriptor& ioDescriptor) const;
 
-        virtual inline IOTask Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
+        virtual inline task<int> Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
         {
-            return m_initiator->Send(ioDescriptor, buffer, len, flags);
+            //log::inform("Will Pend a send on {0}", ioDescriptor->m_fd);
+            auto ioResult = co_await m_initiator->Send(ioDescriptor, buffer, len, flags);
+            //log::inform("Will process a send on {0}", ioDescriptor->m_fd);
+            co_return ioResult.status_code;
         }
 
-        virtual inline IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual inline task<int> Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
         {
-            return m_initiator->Recv(ioDescriptor, buffer, len);
+            //log::inform("Will Pend a receive on {0}", ioDescriptor->m_fd);
+            auto ioResult = co_await m_initiator->Recv(ioDescriptor, buffer, len);                
+            //log::inform("Will process a receive on {0}", ioDescriptor->m_fd);
+            co_return ioResult.status_code;
         }
 
         virtual inline IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
         {
             return m_initiator->Read(ioDescriptor, buffer, len);
+        }
+
+        virtual inline task<int> Shutdown(platform::IODescriptor* ioDescriptor, int how) const
+        {
+            auto ioResult = co_await m_initiator->Shutdown(ioDescriptor, how);
+            co_return ioResult.status_code;
         }
 
         virtual inline IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog) const

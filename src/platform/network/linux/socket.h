@@ -55,13 +55,14 @@ namespace qor{ namespace nslinux{
         virtual int32_t GetSockName(network::Address& Address);
         virtual int32_t GetSockOpt(int32_t iLevel, int32_t iOptName, char* pOptVal, int32_t* pOptLen);
         virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen);
-        virtual qor::framework::IOTask AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
+        virtual task<int32_t> AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
         virtual int32_t Receive(char* buf, int32_t len, int32_t flags);
         virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, network::Address& From);
-        virtual qor::framework::IOTask AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
+        virtual task<int32_t> AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
         virtual int32_t Send(const char* Buffer, int32_t iLen);
         virtual int32_t SendTo(const char* Buffer, int32_t iLen, int32_t iFlags, const network::Address& To);
-        virtual int32_t Shutdown(network::sockets::eShutdown how);
+        virtual task<int32_t> AsyncShutdown(const qor::framework::AsyncIOInterface& ioContext, network::sockets::eShutdown how);
+        virtual int32_t Shutdown(network::sockets::eShutdown how);        
         virtual std::size_t ID(void);
         virtual int32_t GetLastError(void);
         virtual bool SetNonBlocking(bool nonBlocking);

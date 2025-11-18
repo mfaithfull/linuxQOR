@@ -35,8 +35,8 @@ namespace qor{ namespace components{
     stdofstreamWriter::stdofstreamWriter(const std::string& fileName, size_t bufferByteCapacity) : pipeline::Pipeline(), m_Setup(false)
     {
         auto fileSystem = new_ref<platform::FileSystem>();
-        fileSystem().Setup();
-        platform::FileIndex file(fileSystem().CurrentPath(), fileName);
+        fileSystem->Setup();
+        platform::FileIndex file(fileSystem->CurrentPath(), fileName);
         SetFile(file);
         SetBufferCapacity(bufferByteCapacity);
         Setup();

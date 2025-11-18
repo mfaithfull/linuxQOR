@@ -27,6 +27,7 @@
 #include "iouringeventprocessor.h"
 #include "src/platform/os/linux/framework/asyncioservice/asyncioservice.h"
 #include "src/qor/error/error.h"
+#include "src/qor/log//informative.h"
 
 qor_pp_module_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOEventProcessor)
 
@@ -35,26 +36,42 @@ namespace qor{ namespace nslinux{ namespace framework{
     int IOUringEventProcessor::Event()
     {
         io_uring_cqe *temp = nullptr;
-        __kernel_timespec ts{ .tv_sec = 0, .tv_nsec = 1000000 /*/ (1 << scale)*/ };
+        __kernel_timespec ts{ .tv_sec = 0, .tv_nsec = 100000 /*/ (1 << scale)*/ };
         sigset_t sigmask;
         memset(&sigmask, sizeof(sigset_t), 0);        
+        //log::inform("Waiting for {0} io events...", uring.ExpectationCount());
         int result = io_uring_submit_and_wait_timeout(uring.get(), &temp, uring.ExpectationCount(), &ts, &sigmask);
         
-        if(result > 0 && temp != nullptr) 
+        if(result >= 0) 
         {
-            return uring.ConsumeCQEntries(temp, result);
+            if(temp != nullptr)
+            {
+                //log::inform("Got {0} io events with temp CQE.", result);
+                if( result == 0)
+                {
+                    return uring.ConsumeCQEntries();
+                }
+                else
+                {
+                    return uring.ConsumeCQEntries(temp, result);
+                }
+            }
+            else
+            {
+                //log::inform("Got {0} io events with no temp CQE.", result);
+                return uring.ConsumeCQEntries();
+            }
         }
         else if (result < 0)
-        {
-            if(result == 0 || result == -ETIME || result == -EINTR)
+        {            
+            if(result == -EINTR || result == -EAGAIN)
             {
                 return 0;
             }
-            serious("IOUring error");
-        }
-        else
-        {
-            return uring.ConsumeCQEntriesNonBlocking();
+            if(result != -ETIME)
+            {
+                serious("IOUring error");
+            }
         }
         return result;
     }

@@ -22,30 +22,24 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOPROTOCOL
-#define QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOPROTOCOL
+#ifndef QOR_PP_H_EXAMPLES_HYDRA_WORKFLOW
+#define QOR_PP_H_EXAMPLES_HYDRA_WORKFLOW
 
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
-#include "src/framework/application/irunable.h"
-#include "src/framework/pipeline/pipeline.h"
-#include "src/framework/pipeline/copyfilter.h"
+#include "sdk/using_framework.h"
 
-class EchoProtocol : public qor::framework::IRunable
+class HydraWorkflow : public Workflow
 {
 public:
 
-    static constexpr size_t maxEchoSize = 1024;
+    HydraWorkflow();
+    virtual ~HydraWorkflow() = default;
 
-    EchoProtocol(qor::ref_of<qor::pipeline::Pipeline>::type pipeline);
-    virtual ~EchoProtocol() noexcept = default;
-    virtual int Run(void);
-        
 private:
-    qor::pipeline::CopyFilter m_copyFilter;
-    qor::ref_of<qor::pipeline::Pipeline>::type m_Pipeline;
+
+    ref_of<State>::type setup;
+    ref_of<State>::type freakout;
+    ref_of<State>::type report;
+
 };
 
-#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOPROTOCOL
-
-//marked for auto reiveew 04/11/2025
+#endif//QOR_PP_H_EXAMPLES_HYDRA_WORKFLOW

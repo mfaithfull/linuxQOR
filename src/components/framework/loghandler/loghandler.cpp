@@ -31,7 +31,7 @@
 
 namespace qor{ namespace components {
 
-    LogHandler::LogHandler(log::Level logLevel) : m_level(logLevel), m_writeToStandardOutput(false), m_forward(true)
+    LogHandler::LogHandler(log::Level logLevel) : qor::IssueHandler<log::Log>(), m_level(logLevel), m_writeToStandardOutput(false), m_forward(true)
     {
     }
 

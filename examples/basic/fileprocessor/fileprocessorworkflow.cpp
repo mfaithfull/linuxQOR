@@ -49,7 +49,7 @@ FileProcessorWorkflow::FileProcessorWorkflow() : state0(new_ref<qor::workflow::S
                 
         ref_of<FileProcessorApp>::type application = new_ref<FileProcessorApp>();    
         std::string filename = application->GetFileName();
-        auto filesystem = ThePlatform()->GetSubsystem<FileSystem>();
+        auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
         FileIndex newIndex(filesystem->CurrentPath(), "large_output.json");
 
         auto refReadFile = filesystem->Open(newIndex, IFileSystem::OpenFor::ReadOnly, IFileSystem::WithFlags::Exclusive);

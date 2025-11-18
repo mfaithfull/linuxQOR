@@ -29,14 +29,18 @@ namespace qor{ namespace framework{
 
     AppBuilder::AppBuilder()
     {
-        //If we need to do any one time setup for the QOR overall such as registering types
-        //this might be the place to do it
     }
 
     ref_of<Application>::type AppBuilder::Build(const std::string name, const int argc, const char** argv, const char** env)
     {
         auto application = new_ref<Application>();
         application->Name() = name;
+        return application;
+    }
+
+    ref_of<Application>::type AppBuilder::TheApplication()
+    {
+        auto application = new_ref<Application>();
         return application;
     }
     

@@ -24,7 +24,7 @@ qor_pp_module_requires(Sockets)
 
 int main(const int argc, const char** argv, char**)
 {	
-    ThePlatform()->AddSubsystem<Sockets>();
+    ThePlatform(qor_shared)->AddSubsystem<Sockets>();
     return AppBuilder().Build(appName)->
     SetRole<Role>([](ref_of<IRole>::type role)
     {

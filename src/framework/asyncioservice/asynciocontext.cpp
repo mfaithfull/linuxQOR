@@ -61,6 +61,7 @@ namespace qor { namespace framework{
             m_processor->Reset();
             m_processorResult = m_threadPool->SubmitTask( [this]()
             {
+                CurrentThread::GetCurrent().SetName("IO Thread");
                 return m_processor->Run();
             });
         }

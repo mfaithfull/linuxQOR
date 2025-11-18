@@ -44,7 +44,8 @@ using namespace qor::log;
 using namespace qor::components;
 using namespace qor::platform;
 
-#define appName "Echo Client"
+const char* appName = "Echo Client";
+const char* logTag = "echoclient";
 
 qor_pp_implement_module(appName)
 qor_pp_module_requires(ICurrentThread)
@@ -52,12 +53,25 @@ qor_pp_module_requires(Sockets)
 qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
 
+void SetupLogging(LogHandler& logHandler, ref_of<LogAggregatorService>::type logAggregator)
+{
+    qor::connect(
+        logHandler, &qor::components::LogHandler::forward, 
+        logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog, 
+        qor::ConnectionKind::QueuedConnection);
+
+    auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
+    auto logPath = fileSystem(qor_shared).ApplicationLogPath() / logTag;
+    logAggregator(qor_shared).Receiver().WriteToFileSystem(logPath, logTag);
+    logAggregator(qor_shared).Receiver().WriteToStandardOutput(true);
+}
+
 int main(const int argc, const char** argv, char**)
 {
     ErrorHandler errorHandler;
-    ClientLogHandler logHandler;
-    ThePlatform()->AddSubsystem<Sockets>();
-    ThePlatform()->AddSubsystem<FileSystem>();
+    ClientLogHandler logHandler(log::Level::Debug);
+    ThePlatform(qor_shared)->AddSubsystem<Sockets>();
+    ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build(appName)->
         SetRole<Role>(
@@ -73,10 +87,7 @@ int main(const int argc, const char** argv, char**)
                 role->AddFeature<LogAggregatorService>(
                     [&logHandler](ref_of<LogAggregatorService>::type logAggregator)->void
                     {
-                        qor::connect(logHandler, &qor::components::LogHandler::forward, 
-                            logAggregator->Receiver(), &qor::components::LogReceiver::ReceiveLog, qor::ConnectionKind::QueuedConnection);
-                        logAggregator->Receiver().WriteToFileSystem(qor::platform::Path("/var/log/echoclient"), "echoclient");
-                        logAggregator->Receiver().WriteToStandardOutput(false);
+                        SetupLogging(logHandler, logAggregator);
                     }
                 );
             }

@@ -77,15 +77,12 @@ namespace qor{ namespace pipeline{
 
     void Buffer::Reset(size_t itemCount)
     {
-        if(itemCount == 0 || itemCount == m_allocationCount)
-        {
-            m_readBegin = 0;
-            m_readEnd = 0;
-            m_writeBegin = 0;
-            m_writeEnd = 0;
-        }
-        else //Only reallocate if the size actually changes
-        {
+        m_readBegin = 0;
+        m_readEnd = 0;
+        m_writeBegin = 0;
+        m_writeEnd = 0;
+        if(itemCount != 0 && itemCount != m_allocationCount)
+        {   //Only reallocate if the size actually changes
             SetCapacity(itemCount);
         }
     }

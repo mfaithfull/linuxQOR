@@ -35,7 +35,7 @@ namespace qor{ namespace nslinux{ namespace framework{
     {
         public:
 
-        AcceptOperation(const IOUring &uring, int fd, struct sockaddr *addr, socklen_t *addrlen, int flags) : m_sqe(uring.GetSQE())
+        AcceptOperation(IOUring &uring, int fd, struct sockaddr *addr, socklen_t *addrlen, int flags) : m_sqe(uring.GetSQE())
         {
             m_sqe.PrepareAccept(fd, addr, addrlen, flags);
             m_ring = const_cast<IOUring*>(&uring);

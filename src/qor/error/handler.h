@@ -51,7 +51,7 @@ namespace qor{
 
 		virtual ~BaseIssueHandler(){}
 
-        virtual bool Handle(const Issue<What>& issue) const
+        virtual bool Handle(const Issue<What>& issue)
         {
             return false;//false here means failure to resolve the issue
         }        

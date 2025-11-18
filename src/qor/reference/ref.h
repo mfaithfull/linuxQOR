@@ -30,6 +30,9 @@
 #include "src/qor/instance/instance.h"
 #include "src/qor/memory/memory.h"
 
+#define qor_shared )(
+#define qor_shared_ref )()(
+	
 namespace qor{
 
 	//A counted reference class for managed objects
@@ -156,13 +159,13 @@ namespace qor{
 			{
 				Lock();
 				unsigned long ulResult = ++m_ulRefCount;
-				//Unlock();
+				Unlock();
 				return ulResult;
 			}
 			
 			unsigned long Release(void)
 			{
-				//Lock();
+				Lock();
 				unsigned long ulResult = m_ulRefCount > 0 ? --m_ulRefCount : 0;
 				Unlock();
 
@@ -269,9 +272,34 @@ namespace qor{
 	template< class T > 
 	class Ref final
 	{
-	public:
+	public:	
 
 		typedef detail::SharedRef<T> _tInternalRef;
+
+		class Ptr
+		{
+		public:
+			Ptr(const Ref& r) : m(r)
+			{
+				m.Lock();
+			}
+
+			T* operator -> () const
+			{
+				return m.m_p->ptr();
+			}
+
+			T& operator ()()
+			{
+				return *(m.m_p->ptr());
+			}
+
+			~Ptr()
+			{
+				m.Unlock();
+			}
+			const Ref& m;
+		};	
 
 		constexpr Ref() : m_p(nullptr) {}
 
@@ -337,13 +365,25 @@ namespace qor{
 			return m_p ? m_p->ptr() : nullptr;
 		}
 
-		T& operator() (void) const
+		//T& operator() (void) const
+		const Ptr operator()(void) const
 		{
 			if (m_p == nullptr)
 			{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
-			return *(m_p->ptr());
+			//return *(m_p->ptr());
+			return Ptr(*this);
+		}
+
+		Ptr operator()(void)
+		{
+			if (m_p == nullptr)
+			{
+				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
+			}
+			//return *(m_p->ptr());
+			return Ptr(*this);
 		}
 
 		T* operator -> () const
@@ -352,7 +392,7 @@ namespace qor{
 			{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
-			return m_p->ptr();
+			return m_p->ptr();			
 		}
 
 		operator const T& () const

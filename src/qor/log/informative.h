@@ -33,9 +33,12 @@ namespace qor{ namespace log {
         public LevelTemplateIssue<Level::Informative>
     {
     public:
-        Informative(const std::string& message);
+        Informative(const std::string& message, IFunctionContext* fContext = nullptr);
+        Informative(const Informative& src) : LevelTemplateIssue<Level::Informative>(src) {}
+        Informative(Informative&& src) noexcept : LevelTemplateIssue<Level::Informative>(src) {}
         virtual ~Informative() noexcept = default;
         Informative& operator = (const Informative& src);
+        Informative& operator = (Informative&& src) noexcept;
         virtual void Handle();
     };
 

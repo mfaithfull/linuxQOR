@@ -22,22 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "echoprotocol.h"
+#ifndef QOR_PP_H_EXAMPLES_HYDRA_REQUESTPIPELINE
+#define QOR_PP_H_EXAMPLES_HYDRA_REQUESTPIPELINE
 
-EchoProtocol::EchoProtocol(qor::ref_of<qor::pipeline::Pipeline>::type pipeline) : m_Pipeline(pipeline)
+#include "sdk/using_framework.h"
+#include "sdk/components/framework.h"
+
+#include "request.h"
+
+class RequestPipeline : public Pipeline
 {
-    m_Pipeline->GetSink()->GetBuffer()->SetCapacity(maxEchoSize);
-    m_Pipeline->GetSource()->GetBuffer()->SetCapacity(maxEchoSize);
-    m_copyFilter.SetParent(m_Pipeline);        
-    m_copyFilter.SetSink(m_Pipeline->GetSink());
-    m_copyFilter.SetSource(m_Pipeline->GetSource());
-}
+public:
 
-int EchoProtocol::Run(void)
-{ 
-    size_t unitsPumped = 0;
-    m_copyFilter.PumpSome(unitsPumped, maxEchoSize);
-    return unitsPumped;
-}
+    RequestPipeline(ref_of<SocketClientConnector>::type connector);
+    virtual ~RequestPipeline() = default;
 
+private:    //stdin -> socket
+
+    ByteBuffer m_requestBuffer;
+    RandomSource m_source;
+    SocketSink m_socketSink;
+    ref_of<SocketClientConnector>::type m_socketConnector;
+};
+
+#endif // QOR_PP_H_EXAMPLES_HYDRA_REQUESTPIPELINE

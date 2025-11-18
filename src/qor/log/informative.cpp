@@ -23,13 +23,16 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <iostream>
+
 #include "src/qor/error/error.h"
 #include "informative.h"
 #include "handler.h"
 
 namespace qor{ namespace log{
 
-    Informative::Informative(const std::string& message) : LevelTemplateIssue<Level::Informative>(message)
+    Informative::Informative(const std::string& message, IFunctionContext* fContext) : LevelTemplateIssue<Level::Informative>(message,fContext)
     {
     }
 
@@ -39,6 +42,12 @@ namespace qor{ namespace log{
         return *this;
     }
     
+    Informative& Informative::operator = (Informative&& src) noexcept
+    {
+        LevelTemplateIssue<Level::Informative>::operator = (src);
+        return *this;
+    }
+
     void Informative::Handle()
     {
         auto informHandler = new_ref< IssueHandler<Informative> >();
@@ -52,6 +61,10 @@ namespace qor{ namespace log{
             if(!logHandler.IsNull())
             {
                 logHandler->Handle(*this);
+            }
+            else
+            {
+                std::cerr << "No log handler installed." << this->m_what->Content() << std::endl;
             }
         }
     }

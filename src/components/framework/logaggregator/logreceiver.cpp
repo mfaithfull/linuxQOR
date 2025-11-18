@@ -51,7 +51,7 @@ namespace qor { namespace components{
 
     void LogReceiver::WriteToFileSystem(Path path, const std::string& fileNamePrefix)
     {
-        auto filesystem = ThePlatform()->GetSubsystem<FileSystem>();
+        auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
 
         FileIndex pathIndex(path,"");
         if(!pathIndex.Exists())
@@ -89,8 +89,12 @@ namespace qor { namespace components{
 
     void LogReceiver::Stop()
     {
-        m_running = false;
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            m_running = false;
+        }
         m_alarm.notify_one();
+        m_running = false;
     }
 
     void LogReceiver::queueSlot(PendingSlot data, ConnectionKind type)

@@ -34,7 +34,7 @@ namespace qor{
     {
     public:
 
-        SeverityWhat(const ref_of<SeverityWhat>::type& src) : What(src()), m_severity(src->m_severity)
+        SeverityWhat(const ref_of<SeverityWhat>::type& src) : What(src->Content()), m_severity(src->m_severity)
         {}
 
         SeverityWhat(const std::string& what, Severity severity) : What(what), m_severity(severity)

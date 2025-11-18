@@ -28,7 +28,8 @@
 #include <liburing.h>
 #include <functional>
 #include <system_error>
-#include <semaphore>
+#include <mutex>
+#include <condition_variable>
 
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/sync/asyncmanualresetevent.h"
@@ -90,6 +91,8 @@ namespace qor{ namespace nslinux{ namespace framework{
             void PrepareWrite(int fd, const byte* buffer, size_t byteCount, off_t offset);
             void PrepareWriteV(int fd, const iovec* iovecs, unsigned int nr_vecs, off_t offset);
             void PrepareSend(int fd, const byte* buffer, size_t len, int flags);
+            void PrepareRecv(int fd, byte* byffer, size_t byteCount, int flags);
+            void PrepareShutdown(int fd, int how);
 
         private:
             io_uring_sqe* m_;
@@ -109,7 +112,7 @@ namespace qor{ namespace nslinux{ namespace framework{
 
         void Submit() const;
         void RemoteSubmit();
-        SQE GetSQE() const;
+        SQE GetSQE();
         CQEIterator CQEIteratorInit();
         void CQAdvance(unsigned int nr);
         int Peek(IOUring::CQE& temp);
@@ -119,8 +122,9 @@ namespace qor{ namespace nslinux{ namespace framework{
         int ConsumeCQEntries(io_uring_cqe* entries, size_t count);
         unsigned int ExpectationCount() const;
         
-        //AsyncManualResetEvent trigger;
-        std::counting_semaphore<256> sem;
+        //std::counting_semaphore<256> sem;
+        std::condition_variable_any m_cond;
+        std::recursive_mutex m_guard;
     private:
 
         struct io_uring m_ring;

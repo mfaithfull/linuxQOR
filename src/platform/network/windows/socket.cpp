@@ -153,7 +153,7 @@ namespace qor{ namespace network{ namespace nswindows{
         return WS2::setsockopt(m_handle, level, optname, optval, optlen);
     }
  
-    qor::framework::IOTask Socket::AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
+    task<int32_t> Socket::AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
     {
         return ioContext.Recv(this, (byte*)pBuffer, iLen);
     }

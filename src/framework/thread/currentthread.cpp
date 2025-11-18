@@ -96,7 +96,7 @@ namespace qor{
 
 	CurrentThread& CurrentThread::GetMutableCurrent()
 	{
-        return detail::GetCurrentThreadHolder()->Instance()();
+        return detail::GetCurrentThreadHolder()->Instance()()();
 	}
 
 

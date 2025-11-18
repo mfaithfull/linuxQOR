@@ -49,6 +49,7 @@ namespace qor{ namespace nslinux{ namespace framework{
             requestData.handle = handle;
             entry.SetData(&requestData);
             m_ring->RemoteSubmit();
+            m_ring->m_guard.unlock();
         }
 
         int await_resume() 

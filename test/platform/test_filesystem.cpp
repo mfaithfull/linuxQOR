@@ -46,14 +46,14 @@ bool requiresFileSystem = qor::ImplementsIFileSystem();
 qor_pp_test_suite_case(FileSystemTestSuite, canCreatefileSytemInstance)
 {    
     auto ref = new_ref<FileSystem>();
-    qor_pp_assert_that( &(ref()) ).isNotNull();
+    qor_pp_assert_that( &(ref()()) ).isNotNull();
 }
 
 qor_pp_test_suite_case(FileSystemTestSuite, canGetRootFolder)
 {    
     auto fileSystem = new_ref<FileSystem>();
-    fileSystem().Setup();
-    Folder rootFolder(fileSystem().GetRoot().Path());
+    fileSystem->Setup();
+    Folder rootFolder(fileSystem->GetRoot().Path());
 
     std::cout << rootFolder.Path().ToString();
     qor_pp_assert_that( rootFolder.Path().ToString().empty() ).isFalse();
@@ -62,8 +62,8 @@ qor_pp_test_suite_case(FileSystemTestSuite, canGetRootFolder)
 qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolderRegularFiles)
 {
     auto fileSystem = new_ref<FileSystem>();
-    fileSystem().Setup();
-    Folder currentFolder(fileSystem().CurrentPath());
+    fileSystem->Setup();
+    Folder currentFolder(fileSystem->CurrentPath());
     std::cout << std::endl;
     currentFolder.Enumerate( [](FileIndex& i) ->bool {
         if(i.IsRegularFile())
@@ -78,29 +78,29 @@ qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolderRegularFile
 qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFile)
 {
     auto fileSystem = new_ref<FileSystem>();
-    fileSystem().Setup();
-    FileIndex newIndex(fileSystem().CurrentPath(), "TestTemp");
-    auto refFile = fileSystem().Create(newIndex, IFileSystem::WithFlags::CreateNew);
-    fileSystem().Delete(newIndex);
+    fileSystem->Setup();
+    FileIndex newIndex(fileSystem->CurrentPath(), "TestTemp");
+    auto refFile = fileSystem->Create(newIndex, IFileSystem::WithFlags::CreateNew);
+    fileSystem->Delete(newIndex);
 }
 
 qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFolder)
 {
     auto fileSystem = new_ref<FileSystem>();
-    fileSystem().Setup();
-    Path currentPath(fileSystem().CurrentPath());
+    fileSystem->Setup();
+    Path currentPath(fileSystem->CurrentPath());
     Path testPath = currentPath / "TestFolder";
-    auto refFile = fileSystem().Create(testPath);
-    fileSystem().DeleteFolder(testPath);
+    auto refFile = fileSystem->Create(testPath);
+    fileSystem->DeleteFolder(testPath);
 }
 
 qor_pp_test_suite_case(FileSystemTestSuite, openAndWriteToANewFile)
 {
     auto fileSystem = new_ref<FileSystem>();
-    fileSystem().Setup();
-    FileIndex newIndex(fileSystem().CurrentPath(), "testfile2.txt");
+    fileSystem->Setup();
+    FileIndex newIndex(fileSystem->CurrentPath(), "testfile2.txt");
     {
-        auto refFile = fileSystem().Create(newIndex, IFileSystem::WithFlags::CreateNew);
+        auto refFile = fileSystem->Create(newIndex, IFileSystem::WithFlags::CreateNew);
         refFile->Flush();
         auto status = refFile->GetStatus();        
         auto fileType = refFile->GetType();
@@ -109,14 +109,14 @@ qor_pp_test_suite_case(FileSystemTestSuite, openAndWriteToANewFile)
         refFile->Write((byte*)message, len);        
     }
     
-    fileSystem().Delete(newIndex);
+    fileSystem->Delete(newIndex);
 }
 
 qor_pp_test_suite_case(FileSystemTestSuite, writeAndReadBackFileContents)
 {
     auto fileSystem = new_ref<FileSystem>();
-    fileSystem().Setup();
-    FileIndex newIndex(fileSystem().CurrentPath(), "testfile3.txt");
+    fileSystem->Setup();
+    FileIndex newIndex(fileSystem->CurrentPath(), "testfile3.txt");
     {
         static const char* message = "{\
 \"name\": \"John Doe\",\
@@ -124,13 +124,13 @@ qor_pp_test_suite_case(FileSystemTestSuite, writeAndReadBackFileContents)
 \"isStudent\": false\
 }";
         {
-            auto refFile = fileSystem().Create(newIndex, IFileSystem::WithFlags::CreateNew);
+            auto refFile = fileSystem->Create(newIndex, IFileSystem::WithFlags::CreateNew);
             size_t len = strlen(message);
             refFile->Write((byte*)message, len);
         }
 
         {
-            auto refReadFile = fileSystem().Open(newIndex, IFileSystem::OpenFor::ReadOnly, IFileSystem::WithFlags::Exclusive);
+            auto refReadFile = fileSystem->Open(newIndex, IFileSystem::OpenFor::ReadOnly, IFileSystem::WithFlags::Exclusive);
             auto size = refReadFile->GetSize();
             pipeline::PODBuffer<byte> byteBuffer;
             byteBuffer.SetCapacity(size);
@@ -142,5 +142,5 @@ qor_pp_test_suite_case(FileSystemTestSuite, writeAndReadBackFileContents)
         }
 
     }
-    fileSystem().Delete(newIndex);
+    fileSystem->Delete(newIndex);
 }

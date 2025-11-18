@@ -139,14 +139,14 @@ namespace qor {
 		{
 			if (!m_pParent->Locked() && m_pParent->GetCallContext())
 			{
-				m_pParent->GetCallContext()->CallCompleted();//Tell call context we have completed sub function body				
-				//m_pParent->GetCallContext()->Cleanup();
+				m_pParent->GetCallContext()->CallCompleted();//Tell call context we have completed sub function body
 			}
 		}
 
         qor::framework::CurrentThread::GetCurrent().Context().UnregisterFunctionContext(this, m_pParent);
 
         Unlock();
+		/*
 		m_uiLocked = (unsigned int) - 1;
 		m_TraceDepth = 1001;
 		m_szFuncName = "deleted";
@@ -154,6 +154,7 @@ namespace qor {
 		m_szModule = "deleted";
 		m_uiLine = (unsigned int) - 1;
 		m_pParent = nullptr;
+		*/
 	}
 
 	const char* FunctionContext::Name() const
@@ -166,9 +167,13 @@ namespace qor {
 		return m_ObjContext;
 	}
 
-	void FunctionContext::Profile(const std::chrono::duration<int64_t, std::milli>)
+	void FunctionContext::Profile(const std::chrono::duration<int64_t, std::milli> duration, IFunctionContext* /*ignore*/)
 	{
-		//TODO: Find a flyer to handle the profiling info. Pass the function details along with the duration.
+        auto profileHandler = new_ref< ProfileReceiver >();
+        if(!profileHandler.IsNull())
+        {
+            profileHandler->Profile(duration, this);
+        }
 	}
 
 }//qor

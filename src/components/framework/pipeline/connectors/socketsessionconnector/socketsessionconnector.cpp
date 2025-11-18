@@ -53,7 +53,14 @@ namespace qor{ namespace components{
 
     void SocketSessionConnector::Disconnect()
     {
-        m_Socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
+        if(m_Session.IsNotNull())
+        {
+            sync_wait(m_Socket->Shutdown(*m_Session, network::sockets::eShutdown::ShutdownReadWrite));
+        }
+        else
+        {
+            m_Socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
+        }
         m_connected = false;
     }
 
@@ -64,21 +71,24 @@ namespace qor{ namespace components{
 
     int32_t SocketSessionConnector::Receive(char* buf, int32_t len, int32_t flags)
     {
+        //return m_Socket->Receive(buf, len, flags);
+        
         if(m_Session.IsNotNull())
         {
-            return m_Socket->Receive(*m_Session, buf, len);
+           return sync_wait(m_Socket->Receive(*m_Session, buf, len));
         }
         else
         {
             return m_Socket->Receive(buf, len, flags);
-        }
+        }        
     }
 
     int32_t SocketSessionConnector::Send(const char* buf, int32_t len)
     {
+        //return m_Socket->Send(buf, len);        
         if(m_Session.IsNotNull())
         {
-            return m_Socket->Send(*m_Session, buf, len);
+            return sync_wait(m_Socket->Send(*m_Session, buf, len));
         }
         else
         {

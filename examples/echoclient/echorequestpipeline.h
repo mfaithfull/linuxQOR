@@ -44,7 +44,7 @@ public:
     EchoRequestPipeline(qor::ref_of<qor::components::SocketClientConnector>::type connector);
     virtual ~EchoRequestPipeline() = default;
 
-private:
+private:    //stdin -> socket
 
     qor::pipeline::ByteBuffer m_requestBuffer;
     qor::components::StdInSource m_source;

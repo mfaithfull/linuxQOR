@@ -35,7 +35,7 @@ namespace qor{ namespace nslinux{ namespace framework{
     {
         public:
 
-        BindOperation(const IOUring &uring, int fd, struct sockaddr *addr, socklen_t addrlen) : m_sqe(uring.GetSQE())
+        BindOperation(IOUring &uring, int fd, struct sockaddr *addr, socklen_t addrlen) : m_sqe(uring.GetSQE())
         {
             m_sqe.PrepareBind(fd, addr, addrlen);
             m_ring = const_cast<IOUring*>(&uring);

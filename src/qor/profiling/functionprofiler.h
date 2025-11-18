@@ -36,20 +36,20 @@ namespace qor {
 
 	public:
 
-		FunctionProfiler(ProfileReceiver* receiver, bool enabled)  : m_Receviver(receiver), m_bProfileEnabled(enabled), m_startTime(std::chrono::high_resolution_clock::now()){};
+		FunctionProfiler(IProfileReceiver* receiver, bool enabled)  : m_Receviver(receiver), m_bProfileEnabled(enabled), m_startTime(std::chrono::high_resolution_clock::now()){};
 		
         ~FunctionProfiler()
         {
             if (m_bProfileEnabled && m_Receviver)
             {
-                m_Receviver->Profile( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_startTime) );
+                m_Receviver->Profile( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_startTime), nullptr);
             }
         }    
 
 	private:
 		bool m_bProfileEnabled;
 		std::chrono::high_resolution_clock::time_point m_startTime;
-		ProfileReceiver* m_Receviver;
+		IProfileReceiver* m_Receviver;
 	};
 
 }//qor

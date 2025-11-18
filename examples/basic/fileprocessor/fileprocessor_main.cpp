@@ -38,11 +38,11 @@ int main(const int argc, const char** argv, char**)
         }
     }
 
-    ThePlatform()->AddSubsystem<FileSystem>();
+    ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
     return AppBuilder().Build<FileProcessorApp>(appName, 
         [](ref_of<FileProcessorApp>::type app, const int argc, const char** argv, const char** env)
         {
-            OptionGetter options(argc, argv, app());
+            OptionGetter options(argc, argv, app(qor_shared));
         })->
         SetRole<Role>([](ref_of<IRole>::type role)
         {

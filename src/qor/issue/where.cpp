@@ -91,7 +91,15 @@ namespace qor{
 
     Where::Where(const ref_of<Where>::type& src)
     {
-        *this = src();
+        m_line = src->m_line;
+        m_function = src->m_function;
+        m_file = src->m_file;
+        m_thread = src->m_thread;
+        m_moduleContext = src->m_moduleContext;
+        //m_processContext = src.m_processContext;
+        m_objContext = src->m_objContext;
+        m_inInstance = src->m_inInstance;
+        m_inException = src->m_inException;
     }
 
     Where& Where::operator = (const Where& src)

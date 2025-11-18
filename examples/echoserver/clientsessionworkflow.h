@@ -29,8 +29,9 @@
 #include "src/platform/network/sockets.h"
 #include "src/platform/network/socket.h"
 #include "sessionpipeline.h"
-#include "echoprotocol.h"
 #include "errorhandler.h"
+#include "serverloghandler.h"
+#include "src/qor/profiling/profilereceiver.h"
 
 class ClientSessionWorkflow : public qor::workflow::Workflow
 {
@@ -40,11 +41,15 @@ public:
         qor::ref_of<qor::framework::SharedAsyncIOContext>::type sharedContext,
         qor::ref_of<qor::network::Socket>::type socket);
         
-    virtual ~ClientSessionWorkflow() = default;
+    virtual ~ClientSessionWorkflow();
 
 private:
 
+    ServerLogHandler m_logHandler;
     ErrorHandler m_errorHandler;
+    qor::ProfileReceiver m_profileReceiver;
+
+    static constexpr size_t maxEchoSize = 1024;
 
     qor::ref_of<qor::workflow::State>::type connected;
     qor::ref_of<qor::workflow::State>::type echo;
@@ -52,8 +57,7 @@ private:
 
     qor::ref_of<qor::framework::SharedAsyncIOContext>::type m_ioSharedContext;
     qor::ref_of<qor::network::Socket>::type m_socket;
-    qor::ref_of<SessionPipeline>::type m_pipeline;
-    qor::ref_of<EchoProtocol>::type m_protocol;
+    qor::ref_of<SessionPipeline>::type m_pipeline;    
 };
 
 #endif//QOR_PP_H_EXAMPLES_ECHOSERVER_CLIENTWORKFLOW

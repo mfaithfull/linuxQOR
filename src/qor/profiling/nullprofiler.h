@@ -34,7 +34,7 @@ namespace qor {
 
 	public:
 
-		constexpr NullProfiler(ProfileReceiver*, bool) {}
+		constexpr NullProfiler(IProfileReceiver*, bool) {}
 		~NullProfiler() = default;
 	};
 

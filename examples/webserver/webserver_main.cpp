@@ -16,7 +16,7 @@ void SetupRole(ref_of<IRole>::type role);
 
 int main()
 {	
-    ThePlatform()->AddSubsystem<Sockets>();
+    ThePlatform(qor_shared)->AddSubsystem<Sockets>();
     auto application = AppBuilder().Build("QOR HTTP Server");
     application->SetRole<Role>( &SetupRole );
     return application->RunWorkflow<Workflow>();

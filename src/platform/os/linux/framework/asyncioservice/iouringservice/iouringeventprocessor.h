@@ -35,7 +35,7 @@ namespace qor{ namespace nslinux{ namespace framework{
     {
     public:
         
-        IOUringEventProcessor() : qor::framework::AsyncIOEventProcessor(), uring(128) {}
+        IOUringEventProcessor() : qor::framework::AsyncIOEventProcessor(), uring(256) {}
         virtual ~IOUringEventProcessor() noexcept = default;
         
         const IOUring& Ring() const{ return uring; }
@@ -49,11 +49,16 @@ namespace qor{ namespace nslinux{ namespace framework{
 
             while(!m_StopRequested)
             {
-                if(uring.sem.try_acquire_for(std::chrono::seconds(1)))
+                {
+                    std::unique_lock<std::recursive_mutex> lock(uring.m_guard);
+                    auto timeout_status = uring.m_cond.wait_for(lock, std::chrono::seconds(1));
+                }
+                //if((std::cv_status::timeout != timeout_status) || (uring.ExpectationCount() > 0))
                 {
                     int result = 0;
-                    while(!m_StopRequested && result == 0)
+                    while(!m_StopRequested && (result > 0 || (uring.ExpectationCount() > 0)))
                     {
+                        std::unique_lock<std::recursive_mutex> lock(uring.m_guard);
                         result = Event();
                     }
                 }
@@ -64,9 +69,10 @@ namespace qor{ namespace nslinux{ namespace framework{
         virtual void Stop()
         {
             m_StopRequested = true;
-            uring.sem.release(1);
+            uring.m_cond.notify_one();
+            //uring.sem.release(1);
             sleep(1);
-            uring.sem.try_acquire_for(std::chrono::seconds(2));
+            //uring.sem.try_acquire_for(std::chrono::seconds(2));
         }
 
     private:

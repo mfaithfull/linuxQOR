@@ -37,6 +37,7 @@ namespace qor{ namespace framework{
         virtual ~AppBuilder() = default;
 
         ref_of<Application>::type Build(const std::string appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr);
+        ref_of<Application>::type TheApplication();
 
         template< class AppClass >
         ref_of<Application>::type Build(const std::string appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr)

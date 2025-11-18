@@ -37,37 +37,37 @@ qor_pp_module_requires(ICurrentThread)
 int main(const int argc, const char** argv, char**)
 {	
     ErrorHandler errorHandler;
-    ServerLogHandler logHandler;
+    ServerLogHandler logHandler(Level::Debug);
 
-    ThePlatform()->AddSubsystem<Sockets>();             //What subsystems it needs
-    ThePlatform()->AddSubsystem<FileSystem>();
+    ThePlatform(qor_shared)->AddSubsystem<Sockets>();             //What subsystems it needs
+    ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build<EchoServerApp>(appName,   //What it is
         [](ref_of<EchoServerApp>::type app, const int argc, const char** argv, const char** env)
         {
-            OptionGetter options(argc, argv, app());
+            OptionGetter options(argc, argv, app()());
         }
     )->SetRole<Role>(                                   //What features it has
         [&logHandler](ref_of<IRole>::type role)
         {
             role->AddFeature<ThreadPool>([](ref_of<ThreadPool>::type threadPool)->void
             {
-                threadPool->SetThreadCount(5);
+                threadPool(qor_shared).SetThreadCount(63);
                 CurrentThread::GetCurrent().SetName("Server Main");
             });
             role->AddFeature<AsyncIOService>([](ref_of<AsyncIOService>::type ioService)->void
             {
-                PoolInstancer::SetPoolSize<AsyncIOContext>(2);
+                PoolInstancer::SetPoolSize<AsyncIOContext>(4);
             });
             role->AddFeature<LogAggregatorService>(
                 [&logHandler](ref_of<LogAggregatorService>::type logAggregator)->void
                 {
                     qor::connect(logHandler, &qor::components::LogHandler::forward, 
-                        logAggregator->Receiver(), &qor::components::LogReceiver::ReceiveLog, qor::ConnectionKind::QueuedConnection);
-                    auto fileSystem = ThePlatform()->GetSubsystem<FileSystem>();
-                    auto logPath = fileSystem->ApplicationLogPath() / "echoserver";
-                    logAggregator->Receiver().WriteToFileSystem(logPath, "echoserver");
-                    logAggregator->Receiver().WriteToStandardOutput(false);
+                        logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog, qor::ConnectionKind::QueuedConnection);
+                    auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
+                    auto logPath = fileSystem(qor_shared).ApplicationLogPath() / "echoserver";
+                    logAggregator(qor_shared).Receiver().WriteToFileSystem(logPath, "echoserver");
+                    logAggregator(qor_shared).Receiver().WriteToStandardOutput(true);
                 }
             );
         }

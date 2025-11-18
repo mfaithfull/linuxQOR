@@ -95,7 +95,7 @@ namespace qor{ namespace components{
             return false;//TODO: ConnectUnixSocketToAddress();
         }
 
-        auto socketsSubsystem = ThePlatform()->GetSubsystem<network::Sockets>();
+        auto socketsSubsystem = ThePlatform(qor_shared)->GetSubsystem<network::Sockets>();
         auto service = std::to_string(port);
         std::string node;
         network::AddressInfo hints;

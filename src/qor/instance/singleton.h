@@ -130,7 +130,7 @@ namespace qor{
 	private:
 
         template< class T>
-        static detail::SingletonInstanceHolder<T>& Holder()
+        qor_pp_noinline static detail::SingletonInstanceHolder<T>& Holder()
         {
             static detail::SingletonInstanceHolder<T> holder;
             return holder;
@@ -139,7 +139,6 @@ namespace qor{
         SingletonInstancer() = delete;
 		~SingletonInstancer() = delete;
 	};
-
 }//qor
 
 #endif//QOR_PP_H_INSTANCE_SINGLETON

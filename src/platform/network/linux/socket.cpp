@@ -153,7 +153,7 @@ namespace qor{ namespace nslinux{
         return ::setsockopt(m_fd, level, optname, optval, optlen);
     }
  
-    qor::framework::IOTask Socket::AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
+    task<int32_t> Socket::AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
     {
         return ioContext.Recv(this, (byte*)pBuffer, iLen);
     }
@@ -178,7 +178,7 @@ namespace qor{ namespace nslinux{
         return ::recvfrom(m_fd, Buffer, iLen, iFlags, (sockaddr*)&addr, &socklen);
     }
  
-    qor::framework::IOTask Socket::AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+    task<int32_t> Socket::AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
     {
         return ioContext.Send(this, (byte*)Buffer, iLen, 0);
     }
@@ -206,6 +206,11 @@ namespace qor{ namespace nslinux{
         return ::shutdown(m_fd, iHow);
     }
  
+    task<int32_t> Socket::AsyncShutdown(const qor::framework::AsyncIOInterface& ioContext,  network::sockets::eShutdown how)
+    {
+        return ioContext.Shutdown(this, how);
+    }
+
     std::size_t Socket::ID(void)
     {
         return m_fd;

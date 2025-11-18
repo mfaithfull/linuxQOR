@@ -7,4 +7,4 @@ iouringservice/iouring.cpp iouringservice/iouringeventprocessor.cpp iouringservi
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-threadsafe-statics -fvisibility=hidden")
 
 target_compile_definitions(linqor_asyncioservice PRIVATE -DQOR_LINUXASYNCIOSERVICE)
-target_link_libraries(linqor_asyncioservice qor_module qor_host qor_datastructures qor_objectcontext qor_injection qor_asyncioservice qor_error uring rt)
+target_link_libraries(linqor_asyncioservice qor_module qor_host qor_datastructures qor_objectcontext qor_injection qor_asyncioservice qor_error qor_log uring rt)

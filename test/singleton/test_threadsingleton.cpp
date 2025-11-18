@@ -87,7 +87,7 @@ namespace qor {
 qor_pp_test_suite_case(ThreadSingletonTestSuite, canCreateThreadSingleton)
 {
     auto ref = new_ref<Test_ThreadSingleton>();
-    qor_pp_assert_that( &(ref()) ).isNotNull();
+    qor_pp_assert_that( &(ref()()) ).isNotNull();
 }
 
 qor_pp_test_suite_case(ThreadSingletonTestSuite, checkThreadSingletonBehaviour)

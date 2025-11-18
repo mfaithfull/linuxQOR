@@ -37,7 +37,7 @@ namespace qor { namespace components {
 
     void ConsoleCompositor::Compose(ref_of<ConsoleViewModel>::type model, ref_of<ConsoleView>::type view)
     {
-        for(auto widget: model())
+        for(auto widget: model()())
         {
             Compose(widget->GetPosition(), widget->GetSize(), widget->View(), view);
         }

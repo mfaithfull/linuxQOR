@@ -26,6 +26,7 @@
 #define QOR_PP_H_FRAMEWORK_ASYNCIOINTERFACE
 
 #include "asynciotypes.h"
+#include <future>
 
 namespace qor { namespace network {
     class qor_pp_module_interface(QOR_SOCKETS) Socket;
@@ -41,10 +42,11 @@ namespace qor { namespace framework{
         AsyncIOInterface() = default;
         virtual ~AsyncIOInterface() = default;
 
-        virtual inline IOTask Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const = 0;
-        virtual inline IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
+        virtual inline task<int> Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const = 0;
+        virtual inline task<int> Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
         virtual inline IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
         virtual inline IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog) const = 0;
+        virtual inline task<int> Shutdown(platform::IODescriptor* ioDescriptor, int how) const = 0;
         virtual inline IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const = 0;
         virtual inline IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const = 0;
         virtual inline int AcceptEx(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const = 0;
