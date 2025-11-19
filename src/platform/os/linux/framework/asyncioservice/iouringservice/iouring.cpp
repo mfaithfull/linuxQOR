@@ -206,8 +206,6 @@ namespace qor{ namespace nslinux{ namespace framework{
             if(request_data)
             {
                 request_data->statusCode = cqe->res;
-                //if(request_data->handle._M_fr_ptr)
-                //{
                 m_ExpectationCount.fetch_sub(1, std::memory_order_relaxed);
                 if(!request_data->handle.done())
                 {
@@ -215,14 +213,13 @@ namespace qor{ namespace nslinux{ namespace framework{
                 }
                 else
                 {
-                    log::inform("No associated handle {0}", cqe->res);    
+                    log::inform("Already done {0}", cqe->res);    
                 }
                 ++processed;
                 ++cqe;
             }
             else
             {
-                //log::inform("No associated request data {0}", cqe->res);
                 ++processed;
                 ++cqe;
             }
