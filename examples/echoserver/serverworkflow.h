@@ -45,7 +45,7 @@ private:
 
     const qor::network::Sockets* m_sockets;
     const qor::framework::AsyncIOService* m_io;
-    qor::framework::ThreadPool* m_threadPool;
+    qor::ref_of<qor::framework::ThreadPool>::type m_threadPool;
         
     qor::ref_of<qor::framework::AsyncIOContext>::type m_ioContext;
     qor::ref_of<qor::framework::SharedAsyncIOContext>::type m_ioSharedContext;

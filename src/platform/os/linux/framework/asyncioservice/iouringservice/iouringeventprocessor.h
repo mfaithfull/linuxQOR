@@ -50,17 +50,16 @@ namespace qor{ namespace nslinux{ namespace framework{
             while(!m_StopRequested)
             {
                 {
-                    std::unique_lock<std::recursive_mutex> lock(uring.m_guard);
-                    auto timeout_status = uring.m_cond.wait_for(lock, std::chrono::seconds(1));
+                    std::mutex dummy;
+                    std::unique_lock<std::mutex> lock(dummy);
+                    auto timeout_status = uring.m_cond.wait_for(lock, std::chrono::seconds(5));//wait while there is nothing to do
                 }
-                //if((std::cv_status::timeout != timeout_status) || (uring.ExpectationCount() > 0))
+
+                int result = 0;//Keep doing IO until we're told to stop or there are no pending coroutines to be resumed
+                while(!m_StopRequested && (result > 0 || (uring.ExpectationCount() > 0)))
                 {
-                    int result = 0;
-                    while(!m_StopRequested && (result > 0 || (uring.ExpectationCount() > 0)))
-                    {
-                        std::unique_lock<std::recursive_mutex> lock(uring.m_guard);
-                        result = Event();
-                    }
+                    std::unique_lock<std::mutex> lock(uring.m_guard);
+                    result = Event();
                 }
             }
             return 0;

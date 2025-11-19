@@ -45,20 +45,24 @@ int main(const int argc, const char** argv, char**)
     return AppBuilder().Build<EchoServerApp>(appName,   //What it is
         [](ref_of<EchoServerApp>::type app, const int argc, const char** argv, const char** env)
         {
-            OptionGetter options(argc, argv, app()());
+            OptionGetter options(argc, argv, app(qor_shared));
         }
     )->SetRole<Role>(                                   //What features it has
         [&logHandler](ref_of<IRole>::type role)
         {
-            role->AddFeature<ThreadPool>([](ref_of<ThreadPool>::type threadPool)->void
-            {
-                threadPool(qor_shared).SetThreadCount(63);
-                CurrentThread::GetCurrent().SetName("Server Main");
-            });
-            role->AddFeature<AsyncIOService>([](ref_of<AsyncIOService>::type ioService)->void
-            {
-                PoolInstancer::SetPoolSize<AsyncIOContext>(4);
-            });
+            role->AddFeature<ThreadPool>(
+                [](ref_of<ThreadPool>::type threadPool)->void
+                {
+                    threadPool(qor_shared).SetThreadCount(16);
+                    CurrentThread::GetCurrent().SetName("Server Main");
+                }
+            );
+            role->AddFeature<AsyncIOService>(
+                [](ref_of<AsyncIOService>::type ioService)->void
+                {
+                    PoolInstancer::SetPoolSize<AsyncIOContext>(4);
+                }
+            );
             role->AddFeature<LogAggregatorService>(
                 [&logHandler](ref_of<LogAggregatorService>::type logAggregator)->void
                 {

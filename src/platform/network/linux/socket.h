@@ -49,7 +49,7 @@ namespace qor{ namespace nslinux{
         virtual int32_t Listen(int32_t iBacklog);
         virtual int32_t Listen(const qor::framework::AsyncIOInterface& ioContext, int32_t iBacklog);
         virtual ref_of<network::Socket>::type Accept(network::Address& Address);
-        virtual qor::framework::IOTask AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket);
+        virtual task<int32_t> AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket);
         virtual int32_t Connect(const network::Address& Address);
         virtual int32_t GetPeerName(network::Address& Address);
         virtual int32_t GetSockName(network::Address& Address);

@@ -67,9 +67,10 @@ namespace qor { namespace framework{
             co_return ioResult.status_code;
         }
 
-        virtual inline IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual inline task<int> Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
         {
-            return m_initiator->Read(ioDescriptor, buffer, len);
+            auto ioResult = co_await m_initiator->Read(ioDescriptor, buffer, len);
+            co_return ioResult.status_code;
         }
 
         virtual inline task<int> Shutdown(platform::IODescriptor* ioDescriptor, int how) const
@@ -78,22 +79,23 @@ namespace qor { namespace framework{
             co_return ioResult.status_code;
         }
 
-        virtual inline IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog) const
+        virtual inline task<int> Listen(platform::IODescriptor* ioDescriptor, int backlog) const
         {
-            return m_initiator->Listen(ioDescriptor, backlog);
+            auto ioResult = co_await m_initiator->Listen(ioDescriptor, backlog);
+            co_return ioResult.status_code;
         }
 
-        virtual inline IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
+        virtual inline task<int> Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
         {
-            return m_initiator->Bind(ioDescriptor, Address);
+            auto ioResult = co_await m_initiator->Bind(ioDescriptor, Address);
+            co_return ioResult.status_code;
         }
 
-        virtual inline IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
+        virtual inline task<int> Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
         {
-            return m_initiator->Accept(ioDescriptor, Address, Socket);
+            auto ioResult = co_await m_initiator->Accept(ioDescriptor, Address, Socket);
+            co_return ioResult.status_code;
         }
-
-        virtual int AcceptEx(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const;
 
     private:
 

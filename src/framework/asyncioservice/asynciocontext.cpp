@@ -77,14 +77,4 @@ namespace qor { namespace framework{
     }
 
 
-    int AsyncIOContext::AcceptEx(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
-    {
-        auto acceptTask = [&]() -> task<AsyncIOResult>
-        {
-            co_await m_threadPool->Schedule();
-            m_initiator->Accept(ioDescriptor, Address, Socket);
-        };
-        return sync_wait(acceptTask()).status_code;
-    }
-
 }}//qor::framework

@@ -53,7 +53,6 @@ namespace qor{ namespace nslinux{ namespace framework{
         
         AsyncIOService();
         virtual ~AsyncIOService() noexcept = default;
-
     };
 
 }}}//qor::nslinux::framework

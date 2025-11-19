@@ -49,7 +49,7 @@ namespace qor{ namespace nslinux{ namespace framework{
             requestData.handle = handle;
             entry.SetData(&requestData);
             m_ring->RemoteSubmit();
-            m_ring->m_guard.unlock();
+            m_ring->m_guard.unlock();//We must have the ring in order to submit entires and here we must give it up to allow it to be submitted.
         }
 
         int await_resume() 

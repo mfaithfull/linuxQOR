@@ -71,8 +71,6 @@ namespace qor{ namespace components{
 
     int32_t SocketSessionConnector::Receive(char* buf, int32_t len, int32_t flags)
     {
-        //return m_Socket->Receive(buf, len, flags);
-        
         if(m_Session.IsNotNull())
         {
            return sync_wait(m_Socket->Receive(*m_Session, buf, len));
@@ -85,7 +83,6 @@ namespace qor{ namespace components{
 
     int32_t SocketSessionConnector::Send(const char* buf, int32_t len)
     {
-        //return m_Socket->Send(buf, len);        
         if(m_Session.IsNotNull())
         {
             return sync_wait(m_Socket->Send(*m_Session, buf, len));

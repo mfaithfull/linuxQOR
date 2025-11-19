@@ -51,8 +51,7 @@ using namespace qor::network::sockets;
 using namespace qor::components;
 
 ClientSessionWorkflow::ClientSessionWorkflow(
-    ref_of<qor::framework::SharedAsyncIOContext>::type sharedContext,
-    ref_of<Socket>::type socket) : 
+    ref_of<qor::framework::SharedAsyncIOContext>::type sharedContext, ref_of<Socket>::type socket) : 
     m_logHandler(log::Level::Debug),
     connected(new_ref<workflow::State>(this)),
     echo(new_ref<workflow::State>(this)),
@@ -62,19 +61,22 @@ ClientSessionWorkflow::ClientSessionWorkflow(
 {
     
     qor_pp_ofcontext;
-    m_logHandler.WriteToStandardOutput(false);
+    
     auto application = new_ref<EchoServerApp>();
-    auto logAggregator = application(qor_shared).GetRole()->GetFeature<LogAggregatorService>();
-    qor::connect(m_logHandler, &qor::components::LogHandler::forward, 
+    auto logAggregator = application(qor_shared).GetRole(qor_shared)->GetFeature<LogAggregatorService>();
+    if( qor::connect(m_logHandler, &qor::components::LogHandler::forward, 
         logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog, 
-        qor::ConnectionKind::QueuedConnection);
+        qor::ConnectionKind::QueuedConnection) )
+    {
+        m_logHandler.WriteToStandardOutput(false);
+    }
 
     connected->Enter = [this]()->void
     {
         qor_pp_ofcontext;
         qor::log::inform("Servicing a connected client {0}", m_socket->m_fd);
 
-        auto ioSession = m_ioSharedContext->GetSession();
+        auto ioSession = m_ioSharedContext(qor_shared).GetSession();
         if(ioSession.IsNull()){ warning("Out of IO contexts. IO will proceed synchronously.");}
 
         m_pipeline = new_ref<SessionPipeline>(m_socket, ioSession);
@@ -107,8 +109,8 @@ ClientSessionWorkflow::ClientSessionWorkflow(
 
 ClientSessionWorkflow::~ClientSessionWorkflow()
 {
-    auto application = weak_ref<EchoServerApp>();
-    auto logAggregator = application->GetRole()->GetFeature<LogAggregatorService>();
+    auto application = new_ref<EchoServerApp>();
+    auto logAggregator = application(qor_shared).GetRole(qor_shared)->GetFeature<LogAggregatorService>();
     qor::disconnect(m_logHandler, &qor::components::LogHandler::forward, 
         logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog);
 

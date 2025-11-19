@@ -37,13 +37,16 @@ namespace qor{ namespace network{
 
     Socket::Socket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol)
     {
+        m_objectType = guid_of<Socket>::guid();
     }
 
-    framework::IOTask Socket::AcceptAsync(const framework::AsyncIOInterface& ioContext, Address& ClientAddress, Socket* Socket)
+    task<int32_t> Socket::AcceptAsync(const framework::AsyncIOInterface& ioContext, Address& ClientAddress, Socket* Socket)
     {
         //Provide an override implementation specific to your platform
-        qor::framework::AsyncIOResult result;
-        co_return result;
+         return []()->task<int32_t>
+        {
+            co_return -1;
+        }();
     }
 
     ref_of<Socket>::type Socket::Accept(const framework::AsyncIOInterface& ioContext, Address& ClientAddress)
@@ -53,11 +56,8 @@ namespace qor{ namespace network{
             network::sockets::eType::Sock_Stream, 
             network::sockets::eProtocol::IPProto_IP);
 
-        auto result = sync_wait([this,&ioContext,&ClientAddress,clientSocket]() -> task<framework::AsyncIOResult>
-	    {
-            return AcceptAsync(ioContext, ClientAddress, clientSocket);
-        }());
-        ioContext.Enroll(clientSocket()());
+        auto result = sync_wait(AcceptAsync(ioContext, ClientAddress, clientSocket));
+        ioContext.Enroll(*clientSocket);
         return clientSocket;
     }
         

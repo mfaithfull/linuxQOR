@@ -59,9 +59,9 @@ ServerWorkflow::ServerWorkflow() :
     bind->Enter = [this]()->void
     {
         qor_pp_ofcontext;
-        auto application = weak_ref<EchoServerApp>();
-        m_io = application->GetRole()->GetFeature<AsyncIOService>();
-        m_threadPool = application->GetRole()->GetFeature<ThreadPool>();
+        auto application = new_ref<EchoServerApp>();
+        m_io = application(qor_shared).GetRole()->GetFeature<AsyncIOService>();
+        m_threadPool = application(qor_shared).GetRole()->GetFeature<ThreadPool>();
         m_sockets = ThePlatform(qor_shared)->GetSubsystem<Sockets>();
         m_ioContext = m_io->Context();
         m_ioSharedContext = m_io->SharedContext();

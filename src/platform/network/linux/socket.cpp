@@ -67,21 +67,15 @@ namespace qor{ namespace nslinux{
     
     int32_t Socket::Bind(const qor::framework::AsyncIOInterface& ioContext, const network::Address& Address)
     {
-        return sync_wait([this,&ioContext,Address]() -> task<qor::framework::AsyncIOResult>
-	    {
-            return ioContext.Bind(this, Address);
-        }()).status_code;
+        return sync_wait(ioContext.Bind(this, Address));
     }
     
     int32_t Socket::Listen(const qor::framework::AsyncIOInterface& ioContext, int32_t backlog)
     {
-        return sync_wait([this,&ioContext,backlog]() -> task<qor::framework::AsyncIOResult>
-	    {
-            return ioContext.Listen(this, backlog);
-        }()).status_code;
+        return sync_wait(ioContext.Listen(this, backlog));
     }
 
-    qor::framework::IOTask Socket::AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket)
+    task<int32_t> Socket::AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket)
     {
         return ioContext.Accept(this, Address, Socket);
     }
@@ -208,7 +202,11 @@ namespace qor{ namespace nslinux{
  
     task<int32_t> Socket::AsyncShutdown(const qor::framework::AsyncIOInterface& ioContext,  network::sockets::eShutdown how)
     {
-        return ioContext.Shutdown(this, how);
+        int iHow = 0;
+        iHow = ( how & network::sockets::eShutdown::ShutdownRead ) ? SHUT_RD : iHow;
+        iHow = ( how & network::sockets::eShutdown::ShutdownWrite ) ? SHUT_WR : iHow;
+        iHow = ( how & network::sockets::eShutdown::ShutdownReadWrite ) ? SHUT_RDWR : iHow;
+        return ioContext.Shutdown(this, iHow);
     }
 
     std::size_t Socket::ID(void)
@@ -244,7 +242,6 @@ namespace qor{ namespace nslinux{
         auto timeout = static_cast<int>(sec * 1000 + usec / 1000);
         return handle_EINTR([&]() { return ::poll(&pfd, 1, timeout); });
     }
-
 
     bool Socket::IsAlive()
     {        

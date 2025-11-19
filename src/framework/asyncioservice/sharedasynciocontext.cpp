@@ -35,14 +35,11 @@ namespace qor { namespace framework{
 
     SharedAsyncIOContext::~SharedAsyncIOContext()
     {
-        //m_access.Acquire();
-        //m_access.Release();
     }
 
     ref_of<SharedAsyncIOContext::Session>::type SharedAsyncIOContext::GetSession()
     {
         return new_ref<Session>(this);
     }
-
 
 }}//qor::framework

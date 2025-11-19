@@ -122,9 +122,8 @@ namespace qor{ namespace nslinux{ namespace framework{
         int ConsumeCQEntries(io_uring_cqe* entries, size_t count);
         unsigned int ExpectationCount() const;
         
-        //std::counting_semaphore<256> sem;
-        std::condition_variable_any m_cond;
-        std::recursive_mutex m_guard;
+        std::condition_variable m_cond;
+        std::mutex m_guard;
     private:
 
         struct io_uring m_ring;

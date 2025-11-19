@@ -54,7 +54,7 @@ namespace qor{ namespace network{
         virtual int32_t Listen(const framework::AsyncIOInterface& ioContext, int32_t iBacklog);
         virtual ref_of<Socket>::type Accept(Address& Address);
                 ref_of<Socket>::type Accept(const framework::AsyncIOInterface& ioContext, Address& Address);
-        virtual framework::IOTask AcceptAsync(const framework::AsyncIOInterface& ioContext, Address& Address, Socket* Socket);
+        virtual task<int32_t> AcceptAsync(const framework::AsyncIOInterface& ioContext, Address& Address, Socket* Socket);
         virtual int32_t Connect(const Address& Address);
         virtual int32_t GetPeerName(Address& Address);
         virtual int32_t GetSockName(Address& Address);

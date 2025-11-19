@@ -36,30 +36,35 @@ namespace qor{ namespace nslinux{ namespace framework{
     int IOUringEventProcessor::Event()
     {
         io_uring_cqe *temp = nullptr;
-        __kernel_timespec ts{ .tv_sec = 0, .tv_nsec = 100000 /*/ (1 << scale)*/ };
+        __kernel_timespec ts{ .tv_sec = 0, .tv_nsec = 50000 /*/ (1 << scale)*/ };
         sigset_t sigmask;
         memset(&sigmask, sizeof(sigset_t), 0);        
-        //log::inform("Waiting for {0} io events...", uring.ExpectationCount());
-        int result = io_uring_submit_and_wait_timeout(uring.get(), &temp, uring.ExpectationCount(), &ts, &sigmask);
+        unsigned wait_nr = uring.ExpectationCount();
+        if( wait_nr == 0)
+        {
+            wait_nr = 1;
+        }
+        int result = io_uring_submit_and_wait_timeout(uring.get(), &temp, wait_nr, &ts, &sigmask);
         
         if(result >= 0) 
         {
             if(temp != nullptr)
             {
-                //log::inform("Got {0} io events with temp CQE.", result);
+                return uring.ConsumeCQEntries();
+                /*
                 if( result == 0)
                 {
                     return uring.ConsumeCQEntries();
                 }
                 else
                 {
-                    return uring.ConsumeCQEntries(temp, result);
+                    return uring.ConsumeCQEntries(temp, wait_nr);
                 }
+                */
             }
             else
             {
-                //log::inform("Got {0} io events with no temp CQE.", result);
-                return uring.ConsumeCQEntries();
+                return 0;
             }
         }
         else if (result < 0)

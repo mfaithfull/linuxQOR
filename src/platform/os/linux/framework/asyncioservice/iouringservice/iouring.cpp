@@ -42,8 +42,7 @@ namespace qor{ namespace nslinux{ namespace framework{
     }
 
     IOUring::SQE IOUring::GetSQE()
-    {
-        std::unique_lock<std::recursive_mutex> lock(m_guard);
+    {        
         IOUring::SQE sqe( io_uring_get_sqe(const_cast<io_uring*>(&m_ring)));
         return sqe;
     }
@@ -97,7 +96,7 @@ namespace qor{ namespace nslinux{ namespace framework{
 
     IOUring::~IOUring() 
     { 
-        std::unique_lock<std::recursive_mutex> lock(m_guard);
+        std::unique_lock<std::mutex> lock(m_guard);
         io_uring_queue_exit(&m_ring); 
     }
 
@@ -168,16 +167,20 @@ namespace qor{ namespace nslinux{ namespace framework{
 
     int IOUring::ConsumeCQEntries()
     {
-        std::unique_lock<std::recursive_mutex> lock(m_guard);
         return ForEachCQE( [this](IOUring::CQE& cqe){
             auto *request_data = static_cast<qor::framework::AsyncIORequest*>(cqe.GetData());
             if(request_data)
             {
                 request_data->statusCode = cqe.GetResult();
-                //log::inform("Got a {0} resuming.", request_data->statusCode);
-                request_data->handle.resume();
+                if(!request_data->handle.done())
+                {
+                    request_data->handle.resume();
+                }
+                else
+                {
+                    log::inform("Already done {0}", cqe.GetResult());
+                }
                 m_ExpectationCount.fetch_sub(1, std::memory_order_relaxed);
-                //log::inform("{m_ExpectationCount} more expected result.", m_ExpectationCount.load());
             }
         });
     }
@@ -193,7 +196,6 @@ namespace qor{ namespace nslinux{ namespace framework{
 
     int IOUring::ConsumeCQEntries(io_uring_cqe* entries, size_t count)
     {
-        std::unique_lock<std::recursive_mutex> lock(m_guard);
         unsigned int processed{0};
 
         io_uring_cqe* cqe = entries;
@@ -204,16 +206,23 @@ namespace qor{ namespace nslinux{ namespace framework{
             if(request_data)
             {
                 request_data->statusCode = cqe->res;
-                //log::inform("Got a {0} resuming.", request_data->statusCode);
-                request_data->handle.resume();
+                //if(request_data->handle._M_fr_ptr)
+                //{
                 m_ExpectationCount.fetch_sub(1, std::memory_order_relaxed);
-                //log::inform("{m_ExpectationCount} more expected result.", m_ExpectationCount.load());
+                if(!request_data->handle.done())
+                {
+                    request_data->handle.resume();
+                }
+                else
+                {
+                    log::inform("No associated handle {0}", cqe->res);    
+                }
                 ++processed;
                 ++cqe;
             }
             else
             {
-                log::inform("No associated request data {0}", cqe->res);
+                //log::inform("No associated request data {0}", cqe->res);
                 ++processed;
                 ++cqe;
             }

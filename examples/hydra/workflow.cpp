@@ -46,7 +46,7 @@ HydraWorkflow::HydraWorkflow() :
         qor_pp_ofcontext;
         auto application = AppBuilder().TheApplication();
         auto threadPool = application(qor_shared).GetRole()->GetFeature<ThreadPool>();
-        const std::size_t num_tasks = 6;//threadPool->GetThreadCount() * 2000;        
+        const std::size_t num_tasks = 12;//threadPool->GetThreadCount() * 2000;        
         for (std::size_t i = 0; i < num_tasks; ++i)
         {
             threadPool->PostTask(

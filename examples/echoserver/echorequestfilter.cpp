@@ -38,7 +38,7 @@ void EchoRequestFilter::Filter(byte* space, byte* data, size_t& itemCount)
 
     std::string input = request.GetValue();
 
-    qor::log::inform("Handling request, {0} bytes.", itemCount);
+    //qor::log::inform("Handling request, {0} bytes.", itemCount);
     if(input == "quit")
     {
         fatal("user wants to quit");

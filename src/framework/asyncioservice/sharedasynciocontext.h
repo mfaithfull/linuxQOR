@@ -50,12 +50,10 @@ namespace qor { namespace framework{
 
             Session(SharedAsyncIOContext* sharedContext) : m_sharedContext(*sharedContext)
             {
-                //m_sharedContext.m_access.Acquire();
             }
 
-            ~Session()
+            virtual ~Session()
             {
-                //m_sharedContext.m_access.Release();
             }
 
             virtual inline bool Enroll(platform::IODescriptor& ioDescriptor) const
@@ -76,7 +74,7 @@ namespace qor { namespace framework{
                 return m_sharedContext.m_context->Recv(ioDescriptor, buffer, len);
             }
 
-            virtual inline IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+            virtual inline task<int> Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.m_context->Read(ioDescriptor, buffer, len);
@@ -88,28 +86,22 @@ namespace qor { namespace framework{
                 return m_sharedContext.m_context->Shutdown(ioDescriptor, how);
             }
             
-            virtual inline IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog) const
+            virtual inline task<int> Listen(platform::IODescriptor* ioDescriptor, int backlog) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.m_context->Listen(ioDescriptor, backlog);
             }
 
-            virtual inline IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
+            virtual inline task<int> Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.m_context->Bind(ioDescriptor, Address);
             }
 
-            virtual inline IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
+            virtual inline task<int> Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.m_context->Accept(ioDescriptor, Address, Socket);
-            }
-
-            virtual inline int AcceptEx(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* ClientSocket) const
-            {
-                Lock lock(m_sharedContext.m_access);
-                return m_sharedContext.m_context->AcceptEx(ioDescriptor, Address, ClientSocket);
             }
 
         private:
