@@ -24,18 +24,8 @@
 
 #include "src/configuration/configuration.h"
 
-#include "sharedasynciocontext.h"
+namespace qor{ 
 
-namespace qor { namespace framework{
+    qor_pp_export const char* Error_empty_base_called = "The required override for your platform apppears to be missing. Empty base class called. Will halt.";
 
-    SharedAsyncIOContext::SharedAsyncIOContext(ref_of<ThreadPool>::type threadPool)
-    {
-        m_context = new_ref<AsyncIOContext>(threadPool);
-    }
-
-    ref_of<SharedAsyncIOContext::Session>::type SharedAsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
-    }
-
-}}//qor::framework
+}//qor

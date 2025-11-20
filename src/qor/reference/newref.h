@@ -63,16 +63,6 @@ namespace qor{
 		instancer_of<T>::type::template Release<T>(p, 1);
 	}
 
-	template< typename T >
-	const T* weak_ref()
-	{		
-		if constexpr (std::is_base_of_v<SingletonInstancer,typename instancer_of<T>::type>)
-		{
-			return instancer_of<T>::type::template Instance<T>(1);
-		}
-		return nullptr;
-	}
-
 }//qor
 
 #endif//QOR_PP_H_REFERENCE_NEW

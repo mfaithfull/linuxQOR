@@ -3,7 +3,8 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target qor_asyncioservice)
 
-add_library(${target} SHARED qor_asyncioservice.cpp asyncioservice.cpp asynciocontext.cpp sharedasynciocontext.cpp)
+add_library(${target} SHARED qor_asyncioservice.cpp asyncioservice.cpp asynciocontext.cpp sharedasynciocontext.cpp
+asyncioeventprocessor.cpp asyncioinitiator.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

@@ -36,7 +36,6 @@ namespace qor{ namespace log {
         Important,      //Things that are unexpected or off the happy path, missing resources, exceptions, failures
         Impactful,      //Things that will change the flow of control and functional outcomes, exceptions, serious errors
         Imperative,     //Things that will cause a program to start or stop including Fatal errors
-        end
     };
 
     constexpr std::string_view LevelNames[] = {

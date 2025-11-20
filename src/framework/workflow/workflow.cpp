@@ -24,7 +24,10 @@
 
 #include "src/configuration/configuration.h"
 
+#include <iostream>
+
 #include "workflow.h"
+#include "src/qor/error/error.h"
 
 namespace qor{ namespace workflow{
 
@@ -55,14 +58,24 @@ namespace qor{ namespace workflow{
 
     int Workflow::Run()
     {   
-        m_complete = false;     
-        while(!IsComplete())
-        {
-            CurrentState()->Enter();
+        m_complete = false;
+        try{   
+            while(!IsComplete())
+            {
+                CurrentState()->Enter();
+            }
+            while(!m_StateStack.empty())
+            {
+                PopState();
+            }
         }
-        while(!m_StateStack.empty())
+        catch(const Error& error)
         {
-            PopState();
+            std::cerr << error.what().Content() << '\n';
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
         }
         return m_result;
     }

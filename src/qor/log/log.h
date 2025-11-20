@@ -64,6 +64,7 @@ namespace qor{ namespace log {
             Log::operator=(src);
             return *this;
         }
+        
         const Level GetLevel() const { return S; }
     };
 

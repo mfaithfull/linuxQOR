@@ -22,20 +22,21 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_ERROR_DEFAULTHANDLER
+#define QOR_PP_H_ERROR_DEFAULTHANDLER
 
-#include "sharedasynciocontext.h"
+#include "src/qor/error/error.h"
+#include "src/qor/error/handler.h"
 
-namespace qor { namespace framework{
+namespace qor{ 
 
-    SharedAsyncIOContext::SharedAsyncIOContext(ref_of<ThreadPool>::type threadPool)
+    class DefaultErrorHandler : public qor::IssueHandler<qor::Error>
     {
-        m_context = new_ref<AsyncIOContext>(threadPool);
-    }
+    public:
+        
+        virtual bool Handle(const qor::Error& error);
+    };
 
-    ref_of<SharedAsyncIOContext::Session>::type SharedAsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
-    }
+}//qor
 
-}}//qor::framework
+#endif//QOR_PP_H_ERROR_DEFAULTHANDLER

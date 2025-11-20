@@ -35,7 +35,6 @@ namespace qor { namespace framework{
 
     AsyncIOService::AsyncIOService()
     {
-
     }
 
     AsyncIOService::~AsyncIOService()

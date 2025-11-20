@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_PLATFORM_NETWORK_ISOCKET
-#define QOR_PP_H_PLATFORM_NETWORK_ISOCKET
+#ifndef QOR_PP_H_PLATFORM_NETWORK_SOCKET
+#define QOR_PP_H_PLATFORM_NETWORK_SOCKET
 
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
@@ -35,10 +35,11 @@
 #include "src/framework/asyncioservice/asynciotypes.h"
 #include "src/framework/asyncioservice/asynciointerface.h"
 #include "src/platform/io/iodescriptor.h"
+#include "isocket.h"
 
 namespace qor{ namespace network{
 
-    class qor_pp_module_interface(QOR_SOCKETS) Socket : public platform::IODescriptor
+    class qor_pp_module_interface(QOR_SOCKETS) Socket : public platform::IODescriptor, virtual public ISocket
     {
     public:
 
@@ -85,4 +86,4 @@ namespace qor{ namespace network{
 
 }//qor
 
-#endif//QOR_PP_H_PLATFORM_NETWORK_ISOCKET
+#endif//QOR_PP_H_PLATFORM_NETWORK_SOCKET

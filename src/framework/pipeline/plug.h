@@ -46,7 +46,10 @@ namespace qor{ namespace pipeline{
 
         virtual void SetSink(Element* ignored){};
         virtual void SetSource(Element* ignored){};
+        virtual Element* GetSink(){ return nullptr; }
+        virtual Element* GetSource(){ return nullptr; }
 
+        virtual bool IsPlug() { return true; }
         virtual bool Connect();
         virtual void Disconnect();
         virtual bool HandlePendingConnectionResult(bool connected);

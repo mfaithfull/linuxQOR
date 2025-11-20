@@ -47,7 +47,6 @@ private:
 
     ServerLogHandler m_logHandler;
     ErrorHandler m_errorHandler;
-    qor::ProfileReceiver m_profileReceiver;
 
     static constexpr size_t maxEchoSize = 1024;
 

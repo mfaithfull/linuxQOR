@@ -35,7 +35,7 @@ EchoWorkflow::EchoWorkflow() :
 
     m_totalSent = 0;
     m_totalReceived = 0;
-    m_messageCount = 2500;
+    m_messageCount = 250;
 
     auto application = AppBuilder().TheApplication();
     auto logAggregator = application(qor_shared).GetRole()->GetFeature<LogAggregatorService>();

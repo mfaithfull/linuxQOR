@@ -4,7 +4,8 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(target qor_error)
 
 add_library(qor_error SHARED qor_error.cpp severityissue.cpp fatal.cpp serious.cpp
-continuable.cpp warning.cpp note.cpp clibresult.cpp)
+continuable.cpp warning.cpp note.cpp clibresult.cpp commonerrormessages.cpp 
+defaulterrorhandler.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

@@ -24,18 +24,5 @@
 
 #include "src/configuration/configuration.h"
 
-#include "sharedasynciocontext.h"
+#include "netclient.h"
 
-namespace qor { namespace framework{
-
-    SharedAsyncIOContext::SharedAsyncIOContext(ref_of<ThreadPool>::type threadPool)
-    {
-        m_context = new_ref<AsyncIOContext>(threadPool);
-    }
-
-    ref_of<SharedAsyncIOContext::Session>::type SharedAsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
-    }
-
-}}//qor::framework

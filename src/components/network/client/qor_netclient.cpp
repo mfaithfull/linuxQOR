@@ -23,19 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include "sharedasynciocontext.h"
-
-namespace qor { namespace framework{
-
-    SharedAsyncIOContext::SharedAsyncIOContext(ref_of<ThreadPool>::type threadPool)
-    {
-        m_context = new_ref<AsyncIOContext>(threadPool);
-    }
-
-    ref_of<SharedAsyncIOContext::Session>::type SharedAsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
-    }
-
-}}//qor::framework
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Network Client Module",
+		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

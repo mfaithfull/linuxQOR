@@ -28,23 +28,26 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/platform/network/socket.h"
 #include "src/platform/network/sockets.h"
+#include "src/platform/network/address.h"
 #include "src/platform/network/addressinfo.h"
 #include "src/framework/pipeline/connection.h"
 
 namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_CLIENTSOCKETCONNECTOR) SocketClientConnector : public pipeline::Plug
+    class qor_pp_module_interface(QOR_CLIENTSOCKETCONNECTOR) SocketClientConnector : public pipeline::Plug, virtual public qor::network::ISocket
     {
     public:
 
 		SocketClientConnector();
-		virtual ~SocketClientConnector();
+		virtual ~SocketClientConnector() noexcept;
 
         //Plug interface
         virtual bool Connect();													//Device specific connection
         virtual void Disconnect(void);											//Device specific disconnection
+        virtual qor::pipeline::Element* GetSink();
+        virtual qor::pipeline::Element* GetSource();
 
-        ref_of<qor::network::Socket>::type m_Socket;
+        void Configure(const std::string &host, const std::string &ip, int port, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec = 0);        
 
         const qor::network::Address& RemoteAddress()
         {
@@ -58,10 +61,152 @@ namespace qor{ namespace components{
 
         bool ConnectToAddress( const std::string &host, const std::string &ip, int port, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec = 0 );
         bool SetNonBlocking(bool nonBlocking);
+        
+        //ISocket implementation over owned socket instance
+        virtual int32_t Bind(const qor::network::Address& Address)
+        {
+            return m_Socket->Bind(Address);
+        }             
+
+        virtual int32_t Bind(const framework::AsyncIOInterface& ioContext, const qor::network::Address& Address)
+        {
+            return m_Socket->Bind(ioContext, Address);
+        }
+
+        virtual int32_t Listen(int32_t iBacklog)
+        {
+            return m_Socket->Listen(iBacklog);
+        }
+
+        virtual int32_t Listen(const framework::AsyncIOInterface& ioContext, int32_t iBacklog)
+        {
+            return m_Socket->Listen(ioContext, iBacklog);
+        }
+
+        virtual ref_of<qor::network::Socket>::type Accept(qor::network::Address& Address)
+        {
+            return m_Socket->Accept(Address);
+        }
+
+        ref_of<qor::network::Socket>::type Accept(const framework::AsyncIOInterface& ioContext, qor::network::Address& Address)
+        {
+            return m_Socket->Accept(ioContext, Address);
+        }
+
+        virtual task<int32_t> AcceptAsync(const framework::AsyncIOInterface& ioContext, qor::network::Address& Address, qor::network::Socket* Socket)
+        {
+            return m_Socket->AcceptAsync(ioContext, Address, Socket);
+        }
+
+        virtual int32_t Connect(const qor::network::Address& Address)
+        {
+            return m_Socket->Connect(Address);
+        }
+
+        virtual int32_t GetPeerName(qor::network::Address& Address)
+        {
+            return m_Socket->GetPeerName(Address);
+        }
+
+        virtual int32_t GetSockName(qor::network::Address& Address)
+        {
+            return m_Socket->GetSockName(Address);
+        }
+
+        virtual int32_t GetSockOpt(int32_t iLevel, int32_t iOptName, char* pOptVal, int32_t* pOptLen)
+        {
+            return m_Socket->GetSockOpt(iLevel, iOptName, pOptVal, pOptLen);
+        }
+
+        virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen)
+        {
+            return m_Socket->SetSockOpt(iLevel, iOptName, pOptVal, iOptLen);
+        }
+
+        virtual int32_t Receive(char* buf, int32_t len, int32_t flags)
+        {
+            return m_Socket->Receive(buf, len, flags);
+        }
+
+        task<int32_t> Receive(const framework::AsyncIOInterface& ioContext, char* Buffer, int32_t iLen)
+        {
+            return m_Socket->Receive(ioContext, Buffer, iLen);
+        }
+
+        virtual task<int32_t> AsyncReceive(const framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
+        {
+            return m_Socket->AsyncReceive(ioContext, pBuffer, iLen);
+        }
+
+        virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, qor::network::Address& From)
+        {
+            return m_Socket->ReceiveFrom(Buffer, iLen, iFlags, From);
+        }
+
+        virtual int32_t Send(const char* Buffer, int32_t iLen)
+        {
+            return m_Socket->Send(Buffer, iLen);
+        }
+        
+        task<int32_t> Send(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+        {
+            return m_Socket->Send(ioContext, Buffer, iLen);
+        }
+
+        virtual task<int32_t> AsyncSend(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+        {
+            return m_Socket->AsyncSend(ioContext, Buffer, iLen);
+        }
+
+        virtual int32_t SendTo(const char* Buffer, int32_t iLen, int32_t iFlags, const qor::network::Address& To)
+        {
+            return m_Socket->SendTo(Buffer, iLen, iFlags, To);
+        }
+
+        virtual int32_t Shutdown(qor::network::sockets::eShutdown how)
+        {
+            return m_Socket->Shutdown(how);            
+        }
+
+        task<int32_t> Shutdown(const framework::AsyncIOInterface& ioContext, qor::network::sockets::eShutdown how)
+        {
+            return m_Socket->Shutdown(ioContext, how);
+        }
+
+        virtual task<int32_t> AsyncShutdown(const framework::AsyncIOInterface& ioContext, qor::network::sockets::eShutdown how)
+        {
+            return m_Socket->AsyncShutdown(ioContext, how);
+        }
+
+        virtual std::size_t ID(void)
+        {
+            return m_Socket->ID();
+        }
+
+        virtual int32_t GetLastError(void)
+        {
+            return m_Socket->GetLastError();
+        }
+
+        virtual bool IsAlive()
+        {
+            return m_Socket->IsAlive();
+        }
 
 	protected:
 
+        std::string m_host;
+        std::string m_ip;
+        unsigned  m_port;
+        qor::network::sockets::eAddressFamily m_addressFamily;
+        qor::network::addrinfo_flags m_socketFlags;
+        bool m_tcpNodelay;
+        bool m_ipv6Only;
+        time_t m_timeoutSec;
+        ref_of<qor::network::Socket>::type m_Socket;
         qor::network::Address m_remoteAddress;
+        qor::ref_of<qor::pipeline::Sink>::type m_sink;
+        qor::ref_of<qor::pipeline::Source>::type m_source;
 
     private:
 

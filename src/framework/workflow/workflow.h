@@ -31,6 +31,8 @@
 #include "src/qor/reference/newref.h"
 #include "iworkflow.h"
 #include "src/qor/delegate/delegate.h"
+#include "src/qor/error/defaulterrorhandler.h"
+#include "src/qor/log/defaultloghandler.h"
 
 namespace qor{ namespace workflow{
 
@@ -61,6 +63,12 @@ namespace qor{ namespace workflow{
         Workflow(const Workflow& src);
         Workflow& operator = (const Workflow& src);
         virtual int Run();
+        template< typename workflow_config_func>
+        int Run(workflow_config_func&& configure)
+        {
+            configure(*this);
+            return Run();
+        }
         virtual bool IsComplete() const;
         void SetInitialState(ref_of<State>::type state);
         
@@ -78,11 +86,16 @@ namespace qor{ namespace workflow{
         ref_of<State>::type GetInitialState() const;
         ref_of<State>::type CurrentState();
 
+        ref_of<DefaultLogHandler>::type m_logHander;
+        ref_of<DefaultErrorHandler>::type m_errorHandler;
+
     private:
+    
         int m_result;
         bool m_complete;
         ref_of<State>::type m_initialState;
         std::stack< ref_of<State>::type > m_StateStack;
+
     };
 
 }}//qor::workflow

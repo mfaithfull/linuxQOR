@@ -91,6 +91,12 @@ namespace qor{ namespace pipeline{
         return dynamic_cast<Sink*>(m_sink);
     }
 
+    void Source::SetPlug(Element* plug)
+    {
+        
+    }
+
+
     bool NullSource::Read(size_t& unitsRead, size_t unitsToRead)
     {
         //GetBuffer()->WriteRequest(unitsToRead);

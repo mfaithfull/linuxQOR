@@ -22,20 +22,11 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_ERROR_COMMON_MESSAGES
+#define QOR_PP_H_ERROR_COMMON_MESSAGES
 
-#include "sharedasynciocontext.h"
+namespace qor{ 
 
-namespace qor { namespace framework{
-
-    SharedAsyncIOContext::SharedAsyncIOContext(ref_of<ThreadPool>::type threadPool)
-    {
-        m_context = new_ref<AsyncIOContext>(threadPool);
-    }
-
-    ref_of<SharedAsyncIOContext::Session>::type SharedAsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
-    }
-
-}}//qor::framework
+    qor_pp_import extern const char* Error_empty_base_called;
+}//qor
+#endif//QOR_PP_H_ERROR_COMMON_MESSAGES

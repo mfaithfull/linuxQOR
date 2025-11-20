@@ -24,18 +24,18 @@
 
 #include "src/configuration/configuration.h"
 
-#include "sharedasynciocontext.h"
+#include <iostream>
 
-namespace qor { namespace framework{
+#include "defaulterrorhandler.h"
 
-    SharedAsyncIOContext::SharedAsyncIOContext(ref_of<ThreadPool>::type threadPool)
+namespace qor{ 
+    bool DefaultErrorHandler::Handle(const qor::Error& error)
     {
-        m_context = new_ref<AsyncIOContext>(threadPool);
-    }
+        auto severity = error.what().GetSeverity();
+        auto severityString = qor::SeverityNames[(int)severity];
 
-    ref_of<SharedAsyncIOContext::Session>::type SharedAsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
-    }
+        std::cerr << severityString << ": " << error.what().Content() << std::endl;
 
-}}//qor::framework
+        return false;
+    }
+}//qor

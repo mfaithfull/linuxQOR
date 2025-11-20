@@ -27,6 +27,7 @@
 
 namespace qor{
     
+    //A base class for static and dynamic library representative objects
 	class Library
     {
     public:

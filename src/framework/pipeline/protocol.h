@@ -22,20 +22,44 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_COMPONENTS_NETWORK_PROTOCOL
+#define QOR_PP_H_COMPONENTS_NETWORK_PROTOCOL
 
-#include "sharedasynciocontext.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "source.h"
+#include "sink.h"
+#include "inlinefilter.h"
 
-namespace qor { namespace framework{
+namespace qor{ namespace pipeline{
 
-    SharedAsyncIOContext::SharedAsyncIOContext(ref_of<ThreadPool>::type threadPool)
+    class Protocol 
     {
-        m_context = new_ref<AsyncIOContext>(threadPool);
-    }
+    public:
 
-    ref_of<SharedAsyncIOContext::Session>::type SharedAsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
-    }
+        Protocol(){}
+        ~Protocol(){}
 
-}}//qor::framework
+        qor::ref_of<qor::pipeline::Source>::type GetSource()
+        {
+            qor::ref_of<qor::pipeline::Source>::type source;
+            return source;
+        }
+
+        qor::ref_of<qor::pipeline::Sink>::type GetSink()
+        {
+            qor::ref_of<qor::pipeline::Sink>::type sink;
+            return sink;
+        }
+
+        qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetFilter()
+        {
+            qor::ref_of<qor::pipeline::InlineFilter<byte>>::type filter;
+            return filter;
+        }
+    };
+
+}}//qor::pipeline
+
+
+#endif//QOR_PP_H_COMPONENTS_NETWORK_PROTOCOL

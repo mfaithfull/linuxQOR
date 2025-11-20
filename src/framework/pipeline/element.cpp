@@ -74,6 +74,11 @@ namespace qor{ namespace pipeline{
         return false;
     }
 
+    bool Element::IsPlug()
+    {
+        return false;
+    }
+
     void Element::SetBuffer(Buffer* buffer)
     {
         m_buffer = buffer;

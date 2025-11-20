@@ -72,14 +72,4 @@ namespace qor{ namespace components{
         return ActualSink() ? ActualSink()->Write(unitsWritten, unitsToWrite) : false;
     }
 
-    ref_of<qor::network::Socket>::type SocketWriter::Socket()
-    {
-        ref_of<qor::network::Socket>::type socket;
-        if(m_connector.IsNotNull())
-        {
-            socket = m_connector->m_Socket;
-        }
-        return socket;
-    }
-
 }}//qor::components

@@ -88,6 +88,28 @@ namespace qor{ namespace pipeline{
             }
         }
 
+        void SetSinkConnector(Element* plug)
+        {
+            if(plug && plug->IsPlug() && m_sink)
+            {
+                dynamic_cast<Sink*>(m_sink)->SetPlug(plug);
+            }
+        }
+
+        void SetSourceConnector(Element* plug)
+        {
+            if(plug && plug->IsPlug() && m_source)
+            {
+                dynamic_cast<Source*>(m_source)->SetPlug(plug);
+            }
+        }
+
+        void SetConnector(Element* plug)
+        {
+            SetSourceConnector(plug);
+            SetSinkConnector(plug);
+        }
+
         virtual Element::FlowMode GetFlowMode()
         {
             auto pipelineparent = dynamic_cast<Pipeline*>(GetParent());

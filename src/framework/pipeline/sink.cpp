@@ -94,6 +94,11 @@ namespace qor{ namespace pipeline{
         return dynamic_cast<Source*>(m_source);
     }
 
+    void Sink::SetPlug(Element* plug)
+    {
+        
+    }
+
     bool NullSink::Write(size_t& unitsWritten, size_t unitsToWrite)
     {
         GetBuffer()->ReadRequest(unitsToWrite);
@@ -101,5 +106,7 @@ namespace qor{ namespace pipeline{
         GetBuffer()->ReadAcknowledge(unitsWritten);        
         return true;
     }
+
+    
 
 }}//qor::pipeline

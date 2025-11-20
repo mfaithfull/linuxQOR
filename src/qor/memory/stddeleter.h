@@ -26,7 +26,6 @@
 #define QOR_PP_H_STDDELETER
 
 #include <memory>
-//#include <xmemory>
 #include "memory.h"
 
 namespace qor{

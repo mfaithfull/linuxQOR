@@ -276,10 +276,10 @@ namespace qor{
 
 		typedef detail::SharedRef<T> _tInternalRef;
 
-		class Ptr
+		class Access
 		{
 		public:
-			Ptr(const Ref& r) : m(r)
+			Access(const Ref& r) : m(r)
 			{
 				m.Lock();
 			}
@@ -294,7 +294,7 @@ namespace qor{
 				return *(m.m_p->ptr());
 			}
 
-			~Ptr()
+			~Access()
 			{
 				m.Unlock();
 			}
@@ -359,31 +359,40 @@ namespace qor{
 			return (m_p == Cmp.m_p);
 		}
 
+		template< class D >
+		operator Ref<D>(void) const
+		{
+			if (m_p && ( dynamic_cast<D*>(m_p->ptr()) != nullptr ))
+			{
+				return Ref<D>(reinterpret_cast<const detail::SharedRef<D>*>(m_p));
+			}
+			return Ref<D>();
+		}
+
 		//The overloaded operators double dereference through the inner pointer to provide access to the referenced object
 		operator T* (void) const
 		{
 			return m_p ? m_p->ptr() : nullptr;
 		}
 
-		//T& operator() (void) const
-		const Ptr operator()(void) const
+		//Function operator returns a temporary for locked access to shared objects
+		const Access operator()(void) const
 		{
 			if (m_p == nullptr)
 			{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
-			//return *(m_p->ptr());
-			return Ptr(*this);
+			return Access(*this);
 		}
 
-		Ptr operator()(void)
+		//Function operator returns a temporary for locked access to shared objects
+		Access operator()(void)
 		{
 			if (m_p == nullptr)
 			{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
-			//return *(m_p->ptr());
-			return Ptr(*this);
+			return Access(*this);
 		}
 
 		T* operator -> () const

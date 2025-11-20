@@ -38,8 +38,7 @@ namespace qor{ namespace log {
         {}
 
         LevelWhat(const std::string& what, Level level) : What(what), m_level(level)
-        {
-        }
+        {}
 
         virtual ~LevelWhat() noexcept = default;
 

@@ -61,6 +61,7 @@ namespace qor{ namespace pipeline{
         virtual void OnReadError(size_t error, size_t unitsRead);
         virtual void OnEndOfData();
         virtual bool IsSource();
+        virtual void SetPlug(Element* plug);
 
     protected:
 

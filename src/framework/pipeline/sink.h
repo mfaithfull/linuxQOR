@@ -55,6 +55,7 @@ namespace qor{ namespace pipeline{
         virtual void OnWriteSuccess(size_t unitsWritten);
         virtual void OnWriteError(size_t error, size_t unitsWritten);
         virtual bool IsSink();
+        virtual void SetPlug(Element* plug);
 
     protected:
         virtual void SetSink(Element*){};

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_ISSUE_WHERE
 #define QOR_PP_H_ISSUE_WHERE
 
-#include <iosfwd>		// std::basic_ostream
+//#include <iosfwd>		// std::basic_ostream
 #include <string>
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/module/module.h"
@@ -73,8 +73,8 @@ namespace qor{
         bool m_inException;
         bool m_inInstance;
 
-        template<class _CharT, class _Traits>
-	    friend std::basic_ostream<_CharT, _Traits>& operator<<(std::basic_ostream<_CharT, _Traits>& __out, Where& __id);
+        //template<class _CharT, class _Traits>
+	    //friend std::basic_ostream<_CharT, _Traits>& operator<<(std::basic_ostream<_CharT, _Traits>& __out, Where& __id);
     };
 
 }//qor

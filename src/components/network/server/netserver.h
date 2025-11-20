@@ -22,49 +22,43 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR
-#define QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR
- 
-#include "src/qor/datastructures/guid.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/interception/functioncontext.h"
-#include "src/qor/factory/factory.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/factory/externalfactory.h"
-#include "src/qor/sync/asyncmanualresetevent.h"
-#include "src/framework/task/task.h"
-#include "src/framework/task/syncwait.h"
-#include "src/platform/io/iodescriptor.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_COMPONENTS_NETWORK_SERVER
+#define QOR_PP_H_COMPONENTS_NETWORK_SERVER
 
-namespace qor { namespace framework{
-  
-    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOEventProcessor
+#include "src/qor/interception/functioncontext.h"
+#include "src/framework/workflow/workflow.h"
+#include "src/platform/network/sockets.h"
+#include "src/platform/network/socket.h"
+#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/application/application.h"
+#include "src/qor/log/debug.h"
+#include "src/qor/error/error.h"
+#include "src/framework/thread/threadpool.h"
+#include "src/framework/pipeline/protocol.h"
+
+namespace qor{ namespace components {
+
+    class NetworkServer : public workflow::Workflow
     {
     public:
 
-        AsyncIOEventProcessor() : m_StopRequested(false), m_freeRun(false) {}
-        virtual ~AsyncIOEventProcessor() noexcept = default;
+        NetworkServer(unsigned port, ref_of<pipeline::Protocol>::type protocol);
+        
+    private:
+    
+        qor::ref_of<qor::workflow::State>::type bind;
+        qor::ref_of<qor::workflow::State>::type listen;
+        qor::ref_of<qor::workflow::State>::type accept;
 
-        virtual int Run();
-        virtual void Stop() { m_StopRequested = true; }
-        virtual void Reset() { m_StopRequested = false;}
+        qor::ref_of<qor::network::Sockets>::type m_sockets;
+        qor::ref_of<qor::framework::AsyncIOService>::type m_io;
+        qor::ref_of<qor::framework::ThreadPool>::type m_threadPool;
+        qor::ref_of<qor::framework::AsyncIOContext>::type m_ioContext;
 
-        virtual bool Enroll(platform::IODescriptor& ioDescriptor) const {return false;}
-
-    protected:
-
-        virtual int Event(){return 0;};
-        bool m_freeRun;
-        bool m_StopRequested;
+        unsigned m_port;
+        qor::ref_of<qor::network::Socket>::type m_serverSocket;
     };
 
-    }//framework
+}}//qor::components
 
-    qor_pp_declare_factory_of(framework::AsyncIOEventProcessor, ExternalFactory);    
-    constexpr GUID AsyncIOEventProcessorGUID = {0xe92b1e2d, 0x2295, 0x4f5e, {0xb0, 0xba, 0xea, 0xb9, 0x97, 0x27, 0xb5, 0x22}};
-    qor_pp_declare_guid_of(framework::AsyncIOEventProcessor,AsyncIOEventProcessorGUID);
-
-}//qor
-
-#endif//QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR
+#endif//QOR_PP_H_COMPONENTS_NETWORK_SERVER

@@ -29,6 +29,7 @@
 #include "src/platform/io/iodescriptor.h"
 #include "src/platform/network/address.h"
 #include "asyncioeventprocessor.h"
+#include "src/qor/error/error.h"
 
 namespace qor { namespace network{
     class Socket;
@@ -53,40 +54,13 @@ namespace qor { namespace framework{
             return true;
         }
 
-        virtual IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address)
-        {
-            co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
-        }
-
-        virtual IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog)
-        {
-            co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
-        }
-
-        virtual IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket)
-        {
-            co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
-        }
-
-        virtual IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
-        {
-            co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
-        }
-
-        virtual IOTask Send(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
-        {
-            co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
-        }
-
-        virtual IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
-        {
-            co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
-        }
-
-        virtual IOTask Shutdown(platform::IODescriptor* ioDescriptor, int how)
-        {
-            co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
-        }
+        virtual IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address);
+        virtual IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog);
+        virtual IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket);
+        virtual IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len);
+        virtual IOTask Send(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags);
+        virtual IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len);
+        virtual IOTask Shutdown(platform::IODescriptor* ioDescriptor, int how);
     };
 
     }//framework

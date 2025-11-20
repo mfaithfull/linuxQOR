@@ -35,15 +35,16 @@
 
 namespace qor { namespace framework{
   
-    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) SharedAsyncIOContext
+    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) SharedAsyncIOContext final
     {
 
     public:
 
         SharedAsyncIOContext(ref_of<ThreadPool>::type threadPool);
-        ~SharedAsyncIOContext();
+        ~SharedAsyncIOContext() = default;
         SharedAsyncIOContext(const SharedAsyncIOContext&) = delete;
 
+        //Provides synchronisaed access to a shared IO Context
         class Session : public AsyncIOInterface
         {
             public:
@@ -52,9 +53,7 @@ namespace qor { namespace framework{
             {
             }
 
-            virtual ~Session()
-            {
-            }
+            virtual ~Session() = default;
 
             virtual inline bool Enroll(platform::IODescriptor& ioDescriptor) const
             {

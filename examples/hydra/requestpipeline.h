@@ -28,8 +28,6 @@
 #include "sdk/using_framework.h"
 #include "sdk/components/framework.h"
 
-#include "request.h"
-
 class RequestPipeline : public Pipeline
 {
 public:
@@ -37,7 +35,7 @@ public:
     RequestPipeline(ref_of<SocketClientConnector>::type connector);
     virtual ~RequestPipeline() = default;
 
-private:    //stdin -> socket
+private:    //randomish -> socket
 
     ByteBuffer m_requestBuffer;
     RandomSource m_source;

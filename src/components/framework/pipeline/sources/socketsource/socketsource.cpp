@@ -34,7 +34,7 @@ namespace qor{ namespace components{
         int32_t result = 0;
         if(m_Connector && m_Connector->IsConnected())
         {
-            result = m_Connector->m_Socket->Receive((char*)space, bytesToRead, 0);
+            result = m_Connector->Receive((char*)space, bytesToRead, 0);
         }
         else
         {

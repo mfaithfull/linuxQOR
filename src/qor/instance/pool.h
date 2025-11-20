@@ -73,6 +73,11 @@ namespace qor{
                         instance = factory_of<T>::type::Construct();
                         ++m_instanceCount;
                     }
+                    else
+                    {
+                        //TODO: At this point we need a plug in policy to determine what to do as the pool is empty
+                        //Do we give out existing in use instances or do we throw an error.
+                    }
                 }
                 return instance;
             }
@@ -95,6 +100,11 @@ namespace qor{
                     {                        
                         instance = factory_of<T>::type::Construct(count, std::forward<_p>(p1)...);
                         m_instanceCount += count;
+                    }
+                    else
+                    {
+                        //TODO: At this point we need a plug in policy to determine what to do as the pool is empty
+                        //Do we give out existing in use instances or do we throw an error.
                     }
                 }
                 return instance;

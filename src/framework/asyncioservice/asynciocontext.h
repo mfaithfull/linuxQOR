@@ -53,17 +53,13 @@ namespace qor { namespace framework{
 
         virtual inline task<int> Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
         {
-            //log::inform("Will Pend a send on {0}", ioDescriptor->m_fd);
             auto ioResult = co_await m_initiator->Send(ioDescriptor, buffer, len, flags);
-            //log::inform("Will process a send on {0}", ioDescriptor->m_fd);
             co_return ioResult.status_code;
         }
 
         virtual inline task<int> Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
         {
-            //log::inform("Will Pend a receive on {0}", ioDescriptor->m_fd);
             auto ioResult = co_await m_initiator->Recv(ioDescriptor, buffer, len);                
-            //log::inform("Will process a receive on {0}", ioDescriptor->m_fd);
             co_return ioResult.status_code;
         }
 

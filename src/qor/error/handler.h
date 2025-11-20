@@ -38,12 +38,12 @@
 
 namespace qor{ 
 
-    class qor_pp_module_interface(QOR_ISSUE) BaseIssueHandler;
+    class qor_pp_module_interface(QOR_ERROR) BaseIssueHandler;
     constexpr GUID BaseIssueHandlerGUID = {0x48467945, 0xfbae, 0x4a8d, { 0xb2, 0xbb, 0xd0, 0x50, 0x10, 0xde, 0x94, 0x02}};
     qor_pp_declare_guid_of(BaseIssueHandler,BaseIssueHandlerGUID);
     qor_pp_declare_ref_of(BaseIssueHandler,FlyerRef);
     
-    class qor_pp_module_interface(QOR_ISSUE) BaseIssueHandler
+    class qor_pp_module_interface(QOR_ERROR) BaseIssueHandler
     {
     public:
 

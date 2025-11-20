@@ -24,18 +24,19 @@
 
 #include "src/configuration/configuration.h"
 
-#include "sharedasynciocontext.h"
+#include "asyncioeventprocessor.h"
+#include "src/qor/error/commonerrormessages.h"
 
 namespace qor { namespace framework{
 
-    SharedAsyncIOContext::SharedAsyncIOContext(ref_of<ThreadPool>::type threadPool)
+    int AsyncIOEventProcessor::Run()
     {
-        m_context = new_ref<AsyncIOContext>(threadPool);
-    }
-
-    ref_of<SharedAsyncIOContext::Session>::type SharedAsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
+        qor_pp_ofcontext;
+        fatal(Error_empty_base_called);
+        while(!m_StopRequested)
+        {
+        }
+        return 0;
     }
 
 }}//qor::framework
