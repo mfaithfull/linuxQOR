@@ -37,7 +37,7 @@ namespace qor{ namespace pipeline{
         m_plug = source;
     }
 
-    pipeline::Element* iosink_base::GetPlug()
+    pipeline::Element* iosink_base::GetPlug() const
     {
         return m_plug;
     }

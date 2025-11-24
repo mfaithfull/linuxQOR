@@ -30,7 +30,7 @@
 
 namespace qor{ 
 
-    class DefaultErrorHandler : public qor::IssueHandler<qor::Error>
+    class qor_pp_module_interface(QOR_ERROR) DefaultErrorHandler : public qor::IssueHandler<qor::Error>
     {
     public:
         

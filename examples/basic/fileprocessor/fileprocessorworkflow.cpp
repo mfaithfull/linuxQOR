@@ -52,7 +52,7 @@ FileProcessorWorkflow::FileProcessorWorkflow() : state0(new_ref<qor::workflow::S
         auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
         FileIndex newIndex(filesystem->CurrentPath(), "large_output.json");
 
-        auto refReadFile = filesystem->Open(newIndex, IFileSystem::OpenFor::ReadOnly, IFileSystem::WithFlags::Exclusive);
+        auto refReadFile = filesystem->Open(newIndex, OpenFor::ReadOnly, WithFlags::Exclusive);
         auto size = refReadFile->GetSize();
         PODBuffer<byte> byteBuffer;
         byteBuffer.SetCapacity(size);

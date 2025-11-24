@@ -25,21 +25,21 @@
 #ifndef QOR_PP_H_PIPELINE_BASE64ENCODEFILTER
 #define QOR_PP_H_PIPELINE_BASE64ENCODEFILTER
 
-#include "src/framework/pipeline/filter.h"
+#include "src/framework/pipeline/inlinefilter.h"
 
 namespace qor{ namespace components{
 
-    class qor_pp_module_interface(QOR_BASE64ENCODE) Base64EncodeFilter : public pipeline::Filter
+    class qor_pp_module_interface(QOR_BASE64ENCODE) Base64EncodeFilter : public qor::pipeline::InlineFilter<qor::byte>
     {
     public:
 
-        Base64EncodeFilter() = default;
+        Base64EncodeFilter(size_t itemCount = 0) : 
+            qor::pipeline::InlineFilter<qor::byte>(itemCount){}
+
         virtual ~Base64EncodeFilter() = default;
 
-        virtual bool ReadFilter(size_t& unitsProcessed, size_t unitsToProcess);
-        virtual bool WriteFilter(size_t& unitsProcessed, size_t unitsToProcess);
-        virtual bool Encode(size_t& unitsProcessed, size_t unitsToProcess);
-                
+        virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount);
+
     };
 
 }}//qor::pipeline

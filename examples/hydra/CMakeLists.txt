@@ -14,7 +14,7 @@ workflow.cpp echoworkflow.cpp requestpipeline.cpp responsepipeline.cpp)
 target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE)
 
 set(portable_libraries 
-qor_application qor_module qor_host qor_datastructures qor_objectcontext qor_sync
+qor_application qor_module qor_host qor_compiler qor_datastructures qor_objectcontext qor_sync
  qor_thread qor_platform qor_log qor_loghandler qor_logaggregator 
  qor_role qor_workflow qor_filesystem qor_pipeline
  qor_sockets qor_socketclientconnector qor_socketsink qor_socketsource

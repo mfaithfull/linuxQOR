@@ -642,6 +642,8 @@ namespace qor { namespace framework{
 
     }//qor::framework
 
+    constexpr GUID ThreadPoolGUID = {0x801bc441, 0x7b30, 0x4591, {0xba, 0xea, 0xd9, 0x87, 0x49, 0x6f, 0x4f, 0x63}};
+    qor_pp_declare_guid_of(framework::ThreadPool,ThreadPoolGUID);
 }//qor
 
 #endif // QOR_PP_H_FRAMEWORK_THREADPOOL

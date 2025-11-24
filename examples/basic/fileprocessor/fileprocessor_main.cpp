@@ -40,7 +40,7 @@ int main(const int argc, const char** argv, char**)
 
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
     return AppBuilder().Build<FileProcessorApp>(appName, 
-        [](ref_of<FileProcessorApp>::type app, const int argc, const char** argv, const char** env)
+        [argc,argv](ref_of<FileProcessorApp>::type app)
         {
             OptionGetter options(argc, argv, app(qor_shared));
         })->

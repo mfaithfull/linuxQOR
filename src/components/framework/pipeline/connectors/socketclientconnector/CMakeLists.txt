@@ -7,7 +7,9 @@ add_library(${target} SHARED qor_socketclientconnector.cpp socketclientconnector
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_CLIENTSOCKETCONNECTOR)
-target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_thread qor_signals qor_pipeline qor_platform qor_sockets)
+target_compile_definitions(${target} PRIVATE QOR_CLIENTSOCKETCONNECTOR)
+target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_thread 
+qor_signals qor_pipeline qor_platform qor_sockets qor_socketsink qor_socketsource
+qor_asyncioservice)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

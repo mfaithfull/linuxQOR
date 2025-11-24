@@ -27,29 +27,18 @@
 
 namespace qor{ namespace components{ 
 
-    bool Base64EncodeFilter::ReadFilter(size_t& unitsProcessed, size_t unitsToProcess)
-    {
-        return Encode(unitsProcessed, unitsToProcess);
-    }
-
-    bool Base64EncodeFilter::WriteFilter(size_t& unitsProcessed, size_t unitsToProcess)
-    {
-        return Encode(unitsProcessed, unitsToProcess);
-    }
-
-    bool Base64EncodeFilter::Encode(size_t& unitsProcessed, size_t unitsToProcess)
+    void Base64EncodeFilter::Filter(qor::byte* space, qor::byte* data, size_t& unitsToProcess)
     {
         static const char* base64_chars = 
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789+/";
-        auto sourceBuffer = ActualSource()->GetBuffer();
-        auto sinkBuffer = ActualSink()->GetBuffer();
-        if(sourceBuffer && sinkBuffer && unitsToProcess)
+
+        if(unitsToProcess)
         {
-            byte* data = sourceBuffer->ReadRequest(unitsToProcess);
+            //byte* data = sourceBuffer->ReadRequest(unitsToProcess);
             size_t output_space = (unitsToProcess + 2 ) / 3 * 4;
-            byte* space = sinkBuffer->WriteRequest(output_space);
+            //byte* space = sinkBuffer->WriteRequest(output_space);
             int val = 0, valb = -6;
             unsigned char* c = data;
             size_t index = 0;
@@ -74,11 +63,9 @@ namespace qor{ namespace components{
             {
                 space[outindex++] = '=';
             }
-            sinkBuffer->WriteAcknowledge(outindex);
-            sourceBuffer->ReadAcknowledge(index);
-            unitsProcessed = outindex;
-            return true;
+            //sinkBuffer->WriteAcknowledge(outindex);
+            //sourceBuffer->ReadAcknowledge(index);
+            unitsToProcess = outindex;            
         }
-        return false;
     }
 }}//qor::components

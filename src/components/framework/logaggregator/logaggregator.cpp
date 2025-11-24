@@ -50,11 +50,11 @@ namespace qor { namespace components{
         
         if(m_threadPool.IsNotNull())
         {
-            m_threadPool->SubmitTask(
-                [this]()
+            m_threadPool->PostTask(
+                [this]()->void
                 {
                     qor::framework::CurrentThread::GetCurrent().SetName("Log Aggregator");
-                    return m_receiver.Listen();
+                    m_receiver.Listen();
                 }
             );
         }

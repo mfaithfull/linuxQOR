@@ -80,7 +80,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFile)
     auto fileSystem = new_ref<FileSystem>();
     fileSystem->Setup();
     FileIndex newIndex(fileSystem->CurrentPath(), "TestTemp");
-    auto refFile = fileSystem->Create(newIndex, IFileSystem::WithFlags::CreateNew);
+    auto refFile = fileSystem->Create(newIndex, WithFlags::CreateNew);
     fileSystem->Delete(newIndex);
 }
 
@@ -100,7 +100,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, openAndWriteToANewFile)
     fileSystem->Setup();
     FileIndex newIndex(fileSystem->CurrentPath(), "testfile2.txt");
     {
-        auto refFile = fileSystem->Create(newIndex, IFileSystem::WithFlags::CreateNew);
+        auto refFile = fileSystem->Create(newIndex, WithFlags::CreateNew);
         refFile->Flush();
         auto status = refFile->GetStatus();        
         auto fileType = refFile->GetType();
@@ -124,13 +124,13 @@ qor_pp_test_suite_case(FileSystemTestSuite, writeAndReadBackFileContents)
 \"isStudent\": false\
 }";
         {
-            auto refFile = fileSystem->Create(newIndex, IFileSystem::WithFlags::CreateNew);
+            auto refFile = fileSystem->Create(newIndex, WithFlags::CreateNew);
             size_t len = strlen(message);
             refFile->Write((byte*)message, len);
         }
 
         {
-            auto refReadFile = fileSystem->Open(newIndex, IFileSystem::OpenFor::ReadOnly, IFileSystem::WithFlags::Exclusive);
+            auto refReadFile = fileSystem->Open(newIndex, OpenFor::ReadOnly, WithFlags::Exclusive);
             auto size = refReadFile->GetSize();
             pipeline::PODBuffer<byte> byteBuffer;
             byteBuffer.SetCapacity(size);

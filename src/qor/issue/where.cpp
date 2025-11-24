@@ -64,12 +64,13 @@ namespace qor{
 
     Where::Where(const char* szFile, const unsigned int uiLine, const char* szFunction, const AnyObject& ObjContext, const char* module)
     {
+        m_inInstance = false;
         m_inException = false;
         m_file = szFile;
         m_line = uiLine;
         SetFunction(szFunction);
         m_moduleContext = module == nullptr ? ThisModule().Name() : module;
-        SetObjectContext(ObjContext);
+        if(!ObjContext.IsNull()) { SetObjectContext(ObjContext); };
         //m_processContext = HostProcess::ThisProcess();
         std::optional<std::string> maybeName = framework::CurrentThread::GetCurrent().GetName();
         if(maybeName.has_value())

@@ -46,8 +46,8 @@ namespace qor{ namespace pipeline{
 
         virtual void SetSink(Element* ignored){};
         virtual void SetSource(Element* ignored){};
-        virtual Element* GetSink(){ return nullptr; }
-        virtual Element* GetSource(){ return nullptr; }
+        virtual Element* GetSink() const { return nullptr; }
+        virtual Element* GetSource() const { return nullptr; }
 
         virtual bool IsPlug() { return true; }
         virtual bool Connect();

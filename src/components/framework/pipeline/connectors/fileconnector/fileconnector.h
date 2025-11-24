@@ -37,9 +37,9 @@ namespace qor{ namespace components{
 
 		FileConnector();
 		FileConnector(platform::FileIndex & fileIndex, 
-            const platform::IFileSystem::WithFlags mode = platform::IFileSystem::WithFlags::CreateNew,
-            const platform::IFileSystem::ShareMode access = platform::IFileSystem::ShareMode::Owner_Read, 
-            const platform::IFileSystem::OpenFor openfor = platform::IFileSystem::OpenFor::ReadWrite);
+            const platform::WithFlags mode = platform::WithFlags::CreateNew,
+            const platform::ShareMode access = platform::ShareMode::Owner_Read, 
+            const platform::OpenFor openfor = platform::OpenFor::ReadWrite);
 		virtual ~FileConnector();
 
         //Plug interface
@@ -47,14 +47,14 @@ namespace qor{ namespace components{
         virtual void Disconnect(void);											//Device specific disconnection
         virtual bool HandlePendingConnectionResult(bool bConnected);			//Handling device specific pending connection states for async connections
 
-    	void SetMode(platform::IFileSystem::WithFlags mode);
-	    platform::IFileSystem::WithFlags GetMode(void);
+    	void SetMode(platform::WithFlags mode);
+	    platform::WithFlags GetMode(void);
 
-		void SetOpenFor(platform::IFileSystem::OpenFor openfor);
-		platform::IFileSystem::OpenFor GetOpenFor(void);
+		void SetOpenFor(platform::OpenFor openfor);
+		platform::OpenFor GetOpenFor(void);
 
-		void SetShare(platform::IFileSystem::ShareMode share);
-		platform::IFileSystem::ShareMode GetShare(void);
+		void SetShare(platform::ShareMode share);
+		platform::ShareMode GetShare(void);
 
 		void SetFile(platform::FileIndex & fileIndex);
 
@@ -68,12 +68,18 @@ namespace qor{ namespace components{
             return m_File; 							//The underlying File
         }
 
+        virtual Element* GetSink() const { return m_sink; }
+        virtual Element* GetSource() const { return m_source; }
+
 	protected:
 
         platform::FileIndex* m_pFileIndex;
-        platform::IFileSystem::WithFlags m_Mode;
-        platform::IFileSystem::OpenFor m_OpenFor;
-        platform::IFileSystem::ShareMode m_Share;
+        platform::WithFlags m_Mode;
+        platform::OpenFor m_OpenFor;
+        platform::ShareMode m_Share;
+
+        ref_of<pipeline::Sink>::type m_sink;
+        ref_of<pipeline::Source>::type m_source;
 
     private:
 

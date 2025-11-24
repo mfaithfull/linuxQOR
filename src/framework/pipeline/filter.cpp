@@ -123,17 +123,25 @@ namespace qor{ namespace pipeline{
 
     bool Filter::Pump(size_t& unitsPumped, size_t unitsToPump)
     {    
-        bool working = true;    
+        bool working = unitsToPump > 0 ? true : false;
         while(working && unitsToPump > 0)
         {
             size_t unitsPumpedAtOnce = 0;
             if(GetFlowMode() == FlowMode::Pull)
             {
                 working = ActualSink()->Write(unitsPumpedAtOnce, unitsToPump);
+                if(unitsPumpedAtOnce == 0)
+                {
+                    break;
+                }
             }
             else
             {
                 working = ActualSource()->Read(unitsPumpedAtOnce, unitsToPump);
+                if(unitsPumpedAtOnce == 0)
+                {
+                    break;
+                }
             }
             unitsToPump -= unitsPumpedAtOnce;
             unitsPumped += unitsPumpedAtOnce;

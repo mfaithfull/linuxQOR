@@ -26,3 +26,32 @@
 
 #include "netclient.h"
 
+namespace qor{ namespace components {
+
+    bool NetworkClient::Connect()
+    {
+        qor_pp_ofcontext;
+        if(m_protocol.IsNull())
+        {
+            serious("No protocol set for NetworkClient connection.");
+            return false;
+        }
+        else
+        {                
+            m_requestPipeline->SetFlowMode(qor::pipeline::Element::FlowMode::Push);
+            m_socketClientConnector->GetSink()->SetBuffer(m_protocol->GetRequestBuffer().operator const qor::pipeline::ByteBuffer &());
+            m_requestPipeline->SetSource(m_protocol->GetSource());
+            m_requestPipeline->SetSink(m_socketClientConnector->GetSink());
+            m_requestPipeline->GetSource()->SetSink(m_socketClientConnector->GetSink());
+
+            m_responsePipeline->SetFlowMode(qor::pipeline::Element::FlowMode::Push);
+            m_responsePipeline->SetSource(m_socketClientConnector->GetSource());
+            m_responsePipeline->SetSink(m_protocol->GetSink());
+            m_responsePipeline->GetSource()->SetBuffer(m_protocol->GetResponseBuffer().operator const qor::pipeline::ByteBuffer &());
+            m_responsePipeline->GetSource()->SetSink(m_protocol->GetSink());
+
+            return m_socketClientConnector->Connect();
+        }
+    }
+
+}}//qor::components

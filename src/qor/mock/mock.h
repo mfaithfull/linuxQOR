@@ -33,6 +33,8 @@
 #include<map>
 #include<vector>
 
+#include "basemock.h"
+
 namespace qor{ namespace mock{
     
     template <class T>

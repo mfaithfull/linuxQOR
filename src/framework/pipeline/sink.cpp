@@ -99,6 +99,11 @@ namespace qor{ namespace pipeline{
         
     }
 
+    Element* Sink::GetPlug() const
+    {
+        return nullptr;
+    }
+
     bool NullSink::Write(size_t& unitsWritten, size_t unitsToWrite)
     {
         GetBuffer()->ReadRequest(unitsToWrite);

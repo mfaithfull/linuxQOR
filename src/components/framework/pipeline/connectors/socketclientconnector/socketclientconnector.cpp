@@ -39,6 +39,16 @@ namespace qor{ namespace components{
         m_source->SetPlug(this);
     }
 
+    SocketClientConnector::SocketClientConnector(
+        ref_of<qor::network::Socket>::type connectedSocket,
+        ref_of<qor::framework::SharedAsyncIOContext::Session>::type session
+        ) : SocketClientConnector()
+    {
+        m_Socket = connectedSocket;
+        m_Session = session;
+        m_connected = true;
+    }
+
     SocketClientConnector::~SocketClientConnector() noexcept
     {
         if (m_connected)
@@ -47,19 +57,22 @@ namespace qor{ namespace components{
         }
     }
 
-    qor::pipeline::Element* SocketClientConnector::GetSink()
+    qor::pipeline::Element* SocketClientConnector::GetSink() const
     {
         return m_sink;
     }
 
-    qor::pipeline::Element* SocketClientConnector::GetSource()
+    qor::pipeline::Element* SocketClientConnector::GetSource() const
     {
         return m_source;
     }
 
     bool SocketClientConnector::Connect()
-    {        
-        ConnectToAddress(m_host, m_ip, m_port, m_addressFamily, m_socketFlags, m_tcpNodelay, m_ipv6Only, m_timeoutSec);
+    {       
+        if(!m_connected) 
+        {
+            m_connected = ConnectToAddress(m_host, m_port, m_ip, m_addressFamily, m_socketFlags, m_tcpNodelay, m_ipv6Only, m_timeoutSec);
+        }
         return m_connected;
     }
 
@@ -102,7 +115,7 @@ namespace qor{ namespace components{
         return false;
     }
 
-    void SocketClientConnector::Configure(const std::string &host, const std::string &ip, int port, 
+    void SocketClientConnector::Configure(const std::string &host, int port, const std::string &ip, 
         qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec)
     {
         m_host = host;
@@ -115,7 +128,7 @@ namespace qor{ namespace components{
         m_timeoutSec = timeout_sec;
     }
 
-    bool SocketClientConnector::ConnectToAddress(const std::string &host, const std::string &ip, int port, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec)
+    bool SocketClientConnector::ConnectToAddress(const std::string &host, int port, const std::string &ip, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec)
     {
         if(address_family == qor::network::sockets::eAddressFamily::AF_Unix)
         {
@@ -142,7 +155,14 @@ namespace qor{ namespace components{
 
     void SocketClientConnector::Disconnect()
     {
-        m_Socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
+        if(m_Session.IsNotNull())
+        {
+            sync_wait(m_Socket->Shutdown(*m_Session, network::sockets::eShutdown::ShutdownReadWrite));
+        }
+        else
+        {
+            m_Socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
+        }
         m_connected = false;
     }
 

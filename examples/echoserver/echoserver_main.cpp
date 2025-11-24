@@ -43,7 +43,7 @@ int main(const int argc, const char** argv, char**)
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build<EchoServerApp>(appName,   //What it is
-        [](ref_of<EchoServerApp>::type app, const int argc, const char** argv, const char** env)
+        [argc,argv](ref_of<EchoServerApp>::type app)
         {
             OptionGetter options(argc, argv, app(qor_shared));
         }

@@ -61,6 +61,18 @@ namespace qor{
             }
         };        
 
+		template< typename Lock_t >
+		struct LockIsRealInternal
+		{
+			typedef std::true_type type;
+		};
+
+		template<>
+		struct LockIsRealInternal<NullSection>
+		{
+			typedef std::false_type type;
+		};
+
         
 		//This is the owning shared reference class which has the pointer to the object
 		//It also holds the reference count
@@ -73,9 +85,8 @@ namespace qor{
 
 			typedef typename std::is_abstract<R> is_abstract;
 			
-
 		public:
-			
+		
 			template< typename... _p >
 			SharedRef(size_t count, _p&&... p1) : m_p(nullptr), m_ulRefCount(0), m_Section()
 			{
@@ -193,6 +204,11 @@ namespace qor{
 				m_p = nullptr;				
 			}
 			
+			bool LockIsReal() const
+			{
+				return LockIsRealInternal< typename sync_of<R>::type >::type::value;
+			}
+
 			void Lock() const
 			{
 				m_Section.Acquire();
@@ -372,6 +388,12 @@ namespace qor{
 		//The overloaded operators double dereference through the inner pointer to provide access to the referenced object
 		operator T* (void) const
 		{
+#ifndef NDEBUG			
+			if(m_p && m_p->LockIsReal() && m_p->m_ulRefCount != 0)
+			{
+				throw std::logic_error("Synchronised object being accessed without auto locking. Did you forget a (qor_shared) ?");
+			}
+#endif
 			return m_p ? m_p->ptr() : nullptr;
 		}
 
@@ -401,6 +423,12 @@ namespace qor{
 			{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
+#ifndef NDEBUG
+			if(m_p->LockIsReal())
+			{
+				throw std::logic_error("Synchronised object being accessed without auto locking. Did you forget a (qor_shared) ?");
+			}
+#endif
 			return m_p->ptr();			
 		}
 
@@ -410,6 +438,12 @@ namespace qor{
 			{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
+#ifndef NDEBUG
+			if(m_p->LockIsReal())
+			{
+				throw std::logic_error("Synchronised object being accessed without auto locking. Did you forget a (qor_shared) ?");
+			}
+#endif
 			return const_cast<const T&>(*(m_p->ptr()));
 		}
 

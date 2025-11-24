@@ -37,57 +37,57 @@
 
 namespace qor{ namespace platform{
 
+    enum OpenFor
+    {
+        Exec = 1,
+        ReadOnly = 2,
+        ReadWrite = 4,
+        Search = 8,
+        WriteOnly = 16,
+    };
+
+    enum WithFlags
+    {
+        None = 0,
+        Append = 1 << 0,
+        CloseExec = 1 << 1,
+        CloseFork = 1 << 2,
+        CreateNew = 1 << 3,
+        Directory = 1 << 4,
+        DSync = 1 << 5,
+        Exclusive = 1 << 6,
+        NoCTTY = 1 << 7,
+        NoFollow = 1 << 8,
+        NonBlock = 1 << 9,
+        RSync = 1 << 10,
+        Sync = 1 << 11,
+        Truncate = 1 << 12,
+        TTYInit = 1 << 13,
+        TempFile = 1 << 14,
+    };
+
+    enum ShareMode
+    {
+        SetUserIDOnExecution    =04000,
+        SetGroupIDOnExecution   =02000,
+        DirRestrictedDelFlag    =01000,
+        Owner_ReadWiteExecute   = 0700,
+        Owner_Read              = 0400,
+        Owner_Write             = 0200,
+        Owner_Execute           = 0100,
+        Group_ReadWriteExecute  =  070,
+        Group_Read              =  040,
+        Group_Write             =  020,
+        Group_Execute           =  010,
+        Other_ReadWriteExecute  =   07,
+        Other_Read              =   04,
+        Other_Write             =   02,
+        Other_Execute           =   01
+    };
+
     class qor_pp_module_interface(QOR_FILESYSTEM) IFileSystem
     {
     public:
-
-        enum OpenFor
-        {
-            Exec = 1,
-            ReadOnly = 2,
-            ReadWrite = 4,
-            Search = 8,
-            WriteOnly = 16,
-        };
-
-        enum WithFlags
-        {
-            None = 0,
-            Append = 1 << 0,
-            CloseExec = 1 << 1,
-            CloseFork = 1 << 2,
-            CreateNew = 1 << 3,
-            Directory = 1 << 4,
-            DSync = 1 << 5,
-            Exclusive = 1 << 6,
-            NoCTTY = 1 << 7,
-            NoFollow = 1 << 8,
-            NonBlock = 1 << 9,
-            RSync = 1 << 10,
-            Sync = 1 << 11,
-            Truncate = 1 << 12,
-            TTYInit = 1 << 13,
-            TempFile = 1 << 14,
-        };
-
-        enum ShareMode
-        {
-            SetUserIDOnExecution    =04000,
-            SetGroupIDOnExecution   =02000,
-            DirRestrictedDelFlag    =01000,
-            Owner_ReadWiteExecute   = 0700,
-            Owner_Read              = 0400,
-            Owner_Write             = 0200,
-            Owner_Execute           = 0100,
-            Group_ReadWriteExecute  =  070,
-            Group_Read              =  040,
-            Group_Write             =  020,
-            Group_Execute           =  010,
-            Other_ReadWriteExecute  =   07,
-            Other_Read              =   04,
-            Other_Write             =   02,
-            Other_Execute           =   01
-        };
 
         IFileSystem() = default;
         virtual ~IFileSystem() noexcept = default;

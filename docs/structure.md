@@ -1,8 +1,12 @@
 
 build - The sources for the QOR build system
+examples - Example projects using the QOR
 src - The sources for the QOR
 test - The sources for tests for the QOR
+sdk - headers suitable for external application using the QOR
 
+
+src/components - extra libraries that depend on but are not depended on by other qor libraries.
 src/configuration - main project header and overall configuration headers
 src/framework - structural elements from which to put together an application
 src/macros - preprocessor header library

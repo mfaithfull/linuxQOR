@@ -37,7 +37,7 @@ SessionPipeline::SessionPipeline(
         m_ioSession(session)
 {
     m_filter.SetCapacity(m_ioBufferSize);
-    m_socketSessionConnector = new_ref<SocketSessionConnector>(m_socket, m_ioSession);
+    m_socketSessionConnector = new_ref<SocketClientConnector>(m_socket, m_ioSession);
     SetFlowMode(Element::FlowMode::Push);
 
     m_socketSource = new_ref<SocketSessionSource>();

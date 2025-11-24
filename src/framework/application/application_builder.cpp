@@ -31,7 +31,7 @@ namespace qor{ namespace framework{
     {
     }
 
-    ref_of<Application>::type AppBuilder::Build(const std::string name, const int argc, const char** argv, const char** env)
+    ref_of<Application>::type AppBuilder::Build(const std::string& name, const int argc, const char** argv, const char** env)
     {
         auto application = new_ref<Application>();
         application->Name() = name;
@@ -42,6 +42,11 @@ namespace qor{ namespace framework{
     {
         auto application = new_ref<Application>();
         return application;
+    }
+
+    void AppBuilder::AutoRedirect(ref_of<Application>::type application)
+    {
+        SingletonInstancer::AutoRedirect<Application>(application);
     }
     
 }}//qor::framework

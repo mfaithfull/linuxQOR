@@ -62,6 +62,7 @@ namespace qor{ namespace pipeline{
         virtual void OnEndOfData();
         virtual bool IsSource();
         virtual void SetPlug(Element* plug);
+        virtual Element* GetPlug() const;
 
     protected:
 

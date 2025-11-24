@@ -248,26 +248,28 @@ qor_pp_test_suite_case(PipelineTestSuite, testBase64EncodeFilter)
     Pipeline testPipeline;
     testPipeline.SetFlowMode(Element::FlowMode::Push);
 
-    ByteBuffer InBuffer(128);
-    ByteBuffer OutBuffer(200);
+    //ByteBuffer InBuffer(128);
+    //ByteBuffer OutBuffer(200);
+
+    Base64EncodeFilter filter;
 
     StdOutSink sink;
     sink.SetParent(&testPipeline);
-    sink.SetBuffer(&OutBuffer);    
+    sink.SetBuffer(&filter);    
 
     StringSource source;
-    source.SetBuffer(&InBuffer);
+    source.SetBuffer(&filter);
     source.SetParent(&testPipeline);
     source.SetData(testData);
 
-    Base64EncodeFilter filter;
-    filter.SetFlowMode(Element::FlowMode::Push);
-    filter.SetParent(&testPipeline);
-    filter.SetSink(&sink);
-    filter.SetSource(&source);
     
-    testPipeline.SetSource(&filter);
-    testPipeline.SetSink(&filter);
+    //filter.SetFlowMode(Element::FlowMode::Push);
+    //filter.SetParent(&testPipeline);
+    //filter.SetSink(&sink);
+    //filter.SetSource(&source);
+    
+    //testPipeline.SetSource(&filter);
+    //testPipeline.SetSink(&filter);
 
     size_t unitsPumped = 0;
     testPipeline.Pump(unitsPumped, testData.length());
@@ -307,12 +309,14 @@ qor_pp_test_suite_case(PipelineTestSuite, testBase64DecodeFilter)
     Pipeline testPipeline;
     testPipeline.SetFlowMode(Element::FlowMode::Push);
 
-    ByteBuffer InBuffer(128);
-    ByteBuffer EncodedBuffer(200);
+    Base64EncodeFilter encodeFilter;
+
+    //ByteBuffer InBuffer(128);
+    //ByteBuffer EncodedBuffer(200);
     ByteBuffer OutBuffer(128);
 
     StringSource source;
-    source.SetBuffer(&InBuffer);
+    source.SetBuffer(&encodeFilter);
     source.SetParent(&testPipeline);
     source.SetData(testData);
 
@@ -320,19 +324,19 @@ qor_pp_test_suite_case(PipelineTestSuite, testBase64DecodeFilter)
     sink.SetParent(&testPipeline);
     sink.SetBuffer(&OutBuffer);    
 
-    Base64EncodeFilter encodeFilter;
-    encodeFilter.SetBuffer(&EncodedBuffer);
-    encodeFilter.SetFlowMode(Element::FlowMode::Push);
-    encodeFilter.SetParent(&testPipeline);    
-    encodeFilter.SetSource(&source);
+    
+    //encodeFilter.SetBuffer(&EncodedBuffer);
+    //encodeFilter.SetFlowMode(Element::FlowMode::Push);
+    //encodeFilter.SetParent(&testPipeline);    
+    //encodeFilter.SetSource(&source);
 
     Base64DecodeFilter decodeFilter;
-    decodeFilter.SetBuffer(&EncodedBuffer);
-    decodeFilter.SetFlowMode(Element::FlowMode::Push);
-    decodeFilter.SetParent(&testPipeline);    
-    decodeFilter.SetSource(&encodeFilter);
+    //decodeFilter.SetBuffer(&EncodedBuffer);
+    //decodeFilter.SetFlowMode(Element::FlowMode::Push);
+    //decodeFilter.SetParent(&testPipeline);    
+    //decodeFilter.SetSource(&encodeFilter);
 
-    encodeFilter.SetSink(&decodeFilter);
+    //encodeFilter.SetSink(&decodeFilter);
     decodeFilter.SetSink(&sink);
     
     testPipeline.SetSource(&decodeFilter);

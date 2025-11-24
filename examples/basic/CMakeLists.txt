@@ -9,6 +9,13 @@ endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
 endif()
+
+add_subdirectory(outline)
+add_subdirectory(options)
+add_subdirectory(roller)
+add_subdirectory(work)
+add_subdirectory(plumbing)
+add_subdirectory(parallel)
 add_subdirectory(fileprocessor)
 add_subdirectory(readlinebyline)
 

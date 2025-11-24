@@ -25,26 +25,18 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE
 
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/pipeline/iosink.h"
 #include "src/components/framework/pipeline/connectors/fileconnector/fileconnector.h"
 
 namespace qor{ namespace components{
 
-    class qor_pp_module_interface(QOR_FILESINK) FileSink : public pipeline::Sink
+    class qor_pp_module_interface(QOR_FILESINK) FileSink : public pipeline::iosink<FileConnector>
     {
     public:
 
-        //TODO: Constructors with the same pattern as FileConnector so we can set up the connector for write
-        //ideally we should be able to pass in a connector to share it with a source
-        FileSink();
+        FileSink() = default;
         virtual ~FileSink() = default;
-
-        virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
-
-    protected:
-
-        FileConnector m_Connector;
-
+        virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
     };
 
 }}//qor::components

@@ -56,7 +56,7 @@ ServerWorkflow::ServerWorkflow() :
     accept(new_ref<workflow::State>(this))
 {
     qor_pp_ofcontext;
-    bind->Enter = [this]()->void
+    bind->Enter = [this](void)->void
     {
         qor_pp_ofcontext;
         auto application = new_ref<EchoServerApp>();

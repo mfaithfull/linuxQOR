@@ -4,8 +4,10 @@
 #include "using_qor.h"
 
 #include "src/framework/application/application_builder.h"
+#include "src/framework/role/ifeature.h"
 #include "src/framework/role/role.h"
 #include "src/framework/thread/currentthread.h"
+#include "src/framework/thread/icurrentthread.h"
 #include "src/framework/workflow/workflow.h"
 #include "src/framework/pipeline/podbuffer.h"
 #include "src/framework/pipeline/pipeline.h"

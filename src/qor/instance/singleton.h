@@ -39,71 +39,121 @@ namespace qor{
     namespace detail {
 
         template <class T>    
-        class SingletonInstanceHolder final
+        class SingletonInstanceHolder
         {
         public:
-            SingletonInstanceHolder() : bInitialised(false){}
 
-            ~SingletonInstanceHolder()
+            SingletonInstanceHolder() : bInitialised(false), redirected(false) {}
+
+            virtual ~SingletonInstanceHolder()
             {
-                Lock lock(m);
-                if(bInitialised)
+                if(redirected)
                 {
-                    theRef.Dispose();
-                    bInitialised = false;
+                    redirect->~SingletonInstanceHolder();
+                }
+                else
+                {
+                    Lock lock(m);
+                    if(bInitialised)
+                    {
+                        theRef.Dispose();
+                        bInitialised = false;
+                    }
                 }
             }
 
-            typename ref_of<T>::type Instance()
+            virtual typename ref_of<T>::type Instance()
             {
-                Lock lock(m);
-                if( !bInitialised )
-                {                
-                    theRef = factory_of<T>::type::Construct(count);                    
-                    bInitialised = true;
-                }
-                else if(theRef.IsNull())
+                if(redirected)
                 {
-                    theRef.Attach(factory_of<T>::type::Construct(count));
+                    return redirect->Instance();
                 }
-                return theRef;
+                else
+                {
+                    Lock lock(m);
+                    if( !bInitialised )
+                    {                
+                        theRef = factory_of<T>::type::Construct(count);                    
+                        bInitialised = true;
+                    }
+                    else if(theRef.IsNull())
+                    {
+                        theRef.Attach(factory_of<T>::type::Construct(count));
+                    }
+                    return theRef;
+                }
             }
 
             template<typename... _p >
             typename ref_of<T>::type Instance(size_t, _p&&... p1)
             {
-                Lock lock(m);
-                if( !bInitialised )
-                {                                    
-                    theRef = factory_of<T>::type::Construct(count, std::forward<_p>(p1)...);
-                    bInitialised = true;
-                }
-                else if(theRef.IsNull())
+                if(redirected)
                 {
-                    theRef.Attach(factory_of<T>::type::Construct(count, std::forward<_p>(p1)...));
+                    return redirect->Instance(std::forward<_p>(p1)...);
                 }
-                return theRef;
+                else
+                {
+                    Lock lock(m);
+                    if( !bInitialised )
+                    {                                    
+                        theRef = factory_of<T>::type::Construct(count, std::forward<_p>(p1)...);
+                        bInitialised = true;
+                    }
+                    else if(theRef.IsNull())
+                    {
+                        theRef.Attach(factory_of<T>::type::Construct(count, std::forward<_p>(p1)...));
+                    }
+                    return theRef;
+                }
             }
 
-            void Release()
+            virtual void Release()
+            {
+                if(redirected)
+                {
+                    redirect->Release();
+                }
+                else
+                {
+                    Lock lock(m);
+                    if(bInitialised)
+                    {
+                        factory_of<T>::type::Destruct(theRef);
+                        theRef.Reset();
+                    }
+                }
+            }
+
+            template<class D>
+            void Redirect()
+            {
+                static SingletonInstanceHolder<D> holder;
+                redirect = reinterpret_cast< SingletonInstanceHolder<T>* >(&holder);
+                redirected = true;
+            }
+
+            void AutoRedirect(ref_of<T>::type ref)
             {
                 Lock lock(m);
-                if(bInitialised)
+                if(!bInitialised)
                 {
-                    factory_of<T>::type::Destruct(theRef);
-                    theRef.Reset();
+                    bInitialised = true;
+                    theRef = ref;
                 }
             }
 
         private:
+
             static constexpr size_t count = 1;
             ref_of<T>::type theRef;
             bool bInitialised;
+            bool redirected;
             RecursiveMutex m;
+            SingletonInstanceHolder<T>* redirect;
         };
 
     }//detail
-    
+        
 	class SingletonInstancer final
 	{
 	public:
@@ -127,6 +177,19 @@ namespace qor{
 		}
 		
         static constexpr size_t ignored_count = 1;
+
+        template<class T, class D>
+        static inline void Redirect()
+        {
+            Holder<T>().template Redirect<D>();
+        }
+
+        template< class T >
+        static inline void AutoRedirect(ref_of<T>::type ref)
+        {
+            Holder<T>().template AutoRedirect(ref);
+        }
+
 	private:
 
         template< class T>
@@ -139,6 +202,16 @@ namespace qor{
         SingletonInstancer() = delete;
 		~SingletonInstancer() = delete;
 	};
+
+    template<class B, class D>
+    class SingletonRedirector
+    {
+    public:
+        SingletonRedirector()
+        {
+            SingletonInstancer::Redirect<B, D>();
+        }
+    };
 }//qor
 
 #endif//QOR_PP_H_INSTANCE_SINGLETON

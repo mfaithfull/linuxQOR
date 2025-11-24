@@ -84,6 +84,11 @@ namespace qor{ namespace pipeline{
         m_buffer = buffer;
     }
 
+    void Element::SetBuffer(const Buffer& buffer)
+    {
+        m_buffer = &(const_cast<Buffer&>(buffer));
+    }
+
     Buffer* Element::GetBuffer()
     {
         return m_buffer;

@@ -1,4 +1,4 @@
-A large part of self aware code is having the coed be able to reflect on the context in which it's executing.
+A large part of self aware code is having the code be able to reflect on the context in which it's executing.
 What process is this in?
 What thread is this on?
 What module is this line of code in?

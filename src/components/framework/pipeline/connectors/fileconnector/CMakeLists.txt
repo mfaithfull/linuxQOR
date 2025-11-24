@@ -8,6 +8,7 @@ add_library(${target} SHARED qor_fileconnector.cpp fileconnector.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE -DQOR_FILECONNECTOR)
-target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_signals qor_pipeline qor_filesystem)
+target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_signals qor_pipeline 
+qor_filesystem qor_filesource qor_filesink)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

@@ -25,7 +25,6 @@
 #include "src/configuration/configuration.h"
 
 #include "filesource.h"
-#include "src/framework/pipeline/sink.h"
 
 namespace qor{ namespace components{ 
 
@@ -34,11 +33,20 @@ namespace qor{ namespace components{
         size_t result = 0;
         if(m_Connector && m_Connector->IsConnected())
         {
-            result = m_Connector->File()->Read(space, bytesToRead, 0);
+            result = m_Connector->File()->Read(space, bytesToRead, -1);
+
+            if(result < 0)
+            {
+                OnReadError(result,0);
+            }
+            else if(result == 0)
+            {
+                OnEndOfData();
+            }
         }
         else
         {
-            //TODO: No connection
+            OnReadError(0,0);
         }
         return result;
     }

@@ -70,16 +70,12 @@ LineByLineWorkflow::LineByLineWorkflow() : state0(new_ref<qor::workflow::State>(
         filter.SetSink(&sink);
         filter.SetSource(&source);
 
-        //HTTPResponseReader responseFilter;
-        //responseReader.SetSource(&filter);
-        //filter.SetSink(&responseFilter);
-
         testPipeline.SetSource(&source);
         testPipeline.SetSink(&sink);
 
         connector.SetFile(newIndex);
-        connector.SetOpenFor(IFileSystem::OpenFor::ReadOnly);
-        connector.SetShare(IFileSystem::ShareMode::Owner_Read);
+        connector.SetOpenFor(OpenFor::ReadOnly);
+        connector.SetShare(ShareMode::Owner_Read);
         connector.Connect();
 
         size_t unitsPumped = 0;

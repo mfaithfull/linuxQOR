@@ -42,21 +42,23 @@ namespace qor{ namespace platform{
     {
     public:
 
+        typedef ref_of<FileSystem>::type ref;
+
         FileSystem();
         virtual ~FileSystem() noexcept = default;
 
         virtual void Setup();
         virtual void Shutdown();
 
-        const Root& GetRoot();
-        Path CurrentPath();
-        void CurrentPath(Path& path);
+        const Root& GetRoot() const;
+        Path CurrentPath() const;
+        void CurrentPath(Path& path) const;
 
         ref_of<IFile>::type Create(const FileIndex& index, const int withFlags) const;
         std::optional<Folder> Create(const Path& path) const;
         std::optional<Folder> MakeDir(const Path& path) const;
         std::optional<Folder> NewFolder(const Path& path) const;
-        ref_of<IFile>::type Open(const FileIndex& index, const int openFor, const int withFlags) const;
+        ref_of<IFile>::type Open(const FileIndex& index, const int openFor = OpenFor::ReadWrite, const int withFlags = 0) const;
         bool Delete(const FileIndex& index) const;
         bool RemoveDir(const Path& path) const;
         bool DeleteFolder(const Path& path) const;
@@ -64,9 +66,9 @@ namespace qor{ namespace platform{
         bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
         bool Rename(platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
 
-        std::filesystem::space_info Space(const Path& path);
-        Path TempFolder();
-        Path ApplicationLogPath();
+        std::filesystem::space_info Space(const Path& path) const;
+        Path TempFolder() const;
+        Path ApplicationLogPath() const;
                 
     private:
 

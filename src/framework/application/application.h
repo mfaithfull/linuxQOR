@@ -65,6 +65,7 @@ namespace qor{ namespace framework{
         Application& SetWorkflow( ref_of<workflow::IWorkflow>::type workflow);
         ref_of<workflow::IWorkflow>::type GetWorkflow() const;
         std::string& Name();
+        void SetName(const std::string& name) { m_Name = name; }
 
         template<class TSubsystem>
 		Application& AddSubSystem()
@@ -93,7 +94,22 @@ namespace qor{ namespace framework{
 
         int Run( ref_of<IRunable>::type runable )
         {
-            return runable->Run();
+            int result = -1;
+            if(m_Role.IsNotNull())
+            {
+                m_Role->Setup();
+            }
+            
+            if(runable.IsNotNull())
+            {
+                result = runable->Run();
+            }
+
+            if(m_Role.IsNotNull())
+            {
+                m_Role->Shutdown();
+            }
+            return result;
         }
 
     private:

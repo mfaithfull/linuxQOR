@@ -26,11 +26,11 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKETSESSION
 
 #include "src/framework/pipeline/iosource.h"
-#include "src/components/framework/pipeline/connectors/socketsessionconnector/socketsessionconnector.h"
+#include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
 
 namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_SOCKETSOURCE) SocketSessionSource : public pipeline::iosource<SocketSessionConnector>
+    class qor_pp_module_interface(QOR_SOCKETSOURCE) SocketSessionSource : public pipeline::iosource<SocketClientConnector>
     {
     
     public:

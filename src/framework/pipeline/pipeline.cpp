@@ -46,5 +46,39 @@ namespace qor{ namespace pipeline{
     {
 
     }
+
+    Pipeline& Pipeline::InsertInlineFilter(const Buffer& filter, FilterPos Pos)
+    {
+        switch(Pos)
+        {
+        case FilterPos::AfterSource:
+            {
+                if(m_source)
+                {
+                    m_source->SetBuffer(filter);
+                    auto sink = m_source->GetSink();
+                    if(sink)
+                    {
+                        sink->SetBuffer(filter);
+                    }
+                }
+            }
+            break;
+        case FilterPos::BeforeSink:
+            {
+                if(m_sink)
+                {
+                    m_sink->SetBuffer(filter);
+                    auto source = m_sink->GetSource();
+                    if(source)
+                    {
+                        source->SetBuffer(filter);
+                    }
+                }
+            }
+            break;
+        }
+        return *this;
+    }
 }}//qor::pipeline
 

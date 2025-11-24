@@ -40,7 +40,7 @@ namespace qor{ namespace pipeline{
         virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
         
         virtual void SetPlug(Element* pPlug);
-        virtual Element* GetPlug();
+        virtual Element* GetPlug() const;
         virtual bool HasPlug();
 
     protected:

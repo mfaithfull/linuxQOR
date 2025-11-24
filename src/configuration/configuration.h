@@ -60,9 +60,17 @@ namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(); }
 #define qor_pp_module_provide(_M, _X) \
 namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(){ return true; } }//qor
 
-#define qor_pp_ver_major 0
-#define qor_pp_ver_minor 0
-#define qor_pp_ver_patch 0
+#ifndef qor_pp_ver_major
+#   define qor_pp_ver_major 0
+#endif
+
+#ifndef qor_pp_ver_minor
+#   define qor_pp_ver_minor 0
+#endif
+
+#ifndef qor_pp_ver_patch
+#   define qor_pp_ver_patch 0
+#endif
 
 #if (qor_pp_unicode && (qor_pp_os_target == qor_pp_os_windows))
 typedef char16_t char_t;

@@ -29,7 +29,6 @@
 
 namespace qor{ namespace pipeline{
 
-
     template< class pod_t >
     class PODBuffer : public Buffer
     {

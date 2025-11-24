@@ -92,8 +92,12 @@ namespace qor{ namespace pipeline{
     }
 
     void Source::SetPlug(Element* plug)
+    {  
+    }
+
+    Element* Source::GetPlug() const
     {
-        
+        return nullptr;
     }
 
 

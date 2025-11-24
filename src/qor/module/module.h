@@ -74,7 +74,7 @@ extern qor::Module& ThisModule();       //Each and every module that includes th
 Module& ThisModule(void)\
 {\
 	static Module QORModule(_X, \
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);\
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) " " __DATE__ "_" __TIME__);\
 	return QORModule;\
 }
 

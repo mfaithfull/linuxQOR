@@ -3,8 +3,10 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target qor_compiler)
 
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+
 add_library(${target} compiler.cpp)
 
-include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+target_compile_definitions(${target} PRIVATE -DQOR_COMPILER)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

@@ -51,19 +51,19 @@ namespace qor{ namespace platform{
 
     void FileSystem::Shutdown(){}
 
-    const Root& FileSystem::GetRoot()
+    const Root& FileSystem::GetRoot() const
     {
         return m_root;
     }
 
-    Path FileSystem::CurrentPath()
+    Path FileSystem::CurrentPath() const
     {
         std::filesystem::path stdpath = std::filesystem::current_path();
         Path currentPath(stdpath.string());
         return currentPath;
     }
 
-    void FileSystem::CurrentPath(Path& path)
+    void FileSystem::CurrentPath(Path& path) const
     {
         std::filesystem::current_path(path);
     }
@@ -171,18 +171,18 @@ namespace qor{ namespace platform{
         }
     }
 
-    std::filesystem::space_info Space(const Path& path)
+    std::filesystem::space_info FileSystem::Space(const Path& path) const
     {
         return std::filesystem::space(path);
     }
 
-    Path FileSystem::TempFolder()
+    Path FileSystem::TempFolder() const
     {
         Path tempPath(std::filesystem::temp_directory_path().generic_string());
         return tempPath;
     }
 
-    Path FileSystem::ApplicationLogPath()
+    Path FileSystem::ApplicationLogPath() const
     {
         return m_pimpl->ApplicationLogPath();
     }

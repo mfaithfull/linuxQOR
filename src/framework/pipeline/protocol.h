@@ -33,29 +33,41 @@
 
 namespace qor{ namespace pipeline{
 
-    class Protocol 
+    class qor_pp_module_interface(QOR_PIPELINE) Protocol 
     {
     public:
 
         Protocol(){}
-        ~Protocol(){}
+        virtual ~Protocol(){}
 
-        qor::ref_of<qor::pipeline::Source>::type GetSource()
+        virtual qor::ref_of<qor::pipeline::Source>::type GetSource()
         {
             qor::ref_of<qor::pipeline::Source>::type source;
             return source;
         }
 
-        qor::ref_of<qor::pipeline::Sink>::type GetSink()
+        virtual qor::ref_of<qor::pipeline::Sink>::type GetSink()
         {
             qor::ref_of<qor::pipeline::Sink>::type sink;
             return sink;
         }
 
-        qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetFilter()
+        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetFilter()
         {
             qor::ref_of<qor::pipeline::InlineFilter<byte>>::type filter;
             return filter;
+        }
+
+        virtual qor::ref_of<qor::pipeline::ByteBuffer>::type GetRequestBuffer()
+        {
+            qor::ref_of<qor::pipeline::ByteBuffer>::type buffer;
+            return buffer;
+        }
+
+        virtual qor::ref_of<qor::pipeline::ByteBuffer>::type GetResponseBuffer()
+        {
+            qor::ref_of<qor::pipeline::ByteBuffer>::type buffer;
+            return buffer;
         }
     };
 

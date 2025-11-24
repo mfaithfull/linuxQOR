@@ -54,6 +54,7 @@ namespace qor{ namespace framework{
     public:
 
         static const CurrentThread& GetCurrent();
+        static const CurrentThread& Get();
         CurrentThread() {};
         CurrentThread(const CurrentThread & src) = delete;
         CurrentThread& operator=(CurrentThread const& src) = delete;

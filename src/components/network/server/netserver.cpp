@@ -29,6 +29,7 @@
 
 #include "src/qor/error/defaulterrorhandler.h"
 #include "src/qor/log/defaultloghandler.h"
+#include "src/framework/application/application_builder.h"
 #include "netserver.h"
 #include "netsession.h"
 #include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
@@ -52,7 +53,7 @@ namespace qor{ namespace components{
         bind->Enter = [this]()->void
         {
             qor_pp_ofcontext;
-            auto application = new_ref<Application>();
+            auto application = AppBuilder().TheApplication();
             m_io = application(qor_shared).GetRole()->GetFeature<AsyncIOService>();
             m_threadPool = application(qor_shared).GetRole()->GetFeature<ThreadPool>();
             m_sockets = ThePlatform(qor_shared)->GetSubsystem<Sockets>();

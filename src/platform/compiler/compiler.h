@@ -43,7 +43,7 @@ namespace qor { namespace compiler {
         const char* Name();
     };
 
-    const Compiler* TheCompiler();
+    qor_pp_module_interface(QOR_COMPILER) extern const Compiler* TheCompiler();
 
     template <typename T>
     static std::string demangle()

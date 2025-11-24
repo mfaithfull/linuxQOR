@@ -25,25 +25,39 @@
 #include "src/configuration/configuration.h"
 
 #include "fileconnector.h"
+#include "src/components/framework/pipeline/sinks/filesink/filesink.h"
+#include "src/components/framework/pipeline/sources/filesource/filesource.h"
 
 namespace qor{ namespace components{ 
 
     FileConnector::FileConnector() : Plug()
     {
-        m_Mode = platform::IFileSystem::WithFlags::None;        
-        m_OpenFor = platform::IFileSystem::OpenFor::ReadWrite;
-        m_Share = platform::IFileSystem::ShareMode::Owner_ReadWiteExecute;
+        m_Mode = platform::WithFlags::None;        
+        m_OpenFor = platform::OpenFor::ReadWrite;
+        m_Share = platform::ShareMode::Owner_ReadWiteExecute;
+
+        m_sink = new_ref<FileSink>();
+        m_source = new_ref<FileSource>();
+        m_sink->SetPlug(this);
+        m_source->SetPlug(this);
+
     }
 
     FileConnector::FileConnector(platform::FileIndex& fileIndex, 
-        const platform::IFileSystem::WithFlags mode, 
-        const platform::IFileSystem::ShareMode share,
-        const platform::IFileSystem::OpenFor openfor) : Plug()
+        const platform::WithFlags mode, 
+        const platform::ShareMode share,
+        const platform::OpenFor openfor) : Plug()
     {
         m_Mode = mode;
         m_OpenFor = openfor;
         m_Share = share;
         m_pFileIndex = &fileIndex;
+
+        m_sink = new_ref<FileSink>();
+        m_source = new_ref<FileSource>();
+        m_sink->SetPlug(this);
+        m_source->SetPlug(this);
+
     }
 
     FileConnector::~FileConnector()
@@ -77,32 +91,32 @@ namespace qor{ namespace components{
         return false;
     }
 
-    void FileConnector::SetMode(platform::IFileSystem::WithFlags mode)
+    void FileConnector::SetMode(platform::WithFlags mode)
     {
         m_Mode = mode;
     }
 
-    platform::IFileSystem::WithFlags FileConnector::GetMode(void)
+    platform::WithFlags FileConnector::GetMode(void)
     {
         return m_Mode;
     }
 
-    void FileConnector::SetOpenFor(platform::IFileSystem::OpenFor openfor)
+    void FileConnector::SetOpenFor(platform::OpenFor openfor)
     {
         m_OpenFor = openfor;
     }
 
-	platform::IFileSystem::OpenFor FileConnector::GetOpenFor(void)
+	platform::OpenFor FileConnector::GetOpenFor(void)
     {
         return m_OpenFor;
     }
 
-    void FileConnector::SetShare(platform::IFileSystem::ShareMode share)
+    void FileConnector::SetShare(platform::ShareMode share)
     {
         m_Share = share;
     }
     
-    platform::IFileSystem::ShareMode FileConnector::GetShare(void)
+    platform::ShareMode FileConnector::GetShare(void)
     {
         return m_Share;
     }

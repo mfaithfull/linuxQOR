@@ -38,6 +38,8 @@ namespace qor{ namespace framework{
     {
     public:
 
+        typedef ref_of<IRole>::type ref;
+
         IRole() = default;
         virtual ~IRole() = default;
         virtual void Setup() = 0;

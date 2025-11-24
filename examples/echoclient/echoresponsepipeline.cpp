@@ -25,7 +25,8 @@
 #include "src/configuration/configuration.h"
 #include "echoresponsepipeline.h"
 
-EchoResponsePipeline::EchoResponsePipeline(qor::ref_of<qor::components::SocketClientConnector>::type connector) : m_socketConnector(connector)
+EchoResponsePipeline::EchoResponsePipeline(qor::ref_of<qor::components::SocketClientConnector>::type connector) : 
+m_socketConnector(connector), m_filter(1024)
 {
     m_socketSource.SetBuffer(&m_filter);
     m_stdOutsink.SetBuffer(&m_filter);

@@ -27,6 +27,7 @@
 
 #include <stack>
 #include <functional>
+
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "iworkflow.h"
@@ -41,6 +42,9 @@ namespace qor{ namespace workflow{
     class qor_pp_module_interface(QOR_WORKFLOW) State
     {
     public:
+
+        typedef ref_of<State>::type ref;
+
         std::function<void(void)> Enter;
         std::function<void(void)> Suspend;
         std::function<void(void)> Resume;
@@ -76,6 +80,7 @@ namespace qor{ namespace workflow{
         void PushState(ref_of<State>::type state);
         void PopState();        
         void SetComplete();
+        void SetComplete(int result);
         void SetResult(int result);
         
         virtual void Enter();

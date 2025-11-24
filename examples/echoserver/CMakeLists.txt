@@ -13,7 +13,7 @@ target_compile_definitions(${target} PRIVATE -DQOR_PP_EXECUTABLE)
 
 set(portable_libraries qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_pipeline qor_error qor_sockets
-qor_asyncioservice qor_socketsessionconnector qor_socketsource qor_socketsink qor_log qor_logaggregator qor_loghandler qor_parser)
+qor_asyncioservice qor_socketclientconnector qor_socketsource qor_socketsink qor_log qor_logaggregator qor_loghandler qor_parser)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 set(os_libraries linqor_sockets linqor_asyncioservice linq_filesystem linq_thread)

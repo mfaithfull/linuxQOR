@@ -55,6 +55,10 @@ namespace qor{
         {
             Resolve(pHandler->Handle(*this));
         }
+        else
+        {
+            Escalate();
+        }
     }
 
 }//qor

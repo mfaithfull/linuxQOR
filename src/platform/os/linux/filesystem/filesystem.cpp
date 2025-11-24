@@ -60,9 +60,9 @@ namespace qor{ namespace nslinux{
 
     ref_of<platform::IFile>::type FileSystem::Create(const platform::FileIndex& index, int withFlags) const
     {
-        int flags = withFlags |= WithFlags::CreateNew | WithFlags::Truncate;
-        auto ref = Open(index, OpenFor::WriteOnly, flags);
-        ref.AsRef<File>()->ChangeMode(Owner_Read | Owner_Write);
+        int flags = withFlags |= platform::WithFlags::CreateNew | platform::WithFlags::Truncate;
+        auto ref = Open(index, platform::OpenFor::WriteOnly, flags);
+        ref.AsRef<File>()->ChangeMode(platform::Owner_Read | platform::Owner_Write);
         return ref;
     }
 

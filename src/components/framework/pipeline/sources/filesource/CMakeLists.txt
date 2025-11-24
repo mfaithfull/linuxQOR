@@ -9,6 +9,6 @@ include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE -DQOR_FILESOURCE)
 target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_signals qor_pipeline 
-qor_platform qor_filesystem qor_fileconnector)
+qor_platform qor_filesystem)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

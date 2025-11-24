@@ -31,6 +31,7 @@
 #include "src/platform/network/address.h"
 #include "src/platform/network/addressinfo.h"
 #include "src/framework/pipeline/connection.h"
+#include "src/framework/asyncioservice/sharedasynciocontext.h"
 
 namespace qor{ namespace components{ 
 
@@ -39,15 +40,19 @@ namespace qor{ namespace components{
     public:
 
 		SocketClientConnector();
+        SocketClientConnector(
+            ref_of<qor::network::Socket>::type connectedSocket,
+            ref_of<qor::framework::SharedAsyncIOContext::Session>::type session);
+
 		virtual ~SocketClientConnector() noexcept;
 
         //Plug interface
         virtual bool Connect();													//Device specific connection
         virtual void Disconnect(void);											//Device specific disconnection
-        virtual qor::pipeline::Element* GetSink();
-        virtual qor::pipeline::Element* GetSource();
+        virtual qor::pipeline::Element* GetSink() const;
+        virtual qor::pipeline::Element* GetSource() const;
 
-        void Configure(const std::string &host, const std::string &ip, int port, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec = 0);        
+        void Configure(const std::string &host, int port, const std::string &ip = "", qor::network::sockets::eAddressFamily address_family = qor::network::sockets::eAddressFamily::AF_INet, qor::network::addrinfo_flags socket_flags = 0, bool tcp_nodelay = false, bool ipv6_v6only = false, time_t timeout_sec = 0);
 
         const qor::network::Address& RemoteAddress()
         {
@@ -59,7 +64,7 @@ namespace qor{ namespace components{
             m_remoteAddress = address;
         }
 
-        bool ConnectToAddress( const std::string &host, const std::string &ip, int port, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec = 0 );
+        bool ConnectToAddress(const std::string &host, int port, const std::string &ip, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec = 0 );
         bool SetNonBlocking(bool nonBlocking);
         
         //ISocket implementation over owned socket instance
@@ -125,12 +130,14 @@ namespace qor{ namespace components{
 
         virtual int32_t Receive(char* buf, int32_t len, int32_t flags)
         {
-            return m_Socket->Receive(buf, len, flags);
-        }
-
-        task<int32_t> Receive(const framework::AsyncIOInterface& ioContext, char* Buffer, int32_t iLen)
-        {
-            return m_Socket->Receive(ioContext, Buffer, iLen);
+            if(m_Session.IsNotNull())
+            {
+            return sync_wait(m_Socket->Receive(*m_Session, buf, len));
+            }
+            else
+            {
+                return m_Socket->Receive(buf, len, flags);
+            }        
         }
 
         virtual task<int32_t> AsyncReceive(const framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
@@ -143,16 +150,18 @@ namespace qor{ namespace components{
             return m_Socket->ReceiveFrom(Buffer, iLen, iFlags, From);
         }
 
-        virtual int32_t Send(const char* Buffer, int32_t iLen)
+        virtual int32_t Send(const char* buf, int32_t len)
         {
-            return m_Socket->Send(Buffer, iLen);
+            if(m_Session.IsNotNull())
+            {
+                return sync_wait(m_Socket->Send(*m_Session, buf, len));
+            }
+            else
+            {
+                return m_Socket->Send(buf, len);
+            }
         }
         
-        task<int32_t> Send(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
-        {
-            return m_Socket->Send(ioContext, Buffer, iLen);
-        }
-
         virtual task<int32_t> AsyncSend(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
         {
             return m_Socket->AsyncSend(ioContext, Buffer, iLen);
@@ -204,6 +213,7 @@ namespace qor{ namespace components{
         bool m_ipv6Only;
         time_t m_timeoutSec;
         ref_of<qor::network::Socket>::type m_Socket;
+        ref_of<framework::SharedAsyncIOContext::Session>::type m_Session;
         qor::network::Address m_remoteAddress;
         qor::ref_of<qor::pipeline::Sink>::type m_sink;
         qor::ref_of<qor::pipeline::Source>::type m_source;

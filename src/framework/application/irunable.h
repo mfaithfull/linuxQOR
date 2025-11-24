@@ -26,6 +26,7 @@
 #define QOR_PP_H_RUNABLE
 
 #include <functional>
+#include <iostream>
 
 namespace qor{ namespace framework{
 
@@ -51,7 +52,15 @@ namespace qor{ namespace framework{
 
         virtual int Run(void)
         {
-            return m_func();
+            try
+            {
+                return m_func();
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+            return -1;
         }
 
     private:

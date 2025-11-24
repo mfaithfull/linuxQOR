@@ -29,16 +29,22 @@
 
 namespace qor{ namespace components{ 
 
-    FileSink::FileSink()
+    size_t FileSink::WriteBytes(byte* data, size_t bytesToWrite)
     {
-    }
-
-    bool FileSink::Write(size_t& unitsWritten, size_t unitsToWrite)
-    {
-        GetBuffer()->ReadRequest(unitsToWrite);
-        unitsWritten = unitsToWrite;
-        GetBuffer()->ReadAcknowledge(unitsWritten);        
-        return false;
+        size_t result = 0;
+        if(m_Connector && m_Connector->IsConnected())
+        {
+            result = m_Connector->File()->Write((byte*)data, bytesToWrite);
+        }
+        else
+        {
+            OnWriteError(0,0);
+        }
+        if( result < 0)
+        {
+            OnWriteError(result,0);
+        }
+        return result;
     }
 
 }}//qor::components

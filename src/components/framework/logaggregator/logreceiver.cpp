@@ -72,8 +72,8 @@ namespace qor { namespace components{
         {
             std::lock_guard<std::mutex> lock(m_mutex);
             m_refLogFile = filesystem->Open(logFileIndex, 
-                IFileSystem::OpenFor::ReadWrite, logFileIndex.Exists() ? IFileSystem::WithFlags::Append :
-                IFileSystem::WithFlags::CreateNew | IFileSystem::WithFlags::Exclusive
+                OpenFor::ReadWrite, logFileIndex.Exists() ? WithFlags::Append :
+                WithFlags::CreateNew | WithFlags::Exclusive
             );
             if(m_refLogFile.IsNotNull())
             {

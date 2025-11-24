@@ -37,7 +37,7 @@ namespace qor{ namespace pipeline{
         m_plug = plug;
     }
 
-    pipeline::Element* iosource_base::GetPlug()
+    pipeline::Element* iosource_base::GetPlug() const
     {
         return m_plug;
     }

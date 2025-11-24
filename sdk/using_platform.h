@@ -7,6 +7,9 @@
 #include "src/platform/network/socket.h"
 #include "src/platform/filesystem/filesystem.h"
 #include "src/platform/filesystem/path.h"
+#include "src/platform/filesystem/fileindex.h"
+#include "src/platform/filesystem/file/file.h"
+#include "src/platform/filesystem/file/filereader.h"
 
 using namespace qor::platform;
 using namespace qor::network;

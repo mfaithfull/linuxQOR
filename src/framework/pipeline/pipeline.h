@@ -27,6 +27,7 @@
 
 #include "element.h"
 #include "filter.h"
+#include "inlinefilter.h"
 #include "connection.h"
 
 namespace qor{ namespace pipeline{
@@ -52,6 +53,32 @@ namespace qor{ namespace pipeline{
             SetSource(SourceConnection->GetSource());
         }
 
+        Pipeline(Plug& SourceConnection, Plug& SinkConnection, Element::FlowMode flowmode = Element::FlowMode::Pull) : m_flowmode(flowmode)
+        {
+            SetSink(SinkConnection.GetSink());
+            SetSource(SourceConnection.GetSource());
+            SinkConnection.Connect();
+            SourceConnection.Connect();
+        }
+
+        Pipeline(const Plug& SourceConnection, const Plug& SinkConnection, Element::FlowMode flowmode = Element::FlowMode::Pull) : m_flowmode(flowmode)
+        {
+            SetSink(SinkConnection.GetSink());
+            SetSource(SourceConnection.GetSource());
+        }
+
+        Pipeline& Connect()
+        {
+            if(m_sink && m_source)
+            {
+                auto sinkPlug = dynamic_cast<Plug*>(ActualSink()->GetPlug());
+                auto sourcePlug = dynamic_cast<Plug*>(ActualSource()->GetPlug());
+                sinkPlug->Connect();
+                sourcePlug->Connect();
+            }
+            return *this;
+        }
+
         void SetSource(Element* source, Buffer* buffer)
         {
             if(buffer && source && source->IsSource())
@@ -67,6 +94,11 @@ namespace qor{ namespace pipeline{
             {
                 m_source = source;
                 m_source->SetParent(this);
+                if(m_sink)
+                {
+                    m_source->SetSink(m_sink);
+                    m_sink->SetSource(m_source);
+                }
             }
         }
 
@@ -85,6 +117,11 @@ namespace qor{ namespace pipeline{
             {
                 m_sink = sink;
                 m_sink->SetParent(this);
+                if(m_source)
+                {
+                    m_sink->SetSource(m_source);
+                    m_source->SetSink(m_sink);
+                }
             }
         }
 
@@ -137,7 +174,18 @@ namespace qor{ namespace pipeline{
             return Filter::Pump(unitsPumped, unitsToPump);
         }
 
+        void PumpAll()
+        {
+            size_t unitsPumped = 0;
+            size_t unitsToPump = 0;
+            do
+            {
+                unitsToPump = m_flowmode == FlowMode::Push ? m_source->GetBuffer()->WriteCapacity() : m_sink->GetBuffer()->WriteCapacity();
+            } while (Filter::Pump(unitsPumped, unitsToPump));
+        }
+
         virtual void InsertFilter(Filter* pFilter, FilterPos Pos = BeforeSink);
+        virtual Pipeline& InsertInlineFilter(const Buffer& filter, FilterPos Pos = BeforeSink);
 
         virtual void ResetStream(size_t streamSize = 0)
         {

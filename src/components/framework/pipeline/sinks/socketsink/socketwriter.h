@@ -43,8 +43,8 @@ namespace qor{ namespace components{
 
         SocketWriter( 
             const std::string &host, 
-            const std::string &ip, 
             int port,
+            const std::string &ip,             
             qor::network::sockets::eAddressFamily address_family = qor::network::sockets::eAddressFamily::AF_INet, 
             qor::network::addrinfo_flags socket_flags = 0, 
             bool tcp_nodelay = false, bool ipv6_v6only = false, time_t timeout_sec = 0, size_t bufferByteCount = 1024);
@@ -107,25 +107,6 @@ namespace qor{ namespace components{
         SocketSink m_sink;
         pipeline::NullSource m_source;
     };
-
-    template<>
-    uint16_t SocketWriter::HToN(const uint16_t& s)
-    {
-        return s;//TODO ::htons(s);
-    }
-
-    template<>
-    uint32_t SocketWriter::HToN(const uint32_t& s)
-    {
-        return s;//TODO::htonl(s);
-    }
-
-    template<>
-    uint64_t SocketWriter::HToN(const uint64_t& s)
-    {
-
-        return s;//TODO((uint64_t)htonl(s & 0xFFFFFFFF) << 32LL) | htonl(s >> 32);
-    }
 
 }}//qor::components
 

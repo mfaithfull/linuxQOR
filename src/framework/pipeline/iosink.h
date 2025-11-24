@@ -40,7 +40,7 @@ namespace qor{ namespace pipeline{
         virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );
         
         virtual void SetPlug(Element* pPlug);
-        virtual Element* GetPlug();
+        virtual Element* GetPlug() const;
         virtual bool HasPlug();
 
         virtual size_t WriteBytes(byte* data, size_t bytesToWrite) = 0;
@@ -74,6 +74,11 @@ namespace qor{ namespace pipeline{
             {
                 //Wrong type of plug
             }
+        }
+
+        virtual Element* GetPlug() const
+        {
+            return m_Connector;
         }
 
         virtual size_t WriteBytes(byte* space, size_t bytesToRead) = 0;

@@ -3,7 +3,8 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target qor_filesystem)
 
-add_library(${target} SHARED qor_filesystem.cpp filesystem.cpp path.cpp root.cpp fileindex.cpp folder.cpp file/file.cpp)
+add_library(${target} SHARED qor_filesystem.cpp filesystem.cpp path.cpp root.cpp fileindex.cpp folder.cpp 
+file/file.cpp file/filereader.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

@@ -85,6 +85,11 @@ namespace qor{
         return detail::GetCurrentThreadHolder()->Instance().operator const qor::framework::CurrentThread &();
 	}
 
+	const CurrentThread& CurrentThread::Get()
+	{
+        return detail::GetCurrentThreadHolder()->Instance().operator const qor::framework::CurrentThread &();
+	}
+
     void CurrentThread::Init()
     {
     }

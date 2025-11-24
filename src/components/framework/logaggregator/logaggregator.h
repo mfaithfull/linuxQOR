@@ -46,6 +46,8 @@ namespace qor { namespace components{
     {
     public:
 
+        typedef ref_of<LogAggregatorService>::type ref;
+        
         LogAggregatorService();
         virtual ~LogAggregatorService() noexcept;
 

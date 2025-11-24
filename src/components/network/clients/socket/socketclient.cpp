@@ -146,7 +146,7 @@ namespace qor{ namespace components{ namespace network{
 
     bool SocketClient::Connect(const std::string &host, const std::string &ip, int port)//, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, SocketOptions socket_options, time_t connection_timeout_sec, time_t connection_timeout_usec, time_t read_timeout_sec, time_t read_timeout_usec, time_t write_timeout_sec, time_t write_timeout_usec, const std::string &intf)
     {
-        m_Connector->ConnectToAddress(host, ip, port, m_AddressFamily, 0, m_TCPNoDelay, m_IPv6Only, connection_timeout_sec_);
+        m_Connector->ConnectToAddress(host, port, ip, m_AddressFamily, 0, m_TCPNoDelay, m_IPv6Only, connection_timeout_sec_);
         return m_Connector->IsConnected();
     }
 

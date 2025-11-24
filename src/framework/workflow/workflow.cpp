@@ -59,6 +59,11 @@ namespace qor{ namespace workflow{
     int Workflow::Run()
     {   
         m_complete = false;
+        if(m_StateStack.empty())
+        {
+            serious("No initial state set for workflow.");
+            return -1;
+        }
         try{   
             while(!IsComplete())
             {
@@ -69,13 +74,17 @@ namespace qor{ namespace workflow{
                 PopState();
             }
         }
-        catch(const Error& error)
+        catch(const Error* error)
         {
-            std::cerr << error.what().Content() << '\n';
+            std::cerr << error->what().Content() << '\n';
         }
         catch(const std::exception& e)
         {
             std::cerr << e.what() << '\n';
+        }
+        catch(...)
+        {
+            std::cerr << "Workflow failed due to unhandled exception.\n";
         }
         return m_result;
     }
@@ -181,6 +190,12 @@ namespace qor{ namespace workflow{
 
     void Workflow::SetComplete()
     {
+        m_complete = true;
+    }
+
+    void Workflow::SetComplete(int result)
+    {
+        SetResult(result);
         m_complete = true;
     }
 

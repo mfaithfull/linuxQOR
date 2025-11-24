@@ -55,7 +55,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
         m_requestPipeline = new_ref<EchoRequestPipeline>(m_connector);
         m_responsePipeline = new_ref<EchoResponsePipeline>(m_connector);
 
-        if( m_connector->ConnectToAddress("localhost", "127.0.0.1", 12345, qor::network::sockets::eAddressFamily::AF_INet, 0, false, false) )
+        if( m_connector->ConnectToAddress("localhost", 12345, "127.0.0.1", qor::network::sockets::eAddressFamily::AF_INet, 0, false, false) )
         { 
             qor::log::inform("Connected to server on 12345 @ localhost");
             SetState(send); 

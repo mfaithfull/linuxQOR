@@ -54,4 +54,4 @@ namespace qor{ namespace components{
 
 }}//qor::components
 
-#endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIFSTREAM
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STRING
