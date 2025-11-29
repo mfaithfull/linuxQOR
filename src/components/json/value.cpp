@@ -61,7 +61,7 @@ namespace qor { namespace components { namespace json { namespace parser {
 
     void value::Prepare()
     {
-        //Push a node onto the stack in expectation of an object
+        //Push a node onto the stack in expectation of a value
         GetParser()->PushNode(new_ref<Value>().AsRef<Node>());
     }
 

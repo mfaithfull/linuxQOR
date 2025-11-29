@@ -94,7 +94,7 @@ namespace qor{ namespace workflow{
         ref_of<DefaultLogHandler>::type m_logHander;
         ref_of<DefaultErrorHandler>::type m_errorHandler;
 
-    private:
+    protected:
     
         int m_result;
         bool m_complete;

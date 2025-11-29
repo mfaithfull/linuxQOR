@@ -38,7 +38,7 @@
 
 namespace qor{ namespace components {
 
-    class NetworkServer : public workflow::Workflow
+    class qor_pp_module_interface(QOR_NETSERVER) NetworkServer : public workflow::Workflow
     {
     public:
 
@@ -53,7 +53,7 @@ namespace qor{ namespace components {
         qor::ref_of<qor::network::Sockets>::type m_sockets;
         qor::ref_of<qor::framework::AsyncIOService>::type m_io;
         qor::ref_of<qor::framework::ThreadPool>::type m_threadPool;
-        qor::ref_of<qor::framework::AsyncIOContext>::type m_ioContext;
+        qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
 
         unsigned m_port;
         qor::ref_of<qor::network::Socket>::type m_serverSocket;

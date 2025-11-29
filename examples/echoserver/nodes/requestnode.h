@@ -38,12 +38,10 @@ public:
 
     RequestNode() : qor::components::parser::NodeAdapter<EchoRequest>(static_cast<uint64_t>(echoRequestToken::request))
     {
-        m_t = qor::new_ref<EchoRequest>();
     }
 
-    RequestNode(qor::ref_of<EchoRequest>::type request) : qor::components::parser::NodeAdapter<EchoRequest>(static_cast<uint64_t>(echoRequestToken::request))
+    RequestNode(qor::ref_of<EchoRequest>::type request) : qor::components::parser::NodeAdapter<EchoRequest>(request, static_cast<uint64_t>(echoRequestToken::request))
     {
-        m_t = request;
     }
 
     virtual ~RequestNode() = default;

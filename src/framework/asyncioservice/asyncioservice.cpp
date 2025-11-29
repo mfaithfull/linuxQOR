@@ -35,6 +35,8 @@ namespace qor { namespace framework{
 
     AsyncIOService::AsyncIOService()
     {
+        m_contextArray = nullptr;
+        m_contextIndex = 0;
     }
 
     AsyncIOService::~AsyncIOService()
@@ -44,10 +46,25 @@ namespace qor { namespace framework{
     void AsyncIOService::Setup()
     {
         m_threadPool = m_Role->GetFeature<ThreadPool>();
+
+        //Take all the AsyncIOContext(s) from the pool.
+        m_contextCount = PoolInstancer::GetPoolSize<AsyncIOContext>();
+        m_contextArray = new ref_of<AsyncIOContext>::type [m_contextCount];
+        for(unsigned context = 0; context < m_contextCount; context++)
+        {
+            m_contextArray[context] = new_ref<AsyncIOContext>(m_threadPool);
+        }
     }
     
     void AsyncIOService::Shutdown()
     {
+        for(unsigned context = 0; context < m_contextCount; context++)
+        {
+            delete m_contextArray[context];
+            m_contextArray[context] = nullptr;
+        }
+        delete m_contextArray;
+        m_contextArray = nullptr;
     }
 
 }}//qor::framework

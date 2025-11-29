@@ -29,7 +29,7 @@
 
 namespace qor { namespace components{ namespace json{
 
-    class Object : public components::parser::Node
+    class qor_pp_module_interface(QOR_JSON) Object : public components::parser::Node
     {
     public:
 

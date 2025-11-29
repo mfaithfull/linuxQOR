@@ -63,9 +63,8 @@ ServerWorkflow::ServerWorkflow() :
         m_io = application(qor_shared).GetRole()->GetFeature<AsyncIOService>();
         m_threadPool = application(qor_shared).GetRole()->GetFeature<ThreadPool>();
         m_sockets = ThePlatform(qor_shared)->GetSubsystem<Sockets>();
-        m_ioContext = m_io->Context();
-        m_ioSharedContext = m_io->SharedContext();
-        m_serverSocket = m_sockets->CreateSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP, m_ioContext);
+        m_ioSession = m_io->GetSession();
+        m_serverSocket = m_sockets->CreateSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP, m_ioSession);
         m_serverAddress.sa_family = eAddressFamily::AF_INet;
         m_serverAddress.SetPort(12345);
         m_serverAddress.SetIPV4Address(127,0,0,1);
@@ -107,7 +106,7 @@ ServerWorkflow::ServerWorkflow() :
     {
         qor_pp_ofcontext;
         Address ClientAddress;
-        auto ClientSocket = m_serverSocket->Accept(m_ioContext, ClientAddress);
+        auto ClientSocket = m_serverSocket->Accept(m_ioSession, ClientAddress);
         
         if(!ClientSocket->IsAlive())
         {
@@ -119,7 +118,7 @@ ServerWorkflow::ServerWorkflow() :
             m_threadPool->PostTask(
                 [this, ClientSocket](){
                 CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));
-                new_ref<ClientSessionWorkflow>(m_ioSharedContext, ClientSocket)->Run();
+                new_ref<ClientSessionWorkflow>(m_ioSession, ClientSocket)->Run();
             });
         }
     };

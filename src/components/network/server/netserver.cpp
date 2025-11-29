@@ -50,32 +50,31 @@ namespace qor{ namespace components{
     {
         qor_pp_ofcontext;
 
-        bind->Enter = [this]()->void
+        bind->Enter = [this, protocol]()->void
         {
             qor_pp_ofcontext;
             auto application = AppBuilder().TheApplication();
             m_io = application(qor_shared).GetRole()->GetFeature<AsyncIOService>();
             m_threadPool = application(qor_shared).GetRole()->GetFeature<ThreadPool>();
             m_sockets = ThePlatform(qor_shared)->GetSubsystem<Sockets>();
-            m_ioContext = m_io->Context();
-            m_serverSocket = m_sockets->CreateSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP, m_ioContext);
+            m_ioSession = m_io->GetSession();
+            m_serverSocket = m_sockets->CreateSocket(protocol->GetAddressFamily(), protocol->FramingType(), protocol->ProtocolType(), m_ioSession);
 
             Address serverAddress;
-            serverAddress.sa_family = eAddressFamily::AF_INet;
+            serverAddress.sa_family = protocol->GetAddressFamily();
             serverAddress.SetPort(m_port);
-            serverAddress.SetIPV4Address(127,0,0,1);
+            //serverAddress.SetIPV4Address(127,0,0,1);
 
             auto result = m_serverSocket->Bind(serverAddress);
 
             if( result < 0 )
             {
-                serious("Can't bind to socket: {0}", strerror(result));
-                SetResult(EXIT_FAILURE);
-                SetComplete();            
+                serious("Can't bind socket to port {0}: {1}", m_port, strerror(result));
+                SetComplete(EXIT_FAILURE);            
             }
             else
             {
-                log::inform("Bound port {0}", m_port);
+                log::inform("Bound server socket {0} to port {1}", m_serverSocket->m_fd, m_port);
                 SetState(listen);
             }
         };
@@ -87,13 +86,12 @@ namespace qor{ namespace components{
 
             if( result < 0)
             {
-                serious("Can't listen on socket: {0}", strerror(result));
-                SetResult(EXIT_FAILURE);
-                SetComplete();
+                serious("Can't listen on socket {0}: {1}", m_serverSocket->m_fd ,strerror(result));
+                SetComplete(EXIT_FAILURE);
             }
             else
             {
-                qor::log::inform("Listening on port: {0}...", m_port);
+                qor::log::inform("Listening on server socket: {0}...", m_serverSocket->m_fd);
                 SetState(accept);
             }
         };
@@ -102,15 +100,15 @@ namespace qor{ namespace components{
         {
             qor_pp_ofcontext;
             Address ClientAddress;
-            auto ClientSocket = m_serverSocket->Accept(m_ioContext, ClientAddress);
+            auto ClientSocket = m_serverSocket->Accept(m_ioSession, ClientAddress);
             
             if(!ClientSocket->IsAlive())
             {
-                serious("Failed to accept client connection.");
+                serious("Failed to accept client connection. Socket {0} failed is-alive check.", ClientSocket->m_fd );
             }
             else
             {
-                qor::log::inform("Accepted client connection: {0}:{1}", ClientSocket->m_fd, ClientAddress.GetIPV4Address());
+                log::inform("Accepted client connection: {0}:{1}", ClientSocket->m_fd, ClientAddress.GetIPV4Address());
                 m_threadPool->PostTask(
                     [this, ClientSocket, protocol](){
                     CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));

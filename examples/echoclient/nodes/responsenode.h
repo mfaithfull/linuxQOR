@@ -38,12 +38,11 @@ public:
 
     ResponseNode() : qor::components::parser::NodeAdapter<EchoResponse>(static_cast<uint64_t>(echoResponseToken::response))
     {
-        m_t = qor::new_ref<EchoResponse>();
     }
 
-    ResponseNode(qor::ref_of<EchoResponse>::type response) : qor::components::parser::NodeAdapter<EchoResponse>(static_cast<uint64_t>(echoResponseToken::response))
+    ResponseNode(qor::ref_of<EchoResponse>::type response) : 
+        qor::components::parser::NodeAdapter<EchoResponse>(response,static_cast<uint64_t>(echoResponseToken::response))
     {
-        m_t = response;
     }
 
     virtual ~ResponseNode() = default;

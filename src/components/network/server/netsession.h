@@ -55,13 +55,11 @@ namespace qor{ namespace components {
             {
                 qor_pp_ofcontext;
                 qor::log::inform("Servicing a connected client {0}", m_socket->m_fd);
-                auto application = new_ref<qor::framework::Application>();
+                auto application = framework::AppBuilder().TheApplication();
                 auto ioService = application(qor_shared).GetRole()->GetFeature<framework::AsyncIOService>();
-                m_sharedIO = ioService(qor_shared).SharedContext();
-                auto ioSession = m_sharedIO(qor_shared).GetSession();
-                if(ioSession.IsNull()){ warning("Out of IO contexts. IO will proceed synchronously.");}
+                m_ioSession = ioService(qor_shared).GetSession();
 
-                m_pipeline = new_ref<SessionPipeline>(m_socket, ioSession, protocol);
+                m_pipeline = new_ref<SessionPipeline>(m_socket, m_ioSession, protocol);
                 SetState(running);
             };
 
@@ -98,9 +96,9 @@ namespace qor{ namespace components {
         qor::ref_of<qor::workflow::State>::type running;
         qor::ref_of<qor::workflow::State>::type disconnect;
 
-        qor::ref_of<qor::network::Socket>::type m_socket;
-        qor::ref_of<SessionPipeline>::type m_pipeline;    
-        qor::ref_of<qor::framework::SharedAsyncIOContext>::type m_sharedIO;
+        qor::ref_of<qor::network::Socket>::type m_socket;        
+        qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
+        qor::ref_of<SessionPipeline>::type m_pipeline;
 
     };
 

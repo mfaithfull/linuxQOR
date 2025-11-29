@@ -27,7 +27,7 @@
 
 qor::Module& ThisModule(void)
 {
-	static qor::Module QORModule("Querysoft Open Runtime: HTTP Module",
+	static qor::Module QORModule("Querysoft Open Runtime: HTTP Protocol Module",
 		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 	return QORModule;
 }

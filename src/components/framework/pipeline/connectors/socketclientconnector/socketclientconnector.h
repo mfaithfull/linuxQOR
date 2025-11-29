@@ -31,7 +31,7 @@
 #include "src/platform/network/address.h"
 #include "src/platform/network/addressinfo.h"
 #include "src/framework/pipeline/connection.h"
-#include "src/framework/asyncioservice/sharedasynciocontext.h"
+#include "src/framework/asyncioservice/asynciocontext.h"
 
 namespace qor{ namespace components{ 
 
@@ -42,7 +42,7 @@ namespace qor{ namespace components{
 		SocketClientConnector();
         SocketClientConnector(
             ref_of<qor::network::Socket>::type connectedSocket,
-            ref_of<qor::framework::SharedAsyncIOContext::Session>::type session);
+            ref_of<qor::framework::AsyncIOContext::Session>::type session);
 
 		virtual ~SocketClientConnector() noexcept;
 
@@ -213,10 +213,10 @@ namespace qor{ namespace components{
         bool m_ipv6Only;
         time_t m_timeoutSec;
         ref_of<qor::network::Socket>::type m_Socket;
-        ref_of<framework::SharedAsyncIOContext::Session>::type m_Session;
         qor::network::Address m_remoteAddress;
         qor::ref_of<qor::pipeline::Sink>::type m_sink;
         qor::ref_of<qor::pipeline::Source>::type m_source;
+        ref_of<framework::AsyncIOContext::Session>::type m_Session;
 
     private:
 

@@ -72,12 +72,12 @@ namespace qor{ namespace nslinux{
         memcpy(addressinfo.address.sa.sa_data, info.ai_addr->sa_data, info.ai_addrlen);
     }
 
-    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, qor::framework::AsyncIOContext* ioContext) const
+    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<framework::AsyncIOContext::Session>::type ioSession) const
     {
         ref_of<network::Socket>::type socket = new_ref<Socket>(AF, Type, Protocol).AsRef<network::Socket>();
-        if( ioContext != nullptr)
+        if( ioSession.IsNotNull())
         {
-            ioContext->Enroll(socket()());
+            ioSession->Enroll(socket()());
         }
         return socket;
     }
@@ -102,7 +102,8 @@ namespace qor{ namespace nslinux{
             auto socket = CreateSocket(
                 Socket::AddressFamilyFromLinux(rp->ai_family), 
                 Socket::TypeFromLinux(rp->ai_socktype),
-                Socket::ProtocolFromLinux(rp->ai_protocol));
+                Socket::ProtocolFromLinux(rp->ai_protocol),
+                ref_of<framework::AsyncIOContext::Session>::type());
             if(socket.IsNull())
             {
                 continue;

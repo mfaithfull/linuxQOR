@@ -60,8 +60,15 @@ namespace qor { namespace components { namespace parser {
     public:
 
         NodeAdapter(uint64_t token) : Node(token)
-        {            
+        {
+            m_t = qor::new_ref<T>();
         }
+
+        NodeAdapter(qor::ref_of<T>::type response, uint64_t token) : Node(token)
+        {
+            m_t = response;
+        }
+
 
         virtual ~NodeAdapter() = default;
 

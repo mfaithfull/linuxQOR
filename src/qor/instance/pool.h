@@ -122,6 +122,11 @@ namespace qor{
                 maxCount = max;
             }
 
+            size_t GetSize() const
+            {
+                return maxCount;
+            }
+
             void Drain()
             {                
                 Lock lock(m);
@@ -169,6 +174,12 @@ namespace qor{
         static inline void SetPoolSize(size_t size)
         {
             return Holder<T>().SetSize(size);
+        }
+
+        template< class T >
+        static inline size_t GetPoolSize()
+        {
+            return Holder<T>().GetSize();
         }
 
         template< class T >

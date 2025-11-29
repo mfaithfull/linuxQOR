@@ -27,6 +27,7 @@
 
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "src/platform/network/socketdefs.h"
 #include "source.h"
 #include "sink.h"
 #include "inlinefilter.h"
@@ -39,6 +40,21 @@ namespace qor{ namespace pipeline{
 
         Protocol(){}
         virtual ~Protocol(){}
+
+        virtual qor::network::sockets::eAddressFamily GetAddressFamily() const
+        {
+            return qor::network::sockets::eAddressFamily::AF_Unspecified;
+        }
+
+        virtual qor::network::sockets::eType FramingType() const
+        {
+            return qor::network::sockets::eType::Sock_Stream;
+        }
+
+        virtual qor::network::sockets::eProtocol ProtocolType() const
+        {
+            return qor::network::sockets::eProtocol::IPProto_IP;
+        }
 
         virtual qor::ref_of<qor::pipeline::Source>::type GetSource()
         {

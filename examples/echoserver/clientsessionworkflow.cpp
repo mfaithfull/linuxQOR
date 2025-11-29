@@ -35,6 +35,7 @@
 #include "src/qor/log/impactful.h"
 #include "src/qor/log/important.h"
 #include "src/qor/log/imperative.h"
+#include "src/framework/application/application_builder.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
 #include "src/components/framework/logaggregator/logaggregator.h"
 #include "src/framework/task/syncwait.h"
@@ -51,13 +52,13 @@ using namespace qor::network::sockets;
 using namespace qor::components;
 
 ClientSessionWorkflow::ClientSessionWorkflow(
-    ref_of<qor::framework::SharedAsyncIOContext>::type sharedContext, ref_of<Socket>::type socket) : 
+    ref_of<qor::framework::AsyncIOContext::Session>::type ioSession, ref_of<Socket>::type socket) : 
     m_logHandler(log::Level::Debug),
     connected(new_ref<workflow::State>(this)),
     echo(new_ref<workflow::State>(this)),
     disconnect(new_ref<workflow::State>(this)),
     m_socket(socket),
-    m_ioSharedContext(sharedContext)
+    m_ioSession(ioSession)
 {
     
     qor_pp_ofcontext;
@@ -75,10 +76,8 @@ ClientSessionWorkflow::ClientSessionWorkflow(
     {
         qor_pp_ofcontext;
         qor::log::inform("Servicing a connected client {0}", m_socket->m_fd);
-
-        auto ioSession = m_ioSharedContext(qor_shared).GetSession();
-        if(ioSession.IsNull()){ warning("Out of IO contexts. IO will proceed synchronously.");}
-
+        
+        auto ioSession = AppBuilder().TheApplication(qor_shared)->GetRole()->GetFeature<AsyncIOService>(qor_shared)->GetSession();
         m_pipeline = new_ref<SessionPipeline>(m_socket, ioSession);
         SetState(echo);
     };

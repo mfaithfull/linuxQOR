@@ -76,5 +76,10 @@ namespace qor { namespace framework{
         }
     }
 
+    ref_of<AsyncIOContext::Session>::type AsyncIOContext::GetSession()
+    {
+        return new_ref<Session>(this);
+    }
+
 
 }}//qor::framework

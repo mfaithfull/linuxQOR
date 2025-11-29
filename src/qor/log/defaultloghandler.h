@@ -31,7 +31,7 @@
 
 namespace qor{
 
-    class qor_pp_module_interface(QOR_LOG) DefaultLogHandler : public qor::IssueHandler<log::Log>, public virtual SignalBase
+    class qor_pp_module_interface(QOR_LOG) DefaultLogHandler : public qor::IssueHandler<log::Log>, public SignalBase
     {
     public:
 

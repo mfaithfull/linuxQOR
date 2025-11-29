@@ -35,7 +35,7 @@
 
 namespace qor{ namespace components {
 
-    class qor_pp_module_interface(QOR_LOGHANDLER) LogHandler : public qor::IssueHandler<log::Log>, public virtual SignalBase
+    class qor_pp_module_interface(QOR_LOGHANDLER) LogHandler : public qor::IssueHandler<log::Log>, public SignalBase
     {
     public:
 

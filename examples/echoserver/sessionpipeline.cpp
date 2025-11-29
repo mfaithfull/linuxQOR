@@ -32,7 +32,7 @@ using namespace qor::framework;
 
 SessionPipeline::SessionPipeline(
         ref_of<Socket>::type socket, 
-        ref_of<SharedAsyncIOContext::Session>::type session) : 
+        ref_of<AsyncIOContext::Session>::type session) : 
         m_socket(socket), 
         m_ioSession(session)
 {

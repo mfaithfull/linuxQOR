@@ -40,7 +40,6 @@
 #include "asyncioeventprocessor.h"
 #include "asyncioinitiator.h"
 #include "asynciocontext.h"
-#include "sharedasynciocontext.h"
 
 namespace qor{ bool qor_pp_import ImplementsAsyncIOService();}
 
@@ -62,19 +61,17 @@ namespace qor { namespace framework{
         virtual void Setup();
         virtual void Shutdown();
 
-        ref_of<AsyncIOContext>::type Context() const
+        ref_of<AsyncIOContext::Session>::type GetSession()
         {
-            return new_ref<AsyncIOContext>(m_threadPool);
-        }
-
-        ref_of<SharedAsyncIOContext>::type SharedContext() const
-        {
-            return new_ref<SharedAsyncIOContext>(m_threadPool);
+            return m_contextArray[m_contextIndex++ % m_contextCount]->GetSession();
         }
 
     private:        
 
         ref_of<ThreadPool>::type m_threadPool;
+        unsigned m_contextCount;
+        ref_of<AsyncIOContext>::type* m_contextArray;
+        size_t m_contextIndex;
         
     };
     } //framework

@@ -41,7 +41,7 @@ namespace qor{ namespace components{
 
     SocketClientConnector::SocketClientConnector(
         ref_of<qor::network::Socket>::type connectedSocket,
-        ref_of<qor::framework::SharedAsyncIOContext::Session>::type session
+        ref_of<qor::framework::AsyncIOContext::Session>::type session
         ) : SocketClientConnector()
     {
         m_Socket = connectedSocket;
@@ -107,7 +107,7 @@ namespace qor{ namespace components{
             m_remoteAddress.sa_family = address.family;
             m_remoteAddress.SetPort( address.address.sa.IPAddress.sin_port);
             memcpy(m_remoteAddress.sa.sa_data, address.address.sa.sa_data, address.address.byte_size);
-            m_Socket = socketsSubsystem->CreateSocket(address.family, address.socktype, address.protocol);
+            m_Socket = socketsSubsystem->CreateSocket(address.family, address.socktype, address.protocol, ref_of<qor::framework::AsyncIOContext::Session>::type());
 
             m_connected = m_Socket->Connect(m_remoteAddress) == 0;
             return m_connected;

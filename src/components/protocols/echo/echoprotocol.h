@@ -41,6 +41,11 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         EchoProtocol();
         virtual ~EchoProtocol(){}
 
+        virtual qor::network::sockets::eAddressFamily GetAddressFamily() const
+        {
+            return qor::network::sockets::eAddressFamily::AF_INet;
+        }
+
         virtual qor::ref_of<qor::pipeline::Source>::type GetSource() override
         {            
             return m_source;

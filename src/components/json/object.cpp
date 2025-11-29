@@ -86,7 +86,6 @@ namespace qor { namespace components { namespace json { namespace parser {
             {
                 std::cout << "Emitting an object: " << std::endl;
                 std::cout << "unexpected:" << tokenName << std::endl;
-
             }
             node = GetParser()->PopNode();
         }

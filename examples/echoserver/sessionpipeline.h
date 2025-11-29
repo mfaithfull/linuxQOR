@@ -41,7 +41,7 @@ public:
 
     SessionPipeline(
         qor::ref_of<qor::network::Socket>::type socket, 
-        qor::ref_of<qor::framework::SharedAsyncIOContext::Session>::type session);
+        qor::ref_of<qor::framework::AsyncIOContext::Session>::type session);
     virtual ~SessionPipeline();
 
 private:
@@ -49,7 +49,7 @@ private:
     const size_t m_ioBufferSize = 1024;
     EchoRequestFilter m_filter;
     qor::ref_of<qor::network::Socket>::type m_socket;
-    qor::ref_of<qor::framework::SharedAsyncIOContext::Session>::type m_ioSession;
+    qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
     qor::ref_of<qor::components::SocketClientConnector>::type m_socketSessionConnector;
     qor::ref_of<qor::components::SocketSessionSource>::type m_socketSource;
     qor::ref_of<qor::components::SocketSessionSink>::type m_socketSink;

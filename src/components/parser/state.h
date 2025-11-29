@@ -81,7 +81,7 @@ namespace qor { namespace components { namespace parser {
     {
     public:
 
-        OneOfARange(Parser* parser, byte firstOctet, byte lastOctet, uint64_t token);
+        OneOfARange(Parser* parser, byte firstOctet, byte lastOctet, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
         virtual ~OneOfARange() = default;
     private:
         byte m_first;

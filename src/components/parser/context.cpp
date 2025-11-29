@@ -36,7 +36,7 @@ namespace qor { namespace components { namespace parser {
     bool Context::ConsumeOctet()
     {
         ++m_position;
-        return true;
+        return m_position < m_size;
     }
 
     bool Context::GetOctet(byte*& data)

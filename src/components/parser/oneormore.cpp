@@ -58,13 +58,17 @@ namespace qor { namespace components { namespace parser {
                 m_head->Reset();
                 Workflow()->PushState(m_head.AsRef<workflow::State>());
             }
-            else
+            else if(m_head->m_result.code == Result::FAILURE)
             {
                 if(m_first)
                 {
                     m_result.code = Result::FAILURE;
                     m_result.m_position = m_head->m_result.m_position;
                 }
+                Workflow()->PopState();
+            }
+            else
+            {
                 Workflow()->PopState();
             }
         };

@@ -24,10 +24,93 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <iostream>
+
 #include "src/platform/compiler/compiler.h"
 #include "parser.h"
 
 namespace qor { namespace components { namespace parser {
 
+    int Parser::FinalParse()
+    {
+        m_complete = false;
+        if(m_StateStack.empty())
+        {
+            return m_result;        }
+        else
+        {
+            std::cout << "Stack on entry has " << m_StateStack.size() << " states." << std::endl;
+        }
+        try{   
+            PopState();
+            while(!IsComplete())
+            {
+                CurrentState()->Enter();
+            }
+            if(IsComplete())
+            {
+                std::cout << "Parse complete." << std::endl;
+            }
+        }
+        catch(const Error* error)
+        {
+            std::cerr << error->what().Content() << '\n';
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        catch(...)
+        {
+            std::cerr << "Parser failed due to unhandled exception.\n";
+        }
+
+        std::cout << "Stack on exit has " << m_StateStack.size() << " states." << std::endl;
+        return m_result;
+    }
+
+    int Parser::Parse()
+    {   
+        m_complete = false;
+        if(m_StateStack.empty())
+        {
+            serious("No initial state set for workflow.");
+            return -1;
+        }
+        else
+        {
+            std::cout << "Stack on entry has " << m_StateStack.size() << " states." << std::endl;
+        }
+        try{   
+            while(!IsComplete() && m_context->HasUnparsedData())
+            {
+                CurrentState()->Enter();
+            }
+            if(IsComplete())
+            {
+                std::cout << "Parse complete." << std::endl;
+            }
+            if(!m_context->HasUnparsedData())
+            {
+                std::cout << "All available data consumed." << std::endl;
+            }
+        }
+        catch(const Error* error)
+        {
+            std::cerr << error->what().Content() << '\n';
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        catch(...)
+        {
+            std::cerr << "Parser failed due to unhandled exception.\n";
+        }
+
+        std::cout << "Stack on exit has " << m_StateStack.size() << " states." << std::endl;
+        return m_result;
+    }
 
 }}}//qor::components::parser

@@ -36,7 +36,15 @@ namespace qor{ namespace components{
     public:
 
 		FileConnector();
-		FileConnector(platform::FileIndex & fileIndex, 
+		FileConnector(const platform::FileIndex & fileIndex, 
+            const platform::WithFlags mode = platform::WithFlags::CreateNew,
+            const platform::ShareMode access = platform::ShareMode::Owner_Read, 
+            const platform::OpenFor openfor = platform::OpenFor::ReadWrite);
+		FileConnector(const platform::FileIndex & fileIndex, const pipeline::Buffer& buffer,
+            const platform::WithFlags mode = platform::WithFlags::CreateNew,
+            const platform::ShareMode access = platform::ShareMode::Owner_Read, 
+            const platform::OpenFor openfor = platform::OpenFor::ReadWrite);
+		FileConnector(const platform::FileIndex & fileIndex, pipeline::Buffer& buffer,
             const platform::WithFlags mode = platform::WithFlags::CreateNew,
             const platform::ShareMode access = platform::ShareMode::Owner_Read, 
             const platform::OpenFor openfor = platform::OpenFor::ReadWrite);

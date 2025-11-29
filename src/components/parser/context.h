@@ -32,7 +32,7 @@
 
 namespace qor { namespace components { namespace parser {
 
-    class Context
+    class qor_pp_module_interface(QOR_PARSER) Context
     {
     public:
 
@@ -45,6 +45,18 @@ namespace qor { namespace components { namespace parser {
         bool GetOctet(byte*& data);
         bool ConsumeOctet();
         size_t GetPosition();
+
+        void SetData(byte* data, size_t itemCount)
+        {
+            m_octetStream = data;
+            m_position = 0;
+            m_size = itemCount;
+        }
+
+        bool HasUnparsedData()
+        {
+            return m_size - m_position > 0;
+        }
 
     private:
     

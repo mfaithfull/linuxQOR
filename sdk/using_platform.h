@@ -13,5 +13,6 @@
 
 using namespace qor::platform;
 using namespace qor::network;
+using namespace qor::network::sockets;
 
 #endif//QOR_PP_H_SDK_USING_PLATFORM

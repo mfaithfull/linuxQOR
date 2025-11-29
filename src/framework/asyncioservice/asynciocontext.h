@@ -35,6 +35,7 @@
 #include "src/framework/thread/threadpool.h"
 #include "asynciointerface.h"
 #include "src/qor/log/informative.h"
+#include "src/qor/sync/mutex.h"
 
 namespace qor { namespace framework{
   
@@ -44,8 +45,8 @@ namespace qor { namespace framework{
     public:
 
         AsyncIOContext(ref_of<ThreadPool>::type threadPool);
-        ~AsyncIOContext();
-
+        ~AsyncIOContext();        
+        
         virtual void Inflate();
         virtual void Deflate();
 
@@ -93,12 +94,80 @@ namespace qor { namespace framework{
             co_return ioResult.status_code;
         }
 
+        //Provides synchronisaed access to a shared IO Context
+        class Session : public AsyncIOInterface
+        {
+            public:
+
+            Session(AsyncIOContext* sharedContext) : m_sharedContext(*sharedContext)
+            {
+            }
+
+            virtual ~Session() = default;
+
+            virtual inline bool Enroll(platform::IODescriptor& ioDescriptor) const
+            {
+                Lock lock(m_sharedContext.m_access);
+                return m_sharedContext.Enroll(ioDescriptor);
+            }
+
+            virtual inline task<int> Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
+            {
+                Lock lock(m_sharedContext.m_access);
+                return m_sharedContext.Send(ioDescriptor, buffer, len, flags);
+            }
+
+            virtual inline task<int> Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+            {
+                Lock lock(m_sharedContext.m_access);
+                return m_sharedContext.Recv(ioDescriptor, buffer, len);
+            }
+
+            virtual inline task<int> Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+            {
+                Lock lock(m_sharedContext.m_access);
+                return m_sharedContext.Read(ioDescriptor, buffer, len);
+            }
+
+            virtual inline task<int> Shutdown(platform::IODescriptor* ioDescriptor, int how) const
+            {
+                Lock lock(m_sharedContext.m_access);
+                return m_sharedContext.Shutdown(ioDescriptor, how);
+            }
+            
+            virtual inline task<int> Listen(platform::IODescriptor* ioDescriptor, int backlog) const
+            {
+                Lock lock(m_sharedContext.m_access);
+                return m_sharedContext.Listen(ioDescriptor, backlog);
+            }
+
+            virtual inline task<int> Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
+            {
+                Lock lock(m_sharedContext.m_access);
+                return m_sharedContext.Bind(ioDescriptor, Address);
+            }
+
+            virtual inline task<int> Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
+            {
+                Lock lock(m_sharedContext.m_access);
+                return m_sharedContext.Accept(ioDescriptor, Address, Socket);
+            }
+
+        private:
+
+            AsyncIOContext& m_sharedContext;
+        };
+
+        ref_of<Session>::type GetSession();
+
     private:
 
         ref_of<AsyncIOInitiator>::type m_initiator;
         ref_of<AsyncIOEventProcessor>::type m_processor;
         ref_of<ThreadPool>::type m_threadPool;
-        std::future<int> m_processorResult;
+        std::future<int> m_processorResult;        
+        Mutex m_access;
+        friend class Session;
     };
 
     }//framework

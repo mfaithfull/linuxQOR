@@ -26,6 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PARSER_PARSER
 
 #include <stack>
+#include <iostream>
 
 #include "src/framework/workflow/workflow.h"
 #include "context.h"
@@ -34,7 +35,7 @@
 
 namespace qor { namespace components { namespace parser {
 
-    class Parser : public workflow::Workflow
+    class qor_pp_module_interface(QOR_PARSER) Parser : public workflow::Workflow
     {
     
     public:
@@ -76,6 +77,9 @@ namespace qor { namespace components { namespace parser {
             m_context = context;
         }
 
+        int Parse();
+        int FinalParse();
+        
     private:
 
         ref_of<class Context>::type m_context;

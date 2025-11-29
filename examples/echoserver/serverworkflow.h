@@ -44,11 +44,10 @@ private:
     qor::ref_of<qor::workflow::State>::type accept;
 
     const qor::network::Sockets* m_sockets;
-    const qor::framework::AsyncIOService* m_io;
+    qor::ref_of<qor::framework::AsyncIOService>::type m_io;
     qor::ref_of<qor::framework::ThreadPool>::type m_threadPool;
         
-    qor::ref_of<qor::framework::AsyncIOContext>::type m_ioContext;
-    qor::ref_of<qor::framework::SharedAsyncIOContext>::type m_ioSharedContext;
+    qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
     qor::network::Address m_serverAddress;
     qor::ref_of<qor::network::Socket>::type m_serverSocket;
 };

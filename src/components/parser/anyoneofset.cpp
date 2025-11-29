@@ -67,6 +67,7 @@ namespace qor { namespace components { namespace parser {
                     m_result.m_position = parserState->m_result.m_position;
                     m_result.length = 0;
                     m_result.code = Result::FAILURE;
+                    Workflow()->PopState();
                 }
                 else
                 {                    

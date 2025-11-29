@@ -26,125 +26,120 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUEST
 
 #include <string>
+#include <vector>
 #include <chrono>
-#include "../text/utils.h"
-#include "../headers.h"
-#include "../forms/forms.h"
-#include "../ranges.h"
-#include "../contentprovider.h"
-#include "../contentreader.h"
+
+#include "params.h"
+#include "../headers/headers.h"
+#include "progress.h"
+#include "content.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
-
-    class qor_pp_module_interface(QOR_HTTP) Request
+    
+    class HTTPRequest
     {
     public:
-    
-        std::string method;
-        std::string path;
-        std::string matched_route;
-        Params params;
-        Headers headers;
-        Headers trailers;
-        std::string body;
 
-        std::string remote_addr;
-        int remote_port = -1;
-        std::string local_addr;
-        int local_port = -1;
+        HTTPRequest() = default;
+        virtual ~HTTPRequest() = default;
 
-        // for server
-        std::string version;
-        std::string target;
-        MultipartFormData form;
-        Ranges ranges;
-        Match matches;
-        std::unordered_map<std::string, std::string> path_params;
-        std::function<bool()> is_connection_closed = []() { return true; };
-
-        // for client
-        std::vector<std::string> accept_content_types;
-        ResponseHandler response_handler;
-        ContentReceiverWithProgress content_receiver;
-        DownloadProgress download_progress;
-        UploadProgress upload_progress;
-#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
-        const SSL *ssl = nullptr;
-#endif
-
-        bool has_header(const std::string &key) const;
-        std::string get_header_value(const std::string &key, const char *def = "", size_t id = 0) const;
-        size_t get_header_value_u64(const std::string &key, size_t def = 0, size_t id = 0) const;
-        size_t get_header_value_count(const std::string &key) const;
-        void set_header(const std::string &key, const std::string &val);
-        bool has_trailer(const std::string &key) const;
-        std::string get_trailer_value(const std::string &key, size_t id = 0) const;
-        size_t get_trailer_value_count(const std::string &key) const;
-        bool has_param(const std::string &key) const;
-        std::string get_param_value(const std::string &key, size_t id = 0) const;
-        size_t get_param_value_count(const std::string &key) const;
-        bool is_multipart_form_data() const;
-
-        inline std::string get_bearer_token_auth() 
+        void SetValue(const std::string& value)
         {
-            if (has_header("Authorization")) 
-            {
-                constexpr auto bearer_header_prefix_len = text::str_len("Bearer ");
-                return get_header_value("Authorization").substr(bearer_header_prefix_len);
-            }
-            return "";
+            //TODO:
         }
 
-        void StartTimeout()
+        const std::string& GetValue() const
         {
-            start_time_ = std::chrono::steady_clock::now();
+            return m_method;//TODO:
         }
 
-        void SetContentLength(size_t length)
+        void SetMethod(const std::string& method)
         {
-            content_length_ = length;
+            m_method = method;
         }
 
-        void SetContentProvider(ContentProvider&& content_provider)
+        const std::string& GetMethod() const
         {
-            content_provider_ = content_provider;
+            return m_method;
         }
 
-        void SetIsChunkedContentProvider(bool is)
+        void SetPath(const std::string& path)
         {
-            is_chunked_content_provider_ = is;
+            m_path = path;            
         }
 
-        std::chrono::time_point<std::chrono::steady_clock> GetStartTime(void)
+        const std::string& GetPath() const
         {
-            return start_time_;
+            return m_path;
         }
 
-        const ContentProvider& GetContentProvider(void) const
+        void SetParams(const Params& params)
         {
-            return content_provider_;
+            m_params = params;
         }
 
-        bool IsChunkedContentProvider(void) const
+        const Params& GetParams()
         {
-            return is_chunked_content_provider_;
+            return m_params;
         }
 
-        size_t GetContentLength(void) const
+        void SetHeaders(const Headers& headers)
         {
-            return content_length_;
+            m_headers = headers;
         }
 
+        const Headers& GetHeaders()
+        {
+            return m_headers;
+        }
+
+        void SetTrailers(const Headers& trailers)
+        {
+            m_trailers = trailers;
+        }
+
+        const Headers& GetTrailers()
+        {
+            return m_trailers;
+        }
+
+        void SetBody(const std::string& body)
+        {
+            m_body = body;
+        }
+
+        const std::string& GetBody()
+        {
+            return m_body;
+        }
+
+        void AddAcceptContentType(const std::string& acceptContentType)
+        {
+            m_acceptContentTypes.push_back(acceptContentType);
+        }
+        
     private:
+        
+        std::string m_method;
+        std::string m_path;
+        Params m_params;
+        Headers m_headers;
+        Headers m_trailers;
+        std::string m_body;
+        std::vector<std::string> m_acceptContentTypes;
+        //ResponseHandler response_handler;
+        ContentReceiverWithProgress content_receiver;
+        DownloadProgress m_downloadProgress;
+        
+        UploadProgress m_uploadProgress;
+        size_t m_maxRedirectCount = 1;
+        size_t m_contentLength = 0;
+        ContentProvider m_contentProvider;
+        size_t m_authorizationCount = 0;
+        std::chrono::time_point<std::chrono::steady_clock> m_startTime = (std::chrono::steady_clock::time_point::min)();
 
-        size_t redirect_count_ = 1;//CPPHTTPLIB_REDIRECT_MAX_COUNT;
-        size_t content_length_ = 0;
-        ContentProvider content_provider_;
-        bool is_chunked_content_provider_ = false;
-        size_t authorization_count_ = 0;
-        std::chrono::time_point<std::chrono::steady_clock> start_time_ = (std::chrono::steady_clock::time_point::min)();
     };
 
-}}}}
+}}}}//qor::components::protocols::http
 
 #endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUEST

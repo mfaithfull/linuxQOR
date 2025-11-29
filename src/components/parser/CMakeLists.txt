@@ -10,7 +10,7 @@ add_library(${target} SHARED qor_parser.cpp state.cpp parser.cpp context.cpp rfc
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_PARSER)
+target_compile_definitions(${target} PRIVATE QOR_PARSER)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_thread qor_sync qor_injection 
 qor_workflow qor_pipeline qor_property)
 

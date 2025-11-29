@@ -42,13 +42,17 @@ namespace qor { namespace components { namespace parser {
 
         Leave = [this]()
         {
-            if(m_result.code != Result::SUCCESS)
+            if(m_result.code == Result::FAILURE)
             {
                 Fail();
             }
             else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
             {
                 Emit();
+            }
+            else if(m_result.code == Result::MORE_DATA)
+            {
+                std::cout << "Ran out of data before we could decide. Reenter with more data to try again." << std::endl;
             }
         };
     }
@@ -109,7 +113,8 @@ namespace qor { namespace components { namespace parser {
             }
             else
             {
-                m_Workflow->PopState();
+                return;
+                //m_Workflow->PopState();
             }
         };
     }
@@ -122,22 +127,31 @@ namespace qor { namespace components { namespace parser {
             Prepare();
 
             byte* data = nullptr;
-            if(GetContext()->GetOctet(data) && (*data >= m_first && *data <= m_last) )
+            if(GetContext()->GetOctet(data))
             {
-                m_result.first = *data;
-                m_result.m_position = GetContext()->GetPosition();
-                GetContext()->ConsumeOctet();
-                m_result.token = m_token;
-                ++m_result.length;              
-                m_result.code = Result::SUCCESS;
+                if( (*data >= m_first && *data <= m_last) )
+                {
+                    m_result.first = *data;
+                    m_result.m_position = GetContext()->GetPosition();
+                    GetContext()->ConsumeOctet();
+                    m_result.token = m_token;
+                    ++m_result.length;              
+                    m_result.code = Result::SUCCESS;
+                }
+                else
+                {
+                    m_result.m_position = GetContext()->GetPosition();
+                    m_result.code = Result::FAILURE;
+                    m_result.length = 0;
+                }
+                Workflow()->PopState();
             }
             else
             {
-                m_result.m_position = GetContext()->GetPosition();
-                m_result.code = Result::FAILURE;
-                m_result.length = 0;
+                Fail();
+                m_result.code = Result::MORE_DATA;
+                return;//Need more data
             }
-            Workflow()->PopState();
         };
     }
 
@@ -149,22 +163,31 @@ namespace qor { namespace components { namespace parser {
             Prepare();
 
             byte* data = nullptr;
-            if(GetContext()->GetOctet(data) && *data == m_matchingOctet)
+            if(GetContext()->GetOctet(data))
             {
-                m_result.first = *data;
-                m_result.m_position = GetContext()->GetPosition();
-                GetContext()->ConsumeOctet();
-                m_result.token = m_token;
-                m_result.length = 1;
-                m_result.code = Result::SUCCESS;
+                if(*data == m_matchingOctet)
+                {
+                    m_result.first = *data;
+                    m_result.m_position = GetContext()->GetPosition();
+                    GetContext()->ConsumeOctet();
+                    m_result.token = m_token;
+                    m_result.length = 1;
+                    m_result.code = Result::SUCCESS;
+                }
+                else if(data)
+                {
+                    m_result.code = Result::FAILURE;
+                    m_result.m_position = GetContext()->GetPosition();
+                    m_result.length = 0;
+                }
+                Workflow()->PopState();
             }
-            else if(data)
+            else
             {
-                m_result.code = Result::FAILURE;
-                m_result.m_position = GetContext()->GetPosition();
-                m_result.length = 0;
-            }
-            Workflow()->PopState();
+                Fail();
+                m_result.code = Result::MORE_DATA;
+                return;//Need more data to continue
+            }            
         };
     }
 
@@ -192,6 +215,10 @@ namespace qor { namespace components { namespace parser {
                     m_result.m_position = m_head->m_result.m_position;
                     Workflow()->PopState();
                 }
+                else if(m_head->m_result.code == Result::MORE_DATA)
+                {
+                    Workflow()->PopState();
+                }
                 else
                 {
                     m_internalState = 1;
@@ -206,6 +233,10 @@ namespace qor { namespace components { namespace parser {
                     m_result.length = m_tail->m_result.length;
                     m_result.token = m_token;
                     m_result.m_position = m_tail->m_result.m_position;
+                    Workflow()->PopState();
+                }
+                else if(m_head->m_result.code == Result::MORE_DATA)
+                {
                     Workflow()->PopState();
                 }
                 else
@@ -294,20 +325,24 @@ namespace qor { namespace components { namespace parser {
             switch(m_internalState)
             {
             case 0://head
-                if(m_head->m_result.code != Result::SUCCESS)
+                if(m_head->m_result.code == Result::FAILURE)
                 {
                     m_result.code = m_head->m_result.code;
                     m_result.length = 0;
                     m_result.m_position = m_head->m_result.m_position;
                     Workflow()->PopState();
                 }
-                else
+                else if(m_head->m_result.code == Result::SUCCESS)
                 {
                     m_result.first = m_head->m_result.first;
                     m_result.length = m_head->m_result.length;                        
                     m_result.m_position = m_head->m_result.m_position;
                     m_internalState = 1;
                     Workflow()->PushState(m_tail.AsRef<workflow::State>());
+                }
+                else
+                {
+                    std::cout << "More data required" << std::endl;
                 }
                 break;
             case 1://tail
@@ -318,11 +353,15 @@ namespace qor { namespace components { namespace parser {
                     m_result.token = m_token;
                     Workflow()->PopState();
                 }
-                else
+                else if(m_tail->m_result.code == Result::FAILURE)
                 {
                     m_result.code = Result::FAILURE;
                     m_result.length = 0;
                     Workflow()->PopState();
+                }
+                else
+                {
+                    std::cout << "More data required" << std::endl;
                 }
                 break;
             }
