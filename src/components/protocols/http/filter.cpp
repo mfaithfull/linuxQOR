@@ -38,7 +38,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
         HTTPRequest request = Parse(data, itemCount);
 
-        std::string input = request.GetValue();
+        std::string input = "";
 
         //qor::log::inform("Handling request, {0} bytes.", itemCount);
 

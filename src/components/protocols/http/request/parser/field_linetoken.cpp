@@ -36,7 +36,9 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void field_line::Emit()
     {
-        std::cout << "Emitting a field_line." << std::endl;
+        //std::cout << "Emitting a field_line." << std::endl;
+        std::string name;
+        std::vector<std::string> values;
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -48,15 +50,33 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            std::cout << tokenName << std::endl;
+            //std::cout << tokenName << std::endl;
 
-            //TODO: extract field name and values and assign
+            if(token == static_cast<uint64_t>(httpRequestToken::field_name))
+            {
+                auto nameNode = node.AsRef<FieldNameNode>();
+                name = nameNode->GetObject()->m_fieldName;
+            }
+
+            if(token == static_cast<uint64_t>(httpRequestToken::field_value))
+            {
+                auto valueNode = node.AsRef<FieldValueNode>();
+                std::string value = valueNode->GetObject()->m_value;
+                values.push_back(value);
+            }
+            
 
             node = GetParser()->PopNode();
         }
 
         if(node.IsNotNull())
         {
+            auto fieldlineNode = node.AsRef<FieldLineNode>();
+            if(fieldlineNode.IsNotNull())
+            {
+                fieldlineNode->GetObject()->m_fieldName = name;
+                fieldlineNode->GetObject()->m_fieldValues = values;
+            }
             GetParser()->PushNode(node);
         }                        
     }

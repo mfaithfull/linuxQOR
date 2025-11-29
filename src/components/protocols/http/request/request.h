@@ -43,16 +43,6 @@ namespace qor { namespace components { namespace protocols { namespace http {
         HTTPRequest() = default;
         virtual ~HTTPRequest() = default;
 
-        void SetValue(const std::string& value)
-        {
-            //TODO:
-        }
-
-        const std::string& GetValue() const
-        {
-            return m_method;//TODO:
-        }
-
         void SetMethod(const std::string& method)
         {
             m_method = method;
@@ -117,7 +107,92 @@ namespace qor { namespace components { namespace protocols { namespace http {
         {
             m_acceptContentTypes.push_back(acceptContentType);
         }
+
+        bool HasHeader(const std::string &key) const
+        {
+            return m_headers.find(key) != m_headers.end();
+        }
         
+        bool HasTrailer(const std::string &key) const
+        {
+            return m_trailers.find(key) != m_trailers.end();
+        }
+
+        bool HasParam(const std::string &key) const 
+        {
+            return m_params.find(key) != m_params.end();
+        }
+
+        std::string GetHeaderValue(const std::string &key, const char* def = "", size_t id = 0) const
+        {
+            auto rng = m_headers.equal_range(key);
+            auto it = rng.first;
+            std::advance(it, static_cast<ssize_t>(id));
+            if (it != rng.second) 
+            { 
+                return it->second.c_str(); 
+            }
+            return def;
+        }
+
+        std::string GetTrailerValue(const std::string &key, const char* def = "", size_t id = 0) const
+        {
+            auto rng = m_trailers.equal_range(key);
+            auto it = rng.first;
+            std::advance(it, static_cast<ssize_t>(id));
+            if (it != rng.second) 
+            { 
+                return it->second.c_str(); 
+            }
+            return def;
+        }
+
+        std::string GetParamValue(const std::string &key, size_t id) const 
+        {
+            auto rng = m_params.equal_range(key);
+            auto it = rng.first;
+            std::advance(it, static_cast<ssize_t>(id));
+            if (it != rng.second) 
+            { 
+                return it->second; 
+            }
+            return std::string();
+        }
+
+        void AddHeader(const std::string &key, const std::string &value)
+        {
+            m_headers.emplace(key,value);
+        }
+
+        void AddTrailer(const std::string &key, const std::string &value)
+        {
+            m_trailers.emplace(key,value);
+        }
+
+        size_t GetHeaderValueCount(const std::string &key) const 
+        {
+            auto r = m_headers.equal_range(key);
+            return static_cast<size_t>(std::distance(r.first, r.second));
+        }
+
+        size_t GetTrailerValueCount(const std::string &key) const 
+        {
+            auto r = m_trailers.equal_range(key);
+            return static_cast<size_t>(std::distance(r.first, r.second));
+        }
+
+        size_t GetParamValueCount(const std::string &key) const 
+        {
+            auto r = m_params.equal_range(key);
+            return static_cast<size_t>(std::distance(r.first, r.second));
+        }
+
+        bool IsMultipartFormData() const 
+        {
+            const auto &content_type = GetHeaderValue("Content-Type");
+            return !content_type.rfind("multipart/form-data", 0);
+        }
+
     private:
         
         std::string m_method;

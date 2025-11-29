@@ -2,6 +2,7 @@
 #define QOR_PP_H_SDK_USING_PLATFORM
 
 #include "using_qor.h"
+#include "src/platform/compiler/compiler.h"
 #include "src/platform/platform.h"
 #include "src/platform/network/sockets.h"
 #include "src/platform/network/socket.h"

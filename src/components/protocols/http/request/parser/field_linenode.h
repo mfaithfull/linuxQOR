@@ -26,6 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTPARSER_FIELD_LINENODE
 
 #include <string>
+#include <vector>
 
 #include "src/components/parser/state.h"
 #include "src/components/parser/rfc5234.h"
@@ -36,11 +37,10 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class FieldLine
-    { 
-    protected:
+    struct FieldLine
+    {     
         std::string m_fieldName;
-        std::string m_fieldValue;
+        std::vector<std::string> m_fieldValues;
     };
 
     class FieldLineNode : public parser::NodeAdapter<FieldLine>

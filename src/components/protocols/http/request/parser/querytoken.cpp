@@ -24,20 +24,24 @@
 
 #include "src/configuration/configuration.h"
 
+#include <string>
+#include <vector>
+
 #include "querytoken.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
     void query::Prepare()
     {
-        std::cout << "Looking for a query." << std::endl;
+        //std::cout << "Looking for a query." << std::endl;
         GetParser()->PushNode(new_ref<QueryNode>());
     }
 
     void query::Emit()
     {
-        std::cout << "Emitting a query." << std::endl;
-        auto node = GetParser()->PopNode();
+        //std::cout << "Emitting a query." << std::endl;
+        std::vector<char> queryChars;
+        auto node = GetParser()->PopNode();        
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
@@ -49,11 +53,38 @@ namespace qor { namespace components { namespace protocols { namespace http {
             }
             
             std::cout << tokenName << std::endl;
+
+            if(token == static_cast<uint64_t>(httpRequestToken::pchar))
+            {
+                auto charNode = node.AsRef<PCharNode>();
+                if(charNode.IsNotNull())
+                {
+                    queryChars.push_back(charNode->GetObject()->m_char);
+                }
+            }
+            else if(token == static_cast<uint64_t>(parser::eToken::Char))
+            {
+                auto charNode = node.AsRef<parser::Char>();
+                if(charNode.IsNotNull())
+                {
+                    queryChars.push_back(charNode->GetValue());
+                }                
+            }
+            else
+            {
+                queryChars.push_back((char)m_result.first);                
+            }
             node = GetParser()->PopNode();
         }
 
         if(node.IsNotNull())
         {
+            auto queryNode = node.AsRef<QueryNode>();
+            if(queryNode.IsNotNull())
+            {
+                std::string query(queryChars.rbegin(), queryChars.rend());
+                queryNode->GetObject()->m_query = query;
+            }
             GetParser()->PushNode(node);
         }
     }

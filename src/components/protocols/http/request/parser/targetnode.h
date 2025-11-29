@@ -49,7 +49,33 @@ namespace qor { namespace components { namespace protocols { namespace http {
         uriForm m_form;
         UriOriginForm m_originURI;
         UriAbsoluteForm m_absoluteURI;
-        UriAuthorityForm m_authorityURI;        
+        UriAuthorityForm m_authorityURI;      
+        
+        std::string GetPath()
+        {
+            switch(m_form)
+            {
+                case form_asterisk:
+                return std::string();
+
+                case form_authority:
+                return std::string();
+
+                case form_origin:
+                {
+                    std::string path = "";
+                    for(std::string segment : m_originURI.m_path.m_segments)
+                    {
+                        path += "/";
+                        path += segment;
+                    }
+                    return path;
+                }
+                case form_absolute:
+                return m_absoluteURI.m_heirPart.m_path;
+            }
+            return "";
+        }
     };
 
     class TargetNode : public parser::NodeAdapter<Target>

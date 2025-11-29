@@ -35,9 +35,8 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class HeirPart
+    struct HeirPart
     { 
-    protected:
         Authority m_authority;
         std::string m_path;
     };

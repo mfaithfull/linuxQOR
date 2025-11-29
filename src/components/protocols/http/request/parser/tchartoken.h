@@ -112,7 +112,16 @@ namespace qor { namespace components { namespace protocols { namespace http {
                         break;
                     }
                 }
+                else
+                {
+                    c='?';                    
+                }
                 node = GetParser()->PopNode();
+            }
+
+            if(c == '\0')
+            {
+                c = m_result.first;        
             }
 
             if(node.IsNotNull())

@@ -134,7 +134,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
         //std::cout << "Emitting a field name." << std::endl;
         auto node = GetParser()->PopNode();
-        std::string fieldName;
+        std::vector<char> fieldNameChars;
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
@@ -145,13 +145,16 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            //std::cout << tokenName << std::endl;
-
             if(token == static_cast<uint64_t>(httpRequestToken::tchar))
             {
                 auto tcharNode = node.AsRef<TCharNode>();
                 char c = tcharNode->GetObject()->m_char;
-                fieldName = std::string(&c,1) + fieldName;
+                fieldNameChars.push_back(c);
+            }
+            else
+            {
+                char c = m_result.first;
+                fieldNameChars.push_back(c);
             }
             node = GetParser()->PopNode();
         }
@@ -161,6 +164,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             auto fieldnameNode = node.AsRef<FieldNameNode>();
             if(fieldnameNode.IsNotNull())
             {
+                std::string fieldName(fieldNameChars.rbegin(), fieldNameChars.rend());
                 fieldnameNode->GetObject()->m_fieldName = fieldName;
                 std::cout << "Field Name: " << fieldName << std::endl;
             }

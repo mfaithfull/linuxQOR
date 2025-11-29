@@ -39,9 +39,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
     }
 
     void request::Emit()
-    {
-        std::cout << "Emitting a request." << std::endl;
-        //std::vector<char> chars;
+    {        
+        std::string method;
+        std::string protocolVersion;
+        Target uri;
+        Params params;
+        Headers m_headers;
+
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -49,11 +53,25 @@ namespace qor { namespace components { namespace protocols { namespace http {
             
             if(token == static_cast<uint64_t>(httpRequestToken::request_line))
             {
-                //Read method, uri, protocol name/version
+                auto reqlineNode = node.AsRef<RequestLineNode>();
+                if(reqlineNode.IsNotNull())
+                {
+                    method = reqlineNode->GetObject()->m_method;
+                    protocolVersion = reqlineNode->GetObject()->m_protocolVersion;
+                    uri = reqlineNode->GetObject()->m_target;
+                }
             }
             else if(token == static_cast<uint64_t>(httpRequestToken::field_line))
             {
-                //Read headers
+                auto fieldlineNode = node.AsRef<FieldLineNode>();
+                if(fieldlineNode.IsNotNull())
+                {
+                    auto key = fieldlineNode->GetObject()->m_fieldName;
+                    for(std::string fieldValue : fieldlineNode->GetObject()->m_fieldValues)
+                    {
+                        m_headers.emplace(key, fieldValue);
+                    }
+                }
             }
             else if(token == static_cast<uint64_t>(parser::eToken::CarriageReturnLineFeed))            
             {
@@ -68,10 +86,16 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
 
         if(node.IsNotNull())
-        {
-            //std::string requestValue(chars.rbegin(), chars.rend());
+        {            
             auto requestNode = node.AsRef<RequestNode>();
-            //requestNode->GetObject()->SetValue(requestValue);
+            if(requestNode.IsNotNull())
+            {
+                requestNode->GetObject()->SetMethod(method);
+                //requestNode->GetObject()->SetProtocolVersion(protocolVersion);
+                requestNode->GetObject()->SetPath(uri.GetPath());
+                requestNode->GetObject()->SetParams(params);
+                requestNode->GetObject()->SetHeaders(m_headers);
+            }            
             GetParser()->PushNode(node);
         }
     }

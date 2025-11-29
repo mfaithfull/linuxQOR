@@ -71,7 +71,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             if(contentNode.IsNotNull())
             {
                 contentNode->GetObject()->m_content = content;
-                std::cout << "Content: " << content << std::endl;
+                //std::cout << "Content: " << content << std::endl;
             }
             GetParser()->PushNode(node);
         }                        
