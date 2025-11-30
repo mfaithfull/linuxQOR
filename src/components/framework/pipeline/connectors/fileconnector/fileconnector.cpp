@@ -25,8 +25,8 @@
 #include "src/configuration/configuration.h"
 
 #include "fileconnector.h"
-#include "src/components/framework/pipeline/sinks/filesink/filesink.h"
-#include "src/components/framework/pipeline/sources/filesource/filesource.h"
+#include "filesink.h"
+#include "filesource.h"
 
 namespace qor{ namespace components{ 
 

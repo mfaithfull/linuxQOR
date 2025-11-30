@@ -22,12 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
+#ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE
+#define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: File Sink Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
-	return QORModule;
-}
+#include "src/framework/pipeline/iosink.h"
+#include "fileconnector.h"
+
+namespace qor{ namespace components{
+
+    class qor_pp_module_interface(QOR_FILECONNECTOR) FileSink : public pipeline::iosink<FileConnector>
+    {
+    public:
+
+        FileSink() = default;
+        virtual ~FileSink() = default;
+        virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
+    };
+
+}}//qor::components
+
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE

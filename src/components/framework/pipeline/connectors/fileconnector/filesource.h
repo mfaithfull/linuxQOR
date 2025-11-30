@@ -26,11 +26,11 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_FILE
 
 #include "src/framework/pipeline/iosource.h"
-#include "src/components/framework/pipeline/connectors/fileconnector/fileconnector.h"
+#include "fileconnector.h"
 
 namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_FILESOURCE) FileSource : public pipeline::iosource<FileConnector>
+    class qor_pp_module_interface(QOR_FILECONNECTOR) FileSource : public pipeline::iosource<FileConnector>
     {
     
     public:
