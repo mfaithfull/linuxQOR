@@ -27,7 +27,7 @@
 
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/profiling/profiling.h"
-#include "src/qor/profiling/profilereceiver.h"
+#include "src/qor/profiling/iprofilereceiver.h"
 #include "src/qor/interception/ifunctioncontext.h"
 #include "src/qor/interception/callcontext.h"
 
@@ -35,10 +35,10 @@
 //Usage: Only ever create these on the stack at the beginning of a function
 
 //Use this in free functions
-#define qor_pp_fcontext qor::FunctionContext _FContext_(qpr_pp_funcsig, __FILE__, __LINE__, ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled)
+#define qor_pp_fcontext qor::FunctionContext _FContext_(qor_pp_funcsig, __FILE__, __LINE__, ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled)
 
 //Use this in member functions
-#define qor_pp_ofcontext qor::FunctionContext _FContext_(qpr_pp_funcsig, __FILE__, __LINE__, ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled, qor::AnyObject(this))
+#define qor_pp_ofcontext qor::FunctionContext _FContext_(qor_pp_funcsig, __FILE__, __LINE__, ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled, qor::AnyObject(this))
 
 //--------------------------------------------------------------------------------
 namespace qor

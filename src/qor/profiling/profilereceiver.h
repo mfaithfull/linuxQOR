@@ -27,6 +27,7 @@
 
 #include <chrono>
 
+#include "iprofilereceiver.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/objectcontext/typedany.h"
 #include "src/qor/reference/flyerref.h"
@@ -40,11 +41,6 @@
 #include "src/qor/log/informative.h"
 
 namespace qor {
-
-	struct IProfileReceiver
-	{	
-		virtual void Profile(const std::chrono::duration<int64_t, std::milli>, IFunctionContext*) = 0;
-	};
 
 	class ProfileReceiver : public Flyer< ProfileReceiver, IProfileReceiver >
 	{

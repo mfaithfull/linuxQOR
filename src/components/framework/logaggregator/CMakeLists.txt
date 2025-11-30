@@ -8,7 +8,7 @@ logaggregator.cpp logreceiver.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_LOGAGGREGATOR)
-target_link_libraries(${target} qor_module qor_host qor_thread qor_sync qor_signals)
+target_compile_definitions(${target} PRIVATE QOR_LOGAGGREGATOR)
+target_link_libraries(${target} qor_module qor_host qor_thread qor_sync qor_signals qor_error qor_log qor_interception qor_loghandler qor_filesystem qor_role)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

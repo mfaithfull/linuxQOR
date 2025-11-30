@@ -51,7 +51,7 @@ namespace qor { namespace components{
         virtual ~LogReceiver() noexcept = default;
 
         void Stop();
-        void ReceiveLog(const std::string& logEntry);
+        void ReceiveLog(std::string logEntry);
         void Listen();
 
         void WriteToStandardOutput(bool write = true);

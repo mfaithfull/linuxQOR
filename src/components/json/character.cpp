@@ -36,7 +36,7 @@ namespace qor { namespace components { namespace json { namespace parser {
 
     void character::Emit()
     {
-        char charVal = m_result.first;
+        char charVal = (char)m_result.first;
         GetParser()->PushNode(new_ref<Character>(charVal).AsRef<components::parser::Node>());     
     }
 

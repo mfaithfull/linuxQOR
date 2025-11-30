@@ -62,7 +62,7 @@ namespace qor {
 
     std::string DefaultLogHandler::MessageText(const std::string_view& level, const std::string& what, const std::string& where, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const
     {
-        return std::format("{0}:{3}|{2} \"{1}\"\n",level, what, where, when);
+        return std::vformat("{0}:TODO: |{2} \"{1}\"\n", std::make_format_args(level, what, where/*, when*/));
     }
 
     DefaultLogHandler& DefaultLogHandler::Forward(bool forward)

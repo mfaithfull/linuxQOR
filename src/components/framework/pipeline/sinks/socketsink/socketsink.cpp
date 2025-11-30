@@ -34,7 +34,7 @@ namespace qor{ namespace components{
         size_t result = 0;
         if(m_Connector && m_Connector->IsConnected())
         {
-            result = m_Connector->Send((const char*)data, bytesToWrite);
+            result = (int32_t)m_Connector->Send((const char*)data, bytesToWrite);
         }
         return result;
     }

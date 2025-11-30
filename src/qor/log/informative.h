@@ -24,7 +24,6 @@
 
 #ifndef QOR_PP_H_LOG_INFORMATIVE
 #define QOR_PP_H_LOG_INFORMATIVE
-
 #include "log.h"
 
 namespace qor{ namespace log {

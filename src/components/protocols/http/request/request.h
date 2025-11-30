@@ -29,6 +29,8 @@
 #include <vector>
 #include <chrono>
 
+#include <cstdint>
+
 #include "params.h"
 #include "../headers/headers.h"
 #include "progress.h"
@@ -127,7 +129,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         {
             auto rng = m_headers.equal_range(key);
             auto it = rng.first;
-            std::advance(it, static_cast<ssize_t>(id));
+            std::advance(it, static_cast<int64_t>(id));
             if (it != rng.second) 
             { 
                 return it->second.c_str(); 
@@ -139,7 +141,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         {
             auto rng = m_trailers.equal_range(key);
             auto it = rng.first;
-            std::advance(it, static_cast<ssize_t>(id));
+            std::advance(it, static_cast<int64_t>(id));
             if (it != rng.second) 
             { 
                 return it->second.c_str(); 
@@ -151,7 +153,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         {
             auto rng = m_params.equal_range(key);
             auto it = rng.first;
-            std::advance(it, static_cast<ssize_t>(id));
+            std::advance(it, static_cast<int64_t>(id));
             if (it != rng.second) 
             { 
                 return it->second; 

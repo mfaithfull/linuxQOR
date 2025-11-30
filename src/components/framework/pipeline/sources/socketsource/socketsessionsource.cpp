@@ -34,7 +34,7 @@ namespace qor{ namespace components{
         size_t result = 0;
         if(m_Connector && m_Connector->IsConnected())
         {
-            result = m_Connector->Receive((char*)space, bytesToRead, 0);
+            result = (int32_t)m_Connector->Receive((char*)space, (int32_t)bytesToRead, 0);
         }
         else
         {

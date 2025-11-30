@@ -58,7 +58,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             }
             else
             {
-                c = this->m_result.first;
+                c = (char)this->m_result.first;
             }
             node = GetParser()->PopNode();
         }

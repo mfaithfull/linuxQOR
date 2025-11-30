@@ -69,7 +69,8 @@ namespace qor{ namespace components{
 
             if( result < 0 )
             {
-                serious("Can't bind socket to port {0}: {1}", m_port, strerror(result));
+                std::string s(strerror(result));
+                serious("Can't bind socket to port {0}: {1}", m_port,s);
                 SetComplete(EXIT_FAILURE);            
             }
             else
@@ -86,7 +87,8 @@ namespace qor{ namespace components{
 
             if( result < 0)
             {
-                serious("Can't listen on socket {0}: {1}", m_serverSocket->m_fd ,strerror(result));
+                std::string s(strerror(result));
+                serious("Can't listen on socket {0}: {1}", m_serverSocket->m_fd ,s);
                 SetComplete(EXIT_FAILURE);
             }
             else
@@ -108,7 +110,8 @@ namespace qor{ namespace components{
             }
             else
             {
-                log::inform("Accepted client connection: {0}:{1}", ClientSocket->m_fd, ClientAddress.GetIPV4Address());
+                auto addr = ClientAddress.GetIPV4Address();
+                log::inform("Accepted client connection: {0}:{1}", ClientSocket->m_fd, addr );
                 m_threadPool->PostTask(
                     [this, ClientSocket, protocol](){
                     CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));

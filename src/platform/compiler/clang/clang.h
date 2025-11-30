@@ -60,7 +60,7 @@ static constexpr int function_stride = 1;
 #define qor_pp_thread_local     __declspec(thread)
 #define qor_pp_forceinline		inline
 #define qor_pp_noinline			__declspec(noinline)
-#define qpr_pp_funcsig          __FUNCSIG__
+#define qor_pp_funcsig          __FUNCSIG__
 #define qor_pp_allocator        __declspec(allocator)
 
 #define qor_pp_assume(X)        __assume(X)

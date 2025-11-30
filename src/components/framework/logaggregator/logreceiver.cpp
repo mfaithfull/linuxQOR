@@ -130,7 +130,7 @@ namespace qor { namespace components{
         }
     }
 
-    void LogReceiver::ReceiveLog(const std::string& logEntry)
+    void LogReceiver::ReceiveLog(std::string logEntry)
     {
         if(m_writeToStandardOutput)
         {

@@ -67,21 +67,15 @@ namespace qor{ namespace network{ namespace nswindows{
     
     int32_t Socket::Bind(const qor::framework::AsyncIOInterface& ioContext, const network::Address& Address)
     {
-        return sync_wait([this,&ioContext,Address]() -> task<qor::framework::AsyncIOResult>
-	    {
-            return ioContext.Bind(this, Address);
-        }()).status_code;
+        return sync_wait(ioContext.Bind(this, Address));
     }
     
     int32_t Socket::Listen(const qor::framework::AsyncIOInterface& ioContext, int32_t backlog)
     {
-        return sync_wait([this,&ioContext,backlog]() -> task<qor::framework::AsyncIOResult>
-	    {
-            return ioContext.Listen(this, backlog);
-        }()).status_code;
+        return sync_wait(ioContext.Listen(this, backlog));
     }
 
-    qor::framework::IOTask Socket::AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket)
+    task<int32_t> Socket::AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket)
     {
         return ioContext.Accept(this, Address, Socket);
     }
@@ -178,7 +172,7 @@ namespace qor{ namespace network{ namespace nswindows{
         return WS2::recvfrom(m_fd, Buffer, iLen, iFlags, (sockaddr*)&addr, &socklen);
     }
  
-    qor::framework::IOTask Socket::AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+    task<int32_t> Socket::AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
     {
         return ioContext.Send(this, (byte*)Buffer, iLen, 0);
     }

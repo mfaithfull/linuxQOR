@@ -27,7 +27,7 @@
 
 #include <chrono>
 #include "src/platform/compiler/compiler.h"
-#include "src/qor/profiling/profilereceiver.h"
+#include "src/qor/profiling/iprofilereceiver.h"
 
 namespace qor {
     

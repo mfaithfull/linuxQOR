@@ -187,7 +187,7 @@ namespace qor{
         template< class T >
         static inline void AutoRedirect(ref_of<T>::type ref)
         {
-            Holder<T>().template AutoRedirect(ref);
+            Holder<T>().AutoRedirect(ref);
         }
 
 	private:

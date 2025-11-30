@@ -22,11 +22,19 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_IPROFILERECEIVER
+#define QOR_PP_H_IPROFILERECEIVER
 
-#include "ipopipeline.h"
+#include <chrono>
+#include "src/qor/interception/ifunctioncontext.h"
 
-namespace qor{ namespace pipeline{
+namespace qor {
 
-}}//qor::pipeline
+	struct IProfileReceiver
+	{
+		virtual void Profile(const std::chrono::duration<int64_t, std::milli>, IFunctionContext*) = 0;
+	};
 
+}//qor
+
+#endif//QOR_PP_H_IPROFILERECEIVER

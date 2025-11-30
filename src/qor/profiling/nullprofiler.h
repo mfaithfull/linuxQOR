@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_NULLPROFILER
 #define QOR_PP_H_NULLPROFILER
 
-#include "src/qor/profiling/profilereceiver.h"
+#include "src/qor/profiling/iprofilereceiver.h"
 
 namespace qor {
     

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FRAMEWORK_PIPELINE
 #define QOR_PP_H_FRAMEWORK_PIPELINE
 
-#include "src/qor/reference/reference.h"
+//#include "src/qor/reference/reference.h"
 #include "element.h"
 #include "filter.h"
 #include "inlinefilter.h"
@@ -128,11 +128,6 @@ namespace qor{ namespace pipeline{
                 sink->SetBuffer(buffer);
             }
             SetSink(sink);
-        }
-
-        void SetSink(qor::ref_of<Sink>::type sink)
-        {
-            SetSink(sink.operator->());
         }
 
         void SetSink(const Sink& sink)

@@ -56,7 +56,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         virtual ~requestChar() = default;
         virtual void Emit()
         {
-            char charValue = m_result.first;
+            char charValue = (char)m_result.first;
             GetParser()->PushNode(
                 qor::new_ref<qor::components::parser::Char>(
                     charValue,static_cast<uint64_t>(echoRequestToken::requestChar)

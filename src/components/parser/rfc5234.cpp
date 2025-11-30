@@ -41,13 +41,13 @@ namespace qor { namespace components { namespace parser {
 
     void VCHAR::Emit()
     {
-        char charVal = m_result.first;
+        char charVal = (char)m_result.first;
         GetParser()->PushNode(new_ref<Char>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
 
     void CTL::Emit()
     {
-        char ctlVal = m_result.first;
+        char ctlVal = (char)m_result.first;
         GetParser()->PushNode(new_ref<Char>(ctlVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
     
@@ -68,13 +68,13 @@ namespace qor { namespace components { namespace parser {
 
     void CHAR::Emit()
     {
-        char charVal = m_result.first;
+        char charVal = (char)m_result.first;
         GetParser()->PushNode(new_ref<Char>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
 
     void ALPHA::Emit()
     {
-        char charVal = m_result.first;
+        char charVal = (char)m_result.first;
         GetParser()->PushNode(new_ref<Char>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
 

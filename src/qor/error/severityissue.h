@@ -43,6 +43,10 @@ namespace qor{
         {
             Handle();
         }
+        virtual void Escalate(void) const
+        {
+            throw (*this);
+        }
     };
 
     template<Severity S>

@@ -8,6 +8,6 @@ add_library(${target} SHARED qor_parsersink.cpp parsersink.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE QOR_PARSERSINK)
-target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_signals qor_pipeline)
+target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_signals qor_pipeline qor_error qor_log qor_workflow qor_parser)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

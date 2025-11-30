@@ -56,7 +56,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::AddConsoleAlias(to_tstring(source.c_str()).data(), to_tstring(target.c_str()).data(), to_tstring(exeName.c_str()).data());
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -75,7 +75,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::AllocConsole();
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -94,7 +94,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::AttachConsole(static_cast<DWORD>(processId));
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -113,7 +113,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::FreeConsole();
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -132,7 +132,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::GenerateConsoleCtrlEvent(static_cast<DWORD>(ctrlEvent), static_cast<DWORD>(processGroupId));
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -151,7 +151,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::GetConsoleAlias(to_tstring(source.c_str()).data(), to_tstring(target.c_str()).data(), static_cast<DWORD>(target.size()), to_tstring(exeName.c_str()).data());
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -170,7 +170,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::GetConsoleAliases(to_tstring(aliases.c_str()).data(), static_cast<DWORD>(aliases.size()), to_tstring(exeName.c_str()).data());
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -189,7 +189,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::GetConsoleAliasesLength(to_tstring(exeName.c_str()).data());
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -208,7 +208,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::GetConsoleAliasExes(to_tstring(nameBuffer.c_str()).data(), static_cast<DWORD>(nameBuffer.size()));
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -227,7 +227,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::GetConsoleAliasExesLength();
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -248,7 +248,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::GetConsoleDisplayMode(&modeFlags);
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -268,7 +268,7 @@ namespace qor { namespace components { namespace nswindows {
 			//TODO:
 			//result = Kernel32::GetConsoleDisplayMode(&modeFlags);
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -287,7 +287,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::GetConsoleOriginalTitle(to_tstring(consoleTitle.c_str()).data(), static_cast<DWORD>(consoleTitle.size()));
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -312,7 +312,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::GetConsoleTitle(to_tstring(consoleTitle.c_str()).data(), static_cast<DWORD>(consoleTitle.size()));
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -341,7 +341,7 @@ namespace qor { namespace components { namespace nswindows {
 				continuable("Call to Kernel32::GetNumberOfConsoleMouseButtons failed.");
 			}
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -376,7 +376,7 @@ namespace qor { namespace components { namespace nswindows {
 			std.SetProtectFromClose(true);
 			return std;
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -395,7 +395,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::SetConsoleCtrlHandler(handlerRoutine, add);
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -415,7 +415,7 @@ namespace qor { namespace components { namespace nswindows {
 		{
 			result = Kernel32::SetConsoleTitle(to_tstring(consoleTitle.c_str()).c_str());
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}
@@ -447,7 +447,7 @@ namespace qor { namespace components { namespace nswindows {
 			}
 			result = Kernel32::SetStdHandle(h, handle.Use());
 		}
-		catch (const Error& error)
+		catch (Error error)
 		{
 			error.Catch();
 		}

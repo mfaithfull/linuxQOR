@@ -70,7 +70,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
         if(c == '\0')
         {
-            c = m_result.first;        
+            c = (char)m_result.first;        
         }
 
         if(node.IsNotNull())

@@ -71,7 +71,7 @@ namespace qor{ namespace network{ namespace nswindows{
         ref_of<network::Socket>::type socket = new_ref<Socket>(AF, Type, Protocol).AsRef<network::Socket>();
         if( ioSession.IsNotNull())
         {
-            ioSession->Enroll(socket());
+            ioSession->Enroll(socket()());
         }
         return socket;
     }
@@ -129,7 +129,7 @@ namespace qor{ namespace network{ namespace nswindows{
         }
 
         WS2::freeaddrinfo(res);
-        return results.size();
+        return (int)results.size();
     }
 
 }}}//qor::network::nswindows

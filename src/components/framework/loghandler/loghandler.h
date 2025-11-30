@@ -60,7 +60,7 @@ namespace qor{ namespace components {
 
     public:
 
-        qor_pp_signal_func forward(const std::string& logMessage)//don't call this outgoing interface directly
+        qor_pp_signal_func forward(std::string logMessage)//don't call this outgoing interface directly
         {
             qor_pp_emit(forward,logMessage);
         }

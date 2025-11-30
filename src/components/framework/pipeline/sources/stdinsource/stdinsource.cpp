@@ -48,7 +48,7 @@ namespace qor{ namespace components{
 	string_t StdInSource::ReadLine(size_t& unitsRead, size_t unitsToRead)
 	{
         string_t result;
-        char_t c = 0;
+        std::istream::char_type c = 0;
         if(unitsToRead > 0)
         {
             do

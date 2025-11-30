@@ -34,7 +34,7 @@ namespace qor{ namespace network{
     {
         addrinfo_flags() : value(0){}
         addrinfo_flags(int v) : value(v){}
-        addrinfo_flags(const addrinfo_flags&& src) : value(std::move(src.value)){}
+        addrinfo_flags(addrinfo_flags&& src) noexcept : value(std::move(src.value)){}
         addrinfo_flags(const addrinfo_flags& src) : value(src.value){}
         
         addrinfo_flags& operator =(const addrinfo_flags& src)

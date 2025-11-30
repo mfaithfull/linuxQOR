@@ -115,7 +115,7 @@ namespace qor { namespace components {
             m_view->DrawString(column + 2, row, item->itemText);
             row += 1;
         }
-        m_view->DrawString(1 + (((m_size.m_width - 2) - m_name.size()) / 2),1, m_name);
+        m_view->DrawString(1 + (((m_size.m_width - 2) - (int)m_name.size()) / 2),1, m_name);
         m_view->DrawInternalHLine(0,2,m_size.m_width);
     }
 

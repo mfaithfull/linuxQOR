@@ -8,7 +8,8 @@ add_library(${target} SHARED qor_sockets.cpp sockets.cpp socket.cpp address.cpp 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE -DQOR_SOCKETS)
-set(portable_libraries qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform)
+set(portable_libraries qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform qor_error qor_interception
+qor_asyncioservice)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
     set(os_libraries)

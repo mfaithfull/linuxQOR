@@ -48,7 +48,7 @@ namespace qor { namespace framework{
         m_threadPool = m_Role->GetFeature<ThreadPool>();
 
         //Take all the AsyncIOContext(s) from the pool.
-        m_contextCount = PoolInstancer::GetPoolSize<AsyncIOContext>();
+        m_contextCount = (unsigned int)PoolInstancer::GetPoolSize<AsyncIOContext>();
         m_contextArray = new ref_of<AsyncIOContext>::type [m_contextCount];
         for(unsigned context = 0; context < m_contextCount; context++)
         {

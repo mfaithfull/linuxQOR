@@ -47,7 +47,7 @@ namespace qor{ namespace framework{
         Thread();
 		Thread(const Thread & src) = delete;
 
-		Thread(Thread&& other) : m_std_thread(std::move(other.m_std_thread)), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
+		Thread(Thread&& other) noexcept : m_std_thread(std::move(other.m_std_thread)), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
 		{
 			m_pCurrent = other.m_pCurrent;
 			other.m_pCurrent = nullptr;			

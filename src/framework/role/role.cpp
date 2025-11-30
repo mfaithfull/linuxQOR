@@ -45,7 +45,8 @@ namespace qor{ namespace framework{
             }
             catch(std::exception e)
             {
-                fatal("Feature setup failed with exception {0}.", e.what());
+                std::string s(e.what());
+                fatal("Feature setup failed with exception {0}.", s);
             }
             catch(...)
             {
@@ -68,7 +69,8 @@ namespace qor{ namespace framework{
             }
             catch(std::exception e)
             {
-                warning("Feature shutdown failed with exception {0}.", e.what());
+                std::string s(e.what());
+                warning("Feature shutdown failed with exception {0}.", s);
             }
             catch(...)
             {

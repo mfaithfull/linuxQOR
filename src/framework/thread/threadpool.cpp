@@ -75,23 +75,18 @@ namespace qor{ namespace framework{
             const std::scoped_lock tasks_lock(tasks_mutex);
             tasks_running = thread_count;
         }
-        unsigned start_count = thread_count;
+
         for (std::size_t i = 0; i < thread_count; ++i)
         {
             threads[i] = thread_t(
-                [this, i, &start_count]
+                [this, i]
                 (const std::stop_token& stop_token)
                 {               
-                    start_count--;     
                     CurrentThread::Init();                    
                     Worker(stop_token, i);
                     CurrentThread::Destroy();
                 }
             );
-        }
-        while(start_count > 0)
-        {
-            sleep(1);
         }
     }
 
