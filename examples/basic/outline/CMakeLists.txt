@@ -17,7 +17,7 @@ target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qo
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application)
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_log qor_pipeline qor_asyncioservice qor_property)
 endif()
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

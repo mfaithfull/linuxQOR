@@ -20,7 +20,7 @@ add_custom_command(TARGET ${target} POST_BUILD
 add_custom_command(TARGET ${target} POST_BUILD
   COMMAND ${CMAKE_COMMAND} 
   -Dsrc_dir="${CMAKE_CURRENT_BINARY_DIR}" 
-  -Ddst_dir="${CMAKE_SOURCE_DIR}/cmakebuild/examples/basic/fileprocessor"
+  -Ddst_dir="${CMAKE_SOURCE_DIR}/libs"
     -P "${CMAKE_SOURCE_DIR}/cmake/update_directory.cmake"
 )
 endif()
