@@ -46,7 +46,7 @@ namespace qor{ namespace components {
 
             m_responsePipeline->SetFlowMode(qor::pipeline::Element::FlowMode::Push);
             m_responsePipeline->SetSource(m_socketClientConnector->GetSource());
-            m_responsePipeline->SetSink(m_protocol->GetSink());
+            m_responsePipeline->SetSink((pipeline::Element*)m_protocol->GetSink());
             m_responsePipeline->GetSource()->SetBuffer(m_protocol->GetResponseBuffer().operator const qor::pipeline::ByteBuffer &());
             m_responsePipeline->GetSource()->SetSink(m_protocol->GetSink());
 
