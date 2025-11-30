@@ -16,7 +16,7 @@ target_compile_definitions(${target} PRIVATE -DQOR_PP_EXECUTABLE)
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_optionparser qor_pipeline qor_error qor_sockets
-qor_console qor_socketclientconnector qor_stdinsource qor_stdoutsink qor_socketsource qor_socketsink qor_parser qor_log
+qor_console qor_socketconnector qor_stdinsource qor_stdoutsink qor_parser qor_log
 qor_logaggregator qor_loghandler
 linqor_sockets linq_console linq_thread linq_filesystem)
 endif()
@@ -24,7 +24,7 @@ endif()
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_optionparser qor_pipeline qor_error qor_sockets
-qor_console qor_socketclientconnector qor_stdinsource qor_stdoutsink qor_socketsource qor_socketsink qor_parser qor_log
+qor_console qor_socketconnector qor_stdinsource qor_stdoutsink qor_parser qor_log
 qor_logaggregator qor_loghandler
 winqor_sockets winqor_console winq_thread winq_filesystem)
 endif()

@@ -32,7 +32,7 @@ class RequestPipeline : public Pipeline
 {
 public:
 
-    RequestPipeline(ref_of<SocketClientConnector>::type connector);
+    RequestPipeline(ref_of<SocketConnector>::type connector);
     virtual ~RequestPipeline() = default;
 
 private:    //randomish -> socket
@@ -40,7 +40,7 @@ private:    //randomish -> socket
     ByteBuffer m_requestBuffer;
     RandomSource m_source;
     SocketSink m_socketSink;
-    ref_of<SocketClientConnector>::type m_socketConnector;
+    ref_of<SocketConnector>::type m_socketConnector;
 };
 
 #endif // QOR_PP_H_EXAMPLES_HYDRA_REQUESTPIPELINE

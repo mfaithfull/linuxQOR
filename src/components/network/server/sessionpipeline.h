@@ -29,9 +29,9 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/pipeline/pipeline.h"
 #include "src/framework/pipeline/protocol.h"
-#include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
-#include "src/components/framework/pipeline/sources/socketsource/socketsessionsource.h"
-#include "src/components/framework/pipeline/sinks/socketsink/socketsessionsink.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketsessionsource.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketsessionsink.h"
 
 namespace qor{ namespace components {
 
@@ -49,7 +49,7 @@ namespace qor{ namespace components {
         {
             m_filter = protocol->GetFilter();
             
-            m_socketSessionConnector = new_ref<SocketClientConnector>(m_socket, m_ioSession);
+            m_socketSessionConnector = new_ref<SocketConnector>(m_socket, m_ioSession);
             SetFlowMode(Element::FlowMode::Push);
 
             m_socketSource = new_ref<SocketSessionSource>();
@@ -78,7 +78,7 @@ namespace qor{ namespace components {
         qor::ref_of<qor::pipeline::InlineFilter<byte>>::type m_filter;
         qor::ref_of<qor::network::Socket>::type m_socket;
         qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
-        qor::ref_of<qor::components::SocketClientConnector>::type m_socketSessionConnector;
+        qor::ref_of<qor::components::SocketConnector>::type m_socketSessionConnector;
         qor::ref_of<qor::components::SocketSessionSource>::type m_socketSource;
         qor::ref_of<qor::components::SocketSessionSink>::type m_socketSink;
 

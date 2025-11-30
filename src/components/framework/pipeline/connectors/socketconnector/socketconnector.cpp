@@ -25,13 +25,13 @@
 #include "src/configuration/configuration.h"
 
 #include "src/platform/platform.h"
-#include "socketclientconnector.h"
-#include "src/components/framework/pipeline/sinks/socketsink/socketsink.h"
-#include "src/components/framework/pipeline/sources/socketsource/socketsource.h"
+#include "socketconnector.h"
+#include "socketsink.h"
+#include "socketsource.h"
 
 namespace qor{ namespace components{ 
 
-    SocketClientConnector::SocketClientConnector() : Plug()
+    SocketConnector::SocketConnector() : Plug()
     {
         m_sink = new_ref<qor::components::SocketSink>();
         m_source = new_ref<qor::components::SocketSource>();
@@ -39,17 +39,17 @@ namespace qor{ namespace components{
         m_source->SetPlug(this);
     }
 
-    SocketClientConnector::SocketClientConnector(
+    SocketConnector::SocketConnector(
         ref_of<qor::network::Socket>::type connectedSocket,
         ref_of<qor::framework::AsyncIOContext::Session>::type session
-        ) : SocketClientConnector()
+        ) : SocketConnector()
     {
         m_Socket = connectedSocket;
         m_Session = session;
         m_connected = true;
     }
 
-    SocketClientConnector::~SocketClientConnector() noexcept
+    SocketConnector::~SocketConnector() noexcept
     {
         if (m_connected)
         {
@@ -57,17 +57,17 @@ namespace qor{ namespace components{
         }
     }
 
-    qor::pipeline::Element* SocketClientConnector::GetSink() const
+    qor::pipeline::Element* SocketConnector::GetSink() const
     {
         return m_sink;
     }
 
-    qor::pipeline::Element* SocketClientConnector::GetSource() const
+    qor::pipeline::Element* SocketConnector::GetSource() const
     {
         return m_source;
     }
 
-    bool SocketClientConnector::Connect()
+    bool SocketConnector::Connect()
     {       
         if(!m_connected) 
         {
@@ -76,7 +76,7 @@ namespace qor{ namespace components{
         return m_connected;
     }
 
-    void SocketClientConnector::SetupHintsForGetAddressInfo(network::AddressInfo& hints, const std::string &host, const std::string &ip, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, std::string& node)
+    void SocketConnector::SetupHintsForGetAddressInfo(network::AddressInfo& hints, const std::string &host, const std::string &ip, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, std::string& node)
     {
         hints.socktype = network::sockets::eType::Sock_Stream;
         hints.protocol = network::sockets::eProtocol::IPProto_IP;
@@ -100,7 +100,7 @@ namespace qor{ namespace components{
 
     }
 
-    bool SocketClientConnector::AttemptConnections(ref_of<qor::network::Sockets>::type socketsSubsystem, std::vector<network::AddressInfo>& addresses)
+    bool SocketConnector::AttemptConnections(ref_of<qor::network::Sockets>::type socketsSubsystem, std::vector<network::AddressInfo>& addresses)
     {
         for(auto address : addresses)
         {
@@ -115,7 +115,7 @@ namespace qor{ namespace components{
         return false;
     }
 
-    void SocketClientConnector::Configure(const std::string &host, int port, const std::string &ip, 
+    void SocketConnector::Configure(const std::string &host, int port, const std::string &ip, 
         qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec)
     {
         m_host = host;
@@ -128,7 +128,7 @@ namespace qor{ namespace components{
         m_timeoutSec = timeout_sec;
     }
 
-    bool SocketClientConnector::ConnectToAddress(const std::string &host, int port, const std::string &ip, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec)
+    bool SocketConnector::ConnectToAddress(const std::string &host, int port, const std::string &ip, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec)
     {
         if(address_family == qor::network::sockets::eAddressFamily::AF_Unix)
         {
@@ -153,7 +153,7 @@ namespace qor{ namespace components{
         }
     }
 
-    void SocketClientConnector::Disconnect()
+    void SocketConnector::Disconnect()
     {
         if(m_Session.IsNotNull())
         {
@@ -166,7 +166,7 @@ namespace qor{ namespace components{
         m_connected = false;
     }
 
-    bool SocketClientConnector::SetNonBlocking(bool nonBlocking)
+    bool SocketConnector::SetNonBlocking(bool nonBlocking)
     {
         return m_Socket->SetNonBlocking(nonBlocking);
     }

@@ -51,7 +51,7 @@ EchoClientWorkflow::EchoClientWorkflow() :
     connect->Enter = [this]()->void
     {
         qor_pp_ofcontext;
-        m_connector = new_ref<qor::components::SocketClientConnector>();
+        m_connector = new_ref<qor::components::SocketConnector>();
         m_requestPipeline = new_ref<EchoRequestPipeline>(m_connector);
         m_responsePipeline = new_ref<EchoResponsePipeline>(m_connector);
 

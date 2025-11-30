@@ -8,7 +8,7 @@ add_library(${target} SHARED qor_socketclient.cpp socketclient.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE -DQOR_SOCKETCLIENT)
-target_link_libraries(${target} qor_socketsink qor_socketsource qor_module qor_host qor_datastructures qor_objectcontext qor_thread qor_sync qor_injection
-qor_asyncioservice qor_socketclientconnector)
+target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_thread qor_sync qor_injection
+qor_asyncioservice qor_socketconnector)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

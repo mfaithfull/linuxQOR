@@ -40,12 +40,12 @@ namespace qor{ namespace components{
         SetBufferCapacity(bufferByteCount);
         if(m_connector.IsNull())
         {
-            SetPlug(new_ref<SocketClientConnector>());
+            SetPlug(new_ref<SocketConnector>());
         }
         m_connector->ConnectToAddress(host, port, ip, address_family, socket_flags, tcp_nodelay, ipv6_v6only, timeout_sec);
     }
 
-    void SocketWriter::SetPlug(ref_of<SocketClientConnector>::type plug)
+    void SocketWriter::SetPlug(ref_of<SocketConnector>::type plug)
     {
         m_connector = plug;
         m_sink.SetPlug(plug);

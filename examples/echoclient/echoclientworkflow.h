@@ -28,7 +28,7 @@
 #include "src/framework/workflow/workflow.h"
 #include "src/platform/network/sockets.h"
 #include "src/platform/network/socket.h"
-#include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
 #include "src/components/framework/console/console.h"
 #include "src/framework/pipeline/podbuffer.h"
 #include "echorequestpipeline.h"
@@ -50,7 +50,7 @@ private:
     qor::ref_of<qor::workflow::State>::type send;
     qor::ref_of<qor::workflow::State>::type receive;    
 
-    qor::ref_of<qor::components::SocketClientConnector>::type m_connector;
+    qor::ref_of<qor::components::SocketConnector>::type m_connector;
     qor::ref_of<EchoRequestPipeline>::type m_requestPipeline;
     qor::ref_of<EchoResponsePipeline>::type m_responsePipeline;
 

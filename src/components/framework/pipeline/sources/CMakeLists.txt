@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(stdinsource)
 add_subdirectory(stdifstreamsource)
-add_subdirectory(socketsource)
 add_subdirectory(stringsource)
 add_subdirectory(filesource)
 add_subdirectory(randomsource)

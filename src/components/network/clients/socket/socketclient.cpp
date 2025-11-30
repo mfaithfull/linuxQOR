@@ -35,7 +35,7 @@ namespace qor{ namespace components{ namespace network{
     {
         m_OutputBuffer.SetCapacity(16384);
         m_InputBuffer.SetCapacity(4096);
-        m_Connector = new_ref<SocketClientConnector>();
+        m_Connector = new_ref<SocketConnector>();
         m_Writer.SetPlug(m_Connector);
         m_Reader.SetPlug(m_Connector);        
     }    

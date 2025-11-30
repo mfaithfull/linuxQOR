@@ -1,7 +1,6 @@
 Copy-Item -Path cmakebuild/src/components/framework/console/Debug/* -Destination cmakebuild/test/Debug -Force
 Copy-Item -Path cmakebuild/src/components/framework/optionparser/Debug/* -Destination cmakebuild/test/Debug -Force
 Copy-Item -Path cmakebuild/src/components/framework/pipeline/connectors/fileconnector/Debug/* -Destination cmakebuild/test/Debug -Force
-Copy-Item -Path cmakebuild/src/components/framework/pipeline/connectors/socketclientconnector/Debug/* -Destination cmakebuild/test/Debug -Force
 Copy-Item -Path cmakebuild/src/components/framework/pipeline/connectors/socketsessionconnector/Debug/* -Destination cmakebuild/test/Debug -Force
 Copy-Item -Path cmakebuild/src/components/framework/pipeline/connectors/stdfstreamconnector/Debug/* -Destination cmakebuild/test/Debug -Force
 Copy-Item -Path cmakebuild/src/components/framework/pipeline/filters/base64decodefilter/Debug/* -Destination cmakebuild/test/Debug -Force

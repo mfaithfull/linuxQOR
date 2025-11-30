@@ -24,7 +24,7 @@
 
 #include "responsepipeline.h"
 
-ResponsePipeline::ResponsePipeline(ref_of<SocketClientConnector>::type connector) : 
+ResponsePipeline::ResponsePipeline(ref_of<SocketConnector>::type connector) : 
 m_socketConnector(connector)
 {
     m_responseBuffer.SetCapacity(1024);

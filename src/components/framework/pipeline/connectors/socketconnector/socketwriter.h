@@ -29,12 +29,12 @@
 #include "src/framework/pipeline/pipeline.h"
 #include "src/framework/pipeline/podbuffer.h"
 #include "src/framework/pipeline/sink.h"
-#include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
+#include "socketconnector.h"
 #include "socketsink.h"
 
 namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_SOCKETSINK) SocketWriter : public pipeline::Pipeline
+    class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketWriter : public pipeline::Pipeline
     {
     public:
 
@@ -51,7 +51,7 @@ namespace qor{ namespace components{
 
         virtual void SetBuffer(pipeline::Buffer* buffer);
         void SetBufferCapacity(size_t itemCount);
-        void SetPlug(ref_of<SocketClientConnector>::type plug);
+        void SetPlug(ref_of<SocketConnector>::type plug);
         virtual bool Write(size_t& unitsWritten, size_t unitstoWrite);
         ref_of<qor::network::Socket>::type Socket();
 
@@ -103,7 +103,7 @@ namespace qor{ namespace components{
         }
 
         virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1 ) { return false; }
-        ref_of<SocketClientConnector>::type m_connector;
+        ref_of<SocketConnector>::type m_connector;
         SocketSink m_sink;
         pipeline::NullSource m_source;
     };

@@ -23,11 +23,48 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
+#include "socketreader.h"
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Socket Sink Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
-	return QORModule;
-}
+namespace qor{ namespace components{ 
+
+    SocketReader::SocketReader() : pipeline::Pipeline()
+    {        
+        m_source.SetParent(this);
+        m_source.SetSink(this);        
+        this->SetSink(&m_sink);
+        this->SetSource(&m_source);
+    }
+
+    SocketReader::SocketReader(pipeline::Buffer* buffer) : SocketReader()
+    {
+        SetBuffer(buffer);
+    }
+
+    void SocketReader::SetPlug(ref_of<SocketConnector>::type plug)
+    {
+        m_connector = plug;
+        m_source.SetPlug(plug);
+    }
+
+    void SocketReader::SetBuffer(pipeline::Buffer* buffer)
+    {
+        Pipeline::SetBuffer(buffer);        
+        m_source.SetBuffer(buffer);
+        m_sink.SetBuffer(buffer);
+    }
+
+    void SocketReader::SetBufferCapacity(size_t itemCount)
+    {
+        auto buffer = GetBuffer();
+        if(buffer)
+        {
+            buffer->SetCapacity(itemCount);
+        }
+    }
+
+    bool SocketReader::Read(size_t& unitsRead, size_t unitsToRead)
+    {        
+        return ActualSource()->Read(unitsRead, unitsToRead);
+    }
+
+}}//qor::components

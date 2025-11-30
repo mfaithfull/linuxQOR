@@ -17,7 +17,7 @@ set(portable_libraries
 qor_application qor_module qor_host qor_compiler qor_datastructures qor_objectcontext qor_sync
  qor_thread qor_platform qor_log qor_loghandler qor_logaggregator 
  qor_role qor_workflow qor_filesystem qor_pipeline
- qor_sockets qor_socketclientconnector qor_socketsink qor_socketsource
+ qor_sockets qor_socketconnector
  qor_randomsource qor_stdoutsink)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)

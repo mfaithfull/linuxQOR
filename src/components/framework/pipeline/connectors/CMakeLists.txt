@@ -5,6 +5,6 @@ set(CMAKE_CXX_RTTI ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(socketclientconnector)
+add_subdirectory(socketconnector)
 add_subdirectory(fileconnector)
 add_subdirectory(stdfstreamconnector)

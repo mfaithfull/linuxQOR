@@ -22,23 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_SOCKET
-#define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_SOCKET
+#ifndef QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKET
+#define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKET
 
-#include "src/framework/pipeline/iosink.h"
-#include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
+#include "src/framework/pipeline/iosource.h"
+#include "socketconnector.h"
 
 namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_SOCKETSINK) SocketSink : public pipeline::iosink<SocketClientConnector>
+    class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketSource : public pipeline::iosource<SocketConnector>
     {
+    
     public:
 
-        SocketSink() = default;
-        virtual ~SocketSink() = default;
-        virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
+        SocketSource() = default;
+        virtual ~SocketSource() = default;
+
+    protected:
+
+        virtual size_t ReadBytes(byte* data, size_t bytesToRead);
+       
     };
 
 }}//qor::components
 
-#endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOFSTREAM
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKET

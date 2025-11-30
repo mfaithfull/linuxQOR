@@ -32,7 +32,7 @@ class ResponsePipeline : public Pipeline
 {
 public:
 
-    ResponsePipeline(ref_of<SocketClientConnector>::type connector);
+    ResponsePipeline(ref_of<SocketConnector>::type connector);
     virtual ~ResponsePipeline() = default;
 
 private:    //socket -> stdout
@@ -40,7 +40,7 @@ private:    //socket -> stdout
     ByteBuffer m_responseBuffer;
     StdOutSink m_stdOutsink;
     SocketSource m_socketSource;
-    ref_of<SocketClientConnector>::type m_socketConnector;
+    ref_of<SocketConnector>::type m_socketConnector;
 };
 
 #endif // QOR_PP_H_EXAMPLES_HYDRA_RESPONSEPIPELINE

@@ -22,12 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
+#ifndef QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKETSESSION
+#define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKETSESSION
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Socket Source Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
-	return QORModule;
-}
+#include "src/framework/pipeline/iosource.h"
+#include "socketconnector.h"
+
+namespace qor{ namespace components{ 
+
+    class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketSessionSource : public pipeline::iosource<SocketConnector>
+    {
+    
+    public:
+
+        SocketSessionSource() = default;
+        virtual ~SocketSessionSource() = default;
+
+    protected:
+
+        virtual size_t ReadBytes(byte* data, size_t bytesToRead);
+       
+    };
+
+}}//qor::components
+
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKETSESSION

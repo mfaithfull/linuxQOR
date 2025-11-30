@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_SOCKETCLIENT
-#define QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_SOCKETCLIENT
+#ifndef QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_SOCKET
+#define QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_SOCKET
 
 #include "src/framework/thread/currentthread.h"
 #include "src/platform/network/socket.h"
@@ -35,16 +35,16 @@
 
 namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_CLIENTSOCKETCONNECTOR) SocketClientConnector : public pipeline::Plug, virtual public qor::network::ISocket
+    class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketConnector : public pipeline::Plug, virtual public qor::network::ISocket
     {
     public:
 
-		SocketClientConnector();
-        SocketClientConnector(
+		SocketConnector();
+        SocketConnector(
             ref_of<qor::network::Socket>::type connectedSocket,
             ref_of<qor::framework::AsyncIOContext::Session>::type session);
 
-		virtual ~SocketClientConnector() noexcept;
+		virtual ~SocketConnector() noexcept;
 
         //Plug interface
         virtual bool Connect();													//Device specific connection
@@ -226,4 +226,4 @@ namespace qor{ namespace components{
 
 }}//qor::components
 
-#endif//QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_SOCKETCLIENT
+#endif//QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_SOCKET

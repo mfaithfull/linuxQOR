@@ -26,11 +26,11 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_SOCKETSESSION
 
 #include "src/framework/pipeline/iosink.h"
-#include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
+#include "socketconnector.h"
 
 namespace qor{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_SOCKETSINK) SocketSessionSink : public pipeline::iosink<SocketClientConnector>
+    class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketSessionSink : public pipeline::iosink<SocketConnector>
     {
     public:
 

@@ -31,7 +31,7 @@
 #include "src/platform/network/socket.h"
 #include "src/framework/pipeline/pipeline.h"
 #include "src/framework/pipeline/protocol.h"
-#include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
 
 namespace qor{ namespace components {
 
@@ -74,13 +74,13 @@ namespace qor{ namespace components {
 
         NetworkClient() : BaseClient()
         {            
-            m_socketClientConnector = new_ref<qor::components::SocketClientConnector>();
+            m_socketClientConnector = new_ref<qor::components::SocketConnector>();
         }
 
         NetworkClient(qor::ref_of<pipeline::Protocol>::type protocol) :  BaseClient(),
             m_protocol(protocol)
         {
-            m_socketClientConnector = new_ref<qor::components::SocketClientConnector>();
+            m_socketClientConnector = new_ref<qor::components::SocketConnector>();
         }
 
 
@@ -119,7 +119,7 @@ namespace qor{ namespace components {
 
     protected:
     
-        qor::ref_of<qor::components::SocketClientConnector>::type m_socketClientConnector;
+        qor::ref_of<qor::components::SocketConnector>::type m_socketClientConnector;
         qor::ref_of<qor::pipeline::Protocol>::type m_protocol;
 
     };

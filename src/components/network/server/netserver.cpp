@@ -32,7 +32,7 @@
 #include "src/framework/application/application_builder.h"
 #include "netserver.h"
 #include "netsession.h"
-#include "src/components/framework/pipeline/connectors/socketclientconnector/socketclientconnector.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
 
 using namespace qor;
 using namespace qor::framework;

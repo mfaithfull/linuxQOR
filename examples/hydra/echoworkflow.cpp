@@ -47,7 +47,7 @@ EchoWorkflow::EchoWorkflow() :
     {
         qor_pp_ofcontext;
         
-        m_connector = new_ref<SocketClientConnector>();
+        m_connector = new_ref<SocketConnector>();
         m_requestPipeline = new_ref<RequestPipeline>(m_connector);
         m_responsePipeline = new_ref<ResponsePipeline>(m_connector);
 

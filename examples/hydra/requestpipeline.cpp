@@ -24,7 +24,7 @@
 
 #include "requestpipeline.h"
 
-RequestPipeline::RequestPipeline(ref_of<SocketClientConnector>::type connector) : m_socketConnector(connector)
+RequestPipeline::RequestPipeline(ref_of<SocketConnector>::type connector) : m_socketConnector(connector)
 {
     m_requestBuffer.SetCapacity(1024);
     m_source.SetBuffer(&m_requestBuffer);

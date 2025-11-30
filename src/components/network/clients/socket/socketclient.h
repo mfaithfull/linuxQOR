@@ -44,8 +44,8 @@
 #include "durationdetails.h"
 #include "error.h"
 #include "src/components/network/clients/itransportclient.h"
-#include "src/components/framework/pipeline/sinks/socketsink/socketwriter.h"
-#include "src/components/framework/pipeline/sources/socketsource/socketreader.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketwriter.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketreader.h"
 
 namespace qor{ namespace components{ namespace network{
 
@@ -186,7 +186,7 @@ namespace qor{ namespace components{ namespace network{
         const int m_port;
         const std::string m_hostAndPort;
         ref_of<qor::network::Socket>::type m_Socket;
-        ref_of<SocketClientConnector>::type m_Connector;
+        ref_of<SocketConnector>::type m_Connector;
         SocketWriter m_Writer;
         SocketReader m_Reader;
         qor::pipeline::ByteBuffer m_OutputBuffer;
