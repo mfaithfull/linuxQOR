@@ -61,5 +61,6 @@ std::string ServerLogHandler::InExceptionText(bool inException) const
 
 std::string ServerLogHandler::MessageText(const std::string_view& level, const std::string& what, const std::string& where, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const
 {
-    return std::format("{0}:{3}|{2} \"{1}\"\n",level, what, where, when);
+    //TODO: Fix windows side formatting of nanosecond durations
+    return std::format("{0}:TODO:|{2} \"{1}\"\n",level, what, where/*, when*/);
 }

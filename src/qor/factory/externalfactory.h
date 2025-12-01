@@ -86,7 +86,9 @@ namespace qor
                 IndirectFactorywithParams<T, _p...>* pFactory = dynamic_cast<IndirectFactorywithParams<T, _p...>*>(pBaseFactory);
                 if(pFactory == nullptr)
                 {
-                    throw std::logic_error("Couldn't find a factory with matching parameters.");
+                    //warning ("Couldn't find a factory with matching parameters.");
+                    pFactory = reinterpret_cast<IndirectFactorywithParams<T, _p...>*>(pBaseFactory);
+                    return pFactory->Construct(count, p1...).template AsRef<T>();                    
                 }
                 else
                 {

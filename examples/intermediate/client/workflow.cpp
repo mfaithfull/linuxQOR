@@ -46,7 +46,8 @@ ClientWorkflow::ClientWorkflow() :
         }
         else
         {
-            impact("Failed to connect to service on port 12345 @ localhost: {0}", strerror(errno));
+            std::string err(strerror(errno));
+            impact("Failed to connect to service on port 12345 @ localhost: {0}", err);
             SetResult(EXIT_FAILURE);
             SetComplete();
         }
@@ -61,7 +62,8 @@ ClientWorkflow::ClientWorkflow() :
         }
         else
         {
-            imperative("Failed to send to server: {0}", strerror(errno));
+            std::string err(strerror(errno));
+            imperative("Failed to send to server: {0}",err);
             SetComplete(EXIT_FAILURE);         
         }
     };
@@ -77,7 +79,8 @@ ClientWorkflow::ClientWorkflow() :
         }
         else
         {
-            imperative("Failed to receive from server: {0}", strerror(errno));
+            std::string err(strerror(errno));
+            imperative("Failed to receive from server: {0}", err);
             SetComplete(EXIT_FAILURE);            
         }
     };

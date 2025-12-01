@@ -46,6 +46,6 @@ qor::Module& ThisModule(void)
 	//Register the Windows specific implementations
 	static qor::TypeRegEntry< qor::platform::nswindows::FileSystem, qor::platform::IFileSystem > regIFileSystem;  
 	static qor::TypeRegEntry< qor::platform::nswindows::FileStat, qor::platform::IFileStat > regIFileStat;
-	static qor::TypeRegEntryWithParams< qor::platform::nswindows::File, qor::platform::IFile, const qor::platform::FileIndex&, int, int > regIFile;
+	static qor::TypeRegEntryWithParams< qor::platform::nswindows::File, qor::platform::IFile, const qor::platform::FileIndex&, int&, int& > regIFile;
 	return QORModule;
 }

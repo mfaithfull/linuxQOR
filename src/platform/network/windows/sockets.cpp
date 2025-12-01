@@ -27,6 +27,7 @@
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "src/platform/io/iodescriptor.h"
 #include "src/platform/network/windows/sockets.h"
 #include "src/platform/network/windows/socket.h"
 #include "src/qor/error/error.h"
@@ -68,10 +69,12 @@ namespace qor{ namespace network{ namespace nswindows{
 
     ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<framework::AsyncIOContext::Session>::type ioSession) const
     {
-        ref_of<network::Socket>::type socket = new_ref<Socket>(AF, Type, Protocol).AsRef<network::Socket>();
+        auto socket = new_ref<Socket>(AF, Type, Protocol);
         if( ioSession.IsNotNull())
         {
-            ioSession->Enroll(socket()());
+            platform::IODescriptor iod;
+            iod.m_fd = socket->ID();
+            ioSession->Enroll(iod);
         }
         return socket;
     }

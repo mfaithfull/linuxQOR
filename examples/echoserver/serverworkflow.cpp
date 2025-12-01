@@ -73,13 +73,15 @@ ServerWorkflow::ServerWorkflow() :
 
         if( result < 0 )
         {
-            qor::log::imperative("Can't bind to socket: {0}", strerror(result));
+            std::string err(strerror(result));
+            qor::log::imperative("Can't bind to socket: {0}", err);
             SetResult(EXIT_FAILURE);
             SetComplete();            
         }
         else
         {
-            qor::log::inform("Bound port {0}", m_serverAddress.GetPort());
+            auto p = m_serverAddress.GetPort();
+            qor::log::inform("Bound port {0}", p);
             SetState(listen);
         }
     };
@@ -91,13 +93,15 @@ ServerWorkflow::ServerWorkflow() :
 
         if( result < 0)
         {
-            qor::log::imperative("Can't listen on socket: {0}", strerror(result));
+            std::string err(strerror(result));
+            qor::log::imperative("Can't listen on socket: {0}", err);
             SetResult(EXIT_FAILURE);
             SetComplete();
         }
         else
         {
-            qor::log::inform("Echo server listening on port: {0}...", m_serverAddress.GetPort());
+            auto p = m_serverAddress.GetPort();
+            qor::log::inform("Echo server listening on port: {0}...", p);
             SetState(accept);
         }
     };
@@ -114,7 +118,8 @@ ServerWorkflow::ServerWorkflow() :
         }
         else
         {
-            qor::log::inform("Accepted client connection: {0}:{1}", ClientSocket->m_fd, ClientAddress.GetIPV4Address());
+            auto addr = ClientAddress.GetIPV4Address();
+            qor::log::inform("Accepted client connection: {0}:{1}", ClientSocket->m_fd,addr );
             m_threadPool->PostTask(
                 [this, ClientSocket](){
                 CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));

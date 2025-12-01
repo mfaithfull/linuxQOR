@@ -58,7 +58,8 @@ EchoWorkflow::EchoWorkflow() :
         }
         else
         {
-            log::impact("Failed to connect to server on 12345 @ localhost: {0}", strerror(errno));
+            std::string err(strerror(errno));
+            log::impact("Failed to connect to server on 12345 @ localhost: {0}", err);
             SetResult(EXIT_FAILURE);
             SetComplete();
         }
@@ -76,7 +77,8 @@ EchoWorkflow::EchoWorkflow() :
         }
         else
         {
-            log::imperative("Failed to send to server: {0}", strerror(errno));
+            std::string err(strerror(errno));
+            log::imperative("Failed to send to server: {0}", err);
             SetResult(EXIT_FAILURE);            
             SetComplete();
         }       
@@ -105,7 +107,8 @@ EchoWorkflow::EchoWorkflow() :
         }
         else
         {
-            log::imperative("Failed to receive from server: {0}", strerror(errno));
+            std::string err(strerror(errno));
+            log::imperative("Failed to receive from server: {0}", err);
             SetResult(EXIT_FAILURE);
             SetComplete();      
         }
