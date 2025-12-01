@@ -20,7 +20,7 @@ set(os_libraries linqor_sockets linqor_asyncioservice linq_filesystem linq_threa
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-set(os_libraries winqor_sockets winqor_asyncioservice winq_filesystem winqor_thread)
+set(os_libraries winqor_sockets winqor_asyncioservice winqor_filesystem winqor_thread)
 endif()
 
 target_link_libraries(${target} ${portable_libraries} ${os_libraries})
