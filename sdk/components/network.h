@@ -3,7 +3,6 @@
 
 #include "sdk/using_qor.h"
 
-#include "src/components/network/clients/socket/socketclient.h"
 #include "src/components/network/client/netclient.h"
 #include "src/components/network/server/netserver.h"
 
