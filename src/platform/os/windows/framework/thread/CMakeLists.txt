@@ -3,7 +3,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target winqor_thread)
 
-add_library(${target} SHARED winq_thread.cpp currentthread.cpp)
+add_library(${target} SHARED winqor_thread.cpp currentthread.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

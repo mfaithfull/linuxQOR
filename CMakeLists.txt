@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-
+set(CMAKE_SUPPRESS_REGENERATION true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
