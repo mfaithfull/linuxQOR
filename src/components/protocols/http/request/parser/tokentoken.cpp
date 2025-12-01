@@ -153,7 +153,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             }
             else
             {
-                char c = m_result.first;
+                char c = (char)m_result.first;
                 fieldNameChars.push_back(c);
             }
             node = GetParser()->PopNode();

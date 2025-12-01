@@ -25,7 +25,9 @@ if(CMAKE_SYSTEM_NAME MATCHES Linux)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-    set(os_libraries winqor_filesystem winqor_thread winqor_sockets)
+    set(os_libraries winqor_filesystem winqor_thread winqor_sockets
+    qor_property qor_optionparser qor_fileconnector qor_base64encodefilter
+    qor_base64decodefilter)
 endif()
 
 target_link_libraries(${target} ${portable_libraries} ${os_libraries})

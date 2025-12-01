@@ -19,7 +19,7 @@ endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_thread
-winqor_thread)
+winqor_thread qor_property qor_log qor_loghandler qor_pipeline qor_error qor_signals qor_asyncioservice)
 endif()
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
