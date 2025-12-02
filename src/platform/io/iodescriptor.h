@@ -35,6 +35,7 @@ namespace qor{ namespace platform{
         {
             int m_fd;
             void* m_handle;
+            unsigned long long m_socket;
         };
         const GUID* m_objectType;        
     };

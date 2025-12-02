@@ -50,8 +50,8 @@ namespace qor { namespace framework { namespace nswindows {
 
 		DWORD bytesReceived = 0;
 		BOOL ok = WS2::AcceptEx(
-			m_listeningSocket->m_handle,
-			m_acceptingSocket->m_handle,
+			m_listeningSocket->m_socket,
+			m_acceptingSocket->m_socket,
 			m_addressBuffer,
 			0,
 			sizeof(m_addressBuffer) / 2,
@@ -116,9 +116,9 @@ namespace qor { namespace framework { namespace nswindows {
 			// Need to set SO_UPDATE_ACCEPT_CONTEXT after the accept completes
 			// to ensure that ::shutdown() and ::setsockopt() calls work on the
 			// accepted socket.
-			SOCKET listenSocket = m_listeningSocket->m_handle;
+			SOCKET listenSocket = m_listeningSocket->m_socket;
 			const int result = WS2::setsockopt(
-				m_acceptingSocket->m_handle,
+				m_acceptingSocket->m_socket,
 				SOL_SOCKET,
 				SO_UPDATE_ACCEPT_CONTEXT,
 				(const char*)&listenSocket,

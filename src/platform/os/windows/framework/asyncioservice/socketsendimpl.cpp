@@ -45,7 +45,7 @@ namespace qor { namespace framework { namespace nswindows {
 
 		DWORD numberOfBytesSent = 0;
 		int result = ::WSASend(
-			m_socket->m_handle,
+			m_socket->m_socket,
 			reinterpret_cast<WSABUF*>(&m_buffer),
 			1, // buffer count
 			&numberOfBytesSent,

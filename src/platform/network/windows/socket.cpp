@@ -37,17 +37,17 @@ namespace qor{ namespace network{ namespace nswindows{
 
     Socket::Socket()
     {
-        m_handle = network::Socket::Invalid_Socket;
+        m_socket = network::Socket::Invalid_Socket;
     }
 
     Socket::Socket(int sock)
     {
-        m_handle = sock;
+        m_socket = sock;
     }
 
     Socket::Socket(const Socket& src)
     {
-        m_handle = src.m_handle;
+        m_socket = src.m_socket;
     }
 
     Socket::Socket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol)
@@ -57,12 +57,12 @@ namespace qor{ namespace network{ namespace nswindows{
         int protocol = ProtocolToWindows(Protocol);
         WSAPROTOCOL_INFO protocolInfo;
         unsigned long flags = WSA_FLAG_OVERLAPPED;
-        m_handle = WS2::WSASocket(domain, type, protocol, nullptr, 0, flags);
+        m_socket = WS2::WSASocket(domain, type, protocol, nullptr, 0, flags);
     }
     
     Socket::~Socket()
     {
-        closesocket(m_handle);
+        closesocket(m_socket);
     }
     
     int32_t Socket::Bind(const qor::framework::AsyncIOInterface& ioContext, const network::Address& Address)
@@ -87,12 +87,12 @@ namespace qor{ namespace network{ namespace nswindows{
         addr.sin_family = Address.sa_family;
         addr.sin_addr.s_addr = Address.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = Address.sa.IPAddress.sin_port;                
-        return WS2::bind(m_handle, (struct sockaddr *)&addr, 16);
+        return WS2::bind(m_socket, (struct sockaddr *)&addr, 16);
     }
 
     int32_t Socket::Listen(int32_t iBacklog)
     {
-        return WS2::listen(m_handle, iBacklog);
+        return WS2::listen(m_socket, iBacklog);
     }
  
     ref_of<network::Socket>::type Socket::Accept(network::Address& Address)
@@ -100,7 +100,7 @@ namespace qor{ namespace network{ namespace nswindows{
         ref_of<network::Socket>::type newsocket;
         sockaddr addr;
         socklen_t len = 0;
-        SOCKET iresult = WS2::accept(m_handle, &addr, &len);
+        SOCKET iresult = WS2::accept(m_socket, &addr, &len);
         if(iresult == -1)
         {
             //TODO:Raise error
@@ -120,31 +120,31 @@ namespace qor{ namespace network{ namespace nswindows{
         addr.sin_addr.s_addr = Address.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = Address.sa.IPAddress.sin_port;
         socklen_t len = sizeof(addr);
-        return WS2::connect(m_fd, (const sockaddr*)&addr, len);
+        return WS2::connect(m_socket, (const sockaddr*)&addr, len);
     }
  
     int32_t Socket::GetPeerName(network::Address& Address)
     {
         sockaddr addr;
         socklen_t len;
-        return WS2::getpeername(m_handle, &addr, &len);
+        return WS2::getpeername(m_socket, &addr, &len);
     }
  
     int32_t Socket::GetSockName(network::Address& Address)
     {
         sockaddr addr;
         socklen_t len;
-        return WS2::getsockname(m_handle, &addr, &len);
+        return WS2::getsockname(m_socket, &addr, &len);
     }
  
     int32_t Socket::GetSockOpt(int32_t level, int32_t optname, char* optval, int32_t* len)
     {
-        return WS2::getsockopt(m_handle, level, optname, optval, (socklen_t*)&len);
+        return WS2::getsockopt(m_socket, level, optname, optval, (socklen_t*)&len);
     }
  
     int32_t Socket::SetSockOpt(int32_t level, int32_t optname, const char* optval, int32_t optlen)
     {
-        return WS2::setsockopt(m_handle, level, optname, optval, optlen);
+        return WS2::setsockopt(m_socket, level, optname, optval, optlen);
     }
  
     task<int32_t> Socket::AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
@@ -154,12 +154,12 @@ namespace qor{ namespace network{ namespace nswindows{
  
     int32_t Socket::Receive(char* buf, int32_t len, int32_t flags)
     {
-        return WS2::recv(m_handle, buf, len, flags);
+        return WS2::recv(m_socket, buf, len, flags);
     }
 
     int32_t Socket::Peek(char* buf, int32_t len)
     {
-        return WS2::recv(m_handle, buf, len, MSG_PEEK);
+        return WS2::recv(m_socket, buf, len, MSG_PEEK);
     }
     
     int32_t Socket::ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, network::Address& From)
@@ -169,7 +169,7 @@ namespace qor{ namespace network{ namespace nswindows{
         addr.sin_addr.s_addr = From.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = From.sa.IPAddress.sin_port;
         socklen_t socklen = sizeof(addr);
-        return WS2::recvfrom(m_fd, Buffer, iLen, iFlags, (sockaddr*)&addr, &socklen);
+        return WS2::recvfrom(m_socket, Buffer, iLen, iFlags, (sockaddr*)&addr, &socklen);
     }
  
     task<int32_t> Socket::AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
@@ -179,7 +179,7 @@ namespace qor{ namespace network{ namespace nswindows{
 
     int32_t Socket::Send(const char* Buffer, int32_t iLen)
     {
-        return WS2::send(m_fd, Buffer, iLen, 0);
+        return WS2::send(m_socket, Buffer, iLen, 0);
     }
  
     int32_t Socket::SendTo(const char* Buffer, int32_t len, int32_t flags, const network::Address& To)
@@ -188,7 +188,7 @@ namespace qor{ namespace network{ namespace nswindows{
         addr.sin_family = To.sa_family;
         addr.sin_addr.s_addr = To.sa.IPAddress.sin_addr.S_un.S_addr;
         addr.sin_port = To.sa.IPAddress.sin_port;
-        return WS2::sendto(m_fd, Buffer, len, flags, (sockaddr*)&addr, len);
+        return WS2::sendto(m_socket, Buffer, len, flags, (sockaddr*)&addr, len);
     }
  
     int32_t Socket::Shutdown(network::sockets::eShutdown how)
@@ -198,12 +198,12 @@ namespace qor{ namespace network{ namespace nswindows{
         iHow = ( how & network::sockets::eShutdown::ShutdownWrite ) ? SD_SEND : iHow;
         iHow = ( (how & network::sockets::eShutdown::ShutdownReadWrite) == 
             network::sockets::eShutdown::ShutdownReadWrite) ? SD_BOTH : iHow;
-        return WS2::shutdown(m_handle, iHow);
+        return WS2::shutdown(m_socket, iHow);
     }
  
     std::size_t Socket::ID(void)
     {
-        return m_handle;
+        return m_socket;
     }
  
     int32_t Socket::GetLastError(void)
@@ -214,14 +214,14 @@ namespace qor{ namespace network{ namespace nswindows{
     bool Socket::SetNonBlocking(bool nonBlocking)
     {
         u_long mode = 1;  // 1 to enable non-blocking socket
-        return WS2::ioctlsocket(m_handle, FIONBIO, &mode) == 0 ? true : false;
+        return WS2::ioctlsocket(m_socket, FIONBIO, &mode) == 0 ? true : false;
     }
 
     bool Socket::IsAlive()
     {        
         WSAPOLLFD fdArray[1];
         fdArray[0] = {
-            .fd = m_handle,
+            .fd = m_socket,
             .events = POLLIN | POLLOUT,
             .revents = 0,
         };

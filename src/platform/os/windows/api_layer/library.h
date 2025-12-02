@@ -82,7 +82,6 @@ namespace qor { namespace nswindows { namespace api {
 				}
 				__except(ExceptionFilterFunction(GetExceptionInformation()))
 				{
-					continuable("Call failed.");
 				}
 			}
 			else

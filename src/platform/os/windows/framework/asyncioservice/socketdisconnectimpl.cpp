@@ -43,7 +43,7 @@ namespace qor { namespace framework { namespace nswindows {
 			GUID disconnectExGuid = WSAID_DISCONNECTEX;
 			DWORD byteCount = 0;
 			const int result = ::WSAIoctl(
-				m_socket.m_handle,
+				m_socket.m_socket,
 				SIO_GET_EXTENSION_FUNCTION_POINTER,
 				static_cast<void*>(&disconnectExGuid),
 				sizeof(disconnectExGuid),
@@ -71,7 +71,7 @@ namespace qor { namespace framework { namespace nswindows {
 		const DWORD flags = 0;
 
 		const BOOL ok = disconnectExPtr(
-			m_socket.m_handle,
+			m_socket.m_socket,
 			operation.get_overlapped(),
 			flags,
 			0);

@@ -44,7 +44,7 @@ namespace qor { namespace framework { namespace nswindows {
 			GUID connectExGuid = WSAID_CONNECTEX;
 			DWORD byteCount = 0;
 			int result = ::WSAIoctl(
-				m_socket.m_handle,
+				m_socket.m_socket,
 				SIO_GET_EXTENSION_FUNCTION_POINTER,
 				static_cast<void*>(&connectExGuid),
 				sizeof(connectExGuid),
@@ -71,7 +71,7 @@ namespace qor { namespace framework { namespace nswindows {
 
 		DWORD bytesSent = 0;
 		const BOOL ok = connectExPtr(
-			m_socket.m_handle,
+			m_socket.m_socket,
 			reinterpret_cast<const SOCKADDR*>(&remoteSockaddrStorage),
 			sockaddrNameLength,
 			nullptr, // send buffer
@@ -124,7 +124,7 @@ namespace qor { namespace framework { namespace nswindows {
 		// about the connection now that it has been successfully connected.
 		{
 			const int result = ::setsockopt(
-				m_socket.m_handle,
+				m_socket.m_socket,
 				SOL_SOCKET,
 				SO_UPDATE_CONNECT_CONTEXT,
 				nullptr,
@@ -145,7 +145,7 @@ namespace qor { namespace framework { namespace nswindows {
 			SOCKADDR_STORAGE localSockaddr;
 			int nameLength = sizeof(localSockaddr);
 			const int result = ::getsockname(
-				m_socket.m_handle,
+				m_socket.m_socket,
 				reinterpret_cast<SOCKADDR*>(&localSockaddr),
 				&nameLength);
 			if (result == 0)
@@ -165,7 +165,7 @@ namespace qor { namespace framework { namespace nswindows {
 			SOCKADDR_STORAGE remoteSockaddr;
 			int nameLength = sizeof(remoteSockaddr);
 			const int result = ::getpeername(
-				m_socket.m_handle,
+				m_socket.m_socket,
 				reinterpret_cast<SOCKADDR*>(&remoteSockaddr),
 				&nameLength);
 			if (result == 0)

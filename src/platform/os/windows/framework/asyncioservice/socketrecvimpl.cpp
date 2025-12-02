@@ -46,7 +46,7 @@ namespace qor { namespace framework { namespace nswindows {
 		DWORD numberOfBytesReceived = 0;
 		DWORD flags = 0;
 		int result = ::WSARecv(
-			m_socket->m_handle,
+			m_socket->m_socket,
 			reinterpret_cast<WSABUF*>(&m_buffer),
 			1, // buffer count
 			&numberOfBytesReceived,
