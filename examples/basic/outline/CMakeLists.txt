@@ -21,3 +21,12 @@ target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qo
 endif()
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
+
+if (WIN32)
+  add_custom_command(
+    TARGET outline POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:outline> $<TARGET_FILE_DIR:outline>
+    COMMAND_EXPAND_LISTS
+  )
+endif ()

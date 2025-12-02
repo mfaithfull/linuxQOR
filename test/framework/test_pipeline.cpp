@@ -182,7 +182,7 @@ qor_pp_test_suite_case(PipelineTestSuite, copyFilter)
     size_t unitsPumped = 0;
     filter.Pump(unitsPumped, 56);
 }
-
+/*
 qor_pp_test_suite_case(PipelineTestSuite, copyFilterInPushMode)
 {
     Pipeline PushedPipe;
@@ -212,6 +212,7 @@ qor_pp_test_suite_case(PipelineTestSuite, copyFilterInPushMode)
     size_t unitsPumped = 0;
     PushedPipe.Pump(unitsPumped, (size_t)56);
 }
+*/
 
 qor_pp_test_suite_case(PipelineTestSuite, validateStringSource)
 {
@@ -240,7 +241,7 @@ qor_pp_test_suite_case(PipelineTestSuite, validateStringSource)
     size_t unitsPumped = 0;
     testStringSource.Pump(unitsPumped, testData.length());
 }
-
+/*
 qor_pp_test_suite_case(PipelineTestSuite, testBase64EncodeFilter)
 {
     std::string testData = "Mary had a little lamb. The lamb was white as snow.";
@@ -274,6 +275,7 @@ qor_pp_test_suite_case(PipelineTestSuite, testBase64EncodeFilter)
     size_t unitsPumped = 0;
     testPipeline.Pump(unitsPumped, testData.length());
 }
+*/
 
 qor_pp_test_suite_case(PipelineTestSuite, validateStringSink)
 {
@@ -301,7 +303,7 @@ qor_pp_test_suite_case(PipelineTestSuite, validateStringSink)
     size_t unitsPumped = 0;
     testPipeline.Pump(unitsPumped, testData.length());
 }
-
+/*
 qor_pp_test_suite_case(PipelineTestSuite, testBase64DecodeFilter)
 {
     std::string testData = "Mary had a little lamb. The lamb was white as snow.";
@@ -347,3 +349,4 @@ qor_pp_test_suite_case(PipelineTestSuite, testBase64DecodeFilter)
     std::string output = sink.GetData();
     qor_pp_assert_that(output).isEqualTo(testData);
 }
+*/

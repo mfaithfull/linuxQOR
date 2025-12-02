@@ -34,6 +34,7 @@ namespace qor {
     class IndirectFactory   //This is what gets registered in the TypeRegistry but the real type may be one of the derived types below
     {
     public:
+
         virtual ref_of<I>::type Construct(size_t count = 1) const
         {
             return InternalFactory<I>::Construct(count);
@@ -43,6 +44,8 @@ namespace qor {
         {
             InternalFactory<I>::Destruct(pt, count);
         }
+
+        virtual ~IndirectFactory() = default;
     };
 
     template<class I, typename... _p>
@@ -53,6 +56,13 @@ namespace qor {
         {
             return InternalFactory<I>::template Construct<_p...>(count, p1...);
         }
+
+        virtual void Destruct( I* pt, size_t count = 1) const
+        {
+            InternalFactory<I>::Destruct(pt, count);
+        }
+
+        virtual ~IndirectFactorywithParams() = default;
     };
 
 
@@ -66,7 +76,7 @@ namespace qor {
             TheTypeRegistry()->Register( *(guid_of<I>::guid()), TypedAny< IndirectFactory<I> >(dynamic_cast< IndirectFactory<I>* >(this)));
         }
 
-        ~TypeRegEntryWithParams()
+        virtual ~TypeRegEntryWithParams()
         {
             TheTypeRegistry()->Unregister( *(guid_of<I>::guid()));
         }
@@ -83,7 +93,15 @@ namespace qor {
 
         virtual void Destruct( I* pt, size_t count = 1) const
         {
-            InternalFactory<T>::Destruct(dynamic_cast<T*>(pt), count);
+            auto r = dynamic_cast<T*>(pt);
+            if(r != nullptr)
+            {
+                InternalFactory<T>::Destruct(r, count);
+            }
+            else
+            {
+                InternalFactory<I>::Destruct(pt, count);
+            }
         }
     };
 

@@ -91,3 +91,12 @@ winqor_api_kernel winqor_api_winsock2 winqor_filesystem winqor_thread winqor_pro
 qor_stdifstreamsource qor_stdofstreamsink qor_sockets qor_log qor_loghandler qor_logaggregator
 qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter winqor_sockets) 
 endif()
+
+if (WIN32)
+  add_custom_command(
+    TARGET QORTest POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:QORTest> $<TARGET_FILE_DIR:QORTest>
+    COMMAND_EXPAND_LISTS
+  )
+endif ()

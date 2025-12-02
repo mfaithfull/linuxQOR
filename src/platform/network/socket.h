@@ -39,7 +39,7 @@
 
 namespace qor{ namespace network{
 
-    class qor_pp_module_interface(QOR_SOCKETS) Socket : public platform::IODescriptor, virtual public ISocket
+    class qor_pp_module_interface(QOR_SOCKETS) Socket : public platform::IODescriptor, public ISocket
     {
     public:
 
