@@ -96,10 +96,10 @@ namespace qor{ namespace platform { namespace nswindows {
     } GUID;
 
     enum FileIdType {
-        File,
-        Object,
-        ExtendedFile,
-        MaximumFile
+        FileType,
+        ObjectType,
+        ExtendedFileType,
+        MaximumFileType
     };
 
     typedef struct FileIDDescriptor 

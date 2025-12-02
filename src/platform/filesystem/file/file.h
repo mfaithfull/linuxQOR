@@ -34,7 +34,7 @@
 
 namespace qor{ namespace platform{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File : public platform::IODescriptor, virtual public IFile
+    class qor_pp_module_interface(QOR_FILESYSTEM) File : public platform::IODescriptor, public IFile
 	{
 	public:
 
