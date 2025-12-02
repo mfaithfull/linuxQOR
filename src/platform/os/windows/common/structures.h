@@ -39,7 +39,111 @@ namespace qor{ namespace platform { namespace nswindows {
         __int64 QuadPart;
     } LARGE_INTEGER;
 
-    typedef LARGE_INTEGER *PLARGE_INTEGER;
+    typedef union _FileSegmentElement 
+    {
+        void*__ptr64 Buffer;
+        unsigned long long Alignment;
+    }FileSegmentElement;
+
+#if qor_pp_unicode
+    typedef wchar_t TCHAR;
+#else
+    typedef char TCHAR;
+#endif 
+
+    typedef enum _FileInfoByHandleClass
+    {
+        FileBasicInfo,
+        FileStandardInfo,
+        FileNameInfo,
+        FileRenameInfo,
+        FileDispositionInfo,
+        FileAllocationInfo,
+        FileEndOfFileInfo,
+        FileStreamInfo,
+        FileCompressionInfo,
+        FileAttributeTagInfo,
+        FileIdBothDirectoryInfo,
+        FileIdBothDirectoryRestartInfo,
+        FileIoPriorityHintInfo,
+        FileRemoteProtocolInfo,
+        FileFullDirectoryInfo,
+        FileFullDirectoryRestartInfo,
+        FileStorageInfo,
+        FileAlignmentInfo,
+        FileIdInfo,
+        FileIdExtdDirectoryInfo,
+        FileIdExtdDirectoryRestartInfo,
+        FileDispositionInfoEx,
+        FileRenameInfoEx,
+        FileCaseSensitiveInfo,
+        FileNormalizedNameInfo,
+        MaximumFileInfoByHandleClass
+    } FileInfoByHandleClass;
+
+    #define FileInvalidFileID               ((long long)-1LL) 
+    typedef struct _FileID128
+    {
+        unsigned char Identifier[16];                                   
+    } FileID128;
+
+    typedef struct _GUID 
+    {
+        unsigned long  Data1;
+        unsigned short Data2;
+        unsigned short Data3;
+        unsigned char  Data4[ 8 ];
+    } GUID;
+
+    enum FileIdType {
+        File,
+        Object,
+        ExtendedFile,
+        MaximumFile
+    };
+
+    typedef struct FileIDDescriptor 
+    {
+        unsigned long size;  // Size of the struct
+        FileIdType Type; // Describes the type of identifier passed in.
+        union {
+            LARGE_INTEGER FileId;
+            GUID ObjectId;
+            FileID128 ExtendedFileId;
+        } DUMMYUNIONNAME;
+    } FileIDDescriptor;
+
+    constexpr int OFS_MaxPathName = 128;
+    typedef struct _OFStruct
+    {
+        unsigned char cBytes;
+        unsigned char fFixedDisk;
+        unsigned short nErrCode;
+        unsigned short Reserved1;
+        unsigned short Reserved2;
+        char szPathName[OFS_MaxPathName];
+    } OFStruct;
+
+    typedef struct _FileTime 
+    {
+        unsigned long lowDateTime;
+        unsigned long highDateTime;
+    } FileTime;
+
+    typedef struct _ByHandleFileInformation
+    {
+        unsigned long fileAttributes;
+        FileTime ftCreationTime;
+        FileTime ftLastAccessTime;
+        FileTime ftLastWriteTime;
+        unsigned long volumeSerialNumber;
+        unsigned long fileSizeHigh;
+        unsigned long fileSizeLow;
+        unsigned long numberOfLinks;
+        unsigned long fileIndexHigh;
+        unsigned long fileIndexLow;
+    } ByHandleFileInformation;
+
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_STRUCTURES

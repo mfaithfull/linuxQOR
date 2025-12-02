@@ -28,12 +28,15 @@
 #include "src/platform/filesystem/file/file.h"
 #include "src/platform/filesystem/fileindex.h"
 #include "src/platform/filesystem/path.h"
+#include "src/platform/os/windows/common/structures.h"
 
 //Declaration must match the one in src/system/filesystem/ifile.h
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFile(); }
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
+
+    typedef void (*overlappedCompletionRoutine)( unsigned long ErrorCode, unsigned long NumberOfBytesTransfered, void* overlapped);
 
     class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) File : public platform::File
     {
@@ -46,41 +49,58 @@ namespace qor{ namespace platform { namespace nswindows{
         File(int fd);
         virtual ~File();
 
+        virtual bool SupportsPosition() override;
+        virtual uint64_t GetPosition() override;
+        virtual long SetPosition(long offset, Whence whence);
+        virtual uint64_t SetPosition(uint64_t newPosition) override;
+        virtual uint64_t SetPositionRelative(int64_t offset) override;
+        virtual void Truncate(uint64_t length) override;
+        virtual void Reserve(uint64_t length) override;
+        virtual uint64_t GetSize() override;
+        virtual void Flush() override;
+        virtual Type GetType() override;
+        virtual ref_of<IFile>::type ReOpen() override;                
+        virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1) override;
+        virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1) override;
+
         virtual int ChangeMode(unsigned int mode);
-        int ChangeAccess(unsigned int mode);
-        int AdviseOnUsage(off_t offset, off_t length, int advise);
         ref_of<platform::IFile>::type Duplicate();
-        int GetDescriptor() const;
-        int GetDescriptorMode();
-        int ChangeDescriptorMode(int flags);
-        int GetOperatingMode();
-        int ChangeOperatingMode(int flags);
-        int ReserveSpace(off_t offset, off_t length);
-        int Truncate(off_t length);
-        int SyncToSystem();
-        uint64_t GetPosition();
-        off_t SetPosition(off_t offset, int whence);
+        
+        int SyncToSystem();                
         int AsyncRead(byte* buffer, size_t byteCount, off_t offset);
         int AsyncWrite(byte* buffer, size_t byteCount, off_t offset);
-        virtual int64_t Read(byte* buffer, size_t byteCount, off_t offset = -1);
-        virtual int64_t Write(byte* buffer, size_t byteCount, off_t offset = -1);
         
     private:
         
-        static int64_t Validate_write_Result(int64_t result);
-        static int64_t Validate_read_Result(int64_t result);
-        static off_t Validate_lseek_Result(off_t result);
-        static uint64_t Validate_lseek64_Result(uint64_t result);
-        static int Validate_ftruncate_Result(int result);
-        static int Validate_posix_fallocate_Result(int result);
-        static int Validate_fcntl_Result(int result);
-        static int Validate_posix_fadvise_Result(int result);
-        static int Validate_fchmod_Result(int result);
-        static int Validate_fsync_Result(int result);
-        static void Check_fsync_Result(int result);
-        static void Check_close_Result(int result);
-        static void ErrorOnOpen(int err);
-
+		bool CancelIo();
+		bool CancelIoEx( void* lpOverlapped );		
+		void* CreateFile( const char* lpFileName, unsigned long dwDesiredAccess, unsigned long dwShareMode, void* lpSecurityAttributes, unsigned long dwCreationDisposition, unsigned long dwFlagsAndAttributes, void* hTemplateFile);
+		void* CreateFile( const wchar_t* lpFileName, unsigned long dwDesiredAccess, unsigned long dwShareMode, void* lpSecurityAttributes, unsigned long dwCreationDisposition, unsigned long dwFlagsAndAttributes, void* hTemplateFile);		       
+		bool GetBandwidthReservation( unsigned long& periodMilliseconds, unsigned long& bytesPerPeriod, bool& discardable, unsigned long& transferSize, unsigned long& numOutstandingRequests );        
+		bool GetInformationByHandle( ByHandleFileInformation* fileInformation );        
+		bool GetInformationByHandleEx(FileInfoByHandleClass FileInformationClass, void* fileInformation, unsigned long bufferSize );
+		unsigned long GetFinalPathNameByHandleT( TCHAR* filePath, unsigned long cchFilePath, unsigned long flags );
+		bool LockFile( unsigned long offsetLow, unsigned long offsetHigh, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh );
+		bool LockFileEx( unsigned long flags, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh, void* overlapped );
+		int Open( const char* fileName, OFStruct* reOpenBuff, unsigned int style );
+		bool Read( byte* lpBuffer, unsigned long NumberOfBytesToRead, unsigned long& NumberOfBytesRead, void* overlapped );
+		bool ReadEx( byte* lpBuffer, unsigned long NumberOfBytesToRead, void* overlapped, overlappedCompletionRoutine completionRoutine );        
+		bool ReadScatter( FileSegmentElement* aSegmentArray, unsigned long numberOfBytesToRead, void* overlapped );        		
+		bool SetEnd();
+		bool SetBandwidthReservation( unsigned long periodMilliseconds, unsigned long bytesPerPeriod, bool discardable, unsigned long& transferSize, unsigned long& numOutstandingRequests );
+		bool SetCompletionNotificationModes( unsigned char flags );
+		bool SetInformationByHandle( FileInfoByHandleClass fileInformationClass, void* fileInformation, unsigned long bufferSize );        
+		bool SetOverlappedRange( unsigned char* overlappedRangeStart, unsigned long length );
+		unsigned long SetPointer( long distanceToMove, long& distanceToMoveHigh, unsigned long moveMethod );
+		bool SetPointerEx( LARGE_INTEGER distanceToMove, LARGE_INTEGER* newFilePointer, unsigned long moveMethod );
+		bool SetShortNameT( const TCHAR* shortName );
+		bool SetValidDataLength( long long validDataLength );
+		bool Unlock( unsigned long fileOffsetLow, unsigned long fileOffsetHigh, unsigned long numberOfBytesToUnlockLow, unsigned long numberOfBytesToUnlockHigh );
+		bool UnlockEx( unsigned long numberOfBytesToUnlockLow, unsigned long numberOfBytesToUnlockHigh, void* overlapped );
+		bool Write( const byte* lpBuffer, unsigned long NumberOfBytesToWrite, unsigned long& NumberOfBytesWritten, void* overlapped );
+        bool WriteEx( const byte* lpBuffer, unsigned long NumberOfBytesToWrite, void* overlapped, overlappedCompletionRoutine completionRoutine );        
+		bool WriteGather( FileSegmentElement* aSegmentArray, unsigned long numberOfBytesToWrite, void* overlapped );
+       
     };
 }}}//qor::platform::nswindows
 

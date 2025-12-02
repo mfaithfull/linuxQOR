@@ -47,19 +47,14 @@ namespace qor{ namespace nslinux{
         File(int fd);
         ~File();
 
-        virtual int ChangeMode(unsigned int mode);
-        int ChangeAccess(unsigned int mode);
-        int AdviseOnUsage(off_t offset, off_t length, int advise);
-        ref_of<platform::IFile>::type Duplicate();
-        int GetDescriptor() const;
-        int GetDescriptorMode();
-        int ChangeDescriptorMode(int flags);
-        int GetOperatingMode();
-        int ChangeOperatingMode(int flags);
-        int ReserveSpace(off_t offset, off_t length);
+        virtual bool SupportsPosition() override;
+        virtual int ChangeMode(unsigned int mode);        
+        ref_of<platform::IFile>::type Duplicate();                               
+        virtual void Truncate(uint64_t length);
+                
         int Truncate(off_t length);
         int SyncToSystem();
-        uint64_t GetPosition();
+        virtual uint64_t GetPosition() override;
         off_t SetPosition(off_t offset, int whence);
         int AsyncRead(byte* buffer, size_t byteCount, off_t offset);
         int AsyncWrite(byte* buffer, size_t byteCount, off_t offset);
@@ -67,6 +62,15 @@ namespace qor{ namespace nslinux{
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
         
     private:
+
+        int GetDescriptor() const; 
+        int ChangeAccess(unsigned int mode);        
+        int GetOperatingMode();
+        int ChangeDescriptorMode(int flags);
+        int GetDescriptorMode();
+        int AdviseOnUsage(off_t offset, off_t length, int advise);
+        int ReserveSpace(off_t offset, off_t length);
+        int ChangeOperatingMode(int flags);
         
         static int64_t Validate_write_Result(int64_t result);
         static int64_t Validate_read_Result(int64_t result);

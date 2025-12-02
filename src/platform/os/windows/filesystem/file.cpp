@@ -31,12 +31,47 @@
 #include "file.h"
 #include "src/platform/filesystem/ifilesystem.h"
 
+#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
+#undef CreateFile
+
+using namespace qor::nswindows::api;
+
 //Export this trivial function so the linker will pull in this library to fulfil the ImplementsIFile requirement.
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFile() { return true; } }//qor
 
 namespace qor{ namespace platform { namespace nswindows{    
 
-    File::File(){}
+    /*
+    unsigned long File::CreationDisposition(platform::WithFlags mode)
+    {
+        unsigned long dwCreationDisposition = 0;
+        switch (mode)
+        {
+        case CreateNew:
+            dwCreationDisposition = CREATE_NEW;
+            break;
+        case Create:
+            dwCreationDisposition = CREATE_ALWAYS;
+            break;
+        case Open:
+            dwCreationDisposition = OPEN_EXISTING;
+            break;
+        case OpenOrCreate:
+        case Append:
+            dwCreationDisposition = OPEN_ALWAYS;
+            break;
+        case Truncate:
+            dwCreationDisposition = TRUNCATE_EXISTING;
+            break;
+        }
+        return dwCreationDisposition;
+    }
+    */
+
+    File::File()
+    {
+        m_handle = INVALID_HANDLE_VALUE;
+    }
     
     File::File(int fd){}
 
@@ -52,17 +87,153 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     }
 
+    bool File::SupportsPosition()
+    {
+        return GetType() == IFile::Disk;
+    }
+
+    uint64_t File::GetPosition()
+    {
+        LARGE_INTEGER position;
+        position.QuadPart = 0;
+        LARGE_INTEGER newPos;
+        SetPointerEx(position, &newPos, FILE_CURRENT);
+        return newPos.QuadPart; 
+    }
+
+    long File::SetPosition(long offset, Whence whence)
+    {
+        unsigned long method;
+        switch(whence)
+        {
+            case Set:
+                method = FILE_BEGIN;
+            break;
+            case Current:
+                method = FILE_CURRENT;
+            break;
+            case End:
+                method = FILE_END;
+            break;
+            default:
+            method = FILE_CURRENT;
+        };
+        uint64_t offset64 = offset;
+        LARGE_INTEGER position;
+        position.QuadPart = offset64;
+        LARGE_INTEGER newPos;
+        SetPointerEx(position, &newPos, method);
+        return static_cast<long>(newPos.QuadPart);
+    }
+
+    uint64_t File::SetPosition(uint64_t newPosition)
+    {
+        LARGE_INTEGER position;
+        position.QuadPart = newPosition;
+        LARGE_INTEGER newPos;
+        SetPointerEx(position, &newPos, FILE_BEGIN);
+        return newPos.QuadPart;
+    }
+
+    uint64_t File::SetPositionRelative(int64_t offset)
+    {
+        LARGE_INTEGER position;
+        position.QuadPart = offset;
+        LARGE_INTEGER newPos;
+        SetPointerEx(position, &newPos, FILE_CURRENT);
+        return newPos.QuadPart;        
+    }
+
+    void File::Truncate(uint64_t length)
+    {
+        LARGE_INTEGER position;
+        position.QuadPart = length;
+        LARGE_INTEGER newPosition;
+        SetPointerEx(position, &newPosition, FILE_BEGIN);
+        SetEnd();        
+    }
+
+    void File::Reserve(uint64_t length)
+    {
+        LARGE_INTEGER beggining  = {0};
+        LARGE_INTEGER newPosition;
+        Truncate(length);
+        SetPointerEx(beggining, &newPosition, FILE_BEGIN); // reset
+    }
+
+    uint64_t File::GetSize()
+    {
+        LARGE_INTEGER fileSize;
+        fileSize.QuadPart = 0;
+        if(!Kernel32::GetFileSizeEx(m_handle, reinterpret_cast<::PLARGE_INTEGER>(&fileSize)))
+        {            
+            continuable("Failed to get file size.");
+        }
+        return fileSize.QuadPart;
+    }
+
+    void File::Flush() 
+    {
+        if(!Kernel32::FlushFileBuffers(m_handle))
+        {
+            continuable("Flush failed.");
+        }
+    }
+
+    IFile::Type File::GetType()
+    {
+        unsigned long fileType = Kernel32::GetFileType(m_handle);
+
+        switch(fileType)
+        {
+            case FILE_TYPE_CHAR://The specified file is a character file, typically an LPT device or a console.
+                return IFile::Char;
+            case FILE_TYPE_DISK://The specified file is a disk file.
+                return IFile::Disk;
+            case FILE_TYPE_PIPE://The specified file is a socket, a named pipe, or an anonymous pipe.
+                return IFile::Pipe;
+            case FILE_TYPE_REMOTE://Unused.
+            default:
+                return IFile::Unknown;
+        }
+    }
+
+    ref_of<IFile>::type File::ReOpen()
+    {
+        platform::IODescriptor iod;
+        iod.m_handle = Kernel32::ReOpenFile(m_handle, FILE_GENERIC_READ | FILE_GENERIC_WRITE | FILE_GENERIC_EXECUTE, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, 0);
+        return new_ref<IFile>(iod);
+    }
+
+    int64_t File::Read(byte* buffer, size_t byteCount, int64_t offset)
+    {
+        if(offset != -1)
+        {
+            SetPosition(offset);
+        }
+        unsigned long numberOfBytesRead = 0;
+        if(!Kernel32::ReadFile(m_handle, buffer, (unsigned long)byteCount, &numberOfBytesRead, nullptr))
+        {
+            continuable("Read failed.");
+        }
+        return numberOfBytesRead;
+    }
+
+    int64_t File::Write(byte* buffer, size_t byteCount, int64_t offset)
+    {
+        if(offset != -1)
+        {
+            SetPosition(offset);
+        }
+        unsigned long numberofBytesWritten = 0;
+        if(!Kernel32::WriteFile(m_handle, buffer, (unsigned long)byteCount, &numberofBytesWritten, nullptr))
+        {
+            continuable("Write failed.");
+        }
+        return numberofBytesWritten;
+    }
+    
     int File::ChangeMode(unsigned int mode)
-    {
-        return -1;
-    }
-
-    int File::ChangeAccess(unsigned int mode)
-    {
-        return -1;
-    }
-
-    int File::AdviseOnUsage(off_t offset, off_t length, int advise)
     {
         return -1;
     }
@@ -71,56 +242,6 @@ namespace qor{ namespace platform { namespace nswindows{
     {
         ref_of<platform::IFile>::type nullref;
         return nullref;
-    }
-
-    int File::GetDescriptor() const
-    {
-        return -1;
-    }
-
-    int File::GetDescriptorMode()
-    {
-        return -1;
-    }
-
-    int File::ChangeDescriptorMode(int flags)
-    {
-        return -1;
-    }
-
-    int File::GetOperatingMode()
-    {
-        return -1;
-    }    
-
-    int File::ChangeOperatingMode(int flags)
-    {        
-        return -1;
-    }
-
-    int File::ReserveSpace(off_t offset, off_t length)
-    {
-        return -1;
-    }
-
-    int File::Truncate(off_t length)
-    {
-        return -1;
-    }
-
-    int File::SyncToSystem()
-    {
-        return -1;
-    }
-
-    uint64_t File::GetPosition()
-    {
-        return -1;
-    }
-
-    off_t File::SetPosition(off_t offset, int whence)
-    {
-        return -1;
     }
 
     int File::AsyncRead(byte* buffer, size_t byteCount, off_t offset)
@@ -133,76 +254,155 @@ namespace qor{ namespace platform { namespace nswindows{
         return -1;
     }
 
-    int64_t File::Read(byte* buffer, size_t byteCount, off_t offset)
+    //Windows facing private and temporary
+
+    bool File::CancelIo()
     {
-        return -1;
+        return Kernel32::CancelIo(m_handle) ? true : false;
     }
 
-    int64_t File::Write(byte* buffer, size_t byteCount, off_t offset)
+    bool File::CancelIoEx( void* lpOverlapped )
     {
-        return -1;
+        return Kernel32::CancelIoEx(m_handle, reinterpret_cast<LPOVERLAPPED>(lpOverlapped));
     }
 
-    int64_t File::Validate_write_Result(int64_t result)
+    void* File::CreateFile( const char* fileName, unsigned long desiredAccess, unsigned long shareMode, void* securityAttributes, unsigned long creationDisposition, unsigned long flagsAndAttributes, void* hTemplateFile)
     {
+        return Kernel32::CreateFileA(fileName, desiredAccess, shareMode, 
+            reinterpret_cast<LPSECURITY_ATTRIBUTES>(securityAttributes), creationDisposition, flagsAndAttributes, hTemplateFile);
+    }
+
+    void* File::CreateFile(const wchar_t* fileName, unsigned long desiredAccess, unsigned long shareMode, void* securityAttributes, unsigned long creationDisposition, unsigned long flagsAndAttributes, void* hTemplateFile)
+    {
+        return Kernel32::CreateFileW(fileName, desiredAccess, shareMode, 
+            reinterpret_cast<LPSECURITY_ATTRIBUTES>(securityAttributes), creationDisposition, flagsAndAttributes, hTemplateFile);
+    }
+
+    bool File::GetBandwidthReservation( unsigned long& periodMilliseconds, unsigned long& bytesPerPeriod, bool& discardable, unsigned long& transferSize, unsigned long& numOutstandingRequests )
+    {
+        int discard = discardable;
+        bool result = Kernel32::GetFileBandwidthReservation(m_handle, &periodMilliseconds, &bytesPerPeriod, &discard, &transferSize, &numOutstandingRequests) ? true : false;
+        discardable = discard ? true : false;
         return result;
     }
 
-    int64_t File::Validate_read_Result(int64_t result)
+    bool File::GetInformationByHandle( ByHandleFileInformation* fileInformation )
     {
-        return result;
+        return Kernel32::GetFileInformationByHandle(m_handle, reinterpret_cast<LPBY_HANDLE_FILE_INFORMATION>(fileInformation)) ? true : false;
     }
 
-    off_t File::Validate_lseek_Result(off_t result)
+    bool File::GetInformationByHandleEx(FileInfoByHandleClass FileInformationClass, void* fileInformation, unsigned long bufferSize )
     {
-        return result;
+        return Kernel32::GetFileInformationByHandleEx(m_handle, static_cast<FILE_INFO_BY_HANDLE_CLASS>(FileInformationClass), fileInformation, bufferSize) ? true : false;
     }
 
-    uint64_t File::Validate_lseek64_Result(uint64_t result)
+    unsigned long File::GetFinalPathNameByHandleT( TCHAR* filePath, unsigned long cchFilePath, unsigned long flags )
     {
-        return result;
+        return Kernel32::GetFinalPathNameByHandleT(m_handle, filePath, cchFilePath, flags);
     }
 
-    int File::Validate_ftruncate_Result(int result)
+    bool File::LockFile( unsigned long offsetLow, unsigned long offsetHigh, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh )
     {
-        return result;
+        return Kernel32::LockFile(m_handle, offsetLow, offsetHigh, numberOfBytesToLockLow, numberOfBytesToLockHigh) ? true : false;
     }
 
-    int File::Validate_posix_fallocate_Result(int result)
+    bool File::LockFileEx( unsigned long flags, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh, void* overlapped )
     {
-        return result;
+        return Kernel32::LockFileEx(m_handle, flags, 0, numberOfBytesToLockLow, numberOfBytesToLockHigh, reinterpret_cast<LPOVERLAPPED>(overlapped)) ? true : false;
     }
 
-    int File::Validate_fcntl_Result(int result)
+    int File::Open( const char* fileName, OFStruct* reOpenBuff, unsigned int style )
     {
-        return result;
-    }
-
-    int File::Validate_posix_fadvise_Result(int result)
-    {
-        return result;
-    }
-
-    int File::Validate_fchmod_Result(int result)
-    {
-        return result;
-    }
-
-    void File::Check_close_Result(int result)
-    {
-    }
-
-    int File::Validate_fsync_Result(int result)
-    {
-        return result;
+        return Kernel32::OpenFile(fileName, reinterpret_cast<LPOFSTRUCT>(reOpenBuff), style);
     }
     
-    void File::Check_fsync_Result(int result)
+    bool File::Read( byte* buffer, unsigned long NumberOfBytesToRead, unsigned long& NumberOfBytesRead, void* overlapped )
     {
+        return Kernel32::ReadFile(m_handle, buffer, NumberOfBytesToRead, &NumberOfBytesRead, reinterpret_cast<LPOVERLAPPED>(overlapped)) ? true : false;
     }
 
-    void File::ErrorOnOpen(int err)
+    bool File::ReadEx( byte* buffer, unsigned long NumberOfBytesToRead, void* overlapped, overlappedCompletionRoutine completionRoutine )
     {
+        return Kernel32::ReadFileEx(m_handle, buffer, NumberOfBytesToRead, reinterpret_cast<LPOVERLAPPED>(overlapped), 
+            reinterpret_cast<LPOVERLAPPED_COMPLETION_ROUTINE>(completionRoutine)) ? true : false;
+    }
+
+    bool File::ReadScatter( FileSegmentElement* aSegmentArray, unsigned long numberOfBytesToRead, void* overlapped )
+    {
+        return Kernel32::ReadFileScatter(m_handle, reinterpret_cast<FILE_SEGMENT_ELEMENT*>(aSegmentArray), numberOfBytesToRead, 0, 
+            reinterpret_cast<LPOVERLAPPED>(overlapped)) ? true : false;
+    }
+
+    bool File::SetEnd()
+    {
+        return Kernel32::SetEndOfFile(m_handle) ? true : false;
+    }
+
+    bool File::SetCompletionNotificationModes( unsigned char flags )
+    {
+        return Kernel32::SetFileCompletionNotificationModes(m_handle, flags) ? true : false;
+    }
+
+    bool File::SetBandwidthReservation( unsigned long periodMilliseconds, unsigned long bytesPerPeriod, bool discardable, unsigned long& transferSize, unsigned long& numOutstandingRequests )
+    {
+        return Kernel32::SetFileBandwidthReservation(m_handle, periodMilliseconds, bytesPerPeriod, discardable, &transferSize, &numOutstandingRequests) ? true : false;
+    }
+
+    bool File::SetInformationByHandle( FileInfoByHandleClass fileInformationClass, void* fileInformation, unsigned long bufferSize )
+    {
+        return Kernel32::SetFileInformationByHandle(m_handle, static_cast<FILE_INFO_BY_HANDLE_CLASS>(fileInformationClass), fileInformation, bufferSize) ? true : false;
+    }
+
+    bool File::SetOverlappedRange( unsigned char* overlappedRangeStart, unsigned long length )
+    {
+        return Kernel32::SetFileIoOverlappedRange(m_handle, overlappedRangeStart, length);
+    }
+
+    unsigned long File::SetPointer( long distanceToMove, long& distanceToMoveHigh, unsigned long moveMethod )
+    {
+        return Kernel32::SetFilePointer(m_handle, distanceToMove, &distanceToMoveHigh, moveMethod);
+    }
+
+    bool File::SetPointerEx( LARGE_INTEGER distanceToMove, LARGE_INTEGER* newFilePointer, unsigned long moveMethod )
+    {
+        return Kernel32::SetFilePointerEx(m_handle, *(reinterpret_cast<::LARGE_INTEGER*>(&distanceToMove)), reinterpret_cast<::PLARGE_INTEGER>(newFilePointer), moveMethod) ? true : false;
+    }
+
+    bool File::SetShortNameT( const TCHAR* shortName )
+    {
+        return Kernel32::SetFileShortNameT(m_handle, shortName) ? true : false;
+    }
+
+    bool File::SetValidDataLength( long long validDataLength )
+    {
+        return Kernel32::SetFileValidData(m_handle, validDataLength) ? true : false;
+    }
+
+    bool File::Unlock( unsigned long offsetLow, unsigned long offsetHigh, unsigned long numberOfBytesToUnlockLow, unsigned long numberOfBytesToUnlockHigh )
+    {
+        return Kernel32::UnlockFile(m_handle, offsetLow, offsetHigh, numberOfBytesToUnlockLow, numberOfBytesToUnlockHigh) ? true : false;
     }
     
+    bool File::UnlockEx( unsigned long numberOfBytesToUnlockLow, unsigned long numberOfBytesToUnlockHigh, void* overlapped )
+    {
+        return Kernel32::UnlockFileEx(m_handle, 0, numberOfBytesToUnlockLow, numberOfBytesToUnlockHigh, reinterpret_cast<LPOVERLAPPED>(overlapped)) ? true : false;
+    }
+    
+    bool File::Write( const byte* buffer, unsigned long NumberOfBytesToWrite, unsigned long& NumberOfBytesWritten, void* overlapped )
+    {
+        return Kernel32::WriteFile(m_handle, buffer, NumberOfBytesToWrite, &NumberOfBytesWritten, reinterpret_cast<LPOVERLAPPED>(overlapped)) ? true : false;
+    }
+
+    bool File::WriteEx( const byte* buffer, unsigned long NumberOfBytesToWrite, void* overlapped, overlappedCompletionRoutine completionRoutine )
+    {
+        return Kernel32::WriteFileEx(m_handle, buffer, NumberOfBytesToWrite, reinterpret_cast<LPOVERLAPPED>(overlapped),
+        reinterpret_cast<LPOVERLAPPED_COMPLETION_ROUTINE>(completionRoutine)) ? true : false;
+    }
+
+    bool File::WriteGather( FileSegmentElement* aSegmentArray, unsigned long numberOfBytesToWrite, void* overlapped )
+    {
+        return Kernel32::WriteFileGather(m_handle, reinterpret_cast<FILE_SEGMENT_ELEMENT*>(aSegmentArray),numberOfBytesToWrite, nullptr, 
+        reinterpret_cast<LPOVERLAPPED>(overlapped)) ? true : false;
+    }
+
 }}}//qor::platform::nswindows

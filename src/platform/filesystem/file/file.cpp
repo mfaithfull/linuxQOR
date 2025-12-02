@@ -95,6 +95,7 @@ namespace qor{ namespace platform{
 
     uint64_t File::SetPositionRelative(int64_t offset)
     {
+        serious("Empty base implementation.");
         return 0;
     }
 

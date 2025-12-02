@@ -188,7 +188,102 @@ namespace qor { namespace nswindows { namespace api {
 		static DWORD CtrlRoutine(LPVOID lpParameter);
 
 		//IO
-		static BOOL CancelIoEx( HANDLE hFile, LPOVERLAPPED lpOverlapped );
+		static BOOL AreFileApisANSI(void);
+		static BOOL CheckNameLegalDOS8Dot3A( LPCTSTR lpName, LPSTR lpOemName, DWORD OemNameSize, PBOOL pbNameContainsSpaces, PBOOL pbNameLegal );
+		static BOOL CheckNameLegalDOS8Dot3W( LPCTSTR lpName, LPSTR lpOemName, DWORD OemNameSize, PBOOL pbNameContainsSpaces, PBOOL pbNameLegal );
+		static BOOL CopyFile( LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, BOOL bFailIfExists );
+		static BOOL CopyFileEx( LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, ::LPPROGRESS_ROUTINE lpProgressRoutine, void* lpData, LPBOOL pbCancel, DWORD dwCopyFlags );
+		static BOOL CopyFileTransacted( LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, ::LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, LPBOOL pbCancel, DWORD dwCopyFlags, HANDLE hTransaction );
+		static BOOL CreateHardLink( LPCTSTR lpFileName, LPCTSTR lpExistingFileName, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes );
+		static BOOL CreateHardLinkTransacted( LPCTSTR lpFileName, LPCTSTR lpExistingFileName, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes, HANDLE hTransaction );
+		static BOOL CreateSymbolicLink( LPCTSTR lpSymlinkFileName, LPCTSTR lpTargetFileName, DWORD dwFlags );
+		static BOOL CreateSymbolicLinkTransacted( LPCTSTR lpSymlinkFileName, LPCTSTR lpTargetFileName, DWORD dwFlags, HANDLE hTransaction );
+		static BOOL DeleteFile( LPCTSTR lpFileName );
+		static BOOL DeleteFileTransacted( LPCTSTR lpFileName, HANDLE hTransaction );
+		static BOOL GetBinaryType( LPCTSTR lpApplicationName, LPDWORD lpBinaryType );
+		static DWORD GetCompressedFileSize( LPCTSTR lpFileName, LPDWORD lpFileSizeHigh );
+		static DWORD GetCompressedFileSizeTransacted( LPCTSTR lpFileName, LPDWORD lpFileSizeHigh, HANDLE hTransaction );
+		static DWORD GetFileAttributes( LPCTSTR lpFileName );
+		static BOOL GetFileAttributesEx( LPCTSTR lpFileName, ::GET_FILEEX_INFO_LEVELS fInfoLevelId, void* lpFileInformation );
+		static BOOL GetFileAttributesTransacted( LPCTSTR lpFileName, ::GET_FILEEX_INFO_LEVELS fInfoLevelId, LPVOID lpFileInformation, HANDLE hTransaction );
+		static DWORD GetFullPathName( LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR* lpFilePart );
+		static DWORD GetFullPathNameTransacted( LPCTSTR lpFileName, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR *lpFilePart, HANDLE hTransaction );
+		static DWORD GetLongPathName( LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer );
+		static DWORD GetLongPathNameTransacted( LPCTSTR lpszShortPath, LPTSTR lpszLongPath, DWORD cchBuffer, HANDLE hTransaction );
+		static DWORD GetShortPathName( LPCTSTR lpszLongPath, LPTSTR lpszShortPath, DWORD cchBuffer );
+		static UINT GetTempFileName( LPCTSTR lpPathName, LPCTSTR lpPrefixString, UINT uUnique, LPTSTR lpTempFileName );
+		static DWORD GetTempPath( DWORD nBufferLength, LPTSTR lpBuffer );
+		static BOOL MoveFile( LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName );
+		static BOOL MoveFileEx( LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, DWORD dwFlags );
+		static BOOL MoveFileTransacted( LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, ::LPPROGRESS_ROUTINE lpProgressRoutine, LPVOID lpData, DWORD dwFlags, HANDLE hTransaction );
+		static BOOL MoveFileWithProgress( LPCTSTR lpExistingFileName, LPCTSTR lpNewFileName, ::LPPROGRESS_ROUTINE lpProgressRoutine, void* lpData, DWORD dwFlags );
+		static BOOL ReplaceFile( LPCTSTR lpReplacedFileName, LPCTSTR lpReplacementFileName, LPCTSTR lpBackupFileName, DWORD dwReplaceFlags, void* lpExclude, LPVOID lpReserved );
+		static DWORD SearchPath( LPCTSTR lpPath, LPCTSTR lpFileName, LPCTSTR lpExtension, DWORD nBufferLength, LPTSTR lpBuffer, LPTSTR* lpFilePart );
+		static void SetFileApisToANSI(void);
+		static void SetFileApisToOEM(void);
+		static BOOL SetFileAttributes( LPCTSTR lpFileName, DWORD dwFileAttributes );
+		static BOOL SetFileAttributesTransacted( LPCTSTR lpFileName, DWORD dwFileAttributes, HANDLE hTransaction );
+		static BOOL Wow64DisableWow64FsRedirection( void** OldValue );
+		static BOOLEAN Wow64EnableWow64FsRedirection( BOOLEAN Wow64FsEnableRedirection );
+		static BOOL Wow64RevertWow64FsRedirection( void* OldValue );
+		static UINT SetHandleCount( UINT uNumber );
+
+		//IO Completion Ports
+		static HANDLE CreateIoCompletionPort( HANDLE FileHandle, HANDLE ExistingCompletionPort, ULONG_PTR CompletionKey, DWORD NumberOfConcurrentThreads );
+		static BOOL GetQueuedCompletionStatus( HANDLE CompletionPort, LPDWORD lpNumberOfBytes, PULONG_PTR lpCompletionKey, ::LPOVERLAPPED* lpOverlapped, DWORD dwMilliseconds );
+		static BOOL GetQueuedCompletionStatusEx( HANDLE CompletionPort, ::LPOVERLAPPED_ENTRY lpCompletionPortEntries, ULONG ulCount, PULONG ulNumEntriesRemoved, DWORD dwMilliseconds, BOOL fAlertable );
+		static BOOL PostQueuedCompletionStatus( HANDLE CompletionPort, DWORD dwNumberOfBytesTransferred, ULONG_PTR dwCompletionKey, ::LPOVERLAPPED lpOverlapped );
+
+		static BOOL FindClose( HANDLE hFindFile );
+		static HANDLE FindFirstFile( LPCTSTR lpFileName, ::LPWIN32_FIND_DATA lpFindFileData );
+		static HANDLE FindFirstFileEx( LPCTSTR lpFileName, ::FINDEX_INFO_LEVELS fInfoLevelId, LPVOID lpFindFileData, ::FINDEX_SEARCH_OPS fSearchOp, void* lpSearchFilter, DWORD dwAdditionalFlags );
+		static HANDLE FindFirstFileNameTransactedW( LPCWSTR lpFileName, DWORD dwFlags, LPDWORD StringLength, PWCHAR LinkName, HANDLE hTransaction );
+		static HANDLE FindFirstFileNameW( LPCWSTR lpFileName, DWORD dwFlags, LPDWORD StringLength, PWCHAR LinkName );
+		static HANDLE FindFirstFileTransacted( LPCTSTR lpFileName, ::FINDEX_INFO_LEVELS fInfoLevelId, LPVOID lpFindFileData, ::FINDEX_SEARCH_OPS fSearchOp, LPVOID lpSearchFilter, DWORD dwAdditionalFlags, HANDLE hTransaction );
+		static HANDLE FindFirstStreamTransactedW( LPCWSTR lpFileName, ::STREAM_INFO_LEVELS InfoLevel, LPVOID lpFindStreamData, DWORD dwFlags, HANDLE hTransaction );
+		static HANDLE FindFirstStreamW( LPCWSTR lpFileName, ::STREAM_INFO_LEVELS InfoLevel, LPVOID lpFindStreamData, DWORD dwFlags );
+		static BOOL FindNextFile( HANDLE hFindFile, ::LPWIN32_FIND_DATA lpFindFileData );
+		static BOOL FindNextFileNameW( HANDLE hFindStream, LPDWORD StringLength, PWCHAR LinkName );
+		static BOOL FindNextStreamW( HANDLE hFindStream, void* lpFindStreamData );
+
+		//File
+		static BOOL CancelIo( HANDLE hFile );
+		static BOOL CancelIoEx( HANDLE hFile, ::LPOVERLAPPED lpOverlapped );
+		static BOOL CancelSynchronousIo( HANDLE hThread );
+		static HANDLE CreateFileA( LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile );
+		static HANDLE CreateFileW( LPCWSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile );
+		static HANDLE CreateFileTransacted( LPCTSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile, HANDLE hTransaction, PUSHORT pusMiniVersion, void* pExtendedParameter );				
+		static BOOL FlushFileBuffers( HANDLE hFile );
+		static BOOL GetFileBandwidthReservation( HANDLE hFile, LPDWORD lpPeriodMilliseconds, LPDWORD lpBytesPerPeriod, LPBOOL pDiscardable, LPDWORD lpTransferSize, LPDWORD lpNumOutstandingRequests );
+		static BOOL GetFileInformationByHandle( HANDLE hFile, ::LPBY_HANDLE_FILE_INFORMATION lpFileInformation );
+		static BOOL GetFileInformationByHandleEx( HANDLE hFile, ::FILE_INFO_BY_HANDLE_CLASS FileInformationClass, LPVOID lpFileInformation, DWORD dwBufferSize );
+		static DWORD GetFileSize( HANDLE hFile, LPDWORD lpFileSizeHigh );
+		static BOOL GetFileSizeEx( HANDLE hFile, PLARGE_INTEGER lpFileSize );
+		static DWORD GetFileType( HANDLE hFile );
+		static DWORD GetFinalPathNameByHandleT( HANDLE hFile, LPTSTR lpszFilePath, DWORD cchFilePath, DWORD dwFlags );
+		static BOOL LockFile( HANDLE hFile, DWORD dwFileOffsetLow, DWORD dwFileOffsetHigh, DWORD nNumberOfBytesToLockLow, DWORD nNumberOfBytesToLockHigh );
+		static BOOL LockFileEx( HANDLE hFile, DWORD dwFlags, DWORD dwReserved, DWORD nNumberOfBytesToLockLow, DWORD nNumberOfBytesToLockHigh, ::LPOVERLAPPED lpOverlapped );
+		static HFILE OpenFile( LPCSTR lpFileName, ::LPOFSTRUCT lpReOpenBuff, UINT uStyle );
+		static HANDLE OpenFileById( HANDLE hFile, ::LPFILE_ID_DESCRIPTOR lpFileID, DWORD dwDesiredAccess, DWORD dwShareMode, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwFlags );
+		static BOOL ReadFile( HANDLE hFile, void* lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead, ::LPOVERLAPPED lpOverlapped );
+		static BOOL ReadFileEx( HANDLE hFile, void* lpBuffer, DWORD nNumberOfBytesToRead, ::LPOVERLAPPED lpOverlapped, ::LPOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine );
+		static BOOL ReadFileScatter( HANDLE hFile, ::FILE_SEGMENT_ELEMENT aSegmentArray[], DWORD nNumberOfBytesToRead, LPDWORD lpReserved, ::LPOVERLAPPED lpOverlapped );
+		static HANDLE ReOpenFile( HANDLE hOriginalFile, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlags );
+		static BOOL SetEndOfFile( HANDLE hFile );
+		static BOOL SetFileBandwidthReservation( HANDLE hFile, DWORD nPeriodMilliseconds, DWORD nBytesPerPeriod, BOOL bDiscardable, LPDWORD lpTransferSize, LPDWORD lpNumOutstandingRequests );
+		static BOOL SetFileCompletionNotificationModes( HANDLE FileHandle, UCHAR Flags );
+		static BOOL SetFileInformationByHandle( HANDLE hFile, ::FILE_INFO_BY_HANDLE_CLASS FileInformationClass, LPVOID lpFileInformation, DWORD dwBufferSize );
+		static BOOL SetFileIoOverlappedRange( HANDLE FileHandle, PUCHAR OverlappedRangeStart, ULONG Length );
+		static DWORD SetFilePointer( HANDLE hFile, long lDistanceToMove, PLONG lpDistanceToMoveHigh, DWORD dwMoveMethod );
+		static BOOL SetFilePointerEx( HANDLE hFile, ::LARGE_INTEGER liDistanceToMove, ::PLARGE_INTEGER lpNewFilePointer, DWORD dwMoveMethod );
+		static BOOL SetFileShortNameT( HANDLE hFile, LPCTSTR lpShortName );
+		static BOOL SetFileValidData( HANDLE hFile, LONGLONG ValidDataLength );
+		static BOOL UnlockFile( HANDLE hFile, DWORD dwFileOffsetLow, DWORD dwFileOffsetHigh, DWORD nNumberOfBytesToUnlockLow, DWORD nNumberOfBytesToUnlockHigh );
+		static BOOL UnlockFileEx( HANDLE hFile, DWORD dwReserved, DWORD nNumberOfBytesToUnlockLow, DWORD nNumberOfBytesToUnlockHigh, ::LPOVERLAPPED lpOverlapped );
+		static BOOL WriteFile( HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite, LPDWORD lpNumberOfBytesWritten, ::LPOVERLAPPED lpOverlapped );
+		static BOOL WriteFileEx( HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite, ::LPOVERLAPPED lpOverlapped, ::LPOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine );
+		static BOOL WriteFileGather( HANDLE hFile, ::FILE_SEGMENT_ELEMENT aSegmentArray[], DWORD nNumberOfBytesToWrite, LPDWORD lpReserved, ::LPOVERLAPPED lpOverlapped );
+		
 
 		//Sync API
 		static DWORD WaitForMultipleObjectsEx(DWORD nCount, const void** lpHandles, BOOL bWaitAll, DWORD dwMilliseconds, BOOL bAlertable);

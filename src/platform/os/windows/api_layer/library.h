@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include <excpt.h>
+#include "src/qor/error/error.h"
 
 namespace qor { namespace nswindows { namespace api {
 
@@ -32,13 +33,16 @@ namespace qor { namespace nswindows { namespace api {
 
 		typedef int(*DefProc)(void);//Default procedure pointer type
 
-		static unsigned long StructuredExceptionFilterFunction(unsigned long exceptionCode)
+		static int ExceptionFilterFunction(LPEXCEPTION_POINTERS exception_pointers)
 		{
+			serious("Win32 API Exception: Code {0}, Address {1}, Flags {2}, Info {3}, {4} parameters.", 
+				exception_pointers->ExceptionRecord->ExceptionCode,
+				exception_pointers->ExceptionRecord->ExceptionAddress,
+				exception_pointers->ExceptionRecord->ExceptionFlags,
+				exception_pointers->ExceptionRecord->ExceptionInformation[0],
+				exception_pointers->ExceptionRecord->NumberParameters
+			);
 			return EXCEPTION_EXECUTE_HANDLER;
-		}
-
-		static void StructuredExceptionHandler()
-		{
 		}
 
 		template< typename ret, class ...MethodArgs >
@@ -56,9 +60,8 @@ namespace qor { namespace nswindows { namespace api {
 			{
 				return (FP)(std::forward< MethodArgs >(args)...);
 			}
-			__except(StructuredExceptionFilterFunction(GetExceptionCode()))
+			__except(ExceptionFilterFunction(GetExceptionInformation()))
 			{
-				StructuredExceptionHandler();
 			}
 			ret _{};
 			return _;
@@ -73,7 +76,14 @@ namespace qor { namespace nswindows { namespace api {
 
 			if (FP != nullptr)
 			{
-				(FP)(std::forward< MethodArgs >(args)...);
+				__try
+				{
+					(FP)(std::forward< MethodArgs >(args)...);
+				}
+				__except(ExceptionFilterFunction(GetExceptionInformation()))
+				{
+					continuable("Call failed.");
+				}
 			}
 			else
 			{

@@ -7,7 +7,8 @@ add_library(${target} SHARED winqor_filesystem.cpp filesystem.cpp filestat.cpp f
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_WINDOWSFILESYSTEM)
-target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_injection qor_filesystem)
+target_compile_definitions(${target} PRIVATE QOR_WINDOWSFILESYSTEM)
+target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_injection qor_filesystem
+winqor_api_kernel)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

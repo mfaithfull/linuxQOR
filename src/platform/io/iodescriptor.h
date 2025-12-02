@@ -34,7 +34,7 @@ namespace qor{ namespace platform{
         union 
         {
             int m_fd;
-            unsigned long long m_handle;
+            void* m_handle;
         };
         const GUID* m_objectType;        
     };

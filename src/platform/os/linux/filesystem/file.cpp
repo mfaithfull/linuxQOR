@@ -102,6 +102,11 @@ namespace qor{ namespace nslinux{
         }
     }
 
+    bool File::SupportsPosition()
+    {
+        return lseek(m_fd, 0, SEEK_CUR) != -1 ? true : false;        
+    }
+
     int File::ChangeMode(unsigned int mode)
     {
         unsigned int linuxMode = 0;
@@ -168,6 +173,11 @@ namespace qor{ namespace nslinux{
     int File::Truncate(off_t length)
     {
         return Validate_ftruncate_Result(::ftruncate(m_fd, length));
+    }
+
+    void File::Truncate(uint64_t length)
+    {
+        ::ftruncate(m_fd, length);
     }
 
     int File::SyncToSystem()

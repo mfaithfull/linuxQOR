@@ -34,6 +34,7 @@
 #local dev stuff
 /.vs
 /build/.vs
+/build
 .vscode
 
 # CMake

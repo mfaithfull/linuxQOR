@@ -31,10 +31,15 @@
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/error/error.h"
 #include "src/qor/reference/newref.h"
+#include "src/platform/io/iodescriptor.h"
 
 //All libraries providing an implementation of IFile also need to export this function so that the linker can find them
 namespace qor{
-    bool qor_pp_if(qor_pp_is_empty(QOR_FILESYSTEM), qor_pp_export, qor_pp_import) ImplementsIFile(void);
+#ifdef QOR_FILESYSTEM
+    bool qor_pp_import ImplementsIFile(void);
+#else
+    bool qor_pp_export ImplementsIFile(void);
+#endif
 }
 
 namespace qor{ namespace platform{
@@ -47,13 +52,26 @@ namespace qor{ namespace platform{
 
         enum Type
         {
-            Unknown
+            Unknown,
+            Char,
+            Disk,
+            Pipe,
+            Remote
+        };
+
+        enum Whence
+        {
+            Set,
+            Current,
+            End
         };
 
         IFile(){}
         IFile(const FileIndex& index, int openFor, int withFlags){}
+        IFile(const IODescriptor& iod){}
         virtual bool SupportsPosition(){ return false; }
         virtual uint64_t GetPosition(){ return 0; }
+        virtual long SetPosition(long offset, int whence){return 0;}
         virtual uint64_t SetPosition(uint64_t newPosition){return 0;}
         virtual uint64_t SetPositionRelative(int64_t offset){return 0;}
         virtual void Truncate(uint64_t length){}

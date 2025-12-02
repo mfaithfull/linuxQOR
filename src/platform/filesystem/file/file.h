@@ -28,12 +28,13 @@
 #include <string>
 #include "../path.h"
 #include "ifile.h"
+#include "src/platform/io/iodescriptor.h"
 #include "src/platform/filesystem/fileindex.h"
 #include "src/platform/filesystem/ifilesystem.h"
 
 namespace qor{ namespace platform{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File : public IFile
+    class qor_pp_module_interface(QOR_FILESYSTEM) File : public platform::IODescriptor, virtual public IFile
 	{
 	public:
 
@@ -63,7 +64,8 @@ namespace qor{ namespace platform{
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
 
         static ref_of<IFile>::type Open(const FileIndex& index, int openFor, int withFlags);
-    private:
+        
+    protected:
 
         FileIndex m_index;
     };
