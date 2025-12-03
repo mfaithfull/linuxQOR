@@ -26,6 +26,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/error/error.h"
+#include "errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
@@ -37,6 +38,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::CancelIo( HANDLE hFile)
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, CancelIo );
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE >( pFunc, hFile );
         return bResult;
@@ -45,6 +47,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::CancelIoEx( HANDLE hFile, LPOVERLAPPED lpOverlapped )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, CancelIoEx );
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, LPOVERLAPPED >( pFunc, hFile, lpOverlapped );
         return bResult;
@@ -53,6 +56,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::CancelSynchronousIo( HANDLE hThread )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, CancelSynchronousIo);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE>(pFunc, hThread);
         return bResult;
@@ -61,6 +65,7 @@ namespace qor { namespace nswindows { namespace api {
     HANDLE Kernel32::CreateFileA( LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, CreateFileA);
         CheckReturn< HANDLE, HandleCheck >::TType h = Library::Call<HANDLE, LPCSTR, DWORD, DWORD, ::LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE>(
             pFunc, lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
@@ -70,6 +75,7 @@ namespace qor { namespace nswindows { namespace api {
     HANDLE Kernel32::CreateFileW( LPCWSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, CreateFileW);
         CheckReturn< HANDLE, HandleCheck >::TType h = Library::Call<HANDLE, LPCWSTR, DWORD, DWORD, ::LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE>(
             pFunc, lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
@@ -79,6 +85,7 @@ namespace qor { namespace nswindows { namespace api {
     HANDLE Kernel32::CreateFileTransacted( LPCTSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile, HANDLE hTransaction, PUSHORT pusMiniVersion, void* pExtendedParameter )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(kernel32, CreateFileTransacted);
         CheckReturn< HANDLE, HandleCheck >::TType h = Library::Call<HANDLE, LPCTSTR, DWORD, DWORD, ::LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE, HANDLE, PUSHORT, void*>(
             pFunc, lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile, hTransaction, pusMiniVersion, pExtendedParameter);
@@ -88,6 +95,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::FlushFileBuffers( HANDLE hFile )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, FlushFileBuffers);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE >(pFunc, hFile);
         return bResult;
@@ -96,6 +104,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::GetFileBandwidthReservation( HANDLE hFile, LPDWORD lpPeriodMilliseconds, LPDWORD lpBytesPerPeriod, LPBOOL pDiscardable, LPDWORD lpTransferSize, LPDWORD lpNumOutstandingRequests )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, GetFileBandwidthReservation);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, LPDWORD, LPDWORD, LPBOOL, LPDWORD, LPDWORD>(
             pFunc, hFile, lpPeriodMilliseconds, lpBytesPerPeriod, pDiscardable, lpTransferSize, lpNumOutstandingRequests);
@@ -105,6 +114,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::GetFileInformationByHandle( HANDLE hFile, ::LPBY_HANDLE_FILE_INFORMATION lpFileInformation )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, GetFileInformationByHandle);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, ::LPBY_HANDLE_FILE_INFORMATION>(
             pFunc, hFile, lpFileInformation);
@@ -114,6 +124,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::GetFileInformationByHandleEx( HANDLE hFile, ::FILE_INFO_BY_HANDLE_CLASS FileInformationClass, LPVOID lpFileInformation, DWORD dwBufferSize )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, GetFileInformationByHandleEx);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, ::FILE_INFO_BY_HANDLE_CLASS, LPVOID, DWORD>(
             pFunc, hFile, FileInformationClass, lpFileInformation, dwBufferSize);
@@ -123,6 +134,7 @@ namespace qor { namespace nswindows { namespace api {
     DWORD Kernel32::GetFileSize( HANDLE hFile, LPDWORD lpFileSizeHigh )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, GetFileSize);
         CheckReturn< DWORD, TCheckFailureValue<DWORD, INVALID_FILE_SIZE> >::TType result = Library::Call<DWORD, HANDLE, LPDWORD>(
             pFunc, hFile, lpFileSizeHigh);
@@ -132,6 +144,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::GetFileSizeEx( HANDLE hFile, PLARGE_INTEGER lpFileSize )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, GetFileSizeEx);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, PLARGE_INTEGER>(
             pFunc, hFile, lpFileSize);
@@ -141,6 +154,7 @@ namespace qor { namespace nswindows { namespace api {
     DWORD Kernel32::GetFileType( HANDLE hFile )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, GetFileType);     
         CheckReturn< DWORD, TCheckFailureValue<DWORD, FILE_TYPE_UNKNOWN> >::TType result = Library::Call<DWORD, HANDLE>(pFunc, hFile);
         return result;
@@ -149,6 +163,7 @@ namespace qor { namespace nswindows { namespace api {
     DWORD Kernel32::GetFinalPathNameByHandleT( HANDLE hFile, LPTSTR lpszFilePath, DWORD cchFilePath, DWORD dwFlags )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(kernel32, GetFinalPathNameByHandle);
         CheckReturn< DWORD, TCheckFailureValue<DWORD, 0> >::TType result = Library::Call<DWORD, HANDLE, LPTSTR, DWORD, DWORD>(
             pFunc, hFile, lpszFilePath, cchFilePath, dwFlags);
@@ -158,6 +173,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::LockFile( HANDLE hFile, DWORD dwFileOffsetLow, DWORD dwFileOffsetHigh, DWORD nNumberOfBytesToLockLow, DWORD nNumberOfBytesToLockHigh )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, LockFile);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HANDLE, DWORD, DWORD, DWORD, DWORD>(
             pFunc, hFile, dwFileOffsetLow, dwFileOffsetHigh, nNumberOfBytesToLockLow, nNumberOfBytesToLockHigh);
@@ -167,6 +183,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::LockFileEx( HANDLE hFile, DWORD dwFlags, DWORD dwReserved, DWORD nNumberOfBytesToLockLow, DWORD nNumberOfBytesToLockHigh, ::LPOVERLAPPED lpOverlapped )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, LockFileEx);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, DWORD, DWORD, DWORD, DWORD, ::LPOVERLAPPED>(
             pFunc, hFile, dwFlags, dwReserved, nNumberOfBytesToLockLow, nNumberOfBytesToLockHigh, lpOverlapped);
@@ -176,6 +193,7 @@ namespace qor { namespace nswindows { namespace api {
     HFILE Kernel32::OpenFile( LPCSTR lpFileName, ::LPOFSTRUCT lpReOpenBuff, UINT uStyle )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, OpenFile);
         CheckReturn< HFILE, TCheckFailureValue< HFILE, HFILE_ERROR> >::TType h = Library::Call<HFILE, LPCSTR, ::LPOFSTRUCT, UINT>(
             pFunc, lpFileName, lpReOpenBuff, uStyle);
@@ -185,6 +203,7 @@ namespace qor { namespace nswindows { namespace api {
     HANDLE Kernel32::OpenFileById( HANDLE hFile, ::LPFILE_ID_DESCRIPTOR lpFileID, DWORD dwDesiredAccess, DWORD dwShareMode, ::LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwFlags )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, OpenFileById);
         CheckReturn< HANDLE, HandleCheck >::TType h = Library::Call<HANDLE, HANDLE, ::LPFILE_ID_DESCRIPTOR, DWORD, DWORD, ::LPSECURITY_ATTRIBUTES, DWORD>(
             pFunc, hFile, lpFileID, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwFlags);
@@ -194,6 +213,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::ReadFile( HANDLE hFile, void* lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead, ::LPOVERLAPPED lpOverlapped )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, ReadFile);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, void*, DWORD, LPDWORD, ::LPOVERLAPPED>(
             pFunc, hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped);
@@ -203,6 +223,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::ReadFileEx( HANDLE hFile, void* lpBuffer, DWORD nNumberOfBytesToRead, ::LPOVERLAPPED lpOverlapped, ::LPOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, ReadFileEx);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, void*, DWORD, ::LPOVERLAPPED, ::LPOVERLAPPED_COMPLETION_ROUTINE>(
             pFunc, hFile, lpBuffer, nNumberOfBytesToRead, lpOverlapped, lpCompletionRoutine);
@@ -212,6 +233,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::ReadFileScatter( HANDLE hFile, ::FILE_SEGMENT_ELEMENT aSegmentArray[], DWORD nNumberOfBytesToRead, LPDWORD lpReserved, ::LPOVERLAPPED lpOverlapped )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, ReadFileScatter);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, ::FILE_SEGMENT_ELEMENT*, DWORD, LPDWORD, ::LPOVERLAPPED>(
             pFunc, hFile, aSegmentArray, nNumberOfBytesToRead, lpReserved, lpOverlapped);
@@ -221,6 +243,7 @@ namespace qor { namespace nswindows { namespace api {
     HANDLE Kernel32::ReOpenFile( HANDLE hOriginalFile, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlags )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, ReOpenFile);
         CheckReturn< HANDLE, HandleCheck >::TType h = Library::Call<HANDLE, HANDLE, DWORD, DWORD, DWORD>(
             pFunc, hOriginalFile, dwDesiredAccess, dwShareMode, dwFlags);
@@ -230,6 +253,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::SetEndOfFile( HANDLE hFile )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, SetEndOfFile);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE>(pFunc, hFile);
         return bResult;
@@ -238,6 +262,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::SetFileBandwidthReservation( HANDLE hFile, DWORD nPeriodMilliseconds, DWORD nBytesPerPeriod, BOOL bDiscardable, LPDWORD lpTransferSize, LPDWORD lpNumOutstandingRequests )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, SetFileBandwidthReservation);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, DWORD, DWORD, BOOL, LPDWORD, LPDWORD >(
             pFunc, hFile, nPeriodMilliseconds, nBytesPerPeriod, bDiscardable, lpTransferSize, lpNumOutstandingRequests);
@@ -247,6 +272,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::SetFileCompletionNotificationModes( HANDLE FileHandle, UCHAR Flags )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, SetFileCompletionNotificationModes);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, UCHAR >(
             pFunc, FileHandle, Flags);
@@ -256,6 +282,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::SetFileInformationByHandle( HANDLE hFile, ::FILE_INFO_BY_HANDLE_CLASS FileInformationClass, LPVOID lpFileInformation, DWORD dwBufferSize )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, SetFileInformationByHandle);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, ::FILE_INFO_BY_HANDLE_CLASS, LPVOID, DWORD>(
             pFunc, hFile, FileInformationClass, lpFileInformation, dwBufferSize);
@@ -265,6 +292,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::SetFileIoOverlappedRange( HANDLE FileHandle, PUCHAR OverlappedRangeStart, ULONG Length )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, SetFileIoOverlappedRange);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, PUCHAR, ULONG>(
             pFunc, FileHandle, OverlappedRangeStart, Length);
@@ -274,6 +302,7 @@ namespace qor { namespace nswindows { namespace api {
     DWORD Kernel32::SetFilePointer( HANDLE hFile, long lDistanceToMove, PLONG lpDistanceToMoveHigh, DWORD dwMoveMethod )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, SetFilePointer);
         CheckReturn< DWORD, TCheckFailureValue<DWORD, INVALID_SET_FILE_POINTER> > result = Library::Call<DWORD, HANDLE, long, PLONG, DWORD>(
             pFunc, hFile, lDistanceToMove, lpDistanceToMoveHigh, dwMoveMethod);
@@ -283,6 +312,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::SetFilePointerEx( HANDLE hFile, ::LARGE_INTEGER liDistanceToMove, ::PLARGE_INTEGER lpNewFilePointer, DWORD dwMoveMethod )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, SetFilePointerEx );
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, ::LARGE_INTEGER, ::PLARGE_INTEGER, DWORD >(
             pFunc, hFile, liDistanceToMove, lpNewFilePointer, dwMoveMethod);
@@ -292,6 +322,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::SetFileShortNameT( HANDLE hFile, LPCTSTR lpShortName )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapiAW(kernel32, SetFileShortName );
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, LPCTSTR>(pFunc, hFile, lpShortName);
         return bResult;
@@ -300,6 +331,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::SetFileValidData( HANDLE hFile, LONGLONG ValidDataLength )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, SetFileValidData );
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, LONGLONG >(pFunc, hFile, ValidDataLength);
         return bResult;
@@ -308,6 +340,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::UnlockFile( HANDLE hFile, DWORD dwFileOffsetLow, DWORD dwFileOffsetHigh, DWORD nNumberOfBytesToUnlockLow, DWORD nNumberOfBytesToUnlockHigh )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, UnlockFile );
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, DWORD, DWORD, DWORD, DWORD>(
             pFunc, hFile, dwFileOffsetLow, dwFileOffsetHigh, nNumberOfBytesToUnlockLow, nNumberOfBytesToUnlockHigh);
@@ -317,6 +350,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::UnlockFileEx( HANDLE hFile, DWORD dwReserved, DWORD nNumberOfBytesToUnlockLow, DWORD nNumberOfBytesToUnlockHigh, ::LPOVERLAPPED lpOverlapped )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, UnlockFileEx );
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, DWORD, DWORD, DWORD, ::LPOVERLAPPED>(
             pFunc, hFile, dwReserved, nNumberOfBytesToUnlockLow, nNumberOfBytesToUnlockHigh, lpOverlapped);
@@ -326,6 +360,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::WriteFile( HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite, LPDWORD lpNumberOfBytesWritten, ::LPOVERLAPPED lpOverlapped )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, WriteFile);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HANDLE, LPCVOID, DWORD, LPDWORD, ::LPOVERLAPPED>(
             pFunc, hFile, lpBuffer, nNumberOfBytesToWrite, lpNumberOfBytesWritten, lpOverlapped);
@@ -335,6 +370,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::WriteFileEx( HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite, ::LPOVERLAPPED lpOverlapped, ::LPOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, WriteFileEx);
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HANDLE, LPCVOID, DWORD, ::LPOVERLAPPED, ::LPOVERLAPPED_COMPLETION_ROUTINE>(
             pFunc, hFile, lpBuffer, nNumberOfBytesToWrite, lpOverlapped, lpCompletionRoutine);
@@ -344,6 +380,7 @@ namespace qor { namespace nswindows { namespace api {
     BOOL Kernel32::WriteFileGather( HANDLE hFile, ::FILE_SEGMENT_ELEMENT aSegmentArray[], DWORD nNumberOfBytesToWrite, LPDWORD lpReserved, ::LPOVERLAPPED lpOverlapped )
     {
         qor_pp_fcontext;
+        Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, WriteFileGather );
         CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call<BOOL, HANDLE, ::FILE_SEGMENT_ELEMENT*, DWORD, LPDWORD, ::LPOVERLAPPED>(pFunc, hFile, aSegmentArray, nNumberOfBytesToWrite, lpReserved, lpOverlapped);
         return bResult;

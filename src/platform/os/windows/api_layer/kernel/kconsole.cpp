@@ -26,6 +26,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/error/error.h"
+#include "errorhandler.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
@@ -36,7 +37,8 @@ namespace qor { namespace nswindows { namespace api {
 
 	BOOL Kernel32::AddConsoleAlias(LPTSTR Source, LPTSTR Target, LPTSTR ExeName)
 	{
-		qor_pp_fcontext;		
+		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0501 )
 		qor_pp_useswinapi( kernel32,AddConsoleAlias);
@@ -51,6 +53,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::AllocConsole(void)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::AllocConsole();
 		return bResult;
 	}
@@ -58,6 +61,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::AttachConsole(DWORD dwProcessId)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0501 )
 		bResult = ::AttachConsole(dwProcessId);
@@ -71,6 +75,7 @@ namespace qor { namespace nswindows { namespace api {
 	HANDLE Kernel32::CreateConsoleScreenBuffer(DWORD dwDesiredAccess, DWORD dwShareMode, const ::SECURITY_ATTRIBUTES* lpSecurityAttributes, DWORD dwFlags, void* lpScreenBufferData)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< HANDLE, HandleCheck >::TType h = ::CreateConsoleScreenBuffer(dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwFlags, lpScreenBufferData);
 		return h;
 	}
@@ -78,6 +83,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::FillConsoleOutputAttribute(HANDLE hConsoleOutput, WORD wAttribute, DWORD nLength, ::COORD dwWriteCoord, LPDWORD lpNumberOfAttrsWritten)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::FillConsoleOutputAttribute(hConsoleOutput, wAttribute, nLength, dwWriteCoord, lpNumberOfAttrsWritten);
 		return bResult;
 	}
@@ -85,6 +91,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::FillConsoleOutputCharacter(HANDLE hConsoleOutput, TCHAR cCharacter, DWORD nLength, ::COORD dwWriteCoord, LPDWORD lpNumberOfCharsWritten)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::FillConsoleOutputCharacter(hConsoleOutput, cCharacter, nLength, dwWriteCoord, lpNumberOfCharsWritten);
 		return bResult;
 	}
@@ -92,6 +99,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::FlushConsoleInputBuffer(HANDLE hConsoleInput)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::FlushConsoleInputBuffer(hConsoleInput);
 		return bResult;
 	}
@@ -99,6 +107,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::FreeConsole(void)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::FreeConsole();
 		return bResult;
 	}
@@ -106,6 +115,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GenerateConsoleCtrlEvent(DWORD dwCtrlEvent, DWORD dwProcessGroupId)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::GenerateConsoleCtrlEvent(dwCtrlEvent, dwProcessGroupId);
 		return bResult;
 	}
@@ -113,6 +123,7 @@ namespace qor { namespace nswindows { namespace api {
 	DWORD Kernel32::GetConsoleAlias(LPTSTR lpSource, LPTSTR lpTargetBuffer, DWORD TargetBufferLength, LPTSTR lpExeName)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< DWORD, CheckNonZero< DWORD> >::TType dwResult;
 #	if( _WIN32_WINNT >= 0x0501 )
 		qor_pp_useswinapi( kernel32,GetConsoleAlias);
@@ -129,6 +140,7 @@ namespace qor { namespace nswindows { namespace api {
 	DWORD Kernel32::GetConsoleAliases(LPTSTR lpAliasBuffer, DWORD AliasBufferLength, LPTSTR lpExeName)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< DWORD, CheckNonZero< DWORD> >::TType dwResult;
 #	if( _WIN32_WINNT >= 0x0501 )
 		qor_pp_useswinapi( kernel32,GetConsoleAliases);
@@ -143,6 +155,7 @@ namespace qor { namespace nswindows { namespace api {
 	DWORD Kernel32::GetConsoleAliasesLength(LPTSTR lpExeName)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		DWORD dwResult = 0;
 #	if( _WIN32_WINNT >= 0x0501 )
 		qor_pp_useswinapi( kernel32,GetConsoleAliasesLength);
@@ -157,6 +170,7 @@ namespace qor { namespace nswindows { namespace api {
 	DWORD Kernel32::GetConsoleAliasExes(LPTSTR lpExeNameBuffer, DWORD ExeNameBufferLength)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< DWORD, CheckNonZero< DWORD> >::TType dwResult;
 #	if ( _WIN32_WINNT >= 0x0501 )
 		qor_pp_useswinapi( kernel32,GetConsoleAliasExes);
@@ -172,6 +186,7 @@ namespace qor { namespace nswindows { namespace api {
 	DWORD Kernel32::GetConsoleAliasExesLength(VOID)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		DWORD dwResult = 0;
 #	if ( _WIN32_WINNT >= 0x0501 )
 		qor_pp_useswinapi( kernel32,GetConsoleAliasExesLength);
@@ -185,12 +200,14 @@ namespace qor { namespace nswindows { namespace api {
 	UINT Kernel32::GetConsoleCP(void)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		return ::GetConsoleCP();
 	}
 
 	BOOL Kernel32::GetConsoleCursorInfo(HANDLE hConsoleOutput, ::PCONSOLE_CURSOR_INFO lpConsoleCursorInfo)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::GetConsoleCursorInfo(hConsoleOutput, lpConsoleCursorInfo);
 		return bResult;
 	}
@@ -198,6 +215,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetConsoleDisplayMode(LPDWORD lpModeFlags)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0501 )
 		bResult = ::GetConsoleDisplayMode(lpModeFlags);
@@ -211,6 +229,7 @@ namespace qor { namespace nswindows { namespace api {
 	::COORD Kernel32::GetConsoleFontSize(HANDLE hConsoleOutput, DWORD nFont)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		::COORD Result = { 0 };
 #	if ( _WIN32_WINNT >= 0x0501 )
 		qor_pp_useswinapi( kernel32,GetConsoleFontSize);
@@ -229,6 +248,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetConsoleHistoryInfo(::PCONSOLE_HISTORY_INFO lpConsoleHistoryInfo)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0600 )
 		qor_pp_useswinapi( kernel32,GetConsoleHistoryInfo);
@@ -243,6 +263,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetConsoleMode(HANDLE hConsoleHandle, LPDWORD lpMode)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 		bResult = ::GetConsoleMode(hConsoleHandle, lpMode);
 		return bResult;
@@ -251,6 +272,7 @@ namespace qor { namespace nswindows { namespace api {
 	DWORD Kernel32::GetConsoleOriginalTitle(LPTSTR lpConsoleTitle, DWORD nSize)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		DWORD dwResult = 0;
 #	if ( _WIN32_WINNT >= 0x0600 )
 		qor_pp_useswinapi( kernel32,GetConsoleOriginalTitle);
@@ -277,12 +299,14 @@ namespace qor { namespace nswindows { namespace api {
 	UINT Kernel32::GetConsoleOutputCP(void)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		return ::GetConsoleOutputCP();
 	}
 
 	DWORD Kernel32::GetConsoleProcessList(LPDWORD lpdwProcessList, DWORD dwProcessCount)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< DWORD, CheckNonZero< DWORD> >::TType dwResult;
 #	if ( _WIN32_WINNT >= 0x0501 )
 		dwResult = ::GetConsoleProcessList(lpdwProcessList, dwProcessCount);
@@ -296,6 +320,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetConsoleScreenBufferInfo(HANDLE hConsoleOutput, ::PCONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::GetConsoleScreenBufferInfo(hConsoleOutput, lpConsoleScreenBufferInfo);
 		return bResult;
 	}
@@ -303,6 +328,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetConsoleScreenBufferInfoEx(HANDLE hConsoleOutput, ::PCONSOLE_SCREEN_BUFFER_INFOEX lpConsoleScreenBufferInfoEx)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 		qor_pp_useswinapi( kernel32,GetConsoleScreenBufferInfoEx);
 		bResult = Library::Call< BOOL, HANDLE, ::PCONSOLE_SCREEN_BUFFER_INFOEX >(pFunc, hConsoleOutput, lpConsoleScreenBufferInfoEx);
@@ -312,6 +338,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetConsoleSelectionInfo(::PCONSOLE_SELECTION_INFO lpConsoleSelectionInfo)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0500 )
 		qor_pp_useswinapi( kernel32,GetConsoleSelectionInfo);
@@ -326,6 +353,7 @@ namespace qor { namespace nswindows { namespace api {
 	DWORD Kernel32::GetConsoleTitle(LPTSTR lpConsoleTitle, DWORD nSize)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		DWORD dwResult = ::GetConsoleTitle(lpConsoleTitle, nSize);
 		if (dwResult == 0)
 		{
@@ -345,6 +373,7 @@ namespace qor { namespace nswindows { namespace api {
 	HWND Kernel32::GetConsoleWindow(void)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< HWND, CheckNonZero< HWND> >::TType hWnd;
 #	if ( _WIN32_WINNT >= 0x0500 )
 		hWnd = ::GetConsoleWindow();
@@ -357,6 +386,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetCurrentConsoleFont(HANDLE hConsoleOutput, BOOL bMaximumWindow, ::PCONSOLE_FONT_INFO lpConsoleCurrentFont)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0500 )
 		qor_pp_useswinapi( kernel32,GetCurrentConsoleFont);
@@ -371,6 +401,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetCurrentConsoleFontEx(HANDLE hConsoleOutput, BOOL bMaximumWindow, ::PCONSOLE_FONT_INFOEX lpConsoleCurrentFontEx)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0600 )
 		qor_pp_useswinapi( kernel32,GetCurrentConsoleFontEx);
@@ -385,6 +416,7 @@ namespace qor { namespace nswindows { namespace api {
 	::COORD Kernel32::GetLargestConsoleWindowSize(HANDLE hConsoleOutput)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		::COORD Result = { 0 };
 		Result = ::GetLargestConsoleWindowSize(hConsoleOutput);
 		if (Result.X == 0 && Result.Y == 0)
@@ -397,6 +429,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, LPDWORD lpcNumberOfEvents)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::GetNumberOfConsoleInputEvents(hConsoleInput, lpcNumberOfEvents);
 		return bResult;
 	}
@@ -404,6 +437,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::GetNumberOfConsoleMouseButtons(LPDWORD lpNumberOfMouseButtons)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::GetNumberOfConsoleMouseButtons(lpNumberOfMouseButtons);
 		return bResult;
 	}
@@ -411,6 +445,7 @@ namespace qor { namespace nswindows { namespace api {
 	HANDLE Kernel32::GetStdHandle(DWORD nStdHandle)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		HANDLE h = ::GetStdHandle(nStdHandle);
 		if (h == INVALID_HANDLE_VALUE)
 		{
@@ -428,6 +463,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::PeekConsoleInput(HANDLE hConsoleInput, ::PINPUT_RECORD lpBuffer, DWORD nLength, LPDWORD lpNumberOfEventsRead)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::PeekConsoleInput(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead);
 		return bResult;
 	}
@@ -435,12 +471,14 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::ReadConsole(HANDLE hConsoleInput, void* lpBuffer, DWORD nNumberOfCharsToRead, LPDWORD lpNumberOfCharsRead, ::PCONSOLE_READCONSOLE_CONTROL pReadcontrol)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		return ::ReadConsole(hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, pReadcontrol);		
 	}
 
 	BOOL Kernel32::ReadConsoleInput(HANDLE hConsoleInput, ::PINPUT_RECORD lpBuffer, DWORD nLength, LPDWORD lpNumberOfEventsRead)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::ReadConsoleInput(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead);
 		return bResult;
 	}
@@ -448,6 +486,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::ReadConsoleOutput(HANDLE hConsoleOutput, ::PCHAR_INFO lpBuffer, ::COORD dwBufferSize, ::COORD dwBufferCoord, ::PSMALL_RECT lpReadRegion)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::ReadConsoleOutput(hConsoleOutput, lpBuffer, dwBufferSize, dwBufferCoord, lpReadRegion);
 		return bResult;
 	}
@@ -455,6 +494,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::ReadConsoleOutputAttribute(HANDLE hConsoleOutput, LPWORD lpAttribute, DWORD nLength, ::COORD dwReadCoord, LPDWORD lpNumberOfAttrsRead)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::ReadConsoleOutputAttribute(hConsoleOutput, lpAttribute, nLength, dwReadCoord, lpNumberOfAttrsRead);
 		return bResult;
 	}
@@ -462,6 +502,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::ReadConsoleOutputCharacter(HANDLE hConsoleOutput, LPTSTR lpCharacter, DWORD nLength, ::COORD dwReadCoord, LPDWORD lpNumberOfCharsRead)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::ReadConsoleOutputCharacter(hConsoleOutput, lpCharacter, nLength, dwReadCoord, lpNumberOfCharsRead);
 		return bResult;
 	}
@@ -469,6 +510,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::ScrollConsoleScreenBuffer(HANDLE hConsoleOutput, const ::SMALL_RECT* lpScrollRectangle, const ::SMALL_RECT* lpClipRectangle, ::COORD dwDestinationOrigin, const ::CHAR_INFO* lpFill)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::ScrollConsoleScreenBuffer(hConsoleOutput, lpScrollRectangle, lpClipRectangle, dwDestinationOrigin, lpFill);
 		return bResult;
 	}
@@ -476,6 +518,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleActiveScreenBuffer(HANDLE hConsoleOutput)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleActiveScreenBuffer(hConsoleOutput);
 		return bResult;
 	}
@@ -483,6 +526,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleCP(UINT wCodePageID)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleCP(wCodePageID);
 		return bResult;
 	}
@@ -490,6 +534,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleCtrlHandler(PHANDLER_ROUTINE HandlerRoutine, BOOL Add)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleCtrlHandler(HandlerRoutine, Add);
 		return bResult;
 	}
@@ -497,6 +542,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleCursorInfo(HANDLE hConsoleOutput, const ::CONSOLE_CURSOR_INFO* lpConsoleCursorInfo)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleCursorInfo(hConsoleOutput, lpConsoleCursorInfo);
 		return bResult;
 	}
@@ -504,6 +550,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleCursorPosition(HANDLE hConsoleOutput, ::COORD dwCursorPosition)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleCursorPosition(hConsoleOutput, dwCursorPosition);
 		return bResult;
 	}
@@ -511,6 +558,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleMode(HANDLE hConsoleHandle, DWORD dwMode)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleMode(hConsoleHandle, dwMode);
 		return bResult;
 	}
@@ -518,6 +566,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleDisplayMode(HANDLE hConsoleOutput, DWORD dwFlags, ::PCOORD lpNewScreenBufferDimensions)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if( _WIN32_WINNT >= 0x0502 )
 		bResult = ::SetConsoleDisplayMode(hConsoleOutput, dwFlags, lpNewScreenBufferDimensions);
@@ -531,6 +580,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleHistoryInfo(::PCONSOLE_HISTORY_INFO lpConsoleHistoryInfo)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0600 )
 		qor_pp_useswinapi( kernel32,SetConsoleHistoryInfo);
@@ -545,6 +595,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleOutputCP(UINT wCodePageID)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleOutputCP(wCodePageID);
 		return bResult;
 	}
@@ -552,6 +603,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleScreenBufferInfoEx(HANDLE hConsoleOutput, ::PCONSOLE_SCREEN_BUFFER_INFOEX lpConsoleScreenBufferInfoEx)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0600 )
 		qor_pp_useswinapi( kernel32,SetConsoleScreenBufferInfoEx);
@@ -566,6 +618,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleScreenBufferSize(HANDLE hConsoleOutput, ::COORD dwSize)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleScreenBufferSize(hConsoleOutput, dwSize);
 		return bResult;
 	}
@@ -573,6 +626,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleTextAttribute(HANDLE hConsoleOutput, WORD wAttributes)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleTextAttribute(hConsoleOutput, wAttributes);
 		return bResult;
 	}
@@ -580,6 +634,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleTitle(LPCTSTR lpConsoleTitle)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleTitle(lpConsoleTitle);
 		return bResult;
 	}
@@ -587,6 +642,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetConsoleWindowInfo(HANDLE hConsoleOutput, BOOL bAbsolute, const ::SMALL_RECT* lpConsoleWindow)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetConsoleWindowInfo(hConsoleOutput, bAbsolute, lpConsoleWindow);
 		return bResult;
 	}
@@ -594,6 +650,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetCurrentConsoleFontEx(HANDLE hConsoleOutput, BOOL bMaximumWindow, ::PCONSOLE_FONT_INFOEX lpConsoleCurrentFontEx)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0600 )
 		qor_pp_useswinapi( kernel32,SetCurrentConsoleFontEx);
@@ -608,6 +665,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::SetStdHandle(DWORD nStdHandle, HANDLE hHandle)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetStdHandle(nStdHandle, hHandle);
 		return bResult;
 	}
@@ -615,6 +673,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::WriteConsoleA(HANDLE hConsoleOutput, const VOID* lpBuffer, DWORD nNumberOfCharsToWrite, LPDWORD lpNumberOfCharsWritten, void* lpReserved)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::WriteConsoleA(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
 		return bResult;
 	}
@@ -622,6 +681,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::WriteConsoleW(HANDLE hConsoleOutput, const VOID* lpBuffer, DWORD nNumberOfCharsToWrite, LPDWORD lpNumberOfCharsWritten, void* lpReserved)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::WriteConsoleW(hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved);
 		return bResult;
 	}
@@ -629,6 +689,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::WriteConsoleInput(HANDLE hConsoleInput, const ::INPUT_RECORD* lpBuffer, DWORD nLength, LPDWORD lpNumberOfEventsWritten)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::WriteConsoleInput(hConsoleInput, lpBuffer, nLength, lpNumberOfEventsWritten);
 		return bResult;
 	}
@@ -636,6 +697,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::WriteConsoleOutput(HANDLE hConsoleOutput, const ::CHAR_INFO* lpBuffer, ::COORD dwBufferSize, ::COORD dwBufferCoord, ::PSMALL_RECT lpWriteRegion)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::WriteConsoleOutput(hConsoleOutput, lpBuffer, dwBufferSize, dwBufferCoord, lpWriteRegion);
 		return bResult;
 	}
@@ -643,6 +705,7 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::WriteConsoleOutputAttribute(HANDLE hConsoleOutput, const WORD* lpAttribute, DWORD nLength, ::COORD dwWriteCoord, LPDWORD lpNumberOfAttrsWritten)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::WriteConsoleOutputAttribute(hConsoleOutput, lpAttribute, nLength, dwWriteCoord, lpNumberOfAttrsWritten);
 		return bResult;
 	}
@@ -650,13 +713,14 @@ namespace qor { namespace nswindows { namespace api {
 	BOOL Kernel32::WriteConsoleOutputCharacter(HANDLE hConsoleOutput, LPCTSTR lpCharacter, DWORD nLength, ::COORD dwWriteCoord, LPDWORD lpNumberOfCharsWritten)
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult = ::WriteConsoleOutputCharacter(hConsoleOutput, lpCharacter, nLength, dwWriteCoord, lpNumberOfCharsWritten);
 		return bResult;
 	}
 
 	DWORD Kernel32::CtrlRoutine(LPVOID lpParameter)
 	{
-		qor_pp_fcontext;
+		qor_pp_fcontext;		
 		DWORD dwResult = 0;
 #if ( _WIN32_WINNT >= 0x0600 )
 		qor_pp_unref(lpParameter);

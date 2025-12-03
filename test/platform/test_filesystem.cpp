@@ -80,7 +80,9 @@ qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFile)
     auto fileSystem = new_ref<FileSystem>();
     fileSystem->Setup();
     FileIndex newIndex(fileSystem->CurrentPath(), "TestTemp");
-    auto refFile = fileSystem->Create(newIndex, WithFlags::CreateNew);
+    {
+        auto refFile = fileSystem->Create(newIndex, WithFlags::CreateNew);
+    }
     fileSystem->Delete(newIndex);
 }
 
@@ -90,7 +92,9 @@ qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFolder)
     fileSystem->Setup();
     Path currentPath(fileSystem->CurrentPath());
     Path testPath = currentPath / "TestFolder";
-    auto refFile = fileSystem->Create(testPath);
+    {
+        auto refFile = fileSystem->Create(testPath);
+    }
     fileSystem->DeleteFolder(testPath);
 }
 

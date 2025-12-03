@@ -106,18 +106,21 @@ namespace qor{ namespace components{
         {
             unitsWrittenAtOnce = 0;
             size_t unitsToWrite = strData.length() - unitsWritten;
-            byte* space = m_buffer.WriteRequest(unitsToWrite);
-            memcpy( space, strData.c_str() + unitsWritten, unitsToWrite * m_buffer.GetUnitSize());
-            m_buffer.WriteAcknowledge(unitsToWrite);
-            if(!Write(unitsWrittenAtOnce, unitsToWrite))
+            if(unitsToWrite > 0)
             {
-                return false;
+                byte* space = m_buffer.WriteRequest(unitsToWrite);
+                memcpy( space, strData.c_str() + unitsWritten, unitsToWrite * m_buffer.GetUnitSize());
+                m_buffer.WriteAcknowledge(unitsToWrite);
+                if(!Write(unitsWrittenAtOnce, unitsToWrite))
+                {
+                    return false;
+                }
+                if(unitsWrittenAtOnce == 0)
+                {
+                    break;
+                }
+                unitsWritten += unitsWrittenAtOnce;
             }
-            if(unitsWrittenAtOnce == 0)
-            {
-                break;
-            }
-            unitsWritten += unitsWrittenAtOnce;
         }while(unitsWritten < strData.length());
         return true;
     }

@@ -53,9 +53,8 @@ namespace qor{ namespace platform { namespace nswindows{
     }
 
     ref_of<platform::IFile>::type FileSystem::Create(const platform::FileIndex& index, int withFlags) const
-    {
-        int flags = withFlags |= WithFlags::CreateNew | WithFlags::Truncate;
-        auto ref = Open(index, OpenFor::WriteOnly, flags);
+    {        
+        auto ref = Open(index, OpenFor::ReadWrite, withFlags);
         ref.AsRef<File>()->ChangeMode(Owner_Read | Owner_Write);
         return ref;
     }

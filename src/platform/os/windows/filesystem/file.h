@@ -46,7 +46,7 @@ namespace qor{ namespace platform { namespace nswindows{
         File(const File& src);
         File(const platform::Path& path, const std::string& fileName, int openFor, int withFlags) : File(platform::FileIndex(path,fileName),openFor,withFlags) {}
         File(const platform::FileIndex& direntry, int openFor, int withFlags);
-        File(int fd);
+        File(const platform::IODescriptor& iod);
         virtual ~File();
 
         virtual bool SupportsPosition() override;
@@ -70,18 +70,23 @@ namespace qor{ namespace platform { namespace nswindows{
         int AsyncRead(byte* buffer, size_t byteCount, off_t offset);
         int AsyncWrite(byte* buffer, size_t byteCount, off_t offset);
         
+        static unsigned long GetDesiredAccess(int openFor, int withFlags);
+        static unsigned long GetShareMode(int openFor, int withFlags);
+        static unsigned long GetCreationDisposition(int openFor, int withFlags);
+        static unsigned long GetFlagsAndAttributes(int openFor, int withFlags);
+        
     private:
         
 		bool CancelIo();
 		bool CancelIoEx( void* lpOverlapped );		
-		void* CreateFile( const char* lpFileName, unsigned long dwDesiredAccess, unsigned long dwShareMode, void* lpSecurityAttributes, unsigned long dwCreationDisposition, unsigned long dwFlagsAndAttributes, void* hTemplateFile);
-		void* CreateFile( const wchar_t* lpFileName, unsigned long dwDesiredAccess, unsigned long dwShareMode, void* lpSecurityAttributes, unsigned long dwCreationDisposition, unsigned long dwFlagsAndAttributes, void* hTemplateFile);		       
+		void* Create( const char* lpFileName, unsigned long dwDesiredAccess, unsigned long dwShareMode, void* lpSecurityAttributes, unsigned long dwCreationDisposition, unsigned long dwFlagsAndAttributes, void* hTemplateFile);
+		void* Create( const wchar_t* lpFileName, unsigned long dwDesiredAccess, unsigned long dwShareMode, void* lpSecurityAttributes, unsigned long dwCreationDisposition, unsigned long dwFlagsAndAttributes, void* hTemplateFile);		       
 		bool GetBandwidthReservation( unsigned long& periodMilliseconds, unsigned long& bytesPerPeriod, bool& discardable, unsigned long& transferSize, unsigned long& numOutstandingRequests );        
 		bool GetInformationByHandle( ByHandleFileInformation* fileInformation );        
 		bool GetInformationByHandleEx(FileInfoByHandleClass FileInformationClass, void* fileInformation, unsigned long bufferSize );
 		unsigned long GetFinalPathNameByHandleT( TCHAR* filePath, unsigned long cchFilePath, unsigned long flags );
-		bool LockFile( unsigned long offsetLow, unsigned long offsetHigh, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh );
-		bool LockFileEx( unsigned long flags, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh, void* overlapped );
+		bool Lock( unsigned long offsetLow, unsigned long offsetHigh, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh );
+		bool LockEx( unsigned long flags, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh, void* overlapped );
 		int Open( const char* fileName, OFStruct* reOpenBuff, unsigned int style );
 		bool Read( byte* lpBuffer, unsigned long NumberOfBytesToRead, unsigned long& NumberOfBytesRead, void* overlapped );
 		bool ReadEx( byte* lpBuffer, unsigned long NumberOfBytesToRead, void* overlapped, overlappedCompletionRoutine completionRoutine );        

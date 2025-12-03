@@ -22,35 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
-#include "src/framework/application/application_builder.h"
-#include "src/framework/role/role.h"
-#include "src/platform/platform.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/workflow/workflow.h"
+#ifndef QOR_PP_H_OS_WINDOWS_API_KERNEL_ERRHANDLER
+#define QOR_PP_H_OS_WINDOWS_API_KERNEL_ERRHANDLER
 
-using namespace qor;
-using namespace qor::test;
-using namespace qor::framework;
-using namespace qor::workflow;
-using namespace qor::platform;
+#include "src/qor/error/defaulterrorhandler.h"
 
-struct ApplicationTestSuite{};
+namespace qor { namespace nswindows { namespace api {
 
-qor_pp_test_suite_case(ApplicationTestSuite, canBuildAnApplication)
-{
-    auto app = AppBuilder().Build("QOR Test Application")->        
-        SetRole<Role>(
-            [](ref_of<IRole>::type role)
-            {
-            }
-        );
-    qor_pp_assert_that(true);//Yay we got here;
-}
+    class qor_pp_module_interface(QOR_WINAPI) Win32ErrorHandler : public qor::IssueHandler<qor::Error>
+    {
+    public:
+        
+        virtual bool Handle(const qor::Error& error);
+    };
+
+}}}//qor::nswindows::api
+
+#endif//QOR_PP_H_OS_WINDOWS_API_KERNEL_ERRHANDLER

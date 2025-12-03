@@ -41,50 +41,100 @@ namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFi
 
 namespace qor{ namespace platform { namespace nswindows{    
 
-    /*
-    unsigned long File::CreationDisposition(platform::WithFlags mode)
+
+    unsigned long File::GetDesiredAccess(int openFor, int withFlags)
     {
-        unsigned long dwCreationDisposition = 0;
-        switch (mode)
+        unsigned long desiredAccess = 0;
+        switch(openFor)
         {
-        case CreateNew:
-            dwCreationDisposition = CREATE_NEW;
-            break;
-        case Create:
-            dwCreationDisposition = CREATE_ALWAYS;
-            break;
-        case Open:
-            dwCreationDisposition = OPEN_EXISTING;
-            break;
-        case OpenOrCreate:
-        case Append:
-            dwCreationDisposition = OPEN_ALWAYS;
-            break;
-        case Truncate:
-            dwCreationDisposition = TRUNCATE_EXISTING;
-            break;
+            case Exec:
+                desiredAccess = GENERIC_EXECUTE | GENERIC_READ;
+                break;                
+            case ReadOnly:
+                desiredAccess = GENERIC_READ;
+                break;
+            case ReadWrite:
+                desiredAccess = GENERIC_READ | GENERIC_WRITE;
+                break;
+            case Search:
+                desiredAccess = GENERIC_READ;
+                break;
+            case WriteOnly:
+                desiredAccess = GENERIC_WRITE;
         }
-        return dwCreationDisposition;
+        return desiredAccess;
     }
-    */
+    
+    unsigned long File::GetShareMode(int openFor, int withFlags)
+    {
+        unsigned long shareMode = 0;
+        if((static_cast<unsigned>(WithFlags::Exclusive) & withFlags) != 0)
+        {
+            shareMode = 0;
+        }
+        else
+        {
+            shareMode = FILE_SHARE_READ;
+        }
+        return shareMode;
+    }
+
+    unsigned long File::GetCreationDisposition(int openFor, int withFlags)
+    {
+        unsigned long creationDisposition = OPEN_EXISTING;
+        if((static_cast<unsigned>(WithFlags::CreateNew) & withFlags) != 0)
+        {
+            creationDisposition = CREATE_NEW;
+        }
+        else if((static_cast<unsigned>(WithFlags::Truncate) & withFlags) != 0)
+        {
+            creationDisposition = TRUNCATE_EXISTING;
+        }
+        else if(openFor == ReadWrite || openFor == WriteOnly)
+        {
+            creationDisposition = CREATE_ALWAYS;
+        }
+        return creationDisposition;
+    }
+
+    unsigned long File::GetFlagsAndAttributes(int openFor, int withFlags)
+    {        
+        return FILE_ATTRIBUTE_NORMAL;
+    }
 
     File::File()
     {
         m_handle = INVALID_HANDLE_VALUE;
     }
     
-    File::File(int fd){}
+    File::File(const platform::IODescriptor& iod)
+    {
+        m_handle = iod.m_handle;
+    }
 
     File::File(const File& src) : File()
-    {//TODO:
+    {
+        m_handle = src.m_handle;
+        m_objectType = src.m_objectType;
     }
 
     File::File(const platform::FileIndex& direntry, int openFor, int withFlags) : platform::File(direntry) 
     {
+        unsigned long desiredAccess = GetDesiredAccess(openFor, withFlags);
+        unsigned long shareMode = GetShareMode(openFor, withFlags);
+        unsigned long creationDisposition = GetCreationDisposition(openFor, withFlags);
+        unsigned long flagsAndAttributes = GetFlagsAndAttributes(openFor, withFlags);
+
+        m_handle = this->Create(direntry.ToString().c_str(), desiredAccess, shareMode, nullptr, creationDisposition, flagsAndAttributes, nullptr);
     }
 
     File::~File()
     {
+        if(m_handle != nullptr && m_handle != INVALID_HANDLE_VALUE)
+        {
+            Kernel32::CloseHandle(m_handle);
+        }
+        m_handle = nullptr;
     }
 
     bool File::SupportsPosition()
@@ -266,13 +316,13 @@ namespace qor{ namespace platform { namespace nswindows{
         return Kernel32::CancelIoEx(m_handle, reinterpret_cast<LPOVERLAPPED>(lpOverlapped));
     }
 
-    void* File::CreateFile( const char* fileName, unsigned long desiredAccess, unsigned long shareMode, void* securityAttributes, unsigned long creationDisposition, unsigned long flagsAndAttributes, void* hTemplateFile)
+    void* File::Create( const char* fileName, unsigned long desiredAccess, unsigned long shareMode, void* securityAttributes, unsigned long creationDisposition, unsigned long flagsAndAttributes, void* hTemplateFile)
     {
         return Kernel32::CreateFileA(fileName, desiredAccess, shareMode, 
             reinterpret_cast<LPSECURITY_ATTRIBUTES>(securityAttributes), creationDisposition, flagsAndAttributes, hTemplateFile);
     }
 
-    void* File::CreateFile(const wchar_t* fileName, unsigned long desiredAccess, unsigned long shareMode, void* securityAttributes, unsigned long creationDisposition, unsigned long flagsAndAttributes, void* hTemplateFile)
+    void* File::Create(const wchar_t* fileName, unsigned long desiredAccess, unsigned long shareMode, void* securityAttributes, unsigned long creationDisposition, unsigned long flagsAndAttributes, void* hTemplateFile)
     {
         return Kernel32::CreateFileW(fileName, desiredAccess, shareMode, 
             reinterpret_cast<LPSECURITY_ATTRIBUTES>(securityAttributes), creationDisposition, flagsAndAttributes, hTemplateFile);
@@ -301,12 +351,12 @@ namespace qor{ namespace platform { namespace nswindows{
         return Kernel32::GetFinalPathNameByHandleT(m_handle, filePath, cchFilePath, flags);
     }
 
-    bool File::LockFile( unsigned long offsetLow, unsigned long offsetHigh, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh )
+    bool File::Lock( unsigned long offsetLow, unsigned long offsetHigh, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh )
     {
         return Kernel32::LockFile(m_handle, offsetLow, offsetHigh, numberOfBytesToLockLow, numberOfBytesToLockHigh) ? true : false;
     }
 
-    bool File::LockFileEx( unsigned long flags, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh, void* overlapped )
+    bool File::LockEx( unsigned long flags, unsigned long numberOfBytesToLockLow, unsigned long numberOfBytesToLockHigh, void* overlapped )
     {
         return Kernel32::LockFileEx(m_handle, flags, 0, numberOfBytesToLockLow, numberOfBytesToLockHigh, reinterpret_cast<LPOVERLAPPED>(overlapped)) ? true : false;
     }

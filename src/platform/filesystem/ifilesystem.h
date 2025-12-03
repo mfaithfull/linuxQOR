@@ -48,7 +48,7 @@ namespace qor{ namespace platform{
 
     enum WithFlags
     {
-        None = 0,
+        None = 0u,
         Append = 1 << 0,
         CloseExec = 1 << 1,
         CloseFork = 1 << 2,

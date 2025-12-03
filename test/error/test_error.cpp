@@ -38,7 +38,7 @@ class SeriousHandler : public qor::IssueHandler<qor::Serious>
 {
     public:
     
-    virtual bool Handle(const Serious& issue) const
+    virtual bool Handle(const Serious& issue)
     {
         return true;
     }

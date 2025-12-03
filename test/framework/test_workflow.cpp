@@ -92,7 +92,10 @@ private:
 
 qor_pp_test_suite_case(WorkflowTestSuite, canDoSimpleWorkflow)
 {    
-    Workflow test_workflow;    
+    Workflow test_workflow;
+    auto testState = new_ref<State>(&test_workflow);
+    testState->Enter = [&test_workflow](){ test_workflow.PopState();};
+    test_workflow.SetInitialState(testState);
     test_workflow.Run();
     qor_pp_assert_that(test_workflow.IsComplete()).isTrue();
 }
