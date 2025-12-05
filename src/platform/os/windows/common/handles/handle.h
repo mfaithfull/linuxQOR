@@ -27,6 +27,46 @@
 
 namespace qor { namespace platform { namespace nswindows {
 
+	class qor_pp_module_interface(QOR_WINCOMMON) PrimitiveHandle
+	{
+	public:
+
+		PrimitiveHandle();
+		PrimitiveHandle(void* h);
+		PrimitiveHandle(int h);
+		virtual ~PrimitiveHandle();
+		PrimitiveHandle(const PrimitiveHandle&);
+		PrimitiveHandle& operator = (PrimitiveHandle && src);
+		PrimitiveHandle& operator = (const PrimitiveHandle&);
+		void* operator()();
+		virtual void* Use(void) const;
+
+		void* ptr(void) const
+		{
+			return m_h;
+		}
+
+		void** pptr(void)
+		{
+			return &m_h;
+		}
+
+		bool operator == (const PrimitiveHandle & cmp) const
+		{
+			return (m_h == cmp.m_h) ? true : false;
+		}
+
+		bool operator < (const PrimitiveHandle & cmp) const
+		{
+			return m_h < cmp.m_h;
+		}
+
+	protected:
+
+		void* m_h;
+
+	};
+
 	//class over a Windows Handle
 	class qor_pp_module_interface(QOR_WINCOMMON) Handle
 	{
@@ -47,6 +87,7 @@ namespace qor { namespace platform { namespace nswindows {
 		bool GetProtectFromClose();
 		bool SetHeritable(bool inherit);
 		bool SetProtectFromClose(bool close);
+		void DontClose();
 		virtual void Close(void);
 		bool IsNull(void) const;
 		bool IsInvalid(void) const;

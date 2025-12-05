@@ -22,26 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
-#define QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
+#ifndef QOR_PP_H_WINDOWS_GUI_FONT
+#define QOR_PP_H_WINDOWS_GUI_FONT
 
+#include "src/platform/os/windows/common/handles/handle.h"
 
-#define Invalid_Handle_Value ((void* const)(size_t)(-1))
-#define Infinite_Timeout            0xFFFFFFFF  // Infinite timeout
+//All types on this interface must be portable
+namespace qor{ namespace platform { namespace nswindows{ 
 
-#define Success                    0L
+    class qor_pp_module_interface(QOR_WINGUI) Font
+    {
+    public:
+        Font();
+        Font(const PrimitiveHandle& h);
+        virtual ~Font();
 
-#define Status_Wait0        ((unsigned long)0x00000000L)
-#define Wait_Failed 		((unsigned long)0xFFFFFFFF)
-#define Wait_Object0       	((Status_Wait0 ) + 0 )
-#define MaxPath          			260
+        const Handle& GetHandle() const;
 
-namespace qor{ namespace platform { namespace nswindows {
+    protected:
 
-	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
-	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
-	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
+        Handle m_handle;
 
+    };
+    
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
+#endif//QOR_PP_H_WINDOWS_GUI_FONT

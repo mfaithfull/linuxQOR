@@ -4,7 +4,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(target winqor_api_kernel)
 
 add_library(${target} SHARED winqor_api_kernel.cpp kconsole.cpp  kerrorhandling.cpp kdll.cpp khandle.cpp kio.cpp sync.cpp kfile.cpp
-errorhandler.cpp)
+errorhandler.cpp process.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

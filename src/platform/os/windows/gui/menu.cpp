@@ -22,26 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
-#define QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
+#include "src/configuration/configuration.h"
 
+#include "menu.h"
+#include "src/platform/os/windows/common/stringconv.h"
+#include "src/platform/os/windows/api_layer/user/user32.h"
 
-#define Invalid_Handle_Value ((void* const)(size_t)(-1))
-#define Infinite_Timeout            0xFFFFFFFF  // Infinite timeout
+using namespace qor::nswindows::api;
 
-#define Success                    0L
+namespace qor{ namespace platform { namespace nswindows{
+    
+    Menu::Menu()
+    {
+        m_handle = 0;
+    }
 
-#define Status_Wait0        ((unsigned long)0x00000000L)
-#define Wait_Failed 		((unsigned long)0xFFFFFFFF)
-#define Wait_Object0       	((Status_Wait0 ) + 0 )
-#define MaxPath          			260
+    Menu::Menu(int m) : m_handle(m)
+    {
+        m_handle.DontClose();
+    }
 
-namespace qor{ namespace platform { namespace nswindows {
+    Menu::Menu(const PrimitiveHandle& h) : m_handle(h.Use())
+    {
+        m_handle.DontClose();
+    }
 
-	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
-	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
-	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
+    Menu::Menu(const Menu& m) : m_handle(m.GetHandle().Use())
+    {
+        m_handle.DontClose();
+    }
+
+    const Handle& Menu::GetHandle() const
+    {
+        return m_handle;
+    }
+
+    unsigned long Menu::CheckItem(unsigned int uIDCheckItem, unsigned int uCheck)
+    {
+        return User32::CheckMenuItem((HMENU)(m_handle.Use()), uIDCheckItem, uCheck);
+    }
+
+    bool Menu::EnableItem(unsigned int uIDEnableItem, unsigned int uEnable)
+    {
+        return User32::EnableMenuItem((HMENU)(m_handle.Use()), uIDEnableItem, uEnable) ? true : false;
+    }
 
 }}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS

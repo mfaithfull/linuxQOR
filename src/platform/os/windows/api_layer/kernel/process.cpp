@@ -34,31 +34,12 @@
 
 namespace qor { namespace nswindows { namespace api {
 
-	BOOL Kernel32::CloseHandle(HANDLE hObject)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::CloseHandle(hObject);
-		return bResult;
-	}
-
-	BOOL Kernel32::DuplicateHandle(HANDLE hSourceProcessHandle, HANDLE hSourceHandle, HANDLE hTargetProcessHandle, LPHANDLE lpTargetHandle, DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwOptions)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::DuplicateHandle(hSourceProcessHandle, hSourceHandle, hTargetProcessHandle, lpTargetHandle, dwDesiredAccess, bInheritHandle, dwOptions);
-		return bResult;
-	}
-
-	BOOL Kernel32::GetHandleInformation(HANDLE hObject, LPDWORD lpdwFlags)
-	{
-		qor_pp_fcontext;
-		return ::GetHandleInformation(hObject, lpdwFlags);
-	}
-
-	BOOL Kernel32::SetHandleInformation(HANDLE hObject, DWORD dwMask, DWORD dwFlags)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetHandleInformation(hObject, dwMask, dwFlags);
-		return bResult;
-	}
+    HANDLE Kernel32::GetCurrentProcess(void)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(kernel32, GetCurrentProcess );
+        CheckReturn< HANDLE, HandleNullCheck >::TType h = Library::Call< HANDLE >( pFunc );
+        return h;
+    }
 
 }}}//qor::nswindows::api

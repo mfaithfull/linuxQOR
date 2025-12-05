@@ -22,26 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
-#define QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
+#ifndef QOR_PP_H_WINDOWS_GUI_MESSAGE
+#define QOR_PP_H_WINDOWS_GUI_MESSAGE
 
+#include "point.h"
 
-#define Invalid_Handle_Value ((void* const)(size_t)(-1))
-#define Infinite_Timeout            0xFFFFFFFF  // Infinite timeout
+//All types on this interface must be portable
+namespace qor{ namespace platform { namespace nswindows{ 
 
-#define Success                    0L
-
-#define Status_Wait0        ((unsigned long)0x00000000L)
-#define Wait_Failed 		((unsigned long)0xFFFFFFFF)
-#define Wait_Object0       	((Status_Wait0 ) + 0 )
-#define MaxPath          			260
-
-namespace qor{ namespace platform { namespace nswindows {
-
-	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
-	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
-	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
-
+    struct Message
+    {
+        void*               hwnd;
+        unsigned int        message;
+        unsigned long long  wParam;
+        long long           lParam;
+        unsigned long       time;
+        Point               pt;
+#ifdef _MAC
+        unsigned long       lPrivate;
+#endif
+    };
+    
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
+#endif//QOR_PP_H_WINDOWS_GUI_MESSAGE

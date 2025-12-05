@@ -7,4 +7,5 @@ add_subdirectory(framework)
 add_subdirectory(components)
 add_subdirectory(common)
 add_subdirectory(filesystem)
-
+add_subdirectory(gui)
+add_subdirectory(examples)

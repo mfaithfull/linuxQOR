@@ -24,41 +24,10 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
-#include "src/qor/interception/functioncontext.h"
-#include "src/qor/error/error.h"
 
-//Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
-#include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
-#include "../returncheck.h"
-#include "../library.h"
-
-namespace qor { namespace nswindows { namespace api {
-
-	BOOL Kernel32::CloseHandle(HANDLE hObject)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::CloseHandle(hObject);
-		return bResult;
-	}
-
-	BOOL Kernel32::DuplicateHandle(HANDLE hSourceProcessHandle, HANDLE hSourceHandle, HANDLE hTargetProcessHandle, LPHANDLE lpTargetHandle, DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwOptions)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::DuplicateHandle(hSourceProcessHandle, hSourceHandle, hTargetProcessHandle, lpTargetHandle, dwDesiredAccess, bInheritHandle, dwOptions);
-		return bResult;
-	}
-
-	BOOL Kernel32::GetHandleInformation(HANDLE hObject, LPDWORD lpdwFlags)
-	{
-		qor_pp_fcontext;
-		return ::GetHandleInformation(hObject, lpdwFlags);
-	}
-
-	BOOL Kernel32::SetHandleInformation(HANDLE hObject, DWORD dwMask, DWORD dwFlags)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetHandleInformation(hObject, dwMask, dwFlags);
-		return bResult;
-	}
-
-}}}//qor::nswindows::api
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Windows GUI",
+		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

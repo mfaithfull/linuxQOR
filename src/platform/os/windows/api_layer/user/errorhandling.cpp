@@ -28,37 +28,41 @@
 #include "src/qor/error/error.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
-#include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
+#include "user32.h"
 #include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace nswindows { namespace api {
 
-	BOOL Kernel32::CloseHandle(HANDLE hObject)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::CloseHandle(hObject);
-		return bResult;
-	}
+    BOOL User32::FlashWindow(HWND hWnd, BOOL bInvert)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, FlashWindow);
+        return Library::Call<BOOL, HWND, BOOL>(pFunc, hWnd, bInvert);
+    }
 
-	BOOL Kernel32::DuplicateHandle(HANDLE hSourceProcessHandle, HANDLE hSourceHandle, HANDLE hTargetProcessHandle, LPHANDLE lpTargetHandle, DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwOptions)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::DuplicateHandle(hSourceProcessHandle, hSourceHandle, hTargetProcessHandle, lpTargetHandle, dwDesiredAccess, bInheritHandle, dwOptions);
-		return bResult;
-	}
+    BOOL User32::FlashWindowEx(::PFLASHWINFO pfwi)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, FlashWindowEx);
+        return Library::Call<BOOL, ::PFLASHWINFO>(pFunc, pfwi);
+    }
 
-	BOOL Kernel32::GetHandleInformation(HANDLE hObject, LPDWORD lpdwFlags)
-	{
-		qor_pp_fcontext;
-		return ::GetHandleInformation(hObject, lpdwFlags);
-	}
+    BOOL User32::MessageBeep(UINT uType)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, MessageBeep);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, UINT >(
+             pFunc, uType );
+        return bResult;
+    }
 
-	BOOL Kernel32::SetHandleInformation(HANDLE hObject, DWORD dwMask, DWORD dwFlags)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetHandleInformation(hObject, dwMask, dwFlags);
-		return bResult;
-	}
+    void User32::SetLastErrorEx(DWORD dwErrCode, DWORD dwType)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, SetLastErrorEx);
+        Library::voidCall< DWORD, DWORD >(pFunc, dwErrCode, dwType );
+    }
 
 }}}//qor::nswindows::api
+

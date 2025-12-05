@@ -22,26 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
-#define QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
+#include "src/configuration/configuration.h"
 
+#include "brush.h"
+#include "src/platform/os/windows/common/stringconv.h"
+#include "src/platform/os/windows/api_layer/user/user32.h"
 
-#define Invalid_Handle_Value ((void* const)(size_t)(-1))
-#define Infinite_Timeout            0xFFFFFFFF  // Infinite timeout
+using namespace qor::nswindows::api;
 
-#define Success                    0L
+namespace qor{ namespace platform { namespace nswindows{
 
-#define Status_Wait0        ((unsigned long)0x00000000L)
-#define Wait_Failed 		((unsigned long)0xFFFFFFFF)
-#define Wait_Object0       	((Status_Wait0 ) + 0 )
-#define MaxPath          			260
+    Brush::Brush()
+    {
 
-namespace qor{ namespace platform { namespace nswindows {
+    }
 
-	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
-	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
-	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
+    Brush::Brush(int col) : m_handle(col)
+    {
+        m_handle.DontClose();
+    }
 
+    Brush::~Brush()
+    {
+        if(!m_handle.IsInvalid())
+        {
+            DeleteObject(m_handle.Use());
+            m_handle.Drop();
+        }
+    }
+
+    const Handle& Brush::GetHandle() const
+    {
+        return m_handle;
+    }
+
+    SysBrush::SysBrush(int nIndex) : Brush()
+    {        
+        m_handle = User32::GetSysColorBrush(nIndex);        
+    }
+
+    SysBrush::~SysBrush()
+    {
+    }
+
+    
 }}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS

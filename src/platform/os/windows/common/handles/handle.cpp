@@ -33,6 +33,50 @@ using namespace qor::nswindows::api;
 
 namespace qor { namespace platform { namespace nswindows {
 
+	PrimitiveHandle::PrimitiveHandle() : m_h(nullptr)
+	{		
+	}
+
+	PrimitiveHandle::PrimitiveHandle(void* h) : m_h(h)
+	{		
+	}
+
+	PrimitiveHandle::PrimitiveHandle(int h) : m_h((void*)(static_cast<size_t>(h)))
+	{		
+	}
+
+	PrimitiveHandle::~PrimitiveHandle()
+	{		
+	}
+
+	PrimitiveHandle::PrimitiveHandle(const PrimitiveHandle& src) : m_h(src.m_h)
+	{		
+	}
+
+	PrimitiveHandle& PrimitiveHandle::operator = (PrimitiveHandle && src)
+	{
+		m_h = src.m_h;
+		return *this;
+	}
+
+	PrimitiveHandle& PrimitiveHandle::operator = (const PrimitiveHandle& src)
+	{
+		m_h = src.m_h;
+		return *this;
+	}
+
+	void* PrimitiveHandle::operator()()
+	{
+		return m_h;
+	}
+
+	void* PrimitiveHandle::Use(void) const
+	{
+		return m_h;
+	}
+
+
+
 	Handle::Handle() : m_h(Invalid_Handle_Value), m_needsClose(false) {}
 	
 	Handle::Handle(void* h) : m_h(h)
@@ -118,10 +162,6 @@ namespace qor { namespace platform { namespace nswindows {
 			result = (flags & HANDLE_FLAG_PROTECT_FROM_CLOSE) != 0;
 			return result;
 		}
-		else
-		{
-			continuable("Call to Kernel32::GetHandleInformation failed");
-		}
 		return false;
 	}
 
@@ -133,6 +173,11 @@ namespace qor { namespace platform { namespace nswindows {
 	bool Handle::SetHeritable(bool inherit)
 	{
 		return Kernel32::SetHandleInformation(m_h, HANDLE_FLAG_INHERIT, inherit ? HANDLE_FLAG_INHERIT : 0) ? true : false;
+	}
+
+	void Handle::DontClose()
+	{
+		m_needsClose = false;
 	}
 
 	bool Handle::SetProtectFromClose(bool close)

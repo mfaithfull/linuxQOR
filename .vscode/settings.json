@@ -104,6 +104,7 @@
         "netfwd": "cpp",
         "socket": "cpp",
         "resumable": "cpp",
-        "source_location": "cpp"
+        "source_location": "cpp",
+        "*.rh": "cpp"
     }
 }

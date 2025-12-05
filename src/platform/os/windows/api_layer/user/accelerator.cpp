@@ -28,37 +28,45 @@
 #include "src/qor/error/error.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
-#include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
+#include "user32.h"
 #include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace nswindows { namespace api {
 
-	BOOL Kernel32::CloseHandle(HANDLE hObject)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::CloseHandle(hObject);
-		return bResult;
-	}
+    int User32::CopyAcceleratorTableT(HACCEL hAccelSrc, LPACCEL lpAccelDst, int cAccelEntries)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapiAW(user32, CopyAcceleratorTable);
+        return Library::Call<int, HACCEL, LPACCEL, int>(pFunc, hAccelSrc, lpAccelDst, cAccelEntries);
+    }
 
-	BOOL Kernel32::DuplicateHandle(HANDLE hSourceProcessHandle, HANDLE hSourceHandle, HANDLE hTargetProcessHandle, LPHANDLE lpTargetHandle, DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwOptions)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::DuplicateHandle(hSourceProcessHandle, hSourceHandle, hTargetProcessHandle, lpTargetHandle, dwDesiredAccess, bInheritHandle, dwOptions);
-		return bResult;
-	}
+    HACCEL User32::CreateAcceleratorTableT(LPACCEL lpaccl, int cEntries)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, CreateAcceleratorTable);
+        return Library::Call<HACCEL, LPACCEL, int>(pFunc, lpaccl, cEntries);
+    }
 
-	BOOL Kernel32::GetHandleInformation(HANDLE hObject, LPDWORD lpdwFlags)
-	{
-		qor_pp_fcontext;
-		return ::GetHandleInformation(hObject, lpdwFlags);
-	}
+    BOOL User32::DestroyAcceleratorTable(HACCEL hAccel)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, DestroyAcceleratorTable);
+        return Library::Call<BOOL, HACCEL>(pFunc, hAccel);
+    }
 
-	BOOL Kernel32::SetHandleInformation(HANDLE hObject, DWORD dwMask, DWORD dwFlags)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetHandleInformation(hObject, dwMask, dwFlags);
-		return bResult;
-	}
+    HACCEL User32::LoadAcceleratorsT(HINSTANCE hInstance, LPCTSTR lpTableName)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, LoadAccelerators);
+        return Library::Call<HACCEL, HINSTANCE, LPCTSTR>(pFunc, hInstance, lpTableName);
+    }
+
+    int User32::TranslateAcceleratorT(HWND hWnd, HACCEL hAccTable, LPMSG lpMsg)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, TranslateAccelerator);
+        return Library::Call<int, HWND, HACCEL, LPMSG>(pFunc, hWnd, hAccTable, lpMsg);
+    }
 
 }}}//qor::nswindows::api

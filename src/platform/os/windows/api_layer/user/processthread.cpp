@@ -28,37 +28,52 @@
 #include "src/qor/error/error.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
-#include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
+#include "user32.h"
 #include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace nswindows { namespace api {
 
-	BOOL Kernel32::CloseHandle(HANDLE hObject)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::CloseHandle(hObject);
-		return bResult;
-	}
+    BOOL User32::AttachThreadInput(DWORD idAttach, DWORD idAttachTo, BOOL fAttach)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, AttachThreadInput);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, DWORD, DWORD, BOOL >(
+             pFunc, idAttach, idAttachTo, fAttach );
+        return bResult;
+    }
 
-	BOOL Kernel32::DuplicateHandle(HANDLE hSourceProcessHandle, HANDLE hSourceHandle, HANDLE hTargetProcessHandle, LPHANDLE lpTargetHandle, DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwOptions)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::DuplicateHandle(hSourceProcessHandle, hSourceHandle, hTargetProcessHandle, lpTargetHandle, dwDesiredAccess, bInheritHandle, dwOptions);
-		return bResult;
-	}
+    DWORD User32::GetGuiResources(HANDLE hProcess, DWORD uiFlags)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, GetGuiResources);
+		CheckReturn< DWORD, CheckNonZero< DWORD> >::TType dwResult = Library::Call<DWORD, HANDLE, DWORD>(
+            pFunc, hProcess, uiFlags);
+        return dwResult;
+    }
 
-	BOOL Kernel32::GetHandleInformation(HANDLE hObject, LPDWORD lpdwFlags)
-	{
-		qor_pp_fcontext;
-		return ::GetHandleInformation(hObject, lpdwFlags);
-	}
+    BOOL User32::IsWow64Message(void)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, IsWow64Message);
+        return Library::Call< BOOL >(pFunc);
+    }
 
-	BOOL Kernel32::SetHandleInformation(HANDLE hObject, DWORD dwMask, DWORD dwFlags)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetHandleInformation(hObject, dwMask, dwFlags);
-		return bResult;
-	}
+    BOOL User32::UserHandleGrantAccess(HANDLE hUserHandle, HANDLE hJob, BOOL bGrant)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, UserHandleGrantAccess);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, HANDLE, HANDLE, BOOL >(
+             pFunc, hUserHandle, hJob, bGrant );
+        return bResult;
+    }
+
+    DWORD User32::WaitForInputIdle(HANDLE hProcess, DWORD dwMilliseconds)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, WaitForInputIdle);
+        return Library::Call< DWORD, HANDLE, DWORD >(pFunc, hProcess, dwMilliseconds );
+    }
 
 }}}//qor::nswindows::api
+

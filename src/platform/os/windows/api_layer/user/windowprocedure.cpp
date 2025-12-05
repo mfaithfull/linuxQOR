@@ -28,37 +28,24 @@
 #include "src/qor/error/error.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
-#include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
+#include "user32.h"
 #include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace nswindows { namespace api {
 
-	BOOL Kernel32::CloseHandle(HANDLE hObject)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::CloseHandle(hObject);
-		return bResult;
-	}
+    LRESULT CallWindowProcT(WNDPROC lpPrevWndFunc, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapiAW(user32, CallWindowProc);
+        return Library::Call<LRESULT,WNDPROC, HWND, UINT, WPARAM, LPARAM>(pFunc, lpPrevWndFunc, hWnd, Msg, wParam, lParam);
+    }
 
-	BOOL Kernel32::DuplicateHandle(HANDLE hSourceProcessHandle, HANDLE hSourceHandle, HANDLE hTargetProcessHandle, LPHANDLE lpTargetHandle, DWORD dwDesiredAccess, BOOL bInheritHandle, DWORD dwOptions)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::DuplicateHandle(hSourceProcessHandle, hSourceHandle, hTargetProcessHandle, lpTargetHandle, dwDesiredAccess, bInheritHandle, dwOptions);
-		return bResult;
-	}
-
-	BOOL Kernel32::GetHandleInformation(HANDLE hObject, LPDWORD lpdwFlags)
-	{
-		qor_pp_fcontext;
-		return ::GetHandleInformation(hObject, lpdwFlags);
-	}
-
-	BOOL Kernel32::SetHandleInformation(HANDLE hObject, DWORD dwMask, DWORD dwFlags)
-	{
-		qor_pp_fcontext;
-		CheckReturn< BOOL, BoolCheck >::TType bResult = ::SetHandleInformation(hObject, dwMask, dwFlags);
-		return bResult;
-	}
+    LRESULT DefWindowProcT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapiAW(user32, DefWindowProc);
+        return Library::Call<LRESULT, HWND, UINT, WPARAM, LPARAM>(pFunc, hWnd, Msg, wParam, lParam);
+    }
 
 }}}//qor::nswindows::api

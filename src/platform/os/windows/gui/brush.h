@@ -22,26 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
-#define QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
+#ifndef QOR_PP_H_WINDOWS_GUI_BRUSH
+#define QOR_PP_H_WINDOWS_GUI_BRUSH
 
+#include <string>
 
-#define Invalid_Handle_Value ((void* const)(size_t)(-1))
-#define Infinite_Timeout            0xFFFFFFFF  // Infinite timeout
+#include "src/platform/os/windows/common/handles/handle.h"
 
-#define Success                    0L
+//All types on this interface must be portable
+namespace qor{ namespace platform { namespace nswindows{ 
 
-#define Status_Wait0        ((unsigned long)0x00000000L)
-#define Wait_Failed 		((unsigned long)0xFFFFFFFF)
-#define Wait_Object0       	((Status_Wait0 ) + 0 )
-#define MaxPath          			260
+    class qor_pp_module_interface(QOR_WINGUI) Brush
+    {
+    public:
 
-namespace qor{ namespace platform { namespace nswindows {
+        Brush();
+        Brush(int);
+        virtual ~Brush();
 
-	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
-	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
-	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
+        const Handle& GetHandle() const;
+
+    protected:
+
+        Handle m_handle;
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) SysBrush : public Brush
+    {
+    public:
+
+        SysBrush(int nIndex);
+        virtual ~SysBrush();
+    };
 
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
+#endif//QOR_PP_H_WINDOWS_GUI_BRUSH
