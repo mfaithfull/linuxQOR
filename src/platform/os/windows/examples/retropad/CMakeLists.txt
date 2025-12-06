@@ -8,7 +8,7 @@ set(target retropad)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-add_executable(${target} retropad.cpp fileio.cpp retropad.rc model.cpp viewmodel.cpp controller.cpp)
+add_executable(${target} main.cpp fileio.cpp retropad.rc model.cpp viewmodel.cpp controller.cpp)
 set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE true)
 target_compile_definitions(${target} PRIVATE WINDOWS UNICODE _UNICODE QOR_PP_EXECUTABLE qor_pp_ver_major=1 )
 

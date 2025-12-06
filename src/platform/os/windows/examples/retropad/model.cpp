@@ -8,87 +8,87 @@
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 #undef min
 
-const qor::platform::nswindows::TCHAR* APP_TITLE = TEXT("Retropad");
-const qor::platform::nswindows::TCHAR* UNTITLED_NAME = TEXT("Untitled");
+const stdstring APP_TITLE = TEXT("Retropad");
+const stdstring UNTITLED_NAME = TEXT("Untitled");
 
-void ModelState::SetCurrentPath(qor::platform::nswindows::TCHAR* path, int charCount)
+void ModelState::SetCurrentPath(const stdstring& path)
 {
-    memcpy(currentPath, path, std::min(charCount*sizeof(qor::platform::nswindows::TCHAR), MAX_PATH_BUFFER * sizeof(qor::platform::nswindows::TCHAR)));
+    m_currentPath = path;
 }
 
-qor::platform::nswindows::TCHAR* ModelState::GetCurrentPath()
+stdstring& ModelState::GetCurrentPath()
 {
-    return currentPath;
+    return m_currentPath;
 }
 
-int ModelState::GetCurrentPathLength()
+size_t ModelState::GetCurrentPathLength()
 {
-    return ARRAYSIZE(currentPath);
+    return m_currentPath.size();
 }
 
 void ModelState::SetModified()
 {
-    modified = true;
+    m_modified = true;
 }
 
 void ModelState::ClearModified()
 {
-    modified = false;
+    m_modified = false;
 }
 
 bool ModelState::GetModified()
 {
-    return modified;
+    return m_modified;
 }
 
 void ModelState::SetEncoding(TextEncoding enc)
 {
-    encoding = enc;
+    m_encoding = enc;
 }
 
 TextEncoding ModelState::GetEncoding()
 {
-    return encoding;
+    return m_encoding;
 }
 
 void ModelState::SetFindFlags(unsigned int flags)
 {
-    findFlags = flags;
+    m_findFlags = flags;
 }
 
 unsigned int ModelState::GetFindFlags()
 {
-    return findFlags;
+    return m_findFlags;
 }
 
-void ModelState::SetFindText(qor::platform::nswindows::TCHAR* find, int charCount)
+void ModelState::SetFindText(const stdstring& find)
 {
-    memcpy(findText, find, std::min(charCount*sizeof(qor::platform::nswindows::TCHAR), FIND_SIZE * sizeof(qor::platform::nswindows::TCHAR)));
+    m_findText = find;
 }
 
-qor::platform::nswindows::TCHAR* ModelState::GetFindText()
+stdstring& ModelState::GetFindText()
 {
-    return findText;
+    return m_findText;
 }
 
-int ModelState::GetFindTextLength()
+size_t ModelState::GetFindTextLength()
 {
-    return ARRAYSIZE(findText);
+    return m_findText.size();
 }
 
-void ModelState::SetReplaceText(qor::platform::nswindows::TCHAR* replace, int charCount)
+void ModelState::SetReplaceText(const stdstring& replace)
 {
-    memcpy(replaceText, replace, std::min(charCount*sizeof(qor::platform::nswindows::TCHAR), REPLACE_SIZE * sizeof(qor::platform::nswindows::TCHAR)));
+    m_replaceText = replace;
 }
 
-qor::platform::nswindows::TCHAR* ModelState::GetReplaceText()
+stdstring& ModelState::GetReplaceText()
 {
-    return replaceText;
+    return m_replaceText;
 }
 
-int ModelState::GetReplaceTextLength()
+size_t ModelState::GetReplaceTextLength()
 {
-    return ARRAYSIZE(replaceText);
+    return m_replaceText.size();
 }
 
 qor::pipeline::PODBuffer<qor::platform::nswindows::TCHAR>& ModelState::Document()
@@ -109,9 +109,9 @@ void ModelState::InsertTimeDate()
 
 void ModelState::DoFileNew()
 {
-    currentPath[0] = TEXT('\0');
-    encoding = ENC_UTF8;
-    modified = FALSE;
+    m_currentPath.clear();
+    m_encoding = ENC_UTF8;
+    m_modified = false;
 }
 
 
@@ -196,7 +196,7 @@ bool ModelState::FindInText(const TCHAR *needle, bool matchCase, bool searchDown
     return result;
 }
 
-bool ModelState::LoadDocumentFromPath(LPCTSTR path)
+bool ModelState::LoadDocumentFromPath(stdstring path)
 {
     TCHAR *text = NULL;
     TextEncoding enc = ENC_UTF8;
@@ -209,20 +209,22 @@ bool ModelState::LoadDocumentFromPath(LPCTSTR path)
     TODO: Update View
     hwndEdit->SetText(text);
     HeapFree(GetProcessHeap(), 0, text);
-    StringCchCopy(currentPath, ARRAYSIZE(currentPath), path);
-    encoding = enc;
+    */
+    m_currentPath = path;
+    m_encoding = enc;
+    /*    
     hwndEdit->ProcessMessage(EM_SETMODIFY, FALSE, 0);
-    modified = false;
+    */
+    m_modified = false;
     //TODO:UpdateTitle(hwnd);
     //TODO:UpdateStatusBar(hwnd);
-*/
     return true;
 }
 
 int ModelState::ReplaceAllOccurrences(bool matchCase) 
 {
-    TCHAR *needle = GetFindText();
-    TCHAR *replacement = GetReplaceText();
+    TCHAR *needle = GetFindText().data();
+    TCHAR *replacement = GetReplaceText().data();
 
     if (!needle || needle[0] == TEXT('\0')) return 0;
 
@@ -310,13 +312,20 @@ int ModelState::ReplaceAllOccurrences(bool matchCase)
     HeapFree(GetProcessHeap(), 0, needleBuf);
     HeapFree(GetProcessHeap(), 0, result);
     SendMessage(hwndEdit, EM_SETMODIFY, TRUE, 0);
-    modified = TRUE;
+    */
+    m_modified = true;
+    /*
     UpdateTitle(hwndMain);
     */
     return count;
 }
 
-bool ModelState::SaveTextFile(LPCTSTR path, LPCTSTR text, size_t length, TextEncoding encoding)
+bool ModelState::Save(const stdstring& path)
+{
+    return true;
+}
+
+bool ModelState::SaveTextFile(const stdstring& path, LPCTSTR text, size_t length, TextEncoding encoding)
 {
     /*
     HANDLE file = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -336,7 +345,7 @@ bool ModelState::SaveTextFile(LPCTSTR path, LPCTSTR text, size_t length, TextEnc
     case ENC_UTF16BE:
         // Saving as UTF-16BE is uncommon; fall back to UTF-8 with BOM to preserve readability
         ok = WriteUTF8WithBOM(file, text, length);
-        encoding = ENC_UTF8;
+        m_encoding = ENC_UTF8;
         break;
     case ENC_UTF8:
     default:
@@ -350,6 +359,6 @@ bool ModelState::SaveTextFile(LPCTSTR path, LPCTSTR text, size_t length, TextEnc
     }
     return ok;
     */
-   return TRUE;
+   return true;
 }
 

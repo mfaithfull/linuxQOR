@@ -60,10 +60,11 @@ typedef enum _WER_REGISTER_FILE_TYPE
 #if ( qor_pp_unicode )
 #	define _TXT( _X ) ( _WTXT( _X ) )
 #	define _C( _X ) _WC( _X )
-//typedef String16 String;
+typedef std::wstring stdstring;
 #else
 #	define _TXT( _X ) ( _ATXT( _X ) )
 #	define _C( _X ) _AC( _X )
+typedef std::string stdstring;
 #endif
 
 #define qor_pp_useswinapi( _MODULE, _NAME ) static const Library::DefProc pFunc = reinterpret_cast< Library::DefProc>( Kernel32::GetProcAddress( reinterpret_cast< ::HMODULE >( Kernel32::GetModuleHandle(_TXT(_MODULE)) ), _ATXT(_NAME) ) )

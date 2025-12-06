@@ -6,6 +6,7 @@
 #include <shellapi.h>
 #include <strsafe.h>
 #include <tchar.h>
+#include <format>
 
 #include "viewmodel.h"
 #include "model.h"
@@ -23,10 +24,12 @@ ViewState* ViewState::Create(void* instance, const TCHAR* windowClass, const qor
     view->wordWrap = false;
     view->statusVisible = true;
     view->statusBeforeWrap = true;
-
-    view->hwndMain = new qor::platform::nswindows::Window(windowClass, APP_TITLE, WS_OVERLAPPEDWINDOW, 0, CW_USEDEFAULT, CW_USEDEFAULT, DEFAULT_WIDTH, DEFAULT_HEIGHT, NULL, menu, (HINSTANCE)(view->m_instance), param);
-    view->Show();
-
+    view->hwndMain = new qor::platform::nswindows::Window(windowClass, APP_TITLE.c_str(), WS_OVERLAPPEDWINDOW, 0, CW_USEDEFAULT, CW_USEDEFAULT, DEFAULT_WIDTH, DEFAULT_HEIGHT, NULL, menu, (HINSTANCE)(view->m_instance), param);
+    view->hwndMain->SetPointer(GWLP_USERDATA, param);
+    view->CreateEditControl();
+    view->ToggleStatusBar(true);
+    view->UpdateTitle();
+    view->UpdateStatusBar();    
     return view;
 }
 
@@ -83,7 +86,7 @@ void ViewState::UpdateLayout()
 
 void ViewState::ApplyFontToEdit()
 {
-    SendMessage((HWND)(hwndEdit->GetHandle().Use()), WM_SETFONT, (WPARAM)hFont, TRUE);
+    hwndEdit->ProcessMessage(WM_SETFONT, (WPARAM)(hFont->GetHandle().Use()), TRUE);
 }
 
 void ViewState::UpdateMenuStates() 
@@ -134,14 +137,14 @@ void ViewState::UpdateStatusBar()
 {
     if (!statusVisible || !hwndStatus) return;
     DWORD selStart = 0, selEnd = 0;
-    SendMessage((HWND)(hwndEdit->GetHandle().Use()), EM_GETSEL, (WPARAM)&selStart, (LPARAM)&selEnd);
-    int line = (int)SendMessage((HWND)(hwndEdit->GetHandle().Use()), EM_LINEFROMCHAR, selStart, 0) + 1;
-    int col = (int)(selStart - SendMessage((HWND)(hwndEdit->GetHandle().Use()), EM_LINEINDEX, line - 1, 0)) + 1;
-    int lines = (int)SendMessage((HWND)(hwndEdit->GetHandle().Use()), EM_GETLINECOUNT, 0, 0);
+    hwndEdit->ProcessMessage(EM_GETSEL, (WPARAM)&selStart, (LPARAM)&selEnd);
+    int line = (int)hwndEdit->ProcessMessage(EM_LINEFROMCHAR, selStart, 0) + 1;    
+    int col = (int)(selStart - hwndEdit->ProcessMessage(EM_LINEINDEX, line - 1, 0)) + 1;    
+    int lines = (int)hwndEdit->ProcessMessage(EM_GETLINECOUNT, 0, 0);    
 
     TCHAR status[128];
     StringCchPrintf(status, ARRAYSIZE(status), TEXT("Ln %d, Col %d    Lines: %d"), line, col, lines);
-    SendMessage((HWND)(hwndStatus->GetHandle().Use()), SB_SETTEXT, 0, (LPARAM)status);
+    hwndStatus->ProcessMessage( SB_SETTEXT, 0, (LPARAM)(status));
 }
 
 bool ViewState::GetEditText(TCHAR* buffer, int* lengthOut) 
@@ -194,20 +197,20 @@ void ViewState::SetWordWrap(bool enabled)
 
 void ViewState::UpdateTitle() 
 {
-    TCHAR name[MAX_PATH_BUFFER];
-    if (model->GetCurrentPath()[0]) 
+    stdstring name;
+    if (!model->GetCurrentPath().empty()) 
     {
-        TCHAR *fileName = _tcsrchr(model->GetCurrentPath(), TEXT('\\'));
-        fileName = fileName ? fileName + 1 : model->GetCurrentPath();
-        StringCchCopy(name, MAX_PATH_BUFFER, fileName);
+        TCHAR *fileName = _tcsrchr(model->GetCurrentPath().data(), TEXT('\\'));
+        fileName = fileName ? fileName + 1 : model->GetCurrentPath().data();
+        name = stdstring(fileName, model->GetCurrentPathLength());
     } 
     else 
     {
-        StringCchCopy(name, MAX_PATH_BUFFER, UNTITLED_NAME);
+        name = UNTITLED_NAME;
     }
 
     TCHAR title[MAX_PATH_BUFFER + 32];
-    StringCchPrintf(title, ARRAYSIZE(title), TEXT("%s%s - %s"), (model->GetModified() ? TEXT("*") : TEXT("")), name, APP_TITLE);
+    StringCchPrintf(title, ARRAYSIZE(title), TEXT("%s%s - %s"), (model->GetModified() ? TEXT("*") : TEXT("")), name.c_str(), APP_TITLE.c_str());
     hwndMain->SetText(title);
 }
 
@@ -222,8 +225,8 @@ void ViewState::ShowFindDialog()
     ZeroMemory(&find, sizeof(find));
     find.lStructSize = sizeof(FINDREPLACE);
     find.hwndOwner = (HWND)(hwndMain->GetHandle().Use());
-    find.lpstrFindWhat = model->GetFindText();
-    find.wFindWhatLen = model->GetFindTextLength();
+    find.lpstrFindWhat = model->GetFindText().data();
+    find.wFindWhatLen = (WORD)model->GetFindTextLength();
     find.Flags = model->GetFindFlags();
     hFindDlg = new qor::platform::nswindows::Window(FindText(&find));
 }
@@ -239,10 +242,10 @@ void ViewState::ShowReplaceDialog()
     ZeroMemory(&find, sizeof(find));
     find.lStructSize = sizeof(FINDREPLACE);
     find.hwndOwner = (HWND)(hwndMain->GetHandle().Use());
-    find.lpstrFindWhat = model->GetFindText();
-    find.lpstrReplaceWith = model->GetReplaceText();
-    find.wFindWhatLen = model->GetFindTextLength();
-    find.wReplaceWithLen = model->GetReplaceTextLength();
+    find.lpstrFindWhat = model->GetFindText().data();
+    find.lpstrReplaceWith = model->GetReplaceText().data();
+    find.wFindWhatLen = (WORD)model->GetFindTextLength();
+    find.wReplaceWithLen = (WORD)model->GetReplaceTextLength();
     find.Flags = model->GetFindFlags();
     hReplaceDlg = new qor::platform::nswindows::Window(ReplaceText(&find));
 }
@@ -260,10 +263,11 @@ bool ViewState::PromptSaveChanges()
 {
     if (!model->GetModified()) return true;
 
-    TCHAR prompt[MAX_PATH_BUFFER + 64];
-    const TCHAR* name = model->GetCurrentPath()[0] ? model->GetCurrentPath() : UNTITLED_NAME;
-    StringCchPrintf(prompt, ARRAYSIZE(prompt), TEXT("Do you want to save changes to %s?"), name);
-    int res = MessageBox((HWND)(hwndMain->GetHandle().Use()), prompt, APP_TITLE, MB_ICONQUESTION | MB_YESNOCANCEL);
+    stdstring prompt;
+    prompt.reserve(MAX_PATH_BUFFER + 64);
+    stdstring name = !model->GetCurrentPath().empty() ? model->GetCurrentPath() : UNTITLED_NAME;
+    StringCchPrintf(prompt.data(), MAX_PATH_BUFFER + 64, TEXT("Do you want to save changes to %s?"), name.c_str());
+    int res = MessageBox((HWND)(hwndMain->GetHandle().Use()), prompt.c_str(), APP_TITLE.c_str(), MB_ICONQUESTION | MB_YESNOCANCEL);
     if (res == IDYES) 
     {
         return DoFileSave(false);
@@ -273,23 +277,23 @@ bool ViewState::PromptSaveChanges()
 
 bool ViewState::DoFileSave(bool saveAs)
 {
-    TCHAR path[MAX_PATH_BUFFER];
-    if (saveAs || model->GetCurrentPath()[0] == L'\0') 
+    stdstring path;
+    if (saveAs || model->GetCurrentPath().empty()) 
     {
-        path[0] = TEXT('\0');
-        if (model->GetCurrentPath()[0]) 
+        path.clear();
+        if (!model->GetCurrentPath().empty()) 
         {
-            StringCchCopy(path, ARRAYSIZE(path), model->GetCurrentPath());
+            path = model->GetCurrentPath();
         }
-        if (!SaveFileDialog(path, ARRAYSIZE(path))) 
+        if (!SaveFileDialog(path))
         {
             return false;
         }
-        StringCchCopy(model->GetCurrentPath(), model->GetCurrentPathLength(), path);
+        model->SetCurrentPath(path);
     } 
     else 
     {
-        StringCchCopy(path, ARRAYSIZE(path), model->GetCurrentPath());
+        path = model->GetCurrentPath();
     }
 
     int len = hwndEdit->GetTextLength();
@@ -344,7 +348,7 @@ void ViewState::DoSelectFont()
 
 bool ViewState::DoFindNext(bool reverse) 
 {
-    if (model->GetFindText()[0] == TEXT('\0')) 
+    if (model->GetFindText().empty())
     {
         ShowFindDialog();
         return false;
@@ -360,13 +364,13 @@ bool ViewState::DoFindNext(bool reverse)
     }
     DWORD searchStart = down ? end : start;
     DWORD outStart = 0, outEnd = 0;
-    if (model->FindInText(model->GetFindText(), matchCase, down, searchStart, &outStart, &outEnd)) 
+    if (model->FindInText(model->GetFindText().data(), matchCase, down, searchStart, &outStart, &outEnd)) 
     {
         hwndEdit->ProcessMessage(EM_SETSEL, outStart, outEnd);
         hwndEdit->ProcessMessage(EM_SCROLLCARET, 0, 0);
         return true;
     }
-    MessageBox((HWND)(hwndMain->GetHandle().Use()), TEXT("Cannot find the text."), APP_TITLE, MB_ICONINFORMATION);
+    MessageBox((HWND)(hwndMain->GetHandle().Use()), TEXT("Cannot find the text."), APP_TITLE.c_str(), MB_ICONINFORMATION);
     return false;
 }
 
@@ -382,11 +386,11 @@ void ViewState::HandleFindReplace(LPFINDREPLACE lpfr)
     model->SetFindFlags(lpfr->Flags);
     if (lpfr->lpstrFindWhat && lpfr->lpstrFindWhat[0]) 
     {
-        StringCchCopy(model->GetFindText(), model->GetFindTextLength(), lpfr->lpstrFindWhat);
+        StringCchCopy(model->GetFindText().data(), model->GetFindTextLength(), lpfr->lpstrFindWhat);
     }
     if (lpfr->lpstrReplaceWith) 
     {
-        StringCchCopy(model->GetReplaceText(), model->GetReplaceTextLength(), lpfr->lpstrReplaceWith);
+        StringCchCopy(model->GetReplaceText().data(), model->GetReplaceTextLength(), lpfr->lpstrReplaceWith);
     }
 
     bool matchCase = (lpfr->Flags & FR_MATCHCASE) != 0;
@@ -398,14 +402,14 @@ void ViewState::HandleFindReplace(LPFINDREPLACE lpfr)
         hwndEdit->ProcessMessage(EM_GETSEL, (WPARAM)&start, (LPARAM)&end);
         DWORD searchStart = down ? end : start;
         DWORD outStart = 0, outEnd = 0;
-        if (model->FindInText(model->GetFindText(), matchCase, down, searchStart, &outStart, &outEnd))
+        if (model->FindInText(model->GetFindText().data(), matchCase, down, searchStart, &outStart, &outEnd))
         {
             hwndEdit->ProcessMessage(EM_SETSEL, outStart, outEnd);
             hwndEdit->ProcessMessage(EM_SCROLLCARET, 0, 0);
         } 
         else 
         {
-            MessageBox((HWND)(hwndMain->GetHandle().Use()), TEXT("Cannot find the text."), APP_TITLE, MB_ICONINFORMATION);
+            MessageBox((HWND)(hwndMain->GetHandle().Use()), TEXT("Cannot find the text."), APP_TITLE.c_str(), MB_ICONINFORMATION);
         }
     } 
     else if (lpfr->Flags & FR_REPLACE) 
@@ -413,17 +417,17 @@ void ViewState::HandleFindReplace(LPFINDREPLACE lpfr)
         DWORD start = 0, end = 0;
         hwndEdit->ProcessMessage(EM_GETSEL, (WPARAM)&start, (LPARAM)&end);
         DWORD outStart = 0, outEnd = 0;
-        if (model->FindInText(model->GetFindText(), matchCase, down, start, &outStart, &outEnd)) 
+        if (model->FindInText(model->GetFindText().data(), matchCase, down, start, &outStart, &outEnd)) 
         {
             hwndEdit->ProcessMessage(EM_SETSEL, outStart, outEnd);
-            hwndEdit->ProcessMessage(EM_REPLACESEL, TRUE, (LPARAM)model->GetReplaceText());
+            hwndEdit->ProcessMessage(EM_REPLACESEL, TRUE, (LPARAM)model->GetReplaceText().data());
             hwndEdit->ProcessMessage(EM_SCROLLCARET, 0, 0);
             model->SetModified();
             UpdateTitle();
         } 
         else 
         {
-            MessageBox((HWND)(hwndMain->GetHandle().Use()), TEXT("Cannot find the text."), APP_TITLE, MB_ICONINFORMATION);
+            MessageBox((HWND)(hwndMain->GetHandle().Use()), TEXT("Cannot find the text."), APP_TITLE.c_str(), MB_ICONINFORMATION);
         }
     } 
     else if (lpfr->Flags & FR_REPLACEALL) 
@@ -431,7 +435,7 @@ void ViewState::HandleFindReplace(LPFINDREPLACE lpfr)
         int replaced = model->ReplaceAllOccurrences(matchCase);
         TCHAR msg[64];
         StringCchPrintf(msg, ARRAYSIZE(msg), TEXT("Replaced %d occurrence%s."), replaced, replaced == 1 ? TEXT("") : TEXT("s"));
-        MessageBox((HWND)(hwndMain->GetHandle().Use()), msg, APP_TITLE, MB_OK | MB_ICONINFORMATION);
+        MessageBox((HWND)(hwndMain->GetHandle().Use()), msg, APP_TITLE.c_str(), MB_OK | MB_ICONINFORMATION);
     }
 }
 
@@ -442,8 +446,9 @@ bool ViewState::DoFileOpen()
         return false;
     }
 
-    TCHAR path[MAX_PATH_BUFFER] = TEXT("");
-    if (!OpenFileDialog(path, ARRAYSIZE(path))) 
+    stdstring path = TEXT("");
+    path.reserve(MAX_PATH_BUFFER);
+    if (!OpenFileDialog(path.data(), MAX_PATH_BUFFER)) 
     {
         return false;
     }
@@ -465,21 +470,22 @@ bool ViewState::OpenFileDialog(TCHAR *pathOut, unsigned long pathLen)
     return GetOpenFileName(&ofn) ? true : false;
 }
 
-bool ViewState::SaveFileDialog(TCHAR *pathOut, unsigned long pathLen) 
+bool ViewState::SaveFileDialog(stdstring& path) 
 {
+    path.reserve(MAX_PATH_BUFFER);
+    if (path.empty()) 
+    {
+        path = TEXT("*.txt");
+    }
     OPENFILENAME ofn = {0};
-    TCHAR filter[] = TEXT("Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0\0");
+    stdstring filter = TEXT("Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0\0");
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = (HWND)(hwndMain->GetHandle().Use());;
-    ofn.lpstrFilter = filter;
-    ofn.lpstrFile = pathOut;
-    ofn.nMaxFile = pathLen;
+    ofn.lpstrFilter = filter.c_str();
+    ofn.lpstrFile = path.data();
+    ofn.nMaxFile = MAX_PATH_BUFFER;
     ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
     ofn.lpstrDefExt = TEXT("txt");
-    if (pathOut[0] == TEXT('\0')) 
-    {
-        StringCchCopy(pathOut, pathLen, TEXT("*.txt"));
-    }
     return GetSaveFileName(&ofn) ? true : false;
 }
 

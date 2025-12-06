@@ -5,6 +5,10 @@
 #include <vector>
 
 #include "src/platform/os/windows/gui/window.h"
+#include "src/platform/os/windows/gui/windowclassregistration.h"
+#include "src/platform/os/windows/gui/icon.h"
+#include "src/platform/os/windows/gui/cursor.h"
+#include "src/platform/os/windows/gui/brush.h"
 
 #include "model.h"
 #include "viewmodel.h"
@@ -15,7 +19,8 @@ public:
     RetroPadController(void* instance);
     virtual ~RetroPadController();
 
-    void HandleCommand(HWND hwnd, WPARAM wParam, LPARAM lParam);
+    int Run();
+
     LRESULT MainWindowHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     
 private:
@@ -30,6 +35,8 @@ private:
     qor::platform::nswindows::Menu m_menu;
     qor::platform::nswindows::WindowClass* m_windowClass;
     qor::platform::nswindows::WindowClassRegistration* m_wcReg;
+
+    void HandleCommand(HWND hwnd, WPARAM wParam, LPARAM lParam);    
 
 };
 

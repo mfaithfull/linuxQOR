@@ -6,21 +6,23 @@
 #include "src/platform/os/windows/gui/window.h"
 #include "src/platform/os/windows/gui/font.h"
 #include "model.h"
+#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
+#include <commdlg.h>
 
 struct ViewState 
 {
-    void* m_instance;
-    ModelState* model;
-    qor::platform::nswindows::Window* hwndMain;
-    qor::platform::nswindows::Window* hwndEdit;
-    qor::platform::nswindows::Window* hwndStatus;
-    qor::platform::nswindows::Font* hFont;
+    void* m_instance = nullptr;
+    ModelState* model = nullptr;
+    qor::platform::nswindows::Window* hwndMain = nullptr;
+    qor::platform::nswindows::Window* hwndEdit = nullptr;
+    qor::platform::nswindows::Window* hwndStatus = nullptr;
+    qor::platform::nswindows::Font* hFont = nullptr;
     bool wordWrap;
     bool statusVisible;
     bool statusBeforeWrap;
     FINDREPLACE find;
-    qor::platform::nswindows::Window* hFindDlg;
-    qor::platform::nswindows::Window* hReplaceDlg;
+    qor::platform::nswindows::Window* hFindDlg = nullptr;
+    qor::platform::nswindows::Window* hReplaceDlg = nullptr;
 
     static ViewState* Create(void* instance, const TCHAR* windowClass, const qor::platform::nswindows::Menu& menu, ModelState* model, void* param);
     void Show();
@@ -42,7 +44,7 @@ struct ViewState
     void HandleFindReplace(LPFINDREPLACE lpfr);
     bool DoFileOpen();
     bool OpenFileDialog(TCHAR *pathOut, unsigned long pathLen);
-    bool SaveFileDialog(TCHAR *pathOut, unsigned long pathLen);
+    bool SaveFileDialog(stdstring& path);
     bool DoFileSave(bool saveAs);
     int Run();
 };

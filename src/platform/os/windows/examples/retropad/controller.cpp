@@ -20,12 +20,12 @@ m_icon(LoadIcon((HINSTANCE)(m_instance), MAKEINTRESOURCE(IDI_RETROPAD))),
 m_cursor(LoadCursor(NULL, IDC_IBEAM)),
 m_backgroundBrush(COLOR_BACKGROUND)
 {
-    m_findMsg = RegisterWindowMessage(FINDMSGSTRING);
-
     //Initialize the model
     m_model.SetEncoding(TextEncoding::ENC_UTF8);
     m_model.SetFindFlags(FR_DOWN);    
 
+    //Initialize the OS interaction
+    m_findMsg = RegisterWindowMessage(FINDMSGSTRING);
     m_windowClass = new WindowClass;
     m_windowClass->SetStyle( CS_HREDRAW | CS_VREDRAW );
     m_windowClass->SetMessageFunction((messageFunc)MainWndProc);
@@ -36,16 +36,21 @@ m_backgroundBrush(COLOR_BACKGROUND)
     m_windowClass->SetBackgroundBrush(m_backgroundBrush);
     m_windowClass->SetName(TEXT("RETROPAD_WINDOW"));
     m_windowClass->SetMenuName((const TCHAR*)1000);
-
     m_wcReg = new WindowClassRegistration(*m_windowClass);    
-
-    m_view = ViewState::Create(m_instance, m_windowClass->Name(), m_menu, &m_model, this);    
 }
 
 RetroPadController::~RetroPadController()
 {
-    delete m_view;
     delete m_wcReg;
+}
+
+int RetroPadController::Run()
+{
+    m_view = ViewState::Create(m_instance, m_windowClass->Name(), m_menu, &m_model, this);    
+    m_view->Show();
+    int result = m_view->Run();
+    delete m_view;
+    return result;
 }
 
 static INT_PTR CALLBACK GoToDlgProc(HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam) 
@@ -70,7 +75,7 @@ static INT_PTR CALLBACK GoToDlgProc(HWND dlg, UINT msg, WPARAM wParam, LPARAM lP
                 UINT line = GetDlgItemInt(dlg, IDC_GOTO_EDIT, &ok, FALSE);
                 if (!ok || line == 0) 
                 {
-                    MessageBox(dlg, TEXT("Enter a valid line number."), APP_TITLE, MB_ICONWARNING);
+                    MessageBox(dlg, TEXT("Enter a valid line number."), APP_TITLE.c_str(), MB_ICONWARNING);
                     return true;
                 }
                 int maxLine = (int) view->hwndEdit->ProcessMessage(EM_GETLINECOUNT, 0, 0);
@@ -128,7 +133,7 @@ void RetroPadController::HandleCommand(HWND hwnd, WPARAM wParam, LPARAM lParam)
         break;
     case IDM_FILE_PAGE_SETUP:
     case IDM_FILE_PRINT:
-        MessageBox(hwnd, TEXT("Printing is not implemented in Retropad."), APP_TITLE, MB_ICONINFORMATION);
+        MessageBox(hwnd, TEXT("Printing is not implemented in Retropad."), APP_TITLE.c_str(), MB_ICONINFORMATION);
         break;
     case IDM_FILE_EXIT:
         PostMessage(hwnd, WM_CLOSE, 0, 0);
@@ -160,7 +165,7 @@ void RetroPadController::HandleCommand(HWND hwnd, WPARAM wParam, LPARAM lParam)
     case IDM_EDIT_GOTO:
         if (m_view->wordWrap) 
         {
-            MessageBox(hwnd, TEXT("Go To is unavailable when Word Wrap is on."), APP_TITLE, MB_ICONINFORMATION);
+            MessageBox(hwnd, TEXT("Go To is unavailable when Word Wrap is on."), APP_TITLE.c_str(), MB_ICONINFORMATION);
         } 
         else 
         {
@@ -186,7 +191,7 @@ void RetroPadController::HandleCommand(HWND hwnd, WPARAM wParam, LPARAM lParam)
         break;
 
     case IDM_HELP_VIEW_HELP:
-        MessageBox(hwnd, TEXT("No help file is available for Retropad."), APP_TITLE, MB_ICONINFORMATION);
+        MessageBox(hwnd, TEXT("No help file is available for Retropad."), APP_TITLE.c_str(), MB_ICONINFORMATION);
         break;
     case IDM_HELP_ABOUT:
         DialogBox((HINSTANCE)(m_instance), MAKEINTRESOURCE(IDD_ABOUT), hwnd, AboutDlgProc);
@@ -194,12 +199,22 @@ void RetroPadController::HandleCommand(HWND hwnd, WPARAM wParam, LPARAM lParam)
     }
 }
 
-
 LRESULT MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     Window w(hwnd);
     RetroPadController* controller = reinterpret_cast<RetroPadController*>(w.GetPointer(GWLP_USERDATA));
-    return controller->MainWindowHandler(hwnd, msg, wParam, lParam);
+    if(controller == nullptr)
+    {
+        controller = reinterpret_cast<RetroPadController*>(lParam);
+    }
+    if(controller)
+    {
+        return controller->MainWindowHandler(hwnd, msg, wParam, lParam);
+    }
+    else
+    {
+        return ::DefWindowProc(hwnd, msg, wParam, lParam);
+    }
 }
 
 LRESULT RetroPadController::MainWindowHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -216,10 +231,6 @@ LRESULT RetroPadController::MainWindowHandler(HWND hwnd, UINT msg, WPARAM wParam
     {
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };
         InitCommonControlsEx(&icc);
-        m_view->CreateEditControl();
-        m_view->ToggleStatusBar(true);
-        m_view->UpdateTitle();
-        m_view->UpdateStatusBar();
         DragAcceptFiles(hwnd, TRUE);
         return 0;
     }
@@ -233,8 +244,9 @@ LRESULT RetroPadController::MainWindowHandler(HWND hwnd, UINT msg, WPARAM wParam
     case WM_DROPFILES: 
     {
         HDROP hDrop = (HDROP)wParam;
-        TCHAR path[MAX_PATH_BUFFER];
-        if (DragQueryFile(hDrop, 0, path, ARRAYSIZE(path))) 
+        stdstring path;
+        path.reserve(MAX_PATH_BUFFER);
+        if (DragQueryFile(hDrop, 0, path.data(), MAX_PATH_BUFFER)) 
         {
             if (m_view->PromptSaveChanges()) 
             {
@@ -249,7 +261,7 @@ LRESULT RetroPadController::MainWindowHandler(HWND hwnd, UINT msg, WPARAM wParam
         {
             if(m_view->hwndEdit->ProcessMessage(EM_GETMODIFY, 0, 0) != 0)
             {
-                int length = m_view->hwndEdit->GetTextLength();
+                int length = m_view->hwndEdit->GetTextLength() + 1;
                 m_model.Document().SetCapacity(length);
                 size_t lengthRequest = (size_t)length;
                 byte* space = m_model.Document().WriteRequest(lengthRequest);                
