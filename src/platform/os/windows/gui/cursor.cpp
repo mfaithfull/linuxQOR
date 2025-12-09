@@ -65,7 +65,7 @@ namespace qor{ namespace platform { namespace nswindows{
     Cursor::Cursor(const std::string& fileName)
     {
         m_handle = User32::LoadCursorFromFileT(to_tstring(fileName.c_str()).c_str());
-        m_bNeedsDestroy = false;
+        m_bNeedsDestroy = true;
     }
     
     Cursor::~Cursor()

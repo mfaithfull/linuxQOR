@@ -180,6 +180,11 @@ namespace qor { namespace platform { namespace nswindows {
 		m_needsClose = false;
 	}
 
+	bool Handle::NeedsClose()
+	{
+		return m_needsClose;
+	}
+
 	bool Handle::SetProtectFromClose(bool close)
 	{
 		m_needsClose = !close;

@@ -26,10 +26,115 @@
 
 #include "region.h"
 #include "src/platform/os/windows/common/stringconv.h"
-#include "src/platform/os/windows/api_layer/user/user32.h"
+#include "src/platform/os/windows/api_layer/gdi/gdi32.h"
 
 using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
     
+    Region::Region() : GDIObject(ORegion)
+    {}
+    
+    Region::Region(const PrimitiveHandle& h) : GDIObject(h, ORegion)
+    {}
+
+    Region::~Region()
+    {}
+
+    bool Region::operator == (const Region& cmp)
+    {
+        return GDI32::EqualRgn((HRGN)(m_handle.Use()), (HRGN)(cmp.GetHandle().Use())) ? true : false;
+    }
+
+    int Region::Combine(const Region& rgn1, const Region& rgn2, int combineMode)
+    {
+        return GDI32::CombineRgn((HRGN)(m_handle.Use()), (HRGN)(rgn1.GetHandle().Use()), (HRGN)(rgn2.GetHandle().Use()), combineMode);        
+    }
+
+    unsigned long Region::GetData(unsigned long count, RgnData* rgnData)
+    {
+        return GDI32::GetRegionData((HRGN)(m_handle.Use()), count, reinterpret_cast<LPRGNDATA>(rgnData));
+    }
+
+    int Region::GetBox(Rect& r)
+    {
+        return GDI32::GetRgnBox((HRGN)(m_handle.Use()), reinterpret_cast<LPRECT>(&r));
+    }
+
+    bool Region::IsRectIn(const Rect& r)
+    {
+        return GDI32::RectInRegion((HRGN)(m_handle.Use()), reinterpret_cast<const RECT*>(&r)) ? true : false;
+    }
+
+    bool Region::SetRect(int left, int top, int right, int bottom)
+    {
+        return GDI32::SetRectRgn((HRGN)(m_handle.Use()), left, top, right, bottom) ? true : false;
+    }
+
+    int Region::Offset(int xOffset, int yOffset)
+    {
+        return GDI32::OffsetRgn((HRGN)(m_handle.Use()), xOffset, yOffset);
+    }
+
+    bool Region::IsPointIn(int x, int y)
+    {
+        return GDI32::PtInRegion((HRGN)(m_handle.Use()), x, y) ? true : false;
+    }
+
+    Region Region::CreateElliptic(int left, int top, int right, int bottom)
+    {
+        PrimitiveHandle ph(GDI32::CreateEllipticRgn(left, top, right, bottom));
+        Region rgn(ph);
+        return rgn;        
+    }
+
+    Region Region::CreateElliptic(const Rect& r)
+    {
+        PrimitiveHandle ph(GDI32::CreateEllipticRgnIndirect(reinterpret_cast<const RECT*>(&r)));
+        Region rgn(ph);
+        return rgn;
+    }
+
+    Region Region::CreatePolygon(const Point* pt, int countPoints, int polyFillMode)
+    {
+        PrimitiveHandle ph(GDI32::CreatePolygonRgn(reinterpret_cast<const POINT*>(pt), countPoints, polyFillMode));
+        Region rgn(ph);
+        return rgn;
+    }
+
+    Region Region::CreatePolyPolygon(const Point* pt, const int* polyCounts, int count, int polyFillMode)
+    {
+        PrimitiveHandle ph(GDI32::CreatePolyPolygonRgn(reinterpret_cast<const POINT*>(pt), polyCounts, count, polyFillMode));
+        Region rgn(ph);
+        return rgn;
+    }
+
+    Region Region::CreateRect(int left, int top, int right, int bottom)
+    {
+        PrimitiveHandle ph(GDI32::CreateRectRgn(left, top, right, bottom));
+        Region rgn(ph);
+        return rgn;
+    }
+
+    Region Region::CreateRect(const Rect& r)
+    {
+        PrimitiveHandle ph(GDI32::CreateRectRgnIndirect(reinterpret_cast<const RECT*>(&r)));
+        Region rgn(ph);
+        return rgn;
+    }
+
+    Region Region::CreateRoundRect(int left, int top, int right, int bottom, int widthEllipse, int heightEllipse)
+    {
+        PrimitiveHandle ph(GDI32::CreateRoundRectRgn(left, top, right, bottom, widthEllipse, heightEllipse));
+        Region rgn(ph);
+        return rgn;
+    }
+
+    Region Region::Create( const XForm* xform, unsigned long count, const RgnData* rgnData)
+    {
+        PrimitiveHandle ph(GDI32::ExtCreateRegion(reinterpret_cast<const XFORM*>(xform), count, reinterpret_cast<const RGNDATA*>(rgnData)));
+        Region rgn(ph);
+        return rgn;
+    }
+
 }}}//qor::platform::nswindows

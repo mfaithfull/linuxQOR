@@ -138,4 +138,41 @@ namespace qor{ namespace platform { namespace nswindows{
         return User32::GetWindowLongPtrT((HWND)(m_handle.Use()), index);
     }
 
+    int Window::EnumProperties(PropEnumProc enumProc)
+    {
+        return User32::EnumPropsT((HWND)(m_handle.Use()), reinterpret_cast<PROPENUMPROC>(enumProc));
+    }
+
+    int Window::EnumPropertiesEx(PropEnumProcEx enumProc, long long param)
+    {
+        return User32::EnumPropsExT((HWND)(m_handle.Use()), reinterpret_cast<PROPENUMPROCEX>(enumProc), param);
+    }
+
+    void* Window::GetProperty(const TCHAR* property)
+    {
+        return User32::GetPropT((HWND)(m_handle.Use()), property);
+    }
+
+    void* Window::RemoveProperty(const TCHAR* property)
+    {
+        return User32::RemovePropT((HWND)(m_handle.Use()), property);
+    }
+
+    bool Window::SetProperty(const TCHAR* property, void* data)
+    {
+        return User32::SetPropT((HWND)(m_handle.Use()), property, (HANDLE)(data));
+    }
+
+    bool Window::DragDetect(Point p)
+    {
+        return User32::DragDetect((HWND)(m_handle.Use()), *(reinterpret_cast<POINT*>(&p))) ? true : false;
+    }
+
+    Handle Window::SetCapture()
+    {
+        Handle h(User32::SetCapture((HWND)(m_handle.Use())));
+        h.DontClose();
+        return h;
+    }
+
 }}}//qor::platform::nswindows

@@ -69,29 +69,28 @@ namespace qor { namespace nswindows { namespace api {
         static SHORT VkKeyScanT(TCHAR ch);
         static SHORT VkKeyScanExT(TCHAR ch, HKL dwhkl);
 
-        //--------------------------------------------------------------------------------
         //Clipboard functions
-        BOOL AddClipboardFormatListener(HWND hwnd);
-        BOOL ChangeClipboardChain(HWND hWndRemove, HWND hWndNewNext);
-        BOOL CloseClipboard();
-        int CountClipboardFormats();
-        BOOL EmptyClipboard(void);
-        UINT EnumClipboardFormats(UINT format);
-        HANDLE GetClipboardData(UINT uFormat);
-        int GetClipboardFormatName(UINT format, LPTSTR lpszFormatName, int cchMaxCount);
-        HWND GetClipboardOwner(void);
-        DWORD GetClipboardSequenceNumber(void);
-        HWND GetClipboardViewer(void);
-        HWND GetOpenClipboardWindow();
-        int GetPriorityClipboardFormat(UINT* paFormatPriorityList, int cFormats);
-        BOOL GetUpdatedClipboardFormats(PUINT lpuiFormats, UINT cFormats, PUINT pcFormatsOut);
-        BOOL IsClipboardFormatAvailable(UINT format);
-        BOOL OpenClipboard(HWND hWndNewOwner);
-        UINT RegisterClipboardFormat(LPCTSTR lpszFormat);
-        BOOL RemoveClipboardFormatListener(HWND hwnd);
-        HANDLE SetClipboardData(UINT uFormat, HANDLE hMem);
-        HWND SetClipboardViewer(HWND hWndNewViewer);
-        //--------------------------------------------------------------------------------
+        static BOOL AddClipboardFormatListener(HWND hwnd);
+        static BOOL ChangeClipboardChain(HWND hWndRemove, HWND hWndNewNext);
+        static BOOL CloseClipboard();
+        static int CountClipboardFormats();
+        static BOOL EmptyClipboard(void);
+        static UINT EnumClipboardFormats(UINT format);
+        static HANDLE GetClipboardData(UINT uFormat);
+        static int GetClipboardFormatNameT(UINT format, LPTSTR lpszFormatName, int cchMaxCount);
+        static HWND GetClipboardOwner(void);
+        static DWORD GetClipboardSequenceNumber(void);
+        static HWND GetClipboardViewer(void);
+        static HWND GetOpenClipboardWindow();
+        static int GetPriorityClipboardFormat(UINT* paFormatPriorityList, int cFormats);
+        static BOOL GetUpdatedClipboardFormats(PUINT lpuiFormats, UINT cFormats, PUINT pcFormatsOut);
+        static BOOL IsClipboardFormatAvailable(UINT format);
+        static BOOL OpenClipboard(HWND hWndNewOwner);
+        static UINT RegisterClipboardFormatT(LPCTSTR lpszFormat);
+        static BOOL RemoveClipboardFormatListener(HWND hwnd);
+        static HANDLE SetClipboardData(UINT uFormat, HANDLE hMem);
+        static HWND SetClipboardViewer(HWND hWndNewViewer);
+
         //Window functions
         static BOOL AdjustWindowRect(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu);
         static BOOL AdjustWindowRectEx(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle);
@@ -177,7 +176,6 @@ namespace qor { namespace nswindows { namespace api {
         static HWND WindowFromPhysicalPoint(::POINT Point);
         static HWND WindowFromPoint(::POINT Point);
 
-        //--------------------------------------------------------------------------------
         //Menu functions
         static BOOL AppendMenuT(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem);
         static DWORD CheckMenuItem(HMENU hmenu, UINT uIDCheckItem, UINT uCheck);
@@ -253,7 +251,6 @@ namespace qor { namespace nswindows { namespace api {
         static BOOL ValidateRgn(HWND hWnd, HRGN hRgn);
         static HWND WindowFromDC(HDC hDC);
 
-        //--------------------------------------------------------------------------------
         //Message and Message Queue functions
         static long BroadcastSystemMessageT(DWORD dwFlags, LPDWORD lpdwRecipients, UINT uiMessage, WPARAM wParam, LPARAM lParam);
         static long BroadcastSystemMessageExT(DWORD dwFlags, LPDWORD lpdwRecipients, UINT uiMessage, WPARAM wParam, LPARAM lParam, ::PBSMINFO pBSMInfo);
@@ -280,26 +277,26 @@ namespace qor { namespace nswindows { namespace api {
         static BOOL TranslateMessage(const MSG* lpMsg);
         static BOOL WaitMessage(void);
 
-        //--------------------------------------------------------------------------------
         //Hook functions
-        BOOL CallMsgFilter(LPMSG lpMsg, int nCode);
-        LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, LPARAM lParam);
-        HHOOK SetWindowsHookEx(int idHook, HOOKPROC lpfn, HINSTANCE hMod, DWORD dwThreadId);
-        BOOL UnhookWindowsHookEx(HHOOK hhk);
-        //--------------------------------------------------------------------------------
+        static BOOL CallMsgFilterT(LPMSG lpMsg, int nCode);
+        static LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, LPARAM lParam);
+        static HHOOK SetWindowsHookExT(int idHook, HOOKPROC lpfn, HINSTANCE hMod, DWORD dwThreadId);
+        static BOOL UnhookWindowsHookEx(HHOOK hhk);
+        
         //Window Procedure functions
         static LRESULT CallWindowProcT(WNDPROC lpPrevWndFunc, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
         static LRESULT DefWindowProcT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-        //--------------------------------------------------------------------------------
+        
         //DC functions
-        LONG ChangeDisplaySettings(::LPDEVMODE lpDevMode, DWORD dwflags) const;
-        LONG ChangeDisplaySettingsEx(LPCTSTR lpszDeviceName, ::LPDEVMODE lpDevMode, HWND hwnd, DWORD dwflags, LPVOID lParam) const;
-        BOOL EnumDisplayDevices(LPCTSTR lpDevice, DWORD iDevNum, ::PDISPLAY_DEVICE lpDisplayDevice, DWORD dwFlags) const;
-        BOOL EnumDisplaySettings(LPCTSTR lpszDeviceName, DWORD iModeNum, ::LPDEVMODE lpDevMode) const;
-        BOOL EnumDisplaySettingsEx(LPCTSTR lpszDeviceName, DWORD iModeNum, ::LPDEVMODE lpDevMode, DWORD dwFlags) const;
-        HDC GetDC(HWND hWnd);
-        HDC GetDCEx(HWND hWnd, HRGN hrgnClip, DWORD flags);
-        int ReleaseDC(HWND hWnd, HDC hDC);
+        static LONG ChangeDisplaySettingsT(::LPDEVMODE lpDevMode, DWORD dwflags);
+        static LONG ChangeDisplaySettingsExT(LPCTSTR lpszDeviceName, ::LPDEVMODE lpDevMode, HWND hwnd, DWORD dwflags, LPVOID lParam);
+        static BOOL EnumDisplayDevicesT(LPCTSTR lpDevice, DWORD iDevNum, ::PDISPLAY_DEVICE lpDisplayDevice, DWORD dwFlags);
+        static BOOL EnumDisplaySettingsT(LPCTSTR lpszDeviceName, DWORD iModeNum, ::LPDEVMODE lpDevMode);
+        static BOOL EnumDisplaySettingsExT(LPCTSTR lpszDeviceName, DWORD iModeNum, ::LPDEVMODE lpDevMode, DWORD dwFlags);
+        static HDC GetDC(HWND hWnd);
+        static HDC GetDCEx(HWND hWnd, HRGN hrgnClip, DWORD flags);
+        static int ReleaseDC(HWND hWnd, HDC hDC);
+
         //--------------------------------------------------------------------------------
         //String functions
         LPSTR CharLowerA(LPSTR lpsz);
@@ -336,17 +333,18 @@ namespace qor { namespace nswindows { namespace api {
         BOOL OemToCharBuffW(LPCWSTR lpwszSrc, LPWSTR lpwszDst, DWORD cchDstLength);
         int wvsprintfA(LPSTR lpOutput, LPCSTR lpFmt, va_list arglist);
         int wvsprintfW(LPWSTR lpOutput, LPCWSTR lpFmt, va_list arglist);
+        
         //--------------------------------------------------------------------------------
         //Button Control functions
         BOOL CheckDlgButton(HWND hDlg, int nIDButton, UINT uCheck);
         BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton, int nIDLastButton, int nIDCheckButton);
         UINT IsDlgButtonChecked(HWND hDlg, int nIDButton);
-        //--------------------------------------------------------------------------------
+        
         //Coordinate Transform functions
-        BOOL ClientToScreen(HWND hWnd, ::LPPOINT lpPoint);
-        BOOL ScreenToClient(HWND hWnd, ::LPPOINT lpPoint);
-        int MapWindowPoints(HWND hWndFrom, HWND hWndTo, ::LPPOINT lpPoints, UINT cPoints);
-        //--------------------------------------------------------------------------------
+        static BOOL ClientToScreen(HWND hWnd, ::LPPOINT lpPoint);
+        static BOOL ScreenToClient(HWND hWnd, ::LPPOINT lpPoint);
+        static int MapWindowPoints(HWND hWndFrom, HWND hWndTo, ::LPPOINT lpPoints, UINT cPoints);
+        
         //Cursor functions
         static BOOL ClipCursor(const RECT* lpRect);
         static HCURSOR CopyCursorT(HCURSOR pcur);
@@ -364,26 +362,26 @@ namespace qor { namespace nswindows { namespace api {
         static int ShowCursor(BOOL bShow);
         static HCURSOR SetCursor(HCURSOR hCursor);
         static BOOL SetSystemCursor(HCURSOR hcur, DWORD id);
-        //--------------------------------------------------------------------------------
+
         //Window Station and Desktop functions
-        HDESK OpenDesktop(LPCTSTR lpszDesktop, DWORD dwFlags, BOOL fInherit, ACCESS_MASK dwDesiredAccess);
-        BOOL CloseDesktop(HDESK hDesktop);
-        HDESK CreateDesktop(LPCTSTR lpszDesktop, LPCTSTR lpszDevice, ::LPDEVMODE pDevmode, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa);
-        HDESK CreateDesktopEx(LPCTSTR lpszDesktop, LPCTSTR lpszDevice, ::LPDEVMODE pDevmode, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa, ULONG ulHeapSize, PVOID pvoid);
-        BOOL EnumDesktops(HWINSTA hwinsta, DESKTOPENUMPROC lpEnumFunc, LPARAM lParam);
-        HWINSTA CreateWindowStation(LPCTSTR lpwinsta, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa);
-        BOOL CloseWindowStation(HWINSTA hWinSta);
-        BOOL EnumWindowStations(WINSTAENUMPROC lpEnumFunc, LPARAM lParam);
-        HWINSTA GetProcessWindowStation(void);
-        HDESK GetThreadDesktop(DWORD dwThreadId);
-        BOOL GetUserObjectInformation(HANDLE hObj, int nIndex, PVOID pvInfo, DWORD nLength, LPDWORD lpnLengthNeeded);
-        HDESK OpenInputDesktop(DWORD dwFlags, BOOL fInherit, ACCESS_MASK dwDesiredAccess);
-        HWINSTA OpenWindowStation(LPTSTR lpszWinSta, BOOL fInherit, ACCESS_MASK dwDesiredAccess);
-        BOOL SetProcessWindowStation(HWINSTA hWinSta);
-        BOOL SetThreadDesktop(HDESK hDesktop);
-        BOOL SetUserObjectInformation(HANDLE hObj, int nIndex, PVOID pvInfo, DWORD nLength);
-        BOOL SwitchDesktop(HDESK hDesktop);
-        BOOL EnumDesktopWindows(HDESK hDesktop, ::WNDENUMPROC lpfn, LPARAM lParam);
+        static HDESK OpenDesktopT(LPCTSTR lpszDesktop, DWORD dwFlags, BOOL fInherit, ACCESS_MASK dwDesiredAccess);
+        static BOOL CloseDesktop(HDESK hDesktop);
+        static HDESK CreateDesktopT(LPCTSTR lpszDesktop, LPCTSTR lpszDevice, ::LPDEVMODE pDevmode, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa);
+        static HDESK CreateDesktopExT(LPCTSTR lpszDesktop, LPCTSTR lpszDevice, ::LPDEVMODE pDevmode, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa, ULONG ulHeapSize, PVOID pvoid);
+        static BOOL EnumDesktopsT(HWINSTA hwinsta, DESKTOPENUMPROC lpEnumFunc, LPARAM lParam);
+        static HWINSTA CreateWindowStationT(LPCTSTR lpwinsta, DWORD dwFlags, ACCESS_MASK dwDesiredAccess, ::LPSECURITY_ATTRIBUTES lpsa);
+        static BOOL CloseWindowStation(HWINSTA hWinSta);
+        static BOOL EnumWindowStationsT(WINSTAENUMPROC lpEnumFunc, LPARAM lParam);
+        static HWINSTA GetProcessWindowStation(void);
+        static HDESK GetThreadDesktop(DWORD dwThreadId);
+        static BOOL GetUserObjectInformationT(HANDLE hObj, int nIndex, PVOID pvInfo, DWORD nLength, LPDWORD lpnLengthNeeded);
+        static HDESK OpenInputDesktop(DWORD dwFlags, BOOL fInherit, ACCESS_MASK dwDesiredAccess);
+        static HWINSTA OpenWindowStationT(LPTSTR lpszWinSta, BOOL fInherit, ACCESS_MASK dwDesiredAccess);
+        static BOOL SetProcessWindowStation(HWINSTA hWinSta);
+        static BOOL SetThreadDesktop(HDESK hDesktop);
+        static BOOL SetUserObjectInformationT(HANDLE hObj, int nIndex, PVOID pvInfo, DWORD nLength);
+        static BOOL SwitchDesktop(HDESK hDesktop);
+        static BOOL EnumDesktopWindows(HDESK hDesktop, ::WNDENUMPROC lpfn, LPARAM lParam);
         
         //Keyboard Accelerator functions
         static int CopyAcceleratorTableT(HACCEL hAccelSrc, LPACCEL lpAccelDst, int cAccelEntries);
@@ -407,34 +405,34 @@ namespace qor { namespace nswindows { namespace api {
         static int LookupIconIdFromDirectory(PBYTE presbits, BOOL fIcon);
         static int LookupIconIdFromDirectoryEx(PBYTE presbits, BOOL fIcon, int cxDesired, int cyDesired, UINT Flags);
         static UINT PrivateExtractIconsT(LPCTSTR lpszFile, int nIconIndex, int cxIcon, int cyIcon, HICON* phicon, UINT* piconid, UINT nIcons, UINT flags);
-        //--------------------------------------------------------------------------------
+        
         //Resource functions
-        HANDLE CopyImage(HANDLE hImage, UINT uType, int cxDesired, int cyDesired, UINT fuFlags);
-        HANDLE LoadImage(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired, int cyDesired, UINT fuLoad);
-        //--------------------------------------------------------------------------------
+        static HANDLE CopyImage(HANDLE hImage, UINT uType, int cxDesired, int cyDesired, UINT fuFlags);
+        static HANDLE LoadImageT(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired, int cyDesired, UINT fuLoad);
+
         //Rectangle functions
-        BOOL CopyRect(::LPRECT lprcDst, CONST::RECT* lprcSrc);
-        BOOL EqualRect(CONST::RECT* lprc1, CONST::RECT* lprc2);
-        BOOL InflateRect(::LPRECT lprc, int dx, int dy);
-        BOOL IntersectRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
-        BOOL IsRectEmpty(CONST::RECT* lprc);
-        BOOL OffsetRect(::LPRECT lprc, int dx, int dy);
-        BOOL PtInRect(CONST::RECT* lprc, POINT pt);
-        BOOL SetRect(::LPRECT lprc, int xLeft, int yTop, int xRight, int yBottom);
-        BOOL SetRectEmpty(::LPRECT lprc);
-        BOOL SubtractRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
-        BOOL UnionRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
-        //--------------------------------------------------------------------------------
+        static BOOL CopyRect(::LPRECT lprcDst, CONST::RECT* lprcSrc);
+        static BOOL EqualRect(CONST::RECT* lprc1, CONST::RECT* lprc2);
+        static BOOL InflateRect(::LPRECT lprc, int dx, int dy);
+        static BOOL IntersectRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
+        static BOOL IsRectEmpty(CONST::RECT* lprc);
+        static BOOL OffsetRect(::LPRECT lprc, int dx, int dy);
+        static BOOL PtInRect(CONST::RECT* lprc, POINT pt);
+        static BOOL SetRect(::LPRECT lprc, int xLeft, int yTop, int xRight, int yBottom);
+        static BOOL SetRectEmpty(::LPRECT lprc);
+        static BOOL SubtractRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
+        static BOOL UnionRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
+        
         //Caret functions
-        BOOL CreateCaret(HWND hWnd, HBITMAP hBitmap, int nWidth, int nHeight);
-        BOOL DestroyCaret(void);
-        UINT GetCaretBlinkTime(void);
-        BOOL GetCaretPos(LPPOINT lpPoint);
-        BOOL HideCaret(HWND hWnd);
-        BOOL SetCaretBlinkTime(UINT uMSeconds);
-        BOOL SetCaretPos(int X, int Y);
-        BOOL ShowCaret(HWND hWnd);
-        //--------------------------------------------------------------------------------
+        static BOOL CreateCaret(HWND hWnd, HBITMAP hBitmap, int nWidth, int nHeight);
+        static BOOL DestroyCaret(void);
+        static UINT GetCaretBlinkTime(void);
+        static BOOL GetCaretPos(LPPOINT lpPoint);
+        static BOOL HideCaret(HWND hWnd);
+        static BOOL SetCaretBlinkTime(UINT uMSeconds);
+        static BOOL SetCaretPos(int X, int Y);
+        static BOOL ShowCaret(HWND hWnd);
+
         //Dialog functions
         static HWND CreateDialogIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE lpTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM lParamInit);
         static HWND CreateDialogParamT(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam);
@@ -459,13 +457,13 @@ namespace qor { namespace nswindows { namespace api {
         static LRESULT SendDlgItemMessageT(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam);
         static BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem, UINT uValue, BOOL bSigned);
         static BOOL SetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPCTSTR lpString);
-
         
         //Multi Document Interface functions
         HWND CreateMDIWindow(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HINSTANCE hInstance, LPARAM lParam);
         LRESULT DefFrameProc(HWND hWnd, HWND hWndMDIClient, UINT uMsg, WPARAM wParam, LPARAM lParam);
         LRESULT DefMDIChildProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
         BOOL TranslateMDISysAccel(HWND hWndClient, LPMSG lpMsg);
+
         //--------------------------------------------------------------------------------
         //Dynamic Data Exchange functions
         BOOL DdeAbandonTransaction(DWORD idInst, HCONV hConv, DWORD idTransaction) const;
@@ -502,7 +500,8 @@ namespace qor { namespace nswindows { namespace api {
         BOOL ImpersonateDdeClientWindow(HWND hWndClient, HWND hWndServer) const;
         LPARAM ReuseDDElParam(LPARAM lParam, UINT msgIn, UINT msgOut, UINT_PTR uiLo, UINT_PTR uiHi) const;
         BOOL UnpackDDElParam(UINT msg, LPARAM lParam, PUINT_PTR puiLo, PUINT_PTR puiHi) const;
-        //--------------------------------------------------------------------------------
+        
+		//--------------------------------------------------------------------------------
         //Raw Input functions
         LRESULT DefRawInputProc(PRAWINPUT* paRawInput, INT nInput, UINT cbSizeHeader);
         UINT GetRawInputBuffer(PRAWINPUT pData, PUINT pcbSize, UINT cbSizeHeader);
@@ -511,34 +510,37 @@ namespace qor { namespace nswindows { namespace api {
         UINT GetRawInputDeviceList(PRAWINPUTDEVICELIST pRawInputDeviceList, PUINT puiNumDevices, UINT cbSize);
         UINT GetRegisteredRawInputDevices(PRAWINPUTDEVICE pRawInputDevices, PUINT puiNumDevices, UINT cbSize);
         BOOL RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize);
-        //--------------------------------------------------------------------------------
+        
+		//--------------------------------------------------------------------------------
         //List Box functions
         int DlgDirList(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType);
         BOOL DlgDirSelectEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDListBox);
         DWORD GetListBoxInfo(HWND hwnd);
+
         //--------------------------------------------------------------------------------
         //Combo Box functions
         int DlgDirListComboBox(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype);
         BOOL DlgDirSelectComboBoxEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox);
         BOOL GetComboBoxInfo(HWND hwndCombo, PCOMBOBOXINFO pcbi);
-        //--------------------------------------------------------------------------------
+        
         //Mouse functions
-        BOOL DragDetect(HWND hwnd, ::POINT pt);
-        HWND GetCapture(void);
-        UINT GetDoubleClickTime(void);
-        int GetMouseMovePointsEx(UINT cbSize, LPMOUSEMOVEPOINT lppt, LPMOUSEMOVEPOINT lpptBuf, int nBufPoints, DWORD resolution);
-        VOID mouse_event(DWORD dwFlags, DWORD dx, DWORD dy, DWORD dwData, ULONG_PTR dwExtraInfo);
-        BOOL ReleaseCapture(void);
-        HWND SetCapture(HWND hWnd);
-        BOOL SetDoubleClickTime(UINT uInterval);
-        BOOL SwapMouseButton(BOOL fSwap);
-        BOOL TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack);
-        //--------------------------------------------------------------------------------
+        static BOOL DragDetect(HWND hwnd, ::POINT pt);
+        static HWND GetCapture(void);
+        static UINT GetDoubleClickTime(void);
+        static int GetMouseMovePointsEx(UINT cbSize, LPMOUSEMOVEPOINT lppt, LPMOUSEMOVEPOINT lpptBuf, int nBufPoints, DWORD resolution);
+        static VOID mouse_event(DWORD dwFlags, DWORD dx, DWORD dy, DWORD dwData, ULONG_PTR dwExtraInfo);
+        static BOOL ReleaseCapture(void);
+        static HWND SetCapture(HWND hWnd);
+        static BOOL SetDoubleClickTime(UINT uInterval);
+        static BOOL SwapMouseButton(BOOL fSwap);
+        static BOOL TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack);
+                
         //Font and Text functions
-        int DrawText(HDC hDC, LPCTSTR lpString, int nCount, ::LPRECT lpRect, UINT uFormat);
-        int DrawTextEx(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT dwDTFormat, ::LPDRAWTEXTPARAMS lpDTParams);
-        DWORD GetTabbedTextExtent(HDC hDC, LPCTSTR lpString, int nCount, int nTabPositions, CONST LPINT lpnTabStopPositions);
-        LONG TabbedTextOut(HDC hDC, int X, int Y, LPCTSTR lpString, int nCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin);
+        static int DrawTextT(HDC hDC, LPCTSTR lpString, int nCount, ::LPRECT lpRect, UINT uFormat);
+        static int DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT dwDTFormat, ::LPDRAWTEXTPARAMS lpDTParams);
+        static DWORD GetTabbedTextExtentT(HDC hDC, LPCTSTR lpString, int nCount, int nTabPositions, CONST LPINT lpnTabStopPositions);
+        static LONG TabbedTextOutT(HDC hDC, int X, int Y, LPCTSTR lpString, int nCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin);
+        
         //--------------------------------------------------------------------------------
         //ScrollBar functions
         BOOL EnableScrollBar(HWND hWnd, UINT wSBFlags, UINT wArrows);
@@ -554,40 +556,38 @@ namespace qor { namespace nswindows { namespace api {
         BOOL SetScrollRange(HWND hWnd, int nBar, int nMinPos, int nMaxPos, BOOL bRedraw);
         BOOL ShowScrollBar(HWND hWnd, int wBar, BOOL bShow);
         
-        //--------------------------------------------------------------------------------
         //Monitor functions
-        BOOL EnumDisplayMonitors(HDC hdc, LPCRECT lprcClip, ::MONITORENUMPROC lpfnEnum, LPARAM dwData) const;
-        BOOL GetMonitorInfo(HMONITOR hMonitor, ::LPMONITORINFO lpmi) const;
-        HMONITOR MonitorFromPoint(::POINT pt, DWORD dwFlags);
-        HMONITOR MonitorFromRect(LPCRECT lprc, DWORD dwFlags);
-        HMONITOR MonitorFromWindow(HWND hwnd, DWORD dwFlags);
-        //--------------------------------------------------------------------------------
-        //Window Properties functions
-        int EnumProps(HWND hWnd, PROPENUMPROC lpEnumFunc);
-        int EnumPropsEx(HWND hWnd, PROPENUMPROCEX lpEnumFunc, LPARAM lParam);
-        HANDLE GetProp(HWND hWnd, LPCTSTR lpString);
-        HANDLE RemoveProp(HWND hWnd, LPCTSTR lpString);
-        BOOL SetProp(HWND hWnd, LPCTSTR lpString, HANDLE hData);
-        //--------------------------------------------------------------------------------
-        //System Shutdwown functions
-        BOOL ExitWindowsEx(UINT uFlags, DWORD dwReason);
-        BOOL LockWorkStation(void);
-        BOOL ShutdownBlockReasonCreate(HWND hWnd, LPCWSTR pwszReason);
-        BOOL WINAPI ShutdownBlockReasonDestroy(HWND hWnd);
-        BOOL WINAPI ShutdownBlockReasonQuery(HWND hWnd, LPWSTR pwszBuff, DWORD* pcchBuff);
-        //--------------------------------------------------------------------------------
-        //Filled Shapes functions
-        int FillRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr);
-        int FrameRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr);
-        BOOL InvertRect(HDC hDC, CONST::RECT* lprc);
+        static BOOL EnumDisplayMonitors(HDC hdc, LPCRECT lprcClip, ::MONITORENUMPROC lpfnEnum, LPARAM dwData);
+        static BOOL GetMonitorInfoT(HMONITOR hMonitor, ::LPMONITORINFO lpmi);
+        static HMONITOR MonitorFromPoint(::POINT pt, DWORD dwFlags);
+        static HMONITOR MonitorFromRect(LPCRECT lprc, DWORD dwFlags);
+        static HMONITOR MonitorFromWindow(HWND hwnd, DWORD dwFlags);
                 
+        //Window Properties functions
+        static int EnumPropsT(HWND hWnd, PROPENUMPROC lpEnumFunc);
+        static int EnumPropsExT(HWND hWnd, PROPENUMPROCEX lpEnumFunc, LPARAM lParam);
+        static HANDLE GetPropT(HWND hWnd, LPCTSTR lpString);
+        static HANDLE RemovePropT(HWND hWnd, LPCTSTR lpString);
+        static BOOL SetPropT(HWND hWnd, LPCTSTR lpString, HANDLE hData);
+        
+        //System Shutdwown functions
+        static BOOL ExitWindowsEx(UINT uFlags, DWORD dwReason);
+        static BOOL LockWorkStation(void);
+        static BOOL ShutdownBlockReasonCreate(HWND hWnd, LPCWSTR pwszReason);
+        static BOOL WINAPI ShutdownBlockReasonDestroy(HWND hWnd);
+        static BOOL WINAPI ShutdownBlockReasonQuery(HWND hWnd, LPWSTR pwszBuff, DWORD* pcchBuff);
+                
+        //Filled Shapes functions
+        static int FillRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr);
+        static int FrameRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr);
+        static BOOL InvertRect(HDC hDC, CONST::RECT* lprc);
+
         //Error Handling functions
         static BOOL FlashWindow(HWND hWnd, BOOL bInvert);
         static BOOL FlashWindowEx(::PFLASHWINFO pfwi);
         static BOOL MessageBeep(UINT uType);
         static void SetLastErrorEx(DWORD dwErrCode, DWORD dwType);
 
-        //--------------------------------------------------------------------------------
         //Window-Class functions
         static BOOL GetClassInfoT(HINSTANCE hInstance, LPCTSTR lpClassName, LPWNDCLASS lpWndClass);
         static BOOL GetClassInfoExT(HINSTANCE hinst, LPCTSTR lpszClass, LPWNDCLASSEX lpwcx);
@@ -617,43 +617,52 @@ namespace qor { namespace nswindows { namespace api {
         BOOL SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId);
         DWORD GetWindowContextHelpId(HWND hwnd);
         BOOL WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData);
+
         //--------------------------------------------------------------------------------
         //System Information functions
         DWORD GetSysColor(int nIndex);
         int GetSystemMetrics(int nIndex);
         BOOL SetSysColors(int cElements, const INT* lpaElements, const COLORREF* lpaRgbValues);
         BOOL SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
-        //--------------------------------------------------------------------------------
+        
         //Brush functions
         static HBRUSH GetSysColorBrush(int nIndex);
+        
         //--------------------------------------------------------------------------------
         //Authorization functions
         BOOL GetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSD, DWORD nLength, LPDWORD lpnLengthNeeded);
         BOOL SetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSID);
+
         //--------------------------------------------------------------------------------
         //Active Accessibility functions
         HWINEVENTHOOK SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC lpfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwflags);
         BOOL UnhookWinEvent(HWINEVENTHOOK hWinEventHook);
         BOOL IsWinEventHookInstalled(DWORD dwEvent);
         void NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild);
+
         //--------------------------------------------------------------------------------
         //Timer functions
         BOOL KillTimer(HWND hWnd, UINT_PTR uIDEvent);
         UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
+
         //--------------------------------------------------------------------------------
         //Bitmap functions
         HBITMAP LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
+
         //--------------------------------------------------------------------------------
         //Synchronization functions
         DWORD MsgWaitForMultipleObjects(DWORD nCount, const HANDLE* pHandles, BOOL bWaitAll, DWORD dwMilliseconds, DWORD dwWakeMask);
         DWORD MsgWaitForMultipleObjectsEx(DWORD nCount, const HANDLE* pHandles, DWORD dwMilliseconds, DWORD dwWakeMask, DWORD dwFlags);
+
         //--------------------------------------------------------------------------------
         //Printing functions
         BOOL PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags);
+
         //--------------------------------------------------------------------------------
         //Device Management functions
         HDEVNOTIFY RegisterDeviceNotification(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags);
         BOOL UnregisterDeviceNotification(HDEVNOTIFY Handle);
+
         //--------------------------------------------------------------------------------
         //Power Management functions
         HPOWERNOTIFY RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags);

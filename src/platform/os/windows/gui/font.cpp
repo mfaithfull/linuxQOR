@@ -32,28 +32,16 @@ using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
 
-    Font::Font()
+    Font::Font() : GDIObject(OFont)
     {
-
     }
 
-    Font::Font(const PrimitiveHandle& h) : m_handle(h.Use())
+    Font::Font(const PrimitiveHandle& h) : GDIObject(h, OFont)
     {
-        m_handle.DontClose();
     }
 
     Font::~Font()
     {
-        if(!m_handle.IsInvalid())
-        {
-            DeleteObject(m_handle.Use());
-            m_handle.Drop();
-        }
-    }
-
-    const Handle& Font::GetHandle() const
-    {
-        return m_handle;
     }
     
 }}}//qor::platform::nswindows

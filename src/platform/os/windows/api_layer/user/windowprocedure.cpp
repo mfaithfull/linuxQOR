@@ -34,14 +34,14 @@
 
 namespace qor { namespace nswindows { namespace api {
 
-    LRESULT CallWindowProcT(WNDPROC lpPrevWndFunc, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+    LRESULT User32::CallWindowProcT(WNDPROC lpPrevWndFunc, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, CallWindowProc);
         return Library::Call<LRESULT,WNDPROC, HWND, UINT, WPARAM, LPARAM>(pFunc, lpPrevWndFunc, hWnd, Msg, wParam, lParam);
     }
 
-    LRESULT DefWindowProcT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+    LRESULT User32::DefWindowProcT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, DefWindowProc);

@@ -25,24 +25,50 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_FONT
 #define QOR_PP_H_WINDOWS_GUI_FONT
 
+#include "src/platform/compiler/compiler.h"
 #include "src/platform/os/windows/common/handles/handle.h"
+#include "gdiobject.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINGUI) Font
+    constexpr int LFFaceSize = 32;
+
+    struct LogFont
+    {
+        long      lfHeight;
+        long      lfWidth;
+        long      lfEscapement;
+        long      lfOrientation;
+        long      lfWeight;
+        byte      lfItalic;
+        byte      lfUnderline;
+        byte      lfStrikeOut;
+        byte      lfCharSet;
+        byte      lfOutPrecision;
+        byte      lfClipPrecision;
+        byte      lfQuality;
+        byte      lfPitchAndFamily;
+#if qor_pp_unicode
+        wchar_t     lfFaceName[LFFaceSize];
+#else
+        char      lfFaceName[LFFaceSize];
+#endif
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) Font : public GDIObject
     {
     public:
         Font();
         Font(const PrimitiveHandle& h);
         virtual ~Font();
 
-        const Handle& GetHandle() const;
+/*
+        static HFONT CreateFontT(int nHeight, int nWidth, int nEscapement, int nOrientation, int fnWeight, DWORD fdwItalic, DWORD fdwUnderline, DWORD fdwStrikeOut, DWORD fdwCharSet, DWORD fdwOutputPrecision, DWORD fdwClipPrecision, DWORD fdwQuality, DWORD fdwPitchAndFamily, LPCTSTR lpszFace);
+        static HFONT CreateFontIndirectT(CONST::LOGFONT* lplf);
+        static HFONT CreateFontIndirectExT(CONST::ENUMLOGFONTEXDV* penumlfex);
 
-    protected:
-
-        Handle m_handle;
-
+*/        
     };
     
 }}}//qor::platform::nswindows

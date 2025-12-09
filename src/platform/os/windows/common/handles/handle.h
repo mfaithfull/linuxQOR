@@ -88,6 +88,7 @@ namespace qor { namespace platform { namespace nswindows {
 		bool SetHeritable(bool inherit);
 		bool SetProtectFromClose(bool close);
 		void DontClose();
+		bool NeedsClose();
 		virtual void Close(void);
 		bool IsNull(void) const;
 		bool IsInvalid(void) const;

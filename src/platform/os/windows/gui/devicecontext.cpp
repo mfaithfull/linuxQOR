@@ -27,9 +27,837 @@
 #include "devicecontext.h"
 #include "src/platform/os/windows/common/stringconv.h"
 #include "src/platform/os/windows/api_layer/user/user32.h"
+#include "src/platform/os/windows/api_layer/gdi/gdi32.h"
 
 using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
     
+    DeviceContext::DeviceContext() : GDIObject(ODeviceContext), m_mustBeReleased(false), m_hWnd(0)
+    {        
+    }
+
+    DeviceContext::DeviceContext(const PrimitiveHandle& h) : GDIObject(h, ODeviceContext), m_mustBeReleased(false), m_hWnd(0)
+    {
+    }
+
+    DeviceContext::~DeviceContext()
+    {
+        if(m_mustBeReleased)
+        {
+            Release();
+        }
+    }
+
+    void DeviceContext::MustRelease()
+    {
+        m_mustBeReleased = true;        
+    }
+
+    const Handle& DeviceContext::GetHandle() const
+    {
+        return m_handle;
+    }
+
+    DeviceContext DeviceContext::FromWindow(const Handle& hWnd)
+    {
+        DeviceContext dc( User32::GetDC((HWND)(hWnd.Use())));
+        dc.m_hWnd = hWnd;
+        dc.MustRelease();
+        return dc;
+    }
+
+    DeviceContext DeviceContext::FromWindow(const Handle& hWnd, const Handle& hRgnClip, unsigned long flags)
+    {
+        DeviceContext dc( User32::GetDCEx((HWND)(hWnd.Use()), (HRGN)(hRgnClip.Use()), flags) );
+        dc.m_hWnd = hWnd;
+        dc.MustRelease();
+        return dc;
+    }
+        
+    int DeviceContext::Release()
+    {
+        return User32::ReleaseDC((HWND)(m_hWnd.Use()), (HDC)(m_handle.Use()));
+    }
+
+    int DeviceContext::FillRect(const Rect& rc, const Brush& br) const
+    {
+        return User32::FillRect((HDC)(m_handle.Use()), reinterpret_cast<const RECT*>(&rc), (HBRUSH)(br.GetHandle().Use()));
+    }
+    
+    int DeviceContext::FrameRect(const Rect& rc, const Brush& br) const
+    {
+        return User32::FrameRect((HDC)(m_handle.Use()), reinterpret_cast<const RECT*>(&rc), (HBRUSH)(br.GetHandle().Use()));
+    }
+    
+    bool DeviceContext::InvertRect(const Rect& rc) const
+    {
+        return User32::InvertRect((HDC)(m_handle.Use()), reinterpret_cast<const RECT*>(&rc)) ? true : false;
+    }
+
+    bool DeviceContext::PatBlt(int nXLeft, int nYLeft, int nWidth, int nHeight, unsigned long dwRop)
+    {
+        return GDI32::PatBlt((HDC)(m_handle.Use()), nXLeft, nYLeft, nWidth, nHeight, dwRop);
+    }
+
+    int DeviceContext::ExcludeClipRect(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect)
+    {
+        return GDI32::ExcludeClipRect((HDC)(m_handle.Use()), nLeftRect, nTopRect, nRightRect, nBottomRect);
+    }
+
+    int DeviceContext::ExtSelectClipRgn(Handle& region, int fnMode)
+    {
+        return GDI32::ExtSelectClipRgn((HDC)(m_handle.Use()), (HRGN)(region.Use()), fnMode);
+    }
+
+    int DeviceContext::GetClipBox(Rect& r)
+    {
+        return GDI32::GetClipBox((HDC)(m_handle.Use()), reinterpret_cast<LPRECT>(&r));
+    }
+
+    int DeviceContext::GetClipRegion(Handle& region)
+    {
+        return GDI32::GetClipRgn((HDC)(m_handle.Use()), (HRGN)(region.Use()));
+    }
+
+    int DeviceContext::GetMetaRegion(Handle& region)
+    {
+        return GDI32::GetMetaRgn((HDC)(m_handle.Use()), (HRGN)(region.Use()));
+    }
+
+    int DeviceContext::SetMetaRegion()
+    {
+        return GDI32::SetMetaRgn((HDC)(m_handle.Use()));
+    }
+
+    int DeviceContext::GetRandomRegion(Handle& region, int num)
+    {
+        return GDI32::GetRandomRgn((HDC)(m_handle.Use()), (HRGN)(region.Use()), num);
+    }
+
+    int DeviceContext::IntersectClipRect(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect)
+    {
+        return GDI32::IntersectClipRect((HDC)(m_handle.Use()), nLeftRect, nTopRect, nRightRect, nBottomRect);
+    }
+
+    bool DeviceContext::OffsetClipRgn(int nXOffset, int nYOffset)
+    {
+        return GDI32::OffsetClipRgn((HDC)(m_handle.Use()), nXOffset, nYOffset) ? true : false;
+    }
+
+    bool DeviceContext::PointVisible(int x, int y)
+    {
+        return GDI32::PtVisible((HDC)(m_handle.Use()), x, y) ? true : false;
+    }
+
+    bool DeviceContext::RectVisible(const Rect& r)
+    {
+        return GDI32::RectVisible((HDC)(m_handle.Use()), reinterpret_cast<const RECT*>(&r)) ? true : false;
+    }
+
+    bool DeviceContext::SelectClipPath(int iMode)
+    {
+        return GDI32::SelectClipPath((HDC)(m_handle.Use()), iMode) ? true : false;
+    }
+
+    int DeviceContext::SelectClipRegion(Handle& region)
+    {
+        return GDI32::SelectClipRgn((HDC)(m_handle.Use()), (HRGN)(region.Use()));
+    }
+
+    bool DeviceContext::GetColourAdjustment(ColourAdjustment* ca)
+    {
+        return GDI32::GetColorAdjustment((HDC)(m_handle.Use()), reinterpret_cast<LPCOLORADJUSTMENT>(ca)) ? true : false;
+    }
+
+    unsigned long DeviceContext::GetNearestColour(unsigned long crColour)
+    {
+        return GDI32::GetNearestColor((HDC)(m_handle.Use()), crColour);
+    }
+
+    unsigned int DeviceContext::GetSystemPaletteEntries(unsigned int startIndex, unsigned int entries, PaletteEntry* pe)
+    {
+        return GDI32::GetSystemPaletteEntries((HDC)(m_handle.Use()), startIndex, entries, reinterpret_cast<LPPALETTEENTRY>(pe));
+    }
+
+    unsigned int DeviceContext::GetSystemPaletteUse()
+    {
+        return GDI32::GetSystemPaletteUse((HDC)(m_handle.Use()));
+    }
+
+    unsigned int DeviceContext::RealizePalette()
+    {
+        return GDI32::RealizePalette((HDC)(m_handle.Use()));
+    }
+
+    Handle DeviceContext::SelectPalette(Palette& palette, bool forceBackground)
+    {
+        PrimitiveHandle ph(GDI32::SelectPalette((HDC)(m_handle.Use()), (HPALETTE)(palette.GetHandle().Use()), forceBackground));
+        Handle h(ph.Use());
+        h.DontClose();
+        return h;
+    }
+
+    bool DeviceContext::SetColourAdjustment(const ColourAdjustment* ca)
+    {
+        return GDI32::SetColorAdjustment((HDC)(m_handle.Use()), reinterpret_cast<const COLORADJUSTMENT*>(ca)) ? true : false;
+    }
+
+    unsigned int DeviceContext::SetSystemPaletteUse(unsigned int usage)
+    {
+        return GDI32::SetSystemPaletteUse((HDC)(m_handle.Use()), usage);
+    }
+
+    //TODO: Move this to GDIObject
+    bool DeviceContext::UnrealizeObject(Handle& hgdiobj)
+    {
+        return GDI32::UnrealizeObject((HGDIOBJ)(hgdiobj.Use()));
+    }
+
+    bool DeviceContext::UpdateColours()
+    {
+        return GDI32::UpdateColors((HDC)(m_handle.Use())) ? true : false;
+    }
+
+    bool DeviceContext::GetDeviceGammaRamp(void* ramp)
+    {
+        return GDI32::GetDeviceGammaRamp((HDC)(m_handle.Use()), ramp) ? true : false;
+    }
+
+    bool DeviceContext::SetDeviceGammaRamp(void* ramp)
+    {
+        return GDI32::SetDeviceGammaRamp((HDC)(m_handle.Use()), ramp) ? true : false;
+    }
+
+    int DeviceContext::EnumICMProfilesT( IcmEnumProc enumICMProfilesFunc, long long param)
+    {
+        return GDI32::EnumICMProfilesT( (HDC)(m_handle.Use()), reinterpret_cast<ICMENUMPROC>(enumICMProfilesFunc), param);
+    }
+
+    bool DeviceContext::GetICMProfileT(unsigned long* name, TCHAR* filename)
+    {
+        return GDI32::GetICMProfileT((HDC)(m_handle.Use()), name, filename);
+    }
+
+    int DeviceContext::SetICMMode(int enableICM)
+    {
+        return GDI32::SetICMMode((HDC)(m_handle.Use()), enableICM);
+    }
+
+    bool DeviceContext::SetICMProfileT(TCHAR* fileName)
+    {
+        return GDI32::SetICMProfileT((HDC)(m_handle.Use()), fileName) ? true : false;
+    }
+
+    bool DeviceContext::CheckColoursInGamut(void* rgbTriples, void* buffer, unsigned int count)
+    {
+        return GDI32::CheckColorsInGamut((HDC)(m_handle.Use()), rgbTriples, buffer, count) ? true : false;
+    }
+
+    bool DeviceContext::ColourCorrectPalette(Palette& palette, unsigned long firstEntry, unsigned long numOfEntries)
+    {
+        return GDI32::ColorCorrectPalette((HDC)(m_handle.Use()), (HPALETTE)(palette.GetHandle().Use()), firstEntry, numOfEntries) ? true : false;
+    }
+
+    bool DeviceContext::ColourMatchToTarget(DeviceContext& target, unsigned long action)
+    {
+        return GDI32::ColorMatchToTarget((HDC)(m_handle.Use()), (HDC)(target.GetHandle().Use()), action) ? true : false;
+    }
+
+    bool DeviceContext::SetMagicColours(unsigned long u1, unsigned long u2)
+    {
+        return GDI32::SetMagicColors((HDC)(m_handle.Use()), u1, u2);
+    }
+    
+    bool DeviceContext::DPtoLP(Point* points, int count)
+    {
+        return GDI32::DPtoLP((HDC)(m_handle.Use()), reinterpret_cast<LPPOINT>(points), count) ? true : false;
+    }
+
+    bool DeviceContext::GetCurrentPosition(Point& point)
+    {
+        return GDI32::GetCurrentPositionEx((HDC)(m_handle.Use()), reinterpret_cast<LPPOINT>(&point)) ? true : false;
+    }
+
+    int DeviceContext::GetGraphicsMode()
+    {
+        return GDI32::GetGraphicsMode((HDC)(m_handle.Use()));
+    }
+
+    int DeviceContext::GetMapMode()
+    {
+        return GDI32::GetMapMode((HDC)(m_handle.Use()));
+    }
+
+    bool DeviceContext::GetViewportExtEx(Size& size)
+    {
+        return GDI32::GetViewportExtEx((HDC)(m_handle.Use()), reinterpret_cast<LPSIZE>(&size)) ? true : false;
+    }
+
+    bool DeviceContext::GetViewportOrgEx(Point& point)
+    {
+        return GDI32::GetViewportOrgEx((HDC)(m_handle.Use()), reinterpret_cast<LPPOINT>(&point)) ? true : false;
+    }
+
+    bool DeviceContext::GetworldTransform(XForm& xform)
+    {
+        return GDI32::GetWorldTransform((HDC)(m_handle.Use()), reinterpret_cast<LPXFORM>(&xform)) ? true : false;
+    }
+
+    bool DeviceContext::LPtoDP(Point* points, int count)
+    {
+        return GDI32::LPtoDP((HDC)(m_handle.Use()), reinterpret_cast<LPPOINT>(points), count) ? true : false;
+    }
+
+    bool DeviceContext::ModifyWorldTransform(const XForm* xform, unsigned long mode)
+    {
+        return GDI32::ModifyWorldTransform((HDC)(m_handle.Use()), reinterpret_cast<const XFORM*>(xform), mode) ? true : false;
+    }
+
+    bool DeviceContext::OffsetViewportOrgEx(int xOffset, int yOffset, Point* point)
+    {
+        return GDI32::OffsetViewportOrgEx((HDC)(m_handle.Use()), xOffset, yOffset, reinterpret_cast<LPPOINT>(point)) ? true : false;
+    }
+
+    bool DeviceContext::OffsetWindowOrgEx(int xOffset, int yOffset, Point* point)
+    {
+        return GDI32::OffsetWindowOrgEx((HDC)(m_handle.Use()), xOffset, yOffset, reinterpret_cast<LPPOINT>(point)) ? true : false;
+    }
+
+    bool DeviceContext::ScaleViewportExtEx(int Xnum, int Xdenom, int Ynum, int Ydenom, Size* size)
+    {
+        return GDI32::ScaleViewportExtEx((HDC)(m_handle.Use()), Xnum, Xdenom, Ynum, Ydenom, reinterpret_cast<LPSIZE>(size)) ? true : false;
+    }
+
+    bool DeviceContext::ScaleWindowExtEx(int Xnum, int Xdenom, int Ynum, int Ydenom, Size* size)
+    {
+        return GDI32::ScaleWindowExtEx((HDC)(m_handle.Use()), Xnum, Xdenom, Ynum, Ydenom, reinterpret_cast<LPSIZE>(size)) ? true : false;
+    }
+
+    int DeviceContext::SetGraphicsMode(int mode)
+    {
+        return GDI32::SetGraphicsMode((HDC)(m_handle.Use()), mode);
+    }
+
+    int DeviceContext::SetMapMode(int mapMode)
+    {
+        return GDI32::SetMapMode((HDC)(m_handle.Use()), mapMode);
+    }
+
+    bool DeviceContext::SetViewportExtEx(int xExtent, int yExtent, Size* size)
+    {
+        return GDI32::SetViewportExtEx((HDC)(m_handle.Use()), xExtent, yExtent, reinterpret_cast<LPSIZE>(size)) ? true : false;
+    }
+
+    bool DeviceContext::SetViewportOrgEx(int x, int y, Point* point)
+    {
+        return GDI32::SetViewportOrgEx((HDC)(m_handle.Use()), x, y, reinterpret_cast<LPPOINT>(point)) ? true : false;
+    }
+
+    bool DeviceContext::SetWindowExtEx(int xExtent, int yExtent, Size* size)
+    {
+        return GDI32::SetWindowExtEx((HDC)(m_handle.Use()), xExtent, yExtent, reinterpret_cast<LPSIZE>(size)) ? true : false;
+    }
+
+    bool DeviceContext::SetWindowOrgEx(int x, int y, Point* point)
+    {
+        return GDI32::SetWindowOrgEx((HDC)(m_handle.Use()), x, y, reinterpret_cast<LPPOINT>(point)) ? true : false;
+    }
+
+    bool DeviceContext::SetWorldTransform(const XForm* xform)
+    {
+        return GDI32::SetWorldTransform((HDC)(m_handle.Use()), reinterpret_cast<const XFORM*>(xform)) ? true : false;
+    }
+
+    DeviceContext DeviceContext::CreateCompatible(const DeviceContext& deviceContext)
+    {
+        DeviceContext dc(GDI32::CreateCompatibleDC((HDC)(deviceContext.GetHandle().Use())));
+        return dc;
+    }
+
+    DeviceContext DeviceContext::Create(const TCHAR* driver, const TCHAR* device, const TCHAR* output, const DeviceMode* initData)
+    {
+        DeviceContext dc(GDI32::CreateDCT(driver, device, output, reinterpret_cast<const DEVMODE*>(initData)));
+        return dc;
+    }
+
+    bool DeviceContext::Delete()
+    {
+        return GDI32::DeleteDC((HDC)(m_handle.Use())) ? true : false;
+    }
+
+    bool DeviceContext::Cancel()
+    {
+        return GDI32::CancelDC((HDC)(m_handle.Use())) ? true : false;
+    }
+
+    DeviceContext DeviceContext::CreateICT(const TCHAR* driver, const TCHAR* device, const TCHAR* output, const DeviceMode* initData)
+    {
+        DeviceContext dc(GDI32::CreateICT(driver, device, output, reinterpret_cast<const DEVMODE*>(initData)));
+        return dc;
+    }
+
+    bool DeviceContext::DeleteObject(Handle hgdiObject)
+    {
+        return GDI32::DeleteObject((HGDIOBJ)(hgdiObject.Use())) ? true : false;
+    }
+
+    int DeviceContext::DrawEscape(int nEscape, int cbInput, const byte* inData)
+    {
+        return GDI32::DrawEscape((HDC)(m_handle.Use()), nEscape, cbInput, (LPCSTR)(inData));
+    }
+
+    int DeviceContext::EnumObjects(int objectType, GObjEnumProc objectFunc, long long param)
+    {
+        return GDI32::EnumObjects((HDC)(m_handle.Use()), objectType, reinterpret_cast<GOBJENUMPROC>(objectFunc), param);
+    }
+
+    Handle DeviceContext::GetCurrentObject(unsigned int objectType)
+    {
+        PrimitiveHandle ph(GDI32::GetCurrentObject((HDC)(m_handle.Use()), objectType));
+        Handle h(ph.Use());
+        h.DontClose();
+        return h;
+    }
+
+    unsigned long DeviceContext::GetBrushColour()
+    {
+        return GDI32::GetDCBrushColor((HDC)(m_handle.Use()));
+    }
+
+    bool DeviceContext::GetOrgEx(Point& point)
+    {
+        return GDI32::GetDCOrgEx((HDC)(m_handle.Use()), reinterpret_cast<LPPOINT>(&point)) ? true : false;
+    }
+
+    unsigned long DeviceContext::GetPenColour()
+    {
+        return GDI32::GetDCPenColor((HDC)(m_handle.Use()));
+    }
+
+    int DeviceContext::GetDeviceCaps(int index)
+    {
+        return GDI32::GetDeviceCaps((HDC)(m_handle.Use()), index);
+    }
+
+    unsigned long DeviceContext::GetLayout()
+    {
+        return GDI32::GetLayout((HDC)(m_handle.Use()));
+    }
+
+    int DeviceContext::GetObjectT(Handle& hgdiobj, int byteCount, void* object)
+    {
+        return GDI32::GetObjectT((HGDIOBJ)(hgdiobj.Use()), byteCount, object);
+    }
+
+    unsigned long DeviceContext::GetObjectType(Handle& hgdiobj)
+    {
+        return GDI32::GetObjectType((HGDIOBJ)(hgdiobj.Use()));
+    }
+
+    Handle DeviceContext::GetStockObject(int object)
+    {
+        PrimitiveHandle ph(GDI32::GetStockObject(object));
+        Handle h(ph.Use());
+        h.DontClose();
+        return h;
+    }
+
+    Handle DeviceContext::Reset(const DeviceMode* initData)
+    {
+        PrimitiveHandle ph(GDI32::ResetDCT((HDC)(m_handle.Use()), reinterpret_cast<const DEVMODE*>(initData)));
+        Handle h(ph.Use());
+        h.DontClose();
+        return h;
+    }
+
+    bool DeviceContext::Restore(int savedDC)
+    {
+        return GDI32::RestoreDC((HDC)(m_handle.Use()), savedDC) ? true : false;
+    }
+
+    int DeviceContext::Save()
+    {
+        return GDI32::SaveDC((HDC)(m_handle.Use()));
+    }
+
+    Handle DeviceContext::SelectObject(const Handle& hgdiobj)
+    {
+        PrimitiveHandle ph(GDI32::SelectObject((HDC)(m_handle.Use()), (HGDIOBJ)(hgdiobj.Use())));
+        Handle h(ph.Use());
+        h.DontClose();
+        return h;
+    }
+
+    unsigned long DeviceContext::SetBrushColour(unsigned long crColour)
+    {
+        return GDI32::SetDCBrushColor((HDC)(m_handle.Use()), crColour);
+    }
+
+    unsigned long DeviceContext::SetPenColour(unsigned long crColour)
+    {
+        return GDI32::SetDCPenColor((HDC)(m_handle.Use()), crColour);        
+    }
+
+    unsigned long DeviceContext::SetLayout(unsigned long layout)
+    {
+        return GDI32::SetLayout((HDC)(m_handle.Use()), layout);
+    }
+
+    bool DeviceContext::AlphaBlend(int xoriginDest, int yoriginDest, int wDest, int hDest, DeviceContext& dcSrc, int xoriginSrc, int yoriginSrc, int wSrc, int hSrc, BlendFunction ftn)
+    {
+        return GDI32::AlphaBlend((HDC)(m_handle.Use()), xoriginDest, yoriginDest, wDest, hDest, (HDC)(dcSrc.GetHandle().Use()), xoriginSrc, yoriginSrc, wSrc, hSrc, *(reinterpret_cast<BLENDFUNCTION*>(&ftn)));
+    }
+
+    bool DeviceContext::AngleArc(int x, int y, unsigned long radius, float startAngle, float sweepAngle)
+    {
+        return GDI32::AngleArc((HDC)(m_handle.Use()), x, y, radius, startAngle, sweepAngle) ? true : false;
+    }
+
+    bool DeviceContext::Arc(int leftRect, int topRect, int rightRect, int bottomRect, int xStartArc, int yStartArc, int xEndArc, int yEndArc)
+    {
+        return GDI32::Arc((HDC)(m_handle.Use()), leftRect, topRect, rightRect, bottomRect, xStartArc, yStartArc, xEndArc, yEndArc) ? true : false;
+    }
+
+    bool DeviceContext::ArcTo(int leftRect, int topRect, int rightRect, int bottomRect, int xRadial1, int yRadial1, int xRadial2, int yRadial2)
+    {
+        return GDI32::ArcTo((HDC)(m_handle.Use()), leftRect, topRect, rightRect, bottomRect, xRadial1, yRadial1, xRadial2, yRadial2) ? true : false;
+    }
+
+    int DeviceContext::GetArcDirection()
+    {
+        return GDI32::GetArcDirection((HDC)(m_handle.Use()));
+    }
+
+    bool DeviceContext::LineDDA(int xStart, int yStart, int xEnd, int yEnd, LineDDAProc lineFunc, long long data)
+    {
+        return GDI32::LineDDA(xStart, yStart, xEnd, yEnd, reinterpret_cast<LINEDDAPROC>(lineFunc), data) ? true : false;
+    }
+
+    bool DeviceContext::LineTo(int xEnd, int yEnd)
+    {
+        return GDI32::LineTo((HDC)(m_handle.Use()), xEnd, yEnd);
+    }
+
+    bool DeviceContext::MoveTo(int x, int y, Point* pt)
+    {
+        return GDI32::MoveToEx((HDC)(m_handle.Use()), x, y, reinterpret_cast<LPPOINT>(pt)) ? true : false;
+    }
+
+    bool DeviceContext::PolyBezier(const Point* points, unsigned long count)
+    {
+        return GDI32::PolyBezier((HDC)(m_handle.Use()), reinterpret_cast<const POINT*>(points), count) ? true : false;
+    }
+    
+    bool DeviceContext::PolyBezierTo( const Point* points, unsigned long count)
+    {
+        return GDI32::PolyBezierTo((HDC)(m_handle.Use()), reinterpret_cast<const POINT*>(points), count) ? true : false;
+    }
+
+    bool DeviceContext::PolyDraw(const Point* points, const byte* types, int count)
+    {
+        return GDI32::PolyDraw((HDC)(m_handle.Use()), reinterpret_cast<const POINT*>(points), types, count) ? true : false;
+    }
+
+    bool DeviceContext::Polyline(const Point* points, int count)
+    {
+        return GDI32::Polyline((HDC)(m_handle.Use()), reinterpret_cast<const POINT*>(points), count) ? true : false;
+    }
+
+    bool DeviceContext::PolylineTo(const Point* points, unsigned long count)
+    {
+        return GDI32::PolylineTo((HDC)(m_handle.Use()), reinterpret_cast<const POINT*>(points), count) ? true : false;
+    }
+
+    bool DeviceContext::PolyPolyline(const Point* points, const unsigned long* polyPoints, unsigned long count)
+    {
+        return GDI32::PolyPolyline((HDC)(m_handle.Use()), reinterpret_cast< const POINT*>(points), polyPoints, count) ? true : false;
+    }
+
+    int DeviceContext::SetArcDirection(int arcDirection)
+    {
+        return GDI32::SetArcDirection((HDC)(m_handle.Use()), arcDirection);
+    }
+
+    bool DeviceContext::Chord(int leftRect, int topRect, int rightRect, int bottomRect, int xRadial1, int yRadial1, int xRadial2, int yRadial2)
+    {
+        return GDI32::Chord((HDC)(m_handle.Use()), leftRect, topRect, rightRect, bottomRect, xRadial1, yRadial1, xRadial2, yRadial2) ? true : false;
+    }
+
+    bool DeviceContext::Ellipse(int leftRect, int topRect, int rightRect, int bottomRect)
+    {
+        return GDI32::Ellipse((HDC)(m_handle.Use()), leftRect, topRect, rightRect, bottomRect) ? true : false;        
+    }
+
+    bool DeviceContext::Pie(int leftRect, int topRect, int rightRect, int bottomRect, int xRadial1, int yRadial1, int xRadial2, int yRadial2)
+    {
+        return GDI32::Pie((HDC)(m_handle.Use()), leftRect, topRect, rightRect, bottomRect, xRadial1, yRadial1, xRadial2, yRadial2) ? true : false;
+    }
+
+    bool DeviceContext::Polygon(const Point* points, int count)
+    {
+        return GDI32::Polygon((HDC)(m_handle.Use()), reinterpret_cast<const POINT*>(points), count) ? true : false;
+    }
+
+    bool DeviceContext::PolyPolygon(const Point* points, const int* polyCounts, int count)
+    {
+        return GDI32::PolyPolygon((HDC)(m_handle.Use()), reinterpret_cast<const POINT*>(points), polyCounts, count) ? true : false;
+    }
+
+    bool DeviceContext::Rectangle(int leftRect, int topRect, int rightRect, int bottomRect)
+    {
+        return GDI32::Rectangle((HDC)(m_handle.Use()), leftRect, topRect, rightRect, bottomRect) ? true : false;
+    }
+
+    bool DeviceContext::RoundRect(int leftRect, int topRect, int rightRect, int bottomRect, int width, int height)
+    {
+        return GDI32::RoundRect((HDC)(m_handle.Use()), leftRect, topRect, rightRect, bottomRect, width, height) ? true : false;
+    }
+
+    int DeviceContext::EnumFontFamiliesT(const TCHAR* family, FontEumProc fontFamProc, long long param)
+    {
+        return GDI32::EnumFontFamiliesT((HDC)(m_handle.Use()), family, reinterpret_cast<FONTENUMPROC>(fontFamProc), param);
+    }
+
+    int DeviceContext::EnumFontFamiliesExT(LogFont* logfont, FontEumProc fontFamExProc, long long param, unsigned long flags)
+    {
+        return GDI32::EnumFontFamiliesExT((HDC)(m_handle.Use()), reinterpret_cast<LPLOGFONT>(logfont), 
+            reinterpret_cast<FONTENUMPROC>(fontFamExProc), param, flags);
+    }
+
+    int DeviceContext::EnumFontsT(const TCHAR* faceName, FontEumProc fontFunc, long long param)
+    {
+        return GDI32::EnumFontsT((HDC)(m_handle.Use()), faceName, reinterpret_cast<FONTENUMPROC>(fontFunc), param);
+    }
+
+    bool DeviceContext::ExtTextOutT(int x, int y, unsigned int options, const Rect* rc, const TCHAR* string, unsigned int count, const int* dx)
+    {
+        return GDI32::ExtTextOutT((HDC)(m_handle.Use()), x, y, options, reinterpret_cast<const RECT*>(rc), string, count, dx);
+    }
+
+    bool DeviceContext::GetAspectRatioFilterEx(Size& aspectRatio)
+    {
+        return GDI32::GetAspectRatioFilterEx((HDC)(m_handle.Use()), reinterpret_cast<LPSIZE>(&aspectRatio)) ? true : false;
+    }
+
+    bool DeviceContext::GetCharABCWidthsT(unsigned int firstChar, unsigned int lastChar, Abc* abc)
+    {
+        return GDI32::GetCharABCWidthsT((HDC)(m_handle.Use()), firstChar, lastChar, reinterpret_cast<LPABC>(abc)) ? true : false;
+    }
+
+    bool DeviceContext::GetCharABCWidthsFloatT(unsigned int firstChar, unsigned int lastChar, AbcFloat* abcf)
+    {
+        return GDI32::GetCharABCWidthsFloatT((HDC)(m_handle.Use()), firstChar, lastChar, reinterpret_cast<LPABCFLOAT>(abcf)) ? true : false;
+    }
+
+    bool DeviceContext::GetCharABCWidthsI(unsigned int first, unsigned int cgi, unsigned short* pgi, Abc* abc)
+    {
+        return GDI32::GetCharABCWidthsI((HDC)(m_handle.Use()), first, cgi, pgi, reinterpret_cast<LPABC>(abc)) ? true : false;
+    }
+
+    unsigned long DeviceContext::GetCharacterPlacementT(const TCHAR* string, int count, int maxExtent, GCPResults* results, unsigned long flags)
+    {
+        return GDI32::GetCharacterPlacementT((HDC)(m_handle.Use()), string, count, maxExtent, reinterpret_cast<LPGCP_RESULTS>(results), flags);
+    }
+
+    bool DeviceContext::GetCharWidthT(unsigned int firstChar, unsigned int lastChar, int* buffer)
+    {
+        return GDI32::GetCharWidthT((HDC)(m_handle.Use()), firstChar, lastChar, buffer) ? true : false;
+    }
+
+    bool DeviceContext::GetCharWidth32T(unsigned int firstChar, unsigned int lastChar, int* buffer)
+    {
+        return GDI32::GetCharWidth32T((HDC)(m_handle.Use()), firstChar, lastChar, buffer) ? true : false;
+    }
+
+    bool DeviceContext::GetCharWidthFloatT(unsigned int firstChar, unsigned int lastChar, float* buffer)
+    {
+        return GDI32::GetCharWidthFloatT((HDC)(m_handle.Use()), firstChar, lastChar, buffer);
+    }
+
+    bool DeviceContext::GetCharWidthI(unsigned int first, unsigned int cgi, unsigned short* pgi, int* buffer)
+    {
+        return GDI32::GetCharWidthI((HDC)(m_handle.Use()), first, cgi, pgi, buffer);
+    }
+
+    unsigned long DeviceContext::GetFontData(unsigned long table, unsigned long offset, void* buffer, unsigned long byteCount)
+    {
+        return GDI32::GetFontData((HDC)(m_handle.Use()), table, offset, buffer, byteCount);
+    }
+
+    unsigned long DeviceContext::GetFontLanguageInfo()
+    {
+        return GDI32::GetFontLanguageInfo((HDC)(m_handle.Use()));
+    }
+
+    unsigned long DeviceContext::GetFontUnicodeRanges(GlyphSet* glyphSet)
+    {
+        return GDI32::GetFontUnicodeRanges((HDC)(m_handle.Use()), reinterpret_cast<LPGLYPHSET>(glyphSet));
+    }
+
+    unsigned long DeviceContext::GetGlyphIndicesT(const TCHAR* str, int c, unsigned short* pgi, unsigned long fl)
+    {
+        return GDI32::GetGlyphIndicesT((HDC)(m_handle.Use()), str, c, pgi, fl);
+    }
+
+    unsigned long DeviceContext::GetGlyphOutlineT(unsigned int uchar, unsigned int format, GlyphMetrics* glyphMetrics, unsigned long bufferBytes, void* buffer, const Mat2* mat2)
+    {
+        return GDI32::GetGlyphOutlineT((HDC)(m_handle.Use()), uchar, format, reinterpret_cast<LPGLYPHMETRICS>(glyphMetrics), bufferBytes, buffer, reinterpret_cast< const MAT2*>(mat2));
+    }
+
+    unsigned long DeviceContext::GetKerningPairsT(unsigned long numPairs, KerningPair* krnpair)
+    {
+        return GDI32::GetKerningPairsT((HDC)(m_handle.Use()), numPairs, reinterpret_cast<LPKERNINGPAIR>(krnpair));
+    }
+
+    unsigned int DeviceContext::GetOutlineTextMetricsT(unsigned int dataSize, OutlineTextMetric* otm)
+    {
+        return GDI32::GetOutlineTextMetricsT((HDC)(m_handle.Use()), dataSize, reinterpret_cast<LPOUTLINETEXTMETRIC>(otm));
+    }
+
+    unsigned int DeviceContext::GetTextAlign()
+    {
+        return GDI32::GetTextAlign((HDC)(m_handle.Use()));
+    }
+
+    int DeviceContext::GetTextCharacterExtra()
+    {
+        return GDI32::GetTextCharacterExtra((HDC)(m_handle.Use()));
+    }
+
+    int DeviceContext::GetTextCharset()
+    {
+        return GDI32::GetTextCharset((HDC)(m_handle.Use()));
+    }
+
+    int DeviceContext::GetTextCharsetInfo( FontSignature* sig, unsigned long flags)
+    {
+        return GDI32::GetTextCharsetInfo((HDC)(m_handle.Use()), reinterpret_cast<LPFONTSIGNATURE>(sig), flags);
+    }
+
+    unsigned long DeviceContext::GetTextColour()
+    {
+        return GDI32::GetTextColor((HDC)(m_handle.Use()));
+    }
+
+    bool DeviceContext::GetTextExtentExPointT(const TCHAR* str, int charCount, int maxExtent, int* fit, int* alpDx, Size* size)
+    {
+        return GDI32::GetTextExtentExPointT((HDC)(m_handle.Use()), str, charCount, maxExtent, fit, alpDx, reinterpret_cast<LPSIZE>(size)) ? true : false;
+    }
+
+    bool DeviceContext::GetTextExtentExPointI(unsigned short* pgiIn, int cgi, int maxExtent, int* fit, int* alpDx, Size* size)
+    {
+        return GDI32::GetTextExtentExPointI((HDC)(m_handle.Use()), pgiIn, cgi, maxExtent, fit, alpDx,reinterpret_cast<LPSIZE>(size)) ? true : false;
+    }
+
+    bool DeviceContext::GetTextExtentPointT(const TCHAR* str, int charCount, Size* size)
+    {
+        return GDI32::GetTextExtentPointT((HDC)(m_handle.Use()), str, charCount, reinterpret_cast<LPSIZE>(size)) ? true : false;
+    }
+
+    bool DeviceContext::GetTextExtentPoint32T(const TCHAR* str, int c, Size* size)
+    {
+        return GDI32::GetTextExtentPoint32T((HDC)(m_handle.Use()), str, c, reinterpret_cast<LPSIZE>(size)) ? true : false;
+    }
+
+    bool DeviceContext::GetTextExtentPointI( unsigned short* pgiIn, int cgi, Size* size)
+    {
+        return GDI32::GetTextExtentPointI((HDC)(m_handle.Use()), pgiIn, cgi, reinterpret_cast<LPSIZE>(size)) ? true : false;
+    }
+
+    int DeviceContext::GetTextFaceT(int count, TCHAR* faceName)
+    {
+        return GDI32::GetTextFaceT((HDC)(m_handle.Use()), count, faceName);
+    }
+
+    bool DeviceContext::GetTextMetricsT(TextMetric* tm)
+    {
+        return GDI32::GetTextMetricsT((HDC)(m_handle.Use()), reinterpret_cast<LPTEXTMETRIC>(tm)) ? true : false;
+    }
+
+    bool DeviceContext::PolyTextOutT(const PolyText* polyText, int countStrings)
+    {
+        return GDI32::PolyTextOutT((HDC)(m_handle.Use()), reinterpret_cast<const POLYTEXT*>(polyText), countStrings) ? true : false;
+    }
+
+    unsigned long DeviceContext::SetMapperFlags(unsigned long flags)
+    {
+        return GDI32::SetMapperFlags((HDC)(m_handle.Use()), flags);
+    }
+
+    unsigned int DeviceContext::SetTextAlign(unsigned int mode)
+    {
+        return GDI32::SetTextAlign((HDC)(m_handle.Use()), mode);
+    }
+
+    int DeviceContext::SetTextCharacterExtra(int charExtra)
+    {
+        return GDI32::SetTextCharacterExtra((HDC)(m_handle.Use()), charExtra);
+    }
+
+    unsigned long DeviceContext::SetTextColour(unsigned long crColour)
+    {
+        return GDI32::SetTextColor((HDC)(m_handle.Use()), crColour);
+    }
+
+    bool DeviceContext::SetTextJustification(int breakExtra, int breakCount)
+    {
+        return GDI32::SetTextJustification((HDC)(m_handle.Use()), breakExtra, breakCount) ? true : false;
+    }
+
+    bool DeviceContext::TextOutT(int xStart, int yStart, const TCHAR* string, int cbString)
+    {
+        return GDI32::TextOutT((HDC)(m_handle.Use()), xStart, yStart, string, cbString) ? true : false;
+    }
+
+    int DeviceContext::DrawTextT(const TCHAR* str, int count, Rect* rect, unsigned int format)
+    {
+        return User32::DrawTextT((HDC)(m_handle.Use()), str, count, reinterpret_cast<LPRECT>(rect), format);
+    }
+
+    int DeviceContext::DrawTextExT(TCHAR* str, int countChars, Rect* rect, unsigned int format, DrawTextParams* params)
+    {
+        return User32::DrawTextExT((HDC)(m_handle.Use()), str, countChars, reinterpret_cast<LPRECT>(rect), format, reinterpret_cast<LPDRAWTEXTPARAMS>(params));
+    }
+
+    unsigned long DeviceContext::GetTabbedTextExtentT( const TCHAR* str, int count, int tabPositionCount, int* tabStopPositions)
+    {
+        return User32::GetTabbedTextExtentT((HDC)(m_handle.Use()), str, count, tabPositionCount, tabStopPositions);
+    }
+
+    long DeviceContext::TabbedTextOutT(int x, int y, const TCHAR* str, int count, int tabPositionsCount, int* tabStopPositions, int tabOrigin)
+    {
+        return User32::TabbedTextOutT((HDC)(m_handle.Use()), x, y, str, count, tabPositionsCount, tabStopPositions, tabOrigin);
+    }
+
+    bool DeviceContext::FillRgn(const Handle& rgn, const Handle& brush)
+    {
+        return GDI32::FillRgn((HDC)(m_handle.Use()), (HRGN)(rgn.Use()), (HBRUSH)(brush.Use())) ? true : false;
+    }
+
+    bool DeviceContext::FrameRgn(const Handle& rgn, const Handle& brush, int width, int height)
+    {
+        return GDI32::FrameRgn((HDC)(m_handle.Use()), (HRGN)(rgn.Use()), (HBRUSH)(brush.Use()), width, height) ? true : false;
+    }
+
+    int DeviceContext::GetPolyFillMode()
+    {
+        return GDI32::GetPolyFillMode((HDC)(m_handle.Use()));
+    }
+
+    bool DeviceContext::InvertRgn(Handle& rgn)
+    {
+        return GDI32::InvertRgn((HDC)(m_handle.Use()), (HRGN)(rgn.Use())) ? true : false;
+    }
+
+    bool DeviceContext::PaintRgn(Handle& rgn)
+    {
+        return GDI32::PaintRgn((HDC)(m_handle.Use()), (HRGN)(rgn.Use())) ? true : false;
+    }
+
+    int DeviceContext::SetPolyFillMode(int polyFillMode)
+    {
+        return GDI32::SetPolyFillMode((HDC)(m_handle.Use()), polyFillMode);
+    }
+
 }}}//qor::platform::nswindows

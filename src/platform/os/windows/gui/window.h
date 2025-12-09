@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_REGION
-#define QOR_PP_H_WINDOWS_GUI_REGION
+#ifndef QOR_PP_H_WINDOWS_GUI_WINDOW
+#define QOR_PP_H_WINDOWS_GUI_WINDOW
 
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
@@ -34,6 +34,9 @@
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
+
+    typedef int (__stdcall* PropEnumProc)(void*, const TCHAR*, void*);
+    typedef int (__stdcall* PropEnumProcEx)(void*, TCHAR*, void*, unsigned long long);
 
     class qor_pp_module_interface(QOR_WINGUI) Window
     {
@@ -62,6 +65,15 @@ namespace qor{ namespace platform { namespace nswindows{
         void SetPointer(int index, void* ptr);
         long long GetPointer(int index);
 
+        int EnumProperties(PropEnumProc enumProc);
+        int EnumPropertiesEx(PropEnumProcEx enumProc, long long param);
+        void* GetProperty(const TCHAR*);
+        void* RemoveProperty(const TCHAR*);
+        bool SetProperty(const TCHAR*, void* data);
+
+        bool DragDetect(Point p);
+        Handle SetCapture();
+
         decltype([](unsigned int msg, unsigned long long wParam, long long lParam)->long long{
             return 0;
         }) m_messageProc;
@@ -73,4 +85,4 @@ namespace qor{ namespace platform { namespace nswindows{
     
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI_REGION
+#endif//QOR_PP_H_WINDOWS_GUI_WINDOW

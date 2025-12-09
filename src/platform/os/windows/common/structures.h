@@ -144,6 +144,100 @@ namespace qor{ namespace platform { namespace nswindows {
         unsigned long fileIndexLow;
     } ByHandleFileInformation;
 
+    struct DisplayDevice
+    {
+        unsigned long  cb;
+        TCHAR  DeviceName[32];
+        TCHAR  DeviceString[128];
+        unsigned long  StateFlags;
+        TCHAR  DeviceID[128];
+        TCHAR  DeviceKey[128];
+    };
+
+    constexpr int CchFormName = 32;
+    constexpr int CchDeviceName = 32;
+
+    struct PointL
+    {
+        long  x;
+        long  y;
+    };
+
+    struct DeviceMode 
+    {
+        TCHAR  dmDeviceName[CchDeviceName];
+        unsigned short dmSpecVersion;
+        unsigned short dmDriverVersion;
+        unsigned short dmSize;
+        unsigned short dmDriverExtra;
+        unsigned long dmFields;
+        union 
+        {
+            //printer only fields
+            struct 
+            {
+                short dmOrientation;
+                short dmPaperSize;
+                short dmPaperLength;
+                short dmPaperWidth;
+                short dmScale;
+                short dmCopies;
+                short dmDefaultSource;
+                short dmPrintQuality;
+            } DUMMYSTRUCTNAME;
+            // display only fields
+            struct 
+            {
+                PointL dmPosition;
+                unsigned long  dmDisplayOrientation;
+                unsigned long  dmDisplayFixedOutput;
+            } DUMMYSTRUCTNAME2;
+        } DUMMYUNIONNAME;
+        short dmColor;
+        short dmDuplex;
+        short dmYResolution;
+        short dmTTOption;
+        short dmCollate;
+        TCHAR  dmFormName[CchFormName];
+        unsigned short   dmLogPixels;
+        unsigned long  dmBitsPerPel;
+        unsigned long  dmPelsWidth;
+        unsigned long  dmPelsHeight;
+        union 
+        {
+            unsigned long  dmDisplayFlags;
+            unsigned long  dmNup;
+        } DUMMYUNIONNAME2;
+        unsigned long  dmDisplayFrequency;    
+        unsigned long  dmICMMethod;
+        unsigned long  dmICMIntent;
+        unsigned long  dmMediaType;
+        unsigned long  dmDitherType;
+        unsigned long  dmReserved1;
+        unsigned long  dmReserved2;
+        unsigned long  dmPanningWidth;
+        unsigned long  dmPanningHeight;
+    };
+    
+    struct XForm
+    {
+        float   eM11;
+        float   eM12;
+        float   eM21;
+        float   eM22;
+        float   eDx;
+        float   eDy;
+    };
+
+    struct DrawTextParams
+    {
+        unsigned int    cbSize;
+        int             iTabLength;
+        int             iLeftMargin;
+        int             iRightMargin;
+        unsigned int    uiLengthDrawn;
+    };
+
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_STRUCTURES

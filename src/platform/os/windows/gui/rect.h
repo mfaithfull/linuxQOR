@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_RECT
 #define QOR_PP_H_WINDOWS_GUI_RECT
 
+#include "point.h"
+
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
@@ -34,7 +36,31 @@ namespace qor{ namespace platform { namespace nswindows{
         long m_top;
         long m_right;
         long m_bottom;
+
+        bool CopyFrom(const Rect& src);
+        bool Equal(const Rect& cmp) const;
+        bool Inflate(int dx, int dy);
+        static Rect FromIntersection(const Rect& rc1, const Rect& rc2);
+        bool IsEmpty() const;
+        bool Offset(int dx, int dy);
+        bool IsPointInRect(const Point& pt) const;
+        bool Set(int left, int top, int right, int bottom);
+        bool SetEmpty();
+        static Rect FromSubtraction(const Rect& rc1, const Rect& rc2);
+        static Rect FromUnion(const Rect& rc1, const Rect& rc2);
     };
+    /*        static BOOL CopyRect(::LPRECT lprcDst, CONST::RECT* lprcSrc);
+        static BOOL EqualRect(CONST::RECT* lprc1, CONST::RECT* lprc2);
+        static BOOL InflateRect(::LPRECT lprc, int dx, int dy);
+        static BOOL IntersectRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
+        static BOOL IsRectEmpty(CONST::RECT* lprc);
+        static BOOL OffsetRect(::LPRECT lprc, int dx, int dy);
+        static BOOL PtInRect(CONST::RECT* lprc, POINT pt);
+        static BOOL SetRect(::LPRECT lprc, int xLeft, int yTop, int xRight, int yBottom);
+        static BOOL SetRectEmpty(::LPRECT lprc);
+        static BOOL SubtractRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
+        static BOOL UnionRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
+*/
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_WINDOWS_GUI_RECT

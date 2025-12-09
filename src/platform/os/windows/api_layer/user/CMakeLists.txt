@@ -17,7 +17,20 @@ windowprocedure.cpp
 painting.cpp
 window.cpp
 menu.cpp
-keyboard.cpp)
+keyboard.cpp
+devicecontext.cpp
+coordtransform.cpp
+desktop.cpp
+resource.cpp
+rectangle.cpp
+caret.cpp
+clipboard.cpp
+monitor.cpp
+filledshapes.cpp
+windowproperties.cpp
+systemshutdown.cpp
+text.cpp
+mouse.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

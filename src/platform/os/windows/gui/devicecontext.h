@@ -22,16 +22,408 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_REGION
-#define QOR_PP_H_WINDOWS_GUI_REGION
+#ifndef QOR_PP_H_WINDOWS_GUI_DEVICECONTEXT
+#define QOR_PP_H_WINDOWS_GUI_DEVICECONTEXT
+
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "src/platform/os/windows/common/structures.h"
+#include "rect.h"
+#include "brush.h"
+#include "size.h"
+#include "palette.h"
+#include "font.h"
+#include "gdiobject.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class DeviceContext
+    struct ColourAdjustment
     {
+        unsigned short      caSize;
+        unsigned short      caFlags;
+        unsigned short      caIlluminantIndex;
+        unsigned short      caRedGamma;
+        unsigned short      caGreenGamma;
+        unsigned short      caBlueGamma;
+        unsigned short      caReferenceBlack;
+        unsigned short      caReferenceWhite;
+        short               caContrast;
+        short               caBrightness;
+        short               caColorfulness;
+        short               caRedGreenTint;
+    };
+
+    struct BlendFunction
+    {
+        byte   BlendOp;
+        byte   BlendFlags;
+        byte   SourceConstantAlpha;
+        byte   AlphaFormat;
+    };
+
+    struct Abc 
+    {
+        int             abcA;
+        unsigned int    abcB;
+        int             abcC;
+    };
+
+    struct AbcFloat 
+    {
+        float   abcfA;
+        float   abcfB;
+        float   abcfC;
+    };
+
+    struct GCPResults
+    {
+        unsigned long   lStructSize;
+        TCHAR*          lpOutString;
+        unsigned int*   lpOrder;
+        int*            lpDx;
+        int*            lpCaretPos;
+        char*           lpClass;
+        TCHAR*          lpGlyphs;
+        unsigned int    nGlyphs;
+        int             nMaxFit;
+    };
+
+    struct CharRange
+    {
+        TCHAR  low;
+        unsigned short cGlyphs;
+    };
+
+    struct GlyphSet
+    {
+        unsigned long    cbThis;
+        unsigned long    flAccel;
+        unsigned long    cGlyphsSupported;
+        unsigned long    cRanges;
+        CharRange  ranges[1];
+    };
+
+    struct GlyphMetrics
+    {
+        unsigned int    gmBlackBoxX;
+        unsigned int    gmBlackBoxY;
+        Point   gmptGlyphOrigin;
+        short   gmCellIncX;
+        short   gmCellIncY;
+    };
+
+    struct Fixed 
+    {
+#ifndef _MAC
+        unsigned short    fract;
+        short             value;
+#else
+        short             value;
+        unsigned short    fract;
+#endif
+    };
+
+    struct Mat2 
+    {
+        Fixed  eM11;
+        Fixed  eM12;
+        Fixed  eM21;
+        Fixed  eM22;
+    };
+
+    struct KerningPair
+    {
+        unsigned short wFirst;
+        unsigned short wSecond;
+        int  iKernAmount;
+    };
+
+    struct Panose
+    {
+        byte    bFamilyType;
+        byte    bSerifStyle;
+        byte    bWeight;
+        byte    bProportion;
+        byte    bContrast;
+        byte    bStrokeVariation;
+        byte    bArmStyle;
+        byte    bLetterform;
+        byte    bMidline;
+        byte    bXHeight;
+    };
+
+    struct TextMetric
+    {
+        long        tmHeight;
+        long        tmAscent;
+        long        tmDescent;
+        long        tmInternalLeading;
+        long        tmExternalLeading;
+        long        tmAveCharWidth;
+        long        tmMaxCharWidth;
+        long        tmWeight;
+        long        tmOverhang;
+        long        tmDigitizedAspectX;
+        long        tmDigitizedAspectY;
+        TCHAR       tmFirstChar;
+        TCHAR       tmLastChar;
+        TCHAR       tmDefaultChar;
+        TCHAR       tmBreakChar;
+        byte        tmItalic;
+        byte        tmUnderlined;
+        byte        tmStruckOut;
+        byte        tmPitchAndFamily;
+        byte        tmCharSet;
+    };
+
+    struct OutlineTextMetric
+    {
+        unsigned int    otmSize;
+        TextMetric otmTextMetrics;
+        byte    otmFiller;
+        Panose  otmPanoseNumber;
+        unsigned int    otmfsSelection;
+        unsigned int    otmfsType;
+        int    otmsCharSlopeRise;
+        int    otmsCharSlopeRun;
+        int    otmItalicAngle;
+        unsigned int    otmEMSquare;
+        int    otmAscent;
+        int    otmDescent;
+        unsigned int    otmLineGap;
+        unsigned int    otmsCapEmHeight;
+        unsigned int    otmsXHeight;
+        Rect    otmrcFontBox;
+        int    otmMacAscent;
+        int    otmMacDescent;
+        unsigned int    otmMacLineGap;
+        unsigned int    otmusMinimumPPEM;
+        Point   otmptSubscriptSize;
+        Point   otmptSubscriptOffset;
+        Point   otmptSuperscriptSize;
+        Point   otmptSuperscriptOffset;
+        unsigned int    otmsStrikeoutSize;
+        int    otmsStrikeoutPosition;
+        int    otmsUnderscoreSize;
+        int    otmsUnderscorePosition;
+        char*    otmpFamilyName;
+        char*    otmpFaceName;
+        char*    otmpStyleName;
+        char*    otmpFullName;
+    };
+
+    struct FontSignature
+    {
+        unsigned long fsUsb[4];
+        unsigned long fsCsb[2];
+    };
+
+    struct PolyText
+    {
+        int             x;
+        int             y;
+        unsigned int    n;
+        const TCHAR*    lpstr;
+        unsigned int    uiFlags;
+        Rect            rcl;
+        int*            pdx;
+    };
+
+    typedef int (__stdcall* IcmEnumProc)(TCHAR*, long long);
+    typedef int (__stdcall* GObjEnumProc)(void*, long long);
+    typedef void (__stdcall* LineDDAProc)(int, int, long long);
+    typedef int (__stdcall* FontEumProc)(const LogFont*, const TextMetric*, unsigned long, long long);
+
+    class DeviceContext : public GDIObject
+    {
+    public:
+        DeviceContext();
+        DeviceContext(const PrimitiveHandle& h);
+        virtual ~DeviceContext();
+
+        static DeviceContext FromWindow(const Handle& hWnd);
+        static DeviceContext FromWindow(const Handle& hWnd, const Handle& hRgnClip, unsigned long flags);
+
+        int Release();
+
+        const Handle& GetHandle() const;
+
+        int FillRect(const Rect& rc, const Brush& br) const;
+        int FrameRect(const Rect& rc, const Brush& br) const;
+        bool InvertRect(const Rect& rc) const;
+        bool PatBlt(int nXLeft, int nYLeft, int nWidth, int nHeight, unsigned long dwRop);
+        int ExcludeClipRect(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+        int ExtSelectClipRgn(Handle& region, int fnMode);
+        int GetClipBox(Rect& r);
+        int GetClipRegion(Handle& region);
+        int GetMetaRegion(Handle& region);
+        int SetMetaRegion();
+        int GetRandomRegion(Handle& region, int num);
+        int IntersectClipRect(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+        bool OffsetClipRgn(int nXOffset, int nYOffset);
+        bool PointVisible(int x, int y);
+        bool RectVisible(const Rect& r);
+        bool SelectClipPath(int iMode);
+        int SelectClipRegion(Handle& region);
+        bool GetColourAdjustment(ColourAdjustment* ca);
+        unsigned long GetNearestColour(unsigned long crColour);
+        unsigned int GetSystemPaletteEntries(unsigned int startIndex, unsigned int entries, PaletteEntry* lppe);
+        unsigned int GetSystemPaletteUse();
+        unsigned int RealizePalette();
+        Handle SelectPalette(Palette& palette, bool forceBackground);
+        bool SetColourAdjustment(const ColourAdjustment* ca);
+        unsigned int SetSystemPaletteUse(unsigned int usage);
+        bool UnrealizeObject(Handle& hgdiobj);
+        bool UpdateColours();
+        bool GetDeviceGammaRamp(void* ramp);
+        bool SetDeviceGammaRamp(void* ramp);
+        int EnumICMProfilesT( IcmEnumProc enumICMProfilesFunc, long long param);
+        bool GetICMProfileT(unsigned long* name, TCHAR* filename);
+        int SetICMMode(int enableICM);
+        bool SetICMProfileT(TCHAR* fileName);
+        bool CheckColoursInGamut(void* rgbTriples, void* buffer, unsigned int count);
+        bool ColourCorrectPalette(Palette& palette, unsigned long firstEntry, unsigned long numOfEntries);
+        bool ColourMatchToTarget(DeviceContext& target, unsigned long action);
+        bool SetMagicColours(unsigned long u1, unsigned long u2);
+        bool DPtoLP(Point* points, int count);
+        bool GetCurrentPosition(Point& point);
+        int GetGraphicsMode();
+        int GetMapMode();
+        bool GetViewportExtEx(Size& size);
+        bool GetViewportOrgEx(Point& point);
+        bool GetworldTransform(XForm& xform);
+        bool LPtoDP(Point* points, int count);
+        bool ModifyWorldTransform(const XForm* xform, unsigned long mode);
+        bool OffsetViewportOrgEx(int xOffset, int yOffset, Point* point);
+        bool OffsetWindowOrgEx(int xOffset, int yOffset, Point* point);
+        bool ScaleViewportExtEx(int Xnum, int Xdenom, int Ynum, int Ydenom, Size* size);
+        bool ScaleWindowExtEx(int Xnum, int Xdenom, int Ynum, int Ydenom, Size* size);
+        int SetGraphicsMode(int mode);
+        int SetMapMode(int mapMode);
+        bool SetViewportExtEx(int xExtent, int yExtent, Size* size);
+        bool SetViewportOrgEx(int x, int y, Point* point);
+        bool SetWindowExtEx(int xExtent, int yExtent, Size* size);
+        bool SetWindowOrgEx(int x, int y, Point* point);
+        bool SetWorldTransform(const XForm* xform);
+        static DeviceContext CreateCompatible(const DeviceContext& deviceContext);
+        static DeviceContext Create(const TCHAR* driver, const TCHAR* device, const TCHAR* output, const DeviceMode* initData);
+        bool Delete();
+        bool Cancel();
+        static DeviceContext CreateICT(const TCHAR* driver, const TCHAR* device, const TCHAR* output, const DeviceMode* initData);
+        bool DeleteObject(Handle hgdiObject);
+        int DrawEscape(int nEscape, int cbInput, const byte* inData);
+        int EnumObjects(int objectType, GObjEnumProc objectFunc, long long param);
+        Handle GetCurrentObject(unsigned int objectType);
+        unsigned long GetBrushColour();
+        bool GetOrgEx(Point& point);
+        unsigned long GetPenColour();
+        int GetDeviceCaps(int index);
+        unsigned long GetLayout();
+        int GetObjectT(Handle& hgdiobj, int byteCount, void* object);
+        unsigned long GetObjectType(Handle& hgdiobj);
+        Handle GetStockObject(int object);
+        Handle Reset(const DeviceMode* initData);
+        bool Restore(int savedDC);
+        int Save();
+        Handle SelectObject(const Handle& hgdiobj);
+        unsigned long SetBrushColour(unsigned long crColour);
+        unsigned long SetPenColour(unsigned long crColour);
+        unsigned long SetLayout(unsigned long layout);
+        bool AlphaBlend(int xoriginDest, int yoriginDest, int wDest, int hDest, DeviceContext& dcSrc, int xoriginSrc, int yoriginSrc, int wSrc, int hSrc, BlendFunction ftn);
+        bool AngleArc(int x, int y, unsigned long radius, float startAngle, float sweepAngle);
+        bool Arc(int leftRect, int topRect, int rightRect, int bottomRect, int xStartArc, int yStartArc, int xEndArc, int yEndArc);
+        bool ArcTo(int leftRect, int topRect, int rightRect, int bottomRect, int xRadial1, int yRadial1, int xRadial2, int yRadial2);
+        int GetArcDirection();
+        bool LineDDA(int xStart, int yStart, int xEnd, int yEnd, LineDDAProc lineFunc, long long data);
+        bool LineTo(int xEnd, int yEnd);
+        bool MoveTo(int x, int y, Point* pt);
+        bool PolyBezier(const Point* points, unsigned long count);
+        bool PolyBezierTo( const Point* points, unsigned long count);
+        bool PolyDraw(const Point* points, const byte* types, int count);
+        bool Polyline(const Point* points, int count);
+        bool PolylineTo(const Point* points, unsigned long count);
+        bool PolyPolyline(const Point* points, const unsigned long* polyPoints, unsigned long count);
+        int SetArcDirection(int ArcDirection);
+        bool Chord(int leftRect, int topRect, int rightRect, int bottomRect, int xRadial1, int yRadial1, int xRadial2, int yRadial2);
+        bool Ellipse(int leftRect, int topRect, int rightRect, int bottomRect);
+        bool Pie(int leftRect, int topRect, int rightRect, int bottomRect, int xRadial1, int yRadial1, int xRadial2, int yRadial2);
+        bool Polygon(const Point* points, int count);
+        bool PolyPolygon(const Point* points, const int* polyCounts, int count);
+        bool Rectangle(int leftRect, int topRect, int rightRect, int bottomRect);
+        bool RoundRect(int leftRect, int topRect, int rightRect, int bottomRect, int width, int height);
+        int EnumFontFamiliesT(const TCHAR* family, FontEumProc fontFamProc, long long param);
+        int EnumFontFamiliesExT(LogFont* logfont, FontEumProc fontFamExProc, long long param, unsigned long flags);
+        int EnumFontsT(const TCHAR* faceName, FontEumProc fontFunc, long long param);
+        bool ExtTextOutT(int x, int y, unsigned int options, const Rect* rc, const TCHAR* string, unsigned int count, const int* dx);
+        bool GetAspectRatioFilterEx(Size& aspectRatio);
+        bool GetCharABCWidthsT(unsigned int firstChar, unsigned int lastChar, Abc* abc);
+        bool GetCharABCWidthsFloatT(unsigned int firstChar, unsigned int lastChar, AbcFloat* abcf);
+        bool GetCharABCWidthsI(unsigned int first, unsigned int cgi, unsigned short* pgi, Abc* abc);
+        unsigned long GetCharacterPlacementT(const TCHAR* string, int count, int maxExtent, GCPResults* results, unsigned long flags);
+        bool GetCharWidthT(unsigned int firstChar, unsigned int lastChar, int* buffer);
+        bool GetCharWidth32T(unsigned int firstChar, unsigned int lastChar, int* buffer);
+        bool GetCharWidthFloatT(unsigned int firstChar, unsigned int lastChar, float* buffer);
+        bool GetCharWidthI(unsigned int first, unsigned int cgi, unsigned short* pgi, int* buffer);
+        unsigned long GetFontData(unsigned long table, unsigned long offset, void* buffer, unsigned long byteCount);
+        unsigned long GetFontLanguageInfo();
+        unsigned long GetFontUnicodeRanges(GlyphSet* glyphSet);
+        unsigned long GetGlyphIndicesT(const TCHAR* str, int c, unsigned short* pgi, unsigned long fl);
+        unsigned long GetGlyphOutlineT(unsigned int uchar, unsigned int format, GlyphMetrics* glyphMetrics, unsigned long bufferBytes, void* buffer, const Mat2* mat2);
+        unsigned long GetKerningPairsT(unsigned long numPairs, KerningPair* krnpair);
+        unsigned int GetOutlineTextMetricsT(unsigned int dataSize, OutlineTextMetric* otm);
+        unsigned int GetTextAlign();
+        int GetTextCharacterExtra();
+        int GetTextCharset();
+        int GetTextCharsetInfo( FontSignature* sig, unsigned long flags);
+        unsigned long GetTextColour();
+        bool GetTextExtentExPointT(const TCHAR* str, int charCount, int maxExtent, int* fit, int* alpDx, Size* size);
+        bool GetTextExtentExPointI(unsigned short* pgiIn, int cgi, int maxExtent, int* fit, int* alpDx, Size* size);
+        bool GetTextExtentPointT(const TCHAR* str, int charCount, Size* size);
+        bool GetTextExtentPoint32T(const TCHAR* str, int c, Size* size);
+        bool GetTextExtentPointI( unsigned short* pgiIn, int cgi, Size* size);
+        int GetTextFaceT(int count, TCHAR* faceName);
+        bool GetTextMetricsT(TextMetric* tm);
+        bool PolyTextOutT(const PolyText* polyText, int countStrings);
+        unsigned long SetMapperFlags(unsigned long flags);
+        unsigned int SetTextAlign(unsigned int mode);
+        int SetTextCharacterExtra(int charExtra);
+        unsigned long SetTextColour(unsigned long crColour);
+        bool SetTextJustification(int breakExtra, int breakCount);
+        bool TextOutT(int xStart, int yStart, const TCHAR* string, int cbString);
+        int DrawTextT(const TCHAR* str, int count, Rect* rect, unsigned int format);
+        int DrawTextExT(TCHAR* str, int countChars, Rect* rect, unsigned int format, DrawTextParams* params);
+        unsigned long GetTabbedTextExtentT( const TCHAR* str, int count, int tabPositionCount, int* tabStopPositions);
+        long TabbedTextOutT(int x, int y, const TCHAR* str, int count, int tabPositionsCount, int* tabStopPositions, int tabOrigin);
+        bool FillRgn(const Handle& rgn, const Handle& brush);
+        bool FrameRgn(const Handle& rgn, const Handle& brush, int width, int height);
+        int GetPolyFillMode();
+        bool InvertRgn(Handle& rgn);
+        bool PaintRgn(Handle& rgn);
+        int SetPolyFillMode(int polyFillMode);
+
+        /*
+        
+        static BOOL GetRasterizerCaps(::LPRASTERIZER_STATUS lprs, UINT cb);
+        static BOOL TranslateCharsetInfo(DWORD* pSrc, LPCHARSETINFO lpCs, DWORD dwFlags);
+        static DWORD GetFontResourceInfo(LPCTSTR szFontName, DWORD dwBufSize, LPTSTR szBuffer, DWORD dwInfo);
+        static BOOL RemoveFontMemResourceEx(HANDLE fh);
+        static BOOL RemoveFontResourceT(LPCTSTR lpFileName);
+        static BOOL RemoveFontResourceExT(LPCTSTR lpFileName, DWORD fl, PVOID pdv);
+        static HANDLE AddFontMemResourceEx(PVOID pbFont, DWORD cbFont, PVOID pdv, DWORD* pcFonts);
+        static int AddFontResourceT(LPCTSTR lpszFilename);
+        static int AddFontResourceExT(LPCTSTR lpszFilename, DWORD fl, PVOID pdv);
+        static int AddFontResourceTracking(LPCSTR lpString, int unknown);
+        static BOOL CreateScalableFontResourceT(DWORD fdwHidden, LPCTSTR lpszFontRes, LPCTSTR lpszFontFile, LPCTSTR lpszCurrentPath);
+        static BOOL EnableEUDC(BOOL fEnableEUDC);
+*/
+    protected:
+        bool m_mustBeReleased;
+
+    private:
+        Handle m_hWnd;
+        void MustRelease();
     };
     
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI_REGION
+#endif//QOR_PP_H_WINDOWS_GUI_DEVICECONTEXT

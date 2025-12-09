@@ -28,23 +28,36 @@
 #include <string>
 
 #include "src/platform/os/windows/common/handles/handle.h"
+#include "point.h"
+#include "gdiobject.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINGUI) Brush
+    struct LogBrush
+    {
+        unsigned int        m_style;
+        unsigned long       m_colour;
+        unsigned long long  m_hatch;
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) Brush : public GDIObject
     {
     public:
 
         Brush();
         Brush(int);
+        Brush(const PrimitiveHandle& h);
         virtual ~Brush();
 
-        const Handle& GetHandle() const;
+        static Brush CreateIndirect(const LogBrush& logBrush);
+        static Brush CreateDIBPattern(void* hglbDIBPacked, unsigned int fuColorSpec);
+        static Brush CreateHatch(int fnStyle, unsigned long clrref);
+        static Brush CreatePattern(Handle& bitmap);
+        static Brush CreateSolid(unsigned long crColor);
 
-    protected:
-
-        Handle m_handle;
+        bool GetOrg(const Handle& deviceContext, Point& pt);
+        bool SetOrg(const Handle& deviceContext, int x, int y, Point& pt);
     };
 
     class qor_pp_module_interface(QOR_WINGUI) SysBrush : public Brush

@@ -27,38 +27,73 @@
 #include "brush.h"
 #include "src/platform/os/windows/common/stringconv.h"
 #include "src/platform/os/windows/api_layer/user/user32.h"
+#include "src/platform/os/windows/api_layer/gdi/gdi32.h"
 
 using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
 
-    Brush::Brush()
+    Brush::Brush() : GDIObject(OBrush)
     {
-
     }
 
-    Brush::Brush(int col) : m_handle(col)
+    Brush::Brush(int colour) : GDIObject(colour, OBrush)
     {
-        m_handle.DontClose();
+    }
+
+    Brush::Brush(const PrimitiveHandle& h) : GDIObject(h, OBrush)
+    {
     }
 
     Brush::~Brush()
     {
-        if(!m_handle.IsInvalid())
-        {
-            DeleteObject(m_handle.Use());
-            m_handle.Drop();
-        }
     }
 
-    const Handle& Brush::GetHandle() const
+    Brush Brush::CreateIndirect(const LogBrush& logBrush)
     {
-        return m_handle;
+        Brush b(GDI32::CreateBrushIndirect(reinterpret_cast<const LOGBRUSH*>(&logBrush)));
+        return b;
     }
 
+    Brush Brush::CreateDIBPattern(void* hglbDIBPacked, unsigned int fuColorSpec)
+    {
+        Brush b(GDI32::CreateDIBPatternBrush(hglbDIBPacked, fuColorSpec));
+        return b;
+    }
+    
+    Brush Brush::CreateHatch(int fnStyle, unsigned long clrref)
+    {
+        Brush b(GDI32::CreateHatchBrush(fnStyle, clrref));
+        return b;
+    }
+
+    Brush Brush::CreatePattern(Handle& bitmap)
+    {
+        Brush b(GDI32::CreatePatternBrush((HBITMAP)(bitmap.Use())));
+        return b;
+    }
+
+    Brush Brush::CreateSolid(unsigned long crColor)
+    {
+        Brush b(GDI32::CreateSolidBrush(crColor));
+        return b;
+    }
+
+    bool Brush::GetOrg(const Handle& deviceContext, Point& pt)
+    {
+        return GDI32::GetBrushOrgEx((HDC)(deviceContext.Use()), reinterpret_cast<LPPOINT>(&pt)) ? true : false;
+    }
+
+    bool Brush::SetOrg(const Handle& deviceContext, int x, int y, Point& pt)
+    {
+        return GDI32::SetBrushOrgEx((HDC)(deviceContext.Use()), x, y, reinterpret_cast<LPPOINT>(&pt)) ? true : false;
+    }
+
+    
     SysBrush::SysBrush(int nIndex) : Brush()
     {        
-        m_handle = User32::GetSysColorBrush(nIndex);        
+        m_handle = User32::GetSysColorBrush(nIndex);
+        m_handle.DontClose();
     }
 
     SysBrush::~SysBrush()
