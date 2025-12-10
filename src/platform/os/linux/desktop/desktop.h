@@ -22,40 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_CONSOLE_VIEW_CONTROLLER
-#define QOR_PP_H_COMPONENTS_CONSOLE_VIEW_CONTROLLER
+#ifndef QOR_PP_H_OS_LINUX_DESKTOP
+#define QOR_PP_H_OS_LINUX_DESKTOP
 
-#include "src/qor/reference/reference.h"
-#include "src/qor/reference/newref.h"
-#include "console.h"
-#include "consoleviewmodel.h"
-#include "consoleview.h"
-#include "consolecompositor.h"
+#define QOR_PP_IMPLEMENTS_DESKTOP
+#include "src/components/framework/desktop/desktop.h"
 
-/*ConsoleViewController get input from the Console and splits in between purely View related input which is handled here by modifying the ViewModel and
-Application related input which is passed on to the Application controller*/
-namespace qor { namespace components {
+namespace qor{ bool qor_pp_module_interface(QOR_LINUXDESKTOP) ImplementsDesktop(); }
 
-    class qor_pp_module_interface(QOR_CONSOLE) ConsoleViewController
+namespace qor{ namespace platform { namespace nslinux{ 
+
+    class qor_pp_module_interface(QOR_LINUXDESKTOP) Desktop : public qor::components::Desktop
     {
     public:
+        Desktop() = default;
+        virtual ~Desktop() noexcept = default;
 
-        ConsoleViewController();
-        ~ConsoleViewController();
+        virtual void Setup();
+        virtual void Shutdown();
 
-        ref_of<ConsoleViewModel>::type Model();
-
-        void Render();
-        void GetUserInput();
-
-    private:
-
-        ref_of<ConsoleViewModel>::type m_model;
-        ref_of<Console>::type m_console;
-        ref_of<ConsoleView>::type m_view;
-        ref_of<ConsoleCompositor>::type m_compositor;
     };
 
-}}//qor::components
+}}}//qor::platform::nslinux
 
-#endif//QOR_PP_H_COMPONENTS_CONSOLE_VIEW_CONTROLLER
+#endif//QOR_PP_H_OS_LINUX_DESKTOP

@@ -22,40 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_CONSOLE_VIEW_CONTROLLER
-#define QOR_PP_H_COMPONENTS_CONSOLE_VIEW_CONTROLLER
-
-#include "src/qor/reference/reference.h"
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
 #include "src/qor/reference/newref.h"
-#include "console.h"
-#include "consoleviewmodel.h"
-#include "consoleview.h"
-#include "consolecompositor.h"
 
-/*ConsoleViewController get input from the Console and splits in between purely View related input which is handled here by modifying the ViewModel and
-Application related input which is passed on to the Application controller*/
-namespace qor { namespace components {
+#include "desktop.h"
 
-    class qor_pp_module_interface(QOR_CONSOLE) ConsoleViewController
-    {
-    public:
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Desktop Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-        ConsoleViewController();
-        ~ConsoleViewController();
-
-        ref_of<ConsoleViewModel>::type Model();
-
-        void Render();
-        void GetUserInput();
-
-    private:
-
-        ref_of<ConsoleViewModel>::type m_model;
-        ref_of<Console>::type m_console;
-        ref_of<ConsoleView>::type m_view;
-        ref_of<ConsoleCompositor>::type m_compositor;
-    };
-
-}}//qor::components
-
-#endif//QOR_PP_H_COMPONENTS_CONSOLE_VIEW_CONTROLLER
+	//Register the Linux specific implementations
+	static qor::TypeRegEntry< qor::platform::nslinux::Desktop, qor::components::Desktop > regDesktop;
+	return QORModule;
+}
