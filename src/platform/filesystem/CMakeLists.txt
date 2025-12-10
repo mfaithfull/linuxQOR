@@ -8,7 +8,7 @@ file/file.cpp file/filereader.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_FILESYSTEM)
+target_compile_definitions(${target} PRIVATE QOR_FILESYSTEM)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform qor_error)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

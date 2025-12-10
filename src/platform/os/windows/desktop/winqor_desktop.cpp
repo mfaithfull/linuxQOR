@@ -22,38 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FILESYSTEM
-#define QOR_PP_H_OS_WINDOWS_FILESYSTEM
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
+#include "src/qor/reference/newref.h"
 
-#include <optional>
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/platform/filesystem/fileindex.h"
+#include "desktop.h"
 
-namespace qor
+qor::Module& ThisModule(void)
 {
-    ////Declaration must match the one in src/system/filesystem/filesystem.h
-    bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem();
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Desktop Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+
+	//Register the Windows specific implementations
+	static qor::TypeRegEntry< qor::platform::nswindows::Desktop, qor::components::Desktop > regDesktop;
+	return QORModule;
 }
-
-namespace qor{ namespace platform { namespace nswindows{ 
-
-    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::platform::IFileSystem
-    {
-    public:
-        FileSystem() = default;
-        virtual ~FileSystem() noexcept = default;
-
-        virtual void Setup();
-        virtual void Shutdown();
-
-        virtual ref_of<platform::IFile>::type Create(const platform::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<platform::IFile>::type Open(const platform::FileIndex& index, const int openFor, const int withFlags) const;        
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-
-        void SyncToSystem() const;
-    };
-
-}}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FILESYSTEM

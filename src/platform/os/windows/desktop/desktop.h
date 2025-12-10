@@ -22,38 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FILESYSTEM
-#define QOR_PP_H_OS_WINDOWS_FILESYSTEM
+#ifndef QOR_PP_H_OS_WINDOWS_DESKTOP
+#define QOR_PP_H_OS_WINDOWS_DESKTOP
 
-#include <optional>
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/platform/filesystem/fileindex.h"
+#define QOR_PP_IMPLEMENTS_DESKTOP
+#include "src/components/framework/desktop/desktop.h"
 
-namespace qor
-{
-    ////Declaration must match the one in src/system/filesystem/filesystem.h
-    bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem();
-}
+namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSDESKTOP) ImplementsDesktop(); }
 
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::platform::IFileSystem
+    class qor_pp_module_interface(QOR_WINDOWSDESKTOP) Desktop : public qor::components::Desktop
     {
     public:
-        FileSystem() = default;
-        virtual ~FileSystem() noexcept = default;
+        Desktop() = default;
+        virtual ~Desktop() noexcept = default;
 
         virtual void Setup();
         virtual void Shutdown();
 
-        virtual ref_of<platform::IFile>::type Create(const platform::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<platform::IFile>::type Open(const platform::FileIndex& index, const int openFor, const int withFlags) const;        
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-
-        void SyncToSystem() const;
     };
 
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_OS_WINDOWS_FILESYSTEM
+#endif//QOR_PP_H_OS_WINDOWS_DESKTOP

@@ -22,38 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FILESYSTEM
-#define QOR_PP_H_OS_WINDOWS_FILESYSTEM
+#include "src/configuration/configuration.h"
 
-#include <optional>
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/platform/filesystem/fileindex.h"
+#include "applicationview.h"
+#include "src/components/framework/console/iconsole.h"
 
-namespace qor
-{
-    ////Declaration must match the one in src/system/filesystem/filesystem.h
-    bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem();
-}
+namespace qor{ namespace components{ 
 
-namespace qor{ namespace platform { namespace nswindows{ 
-
-    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::platform::IFileSystem
+    ApplicationView::ApplicationView()
     {
-    public:
-        FileSystem() = default;
-        virtual ~FileSystem() noexcept = default;
+    }
 
-        virtual void Setup();
-        virtual void Shutdown();
+    void ApplicationView::Update(ApplicationModel& target)
+    {
+        //Does the Role have a desktop?
+        //auto desktop = framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<IDesktop>();
 
-        virtual ref_of<platform::IFile>::type Create(const platform::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<platform::IFile>::type Open(const platform::FileIndex& index, const int openFor, const int withFlags) const;        
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
+        //Does the Role have a terminal?
+        //auto terminal = framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<ITerminal>();
 
-        void SyncToSystem() const;
-    };
+        //Does the Role have a console?
+        auto console = framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<IConsole>();
 
-}}}//qor::platform::nswindows
+        if(console.IsNotNull())
+        {
+            //Build a Console View of the ApplicationModel
+        }
+    }
 
-#endif//QOR_PP_H_OS_WINDOWS_FILESYSTEM
+}}//qor::components

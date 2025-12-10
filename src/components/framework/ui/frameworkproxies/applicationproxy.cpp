@@ -22,38 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FILESYSTEM
-#define QOR_PP_H_OS_WINDOWS_FILESYSTEM
+#include "src/configuration/configuration.h"
 
-#include <optional>
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/platform/filesystem/fileindex.h"
+#include "src/framework/application/application_builder.h"
+#include "applicationproxy.h"
 
-namespace qor
-{
-    ////Declaration must match the one in src/system/filesystem/filesystem.h
-    bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem();
-}
+namespace qor{ namespace components{ 
 
-namespace qor{ namespace platform { namespace nswindows{ 
-
-    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::platform::IFileSystem
+    ApplicationProxy::ApplicationProxy() : m_appName(framework::AppBuilder().TheApplication()->Name()), m_observable(*this)
     {
-    public:
-        FileSystem() = default;
-        virtual ~FileSystem() noexcept = default;
+    }
+    
+    std::string ApplicationProxy::Name()
+    {
+        return m_appName;
+    }
 
-        virtual void Setup();
-        virtual void Shutdown();
-
-        virtual ref_of<platform::IFile>::type Create(const platform::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<platform::IFile>::type Open(const platform::FileIndex& index, const int openFor, const int withFlags) const;        
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-
-        void SyncToSystem() const;
-    };
-
-}}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FILESYSTEM
+}}//qor::components

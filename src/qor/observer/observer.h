@@ -45,7 +45,7 @@ namespace qor{
         {
             if( &src != this )
             {
-                m_first = src.first;
+                m_first = src.m_first;
             }
             return *this;
         }

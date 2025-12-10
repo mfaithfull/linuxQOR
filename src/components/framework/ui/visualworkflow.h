@@ -22,38 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FILESYSTEM
-#define QOR_PP_H_OS_WINDOWS_FILESYSTEM
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALWORKFLOW
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALWORKFLOW
 
-#include <optional>
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/platform/filesystem/fileindex.h"
+#include "src/framework/workflow/workflow.h"
+#include "model.h"
+#include "view.h"
+#include "visualstate.h"
 
-namespace qor
-{
-    ////Declaration must match the one in src/system/filesystem/filesystem.h
-    bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem();
-}
+namespace qor{ namespace components{ 
 
-namespace qor{ namespace platform { namespace nswindows{ 
-
-    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::platform::IFileSystem
+    class qor_pp_module_interface(QOR_UI) VisualWorkflow : public qor::workflow::Workflow
     {
     public:
-        FileSystem() = default;
-        virtual ~FileSystem() noexcept = default;
 
-        virtual void Setup();
-        virtual void Shutdown();
+        VisualWorkflow(); 
+        virtual ~VisualWorkflow() = default;
 
-        virtual ref_of<platform::IFile>::type Create(const platform::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<platform::IFile>::type Open(const platform::FileIndex& index, const int openFor, const int withFlags) const;        
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-
-        void SyncToSystem() const;
+        Model m_model;
+        View<Model> m_initialView;
     };
 
-}}}//qor::platform::nswindows
+}}//qor::components
 
-#endif//QOR_PP_H_OS_WINDOWS_FILESYSTEM
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALWORKFLOW

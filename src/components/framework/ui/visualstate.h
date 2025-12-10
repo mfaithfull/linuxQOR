@@ -22,38 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FILESYSTEM
-#define QOR_PP_H_OS_WINDOWS_FILESYSTEM
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALSTATE
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALSTATE
 
-#include <optional>
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/platform/filesystem/fileindex.h"
+#include "src/framework/workflow/workflow.h"
 
-namespace qor
-{
-    ////Declaration must match the one in src/system/filesystem/filesystem.h
-    bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem();
-}
+//Semantic UI component representing a state of a VisualWorkflow
 
-namespace qor{ namespace platform { namespace nswindows{ 
-
-    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::platform::IFileSystem
+namespace qor{ namespace components{ 
+    
+    class qor_pp_module_interface(QOR_UI) VisualState : public workflow::State
     {
     public:
-        FileSystem() = default;
-        virtual ~FileSystem() noexcept = default;
 
-        virtual void Setup();
-        virtual void Shutdown();
+        typedef ref_of<VisualState>::type ref;
 
-        virtual ref_of<platform::IFile>::type Create(const platform::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<platform::IFile>::type Open(const platform::FileIndex& index, const int openFor, const int withFlags) const;        
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
 
-        void SyncToSystem() const;
+        VisualState(workflow::Workflow* workflow);
+        virtual ~VisualState() = default;
+
+    protected:
+
+        std::vector<std::function<void(void)>> m_ActionHandlers;
+
     };
 
-}}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FILESYSTEM
+}}//qor::components
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALSTATE

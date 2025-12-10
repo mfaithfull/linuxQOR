@@ -22,42 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_CONSOLE_VIEW_MODEL
-#define QOR_PP_H_COMPONENTS_CONSOLE_VIEW_MODEL
-
-#include <vector>
-#include "src/qor/reference/reference.h"
+#ifndef QOR_PP_H_COMPONENTS_DESKTOP
+#define QOR_PP_H_COMPONENTS_DESKTOP
+ 
+#include "src/framework/role/ifeature.h"
+#include "src/framework/thread/icurrentthread.h"
 #include "src/qor/reference/newref.h"
-#include "consolewidget.h"
 
-/*ConsoleViewModel collects ConsoleWidgetModels built by observation of domain models and injection of Style and Console UI specific data*/
-namespace qor { namespace components {
+#ifndef QOR_PP_IMPLEMENTS_DESKTOP                       //If we aren't including this to implement the desktop concept
+namespace qor{ bool qor_pp_import ImplementsDesktop(); }//then including this header requires linking to something that implement the Desktop concept
+#endif
 
-    class qor_pp_module_interface(QOR_CONSOLE) ConsoleViewModel
+namespace qor { namespace components{
+  
+    class qor_pp_module_interface(QOR_DESKTOP) Desktop : public framework::IFeature
     {
     public:
 
-        ConsoleViewModel();
-        ~ConsoleViewModel();
-
-        //RemoveWidget
-        void Layout(unsigned int width, unsigned int height);// - position and size everything within the contraints of width and height
-        //Each widget then renders to it's own view. The views are composited to the main view
-        void Render();
-        bool HandleInput(string_t input);
-        //Add Layer Widgets, Row Widgets, Column Widgets, Grid Widgets, Flow Widgets which exist just as containers to layout their contents
-        std::vector<ref_of<ConsoleWidget>::type>::const_iterator cbegin();
-        std::vector<ref_of<ConsoleWidget>::type>::const_iterator cend();
-        std::vector<ref_of<ConsoleWidget>::type>::iterator begin();
-        std::vector<ref_of<ConsoleWidget>::type>::iterator end();
-
-        void AddWidget(ref_of<ConsoleWidget>::type);
+        typedef ref_of<Desktop>::type ref;
         
-    private:
+        Desktop();
+        virtual ~Desktop() = default;
 
-        std::vector<ref_of<ConsoleWidget>::type> m_itemVector;
+        virtual void Setup(){};
+        virtual void Shutdown(){};
+
     };
+    } //components
 
-}}//qor::components
+    qor_pp_declare_instancer_of(components::Desktop, SingletonInstancer);
+    qor_pp_declare_factory_of(components::Desktop, ExternalFactory);
+    constexpr GUID DesktopGUID = {0x0e39a803, 0x2d31, 0x4450, {0x94, 0x73, 0x86, 0x27, 0xcc, 0xe0, 0xed, 0x27}};
+    qor_pp_declare_guid_of(components::Desktop,DesktopGUID);
 
-#endif//QOR_PP_H_COMPONENTS_CONSOLE_VIEW_MODEL
+}//qor
+
+#endif//QOR_PP_H_COMPONENTS_DESKTOP

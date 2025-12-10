@@ -10,3 +10,5 @@ add_subdirectory(filesystem)
 add_subdirectory(gdi)
 add_subdirectory(gui)
 add_subdirectory(examples)
+add_subdirectory(desktop)
+
