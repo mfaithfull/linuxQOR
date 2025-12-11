@@ -40,4 +40,9 @@ namespace qor { namespace components{
         return nullptr;
     }
 
+    void* EGLWindow::GetNativeWindow()
+    {
+        return nullptr;
+    }
+    
 }}//qor::components

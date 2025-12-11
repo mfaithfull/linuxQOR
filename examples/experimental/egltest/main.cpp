@@ -95,7 +95,7 @@ int main()
                 GetFeature(&EGLFeatureGUID).
                 AsRef<qor::components::EGLFeature>(qor_shared)->CreateNativeWindow();
 
-                auto surface = display->CreateWindowSurface(config, window->GetNativeSurface(), nullptr);
+                auto surface = display->CreateWindowSurface(config, window->GetNativeWindow(), nullptr);
                 context->MakeCurrent(surface, surface);
 
                 //do the actual drawing on the surface

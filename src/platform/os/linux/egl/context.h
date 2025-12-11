@@ -22,25 +22,24 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
+#ifndef QOR_PP_H_LINUX_EGL_CONTEXT
+#define QOR_PP_H_LINUX_EGL_CONTEXT
 
-#include "src/framework/role/ifeature.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "display.h"
+#include "src/components/framework/ui/egl/context.h"
 
-namespace qor { namespace components{
+//All types on this interface must be portable
+namespace qor{ namespace platform { namespace nslinux{ 
 
-    class qor_pp_module_interface(QOR_EGL) EGLWindow
+    class qor_pp_module_interface(QOR_WINEGL) EglContext : public qor::components::EGLContext
     {
     public:
 
-        EGLWindow();        
-        virtual ~EGLWindow();
-
-        virtual void* GetNativeSurface();
-        virtual void* GetNativeWindow();
+        EglContext(void* ctx, qor::components::EGLDisplay& display);
+        EglContext(qor::components::EGLDisplay* display, void* config, void* share_context, const int32_t *attrib_list);
+        virtual ~EglContext();
     };
-}}//qor::components
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
+}}}//qor::platform::nslinux
+
+#endif//QOR_PP_H_LINUX_EGL_CONTEXT

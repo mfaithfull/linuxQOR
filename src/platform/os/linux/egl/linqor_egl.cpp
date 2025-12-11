@@ -22,25 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
-
-#include "src/framework/role/ifeature.h"
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
 #include "src/qor/reference/newref.h"
 
-namespace qor { namespace components{
+#include "egl.h"
 
-    class qor_pp_module_interface(QOR_EGL) EGLWindow
-    {
-    public:
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Linux EGL",
+		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-        EGLWindow();        
-        virtual ~EGLWindow();
-
-        virtual void* GetNativeSurface();
-        virtual void* GetNativeWindow();
-    };
-}}//qor::components
-
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
+    //Register the Linux specific implementations
+	static qor::TypeRegEntry< qor::platform::nslinux::EGL, qor::components::EGLFeature > regEGL;
+	return QORModule;
+}

@@ -22,25 +22,24 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
+#include "src/configuration/configuration.h"
 
-#include "src/framework/role/ifeature.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "context.h"
 
-namespace qor { namespace components{
+namespace qor{ namespace platform { namespace nslinux{
 
-    class qor_pp_module_interface(QOR_EGL) EGLWindow
+    EglContext::EglContext(void* ctx, qor::components::EGLDisplay& display) : qor::components::EGLContext(ctx, display)
     {
-    public:
 
-        EGLWindow();        
-        virtual ~EGLWindow();
+    }
 
-        virtual void* GetNativeSurface();
-        virtual void* GetNativeWindow();
-    };
-}}//qor::components
+    EglContext::EglContext(qor::components::EGLDisplay* display, void* config, void* share_context, const int32_t *attrib_list) :
+        qor::components::EGLContext(display, config, share_context, attrib_list)
+    {
+    }
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
+    EglContext::~EglContext()
+    {
+    }
+
+}}}//qor::platform::nslinux
