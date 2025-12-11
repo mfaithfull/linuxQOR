@@ -17,3 +17,4 @@ qor_property)
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 
 add_subdirectory(egl)
+add_subdirectory(cairo)
