@@ -1,9 +1,10 @@
 
 #include "src/configuration/configuration.h"
 
-#include "win32header.h"
 #include "controller.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
+
+extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
 
 int main();
 

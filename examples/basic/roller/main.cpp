@@ -56,7 +56,7 @@ qor_pp_module_requires(ICurrentThread)
 int main()
 {
     /*We must request the AppBuilder to build a base Application class
-    rather than our csutom derived App. 
+    rather than our custom derived App. 
     We've already redirected the factory so it will really give us a
     custom App instance. However we must always go through the 
     base Application singleton factory.

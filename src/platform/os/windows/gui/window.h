@@ -74,6 +74,10 @@ namespace qor{ namespace platform { namespace nswindows{
         bool DragDetect(Point p);
         Handle SetCapture();
 
+        Handle GetDeviceContext();
+        long long DefWindowProcT(unsigned int msg, unsigned long long wparam, long long lparam);
+
+
         decltype([](unsigned int msg, unsigned long long wParam, long long lParam)->long long{
             return 0;
         }) m_messageProc;

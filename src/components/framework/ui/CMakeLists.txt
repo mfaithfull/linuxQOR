@@ -15,3 +15,5 @@ target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext 
 qor_property)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
+
+add_subdirectory(egl)

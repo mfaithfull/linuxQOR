@@ -175,4 +175,16 @@ namespace qor{ namespace platform { namespace nswindows{
         return h;
     }
 
+    Handle Window::GetDeviceContext()
+    {
+        Handle h(User32::GetDC((HWND)(m_handle.Use())));
+        h.DontClose();
+        return h;
+    }
+
+    long long Window::DefWindowProcT(unsigned int msg, unsigned long long wparam, long long lparam)
+    {
+        return User32::DefWindowProcT((HWND)(m_handle.Use()), msg, wparam, lparam);
+    }
+
 }}}//qor::platform::nswindows
