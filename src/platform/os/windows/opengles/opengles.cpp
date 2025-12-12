@@ -24,45 +24,21 @@
 
 #include "src/configuration/configuration.h"
 
-#include "window.h"
+#include "opengles.h"
+#include "GLES3/gl3.h"
 
-extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
+namespace qor{ bool qor_pp_module_interface(QOR_WINEGL) ImplementsOpenGLESFeature() { return true; } }//qor
 
 namespace qor{ namespace platform { namespace nswindows{
 
-    long long EglWindowClass::EglWindowProc(void* window, unsigned int msg, unsigned long long wparam, long long lparam)
+    const byte* OpenGLES::GetString(unsigned int name)
     {
-        Window w(window);
-        return w.DefWindowProcT(msg, wparam, lparam);
+        return glGetString(name);
     }
 
-    EglWindow::EglWindow()
+    unsigned int OpenGLES::GetError()
     {
-        static EglWindowRegistration s_windowClassReg((void*)(&__ImageBase));
-
-        m_window = new qor::platform::nswindows::Window(s_windowClassReg.GetWindowClass().Name(),
-         to_tstring("EglWindow").c_str(), 
-         (0x00000000L | 0x00C00000L | 0x00080000L | 0x00040000L | 0x00020000L | 0x00010000L), 0, 
-         ((int)0x80000000), ((int)0x80000000), 
-         640, 480, nullptr, Menu(0), (void*)(&__ImageBase), nullptr);
-
-         m_window->Show(1);
-         m_window->Update();
-    }
-
-    EglWindow::~EglWindow()
-    {
-        delete m_window;
-    }
-
-    void* EglWindow::GetNativeSurface()
-    {
-        return m_window->GetDeviceContext().Use();
-    }
-
-    void* EglWindow::GetNativeWindow()
-    {
-        return m_window->GetHandle().Use();
+        return glGetError();
     }
 
 }}}//qor::platform::nswindows

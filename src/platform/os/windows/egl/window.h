@@ -104,6 +104,7 @@ namespace qor{ namespace platform { namespace nswindows{
         virtual ~EglWindow();
 
         virtual void* GetNativeSurface();
+        virtual void* GetNativeWindow();
 
     private:
 

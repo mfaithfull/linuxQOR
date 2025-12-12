@@ -22,47 +22,6 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#include "app.h"
 
-#include "window.h"
-
-extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
-
-namespace qor{ namespace platform { namespace nswindows{
-
-    long long EglWindowClass::EglWindowProc(void* window, unsigned int msg, unsigned long long wparam, long long lparam)
-    {
-        Window w(window);
-        return w.DefWindowProcT(msg, wparam, lparam);
-    }
-
-    EglWindow::EglWindow()
-    {
-        static EglWindowRegistration s_windowClassReg((void*)(&__ImageBase));
-
-        m_window = new qor::platform::nswindows::Window(s_windowClassReg.GetWindowClass().Name(),
-         to_tstring("EglWindow").c_str(), 
-         (0x00000000L | 0x00C00000L | 0x00080000L | 0x00040000L | 0x00020000L | 0x00010000L), 0, 
-         ((int)0x80000000), ((int)0x80000000), 
-         640, 480, nullptr, Menu(0), (void*)(&__ImageBase), nullptr);
-
-         m_window->Show(1);
-         m_window->Update();
-    }
-
-    EglWindow::~EglWindow()
-    {
-        delete m_window;
-    }
-
-    void* EglWindow::GetNativeSurface()
-    {
-        return m_window->GetDeviceContext().Use();
-    }
-
-    void* EglWindow::GetNativeWindow()
-    {
-        return m_window->GetHandle().Use();
-    }
-
-}}}//qor::platform::nswindows
+SingletonRedirector<Application, OpenGLESApp> OpenGLESApp::m_sRedirect;

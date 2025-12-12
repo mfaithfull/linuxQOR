@@ -161,7 +161,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return EGL::StaticGetConfigs(m_display, configs, config_size, num_config);
     }
 
-    bool EglDisplay::MakeCurrent(void* draw, void* read, void* ctx)
+    bool EglDisplay::InternalMakeCurrent(void* draw, void* read, void* ctx)
     {
         return EGL::StaticMakeCurrent(m_display, draw, read, ctx);
     }

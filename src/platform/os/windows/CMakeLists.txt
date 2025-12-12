@@ -12,4 +12,5 @@ add_subdirectory(gui)
 add_subdirectory(examples)
 add_subdirectory(desktop)
 add_subdirectory(egl)
+add_subdirectory(opengles)
 

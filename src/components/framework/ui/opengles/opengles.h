@@ -22,47 +22,43 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_OPENGLES
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_OPENGLES
 
-#include "window.h"
+#include "src/framework/role/ifeature.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 
-extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
+#ifndef QOR_PP_IMPLEMENTS_OPENGLES
+namespace qor{ bool qor_pp_import ImplementsOpenGLESFeature(); }
+#endif
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor { namespace components{
 
-    long long EglWindowClass::EglWindowProc(void* window, unsigned int msg, unsigned long long wparam, long long lparam)
+    class qor_pp_module_interface(QOR_OPENGLES) OpenGLESFeature : public framework::IFeature
     {
-        Window w(window);
-        return w.DefWindowProcT(msg, wparam, lparam);
-    }
+    public:
 
-    EglWindow::EglWindow()
-    {
-        static EglWindowRegistration s_windowClassReg((void*)(&__ImageBase));
+        typedef ref_of<OpenGLESFeature>::type ref;
+        
+        OpenGLESFeature();
+        virtual ~OpenGLESFeature() = default;
 
-        m_window = new qor::platform::nswindows::Window(s_windowClassReg.GetWindowClass().Name(),
-         to_tstring("EglWindow").c_str(), 
-         (0x00000000L | 0x00C00000L | 0x00080000L | 0x00040000L | 0x00020000L | 0x00010000L), 0, 
-         ((int)0x80000000), ((int)0x80000000), 
-         640, 480, nullptr, Menu(0), (void*)(&__ImageBase), nullptr);
+        virtual void Setup(){};
+        virtual void Shutdown(){};
 
-         m_window->Show(1);
-         m_window->Update();
-    }
+        virtual const byte* GetString (unsigned int name);
+        virtual unsigned int GetError();
 
-    EglWindow::~EglWindow()
-    {
-        delete m_window;
-    }
+    };
+    } //components
 
-    void* EglWindow::GetNativeSurface()
-    {
-        return m_window->GetDeviceContext().Use();
-    }
+    qor_pp_declare_instancer_of(components::OpenGLESFeature, SingletonInstancer);
+    qor_pp_declare_factory_of(components::OpenGLESFeature, ExternalFactory);
+    constexpr GUID OpenGLESFeatureGUID = {0xd035d23f, 0x9528, 0x4660, {0x8f, 0xa2, 0x3d, 0xa5, 0x9e, 0x8e, 0xc6, 0xc5}};
+    qor_pp_declare_guid_of(components::OpenGLESFeature, OpenGLESFeatureGUID);
 
-    void* EglWindow::GetNativeWindow()
-    {
-        return m_window->GetHandle().Use();
-    }
+}//qor::components
 
-}}}//qor::platform::nswindows
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_OPENGLES
+

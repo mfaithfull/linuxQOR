@@ -22,47 +22,31 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_EXAMPLES_OPENGLES_APP
+#define QOR_PP_H_EXAMPLES_OPENGLES_APP
 
-#include "window.h"
+#include <string>
 
-extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
+#include "sdk/using_framework.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+class OpenGLESApp : public Application
+{
+private:
 
-    long long EglWindowClass::EglWindowProc(void* window, unsigned int msg, unsigned long long wparam, long long lparam)
-    {
-        Window w(window);
-        return w.DefWindowProcT(msg, wparam, lparam);
-    }
+    static SingletonRedirector<Application, OpenGLESApp> m_sRedirect;
 
-    EglWindow::EglWindow()
-    {
-        static EglWindowRegistration s_windowClassReg((void*)(&__ImageBase));
+public:
 
-        m_window = new qor::platform::nswindows::Window(s_windowClassReg.GetWindowClass().Name(),
-         to_tstring("EglWindow").c_str(), 
-         (0x00000000L | 0x00C00000L | 0x00080000L | 0x00040000L | 0x00020000L | 0x00010000L), 0, 
-         ((int)0x80000000), ((int)0x80000000), 
-         640, 480, nullptr, Menu(0), (void*)(&__ImageBase), nullptr);
+    constexpr static const char* Name = "Experimental OpenGL ES App";
 
-         m_window->Show(1);
-         m_window->Update();
-    }
+    OpenGLESApp() = default;
+    virtual ~OpenGLESApp() = default;
 
-    EglWindow::~EglWindow()
-    {
-        delete m_window;
-    }
+};
 
-    void* EglWindow::GetNativeSurface()
-    {
-        return m_window->GetDeviceContext().Use();
-    }
+namespace qor{
 
-    void* EglWindow::GetNativeWindow()
-    {
-        return m_window->GetHandle().Use();
-    }
+    qor_pp_declare_instancer_of(OpenGLESApp, SingletonInstancer);
+}
 
-}}}//qor::platform::nswindows
+#endif//QOR_PP_H_EXAMPLES_OPENGLES_APP

@@ -50,7 +50,7 @@ namespace qor{ namespace platform { namespace nswindows{
         virtual bool DestroySurface(void* surface);
         virtual bool GetConfigAttrib(void* config, int32_t attribute, int32_t *value);
         virtual bool GetConfigs(void* *configs, int32_t config_size, int32_t *num_config);        
-        virtual bool MakeCurrent(void* draw, void* read, void* ctx);        
+        //virtual bool MakeCurrent(void* draw, void* read, void* ctx);        
         virtual const char* QueryString(int32_t name);
         virtual bool QuerySurface(void* surface, int32_t attribute, int32_t *value);
         virtual bool SwapBuffers(void* surface);        
@@ -72,6 +72,7 @@ namespace qor{ namespace platform { namespace nswindows{
         virtual void* InternalCreateContext(void* config, void* share_context, const int32_t *attrib_list);
         virtual bool InternalDestroyContext(void* ctx);
         virtual bool InternalQueryContext(void* ctx, int32_t attribute, int32_t *value);
+        virtual bool InternalMakeCurrent(void* draw, void* read, void* ctx);
 
     private:
 

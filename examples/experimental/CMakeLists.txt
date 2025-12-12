@@ -6,3 +6,4 @@ set(CMAKE_CXX_EXTENSIONS ON)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 add_subdirectory(egltest)
+add_subdirectory(openglestest)

@@ -62,7 +62,19 @@ namespace qor{ namespace platform { namespace nswindows{
 
     bool EGL::StaticChooseConfig(EGLDisplay dpy, const int32_t* attrib_list, EGLConfig* configs, int32_t config_size, int32_t* num_config)
     {
-        return ::eglChooseConfig(dpy, attrib_list, configs, config_size, num_config) ? true : false;
+        bool result = ::eglChooseConfig(dpy, attrib_list, configs, config_size, num_config) ? true : false;
+        if(!result)
+        {
+            auto err = ::eglGetError();
+            /*EGL_BAD_DISPLAY is generated if display is not an EGL display connection.
+
+EGL_BAD_ATTRIBUTE is generated if attribute_list contains an invalid frame buffer configuration attribute or an attribute value that is unrecognized or out of range.
+
+EGL_NOT_INITIALIZED is generated if display has not been initialized.
+
+EGL_BAD_PARAMETER is generated if num_config is NULL.*/
+        }
+        return result;
     }
 
     bool EGL::StaticCopyBuffers(EGLDisplay dpy, EGLSurface surface, EGLNativePixmapType target)
@@ -87,7 +99,46 @@ namespace qor{ namespace platform { namespace nswindows{
 
     EGLSurface EGL::StaticCreateWindowSurface(EGLDisplay dpy, EGLConfig config, EGLNativeWindowType win, const EGLint *attrib_list)
     {
-        return ::eglCreateWindowSurface(dpy, config, win, attrib_list);
+        EGLSurface result = ::eglCreateWindowSurface(dpy, config, win, attrib_list);
+
+        if(result == EGL_NO_SURFACE)
+        {
+            auto err = ::eglGetError();
+
+            switch(err)
+            {
+                case EGL_BAD_PARAMETER:
+                //Bad parameter
+                case EGL_BAD_DISPLAY:
+                //display is not an EGL display connection.
+                break;
+                case EGL_NOT_INITIALIZED:
+                //display has not been initialized.
+                break;
+                case EGL_BAD_CONFIG:
+                //config is not a valid EGL frame buffer configuration.
+                break;
+                case EGL_BAD_NATIVE_WINDOW:
+                //native_window is not a valid native window for the same platform as display.
+                break;
+                case EGL_BAD_ATTRIBUTE:
+                //attrib_list contains an invalid window attribute or if an attribute value is not recognized or is out of range.
+                break;
+                case EGL_BAD_ALLOC:
+                //there is already an EGLSurface associated with native_window (as a result of a previous eglCreatePlatformWindowSurface call).
+                //the implementation cannot allocate resources for the new EGL window.
+                break;
+                case EGL_BAD_MATCH:
+                //the pixel format of native_window does not correspond to the format, type, and size of the color buffers required by config.
+                //config does not support rendering to windows (the EGL_SURFACE_TYPE attribute does not contain EGL_WINDOW_BIT).
+                //config does not support the specified OpenVG alpha format attribute (the value of EGL_VG_ALPHA_FORMAT is EGL_VG_ALPHA_FORMAT_PRE and the EGL_VG_ALPHA_FORMAT_PRE_BIT is not set in the EGL_SURFACE_TYPE attribute of config) or colorspace attribute (the value of EGL_VG_COLORSPACE is EGL_VG_COLORSPACE_LINEAR and the EGL_VG_COLORSPACE_LINEAR_IT is not set in the EGL_SURFACE_TYPE attribute of config).*/
+                break;
+                default:
+                //What is it then?
+                break;
+            }
+        }
+        return result;
     }
 
     bool EGL::StaticDestroyContext(EGLDisplay dpy, EGLContext ctx)
