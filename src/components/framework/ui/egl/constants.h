@@ -28,6 +28,7 @@
 namespace qor { namespace components{
 }}//qor::components
 
+#define EGL_CAST(type, value) (static_cast<type>(value))
 #define EGL_ALPHA_SIZE                    0x3021
 #define EGL_BAD_ACCESS                    0x3002
 #define EGL_BAD_ALLOC                     0x3003
@@ -47,7 +48,7 @@ namespace qor { namespace components{
 #define EGL_CONFIG_ID                     0x3028
 #define EGL_CORE_NATIVE_ENGINE            0x305B
 #define EGL_DEPTH_SIZE                    0x3025
-#define EGL_DONT_CARE                     EGL_CAST(EGLint,-1)
+#define EGL_DONT_CARE                     EGL_CAST(int32_t,-1)
 #define EGL_DRAW                          0x3059
 #define EGL_EXTENSIONS                    0x3055
 #define EGL_FALSE                         0

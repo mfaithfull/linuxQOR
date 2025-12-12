@@ -28,12 +28,31 @@
 #include "src/components/framework/ui/egl/context.h"
 #include "src/components/framework/ui/egl/window.h"
 
+#include <string>
+#include <sstream>
+
 #include "app.h"
 
 qor_pp_implement_module(EGLApp::Name)
 
 qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(EGLFeature)
+
+/*
+void outputGLESInfo() {
+	std::cout << "GL_VENDOR = " << glGetString(GL_VENDOR) << "\n";
+	std::cout << "GL_RENDERER = " << glGetString(GL_RENDERER) << "\n";
+	std::cout << "GL_VERSION = " << glGetString(GL_VERSION) << "\n";
+	std::cout << "GL_SHADING_LANGUAGE_VERSION = " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
+	std::cout << "Extensions :\n";
+	std::string extBuffer;
+	std::stringstream extStream; 
+	extStream << glGetString(GL_EXTENSIONS);
+	while (extStream >> extBuffer) {
+		std::cout << extBuffer << "\n";
+	}
+}
+*/
 
 int main()
 {
@@ -68,17 +87,44 @@ int main()
 
             []()->int
             {                
-                auto display = AppBuilder().TheApplication()->
+                auto egl = AppBuilder().TheApplication()->
                 GetRole(qor_shared)->
                 GetFeature(&EGLFeatureGUID).
-                AsRef<qor::components::EGLFeature>(qor_shared)->CreateDisplay(nullptr);
+                AsRef<qor::components::EGLFeature>();
+
+                auto display = egl->CreateDisplay(nullptr);
+
+                egl->BindAPI(EGL_OPENGL_ES_API);
                 
                 int32_t const attribute_list[] = {
-                        EGL_RED_SIZE, 1,
-                        EGL_GREEN_SIZE, 1,
-                        EGL_BLUE_SIZE, 1,
-                        EGL_NONE
+                    EGL_BUFFER_SIZE, 0,
+                    EGL_RED_SIZE, 5,
+                    EGL_GREEN_SIZE, 6,
+                    EGL_BLUE_SIZE, 5,
+                    EGL_ALPHA_SIZE, 0,
+                    EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER,
+                    EGL_CONFIG_CAVEAT, EGL_DONT_CARE,
+                    EGL_CONFIG_ID, EGL_DONT_CARE,
+                    EGL_DEPTH_SIZE, 24,
+                    EGL_LEVEL, 0,
+                    EGL_MAX_SWAP_INTERVAL, EGL_DONT_CARE,
+                    EGL_MIN_SWAP_INTERVAL, EGL_DONT_CARE,
+                    EGL_NATIVE_RENDERABLE, EGL_DONT_CARE,
+                    EGL_NATIVE_VISUAL_TYPE, EGL_DONT_CARE,
+                    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+                    EGL_SAMPLE_BUFFERS, 0,
+                    EGL_SAMPLES, 0,
+                    EGL_STENCIL_SIZE, 0,
+                    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+                    EGL_TRANSPARENT_TYPE, EGL_NONE,
+                    EGL_TRANSPARENT_RED_VALUE, EGL_DONT_CARE,
+                    EGL_TRANSPARENT_GREEN_VALUE, EGL_DONT_CARE,
+                    EGL_TRANSPARENT_BLUE_VALUE, EGL_DONT_CARE,
+                    EGL_NONE
                 };
+
+              	int32_t surfaceAttributes[] = { EGL_NONE };
+            	int32_t contextAttributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
 
                 void* config = nullptr;
                 int32_t num_config = 0;
@@ -88,25 +134,80 @@ int main()
 
                 }
 
-                auto context = display->CreateContext(config, nullptr, nullptr);
+                auto context = display->CreateContext(config, nullptr, contextAttributes);
 
-                auto window = AppBuilder().TheApplication()->
-                GetRole(qor_shared)->
-                GetFeature(&EGLFeatureGUID).
-                AsRef<qor::components::EGLFeature>(qor_shared)->CreateNativeWindow();
+                auto window = egl->CreateNativeWindow();
 
-                auto surface = display->CreateWindowSurface(config, window->GetNativeWindow(), nullptr);
+                auto surface = display->CreateWindowSurface(config, window->GetNativeWindow(), surfaceAttributes);
+
+                std::cout << "EGL Version = " << display->QueryString(EGL_VERSION) << "\n";
+                std::cout << "EGL Vendor = " << display->QueryString(EGL_VENDOR) << "\n";
+                std::cout << "EGL Client APIs : \n" << display->QueryString(EGL_CLIENT_APIS) << "\n";
+                std::cout << "EGL Extensions : \n" << display->QueryString(EGL_EXTENSIONS) << "\n";
+                std::cout << "EGL Configurations:\n";
+
+                void** configs;
+                int eglNumConfigs;
+                display->GetConfigs(nullptr, 0, &eglNumConfigs);
+
+                configs = new void*[eglNumConfigs];
+
+                for (int i = 0; i < eglNumConfigs; i++) 
+                {
+                    std::cout << "Config " << i << "\n";
+                    std::cout << "Supported APIs :\n";
+                    int eglRenderable;
+                    display->GetConfigAttrib(configs[i], EGL_RENDERABLE_TYPE, &eglRenderable);
+                    if (eglRenderable & EGL_OPENGL_ES_BIT) std::cout << "OPENGL ES" << "\n";
+                    if (eglRenderable & EGL_OPENGL_ES2_BIT) std::cout << "OPENGL ES2" << "\n";
+                    if (eglRenderable & EGL_OPENVG_BIT) std::cout << "OPENVG" << "\n";
+                    if (eglRenderable & EGL_OPENGL_BIT) std::cout << "OPENGL" << "\n";
+                    std::cout << "\n";
+                }
+
+                //delete configs;
+
+                int32_t attr[] = 
+                {
+                    EGL_BUFFER_SIZE, 16,
+                    EGL_RENDERABLE_TYPE,
+                    EGL_OPENGL_ES2_BIT,
+                    EGL_NONE
+                };
+
+                void** eglConfig = new void*;
+                int elgNumConfig;
+                if (!display->ChooseConfig(attr, eglConfig, sizeof(eglConfig), &eglNumConfigs)) 
+                {
+                    std::cout << "Could not get valid egl configuration!" << std::endl;
+                    return 1;
+                }
+
                 context->MakeCurrent(surface, surface);
 
-                //do the actual drawing on the surface
-                // clear the color buffer 
-                //glClearColor(1.0, 1.0, 0.0, 1.0);
-                //glClear(GL_COLOR_BUFFER_BIT);
-                //glFlush();
-                //
+                //outputGLESInfo();
 
-                display->SwapBuffers(surface);
-                
+                //MSG uMsg;
+                //PeekMessage(&uMsg, NULL, 0, 0, PM_REMOVE);
+
+                long long qpcStart, qpcEnd;
+
+                //while (!quit)  
+                {
+
+                    //QueryPerformanceCounter((LARGE_INTEGER*)&qpcStart);
+                    //renderScene(timeFactor);
+
+                    /*
+                    while (PeekMessage(&uMsg, NULL, 0, 0, PM_REMOVE) > 0) {
+                        TranslateMessage(&uMsg);
+                        DispatchMessage(&uMsg);
+                    }
+                    */
+
+                    display->SwapBuffers(surface);
+                }
+
                 return EXIT_SUCCESS;
             }
         )
