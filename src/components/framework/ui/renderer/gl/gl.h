@@ -41,7 +41,7 @@
     #endif
 
     #ifdef _DEBUG
-        #define GL_CHECK(stmt) stmt; assert(glGetError() == GL_NO_ERROR);
+        #define GL_CHECK(stmt) stmt; assert(m_openGLES->GetError() == GL_NO_ERROR);
     #else
         #define GL_CHECK(stmt) stmt
     #endif

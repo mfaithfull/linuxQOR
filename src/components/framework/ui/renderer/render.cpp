@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#include "src/configuration/configuration.h"
  #include <algorithm>
  #include "common/math.h"
  #include "render.h"
@@ -720,7 +720,7 @@ bool RenderTrimPath::trim(const RenderPath& in, RenderPath& out) const
 /************************************************************************/
 
 //TODO: use this common function from sw engine
-#if defined(THORVG_GL_RASTER_SUPPORT) || defined(THORVG_WG_RASTER_SUPPORT)
+//#if defined(THORVG_GL_RASTER_SUPPORT) || defined(THORVG_WG_RASTER_SUPPORT)
 
 struct StrokeDashPath
 {
@@ -750,7 +750,7 @@ void StrokeDashPath::segment(Segment seg, float len, RenderPath& out, bool allow
 {
     #define MIN_CURR_LEN_THRESHOLD 0.1f
 
-    if (tvg::zero(len)) {
+    if (zero(len)) {
         out.moveTo(curPos);
     } else if (len <= curLen) {
         curLen -= len;
@@ -810,7 +810,7 @@ bool StrokeDashPath::gen(const RenderPath& in, RenderPath& out, bool allowDot)
     int32_t idx = 0;
     auto offset = dash.offset;
     auto gap = false;
-    if (!tvg::zero(dash.offset)) {
+    if (!zero(dash.offset)) {
         auto length = (dash.count % 2) ? dash.length * 2 : dash.length;
         offset = fmodf(offset, length);
         if (offset < 0) offset += length;
@@ -915,11 +915,5 @@ bool RenderShape::strokeDash(RenderPath& out) const
     }
     return dash.gen(path, out, allowDot);
 }
-#else
-bool RenderShape::strokeDash(RenderPath& out) const
-{
-    return false;
-}
-#endif
 
 }}}}//qor::components::ui::renderer

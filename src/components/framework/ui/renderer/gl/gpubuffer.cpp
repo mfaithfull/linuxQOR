@@ -43,7 +43,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#include "src/configuration/configuration.h"
 #include "gpubuffer.h"
 
 #include <math.h>
@@ -55,13 +55,13 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     /* GlGpuBuffer Implementation                                           */
     /************************************************************************/
 
-    static GLint _getGpuBufferAlign() 
+    static GLint _getGpuBufferAlign(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES) 
     {
         static GLint offset = 0;
 
         if (!offset)
         {
-            GL_CHECK(glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &offset));
+            openGLES->GetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &offset);
         }
 
         return offset;
@@ -70,25 +70,24 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     void GlGpuBuffer::updateBufferData(Target target, uint32_t size, const void* data)
     {
-        GL_CHECK(glBufferData(static_cast<uint32_t>(target), size, data, GL_STATIC_DRAW));
+        m_openGLES->BufferData(static_cast<uint32_t>(target), size, data, GL_STATIC_DRAW);
     }
 
 
     void GlGpuBuffer::bind(Target target)
     {
-        GL_CHECK(glBindBuffer(static_cast<uint32_t>(target), mGlBufferId));
+        m_openGLES->BindBuffer(static_cast<uint32_t>(target), mGlBufferId);
     }
 
 
     void GlGpuBuffer::unbind(Target target)
     {
-        GL_CHECK(glBindBuffer(static_cast<uint32_t>(target), 0));
+        m_openGLES->BindBuffer(static_cast<uint32_t>(target), 0);
     }
 
-
-    GlGpuBuffer::GlGpuBuffer()
+    GlGpuBuffer::GlGpuBuffer(ref_of<OpenGLESFeature>::type openGLES) : m_openGLES(openGLES)
     {
-        GL_CHECK(glGenBuffers(1, &mGlBufferId));
+        m_openGLES->GenBuffers(1, &mGlBufferId);
         assert(mGlBufferId != 0);
     }
 
@@ -97,7 +96,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     {
         if (mGlBufferId)
         {
-            GL_CHECK(glDeleteBuffers(1, &mGlBufferId));
+            m_openGLES->DeleteBuffers(1, &mGlBufferId);
         }
     }
 
@@ -105,16 +104,16 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     /* GlStageBuffer Implementation                                         */
     /************************************************************************/
 
-    GlStageBuffer::GlStageBuffer() : mVao(0), mGpuBuffer(), mGpuIndexBuffer()
+    GlStageBuffer::GlStageBuffer(ref_of<OpenGLESFeature>::type openGLES) : m_openGLES(openGLES), mVao(0), mGpuBuffer(openGLES), mGpuIndexBuffer(openGLES)
     {
-        GL_CHECK(glGenVertexArrays(1, &mVao));
+        m_openGLES->GenVertexArrays(1, &mVao);
     }
 
 
     GlStageBuffer::~GlStageBuffer()
     {
         if (mVao) {
-            glDeleteVertexArrays(1, &mVao);
+            m_openGLES->DeleteVertexArrays(1, &mVao);
             mVao = 0;
         }
     }
@@ -180,7 +179,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     void GlStageBuffer::bind()
     {
-        glBindVertexArray(mVao);
+        m_openGLES->BindVertexArray(mVao);
         mGpuBuffer.bind(GlGpuBuffer::Target::ARRAY_BUFFER);
         mGpuBuffer.bind(GlGpuBuffer::Target::UNIFORM_BUFFER);
         mGpuIndexBuffer.bind(GlGpuBuffer::Target::ELEMENT_ARRAY_BUFFER);
@@ -189,7 +188,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     void GlStageBuffer::unbind()
     {
-        glBindVertexArray(0);
+        m_openGLES->BindVertexArray(0);
         mGpuBuffer.unbind(GlGpuBuffer::Target::ARRAY_BUFFER);
         mGpuBuffer.unbind(GlGpuBuffer::Target::UNIFORM_BUFFER);
         mGpuIndexBuffer.unbind(GlGpuBuffer::Target::ELEMENT_ARRAY_BUFFER);
@@ -205,7 +204,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     void GlStageBuffer::alignOffset(uint32_t size)
     {
 
-        uint32_t alignment = _getGpuBufferAlign();
+        uint32_t alignment = _getGpuBufferAlign(m_openGLES);
 
         if (mStageBuffer.count % alignment == 0) return;
 

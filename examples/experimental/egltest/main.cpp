@@ -97,48 +97,31 @@ int main()
                 egl->BindAPI(EGL_OPENGL_ES_API);
                 
                 int32_t const attribute_list[] = {
-                    EGL_BUFFER_SIZE, 0,
-                    EGL_RED_SIZE, 5,
-                    EGL_GREEN_SIZE, 6,
-                    EGL_BLUE_SIZE, 5,
-                    EGL_ALPHA_SIZE, 0,
-                    EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER,
-                    EGL_CONFIG_CAVEAT, EGL_DONT_CARE,
-                    EGL_CONFIG_ID, EGL_DONT_CARE,
-                    EGL_DEPTH_SIZE, 24,
-                    EGL_LEVEL, 0,
-                    EGL_MAX_SWAP_INTERVAL, EGL_DONT_CARE,
-                    EGL_MIN_SWAP_INTERVAL, EGL_DONT_CARE,
-                    EGL_NATIVE_RENDERABLE, EGL_DONT_CARE,
-                    EGL_NATIVE_VISUAL_TYPE, EGL_DONT_CARE,
-                    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                    EGL_SAMPLE_BUFFERS, 0,
-                    EGL_SAMPLES, 0,
-                    EGL_STENCIL_SIZE, 0,
+                    EGL_RED_SIZE, 8,
+                    EGL_GREEN_SIZE, 8,
+                    EGL_BLUE_SIZE, 8,
+                    EGL_ALPHA_SIZE, 8,
                     EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-                    EGL_TRANSPARENT_TYPE, EGL_NONE,
-                    EGL_TRANSPARENT_RED_VALUE, EGL_DONT_CARE,
-                    EGL_TRANSPARENT_GREEN_VALUE, EGL_DONT_CARE,
-                    EGL_TRANSPARENT_BLUE_VALUE, EGL_DONT_CARE,
+                    EGL_DEPTH_SIZE,8,
                     EGL_NONE
                 };
 
               	int32_t surfaceAttributes[] = { EGL_NONE };
             	int32_t contextAttributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
 
-                void* config = nullptr;
+                void* config[2] = {};
                 int32_t num_config = 0;
 
-                if(!display->ChooseConfig(attribute_list, &config, 1, &num_config))
+                if(!display->ChooseConfig(attribute_list, &config[1], 1, &num_config))
                 {
 
                 }
 
-                auto context = display->CreateContext(config, nullptr, contextAttributes);
+                auto context = display->CreateContext(config[1], nullptr, contextAttributes);
 
-                auto window = egl->CreateNativeWindow();
+                auto window = egl->CreateNativeWindow(display, context);
 
-                auto surface = display->CreateWindowSurface(config, window->GetNativeWindow(), surfaceAttributes);
+                auto surface = display->CreateWindowSurface(config[1], window->GetNativeWindow(), surfaceAttributes);
 
                 std::cout << "EGL Version = " << display->QueryString(EGL_VERSION) << "\n";
                 std::cout << "EGL Vendor = " << display->QueryString(EGL_VENDOR) << "\n";
@@ -176,8 +159,7 @@ int main()
                 };
 
                 void** eglConfig = new void*;
-                int elgNumConfig;
-                if (!display->ChooseConfig(attr, eglConfig, sizeof(eglConfig), &eglNumConfigs)) 
+                if (!display->ChooseConfig(attr, eglConfig, 1, &eglNumConfigs)) 
                 {
                     std::cout << "Could not get valid egl configuration!" << std::endl;
                     return 1;
@@ -185,28 +167,7 @@ int main()
 
                 context->MakeCurrent(surface, surface);
 
-                //outputGLESInfo();
-
-                //MSG uMsg;
-                //PeekMessage(&uMsg, NULL, 0, 0, PM_REMOVE);
-
-                long long qpcStart, qpcEnd;
-
-                //while (!quit)  
-                {
-
-                    //QueryPerformanceCounter((LARGE_INTEGER*)&qpcStart);
-                    //renderScene(timeFactor);
-
-                    /*
-                    while (PeekMessage(&uMsg, NULL, 0, 0, PM_REMOVE) > 0) {
-                        TranslateMessage(&uMsg);
-                        DispatchMessage(&uMsg);
-                    }
-                    */
-
-                    display->SwapBuffers(surface);
-                }
+                display->SwapBuffers(surface);
 
                 return EXIT_SUCCESS;
             }

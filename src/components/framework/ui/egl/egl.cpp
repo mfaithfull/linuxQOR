@@ -98,9 +98,9 @@ namespace qor { namespace components{
         return new_ref<EGLDisplay>(platform, nativeDisplay, attrib_list);
     }
 
-    qor::ref_of<qor::components::EGLWindow>::type EGLFeature::CreateNativeWindow()
+    qor::ref_of<qor::components::EGLWindow>::type EGLFeature::CreateNativeWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context)
     {
-        return new_ref<EGLWindow>();
+        return new_ref<EGLWindow>(display, context);
     }
 
 }}//qor::components

@@ -22,34 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
-
-#include "src/framework/role/ifeature.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
-#include "display.h"
+#include "src/configuration/configuration.h"
+#include "glwindow.h"
 
 namespace qor { namespace components{
 
-    class qor_pp_module_interface(QOR_EGL) EGLContext
-    {
-    public:
-
-        EGLContext(void* ctx, EGLDisplay& display);
-        EGLContext(EGLDisplay* display, void* config, void* share_context, const int32_t *attrib_list);        
-        virtual ~EGLContext();
-
-        virtual bool MakeCurrent(void* draw, void* read);
-        virtual bool Query(int32_t attribute, int32_t* value);
-        virtual void* CreateImage(unsigned int target, void* buffer, const intptr_t* attrib_list);
-        virtual void* Use();
-        
-    protected:
-
-        EGLDisplay* m_display;
-        void* m_ctx;
-    };
 }}//qor::components
-
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT

@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+#include "src/configuration/configuration.h"
 #include <atomic>
 #include "inlist.h"
 #include "common/str.h"

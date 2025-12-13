@@ -27,7 +27,7 @@
 
 namespace qor { namespace components{
 
-    EGLWindow::EGLWindow()
+    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context) : m_display(display), m_context(context)
     {        
     }
 
@@ -43,6 +43,16 @@ namespace qor { namespace components{
     void* EGLWindow::GetNativeWindow()
     {
         return nullptr;
+    }
+
+    void EGLWindow::MakeCurrent(void* surface)
+    {
+        m_display(qor_shared).InternalMakeCurrent(surface, surface, m_context->Use());
+    }
+
+    void EGLWindow::Refresh(void* surface)
+    {
+        m_display(qor_shared).SwapBuffers(surface);
     }
     
 }}//qor::components

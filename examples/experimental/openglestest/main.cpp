@@ -29,6 +29,7 @@
 #include "src/components/framework/ui/egl/window.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
+#include "src/components/framework/ui/opengles/glwindow.h"
 
 #include <string>
 #include <sstream>
@@ -93,66 +94,28 @@ int main()
             role->AddFeature<qor::components::EGLFeature>(
                 [](ref_of<qor::components::EGLFeature>::type eglFeature)->void
                 {
-                    //customFeature->DoThatConfigurationThing("Hello world.");                    
                 }
             );
 
-            role->AddFeature<qor::components::OpenGLESFeature>(
-
-            );
+            role->AddFeature<qor::components::OpenGLESFeature>();
         }
     ).Run(
 
         make_runable(
 
             []()->int
-            {                
-                auto egl = AppBuilder().TheApplication()->
+            {
+                auto opengles = AppBuilder().TheApplication()->
                 GetRole(qor_shared)->
-                GetFeature(&EGLFeatureGUID).
-                AsRef<qor::components::EGLFeature>();
+                GetFeature(&OpenGLESFeatureGUID).
+                AsRef<qor::components::OpenGLESFeature>();
 
-                auto display = egl->CreateDisplay(nullptr);
+                auto window = opengles->CreateWindow();
 
-                egl->BindAPI(EGL_OPENGL_ES_API);
-                
-                int32_t const attribute_list[] = {
-                    EGL_RED_SIZE, 8,
-                    EGL_GREEN_SIZE, 8,
-                    EGL_BLUE_SIZE, 8,
-                    EGL_ALPHA_SIZE, 8,
-                    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-                    EGL_DEPTH_SIZE,8,
-                    EGL_NONE
-                };
-
-              	int32_t surfaceAttributes[] = { EGL_NONE };
-            	int32_t contextAttributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-
-                void* config = new void*[1];
-                int eglNumConfig;
-                if (!display->ChooseConfig(attribute_list, &config, 1, &eglNumConfig) || eglNumConfig == 0) 
-                {
-                    std::cout << "Could not get valid egl configuration!" << std::endl;
-                    return 1;
-                }
-
-
-                auto context = display->CreateContext(config, nullptr, contextAttributes);
-
-                auto window = egl->CreateNativeWindow();
-
-                auto surface = display->CreateWindowSurface(config, window->GetNativeWindow(), nullptr);
-
-                std::cout << "EGL Version = " << display->QueryString(EGL_VERSION) << "\n";
-                std::cout << "EGL Vendor = " << display->QueryString(EGL_VENDOR) << "\n";
-                std::cout << "EGL Client APIs : \n" << display->QueryString(EGL_CLIENT_APIS) << "\n";
-                std::cout << "EGL Extensions : \n" << display->QueryString(EGL_EXTENSIONS) << "\n";
-                std::cout << "EGL Configurations:\n";
 
                 void** configs;
                 int eglNumConfigs;
-                display->GetConfigs(nullptr, 0, &eglNumConfigs);
+                opengles->Display(qor_shared)->GetConfigs(nullptr, 0, &eglNumConfigs);
 
                 configs = new void*[eglNumConfigs];
 
@@ -161,7 +124,7 @@ int main()
                     std::cout << "Config " << i << "\n";
                     std::cout << "Supported APIs :\n";
                     int eglRenderable;
-                    display->GetConfigAttrib(configs[i], EGL_RENDERABLE_TYPE, &eglRenderable);
+                    opengles->Display(qor_shared)->GetConfigAttrib(configs[i], EGL_RENDERABLE_TYPE, &eglRenderable);
                     if (eglRenderable & EGL_OPENGL_ES_BIT) std::cout << "OPENGL ES" << "\n";
                     if (eglRenderable & EGL_OPENGL_ES2_BIT) std::cout << "OPENGL ES2" << "\n";
                     if (eglRenderable & EGL_OPENVG_BIT) std::cout << "OPENVG" << "\n";
@@ -169,31 +132,11 @@ int main()
                     std::cout << "\n";
                 }
 
-
-                context->MakeCurrent(surface, surface);
-
+                opengles->MakeCurrent(window);
+                
                 outputGLESInfo();
 
-                //MSG uMsg;
-                //PeekMessage(&uMsg, NULL, 0, 0, PM_REMOVE);
-
-                long long qpcStart, qpcEnd;
-
-                //while (!quit)  
-                {
-
-                    //QueryPerformanceCounter((LARGE_INTEGER*)&qpcStart);
-                    //renderScene(timeFactor);
-
-                    /*
-                    while (PeekMessage(&uMsg, NULL, 0, 0, PM_REMOVE) > 0) {
-                        TranslateMessage(&uMsg);
-                        DispatchMessage(&uMsg);
-                    }
-                    */
-
-                    display->SwapBuffers(surface);
-                }
+                opengles->Display(qor_shared)->SwapBuffers(window->Surface());
 
                 return EXIT_SUCCESS;
             }

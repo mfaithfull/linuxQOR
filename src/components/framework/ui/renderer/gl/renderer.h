@@ -165,11 +165,11 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         void damage(RenderData rd, const RenderRegion& region) override;
         bool partial(bool disable) override;
 
-        static GlRenderer* gen(uint32_t threads);
+        static GlRenderer* gen(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, uint32_t threads);
         static bool term();
 
     private:
-        GlRenderer(); 
+        GlRenderer(ref_of<OpenGLESFeature>::type openGLES); 
         ~GlRenderer();
 
         void initShaders();
@@ -191,6 +191,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         void clearDisposes();
         void currentContext();
 
+        qor::ref_of<qor::components::OpenGLESFeature>::type m_openGLES;
         void* mContext = nullptr;
         RenderSurface surface;
         GLint mTargetFboId = 0;

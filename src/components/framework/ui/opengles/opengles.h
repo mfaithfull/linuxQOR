@@ -28,6 +28,8 @@
 #include "src/framework/role/ifeature.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "src/components/framework/ui/egl/display.h"
+#include "src/components/framework/ui/egl/context.h"
 
 #ifndef QOR_PP_IMPLEMENTS_OPENGLES
 namespace qor{ bool qor_pp_import ImplementsOpenGLESFeature(); }
@@ -35,6 +37,7 @@ namespace qor{ bool qor_pp_import ImplementsOpenGLESFeature(); }
 
 namespace qor { namespace components{
 
+    class qor_pp_module_interface(QOR_OPENGLES) OpenGLESWindow;
     class qor_pp_module_interface(QOR_OPENGLES) OpenGLESFeature : public framework::IFeature
     {
     public:
@@ -44,12 +47,98 @@ namespace qor { namespace components{
         OpenGLESFeature();
         virtual ~OpenGLESFeature() = default;
 
-        virtual void Setup(){};
-        virtual void Shutdown(){};
+        virtual void Setup();
+        virtual void Shutdown();
 
         virtual const byte* GetString (unsigned int name);
         virtual unsigned int GetError();
 
+        qor::ref_of<OpenGLESWindow>::type CreateWindow();
+        bool MakeCurrent(qor::ref_of<OpenGLESWindow>::type openGLESWindow);
+
+        qor::ref_of<EGLDisplay>::type Display()
+        {
+            return m_display;
+        }
+
+        qor::ref_of<EGLContext>::type Context()
+        {
+            return m_context;
+        }
+
+        virtual void GenBuffers(int n, unsigned int* buffers){};
+        virtual void DeleteBuffers(int n, const unsigned int* buffers){};
+        virtual void GenVertexArrays(int n, unsigned int* arrays){};
+        virtual void DeleteVertexArrays(int n, const unsigned int* arrays){};
+        virtual void GenFrameBuffers(int n, unsigned int* frameBuffers){};
+        virtual void BindFrameBuffer(unsigned int target, unsigned int framebuffer){};
+        virtual void GenRenderBuffers(int n, unsigned int* renderBuffers){};
+        virtual void BindRenderBuffer(unsigned int target, unsigned int renderBuffer){};
+        virtual void RenderBufferStorageMultisample(unsigned int target, int samples, unsigned int internalformat, int width, int height){};
+        virtual void FrameBufferRenderBuffer(unsigned int target, unsigned int attachment, unsigned int renderbuffertarget, unsigned int renderbuffer){};
+        virtual void GenTextures(int n, unsigned int* textures){};
+        virtual void BindTexture(unsigned int target, unsigned int texture){};
+        virtual void TexImage2D(unsigned int target, int level, int internalformat, int width, int height, int border, unsigned int format, unsigned int type, const void *pixels){};
+        virtual void TexParameteri(unsigned int target, unsigned int pname, int param){};
+        virtual void FrameBufferTexture2D(unsigned int target, unsigned int attachment, unsigned int textarget, unsigned int texture, int level){};
+        virtual void DeleteFrameBuffers(int n, const unsigned int* framebuffers){};
+        virtual void DeleteRenderBuffers(int n, const unsigned int* renderbuffers){};
+        virtual void DeleteTextures(int n, const unsigned int* textures){};
+        virtual unsigned int CreateShader(unsigned int type){ return 0; };
+        virtual void ShaderSource(unsigned int shader, int count, const char* const* string, const int* length){};
+        virtual void CompileShader(unsigned int shader){};
+        virtual void GetShaderiv(unsigned int shader, unsigned int pname, int* params){};
+        virtual void GetShaderInfoLog(unsigned int shader, int bufSize, int* length, char* infoLog){};
+        virtual void DeleteShader(unsigned int shader){};
+        virtual unsigned int CreateProgram(void){ return 0; };
+        virtual void AttachShader(unsigned int program, unsigned int shader){};
+        virtual void LinkProgram(unsigned int program){};
+        virtual void GetProgramiv(unsigned int program, unsigned int pname, int* params){};
+        virtual void GetProgramInfoLog(unsigned int program, int bufSize, int* length, char* infoLog){};
+        virtual void DeleteProgram(unsigned int program){};
+        virtual void UseProgram(unsigned int program){};
+        virtual int GetAttribLocation(unsigned int program, const char* name){ return 0; };
+        virtual int GetUniformLocation(unsigned int program, const char* name){ return 0; };
+        virtual unsigned int GetUniformBlockIndex(unsigned int program, const char* uniformBlockName){ return 0; };
+        virtual void Uniform1iv(int location, int count, const int* value){};
+        virtual void GetIntegerv(unsigned long pname, int* data){};
+        virtual void BlendFunc(unsigned int sfactor, unsigned int dfactor){};
+        virtual void Enable(unsigned int cap){};
+        virtual void CullFace(unsigned int mode){};
+        virtual void FrontFace(unsigned int mode){};
+        virtual void DepthFunc(unsigned int func){};
+        virtual void Disable(unsigned int cap){};
+        virtual void BindBuffer(unsigned int target, unsigned int buffer){};
+        virtual void BufferData(unsigned int target, signed long long size, const void *data, unsigned int usage){};
+        virtual void BindVertexArray(unsigned int array){};
+        virtual void Viewport(int x, int y, int width, int height){};
+        virtual void Scissor(int x, int y, int width, int height){};
+        virtual void BlitFrameBuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, unsigned int mask, unsigned int filter){};
+        virtual void ClearColour(float red, float green, float blue, float alpha){};
+        virtual void Clear(unsigned int mask){};
+        virtual void ClearStencil(int s){};
+        virtual void ClearDepthf(float d){};
+        virtual void DepthMask(unsigned char flag){};
+        virtual void StencilFunc(unsigned int func, int ref, unsigned int mask){};
+        virtual void StencilOp(unsigned int fail, unsigned int zfail, unsigned int zpass){};
+        virtual void StencilFuncSeparate(unsigned int face, unsigned int func, int ref, unsigned int mask){};
+        virtual void StencilOpSeparate(unsigned int face, unsigned int sfail, unsigned int dpfail, unsigned int dppass){};
+        virtual void ColourMask(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha){};
+        virtual void Uniform1f(int location, float v0){};
+        virtual void EnableVertexAttribArray(unsigned int index){};
+        virtual void VertexAttribPointer(unsigned int index, int size, unsigned int type, unsigned char normalized, int stride, const void* pointer){};
+        virtual void ActiveTexture(unsigned int texture){};
+        virtual void UniformBlockBinding(unsigned int program, unsigned int uniformBlockIndex, unsigned int uniformBlockBinding){};
+        virtual void BindBufferRange(unsigned int target, unsigned int index, unsigned int buffer, signed long long offset, signed long long size){};
+        virtual void DrawElements(unsigned int mode, int count, unsigned int type, const void* indices){};
+        virtual void DisableVertexAttribArray(unsigned int index){};
+        virtual void InvalidateFramebuffer (unsigned int target, int numAttachments, const unsigned int* attachments){};
+
+    private:
+
+        qor::ref_of<EGLDisplay>::type m_display;
+        qor::ref_of<EGLContext>::type m_context;
+        void* m_config[2];
     };
     } //components
 

@@ -43,7 +43,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#include "src/configuration/configuration.h"
 #include "program.h"
 
 namespace qor{ namespace components{ namespace ui{ namespace renderer{
@@ -58,36 +58,36 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     /* External Class Implementation                                        */
     /************************************************************************/
 
-    GlProgram::GlProgram(const char* vertSrc, const char* fragSrc)
+    GlProgram::GlProgram(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, const char* vertSrc, const char* fragSrc) : m_openGLES(openGLES)
     {
-        auto shader = GlShader(vertSrc, fragSrc);
+        auto shader = GlShader(m_openGLES, vertSrc, fragSrc);
 
         // Create the program object
-        uint32_t progObj = glCreateProgram();
+        uint32_t progObj = m_openGLES->CreateProgram();
         assert(progObj);
 
-        glAttachShader(progObj, shader.getVertexShader());
-        glAttachShader(progObj, shader.getFragmentShader());
+        m_openGLES->AttachShader(progObj, shader.getVertexShader());
+        m_openGLES->AttachShader(progObj, shader.getFragmentShader());
 
         // Link the program
-        glLinkProgram(progObj);
+        m_openGLES->LinkProgram(progObj);
 
         // Check the link status
         GLint linked;
-        glGetProgramiv(progObj, GL_LINK_STATUS, &linked);
+        m_openGLES->GetProgramiv(progObj, GL_LINK_STATUS, &linked);
 
         if (!linked) {
             GLint infoLen = 0;
-            glGetProgramiv(progObj, GL_INFO_LOG_LENGTH, &infoLen);
+            m_openGLES->GetProgramiv(progObj, GL_INFO_LOG_LENGTH, &infoLen);
             if (infoLen > 0)
             {
                 auto infoLog = malloc<char>(sizeof(char) * infoLen);
-                glGetProgramInfoLog(progObj, infoLen, NULL, infoLog);
+                m_openGLES->GetProgramInfoLog(progObj, infoLen, NULL, infoLog);
                 TVGERR("GL_ENGINE", "Error linking shader: %s", infoLog);
                 free(infoLog);
 
             }
-            glDeleteProgram(progObj);
+            m_openGLES->DeleteProgram(progObj);
             progObj = 0;
             assert(0);
         }
@@ -98,7 +98,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     GlProgram::~GlProgram()
     {
         if (mCurrentProgram == mProgramObj) unload();
-        glDeleteProgram(mProgramObj);
+        m_openGLES->DeleteProgram(mProgramObj);
     }
 
 
@@ -106,7 +106,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     {
         if (mCurrentProgram == mProgramObj) return;
         mCurrentProgram = mProgramObj;
-        GL_CHECK(glUseProgram(mProgramObj));
+        m_openGLES->UseProgram(mProgramObj);
 
     }
 
@@ -119,20 +119,20 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     int32_t GlProgram::getAttributeLocation(const char* name)
     {
-        GL_CHECK(int32_t location = glGetAttribLocation(mCurrentProgram, name));
+        GL_CHECK(int32_t location = m_openGLES->GetAttribLocation(mCurrentProgram, name));
         return location;
     }
 
 
     int32_t GlProgram::getUniformLocation(const char* name)
     {
-        GL_CHECK(int32_t location = glGetUniformLocation(mProgramObj, name));
+        GL_CHECK(int32_t location = m_openGLES->GetUniformLocation(mProgramObj, name));
         return location;
     }
 
     int32_t GlProgram::getUniformBlockIndex(const char* name)
     {
-        GL_CHECK(int32_t index = glGetUniformBlockIndex(mProgramObj, name));
+        GL_CHECK(int32_t index = m_openGLES->GetUniformBlockIndex(mProgramObj, name));
         return index;
     }
 
@@ -143,7 +143,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     void GlProgram::setUniform1Value(int32_t location, int count, const int* values)
     {
-        GL_CHECK(glUniform1iv(location, count, values));
+        m_openGLES->Uniform1iv(location, count, values);
     }
 
 

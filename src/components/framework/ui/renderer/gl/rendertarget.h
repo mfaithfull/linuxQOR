@@ -32,7 +32,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlRenderTarget
     {
     public:
-        GlRenderTarget();
+        GlRenderTarget(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES);
         ~GlRenderTarget();
 
         void init(uint32_t width, uint32_t height, GLint resolveId);
@@ -51,6 +51,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         bool invalid() const { return mFbo == 0; }
 
     private:
+        qor::ref_of<qor::components::OpenGLESFeature>::type m_openGLES;
         uint32_t mWidth = 0;
         uint32_t mHeight = 0;
         RenderRegion mViewport{};
@@ -63,11 +64,12 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     class GlRenderTargetPool {
     public:
-        GlRenderTargetPool(uint32_t maxWidth, uint32_t maxHeight);
+        GlRenderTargetPool(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, uint32_t maxWidth, uint32_t maxHeight);
         ~GlRenderTargetPool();
 
         GlRenderTarget* getRenderTarget(const RenderRegion& vp, GLuint resolveId = 0);
     private:
+        qor::ref_of<qor::components::OpenGLESFeature>::type m_openGLES;
         uint32_t mMaxWidth = 0;
         uint32_t mMaxHeight = 0;
         Array<GlRenderTarget*> mPool;

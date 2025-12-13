@@ -43,7 +43,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#include "src/configuration/configuration.h"
 #include "shader.h"
 
 namespace qor{ namespace components{ namespace ui{ namespace renderer{
@@ -58,7 +58,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         GLint compiled;
 
         // Create the shader object
-        shader = glCreateShader(type);
+        shader = m_openGLES->CreateShader(type);
 
         /**
          * [0] shader version string
@@ -67,37 +67,37 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
          */
         const char* shaderPack[3];
         // but in general All Desktop GPU should use OpenGL version ( #version 330 core )
-    #if defined (THORVG_GL_TARGET_GLES)
+    //#if defined (THORVG_GL_TARGET_GLES)
         shaderPack[0] ="#version 300 es\n";
-    #else
-        shaderPack[0] ="#version 330 core\n";
-    #endif
+    //#else
+        //shaderPack[0] ="#version 330 core\n";
+    //#endif
         shaderPack[1] = "precision highp float;\n precision highp int;\n";
         shaderPack[2] = shaderSrc;
 
         // Load the shader source
-        glShaderSource(shader, 3, shaderPack, NULL);
+        m_openGLES->ShaderSource(shader, 3, shaderPack, NULL);
 
         // Compile the shader
-        glCompileShader(shader);
+        m_openGLES->CompileShader(shader);
 
         // Check the compile status
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+         m_openGLES->GetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 
         if (!compiled)
         {
             GLint infoLen = 0;
 
-            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
+             m_openGLES->GetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
 
             if (infoLen > 0)
             {
                 auto infoLog = malloc<char>(sizeof(char)*infoLen);
-                glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
+                m_openGLES->GetShaderInfoLog(shader, infoLen, NULL, infoLog);
                 TVGERR("GL_ENGINE", "Error compiling shader: %s", infoLog);
                 free(infoLog);
             }
-            glDeleteShader(shader);
+            m_openGLES->DeleteShader(shader);
         }
 
         return shader;
@@ -107,7 +107,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     /* External Class Implementation                                        */
     /************************************************************************/
 
-    GlShader::GlShader(const char* vertSrc, const char* fragSrc)
+    GlShader::GlShader(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, const char* vertSrc, const char* fragSrc) : m_openGLES(openGLES)
     {
         mVtShader = compileShader(GL_VERTEX_SHADER, const_cast<char*>(vertSrc));
         mFrShader = compileShader(GL_FRAGMENT_SHADER, const_cast<char*>(fragSrc));
@@ -116,8 +116,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     GlShader::~GlShader()
     {
-        glDeleteShader(mVtShader);
-        glDeleteShader(mFrShader);
+        m_openGLES->DeleteShader(mVtShader);
+        m_openGLES->DeleteShader(mFrShader);
     }
 
     uint32_t GlShader::getVertexShader()

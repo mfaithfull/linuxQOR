@@ -43,7 +43,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#include "src/configuration/configuration.h"
 #include "rendertask.h"
 #include "program.h"
 #include "renderpass.h"
@@ -54,7 +54,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 /* GlRenderTask Class Implementation                                    */
 /************************************************************************/
 
-GlRenderTask::GlRenderTask(GlProgram* program, GlRenderTask* other): mProgram(program)
+GlRenderTask::GlRenderTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program, GlRenderTask* other): m_openGLES(openGLES), mProgram(program)
 {
     mVertexLayout.push(other->mVertexLayout);
     mViewport = other->mViewport;
@@ -69,45 +69,44 @@ void GlRenderTask::run()
     mProgram->load();
 
     int32_t dLoc = mProgram->getUniformLocation("uDepth");
-    if (dLoc >= 0) {
-        // fixme: prevent compiler warning: macro expands to multiple statements [-Wmultistatement-macros]
-        GL_CHECK(glUniform1f(dLoc, mDrawDepth));
+    if (dLoc >= 0) {        
+        m_openGLES->Uniform1f(dLoc, mDrawDepth);
     }
 
     // setup scissor rect
-    GL_CHECK(glScissor(mViewport.sx(), mViewport.sy(), mViewport.sw(), mViewport.sh()));
+    m_openGLES->Scissor(mViewport.sx(), mViewport.sy(), mViewport.sw(), mViewport.sh());
 
     // setup attribute layout
-    for (uint32_t i = 0; i < mVertexLayout.count; i++) {
+    for (uint32_t i = 0; i < mVertexLayout.count; i++) 
+    {
         const auto &layout = mVertexLayout[i];
-        GL_CHECK(glEnableVertexAttribArray(layout.index));
-        GL_CHECK(glVertexAttribPointer(layout.index, layout.size, GL_FLOAT,
+        m_openGLES->EnableVertexAttribArray(layout.index);
+        m_openGLES->VertexAttribPointer(layout.index, layout.size, GL_FLOAT,
                                    GL_FALSE, layout.stride,
-                                   reinterpret_cast<void *>(layout.offset)));
+                                   reinterpret_cast<void *>(layout.offset));
     }
 
     // binding uniforms
     for (uint32_t i = 0; i < mBindingResources.count; i++) {
         const auto& binding = mBindingResources[i];
         if (binding.type == GlBindingType::kTexture) {
-            GL_CHECK(glActiveTexture(GL_TEXTURE0 + binding.bindPoint));
-            GL_CHECK(glBindTexture(GL_TEXTURE_2D, binding.gBufferId));
+            m_openGLES->ActiveTexture(GL_TEXTURE0 + binding.bindPoint);
+            m_openGLES->BindTexture(GL_TEXTURE_2D, binding.gBufferId);
 
             mProgram->setUniform1Value(binding.location, 1, (int32_t*)&binding.bindPoint);
         } else if (binding.type == GlBindingType::kUniformBuffer) {
 
-            GL_CHECK(glUniformBlockBinding(mProgram->getProgramId(), binding.location, binding.bindPoint));
-            GL_CHECK(glBindBufferRange(GL_UNIFORM_BUFFER, binding.bindPoint, binding.gBufferId,
-                                       binding.bufferOffset, binding.bufferRange));
+            m_openGLES->UniformBlockBinding(mProgram->getProgramId(), binding.location, binding.bindPoint);
+            m_openGLES->BindBufferRange(GL_UNIFORM_BUFFER, binding.bindPoint, binding.gBufferId, binding.bufferOffset, binding.bufferRange);
         }
     }
 
-    GL_CHECK(glDrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_INT, reinterpret_cast<void*>(mIndexOffset)));
+    m_openGLES->DrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_INT, reinterpret_cast<void*>(mIndexOffset));
 
     // setup attribute layout
     for (uint32_t i = 0; i < mVertexLayout.count; i++) {
         const auto &layout = mVertexLayout[i];
-        GL_CHECK(glDisableVertexAttribArray(layout.index));
+        m_openGLES->DisableVertexAttribArray(layout.index);
     }
 }
 
@@ -143,8 +142,8 @@ void GlRenderTask::setViewport(const RenderRegion &viewport)
 /* GlStencilCoverTask Class Implementation                              */
 /************************************************************************/
 
-GlStencilCoverTask::GlStencilCoverTask(GlRenderTask* stencil, GlRenderTask* cover, GlStencilMode mode)
- :GlRenderTask(nullptr), mStencilTask(stencil), mCoverTask(cover), mStencilMode(mode)
+GlStencilCoverTask::GlStencilCoverTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlRenderTask* stencil, GlRenderTask* cover, GlStencilMode mode)
+ :GlRenderTask(openGLES, nullptr), mStencilTask(stencil), mCoverTask(cover), mStencilMode(mode)
  {
 
  }
@@ -159,35 +158,35 @@ GlStencilCoverTask::~GlStencilCoverTask()
 
 void GlStencilCoverTask::run()
 {
-    GL_CHECK(glEnable(GL_STENCIL_TEST));
+    m_openGLES->Enable(GL_STENCIL_TEST);
 
     if (mStencilMode == GlStencilMode::Stroke) {
-        GL_CHECK(glStencilFunc(GL_NOTEQUAL, 0x1, 0xFF));
-        GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
+        m_openGLES->StencilFunc(GL_NOTEQUAL, 0x1, 0xFF);
+        m_openGLES->StencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     } else {
-        GL_CHECK(glStencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0x0, 0xFF));
-        GL_CHECK(glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP));
+        m_openGLES->StencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0x0, 0xFF);
+        m_openGLES->StencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP);
 
-        GL_CHECK(glStencilFuncSeparate(GL_BACK, GL_ALWAYS, 0x0, 0xFF));
-        GL_CHECK(glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP));
+        m_openGLES->StencilFuncSeparate(GL_BACK, GL_ALWAYS, 0x0, 0xFF);
+        m_openGLES->StencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP);
     }
-    GL_CHECK(glColorMask(0, 0, 0, 0));
+    m_openGLES->ColourMask(0, 0, 0, 0);
 
     mStencilTask->run();
 
     if (mStencilMode == GlStencilMode::FillEvenOdd) {
-        GL_CHECK(glStencilFunc(GL_NOTEQUAL, 0x00, 0x01));
-        GL_CHECK(glStencilOp(GL_REPLACE, GL_KEEP, GL_REPLACE));
+        m_openGLES->StencilFunc(GL_NOTEQUAL, 0x00, 0x01);
+        m_openGLES->StencilOp(GL_REPLACE, GL_KEEP, GL_REPLACE);
     } else {
-        GL_CHECK(glStencilFunc(GL_NOTEQUAL, 0x0, 0xFF));
-        GL_CHECK(glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE));
+        m_openGLES->StencilFunc(GL_NOTEQUAL, 0x0, 0xFF);
+        m_openGLES->StencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     }
 
-    GL_CHECK(glColorMask(1, 1, 1, 1));
+    m_openGLES->ColourMask(1, 1, 1, 1);
 
     mCoverTask->run();
 
-    GL_CHECK(glDisable(GL_STENCIL_TEST));
+    m_openGLES->Disable(GL_STENCIL_TEST);
 }
 
 
@@ -202,8 +201,8 @@ void GlStencilCoverTask::normalizeDrawDepth(int32_t maxDepth)
 /* GlComposeTask Class Implementation                                   */
 /************************************************************************/
 
-GlComposeTask::GlComposeTask(GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks)
- :GlRenderTask(program) ,mTargetFbo(target), mFbo(fbo), mTasks()
+GlComposeTask::GlComposeTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks)
+ :GlRenderTask(openGLES, program) ,mTargetFbo(target), mFbo(fbo), mTasks()
 {
     mTasks.push(tasks);
     tasks.clear();
@@ -219,37 +218,37 @@ GlComposeTask::~GlComposeTask()
 
 void GlComposeTask::run()
 {
-    GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, getSelfFbo()));
+    m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, getSelfFbo());
 
     // we must clear all area of fbo
-    GL_CHECK(glViewport(0, 0, mFbo->getWidth(), mFbo->getHeight()));
-    GL_CHECK(glScissor(0, 0, mFbo->getWidth(), mFbo->getHeight()));
-    GL_CHECK(glClearColor(0, 0, 0, 0));
-    GL_CHECK(glClearStencil(0));
-#ifdef THORVG_GL_TARGET_GLES
-    GL_CHECK(glClearDepthf(0.0));
-#else
-    GL_CHECK(glClearDepth(0.0));
-#endif
-    GL_CHECK(glDepthMask(1));
+    m_openGLES->Viewport(0, 0, mFbo->getWidth(), mFbo->getHeight());
+    m_openGLES->Scissor(0, 0, mFbo->getWidth(), mFbo->getHeight());
+    m_openGLES->ClearColour(0, 0, 0, 0);
+    m_openGLES->ClearStencil(0);
+//#ifdef THORVG_GL_TARGET_GLES
+    m_openGLES->ClearDepthf(0.0);
+//#else
+    //GL_CHECK(glClearDepth(0.0));
+//#endif
+    m_openGLES->DepthMask(1);
 
-    GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    GL_CHECK(glDepthMask(0));
+    m_openGLES->Clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    m_openGLES->DepthMask(0);
 
-    GL_CHECK(glViewport(0, 0, mRenderWidth, mRenderHeight));
-    GL_CHECK(glScissor(0, 0, mRenderWidth, mRenderHeight));
+    m_openGLES->Viewport(0, 0, mRenderWidth, mRenderHeight);
+    m_openGLES->Scissor(0, 0, mRenderWidth, mRenderHeight);
 
     ARRAY_FOREACH(p, mTasks) {
         (*p)->run();
     }
 
-#if defined(THORVG_GL_TARGET_GLES)
+//#if defined(THORVG_GL_TARGET_GLES)
     // only OpenGLES has tiled base framebuffer and discard function
     GLenum attachments[2] = {GL_STENCIL_ATTACHMENT, GL_DEPTH_ATTACHMENT };
-    GL_CHECK(glInvalidateFramebuffer(GL_FRAMEBUFFER, 2, attachments));
-#endif
+    m_openGLES->InvalidateFramebuffer(GL_FRAMEBUFFER, 2, attachments);
+//#endif
     // reset scissor box
-    GL_CHECK(glScissor(0, 0, mFbo->getWidth(), mFbo->getHeight()));
+    m_openGLES->Scissor(0, 0, mFbo->getWidth(), mFbo->getHeight());
     onResolve();
 }
 
@@ -268,9 +267,9 @@ GLuint GlComposeTask::getResolveFboId()
 
 void GlComposeTask::onResolve()
 {
-    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, getSelfFbo()));
-    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getResolveFboId()));
-    GL_CHECK(glBlitFramebuffer(0, 0, mRenderWidth, mRenderHeight, 0, 0, mRenderWidth, mRenderHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST));
+    m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, getSelfFbo());
+    m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, getResolveFboId());
+    m_openGLES->BlitFrameBuffer(0, 0, mRenderWidth, mRenderHeight, 0, 0, mRenderWidth, mRenderHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
 
@@ -278,8 +277,8 @@ void GlComposeTask::onResolve()
 /* GlBlitTask Class Implementation                                      */
 /************************************************************************/
 
-GlBlitTask::GlBlitTask(GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks)
- : GlComposeTask(program, target, fbo, std::move(tasks)), mColorTex(fbo->getColorTexture())
+GlBlitTask::GlBlitTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks)
+ : GlComposeTask(openGLES, program, target, fbo, std::move(tasks)), mColorTex(fbo->getColorTexture())
 {
 }
 
@@ -288,18 +287,18 @@ void GlBlitTask::run()
 {
     GlComposeTask::run();
 
-    GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, getTargetFbo()));
-    GL_CHECK(glViewport(mTargetViewport.x(), mTargetViewport.y(), mTargetViewport.w(), mTargetViewport.h()));
+    m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, getTargetFbo());
+    m_openGLES->Viewport(mTargetViewport.x(), mTargetViewport.y(), mTargetViewport.w(), mTargetViewport.h());
 
     if (mClearBuffer) {
-        GL_CHECK(glClearColor(0, 0, 0, 0));
-        GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        m_openGLES->ClearColour(0, 0, 0, 0);
+        m_openGLES->Clear(GL_COLOR_BUFFER_BIT);
     }
 
-    GL_CHECK(glDisable(GL_DEPTH_TEST));
+    m_openGLES->Disable(GL_DEPTH_TEST);
     // make sure the blending is correct
-    GL_CHECK(glEnable(GL_BLEND));
-    GL_CHECK(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+    m_openGLES->Enable(GL_BLEND);
+    m_openGLES->BlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     GlRenderTask::run();
 }
@@ -310,8 +309,8 @@ void GlBlitTask::run()
 /************************************************************************/
 
 
-GlDrawBlitTask::GlDrawBlitTask(GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks)
- : GlComposeTask(program, target, fbo, std::move(tasks))
+GlDrawBlitTask::GlDrawBlitTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks)
+ : GlComposeTask(openGLES, program, target, fbo, std::move(tasks))
 {
 }
 
@@ -328,10 +327,10 @@ void GlDrawBlitTask::run()
 
     GlComposeTask::run();
 
-    GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, getTargetFbo()));
+    m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, getTargetFbo());
 
-    GL_CHECK(glViewport(0, 0, mParentWidth, mParentHeight));
-    GL_CHECK(glScissor(0, 0, mParentWidth, mParentHeight));
+    m_openGLES->Viewport(0, 0, mParentWidth, mParentHeight);
+    m_openGLES->Scissor(0, 0, mParentWidth, mParentHeight);
     GlRenderTask::run();
 }
 
@@ -341,8 +340,8 @@ void GlDrawBlitTask::run()
 /************************************************************************/
 
 
-GlSceneBlendTask::GlSceneBlendTask(GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks)
- : GlComposeTask(program, target, fbo, std::move(tasks))
+GlSceneBlendTask::GlSceneBlendTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks)
+ : GlComposeTask(openGLES, program, target, fbo, std::move(tasks))
 {
 }
 
@@ -364,33 +363,33 @@ void GlSceneBlendTask::run()
 
     // Platform-specific source framebuffer binding
 #ifdef __EMSCRIPTEN__
-    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, mSrcFbo->getFboId()));
-    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mSrcFbo->getResolveFboId()));
-    GL_CHECK(glViewport(vp.x(), vp.y(), vp.w(), vp.h()));
-    GL_CHECK(glScissor(vp.x(), vp.y(), vp.w(), vp.h()));
-    GL_CHECK(glBlitFramebuffer(vp.min.x, vp.min.y, vp.max.x, vp.max.y, vp.min.x, vp.min.y, vp.max.x, vp.max.y, GL_COLOR_BUFFER_BIT, GL_LINEAR));
+    m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, mSrcFbo->getFboId());
+    m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, mSrcFbo->getResolveFboId());
+    m_openGLES->Viewport(vp.x(), vp.y(), vp.w(), vp.h());
+    m_openGLES->Scissor(vp.x(), vp.y(), vp.w(), vp.h());
+    m_openGLES->BlitFrameBuffer(vp.min.x, vp.min.y, vp.max.x, vp.max.y, vp.min.x, vp.min.y, vp.max.x, vp.max.y, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
     // Prepare for second blit to destination framebuffer
-    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, mSrcFbo->getResolveFboId()));
+    m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, mSrcFbo->getResolveFboId());
 #else
-    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, getTargetFbo()));
+    m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, getTargetFbo());
 #endif
 
     // Common: bind destination framebuffer and blit
-    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo->getResolveFboId()));
-    GL_CHECK(glViewport(0, 0, mDstCopyFbo->getWidth(), mDstCopyFbo->getHeight()));
-    GL_CHECK(glScissor(0, 0, mDstCopyFbo->getWidth(), mDstCopyFbo->getHeight()));
-    GL_CHECK(glBlitFramebuffer(vp.min.x, vp.min.y, vp.max.x, vp.max.y, 0, 0, vp.w(), vp.h(), GL_COLOR_BUFFER_BIT, GL_LINEAR));
+    m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo->getResolveFboId());
+    m_openGLES->Viewport(0, 0, mDstCopyFbo->getWidth(), mDstCopyFbo->getHeight());
+    m_openGLES->Scissor(0, 0, mDstCopyFbo->getWidth(), mDstCopyFbo->getHeight());
+    m_openGLES->BlitFrameBuffer(vp.min.x, vp.min.y, vp.max.x, vp.max.y, 0, 0, vp.w(), vp.h(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-    GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, getTargetFbo()));
-    GL_CHECK(glViewport(0, 0, mParentWidth, mParentHeight));
-    GL_CHECK(glScissor(0, 0, mParentWidth, mParentHeight));
+    m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, getTargetFbo());
+    m_openGLES->Viewport(0, 0, mParentWidth, mParentHeight);
+    m_openGLES->Scissor(0, 0, mParentWidth, mParentHeight);
 
-    GL_CHECK(glDisable(GL_DEPTH_TEST));
-    GL_CHECK(glBlendFunc(GL_ONE, GL_ZERO));
+    m_openGLES->Disable(GL_DEPTH_TEST);
+    m_openGLES->BlendFunc(GL_ONE, GL_ZERO);
     GlRenderTask::run();
-    GL_CHECK(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
-    GL_CHECK(glEnable(GL_DEPTH_TEST));
+    m_openGLES->BlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    m_openGLES->Enable(GL_DEPTH_TEST);
 }
 
 
@@ -399,7 +398,7 @@ void GlSceneBlendTask::run()
 /************************************************************************/
 
 GlClipTask::GlClipTask(GlRenderTask* clip, GlRenderTask* mask)
- :GlRenderTask(nullptr), mClipTask(clip), mMaskTask(mask) {}
+ :GlRenderTask(m_openGLES, nullptr), mClipTask(clip), mMaskTask(mask) {}
 
 
 GlClipTask::~GlClipTask()
@@ -411,28 +410,28 @@ GlClipTask::~GlClipTask()
 
 void GlClipTask::run()
 {
-    GL_CHECK(glEnable(GL_STENCIL_TEST));
-    GL_CHECK(glColorMask(0, 0, 0, 0));
+    m_openGLES->Enable(GL_STENCIL_TEST);
+    m_openGLES->ColourMask(0, 0, 0, 0);
     // draw clip path as normal stencil mask
-    GL_CHECK(glStencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0x1, 0xFF));
-    GL_CHECK(glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP));
+    m_openGLES->StencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0x1, 0xFF);
+    m_openGLES->StencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP);
 
-    GL_CHECK(glStencilFuncSeparate(GL_BACK, GL_ALWAYS, 0x1, 0xFF));
-    GL_CHECK(glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP));
+    m_openGLES->StencilFuncSeparate(GL_BACK, GL_ALWAYS, 0x1, 0xFF);
+    m_openGLES->StencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP);
 
     mClipTask->run();
 
 
     // draw clip mask
-    GL_CHECK(glDepthMask(1));
-    GL_CHECK(glStencilFunc(GL_EQUAL, 0x0, 0xFF));
-    GL_CHECK(glStencilOp(GL_REPLACE, GL_KEEP, GL_REPLACE));
+    m_openGLES->DepthMask(1);
+    m_openGLES->StencilFunc(GL_EQUAL, 0x0, 0xFF);
+    m_openGLES->StencilOp(GL_REPLACE, GL_KEEP, GL_REPLACE);
 
     mMaskTask->run();
 
-    GL_CHECK(glColorMask(1, 1, 1, 1));
-    GL_CHECK(glDepthMask(0));
-    GL_CHECK(glDisable(GL_STENCIL_TEST));
+    m_openGLES->ColourMask(1, 1, 1, 1);
+    m_openGLES->DepthMask(0);
+    m_openGLES->Disable(GL_STENCIL_TEST);
 }
 
 
@@ -447,28 +446,28 @@ void GlClipTask::normalizeDrawDepth(int32_t maxDepth)
 /************************************************************************/
 
 GlSimpleBlendTask::GlSimpleBlendTask(BlendMethod method, GlProgram* program)
- : GlRenderTask(program), mBlendMethod(method)
+ : GlRenderTask(m_openGLES, program), mBlendMethod(method)
  {
  }
 
 
 void GlSimpleBlendTask::run()
 {
-    if (mBlendMethod == BlendMethod::Add) glBlendFunc(GL_ONE, GL_ONE);
+    if (mBlendMethod == BlendMethod::Add) m_openGLES->BlendFunc(GL_ONE, GL_ONE);
     else if (mBlendMethod == BlendMethod::Darken) {
-        glBlendFunc(GL_ONE, GL_ONE);
+        m_openGLES->BlendFunc(GL_ONE, GL_ONE);
         glBlendEquation(GL_MIN);
     } else if (mBlendMethod == BlendMethod::Lighten) {
-        glBlendFunc(GL_ONE, GL_ONE);
+        m_openGLES->BlendFunc(GL_ONE, GL_ONE);
         glBlendEquation(GL_MAX);
     }
-    else glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    else m_openGLES->BlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     GlRenderTask::run();
 
     if (mBlendMethod == BlendMethod::Darken || mBlendMethod == BlendMethod::Lighten) glBlendEquation(GL_FUNC_ADD);
 
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    m_openGLES->BlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 
@@ -478,7 +477,7 @@ void GlSimpleBlendTask::run()
 
 
 GlComplexBlendTask::GlComplexBlendTask(GlProgram* program, GlRenderTarget* dstFbo, GlRenderTarget* dstCopyFbo, GlRenderTask* stencilTask, GlComposeTask* composeTask)
- : GlRenderTask(program), mDstFbo(dstFbo), mDstCopyFbo(dstCopyFbo), mStencilTask(stencilTask), mComposeTask(composeTask)
+ : GlRenderTask(m_openGLES, program), mDstFbo(dstFbo), mDstCopyFbo(dstCopyFbo), mStencilTask(stencilTask), mComposeTask(composeTask)
  {
  }
 
@@ -495,38 +494,38 @@ void GlComplexBlendTask::run()
     mComposeTask->run();
 
     // copy the current fbo to the dstCopyFbo
-    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId()));
-    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo->getResolveFboId()));
+    m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId());
+    m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo->getResolveFboId());
 
-    GL_CHECK(glViewport(0, 0, mDstFbo->getViewport().w(), mDstFbo->getViewport().h()));
-    GL_CHECK(glScissor(0, 0, mDstFbo->getViewport().w(), mDstFbo->getViewport().h()));
+    m_openGLES->Viewport(0, 0, mDstFbo->getViewport().w(), mDstFbo->getViewport().h());
+    m_openGLES->Scissor(0, 0, mDstFbo->getViewport().w(), mDstFbo->getViewport().h());
     
     const auto& vp = getViewport();
-    GL_CHECK(glBlitFramebuffer(vp.min.x, vp.min.y, vp.max.x, vp.max.y, 0, 0, vp.w(), vp.h(), GL_COLOR_BUFFER_BIT, GL_LINEAR));
+    m_openGLES->BlitFrameBuffer(vp.min.x, vp.min.y, vp.max.x, vp.max.y, 0, 0, vp.w(), vp.h(), GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
-    GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mDstFbo->getFboId()));
+    m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mDstFbo->getFboId());
 
-    GL_CHECK(glEnable(GL_STENCIL_TEST));
-    GL_CHECK(glColorMask(0, 0, 0, 0));
-    GL_CHECK(glStencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0x0, 0xFF));
-    GL_CHECK(glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP));
+    m_openGLES->Enable(GL_STENCIL_TEST);
+    m_openGLES->ColourMask(0, 0, 0, 0);
+    m_openGLES->StencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0x0, 0xFF);
+    m_openGLES->StencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP);
 
-    GL_CHECK(glStencilFuncSeparate(GL_BACK, GL_ALWAYS, 0x0, 0xFF));
-    GL_CHECK(glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP));
+    m_openGLES->StencilFuncSeparate(GL_BACK, GL_ALWAYS, 0x0, 0xFF);
+    m_openGLES->StencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP);
 
 
     mStencilTask->run();
 
-    GL_CHECK(glColorMask(1, 1, 1, 1));
-    GL_CHECK(glStencilFunc(GL_NOTEQUAL, 0x0, 0xFF));
-    GL_CHECK(glStencilOp(GL_REPLACE, GL_KEEP, GL_REPLACE));
+    m_openGLES->ColourMask(1, 1, 1, 1);
+    m_openGLES->StencilFunc(GL_NOTEQUAL, 0x0, 0xFF);
+    m_openGLES->StencilOp(GL_REPLACE, GL_KEEP, GL_REPLACE);
 
-    GL_CHECK(glBlendFunc(GL_ONE, GL_ZERO));
+    m_openGLES->BlendFunc(GL_ONE, GL_ZERO);
 
     GlRenderTask::run();
 
-    GL_CHECK(glDisable(GL_STENCIL_TEST));
-    GL_CHECK(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+    m_openGLES->Disable(GL_STENCIL_TEST);
+    m_openGLES->BlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 
@@ -555,26 +554,26 @@ void GlGaussianBlurTask::run()
     GLint horzSrcTextureLoc = programHorz->getUniformLocation("uSrcTexture");
     GLint vertSrcTextureLoc = programVert->getUniformLocation("uSrcTexture");
 
-    GL_CHECK(glViewport(0, 0, width, height));
-    GL_CHECK(glScissor(0, 0, width, height));
+    m_openGLES->Viewport(0, 0, width, height);
+    m_openGLES->Scissor(0, 0, width, height);
     // we need to make a full copy of dst to intermediate buffers to be sure that they don’t contain prev data.
-    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId()));
-    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo0->getResolveFboId()));
-    GL_CHECK(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
-    GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mDstFbo->getFboId()));
+    m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId());
+    m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo0->getResolveFboId());
+    m_openGLES->BlitFrameBuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mDstFbo->getFboId());
 
-    GL_CHECK(glDisable(GL_BLEND));
+    m_openGLES->Disable(GL_BLEND);
     if (effect->direction == 0) {
-        GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId()));
-        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo1->getResolveFboId()));
-        GL_CHECK(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
+        m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId());
+        m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo1->getResolveFboId());
+        m_openGLES->BlitFrameBuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
         // horizontal blur
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mDstCopyFbo1->getResolveFboId()));
+        m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mDstCopyFbo1->getResolveFboId());
         horzTask->setViewport(vp);
         horzTask->addBindResource({ 0, dstCopyTexId0, horzSrcTextureLoc });
         horzTask->run();
         // vertical blur
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mDstFbo->getFboId()));
+        m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mDstFbo->getFboId());
         vertTask->setViewport(vp);
         vertTask->addBindResource({ 0, dstCopyTexId1, vertSrcTextureLoc });
         vertTask->run();
@@ -589,7 +588,7 @@ void GlGaussianBlurTask::run()
         vertTask->addBindResource({ 0, dstCopyTexId0, vertSrcTextureLoc });
         vertTask->run();
     }
-    GL_CHECK(glEnable(GL_BLEND));
+    m_openGLES->Enable(GL_BLEND);
 }
 
 /************************************************************************/
@@ -616,39 +615,39 @@ void GlEffectDropShadowTask::run()
     addBindResource({ 0, dstCopyTexId0, srcTextureLoc });
     addBindResource({ 1, dstCopyTexId1, blrTextureLoc });
 
-    GL_CHECK(glViewport(0, 0, width, height));
-    GL_CHECK(glScissor(0, 0, width, height));
+    m_openGLES->Viewport(0, 0, width, height);
+    m_openGLES->Scissor(0, 0, width, height);
 
     // we need to make a full copy of dst to intermediate buffers to be sure that they don’t contain prev data.
-    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId()));
-    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo0->getResolveFboId()));
-    GL_CHECK(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
-    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId()));
-    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo1->getResolveFboId()));
-    GL_CHECK(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
+    m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId());
+    m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo0->getResolveFboId());
+    m_openGLES->BlitFrameBuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId());
+    m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo1->getResolveFboId());
+    m_openGLES->BlitFrameBuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     
-    GL_CHECK(glDisable(GL_BLEND));
+    m_openGLES->Disable(GL_BLEND);
     // when sigma is 0, no blur is applied, and the original image is used directly as the shadow.
     if (!zero(effect->sigma)) {
         // horizontal blur
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mDstCopyFbo0->getResolveFboId()));
+        m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mDstCopyFbo0->getResolveFboId());
         horzTask->setViewport(vp);
         horzTask->addBindResource({ 0, dstCopyTexId1, horzSrcTextureLoc });
         horzTask->run();
         // vertical blur
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mDstCopyFbo1->getResolveFboId()));
+        m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mDstCopyFbo1->getResolveFboId());
         vertTask->setViewport(vp);
         vertTask->addBindResource({ 0, dstCopyTexId0, vertSrcTextureLoc });
         vertTask->run();
         // copy original image to intermediate buffer
-        GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId()));
-        GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo0->getResolveFboId()));
-        GL_CHECK(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
+        m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId());
+        m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo0->getResolveFboId());
+        m_openGLES->BlitFrameBuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
     // run drop shadow effect
-    GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mDstFbo->getFboId()));
+    m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mDstFbo->getFboId());
     GlRenderTask::run();
-    GL_CHECK(glEnable(GL_BLEND));
+    m_openGLES->Enable(GL_BLEND);
 }
 
 /************************************************************************/
@@ -664,18 +663,18 @@ void GlEffectColorTransformTask::run()
     GLint srcTextureLoc = getProgram()->getUniformLocation("uSrcTexture");
     addBindResource({ 0, dstCopyTexId, srcTextureLoc });
 
-    GL_CHECK(glViewport(0, 0, width, height));
-    GL_CHECK(glScissor(0, 0, width, height));
+    m_openGLES->Viewport(0, 0, width, height);
+    m_openGLES->Scissor(0, 0, width, height);
     // we need to make a full copy of dst to intermediate buffers to be sure that they don’t contain prev data.
-    GL_CHECK(glBindFramebuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId()));
-    GL_CHECK(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo->getResolveFboId()));
-    GL_CHECK(glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
-    GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mDstFbo->getFboId()));
+    m_openGLES->BindFrameBuffer(GL_READ_FRAMEBUFFER, mDstFbo->getFboId());
+    m_openGLES->BindFrameBuffer(GL_DRAW_FRAMEBUFFER, mDstCopyFbo->getResolveFboId());
+    m_openGLES->BlitFrameBuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mDstFbo->getFboId());
 
     // run transform
-    GL_CHECK(glDisable(GL_BLEND));
+    m_openGLES->Disable(GL_BLEND);
     GlRenderTask::run();
-    GL_CHECK(glEnable(GL_BLEND));
+    m_openGLES->Enable(GL_BLEND);
 }
 
 }}}}//qor::components::ui::renderer

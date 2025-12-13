@@ -35,6 +35,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlEffect
     {
     private:
+        qor::ref_of<qor::components::OpenGLESFeature>::type m_openGLES;
         GlStageBuffer* gpuBuffer; //shared resource with GlRenderer
 
         GlProgram* pBlurV{};
@@ -58,7 +59,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         GlRenderTask* render(RenderEffect* effect, GlRenderTarget* dstFbo, Array<GlRenderTargetPool*>& blendPool, const RenderRegion& vp, uint32_t voffset, uint32_t ioffset);
 
     public:
-        GlEffect(GlStageBuffer* buffer);
+        GlEffect(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlStageBuffer* buffer);
         ~GlEffect();
 
         void update(RenderEffect* effect, const Matrix& transform);

@@ -43,12 +43,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#include "src/configuration/configuration.h"
 #include "rendertarget.h"
 
 namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
-    GlRenderTarget::GlRenderTarget() {}
+    GlRenderTarget::GlRenderTarget(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES) : m_openGLES(openGLES) {}
 
     GlRenderTarget::~GlRenderTarget()
     {
@@ -63,60 +63,59 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         mHeight = height;
 
         //TODO: fbo is used. maybe we can consider the direct rendering with resolveId as well.
-        GL_CHECK(glGenFramebuffers(1, &mFbo));
+        m_openGLES->GenFrameBuffers(1, &mFbo);
+        m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mFbo);
 
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mFbo));
+        m_openGLES->GenRenderBuffers(1, &mColorBuffer);
+        m_openGLES->BindRenderBuffer(GL_RENDERBUFFER, mColorBuffer);
+        m_openGLES->RenderBufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, mWidth, mHeight);
 
-        GL_CHECK(glGenRenderbuffers(1, &mColorBuffer));
-        GL_CHECK(glBindRenderbuffer(GL_RENDERBUFFER, mColorBuffer));
-        GL_CHECK(glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, mWidth, mHeight));
+        m_openGLES->GenRenderBuffers(1, &mDepthStencilBuffer);
 
-        GL_CHECK(glGenRenderbuffers(1, &mDepthStencilBuffer));
+        m_openGLES->BindRenderBuffer(GL_RENDERBUFFER, mDepthStencilBuffer);
 
-        GL_CHECK(glBindRenderbuffer(GL_RENDERBUFFER, mDepthStencilBuffer));
+        m_openGLES->RenderBufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, mWidth, mHeight);
 
-        GL_CHECK(glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, mWidth, mHeight));
+        m_openGLES->BindRenderBuffer(GL_RENDERBUFFER, 0);
 
-        GL_CHECK(glBindRenderbuffer(GL_RENDERBUFFER, 0));
-
-        GL_CHECK(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, mColorBuffer));
-        GL_CHECK(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthStencilBuffer));
+        m_openGLES->FrameBufferRenderBuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, mColorBuffer);
+        m_openGLES->FrameBufferRenderBuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthStencilBuffer);
 
         // resolve target
-        GL_CHECK(glGenTextures(1, &mColorTex));
+        m_openGLES->GenTextures(1, &mColorTex);
 
-        GL_CHECK(glBindTexture(GL_TEXTURE_2D, mColorTex));
-        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mWidth, mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
+        m_openGLES->BindTexture(GL_TEXTURE_2D, mColorTex);
+        m_openGLES->TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mWidth, mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+        m_openGLES->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        m_openGLES->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        m_openGLES->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        m_openGLES->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
+        m_openGLES->BindTexture(GL_TEXTURE_2D, 0);
 
-        GL_CHECK(glGenFramebuffers(1, &mResolveFbo));
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, mResolveFbo));
-        GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mColorTex, 0));
+        m_openGLES->GenFrameBuffers(1, &mResolveFbo);
+        m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, mResolveFbo);
+        m_openGLES->FrameBufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mColorTex, 0);
 
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, resolveId));
+        m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, resolveId);
     }
 
     void GlRenderTarget::reset()
     {
         if (mFbo == 0) return;
 
-        GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-        GL_CHECK(glDeleteFramebuffers(1, &mFbo));
-        GL_CHECK(glDeleteRenderbuffers(1, &mColorBuffer));
-        GL_CHECK(glDeleteRenderbuffers(1, &mDepthStencilBuffer));
-        GL_CHECK(glDeleteFramebuffers(1, &mResolveFbo));
-        GL_CHECK(glDeleteTextures(1, &mColorTex));
+        m_openGLES->BindFrameBuffer(GL_FRAMEBUFFER, 0);
+        m_openGLES->DeleteFrameBuffers(1, &mFbo);
+        m_openGLES->DeleteRenderBuffers(1, &mColorBuffer);
+        m_openGLES->DeleteRenderBuffers(1, &mDepthStencilBuffer);
+        m_openGLES->DeleteFrameBuffers(1, &mResolveFbo);
+        m_openGLES->DeleteTextures(1, &mColorTex);
 
         mFbo = mColorBuffer = mDepthStencilBuffer = mResolveFbo = mColorTex = 0;
     }
 
-    GlRenderTargetPool::GlRenderTargetPool(uint32_t maxWidth, uint32_t maxHeight): mMaxWidth(maxWidth), mMaxHeight(maxHeight), mPool() {}
+    GlRenderTargetPool::GlRenderTargetPool(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, uint32_t maxWidth, uint32_t maxHeight): m_openGLES(openGLES), mMaxWidth(maxWidth), mMaxHeight(maxHeight), mPool() {}
 
     GlRenderTargetPool::~GlRenderTargetPool()
     {
@@ -156,7 +155,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             }
         }
 
-        auto rt = new GlRenderTarget();
+        auto rt = new GlRenderTarget(m_openGLES);
         rt->init(width, height, resolveId);
         rt->setViewport(vp);
         mPool.push(rt);

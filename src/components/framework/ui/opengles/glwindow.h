@@ -22,34 +22,51 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_OPENGLES_WINDOW
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_OPENGLES_WINDOW
 
 #include "src/framework/role/ifeature.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "display.h"
+#include "src/components/framework/ui/egl/window.h"
 
 namespace qor { namespace components{
 
-    class qor_pp_module_interface(QOR_EGL) EGLContext
+    class OpenGLESWindow
     {
+
     public:
 
-        EGLContext(void* ctx, EGLDisplay& display);
-        EGLContext(EGLDisplay* display, void* config, void* share_context, const int32_t *attrib_list);        
-        virtual ~EGLContext();
+        OpenGLESWindow( qor::ref_of<EGLWindow>::type eglWindow, void* surface) : m_eglWindow(eglWindow), m_surface(surface)
+        {
+        }
 
-        virtual bool MakeCurrent(void* draw, void* read);
-        virtual bool Query(int32_t attribute, int32_t* value);
-        virtual void* CreateImage(unsigned int target, void* buffer, const intptr_t* attrib_list);
-        virtual void* Use();
-        
-    protected:
+        ~OpenGLESWindow()
+        {            
+        }
 
-        EGLDisplay* m_display;
-        void* m_ctx;
+        void* Surface()
+        {
+            return m_surface;
+        }
+
+        void Show()
+        {
+            m_eglWindow->MakeCurrent(m_surface);
+        }
+
+        void Refresh()
+        {
+            m_eglWindow->Refresh(m_surface);
+        }
+
+    private:
+
+        qor::ref_of<EGLWindow>::type m_eglWindow;
+        void* m_surface;
+
     };
+
 }}//qor::components
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_OPENGLES_WINDOW

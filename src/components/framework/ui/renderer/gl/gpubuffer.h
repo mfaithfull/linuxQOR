@@ -39,7 +39,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             UNIFORM_BUFFER = GL_UNIFORM_BUFFER,
         };
 
-        GlGpuBuffer();
+        GlGpuBuffer(ref_of<OpenGLESFeature>::type openGLES);
         ~GlGpuBuffer();
         void updateBufferData(Target target, uint32_t size, const void* data);
         void bind(Target target);
@@ -48,12 +48,12 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     private:
         uint32_t    mGlBufferId = 0;
-
+        qor::ref_of<qor::components::OpenGLESFeature>::type m_openGLES;
     };
 
     class GlStageBuffer {
     public:
-        GlStageBuffer();
+        GlStageBuffer(ref_of<OpenGLESFeature>::type openGLES);
         ~GlStageBuffer();
 
         uint32_t push(void* data, uint32_t size, bool alignGpuOffset = false);
@@ -66,11 +66,13 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     private:
         void alignOffset(uint32_t size);
 
+        qor::ref_of<qor::components::OpenGLESFeature>::type m_openGLES;
         GLuint mVao = 0;
-        GlGpuBuffer mGpuBuffer = {};
-        GlGpuBuffer mGpuIndexBuffer = {};
+        GlGpuBuffer mGpuBuffer;
+        GlGpuBuffer mGpuIndexBuffer;
         Array<uint8_t> mStageBuffer = {};
-        Array<uint8_t> mIndexBuffer = {};
+        Array<uint8_t> mIndexBuffer = {};        
+
     };
 
 

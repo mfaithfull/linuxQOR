@@ -24,11 +24,65 @@
 
 #include "src/configuration/configuration.h"
 #include "opengles.h"
+#include "src/framework/application/application_builder.h"
+#include "src/components/framework/ui/egl/egl.h"
+#include "src/components/framework/ui/egl/display.h"
+#include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/egl/context.h"
+#include "glwindow.h"
 
 namespace qor { namespace components{
 
+    using namespace qor::framework;
+    
     OpenGLESFeature::OpenGLESFeature()
     {        
+    }
+
+    void OpenGLESFeature::Setup()
+    {
+        auto egl = AppBuilder().TheApplication()->
+        GetRole(qor_shared)->
+        GetFeature(&EGLFeatureGUID).
+        AsRef<qor::components::EGLFeature>();
+
+        if(egl.IsNotNull())
+        {
+            m_display = egl(qor_shared).CreateDisplay(nullptr);
+
+            egl(qor_shared).BindAPI(EGL_OPENGL_ES_API);
+            
+            int32_t const attribute_list[] = {
+                EGL_RED_SIZE, 8,
+                EGL_GREEN_SIZE, 8,
+                EGL_BLUE_SIZE, 8,
+                EGL_ALPHA_SIZE, 8,
+                EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+                EGL_DEPTH_SIZE,8,
+                EGL_NONE
+            };
+
+            int32_t surfaceAttributes[] = { EGL_NONE };
+            int32_t contextAttributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
+            
+            int eglNumConfig = 0;
+            if (!m_display->ChooseConfig(attribute_list, &m_config[0], 1, &eglNumConfig) || eglNumConfig == 0) 
+            {
+                //std::cout << "Could not get valid egl configuration!" << std::endl;
+                //return 1;
+            }
+
+            m_context = m_display->CreateContext(m_config[0], nullptr, contextAttributes);
+        }
+        else
+        {
+            //OpenGLES Feature requires EGLFeature.
+        }
+    }
+
+    void OpenGLESFeature::Shutdown()
+    {
+
     }
 
     const byte* OpenGLESFeature::GetString (unsigned int name)
@@ -39,6 +93,32 @@ namespace qor { namespace components{
     unsigned int OpenGLESFeature::GetError()
     {
         return 0;
+    }
+
+    qor::ref_of<OpenGLESWindow>::type OpenGLESFeature::CreateWindow()
+    {
+        qor::ref_of<OpenGLESWindow>::type glWindow;
+        auto egl = AppBuilder().TheApplication()->
+        GetRole(qor_shared)->
+        GetFeature(&EGLFeatureGUID).
+        AsRef<qor::components::EGLFeature>();
+
+        if(egl.IsNotNull())
+        {
+            qor::ref_of<EGLWindow>::type eglWindow = egl(qor_shared).CreateNativeWindow(m_display, m_context);
+            auto surface = m_display->CreateWindowSurface(m_config[0], eglWindow->GetNativeWindow(), nullptr);
+            glWindow = new_ref<OpenGLESWindow>(eglWindow, surface);
+        }
+        else
+        {
+            //OpenGLES requires working EGL
+        }
+        return glWindow;
+    }
+
+    bool OpenGLESFeature::MakeCurrent(qor::ref_of<OpenGLESWindow>::type openGLESWindow)
+    {
+        return m_context->MakeCurrent(openGLESWindow->Surface(), openGLESWindow->Surface());
     }
 
 }}//qor::components

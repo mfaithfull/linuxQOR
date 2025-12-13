@@ -43,7 +43,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#include "src/configuration/configuration.h"
 #include "../common/math.h"
 #include "rendertask.h"
 #include "gpubuffer.h"
@@ -94,8 +94,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     GlRenderTask* GlEffect::render(RenderEffectGaussianBlur* effect, GlRenderTarget* dstFbo, Array<GlRenderTargetPool*>& blendPool, const RenderRegion& vp, uint32_t voffset, uint32_t ioffset)
     {
-        if (!pBlurV) pBlurV = new GlProgram(EFFECT_VERTEX, GAUSSIAN_VERTICAL);
-        if (!pBlurH) pBlurH = new GlProgram(EFFECT_VERTEX, GAUSSIAN_HORIZONTAL);
+        if (!pBlurV) pBlurV = new GlProgram(m_openGLES, EFFECT_VERTEX, GAUSSIAN_VERTICAL);
+        if (!pBlurH) pBlurH = new GlProgram(m_openGLES, EFFECT_VERTEX, GAUSSIAN_HORIZONTAL);
 
         // get current and intermidiate framebuffers
         auto dstCopyFbo0 = blendPool[0]->getRenderTarget(vp);
@@ -111,13 +111,13 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         task->effect = effect;
         task->setViewport({{0, 0}, {vp.sw(), vp.sh()}});
         // horizontal blur task and geometry
-        task->horzTask = new GlRenderTask(pBlurH);
+        task->horzTask = new GlRenderTask(m_openGLES, pBlurH);
         task->horzTask->addBindResource(GlBindingResource{0, pBlurH->getUniformBlockIndex("Gaussian"), gpuBuffer->getBufferId(), blurOffset, sizeof(GlGaussianBlur)});
         task->horzTask->addBindResource(GlBindingResource{1, pBlurH->getUniformBlockIndex("Viewport"), gpuBuffer->getBufferId(), viewportOffset, sizeof(viewport)});
         task->horzTask->addVertexLayout(GlVertexLayout{0, 2, 2 * sizeof(float), voffset});
         task->horzTask->setDrawRange(ioffset, 6);
         // vertical blur task and geometry
-        task->vertTask = new GlRenderTask(pBlurV);
+        task->vertTask = new GlRenderTask(m_openGLES, pBlurV);
         task->vertTask->addBindResource(GlBindingResource{0, pBlurV->getUniformBlockIndex("Gaussian"), gpuBuffer->getBufferId(), blurOffset, sizeof(GlGaussianBlur)});
         task->vertTask->addBindResource(GlBindingResource{1, pBlurV->getUniformBlockIndex("Viewport"), gpuBuffer->getBufferId(), viewportOffset, sizeof(viewport)});
         task->vertTask->addVertexLayout(GlVertexLayout{0, 2, 2 * sizeof(float), voffset});
@@ -173,9 +173,9 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     GlRenderTask* GlEffect::render(RenderEffectDropShadow* effect, GlRenderTarget* dstFbo, Array<GlRenderTargetPool*>& blendPool, const RenderRegion& vp, uint32_t voffset, uint32_t ioffset)
     {
-        if (!pBlurV) pBlurV = new GlProgram(EFFECT_VERTEX, GAUSSIAN_VERTICAL);
-        if (!pBlurH) pBlurH = new GlProgram(EFFECT_VERTEX, GAUSSIAN_HORIZONTAL);
-        if (!pDropShadow) pDropShadow = new GlProgram(EFFECT_VERTEX, EFFECT_DROPSHADOW);
+        if (!pBlurV) pBlurV = new GlProgram(m_openGLES, EFFECT_VERTEX, GAUSSIAN_VERTICAL);
+        if (!pBlurH) pBlurH = new GlProgram(m_openGLES, EFFECT_VERTEX, GAUSSIAN_HORIZONTAL);
+        if (!pDropShadow) pDropShadow = new GlProgram(m_openGLES, EFFECT_VERTEX, EFFECT_DROPSHADOW);
 
         // get current and intermidiate framebuffers
         auto dstCopyFbo0 = blendPool[0]->getRenderTarget(vp);
@@ -188,7 +188,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         auto viewportOffset = gpuBuffer->push(viewport, sizeof(viewport), true);
 
         // create gaussian blur tasks
-        auto task = new GlEffectDropShadowTask(pDropShadow, dstFbo, dstCopyFbo0, dstCopyFbo1);
+        auto task = new GlEffectDropShadowTask(m_openGLES, pDropShadow, dstFbo, dstCopyFbo0, dstCopyFbo1);
         task->effect = (RenderEffectDropShadow*)effect;
         task->setViewport({{0, 0}, {vp.sw(), vp.sh()}});
         task->addBindResource(GlBindingResource{0, pDropShadow->getUniformBlockIndex("DropShadow"), gpuBuffer->getBufferId(), paramsOffset, sizeof(GlDropShadow)});
@@ -196,14 +196,14 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         task->setDrawRange(ioffset, 6);
 
         // horizontal blur task and geometry
-        task->horzTask = new GlRenderTask(pBlurH);
+        task->horzTask = new GlRenderTask(m_openGLES, pBlurH);
         task->horzTask->addBindResource(GlBindingResource{0, pBlurH->getUniformBlockIndex("Gaussian"), gpuBuffer->getBufferId(), paramsOffset, sizeof(GlGaussianBlur)});
         task->horzTask->addBindResource(GlBindingResource{1, pBlurH->getUniformBlockIndex("Viewport"), gpuBuffer->getBufferId(), viewportOffset, sizeof(viewport)});
         task->horzTask->addVertexLayout(GlVertexLayout{0, 2, 2 * sizeof(float), voffset});
         task->horzTask->setDrawRange(ioffset, 6);
 
         // vertical blur task and geometry
-        task->vertTask = new GlRenderTask(pBlurV);
+        task->vertTask = new GlRenderTask(m_openGLES, pBlurV);
         task->vertTask->addBindResource(GlBindingResource{0, pBlurV->getUniformBlockIndex("Gaussian"), gpuBuffer->getBufferId(), paramsOffset, sizeof(GlGaussianBlur)});
         task->vertTask->addBindResource(GlBindingResource{1, pBlurV->getUniformBlockIndex("Viewport"), gpuBuffer->getBufferId(), viewportOffset, sizeof(viewport)});
         task->vertTask->addVertexLayout(GlVertexLayout{0, 2, 2 * sizeof(float), voffset});
@@ -286,13 +286,13 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         //common color replacement effects
         GlProgram* program = nullptr;
         if (effect->type == SceneEffect::Fill) {
-            if (!pFill) pFill = new GlProgram(EFFECT_VERTEX, EFFECT_FILL);
+            if (!pFill) pFill = new GlProgram(m_openGLES, EFFECT_VERTEX, EFFECT_FILL);
             program = pFill;
         } else if (effect->type == SceneEffect::Tint) {
-            if (!pTint) pTint = new GlProgram(EFFECT_VERTEX, EFFECT_TINT);
+            if (!pTint) pTint = new GlProgram(m_openGLES, EFFECT_VERTEX, EFFECT_TINT);
             program = pTint;
         } else if (effect->type == SceneEffect::Tritone) {
-            if (!pTritone) pTritone = new GlProgram(EFFECT_VERTEX, EFFECT_TRITONE);
+            if (!pTritone) pTritone = new GlProgram(m_openGLES, EFFECT_VERTEX, EFFECT_TRITONE);
             program = pTritone;
         } else return nullptr;
 
@@ -368,7 +368,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     }
 
 
-    GlEffect::GlEffect(GlStageBuffer* buffer) : gpuBuffer(buffer)
+    GlEffect::GlEffect(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlStageBuffer* buffer) : m_openGLES(openGLES), gpuBuffer(buffer)
     {
     }
 

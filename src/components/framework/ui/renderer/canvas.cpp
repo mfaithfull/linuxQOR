@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+#include "src/configuration/configuration.h"
 #include "canvas.h"
 #include "taskscheduler.h"
 #include "loadmodule.h"
@@ -28,9 +29,9 @@
     #include "sw/renderer.h"
 //#endif
 
-#ifdef THORVG_GL_RASTER_SUPPORT
-    #include "tvgGlRenderer.h"
-#endif
+//#ifdef THORVG_GL_RASTER_SUPPORT
+    #include "gl/renderer.h"
+//#endif
 
 #ifdef THORVG_WG_RASTER_SUPPORT
     #include "tvgWgRenderer.h"
@@ -149,15 +150,15 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     GlCanvas::~GlCanvas()
     {
-    #ifdef THORVG_GL_RASTER_SUPPORT
+    //#ifdef THORVG_GL_RASTER_SUPPORT
         GlRenderer::term();
-    #endif
+    //#endif
     }
 
 
     Result GlCanvas::target(void* context, int32_t id, uint32_t w, uint32_t h, ColorSpace cs) noexcept
     {
-    #ifdef THORVG_GL_RASTER_SUPPORT
+    //#ifdef THORVG_GL_RASTER_SUPPORT
         if (cs != ColorSpace::ABGR8888S) return Result::NonSupport;
 
         if (pImpl->status == Status::Updating || pImpl->status == Status::Drawing) {
@@ -176,23 +177,23 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         pImpl->status = Status::Damaged;
 
         return Result::Success;
-    #endif
-        return Result::NonSupport;
+    //#endif
+        //return Result::NonSupport;
     }
 
 
-    GlCanvas* GlCanvas::gen() noexcept
+    GlCanvas* GlCanvas::gen(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES) noexcept
     {
-    #ifdef THORVG_GL_RASTER_SUPPORT
+    //#ifdef THORVG_GL_RASTER_SUPPORT
         //if (engineInit > 0) {
-            auto renderer = GlRenderer::gen(TaskScheduler::threads());
+            auto renderer = GlRenderer::gen(openGLES, 1/*TaskScheduler::threads()*/);
             if (!renderer) return nullptr;
             renderer->ref();
             auto ret = new GlCanvas;
             ret->pImpl->renderer = renderer;
             return ret;
         //}
-    #endif
+    //#endif
         return nullptr;
     }
 

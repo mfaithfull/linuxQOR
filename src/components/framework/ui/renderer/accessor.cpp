@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+#include "src/configuration/configuration.h"
 #include "iteratoraccessor.h"
 #include "common/compressor.h"
 

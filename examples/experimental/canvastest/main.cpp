@@ -22,34 +22,43 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
+#include "sdk/using_framework.h"
+#include "src/components/framework/ui/egl/egl.h"
+#include "src/components/framework/ui/opengles/opengles.h"
+#include "src/components/framework/ui/canvas/canvas.h"
 
-#include "src/framework/role/ifeature.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
-#include "display.h"
+#include <string>
+#include <sstream>
 
-namespace qor { namespace components{
+const char* appName = "CanvasTest";
 
-    class qor_pp_module_interface(QOR_EGL) EGLContext
-    {
-    public:
+qor_pp_implement_module(appName)
 
-        EGLContext(void* ctx, EGLDisplay& display);
-        EGLContext(EGLDisplay* display, void* config, void* share_context, const int32_t *attrib_list);        
-        virtual ~EGLContext();
+qor_pp_module_requires(ICurrentThread)
+qor_pp_module_requires(EGLFeature)
+qor_pp_module_requires(OpenGLESFeature)
 
-        virtual bool MakeCurrent(void* draw, void* read);
-        virtual bool Query(int32_t attribute, int32_t* value);
-        virtual void* CreateImage(unsigned int target, void* buffer, const intptr_t* attrib_list);
-        virtual void* Use();
-        
-    protected:
+int main()
+{
+   return AppBuilder().Build(appName)->SetRole<Role>(
+        [](ref_of<IRole>::type role)    
+        {
+            role->AddFeature<qor::components::EGLFeature>();
+            role->AddFeature<qor::components::OpenGLESFeature>();
+        }
+    ).Run(
 
-        EGLDisplay* m_display;
-        void* m_ctx;
-    };
-}}//qor::components
+        make_runable(
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
+            []()->int
+            {
+                auto canvas = qor::new_ref<qor::components::Canvas>();
+
+                canvas->Ready();
+                canvas->Show();
+
+                return EXIT_SUCCESS;
+            }
+        )
+    );
+}

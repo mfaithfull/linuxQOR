@@ -28,6 +28,8 @@
 #include "src/framework/role/ifeature.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "display.h"
+#include "context.h"
 
 namespace qor { namespace components{
 
@@ -35,11 +37,18 @@ namespace qor { namespace components{
     {
     public:
 
-        EGLWindow();        
+        EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type, qor::ref_of<EGLContext>::type context);
         virtual ~EGLWindow();
 
         virtual void* GetNativeSurface();
         virtual void* GetNativeWindow();
+        virtual void MakeCurrent(void* surface);
+        virtual void Refresh(void* surface);
+
+    private:
+
+        qor::ref_of<EGLDisplay>::type m_display;
+        qor::ref_of<EGLContext>::type m_context;
     };
 }}//qor::components
 

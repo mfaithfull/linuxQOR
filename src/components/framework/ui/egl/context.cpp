@@ -56,4 +56,9 @@ namespace qor { namespace components{
         return m_display->InternalCreateImage(m_ctx, target, buffer, attrib_list);
     }
 
+    void* EGLContext::Use()
+    {
+        return m_ctx;
+    }
+    
 }}//qor::components

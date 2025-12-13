@@ -6,6 +6,10 @@
 #include <list>
 #include <cstdarg>
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/components/framework/ui/opengles/opengles.h"
+
 #ifdef TVG_API
     #undef TVG_API
 #endif
@@ -2164,7 +2168,7 @@ struct TVG_API GlCanvas final : Canvas
      *
      * @since 0.14
      */
-    static GlCanvas* gen() noexcept;
+    static GlCanvas* gen(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES) noexcept;
 
     _TVG_DECLARE_PRIVATE(GlCanvas);
 };

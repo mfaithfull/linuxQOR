@@ -43,7 +43,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+#include "src/configuration/configuration.h"
 #include <atomic>
 #include "../fill.h"
 #include "common.h"
@@ -66,7 +66,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     void GlRenderer::clearDisposes()
     {
         if (mDisposed.textures.count > 0) {
-            glDeleteTextures(mDisposed.textures.count, mDisposed.textures.data);
+            m_openGLES->DeleteTextures(mDisposed.textures.count, mDisposed.textures.data);
             mDisposed.textures.clear();
         }
 
@@ -105,7 +105,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     }
 
 
-    GlRenderer::GlRenderer() : mEffect(GlEffect(&mGpuBuffer))
+    GlRenderer::GlRenderer(ref_of<OpenGLESFeature>::type openGLES) : m_openGLES(openGLES), mGpuBuffer(openGLES), mRootTarget(openGLES), mEffect(GlEffect(openGLES, &mGpuBuffer))
     {
         ++rendererCnt;
     }
@@ -152,28 +152,28 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             STR_RADIAL_GRADIENT_MAIN
         );
 
-        mPrograms.push(new GlProgram(COLOR_VERT_SHADER, COLOR_FRAG_SHADER));
-        mPrograms.push(new GlProgram(GRADIENT_VERT_SHADER, linearGradientFragShader));
-        mPrograms.push(new GlProgram(GRADIENT_VERT_SHADER, radialGradientFragShader));
-        mPrograms.push(new GlProgram(IMAGE_VERT_SHADER, IMAGE_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, COLOR_VERT_SHADER, COLOR_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, GRADIENT_VERT_SHADER, linearGradientFragShader));
+        mPrograms.push(new GlProgram(m_openGLES, GRADIENT_VERT_SHADER, radialGradientFragShader));
+        mPrograms.push(new GlProgram(m_openGLES, IMAGE_VERT_SHADER, IMAGE_FRAG_SHADER));
 
         // compose Renderer
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_ALPHA_FRAG_SHADER));
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_INV_ALPHA_FRAG_SHADER));
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_LUMA_FRAG_SHADER));
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_INV_LUMA_FRAG_SHADER));
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_ADD_FRAG_SHADER));
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_SUB_FRAG_SHADER));
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_INTERSECT_FRAG_SHADER));
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_DIFF_FRAG_SHADER));
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_LIGHTEN_FRAG_SHADER));
-        mPrograms.push(new GlProgram(MASK_VERT_SHADER, MASK_DARKEN_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_ALPHA_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_INV_ALPHA_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_LUMA_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_INV_LUMA_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_ADD_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_SUB_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_INTERSECT_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_DIFF_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_LIGHTEN_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, MASK_VERT_SHADER, MASK_DARKEN_FRAG_SHADER));
 
         // stencil Renderer
-        mPrograms.push(new GlProgram(STENCIL_VERT_SHADER, STENCIL_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, STENCIL_VERT_SHADER, STENCIL_FRAG_SHADER));
 
         // blit Renderer
-        mPrograms.push(new GlProgram(BLIT_VERT_SHADER, BLIT_FRAG_SHADER));
+        mPrograms.push(new GlProgram(m_openGLES, BLIT_VERT_SHADER, BLIT_FRAG_SHADER));
 
         for (uint32_t i = 0; i < 17; i++) {
             mPrograms.push(nullptr); // slot for blend
@@ -205,7 +205,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         GlRenderTask* task = nullptr;
         if (mBlendMethod != BlendMethod::Normal && !complexBlend) task = new GlSimpleBlendTask(mBlendMethod, mPrograms[RT_Color]);
-        else task = new GlRenderTask(mPrograms[RT_Color]);
+        else task = new GlRenderTask(m_openGLES, mPrograms[RT_Color]);
 
         task->setDrawDepth(depth);
 
@@ -221,7 +221,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         GlStencilMode stencilMode = sdata.geometry.getStencilMode(flag);
         if (stencilMode != GlStencilMode::None) {
-            stencilTask = new GlRenderTask(mPrograms[RT_Stencil], task);
+            stencilTask = new GlRenderTask(m_openGLES, mPrograms[RT_Stencil], task);
             stencilTask->setDrawDepth(depth);
         }
 
@@ -269,11 +269,11 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             4 * sizeof(float),
         });
 
-        if (stencilTask) currentPass()->addRenderTask(new GlStencilCoverTask(stencilTask, task, stencilMode));
+        if (stencilTask) currentPass()->addRenderTask(new GlStencilCoverTask(m_openGLES, stencilTask, task, stencilMode));
         else currentPass()->addRenderTask(task);
 
         if (complexBlend) {
-            auto task = new GlRenderTask(mPrograms[RT_Stencil]);
+            auto task = new GlRenderTask(m_openGLES, mPrograms[RT_Stencil]);
             sdata.geometry.draw(task, &mGpuBuffer, flag);
             endBlendingCompose(task, sdata.geometry.matrix, false, false);
         }
@@ -292,8 +292,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         GlRenderTask* task = nullptr;
 
-        if (fill->type() == Type::LinearGradient) task = new GlRenderTask(mPrograms[RT_LinGradient]);
-        else if (fill->type() == Type::RadialGradient) task = new GlRenderTask(mPrograms[RT_RadGradient]);
+        if (fill->type() == Type::LinearGradient) task = new GlRenderTask(m_openGLES, mPrograms[RT_LinGradient]);
+        else if (fill->type() == Type::RadialGradient) task = new GlRenderTask(m_openGLES, mPrograms[RT_RadGradient]);
         else return;
 
         task->setDrawDepth(depth);
@@ -313,7 +313,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         GlRenderTask* stencilTask = nullptr;
         GlStencilMode stencilMode = sdata.geometry.getStencilMode(flag);
         if (stencilMode != GlStencilMode::None) {
-            stencilTask = new GlRenderTask(mPrograms[RT_Stencil], task);
+            stencilTask = new GlRenderTask(m_openGLES, mPrograms[RT_Stencil], task);
             stencilTask->setDrawDepth(depth);
         }
 
@@ -448,13 +448,13 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         task->addBindResource(gradientBinding);
 
         if (stencilTask) {
-            currentPass()->addRenderTask(new GlStencilCoverTask(stencilTask, task, stencilMode));
+            currentPass()->addRenderTask(new GlStencilCoverTask(m_openGLES, stencilTask, task, stencilMode));
         } else {
             currentPass()->addRenderTask(task);
         }
 
         if (complexBlend) {
-            auto task = new GlRenderTask(mPrograms[RT_Stencil]);
+            auto task = new GlRenderTask(m_openGLES, mPrograms[RT_Stencil]);
             sdata.geometry.draw(task, &mGpuBuffer, flag);
             endBlendingCompose(task, sdata.geometry.matrix, true, false);
         }
@@ -508,7 +508,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         for (uint32_t i = 0; i < clips.count; ++i) {
             auto sdata = static_cast<GlShape*>(clips[i]);
-            auto clipTask = new GlRenderTask(mPrograms[RT_Stencil]);
+            auto clipTask = new GlRenderTask(m_openGLES, mPrograms[RT_Stencil]);
             clipTask->setDrawDepth(clipDepths[i]);
 
             auto flag = (sdata->geometry.stroke.vertex.count > 0) ? RenderUpdateFlag::Stroke : RenderUpdateFlag::Path;
@@ -529,7 +529,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
             clipTask->addBindResource(GlBindingResource{0, loc, mGpuBuffer.getBufferId(), viewOffset, 16 * sizeof(float), });
 
-            auto maskTask = new GlRenderTask(mPrograms[RT_Stencil]);
+            auto maskTask = new GlRenderTask(m_openGLES, mPrograms[RT_Stencil]);
 
             maskTask->setDrawDepth(clipDepths[i]);
             maskTask->addVertexLayout(GlVertexLayout{0, 2, 2 * sizeof(float), identityVertexOffset});
@@ -556,7 +556,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         if (mBlendMethod == BlendMethod::Normal) return false;
 
-        if (mBlendPool.empty()) mBlendPool.push(new GlRenderTargetPool(surface.w, surface.h));
+        if (mBlendPool.empty()) mBlendPool.push(new GlRenderTargetPool(m_openGLES, surface.w, surface.h));
 
         auto blendFbo = mBlendPool[0]->getRenderTarget(bounds);
 
@@ -572,10 +572,10 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         
         blendPass->setDrawDepth(currentPass()->nextDrawDepth());
 
-        auto composeTask = blendPass->endRenderPass<GlComposeTask>(nullptr, currentPass()->getFboId());
+        auto composeTask = blendPass->endRenderPass<GlComposeTask>(m_openGLES, nullptr, currentPass()->getFboId());
 
         const auto& vp = blendPass->getViewport();
-        if (mBlendPool.count < 2) mBlendPool.push(new GlRenderTargetPool(surface.w, surface.h));
+        if (mBlendPool.count < 2) mBlendPool.push(new GlRenderTargetPool(m_openGLES, surface.w, surface.h));
         auto dstCopyFbo = mBlendPool[1]->getRenderTarget(vp);
 
         auto x = vp.sx();
@@ -662,7 +662,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         }
 
         if (!mPrograms[shaderInd])
-            mPrograms[shaderInd] = new GlProgram(vertShader, fragShader);
+            mPrograms[shaderInd] = new GlProgram(m_openGLES, vertShader, fragShader);
         return mPrograms[shaderInd];
     }
 
@@ -775,12 +775,12 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
                 default: break;
             }
             if (program && !selfPass->isEmpty() && !maskPass->isEmpty()) {
-                auto prev_task = maskPass->endRenderPass<GlComposeTask>(nullptr, currentPass()->getFboId());
+                auto prev_task = maskPass->endRenderPass<GlComposeTask>(m_openGLES, nullptr, currentPass()->getFboId());
                 prev_task->setDrawDepth(currentPass()->nextDrawDepth());
                 prev_task->setRenderSize(glCmp->bbox.w(), glCmp->bbox.h());
                 prev_task->setViewport(glCmp->bbox);
 
-                auto compose_task = selfPass->endRenderPass<GlDrawBlitTask>(program, currentPass()->getFboId());
+                auto compose_task = selfPass->endRenderPass<GlDrawBlitTask>(m_openGLES, program, currentPass()->getFboId());
                 compose_task->setRenderSize(glCmp->bbox.w(), glCmp->bbox.h());
                 compose_task->setPrevTask(prev_task);
 
@@ -801,15 +801,15 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
             if (!renderPass->isEmpty()) {
                 const auto& vp = renderPass->getViewport();
-                if (mBlendPool.count < 1) mBlendPool.push(new GlRenderTargetPool(surface.w, surface.h));
-                if (mBlendPool.count < 2) mBlendPool.push(new GlRenderTargetPool(surface.w, surface.h));
+                if (mBlendPool.count < 1) mBlendPool.push(new GlRenderTargetPool(m_openGLES, surface.w, surface.h));
+                if (mBlendPool.count < 2) mBlendPool.push(new GlRenderTargetPool(m_openGLES, surface.w, surface.h));
                 auto dstCopyFbo = mBlendPool[1]->getRenderTarget(vp);
 
                 // image info
                 uint32_t info[4] = {(uint32_t)ColorSpace::ABGR8888, 0, cmp->opacity, 0};
 
                 auto program = getBlendProgram(glCmp->blendMethod, false, false, true);
-                auto task = renderPass->endRenderPass<GlSceneBlendTask>(program, currentPass()->getFboId());
+                auto task = renderPass->endRenderPass<GlSceneBlendTask>(m_openGLES, program, currentPass()->getFboId());
                 task->setSrcTarget(currentPass()->getFbo());
                 task->setDstCopy(dstCopyFbo);
                 task->setRenderSize(glCmp->bbox.w(), glCmp->bbox.h());
@@ -829,7 +829,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             mRenderPassStack.pop();
 
             if (!renderPass->isEmpty()) {
-                auto task = renderPass->endRenderPass<GlDrawBlitTask>(mPrograms[RT_Image], currentPass()->getFboId());
+                auto task = renderPass->endRenderPass<GlDrawBlitTask>(m_openGLES, mPrograms[RT_Image], currentPass()->getFboId());
                 task->setRenderSize(glCmp->bbox.w(), glCmp->bbox.h());
                 prepareCmpTask(task, glCmp->bbox, renderPass->getFboWidth(), renderPass->getFboHeight());
                 task->setDrawDepth(currentPass()->nextDrawDepth());
@@ -913,15 +913,15 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         currentContext();
 
         // Blend function for straight alpha
-        GL_CHECK(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
-        GL_CHECK(glEnable(GL_BLEND));
-        GL_CHECK(glEnable(GL_SCISSOR_TEST));
-        GL_CHECK(glCullFace(GL_FRONT_AND_BACK));
-        GL_CHECK(glFrontFace(GL_CCW));
-        GL_CHECK(glEnable(GL_DEPTH_TEST));
-        GL_CHECK(glDepthFunc(GL_GREATER));
+        m_openGLES->BlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        m_openGLES->Enable(GL_BLEND);
+        m_openGLES->Enable(GL_SCISSOR_TEST);
+        m_openGLES->CullFace(GL_FRONT_AND_BACK);
+        m_openGLES->FrontFace(GL_CCW);
+        m_openGLES->Enable(GL_DEPTH_TEST);
+        m_openGLES->DepthFunc(GL_GREATER);
 
-        auto task = mRenderPassStack.first()->endRenderPass<GlBlitTask>(mPrograms[RT_Blit], mTargetFboId);
+        auto task = mRenderPassStack.first()->endRenderPass<GlBlitTask>(m_openGLES, mPrograms[RT_Blit], mTargetFboId);
 
         prepareBlitTask(task);
 
@@ -935,7 +935,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         mGpuBuffer.unbind();
 
-        GL_CHECK(glDisable(GL_SCISSOR_TEST));
+        m_openGLES->Disable(GL_SCISSOR_TEST);
 
         clearDisposes();
 
@@ -1020,7 +1020,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         glCmp->blendMethod = mBlendMethod;
 
         uint32_t index = mRenderPassStack.count - 1;
-        if (index >= mComposePool.count) mComposePool.push( new GlRenderTargetPool(surface.w, surface.h));
+        if (index >= mComposePool.count) mComposePool.push( new GlRenderTargetPool(m_openGLES, surface.w, surface.h));
         
         if (glCmp->bbox.valid()) mRenderPassStack.push(new GlRenderPass(mComposePool[index]->getRenderTarget(glCmp->bbox)));
         else mRenderPassStack.push(new GlRenderPass(nullptr));
@@ -1051,8 +1051,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     void GlRenderer::prepare(RenderEffect* effect, const Matrix& transform)
     {
         // we must be sure, that we have intermidiate FBOs
-        if (mBlendPool.count < 1) mBlendPool.push(new GlRenderTargetPool(surface.w, surface.h));
-        if (mBlendPool.count < 2) mBlendPool.push(new GlRenderTargetPool(surface.w, surface.h));
+        if (mBlendPool.count < 1) mBlendPool.push(new GlRenderTargetPool(m_openGLES, surface.w, surface.h));
+        if (mBlendPool.count < 2) mBlendPool.push(new GlRenderTargetPool(m_openGLES, surface.w, surface.h));
 
         mEffect.update(effect, transform);
     }
@@ -1117,7 +1117,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         if (!sdata->clips.empty()) drawClip(sdata->clips);
 
-        auto task = new GlRenderTask(mPrograms[RT_Image]);
+        auto task = new GlRenderTask(m_openGLES, mPrograms[RT_Image]);
         task->setDrawDepth(drawDepth);
 
         if (!sdata->geometry.draw(task, &mGpuBuffer, RenderUpdateFlag::Image)) {
@@ -1163,7 +1163,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         currentPass()->addRenderTask(task);
 
         if (complexBlend) {
-            auto task = new GlRenderTask(mPrograms[RT_Stencil]);
+            auto task = new GlRenderTask(m_openGLES, mPrograms[RT_Stencil]);
             sdata->geometry.draw(task, &mGpuBuffer, RenderUpdateFlag::Image);
             endBlendingCompose(task, sdata->geometry.matrix, false, true);
         }
@@ -1232,21 +1232,21 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         delete sdata;
     }
 
-    static GLuint _genTexture(RenderSurface* image)
+    static GLuint _genTexture(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, RenderSurface* image)
     {
         GLuint tex = 0;
 
-        GL_CHECK(glGenTextures(1, &tex));
+        openGLES->GenTextures(1, &tex);
 
-        GL_CHECK(glBindTexture(GL_TEXTURE_2D, tex));
-        GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image->w, image->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data));
+        openGLES->BindTexture(GL_TEXTURE_2D, tex);
+        openGLES->TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image->w, image->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);
 
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+        openGLES->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        openGLES->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        openGLES->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        openGLES->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        GL_CHECK(glBindTexture(GL_TEXTURE_2D, 0));
+        openGLES->BindTexture(GL_TEXTURE_2D, 0);
 
         return tex;
     }
@@ -1265,7 +1265,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         sdata->viewHt = static_cast<float>(surface.h);
 
         if (sdata->texId == 0) {
-            sdata->texId = _genTexture(image);
+            sdata->texId = _genTexture(m_openGLES, image);
             sdata->texColorSpace = image->cs;
             sdata->texFlipY = 1;
             sdata->geometry = GlGeometry();
@@ -1401,7 +1401,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     }
 
 
-    GlRenderer* GlRenderer::gen(TVG_UNUSED uint32_t threads)
+    GlRenderer* GlRenderer::gen(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, uint32_t threads)
     {
         //initialize engine
         //TODO:
@@ -1416,7 +1416,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             rendererCnt = 0;
         }
 
-        return new GlRenderer;
+        return new GlRenderer(openGLES);
     }
 
 }}}}//qor::components::ui::renderer

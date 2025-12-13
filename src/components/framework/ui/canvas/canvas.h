@@ -22,34 +22,53 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_CANVAS
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_CANVAS
 
-#include "src/framework/role/ifeature.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "display.h"
+#include "src/components/framework/ui/opengles/glwindow.h"
+#include "src/components/framework/ui/renderer/thor.h"
 
 namespace qor { namespace components{
 
-    class qor_pp_module_interface(QOR_EGL) EGLContext
+    class qor_pp_module_interface(QOR_CANVAS) Canvas
     {
     public:
 
-        EGLContext(void* ctx, EGLDisplay& display);
-        EGLContext(EGLDisplay* display, void* config, void* share_context, const int32_t *attrib_list);        
-        virtual ~EGLContext();
-
-        virtual bool MakeCurrent(void* draw, void* read);
-        virtual bool Query(int32_t attribute, int32_t* value);
-        virtual void* CreateImage(unsigned int target, void* buffer, const intptr_t* attrib_list);
-        virtual void* Use();
+        typedef ref_of<Canvas>::type ref;
         
-    protected:
+        Canvas();
+        virtual ~Canvas() = default;
 
-        EGLDisplay* m_display;
-        void* m_ctx;
+        bool Draw();
+        bool Ready();
+        void Show();
+        void Resize();
+        void Refresh();
+
+    private:
+
+        qor::ref_of<EGLContext>::type m_eglContext;
+        qor::ref_of<OpenGLESWindow>::type m_window;
+        ui::renderer::Canvas* m_canvas = nullptr;
+
+        uint32_t width;
+        uint32_t height;
+        //uint32_t stime;    //start time tick
+        //double mfps = 0;   //mean fps
+
+        //Example* example = nullptr;
+
+        bool needResize = false;
+        bool needDraw = false;
+        //bool initialized = false;
+        bool clearBuffer = false;
+        bool print = false;
+
     };
+
 }}//qor::components
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONTEXT
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_CANVAS
+

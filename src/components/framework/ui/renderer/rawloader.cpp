@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-
+#include "src/configuration/configuration.h"
 #include <fstream>
 #include "loader.h"
 #include "rawloader.h"

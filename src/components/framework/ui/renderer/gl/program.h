@@ -32,7 +32,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlProgram
     {
     public:
-        GlProgram(const char* vertSrc, const char* fragSrc);
+        GlProgram(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, const char* vertSrc, const char* fragSrc);
         ~GlProgram();
 
         void load();
@@ -52,6 +52,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         void setUniform4x4Value(int32_t location, int count, const float* values);
 
     private:
+        qor::ref_of<qor::components::OpenGLESFeature>::type m_openGLES;
         uint32_t mProgramObj;
         static uint32_t mCurrentProgram;
     };

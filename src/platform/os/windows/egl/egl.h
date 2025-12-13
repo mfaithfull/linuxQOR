@@ -30,6 +30,7 @@
 #define QOR_PP_IMPLEMENTS_EGL
 #include "src/components/framework/ui/egl/egl.h"
 #include "src/components/framework/ui/egl/display.h"
+#include "src/components/framework/ui/egl/context.h"
 #include "src/components/framework/ui/egl/window.h"
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
@@ -135,7 +136,7 @@ namespace qor{ namespace platform { namespace nswindows{
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay();
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(void* nativeDisplay);
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list);
-        virtual ref_of<qor::components::EGLWindow>::type CreateNativeWindow();
+        virtual ref_of<qor::components::EGLWindow>::type CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context);
     };
 
 }}}//qor::platform::nswindows

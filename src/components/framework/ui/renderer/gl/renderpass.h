@@ -58,14 +58,14 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         void getMatrix(float dst[16], const Matrix& matrix) const;
 
         template <class T>
-        T* endRenderPass(GlProgram* program, GLuint targetFbo) {
+        T* endRenderPass(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program, GLuint targetFbo) {
             int32_t maxDepth = mDrawDepth + 1;
 
             for (uint32_t i = 0; i < mTasks.count; i++) {
                 mTasks[i]->normalizeDrawDepth(maxDepth);
             }
 
-            auto task = new T(program, targetFbo, mFbo, std::move(mTasks));
+            auto task = new T(openGLES, program, targetFbo, mFbo, std::move(mTasks));
             task->setRenderSize(mFbo->getViewport().w(),  mFbo->getViewport().h());
 
             return task;

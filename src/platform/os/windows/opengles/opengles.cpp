@@ -24,12 +24,28 @@
 
 #include "src/configuration/configuration.h"
 
+#include <iostream>
+
 #include "opengles.h"
 #include "GLES3/gl3.h"
 
 namespace qor{ bool qor_pp_module_interface(QOR_WINEGL) ImplementsOpenGLESFeature() { return true; } }//qor
 
 namespace qor{ namespace platform { namespace nswindows{
+
+    void OpenGLES::CheckStatus()
+    {
+        unsigned int err = GetError();
+        if(err == 0)
+        {
+            return;
+        }
+        else
+        {
+            std::cout << "OpenGL|ES Status: " << err << std::endl;
+        }
+
+    }
 
     const byte* OpenGLES::GetString(unsigned int name)
     {
@@ -39,6 +55,403 @@ namespace qor{ namespace platform { namespace nswindows{
     unsigned int OpenGLES::GetError()
     {
         return glGetError();
+    }
+
+    void OpenGLES::GenBuffers(int n, unsigned int* buffers)
+    {
+        glGenBuffers(n, buffers);
+        CheckStatus();
+    }
+
+    void OpenGLES::DeleteBuffers(int n, const unsigned int* buffers)
+    {
+        glDeleteBuffers(n, buffers);
+        CheckStatus();
+    }
+
+    void OpenGLES::GenVertexArrays (int n, unsigned int* arrays)
+    {
+        glGenVertexArrays(n, arrays);
+        CheckStatus();
+    }
+
+    void OpenGLES::DeleteVertexArrays(int n, const unsigned int* arrays)
+    {
+        glDeleteVertexArrays(n, arrays);
+        CheckStatus();
+    }
+
+    void OpenGLES::GenFrameBuffers(int n, unsigned int* frameBuffers)
+    {
+        glGenFramebuffers(n, frameBuffers);
+        CheckStatus();
+    }
+
+    void OpenGLES::BindFrameBuffer(unsigned int target, unsigned int framebuffer)
+    {
+        glBindFramebuffer(target, framebuffer);
+        CheckStatus();
+    }
+
+    void OpenGLES::GenRenderBuffers(int n, unsigned int* renderBuffers)
+    {
+        glGenRenderbuffers(n, renderBuffers);
+        CheckStatus();
+    }
+
+    void OpenGLES::BindRenderBuffer(unsigned int target, unsigned int renderBuffer)
+    {
+        glBindRenderbuffer(target, renderBuffer);
+        CheckStatus();
+    }
+
+    void OpenGLES::RenderBufferStorageMultisample(unsigned int target, int samples, unsigned int internalformat, int width, int height)
+    {
+        glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
+        CheckStatus();
+    }
+
+    void OpenGLES::FrameBufferRenderBuffer(unsigned int target, unsigned int attachment, unsigned int renderbuffertarget, unsigned int renderbuffer)
+    {
+        glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
+        CheckStatus();
+    }
+
+    void OpenGLES::GenTextures(int n, unsigned int* textures)
+    {
+        glGenTextures(n, textures);
+        CheckStatus();
+    }
+
+    void OpenGLES::BindTexture(unsigned int target, unsigned int texture)
+    {
+        glBindTexture(target, texture);
+        CheckStatus();
+    }
+
+    void OpenGLES::TexImage2D(unsigned int target, int level, int internalformat, int width, int height, int border, unsigned int format, unsigned int type, const void *pixels)
+    {
+        glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
+        CheckStatus();
+    }
+        
+    void OpenGLES::TexParameteri(unsigned int target, unsigned int pname, int param)
+    {
+        glTexParameteri(target, pname, param);
+        CheckStatus();
+    }
+
+    void OpenGLES::FrameBufferTexture2D(unsigned int target, unsigned int attachment, unsigned int textarget, unsigned int texture, int level)
+    {
+        glFramebufferTexture2D(target, attachment, textarget, texture, level);
+        CheckStatus();
+    }
+
+    void OpenGLES::DeleteFrameBuffers(int n, const unsigned int* framebuffers)
+    {
+        glDeleteFramebuffers(n, framebuffers);
+        CheckStatus();
+    }
+
+    void OpenGLES::DeleteRenderBuffers(int n, const unsigned int* renderbuffers)
+    {
+        glDeleteRenderbuffers (n, renderbuffers);
+        CheckStatus();
+    }
+
+    void OpenGLES::DeleteTextures(int n, const unsigned int* textures)
+    {
+        glDeleteTextures(n, textures);
+        CheckStatus();
+    }
+
+    unsigned int OpenGLES::CreateShader(unsigned int type)
+    {
+        return glCreateShader(type);
+    }
+
+    void OpenGLES::ShaderSource(unsigned int shader, int count, const char* const* string, const int* length)
+    {
+        glShaderSource(shader, count, string, length);
+        CheckStatus();
+    }
+
+    void OpenGLES::CompileShader(unsigned int shader)
+    {
+        glCompileShader(shader);
+        CheckStatus();
+    }
+
+    void OpenGLES::GetShaderiv(unsigned int shader, unsigned int pname, int* params)
+    {
+        glGetShaderiv(shader, pname, params);
+        CheckStatus();
+    }
+
+    void OpenGLES::GetShaderInfoLog(unsigned int shader, int bufSize, int* length, char* infoLog)
+    {
+        glGetShaderInfoLog(shader, bufSize, length, infoLog);
+        CheckStatus();
+    }
+
+    void OpenGLES::DeleteShader(unsigned int shader)
+    {
+        glDeleteShader(shader);
+        CheckStatus();
+    }
+
+    unsigned int OpenGLES::CreateProgram(void)
+    {
+        return glCreateProgram();        
+    }
+
+    void OpenGLES::AttachShader(unsigned int program, unsigned int shader)
+    {
+        glAttachShader(program, shader);
+        CheckStatus();
+    }
+
+    void OpenGLES::LinkProgram(unsigned int program)
+    {
+        glLinkProgram(program);
+        CheckStatus();
+    }
+
+    void OpenGLES::GetProgramiv(unsigned int program, unsigned int pname, int* params)
+    {
+        glGetProgramiv(program, pname, params);
+        CheckStatus();
+    }
+
+    void OpenGLES::GetProgramInfoLog(unsigned int program, int bufSize, int* length, char* infoLog)
+    {
+        glGetProgramInfoLog(program, bufSize, length, infoLog);
+        CheckStatus();
+    }
+
+    void OpenGLES::DeleteProgram(unsigned int program)
+    {
+        glDeleteProgram(program);
+        CheckStatus();
+    }
+
+    void OpenGLES::UseProgram(unsigned int program)
+    {
+       glUseProgram(program);
+       CheckStatus();
+    }
+
+    int OpenGLES::GetAttribLocation(unsigned int program, const char* name)
+    {
+        return glGetAttribLocation(program, name);
+    }
+
+    int OpenGLES::GetUniformLocation(unsigned int program, const char* name)
+    {
+       return glGetUniformLocation(program, name);
+    }
+
+    unsigned int OpenGLES::GetUniformBlockIndex(unsigned int program, const char* uniformBlockName)
+    {
+        return glGetUniformBlockIndex(program, uniformBlockName);
+    }
+
+    void OpenGLES::Uniform1iv(int location, int count, const int* value)
+    {
+        glUniform1iv (location, count, value);
+        CheckStatus();
+    }
+
+    void OpenGLES::GetIntegerv(unsigned long pname, int* data)
+    {
+        glGetIntegerv(pname, data);
+        CheckStatus();
+    }
+
+    void OpenGLES::BlendFunc(unsigned int sfactor, unsigned int dfactor)
+    {
+        glBlendFunc(sfactor, dfactor);
+        CheckStatus();
+    }
+
+    void OpenGLES::Enable(unsigned int cap)
+    {
+        glEnable(cap);
+        CheckStatus();
+    }
+
+    void OpenGLES::CullFace(unsigned int mode)
+    {
+        glCullFace(mode);
+        CheckStatus();
+    }
+
+    void OpenGLES::FrontFace(unsigned int mode)
+    {
+        glFrontFace(mode);
+        CheckStatus();
+    }
+
+    void OpenGLES::DepthFunc(unsigned int func)
+    {
+        glDepthFunc(func);
+        CheckStatus();
+    }
+
+    void OpenGLES::Disable(unsigned int cap)
+    {
+        glDisable(cap);
+        CheckStatus();
+    }
+
+    void OpenGLES::BindBuffer(unsigned int target, unsigned int buffer)
+    {
+        glBindBuffer(target, buffer);
+        CheckStatus();
+    }
+
+    void OpenGLES::BufferData(unsigned int target, signed long long size, const void *data, unsigned int usage)
+    {   
+        glBufferData(target, size, data, usage);
+        CheckStatus();
+    }
+
+    void OpenGLES::BindVertexArray(unsigned int array)
+    {
+        glBindVertexArray(array);
+        CheckStatus();
+    }
+
+    void OpenGLES::Viewport(int x, int y, int width, int height)
+    {
+        glViewport(x, y, width, height);
+        CheckStatus();
+    }
+
+    void OpenGLES::Scissor(int x, int y, int width, int height)
+    {
+        glScissor(x, y, width, height);
+        CheckStatus();
+    }
+
+    void OpenGLES::BlitFrameBuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, unsigned int mask, unsigned int filter)
+    {
+        glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+        CheckStatus();
+    }
+
+    void OpenGLES::ClearColour(float red, float green, float blue, float alpha)
+    {
+        glClearColor(red, green, blue, alpha);
+        CheckStatus();
+    }
+
+    void OpenGLES::Clear(unsigned int mask)
+    {
+        glClear(mask);
+        CheckStatus();
+    }
+
+    void OpenGLES::ClearStencil(int s)
+    {
+        glClearStencil(s);
+        CheckStatus();
+    }
+
+    void OpenGLES::ClearDepthf(float d)
+    { 
+        glClearDepthf(d);
+        CheckStatus();
+    }
+
+    void OpenGLES::DepthMask(unsigned char flag)
+    {
+        glDepthMask(flag);
+        CheckStatus();
+    }
+
+    void OpenGLES::StencilFunc(unsigned int func, int ref, unsigned int mask)
+    {
+        glStencilFunc(func, ref, mask);
+        CheckStatus();
+    }
+
+    void OpenGLES::StencilOp(unsigned int fail, unsigned int zfail, unsigned int zpass)
+    {
+        glStencilOp(fail, zfail, zpass);
+        CheckStatus();
+    }
+
+    void OpenGLES::StencilFuncSeparate(unsigned int face, unsigned int func, int ref, unsigned int mask)
+    {
+        glStencilFuncSeparate(face, func, ref, mask);
+        CheckStatus();
+    }
+
+    void OpenGLES::StencilOpSeparate(unsigned int face, unsigned int sfail, unsigned int dpfail, unsigned int dppass)
+    { 
+        glStencilOpSeparate(face, sfail, dpfail, dppass);
+        CheckStatus();
+    }
+
+    void OpenGLES::ColourMask(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
+    {
+        glColorMask(red, green, blue, alpha);
+        CheckStatus();
+    }
+
+    void OpenGLES::Uniform1f(int location, float v0)
+    { 
+        glUniform1f(location, v0);
+        CheckStatus();
+    }
+
+    void OpenGLES::EnableVertexAttribArray(unsigned int index)
+    { 
+        glEnableVertexAttribArray(index);
+        CheckStatus();
+    }
+
+    void OpenGLES::VertexAttribPointer(unsigned int index, int size, unsigned int type, unsigned char normalized, int stride, const void* pointer)
+    { 
+        glVertexAttribPointer(index, size, type, normalized, stride, pointer);
+        CheckStatus();
+    }
+
+    void OpenGLES::ActiveTexture(unsigned int texture)
+    { 
+        glActiveTexture(texture);
+        CheckStatus();
+    }
+
+    void OpenGLES::UniformBlockBinding(unsigned int program, unsigned int uniformBlockIndex, unsigned int uniformBlockBinding)
+    { 
+        glUniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
+        CheckStatus();
+    }
+
+    void OpenGLES::BindBufferRange(unsigned int target, unsigned int index, unsigned int buffer, signed long long offset, signed long long size)
+    {
+        glBindBufferRange(target, index, buffer, offset, size);
+        CheckStatus();
+    }
+
+    void OpenGLES::DrawElements(unsigned int mode, int count, unsigned int type, const void* indices)
+    {
+        glDrawElements(mode, count, type, indices);
+        CheckStatus();
+    }
+
+    void OpenGLES::DisableVertexAttribArray(unsigned int index)
+    { 
+        glDisableVertexAttribArray(index);
+        CheckStatus();
+    }
+
+    void OpenGLES::InvalidateFramebuffer(unsigned int target, int numAttachments, const unsigned int* attachments)
+    { 
+        glInvalidateFramebuffer(target, numAttachments, attachments);
+        CheckStatus();
     }
 
 }}}//qor::platform::nswindows

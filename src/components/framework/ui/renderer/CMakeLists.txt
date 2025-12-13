@@ -48,7 +48,7 @@ include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE QOR_RENDERER)
 target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_role qor_application qor_workflow qor_signals qor_error
-qor_property)
+qor_property qor_opengles)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 

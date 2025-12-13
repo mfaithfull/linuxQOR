@@ -26,6 +26,7 @@
 #define QOR_PP_H_WINDOWS_EGL_WINDOW
 
 #include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/egl/context.h"
 
 #include "src/platform/os/windows/common/stringconv.h"
 #include "src/platform/os/windows/common/structures.h"
@@ -100,7 +101,8 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     public:
 
-        EglWindow();       
+        EglWindow();
+        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context);
         virtual ~EglWindow();
 
         virtual void* GetNativeSurface();

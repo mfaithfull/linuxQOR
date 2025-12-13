@@ -32,13 +32,14 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlShader
     {
     public:
-        GlShader(const char* vertSrc, const char* fragSrc);
+        GlShader(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, const char* vertSrc, const char* fragSrc);
         ~GlShader();
 
         uint32_t getVertexShader();
         uint32_t getFragmentShader();
 
     private:
+        qor::ref_of<qor::components::OpenGLESFeature>::type m_openGLES;
         uint32_t compileShader(uint32_t type, char* shaderSrc);
 
         uint32_t mVtShader;

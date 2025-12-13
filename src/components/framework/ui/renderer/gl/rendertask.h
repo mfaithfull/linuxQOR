@@ -74,8 +74,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlRenderTask
     {
     public:
-        GlRenderTask(GlProgram* program): mProgram(program) {}
-        GlRenderTask(GlProgram* program, GlRenderTask* other);
+        GlRenderTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program): m_openGLES(openGLES), mProgram(program) {}
+        GlRenderTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program, GlRenderTask* other);
 
         virtual ~GlRenderTask() = default;
 
@@ -91,7 +91,12 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         GlProgram* getProgram() { return mProgram; }
         const RenderRegion& getViewport() const { return mViewport; }
         float getDrawDepth() const { return mDrawDepth; }
+        
+    protected:
+
+        qor::ref_of<qor::components::OpenGLESFeature>::type m_openGLES;
     private:
+        
         GlProgram* mProgram;
         RenderRegion mViewport = {};
         uint32_t mIndexOffset = {};
@@ -104,7 +109,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlStencilCoverTask : public GlRenderTask
     {
     public:
-        GlStencilCoverTask(GlRenderTask* stencil, GlRenderTask* cover, GlStencilMode mode);
+        GlStencilCoverTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlRenderTask* stencil, GlRenderTask* cover, GlStencilMode mode);
         ~GlStencilCoverTask() override;
 
         void run() override;
@@ -121,7 +126,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlComposeTask : public GlRenderTask 
     {
     public:
-        GlComposeTask(GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks);
+        GlComposeTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks);
         ~GlComposeTask() override;
 
         void run() override;
@@ -147,7 +152,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlBlitTask : public GlComposeTask
     {
     public:
-        GlBlitTask(GlProgram*, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks);
+        GlBlitTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram*, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks);
         ~GlBlitTask() override = default;
 
         void run() override;
@@ -163,7 +168,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlDrawBlitTask : public GlComposeTask
     {
     public:
-        GlDrawBlitTask(GlProgram*, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks);
+        GlDrawBlitTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram*, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks);
         ~GlDrawBlitTask() override;
 
         void setPrevTask(GlRenderTask* task) { mPrevTask = task; }
@@ -181,7 +186,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlSceneBlendTask : public GlComposeTask
     {
     public:
-        GlSceneBlendTask(GlProgram*, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks);
+        GlSceneBlendTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram*, GLuint target, GlRenderTarget* fbo, Array<GlRenderTask*>&& tasks);
         ~GlSceneBlendTask() override;
 
         void setParentSize(uint32_t width, uint32_t height) { mParentWidth = width; mParentHeight = height; }
@@ -242,7 +247,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     {
     public:
         GlGaussianBlurTask(GlRenderTarget* dstFbo, GlRenderTarget* dstCopyFbo0, GlRenderTarget* dstCopyFbo1): 
-            GlRenderTask(nullptr), mDstFbo(dstFbo), mDstCopyFbo0(dstCopyFbo0), mDstCopyFbo1(dstCopyFbo1) {};
+            GlRenderTask(m_openGLES, nullptr), mDstFbo(dstFbo), mDstCopyFbo0(dstCopyFbo0), mDstCopyFbo1(dstCopyFbo1) {};
         ~GlGaussianBlurTask(){ delete horzTask; delete vertTask; };
 
         void run() override;
@@ -259,8 +264,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     class GlEffectDropShadowTask: public GlRenderTask
     {
     public:
-        GlEffectDropShadowTask(GlProgram* program, GlRenderTarget* dstFbo, GlRenderTarget* dstCopyFbo0, GlRenderTarget* dstCopyFbo1): 
-            GlRenderTask(program), mDstFbo(dstFbo), mDstCopyFbo0(dstCopyFbo0), mDstCopyFbo1(dstCopyFbo1) {};
+        GlEffectDropShadowTask(qor::ref_of<qor::components::OpenGLESFeature>::type openGLES, GlProgram* program, GlRenderTarget* dstFbo, GlRenderTarget* dstCopyFbo0, GlRenderTarget* dstCopyFbo1): 
+            GlRenderTask(openGLES, program), mDstFbo(dstFbo), mDstCopyFbo0(dstCopyFbo0), mDstCopyFbo1(dstCopyFbo1) {};
         ~GlEffectDropShadowTask(){ delete horzTask; delete vertTask; };
 
         void run() override;
@@ -278,7 +283,7 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
     {
     public:
         GlEffectColorTransformTask(GlProgram* program, GlRenderTarget* dstFbo, GlRenderTarget* dstCopyFbo):
-            GlRenderTask(program), mDstFbo(dstFbo), mDstCopyFbo(dstCopyFbo) {};
+            GlRenderTask(m_openGLES, program), mDstFbo(dstFbo), mDstCopyFbo(dstCopyFbo) {};
         ~GlEffectColorTransformTask() {};
 
         void run() override;
