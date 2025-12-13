@@ -30,7 +30,19 @@ animation.cpp
 accessor.cpp
 taskscheduler.cpp
 rawloader.cpp
-loader.cpp)
+loader.cpp
+gl/effect.cpp
+gl/geometry.cpp
+gl/gl.cpp
+gl/gpubuffer.cpp
+gl/program.cpp
+gl/renderer.cpp
+gl/renderpass.cpp
+gl/rendertask.cpp
+gl/rendertarget.cpp
+gl/shader.cpp
+gl/shadersrc.cpp
+gl/tessellator.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
