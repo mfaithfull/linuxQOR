@@ -13,7 +13,7 @@ add_executable(${target} main.cpp)
 target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE qor_pp_ver_major=1 )
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application linqor_egl)
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_egl qor_opengles qor_renderer qor_canvas linqor_egl linqor_opengles)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

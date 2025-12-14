@@ -46,6 +46,10 @@ gl/tessellator.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx")
+endif()
+
 target_compile_definitions(${target} PRIVATE QOR_RENDERER)
 target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_role qor_application qor_workflow qor_signals qor_error
 qor_property qor_opengles)
