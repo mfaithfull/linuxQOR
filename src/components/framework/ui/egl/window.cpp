@@ -27,7 +27,11 @@
 
 namespace qor { namespace components{
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context) : m_display(display), m_context(context)
+    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context)  : m_display(display), m_context(context)
+    {
+    }
+
+    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height) : m_display(display), m_context(context)
     {        
     }
 

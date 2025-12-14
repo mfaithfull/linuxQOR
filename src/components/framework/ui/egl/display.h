@@ -38,7 +38,7 @@ namespace qor { namespace components{
         EGLDisplay(void* nativeDisplay = nullptr);
         EGLDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list);
 
-        virtual ~EGLDisplay() = default;
+        virtual ~EGLDisplay();
 
         virtual bool ChooseConfig(const int32_t* attrib_list, void** configs, int32_t config_size, int32_t* num_config);
         virtual bool CopyBuffers(void* surface, void* target);

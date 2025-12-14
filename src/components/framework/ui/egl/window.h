@@ -38,6 +38,7 @@ namespace qor { namespace components{
     public:
 
         EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type, qor::ref_of<EGLContext>::type context);
+        EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height);
         virtual ~EGLWindow();
 
         virtual void* GetNativeSurface();

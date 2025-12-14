@@ -95,7 +95,7 @@ namespace qor { namespace components{
         return 0;
     }
 
-    qor::ref_of<OpenGLESWindow>::type OpenGLESFeature::CreateWindow()
+    qor::ref_of<OpenGLESWindow>::type OpenGLESFeature::CreateWindow(const std::string& title, int width, int height)
     {
         qor::ref_of<OpenGLESWindow>::type glWindow;
         auto egl = AppBuilder().TheApplication()->
@@ -105,7 +105,7 @@ namespace qor { namespace components{
 
         if(egl.IsNotNull())
         {
-            qor::ref_of<EGLWindow>::type eglWindow = egl(qor_shared).CreateNativeWindow(m_display, m_context);
+            qor::ref_of<EGLWindow>::type eglWindow = egl(qor_shared).CreateNativeWindow(m_display, m_context, title, width, height);
             auto surface = m_display->CreateWindowSurface(m_config[0], eglWindow->GetNativeWindow(), nullptr);
             glWindow = new_ref<OpenGLESWindow>(eglWindow, surface);
         }

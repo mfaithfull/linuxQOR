@@ -119,20 +119,20 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     int32_t GlProgram::getAttributeLocation(const char* name)
     {
-        GL_CHECK(int32_t location = m_openGLES->GetAttribLocation(mCurrentProgram, name));
+        int32_t location = m_openGLES->GetAttribLocation(mCurrentProgram, name);
         return location;
     }
 
 
     int32_t GlProgram::getUniformLocation(const char* name)
     {
-        GL_CHECK(int32_t location = m_openGLES->GetUniformLocation(mProgramObj, name));
+        int32_t location = m_openGLES->GetUniformLocation(mProgramObj, name);
         return location;
     }
 
     int32_t GlProgram::getUniformBlockIndex(const char* name)
     {
-        GL_CHECK(int32_t index = m_openGLES->GetUniformBlockIndex(mProgramObj, name));
+        int32_t index = m_openGLES->GetUniformBlockIndex(mProgramObj, name);
         return index;
     }
 

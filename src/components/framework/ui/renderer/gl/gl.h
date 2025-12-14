@@ -32,13 +32,13 @@
     #include <emscripten/html5_webgl.h>
     #define GL_CHECK(stmt) stmt
 #else //__EMSCRIPTEN__
-    #if defined (THORVG_GL_TARGET_GLES)
+    //#if defined (THORVG_GL_TARGET_GLES)
         #define TVG_REQUIRE_GL_MAJOR_VER 3
         #define TVG_REQUIRE_GL_MINOR_VER 0
-    #else
-        #define TVG_REQUIRE_GL_MAJOR_VER 3
-        #define TVG_REQUIRE_GL_MINOR_VER 3
-    #endif
+    //#else
+    //    #define TVG_REQUIRE_GL_MAJOR_VER 3
+    //    #define TVG_REQUIRE_GL_MINOR_VER 3
+    //#endif
 
     #ifdef _DEBUG
         #define GL_CHECK(stmt) stmt; assert(m_openGLES->GetError() == GL_NO_ERROR);

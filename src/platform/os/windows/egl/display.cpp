@@ -32,7 +32,7 @@ namespace qor{ namespace platform { namespace nswindows{
 
     EglDisplay::EglDisplay() : qor::components::EGLDisplay()
     {
-        m_nativeWindow = new EglWindow();
+        m_nativeWindow = new EglWindow("Default", 100, 100);
         m_display = EGL::StaticGetDisplay((EGLNativeDisplayType)(m_nativeWindow->GetNativeSurface()));
         if( m_display == nullptr)
         {
@@ -90,9 +90,13 @@ namespace qor{ namespace platform { namespace nswindows{
 
     EglDisplay::~EglDisplay()
     {
-        if(!Terminate())
+        if(m_display)
         {
-            //EGL_BAD_DISPLAY is generated if display is not an EGL display connection
+            EGL::StaticMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+            if(!Terminate())
+            {
+                //EGL_BAD_DISPLAY is generated if display is not an EGL display connection
+            }
         }
     }
 

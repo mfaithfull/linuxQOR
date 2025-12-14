@@ -53,7 +53,7 @@ namespace qor { namespace components{
         virtual const byte* GetString (unsigned int name);
         virtual unsigned int GetError();
 
-        qor::ref_of<OpenGLESWindow>::type CreateWindow();
+        qor::ref_of<OpenGLESWindow>::type CreateWindow(const std::string& title, int width, int height);
         bool MakeCurrent(qor::ref_of<OpenGLESWindow>::type openGLESWindow);
 
         qor::ref_of<EGLDisplay>::type Display()

@@ -101,8 +101,9 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     public:
 
-        EglWindow();
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context);
+        EglWindow(const std::string& title, int width, int height);
+        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
+        const std::string& title, int width, int height);
         virtual ~EglWindow();
 
         virtual void* GetNativeSurface();

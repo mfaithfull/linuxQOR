@@ -391,9 +391,9 @@ EGL_BAD_PARAMETER is generated if num_config is NULL.*/
         return new_ref<EglDisplay>(platform, nativeDisplay, attrib_list);
     }
 
-    ref_of<qor::components::EGLWindow>::type EGL::CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context)
+    ref_of<qor::components::EGLWindow>::type EGL::CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context, const std::string& title, int width, int height)
     {
-        return new_ref<EglWindow>(display, context);
+        return new_ref<EglWindow>(display, context, title, width, height);
     }
 
 }}}//qor::platform::nswindows

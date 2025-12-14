@@ -118,8 +118,10 @@ int main()
                 }
 
                 auto context = display->CreateContext(config[1], nullptr, contextAttributes);
-
-                auto window = egl->CreateNativeWindow(display, context);
+                std::string title("EGL Test");
+                int width = 640;
+                int height = 480;
+                auto window = egl->CreateNativeWindow(display, context, title, width, height);
 
                 auto surface = display->CreateWindowSurface(config[1], window->GetNativeWindow(), surfaceAttributes);
 

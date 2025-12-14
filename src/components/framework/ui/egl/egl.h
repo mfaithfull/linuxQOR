@@ -65,7 +65,7 @@ namespace qor { namespace components{
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay();
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(void* nativeDisplay);
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list);
-        virtual ref_of<qor::components::EGLWindow>::type CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context);
+        virtual ref_of<qor::components::EGLWindow>::type CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height);
 
     };
     } //components

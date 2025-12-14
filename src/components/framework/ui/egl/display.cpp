@@ -36,6 +36,10 @@ namespace qor { namespace components{
     {        
     }
 
+    EGLDisplay::~EGLDisplay()
+    {        
+    }
+
     bool EGLDisplay::ChooseConfig(const int32_t* attrib_list, void** configs, int32_t config_size, int32_t* num_config)
     {
         return false;

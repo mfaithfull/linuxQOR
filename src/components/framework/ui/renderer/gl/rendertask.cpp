@@ -228,7 +228,7 @@ void GlComposeTask::run()
 //#ifdef THORVG_GL_TARGET_GLES
     m_openGLES->ClearDepthf(0.0);
 //#else
-    //GL_CHECK(glClearDepth(0.0));
+    //m_openGLES->ClearDepth(0.0);
 //#endif
     m_openGLES->DepthMask(1);
 

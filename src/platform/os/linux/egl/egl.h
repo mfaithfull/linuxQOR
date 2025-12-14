@@ -108,7 +108,7 @@ namespace qor{ namespace platform { namespace nslinux{
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay();
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(void* nativeDisplay);
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list);
-        virtual ref_of<qor::components::EGLWindow>::type CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context);
+        virtual ref_of<qor::components::EGLWindow>::type CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context, const std::string& title, int width, int height);
     };
 
 }}}//qor::platform::nslinux

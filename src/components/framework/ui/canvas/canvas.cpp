@@ -41,7 +41,7 @@ namespace qor{ namespace components{
         AsRef<qor::components::OpenGLESFeature>();
 
         m_eglContext = opengles->Context();
-        m_window = opengles->CreateWindow();//SDL_CreateWindow("ThorVG Example (OpenGL/ES)", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
+        m_window = opengles->CreateWindow("ThorVG based canvas", 1280, 800);
         m_window->Show();
         //Create a Canvas
         m_canvas = ui::renderer::GlCanvas::gen(opengles);
