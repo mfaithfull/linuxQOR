@@ -110,8 +110,7 @@ int main()
                 GetFeature(&OpenGLESFeatureGUID).
                 AsRef<qor::components::OpenGLESFeature>();
 
-                auto window = opengles->CreateWindow();
-
+                auto window = opengles->CreateWindow("OpenGL|ES Test", 800,600);
 
                 void** configs;
                 int eglNumConfigs;

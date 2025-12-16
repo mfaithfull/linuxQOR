@@ -22,33 +22,46 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#include "src/configuration/configuration.h"
 
-#include "src/components/framework/ui/egl/window.h"
-#include <X11/Xlib.h>       // X11 window system headers
+#include "pixmap.h"
+#include "display.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+#include <X11/Xlib.h>
+#include <X11/X.h>
+#include <X11/Xcms.h>
+#include <X11/Xutil.h>
+#include <X11/Xresource.h>
+#include <X11/Xatom.h>
+#include <X11/cursorfont.h>
+#include <X11/keysymdef.h>
+#include <X11/keysym.h>
+#include <X11/Xlibint.h>
+#include <X11/Xproto.h>
+#include <X11/Xprotostr.h>
 
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
+
+    Pixmap::Pixmap(unsigned long drawableId) : Drawable(drawableId), m_display(nullptr), temporary(true)
     {
-    public:
+    }
 
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
+    Pixmap::Pixmap(Display* display, unsigned long drawableId) : Drawable(drawableId), m_display(display), temporary(true)
+    {
+    }
 
-        virtual void* GetNativeSurface();
-        virtual void* GetNativeWindow();
+    Pixmap::Pixmap(Display* display, unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth) : Drawable(drawableId), m_display(display)
+    {        
+        temporary = false;
+        m_Id = XCreatePixmap((::Display*)(m_display->Use()), (::Drawable)m_Id, width, height, depth);
+    }
 
-    private:
+    Pixmap::~Pixmap()
+    {
+        if(!temporary)
+        {
+            XFreePixmap((::Display*)(m_display), (::Pixmap)(m_Id));
+        }
+    }
 
-        Window m_window;
-        Display* m_x11_display;
-    };
-
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW
+}}}}//qor::platform::nslinux::x

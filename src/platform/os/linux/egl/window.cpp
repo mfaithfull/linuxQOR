@@ -27,7 +27,16 @@
 
 namespace qor{ namespace platform { namespace nslinux{
 
-    EglWindow::EglWindow()
+    EglWindow::EglWindow(const std::string& title, int width, int height) : 
+        EglWindow(ref_of<qor::components::EGLDisplay>::type(), ref_of<qor::components::EGLContext>::type(),
+        title, width, height)
+    {
+    }
+
+    EglWindow::EglWindow(
+        ref_of<qor::components::EGLDisplay>::type display, 
+        ref_of<qor::components::EGLContext>::type context,
+        const std::string& title, int width, int height) : qor::components::EGLWindow(display, context)
     {
         m_x11_display = XOpenDisplay(NULL);  
     
@@ -40,10 +49,10 @@ namespace qor{ namespace platform { namespace nslinux{
         xwa.border_pixel = WhitePixel(m_x11_display, screen);  
         xwa.event_mask = StructureNotifyMask;  
     
-        // Create a 800x600 window  
+        // Create a window  
         m_window = XCreateWindow(  
             m_x11_display, root_window,  
-            0, 0, 800, 600, 0,  
+            0, 0, width, height, 0,  
             DefaultDepth(m_x11_display, screen),  
             InputOutput,  
             DefaultVisual(m_x11_display, screen),  

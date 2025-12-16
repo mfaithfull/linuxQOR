@@ -22,33 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#ifndef QOR_PP_H_LINUX_X_PIXMAP
+#define QOR_PP_H_LINUX_X_PIXMAP
 
-#include "src/components/framework/ui/egl/window.h"
-#include <X11/Xlib.h>       // X11 window system headers
+#include <string>
+#include <format>
+#include <vector>
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+#include "drawable.h"
 
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
+
+    class qor_pp_module_interface(QOR_LINX) Display;
+
+    class qor_pp_module_interface(QOR_LINX) Pixmap : public Drawable
     {
     public:
 
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
+        Pixmap(unsigned long drawableId);
+        Pixmap(Display* display, unsigned long drawableId);
+        Pixmap(Display* display, unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth);
+        ~Pixmap();
 
-        virtual void* GetNativeSurface();
-        virtual void* GetNativeWindow();
+        bool IsTemporary()
+        {
+            return temporary;
+        }
 
     private:
 
-        Window m_window;
-        Display* m_x11_display;
+        bool temporary;
+        Display* m_display;
     };
 
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_X_PIXMAP

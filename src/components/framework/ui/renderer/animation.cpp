@@ -41,7 +41,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         if (!loader) return Result::InsufficientCondition;
         if (!loader->animatable()) return Result::NonSupport;
 
-        if (static_cast<FrameModule*>(loader)->frame(no)) {
+        if (static_cast<FrameModule*>(loader)->frame(no)) 
+        {
             PAINT(pImpl->picture)->mark(RenderUpdateFlag::All);
             return Result::Success;
         }

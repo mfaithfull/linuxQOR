@@ -34,7 +34,7 @@
 namespace qor{ bool qor_pp_module_interface(QOR_LINCAIRO) ImplementsCairoFeature(); }
 
 //All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+namespace qor{ namespace platform { namespace nslinux{
     
     class qor_pp_module_interface(QOR_LINCAIRO) Cairo : public qor::components::CairoFeature
     {
@@ -50,4 +50,4 @@ namespace qor{ namespace platform { namespace nslinux{
 
 }}}//qor::platform::nslinux
 
-#endif//QOR_PP_IMPLEMENTS_CAIRO
+#endif//QOR_PP_H_LINUX_CAIRO

@@ -51,7 +51,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         ~TextImpl()
         {
             free(utf8);
-            if (loader) {
+            if (loader) 
+            {
                 loader->release(fm);
                 LoaderMgr::retrieve(loader);
             }
@@ -75,8 +76,9 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             if (!loader) return Result::InsufficientCondition;
 
             //Same resource has been loaded.
-            if (this->loader == loader) {
-                this->loader->sharing--;  //make it sure the reference counting.
+            if (this->loader == loader) 
+            {
+                this->loader->sharing--;
                 return Result::Success;
             } else if (this->loader) {
                 this->loader->release(fm);
@@ -90,8 +92,10 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         Result size(float fontSize)
         {
-            if (fontSize > 0.0f) {
-                if (fm.fontSize != fontSize) {
+            if (fontSize > 0.0f) 
+            {
+                if (fm.fontSize != fontSize) 
+                {
                     fm.fontSize = fontSize;
                     updated = true;
                 }
@@ -116,8 +120,10 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         bool load()
         {
             if (!loader) return false;
-            if (updated) {
-                if (loader->get(fm, utf8, to<ShapeImpl>(shape)->rs.path)) {
+            if (updated) 
+            {
+                if (loader->get(fm, utf8, to<ShapeImpl>(shape)->rs.path)) 
+                {
                     loader->transform(shape, fm, italicShear);
                 }
                 updated = false;
@@ -152,11 +158,15 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
             //transform the gradient coordinates based on the final scaled font.
             auto fill = to<ShapeImpl>(shape)->rs.fill;
-            if (fill && to<ShapeImpl>(shape)->impl.marked(RenderUpdateFlag::Gradient)) {
-                if (fill->type() == Type::LinearGradient) {
+            if (fill && to<ShapeImpl>(shape)->impl.marked(RenderUpdateFlag::Gradient)) 
+            {
+                if (fill->type() == Type::LinearGradient) 
+                {
                     LINEAR(fill)->p1 *= scale;
                     LINEAR(fill)->p2 *= scale;
-                } else {
+                } 
+                else 
+                {
                     RADIAL(fill)->center *= scale;
                     RADIAL(fill)->r *= scale;
                     RADIAL(fill)->focal *= scale;

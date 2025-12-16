@@ -28,13 +28,16 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     static bool accessChildren(Iterator* it, std::function<bool(const Paint* paint, void* data)> func, void* data)
     {
-        while (auto child = it->next()) {
+        while (auto child = it->next()) 
+        {
             //Access the child
             if (!func(child, data)) return false;
 
             //Access the children of the child
-            if (auto it2 = IteratorAccessor::iterator(child)) {
-                if (!accessChildren(it2, func, data)) {
+            if (auto it2 = IteratorAccessor::iterator(child)) 
+            {
+                if (!accessChildren(it2, func, data)) 
+                {
                     delete(it2);
                     return false;
                 }

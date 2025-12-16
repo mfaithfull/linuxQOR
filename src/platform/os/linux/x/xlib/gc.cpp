@@ -22,33 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#include "src/configuration/configuration.h"
 
-#include "src/components/framework/ui/egl/window.h"
-#include <X11/Xlib.h>       // X11 window system headers
+#include "gc.h"
+#include "display.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+#include <X11/Xlib.h>
+#include <X11/X.h>
+#include <X11/Xcms.h>
+#include <X11/Xutil.h>
+#include <X11/Xresource.h>
+#include <X11/Xatom.h>
+#include <X11/cursorfont.h>
+#include <X11/keysymdef.h>
+#include <X11/keysym.h>
+#include <X11/Xlibint.h>
+#include <X11/Xproto.h>
+#include <X11/Xprotostr.h>
 
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
+
+    GC::GC(void* gc) : m_gc(gc)
     {
-    public:
+    }
 
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
-
-        virtual void* GetNativeSurface();
-        virtual void* GetNativeWindow();
-
-    private:
-
-        Window m_window;
-        Display* m_x11_display;
-    };
-
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW
+}}}}//qor::platform::nslinux::x

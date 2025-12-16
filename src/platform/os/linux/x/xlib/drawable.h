@@ -22,33 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#ifndef QOR_PP_H_LINUX_X_DRAWABLE
+#define QOR_PP_H_LINUX_X_DRAWABLE
 
-#include "src/components/framework/ui/egl/window.h"
-#include <X11/Xlib.h>       // X11 window system headers
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
-
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
+    class qor_pp_module_interface(QOR_LINX) Drawable
     {
     public:
 
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
+        Drawable(unsigned long drawableId) : m_Id(drawableId)
+        {            
+        }
 
-        virtual void* GetNativeSurface();
-        virtual void* GetNativeWindow();
+        ~Drawable()
+        {            
+        }
 
-    private:
-
-        Window m_window;
-        Display* m_x11_display;
+    protected:
+        unsigned long m_Id;        
     };
 
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_X_DRAWABLE
