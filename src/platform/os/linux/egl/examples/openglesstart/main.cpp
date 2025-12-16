@@ -66,7 +66,7 @@ int main() {
     // ----------------------------  
     // Step 3: Choose an EGL Config  
     // ----------------------------  
-    // An EGL "Config" defines surface properties (e.g., color depth, alpha channel)  
+    // An EGL "Config" defines surface properties (e.g., colour depth, alpha channel)  
     EGLConfig egl_config;  
     EGLint num_configs;  
     EGLint config_attribs[] = {  
@@ -136,7 +136,7 @@ int main() {
     // ----------------------------  
     // Step 7: Render with OpenGL ES  
     // ----------------------------  
-    // Clear the screen to a blue color  
+    // Clear the screen to a blue colour  
     glClearColor(0.2f, 0.4f, 0.8f, 1.0f);  // RGBA: light blue  
     glClear(GL_COLOR_BUFFER_BIT);  
  

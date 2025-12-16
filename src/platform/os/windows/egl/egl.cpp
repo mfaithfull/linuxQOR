@@ -129,7 +129,7 @@ EGL_BAD_PARAMETER is generated if num_config is NULL.*/
                 //the implementation cannot allocate resources for the new EGL window.
                 break;
                 case EGL_BAD_MATCH:
-                //the pixel format of native_window does not correspond to the format, type, and size of the color buffers required by config.
+                //the pixel format of native_window does not correspond to the format, type, and size of the colour buffers required by config.
                 //config does not support rendering to windows (the EGL_SURFACE_TYPE attribute does not contain EGL_WINDOW_BIT).
                 //config does not support the specified OpenVG alpha format attribute (the value of EGL_VG_ALPHA_FORMAT is EGL_VG_ALPHA_FORMAT_PRE and the EGL_VG_ALPHA_FORMAT_PRE_BIT is not set in the EGL_SURFACE_TYPE attribute of config) or colorspace attribute (the value of EGL_VG_COLORSPACE is EGL_VG_COLORSPACE_LINEAR and the EGL_VG_COLORSPACE_LINEAR_IT is not set in the EGL_SURFACE_TYPE attribute of config).*/
                 break;

@@ -31,6 +31,8 @@
 #endif
 
 #include <Windows.h>
+#undef min
+#undef max
 
 //Conditionally bring in extra headers on versions where they are supported
 #ifndef __MINGW32__
