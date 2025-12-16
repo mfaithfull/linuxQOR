@@ -22,32 +22,41 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_CAIRO
-#define QOR_PP_H_LINUX_CAIRO
-
 #include <string>
+#include <format>
+#include <vector>
 
-#define QOR_PP_IMPLEMENTS_CAIRO
-#include "src/components/framework/ui/cairo/cairo.h"
-#include <cairo/cairo.h>
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-namespace qor{ bool qor_pp_module_interface(QOR_LINCAIRO) ImplementsCairoFeature(); }
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{
-    
-    class qor_pp_module_interface(QOR_LINCAIRO) Cairo : public qor::components::CairoFeature
+    /*#define   VisualNoMask                 0x0
+#define   VisualIDMask                 0x1
+#define   VisualScreenMask             0x2
+#define   VisualDepthMask              0x4
+#define   VisualClassMask              0x8
+#define   VisualRedMaskMask            0x10
+#define   VisualGreenMaskMask          0x20
+#define   VisualBlueMaskMask           0x40
+#define   VisualColormapSizeMask       0x80
+#define   VisualBitsPerRGBMask         0x100
+#define   VisualAllMask                0x1FF*/
+
+    class qor_pp_module_interface(QOR_LINX) Visual
     {
     public:
 
-        Cairo(){};
-        virtual ~Cairo(){};
+        Visual() = default;
+        Visual(void* handle);
+        virtual ~Visual() = default;
 
-        virtual void Setup(){};
-        virtual void Shutdown(){};
+        //VisualID XVisualIDFromVisual(visual);
+        void* Use()
+        {
+            return m_visual;
+        }
 
+    private:
+        void* m_visual;
     };
 
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_CAIRO
+}}}}//qor::platform::nslinux::x

@@ -64,7 +64,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         if (!name || (size == 0 && data)) return Result::InvalidArguments;
 
         //unload font
-        if (!data) {
+        if (!data) 
+        {
             if (LoaderMgr::retrieve(LoaderMgr::font(name))) return Result::Success;
             return Result::InsufficientCondition;
         }

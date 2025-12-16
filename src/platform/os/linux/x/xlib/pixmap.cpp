@@ -22,32 +22,46 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_CAIRO
-#define QOR_PP_H_LINUX_CAIRO
+#include "src/configuration/configuration.h"
 
-#include <string>
+#include "pixmap.h"
+#include "display.h"
 
-#define QOR_PP_IMPLEMENTS_CAIRO
-#include "src/components/framework/ui/cairo/cairo.h"
-#include <cairo/cairo.h>
+#include <X11/Xlib.h>
+#include <X11/X.h>
+#include <X11/Xcms.h>
+#include <X11/Xutil.h>
+#include <X11/Xresource.h>
+#include <X11/Xatom.h>
+#include <X11/cursorfont.h>
+#include <X11/keysymdef.h>
+#include <X11/keysym.h>
+#include <X11/Xlibint.h>
+#include <X11/Xproto.h>
+#include <X11/Xprotostr.h>
 
-namespace qor{ bool qor_pp_module_interface(QOR_LINCAIRO) ImplementsCairoFeature(); }
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{
-    
-    class qor_pp_module_interface(QOR_LINCAIRO) Cairo : public qor::components::CairoFeature
+    Pixmap::Pixmap(unsigned long drawableId) : Drawable(drawableId), m_display(nullptr), temporary(true)
     {
-    public:
+    }
 
-        Cairo(){};
-        virtual ~Cairo(){};
+    Pixmap::Pixmap(Display* display, unsigned long drawableId) : Drawable(drawableId), m_display(display), temporary(true)
+    {
+    }
 
-        virtual void Setup(){};
-        virtual void Shutdown(){};
+    Pixmap::Pixmap(Display* display, unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth) : Drawable(drawableId), m_display(display)
+    {        
+        temporary = false;
+        m_Id = XCreatePixmap((::Display*)(m_display->Use()), (::Drawable)m_Id, width, height, depth);
+    }
 
-    };
+    Pixmap::~Pixmap()
+    {
+        if(!temporary)
+        {
+            XFreePixmap((::Display*)(m_display), (::Pixmap)(m_Id));
+        }
+    }
 
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_CAIRO
+}}}}//qor::platform::nslinux::x

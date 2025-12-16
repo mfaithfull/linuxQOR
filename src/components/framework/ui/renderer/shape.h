@@ -66,7 +66,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             if (!rs.fill && rs.color.a == 0) return false;
 
             //translucent fill & stroke
-            if (opacity < 255) {
+            if (opacity < 255) 
+            {
                 impl.mark(CompositionFlag::Opacity);
                 return true;
             }
@@ -76,13 +77,17 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             auto method = PAINT(this)->mask(&target);
             if (!target) return false;
 
-            if ((target->pImpl->opacity == 255 || target->pImpl->opacity == 0) && target->type() == Type::Shape) {
+            if ((target->pImpl->opacity == 255 || target->pImpl->opacity == 0) && target->type() == Type::Shape) 
+            {
                 auto shape = static_cast<const Shape*>(target);
-                if (!shape->fill()) {
+                if (!shape->fill()) 
+                {
                     uint8_t r, g, b, a;
                     shape->fill(&r, &g, &b, &a);
-                    if (a == 0 || a == 255) {
-                        if (method == MaskMethod::Luma || method == MaskMethod::InvLuma) {
+                    if (a == 0 || a == 255) 
+                    {
+                        if (method == MaskMethod::Luma || method == MaskMethod::InvLuma) 
+                        {
                             if ((r == 255 && g == 255 && b == 255) || (r == 0 && g == 0 && b == 0)) return false;
                         } else return false;
                     }
@@ -101,7 +106,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         bool update(RenderMethod* renderer, const Matrix& transform, Array<RenderData>& clips, uint8_t opacity, RenderUpdateFlag flag, bool clipper)
         {
-            if (needComposition(opacity)) {
+            if (needComposition(opacity)) 
+            {
                 /* Overriding opacity value. If this scene is half-translucent,
                 It must do intermediate composition with that opacity value. */ 
                 this->opacity = opacity;
@@ -121,16 +127,20 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         {
             auto fallback = true;  //TODO: remove this when all backend engines suppport bounds()
 
-            if (impl.renderer && rs.strokeWidth() > 0.0f) {
-                if (impl.renderer->bounds(impl.rd, pt4, obb ? identity() : m)) {
+            if (impl.renderer && rs.strokeWidth() > 0.0f) 
+            {
+                if (impl.renderer->bounds(impl.rd, pt4, obb ? identity() : m)) 
+                {
                     fallback = false;
                 }
             }
             //Keep this for legacy. loaders still depend on this logic, remove it if possible.
-            if (fallback) {
+            if (fallback) 
+            {
                 BBox box = {{FLT_MAX, FLT_MAX}, {-FLT_MAX, -FLT_MAX}};
                 if (!rs.path.bounds(obb ? nullptr : &m, box)) return false;
-                if (rs.stroke) {
+                if (rs.stroke) 
+                {
                     //Use geometric mean for feathering.
                     //Join, Cap wouldn't be considered. Generate stroke outline and compute bbox for accurate size?
                     auto sx = sqrt(m.e11 * m.e11 + m.e21 * m.e21);
@@ -147,7 +157,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
                 pt4[3] = {box.min.x, box.max.y};
             }
 
-            if (obb) {
+            if (obb) 
+            {
                 pt4[0] *= m;
                 pt4[1] *= m;
                 pt4[2] *= m;
@@ -190,7 +201,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         void trimpath(const RenderTrimPath& trim)
         {
-            if (!rs.stroke) {
+            if (!rs.stroke) 
+            {
                 if (trim.begin == 0.0f && trim.end == 1.0f) return;
                 rs.stroke = new RenderStroke();
             }
@@ -203,11 +215,14 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         bool trimpath(float* begin, float* end)
         {
-            if (rs.stroke) {
+            if (rs.stroke) 
+            {
                 if (begin) *begin = rs.stroke->trim.begin;
                 if (end) *end = rs.stroke->trim.end;
                 return rs.stroke->trim.simultaneous;
-            } else {
+            } 
+            else 
+            {
                 if (begin) *begin = 0.0f;
                 if (end) *end = 1.0f;
                 return false;
@@ -249,7 +264,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         void strokeFill(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
         {
             if (!rs.stroke) rs.stroke = new RenderStroke();
-            if (rs.stroke->fill) {
+            if (rs.stroke->fill) 
+            {
                 delete(rs.stroke->fill);
                 rs.stroke->fill = nullptr;
                 impl.mark(RenderUpdateFlag::GradientStroke);
@@ -280,14 +296,17 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
             if (!rs.stroke) rs.stroke = new RenderStroke;
             //Reset dash
             auto& dash = rs.stroke->dash;
-            if (dash.count != cnt) {
+            if (dash.count != cnt) 
+            {
                 free(dash.pattern);
                 dash.pattern = nullptr;
             }
-            if (cnt > 0) {
+            if (cnt > 0) 
+            {
                 if (!dash.pattern) dash.pattern = malloc<float>(sizeof(float) * cnt);
                 dash.length = 0.0f;
-                for (uint32_t i = 0; i < cnt; ++i) {
+                for (uint32_t i = 0; i < cnt; ++i) 
+                {
                     dash.pattern[i] = pattern[i] < 0.0f ? 0.0f : pattern[i];
                     dash.length += dash.pattern[i];
                 }
@@ -325,7 +344,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
         void fill(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
         {
-            if (rs.fill) {
+            if (rs.fill) 
+            {
                 delete(rs.fill);
                 rs.fill = nullptr;
                 impl.mark(RenderUpdateFlag::Gradient);
@@ -392,7 +412,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         void appendRect(float x, float y, float w, float h, float rx, float ry, bool cw)
         {
             //sharp rect
-            if (zero(rx) && zero(ry)) {
+            if (zero(rx) && zero(ry)) 
+            {
                 rs.path.cmds.grow(5);
                 rs.path.pts.grow(4);
 
@@ -405,10 +426,13 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
                 pts[0] = {x + w, y};
                 pts[2] = {x, y + h};
-                if (cw) {
+                if (cw) 
+                {
                     pts[1] = {x + w, y + h};
                     pts[3] = {x, y};
-                } else {
+                } 
+                else 
+                {
                     pts[1] = {x, y};
                     pts[3] = {x + w, y + h};
                 }
@@ -416,7 +440,9 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
                 rs.path.cmds.count += 5;
                 rs.path.pts.count += 4;
             //round rect
-            } else {
+            } 
+            else 
+            {
                 auto hsize = Point{w * 0.5f, h * 0.5f};
                 rx = (rx > hsize.x) ? hsize.x : rx;
                 ry = (ry > hsize.y) ? hsize.y : ry;
@@ -432,7 +458,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
                 cmds[9] = PathCommand::Close;
                 pts[0] = {x + w, y + ry}; //move
 
-                if (cw) {
+                if (cw) 
+                {
                     cmds[1] = cmds[3] = cmds[5] = cmds[7] = PathCommand::LineTo;
                     cmds[2] = cmds[4] = cmds[6] = cmds[8] = PathCommand::CubicTo;
 
@@ -444,7 +471,9 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
                     pts[10] = {x, y + ry - hr.y}; pts[11] = {x + rx - hr.x, y}; pts[12] = {x + rx, y}; //cubic
                     pts[13] = {x + w - rx, y}; //line
                     pts[14] = {x + w - rx + hr.x, y}; pts[15] = {x + w, y + ry - hr.y}; pts[16] = {x + w, y + ry}; //cubic
-                } else {
+                } 
+                else 
+                {
                     cmds[1] = cmds[3] = cmds[5] = cmds[7] = PathCommand::CubicTo;
                     cmds[2] = cmds[4] = cmds[6] = cmds[8] = PathCommand::LineTo;
 

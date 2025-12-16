@@ -22,32 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_CAIRO
-#define QOR_PP_H_LINUX_CAIRO
+#ifndef QOR_PP_H_LINUX_X_PIXMAP
+#define QOR_PP_H_LINUX_X_PIXMAP
 
 #include <string>
+#include <format>
+#include <vector>
 
-#define QOR_PP_IMPLEMENTS_CAIRO
-#include "src/components/framework/ui/cairo/cairo.h"
-#include <cairo/cairo.h>
+#include "drawable.h"
 
-namespace qor{ bool qor_pp_module_interface(QOR_LINCAIRO) ImplementsCairoFeature(); }
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{
-    
-    class qor_pp_module_interface(QOR_LINCAIRO) Cairo : public qor::components::CairoFeature
+    class qor_pp_module_interface(QOR_LINX) Display;
+
+    class qor_pp_module_interface(QOR_LINX) Pixmap : public Drawable
     {
     public:
 
-        Cairo(){};
-        virtual ~Cairo(){};
+        Pixmap(unsigned long drawableId);
+        Pixmap(Display* display, unsigned long drawableId);
+        Pixmap(Display* display, unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth);
+        ~Pixmap();
 
-        virtual void Setup(){};
-        virtual void Shutdown(){};
+        bool IsTemporary()
+        {
+            return temporary;
+        }
 
+    private:
+
+        bool temporary;
+        Display* m_display;
     };
 
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_CAIRO
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_X_PIXMAP

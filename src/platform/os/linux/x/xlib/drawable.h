@@ -22,32 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_CAIRO
-#define QOR_PP_H_LINUX_CAIRO
+#ifndef QOR_PP_H_LINUX_X_DRAWABLE
+#define QOR_PP_H_LINUX_X_DRAWABLE
 
-#include <string>
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-#define QOR_PP_IMPLEMENTS_CAIRO
-#include "src/components/framework/ui/cairo/cairo.h"
-#include <cairo/cairo.h>
-
-namespace qor{ bool qor_pp_module_interface(QOR_LINCAIRO) ImplementsCairoFeature(); }
-
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{
-    
-    class qor_pp_module_interface(QOR_LINCAIRO) Cairo : public qor::components::CairoFeature
+    class qor_pp_module_interface(QOR_LINX) Drawable
     {
     public:
 
-        Cairo(){};
-        virtual ~Cairo(){};
+        Drawable(unsigned long drawableId) : m_Id(drawableId)
+        {            
+        }
 
-        virtual void Setup(){};
-        virtual void Shutdown(){};
+        ~Drawable()
+        {            
+        }
 
+    protected:
+        unsigned long m_Id;        
     };
 
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_CAIRO
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_X_DRAWABLE

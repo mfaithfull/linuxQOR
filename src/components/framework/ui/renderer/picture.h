@@ -90,15 +90,19 @@ struct PictureImpl : Picture
 
         auto pivot = Point{-origin.x * float(w), -origin.y * float(h)};
 
-        if (bitmap) {
+        if (bitmap) 
+        {
             //Overriding Transformation by the desired image size
             auto sx = w / loader->w;
             auto sy = h / loader->h;
             auto scale = sx < sy ? sx : sy;
             auto m = transform * Matrix{scale, 0, pivot.x, 0, scale, pivot.y, 0, 0, 1};
             impl.rd = renderer->prepare(bitmap, impl.rd, m, clips, opacity, flag);
-        } else if (vector) {
-            if (resizing) {
+        } 
+        else if (vector) 
+        {
+            if (resizing) 
+            {
                 loader->resize(vector, w, h);
                 resizing = false;
             }

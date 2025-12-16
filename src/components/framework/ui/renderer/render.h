@@ -55,7 +55,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
 
     struct RenderSurface
     {
-        union {
+        union 
+        {
             pixel_t* data = nullptr;    //system based data pointer
             uint32_t* buf32;            //for explicit 32bits channels
             uint8_t*  buf8;             //for explicit 8bits grayscale

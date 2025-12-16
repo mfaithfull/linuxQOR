@@ -22,32 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_CAIRO
-#define QOR_PP_H_LINUX_CAIRO
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
+#include "src/qor/reference/newref.h"
 
-#include <string>
+#include "xlib.h"
 
-#define QOR_PP_IMPLEMENTS_CAIRO
-#include "src/components/framework/ui/cairo/cairo.h"
-#include <cairo/cairo.h>
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: X Client",
+		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-namespace qor{ bool qor_pp_module_interface(QOR_LINCAIRO) ImplementsCairoFeature(); }
-
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{
-    
-    class qor_pp_module_interface(QOR_LINCAIRO) Cairo : public qor::components::CairoFeature
-    {
-    public:
-
-        Cairo(){};
-        virtual ~Cairo(){};
-
-        virtual void Setup(){};
-        virtual void Shutdown(){};
-
-    };
-
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_CAIRO
+    //Register the Linux specific implementations
+	static qor::TypeRegEntry< qor::platform::nslinux::XClient, qor::platform::nslinux::XClient > regXClient;
+	return QORModule;
+}
