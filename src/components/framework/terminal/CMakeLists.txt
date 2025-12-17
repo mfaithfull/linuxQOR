@@ -54,11 +54,40 @@ dom/box_helper.cpp
 dom/border.cpp
 dom/bold.cpp
 dom/blink.cpp
-dom/automerge.cpp)
+dom/automerge.cpp
+ui/animation.cpp
+ui/component.cpp
+ui/componentoptions.cpp
+ui/container.cpp
+ui/event.cpp
+ui/input.cpp
+ui/inputparser.cpp
+ui/loop.cpp
+ui/renderer.cpp
+ui/screeninteractive.cpp
+ui/task.cpp
+ui/taskqueue.cpp
+ui/taskrunner.cpp
+ui/util.cpp
+ui/maybe.cpp
+ui/catchevent.cpp
+widgets/button.cpp
+widgets/checkbox.cpp
+widgets/collapsible.cpp
+widgets/dropdown.cpp
+widgets/hoverable.cpp
+widgets/menu.cpp
+widgets/modal.cpp
+widgets/radiobox.cpp
+widgets/resizablesplit.cpp
+widgets/slider.cpp
+widgets/toggle.cpp
+widgets/window.cpp
+)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE QOR_TUI)
+target_compile_definitions(${target} PRIVATE UNICODE QOR_TUI)
 target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_role qor_application qor_workflow qor_signals qor_error
 qor_property)
 

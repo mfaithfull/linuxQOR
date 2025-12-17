@@ -28,6 +28,9 @@
 #include "src/components/framework/terminal/screen/colour.h"
 #include "src/components/framework/terminal/screen/screen.h"
 #include "src/components/framework/terminal/screen/termscreen.h"
+#include "src/components/framework/terminal/ui/component.h"
+#include "src/components/framework/terminal/ui/screeninteractive.h"
+
 
 #include <string>
 #include <sstream>
@@ -40,6 +43,28 @@ qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(TermScreen)
 
 using namespace qor::components::tui;
+
+// Define a special style for some menu entry.
+MenuEntryOption Coloured(qor::components::tui::Colour c) {
+  MenuEntryOption option;
+  option.animated_colors.foreground.enabled = true;
+  option.animated_colors.background.enabled = true;
+  option.animated_colors.background.active = c;
+  option.animated_colors.background.inactive = Colour::Black;
+  option.animated_colors.foreground.active = Colour::White;
+  option.animated_colors.foreground.inactive = c;
+  return option;
+}
+
+namespace qor::components::tui{
+
+    class std::shared_ptr<class qor::components::tui::ComponentBase> __cdecl qor::components::tui::operator|(
+        class std::shared_ptr<class qor::components::tui::ComponentBase> element,
+        class std::function<class std::shared_ptr<class qor::components::tui::Node> __cdecl(class std::shared_ptr<class qor::components::tui::Node>)> decorator)
+    {
+        return element;
+    }
+}
 
 int main()
 {
@@ -54,30 +79,42 @@ int main()
 
             []()->int
             {
-                auto document =
-                    hbox({
-                        vbox({
-                            text("Line 1"),
-                            text("Line 2"),
-                            text("Line 3"),
-                        }) | border,
+                auto screen = ScreenInteractive::TerminalOutput();
 
-                        vbox({
-                            text("Line 4"),
-                            text("Line 5"),
-                            text("Line 6"),
-                        }) | border,
+                int selected = 0;
+                auto menu = Container::Vertical(
+                    {
+                        MenuEntry(" 1. rear", Coloured(Colour::Red)),
+                        MenuEntry(" 2. drown", Coloured(Colour::Yellow)),
+                        MenuEntry(" 3. nail", Coloured(Colour::Green)),
+                        MenuEntry(" 4. quit", Coloured(Colour::Cyan)),
+                        MenuEntry(" 5. decorative", Coloured(Colour::Blue)),
+                        MenuEntry(" 7. costume"),
+                        MenuEntry(" 8. pick"),
+                        MenuEntry(" 9. oral"),
+                        MenuEntry("11. minister"),
+                        MenuEntry("12. football"),
+                        MenuEntry("13. welcome"),
+                        MenuEntry("14. copper"),
+                        MenuEntry("15. inhabitant"),
+                    },
+                    &selected);
 
-                        vbox({
-                            text("Line 7"),
-                            text("Line 8"),
-                            text("Line 9"),
-                        }) | border,
+                // Display together the menu with a border
+                auto renderer = Renderer(menu, [&] 
+                    {
+                        return vbox(
+                            {
+                                hbox(text("selected = "), text(std::to_string(selected))),
+                                separator(),
+                                menu->Render() | frame,
+                            }
+                        ) | border | bgcolor(Colour::Black);
                     });
-                auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(document));
-                Render(screen, document);
-                screen.Print();
 
+                screen.Loop(renderer);
+
+                std::cout << "Selected element = " << selected << std::endl;
                 return EXIT_SUCCESS;
             }
         )

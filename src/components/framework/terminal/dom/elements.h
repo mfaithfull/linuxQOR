@@ -41,7 +41,7 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-    class Node;
+    class qor_pp_module_interface(QOR_TUI) Node;
     using Element = std::shared_ptr<Node>;
     using Elements = std::vector<Element>;
     using Decorator = std::function<Element(Element)>;
@@ -62,7 +62,7 @@ namespace qor{ namespace components{ namespace tui {
         EMPTY,
     };
 
-    // Pipe elements into decorator togethers.
+    // Pipe elements into decorator.
     // For instance the next lines are equivalents:
     // -> text("ftxui") | bold | underlined
     // -> underlined(bold(text("FTXUI")))

@@ -22,20 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASKINTERNAL
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASKINTERNAL
 
+#include <chrono>
 #include <functional>
-#include <variant>
-#include "event.h"
+#include <optional>
 
 namespace qor{ namespace components{ namespace tui {
 
-    class AnimationTask {};
-    using Closure = std::function<void()>;
-    using Task = std::variant<Event, Closure, AnimationTask>;
+    namespace task
+    {
+        // A task represents a unit of work.
+        using Task = std::function<void()>;
 
+        // A PendingTask represents a task that is scheduled to be executed at a
+        // specific time, or as soon as possible.
+        struct PendingTask 
+        {
+            // Immediate task:
+            PendingTask(Task t) : task(std::move(t)) 
+            {}
+
+            // Delayed task with a duration
+            PendingTask(Task t, std::chrono::steady_clock::duration duration) : task(std::move(t)), time(std::chrono::steady_clock::now() + duration) 
+            {}
+            
+            Task task;
+
+            // The time when the task should be executed. If the time is empty, the task should be executed as soon as possible.
+            std::optional<std::chrono::steady_clock::time_point> time;
+
+            // Compare two PendingTasks by their time. If both tasks have no time, they are considered equal.
+            bool operator<(const PendingTask& other) const;
+        };
+    }
 }}}//qor::components::tui
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASKINTERNAL
 

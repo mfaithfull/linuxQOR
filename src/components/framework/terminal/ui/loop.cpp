@@ -22,20 +22,58 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
+#include "src/configuration/configuration.h"
 
-#include <functional>
-#include <variant>
-#include "event.h"
+#include <utility>
+
+#include "loop.h"
+#include "screeninteractive.h"
 
 namespace qor{ namespace components{ namespace tui {
 
-    class AnimationTask {};
-    using Closure = std::function<void()>;
-    using Task = std::variant<Event, Closure, AnimationTask>;
+/// @brief A Loop is a wrapper around a Component and a ScreenInteractive.
+/// It is used to run a Component in a terminal.
+/// @see Component, ScreenInteractive.
+/// @see ScreenInteractive::Loop().
+/// @see ScreenInteractive::ExitLoop().
+/// @param[in] screen The screen to use.
+/// @param[in] component The component to run.
+
+Loop::Loop(ScreenInteractive* screen, Component component)
+    : screen_(screen), component_(std::move(component)) {
+  screen_->PreMain();
+}
+
+Loop::~Loop() {
+  screen_->PostMain();
+}
+
+/// @brief Whether the loop has quitted.
+bool Loop::HasQuitted() {
+  return screen_->HasQuitted();
+}
+
+/// @brief Execute the loop. Make the `component` to process every pending
+/// tasks/events. A new frame might be drawn if the previous was invalidated.
+/// Return true until the loop hasn't completed.
+void Loop::RunOnce() {
+  screen_->RunOnce(component_);
+}
+
+/// @brief Wait for at least one event to be handled and execute
+/// `Loop::RunOnce()`.
+void Loop::RunOnceBlocking() {
+  screen_->RunOnceBlocking(component_);
+}
+
+/// Execute the loop, blocking the current thread, up until the loop has
+/// quitted.
+void Loop::Run() {
+  while (!HasQuitted()) {
+    RunOnceBlocking();
+  }
+}
 
 }}}//qor::components::tui
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
 

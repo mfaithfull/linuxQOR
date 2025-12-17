@@ -22,20 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UTIL_UTIL
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UTIL_UTIL
 
-#include <functional>
-#include <variant>
-#include "event.h"
+#include <utility>
 
 namespace qor{ namespace components{ namespace tui {
 
-    class AnimationTask {};
-    using Closure = std::function<void()>;
-    using Task = std::variant<Event, Closure, AnimationTask>;
+    namespace util 
+    {
+        // Similar to std::clamp, but allow hi to be lower than lo.
+        template <class T>
+        constexpr const T& clamp(const T& v, const T& lo, const T& hi) 
+        {
+            return v < lo ? lo : hi < v ? hi : v;
+        } 
+    }   
+}}}
 
-}}}//qor::components::tui
-
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
-
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UTIL_UTIL

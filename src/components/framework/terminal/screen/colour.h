@@ -30,7 +30,7 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-    class Colour
+    class qor_pp_module_interface(QOR_TUI) Colour
     {
     public:
 

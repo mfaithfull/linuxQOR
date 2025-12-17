@@ -22,20 +22,11 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
-
-#include <functional>
-#include <variant>
-#include "event.h"
+#include "src/configuration/configuration.h"
 
 namespace qor{ namespace components{ namespace tui {
 
-    class AnimationTask {};
-    using Closure = std::function<void()>;
-    using Task = std::variant<Event, Closure, AnimationTask>;
 
 }}}//qor::components::tui
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_TASK
 

@@ -87,7 +87,7 @@ void function_not_flex(Requirement& r) {
   r.flex_shrink_y = 0;
 }
 
-class Flex : public Node {
+class qor_pp_module_interface(QOR_TUI) Flex : public Node {
  public:
   explicit Flex(FlexFunction f) : f_(f) {}
   Flex(FlexFunction f, Element child) : Node(unpack(std::move(child))), f_(f) {}
