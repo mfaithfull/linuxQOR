@@ -1,16 +1,15 @@
 #include "src/configuration/configuration.h"
 
+#include <strsafe.h>
+#include <tchar.h>
+#include <format>
+#include "viewmodel.h"
+#include "model.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 #include <commdlg.h>
 #include <commctrl.h>
 #include <shellapi.h>
-#include <strsafe.h>
-#include <tchar.h>
-#include <format>
-
-#include "viewmodel.h"
-#include "model.h"
-#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
+#include <commdlg.h>
 #include "resource.h"
 
 constexpr int DEFAULT_WIDTH  = 640;
@@ -228,7 +227,7 @@ void ViewState::ShowFindDialog()
     find.lpstrFindWhat = model->GetFindText().data();
     find.wFindWhatLen = (WORD)model->GetFindTextLength();
     find.Flags = model->GetFindFlags();
-    hFindDlg = new qor::platform::nswindows::Window(FindText(&find));
+    hFindDlg = new qor::platform::nswindows::Window(FindText(reinterpret_cast<LPFINDREPLACE>(&find)));
 }
 
 void ViewState::ShowReplaceDialog() 
@@ -247,7 +246,7 @@ void ViewState::ShowReplaceDialog()
     find.wFindWhatLen = (WORD)model->GetFindTextLength();
     find.wReplaceWithLen = (WORD)model->GetReplaceTextLength();
     find.Flags = model->GetFindFlags();
-    hReplaceDlg = new qor::platform::nswindows::Window(ReplaceText(&find));
+    hReplaceDlg = new qor::platform::nswindows::Window(ReplaceText(reinterpret_cast<LPFINDREPLACE>(&find)));
 }
 
 void ViewState::DoFileNew() 
@@ -374,7 +373,7 @@ bool ViewState::DoFindNext(bool reverse)
     return false;
 }
 
-void ViewState::HandleFindReplace(LPFINDREPLACE lpfr)
+void ViewState::HandleFindReplace(qor::platform::nswindows::FindReplace* lpfr)
 {
     if (lpfr->Flags & FR_DIALOGTERM) 
     {

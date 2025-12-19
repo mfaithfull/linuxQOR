@@ -97,7 +97,7 @@ namespace qor{ namespace components{ namespace tui {
 
             void Select(Selection& selection) override 
             {
-                // If this Node box_ doesn't intersect with the selection, then no  selection.
+                // If this Node box_ doesn't intersect with the selection, then no selection.
                 if (Box::Intersection(selection.GetBox(), box_).IsEmpty()) 
                 {
                     return;
@@ -111,7 +111,7 @@ namespace qor{ namespace components{ namespace tui {
                 }
             }
         };
-    }  // namespace
+    }//
 
 
     //A container displaying elements vertically one by one.

@@ -32,6 +32,11 @@ using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
 
+    Icon::Icon(const PrimitiveHandle& h) : m_handle(h.Use())
+    {
+        m_handle.DontClose();
+    }
+    
     Icon::Icon(const Handle& h) : m_handle(h)
     {
     }

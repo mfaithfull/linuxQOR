@@ -42,7 +42,8 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-    namespace {
+    namespace 
+    {
         using qor::components::tui::Screen;
 
         class Text : public Node 
@@ -160,151 +161,44 @@ namespace qor{ namespace components{ namespace tui {
             int width_ = 1;
         };
 
-    }  // namespace
+    }//
 
-    /// @brief Display a piece of UTF8 encoded unicode text.
-    /// @ingroup dom
-    /// @see ftxui::to_wstring
-    ///
-    /// ### Example
-    ///
-    /// ```cpp
-    /// Element document = text("Hello world!");
-    /// ```
-    ///
-    /// ### Output
-    ///
-    /// ```bash
-    /// Hello world!
-    /// ```
-    Element text(std::string_view text) {
-    return std::make_shared<Text>(std::string(text));
+    //Display a piece of UTF8 encoded unicode text.
+    // Element document = text("Hello world!");    
+    Element text(std::string_view text) 
+    {
+        return std::make_shared<Text>(std::string(text));
     }
 
-    /// @brief Display a piece of unicode text.
-    /// @ingroup dom
-    /// @see ftxui::to_wstring
-    ///
-    /// ### Example
-    ///
-    /// ```cpp
-    /// Element document = text(L"Hello world!");
-    /// ```
-    ///
-    /// ### Output
-    ///
-    /// ```bash
-    /// Hello world!
-    /// ```
-    Element text(std::wstring text) {  // NOLINT
-    return std::make_shared<Text>(to_string(text));
+    //Display a piece of unicode text.
+    // Element document = text(L"Hello world!");
+    Element text(std::wstring text) 
+    {
+        return std::make_shared<Text>(to_string(text));
     }
 
-    /// @brief Display a piece of unicode text.
-    /// @ingroup dom
-    /// @see ftxui::to_wstring
-    ///
-    /// ### Example
-    ///
-    /// ```cpp
-    /// Element document = text(L"Hello world!");
-    /// ```
-    ///
-    /// ### Output
-    ///
-    /// ```bash
-    /// Hello world!
-    /// ```
-    Element text(std::wstring_view sv) {
-    return text(std::wstring(sv));
+    //Display a piece of unicode text.
+    // Element document = text(L"Hello world!");
+    // Hello world!
+    Element text(std::wstring_view sv) 
+    {
+        return text(std::wstring(sv));
     }
 
-    /// @brief Display a piece of unicode text vertically.
-    /// @ingroup dom
-    /// @see ftxui::to_wstring
-    ///
-    /// ### Example
-    ///
-    /// ```cpp
-    /// Element document = vtext("Hello world!");
-    /// ```
-    ///
-    /// ### Output
-    ///
-    /// ```bash
-    /// H
-    /// e
-    /// l
-    /// l
-    /// o
-    ///
-    /// w
-    /// o
-    /// r
-    /// l
-    /// d
-    /// !
-    /// ```
-    Element vtext(std::string_view text) {
-    return std::make_shared<VText>(std::string(text));
+    //Display a piece of unicode text vertically.
+    // Element document = vtext("Hello world!");
+    Element vtext(std::string_view text) 
+    {
+        return std::make_shared<VText>(std::string(text));
     }
 
-    /// @brief Display a piece unicode text vertically.
-    /// @ingroup dom
-    /// @see ftxui::to_wstring
-    ///
-    /// ### Example
-    ///
-    /// ```cpp
-    /// Element document = vtext(L"Hello world!");
-    /// ```
-    ///
-    /// ### Output
-    ///
-    /// ```bash
-    /// H
-    /// e
-    /// l
-    /// l
-    /// o
-    ///
-    /// w
-    /// o
-    /// r
-    /// l
-    /// d
-    /// !
-    /// ```
-    Element vtext(std::wstring text) {  // NOLINT
-    return std::make_shared<VText>(to_string(text));
+    //Display a piece unicode text vertically.
+    Element vtext(std::wstring text) 
+    {
+        return std::make_shared<VText>(to_string(text));
     }
 
-    /// @brief Display a piece unicode text vertically.
-    /// @ingroup dom
-    /// @see ftxui::to_wstring
-    ///
-    /// ### Example
-    ///
-    /// ```cpp
-    /// Element document = vtext(L"Hello world!");
-    /// ```
-    ///
-    /// ### Output
-    ///
-    /// ```bash
-    /// H
-    /// e
-    /// l
-    /// l
-    /// o
-    ///
-    /// w
-    /// o
-    /// r
-    /// l
-    /// d
-    /// !
-    /// ```
+    //Display a piece unicode text vertically.
     Element vtext(std::wstring_view text) 
     {
         return vtext(std::wstring(text));

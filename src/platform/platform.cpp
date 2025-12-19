@@ -50,12 +50,11 @@ namespace qor{
     }
 
     void Platform::Shutdown()
-    {
+    {   //TODO: consider shutting down the sub systems in reverse order as we do with features
         for( auto it : m_mapSubsystems)
         {
             it.second->Shutdown();            
         }
-
         m_mapSubsystems.clear();
     }
 

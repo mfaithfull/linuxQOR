@@ -42,6 +42,24 @@ namespace qor{ namespace platform { namespace nswindows {
 	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
 	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
 
+	static constexpr unsigned long ICC_LISTVIEW_CLASSES   = 0x00000001; // listview, header
+	static constexpr unsigned long ICC_TREEVIEW_CLASSES   = 0x00000002; // treeview, tooltips
+	static constexpr unsigned long ICC_BAR_CLASSES        = 0x00000004; // toolbar, statusbar, trackbar, tooltips
+	static constexpr unsigned long ICC_TAB_CLASSES        = 0x00000008; // tab, tooltips
+	static constexpr unsigned long ICC_UPDOWN_CLASS       = 0x00000010; // updown
+	static constexpr unsigned long ICC_PROGRESS_CLASS     = 0x00000020; // progress
+	static constexpr unsigned long ICC_HOTKEY_CLASS       = 0x00000040; // hotkey
+	static constexpr unsigned long ICC_ANIMATE_CLASS      = 0x00000080; // animate
+	static constexpr unsigned long ICC_WIN95_CLASSES      = 0x000000FF;
+	static constexpr unsigned long ICC_DATE_CLASSES       = 0x00000100; // month picker, date picker, time picker, updown
+	static constexpr unsigned long ICC_USEREX_CLASSES     = 0x00000200; // comboex
+	static constexpr unsigned long ICC_COOL_CLASSES       = 0x00000400; // rebar (coolbar) control
+	static constexpr unsigned long ICC_INTERNET_CLASSES   = 0x00000800;
+	static constexpr unsigned long ICC_PAGESCROLLER_CLASS = 0x00001000;   // page scroller
+	static constexpr unsigned long ICC_NATIVEFNTCTL_CLASS = 0x00002000;   // native font control
+	static constexpr unsigned long ICC_STANDARD_CLASSES   = 0x00004000;
+	static constexpr unsigned long ICC_LINK_CLASS         = 0x00008000;
+
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS

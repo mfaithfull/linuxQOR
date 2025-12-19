@@ -6,11 +6,12 @@
 #include "src/platform/os/windows/gui/window.h"
 #include "src/platform/os/windows/gui/font.h"
 #include "model.h"
-#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
-#include <commdlg.h>
+//#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
+//#include <commdlg.h>
 
 struct ViewState 
 {
+    ModelState* m_model;
     void* m_instance = nullptr;
     ModelState* model = nullptr;
     qor::platform::nswindows::Window* hwndMain = nullptr;
@@ -20,7 +21,7 @@ struct ViewState
     bool wordWrap;
     bool statusVisible;
     bool statusBeforeWrap;
-    FINDREPLACE find;
+    qor::platform::nswindows::FindReplace find;
     qor::platform::nswindows::Window* hFindDlg = nullptr;
     qor::platform::nswindows::Window* hReplaceDlg = nullptr;
 
@@ -41,7 +42,7 @@ struct ViewState
     bool PromptSaveChanges();
     void DoSelectFont();
     bool DoFindNext(bool reverse);
-    void HandleFindReplace(LPFINDREPLACE lpfr);
+    void HandleFindReplace(qor::platform::nswindows::FindReplace* lpfr);
     bool DoFileOpen();
     bool OpenFileDialog(TCHAR *pathOut, unsigned long pathLen);
     bool SaveFileDialog(stdstring& path);

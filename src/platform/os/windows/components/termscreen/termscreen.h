@@ -43,7 +43,13 @@ namespace qor{ namespace components{ namespace nswindows{ namespace tui {
         virtual ~TermScreen(){};
 
         virtual void Setup();
-        virtual void Shutdown(){};
+        virtual void Shutdown();
+
+    private:
+
+        unsigned long m_originalMode;
+        unsigned int m_codePage;
+        unsigned int m_outputCodePage;
 
     };
 

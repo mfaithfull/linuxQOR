@@ -29,20 +29,23 @@ namespace qor{ bool qor_pp_module_interface(QOR_WINTERMSCREEN) ImplementsTermScr
 
 namespace qor{ namespace components{ namespace nswindows{ namespace tui {
 
-    TermScreen::TermScreen()
-    {
+    TermScreen::TermScreen() : m_originalMode{0}
+    {        
     }
 
     void TermScreen::Setup()
     {
+        m_outputCodePage = GetConsoleOutputCP();
+        m_codePage = GetConsoleCP();
         SetConsoleOutputCP(CP_UTF8);
-        SetConsoleCP(CP_UTF8);        
+        SetConsoleCP(CP_UTF8);
 
         // Enable VT processing on stdout and stdin
         auto stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
-        unsigned long out_mode = 0;
-        GetConsoleMode(stdout_handle, &out_mode);
+        unsigned long out_mode = 0;        
+        GetConsoleMode(stdout_handle, &m_originalMode);
+        out_mode = m_originalMode;
 
         // https://docs.microsoft.com/en-us/windows/console/setconsolemode
         const int enable_virtual_terminal_processing = 0x0004;
@@ -51,6 +54,15 @@ namespace qor{ namespace components{ namespace nswindows{ namespace tui {
         out_mode |= disable_newline_auto_return;
 
         SetConsoleMode(stdout_handle, out_mode);
-
     }
+
+    void TermScreen::Shutdown()
+    {
+        //Restore Console settings
+        SetConsoleOutputCP(m_outputCodePage);
+        SetConsoleCP(m_codePage);
+        auto stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleMode(stdout_handle, m_originalMode);
+    }
+
 }}}}//qor::components::nswindows::tui

@@ -29,7 +29,7 @@
 
 namespace qor { namespace nswindows { namespace api {
 
-	class qor_pp_module_interface(QOR_WINAPI) GDI32
+	class qor_pp_module_interface(QOR_WINAPIGDI) GDI32
 	{
 	public:
         

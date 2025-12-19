@@ -30,36 +30,24 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-/// @brief Center an element horizontally.
-/// @param child The decorated element.
-/// @return The centered element.
-/// @ingroup dom
-Element hcenter(Element child) {
-  return hbox(filler(), std::move(child), filler());
-}
+	Element hcenter(Element child) 
+	{
+		return hbox(filler(), std::move(child), filler());
+	}
 
-/// @brief Center an element vertically.
-/// @param child The decorated element.
-/// @return The centered element.
-/// @ingroup dom
-Element vcenter(Element child) {
-  return vbox(filler(), std::move(child), filler());
-}
+	Element vcenter(Element child) 
+	{
+		return vbox(filler(), std::move(child), filler());
+	}
 
-/// @brief Center an element horizontally and vertically.
-/// @param child The decorated element.
-/// @return The centered element.
-/// @ingroup dom
-Element center(Element child) {
-  return hcenter(vcenter(std::move(child)));
-}
+	Element center(Element child) 
+	{
+		return hcenter(vcenter(std::move(child)));
+	}
 
-/// @brief Align an element on the right side.
-/// @param child The decorated element.
-/// @return The right aligned element.
-/// @ingroup dom
-Element align_right(Element child) {
-  return hbox(filler(), std::move(child));
-}
+	Element align_right(Element child) 
+	{
+		return hbox(filler(), std::move(child));
+	}
 
 }}}//qor::components::tui

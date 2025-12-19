@@ -46,7 +46,7 @@ namespace qor{ namespace components{ namespace tui {
     using Component = std::shared_ptr<ComponentBase>;
     using Components = std::vector<Component>;
 
-    /// It implement rendering itself as Element. implements keyboard navigation by responding to Event.
+    // It implement rendering itself as Element. implements keyboard navigation by responding to Event.
     
     class qor_pp_module_interface(QOR_TUI) ComponentBase 
     {
@@ -76,40 +76,34 @@ namespace qor{ namespace components{ namespace tui {
         // Override this function modify how `Render` works.
         virtual Element OnRender();
 
-        // Handles an event.
-        // By default, reduce on children with a lazy OR.
-        //
+        // Handles an event. By default, reduce on children with a lazy OR.
         // Returns whether the event was handled or not.
         virtual bool OnEvent(Event);
 
         // Handle an animation step.
         virtual void OnAnimation(animation::Params& params);
 
-        // Focus management ----------------------------------------------------------
+        // Focus management
         //
-        // If this component contains children, this indicates which one is active,
-        // nullptr if none is active.
+        // If this component contains children, this indicates which one is active, nullptr if none is active.
         //
         // We say an element has the focus if the chain of ActiveChild() from the
         // root component contains this object.
         virtual Component ActiveChild();
 
         // Return true when the component contains focusable elements.
-        // The non focusable Component will be skipped when navigating using the
-        // keyboard.
+        // The non focusable Component will be skipped when navigating using the keyboard.
         virtual bool Focusable() const;
 
-        // Whether this is the active child of its parent.
-        bool Active() const;
-        // Whether all the ancestors are active.
-        bool Focused() const;
+        
+        bool Active() const;// Whether this is the active child of its parent.
+        
+        bool Focused() const;// Whether all the ancestors are active.
 
         // Make the |child| to be the "active" one.
         virtual void SetActiveChild(ComponentBase* child);
         void SetActiveChild(Component child);
-
-        // Configure all the ancestors to give focus to this component.
-        void TakeFocus();
+        void TakeFocus();// Configure all the ancestors to give focus to this component.
 
     protected:
         CapturedMouse CaptureMouse(const Event& event);

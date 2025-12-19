@@ -1,7 +1,10 @@
 #include "src/configuration/configuration.h"
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 #include "src/platform/os/windows/gui/windowclassregistration.h"
 #include "src/platform/os/windows/gui/window.h"
+#include "src/platform/os/windows/gui/view/controllers/toplevel.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 #include <commdlg.h>
 #include <commctrl.h>
@@ -12,11 +15,32 @@
 
 using namespace qor::nswindows::api;
 using namespace qor::platform::nswindows;
+using namespace qor::platform::nswindows::gui;
+using namespace qor::platform::nswindows::gui::view;
+
+RetroPadTopLevelWindowController::RetroPadTopLevelWindowController() : qor::platform::nswindows::gui::view::TopLevelWindowController()
+{
+    m_focus = qor::new_ref<FocusController>();
+    qor::connect(m_focus(qor_shared), &FocusController::SetFocusSignal, *this, &RetroPadTopLevelWindowController::OnSetFocus);
+}
+
+RetroPadTopLevelWindowController::~RetroPadTopLevelWindowController() noexcept(true)
+{
+    qor::disconnect(m_focus(qor_shared), &FocusController::SetFocusSignal, *this, &RetroPadTopLevelWindowController::OnSetFocus);
+}
+
+long RetroPadTopLevelWindowController::OnCreate(qor::platform::nswindows::Window& window, qor::platform::nswindows::gui::view::CreateStruct* pCreateStruct)
+{
+    INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };
+    //InitCommonControlsEx(&icc);
+    DragAcceptFiles((HWND)(window.GetHandle().Use()), TRUE);
+    return 0;
+}
 
 LRESULT MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 RetroPadController::RetroPadController(void* instance) : m_instance(instance),
-m_icon(LoadIcon((HINSTANCE)(m_instance), MAKEINTRESOURCE(IDI_RETROPAD))),
+m_icon(Handle(LoadIcon((HINSTANCE)(m_instance), MAKEINTRESOURCE(IDI_RETROPAD)))),
 m_cursor(LoadCursor(NULL, IDC_IBEAM)),
 m_backgroundBrush(COLOR_BACKGROUND)
 {
@@ -205,15 +229,17 @@ LRESULT MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     RetroPadController* controller = reinterpret_cast<RetroPadController*>(w.GetPointer(GWLP_USERDATA));
     if(controller == nullptr)
     {
-        controller = reinterpret_cast<RetroPadController*>(lParam);
-    }
-    if(controller)
-    {
-        return controller->MainWindowHandler(hwnd, msg, wParam, lParam);
+        //The Window hasn't been created yet so use a temporary controller for the class of window
+        RetroPadTopLevelWindowController windowController;
+        windowController.m_rendering = qor::new_ref<RenderingController>();
+        windowController.m_ncRendering = qor::new_ref<RetroPadNonClientRenderingController>();
+        LRESULT result = 0;
+        windowController.ProcessMessage(w, result, msg, wParam, lParam);
+        return result;
     }
     else
     {
-        return ::DefWindowProc(hwnd, msg, wParam, lParam);
+        return controller->MainWindowHandler(hwnd, msg, wParam, lParam);
     }
 }
 
@@ -221,7 +247,7 @@ LRESULT RetroPadController::MainWindowHandler(HWND hwnd, UINT msg, WPARAM wParam
 {
     if (msg == m_findMsg) 
     {
-        m_view->HandleFindReplace((LPFINDREPLACE)lParam);
+        m_view->HandleFindReplace((qor::platform::nswindows::FindReplace*)lParam);
         return 0;
     }
 
@@ -230,7 +256,7 @@ LRESULT RetroPadController::MainWindowHandler(HWND hwnd, UINT msg, WPARAM wParam
     case WM_CREATE: 
     {
         INITCOMMONCONTROLSEX icc = { sizeof(icc), ICC_BAR_CLASSES };
-        InitCommonControlsEx(&icc);
+        //InitCommonControlsEx(&icc);
         DragAcceptFiles(hwnd, TRUE);
         return 0;
     }

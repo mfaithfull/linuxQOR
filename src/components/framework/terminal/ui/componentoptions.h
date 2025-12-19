@@ -34,86 +34,82 @@
 #include "../dom/direction.h"
 #include "../dom/elements.h"
 #include "../util/ref.h"
-//#include "../util/warn_windows_macro.h"
 #include "componentbase.h"
 #include "../screen/colour.h"
 
-namespace qor{ namespace components{ namespace tui {
-
-    /// @brief arguments for transform from |ButtonOption|, |CheckboxOption|,
-    /// |RadioboxOption|, |MenuEntryOption|, |MenuOption|.
+namespace qor{ namespace components{ namespace tui 
+{
+    //Arguments for transform from |ButtonOption|, |CheckboxOption|, |RadioboxOption|, |MenuEntryOption|, |MenuOption|.
     struct qor_pp_module_interface(QOR_TUI) EntryState 
     {
-        std::string label;  ///< The label to display.
-        bool state;         ///< The state of the button/checkbox/radiobox
-        bool active;        ///< Whether the entry is the active one.
-        bool focused;       ///< Whether the entry is one focused by the user.
-        int index;          ///< Index of the entry when applicable or -1.
+        std::string label;  //< The label to display.
+        bool state;         //< The state of the button/checkbox/radiobox
+        bool active;        //< Whether the entry is the active one.
+        bool focused;       //< Whether the entry is one focused by the user.
+        int index;          //< Index of the entry when applicable or -1.
     };
 
-    /// @brief Option for the underline effect.
-    /// @ingroup component
-    struct qor_pp_module_interface(QOR_TUI) UnderlineOption {
-    bool enabled = false;
+    //Option for the underline effect.
+    struct qor_pp_module_interface(QOR_TUI) UnderlineOption 
+    {
+        bool enabled = false;
 
-    Colour color_active = Colour::White;
-    Colour color_inactive = Colour::GrayDark;
+        Colour color_active = Colour::White;
+        Colour color_inactive = Colour::GrayDark;
 
-    animation::easing::Function leader_function = animation::easing::QuadraticInOut;
-    animation::easing::Function follower_function = animation::easing::QuadraticInOut;
+        animation::easing::Function leader_function = animation::easing::QuadraticInOut;
+        animation::easing::Function follower_function = animation::easing::QuadraticInOut;
 
-    animation::Duration leader_duration = std::chrono::milliseconds(250);
-    animation::Duration leader_delay = std::chrono::milliseconds(0);
-    animation::Duration follower_duration = std::chrono::milliseconds(250);
-    animation::Duration follower_delay = std::chrono::milliseconds(0);
+        animation::Duration leader_duration = std::chrono::milliseconds(250);
+        animation::Duration leader_delay = std::chrono::milliseconds(0);
+        animation::Duration follower_duration = std::chrono::milliseconds(250);
+        animation::Duration follower_delay = std::chrono::milliseconds(0);
 
-    void SetAnimation(animation::Duration d, animation::easing::Function f);
-    void SetAnimationDuration(animation::Duration d);
-    void SetAnimationFunction(animation::easing::Function f);
-    void SetAnimationFunction(animation::easing::Function f_leader, animation::easing::Function f_follower);
+        void SetAnimation(animation::Duration d, animation::easing::Function f);
+        void SetAnimationDuration(animation::Duration d);
+        void SetAnimationFunction(animation::easing::Function f);
+        void SetAnimationFunction(animation::easing::Function f_leader, animation::easing::Function f_follower);
     };
 
-    /// @brief Option about a potentially animated color.
-    /// @ingroup component
-    struct qor_pp_module_interface(QOR_TUI) AnimatedColorOption {
-    void Set(
-        Colour inactive,
-        Colour active,
-        animation::Duration duration = std::chrono::milliseconds(250),
-        animation::easing::Function function = animation::easing::QuadraticInOut);
+    //Options for a potentially animated color.
+    struct qor_pp_module_interface(QOR_TUI) AnimatedColorOption 
+    {
+        void Set(Colour inactive, Colour active,
+            animation::Duration duration = std::chrono::milliseconds(250),
+            animation::easing::Function function = animation::easing::QuadraticInOut);
 
-    bool enabled = false;
-    Colour inactive;
-    Colour active;
-    animation::Duration duration = std::chrono::milliseconds(250);
-    animation::easing::Function function = animation::easing::QuadraticInOut;
+        bool enabled = false;
+        Colour inactive;
+        Colour active;
+        animation::Duration duration = std::chrono::milliseconds(250);
+        animation::easing::Function function = animation::easing::QuadraticInOut;
     };
 
-    struct AnimatedColorsOption {
-    AnimatedColorOption background;
-    AnimatedColorOption foreground;
+    struct AnimatedColorsOption 
+    {
+        AnimatedColorOption background;
+        AnimatedColorOption foreground;
     };
 
-    /// @brief Option for the MenuEntry component.
-    /// @ingroup component
-    struct qor_pp_module_interface(QOR_TUI) MenuEntryOption {
-    ConstStringRef label = "MenuEntry";
-    std::function<Element(const EntryState& state)> transform;
-    AnimatedColorsOption animated_colors;
+    //Option for the MenuEntry component.
+    struct qor_pp_module_interface(QOR_TUI) MenuEntryOption 
+    {
+        ConstStringRef label = "MenuEntry";
+        std::function<Element(const EntryState& state)> transform;
+        AnimatedColorsOption animated_colors;
     };
 
-    /// @brief Option for the Menu component.
-    /// @ingroup component
-    struct qor_pp_module_interface(QOR_TUI) MenuOption {
-        // Standard constructors:
+    //Option for the Menu component.    
+    struct qor_pp_module_interface(QOR_TUI) MenuOption 
+    {
         static MenuOption Horizontal();
         static MenuOption HorizontalAnimated();
         static MenuOption Vertical();
         static MenuOption VerticalAnimated();
         static MenuOption Toggle();
 
-        ConstStringListRef entries;  ///> The list of entries.
-        Ref<int> selected = 0;       ///> The index of the selected entry.
+        ConstStringListRef entries;  //> The list of entries.
+        Ref<int> selected = 0;       //> The index of the selected entry.
 
         // Style:
         UnderlineOption underline;
@@ -129,11 +125,9 @@ namespace qor{ namespace components{ namespace tui {
         Ref<int> focused_entry = 0;
     };
 
-    /// @brief Option for the AnimatedButton component.
-    /// @ingroup component
+    //Option for the AnimatedButton component.
     struct qor_pp_module_interface(QOR_TUI) ButtonOption 
     {
-        // Standard constructors:
         static ButtonOption Ascii();
         static ButtonOption Simple();
         static ButtonOption Border();
@@ -150,10 +144,9 @@ namespace qor{ namespace components{ namespace tui {
         AnimatedColorsOption animated_colors;
     };
 
-    /// @brief Option for the Checkbox component.
-    /// @ingroup component
-    struct qor_pp_module_interface(QOR_TUI) CheckboxOption {
-        // Standard constructors:
+    //Option for the Checkbox component.
+    struct qor_pp_module_interface(QOR_TUI) CheckboxOption 
+    {    
         static CheckboxOption Simple();
 
         ConstStringRef label = "Checkbox";
@@ -163,54 +156,49 @@ namespace qor{ namespace components{ namespace tui {
         // Style:
         std::function<Element(const EntryState&)> transform;
 
-        // Observer:
-        /// Called when the user change the state.
+        // Observer: Called when the user changes the state.
         std::function<void()> on_change = [] {};
     };
 
-    /// @brief Used to define style for the Input component.
-    struct qor_pp_module_interface(QOR_TUI) InputState {
+    //Used to define style for the Input component.
+    struct qor_pp_module_interface(QOR_TUI) InputState 
+    {
         Element element;
-        bool hovered;         ///< Whether the input is hovered by the mouse.
-        bool focused;         ///< Whether the input is focused by the user.
-        bool is_placeholder;  ///< Whether the input is empty and displaying the placeholder.
+        bool hovered;         //< Whether the input is hovered by the mouse.
+        bool focused;         //< Whether the input is focused by the user.
+        bool is_placeholder;  //< Whether the input is empty and displaying the placeholder.
     };
 
-    /// @brief Option for the Input component.
-    /// @ingroup component
+    //Option for the Input component.    
     struct qor_pp_module_interface(QOR_TUI) InputOption 
     {
-        // A set of predefined styles:
-
-        /// @brief Create the default input style:
+        //Create the default input style:
         static InputOption Default();
-        /// @brief A white on black style with high margins:
+        //A white on black style with high margins:
         static InputOption Spacious();
 
-        /// The content of the input.
+        // The content of the input.
         StringRef content = "";
 
-        /// The content of the input when it's empty.
+        // The content of the input when it's empty.
         StringRef placeholder = "";
 
         // Style:
         std::function<Element(InputState)> transform;
-        Ref<bool> password = false;  ///< Obscure the input content using '*'.
-        Ref<bool> multiline = true;  ///< Whether the input can be multiline.
-        Ref<bool> insert = true;     ///< Insert or overtype character mode.
-
-        /// Called when the content changes.
-        std::function<void()> on_change = [] {};
-        /// Called when the user presses enter.
-        std::function<void()> on_enter = [] {};
+        Ref<bool> password = false;  //< Obscure the input content using '*'.
+        Ref<bool> multiline = true;  //< Whether the input can be multiline.
+        Ref<bool> insert = true;     //< Insert or overtype character mode.
+        
+        std::function<void()> on_change = [] {}; // Called when the content changes.        
+        std::function<void()> on_enter = [] {};// Called when the user presses enter.
 
         // The char position of the cursor:
         Ref<int> cursor_position = 0;
     };
 
-    /// @brief Option for the Radiobox component.
-    /// @ingroup component
-    struct qor_pp_module_interface(QOR_TUI) RadioboxOption {
+    //Option for the Radiobox component.
+    struct qor_pp_module_interface(QOR_TUI) RadioboxOption 
+    {
         // Standard constructors:
         static RadioboxOption Simple();
 
@@ -221,19 +209,17 @@ namespace qor{ namespace components{ namespace tui {
         // Style:
         std::function<Element(const EntryState&)> transform;
 
-        // Observers:
-        /// Called when the selected entry changes.
+        // Observers: Called when the selected entry changes.
         std::function<void()> on_change = [] {};
         Ref<int> focused_entry = 0;
     };
 
-    struct qor_pp_module_interface(QOR_TUI) ResizableSplitOption {
+    struct qor_pp_module_interface(QOR_TUI) ResizableSplitOption 
+    {
         Component main;
         Component back;
         Ref<Direction> direction = Direction::Left;
-        Ref<int> main_size =
-            (direction() == Direction::Left || direction() == Direction::Right) ? 20
-                                                                                : 10;
+        Ref<int> main_size = (direction() == Direction::Left || direction() == Direction::Right) ? 20 : 10;
         std::function<Element()> separator_func = [] { return qor::components::tui::separator(); };
 
         // Constraints on main_size:
@@ -241,8 +227,7 @@ namespace qor{ namespace components{ namespace tui {
         Ref<int> max = std::numeric_limits<int>::max();
     };
 
-    // @brief Option for the `Slider` component.
-    // @ingroup component
+    //Option for the `Slider` component.
     template <typename T>
     struct SliderOption 
     {
@@ -253,58 +238,52 @@ namespace qor{ namespace components{ namespace tui {
         Direction direction = Direction::Right;
         Colour color_active = Colour::White;
         Colour color_inactive = Colour::GrayDark;
-        std::function<void()> on_change;  ///> Called when `value` is updated.
+        std::function<void()> on_change;  //> Called when `value` is updated.
     };
 
-    /// @brief State passed to the `Window` component's render function.
-    /// @ingroup component
-    struct qor_pp_module_interface(QOR_TUI) WindowRenderState {
-        Element inner;             ///< The element wrapped inside this window.
-        const std::string& title;  ///< The title of the window.
-        bool active = false;       ///< Whether the window is the active one.
-        bool drag = false;         ///< Whether the window is being dragged.
-        bool resize = false;       ///< Whether the window is being resized.
-        bool hover_left = false;   ///< Whether the resizeable left side is hovered.
-        bool hover_right = false;  ///< Whether the resizeable right side is hovered.
-        bool hover_top = false;    ///< Whether the resizeable top side is hovered.
-        bool hover_down = false;   ///< Whether the resizeable down side is hovered.
+    //State passed to the `Window` component's render function.    
+    struct qor_pp_module_interface(QOR_TUI) WindowRenderState 
+    {
+        Element inner;             //< The element wrapped inside this window.
+        const std::string& title;  //< The title of the window.
+        bool active = false;       //< Whether the window is the active one.
+        bool drag = false;         //< Whether the window is being dragged.
+        bool resize = false;       //< Whether the window is being resized.
+        bool hover_left = false;   //< Whether the resizeable left side is hovered.
+        bool hover_right = false;  //< Whether the resizeable right side is hovered.
+        bool hover_top = false;    //< Whether the resizeable top side is hovered.
+        bool hover_down = false;   //< Whether the resizeable down side is hovered.
     };
 
-    // @brief Option for the `Window` component.
-    // @ingroup component
-    struct qor_pp_module_interface(QOR_TUI) WindowOptions {
-        Component inner;            ///< The component wrapped by this window.
-        ConstStringRef title = "";  ///< The title displayed by this window.
+    //Options for the `Window` component.
+    struct qor_pp_module_interface(QOR_TUI) WindowOptions 
+    {
+        Component inner;            //< The component wrapped by this window.
+        ConstStringRef title = "";  //< The title displayed by this window.
 
-        Ref<int> left = 0;     ///< The left side position of the window.
-        Ref<int> top = 0;      ///< The top side position of the window.
-        Ref<int> width = 20;   ///< The width of the window.
-        Ref<int> height = 10;  ///< The height of the window.
+        Ref<int> left = 0;     //< The left side position of the window.
+        Ref<int> top = 0;      //< The top side position of the window.
+        Ref<int> width = 20;   //< The width of the window.
+        Ref<int> height = 10;  //< The height of the window.
 
         Ref<bool> resize_left = true;   ///< Can the left side be resized?
         Ref<bool> resize_right = true;  ///< Can the right side be resized?
         Ref<bool> resize_top = true;    ///< Can the top side be resized?
         Ref<bool> resize_down = true;   ///< Can the down side be resized?
 
-        /// An optional function to customize how the window looks like:
-        std::function<Element(const WindowRenderState&)> render;
+        std::function<Element(const WindowRenderState&)> render;// An optional function to customize the window appearance:
     };
 
-    /// @brief Option for the Dropdown component.
-    /// @ingroup component
-    /// A dropdown menu is a checkbox opening/closing a radiobox.
-    struct qor_pp_module_interface(QOR_TUI) DropdownOption {
-        /// Whether the dropdown is open or closed:
-        Ref<bool> open = false;
-        // The options for the checkbox:
-        CheckboxOption checkbox;
-        // The options for the radiobox:
-        RadioboxOption radiobox;
-        // The transformation function:
-        std::function<Element(bool open, Element checkbox, Element radiobox)> transform;
+    //Options for the Dropdown component.
+    // A dropdown menu is a checkbox opening/closing a radiobox.
+    struct qor_pp_module_interface(QOR_TUI) DropdownOption 
+    {        
+        Ref<bool> open = false;// Whether the dropdown is open or closed:
+        CheckboxOption checkbox;// The options for the checkbox:        
+        RadioboxOption radiobox;// The options for the radiobox:        
+        std::function<Element(bool open, Element checkbox, Element radiobox)> transform;// The transformation function:
     };
 
 }}}//qor::components::tui
 
 #endif//QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_COMPONENTOPTIONS
-

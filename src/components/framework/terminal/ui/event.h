@@ -35,18 +35,18 @@ namespace qor{ namespace components{ namespace tui {
     class qor_pp_module_interface(QOR_TUI) ScreenInteractive;
     class qor_pp_module_interface(QOR_TUI) ComponentBase;
 
-    /// @brief Represent an event. It can be key press event, a terminal resize, or
-    ///
+    //Represent an event. It can be key press event, a terminal resize, or
+    //
     /// For example:
-    /// - Printable character can be created using Event::Character('a').
-    /// - Some special are predefined, like Event::ArrowLeft.
-    /// - One can find arbitrary code for special Events using:
-    ///   ./example/util/print_key_press
-    ///  For instance, CTLR+A maps to Event::Special({1});
-    ///
-    /// Useful documentation about xterm specification:
-    /// https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
-    ///
+    // - Printable character can be created using Event::Character('a').
+    // - Some special are predefined, like Event::ArrowLeft.
+    // - One can find arbitrary code for special Events using:
+    //   ./example/util/print_key_press
+    //  For instance, CTLR+A maps to Event::Special({1});
+    //
+    // Useful documentation about xterm specification:
+    // https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+
     struct qor_pp_module_interface(QOR_TUI) Event 
     {
         static Event Character(std::string_view);
@@ -257,7 +257,7 @@ namespace qor{ namespace components{ namespace tui {
         //--- State section ----------------------------------------------------------
         ScreenInteractive* screen_ = nullptr;
 
-        private:
+    private:
         friend ComponentBase;
         friend ScreenInteractive;
         enum class Type 

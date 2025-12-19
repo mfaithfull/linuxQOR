@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_PLATFORM_SUBSYSTEM_INTERFACE
 #define QOR_PP_H_PLATFORM_SUBSYSTEM_INTERFACE
 
+//Base interface for platform sub systems
+
 namespace qor{ namespace platform{
 
     class qor_pp_module_interface(QOR_PLATFORM) ISubsystem

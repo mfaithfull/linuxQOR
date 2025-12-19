@@ -29,7 +29,6 @@
 #include <memory>
 #include <utility>
 
-//#include <ftxui/util/warn_windows_macro.hpp>
 #include "componentbase.h"
 #include "componentoptions.h"
 #include "../dom/elements.h"
@@ -67,7 +66,7 @@ namespace qor{ namespace components{ namespace tui {
         qor_pp_module_interface(QOR_TUI) Component Horizontal(Components children, int* selector);
         qor_pp_module_interface(QOR_TUI) Component Tab(Components children, int* selector);
         qor_pp_module_interface(QOR_TUI) Component Stacked(Components children);
-    }  // namespace Container
+    }//Container
 
     qor_pp_module_interface(QOR_TUI) Component Button(ButtonOption options);
     qor_pp_module_interface(QOR_TUI) Component Button(ConstStringRef label, std::function<void()> on_click, ButtonOption options = ButtonOption::Simple());
@@ -93,30 +92,19 @@ namespace qor{ namespace components{ namespace tui {
     qor_pp_module_interface(QOR_TUI) Component Toggle(ConstStringListRef entries, int* selected);
 
     // General slider constructor:
-    template <typename T>
-    Component Slider(SliderOption<T> options);
+    template <typename T> Component Slider(SliderOption<T> options);
 
     // Shorthand without the `SliderOption` constructor:
-    qor_pp_module_interface(QOR_TUI) Component Slider(ConstStringRef label, Ref<int> value,
-                    ConstRef<int> min = 0,
-                    ConstRef<int> max = 100,
-                    ConstRef<int> increment = 5);
-    qor_pp_module_interface(QOR_TUI) Component Slider(ConstStringRef label,
-                    Ref<float> value,
-                    ConstRef<float> min = 0.f,
-                    ConstRef<float> max = 100.f,
-                    ConstRef<float> increment = 5.f);
-    qor_pp_module_interface(QOR_TUI) Component Slider(ConstStringRef label,
-                    Ref<long> value,
-                    ConstRef<long> min = 0L,
-                    ConstRef<long> max = 100L,
-                    ConstRef<long> increment = 5L);
+    qor_pp_module_interface(QOR_TUI) Component Slider(ConstStringRef label, Ref<int> value, ConstRef<int> min = 0, ConstRef<int> max = 100, ConstRef<int> increment = 5);
+    qor_pp_module_interface(QOR_TUI) Component Slider(ConstStringRef label, Ref<float> value, ConstRef<float> min = 0.f, ConstRef<float> max = 100.f, ConstRef<float> increment = 5.f);
+    qor_pp_module_interface(QOR_TUI) Component Slider(ConstStringRef label, Ref<long> value, ConstRef<long> min = 0L, ConstRef<long> max = 100L, ConstRef<long> increment = 5L);
 
     qor_pp_module_interface(QOR_TUI) Component ResizableSplit(ResizableSplitOption options);
     qor_pp_module_interface(QOR_TUI) Component ResizableSplitLeft(Component main, Component back, int* main_size);
     qor_pp_module_interface(QOR_TUI) Component ResizableSplitRight(Component main, Component back, int* main_size);
     qor_pp_module_interface(QOR_TUI) Component ResizableSplitTop(Component main, Component back, int* main_size);
     qor_pp_module_interface(QOR_TUI) Component ResizableSplitBottom(Component main, Component back, int* main_size);
+
     qor_pp_module_interface(QOR_TUI) Component Renderer(Component child, std::function<Element()>);
     qor_pp_module_interface(QOR_TUI) Component Renderer(std::function<Element()>);
     qor_pp_module_interface(QOR_TUI) Component Renderer(std::function<Element(bool /* focused */)>);

@@ -242,7 +242,7 @@ class Flexbox : public Node {
     status->need_iteration |= need_iteration_;
   }
 
-  int asked_ = 6000;  // NOLINT
+  int asked_ = 6000;
   bool need_iteration_ = true;
   const FlexboxConfig config_;
   const FlexboxConfig config_normalized_;
@@ -309,9 +309,9 @@ Element hflow(Elements children) {
 ///   text("element 3"),
 /// });
 /// ```
-Element vflow(Elements children) {
-  return flexbox(std::move(children),
-                 FlexboxConfig().Set(FlexboxConfig::Direction::Column));
+Element vflow(Elements children) 
+{
+	return flexbox(std::move(children), FlexboxConfig().Set(FlexboxConfig::Direction::Column));
 }
 
 }}}//qor::components::tui

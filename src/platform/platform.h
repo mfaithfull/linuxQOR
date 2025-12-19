@@ -34,7 +34,7 @@
 
 /*The Platform class represents the OS at runtime, it's capabilities services, 
 features, configuration and settings including the devices it presents.
-This works very much like qor::framework::role but for OS subsystems rather than
+This works very much like qor::framework::Role but for OS subsystems rather than
 application features*/
 
 namespace qor{ namespace platform{

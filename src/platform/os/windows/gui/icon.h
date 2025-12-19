@@ -61,6 +61,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     public:
 
+        explicit Icon(const PrimitiveHandle& h);
         Icon(const Handle& h);
         Icon(const Icon& src);
         Icon(void* hInstance, int nWidth, int nHeight, byte cPlanes, byte cBitsPixel, const byte* lpbANDbits, const byte* lpbXORbits);

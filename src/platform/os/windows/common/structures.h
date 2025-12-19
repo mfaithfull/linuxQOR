@@ -267,6 +267,68 @@ namespace qor{ namespace platform { namespace nswindows {
         unsigned int    uiLengthDrawn;
     };
 
+    struct NotificationMessageHeader
+    {
+        void*				m_phWindowFrom;
+        unsigned long long  m_uiIdFrom;
+        unsigned int		m_uiCode;
+    };
+
+    struct DeleteItemStruct
+    {
+        unsigned int        CtlType;
+        unsigned int        CtlID;
+        unsigned int        itemID;
+        void*			    phwndItem;
+        unsigned long long  itemData;
+    };
+
+    struct ComparisonItem
+    {
+        unsigned int        CtlType;
+        unsigned int        CtlID;
+        void*				phwndItem;
+        unsigned int        itemID1;
+        unsigned long long	itemData1;
+        unsigned int        itemID2;
+        unsigned long long  itemData2;
+        unsigned long       dwLocaleId;
+    };
+
+    struct MeasureItemStruct
+    {
+        unsigned int       CtlType;
+        unsigned int       CtlID;
+        unsigned int       itemID;
+        unsigned int       itemWidth;
+        unsigned int       itemHeight;
+        unsigned long long itemData;
+    };
+
+    struct InitCommonControlsEx
+    {
+        unsigned long dwSize;             // size of this structure
+        unsigned long dwICC;              // flags indicating which classes to be initialized
+    };
+
+    typedef unsigned long long (__stdcall * FindReplaceHookProc) (void*, unsigned int, unsigned long long , long long);
+
+    struct FindReplace
+    {
+        unsigned long       lStructSize;        // size of this struct 0x20
+        void*               hwndOwner;          // handle to owner's window
+        void*               hInstance;          // instance handle of.EXE that
+        //   contains cust. dlg. template
+        unsigned long       Flags;              // one or more of the FR_??
+        TCHAR*              lpstrFindWhat;      // ptr. to search string
+        TCHAR*              lpstrReplaceWith;   // ptr. to replace string
+        unsigned short      wFindWhatLen;       // size of find buffer
+        unsigned short      wReplaceWithLen;    // size of replace buffer
+        long long           lCustData;          // data passed to hook fn.
+        FindReplaceHookProc lpfnHook;           // ptr. to hook fn. or NULL
+        const TCHAR*        lpTemplateName;     // custom template name
+    };
+
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_STRUCTURES

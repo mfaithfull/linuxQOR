@@ -38,6 +38,7 @@
 
 namespace qor{ namespace network{
 
+    //Defines Socket interface to be implemented by each platform
     class ISocket
     {
     public:

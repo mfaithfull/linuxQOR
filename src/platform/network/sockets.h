@@ -36,6 +36,7 @@ namespace qor{ bool qor_pp_import ImplementsSockets();}
 
 namespace qor{ namespace network{
 
+    //Empty base implementation of Sockets subsystem
     class qor_pp_module_interface(QOR_SOCKETS) Sockets : public platform::ISubsystem   
     {
     public:

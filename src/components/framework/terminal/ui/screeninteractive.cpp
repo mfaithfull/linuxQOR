@@ -84,41 +84,42 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-struct ScreenInteractive::Internal {
-  // Convert char to Event.
-  TerminalInputParser terminal_input_parser;
+struct ScreenInteractive::Internal 
+{
+	// Convert char to Event.
+	TerminalInputParser terminal_input_parser;
+	task::TaskRunner task_runner;
 
-  task::TaskRunner task_runner;
+	// The last time a character was received.
+	std::chrono::time_point<std::chrono::steady_clock> last_char_time = std::chrono::steady_clock::now();
 
-  // The last time a character was received.
-  std::chrono::time_point<std::chrono::steady_clock> last_char_time =
-      std::chrono::steady_clock::now();
-
-  explicit Internal(std::function<void(Event)> out)
-      : terminal_input_parser(std::move(out)) {}
+	explicit Internal(std::function<void(Event)> out) : terminal_input_parser(std::move(out)) {}
 };
 
 namespace animation {
-void RequestAnimationFrame() {
-  auto* screen = ScreenInteractive::Active();
-  if (screen) {
-    screen->RequestAnimationFrame();
-  }
-}
+	void RequestAnimationFrame() 
+	{
+		auto* screen = ScreenInteractive::Active();
+		if (screen) 
+		{
+			screen->RequestAnimationFrame();
+		}
+	}
 }  // namespace animation
 
-namespace {
+namespace 
+{
 
-ScreenInteractive* g_active_screen = nullptr;  // NOLINT
+	ScreenInteractive* g_active_screen = nullptr;  // NOLINT
 
-void Flush() {
-  // Emscripten doesn't implement flush. We interpret zero as flush.
-  std::cout << '\0' << std::flush;
-}
+	void Flush() 
+	{
+		// Emscripten doesn't implement flush. We interpret zero as flush.
+		std::cout << '\0' << std::flush;
+	}
 
 constexpr int timeout_milliseconds = 20;
-[[maybe_unused]] constexpr int timeout_microseconds =
-    timeout_milliseconds * 1000;
+[[maybe_unused]] constexpr int timeout_microseconds = timeout_milliseconds * 1000;
 #if defined(_WIN32)
 
 #elif defined(__EMSCRIPTEN__)
@@ -148,22 +149,25 @@ int CheckStdinReady(int fd) {
 
 #endif
 
-std::stack<Closure> on_exit_functions;  // NOLINT
-void OnExit() {
-  while (!on_exit_functions.empty()) {
-    on_exit_functions.top()();
-    on_exit_functions.pop();
-  }
+std::stack<Closure> on_exit_functions;
+void OnExit() 
+{
+	while (!on_exit_functions.empty()) 
+	{
+		on_exit_functions.top()();
+		on_exit_functions.pop();
+	}
 }
 
-std::atomic<int> g_signal_exit_count = 0;  // NOLINT
+std::atomic<int> g_signal_exit_count = 0;
 #if !defined(_WIN32)
-std::atomic<int> g_signal_stop_count = 0;    // NOLINT
-std::atomic<int> g_signal_resize_count = 0;  // NOLINT
+std::atomic<int> g_signal_stop_count = 0;
+std::atomic<int> g_signal_resize_count = 0;
 #endif
 
 // Async signal safe function
-void RecordSignal(int signal) {
+void RecordSignal(int signal) 
+{
   switch (signal) {
     case SIGABRT:
     case SIGFPE:
@@ -189,11 +193,13 @@ void RecordSignal(int signal) {
   }
 }
 
-void ExecuteSignalHandlers() {
-  int signal_exit_count = g_signal_exit_count.exchange(0);
-  while (signal_exit_count--) {
-    ScreenInteractive::Private::Signal(*g_active_screen, SIGABRT);
-  }
+void ExecuteSignalHandlers() 
+{
+	int signal_exit_count = g_signal_exit_count.exchange(0);
+	while (signal_exit_count--) 
+	{
+    	ScreenInteractive::Private::Signal(*g_active_screen, SIGABRT);
+	}
 
 #if !defined(_WIN32)
   int signal_stop_count = g_signal_stop_count.exchange(0);
@@ -208,10 +214,11 @@ void ExecuteSignalHandlers() {
 #endif
 }
 
-void InstallSignalHandler(int sig) {
-  auto old_signal_handler = std::signal(sig, RecordSignal);
-  on_exit_functions.emplace(
-      [=] { std::ignore = std::signal(sig, old_signal_handler); });
+void InstallSignalHandler(int sig) 
+{
+	auto old_signal_handler = std::signal(sig, RecordSignal);
+	on_exit_functions.emplace(
+		[=] { std::ignore = std::signal(sig, old_signal_handler); });
 }
 
 // CSI: Control Sequence Introducer
@@ -374,9 +381,7 @@ ScreenInteractive ScreenInteractive::TerminalOutput() {
 
 ScreenInteractive::~ScreenInteractive() = default;
 
-/// Create a ScreenInteractive whose width and height match the component being
-/// drawn.
-// static
+/// Create a ScreenInteractive whose width and height match the component being drawn.
 ScreenInteractive ScreenInteractive::FitComponent() {
   auto terminal = Terminal::Size();
   return {
@@ -800,15 +805,15 @@ void ScreenInteractive::RunOnce(Component component) {
 }
 
 // private
-// NOLINTNEXTLINE
-void ScreenInteractive::HandleTask(Component component, Task& task) {
+void ScreenInteractive::HandleTask(Component component, Task& task) 
+{
   std::visit(
       [&](auto&& arg) {
         using T = std::decay_t<decltype(arg)>;
 
-        // clang-format off
     // Handle Event.
-    if constexpr (std::is_same_v<T, Event>) {
+    if constexpr (std::is_same_v<T, Event>) 
+	{
 
       if (arg.is_cursor_position()) {
         cursor_x_ = arg.cursor_x();
@@ -837,7 +842,8 @@ void ScreenInteractive::HandleTask(Component component, Task& task) {
       }
 
 #if !defined(_WIN32)
-      if (arg == Event::CtrlZ && (!handled || force_handle_ctrl_z_)) {
+      if (arg == Event::CtrlZ && (!handled || force_handle_ctrl_z_)) 
+	  {
         RecordSignal(SIGTSTP);
       }
 #endif
@@ -869,8 +875,7 @@ void ScreenInteractive::HandleTask(Component component, Task& task) {
       return;
     }
   },
-  task);
-  // clang-format on
+  task);  
 }
 
 // private
@@ -927,7 +932,6 @@ bool ScreenInteractive::HandleSelection(bool handled, Event event) {
 }
 
 // private
-// NOLINTNEXTLINE
 void ScreenInteractive::Draw(Component component) {
   if (frame_valid_) {
     return;
@@ -1208,8 +1212,7 @@ void ScreenInteractive::PostAnimationTask() {
 
   // Repeat the animation task every 15ms. This correspond to a frame rate
   // of around 66fps.
-  internal_->task_runner.PostDelayedTask([this] { PostAnimationTask(); },
-                                         std::chrono::milliseconds(15));
+  internal_->task_runner.PostDelayedTask([this] { PostAnimationTask(); }, std::chrono::milliseconds(15));
 }
 
 bool ScreenInteractive::SelectionData::operator==(

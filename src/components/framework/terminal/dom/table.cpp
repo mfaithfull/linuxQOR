@@ -37,79 +37,88 @@ namespace qor{ namespace components{ namespace tui {
 
     namespace {
 
-        bool IsCell(int x, int y) {
-        return x % 2 == 1 && y % 2 == 1;
+        bool IsCell(int x, int y) 
+        {
+            return x % 2 == 1 && y % 2 == 1;
         }
 
-        // NOLINTNEXTLINE
-        static std::string charset[6][6] = {
-        {"┌", "┐", "└", "┘", "─", "│"},  // LIGHT
-        {"┏", "┓", "┗", "┛", "╍", "╏"},  // DASHED
-        {"┏", "┓", "┗", "┛", "━", "┃"},  // HEAVY
-        {"╔", "╗", "╚", "╝", "═", "║"},  // DOUBLE
-        {"╭", "╮", "╰", "╯", "─", "│"},  // ROUNDED
-        {" ", " ", " ", " ", " ", " "},  // EMPTY
+        static std::string charset[6][6] = 
+        {
+            {"┌", "┐", "└", "┘", "─", "│"},  // LIGHT
+            {"┏", "┓", "┗", "┛", "╍", "╏"},  // DASHED
+            {"┏", "┓", "┗", "┛", "━", "┃"},  // HEAVY
+            {"╔", "╗", "╚", "╝", "═", "║"},  // DOUBLE
+            {"╭", "╮", "╰", "╯", "─", "│"},  // ROUNDED
+            {" ", " ", " ", " ", " ", " "},  // EMPTY
         };
 
-        int Wrap(int input, int modulo) {
-        input %= modulo;
-        input += modulo;
-        input %= modulo;
-        return input;
+        int Wrap(int input, int modulo) 
+        {
+            input %= modulo;
+            input += modulo;
+            input %= modulo;
+            return input;
         }
 
-        void Order(int& a, int& b) {
-        if (a >= b) {
-        std::swap(a, b);
-        }
+        void Order(int& a, int& b) 
+        {
+            if (a >= b) 
+            {
+                std::swap(a, b);
+            }
         }
 
-        }  // namespace
+    }//
 
-        /// @brief Create an empty table.
-        Table::Table() {
+    //Create an empty table.
+    Table::Table() 
+    {
         Initialize({});
-        }
+    }
 
-        /// @brief Create a table from a vector of vector of string.
-        /// @param input The input data.
-        Table::Table(std::vector<std::vector<std::string>> input) {
+    //Create a table from a vector of vector of string.        
+    Table::Table(std::vector<std::vector<std::string>> input) 
+    {
         std::vector<std::vector<Element>> output;
         output.reserve(input.size());
-        for (auto& row : input) {
-        output.emplace_back();
-        auto& output_row = output.back();
-        output_row.reserve(row.size());
-        for (auto& cell : row) {
-        output_row.push_back(text(std::move(cell)));
-        }
+        for (auto& row : input) 
+        {
+            output.emplace_back();
+            auto& output_row = output.back();
+            output_row.reserve(row.size());
+            for (auto& cell : row) 
+            {
+                output_row.push_back(text(std::move(cell)));
+            }
         }
         Initialize(std::move(output));
-        }
+    }
 
-        /// @brief Create a table from a vector of vector of Element
-        /// @param input The input elements.
-        Table::Table(std::vector<std::vector<Element>> input) {
+    //Create a table from a vector of vector of Element
+    Table::Table(std::vector<std::vector<Element>> input) 
+    {
         Initialize(std::move(input));
-        }
+    }
 
-        // @brief Create a table from a list of list of string.
-        // @param init The input data.
-        Table::Table(std::initializer_list<std::vector<std::string>> init) {
+    //Create a table from a list of list of string.
+    Table::Table(std::initializer_list<std::vector<std::string>> init) 
+    {
         std::vector<std::vector<Element>> input;
-        for (const auto& row : init) {
-        std::vector<Element> output_row;
-        output_row.reserve(row.size());
-        for (const auto& cell : row) {
-        output_row.push_back(text(cell));
-        }
-        input.push_back(std::move(output_row));
+        for (const auto& row : init) 
+        {
+            std::vector<Element> output_row;
+            output_row.reserve(row.size());
+            for (const auto& cell : row) 
+            {
+                output_row.push_back(text(cell));
+            }
+            input.push_back(std::move(output_row));
         }
         Initialize(std::move(input));
-        }
+    }
 
-        // private
-        void Table::Initialize(std::vector<std::vector<Element>> input) {
+    void Table::Initialize(std::vector<std::vector<Element>> input) 
+    {
         input_dim_y_ = static_cast<int>(input.size());
         input_dim_x_ = 0;
         for (auto& row : input) {
@@ -153,29 +162,31 @@ namespace qor{ namespace components{ namespace tui {
         element = emptyElement();
         }
         }
-        }
+    }
 
-        /// @brief Select a row of the table.
-        /// @param index The index of the row to select.
-        /// @note You can use negative index to select from the end.
-        TableSelection Table::SelectRow(int index) {
+    //Select a row of the table.
+    //You can use negative index to select from the end.
+    TableSelection Table::SelectRow(int index) 
+    {
         return SelectRectangle(0, -1, index, index);
-        }
+    }
 
-        /// @brief Select a range of rows of the table.
-        /// @param row_min The first row to select.
-        /// @param row_max The last row to select.
-        /// @note You can use negative index to select from the end.
-        TableSelection Table::SelectRows(int row_min, int row_max) {
+    //Select a range of rows of the table.
+    //row_min The first row to select.
+    //row_max The last row to select.
+    //Note You can use negative index to select from the end.
+    TableSelection Table::SelectRows(int row_min, int row_max) 
+    {
         return SelectRectangle(0, -1, row_min, row_max);
-        }
+    }
 
-        /// @brief Select a column of the table.
-        /// @param index The index of the column to select.
-        /// @note You can use negative index to select from the end.
-        TableSelection Table::SelectColumn(int index) {
+    //Select a column of the table.
+    //index The index of the column to select.
+    //Note You can use negative index to select from the end.
+    TableSelection Table::SelectColumn(int index) 
+    {
         return SelectRectangle(index, index, 0, -1);
-        }
+    }
 
         /// @brief Select a range of columns of the table.
         /// @param column_min The first column to select.
@@ -444,7 +455,7 @@ namespace qor{ namespace components{ namespace tui {
         void TableSelection::BorderTop(BorderStyle border) {
         for (int x = x_min_; x <= x_max_; x++) {
         table_->elements_[y_min_][x] =
-        separatorCharacter(charset[border][4]) | automerge;  // NOLINT
+        separatorCharacter(charset[border][4]) | automerge;
         }
         }
 
@@ -453,7 +464,7 @@ namespace qor{ namespace components{ namespace tui {
         void TableSelection::BorderBottom(BorderStyle border) {
         for (int x = x_min_; x <= x_max_; x++) {
         table_->elements_[y_max_][x] =
-        separatorCharacter(charset[border][4]) | automerge;  // NOLINT
+        separatorCharacter(charset[border][4]) | automerge;
         }
     }
 
