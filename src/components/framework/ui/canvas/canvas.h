@@ -42,10 +42,15 @@ namespace qor { namespace components{
         virtual ~Canvas() = default;
 
         bool Draw();
-        bool Ready();
+        bool Prepare();
         void Show();
         void Resize();
         void Refresh();
+
+        ui::renderer::Result Push(ui::renderer::Paint* target, ui::renderer::Paint* at = nullptr);
+        ui::renderer::Result Remove(ui::renderer::Paint* paint = nullptr);
+        ui::renderer::Result Update();
+        ui::renderer::Result Viewport(int32_t x, int32_t y, int32_t w, int32_t h);
 
     private:
 
@@ -55,14 +60,8 @@ namespace qor { namespace components{
 
         uint32_t width;
         uint32_t height;
-        //uint32_t stime;    //start time tick
-        //double mfps = 0;   //mean fps
-
-        //Example* example = nullptr;
-
         bool needResize = false;
         bool needDraw = false;
-        //bool initialized = false;
         bool clearBuffer = false;
         bool print = false;
 

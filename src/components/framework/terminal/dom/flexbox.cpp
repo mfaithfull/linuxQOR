@@ -121,11 +121,11 @@ class Flexbox : public Node {
     global_ = flexbox_helper::Global();
     global_.config = config_normalized_;
     if (IsColumnOriented()) {
-      global_.size_x = 100000;  // NOLINT
+      global_.size_x = 100000;
       global_.size_y = asked_;
     } else {
       global_.size_x = asked_;
-      global_.size_y = 100000;  // NOLINT
+      global_.size_y = 100000;
     }
     Layout(global_, true);
 
@@ -193,8 +193,7 @@ class Flexbox : public Node {
   }
 
   void Select(Selection& selection) override {
-    // If this Node box_ doesn't intersect with the selection, then no
-    // selection.
+    // If this Node box_ doesn't intersect with the selection, then no  selection.
     if (Box::Intersection(selection.GetBox(), box_).IsEmpty()) {
       return;
     }
@@ -211,8 +210,7 @@ class Flexbox : public Node {
       box.y_min = box_.y_min + line.y;
       box.y_max = box_.y_min + line.y + line.dim_y - 1;
 
-      // If the line box doesn't intersect with the selection, then no
-      // selection.
+      // If the line box doesn't intersect with the selection, then no selection.
       if (Box::Intersection(selection.GetBox(), box).IsEmpty()) {
         continue;
       }

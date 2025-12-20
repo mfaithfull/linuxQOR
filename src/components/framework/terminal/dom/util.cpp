@@ -46,7 +46,7 @@ namespace qor{ namespace components{ namespace tui {
             return b(a(std::move(element)));
             };
         }
-    }  // namespace
+    }//
 
     //A decoration doing absolutely nothing.
     qor_pp_export Element nothing(Element element) 
@@ -55,16 +55,14 @@ namespace qor{ namespace components{ namespace tui {
     }
 
     //Compose two decorator into one.
-    /// ### Example
-    /// auto decorator = bold | blink;
+    //auto decorator = bold | blink;
     qor_pp_export Decorator operator|(Decorator a, Decorator b) 
     {
         return compose(std::move(a), std::move(b));
     }
 
-    //From a set of element, apply a decorator to every elements.
+    //From a set of elements, apply a decorator to every elements.
     //return the set of decorated element.
-    
     qor_pp_export Elements operator|(Elements elements, Decorator decorator) 
     {
         Elements output;
@@ -78,10 +76,9 @@ namespace qor{ namespace components{ namespace tui {
 
     //From an element, apply a decorator.
     //return the decorated element.
-    /// ### Example
-    /// Both of these are equivalent:
-    /// bold(text("Hello"));
-    /// text("Hello") | bold;
+    // Both of these are equivalent:
+    // bold(text("Hello"));
+    // text("Hello") | bold;
     qor_pp_export Element operator|(Element element, Decorator decorator) 
     {
         return decorator(std::move(element));
@@ -89,17 +86,16 @@ namespace qor{ namespace components{ namespace tui {
 
     //Apply a decorator to an element.
     //return the decorated element.
-    /// ### Example
-    /// Both of these are equivalent:
-    /// auto element = text("Hello");
-    /// element |= bold;
+    // Both of these are equivalent:
+    // auto element = text("Hello");
+    // element |= bold;
     qor_pp_export Element& operator|=(Element& e, Decorator d) 
     {
         e = e | std::move(d);
         return e;
     }
 
-    /// The minimal dimension that will fit the given element.
+    // The minimal dimension that will fit the given element.
     qor_pp_export Dimensions Dimension::Fit(Element& e, bool extend_beyond_screen) 
     {
         const Dimensions fullsize = Dimension::Full();
@@ -151,8 +147,7 @@ namespace qor{ namespace components{ namespace tui {
         };
     }
 
-    /// An element of size 0x0 drawing nothing.
-
+    // An element of size 0x0 drawing nothing.
     qor_pp_export Element emptyElement() 
     {
         class Impl : public Node 

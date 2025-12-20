@@ -35,31 +35,33 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-namespace {
-using qor::components::tui::Screen;
+	namespace {
+		using qor::components::tui::Screen;
 
-class ClearUnder : public NodeDecorator {
- public:
-  using NodeDecorator::NodeDecorator;
+		class ClearUnder : public NodeDecorator 
+		{
+		public:
+			using NodeDecorator::NodeDecorator;
 
-  void Render(Screen& screen) override {
-    for (int y = box_.y_min; y <= box_.y_max; ++y) {
-      for (int x = box_.x_min; x <= box_.x_max; ++x) {
-        screen.PixelAt(x, y) = Pixel();
-        screen.PixelAt(x, y).character = " ";  // Consider the pixel written.
-      }
-    }
-    Node::Render(screen);
-  }
-};
-}  // namespace
+			void Render(Screen& screen) override 
+			{
+				for (int y = box_.y_min; y <= box_.y_max; ++y) 
+				{
+					for (int x = box_.x_min; x <= box_.x_max; ++x) 
+					{
+						screen.PixelAt(x, y) = Pixel();
+						screen.PixelAt(x, y).character = " ";  // Consider the pixel written.
+					}
+				}
+				Node::Render(screen);
+			}
+		};
+	}//
 
-/// @brief Before drawing |child|, clear the pixels below. This is useful in
-///        combination with dbox.
-/// @see ftxui::dbox
-/// @ingroup dom
-Element clear_under(Element element) {
-  return std::make_shared<ClearUnder>(std::move(element));
-}
+	//Before drawing |child|, clear the pixels below. This is useful in combination with dbox.
+	Element clear_under(Element element) 
+	{
+		return std::make_shared<ClearUnder>(std::move(element));
+	}
 
 }}}//qor::components::tui

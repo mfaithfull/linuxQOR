@@ -39,7 +39,7 @@ Node::Node() = default;
 Node::Node(Elements children) : children_(std::move(children)) {}
 Node::~Node() = default;
 
-/// @brief Compute how much space an element needs.
+//Compute how much space an element needs.
 void Node::ComputeRequirement() {
   if (children_.empty()) {
     return;
@@ -60,12 +60,12 @@ void Node::ComputeRequirement() {
   }
 }
 
-/// @brief Assign a position and a dimension to an element for drawing.
+//Assign a position and a dimension to an element for drawing.
 void Node::SetBox(Box box) {
   box_ = box;
 }
 
-/// @brief Compute the selection of an element.
+//Compute the selection of an element.
 void Node::Select(Selection& selection) {
   // If this Node box_ doesn't intersect with the selection, then no selection.
   if (Box::Intersection(selection.GetBox(), box_).IsEmpty()) {
@@ -78,7 +78,7 @@ void Node::Select(Selection& selection) {
   }
 }
 
-/// @brief Display an element on a ftxui::Screen.
+//Display an element on a ftxui::Screen.
 void Node::Render(Screen& screen) {
   for (auto& child : children_) {
     child->Render(screen);
@@ -102,15 +102,13 @@ std::string Node::GetSelectedContent(Selection& selection) {
   return content;
 }
 
-/// @brief Display an element on a ftxui::Screen.
-/// @ingroup dom
+//Display an element on a Screen.
 qor_pp_export void Render(Screen& screen, const Element& element) {
   Selection selection;
   Render(screen, element.get(), selection);
 }
 
-/// @brief Display an element on a ftxui::Screen.
-/// @ingroup dom
+//Display an element on a Screen.
 qor_pp_export void Render(Screen& screen, Node* node) {
   Selection selection;
   Render(screen, node, selection);
@@ -188,9 +186,8 @@ qor_pp_export void Render(Screen& screen, Node* node, Selection& selection) {
   screen.ApplyShader();
 }
 
-qor_pp_export std::string GetNodeSelectedContent(Screen& screen,
-                                   Node* node,
-                                   Selection& selection) {
+qor_pp_export std::string GetNodeSelectedContent(Screen& screen,Node* node,Selection& selection) 
+{
   Box box;
   box.x_min = 0;
   box.y_min = 0;
@@ -200,7 +197,8 @@ qor_pp_export std::string GetNodeSelectedContent(Screen& screen,
   Node::Status status;
   node->Check(&status);
   const int max_iterations = 20;
-  while (status.need_iteration && status.iteration < max_iterations) {
+  while (status.need_iteration && status.iteration < max_iterations) 
+  {
     // Step 1: Find what dimension this elements wants to be.
     node->ComputeRequirement();
 

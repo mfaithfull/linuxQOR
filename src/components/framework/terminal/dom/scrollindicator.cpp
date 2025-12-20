@@ -38,26 +38,31 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-/// @brief Display a vertical scrollbar on the right.
-/// Colors follow the content.
-/// @ingroup dom
-Element vscroll_indicator(Element child) {
-  class Impl : public NodeDecorator {
+//Display a vertical scrollbar on the right.
+// Colors follow the content.
+
+Element vscroll_indicator(Element child) 
+{
+  class Impl : public NodeDecorator 
+  {
     using NodeDecorator::NodeDecorator;
 
-    void ComputeRequirement() override {
+    void ComputeRequirement() override 
+    {
       NodeDecorator::ComputeRequirement();
       requirement_ = children_[0]->requirement();
       requirement_.min_x++;
     }
 
-    void SetBox(Box box) override {
+    void SetBox(Box box) override 
+    {
       box_ = box;
       box.x_max--;
       children_[0]->SetBox(box);
     }
 
-    void Render(Screen& screen) final {
+    void Render(Screen& screen) final 
+    {
       NodeDecorator::Render(screen);
 
       const Box& stencil = screen.stencil;
@@ -93,9 +98,8 @@ Element vscroll_indicator(Element child) {
   return std::make_shared<Impl>(std::move(child));
 }
 
-/// @brief Display a horizontal scrollbar at the bottom.
-/// Colors follow the content.
-/// @ingroup dom
+//Display a horizontal scrollbar at the bottom.
+// Colors follow the content.
 Element hscroll_indicator(Element child) {
   class Impl : public NodeDecorator {
     using NodeDecorator::NodeDecorator;

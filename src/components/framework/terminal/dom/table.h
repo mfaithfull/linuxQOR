@@ -65,10 +65,7 @@ namespace qor{ namespace components{ namespace tui {
         TableSelection SelectRows(int row_min, int row_max);
         TableSelection SelectColumn(int column_index);
         TableSelection SelectColumns(int column_min, int column_max);
-        TableSelection SelectRectangle(int column_min,
-                                        int column_max,
-                                        int row_min,
-                                        int row_max);
+        TableSelection SelectRectangle(int column_min, int column_max, int row_min, int row_max);
         Element Render();
 
     private:

@@ -71,12 +71,10 @@ class DBox : public Node {
 };
 }  // namespace
 
-/// @brief Stack several element on top of each other.
-/// @param children_ The input element.
-/// @return The right aligned element.
-/// @ingroup dom
+//Stack several element on top of each other.
+//children_ The input element.
 Element dbox(Elements children_) {
-  return std::make_shared<DBox>(std::move(children_));
+	return std::make_shared<DBox>(std::move(children_));
 }
 
 }}}//qor::components::tui

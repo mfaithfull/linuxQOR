@@ -43,11 +43,11 @@ namespace qor{ namespace components{
         m_eglContext = opengles->Context();
         m_window = opengles->CreateWindow("ThorVG based canvas", 1280, 800);
         m_window->Show();
+
         //Create a Canvas
         m_canvas = ui::renderer::GlCanvas::gen(opengles);
         if (!m_canvas) {
             std::cout << "GlCanvas is not supported. Did you enable the GlEngine?" << std::endl;
-            //return;
         }
 
         width = 1200;
@@ -63,43 +63,10 @@ namespace qor{ namespace components{
         return true;
     }
 
-    bool Canvas::Ready()
+    bool Canvas::Prepare()
     {
         if (!m_canvas) return false;
-
-//
-        //Prepare a Composite Shape (Rectangle + Rectangle + Circle + Circle)
-        auto shape4 = ui::renderer::Shape::gen();
-        shape4->appendRect(0, 0, 300, 300, 50, 50);     //x, y, w, h, rx, ry
-        shape4->appendCircle(400, 150, 150, 150);       //cx, cy, radiusW, radiusH
-        shape4->appendCircle(600, 150, 150, 100);       //cx, cy, radiusW, radiusH
-        shape4->fill(255, 255, 0);                      //r, g, b
-        m_canvas->push(shape4);
-
-        //Prepare Round Rectangle
-        auto shape1 = ui::renderer::Shape::gen();
-        shape1->appendRect(0, 450, 300, 300, 50, 50);  //x, y, w, h, rx, ry
-        shape1->fill(0, 255, 0);                       //r, g, b
-        m_canvas->push(shape1);
-
-        //Prepare Circle
-        auto shape2 = ui::renderer::Shape::gen();
-        shape2->appendCircle(400, 600, 150, 150);    //cx, cy, radiusW, radiusH
-        shape2->fill(255, 255, 0);                   //r, g, b
-        m_canvas->push(shape2);
-
-        //Prepare Ellipse
-        auto shape3 = ui::renderer::Shape::gen();
-        shape3->appendCircle(600, 600, 150, 100);    //cx, cy, radiusW, radiusH
-        shape3->fill(0, 255, 255);                   //r, g, b
-        m_canvas->push(shape3);
-
-//
-        //initiate the first rendering before window pop-up.
-        m_canvas->draw();
-        m_canvas->sync();
-
-        return true;
+        return Draw();
     }
 
     void Canvas::Show()
@@ -116,6 +83,26 @@ namespace qor{ namespace components{
     void Canvas::Refresh()
     {
         m_window->Refresh();
+    }
+
+    ui::renderer::Result Canvas::Push(ui::renderer::Paint* target, ui::renderer::Paint* at)
+    {
+        return m_canvas->push(target, at);
+    }
+
+    ui::renderer::Result Canvas::Remove(ui::renderer::Paint* paint)
+    {
+        return m_canvas->remove(paint);
+    }
+
+    ui::renderer::Result Canvas::Update()
+    {
+        return m_canvas->update();
+    }
+
+    ui::renderer::Result Canvas::Viewport(int32_t x, int32_t y, int32_t w, int32_t h)
+    {
+        return m_canvas->viewport(x, y, w, h);
     }
 
 }}//qor::components

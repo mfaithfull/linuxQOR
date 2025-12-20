@@ -143,100 +143,46 @@ Element frame(Element child) {
 }
 
 /// @brief Same as `frame`, but only on the x-axis.
-/// @see frame
-/// @see xframe
-/// @see yframe
 Element xframe(Element child) {
   return std::make_shared<Frame>(unpack(std::move(child)), true, false);
 }
 
 /// @brief Same as `frame`, but only on the y-axis.
-/// @see frame
-/// @see xframe
-/// @see yframe
 Element yframe(Element child) {
   return std::make_shared<Frame>(unpack(std::move(child)), false, true);
 }
 
 /// @brief Same as `focus`, but set the cursor shape to be a still block.
-/// @see focus
-/// @see focusCursorBlock
-/// @see focusCursorBlockBlinking
-/// @see focusCursorBar
-/// @see focusCursorBarBlinking
-/// @see focusCursorUnderline
-/// @see focusCursorUnderlineBlinking
-/// @ingroup dom
 Element focusCursorBlock(Element child) {
   return std::make_shared<FocusCursor>(unpack(std::move(child)),
                                        Screen::Cursor::Block);
 }
 
 /// @brief Same as `focus`, but set the cursor shape to be a blinking block.
-/// @see focus
-/// @see focusCursorBlock
-/// @see focusCursorBlockBlinking
-/// @see focusCursorBar
-/// @see focusCursorBarBlinking
-/// @see focusCursorUnderline
-/// @see focusCursorUnderlineBlinking
-/// @ingroup dom
 Element focusCursorBlockBlinking(Element child) {
   return std::make_shared<FocusCursor>(unpack(std::move(child)),
                                        Screen::Cursor::BlockBlinking);
 }
 
 /// @brief Same as `focus`, but set the cursor shape to be a still block.
-/// @see focus
-/// @see focusCursorBlock
-/// @see focusCursorBlockBlinking
-/// @see focusCursorBar
-/// @see focusCursorBarBlinking
-/// @see focusCursorUnderline
-/// @see focusCursorUnderlineBlinking
-/// @ingroup dom
 Element focusCursorBar(Element child) {
   return std::make_shared<FocusCursor>(unpack(std::move(child)),
                                        Screen::Cursor::Bar);
 }
 
 /// @brief Same as `focus`, but set the cursor shape to be a blinking bar.
-/// @see focus
-/// @see focusCursorBlock
-/// @see focusCursorBlockBlinking
-/// @see focusCursorBar
-/// @see focusCursorBarBlinking
-/// @see focusCursorUnderline
-/// @see focusCursorUnderlineBlinking
-/// @ingroup dom
 Element focusCursorBarBlinking(Element child) {
   return std::make_shared<FocusCursor>(unpack(std::move(child)),
                                        Screen::Cursor::BarBlinking);
 }
 
 /// @brief Same as `focus`, but set the cursor shape to be a still underline.
-/// @see focus
-/// @see focusCursorBlock
-/// @see focusCursorBlockBlinking
-/// @see focusCursorBar
-/// @see focusCursorBarBlinking
-/// @see focusCursorUnderline
-/// @see focusCursorUnderlineBlinking
-/// @ingroup dom
 Element focusCursorUnderline(Element child) {
   return std::make_shared<FocusCursor>(unpack(std::move(child)),
                                        Screen::Cursor::Underline);
 }
 
 /// @brief Same as `focus`, but set the cursor shape to be a blinking underline.
-/// @see focus
-/// @see focusCursorBlock
-/// @see focusCursorBlockBlinking
-/// @see focusCursorBar
-/// @see focusCursorBarBlinking
-/// @see focusCursorUnderline
-/// @see focusCursorUnderlineBlinking
-/// @ingroup dom
 Element focusCursorUnderlineBlinking(Element child) {
   return std::make_shared<FocusCursor>(unpack(std::move(child)),
                                        Screen::Cursor::UnderlineBlinking);

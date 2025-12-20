@@ -28,6 +28,7 @@
 namespace qor { namespace components{
 }}//qor::components
 
+#ifndef EGL_VERSION_1_0
 #define EGL_CAST(type, value) (static_cast<type>(value))
 #define EGL_ALPHA_SIZE                    0x3021
 #define EGL_BAD_ACCESS                    0x3002
@@ -187,5 +188,6 @@ namespace qor { namespace components{
 #define EGL_GL_TEXTURE_CUBE_MAP_POSITIVE_Z 0x30B7
 #define EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Z 0x30B8
 #define EGL_IMAGE_PRESERVED               0x30D2
+#endif//EGL_VERSION_1_0
 
 #endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_CONSTANTS

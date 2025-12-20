@@ -82,14 +82,15 @@ bool IsHorizontal(Direction direction) {
     case Direction::Up:
       return false;
   }
-  return false;  // NOT_REACHED()
+  return false;
 }
 
-}  // namespace
+}//
 
-/// @brief A list of items. The user can navigate through them.
-/// @ingroup component
-class qor_pp_module_interface(QOR_TUI) MenuBase : public ComponentBase, public MenuOption {
+//A list of items. The user can navigate through them.
+
+class qor_pp_module_interface(QOR_TUI) MenuBase : public ComponentBase, public MenuOption 
+{
  public:
   explicit MenuBase(const MenuOption& option) : MenuOption(option) {}
 

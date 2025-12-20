@@ -39,8 +39,10 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-namespace {
-class HBox : public Node {
+namespace 
+{
+class HBox : public Node 
+{
  public:
   explicit HBox(Elements children) : Node(std::move(children)) {}
 

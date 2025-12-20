@@ -27,6 +27,7 @@
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/canvas/canvas.h"
 
+
 #include <string>
 #include <sstream>
 
@@ -37,6 +38,9 @@ qor_pp_implement_module(appName)
 qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(EGLFeature)
 qor_pp_module_requires(OpenGLESFeature)
+
+using namespace qor::components::ui;
+using namespace qor::components::ui::renderer;
 
 int main()
 {
@@ -54,7 +58,51 @@ int main()
             {
                 auto canvas = qor::new_ref<qor::components::Canvas>();
 
-                canvas->Ready();
+                //Prepare a Composite Shape (Rectangle + Rectangle + Circle + Circle)
+                /*
+                auto shape4 = Shape::gen();
+                shape4->appendRect(0, 0, 300, 300, 50, 50);     //x, y, w, h, rx, ry
+                shape4->appendCircle(400, 150, 150, 150);       //cx, cy, radiusW, radiusH
+                shape4->appendCircle(600, 150, 150, 100);       //cx, cy, radiusW, radiusH
+                shape4->fill(255, 255, 0);                      //r, g, b
+                canvas->Push(shape4);*/
+
+                //Prepare Round Rectangle
+                auto shape1 = Shape::gen();
+                shape1->appendRect(0, 450, 300, 300, 50, 50);  //x, y, w, h, rx, ry
+                shape1->fill(0, 255, 0);                       //r, g, b
+                canvas->Push(shape1);
+
+                //Prepare Circle
+                auto shape2 = Shape::gen();
+                shape2->appendCircle(400, 600, 150, 150);    //cx, cy, radiusW, radiusH
+                shape2->fill(255, 255, 0);                   //r, g, b
+                canvas->Push(shape2);
+
+                //Prepare Ellipse
+                auto shape3 = Shape::gen();
+                shape3->appendCircle(600, 600, 150, 100);    //cx, cy, radiusW, radiusH
+                shape3->fill(0, 255, 255);                   //r, g, b
+                canvas->Push(shape3);
+                
+                auto stone = Shape::gen();
+                stone->appendRect(50,40,64,32,2,2);
+                stone->opacity(127);
+                stone->strokeWidth(2);
+                stone->strokeFill(0,167,0);
+                stone->fill(nullptr);
+                canvas->Push(stone);
+
+                /*Text::load("Arial.ttf");
+                auto label = Text::gen();  
+                label->font("Arial");              
+                label->size(18);
+                label->text("Yes");
+                label->fill(200,255,255);
+                label->translate(53,43);
+                canvas->Push(label);*/
+
+                canvas->Prepare();
                 canvas->Show();
 
                 return EXIT_SUCCESS;

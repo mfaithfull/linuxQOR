@@ -24,8 +24,8 @@
 
 #include "src/configuration/configuration.h"
 
-#include <memory>                   // for allocator, make_shared
-#include <string>                   // for string
+#include <memory>
+#include <string>
 
 #include "direction.h"
 #include "elements.h"
@@ -37,7 +37,7 @@
 namespace qor{ namespace components{ namespace tui {
 
 namespace {
-// NOLINTNEXTLINE
+
 static const std::string charset_horizontal[11] = {
 #if defined(FTXUI_MICROSOFT_TERMINAL_FALLBACK)
     // Microsoft's terminals often use fonts not handling the 8 unicode
@@ -50,7 +50,7 @@ static const std::string charset_horizontal[11] = {
     // int(9 * (limit - limit_int) = 9
     "█"};
 
-// NOLINTNEXTLINE
+
 static const std::string charset_vertical[10] = {
     "█",
     "▇",
@@ -195,62 +195,31 @@ Element gaugeDirection(float progress, Direction direction) {
 
 /// @brief Draw a high definition progress bar progressing from left to right.
 /// @param progress The proportion of the area to be filled. Belong to [0,1].
-/// @ingroup dom
-///
-/// ### Example
 ///
 /// A gauge. It can be used to represent a progress bar.
-/// ~~~cpp
 /// border(gaugeRight(0.5))
-/// ~~~
-///
-/// #### Output
-///
-/// ~~~bash
 /// ┌──────────────────────────────────────────────────────────────────────────┐
 /// │█████████████████████████████████████                                     │
 /// └──────────────────────────────────────────────────────────────────────────┘
-/// ~~~
-Element gaugeRight(float progress) {
-  return gaugeDirection(progress, Direction::Right);
+Element gaugeRight(float progress) 
+{
+	return gaugeDirection(progress, Direction::Right);
 }
 
 /// @brief Draw a high definition progress bar progressing from right to left.
 /// @param progress The proportion of the area to be filled. Belong to [0,1].
-/// @ingroup dom
-///
-/// ### Example
-///
 /// A gauge. It can be used to represent a progress bar.
-/// ~~~cpp
 /// border(gaugeLeft(0.5))
-/// ~~~
-///
-/// #### Output
-///
-/// ~~~bash
 /// ┌──────────────────────────────────────────────────────────────────────────┐
 /// │                                     █████████████████████████████████████│
 /// └──────────────────────────────────────────────────────────────────────────┘
-/// ~~~
 Element gaugeLeft(float progress) {
   return gaugeDirection(progress, Direction::Left);
 }
 
-/// @brief Draw a high definition progress bar progressing from bottom to top.
-/// @param progress The proportion of the area to be filled. Belong to [0,1].
-/// @ingroup dom
-///
-/// ### Example
-///
-/// A gauge. It can be used to represent a progress bar.
-/// ~~~cpp
+/// Draw a high definition progress bar progressing from bottom to top.
+/// progress The proportion of the area to be filled. Belong to [0,1].
 /// border(gaugeUp(0.5))
-/// ~~~
-///
-/// #### Output
-///
-/// ~~~bash
 ///  ┌─┐
 ///  │ │
 ///  │ │
@@ -261,25 +230,14 @@ Element gaugeLeft(float progress) {
 ///  │█│
 ///  │█│
 ///  └─┘
-/// ~~~
-Element gaugeUp(float progress) {
-  return gaugeDirection(progress, Direction::Up);
+Element gaugeUp(float progress) 
+{
+	return gaugeDirection(progress, Direction::Up);
 }
 
-/// @brief Draw a high definition progress bar progressing from top to bottom.
-/// @param progress The proportion of the area to be filled. Belong to [0,1].
-/// @ingroup dom
-///
-/// ### Example
-///
-/// A gauge. It can be used to represent a progress bar.
-/// ~~~cpp
+//Draw a high definition progress bar progressing from top to bottom.
+//progress The proportion of the area to be filled. Belong to [0,1].
 /// border(gaugeDown(0.5))
-/// ~~~
-///
-/// #### Output
-///
-/// ~~~bash
 ///  ┌─┐
 ///  │█│
 ///  │█│
@@ -290,31 +248,20 @@ Element gaugeUp(float progress) {
 ///  │ │
 ///  │ │
 ///  └─┘
-/// ~~~
-Element gaugeDown(float progress) {
-  return gaugeDirection(progress, Direction::Down);
+Element gaugeDown(float progress) 
+{
+	return gaugeDirection(progress, Direction::Down);
 }
 
-/// @brief Draw a high definition progress bar.
-/// @param progress The proportion of the area to be filled. Belong to [0,1].
-/// @ingroup dom
-///
-/// ### Example
-///
-/// A gauge. It can be used to represent a progress bar.
-/// ~~~cpp
+//Draw a high definition progress bar.
+//progress The proportion of the area to be filled. Belong to [0,1].
 /// border(gauge(0.5))
-/// ~~~
-///
-/// #### Output
-///
-/// ~~~bash
 /// ┌──────────────────────────────────────────────────────────────────────────┐
 /// │█████████████████████████████████████                                     │
 /// └──────────────────────────────────────────────────────────────────────────┘
-/// ~~~
-Element gauge(float progress) {
-  return gaugeRight(progress);
+Element gauge(float progress) 
+{
+	return gaugeRight(progress);
 }
 
 }}}//qor::components::tui

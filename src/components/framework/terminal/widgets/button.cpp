@@ -125,9 +125,8 @@ namespace qor{ namespace components{ namespace tui {
                 animation_foreground_ = 0.5F;
                 SetAnimationTarget(1.F);
 
-                // TODO(arthursonzogni): Consider posting the task to the main loop, instead
-                // of invoking it immediately.
-                on_click();  // May delete this.
+                // TODO: Consider posting the task to the main loop, instead of invoking it immediately.
+                on_click();
             }
 
             bool OnEvent(Event event) override 
@@ -176,29 +175,17 @@ namespace qor{ namespace components{ namespace tui {
 
     }  // namespace
 
-    /// @brief Draw a button. Execute a function when clicked.
-    /// @param option Additional optional parameters.
-    /// @ingroup component
-    /// @see ButtonBase
-    ///
-    /// ### Example
-    ///
-    /// ```cpp
+    //Draw a button. Execute a function when clicked.
+    //option Additional optional parameters.
     /// auto screen = ScreenInteractive::FitComponent();
     /// Component button = Button({
     ///   .label = "Click to quit",
     ///   .on_click = screen.ExitLoopClosure(),
     /// });
     /// screen.Loop(button)
-    /// ```
-    ///
-    /// ### Output
-    ///
-    /// ```bash
     /// ┌─────────────┐
     /// │Click to quit│
     /// └─────────────┘
-    /// ```
     Component Button(ButtonOption option) 
     {
         return Make<ButtonBase>(std::move(option));

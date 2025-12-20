@@ -44,9 +44,11 @@ namespace qor{ namespace components{ namespace tui {
         class VBox : public Node 
         {
         public:
+
             explicit VBox(Elements children) : Node(std::move(children)) {}
 
         private:        
+        
             void ComputeRequirement() override 
             {
                 requirement_ = Requirement{};
@@ -113,13 +115,7 @@ namespace qor{ namespace components{ namespace tui {
         };
     }//
 
-
     //A container displaying elements vertically one by one.
-    /// vbox({
-    ///   text("Up"),
-    ///   text("Down"),
-    /// });
-
     Element vbox(Elements children) 
     {
         return std::make_shared<VBox>(std::move(children));

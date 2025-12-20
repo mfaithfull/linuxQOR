@@ -35,117 +35,107 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-namespace {
-class BgColor : public NodeDecorator {
- public:
-  BgColor(Element child, Colour color)
-      : NodeDecorator(std::move(child)), color_(color) {}
+	namespace 
+	{
+		class BgColor : public NodeDecorator 
+		{
+		public:
+			BgColor(Element child, Colour color) : NodeDecorator(std::move(child)), color_(color) 
+			{				
+			}
 
-  void Render(Screen& screen) override {
-    if (color_.IsOpaque()) {
-      for (int y = box_.y_min; y <= box_.y_max; ++y) {
-        for (int x = box_.x_min; x <= box_.x_max; ++x) {
-          screen.PixelAt(x, y).background_color = color_;
-        }
-      }
-    } else {
-      for (int y = box_.y_min; y <= box_.y_max; ++y) {
-        for (int x = box_.x_min; x <= box_.x_max; ++x) {
-          Colour& color = screen.PixelAt(x, y).background_color;
-          color = Colour::Blend(color, color_);
-        }
-      }
-    }
-    NodeDecorator::Render(screen);
-  }
+			void Render(Screen& screen) override 
+			{
+				if (color_.IsOpaque()) 
+				{
+					for (int y = box_.y_min; y <= box_.y_max; ++y) 
+					{
+						for (int x = box_.x_min; x <= box_.x_max; ++x) 
+						{
+							screen.PixelAt(x, y).background_color = color_;
+						}
+					}
+				} 
+				else 
+				{
+					for (int y = box_.y_min; y <= box_.y_max; ++y) 
+					{
+						for (int x = box_.x_min; x <= box_.x_max; ++x) 
+						{
+							Colour& color = screen.PixelAt(x, y).background_color;
+							color = Colour::Blend(color, color_);
+						}
+					}
+				}
+				NodeDecorator::Render(screen);
+			}
 
-  Colour color_;
-};
+			Colour color_;
+		};
 
-class FgColor : public NodeDecorator {
- public:
-  FgColor(Element child, Colour color)
-      : NodeDecorator(std::move(child)), color_(color) {}
+		class FgColor : public NodeDecorator 
+		{
+		public:
+			FgColor(Element child, Colour color) : NodeDecorator(std::move(child)), color_(color) 
+			{				
+			}
 
-  void Render(Screen& screen) override {
-    if (color_.IsOpaque()) {
-      for (int y = box_.y_min; y <= box_.y_max; ++y) {
-        for (int x = box_.x_min; x <= box_.x_max; ++x) {
-          screen.PixelAt(x, y).foreground_color = color_;
-        }
-      }
-    } else {
-      for (int y = box_.y_min; y <= box_.y_max; ++y) {
-        for (int x = box_.x_min; x <= box_.x_max; ++x) {
-          Colour& color = screen.PixelAt(x, y).foreground_color;
-          color = Colour::Blend(color, color_);
-        }
-      }
-    }
-    NodeDecorator::Render(screen);
-  }
+			void Render(Screen& screen) override 
+			{
+				if (color_.IsOpaque()) 
+				{
+					for (int y = box_.y_min; y <= box_.y_max; ++y) 
+					{
+						for (int x = box_.x_min; x <= box_.x_max; ++x) 
+						{
+							screen.PixelAt(x, y).foreground_color = color_;
+						}
+					}
+				} 
+				else 
+				{
+					for (int y = box_.y_min; y <= box_.y_max; ++y) 
+					{
+						for (int x = box_.x_min; x <= box_.x_max; ++x) 
+						{
+							Colour& color = screen.PixelAt(x, y).foreground_color;
+							color = Colour::Blend(color, color_);
+						}
+					}
+				}
+				NodeDecorator::Render(screen);
+			}
 
-  Colour color_;
-};
+			Colour color_;
+		};
+	}//
 
-}  // namespace
+	//Set the foreground color of an element.
+	// Element document = color(Color::Green, text("Success")),
+	Element color(Colour color, Element child) 
+	{
+		return std::make_shared<FgColor>(std::move(child), color);
+	}
 
-/// @brief Set the foreground color of an element.
-/// @param color The color of the output element.
-/// @param child The input element.
-/// @return The output element colored.
-/// @ingroup dom
-///
-/// ### Example
-///
-/// ```cpp
-/// Element document = color(Color::Green, text("Success")),
-/// ```
-Element color(Colour color, Element child) {
-  return std::make_shared<FgColor>(std::move(child), color);
-}
+	//brief Set the background color of an element.
+	// Element document = bgcolor(Color::Green, text("Success")),
+	Element bgcolor(Colour color, Element child) 
+	{
+		return std::make_shared<BgColor>(std::move(child), color);
+	}
 
-/// @brief Set the background color of an element.
-/// @param color The color of the output element.
-/// @param child The input element.
-/// @return The output element colored.
-/// @ingroup dom
-///
-/// ### Example
-///
-/// ```cpp
-/// Element document = bgcolor(Color::Green, text("Success")),
-/// ```
-Element bgcolor(Colour color, Element child) {
-  return std::make_shared<BgColor>(std::move(child), color);
-}
+	//Decorate using a foreground color.
+	/// Element document = text("red") | color(Color::Red);
+	Decorator color(Colour c) 
+	{
+		return [c](Element child) { return color(c, std::move(child)); };
+	}
 
-/// @brief Decorate using a foreground color.
-/// @param c The foreground color to be applied.
-/// @return The Decorator applying the color.
-/// @ingroup dom
-///
-/// ### Example
-///
-/// ```cpp
-/// Element document = text("red") | color(Color::Red);
-/// ```
-Decorator color(Colour c) {
-  return [c](Element child) { return color(c, std::move(child)); };
-}
-
-/// @brief Decorate using a background color.
-/// @param color The background color to be applied.
-/// @return The Decorator applying the color.
-/// @ingroup dom
-///
-/// ### Example
-///
-/// ```cpp
-/// Element document = text("red") | bgcolor(Color::Red);
-/// ```
-Decorator bgcolor(Colour color) {
-  return [color](Element child) { return bgcolor(color, std::move(child)); };
-}
+	//Decorate using a background color.
+	// Element document = text("red") | bgcolor(Color::Red);
+	Decorator bgcolor(Colour color) 
+	{
+		return [color](Element child) { return bgcolor(color, std::move(child)); };
+	}
 
 }}}//qor::components::tui

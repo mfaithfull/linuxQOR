@@ -104,16 +104,8 @@ namespace qor{ namespace components{ namespace tui {
         void DrawBlockEllipse(int x1, int y1, int r1, int r2, const Stylizer& s);
         void DrawBlockEllipse(int x1, int y1, int r1, int r2, const Colour& color);
         void DrawBlockEllipseFilled(int x1, int y1, int r1, int r2);
-        void DrawBlockEllipseFilled(int x1,
-                        int y1,
-                        int r1,
-                        int r2,
-                        const Stylizer& s);
-        void DrawBlockEllipseFilled(int x1,
-                        int y1,
-                        int r1,
-                        int r2,
-                        const Colour& color);
+        void DrawBlockEllipseFilled(int x1, int y1, int r1, int r2, const Stylizer& s);
+        void DrawBlockEllipseFilled(int x1, int y1, int r1, int r2, const Colour& color);
 
         // Draw using normal characters ----------------------------------------------
         // Draw using character of size 2x4 at position (x,y)

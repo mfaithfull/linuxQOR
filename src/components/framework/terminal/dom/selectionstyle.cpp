@@ -36,48 +36,56 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-namespace {
+	namespace {
 
-class SelectionStyleReset : public NodeDecorator {
- public:
-  explicit SelectionStyleReset(Element child)
-      : NodeDecorator(std::move(child)) {}
+		class SelectionStyleReset : public NodeDecorator 
+		{
+		public:
+			explicit SelectionStyleReset(Element child) : NodeDecorator(std::move(child)) 
+			{		
+			}
 
-  void Render(Screen& screen) final {
-    auto old_style = screen.GetSelectionStyle();
-    screen.SetSelectionStyle([](Pixel&) {});
-    NodeDecorator::Render(screen);
-    screen.SetSelectionStyle(old_style);
-  }
-};
+			void Render(Screen& screen) final 
+			{
+				auto old_style = screen.GetSelectionStyle();
+				screen.SetSelectionStyle([](Pixel&) {});
+				NodeDecorator::Render(screen);
+				screen.SetSelectionStyle(old_style);
+			}
+		};
 
-class SelectionStyle : public NodeDecorator {
- public:
-  SelectionStyle(Element child, const std::function<void(Pixel&)>& style)
-      : NodeDecorator(std::move(child)), style_(style) {}
+		class SelectionStyle : public NodeDecorator 
+		{
+		public:
+			SelectionStyle(Element child, const std::function<void(Pixel&)>& style) : NodeDecorator(std::move(child)), style_(style) 
+			{		
+			}
 
-  void Render(Screen& screen) final {
-    auto old_style = screen.GetSelectionStyle();
-    auto new_style = [&, old_style](Pixel& pixel) {
-      old_style(pixel);
-      style_(pixel);
-    };
-    screen.SetSelectionStyle(new_style);
-    NodeDecorator::Render(screen);
-    screen.SetSelectionStyle(old_style);
-  }
+			void Render(Screen& screen) final 
+			{
+				auto old_style = screen.GetSelectionStyle();
+				auto new_style = [&, old_style](Pixel& pixel) 
+				{
+					old_style(pixel);
+					style_(pixel);
+				};
+				screen.SetSelectionStyle(new_style);
+				NodeDecorator::Render(screen);
+				screen.SetSelectionStyle(old_style);
+			}
 
-  std::function<void(Pixel&)> style_;
-};
+			std::function<void(Pixel&)> style_;
+		};
 
-}  // namespace
+	}//
 
-/// @brief Reset the selection style of an element.
-/// @param child The input element.
-/// @return The output element with the selection style reset.
-Element selectionStyleReset(Element child) {
-  return std::make_shared<SelectionStyleReset>(std::move(child));
-}
+	//Reset the selection style of an element.
+	//child The input element.
+	//return The output element with the selection style reset.
+	Element selectionStyleReset(Element child) 
+	{
+		return std::make_shared<SelectionStyleReset>(std::move(child));
+	}
 
 /// @brief Set the background color of an element when selected.
 /// Note that the style is applied on top of the existing style.

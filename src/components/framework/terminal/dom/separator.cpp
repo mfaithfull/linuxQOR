@@ -40,9 +40,9 @@
 namespace qor{ namespace components{ namespace tui {
 
 namespace {
-using Charset = std::array<std::string, 2>;  // NOLINT
-using Charsets = std::array<Charset, 6>;     // NOLINT
-// NOLINTNEXTLINE
+using Charset = std::array<std::string, 2>;
+using Charsets = std::array<Charset, 6>;
+
 const Charsets charsets = {
     Charset{"│", "─"},  // LIGHT
     Charset{"╏", "╍"},  // DASHED
@@ -121,116 +121,55 @@ class SeparatorWithPixel : public SeparatorAuto {
 };
 }  // namespace
 
-/// @brief Draw a vertical or horizontal separation in between two other
-/// elements.
-/// @ingroup dom
-/// @see separator
-/// @see separatorLight
-/// @see separatorDashed
-/// @see separatorDouble
-/// @see separatorHeavy
-/// @see separatorEmpty
-/// @see separatorRounded
-/// @see separatorStyled
-/// @see separatorCharacter
-///
+//Draw a vertical or horizontal separation in between two other elements.
+
 /// Add a visual separation in between two elements.
 ///
-/// ### Example
-///
-/// ```cpp
 /// // Use 'border' as a function...
 /// Element document = vbox({
 ///   text("up"),
 ///   separator(),
 ///   text("down"),
 /// });
-/// ```
 ///
-/// ### Output
-///
-/// ```bash
 /// up
 /// ────
 /// down
-/// ```
-Element separator() {
-  return std::make_shared<SeparatorAuto>(LIGHT);
+Element separator() 
+{
+	return std::make_shared<SeparatorAuto>(LIGHT);
 }
 
-/// @brief Draw a vertical or horizontal separation in between two other
-/// elements.
-/// @param style the style of the separator.
-/// @ingroup dom
-/// @see separator
-/// @see separatorLight
-/// @see separatorDashed
-/// @see separatorDouble
-/// @see separatorHeavy
-/// @see separatorEmpty
-/// @see separatorRounded
-/// @see separatorStyled
-/// @see separatorCharacter
-///
-/// Add a visual separation in between two elements.
-///
-/// ### Example
-///
-/// ```cpp
+//Draw a vertical or horizontal separation in between two other elements.
+//style the style of the separator.
 /// // Use 'border' as a function...
 /// Element document = vbox({
 ///   text("up"),
 ///   separatorStyled(DOUBLE),
 ///   text("down"),
 /// });
-/// ```
-///
-/// ### Output
-///
-/// ```bash
 /// up
 /// ════
 /// down
-/// ```
-Element separatorStyled(BorderStyle style) {
-  return std::make_shared<SeparatorAuto>(style);
+Element separatorStyled(BorderStyle style) 
+{
+	return std::make_shared<SeparatorAuto>(style);
 }
 
 /// @brief Draw a vertical or horizontal separation in between two other
 /// elements, using the LIGHT style.
-/// @ingroup dom
-/// @see separator
-/// @see separatorLight
-/// @see separatorDashed
-/// @see separatorDouble
-/// @see separatorHeavy
-/// @see separatorEmpty
-/// @see separatorRounded
-/// @see separatorStyled
-/// @see separatorCharacter
-///
-/// Add a visual separation in between two elements.
-///
-/// ### Example
-///
-/// ```cpp
 /// // Use 'border' as a function...
 /// Element document = vbox({
 ///   text("up"),
 ///   separatorLight(),
 ///   text("down"),
 /// });
-/// ```
-///
-/// ### Output
-///
-/// ```bash
 /// up
 /// ────
 /// down
-/// ```
-Element separatorLight() {
-  return std::make_shared<SeparatorAuto>(LIGHT);
+Element separatorLight() 
+{
+	return std::make_shared<SeparatorAuto>(LIGHT);
 }
 
 /// @brief Draw a vertical or horizontal separation in between two other

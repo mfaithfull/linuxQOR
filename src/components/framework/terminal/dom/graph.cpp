@@ -89,10 +89,11 @@ class Graph : public Node {
 
 }  // namespace
 
-/// @brief Draw a graph using a GraphFunction.
-/// @param graph_function the function to be called to get the data.
-Element graph(GraphFunction graph_function) {
-  return std::make_shared<Graph>(std::move(graph_function));
+//Draw a graph using a GraphFunction.
+//graph_function the function to be called to get the data.
+Element graph(GraphFunction graph_function) 
+{
+	return std::make_shared<Graph>(std::move(graph_function));
 }
 
 }}}//qor::components::tui

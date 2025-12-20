@@ -33,7 +33,7 @@
 
 namespace qor{ namespace components{ namespace tui {
 
-    class Delegate;
+    //class Delegate;
     class Focus;
     struct qor_pp_module_interface(QOR_TUI) Event;
 

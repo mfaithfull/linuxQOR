@@ -438,11 +438,10 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
                 }
 
                 rs.path.cmds.count += 5;
-                rs.path.pts.count += 4;
-            //round rect
+                rs.path.pts.count += 4;            
             } 
             else 
-            {
+            {   //round rect
                 auto hsize = Point{w * 0.5f, h * 0.5f};
                 rx = (rx > hsize.x) ? hsize.x : rx;
                 ry = (ry > hsize.y) ? hsize.y : ry;

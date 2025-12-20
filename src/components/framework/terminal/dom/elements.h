@@ -37,7 +37,6 @@
 #include "../screen/box.h"
 #include "../screen/colour.h"
 #include "../screen/terminal.h"
-//#include "ftxui/util/ref.hpp"
 
 namespace qor{ namespace components{ namespace tui {
 
@@ -214,7 +213,7 @@ namespace qor{ namespace components{ namespace tui {
     namespace Dimension 
     {
         qor_pp_module_interface(QOR_TUI) Dimensions Fit(Element&, bool extend_beyond_screen = false);
-    }  // namespace Dimension
+    }//Dimension
 
 }}}//qor::components::tui
 

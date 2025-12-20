@@ -45,7 +45,7 @@ namespace qor{ namespace components{ namespace tui {
     {
         using Charset = std::array<std::string, 6>;  // NOLINT
         using Charsets = std::array<Charset, 6>;     // NOLINT
-        // NOLINTNEXTLINE
+        
         static Charsets simple_border_charset = 
         {
             Charset{"┌", "┐", "└", "┘", "─", "│"},  // LIGHT
@@ -309,11 +309,12 @@ namespace qor{ namespace components{ namespace tui {
     /// ╏The element   ╏
     /// ┗╍╍╍╍╍╍╍╍╍╍╍╍╍╍┛
     /// ```
-    Element borderDashed(Element child) {
-    return std::make_shared<Border>(unpack(std::move(child)), DASHED);
+    Element borderDashed(Element child) 
+    {
+        return std::make_shared<Border>(unpack(std::move(child)), DASHED);
     }
 
-    /// @brief Draw a light border around the element.
+    //Draw a light border around the element.
 
     ///
     /// Add a border around an element
@@ -340,17 +341,7 @@ namespace qor{ namespace components{ namespace tui {
         return std::make_shared<Border>(unpack(std::move(child)), LIGHT);
     }
 
-    /// @brief Draw a heavy border around the element.
-    /// @ingroup dom
-    /// @see border
-    /// @see borderLight
-    /// @see borderDashed
-    /// @see borderDouble
-    /// @see borderHeavy
-    /// @see borderRounded
-    /// @see borderEmpty
-    /// @see borderStyled
-    /// @see borderWith
+    //Draw a heavy border around the element.
     ///
     /// Add a border around an element
     ///
@@ -376,7 +367,7 @@ namespace qor{ namespace components{ namespace tui {
         return std::make_shared<Border>(unpack(std::move(child)), HEAVY);
     }
 
-    /// @brief Draw a double border around the element.
+    //Draw a double border around the element.
     ///
     /// Add a border around an element
     ///

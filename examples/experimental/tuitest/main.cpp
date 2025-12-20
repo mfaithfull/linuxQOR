@@ -100,7 +100,7 @@ int main()
                     },
                     &selected);
 
-                // Display together the menu with a border
+                // Display the menu together with a border
                 auto renderer = Renderer(menu, [&] 
                     {
                         return vbox(
