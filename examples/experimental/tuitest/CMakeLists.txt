@@ -13,7 +13,8 @@ add_executable(${target} main.cpp)
 target_compile_definitions(${target} PRIVATE CONSOLE QOR_PP_EXECUTABLE qor_pp_ver_major=1 )
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_tui)
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_thread qor_tui
+linqor_termscreen linq_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

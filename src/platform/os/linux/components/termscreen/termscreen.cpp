@@ -21,24 +21,23 @@
 // FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
-
 #include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
-
 #include "termscreen.h"
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Terminal Screen Module",
-		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+namespace qor{ bool qor_pp_module_interface(QOR_LINTERMSCREEN) ImplementsTermScreen() { return true; } }//qor
 
-	//Register the Windows specific implementation of TermScreen
-	static qor::TypeRegEntry< qor::components::nswindows::tui::TermScreen, qor::components::tui::TermScreen> regTermScreen;
-	return QORModule;
-}
+namespace qor{ namespace components{ namespace nslinux{ namespace tui {
+
+    TermScreen::TermScreen()
+    {        
+    }
+
+    void TermScreen::Setup()
+    {
+    }
+
+    void TermScreen::Shutdown()
+    {
+    }
+
+}}}}//qor::components::nslinux::tui

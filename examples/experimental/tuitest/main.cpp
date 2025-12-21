@@ -58,9 +58,9 @@ MenuEntryOption Coloured(qor::components::tui::Colour c) {
 
 namespace qor::components::tui{
 
-    class std::shared_ptr<class qor::components::tui::ComponentBase> __cdecl qor::components::tui::operator|(
+    class std::shared_ptr<class qor::components::tui::ComponentBase> operator|(
         class std::shared_ptr<class qor::components::tui::ComponentBase> element,
-        class std::function<class std::shared_ptr<class qor::components::tui::Node> __cdecl(class std::shared_ptr<class qor::components::tui::Node>)> decorator)
+        class std::function<class std::shared_ptr<class qor::components::tui::Node> (class std::shared_ptr<class qor::components::tui::Node>)> decorator)
     {
         return element;
     }

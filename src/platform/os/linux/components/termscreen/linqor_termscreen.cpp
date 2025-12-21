@@ -35,10 +35,10 @@
 
 qor::Module& ThisModule(void)
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Terminal Screen Module",
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Terminal Screen Module",
 		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-	//Register the Windows specific implementation of TermScreen
-	static qor::TypeRegEntry< qor::components::nswindows::tui::TermScreen, qor::components::tui::TermScreen> regTermScreen;
+	//Register the Linux specific implementation of TermScreen
+	static qor::TypeRegEntry< qor::components::nslinux::tui::TermScreen, qor::components::tui::TermScreen> regTermScreen;
 	return QORModule;
 }
