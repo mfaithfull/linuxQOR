@@ -35,16 +35,27 @@
 
 namespace qor{ namespace components{ namespace ui { 
 
-    class qor_pp_module_interface(QOR_UI) Node;
+    struct Dimensions
+    {
+        int dimx;
+        int dimy;
+    };
+
+    class qor_pp_module_interface(QOR_LAYOUT) Node;
 
     using Element = std::shared_ptr<Node>;
     using Elements = std::vector<Element>;
     using Decorator = std::function<Element(Element)>;
 
+    qor_pp_module_interface(QOR_LAYOUT) Element operator|(Element, Decorator);
+    qor_pp_module_interface(QOR_LAYOUT) Element& operator|=(Element&, Decorator);
+    qor_pp_module_interface(QOR_LAYOUT) Elements operator|(Elements, Decorator);
+    qor_pp_module_interface(QOR_LAYOUT) Decorator operator|(Decorator, Decorator);
+
     // Node is the base class for all elements in the DOM tree.
     // It typically contains child elements, which are also instances of Node.
     // Derive from this class to create custom elements.
-    class qor_pp_module_interface(QOR_UI) Node 
+    class qor_pp_module_interface(QOR_LAYOUT) Node 
     {
     public:
         Node();
@@ -63,8 +74,8 @@ namespace qor{ namespace components{ namespace ui {
         // Step 2: Assign this element its final dimensions. Propagated from Parents to Children.
         virtual void SetBox(Box box);
 
-        // Step 3: Finalize this element. Propagate things from Parents to Children, Focus, Selection etc, transients that affect appearance
-        virtual void Finalize();
+        // Step 3: Visit this element. Propagate things from Parents to Children, Focus, Selection etc, transients that affect appearance
+        virtual void Visit(std::function<void (Node*)> operation);
 
         // Layout may not resolve within a single iteration for some elements. This
         // allows them to request additionnal iterations. This signal must be
@@ -77,11 +88,22 @@ namespace qor{ namespace components{ namespace ui {
 
         virtual void Check(Status* status);
 
+        //Override this this for things that need rendering
+        virtual bool IsVisible()
+        {
+            return false;
+        }
+
+        virtual void Express(std::function<void(Box&)> realize)
+        {
+            realize(box_);
+        }
+        
     protected:
 
-            Elements children_;
-            Requirement requirement_;
-            Box box_;
+        Elements children_;
+        Requirement requirement_;
+        Box box_;
     };
 
 }}}//qor::components::ui

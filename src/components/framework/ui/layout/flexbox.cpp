@@ -32,6 +32,7 @@
 #include <vector>
 
 #include "flexbox.h"
+#include "anyargs.h"
 #include "flexboxhelper.h"
 #include "node.h"
 #include "requirement.h"
@@ -83,7 +84,7 @@ namespace qor{ namespace components{ namespace ui {
             return config;
         }
 
-        class Flexbox : public Node 
+        class qor_pp_module_interface(QOR_LAYOUT) Flexbox : public Node 
         {
         public:
             Flexbox(Elements children, FlexboxConfig config) : Node(std::move(children)), config_(config), config_normalized_(Normalize(config)) 

@@ -25,8 +25,15 @@
 #include "src/configuration/configuration.h"
 
 #include "nodedecorator.h"
+#include "flexbox.h"
+#include "anyargs.h"
 
 namespace qor{ namespace components{ namespace ui {
+
+    NodeDecorator::NodeDecorator(Element child) : Node(unpack(std::move(child))) 
+    {
+
+    }
 
     void NodeDecorator::ComputeRequirement() 
     {

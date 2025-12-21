@@ -26,7 +26,8 @@
 #include "src/components/framework/ui/egl/egl.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/canvas/canvas.h"
-
+#include "src/components/framework/ui/layout/elements.h"
+#include "src/components/framework/ui/widgets/panel.h"
 
 #include <string>
 #include <sstream>
@@ -58,6 +59,66 @@ int main()
             {
                 auto canvas = qor::new_ref<qor::components::Canvas>();
 
+                PanelOptions options;                
+                options.width = 150 + (rand() % 150);
+                options.height = 50 + (rand() % 100);
+                auto apanel = panel(options);
+                options.width = 150 + (rand() % 150);
+                options.height = 50 + (rand() % 100);
+                auto bpanel = panel(options);
+                options.width = 150 + (rand() % 150);
+                options.height = 50 + (rand() % 100);
+                auto cpanel = panel(options);
+                
+                auto layout = vbox({
+                    hbox({ apanel->Render(), bpanel->Render(), cpanel->Render() })
+                 });
+
+                Box box;
+                box.x_min = 0;
+                box.y_min = 0;
+                box.x_max = 1280;
+                box.y_max = 800;
+
+                Node::Status status;
+                layout->Check(&status);
+                const int max_iterations = 20;
+                while (status.need_iteration && status.iteration < max_iterations) {
+                    // Step 1: Find what dimension this elements wants to be.
+                    layout->ComputeRequirement();
+
+                    // Step 2: Assign a dimension to the element.
+                    layout->SetBox(box);
+
+                    // Check if the element needs another iteration of the layout algorithm.
+                    status.need_iteration = false;
+                    status.iteration++;
+                    layout->Check(&status);
+                }
+
+                layout->Visit([&canvas](Node* node)
+                {
+                    if(node->IsVisible())
+                    {                        
+                        //Render the nodes to the canvas here ish.
+                    }
+                    node->Express([&canvas](Box& boundingBox)
+                    {
+                        if( ((boundingBox.x_max - boundingBox.x_min) * (boundingBox.y_max - boundingBox.y_min)) > 0 )
+                        {
+                            auto box = Shape::gen();
+                            box->appendRect(boundingBox.x_min,boundingBox.y_min,
+                                boundingBox.x_max - boundingBox.x_min,
+                                boundingBox.y_max - boundingBox.y_min,2,2);
+                            box->opacity(127);
+                            box->strokeWidth(2);
+                            box->strokeFill(0,167,0);
+                            box->fill(0,0,0,0);
+                            canvas->Push(box);                        
+                        }                        
+                    });
+                });
+
                 //Prepare a Composite Shape (Rectangle + Rectangle + Circle + Circle)
                 /*
                 auto shape4 = Shape::gen();
@@ -85,14 +146,6 @@ int main()
                 shape3->fill(0, 255, 255);                   //r, g, b
                 canvas->Push(shape3);
                 
-                auto stone = Shape::gen();
-                stone->appendRect(50,40,64,32,2,2);
-                stone->opacity(127);
-                stone->strokeWidth(2);
-                stone->strokeFill(0,167,0);
-                stone->fill(nullptr);
-                canvas->Push(stone);
-
                 /*Text::load("Arial.ttf");
                 auto label = Text::gen();  
                 label->font("Arial");              

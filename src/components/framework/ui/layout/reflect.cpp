@@ -22,30 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_BOX
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_BOX
+#include "src/configuration/configuration.h"
 
-namespace qor{ namespace components{ namespace ui { 
+#include "reflect.h"
+#include "flexbox.h"
+#include "anyargs.h"
 
-    struct qor_pp_module_interface(QOR_LAYOUT) Box
+namespace qor{ namespace components{ namespace ui {
+
+    Decorator reflect(Box& box) 
     {
-    public:
+        return [&](Element child) -> Element 
+        {
+            return std::make_shared<Reflect>(std::move(child), box);
+        };
+    }
 
-        int x_min = 0;
-        int x_max = 0;
-        int y_min = 0;
-        int y_max = 0;
+    Reflect::Reflect(Element child, Box& box) : Node(unpack(std::move(child))), reflected_box_(box) 
+    {
+    }
 
-        static auto Intersection(Box a, Box b) -> Box;
-        static auto Union(Box a, Box b) -> Box;
-        void Shift(int x, int y);
-        bool Contain(int x, int y) const;
-        bool IsEmpty() const;
-        bool operator==(const Box& other) const;
-        bool operator!=(const Box& other) const;
-    };
+    void Reflect::ComputeRequirement()
+    {
+        Node::ComputeRequirement();
+        requirement_ = children_[0]->requirement();
+    }
+
+    void Reflect::SetBox(Box box)
+    {
+        reflected_box_ = box;
+        Node::SetBox(box);
+        children_[0]->SetBox(box);
+    }
 
 }}}//qor::components::ui
-
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_BOX
-

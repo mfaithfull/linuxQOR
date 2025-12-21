@@ -757,14 +757,14 @@ void ScreenInteractive::Uninstall() {
 // private
 void ScreenInteractive::RunOnceBlocking(Component component) {
   // Set FPS to 120 at most.
-  const auto time_per_frame = std::chrono::microseconds(8888);  // 1s / 60fps
+  const auto time_per_frame = std::chrono::microseconds(8888);  // 1s / 120fps
 
   auto time = std::chrono::steady_clock::now();
   size_t executed_task = internal_->task_runner.ExecutedTasks();
 
   // Wait for at least one task to execute.
-  while (executed_task == internal_->task_runner.ExecutedTasks() &&
-         !HasQuitted()) {
+  while (executed_task == internal_->task_runner.ExecutedTasks() && !HasQuitted()) 
+  {
     RunOnce(component);
 
     const auto now = std::chrono::steady_clock::now();
@@ -788,14 +788,16 @@ void ScreenInteractive::RunOnce(Component component) {
   const size_t executed_task = internal_->task_runner.ExecutedTasks();
   internal_->task_runner.RunUntilIdle();
   // If no executed task, we can return early without redrawing the screen.
-  if (executed_task == internal_->task_runner.ExecutedTasks()) {
+  if (executed_task == internal_->task_runner.ExecutedTasks()) 
+  {
     return;
   }
 
   ExecuteSignalHandlers();
   Draw(component);
 
-  if (selection_data_previous_ != selection_data_) {
+  if (selection_data_previous_ != selection_data_) 
+  {
     selection_data_previous_ = selection_data_;
     if (selection_on_change_) {
       selection_on_change_();
@@ -1052,12 +1054,12 @@ void ScreenInteractive::ResetCursorPosition() {
   reset_cursor_position = "";
 }
 
-/// @brief Return a function to exit the main loop.
+//Return a function to exit the main loop.
 Closure ScreenInteractive::ExitLoopClosure() {
   return [this] { Exit(); };
 }
 
-/// @brief Exit the main loop.
+//Exit the main loop.
 void ScreenInteractive::Exit() {
   Post([this] { ExitNow(); });
 }
@@ -1074,7 +1076,7 @@ void ScreenInteractive::Signal(int signal) {
     return;
   }
 
-// Windows do no support SIGTSTP / SIGWINCH
+// Windows does no support SIGTSTP / SIGWINCH
 #if !defined(_WIN32)
   if (signal == SIGTSTP) {
     Post([&] {

@@ -13,12 +13,13 @@ add_executable(${target} main.cpp)
 target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE qor_pp_ver_major=1 )
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_egl qor_opengles qor_renderer qor_canvas linqor_egl linqor_opengles)
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_egl qor_opengles qor_renderer qor_canvas 
+qor_widgets qor_layout linqor_egl linqor_opengles)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_log qor_pipeline qor_asyncioservice qor_property
-qor_egl qor_role qor_thread winqor_thread winqor_egl qor_opengles qor_canvas qor_renderer winqor_opengles)
+qor_egl qor_role qor_thread qor_widgets qor_layout winqor_thread winqor_egl qor_opengles qor_canvas qor_renderer winqor_opengles)
 endif()
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

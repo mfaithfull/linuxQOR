@@ -25,7 +25,8 @@
 #include "src/configuration/configuration.h"
 
 #include "dbox.h"
-
+#include "flexbox.h"
+#include "anyargs.h"
 namespace qor{ namespace components{ namespace ui {
 
     //Stack several element on top of each other.

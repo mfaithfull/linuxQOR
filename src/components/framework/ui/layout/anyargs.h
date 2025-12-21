@@ -96,8 +96,8 @@ namespace qor{ namespace components{ namespace ui {
 
     TAKE_ANY_ARGS(vbox)
     TAKE_ANY_ARGS(hbox)
-    //TAKE_ANY_ARGS(dbox)
-    //TAKE_ANY_ARGS(hflow)
+    TAKE_ANY_ARGS(dbox)
+    TAKE_ANY_ARGS(hflow)
 
 }}}//qor::components::ui
 

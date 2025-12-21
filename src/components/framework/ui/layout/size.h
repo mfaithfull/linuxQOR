@@ -28,21 +28,16 @@
 #include "node.h"
 #include "vbox.h"
 #include "hbox.h"
-#include "anyargs.h"
 
 namespace qor{ namespace components{ namespace ui { 
 
     enum WidthOrHeight { WIDTH, HEIGHT };
     enum Constraint { LESS_THAN, EQUAL, GREATER_THAN };
 
-    class Size : public Node 
+    class qor_pp_module_interface(QOR_LAYOUT) Size : public Node 
     {
     public:
-        Size(Element child, WidthOrHeight direction, Constraint constraint, int value) : 
-        Node(unpack(std::move(child))), direction_(direction), constraint_(constraint), value_(std::max(0, value)) 
-        {                
-        }
-
+        Size(Element child, WidthOrHeight direction, Constraint constraint, int value);
         void ComputeRequirement() override;
         void SetBox(Box box) override;
 
@@ -54,7 +49,7 @@ namespace qor{ namespace components{ namespace ui {
 
     //Apply a constraint on the size of an element. direction Whether the WIDTH or the HEIGHT of the element must be constrained.
     //constraint The type of constaint.
-    qor_pp_module_interface(QOR_UI) Decorator size(WidthOrHeight direction, Constraint constraint, int value);
+    qor_pp_module_interface(QOR_LAYOUT) Decorator size(WidthOrHeight direction, Constraint constraint, int value);
 
 }}}//qor::components::ui
 

@@ -25,9 +25,14 @@
 #include "src/configuration/configuration.h"
 
 #include "size.h"
+#include "flexbox.h"
+#include "anyargs.h"
 
 namespace qor{ namespace components{ namespace ui {
 
+    Size::Size(Element child, WidthOrHeight direction, Constraint constraint, int value) : Node(unpack(std::move(child))), direction_(direction), constraint_(constraint), value_(std::max(0, value)) 
+    {                
+    }
     //Apply a constraint on the size of an element. direction Whether the WIDTH or the HEIGHT of the element must be constrained.
     //constraint The type of constaint.
     Decorator size(WidthOrHeight direction, Constraint constraint, int value) 

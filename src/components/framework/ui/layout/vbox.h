@@ -29,7 +29,7 @@
 
 namespace qor{ namespace components{ namespace ui { 
 
-    class qor_pp_module_interface(QOR_UI) VBox : public Node 
+    class qor_pp_module_interface(QOR_LAYOUT) VBox : public Node 
     {
     public:
 
@@ -42,7 +42,7 @@ namespace qor{ namespace components{ namespace ui {
     };
 
     //A container displaying elements vertically one by one.
-    qor_pp_module_interface(QOR_UI) Element vbox(Elements children);
+    qor_pp_module_interface(QOR_LAYOUT) Element vbox(Elements children);
 
 }}}//qor::components::ui
 

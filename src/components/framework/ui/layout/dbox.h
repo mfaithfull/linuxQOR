@@ -28,13 +28,12 @@
 #include "node.h"
 #include "vbox.h"
 #include "hbox.h"
-#include "anyargs.h"
 
 namespace qor{ namespace components{ namespace ui { 
 
     namespace 
     {
-        class DBox : public Node 
+        class qor_pp_module_interface(QOR_LAYOUT) DBox : public Node 
         {
         public:
             explicit DBox(Elements children) : Node(std::move(children)) {}
@@ -72,7 +71,7 @@ namespace qor{ namespace components{ namespace ui {
 
     //Stack several element on top of each other.
     //children_ The input element.
-    qor_pp_module_interface(QOR_UI) Element dbox(Elements children_);
+    qor_pp_module_interface(QOR_LAYOUT) Element dbox(Elements children_);
 
 }}}//qor::components::ui
 

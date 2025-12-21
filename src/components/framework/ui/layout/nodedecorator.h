@@ -28,14 +28,13 @@
 #include "node.h"
 #include "vbox.h"
 #include "hbox.h"
-#include "anyargs.h"
 
 namespace qor{ namespace components{ namespace ui { 
 
-    class qor_pp_module_interface(QOR_UI) NodeDecorator : public Node 
+    class qor_pp_module_interface(QOR_LAYOUT) NodeDecorator : public Node 
     {
     public:
-        explicit NodeDecorator(Element child) : Node(unpack(std::move(child))) {}
+        explicit NodeDecorator(Element child);
         void ComputeRequirement() override;
         void SetBox(Box box) override;
     };

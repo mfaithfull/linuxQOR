@@ -161,12 +161,14 @@ namespace qor{ namespace components{ namespace tui {
     /// @brief Draw the component.
     /// Build a ftxui::Element to be drawn on the ftxi::Screen representing this
     /// ftxui::ComponentBase. This function is means to be overridden.
-    Element ComponentBase::OnRender() {
-    if (children_.size() == 1) {
-        return children_.front()->Render();
-    }
+    Element ComponentBase::OnRender() 
+    {
+        if (children_.size() == 1) 
+        {
+            return children_.front()->Render();
+        }
 
-    return text("Not implemented component");
+        return text("Not implemented component");
     }
 
     /// @brief Called in response to an event.

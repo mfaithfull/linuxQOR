@@ -47,11 +47,17 @@ namespace qor{ namespace components{ namespace ui {
         }
         for (auto& child : children_) 
         {
-            child->ComputeRequirement();
+            if(child)
+            {
+                child->ComputeRequirement();
+            }
         }
 
         // By default, the requirement is the one of the first child.
-        requirement_ = children_[0]->requirement();
+        if(children_[0])
+        {
+            requirement_ = children_[0]->requirement();
+        }
 
         // Propagate the focused requirement.
         for (size_t i = 1; i < children_.size(); ++i) 
@@ -69,12 +75,16 @@ namespace qor{ namespace components{ namespace ui {
         box_ = box;
     }
 
-    //Finalize a node
-    void Node::Finalize() 
+    //Visit a node
+    void Node::Visit(std::function<void (Node*)> operation) 
     {
+        operation(this);
         for (auto& child : children_) 
         {
-            child->Finalize();
+            if(child)
+            {
+                child->Visit(operation);
+            }
         }
     }
 
@@ -82,7 +92,10 @@ namespace qor{ namespace components{ namespace ui {
     {
         for (auto& child : children_) 
         {
-            child->Check(status);
+            if(child)
+            {
+                child->Check(status);
+            }
         }
         status->need_iteration |= (status->iteration == 0);
     }

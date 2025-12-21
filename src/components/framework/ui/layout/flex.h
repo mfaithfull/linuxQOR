@@ -130,7 +130,7 @@ namespace qor{ namespace components{ namespace ui {
 	}//
 
 	//An element that will take expand proportionally to the space left in a container.
-	qor_pp_module_interface(QOR_UI) Element filler() 
+	qor_pp_module_interface(QOR_LAYOUT) Element filler() 
 	{
 		return std::make_shared<Flex>(function_flex);
 	}
@@ -147,61 +147,61 @@ namespace qor{ namespace components{ namespace ui {
 	/// │left││middle                                                   ││right│
 	/// └────┘└─────────────────────────────────────────────────────────┘└─────┘
 
-	qor_pp_module_interface(QOR_UI) Element flex(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element flex(Element child) 
 	{
 		return std::make_shared<Flex>(function_flex, std::move(child));
 	}
 
 	//Expand/Minimize if possible/needed on the X axis.
-	qor_pp_module_interface(QOR_UI) Element xflex(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element xflex(Element child) 
 	{
 		return std::make_shared<Flex>(function_xflex, std::move(child));
 	}
 
 	//Expand/Minimize if possible/needed on the Y axis.
-	qor_pp_module_interface(QOR_UI) Element yflex(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element yflex(Element child) 
 	{
 		return std::make_shared<Flex>(function_yflex, std::move(child));
 	}
 
 	//Expand if possible.
-	qor_pp_module_interface(QOR_UI) Element flex_grow(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element flex_grow(Element child) 
 	{
 		return std::make_shared<Flex>(function_flex_grow, std::move(child));
 	}
 
 	//Expand if possible on the X axis.
-	qor_pp_module_interface(QOR_UI) Element xflex_grow(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element xflex_grow(Element child) 
 	{
 		return std::make_shared<Flex>(function_xflex_grow, std::move(child));
 	}
 
 	//Expand if possible on the Y axis.
-	qor_pp_module_interface(QOR_UI) Element yflex_grow(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element yflex_grow(Element child) 
 	{
 		return std::make_shared<Flex>(function_yflex_grow, std::move(child));
 	}
 
 	//Minimize.
-	qor_pp_module_interface(QOR_UI) Element flex_shrink(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element flex_shrink(Element child) 
 	{
 		return std::make_shared<Flex>(function_flex_shrink, std::move(child));
 	}
 
 	//Minimize on the X axis.
-	qor_pp_module_interface(QOR_UI) Element xflex_shrink(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element xflex_shrink(Element child) 
 	{
 		return std::make_shared<Flex>(function_xflex_shrink, std::move(child));
 	}
 
 	//Minimize on the Y axis.
-	qor_pp_module_interface(QOR_UI) Element yflex_shrink(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element yflex_shrink(Element child) 
 	{
 		return std::make_shared<Flex>(function_yflex_shrink, std::move(child));
 	}
 
 	//Make the element not flexible.
-	qor_pp_module_interface(QOR_UI) Element notflex(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element notflex(Element child) 
 	{
 		return std::make_shared<Flex>(function_not_flex, std::move(child));
 	}

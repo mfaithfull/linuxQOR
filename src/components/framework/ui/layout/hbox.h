@@ -29,7 +29,7 @@
 
 namespace qor{ namespace components{ namespace ui { 
 
-    class qor_pp_module_interface(QOR_UI) HBox : public Node 
+    class qor_pp_module_interface(QOR_LAYOUT) HBox : public Node 
     {
     public:
         explicit HBox(Elements children) : Node(std::move(children)) {}
@@ -40,7 +40,7 @@ namespace qor{ namespace components{ namespace ui {
 
     };
 
-    qor_pp_module_interface(QOR_UI) Element hbox(Elements children);
+    qor_pp_module_interface(QOR_LAYOUT) Element hbox(Elements children);
 
 }}}//qor::components::ui
 

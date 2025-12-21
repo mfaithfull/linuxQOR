@@ -41,7 +41,7 @@ namespace qor{ namespace components{
         AsRef<qor::components::OpenGLESFeature>();
 
         m_eglContext = opengles->Context();
-        m_window = opengles->CreateWindow("ThorVG based canvas", 1280, 800);
+        m_window = opengles->CreateWindow("Canvas", 1280, 800);
         m_window->Show();
 
         //Create a Canvas

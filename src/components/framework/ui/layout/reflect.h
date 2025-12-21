@@ -22,30 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_BOX
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_BOX
+#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_REFLECT
+#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_REFLECT
+
+#include "node.h"
+#include "vbox.h"
+#include "hbox.h"
 
 namespace qor{ namespace components{ namespace ui { 
 
-    struct qor_pp_module_interface(QOR_LAYOUT) Box
+    class qor_pp_module_interface(QOR_LAYOUT) Reflect : public Node 
     {
     public:
+        Reflect(Element child, Box& box);
+        void ComputeRequirement() final;
+        void SetBox(Box box) final;
 
-        int x_min = 0;
-        int x_max = 0;
-        int y_min = 0;
-        int y_max = 0;
-
-        static auto Intersection(Box a, Box b) -> Box;
-        static auto Union(Box a, Box b) -> Box;
-        void Shift(int x, int y);
-        bool Contain(int x, int y) const;
-        bool IsEmpty() const;
-        bool operator==(const Box& other) const;
-        bool operator!=(const Box& other) const;
+    private:
+        Box& reflected_box_;
     };
 
+    qor_pp_module_interface(QOR_LAYOUT) Decorator reflect(Box& box);
 }}}//qor::components::ui
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_BOX
+#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_REFLECT
 

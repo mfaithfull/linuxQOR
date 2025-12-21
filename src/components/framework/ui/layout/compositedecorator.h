@@ -34,22 +34,22 @@
 
 namespace qor{ namespace components{ namespace ui {
 
-	qor_pp_module_interface(QOR_UI) Element hcenter(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element hcenter(Element child) 
 	{
 		return hbox(filler(), std::move(child), filler());
 	}
 
-	qor_pp_module_interface(QOR_UI) Element vcenter(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element vcenter(Element child) 
 	{
 		return vbox(filler(), std::move(child), filler());
 	}
 
-	qor_pp_module_interface(QOR_UI) Element center(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element center(Element child) 
 	{
 		return hcenter(vcenter(std::move(child)));
 	}
 
-	qor_pp_module_interface(QOR_UI) Element align_right(Element child) 
+	qor_pp_module_interface(QOR_LAYOUT) Element align_right(Element child) 
 	{
 		return hbox(filler(), std::move(child));
 	}

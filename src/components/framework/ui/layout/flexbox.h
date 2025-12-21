@@ -28,14 +28,14 @@
 #include "node.h"
 #include "vbox.h"
 #include "hbox.h"
-#include "anyargs.h"
+#include "dbox.h"
 #include "flexboxconfig.h"
 
 namespace qor{ namespace components{ namespace ui { 
 
-    qor_pp_module_interface(QOR_UI) Element flexbox(Elements children, FlexboxConfig config);
-    qor_pp_module_interface(QOR_UI) Element hflow(Elements children);
-    qor_pp_module_interface(QOR_UI) Element vflow(Elements children);
+    qor_pp_module_interface(QOR_LAYOUT) Element flexbox(Elements children, FlexboxConfig config);
+    qor_pp_module_interface(QOR_LAYOUT) Element hflow(Elements children);
+    qor_pp_module_interface(QOR_LAYOUT) Element vflow(Elements children);
 
 }}}//qor::components::ui
 

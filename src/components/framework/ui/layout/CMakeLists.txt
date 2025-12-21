@@ -4,7 +4,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(target qor_layout)
 
 add_library(${target} SHARED qor_layout.cpp box.cpp node.cpp boxhelper.cpp vbox.cpp hbox.cpp size.cpp nodedecorator.cpp
-flexboxhelper.cpp flexboxconfig.cpp flexbox.cpp dbox.cpp gridbox.cpp)
+flexboxhelper.cpp flexboxconfig.cpp flexbox.cpp dbox.cpp gridbox.cpp reflect.cpp operators.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

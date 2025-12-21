@@ -22,30 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_BOX
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_BOX
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-namespace qor{ namespace components{ namespace ui { 
-
-    struct qor_pp_module_interface(QOR_LAYOUT) Box
-    {
-    public:
-
-        int x_min = 0;
-        int x_max = 0;
-        int y_min = 0;
-        int y_max = 0;
-
-        static auto Intersection(Box a, Box b) -> Box;
-        static auto Union(Box a, Box b) -> Box;
-        void Shift(int x, int y);
-        bool Contain(int x, int y) const;
-        bool IsEmpty() const;
-        bool operator==(const Box& other) const;
-        bool operator!=(const Box& other) const;
-    };
-
-}}}//qor::components::ui
-
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_LAYOUT_BOX
-
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Widgets Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}
