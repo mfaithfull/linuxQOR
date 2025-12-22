@@ -4,7 +4,8 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target linqor_x)
 
-add_library(${target} SHARED linqor_x.cpp xlib.cpp display.cpp pixmap.cpp window.cpp screen.cpp gc.cpp visual.cpp)
+add_library(${target} SHARED linqor_x.cpp xlib.cpp display.cpp pixmap.cpp window.cpp screen.cpp gc.cpp visual.cpp font.cpp
+servergrab.cpp pointergrab.cpp keyboardgrab.cpp keygrab.cpp buttongrab.cpp colourmap.cpp selection.cpp)
 
 target_include_directories(${target} PRIVATE)
 

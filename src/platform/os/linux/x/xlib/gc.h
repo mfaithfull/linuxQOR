@@ -30,107 +30,108 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
+    /*GC attribute value mask bits
+    #define GCFunction (1L<<0)
+    #define GCPlaneMask (1L<<1)
+    #define GCForeground (1L<<2)
+    #define GCBackground (1L<<3)
+    #define GCLineWidth (1L<<4)
+    #define GCLineStyle (1L<<5)
+    #define GCCapStyle (1L<<6)
+    #define GCJoinStyle (1L<<7)
+    #define GCFillStyle (1L<<8)
+    #define GCFillRule (1L<<9)
+    #define GCTile (1L<<10)
+    #define GCStipple (1L<<11)
+    #define GCTileStipXOrigin (1L<<12)
+    #define GCTileStipYOrigin (1L<<13)
+    #define GCFont (1L<<14)
+    #define GCSubwindowMode (1L<<15)
+    #define GCGraphicsExposures (1L<<16)
+    #define GCClipXOrigin (1L<<17)
+    #define GCClipYOrigin (1L<<18)
+    #define GCClipMask (1L<<19)
+    #define GCDashOffset (1L<<20)
+    #define GCDashList (1L<<21)
+    #define GCArcMode (1L<<22*/
+    struct qor_pp_module_interface(QOR_LINX) GCValues
+    {
+        int function;		/* logical operation */
+        unsigned long plane_mask;/* plane mask */
+        unsigned long foreground;/* foreground pixel */
+        unsigned long background;/* background pixel */
+        int line_width;		/* line width */
+        int line_style;	 	/* LineSolid, LineOnOffDash, LineDoubleDash */
+        int cap_style;	  	/* CapNotLast, CapButt, CapRound, CapProjecting */
+        int join_style;	 	/* JoinMiter, JoinRound, JoinBevel */
+        int fill_style;	 	/* FillSolid, FillTiled, FillStippled, FillOpaeueStippled */
+        int fill_rule;	  	/* EvenOddRule, WindingRule */
+        int arc_mode;		/* ArcChord, ArcPieSlice */
+        unsigned long tile;		/* tile pixmap for tiling operations */
+        unsigned long stipple;		/* stipple 1 plane pixmap for stipping */
+        int ts_x_origin;	/* offset for tile or stipple operations */
+        int ts_y_origin;
+        unsigned long font;	        /* default text font for text operations */
+        int subwindow_mode;     /* ClipByChildren, IncludeInferiors */
+        int graphics_exposures;/* boolean, should exposures be generated */
+        int clip_x_origin;	/* origin for clipping */
+        int clip_y_origin;
+        unsigned long clip_mask;	/* bitmap clipping; other calls for rects */
+        int dash_offset;	/* patterned/dashed line information */
+        char dashes;
+    };
+
+    struct Rectangle{
+        short x;
+        short y;
+        unsigned short width;
+        unsigned short height;
+    };
+
+    class qor_pp_module_interface(QOR_LINX) Display;
+    class qor_pp_module_interface(QOR_LINX) Window;
+
     class qor_pp_module_interface(QOR_LINX) GC
     {
     public:
 
         GC() = default;
-        GC(void* gc);
-        virtual ~GC() = default;
-        /*//Graphics Context
- XCreateGC.
+        GC(Display* display, Window* window, void* gc);
+        GC(Display* display, void* gc);
+        virtual ~GC();
 
- // GC attribute value mask bits 
-#define GCFunction (1L<<0)
-#define GCPlaneMask (1L<<1)
-#define GCForeground (1L<<2)
-#define GCBackground (1L<<3)
-#define GCLineWidth (1L<<4)
-#define GCLineStyle (1L<<5)
-#define GCCapStyle (1L<<6)
-#define GCJoinStyle (1L<<7)
-#define GCFillStyle (1L<<8)
-#define GCFillRule (1L<<9)
-#define GCTile (1L<<10)
-#define GCStipple (1L<<11)
-#define GCTileStipXOrigin (1L<<12)
-#define GCTileStipYOrigin (1L<<13)
-#define GCFont (1L<<14)
-#define GCSubwindowMode (1L<<15)
-#define GCGraphicsExposures (1L<<16)
-#define GCClipXOrigin (1L<<17)
-#define GCClipYOrigin (1L<<18)
-#define GCClipMask (1L<<19)
-#define GCDashOffset (1L<<20)
-#define GCDashList (1L<<21)
-#define GCArcMode (1L<<22)
-
-* Values 
-typedef struct {
- int function; // logical operation 
- unsigned long plane_mask; // plane mask 
- unsigned long foreground; // foreground pixel 
- unsigned long background; // background pixel 
- int line_width; // line width (in pixels) 
- int line_style; // LineSolid, LineOnOffDash, LineDoubleDash 
- int cap_style; // CapNotLast, CapButt, CapRound, CapProjecting int join_style; /* JoinMiter, JoinRound, JoinBevel 
- int fill_style; // FillSolid, FillTiled, FillStippled FillOpaqu int fill_rule; /* EvenOddRule, WindingRule 
- int arc_mode; // ArcChord, ArcPieSlice 
- Pixmap tile; // tile pixmap for tiling operations 
- Pixmap stipple; // stipple 1 plane pixmap for stippling 
- int ts_x_origin; // offset for tile or stipple operations 
- int ts_y_origin
- Font font; // default text font for text operations 
- int subwindow_mode; // ClipByChildren, IncludeInferiors 
- Bool graphics_exposures; // boolean, should exposures be generated 
- int clip_x_origin; // origin for clipping 
- int clip_y_origin;
- Pixmap clip_mask; // bitmap clipping; other calls for rects 
- int dash_offset; // patterned/dashed line information 
- char dashes;
-} XGCValues;
-
-
-GC XCreateGC(display, d, valuemask, values);
-XCopyGC(display, src, dest, valuemask);
-XChangeGC(display, gc, valuemask, values);
-Status XGetGCValues(display, gc, valuemask, values_return);
-XFreeGC(display, gc);
-GContext XGContextFromGC(gc);
-void XFlushGC(display, gc);
-
-XSetState(display, gc, foreground, background, function, plane_mask);
-XSetForeground(display, gc, foreground);
-XSetBackground(display, gc, background);
-XSetFunction(display, gc, function);
-XSetPlaneMask(display, gc, plane_mask);
-XSetLineAttributes(display, gc, line_width, line_style, cap_style,
-join_style);
-XSetDashes(display, gc, dash_offset, dash_list[], n);
-XSetFillStyle(display, gc, fill_style);
-XSetFillRule(display, gc, fill_rule);
-
-XSetTile(display, gc, tile);
-XSetStipple(display, gc, stipple);
-XSetTSOrigin(display, gc, ts_x_origin, ts_y_origin);
-XSetFont(display, gc, font);
-XSetClipOrigin(display, gc, clip_x_origin, clip_y_origin);
-XSetClipMask(display, gc, pixmap);
-XSetClipRectangles(display, gc, clip_x_origin, clip_y_origin, rectangles[], n, ordering);
-XSetArcMode(display, gc, arc_mode);
-XSetSubwindowMode(display, gc, subwindow_mode);
-XSetGraphicsExposures(display, gc, graphics_exposures);
-*/
-
-        int SetClipMask(Pixmap pixmap);
-        int SetClipRectangles(int clip_x_origin, int clip_y_origin, int rectangles[], int n, int ordering);
+        void* Use();
+        unsigned long GetID();
+        void Flush();
+        int Copy(GC& dest, unsigned long valuemask);
+        int Change(unsigned long valueMask, GCValues& values);
+        int GetValues(unsigned long valueMask, GCValues& valuesReturn);
+        int SetState(unsigned long foreground, unsigned long background, int function, unsigned long plane_mask);
+        int SetForeground(unsigned long foreground);
+        int SetBackground(unsigned long background);
+        int SetFunction(int function);
+        int SetPlaneMask(unsigned long plane_mask);
+        int SetLineAttributes(unsigned int line_width, int line_style, int cap_style, int join_style);
+        int SetDashes(int dash_offset, const char* dash_list, int n);
+        int SetFillStyle(int fill_style);
+        int SetFillRule(int fill_rule);
+        int SetTile(Pixmap& tile);
+        int SetStipple(Pixmap& stipple);
+        int SetTSOrigin(int ts_x_origin, int ts_y_origin);
+        int SetFont(unsigned long font);
+        int SetClipOrigin(int clip_x_origin, int clip_y_origin);
+        int SetClipMask(Pixmap& pixmap);
+        int SetClipRectangles(int clip_x_origin, int clip_y_origin, Rectangle rectangles[], int n, int ordering);
         int SetArcMode(int arc_mode);
         int SetSubWindowMode(int subwindow_mode);
         int SetGraphicsExposures(int graphics_exposures);
 
     private:
         Display* m_display;
+        Window* m_window;
         void* m_gc;
+
+        bool m_temporary;
     };
 
 }}}}//qor::platform::nslinux::x

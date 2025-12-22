@@ -27,6 +27,8 @@
 #include "window.h"
 #include "display.h"
 #include "visual.h"
+#include "gc.h"
+#include "colourmap.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -289,12 +291,130 @@ RGB_RED_MAP	WM_ZOOM_HINTS*/
         XWMHints* data = XAllocWMHints();
         memcpy(data, &hints, sizeof(WMHints));
         int result = XSetWMHints(WITH_THIS, data);
-        //XFree(data);//TODO:?
+        XFree(data);
         return result;
     }
+
+    WMSizeHints Window::GetNormalHints(long& validBitsOfReturn, int& status)
+    {      
+        WMSizeHints hints = {0};
+        validBitsOfReturn = 0;
+        status = XGetWMNormalHints(WITH_THIS, reinterpret_cast<XSizeHints*>(&hints), &validBitsOfReturn);
+        return hints;
+    }
+
+    void Window::SetNormalHints(WMSizeHints& hints)
+    {
+        XSetWMNormalHints(WITH_THIS, reinterpret_cast<XSizeHints*>(&hints));
+    }
         
+    int Window::SetTitle(const std::string& title)
+    {
+        return XStoreName(WITH_THIS, title.c_str());
+    }
+    
+    std::string Window::GetTitle()
+    {
+        std::string title;
+        char* buffer = nullptr;
+        XFetchName(WITH_THIS, &buffer);
+        if(buffer != nullptr)
+        {
+            title = std::string(buffer);
+            XFree(buffer);
+        }
+        return title;
+    }
 
+    int Window::SelectInput(long eventMask)
+    {
+        return XSelectInput(WITH_THIS, eventMask);
+    }
 
+    int Window::SetWMProtocols(unsigned long* atoms, int count)
+    {
+        return XSetWMProtocols( WITH_THIS, atoms, count);
+    }
+
+    GC Window::CreateGC(unsigned long mask, GCValues& values )
+    {
+        ::GC gc = XCreateGC(WITH_THIS, mask, reinterpret_cast<XGCValues*>(&values));
+        return GC(m_display, this, gc);
+    }
+
+    int Window::Withdraw(int screen_number)
+    {
+        return XWithdrawWindow(WITH_THIS, screen_number);
+    }
+
+    int Window::SetZoomHints(WMSizeHints& zhints)
+    {
+        return XSetZoomHints(WITH_THIS, reinterpret_cast<XSizeHints*>(&zhints));
+    }
+
+    int Window::SetColourmap(Colourmap& colourmap)
+    {
+        return XSetWindowColormap(WITH_THIS, colourmap.GetId());
+    }
+
+    void Window::SetWMProperties(TextProperty* window_name, TextProperty* icon_name, char** argv, int argc, WMSizeHints* normal_hints, WMHints* wm_hints, ClassHint* class_hints)
+    {
+        XSetWMProperties(WITH_THIS, reinterpret_cast<XTextProperty*>(window_name), reinterpret_cast<XTextProperty*>(icon_name), argv, argc, reinterpret_cast<XSizeHints*>(normal_hints), reinterpret_cast<XWMHints*>(wm_hints), reinterpret_cast<XClassHint*>(class_hints));
+    }
+
+    void Window::SetWMName(TextProperty& windowName)
+    {
+        XSetWMName(WITH_THIS, reinterpret_cast<XTextProperty*>(&windowName));
+    }
+
+    void Window::SetWMIconName(TextProperty& iconName)
+    {
+        XSetWMIconName(WITH_THIS, reinterpret_cast<XTextProperty*>(&iconName));
+    }
+
+    int Window::SetWMHints(WMSizeHints& normalHints)
+    {
+        return XSetWMHints(WITH_THIS, reinterpret_cast<XWMHints*>(&normalHints));
+    }
+
+    int Window::SetWMColourmapWindows(std::vector<unsigned long> colourmapWindows)
+    {
+        return XSetWMColormapWindows(WITH_THIS, colourmapWindows.data(), colourmapWindows.size());
+    }
+
+    void Window::SetWMClientMachine(TextProperty& clientMachine)
+    {
+        XSetWMClientMachine(WITH_THIS, reinterpret_cast<XTextProperty*>(&clientMachine));
+    }
+
+    int Window::SetTransientForHint(Window& propWindow)
+    {
+        return XSetTransientForHint(WITH_THIS, propWindow.GetId());
+    }
+
+    void Window::SetTextProperty(TextProperty& textProp, unsigned long property)
+    {
+        XSetTextProperty(WITH_THIS, reinterpret_cast<XTextProperty*>(&textProp), property);
+    }
+
+    void Window::SetRGBColourmaps(std::vector<StandardColourmap> colourMaps, unsigned long property)
+    {
+        XSetRGBColormaps(WITH_THIS, reinterpret_cast<XStandardColormap*>(colourMaps.data()), colourMaps.size(), (::Atom)(property));
+    }
+
+    int Window::GetIconSizes(std::vector<IconSize>& size_list_return)
+    {
+        int count;
+        XIconSize* data = nullptr;
+        int status = XGetIconSizes(WITH_THIS, &data, &count);
+        if(data != nullptr && count != 0)
+        {
+            size_list_return.resize(count);
+            memcpy(size_list_return.data(), data, sizeof(IconSize)* count);
+            XFree(data);
+        }
+        return status;
+    }
 
 }}}}//qor::platform::nslinux::x
 

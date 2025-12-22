@@ -26,6 +26,7 @@
 
 #include "gc.h"
 #include "display.h"
+#include "window.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -42,8 +43,145 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-    GC::GC(void* gc) : m_gc(gc)
+    GC::GC(Display* display, Window* window, void* gc) : m_display(display), m_window(window), m_gc(gc), m_temporary(false)
     {
+    }
+
+    GC::GC(Display* display, void* gc) : m_display(display), m_window(nullptr), m_gc(gc), m_temporary(true)
+    {        
+    }
+
+    GC::~GC()
+    {
+        if(!m_temporary)
+        {
+            XFreeGC((::Display*)(m_display),(::GC)(m_gc));
+        }
+    }
+
+    void* GC::Use()
+    {
+        return m_gc;
+    }
+
+    unsigned long GC::GetID()
+    {
+        return XGContextFromGC((::GC)(m_gc));
+    }
+
+    void GC::Flush()
+    {
+        XFlushGC((::Display*)(m_display),(::GC)(m_gc));
+    }
+
+    int GC::Copy(GC& dest, unsigned long valuemask)
+    {
+        return XCopyGC((::Display*)(m_display), (::GC)(m_gc), valuemask, (::GC)(dest.Use()));
+    }
+
+    int GC::Change(unsigned long valueMask, GCValues& values)
+    {
+        return XChangeGC((::Display*)(m_display), (::GC)(m_gc), valueMask, reinterpret_cast<XGCValues*>(&values));
+    }
+
+    int GC::GetValues(unsigned long valueMask, GCValues& valuesReturn)
+    {
+        return XGetGCValues((::Display*)(m_display), (::GC)(m_gc), valueMask, reinterpret_cast<XGCValues*>(&valuesReturn));
+    }
+
+    int GC::SetState(unsigned long foreground, unsigned long background, int function, unsigned long plane_mask)
+    {
+        return XSetState((::Display*)(m_display), (::GC)(m_gc), foreground, background, function, plane_mask);        
+    }
+
+    int GC::SetForeground(unsigned long foreground)
+    {
+        return XSetForeground((::Display*)(m_display), (::GC)(m_gc), foreground);
+    }
+
+    int GC::SetBackground(unsigned long background)
+    {
+        return XSetBackground((::Display*)(m_display), (::GC)(m_gc), background);
+    }
+
+    int GC::SetFunction(int function)
+    {
+        return XSetFunction((::Display*)(m_display), (::GC)(m_gc), function);
+    }
+
+    int GC::SetPlaneMask(unsigned long plane_mask)
+    {
+        return XSetPlaneMask((::Display*)(m_display), (::GC)(m_gc), plane_mask);
+    }
+
+    int GC::SetLineAttributes(unsigned int line_width, int line_style, int cap_style, int join_style)
+    {
+        return XSetLineAttributes((::Display*)(m_display), (::GC)(m_gc), line_width, line_style, cap_style, join_style);
+    }
+
+    int GC::SetDashes(int dash_offset, const char* dash_list, int n)
+    {
+        return XSetDashes((::Display*)(m_display), (::GC)(m_gc), dash_offset, dash_list, n);
+    }
+
+    int GC::SetFillStyle(int fill_style)
+    {
+        return XSetFillStyle((::Display*)(m_display), (::GC)(m_gc), fill_style);
+    }
+
+    int GC::SetFillRule(int fill_rule)
+    {
+        return XSetFillRule((::Display*)(m_display), (::GC)(m_gc), fill_rule);
+    }
+
+    int GC::SetTile(Pixmap& tile)
+    {
+        return XSetTile((::Display*)(m_display), (::GC)(m_gc), tile.GetId());
+    }
+
+    int GC::SetStipple(Pixmap& stipple)
+    {
+        return XSetStipple((::Display*)(m_display), (::GC)(m_gc), stipple.GetId());
+    }
+
+    int GC::SetTSOrigin(int ts_x_origin, int ts_y_origin)
+    {
+        return XSetTSOrigin((::Display*)(m_display), (::GC)(m_gc), ts_x_origin, ts_y_origin);
+    }
+
+    int GC::SetFont(unsigned long font)
+    {
+        return XSetFont((::Display*)(m_display), (::GC)(m_gc), font);
+    }
+
+    int GC::SetClipOrigin(int clip_x_origin, int clip_y_origin)
+    {
+        return XSetClipOrigin((::Display*)(m_display), (::GC)(m_gc), clip_x_origin, clip_y_origin);
+    }
+
+    int GC::SetClipMask(Pixmap& pixmap)
+    {
+        return XSetClipMask((::Display*)(m_display), (::GC)(m_gc), pixmap.GetId());
+    }
+
+    int GC::SetClipRectangles(int clip_x_origin, int clip_y_origin, Rectangle rectangles[], int n, int ordering)
+    {
+        return XSetClipRectangles((::Display*)(m_display), (::GC)(m_gc), clip_x_origin, clip_y_origin, reinterpret_cast<XRectangle*>(rectangles), n, ordering);
+    }
+
+    int GC::SetArcMode(int arc_mode)
+    {
+        return XSetArcMode((::Display*)(m_display), (::GC)(m_gc), arc_mode);
+    }
+
+    int GC::SetSubWindowMode(int subwindow_mode)
+    {
+        return XSetSubwindowMode((::Display*)(m_display), (::GC)(m_gc), subwindow_mode);
+    }
+    
+    int GC::SetGraphicsExposures(int graphics_exposures)
+    {
+        return XSetGraphicsExposures((::Display*)(m_display), (::GC)(m_gc), graphics_exposures);
     }
 
 }}}}//qor::platform::nslinux::x

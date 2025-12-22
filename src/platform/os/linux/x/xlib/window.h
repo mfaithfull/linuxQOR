@@ -36,8 +36,46 @@
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     class qor_pp_module_interface(QOR_LINX) Visual;
+    class qor_pp_module_interface(QOR_LINX) GC;
+    struct qor_pp_module_interface(QOR_LINX) GCValues;
+    class qor_pp_module_interface(QOR_LINX) Colourmap;
 
     //Note: Input only windows have no Visibility
+
+    struct TextProperty
+    {
+        unsigned char* value;		// same as Property routines
+        unsigned long encoding;		//Atom prop type
+        int format;				    // prop data format: 8, 16, or 32
+        unsigned long nitems;		// number of data items in value
+    };
+
+    struct ClassHint
+    {
+        char* res_name;
+        char* res_class;
+    };
+
+    struct StandardColourmap
+    {
+        unsigned long colormap;
+        unsigned long red_max;
+        unsigned long red_mult;
+        unsigned long green_max;
+        unsigned long green_mult;
+        unsigned long blue_max;
+        unsigned long blue_mult;
+        unsigned long base_pixel;
+        unsigned long visualid;
+        unsigned long killid;
+    };
+
+    struct IconSize
+    {
+        int min_width, min_height;
+        int max_width, max_height;
+        int width_inc, height_inc;
+    };
 
     class qor_pp_module_interface(QOR_LINX) Window : public Drawable
     {
@@ -111,10 +149,28 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         int GetProperty(unsigned long property, long long_offset, long long_length, int del, unsigned long req_type, unsigned long* actual_type_return, int* actual_format_return, unsigned long* nitems_return, unsigned long* bytes_after_return, unsigned char** prop_return);
         std::vector<unsigned long> ListProperties();
         int ChangeProperty(unsigned long property, unsigned long type, int format, int mode, unsigned char* data, int nelements);        
-        
         WMHints GetWMHints();
         int SetWMHints(WMHints& hints);
-
+        WMSizeHints GetNormalHints(long& validBitsOfReturn, int& status);
+        void SetNormalHints(WMSizeHints& hints);
+        int SetTitle(const std::string& title);
+        std::string GetTitle();
+        int SelectInput(long eventMask);
+        int SetWMProtocols(unsigned long* atoms, int count);
+        GC CreateGC(unsigned long ul, GCValues& values );
+        int Withdraw(int screen_number);
+        int SetZoomHints(WMSizeHints& zhints);
+        int SetColourmap(Colourmap& colourmap);
+        void SetWMProperties(TextProperty* window_name, TextProperty* icon_name, char** argv, int argc, WMSizeHints* normal_hints, WMHints* wm_hints, ClassHint* class_hints);
+        void SetWMName(TextProperty& windowName);
+        void SetWMIconName(TextProperty& iconName);
+        int SetWMHints(WMSizeHints& normalHints);
+        int SetWMColourmapWindows(std::vector<unsigned long> colourmapWindows);
+        void SetWMClientMachine(TextProperty& clientMachine);
+        int SetTransientForHint(Window& propWindow);
+        void SetTextProperty(TextProperty& textProp, unsigned long property);
+        void SetRGBColourmaps(std::vector<StandardColourmap> colourMaps, unsigned long property);
+        int GetIconSizes(std::vector<IconSize>& size_list_return);
 
     protected:
                 
