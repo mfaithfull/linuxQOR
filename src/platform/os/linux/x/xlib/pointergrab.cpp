@@ -24,9 +24,8 @@
 
 #include "src/configuration/configuration.h"
 
-#include "xlib.h"
+#include "pointergrab.h"
 #include "display.h"
-#include "src/qor/error/error.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -41,52 +40,16 @@
 #include <X11/Xproto.h>
 #include <X11/Xprotostr.h>
 
-qor_pp_module_provide(QOR_LINX, XClient)
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-namespace qor{ namespace platform { namespace nslinux{
-
-    int XClient::HandleLibErrors(void* display, ErrorEvent* errEvent)
+    PointerGrab::PointerGrab(Display* display, unsigned long grab_window, int owner_events, unsigned int event_mask, int pointer_mode, int keyboard_mode, unsigned long confine_to, unsigned long cursor, unsigned long time) : m_display(display)
     {
-        char emergencyBuffer[1025] = {};
-        XGetErrorText((::Display*)(display), errEvent->error_code, emergencyBuffer, 1024);
-
-        std::string message(emergencyBuffer);
-        continuable(message);
-
-        //XGetErrorDatabaseText(display, name, message, default_string, buffer_return, length);
-
-        //printf("Error code: %d\n", error->error_code);
-        return 0; // Return 0 to continue processing
+        XGrabPointer((::Display*)(m_display), grab_window, owner_events, event_mask, pointer_mode, keyboard_mode, confine_to, cursor, time);
     }
 
-    void XClient::Setup()
-    {        
-        if(XInitThreads() == 0)
-        {
-            warning("Xlib multithreading failed to initialise. Application must synchronise all calls.");
-        }
-        m_savedErrHandler = reinterpret_cast<void*>(XSetErrorHandler((::XErrorHandler)(&XClient::HandleLibErrors)));
-    }
-        
-    void XClient::Shutdown()
+    PointerGrab::~PointerGrab()
     {
-        //Restore the error handler.
-        XSetErrorHandler((::XErrorHandler)(m_savedErrHandler));
+        XUngrabPointer((::Display*)(m_display), CurrentTime);
     }
 
-    qor::ref_of<x::Display>::type XClient::GetDisplay(const std::string& displayConnection)
-    {
-        return new_ref<x::Display>(displayConnection.c_str());
-    }
-
-    qor::ref_of<x::Display>::type XClient::GetDisplay(int screen_number, int display_number, const std::string& hostname, const std::string& protocol)
-    {
-        return new_ref<x::Display>(protocol, hostname, display_number, screen_number);
-    }
-
-    int XClient::Free(void* data)
-    {
-        return XFree(data);
-    }
-    
-}}}//qor::platform::nslinux
+}}}}//qor::platform::nslinux::x

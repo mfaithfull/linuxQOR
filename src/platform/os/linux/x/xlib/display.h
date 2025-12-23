@@ -28,8 +28,11 @@
 #include <string>
 #include <format>
 #include <vector>
+#include <functional>
 
 #include "visualinfoquery.h"
+#include "event.h"
+#include "keysymbols.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
@@ -44,6 +47,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         int depth;
         int bits_per_pixel;
         int scanline_pad;
+    };
+
+    struct ModifierKeymap
+    {
+        int max_keypermod;	    // The server's max # of keys per modifier
+        unsigned char* modifiermap;	// An 8 by max_keypermod array of modifiers
     };
 
     class qor_pp_module_interface(QOR_LINX) Display
@@ -113,13 +122,28 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         const std::vector<PixmapFormatValue> ListPixmapFormats();
         void Lock();
         void Unlock();
-        Pixmap StackPixmap(unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth);
+        Pixmap GetPixmap(unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth);
         std::vector<VisualInfo> GetVisualInfo(long vinfo_mask, VisualInfo& vinfo_template);
         std::vector<VisualInfo> GetVisualInfo(VisualInfoQuery& visualInfoQuery);
         int Flush();
-        unsigned long GetAtom(char* name);
+        unsigned long GetAtom(const char* name);
         unsigned long CreateAtom(char* name);
         const std::string GetAtomName(unsigned long atom);
+        int NextEvent(Event& event);
+        int Pending();
+        int ProcessEvent(std::function< eventHandler(int)> filterType, int& result);
+        int LookupKeySymbol(KeyEvent& keyEvent, int index);
+        int WarpPointer(unsigned long src_w, unsigned long dest_w, int src_x, int src_y, unsigned int src_width, unsigned int src_height, int dest_x, int dest_y);
+        int InstallColourmap(unsigned long colourmap);
+        int UninstallColourmap(unsigned long colourmap);
+        int TranslateCoordinates(unsigned long src_w, unsigned long dest_w, int src_x, int src_y, int& dest_x_return, int& dest_y_return, unsigned long& child_return);
+        int Sync(bool discard);
+        int StoreBytes(const char* bytes, int nbytes);
+        int StoreBuffer(const char* bytes, int nbytes, int buffer);
+        int GetPointerMapping(std::vector<unsigned char>& buttons);
+        int SetPointerMapping(const std::vector<unsigned char>& buttons);
+        int SetModifierMapping(ModifierKeymap& modmap);
+        int SetInputFocus(unsigned long focus, int revert_to, unsigned long time);
 
     private:
 

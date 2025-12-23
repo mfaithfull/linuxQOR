@@ -24,9 +24,8 @@
 
 #include "src/configuration/configuration.h"
 
-#include "xlib.h"
+#include "colourmap.h"
 #include "display.h"
-#include "src/qor/error/error.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -41,52 +40,38 @@
 #include <X11/Xproto.h>
 #include <X11/Xprotostr.h>
 
-qor_pp_module_provide(QOR_LINX, XClient)
+#define WITH_THIS (::Display*)(m_display), (::Colormap)(m_Id)
 
-namespace qor{ namespace platform { namespace nslinux{
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-    int XClient::HandleLibErrors(void* display, ErrorEvent* errEvent)
+    Colourmap::Colourmap(Display* display, unsigned long Id) : m_display(display), m_Id(Id), temporary(false)
     {
-        char emergencyBuffer[1025] = {};
-        XGetErrorText((::Display*)(display), errEvent->error_code, emergencyBuffer, 1024);
-
-        std::string message(emergencyBuffer);
-        continuable(message);
-
-        //XGetErrorDatabaseText(display, name, message, default_string, buffer_return, length);
-
-        //printf("Error code: %d\n", error->error_code);
-        return 0; // Return 0 to continue processing
     }
 
-    void XClient::Setup()
-    {        
-        if(XInitThreads() == 0)
+    Colourmap::~Colourmap()
+    {
+        if(!temporary)
         {
-            warning("Xlib multithreading failed to initialise. Application must synchronise all calls.");
+            XFreeColormap((::Display*)(m_display), (::Colormap)(m_Id));
         }
-        m_savedErrHandler = reinterpret_cast<void*>(XSetErrorHandler((::XErrorHandler)(&XClient::HandleLibErrors)));
-    }
-        
-    void XClient::Shutdown()
-    {
-        //Restore the error handler.
-        XSetErrorHandler((::XErrorHandler)(m_savedErrHandler));
     }
 
-    qor::ref_of<x::Display>::type XClient::GetDisplay(const std::string& displayConnection)
+    int Colourmap::StoreNamedColour(const char* colour, unsigned long pixel, int flags)
     {
-        return new_ref<x::Display>(displayConnection.c_str());
+        XStoreNamedColor(WITH_THIS, colour, pixel, flags);
     }
 
-    qor::ref_of<x::Display>::type XClient::GetDisplay(int screen_number, int display_number, const std::string& hostname, const std::string& protocol)
+    int Colourmap::StoreColours(std::vector<Colour> colours)
     {
-        return new_ref<x::Display>(protocol, hostname, display_number, screen_number);
+        XStoreColors(WITH_THIS, reinterpret_cast<XColor*>(colours.data()), colours.size());
     }
 
-    int XClient::Free(void* data)
+    int Colourmap::StoreColour(Colour colour)
     {
-        return XFree(data);
+        XStoreColor(WITH_THIS, reinterpret_cast<XColor*>(&colour));
     }
-    
-}}}//qor::platform::nslinux
+
+
+}}}}//qor::platform::nslinux::x
+
+#undef WITH_THIS

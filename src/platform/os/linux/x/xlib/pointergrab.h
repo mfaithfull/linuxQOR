@@ -22,23 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#ifndef QOR_PP_H_LINUX_X_POINTERGRAB
+#define QOR_PP_H_LINUX_X_POINTERGRAB
 
-#include "termscreen.h"
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Terminal Screen Module",
-		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+    class qor_pp_module_interface(QOR_LINX) Display;
 
-	//Register the Windows specific implementation of TermScreen
-	static qor::TypeRegEntry< qor::components::nswindows::tui::TermScreen, qor::components::tui::TermScreen> regTermScreen;
-	return QORModule;
-}
+    class qor_pp_module_interface(QOR_LINX) PointerGrab
+    {
+    public:
+
+        PointerGrab(Display* display, unsigned long grab_window, int owner_events, unsigned int event_mask, int pointer_mode, int keyboard_mode, unsigned long confine_to, unsigned long cursor, unsigned long time);
+        ~PointerGrab();
+
+    private:
+
+        Display* m_display;
+
+    };
+
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_X_POINTERGRAB

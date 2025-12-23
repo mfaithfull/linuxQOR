@@ -65,6 +65,8 @@ namespace qor{ namespace platform { namespace nslinux{
 
         static int HandleLibErrors(void* display, ErrorEvent* err);
 
+        int Free(void* data);
+
     private:
 
         void* m_savedErrHandler;

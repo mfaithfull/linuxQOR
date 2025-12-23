@@ -46,14 +46,15 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     public:
 
         Visual() = default;
-        Visual(void* handle);
+        Visual(void* visual);
         virtual ~Visual() = default;
 
-        //VisualID XVisualIDFromVisual(visual);
         void* Use()
         {
             return m_visual;
         }
+
+        unsigned long GetId();
 
     private:
         void* m_visual;

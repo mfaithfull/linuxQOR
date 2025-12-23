@@ -113,7 +113,7 @@ int main()
                     toplevelWindow->SetBorderWidth(12);
 
                     qor::platform::nslinux::x::WindowChangeQuery windowChangeQuery;
-                    windowChangeQuery.SetBorderWidth(24);
+                    windowChangeQuery.SetBorderWidth(0);
                     windowChangeQuery.Setx(20);
                     windowChangeQuery.Sety(20);
                     toplevelWindow->Configure(windowChangeQuery);
@@ -122,23 +122,34 @@ int main()
                     windowSetAttribs.SetSaveUnder(1);
                     windowSetAttribs.SetBitGravity(qor::platform::nslinux::x::Window::NorthWestGravity);
                     toplevelWindow->ChangeAttributes(windowSetAttribs);
+                    toplevelWindow->SetTitle("X Window");
+                    std::string title = toplevelWindow->GetTitle();
 
                     auto hints = toplevelWindow->GetWMHints();
                     hints.flags = (1L << 1);
                     hints.initial_state = 3;
                     toplevelWindow->SetWMHints(hints);
 
+
+                    //If we want the border/decorations from the Window Manager gone this is required
                     std::string motifHintsAtomName("_MOTIF_WM_HINTS");
                     unsigned long motifWMHintsProperty = defaultDisplay->GetAtom(motifHintsAtomName.data());
-
                     qor::platform::nslinux::x::MotifWmHints mhints = {0};
                     mhints.flags = MWM_HINTS_DECORATIONS;
                     mhints.decorations = 0;
+                    //toplevelWindow->ChangeProperty(motifWMHintsProperty, motifWMHintsProperty, 32, qor::platform::nslinux::x::Window::PropModeReplace, (unsigned char*)(&mhints), sizeof(mhints)/sizeof(long));
 
-                    toplevelWindow->ChangeProperty(motifWMHintsProperty, motifWMHintsProperty, 32, qor::platform::nslinux::x::Window::PropModeReplace, (unsigned char*)(&mhints), sizeof(mhints)/sizeof(long));
+
+                    //This is needed to actually position the window as the Window Manager ignores the position set when the window was created
+                    long validBitsOfReturn = 0;
+                    qor::platform::nslinux::x::WMSizeHints normalHints = toplevelWindow->GetNormalHints(validBitsOfReturn, status);
+                    normalHints.ResetFlags();
+                    normalHints.SetPosition(50,50);
+                    normalHints.SetSize(800,600);
+                    toplevelWindow->SetNormalHints(normalHints);
+
 
                     std::vector<unsigned long> atoms = toplevelWindow->ListProperties();
-
                     for(unsigned long prop : atoms)
                     {
                         std::string name(defaultDisplay->GetAtomName(prop));
@@ -157,14 +168,62 @@ int main()
                         }
                         if(data != nullptr)
                         {
-                            //data will need to be freed
+                            xclient->Free(data);//Horrible! We need to find a way to wrap the data in a Ref before returning it to this level.
                         }
                     }
-                                        
+
+                    //Set this so the Window Manager will send us a Client message for closing the window not just kill the process.
+                    auto wm_delete_window = defaultDisplay->GetAtom("WM_DELETE_WINDOW");
+                    toplevelWindow->SetWMProtocols(&wm_delete_window, 1);
+
+                    //Determine what normal events we want to recieve
+                    toplevelWindow->SelectInput( qor::platform::nslinux::x::KeyPressMask | qor::platform::nslinux::x::ExposureMask | qor::platform::nslinux::x::StructureNotifyMask);
+
                     toplevelWindow->Map();
                     defaultDisplay->Flush();
 
-                    sleep(5);
+                    bool quit = false;
+                    while(!quit)
+                    {
+                        int result = 0;
+                        while(
+                            defaultDisplay->ProcessEvent(
+                                [&defaultDisplay, &quit](int type) -> qor::platform::nslinux::x::eventHandler
+                                {
+                                    switch(type)
+                                    {
+                                    case qor::platform::nslinux::x::ClientMessageType:
+                                        return [&defaultDisplay, &quit](qor::platform::nslinux::x::Event& event) -> int
+                                        {
+                                            if (  event.xclient.message_type  == defaultDisplay->GetAtom("WM_PROTOCOLS")
+                                                && event.xclient.data.l[0]  == defaultDisplay->GetAtom("WM_DELETE_WINDOW"))
+                                            {
+                                                quit = true;
+                                            }                                        
+                                            return 0;
+                                        };
+                                    case qor::platform::nslinux::x::KeyPressType:
+                                        return [&defaultDisplay, &quit](qor::platform::nslinux::x::Event& event) -> int
+                                        {
+                                            if (defaultDisplay->LookupKeySymbol(reinterpret_cast<qor::platform::nslinux::x::KeyEvent&>(event), 0) == qor::platform::nslinux::x::XK_Escape)
+                                            {
+                                                quit = true;
+                                            }
+                                            return 0;
+                                        };
+                                    default:
+                                        return [](qor::platform::nslinux::x::Event& event) -> int
+                                        {
+                                            return 0;
+                                        };
+                                    }
+                                }, result
+                            ) > 0 
+                        )
+                        {
+                            
+                        }
+                    }
                     toplevelWindow->Unmap();
                 }                
 

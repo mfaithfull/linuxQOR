@@ -22,23 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#ifndef QOR_PP_H_LINUX_TERMSCREEN
+#define QOR_PP_H_LINUX_TERMSCREEN
 
-#include "termscreen.h"
+#include <string>
 
-qor::Module& ThisModule(void)
-{
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Terminal Screen Module",
-		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+#define QOR_PP_IMPLEMENTS_TERMSCREEN
+#include "src/components/framework/terminal/screen/termscreen.h"
 
-	//Register the Windows specific implementation of TermScreen
-	static qor::TypeRegEntry< qor::components::nswindows::tui::TermScreen, qor::components::tui::TermScreen> regTermScreen;
-	return QORModule;
-}
+namespace qor{ bool qor_pp_module_interface(QOR_LINTERMSCREEN) ImplementsTermScreenFeature(); }
+
+//All types on this interface must be portable
+namespace qor{ namespace components{ namespace nslinux{ namespace tui {
+    
+    class qor_pp_module_interface(QOR_LINTERMSCREEN) TermScreen : public qor::components::tui::TermScreen
+    {
+    public:
+
+        TermScreen();
+        virtual ~TermScreen(){};
+
+        virtual void Setup();
+        virtual void Shutdown();
+
+    private:
+
+
+    };
+
+}}}}//qor::components::nslinux::tui
+
+#endif//QOR_PP_H_LINUX_TERMSCREEN

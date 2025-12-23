@@ -264,5 +264,95 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         unsigned long decorations; // Decoration bitmask (0 = no decorations)
         unsigned long input_mode;  // Input mode hints
     };
+
+    struct AspectRatio
+    {
+        int x;	                    // numerator
+        int y;	                    // denominator
+    };
+
+    struct WMSizeHints
+    {
+        long flags;	                    // marks which fields in this structure are defined
+        int x, y;		                // obsolete for new window mgrs, but clients
+        int width, height;	            // should set so old wm's don't mess up
+        int min_width, min_height;
+        int max_width, max_height;
+        int width_inc, height_inc;
+        struct 
+        {
+            int x;	                    // numerator
+            int y;	                    // denominator
+        } min_aspect, max_aspect;
+        int base_width, base_height;    // added by ICCCM version 1
+        int win_gravity;                // added by ICCCM version 1
+
+        void ResetFlags()
+        {
+            flags = 0;
+        }
+
+        void SetFlags(long bitSet)
+        {
+            flags = bitSet;
+        }
+
+        void SetPosition( int xPos, int yPos)
+        {
+            x = xPos;
+            y = yPos;
+            flags |= (1L << 2);//PPosition	(1L << 2) // program specified position
+        }
+
+        void SetSize(int w, int h)
+        {
+            width = w;
+            height = h;
+            flags |= (1L << 3);// PSize		(1L << 3) // program specified size
+        }
+
+        void SetMinSize(int min_w, int min_h)
+        {
+            min_width = min_w;
+            min_height = min_h;
+            flags |= (1L << 4);//PMinSize	(1L << 4) // program specified minimum size
+        }
+
+        void SetMaxSize(int max_w, int max_h)
+        {
+            max_width = max_w;
+            max_height = max_h;
+            flags |= (1L << 5);//PMaxSize	(1L << 5) // program specified maximum size
+        }
+
+        void SetResizeIncrements(int xInc, int yInc)
+        {
+             width_inc = xInc;
+             height_inc = yInc;
+             flags |= (1L << 6);//PResizeInc	(1L << 6) // program specified resize increments
+        }
+
+        void SetMinMaxAspectRatio( AspectRatio min, AspectRatio max)
+        {
+            min_aspect.x = min.x;
+            min_aspect.y = min.y;
+            max_aspect.x = max.x;
+            max_aspect.y = max.y;
+            flags |= (1L << 7);//PAspect		(1L << 7) // program specified min and max aspect ratios
+        }
+
+        void SetBaseSizeForIncrementing(int width, int height)
+        {
+            base_width = width;
+            base_height = height;
+            flags |= (1L << 8);//PBaseSize	(1L << 8) // program specified base for incrementing
+        }
+
+        void SetGravity(int gravity)
+        {
+            win_gravity = gravity;
+            flags |= (1L << 9);//PWinGravity	(1L << 9) // program specified window gravity
+        }
+    };
      
 }}}}//qor::platform::nslinux::x

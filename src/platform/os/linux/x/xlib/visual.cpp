@@ -46,4 +46,9 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     {
     }
 
+    unsigned long Visual::GetId()
+    {
+        return XVisualIDFromVisual((::Visual*)(m_visual));
+    }
+
 }}}}//qor::platform::nslinux::x

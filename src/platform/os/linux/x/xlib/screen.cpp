@@ -93,7 +93,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     GC Screen::DefaultGC()
     {
-        return XDefaultGCOfScreen(WITH_THIS);//default context do not free
+        return GC(m_display, XDefaultGCOfScreen(WITH_THIS));//default context do not free
     }
 
     Visual Screen::DefaultVisual()

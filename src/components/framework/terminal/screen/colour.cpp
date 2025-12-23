@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include <array>
-
+#include <math.h>
 #include "colour.h"
 #include "colourinfo.h"
 #include "terminal.h"

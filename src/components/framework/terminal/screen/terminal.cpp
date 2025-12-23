@@ -24,6 +24,11 @@
 
 #include "src/configuration/configuration.h"
 
+#if( qor_pp_os_target == qor_pp_os_linux )
+#   include <sys/ioctl.h>  // for winsize, ioctl, TIOCGWINSZ
+#   include <unistd.h>     // for STDOUT_FILENO
+#endif
+
 #include "terminal.h"
 
 namespace qor{ namespace components{ namespace tui {

@@ -195,7 +195,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     GC Display::DefaultGC(int screen_number)
     {
-        return XDefaultGC((::Display*)(m_display), screen_number);
+        return GC(this, XDefaultGC((::Display*)(m_display), screen_number));
     }
 
     Window Display::DefaultRootWindow()
@@ -403,7 +403,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         XUnlockDisplay((::Display*)(m_display));
     }
 
-    Pixmap Display::StackPixmap(unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth)
+    Pixmap Display::GetPixmap(unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth)
     {
         Pixmap p(this, drawableId, width, height, depth);
         return p;
@@ -433,7 +433,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         return XFlush((::Display*)(m_display));
     }
 
-    unsigned long Display::GetAtom(char* name)
+    unsigned long Display::GetAtom(const char* name)
     {
         return XInternAtom((::Display*)(m_display), name, 1);
     }
@@ -451,6 +451,91 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         return name; 
     }
 
+    int Display::NextEvent(Event& event)
+    {
+        return XNextEvent((::Display*)(m_display), reinterpret_cast<XEvent*>(&event));
+    }
 
+    int Display::Pending()
+    {
+        return XPending((::Display*)(m_display));
+    }
 
+    int Display::ProcessEvent(std::function< eventHandler(int)> filterType, int& result)
+    {
+        int more = Pending();
+        if(more > 0)
+        {            
+            Event event;
+            int status = NextEvent(event);
+
+            eventHandler evt = filterType(event.type);
+            if(evt)
+            {
+                result = evt(event);
+            }     
+        }
+        return more;
+    }
+
+    int Display::LookupKeySymbol(KeyEvent& keyEvent, int index)
+    {        
+        return XLookupKeysym(reinterpret_cast<XKeyEvent*>(&keyEvent), index);
+    }
+
+    int Display::WarpPointer(unsigned long src_w, unsigned long dest_w, int src_x, int src_y, unsigned int src_width, unsigned int src_height, int dest_x, int dest_y)
+    {
+        return XWarpPointer((::Display*)(m_display), src_w, dest_w, src_x, src_y, src_width, src_height, dest_x, dest_y);
+    }
+
+    int Display::InstallColourmap(unsigned long colourmap)
+    {
+        return XInstallColormap((::Display*)(m_display), colourmap);
+    }
+
+    int Display::UninstallColourmap(unsigned long colourmap)
+    {
+        return XUninstallColormap((::Display*)(m_display), colourmap);
+    }
+
+    int Display::TranslateCoordinates(unsigned long src_w, unsigned long dest_w, int src_x, int src_y, int& dest_x_return, int& dest_y_return, unsigned long& child_return)
+    {
+        return XTranslateCoordinates((::Display*)(m_display), src_w, dest_w, src_x, src_y, &dest_x_return, &dest_y_return, &child_return);
+    }
+
+    int Display::Sync(bool discard)
+    {
+        return XSync((::Display*)(m_display), discard ? 1 : 0);
+    }
+
+    int Display::StoreBytes(const char* bytes, int nbytes)
+    {
+        return XStoreBytes((::Display*)(m_display), bytes, nbytes);
+    }
+
+    int Display::StoreBuffer(const char* bytes, int nbytes, int buffer)
+    {
+        return XStoreBuffer((::Display*)(m_display), bytes, nbytes, buffer);
+    }
+
+    int Display::GetPointerMapping(std::vector<unsigned char>& buttons)
+    {
+        return XGetPointerMapping((::Display*)(m_display), buttons.data(), buttons.size());
+    }
+
+    int Display::SetPointerMapping(const std::vector<unsigned char>& buttons)
+    {
+        return XSetPointerMapping((::Display*)(m_display), buttons.data(), buttons.size());
+    }
+
+    int Display::SetModifierMapping(ModifierKeymap& modmap)
+    {
+        return XSetModifierMapping((::Display*)(m_display), reinterpret_cast<XModifierKeymap*>(&modmap));
+    }
+
+    int Display::SetInputFocus(unsigned long focus, int revert_to, unsigned long time)
+    {
+        return XSetInputFocus((::Display*)(m_display), (::Window)(focus), revert_to, (::Time)time);
+    }
+    
 }}}}//qor::platform::nslinux::x
