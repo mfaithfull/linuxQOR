@@ -62,6 +62,7 @@ view/controllers/rendered/ncrender.cpp
 view/controllers/rendered/rendering.cpp
 view/controllers/rendered/text.cpp
 gui.cpp
+messagehandler.cpp
 )
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

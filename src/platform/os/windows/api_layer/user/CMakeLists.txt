@@ -30,7 +30,8 @@ filledshapes.cpp
 windowproperties.cpp
 systemshutdown.cpp
 text.cpp
-mouse.cpp)
+mouse.cpp
+mdi.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

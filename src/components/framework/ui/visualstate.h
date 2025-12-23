@@ -41,6 +41,13 @@ namespace qor{ namespace components{
         VisualState(workflow::Workflow* workflow);
         virtual ~VisualState() = default;
 
+        /* All the transient things that modify what a visual element looks like
+        Visible, Focussed, Activated, Selected, Debugged, Read Only, Hovered, Pressed, Dragged. 
+        Probably need: Minimized, Maximized, Mapped, UnMapped, Withdrawn, Offscreen (i.e. rendering target is image/printer)
+        Scrolled, Scaled, Zoomed, Positioned (If it has a user modifiable position), Sorted (contents are ordered by), Filtered
+        Dismissed
+        Styled - the style use for Rendering
+        */
     protected:
 
         std::vector<std::function<void(void)>> m_ActionHandlers;

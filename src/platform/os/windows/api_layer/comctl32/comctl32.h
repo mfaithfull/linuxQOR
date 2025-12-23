@@ -34,60 +34,60 @@ namespace qor { namespace nswindows { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPICOMCTL) ComCtl32
 	{
-	public:        
-        /*
-        HRESULT HIMAGELIST_QueryInterface(HIMAGELIST himl, REFIID riid, void** ppv);
-        int ImageList_Add(HIMAGELIST himl, HBITMAP hbmImage, HBITMAP hbmMask);
-        int ImageList_mxAddIcon(HIMAGELIST himl, HICON hicon);
-        int ImageList_AddMasked(HIMAGELIST himl, HBITMAP hbmImage, COLORREF crMask);
-        BOOL ImageList_BeginDrag(HIMAGELIST himlTrack, int iTrack, int dxHotspot, int dyHotspot);
-        BOOL ImageList_Copy(HIMAGELIST himlDst, HIMAGELIST himlSrc, int iDst, int iSrc, UINT uFlags);
-        HIMAGELIST ImageList_Create(int cx, int cy, UINT flags, int cInitial, int cGrow);
-        BOOL ImageList_Destroy(HIMAGELIST himl);
-        BOOL ImageList_DragEnter(HWND hwndLock, int x, int y);
-        BOOL ImageList_DragLeave(HWND hwndLock);
-        BOOL ImageList_DragMove(int x, int y);
-        BOOL ImageList_DragShowNolock(BOOL fShow);
-        BOOL ImageList_Draw(HIMAGELIST himl, int i, HDC hdcDst, int x, int y, UINT fStyle);
-        BOOL ImageList_DrawEx(HIMAGELIST himl, int i, HDC hdcDst, int x, int y, int dx, int dy, COLORREF rgbBk, COLORREF rgbFg, UINT fStyle);
-        BOOL ImageList_DrawIndirect(IMAGELISTDRAWPARAMS* pimldp);
-        HIMAGELIST ImageList_Duplicate(HIMAGELIST himl);
-        void ImageList_EndDrag();
-        COLORREF ImageList_GetBkColor(HIMAGELIST himl);
-        HIMAGELIST ImageList_GetDragImage(::POINT* ppt, ::POINT* pptHotspot);
-        HICON ImageList_GetIcon(HIMAGELIST himl, int i, UINT flags);
-        BOOL ImageList_GetIconSize(HIMAGELIST himl, int* cx, int* cy);
-        int ImageList_GetImageCount(HIMAGELIST himl);
-        BOOL ImageList_GetImageInfo(HIMAGELIST himl, int i, IMAGEINFO* pImageInfo);
-        HIMAGELIST ImageList_LoadImageT(HINSTANCE hi, LPCTSTR lpbmp, int cx, int cGrow, COLORREF crMask, UINT uType, UINT uFlags);
-        HIMAGELIST ImageList_Merge(HIMAGELIST himl1, int i1, HIMAGELIST himl2, int i2, int dx, int dy);
-        HIMAGELIST ImageList_Read(LPSTREAM pstm);
-        HRESULT ImageList_ReadEx(DWORD dwFlags, LPSTREAM pstm, REFIID riid, void** ppv);
-        BOOL ImageList_Remove(HIMAGELIST himl, int i);
-        BOOL ImageList_Replace(HIMAGELIST himl, int i, HBITMAP hbmImage, HBITMAP hbmMask);
-        int ImageList_ReplaceIcon(HIMAGELIST himl, int i, HICON hicon);
-        COLORREF ImageList_SetBkColor(HIMAGELIST himl, COLORREF clrBk);
-        BOOL ImageList_SetDragCursorImage(HIMAGELIST himlDrag, int iDrag, int dxHotspot, int dyHotspot);
-        BOOL ImageList_SetIconSize(HIMAGELIST himl, int cx, int cy);
-        BOOL ImageList_SetImageCount(HIMAGELIST himl, UINT uNewCount);
-        BOOL ImageList_SetOverlayImage(HIMAGELIST himl, int iImage, int iOverlay);
-        BOOL ImageList_Write(HIMAGELIST himl, LPSTREAM pstm);
-        HRESULT ImageList_WriteEx(HIMAGELIST himl, DWORD dwFlags, LPSTREAM pstm);
-        void InitCommonControls();*/
+	public:
+        static HPROPSHEETPAGE CreatePropertySheetPageT(LPCPROPSHEETPAGE lppsp);
+        static void DrawInsert(HWND hWndParent, HWND hLB, int nItem);
+        static HRESULT HIMAGELIST_QueryInterface(HIMAGELIST himl, REFIID riid, void** ppv);
+        static int ImageList_Add(HIMAGELIST himl, HBITMAP hbmImage, HBITMAP hbmMask);
+        static int ImageList_mxAddIcon(HIMAGELIST himl, HICON hicon);
+        static int ImageList_AddMasked(HIMAGELIST himl, HBITMAP hbmImage, COLORREF crMask);
+        static BOOL ImageList_BeginDrag(HIMAGELIST himlTrack, int iTrack, int dxHotspot, int dyHotspot);
+        static BOOL ImageList_Copy(HIMAGELIST himlDst, HIMAGELIST himlSrc, int iDst, int iSrc, UINT uFlags);
+        static HIMAGELIST ImageList_Create(int cx, int cy, UINT flags, int cInitial, int cGrow);
+        static BOOL ImageList_Destroy(HIMAGELIST himl);
+        static BOOL ImageList_DragEnter(HWND hwndLock, int x, int y);
+        static BOOL ImageList_DragLeave(HWND hwndLock);
+        static BOOL ImageList_DragMove(int x, int y);
+        static BOOL ImageList_DragShowNolock(BOOL fShow);
+        static BOOL ImageList_Draw(HIMAGELIST himl, int i, HDC hdcDst, int x, int y, UINT fStyle);
+        static BOOL ImageList_DrawEx(HIMAGELIST himl, int i, HDC hdcDst, int x, int y, int dx, int dy, COLORREF rgbBk, COLORREF rgbFg, UINT fStyle);
+        static BOOL ImageList_DrawIndirect(IMAGELISTDRAWPARAMS* pimldp);
+        static HIMAGELIST ImageList_Duplicate(HIMAGELIST himl);
+        static void ImageList_EndDrag();
+        static COLORREF ImageList_GetBkColor(HIMAGELIST himl);
+        static HIMAGELIST ImageList_GetDragImage(::POINT* ppt, ::POINT* pptHotspot);
+        static HICON ImageList_GetIcon(HIMAGELIST himl, int i, UINT flags);
+        static BOOL ImageList_GetIconSize(HIMAGELIST himl, int* cx, int* cy);
+        static int ImageList_GetImageCount(HIMAGELIST himl);
+        static BOOL ImageList_GetImageInfo(HIMAGELIST himl, int i, IMAGEINFO* pImageInfo);
+        static HIMAGELIST ImageList_LoadImageT(HINSTANCE hi, LPCTSTR lpbmp, int cx, int cGrow, COLORREF crMask, UINT uType, UINT uFlags);
+        static HIMAGELIST ImageList_Merge(HIMAGELIST himl1, int i1, HIMAGELIST himl2, int i2, int dx, int dy);
+        static HIMAGELIST ImageList_Read(LPSTREAM pstm);
+        static HRESULT ImageList_ReadEx(DWORD dwFlags, LPSTREAM pstm, REFIID riid, void** ppv);
+        static BOOL ImageList_Remove(HIMAGELIST himl, int i);
+        static BOOL ImageList_Replace(HIMAGELIST himl, int i, HBITMAP hbmImage, HBITMAP hbmMask);
+        static int ImageList_ReplaceIcon(HIMAGELIST himl, int i, HICON hicon);
+        static COLORREF ImageList_SetBkColor(HIMAGELIST himl, COLORREF clrBk);
+        static BOOL ImageList_SetDragCursorImage(HIMAGELIST himlDrag, int iDrag, int dxHotspot, int dyHotspot);
+        static BOOL ImageList_SetIconSize(HIMAGELIST himl, int cx, int cy);
+        static BOOL ImageList_SetImageCount(HIMAGELIST himl, UINT uNewCount);
+        static BOOL ImageList_SetOverlayImage(HIMAGELIST himl, int iImage, int iOverlay);
+        static BOOL ImageList_Write(HIMAGELIST himl, LPSTREAM pstm);
+        static HRESULT ImageList_WriteEx(HIMAGELIST himl, DWORD dwFlags, LPSTREAM pstm);
+        static void InitCommonControls();
+        static BOOL InitializeFlatSB(HWND hwnd);
+        static VOID InitMUILanguage(LANGID uiLang);
+        static int LBItemFromPt(HWND hLB, ::POINT pt, BOOL bAutoScroll);
+        static BOOL MakeDragList(HWND hLB);
+        static void MenuHelp(UINT uMsg, WPARAM wParam, LPARAM lParam, HMENU hMainMenu, HINSTANCE hInst, HWND hwndStatus, LPUINT lpwIDs);
+        static INT_PTR PropertySheetT(LPCPROPSHEETHEADER lppsph);
+        static BOOL RemoveWindowSubclass(HWND hWnd, SUBCLASSPROC pfnSubclass, UINT_PTR uIdSubclass);
+        static BOOL SetWindowSubclass(HWND hWnd, SUBCLASSPROC pfnSubclass, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
+        static BOOL ShowHideMenuCtl(HWND hWnd, UINT_PTR uFlags, LPINT lpInfo);//NOTE: Deprecated
+        static BOOL __stdcall Str_SetPtrW(LPWSTR* ppszCurrent, LPCWSTR pszNew);
+        static BOOL _TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack);
+        static HRESULT UninitializeFlatSB(HWND hwnd);
         static BOOL InitCommonControlsEx(const LPINITCOMMONCONTROLSEX lpInitCtrls);
-        /*BOOL InitializeFlatSB(HWND hwnd);
-        VOID InitMUILanguage(LANGID uiLang);
-        int LBItemFromPt(HWND hLB, ::POINT pt, BOOL bAutoScroll);
-        BOOL MakeDragList(HWND hLB);
-        void MenuHelp(UINT uMsg, WPARAM wParam, LPARAM lParam, HMENU hMainMenu, HINSTANCE hInst, HWND hwndStatus, LPUINT lpwIDs);
-        INT_PTR PropertySheetT(LPCPROPSHEETHEADER lppsph);
-        BOOL RemoveWindowSubclass(HWND hWnd, SUBCLASSPROC pfnSubclass, UINT_PTR uIdSubclass);
-        BOOL SetWindowSubclass(HWND hWnd, SUBCLASSPROC pfnSubclass, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
-        BOOL ShowHideMenuCtl(HWND hWnd, UINT_PTR uFlags, LPINT lpInfo);//NOTE: Deprecated
-        BOOL __stdcall Str_SetPtrW(LPWSTR* ppszCurrent, LPCWSTR pszNew);
-        BOOL _TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack);
-        HRESULT UninitializeFlatSB(HWND hwnd);
-        */
     };
 
 }}}//qor::nswindows::api

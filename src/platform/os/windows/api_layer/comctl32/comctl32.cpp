@@ -34,6 +34,370 @@
 
 namespace qor { namespace nswindows { namespace api {
 
+    HPROPSHEETPAGE ComCtl32::CreatePropertySheetPageT(LPCPROPSHEETPAGE lppsp)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapiAW(comctl32, CreatePropertySheetPage);
+        return Library::Call<HPROPSHEETPAGE, LPCPROPSHEETPAGE>(pFunc, lppsp);
+    }
+
+    void ComCtl32::DrawInsert(HWND hWndParent, HWND hLB, int nItem)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, DrawInsert);
+        return Library::voidCall<HWND, HWND, int>(pFunc, hWndParent, hLB, nItem);
+    }
+
+    HRESULT ComCtl32::HIMAGELIST_QueryInterface(HIMAGELIST himl, REFIID riid, void** ppv)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, HIMAGELIST_QueryInterface);
+        return Library::Call<HRESULT, HIMAGELIST, REFIID, void**>(pFunc, himl, riid, ppv);
+    }
+
+    int ComCtl32::ImageList_Add(HIMAGELIST himl, HBITMAP hbmImage, HBITMAP hbmMask)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Add);
+        return Library::Call<int, HIMAGELIST, HBITMAP, HBITMAP>(pFunc, himl, hbmImage, hbmMask);
+    }
+
+    int ComCtl32::ImageList_mxAddIcon(HIMAGELIST himl, HICON hicon)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_mxAddIcon);
+        return Library::Call<int, HIMAGELIST, HICON>(pFunc, himl, hicon);
+    }
+
+    int ComCtl32::ImageList_AddMasked(HIMAGELIST himl, HBITMAP hbmImage, COLORREF crMask)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_AddMasked);
+        return Library::Call<int, HIMAGELIST, HBITMAP, COLORREF>(pFunc, himl, hbmImage, crMask);
+    }
+
+    BOOL ComCtl32::ImageList_BeginDrag(HIMAGELIST himlTrack, int iTrack, int dxHotspot, int dyHotspot)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_BeginDrag);
+        return Library::Call<BOOL, HIMAGELIST, int, int, int>(pFunc, himlTrack, iTrack, dxHotspot, dyHotspot);
+    }
+
+    BOOL ComCtl32::ImageList_Copy(HIMAGELIST himlDst, HIMAGELIST himlSrc, int iDst, int iSrc, UINT uFlags)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Copy);
+        return Library::Call<BOOL, HIMAGELIST, HIMAGELIST, int, int, UINT>(pFunc, himlDst, himlSrc, iDst, iSrc, uFlags);
+    }
+
+    HIMAGELIST ComCtl32::ImageList_Create(int cx, int cy, UINT flags, int cInitial, int cGrow)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Create);
+        return Library::Call<HIMAGELIST, int, int, UINT, int, int>(pFunc, cx, cy, flags, cInitial, cGrow);
+    }
+
+    BOOL ComCtl32::ImageList_Destroy(HIMAGELIST himl)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Destroy);
+        return Library::Call<BOOL, HIMAGELIST>(pFunc, himl);
+    }
+
+    BOOL ComCtl32::ImageList_DragEnter(HWND hwndLock, int x, int y)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_DragEnter);
+        return Library::Call<BOOL, HWND, int, int>(pFunc, hwndLock, x, y);
+    }
+
+    BOOL ComCtl32::ImageList_DragLeave(HWND hwndLock)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_DragLeave);
+        return Library::Call<BOOL, HWND>(pFunc, hwndLock);
+    }
+
+    BOOL ComCtl32::ImageList_DragMove(int x, int y)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_DragMove);
+        return Library::Call<BOOL, int, int>(pFunc, x, y);
+    }
+
+    BOOL ComCtl32::ImageList_DragShowNolock(BOOL fShow)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_DragShowNolock);
+        return Library::Call<BOOL, BOOL>(pFunc, fShow);
+    }
+
+    BOOL ComCtl32::ImageList_Draw(HIMAGELIST himl, int i, HDC hdcDst, int x, int y, UINT fStyle)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Draw);
+        return Library::Call<BOOL, HIMAGELIST, int, HDC, int, int, UINT>(pFunc, himl, i, hdcDst, x, y, fStyle);
+    }
+
+    BOOL ComCtl32::ImageList_DrawEx(HIMAGELIST himl, int i, HDC hdcDst, int x, int y, int dx, int dy, COLORREF rgbBk, COLORREF rgbFg, UINT fStyle)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_DrawEx);
+        return Library::Call<BOOL, HIMAGELIST, int, HDC, int, int, int, int, COLORREF, COLORREF, UINT>(pFunc, himl, i, hdcDst, x, y, dx, dy, rgbBk, rgbFg, fStyle);
+    }
+
+    BOOL ComCtl32::ImageList_DrawIndirect(IMAGELISTDRAWPARAMS* pimldp)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_DrawIndirect);
+        return Library::Call<BOOL, IMAGELISTDRAWPARAMS*>(pFunc, pimldp);
+    }
+
+    HIMAGELIST ComCtl32::ImageList_Duplicate(HIMAGELIST himl)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Duplicate);
+        return Library::Call<HIMAGELIST, HIMAGELIST>(pFunc, himl);
+    }
+
+    void ComCtl32::ImageList_EndDrag()
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_EndDrag);
+        return Library::voidCall<>(pFunc);
+    }
+
+    COLORREF ComCtl32::ImageList_GetBkColor(HIMAGELIST himl)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_GetBkColor);
+        return Library::Call<COLORREF, HIMAGELIST>(pFunc, himl);
+    }
+
+    HIMAGELIST ComCtl32::ImageList_GetDragImage(::POINT* ppt, ::POINT* pptHotspot)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_GetDragImage);
+        return Library::Call<HIMAGELIST, ::POINT*, ::POINT*>(pFunc, ppt, pptHotspot);
+    }
+
+    HICON ComCtl32::ImageList_GetIcon(HIMAGELIST himl, int i, UINT flags)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_GetIcon);
+        return Library::Call<HICON, HIMAGELIST, int, UINT>(pFunc, himl, i, flags);
+    }
+
+    BOOL ComCtl32::ImageList_GetIconSize(HIMAGELIST himl, int* cx, int* cy)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_GetIconSize);
+        return Library::Call<BOOL, HIMAGELIST, int*, int*>(pFunc, himl, cx, cy);
+    }
+
+    int ComCtl32::ImageList_GetImageCount(HIMAGELIST himl)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_GetImageCount);
+        return Library::Call<int, HIMAGELIST>(pFunc, himl);
+    }
+
+    BOOL ComCtl32::ImageList_GetImageInfo(HIMAGELIST himl, int i, IMAGEINFO* pImageInfo)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_GetImageInfo);
+        return Library::Call<BOOL, HIMAGELIST, int, IMAGEINFO*>(pFunc, himl, i, pImageInfo);
+    }
+
+    HIMAGELIST ComCtl32::ImageList_LoadImageT(HINSTANCE hi, LPCTSTR lpbmp, int cx, int cGrow, COLORREF crMask, UINT uType, UINT uFlags)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapiAW(comctl32, ImageList_LoadImage);
+        return Library::Call<HIMAGELIST, HINSTANCE, LPCTSTR, int, int, COLORREF, UINT, UINT>(pFunc, hi, lpbmp, cx, cGrow, crMask, uType, uFlags);
+    }
+
+    HIMAGELIST ComCtl32::ImageList_Merge(HIMAGELIST himl1, int i1, HIMAGELIST himl2, int i2, int dx, int dy)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Merge);
+        return Library::Call<HIMAGELIST, HIMAGELIST, int, HIMAGELIST, int, int, int>(pFunc, himl1, i1, himl2, i2, dx, dy);
+    }
+
+    HIMAGELIST ComCtl32::ImageList_Read(LPSTREAM pstm)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Read);
+        return Library::Call<HIMAGELIST, LPSTREAM>(pFunc, pstm);
+    }
+
+    HRESULT ComCtl32::ImageList_ReadEx(DWORD dwFlags, LPSTREAM pstm, REFIID riid, void** ppv)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_ReadEx);
+        return Library::Call<HRESULT, DWORD, LPSTREAM, REFIID, void**>(pFunc, dwFlags, pstm, riid, ppv);
+    }
+
+    BOOL ComCtl32::ImageList_Remove(HIMAGELIST himl, int i)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Remove);
+        return Library::Call<BOOL, HIMAGELIST, int>(pFunc, himl, i);
+    }
+
+    BOOL ComCtl32::ImageList_Replace(HIMAGELIST himl, int i, HBITMAP hbmImage, HBITMAP hbmMask)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Replace);
+        return Library::Call<BOOL, HIMAGELIST, int, HBITMAP, HBITMAP>(pFunc, himl, i, hbmImage, hbmMask);
+    }
+
+    int ComCtl32::ImageList_ReplaceIcon(HIMAGELIST himl, int i, HICON hicon)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_ReplaceIcon);
+        return Library::Call<int, HIMAGELIST, int, HICON>(pFunc, himl, i, hicon);
+    }
+
+    COLORREF ComCtl32::ImageList_SetBkColor(HIMAGELIST himl, COLORREF clrBk)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_SetBkColor);
+        return Library::Call<COLORREF, HIMAGELIST, COLORREF>(pFunc, himl, clrBk);
+    }
+
+    BOOL ComCtl32::ImageList_SetDragCursorImage(HIMAGELIST himlDrag, int iDrag, int dxHotspot, int dyHotspot)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_SetDragCursorImage);
+        return Library::Call<BOOL, HIMAGELIST, int, int, int>(pFunc, himlDrag, iDrag, dxHotspot, dyHotspot);
+    }
+
+    BOOL ComCtl32::ImageList_SetIconSize(HIMAGELIST himl, int cx, int cy)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_SetIconSize);
+        return Library::Call<BOOL, HIMAGELIST, int, int >(pFunc, himl, cx, cy);
+    }
+
+    BOOL ComCtl32::ImageList_SetImageCount(HIMAGELIST himl, UINT uNewCount)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_SetImageCount);
+        return Library::Call<BOOL, HIMAGELIST, UINT>(pFunc, himl, uNewCount);
+    }
+
+    BOOL ComCtl32::ImageList_SetOverlayImage(HIMAGELIST himl, int iImage, int iOverlay)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_SetOverlayImage);
+        return Library::Call<BOOL, HIMAGELIST, int, int>(pFunc, himl, iImage, iOverlay);
+    }
+
+    BOOL ComCtl32::ImageList_Write(HIMAGELIST himl, LPSTREAM pstm)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_Write);
+        return Library::Call<BOOL, HIMAGELIST, LPSTREAM>(pFunc, himl, pstm);
+    }
+
+    HRESULT ComCtl32::ImageList_WriteEx(HIMAGELIST himl, DWORD dwFlags, LPSTREAM pstm)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ImageList_WriteEx);
+        return Library::Call<HRESULT, HIMAGELIST, DWORD, LPSTREAM>(pFunc, himl, dwFlags, pstm);
+    }
+
+    void ComCtl32::InitCommonControls()
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, InitCommonControls);
+        return Library::voidCall<>(pFunc);
+    }
+
+    BOOL ComCtl32::InitializeFlatSB(HWND hwnd)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, InitializeFlatSB);
+        return Library::Call<BOOL, HWND>(pFunc, hwnd);
+    }
+
+    VOID ComCtl32::InitMUILanguage(LANGID uiLang)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, InitMUILanguage);
+        return Library::voidCall<LANGID>(pFunc, uiLang);
+    }
+
+    int ComCtl32::LBItemFromPt(HWND hLB, ::POINT pt, BOOL bAutoScroll)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, LBItemFromPt);
+        return Library::Call<int, HWND, ::POINT, BOOL>(pFunc, hLB, pt, bAutoScroll);
+    }
+
+    BOOL ComCtl32::MakeDragList(HWND hLB)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, MakeDragList);
+        return Library::Call<BOOL, HWND>(pFunc, hLB);
+    }
+
+    void ComCtl32::MenuHelp(UINT uMsg, WPARAM wParam, LPARAM lParam, HMENU hMainMenu, HINSTANCE hInst, HWND hwndStatus, LPUINT lpwIDs)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, MenuHelp);
+        return Library::voidCall<UINT, WPARAM, LPARAM, HMENU, HINSTANCE, HWND, LPUINT>(pFunc, uMsg, wParam, lParam, hMainMenu, hInst, hwndStatus, lpwIDs);
+    }
+
+    INT_PTR ComCtl32::PropertySheetT(LPCPROPSHEETHEADER lppsph)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapiAW(comctl32, PropertySheet);
+        return Library::Call<INT_PTR, LPCPROPSHEETHEADER>(pFunc, lppsph);
+    }
+
+    BOOL ComCtl32::RemoveWindowSubclass(HWND hWnd, SUBCLASSPROC pfnSubclass, UINT_PTR uIdSubclass)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, RemoveWindowSubclass);
+        return Library::Call<BOOL, HWND, SUBCLASSPROC, UINT_PTR>(pFunc, hWnd, pfnSubclass, uIdSubclass);
+    }
+
+    BOOL ComCtl32::SetWindowSubclass(HWND hWnd, SUBCLASSPROC pfnSubclass, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, SetWindowSubclass);
+        return Library::Call<BOOL, HWND, SUBCLASSPROC, UINT_PTR, DWORD_PTR>(pFunc, hWnd, pfnSubclass, uIdSubclass, dwRefData);
+    }
+
+    BOOL ComCtl32::ShowHideMenuCtl(HWND hWnd, UINT_PTR uFlags, LPINT lpInfo)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, ShowHideMenuCtl);
+        return Library::Call<BOOL, HWND, UINT_PTR, LPINT>(pFunc, hWnd, uFlags, lpInfo);
+    }
+
+    BOOL __stdcall ComCtl32::Str_SetPtrW(LPWSTR* ppszCurrent, LPCWSTR pszNew)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, Str_SetPtrW);
+        return Library::Call<BOOL, LPWSTR*, LPCWSTR>(pFunc, ppszCurrent, pszNew);
+    }
+
+    BOOL ComCtl32::_TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, _TrackMouseEvent);
+        return Library::Call<BOOL, LPTRACKMOUSEEVENT>(pFunc, lpEventTrack);
+    }
+
+    HRESULT ComCtl32::UninitializeFlatSB(HWND hwnd)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(comctl32, UninitializeFlatSB);
+        return Library::Call<HRESULT, HWND>(pFunc, hwnd);
+    }
+
     BOOL ComCtl32::InitCommonControlsEx(const LPINITCOMMONCONTROLSEX lpInitCtrls)
     {
         qor_pp_fcontext;

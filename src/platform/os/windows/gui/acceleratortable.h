@@ -25,23 +25,45 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_ACCELERATORTABLE
 #define QOR_PP_H_WINDOWS_GUI_ACCELERATORTABLE
 
+#include <vector>
+#include <string>
 #include "src/platform/os/windows/common/handles/handle.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
+    struct qor_pp_module_interface(QOR_WINGUI) Accel
+    {
+#ifndef _MAC
+        unsigned char fVirt;
+        unsigned short key;
+        unsigned short cmd;
+#else
+        unsigned short fVirt;
+        unsigned short key;
+        unsigned long cmd;
+#endif
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) Window;
+    
     class qor_pp_module_interface(QOR_WINGUI) AcceleratorTable
     {
     public:
 
         AcceleratorTable();
         AcceleratorTable(const PrimitiveHandle& h);
-        virtual ~AcceleratorTable() = default;
+        AcceleratorTable(std::vector<Accel>& accels);
+        AcceleratorTable(void* hInstance, const std::string& tableName);
+        virtual ~AcceleratorTable();
 
         const Handle& GetHandle() const;
+        int Copy(Accel* lpAccelDst, int cAccelEntries);
+        int Translate(Window& wnd, Message& msg);
 
     protected:
 
+        bool m_temporary;
         Handle m_handle;
     };
     

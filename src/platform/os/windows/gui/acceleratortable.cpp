@@ -24,7 +24,10 @@
 
 #include "src/configuration/configuration.h"
 
+#include "message.h"
 #include "acceleratortable.h"
+#include "window.h"
+
 #include "src/platform/os/windows/common/stringconv.h"
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
@@ -40,11 +43,44 @@ namespace qor{ namespace platform { namespace nswindows{
     AcceleratorTable::AcceleratorTable()
     {
         m_handle = 0;
+        m_temporary = true;
     }
 
     AcceleratorTable::AcceleratorTable(const PrimitiveHandle& h) : m_handle(h.Use())
     {
         m_handle.DontClose();
+        m_temporary = true;
+    }
+
+    AcceleratorTable::AcceleratorTable(std::vector<Accel>& accels)
+    {
+        m_handle = User32::CreateAcceleratorTableT(reinterpret_cast<LPACCEL>( accels.data()), static_cast<int>(accels.size()));
+        m_temporary = false;
+    }
+    
+    AcceleratorTable::AcceleratorTable(void* hInstance, const std::string& tableName)
+    {
+        m_handle = User32::LoadAcceleratorsT((HINSTANCE)(hInstance), to_tstring(tableName.c_str()).c_str());
+        m_temporary = false;
+    }
+
+    AcceleratorTable::~AcceleratorTable()
+    {
+        if(!m_temporary)
+        {
+            User32::DestroyAcceleratorTable((HACCEL)(m_handle.Use()));            
+            m_handle.Drop();
+        }
+    }
+
+    int AcceleratorTable::Copy(Accel* lpAccelDst, int cAccelEntries)
+    {
+        return User32::CopyAcceleratorTableT((HACCEL)(m_handle.Use()), reinterpret_cast<LPACCEL>(lpAccelDst), cAccelEntries);
+    }
+
+    int AcceleratorTable::Translate(Window& wnd, Message& msg)
+    {
+        return User32::TranslateAcceleratorT((HWND)(wnd.GetHandle().Use()), (HACCEL)(m_handle.Use()), reinterpret_cast<LPMSG>(&msg));
     }
 
 }}}//qor::platform::nswindows

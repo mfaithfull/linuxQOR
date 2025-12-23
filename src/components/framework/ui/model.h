@@ -42,9 +42,28 @@ namespace qor{ namespace components{
 
 		Model(const PropertyName & name, PropertyValue & value) : Property(name, value), m_observable(*this)
         {
-
         }
 
+/*The thing a Widget is observing
+Nothing - an empty space widget that has style but no substance
+Percentage
+Number
+Currency
+Other SI and derived unit values
+Label
+Sentence
+Paragraph
+Document
+Tree
+FileSystem
+Devices
+Dates & Times
+Icon
+Image
+Scene
+The various kinds of choices, made up of the kind of thing being chosen and the number of options
+We'll need a Specific Model for the Application itself for the top level window/widget
+*/        
         Observable<Model> m_observable;
     };
 

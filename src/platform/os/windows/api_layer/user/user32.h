@@ -459,10 +459,10 @@ namespace qor { namespace nswindows { namespace api {
         static BOOL SetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPCTSTR lpString);
         
         //Multi Document Interface functions
-        HWND CreateMDIWindow(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HINSTANCE hInstance, LPARAM lParam);
-        LRESULT DefFrameProc(HWND hWnd, HWND hWndMDIClient, UINT uMsg, WPARAM wParam, LPARAM lParam);
-        LRESULT DefMDIChildProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-        BOOL TranslateMDISysAccel(HWND hWndClient, LPMSG lpMsg);
+        static HWND CreateMDIWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HINSTANCE hInstance, LPARAM lParam);
+        static LRESULT DefFrameProcT(HWND hWnd, HWND hWndMDIClient, UINT uMsg, WPARAM wParam, LPARAM lParam);
+        static LRESULT DefMDIChildProcT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+        static BOOL TranslateMDISysAccel(HWND hWndClient, LPMSG lpMsg);
 
         //--------------------------------------------------------------------------------
         //Dynamic Data Exchange functions
