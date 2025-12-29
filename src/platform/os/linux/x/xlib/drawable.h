@@ -45,6 +45,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         }
 
     protected:
+
+        Drawable() : m_Id(0)
+        {            
+        }
+        
         unsigned long m_Id;        
     };
 

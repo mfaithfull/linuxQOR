@@ -26,6 +26,7 @@
 
 #include "colourmap.h"
 #include "display.h"
+#include "visual.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -48,6 +49,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     {
     }
 
+    Colourmap::Colourmap(Display* display, unsigned long window, Visual* visual, int alloc) : m_display(display), temporary(false)
+    {
+        m_Id = XCreateColormap((::Display*)(m_display), window, (::Visual*)(visual->Use()), alloc);
+    }
+
+    Colourmap::Colourmap(Display* display, Colourmap& source)
+    {
+        m_Id = XCopyColormapAndFree((::Display*)(m_display), source.GetId());
+    }
+
     Colourmap::~Colourmap()
     {
         if(!temporary)
@@ -58,19 +69,53 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     int Colourmap::StoreNamedColour(const char* colour, unsigned long pixel, int flags)
     {
-        XStoreNamedColor(WITH_THIS, colour, pixel, flags);
+        return XStoreNamedColor(WITH_THIS, colour, pixel, flags);
     }
 
     int Colourmap::StoreColours(std::vector<Colour> colours)
     {
-        XStoreColors(WITH_THIS, reinterpret_cast<XColor*>(colours.data()), colours.size());
+        return XStoreColors(WITH_THIS, reinterpret_cast<XColor*>(colours.data()), colours.size());
     }
 
     int Colourmap::StoreColour(Colour colour)
     {
-        XStoreColor(WITH_THIS, reinterpret_cast<XColor*>(&colour));
+        return XStoreColor(WITH_THIS, reinterpret_cast<XColor*>(&colour));
     }
 
+    int Colourmap::ParseColour(const std::string& spec, Colour& colour)
+    {
+        return XParseColor(WITH_THIS, spec.c_str(), reinterpret_cast<XColor*>(&colour));
+    }
+
+    int Colourmap::LookupColour(const std::string& colourName, Colour& exactDefReturn, Colour& screenDefReturn)
+    {
+        return XLookupColor(WITH_THIS, colourName.c_str(), reinterpret_cast<XColor*>(&exactDefReturn), reinterpret_cast<XColor*>(&screenDefReturn));
+    }
+
+    int Colourmap::FreeColours(std::vector<unsigned long>& pixels, unsigned long planes)
+    {
+        return XFreeColors(WITH_THIS, pixels.data(), pixels.size(), planes);
+    }
+
+    int Colourmap::AllocNamedColour(std::string& colourName, Colour& screenDefReturn, Colour& exactDefReturn)
+    {
+        return XAllocNamedColor(WITH_THIS, colourName.c_str(), reinterpret_cast<XColor*>(&screenDefReturn), reinterpret_cast<XColor*>(&exactDefReturn));
+    }
+
+    int Colourmap::AllocColourPlanes(int contig, unsigned long* pixelsReturn, int nColours, int nreds, int ngreens, int nblues, unsigned long& rmaskReturn, unsigned long& gmaskReturn, unsigned long& bmaskReturn)
+    {
+        return XAllocColorPlanes(WITH_THIS, contig, pixelsReturn, nColours, nreds, ngreens, nblues, &rmaskReturn, &gmaskReturn, &bmaskReturn);
+    }
+
+    int Colourmap::AllocColourCells(int contig, unsigned long* planeMasksReturn, unsigned int nplanes, unsigned long* pixelsReturn, unsigned int npixels)
+    {
+        return XAllocColorCells(WITH_THIS, contig, planeMasksReturn, nplanes, pixelsReturn, npixels);
+    }
+
+    int Colourmap::AllocColour(Colour& colour)
+    {
+        return XAllocColor(WITH_THIS, reinterpret_cast<XColor*>(&colour));
+    }
 
 }}}}//qor::platform::nslinux::x
 

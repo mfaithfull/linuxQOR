@@ -27,6 +27,7 @@
 #include "src/platform/os/linux/x/xlib/display.h"
 #include "src/platform/os/linux/x/xlib/screen.h"
 #include "src/platform/os/linux/x/xlib/window.h"
+#include "src/platform/os/linux/x/xlib/font.h"
 
 const char* appName = "XRaw";
 
@@ -106,6 +107,17 @@ int main()
 
                     auto screen = defaultDisplay->ScreenOfDisplay(defaultDisplay->DefaultScreen());
 
+                    {                        
+                        std::vector<std::string> vecNames;
+                        qor::platform::nslinux::x::FontInfoHolder f = defaultDisplay->ListFontsWithInfo("*", 200, vecNames);
+                    }
+
+                    auto extensions = defaultDisplay->ListExtensions();
+                    for(auto extension : extensions)
+                    {
+                        std::cout << "Extension: " << extension << std::endl;
+                    }
+                    
                     unsigned long screenBlackPixel = screen.BlackPixel();
                     auto screenRootWindow = screen.RootWindow();
 
@@ -130,7 +142,6 @@ int main()
                     hints.initial_state = 3;
                     toplevelWindow->SetWMHints(hints);
 
-
                     //If we want the border/decorations from the Window Manager gone this is required
                     std::string motifHintsAtomName("_MOTIF_WM_HINTS");
                     unsigned long motifWMHintsProperty = defaultDisplay->GetAtom(motifHintsAtomName.data());
@@ -138,7 +149,6 @@ int main()
                     mhints.flags = MWM_HINTS_DECORATIONS;
                     mhints.decorations = 0;
                     //toplevelWindow->ChangeProperty(motifWMHintsProperty, motifWMHintsProperty, 32, qor::platform::nslinux::x::Window::PropModeReplace, (unsigned char*)(&mhints), sizeof(mhints)/sizeof(long));
-
 
                     //This is needed to actually position the window as the Window Manager ignores the position set when the window was created
                     long validBitsOfReturn = 0;

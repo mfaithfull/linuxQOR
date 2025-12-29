@@ -41,6 +41,17 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     class qor_pp_module_interface(QOR_LINX) Screen;
     class qor_pp_module_interface(QOR_LINX) Visual;
     class qor_pp_module_interface(QOR_LINX) Pixmap;
+    class qor_pp_module_interface(QOR_LINX) Font;
+    struct qor_pp_module_interface(QOR_LINX) Colour;
+    struct qor_pp_module_interface(QOR_LINX) Image;
+
+    struct ExtCodes
+    {		                // public to extension, cannot be changed
+        int extension;		// extension number 
+        int major_opcode;	// major op-code assigned by server 
+        int first_event;	// first event number for the extension 
+        int first_error;	// first error number for the extension 
+    };
 
     struct PixmapFormatValue
     {
@@ -54,6 +65,114 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         int max_keypermod;	    // The server's max # of keys per modifier
         unsigned char* modifiermap;	// An 8 by max_keypermod array of modifiers
     };
+
+    //per character font metric information.
+    struct CharStruct
+    {
+        short	lbearing;	        // origin to left edge of raster
+        short	rbearing;	        // origin to right edge of raster
+        short	width;		        // advance to next char's origin
+        short	ascent;		        // baseline to top edge of raster
+        short	descent;	        // baseline to bottom edge of raster
+        unsigned short attributes;	// per char flags (not predefined)
+    };
+
+    struct Char2b{		            // normal 16 bit characters are two bytes
+        unsigned char byte1;
+        unsigned char byte2;
+    };
+
+    struct ExtData{
+        int number;		            // number returned by XRegisterExtension
+        struct ExtData* next;	    // next item on list of data for structure
+        int (*free_private)(	    // called to free private storage
+        struct ExtData *extension
+        );
+        char* private_data;	        // data private to this extension.
+    };
+
+    struct FontProp
+    {
+        unsigned long name;
+        unsigned long card32;
+    };
+
+    struct FontStruct
+    {
+        ExtData*    ext_data;	/* hook for extension to hang data */
+        unsigned long        fid;            /* Font id for this font */
+        unsigned	direction;	/* hint about direction the font is painted */
+        unsigned	min_char_or_byte2;/* first character */
+        unsigned	max_char_or_byte2;/* last character */
+        unsigned	min_byte1;	/* first row that exists */
+        unsigned	max_byte1;	/* last row that exists */
+        int	        all_chars_exist;/* flag if all characters have non-zero size*/
+        unsigned	default_char;	/* char to print for undefined character */
+        int         n_properties;   /* how many properties there are */
+        FontProp*   properties;	/* pointer to array of additional properties*/
+        CharStruct	min_bounds;	/* minimum bounds over all existing char*/
+        CharStruct	max_bounds;	/* maximum bounds over all existing char*/
+        CharStruct* per_char;	/* first_char to last_char information */
+        int		ascent;		/* log. extent above baseline for spacing */
+        int		descent;	/* log. descent below baseline for spacing */
+    };
+
+    class qor_pp_module_interface(QOR_LINX) FontInfoHolder final
+    {
+    public:
+        FontInfoHolder(FontStruct* fontInfo, int count);
+        FontInfoHolder(FontInfoHolder&& src);
+        FontInfoHolder(const FontInfoHolder& src) = delete;
+        FontInfoHolder& operator = (const FontInfoHolder& src) = delete;
+        FontInfoHolder& operator = (FontInfoHolder& src) = delete;
+        ~FontInfoHolder();
+
+        std::vector<qor::platform::nslinux::x::Font> vecFonts;
+
+    private:
+        FontStruct* m_fontInfo;
+        int m_count;
+    };
+
+    class qor_pp_module_interface(QOR_LINX) ModifierKeymapHolder final
+    {
+    public:
+        ModifierKeymapHolder();
+        ModifierKeymapHolder(ModifierKeymap* keymapInfo);
+        ModifierKeymapHolder(ModifierKeymapHolder&& src);
+        ModifierKeymapHolder(const ModifierKeymapHolder& src) = delete;
+        ModifierKeymapHolder& operator = (const ModifierKeymapHolder& src) = delete;
+        ModifierKeymapHolder& operator = (ModifierKeymapHolder& src) = delete;
+        ~ModifierKeymapHolder();
+
+        size_t size(){ return m_modifierKeyMap.max_keypermod * 8; }
+        unsigned char* data() { return m_modifierKeyMap.modifiermap; }
+
+    private:
+
+        ModifierKeymap m_modifierKeyMap;
+    };
+
+    class qor_pp_module_interface(QOR_LINX) KeyboardMappingHolder final
+    {
+    public:
+        KeyboardMappingHolder() : m_symsPerKeycode(0) {}
+        KeyboardMappingHolder(unsigned long* symbols, int count, unsigned int symsPerKeycode);
+        ~KeyboardMappingHolder() = default;
+        std::vector<unsigned long> m_keySyms;
+        unsigned int m_symsPerKeycode;        
+    };
+
+    struct KeyboardState
+    {
+        int key_click_percent;
+        int bell_percent;
+        unsigned int bell_pitch, bell_duration;
+        unsigned long led_mask;
+        int global_auto_repeat;
+        char auto_repeats[32];
+    };
+
 
     class qor_pp_module_interface(QOR_LINX) Display
     {
@@ -144,6 +263,48 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         int SetPointerMapping(const std::vector<unsigned char>& buttons);
         int SetModifierMapping(ModifierKeymap& modmap);
         int SetInputFocus(unsigned long focus, int revert_to, unsigned long time);
+        int SetFontPath(std::vector<std::string> directories);
+        int SetAccessControl(int mode);
+        int SendEvent(unsigned long w, int propagate, long eventMask, Event& event);
+        int RotateBuffers(int rotate);
+        int RestackWindows(std::vector<unsigned int>& windows);
+        Pixmap ReadBitmapFile(unsigned long drawableId, const std::string& filename, unsigned int& widthReturn, unsigned int& heightReturn, int& xHotReturn, int& yHotReturn, int& result);
+        int QueryTextExtents16(unsigned long fontId, const Char2b*, int charCount, int& directionReturn, int& fontAscentReturn, int& fontDescentReturn, CharStruct& overallReturn);
+        int QueryTextExtents(unsigned long fontId, const std::string& str, int& directionReturn, int& fontAscentReturn, int& fontDescentReturn, CharStruct& overallReturn);
+        int QueryKeymap(std::vector<char>& keysReturn);
+        Font QueryFont(unsigned long fontId);
+        int QueryExtension(const std::string& name, int& majorOpcodeReturn, int& firstEventReturn, int& firstErrorReturn);
+        int QueryColours(unsigned long colourmap, std::vector<Colour>& colours);
+        int QueryColour(unsigned long colourmap, Colour& colour);
+        int QueryBestTile(unsigned long whichScreen, unsigned int width, unsigned int height, unsigned int& widthReturn, unsigned int& heightReturn);
+        int QueryBestStipple(unsigned long whichScreen, unsigned int width, unsigned int height, unsigned int&widthReturn, unsigned int& heightReturn);
+        int QueryBestSize(int ofWhat, unsigned long whichScreen, unsigned int width, unsigned int height, unsigned int& widthReturn, unsigned int& heightReturn);
+        int QueryBestCursor(unsigned long whichScreen, unsigned int width, unsigned int height, unsigned int& widthReturn, unsigned int& heightReturn);
+        Font LoadQueryFont(const std::string& name);
+        Font LoadFont(const std::string& name);
+        FontInfoHolder ListFontsWithInfo(const std::string& pattern, int maxNames, std::vector<std::string>& names);
+        std::vector<std::string> ListFonts(const std::string& pattern, int maxNames);
+        std::vector<std::string> ListExtensions();
+        unsigned long GetSelectionOwner(unsigned long selection);
+        int GetPointerControl(int& accel_numerator_return, int& accel_denominator_return, int& threshold_return);
+        ModifierKeymapHolder GetModifierMapping();
+        KeyboardMappingHolder GetKeyboardMapping(unsigned char first_keycode, int keycode_count, int&keysyms_per_keycode_return);
+        int GetKeyboardControl(KeyboardState& keyboardState);
+        int GetInputFocus(unsigned long& focusReturn, int revertToReturn);
+        Image GetImage(unsigned long drawableId, int x, int y, unsigned int width, unsigned int height, unsigned long planeMask, int format);
+        int GetGeometry(unsigned long drawableId, unsigned long& rootReturn, int& xReturn, int& yReturn, unsigned int& widthReturn, unsigned int& heightReturn, unsigned int& borderWidthReturn, unsigned int& depthReturn);
+        std::vector<std::string> GetFontPath();
+        std::vector<char> FetchBytes();
+        int EnableAccessControl();
+        int DisableAccessControl();
+        int ConvertSelection(unsigned long selection, unsigned long target, unsigned long property, unsigned long requestor, unsigned long time);
+        int ChangePointerControl(int do_accel, int do_threshold, int accel_numerator, int accel_denominator, int threshold);
+        int ChangeKeyboardMapping(int firstKeycode, int keySymsPerKeycode, std::vector<unsigned long>& keySyms);
+        int ChangeActivePointerGrab(unsigned int event_mask, unsigned long cursor, unsigned long time);
+        int Bell(int percent);
+        int AutoRepeatOn();
+        int AutoRepeatOff();
+        int AllowEvents(int eventMode, unsigned long time);
 
     private:
 

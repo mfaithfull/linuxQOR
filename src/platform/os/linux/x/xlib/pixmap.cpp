@@ -46,14 +46,20 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     {
     }
 
-    Pixmap::Pixmap(Display* display, unsigned long drawableId) : Drawable(drawableId), m_display(display), temporary(true)
+    Pixmap::Pixmap(Display* display, unsigned long drawableId, bool temp) : Drawable(drawableId), m_display(display), temporary(temp)
     {
     }
 
     Pixmap::Pixmap(Display* display, unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth) : Drawable(drawableId), m_display(display)
     {        
         temporary = false;
-        m_Id = XCreatePixmap((::Display*)(m_display->Use()), (::Drawable)m_Id, width, height, depth);
+        m_Id = XCreatePixmap((::Display*)(m_display->Use()), (::Drawable)drawableId, width, height, depth);
+    }
+
+    Pixmap::Pixmap(Display* display, unsigned long drawableId, char* data, int width, int height) : Drawable()
+    {
+        temporary = false;
+        m_Id = XCreateBitmapFromData((::Display*)(m_display->Use()), (::Drawable)drawableId, data, width, height);
     }
 
     Pixmap::~Pixmap()

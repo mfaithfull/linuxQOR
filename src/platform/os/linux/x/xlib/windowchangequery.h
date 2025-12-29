@@ -130,6 +130,32 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         unsigned long cursor; // cursor to be displayed (or None) 
     };
 
+    struct WindowAttributes
+    {
+        int x, y;			/* location of window */
+        int width, height;		/* width and height of window */
+        int border_width;		/* border width of window */
+        int depth;          	/* depth of window */
+        void* visual;		/* the associated visual structure */
+        unsigned long root;        	/* root of screen containing window */
+        int c_class;		/* C++ InputOutput, InputOnly*/
+        int bit_gravity;		/* one of bit gravity values */
+        int win_gravity;		/* one of the window gravity values */
+        int backing_store;		/* NotUseful, WhenMapped, Always */
+        unsigned long backing_planes;/* planes to be preserved if possible */
+        unsigned long backing_pixel;/* value to be used when restoring planes */
+        int save_under;		/* boolean, should bits under be saved? */
+        unsigned long colormap;		/* color map to be associated with window */
+        int map_installed;		/* boolean, is color map currently installed*/
+        int map_state;		/* IsUnmapped, IsUnviewable, IsViewable */
+        long all_event_masks;	/* set of events all people have interest in*/
+        long your_event_mask;	/* my event mask */
+        long do_not_propagate_mask; /* set of events that should not propagate */
+        int override_redirect;	/* boolean value for override-redirect */
+        void* screen;		/* back pointer to correct screen */
+    };
+
+
     class qor_pp_module_interface(QOR_LINX) SetWindowAttributesQuery
     {
     public:

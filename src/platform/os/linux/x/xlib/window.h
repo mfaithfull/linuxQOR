@@ -111,6 +111,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
             return temporary;
         }
 
+        Display* GetDisplay();
+
         int Reparent(unsigned long parent, int x, int y);
         int Raise();
         int Lower();
@@ -171,6 +173,34 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         void SetTextProperty(TextProperty& textProp, unsigned long property);
         void SetRGBColourmaps(std::vector<StandardColourmap> colourMaps, unsigned long property);
         int GetIconSizes(std::vector<IconSize>& size_list_return);
+        int SetIconName(const std::string& iconName);
+        int SetCommand(char** argv, int argc);
+        int SetClassHint(ClassHint& classHints);
+        int RotateProperties(std::vector<unsigned long>& properties, int num_prop, int npositions);
+        int ReconfigureWMWindow(int screenNumber, unsigned int valueMask, WindowChanges& values);
+        int QueryTree(unsigned long& root_return, unsigned long& parent_return, std::vector<unsigned long>& childWindows);
+        int QueryPointer(unsigned long& rootReturn, unsigned long& childReturn, int& rootXReturn, int& rootYReturn, int& winXReturn, int& winYReturn, unsigned int& maskReturn);
+        std::vector<unsigned long> ListInstalledColourmaps();
+        int Iconify(int screenNumber);
+        int GetZoomHints(WMSizeHints& zhintsReturn);
+        int GetWindowAttributes(WindowAttributes& attribsReturn);
+        int GetWMSizeHints(WMSizeHints& hintsReturn,  long suppliedReturn, unsigned long property);
+        int GetWMProtocols(std::vector<unsigned long>& protocols);
+        int GetWMName(TextProperty& nameProperty);
+        int GetWMIconName(TextProperty& nameProperty);
+        int GetWMColourmaps(std::vector<unsigned long>& colourMapWindows);
+        int GetWMClientMachine(TextProperty& nameProperty);
+        int GetTransientForHint(unsigned long& window);        
+        int GetTextProperty(TextProperty& property, unsigned long id);
+        int GetRGBColourmaps(std::vector<StandardColourmap>& colourMaps, unsigned long property);
+        int GetNormalHints(WMSizeHints& hintsReturn);
+        int GetIconName(std::string& name);
+        int GetClassHint(ClassHint& hint);
+        int DeleteProperty(unsigned long property);
+        int CirculateSubwindowsUp();
+        int CirculateSubwindowsDown();
+        int ChangeSaveSet(int changeMode);
+        int AddToSaveSet();
 
     protected:
                 

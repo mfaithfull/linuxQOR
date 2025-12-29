@@ -184,4 +184,119 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         return XSetGraphicsExposures((::Display*)(m_display), (::GC)(m_gc), graphics_exposures);
     }
 
+    int GC::PutImage(unsigned long drawableTarget, void* image, int srcX, int srcY, int destX, int destY, unsigned int width, unsigned int height)
+    {
+        return XPutImage((::Display*)(m_display), (::Drawable)(drawableTarget), (::GC)(m_gc), reinterpret_cast<XImage*>(image), srcX, srcY, destX, destY, width, height);
+    }
+
+    int GC::FillRectangles(unsigned long drawableTarget, std::vector<Rectangle>& rectangles)
+    {
+        return XFillRectangles((::Display*)(m_display), drawableTarget, (::GC)(m_gc), reinterpret_cast<XRectangle*>(rectangles.data()), static_cast<int>(rectangles.size()));
+    }
+
+    int GC::FillRectangle(unsigned long drawableTarget, int x, int y, unsigned int width, unsigned int height)
+    {
+        return XFillRectangle((::Display*)(m_display), drawableTarget, (::GC)(m_gc), x, y, width, height);
+    }
+
+    int GC::FillPolygon(unsigned long drawableTarget, std::vector<Point> points, int shape, int mode)
+    {
+        return XFillPolygon((::Display*)(m_display), drawableTarget, (::GC)(m_gc), reinterpret_cast<XPoint*>(points.data()), points.size(), shape, mode);
+    }
+
+    int GC::FillArcs(unsigned long drawableTarget, std::vector<Arc>& arcs)
+    {
+        return XFillArcs((::Display*)(m_display), drawableTarget, (::GC)(m_gc), reinterpret_cast<XArc*>(arcs.data()), arcs.size());
+    }
+
+    int GC::FillArc(unsigned long drawableTarget, Arc& src)
+    {
+        return XFillArc((::Display*)(m_display), drawableTarget, (::GC)(m_gc), src.x, src.y, src.width, src.height, src.angle1, src.angle2);
+    }
+
+    int GC::DrawText16(unsigned long drawableTarget, int x, int y, std::vector<TextItem16>& items)
+    {
+        return XDrawText16((::Display*)(m_display), drawableTarget, (::GC)(m_gc), x, y, reinterpret_cast<XTextItem16*>(items.data()), items.size());
+    }
+
+    int GC::DrawText(unsigned long drawableTarget, int x, int y, std::vector<TextItem>& items)
+    {
+        return XDrawText((::Display*)(m_display), drawableTarget,(::GC)(m_gc), x, y, reinterpret_cast<XTextItem*>(items.data()), items.size());
+    }
+
+    int GC::DrawString16(unsigned long drawableTarget, int x, int y, std::vector<Char2b>& str)
+    {
+        return XDrawString16((::Display*)(m_display), drawableTarget,(::GC)(m_gc), x, y, reinterpret_cast<const XChar2b*>(str.data()), str.size());
+    }
+
+    int GC::DrawString(unsigned long drawableTarget, int x, int y, std::string& str)
+    {
+        return XDrawString((::Display*)(m_display), drawableTarget, (::GC)(m_gc), x, y, str.c_str(), str.size());
+    }
+
+    int GC::DrawSegments(unsigned long drawableTarget, std::vector<Segment>& segments)
+    {
+        return XDrawSegments((::Display*)(m_display), drawableTarget, (::GC)(m_gc), reinterpret_cast<XSegment*>(segments.data()), segments.size());
+    }
+
+    int GC::DrawRectangles(unsigned long drawableTarget, std::vector<Rectangle>& rectangles)
+    {
+        return XDrawRectangles((::Display*)(m_display), drawableTarget, (::GC)(m_gc), reinterpret_cast<XRectangle*>(rectangles.data()), rectangles.size());
+    }
+
+    int GC::DrawRectangle(unsigned long drawableTarget, int x, int y, unsigned int width, unsigned int height)
+    {
+        return XDrawRectangle((::Display*)(m_display), drawableTarget, (::GC)(m_gc), x, y, width, height);
+    }
+
+    int GC::DrawPoint(unsigned long drawableTarget, int x, int y)
+    {
+        return XDrawPoint((::Display*)(m_display), drawableTarget, (::GC)(m_gc), x, y);
+    }
+
+    int GC::DrawPoints(unsigned long drawableTarget, std::vector<Point>& points, int mode)
+    {
+        return XDrawPoints((::Display*)(m_display), drawableTarget, (::GC)(m_gc), reinterpret_cast<XPoint*>(points.data()), points.size(), mode);
+    }
+
+    int GC::DrawLines(unsigned long drawableTarget, std::vector<Point>& points, int mode)
+    {
+        return XDrawLines((::Display*)(m_display), drawableTarget, (::GC)(m_gc), reinterpret_cast<XPoint*>(points.data()), points.size(), mode);
+    }
+
+    int GC::DrawLine(unsigned long drawableTarget, int x1, int y1, int x2, int y2)
+    {
+        return XDrawLine((::Display*)(m_display), drawableTarget, (::GC)(m_gc), x1, y1, x2, y2);
+    }
+
+    int GC::DrawImageString16(unsigned long drawableTarget, int x, int y, std::vector<Char2b>& str)
+    {
+        return XDrawImageString16((::Display*)(m_display), drawableTarget, (::GC)(m_gc), x, y, reinterpret_cast<const XChar2b *>(str.data()), str.size());
+    }
+
+    int GC::DrawImageString(unsigned long drawableTarget, int x, int y, std::string& str)
+    {
+        return XDrawImageString((::Display*)(m_display), drawableTarget, (::GC)(m_gc), x, y, str.c_str(), str.size());
+    }
+
+    int GC::DrawArcs(unsigned long drawableTarget, std::vector<Arc>& arcs)
+    {
+        return XDrawArcs((::Display*)(m_display), drawableTarget, (::GC)(m_gc), reinterpret_cast<XArc*>(arcs.data()), arcs.size());
+    }
+
+    int GC::DrawArc(unsigned long drawableTarget, int x, int y, unsigned int width, unsigned int height, int angle1, int angle2)
+    {
+        return XDrawArc((::Display*)(m_display), drawableTarget, (::GC)(m_gc), x, y, width, height, angle1, angle2);
+    }
+
+    int GC::CopyPlane(unsigned long src, unsigned long dest, int src_x, int src_y, unsigned int width, unsigned int height, int dest_x, int dest_y, unsigned long plane)
+    {
+        return XCopyPlane((::Display*)(m_display), src, dest, (::GC)(m_gc), src_x, src_y, width, height, dest_x, dest_y, plane);
+    }
+
+    int GC::CopyArea(unsigned long src, unsigned long dest, int src_x, int src_y, unsigned int width, unsigned int height, int dest_x, int dest_y)
+    {
+        return XCopyArea((::Display*)(m_display), src, dest, (::GC)(m_gc), src_x, src_y, width, height, dest_x, dest_y);
+    }
+
 }}}}//qor::platform::nslinux::x

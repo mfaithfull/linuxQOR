@@ -206,7 +206,7 @@ CIELab:<L>/<a>/<b>
 CIELuv:<L>/<u>/<v>
 TekHVC:<H>/<V>/<C>
 
-Colormap XCreateColormap(display, w, visual, alloc);
+
 XFreeColormap(display, colormap);
 
 Colormap XCopyColormapAndFree(display, colormap);

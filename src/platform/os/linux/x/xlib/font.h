@@ -28,19 +28,29 @@
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     class qor_pp_module_interface(QOR_LINX) Display;
+    struct qor_pp_module_interface(QOR_LINX) FontStruct;
 
     class qor_pp_module_interface(QOR_LINX) Font
     {
     public:
 
         Font(Display* display, const std::string& name);
+        Font(Display* display, FontStruct* fontinfo, bool temporary = false);
+        Font(Display* display, unsigned long fontId);
         ~Font();
+
+        unsigned long Id()
+        {
+            return m_Id;
+        }
 
     private:
 
+        bool m_temporary;
         Display* m_display;
+        FontStruct* m_fontInfo;
         unsigned long m_Id;
-
+        bool m_unload;
     };
 
 }}}}//qor::platform::nslinux::x

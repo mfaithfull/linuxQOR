@@ -88,5 +88,5 @@ namespace qor{ namespace platform { namespace nslinux{
     {
         return XFree(data);
     }
-    
+
 }}}//qor::platform::nslinux

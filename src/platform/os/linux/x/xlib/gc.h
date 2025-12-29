@@ -81,11 +81,47 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         char dashes;
     };
 
-    struct Rectangle{
+    struct Rectangle
+    {
         short x;
         short y;
         unsigned short width;
         unsigned short height;
+    };
+
+    struct Point
+    {
+        short x, y;
+    };
+
+    struct Arc
+    {
+        short x, y;
+        unsigned short width, height;
+        short angle1, angle2;
+    };
+
+    struct Char2b;
+
+    struct TextItem16
+    {
+        Char2b *chars;		// two byte characters
+        int nchars;			// number of characters
+        int delta;			// delta between strings
+        unsigned long font;	// font to print it in, None don't change
+    };
+
+    struct TextItem
+    {
+        char* chars;		// pointer to string
+        int nchars;			// number of characters
+        int delta;			// delta between strings
+        unsigned long font; // font to print it in, None don't change
+    };
+
+    struct Segment
+    {
+        short x1, y1, x2, y2;
     };
 
     class qor_pp_module_interface(QOR_LINX) Display;
@@ -125,7 +161,30 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         int SetArcMode(int arc_mode);
         int SetSubWindowMode(int subwindow_mode);
         int SetGraphicsExposures(int graphics_exposures);
-
+        int PutImage(unsigned long drawableTarget, void* image, int srcX, int srcY, int destX, int destY, unsigned int width, unsigned int height);
+        int FillRectangles(unsigned long drawableTarget, std::vector<Rectangle>& rectangles);
+        int FillRectangle(unsigned long drawableTarget, int x, int y, unsigned int width, unsigned int height);
+        int FillPolygon(unsigned long drawableTarget, std::vector<Point> points, int shape, int mode);
+        int FillArcs(unsigned long drawableTarget, std::vector<Arc>& arcs);
+        int FillArc(unsigned long drawableTaget, Arc& src);
+        int DrawText16(unsigned long drawableTarget, int x, int y, std::vector<TextItem16>& items);
+        int DrawText(unsigned long drawableTarget, int x, int y, std::vector<TextItem>& items);
+        int DrawString16(unsigned long drawableTarget, int x, int y, std::vector<Char2b>& str);
+        int DrawString(unsigned long drawableTarget, int x, int y, std::string& str);
+        int DrawSegments(unsigned long drawableTarget, std::vector<Segment>& segments);
+        int DrawRectangles(unsigned long drawableTarget, std::vector<Rectangle>& rectangles);
+        int DrawRectangle(unsigned long drawableTarget, int x, int y, unsigned int width, unsigned int height);
+        int DrawPoint(unsigned long drawableTarget, int x, int y);
+        int DrawPoints(unsigned long drawableTarget, std::vector<Point>& points, int mode);
+        int DrawLines(unsigned long drawableTarget, std::vector<Point>& points, int mode);
+        int DrawLine(unsigned long drawableTarget, int x1, int y1, int x2, int y2);
+        int DrawImageString16(unsigned long drawableTarget, int x, int y, std::vector<Char2b>& str);
+        int DrawImageString(unsigned long drawableTarget, int x, int y, std::string& str);
+        int DrawArcs(unsigned long drawableTarget, std::vector<Arc>& arcs);
+        int DrawArc(unsigned long drawableTarget, int x, int y, unsigned int width, unsigned int height, int angle1, int angle2);
+        int CopyPlane(unsigned long src, unsigned long dest, int src_x, int src_y, unsigned int width, unsigned int height, int dest_x, int dest_y, unsigned long plane);
+        int CopyArea(unsigned long src, unsigned long dest, int src_x, int src_y, unsigned int width, unsigned int height, int dest_x, int dest_y);
+        
     private:
         Display* m_display;
         Window* m_window;

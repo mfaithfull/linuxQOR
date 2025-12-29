@@ -31,6 +31,9 @@
 #include "window.h"
 #include "visual.h"
 #include "pixmap.h"
+#include "font.h"
+#include "colourmap.h"
+#include "image.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>
@@ -74,6 +77,55 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
+    FontInfoHolder::FontInfoHolder(FontStruct* fontInfo, int count) : m_fontInfo(fontInfo), m_count(count) 
+    {}
+
+    FontInfoHolder::FontInfoHolder(FontInfoHolder&& src) : m_fontInfo(std::move(src.m_fontInfo)), m_count(std::move(src.m_count))
+    {
+        src.m_fontInfo = nullptr;
+    }
+
+    FontInfoHolder::~FontInfoHolder()
+    {
+        if(m_fontInfo)
+        {
+            XFreeFontInfo(nullptr, reinterpret_cast<XFontStruct*>(m_fontInfo), 0);
+        }
+    }
+
+    ModifierKeymapHolder::ModifierKeymapHolder()
+    {
+        m_modifierKeyMap.max_keypermod = 0;
+        m_modifierKeyMap.modifiermap = nullptr;
+    }
+
+    ModifierKeymapHolder::ModifierKeymapHolder(ModifierKeymap* keymapInfo)
+    {
+        m_modifierKeyMap.max_keypermod = keymapInfo->max_keypermod;
+        m_modifierKeyMap.modifiermap = new unsigned char[ 8 * m_modifierKeyMap.max_keypermod ];
+        memcpy(&m_modifierKeyMap.modifiermap[0], keymapInfo->modifiermap, 8 * m_modifierKeyMap.max_keypermod);
+    }
+
+    ModifierKeymapHolder::ModifierKeymapHolder(ModifierKeymapHolder&& src) : m_modifierKeyMap(std::move(src.m_modifierKeyMap))
+    {
+        src.m_modifierKeyMap.modifiermap = nullptr;
+        src.m_modifierKeyMap.max_keypermod = 0;
+    }
+
+    ModifierKeymapHolder::~ModifierKeymapHolder()
+    {
+        if(m_modifierKeyMap.modifiermap)
+        {
+            delete [] m_modifierKeyMap.modifiermap;
+        }
+    }
+
+    KeyboardMappingHolder::KeyboardMappingHolder(unsigned long* symbols, int count, unsigned int symsPerKeycode) : m_symsPerKeycode(symsPerKeycode)
+    {
+        m_keySyms.resize(count);
+        memcpy(m_keySyms.data(), symbols, sizeof(unsigned long) * count);
+    }
+
     Display::Display(const std::string& protocol, const std::string& hostname, int display_number, int screen_number) : temporary(false)
     {
         std::string name;
@@ -94,11 +146,15 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         {
             continuable("Failed to open X Server {0}", name);
         }
+        // TODO Check for and initialise "Generic Event Extension" XInitExtension()
+        //TODO Check for and initialise "BIG-REQUESTS" XInitExtension()
+
     }
 
     Display::Display(const char* name) : temporary(false)
     {
         m_display = XOpenDisplay(name);
+        // TODO Check for and initialise "Generic Event Extension" XInitExtension()
     }
 
     Display::Display(void* display) : temporary(true)
@@ -537,5 +593,309 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     {
         return XSetInputFocus((::Display*)(m_display), (::Window)(focus), revert_to, (::Time)time);
     }
+
+    int Display::SetFontPath(std::vector<std::string> directories)
+    {
+        char* pathArray[directories.size()];
+        int index = 0;
+        for(auto str : directories)
+        {
+            pathArray[index++] = str.data();
+        }
+        return XSetFontPath((::Display*)(m_display), pathArray, directories.size());
+    }
+
+    int Display::SetAccessControl(int mode)
+    {
+        return XSetAccessControl((::Display*)(m_display), mode);
+    }
+
+    int Display::SendEvent(unsigned long w, int propagate, long eventMask, Event& event)
+    {
+        return XSendEvent((::Display*)(m_display), w, propagate, eventMask, reinterpret_cast<XEvent*>(&event));
+    }
+
+    int Display::RotateBuffers(int rotate)
+    {
+        return XRotateBuffers((::Display*)(m_display), rotate);
+    }
+
+    int Display::RestackWindows(std::vector<unsigned int>& windows)
+    {
+        return XRestackWindows((::Display*)(m_display), (::Window*)(windows.data()), windows.size());
+    }
+
+    Pixmap Display::ReadBitmapFile(unsigned long drawableId, const std::string& filename, unsigned int& widthReturn, unsigned int& heightReturn, int& xHotReturn, int& yHotReturn, int& result)
+    {        
+        unsigned long pixmapId = 0;
+        result = XReadBitmapFile((::Display*)(m_display), drawableId, filename.data(), &widthReturn, &heightReturn, &pixmapId, &xHotReturn, &yHotReturn);
+        return Pixmap(this, pixmapId, false);
+    }
+
+    int Display::QueryTextExtents16(unsigned long fontId, const Char2b* sz16, int charCount, int& directionReturn, int& fontAscentReturn, int& fontDescentReturn, CharStruct& overallReturn)
+    {
+        return XQueryTextExtents16((::Display*)(m_display), fontId, (XChar2b*)(sz16), charCount, &directionReturn, &fontAscentReturn, &fontDescentReturn, reinterpret_cast<XCharStruct*>(&overallReturn));
+    }
+
+    int Display::QueryTextExtents(unsigned long fontId, const std::string& str, int& directionReturn, int& fontAscentReturn, int& fontDescentReturn, CharStruct& overallReturn)
+    {
+        return XQueryTextExtents((::Display*)(m_display), fontId, str.c_str(), str.size(), &directionReturn, &fontAscentReturn, &fontDescentReturn, reinterpret_cast<XCharStruct*>(&overallReturn));
+    }
+
+    int Display::QueryKeymap(std::vector<char>& keysReturn)
+    {
+        keysReturn.resize(32);
+        return XQueryKeymap((::Display*)(m_display), keysReturn.data());
+    }
+
+    Font Display::QueryFont(unsigned long fontId)// XFreeFontInfo
+    {
+        FontStruct* fontinfo;
+        fontinfo = reinterpret_cast<FontStruct*>(XQueryFont((::Display*)(m_display), fontId));
+        return Font(this, fontinfo);
+    }
+
+    int Display::QueryExtension(const std::string& name, int& majorOpcodeReturn, int& firstEventReturn, int& firstErrorReturn)
+    {
+        return XQueryExtension((::Display*)(m_display), name.c_str(), &majorOpcodeReturn, &firstEventReturn, &firstErrorReturn);
+    }
+
+    int Display::QueryColours(unsigned long colourmap, std::vector<Colour>& colours)
+    {
+        return XQueryColors((::Display*)(m_display), (::Colormap)(colourmap), reinterpret_cast<XColor*>(colours.data()), colours.size());
+    }
+
+    int Display::QueryColour(unsigned long colourmap, Colour& colour)
+    {
+        return XQueryColor((::Display*)(m_display), (::Colormap)(colourmap), reinterpret_cast<XColor*>(&colour));
+    }
+
+    int Display::QueryBestTile(unsigned long whichScreen, unsigned int width, unsigned int height, unsigned int& widthReturn, unsigned int& heightReturn)
+    {
+        return XQueryBestTile((::Display*)(m_display), whichScreen, width, height, &widthReturn, &heightReturn);
+    }
+
+    int Display::QueryBestStipple(unsigned long whichScreen, unsigned int width, unsigned int height, unsigned int&widthReturn, unsigned int& heightReturn)
+    {
+        return XQueryBestStipple((::Display*)(m_display), whichScreen, width, height, &widthReturn, &heightReturn);
+    }
+
+    int Display::QueryBestSize(int ofWhat, unsigned long whichScreen, unsigned int width, unsigned int height, unsigned int& widthReturn, unsigned int& heightReturn)
+    {
+        return XQueryBestSize((::Display*)(m_display), ofWhat, whichScreen, width, height, &widthReturn, &heightReturn);
+    }
+
+    int Display::QueryBestCursor(unsigned long whichScreen, unsigned int width, unsigned int height, unsigned int& widthReturn, unsigned int& heightReturn)
+    {
+        return XQueryBestCursor((::Display*)(m_display), whichScreen, width, height, &widthReturn, &heightReturn);
+    }
+
+    Font Display::LoadQueryFont(const std::string& name)
+    {
+        return Font(this, reinterpret_cast<FontStruct*>(XLoadQueryFont((::Display*)(m_display), name.c_str())));
+    }
+
+    Font Display::LoadFont(const std::string& name)
+    {
+        return Font(this, XLoadFont((::Display*)(m_display), name.c_str()));
+    }
+
+    FontInfoHolder Display::ListFontsWithInfo(const std::string& pattern, int maxNames, std::vector<std::string>& names)
+    {                        
+        XFontStruct* fontInfo = nullptr;
+        int count = 0;
+        char** data = XListFontsWithInfo((::Display*)(m_display), pattern.c_str(), maxNames, &count, &fontInfo);
+        FontInfoHolder holder(reinterpret_cast<FontStruct*>(&fontInfo[0]), count);
+        if(count != 0 && data != nullptr)
+        {
+            holder.vecFonts.clear();
+            names.clear();
+            holder.vecFonts.reserve(count);            
+            names.reserve(count);
+            for(unsigned int index = 0; index < count; ++index)
+            {
+                std::string name(data[index]);
+                names.emplace_back(name);
+                Font font(this, reinterpret_cast<FontStruct*>(&fontInfo[index]), true);
+                holder.vecFonts.emplace_back(font);
+            }
+            XFreeFontNames(data);
+        }
+        return holder;
+    }
+
+    std::vector<std::string> Display::ListFonts(const std::string& pattern, int maxNames)
+    {
+        std::vector<std::string> names;
+        int count = 0;
+        char** data = XListFonts((::Display*)(m_display), pattern.c_str(), maxNames, &count);
+        if(count != 0 && data != nullptr)
+        {
+            names.reserve(count);
+            for(unsigned index = 0; index < count; ++index)
+            {
+                std::string name(data[index]);
+                names.emplace_back(name);
+            }
+            XFreeFontNames(data);
+        }
+        return names;
+    }
+
+    std::vector<std::string> Display::ListExtensions()
+    {
+        std::vector<std::string> extensions;
+        int count = 0;
+        char** data = XListExtensions((::Display*)(m_display), &count);
+        if( count != 0 && data != nullptr)
+        {
+            extensions.reserve(count);
+            for(unsigned index = 0; index < count; ++index)
+            {
+                std::string extension(data[index]);
+                extensions.emplace_back(extension);
+            }
+            XFreeExtensionList(data);
+        }
+        return extensions;
+    }
     
+    unsigned long Display::GetSelectionOwner(unsigned long selection)
+    {
+        return XGetSelectionOwner((::Display*)(m_display), (::Atom)(selection));
+    }
+
+    int Display::GetPointerControl(int& accel_numerator_return, int& accel_denominator_return, int& threshold_return)
+    {
+        return XGetPointerControl((::Display*)(m_display), &accel_numerator_return, &accel_denominator_return, &threshold_return);
+    }
+
+    ModifierKeymapHolder Display::GetModifierMapping()
+    {                
+        XModifierKeymap* data = XGetModifierMapping((::Display*)(m_display));
+        if( data != nullptr)
+        {
+            ModifierKeymapHolder holder(reinterpret_cast<ModifierKeymap*>(data));
+            XFree(data);
+            return holder;
+        }
+        return ModifierKeymapHolder();
+    }
+
+    KeyboardMappingHolder Display::GetKeyboardMapping(unsigned char firstKeycode, int keycodeCount, int& keysymsPerKeycodeReturn)
+    {
+        KeySym* data = XGetKeyboardMapping((::Display*)(m_display), firstKeycode, keycodeCount, &keysymsPerKeycodeReturn);
+        if( data != nullptr && keysymsPerKeycodeReturn != 0)
+        {
+            KeyboardMappingHolder holder(reinterpret_cast<unsigned long*>(data), keycodeCount * keysymsPerKeycodeReturn, keysymsPerKeycodeReturn);
+            XFree(data);
+            return holder;
+        }
+        return KeyboardMappingHolder();
+    }
+
+    int Display::GetKeyboardControl(KeyboardState& keyboardState)
+    {
+        return XGetKeyboardControl((::Display*)(m_display), reinterpret_cast<XKeyboardState*>(&keyboardState));
+    }
+
+    int Display::GetInputFocus(unsigned long& focusReturn, int revertToReturn)
+    {
+        return XGetInputFocus((::Display*)(m_display), &focusReturn, &revertToReturn);
+    }
+
+    Image Display::GetImage(unsigned long drawableId, int x, int y, unsigned int width, unsigned int height, unsigned long planeMask, int format)
+    {
+        XImage* image = XGetImage((::Display*)(m_display), drawableId, x, y, width, height, planeMask, format);
+        return Image(this, image);
+    }
+
+    int Display::GetGeometry(unsigned long drawableId, unsigned long& rootReturn, int& xReturn, int& yReturn, unsigned int& widthReturn, unsigned int& heightReturn, unsigned int& borderWidthReturn, unsigned int& depthReturn)
+    {
+        return XGetGeometry((::Display*)(m_display), (::Drawable)(drawableId), &rootReturn, &xReturn, &yReturn, &widthReturn, &heightReturn, &borderWidthReturn, &depthReturn);
+    }
+
+    std::vector<std::string> Display::GetFontPath()
+    {
+        std::vector<std::string> path;
+        int count = 0;
+        char** data = XGetFontPath((::Display*)(m_display), &count);
+        if(count != 0)
+        {
+            path.resize(count);
+            for(unsigned int index = 0; index < count; ++index)
+            {
+                std::string folder(data[index]);
+                path.emplace_back(folder);
+            }
+            XFree(data);
+        }
+        return path;
+    }
+
+    std::vector<char> Display::FetchBytes()
+    {
+        std::vector<char> bytes;
+        int count = 0;
+        char* data = XFetchBytes((::Display*)(m_display), &count);
+        if(data != nullptr && count != 0)
+        {
+            bytes.resize(count);
+            memcpy(bytes.data(), data, count);
+            XFree(data);
+        }
+        return bytes;
+    }
+
+    int Display::EnableAccessControl()
+    {
+        return XEnableAccessControl((::Display*)(m_display));
+    }
+
+    int Display::DisableAccessControl()
+    {
+        return XDisableAccessControl((::Display*)(m_display));
+    }
+
+    int Display::ConvertSelection(unsigned long selection, unsigned long target, unsigned long property, unsigned long requestor, unsigned long time)
+    {
+        return XConvertSelection((::Display*)(m_display), selection, target, property, requestor, time);
+    }
+
+    int Display::ChangePointerControl(int do_accel, int do_threshold, int accel_numerator, int accel_denominator, int threshold)
+    {
+        return XChangePointerControl((::Display*)(m_display), do_accel, do_threshold, accel_numerator, accel_denominator, threshold);
+    }
+
+    int Display::ChangeKeyboardMapping(int firstKeycode, int keySymsPerKeycode, std::vector<unsigned long>& keySyms)
+    {
+        return XChangeKeyboardMapping((::Display*)(m_display), firstKeycode, keySymsPerKeycode, reinterpret_cast<::KeySym*>(keySyms.data()), keySyms.size());
+    }
+
+    int Display::ChangeActivePointerGrab(unsigned int eventMask, unsigned long cursor, unsigned long time)
+    {
+        return XChangeActivePointerGrab((::Display*)(m_display), eventMask, cursor, time);
+    }
+
+    int Display::Bell(int percent)
+    {
+        return XBell((::Display*)(m_display), percent);
+    }
+
+    int Display::AutoRepeatOn()
+    {
+        return XAutoRepeatOn((::Display*)(m_display));
+    }
+
+    int Display::AutoRepeatOff()
+    {
+        return XAutoRepeatOff((::Display*)(m_display));
+    }
+
+    int Display::AllowEvents(int eventMode, unsigned long time)
+    {
+        return XAllowEvents((::Display*)(m_display), eventMode, time);
+    }
+
+
 }}}}//qor::platform::nslinux::x

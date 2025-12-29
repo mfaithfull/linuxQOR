@@ -76,6 +76,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         }
     }
 
+    Display* Window::GetDisplay()
+    {
+        return m_display;
+    }
+
     int Window::Reparent(unsigned long parent, int x, int y)
     {
         return XReparentWindow(WITH_THIS, parent, x, y);
@@ -414,6 +419,199 @@ RGB_RED_MAP	WM_ZOOM_HINTS*/
             XFree(data);
         }
         return status;
+    }
+
+    int Window::SetIconName(const std::string& iconName)
+    {
+        return XSetIconName(WITH_THIS, iconName.c_str());
+    }
+
+    int Window::SetCommand(char** argv, int argc)
+    {
+        return XSetCommand(WITH_THIS, argv, argc);
+    }
+
+    int Window::SetClassHint(ClassHint& classHints)
+    {
+        return XSetClassHint(WITH_THIS, reinterpret_cast<XClassHint*>(&classHints));
+    }
+
+    int Window::RotateProperties(std::vector<unsigned long>& properties, int num_prop, int npositions)
+    {
+        return XRotateWindowProperties(WITH_THIS, properties.data(), num_prop, npositions);
+    }
+
+    int Window::ReconfigureWMWindow(int screenNumber, unsigned int valueMask, WindowChanges& values)
+    {
+        return XReconfigureWMWindow(WITH_THIS, screenNumber, valueMask, reinterpret_cast<XWindowChanges*>(&values));
+    }
+
+    int Window::QueryTree(unsigned long& root_return, unsigned long& parent_return, std::vector<unsigned long>& childWindows)
+    {
+        unsigned long* children_return = nullptr;
+        unsigned int nchildren_return = 0;
+        int status = XQueryTree(WITH_THIS, &root_return, &parent_return, &children_return, &nchildren_return);
+        if( nchildren_return != 0 && children_return != nullptr)
+        {
+            childWindows.resize(nchildren_return);
+            memcpy(childWindows.data(), children_return, sizeof(unsigned long) * nchildren_return);
+            XFree(children_return);
+        }
+        return status;
+    }
+
+    int Window::QueryPointer(unsigned long& rootReturn, unsigned long& childReturn, int& rootXReturn, int& rootYReturn, int& winXReturn, int& winYReturn, unsigned int& maskReturn)
+    {
+        return XQueryPointer(WITH_THIS, &rootReturn, &childReturn, &rootXReturn, &rootYReturn, &winXReturn, &winYReturn, &maskReturn);
+    }
+
+    std::vector<unsigned long> Window::ListInstalledColourmaps()
+    {
+        std::vector<unsigned long> colourMaps;
+        int count = 0;        
+        Colormap* data = XListInstalledColormaps(WITH_THIS, &count);
+        if(count != 0 && data != nullptr)
+        {
+            colourMaps.resize(count);
+            memcpy(colourMaps.data(), data, sizeof(unsigned long) * count);
+            XFree(data);
+        }
+        return colourMaps;
+    }
+
+    int Window::Iconify(int screenNumber)
+    {
+        return XIconifyWindow(WITH_THIS, screenNumber);
+    }
+
+    int Window::GetZoomHints(WMSizeHints& zhintsReturn)
+    {
+        return XGetZoomHints(WITH_THIS, reinterpret_cast<XSizeHints*>(&zhintsReturn));
+    }
+
+    int Window::GetWindowAttributes(WindowAttributes& attribsReturn)
+    {
+        return XGetWindowAttributes(WITH_THIS, reinterpret_cast<XWindowAttributes*>(&attribsReturn));
+    }
+
+    int Window::GetWMSizeHints(WMSizeHints& hintsReturn, long suppliedReturn, unsigned long property)
+    {
+        return XGetWMSizeHints(WITH_THIS, reinterpret_cast<XSizeHints*>(&hintsReturn), &suppliedReturn, (::Atom)(property));
+    }
+
+    int Window::GetWMProtocols(std::vector<unsigned long>& protocols)
+    {
+        unsigned long* data;
+        int count = 0;
+        int status = XGetWMProtocols(WITH_THIS, &data, &count);
+        if(count != 0 && data != nullptr)
+        {
+            protocols.resize(count);
+            memcpy(protocols.data(), data, sizeof(unsigned long) * count);
+            XFree(data);
+        }
+        return status;
+    }
+
+    int Window::GetWMName(TextProperty& nameProperty)
+    {
+        return XGetWMName(WITH_THIS, reinterpret_cast<XTextProperty*>(&nameProperty));
+    }
+
+    int Window::GetWMIconName(TextProperty& nameProperty)
+    {
+        return XGetWMIconName(WITH_THIS, reinterpret_cast<XTextProperty*>(&nameProperty));
+    }
+
+    int Window::GetWMColourmaps(std::vector<unsigned long>& colourMapWindows)
+    {
+        ::Window* data = nullptr;
+        int count = 0;
+        int status = XGetWMColormapWindows(WITH_THIS, &data, &count);
+        if(count != 0 && data != nullptr)
+        {
+            colourMapWindows.resize(count);
+            memcpy(colourMapWindows.data(), data, sizeof(unsigned long) * count);
+            XFree(data);
+        }
+        return status;
+    }
+
+    int Window::GetWMClientMachine(TextProperty& nameProperty)
+    {
+        return XGetWMClientMachine(WITH_THIS, reinterpret_cast<XTextProperty*>(&nameProperty));
+    }
+
+    int Window::GetTransientForHint(unsigned long& window)
+    {
+        return XGetTransientForHint(WITH_THIS, (::Window*)(&window));
+    }
+
+    int Window::GetTextProperty(TextProperty& property, unsigned long id)
+    {
+        return XGetTextProperty(WITH_THIS, reinterpret_cast<XTextProperty*>(&property), (::Atom)(id));
+    }
+
+    int Window::GetRGBColourmaps(std::vector<StandardColourmap>& colourMaps, unsigned long property)
+    {
+        XStandardColormap* data = nullptr;
+        int count = 0;
+        int status = XGetRGBColormaps(WITH_THIS, &data, &count, property);
+        if(count != 0 && data != nullptr)
+        {
+            colourMaps.resize(count);
+            memcpy(colourMaps.data(), data, sizeof(StandardColourmap) * count);
+            XFree(data);
+        }
+
+        return status;
+    }
+
+    int Window::GetNormalHints(WMSizeHints& hintsReturn)
+    {
+        return XGetNormalHints(WITH_THIS, reinterpret_cast<XSizeHints*>(&hintsReturn));
+    }
+
+    int Window::GetIconName(std::string& name)
+    {
+        char* iconName = nullptr;
+        int status = XGetIconName(WITH_THIS, &iconName);
+        if(iconName != nullptr)
+        {
+            name = std::string(iconName);
+            XFree(iconName);
+        }
+        return status;
+    }
+
+    int Window::GetClassHint(ClassHint& hint)
+    {
+        return XGetClassHint(WITH_THIS, reinterpret_cast<XClassHint*>(&hint));
+    }
+
+    int Window::DeleteProperty(unsigned long property)
+    {
+        return XDeleteProperty(WITH_THIS, property);
+    }
+
+    int Window::CirculateSubwindowsUp()
+    {
+        return XCirculateSubwindowsUp(WITH_THIS);
+    }
+
+    int Window::CirculateSubwindowsDown()
+    {
+        return XCirculateSubwindowsDown(WITH_THIS);
+    }
+
+    int Window::ChangeSaveSet(int changeMode)
+    {
+        return XChangeSaveSet(WITH_THIS, changeMode);
+    }
+
+    int Window::AddToSaveSet()
+    {
+        return XAddToSaveSet(WITH_THIS);
     }
 
 }}}}//qor::platform::nslinux::x

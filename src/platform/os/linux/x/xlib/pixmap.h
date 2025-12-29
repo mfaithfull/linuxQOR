@@ -40,9 +40,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     public:
 
         Pixmap(unsigned long drawableId);
-        Pixmap(Display* display, unsigned long drawableId);
+        Pixmap(Display* display, unsigned long drawableId, bool temp = true);
         Pixmap(Display* display, unsigned long drawableId, unsigned int width, unsigned int height, unsigned int depth);
-        ~Pixmap();
+
+        Pixmap(Display* display, unsigned long drawableId, char* data, int width, int height);
+        ~Pixmap();        
 
         bool IsTemporary()
         {

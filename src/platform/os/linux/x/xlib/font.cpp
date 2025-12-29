@@ -45,11 +45,34 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     Font::Font(Display* display, const std::string& name) : m_display(display)
     {
         m_Id = XLoadFont((::Display*)(m_display), name.c_str());
+        m_unload = true;
+        m_temporary = true;
+        m_fontInfo = nullptr;
+    }
+
+    Font::Font(Display* display, FontStruct* fontinfo, bool temporary) : m_temporary(temporary)
+    {
+        m_unload = false;
+        m_fontInfo = fontinfo;        
+    }
+
+    Font::Font(Display* display, unsigned long fontId)
+    {
+        m_unload = true;
+        m_temporary = true;
+        m_fontInfo = nullptr;
     }
 
     Font::~Font()
     {
-        XUnloadFont((::Display*)(m_display), m_Id);
+        if(m_unload)
+        {
+            XUnloadFont((::Display*)(m_display), m_Id);
+        }
+        if(m_fontInfo && !m_temporary)
+        {
+            XFreeFontInfo(nullptr, reinterpret_cast<XFontStruct*>(m_fontInfo), 0);
+        }
     }
 
 }}}}//qor::platform::nslinux::x

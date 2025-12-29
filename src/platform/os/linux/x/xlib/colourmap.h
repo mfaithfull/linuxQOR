@@ -31,8 +31,9 @@
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     class qor_pp_module_interface(QOR_LINX) Display;
+    class qor_pp_module_interface(QOR_LINX) Visual;
 
-    struct Colour
+    struct qor_pp_module_interface(QOR_LINX) Colour
     {
         unsigned long pixel;
         unsigned short red, green, blue;
@@ -45,6 +46,9 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     public:
 
         Colourmap(Display* display, unsigned long Id);
+        Colourmap(Display* display, unsigned long window, Visual* visual, int alloc);
+        Colourmap(Display* display, Colourmap& source);
+
         ~Colourmap();
 
         bool IsTemporary()
@@ -60,6 +64,13 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         int StoreNamedColour(const char* colour, unsigned long pixel, int flags);
         int StoreColours(std::vector<Colour> colours);
         int StoreColour(Colour colour);
+        int ParseColour(const std::string& spec, Colour& colour);
+        int LookupColour(const std::string& colourName, Colour& exactDefReturn, Colour& screenDefReturn);
+        int FreeColours(std::vector<unsigned long>& pixels, unsigned long planes);
+        int AllocNamedColour(std::string& colourName, Colour& screenDefReturn, Colour& exactDefReturn);
+        int AllocColourPlanes(int contig, unsigned long* pixelsReturn, int nColours, int nreds, int ngreens, int nblues, unsigned long& rmaskReturn, unsigned long& gmaskReturn, unsigned long& bmaskReturn);
+        int AllocColourCells(int contig, unsigned long* planeMasksReturn, unsigned int nplanes, unsigned long* pixelsReturn, unsigned int npixels);
+        int AllocColour(Colour& colour);
 
     private:
 
