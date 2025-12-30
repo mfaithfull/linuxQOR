@@ -13,7 +13,7 @@ include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE QOR_LINX)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
-qor_interception qor_egl linq_thread cairo X11)
+qor_interception qor_egl linq_thread X11)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 
