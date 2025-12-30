@@ -39,7 +39,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         {            
         }
 
-        unsigned long GetId()
+        unsigned long GetId() const
         {
             return m_Id;
         }

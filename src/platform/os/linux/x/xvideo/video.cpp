@@ -25,6 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "video.h"
+#include "adaptorinfo.h"
 #include "src/platform/os/linux/x/xlib/display.h"
 #include "src/platform/os/linux/x/xlib/window.h"
 #include "src/platform/os/linux/x/xlib/cursor.h"
@@ -44,18 +45,96 @@
 #include <X11/Xprotostr.h>
 
 #include <X11/extensions/Xv.h>
+#include <X11/extensions/Xvlib.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     Video::Video(Display* dpy) : m_display(dpy)
     {        
         XExtCodes* data = XInitExtension((::Display*)(m_display->Use()), "RECORD");
-        m_extCodes = *(reinterpret_cast<ExtCodes*>(data));
-        XFree(data);
+        m_extCodes = *(reinterpret_cast<ExtCodes*>(data));        
     }
 
     Video::~Video()
     {
+    }
+
+    int Video::QueryExtension(unsigned int& version, unsigned int& revision, unsigned int& requestBase, unsigned int& eventBase, unsigned int& errorBase)
+    {
+        return XvQueryExtension((::Display*)(m_display->Use()), &version, &revision, &requestBase, &eventBase, &errorBase);
+    }
+
+    AdaptorInfo Video::QueryAdaptors(const Window& window)
+    {        
+        XvAdaptorInfo* data = nullptr;
+        unsigned int count = 0;
+        int status = XvQueryAdaptors((::Display*)(m_display->Use()), window.GetId(), &count, &data);
+        return AdaptorInfo(data, count);
+    }
+
+    int Video::GrabPort(unsigned long port, unsigned long time)
+    {
+        return XvGrabPort((::Display*)(m_display->Use()), (::XvPortID)port, (::Time)(time));
+    }
+
+    int Video::UngrabPort(unsigned long port, unsigned long time)
+    {
+        return XvUngrabPort((::Display*)(m_display->Use()), (::XvPortID)port, (::Time)(time));
+    }
+
+    std::vector<Attribute> Video::QueryPortAttributes(unsigned long port)
+    {
+        std::vector<Attribute> attributes;
+        int count = 0;
+        XvAttribute* data = XvQueryPortAttributes((::Display*)(m_display->Use()), port, &count);
+        if(count != 0 && data != 0)
+        {
+            for(unsigned int index = 0; index < count; ++index)
+            {
+                Attribute att;
+                att.flags = data[index].flags;
+                att.min_value = data[index].min_value;
+                att.max_value = data[index].max_value;
+                att.name = std::string(data[index].name);
+                attributes.emplace_back(att);
+            }
+            XFree(data);
+        }
+        return attributes;
+    }
+
+    int Video::GetPortAttribute(unsigned long port, unsigned long attribute, int& value)
+    {
+        return XvGetPortAttribute((::Display*)(m_display->Use()), (::XvPortID)(port), (::Atom)(attribute), &value);
+    }
+
+    int Video::SetPortAttribute(unsigned long port, unsigned long attribute, int value)
+    {
+        return XvSetPortAttribute((::Display*)(m_display->Use()), (::XvPortID)(port), (::Atom)(attribute), value);
+    }
+
+    std::vector<ImageFormat> Video::ListImageFormats(unsigned long port)
+    {
+        std::vector<ImageFormat> formats;
+        int count = 0;
+        XvImageFormatValues* data = XvListImageFormats((::Display*)(m_display->Use()), (::XvPortID)(port), &count);
+        if(count != 0 && data != nullptr)
+        {
+            formats.resize(count);
+            memcpy(formats.data(), data, sizeof(ImageFormat) * count );
+            XFree(data);
+        }
+        return formats;
+    }
+
+    VideoImage* Video::CreateImage(unsigned long port, int id, char* data, int width, int height)
+    {
+        return reinterpret_cast<VideoImage*>(XvCreateImage((::Display*)(m_display->Use()), port, id, data, width, height));
+    }
+
+    int Video::PutImage(unsigned long id, unsigned long drawable, GC& gc, VideoImage *image, int srcX, int srcY, unsigned int srcW, unsigned int srcH, int destX, int destY, unsigned int destW, unsigned int destH)
+    {
+        return XvPutImage((::Display*)(m_display->Use()), (::XvPortID)(id), (::Drawable)(drawable), (::GC)(gc.Use()), reinterpret_cast<XvImage*>(image), srcX, srcY, srcW, srcH, destX, destY, destW, destH);
     }
 
 }}}}//qor::platform::nslinux::x

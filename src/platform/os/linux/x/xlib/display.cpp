@@ -77,6 +77,8 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
+    typedef int(eventPred)(::Display*, XEvent*, XPointer);
+
     FontInfoHolder::FontInfoHolder(FontStruct* fontInfo, int count) : m_fontInfo(fontInfo), m_count(count) 
     {}
 
@@ -495,7 +497,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         return XInternAtom((::Display*)(m_display), name, 1);
     }
 
-    unsigned long Display::CreateAtom(char* name)
+    unsigned long Display::CreateAtom(const char* name)
     {
         return XInternAtom((::Display*)(m_display), name, 0);
     }
@@ -898,5 +900,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         return XAllowEvents((::Display*)(m_display), eventMode, time);
     }
 
+    int Display::IfEvent(Event& event, int(predicate)(void*, Event*, char*), void* arg)
+    {
+        return XIfEvent((::Display*)(m_display), reinterpret_cast<XEvent*>(&event), reinterpret_cast<eventPred*>(predicate), reinterpret_cast<XPointer>(arg));
+    }
+
+    int Display::CheckMaskEvent(long mask, Event& event)
+    {
+        return XCheckMaskEvent((::Display*)(m_display), mask, reinterpret_cast<XEvent*>(&event));
+    }
 
 }}}}//qor::platform::nslinux::x

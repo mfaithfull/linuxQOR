@@ -1,3 +1,4 @@
+
 // Copyright Querysoft Limited 2008 - 2025
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -22,42 +23,56 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include <string>
-#include <format>
+#ifndef QOR_PP_H_LINUX_XVIDEO_ADAPTORINFO
+#define QOR_PP_H_LINUX_XVIDEO_ADAPTORINFO
+
 #include <vector>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-
-    /*#define   VisualNoMask                 0x0
-#define   VisualIDMask                 0x1
-#define   VisualScreenMask             0x2
-#define   VisualDepthMask              0x4
-#define   VisualClassMask              0x8
-#define   VisualRedMaskMask            0x10
-#define   VisualGreenMaskMask          0x20
-#define   VisualBlueMaskMask           0x40
-#define   VisualColormapSizeMask       0x80
-#define   VisualBitsPerRGBMask         0x100
-#define   VisualAllMask                0x1FF*/
-
-    class qor_pp_module_interface(QOR_LINX) Visual
+    class qor_pp_module_interface(QOR_LINXVIDEO) AdaptorInfo
     {
     public:
+            
+        struct Header
+        {
+            unsigned long   base_id;
+            unsigned long   num_ports;
+            char            type;
+            char*           name;
+            unsigned long   num_formats;
+            Format*         formats;
+            unsigned long   num_adaptors;
+        };
 
-        Visual() = default;
-        Visual(void* visual);
-        virtual ~Visual() = default;
+        AdaptorInfo(void* info, unsigned int count);
+        virtual ~AdaptorInfo();
 
         void* Use()
         {
-            return m_visual;
+            return m_info;
         }
 
-        unsigned long GetId() const;
+        unsigned int Size()
+        {
+            return m_count;
+        }
+        
+        Header* GetInfo(unsigned int index)
+        {
+            if(index > m_count)
+            {
+                return nullptr;
+            }
+            return &(reinterpret_cast<Header*>(m_info))[index];
+        }
 
-    private:
-        void* m_visual;
+    protected:
+
+        void* m_info;
+        unsigned int m_count;
     };
 
 }}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_XVIDEO_ADAPTORINFO

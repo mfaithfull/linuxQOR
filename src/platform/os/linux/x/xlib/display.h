@@ -45,6 +45,17 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     struct qor_pp_module_interface(QOR_LINX) Colour;
     struct qor_pp_module_interface(QOR_LINX) Image;
 
+    static const unsigned long None = 0;
+    /* Display classes  used in opening the connection
+    * Note that the statically allocated ones are even numbered and the
+    * dynamically changeable ones are odd numbered */
+    static const int StaticGray		= 0;
+    static const int GrayScale		= 1;
+    static const int StaticColor	= 2;
+    static const int PseudoColor	= 3;
+    static const int TrueColor		= 4;
+    static const int DirectColor	= 5;
+
     struct ExtCodes
     {		                // public to extension, cannot be changed
         int extension;		// extension number 
@@ -246,7 +257,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         std::vector<VisualInfo> GetVisualInfo(VisualInfoQuery& visualInfoQuery);
         int Flush();
         unsigned long GetAtom(const char* name);
-        unsigned long CreateAtom(char* name);
+        unsigned long CreateAtom(const char* name);
         const std::string GetAtomName(unsigned long atom);
         int NextEvent(Event& event);
         int Pending();
@@ -304,7 +315,9 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         int Bell(int percent);
         int AutoRepeatOn();
         int AutoRepeatOff();
-        int AllowEvents(int eventMode, unsigned long time);
+        int AllowEvents(int eventMode, unsigned long time);        
+        int IfEvent( Event& event, int(predicate)(void*, Event*, char*), void* arg );
+        int CheckMaskEvent(long mask, Event& event);
 
     private:
 

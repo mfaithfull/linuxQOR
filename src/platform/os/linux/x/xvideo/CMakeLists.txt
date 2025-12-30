@@ -3,7 +3,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target linqor_xvideo)
 
-add_library(${target} SHARED linqor_video.cpp video.cpp)
+add_library(${target} SHARED linqor_video.cpp video.cpp adaptorinfo.cpp)
 
 target_include_directories(${target} PRIVATE)
 

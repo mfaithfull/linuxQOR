@@ -37,12 +37,292 @@
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
     
+    class qor_pp_module_interface(QOR_LINXVIDEO) AdaptorInfo;
+
+    struct Format
+    {
+        char depth;
+        unsigned long visual_id;
+    };
+
+    struct Attribute
+    {
+        int flags;                  /* XvGettable, XvSettable */
+        int min_value;
+        int max_value;
+        std::string name;
+    };
+
+    struct ImageFormat
+    {
+        int id;                     // Unique descriptor for the format
+        int type;                   // XvRGB, XvYUV
+        int byte_order;             // LSBFirst, MSBFirst
+        char guid[16];              // Globally Unique IDentifier
+        int bits_per_pixel;
+        int format;                 // XvPacked, XvPlanar
+        int num_planes;
+
+        // for RGB formats only
+        int depth;
+        unsigned int red_mask;
+        unsigned int green_mask;
+        unsigned int blue_mask;
+
+        // for YUV formats only
+        unsigned int y_sample_bits;
+        unsigned int u_sample_bits;
+        unsigned int v_sample_bits;
+        unsigned int horz_y_period;
+        unsigned int horz_u_period;
+        unsigned int horz_v_period;
+        unsigned int vert_y_period;
+        unsigned int vert_u_period;
+        unsigned int vert_v_period;
+        char component_order[32];   // eg. UYVY
+        int scanline_order;         // XvTopToBottom, XvBottomToTop
+    };
+
+
+    static const int XvNone          = 0;
+    static const int XvInput         = 0;
+    static const int XvOutput        = 1;
+    static const int XvInputMask     = (1<<XvInput);
+    static const int XvOutputMask    = (1<<XvOutput);
+    static const int XvVideoMask	 = 0x00000004;
+    static const int XvStillMask	 = 0x00000008;
+    static const int XvImageMask	 = 0x00000010;
+
+    /*
+// These two are not client viewable
+#define XvPixmapMask	 0x00010000
+#define XvWindowMask	 0x00020000
+
+
+#define XvGettable	0x01
+#define XvSettable	0x02
+
+#define XvRGB		0
+#define XvYUV		1
+
+#define XvPacked	0
+#define XvPlanar	1
+
+#define XvTopToBottom	0
+#define XvBottomToTop	1
+
+
+// Events
+
+#define XvVideoNotify 0
+#define XvPortNotify 1
+#define XvNumEvents 2
+
+// Video Notify Reasons
+
+#define XvStarted 0
+#define XvStopped 1
+#define XvBusy 2
+#define XvPreempted 3
+#define XvHardError 4
+#define XvLastReason 4
+
+#define XvNumReasons (XvLastReason + 1)
+
+#define XvStartedMask     (1<<XvStarted)
+#define XvStoppedMask     (1<<XvStopped)
+#define XvBusyMask        (1<<XvBusy)
+#define XvPreemptedMask   (1<<XvPreempted)
+#define XvHardErrorMask   (1<<XvHardError)
+
+#define XvAnyReasonMask   ((1<<XvNumReasons) - 1)
+#define XvNoReasonMask    0
+
+// Errors
+
+#define XvBadPort 0
+#define XvBadEncoding 1
+#define XvBadControl 2
+#define XvNumErrors 3
+
+// Status
+
+#define XvBadExtension 1
+#define XvAlreadyGrabbed 2
+#define XvInvalidTime 3
+#define XvBadReply 4
+#define XvBadAlloc 5
+*/    
+
+
+    struct VideoImage
+    {
+        int id;
+        int width, height;
+        int data_size;
+        int num_planes;
+        int *pitches;
+        int *offsets;
+        char *data;
+        char* obdata;
+    };
+
     class qor_pp_module_interface(QOR_LINXVIDEO) Video
     {
     public:
     
         Video(Display* dpy);
         virtual ~Video();
+
+        int QueryExtension(unsigned int& version, unsigned int& revision, unsigned int& requestBase, unsigned int& eventBase, unsigned int& errorBase);
+        AdaptorInfo QueryAdaptors(const Window& window);
+        int GrabPort(unsigned long port, unsigned long time);
+        int UngrabPort(unsigned long port, unsigned long time);
+        std::vector<Attribute> QueryPortAttributes(unsigned long port);
+        int GetPortAttribute(unsigned long port, unsigned long attribute, int& value);
+        int SetPortAttribute(unsigned long port, unsigned long attribute, int value);
+        std::vector<ImageFormat> ListImageFormats(unsigned long port);
+        VideoImage* CreateImage (unsigned long port, int id, char* data, int width, int height);
+        int PutImage(unsigned long id, unsigned long drawable, GC& gc, VideoImage *image, int srcX, int srcY, unsigned int srcW, unsigned int srcH, int destX, int destY, unsigned int destW, unsigned int destH);
+
+
+/*
+extern int XvQueryEncodings(
+    Display *                   // display,
+    XvPortID                    // port,
+    unsigned int *              // p_nEncoding,
+    XvEncodingInfo **           // p_pEncoding
+);
+
+extern int XvPutVideo(
+    Display *                   // display,
+    XvPortID                    // port ,
+    Drawable                    // d ,
+    GC                          // gc ,
+    int                         // vx ,
+    int                         // vy ,
+    unsigned int                // vw ,
+    unsigned int                // vh ,
+    int                         // dx ,
+    int                         // dy ,
+    unsigned int                // dw ,
+    unsigned int                // dh 
+);
+
+extern int XvPutStill(
+    Display *                   // display //,
+    XvPortID                    // port //,
+    Drawable                    // d //,
+    GC                          // gc //,
+    int                         // vx //,
+    int                         // vy //,
+    unsigned int                // vw //,
+    unsigned int                // vh //,
+    int                         // dx //,
+    int                         // dy //,
+    unsigned int                // dw //,
+    unsigned int                // dh //
+);
+
+extern int XvGetVideo(
+    Display *                   // display //,
+    XvPortID                    // port //,
+    Drawable                    // d //,
+    GC                          // gc //,
+    int                         // vx //,
+    int                         // vy //,
+    unsigned int                // vw //,
+    unsigned int                // vh //,
+    int                         // dx //,
+    int                         // dy //,
+    unsigned int                // dw //,
+    unsigned int                // dh //
+);
+
+extern int XvGetStill(
+    Display *                   // display //,
+    XvPortID                    // port //,
+    Drawable                    // d //,
+    GC                          // gc //,
+    int                         // vx //,
+    int                         // vy //,
+    unsigned int                // vw //,
+    unsigned int                // vh //,
+    int                         // dx //,
+    int                         // dy //,
+    unsigned int                // dw //,
+    unsigned int                // dh //
+);
+
+extern int XvStopVideo(
+    Display *                   // display //,
+    XvPortID                    // port //,
+    Drawable                    // drawable //
+);
+
+extern int XvSelectVideoNotify(
+    Display *                   // display //,
+    Drawable                    // drawable //,
+    Bool                        // onoff //
+);
+
+extern int XvSelectPortNotify(
+    Display *                   // display //,
+    XvPortID                    // port //,
+    Bool                        // onoff //
+);
+
+extern int XvQueryBestSize(
+    Display *                   // display //,
+    XvPortID                    // port //,
+    Bool                        // motion //,
+    unsigned int                // vid_w //,
+    unsigned int                // vid_h //,
+    unsigned int                // drw_w //,
+    unsigned int                // drw_h //,
+    unsigned int *              // p_actual_width //,
+    unsigned int *              // p_actual_width //
+);
+
+
+extern void XvFreeAdaptorInfo(
+    XvAdaptorInfo *             // adaptors //
+);
+
+extern void XvFreeEncodingInfo(
+    XvEncodingInfo *            // encodings //
+);
+
+
+
+
+extern int XvShmPutImage (
+    Display *display,
+    XvPortID id,
+    Drawable d,
+    GC gc,
+    XvImage *image,
+    int src_x,
+    int src_y,
+    unsigned int src_w,
+    unsigned int src_h,
+    int dest_x,
+    int dest_y,
+    unsigned int dest_w,
+    unsigned int dest_h,
+    Bool send_event
+);
+
+extern XvImage *XvShmCreateImage (
+    Display *display,
+    XvPortID port,
+    int id,
+    char *data,
+    int width,
+    int height,
+    XShmSegmentInfo *shminfo
+);
+*/        
 
     protected:
         Display* m_display;

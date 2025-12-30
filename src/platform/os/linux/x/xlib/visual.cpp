@@ -46,7 +46,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     {
     }
 
-    unsigned long Visual::GetId()
+    unsigned long Visual::GetId() const
     {
         return XVisualIDFromVisual((::Visual*)(m_visual));
     }

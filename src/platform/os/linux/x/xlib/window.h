@@ -42,6 +42,25 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     //Note: Input only windows have no Visibility
 
+    static const int CWBackPixmap		= (1L<<0);
+    static const int CWBackPixel		= (1L<<1);
+    static const int CWBorderPixmap		= (1L<<2);
+    static const int CWBorderPixel      = (1L<<3);
+    static const int CWBitGravity		= (1L<<4);
+    static const int CWWinGravity		= (1L<<5);
+    static const int CWBackingStore     = (1L<<6);
+    static const int CWBackingPlanes	= (1L<<7);
+    static const int CWBackingPixel	    = (1L<<8);
+    static const int CWOverrideRedirect	= (1L<<9);
+    static const int CWSaveUnder		= (1L<<10);
+    static const int CWEventMask		= (1L<<11);
+    static const int CWDontPropagate	= (1L<<12);
+    static const int CWColormap		    = (1L<<13);
+    static const int CWCursor	        = (1L<<14);
+
+    static const unsigned int InputOutput	= 1;
+    static const unsigned int InputOnly		= 2;
+
     struct TextProperty
     {
         unsigned char* value;		// same as Property routines

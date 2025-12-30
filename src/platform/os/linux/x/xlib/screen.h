@@ -57,8 +57,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         int MaxCmaps();//int XMaxCmapsOfScreen(screen);//max colour maps supported
         int Planes();//int XPlanesOfScreen(screen);
         Window RootWindow();//Window XRootWindowOfScreen(screen);
-
-        //Status XMatchVisualInfo(Display *display, int screen, int depth, int class, XVisualInfo *vinfo_return);
+        int MatchVisualInfo(int depth, int c_class, VisualInfo& visualInfo);
+        
     private:
 
         void* m_screen;

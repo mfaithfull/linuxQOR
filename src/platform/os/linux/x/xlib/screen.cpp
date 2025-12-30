@@ -161,6 +161,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         return Window(XRootWindowOfScreen(WITH_THIS), m_display);
     }
 
+    int Screen::MatchVisualInfo(int depth, int c_class, VisualInfo& visualInfo)
+    {
+        return XMatchVisualInfo((::Display*)(m_display->Use()), ScreenNumber(), depth, c_class, reinterpret_cast<XVisualInfo*>(&visualInfo));
+    }
+
 }}}}//qor::platform::nslinux::x
 
 #undef WITH_THIS

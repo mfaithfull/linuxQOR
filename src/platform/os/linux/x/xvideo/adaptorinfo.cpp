@@ -22,42 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include <string>
-#include <format>
-#include <vector>
+#include "src/configuration/configuration.h"
+
+#include "video.h"
+#include "adaptorinfo.h"
+
+#include "src/platform/os/linux/x/xlib/display.h"
+#include "src/platform/os/linux/x/xlib/window.h"
+#include "src/qor/error/error.h"
+
+#include <X11/Xlib.h>
+#include <X11/X.h>
+#include <X11/Xcms.h>
+#include <X11/Xutil.h>
+#include <X11/Xresource.h>
+#include <X11/Xatom.h>
+#include <X11/cursorfont.h>
+#include <X11/keysymdef.h>
+#include <X11/keysym.h>
+#include <X11/Xlibint.h>
+#include <X11/Xproto.h>
+#include <X11/Xprotostr.h>
+#include <X11/extensions/Xvlib.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
+    AdaptorInfo::AdaptorInfo(void* info, unsigned int count) : m_info(info), m_count(count)
+    {        
+    }
 
-    /*#define   VisualNoMask                 0x0
-#define   VisualIDMask                 0x1
-#define   VisualScreenMask             0x2
-#define   VisualDepthMask              0x4
-#define   VisualClassMask              0x8
-#define   VisualRedMaskMask            0x10
-#define   VisualGreenMaskMask          0x20
-#define   VisualBlueMaskMask           0x40
-#define   VisualColormapSizeMask       0x80
-#define   VisualBitsPerRGBMask         0x100
-#define   VisualAllMask                0x1FF*/
-
-    class qor_pp_module_interface(QOR_LINX) Visual
-    {
-    public:
-
-        Visual() = default;
-        Visual(void* visual);
-        virtual ~Visual() = default;
-
-        void* Use()
-        {
-            return m_visual;
-        }
-
-        unsigned long GetId() const;
-
-    private:
-        void* m_visual;
-    };
-
+    AdaptorInfo::~AdaptorInfo()
+    {        
+        XvFreeAdaptorInfo(reinterpret_cast<XvAdaptorInfo*>(m_info));
+    }
+    
 }}}}//qor::platform::nslinux::x
