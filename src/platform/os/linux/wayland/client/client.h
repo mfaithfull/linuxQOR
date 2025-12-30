@@ -38,7 +38,7 @@ struct wl_display;
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nslinux{
     
-    class qor_pp_module_interface(QOR_LINWAYLAND) Display;
+    namespace wl{ class qor_pp_module_interface(QOR_LINWAYLAND) Display;}//wl
 
     class qor_pp_module_interface(QOR_LINWAYLAND) WaylandClient : public qor::framework::IFeature
     {
@@ -50,9 +50,10 @@ namespace qor{ namespace platform { namespace nslinux{
         virtual void Setup();
         virtual void Shutdown();
 
-    private:
+        qor::ref_of<wl::Display>::type GetDisplay(const std::string& displayConnection);
+        qor::ref_of<wl::Display>::type GetDisplay(int fd);
 
-        ::wl_display* m_display;
+    private:
 
     };
     }}

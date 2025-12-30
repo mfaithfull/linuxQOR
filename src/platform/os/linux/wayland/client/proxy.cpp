@@ -23,33 +23,20 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
-#include "client.h"
-#include "display.h"
 #include "src/qor/error/error.h"
+
+#include "proxy.h"
 
 #include <wayland-client-core.h>
 
-qor_pp_module_provide(QOR_LINWAYLAND, WaylandClient)
+namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-namespace qor{ namespace platform { namespace nslinux{
-
-    void WaylandClient::Setup()
-    {        
-    }
-        
-    void WaylandClient::Shutdown()
+    Proxy::Proxy()
     {
     }
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(const std::string& displayConnection)
+    Proxy::~Proxy()
     {
-        return qor::new_ref<wl::Display>(displayConnection.empty() ? nullptr : displayConnection.c_str());
     }
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(int fd)
-    {
-        return qor::new_ref<wl::Display>(fd);
-    }
-
-}}}//qor::platform::nslinux
+}}}}//qor::platform::nslinux::wl

@@ -22,34 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_REGISTRY
+#define QOR_PP_H_LINUX_WAYLAND_REGISTRY
 
-#include "client.h"
-#include "display.h"
-#include "src/qor/error/error.h"
+struct wl_registry;
+struct wl_registry_listener;
 
-#include <wayland-client-core.h>
+namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-qor_pp_module_provide(QOR_LINWAYLAND, WaylandClient)
-
-namespace qor{ namespace platform { namespace nslinux{
-
-    void WaylandClient::Setup()
-    {        
-    }
+    class qor_pp_module_interface(QOR_LINWAYLAND) Registry
+    {
+    public:
         
-    void WaylandClient::Shutdown()
-    {
-    }
+        Registry(wl_registry* registry);
+        ~Registry();
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(const std::string& displayConnection)
-    {
-        return qor::new_ref<wl::Display>(displayConnection.empty() ? nullptr : displayConnection.c_str());
-    }
+        wl_registry* Use();
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(int fd)
-    {
-        return qor::new_ref<wl::Display>(fd);
-    }
+        int AddListener(const wl_registry_listener& listener, void* data);
 
-}}}//qor::platform::nslinux
+    private:
+        wl_registry* m_registry;
+    };
+
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_REGISTRY

@@ -22,34 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_QUEUE
+#define QOR_PP_H_LINUX_WAYLAND_QUEUE
 
-#include "client.h"
-#include "display.h"
-#include "src/qor/error/error.h"
+struct wl_event_queue;
 
-#include <wayland-client-core.h>
+namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-qor_pp_module_provide(QOR_LINWAYLAND, WaylandClient)
-
-namespace qor{ namespace platform { namespace nslinux{
-
-    void WaylandClient::Setup()
-    {        
-    }
+    class qor_pp_module_interface(QOR_LINWAYLAND) Queue
+    {
+    public:
         
-    void WaylandClient::Shutdown()
-    {
-    }
+        Queue(wl_event_queue* queue);
+        ~Queue();
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(const std::string& displayConnection)
-    {
-        return qor::new_ref<wl::Display>(displayConnection.empty() ? nullptr : displayConnection.c_str());
-    }
+        wl_event_queue* Use();
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(int fd)
-    {
-        return qor::new_ref<wl::Display>(fd);
-    }
+    private:
+        wl_event_queue* m_queue;
+    };
 
-}}}//qor::platform::nslinux
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_QUEUE

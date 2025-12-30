@@ -4,7 +4,8 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target linqor_waylandclient)
 
-add_library(${target} SHARED linqor_waylandclient.cpp client.cpp)
+add_library(${target} SHARED linqor_waylandclient.cpp client.cpp
+display.cpp proxy.cpp registry.cpp queue.cpp)
 
 target_include_directories(${target} PRIVATE)
 

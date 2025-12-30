@@ -23,33 +23,31 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
-#include "client.h"
-#include "display.h"
 #include "src/qor/error/error.h"
 
+#include "registry.h"
+
 #include <wayland-client-core.h>
+#include <wayland-client-protocol.h>
 
-qor_pp_module_provide(QOR_LINWAYLAND, WaylandClient)
+namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-namespace qor{ namespace platform { namespace nslinux{
-
-    void WaylandClient::Setup()
-    {        
-    }
-        
-    void WaylandClient::Shutdown()
+    Registry::Registry(wl_registry* registry) : m_registry(registry)
     {
     }
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(const std::string& displayConnection)
+    Registry::~Registry()
     {
-        return qor::new_ref<wl::Display>(displayConnection.empty() ? nullptr : displayConnection.c_str());
     }
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(int fd)
+    wl_registry* Registry::Use()
     {
-        return qor::new_ref<wl::Display>(fd);
+        return m_registry;
     }
 
-}}}//qor::platform::nslinux
+    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    {
+        return wl_registry_add_listener(m_registry, &listener, data);
+    }
+
+}}}}//qor::platform::nslinux::wl

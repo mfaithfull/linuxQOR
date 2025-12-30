@@ -22,34 +22,50 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_DISPLAY
+#define QOR_PP_H_LINUX_WAYLAND_DISPLAY
 
-#include "client.h"
-#include "display.h"
-#include "src/qor/error/error.h"
+#include <string>
 
-#include <wayland-client-core.h>
+struct wl_display;
 
-qor_pp_module_provide(QOR_LINWAYLAND, WaylandClient)
+namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-namespace qor{ namespace platform { namespace nslinux{
+    class qor_pp_module_interface(QOR_LINWAYLAND) Queue;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Registry;
 
-    void WaylandClient::Setup()
-    {        
-    }
+    class qor_pp_module_interface(QOR_LINWAYLAND) Display
+    {
+    public:
         
-    void WaylandClient::Shutdown()
-    {
-    }
+        Display(const char* name = nullptr);
+        Display(int fd);
+        ~Display();
+        wl_display* Use();
+        int GetFD();
+        int Dispatch();
+        int Dispatch(Queue& queue);
+        int DispatchPending(Queue& queue);
+        int DispatchPending();
+        int Roundtrip(Queue& queue);
+        int Roundtrip();
+        int GetError();
+        int Flush();
+        Queue CreateQueue();
+        int PrepareRead();
+        int PrepareRead(Queue& queue);
+        int ReadEvents();
+        void CancelRead();
+        Registry GetRegistry();
+        //TODO:
+        void SetLogHandler(void(loghandlerfunc)(std::string&));
+        uint32_t GetProtocolError();
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(const std::string& displayConnection)
-    {
-        return qor::new_ref<wl::Display>(displayConnection.empty() ? nullptr : displayConnection.c_str());
-    }
+    private:
+        
+        wl_display* m_display;
+    };
 
-    qor::ref_of<wl::Display>::type WaylandClient::GetDisplay(int fd)
-    {
-        return qor::new_ref<wl::Display>(fd);
-    }
-
-}}}//qor::platform::nslinux
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_DISPLAY
