@@ -146,9 +146,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         {
             continuable("Failed to open X Server {0}", name);
         }
-        // TODO Check for and initialise "Generic Event Extension" XInitExtension()
+        
+        //TODO Check for and initialise "Generic Event Extension" XInitExtension()
         //TODO Check for and initialise "BIG-REQUESTS" XInitExtension()
-
+        //TODO Check for and initialise "XC-MISC" XInitExtension()
     }
 
     Display::Display(const char* name) : temporary(false)
