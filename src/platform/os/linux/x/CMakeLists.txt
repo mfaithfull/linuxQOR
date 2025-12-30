@@ -11,4 +11,5 @@ add_subdirectory(xtest)
 add_subdirectory(xsync)
 add_subdirectory(xkeyboard)
 add_subdirectory(xinerama)
+add_subdirectory(xrandr)
 

@@ -22,48 +22,13 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_XINERAMA
-#define QOR_PP_H_LINUX_XINERAMA
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include <string>
-#include <vector>
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: X Client Ext Resize Reflect and Rotate",
+		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-#include "src/platform/os/linux/x/xlib/display.h"
-#include "src/platform/os/linux/x/xlib/gc.h"
-#include "src/platform/os/linux/x/xlib/image.h"
-#include "src/platform/os/linux/x/xlib/visual.h"
-#include "src/platform/os/linux/x/xinput/device.h"
-
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ namespace x{
-    
-    struct qor_pp_module_interface(QOR_LINXINERAMA) ScreenInfo
-    {
-        int   screen_number;
-        short x_org;
-        short y_org;
-        short width;
-        short height;
-    };
-
-    class qor_pp_module_interface(QOR_LINXINERAMA) Xinerama
-    {
-    public:
-    
-        Xinerama(Display* dpy);
-        virtual ~Xinerama();
-
-        int QueryExtension(int& eventBase, int& errorBase);
-        int QueryVersion(int& majorVersionp, int& minor_versionp);
-        bool IsActive();
-        std::vector<ScreenInfo> QueryScreens();
-
-    protected:
-        Display* m_display;
-        ExtCodes m_extCodes;
-    };
-
-}}}}//qor::platform::nslinux::x
-
-#endif//QOR_PP_H_LINUX_XINERAMA
-
+	return QORModule;
+}

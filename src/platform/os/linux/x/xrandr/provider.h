@@ -1,3 +1,4 @@
+
 // Copyright Querysoft Limited 2008 - 2025
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -22,48 +23,43 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_XINERAMA
-#define QOR_PP_H_LINUX_XINERAMA
+#ifndef QOR_PP_H_LINUX_XRANDR_PROVIDER
+#define QOR_PP_H_LINUX_XRANDR_PROVIDER
 
-#include <string>
 #include <vector>
 
-#include "src/platform/os/linux/x/xlib/display.h"
-#include "src/platform/os/linux/x/xlib/gc.h"
-#include "src/platform/os/linux/x/xlib/image.h"
-#include "src/platform/os/linux/x/xlib/visual.h"
-#include "src/platform/os/linux/x/xinput/device.h"
-
-//All types on this interface must be portable
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
-    
-    struct qor_pp_module_interface(QOR_LINXINERAMA) ScreenInfo
-    {
-        int   screen_number;
-        short x_org;
-        short y_org;
-        short width;
-        short height;
-    };
 
-    class qor_pp_module_interface(QOR_LINXINERAMA) Xinerama
+    class qor_pp_module_interface(QOR_LINX) Display;
+    class qor_pp_module_interface(QOR_LINX) Window;
+
+    class qor_pp_module_interface(QOR_LINXRANDR) Provider
     {
     public:
     
-        Xinerama(Display* dpy);
-        virtual ~Xinerama();
+        Provider();
+        Provider(Display* dpy, unsigned long Id);
+        virtual ~Provider();
 
-        int QueryExtension(int& eventBase, int& errorBase);
-        int QueryVersion(int& majorVersionp, int& minor_versionp);
-        bool IsActive();
-        std::vector<ScreenInfo> QueryScreens();
+        unsigned long GetId()
+        {
+            return m_Id;
+        }
+
+        int SetOutputSource(unsigned long sourceProvider);
+        int SetOffloadSink(unsigned long sinkProvider);
+        std::vector<unsigned long> ListProperties();
+        PropertyInfo QueryProperty(unsigned long property);
+        void ConfigureProperty(unsigned long property, int pending, int range, std::vector<long>& values);
+		void ChangeProperty(unsigned long property, unsigned long type, int format, int mode, const std::vector<unsigned char>& data);
+        void DeleteProperty(unsigned long property);
+        int GetProperty(unsigned long property, long offset, long length, int _delete, int pending, unsigned long reqType, unsigned long& actualType, int& actualFormat, unsigned long& bytesAfter, std::vector<unsigned char>& value);
 
     protected:
         Display* m_display;
-        ExtCodes m_extCodes;
+        unsigned long m_Id;
     };
 
 }}}}//qor::platform::nslinux::x
-
-#endif//QOR_PP_H_LINUX_XINERAMA
-
+    
+#endif//QOR_PP_H_LINUX_XRANDR_PROVIDER

@@ -22,48 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_XINERAMA
-#define QOR_PP_H_LINUX_XINERAMA
+#include "src/configuration/configuration.h"
 
-#include <string>
-#include <vector>
+#include "randr.h"
+#include "crtcinfo.h"
 
 #include "src/platform/os/linux/x/xlib/display.h"
-#include "src/platform/os/linux/x/xlib/gc.h"
-#include "src/platform/os/linux/x/xlib/image.h"
-#include "src/platform/os/linux/x/xlib/visual.h"
-#include "src/platform/os/linux/x/xinput/device.h"
+#include "src/platform/os/linux/x/xlib/window.h"
+#include "src/qor/error/error.h"
 
-//All types on this interface must be portable
+#include <X11/Xlib.h>
+#include <X11/X.h>
+#include <X11/Xcms.h>
+#include <X11/Xutil.h>
+#include <X11/Xresource.h>
+#include <X11/Xatom.h>
+#include <X11/cursorfont.h>
+#include <X11/keysymdef.h>
+#include <X11/keysym.h>
+#include <X11/Xlibint.h>
+#include <X11/Xproto.h>
+#include <X11/Xprotostr.h>
+#include <X11/extensions/Xrandr.h>
+
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
+
+    CrtcInfo::CrtcInfo(void* info) : m_info(info)
+    {        
+    }
+
+    CrtcInfo::~CrtcInfo()
+    {        
+        XRRFreeCrtcInfo((::XRRCrtcInfo*)(m_info));
+    }
     
-    struct qor_pp_module_interface(QOR_LINXINERAMA) ScreenInfo
-    {
-        int   screen_number;
-        short x_org;
-        short y_org;
-        short width;
-        short height;
-    };
-
-    class qor_pp_module_interface(QOR_LINXINERAMA) Xinerama
-    {
-    public:
-    
-        Xinerama(Display* dpy);
-        virtual ~Xinerama();
-
-        int QueryExtension(int& eventBase, int& errorBase);
-        int QueryVersion(int& majorVersionp, int& minor_versionp);
-        bool IsActive();
-        std::vector<ScreenInfo> QueryScreens();
-
-    protected:
-        Display* m_display;
-        ExtCodes m_extCodes;
-    };
-
 }}}}//qor::platform::nslinux::x
-
-#endif//QOR_PP_H_LINUX_XINERAMA
 
