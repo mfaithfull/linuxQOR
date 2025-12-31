@@ -131,6 +131,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         if(m_touch)
         {
             wl_touch_release(m_touch);
+            m_touch = nullptr;
         }
     }
 

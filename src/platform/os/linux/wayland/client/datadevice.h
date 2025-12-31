@@ -40,6 +40,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit DataDevice(wl_data_device* datadevice);
         ~DataDevice();
+        DataDevice(const DataDevice&) = delete;
+        DataDevice& operator=(const DataDevice&) = delete;
         DataDevice(DataDevice&& rhs) noexcept;
         DataDevice& operator=(DataDevice&& rhs) noexcept;
 

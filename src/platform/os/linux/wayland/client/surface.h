@@ -44,6 +44,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit Surface(wl_surface* surface);
         ~Surface();
+        Surface(const Surface&) = delete;
+        Surface& operator=(const Surface&) = delete;
         Surface(Surface&& rhs) noexcept;
         Surface& operator=(Surface&& rhs) noexcept;
         const char* Tag() const{return TagName;}

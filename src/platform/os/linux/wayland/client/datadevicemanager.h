@@ -43,6 +43,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit DataDeviceManager(wl_data_device_manager* ddm);
         ~DataDeviceManager();
+        DataDeviceManager(const DataDeviceManager&) = delete;
+        DataDeviceManager& operator=(const DataDeviceManager&) = delete;
         DataDeviceManager(DataDeviceManager&& rhs) noexcept;
         DataDeviceManager& operator=(DataDeviceManager&& rhs) noexcept;
 

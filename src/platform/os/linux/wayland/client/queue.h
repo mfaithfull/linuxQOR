@@ -35,6 +35,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit Queue(wl_event_queue* queue);
         ~Queue();
+        Queue(const Queue&) = delete;
+        Queue& operator=(const Queue&) = delete;
         Queue(Queue&& rhs) noexcept;
         Queue& operator=(Queue&& rhs) noexcept;
 

@@ -167,6 +167,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         if(m_seat)
         {
             wl_seat_release(m_seat);
+            m_seat = nullptr;
         }
     }
 

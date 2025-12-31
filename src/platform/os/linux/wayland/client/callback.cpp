@@ -49,7 +49,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         {
             continuable("Wayland wl_callback user data tag mismatch");
         }
-        return result;
+        return new Callback(callback);
     }
 
     Callback::Callback(wl_callback* callback) : m_callback(callback)

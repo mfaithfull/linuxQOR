@@ -40,6 +40,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         Callback(wl_callback* callback);
         ~Callback();
+        Callback(wl_callback* callback);
+        ~Callback();
+        Callback(const Callback&) = delete;
+        Callback& operator=(const Callback&) = delete;
         Callback(Callback&& rhs) noexcept;
         Callback& operator=(Callback&& rhs) noexcept;
 

@@ -39,6 +39,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit Output(wl_output* output);
         ~Output();
+        Output(const Output&) = delete;
+        Output& operator=(const Output&) = delete;
         Output(Output&& rhs) noexcept;
         Output& operator=(Output&& rhs) noexcept;
 
