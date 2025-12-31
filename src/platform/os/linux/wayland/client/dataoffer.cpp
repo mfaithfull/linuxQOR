@@ -32,53 +32,141 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const DataOffer::TagName = "QOR::PLATFORM::NSLINUX::WL::DATAOFFER";
+
     DataOffer* DataOffer::DataOfferFrom(wl_data_offer* dataoffer)
     {
-        return reinterpret_cast<DataOffer*>(wl_data_offer_get_user_data(dataoffer));
+        if(!dataoffer)
+        {
+            return nullptr;
+        }
+        DataOffer* result = reinterpret_cast<DataOffer*>(wl_data_offer_get_user_data(dataoffer));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_data_offer user data tag mismatch");
+        }
+        return new DataOffer(dataoffer);
     }
 
     DataOffer::DataOffer(wl_data_offer* dataoffer) : m_dataoffer(dataoffer)
     {
-        wl_data_offer_set_user_data(m_dataoffer, this);
+        if(dataoffer)
+        {
+            wl_data_offer_set_user_data(m_dataoffer, this);
+        }
+        else
+        {
+            continuable("DataOffer created with null wl_data_offer pointer");
+        }
     }    
+
+    DataOffer::DataOffer(DataOffer&& rhs) noexcept : m_dataoffer(rhs.m_dataoffer)
+    {
+        rhs.m_dataoffer = nullptr;
+        if (m_dataoffer)
+        {
+            wl_data_offer_set_user_data(m_dataoffer, this);
+        }
+    }
+
+    DataOffer& DataOffer::operator=(DataOffer&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_dataoffer)
+            {
+                wl_data_offer_destroy(m_dataoffer);
+            }
+
+            m_dataoffer = rhs.m_dataoffer;
+            rhs.m_dataoffer = nullptr;
+
+            if (m_dataoffer)
+            {
+                wl_data_offer_set_user_data(m_dataoffer, this);
+            }
+        }
+        return *this;
+    }
 
     DataOffer::~DataOffer()
     {
-        wl_data_offer_destroy(m_dataoffer);
+        if(m_dataoffer)
+        {
+            wl_data_offer_destroy(m_dataoffer);
+        }
     }
 
-    wl_data_offer* DataOffer::Use()
+    wl_data_offer* DataOffer::Use() const
     {
+        if(!m_dataoffer)
+        {
+            warning("Using DataOffer with null wl_data_offer pointer");
+        }
         return m_dataoffer;
     }
 
-    uint32_t DataOffer::Version()
+    uint32_t DataOffer::Version() const
     {
+        if(!m_dataoffer)
+        {
+            warning("Getting version of DataOffer with null wl_data_offer pointer");
+            return 0;
+        }
         return wl_data_offer_get_version(m_dataoffer);
     }
     
     int DataOffer::AddListener(const wl_data_offer_listener& listener, void* context)
     {
+        if(!m_dataoffer)
+        {
+            warning("Adding listener to DataOffer with null wl_data_offer pointer");
+            return -1;
+        }
         return wl_data_offer_add_listener(m_dataoffer, &listener, context);
     }
 
     void DataOffer::Accept(uint32_t serial, const std::string& mimeType)
     {
+        if(!m_dataoffer)
+        {
+            warning("Accepting DataOffer with null wl_data_offer pointer");
+            return;
+        }
         wl_data_offer_accept(m_dataoffer, serial, mimeType.c_str());
     }
 
     void DataOffer::Finish()
     {
+        if(!m_dataoffer)
+        {
+            warning("Finishing DataOffer with null wl_data_offer pointer");
+            return;
+        }
         wl_data_offer_finish(m_dataoffer);
     }
 
     void DataOffer::Receive(const std::string& mimeType, int32_t fd)
     {
+        if(!m_dataoffer)
+        {
+            warning("Receiving DataOffer with null wl_data_offer pointer");
+            return;
+        }
         wl_data_offer_receive(m_dataoffer, mimeType.c_str(), fd);
     }
 
     void DataOffer::SetActions(uint32_t DnDActions, uint32_t preferredAction)
     {
+        if(!m_dataoffer)
+        {
+            warning("Setting actions on DataOffer with null wl_data_offer pointer");
+            return;
+        }
         wl_data_offer_set_actions(m_dataoffer, DnDActions, preferredAction);
     }
     

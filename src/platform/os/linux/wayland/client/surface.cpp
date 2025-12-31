@@ -35,78 +35,191 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Surface::TagName = "QOR::PLATFORM::NSLINUX::WL::SURFACE";
+
     Surface* Surface::SurfaceFrom(wl_surface* surface)
     {
-        return reinterpret_cast<Surface*>(wl_surface_get_user_data(surface));
+        if(!surface)
+        {
+            return nullptr;
+        }
+        Surface* result = reinterpret_cast<Surface*>(wl_surface_get_user_data(surface));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_surface user data tag mismatch");
+        }
+        return new Surface(surface);
     }
 
     Surface::Surface(wl_surface* surface) : m_surface(surface)
     {
-        wl_surface_set_user_data(m_surface, this);
+        if(surface)
+        {
+            wl_surface_set_user_data(m_surface, this);
+        }
+        else
+        {
+            continuable("Surface created with null wl_surface pointer");
+        }        
+    }
+
+    Surface::Surface(Surface&& rhs) noexcept : m_surface(rhs.m_surface)
+    {
+        rhs.m_surface = nullptr;
+        if (m_surface)
+        {
+            wl_surface_set_user_data(m_surface, this);
+        }
+    }
+
+    Surface& Surface::operator=(Surface&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_surface)
+            {
+                wl_surface_destroy(m_surface);
+            }
+
+            m_surface = rhs.m_surface;
+            rhs.m_surface = nullptr;
+
+            if (m_surface)
+            {
+                wl_surface_set_user_data(m_surface, this);
+            }
+        }
+        return *this;
     }
 
     Surface::~Surface()
     {
-        wl_surface_destroy(m_surface);
+        if(m_surface)
+        {
+            wl_surface_destroy(m_surface);
+        }
     }
 
-    wl_surface* Surface::Use()
+    wl_surface* Surface::Use() const
     {
+        if(!m_surface)
+        {
+            warning("Using Surface with null wl_surface pointer");
+        }
         return m_surface;
     }
 
-    uint32_t Surface::Version()
+    uint32_t Surface::Version() const
     {
+        if(!m_surface)
+        {
+            warning("Getting version of Surface with null wl_surface pointer");
+            return 0;
+        }
         return wl_surface_get_version(m_surface);
     }
 
     int Surface::AddListener(const wl_surface_listener& listener, void* context)
     {
+        if(!m_surface)
+        {
+            warning("Adding listener to Surface with null wl_surface pointer");
+            return -1;
+        }
         return wl_surface_add_listener(m_surface, &listener, context);
     }
 
     void Surface::Attach(Buffer& buffer, int32_t x, int32_t y)
     {
+        if(!m_surface)
+        {
+            warning("Attaching Buffer to Surface with null wl_surface pointer");
+            return;
+        }
         wl_surface_attach(m_surface, buffer.Use(), x, y);
     }
 
     void Surface::Damage(int32_t x, int32_t y, int32_t width, int32_t height)
     {
+        if(!m_surface)
+        {
+            warning("Damaging Surface with null wl_surface pointer");
+            return;
+        }
         wl_surface_damage(m_surface, x, y, width, height);
     }
 
     Callback Surface::Frame()
     {
+        if(!m_surface)
+        {
+            warning("Creating Frame Callback from Surface with null wl_surface pointer");
+            return Callback(nullptr);
+        }
         return Callback(wl_surface_frame(m_surface));
     }
 
     void Surface::SetOpaqueRegion(Region& region)
     {
+        if(!m_surface)
+        {
+            warning("Setting opaque region on Surface with null wl_surface pointer");
+            return;
+        }
         wl_surface_set_opaque_region(m_surface, region.Use());
     }
 
     void Surface::SetInputRegion(Region& region)
     {
+        if(!m_surface)
+        {
+            warning("Setting input region on Surface with null wl_surface pointer");
+            return;
+        }
         wl_surface_set_input_region(m_surface, region.Use());
     }
 
     void Surface::Commit()
     {
+        if(!m_surface)
+        {
+            warning("Committing Surface with null wl_surface pointer");
+            return;
+        }
         wl_surface_commit(m_surface);
     }
 
     void Surface::SetBufferTransform(int32_t transform)
     {
+        if(!m_surface)
+        {
+            warning("Setting buffer transform on Surface with null wl_surface pointer");
+            return;
+        }
         wl_surface_set_buffer_transform(m_surface, transform);
     }
 
     void Surface::SetBufferScale(int32_t scale)
     {
+        if(!m_surface)
+        {
+            warning("Setting buffer scale on Surface with null wl_surface pointer");
+            return;
+        }
         wl_surface_set_buffer_scale(m_surface, scale);
     }
 
     void Surface::DamageBuffer(int32_t x, int32_t y, int32_t width, int32_t height)
     {
+        if(!m_surface)
+        {
+            warning("Damaging buffer of Surface with null wl_surface pointer");
+            return;
+        }
         wl_surface_damage_buffer(m_surface, x, y, width, height);
     }    
 

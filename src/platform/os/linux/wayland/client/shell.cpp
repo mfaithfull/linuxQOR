@@ -34,34 +34,101 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Shell::TagName = "QOR::PLATFORM::NSLINUX::WL::SHELL";
+
     Shell::Shell(wl_shell* shell) : m_shell(shell)
     {
-        wl_shell_set_user_data(m_shell, this);
+        if(shell)
+        {
+            wl_shell_set_user_data(m_shell, this);
+        }
+        else
+        {
+            continuable("Shell created with null wl_shell pointer");
+        }
+    }
+
+    Shell::Shell(Shell&& rhs) noexcept : m_shell(rhs.m_shell)
+    {
+        rhs.m_shell = nullptr;
+        if (m_shell)
+        {
+            wl_shell_set_user_data(m_shell, this);
+        }
+    }
+
+    Shell& Shell::operator=(Shell&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_shell)
+            {
+                wl_shell_destroy(m_shell);
+            }
+
+            m_shell = rhs.m_shell;
+            rhs.m_shell = nullptr;
+
+            if (m_shell)
+            {
+                wl_shell_set_user_data(m_shell, this);
+            }
+        }
+        return *this;
     }
 
     Shell::~Shell()
     {
-        wl_shell_destroy(m_shell);
+        if(m_shell)
+        {
+            wl_shell_destroy(m_shell);
+        }
     }
 
-    wl_shell* Shell::Use()
+    wl_shell* Shell::Use() const
     {
+        if(!m_shell)
+        {
+            warning("Using Shell with null wl_shell pointer");
+        }
         return m_shell;
     }
 
     Shell* Shell::ShellFrom(wl_shell* shell)
     {
+        if(!shell)
+        {
+            return nullptr;
+        }
         Shell* result = reinterpret_cast<Shell*>(wl_shell_get_user_data(shell));
-        return result;
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_shell user data tag mismatch");
+        }
+        return new Shell(shell);
     }
 
-    uint32_t Shell::Version()
+    uint32_t Shell::Version() const
     {
+        if(!m_shell)
+        {
+            warning("Getting version of Shell with null wl_shell pointer");
+            return 0;
+        }
         return wl_shell_get_version(m_shell);
     }
 
     ShellSurface Shell::GetSurface(Surface* surface)
     {
+        if(!m_shell)
+        {
+            warning("Getting ShellSurface from Shell with null wl_shell pointer");
+            return ShellSurface(nullptr);
+        }
         return ShellSurface(wl_shell_get_shell_surface(m_shell, surface ? surface->Use() : nullptr));
     }
         

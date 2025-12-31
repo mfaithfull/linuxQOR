@@ -35,78 +35,191 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const ShellSurface::TagName = "QOR::PLATFORM::NSLINUX::WL::SHELLSURFACE";
+
     ShellSurface* ShellSurface::ShellSurfaceFrom(wl_shell_surface* shellsurface)
     {
-        return reinterpret_cast<ShellSurface*>(wl_shell_surface_get_user_data(shellsurface));
+        if(!shellsurface)
+        {
+            return nullptr;
+        }
+        ShellSurface* result = reinterpret_cast<ShellSurface*>(wl_shell_surface_get_user_data(shellsurface));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_shell_surface user data tag mismatch");
+        }
+        return new ShellSurface(shellsurface);
     }
 
     ShellSurface::ShellSurface(wl_shell_surface* shellsurface) : m_shellsurface(shellsurface)
     {
-        wl_shell_surface_set_user_data(m_shellsurface, this);
+        if(shellsurface)
+        {   
+            wl_shell_surface_set_user_data(m_shellsurface, this);
+        }
+        else
+        {
+            continuable("ShellSurface created with null wl_shell_surface pointer");
+        }
+    }
+
+    ShellSurface::ShellSurface(ShellSurface&& rhs) noexcept : m_shellsurface(rhs.m_shellsurface)
+    {
+        rhs.m_shellsurface = nullptr;
+        if (m_shellsurface)
+        {
+            wl_shell_surface_set_user_data(m_shellsurface, this);
+        }
+    }
+
+    ShellSurface& ShellSurface::operator=(ShellSurface&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_shellsurface)
+            {
+                wl_shell_surface_destroy(m_shellsurface);
+            }
+
+            m_shellsurface = rhs.m_shellsurface;
+            rhs.m_shellsurface = nullptr;
+
+            if (m_shellsurface)
+            {
+                wl_shell_surface_set_user_data(m_shellsurface, this);
+            }
+        }
+        return *this;
     }
 
     ShellSurface::~ShellSurface()
     {
-        wl_shell_surface_destroy(m_shellsurface);
+        if(m_shellsurface)
+        {
+            wl_shell_surface_destroy(m_shellsurface);
+        }
     }
 
-    wl_shell_surface* ShellSurface::Use()
+    wl_shell_surface* ShellSurface::Use() const
     {
+        if(!m_shellsurface)
+        {
+            warning("Using ShellSurface with null wl_shell_surface pointer");
+        }
         return m_shellsurface;
     }
 
-    uint32_t ShellSurface::Version()
+    uint32_t ShellSurface::Version() const
     {
+        if(!m_shellsurface)
+        {
+            warning("Getting version of ShellSurface with null wl_shell_surface pointer");
+            return 0;
+        }
         return wl_shell_surface_get_version(m_shellsurface);
     }
 
     int ShellSurface::AddListener(const wl_shell_surface_listener& listener, void* context)
     {
+        if(!m_shellsurface)
+        {
+            warning("Adding listener to ShellSurface with null wl_shell_surface pointer");
+            return -1;
+        }
         return wl_shell_surface_add_listener(m_shellsurface, &listener, context);
     }
 
     void ShellSurface::Move(Seat* seat, uint32_t serial)
     {
+        if(!m_shellsurface)
+        {
+            warning("Moving ShellSurface with null wl_shell_surface pointer");
+            return;
+        }
         wl_shell_surface_move(m_shellsurface, seat ? seat->Use() : nullptr, serial);
     }
 
     void ShellSurface::Pong(uint32_t serial)
     {
+        if(!m_shellsurface)
+        {
+            warning("Pong on ShellSurface with null wl_shell_surface pointer");
+            return;
+        }
         wl_shell_surface_pong(m_shellsurface, serial);
     }
 
     void ShellSurface::SetClass(const std::string& className)
     {
+        if(!m_shellsurface)
+        {
+            warning("Setting class on ShellSurface with null wl_shell_surface pointer");
+            return;
+        }
         wl_shell_surface_set_class(m_shellsurface, className.c_str());
     }
 
     void ShellSurface::SetFullScreen(uint32_t method, uint32_t framerate, Output* output)
     {
+        if(!m_shellsurface)
+        {
+            warning("Setting fullscreen on ShellSurface with null wl_shell_surface pointer");
+            return;
+        }
         wl_shell_surface_set_fullscreen(m_shellsurface, method, framerate, output ? output->Use() : nullptr);
     }
 
     void ShellSurface::SetMaximized(Output* output)
     {
+        if(!m_shellsurface)
+        {
+            warning("Setting maximized on ShellSurface with null wl_shell_surface pointer");
+            return;
+        }
         wl_shell_surface_set_maximized(m_shellsurface, output ? output->Use() : nullptr);
     }
 
     void ShellSurface::SetPopup(Seat* seat, uint32_t serial, Surface* parent, int32_t x, int32_t y, uint32_t flags)
     {
+        if(!m_shellsurface)
+        {
+            warning("Setting popup on ShellSurface with null wl_shell_surface pointer");
+            return;
+        }
         wl_shell_surface_set_popup(m_shellsurface, seat ? seat->Use() : nullptr, serial, parent ? parent->Use() : nullptr, x, y, flags);
     }
 
     void ShellSurface::SetTitle(const std::string& title)
     {
+        if(!m_shellsurface)
+        {
+            warning("Setting title on ShellSurface with null wl_shell_surface pointer");
+            return;
+        }
         wl_shell_surface_set_title(m_shellsurface, title.c_str());
     }
 
     void ShellSurface::SetTopLevel()
     {
+        if(!m_shellsurface)
+        {
+            warning("Setting toplevel on ShellSurface with null wl_shell_surface pointer");
+            return;
+        }
         wl_shell_surface_set_toplevel(m_shellsurface);
     }
 
     void ShellSurface::SetTransient(Surface* parent, int32_t x, int32_t y, uint32_t flags)
     {
+        if(!m_shellsurface)
+        {
+            warning("Setting transient on ShellSurface with null wl_shell_surface pointer");
+            return;
+        }
         wl_shell_surface_set_transient(m_shellsurface, parent ? parent->Use() : nullptr, x, y, flags);
     }    
 

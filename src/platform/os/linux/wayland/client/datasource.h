@@ -36,14 +36,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) DataSource
     {
     public:
-        
+        static const char* const TagName;
         static DataSource* DataSourceFrom(wl_data_source* datasource);
 
-        DataSource(wl_data_source* datasource);
+        explicit DataSource(wl_data_source* datasource);
         ~DataSource();
-
-        wl_data_source* Use();
-        uint32_t Version();
+        DataSource(DataSource&& rhs) noexcept;
+        DataSource& operator=(DataSource&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
+        wl_data_source* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_data_source_listener& listener, void* context);
         void Offer(const std::string& mimeType);
         void SetActions(uint32_t DnDActions);
@@ -53,6 +55,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_data_source* m_datasource;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_DATASOURCE

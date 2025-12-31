@@ -34,14 +34,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Region
     {
     public:
-        
+        static const char* const TagName;
         static Region* RegionFrom(wl_region* region);
 
         Region(wl_region* region);
         ~Region();
-
-        wl_region* Use();
-        uint32_t Version();
+        Region(Region&& rhs) noexcept;
+        Region& operator=(Region&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
+        wl_region* Use() const;
+        uint32_t Version() const;
         void Add(int32_t x, int32_t y, int32_t width, int32_t height);
         void Subtract(int32_t x, int32_t y, int32_t width, int32_t height);
 
@@ -50,6 +52,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_region* m_region;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
-#endif//QOR_PP_H_LINUX_WAYLAND_SURFACE
+#endif//QOR_PP_H_LINUX_WAYLAND_REGION

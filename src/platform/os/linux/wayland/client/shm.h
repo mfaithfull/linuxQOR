@@ -37,15 +37,17 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemory
     {
     public:
-        
+        static const char* const TagName;
         static SharedMemory* SharedMemoryFrom(wl_shm* shm);
 
-        SharedMemory(wl_shm* shm);
+        explicit SharedMemory(wl_shm* shm);
         ~SharedMemory();
+        SharedMemory(SharedMemory&& rhs) noexcept;
+        SharedMemory& operator=(SharedMemory&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
 
-        wl_shm* Use();
-        uint32_t Version();
-
+        wl_shm* Use() const;
+        uint32_t Version() const;
         SharedMemoryPool CreatePool(int32_t fd, int32_t size);
         int AddListener(const wl_shm_listener& listener, void* context);
 
@@ -54,6 +56,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_shm* m_shm;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_SHM

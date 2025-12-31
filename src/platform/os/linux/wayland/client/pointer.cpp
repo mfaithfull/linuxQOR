@@ -33,43 +33,119 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Pointer::TagName = "QOR::PLATFORM::NSLINUX::WL::POINTER";
+
     Pointer* Pointer::PointerFrom(wl_pointer* pointer)
     {
-        return reinterpret_cast<Pointer*>(wl_pointer_get_user_data(pointer));
+        if(!pointer)
+        {
+            return nullptr;
+        }
+        Pointer* result = reinterpret_cast<Pointer*>(wl_pointer_get_user_data(pointer));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_pointer user data tag mismatch");
+        }
+        return new Pointer(pointer);
     }
 
     Pointer::Pointer(wl_pointer* pointer) : m_pointer(pointer)
     {
-        wl_pointer_set_user_data(m_pointer, this);
+        if(pointer)
+        {
+            wl_pointer_set_user_data(m_pointer, this);
+        }
+        else
+        {
+            continuable("Pointer created with null wl_pointer pointer");
+        }
     }    
+
+    Pointer::Pointer(Pointer&& rhs) noexcept : m_pointer(rhs.m_pointer)
+    {
+        rhs.m_pointer = nullptr;
+        if (m_pointer)
+        {
+            wl_pointer_set_user_data(m_pointer, this);
+        }
+    }
+
+    Pointer& Pointer::operator=(Pointer&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_pointer)
+            {
+                wl_pointer_destroy(m_pointer);
+            }
+
+            m_pointer = rhs.m_pointer;
+            rhs.m_pointer = nullptr;
+
+            if (m_pointer)
+            {
+                wl_pointer_set_user_data(m_pointer, this);
+            }
+        }
+        return *this;
+    }
 
     Pointer::~Pointer()
     {
-        wl_pointer_destroy(m_pointer);
+        if(m_pointer)
+        {
+            wl_pointer_destroy(m_pointer);
+        }
     }
 
-    wl_pointer* Pointer::Use()
+    wl_pointer* Pointer::Use() const
     {
+        if(!m_pointer)
+        {
+            warning("Using Pointer with null wl_pointer pointer");
+        }
         return m_pointer;
     }
 
-    uint32_t Pointer::Version()
+    uint32_t Pointer::Version() const
     {
+        if(!m_pointer)
+        {
+            warning("Getting version of Pointer with null wl_pointer pointer");
+            return 0;
+        }
         return wl_pointer_get_version(m_pointer);
     }
 
     int Pointer::AddListener(const wl_pointer_listener& listener, void* context)
     {
+        if(!m_pointer)
+        {
+            warning("Adding listener to Pointer with null wl_pointer pointer");
+            return -1;
+        }
         return wl_pointer_add_listener(m_pointer, &listener, context);
     }
 
     void Pointer::Release()
     {
-        wl_pointer_release(m_pointer);
+        if(m_pointer)
+        {
+            wl_pointer_release(m_pointer);
+        }
     }
 
     void Pointer::SetCursor(uint32_t serial, Surface* surface, int32_t hotspot_x, int32_t hotspot_y)
     {
+        if(!m_pointer)
+        {
+            warning("Setting cursor on Pointer with null wl_pointer pointer");
+            return;
+        }
         wl_pointer_set_cursor(m_pointer, serial, surface ? surface->Use() : nullptr, hotspot_x, hotspot_y);
     }
     

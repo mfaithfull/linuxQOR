@@ -35,28 +35,91 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const DataDeviceManager::TagName = "QOR::PLATFORM::NSLINUX::WL::DATADEVICEMANAGER";
+
     DataDeviceManager* DataDeviceManager::DataDeviceManagerFrom(wl_data_device_manager* ddm)
     {
-        return reinterpret_cast<DataDeviceManager*>(wl_data_device_manager_get_user_data(ddm));
+        if(!ddm)
+        {
+            return nullptr;
+        }
+        DataDeviceManager* result = reinterpret_cast<DataDeviceManager*>(wl_data_device_manager_get_user_data(ddm));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_data_device_manager user data tag mismatch");
+        }
+        return new DataDeviceManager(ddm);
     }
 
     DataDeviceManager::DataDeviceManager(wl_data_device_manager* ddm) : m_ddm(ddm)
     {
-        wl_data_device_manager_set_user_data(m_ddm, this);
+        if(ddm)
+        {
+            wl_data_device_manager_set_user_data(m_ddm, this);
+        }
+        else
+        {
+            continuable("DataDeviceManager created with null wl_data_device_manager pointer");
+        }
     }    
+
+    DataDeviceManager::DataDeviceManager(DataDeviceManager&& rhs) noexcept : m_ddm(rhs.m_ddm)
+    {
+        rhs.m_ddm = nullptr;
+        if (m_ddm)
+        {
+            wl_data_device_manager_set_user_data(m_ddm, this);
+        }
+    }
+
+    DataDeviceManager& DataDeviceManager::operator=(DataDeviceManager&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_ddm)
+            {
+                wl_data_device_manager_destroy(m_ddm);
+            }
+
+            m_ddm = rhs.m_ddm;
+            rhs.m_ddm = nullptr;
+
+            if (m_ddm)
+            {
+                wl_data_device_manager_set_user_data(m_ddm, this);
+            }
+        }
+        return *this;
+    }
 
     DataDeviceManager::~DataDeviceManager()
     {
-        wl_data_device_manager_destroy(m_ddm);
+        if(m_ddm)
+        {
+            wl_data_device_manager_destroy(m_ddm);
+        }
     }
 
-    wl_data_device_manager* DataDeviceManager::Use()
+    wl_data_device_manager* DataDeviceManager::Use() const
     {
+        if(!m_ddm)
+        {
+            warning("Using DataDeviceManager with null wl_data_device_manager pointer");
+        }
         return m_ddm;
     }
 
-    uint32_t DataDeviceManager::Version()
+    uint32_t DataDeviceManager::Version() const
     {
+        if(!m_ddm)
+        {
+            warning("Getting version of DataDeviceManager with null wl_data_device_manager pointer");
+            return 0;
+        }
         return wl_data_device_manager_get_version(m_ddm);
     }
 

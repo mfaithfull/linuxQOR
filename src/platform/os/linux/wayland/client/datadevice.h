@@ -35,14 +35,18 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) DataDevice
     {
     public:
-        
+        static const char* const TagName;
         static DataDevice* DataDeviceFrom(wl_data_device* datadevice);
 
-        DataDevice(wl_data_device* datadevice);
+        explicit DataDevice(wl_data_device* datadevice);
         ~DataDevice();
+        DataDevice(DataDevice&& rhs) noexcept;
+        DataDevice& operator=(DataDevice&& rhs) noexcept;
 
-        wl_data_device* Use();
-        uint32_t Version();
+        const char* Tag() const{return TagName;}
+
+        wl_data_device* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_data_device_listener& listener, void* context);
 
     private:
@@ -50,6 +54,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_data_device* m_datadevice;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_DATADEVICE

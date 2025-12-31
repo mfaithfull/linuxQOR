@@ -35,14 +35,18 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Buffer
     {
     public:
-        
+        static const char* const TagName;
         static Buffer* BufferFrom(wl_buffer* buffer);
 
-        Buffer(wl_buffer* buffer);
+        explicit Buffer(wl_buffer* buffer);
         ~Buffer();
+        Buffer(Buffer&& rhs) noexcept;
+        Buffer& operator=(Buffer&& rhs) noexcept;
 
-        wl_buffer* Use();
-        uint32_t Version();
+        const char* Tag() const{return TagName;}
+
+        wl_buffer* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_buffer_listener& listener, void* context);
         
     private:
@@ -50,6 +54,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_buffer* m_buffer;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_BUFFER

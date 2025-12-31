@@ -33,15 +33,17 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     {
     public:
 
-        Queue(wl_event_queue* queue);
+        explicit Queue(wl_event_queue* queue);
         ~Queue();
+        Queue(Queue&& rhs) noexcept;
+        Queue& operator=(Queue&& rhs) noexcept;
 
-        wl_event_queue* Use();
+        wl_event_queue* Use() const;
 
     private:
         wl_event_queue* m_queue;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_QUEUE

@@ -34,20 +34,23 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Output
     {
     public:
-        
+        static const char* const TagName;
         static Output* OutputFrom(wl_output* output);
 
-        Output(wl_output* output);
+        explicit Output(wl_output* output);
         ~Output();
+        Output(Output&& rhs) noexcept;
+        Output& operator=(Output&& rhs) noexcept;
 
-        wl_output* Use();
-        uint32_t Version();
+        const char* Tag() const{return TagName;}
+        wl_output* Use() const;
+        uint32_t Version() const;
 
     private:
 
         wl_output* m_output;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_OUTPUT

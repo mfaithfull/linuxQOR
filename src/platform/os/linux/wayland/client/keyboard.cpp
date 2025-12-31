@@ -32,39 +32,114 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Keyboard::TagName = "QOR::PLATFORM::NSLINUX::WL::KEYBOARD";
+
     Keyboard* Keyboard::KeyboardFrom(wl_keyboard* keyboard)
     {
-        return reinterpret_cast<Keyboard*>(wl_keyboard_get_user_data(keyboard));
+        if(!keyboard)
+        {
+            return nullptr;
+        }
+        Keyboard* result = reinterpret_cast<Keyboard*>(wl_keyboard_get_user_data(keyboard));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_keyboard user data tag mismatch");
+        }
+        return new Keyboard(keyboard);
     }
 
     Keyboard::Keyboard(wl_keyboard* keyboard) : m_keyboard(keyboard)
     {
-        wl_keyboard_set_user_data(m_keyboard, this);
+        if(keyboard)
+        {
+            wl_keyboard_set_user_data(m_keyboard, this);
+        }
+        else
+        {
+            continuable("Keyboard created with null wl_keyboard pointer");
+        }
     }    
+
+    Keyboard::Keyboard(Keyboard&& rhs) noexcept : m_keyboard(rhs.m_keyboard)
+    {
+        rhs.m_keyboard = nullptr;
+        if (m_keyboard)
+        {
+            wl_keyboard_set_user_data(m_keyboard, this);
+        }
+    }
+
+    Keyboard& Keyboard::operator=(Keyboard&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_keyboard)
+            {
+                wl_keyboard_destroy(m_keyboard);
+            }
+
+            m_keyboard = rhs.m_keyboard;
+            rhs.m_keyboard = nullptr;
+
+            if (m_keyboard)
+            {
+                wl_keyboard_set_user_data(m_keyboard, this);
+            }
+        }
+        return *this;
+    }
 
     Keyboard::~Keyboard()
     {
-        wl_keyboard_destroy(m_keyboard);
+        if(m_keyboard)
+        {
+            wl_keyboard_destroy(m_keyboard);
+        }
     }
 
-    wl_keyboard* Keyboard::Use()
+    wl_keyboard* Keyboard::Use() const
     {
+        if(!m_keyboard)
+        {
+            warning("Using Keyboard with null wl_keyboard pointer");
+        }
         return m_keyboard;
     }
 
-    uint32_t Keyboard::Version()
+    uint32_t Keyboard::Version() const
     {
+        if(!m_keyboard)
+        {
+            warning("Getting version of Keyboard with null wl_keyboard pointer");
+            return 0;
+        }
         return wl_keyboard_get_version(m_keyboard);
     }
 
     int Keyboard::AddListener(const wl_keyboard_listener& listener, void* context)
     {
+        if(!m_keyboard)
+        {
+            warning("Adding listener to Keyboard with null wl_keyboard pointer");
+            return -1;
+        }
         return wl_keyboard_add_listener(m_keyboard, &listener, context);
     }
 
     void Keyboard::Release()
     {
-        wl_keyboard_release(m_keyboard);
+        if(m_keyboard)
+        {
+            wl_keyboard_destroy(m_keyboard);
+        }
+        else
+        {
+            warning("Releasing Keyboard with null wl_keyboard pointer");
+        }
     }
     
 }}}}//qor::platform::nslinux::wl

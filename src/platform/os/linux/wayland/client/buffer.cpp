@@ -32,35 +32,102 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Buffer::TagName = "QOR::PLATFORM::NSLINUX::WL::BUFFER";
+
     Buffer* Buffer::BufferFrom(wl_buffer* buffer)
     {
-        return reinterpret_cast<Buffer*>(wl_buffer_get_user_data(buffer));
+        if(!buffer)
+        {
+            return nullptr;
+        }
+        Buffer* result = reinterpret_cast<Buffer*>(wl_buffer_get_user_data(buffer));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_buffer user data tag mismatch");
+        }
+        return new Buffer(buffer);
     }
 
     Buffer::Buffer(wl_buffer* buffer) : m_buffer(buffer)
     {
-        wl_buffer_set_user_data(m_buffer, this);
+        if(buffer)
+        {
+            wl_buffer_set_user_data(m_buffer, this);
+        }
+        else
+        {
+            continuable("Null wl_buffer pointer");
+        }
+    }
+
+    Buffer::Buffer(Buffer&& rhs) noexcept : m_buffer(rhs.m_buffer)
+    {
+        rhs.m_buffer = nullptr;
+        if (m_buffer)
+        {
+            wl_buffer_set_user_data(m_buffer, this);
+        }
+    }
+
+    Buffer& Buffer::operator=(Buffer&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_buffer)
+            {
+                wl_buffer_destroy(m_buffer);
+            }
+
+            m_buffer = rhs.m_buffer;
+            rhs.m_buffer = nullptr;
+
+            if (m_buffer)
+            {
+                wl_buffer_set_user_data(m_buffer, this);
+            }
+        }
+        return *this;
     }
 
     Buffer::~Buffer()
     {
-        wl_buffer_destroy(m_buffer);
+        if(m_buffer)
+        {
+            wl_buffer_destroy(m_buffer);
+        }
     }
 
-    wl_buffer* Buffer::Use()
+    wl_buffer* Buffer::Use() const
     {
+        if(!m_buffer)
+        {
+            warning("returning null wl_buffer pointer");
+        }
         return m_buffer;
     }
 
-    uint32_t Buffer::Version()
+    uint32_t Buffer::Version() const
     {
+        if(!m_buffer)
+        {
+            warning("returning zero version for null wl_buffer pointer");
+            return 0;
+        }
         return wl_buffer_get_version(m_buffer);
     }
 
     int Buffer::AddListener(const wl_buffer_listener& listener, void* context)
     {
+        if(!m_buffer)
+        {
+            warning("adding listener to null wl_buffer pointer");
+            return -1;
+        }
         return wl_buffer_add_listener(m_buffer, &listener, context);
     }
         
-
 }}}}//qor::platform::nslinux::wl

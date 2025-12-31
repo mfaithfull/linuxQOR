@@ -32,33 +32,102 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const DataDevice::TagName = "QOR::PLATFORM::NSLINUX::WL::DATADEVICE";
+
     DataDevice* DataDevice::DataDeviceFrom(wl_data_device* datadevice)
     {
-        return reinterpret_cast<DataDevice*>(wl_data_device_get_user_data(datadevice));
+        if(!datadevice)
+        {
+            return nullptr;
+        }
+        DataDevice* result = reinterpret_cast<DataDevice*>(wl_data_device_get_user_data(datadevice));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_data_device user data tag mismatch");
+        }
+        return new DataDevice(datadevice);
     }
 
     DataDevice::DataDevice(wl_data_device* datadevice) : m_datadevice(datadevice)
     {
-        wl_data_device_set_user_data(m_datadevice, this);
-    }    
+        if(datadevice)
+        {
+            wl_data_device_set_user_data(m_datadevice, this);
+        }
+        else
+        {
+            continuable("DataDevice created with null wl_data_device pointer");
+        }
+    }
+
+    DataDevice::DataDevice(DataDevice&& rhs) noexcept : m_datadevice(rhs.m_datadevice)
+    {
+        rhs.m_datadevice = nullptr;
+        if (m_datadevice)
+        {
+            wl_data_device_set_user_data(m_datadevice, this);
+        }
+    }
+
+
+    DataDevice& DataDevice::operator=(DataDevice&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_datadevice)
+            {
+                wl_data_device_destroy(m_datadevice);
+            }
+
+            m_datadevice = rhs.m_datadevice;
+            rhs.m_datadevice = nullptr;
+
+            if (m_datadevice)
+            {
+                wl_data_device_set_user_data(m_datadevice, this);
+            }
+        }
+        return *this;
+    }
 
     DataDevice::~DataDevice()
     {
-        wl_data_device_destroy(m_datadevice);
+        if(m_datadevice)
+        {
+            wl_data_device_destroy(m_datadevice);
+        }
     }
 
-    wl_data_device* DataDevice::Use()
+    wl_data_device* DataDevice::Use() const
     {
+        if(!m_datadevice)
+        {
+            warning("Using DataDevice with null wl_data_device pointer");
+        }
         return m_datadevice;
     }
 
-    uint32_t DataDevice::Version()
+    uint32_t DataDevice::Version() const
     {
+        if(!m_datadevice)
+        {
+            warning("Getting version of DataDevice with null wl_data_device pointer");
+            return 0;
+        }
         return wl_data_device_get_version(m_datadevice);
     }
     
     int DataDevice::AddListener(const wl_data_device_listener& listener, void* context)
     {
+        if(!m_datadevice)
+        {
+            warning("Adding listener to DataDevice with null wl_data_device pointer");
+            return -1;
+        }
         return wl_data_device_add_listener(m_datadevice, &listener, context);
     }
     

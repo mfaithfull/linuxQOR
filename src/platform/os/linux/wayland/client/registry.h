@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_LINUX_WAYLAND_REGISTRY
 #define QOR_PP_H_LINUX_WAYLAND_REGISTRY
 
+#include <stdint.h>
+
 struct wl_registry;
 struct wl_registry_listener;
 struct wl_interface;
@@ -34,16 +36,18 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Registry
     {
     public:
-        
-        static Registry* RegistryFrom(wl_registry* seat);
+        static const char* const TagName;
+        static Registry* RegistryFrom(wl_registry* registry);
 
-        Registry(wl_registry* registry);
+        explicit Registry(wl_registry* registry);
         ~Registry();
-
-        wl_registry* Use();
+        Registry(Registry&& rhs) noexcept;
+        Registry& operator=(Registry&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
+        wl_registry* Use() const;
 
         int AddListener(const wl_registry_listener& listener, void* data);
-        void Bind(uint32_t name, uint32_t version, const wl_interface& interface);
+        void Bind(uint32_t name, uint32_t version, wl_interface& interface);
         uint32_t Version();
 
     private:
@@ -51,6 +55,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_registry* m_registry;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_REGISTRY

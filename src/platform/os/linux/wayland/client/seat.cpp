@@ -32,58 +32,142 @@
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
+#include <stdexcept>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Seat::TagName = "QOR::PLATFORM::NSLINUX::WL::SEAT";
+
     Seat::Seat(wl_seat* seat) : m_seat(seat)
     {
-        wl_seat_set_user_data(m_seat, this);
+        if(seat)
+        {
+            wl_seat_set_user_data(m_seat, this);
+        }
+        else
+        {
+            continuable("Seat created with null wl_seat pointer");
+        }
+    }
+
+    Seat::Seat(Seat&& rhs) noexcept : m_seat(rhs.m_seat)
+    {
+        rhs.m_seat = nullptr;
+        if (m_seat)
+        {
+            wl_seat_set_user_data(m_seat, this);
+        }
+    }
+
+    Seat& Seat::operator=(Seat&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_seat)
+            {
+                wl_seat_destroy(m_seat);
+            }
+            m_seat = rhs.m_seat;
+            rhs.m_seat = nullptr;
+            if (m_seat)
+            {
+                wl_seat_set_user_data(m_seat, this);
+            }
+        }
+        return *this;
     }
 
     Seat::~Seat()
     {
-        wl_seat_destroy(m_seat);
+        if(m_seat)
+        {
+            wl_seat_destroy(m_seat);
+        }
     }
 
-    wl_seat* Seat::Use()
+    wl_seat* Seat::Use() const
     {
+        if(!m_seat)
+        {
+            warning("Using Seat with null wl_seat pointer");
+        }
         return m_seat;
     }
 
     Seat* Seat::SeatFrom(wl_seat* seat)
     {
+        if(!seat)
+        {
+            return nullptr;
+        }
         Seat* result = reinterpret_cast<Seat*>(wl_seat_get_user_data(seat));
-        return result;
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_seat user data tag mismatch");
+        }
+        return new Seat(seat);
     }
 
-    uint32_t Seat::Version()
+    uint32_t Seat::Version() const
     {
+        if(!m_seat)
+        {
+            warning("Getting version of Seat with null wl_seat pointer");
+            return 0;
+        }
         return wl_seat_get_version(m_seat);
     }
 
     int Seat::AddListener(const wl_seat_listener& listener, void* context)
     {
+        if(!m_seat)
+        {
+            warning("Adding listener to Seat with null wl_seat pointer");
+            return -1;
+        }
         return wl_seat_add_listener(m_seat, &listener, context);
     }
 
     Keyboard Seat::GetKeyboard()
     {
+        if(!m_seat)
+        {
+            warning("Getting Keyboard from Seat with null wl_seat pointer");
+            return Keyboard(nullptr);
+        }
         return Keyboard(wl_seat_get_keyboard(m_seat));
     }
 
     Pointer Seat::GetPointer()
     {
+        if(!m_seat)
+        {
+            warning("Getting Pointer from Seat with null wl_seat pointer");
+            return Pointer(nullptr);
+        }
         return Pointer(wl_seat_get_pointer(m_seat));
     }
 
     Touch Seat::GetTouch()
     {
+        if(!m_seat)
+        {
+            warning("Getting Touch from Seat with null wl_seat pointer");
+            return Touch(nullptr);
+        }
         return Touch(wl_seat_get_touch(m_seat));
     }
 
     void Seat::Release()
     {
-        wl_seat_release(m_seat);
+        if(m_seat)
+        {
+            wl_seat_release(m_seat);
+        }
     }
 
 }}}}//qor::platform::nslinux::wl

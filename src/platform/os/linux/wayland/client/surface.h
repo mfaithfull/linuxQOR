@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_LINUX_WAYLAND_SURFACE
 #define QOR_PP_H_LINUX_WAYLAND_SURFACE
 
+#include <stdint.h>
+
 struct wl_surface;
 struct wl_surface_listener;
 
@@ -37,14 +39,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Surface
     {
     public:
-        
+        static const char* const TagName;
         static Surface* SurfaceFrom(wl_surface* surface);
 
-        Surface(wl_surface* surface);
+        explicit Surface(wl_surface* surface);
         ~Surface();
-
-        wl_surface* Use();
-        uint32_t Version();
+        Surface(Surface&& rhs) noexcept;
+        Surface& operator=(Surface&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
+        wl_surface* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_surface_listener& listener, void* context);
         void Attach(Buffer& buffer, int32_t x, int32_t y);
         void Damage(int32_t x, int32_t y, int32_t width, int32_t height);
@@ -61,6 +65,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_surface* m_surface;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_SURFACE

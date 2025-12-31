@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_LINUX_WAYLAND_CALLBACK
 #define QOR_PP_H_LINUX_WAYLAND_CALLBACK
 
+#include <stdint.h>
+
 struct wl_callback;
 struct wl_callback_listener;
 
@@ -33,14 +35,18 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Callback
     {
     public:
-        
+        static const char* const TagName;
         static Callback* CallbackFrom(wl_callback* callback);
 
         Callback(wl_callback* callback);
         ~Callback();
+        Callback(Callback&& rhs) noexcept;
+        Callback& operator=(Callback&& rhs) noexcept;
 
-        wl_callback* Use();
-        uint32_t Version();
+        const char* Tag() const{return TagName;}
+
+        wl_callback* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_callback_listener& listener, void* context);
         
     private:
@@ -48,6 +54,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_callback* m_callback;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_CALLBACK

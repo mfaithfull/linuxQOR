@@ -37,14 +37,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Pointer
     {
     public:
-        
+        static const char* const TagName;
         static Pointer* PointerFrom(wl_pointer* pointer);
 
-        Pointer(wl_pointer* pointer);
+        explicit Pointer(wl_pointer* pointer);
         ~Pointer();
-
-        wl_pointer* Use();
-        uint32_t Version();
+        Pointer(Pointer&& rhs) noexcept;
+        Pointer& operator=(Pointer&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
+        wl_pointer* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_pointer_listener& listener, void* context);
         void Release();
         void SetCursor(uint32_t serial, Surface* surface, int32_t hotspot_x, int32_t hotspot_y);
@@ -54,6 +56,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_pointer* m_pointer;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_POINTER

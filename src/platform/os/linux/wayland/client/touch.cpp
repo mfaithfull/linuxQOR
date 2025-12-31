@@ -34,38 +34,104 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     Touch::Touch(wl_touch* touch) : m_touch(touch)
     {
-        wl_touch_set_user_data(m_touch, this);
+        if(touch)
+        {
+            wl_touch_set_user_data(m_touch, this);
+        }
+        else
+        {
+            continuable("Touch created with null wl_touch pointer");
+        }
+    }
+
+    Touch::Touch(Touch&& rhs) noexcept : m_touch(rhs.m_touch)
+    {
+        rhs.m_touch = nullptr;
+        if (m_touch)
+        {
+            wl_touch_set_user_data(m_touch, this);
+        }
+    }
+
+    Touch& Touch::operator=(Touch&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_touch)
+            {
+                wl_touch_destroy(m_touch);
+            }
+            m_touch = rhs.m_touch;
+            rhs.m_touch = nullptr;
+            if (m_touch)
+            {
+                wl_touch_set_user_data(m_touch, this);
+            }
+        }
+        return *this;
     }
 
     Touch::~Touch()
     {
-        wl_touch_destroy(m_touch);
+        if(m_touch)
+        {
+            wl_touch_destroy(m_touch);
+        }
     }
 
-    wl_touch* Touch::Use()
+    wl_touch* Touch::Use() const
     {
+        if(!m_touch)
+        {
+            warning("Using Touch with null wl_touch pointer");
+        }
         return m_touch;
     }
 
     Touch* Touch::TouchFrom(wl_touch* touch)
     {
+        if(!touch)
+        {
+            return nullptr;
+        }
         Touch* result = reinterpret_cast<Touch*>(wl_touch_get_user_data(touch));
-        return result;
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_touch user data tag mismatch");
+        }
+        return new Touch(touch);
     }
 
-    uint32_t Touch::Version()
+    uint32_t Touch::Version() const
     {
+        if(!m_touch)
+        {
+            warning("Getting version of Touch with null wl_touch pointer");
+            return 0;
+        }
         return wl_touch_get_version(m_touch);
     }
 
     int Touch::AddListener(const wl_touch_listener& listener, void* context)
     {
+        if(!m_touch)
+        {
+            warning("Adding listener to Touch with null wl_touch pointer");
+            return -1;
+        }
         return wl_touch_add_listener(m_touch, &listener, context);
     }
 
     void Touch::Release()
     {
-        wl_touch_release(m_touch);
+        if(m_touch)
+        {
+            wl_touch_release(m_touch);
+        }
     }
 
 }}}}//qor::platform::nslinux::wl

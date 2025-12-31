@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_LINUX_WAYLAND_COMPOSITOR
 #define QOR_PP_H_LINUX_WAYLAND_COMPOSITOR
 
+#include <stdint.h>
+
 struct wl_compositor;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
@@ -35,14 +37,18 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Compositor
     {
     public:
-        
-        static Compositor* FromCompositor(wl_compositor* compositor);
+        static const char* const TagName;
+        static Compositor* CompositorFrom(wl_compositor* compositor);
 
         Compositor(wl_compositor* compositor);
         ~Compositor();
+        Compositor(Compositor&& rhs) noexcept;
+        Compositor& operator=(Compositor&& rhs) noexcept;
 
-        wl_compositor* Use();
-        uint32_t Version();        
+        const char* Tag() const{return TagName;}
+
+        wl_compositor* Use() const;
+        uint32_t Version() const;
 
         Surface CreateSurface();
         Region CreateRegion();
@@ -52,6 +58,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_compositor* m_compositor;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_COMPOSITOR

@@ -32,43 +32,121 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const DataSource::TagName = "QOR::PLATFORM::NSLINUX::WL::DATASOURCE";
+
     DataSource* DataSource::DataSourceFrom(wl_data_source* datasource)
     {
-        return reinterpret_cast<DataSource*>(wl_data_source_get_user_data(datasource));
+        if(!datasource)
+        {
+            return nullptr;
+        }
+        DataSource* result = reinterpret_cast<DataSource*>(wl_data_source_get_user_data(datasource));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_data_source user data tag mismatch");
+        }
+        return new DataSource(datasource);
     }
 
     DataSource::DataSource(wl_data_source* datasource) : m_datasource(datasource)
     {
-        wl_data_source_set_user_data(m_datasource, this);
+        if(datasource)
+        {
+            wl_data_source_set_user_data(m_datasource, this);
+        }
+        else
+        {
+            continuable("DataSource created with null wl_data_source pointer");
+        }
     }    
+
+    DataSource::DataSource(DataSource&& rhs) noexcept : m_datasource(rhs.m_datasource)
+    {
+        rhs.m_datasource = nullptr;
+        if (m_datasource)
+        {
+            wl_data_source_set_user_data(m_datasource, this);
+        }
+    }
+
+    DataSource& DataSource::operator=(DataSource&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_datasource)
+            {
+                wl_data_source_destroy(m_datasource);
+            }
+
+            m_datasource = rhs.m_datasource;
+            rhs.m_datasource = nullptr;
+
+            if (m_datasource)
+            {
+                wl_data_source_set_user_data(m_datasource, this);
+            }
+        }
+        return *this;
+    }
 
     DataSource::~DataSource()
     {
-        wl_data_source_destroy(m_datasource);
+        if(m_datasource)
+        {
+            wl_data_source_destroy(m_datasource);
+        }
     }
 
-    wl_data_source* DataSource::Use()
+    wl_data_source* DataSource::Use() const
     {
+        if(!m_datasource)
+        {
+            warning("Using DataSource with null wl_data_source pointer");
+        }
         return m_datasource;
     }
 
-    uint32_t DataSource::Version()
+    uint32_t DataSource::Version() const
     {
+        if(!m_datasource)
+        {
+            warning("Getting version of DataSource with null wl_data_source pointer");
+            return 0;
+        }
         return wl_data_source_get_version(m_datasource);
     }
 
     int DataSource::AddListener(const wl_data_source_listener& listener, void* context)
     {
+        if(!m_datasource)
+        {
+            warning("Adding listener to DataSource with null wl_data_source pointer");
+            return -1;
+        }
         return wl_data_source_add_listener(m_datasource, &listener, context);
     }
 
     void DataSource::Offer(const std::string& mimeType)
     {
+        if(!m_datasource)
+        {
+            warning("Offering mime type on DataSource with null wl_data_source pointer");
+            return;
+        }
         wl_data_source_offer(m_datasource, mimeType.c_str());
     }
 
     void DataSource::SetActions(uint32_t DnDActions)
     {
+        if(!m_datasource)
+        {
+            warning("Setting DnD actions on DataSource with null wl_data_source pointer");
+            return;
+        }
         wl_data_source_set_actions(m_datasource, DnDActions);
     }
     

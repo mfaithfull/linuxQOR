@@ -32,38 +32,111 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Registry::TagName = "QOR::PLATFORM::NSLINUX::WL::REGISTRY";
+
     Registry* Registry::RegistryFrom(wl_registry* registry)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        if(!registry)
+        {
+            return nullptr;
+        }
+        Registry* result = reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_registry user data tag mismatch");
+        }
+        return new Registry(registry);
     }
 
     Registry::Registry(wl_registry* registry) : m_registry(registry)
     {
-        wl_registry_set_user_data(m_registry, this);
+        if(registry)
+        {
+            wl_registry_set_user_data(m_registry, this);
+        }
+        else
+        {
+            continuable("Registry created with null wl_registry pointer");
+        }
+    }
+
+    Registry::Registry(Registry&& rhs) noexcept : m_registry(rhs.m_registry)
+    {
+        rhs.m_registry = nullptr;
+        if (m_registry)
+        {
+            wl_registry_set_user_data(m_registry, this);
+        }
+    }
+
+    Registry& Registry::operator=(Registry&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_registry)
+            {
+                wl_registry_destroy(m_registry);
+            }
+
+            m_registry = rhs.m_registry;
+            rhs.m_registry = nullptr;
+
+            if (m_registry)
+            {
+                wl_registry_set_user_data(m_registry, this);
+            }
+        }
+        return *this;
     }
 
     Registry::~Registry()
     {
-        wl_registry_destroy(m_registry);
+        if(m_registry)
+        {
+            wl_registry_destroy(m_registry);
+        }
     }
 
-    wl_registry* Registry::Use()
+    wl_registry* Registry::Use() const
     {
+        if(!m_registry)
+        {
+            warning("Using Registry with null wl_registry pointer");
+        }
         return m_registry;
     }
 
     uint32_t Registry::Version()
     {
+        if(!m_registry)
+        {
+            warning("Getting version of Registry with null wl_registry pointer");
+            return 0;
+        }
         return wl_registry_get_version(m_registry);
     }
 
     int Registry::AddListener(const wl_registry_listener& listener, void* data)
     {
+        if(!m_registry)
+        {
+            warning("Adding listener to Registry with null wl_registry pointer");
+            return -1;
+        }
         return wl_registry_add_listener(m_registry, &listener, data);
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    void Registry::Bind(uint32_t name, uint32_t version, wl_interface& interface)
     {
+        if(!m_registry)
+        {
+            warning("Binding to Registry with null wl_registry pointer");
+            return;
+        }
         wl_registry_bind(m_registry, name, &interface, version);
     }
 

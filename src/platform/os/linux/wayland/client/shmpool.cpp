@@ -33,39 +33,109 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const SharedMemoryPool::TagName = "QOR::PLATFORM::NSLINUX::WL::SHAREDMEMORYPOOL";
+
     SharedMemoryPool::SharedMemoryPool(wl_shm_pool* shmpool) : m_shmpool(shmpool)
     {
-        wl_shm_pool_set_user_data(m_shmpool, this);
+        if(shmpool) 
+        {
+            wl_shm_pool_set_user_data(m_shmpool, this);
+        }
+        else
+        {
+            continuable("SharedMemoryPool created with null wl_shm_pool pointer");
+        }
+    }
+
+    SharedMemoryPool::SharedMemoryPool(SharedMemoryPool&& rhs) noexcept : m_shmpool(rhs.m_shmpool)
+    {
+        rhs.m_shmpool = nullptr;
+        if (m_shmpool)
+        {
+            wl_shm_pool_set_user_data(m_shmpool, this);
+        }
+    }
+
+    SharedMemoryPool& SharedMemoryPool::operator=(SharedMemoryPool&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_shmpool)
+            {
+                wl_shm_pool_destroy(m_shmpool);
+            }
+            m_shmpool = rhs.m_shmpool;
+            rhs.m_shmpool = nullptr;
+            if (m_shmpool)
+            {
+                wl_shm_pool_set_user_data(m_shmpool, this);
+            }
+        }
+        return *this;
     }
 
     SharedMemoryPool::~SharedMemoryPool()
     {
-        wl_shm_pool_destroy(m_shmpool);
+        if(m_shmpool)
+        {
+            wl_shm_pool_destroy(m_shmpool);
+        }
     }
 
-    wl_shm_pool* SharedMemoryPool::Use()
+    wl_shm_pool* SharedMemoryPool::Use() const
     {
+        if(!m_shmpool)
+        {
+            warning("Using SharedMemoryPool with null wl_shm_pool pointer");
+        }
         return m_shmpool;
     }
 
     SharedMemoryPool* SharedMemoryPool::SharedMemoryPoolFrom(wl_shm_pool* shmpool)
     {
+        if(!shmpool)
+        {
+            return nullptr;
+        }
         SharedMemoryPool* result = reinterpret_cast<SharedMemoryPool*>(wl_shm_pool_get_user_data(shmpool));
-        return result;
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_shm_pool user data tag mismatch");
+        }
+        return new SharedMemoryPool(shmpool);
     }
 
-    uint32_t SharedMemoryPool::Version()
+    uint32_t SharedMemoryPool::Version() const
     {
+        if(!m_shmpool)
+        {
+            warning("Getting version of SharedMemoryPool with null wl_shm_pool pointer");
+            return 0;
+        }
         return wl_shm_pool_get_version(m_shmpool);
     }
 
     Buffer SharedMemoryPool::CreateBuffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format)
     {
+        if(!m_shmpool)
+        {
+            warning("Creating buffer from SharedMemoryPool with null wl_shm_pool pointer");
+            return Buffer(nullptr);
+        }
         return Buffer(wl_shm_pool_create_buffer(m_shmpool, offset, width, height, stride, format));
     }
 
     void SharedMemoryPool::Resize(int32_t size)
     {
+        if(!m_shmpool)
+        {
+            warning("Resizing SharedMemoryPool with null wl_shm_pool pointer");
+            return;
+        }
         wl_shm_pool_resize(m_shmpool, size);
     }
     

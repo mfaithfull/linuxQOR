@@ -37,11 +37,18 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     Queue::~Queue()
     {
-        wl_event_queue_destroy(m_queue);
+        if(m_queue)
+        {
+            wl_event_queue_destroy(m_queue);
+        }
     }
 
-    wl_event_queue* Queue::Use()
+    wl_event_queue* Queue::Use() const
     {
+        if(!m_queue)
+        {
+            warning("Using Queue with null wl_event_queue pointer");
+        }
         return m_queue;
     }
 

@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_LINUX_WAYLAND_SUBCOMPOSITOR
 #define QOR_PP_H_LINUX_WAYLAND_SUBCOMPOSITOR
 
+#include <stdint.h>
+
 struct wl_subcompositor;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
@@ -35,15 +37,18 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) SubCompositor
     {
     public:
-        
-        static SubCompositor* FromSubCompositor(wl_subcompositor* subcompositor);
+        static const char* const TagName;
+        static SubCompositor* SubCompositorFrom(wl_subcompositor* subcompositor);
 
-        SubCompositor(wl_subcompositor* subcompositor);
+        explicit SubCompositor(wl_subcompositor* subcompositor);
         ~SubCompositor();
+        SubCompositor(SubCompositor&& rhs) noexcept;
+        SubCompositor& operator=(SubCompositor&& rhs) noexcept;
 
-        wl_subcompositor* Use();
-        uint32_t Version();        
-
+        const char* Tag() const{return TagName;}
+        wl_subcompositor* Use() const;
+        uint32_t Version() const;
+        
         SubSurface GetSubSurface(Surface* surface, Surface* parent);
 
     private:
@@ -51,6 +56,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_subcompositor* m_subcompositor;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_SUBCOMPOSITOR

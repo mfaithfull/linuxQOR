@@ -36,14 +36,18 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) DataOffer
     {
     public:
-        
+        static const char* const TagName;
         static DataOffer* DataOfferFrom(wl_data_offer* dataoffer);
 
-        DataOffer(wl_data_offer* dataoffer);
+        explicit DataOffer(wl_data_offer* dataoffer);
         ~DataOffer();
+        DataOffer(DataOffer&& rhs) noexcept;
+        DataOffer& operator=(DataOffer&& rhs) noexcept;
 
-        wl_data_offer* Use();
-        uint32_t Version();
+        const char* Tag() const{return TagName;}
+
+        wl_data_offer* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_data_offer_listener& listener, void* context);
         void Accept(uint32_t serial, const std::string& mimeType);
         void Finish();
@@ -55,6 +59,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_data_offer* m_dataoffer;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_DATAOFFER

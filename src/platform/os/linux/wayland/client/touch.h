@@ -35,14 +35,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Touch
     {
     public:
-        
+        static const char* const TagName;
         static Touch* TouchFrom(wl_touch* touch);
 
-        Touch(wl_touch* touch);
+        explicit Touch(wl_touch* touch);
         ~Touch();
-
-        wl_touch* Use();
-        uint32_t Version();
+        Touch(Touch&& rhs) noexcept;
+        Touch& operator=(Touch&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
+        wl_touch* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_touch_listener& listener, void* context);
         void Release();
 
@@ -51,6 +53,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_touch* m_touch;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_TOUCH

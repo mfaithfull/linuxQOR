@@ -35,14 +35,17 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Keyboard
     {
     public:
-        
-        static Keyboard* KeyboardFrom(wl_keyboard* keybaord);
+        static const char* const TagName;
+        static Keyboard* KeyboardFrom(wl_keyboard* keyboard);
 
-        Keyboard(wl_keyboard* keyboard);
+        explicit Keyboard(wl_keyboard* keyboard);
         ~Keyboard();
+        Keyboard(Keyboard&& rhs) noexcept;
+        Keyboard& operator=(Keyboard&& rhs) noexcept;
 
-        wl_keyboard* Use();
-        uint32_t Version();
+        const char* Tag() const{return TagName;}
+        wl_keyboard* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_keyboard_listener& listener, void* context);
         void Release();
 
@@ -51,6 +54,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_keyboard* m_keyboard;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_KEYBOARD

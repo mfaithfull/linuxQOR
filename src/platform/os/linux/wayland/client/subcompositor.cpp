@@ -34,33 +34,101 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    SubCompositor* SubCompositor::FromSubCompositor(wl_subcompositor* subcompositor)
+    const char* const SubCompositor::TagName = "QOR::PLATFORM::NSLINUX::WL::SUBCOMPOSITOR";
+
+    SubCompositor* SubCompositor::SubCompositorFrom(wl_subcompositor* subcompositor)
     {
-        return reinterpret_cast<SubCompositor*>(wl_subcompositor_get_user_data(subcompositor));
+        if(!subcompositor)
+        {
+            return nullptr;
+        }
+        SubCompositor* result = reinterpret_cast<SubCompositor*>(wl_subcompositor_get_user_data(subcompositor));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_subcompositor user data tag mismatch");
+        }
+        return new SubCompositor(subcompositor);
     }
 
     SubCompositor::SubCompositor(wl_subcompositor* subcompositor) : m_subcompositor(subcompositor)
     {
-        wl_subcompositor_set_user_data(m_subcompositor, this);
+        if(subcompositor)
+        {
+            wl_subcompositor_set_user_data(m_subcompositor, this);
+        }
+        else
+        {
+            continuable("SubCompositor created with null wl_subcompositor pointer");
+        }
+    }
+
+    SubCompositor::SubCompositor(SubCompositor&& rhs) noexcept : m_subcompositor(rhs.m_subcompositor)
+    {
+        rhs.m_subcompositor = nullptr;
+        if (m_subcompositor)
+        {
+            wl_subcompositor_set_user_data(m_subcompositor, this);
+        }
+    }
+
+    SubCompositor& SubCompositor::operator=(SubCompositor&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_subcompositor)
+            {
+                wl_subcompositor_destroy(m_subcompositor);
+            }
+
+            m_subcompositor = rhs.m_subcompositor;
+            rhs.m_subcompositor = nullptr;
+
+            if (m_subcompositor)
+            {
+                wl_subcompositor_set_user_data(m_subcompositor, this);
+            }
+        }
+        return *this;
     }
 
     SubCompositor::~SubCompositor()
     {
-        wl_subcompositor_destroy(m_subcompositor);
+        if(m_subcompositor)
+        {
+            wl_subcompositor_destroy(m_subcompositor);
+        }
     }
 
-    wl_subcompositor* SubCompositor::Use()
+    wl_subcompositor* SubCompositor::Use() const
     {
+        if(!m_subcompositor)
+        {
+            warning("Using SubCompositor with null wl_subcompositor pointer");
+        }
         return m_subcompositor;
     }
 
-    uint32_t SubCompositor::Version()
+    uint32_t SubCompositor::Version() const
     {
+        if(!m_subcompositor)
+        {
+            warning("Getting version of SubCompositor with null wl_subcompositor pointer");
+            return 0;
+        }
         return wl_subcompositor_get_version(m_subcompositor);
     }
 
     SubSurface SubCompositor::GetSubSurface(Surface* surface, Surface* parent)
     {
+        if(!m_subcompositor)
+        {
+            warning("Creating SubSurface with null wl_subcompositor pointer");
+            return SubSurface(nullptr);
+        }
         return SubSurface(wl_subcompositor_get_subsurface(m_subcompositor, surface ? surface->Use() : nullptr, parent ? parent->Use() : nullptr));
     }    
 

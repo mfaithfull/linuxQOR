@@ -32,38 +32,111 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Region::TagName = "QOR::PLATFORM::NSLINUX::WL::REGION";
+
     Region* Region::RegionFrom(wl_region* region)
     {
-        return reinterpret_cast<Region*>(wl_region_get_user_data(region));
+        if(!region)
+        {
+            return nullptr;
+        }
+        Region* result = reinterpret_cast<Region*>(wl_region_get_user_data(region));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_region user data tag mismatch");
+        }
+        return new Region(region);
     }
 
     Region::Region(wl_region* region) : m_region(region)
     {
-        wl_region_set_user_data(m_region, this);
+        if(region)
+        {
+            wl_region_set_user_data(m_region, this);
+        }
+        else
+        {
+            continuable("Region created with null wl_region pointer");
+        }
     }    
+
+    Region::Region(Region&& rhs) noexcept : m_region(rhs.m_region)
+    {
+        rhs.m_region = nullptr;
+        if (m_region)
+        {
+            wl_region_set_user_data(m_region, this);
+        }
+    }
+
+    Region& Region::operator=(Region&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_region)
+            {
+                wl_region_destroy(m_region);
+            }
+
+            m_region = rhs.m_region;
+            rhs.m_region = nullptr;
+
+            if (m_region)
+            {
+                wl_region_set_user_data(m_region, this);
+            }
+        }
+        return *this;
+    }
 
     Region::~Region()
     {
-        wl_region_destroy(m_region);
+        if(m_region)
+        {
+            wl_region_destroy(m_region);
+        }
     }
 
-    wl_region* Region::Use()
+    wl_region* Region::Use() const
     {
+        if(!m_region)
+        {
+            warning("Using Region with null wl_region pointer");
+        }
         return m_region;
     }
 
-    uint32_t Region::Version()
+    uint32_t Region::Version() const
     {
+        if(!m_region)
+        {
+            warning("Getting version of Region with null wl_region pointer");
+            return 0;
+        }
         return wl_region_get_version(m_region);
     }
 
     void Region::Add(int32_t x, int32_t y, int32_t width, int32_t height)
     {
+        if(!m_region)
+        {
+            warning("Adding to Region with null wl_region pointer");
+            return;
+        }
         wl_region_add(m_region, x, y, width, height);
     }
 
     void Region::Subtract(int32_t x, int32_t y, int32_t width, int32_t height)
     {
+        if(!m_region)
+        {
+            warning("Subtracting from Region with null wl_region pointer");
+            return;
+        }
         wl_region_subtract(m_region, x, y, width, height);
     }
     

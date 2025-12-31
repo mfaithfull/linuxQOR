@@ -32,19 +32,20 @@ struct wl_shm_pool;
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Buffer;
-    
+
     class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemoryPool
     {
     public:
-        
+        static const char* const TagName;
         static SharedMemoryPool* SharedMemoryPoolFrom(wl_shm_pool* shmpool);
 
-        SharedMemoryPool(wl_shm_pool* shmpool);
+        explicit SharedMemoryPool(wl_shm_pool* shmpool);
         ~SharedMemoryPool();
-
-        wl_shm_pool* Use();
-        uint32_t Version();
-
+        SharedMemoryPool(SharedMemoryPool&& rhs) noexcept;
+        SharedMemoryPool& operator=(SharedMemoryPool&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
+        wl_shm_pool* Use() const;
+        uint32_t Version() const;
         Buffer CreateBuffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format);
         void Resize(int32_t size);
 
@@ -53,6 +54,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_shm_pool* m_shmpool;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_SHMPOOL

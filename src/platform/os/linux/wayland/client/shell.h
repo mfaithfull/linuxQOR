@@ -37,15 +37,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Shell
     {
     public:
-        
+        static const char* const TagName;
         static Shell* ShellFrom(wl_shell* shell);
 
-        Shell(wl_shell* shell);
+        explicit Shell(wl_shell* shell);
         ~Shell();
-
-        wl_shell* Use();
-        uint32_t Version();
-
+        Shell(Shell&& rhs) noexcept;
+        Shell& operator=(Shell&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
+        wl_shell* Use() const;
+        uint32_t Version() const;
         ShellSurface GetSurface(Surface* surface);
 
     private:
@@ -53,6 +54,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_shell* m_shell;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_SHELL

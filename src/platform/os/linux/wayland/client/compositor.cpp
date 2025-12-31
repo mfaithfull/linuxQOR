@@ -34,28 +34,91 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Compositor* Compositor::FromCompositor(wl_compositor* compositor)
+    const char* const Compositor::TagName = "QOR::PLATFORM::NSLINUX::WL::COMPOSITOR";
+
+    Compositor* Compositor::CompositorFrom(wl_compositor* compositor)
     {
-        return reinterpret_cast<Compositor*>(wl_compositor_get_user_data(compositor));
+        if(!compositor)
+        {
+            return nullptr;
+        }
+        Compositor* result = reinterpret_cast<Compositor*>(wl_compositor_get_user_data(compositor));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_compositor user data tag mismatch");
+        }
+        return new Compositor(compositor);
     }
 
     Compositor::Compositor(wl_compositor* compositor) : m_compositor(compositor)
     {
-        wl_compositor_set_user_data(m_compositor, this);
+        if(compositor)
+        {
+            wl_compositor_set_user_data(m_compositor, this);
+        }
+        else
+        {
+            continuable("Compositor created with null wl_compositor pointer");
+        }
+    }
+
+    Compositor::Compositor(Compositor&& rhs) noexcept : m_compositor(rhs.m_compositor)
+    {
+        rhs.m_compositor = nullptr;
+        if (m_compositor)
+        {
+            wl_compositor_set_user_data(m_compositor, this);
+        }
+    }
+
+    Compositor& Compositor::operator=(Compositor&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_compositor)
+            {
+                wl_compositor_destroy(m_compositor);
+            }
+
+            m_compositor = rhs.m_compositor;
+            rhs.m_compositor = nullptr;
+
+            if (m_compositor)
+            {
+                wl_compositor_set_user_data(m_compositor, this);
+            }
+        }
+        return *this;
     }
 
     Compositor::~Compositor()
     {
-        wl_compositor_destroy(m_compositor);
+        if(m_compositor)
+        {
+            wl_compositor_destroy(m_compositor);
+        }
     }
 
-    wl_compositor* Compositor::Use()
+    wl_compositor* Compositor::Use() const
     {
+        if(!m_compositor)
+        {
+            warning("Using Compositor with null wl_compositor pointer");
+        }
         return m_compositor;
     }
 
-    uint32_t Compositor::Version()
+    uint32_t Compositor::Version() const
     {
+        if(!m_compositor)
+        {
+            warning("Getting version of Compositor with null wl_compositor pointer");
+            return 0;
+        }
         return wl_compositor_get_version(m_compositor);
     }
 

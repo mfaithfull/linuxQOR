@@ -40,15 +40,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) ShellSurface
     {
     public:
-        
+        static const char* const TagName;
         static ShellSurface* ShellSurfaceFrom(wl_shell_surface* shellsurface);
 
-        ShellSurface(wl_shell_surface* shellsurface);
+        explicit ShellSurface(wl_shell_surface* shellsurface);
         ~ShellSurface();
-
-        wl_shell_surface* Use();
-        uint32_t Version();
-
+        ShellSurface(ShellSurface&& rhs) noexcept;
+        ShellSurface& operator=(ShellSurface&& rhs) noexcept;
+        const char* Tag() const{return TagName;}
+        wl_shell_surface* Use() const;
+        uint32_t Version() const;
         int AddListener(const wl_shell_surface_listener& listener, void* context);
         void Move(Seat* seat, uint32_t serial);
         void Pong(uint32_t serial);
@@ -65,6 +66,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_shell_surface* m_shellsurface;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_SHELLSURFACE

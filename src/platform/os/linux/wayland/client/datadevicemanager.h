@@ -29,7 +29,6 @@
 
 struct wl_data_device_manager;
 
-
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Seat;
@@ -39,14 +38,18 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) DataDeviceManager
     {
     public:
-        
+        static const char* const TagName;
         static DataDeviceManager* DataDeviceManagerFrom(wl_data_device_manager* ddm);
 
-        DataDeviceManager(wl_data_device_manager* ddm);
+        explicit DataDeviceManager(wl_data_device_manager* ddm);
         ~DataDeviceManager();
+        DataDeviceManager(DataDeviceManager&& rhs) noexcept;
+        DataDeviceManager& operator=(DataDeviceManager&& rhs) noexcept;
 
-        wl_data_device_manager* Use();
-        uint32_t Version();
+        const char* Tag() const{return TagName;}
+
+        wl_data_device_manager* Use() const;
+        uint32_t Version() const;
 
         DataSource CreateDataSource();
         DataDevice GetDataDevice(Seat* seat);
@@ -56,6 +59,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_data_device_manager* m_ddm;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_DATADEVICEMANAGER

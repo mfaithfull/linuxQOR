@@ -32,33 +32,101 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Callback::TagName = "QOR::PLATFORM::NSLINUX::WL::CALLBACK";
+
     Callback* Callback::CallbackFrom(wl_callback* callback)
     {
-        return reinterpret_cast<Callback*>(wl_callback_get_user_data(callback));
+        if(!callback)
+        {
+            return nullptr;
+        }
+        Callback* result = reinterpret_cast<Callback*>(wl_callback_get_user_data(callback));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_callback user data tag mismatch");
+        }
+        return result;
     }
 
     Callback::Callback(wl_callback* callback) : m_callback(callback)
     {
-        wl_callback_set_user_data(m_callback, this);
+        if(callback)
+        {
+            wl_callback_set_user_data(m_callback, this);
+        }
+        else
+        {
+            continuable("Callback created with null wl_callback pointer");
+        }
+    }
+
+    Callback::Callback(Callback&& rhs) noexcept : m_callback(rhs.m_callback)
+    {
+        rhs.m_callback = nullptr;
+        if (m_callback)
+        {
+            wl_callback_set_user_data(m_callback, this);
+        }
+    }
+
+    Callback& Callback::operator=(Callback&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_callback)
+            {
+                wl_callback_destroy(m_callback);
+            }
+
+            m_callback = rhs.m_callback;
+            rhs.m_callback = nullptr;
+
+            if (m_callback)
+            {
+                wl_callback_set_user_data(m_callback, this);
+            }
+        }
+        return *this;
     }
 
     Callback::~Callback()
     {
-        wl_callback_destroy(m_callback);
+        if(m_callback)
+        {
+            wl_callback_destroy(m_callback);
+        }
     }
 
-    wl_callback* Callback::Use()
+    wl_callback* Callback::Use() const
     {
+        if(!m_callback)
+        {
+            warning("Using Callback with null wl_callback pointer");
+        }
         return m_callback;
     }
 
-    uint32_t Callback::Version()
+    uint32_t Callback::Version() const
     {
+        if(!m_callback)
+        {
+            warning("Getting version of Callback with null wl_callback pointer");
+            return 0;
+        }
         return wl_callback_get_version(m_callback);
     }
 
     int Callback::AddListener(const wl_callback_listener& listener, void* context)
     {
+        if(!m_callback)
+        {
+            warning("Adding listener to Callback with null wl_callback pointer");
+            return -1;
+        }
         return wl_callback_add_listener(m_callback, &listener, context);
     }
 

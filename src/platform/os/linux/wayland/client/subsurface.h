@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_LINUX_WAYLAND_SUBSURFACE
 #define QOR_PP_H_LINUX_WAYLAND_SUBSURFACE
 
+#include <stdint.h>
+
 struct wl_subsurface;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
@@ -34,15 +36,17 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) SubSurface
     {
     public:
-        
+        static const char* const TagName;
         static SubSurface* SubSurfaceFrom(wl_subsurface* subsurface);
 
-        SubSurface(wl_subsurface* subsurface);
+        explicit SubSurface(wl_subsurface* subsurface);
         ~SubSurface();
+        SubSurface(SubSurface&& rhs) noexcept;
+        SubSurface& operator=(SubSurface&& rhs) noexcept;
 
-        wl_subsurface* Use();
-        uint32_t Version();
-
+        const char* Tag() const{return TagName;}
+        wl_subsurface* Use() const;
+        uint32_t Version() const;
         void PlaceAbove(Surface& sibling);
         void PlaceBelow(Surface& sibling);
         void SetDesync();
@@ -54,6 +58,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_subsurface* m_subsurface;
     };
 
-}}}}//qor::platform::nslinux::x
+}}}}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_SUBSURFACE

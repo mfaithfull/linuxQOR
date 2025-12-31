@@ -33,39 +33,111 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const SharedMemory::TagName = "QOR::PLATFORM::NSLINUX::WL::SHAREDMEMORY";
+
     SharedMemory::SharedMemory(wl_shm* shm) : m_shm(shm)
     {
-        wl_shm_set_user_data(m_shm, this);
+        if(m_shm)
+        {
+            wl_shm_set_user_data(m_shm, this);
+        }
+        else
+        {
+            continuable("SharedMemory created with null wl_shm pointer");
+        }
+    }
+
+    SharedMemory::SharedMemory(SharedMemory&& rhs) noexcept : m_shm(rhs.m_shm)
+    {
+        rhs.m_shm = nullptr;
+        if (m_shm)
+        {
+            wl_shm_set_user_data(m_shm, this);
+        }
+    }
+
+    SharedMemory& SharedMemory::operator=(SharedMemory&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_shm)
+            {
+                wl_shm_destroy(m_shm);
+            }
+
+            m_shm = rhs.m_shm;
+            rhs.m_shm = nullptr;
+
+            if (m_shm)
+            {
+                wl_shm_set_user_data(m_shm, this);
+            }
+        }
+        return *this;
     }
 
     SharedMemory::~SharedMemory()
     {
-        wl_shm_destroy(m_shm);
+        if(m_shm)
+        {
+            wl_shm_destroy(m_shm);
+        }
     }
 
-    wl_shm* SharedMemory::Use()
+    wl_shm* SharedMemory::Use() const
     {
+        if(!m_shm)
+        {
+            warning("Using SharedMemory with null wl_shm pointer");
+        }
         return m_shm;
     }
 
     SharedMemory* SharedMemory::SharedMemoryFrom(wl_shm* shm)
     {
+        if(!shm)
+        {
+            return nullptr;
+        }
         SharedMemory* result = reinterpret_cast<SharedMemory*>(wl_shm_get_user_data(shm));
-        return result;
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_shm user data tag mismatch");
+        }
+        return new SharedMemory(shm);
     }
 
-    uint32_t SharedMemory::Version()
+    uint32_t SharedMemory::Version() const
     {
+        if(!m_shm)
+        {
+            warning("Getting version of SharedMemory with null wl_shm pointer");
+            return 0;
+        }
         return wl_shm_get_version(m_shm);
     }
 
     SharedMemoryPool SharedMemory::CreatePool(int32_t fd, int32_t size)
     {
+        if(!m_shm)
+        {
+            warning("Creating SharedMemoryPool with null wl_shm pointer");
+            return SharedMemoryPool(nullptr);
+        }
         return SharedMemoryPool(wl_shm_create_pool(m_shm, fd, size));
     }
 
     int SharedMemory::AddListener(const wl_shm_listener& listener, void* context)
     {
+        if(!m_shm)
+        {
+            warning("Adding listener to SharedMemory with null wl_shm pointer");
+            return -1;
+        }
         return wl_shm_add_listener(m_shm, &listener, context);
     }
     

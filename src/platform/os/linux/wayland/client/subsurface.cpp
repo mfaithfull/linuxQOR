@@ -33,53 +33,141 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const SubSurface::TagName = "QOR::PLATFORM::NSLINUX::WL::SUBSURFACE";
+
     SubSurface* SubSurface::SubSurfaceFrom(wl_subsurface* subsurface)
     {
-        return reinterpret_cast<SubSurface*>(wl_subsurface_get_user_data(subsurface));
+        if(!subsurface)
+        {
+            return nullptr;
+        }
+        SubSurface* result = reinterpret_cast<SubSurface*>(wl_subsurface_get_user_data(subsurface));
+        if(result && result->Tag() == TagName)
+        {
+            return result;
+        }
+        else if(result)
+        {
+            continuable("Wayland wl_subsurface user data tag mismatch");
+        }
+        return new SubSurface(subsurface);
     }
 
     SubSurface::SubSurface(wl_subsurface* subsurface) : m_subsurface(subsurface)
     {
-        wl_subsurface_set_user_data(m_subsurface, this);
+        if(m_subsurface)
+        {
+            wl_subsurface_set_user_data(m_subsurface, this);
+        }
+        else
+        {
+            continuable("SubSurface created with null wl_subsurface pointer");
+        }
+    }
+
+    SubSurface::SubSurface(SubSurface&& rhs) noexcept : m_subsurface(rhs.m_subsurface)
+    {
+        rhs.m_subsurface = nullptr;
+        if (m_subsurface)
+        {
+            wl_subsurface_set_user_data(m_subsurface, this);
+        }
+    }
+
+    SubSurface& SubSurface::operator=(SubSurface&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            if (m_subsurface)
+            {
+                wl_subsurface_destroy(m_subsurface);
+            }
+
+            m_subsurface = rhs.m_subsurface;
+            rhs.m_subsurface = nullptr;
+
+            if (m_subsurface)
+            {
+                wl_subsurface_set_user_data(m_subsurface, this);
+            }
+        }
+        return *this;
     }
 
     SubSurface::~SubSurface()
     {
-        wl_subsurface_destroy(m_subsurface);
+        if(m_subsurface)
+        {
+            wl_subsurface_destroy(m_subsurface);
+        }
     }
 
-    wl_subsurface* SubSurface::Use()
+    wl_subsurface* SubSurface::Use() const
     {
+        if(!m_subsurface)
+        {
+            warning("Using SubSurface with null wl_subsurface pointer");
+        }
         return m_subsurface;
     }
 
-    uint32_t SubSurface::Version()
+    uint32_t SubSurface::Version() const
     {
+        if(!m_subsurface)
+        {
+            warning("Getting version of SubSurface with null wl_subsurface pointer");
+            return 0;
+        }
         return wl_subsurface_get_version(m_subsurface);
     }
 
     void SubSurface::PlaceAbove(Surface& sibling)
     {
+        if(!m_subsurface)
+        {
+            warning("Placing SubSurface above with null wl_subsurface pointer");
+            return;
+        }
         wl_subsurface_place_above(m_subsurface, sibling.Use());
     }
 
     void SubSurface::PlaceBelow(Surface& sibling)
     {
+        if(!m_subsurface)
+        {
+            warning("Placing SubSurface below with null wl_subsurface pointer");
+            return;
+        }
         wl_subsurface_place_below(m_subsurface, sibling.Use());
     }
 
     void SubSurface::SetDesync()
     {
+        if(!m_subsurface)
+        {
+            warning("Setting SubSurface desync with null wl_subsurface pointer");
+            return;
+        }
         wl_subsurface_set_desync(m_subsurface);
     }
 
     void SubSurface::SetPosition(int32_t x, int32_t y)
     {
+        if(!m_subsurface)
+        {
+            warning("Setting SubSurface position with null wl_subsurface pointer");
+            return;
+        }
         wl_subsurface_set_position(m_subsurface, x, y);
     }
 
     void SubSurface::SetSync()
     {
+        if(!m_subsurface)
+        {
+            warning("Setting SubSurface sync with null wl_subsurface pointer");
+            return;
+        }
         wl_subsurface_set_sync(m_subsurface);
     }
 
