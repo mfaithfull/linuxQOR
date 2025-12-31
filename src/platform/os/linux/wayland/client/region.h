@@ -37,7 +37,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static const char* const TagName;
         static Region* RegionFrom(wl_region* region);
 
-        Region(wl_region* region);
+        explicit Region(wl_region* region);
         ~Region();
         Region(const Region&) = delete;
         Region& operator=(const Region&) = delete;

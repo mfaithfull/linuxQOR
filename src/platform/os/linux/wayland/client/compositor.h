@@ -40,7 +40,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static const char* const TagName;
         static Compositor* CompositorFrom(wl_compositor* compositor);
 
-        Compositor(wl_compositor* compositor);
+        explicit Compositor(wl_compositor* compositor);
         ~Compositor();
         Compositor(Compositor&& rhs) noexcept;
         Compositor& operator=(Compositor&& rhs) noexcept;

@@ -38,9 +38,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static const char* const TagName;
         static Callback* CallbackFrom(wl_callback* callback);
 
-        Callback(wl_callback* callback);
-        ~Callback();
-        Callback(wl_callback* callback);
+        explicit Callback(wl_callback* callback);
         ~Callback();
         Callback(const Callback&) = delete;
         Callback& operator=(const Callback&) = delete;
