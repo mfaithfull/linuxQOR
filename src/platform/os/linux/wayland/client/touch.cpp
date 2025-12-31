@@ -25,46 +25,47 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "touch.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    Touch::Touch(wl_touch* touch) : m_touch(touch)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        wl_touch_set_user_data(m_touch, this);
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Touch::~Touch()
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_touch_destroy(m_touch);
     }
 
-    Registry::~Registry()
+    wl_touch* Touch::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_touch;
     }
 
-    wl_registry* Registry::Use()
+    Touch* Touch::TouchFrom(wl_touch* touch)
     {
-        return m_registry;
+        Touch* result = reinterpret_cast<Touch*>(wl_touch_get_user_data(touch));
+        return result;
     }
 
-    uint32_t Registry::Version()
+    uint32_t Touch::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_touch_get_version(m_touch);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    int Touch::AddListener(const wl_touch_listener& listener, void* context)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        return wl_touch_add_listener(m_touch, &listener, context);
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    void Touch::Release()
     {
-        wl_registry_bind(m_registry, name, &interface, version);
+        wl_touch_release(m_touch);
     }
 
 }}}}//qor::platform::nslinux::wl

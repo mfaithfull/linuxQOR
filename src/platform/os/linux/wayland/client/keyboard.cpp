@@ -25,46 +25,46 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "keyboard.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    Keyboard* Keyboard::KeyboardFrom(wl_keyboard* keyboard)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<Keyboard*>(wl_keyboard_get_user_data(keyboard));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Keyboard::Keyboard(wl_keyboard* keyboard) : m_keyboard(keyboard)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_keyboard_set_user_data(m_keyboard, this);
+    }    
+
+    Keyboard::~Keyboard()
+    {
+        wl_keyboard_destroy(m_keyboard);
     }
 
-    Registry::~Registry()
+    wl_keyboard* Keyboard::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_keyboard;
     }
 
-    wl_registry* Registry::Use()
+    uint32_t Keyboard::Version()
     {
-        return m_registry;
+        return wl_keyboard_get_version(m_keyboard);
     }
 
-    uint32_t Registry::Version()
+    int Keyboard::AddListener(const wl_keyboard_listener& listener, void* context)
     {
-        return wl_registry_get_version(m_registry);
+        return wl_keyboard_add_listener(m_keyboard, &listener, context);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    void Keyboard::Release()
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        wl_keyboard_release(m_keyboard);
     }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
+    
 }}}}//qor::platform::nslinux::wl

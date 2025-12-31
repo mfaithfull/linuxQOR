@@ -25,46 +25,46 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "region.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    Region* Region::RegionFrom(wl_region* region)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<Region*>(wl_region_get_user_data(region));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Region::Region(wl_region* region) : m_region(region)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_region_set_user_data(m_region, this);
+    }    
+
+    Region::~Region()
+    {
+        wl_region_destroy(m_region);
     }
 
-    Registry::~Registry()
+    wl_region* Region::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_region;
     }
 
-    wl_registry* Registry::Use()
+    uint32_t Region::Version()
     {
-        return m_registry;
+        return wl_region_get_version(m_region);
     }
 
-    uint32_t Registry::Version()
+    void Region::Add(int32_t x, int32_t y, int32_t width, int32_t height)
     {
-        return wl_registry_get_version(m_registry);
+        wl_region_add(m_region, x, y, width, height);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    void Region::Subtract(int32_t x, int32_t y, int32_t width, int32_t height)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        wl_region_subtract(m_region, x, y, width, height);
     }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
+    
 }}}}//qor::platform::nslinux::wl

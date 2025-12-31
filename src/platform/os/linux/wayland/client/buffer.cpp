@@ -25,46 +25,42 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "buffer.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    Buffer* Buffer::BufferFrom(wl_buffer* buffer)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<Buffer*>(wl_buffer_get_user_data(buffer));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Buffer::Buffer(wl_buffer* buffer) : m_buffer(buffer)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_buffer_set_user_data(m_buffer, this);
     }
 
-    Registry::~Registry()
+    Buffer::~Buffer()
     {
-        wl_registry_destroy(m_registry);
+        wl_buffer_destroy(m_buffer);
     }
 
-    wl_registry* Registry::Use()
+    wl_buffer* Buffer::Use()
     {
-        return m_registry;
+        return m_buffer;
     }
 
-    uint32_t Registry::Version()
+    uint32_t Buffer::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_buffer_get_version(m_buffer);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    int Buffer::AddListener(const wl_buffer_listener& listener, void* context)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        return wl_buffer_add_listener(m_buffer, &listener, context);
     }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
+        
 
 }}}}//qor::platform::nslinux::wl

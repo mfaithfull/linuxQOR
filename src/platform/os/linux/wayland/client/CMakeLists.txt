@@ -5,7 +5,11 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(target linqor_waylandclient)
 
 add_library(${target} SHARED linqor_waylandclient.cpp client.cpp
-display.cpp proxy.cpp registry.cpp queue.cpp)
+display.cpp proxy.cpp registry.cpp queue.cpp compositor.cpp surface.cpp
+callback.cpp region.cpp buffer.cpp touch.cpp subsurface.cpp
+subcompositor.cpp shmpool.cpp shm.cpp shellsurface.cpp shell.cpp seat.cpp
+pointer.cpp keyboard.cpp datadevicemanager.cpp datasource.cpp
+datadevice.cpp dataoffer.cpp)
 
 target_include_directories(${target} PRIVATE)
 

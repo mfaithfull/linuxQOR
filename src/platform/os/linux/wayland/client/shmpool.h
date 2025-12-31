@@ -22,49 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_SHMPOOL
+#define QOR_PP_H_LINUX_WAYLAND_SHMPOOL
 
-#include "registry.h"
+#include <stdint.h>
 
-#include <wayland-client-core.h>
-#include <wayland-client-protocol.h>
+struct wl_shm_pool;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    class qor_pp_module_interface(QOR_LINWAYLAND) Buffer;
+    
+    class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemoryPool
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
-    }
+    public:
+        
+        static SharedMemoryPool* SharedMemoryPoolFrom(wl_shm_pool* shmpool);
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
-    {
-        wl_registry_set_user_data(m_registry, this);
-    }
+        SharedMemoryPool(wl_shm_pool* shmpool);
+        ~SharedMemoryPool();
 
-    Registry::~Registry()
-    {
-        wl_registry_destroy(m_registry);
-    }
+        wl_shm_pool* Use();
+        uint32_t Version();
 
-    wl_registry* Registry::Use()
-    {
-        return m_registry;
-    }
+        Buffer CreateBuffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format);
+        void Resize(int32_t size);
 
-    uint32_t Registry::Version()
-    {
-        return wl_registry_get_version(m_registry);
-    }
+    private:
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
-    {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
+        wl_shm_pool* m_shmpool;
+    };
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
-}}}}//qor::platform::nslinux::wl
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_SHMPOOL

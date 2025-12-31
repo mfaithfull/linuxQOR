@@ -25,46 +25,48 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "shm.h"
+#include "shmpool.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    SharedMemory::SharedMemory(wl_shm* shm) : m_shm(shm)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        wl_shm_set_user_data(m_shm, this);
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    SharedMemory::~SharedMemory()
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_shm_destroy(m_shm);
     }
 
-    Registry::~Registry()
+    wl_shm* SharedMemory::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_shm;
     }
 
-    wl_registry* Registry::Use()
+    SharedMemory* SharedMemory::SharedMemoryFrom(wl_shm* shm)
     {
-        return m_registry;
+        SharedMemory* result = reinterpret_cast<SharedMemory*>(wl_shm_get_user_data(shm));
+        return result;
     }
 
-    uint32_t Registry::Version()
+    uint32_t SharedMemory::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_shm_get_version(m_shm);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    SharedMemoryPool SharedMemory::CreatePool(int32_t fd, int32_t size)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        return SharedMemoryPool(wl_shm_create_pool(m_shm, fd, size));
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    int SharedMemory::AddListener(const wl_shm_listener& listener, void* context)
     {
-        wl_registry_bind(m_registry, name, &interface, version);
+        return wl_shm_add_listener(m_shm, &listener, context);
     }
-
+    
 }}}}//qor::platform::nslinux::wl

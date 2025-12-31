@@ -25,46 +25,41 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "callback.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    Callback* Callback::CallbackFrom(wl_callback* callback)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<Callback*>(wl_callback_get_user_data(callback));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Callback::Callback(wl_callback* callback) : m_callback(callback)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_callback_set_user_data(m_callback, this);
     }
 
-    Registry::~Registry()
+    Callback::~Callback()
     {
-        wl_registry_destroy(m_registry);
+        wl_callback_destroy(m_callback);
     }
 
-    wl_registry* Registry::Use()
+    wl_callback* Callback::Use()
     {
-        return m_registry;
+        return m_callback;
     }
 
-    uint32_t Registry::Version()
+    uint32_t Callback::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_callback_get_version(m_callback);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    int Callback::AddListener(const wl_callback_listener& listener, void* context)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
+        return wl_callback_add_listener(m_callback, &listener, context);
     }
 
 }}}}//qor::platform::nslinux::wl

@@ -25,46 +25,48 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "shmpool.h"
+#include "buffer.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    SharedMemoryPool::SharedMemoryPool(wl_shm_pool* shmpool) : m_shmpool(shmpool)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        wl_shm_pool_set_user_data(m_shmpool, this);
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    SharedMemoryPool::~SharedMemoryPool()
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_shm_pool_destroy(m_shmpool);
     }
 
-    Registry::~Registry()
+    wl_shm_pool* SharedMemoryPool::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_shmpool;
     }
 
-    wl_registry* Registry::Use()
+    SharedMemoryPool* SharedMemoryPool::SharedMemoryPoolFrom(wl_shm_pool* shmpool)
     {
-        return m_registry;
+        SharedMemoryPool* result = reinterpret_cast<SharedMemoryPool*>(wl_shm_pool_get_user_data(shmpool));
+        return result;
     }
 
-    uint32_t Registry::Version()
+    uint32_t SharedMemoryPool::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_shm_pool_get_version(m_shmpool);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    Buffer SharedMemoryPool::CreateBuffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        return Buffer(wl_shm_pool_create_buffer(m_shmpool, offset, width, height, stride, format));
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    void SharedMemoryPool::Resize(int32_t size)
     {
-        wl_registry_bind(m_registry, name, &interface, version);
+        wl_shm_pool_resize(m_shmpool, size);
     }
-
+    
 }}}}//qor::platform::nslinux::wl

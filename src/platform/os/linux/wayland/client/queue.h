@@ -32,7 +32,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Queue
     {
     public:
-        
+
         Queue(wl_event_queue* queue);
         ~Queue();
 

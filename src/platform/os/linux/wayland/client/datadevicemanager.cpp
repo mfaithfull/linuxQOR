@@ -25,46 +25,49 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "datadevicemanager.h"
+#include "seat.h"
+#include "datasource.h"
+#include "datadevice.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    DataDeviceManager* DataDeviceManager::DataDeviceManagerFrom(wl_data_device_manager* ddm)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<DataDeviceManager*>(wl_data_device_manager_get_user_data(ddm));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    DataDeviceManager::DataDeviceManager(wl_data_device_manager* ddm) : m_ddm(ddm)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_data_device_manager_set_user_data(m_ddm, this);
+    }    
+
+    DataDeviceManager::~DataDeviceManager()
+    {
+        wl_data_device_manager_destroy(m_ddm);
     }
 
-    Registry::~Registry()
+    wl_data_device_manager* DataDeviceManager::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_ddm;
     }
 
-    wl_registry* Registry::Use()
+    uint32_t DataDeviceManager::Version()
     {
-        return m_registry;
+        return wl_data_device_manager_get_version(m_ddm);
     }
 
-    uint32_t Registry::Version()
+    DataSource DataDeviceManager::CreateDataSource()
     {
-        return wl_registry_get_version(m_registry);
+        return DataSource(wl_data_device_manager_create_data_source(m_ddm));    
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    DataDevice DataDeviceManager::GetDataDevice(Seat* seat)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        return DataDevice(wl_data_device_manager_get_data_device(m_ddm, seat ? seat->Use() : nullptr));
     }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
+    
 }}}}//qor::platform::nslinux::wl

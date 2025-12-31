@@ -25,46 +25,43 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "subcompositor.h"
+#include "surface.h"
+#include "subsurface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    SubCompositor* SubCompositor::FromSubCompositor(wl_subcompositor* subcompositor)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<SubCompositor*>(wl_subcompositor_get_user_data(subcompositor));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    SubCompositor::SubCompositor(wl_subcompositor* subcompositor) : m_subcompositor(subcompositor)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_subcompositor_set_user_data(m_subcompositor, this);
     }
 
-    Registry::~Registry()
+    SubCompositor::~SubCompositor()
     {
-        wl_registry_destroy(m_registry);
+        wl_subcompositor_destroy(m_subcompositor);
     }
 
-    wl_registry* Registry::Use()
+    wl_subcompositor* SubCompositor::Use()
     {
-        return m_registry;
+        return m_subcompositor;
     }
 
-    uint32_t Registry::Version()
+    uint32_t SubCompositor::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_subcompositor_get_version(m_subcompositor);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    SubSurface SubCompositor::GetSubSurface(Surface* surface, Surface* parent)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
+        return SubSurface(wl_subcompositor_get_subsurface(m_subcompositor, surface ? surface->Use() : nullptr, parent ? parent->Use() : nullptr));
+    }    
 
 }}}}//qor::platform::nslinux::wl

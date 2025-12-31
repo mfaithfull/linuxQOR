@@ -39,6 +39,6 @@ qor::Module& ThisModule(void)
 		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
     //Register the Linux specific implementations
-	//static qor::TypeRegEntry< qor::platform::nslinux::WaylandClient, qor::platform::nslinux::WaylandClient > regWaylandClient;
+	static qor::TypeRegEntry< qor::platform::nslinux::WaylandClient, qor::platform::nslinux::WaylandClient > regWaylandClient;
 	return QORModule;
 }

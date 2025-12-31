@@ -25,46 +25,51 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "datasource.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    DataSource* DataSource::DataSourceFrom(wl_data_source* datasource)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<DataSource*>(wl_data_source_get_user_data(datasource));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    DataSource::DataSource(wl_data_source* datasource) : m_datasource(datasource)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_data_source_set_user_data(m_datasource, this);
+    }    
+
+    DataSource::~DataSource()
+    {
+        wl_data_source_destroy(m_datasource);
     }
 
-    Registry::~Registry()
+    wl_data_source* DataSource::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_datasource;
     }
 
-    wl_registry* Registry::Use()
+    uint32_t DataSource::Version()
     {
-        return m_registry;
+        return wl_data_source_get_version(m_datasource);
     }
 
-    uint32_t Registry::Version()
+    int DataSource::AddListener(const wl_data_source_listener& listener, void* context)
     {
-        return wl_registry_get_version(m_registry);
+        return wl_data_source_add_listener(m_datasource, &listener, context);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    void DataSource::Offer(const std::string& mimeType)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        wl_data_source_offer(m_datasource, mimeType.c_str());
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    void DataSource::SetActions(uint32_t DnDActions)
     {
-        wl_registry_bind(m_registry, name, &interface, version);
+        wl_data_source_set_actions(m_datasource, DnDActions);
     }
-
+    
 }}}}//qor::platform::nslinux::wl

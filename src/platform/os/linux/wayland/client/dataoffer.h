@@ -22,49 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_DATAOFFER
+#define QOR_PP_H_LINUX_WAYLAND_DATAOFFER
 
-#include "registry.h"
+#include <stdint.h>
+#include <string>
 
-#include <wayland-client-core.h>
-#include <wayland-client-protocol.h>
+struct wl_data_offer;
+struct wl_data_offer_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    class qor_pp_module_interface(QOR_LINWAYLAND) DataOffer
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
-    }
+    public:
+        
+        static DataOffer* DataOfferFrom(wl_data_offer* dataoffer);
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
-    {
-        wl_registry_set_user_data(m_registry, this);
-    }
+        DataOffer(wl_data_offer* dataoffer);
+        ~DataOffer();
 
-    Registry::~Registry()
-    {
-        wl_registry_destroy(m_registry);
-    }
+        wl_data_offer* Use();
+        uint32_t Version();
+        int AddListener(const wl_data_offer_listener& listener, void* context);
+        void Accept(uint32_t serial, const std::string& mimeType);
+        void Finish();
+        void Receive(const std::string& mimeType, int32_t fd);
+        void SetActions(uint32_t DnDActions, uint32_t preferredAction);
 
-    wl_registry* Registry::Use()
-    {
-        return m_registry;
-    }
+    private:
 
-    uint32_t Registry::Version()
-    {
-        return wl_registry_get_version(m_registry);
-    }
+        wl_data_offer* m_dataoffer;
+    };
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
-    {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
-}}}}//qor::platform::nslinux::wl
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_DATAOFFER

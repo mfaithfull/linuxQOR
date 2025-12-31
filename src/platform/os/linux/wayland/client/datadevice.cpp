@@ -25,46 +25,41 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "datadevice.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    DataDevice* DataDevice::DataDeviceFrom(wl_data_device* datadevice)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<DataDevice*>(wl_data_device_get_user_data(datadevice));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    DataDevice::DataDevice(wl_data_device* datadevice) : m_datadevice(datadevice)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_data_device_set_user_data(m_datadevice, this);
+    }    
+
+    DataDevice::~DataDevice()
+    {
+        wl_data_device_destroy(m_datadevice);
     }
 
-    Registry::~Registry()
+    wl_data_device* DataDevice::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_datadevice;
     }
 
-    wl_registry* Registry::Use()
+    uint32_t DataDevice::Version()
     {
-        return m_registry;
+        return wl_data_device_get_version(m_datadevice);
     }
-
-    uint32_t Registry::Version()
+    
+    int DataDevice::AddListener(const wl_data_device_listener& listener, void* context)
     {
-        return wl_registry_get_version(m_registry);
+        return wl_data_device_add_listener(m_datadevice, &listener, context);
     }
-
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
-    {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
+    
 }}}}//qor::platform::nslinux::wl

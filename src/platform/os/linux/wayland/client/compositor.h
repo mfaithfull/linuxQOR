@@ -22,49 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_COMPOSITOR
+#define QOR_PP_H_LINUX_WAYLAND_COMPOSITOR
 
-#include "registry.h"
-
-#include <wayland-client-core.h>
-#include <wayland-client-protocol.h>
+struct wl_compositor;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
-    {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
-    }
+    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Region;
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    class qor_pp_module_interface(QOR_LINWAYLAND) Compositor
     {
-        wl_registry_set_user_data(m_registry, this);
-    }
+    public:
+        
+        static Compositor* FromCompositor(wl_compositor* compositor);
 
-    Registry::~Registry()
-    {
-        wl_registry_destroy(m_registry);
-    }
+        Compositor(wl_compositor* compositor);
+        ~Compositor();
 
-    wl_registry* Registry::Use()
-    {
-        return m_registry;
-    }
+        wl_compositor* Use();
+        uint32_t Version();        
 
-    uint32_t Registry::Version()
-    {
-        return wl_registry_get_version(m_registry);
-    }
+        Surface CreateSurface();
+        Region CreateRegion();
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
-    {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
+    private:
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
+        wl_compositor* m_compositor;
+    };
 
-}}}}//qor::platform::nslinux::wl
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_COMPOSITOR

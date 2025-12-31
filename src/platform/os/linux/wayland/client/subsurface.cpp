@@ -25,46 +25,62 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "subsurface.h"
+#include "surface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    SubSurface* SubSurface::SubSurfaceFrom(wl_subsurface* subsurface)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<SubSurface*>(wl_subsurface_get_user_data(subsurface));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    SubSurface::SubSurface(wl_subsurface* subsurface) : m_subsurface(subsurface)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_subsurface_set_user_data(m_subsurface, this);
     }
 
-    Registry::~Registry()
+    SubSurface::~SubSurface()
     {
-        wl_registry_destroy(m_registry);
+        wl_subsurface_destroy(m_subsurface);
     }
 
-    wl_registry* Registry::Use()
+    wl_subsurface* SubSurface::Use()
     {
-        return m_registry;
+        return m_subsurface;
     }
 
-    uint32_t Registry::Version()
+    uint32_t SubSurface::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_subsurface_get_version(m_subsurface);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    void SubSurface::PlaceAbove(Surface& sibling)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        wl_subsurface_place_above(m_subsurface, sibling.Use());
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    void SubSurface::PlaceBelow(Surface& sibling)
     {
-        wl_registry_bind(m_registry, name, &interface, version);
+        wl_subsurface_place_below(m_subsurface, sibling.Use());
+    }
+
+    void SubSurface::SetDesync()
+    {
+        wl_subsurface_set_desync(m_subsurface);
+    }
+
+    void SubSurface::SetPosition(int32_t x, int32_t y)
+    {
+        wl_subsurface_set_position(m_subsurface, x, y);
+    }
+
+    void SubSurface::SetSync()
+    {
+        wl_subsurface_set_sync(m_subsurface);
     }
 
 }}}}//qor::platform::nslinux::wl

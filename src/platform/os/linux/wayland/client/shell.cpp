@@ -25,46 +25,44 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "shell.h"
+#include "surface.h"
+#include "shellsurface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    Shell::Shell(wl_shell* shell) : m_shell(shell)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        wl_shell_set_user_data(m_shell, this);
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Shell::~Shell()
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_shell_destroy(m_shell);
     }
 
-    Registry::~Registry()
+    wl_shell* Shell::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_shell;
     }
 
-    wl_registry* Registry::Use()
+    Shell* Shell::ShellFrom(wl_shell* shell)
     {
-        return m_registry;
+        Shell* result = reinterpret_cast<Shell*>(wl_shell_get_user_data(shell));
+        return result;
     }
 
-    uint32_t Registry::Version()
+    uint32_t Shell::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_shell_get_version(m_shell);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    ShellSurface Shell::GetSurface(Surface* surface)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        return ShellSurface(wl_shell_get_shell_surface(m_shell, surface ? surface->Use() : nullptr));
     }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
+        
 }}}}//qor::platform::nslinux::wl

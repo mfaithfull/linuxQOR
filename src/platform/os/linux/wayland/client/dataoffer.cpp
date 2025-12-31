@@ -25,46 +25,61 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "dataoffer.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    DataOffer* DataOffer::DataOfferFrom(wl_data_offer* dataoffer)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<DataOffer*>(wl_data_offer_get_user_data(dataoffer));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    DataOffer::DataOffer(wl_data_offer* dataoffer) : m_dataoffer(dataoffer)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_data_offer_set_user_data(m_dataoffer, this);
+    }    
+
+    DataOffer::~DataOffer()
+    {
+        wl_data_offer_destroy(m_dataoffer);
     }
 
-    Registry::~Registry()
+    wl_data_offer* DataOffer::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_dataoffer;
     }
 
-    wl_registry* Registry::Use()
+    uint32_t DataOffer::Version()
     {
-        return m_registry;
+        return wl_data_offer_get_version(m_dataoffer);
+    }
+    
+    int DataOffer::AddListener(const wl_data_offer_listener& listener, void* context)
+    {
+        return wl_data_offer_add_listener(m_dataoffer, &listener, context);
     }
 
-    uint32_t Registry::Version()
+    void DataOffer::Accept(uint32_t serial, const std::string& mimeType)
     {
-        return wl_registry_get_version(m_registry);
+        wl_data_offer_accept(m_dataoffer, serial, mimeType.c_str());
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    void DataOffer::Finish()
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        wl_data_offer_finish(m_dataoffer);
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    void DataOffer::Receive(const std::string& mimeType, int32_t fd)
     {
-        wl_registry_bind(m_registry, name, &interface, version);
+        wl_data_offer_receive(m_dataoffer, mimeType.c_str(), fd);
     }
 
+    void DataOffer::SetActions(uint32_t DnDActions, uint32_t preferredAction)
+    {
+        wl_data_offer_set_actions(m_dataoffer, DnDActions, preferredAction);
+    }
+    
 }}}}//qor::platform::nslinux::wl

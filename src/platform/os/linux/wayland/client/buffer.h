@@ -22,49 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_BUFFER
+#define QOR_PP_H_LINUX_WAYLAND_BUFFER
 
-#include "registry.h"
+#include <stdint.h>
 
-#include <wayland-client-core.h>
-#include <wayland-client-protocol.h>
+struct wl_buffer;
+struct wl_buffer_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    class qor_pp_module_interface(QOR_LINWAYLAND) Buffer
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
-    }
+    public:
+        
+        static Buffer* BufferFrom(wl_buffer* buffer);
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
-    {
-        wl_registry_set_user_data(m_registry, this);
-    }
+        Buffer(wl_buffer* buffer);
+        ~Buffer();
 
-    Registry::~Registry()
-    {
-        wl_registry_destroy(m_registry);
-    }
+        wl_buffer* Use();
+        uint32_t Version();
+        int AddListener(const wl_buffer_listener& listener, void* context);
+        
+    private:
 
-    wl_registry* Registry::Use()
-    {
-        return m_registry;
-    }
+        wl_buffer* m_buffer;
+    };
 
-    uint32_t Registry::Version()
-    {
-        return wl_registry_get_version(m_registry);
-    }
-
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
-    {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
-}}}}//qor::platform::nslinux::wl
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_BUFFER

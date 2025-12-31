@@ -22,49 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_DATASOURCE
+#define QOR_PP_H_LINUX_WAYLAND_DATASOURCE
 
-#include "registry.h"
+#include <stdint.h>
+#include <string>
 
-#include <wayland-client-core.h>
-#include <wayland-client-protocol.h>
+struct wl_data_source;
+struct wl_data_source_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    class qor_pp_module_interface(QOR_LINWAYLAND) DataSource
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
-    }
+    public:
+        
+        static DataSource* DataSourceFrom(wl_data_source* datasource);
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
-    {
-        wl_registry_set_user_data(m_registry, this);
-    }
+        DataSource(wl_data_source* datasource);
+        ~DataSource();
 
-    Registry::~Registry()
-    {
-        wl_registry_destroy(m_registry);
-    }
+        wl_data_source* Use();
+        uint32_t Version();
+        int AddListener(const wl_data_source_listener& listener, void* context);
+        void Offer(const std::string& mimeType);
+        void SetActions(uint32_t DnDActions);
+        
+    private:
 
-    wl_registry* Registry::Use()
-    {
-        return m_registry;
-    }
+        wl_data_source* m_datasource;
+    };
 
-    uint32_t Registry::Version()
-    {
-        return wl_registry_get_version(m_registry);
-    }
-
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
-    {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
-
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
-}}}}//qor::platform::nslinux::wl
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_DATASOURCE

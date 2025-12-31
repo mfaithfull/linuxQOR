@@ -25,46 +25,65 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "seat.h"
+#include "keyboard.h"
+#include "pointer.h"
+#include "touch.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    Seat::Seat(wl_seat* seat) : m_seat(seat)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        wl_seat_set_user_data(m_seat, this);
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Seat::~Seat()
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_seat_destroy(m_seat);
     }
 
-    Registry::~Registry()
+    wl_seat* Seat::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_seat;
     }
 
-    wl_registry* Registry::Use()
+    Seat* Seat::SeatFrom(wl_seat* seat)
     {
-        return m_registry;
+        Seat* result = reinterpret_cast<Seat*>(wl_seat_get_user_data(seat));
+        return result;
     }
 
-    uint32_t Registry::Version()
+    uint32_t Seat::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_seat_get_version(m_seat);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    int Seat::AddListener(const wl_seat_listener& listener, void* context)
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        return wl_seat_add_listener(m_seat, &listener, context);
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    Keyboard Seat::GetKeyboard()
     {
-        wl_registry_bind(m_registry, name, &interface, version);
+        return Keyboard(wl_seat_get_keyboard(m_seat));
+    }
+
+    Pointer Seat::GetPointer()
+    {
+        return Pointer(wl_seat_get_pointer(m_seat));
+    }
+
+    Touch Seat::GetTouch()
+    {
+        return Touch(wl_seat_get_touch(m_seat));
+    }
+
+    void Seat::Release()
+    {
+        wl_seat_release(m_seat);
     }
 
 }}}}//qor::platform::nslinux::wl

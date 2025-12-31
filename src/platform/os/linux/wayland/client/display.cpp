@@ -28,6 +28,7 @@
 #include "display.h"
 #include "queue.h"
 #include "registry.h"
+#include "callback.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
@@ -122,6 +123,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     Registry Display::GetRegistry()
     {
         return Registry(wl_display_get_registry(m_display));
+    }
+
+    Callback Display::Sync()
+    {
+        return Callback(wl_display_sync(m_display));
     }
 
     void Display::SetLogHandler(void(loghandlerfunc)(std::string&))

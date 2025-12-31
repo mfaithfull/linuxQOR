@@ -25,46 +25,48 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "compositor.h"
+#include "surface.h"
+#include "region.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    Compositor* Compositor::FromCompositor(wl_compositor* compositor)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<Compositor*>(wl_compositor_get_user_data(compositor));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Compositor::Compositor(wl_compositor* compositor) : m_compositor(compositor)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_compositor_set_user_data(m_compositor, this);
     }
 
-    Registry::~Registry()
+    Compositor::~Compositor()
     {
-        wl_registry_destroy(m_registry);
+        wl_compositor_destroy(m_compositor);
     }
 
-    wl_registry* Registry::Use()
+    wl_compositor* Compositor::Use()
     {
-        return m_registry;
+        return m_compositor;
     }
 
-    uint32_t Registry::Version()
+    uint32_t Compositor::Version()
     {
-        return wl_registry_get_version(m_registry);
+        return wl_compositor_get_version(m_compositor);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    Surface Compositor::CreateSurface()
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        return Surface(wl_compositor_create_surface(m_compositor));
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    Region Compositor::CreateRegion()
     {
-        wl_registry_bind(m_registry, name, &interface, version);
+        return Region(wl_compositor_create_region(m_compositor));
     }
 
 }}}}//qor::platform::nslinux::wl

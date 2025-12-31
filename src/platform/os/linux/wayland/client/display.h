@@ -26,6 +26,7 @@
 #define QOR_PP_H_LINUX_WAYLAND_DISPLAY
 
 #include <string>
+#include <stdint.h>
 
 struct wl_display;
 
@@ -33,6 +34,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Queue;
     class qor_pp_module_interface(QOR_LINWAYLAND) Registry;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Callback;
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Display
     {
@@ -57,9 +59,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         int ReadEvents();
         void CancelRead();
         Registry GetRegistry();
+        Callback Sync();
         //TODO:
         void SetLogHandler(void(loghandlerfunc)(std::string&));
-        uint32_t GetProtocolError();
+        uint32_t GetProtocolError();        
 
     private:
         

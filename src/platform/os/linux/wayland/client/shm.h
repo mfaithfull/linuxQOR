@@ -22,49 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_SHM
+#define QOR_PP_H_LINUX_WAYLAND_SHM
 
-#include "registry.h"
+#include <stdint.h>
 
-#include <wayland-client-core.h>
-#include <wayland-client-protocol.h>
+struct wl_shm;
+struct wl_shm_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
-
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    
+    class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemoryPool;
+    
+    class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemory
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
-    }
+    public:
+        
+        static SharedMemory* SharedMemoryFrom(wl_shm* shm);
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
-    {
-        wl_registry_set_user_data(m_registry, this);
-    }
+        SharedMemory(wl_shm* shm);
+        ~SharedMemory();
 
-    Registry::~Registry()
-    {
-        wl_registry_destroy(m_registry);
-    }
+        wl_shm* Use();
+        uint32_t Version();
 
-    wl_registry* Registry::Use()
-    {
-        return m_registry;
-    }
+        SharedMemoryPool CreatePool(int32_t fd, int32_t size);
+        int AddListener(const wl_shm_listener& listener, void* context);
 
-    uint32_t Registry::Version()
-    {
-        return wl_registry_get_version(m_registry);
-    }
+    private:
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
-    {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
+        wl_shm* m_shm;
+    };
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
-}}}}//qor::platform::nslinux::wl
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_SHM

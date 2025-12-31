@@ -22,49 +22,45 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_SURFACE
+#define QOR_PP_H_LINUX_WAYLAND_SURFACE
 
-#include "registry.h"
-
-#include <wayland-client-core.h>
-#include <wayland-client-protocol.h>
+struct wl_surface;
+struct wl_surface_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
-    {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
-    }
+    class qor_pp_module_interface(QOR_LINWAYLAND) Buffer;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Callback;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Region;
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    class qor_pp_module_interface(QOR_LINWAYLAND) Surface
     {
-        wl_registry_set_user_data(m_registry, this);
-    }
+    public:
+        
+        static Surface* SurfaceFrom(wl_surface* surface);
 
-    Registry::~Registry()
-    {
-        wl_registry_destroy(m_registry);
-    }
+        Surface(wl_surface* surface);
+        ~Surface();
 
-    wl_registry* Registry::Use()
-    {
-        return m_registry;
-    }
+        wl_surface* Use();
+        uint32_t Version();
+        int AddListener(const wl_surface_listener& listener, void* context);
+        void Attach(Buffer& buffer, int32_t x, int32_t y);
+        void Damage(int32_t x, int32_t y, int32_t width, int32_t height);
+        Callback Frame();
+        void SetOpaqueRegion(Region& region);
+        void SetInputRegion(Region& region);
+        void Commit();
+        void SetBufferTransform(int32_t transform);
+        void SetBufferScale(int32_t scale);
+        void DamageBuffer(int32_t x, int32_t y, int32_t width, int32_t height);
 
-    uint32_t Registry::Version()
-    {
-        return wl_registry_get_version(m_registry);
-    }
+    private:
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
-    {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
+        wl_surface* m_surface;
+    };
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
-
-}}}}//qor::platform::nslinux::wl
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_SURFACE

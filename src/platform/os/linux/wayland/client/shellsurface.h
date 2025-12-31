@@ -22,49 +22,49 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_SHELLSURFACE
+#define QOR_PP_H_LINUX_WAYLAND_SHELLSURFACE
 
-#include "registry.h"
+#include <stdint.h>
+#include <string>
 
-#include <wayland-client-core.h>
-#include <wayland-client-protocol.h>
+struct wl_shell_surface;
+struct wl_shell_surface_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
-    {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
-    }
+    class qor_pp_module_interface(QOR_LINWAYLAND) Seat;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Output;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    class qor_pp_module_interface(QOR_LINWAYLAND) ShellSurface
     {
-        wl_registry_set_user_data(m_registry, this);
-    }
+    public:
+        
+        static ShellSurface* ShellSurfaceFrom(wl_shell_surface* shellsurface);
 
-    Registry::~Registry()
-    {
-        wl_registry_destroy(m_registry);
-    }
+        ShellSurface(wl_shell_surface* shellsurface);
+        ~ShellSurface();
 
-    wl_registry* Registry::Use()
-    {
-        return m_registry;
-    }
+        wl_shell_surface* Use();
+        uint32_t Version();
 
-    uint32_t Registry::Version()
-    {
-        return wl_registry_get_version(m_registry);
-    }
+        int AddListener(const wl_shell_surface_listener& listener, void* context);
+        void Move(Seat* seat, uint32_t serial);
+        void Pong(uint32_t serial);
+        void SetClass(const std::string& className);
+        void SetFullScreen(uint32_t method, uint32_t framerate, Output* output);
+        void SetMaximized(Output* output);
+        void SetPopup(Seat* seat, uint32_t serial, Surface* parent, int32_t x, int32_t y, uint32_t flags);
+        void SetTitle(const std::string& title);
+        void SetTopLevel();
+        void SetTransient(Surface* parent, int32_t x, int32_t y, uint32_t flags);
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
-    {
-        return wl_registry_add_listener(m_registry, &listener, data);
-    }
+    private:
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
-    {
-        wl_registry_bind(m_registry, name, &interface, version);
-    }
+        wl_shell_surface* m_shellsurface;
+    };
 
-}}}}//qor::platform::nslinux::wl
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_SHELLSURFACE

@@ -25,46 +25,52 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "registry.h"
+#include "pointer.h"
+#include "surface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    Registry* Registry::RegistryFrom(wl_registry* registry)
+    Pointer* Pointer::PointerFrom(wl_pointer* pointer)
     {
-        return reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
+        return reinterpret_cast<Pointer*>(wl_pointer_get_user_data(pointer));
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Pointer::Pointer(wl_pointer* pointer) : m_pointer(pointer)
     {
-        wl_registry_set_user_data(m_registry, this);
+        wl_pointer_set_user_data(m_pointer, this);
+    }    
+
+    Pointer::~Pointer()
+    {
+        wl_pointer_destroy(m_pointer);
     }
 
-    Registry::~Registry()
+    wl_pointer* Pointer::Use()
     {
-        wl_registry_destroy(m_registry);
+        return m_pointer;
     }
 
-    wl_registry* Registry::Use()
+    uint32_t Pointer::Version()
     {
-        return m_registry;
+        return wl_pointer_get_version(m_pointer);
     }
 
-    uint32_t Registry::Version()
+    int Pointer::AddListener(const wl_pointer_listener& listener, void* context)
     {
-        return wl_registry_get_version(m_registry);
+        return wl_pointer_add_listener(m_pointer, &listener, context);
     }
 
-    int Registry::AddListener(const wl_registry_listener& listener, void* data)
+    void Pointer::Release()
     {
-        return wl_registry_add_listener(m_registry, &listener, data);
+        wl_pointer_release(m_pointer);
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
+    void Pointer::SetCursor(uint32_t serial, Surface* surface, int32_t hotspot_x, int32_t hotspot_y)
     {
-        wl_registry_bind(m_registry, name, &interface, version);
+        wl_pointer_set_cursor(m_pointer, serial, surface ? surface->Use() : nullptr, hotspot_x, hotspot_y);
     }
-
+    
 }}}}//qor::platform::nslinux::wl
