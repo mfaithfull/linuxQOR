@@ -29,6 +29,7 @@
 
 struct wl_surface;
 struct wl_surface_listener;
+struct wl_output;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -43,7 +44,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static Surface* SurfaceFrom(wl_surface* surface);
 
         explicit Surface(wl_surface* surface);
-        ~Surface();
+        virtual ~Surface();
         Surface(const Surface&) = delete;
         Surface& operator=(const Surface&) = delete;
         Surface(Surface&& rhs) noexcept;
@@ -61,6 +62,20 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         void SetBufferTransform(int32_t transform);
         void SetBufferScale(int32_t scale);
         void DamageBuffer(int32_t x, int32_t y, int32_t width, int32_t height);
+        virtual void OnEnter(void* context, struct wl_output* output)
+        {/* Override in derived class 
+            surface entered output
+            This event is sent when the surface enters an output
+            (i.e., becomes visible on it). The output argument is
+            the output the surface has entered.
+        */}
+        virtual void OnLeave(void* context, struct wl_output* output)
+        {/* Override in derived class 
+            surface left output
+            This event is sent when the surface leaves an output
+            (i.e., is no longer visible on it). The output argument is
+            the output the surface has left.
+        */}
 
     private:
 

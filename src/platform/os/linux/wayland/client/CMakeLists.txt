@@ -8,8 +8,22 @@ add_library(${target} SHARED linqor_waylandclient.cpp client.cpp
 display.cpp proxy.cpp registry.cpp queue.cpp compositor.cpp surface.cpp
 callback.cpp region.cpp buffer.cpp touch.cpp subsurface.cpp
 subcompositor.cpp shmpool.cpp shm.cpp shellsurface.cpp shell.cpp seat.cpp
-pointer.cpp keyboard.cpp datadevicemanager.cpp datasource.cpp
-datadevice.cpp dataoffer.cpp)
+pointer.cpp keyboard.cpp datadevicemanager.cpp datasource.cpp output.cpp
+datadevice.cpp dataoffer.cpp
+listeners/bufferlistener.cpp 
+listeners/callbacklistener.cpp
+listeners/datadevicelistener.cpp
+listeners/dataofferlistener.cpp 
+listeners/datasourcelistener.cpp
+listeners/keyboardlistener.cpp
+listeners/pointerlistener.cpp 
+listeners/registrylistener.cpp
+listeners/seatlistener.cpp
+listeners/shellsurfacelistener.cpp
+listeners/shmlistener.cpp
+listeners/surfacelistener.cpp
+listeners/touchlistener.cpp
+session.cpp)
 
 target_include_directories(${target} PRIVATE)
 
@@ -17,7 +31,7 @@ include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE QOR_LINWAYLAND)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
-qor_interception qor_egl linq_thread wayland-client)
+qor_interception qor_log linq_thread wayland-client)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 

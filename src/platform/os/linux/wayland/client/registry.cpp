@@ -24,11 +24,16 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
+#include "src/qor/log/informative.h"
 
 #include "registry.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
+
+#include "listeners/registrylistener.h"
+#include "session.h"
+#include "compositor.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -52,7 +57,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return new Registry(registry);
     }
 
-    Registry::Registry(wl_registry* registry) : m_registry(registry)
+    Registry::Registry(wl_registry* registry) : m_registry(registry), m_defaultListener(nullptr)
     {
         if(registry)
         {
@@ -64,9 +69,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }
     }
 
-    Registry::Registry(Registry&& rhs) noexcept : m_registry(rhs.m_registry)
+    Registry::Registry(Registry&& rhs) noexcept : m_registry(rhs.m_registry), m_defaultListener(rhs.m_defaultListener)
     {
         rhs.m_registry = nullptr;
+        rhs.m_defaultListener = nullptr;
         if (m_registry)
         {
             wl_registry_set_user_data(m_registry, this);
@@ -83,6 +89,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             }
 
             m_registry = rhs.m_registry;
+            m_defaultListener = rhs.m_defaultListener;
+            rhs.m_defaultListener = nullptr;
             rhs.m_registry = nullptr;
 
             if (m_registry)
@@ -98,6 +106,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         if(m_registry)
         {
             wl_registry_destroy(m_registry);
+        }
+        if(m_defaultListener)
+        {
+            delete m_defaultListener;
+            m_defaultListener = nullptr;
         }
     }
 
@@ -120,6 +133,20 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return wl_registry_get_version(m_registry);
     }
 
+    void Registry::AddDefaultListener(qor::ref_of<Session>::type session)
+    {
+        if(!m_registry)
+        {
+            warning("Adding default listener to Registry with null wl_registry pointer");
+            return;
+        }
+        if(!m_defaultListener)
+        {
+            m_defaultListener = new RegistryListener();
+        }
+        wl_registry_add_listener(m_registry, m_defaultListener, session.operator->());
+    }
+
     int Registry::AddListener(const wl_registry_listener& listener, void* data)
     {
         if(!m_registry)
@@ -130,14 +157,38 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return wl_registry_add_listener(m_registry, &listener, data);
     }
 
-    void Registry::Bind(uint32_t name, uint32_t version, wl_interface& interface)
+    void* Registry::Bind(uint32_t name, uint32_t version, const wl_interface& interface)
     {
         if(!m_registry)
         {
             warning("Binding to Registry with null wl_registry pointer");
-            return;
+            return nullptr;
         }
-        wl_registry_bind(m_registry, name, &interface, version);
+        return wl_registry_bind(m_registry, name, &interface, version);
+    }
+
+    void Registry::OnGlobal(void* context, uint32_t name, const char* interface, uint32_t version)
+    {
+        log::inform("Global object announced: {0:s} (version {1:u) with name {2:u}", interface, version, name);
+        Session* session = reinterpret_cast<Session*>(context);
+        if(session && session->Tag() == Session::TagName)
+        {
+            if (strcmp(interface, "wl_compositor") == 0)
+            {
+                wl_compositor* compositor = reinterpret_cast<wl_compositor*>(Bind(name, version, wl_compositor_interface));
+                session->SetCompositor(new_ref<Compositor>(compositor));
+            }
+        }
+    }
+
+    void Registry::OnGlobalRemove(void* context, uint32_t name)
+    {
+        log::inform("Global object removed with name {0:u}", name);
+        Session* session = reinterpret_cast<Session*>(context);
+        if(session && session->Tag() == Session::TagName)
+        {
+            //Handle removal if needed
+        }
     }
 
 }}}}//qor::platform::nslinux::wl

@@ -29,6 +29,8 @@
 
 struct wl_touch;
 struct wl_touch_listener;
+struct wl_surface;
+typedef int32_t wl_fixed_t;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -39,7 +41,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static Touch* TouchFrom(wl_touch* touch);
 
         explicit Touch(wl_touch* touch);
-        ~Touch();
+        virtual ~Touch();
         Touch(Touch&& rhs) noexcept;
         Touch& operator=(Touch&& rhs) noexcept;
         const char* Tag() const{return TagName;}
@@ -47,6 +49,30 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         uint32_t Version() const;
         int AddListener(const wl_touch_listener& listener, void* context);
         void Release();
+        virtual void OnDown(void* context, uint32_t serial, uint32_t time, wl_surface* surface, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
+        {/* Override in derived class 
+            touch point down
+            A new touch point has appeared on the surface.
+        */}
+        virtual void OnUp(void* context, uint32_t serial, uint32_t time, int32_t id)
+        {/* Override in derived class 
+            touch point up
+            A touch point has disappeared from the surface.
+        */}
+        virtual void OnMotion(void* context, uint32_t time, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
+        {/* Override in derived class 
+            touch point motion
+            An existing touch point has changed coordinates.
+        */}
+        virtual void OnFrame(void* context)
+        {/* Override in derived class 
+            touch frame
+            All touch points for a given frame have been sent.
+        */}
+        virtual void OnCancel(void* context)
+        {/* Override in derived class 
+            touch sequence cancelled    
+        */}
 
     private:
 

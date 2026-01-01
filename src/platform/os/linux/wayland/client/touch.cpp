@@ -32,6 +32,8 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    const char* const Touch::TagName = "QOR::PLATFORM::NSLINUX::WL::TOUCH";
+
     Touch::Touch(wl_touch* touch) : m_touch(touch)
     {
         if(touch)

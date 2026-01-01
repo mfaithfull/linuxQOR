@@ -27,7 +27,12 @@
 
 #include <stdint.h>
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+
 struct wl_compositor;
+struct wl_surface;
+struct wl_region;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -36,12 +41,19 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Compositor
     {
+    private:
+
+        wl_surface* InternalCreateSurface();
+        wl_region* InternalCreateRegion();
+
     public:
         static const char* const TagName;
         static Compositor* CompositorFrom(wl_compositor* compositor);
 
         explicit Compositor(wl_compositor* compositor);
         ~Compositor();
+        Compositor(const Compositor&) = delete;
+        Compositor& operator=(const Compositor&) = delete;
         Compositor(Compositor&& rhs) noexcept;
         Compositor& operator=(Compositor&& rhs) noexcept;
 
@@ -50,8 +62,17 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_compositor* Use() const;
         uint32_t Version() const;
 
-        Surface CreateSurface();
-        Region CreateRegion();
+        template< typename T = Surface> requires std::is_base_of_v<Surface, T>
+        qor::ref_of<Surface>::type CreateSurface()
+        {
+            return new_ref<T>(InternalCreateSurface());
+        }
+
+        template< typename T = Region> requires std::is_base_of_v<Region, T>
+        qor::ref_of<Region>::type CreateRegion()
+        {
+            return new_ref<T>(InternalCreateRegion());
+        }
 
     private:
 

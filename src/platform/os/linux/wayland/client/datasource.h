@@ -40,7 +40,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static DataSource* DataSourceFrom(wl_data_source* datasource);
 
         explicit DataSource(wl_data_source* datasource);
-        ~DataSource();
+        virtual ~DataSource();
         DataSource(DataSource&& rhs) noexcept;
         DataSource& operator=(DataSource&& rhs) noexcept;
         const char* Tag() const{return TagName;}
@@ -49,6 +49,31 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         int AddListener(const wl_data_source_listener& listener, void* context);
         void Offer(const std::string& mimeType);
         void SetActions(uint32_t DnDActions);
+
+        virtual void OnTarget(void* context, const char* mime_type)
+        {/* Override in derived class 
+            another client is targeting a mime type
+            This event is sent when another client indicates that it is
+            interested in a specific mime type.
+        */}
+
+        virtual void OnSend(void* context, const char* mime_type, int32_t fd)
+        {/* Override in derived class 
+            send data to another client
+            This event is sent to transfer data to another client. The data
+            should be written to the provided file descriptor in the specified
+            mime type. The file descriptor will be closed by the caller after
+            this request is handled.
+        */}
+
+        virtual void OnCancelled(void* context)
+        {/* Override in derived class 
+            the data source is cancelled
+            This event is sent when the data source is no longer valid, for
+            example when the clipboard content is replaced or the drag and
+            drop operation is finished. After receiving this event, the data
+            source object should be destroyed.
+        */}
         
     private:
 

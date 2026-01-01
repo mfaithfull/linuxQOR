@@ -8,37 +8,8 @@
 #include "src/platform/os/linux/wayland/client/client.h"
 #include "src/platform/os/linux/wayland/client/display.h"
 #include "src/platform/os/linux/wayland/client/registry.h"
-
-#include <wayland-client.h>
-
-//struct wl_display* display = NULL;
-struct wl_compositor* compositor = NULL;
-
-static void global_registry_handler(void* data, struct wl_registry* registry, uint32_t id, const char* interface, uint32_t version)
-{
-    printf("Got a registry event for %s id %d\n", interface, id);
-    if (strcmp(interface, "wl_compositor") == 0)
-    {
-        compositor = reinterpret_cast<wl_compositor*>(
-            wl_registry_bind(registry, 
-                id, 
-                &wl_compositor_interface, 
-                1
-            )
-        );
-    }
-}
-
-static void global_registry_remover(void *data, struct wl_registry *registry, uint32_t id)
-{
-    printf("Got a registry losing event for %d\n", id);
-}
-
-static const struct wl_registry_listener registry_listener = 
-{
-    global_registry_handler,
-    global_registry_remover
-};
+#include "src/platform/os/linux/wayland/client/session.h"
+#include "src/platform/os/linux/wayland/client/compositor.h"
 
 const char* appName = "registry";
 
@@ -66,8 +37,8 @@ int main(int argc, char **argv)
             []()->int
             {
                 auto waylandClient = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::platform::nslinux::WaylandClient>();
-                auto display = waylandClient->GetDisplay("");                
-
+                auto display = waylandClient(qor_shared).GetDisplay("");
+                
                 if (display.IsNull()) 
                 {
                     fprintf(stderr, "Can't connect to display\n");
@@ -75,13 +46,13 @@ int main(int argc, char **argv)
                 }
                 printf("connected to display\n");
 
+                auto session = new_ref<qor::platform::nslinux::wl::Session>();
                 auto registry = display->GetRegistry();
-                registry.AddListener(registry_listener, nullptr);
-                                
+                registry->AddDefaultListener(session);
                 display->Dispatch();
                 display->Roundtrip();
 
-                if (compositor == NULL) 
+                if (session->GetCompositor().IsNull()) 
                 {
                     fprintf(stderr, "Can't find compositor\n");
                     exit(1);

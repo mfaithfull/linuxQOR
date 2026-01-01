@@ -28,7 +28,11 @@
 #include <string>
 #include <stdint.h>
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+
 struct wl_display;
+struct wl_registry;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -38,11 +42,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Display
     {
+    private:
+        wl_registry* InternalGetRegistry();
+
     public:
         
         Display(const char* name = nullptr);
         Display(int fd);
-        ~Display();
+        virtual ~Display();
         wl_display* Use();
         int GetFD();
         int Dispatch();
@@ -58,13 +65,19 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         int PrepareRead(Queue& queue);
         int ReadEvents();
         void CancelRead();
-        Registry GetRegistry();
+
+        template< typename T = Registry> requires std::is_base_of_v<Registry, T>
+        qor::ref_of<Registry>::type GetRegistry()
+        {
+            return new_ref<T>(InternalGetRegistry());
+        }
+
         Callback Sync();
         //TODO:
         void SetLogHandler(void(loghandlerfunc)(std::string&));
         uint32_t GetProtocolError();        
 
-    private:
+    private:        
         
         wl_display* m_display;
     };

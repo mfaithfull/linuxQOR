@@ -29,6 +29,9 @@
 
 struct wl_data_device;
 struct wl_data_device_listener;
+struct wl_data_offer;
+typedef int32_t wl_fixed_t;
+struct wl_surface;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -39,7 +42,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static DataDevice* DataDeviceFrom(wl_data_device* datadevice);
 
         explicit DataDevice(wl_data_device* datadevice);
-        ~DataDevice();
+        virtual ~DataDevice();
         DataDevice(const DataDevice&) = delete;
         DataDevice& operator=(const DataDevice&) = delete;
         DataDevice(DataDevice&& rhs) noexcept;
@@ -50,6 +53,46 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_data_device* Use() const;
         uint32_t Version() const;
         int AddListener(const wl_data_device_listener& listener, void* context);
+        virtual void OnDataOffer(void* context, wl_data_offer* id)
+        {/* Override in derived class 
+            new data offer
+            This event is sent when a new data offer is created. The
+            data offer can be used to receive data that another client
+            offers to the compositor.
+        */}
+        virtual void OnDataEnter(void* context, uint32_t serial, wl_surface* surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer* id)
+        {/* Override in derived class 
+            data enters a surface
+            This event is sent when a drag-and-drop or selection
+            operation enters a surface owned by the client. The
+            serial corresponds to the enter event of the
+            wl_pointer or wl_keyboard that triggered the operation.
+        */}
+        virtual void OnDataLeave(void* context)
+        {/* Override in derived class 
+            data leaves a surface
+            This event is sent when a drag-and-drop or selection
+            operation leaves a surface owned by the client.
+        */}
+        virtual void OnDataMotion(void* context, uint32_t time, int32_t x, int32_t y)
+        {/* Override in derived class 
+            data is moved over a surface
+            This event is sent when the drag-and-drop or selection
+            operation is moved over a surface owned by the client. The
+            time argument is a timestamp of when the event occurred.
+        */}
+        virtual void OnDataDrop(void* context)
+        {/* Override in derived class            
+            data is dropped onto a surface
+            This event is sent when a drag-and-drop operation is
+            dropped onto a surface owned by the client.
+        */}
+        virtual void OnDataSelection(void* context, wl_data_offer* id)
+        {/* Override in derived class 
+            selection has changed
+            This event is sent when the selection has changed. If
+            id is NULL, there is no selection.
+        */}
 
     private:
 

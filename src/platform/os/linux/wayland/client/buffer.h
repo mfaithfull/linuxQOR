@@ -39,7 +39,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static Buffer* BufferFrom(wl_buffer* buffer);
 
         explicit Buffer(wl_buffer* buffer);
-        ~Buffer();
+        virtual ~Buffer();
         Buffer(Buffer&& rhs) noexcept;
         Buffer& operator=(Buffer&& rhs) noexcept;
 
@@ -49,6 +49,22 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         uint32_t Version() const;
         int AddListener(const wl_buffer_listener& listener, void* context);
         
+        virtual void OnRelease(void* context){/* Override in derived class 
+            compositor releases buffer
+            Sent when this wl_buffer is no longer used by the compositor.
+            The client is now free to reuse or destroy this buffer and its
+            backing storage.
+
+            If a client receives a release event before the frame callback
+            requested in the same wl_surface.commit that attaches this
+            wl_buffer to a surface, then the client is immediately free to
+            reuse the buffer and its backing storage, and does not need a
+            second buffer for the next surface content update. Typically
+            this is possible, when the compositor maintains a copy of the
+            wl_surface contents, e.g. as a GL texture. This is an important
+            optimization for GL(ES) compositors with wl_shm clients.*/
+        }
+
     private:
 
         wl_buffer* m_buffer;

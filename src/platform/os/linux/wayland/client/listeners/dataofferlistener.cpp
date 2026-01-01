@@ -22,47 +22,40 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_POINTER
-#define QOR_PP_H_LINUX_WAYLAND_POINTER
+#include "src/configuration/configuration.h"
+#include "src/qor/error/error.h"
 
-#include <stdint.h>
-
-struct wl_pointer;
-struct wl_pointer_listener;
-struct wl_surface;
-typedef int32_t wl_fixed_t;
+#include "dataofferlistener.h"
+#include "../dataoffer.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
-
-    class qor_pp_module_interface(QOR_LINWAYLAND) Pointer
+    DataOfferListener::DataOfferListener()
     {
-    public:
-        static const char* const TagName;
-        static Pointer* PointerFrom(wl_pointer* pointer);
-
-        explicit Pointer(wl_pointer* pointer);
-        virtual ~Pointer();
-        Pointer(Pointer&& rhs) noexcept;
-        Pointer& operator=(Pointer&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
-        wl_pointer* Use() const;
-        uint32_t Version() const;
-        int AddListener(const wl_pointer_listener& listener, void* context);
-        void Release();
-        void SetCursor(uint32_t serial, Surface* surface, int32_t hotspot_x, int32_t hotspot_y);
-        virtual void OnEnter(void* context, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy);
-        virtual void OnLeave(void* context, uint32_t serial, wl_surface* surface);
-        virtual void OnMotion(void* context, uint32_t time, wl_fixed_t sx, wl_fixed_t sy);
-        virtual void OnButton(void* context, uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
-        virtual void OnAxis(void* context, uint32_t time, uint32_t axis, wl_fixed_t value);
-
-    private:
-
-        wl_pointer* m_pointer;
-    };
-
+        wl_data_offer_listener::offer = [](void* data, wl_data_offer* offer, const char* mime_type)
+        {
+            DataOffer* dataOffer = DataOffer::DataOfferFrom(offer);
+            if(dataOffer)
+            {
+                dataOffer->OnOffer(data, mime_type);
+            }
+        };
+        wl_data_offer_listener::source_actions = [](void* data, wl_data_offer* offer, uint32_t source_actions)
+        {
+            DataOffer* dataOffer = DataOffer::DataOfferFrom(offer);
+            if(dataOffer)
+            {
+                dataOffer->OnSourceActions(data, source_actions);
+            }
+        };
+        wl_data_offer_listener::action = [](void* data, wl_data_offer* offer, uint32_t dnd_action)
+        {
+            DataOffer* dataOffer = DataOffer::DataOfferFrom(offer);
+            if(dataOffer)
+            {
+                dataOffer->OnAction(data, dnd_action);
+            }
+        };
+    }
+        
 }}}}//qor::platform::nslinux::wl
-    
-#endif//QOR_PP_H_LINUX_WAYLAND_POINTER

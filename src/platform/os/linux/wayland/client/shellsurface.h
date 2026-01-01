@@ -44,7 +44,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static ShellSurface* ShellSurfaceFrom(wl_shell_surface* shellsurface);
 
         explicit ShellSurface(wl_shell_surface* shellsurface);
-        ~ShellSurface();
+        virtual ~ShellSurface();
         ShellSurface(ShellSurface&& rhs) noexcept;
         ShellSurface& operator=(ShellSurface&& rhs) noexcept;
         const char* Tag() const{return TagName;}
@@ -60,7 +60,31 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         void SetTitle(const std::string& title);
         void SetTopLevel();
         void SetTransient(Surface* parent, int32_t x, int32_t y, uint32_t flags);
-
+        virtual void OnPing(void* context, uint32_t serial)
+        {/* Override in derived class 
+            ping from compositor
+            This event is sent by the compositor to ask the client to
+            respond with a pong request. The client should respond
+            as quickly as possible, to avoid the compositor thinking
+            the client has become unresponsive.
+        */}
+        virtual void OnConfigure(void* context, uint32_t edges, int32_t width, int32_t height)
+        {/* Override in derived class 
+            surface resized or moved
+            This event is sent when the compositor wants to
+            resize or move the surface. The edges argument
+            describes which edges of the surface have been
+            changed by the user. The width and height arguments
+            specify the new size of the surface, or 0 to let
+            the client decide its own size.
+        */}
+        virtual void OnPopupDone(void* context)
+        {/* Override in derived class 
+            popup is dismissed
+            This event is sent when the compositor has dismissed
+            the popup surface, e.g. when the user clicks outside
+            the popup.
+        */}
     private:
 
         wl_shell_surface* m_shellsurface;

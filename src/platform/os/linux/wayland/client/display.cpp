@@ -50,6 +50,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_display_disconnect(m_display);
     }
 
+    wl_registry* Display::InternalGetRegistry()
+    {
+        return wl_display_get_registry(m_display);
+    }
+
     int Display::GetFD()
     {
         return wl_display_get_fd(m_display);
@@ -118,11 +123,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     void Display::CancelRead()
     {
         wl_display_cancel_read(m_display);
-    }
-
-    Registry Display::GetRegistry()
-    {
-        return Registry(wl_display_get_registry(m_display));
     }
 
     Callback Display::Sync()

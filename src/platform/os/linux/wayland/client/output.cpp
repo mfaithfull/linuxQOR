@@ -25,111 +25,123 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "compositor.h"
-#include "surface.h"
-#include "region.h"
+#include "output.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    const char* const Compositor::TagName = "QOR::PLATFORM::NSLINUX::WL::COMPOSITOR";
+    const char* const Output::TagName = "QOR::PLATFORM::NSLINUX::WL::OUTPUT";
 
-    Compositor* Compositor::CompositorFrom(wl_compositor* compositor)
+    Output* Output::OutputFrom(wl_output* output)
     {
-        if(!compositor)
+        if(!output)
         {
             return nullptr;
         }
-        Compositor* result = reinterpret_cast<Compositor*>(wl_compositor_get_user_data(compositor));
+        Output* result = reinterpret_cast<Output*>(wl_output_get_user_data(output));
         if(result && result->Tag() == TagName)
         {
             return result;
         }
         else if(result)
         {
-            continuable("Wayland wl_compositor user data tag mismatch");
+            continuable("Wayland wl_output user data tag mismatch");
         }
-        return new Compositor(compositor);
+        return new Output(output);
     }
 
-    Compositor::Compositor(wl_compositor* compositor) : m_compositor(compositor)
+    Output::Output(wl_output* output) : m_output(output)
     {
-        if(compositor)
+        if(output)
         {
-            wl_compositor_set_user_data(m_compositor, this);
+            wl_output_set_user_data(m_output, this);
         }
         else
         {
-            continuable("Compositor created with null wl_compositor pointer");
+            continuable("Output created with null wl_output pointer");
         }
-    }
+    }    
 
-    Compositor::Compositor(Compositor&& rhs) noexcept : m_compositor(rhs.m_compositor)
+    Output::Output(Output&& rhs) noexcept : m_output(rhs.m_output)
     {
-        rhs.m_compositor = nullptr;
-        if (m_compositor)
+        rhs.m_output = nullptr;
+        if (m_output)
         {
-            wl_compositor_set_user_data(m_compositor, this);
+            wl_output_set_user_data(m_output, this);
         }
     }
 
-    Compositor& Compositor::operator=(Compositor&& rhs) noexcept
+    Output& Output::operator=(Output&& rhs) noexcept
     {
         if (this != &rhs)
         {
-            if (m_compositor)
+            if (m_output)
             {
-                wl_compositor_destroy(m_compositor);
+                wl_output_destroy(m_output);
             }
 
-            m_compositor = rhs.m_compositor;
-            rhs.m_compositor = nullptr;
+            m_output = rhs.m_output;
+            rhs.m_output = nullptr;
 
-            if (m_compositor)
+            if (m_output)
             {
-                wl_compositor_set_user_data(m_compositor, this);
+                wl_output_set_user_data(m_output, this);
             }
         }
         return *this;
     }
 
-    Compositor::~Compositor()
+    Output::~Output()
     {
-        if(m_compositor)
+        if(m_output)
         {
-            wl_compositor_destroy(m_compositor);
+            wl_output_destroy(m_output);
         }
     }
 
-    wl_compositor* Compositor::Use() const
+    wl_output* Output::Use() const
     {
-        if(!m_compositor)
+        if(!m_output)
         {
-            warning("Using Compositor with null wl_compositor pointer");
+            warning("Using Output with null wl_output pointer");
         }
-        return m_compositor;
+        return m_output;
     }
 
-    uint32_t Compositor::Version() const
+    uint32_t Output::Version() const
     {
-        if(!m_compositor)
+        if(!m_output)
         {
-            warning("Getting version of Compositor with null wl_compositor pointer");
+            warning("Getting version of Output with null wl_output pointer");
             return 0;
         }
-        return wl_compositor_get_version(m_compositor);
+        return wl_output_get_version(m_output);
     }
-
-    wl_surface* Compositor::InternalCreateSurface()
+    
+    /*
+    int Output::AddListener(const wl_output_listener& listener, void* context)
     {
-        return wl_compositor_create_surface(m_compositor);
+        if(!m_output)
+        {
+            warning("Adding listener to Output with null wl_output pointer");
+            return -1;
+        }
+        return wl_output_add_listener(m_output, &listener, context);
     }
 
-    wl_region* Compositor::InternalCreateRegion()
+    void Output::Release()
     {
-        return wl_compositor_create_region(m_compositor);
-    }
-
+        if(m_output)
+        {
+            wl_output_destroy(m_output);
+            m_output = nullptr;
+        }
+        else
+        {
+            warning("Releasing Output with null wl_output pointer");
+        }
+    }*/
+    
 }}}}//qor::platform::nslinux::wl

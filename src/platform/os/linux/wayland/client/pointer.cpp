@@ -149,4 +149,47 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_pointer_set_cursor(m_pointer, serial, surface ? surface->Use() : nullptr, hotspot_x, hotspot_y);
     }
     
+    void Pointer::OnEnter(void* context, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy)
+    {/* Override in derived class 
+        pointer enters a surface
+        This event indicates that the pointer has entered a surface.
+        The surface argument is the surface entered.
+        The sx and sy arguments are the surface-local coordinates of the
+        pointer hotspot.
+    */}
+
+    void Pointer::OnLeave(void* context, uint32_t serial, wl_surface* surface)
+    {/* Override in derived class 
+        pointer leaves a surface
+        This event indicates that the pointer has left a surface.
+        The surface argument is the surface left.
+    */}
+
+    void Pointer::OnMotion(void* context, uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
+    {/* Override in derived class 
+        pointer motion
+        This event indicates that the pointer has moved.
+        The sx and sy arguments are the surface-local coordinates of the
+        pointer hotspot.
+    */}
+
+    void Pointer::OnButton(void* context, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
+    {/* Override in derived class 
+        pointer button state changed
+        This event indicates that a button on the pointer has changed
+        state. The button argument is a button code as defined
+        in the Linux input event codes (linux/input-event-codes.h).
+        The state argument is either WL_POINTER_BUTTON_STATE_PRESSED
+        or WL_POINTER_BUTTON_STATE_RELEASED.
+    */}
+
+    void Pointer::OnAxis(void* context, uint32_t time, uint32_t axis, wl_fixed_t value)
+    {/* Override in derived class 
+        pointer axis changed
+        This event indicates that an axis on the pointer has changed.
+        The axis argument is one of the WL_POINTER_AXIS_* enums. The value
+        argument is the amount of motion along the axis since the last
+        axis event.
+    */}
+
 }}}}//qor::platform::nslinux::wl

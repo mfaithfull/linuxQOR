@@ -40,7 +40,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static DataOffer* DataOfferFrom(wl_data_offer* dataoffer);
 
         explicit DataOffer(wl_data_offer* dataoffer);
-        ~DataOffer();
+        virtual ~DataOffer();
         DataOffer(DataOffer&& rhs) noexcept;
         DataOffer& operator=(DataOffer&& rhs) noexcept;
 
@@ -53,6 +53,78 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         void Finish();
         void Receive(const std::string& mimeType, int32_t fd);
         void SetActions(uint32_t DnDActions, uint32_t preferredAction);
+        
+        virtual void OnOffer(void* data, const char* mime_type)
+        {
+            /**
+             * advertise offered mime type
+             *
+             * Sent immediately after creating the wl_data_offer object. One
+             * event per offered mime type.
+             * @param mime_type offered mime type
+             */
+        }
+        
+        virtual void OnSourceActions(void* data, uint32_t source_actions)
+        {
+            /**
+             * notify the source-side available actions
+             *
+             * This event indicates the actions offered by the data source.
+             * It will be sent right after wl_data_device.enter, or anytime the
+             * source side changes its offered actions through
+             * wl_data_source.set_actions.
+             * @param source_actions actions offered by the data source
+             * @since 3
+             */
+        }
+        
+        virtual void OnAction(void* data, uint32_t dnd_action)
+        {
+            /**
+             * notify the selected action
+             *
+             * This event indicates the action selected by the compositor
+             * after matching the source/destination side actions. Only one
+             * action (or none) will be offered here.
+             *
+             * This event can be emitted multiple times during the
+             * drag-and-drop operation in response to destination side action
+             * changes through wl_data_offer.set_actions.
+             *
+             * This event will no longer be emitted after wl_data_device.drop
+             * happened on the drag-and-drop destination, the client must honor
+             * the last action received, or the last preferred one set through
+             * wl_data_offer.set_actions when handling an "ask" action.
+             *
+             * Compositors may also change the selected action on the fly,
+             * mainly in response to keyboard modifier changes during the
+             * drag-and-drop operation.
+             *
+             * The most recent action received is always the valid one. Prior
+             * to receiving wl_data_device.drop, the chosen action may change
+             * (e.g. due to keyboard modifiers being pressed). At the time of
+             * receiving wl_data_device.drop the drag-and-drop destination must
+             * honor the last action received.
+             *
+             * Action changes may still happen after wl_data_device.drop,
+             * especially on "ask" actions, where the drag-and-drop destination
+             * may choose another action afterwards. Action changes happening
+             * at this stage are always the result of inter-client negotiation,
+             * the compositor shall no longer be able to induce a different
+             * action.
+             *
+             * Upon "ask" actions, it is expected that the drag-and-drop
+             * destination may potentially choose a different action and/or
+             * mime type, based on wl_data_offer.source_actions and finally
+             * chosen by the user (e.g. popping up a menu with the available
+             * options). The final wl_data_offer.set_actions and
+             * wl_data_offer.accept requests must happen before the call to
+             * wl_data_offer.finish.
+             * @param dnd_action action selected by the compositor
+             * @since 3
+             */
+        }
 
     private:
 

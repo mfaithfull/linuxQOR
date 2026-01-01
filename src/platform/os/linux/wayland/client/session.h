@@ -22,58 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_SEAT
-#define QOR_PP_H_LINUX_WAYLAND_SEAT
+#ifndef QOR_PP_H_LINUX_WAYLAND_SESSION
+#define QOR_PP_H_LINUX_WAYLAND_SESSION
 
-#include <stdint.h>
+#include <string>
 
-struct wl_seat;
-struct wl_seat_listener;
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 
+//All types on this interface must be portable
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Touch;
-    class qor_pp_module_interface(QOR_LINWAYLAND) Keyboard;
-    class qor_pp_module_interface(QOR_LINWAYLAND) Pointer;
-    
-    class qor_pp_module_interface(QOR_LINWAYLAND) Seat
+    class qor_pp_module_interface(QOR_LINWAYLAND) Compositor;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Session
     {
     public:
         static const char* const TagName;
-        static Seat* SeatFrom(wl_seat* seat);
-
-        explicit Seat(wl_seat* seat);
-        virtual ~Seat();
-        Seat(Seat&& rhs) noexcept;
-        Seat& operator=(Seat&& rhs) noexcept;
+        Session();
+        virtual ~Session();
         const char* Tag() const{return TagName;}
-        wl_seat* Use() const;
-        uint32_t Version() const;
-        int AddListener(const wl_seat_listener& listener, void* context);
-        void Release();
-        Touch GetTouch();
-        Pointer GetPointer();
-        Keyboard GetKeyboard();
-        virtual void OnCapabilities(void* context, uint32_t capabilities)
-        {/* Override in derived class 
-            seat capabilities changed
-            This event is sent when the set of available capabilities
-            changes. The capabilities argument is a bitfield composed
-            of zero or more WL_SEAT_CAPABILITY_* bits.
-        */}
-        virtual void OnName(void* context, const char* name)
-        {/* Override in derived class 
-            seat name
-            This event is sent to inform the client of the seat's
-            name. The name is intended for identifying seats
-            within a multi-seat configuration.
-        */}
+        void SetCompositor( qor::ref_of<Compositor>::type compositor );
+        qor::ref_of<Compositor>::type GetCompositor();
 
-    private:
+    protected:
 
-        wl_seat* m_seat;
+        qor::ref_of<Compositor>::type m_Compositor;
+
     };
 
 }}}}//qor::platform::nslinux::wl
-    
-#endif//QOR_PP_H_LINUX_WAYLAND_SEAT
+
+#endif//QOR_PP_H_LINUX_WAYLAND_SESSION

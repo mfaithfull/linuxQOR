@@ -41,7 +41,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static SharedMemory* SharedMemoryFrom(wl_shm* shm);
 
         explicit SharedMemory(wl_shm* shm);
-        ~SharedMemory();
+        virtual ~SharedMemory();
         SharedMemory(SharedMemory&& rhs) noexcept;
         SharedMemory& operator=(SharedMemory&& rhs) noexcept;
         const char* Tag() const{return TagName;}
@@ -50,6 +50,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         uint32_t Version() const;
         SharedMemoryPool CreatePool(int32_t fd, int32_t size);
         int AddListener(const wl_shm_listener& listener, void* context);
+        virtual void OnFormat(void* context, uint32_t format)
+        {/* Override in derived class 
+            format supported
+            This event is sent to inform the client of a pixel format
+            that the compositor supports for shared memory buffers.
+        */}
 
     private:
 

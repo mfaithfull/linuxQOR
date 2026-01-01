@@ -26,12 +26,17 @@
 #define QOR_PP_H_LINUX_WAYLAND_REGISTRY
 
 #include <stdint.h>
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 
 struct wl_registry;
 struct wl_registry_listener;
 struct wl_interface;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
+    
+    struct qor_pp_module_interface(QOR_LINWAYLAND) RegistryListener;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Session;
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Registry
     {
@@ -40,18 +45,33 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static Registry* RegistryFrom(wl_registry* registry);
 
         explicit Registry(wl_registry* registry);
-        ~Registry();
+        virtual ~Registry();
         Registry(Registry&& rhs) noexcept;
         Registry& operator=(Registry&& rhs) noexcept;
         const char* Tag() const{return TagName;}
         wl_registry* Use() const;
-
+        void AddDefaultListener(qor::ref_of<Session>::type session);
         int AddListener(const wl_registry_listener& listener, void* data);
-        void Bind(uint32_t name, uint32_t version, wl_interface& interface);
+        void* Bind(uint32_t name, uint32_t version, const wl_interface& interface);
         uint32_t Version();
+        
+        virtual void OnGlobal(void* context, uint32_t name, const char* interface, uint32_t version);
+        /* Override in derived class 
+            global object announced
+            This event is sent for each global object when the client
+            binds to the wl_registry. It is also sent for new global
+            objects as they are added to the compositor.
+        */
 
+        virtual void OnGlobalRemove(void* context, uint32_t name);
+        /* Override in derived class 
+            global object removed
+            This event is sent when a global object is removed from
+            the compositor.
+        */
     private:
     
+        RegistryListener* m_defaultListener;
         wl_registry* m_registry;
     };
 
