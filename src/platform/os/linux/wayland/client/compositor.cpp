@@ -124,11 +124,21 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     wl_surface* Compositor::InternalCreateSurface()
     {
+        if(!m_compositor)
+        {
+            warning("Creating surface with null wl_compositor pointer");
+            return nullptr;
+        }
         return wl_compositor_create_surface(m_compositor);
     }
 
     wl_region* Compositor::InternalCreateRegion()
     {
+        if(!m_compositor)
+        {
+            warning("Creating region with null wl_compositor pointer");
+            return nullptr;
+        }
         return wl_compositor_create_region(m_compositor);
     }
 

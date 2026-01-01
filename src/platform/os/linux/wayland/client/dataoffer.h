@@ -54,7 +54,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         void Receive(const std::string& mimeType, int32_t fd);
         void SetActions(uint32_t DnDActions, uint32_t preferredAction);
         
-        virtual void OnOffer(void* data, const char* mime_type)
+        virtual void OnOffer(void* data, const char* mime_type) noexcept
         {
             /**
              * advertise offered mime type
@@ -65,7 +65,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
              */
         }
         
-        virtual void OnSourceActions(void* data, uint32_t source_actions)
+        virtual void OnSourceActions(void* data, uint32_t source_actions) noexcept
         {
             /**
              * notify the source-side available actions
@@ -79,7 +79,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
              */
         }
         
-        virtual void OnAction(void* data, uint32_t dnd_action)
+        virtual void OnAction(void* data, uint32_t dnd_action) noexcept
         {
             /**
              * notify the selected action

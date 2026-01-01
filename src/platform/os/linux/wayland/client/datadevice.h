@@ -74,7 +74,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             This event is sent when a drag-and-drop or selection
             operation leaves a surface owned by the client.
         */}
-        virtual void OnDataMotion(void* context, uint32_t time, int32_t x, int32_t y)
+        virtual void OnDataMotion(void* context, uint32_t time, wl_fixed_t x, wl_fixed_t y)
         {/* Override in derived class 
             data is moved over a surface
             This event is sent when the drag-and-drop or selection

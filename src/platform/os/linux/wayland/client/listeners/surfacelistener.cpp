@@ -31,7 +31,7 @@
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     SurfaceListener::SurfaceListener()
     {
-        wl_surface_listener::enter = [](void* data, wl_surface* wl_surface, wl_output* wl_output)
+        this->enter = [](void* data, wl_surface* wl_surface, wl_output* wl_output)
         {
             Surface* surface = Surface::SurfaceFrom(wl_surface);
             if(surface)
@@ -39,7 +39,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
                 surface->OnEnter(data, wl_output);
             }
         };
-        wl_surface_listener::leave = [](void* data, wl_surface* wl_surface, wl_output* wl_output)
+        this->leave = [](void* data, wl_surface* wl_surface, wl_output* wl_output)
         {
             Surface* surface = Surface::SurfaceFrom(wl_surface);
             if(surface)

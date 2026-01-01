@@ -144,7 +144,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         {
             m_defaultListener = new RegistryListener();
         }
-        wl_registry_add_listener(m_registry, m_defaultListener, session.operator->());
+        if(wl_registry_add_listener(m_registry, m_defaultListener, session.operator->()) != 0)
+        {
+            warning("Failed to add default listener to Registry");
+        }
     }
 
     int Registry::AddListener(const wl_registry_listener& listener, void* data)
@@ -169,7 +172,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     void Registry::OnGlobal(void* context, uint32_t name, const char* interface, uint32_t version)
     {
-        log::inform("Global object announced: {0:s} (version {1:u) with name {2:u}", interface, version, name);
+        log::inform("Global object announced: {0:s} (version {1:u} with name {2:u}", interface, version, name);
         Session* session = reinterpret_cast<Session*>(context);
         if(session && session->Tag() == Session::TagName)
         {

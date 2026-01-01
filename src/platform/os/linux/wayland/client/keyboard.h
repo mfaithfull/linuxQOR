@@ -50,7 +50,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         uint32_t Version() const;
         int AddListener(const wl_keyboard_listener& listener, void* context);
         void Release();
-        virtual void OnKeymap(void* context, uint32_t format, int32_t fd, uint32_t size)
+        virtual void OnKeymap(void* context, uint32_t format, int32_t fd, uint32_t size) noexcept
         {/* Override in derived class 
             keymap is sent
             This event is sent to provide the client with the keymap data.
@@ -58,7 +58,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             The fd argument is a file descriptor for reading the keymap data.
             The size argument is the size of the keymap data in bytes.
         */}
-        virtual void OnEnter(void* context, uint32_t serial, wl_surface* surface, wl_array* keys)
+        virtual void OnEnter(void* context, uint32_t serial, wl_surface* surface, wl_array* keys) noexcept
         {/* Override in derived class 
             keyboard focus enters a surface
             This event is sent when the keyboard focus enters a surface.
@@ -68,7 +68,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             keyboard focus.
             The keys argument is an array of currently pressed keys.
         */}
-        virtual void OnLeave(void* context, uint32_t serial, wl_surface* surface)
+        virtual void OnLeave(void* context, uint32_t serial, wl_surface* surface) noexcept
         {/* Override in derived class 
             keyboard focus leaves a surface
             This event is sent when the keyboard focus leaves a surface.
@@ -77,7 +77,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             The surface argument is the wl_surface that is losing
             keyboard focus.
         */}
-        virtual void OnKey(void* context, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+        virtual void OnKey(void* context, uint32_t serial, uint32_t time, uint32_t key, uint32_t state) noexcept
         {/* Override in derived class 
             key state has changed
             This event is sent when the state of a key has changed.
@@ -88,7 +88,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             The state argument is either WL_KEYBOARD_KEY_STATE_PRESSED or
             WL_KEYBOARD_KEY_STATE_RELEASED.
         */}
-        virtual void OnModifiers(void* context, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group)
+        virtual void OnModifiers(void* context, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group) noexcept
         {/* Override in derived class 
             modifier state has changed
             This event is sent when the state of the keyboard modifiers
