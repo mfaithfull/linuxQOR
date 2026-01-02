@@ -26,6 +26,8 @@
 #include "src/qor/error/error.h"
 
 #include "xdgpopup.h"
+#include "xdgpositioner.h"
+#include "src/platform/os/linux/wayland/client/seat.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
@@ -121,4 +123,34 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return xdg_popup_get_version(m_popup);
     }
     
+    int XDGPopup::AddListener(const xdg_popup_listener& listener, void* data)
+    {
+        return xdg_popup_add_listener(m_popup, &listener, data);
+    }
+    
+    void XDGPopup::Grab(Seat* seat, uint32_t serial)
+    {
+        xdg_popup_grab(m_popup, seat ? seat->Use() : nullptr, serial);
+    }
+
+    void XDGPopup::Reposition(XDGPositioner* positioner, uint32_t token)
+    {
+        xdg_popup_reposition(m_popup, positioner ? positioner->Use() : nullptr, token);
+    }
+
+    void XDGPopup::OnConfigure(void* data, int32_t x, int32_t y, int32_t width, int32_t height)
+    {
+
+    }
+
+    void XDGPopup::OnDone(void* data)
+    {
+
+    }
+
+    void XDGPopup::OnRepositioned(void* data, uint32_t token)
+    {
+
+    }
+
 }}}}//qor::platform::nslinux::wl

@@ -9,6 +9,7 @@ xdgtoplevel.cpp xdgpopup.cpp xdgpositioner.cpp
 listeners/xdgsurfacelistener.cpp
 listeners/xdgtoplevellistener.cpp
 listeners/xdgwmbaselistener.cpp
+listeners/xdgpopuplistener.cpp
 )
 
 target_include_directories(${target} PRIVATE)

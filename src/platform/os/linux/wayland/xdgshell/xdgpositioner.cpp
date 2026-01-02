@@ -120,5 +120,50 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }
         return xdg_positioner_get_version(m_positioner);
     }
+
+    void XDGPositioner::SetAnchor(uint32_t anchor)
+    {
+        xdg_positioner_set_anchor(m_positioner, anchor);
+    }
+
+    void XDGPositioner::SetAnchorRect(int32_t x, int32_t y, int32_t width, int32_t height)
+    {
+        xdg_positioner_set_anchor_rect(m_positioner, x, y, width, height);
+    }
+
+    void XDGPositioner::SetConstraintAdjustment(uint32_t constraintAdjustment)
+    {
+        xdg_positioner_set_constraint_adjustment(m_positioner, constraintAdjustment);
+    }
+
+    void XDGPositioner::SetGravity(uint32_t gravity)
+    {
+        xdg_positioner_set_gravity(m_positioner, gravity);
+    }
+
+    void XDGPositioner::SetOffset(int32_t x, int32_t y)
+    {
+        xdg_positioner_set_offset(m_positioner, x, y);
+    }
+
+    void XDGPositioner::SetParentConfigure(uint32_t serial)
+    {
+        xdg_positioner_set_parent_configure(m_positioner, serial);
+    }
+
+    void XDGPositioner::SetParentSize(int32_t parentWidth, int32_t parentHeight)
+    {
+        xdg_positioner_set_parent_size(m_positioner, parentWidth, parentHeight);
+    }
+
+    void XDGPositioner::SetReactive()
+    {
+        xdg_positioner_set_reactive(m_positioner);
+    }
+
+    void XDGPositioner::SetSize(int32_t width, int32_t height)
+    {
+        xdg_positioner_set_size(m_positioner, width, height);
+    }
     
 }}}}//qor::platform::nslinux::wl

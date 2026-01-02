@@ -28,8 +28,13 @@
 #include <stdint.h>
 
 struct xdg_popup;
+struct xdg_popup_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
+
+    class qor_pp_module_interface(QOR_LINWAYLAND) Seat;
+
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner;
 
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPopup
     {
@@ -45,6 +50,13 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         virtual const char* Tag() const{return TagName;}
         xdg_popup* Use() const;
         uint32_t Version() const;
+        int AddListener(const xdg_popup_listener& listener, void* data);
+        void Grab(Seat* seat, uint32_t serial);
+        void Reposition(XDGPositioner* positioner, uint32_t token);
+
+        virtual void OnConfigure(void* data, int32_t x, int32_t y, int32_t width, int32_t height);
+        virtual void OnDone(void* data);
+        virtual void OnRepositioned(void* data, uint32_t token);
 
     private:
 

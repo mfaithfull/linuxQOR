@@ -22,44 +22,43 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_XDGPOSITIONER
-#define QOR_PP_H_LINUX_WAYLAND_XDGPOSITIONER
+#include "src/configuration/configuration.h"
+#include "src/qor/error/error.h"
 
-#include <stdint.h>
-
-struct xdg_positioner;
+#include "xdgpopuplistener.h"
+#include "../xdgpopup.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner
+    XDGPopupListener::XDGPopupListener()
     {
-    public:
-        static const char* const TagName;
-        static XDGPositioner* XDGPositionerFrom(xdg_positioner* positioner);
-        explicit XDGPositioner(xdg_positioner* positioner);
-        virtual ~XDGPositioner();
-        XDGPositioner(const XDGPositioner&) = delete;
-        XDGPositioner& operator=(const XDGPositioner&) = delete;
-        XDGPositioner(XDGPositioner&& rhs) noexcept;
-        XDGPositioner& operator=(XDGPositioner&& rhs) noexcept;
-        virtual const char* Tag() const{return TagName;}
-        xdg_positioner* Use() const;
-        uint32_t Version() const;
-        void SetAnchor(uint32_t anchor);
-        void SetAnchorRect(int32_t x, int32_t y, int32_t width, int32_t height);
-        void SetConstraintAdjustment(uint32_t constraintAdjustment);
-        void SetGravity(uint32_t gravity);
-        void SetOffset(int32_t x, int32_t y);
-        void SetParentConfigure(uint32_t serial);
-        void SetParentSize(int32_t parentWidth, int32_t parentHeight);
-        void SetReactive();
-        void SetSize(int32_t width, int32_t height);
+        this->configure = [](void* data, xdg_popup* xdgpopup, int32_t x, int32_t y, int32_t width, int32_t height)
+        {
+            XDGPopup* popup = XDGPopup::XDGPopupFrom(xdgpopup);
+            if(popup)
+            {
+                popup->OnConfigure(data, x, y, width, height);
+            }
+        };
 
-    private:
+        this->popup_done = [](void* data, xdg_popup* xdgpopup)
+        {
+            XDGPopup* popup = XDGPopup::XDGPopupFrom(xdgpopup);
+            if(popup)
+            {
+                popup->OnDone(data);
+            }
+        };
 
-        xdg_positioner* m_positioner;
-    };
+        this->repositioned = [](void* data, xdg_popup* xdgpopup, uint32_t token)
+        {
+            XDGPopup* popup = XDGPopup::XDGPopupFrom(xdgpopup);
+            if(popup)
+            {
+                popup->OnRepositioned(data, token);
+            }
 
+        };
+
+    }
 }}}}//qor::platform::nslinux::wl
-
-#endif//QOR_PP_H_LINUX_WAYLAND_XDGPOSITIONER
