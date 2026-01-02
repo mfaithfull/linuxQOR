@@ -22,42 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_SUBSURFACE
-#define QOR_PP_H_LINUX_WAYLAND_SUBSURFACE
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregistry.h"
+#include "src/qor/injection/typeregentry.h"
+#include "src/qor/reference/newref.h"
 
-#include <stdint.h>
 
-struct wl_subsurface;
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Wayland XDG Shell",
+		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-namespace qor{ namespace platform { namespace nslinux{ namespace wl{
-
-    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
-
-    class qor_pp_module_interface(QOR_LINWAYLAND) SubSurface
-    {
-    public:
-        static const char* const TagName;
-        static SubSurface* SubSurfaceFrom(wl_subsurface* subsurface);
-
-        explicit SubSurface(wl_subsurface* subsurface);
-        ~SubSurface();
-        SubSurface(SubSurface&& rhs) noexcept;
-        SubSurface& operator=(SubSurface&& rhs) noexcept;
-
-        virtual const char* Tag() const{return TagName;}
-        wl_subsurface* Use() const;
-        uint32_t Version() const;
-        void PlaceAbove(Surface& sibling);
-        void PlaceBelow(Surface& sibling);
-        void SetDesync();
-        void SetPosition(int32_t x, int32_t y);
-        void SetSync();
-
-    private:
-
-        wl_subsurface* m_subsurface;
-    };
-
-}}}}//qor::platform::nslinux::wl
-    
-#endif//QOR_PP_H_LINUX_WAYLAND_SUBSURFACE
+	return QORModule;
+}

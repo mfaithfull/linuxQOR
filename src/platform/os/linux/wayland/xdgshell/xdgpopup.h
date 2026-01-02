@@ -22,55 +22,35 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_BUFFER
-#define QOR_PP_H_LINUX_WAYLAND_BUFFER
+#ifndef QOR_PP_H_LINUX_WAYLAND_XDGPOPUP
+#define QOR_PP_H_LINUX_WAYLAND_XDGPOPUP
 
 #include <stdint.h>
 
-struct wl_buffer;
-struct wl_buffer_listener;
+struct xdg_popup;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Buffer
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPopup
     {
     public:
         static const char* const TagName;
-        static Buffer* BufferFrom(wl_buffer* buffer);
-
-        explicit Buffer(wl_buffer* buffer);
-        virtual ~Buffer();
-        Buffer(Buffer&& rhs) noexcept;
-        Buffer& operator=(Buffer&& rhs) noexcept;
-
+        static XDGPopup* XDGPopupFrom(xdg_popup* popup);
+        explicit XDGPopup(xdg_popup* popup);
+        virtual ~XDGPopup();
+        XDGPopup(const XDGPopup&) = delete;
+        XDGPopup& operator=(const XDGPopup&) = delete;
+        XDGPopup(XDGPopup&& rhs) noexcept;
+        XDGPopup& operator=(XDGPopup&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}
-
-        wl_buffer* Use() const;
+        xdg_popup* Use() const;
         uint32_t Version() const;
-        int AddListener(const wl_buffer_listener& listener, void* context);
-        
-        virtual void OnRelease(void* context);
-        /* Override in derived class 
-            compositor releases buffer
-            Sent when this wl_buffer is no longer used by the compositor.
-            The client is now free to reuse or destroy this buffer and its
-            backing storage.
-
-            If a client receives a release event before the frame callback
-            requested in the same wl_surface.commit that attaches this
-            wl_buffer to a surface, then the client is immediately free to
-            reuse the buffer and its backing storage, and does not need a
-            second buffer for the next surface content update. Typically
-            this is possible, when the compositor maintains a copy of the
-            wl_surface contents, e.g. as a GL texture. This is an important
-            optimization for GL(ES) compositors with wl_shm clients.*/
-        
 
     private:
 
-        wl_buffer* m_buffer;
+        xdg_popup* m_popup;
     };
 
 }}}}//qor::platform::nslinux::wl
-    
-#endif//QOR_PP_H_LINUX_WAYLAND_BUFFER
+
+#endif//QOR_PP_H_LINUX_WAYLAND_XDGPOPUP

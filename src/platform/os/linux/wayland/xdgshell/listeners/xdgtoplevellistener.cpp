@@ -22,42 +22,31 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_SUBSURFACE
-#define QOR_PP_H_LINUX_WAYLAND_SUBSURFACE
+#include "src/configuration/configuration.h"
+#include "src/qor/error/error.h"
 
-#include <stdint.h>
-
-struct wl_subsurface;
+#include "xdgtoplevellistener.h"
+#include "../xdgtoplevel.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
-
-    class qor_pp_module_interface(QOR_LINWAYLAND) SubSurface
+    XDGTopLevelListener::XDGTopLevelListener()
     {
-    public:
-        static const char* const TagName;
-        static SubSurface* SubSurfaceFrom(wl_subsurface* subsurface);
-
-        explicit SubSurface(wl_subsurface* subsurface);
-        ~SubSurface();
-        SubSurface(SubSurface&& rhs) noexcept;
-        SubSurface& operator=(SubSurface&& rhs) noexcept;
-
-        virtual const char* Tag() const{return TagName;}
-        wl_subsurface* Use() const;
-        uint32_t Version() const;
-        void PlaceAbove(Surface& sibling);
-        void PlaceBelow(Surface& sibling);
-        void SetDesync();
-        void SetPosition(int32_t x, int32_t y);
-        void SetSync();
-
-    private:
-
-        wl_subsurface* m_subsurface;
-    };
-
+        this->configure = [](void* data, struct xdg_toplevel* xdg_toplevel, int32_t width, int32_t height, struct wl_array* states)
+        {
+            XDGTopLevel* toplevel = XDGTopLevel::XDGTopLevelFrom(xdg_toplevel);
+            if(toplevel)
+            {
+                toplevel->OnConfigure(data, width, height, states);
+            }
+        };
+        this->close = [](void* data, struct xdg_toplevel* xdg_toplevel)
+        {
+            XDGTopLevel* toplevel = XDGTopLevel::XDGTopLevelFrom(xdg_toplevel);
+            if(toplevel)
+            {
+                toplevel->OnClose(data);
+            }
+        };
+    }
 }}}}//qor::platform::nslinux::wl
-    
-#endif//QOR_PP_H_LINUX_WAYLAND_SUBSURFACE

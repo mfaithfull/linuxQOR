@@ -48,7 +48,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         DataDeviceManager(DataDeviceManager&& rhs) noexcept;
         DataDeviceManager& operator=(DataDeviceManager&& rhs) noexcept;
 
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
 
         wl_data_device_manager* Use() const;
         uint32_t Version() const;

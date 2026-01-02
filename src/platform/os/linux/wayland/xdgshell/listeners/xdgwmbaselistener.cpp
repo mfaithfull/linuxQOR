@@ -22,42 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_SUBSURFACE
-#define QOR_PP_H_LINUX_WAYLAND_SUBSURFACE
+#include "src/configuration/configuration.h"
+#include "src/qor/error/error.h"
 
-#include <stdint.h>
-
-struct wl_subsurface;
+#include "xdgwmbaselistener.h"
+#include "../xdgwmbase.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
-
-    class qor_pp_module_interface(QOR_LINWAYLAND) SubSurface
+    XDGWMBaseListener::XDGWMBaseListener()
     {
-    public:
-        static const char* const TagName;
-        static SubSurface* SubSurfaceFrom(wl_subsurface* subsurface);
-
-        explicit SubSurface(wl_subsurface* subsurface);
-        ~SubSurface();
-        SubSurface(SubSurface&& rhs) noexcept;
-        SubSurface& operator=(SubSurface&& rhs) noexcept;
-
-        virtual const char* Tag() const{return TagName;}
-        wl_subsurface* Use() const;
-        uint32_t Version() const;
-        void PlaceAbove(Surface& sibling);
-        void PlaceBelow(Surface& sibling);
-        void SetDesync();
-        void SetPosition(int32_t x, int32_t y);
-        void SetSync();
-
-    private:
-
-        wl_subsurface* m_subsurface;
-    };
-
+        this->ping = [](void* data, struct xdg_wm_base* xdg_wm_base, uint32_t serial)
+        {
+            XDGWMBase* wmBase = XDGWMBase::XDGWMBaseFrom(xdg_wm_base);
+            if(wmBase)
+            {
+                wmBase->OnPing(data, serial);
+            }
+        };
+    }
 }}}}//qor::platform::nslinux::wl
-    
-#endif//QOR_PP_H_LINUX_WAYLAND_SUBSURFACE

@@ -34,19 +34,52 @@
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Compositor;
+    class qor_pp_module_interface(QOR_LINWAYLAND) DataDeviceManager;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Shell;
+    class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemory;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Output;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Seat;
+    
+    struct GlobalInfo
+    {
+        uint32_t Name;
+        std::string Interface;
+        uint32_t Version;
+    };
+
     class qor_pp_module_interface(QOR_LINWAYLAND) Session
     {
     public:
         static const char* const TagName;
         Session();
         virtual ~Session();
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         void SetCompositor( qor::ref_of<Compositor>::type compositor );
         qor::ref_of<Compositor>::type GetCompositor();
+        void SetDataDeviceManager( qor::ref_of<DataDeviceManager>::type dataDeviceManager );
+        qor::ref_of<DataDeviceManager>::type GetDataDeviceManager();
+        void SetShell( qor::ref_of<Shell>::type shell );
+        qor::ref_of<Shell>::type GetShell();
+        void SetShm( qor::ref_of<SharedMemory>::type shm );
+        qor::ref_of<SharedMemory>::type GetShm();
+        void AddOutput( qor::ref_of<Output>::type output, uint32_t name );
+        qor::ref_of<Output>::type GetOutput( uint32_t name );
+        void AddSeat( qor::ref_of<Seat>::type seat, uint32_t name );
+        qor::ref_of<Seat>::type GetSeat( uint32_t name );
+        void AddUnknownGlobal( uint32_t name, const char* interface, uint32_t version );
+        GlobalInfo* GetGlobal( const std::string& interface );
+        virtual void OnXDGSurfaceConfigured();
+        virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
 
     protected:
 
+        std::vector<GlobalInfo> m_UnknownGlobals;
+        std::map<uint32_t, qor::ref_of<Output>::type> m_Outputs;
+        std::map<uint32_t, qor::ref_of<Seat>::type> m_Seats;
         qor::ref_of<Compositor>::type m_Compositor;
+        qor::ref_of<DataDeviceManager>::type m_DataDeviceManager;
+        qor::ref_of<Shell>::type m_Shell;
+        qor::ref_of<SharedMemory>::type m_Shm;
 
     };
 

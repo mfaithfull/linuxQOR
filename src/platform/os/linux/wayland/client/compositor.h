@@ -57,7 +57,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         Compositor(Compositor&& rhs) noexcept;
         Compositor& operator=(Compositor&& rhs) noexcept;
 
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
 
         wl_compositor* Use() const;
         uint32_t Version() const;

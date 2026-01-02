@@ -27,6 +27,9 @@
 
 #include <stdint.h>
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+
 struct wl_shm_pool;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
@@ -43,10 +46,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         ~SharedMemoryPool();
         SharedMemoryPool(SharedMemoryPool&& rhs) noexcept;
         SharedMemoryPool& operator=(SharedMemoryPool&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_shm_pool* Use() const;
         uint32_t Version() const;
-        Buffer CreateBuffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format);
+        qor::ref_of<Buffer>::type CreateBuffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format);
         void Resize(int32_t size);
 
     private:

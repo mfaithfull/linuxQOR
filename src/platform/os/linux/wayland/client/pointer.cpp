@@ -148,7 +148,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }
         wl_pointer_set_cursor(m_pointer, serial, surface ? surface->Use() : nullptr, hotspot_x, hotspot_y);
     }
-    
+
     void Pointer::OnEnter(void* context, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy)
     {/* Override in derived class 
         pointer enters a surface

@@ -14,6 +14,6 @@ target_include_directories(${target} PRIVATE)
 
 target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE qor_pp_ver_major=1 )
 
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application linqor_waylandclient)
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application linqor_waylandclient linqor_xdgshell)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

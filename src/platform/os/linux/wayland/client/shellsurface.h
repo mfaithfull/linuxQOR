@@ -47,7 +47,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         virtual ~ShellSurface();
         ShellSurface(ShellSurface&& rhs) noexcept;
         ShellSurface& operator=(ShellSurface&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_shell_surface* Use() const;
         uint32_t Version() const;
         int AddListener(const wl_shell_surface_listener& listener, void* context);

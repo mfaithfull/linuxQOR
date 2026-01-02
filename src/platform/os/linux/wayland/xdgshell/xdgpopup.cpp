@@ -25,117 +25,100 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "buffer.h"
+#include "xdgpopup.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
+#include "xdg-shell.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    const char* const Buffer::TagName = "QOR::PLATFORM::NSLINUX::WL::BUFFER";
+    const char* const XDGPopup::TagName = "QOR::PLATFORM::NSLINUX::WL::XDGPOPUP";
 
-    Buffer* Buffer::BufferFrom(wl_buffer* buffer)
+    XDGPopup* XDGPopup::XDGPopupFrom(xdg_popup* popup)
     {
-        if(!buffer)
+        if(!popup)
         {
             return nullptr;
         }
-        Buffer* result = reinterpret_cast<Buffer*>(wl_buffer_get_user_data(buffer));
+        XDGPopup* result = reinterpret_cast<XDGPopup*>(xdg_popup_get_user_data(popup));
         if(result && result->Tag() == TagName)
         {
             return result;
         }
         else if(result)
         {
-            continuable("Wayland wl_buffer user data tag mismatch");
+            continuable("Wayland xdg_popup user data tag mismatch");
         }
-        return new Buffer(buffer);
+        return new XDGPopup(popup);
     }
 
-    Buffer::Buffer(wl_buffer* buffer) : m_buffer(buffer)
+    XDGPopup::XDGPopup(xdg_popup* popup) : m_popup(popup)
     {
-        if(buffer)
+        if(popup)
         {
-            wl_buffer_set_user_data(m_buffer, this);
+            xdg_popup_set_user_data(m_popup, this);
         }
         else
         {
-            continuable("Null wl_buffer pointer");
-        }
+            continuable("XDGPopup created with null xdg_popup pointer");
+        }        
     }
 
-    Buffer::Buffer(Buffer&& rhs) noexcept : m_buffer(rhs.m_buffer)
+    XDGPopup::XDGPopup(XDGPopup&& rhs) noexcept : m_popup(rhs.m_popup)
     {
-        rhs.m_buffer = nullptr;
-        if (m_buffer)
+        rhs.m_popup = nullptr;
+        if (m_popup)
         {
-            wl_buffer_set_user_data(m_buffer, this);
+            xdg_popup_set_user_data(m_popup, this);
         }
     }
 
-    Buffer& Buffer::operator=(Buffer&& rhs) noexcept
+    XDGPopup& XDGPopup::operator=(XDGPopup&& rhs) noexcept
     {
         if (this != &rhs)
         {
-            if (m_buffer)
+            if (m_popup)
             {
-                wl_buffer_destroy(m_buffer);
+                xdg_popup_destroy(m_popup);
             }
 
-            m_buffer = rhs.m_buffer;
-            rhs.m_buffer = nullptr;
+            m_popup = rhs.m_popup;
+            rhs.m_popup = nullptr;
 
-            if (m_buffer)
+            if (m_popup)
             {
-                wl_buffer_set_user_data(m_buffer, this);
+                xdg_popup_set_user_data(m_popup, this);
             }
         }
         return *this;
     }
 
-    Buffer::~Buffer()
+    XDGPopup::~XDGPopup()
     {
-        if(m_buffer)
+        if(m_popup)
         {
-            wl_buffer_destroy(m_buffer);
+            xdg_popup_destroy(m_popup);
         }
     }
 
-    wl_buffer* Buffer::Use() const
+    xdg_popup* XDGPopup::Use() const
     {
-        if(!m_buffer)
+        if(!m_popup)
         {
-            warning("returning null wl_buffer pointer");
+            warning("Using XDGPopup with null xdg_popup pointer");
         }
-        return m_buffer;
+        return m_popup;
     }
 
-    uint32_t Buffer::Version() const
+    uint32_t XDGPopup::Version() const
     {
-        if(!m_buffer)
+        if(!m_popup)
         {
-            warning("returning zero version for null wl_buffer pointer");
+            warning("Getting version of XDGPopup with null xdg_popup pointer");
             return 0;
         }
-        return wl_buffer_get_version(m_buffer);
+        return xdg_popup_get_version(m_popup);
     }
-
-    int Buffer::AddListener(const wl_buffer_listener& listener, void* context)
-    {
-        if(!m_buffer)
-        {
-            warning("adding listener to null wl_buffer pointer");
-            return -1;
-        }
-        return wl_buffer_add_listener(m_buffer, &listener, context);
-    }
-        
-    void Buffer::OnRelease(void* context)
-    {
-        if(m_buffer)
-        {
-            wl_buffer_destroy(m_buffer);
-        }
-        m_buffer = nullptr;
-    }
+    
 }}}}//qor::platform::nslinux::wl

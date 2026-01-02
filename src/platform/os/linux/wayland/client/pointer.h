@@ -46,7 +46,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         virtual ~Pointer();
         Pointer(Pointer&& rhs) noexcept;
         Pointer& operator=(Pointer&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_pointer* Use() const;
         uint32_t Version() const;
         int AddListener(const wl_pointer_listener& listener, void* context);

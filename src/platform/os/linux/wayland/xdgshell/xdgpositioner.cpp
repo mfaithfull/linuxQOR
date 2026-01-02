@@ -25,117 +25,100 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "buffer.h"
+#include "xdgpositioner.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
+#include "xdg-shell.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    const char* const Buffer::TagName = "QOR::PLATFORM::NSLINUX::WL::BUFFER";
+    const char* const XDGPositioner::TagName = "QOR::PLATFORM::NSLINUX::WL::XDGPOSITIONER";
 
-    Buffer* Buffer::BufferFrom(wl_buffer* buffer)
+    XDGPositioner* XDGPositioner::XDGPositionerFrom(xdg_positioner* positioner)
     {
-        if(!buffer)
+        if(!positioner)
         {
             return nullptr;
         }
-        Buffer* result = reinterpret_cast<Buffer*>(wl_buffer_get_user_data(buffer));
+        XDGPositioner* result = reinterpret_cast<XDGPositioner*>(xdg_positioner_get_user_data(positioner));
         if(result && result->Tag() == TagName)
         {
             return result;
         }
         else if(result)
         {
-            continuable("Wayland wl_buffer user data tag mismatch");
+            continuable("Wayland xdg_positioner user data tag mismatch");
         }
-        return new Buffer(buffer);
+        return new XDGPositioner(positioner);
     }
 
-    Buffer::Buffer(wl_buffer* buffer) : m_buffer(buffer)
+    XDGPositioner::XDGPositioner(xdg_positioner* positioner) : m_positioner(positioner)
     {
-        if(buffer)
+        if(positioner)
         {
-            wl_buffer_set_user_data(m_buffer, this);
+            xdg_positioner_set_user_data(m_positioner, this);
         }
         else
         {
-            continuable("Null wl_buffer pointer");
-        }
+            continuable("XDGPositioner created with null xdg_positioner pointer");
+        }        
     }
 
-    Buffer::Buffer(Buffer&& rhs) noexcept : m_buffer(rhs.m_buffer)
+    XDGPositioner::XDGPositioner(XDGPositioner&& rhs) noexcept : m_positioner(rhs.m_positioner)
     {
-        rhs.m_buffer = nullptr;
-        if (m_buffer)
+        rhs.m_positioner = nullptr;
+        if (m_positioner)
         {
-            wl_buffer_set_user_data(m_buffer, this);
+            xdg_positioner_set_user_data(m_positioner, this);
         }
     }
 
-    Buffer& Buffer::operator=(Buffer&& rhs) noexcept
+    XDGPositioner& XDGPositioner::operator=(XDGPositioner&& rhs) noexcept
     {
         if (this != &rhs)
         {
-            if (m_buffer)
+            if (m_positioner)
             {
-                wl_buffer_destroy(m_buffer);
+                xdg_positioner_destroy(m_positioner);
             }
 
-            m_buffer = rhs.m_buffer;
-            rhs.m_buffer = nullptr;
+            m_positioner = rhs.m_positioner;
+            rhs.m_positioner = nullptr;
 
-            if (m_buffer)
+            if (m_positioner)
             {
-                wl_buffer_set_user_data(m_buffer, this);
+                xdg_positioner_set_user_data(m_positioner, this);
             }
         }
         return *this;
     }
 
-    Buffer::~Buffer()
+    XDGPositioner::~XDGPositioner()
     {
-        if(m_buffer)
+        if(m_positioner)
         {
-            wl_buffer_destroy(m_buffer);
+            xdg_positioner_destroy(m_positioner);
         }
     }
 
-    wl_buffer* Buffer::Use() const
+    xdg_positioner* XDGPositioner::Use() const
     {
-        if(!m_buffer)
+        if(!m_positioner)
         {
-            warning("returning null wl_buffer pointer");
+            warning("Using XDGPositioner with null xdg_positioner pointer");
         }
-        return m_buffer;
+        return m_positioner;
     }
 
-    uint32_t Buffer::Version() const
+    uint32_t XDGPositioner::Version() const
     {
-        if(!m_buffer)
+        if(!m_positioner)
         {
-            warning("returning zero version for null wl_buffer pointer");
+            warning("Getting version of XDGPositioner with null xdg_positioner pointer");
             return 0;
         }
-        return wl_buffer_get_version(m_buffer);
+        return xdg_positioner_get_version(m_positioner);
     }
-
-    int Buffer::AddListener(const wl_buffer_listener& listener, void* context)
-    {
-        if(!m_buffer)
-        {
-            warning("adding listener to null wl_buffer pointer");
-            return -1;
-        }
-        return wl_buffer_add_listener(m_buffer, &listener, context);
-    }
-        
-    void Buffer::OnRelease(void* context)
-    {
-        if(m_buffer)
-        {
-            wl_buffer_destroy(m_buffer);
-        }
-        m_buffer = nullptr;
-    }
+    
 }}}}//qor::platform::nslinux::wl

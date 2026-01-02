@@ -83,13 +83,13 @@ namespace qor{
                     return theRef;
                 }
             }
-
+            
             template<typename... _p >
             typename ref_of<T>::type Instance(size_t, _p&&... p1)
             {
                 if(redirected)
                 {
-                    return redirect->Instance(std::forward<_p>(p1)...);
+                    return redirect->Instance(1,std::forward<_p>(p1)...);
                 }
                 else
                 {

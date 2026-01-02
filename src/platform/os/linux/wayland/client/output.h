@@ -44,7 +44,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         Output(Output&& rhs) noexcept;
         Output& operator=(Output&& rhs) noexcept;
 
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_output* Use() const;
         uint32_t Version() const;
 

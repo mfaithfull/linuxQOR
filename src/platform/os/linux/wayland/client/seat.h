@@ -46,7 +46,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         virtual ~Seat();
         Seat(Seat&& rhs) noexcept;
         Seat& operator=(Seat&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_seat* Use() const;
         uint32_t Version() const;
         int AddListener(const wl_seat_listener& listener, void* context);

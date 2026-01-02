@@ -28,6 +28,11 @@
 #include "src/qor/error/error.h"
 
 #include "compositor.h"
+#include "datadevicemanager.h"
+#include "shell.h"
+#include "shm.h"
+#include "output.h"
+#include "seat.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -51,4 +56,96 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return m_Compositor;
     }
 
+    void Session::SetDataDeviceManager( qor::ref_of<DataDeviceManager>::type dataDeviceManager )
+    {
+        m_DataDeviceManager = dataDeviceManager;
+    }
+
+    qor::ref_of<DataDeviceManager>::type Session::GetDataDeviceManager()
+    {
+        return m_DataDeviceManager;
+    }
+
+    void Session::SetShell( qor::ref_of<Shell>::type shell )
+    {
+        m_Shell = shell;
+    }
+
+    qor::ref_of<Shell>::type Session::GetShell()
+    {
+        return m_Shell;
+    }
+
+    void Session::SetShm( qor::ref_of<SharedMemory>::type shm )
+    {
+        m_Shm = shm;
+    }
+
+    qor::ref_of<SharedMemory>::type Session::GetShm()
+    {
+        return m_Shm;
+    }
+
+    void Session::AddOutput( qor::ref_of<Output>::type output, uint32_t name )
+    {
+        m_Outputs[name] = output;
+    }
+
+    qor::ref_of<Output>::type Session::GetOutput( uint32_t name )
+    {
+        auto it = m_Outputs.find(name);
+        if (it != m_Outputs.end())
+        {
+            return it->second;
+        }
+        return nullptr;
+    }
+
+    void Session::AddSeat( qor::ref_of<Seat>::type seat, uint32_t name )
+    {
+        m_Seats[name] = seat;
+    }
+
+    qor::ref_of<Seat>::type Session::GetSeat( uint32_t name )
+    {
+        auto it = m_Seats.find(name);
+        if (it != m_Seats.end())
+        {
+            return it->second;
+        }
+        return nullptr;
+    }
+
+    void Session::AddUnknownGlobal( uint32_t name, const char* interface, uint32_t version )
+    {
+        GlobalInfo info { .Name = name, .Interface = std::string(interface), .Version = version };
+        m_UnknownGlobals.push_back( info );
+    }
+
+    GlobalInfo* Session::GetGlobal( const std::string& interface )
+    {
+        for ( auto& global : m_UnknownGlobals )
+        {
+            if ( global.Interface == interface )
+            {
+                return &global;
+            }
+        }
+        return nullptr;
+    }
+
+    void Session::OnXDGSurfaceConfigured()
+    {
+        /* Override in derived class 
+            XDG Surface configured
+            This event is called when an XDG surface has been configured by the compositor.
+        */
+    }
+
+    void Session::OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states)
+    {
+        /*Override in derivec class
+            This event is called when an XDG TopLevel has been configured by the compositor*/
+    }
+    
 }}}}//qor::platform::nslinux::wl

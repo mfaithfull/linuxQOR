@@ -49,11 +49,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         Surface& operator=(const Surface&) = delete;
         Surface(Surface&& rhs) noexcept;
         Surface& operator=(Surface&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_surface* Use() const;
         uint32_t Version() const;
         int AddListener(const wl_surface_listener& listener, void* context);
-        void Attach(Buffer& buffer, int32_t x, int32_t y);
+        void Attach(qor::ref_of<Buffer>::type buffer, int32_t x, int32_t y);
         void Damage(int32_t x, int32_t y, int32_t width, int32_t height);
         Callback Frame();
         void SetOpaqueRegion(Region& region);

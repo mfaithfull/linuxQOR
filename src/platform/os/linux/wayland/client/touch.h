@@ -44,7 +44,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         virtual ~Touch();
         Touch(Touch&& rhs) noexcept;
         Touch& operator=(Touch&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_touch* Use() const;
         uint32_t Version() const;
         int AddListener(const wl_touch_listener& listener, void* context);

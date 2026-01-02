@@ -22,55 +22,52 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_BUFFER
-#define QOR_PP_H_LINUX_WAYLAND_BUFFER
+#ifndef QOR_PP_H_LINUX_WAYLAND_XDGSURFACE
+#define QOR_PP_H_LINUX_WAYLAND_XDGSURFACE
 
 #include <stdint.h>
 
-struct wl_buffer;
-struct wl_buffer_listener;
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+
+struct xdg_surface;
+struct xdg_surface_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Buffer
+    class qor_pp_module_interface(QOR_LINWAYLAND) Session;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevel;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPopup;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner;
+
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSurface
     {
     public:
         static const char* const TagName;
-        static Buffer* BufferFrom(wl_buffer* buffer);
+        static XDGSurface* XDGSurfaceFrom(xdg_surface* surface);
 
-        explicit Buffer(wl_buffer* buffer);
-        virtual ~Buffer();
-        Buffer(Buffer&& rhs) noexcept;
-        Buffer& operator=(Buffer&& rhs) noexcept;
-
+        explicit XDGSurface(xdg_surface* surface);
+        virtual ~XDGSurface();
+        XDGSurface(const XDGSurface&) = delete;
+        XDGSurface& operator=(const XDGSurface&) = delete;
+        XDGSurface(XDGSurface&& rhs) noexcept;
+        XDGSurface& operator=(XDGSurface&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}
-
-        wl_buffer* Use() const;
+        xdg_surface* Use() const;
         uint32_t Version() const;
-        int AddListener(const wl_buffer_listener& listener, void* context);
-        
-        virtual void OnRelease(void* context);
-        /* Override in derived class 
-            compositor releases buffer
-            Sent when this wl_buffer is no longer used by the compositor.
-            The client is now free to reuse or destroy this buffer and its
-            backing storage.
-
-            If a client receives a release event before the frame callback
-            requested in the same wl_surface.commit that attaches this
-            wl_buffer to a surface, then the client is immediately free to
-            reuse the buffer and its backing storage, and does not need a
-            second buffer for the next surface content update. Typically
-            this is possible, when the compositor maintains a copy of the
-            wl_surface contents, e.g. as a GL texture. This is an important
-            optimization for GL(ES) compositors with wl_shm clients.*/
-        
-
+        void AckConfigure(uint32_t serial);
+        void AddListener(const xdg_surface_listener& listener, void* data);
+        qor::ref_of<XDGPopup>::type GetPopup(XDGSurface* parentSurface, XDGPositioner* positioner);
+        qor::ref_of<XDGTopLevel>::type GetToplevel();
+        void SetWindowGeometry(int32_t x, int32_t y, int32_t width, int32_t height);
+        virtual void OnConfigure(void* context, uint32_t serial);
+        void SetSession(Session* session);
     private:
-
-        wl_buffer* m_buffer;
+        
+        xdg_surface* m_surface;
+        Session* m_session;
     };
 
 }}}}//qor::platform::nslinux::wl
     
-#endif//QOR_PP_H_LINUX_WAYLAND_BUFFER
+#endif//#define QOR_PP_H_LINUX_WAYLAND_XDGSURFACE

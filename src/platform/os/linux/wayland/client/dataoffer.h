@@ -44,7 +44,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         DataOffer(DataOffer&& rhs) noexcept;
         DataOffer& operator=(DataOffer&& rhs) noexcept;
 
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
 
         wl_data_offer* Use() const;
         uint32_t Version() const;

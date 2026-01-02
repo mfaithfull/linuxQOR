@@ -45,7 +45,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         SubCompositor(SubCompositor&& rhs) noexcept;
         SubCompositor& operator=(SubCompositor&& rhs) noexcept;
 
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_subcompositor* Use() const;
         uint32_t Version() const;
         

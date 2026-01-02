@@ -119,14 +119,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return wl_shm_pool_get_version(m_shmpool);
     }
 
-    Buffer SharedMemoryPool::CreateBuffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format)
+    qor::ref_of<Buffer>::type SharedMemoryPool::CreateBuffer(int32_t offset, int32_t width, int32_t height, int32_t stride, uint32_t format)
     {
         if(!m_shmpool)
         {
             warning("Creating buffer from SharedMemoryPool with null wl_shm_pool pointer");
-            return Buffer(nullptr);
+            return new_ref<Buffer>(nullptr);
         }
-        return Buffer(wl_shm_pool_create_buffer(m_shmpool, offset, width, height, stride, format));
+        return new_ref<Buffer>(wl_shm_pool_create_buffer(m_shmpool, offset, width, height, stride, format));
     }
 
     void SharedMemoryPool::Resize(int32_t size)

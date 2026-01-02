@@ -66,7 +66,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         int ReadEvents();
         void CancelRead();
 
-        template< typename T = Registry> requires std::is_base_of_v<Registry, T>
+        template< typename T = Registry>// requires std::is_base_of_v<Registry, T>
         qor::ref_of<Registry>::type GetRegistry()
         {
             return new_ref<T>(InternalGetRegistry());

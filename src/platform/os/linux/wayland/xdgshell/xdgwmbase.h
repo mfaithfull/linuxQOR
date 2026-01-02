@@ -22,55 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_BUFFER
-#define QOR_PP_H_LINUX_WAYLAND_BUFFER
+#ifndef QOR_PP_H_LINUX_WAYLAND_XDGWMBASE
+#define QOR_PP_H_LINUX_WAYLAND_XDGWMBASE
 
 #include <stdint.h>
 
-struct wl_buffer;
-struct wl_buffer_listener;
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+
+struct xdg_wm_base;
+struct xdg_wm_base_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Buffer
+    class qor_pp_module_interface(QOR_LINWAYLAND) Registry;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSurface;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner;
+
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGWMBase
     {
     public:
         static const char* const TagName;
-        static Buffer* BufferFrom(wl_buffer* buffer);
-
-        explicit Buffer(wl_buffer* buffer);
-        virtual ~Buffer();
-        Buffer(Buffer&& rhs) noexcept;
-        Buffer& operator=(Buffer&& rhs) noexcept;
-
+        static XDGWMBase* XDGWMBaseFrom(xdg_wm_base* wmbase);
+        XDGWMBase(Registry* registry, uint32_t name, uint32_t version);
+        explicit XDGWMBase(xdg_wm_base* wmbase);
+        ~XDGWMBase();
+        XDGWMBase(XDGWMBase&& rhs) noexcept;
+        XDGWMBase& operator=(XDGWMBase&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}
-
-        wl_buffer* Use() const;
-        uint32_t Version() const;
-        int AddListener(const wl_buffer_listener& listener, void* context);
-        
-        virtual void OnRelease(void* context);
-        /* Override in derived class 
-            compositor releases buffer
-            Sent when this wl_buffer is no longer used by the compositor.
-            The client is now free to reuse or destroy this buffer and its
-            backing storage.
-
-            If a client receives a release event before the frame callback
-            requested in the same wl_surface.commit that attaches this
-            wl_buffer to a surface, then the client is immediately free to
-            reuse the buffer and its backing storage, and does not need a
-            second buffer for the next surface content update. Typically
-            this is possible, when the compositor maintains a copy of the
-            wl_surface contents, e.g. as a GL texture. This is an important
-            optimization for GL(ES) compositors with wl_shm clients.*/
-        
+        xdg_wm_base* Use() const;
+        uint32_t Version() const;        
+        int AddListener(const xdg_wm_base_listener& listener, void* context);
+        void Pong(uint32_t serial);
+        qor::ref_of<XDGPositioner>::type CreatePositioner();
+        qor::ref_of<XDGSurface>::type GetXDGSurface(Surface& surface);
+        virtual void OnPing(void* context, uint32_t serial);
 
     private:
 
-        wl_buffer* m_buffer;
+        xdg_wm_base* m_wmbase;
     };
 
 }}}}//qor::platform::nslinux::wl
     
-#endif//QOR_PP_H_LINUX_WAYLAND_BUFFER
+#endif//QOR_PP_H_LINUX_WAYLAND_XDGWMBASE

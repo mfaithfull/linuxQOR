@@ -133,14 +133,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return wl_surface_add_listener(m_surface, &listener, context);
     }
 
-    void Surface::Attach(Buffer& buffer, int32_t x, int32_t y)
+    void Surface::Attach(qor::ref_of<Buffer>::type buffer, int32_t x, int32_t y)
     {
         if(!m_surface)
         {
             warning("Attaching Buffer to Surface with null wl_surface pointer");
             return;
         }
-        wl_surface_attach(m_surface, buffer.Use(), x, y);
+        wl_surface_attach(m_surface, buffer->Use(), x, y);
     }
 
     void Surface::Damage(int32_t x, int32_t y, int32_t width, int32_t height)

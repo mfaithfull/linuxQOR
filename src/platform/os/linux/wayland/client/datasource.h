@@ -43,7 +43,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         virtual ~DataSource();
         DataSource(DataSource&& rhs) noexcept;
         DataSource& operator=(DataSource&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_data_source* Use() const;
         uint32_t Version() const;
         int AddListener(const wl_data_source_listener& listener, void* context);

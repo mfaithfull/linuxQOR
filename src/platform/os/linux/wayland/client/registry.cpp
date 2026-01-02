@@ -23,6 +23,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <assert.h>
+
 #include "src/qor/error/error.h"
 #include "src/qor/log/informative.h"
 
@@ -34,39 +37,39 @@
 #include "listeners/registrylistener.h"
 #include "session.h"
 #include "compositor.h"
+#include "datadevicemanager.h"
+#include "shm.h"
+#include "shell.h"
+#include "output.h"
+#include "seat.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     const char* const Registry::TagName = "QOR::PLATFORM::NSLINUX::WL::REGISTRY";
-
+    Registry* Registry::s_pInstance = nullptr;
+    
     Registry* Registry::RegistryFrom(wl_registry* registry)
     {
         if(!registry)
         {
             return nullptr;
         }
-        Registry* result = reinterpret_cast<Registry*>(wl_registry_get_user_data(registry));
-        if(result && result->Tag() == TagName)
-        {
-            return result;
-        }
-        else if(result)
-        {
-            continuable("Wayland wl_registry user data tag mismatch");
-        }
-        return new Registry(registry);
+        return s_pInstance;
+    }
+
+    Registry::Registry() : m_registry(nullptr), m_defaultListener(nullptr)
+    {
+        //DO NOT USE. Required for singleton instancing
     }
 
     Registry::Registry(wl_registry* registry) : m_registry(registry), m_defaultListener(nullptr)
     {
-        if(registry)
-        {
-            wl_registry_set_user_data(m_registry, this);
-        }
-        else
+        if(!registry)
         {
             continuable("Registry created with null wl_registry pointer");
         }
+        s_pInstance = this;
+        wl_registry_set_user_data(m_registry, this);
     }
 
     Registry::Registry(Registry&& rhs) noexcept : m_registry(rhs.m_registry), m_defaultListener(rhs.m_defaultListener)
@@ -172,7 +175,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     void Registry::OnGlobal(void* context, uint32_t name, const char* interface, uint32_t version)
     {
-        log::inform("Global object announced: {0:s} (version {1:u} with name {2:u}", interface, version, name);
+        log::inform("Global object announced: {0} (version {1} with name {2}", interface, version, name);
         Session* session = reinterpret_cast<Session*>(context);
         if(session && session->Tag() == Session::TagName)
         {
@@ -180,7 +183,45 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             {
                 wl_compositor* compositor = reinterpret_cast<wl_compositor*>(Bind(name, version, wl_compositor_interface));
                 session->SetCompositor(new_ref<Compositor>(compositor));
+                return;
             }
+
+            if(strcmp(interface, "wl_data_device_manager") == 0)
+            {
+                wl_data_device_manager* dataDeviceManager = reinterpret_cast<wl_data_device_manager*>(Bind(name, version, wl_data_device_manager_interface));
+                session->SetDataDeviceManager(new_ref<DataDeviceManager>(dataDeviceManager));
+                return;
+            }
+
+            if(strcmp(interface, "wl_shell") == 0)
+            {
+                wl_shell* shell = reinterpret_cast<wl_shell*>(Bind(name, version, wl_shell_interface));
+                session->SetShell(new_ref<Shell>(shell));
+                return;
+            }
+
+            if(strcmp(interface, "wl_output") == 0)
+            {
+                wl_output* output = reinterpret_cast<wl_output*>(Bind(name, version, wl_output_interface));
+                session->AddOutput(new_ref<Output>(output), name);
+                return;
+            }
+
+            if(strcmp(interface, "wl_shm") == 0)
+            {
+                wl_shm* shm = reinterpret_cast<wl_shm*>(Bind(name, version, wl_shm_interface));
+                session->SetShm(new_ref<SharedMemory>(shm));
+                return;
+            }
+
+            if(strcmp(interface, "wl_seat") == 0)
+            {
+                wl_seat* seat = reinterpret_cast<wl_seat*>(Bind(name, version, wl_seat_interface));
+                session->AddSeat(new_ref<Seat>(seat), name);
+                return;
+            }
+
+            session->AddUnknownGlobal(name, interface, version);
         }
     }
 

@@ -44,11 +44,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static const char* const TagName;
         static Registry* RegistryFrom(wl_registry* registry);
 
+        Registry();
         explicit Registry(wl_registry* registry);
         virtual ~Registry();
         Registry(Registry&& rhs) noexcept;
         Registry& operator=(Registry&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_registry* Use() const;
         void AddDefaultListener(qor::ref_of<Session>::type session);
         int AddListener(const wl_registry_listener& listener, void* data);
@@ -70,11 +71,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             the compositor.
         */
     private:
-    
-        RegistryListener* m_defaultListener;
+        static Registry* s_pInstance;
         wl_registry* m_registry;
+        RegistryListener* m_defaultListener;
     };
 
-}}}}//qor::platform::nslinux::wl
+    }}}
+    qor_pp_declare_instancer_of(platform::nslinux::wl::Registry, SingletonInstancer);
+
+}//qor::platform::nslinux::wl
     
 #endif//QOR_PP_H_LINUX_WAYLAND_REGISTRY

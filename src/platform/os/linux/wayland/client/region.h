@@ -43,7 +43,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         Region& operator=(const Region&) = delete;
         Region(Region&& rhs) noexcept;
         Region& operator=(Region&& rhs) noexcept;
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
         wl_region* Use() const;
         uint32_t Version() const;
         void Add(int32_t x, int32_t y, int32_t width, int32_t height);

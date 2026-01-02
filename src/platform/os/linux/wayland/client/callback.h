@@ -45,7 +45,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         Callback(Callback&& rhs) noexcept;
         Callback& operator=(Callback&& rhs) noexcept;
 
-        const char* Tag() const{return TagName;}
+        virtual const char* Tag() const{return TagName;}
 
         wl_callback* Use() const;
         uint32_t Version() const;

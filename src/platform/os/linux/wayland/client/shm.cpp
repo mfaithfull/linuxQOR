@@ -121,14 +121,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return wl_shm_get_version(m_shm);
     }
 
-    SharedMemoryPool SharedMemory::CreatePool(int32_t fd, int32_t size)
+    qor::ref_of<SharedMemoryPool>::type SharedMemory::CreatePool(int32_t fd, int32_t size)
     {
         if(!m_shm)
         {
             warning("Creating SharedMemoryPool with null wl_shm pointer");
-            return SharedMemoryPool(nullptr);
+            return new_ref<SharedMemoryPool>(nullptr);
         }
-        return SharedMemoryPool(wl_shm_create_pool(m_shm, fd, size));
+        return new_ref<SharedMemoryPool>(wl_shm_create_pool(m_shm, fd, size));
     }
 
     int SharedMemory::AddListener(const wl_shm_listener& listener, void* context)

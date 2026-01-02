@@ -22,55 +22,35 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_BUFFER
-#define QOR_PP_H_LINUX_WAYLAND_BUFFER
+#ifndef QOR_PP_H_LINUX_WAYLAND_XDGPOSITIONER
+#define QOR_PP_H_LINUX_WAYLAND_XDGPOSITIONER
 
 #include <stdint.h>
 
-struct wl_buffer;
-struct wl_buffer_listener;
+struct xdg_positioner;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Buffer
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner
     {
     public:
         static const char* const TagName;
-        static Buffer* BufferFrom(wl_buffer* buffer);
-
-        explicit Buffer(wl_buffer* buffer);
-        virtual ~Buffer();
-        Buffer(Buffer&& rhs) noexcept;
-        Buffer& operator=(Buffer&& rhs) noexcept;
-
+        static XDGPositioner* XDGPositionerFrom(xdg_positioner* positioner);
+        explicit XDGPositioner(xdg_positioner* positioner);
+        virtual ~XDGPositioner();
+        XDGPositioner(const XDGPositioner&) = delete;
+        XDGPositioner& operator=(const XDGPositioner&) = delete;
+        XDGPositioner(XDGPositioner&& rhs) noexcept;
+        XDGPositioner& operator=(XDGPositioner&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}
-
-        wl_buffer* Use() const;
+        xdg_positioner* Use() const;
         uint32_t Version() const;
-        int AddListener(const wl_buffer_listener& listener, void* context);
-        
-        virtual void OnRelease(void* context);
-        /* Override in derived class 
-            compositor releases buffer
-            Sent when this wl_buffer is no longer used by the compositor.
-            The client is now free to reuse or destroy this buffer and its
-            backing storage.
-
-            If a client receives a release event before the frame callback
-            requested in the same wl_surface.commit that attaches this
-            wl_buffer to a surface, then the client is immediately free to
-            reuse the buffer and its backing storage, and does not need a
-            second buffer for the next surface content update. Typically
-            this is possible, when the compositor maintains a copy of the
-            wl_surface contents, e.g. as a GL texture. This is an important
-            optimization for GL(ES) compositors with wl_shm clients.*/
-        
 
     private:
 
-        wl_buffer* m_buffer;
+        xdg_positioner* m_positioner;
     };
 
 }}}}//qor::platform::nslinux::wl
-    
-#endif//QOR_PP_H_LINUX_WAYLAND_BUFFER
+
+#endif//QOR_PP_H_LINUX_WAYLAND_XDGPOSITIONER
