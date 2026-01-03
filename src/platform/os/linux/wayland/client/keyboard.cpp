@@ -23,9 +23,13 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <vector>
+
 #include "src/qor/error/error.h"
 
 #include "keyboard.h"
+#include "surface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
@@ -142,5 +146,92 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             warning("Releasing Keyboard with null wl_keyboard pointer");
         }
     }
+
+    void Keyboard::OnKeymap(void* context, uint32_t format, int32_t fd, uint32_t size) noexcept
+    {
+        /*This event is sent to provide the client with the keymap data.
+        The format argument is one of the WL_KEYBOARD_KEYMAP_FORMAT_* enums.
+        The fd argument is a file descriptor for reading the keymap data.
+        The size argument is the size of the keymap data in bytes.*/        
+        KeyMapEvent(this, format, fd, size);//Default handling is to bubble the event
+    }
+
+    qor_pp_signal_func Keyboard::KeyMapEvent(Keyboard*, uint32_t format, int32_t fd, uint32_t size)
+    {
+        qor_pp_signal(KeyMapEvent, this, format, fd, size);
+    }
+
+    void Keyboard::OnEnter(void* context, uint32_t serial, wl_surface* surface, wl_array* keys) noexcept
+    {
+        /*This event is sent when the keyboard focus enters a surface.
+        The serial argument is a serial number associated with this
+        focus change. The surface argument is the wl_surface that is receiving
+        keyboard focus. The keys argument is an array of currently pressed keys.*/
+        Surface* s = Surface::SurfaceFrom(surface);
+        auto data = new_ref<std::vector<byte>>();
+        data->resize(keys->size);
+        memcpy(data->data(), keys->data, keys->size);
+        EnterEvent(this, serial, s, data);
+    }
+
+    qor_pp_signal_func Keyboard::EnterEvent(Keyboard*, uint32_t serial, Surface* surface, ref_of<std::vector<byte>>::type data)
+    {
+        qor_pp_signal(EnterEvent, this, serial, surface, data);
+    }
+
+    void Keyboard::OnLeave(void* context, uint32_t serial, wl_surface* surface) noexcept
+    {
+        /*This event is sent when the keyboard focus leaves a surface.
+        The serial argument is a serial number associated with this
+        focus change. The surface argument is the wl_surface that is losing
+        keyboard focus.*/
+        Surface* s = Surface::SurfaceFrom(surface);
+        LeaveEvent(this, serial, s);
+    }
+
+    qor_pp_signal_func Keyboard::LeaveEvent(Keyboard*, uint32_t serial, Surface* surface)
+    {
+        qor_pp_signal(LeaveEvent, this, serial, surface);
+    }
+
+    void Keyboard::OnKey(void* context, uint32_t serial, uint32_t time, uint32_t key, uint32_t state) noexcept
+    {
+        /*This event is sent when the state of a key has changed.
+        The serial argument is a serial number associated with this
+        key event. The time argument is a timestamp of the event in milliseconds.
+        The key argument is the key code of the key that has changed.
+        The state argument is either WL_KEYBOARD_KEY_STATE_PRESSED or
+        WL_KEYBOARD_KEY_STATE_RELEASED.*/
+        KeyEvent(this, serial, time, key, state);
+    }
+
+    qor_pp_signal_func Keyboard::KeyEvent(Keyboard*, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+    {
+        qor_pp_signal(KeyEvent, this, serial, time, key, state);
+    }
+
+    void Keyboard::OnModifiers(void* context, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group) noexcept
+    {
+        /*This event is sent when the state of the keyboard modifiers has changed.
+        The serial argument is a serial number associated with this modifier event.
+        The mods_depressed, mods_latched, mods_locked, and group arguments are bitfields describing the current state of the
+        keyboard modifiers. The meaning of these fields is described in the wl_keyboard.modifiers event.*/
+        ModifiersEvent(this, serial, mods_depressed, mods_latched, mods_locked, group);
+    }
+
+    qor_pp_signal_func Keyboard::ModifiersEvent(Keyboard*, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group)
+    {
+        qor_pp_signal(ModifiersEvent, this, serial, mods_depressed, mods_latched, mods_locked, group);
+    }
     
+    void Keyboard::OnRepeatInfo(void* data, int32_t rate, int32_t delay) noexcept
+    {
+        RepeatEvent(this, rate, delay);
+    }
+        
+    qor_pp_signal_func Keyboard::RepeatEvent(Keyboard*, int32_t rate, int32_t delay)
+    {
+        qor_pp_signal(RepeatEvent, this, rate, delay);
+    }
+
 }}}}//qor::platform::nslinux::wl

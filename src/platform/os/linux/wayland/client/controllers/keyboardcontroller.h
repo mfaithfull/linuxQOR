@@ -22,63 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_SEAT
-#define QOR_PP_H_LINUX_WAYLAND_SEAT
+#ifndef QOR_PP_H_LINUX_WAYLAND_KEYBOARDCONTROLLER
+#define QOR_PP_H_LINUX_WAYLAND_KEYBOARDCONTROLLER
 
 #include <stdint.h>
 
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-
-struct wl_seat;
-struct wl_seat_listener;
+#include "src/framework/signals/signal.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Touch;
     class qor_pp_module_interface(QOR_LINWAYLAND) Keyboard;
-    class qor_pp_module_interface(QOR_LINWAYLAND) Pointer;
-    
-    class qor_pp_module_interface(QOR_LINWAYLAND) Seat
+    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
+
+    class qor_pp_module_interface(QOR_LINWAYLAND) KeyboardController : public SlotBase
     {
     public:
-        static const char* const TagName;
-        static Seat* SeatFrom(wl_seat* seat);
 
-        explicit Seat(wl_seat* seat);
-        virtual ~Seat();
-        Seat(Seat&& rhs) noexcept;
-        Seat& operator=(Seat&& rhs) noexcept;
-        virtual const char* Tag() const{return TagName;}
-        wl_seat* Use() const;
-        uint32_t Version() const;
-        int AddListener(const wl_seat_listener& listener, void* context);
-        void Release();
-        Touch GetTouch();
-        Pointer GetPointer();
-        ref_of<Keyboard>::type GetKeyboard();
+        KeyboardController(ref_of<Keyboard>::type keyboard);
+        virtual ~KeyboardController();
 
-        virtual void OnCapabilities(void* context, uint32_t capabilities)
-        {/* Override in derived class 
-            seat capabilities changed
-            This event is sent when the set of available capabilities
-            changes. The capabilities argument is a bitfield composed
-            of zero or more WL_SEAT_CAPABILITY_* bits.
-        */}
-        
-        virtual void OnName(void* context, const char* name)
-        {/* Override in derived class 
-            seat name
-            This event is sent to inform the client of the seat's
-            name. The name is intended for identifying seats
-            within a multi-seat configuration.
-        */}
+        virtual void OnEnter(Keyboard*, uint32_t serial, Surface* surface, ref_of<std::vector<byte>>::type data);
+        virtual void OnLeave(Keyboard*, uint32_t serial, Surface* surface);
+        virtual void OnKey(Keyboard*, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
+        virtual void OnModifiers(Keyboard*, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group);
+        virtual void OnRepeatInfo(Keyboard*, int32_t rate, int32_t delay);
+        virtual void OnKeymap(Keyboard*, uint32_t format, int32_t fd, uint32_t size);
 
     private:
 
-        wl_seat* m_seat;
+        ref_of<Keyboard>::type m_keyboard;
     };
 
 }}}}//qor::platform::nslinux::wl
     
-#endif//QOR_PP_H_LINUX_WAYLAND_SEAT
+#endif//QOR_PP_H_LINUX_WAYLAND_KEYBOARDCONTROLLER

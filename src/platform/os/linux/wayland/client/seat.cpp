@@ -132,14 +132,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return wl_seat_add_listener(m_seat, &listener, context);
     }
 
-    Keyboard Seat::GetKeyboard()
+    ref_of<Keyboard>::type Seat::GetKeyboard()
     {
         if(!m_seat)
         {
             warning("Getting Keyboard from Seat with null wl_seat pointer");
-            return Keyboard(nullptr);
+            return new_ref<Keyboard>(nullptr);
         }
-        return Keyboard(wl_seat_get_keyboard(m_seat));
+        return new_ref<Keyboard>(wl_seat_get_keyboard(m_seat));
     }
 
     Pointer Seat::GetPointer()

@@ -33,7 +33,7 @@ namespace qor{ namespace platform { namespace nswindows{
     EglDisplay::EglDisplay() : qor::components::EGLDisplay()
     {
         m_nativeWindow = new EglWindow("Default", 100, 100);
-        m_display = EGL::StaticGetDisplay((EGLNativeDisplayType)(m_nativeWindow->GetNativeSurface()));
+        m_display = EGL::StaticGetDisplay((EGLNativeDisplayType)(m_nativeWindow->GetNativeDisplay()));
         if( m_display == nullptr)
         {
             //TODO: error

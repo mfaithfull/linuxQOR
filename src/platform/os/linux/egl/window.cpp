@@ -38,50 +38,58 @@ namespace qor{ namespace platform { namespace nslinux{
         ref_of<qor::components::EGLContext>::type context,
         const std::string& title, int width, int height) : qor::components::EGLWindow(display, context)
     {
-        m_x11_display = XOpenDisplay(NULL);  
+#if qor_pp_egl_backend == qor_pp_use_x        
+        m_display = XOpenDisplay(NULL);  
     
-        int screen = DefaultScreen(m_x11_display);  
-        Window root_window = RootWindow(m_x11_display, screen);  
+        int screen = DefaultScreen(m_display);  
+        Window root_window = RootWindow(m_display, screen);  
     
         // Window attributes  
         XSetWindowAttributes xwa;  
-        xwa.background_pixel = BlackPixel(m_x11_display, screen);  
-        xwa.border_pixel = WhitePixel(m_x11_display, screen);  
+        xwa.background_pixel = BlackPixel(m_display, screen);  
+        xwa.border_pixel = WhitePixel(m_display, screen);  
         xwa.event_mask = StructureNotifyMask;  
     
         // Create a window  
         m_window = XCreateWindow(  
-            m_x11_display, root_window,  
+            m_display, root_window,  
             0, 0, width, height, 0,  
-            DefaultDepth(m_x11_display, screen),  
+            DefaultDepth(m_display, screen),  
             InputOutput,  
-            DefaultVisual(m_x11_display, screen),  
+            DefaultVisual(m_display, screen),  
             CWBackPixel | CWBorderPixel | CWEventMask,  
             &xwa  
         );  
     
-        XMapWindow(m_x11_display, m_window);  // Show the window  
-        XFlush(m_x11_display);  
+        XMapWindow(m_display, m_window);  // Show the window  
+        XFlush(m_display);  
     
         // Wait for the window to be mapped (visible)  
         XEvent event;  
         while (1) 
         {  
-            XNextEvent(m_x11_display, &event);  
+            XNextEvent(m_display, &event);  
             if (event.type == MapNotify) break;  
         }  
+#else if qor_pp_egl_backend == qor_pp_use_wayland
+
+#endif
 
     }
 
     EglWindow::~EglWindow()
     {
-        XDestroyWindow(m_x11_display, m_window);  
-        XCloseDisplay(m_x11_display);              
+#if qor_pp_egl_backend == qor_pp_use_x        
+        XDestroyWindow(m_display, m_window);  
+        XCloseDisplay(m_display);     
+#else if qor_pp_egl_backend == qor_pp_use_wayland
+
+#endif         
     }
 
-    void* EglWindow::GetNativeSurface()
+    void* EglWindow::GetNativeDisplay()
     {
-        return (void*)(m_x11_display);        
+        return (void*)(m_display);        
     }
 
     void* EglWindow::GetNativeWindow()

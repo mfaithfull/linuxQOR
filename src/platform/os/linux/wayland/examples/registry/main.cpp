@@ -18,14 +18,20 @@
 #include "src/platform/os/linux/wayland/client/shmpool.h"
 #include "src/platform/os/linux/wayland/client/surface.h"
 #include "src/platform/os/linux/wayland/client/buffer.h"
+#include "src/platform/os/linux/wayland/client/seat.h"
+#include "src/platform/os/linux/wayland/client/keyboard.h"
 #include "src/platform/os/linux/wayland/client/listeners/bufferlistener.h"
+#include "src/platform/os/linux/wayland/client/listeners/keyboardlistener.h"
+#include "src/platform/os/linux/wayland/client/controllers/keyboardcontroller.h"
 #include "src/platform/os/linux/wayland/xdgshell/xdgwmbase.h"
 #include "src/platform/os/linux/wayland/xdgshell/xdgsurface.h"
 #include "src/platform/os/linux/wayland/xdgshell/xdgtoplevel.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgsession.h"
 
+using namespace qor::platform::nslinux;
 
 const char* appName = "registry";
 
@@ -33,15 +39,31 @@ qor_pp_implement_module(appName)
 qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(WaylandClient)
 
-class customSession : public qor::platform::nslinux::wl::Session
+class customSession : public wl::XDGSession
 {
 public:
     
-    customSession()
+    customSession(ref_of<wl::Display>::type display) : wl::XDGSession(display)
     {
+        m_end = false;
         pixels = nullptr;
-        width = 640;
-        height = 480;
+        SetWidth(640);
+        SetHeight(480);
+
+        auto seats = GetSeats();
+        if(seats.size() > 0)
+        {
+            for(auto seatindex : seats)
+            {
+                auto seat = GetSeat(seatindex);
+                if(seat.IsNotNull())
+                {
+                    m_keyboard = seat->GetKeyboard();
+                    m_keyboard->AddListener(keyboard_listener, m_keyboard.operator->());
+                    break;
+                }
+            }
+        }
     }
 
     virtual ~customSession()
@@ -50,8 +72,8 @@ public:
 
     void DrawFrame()
     {
-        int stride = width * 4;
-        int size = stride * height;  // bytes
+        int stride = m_width * 4;
+        int size = stride * m_height;  // bytes
 
         // open an anonymous file and write some zero bytes to it
         int fd = syscall(SYS_memfd_create, "buffer", 0);
@@ -61,27 +83,27 @@ public:
         pixels = reinterpret_cast<uint8_t*>(mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0));
 
         // turn it into a shared memory pool
-        auto shmPool = shm->CreatePool(fd, size);
+        auto shmPool = m_Shm->CreatePool(fd, size);
 
         // allocate the buffer in that pool
-        buffer = shmPool->CreateBuffer(0, width, height, stride, qor::platform::nslinux::wl::WL_SHM_FORMAT_XRGB8888);
+        buffer = shmPool->CreateBuffer(0, m_width, m_height, stride, wl::WL_SHM_FORMAT_XRGB8888);
 
         // Draw background
         uint32_t *pixel_ptr = (uint32_t *) pixels;
-        size_t total_pixels = width * height;
+        size_t total_pixels = m_width * m_height;
 
         for (size_t i = 0; i < total_pixels; i++)
         {
-            pixel_ptr[i] = 0xCC0A0000;
+            pixel_ptr[i] = 0xCC0A0B0C;
         }
         
         //Attach a listener to the Buffer to free it when the compositor is done with it.
         buffer->AddListener(buffer_listener, NULL);
             
         //Get the pixels out of the door by:        
-        surface->Attach(buffer, 0, 0);          //attaching them to the surface
-        surface->Damage( 0, 0, width, height);  //marking the whole surface as needing redrawing
-        surface->Commit();                      //commiting the surface
+        m_xdgSurface->BaseSurface()->Attach(buffer, 0, 0);          //attaching them to the surface
+        m_xdgSurface->BaseSurface()->Damage( 0, 0, m_width, m_height);  //marking the whole surface as needing redrawing
+        m_xdgSurface->BaseSurface()->Commit();                      //commiting the surface
 
         shmPool.Dispose();                      //clean up the pool.
         close(fd);                              //clean up the file handle.
@@ -102,24 +124,59 @@ public:
             return;
         }
 
-        if (width != new_width || height != new_height)
+        if (m_width != new_width || m_height != new_height)
         {
             //Free the mapped memory before DrawFrame reallocates it at the new size.
-            munmap(pixels, width * height * 4);
-            width = new_width;
-            height = new_height;
+            munmap(pixels, m_width * m_height * 4);
+            m_width = new_width;
+            m_height = new_height;
 
             DrawFrame();
         }
     }
 
-    int width;
-    int height;
+    void End()
+    {
+        m_end = true;
+    }
+
+    int Run()
+    {
+        while(m_Display->Dispatch() && !m_end)
+        {        
+        }
+        return 0;
+    }
+
+    bool m_end;
     uint8_t* pixels;
-    qor::platform::nslinux::wl::BufferListener buffer_listener;
-    qor::ref_of<qor::platform::nslinux::wl::Buffer>::type buffer;
-    qor::ref_of<qor::platform::nslinux::wl::Surface>::type surface;
-    qor::ref_of<qor::platform::nslinux::wl::SharedMemory>::type shm;
+    wl::BufferListener buffer_listener;
+    wl::KeyboardListener keyboard_listener;
+    ref_of<wl::Buffer>::type buffer;   
+    ref_of<wl::Keyboard>::type m_keyboard; 
+};
+
+class customKeyboardController : public wl::KeyboardController
+{
+    public:
+
+    customKeyboardController(customSession* session, ref_of<wl::Keyboard>::type keyboard) : wl::KeyboardController(keyboard), m_session(session)
+    {}
+
+    virtual ~customKeyboardController()
+    {}
+
+    virtual void OnKey(wl::Keyboard*, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+    {
+        if(key == 1 && state == 1)
+        {
+            m_session->End();
+        }
+    }
+
+    protected:
+
+    customSession* m_session;    
 };
 
 int main(int argc, char **argv) 
@@ -129,9 +186,7 @@ int main(int argc, char **argv)
     registryApp->SetRole<Role>(
         [](ref_of<IRole>::type role)
         {
-            qor_pp_fcontext;
-            
-            role->AddFeature<qor::platform::nslinux::WaylandClient>();
+            role->AddFeature<WaylandClient>();
         }
     );
 
@@ -141,62 +196,23 @@ int main(int argc, char **argv)
 
             []()->int
             {
-                //Get a reference to the Wayland Client feature
-                auto waylandClient = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::platform::nslinux::WaylandClient>();
-                //Get the default local display
-                auto display = waylandClient(qor_shared).GetDisplay("");
-                //Make a custom Session to own this thread's wayland related state
-                auto session = new_ref<customSession>();
-                //Get the global registry object
-                auto registry = display->GetRegistry();
-                //Attach the registry to our session with a default listener so it tells the Session about the available protocols
-                registry->AddDefaultListener(session);
-                //Make the internals do their thing until all pending events have been processed
-                display->Dispatch();
-                display->Roundtrip();
+                {//Inner scope ensures the wayland session is cleaned up neatly before the application quits
 
-                {
-                    //The session will now know about the compositor so extact it
-                    auto compositor = session->GetCompositor();
-                    //The default session caches info for globals it doesn't know about.
-                    //Get the cached info for the XDG Shell Extension
-                    auto xdgWmBaseInfo = session->GetGlobal("xdg_wm_base");                    
-                    //Make a Surface
-                    session->surface = compositor->CreateSurface();
-                    //Get the global shared memory manager from the Session
-                    session->shm = session->GetShm();
-                    //Use the XDG Shell Extension info returned earlier to bind the extension object to it's registry entry.
-                    auto xdgWmBase = new_ref<qor::platform::nslinux::wl::XDGWMBase>(registry, xdgWmBaseInfo->Name, xdgWmBaseInfo->Version);
-                    //Add a listener to handle incoming from the XDG Shell Extension
-                    qor::platform::nslinux::wl::XDGWMBaseListener xdgWmBaseListener;
-                    xdgWmBase->AddListener(xdgWmBaseListener, nullptr);
-                    //Get an XDG Surface adapter for the ordinary surface we already created
-                    auto xdgSurface = xdgWmBase->GetXDGSurface(session->surface(qor_shared));
-                    //Add a listener to handle events for the XDGSurface 
-                    qor::platform::nslinux::wl::XDGSurfaceListener xdgSurfaceListener;
-                    xdgSurface->AddListener(xdgSurfaceListener, xdgSurface.operator->());
-                    //Attach the XDGSurface to the session. It will then forward events to the Session
-                    xdgSurface->SetSession(session);
-                    //Get a TopLevel Adaptor for the XDGSurface to make it an 'ordinary' window (not a popup)
-                    auto xdgTopLevel = xdgSurface->GetToplevel();
-                    //Set window type properties on the TopLevel Adaptor
-                    xdgTopLevel->SetTitle("Wayland XDG Example");
-                    //Commit the Surface to trigger configuration events from the server
-                    session->surface->Commit();
-                    //Process those events
-                    display->Dispatch();
-                    display->Roundtrip();
+                    //Get a reference to the Wayland Client feature
+                    auto waylandClient = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<WaylandClient>();
+                    auto display = waylandClient(qor_shared).GetDisplay("");//Get the default local display
+                    auto session = new_ref<customSession>(display);//Make a custom Session to own this thread's wayland related state
 
-                    //At this point the window is rendering and ready for interaction.
-                    while(display->Dispatch())
-                    {
-                        //Event loop
-                    }
-                }            
+                    {   //Inner scope ensures all our local session dependent objects go away before the session cleans up
 
-                registry.Dispose();
-                session.Dispose();
-                display.Dispose();
+                        auto topLevelWindow = session->GetXDGTopLevelWindow();
+                        topLevelWindow->SetTitle("Wayland XDG Example");//Set window type properties on the TopLevel Adaptor
+
+                        customKeyboardController keycon(session, session->m_keyboard);
+                        session->Run();
+                    }            
+
+                }   
                 printf("disconnected from display\n");
 
                 return EXIT_SUCCESS;

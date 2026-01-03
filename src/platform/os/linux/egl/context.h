@@ -31,7 +31,7 @@
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nslinux{ 
 
-    class qor_pp_module_interface(QOR_WINEGL) EglContext : public qor::components::EGLContext
+    class qor_pp_module_interface(QOR_LINEGL) EglContext : public qor::components::EGLContext
     {
     public:
 

@@ -41,19 +41,6 @@ namespace qor{ bool qor_pp_module_interface(QOR_WINEGL) ImplementsEGLFeature(); 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
     
-    /*
-    class qor_pp_module_interface(QOR_WINEGL) Loader
-    {
-        Loader();
-        virtual ~Loader();
-
-        const Handle& GetHandle() const;
-
-    private:
-
-        Handle m_h;
-    };
-    */
     class qor_pp_module_interface(QOR_WINEGL) EGL : public qor::components::EGLFeature
     {
     public:
@@ -63,19 +50,6 @@ namespace qor{ namespace platform { namespace nswindows{
 
         virtual void Setup(){};
         virtual void Shutdown(){};
-
-        //typedef unsigned int EGLBoolean;
-        //typedef void* EGLDisplay;
-        //typedef void* EGLConfig;
-        //typedef void* EGLSurface;
-        //typedef void* EGLContext;
-        //typedef void (*__eglMustCastToProperFunctionPointerType)(void);
-        //typedef unsigned int EGLenum;
-        //typedef void *EGLClientBuffer;                                
-        //typedef void *EGLSync;
-        //typedef intptr_t EGLAttrib;
-        //typedef khronos_utime_nanoseconds_t EGLTime;
-        //typedef void *EGLImage;
 
         static EGLDisplay StaticGetDisplay(EGLNativeDisplayType display_id);
         static bool StaticChooseConfig(EGLDisplay dpy, const int32_t* attrib_list, EGLConfig* configs, int32_t config_size, int32_t* num_config);

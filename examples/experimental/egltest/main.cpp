@@ -38,22 +38,6 @@ qor_pp_implement_module(EGLApp::Name)
 qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(EGLFeature)
 
-/*
-void outputGLESInfo() {
-	std::cout << "GL_VENDOR = " << glGetString(GL_VENDOR) << "\n";
-	std::cout << "GL_RENDERER = " << glGetString(GL_RENDERER) << "\n";
-	std::cout << "GL_VERSION = " << glGetString(GL_VERSION) << "\n";
-	std::cout << "GL_SHADING_LANGUAGE_VERSION = " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
-	std::cout << "Extensions :\n";
-	std::string extBuffer;
-	std::stringstream extStream; 
-	extStream << glGetString(GL_EXTENSIONS);
-	while (extStream >> extBuffer) {
-		std::cout << extBuffer << "\n";
-	}
-}
-*/
-
 int main()
 {
    return AppBuilder().Build<Application>(
@@ -65,21 +49,7 @@ int main()
     )->SetRole<Role>(
         [](ref_of<IRole>::type role)    
         {
-            role->AddFeature<ThreadPool>(
-
-                [](ref_of<ThreadPool>::type threadPool)->void
-                {
-                    threadPool->SetThreadCount(4);
-                    CurrentThread::Get().SetName("Main thread");
-                }
-            );
-
-            role->AddFeature<qor::components::EGLFeature>(
-                [](ref_of<qor::components::EGLFeature>::type eglFeature)->void
-                {
-                    //customFeature->DoThatConfigurationThing("Hello world.");                    
-                }
-            );
+            role->AddFeature<qor::components::EGLFeature>();
         }
     ).Run(
 
@@ -112,12 +82,12 @@ int main()
                 void* config[2] = {};
                 int32_t num_config = 0;
 
-                if(!display->ChooseConfig(attribute_list, &config[1], 1, &num_config))
+                if(!display->ChooseConfig(attribute_list, &config[0], 1, &num_config))
                 {
 
                 }
 
-                auto context = display->CreateContext(config[1], nullptr, contextAttributes);
+                auto context = display->CreateContext(config[0], nullptr, contextAttributes);
                 std::string title("EGL Test");
                 int width = 640;
                 int height = 480;
@@ -137,6 +107,8 @@ int main()
 
                 configs = new void*[eglNumConfigs];
 
+                display->GetConfigs(&configs[0], eglNumConfigs, &eglNumConfigs);
+
                 for (int i = 0; i < eglNumConfigs; i++) 
                 {
                     std::cout << "Config " << i << "\n";
@@ -150,22 +122,7 @@ int main()
                     std::cout << "\n";
                 }
 
-                //delete configs;
-
-                int32_t attr[] = 
-                {
-                    EGL_BUFFER_SIZE, 16,
-                    EGL_RENDERABLE_TYPE,
-                    EGL_OPENGL_ES2_BIT,
-                    EGL_NONE
-                };
-
-                void** eglConfig = new void*;
-                if (!display->ChooseConfig(attr, eglConfig, 1, &eglNumConfigs)) 
-                {
-                    std::cout << "Could not get valid egl configuration!" << std::endl;
-                    return 1;
-                }
+                delete configs;
 
                 context->MakeCurrent(surface, surface);
 

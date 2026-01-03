@@ -136,7 +136,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return wl_registry_get_version(m_registry);
     }
 
-    void Registry::AddDefaultListener(qor::ref_of<Session>::type session)
+    void Registry::AddDefaultListener(Session* session)
     {
         if(!m_registry)
         {
@@ -147,7 +147,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         {
             m_defaultListener = new RegistryListener();
         }
-        if(wl_registry_add_listener(m_registry, m_defaultListener, session.operator->()) != 0)
+        if(wl_registry_add_listener(m_registry, m_defaultListener, session) != 0)
         {
             warning("Failed to add default listener to Registry");
         }

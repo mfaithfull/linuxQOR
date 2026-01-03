@@ -10,6 +10,7 @@ listeners/xdgsurfacelistener.cpp
 listeners/xdgtoplevellistener.cpp
 listeners/xdgwmbaselistener.cpp
 listeners/xdgpopuplistener.cpp
+xdgsession.cpp
 )
 
 target_include_directories(${target} PRIVATE)

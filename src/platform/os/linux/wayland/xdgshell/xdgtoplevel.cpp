@@ -34,6 +34,10 @@
 #include <wayland-client-protocol.h>
 #include "xdg-shell.h"
 
+#include "listeners/xdgwmbaselistener.h"
+#include "listeners/xdgsurfacelistener.h"
+#include "xdgsession.h"
+
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     const char* const XDGTopLevel::TagName = "QOR::PLATFORM::NSLINUX::WL::XDGTOPLEVEL";
@@ -238,7 +242,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     void XDGTopLevel::OnConfigure(void* context, int32_t width, int32_t height, struct wl_array* states)
     {
-        Session* session = reinterpret_cast<Session*>(context);
+        XDGSession* session = reinterpret_cast<XDGSession*>(context);
         if(session)
         {
             session->OnXDGTopLevelConfigured(width, height, states);

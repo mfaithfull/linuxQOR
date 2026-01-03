@@ -33,6 +33,8 @@
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    class qor_pp_module_interface(QOR_LINWAYLAND) Display;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Registry;
     class qor_pp_module_interface(QOR_LINWAYLAND) Compositor;
     class qor_pp_module_interface(QOR_LINWAYLAND) DataDeviceManager;
     class qor_pp_module_interface(QOR_LINWAYLAND) Shell;
@@ -51,7 +53,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     {
     public:
         static const char* const TagName;
-        Session();
+        Session(qor::ref_of<Display>::type display);
         virtual ~Session();
         virtual const char* Tag() const{return TagName;}
         void SetCompositor( qor::ref_of<Compositor>::type compositor );
@@ -64,22 +66,23 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         qor::ref_of<SharedMemory>::type GetShm();
         void AddOutput( qor::ref_of<Output>::type output, uint32_t name );
         qor::ref_of<Output>::type GetOutput( uint32_t name );
+        const std::vector<uint32_t> GetOutputs();
         void AddSeat( qor::ref_of<Seat>::type seat, uint32_t name );
         qor::ref_of<Seat>::type GetSeat( uint32_t name );
+        const std::vector<uint32_t> GetSeats();
         void AddUnknownGlobal( uint32_t name, const char* interface, uint32_t version );
-        GlobalInfo* GetGlobal( const std::string& interface );
-        virtual void OnXDGSurfaceConfigured();
-        virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
+        const GlobalInfo* GetGlobal( const std::string& interface );
 
     protected:
-
+        qor::ref_of<Display>::type m_Display;
+        qor::ref_of<Registry>::type m_Registry;
+        qor::ref_of<Compositor>::type m_Compositor;
         std::vector<GlobalInfo> m_UnknownGlobals;
         std::map<uint32_t, qor::ref_of<Output>::type> m_Outputs;
-        std::map<uint32_t, qor::ref_of<Seat>::type> m_Seats;
-        qor::ref_of<Compositor>::type m_Compositor;
-        qor::ref_of<DataDeviceManager>::type m_DataDeviceManager;
+        std::map<uint32_t, qor::ref_of<Seat>::type> m_Seats;                
         qor::ref_of<Shell>::type m_Shell;
         qor::ref_of<SharedMemory>::type m_Shm;
+        qor::ref_of<DataDeviceManager>::type m_DataDeviceManager;
 
     };
 

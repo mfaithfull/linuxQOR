@@ -80,4 +80,7 @@ typedef char char_t;
 
 typedef std::basic_string<char> string_t;
 
+#define qor_pp_use_x 0
+#define qor_pp_use_wayand 1
+
 #endif//QOR_PP_H_CONFIGURATION

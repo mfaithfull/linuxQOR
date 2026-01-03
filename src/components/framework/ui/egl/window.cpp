@@ -39,7 +39,7 @@ namespace qor { namespace components{
     {
     }
 
-    void* EGLWindow::GetNativeSurface()
+    void* EGLWindow::GetNativeDisplay()
     {
         return nullptr;
     }

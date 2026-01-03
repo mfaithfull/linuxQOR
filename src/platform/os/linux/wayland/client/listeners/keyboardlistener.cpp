@@ -32,7 +32,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     
     KeyboardListener::KeyboardListener()
     {
-        wl_keyboard_listener::keymap = [](void* data, wl_keyboard* wl_keyboard, uint32_t format, int32_t fd, uint32_t size)
+        this->keymap = [](void* data, wl_keyboard* wl_keyboard, uint32_t format, int32_t fd, uint32_t size)
         {
             Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
             if(keyboard)
@@ -40,7 +40,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
                 keyboard->OnKeymap(data, format, fd, size);
             }
         };
-        wl_keyboard_listener::enter = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, wl_surface* surface, wl_array* keys)
+        this->enter = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, wl_surface* surface, wl_array* keys)
         {
             Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
             if(keyboard)
@@ -48,7 +48,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
                 keyboard->OnEnter(data, serial, surface, keys);
             }
         };
-        wl_keyboard_listener::leave = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, wl_surface* surface)
+        this->leave = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, wl_surface* surface)
         {
             Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
             if(keyboard)
@@ -56,7 +56,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
                 keyboard->OnLeave(data, serial, surface);
             }
         };
-        wl_keyboard_listener::key = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+        this->key = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
         {
             Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
             if(keyboard)
@@ -64,13 +64,21 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
                 keyboard->OnKey(data, serial, time, key, state);
             }
         };
-        wl_keyboard_listener::modifiers = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group)
+        this->modifiers = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group)
         {
             Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
             if(keyboard)
             {
                 keyboard->OnModifiers(data, serial, mods_depressed, mods_latched, mods_locked, group);
             }
-        };           
+        };
+        this->repeat_info = [](void* data, wl_keyboard* wl_keyboard, int32_t rate, int32_t delay)
+        {
+            Keyboard* keyboard = reinterpret_cast<Keyboard*>(data);//Keyboard::KeyboardFrom(wl_keyboard);
+            if(keyboard)
+            {
+                keyboard->OnRepeatInfo(data, rate, delay);
+            }
+        };
     }
 }}}}//qor::platform::nslinux::wl

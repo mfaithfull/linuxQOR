@@ -22,37 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#ifndef QOR_PP_H_LINUX_WAYLAND_EGLWINDOW
+#define QOR_PP_H_LINUX_WAYLAND_EGLWINDOW
 
-#include "src/components/framework/ui/egl/window.h"
-#if qor_pp_egl_backend == qor_pp_use_x
-#include <X11/Xlib.h>       // X11 window system headers
-#else if qor_pp_egl_backend == qor_pp_use_wayland
-#include <wayland-egl.h>
-#endif
+#include <stdint.h>
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
+struct wl_egl_window;
+
+namespace qor{ namespace platform { namespace nslinux{ namespace wl{
+
+    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
+
+    class qor_pp_module_interface(QOR_LINWLEGL) EGLWindow
     {
     public:
 
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
+        explicit EGLWindow(wl_egl_window* window, qor::ref_of<Surface>::type baseSurface);
+        virtual ~EGLWindow();
+        EGLWindow(const EGLWindow&) = delete;
+        EGLWindow& operator=(const EGLWindow&) = delete;
+        EGLWindow(EGLWindow&& rhs) noexcept;
+        EGLWindow& operator=(EGLWindow&& rhs) noexcept;
 
-        virtual void* GetNativeDisplay();
-        virtual void* GetNativeWindow();
+        wl_egl_window* Use() const;
+        qor::ref_of<Surface>::type BaseSurface();
+        void GetAttachedSize(int& width, int& height);
+        void Resize(int width, int height, int dx, int dy);
 
     private:
-
-        Window m_window;
-        Display* m_display;
+        
+        wl_egl_window* m_window;
+        qor::ref_of<Surface>::type m_baseSurface;
     };
 
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW
+}}}}//qor::platform::nslinux::wl
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_EGLWINDOW

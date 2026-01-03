@@ -168,14 +168,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return new_ref<XDGPositioner>(xdg_wm_base_create_positioner(m_wmbase));
     }
 
-    qor::ref_of<XDGSurface>::type XDGWMBase::GetXDGSurface(Surface& surface)
+    qor::ref_of<XDGSurface>::type XDGWMBase::GetXDGSurface(qor::ref_of<Surface>::type surface)
     {
         if(!m_wmbase)
         {
             warning("Getting XDGSurface from XDGWMBase with null xdg_wm_base pointer");
             return nullptr;
         }
-        return new_ref<XDGSurface>(xdg_wm_base_get_xdg_surface(m_wmbase, surface.Use()));
+        return new_ref<XDGSurface>(xdg_wm_base_get_xdg_surface(m_wmbase, surface->Use()), surface);
     }        
 
     void XDGWMBase::OnPing(void* context, uint32_t serial){

@@ -22,53 +22,53 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_REGISTRY
-#define QOR_PP_H_LINUX_WAYLAND_REGISTRY
+#ifndef QOR_PP_H_LINUX_WAYLAND_XDGSESION
+#define QOR_PP_H_LINUX_WAYLAND_XDGSESION
 
 #include <stdint.h>
+
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
-struct wl_registry;
-struct wl_registry_listener;
-struct wl_interface;
+#include "src/platform/os/linux/wayland/client/session.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
-    
-    struct qor_pp_module_interface(QOR_LINWAYLAND) RegistryListener;
-    class qor_pp_module_interface(QOR_LINWAYLAND) Session;
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Registry
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGWMBase;
+    struct XDGWMBaseListener;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSurface;
+    struct XDGSurfaceListener;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevel;
+
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSession : public Session
     {
     public:
-        static const char* const TagName;
-        static Registry* RegistryFrom(wl_registry* registry);
+        XDGSession(qor::ref_of<Display>::type display);
+        virtual ~XDGSession();
+        qor::ref_of<XDGSurface>::type GetXDGSurface();
+        void DoConfiguration();
+        qor::ref_of<XDGTopLevel>::type GetXDGTopLevelWindow();
 
-        Registry();
-        explicit Registry(wl_registry* registry);
-        virtual ~Registry();
-        Registry(Registry&& rhs) noexcept;
-        Registry& operator=(Registry&& rhs) noexcept;
-        virtual const char* Tag() const{return TagName;}
-        wl_registry* Use() const;
-        void AddDefaultListener(Session* session);
-        int AddListener(const wl_registry_listener& listener, void* data);
-        void* Bind(uint32_t name, uint32_t version, const wl_interface& interface);
-        uint32_t Version();
-        
-        virtual void OnGlobal(void* context, uint32_t name, const char* interface, uint32_t version);
-        //This event is sent for each global object when the client binds to the wl_registry. 
-        //It is also sent for new global objects as they are added to the compositor.        
+        virtual void OnXDGSurfaceConfigured();
+        virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
 
-        virtual void OnGlobalRemove(void* context, uint32_t name);
-        //This event is sent when a global object is removed from the compositor.
-        
-    private:
-        static Registry* s_pInstance;
-        wl_registry* m_registry;
-        RegistryListener* m_defaultListener;
+        void SetWidth(int width);
+        int GetWidth();
+        void SetHeight(int height);
+        int GetHeight();
+
+    protected:
+    
+        int m_width;
+        int m_height;
+
+        qor::ref_of<XDGWMBase>::type m_xdgWmBase;
+        XDGWMBaseListener m_xdgWmBaseListener;
+        qor::ref_of<XDGSurface>::type m_xdgSurface;
+        XDGSurfaceListener m_xdgSurfaceListener;
     };
 
 }}}}//qor::platform::nslinux::wl
     
-#endif//QOR_PP_H_LINUX_WAYLAND_REGISTRY
+#endif//QOR_PP_H_LINUX_WAYLAND_XDGSESION

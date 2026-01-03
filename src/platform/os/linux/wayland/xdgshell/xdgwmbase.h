@@ -56,7 +56,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         int AddListener(const xdg_wm_base_listener& listener, void* context);
         void Pong(uint32_t serial);
         qor::ref_of<XDGPositioner>::type CreatePositioner();
-        qor::ref_of<XDGSurface>::type GetXDGSurface(Surface& surface);
+        qor::ref_of<XDGSurface>::type GetXDGSurface(qor::ref_of<Surface>::type surface);
         virtual void OnPing(void* context, uint32_t serial);
 
     private:

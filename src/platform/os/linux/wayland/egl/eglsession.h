@@ -22,37 +22,35 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#ifndef QOR_PP_H_LINUX_WAYLAND_EGLSESION
+#define QOR_PP_H_LINUX_WAYLAND_EGLSESION
 
-#include "src/components/framework/ui/egl/window.h"
-#if qor_pp_egl_backend == qor_pp_use_x
-#include <X11/Xlib.h>       // X11 window system headers
-#else if qor_pp_egl_backend == qor_pp_use_wayland
-#include <wayland-egl.h>
-#endif
+#include <stdint.h>
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgsession.h"
 
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
+
+namespace qor{ namespace platform { namespace nslinux{ namespace wl{
+
+    class qor_pp_module_interface(QOR_LINWLEGL) EGLWindow;
+    class qor_pp_module_interface(QOR_LINWLEGL) EGLSession : public XDGSession
     {
     public:
+        EGLSession(qor::ref_of<Display>::type display);
+        virtual ~EGLSession();
 
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
+        virtual void OnXDGSurfaceConfigured();
+        virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
 
-        virtual void* GetNativeDisplay();
-        virtual void* GetNativeWindow();
+        qor::ref_of<EGLWindow>::type CreateEGLWindow();
+        
+    protected:
 
-    private:
-
-        Window m_window;
-        Display* m_display;
+        qor::ref_of<EGLWindow>::type m_window;
     };
 
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW
+}}}}//qor::platform::nslinux::wl
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_EGLSESION

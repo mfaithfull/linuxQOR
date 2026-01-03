@@ -33,13 +33,20 @@
 #include "shm.h"
 #include "output.h"
 #include "seat.h"
+#include "display.h"
+#include "registry.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     const char* const Session::TagName = "QOR::PLATFORM::NSLINUX::WL::SESSION";
 
-    Session::Session()
-    {
+    Session::Session(qor::ref_of<Display>::type display) : m_Display(display)
+    {        
+        m_Registry = m_Display->GetRegistry();//Get the global registry object      
+        m_Registry->AddDefaultListener(this);//Attach the registry to our session with a default listener so it tells the Session about the available protocols
+        //Make the internals do their thing until all pending events have been processed
+        m_Display->Dispatch();
+        m_Display->Roundtrip();
     }
 
     Session::~Session()
@@ -101,6 +108,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return nullptr;
     }
 
+    const std::vector<uint32_t> Session::GetOutputs()
+    {
+        std::vector<uint32_t> outputs;
+        for(auto pair : m_Outputs)
+        {
+            outputs.push_back(pair.first);
+        }
+        return outputs;
+    }
+
     void Session::AddSeat( qor::ref_of<Seat>::type seat, uint32_t name )
     {
         m_Seats[name] = seat;
@@ -113,7 +130,17 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         {
             return it->second;
         }
-        return nullptr;
+        return qor::ref_of<Seat>::type();
+    }
+
+    const std::vector<uint32_t> Session::GetSeats()
+    {
+        std::vector<uint32_t> seats;
+        for( auto pair : m_Seats )
+        {
+            seats.push_back(pair.first);
+        }
+        return seats;
     }
 
     void Session::AddUnknownGlobal( uint32_t name, const char* interface, uint32_t version )
@@ -122,7 +149,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         m_UnknownGlobals.push_back( info );
     }
 
-    GlobalInfo* Session::GetGlobal( const std::string& interface )
+    const GlobalInfo* Session::GetGlobal( const std::string& interface )
     {
         for ( auto& global : m_UnknownGlobals )
         {
@@ -132,20 +159,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             }
         }
         return nullptr;
-    }
-
-    void Session::OnXDGSurfaceConfigured()
-    {
-        /* Override in derived class 
-            XDG Surface configured
-            This event is called when an XDG surface has been configured by the compositor.
-        */
-    }
-
-    void Session::OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states)
-    {
-        /*Override in derivec class
-            This event is called when an XDG TopLevel has been configured by the compositor*/
     }
     
 }}}}//qor::platform::nslinux::wl

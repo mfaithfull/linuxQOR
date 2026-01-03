@@ -106,7 +106,7 @@ namespace qor{ namespace platform { namespace nswindows{
         const std::string& title, int width, int height);
         virtual ~EglWindow();
 
-        virtual void* GetNativeSurface();
+        virtual void* GetNativeDisplay();
         virtual void* GetNativeWindow();
 
     private:

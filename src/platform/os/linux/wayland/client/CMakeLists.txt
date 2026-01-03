@@ -23,7 +23,8 @@ listeners/shellsurfacelistener.cpp
 listeners/shmlistener.cpp
 listeners/surfacelistener.cpp
 listeners/touchlistener.cpp
-session.cpp)
+session.cpp
+controllers/keyboardcontroller.cpp)
 
 target_include_directories(${target} PRIVATE)
 
@@ -31,7 +32,7 @@ include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE QOR_LINWAYLAND)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
-qor_interception qor_log linq_thread wayland-client)
+qor_interception qor_log qor_signals linq_thread wayland-client)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 

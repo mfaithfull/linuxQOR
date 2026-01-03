@@ -36,6 +36,8 @@ struct xdg_surface_listener;
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Session;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSession;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevel;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPopup;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner;
@@ -46,7 +48,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         static const char* const TagName;
         static XDGSurface* XDGSurfaceFrom(xdg_surface* surface);
 
-        explicit XDGSurface(xdg_surface* surface);
+        explicit XDGSurface(xdg_surface* surface, qor::ref_of<Surface>::type baseSurface);
         virtual ~XDGSurface();
         XDGSurface(const XDGSurface&) = delete;
         XDGSurface& operator=(const XDGSurface&) = delete;
@@ -61,11 +63,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         qor::ref_of<XDGTopLevel>::type GetToplevel();
         void SetWindowGeometry(int32_t x, int32_t y, int32_t width, int32_t height);
         virtual void OnConfigure(void* context, uint32_t serial);
-        void SetSession(Session* session);
+        void SetSession(XDGSession* session);
+        qor::ref_of<Surface>::type BaseSurface();
+
     private:
         
         xdg_surface* m_surface;
-        Session* m_session;
+        qor::ref_of<Surface>::type m_baseSurface;
+        XDGSession* m_session;
     };
 
 }}}}//qor::platform::nslinux::wl

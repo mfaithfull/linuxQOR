@@ -30,10 +30,15 @@
 #include "xdgpopup.h"
 #include "xdgpositioner.h"
 #include "src/platform/os/linux/wayland/client/session.h"
+#include "src/platform/os/linux/wayland/client/surface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 #include "xdg-shell.h"
+
+#include "listeners/xdgwmbaselistener.h"
+#include "listeners/xdgsurfacelistener.h"
+#include "xdgsession.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -54,10 +59,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         {
             continuable("Wayland xdg_surface user data tag mismatch");
         }
-        return new XDGSurface(surface);
+        return new XDGSurface(surface, qor::ref_of<Surface>::type());
     }
 
-    XDGSurface::XDGSurface(xdg_surface* surface) : m_surface(surface)
+    XDGSurface::XDGSurface(xdg_surface* surface, qor::ref_of<Surface>::type baseSurface) : m_surface(surface), m_baseSurface(baseSurface)
     {
         if(surface)
         {
@@ -69,9 +74,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }        
     }
 
-    XDGSurface::XDGSurface(XDGSurface&& rhs) noexcept : m_surface(rhs.m_surface)
+    XDGSurface::XDGSurface(XDGSurface&& rhs) noexcept : m_surface(rhs.m_surface), m_baseSurface(rhs.m_baseSurface)
     {
         rhs.m_surface = nullptr;
+        rhs.m_baseSurface.Dispose();
         if (m_surface)
         {
             xdg_surface_set_user_data(m_surface, this);
@@ -87,8 +93,15 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
                 xdg_surface_destroy(m_surface);
             }
 
+            if(m_baseSurface.IsNotNull())
+            {
+                m_baseSurface.Dispose();
+            }
+
             m_surface = rhs.m_surface;
+            m_baseSurface = rhs.m_baseSurface;
             rhs.m_surface = nullptr;
+            rhs.m_baseSurface.Dispose();
 
             if (m_surface)
             {
@@ -192,8 +205,13 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }
     }
 
-    void XDGSurface::SetSession(Session* session)
+    void XDGSurface::SetSession(XDGSession* session)
     {
         m_session = session;
+    }
+
+    qor::ref_of<Surface>::type XDGSurface::BaseSurface()
+    {
+        return m_baseSurface;
     }
 }}}}//qor::platform::nslinux::wl

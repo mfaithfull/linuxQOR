@@ -64,7 +64,7 @@ namespace qor{ namespace platform { namespace nswindows{
         delete m_window;
     }
 
-    void* EglWindow::GetNativeSurface()
+    void* EglWindow::GetNativeDisplay()
     {
         return m_window->GetDeviceContext().Use();
     }
