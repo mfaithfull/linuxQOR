@@ -22,37 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#ifndef QOR_PP_H_LINUX_WAYLAND_TOUCHCONTROLLER
+#define QOR_PP_H_LINUX_WAYLAND_TOUCHCONTROLLER
 
-#include "src/components/framework/ui/egl/window.h"
-#if (qor_pp_egl_backend == qor_pp_use_x)
-#include <X11/Xlib.h>       // X11 window system headers
-#elif (qor_pp_egl_backend == qor_pp_use_wayland)
-#include <wayland-egl.h>
-#endif
+#include <stdint.h>
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/framework/signals/signal.h"
 
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
+namespace qor{ namespace platform { namespace nslinux{ namespace wl{
+
+    class qor_pp_module_interface(QOR_LINWAYLAND) Touch;
+    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
+
+    class qor_pp_module_interface(QOR_LINWAYLAND) TouchController : public SlotBase
     {
     public:
 
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
-
-        virtual void* GetNativeDisplay();
-        virtual void* GetNativeWindow();
+        TouchController(ref_of<Touch>::type touch);
+        virtual ~TouchController();
+        
+        virtual void OnDown(uint32_t serial, uint32_t time, Surface* surface, int32_t id, int32_t x_w, int32_t y_w);
+        virtual void OnUp(uint32_t serial, uint32_t time, int32_t id);
+        virtual void OnMotion(uint32_t time, int32_t id, int32_t x_w, int32_t y_w);
+        virtual void OnFrame();        
+        virtual void OnCancel();
 
     private:
 
-        Window m_window;
-        Display* m_display;
+        ref_of<Touch>::type m_touch;
     };
 
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW
+}}}}//qor::platform::nslinux::wl
+    
+#endif//QOR_PP_H_LINUX_WAYLAND_TOUCHCONTROLLER

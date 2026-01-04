@@ -52,7 +52,11 @@ namespace qor{ namespace platform { namespace nslinux{
 
     EglDisplay::EglDisplay(void* nativeDisplay) : qor::components::EGLDisplay(nativeDisplay)
     {
+        m_major = 0;
+        m_minor = 0;        
+        m_nativeWindow = nullptr;
         m_display = EGL::StaticGetDisplay((EGLNativeDisplayType)nativeDisplay);
+        
         if( m_display == nullptr)
         {
             //TODO: error

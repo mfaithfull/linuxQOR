@@ -26,6 +26,7 @@
 #include "src/qor/error/error.h"
 
 #include "touch.h"
+#include "surface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
@@ -136,5 +137,62 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             m_touch = nullptr;
         }
     }
+
+    void Touch::OnDown(void* context, uint32_t serial, uint32_t time, wl_surface* surface, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
+    {
+        //A new touch point has appeared on the surface.
+        Surface* s = Surface::SurfaceFrom(surface);
+        DownEvent(serial, time, s, id, x_w, y_w);
+    }
+
+    qor_pp_signal_func Touch::DownEvent(uint32_t serial, uint32_t time, Surface* surface, int32_t id, int32_t x_w, int32_t y_w)
+    {
+        qor_pp_signal(DownEvent, serial, time, surface, id, x_w, y_w);
+    }
+    
+    void Touch::OnUp(void* context, uint32_t serial, uint32_t time, int32_t id)
+    {
+        //A touch point has disappeared from the surface.
+        UpEvent(serial, time, id);
+    }
+
+    qor_pp_signal_func Touch::UpEvent(uint32_t serial, uint32_t time, int32_t id)
+    {
+        qor_pp_signal(UpEvent, serial, time, id);
+    }
+
+    void Touch::OnMotion(void* context, uint32_t time, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
+    {
+        //An existing touch point has changed coordinates.
+        MotionEvent(time, id, x_w, y_w);
+    }
+
+    qor_pp_signal_func Touch::MotionEvent(uint32_t time, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
+    {
+        qor_pp_signal(MotionEvent, time, id, x_w, y_w);
+    }
+
+    void Touch::OnFrame(void* context)
+    {        
+        //All touch points for a given frame have been sent.
+        FrameEvent();
+    }
+
+    qor_pp_signal_func Touch::FrameEvent()
+    {
+        qor_pp_signal(FrameEvent);
+    }
+
+    void Touch::OnCancel(void* context)
+    {
+        //touch sequence cancelled
+        CancelEvent();    
+    }
+
+    qor_pp_signal_func Touch::CancelEvent()
+    {
+        qor_pp_signal(CancelEvent);
+    }
+
 
 }}}}//qor::platform::nslinux::wl

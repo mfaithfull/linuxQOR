@@ -108,6 +108,7 @@ namespace qor{ namespace nslinux{ namespace gui {
         {
             const char* sz = gtk_window_get_role(m_gtk);
             std::string role(sz, strlen(sz));
+            return role;
         }
         /*
         

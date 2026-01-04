@@ -22,37 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#include "src/configuration/configuration.h"
+#include "eltsession.h"
+#include "src/platform/os/linux/wayland/egl/eglwindow.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgtoplevel.h"
 
-#include "src/components/framework/ui/egl/window.h"
-#if (qor_pp_egl_backend == qor_pp_use_x)
-#include <X11/Xlib.h>       // X11 window system headers
-#elif (qor_pp_egl_backend == qor_pp_use_wayland)
-#include <wayland-egl.h>
-#endif
+eltSession::eltSession(qor::ref_of<qor::components::OpenGLESFeature>::type opengles, 
+    qor::ref_of<qor::components::EGLFeature>::type egl, qor::ref_of<qor::platform::nslinux::wl::Display>::type display) : qor::platform::nslinux::wl::EGLSession(egl, display), m_gl(opengles)
+{
+    m_width = 640;
+    m_height = 480;
+    
+}
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+eltSession::~eltSession()
+{
+}
 
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
+
+int eltSession::Run()
+{
+    while(!m_ended)
     {
-    public:
+        m_Display->DispatchPending();                
+		m_gl->ClearColour(0.0/255, 79.0/255, 158.0/255, 1.0);
+	    m_gl->Clear(GL_COLOR_BUFFER_BIT);
+        m_eglDisplay->SwapBuffers(m_surface);
+    }
+    return 0;
+}
 
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
-
-        virtual void* GetNativeDisplay();
-        virtual void* GetNativeWindow();
-
-    private:
-
-        Window m_window;
-        Display* m_display;
-    };
-
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW

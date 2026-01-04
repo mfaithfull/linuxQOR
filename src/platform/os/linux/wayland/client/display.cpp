@@ -55,6 +55,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return wl_display_get_registry(m_display);
     }
 
+    wl_display* Display::Use()
+    {
+        return m_display;        
+    }
+    
     int Display::GetFD()
     {
         return wl_display_get_fd(m_display);

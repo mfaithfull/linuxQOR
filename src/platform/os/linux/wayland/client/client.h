@@ -50,7 +50,7 @@ namespace qor{ namespace platform { namespace nslinux{
         virtual void Setup();
         virtual void Shutdown();
 
-        qor::ref_of<wl::Display>::type GetDisplay(const std::string& displayConnection);
+        qor::ref_of<wl::Display>::type GetDisplay(const std::string& displayConnection = "");
         qor::ref_of<wl::Display>::type GetDisplay(int fd);
 
     private:

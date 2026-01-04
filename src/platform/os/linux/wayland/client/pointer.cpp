@@ -150,46 +150,67 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     }
 
     void Pointer::OnEnter(void* context, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy)
-    {/* Override in derived class 
-        pointer enters a surface
-        This event indicates that the pointer has entered a surface.
-        The surface argument is the surface entered.
-        The sx and sy arguments are the surface-local coordinates of the
-        pointer hotspot.
-    */}
+    {
+        // This event indicates that the pointer has entered a surface.
+        //The surface argument is the surface entered. The sx and sy arguments are the surface-local coordinates of the pointer hotspot.
+        Surface* s = Surface::SurfaceFrom(surface);
+        EnterEvent(serial, s, sx, sy);
+    }
+
+    qor_pp_signal_func Pointer::EnterEvent(uint32_t serial, Surface* surface, int32_t sx, int32_t sy)
+    {
+        qor_pp_signal(EnterEvent, serial, surface, sx, sy);
+    }
 
     void Pointer::OnLeave(void* context, uint32_t serial, wl_surface* surface)
-    {/* Override in derived class 
-        pointer leaves a surface
-        This event indicates that the pointer has left a surface.
-        The surface argument is the surface left.
-    */}
+    {
+        //This event indicates that the pointer has left a surface.
+        //The surface argument is the surface left.
+        Surface* s = Surface::SurfaceFrom(surface);
+        LeaveEvent(serial, s);
+    }
+
+    qor_pp_signal_func Pointer::LeaveEvent(uint32_t serial, Surface* surface)
+    {
+        qor_pp_signal(LeaveEvent, serial, surface);
+    }
 
     void Pointer::OnMotion(void* context, uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
-    {/* Override in derived class 
-        pointer motion
-        This event indicates that the pointer has moved.
-        The sx and sy arguments are the surface-local coordinates of the
-        pointer hotspot.
-    */}
+    {
+        //This event indicates that the pointer has moved.
+        //The sx and sy arguments are the surface-local coordinates of the pointer hotspot.
+        MotionEvent(time, sx, sy);
+    }
+
+    qor_pp_signal_func Pointer::MotionEvent(uint32_t time, int32_t sx, int32_t sy)
+    {
+        qor_pp_signal(MotionEvent, time, sx, sy);
+    }
 
     void Pointer::OnButton(void* context, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
-    {/* Override in derived class 
-        pointer button state changed
-        This event indicates that a button on the pointer has changed
-        state. The button argument is a button code as defined
-        in the Linux input event codes (linux/input-event-codes.h).
-        The state argument is either WL_POINTER_BUTTON_STATE_PRESSED
-        or WL_POINTER_BUTTON_STATE_RELEASED.
-    */}
+    {
+        //This event indicates that a button on the pointer has changedstate. 
+        //The button argument is a button code as defined in the Linux input event codes (linux/input-event-codes.h).
+        //The state argument is either WL_POINTER_BUTTON_STATE_PRESSED or WL_POINTER_BUTTON_STATE_RELEASED.
+        ButtonEvent(serial, time, button, state);
+    }
+
+    qor_pp_signal_func Pointer::ButtonEvent(uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
+    {
+        qor_pp_signal(ButtonEvent, serial, time, button, state);
+    }
 
     void Pointer::OnAxis(void* context, uint32_t time, uint32_t axis, wl_fixed_t value)
-    {/* Override in derived class 
-        pointer axis changed
-        This event indicates that an axis on the pointer has changed.
-        The axis argument is one of the WL_POINTER_AXIS_* enums. The value
-        argument is the amount of motion along the axis since the last
-        axis event.
-    */}
+    {
+        //This event indicates that an axis on the pointer has changed.
+        //The axis argument is one of the WL_POINTER_AXIS_* enums. 
+        //The value argument is the amount of motion along the axis since the last axis event.
+        AxisEvent(time, axis, value);
+    }
+
+    qor_pp_signal_func Pointer::AxisEvent(uint32_t time, uint32_t axis, wl_fixed_t value)
+    {
+        qor_pp_signal(AxisEvent, time, axis, value);
+    }
 
 }}}}//qor::platform::nslinux::wl

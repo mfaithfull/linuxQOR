@@ -22,37 +22,31 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 
-#include "src/components/framework/ui/egl/window.h"
-#if (qor_pp_egl_backend == qor_pp_use_x)
-#include <X11/Xlib.h>       // X11 window system headers
-#elif (qor_pp_egl_backend == qor_pp_use_wayland)
-#include <wayland-egl.h>
-#endif
+#include "src/platform/os/linux/wayland/client/display.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
+#include "src/platform/os/linux/wayland/egl/eglsession.h"
+#include "src/components/framework/ui/opengles/opengles.h"
+#include "src/components/framework/ui/opengles/constants.h"
+#include "src/components/framework/ui/opengles/glwindow.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+class eltSession : public qor::platform::nslinux::wl::EGLSession
+{
+public:
 
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
-    {
-    public:
+    eltSession(
+        qor::ref_of<qor::components::OpenGLESFeature>::type opengles,
+        qor::ref_of<qor::components::EGLFeature>::type egl, 
+        qor::ref_of<qor::platform::nslinux::wl::Display>::type display);
 
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
+    virtual ~eltSession();
 
-        virtual void* GetNativeDisplay();
-        virtual void* GetNativeWindow();
+    virtual int Run();
 
-    private:
-
-        Window m_window;
-        Display* m_display;
-    };
-
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW
+protected:
+    qor::ref_of<qor::components::OpenGLESFeature>::type m_gl;
+};

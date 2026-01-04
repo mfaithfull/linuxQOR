@@ -24,7 +24,9 @@ listeners/shmlistener.cpp
 listeners/surfacelistener.cpp
 listeners/touchlistener.cpp
 session.cpp
-controllers/keyboardcontroller.cpp)
+controllers/keyboardcontroller.cpp
+controllers/pointercontroller.cpp
+controllers/touchcontroller.cpp)
 
 target_include_directories(${target} PRIVATE)
 

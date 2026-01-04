@@ -31,6 +31,8 @@
 #include "src/qor/reference/newref.h"
 
 #include "src/platform/os/linux/wayland/client/session.h"
+#include "src/platform/os/linux/wayland/client/keyboard.h"
+#include "src/platform/os/linux/wayland/client/listeners/keyboardlistener.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -40,6 +42,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     struct XDGSurfaceListener;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevel;
+    struct XDGTopLevelListener;
 
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSession : public Session
     {
@@ -58,8 +61,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         void SetHeight(int height);
         int GetHeight();
 
+        void End() { m_ended = true; }
+        virtual int Run();
+
+        qor::ref_of<Keyboard>::type GetKeyboard();
+
     protected:
     
+        bool m_ended;
         int m_width;
         int m_height;
 
@@ -67,6 +76,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         XDGWMBaseListener m_xdgWmBaseListener;
         qor::ref_of<XDGSurface>::type m_xdgSurface;
         XDGSurfaceListener m_xdgSurfaceListener;
+        XDGTopLevelListener m_xdgTopLevelListener;
+        qor::ref_of<Keyboard>::type m_keyboard; 
+        KeyboardListener m_keyboardListener;
+
     };
 
 }}}}//qor::platform::nslinux::wl

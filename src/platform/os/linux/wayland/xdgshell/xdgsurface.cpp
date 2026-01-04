@@ -38,6 +38,7 @@
 
 #include "listeners/xdgwmbaselistener.h"
 #include "listeners/xdgsurfacelistener.h"
+#include "listeners/xdgtoplevellistener.h"
 #include "xdgsession.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{

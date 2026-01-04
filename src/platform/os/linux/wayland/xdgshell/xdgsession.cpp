@@ -30,6 +30,7 @@
 #include "src/platform/os/linux/wayland/client/surface.h"
 #include "src/platform/os/linux/wayland/client/display.h"
 #include "src/platform/os/linux/wayland/client/registry.h"
+#include "src/platform/os/linux/wayland/client/seat.h"
 #include "src/platform/os/linux/wayland/client/session.h"
 
 #include "xdgwmbase.h"
@@ -39,12 +40,13 @@
 
 #include "listeners/xdgwmbaselistener.h"
 #include "listeners/xdgsurfacelistener.h"
+#include "listeners/xdgtoplevellistener.h"
 
 #include "xdgsession.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    XDGSession::XDGSession(qor::ref_of<Display>::type display) : Session(display), m_width{64}, m_height{64}
+    XDGSession::XDGSession(qor::ref_of<Display>::type display) : Session(display), m_ended{false}, m_width{64}, m_height{64}
     {
         auto xdgWmBaseInfo = GetGlobal("xdg_wm_base");
         if(xdgWmBaseInfo)
@@ -55,6 +57,22 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             m_xdgSurface = m_xdgWmBase->GetXDGSurface(surface);//Get an XDG Surface adapter for the surface
             m_xdgSurface->AddListener(m_xdgSurfaceListener, m_xdgSurface.operator->());//Add a listener to handle events for the XDGSurface        
             m_xdgSurface->SetSession(this);//Attach the XDGSurface so it will then forward events to this Session
+
+            auto seats = GetSeats();
+            if(seats.size() > 0)
+            {
+                for(auto seatindex : seats)
+                {
+                    auto seat = GetSeat(seatindex);
+                    if(seat.IsNotNull())
+                    {
+                        m_keyboard = seat->GetKeyboard();
+                        m_keyboard->AddListener(m_keyboardListener, m_keyboard.operator->());
+                        break;
+                    }
+                }
+            }
+
         }
         else
         {
@@ -81,6 +99,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     qor::ref_of<XDGTopLevel>::type XDGSession::GetXDGTopLevelWindow()
     {
         auto xdgTopLevel = m_xdgSurface->GetToplevel();
+        xdgTopLevel->SetSession(this);
+        xdgTopLevel->AddListener(m_xdgTopLevelListener, xdgTopLevel.operator->());//Add a listener to handle events for the XDGTopLevel
         DoConfiguration();
         return xdgTopLevel;
     }
@@ -117,6 +137,19 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     {
         /*Override in derived class
             This event is called when an XDG TopLevel has been configured by the compositor*/
+    }
+
+    int XDGSession::Run()
+    {
+        while(m_Display->Dispatch() && !m_ended)
+        {        
+        }
+        return 0;
+    }
+
+    qor::ref_of<Keyboard>::type XDGSession::GetKeyboard()
+    {
+        return m_keyboard;
     }
     
 }}}}//qor::platform::nslinux::wl

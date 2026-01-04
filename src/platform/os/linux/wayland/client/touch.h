@@ -27,6 +27,8 @@
 
 #include <stdint.h>
 
+#include "src/framework/signals/signal.h"
+
 struct wl_touch;
 struct wl_touch_listener;
 struct wl_surface;
@@ -34,7 +36,9 @@ typedef int32_t wl_fixed_t;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Touch
+    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
+    
+    class qor_pp_module_interface(QOR_LINWAYLAND) Touch : public SignalBase
     {
     public:
         static const char* const TagName;
@@ -49,30 +53,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         uint32_t Version() const;
         int AddListener(const wl_touch_listener& listener, void* context);
         void Release();
-        virtual void OnDown(void* context, uint32_t serial, uint32_t time, wl_surface* surface, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
-        {/* Override in derived class 
-            touch point down
-            A new touch point has appeared on the surface.
-        */}
-        virtual void OnUp(void* context, uint32_t serial, uint32_t time, int32_t id)
-        {/* Override in derived class 
-            touch point up
-            A touch point has disappeared from the surface.
-        */}
-        virtual void OnMotion(void* context, uint32_t time, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
-        {/* Override in derived class 
-            touch point motion
-            An existing touch point has changed coordinates.
-        */}
-        virtual void OnFrame(void* context)
-        {/* Override in derived class 
-            touch frame
-            All touch points for a given frame have been sent.
-        */}
-        virtual void OnCancel(void* context)
-        {/* Override in derived class 
-            touch sequence cancelled    
-        */}
+        virtual void OnDown(void* context, uint32_t serial, uint32_t time, wl_surface* surface, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w);
+        qor_pp_signal_func DownEvent(uint32_t serial, uint32_t time, Surface* surface, int32_t id, int32_t x_w, int32_t y_w);
+        virtual void OnUp(void* context, uint32_t serial, uint32_t time, int32_t id);
+        qor_pp_signal_func UpEvent(uint32_t serial, uint32_t time, int32_t id);
+        virtual void OnMotion(void* context, uint32_t time, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w);
+        qor_pp_signal_func MotionEvent(uint32_t time, int32_t id, int32_t x_w, int32_t y_w);
+        virtual void OnFrame(void* context);
+        qor_pp_signal_func FrameEvent();
+        virtual void OnCancel(void* context);
+        qor_pp_signal_func CancelEvent();
 
     private:
 

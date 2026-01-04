@@ -30,7 +30,10 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/platform/os/linux/wayland/xdgshell/xdgsession.h"
-
+#include "src/components/framework/ui/egl/egl.h"
+#include "src/components/framework/ui/egl/display.h"
+#include "src/components/framework/ui/egl/context.h"
+#include "src/components/framework/ui/egl/window.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -38,17 +41,22 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWLEGL) EGLSession : public XDGSession
     {
     public:
-        EGLSession(qor::ref_of<Display>::type display);
+        EGLSession(qor::ref_of<qor::components::EGLFeature>::type egl, qor::ref_of<Display>::type display);
         virtual ~EGLSession();
 
         virtual void OnXDGSurfaceConfigured();
         virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
 
-        qor::ref_of<EGLWindow>::type CreateEGLWindow();
+        virtual qor::ref_of<EGLWindow>::type CreateEGLWindow();
         
     protected:
 
         qor::ref_of<EGLWindow>::type m_window;
+        qor::ref_of<qor::platform::nslinux::wl::XDGTopLevel>::type m_xdgtoplevel;
+        qor::ref_of<qor::components::EGLDisplay>::type m_eglDisplay;
+        void* m_config;
+        qor::ref_of<qor::components::EGLContext>::type m_eglContext;    
+        void* m_surface;        
     };
 
 }}}}//qor::platform::nslinux::wl

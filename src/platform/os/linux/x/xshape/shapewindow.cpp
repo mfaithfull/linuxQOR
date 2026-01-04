@@ -75,7 +75,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     int XShapeWindow::QueryExtents(int* bounding_shaped, int* x_bounding, int* y_bounding, unsigned int* w_bounding, unsigned int* h_bounding, int* clip_shaped, int* x_clip, int* y_clip, unsigned int* w_clip, unsigned int* h_clip)
     {
-        XShapeQueryExtents((::Display*)(m_window.GetDisplay()->Use()), m_window.GetId(), bounding_shaped, x_bounding, y_bounding, w_bounding, h_bounding, clip_shaped, x_clip, y_clip, w_clip, h_clip);
+        return XShapeQueryExtents((::Display*)(m_window.GetDisplay()->Use()), m_window.GetId(), bounding_shaped, x_bounding, y_bounding, w_bounding, h_bounding, clip_shaped, x_clip, y_clip, w_clip, h_clip);
     }
 
     void XShapeWindow::SelectInput(unsigned long mask)
@@ -85,7 +85,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     unsigned long XShapeWindow::InputSelected()
     {
-        XShapeInputSelected((::Display*)(m_window.GetDisplay()->Use()), m_window.GetId());
+        return XShapeInputSelected((::Display*)(m_window.GetDisplay()->Use()), m_window.GetId());
     }
 
     std::vector<Rectangle> XShapeWindow::GetRectangles(int kind, int ordering)

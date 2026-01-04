@@ -27,6 +27,8 @@
 
 #include <stdint.h>
 
+#include "src/framework/signals/signal.h"
+
 struct wl_pointer;
 struct wl_pointer_listener;
 struct wl_surface;
@@ -36,7 +38,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Pointer
+    class qor_pp_module_interface(QOR_LINWAYLAND) Pointer : public SignalBase
     {
     public:
         static const char* const TagName;
@@ -53,10 +55,15 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         void Release();
         void SetCursor(uint32_t serial, Surface* surface, int32_t hotspot_x, int32_t hotspot_y);
         virtual void OnEnter(void* context, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy);
+        qor_pp_signal_func EnterEvent(uint32_t serial, Surface* surface, int32_t sx, int32_t sy);
         virtual void OnLeave(void* context, uint32_t serial, wl_surface* surface);
+        qor_pp_signal_func LeaveEvent(uint32_t serial, Surface* surface);
         virtual void OnMotion(void* context, uint32_t time, wl_fixed_t sx, wl_fixed_t sy);
+        qor_pp_signal_func MotionEvent(uint32_t time, int32_t sx, int32_t sy);
         virtual void OnButton(void* context, uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
+        qor_pp_signal_func ButtonEvent(uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
         virtual void OnAxis(void* context, uint32_t time, uint32_t axis, wl_fixed_t value);
+        qor_pp_signal_func AxisEvent(uint32_t time, uint32_t axis, int32_t value);
 
     private:
 

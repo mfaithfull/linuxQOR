@@ -39,6 +39,7 @@
 
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
 
 #include "eglsession.h"
 #include "eglwindow.h"
@@ -49,8 +50,29 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    EGLSession::EGLSession(qor::ref_of<Display>::type display) : XDGSession(display)
+    EGLSession::EGLSession(qor::ref_of<qor::components::EGLFeature>::type egl, qor::ref_of<Display>::type display) : XDGSession(display)
     {
+        m_xdgtoplevel = GetXDGTopLevelWindow();
+        m_eglDisplay = egl->CreateDisplay(display->Use());
+        egl->BindAPI(EGL_OPENGL_ES_API);
+
+        int32_t const attribute_list[] = {
+            EGL_RED_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            EGL_DEPTH_SIZE,8,
+            EGL_NONE
+        };
+
+        void* config[1] = {nullptr};
+        int32_t num_config = 0;
+        m_eglDisplay->ChooseConfig(attribute_list, &config[0], 1, &num_config);
+        m_config = config[0];
+        int32_t contextAttributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
+        m_eglContext = m_eglDisplay->CreateContext(m_config, nullptr, contextAttributes);
+
     }
 
     EGLSession::~EGLSession()
@@ -77,7 +99,9 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     qor::ref_of<EGLWindow>::type EGLSession::CreateEGLWindow()
     {
         m_window = new_ref<EGLWindow>(wl_egl_window_create(m_xdgSurface->BaseSurface()->Use(), m_width, m_height), m_xdgSurface->BaseSurface());
+        m_surface = m_eglDisplay->CreateWindowSurface(m_config, m_window->Use(), nullptr);	    
+        m_eglContext->MakeCurrent(m_surface, m_surface);
         return m_window;
     }
-    
+
 }}}}//qor::platform::nslinux::wl

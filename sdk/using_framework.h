@@ -24,4 +24,11 @@ using namespace qor::framework;
 using namespace qor::pipeline;
 using namespace qor::workflow;
 
+namespace qor{
+    template< class TFeature >
+    typename ref_of<TFeature>::type GetFeature()
+    {
+        return AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<TFeature>();
+    }
+}
 #endif//QOR_PP_H_SDK_USING_FRAMEWORK

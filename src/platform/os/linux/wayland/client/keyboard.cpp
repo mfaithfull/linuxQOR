@@ -138,12 +138,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     {
         if(m_keyboard)
         {
-            wl_keyboard_destroy(m_keyboard);
+            wl_keyboard_release(m_keyboard);            
             m_keyboard = nullptr;
-        }
-        else
-        {
-            warning("Releasing Keyboard with null wl_keyboard pointer");
         }
     }
 

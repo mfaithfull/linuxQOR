@@ -61,8 +61,8 @@ namespace qor{ namespace framework{
     private:
 
         void AutoRedirect(ref_of<Application>::type application);
-
     };
+    
 }}//qor::framework
 
 #endif//QOR_PP_H_APPLICATION_BUILDER

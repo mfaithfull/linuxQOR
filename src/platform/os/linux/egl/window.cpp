@@ -38,7 +38,7 @@ namespace qor{ namespace platform { namespace nslinux{
         ref_of<qor::components::EGLContext>::type context,
         const std::string& title, int width, int height) : qor::components::EGLWindow(display, context)
     {
-#if qor_pp_egl_backend == qor_pp_use_x        
+#if (qor_pp_egl_backend == qor_pp_use_x)
         m_display = XOpenDisplay(NULL);  
     
         int screen = DefaultScreen(m_display);  
@@ -71,7 +71,7 @@ namespace qor{ namespace platform { namespace nslinux{
             XNextEvent(m_display, &event);  
             if (event.type == MapNotify) break;  
         }  
-#else if qor_pp_egl_backend == qor_pp_use_wayland
+#elif (qor_pp_egl_backend == qor_pp_use_wayland)
 
 #endif
 
@@ -79,10 +79,10 @@ namespace qor{ namespace platform { namespace nslinux{
 
     EglWindow::~EglWindow()
     {
-#if qor_pp_egl_backend == qor_pp_use_x        
+#if (qor_pp_egl_backend == qor_pp_use_x)
         XDestroyWindow(m_display, m_window);  
         XCloseDisplay(m_display);     
-#else if qor_pp_egl_backend == qor_pp_use_wayland
+#elif (qor_pp_egl_backend == qor_pp_use_wayland)
 
 #endif         
     }
