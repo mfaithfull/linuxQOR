@@ -23,30 +23,126 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <stdlib.h>
+
 #include "eltsession.h"
 #include "src/platform/os/linux/wayland/egl/eglwindow.h"
 #include "src/platform/os/linux/wayland/xdgshell/xdgtoplevel.h"
 
+namespace
+{
+    static MicroRenderer* r_;
+}
+
 eltSession::eltSession(qor::ref_of<qor::components::OpenGLESFeature>::type opengles, 
-    qor::ref_of<qor::components::EGLFeature>::type egl, qor::ref_of<qor::platform::nslinux::wl::Display>::type display) : qor::platform::nslinux::wl::EGLSession(egl, display), m_gl(opengles)
+    qor::ref_of<qor::components::EGLFeature>::type egl, qor::ref_of<qor::platform::nslinux::wl::Display>::type display) : qor::platform::nslinux::wl::EGLSession(egl, display), 
+    m_gl(opengles), m_r(opengles)
 {
     m_width = 640;
     m_height = 480;
-    
+    bg[0] = 0.0;
+    bg[1] = 79.0;
+    bg[2] = 158.0;
+    m_r.init();
+    r_ = &m_r;
+    ctx = new(mu_Context);
+    mu_init(ctx);
+    ctx->text_width = [](mu_Font font, const char *text, int len)->int 
+        {
+            if (len == -1) { len = strlen(text); }
+            return r_->get_text_width(text, len);
+        };
+    ctx->text_height = [](mu_Font font)->int
+        {
+            return r_->get_text_height();
+        };
 }
 
 eltSession::~eltSession()
 {
+    delete ctx;
 }
 
+static int uint8_slider(mu_Context *ctx, unsigned char *value, int low, int high) {
+  static float tmp;
+  mu_push_id(ctx, &value, sizeof(value));
+  tmp = *value;
+  int res = mu_slider_ex(ctx, &tmp, low, high, 0, "%.0f", MU_OPT_ALIGNCENTER);
+  *value = tmp;
+  mu_pop_id(ctx);
+  return res;
+}
+
+static void style_window(mu_Context *ctx) {
+  static struct { const char *label; int idx; } colors[] = {
+    { "text:",         MU_COLOR_TEXT        },
+    { "border:",       MU_COLOR_BORDER      },
+    { "windowbg:",     MU_COLOR_WINDOWBG    },
+    { "titlebg:",      MU_COLOR_TITLEBG     },
+    { "titletext:",    MU_COLOR_TITLETEXT   },
+    { "panelbg:",      MU_COLOR_PANELBG     },
+    { "button:",       MU_COLOR_BUTTON      },
+    { "buttonhover:",  MU_COLOR_BUTTONHOVER },
+    { "buttonfocus:",  MU_COLOR_BUTTONFOCUS },
+    { "base:",         MU_COLOR_BASE        },
+    { "basehover:",    MU_COLOR_BASEHOVER   },
+    { "basefocus:",    MU_COLOR_BASEFOCUS   },
+    { "scrollbase:",   MU_COLOR_SCROLLBASE  },
+    { "scrollthumb:",  MU_COLOR_SCROLLTHUMB },
+    { NULL }
+  };
+
+  if (mu_begin_window(ctx, "Style Editor", mu_rect(350, 250, 300, 240))) {
+    int sw = mu_get_current_container(ctx)->body.w * 0.14;
+    int widths[] = { 80, sw, sw, sw, sw, -1 };
+    mu_layout_row(ctx, 6, widths, 0);
+    for (int i = 0; colors[i].label; i++) {
+      mu_label(ctx, colors[i].label);
+      uint8_slider(ctx, &ctx->style->colors[i].r, 0, 255);
+      uint8_slider(ctx, &ctx->style->colors[i].g, 0, 255);
+      uint8_slider(ctx, &ctx->style->colors[i].b, 0, 255);
+      uint8_slider(ctx, &ctx->style->colors[i].a, 0, 255);
+      mu_draw_rect(ctx, mu_layout_next(ctx), ctx->style->colors[i]);
+    }
+    mu_end_window(ctx);
+  }
+}
+
+static void process_frame(mu_Context *ctx) {
+  mu_begin(ctx);
+  style_window(ctx);
+  //log_window(ctx);
+  //test_window(ctx);
+  mu_end(ctx);
+}
 
 int eltSession::Run()
 {
     while(!m_ended)
     {
-        m_Display->DispatchPending();                
-		m_gl->ClearColour(0.0/255, 79.0/255, 158.0/255, 1.0);
-	    m_gl->Clear(GL_COLOR_BUFFER_BIT);
+        m_Display->DispatchPending();    
+        
+        //process frame
+        process_frame(ctx);
+
+        // render
+        m_r.clear(mu_color(bg[0], bg[1], bg[2], 255));
+        mu_Command *cmd = NULL;
+        while (mu_next_command(ctx, &cmd)) 
+        {
+            switch (cmd->type) 
+            {
+            case MU_COMMAND_TEXT: m_r.draw_text(cmd->text.str, cmd->text.pos, cmd->text.color); break;
+            case MU_COMMAND_RECT: m_r.draw_rect(cmd->rect.rect, cmd->rect.color); break;
+            case MU_COMMAND_ICON: m_r.draw_icon(cmd->icon.id, cmd->icon.rect, cmd->icon.color); break;
+            case MU_COMMAND_CLIP: m_r.set_clip_rect(cmd->clip.rect); break;
+            }
+        }
+        m_r.present();
+        
+		//m_gl->ClearColour(0.0/255, 79.0/255, 158.0/255, 1.0);
+	    //m_gl->Clear(GL_COLOR_BUFFER_BIT);
         m_eglDisplay->SwapBuffers(m_surface);
     }
     return 0;

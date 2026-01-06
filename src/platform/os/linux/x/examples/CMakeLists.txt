@@ -4,4 +4,5 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 add_subdirectory(rawx)
 add_subdirectory(xtrivial)
 add_subdirectory(testxv)
+add_subdirectory(xegltest)
 

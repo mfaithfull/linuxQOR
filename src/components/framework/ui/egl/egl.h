@@ -36,6 +36,7 @@ namespace qor{ bool qor_pp_import ImplementsEGLFeature(); }    //then including 
 
 namespace qor { namespace components{
 
+    class qor_pp_module_interface(QOR_EGL) EGLSession;
     class qor_pp_module_interface(QOR_EGL) EGLDisplay;
     class qor_pp_module_interface(QOR_EGL) EGLContext;
     class qor_pp_module_interface(QOR_EGL) EGLWindow;
@@ -62,6 +63,7 @@ namespace qor { namespace components{
         virtual void* GetCurrentDisplay(void);
         virtual void* GetCurrentSurface(int32_t readdraw);
         virtual int32_t GetError(void);
+        virtual ref_of<qor::components::EGLSession>::type CreateSession();
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay();
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(void* nativeDisplay);
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list);

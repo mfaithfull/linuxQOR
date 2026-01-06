@@ -23,44 +23,21 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "window.h"
+#include "src/qor/error/error.h"
 
-namespace qor { namespace components{
+#include "eglsurface.h"
+#include "egldisplay.h"
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display) : m_display(display)
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
+
+    XEGLSurface::XEGLSurface(qor::ref_of<qor::components::EGLDisplay>::type display, void* config, void* nativeWindow, int32_t* surfaceAttributes) : qor::components::EGLSurface(), m_display(display)
+    {
+        auto xegldisplay = display.AsRef<XEGLDisplay>();
+        m_surface = xegldisplay->CreateWindowSurface(xegldisplay->GetConfig(), nativeWindow, surfaceAttributes);
+    }
+
+    XEGLSurface::~XEGLSurface()
     {
     }
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context)  : m_display(display), m_context(context)
-    {
-    }
-
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height) : m_display(display), m_context(context)
-    {        
-    }
-
-    EGLWindow::~EGLWindow()
-    {
-    }
-
-    void* EGLWindow::GetNativeDisplay()
-    {
-        return nullptr;
-    }
-
-    void* EGLWindow::GetNativeWindow()
-    {
-        return nullptr;
-    }
-
-    void EGLWindow::MakeCurrent(void* surface)
-    {
-        m_display(qor_shared).InternalMakeCurrent(surface, surface, m_context->Use());
-    }
-
-    void EGLWindow::Refresh(void* surface)
-    {
-        m_display(qor_shared).SwapBuffers(surface);
-    }
-    
-}}//qor::components
+}}}}//qor::platform::nslinux::x

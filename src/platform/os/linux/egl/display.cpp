@@ -125,10 +125,10 @@ namespace qor{ namespace platform { namespace nslinux{
         return EGL::StaticCreateContext(m_display, config, share_context, attrib_list);
     }
 
-    ref_of<qor::components::EGLContext>::type EglDisplay::CreateContext(void* config, void* share_context, const int32_t *attrib_list)
-    {
-        return new_ref<EglContext>(this, config, share_context, attrib_list);
-    }
+    //ref_of<qor::components::EGLContext>::type EglDisplay::CreateContext(void* config, void* share_context, const int32_t *attrib_list)
+    //{
+    //   return new_ref<EglContext>(display, config, share_context, attrib_list);
+    //}
 
     void* EglDisplay::CreatePbufferSurface(void* config, const int32_t *attrib_list)
     {

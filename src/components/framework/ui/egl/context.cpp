@@ -24,14 +24,25 @@
 
 #include "src/configuration/configuration.h"
 #include "context.h"
+#include "display.h"
 
 namespace qor { namespace components{
 
-    EGLContext::EGLContext(void* ctx, EGLDisplay& display) : m_display(&display), m_ctx(ctx)
+    EGLContext::EGLContext()
+    {
+        //TODO: May be temporary;;
+    }
+    
+    EGLContext::EGLContext(ref_of<EGLDisplay>::type display) : m_display(display)
+    {
+
+    }
+
+    EGLContext::EGLContext(void* ctx, ref_of<EGLDisplay>::type display) : m_display(display), m_ctx(ctx)
     {        
     }
 
-    EGLContext::EGLContext(EGLDisplay* display, void* config, void* share_context, const int32_t *attrib_list) : m_display(display)
+    EGLContext::EGLContext(ref_of<EGLDisplay>::type display, void* config, void* share_context, const int32_t *attrib_list) : m_display(display)
     {
         m_ctx = m_display->InternalCreateContext(config, share_context, attrib_list);
     }

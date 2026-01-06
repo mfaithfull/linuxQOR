@@ -3,7 +3,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target qor_egl)
 
-add_library(${target} SHARED qor_egl.cpp egl.cpp display.cpp context.cpp window.cpp)
+add_library(${target} SHARED qor_egl.cpp egl.cpp display.cpp context.cpp window.cpp session.cpp surface.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

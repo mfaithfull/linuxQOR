@@ -32,12 +32,16 @@
 
 namespace qor { namespace components{
 
+    class qor_pp_module_interface(QOR_EGL) EGLDisplay;
+
     class qor_pp_module_interface(QOR_EGL) EGLContext
     {
     public:
 
-        EGLContext(void* ctx, EGLDisplay& display);
-        EGLContext(EGLDisplay* display, void* config, void* share_context, const int32_t *attrib_list);        
+        EGLContext();
+        EGLContext(ref_of<EGLDisplay>::type display);
+        EGLContext(void* ctx, ref_of<EGLDisplay>::type display);
+        EGLContext(ref_of<EGLDisplay>::type display, void* config, void* share_context, const int32_t *attrib_list);        
         virtual ~EGLContext();
 
         virtual bool MakeCurrent(void* draw, void* read);
@@ -47,7 +51,7 @@ namespace qor { namespace components{
         
     protected:
 
-        EGLDisplay* m_display;
+        ref_of<EGLDisplay>::type m_display;
         void* m_ctx;
     };
 }}//qor::components

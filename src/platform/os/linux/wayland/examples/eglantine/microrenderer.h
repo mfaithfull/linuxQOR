@@ -25,33 +25,56 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
-#include "src/platform/os/linux/wayland/client/display.h"
-#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
-#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
-#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
-#include "src/platform/os/linux/wayland/egl/eglsession.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
 #include "src/components/framework/ui/opengles/glwindow.h"
-#include "microrenderer.h"
 #include "microui.h"
 
-class eltSession : public qor::platform::nslinux::wl::EGLSession
+class MicroRenderer
 {
 public:
+    MicroRenderer(typename qor::ref_of<qor::components::OpenGLESFeature>::type opengles);
+    ~MicroRenderer();
 
-    eltSession(
-        qor::ref_of<qor::components::OpenGLESFeature>::type opengles,
-        qor::ref_of<qor::components::EGLFeature>::type egl, 
-        qor::ref_of<qor::platform::nslinux::wl::Display>::type display);
+    void init(void);
+    void draw_rect(mu_Rect rect, mu_Color color);
+    void draw_text(const char *text, mu_Vec2 pos, mu_Color color);
+    void draw_icon(int id, mu_Rect rect, mu_Color color);
+    int get_text_width(const char *text, int len);
+    int get_text_height(void);
+    void set_clip_rect(mu_Rect rect);
+    void clear(mu_Color color);
+    void present(void);
 
-    virtual ~eltSession();
+    int text_width(mu_Font font, const char *text, int len) 
+    {
+        if (len == -1) { len = strlen(text); }
+        return get_text_width(text, len);
+    }
 
-    virtual int Run();
+    int text_height(mu_Font font)
+    {
+        return get_text_height();
+    }
 
-protected:
-    qor::ref_of<qor::components::OpenGLESFeature>::type m_gl;
-    MicroRenderer m_r;
-    mu_Context* ctx;
-    float bg[3];// = { 90, 95, 100 };
+private:
+
+    void flush(void);
+    void push_quad(mu_Rect dst, mu_Rect src, mu_Color color);
+
+    typename qor::ref_of<qor::components::OpenGLESFeature>::type m_gl;
+    typename qor::ref_of<qor::components::OpenGLESWindow>::type m_glWindow;
+
+    #define BUFFER_SIZE 16384
+    float   tex_buf[BUFFER_SIZE *  8];
+    float  vert_buf[BUFFER_SIZE *  8];
+    unsigned char color_buf[BUFFER_SIZE * 16];
+    unsigned int  index_buf[BUFFER_SIZE *  6];
+
+    int width  = 800;
+    int height = 600;
+    int buf_idx;
+    static mu_Rect atlas[];
+
+    //SDL_Window *window;
 };

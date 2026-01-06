@@ -43,7 +43,7 @@ namespace qor{ namespace platform { namespace nslinux{
 
         virtual bool ChooseConfig(const int32_t* attrib_list, void** configs, int32_t config_size, int32_t* num_config);
         virtual bool CopyBuffers(void* surface, void* target);        
-        virtual ref_of<qor::components::EGLContext>::type CreateContext(void* config, void* share_context, const int32_t *attrib_list);
+        //virtual ref_of<qor::components::EGLContext>::type CreateContext(void* config, void* share_context, const int32_t *attrib_list);
         virtual void* CreatePbufferSurface(void* config, const int32_t *attrib_list);
         virtual void* CreatePixmapSurface(void* config, void* pixmap, const int32_t *attrib_list);
         virtual void* CreateWindowSurface(void* config, void* win, const int32_t *attrib_list);

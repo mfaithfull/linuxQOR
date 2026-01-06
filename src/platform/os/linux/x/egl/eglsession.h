@@ -22,45 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "window.h"
+#ifndef QOR_PP_H_LINUX_X_EGLSESION
+#define QOR_PP_H_LINUX_X_EGLSESION
 
-namespace qor { namespace components{
+#include <stdint.h>
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display) : m_display(display)
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+
+#include "src/components/framework/ui/egl/egl.h"
+#include "src/components/framework/ui/egl/display.h"
+#include "src/components/framework/ui/egl/context.h"
+#include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/egl/session.h"
+
+#include "src/platform/os/linux/x/xlib/display.h"
+
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
+
+    class qor_pp_module_interface(QOR_LINXEGL) XEGLWindow;
+
+    class qor_pp_module_interface(QOR_LINXEGL) XEGLSession : public qor::components::EGLSession
     {
-    }
+    public:
+        XEGLSession();
+        virtual ~XEGLSession();
+        
+        virtual int Run();
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context)  : m_display(display), m_context(context)
-    {
-    }
+    protected:
+              
+    };
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height) : m_display(display), m_context(context)
-    {        
-    }
-
-    EGLWindow::~EGLWindow()
-    {
-    }
-
-    void* EGLWindow::GetNativeDisplay()
-    {
-        return nullptr;
-    }
-
-    void* EGLWindow::GetNativeWindow()
-    {
-        return nullptr;
-    }
-
-    void EGLWindow::MakeCurrent(void* surface)
-    {
-        m_display(qor_shared).InternalMakeCurrent(surface, surface, m_context->Use());
-    }
-
-    void EGLWindow::Refresh(void* surface)
-    {
-        m_display(qor_shared).SwapBuffers(surface);
-    }
+}}}}//qor::platform::nslinux::x
     
-}}//qor::components
+#endif//QOR_PP_H_LINUX_X_EGLSESION

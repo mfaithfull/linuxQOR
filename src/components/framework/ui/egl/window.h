@@ -37,6 +37,7 @@ namespace qor { namespace components{
     {
     public:
 
+        EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type);
         EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type, qor::ref_of<EGLContext>::type context);
         EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height);
         virtual ~EGLWindow();
@@ -46,7 +47,7 @@ namespace qor { namespace components{
         virtual void MakeCurrent(void* surface);
         virtual void Refresh(void* surface);
 
-    private:
+    protected:
 
         qor::ref_of<EGLDisplay>::type m_display;
         qor::ref_of<EGLContext>::type m_context;

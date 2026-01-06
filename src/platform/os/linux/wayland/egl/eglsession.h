@@ -47,7 +47,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         virtual void OnXDGSurfaceConfigured();
         virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
 
-        virtual qor::ref_of<EGLWindow>::type CreateEGLWindow();
+        virtual qor::ref_of<qor::components::EGLWindow>::type CreateEGLWindow();
         
     protected:
 

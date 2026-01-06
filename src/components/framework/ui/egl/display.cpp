@@ -50,10 +50,12 @@ namespace qor { namespace components{
         return false;
     }
 
+    /*
     ref_of<EGLContext>::type EGLDisplay::CreateContext(void* config, void* share_context, const int32_t *attrib_list)
     {
-        return new_ref<EGLContext>(this, config, share_context, attrib_list);
+        return new_ref<EGLContext>(display, config, share_context, attrib_list);
     }
+    */
 
     void* EGLDisplay::InternalCreateContext(void* config, void* share_context, const int32_t *attrib_list)
     {

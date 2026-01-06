@@ -35,8 +35,8 @@ namespace qor{ namespace platform { namespace nslinux{
     {
     public:
 
-        EglContext(void* ctx, qor::components::EGLDisplay& display);
-        EglContext(qor::components::EGLDisplay* display, void* config, void* share_context, const int32_t *attrib_list);
+        EglContext(void* ctx, ref_of<qor::components::EGLDisplay>::type display);
+        EglContext(ref_of<qor::components::EGLDisplay>::type display, void* config, void* share_context, const int32_t *attrib_list);
         virtual ~EglContext();
     };
 

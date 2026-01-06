@@ -1,25 +1,29 @@
-//#include <SDL2/SDL.h>
-//#include <SDL2/SDL_opengl.h>
-#include <GL/gl.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include "src/components/framework/ui/egl/egl.h"
+#include "src/components/framework/ui/egl/display.h"
+#include "src/components/framework/ui/egl/context.h"
+#include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/opengles/opengles.h"
+#include "src/components/framework/ui/opengles/constants.h"
+#include "src/components/framework/ui/opengles/glwindow.h"
 #include "renderer.h"
 #include "atlas.inl"
-
+//#include <GL/gl.h>
 #define BUFFER_SIZE 16384
 
-static GLfloat   tex_buf[BUFFER_SIZE *  8];
-static GLfloat  vert_buf[BUFFER_SIZE *  8];
-static GLubyte color_buf[BUFFER_SIZE * 16];
-static GLuint  index_buf[BUFFER_SIZE *  6];
+static float   tex_buf[BUFFER_SIZE *  8];
+static float  vert_buf[BUFFER_SIZE *  8];
+static unsigned char color_buf[BUFFER_SIZE * 16];
+static unsigned int  index_buf[BUFFER_SIZE *  6];
 
 static int width  = 800;
 static int height = 600;
 static int buf_idx;
 
 static SDL_Window *window;
-
+qor::components::OpenGLESFeature* opengl;
 
 void r_init(void) {
   /* init SDL window */
@@ -29,49 +33,49 @@ void r_init(void) {
   SDL_GL_CreateContext(window);
 
   /* init gl */
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glDisable(GL_CULL_FACE);
-  glDisable(GL_DEPTH_TEST);
-  glEnable(GL_SCISSOR_TEST);
-  glEnable(GL_TEXTURE_2D);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glEnableClientState(GL_COLOR_ARRAY);
+  opengl->Enable(GL_BLEND);
+  opengl->BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  opengl->Disable(GL_CULL_FACE);
+  opengl->Disable(GL_DEPTH_TEST);
+  opengl->Enable(GL_SCISSOR_TEST);
+  opengl->Enable(GL_TEXTURE_2D);
+  opengl->EnableClientState(GL_VERTEX_ARRAY);
+  opengl->EnableClientState(GL_TEXTURE_COORD_ARRAY);
+  opengl->glEnableClientState(GL_COLOR_ARRAY);
 
   /* init texture */
-  GLuint id;
-  glGenTextures(1, &id);
-  glBindTexture(GL_TEXTURE_2D, id);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, ATLAS_WIDTH, ATLAS_HEIGHT, 0,
+  unsigned int id;
+  opengl->GenTextures(1, &id);
+  opengl->BindTexture(GL_TEXTURE_2D, id);
+  opengl->TexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, ATLAS_WIDTH, ATLAS_HEIGHT, 0,
     GL_ALPHA, GL_UNSIGNED_BYTE, atlas_texture);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  assert(glGetError() == 0);
+  opengl->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  opengl->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  assert(opengl->GetError() == 0);
 }
 
 
 static void flush(void) {
   if (buf_idx == 0) { return; }
 
-  glViewport(0, 0, width, height);
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix();
-  glLoadIdentity();
-  glOrtho(0.0f, width, height, 0.0f, -1.0f, +1.0f);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
+  opengl->Viewport(0, 0, width, height);
+  opengl->MatrixMode(GL_PROJECTION);
+  opengl->PushMatrix();
+  opengl->LoadIdentity();
+  opengl->Ortho(0.0f, width, height, 0.0f, -1.0f, +1.0f);
+  opengl->MatrixMode(GL_MODELVIEW);
+  opengl->PushMatrix();
+  opengl->LoadIdentity();
 
-  glTexCoordPointer(2, GL_FLOAT, 0, tex_buf);
-  glVertexPointer(2, GL_FLOAT, 0, vert_buf);
-  glColorPointer(4, GL_UNSIGNED_BYTE, 0, color_buf);
-  glDrawElements(GL_TRIANGLES, buf_idx * 6, GL_UNSIGNED_INT, index_buf);
+  opengl->TexCoordPointer(2, GL_FLOAT, 0, tex_buf);
+  opengl->VertexPointer(2, GL_FLOAT, 0, vert_buf);
+  opengl->ColorPointer(4, GL_UNSIGNED_BYTE, 0, color_buf);
+  opengl->DrawElements(GL_TRIANGLES, buf_idx * 6, GL_UNSIGNED_INT, index_buf);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
+  opengl->MatrixMode(GL_MODELVIEW);
+  opengl->PopMatrix();
+  opengl->MatrixMode(GL_PROJECTION);
+  opengl->PopMatrix();
 
   buf_idx = 0;
 }
@@ -171,14 +175,14 @@ int r_get_text_height(void) {
 
 void r_set_clip_rect(mu_Rect rect) {
   flush();
-  glScissor(rect.x, height - (rect.y + rect.h), rect.w, rect.h);
+  opengl->Scissor(rect.x, height - (rect.y + rect.h), rect.w, rect.h);
 }
 
 
 void r_clear(mu_Color clr) {
   flush();
-  glClearColor(clr.r / 255., clr.g / 255., clr.b / 255., clr.a / 255.);
-  glClear(GL_COLOR_BUFFER_BIT);
+  opengl->learColor(clr.r / 255., clr.g / 255., clr.b / 255., clr.a / 255.);
+  opengl->Clear(GL_COLOR_BUFFER_BIT);
 }
 
 

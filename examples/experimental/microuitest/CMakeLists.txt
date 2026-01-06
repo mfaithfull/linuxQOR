@@ -13,12 +13,12 @@ add_executable(${target} main.cpp microui.c renderer.cpp)
 target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE qor_pp_ver_major=1 )
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_thread linq_thread)
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_thread linq_thread linqor_opengles)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_log qor_pipeline qor_asyncioservice qor_property
-qor_role qor_thread winqor_thread)
+qor_role qor_thread winqor_thread winqor_opengles)
 endif()
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

@@ -120,7 +120,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
         Window(unsigned long drawableId, Display* display = nullptr);
         Window(Display* display, unsigned long parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, unsigned long border, unsigned long background);
-        Window(Display* display, unsigned long parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int type, Visual* visual, unsigned long valuemask, SetWindowAttributes& attributes);
+        Window(Display* display, unsigned long parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int type, Visual* visual, unsigned long valuemask, const SetWindowAttributes& attributes);
         virtual ~Window();
 
         qor::ref_of<Window>::type CreateChildWindow(int x, int y, unsigned int width, unsigned int height, unsigned int border_width, unsigned long border, unsigned long background);

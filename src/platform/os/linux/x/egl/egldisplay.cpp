@@ -23,44 +23,51 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "window.h"
 
-namespace qor { namespace components{
+#include "src/qor/error/error.h"
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display) : m_display(display)
+#include "egldisplay.h"
+#include "src/platform/os/linux/x/xlib/xlib.h"
+#include "src/framework/application/application_builder.h"
+
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
+
+    XEGLDisplay::XEGLDisplay() : qor::components::EGLDisplay()
+    {
+        auto xclient = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::platform::nslinux::XClient>();
+        auto egl = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::EGLFeature>();
+        
+        m_xdisplay = xclient->GetDisplay(0);
+        egl->BindAPI(EGL_OPENGL_ES_API);
+
+        int32_t const attribute_list[] = {
+            EGL_RED_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            EGL_DEPTH_SIZE,8,
+            EGL_NONE
+        };
+
+        void* config[1] = {nullptr};
+        int32_t num_config = 0;
+        ChooseConfig(attribute_list, &config[0], 1, &num_config);
+        m_config = config[0];
+    }
+
+    XEGLDisplay::~XEGLDisplay()
     {
     }
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context)  : m_display(display), m_context(context)
+    void* XEGLDisplay::GetConfig()
     {
+        return m_config;
     }
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height) : m_display(display), m_context(context)
-    {        
+    ref_of<Display>::type XEGLDisplay::GetNativeDisplay()
+    {
+        return m_xdisplay;
     }
 
-    EGLWindow::~EGLWindow()
-    {
-    }
-
-    void* EGLWindow::GetNativeDisplay()
-    {
-        return nullptr;
-    }
-
-    void* EGLWindow::GetNativeWindow()
-    {
-        return nullptr;
-    }
-
-    void EGLWindow::MakeCurrent(void* surface)
-    {
-        m_display(qor_shared).InternalMakeCurrent(surface, surface, m_context->Use());
-    }
-
-    void EGLWindow::Refresh(void* surface)
-    {
-        m_display(qor_shared).SwapBuffers(surface);
-    }
-    
-}}//qor::components
+}}}}//qor::platform::nslinux::x

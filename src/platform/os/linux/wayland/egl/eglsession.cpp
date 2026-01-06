@@ -71,7 +71,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         m_eglDisplay->ChooseConfig(attribute_list, &config[0], 1, &num_config);
         m_config = config[0];
         int32_t contextAttributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-        m_eglContext = m_eglDisplay->CreateContext(m_config, nullptr, contextAttributes);
+        m_eglContext = new_ref<qor::components::EGLContext>(m_eglDisplay,m_config, nullptr, contextAttributes);
 
     }
 
@@ -96,7 +96,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     	}        
     }
 
-    qor::ref_of<EGLWindow>::type EGLSession::CreateEGLWindow()
+    qor::ref_of<qor::components::EGLWindow>::type EGLSession::CreateEGLWindow()
     {
         m_window = new_ref<EGLWindow>(wl_egl_window_create(m_xdgSurface->BaseSurface()->Use(), m_width, m_height), m_xdgSurface->BaseSurface());
         m_surface = m_eglDisplay->CreateWindowSurface(m_config, m_window->Use(), nullptr);	    

@@ -22,4 +22,5 @@ add_subdirectory(xrecord)
 add_subdirectory(xpresent)
 add_subdirectory(xvideo)
 add_subdirectory(xf86vidmode)
+add_subdirectory(egl)
 

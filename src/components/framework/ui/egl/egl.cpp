@@ -26,6 +26,7 @@
 #include "egl.h"
 #include "display.h"
 #include "window.h"
+#include "session.h"
 
 namespace qor { namespace components{
 
@@ -81,6 +82,11 @@ namespace qor { namespace components{
     int32_t EGLFeature::GetError(void)
     {
         return 0;
+    }
+
+    qor::ref_of<qor::components::EGLSession>::type EGLFeature::CreateSession()
+    {
+        return new_ref<EGLSession>(CreateDisplay());
     }
 
     qor::ref_of<qor::components::EGLDisplay>::type EGLFeature::CreateDisplay()

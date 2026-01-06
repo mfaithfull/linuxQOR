@@ -57,9 +57,9 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         m_Id = XCreateSimpleWindow((::Display*)(m_display->Use()), (::Window)(parent), x, y, width, height, border_width, border, background);
     }
 
-    Window::Window(Display* display, unsigned long parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int type, Visual* visual, unsigned long valuemask, SetWindowAttributes& attributes) : Drawable(0), m_display(display), temporary(false)
+    Window::Window(Display* display, unsigned long parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, int depth, unsigned int type, Visual* visual, unsigned long valuemask, const SetWindowAttributes& attributes) : Drawable(0), m_display(display), temporary(false)
     {
-        m_Id = XCreateWindow((::Display*)(m_display->Use()), (::Window)(parent), x, y, width, height, border_width, depth, type, (::Visual*)(visual->Use()), valuemask, reinterpret_cast<XSetWindowAttributes*>(&attributes));
+        m_Id = XCreateWindow((::Display*)(m_display->Use()), (::Window)(parent), x, y, width, height, border_width, depth, type, (::Visual*)(visual->Use()), valuemask, const_cast<XSetWindowAttributes*>(reinterpret_cast<const XSetWindowAttributes*>(&attributes)));
     }
 
     qor::ref_of<Window>::type Window::CreateChildWindow(int x, int y, unsigned int width, unsigned int height, unsigned int border_width, unsigned long border, unsigned long background)

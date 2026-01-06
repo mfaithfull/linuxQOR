@@ -22,45 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "window.h"
+#ifndef QOR_PP_H_LINUX_X_EGLDISPLAY
+#define QOR_PP_H_LINUX_X_EGLDISPLAY
 
-namespace qor { namespace components{
+#include <stdint.h>
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display) : m_display(display)
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+
+#include "src/components/framework/ui/egl/egl.h"
+#include "src/components/framework/ui/egl/display.h"
+#include "src/components/framework/ui/egl/context.h"
+#include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/egl/session.h"
+
+#include "src/platform/os/linux/x/xlib/display.h"
+
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
+
+    class qor_pp_module_interface(QOR_LINXEGL) XEGLDisplay : public qor::components::EGLDisplay
     {
-    }
+    public:
+        XEGLDisplay();
+        virtual ~XEGLDisplay();
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context)  : m_display(display), m_context(context)
-    {
-    }
+        void* GetConfig();
+        virtual ref_of<Display>::type GetNativeDisplay();
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height) : m_display(display), m_context(context)
-    {        
-    }
+    protected:
+        ref_of<Display>::type m_xdisplay;
+        void* m_config;
+    };
 
-    EGLWindow::~EGLWindow()
-    {
-    }
-
-    void* EGLWindow::GetNativeDisplay()
-    {
-        return nullptr;
-    }
-
-    void* EGLWindow::GetNativeWindow()
-    {
-        return nullptr;
-    }
-
-    void EGLWindow::MakeCurrent(void* surface)
-    {
-        m_display(qor_shared).InternalMakeCurrent(surface, surface, m_context->Use());
-    }
-
-    void EGLWindow::Refresh(void* surface)
-    {
-        m_display(qor_shared).SwapBuffers(surface);
-    }
+}}}}//qor::platform::nslinux::x
     
-}}//qor::components
+#endif//QOR_PP_H_LINUX_X_EGLDISPLAY

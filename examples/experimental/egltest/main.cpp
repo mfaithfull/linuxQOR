@@ -87,7 +87,7 @@ int main()
 
                 }
 
-                auto context = display->CreateContext(config[0], nullptr, contextAttributes);
+                auto context = new_ref<qor::components::EGLContext>(display, config[0], nullptr, contextAttributes);
                 std::string title("EGL Test");
                 int width = 640;
                 int height = 480;

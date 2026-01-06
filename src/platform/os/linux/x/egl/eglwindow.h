@@ -22,45 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "window.h"
+#ifndef QOR_PP_H_LINUX_X_EGLWINDOW
+#define QOR_PP_H_LINUX_X_EGLWINDOW
 
-namespace qor { namespace components{
+#include <stdint.h>
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display) : m_display(display)
-    {
-    }
+#include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/egl/context.h"
 
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context)  : m_display(display), m_context(context)
-    {
-    }
-
-    EGLWindow::EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height) : m_display(display), m_context(context)
-    {        
-    }
-
-    EGLWindow::~EGLWindow()
-    {
-    }
-
-    void* EGLWindow::GetNativeDisplay()
-    {
-        return nullptr;
-    }
-
-    void* EGLWindow::GetNativeWindow()
-    {
-        return nullptr;
-    }
-
-    void EGLWindow::MakeCurrent(void* surface)
-    {
-        m_display(qor_shared).InternalMakeCurrent(surface, surface, m_context->Use());
-    }
-
-    void EGLWindow::Refresh(void* surface)
-    {
-        m_display(qor_shared).SwapBuffers(surface);
-    }
+namespace qor{ namespace platform { namespace nslinux{ namespace x{
     
-}}//qor::components
+    class qor_pp_module_interface(QOR_LINX) Window;
+
+    class qor_pp_module_interface(QOR_LINXEGL) XEGLSurface;
+    class qor_pp_module_interface(QOR_LINXEGL) XEGLContext;
+
+    class qor_pp_module_interface(QOR_LINXEGL) XEGLWindow : public qor::components::EGLWindow
+    {
+    public:
+
+        XEGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display);
+        virtual ~XEGLWindow();
+        XEGLWindow(const XEGLWindow&) = delete;
+        XEGLWindow& operator=(const XEGLWindow&) = delete;
+        
+        virtual ref_of<Window>::type GetXWindow();
+
+    private:
+        ref_of<Window>::type m_xwindow;
+        ref_of<XEGLSurface>::type m_surface;
+        //ref_of<XEGLContext>::type m_context;
+    };
+
+}}}}//qor::platform::nslinux::x
+    
+#endif//QOR_PP_H_LINUX_X_EGLWINDOW

@@ -98,7 +98,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     Visual Screen::DefaultVisual()
     {
-        return XDefaultVisualOfScreen(WITH_THIS);
+        return Visual(XDefaultVisualOfScreen(WITH_THIS));
     }
 
     int Screen::DoesBackingStore()

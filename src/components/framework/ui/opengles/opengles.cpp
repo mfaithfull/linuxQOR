@@ -72,7 +72,7 @@ namespace qor { namespace components{
                 //return 1;
             }
 
-            m_context = m_display->CreateContext(m_config[0], nullptr, contextAttributes);
+            m_context = new_ref<EGLContext>(m_display,m_config[0], nullptr, contextAttributes);
         }
         else
         {
