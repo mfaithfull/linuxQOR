@@ -31,6 +31,7 @@
 
 namespace qor { namespace components { namespace parser {
 
+    //Matches one thing which is the first in the given set that matches. There can be only one. No matches in the set is an error
     AnyOneOfSet::AnyOneOfSet(Parser* parser, std::vector<ref_of<ParserState>::type>* set, uint64_t token) : ParserState(parser,token),
         m_set(set)
     {

@@ -31,6 +31,7 @@
 
 namespace qor { namespace components { namespace parser {
 
+    //Matches one or more of the head state. Must be at least one, can be any number. First non match breaks the sequence
     OneOrMore::OneOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser,token),
         m_head(head), m_first(true)
     {

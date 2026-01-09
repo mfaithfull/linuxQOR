@@ -48,30 +48,30 @@ int main()
 
     return AppBuilder().Build(appName)->SetRole<Role>().Run(
     make_runable(
-    []()->int
-    {
-        /*Retrieve the file system singleton from the platform.
-        The platform is a shared object so synchronisation is required*/
-        auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
+        []()->int
+        {
+            /*Retrieve the file system singleton from the platform.
+            The platform is a shared object so synchronisation is required*/
+            auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
+            
+            /*All the functions on the fileSystem object are const so 
+            once we have it, it's safe to use without synchronisation*/
+
+            /*A FileIndex is how we refer to a specific file without opening it.
+            Internally it's a directory entry, which is just the index of a file*/
+            FileIndex index(fileSystem->CurrentPath(), "alice.txt");
+
+            /*If we want to do simple step by step processing
+            we can use the traditional way of dealing with files.*/
+            TraditionalFileRead(fileSystem, index);
+
+            /*However what if we want to transcode the whole file
+            to base64 encoding and write it out to another file?        
+            */
+            PipelineFileProcessor(fileSystem, index);
         
-        /*All the functions on the fileSystem object are const so 
-        once we have it, it's safe to use without synchronisation*/
-
-        /*A FileIndex is how we refer to a specific file without opening it.
-        Internally it's a directory entry, which is just the index of a file*/
-        FileIndex index(fileSystem->CurrentPath(), "alice.txt");
-
-        /*If we want to do simple step by step processing
-        we can use the traditional way of dealing with files.*/
-        TraditionalFileRead(fileSystem, index);
-
-        /*However what if we want to transcode the whole file
-        to base64 encoding and write it out to another file?        
-        */
-        PipelineFileProcessor(fileSystem, index);
-      
-        return 0;
-    }
+            return 0;
+        }
     ));
 }
 
@@ -98,7 +98,7 @@ void TraditionalFileRead(FileSystem::ref fileSystem, FileIndex& index)
 
 void PipelineFileProcessor(FileSystem::ref fileSystem, FileIndex& input)
 {
-    /*we need an output file to go with the input file*/
+    /*an output file to go with the input file*/
     FileIndex output(fileSystem->CurrentPath(), "output.txt");
 
     /*Set up a base 64 encoder with 8K of buffer space*/
@@ -107,9 +107,9 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, FileIndex& input)
     /*We use File connectors to connect to the input and output files
     These encapsulate everything file related for the pipeline. If we used
     Socket connectors or Pipe connector or MessageBusX connectors the rest of
-    the pipeline would be identical and obvlivious*/
-    FileConnector inputConnector(input,WithFlags::None,ShareMode::Owner_Read,OpenFor::ReadOnly);
-    FileConnector outputConnector(output,WithFlags::CreateNew,ShareMode::Owner_Write,OpenFor::ReadWrite);
+    the pipeline would be identical and oblivious*/
+    FileConnector inputConnector(input, WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly);
+    FileConnector outputConnector(output, WithFlags::CreateNew, ShareMode::Owner_Write, OpenFor::ReadWrite);
 
     /*Create a pipeline with the connectors at each end*/
     Pipeline fileProcessor(inputConnector, outputConnector, Element::Push);

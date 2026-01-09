@@ -50,13 +50,13 @@ CustomWorkflow::CustomWorkflow() :
         /*We have access to the other states and the content of the workflow due to
         capturing [this] on the lambda*/
 
-        /*Set state takes the flwo directly into another state when this function ends*/
+        /*Set state takes the flow directly into another state when this function ends*/
         if(std::rand() > RAND_MAX/2)
         {
             SetState(middle);
         }
 
-        /*Otherwise this Enter will be called in a loop as long as begginging is the current state*/
+        /*Otherwise this Enter function will be called in a loop as long as begginging is the current state*/
     };
 
     /*Set this only if you need special handling for Suspension*/

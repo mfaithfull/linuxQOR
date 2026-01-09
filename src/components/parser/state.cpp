@@ -94,8 +94,10 @@ namespace qor { namespace components { namespace parser {
     void ParserState::Fail()
     {        
         //Must undo anything done in Prepare
+        //Failures are not final, just a dead end in the parse. Another later branch/option may succeed.
     }
     
+    //Will literally accept anything. Don't use this in practice as it will consume all the rest of any data. It's useful for testing
     AcceptAll::AcceptAll(Parser* parser) : ParserState(parser)
     {        
         Enter = [this]()
@@ -113,12 +115,12 @@ namespace qor { namespace components { namespace parser {
             }
             else
             {
-                return;
-                //m_Workflow->PopState();
+                return;                
             }
         };
     }
 
+    //Octets in a contiguous numerical range. Used for things like 0-9 digits and a-z letters
     OneOfARange::OneOfARange(Parser* parser, byte firstOctet, byte lastOctet, uint64_t token) : ParserState(parser, token),
         m_first(firstOctet), m_last(lastOctet)
     {
@@ -155,6 +157,7 @@ namespace qor { namespace components { namespace parser {
         };
     }
 
+    //Matches one specific octet value e.g. '?'
     Specific::Specific(Parser* parser, byte matchingOctet, uint64_t token) : ParserState(parser,token),
         m_matchingOctet(matchingOctet)
     {
@@ -191,6 +194,7 @@ namespace qor { namespace components { namespace parser {
         };
     }
 
+    //Matches any one of a set of child states, represented by a head state and a tail state which may itself be AnyOneOf
     AnyOneOf::AnyOneOf(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser,token),
         m_head(head), m_tail(tail), m_internalState(0)
     {
@@ -250,6 +254,7 @@ namespace qor { namespace components { namespace parser {
         };
     }
 
+    //Matches if the head state if it's present. If it's not that's fine, we just move on.
     Optional::Optional(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser,token),
         m_head(head), m_first(true)
     {
@@ -274,6 +279,7 @@ namespace qor { namespace components { namespace parser {
         };
     }
 
+    //Matches Zero or more sequential instances of the head state. None is fine. There's no limit except running out of RAM
     ZeroOrMore::ZeroOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser,token),
         m_head(head), m_first(true)
     {
@@ -309,7 +315,7 @@ namespace qor { namespace components { namespace parser {
         };
     }
 
-
+    //Matches a sequence begging with head and followed by tail, which may itself be a sequence
     Sequence::Sequence(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser,token),
         m_head(head), m_tail(tail), m_internalState(0)
     {

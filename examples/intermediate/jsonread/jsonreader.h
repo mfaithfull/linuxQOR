@@ -41,7 +41,8 @@ public:
         Pipeline(
             sourceConnector,
             m_sink,
-            Element::Push).Connect().PumpAll();
+            Element::Push
+        ).Connect().PumpAll();
       
         m_sink.Parser().FinalParse();
         auto finalNode = m_sink.Parser().PopNode();

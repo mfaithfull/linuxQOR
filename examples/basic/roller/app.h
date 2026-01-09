@@ -55,8 +55,8 @@ public:
 
 };
 
-namespace qor{
-
+namespace qor
+{
     /*Declare that the App uses a Singleton factory.
     This is done by overloading the type trait template
     instancer_of<T> such that instancer_of<App>::type
