@@ -75,6 +75,21 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             source object should be destroyed.
         */}
         
+        virtual void OnDropPerformed(void* context)
+        {
+
+        }
+
+        virtual void OnDnDFinished(void* context)
+        {
+            
+        }
+
+        virtual void OnDnDAction(void* context, uint32_t action)
+        {
+
+        }
+        
     private:
 
         wl_data_source* m_datasource;

@@ -22,37 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_WINDOW
-#define QOR_PP_H_LINUX_EGL_WINDOW
+#include "src/configuration/configuration.h"
+#include "src/qor/error/error.h"
 
-#include "src/components/framework/ui/egl/window.h"
-#if (qor_pp_egl_backend == qor_pp_use_x)
-#include <X11/Xlib.h>       // X11 window system headers
-#elif (qor_pp_egl_backend == qor_pp_use_wayland)
-#include <wayland-egl.h>
-#endif
+#include "../output.h"
+#include "outputlistener.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
-
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow : public qor::components::EGLWindow
-    {
-    public:
-
-        EglWindow(const std::string& title, int width, int height);
-        EglWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context,
-        const std::string& title, int width, int height);
-        virtual ~EglWindow();
-
-        virtual void* GetNativeDisplay();
-        virtual void* GetNativeWindow();
-
-    private:
-
-        Window m_window;
-        Display* m_display;
-    };
-
-}}}//qor::platform::nslinux
-
-#endif//QOR_PP_H_LINUX_EGL_WINDOW
+namespace qor{ namespace platform { namespace nslinux{ namespace wl{
+    
+}}}}//qor::platform::nslinux::wl

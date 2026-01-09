@@ -26,19 +26,21 @@
 #define QOR_PP_H_LINUX_WAYLAND_CALLBACK
 
 #include <stdint.h>
+#include <functional>
 
 struct wl_callback;
 struct wl_callback_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    class qor_pp_module_interface(QOR_LINWAYLAND) CallbackListener;
     class qor_pp_module_interface(QOR_LINWAYLAND) Callback
     {
     public:
         static const char* const TagName;
         static Callback* CallbackFrom(wl_callback* callback);
 
-        explicit Callback(wl_callback* callback);
+        explicit Callback(wl_callback* callback = nullptr);
         virtual ~Callback();
         Callback(const Callback&) = delete;
         Callback& operator=(const Callback&) = delete;
@@ -50,18 +52,23 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         wl_callback* Use() const;
         uint32_t Version() const;
         int AddListener(const wl_callback_listener& listener, void* context);
-
+        int AddDefaultListener();
         virtual void OnDone(void* context, uint32_t callbackData)
-        {/* Override in derived class 
-            callback is done
-            This event is sent when the requested operation is complete.
+        {/* This event is sent when the requested operation is complete.
             The callbackData argument is the value that was passed to
-            wl_display_sync when creating this callback object.
-        */}
+            wl_display_sync when creating this callback object.*/
+            if(m_done)
+            {
+                m_done(callbackData);
+            }
+        }
         
-    private:
+        std::function<void(uint32_t)> m_done;
 
+    private:
+        
         wl_callback* m_callback;
+        ref_of<CallbackListener>::type m_callbackListener;
     };
 
 }}}}//qor::platform::nslinux::wl

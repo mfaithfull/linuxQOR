@@ -150,7 +150,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return EGL::StaticDestroyContext(m_display, ctx);
     }
 
-    bool EglDisplay::DestroySurface(void* surface)
+    bool EglDisplay::InternalDestroySurface(void* surface)
     {
         return EGL::StaticDestroySurface(m_display, surface);
     }

@@ -194,5 +194,24 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         qor_pp_signal(CancelEvent);
     }
 
+    void Touch::OnShape(void* context, int32_t id, wl_fixed_t major, wl_fixed_t minor)
+    {
+        ShapeEvent(id, major, minor);
+    }
+        
+    qor_pp_signal_func Touch::ShapeEvent(int32_t id, wl_fixed_t major, wl_fixed_t minor)
+    {
+        qor_pp_signal(ShapeEvent, id, major, minor);
+    }
+
+    void Touch::OnOrientation(void* context, int32_t id, wl_fixed_t orientation)
+    {
+        OrientationEvent(id, orientation);
+    }
+
+    qor_pp_signal_func Touch::OrientationEvent(int32_t id, wl_fixed_t orientation)
+    {
+        qor_pp_signal(OrientationEvent, id, orientation);
+    }
 
 }}}}//qor::platform::nslinux::wl

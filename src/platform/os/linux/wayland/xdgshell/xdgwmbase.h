@@ -39,12 +39,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSurface;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSession;
 
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGWMBase
     {
     public:
         static const char* const TagName;
         static XDGWMBase* XDGWMBaseFrom(xdg_wm_base* wmbase);
+        XDGWMBase(qor::ref_of<XDGSession>::type session);
         XDGWMBase(Registry* registry, uint32_t name, uint32_t version);
         explicit XDGWMBase(xdg_wm_base* wmbase);
         ~XDGWMBase();

@@ -37,7 +37,9 @@
 #include "listeners/xdgwmbaselistener.h"
 #include "listeners/xdgsurfacelistener.h"
 #include "listeners/xdgtoplevellistener.h"
+#include "listeners/xdgpopuplistener.h"
 #include "xdgsession.h"
+#include "xdgtoplevelwindow.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -242,22 +244,26 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     }
 
     void XDGTopLevel::OnConfigure(void* context, int32_t width, int32_t height, struct wl_array* states)
-    {        
-        XDGSession* session = m_session ? m_session : reinterpret_cast<XDGSession*>(context);
-        if(session)
+    {
+        XDGTopLevelWindow* window = m_window ? m_window : reinterpret_cast<XDGTopLevelWindow*>(context);
+        if(window)
         {
-            session->OnXDGTopLevelConfigured(width, height, states);
+            window->OnXDGTopLevelConfigured(width, height, states);
         }        
     }
 
     void XDGTopLevel::OnClose(void* context)
     {
-        // Default implementation does nothing
+        XDGTopLevelWindow* window = m_window ? m_window : reinterpret_cast<XDGTopLevelWindow*>(context);
+        if(window)
+        {
+            window->OnClose();
+        }        
     }
 
-    void XDGTopLevel::SetSession(XDGSession* session)
+    void XDGTopLevel::SetWindow(XDGTopLevelWindow* window)
     {
-        m_session = session;
+        m_window = window;
     }
 
 }}}}//qor::platform::nslinux::wl

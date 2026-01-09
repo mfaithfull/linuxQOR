@@ -103,10 +103,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     wl_buffer* Buffer::Use() const
     {
-        if(!m_buffer)
-        {
-            warning("returning null wl_buffer pointer");
-        }
         return m_buffer;
     }
 
@@ -132,10 +128,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         
     void Buffer::OnRelease(void* context)
     {
+        /*
         if(m_buffer)
         {
             wl_buffer_destroy(m_buffer);
         }
         m_buffer = nullptr;
+        */
     }
 }}}}//qor::platform::nslinux::wl

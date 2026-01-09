@@ -41,6 +41,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevel;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPopup;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGWindow;
 
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSurface
     {
@@ -63,14 +64,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         qor::ref_of<XDGTopLevel>::type GetToplevel();
         void SetWindowGeometry(int32_t x, int32_t y, int32_t width, int32_t height);
         virtual void OnConfigure(void* context, uint32_t serial);
-        void SetSession(XDGSession* session);
+        void SetWindow(XDGWindow* window);
         qor::ref_of<Surface>::type BaseSurface();
 
     private:
         
         xdg_surface* m_surface;
         qor::ref_of<Surface>::type m_baseSurface;
-        XDGSession* m_session;
+        XDGWindow* m_window;
     };
 
 }}}}//qor::platform::nslinux::wl

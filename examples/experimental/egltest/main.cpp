@@ -61,39 +61,20 @@ int main()
                 GetRole(qor_shared)->
                 GetFeature(&EGLFeatureGUID).
                 AsRef<qor::components::EGLFeature>();
-
-                auto display = egl->CreateDisplay(nullptr);
-
-                egl->BindAPI(EGL_OPENGL_ES_API);
                 
-                int32_t const attribute_list[] = {
-                    EGL_RED_SIZE, 8,
-                    EGL_GREEN_SIZE, 8,
-                    EGL_BLUE_SIZE, 8,
-                    EGL_ALPHA_SIZE, 8,
-                    EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-                    EGL_DEPTH_SIZE,8,
-                    EGL_NONE
-                };
-
+                auto display = egl->CreateDisplay();
+                display->Initialize();
+                
               	int32_t surfaceAttributes[] = { EGL_NONE };
             	int32_t contextAttributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
 
-                void* config[2] = {};
-                int32_t num_config = 0;
-
-                if(!display->ChooseConfig(attribute_list, &config[0], 1, &num_config))
-                {
-
-                }
-
-                auto context = new_ref<qor::components::EGLContext>(display, config[0], nullptr, contextAttributes);
+                auto context = new_ref<qor::components::EGLContext>(display, nullptr, contextAttributes);
                 std::string title("EGL Test");
-                int width = 640;
-                int height = 480;
-                auto window = egl->CreateNativeWindow(display, context, title, width, height);
+                //int width = 640;
+                //int height = 480;
+                //auto window = egl->CreateNativeWindow(display, context, title, width, height);
 
-                auto surface = display->CreateWindowSurface(config[1], window->GetNativeWindow(), surfaceAttributes);
+                auto surface = display->CreateWindowSurface(display->GetConfig(), nullptr/*window->GetNativeWindow()*/, surfaceAttributes);
 
                 std::cout << "EGL Version = " << display->QueryString(EGL_VERSION) << "\n";
                 std::cout << "EGL Vendor = " << display->QueryString(EGL_VENDOR) << "\n";

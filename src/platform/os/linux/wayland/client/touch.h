@@ -63,7 +63,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         qor_pp_signal_func FrameEvent();
         virtual void OnCancel(void* context);
         qor_pp_signal_func CancelEvent();
-
+        virtual void OnShape(void* context, int32_t id, wl_fixed_t major, wl_fixed_t minor);
+        qor_pp_signal_func ShapeEvent(int32_t id, wl_fixed_t major, wl_fixed_t minor);
+        virtual void OnOrientation(void* context, int32_t id, wl_fixed_t orientation);
+        qor_pp_signal_func OrientationEvent(int32_t id, wl_fixed_t orientation);
+        
     private:
 
         wl_touch* m_touch;

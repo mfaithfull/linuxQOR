@@ -46,6 +46,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit Pointer(wl_pointer* pointer);
         virtual ~Pointer();
+        Pointer(const Pointer&) = delete;
+        Pointer& operator=(const Pointer&) = delete;
         Pointer(Pointer&& rhs) noexcept;
         Pointer& operator=(Pointer&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}
@@ -64,6 +66,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         qor_pp_signal_func ButtonEvent(uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
         virtual void OnAxis(void* context, uint32_t time, uint32_t axis, wl_fixed_t value);
         qor_pp_signal_func AxisEvent(uint32_t time, uint32_t axis, int32_t value);
+        virtual void OnFrame(void* context);
+        qor_pp_signal_func FrameEvent();
+        virtual void OnAxisDiscrete(void* context, uint32_t axis, int32_t discrete);
+        qor_pp_signal_func AxisDiscreteEvent(uint32_t axis, int32_t discrete);
+        virtual void OnAxisSource(void* context, uint32_t axisSource);
+        qor_pp_signal_func AxisSourceEvent(uint32_t axisSource);
+        virtual void OnAxisStop(void* context, uint32_t time, uint32_t axis);
+        qor_pp_signal_func AxisStopEvent(uint32_t time, uint32_t axis);
 
     private:
 

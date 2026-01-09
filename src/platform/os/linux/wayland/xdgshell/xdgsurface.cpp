@@ -39,7 +39,9 @@
 #include "listeners/xdgwmbaselistener.h"
 #include "listeners/xdgsurfacelistener.h"
 #include "listeners/xdgtoplevellistener.h"
+#include "listeners/xdgpopuplistener.h"
 #include "xdgsession.h"
+#include "xdgwindow.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -183,32 +185,22 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     void XDGSurface::OnConfigure(void* context, uint32_t serial)
     {
-            /* Override in derived class 
-            surface configure
-            This event is sent when the compositor wants to change the
-            size or state of the surface. The client must respond by
-            calling xdg_surface_ack_configure with the serial number
-            provided.
-
-            The width and height arguments specify the new size of the
-            surface's content area in surface-local coordinates. A value
-            of 0 for either dimension means that the surface can choose
-            its own size.
-
-            The states argument is an array of uint32_t values taken
-            from the enum xdg_surface_state. It describes the states
-            that should be applied to the surface.
-        */
-        AckConfigure(serial);        
-        if(m_session)
+        /* This event is sent when the compositor wants to change the
+        size or state of the surface. The client must respond by
+        calling xdg_surface_ack_configure with the serial number
+        provided..
+        */        
+        AckConfigure(serial);
+        if(m_window)
         {
-            m_session->OnXDGSurfaceConfigured();
+            m_window->OnXDGSurfaceConfigured();
         }
+        
     }
 
-    void XDGSurface::SetSession(XDGSession* session)
+    void XDGSurface::SetWindow(XDGWindow* window)
     {
-        m_session = session;
+        m_window = window;
     }
 
     qor::ref_of<Surface>::type XDGSurface::BaseSurface()

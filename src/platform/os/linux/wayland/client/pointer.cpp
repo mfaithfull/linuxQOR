@@ -213,4 +213,44 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         qor_pp_signal(AxisEvent, time, axis, value);
     }
 
+    void Pointer::OnFrame(void* context)
+    {
+        FrameEvent();
+    }
+
+    qor_pp_signal_func Pointer::FrameEvent()
+    {
+        qor_pp_signal(FrameEvent);
+    }
+
+    void Pointer::OnAxisDiscrete(void* context, uint32_t axis, int32_t discrete)
+    {
+        AxisDiscreteEvent(axis, discrete);
+    }
+
+    qor_pp_signal_func Pointer::AxisDiscreteEvent(uint32_t axis, int32_t discrete)
+    {
+        qor_pp_signal(AxisDiscreteEvent, axis, discrete);
+    }
+
+    void Pointer::OnAxisSource(void* context, uint32_t axisSource)
+    {
+        AxisSourceEvent(axisSource);
+    }
+
+    qor_pp_signal_func Pointer::AxisSourceEvent(uint32_t axisSource)
+    {
+        qor_pp_signal(AxisSourceEvent, axisSource);
+    }
+
+    void Pointer::OnAxisStop(void* context, uint32_t time, uint32_t axis)
+    {
+        AxisStopEvent(time, axis);
+    }
+
+    qor_pp_signal_func Pointer::AxisStopEvent(uint32_t time, uint32_t axis)
+    {
+        qor_pp_signal(AxisStopEvent, time, axis);
+    }
+
 }}}}//qor::platform::nslinux::wl

@@ -37,7 +37,7 @@
 namespace qor{ bool qor_pp_module_interface(QOR_LINEGL) ImplementsEGLFeature(); }
 
 //All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
+namespace qor{ namespace platform { namespace nslinux{
     
     class qor_pp_module_interface(QOR_LINEGL) EGL : public qor::components::EGLFeature
     {
@@ -49,7 +49,36 @@ namespace qor{ namespace platform { namespace nslinux{
         virtual void Setup(){};
         virtual void Shutdown(){};
 
-        static EGLDisplay StaticGetDisplay(EGLNativeDisplayType display_id);
+        template<typename T>
+        static void CheckErrorStatus(T& result, const T& errorIndicator)
+        {
+            if(result == errorIndicator)
+            {
+                CheckStatus();
+            }
+        }
+
+        template<typename T, typename S>
+        static void CheckWarningStatus(T& result, S warningIndicator)
+        {
+            if(result == warningIndicator)
+            {                
+                warning("EGL API warning result = {0}", warningIndicator);
+                CheckStatus();
+            }
+        }
+
+        template<typename T>
+        static void CheckSuccessStatus(T& result, const T&successIndicator)
+        {
+            if(result != successIndicator)
+            {
+                CheckStatus();
+            }
+        }
+
+        static void CheckStatus();
+        static EGLDisplay StaticGetDisplay(EGLNativeDisplayType display_id = EGL_DEFAULT_DISPLAY);
         static bool StaticChooseConfig(EGLDisplay dpy, const int32_t* attrib_list, EGLConfig* configs, int32_t config_size, int32_t* num_config);
         static bool StaticCopyBuffers(EGLDisplay dpy, EGLSurface surface, EGLNativePixmapType target);
         static EGLContext StaticCreateContext(EGLDisplay dpy, EGLConfig config, EGLContext share_context, const EGLint *attrib_list);
@@ -107,8 +136,7 @@ namespace qor{ namespace platform { namespace nslinux{
 
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay();
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(void* nativeDisplay);
-        virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list);
-        virtual ref_of<qor::components::EGLWindow>::type CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context, const std::string& title, int width, int height);
+
     };
 
 }}}//qor::platform::nslinux

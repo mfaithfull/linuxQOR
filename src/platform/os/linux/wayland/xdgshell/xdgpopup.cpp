@@ -27,6 +27,7 @@
 
 #include "xdgpopup.h"
 #include "xdgpositioner.h"
+#include "xdgpopupwindow.h"
 #include "src/platform/os/linux/wayland/client/seat.h"
 
 #include <wayland-client-core.h>
@@ -140,17 +141,31 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     void XDGPopup::OnConfigure(void* data, int32_t x, int32_t y, int32_t width, int32_t height)
     {
-
+        if(m_window)
+        {
+            m_window->OnConfigure(x, y, width, height);
+        }
     }
 
     void XDGPopup::OnDone(void* data)
     {
-
+        if(m_window)
+        {
+            m_window->OnDone();
+        }
     }
 
     void XDGPopup::OnRepositioned(void* data, uint32_t token)
     {
+        if(m_window)
+        {
+            m_window->OnRepositioned(token);
+        }
+    }
 
+    void XDGPopup::SetWindow(XDGPopupWindow* window)
+    {
+        m_window = window;
     }
 
 }}}}//qor::platform::nslinux::wl

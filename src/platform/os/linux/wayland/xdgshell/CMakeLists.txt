@@ -11,6 +11,9 @@ listeners/xdgtoplevellistener.cpp
 listeners/xdgwmbaselistener.cpp
 listeners/xdgpopuplistener.cpp
 xdgsession.cpp
+xdgwindow.cpp
+xdgtoplevelwindow.cpp
+xdgpopupwindow.cpp
 )
 
 target_include_directories(${target} PRIVATE)

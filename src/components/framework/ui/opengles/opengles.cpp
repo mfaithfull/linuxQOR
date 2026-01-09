@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include "src/qor/error/error.h"
 #include "opengles.h"
 #include "src/framework/application/application_builder.h"
 #include "src/components/framework/ui/egl/egl.h"
@@ -40,44 +41,13 @@ namespace qor { namespace components{
     }
 
     void OpenGLESFeature::Setup()
-    {
-        auto egl = AppBuilder().TheApplication()->
-        GetRole(qor_shared)->
-        GetFeature(&EGLFeatureGUID).
-        AsRef<qor::components::EGLFeature>();
-
-        if(egl.IsNotNull())
+    {        
+        auto egl = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature(&EGLFeatureGUID).AsRef<qor::components::EGLFeature>();
+        if(egl.IsNull())
         {
-            m_display = egl(qor_shared).CreateDisplay(nullptr);
-
-            egl(qor_shared).BindAPI(EGL_OPENGL_ES_API);
-            
-            int32_t const attribute_list[] = {
-                EGL_RED_SIZE, 8,
-                EGL_GREEN_SIZE, 8,
-                EGL_BLUE_SIZE, 8,
-                EGL_ALPHA_SIZE, 8,
-                EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-                EGL_DEPTH_SIZE,8,
-                EGL_NONE
-            };
-
-            int32_t surfaceAttributes[] = { EGL_NONE };
-            int32_t contextAttributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-            
-            int eglNumConfig = 0;
-            if (!m_display->ChooseConfig(attribute_list, &m_config[0], 1, &eglNumConfig) || eglNumConfig == 0) 
-            {
-                //std::cout << "Could not get valid egl configuration!" << std::endl;
-                //return 1;
-            }
-
-            m_context = new_ref<EGLContext>(m_display,m_config[0], nullptr, contextAttributes);
+            fatal("OpenGLES requires EGL");
         }
-        else
-        {
-            //OpenGLES Feature requires EGLFeature.
-        }
+        
     }
 
     void OpenGLESFeature::Shutdown()

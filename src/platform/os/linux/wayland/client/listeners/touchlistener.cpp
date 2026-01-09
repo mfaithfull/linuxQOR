@@ -25,51 +25,9 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "touchlistener.h"
 #include "../touch.h"
+#include "touchlistener.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
-    TouchListener::TouchListener()
-    {
-        wl_touch_listener::down = [](void* data, wl_touch* wl_touch, uint32_t serial, uint32_t time, wl_surface* surface, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
-        {
-            Touch* touch = Touch::TouchFrom(wl_touch);
-            if(touch)
-            {
-                touch->OnDown(data, serial, time, surface, id, x_w, y_w);
-            }
-        };
-        wl_touch_listener::up = [](void* data, wl_touch* wl_touch, uint32_t serial, uint32_t time, int32_t id)
-        {
-            Touch* touch = Touch::TouchFrom(wl_touch);
-            if(touch)
-            {
-                touch->OnUp(data, serial, time, id);
-            }
-        };
-        wl_touch_listener::motion = [](void* data, wl_touch* wl_touch, uint32_t time, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
-        {
-            Touch* touch = Touch::TouchFrom(wl_touch);
-            if(touch)
-            {
-                touch->OnMotion(data, time, id, x_w, y_w);
-            }
-        };
-        wl_touch_listener::frame = [](void* data, wl_touch* wl_touch)
-        {
-            Touch* touch = Touch::TouchFrom(wl_touch);
-            if(touch)
-            {
-                touch->OnFrame(data);
-            }
-        };
-        wl_touch_listener::cancel = [](void* data, wl_touch* wl_touch)
-        {
-            Touch* touch = Touch::TouchFrom(wl_touch);
-            if(touch)
-            {
-                touch->OnCancel(data);
-            }
-        };           
-    }
+
 }}}}//qor::platform::nslinux::wl

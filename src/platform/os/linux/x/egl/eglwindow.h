@@ -51,7 +51,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     private:
         ref_of<Window>::type m_xwindow;
         ref_of<XEGLSurface>::type m_surface;
-        //ref_of<XEGLContext>::type m_context;
+        
     };
 
 }}}}//qor::platform::nslinux::x

@@ -32,7 +32,11 @@
 
 #include "src/platform/os/linux/wayland/client/session.h"
 #include "src/platform/os/linux/wayland/client/keyboard.h"
+#include "src/platform/os/linux/wayland/client/pointer.h"
+#include "src/platform/os/linux/wayland/client/touch.h"
 #include "src/platform/os/linux/wayland/client/listeners/keyboardlistener.h"
+#include "src/platform/os/linux/wayland/client/listeners/pointerlistener.h"
+#include "src/platform/os/linux/wayland/client/listeners/touchlistener.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -47,39 +51,30 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSession : public Session
     {
     public:
-        XDGSession(qor::ref_of<Display>::type display);
+        XDGSession(ref_of<Display>::type display);
         virtual ~XDGSession();
-        qor::ref_of<XDGSurface>::type GetXDGSurface();
-        void DoConfiguration();
-        qor::ref_of<XDGTopLevel>::type GetXDGTopLevelWindow();
-
-        virtual void OnXDGSurfaceConfigured();
-        virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
-
-        void SetWidth(int width);
-        int GetWidth();
-        void SetHeight(int height);
-        int GetHeight();
 
         void End() { m_ended = true; }
+        bool Ended() { return m_ended; }
         virtual int Run();
 
-        qor::ref_of<Keyboard>::type GetKeyboard();
+        ref_of<Keyboard>::type GetKeyboard();
+        ref_of<XDGWMBase>::type GetXDGWMBase();
+        ref_of<Pointer>::type GetPointer();
+        ref_of<Touch>::type GetTouch();
 
     protected:
     
         bool m_ended;
-        int m_width;
-        int m_height;
 
-        qor::ref_of<XDGWMBase>::type m_xdgWmBase;
+        ref_of<XDGWMBase>::type m_xdgWmBase;
         XDGWMBaseListener m_xdgWmBaseListener;
-        qor::ref_of<XDGSurface>::type m_xdgSurface;
-        XDGSurfaceListener m_xdgSurfaceListener;
-        XDGTopLevelListener m_xdgTopLevelListener;
-        qor::ref_of<Keyboard>::type m_keyboard; 
-        KeyboardListener m_keyboardListener;
-
+        ref_of<Keyboard>::type m_keyboard; 
+        ref_of<KeyboardListener<>>::type m_keyboardListener;
+        ref_of<Pointer>::type m_pointer; 
+        ref_of<PointerListener<>>::type m_pointerListener;
+        ref_of<Touch>::type m_touch;
+        ref_of<TouchListener<>>::type m_touchListener;
     };
 
 }}}}//qor::platform::nslinux::wl

@@ -22,43 +22,54 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_WAYLAND_EGLSESION
-#define QOR_PP_H_LINUX_WAYLAND_EGLSESION
+#ifndef QOR_PP_H_LINUX_WAYLAND_XDGTOPLEVELWINDOW
+#define QOR_PP_H_LINUX_WAYLAND_XDGTOPLEVELWINDOW
 
 #include <stdint.h>
+#include <string>
 
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/platform/os/linux/wayland/xdgshell/xdgsession.h"
-#include "src/components/framework/ui/egl/egl.h"
-#include "src/components/framework/ui/egl/display.h"
-#include "src/components/framework/ui/egl/context.h"
-#include "src/components/framework/ui/egl/window.h"
+
+#include "xdgwindow.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWLEGL) EGLWindow;
-    class qor_pp_module_interface(QOR_LINWLEGL) EGLSession : public XDGSession
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevel;
+
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevelWindow : public XDGWindow
     {
     public:
-        EGLSession(qor::ref_of<qor::components::EGLFeature>::type egl, qor::ref_of<Display>::type display);
-        virtual ~EGLSession();
-
-        virtual void OnXDGSurfaceConfigured();
-        virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
-
-        virtual qor::ref_of<qor::components::EGLWindow>::type CreateEGLWindow();
+        XDGTopLevelWindow(qor::ref_of<XDGSession>::type session);
+        virtual ~XDGTopLevelWindow();
         
+        virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
+        virtual void OnClose();
+        ref_of<XDGTopLevel>::type GetTopLevel();
+
+        void Move(uint32_t serial);
+        void Resize(uint32_t serial, uint32_t edges);
+        void SetAppId(const std::string& app_id);
+        void SetFullscreen(Output& output);
+        void SetMaxSize(int32_t width, int32_t height);
+        void SetMaximized();
+        void SetMinSize(int32_t width, int32_t height);
+        void SetMinimized();
+        void SetParent(XDGTopLevelWindow* parent);
+        void SetTitle(const std::string& title);
+        void ShowWindowMenu(Seat* seat, uint32_t serial, int32_t x, int32_t y);
+        void UnsetFullscreen();
+        void UnsetMaximized();
+
     protected:
 
-        qor::ref_of<EGLWindow>::type m_window;
-        qor::ref_of<qor::platform::nslinux::wl::XDGTopLevel>::type m_xdgtoplevel;
-        qor::ref_of<qor::components::EGLDisplay>::type m_eglDisplay;
-        void* m_config;
-        qor::ref_of<qor::components::EGLContext>::type m_eglContext;    
-        void* m_surface;        
+        ref_of<XDGTopLevel>::type m_topLevel;
+        XDGTopLevelListener m_xdgTopLevelListener;
+    private:
+
+        void AddXDGTopLevelAdaptor();
     };
 
 }}}}//qor::platform::nslinux::wl
     
-#endif//QOR_PP_H_LINUX_WAYLAND_EGLSESION
+#endif//QOR_PP_H_LINUX_WAYLAND_XDGTOPLEVELWINDOW

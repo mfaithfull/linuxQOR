@@ -25,51 +25,9 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "pointerlistener.h"
 #include "../pointer.h"
+#include "pointerlistener.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
-    PointerListener::PointerListener()
-    {
-        wl_pointer_listener::enter = [](void* data, wl_pointer* wl_pointer, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy)
-        {
-            Pointer* pointer = Pointer::PointerFrom(wl_pointer);
-            if(pointer)
-            {
-                pointer->OnEnter(data, serial, surface, sx, sy);
-            }
-        };
-        wl_pointer_listener::leave = [](void* data, wl_pointer* wl_pointer, uint32_t serial, wl_surface* surface)
-        {
-            Pointer* pointer = Pointer::PointerFrom(wl_pointer);
-            if(pointer)
-            {
-                pointer->OnLeave(data, serial, surface);
-            }
-        };
-        wl_pointer_listener::motion = [](void* data, wl_pointer* wl_pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
-        {
-            Pointer* pointer = Pointer::PointerFrom(wl_pointer);
-            if(pointer)
-            {
-                pointer->OnMotion(data, time, sx, sy);
-            }
-        };
-        wl_pointer_listener::button = [](void* data, wl_pointer* wl_pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
-        {
-            Pointer* pointer = Pointer::PointerFrom(wl_pointer);
-            if(pointer)
-            {
-                pointer->OnButton(data, serial, time, button, state);
-            }
-        };
-        wl_pointer_listener::axis = [](void* data, wl_pointer* wl_pointer, uint32_t time, uint32_t axis, wl_fixed_t value)
-        {
-            Pointer* pointer = Pointer::PointerFrom(wl_pointer);
-            if(pointer)
-            {
-                pointer->OnAxis(data, time, axis, value);
-            }
-        };
-    }
+
 }}}}//qor::platform::nslinux::wl

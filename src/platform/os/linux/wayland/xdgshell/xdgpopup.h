@@ -35,6 +35,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Seat;
 
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPositioner;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPopupWindow;
 
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPopup
     {
@@ -57,10 +58,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         virtual void OnConfigure(void* data, int32_t x, int32_t y, int32_t width, int32_t height);
         virtual void OnDone(void* data);
         virtual void OnRepositioned(void* data, uint32_t token);
+        void SetWindow(XDGPopupWindow* window);
 
     private:
 
         xdg_popup* m_popup;
+        XDGPopupWindow* m_window;
     };
 
 }}}}//qor::platform::nslinux::wl

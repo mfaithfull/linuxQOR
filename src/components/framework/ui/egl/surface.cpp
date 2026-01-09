@@ -24,15 +24,23 @@
 
 #include "src/configuration/configuration.h"
 #include "surface.h"
+#include "display.h"
+#include "egl.h"
 
 namespace qor { namespace components{
 
-    EGLSurface::EGLSurface()
+    EGLSurface::EGLSurface(ref_of<EGLDisplay>::type display) : m_display(display)
     {     
     }
     
     EGLSurface::~EGLSurface()
     {
+        m_display->InternalDestroySurface(m_surface);
+    }
+    
+    void* EGLSurface::Use()
+    {
+        return m_surface;
     }
     
 }}//qor::components

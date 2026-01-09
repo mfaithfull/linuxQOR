@@ -46,9 +46,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit Keyboard(wl_keyboard* keyboard);
         virtual ~Keyboard();
+        Keyboard(const Keyboard&) = delete;
+        Keyboard& operator=(const Keyboard&) = delete;
         Keyboard(Keyboard&& rhs) noexcept;
         Keyboard& operator=(Keyboard&& rhs) noexcept;
-
         virtual const char* Tag() const{return TagName;}
         wl_keyboard* Use() const;
         uint32_t Version() const;

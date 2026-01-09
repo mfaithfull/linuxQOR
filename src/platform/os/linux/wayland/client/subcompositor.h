@@ -42,6 +42,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit SubCompositor(wl_subcompositor* subcompositor);
         ~SubCompositor();
+        SubCompositor(const SubCompositor&) = delete;
+        SubCompositor& operator=(const SubCompositor&) = delete;
         SubCompositor(SubCompositor&& rhs) noexcept;
         SubCompositor& operator=(SubCompositor&& rhs) noexcept;
 

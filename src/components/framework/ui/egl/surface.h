@@ -31,14 +31,21 @@
 
 namespace qor { namespace components{
 
+    class qor_pp_module_interface(QOR_EGL) EGLDisplay;
+    
     class qor_pp_module_interface(QOR_EGL) EGLSurface
     {
     public:
 
-        EGLSurface();
+        EGLSurface(ref_of<EGLDisplay>::type display);
         virtual ~EGLSurface();
 
+        void* Use();
+
     protected:
+
+        ref_of<EGLDisplay>::type m_display;
+        void* m_surface;
 
     };
 }}//qor::components

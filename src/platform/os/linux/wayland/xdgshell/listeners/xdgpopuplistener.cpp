@@ -30,7 +30,7 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    XDGPopupListener::XDGPopupListener()
+    XDGPopupListener::XDGPopupListener(uint32_t version)
     {
         this->configure = [](void* data, xdg_popup* xdgpopup, int32_t x, int32_t y, int32_t width, int32_t height)
         {
@@ -50,15 +50,16 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             }
         };
 
-        this->repositioned = [](void* data, xdg_popup* xdgpopup, uint32_t token)
+        if(version >= 3 )
         {
-            XDGPopup* popup = XDGPopup::XDGPopupFrom(xdgpopup);
-            if(popup)
+            this->repositioned = [](void* data, xdg_popup* xdgpopup, uint32_t token)
             {
-                popup->OnRepositioned(data, token);
-            }
-
-        };
-
+                XDGPopup* popup = XDGPopup::XDGPopupFrom(xdgpopup);
+                if(popup)
+                {
+                    popup->OnRepositioned(data, token);
+                }
+            };
+        }
     }
 }}}}//qor::platform::nslinux::wl

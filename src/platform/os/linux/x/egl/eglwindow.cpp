@@ -39,7 +39,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     XEGLWindow::XEGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display) : qor::components::EGLWindow(display)
     {
         auto xegldisplay = display.AsRef<XEGLDisplay>();
-        auto xdisplay = xegldisplay->GetNativeDisplay();
+        auto xdisplay = xegldisplay->GetXDisplay();
         auto window = xdisplay->DefaultRootWindow();
         auto screen = xdisplay->ScreenOfDisplay(xdisplay->DefaultScreen());
         auto screenRootWindow = screen.RootWindow();
@@ -67,7 +67,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         }
 
         int32_t surfaceAttributes[] = { EGL_NONE };
-        m_surface = new_ref<XEGLSurface>(display, xegldisplay->GetConfig(), (void*)(m_xwindow->GetId()), surfaceAttributes);       
+        m_surface = new_ref<XEGLSurface>(display, (void*)(m_xwindow->GetId()), surfaceAttributes);       
 
         m_context->MakeCurrent(m_surface, m_surface);
     }

@@ -25,16 +25,64 @@
 #include "src/configuration/configuration.h"
 #include "display.h"
 #include "context.h"
+#include "constants.h"
+#include "src/framework/application/application_builder.h"
+#include "egl.h"
 
 namespace qor { namespace components{
 
-    EGLDisplay::EGLDisplay(void* nativeDisplay)
+    EGLDisplay::EGLDisplay()
     {
     }
-    
-    EGLDisplay::EGLDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list)
-    {        
+
+    EGLDisplay::EGLDisplay(void* nativeDisplay)
+    {
+        
     }
+
+    bool EGLDisplay::Initialize()
+    {
+        auto egl = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::EGLFeature>();        
+        
+        egl(qor_shared).BindAPI(EGL_OPENGL_ES_API);
+        
+        /*int32_t const attribute_list[] = {
+            EGL_RENDERABLE_TYPE, 
+            EGL_OPENGL_BIT,
+		    EGL_NONE
+        };*/
+
+        int32_t const attribute_list[] = {
+            EGL_RED_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+            EGL_DEPTH_SIZE,8,
+            EGL_NONE
+        };
+
+        void* config[2] = {nullptr, nullptr};
+        int32_t num_config = 0;
+        ChooseConfig(attribute_list, &config[0], 2, &num_config);
+        m_config = config[0];        
+        
+        return m_config != nullptr;
+    }
+
+    void* EGLDisplay::GetConfig()
+    {
+        return m_config;
+    }
+
+    void* EGLDisplay::GetNativeDisplay()
+    {
+        return nullptr;//Override per display technology X/Wayland/Win32
+    }
+
+    /*EGLDisplay::EGLDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list)
+    {        
+    }*/
 
     EGLDisplay::~EGLDisplay()
     {        
@@ -82,7 +130,7 @@ namespace qor { namespace components{
         return false;
     }
 
-    bool EGLDisplay::DestroySurface(void* surface)
+    bool EGLDisplay::InternalDestroySurface(void* surface)
     {
         return false;
     }

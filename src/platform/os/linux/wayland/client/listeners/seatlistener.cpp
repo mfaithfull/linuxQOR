@@ -25,27 +25,9 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "seatlistener.h"
 #include "../seat.h"
+#include "seatlistener.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
-    SeatListener::SeatListener()
-    {
-        wl_seat_listener::capabilities = [](void* data, wl_seat* wl_seat, uint32_t capabilities)
-        {
-            Seat* seat = Seat::SeatFrom(wl_seat);
-            if(seat)
-            {
-                seat->OnCapabilities(data, capabilities);
-            }
-        };
-        wl_seat_listener::name = [](void* data, wl_seat* wl_seat, const char* name)
-        {
-            Seat* seat = Seat::SeatFrom(wl_seat);
-            if(seat)
-            {
-                seat->OnName(data, name);
-            }
-        };           
-    }
+
 }}}}//qor::platform::nslinux::wl

@@ -31,9 +31,36 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    template<uint32_t ver = 1>
     struct qor_pp_module_interface(QOR_LINWAYLAND) SeatListener : public wl_seat_listener
     {
-        SeatListener();
+        SeatListener()
+        {
+            wl_seat_listener::capabilities = [](void* data, wl_seat* wl_seat, uint32_t capabilities)
+            {
+                Seat* seat = Seat::SeatFrom(wl_seat);
+                if(seat)
+                {
+                    seat->OnCapabilities(data, capabilities);
+                }
+            };
+        }
+    };
+
+    template<>
+    struct qor_pp_module_interface(QOR_LINWAYLAND) SeatListener<2> : public SeatListener<1>
+    {
+        SeatListener()
+        {
+            wl_seat_listener::name = [](void* data, wl_seat* wl_seat, const char* name)
+            {
+                Seat* seat = Seat::SeatFrom(wl_seat);
+                if(seat)
+                {
+                    seat->OnName(data, name);
+                }
+            };           
+        }
     };
 
 }}}}//qor::platform::nslinux::wl

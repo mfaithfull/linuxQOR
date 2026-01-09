@@ -160,5 +160,15 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }
         return nullptr;
     }
+
+    qor::ref_of<Registry>::type Session::GetRegistry()
+    {
+        return m_Registry;
+    }
+
+    qor::ref_of<Display>::type Session::GetDisplay()
+    {
+        return m_Display;
+    }
     
 }}}}//qor::platform::nslinux::wl

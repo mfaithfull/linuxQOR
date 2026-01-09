@@ -25,60 +25,9 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "keyboardlistener.h"
 #include "../keyboard.h"
+#include "keyboardlistener.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     
-    KeyboardListener::KeyboardListener()
-    {
-        this->keymap = [](void* data, wl_keyboard* wl_keyboard, uint32_t format, int32_t fd, uint32_t size)
-        {
-            Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
-            if(keyboard)
-            {
-                keyboard->OnKeymap(data, format, fd, size);
-            }
-        };
-        this->enter = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, wl_surface* surface, wl_array* keys)
-        {
-            Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
-            if(keyboard)
-            {
-                keyboard->OnEnter(data, serial, surface, keys);
-            }
-        };
-        this->leave = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, wl_surface* surface)
-        {
-            Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
-            if(keyboard)
-            {
-                keyboard->OnLeave(data, serial, surface);
-            }
-        };
-        this->key = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
-        {
-            Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
-            if(keyboard)
-            {
-                keyboard->OnKey(data, serial, time, key, state);
-            }
-        };
-        this->modifiers = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group)
-        {
-            Keyboard* keyboard = Keyboard::KeyboardFrom(wl_keyboard);
-            if(keyboard)
-            {
-                keyboard->OnModifiers(data, serial, mods_depressed, mods_latched, mods_locked, group);
-            }
-        };
-        this->repeat_info = [](void* data, wl_keyboard* wl_keyboard, int32_t rate, int32_t delay)
-        {
-            Keyboard* keyboard = reinterpret_cast<Keyboard*>(data);//Keyboard::KeyboardFrom(wl_keyboard);
-            if(keyboard)
-            {
-                keyboard->OnRepeatInfo(data, rate, delay);
-            }
-        };
-    }
 }}}}//qor::platform::nslinux::wl

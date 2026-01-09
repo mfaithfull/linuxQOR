@@ -26,12 +26,14 @@
 #define QOR_PP_H_LINUX_WAYLAND_OUTPUT
 
 #include <stdint.h>
+#include "src/framework/signals/signal.h"
 
 struct wl_output;
+struct wl_output_listener;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Output
+    class qor_pp_module_interface(QOR_LINWAYLAND) Output : public SignalBase
     {
     public:
         static const char* const TagName;
@@ -42,11 +44,20 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         Output(const Output&) = delete;
         Output& operator=(const Output&) = delete;
         Output(Output&& rhs) noexcept;
-        Output& operator=(Output&& rhs) noexcept;
-
+        Output& operator=(Output&& rhs) noexcept;        
         virtual const char* Tag() const{return TagName;}
         wl_output* Use() const;
         uint32_t Version() const;
+        int AddListener(const wl_output_listener& listener, void* context);
+        void Release();
+        virtual void OnGeometry(void* data, int32_t x, int32_t y, int32_t physical_width, int32_t physical_height, int32_t subpixel, const char* make, const char* model, int32_t transform);
+        qor_pp_signal_func GeometryEvent(int32_t x, int32_t y, int32_t physical_width, int32_t physical_height, int32_t subpixel, const char* make, const char* model, int32_t transform);
+        virtual void OnDone(void* data);
+        qor_pp_signal_func DoneEvent();
+        virtual void OnMode(void* data, uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+        qor_pp_signal_func ModeEvent(uint32_t flags, int32_t width, int32_t height, int32_t refresh);
+        virtual void OnScale(void* data, int32_t factor);
+        qor_pp_signal_func ScaleEvent(int32_t factor);
 
     private:
 

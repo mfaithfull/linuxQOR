@@ -30,32 +30,33 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
+#include "src/platform/os/linux/wayland/xdgshell/xdgtoplevelwindow.h"
+
 struct wl_egl_window;
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
-
-    class qor_pp_module_interface(QOR_LINWLEGL) EGLWindow
+    class qor_pp_module_interface(QOR_LINWLEGL) WEGLWindow : public XDGTopLevelWindow
     {
     public:
 
-        explicit EGLWindow(wl_egl_window* window, qor::ref_of<Surface>::type baseSurface);
-        virtual ~EGLWindow();
-        EGLWindow(const EGLWindow&) = delete;
-        EGLWindow& operator=(const EGLWindow&) = delete;
-        EGLWindow(EGLWindow&& rhs) noexcept;
-        EGLWindow& operator=(EGLWindow&& rhs) noexcept;
+        WEGLWindow(ref_of<XDGSession>::type session);        
+        virtual ~WEGLWindow();
+        WEGLWindow(const WEGLWindow&) = delete;
+        WEGLWindow& operator=(const WEGLWindow&) = delete;
+        virtual void DoConfiguration();
 
         wl_egl_window* Use() const;
-        qor::ref_of<Surface>::type BaseSurface();
+
         void GetAttachedSize(int& width, int& height);
         void Resize(int width, int height, int dx, int dy);
 
+        virtual void OnXDGSurfaceConfigured();
+        virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
+                
     private:
         
-        wl_egl_window* m_window;
-        qor::ref_of<Surface>::type m_baseSurface;
+        wl_egl_window* m_eglWindow;        
     };
 
 }}}}//qor::platform::nslinux::wl

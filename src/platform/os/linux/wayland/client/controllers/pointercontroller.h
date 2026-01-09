@@ -46,8 +46,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         virtual void OnEnter(uint32_t serial, Surface* surface, int32_t sx, int32_t sy);        
         virtual void OnLeave(uint32_t serial, Surface* surface);        
         virtual void OnMotion(uint32_t time, int32_t sx, int32_t sy);        
-        virtual void OnButton(uint32_t serial, uint32_t time, uint32_t button, uint32_t state);        
+        virtual void OnButton(uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
         virtual void OnAxis(uint32_t time, uint32_t axis, int32_t value);
+        virtual void OnFrame();
+        virtual void OnAxisDiscrete(uint32_t axis, int32_t discrete);
+        virtual void OnAxisSource(uint32_t axisSource);
+        virtual void OnAxisStop(uint32_t time, uint32_t axis);
 
     private:
 

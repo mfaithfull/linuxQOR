@@ -49,6 +49,9 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         uint32_t Version;
     };
 
+    //A Wayland Session collects together all the global state associated with a display
+    //It automates the majority of Wayland Registry client side management
+    //Make just one of these (per thread) and keep it around until your use of Wayland is finished.
     class qor_pp_module_interface(QOR_LINWAYLAND) Session
     {
     public:
@@ -72,7 +75,9 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         const std::vector<uint32_t> GetSeats();
         void AddUnknownGlobal( uint32_t name, const char* interface, uint32_t version );
         const GlobalInfo* GetGlobal( const std::string& interface );
-
+        qor::ref_of<Registry>::type GetRegistry();
+        qor::ref_of<Display>::type GetDisplay();
+        
     protected:
         qor::ref_of<Display>::type m_Display;
         qor::ref_of<Registry>::type m_Registry;

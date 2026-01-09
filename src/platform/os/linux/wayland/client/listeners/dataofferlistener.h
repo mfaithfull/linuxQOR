@@ -31,9 +31,44 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    template<uint32_t ver = 1>
     struct qor_pp_module_interface(QOR_LINWAYLAND) DataOfferListener : public wl_data_offer_listener
     {
-        DataOfferListener();
+        DataOfferListener()
+        {
+            wl_data_offer_listener::offer = [](void* data, wl_data_offer* offer, const char* mime_type)
+            {
+                DataOffer* dataOffer = DataOffer::DataOfferFrom(offer);
+                if(dataOffer)
+                {
+                    dataOffer->OnOffer(data, mime_type);
+                }
+            };
+        }
+    };
+
+    template<>
+    struct qor_pp_module_interface(QOR_LINWAYLAND) DataOfferListener<3> : public DataOfferListener<1>
+    {
+        DataOfferListener()
+        {
+            wl_data_offer_listener::source_actions = [](void* data, wl_data_offer* offer, uint32_t source_actions)
+            {
+                DataOffer* dataOffer = DataOffer::DataOfferFrom(offer);
+                if(dataOffer)
+                {
+                    dataOffer->OnSourceActions(data, source_actions);
+                }
+            };
+            wl_data_offer_listener::action = [](void* data, wl_data_offer* offer, uint32_t dnd_action)
+            {
+                DataOffer* dataOffer = DataOffer::DataOfferFrom(offer);
+                if(dataOffer)
+                {
+                    dataOffer->OnAction(data, dnd_action);
+                }
+            };            
+        }
     };
 
 }}}}//qor::platform::nslinux::wl

@@ -24,6 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
+#include "src/qor/log/impactful.h"
 
 #include "display.h"
 #include "queue.h"
@@ -35,13 +36,32 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    void DefaultLogHandler(const char* msg, ...)
+    {
+        va_list ap;
+        std::string message;
+        va_list ap_copy;
+        va_copy(ap_copy, ap);
+        va_start(ap_copy, msg);
+        size_t len = vsnprintf(0, 0, msg, ap_copy);
+        va_end(ap_copy);
+        message.resize(len + 1);  // need space for NUL
+        va_start(ap, msg);
+        vsnprintf(&message[0], len + 1, msg, ap);
+        message.resize(len);  // remove the NUL
+        log::impact(message);
+        va_end(ap);
+    }
+
     Display::Display(int fd)
     {
+        SetLogHandler(DefaultLogHandler);
         m_display = wl_display_connect_to_fd(fd);
     }
 
     Display::Display(const char* name)
     {
+        SetLogHandler(DefaultLogHandler);
         m_display = wl_display_connect(name);
     }
 
@@ -135,13 +155,13 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return Callback(wl_display_sync(m_display));
     }
 
-    void Display::SetLogHandler(void(loghandlerfunc)(std::string&))
-    {   //TODO:
-        //wl_log_set_handler_client(wl_log_func_t handler);
+    void Display::SetLogHandler(log_func_t handler)
+    {
+        wl_log_set_handler_client((wl_log_func_t)(handler));
     }
 
     uint32_t Display::GetProtocolError()
-    {   //TODO:
+    {
         const wl_interface* interface = nullptr;
         uint32_t id;
         return wl_display_get_protocol_error(m_display, &interface, &id);

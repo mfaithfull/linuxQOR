@@ -35,37 +35,20 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     XEGLDisplay::XEGLDisplay() : qor::components::EGLDisplay()
     {
         auto xclient = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::platform::nslinux::XClient>();
-        auto egl = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::EGLFeature>();
-        
-        m_xdisplay = xclient->GetDisplay(0);
-        egl->BindAPI(EGL_OPENGL_ES_API);
-
-        int32_t const attribute_list[] = {
-            EGL_RED_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_BLUE_SIZE, 8,
-            EGL_ALPHA_SIZE, 8,
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-            EGL_DEPTH_SIZE,8,
-            EGL_NONE
-        };
-
-        void* config[1] = {nullptr};
-        int32_t num_config = 0;
-        ChooseConfig(attribute_list, &config[0], 1, &num_config);
-        m_config = config[0];
+        m_xdisplay = xclient(qor_shared).GetDisplay(0);
     }
 
     XEGLDisplay::~XEGLDisplay()
     {
     }
 
-    void* XEGLDisplay::GetConfig()
+    void* XEGLDisplay::GetNativeDisplay()
     {
-        return m_config;
+        return m_xdisplay->Use();
     }
 
-    ref_of<Display>::type XEGLDisplay::GetNativeDisplay()
+
+    ref_of<Display>::type XEGLDisplay::GetXDisplay()
     {
         return m_xdisplay;
     }

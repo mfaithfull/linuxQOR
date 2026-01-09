@@ -47,6 +47,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         Registry();
         explicit Registry(wl_registry* registry);
         virtual ~Registry();
+        Registry(const Registry&) = delete;
+        Registry& operator=(const Registry&) = delete;        
         Registry(Registry&& rhs) noexcept;
         Registry& operator=(Registry&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}

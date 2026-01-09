@@ -47,6 +47,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit Seat(wl_seat* seat);
         virtual ~Seat();
+        Seat(const Seat&) = delete;
+        Seat& operator=(const Seat&) = delete;        
         Seat(Seat&& rhs) noexcept;
         Seat& operator=(Seat&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}
@@ -54,8 +56,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         uint32_t Version() const;
         int AddListener(const wl_seat_listener& listener, void* context);
         void Release();
-        Touch GetTouch();
-        Pointer GetPointer();
+        ref_of<Touch>::type GetTouch();
+        ref_of<Pointer>::type GetPointer();
         ref_of<Keyboard>::type GetKeyboard();
 
         virtual void OnCapabilities(void* context, uint32_t capabilities)

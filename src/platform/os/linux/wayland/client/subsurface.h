@@ -41,6 +41,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit SubSurface(wl_subsurface* subsurface);
         ~SubSurface();
+        SubSurface(const SubSurface&) = delete;
+        SubSurface& operator=(const SubSurface&) = delete;
         SubSurface(SubSurface&& rhs) noexcept;
         SubSurface& operator=(SubSurface&& rhs) noexcept;
 

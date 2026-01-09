@@ -45,13 +45,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     public:
         XEGLDisplay();
         virtual ~XEGLDisplay();
-
-        void* GetConfig();
-        virtual ref_of<Display>::type GetNativeDisplay();
+        
+        virtual void* GetNativeDisplay();
+        ref_of<Display>::type GetXDisplay();
 
     protected:
-        ref_of<Display>::type m_xdisplay;
-        void* m_config;
+        ref_of<Display>::type m_xdisplay;        
     };
 
 }}}}//qor::platform::nslinux::x

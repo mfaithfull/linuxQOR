@@ -23,10 +23,12 @@ listeners/shellsurfacelistener.cpp
 listeners/shmlistener.cpp
 listeners/surfacelistener.cpp
 listeners/touchlistener.cpp
+listeners/outputlistener.cpp
 session.cpp
 controllers/keyboardcontroller.cpp
 controllers/pointercontroller.cpp
-controllers/touchcontroller.cpp)
+controllers/touchcontroller.cpp
+controllers/outputcontroller.cpp)
 
 target_include_directories(${target} PRIVATE)
 

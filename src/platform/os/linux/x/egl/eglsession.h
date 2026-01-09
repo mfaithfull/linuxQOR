@@ -49,9 +49,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         virtual ~XEGLSession();
         
         virtual int Run();
-
-    protected:
-              
     };
 
 }}}}//qor::platform::nslinux::x

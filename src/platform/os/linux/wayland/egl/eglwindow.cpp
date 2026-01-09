@@ -25,8 +25,17 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "eglwindow.h"
 #include "src/platform/os/linux/wayland/client/surface.h"
+#include "src/platform/os/linux/wayland/client/display.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgsurface.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgtoplevel.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgpopuplistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgsession.h"
+
+#include "eglwindow.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
@@ -34,72 +43,59 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    EGLWindow::EGLWindow(wl_egl_window* window, qor::ref_of<Surface>::type baseSurface) : m_window(window), m_baseSurface(baseSurface)
+    WEGLWindow::WEGLWindow(ref_of<XDGSession>::type session) : XDGTopLevelWindow(session), m_eglWindow(nullptr)
     {
-        if(!window)
-        {
-            continuable("EGLWindow created with null wl_egl_window pointer");
-        }        
     }
 
-    EGLWindow::EGLWindow(EGLWindow&& rhs) noexcept : m_window(rhs.m_window), m_baseSurface(rhs.m_baseSurface)
+    WEGLWindow::~WEGLWindow()
     {
-        rhs.m_window = nullptr;
-        rhs.m_baseSurface.Dispose();
-    }
-
-    EGLWindow& EGLWindow::operator=(EGLWindow&& rhs) noexcept
-    {
-        if (this != &rhs)
+        if(m_eglWindow)
         {
-            if (m_window)
-            {
-                wl_egl_window_destroy(m_window);
-            }
-
-            if(m_baseSurface.IsNotNull())
-            {
-                m_baseSurface.Dispose();
-            }
-
-            m_window = rhs.m_window;
-            m_baseSurface = rhs.m_baseSurface;
-            rhs.m_window = nullptr;
-            rhs.m_baseSurface.Dispose();
-        }
-        return *this;
-    }
-
-    EGLWindow::~EGLWindow()
-    {
-        if(m_window)
-        {
-            wl_egl_window_destroy(m_window);
+            wl_egl_window_destroy(m_eglWindow);
         }
     }
 
-    wl_egl_window* EGLWindow::Use() const
+    void WEGLWindow::DoConfiguration()
     {
-        if(!m_window)
+        XDGWindow::DoConfiguration();
+        m_eglWindow = wl_egl_window_create(m_xdgSurface->BaseSurface()->Use(), m_width, m_height);
+    }
+
+    wl_egl_window* WEGLWindow::Use() const
+    {
+        if(!m_eglWindow)
         {
             warning("Using EGLWindow with null wl_egl_window pointer");
         }
-        return m_window;
+        return m_eglWindow;
     }
 
-    qor::ref_of<Surface>::type EGLWindow::BaseSurface()
+    void WEGLWindow::GetAttachedSize(int& width, int& height)
     {
-        return m_baseSurface;
+        wl_egl_window_get_attached_size(m_eglWindow, &width, &height);
     }
 
-    void EGLWindow::GetAttachedSize(int& width, int& height)
+    void WEGLWindow::Resize(int width, int height, int dx, int dy)
     {
-        wl_egl_window_get_attached_size(m_window, &width, &height);
+        wl_egl_window_resize(m_eglWindow, width, height, dx, dy);
     }
 
-    void EGLWindow::Resize(int width, int height, int dx, int dy)
+    void WEGLWindow::OnXDGSurfaceConfigured()
     {
-        wl_egl_window_resize(m_window, width, height, dx, dy);
+        m_xdgSurface->BaseSurface()->Commit(); 
+    }
+
+    void WEGLWindow::OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states)
+    {
+        if(!width && !height) return;
+
+	    if(m_width != width || m_height != height) 
+        {
+		    m_width = width;
+		    m_height = height;
+		    Resize(m_width, m_height, 0, 0);
+            m_xdgSurface->BaseSurface()->Commit();
+    	}        
     }
 
 }}}}//qor::platform::nslinux::wl

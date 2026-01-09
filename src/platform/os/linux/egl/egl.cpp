@@ -24,77 +24,113 @@
 
 #include "src/configuration/configuration.h"
 
+#include "src/qor/error/error.h"
+
 #include "egl.h"
 #include "display.h"
-#include "window.h"
 
 namespace qor{ bool qor_pp_module_interface(QOR_LINEGL) ImplementsEGLFeature() { return true; } }//qor
 
 namespace qor{ namespace platform { namespace nslinux{
 
-    EGLDisplay EGL::StaticGetDisplay (EGLNativeDisplayType display_id)
+    void EGL::CheckStatus()
     {
-        return ::eglGetDisplay(display_id);
+        EGLint lastError = EGL::StaticGetError();
+        if (lastError != EGL_SUCCESS)
+        {
+            continuable("EGL Error ({0}).\n", lastError);
+        }
+    }
+
+    EGLDisplay EGL::StaticGetDisplay(EGLNativeDisplayType display_id)
+    {        
+        EGLDisplay result = ::eglGetDisplay(display_id);
+        CheckErrorStatus(result, EGL_NO_DISPLAY);
+        return result;
     }
 
     bool EGL::StaticChooseConfig(EGLDisplay dpy, const int32_t* attrib_list, EGLConfig* configs, int32_t config_size, int32_t* num_config)
     {
-        return ::eglChooseConfig(dpy, attrib_list, configs, config_size, num_config) ? true : false;
+        int result = ::eglChooseConfig(dpy, attrib_list, configs, config_size, num_config) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticCopyBuffers(EGLDisplay dpy, EGLSurface surface, EGLNativePixmapType target)
     {
-        return ::eglCopyBuffers(dpy, surface, target);
+        int result = ::eglCopyBuffers(dpy, surface, target);
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     EGLContext EGL::StaticCreateContext(EGLDisplay dpy, EGLConfig config, EGLContext share_context, const EGLint *attrib_list)
     {
-        return ::eglCreateContext(dpy, config, share_context, attrib_list);
+        EGLContext result = ::eglCreateContext(dpy, config, share_context, attrib_list);
+        CheckWarningStatus(result, nullptr);
+        return result;
     }
 
     EGLSurface EGL::StaticCreatePbufferSurface(EGLDisplay dpy, EGLConfig config, const EGLint *attrib_list)
     {
-        return ::eglCreatePbufferSurface(dpy, config, attrib_list);
+        EGLSurface result = ::eglCreatePbufferSurface(dpy, config, attrib_list);
+        CheckWarningStatus(result, nullptr);
+        return result;
     }
 
     EGLSurface EGL::StaticCreatePixmapSurface(EGLDisplay dpy, EGLConfig config, EGLNativePixmapType pixmap, const EGLint *attrib_list)
     {
-        return ::eglCreatePixmapSurface(dpy, config, pixmap, attrib_list);
+        EGLSurface result = ::eglCreatePixmapSurface(dpy, config, pixmap, attrib_list);
+        CheckWarningStatus(result, nullptr);
+        return result;
     }
 
     EGLSurface EGL::StaticCreateWindowSurface(EGLDisplay dpy, EGLConfig config, EGLNativeWindowType win, const EGLint *attrib_list)
     {
-        return ::eglCreateWindowSurface(dpy, config, win, attrib_list);
+        EGLSurface result = ::eglCreateWindowSurface(dpy, config, win, attrib_list);
+        CheckWarningStatus(result, nullptr);
+        return result;
     }
 
     bool EGL::StaticDestroyContext(EGLDisplay dpy, EGLContext ctx)
     {
-        return ::eglDestroyContext(dpy, ctx) ? true : false;
+        int result = ::eglDestroyContext(dpy, ctx) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticDestroySurface(EGLDisplay dpy, EGLSurface surface)
     {
-        return ::eglDestroySurface(dpy, surface) ? true : false;
+        int result = ::eglDestroySurface(dpy, surface) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticGetConfigAttrib(EGLDisplay dpy, EGLConfig config, EGLint attribute, EGLint *value)
     {
-        return ::eglGetConfigAttrib(dpy, config, attribute, value) ? true : false;
+        int result = ::eglGetConfigAttrib(dpy, config, attribute, value) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticGetConfigs(EGLDisplay dpy, EGLConfig *configs, EGLint config_size, EGLint *num_config)
     {
-        return ::eglGetConfigs(dpy, configs, config_size, num_config) ? true : false;
+        int result = ::eglGetConfigs(dpy, configs, config_size, num_config) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     EGLDisplay EGL::StaticGetCurrentDisplay(void)
     {
-        return ::eglGetCurrentDisplay();
+        EGLDisplay result = ::eglGetCurrentDisplay();
+        CheckWarningStatus(result, EGL_NO_DISPLAY);
+        return result;
     }
 
     EGLSurface EGL::StaticGetCurrentSurface(EGLint readdraw)
     {
-        return ::eglGetCurrentSurface(readdraw);
+        EGLSurface result = ::eglGetCurrentSurface(readdraw);
+        CheckWarningStatus(result, nullptr);
+        return result;
     }
 
     EGLint EGL::StaticGetError(void)
@@ -104,77 +140,106 @@ namespace qor{ namespace platform { namespace nslinux{
 
     __eglMustCastToProperFunctionPointerType EGL::StaticGetProcAddress(const char *procname)
     {
-        return ::eglGetProcAddress(procname);
+        __eglMustCastToProperFunctionPointerType result = ::eglGetProcAddress(procname);
+        CheckErrorStatus(result, (__eglMustCastToProperFunctionPointerType)(nullptr));
+        return result;
     }
 
     bool EGL::StaticInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor)
     {
-        return ::eglInitialize(dpy, major, minor) ? true : false;
+        int result = ::eglInitialize(dpy, major, minor) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx)
     {
-        return ::eglMakeCurrent(dpy, draw, read, ctx) ? true : false;
+        int result = ::eglMakeCurrent(dpy, draw, read, ctx) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticQueryContext(EGLDisplay dpy, EGLContext ctx, EGLint attribute, EGLint *value)
     {
-        return ::eglQueryContext(dpy, ctx, attribute, value) ? true : false;
+        int result = ::eglQueryContext(dpy, ctx, attribute, value) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     const char* EGL::StaticQueryString(EGLDisplay dpy, EGLint name)
     {
-        return ::eglQueryString(dpy, name);
+        const char* result = ::eglQueryString(dpy, name);        
+        return result;
     }
 
     bool EGL::StaticQuerySurface(EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint *value)
     {
-        return ::eglQuerySurface(dpy, surface, attribute, value) ? true : false;
+        int result = ::eglQuerySurface(dpy, surface, attribute, value) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticSwapBuffers(EGLDisplay dpy, EGLSurface surface)
     {
-        return ::eglSwapBuffers(dpy, surface);
+        int result = ::eglSwapBuffers(dpy, surface);
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticTerminate(EGLDisplay dpy)
     {
-        return ::eglTerminate(dpy) ? true : false;
+        int result = ::eglTerminate(dpy) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
     
     bool EGL::StaticWaitGL(void)
     {
-        return ::eglWaitGL() ? true : false;
+        int result = ::eglWaitGL() ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticWaitNative(EGLint engine)
     {
-        return ::eglWaitNative(engine) ? true : false;
+        int result = ::eglWaitNative(engine) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticBindTexImage(EGLDisplay dpy, EGLSurface surface, EGLint buffer)
     {
-        return ::eglBindTexImage(dpy, surface, buffer) ? true : false;
+        int result = ::eglBindTexImage(dpy, surface, buffer) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticReleaseTexImage(EGLDisplay dpy, EGLSurface surface, EGLint buffer)
     {
-        return ::eglReleaseTexImage(dpy, surface, buffer) ? true : false;
+        int result = ::eglReleaseTexImage(dpy, surface, buffer) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticSurfaceAttrib(EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint value)
     {
-        return ::eglSurfaceAttrib(dpy, surface, attribute, value) ? true : false;
+        int result = ::eglSurfaceAttrib(dpy, surface, attribute, value) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticSwapInterval(EGLDisplay dpy, EGLint interval)
     {
-        return ::eglSwapInterval(dpy, interval) ? true : false;
+        int result = ::eglSwapInterval(dpy, interval) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticBindAPI(EGLenum api)
     {
-        return ::eglBindAPI(api) ? true : false;
+        int result = ::eglBindAPI(api) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     EGLenum EGL::StaticQueryAPI(void)
@@ -184,74 +249,103 @@ namespace qor{ namespace platform { namespace nslinux{
 
     EGLSurface EGL::StaticCreatePbufferFromClientBuffer(EGLDisplay dpy, EGLenum buftype, EGLClientBuffer buffer, EGLConfig config, const EGLint *attrib_list)
     {
-        return ::eglCreatePbufferFromClientBuffer(dpy, buftype, buffer, config, attrib_list);
+        EGLSurface result = ::eglCreatePbufferFromClientBuffer(dpy, buftype, buffer, config, attrib_list);
+        CheckWarningStatus(result, EGL_NO_SURFACE);
+        return result;
     }
 
     bool EGL::StaticReleaseThread(void)
     {
-        return ::eglReleaseThread() ? true : false;
+        int result = ::eglReleaseThread() ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::StaticWaitClient(void)
     {
-        return ::eglWaitClient() ? true : false;
+        int result = ::eglWaitClient() ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     EGLContext EGL::StaticGetCurrentContext(void)
     {
-        return ::eglGetCurrentContext();
+        EGLContext result = ::eglGetCurrentContext();
+        CheckWarningStatus(result, EGL_NO_CONTEXT);
+        return result;
     }
 
     EGLSync EGL::StaticCreateSync(EGLDisplay dpy, EGLenum type, const EGLAttrib *attrib_list)
     {
-        return ::eglCreateSync(dpy, type, attrib_list);
+        EGLSync result = ::eglCreateSync(dpy, type, attrib_list);
+        CheckErrorStatus(result, (EGLSync)nullptr);
+        return result;
     }
 
     bool EGL::StaticDestroySync(EGLDisplay dpy, EGLSync sync)
     {
-        return ::eglDestroySync(dpy, sync) ? true : false;
+        int result = ::eglDestroySync(dpy, sync) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     EGLint EGL::StaticClientWaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags, EGLTime timeout)
     {
-        return ::eglClientWaitSync(dpy, sync, flags, timeout);
+        EGLint result = ::eglClientWaitSync(dpy, sync, flags, timeout);
+        CheckErrorStatus(result, EGL_FALSE);
+        return result;
     }
 
     bool EGL::StaticGetSyncAttrib(EGLDisplay dpy, EGLSync sync, EGLint attribute, EGLAttrib *value)
     {
-        return ::eglGetSyncAttrib(dpy, sync, attribute, value) ? true : false;
+        int result = ::eglGetSyncAttrib(dpy, sync, attribute, value) ? true : false;
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     EGLImage EGL::StaticCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list)
     {
-        return ::eglCreateImage(dpy, ctx, target, buffer, attrib_list);
+        EGLImage result = ::eglCreateImage(dpy, ctx, target, buffer, attrib_list);
+        CheckErrorStatus(result, EGL_NO_IMAGE);
+        return result;
     }
 
     bool EGL::StaticDestroyImage(EGLDisplay dpy, EGLImage image)
     {
-        return ::eglDestroyImage(dpy, image);
+        int result = ::eglDestroyImage(dpy, image);
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     EGLDisplay EGL::StaticGetPlatformDisplay(EGLenum platform, void *native_display, const EGLAttrib *attrib_list)
     {
-        return ::eglGetPlatformDisplay(platform, native_display, attrib_list);
+        EGLDisplay result = ::eglGetPlatformDisplay(platform, native_display, attrib_list);
+        CheckErrorStatus(result, EGL_NO_DISPLAY);
+        return result;
     }
 
     EGLSurface EGL::StaticCreatePlatformWindowSurface(EGLDisplay dpy, EGLConfig config, void *native_window, const EGLAttrib *attrib_list)
     {
-        return ::eglCreatePlatformWindowSurface(dpy, config, native_window, attrib_list);
+        EGLSurface result = ::eglCreatePlatformWindowSurface(dpy, config, native_window, attrib_list);
+        CheckErrorStatus(result, EGL_NO_SURFACE);
+        return result;
     }
 
     EGLSurface EGL::StaticCreatePlatformPixmapSurface(EGLDisplay dpy, EGLConfig config, void *native_pixmap, const EGLAttrib *attrib_list)
     {
-        return ::eglCreatePlatformPixmapSurface(dpy, config, native_pixmap, attrib_list);
+        EGLSurface result = ::eglCreatePlatformPixmapSurface(dpy, config, native_pixmap, attrib_list);
+        CheckErrorStatus(result, EGL_NO_SURFACE);
+        return result;
     }
 
     bool EGL::StaticWaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags)
     {
-        return ::eglWaitSync(dpy, sync, flags);
+        int result = ::eglWaitSync(dpy, sync, flags);
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
     
+
     bool EGL::ReleaseThread(void)
     {
         return EGL::StaticReleaseThread();
@@ -279,12 +373,16 @@ namespace qor{ namespace platform { namespace nslinux{
 
     bool EGL::WaitGL(void)
     {
-        return EGL::StaticWaitGL();
+        int result = EGL::StaticWaitGL();
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     bool EGL::WaitNative(int32_t engine)
     {
-        return EGL::StaticWaitNative(engine);
+        int result = EGL::StaticWaitNative(engine);
+        CheckSuccessStatus(result, EGL_TRUE);
+        return result ?  true : false;
     }
 
     void* EGL::GetCurrentDisplay(void)
@@ -294,7 +392,7 @@ namespace qor{ namespace platform { namespace nslinux{
 
     void* EGL::GetCurrentSurface(int32_t readdraw)
     {
-        return EGL::StaticGetCurrentSurface(readdraw);
+        return EGL::StaticGetCurrentSurface(readdraw);        
     }
 
     int32_t EGL::GetError(void)
@@ -303,23 +401,13 @@ namespace qor{ namespace platform { namespace nslinux{
     }
 
     ref_of<qor::components::EGLDisplay>::type EGL::CreateDisplay()
-    {
+    {   
         return new_ref<EglDisplay>();
     }
 
     ref_of<qor::components::EGLDisplay>::type EGL::CreateDisplay(void* nativeDisplay)
     {
         return new_ref<EglDisplay>(nativeDisplay);
-    }
-
-    ref_of<qor::components::EGLDisplay>::type EGL::CreateDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list)
-    {
-        return new_ref<EglDisplay>(platform, nativeDisplay, attrib_list);
-    }
-
-    ref_of<qor::components::EGLWindow>::type EGL::CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, ref_of<qor::components::EGLContext>::type context, const std::string& title, int width, int height)
-    {
-        return new_ref<EglWindow>(display, context, title, width, height);
     }
 
 }}}//qor::platform::nslinux

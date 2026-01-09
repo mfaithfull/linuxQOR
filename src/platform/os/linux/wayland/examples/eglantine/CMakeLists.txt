@@ -8,8 +8,7 @@ set(target eglantine)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-add_executable(${target} main.cpp eltkeycontroller.cpp eltpointercontroller.cpp eltsession.cpp
-microrenderer.cpp microui.c)
+add_executable(${target} main.cpp eltkeycontroller.cpp eltpointercontroller.cpp eltsession.cpp)
 
 target_include_directories(${target} PRIVATE)
 

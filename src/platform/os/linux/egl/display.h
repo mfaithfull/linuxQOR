@@ -30,24 +30,22 @@
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nslinux{ 
 
-    class qor_pp_module_interface(QOR_LINEGL) EglWindow;
-
     class qor_pp_module_interface(QOR_LINEGL) EglDisplay : public qor::components::EGLDisplay
     {
     public:
 
         EglDisplay();
         EglDisplay(void* nativeDisplay);
-        EglDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list);
+        void SetNativeDisplay(void* nativeDisplay);
+        
         virtual ~EglDisplay();
-
+        virtual void CheckStatus();
         virtual bool ChooseConfig(const int32_t* attrib_list, void** configs, int32_t config_size, int32_t* num_config);
         virtual bool CopyBuffers(void* surface, void* target);        
-        //virtual ref_of<qor::components::EGLContext>::type CreateContext(void* config, void* share_context, const int32_t *attrib_list);
         virtual void* CreatePbufferSurface(void* config, const int32_t *attrib_list);
         virtual void* CreatePixmapSurface(void* config, void* pixmap, const int32_t *attrib_list);
         virtual void* CreateWindowSurface(void* config, void* win, const int32_t *attrib_list);
-        virtual bool DestroySurface(void* surface);
+        
         virtual bool GetConfigAttrib(void* config, int32_t attribute, int32_t *value);
         virtual bool GetConfigs(void* *configs, int32_t config_size, int32_t *num_config);                
         virtual const char* QueryString(int32_t name);
@@ -67,21 +65,19 @@ namespace qor{ namespace platform { namespace nslinux{
         virtual void* CreatePlatformPixmapSurface(void* config, void *native_pixmap, const intptr_t *attrib_list);
         virtual bool WaitSync(void* sync, int32_t flags);
 
+        virtual bool InternalDestroySurface(void* surface);
         virtual void* InternalCreateImage(void* ctx, unsigned int target, void* buffer, const intptr_t *attrib_list);
         virtual void* InternalCreateContext(void* config, void* share_context, const int32_t *attrib_list);
         virtual bool InternalDestroyContext(void* ctx);
         virtual bool InternalQueryContext(void* ctx, int32_t attribute, int32_t *value);
         virtual bool InternalMakeCurrent(void* draw, void* read, void* ctx);        
 
-    private:
-
         bool Initialize();
-        bool Terminate();
 
-        int32_t m_major;
-        int32_t m_minor;
-        void* m_display;
-        EglWindow* m_nativeWindow;
+    protected:
+        
+        bool Terminate();
+        bool m_initialized;
     };
 
 }}}//qor::platform::nslinux

@@ -41,7 +41,7 @@ namespace qor { namespace components{
         EGLContext();
         EGLContext(ref_of<EGLDisplay>::type display);
         EGLContext(void* ctx, ref_of<EGLDisplay>::type display);
-        EGLContext(ref_of<EGLDisplay>::type display, void* config, void* share_context, const int32_t *attrib_list);        
+        EGLContext(ref_of<EGLDisplay>::type display, void* share_context, const int32_t *attrib_list);        
         virtual ~EGLContext();
 
         virtual bool MakeCurrent(void* draw, void* read);

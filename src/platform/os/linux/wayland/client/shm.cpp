@@ -27,6 +27,7 @@
 
 #include "shm.h"
 #include "shmpool.h"
+#include "listeners/shmlistener.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
@@ -47,9 +48,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }
     }
 
-    SharedMemory::SharedMemory(SharedMemory&& rhs) noexcept : m_shm(rhs.m_shm)
+    SharedMemory::SharedMemory(SharedMemory&& rhs) noexcept : m_shm(rhs.m_shm), m_defaultListener(rhs.m_defaultListener)
     {
         rhs.m_shm = nullptr;
+        rhs.m_defaultListener.Dispose();
+
         if (m_shm)
         {
             wl_shm_set_user_data(m_shm, this);
@@ -64,9 +67,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             {
                 wl_shm_destroy(m_shm);
             }
+            m_defaultListener.Dispose();
 
             m_shm = rhs.m_shm;
+            m_defaultListener = rhs.m_defaultListener;
             rhs.m_shm = nullptr;
+            rhs.m_defaultListener.Dispose();
 
             if (m_shm)
             {
@@ -140,5 +146,28 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }
         return wl_shm_add_listener(m_shm, &listener, context);
     }
+
+    int SharedMemory::AddDefaultListener()
+    {
+        if(m_defaultListener.IsNull())
+        {
+            m_defaultListener = new_ref<ShmListener>();
+            return wl_shm_add_listener(m_shm, m_defaultListener, this);
+        }
+        warning("Default SharedMemory listener already added");
+        return -1;
+    }
     
+    void SharedMemory::OnFormat(void* context, uint32_t format)
+    {
+        /* This event is sent to inform the client of a pixel format
+        that the compositor supports for shared memory buffers.*/
+        FormatEvent(format);
+    }
+
+    qor_pp_signal_func SharedMemory::FormatEvent(uint32_t format)
+    {
+        qor_pp_signal(FormatEvent, format);
+    }
+
 }}}}//qor::platform::nslinux::wl

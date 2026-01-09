@@ -44,6 +44,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit SharedMemoryPool(wl_shm_pool* shmpool);
         ~SharedMemoryPool();
+        SharedMemoryPool(const SharedMemoryPool&) = delete;
+        SharedMemoryPool& operator=(const SharedMemoryPool&) = delete;        
         SharedMemoryPool(SharedMemoryPool&& rhs) noexcept;
         SharedMemoryPool& operator=(SharedMemoryPool&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}

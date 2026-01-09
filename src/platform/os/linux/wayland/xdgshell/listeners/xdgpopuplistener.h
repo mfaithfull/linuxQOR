@@ -35,7 +35,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     struct qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGPopupListener : public xdg_popup_listener
     {
-        XDGPopupListener();
+        XDGPopupListener(uint32_t version);
     };
 
 }}}}//qor::platform::nslinux::wl

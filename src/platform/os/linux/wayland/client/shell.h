@@ -42,6 +42,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit Shell(wl_shell* shell);
         ~Shell();
+        Shell(const Shell&) = delete;
+        Shell& operator=(const Shell&) = delete;        
         Shell(Shell&& rhs) noexcept;
         Shell& operator=(Shell&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}

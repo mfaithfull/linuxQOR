@@ -31,9 +31,92 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    template<uint32_t ver = 1>
     struct qor_pp_module_interface(QOR_LINWAYLAND) PointerListener : public wl_pointer_listener
     {
-        PointerListener();
+        PointerListener()
+        {
+            this->enter = [](void* data, wl_pointer* wl_pointer, uint32_t serial, wl_surface* surface, wl_fixed_t sx, wl_fixed_t sy)
+            {
+                Pointer* pointer = Pointer::PointerFrom(wl_pointer);
+                if(pointer)
+                {
+                    pointer->OnEnter(data, serial, surface, sx, sy);
+                }
+            };
+            this->leave = [](void* data, wl_pointer* wl_pointer, uint32_t serial, wl_surface* surface)
+            {
+                Pointer* pointer = Pointer::PointerFrom(wl_pointer);
+                if(pointer)
+                {
+                    pointer->OnLeave(data, serial, surface);
+                }
+            };
+            this->motion = [](void* data, wl_pointer* wl_pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
+            {
+                Pointer* pointer = Pointer::PointerFrom(wl_pointer);
+                if(pointer)
+                {
+                    pointer->OnMotion(data, time, sx, sy);
+                }
+            };
+            this->button = [](void* data, wl_pointer* wl_pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
+            {
+                Pointer* pointer = Pointer::PointerFrom(wl_pointer);
+                if(pointer)
+                {
+                    pointer->OnButton(data, serial, time, button, state);
+                }
+            };
+            this->axis = [](void* data, wl_pointer* wl_pointer, uint32_t time, uint32_t axis, wl_fixed_t value)
+            {
+                Pointer* pointer = Pointer::PointerFrom(wl_pointer);
+                if(pointer)
+                {
+                    pointer->OnAxis(data, time, axis, value);
+                }
+            };
+        }
+    };
+
+    template<>
+    struct qor_pp_module_interface(QOR_LINWAYLAND) PointerListener<5> : public PointerListener<1>
+    {
+        PointerListener()
+        {
+            this->frame = [](void* data, wl_pointer* wl_pointer)
+            {
+                Pointer* pointer = Pointer::PointerFrom(wl_pointer);
+                if(pointer)
+                {
+                    pointer->OnFrame(data);
+                }
+            };
+            this->axis_discrete = [](void* data, wl_pointer* wl_pointer, uint32_t axis, int32_t discrete)
+            {
+                Pointer* pointer = Pointer::PointerFrom(wl_pointer);
+                if(pointer)
+                {
+                    pointer->OnAxisDiscrete(data, axis, discrete);
+                }
+            };
+            this->axis_source = [](void* data, wl_pointer* wl_pointer, uint32_t axisSource)
+            {
+                Pointer* pointer = Pointer::PointerFrom(wl_pointer);
+                if(pointer)
+                {
+                    pointer->OnAxisSource(data, axisSource);
+                }
+            };
+            this->axis_stop = [](void* data, wl_pointer* wl_pointer, uint32_t time, uint32_t axis)
+            {
+                Pointer* pointer = Pointer::PointerFrom(wl_pointer);
+                if(pointer)
+                {
+                    pointer->OnAxisStop(data, time, axis);
+                }
+            };
+        }
     };
 
 }}}}//qor::platform::nslinux::wl

@@ -26,6 +26,7 @@
 #include "src/qor/error/error.h"
 
 #include "callback.h"
+#include "listeners/callbacklistener.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
@@ -57,10 +58,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         if(callback)
         {
             wl_callback_set_user_data(m_callback, this);
-        }
-        else
-        {
-            continuable("Callback created with null wl_callback pointer");
         }
     }
 
@@ -128,6 +125,17 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             return -1;
         }
         return wl_callback_add_listener(m_callback, &listener, context);
+    }
+
+    int Callback::AddDefaultListener()
+    {
+        if(!m_callback)
+        {
+            warning("Adding listener to Callback with null wl_callback pointer");
+            return -1;
+        }
+        m_callbackListener = new_ref<CallbackListener>();
+        return wl_callback_add_listener(m_callback, m_callbackListener, this);
     }
 
 }}}}//qor::platform::nslinux::wl

@@ -25,37 +25,10 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "dataofferlistener.h"
 #include "../dataoffer.h"
+#include "dataofferlistener.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    DataOfferListener::DataOfferListener()
-    {
-        wl_data_offer_listener::offer = [](void* data, wl_data_offer* offer, const char* mime_type)
-        {
-            DataOffer* dataOffer = DataOffer::DataOfferFrom(offer);
-            if(dataOffer)
-            {
-                dataOffer->OnOffer(data, mime_type);
-            }
-        };
-        wl_data_offer_listener::source_actions = [](void* data, wl_data_offer* offer, uint32_t source_actions)
-        {
-            DataOffer* dataOffer = DataOffer::DataOfferFrom(offer);
-            if(dataOffer)
-            {
-                dataOffer->OnSourceActions(data, source_actions);
-            }
-        };
-        wl_data_offer_listener::action = [](void* data, wl_data_offer* offer, uint32_t dnd_action)
-        {
-            DataOffer* dataOffer = DataOffer::DataOfferFrom(offer);
-            if(dataOffer)
-            {
-                dataOffer->OnAction(data, dnd_action);
-            }
-        };
-    }
         
 }}}}//qor::platform::nslinux::wl

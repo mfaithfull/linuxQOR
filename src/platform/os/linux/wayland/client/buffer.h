@@ -40,9 +40,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit Buffer(wl_buffer* buffer);
         virtual ~Buffer();
+        Buffer(const Buffer&) = delete;
+        Buffer& operator=(const Buffer&) = delete;
         Buffer(Buffer&& rhs) noexcept;
         Buffer& operator=(Buffer&& rhs) noexcept;
-
         virtual const char* Tag() const{return TagName;}
 
         wl_buffer* Use() const;

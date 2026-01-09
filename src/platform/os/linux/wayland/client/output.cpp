@@ -119,8 +119,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }
         return wl_output_get_version(m_output);
     }
-    
-    /*
+        
     int Output::AddListener(const wl_output_listener& listener, void* context)
     {
         if(!m_output)
@@ -142,6 +141,46 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         {
             warning("Releasing Output with null wl_output pointer");
         }
-    }*/
+    }
     
+    void Output::OnGeometry(void* data, int32_t x, int32_t y, int32_t physical_width, int32_t physical_height, int32_t subpixel, const char* make, const char* model, int32_t transform)
+    {
+        GeometryEvent(x, y, physical_width, physical_height, subpixel, make, model, transform);
+    }
+
+    qor_pp_signal_func Output::GeometryEvent(int32_t x, int32_t y, int32_t physical_width, int32_t physical_height, int32_t subpixel, const char* make, const char* model, int32_t transform)
+    {
+        qor_pp_signal(GeometryEvent, x, y, physical_width, physical_height, subpixel, make, model, transform);
+    }
+
+    void Output::OnDone(void* data)
+    {
+        DoneEvent();
+    }
+
+    qor_pp_signal_func Output::DoneEvent()
+    {
+        qor_pp_signal(DoneEvent);
+    }
+
+    void Output::OnMode(void* data, uint32_t flags, int32_t width, int32_t height, int32_t refresh)
+    {
+        ModeEvent(flags, width, height, refresh);
+    }
+
+    qor_pp_signal_func Output::ModeEvent(uint32_t flags, int32_t width, int32_t height, int32_t refresh)
+    {
+        qor_pp_signal(ModeEvent, flags, width, height, refresh);
+    }
+
+    void Output::OnScale(void* data, int32_t factor)
+    {
+        ScaleEvent(factor);
+    }
+
+    qor_pp_signal_func Output::ScaleEvent(int32_t factor)
+    {
+        qor_pp_signal(ScaleEvent, factor);
+    }
+
 }}}}//qor::platform::nslinux::wl

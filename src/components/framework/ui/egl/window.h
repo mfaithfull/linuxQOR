@@ -52,6 +52,7 @@ namespace qor { namespace components{
         qor::ref_of<EGLDisplay>::type m_display;
         qor::ref_of<EGLContext>::type m_context;
     };
+    
 }}//qor::components
 
 #endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW

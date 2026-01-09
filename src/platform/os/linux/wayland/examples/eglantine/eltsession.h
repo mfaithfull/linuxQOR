@@ -29,29 +29,25 @@
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
-#include "src/platform/os/linux/wayland/egl/eglsession.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgsession.h"
+#include "src/components/framework/ui/egl/egl.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
 #include "src/components/framework/ui/opengles/glwindow.h"
-#include "microrenderer.h"
-#include "microui.h"
 
-class eltSession : public qor::platform::nslinux::wl::EGLSession
+class eltSession : public qor::platform::nslinux::wl::XDGSession
 {
 public:
 
     eltSession(
         qor::ref_of<qor::components::OpenGLESFeature>::type opengles,
         qor::ref_of<qor::components::EGLFeature>::type egl, 
-        qor::ref_of<qor::platform::nslinux::wl::Display>::type display);
+        qor::ref_of<qor::components::EGLDisplay>::type display);
 
     virtual ~eltSession();
 
-    virtual int Run();
+    virtual void ProcessEvents();
 
 protected:
     qor::ref_of<qor::components::OpenGLESFeature>::type m_gl;
-    MicroRenderer m_r;
-    mu_Context* ctx;
-    float bg[3];// = { 90, 95, 100 };
 };

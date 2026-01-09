@@ -4,7 +4,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target linqor_egl)
 
-add_library(${target} SHARED linqor_egl.cpp egl.cpp display.cpp context.cpp window.cpp)
+add_library(${target} SHARED linqor_egl.cpp egl.cpp display.cpp)
 
 target_include_directories(${target} PRIVATE)
 

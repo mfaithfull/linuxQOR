@@ -36,7 +36,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) Output;
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) Seat;
 
-    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGSession;
+    class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevelWindow;
 
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevel
     {
@@ -68,12 +68,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         void UnsetMaximized();
         virtual void OnConfigure(void* context, int32_t width, int32_t height, struct wl_array* states);
         virtual void OnClose(void* context);
-        void SetSession(XDGSession* session);
+        void SetWindow(XDGTopLevelWindow* window);
 
     private:
 
         xdg_toplevel* m_toplevel;
-        XDGSession* m_session;
+        XDGTopLevelWindow* m_window;
     };
 
 }}}}//qor::platform::nslinux::wl

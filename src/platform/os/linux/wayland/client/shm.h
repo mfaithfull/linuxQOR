@@ -29,6 +29,7 @@
 
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "src/framework/signals/signal.h"
 
 struct wl_shm;
 struct wl_shm_listener;
@@ -410,8 +411,9 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     };
 
     class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemoryPool;
+    class qor_pp_module_interface(QOR_LINWAYLAND) ShmListener;
     
-    class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemory
+    class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemory : public SignalBase
     {
     public:
         static const char* const TagName;
@@ -419,6 +421,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         explicit SharedMemory(wl_shm* shm);
         virtual ~SharedMemory();
+        SharedMemory(const SharedMemory&) = delete;
+        SharedMemory& operator=(const SharedMemory&) = delete;        
         SharedMemory(SharedMemory&& rhs) noexcept;
         SharedMemory& operator=(SharedMemory&& rhs) noexcept;
         virtual const char* Tag() const{return TagName;}
@@ -427,15 +431,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         uint32_t Version() const;
         qor::ref_of<SharedMemoryPool>::type CreatePool(int32_t fd, int32_t size);
         int AddListener(const wl_shm_listener& listener, void* context);
-        virtual void OnFormat(void* context, uint32_t format)
-        {/* Override in derived class 
-            format supported
-            This event is sent to inform the client of a pixel format
-            that the compositor supports for shared memory buffers.
-        */}
+        int AddDefaultListener();
+        virtual void OnFormat(void* context, uint32_t format);
+        qor_pp_signal_func FormatEvent(uint32_t format);
 
     private:
-
+        ref_of<ShmListener>::type m_defaultListener;
         wl_shm* m_shm;
     };
 

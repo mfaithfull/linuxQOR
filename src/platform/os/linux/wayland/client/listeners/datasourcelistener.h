@@ -31,10 +31,70 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
+    template<uint32_t ver = 1>
     struct qor_pp_module_interface(QOR_LINWAYLAND) DataSourceListener : public wl_data_source_listener
     {
-        DataSourceListener();
+        DataSourceListener()
+        {
+            wl_data_source_listener::target = [](void* data, wl_data_source* wl_data_source, const char* mime_type)
+            {
+                DataSource* source = DataSource::DataSourceFrom(wl_data_source);
+                if(source)
+                {
+                    source->OnTarget(data, mime_type);
+                }
+            };
+            wl_data_source_listener::send = [](void* data, wl_data_source* wl_data_source, const char* mime_type, int32_t fd)
+            {
+                DataSource* source = DataSource::DataSourceFrom(wl_data_source);
+                if(source)
+                {
+                    source->OnSend(data, mime_type, fd);
+                }
+            };
+            wl_data_source_listener::cancelled = [](void* data, wl_data_source* wl_data_source)
+            {
+                DataSource* source = DataSource::DataSourceFrom(wl_data_source);
+                if(source)
+                {
+                    source->OnCancelled(data);
+                }
+            };
+        }
     };
+
+    template<>
+    struct qor_pp_module_interface(QOR_LINWAYLAND) DataSourceListener<3> : public DataSourceListener<1>
+    {
+        DataSourceListener()
+        {
+            this->dnd_drop_performed = [](void* data, wl_data_source* wlDataSource)
+            {
+                DataSource* source = DataSource::DataSourceFrom(wlDataSource);
+                if(source)
+                {
+                    source->OnDropPerformed(data);
+                }
+            };
+            this->dnd_finished = [](void* data, wl_data_source* wlDataSource)
+            {
+                DataSource* source = DataSource::DataSourceFrom(wlDataSource);
+                if(source)
+                {
+                    source->OnDnDFinished(data);
+                }
+            };
+            this->action = [](void* data, wl_data_source* wlDataSource, uint32_t dndAction)
+            {
+                DataSource* source = DataSource::DataSourceFrom(wlDataSource);
+                if(source)
+                {
+                    source->OnDnDAction(data, dndAction);
+                }
+            };
+        }
+    };
+
 
 }}}}//qor::platform::nslinux::wl
 

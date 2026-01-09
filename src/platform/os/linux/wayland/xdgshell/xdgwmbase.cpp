@@ -34,6 +34,11 @@
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 #include "xdg-shell.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgpopuplistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
+#include "xdgsession.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
@@ -55,6 +60,21 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             continuable("Wayland xdg_wm_base user data tag mismatch");
         }
         return new XDGWMBase(wmbase);
+    }
+
+    XDGWMBase::XDGWMBase(qor::ref_of<XDGSession>::type session)
+    {
+        auto xdgWmBaseInfo = session->GetGlobal("xdg_wm_base");
+        
+        m_wmbase = reinterpret_cast<xdg_wm_base*>(session->GetRegistry()->Bind(xdgWmBaseInfo->Name, xdgWmBaseInfo->Version, xdg_wm_base_interface));
+        if(m_wmbase)
+        {
+            xdg_wm_base_set_user_data(m_wmbase, this);
+        }
+        else
+        {
+            continuable("XDGWMBase created with null xdg_wm_base pointer");
+        }
     }
 
     XDGWMBase::XDGWMBase(Registry* registry, uint32_t name, uint32_t version)

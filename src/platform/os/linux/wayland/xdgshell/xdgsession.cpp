@@ -46,17 +46,13 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    XDGSession::XDGSession(qor::ref_of<Display>::type display) : Session(display), m_ended{false}, m_width{64}, m_height{64}
+    XDGSession::XDGSession(qor::ref_of<Display>::type display) : Session(display), m_ended{false}
     {
         auto xdgWmBaseInfo = GetGlobal("xdg_wm_base");
         if(xdgWmBaseInfo)
         {            
             m_xdgWmBase = new_ref<qor::platform::nslinux::wl::XDGWMBase>(m_Registry, xdgWmBaseInfo->Name, xdgWmBaseInfo->Version); //Use the XDG WM Base Extension info returned earlier to bind the extension object.
             m_xdgWmBase->AddListener(m_xdgWmBaseListener, nullptr);//Add a listener to handle incoming from the XDG WM Base Extension
-            auto surface = m_Compositor->CreateSurface();//Make a Surface        
-            m_xdgSurface = m_xdgWmBase->GetXDGSurface(surface);//Get an XDG Surface adapter for the surface
-            m_xdgSurface->AddListener(m_xdgSurfaceListener, m_xdgSurface.operator->());//Add a listener to handle events for the XDGSurface        
-            m_xdgSurface->SetSession(this);//Attach the XDGSurface so it will then forward events to this Session
 
             auto seats = GetSeats();
             if(seats.size() > 0)
@@ -66,8 +62,64 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
                     auto seat = GetSeat(seatindex);
                     if(seat.IsNotNull())
                     {
+                        uint32_t ver = seat->Version();
                         m_keyboard = seat->GetKeyboard();
-                        m_keyboard->AddListener(m_keyboardListener, m_keyboard.operator->());
+                        if(m_keyboard.IsNotNull())
+                        {
+                            if(ver > 7)
+                            {
+                                warning("Keyboard listener support beyond Seat version 7 not gauranteed." 
+                                    "Any added endpoints won't be initialised."
+                                    "They must be filled in before the listener is used or it will fail.");
+                            }
+                            if(ver >= 4)
+                            {
+                                m_keyboardListener = new_ref<KeyboardListener<4>>();
+                            }
+                            else
+                            {
+                                m_keyboardListener = new_ref<KeyboardListener<1>>();
+                            }
+                            m_keyboard->AddListener(m_keyboardListener, m_keyboard.operator->());
+                        }
+                        m_pointer = seat->GetPointer();
+                        if(m_pointer.IsNotNull())
+                        {
+                            if(ver > 7)
+                            {
+                                warning("Pointer listener support beyond Seat version 7 not gauranteed."
+                                    "Any new endpoints won't be initialised."
+                                    "Thye must be filled in before the listener is used or it will fail.");
+                            }
+                            if(ver >=5)
+                            {
+                                m_pointerListener = new_ref<PointerListener<5>>();
+                            }
+                            else
+                            {
+                                m_pointerListener = new_ref<PointerListener<1>>();
+                            }
+                            m_pointer->AddListener(m_pointerListener, m_pointer.operator->());
+                        }
+                        m_touch = seat->GetTouch();
+                        if(m_touch.IsNotNull())
+                        {
+                            if(ver > 7)
+                            {
+                                warning("Touch listener support beyond Seat version 7 not gauranteed." 
+                                    "Any added endpoints won't be initialised."
+                                    "They must be filled in before the listener is used or it will fail.");
+                            }
+                            else if(ver >= 6)
+                            {
+                                m_touchListener = new_ref<TouchListener<6>>();
+                            }
+                            else
+                            {
+                                m_touchListener = new_ref<TouchListener<1>>();
+                            }
+                            m_touch->AddListener(m_touchListener, m_touch.operator->());
+                        }
                         break;
                     }
                 }
@@ -84,61 +136,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     {
     }
 
-    qor::ref_of<XDGSurface>::type XDGSession::GetXDGSurface()
-    {
-        return m_xdgSurface;
-    }
-
-    void XDGSession::DoConfiguration()
-    {
-        m_xdgSurface->BaseSurface()->Commit();
-        m_Display->Dispatch();
-        m_Display->Roundtrip();
-    }
-
-    qor::ref_of<XDGTopLevel>::type XDGSession::GetXDGTopLevelWindow()
-    {
-        auto xdgTopLevel = m_xdgSurface->GetToplevel();
-        xdgTopLevel->SetSession(this);
-        xdgTopLevel->AddListener(m_xdgTopLevelListener, xdgTopLevel.operator->());//Add a listener to handle events for the XDGTopLevel
-        DoConfiguration();
-        return xdgTopLevel;
-    }
-
-    void XDGSession::SetWidth(int width)
-    {
-        m_width = width;
-    }
-    
-    int XDGSession::GetWidth()
-    {
-        return m_width;
-    }
-    
-    void XDGSession::SetHeight(int height)
-    {
-        m_height = height;
-    }
-
-    int XDGSession::GetHeight()
-    {
-        return m_height;
-    }
-
-    void XDGSession::OnXDGSurfaceConfigured()
-    {
-        /* Override in derived class 
-            XDG Surface configured
-            This event is called when an XDG surface has been configured by the compositor.
-        */
-    }
-
-    void XDGSession::OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states)
-    {
-        /*Override in derived class
-            This event is called when an XDG TopLevel has been configured by the compositor*/
-    }
-
     int XDGSession::Run()
     {
         while(m_Display->Dispatch() && !m_ended)
@@ -151,5 +148,20 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     {
         return m_keyboard;
     }
-    
+
+    qor::ref_of<XDGWMBase>::type XDGSession::GetXDGWMBase()
+    {
+        return m_xdgWmBase;
+    }
+
+    qor::ref_of<Pointer>::type XDGSession::GetPointer()
+    {
+        return m_pointer;
+    }
+
+    qor::ref_of<Touch>::type XDGSession::GetTouch()
+    {
+        return m_touch;
+    }
+
 }}}}//qor::platform::nslinux::wl

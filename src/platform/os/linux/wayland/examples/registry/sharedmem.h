@@ -22,24 +22,73 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_LINUX_WAYLAND_EXAMPLES_SHAREDMEM
+#define QOR_PP_H_LINUX_WAYLAND_EXAMPLES_SHAREDMEM
 
-#include "context.h"
+#include <stdexcept>
+#include <iostream>
+#include <array>
+#include <memory>
+#include <sstream>
+#include <ctime>
+#include <algorithm>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <fcntl.h>
+#include <unistd.h>
 
-namespace qor{ namespace platform { namespace nslinux{
-
-    EglContext::EglContext(void* ctx, ref_of<qor::components::EGLDisplay>::type display) : qor::components::EGLContext(ctx, display)
+// shared memory helper class
+class shared_mem_t
+{
+private:
+    std::string name;
+    int fd = 0;
+    size_t len = 0;
+    void *mem = nullptr;
+ 
+public:
+    shared_mem_t()
     {
-
     }
-
-    EglContext::EglContext(ref_of<qor::components::EGLDisplay>::type display, void* config, void* share_context, const int32_t *attrib_list) :
-        qor::components::EGLContext(display, config, share_context, attrib_list)
+ 
+    shared_mem_t(size_t size) : len(size)
     {
-    }
+        // Very simple shared memory wrapper
+        std::stringstream ss;
+        std::srand(std::time(nullptr));
+        ss << '/' << std::rand();
+        name = ss.str();
 
-    EglContext::~EglContext()
+        fd = syscall(SYS_memfd_create, name, 0);
+        ftruncate(fd, size);
+
+        // map memory
+        mem = mmap(nullptr, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        if(mem == MAP_FAILED)
+        throw std::runtime_error("mmap failed.");
+    }
+ 
+    ~shared_mem_t() noexcept(false)
     {
+        if(fd)
+        {
+            if(munmap(mem, len) < 0)
+                throw std::runtime_error("munmap failed.");
+            if(close(fd) < 0)
+                throw std::runtime_error("close failed.");
+        }
     }
+ 
+    int get_fd()
+    {
+        return fd;
+    }
+ 
+    void *get_mem()
+    {
+        return mem;
+    }
+};
 
-}}}//qor::platform::nslinux
+#endif//QOR_PP_H_LINUX_WAYLAND_EXAMPLES_SHAREDMEM

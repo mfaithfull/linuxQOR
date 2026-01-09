@@ -30,7 +30,7 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-    XEGLSurface::XEGLSurface(qor::ref_of<qor::components::EGLDisplay>::type display, void* config, void* nativeWindow, int32_t* surfaceAttributes) : qor::components::EGLSurface(), m_display(display)
+    XEGLSurface::XEGLSurface(qor::ref_of<qor::components::EGLDisplay>::type display, void* nativeWindow, int32_t* surfaceAttributes) : qor::components::EGLSurface(display)
     {
         auto xegldisplay = display.AsRef<XEGLDisplay>();
         m_surface = xegldisplay->CreateWindowSurface(xegldisplay->GetConfig(), nativeWindow, surfaceAttributes);

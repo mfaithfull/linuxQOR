@@ -22,24 +22,44 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_LINUX_EGL_CONTEXT
-#define QOR_PP_H_LINUX_EGL_CONTEXT
+#ifndef QOR_PP_H_LINUX_WAYLAND_EXAMPLES_CUSTOMPOINTERCONTROLLER
+#define QOR_PP_H_LINUX_WAYLAND_EXAMPLES_CUSTOMPOINTERCONTROLLER
 
-#include "display.h"
-#include "src/components/framework/ui/egl/context.h"
+#include <linux/input-event-codes.h>
+#include "sdk/using_framework.h"
+#include "sdk/platform/os/linux/wayland.h"
+#include "customwindow.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nslinux{ 
-
-    class qor_pp_module_interface(QOR_LINEGL) EglContext : public qor::components::EGLContext
+class customPointerController : public wl::PointerController
+{
+public:
+    customPointerController(wl::XDGSession* session, ExampleWindow* window) : 
+        wl::PointerController(session->GetPointer()), m_session(session), m_window(window)
     {
-    public:
+    }
 
-        EglContext(void* ctx, ref_of<qor::components::EGLDisplay>::type display);
-        EglContext(ref_of<qor::components::EGLDisplay>::type display, void* config, void* share_context, const int32_t *attrib_list);
-        virtual ~EglContext();
-    };
+    virtual ~customPointerController() = default;
 
-}}}//qor::platform::nslinux
+    virtual void OnButton(uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
+    {       
+        if(m_window && button == BTN_LEFT && state == 1)
+        {
+            m_window->ShowWindowMenu(m_session->GetSeat(m_session->GetSeats()[0]), serial, 0,0);                      
+            return;
+        }
 
-#endif//QOR_PP_H_LINUX_EGL_CONTEXT
+        if(m_window && button == BTN_RIGHT && state == 1)
+        {
+            m_window->Popup();
+            return;
+        }
+    }
+
+protected:
+
+    wl::XDGSession* m_session;    
+    ExampleWindow* m_window;
+
+};
+
+#endif//QOR_PP_H_LINUX_WAYLAND_EXAMPLES_CUSTOMPOINTERCONTROLLER

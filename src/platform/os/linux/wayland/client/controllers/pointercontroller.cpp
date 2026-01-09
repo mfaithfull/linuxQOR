@@ -41,6 +41,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
             connect(*m_pointer, &Pointer::MotionEvent, *this, &PointerController::OnMotion);
             connect(*m_pointer, &Pointer::ButtonEvent, *this, &PointerController::OnButton);
             connect(*m_pointer, &Pointer::AxisEvent, *this, &PointerController::OnAxis);
+            connect(*m_pointer, &Pointer::AxisDiscreteEvent, *this, &PointerController::OnAxisDiscrete);
+            connect(*m_pointer, &Pointer::AxisSourceEvent, *this, &PointerController::OnAxisSource);
+            connect(*m_pointer, &Pointer::AxisStopEvent,*this, &PointerController::OnAxisStop);
+            connect(*m_pointer, &Pointer::FrameEvent, *this, &PointerController::OnFrame);
         }
         else
         {
@@ -52,6 +56,10 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     {
         if(m_pointer)
         {
+            disconnect(*m_pointer, &Pointer::FrameEvent, *this, &PointerController::OnFrame);
+            disconnect(*m_pointer, &Pointer::AxisStopEvent,*this, &PointerController::OnAxisStop);
+            disconnect(*m_pointer, &Pointer::AxisSourceEvent, *this, &PointerController::OnAxisSource);
+            disconnect(*m_pointer, &Pointer::AxisDiscreteEvent, *this, &PointerController::OnAxisDiscrete);
             disconnect(*m_pointer, &Pointer::AxisEvent, *this, &PointerController::OnAxis);
             disconnect(*m_pointer, &Pointer::ButtonEvent, *this, &PointerController::OnButton);
             disconnect(*m_pointer, &Pointer::MotionEvent, *this, &PointerController::OnMotion);
@@ -84,5 +92,26 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     {
 
     }
+
+    void PointerController::OnFrame()
+    {
+
+    }
+
+    void PointerController::OnAxisDiscrete(uint32_t axis, int32_t discrete)
+    {
+
+    }
+    
+    void PointerController::OnAxisSource(uint32_t axisSource)
+    {
+
+    }
+
+    void PointerController::OnAxisStop(uint32_t time, uint32_t axis)
+    {
+        
+    }
+
 
 }}}}//qor::platform::nslinux::wl

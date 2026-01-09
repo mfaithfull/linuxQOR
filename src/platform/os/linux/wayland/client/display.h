@@ -40,6 +40,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Registry;
     class qor_pp_module_interface(QOR_LINWAYLAND) Callback;
 
+    typedef void (*log_func_t)(const char *, ...);
+
     class qor_pp_module_interface(QOR_LINWAYLAND) Display
     {
     private:
@@ -66,15 +68,14 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         int ReadEvents();
         void CancelRead();
 
-        template< typename T = Registry>// requires std::is_base_of_v<Registry, T>
+        template< typename T = Registry> requires std::is_base_of_v<Registry, T>
         qor::ref_of<Registry>::type GetRegistry()
         {
             return new_ref<T>(InternalGetRegistry());
         }
 
-        Callback Sync();
-        //TODO:
-        void SetLogHandler(void(loghandlerfunc)(std::string&));
+        Callback Sync();        
+        void SetLogHandler(log_func_t handler);
         uint32_t GetProtocolError();        
 
     private:        

@@ -38,13 +38,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     class qor_pp_module_interface(QOR_LINXEGL) XEGLSurface : public qor::components::EGLSurface
     {
     public:
-        XEGLSurface(qor::ref_of<qor::components::EGLDisplay>::type display, void* config, void* nativeWindow, int32_t* attributes);
+        XEGLSurface(qor::ref_of<qor::components::EGLDisplay>::type display, void* nativeWindow, int32_t* attributes);
         virtual ~XEGLSurface();
-        
-    protected:
-
-        qor::ref_of<qor::components::EGLDisplay>::type m_display;
-        void* m_surface;
     };
 
 }}}}//qor::platform::nslinux::x

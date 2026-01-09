@@ -142,24 +142,24 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         return new_ref<Keyboard>(wl_seat_get_keyboard(m_seat));
     }
 
-    Pointer Seat::GetPointer()
+    ref_of<Pointer>::type Seat::GetPointer()
     {
         if(!m_seat)
         {
             warning("Getting Pointer from Seat with null wl_seat pointer");
-            return Pointer(nullptr);
+            return new_ref<Pointer>(nullptr);
         }
-        return Pointer(wl_seat_get_pointer(m_seat));
+        return new_ref<Pointer>(wl_seat_get_pointer(m_seat));
     }
 
-    Touch Seat::GetTouch()
+    ref_of<Touch>::type Seat::GetTouch()
     {
         if(!m_seat)
         {
             warning("Getting Touch from Seat with null wl_seat pointer");
-            return Touch(nullptr);
+            return new_ref<Touch>(nullptr);
         }
-        return Touch(wl_seat_get_touch(m_seat));
+        return new_ref<Touch>(wl_seat_get_touch(m_seat));
     }
 
     void Seat::Release()

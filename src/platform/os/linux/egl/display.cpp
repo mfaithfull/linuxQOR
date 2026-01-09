@@ -24,72 +24,27 @@
 
 #include "src/configuration/configuration.h"
 
+#include "src/qor/error/error.h"
+#include "src/qor/interception/functioncontext.h"
+
 #include "display.h"
-#include "context.h"
-#include "window.h"
 
 namespace qor{ namespace platform { namespace nslinux{
 
-    EglDisplay::EglDisplay() : qor::components::EGLDisplay()
+    EglDisplay::EglDisplay() : qor::components::EGLDisplay(), m_initialized(false)
     {
-        m_nativeWindow = new EglWindow("Default", 320, 200);
-        m_display = EGL::StaticGetDisplay((EGLNativeDisplayType)(m_nativeWindow->GetNativeDisplay()));
-        if( m_display == nullptr)
-        {
-            //TODO: error
-        }
-        else
-        {
-            if(!Initialize())
-            {
-                /*
-                EGL_BAD_DISPLAY is generated if display is not an EGL display connection.
-
-                EGL_NOT_INITIALIZED is generated if display cannot be initialized.*/
-            }
-        }
+        m_display = EGL::StaticGetDisplay((EGLNativeDisplayType)EGL_DEFAULT_DISPLAY);
     }
 
-    EglDisplay::EglDisplay(void* nativeDisplay) : qor::components::EGLDisplay(nativeDisplay)
+    EglDisplay::EglDisplay(void* nativeDisplay) : qor::components::EGLDisplay(), m_initialized(false)
     {
-        m_major = 0;
-        m_minor = 0;        
-        m_nativeWindow = nullptr;
-        m_display = EGL::StaticGetDisplay((EGLNativeDisplayType)nativeDisplay);
-        
-        if( m_display == nullptr)
-        {
-            //TODO: error
-        }
-        else
-        {
-            if(!Initialize())
-            {
-                /*
-                EGL_BAD_DISPLAY is generated if display is not an EGL display connection.
-
-                EGL_NOT_INITIALIZED is generated if display cannot be initialized.*/
-            }
-        }
+        SetNativeDisplay(nativeDisplay);
     }
 
-    EglDisplay::EglDisplay(EGLenum platform, void* nativeDisplay, const intptr_t* attrib_list) : qor::components::EGLDisplay(platform, nativeDisplay, attrib_list)
+    void EglDisplay::SetNativeDisplay(void* nativeDisplay)
     {
-        m_display = EGL::StaticGetPlatformDisplay(platform, nativeDisplay, attrib_list);
-        if(m_display == nullptr)
-        {
-            //TODO: error
-        }
-        else
-        {
-            if(!Initialize())
-            {
-                /*
-                EGL_BAD_DISPLAY is generated if display is not an EGL display connection.
-
-                EGL_NOT_INITIALIZED is generated if display cannot be initialized.*/                
-            }
-        }
+        qor_pp_fcontext;
+        m_display = EGL::StaticGetDisplay((EGLNativeDisplayType)(nativeDisplay));
     }
 
     EglDisplay::~EglDisplay()
@@ -100,163 +55,204 @@ namespace qor{ namespace platform { namespace nslinux{
         }
     }
 
+    void EglDisplay::CheckStatus()
+    {
+        EGLint lastError = EGL::StaticGetError();
+        if (lastError != EGL_SUCCESS)
+        {
+            continuable("EGL Error ({0}).\n", lastError);
+        }
+    }
+
     bool EglDisplay::Initialize()
     {
-        return EGL::StaticInitialize(m_display, &m_major, & m_minor);
+        qor_pp_fcontext;
+        if(!m_initialized)
+        {
+            m_initialized = EGL::StaticInitialize(m_display, &m_major, & m_minor);
+            qor::components::EGLDisplay::Initialize();
+            CheckStatus();        
+        }
+        return m_initialized;
     }
 
     bool EglDisplay::Terminate()
     {
+        qor_pp_fcontext;
         return EGL::StaticTerminate(m_display);
     }
 
     bool EglDisplay::ChooseConfig(const int32_t* attrib_list, void** configs, int32_t config_size, int32_t* num_config)
     {
+        qor_pp_fcontext;
         return EGL::StaticChooseConfig(m_display, attrib_list, configs, config_size, num_config);
     }
 
     bool EglDisplay::CopyBuffers(void* surface, void* target)
     {
+        qor_pp_fcontext;
         return EGL::StaticCopyBuffers(m_display, surface, (EGLNativePixmapType)(target));
     }
 
     void* EglDisplay::InternalCreateContext(void* config, void* share_context, const int32_t *attrib_list)
     {
+        qor_pp_fcontext;
         return EGL::StaticCreateContext(m_display, config, share_context, attrib_list);
     }
 
-    //ref_of<qor::components::EGLContext>::type EglDisplay::CreateContext(void* config, void* share_context, const int32_t *attrib_list)
-    //{
-    //   return new_ref<EglContext>(display, config, share_context, attrib_list);
-    //}
-
     void* EglDisplay::CreatePbufferSurface(void* config, const int32_t *attrib_list)
     {
+        qor_pp_fcontext;
         return EGL::StaticCreatePbufferSurface(m_display, config, attrib_list);
     }
 
     void* EglDisplay::CreatePixmapSurface(void* config, void* pixmap, const int32_t *attrib_list)
     {
+        qor_pp_fcontext;
         return EGL::StaticCreatePixmapSurface(m_display, config, (EGLNativePixmapType)(pixmap), attrib_list);
     }
 
     void* EglDisplay::CreateWindowSurface(void* config, void* win, const int32_t *attrib_list)
     {
+        qor_pp_fcontext;
         return EGL::StaticCreateWindowSurface(m_display, config, (EGLNativeWindowType)(win), attrib_list);
     }
 
     bool EglDisplay::InternalDestroyContext(void* ctx)
     {
+        qor_pp_fcontext;
         return EGL::StaticDestroyContext(m_display, ctx);
     }
 
-    bool EglDisplay::DestroySurface(void* surface)
+    bool EglDisplay::InternalDestroySurface(void* surface)
     {
+        qor_pp_fcontext;
         return EGL::StaticDestroySurface(m_display, surface);
     }
 
     bool EglDisplay::GetConfigAttrib(void* config, int32_t attribute, int32_t *value)
     {
+        qor_pp_fcontext;
         return EGL::StaticGetConfigAttrib(m_display, config, attribute, value);
     }
 
     bool EglDisplay::GetConfigs(void* *configs, int32_t config_size, int32_t *num_config)
     {
+        qor_pp_fcontext;
         return EGL::StaticGetConfigs(m_display, configs, config_size, num_config);
     }
 
     bool EglDisplay::InternalMakeCurrent(void* draw, void* read, void* ctx)
     {
+        qor_pp_fcontext;
         return EGL::StaticMakeCurrent(m_display, draw, read, ctx);
     }
 
     bool EglDisplay::InternalQueryContext(void* ctx, int32_t attribute, int32_t *value)
     {
+        qor_pp_fcontext;
         return EGL::StaticQueryContext(m_display, ctx, attribute, value);
     }
 
     const char* EglDisplay::QueryString(int32_t name)
     {
+        qor_pp_fcontext;
         return EGL::StaticQueryString(m_display, name);
     }
 
     bool EglDisplay::QuerySurface(void* surface, int32_t attribute, int32_t *value)
     {
+        qor_pp_fcontext;
         return EGL::StaticQuerySurface(m_display, surface, attribute, value);
     }
 
     bool EglDisplay::SwapBuffers(void* surface)
     {
+        qor_pp_fcontext;
         return EGL::StaticSwapBuffers(m_display, surface);
     }
 
     bool EglDisplay::BindTexImage(void* surface, int32_t buffer)
     {
+        qor_pp_fcontext;
         return EGL::StaticBindTexImage(m_display, surface, buffer);
     }
 
     bool EglDisplay::ReleaseTexImage(void* surface, int32_t buffer)
     {
+        qor_pp_fcontext;
         return EGL::StaticReleaseTexImage(m_display, surface, buffer);
     }
 
     bool EglDisplay::SurfaceAttrib(void* surface, int32_t attribute, int32_t value)
     {
+        qor_pp_fcontext;
         return EGL::StaticSurfaceAttrib(m_display, surface, attribute, value);
     }
 
     bool EglDisplay::SwapInterval(int32_t interval)
     {
+        qor_pp_fcontext;
         return EGL::StaticSwapInterval(m_display, interval);
     }
 
     void* EglDisplay::CreatePbufferFromClientBuffer(unsigned int buftype, void* buffer, void* config, const int32_t *attrib_list)
     {
+        qor_pp_fcontext;
         return EGL::StaticCreatePbufferFromClientBuffer(m_display, buftype, buffer, config, attrib_list);
     }
 
     void* EglDisplay::CreateSync(unsigned int type, const intptr_t *attrib_list)
     {
+        qor_pp_fcontext;
         return EGL::StaticCreateSync(m_display, type, attrib_list);
     }
 
     bool EglDisplay::DestroySync(void* sync)
     {
+        qor_pp_fcontext;
         return EGL::StaticDestroySync(m_display, sync);
     }
 
     int32_t EglDisplay::ClientWaitSync(void* sync, int32_t flags, unsigned long long timeout)
     {
+        qor_pp_fcontext;
         return EGL::StaticClientWaitSync(m_display, sync, flags, timeout);
     }
 
     bool EglDisplay::GetSyncAttrib(void* sync, int32_t attribute, intptr_t *value)
     {
+        qor_pp_fcontext;
         return EGL::StaticGetSyncAttrib(m_display, sync, attribute, value);
     }
 
     void* EglDisplay::InternalCreateImage(void* ctx, unsigned int target, void* buffer, const intptr_t *attrib_list)
     {
+        qor_pp_fcontext;
         return EGL::StaticCreateImage(m_display, ctx, target, buffer, attrib_list);
     }
 
     bool EglDisplay::DestroyImage(void* image)
     {
+        qor_pp_fcontext;
         return EGL::StaticDestroyImage(m_display, image);
     }
 
     void* EglDisplay::CreatePlatformWindowSurface(void* config, void *native_window, const intptr_t *attrib_list)
     {
+        qor_pp_fcontext;
         return EGL::StaticCreatePlatformWindowSurface(m_display, config, native_window, attrib_list);
     }
 
     void* EglDisplay::CreatePlatformPixmapSurface(void* config, void *native_pixmap, const intptr_t *attrib_list)
     {
+        qor_pp_fcontext;
         return EGL::StaticCreatePlatformPixmapSurface(m_display, config, native_pixmap, attrib_list);
     }
 
     bool EglDisplay::WaitSync(void* sync, int32_t flags)
     {
+        qor_pp_fcontext;
         return EGL::StaticWaitSync(m_display, sync, flags);
     }
 
