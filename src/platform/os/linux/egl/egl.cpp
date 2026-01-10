@@ -25,9 +25,22 @@
 #include "src/configuration/configuration.h"
 
 #include "src/qor/error/error.h"
-
+#include "src/framework/application/application_builder.h"
+#include "src/platform/os/linux/x/egl/eglsession.h"
+#include "src/platform/os/linux/x/egl/eglwindow.h"
+#include "src/platform/os/linux/x/xlib/xlib.h"
 #include "egl.h"
 #include "display.h"
+#include "src/platform/os/linux/wayland/client/client.h"
+#include "src/platform/os/linux/wayland/client/display.h"
+#include "src/platform/os/linux/wayland/client/surface.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgsurface.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgsession.h"
+#include "src/platform/os/linux/wayland/egl/eglwindow.h"
+
 
 namespace qor{ bool qor_pp_module_interface(QOR_LINEGL) ImplementsEGLFeature() { return true; } }//qor
 
@@ -408,6 +421,36 @@ namespace qor{ namespace platform { namespace nslinux{
     ref_of<qor::components::EGLDisplay>::type EGL::CreateDisplay(void* nativeDisplay)
     {
         return new_ref<EglDisplay>(nativeDisplay);
+    }
+
+    ref_of<qor::components::EGLSession>::type EGL::CreateSession(qor::components::EGLPlatformHint hint)
+    {
+        if(hint == qor::components::EGLPlatformHint::X)
+        {
+            auto xClient = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<XClient>();
+            auto xDisplay = xClient(qor_shared).GetDisplay(":0");
+            auto eglDisplay = new_ref<EglDisplay>((void*)0x31D5);//EGL_PLATFORM_X11_KHR
+            return new_ref<qor::components::EGLSessionWrapper<x::XEGLSession, EglDisplay>>(xDisplay, eglDisplay);            
+        }
+        else
+        {            
+            auto waylandClient = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<WaylandClient>();
+            auto waylandDisplay = waylandClient(qor_shared).GetDisplay();              //Get the default local display
+            auto eglDisplay = new_ref<EglDisplay>((void*)0x31D8);//EGL_PLATFORM_WAYLAND_KHR
+            return new_ref<qor::components::EGLSessionWrapper<wl::XDGSession, EglDisplay>>(waylandDisplay, eglDisplay);    
+        }                
+    }
+
+    ref_of<qor::components::EGLWindow>::type EGL::CreateWindow(ref_of<qor::components::EGLSession>::type session, std::vector<int32_t>& contextAttributes, int x, int y, uint32_t width, uint32_t height)
+    {
+        if(session->GetPlatform() == qor::components::EGLPlatformHint::X)
+        {
+            return new_ref<qor::components::EGLWindowWrapper<x::XEGLWindow>>(session, contextAttributes, x,y,width,height); //Create and make current an EGL surfaced X Window
+        }
+        else
+        {
+            return new_ref<qor::components::EGLWindowWrapper<wl::WEGLWindow>>(session, contextAttributes, x,y,width,height);
+        }
     }
 
 }}}//qor::platform::nslinux

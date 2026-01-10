@@ -51,4 +51,9 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         return m_display;
     }
 
+    qor::components::EGLPlatformHint XEGLSession::GetPlatform()
+    {
+        return qor::components::EGLPlatformHint::X;
+    }
+
 }}}}//qor::platform::nslinux::x

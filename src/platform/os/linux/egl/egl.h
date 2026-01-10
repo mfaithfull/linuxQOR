@@ -32,6 +32,7 @@
 #include "src/components/framework/ui/egl/display.h"
 #include "src/components/framework/ui/egl/context.h"
 #include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/egl/session.h"
 #include <EGL/egl.h>
 
 namespace qor{ bool qor_pp_module_interface(QOR_LINEGL) ImplementsEGLFeature(); }
@@ -134,8 +135,10 @@ namespace qor{ namespace platform { namespace nslinux{
         virtual void* GetCurrentSurface(int32_t readdraw);
         virtual int32_t GetError(void);
 
+        virtual ref_of<qor::components::EGLSession>::type CreateSession(qor::components::EGLPlatformHint hint);
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay();
         virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(void* nativeDisplay);
+        virtual ref_of<qor::components::EGLWindow>::type CreateWindow(ref_of<qor::components::EGLSession>::type session, std::vector<int32_t>& contextAttributes, int x, int y, uint32_t width, uint32_t height);
 
     };
 

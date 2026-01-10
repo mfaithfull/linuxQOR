@@ -42,6 +42,8 @@
 #include "src/platform/os/linux/x/xlib/window.h"
 #include "src/platform/os/linux/x/xlib/font.h"
 
+#include "src/platform/os/linux/egl/display.h"
+
 using namespace qor::platform::nslinux;
 using namespace qor::components;
 
@@ -60,10 +62,12 @@ int xanadu()
     auto egl            = GetFeature<EGLFeature>();
     auto opengles       = GetFeature<OpenGLESFeature>();
     auto display        = xClient(qor_shared).GetDisplay(":0");
-    auto session        = qor::new_ref<EGLSessionWrapper<qor::platform::nslinux::x::XEGLSession>>(display);
+    auto session        = qor::new_ref<EGLSessionWrapper<x::XEGLSession, EglDisplay>>(display);
 
     std::vector<int32_t> contextAttributes = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
-    auto eglWindow      = qor::new_ref<EGLWindowWrapper<qor::platform::nslinux::x::XEGLWindow>>(session, contextAttributes, 100,100,640,480); //Create and make current an EGL surfaced X Window
+    auto eglWindow      = qor::new_ref<EGLWindowWrapper<x::XEGLWindow>>(session, contextAttributes, 100,100,640,480); //Create and make current an EGL surfaced X Window
+    eglWindow->DoConfiguration();
+    
     //eltKeyboardController keyController(session, session->GetKeyboard());                 //Catch Escape key to break the loop
     return session->Run();
 }

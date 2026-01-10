@@ -84,9 +84,9 @@ namespace qor { namespace components{
         return 0;
     }
 
-    qor::ref_of<qor::components::EGLSession>::type EGLFeature::CreateSession()
-    {
-        return new_ref<EGLSession>(CreateDisplay());
+    qor::ref_of<qor::components::EGLSession>::type EGLFeature::CreateSession(EGLPlatformHint hint)
+    {        
+        return qor::ref_of<qor::components::EGLSession>::type();
     }
 
     qor::ref_of<qor::components::EGLDisplay>::type EGLFeature::CreateDisplay()
@@ -98,17 +98,10 @@ namespace qor { namespace components{
     {
         return new_ref<EGLDisplay>(nativeDisplay);
     }
-    /*
-    qor::ref_of<qor::components::EGLDisplay>::type EGLFeature::CreateDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list)
+
+    qor::ref_of<EGLWindow>::type EGLFeature::CreateWindow(ref_of<EGLSession>::type session, std::vector<int32_t>& contextAttributes, int x, int y, uint32_t width, uint32_t height)
     {
-        return new_ref<EGLDisplay>(platform, nativeDisplay, attrib_list);
+        return new_ref<EGLWindow>();
     }
-    */
-    /*
-    qor::ref_of<qor::components::EGLWindow>::type EGLFeature::CreateNativeWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height)
-    {
-        return new_ref<EGLWindow>(display, context, title, width, height);
-    }
-    */
 
 }}//qor::components

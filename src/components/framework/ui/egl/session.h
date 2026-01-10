@@ -28,6 +28,7 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "display.h"
+#include "egl.h"
 
 namespace qor { namespace components{
 
@@ -51,18 +52,28 @@ namespace qor { namespace components{
             return m_eglDisplay;
         }
 
+        virtual EGLPlatformHint GetPlatform()
+        {
+            return Wayland;
+        }
+
     protected:
 
         ref_of<EGLDisplay>::type m_eglDisplay;        
     };
 
-    template<class NativeSession>
+    template<class NativeSession, class PlatformEGLDisplay>
     class EGLSessionWrapper : public NativeSession, public EGLSession
     {
     public:
 
         template<class NativeDisplayRef>
-        EGLSessionWrapper(NativeDisplayRef nativeDisplay) : NativeSession(nativeDisplay), EGLSession(new_ref<EGLDisplay>(NativeSession::GetDisplay()->Use()))
+        EGLSessionWrapper(NativeDisplayRef nativeDisplay) : NativeSession(nativeDisplay), EGLSession(new_ref<PlatformEGLDisplay>(NativeSession::GetDisplay()->Use()))
+        {
+        }
+
+        template<class NativeDisplayRef>
+        EGLSessionWrapper(NativeDisplayRef nativeDisplay, ref_of<PlatformEGLDisplay>::type eglDisplay) : NativeSession(nativeDisplay), EGLSession(eglDisplay)
         {
         }
 

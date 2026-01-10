@@ -27,6 +27,7 @@
 #include "src/components/framework/ui/egl/display.h"
 #include "src/components/framework/ui/egl/context.h"
 #include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/egl/session.h"
 
 #include <string>
 #include <sstream>
@@ -62,19 +63,21 @@ int main()
                 GetFeature(&EGLFeatureGUID).
                 AsRef<qor::components::EGLFeature>();
                 
-                auto display = egl->CreateDisplay();
+                auto session = egl->CreateSession(qor::components::EGLPlatformHint::Wayland);                
+                auto display = session->GetEGLDisplay();
                 display->Initialize();
                 
-              	int32_t surfaceAttributes[] = { EGL_NONE };
-            	int32_t contextAttributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-
-                auto context = new_ref<qor::components::EGLContext>(display, nullptr, contextAttributes);
+              	//int32_t surfaceAttributes[] = { EGL_NONE };
+            	std::vector<int32_t> contextAttributes { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
                 std::string title("EGL Test");
-                //int width = 640;
-                //int height = 480;
-                //auto window = egl->CreateNativeWindow(display, context, title, width, height);
 
-                auto surface = display->CreateWindowSurface(display->GetConfig(), nullptr/*window->GetNativeWindow()*/, surfaceAttributes);
+                int x = 100;
+                int y = 100;
+                int width = 640;
+                int height = 480;
+                auto window = egl->CreateWindow(display, contextAttributes, x, y, width, height);
+
+                //auto surface = display->CreateWindowSurface(display->GetConfig(), nullptr/*window->GetNativeWindow()*/, surfaceAttributes);
 
                 std::cout << "EGL Version = " << display->QueryString(EGL_VERSION) << "\n";
                 std::cout << "EGL Vendor = " << display->QueryString(EGL_VENDOR) << "\n";
@@ -105,9 +108,10 @@ int main()
 
                 delete configs;
 
-                context->MakeCurrent(surface, surface);
+                //context->MakeCurrent(surface, surface);
 
-                display->SwapBuffers(surface);
+                window->Present();
+                //display->SwapBuffers(surface);
 
                 return EXIT_SUCCESS;
             }

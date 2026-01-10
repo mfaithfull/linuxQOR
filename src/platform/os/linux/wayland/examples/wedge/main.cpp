@@ -31,8 +31,6 @@
 #include <string.h>
 
 #include "sdk/using_framework.h"
-#include "sdk/platform/os/linux/wayland.h"
-#include "src/platform/os/linux/wayland/egl/eglwindow.h"
 #include "src/components/framework/ui/egl/egl.h"
 #include "src/components/framework/ui/egl/display.h"
 #include "src/components/framework/ui/egl/context.h"
@@ -40,7 +38,10 @@
 #include "src/components/framework/ui/egl/session.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
+#include "src/components/framework/ui/renderer/thor.h"
 
+#include "sdk/platform/os/linux/wayland.h"
+#include "src/platform/os/linux/wayland/egl/eglwindow.h"
 #include "src/platform/os/linux/egl/display.h"
 
 using namespace qor::platform::nslinux;
@@ -50,30 +51,41 @@ class CustomWindow : public EGLWindowWrapper<wl::WEGLWindow>
 {
 public:
 
-    CustomWindow(ref_of<EGLSessionWrapper<wl::XDGSession>>::type session, const std::vector<int32_t>& contextAttributes, int x, int y, unsigned int width, unsigned int height) : 
+    CustomWindow(ref_of<EGLSessionWrapper<wl::XDGSession, EglDisplay>>::type session, const std::vector<int32_t>& contextAttributes, int x, int y, unsigned int width, unsigned int height) : 
         qor::components::EGLWindowWrapper<wl::WEGLWindow>(session, contextAttributes, x, y, width, height), m_session(session)
     {
-        m_gl = GetFeature<OpenGLESFeature>();                
+        m_canvas = nullptr;
+        m_gl = GetFeature<OpenGLESFeature>();                        
         SetWidth(width);
         SetHeight(height);
         DoConfiguration();//Need to this for every XDGWindow to connect up the callbacks to our derived class
-
-        Resize();
+                
+        m_canvas = ui::renderer::GlCanvas::gen(m_gl);
+        auto shape3 = ui::renderer::Shape::gen();
+        shape3->appendCircle(200, 200, 150, 100);    //cx, cy, radiusW, radiusH
+        shape3->fill(0, 255, 255);                   //r, g, b
+        m_canvas->push(shape3);
+        
         DrawFrame();
     }
 
     virtual ~CustomWindow()
     {        
+        delete m_canvas;
     }
 
-    void Resize()
-    {
-        m_gl->Viewport(0,0, m_width, m_height);
+    virtual void OnResize()//Override to handle resize happing to this window, e.g. from a Window Manager
+    {   
+        if(m_canvas)
+        {
+            static_cast<ui::renderer::GlCanvas*>(m_canvas)->target(m_eglContext->Use(), 0, m_width, m_height, ui::renderer::ColorSpace::ABGR8888S);         
+        }
     }
 
     void DrawFrame(uint32_t serial = 0)
     {        
-        m_gl->ClearColour(0, 0, 0, 0);
+        m_canvas->draw(true);
+        m_canvas->sync();
         Present();
     }
 
@@ -88,7 +100,7 @@ public:
         {
             m_width = new_width;
             m_height = new_height;
-            Resize();
+            OnResize();
         }
     }
 
@@ -97,9 +109,9 @@ public:
         m_session->End();
     }
     
-    ref_of<EGLSessionWrapper<wl::XDGSession>>::type m_session;    
+    ref_of<EGLSessionWrapper<wl::XDGSession, EglDisplay>>::type m_session;    
     ref_of<OpenGLESFeature>::type m_gl;
-
+    ui::renderer::Canvas* m_canvas;
 };
 
 class customKeyboardController : public wl::KeyboardController
@@ -128,9 +140,9 @@ protected:
     wl::XDGSession* m_session;    
 };
 
-int waylandExampleRun(ref_of<EGLSessionWrapper<wl::XDGSession>>::type session)
+int waylandExampleRun(ref_of<EGLSessionWrapper<wl::XDGSession, EglDisplay>>::type session)
 {
-    std::vector<int32_t> contextAttributes = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
+    std::vector<int32_t> contextAttributes = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
     auto window = new_ref<CustomWindow>(session,contextAttributes, 100, 100, 640, 480);     //Create a Top Level EGL window
     window->SetTitle("Wayland EGL Example");                            //Set window properties    
     customKeyboardController keycon(session, session->GetKeyboard());   //Setup a Keyboard controller to catch Esc and quit the Session    
@@ -149,7 +161,7 @@ int waylandExampleCommon()
 {
     auto waylandClient = GetFeature<WaylandClient>();                   //Get a reference to the Wayland Client feature
     auto display = waylandClient(qor_shared).GetDisplay();              //Get the default local display
-    auto session = new_ref<EGLSessionWrapper<wl::XDGSession>>(display);        //Create an EGL enabled Session over a Wayland XDG Session
+    auto session = new_ref<EGLSessionWrapper<wl::XDGSession, EglDisplay>>(display);        //Create an EGL enabled Session over a Wayland XDG Session
     return waylandExampleRun(session);
 }
 

@@ -54,6 +54,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
         virtual int Run();
 
         qor::ref_of<Display>::type GetDisplay();
+        qor::components::EGLPlatformHint GetPlatform();
         
     protected:
         bool m_ended;

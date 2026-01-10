@@ -67,13 +67,6 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
             Map();
             m_display->Flush();
-            Event event;  
-            while (1) 
-            {  
-                m_display->NextEvent(event);
-                if (event.type == MapNotifyType) break;  
-            }
-
         }
 
         virtual ~UndecoratedMainWindow()

@@ -38,9 +38,10 @@ namespace qor { namespace components{
     {
     public:
 
+        EGLWindow() {}//do not call
         EGLWindow(qor::ref_of<EGLDisplay>::type eglDisplay, const std::vector<int32_t>& contextAttributes) : m_eglDisplay(eglDisplay)
         {
-            m_eglContext = new_ref<qor::components::EGLContext>(m_eglDisplay, nullptr, contextAttributes.data());
+            m_contextAttributes = contextAttributes;
         }
 
         virtual ~EGLWindow()
@@ -65,12 +66,14 @@ namespace qor { namespace components{
     protected:
 
         void Initialize(void* nativeWindow)
-        {            
+        {           
+            m_eglContext = new_ref<qor::components::EGLContext>(m_eglDisplay, nullptr, m_contextAttributes.data());
             int32_t surfaceAttributes[] = { EGL_NONE };
             m_eglSurface = m_eglDisplay->CreateWindowSurface(m_eglDisplay->GetConfig(), nativeWindow, surfaceAttributes);
             m_eglContext->MakeCurrent(m_eglSurface, m_eglSurface);
         }
 
+        std::vector<int32_t> m_contextAttributes;
         qor::ref_of<EGLDisplay>::type m_eglDisplay;
         qor::ref_of<EGLContext>::type m_eglContext;
         void* m_eglSurface;

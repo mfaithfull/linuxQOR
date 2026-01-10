@@ -41,6 +41,13 @@ namespace qor { namespace components{
     class qor_pp_module_interface(QOR_EGL) EGLContext;
     class qor_pp_module_interface(QOR_EGL) EGLWindow;
 
+    enum EGLPlatformHint
+    {
+        Wayland,
+        X,
+        Win32
+    };
+
     class qor_pp_module_interface(QOR_EGL) EGLFeature : public framework::IFeature
     {
     public:
@@ -63,12 +70,10 @@ namespace qor { namespace components{
         virtual void* GetCurrentDisplay(void);
         virtual void* GetCurrentSurface(int32_t readdraw);
         virtual int32_t GetError(void);
-        virtual ref_of<qor::components::EGLSession>::type CreateSession();
-        virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay();
-        virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(void* nativeDisplay);
-        //virtual ref_of<qor::components::EGLDisplay>::type CreateDisplay(unsigned int platform, void* nativeDisplay, const intptr_t* attrib_list);
-        //virtual ref_of<qor::components::EGLWindow>::type CreateNativeWindow(ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height);
-
+        virtual ref_of<EGLSession>::type CreateSession(EGLPlatformHint hint);
+        virtual ref_of<EGLDisplay>::type CreateDisplay();
+        virtual ref_of<EGLDisplay>::type CreateDisplay(void* nativeDisplay);
+        virtual ref_of<EGLWindow>::type CreateWindow(ref_of<EGLSession>::type session, std::vector<int32_t>& contextAttributes, int x, int y, uint32_t width, uint32_t height);
     };
     } //components
 
