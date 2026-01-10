@@ -29,7 +29,6 @@
 #include "src/components/framework/ui/egl/window.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
-#include "src/components/framework/ui/opengles/glwindow.h"
 
 #include <string>
 #include <sstream>
@@ -110,7 +109,7 @@ int main()
                 GetFeature(&OpenGLESFeatureGUID).
                 AsRef<qor::components::OpenGLESFeature>();
 
-                auto window = opengles->CreateWindow("OpenGL|ES Test", 800,600);
+                //auto window = opengles->CreateWindow("OpenGL|ES Test", 800,600);
 
                 void** configs;
                 int eglNumConfigs;
@@ -131,11 +130,11 @@ int main()
                     std::cout << "\n";
                 }
 
-                opengles->MakeCurrent(window);
+                //opengles->MakeCurrent(window);
                 
                 outputGLESInfo();
 
-                opengles->Display(qor_shared)->SwapBuffers(window->Surface());
+                //opengles->Display(qor_shared)->SwapBuffers(window->Surface());
 
                 return EXIT_SUCCESS;
             }

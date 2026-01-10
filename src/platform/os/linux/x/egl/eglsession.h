@@ -42,13 +42,23 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     class qor_pp_module_interface(QOR_LINXEGL) XEGLWindow;
 
-    class qor_pp_module_interface(QOR_LINXEGL) XEGLSession : public qor::components::EGLSession
+    class qor_pp_module_interface(QOR_LINXEGL) XEGLSession
     {
     public:
-        XEGLSession();
+        XEGLSession(ref_of<Display>::type display);
         virtual ~XEGLSession();
         
+        void End() { m_ended = true; }
+        bool Ended() { return m_ended; }
+
         virtual int Run();
+
+        qor::ref_of<Display>::type GetDisplay();
+        
+    protected:
+        bool m_ended;
+        ref_of<Display>::type m_display;
+        //TODO: Provide controllers at some level for devices
     };
 
 }}}}//qor::platform::nslinux::x

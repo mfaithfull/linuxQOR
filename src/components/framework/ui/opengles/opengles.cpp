@@ -30,7 +30,6 @@
 #include "src/components/framework/ui/egl/display.h"
 #include "src/components/framework/ui/egl/window.h"
 #include "src/components/framework/ui/egl/context.h"
-#include "glwindow.h"
 
 namespace qor { namespace components{
 
@@ -63,32 +62,6 @@ namespace qor { namespace components{
     unsigned int OpenGLESFeature::GetError()
     {
         return 0;
-    }
-
-    qor::ref_of<OpenGLESWindow>::type OpenGLESFeature::CreateWindow(const std::string& title, int width, int height)
-    {
-        qor::ref_of<OpenGLESWindow>::type glWindow;
-        auto egl = AppBuilder().TheApplication()->
-        GetRole(qor_shared)->
-        GetFeature(&EGLFeatureGUID).
-        AsRef<qor::components::EGLFeature>();
-
-        if(egl.IsNotNull())
-        {
-            qor::ref_of<EGLWindow>::type eglWindow = egl(qor_shared).CreateNativeWindow(m_display, m_context, title, width, height);
-            auto surface = m_display->CreateWindowSurface(m_config[0], eglWindow->GetNativeWindow(), nullptr);
-            glWindow = new_ref<OpenGLESWindow>(eglWindow, surface);
-        }
-        else
-        {
-            //OpenGLES requires working EGL
-        }
-        return glWindow;
-    }
-
-    bool OpenGLESFeature::MakeCurrent(qor::ref_of<OpenGLESWindow>::type openGLESWindow)
-    {
-        return m_context->MakeCurrent(openGLESWindow->Surface(), openGLESWindow->Surface());
     }
 
 }}//qor::components

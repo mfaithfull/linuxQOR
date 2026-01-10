@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_LINUX_X_WINDOWS_VISUAL
+#define QOR_PP_H_LINUX_X_WINDOWS_VISUAL
+
 #include <string>
 #include <format>
 #include <vector>
@@ -61,3 +64,5 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     };
 
 }}}}//qor::platform::nslinux::x
+
+#endif//QOR_PP_H_LINUX_X_WINDOWS_VISUAL

@@ -3,4 +3,4 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 add_subdirectory(registry)
 add_subdirectory(wedge)
-add_subdirectory(eglantine)
+#add_subdirectory(eglantine)

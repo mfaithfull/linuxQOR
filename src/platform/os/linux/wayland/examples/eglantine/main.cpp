@@ -26,16 +26,17 @@
 
 #include "sdk/using_framework.h"
 #include "src/platform/os/linux/wayland/client/client.h"
-
+#include "src/platform/os/linux/wayland/client/surface.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgsurface.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgpopuplistener.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
 #include "src/platform/os/linux/wayland/egl/eglwindow.h"
 #include "src/components/framework/ui/egl/egl.h"
+#include "src/components/framework/ui/egl/window.h"
 #include "src/components/framework/ui/egl/display.h"
 #include "src/components/framework/ui/opengles/opengles.h"
-#include "src/components/framework/ui/opengles/glwindow.h"
 
 #include "eltsession.h"
 #include "eltkeycontroller.h"

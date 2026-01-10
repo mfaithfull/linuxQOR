@@ -3,7 +3,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target qor_opengles)
 
-add_library(${target} SHARED qor_opengles.cpp opengles.cpp glwindow.cpp)
+add_library(${target} SHARED qor_opengles.cpp opengles.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

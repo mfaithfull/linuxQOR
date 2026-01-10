@@ -31,7 +31,6 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/workflow/workflow.h"
 #include "result.h"
-//#include "node.h"
 
 namespace qor { namespace components { namespace generator {
 

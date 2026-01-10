@@ -107,7 +107,7 @@ protected:
     uint8_t* pixels;
     wl::BufferListener buffer_listener[2];       
     ref_of<wl::XDGSession>::type m_session;
-    wl::Callback m_frameCallback;        
+    wl::Callback m_frameCallback;
     ref_of<wl::SharedMemoryPool>::type m_shmPool;
     ref_of<wl::Buffer>::type buffer[2];    
     unsigned int m_curBuffer;

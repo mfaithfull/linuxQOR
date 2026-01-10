@@ -30,27 +30,73 @@
 #include "src/qor/reference/newref.h"
 #include "display.h"
 #include "context.h"
+#include "constants.h"
 
 namespace qor { namespace components{
 
-    class qor_pp_module_interface(QOR_EGL) EGLWindow
+    class EGLWindow
     {
     public:
 
-        EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type);
-        EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type, qor::ref_of<EGLContext>::type context);
-        EGLWindow(qor::ref_of<qor::components::EGLDisplay>::type, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height);
-        virtual ~EGLWindow();
+        EGLWindow(qor::ref_of<EGLDisplay>::type eglDisplay, const std::vector<int32_t>& contextAttributes) : m_eglDisplay(eglDisplay)
+        {
+            m_eglContext = new_ref<qor::components::EGLContext>(m_eglDisplay, nullptr, contextAttributes.data());
+        }
 
-        virtual void* GetNativeDisplay();
-        virtual void* GetNativeWindow();
-        virtual void MakeCurrent(void* surface);
-        virtual void Refresh(void* surface);
+        virtual ~EGLWindow()
+        {            
+        }
+
+        virtual void Present()
+        {
+            m_eglDisplay->SwapBuffers(m_eglSurface);
+        }
+        
+        void MakeCurrent(void* surface)
+        {
+            m_eglDisplay(qor_shared).InternalMakeCurrent(surface, surface, m_eglContext->Use());
+        }
+
+        void Refresh(void* surface)
+        {
+            m_eglDisplay(qor_shared).SwapBuffers(surface);
+        }
 
     protected:
 
-        qor::ref_of<EGLDisplay>::type m_display;
-        qor::ref_of<EGLContext>::type m_context;
+        void Initialize(void* nativeWindow)
+        {            
+            int32_t surfaceAttributes[] = { EGL_NONE };
+            m_eglSurface = m_eglDisplay->CreateWindowSurface(m_eglDisplay->GetConfig(), nativeWindow, surfaceAttributes);
+            m_eglContext->MakeCurrent(m_eglSurface, m_eglSurface);
+        }
+
+        qor::ref_of<EGLDisplay>::type m_eglDisplay;
+        qor::ref_of<EGLContext>::type m_eglContext;
+        void* m_eglSurface;
+    };
+
+    template<class NativeWindow>
+    class EGLWindowWrapper : public NativeWindow, public EGLWindow
+    {
+    public:
+
+        template<class SessionRef>
+        EGLWindowWrapper(SessionRef sessionRef, const std::vector<int32_t>& contextAttributes, int x, int y, unsigned int width, unsigned int height) : 
+            NativeWindow(sessionRef, x, y, width, height), EGLWindow(sessionRef->GetEGLDisplay(), contextAttributes)
+        {                                    
+        }
+
+        virtual ~EGLWindowWrapper()
+        {            
+        }
+
+        virtual void DoConfiguration()
+        {
+            NativeWindow::DoConfiguration();
+            EGLWindow::Initialize(NativeWindow::Use());
+        }
+
     };
     
 }}//qor::components

@@ -22,22 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_DELEGATE_BIND_MEMBER
+#define QOR_PP_H_DELEGATE_BIND_MEMBER
 
-#include "eglsurface.h"
-#include "egldisplay.h"
+#include <functional>
 
-namespace qor{ namespace platform { namespace nslinux{ namespace x{
-
-    XEGLSurface::XEGLSurface(qor::ref_of<qor::components::EGLDisplay>::type display, void* nativeWindow, int32_t* surfaceAttributes) : qor::components::EGLSurface(display)
+namespace qor 
+{
+    //create a std::function out of a member function and an object
+    template <typename R, typename T, typename... Args>
+    std::function<R(Args...)> bindMemberFunction(R(T::* func)(Args...), T *t)
     {
-        auto xegldisplay = display.AsRef<XEGLDisplay>();
-        m_surface = xegldisplay->CreateWindowSurface(xegldisplay->GetConfig(), nativeWindow, surfaceAttributes);
+        return [func, t] (Args... args)
+        {
+            return (t->*func)(args...);
+        };
     }
+}
 
-    XEGLSurface::~XEGLSurface()
-    {
-    }
-
-}}}}//qor::platform::nslinux::x
+#endif//QOR_PP_H_DELEGATE_BIND_MEMBER

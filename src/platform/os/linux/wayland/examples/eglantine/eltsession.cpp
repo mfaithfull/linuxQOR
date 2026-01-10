@@ -23,10 +23,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
 #include <stdlib.h>
-
+#include "src/qor/module/module.h"
+#include "src/qor/interception/functioncontext.h"
 #include "eltsession.h"
+#include "src/platform/os/linux/wayland/client/surface.h"
+#include "src/platform/os/linux/wayland/xdgshell/xdgsurface.h"
 #include "src/platform/os/linux/wayland/egl/eglwindow.h"
 #include "src/platform/os/linux/wayland/xdgshell/xdgtoplevel.h"
 

@@ -33,19 +33,45 @@ namespace qor { namespace components{
 
     class qor_pp_module_interface(QOR_EGL) EGLDisplay;
 
-    class qor_pp_module_interface(QOR_EGL) EGLSession
+    class EGLSession
     {
     public:
+        
+        EGLSession(ref_of<EGLDisplay>::type eglDisplay) : m_eglDisplay(eglDisplay)
+        {
+            m_eglDisplay->Initialize();
+        }
 
-        EGLSession(ref_of<EGLDisplay>::type display);        
-        virtual ~EGLSession();
+        virtual ~EGLSession()
+        {
+        }
 
-        virtual ref_of<EGLDisplay>::type GetDisplay();
+        virtual ref_of<EGLDisplay>::type GetEGLDisplay()
+        {
+            return m_eglDisplay;
+        }
 
     protected:
 
         ref_of<EGLDisplay>::type m_eglDisplay;        
     };
+
+    template<class NativeSession>
+    class EGLSessionWrapper : public NativeSession, public EGLSession
+    {
+    public:
+
+        template<class NativeDisplayRef>
+        EGLSessionWrapper(NativeDisplayRef nativeDisplay) : NativeSession(nativeDisplay), EGLSession(new_ref<EGLDisplay>(NativeSession::GetDisplay()->Use()))
+        {
+        }
+
+        virtual ~EGLSessionWrapper()
+        {
+        }
+
+    };
+    
 }}//qor::components
 
 #endif//QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_SESSION

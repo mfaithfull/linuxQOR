@@ -27,7 +27,7 @@
 
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/components/framework/ui/opengles/glwindow.h"
+#include "src/components/framework/ui/egl/window.h"
 #include "src/components/framework/ui/renderer/thor.h"
 
 namespace qor { namespace components{
@@ -55,7 +55,7 @@ namespace qor { namespace components{
     private:
 
         qor::ref_of<EGLContext>::type m_eglContext;
-        qor::ref_of<OpenGLESWindow>::type m_window;
+        qor::ref_of<EGLWindow>::type m_window;
         ui::renderer::Canvas* m_canvas = nullptr;
 
         uint32_t width;

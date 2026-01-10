@@ -43,7 +43,7 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    WEGLWindow::WEGLWindow(ref_of<XDGSession>::type session) : XDGTopLevelWindow(session), m_eglWindow(nullptr)
+    WEGLWindow::WEGLWindow(ref_of<XDGSession>::type session, int x, int y, unsigned int width, unsigned int height) : XDGTopLevelWindow(session), m_eglWindow(nullptr)
     {
     }
 
@@ -82,7 +82,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     void WEGLWindow::OnXDGSurfaceConfigured()
     {
-        m_xdgSurface->BaseSurface()->Commit(); 
+        OnResize();
     }
 
     void WEGLWindow::OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states)
@@ -93,8 +93,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         {
 		    m_width = width;
 		    m_height = height;
-		    Resize(m_width, m_height, 0, 0);
-            m_xdgSurface->BaseSurface()->Commit();
+		    OnResize();
+            DrawFrame();
     	}        
     }
 

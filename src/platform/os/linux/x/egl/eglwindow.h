@@ -27,30 +27,79 @@
 
 #include <stdint.h>
 
-#include "src/components/framework/ui/egl/window.h"
-#include "src/components/framework/ui/egl/context.h"
+#include "src/platform/os/linux/x/xlib/window.h"
+#include "src/platform/os/linux/x/xlib/screen.h"
+#include "src/platform/os/linux/x/xlib/visual.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
     
-    class qor_pp_module_interface(QOR_LINX) Window;
+    class qor_pp_module_interface(QOR_LINXEGL) XEGLSession;
 
-    class qor_pp_module_interface(QOR_LINXEGL) XEGLSurface;
-    class qor_pp_module_interface(QOR_LINXEGL) XEGLContext;
+    class qor_pp_module_interface(QOR_LINXEGL) UndecoratedMainWindow : public Window
+    {
+    public:
+        UndecoratedMainWindow(ref_of<Display>::type display, int x, int y, unsigned int width, unsigned int height) : 
+            Window(display, display->DefaultRootWindow().GetId(), x, y, width, height, 0, 0, 0)
+        {
+            SetTitle("X Window");
 
-    class qor_pp_module_interface(QOR_LINXEGL) XEGLWindow : public qor::components::EGLWindow
+            //Make the decorations go away with a magic Motif incantation
+            std::string motifHintsAtomName("_MOTIF_WM_HINTS");
+            unsigned long motifWMHintsProperty = m_display->GetAtom(motifHintsAtomName.c_str());
+            MotifWmHints mhints = {0};
+            mhints.flags = MWM_HINTS_DECORATIONS;
+            mhints.decorations = 0;
+            ChangeProperty(motifWMHintsProperty, motifWMHintsProperty, 32, Window::PropModeReplace, (unsigned char*)(&mhints), sizeof(mhints)/sizeof(long));
+
+            int status = 0;
+            long validBitsOfReturn = 0;
+            WMSizeHints normalHints = GetNormalHints(validBitsOfReturn, status);
+            normalHints.ResetFlags();
+            normalHints.SetPosition(x,y);
+            normalHints.SetSize(width,height);
+            SetNormalHints(normalHints);
+
+            //we want window close notifications not a sighup that will kill the process.
+            auto wm_delete_window = m_display->GetAtom("WM_DELETE_WINDOW");
+            SetWMProtocols(&wm_delete_window, 1);
+
+            SelectInput(0x0FFF);//Give us all the events
+
+            Map();
+            m_display->Flush();
+            Event event;  
+            while (1) 
+            {  
+                m_display->NextEvent(event);
+                if (event.type == MapNotifyType) break;  
+            }
+
+        }
+
+        virtual ~UndecoratedMainWindow()
+        {
+
+        }
+    };
+
+    class qor_pp_module_interface(QOR_LINXEGL) XEGLWindow : public UndecoratedMainWindow
     {
     public:
 
-        XEGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display);
+        XEGLWindow(ref_of<XEGLSession>::type session, int x, int y, unsigned int width, unsigned int height);
         virtual ~XEGLWindow();
         XEGLWindow(const XEGLWindow&) = delete;
         XEGLWindow& operator=(const XEGLWindow&) = delete;
-        
-        virtual ref_of<Window>::type GetXWindow();
+        virtual void DoConfiguration();
+        void* Use();
 
-    private:
-        ref_of<Window>::type m_xwindow;
-        ref_of<XEGLSurface>::type m_surface;
+        virtual void OnResize()//Override to handle resize happening to this window, e.g. from the Window Manager
+        {            
+        }
+
+        virtual void DrawFrame()//Override to actually draw your frame and Swap the Buffers.
+        {            
+        }
         
     };
 

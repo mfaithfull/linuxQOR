@@ -104,9 +104,11 @@ namespace qor { namespace components{
         return new_ref<EGLDisplay>(platform, nativeDisplay, attrib_list);
     }
     */
+    /*
     qor::ref_of<qor::components::EGLWindow>::type EGLFeature::CreateNativeWindow(qor::ref_of<qor::components::EGLDisplay>::type display, qor::ref_of<EGLContext>::type context, const std::string& title, int width, int height)
     {
         return new_ref<EGLWindow>(display, context, title, width, height);
     }
+    */
 
 }}//qor::components

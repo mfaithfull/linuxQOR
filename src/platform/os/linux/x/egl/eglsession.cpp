@@ -32,7 +32,7 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-    XEGLSession::XEGLSession() : qor::components::EGLSession(new_ref<XEGLDisplay>())
+    XEGLSession::XEGLSession(ref_of<Display>::type display) : m_display(display)
     {        
     }
 
@@ -44,6 +44,11 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
     {
         //m_eglDisplay->SwapBuffers(m_surface);
         return 0;
+    }
+
+    qor::ref_of<Display>::type XEGLSession::GetDisplay()
+    {
+        return m_display;
     }
 
 }}}}//qor::platform::nslinux::x

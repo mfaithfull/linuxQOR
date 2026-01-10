@@ -37,33 +37,25 @@
 #include "src/components/framework/ui/egl/display.h"
 #include "src/components/framework/ui/egl/context.h"
 #include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/egl/session.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
 
-#include "src/platform/os/linux/egl/session.h"
 #include "src/platform/os/linux/egl/display.h"
 
 using namespace qor::platform::nslinux;
+using namespace qor::components;
 
-// helper to create a std::function out of a member function and an object
-template <typename R, typename T, typename... Args>
-std::function<R(Args...)> bind_mem_fn(R(T::* func)(Args...), T *t)
-{
-    return [func, t] (Args... args)
-    {
-        return (t->*func)(args...);
-    };
-}
-
-class CustomWindow : public EglWindow<wl::WEGLWindow>
+class CustomWindow : public EGLWindowWrapper<wl::WEGLWindow>
 {
 public:
 
-    CustomWindow(qor::ref_of<EGLSession<wl::XDGSession>>::type session, const std::vector<int32_t>& contextAttributes) : EglWindow<wl::WEGLWindow>(session, contextAttributes), m_session(session)
+    CustomWindow(ref_of<EGLSessionWrapper<wl::XDGSession>>::type session, const std::vector<int32_t>& contextAttributes, int x, int y, unsigned int width, unsigned int height) : 
+        qor::components::EGLWindowWrapper<wl::WEGLWindow>(session, contextAttributes, x, y, width, height), m_session(session)
     {
-        m_gl = GetFeature<qor::components::OpenGLESFeature>();                
-        SetWidth(640);
-        SetHeight(480);
+        m_gl = GetFeature<OpenGLESFeature>();                
+        SetWidth(width);
+        SetHeight(height);
         DoConfiguration();//Need to this for every XDGWindow to connect up the callbacks to our derived class
 
         Resize();
@@ -81,12 +73,7 @@ public:
 
     void DrawFrame(uint32_t serial = 0)
     {        
-        m_gl->ClearColour(200, 0, 0, 0);
-
-        m_frameCallback = m_xdgSurface->BaseSurface()->Frame();        
-        m_frameCallback.m_done = bind_mem_fn(&CustomWindow::DrawFrame, this);
-        m_frameCallback.AddDefaultListener();
-
+        m_gl->ClearColour(0, 0, 0, 0);
         Present();
     }
 
@@ -110,9 +97,8 @@ public:
         m_session->End();
     }
     
-    qor::ref_of<EGLSession<wl::XDGSession>>::type m_session;
-    wl::Callback m_frameCallback;
-    qor::ref_of<qor::components::OpenGLESFeature>::type m_gl;
+    ref_of<EGLSessionWrapper<wl::XDGSession>>::type m_session;    
+    ref_of<OpenGLESFeature>::type m_gl;
 
 };
 
@@ -142,10 +128,10 @@ protected:
     wl::XDGSession* m_session;    
 };
 
-int waylandExampleRun(ref_of<EGLSession<wl::XDGSession>>::type session)
+int waylandExampleRun(ref_of<EGLSessionWrapper<wl::XDGSession>>::type session)
 {
     std::vector<int32_t> contextAttributes = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
-    auto window = new_ref<CustomWindow>(session,contextAttributes);     //Create a Top Level EGL window
+    auto window = new_ref<CustomWindow>(session,contextAttributes, 100, 100, 640, 480);     //Create a Top Level EGL window
     window->SetTitle("Wayland EGL Example");                            //Set window properties    
     customKeyboardController keycon(session, session->GetKeyboard());   //Setup a Keyboard controller to catch Esc and quit the Session    
     
@@ -163,7 +149,7 @@ int waylandExampleCommon()
 {
     auto waylandClient = GetFeature<WaylandClient>();                   //Get a reference to the Wayland Client feature
     auto display = waylandClient(qor_shared).GetDisplay();              //Get the default local display
-    auto session = new_ref<EGLSession<wl::XDGSession>>(display);        //Create an EGL enabled Session over a Wayland XDG Session
+    auto session = new_ref<EGLSessionWrapper<wl::XDGSession>>(display);        //Create an EGL enabled Session over a Wayland XDG Session
     return waylandExampleRun(session);
 }
 
@@ -181,8 +167,8 @@ int main(int argc, char **argv)
         [](ref_of<IRole>::type role)
         {
             role->AddFeature<WaylandClient>();
-            role->AddFeature<qor::components::EGLFeature>();
-            role->AddFeature<qor::components::OpenGLESFeature>();
+            role->AddFeature<EGLFeature>();
+            role->AddFeature<OpenGLESFeature>();
         }
     ).Run(
         make_runable( 

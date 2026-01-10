@@ -27,58 +27,26 @@
 
 #include "eglwindow.h"
 #include "egldisplay.h"
-#include "eglsurface.h"
-#include "eglcontext.h"
-
-#include "src/platform/os/linux/x/xlib/window.h"
-#include "src/platform/os/linux/x/xlib/screen.h"
-#include "src/platform/os/linux/x/xlib/visual.h"
+#include "eglsession.h"
 
 namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
-    XEGLWindow::XEGLWindow(qor::ref_of<qor::components::EGLDisplay>::type display) : qor::components::EGLWindow(display)
+    XEGLWindow::XEGLWindow(qor::ref_of<XEGLSession>::type session, int x, int y, unsigned int width, unsigned int height) : 
+    UndecoratedMainWindow(session->GetDisplay(), x, y, width, height)
     {
-        auto xegldisplay = display.AsRef<XEGLDisplay>();
-        auto xdisplay = xegldisplay->GetXDisplay();
-        auto window = xdisplay->DefaultRootWindow();
-        auto screen = xdisplay->ScreenOfDisplay(xdisplay->DefaultScreen());
-        auto screenRootWindow = screen.RootWindow();
-        
-        SetWindowAttributes xwa;  
-        xwa.background_pixel = xdisplay->BlackPixel(xdisplay->DefaultScreen());  
-        xwa.border_pixel = xdisplay->WhitePixel(xdisplay->DefaultScreen());  
-        xwa.event_mask = StructureNotifyMask;  
-
-        m_context = new_ref<XEGLContext>(display);
-
-        auto visual = screen.DefaultVisual();
-        // Create a window  
-        m_xwindow = new_ref<Window>(xdisplay, screenRootWindow.GetId(), 0, 0, 800, 600, 0, screen.DefaultDepth(), InputOutput, &visual, CWBackPixel | CWBorderPixel | CWEventMask, xwa);
-
-        m_xwindow->Map();
-        xdisplay->Flush();
-          
-        // Wait for the window to be mapped (visible)
-        Event event;  
-        while (1) 
-        {  
-            xdisplay->NextEvent(event);
-            if (event.type == MapNotifyType) break;  
-        }
-
-        int32_t surfaceAttributes[] = { EGL_NONE };
-        m_surface = new_ref<XEGLSurface>(display, (void*)(m_xwindow->GetId()), surfaceAttributes);       
-
-        m_context->MakeCurrent(m_surface, m_surface);
     }
 
     XEGLWindow::~XEGLWindow()
     {        
     }
 
-    ref_of<Window>::type XEGLWindow::GetXWindow()
+    void XEGLWindow::DoConfiguration()
     {
-        return m_xwindow;
+    }
+
+    void* XEGLWindow::Use()
+    {
+        return (void*)(GetId());
     }
 
 }}}}//qor::platform::nslinux::x

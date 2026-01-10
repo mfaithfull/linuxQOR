@@ -29,7 +29,9 @@
 
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "src/qor/interception/functioncontext.h"
 
+#include "src/platform/os/linux/wayland/client/callback.h"
 #include "src/platform/os/linux/wayland/xdgshell/xdgtoplevelwindow.h"
 
 struct wl_egl_window;
@@ -40,7 +42,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     {
     public:
 
-        WEGLWindow(ref_of<XDGSession>::type session);        
+        WEGLWindow(ref_of<XDGSession>::type session, int x, int y, unsigned int width, unsigned int height);
         virtual ~WEGLWindow();
         WEGLWindow(const WEGLWindow&) = delete;
         WEGLWindow& operator=(const WEGLWindow&) = delete;
@@ -53,7 +55,38 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
         virtual void OnXDGSurfaceConfigured();
         virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);
-                
+        
+        virtual void OnResize()//Override to handle resize happing to this window, e.g. from a Window Manager
+        {            
+        }
+       
+        virtual void BindFrameCallback()//Override to bind the per frame callback to the derived DrawFrame or nothing will draw
+        {
+            qor_pp_ofcontext;
+            m_frameCallback.m_done = bindMemberFunction(&WEGLWindow::WaylandDrawFrame, this);            
+        }
+
+        virtual void RequestPerFrameCallback()//Call this from your derived DrawFrame to request a callback for the next frame
+        {
+            m_frameCallback = m_xdgSurface->BaseSurface()->Frame();        
+            BindFrameCallback();
+            m_frameCallback.AddDefaultListener();            
+        }
+
+        void WaylandDrawFrame(uint32_t serial = 0)//Callback is a wayland mechanism so this is as high up as it reaches.
+        {
+            DrawFrame();
+            RequestPerFrameCallback();
+        }
+
+        virtual void DrawFrame()//Override to actually draw your frame and Swap the Buffers.
+        {            
+        }
+
+    protected:
+
+        Callback m_frameCallback;
+
     private:
         
         wl_egl_window* m_eglWindow;        

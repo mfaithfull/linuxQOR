@@ -26,7 +26,7 @@
 
 #include "src/framework/application/application_builder.h"
 #include "src/components/framework/ui/opengles/opengles.h"
-#include "src/components/framework/ui/opengles/glwindow.h"
+#include "src/components/framework/ui/egl/window.h"
 #include "canvas.h"
 
 namespace qor{ namespace components{ 
@@ -41,8 +41,8 @@ namespace qor{ namespace components{
         AsRef<qor::components::OpenGLESFeature>();
 
         m_eglContext = opengles->Context();
-        m_window = opengles->CreateWindow("Canvas", 1280, 800);
-        m_window->Show();
+        //m_window = opengles->CreateWindow("Canvas", 1280, 800);
+        //m_window->Show();
 
         //Create a Canvas
         m_canvas = ui::renderer::GlCanvas::gen(opengles);
@@ -71,7 +71,7 @@ namespace qor{ namespace components{
 
     void Canvas::Show()
     {
-        m_window->Refresh();
+        m_window->Present();
     }
 
     void Canvas::Resize()
@@ -82,7 +82,7 @@ namespace qor{ namespace components{
 
     void Canvas::Refresh()
     {
-        m_window->Refresh();
+        m_window->Present();
     }
 
     ui::renderer::Result Canvas::Push(ui::renderer::Paint* target, ui::renderer::Paint* at)

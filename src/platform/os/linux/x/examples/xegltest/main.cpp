@@ -28,13 +28,13 @@
 #include "src/components/framework/ui/egl/egl.h"
 #include "src/components/framework/ui/egl/surface.h"
 #include "src/components/framework/ui/egl/context.h"
+#include "src/components/framework/ui/egl/window.h"
+#include "src/components/framework/ui/egl/session.h"
 #include "src/components/framework/ui/opengles/opengles.h"
-#include "src/components/framework/ui/opengles/glwindow.h"
+#include "src/components/framework/ui/opengles/constants.h"
 
 #include "src/platform/os/linux/x/egl/eglsession.h"
 #include "src/platform/os/linux/x/egl/egldisplay.h"
-#include "src/platform/os/linux/x/egl/eglcontext.h"
-#include "src/platform/os/linux/x/egl/eglsurface.h"
 #include "src/platform/os/linux/x/egl/eglwindow.h"
 #include "src/platform/os/linux/x/xlib/xlib.h"
 #include "src/platform/os/linux/x/xlib/display.h"
@@ -59,8 +59,11 @@ int xanadu()
     auto xClient        = GetFeature<XClient>();
     auto egl            = GetFeature<EGLFeature>();
     auto opengles       = GetFeature<OpenGLESFeature>();
-    auto session        = qor::new_ref<qor::platform::nslinux::x::XEGLSession>();
-    auto eglWindow      = qor::new_ref<qor::platform::nslinux::x::XEGLWindow>(session->GetDisplay());     //Create and make current an EGL surfaced X Window    
+    auto display        = xClient(qor_shared).GetDisplay(":0");
+    auto session        = qor::new_ref<EGLSessionWrapper<qor::platform::nslinux::x::XEGLSession>>(display);
+
+    std::vector<int32_t> contextAttributes = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
+    auto eglWindow      = qor::new_ref<EGLWindowWrapper<qor::platform::nslinux::x::XEGLWindow>>(session, contextAttributes, 100,100,640,480); //Create and make current an EGL surfaced X Window
     //eltKeyboardController keyController(session, session->GetKeyboard());                 //Catch Escape key to break the loop
     return session->Run();
 }

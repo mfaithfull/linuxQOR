@@ -31,9 +31,9 @@
 #include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
 #include "src/platform/os/linux/wayland/xdgshell/xdgsession.h"
 #include "src/components/framework/ui/egl/egl.h"
+#include "src/components/framework/ui/egl/window.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
-#include "src/components/framework/ui/opengles/glwindow.h"
 
 class eltSession : public qor::platform::nslinux::wl::XDGSession
 {

@@ -28,17 +28,4 @@
 
 namespace qor { namespace components{
 
-    EGLSession::EGLSession(ref_of<EGLDisplay>::type display) : m_eglDisplay(display)
-    {        
-    }
-
-    EGLSession::~EGLSession()
-    {
-    }
-
-    ref_of<EGLDisplay>::type EGLSession::GetDisplay()
-    {
-        return m_eglDisplay;
-    }
-    
 }}//qor::components
