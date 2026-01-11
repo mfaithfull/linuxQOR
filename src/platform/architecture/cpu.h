@@ -22,24 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_ARCHITECTURES
-#define QOR_PP_H_ARCHITECTURES
+#ifndef QOR_PP_H_ARCHITECTURE_CPU
+#define QOR_PP_H_ARCHITECTURE_CPU
 
-#define qor_pp_arch_anyX86      0x01
-#define qor_pp_arch_anyARM      0x02
-#define qor_pp_arch_anyRISCV    0x04
-//NOTE: Add new architecture support here
+#include "detectarchitecture.h"
+
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/reference.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/qor/reference/newref.h"
+
+/*The Machine class represents the core CPU hardware at runtime, it's capabilities services, 
+features, configuration and settings.
+*/
 
 namespace qor{ namespace arch{
 
-    enum Endian
+    class qor_pp_module_interface(QOR_ARCH) CPU
     {
-        host,       //whatever the host is, i.e. don't mess with it
-        network,    //Network regardless of host
-        big,        //Big, for eoncding, whatever the host is. This is actually the same as Network in practice but is used for target cpu
-        little,     //Little, for encoding, whatever the host is.
-    };
-    //Note: this might get more complex with ARM as some of those seem to be able to do both or to switch
-}}//qor::arch
+    public:
 
-#endif//QOR_PP_H_ARCHITECTURES
+        CPU();     
+        ~CPU() = default;
+
+        Endian ByteOrder();
+    };
+
+    }//qor::arch
+
+    qor_pp_declare_instancer_of(arch::CPU, SingletonInstancer);
+    qor_pp_declare_sync_of(arch::CPU, RecursiveMutex);
+
+    qor_pp_module_interface(QOR_ARCH) ref_of<arch::CPU>::type TheCPU();
+}//qor
+
+#endif//QOR_PP_H_ARCHITECTURE_CPU

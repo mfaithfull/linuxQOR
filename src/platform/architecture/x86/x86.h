@@ -22,24 +22,18 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_ARCHITECTURES
-#define QOR_PP_H_ARCHITECTURES
+#ifndef QOR_PP_H_ARCHITECTURE_X86
+#define QOR_PP_H_ARCHITECTURE_X86
 
-#define qor_pp_arch_anyX86      0x01
-#define qor_pp_arch_anyARM      0x02
-#define qor_pp_arch_anyRISCV    0x04
-//NOTE: Add new architecture support here
+namespace qor{ namespace arch {
 
-namespace qor{ namespace arch{
-
-    enum Endian
-    {
-        host,       //whatever the host is, i.e. don't mess with it
-        network,    //Network regardless of host
-        big,        //Big, for eoncding, whatever the host is. This is actually the same as Network in practice but is used for target cpu
-        little,     //Little, for encoding, whatever the host is.
-    };
-    //Note: this might get more complex with ARM as some of those seem to be able to do both or to switch
+    constexpr Endian endian = little;
 }}//qor::arch
 
-#endif//QOR_PP_H_ARCHITECTURES
+#if(qor_pp_arch_is_64bit)
+    constexpr unsigned wordBytes = 8;
+#else
+    constexpr unsigned wordBytes = 4;
+#endif
+
+#endif//QOR_PP_H_ARCHITECTURE_X86

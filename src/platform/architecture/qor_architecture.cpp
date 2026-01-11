@@ -22,24 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_ARCHITECTURES
-#define QOR_PP_H_ARCHITECTURES
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#define qor_pp_arch_anyX86      0x01
-#define qor_pp_arch_anyARM      0x02
-#define qor_pp_arch_anyRISCV    0x04
-//NOTE: Add new architecture support here
-
-namespace qor{ namespace arch{
-
-    enum Endian
-    {
-        host,       //whatever the host is, i.e. don't mess with it
-        network,    //Network regardless of host
-        big,        //Big, for eoncding, whatever the host is. This is actually the same as Network in practice but is used for target cpu
-        little,     //Little, for encoding, whatever the host is.
-    };
-    //Note: this might get more complex with ARM as some of those seem to be able to do both or to switch
-}}//qor::arch
-
-#endif//QOR_PP_H_ARCHITECTURES
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Architecture Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}
