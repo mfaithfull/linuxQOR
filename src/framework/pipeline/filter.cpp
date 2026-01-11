@@ -99,6 +99,7 @@ namespace qor{ namespace pipeline{
         return true;
     }
 
+    //Pump up to the buffer capacity. In Pull mode the Sink owns the relevant buffer as it's pulling. In Push mode it's the Source.
     size_t Filter::PumpSome()
     {
         size_t unitsPumped = 0;
@@ -109,6 +110,9 @@ namespace qor{ namespace pipeline{
         return unitsPumped;
     }
 
+    //Pump up to the ammount requested. 
+    //In Pull mode this is a request to write that much into the sink. It will pull what it needs to achieve that
+    //In Push mode this is a request to push that much from the source. What arrives at the sink will depend on any filters present
     bool Filter::PumpSome(size_t& unitsPumped, size_t unitsToPump)
     {    
         if(GetFlowMode() == FlowMode::Pull)
@@ -121,6 +125,8 @@ namespace qor{ namespace pipeline{
         }
     }
 
+    //Keep pumping until the requests units have been pumped or the well is empty 
+    //returns true if we got all the units we asked for without breaking the pipe
     bool Filter::Pump(size_t& unitsPumped, size_t unitsToPump)
     {    
         bool working = unitsToPump > 0 ? true : false;

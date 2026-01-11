@@ -52,7 +52,7 @@ int main()
         {
             /*Retrieve the file system singleton from the platform.
             The platform is a shared object so synchronisation is required*/
-            auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
+            auto fileSystem = ThePlatform()(qor_shared).GetSubsystem<FileSystem>();
             
             /*All the functions on the fileSystem object are const so 
             once we have it, it's safe to use without synchronisation*/
@@ -89,8 +89,8 @@ void TraditionalFileRead(FileSystem::ref fileSystem, FileIndex& index)
     /*process the data*/
     std::cout << line << std::endl;
 
-    /*RAII ensures the file is closed here as the file object
-    is destroyed
+    /*RAII ensures the file is closed here as the file objectis destroyed
+
     This could of course be compressed to the single statement:
     std::cout << (FileReader(index, OpenFor::ReadOnly).ReadLine()) << std::endl;
     */
@@ -98,7 +98,7 @@ void TraditionalFileRead(FileSystem::ref fileSystem, FileIndex& index)
 
 void PipelineFileProcessor(FileSystem::ref fileSystem, FileIndex& input)
 {
-    /*an output file to go with the input file*/
+    /*An output file to go with the input file*/
     FileIndex output(fileSystem->CurrentPath(), "output.txt");
 
     /*Set up a base 64 encoder with 8K of buffer space*/
@@ -106,7 +106,7 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, FileIndex& input)
 
     /*We use File connectors to connect to the input and output files
     These encapsulate everything file related for the pipeline. If we used
-    Socket connectors or Pipe connector or MessageBusX connectors the rest of
+    Socket connectors or Pipe connectors or DBus connectors the rest of
     the pipeline would be identical and oblivious*/
     FileConnector inputConnector(input, WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly);
     FileConnector outputConnector(output, WithFlags::CreateNew, ShareMode::Owner_Write, OpenFor::ReadWrite);

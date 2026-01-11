@@ -35,17 +35,15 @@
 
 namespace qor{ namespace components {
 
-    class SessionPipeline : public qor::pipeline::Pipeline
+    class SessionPipeline : public pipeline::Pipeline
     {
     public:
 
         SessionPipeline(
-            qor::ref_of<qor::network::Socket>::type socket, 
-            qor::ref_of<qor::framework::AsyncIOContext::Session>::type ioSession,
-            qor::ref_of<qor::pipeline::Protocol>::type protocol
-        ) :
-            m_socket(socket), 
-            m_ioSession(ioSession)
+            ref_of<network::Socket>::type socket, 
+            ref_of<framework::AsyncIOContext::Session>::type ioSession,
+            ref_of<pipeline::Protocol>::type protocol
+        ) : m_socket(socket), m_ioSession(ioSession)
         {
             m_filter = protocol->GetFilter();
             
@@ -75,12 +73,12 @@ namespace qor{ namespace components {
     private:
 
         const size_t m_ioBufferSize = 1024;
-        qor::ref_of<qor::pipeline::InlineFilter<byte>>::type m_filter;
-        qor::ref_of<qor::network::Socket>::type m_socket;
-        qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
-        qor::ref_of<qor::components::SocketConnector>::type m_socketSessionConnector;
-        qor::ref_of<qor::components::SocketSessionSource>::type m_socketSource;
-        qor::ref_of<qor::components::SocketSessionSink>::type m_socketSink;
+        ref_of<pipeline::InlineFilter<byte>>::type m_filter;
+        ref_of<network::Socket>::type m_socket;
+        ref_of<framework::AsyncIOContext::Session>::type m_ioSession;
+        ref_of<components::SocketConnector>::type m_socketSessionConnector;
+        ref_of<components::SocketSessionSource>::type m_socketSource;
+        ref_of<components::SocketSessionSink>::type m_socketSink;
 
     };
 

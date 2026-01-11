@@ -54,16 +54,20 @@ namespace qor{ namespace components{
         {
             qor_pp_ofcontext;
             auto application = AppBuilder().TheApplication();
-            m_io = application(qor_shared).GetRole()->GetFeature<AsyncIOService>();
-            m_threadPool = application(qor_shared).GetRole()->GetFeature<ThreadPool>();
-            m_sockets = ThePlatform(qor_shared)->GetSubsystem<Sockets>();
+            auto role = application(qor_shared).GetRole();
+            m_io = role(qor_shared).GetFeature<AsyncIOService>();
+            m_threadPool = role(qor_shared).GetFeature<ThreadPool>();
+            m_sockets = ThePlatform()(qor_shared).GetSubsystem<Sockets>();
+
             m_ioSession = m_io->GetSession();
-            m_serverSocket = m_sockets->CreateSocket(protocol->GetAddressFamily(), protocol->FramingType(), protocol->ProtocolType(), m_ioSession);
+            m_serverSocket = m_sockets->CreateSocket(
+                protocol->GetAddressFamily(), 
+                protocol->FramingType(), 
+                protocol->ProtocolType(), m_ioSession);
 
             Address serverAddress;
             serverAddress.sa_family = protocol->GetAddressFamily();
             serverAddress.SetPort(m_port);
-            //serverAddress.SetIPV4Address(127,0,0,1);
 
             auto result = m_serverSocket->Bind(serverAddress);
 

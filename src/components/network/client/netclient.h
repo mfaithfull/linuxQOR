@@ -35,26 +35,33 @@
 
 namespace qor{ namespace components {
 
+    //Abstract base client that provides Send and Receive over a pair of Pipelines
+    //This doesn't assume anything about what the pipelines are connected to, local or remote, or what data is flowing
+    //It doesn't therefore know how to connect up the pipelines, this must be specialized
+    //It does assume simple bufferred, stateless, pipelines which can be reset for each send/receive
+    //If you do something more complex that Send and Receive can be overridden
     class qor_pp_module_interface(QOR_NETCLIENT) BaseClient
     {
     public:
 
         BaseClient()
         {
-            m_requestPipeline = new_ref<qor::pipeline::Pipeline>();
-            m_responsePipeline = new_ref<qor::pipeline::Pipeline>();
+            m_requestPipeline = new_ref<pipeline::Pipeline>();
+            m_responsePipeline = new_ref<pipeline::Pipeline>();
         }
+
+        virtual ~BaseClient() = default;
 
         virtual bool Connect() = 0;
 
-        bool Send()
+        virtual bool Send()
         {
             qor_pp_ofcontext;
             m_requestPipeline->ResetStream();
             return m_requestPipeline->PumpSome() > 0 ? true : false;
         }
 
-        bool Receive()
+        virtual bool Receive()
         {
             qor_pp_ofcontext;
             m_responsePipeline->ResetStream();
@@ -63,10 +70,24 @@ namespace qor{ namespace components {
 
     protected:
             
-        qor::ref_of<qor::pipeline::Pipeline>::type m_requestPipeline;
-        qor::ref_of<qor::pipeline::Pipeline>::type m_responsePipeline;
+        ref_of<pipeline::Pipeline>::type m_requestPipeline;
+        ref_of<pipeline::Pipeline>::type m_responsePipeline;
 
     };
+
+    /*
+    NetworkClient:
+        A client that uses a socket connector at the device end of it's pipelines.
+        It writes to the socket on Send and Read from it on Receive.
+        Configuration for the socket is exposed and this client is independent of whatever protocol is plugged in.        
+    Usage:
+        Construct an instance
+        SetProtocol (can be done as part of construction)
+        Configure (can be done as part of connect)
+        Connect
+        Send
+        Receieve
+    */
 
     class qor_pp_module_interface(QOR_NETCLIENT) NetworkClient : public BaseClient
     {
@@ -74,22 +95,25 @@ namespace qor{ namespace components {
 
         NetworkClient() : BaseClient()
         {            
-            m_socketClientConnector = new_ref<qor::components::SocketConnector>();
+            m_socketClientConnector = new_ref<components::SocketConnector>();
         }
 
-        NetworkClient(qor::ref_of<pipeline::Protocol>::type protocol) :  BaseClient(),
-            m_protocol(protocol)
+        NetworkClient(ref_of<pipeline::Protocol>::type protocol) : BaseClient(), m_protocol(protocol)
         {
-            m_socketClientConnector = new_ref<qor::components::SocketConnector>();
+            m_socketClientConnector = new_ref<SocketConnector>();
         }
 
+        void SetProtocol(ref_of<pipeline::Protocol>::type protocol)
+        {
+            m_protocol = protocol;
+        }
 
-        void Configure(const std::string &host, int port, const std::string &ip = "", qor::network::sockets::eAddressFamily address_family = qor::network::sockets::eAddressFamily::AF_INet, qor::network::addrinfo_flags socket_flags = 0, bool tcp_nodelay = false, bool ipv6_v6only = false, time_t timeout_sec = 0)
+        void Configure(const std::string &host, int port, const std::string &ip = "", network::sockets::eAddressFamily address_family = network::sockets::eAddressFamily::AF_INet, network::addrinfo_flags socket_flags = 0, bool tcp_nodelay = false, bool ipv6_v6only = false, time_t timeout_sec = 0)
         {
             m_socketClientConnector->Configure(host, port, ip, address_family, socket_flags, tcp_nodelay, ipv6_v6only, timeout_sec);
         }
 
-        bool Connect(const std::string &host, int port, const std::string &ip, qor::network::sockets::eAddressFamily address_family, qor::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec)
+        bool Connect(const std::string &host, int port, const std::string &ip, network::sockets::eAddressFamily address_family, network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec)
         {
             qor_pp_ofcontext;
             m_socketClientConnector->Configure(host, port, ip, address_family, socket_flags, tcp_nodelay, ipv6_v6only, timeout_sec);
@@ -98,29 +122,13 @@ namespace qor{ namespace components {
 
         bool Connect();
 
-        void SetProtocol(qor::ref_of<qor::pipeline::Protocol>::type protocol)
-        {
-            m_protocol = protocol;
-        }
-
-        bool Send()
-        {
-            qor_pp_ofcontext;
-            m_requestPipeline->ResetStream();
-            return m_requestPipeline->PumpSome() > 0 ? true : false;
-        }
-
-        bool Receive()
-        {
-            qor_pp_ofcontext;
-            m_responsePipeline->ResetStream();
-            return m_responsePipeline->PumpSome() > 0 ? true : false;
-        }
-
     protected:
     
-        qor::ref_of<qor::components::SocketConnector>::type m_socketClientConnector;
-        qor::ref_of<qor::pipeline::Protocol>::type m_protocol;
+        ref_of<components::SocketConnector>::type m_socketClientConnector;
+        ref_of<pipeline::Protocol>::type m_protocol;
+
+        void SetupRequestPipeline();
+        void SetupResponsePipeline();
 
     };
 
