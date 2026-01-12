@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_PLATFORM_FILESYSTEM_FILE_READER
 #define QOR_PP_H_PLATFORM_FILESYSTEM_FILE_READER
 
+#include <cstdint>
+
 #include "file.h"
 
 namespace qor{ namespace platform{
@@ -40,7 +42,16 @@ namespace qor{ namespace platform{
         std::string ReadLine();
         byte ReadByte();
         char ReadChar();
-                
+        bool ReadBool();// Always 1 byte, no ordering        
+        int16_t ReadInt16(arch::Endian endian = arch::network);
+        uint16_t ReadUInt16(arch::Endian endian = arch::network);
+        int32_t ReadInt32(arch::Endian endian = arch::network);
+        uint32_t ReadUInt32(arch::Endian endian = arch::network);
+        int64_t ReadInt64(arch::Endian endian = arch::network);
+        uint64_t ReadUInt64(arch::Endian endian = arch::network);
+        float ReadFloat(arch::Endian endian = arch::network);
+        double ReadDouble(arch::Endian endian = arch::network);
+
         template<typename T>
         T Read()
         {

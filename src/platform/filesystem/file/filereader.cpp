@@ -26,6 +26,7 @@
 
 #include "filereader.h"
 #include "src/platform/platform.h"
+#include "src/platform/architecture/detectarchitecture.h"
 #include "src/platform/filesystem/filesystem.h"
 
 namespace qor{ namespace platform{
@@ -45,7 +46,7 @@ namespace qor{ namespace platform{
     {
         std::string line;
         char c = '\0';
-        while( c != 0xA && m_file->Read((byte*)&c,1))
+        while( c != 0xA && m_file->Read((byte*)&c,1))//Redo this to use ReadChar 
         {
             if( c != 0xD )
             {
@@ -68,5 +69,173 @@ namespace qor{ namespace platform{
         m_file->Read((byte*)&c, 1);
         return c;
     }
+
+    bool FileReader::ReadBool()
+    {
+        byte b = ReadByte();
+        return b != 0 ? true : false;
+
+    }
+
+    //right now these jst naievely flip the byte order
+    //we may need them to handle word ordering for different types. 
+
+    int16_t FileReader::ReadInt16(arch::Endian endian)
+    {
+        int16_t s = 0;
+        if(endian == arch::host || (endian == qor::arch::endian))
+        {            
+            m_file->Read((byte*)&s, 2);            
+        }
+        else
+        {            
+            m_file->Read(((byte*)&s) + 1, 1);
+            m_file->Read((byte*)&s, 1);
+        }
+        return s;
+    }
+
+    uint16_t FileReader::ReadUInt16(arch::Endian endian)
+    {
+        uint16_t s = 0;
+        if(endian == arch::host || (endian == qor::arch::endian))
+        {            
+            m_file->Read((byte*)&s, 2);            
+        }
+        else
+        {            
+            m_file->Read(((byte*)&s) + 1, 1);
+            m_file->Read((byte*)&s, 1);
+        }
+        return s;
+    }
+
+    int32_t FileReader::ReadInt32(arch::Endian endian)
+    {
+        int32_t i = 0;
+        if(endian == arch::host || (endian == qor::arch::endian))
+        {            
+            m_file->Read((byte*)&i, 4);
+        }
+        else
+        {   
+            byte data[4];
+            m_file->Read(data, 4);
+            byte* p = reinterpret_cast<byte*>(&i);
+            for(unsigned int l = 0; l < 4; ++l)
+            {
+                *p++ = data[3 - l];
+            }
+        }
+        return i;
+    }
+
+    uint32_t FileReader::ReadUInt32(arch::Endian endian)
+    {
+        uint32_t i = 0;
+        if(endian == arch::host || (endian == qor::arch::endian))
+        {            
+            m_file->Read((byte*)&i, 4);
+        }
+        else
+        {   
+            byte data[4];
+            m_file->Read(data,4);
+            byte* p = reinterpret_cast<byte*>(&i);
+            for(unsigned int l = 0; l < 4; ++l)
+            {
+                *p++ = data[3 - l];
+            }
+        }
+        return i;
+    }
+    
+    int64_t FileReader::ReadInt64(arch::Endian endian)
+    {
+        int64_t i = 0;
+        if(endian == arch::host || (endian == qor::arch::endian))
+        {            
+            m_file->Read((byte*)&i, 8);
+        }
+        else
+        {   
+            byte data[8];
+            m_file->Read(data, 8);
+            byte* p = reinterpret_cast<byte*>(&i);
+            for(unsigned int l = 0; l < 8; ++l)
+            {
+                *p++ = data[7 - l];
+            }
+        }
+        return i;
+    }
+
+    uint64_t FileReader::ReadUInt64(arch::Endian endian)
+    {
+        uint64_t i = 0;
+        if(endian == arch::host || (endian == qor::arch::endian))
+        {            
+            m_file->Read((byte*)&i, 8);
+        }
+        else
+        {   
+            byte data[8];
+            m_file->Read(data, 8);
+            byte* p = reinterpret_cast<byte*>(&i);
+            for(unsigned int l = 0; l < 8; ++l)
+            {
+                *p++ = data[7 - l];
+            }
+        }
+        return i;
+    }
+    
+    float FileReader::ReadFloat(arch::Endian endian)
+    {
+        float f = 0.0f;
+        if(endian == arch::host || (endian == qor::arch::endian))
+        {
+            m_file->Read((byte*)&f, sizeof(float));
+        }
+        else
+        {
+            byte data[sizeof(float)];
+            m_file->Read(data, sizeof(float));
+            byte* p = reinterpret_cast<byte*>(&f);
+            for(unsigned int l = 0; l < sizeof(float); ++l)
+            {
+                *p++ = data[sizeof(float) - (1 + l)];
+            }
+        }
+        return f;
+    }
+
+    double FileReader::ReadDouble(arch::Endian endian)
+    {
+        double d = 0.0;
+        if(endian == arch::host || (endian == qor::arch::endian))
+        {
+            m_file->Read((byte*)&d, sizeof(double));
+        }
+        else
+        {
+            byte data[sizeof(double)];
+            m_file->Read(data, sizeof(double));
+            byte* p = reinterpret_cast<byte*>(&d);
+            for(unsigned int l = 0; l < sizeof(double); ++l)
+            {
+                *p++ = data[sizeof(double) - (1 + l)];
+            }
+        }
+        return d;
+    }
+
+    //Add:
+    //ReadUTF8Char - Read and transcode to local, to char8_t
+    //ReadUTF16Char - to char16_t
+    //ReadUTF32Char - to char32_t
+    
+    //ReadShort - with ByteOrder, defaulting to Network from Host, Network, Big, Little and WordSize, defaulting to Host from Host, 8, 16, 32, 64
+        
 
 }}//qor::platform

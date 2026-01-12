@@ -28,12 +28,13 @@
 namespace qor{ namespace arch {
 
     constexpr Endian endian = little;
-}}//qor::arch
 
 #if(qor_pp_arch_is_64bit)
     constexpr unsigned wordBytes = 8;
 #else
     constexpr unsigned wordBytes = 4;
 #endif
+
+}}//qor::arch
 
 #endif//QOR_PP_H_ARCHITECTURE_X86
