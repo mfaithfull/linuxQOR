@@ -22,47 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_APPLICATION_BUILDER
-#define QOR_PP_H_APPLICATION_BUILDER
+#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_FILERESOURCE
+#define QOR_PP_H_FRAMEWORK_RESOURCES_FILERESOURCE
 
-#include "application.h"
+#include <string>
 
-namespace qor{ namespace framework{
+#include "../resource.h"
+#include "src/platform/filesystem/path.h"
+#include "src/platform/filesystem/fileindex.h"
 
-    class qor_pp_module_interface(QOR_APPLICATION) AppBuilder
+namespace qor{ namespace framework{ namespace res {
+
+    class qor_pp_module_interface(QOR_RESOURCES) File : public Resource
     {
     public:
 
-        AppBuilder();
-        virtual ~AppBuilder() = default;
+        static const char* StaticType();
 
-        ref_of<Application>::type Build(const std::string& appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr);
-        ref_of<Application>::type TheApplication();
-
-        template< class AppClass >
-        ref_of<Application>::type Build(const std::string& appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr)
-        {
-            auto application = new_ref<AppClass>().template AsRef<Application>();
-            AutoRedirect(application);
-            application->Name() = appName;
-            return application;
+        File(ResourceManager* manager, const qor::platform::FileIndex& index) : Resource(manager), m_index(index), m_monitor(false)
+        {            
+            Name();
         }
+        
+        virtual ~File() = default;
 
-        template<class AppClass, typename TConfigureApp>
-        ref_of<Application>::type Build(const std::string& appName, TConfigureApp&& config_function)
-        {
-            auto app = new_ref<AppClass>();
-            AutoRedirect(app.template AsRef<Application>());
-            app(qor_shared).SetName(appName);
-            config_function(app);
-            return app.template AsRef<Application>();
-        }
+        virtual const char* Type();
+        virtual void Name();
+        virtual void Locate();
+        virtual void Claim();
+        
+        void MarkForMonitoring();
 
+    protected:
+
+        const qor::platform::FileIndex m_index;
+        bool m_monitor;
+        
     private:
+        static const char* s_fileResourceType;
 
-        void AutoRedirect(ref_of<Application>::type application);
+        std::string GetContentGuess();
     };
-    
-}}//qor::framework
 
-#endif//QOR_PP_H_APPLICATION_BUILDER
+}}}//qor::framework::res
+
+#endif//QOR_PP_H_FRAMEWORK_RESOURCES_FILERESOURCE

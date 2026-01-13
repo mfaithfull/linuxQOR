@@ -71,9 +71,9 @@ namespace qor{
 extern qor::Module& ThisModule();       //Each and every module that includes this header must provide a ThisModule function returning its module representation object.
 
 #define qor_pp_implement_module(_X)\
-Module& ThisModule(void)\
+qor::Module& ThisModule(void)\
 {\
-	static Module QORModule(_X, \
+	static qor::Module QORModule(_X, \
         qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) " " __DATE__ "_" __TIME__);\
 	return QORModule;\
 }

@@ -34,6 +34,7 @@ namespace qor { namespace components { namespace parser {
 
     int Parser::FinalParse()
     {
+        m_final = true;
         m_complete = false;
         if(m_StateStack.empty())
         {
@@ -42,15 +43,19 @@ namespace qor { namespace components { namespace parser {
         {
             std::cout << "Stack on entry has " << m_StateStack.size() << " states." << std::endl;
         }
-        try{   
-            PopState();
-            while(!IsComplete())
+        try{ 
+            while(!IsComplete() && m_StateStack.size() > 0)
             {
-                CurrentState()->Enter();
-            }
-            if(IsComplete())
-            {
-                std::cout << "Parse complete." << std::endl;
+                PopState();
+                while(!IsComplete() && m_context->HasUnparsedData())
+                {
+                    CurrentState()->Enter();
+                }
+                if(IsComplete())
+                {
+                    std::cout << "Parse complete." << std::endl;
+                    break;
+                }
             }
         }
         catch(const Error* error)
@@ -72,6 +77,7 @@ namespace qor { namespace components { namespace parser {
 
     int Parser::Parse()
     {   
+        m_final = false;
         m_complete = false;
         if(m_StateStack.empty())
         {

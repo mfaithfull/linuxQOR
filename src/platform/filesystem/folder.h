@@ -45,7 +45,7 @@ namespace qor{ namespace platform{
         bool Move( class Path& destParent);
         bool Rename( const string_t& name);
         bool Delete();
-        void Enumerate( const std::function <bool (FileIndex&)>& f );
+        void Enumerate( const std::function <bool (FileIndex&)>& f ) const;
         void CreateSymLinkTo( class Path& target);
         class Path Path();
     protected:

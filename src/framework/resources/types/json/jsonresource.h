@@ -22,47 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_APPLICATION_BUILDER
-#define QOR_PP_H_APPLICATION_BUILDER
+#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
+#define QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
 
-#include "application.h"
+#include <string>
 
-namespace qor{ namespace framework{
+#include "../../resource.h"
+#include "src/platform/filesystem/path.h"
+#include "src/platform/filesystem/fileindex.h"
+#include "src/components/json/nodes/object.h"
 
-    class qor_pp_module_interface(QOR_APPLICATION) AppBuilder
+namespace qor{ namespace framework{ namespace res {
+
+    class qor_pp_module_interface(QOR_RESOURCES) JSON : public Resource
     {
     public:
 
-        AppBuilder();
-        virtual ~AppBuilder() = default;
+        static const char* StaticType();
 
-        ref_of<Application>::type Build(const std::string& appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr);
-        ref_of<Application>::type TheApplication();
-
-        template< class AppClass >
-        ref_of<Application>::type Build(const std::string& appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr)
-        {
-            auto application = new_ref<AppClass>().template AsRef<Application>();
-            AutoRedirect(application);
-            application->Name() = appName;
-            return application;
+        JSON(ResourceManager* manager, const qor::platform::FileIndex& index) : Resource(manager), m_index(index)
+        {            
+            Name();
         }
+        
+        virtual ~JSON() = default;
 
-        template<class AppClass, typename TConfigureApp>
-        ref_of<Application>::type Build(const std::string& appName, TConfigureApp&& config_function)
-        {
-            auto app = new_ref<AppClass>();
-            AutoRedirect(app.template AsRef<Application>());
-            app(qor_shared).SetName(appName);
-            config_function(app);
-            return app.template AsRef<Application>();
-        }
+        virtual const char* Type();
+        virtual void Name();
+        virtual void Locate();
+        virtual void Claim();
+        
+        qor::ref_of<qor::components::json::Object>::type GetObject();
+        
+    protected:
 
+        const qor::platform::FileIndex m_index;
+        qor::ref_of<qor::components::json::Object>::type m_object;
+        
     private:
-
-        void AutoRedirect(ref_of<Application>::type application);
+        static const char* s_jsonResourceType;
+        
     };
-    
-}}//qor::framework
 
-#endif//QOR_PP_H_APPLICATION_BUILDER
+}}}//qor::framework::res
+
+#endif//QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE

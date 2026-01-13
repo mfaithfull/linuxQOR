@@ -36,6 +36,7 @@ namespace qor { namespace components { namespace parser {
 
         enum eResultCode
         {
+            UNINITIALIZED,
             MORE_DATA,
             FAILURE,
             SUCCESS,

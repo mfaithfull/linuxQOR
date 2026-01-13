@@ -25,7 +25,7 @@
 //A documented application with a Pipeline using the QOR SDK
 
 /*For a more basic documented example of the flow of a QOR application
-see the roller project*/
+see the roller example*/
 
 #include "sdk/using_framework.h"
 #include "sdk/using_platform.h"
@@ -89,7 +89,7 @@ void TraditionalFileRead(FileSystem::ref fileSystem, FileIndex& index)
     /*process the data*/
     std::cout << line << std::endl;
 
-    /*RAII ensures the file is closed here as the file objectis destroyed
+    /*RAII ensures the file is closed here as the file object is destroyed
 
     This could of course be compressed to the single statement:
     std::cout << (FileReader(index, OpenFor::ReadOnly).ReadLine()) << std::endl;

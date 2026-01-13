@@ -1,6 +1,7 @@
 #ifndef QOR_PP_H_SDK_USING_FRAMEWORK
 #define QOR_PP_H_SDK_USING_FRAMEWORK
 
+#include "src/configuration/configuration.h"
 #include "using_qor.h"
 
 #include "src/framework/application/application_builder.h"
@@ -19,16 +20,10 @@
 #include "src/framework/pipeline/inlinefilter.h"
 #include "src/framework/pipeline/plug.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/role/getfeature.h"
 
 using namespace qor::framework;
 using namespace qor::pipeline;
 using namespace qor::workflow;
 
-namespace qor{
-    template< class TFeature >
-    typename ref_of<TFeature>::type GetFeature()
-    {
-        return AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<TFeature>();
-    }
-}
 #endif//QOR_PP_H_SDK_USING_FRAMEWORK

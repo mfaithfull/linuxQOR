@@ -26,7 +26,7 @@
 #define QOR_PP_H_PLATFORM_FILESYSTEM_FILE_READER
 
 #include <cstdint>
-
+#include "src/qor/reflection/reflection.h"
 #include "file.h"
 
 namespace qor{ namespace platform{
@@ -39,26 +39,42 @@ namespace qor{ namespace platform{
         FileReader(FileIndex index, OpenFor use);
         virtual ~FileReader() = default;
 
-        std::string ReadLine();
-        byte ReadByte();
-        char ReadChar();
-        bool ReadBool();// Always 1 byte, no ordering        
-        int16_t ReadInt16(arch::Endian endian = arch::network);
-        uint16_t ReadUInt16(arch::Endian endian = arch::network);
-        int32_t ReadInt32(arch::Endian endian = arch::network);
-        uint32_t ReadUInt32(arch::Endian endian = arch::network);
-        int64_t ReadInt64(arch::Endian endian = arch::network);
-        uint64_t ReadUInt64(arch::Endian endian = arch::network);
-        float ReadFloat(arch::Endian endian = arch::network);
-        double ReadDouble(arch::Endian endian = arch::network);
+        std::string ReadLine() const;
+        byte ReadByte() const;
+        char ReadChar() const;
+        bool ReadBool() const;// Always 1 byte, no ordering        
+        int16_t ReadInt16(arch::Endian endian = arch::network) const;
+        uint16_t ReadUInt16(arch::Endian endian = arch::network) const;
+        int32_t ReadInt32(arch::Endian endian = arch::network) const;
+        uint32_t ReadUInt32(arch::Endian endian = arch::network) const;
+        int64_t ReadInt64(arch::Endian endian = arch::network) const;
+        uint64_t ReadUInt64(arch::Endian endian = arch::network) const;
+        float ReadFloat(arch::Endian endian = arch::network) const;
+        double ReadDouble(arch::Endian endian = arch::network) const;
 
-        template<typename T>
-        T Read()
-        {
-            T t;
-            m_file->Read((byte*)&t, sizeof(T));
-            return t;
-        }
+        void Read(unsigned char& b, arch::Endian endian = arch::network) const;
+        void Read(char& c, arch::Endian endian = arch::network) const;
+        void Read(bool& b, arch::Endian endian = arch::network) const;
+        void Read(short& s, arch::Endian endian = arch::network) const;
+        void Read(unsigned short& s, arch::Endian endian = arch::network) const;
+        void Read(int& i, arch::Endian endian = arch::network) const;
+        void Read(unsigned int& ui, arch::Endian endian = arch::network) const;
+        void Read(long& l, arch::Endian endian = arch::network) const;
+        void Read(unsigned long& ul, arch::Endian endian = arch::network) const;
+        void Read(long long& ll, arch::Endian endian = arch::network) const;
+        void Read(unsigned long long& ull, arch::Endian endian = arch::network) const;
+        void Read(float& f, arch::Endian endian = arch::network) const;
+        void Read(double& d, arch::Endian endian = arch::network) const;
+
+		template< class T >
+		void ReadStruct(T& t, arch::Endian endian = arch::network) const
+		{
+			qor_reflection::for_each_field(t, [this](auto& value, std::size_t i)
+				{
+                    Read(value, endian);
+				}
+			);
+		}
 
     private:
 

@@ -22,28 +22,17 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_GENERATOR_RESULT
-#define QOR_PP_H_COMPONENTS_GENERATOR_RESULT
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include <cstdint>
+#include "resourcehub.h"
 
-namespace qor { namespace components { namespace generator {
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Resources Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-    class Result
-    {
-    public:
+	static qor::TypeRegEntry< qor::framework::ResourceHub, qor::framework::ResourceHub > regResourceHub;
 
-        enum eResultCode
-        {
-            UNINITIALIZED,
-            MORE_DATA,
-            FAILURE,
-            SUCCESS,
-        };
-
-        eResultCode code;
-    };
-    
-}}}//qor::components::generator
-
-#endif//QOR_PP_H_COMPONENTS_GENERATOR_RESULT
+	return QORModule;
+}

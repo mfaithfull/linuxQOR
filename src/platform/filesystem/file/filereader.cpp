@@ -42,7 +42,7 @@ namespace qor{ namespace platform{
         m_file = fileSystem->Open(index, use);
     }
 
-    std::string FileReader::ReadLine()
+    std::string FileReader::ReadLine() const
     {
         std::string line;
         char c = '\0';
@@ -56,21 +56,21 @@ namespace qor{ namespace platform{
         return line;
     }
 
-    byte FileReader::ReadByte()
+    byte FileReader::ReadByte() const
     {
         byte b;
         m_file->Read(&b, 1);
         return b;
     }
 
-    char FileReader::ReadChar()
+    char FileReader::ReadChar() const
     {
         char c;
         m_file->Read((byte*)&c, 1);
         return c;
     }
 
-    bool FileReader::ReadBool()
+    bool FileReader::ReadBool() const
     {
         byte b = ReadByte();
         return b != 0 ? true : false;
@@ -80,7 +80,7 @@ namespace qor{ namespace platform{
     //right now these jst naievely flip the byte order
     //we may need them to handle word ordering for different types. 
 
-    int16_t FileReader::ReadInt16(arch::Endian endian)
+    int16_t FileReader::ReadInt16(arch::Endian endian) const
     {
         int16_t s = 0;
         if(endian == arch::host || (endian == qor::arch::endian))
@@ -95,7 +95,7 @@ namespace qor{ namespace platform{
         return s;
     }
 
-    uint16_t FileReader::ReadUInt16(arch::Endian endian)
+    uint16_t FileReader::ReadUInt16(arch::Endian endian) const
     {
         uint16_t s = 0;
         if(endian == arch::host || (endian == qor::arch::endian))
@@ -110,7 +110,7 @@ namespace qor{ namespace platform{
         return s;
     }
 
-    int32_t FileReader::ReadInt32(arch::Endian endian)
+    int32_t FileReader::ReadInt32(arch::Endian endian) const
     {
         int32_t i = 0;
         if(endian == arch::host || (endian == qor::arch::endian))
@@ -130,7 +130,7 @@ namespace qor{ namespace platform{
         return i;
     }
 
-    uint32_t FileReader::ReadUInt32(arch::Endian endian)
+    uint32_t FileReader::ReadUInt32(arch::Endian endian) const
     {
         uint32_t i = 0;
         if(endian == arch::host || (endian == qor::arch::endian))
@@ -150,7 +150,7 @@ namespace qor{ namespace platform{
         return i;
     }
     
-    int64_t FileReader::ReadInt64(arch::Endian endian)
+    int64_t FileReader::ReadInt64(arch::Endian endian) const
     {
         int64_t i = 0;
         if(endian == arch::host || (endian == qor::arch::endian))
@@ -170,7 +170,7 @@ namespace qor{ namespace platform{
         return i;
     }
 
-    uint64_t FileReader::ReadUInt64(arch::Endian endian)
+    uint64_t FileReader::ReadUInt64(arch::Endian endian) const
     {
         uint64_t i = 0;
         if(endian == arch::host || (endian == qor::arch::endian))
@@ -190,7 +190,7 @@ namespace qor{ namespace platform{
         return i;
     }
     
-    float FileReader::ReadFloat(arch::Endian endian)
+    float FileReader::ReadFloat(arch::Endian endian) const
     {
         float f = 0.0f;
         if(endian == arch::host || (endian == qor::arch::endian))
@@ -210,7 +210,7 @@ namespace qor{ namespace platform{
         return f;
     }
 
-    double FileReader::ReadDouble(arch::Endian endian)
+    double FileReader::ReadDouble(arch::Endian endian) const
     {
         double d = 0.0;
         if(endian == arch::host || (endian == qor::arch::endian))
@@ -230,12 +230,128 @@ namespace qor{ namespace platform{
         return d;
     }
 
-    //Add:
-    //ReadUTF8Char - Read and transcode to local, to char8_t
-    //ReadUTF16Char - to char16_t
-    //ReadUTF32Char - to char32_t
-    
-    //ReadShort - with ByteOrder, defaulting to Network from Host, Network, Big, Little and WordSize, defaulting to Host from Host, 8, 16, 32, 64
-        
+    void FileReader::Read(unsigned char& b, arch::Endian endian) const
+    {
+        b = ReadByte();
+    }
+
+    void FileReader::Read(char& c, arch::Endian endian) const
+    {
+        c = ReadChar();
+    }
+
+    void FileReader::Read(bool& b, arch::Endian endian) const
+    {
+        byte v = ReadByte();
+        b = v ? true : false;
+    }
+
+    void FileReader::Read(short& s, arch::Endian endian) const
+    {
+        if(sizeof(int16_t) > sizeof(short))
+        {
+            warning("coersing int16_t to a short looses data on this platform");
+        }
+        int16_t v = ReadInt16(endian);
+        s = v;
+    }
+
+    void FileReader::Read(unsigned short& us, arch::Endian endian) const
+    {
+        if(sizeof(uint16_t) > sizeof(unsigned short))
+        {
+            warning("coersing uint16_t to a unsigned short looses data on this platform");
+        }
+        uint16_t v = ReadUInt16(endian);
+        us = v;
+    }
+
+    void FileReader::Read(int& i, arch::Endian endian) const
+    {
+        if(sizeof(int32_t) > sizeof(int))
+        {
+            warning("coersing int32_t to int looses data on this platform");
+        }
+        int32_t v = ReadInt32(endian);
+        i = v;
+    }
+
+    void FileReader::Read(unsigned int& ui, arch::Endian endian) const
+    {
+        if(sizeof(uint32_t) > sizeof(unsigned int))
+        {
+            warning("coersing uint32_t to unsigned int looses data on this platform");
+        }
+        uint32_t v = ReadUInt32(endian);
+        ui = v;
+    }
+
+    void FileReader::Read(long& l, arch::Endian endian) const
+    {
+        if(sizeof(int32_t) > sizeof(long))
+        {
+            warning("coersing int32_t to long looses data on this platform");
+        }
+        int32_t v = ReadInt32(endian);
+        l = v;
+    }
+
+    void FileReader::Read(unsigned long& ul, arch::Endian endian) const
+    {
+        if(sizeof(uint32_t) > sizeof(unsigned long))
+        {
+            warning("coersing uint32_t to unsigned long looses data on this platform");
+        }
+        uint32_t v = ReadUInt32(endian);
+        ul = v;
+    }
+
+    void FileReader::Read(long long& ll, arch::Endian endian) const
+    {
+        if(sizeof(int64_t) > sizeof(long long))
+        {
+            warning("coersing int64_t to long long looses data on this platform");
+        }
+        int64_t v = ReadInt64(endian);
+        ll = v;
+    }
+
+    void FileReader::Read(unsigned long long& ull, arch::Endian endian) const
+    {
+        if(sizeof(uint64_t) > sizeof(unsigned long long))
+        {
+            warning("coersing uint64_t to unsigned long long looses data on this platform");
+        }
+        uint64_t v = ReadUInt64(endian);
+        ull = v;
+    }
+
+    void FileReader::Read(float& f, arch::Endian endian) const
+    {
+        if(sizeof(uint32_t) != sizeof(float))
+        {
+            serious("coersing 4 bytes to float is incompatble with this platform");
+            f = 0.0;
+        }
+        else
+        {
+            int32_t v = ReadInt32(endian);
+            f = *(reinterpret_cast<float*>(&v));
+        }
+    }
+
+    void FileReader::Read(double& d, arch::Endian endian) const
+    {
+        if(sizeof(uint64_t) != sizeof(double))
+        {
+            serious("coersing 8 bytes to double is incompatble with this platform");
+            d = 0.0;
+        }
+        else
+        {
+            uint64_t v = ReadUInt64(endian);
+            d = *(reinterpret_cast<double*>(&v));
+        }
+    }
 
 }}//qor::platform

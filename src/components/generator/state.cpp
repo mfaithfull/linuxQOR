@@ -36,7 +36,7 @@ namespace qor { namespace components { namespace generator {
 
     GeneratorState::GeneratorState(Generator* generator) : workflow::State(generator)
     {
-        m_result.code = Result::MORE_DATA;
+        m_result.code = Result::UNINITIALIZED;
 
         Leave = [this]()
         {

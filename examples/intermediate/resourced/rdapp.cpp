@@ -21,29 +21,44 @@
 // FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
+#include "src/configuration/configuration.h"
 
-#ifndef QOR_PP_H_COMPONENTS_GENERATOR_RESULT
-#define QOR_PP_H_COMPONENTS_GENERATOR_RESULT
+#include "rdapp.h"
 
-#include <cstdint>
+qor::SingletonRedirector<qor::framework::Application, ResourcedApp> ResourcedApp::m_sRedirect;
 
-namespace qor { namespace components { namespace generator {
 
-    class Result
+const char* ResourcedApp::ProvideShortOptionString()
+{
+    return "f";
+}
+
+qor::components::optparser::Option* ResourcedApp::ProvideLongOptions()
+{
+    static qor::components::optparser::Option longOptions[] =
     {
-    public:
-
-        enum eResultCode
-        {
-            UNINITIALIZED,
-            MORE_DATA,
-            FAILURE,
-            SUCCESS,
-        };
-
-        eResultCode code;
+    //   NAME       ARGUMENT				                    FLAG	SHORTNAME
+        {"file",    qor::components::optparser::Option::required_argument,       nullptr, 'f'},
+        {nullptr,   0,						                    nullptr, 0}
     };
-    
-}}}//qor::components::generator
+    return longOptions;
+}
 
-#endif//QOR_PP_H_COMPONENTS_GENERATOR_RESULT
+void ResourcedApp::ReceiveOptionParameter(char c, const char* value)
+{
+    switch (c)
+    {
+    case 'f':
+        //m_filename = value;
+        break;
+    }
+}
+
+void ResourcedApp::ReceiveLongOption(const char* option, const char* value)
+{
+    if (strncmp(option, "file", 4) == 0)
+    {
+        
+    }
+}
+

@@ -40,7 +40,7 @@ namespace qor { namespace components { namespace parser {
     
     public:
 
-        Parser() : workflow::Workflow()
+        Parser() : workflow::Workflow(), m_final(false)
         {
         }
 
@@ -79,9 +79,14 @@ namespace qor { namespace components { namespace parser {
 
         int Parse();
         int FinalParse();
+
+        bool IsFinal()
+        {
+            return m_final;
+        }
         
     private:
-
+        bool m_final;
         ref_of<class Context>::type m_context;
         std::stack<ref_of<Node>::type> m_nodes;
     };

@@ -36,7 +36,7 @@ namespace qor { namespace components { namespace parser {
 
     ParserState::ParserState(Parser* parser, uint64_t token) : workflow::State(parser)
     {
-        m_result.code = Result::MORE_DATA;
+        m_result.code = Result::UNINITIALIZED;
         m_result.length = 0;
         m_token = token;
 
@@ -59,7 +59,7 @@ namespace qor { namespace components { namespace parser {
 
     void ParserState::Reset()
     {
-        m_result.code = Result::MORE_DATA;
+        m_result.code = Result::UNINITIALIZED;
         m_result.first = 0;
         m_result.m_position = 0;
         m_result.length = 0;
@@ -352,7 +352,7 @@ namespace qor { namespace components { namespace parser {
                 }
                 break;
             case 1://tail
-                if(m_tail->m_result.code == Result::SUCCESS)
+                if(m_tail->m_result.code == Result::SUCCESS || GetParser()->IsFinal())
                 {
                     m_result.code = Result::SUCCESS;
                     m_result.length = m_head->m_result.length + m_tail->m_result.length;

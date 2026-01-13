@@ -22,47 +22,44 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_APPLICATION_BUILDER
-#define QOR_PP_H_APPLICATION_BUILDER
+#include "src/components/json/parser.h"
+#include "src/components/json/nodes/object.h"
+#include "src/framework/pipeline/podbuffer.h"
+#include "src/framework/pipeline/pipeline.h"
+#include "src/components/framework/pipeline/sinks/parsersink/parsersink.h"
 
-#include "application.h"
+namespace qor{ namespace framework{ namespace res {
 
-namespace qor{ namespace framework{
-
-    class qor_pp_module_interface(QOR_APPLICATION) AppBuilder
+    class JSONReader
     {
     public:
 
-        AppBuilder();
-        virtual ~AppBuilder() = default;
-
-        ref_of<Application>::type Build(const std::string& appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr);
-        ref_of<Application>::type TheApplication();
-
-        template< class AppClass >
-        ref_of<Application>::type Build(const std::string& appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr)
-        {
-            auto application = new_ref<AppClass>().template AsRef<Application>();
-            AutoRedirect(application);
-            application->Name() = appName;
-            return application;
+        JSONReader() : m_byteBuffer(2048), m_sink(m_byteBuffer)
+        {        
         }
 
-        template<class AppClass, typename TConfigureApp>
-        ref_of<Application>::type Build(const std::string& appName, TConfigureApp&& config_function)
+        qor::ref_of<qor::components::json::Object>::type operator()(const qor::pipeline::Plug& sourceConnector)
+        {        
+            qor::pipeline::Pipeline(
+                sourceConnector,
+                m_sink,
+                qor::pipeline::Element::Push
+            ).Connect().PumpAll();
+        
+            m_sink.Parser().FinalParse();
+            auto finalNode = m_sink.Parser().PopNode();
+            return finalNode;
+        }
+
+        const qor::pipeline::Buffer& Buffer()
         {
-            auto app = new_ref<AppClass>();
-            AutoRedirect(app.template AsRef<Application>());
-            app(qor_shared).SetName(appName);
-            config_function(app);
-            return app.template AsRef<Application>();
+            return m_byteBuffer;
         }
 
     private:
 
-        void AutoRedirect(ref_of<Application>::type application);
+        qor::pipeline::PODBuffer<byte> m_byteBuffer;
+        qor::components::ParserSink<qor::components::json::parser::object> m_sink;
     };
-    
-}}//qor::framework
 
-#endif//QOR_PP_H_APPLICATION_BUILDER
+}}}//qor::framework::res

@@ -76,7 +76,7 @@ namespace qor{ namespace platform{
         return std::filesystem::remove(m_path);
     }
 
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f )
+    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f ) const
     {
         for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
         {

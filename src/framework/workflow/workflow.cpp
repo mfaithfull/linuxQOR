@@ -154,7 +154,7 @@ namespace qor{ namespace workflow{
                 }
             }
             m_StateStack.push(newState);
-            newState->Enter();
+            //newState->Enter();
         }
     }
 

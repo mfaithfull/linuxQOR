@@ -22,28 +22,18 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_GENERATOR_RESULT
-#define QOR_PP_H_COMPONENTS_GENERATOR_RESULT
+#ifndef QOR_PP_H_ROLE_GETFEATURE
+#define QOR_PP_H_ROLE_GETFEATURE
 
-#include <cstdint>
+#include "src/qor/reference/reference.h"
+#include "src/framework/application/application_builder.h"
 
-namespace qor { namespace components { namespace generator {
-
-    class Result
+namespace qor{
+    template< class TFeature >
+    typename ref_of<TFeature>::type GetFeature()
     {
-    public:
+        return framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<TFeature>();
+    }
+}
 
-        enum eResultCode
-        {
-            UNINITIALIZED,
-            MORE_DATA,
-            FAILURE,
-            SUCCESS,
-        };
-
-        eResultCode code;
-    };
-    
-}}}//qor::components::generator
-
-#endif//QOR_PP_H_COMPONENTS_GENERATOR_RESULT
+#endif//QOR_PP_H_ROLE_GETFEATURE
