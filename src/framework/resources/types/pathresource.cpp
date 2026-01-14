@@ -94,24 +94,27 @@ namespace qor{ namespace framework{ namespace res {
         qor::platform::Folder folder(m_path);
         ResourceManager* manager = m_manager;
         bool includeSubFolders = this->m_recurse;
+        Resource* batch = this;
 
         threadPool->PostTask(
-            [folder, manager, includeSubFolders]()        
+            [folder, manager, includeSubFolders, batch]()        
             {
+                manager->BeginBatch(batch);
                 folder.Enumerate(
-                    [manager, includeSubFolders](qor::platform::FileIndex& index)->bool
+                    [manager, includeSubFolders, batch](qor::platform::FileIndex& index)->bool
                     {
                         if(includeSubFolders && index.IsDirectory())
                         {
-                            manager->AddPath(index.GetPath());
+                            manager->AddPath(index.GetPath(), batch);
                         }
                         else if(index.IsRegularFile())
                         {
-                            manager->AddFile(index);
+                            manager->AddFile(index, batch);
                         }
                         return true;
                     }
                 );
+                manager->EndBatch(batch);
             }
         );
 

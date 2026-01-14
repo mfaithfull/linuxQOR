@@ -22,48 +22,53 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
-#define QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
+#ifndef QOR_PP_H_EVENTS_SINK
+#define QOR_PP_H_EVENTS_SINK
 
-#include <string>
+#include "eventqueue.h"
 
-#include "../../resource.h"
-#include "src/platform/filesystem/path.h"
-#include "src/platform/filesystem/fileindex.h"
-#include "src/components/json/nodes/object.h"
+namespace qor{ namespace events{
 
-namespace qor{ namespace framework{ namespace res {
-
-    class qor_pp_module_interface(QOR_RESOURCES) JSON : public Resource
+    class Sink
     {
     public:
 
-        static const char* StaticType();
-
-        JSON(ResourceManager* manager, const qor::platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index)
-        {            
-            Name();
+        Sink(EventQueue* queue) : m_queue(queue)
+        {
         }
-        
-        virtual ~JSON() = default;
 
-        virtual const char* Type();
-        virtual void Name();
-        virtual void Locate();
-        virtual void Claim();
-        
-        qor::ref_of<qor::components::json::Object>::type GetObject();
-        
+        ~Sink()
+        {
+        }
+
+        bool Peek()
+        {
+            struct event* evt = m_queue->Peek();
+            return evt != nullptr ? true : false;
+        }
+
+        struct event GetMessage()
+        {
+            struct event e;
+            struct event* evt = nullptr;
+            while(evt == nullptr)
+            {
+                evt = m_queue->ReadBegin();
+            }
+            e.category = evt->category;
+            e.evt = evt->evt;
+            e.data = evt->data;
+            e.release = evt->release;            
+            m_queue->ReadEnd();
+            return e;
+        }
+
     protected:
 
-        const qor::platform::FileIndex m_index;
-        qor::ref_of<qor::components::json::Object>::type m_object;
-        
-    private:
-        static const char* s_jsonResourceType;
-        
+        EventQueue* m_queue;        
+
     };
 
-}}}//qor::framework::res
+}}//qor::events
 
-#endif//QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
+#endif//QOR_PP_H_EVENTS_SINK

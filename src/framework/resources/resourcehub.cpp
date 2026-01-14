@@ -35,7 +35,7 @@ qor_pp_module_provide(QOR_RESOURCES, ResourceHub)
 
 namespace qor{ namespace framework{
 
-    ResourceHub::ResourceHub()
+    ResourceHub::ResourceHub() : m_batch(nullptr)
     {
     }
 
@@ -63,19 +63,34 @@ namespace qor{ namespace framework{
         m_threadPool = threadPool;
     }
 
-    void ResourceHub::AddPath(const qor::platform::Path& path)
-    {
-        new res::Path(this, path);        
+    void ResourceHub::BeginBatch(Resource* batchKey)
+    {        
+        m_batchMutex.lock();
+        m_batch = batchKey;
     }
 
-    void ResourceHub::AddFile(const qor::platform::FileIndex& index)
+    void ResourceHub::EndBatch(Resource* batchKey)
     {
-        new res::File(this, index);        
+        if(batchKey == m_batch)
+        {            
+            m_batch = nullptr;
+            m_batchMutex.unlock();
+        }
     }
 
-    void ResourceHub::AddJSON(const platform::FileIndex& file)
+    void ResourceHub::AddPath(const qor::platform::Path& path, Resource* batchKey)
     {
-        new res::JSON(this, file);
+        new res::Path(this, path, batchKey);        
+    }
+
+    void ResourceHub::AddFile(const qor::platform::FileIndex& index, Resource* batchKey)
+    {
+        new res::File(this, index, batchKey);        
+    }
+
+    void ResourceHub::AddJSON(const platform::FileIndex& file, Resource* batchKey)
+    {
+        new res::JSON(this, file, batchKey);
     }
 
     void ResourceHub::SubscribeForNamesByType(const char* type, const std::function<bool(Resource*)>& onNamedcallback)
@@ -94,22 +109,31 @@ namespace qor{ namespace framework{
 
     void ResourceHub::SubscribeForClaimsByType(const char* type, const std::function<bool(Resource*)>& onClaimedcallback)
     {
+        m_claimsByTypeSubscriptionsMutex.lock();
+        m_claimsByTypeSubscriptions.push_back( typeSubscription {type, onClaimedcallback} );
+        m_claimsByTypeSubscriptionsMutex.unlock();
 
     }
 
     void ResourceHub::SubscribeForAvailabilityByType(const char* type, const std::function<bool(Resource*)>& onAvailabilitycallback)
     {
-
+        m_availabilityByTypeSubscriptionsMutex.lock();
+        m_availabilityByTypeSubscriptions.push_back( typeSubscription {type, onAvailabilitycallback} );
+        m_availabilityByTypeSubscriptionsMutex.unlock();
     }
 
     void ResourceHub::SubscribeForRemovalByType(const char* type, const std::function<bool(Resource*)>& onRemovedcallback)
     {
-
+        m_removalByTypeSubscriptionsMutex.lock();
+        m_removalByTypeSubscriptions.push_back( typeSubscription {type, onRemovedcallback} );
+        m_removalByTypeSubscriptionsMutex.unlock();
     }
 
     void ResourceHub::SubscribeForAllByType(const char* type, const std::function<bool(Resource*, ResourceStatus)>& onStatuscallback)
     {
-
+        m_allByTypeSubscriptionsMutex.lock();
+        m_allByTypeSubscriptions.push_back( typeallSubscription {type, onStatuscallback} );
+        m_allByTypeSubscriptionsMutex.unlock();
     }
 
     void ResourceHub::SubscribeForNamesByPath(const std::string& uriPathPart, const std::function<bool(Resource*)>& onNamedcallback)
@@ -170,6 +194,30 @@ namespace qor{ namespace framework{
                 {
                     ++it;
                 }
+            }
+        }
+        mtx.unlock();
+    }
+
+    void ResourceHub::UpdateByTypeSubscribersToAll(Resource* res, ResourceStatus status, const std::string& uri, std::vector<typeallSubscription>& subs, std::recursive_mutex& mtx)
+    {
+        mtx.lock();
+        for(auto it = subs.rbegin(); it != subs.rend();)
+        {
+            if(res->Type() == it->first)
+            {
+                if(!it->second(res, status))
+                {
+                    it = decltype(it)(subs.erase(std::next(it).base()));
+                }
+                else
+                {
+                    ++it;
+                }
+            }
+            else
+            {
+                ++it;
             }
         }
         mtx.unlock();
@@ -286,7 +334,7 @@ namespace qor{ namespace framework{
                 //TODO: Get actual path part, dropping type.
                 UpdateSubscribersToAll(res, Named, uri, m_allByPathSubscriptions, m_allByPathSubscriptionsMutex);
                 UpdateSubscribers(res, uri, m_namesByPathSubscriptions, m_namesByPathSubscriptionsMutex);
-                //UpdateByTypeSubscribersToAll(res, Named, m_allByTypeSubscriptiones, m_allByTypeSubscriptionsMutex);
+                UpdateByTypeSubscribersToAll(res, Named, uri, m_allByTypeSubscriptions, m_allByTypeSubscriptionsMutex);
                 UpdateByTypeSubscribers(res, m_namesByTypeSubscriptions, m_namesByTypeSubscriptionsMutex);
             }
             else
@@ -306,6 +354,8 @@ namespace qor{ namespace framework{
             //TODO: Get actual path part, dropping type.
             UpdateSubscribersToAll(res, Located, uri, m_allByPathSubscriptions, m_allByPathSubscriptionsMutex);
             UpdateSubscribers(res, uri, m_locationsByPathSubscriptions, m_locationsByPathSubscriptionsMutex);
+            UpdateByTypeSubscribersToAll(res, Located, uri, m_allByTypeSubscriptions, m_allByTypeSubscriptionsMutex);
+            UpdateByTypeSubscribers(res, m_namesByTypeSubscriptions, m_namesByTypeSubscriptionsMutex);
         }
     }
     
@@ -317,6 +367,8 @@ namespace qor{ namespace framework{
             //TODO: Get actual path part, dropping type.
             UpdateSubscribersToAll(res, Claimed, uri, m_allByPathSubscriptions, m_allByPathSubscriptionsMutex);
             UpdateSubscribers(res, uri, m_claimsByPathSubscriptions, m_claimsByPathSubscriptionsMutex);
+            UpdateByTypeSubscribersToAll(res, Claimed, uri, m_allByTypeSubscriptions, m_allByTypeSubscriptionsMutex);
+            UpdateByTypeSubscribers(res, m_namesByTypeSubscriptions, m_namesByTypeSubscriptionsMutex);
         }
     }
 
@@ -328,6 +380,8 @@ namespace qor{ namespace framework{
             //TODO: Get actual path part, dropping type.
             UpdateSubscribersToAll(res, Available, uri, m_allByPathSubscriptions, m_allByPathSubscriptionsMutex);
             UpdateSubscribers(res, uri, m_availabilityByPathSubscriptions, m_availabilityByPathSubscriptionsMutex);
+            UpdateByTypeSubscribersToAll(res, Available, uri, m_allByTypeSubscriptions, m_allByTypeSubscriptionsMutex);
+            UpdateByTypeSubscribers(res, m_namesByTypeSubscriptions, m_namesByTypeSubscriptionsMutex);
         }
     }
 
@@ -339,6 +393,8 @@ namespace qor{ namespace framework{
             //TODO: Get actual path part, dropping type.
             UpdateSubscribersToAll(res, Removed, uri, m_allByPathSubscriptions, m_allByPathSubscriptionsMutex);
             UpdateSubscribers(res, uri, m_removalsByPathSubscriptions, m_removalsByPathSubscriptionsMutex);
+            UpdateByTypeSubscribersToAll(res, Removed, uri, m_allByTypeSubscriptions, m_allByTypeSubscriptionsMutex);
+            UpdateByTypeSubscribers(res, m_namesByTypeSubscriptions, m_namesByTypeSubscriptionsMutex);
             DisposeResource(res);
         }
     }

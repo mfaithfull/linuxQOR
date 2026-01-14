@@ -47,7 +47,7 @@ namespace qor{ namespace framework{
     {
     public:
 
-        Resource(ResourceManager* manager);
+        Resource(ResourceManager* manager, Resource* batchKey = nullptr);
         virtual ~Resource();
         ResourceManager* Manager();
         virtual const char* Type(); //type, maybe mime-type of the resource, matching this class
@@ -60,6 +60,7 @@ namespace qor{ namespace framework{
         qor_pp_signal_func StatusEvent(Resource* res, ResourceStatus status);
 
     protected:
+        Resource* m_batchKey;
         ResourceManager* m_manager;
         ResourceStatus m_status;
         std::string m_URI;  //unique identifier for the resource        

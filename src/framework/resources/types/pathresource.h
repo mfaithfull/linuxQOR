@@ -39,7 +39,7 @@ namespace qor{ namespace framework{ namespace res {
 
         static const char* StaticType();
 
-        Path(ResourceManager* manager, const qor::platform::Path& path) : Resource(manager), m_path(path), m_monitor(false), m_recurse(false)
+        Path(ResourceManager* manager, const qor::platform::Path& path, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_path(path), m_monitor(false), m_recurse(false)
         {            
             Name();
         }

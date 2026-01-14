@@ -39,6 +39,7 @@
 #include "src/framework/thread/threadpool.h"
 
 #include "manager.h"
+#include "container.h"
 #include "types/pathresource.h"
 #include "types/fileresource.h"
 #include "types/json/jsonresource.h"
@@ -56,7 +57,9 @@ namespace qor{ namespace framework{
     public:
 
         ResourceHub();
-        virtual ~ResourceHub() noexcept = default;
+        virtual ~ResourceHub() noexcept(true)
+        {
+        }
 
         virtual void Setup();
         virtual void Shutdown();
@@ -65,9 +68,11 @@ namespace qor{ namespace framework{
         //Automatically collect the run location of the executable if possible. Also the launch location/current folder
         //  Any user home folder and Application Data folder assigned or preferred by the OS.
 
-        virtual void AddPath(const platform::Path& path);//Add a Path resource, return a URI by which it will be indexed
-        virtual void AddFile(const platform::FileIndex& file);//Add a File resource, return a URI by which it will be indexed
-        virtual void AddJSON(const platform::FileIndex& file);
+        virtual void BeginBatch(Resource* batchKey);
+        virtual void EndBatch(Resource* batchKey);
+        virtual void AddPath(const platform::Path& path, Resource* batchKey = nullptr);//Add a Path resource, return a URI by which it will be indexed
+        virtual void AddFile(const platform::FileIndex& file, Resource* batchKey = nullptr);//Add a File resource, return a URI by which it will be indexed
+        virtual void AddJSON(const platform::FileIndex& file, Resource* batchKey = nullptr);
         
         void SubscribeForNamesByPath(const std::string& uriPathPart, const std::function<bool(Resource*)>& onNamedcallback);
         void SubscribeForLocationsByPath(const std::string& uriPathPart, const std::function<bool(Resource*)>& onLocatedcallback);
@@ -125,6 +130,7 @@ namespace qor{ namespace framework{
     protected:
 
         typedef std::pair< const char*, std::function<bool(Resource*)> > typeSubscription;
+        typedef std::pair< std::string, std::function<bool(Resource*, ResourceStatus)> > typeallSubscription;
 
         typedef std::pair< std::string, std::function<bool(Resource*)> > pathSubscription;
         typedef std::pair< std::string, std::function<bool(Resource*, ResourceStatus)> > pathallSubscription;
@@ -153,6 +159,18 @@ namespace qor{ namespace framework{
         std::vector< typeSubscription > m_locationsByTypeSubscriptions;
         std::recursive_mutex m_locationsByTypeSubscriptionsMutex;
 
+        std::vector< typeSubscription > m_claimsByTypeSubscriptions;
+        std::recursive_mutex m_claimsByTypeSubscriptionsMutex;
+
+        std::vector< typeSubscription > m_availabilityByTypeSubscriptions;
+        std::recursive_mutex m_availabilityByTypeSubscriptionsMutex;
+
+        std::vector< typeSubscription > m_removalByTypeSubscriptions;
+        std::recursive_mutex m_removalByTypeSubscriptionsMutex;
+
+        std::vector< typeallSubscription > m_allByTypeSubscriptions;
+        std::recursive_mutex m_allByTypeSubscriptionsMutex;
+        
         std::map<std::string, res::Path*> m_paths;        
         std::recursive_mutex m_pathsMutex;
 
@@ -162,8 +180,14 @@ namespace qor{ namespace framework{
         std::map<std::string, res::JSON*> m_json;
         std::recursive_mutex m_jsonMutex;
 
+        ByTypeContainer m_containers;
+
+        Resource* m_batch;
+        std::recursive_mutex m_batchMutex;
+
         void UpdateSubscribersToAll(Resource* res, ResourceStatus status, const std::string& uri, std::vector<pathallSubscription>& subs, std::recursive_mutex& mtx);        
         void UpdateSubscribers(Resource* res, const std::string& uri, std::vector<pathSubscription>& subs, std::recursive_mutex& mtx);
+        void UpdateByTypeSubscribersToAll(Resource* res, ResourceStatus status, const std::string& uri, std::vector<typeallSubscription>& subs, std::recursive_mutex& mtx);
         void UpdateByTypeSubscribers(Resource* res, std::vector<typeSubscription>& subs, std::recursive_mutex& mtx);
         bool AdoptResource(Resource* res);
         void DisposeResource(Resource* res);

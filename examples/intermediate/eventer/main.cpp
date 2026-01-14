@@ -23,6 +23,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <cassert>
+
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/qor/module/module.h"
@@ -33,20 +36,17 @@
 #include "src/platform/platform.h"
 #include "src/platform/filesystem/filesystem.h"
 #include "src/components/framework/logaggregator/logaggregator.h"
-#include "src/framework/resources/resourcehub.h"
 #include "src/framework/application/application_builder.h"
 #include "src/components/framework/optionparser/getter.h"
-#include "rdapp.h"
 #include "src/framework/role/getfeature.h"
-#include "src/framework/resources/types/json/jsonresource.h"
-#include "src/framework/resources/claimer.h"
+#include "src/framework/events/eventsource.h"
+#include "src/framework/events/eventsink.h"
 
-const char* logTag = "resourced";
+const char* logTag = "eventer";
 
 qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)
-qor_pp_module_requires(ResourceHub)
 
 using namespace qor;
 using namespace qor::platform;
@@ -68,9 +68,18 @@ void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAg
     logAggregator(qor_shared).Receiver().WriteToStandardOutput(true);
 }
 
-qor_pp_implement_module(ResourcedApp::Name)
+qor_pp_implement_module("eventer")
 
-//bool HandlePathUpdate(Resource* res, ResourceStatus status);
+struct customEvent
+{
+    int a;
+    float b;
+    void Reset()
+    {
+        a = 0;
+        b = 3.141593f;
+    }
+};
 
 int main(const int argc, const char** argv, char** env)
 {    
@@ -78,13 +87,8 @@ int main(const int argc, const char** argv, char** env)
     DefaultLogHandler logHandler(log::Level::Debug);
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build<ResourcedApp>(
-        ResourcedApp::Name,
-        [argc,argv,env](ref_of<ResourcedApp>::type app)
-        {   
-            /*Parse the options from the command line and pass them to the OptionsApp*/
-            qor::components::optparser::OptionGetter options(argc, argv, app(qor_shared));
-        }
+    return AppBuilder().Build(
+        "eventer"
     )->SetRole<Role>(
         [&logHandler](ref_of<IRole>::type role)
         {
@@ -105,23 +109,24 @@ int main(const int argc, const char** argv, char** env)
                 }
             );
             
-            role->AddFeature<ResourceHub>(
-                [&role](ref_of<ResourceHub>::type resourceHub)->void
-                {
-                    resourceHub->UseThreadPool(role->GetFeature<ThreadPool>());
-                }
-            );
         }
     ).Run(
     make_runable(
         [&logHandler]()->int
-        {            
-            auto resourceHub = GetFeature<ResourceHub>();
-            Path fontPath("F:/Develop/thorvg-1.0-pre33/thorvg-1.0-pre33/examples/resources/font");
-            Claimer<res::JSON> claimer(resourceHub, fontPath);
-            res::JSON* jsonResouce = nullptr;
-            claimer.WaitForResouce(jsonResouce);
-            auto jsonObject = jsonResouce->GetObject();
+        {
+            qor::events::EventQueue eventQueue(100);
+            qor::events::Source<customEvent> eventSource(0x00005678, 10, &eventQueue);
+            qor::events::Sink eventSink(&eventQueue);
+
+            customEvent* custom = eventSource.GetMessage(56);
+            custom->a = 101;
+            eventSource.Send();
+            
+            auto e = eventSink.GetMessage();
+            customEvent cevt = *(reinterpret_cast<customEvent*>(e.data));
+            e.release();//Release the message so it can be recycled by the sender.
+
+            assert(cevt.a == 101);
             return 0;
         }
     ));

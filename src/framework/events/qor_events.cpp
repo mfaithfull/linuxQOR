@@ -22,48 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
-#define QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include <string>
-
-#include "../../resource.h"
-#include "src/platform/filesystem/path.h"
-#include "src/platform/filesystem/fileindex.h"
-#include "src/components/json/nodes/object.h"
-
-namespace qor{ namespace framework{ namespace res {
-
-    class qor_pp_module_interface(QOR_RESOURCES) JSON : public Resource
-    {
-    public:
-
-        static const char* StaticType();
-
-        JSON(ResourceManager* manager, const qor::platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index)
-        {            
-            Name();
-        }
-        
-        virtual ~JSON() = default;
-
-        virtual const char* Type();
-        virtual void Name();
-        virtual void Locate();
-        virtual void Claim();
-        
-        qor::ref_of<qor::components::json::Object>::type GetObject();
-        
-    protected:
-
-        const qor::platform::FileIndex m_index;
-        qor::ref_of<qor::components::json::Object>::type m_object;
-        
-    private:
-        static const char* s_jsonResourceType;
-        
-    };
-
-}}}//qor::framework::res
-
-#endif//QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Events Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	return QORModule;
+}

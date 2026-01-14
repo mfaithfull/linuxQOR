@@ -22,48 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
-#define QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
+#ifndef QOR_PP_H_EVENTS_EVENT
+#define QOR_PP_H_EVENTS_EVENT
 
-#include <string>
+#include <cstdint>
+#include <functional>
 
-#include "../../resource.h"
-#include "src/platform/filesystem/path.h"
-#include "src/platform/filesystem/fileindex.h"
-#include "src/components/json/nodes/object.h"
-
-namespace qor{ namespace framework{ namespace res {
-
-    class qor_pp_module_interface(QOR_RESOURCES) JSON : public Resource
+namespace qor{ namespace events{
+    
+    struct event
     {
-    public:
-
-        static const char* StaticType();
-
-        JSON(ResourceManager* manager, const qor::platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index)
-        {            
-            Name();
-        }
-        
-        virtual ~JSON() = default;
-
-        virtual const char* Type();
-        virtual void Name();
-        virtual void Locate();
-        virtual void Claim();
-        
-        qor::ref_of<qor::components::json::Object>::type GetObject();
-        
-    protected:
-
-        const qor::platform::FileIndex m_index;
-        qor::ref_of<qor::components::json::Object>::type m_object;
-        
-    private:
-        static const char* s_jsonResourceType;
-        
+        uint32_t category;
+        uint32_t evt;
+        void* data;
+        std::function<void(void)> release;        
     };
 
-}}}//qor::framework::res
+}}//qor::events
 
-#endif//QOR_PP_H_FRAMEWORK_RESOURCES_JSONRESOURCE
+#endif//QOR_PP_H_EVENTS_EVENT

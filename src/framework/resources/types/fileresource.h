@@ -39,7 +39,7 @@ namespace qor{ namespace framework{ namespace res {
 
         static const char* StaticType();
 
-        File(ResourceManager* manager, const qor::platform::FileIndex& index) : Resource(manager), m_index(index), m_monitor(false)
+        File(ResourceManager* manager, const qor::platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index), m_monitor(false)
         {            
             Name();
         }

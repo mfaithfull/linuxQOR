@@ -45,14 +45,17 @@ namespace qor{ namespace framework{
     public:
     
         ResourceManager();
-        ~ResourceManager() = default;
+        virtual ~ResourceManager() = default;
 
-        //This is the interface seen and used by resources-------------------------
-        void ReceiveResourceUpdate(Resource* res, ResourceStatus status);       //|
-        //This is the interface to be implemented by an actual resource manager---|.
-        virtual void AddPath(const platform::Path& path){}                      //|.
-        virtual void AddFile(const platform::FileIndex& file){}                 //|.
-        virtual void AddJSON(const platform::FileIndex& file){}                 //|.
+        //This is the interface seen and used by resources----------------------------------------------------//|
+        void ReceiveResourceUpdate(Resource* res, ResourceStatus status);                                     //|
+        //This is the interface to be implemented by an actual resource manager---------------------------------|.
+        virtual void AddPath(const platform::Path& path, Resource* batchKey = nullptr){}                      //|.
+        virtual void AddFile(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
+        virtual void AddJSON(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
+        virtual void BeginBatch(Resource* batchKey){}                                                         //|.
+        virtual void EndBatch(Resource* batchKey){}											                  //|.
+
     protected:
 
         void Start();        
