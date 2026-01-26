@@ -43,13 +43,6 @@ namespace qor{ namespace events{
         {
         }
 
-        void Release()
-        {
-            event_type* eventData = m_stock.ReadBegin();
-            eventData->Reset();
-            m_stock.ReadEnd();
-        }
-
         event_type* GetMessage(uint32_t eventId)
         {
             event_type* eventData = nullptr;
@@ -74,6 +67,13 @@ namespace qor{ namespace events{
         void Send()
         {
             m_queue->WriteEnd();					//This makes the queue slot available to be read
+        }
+
+        void Release()
+        {
+            event_type* eventData = m_stock.ReadBegin();
+            eventData->Reset();
+            m_stock.ReadEnd();
         }
 
     protected:
