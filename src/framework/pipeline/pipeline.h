@@ -54,6 +54,12 @@ namespace qor{ namespace pipeline{
             SetSource(SourceConnection->GetSource());
         }
 
+        Pipeline(const Plug& SourceConnection, Sink* sink, Element::FlowMode flowmode = Element::FlowMode::Pull) : m_flowmode(flowmode)
+        {
+            SetSink(sink);
+            SetSource(SourceConnection.GetSource());
+        }
+
         Pipeline(Plug& SourceConnection, Plug& SinkConnection, Element::FlowMode flowmode = Element::FlowMode::Pull) : m_flowmode(flowmode)
         {
             SetSink(SinkConnection.GetSink());
@@ -96,6 +102,28 @@ namespace qor{ namespace pipeline{
                 }
             }
             return *this;
+        }
+
+        bool IsConnected()  //assumes true if there is nothing setup to connect to, like a string source or parser sink.
+        {
+            bool bConnected = false;
+            bool sinkConnected = true;  
+            bool sourceConnected = true;
+            if(m_sink && m_source)
+            {
+                auto sinkPlug = dynamic_cast<Plug*>(ActualSink()->GetPlug());
+                auto sourcePlug = dynamic_cast<Plug*>(ActualSource()->GetPlug());
+                if(sinkPlug)
+                {
+                    sinkConnected = sinkPlug->IsConnected();                    
+                }
+                if(sourcePlug)
+                {
+                    sourceConnected = sourcePlug->IsConnected();
+                }
+                bConnected = sinkConnected && sourceConnected;
+            }
+            return bConnected;
         }
 
         void SetSource(Element* source, Buffer* buffer)

@@ -41,12 +41,12 @@ namespace qor{ namespace pipeline{
 
         virtual ~Connection() = default;
 
-        virtual Element* GetSource()
+        virtual Element* GetSource() const
         {
             return m_source;
         }
 
-        virtual Element* GetSink()
+        virtual Element* GetSink() const
         {
             return m_sink;
         }
