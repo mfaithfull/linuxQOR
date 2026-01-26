@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER
+#define QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER
+
 #include "src/components/json/parser.h"
 #include "src/components/json/nodes/object.h"
 #include "src/framework/pipeline/podbuffer.h"
@@ -63,3 +66,5 @@ namespace qor{ namespace framework{ namespace res {
     };
 
 }}}//qor::framework::res
+
+#endif//QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER

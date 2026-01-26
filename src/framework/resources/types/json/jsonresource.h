@@ -40,7 +40,7 @@ namespace qor{ namespace framework{ namespace res {
 
         static const char* StaticType();
 
-        JSON(ResourceManager* manager, const qor::platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index)
+        JSON(ResourceManager* manager, const platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index)
         {            
             Name();
         }
@@ -52,12 +52,12 @@ namespace qor{ namespace framework{ namespace res {
         virtual void Locate();
         virtual void Claim();
         
-        qor::ref_of<qor::components::json::Object>::type GetObject();
+        ref_of<components::json::Object>::type GetObject();
         
     protected:
 
         const qor::platform::FileIndex m_index;
-        qor::ref_of<qor::components::json::Object>::type m_object;
+        ref_of<components::json::Object>::type m_object;
         
     private:
         static const char* s_jsonResourceType;
