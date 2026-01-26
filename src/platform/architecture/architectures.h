@@ -34,10 +34,10 @@ namespace qor{ namespace arch{
 
     enum Endian
     {
-        host,       //whatever the host is, i.e. don't mess with it
-        network,    //Network regardless of host
-        big,        //Big, for eoncding, whatever the host is. This is actually the same as Network in practice but is used for target cpu
-        little,     //Little, for encoding, whatever the host is.
+        host = 1,       //whatever the host is, i.e. don't mess with it
+        network = 2,    //Network regardless of host
+        big = 2,        //Big, for eoncding, whatever the host is. This is actually the same as Network in practice but is used for target cpu
+        little = 3,     //Little, for encoding, whatever the host is.
     };
     //Note: this might get more complex with ARM as some of those seem to be able to do both or to switch
 }}//qor::arch
