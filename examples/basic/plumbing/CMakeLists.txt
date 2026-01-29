@@ -14,16 +14,16 @@ target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
     target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
-qor_platform qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector qor_base64encodefilter
-linq_filesystem)
+qor_platform qor_thread qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector qor_base64encodefilter
+linq_filesystem linq_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
     target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
-qor_platform qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector qor_base64encodefilter
+qor_platform qor_thread qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector qor_base64encodefilter
 qor_log qor_loghandler qor_sockets qor_asyncioservice qor_base64decodefilter qor_socketconnector qor_optionparser
 qor_property qor_stdoutsink
-winqor_filesystem)
+winqor_filesystem winqor_thread)
 endif()
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

@@ -6,7 +6,9 @@ set(target qor_resources)
 add_library(${target} SHARED qor_resources.cpp manager.cpp resourcehub.cpp resource.cpp
 types/pathresource.cpp
 types/fileresource.cpp
-types/json/jsonresource.cpp)
+types/json/jsonresource.cpp
+types/font/fontresource.cpp
+types/font/reader.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

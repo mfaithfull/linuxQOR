@@ -90,8 +90,11 @@ namespace qor{ namespace components{
 
     bool FileConnector::Connect()
     {
-        m_File = new_ref<platform::IFile>(*m_pFileIndex, static_cast<int>(m_OpenFor), static_cast<int>(m_Mode));
-        m_connected = !m_File.IsNull();//->IsOpen();
+        if(!m_connected)
+        {
+            m_File = new_ref<platform::IFile>(*m_pFileIndex, static_cast<int>(m_OpenFor), static_cast<int>(m_Mode));
+            m_connected = !m_File.IsNull();//->IsOpen();
+        }
         return m_connected;
     }
 

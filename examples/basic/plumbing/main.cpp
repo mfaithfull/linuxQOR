@@ -34,6 +34,7 @@ see the roller example*/
 const char* appName = "Plumbing";
 qor_pp_implement_module(appName)
 
+bool requiresCurrentThread = ImplementsICurrentThread();
 bool requiresFileSystem = ImplementsIFileSystem();
 
 void TraditionalFileRead(FileSystem::ref filesystem, FileIndex& index);
@@ -109,7 +110,7 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, FileIndex& input)
     Socket connectors or Pipe connectors or DBus connectors the rest of
     the pipeline would be identical and oblivious*/
     FileConnector inputConnector(input, WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly);
-    FileConnector outputConnector(output, WithFlags::CreateNew, ShareMode::Owner_Write, OpenFor::ReadWrite);
+    FileConnector outputConnector(output, WithFlags::CreateNew, ShareMode::Owner_Read, OpenFor::ReadWrite);
 
     /*Create a pipeline with the connectors at each end*/
     Pipeline fileProcessor(inputConnector, outputConnector, Element::Push);
