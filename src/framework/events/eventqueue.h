@@ -194,13 +194,17 @@ namespace qor{ namespace events{
         virtual void SetCapacity(size_type itemCount)
         {
             //The one and only bit of memory management;
-            delete[] m_pAllocation;
+            if(m_pAllocation != nullptr)
+            {
+                delete[] m_pAllocation;
+            }
             m_pAllocation = (itemCount > 0) ? new event_t[itemCount] : nullptr;
             AbstractQueue<size_type>::SetCapacity(itemCount);
         }
 
     protected:
         
+        /*
         event_t* EndOfBuffer(void)
         {
             event_t* pResult = nullptr;
@@ -209,7 +213,7 @@ namespace qor{ namespace events{
                 pResult = m_pAllocation + this->m_allocationCount;
             }
             return pResult;
-        }
+        }*/
         
         event_t* AddressOf(size_type index)
         {

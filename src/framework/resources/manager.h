@@ -40,6 +40,7 @@
 
 namespace qor{ namespace framework{
 
+	//Asynchronous resource manager
     class qor_pp_module_interface(QOR_RESOURCES) ResourceManager : public SlotBase
     {
     public:
@@ -49,7 +50,7 @@ namespace qor{ namespace framework{
 
         //This is the interface seen and used by resources----------------------------------------------------//|
         void ReceiveResourceUpdate(Resource* res, ResourceStatus status);                                     //|
-        //This is the interface to be implemented by an actual resource manager---------------------------------|.
+        //This is the interface to be implemented by an actual resource manager----------------------------------.
         virtual void AddPath(const platform::Path& path, Resource* batchKey = nullptr){}                      //|.
         virtual void AddFile(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
         virtual void AddJSON(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
@@ -61,11 +62,11 @@ namespace qor{ namespace framework{
         void Start();        
         void Stop();        
                 
-        virtual void OnNamed(Resource* res);                                    // .
-        virtual void OnLocated(Resource* res);                                  // .
-        virtual void OnClaimed(Resource* res);                                  // .
-        virtual void OnAvailable(Resource* res);                                // .
-        virtual void OnRemoved(Resource* res);                                  // .
+        virtual void OnNamed(Resource* res);                                                                  // .
+        virtual void OnLocated(Resource* res);                                                                // .
+        virtual void OnClaimed(Resource* res);                                  							  // .
+        virtual void OnAvailable(Resource* res);                               								  // .
+        virtual void OnRemoved(Resource* res);                                								  // .
 
         ref_of<framework::ThreadPool>::type m_threadPool;
 

@@ -63,6 +63,7 @@ namespace qor{ namespace framework{ namespace res {
         std::map<std::string, res::File> m_files;
         std::map<std::string, res::Path> m_paths;
         bool m_recurse;
+        
     private:
         static const char* s_pathResourceType;// = "Path";        
 

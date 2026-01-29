@@ -27,7 +27,6 @@
 
 #include "../../qor/module/module.h"
 
-
 namespace qor{ namespace framework{
 
     qor_pp_module_interface(QOR_PP_HOST)Module* TheHost();

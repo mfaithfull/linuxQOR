@@ -29,7 +29,7 @@
 
 namespace qor{ namespace events{
 
-    class Sink
+    class Sink final
     {
     public:
 

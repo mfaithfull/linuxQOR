@@ -27,8 +27,7 @@
 #include "bento.h"
 
 namespace qor
-{
-    //------------------------------------------------------------------------------
+{    
     PendingSlot::PendingSlot(SignalBase* sender, std::unique_ptr<detail::BentoAbstract/*, qor_std_deleter<detail::BentoAbstract>*/ > signal_Bento,
         SlotBase* receiver, std::unique_ptr< detail::BentoAbstract/*, qor_std_deleter<detail::BentoAbstract>*/ > slot_Bento,
         std::unique_ptr< detail::TeaCupAbstract/*, qor_std_deleter<detail::TeaCupAbstract>*/ > teaCup_Data)

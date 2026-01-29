@@ -3,11 +3,11 @@ The topic of global objects (singletons) can be controversial. Developers are en
 
 1.Originally globals were discouraged to promote object oriented design, i.e. modularity. Limiting the scope and extent of variables so that code is easier to reason about and side effects can be limited, as can the blast radius when things go wrong.
 
-2.Later this discouragement was strengthened because singletons are inherently not thread safe and when made safe they can undermine performance. It's easy to end up with an n-thread design performing slower than a single thread design as all the threads queue up to grap the same global singleton lock and hold it while they work.
+2.Later this discouragement was strengthened because singletons are inherently not thread safe and when made safe they can undermine performance. It's easy to end up with an n-thread design performing slower than a single thread design as all the threads queue up to grab the same global singleton lock and hold it while they work.
 
 This advice is sound but it leads to architectural blind spots. In the real world there are things global to your program, things you only ever want one of and things you need to be able to access from anywhere in your code. These are sometimes the same things and sometimes not. Removing singletons altogether from our thinking blinds us to possibilities that a more nuanced approach opens up. 
 
-We often find ourselves needing or dealing with Singletons at the initial stages and top level of an application. Precisely when we're getting started both the striong advise and usually our framework of choice, lets us down by not providing a safe and clear way to do what we need. So we bodge a (temporary) solution and hope for the best, building in instabilities before we've even written any application logic.
+We often find ourselves needing or dealing with Singletons at the initial stages and top level of an application. Precisely when we're getting started both the strong advise and usually our framework of choice, lets us down by not providing a safe and clear way to do what we need. So we bodge a (temporary) solution and hope for the best, building in instabilities before we've even written any application logic.
 
 Singletons are powerful and dangerous so treat them with care and manage them properly. Don't hide the ones you can't avoid in a dark corner and cross your fingers that they'll never come out to bite you. Put them front and centre where they usually belong. Make them safe and do everything possible to keep them limited and performant.
 
@@ -22,13 +22,13 @@ Application
 
 The global module registry and TypeRegistry are also singletons but you never have to create them
 or interact with them directly. The outline example shows runtime, readonly, usage of the 
-global module registry which is normally only used at static initialisation time.
+global module registry which is only written at static initialisation time.
 
-These are things we only want one of as they have to coordinate globally to do their job or they 
-are things we only want one of because they represent a resource that there really is only one of.
+These are things we only want one of because they have to coordinate globally to do their job. 
+Or they are things we only want one of because they represent a resource that there really is only one of.
 
 Creating and cleaning up singletons
-QOR singletons are created using a trait factory pattern. We declare a type to be a singleton by overriding the instancer_of trait
+QOR singletons are created using a trait factory pattern. We declare a type to be a singleton by overriding the instancer_of<> trait
 
 qor_pp_declare_instancer_of(platform::IFileSystem, SingletonInstancer);
 
@@ -69,11 +69,10 @@ All we have to do to make use of this is to call
 auto fileSystem = new_ref<IFileSystem>();
 
 No different for a Singleton or any other type.
-This is part of abstracting requesting an object from what creates, 
-where it comes from or even what it really is.
-When we say new_ref<IFileSystem>(); we are saying,
-give me something that implements IFileSystem. The rest
-is negotiable.
+This is part of abstracting requesting an object from what creates it, where it comes from or even what it really is.
+When we say: 
+new_ref<IFileSystem>(); 
+we are saying, give me something that implements IFileSystem. The rest is negotiable.
 
 However in order to use a Singleton safely it must be locked.
 To achieve this transparently while keeping the time for
@@ -99,7 +98,7 @@ fileSystem(qor_shared)...
 form we never get a name for, or any visbility of, the lock so there's no way to accidentally hold on to it for
 longer than necessary.
 In this case qor::filesystem is designed to be thread safe anyway so this isn't strictly necessary
-however if we were accessing any part of the Application singleton, The Role or a Feature (built in or custom)
+however if we were accessing any part of the Application singleton, the Role, or a Feature (built in or custom)
 then this would be required.
 
 auto logAggregator = AppBuilder().TheApplication(qor_shared)->
@@ -112,7 +111,7 @@ logAggregator(qor_shared).Receiver().WriteToStandardOutput(true);
 
 The only references/pointers from inside shared objects that are safe to retain are Ref<T> instances
 returned by the QOR.
-For example is we retained the 
+For example if we retained the 
 
 LogReceiver& receiver = logAggregator(qor_shared).Receiver();
 

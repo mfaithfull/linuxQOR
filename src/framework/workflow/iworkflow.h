@@ -27,6 +27,7 @@
 
 namespace qor{ namespace workflow{
 
+    //Base abstract interface for all workflows
     class IWorkflow
     {
     public:

@@ -34,6 +34,7 @@
 
 namespace qor{ namespace framework{
 
+    //Base interface for Roles. All Roles are derived from this so that the Application can have any Role
     class IRole
     {
     public:

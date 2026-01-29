@@ -74,7 +74,7 @@ namespace qor{ namespace framework{
             }
             catch(...)
             {
-                warning("Feature shutdown failed.");
+                warning("Feature shutdown failed with unhandled exception.");
             }
         }
         m_mapFeatures.clear();
@@ -105,7 +105,7 @@ namespace qor{ namespace framework{
         }
         else
         {
-            serious("Cannot add null feature to role.");
+            continuable("Cannot add null feature to role.");
         }
     }
 

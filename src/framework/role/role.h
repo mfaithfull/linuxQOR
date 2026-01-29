@@ -30,6 +30,7 @@
 
 namespace qor{ namespace framework{
 
+    //Base Role implementation. This can be extended but is a fully functional feature container.
     class qor_pp_module_interface(QOR_ROLE) Role : public IRole
     {
     public:

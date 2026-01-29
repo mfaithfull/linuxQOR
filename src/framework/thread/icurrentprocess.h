@@ -35,6 +35,7 @@
 
 namespace qor{ namespace framework{
 
+    //Base interface for platform specific clas representing the containing process
     class ICurrentProcess
     {
     public:

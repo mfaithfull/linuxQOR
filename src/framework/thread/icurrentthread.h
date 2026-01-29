@@ -36,6 +36,7 @@
 
 namespace qor{ namespace framework{
 
+    //Base interface for platform specific class representing the current thread of execution
     class ICurrentThread
     {
     public:

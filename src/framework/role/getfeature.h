@@ -25,6 +25,10 @@
 #ifndef QOR_PP_H_ROLE_GETFEATURE
 #define QOR_PP_H_ROLE_GETFEATURE
 
+//A convenience header. The QOR itself can never include this header as it requires the defintion of any derived application class
+//in use to already be present before it's included. QOR derived code however can safely include this header after any derived
+//Application class has been defined.
+
 #include "src/qor/reference/reference.h"
 #include "src/framework/application/application_builder.h"
 

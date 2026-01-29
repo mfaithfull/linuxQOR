@@ -1,3 +1,10 @@
+End of JAN 2026. Reached another inflection point. The QOR now probably qualifies as a large project given that I've lost count of the number pf modules. The oprganiztional structire is holding however and neither dependencies of or sizes have got out of control. This kind of proves it works at least at this scale. Nothing scales forever but the QOR structire is probably good for anything I can linearly write myself in a year or two.
+The next logical step is a to get a real grip on serialization over pipelines. This opens up loading fonts and images and
+a return the the web server to write out responses.
+
+66 extant cross platform libraries according to cmake.
+========================================================================================================================
+
 The style of QOR code should now be clear, given the size of the codebase. The ubiquitous classes and 'utilities' of the QOR are all at least sketched out now.
 If there's anything that fits the mould of code that exists to make other code easier to write then suggestions of extensions, specializations and improvements to the qor modules are welcome.
 

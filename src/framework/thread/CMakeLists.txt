@@ -15,7 +15,7 @@ endif()
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_THREAD)
+target_compile_definitions(${target} PRIVATE QOR_THREAD)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_injection)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

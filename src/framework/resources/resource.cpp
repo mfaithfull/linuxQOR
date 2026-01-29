@@ -59,7 +59,7 @@ namespace qor{ namespace framework{
     void Resource::Name()
     {
         //override to set the URI for the resource
-        //Call this at the end of the overriden implementation
+        //Always call this base implementation at the end of the overriden implementation
         m_status = Named;
         StatusEvent(this, m_status);
     }
@@ -67,7 +67,7 @@ namespace qor{ namespace framework{
     void Resource::Locate()
     {
         //Override to verify the presence of the resource
-        //then call this at the end of the overrriden implementation
+        //Always call this base implementation at the end of the overrriden implementation
         m_status = Located;
         StatusEvent(this, m_status);
     }
@@ -75,7 +75,7 @@ namespace qor{ namespace framework{
     void Resource::Claim()
     {
         //Override to grab the resource, parse it and discover any sub resources
-        //Then call this at the end of the overriden implementation
+        //Always call this base implementation at the end of the overriden implementation
         m_status = Claimed;
         StatusEvent(this, m_status);
     }

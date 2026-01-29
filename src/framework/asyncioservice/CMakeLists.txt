@@ -8,7 +8,7 @@ asyncioeventprocessor.cpp asyncioinitiator.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_ASYNCIOSERVICE)
+target_compile_definitions(${target} PRIVATE QOR_ASYNCIOSERVICE)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread
 qor_task qor_role qor_log)
 

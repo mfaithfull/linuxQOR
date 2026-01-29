@@ -51,6 +51,7 @@ qor_pp_module_will_provide(QOR_RESOURCES, ResourceHub)
 
 namespace qor{ namespace framework{
         
+    //Manage resources and subcriptions for recieving updates about them
     class qor_pp_module_interface(QOR_RESOURCES) ResourceHub : public IFeature, public ResourceManager
     {
 
@@ -194,7 +195,7 @@ namespace qor{ namespace framework{
 
     };
 
-    }//framwork
+    }//framework
 
     qor_pp_declare_factory_of(framework::ResourceHub, ExternalFactory);
     constexpr GUID ResourceHubGUID = {0x347d6ff9, 0x9f76, 0x4a4c, {0xb8, 0x73, 0xef, 0x26, 0x18, 0x9e, 0x50, 0x31}};

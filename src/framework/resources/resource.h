@@ -43,6 +43,7 @@ namespace qor{ namespace framework{
 
     class qor_pp_module_interface(QOR_RESOURCES) ResourceManager;
 
+    //Managable Resource base class
     class qor_pp_module_interface(QOR_RESOURCES) Resource : public SignalBase
     {
     public:

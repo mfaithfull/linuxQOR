@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_NETWORK_PROTOCOL
-#define QOR_PP_H_COMPONENTS_NETWORK_PROTOCOL
+#ifndef QOR_PP_H_PIPELINE_NETWORK_PROTOCOL
+#define QOR_PP_H_PIPELINE_NETWORK_PROTOCOL
 
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
@@ -34,6 +34,7 @@
 
 namespace qor{ namespace pipeline{
 
+    //Base type for pipeline compatible network protocols
     class qor_pp_module_interface(QOR_PIPELINE) Protocol 
     {
     public:
@@ -90,4 +91,4 @@ namespace qor{ namespace pipeline{
 }}//qor::pipeline
 
 
-#endif//QOR_PP_H_COMPONENTS_NETWORK_PROTOCOL
+#endif//QOR_PP_H_PIPELINE_NETWORK_PROTOCOL

@@ -38,7 +38,7 @@ namespace qor
 
 namespace qor{ namespace framework{
 
-    class ThreadPool;                                                   //forward declare ThreadPool class
+    class qor_pp_module_interface(QOR_THREAD) ThreadPool;       //forward declare ThreadPool class
     class qor_pp_module_interface(QOR_THREAD) CurrentThread;
 
 
@@ -47,7 +47,8 @@ namespace qor{ namespace framework{
     extern qor_pp_thread_local std::optional<void*> parent_pool;
 #endif
 
-    class qor_pp_module_interface(QOR_THREAD) CurrentThread
+    //Represent the currently executing thread. Applies whether we have one thread or many.
+    class qor_pp_module_interface(QOR_THREAD) CurrentThread final
     {
         friend class qor_pp_module_interface(QOR_THREAD) Thread;
         friend class ThreadPool;

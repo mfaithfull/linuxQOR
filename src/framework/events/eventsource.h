@@ -61,7 +61,7 @@ namespace qor{ namespace events{
             eventMessage->evt = eventId;
             eventMessage->data = reinterpret_cast<void*>(eventData);//Link the slot to the stock;
             eventMessage->release = bindMemberFunction(&Source<event_type>::Release, this);//make the slot remember how to free the stock      
-            return eventData;						//Return the event dat so the client can set it as required
+            return eventData;						//Return the event data so the client can set it as required
         }
 
         void Send()

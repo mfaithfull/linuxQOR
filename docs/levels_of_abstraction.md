@@ -23,5 +23,5 @@ For large scale-up projects C++ is already the best language. Millions of lines 
 
 There are of course few if any such things, or if there are, they're likely already in the language or the library. The overhead, for example, of 3 stack frames to call a std::function rather than the 1 I would ideally prefer is certainly not zero when my parser is running a thousand calls deep and chewing 28MB of stack space. Making me use platform specific APIs to manipulate the maximum stack size.
 
-So we'll use the zero-overhead abstractions of the language and the library and add the some-cost infrastructure that we need to do real engineering. Comercially of course that impossible because there's no profit in shipping imperfect abstractions. Fortunately we have the FOSS model so maybe, just maybe it's possible.
+So we'll use the zero-overhead abstractions of the language and the library and add the some-cost infrastructure that we need to do real engineering. Comercially of course that's impossible because there's no profit in shipping imperfect abstractions. Fortunately we have the FOSS model so maybe, just maybe it's possible.
 

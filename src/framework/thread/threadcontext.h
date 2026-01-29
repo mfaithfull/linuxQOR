@@ -34,6 +34,8 @@
 
 namespace qor{ namespace framework{
 
+	//Additional state for QOR threads beyond what std library threads provide
+	//Per thread state is only created if it's used via the CurrentThread thread-singletonS
     class qor_pp_module_interface(QOR_THREAD) ThreadContext
     {
 

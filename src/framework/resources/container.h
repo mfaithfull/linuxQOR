@@ -30,6 +30,7 @@
 
 namespace qor{ namespace framework{
 
+    //Abstract base for resource containers
     class AnyResourceContainer
     {
         AnyResourceContainer()
@@ -45,6 +46,7 @@ namespace qor{ namespace framework{
 
     };
 
+    //A map container by URI for a specific resource type
     template<class ResourceType>
     class Container : public AnyResourceContainer
     {
@@ -100,9 +102,11 @@ namespace qor{ namespace framework{
 
     };
 
-    class ByTypeContainer
+    //A by type map container for by URI resource containers
+    class ByTypeContainer final
     {
     public:
+
         ByTypeContainer()
         {            
         }

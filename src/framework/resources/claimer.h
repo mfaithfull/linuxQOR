@@ -30,10 +30,13 @@
 
 namespace qor{ namespace framework{
 
+    //Responds to resource updates with the purpose of claiming a specific type of resource on a specific path
+    //Can be waited on to synchronously claim a resource before proceeding
     template<class ResourceType>
     class Claimer
     {
     public:
+
         Claimer(ref_of<ResourceHub>::type hub, platform::Path& path)
         {
             m_resource = nullptr;
