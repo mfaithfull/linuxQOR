@@ -58,9 +58,9 @@ namespace qor{ namespace components {
             "in a free function or lambda";
     }
 
-    std::string LogHandler::InExcpetionText(bool inExcpetion) const
+    std::string LogHandler::InExceptionText(bool inException) const
     {
-        return inExcpetion ? "inside an exception handler" : "outside any exception handler";
+        return inException ? "inside an exception handler" : "outside any exception handler";
     }
 
     std::string LogHandler::MessageText(const std::string_view& level, const std::string& what, const std::string& where, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const
@@ -99,7 +99,7 @@ namespace qor{ namespace components {
         if(log.HasWhere())
         {
             where = WhereText(log.where().GetModuleContext(),log.where().GetFile(),log.where().GetFunction(),log.where().GetLine(),
-                InExcpetionText(log.where().GetInException()), InstanceText(log.where().GetInInstance(), log.where().GetObjectContext()), 
+                InExceptionText(log.where().GetInException()), InstanceText(log.where().GetInInstance(), log.where().GetObjectContext()), 
                 log.where().GetThreadContext());
         }
         return where;

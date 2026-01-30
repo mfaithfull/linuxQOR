@@ -58,7 +58,7 @@ namespace qor{
         //const HostProcess* GetProcessContext(void) const;
         //void SetProcessContext(const HostProcess* pProcessContext);
         bool GetInException(void) const;
-        void SetInException(bool bInExcpetion);
+        void SetInException(bool bInException);
         bool GetInInstance(void) const;
 
     private:
