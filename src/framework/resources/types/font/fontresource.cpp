@@ -52,7 +52,7 @@ namespace qor{ namespace framework{ namespace res {
         //Read head of file and check it is in fact a TTF container
         TTFReader reader;
 
-        reader.ReadDesignator(
+        /*reader.ReadDesignator(
             qor::components::FileConnector(
                 m_index,
                 reader.Buffer(),
@@ -60,7 +60,7 @@ namespace qor{ namespace framework{ namespace res {
                 qor::platform::ShareMode::Owner_Read,
                 qor::platform::OpenFor::ReadOnly
             )
-        );
+        );*/
 
         if(m_object.IsNotNull())
         {

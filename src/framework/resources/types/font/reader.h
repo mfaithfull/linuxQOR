@@ -39,10 +39,11 @@ namespace qor{ namespace framework{ namespace res {
     {
     public:
 
-        TTFReader() : m_byteBuffer(8192), m_sink(m_byteBuffer)
+        TTFReader() : m_byteBuffer(8192)//, m_sink(m_byteBuffer)
         {        
         }
 
+        /*
         uint32_t ReadDesignator(const qor::pipeline::Plug& sourceConnector)
         {
             size_t unitsPumped = 0;
@@ -52,15 +53,16 @@ namespace qor{ namespace framework{ namespace res {
                 sink,
                 qor::pipeline::Element::Push
             ).Connect().Pump(unitsPumped, sizeof(uint32_t));
-        }
+        }*/
 
         ref_of<TTFObject>::type operator()(const qor::pipeline::Plug& sourceConnector)
         {        
+            /*
             qor::pipeline::Pipeline(
                 sourceConnector,
                 m_sink,
                 qor::pipeline::Element::Push
-            ).Connect().PumpAll();
+            ).Connect().PumpAll();*/
                     
             //auto finalNode = m_sink.Deserializer().PopNode();
             //return finalNode;
@@ -75,7 +77,7 @@ namespace qor{ namespace framework{ namespace res {
     private:
 
         pipeline::PODBuffer<byte> m_byteBuffer;
-        qor::components::DeserializerSink<TTFObject> m_sink;
+        //qor::components::DeserializerSink<TTFObject> m_sink;
     };
 
 }}}//qor::framework::res

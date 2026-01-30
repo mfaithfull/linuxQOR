@@ -7,7 +7,7 @@ add_library(${target} SHARED winqor_thread.cpp currentthread.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_WINDOWSTHREAD)
+target_compile_definitions(${target} PRIVATE QOR_WINDOWSTHREAD)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_injection qor_thread qor_sync qor_error qor_filesystem)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

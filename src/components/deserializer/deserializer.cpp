@@ -36,7 +36,7 @@ namespace qor { namespace components { namespace serial {
         m_complete = false;
         if(m_StateStack.empty())
         {
-            serious("No initial state set for workflow.");
+            serious("No initial state set for Deserializer.");
             return -1;
         }
         else

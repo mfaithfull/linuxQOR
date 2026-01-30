@@ -43,13 +43,13 @@ namespace qor{
         }
 
         template<>
-        ThreadInstanceHolder<framework::ICurrentThread>* theThreadInstanceHolder<framework::ICurrentThread>()
+        qor_pp_export ThreadInstanceHolder<framework::ICurrentThread>* theThreadInstanceHolder<framework::ICurrentThread>()
         {
             return GetCurrentPlatformThreadHolder();
         }
 
         template<>
-        ThreadInstanceHolder<framework::CurrentThread>* theThreadInstanceHolder<framework::CurrentThread>()
+        qor_pp_export ThreadInstanceHolder<framework::CurrentThread>* theThreadInstanceHolder<framework::CurrentThread>()
         {
             return GetCurrentThreadHolder();
         }
