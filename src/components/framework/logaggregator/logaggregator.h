@@ -37,7 +37,9 @@
 #include "src/framework/thread/threadpool.h"
 #include "logreceiver.h"
 
+#ifndef QOR_LOGAGGREGATOR
 namespace qor{ bool qor_pp_import ImplementsLogAggregatorService();}
+#endif
 qor_pp_module_will_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
 
 namespace qor { namespace components{

@@ -107,7 +107,7 @@ namespace qor{ namespace network{ namespace nswindows{
         }
         else
         {
-            newsocket = new_ref<Socket>(iresult).AsRef<network::Socket>();
+            newsocket = new_ref<Socket>(static_cast<int>(iresult)).AsRef<network::Socket>();
         }
         return newsocket;
     }

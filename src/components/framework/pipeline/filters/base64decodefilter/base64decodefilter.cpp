@@ -65,7 +65,7 @@ namespace qor{ namespace components{
             while( index < (unitsToProcess-1) && outindex < output_space)
             {
                 size_t pos_of_char_1 = pos_of_char(data[index + 1] );
-                byte output = (((pos_of_char(data[index])) << 2) + ((pos_of_char_1 & 0x30) >> 4));
+                byte output = static_cast<byte>((((pos_of_char(data[index])) << 2) + ((pos_of_char_1 & 0x30) >> 4)));
                 space[outindex++] = output;
 
                 if(( index + 2 < unitsToProcess) &&                    // Check for data that is not padded with equal signs (which is allowed by RFC 2045)

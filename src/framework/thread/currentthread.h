@@ -33,7 +33,11 @@
 
 namespace qor
 {
+#ifdef QOR_THREAD
     bool qor_pp_import ImplementsICurrentThread();//All libraries providing an implementation of ICurrentThread also need to export this function so that the linker can find them
+#else
+    bool qor_pp_export ImplementsICurrentThread();
+#endif
 }
 
 namespace qor{ namespace framework{

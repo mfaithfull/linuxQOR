@@ -31,6 +31,16 @@
 
 namespace qor {
 
+    qor_pp_signal_func DefaultLogHandler::forward(std::string logMessage)//don't call this outgoing interface directly
+    {
+        qor_pp_emit(forward,logMessage);
+    }
+
+    DefaultLogHandler::forwardFn DefaultLogHandler::GetForwardSignal() 
+    {
+        return &DefaultLogHandler::forward;
+    }
+
     DefaultLogHandler::DefaultLogHandler(log::Level logLevel) : qor::IssueHandler<log::Log>(), m_level(logLevel), m_writeToStandardOutput(false), m_forward(true)
     {
     }
@@ -62,7 +72,7 @@ namespace qor {
 
     std::string DefaultLogHandler::MessageText(const std::string_view& level, const std::string& what, const std::string& where, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const
     {
-        return std::vformat("{0}:TODO: |{2} \"{1}\"\n", std::make_format_args(level, what, where/*, when*/));
+        return std::vformat("{0}:time_point??: |{2} \"{1}\"\n", std::make_format_args(level, what, where/*, when*/));
     }
 
     DefaultLogHandler& DefaultLogHandler::Forward(bool forward)

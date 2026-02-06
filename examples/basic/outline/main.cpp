@@ -41,8 +41,7 @@ definition of the application name*/
 const char* appName = "Outline";
 
 /*Our application is a module in the QOR ecosystem
-This macro gives us a named, versioned module object which ties 
-together the QOR libraries we depend on.
+The qor_pp_implement_module macro gives us a named, versioned module object
 Every QOR executable must:
 1. Link the qor_module static library to become a module
 2. Link the qor_host module to become the host for other modules
@@ -55,28 +54,28 @@ qor_pp_implement_module(appName)
 void AccessLibraries();
 
 /*A QOR application is just a C++ application
-An empty main would work but isn't very interesting*/
+An empty int main(){return 0;} would work but isn't very interesting*/
 int main()
 {
     AccessLibraries();
 
-    /*First we build an Application*/
+    /*Build an Application*/
     auto outlineApp = AppBuilder().Build(appName);
 
-    /*We'll skip configuraing the application in this 
-    simple case*/
+    /*We'll skip configuraing the application in this simple case*/
 
-    /*A QOR Application is a context for running 
+    /*The QOR Application class is a context for running 
     Workflows and anything else that meets the 
     requirements for a runable object
-    Our application instance is a shared global resource so
+    Our Application instance is a shared global resource so
     we access it with synchronisation even though this app
     is safely single threaded.*/
     return outlineApp(qor_shared).Run
     (
         /*Here we make a runable object from a simple
-        lamda with the make_runnable utility. Why so
-        complicated? This bakes in exception handling
+        lamda with the make_runnable utility function.
+        Why is this needed?
+        This bakes in exception handling
         and allows many other good things later.*/
         make_runable(
 
@@ -86,9 +85,9 @@ int main()
             []()->int
             {
                 /*The traditional C++ Hello world*/
-                std::cout << "Hello from the QOR outline application." << std::endl;
+                std::cout << "Hello from the QOR Outline application." << std::endl;
 
-                /*This is integer that the runnable lambda
+                /*This is the integer that the runnable lambda
                 and then the main function will return*/
                 return EXIT_SUCCESS;
             }
@@ -96,8 +95,9 @@ int main()
     );
 }
 
-/*Code like this can be used to access every loaded QOR library.
-However this is intentionally not thread safe so use only when
+/*This (for science only) function can be used to access 
+every loaded QOR library.
+This is intentionally not thread safe so use only when
 single threaded at startup.
 Diagnostically something like this can be useful for tracking
 down dependency issues.*/
@@ -108,7 +108,7 @@ void AccessLibraries()
         [](Module* module)
         {
             std::cout << "Module: " << module->Name() << " : " << module->Version() << std::endl;
-            /*For each module visit all the static libraries linked into it.*/
+            /*Visit all the static libraries linked into the module.*/
             module->VisitLibraries(
                 [](Library* library)
                 {

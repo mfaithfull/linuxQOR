@@ -76,7 +76,7 @@ int main()
             );
 
             /*Add in the log aggregator service which uses the ThreadPool feature to run in the background.
-            It will consume 1 of the 2 pool threads*/
+            It will consume 1 of the pool threads*/
             role->AddFeature<LogAggregatorService>(
                 [&logHandler](LogAggregatorService::ref logAggregator)->void
                 {
@@ -105,7 +105,7 @@ This log message will be written out by the aggregator while the Main thread tha
             );
             
 
-            debug("While the task is executing we can carry on doing other things, including logging to the shared aggregator");            
+            debug("While the task is executing we can carry on doing other things, including logging to the shared aggregator.");            
 
             /*wait for the secondary task to finish*/
             taskResult.wait();
@@ -115,7 +115,7 @@ This log message will be written out by the aggregator while the Main thread tha
             {
                 auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<LogAggregatorService>();
                 disconnect(
-                    logHandler, &DefaultLogHandler::forward, 
+                    logHandler, logHandler.GetForwardSignal(), 
                     logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog);
             }
 
@@ -129,7 +129,7 @@ void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAg
 {
     /*Connect the forward signal from logHandler to the ReceiveLog slot on the log aggregator's Receiver*/
     connect(
-        logHandler, &DefaultLogHandler::forward, 
+        logHandler, logHandler.GetForwardSignal(), 
         logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
         ConnectionKind::QueuedConnection);
 
@@ -155,20 +155,22 @@ int ParallelTask()
         auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<LogAggregatorService>();
         /*We connect the forward signal from our local instance of a DefaultLogHandler to the log aggregator's log receiver on the ReceiveLog slot*/
         connect(
-            secondaryLogHandler, &DefaultLogHandler::forward, //source instance, source signal function
+            secondaryLogHandler, secondaryLogHandler.GetForwardSignal(), //source instance, source signal function
             logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, //sink instance, sink slot function
-            ConnectionKind::QueuedConnection); //we want a queued connection because we're crossing threads and don't need to wait for reception
+            ConnectionKind::QueuedConnection); //we want a queued connection because we're crossing threads and don't want to wait for reception
     }
 
     /*Now when we log from this secondary thread the thread local log handler
     will forward the message to the aggregator*/
     debug("Log from a task running on a pooled thread");
 
+    CurrentThread::Get().Sleep(5000);
+
     {
         auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<LogAggregatorService>();
         /*disconnecting is just like connecting but we don't have to specify the ConnectionKind*/
         disconnect(
-            secondaryLogHandler, &DefaultLogHandler::forward, 
+            secondaryLogHandler, secondaryLogHandler.GetForwardSignal(), 
             logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog);
     }
     return 0;

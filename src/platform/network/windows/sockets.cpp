@@ -73,7 +73,7 @@ namespace qor{ namespace network{ namespace nswindows{
         if( ioSession.IsNotNull())
         {
             platform::IODescriptor iod;
-            iod.m_fd = socket->ID();
+            iod.m_fd = static_cast<int>(socket->ID());
             ioSession->Enroll(iod);
         }
         return socket;

@@ -52,13 +52,16 @@ namespace qor{
         virtual std::string InExceptionText(bool inException) const;
         virtual std::string MessageText(const std::string_view& level, const std::string& what, const std::string& where, 
         const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const;
+        qor_pp_signal_func forward(std::string logMessage);
 
     public:
 
-        qor_pp_signal_func forward(std::string logMessage)//don't call this outgoing interface directly
-        {
-            qor_pp_emit(forward,logMessage);
-        }
+        //Clever compiler optimization that implements the forward signal inside executables that include this header
+        //rather than using a single instance of the function inside the log module, means we have to do this.
+        //Nailing down the address of the forward signal within the build of the log module, by using it,
+        //prevents the 'optimization'.
+        typedef void (DefaultLogHandler::*forwardFn)(std::string);
+        forwardFn GetForwardSignal();
 
     private:
 

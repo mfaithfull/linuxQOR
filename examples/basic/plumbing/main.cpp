@@ -62,13 +62,18 @@ int main()
             Internally it's a directory entry, which is just the index of a file*/
             FileIndex index(fileSystem->CurrentPath(), "alice.txt");
 
+            if(!index.Exists())
+            {
+                std::cout << "Please place a file called alice.txt in the folder " << index.GetPath().ToString() << " to make this example work. The file contents will be encoded into output.txt" << std::endl;
+                return 0;
+            }
+
             /*If we want to do simple step by step processing
             we can use the traditional way of dealing with files.*/
             TraditionalFileRead(fileSystem, index);
 
             /*However what if we want to transcode the whole file
-            to base64 encoding and write it out to another file?        
-            */
+            to base64 encoding and write it out to another file?*/
             PipelineFileProcessor(fileSystem, index);
         
             return 0;
@@ -101,6 +106,11 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, FileIndex& input)
 {
     /*An output file to go with the input file*/
     FileIndex output(fileSystem->CurrentPath(), "output.txt");
+
+    if(output.Exists())
+    {
+        fileSystem->Delete(output);
+    }
 
     /*Set up a base 64 encoder with 8K of buffer space*/
     Base64EncodeFilter encode(8192);
