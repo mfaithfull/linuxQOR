@@ -30,6 +30,7 @@
 #include "resourcehub.h"
 #include "types/pathresource.h"
 #include "types/json/jsonresource.h"
+#include "types/font/fontresource.h"
 
 qor_pp_module_provide(QOR_RESOURCES, ResourceHub)
 
@@ -91,6 +92,11 @@ namespace qor{ namespace framework{
     void ResourceHub::AddJSON(const platform::FileIndex& file, Resource* batchKey)
     {
         new res::JSON(this, file, batchKey);
+    }
+
+    void ResourceHub::AddFont(const platform::FileIndex& file, Resource* batchKey)
+    {
+        new res::Font(this, file, batchKey);
     }
 
     void ResourceHub::SubscribeForNamesByType(const char* type, const std::function<bool(Resource*)>& onNamedcallback)
@@ -295,6 +301,13 @@ namespace qor{ namespace framework{
             m_jsonMutex.unlock();
             return true;
         }
+        else if(res->Type() == res::Font::StaticType())
+        {
+            m_fontMutex.lock();
+            m_fonts.emplace(uri, dynamic_cast<res::Font*>(res));
+            m_fontMutex.unlock();
+            return true;
+        }
         return false;
     }
 
@@ -320,6 +333,26 @@ namespace qor{ namespace framework{
                 m_files.erase(it);
             }
             m_filesMutex.unlock();
+        }
+        else if(res->Type() == res::JSON::StaticType())
+        {
+            m_jsonMutex.lock();
+            auto it = m_json.find(uri);
+            if(it != m_json.end())
+            {
+                m_json.erase(it);
+            }
+            m_jsonMutex.unlock();
+        }
+        else if(res->Type() == res::Font::StaticType())
+        {
+            m_fontMutex.lock();
+            auto it = m_fonts.find(uri);
+            if(it != m_fonts.end())
+            {
+                m_fonts.erase(it);
+            }
+            m_fontMutex.unlock();
         }
         delete res;
     }

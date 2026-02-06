@@ -33,7 +33,7 @@ namespace qor{ namespace framework{ namespace res {
 
     const char* Font::s_fontResourceType = "Font resource type";
 
-    const char* Font::StaticType(){ return s_fontResourceType;}
+    const char* Font::StaticType(){ return s_fontResourceType; }
 
     const char* Font::Type()
     {
@@ -52,7 +52,7 @@ namespace qor{ namespace framework{ namespace res {
         //Read head of file and check it is in fact a TTF container
         TTFReader reader;
 
-        /*reader.ReadDesignator(
+        auto result = reader.ReadDesignator(
             qor::components::FileConnector(
                 m_index,
                 reader.Buffer(),
@@ -60,12 +60,27 @@ namespace qor{ namespace framework{ namespace res {
                 qor::platform::ShareMode::Owner_Read,
                 qor::platform::OpenFor::ReadOnly
             )
-        );*/
+        );        
 
-        if(m_object.IsNotNull())
-        {
-            //If the identifer read is the TTF header BE('t''r''u''e') then we've located a TTF resource.
+        if(result == 0x00010000 || result == 0x74727565) //TFF markers
+        {            
+            m_fontType = TrueType;
             Resource::Locate();
+        }
+        else if(result == 0x4F54544F) //OpenType with PostScript outlines
+        {
+            m_fontType = OpenTypePS;
+            Resource::Locate();            
+        }
+        else if(result == 0x74797031) //Old Type1 PostScript font
+        {
+            m_fontType = PostScriptType1;
+            Resource::Locate();
+        }
+        else
+        {
+            //Unknown type. Maybe not a font at all.
+            //Treat as blob
         }
         
         return;
@@ -74,7 +89,17 @@ namespace qor{ namespace framework{ namespace res {
     void Font::Claim()
     {        
         //Parse the file fully and extract the TTFObject(s) from it.
-        Resource::Claim();
+
+        if(m_fontType == TrueType)
+        {
+            TTFReader reader;
+
+            auto result = reader(
+                components::FileConnector(m_index, reader.Buffer(), platform::WithFlags::None, platform::ShareMode::Owner_Read, platform::OpenFor::ReadOnly)
+            );        
+
+            Resource::Claim();
+        }
     }
 
     ref_of<TTFObject>::type Font::GetObject()

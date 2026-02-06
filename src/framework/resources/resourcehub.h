@@ -43,6 +43,7 @@
 #include "types/pathresource.h"
 #include "types/fileresource.h"
 #include "types/json/jsonresource.h"
+#include "types/font/fontresource.h"
 
 #ifndef QOR_PP_IMPLEMENTS_RESOURCEHUB
 namespace qor{ bool qor_pp_import ImplementsResourceHub();}
@@ -74,6 +75,7 @@ namespace qor{ namespace framework{
         virtual void AddPath(const platform::Path& path, Resource* batchKey = nullptr);//Add a Path resource, return a URI by which it will be indexed
         virtual void AddFile(const platform::FileIndex& file, Resource* batchKey = nullptr);//Add a File resource, return a URI by which it will be indexed
         virtual void AddJSON(const platform::FileIndex& file, Resource* batchKey = nullptr);
+        virtual void AddFont(const platform::FileIndex& file, Resource* batchKey = nullptr);
         
         void SubscribeForNamesByPath(const std::string& uriPathPart, const std::function<bool(Resource*)>& onNamedcallback);
         void SubscribeForLocationsByPath(const std::string& uriPathPart, const std::function<bool(Resource*)>& onLocatedcallback);
@@ -180,6 +182,9 @@ namespace qor{ namespace framework{
 
         std::map<std::string, res::JSON*> m_json;
         std::recursive_mutex m_jsonMutex;
+
+        std::map<std::string, res::Font*> m_fonts;
+        std::recursive_mutex m_fontMutex;
 
         ByTypeContainer m_containers;
 

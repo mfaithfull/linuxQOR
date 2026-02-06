@@ -1,3 +1,4 @@
+
 // Copyright Querysoft Limited 2008 - 2025
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -22,58 +23,16 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_FONTRESOURCE
-#define QOR_PP_H_FRAMEWORK_RESOURCES_FONTRESOURCE
+#include "src/configuration/configuration.h"
 
-#include <string>
+#include "designator.h"
 
-#include "../../resource.h"
-#include "src/platform/filesystem/path.h"
-#include "src/platform/filesystem/fileindex.h"
-#include "ttfobject.h"
+namespace qor { namespace framework { namespace res {
 
-namespace qor{ namespace framework{ namespace res {
-
-    enum FontType
+    DesignatorState::DesignatorState(qor::components::serial::Deserializer* deserializer) : qor::components::serial::DeserializerState(deserializer, sizeof(uint32_t), arch::Endian::big)    
     {
-        Unknown,
-        TrueType,
-        OpenTypePS,
-        PostScriptType1,
-    };
-
-    class qor_pp_module_interface(QOR_RESOURCES) Font : public Resource
-    {
-    public:
-
-        static const char* StaticType();
-
-        Font(ResourceManager* manager, const platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index)
-        {            
-            m_fontType = Unknown;
-            Name();
-        }
-        
-        virtual ~Font() = default;
-
-        virtual const char* Type();
-        virtual void Name();
-        virtual void Locate();
-        virtual void Claim();
-                
-        ref_of<TTFObject>::type GetObject();
-
-    protected:
-
-        FontType m_fontType;
-        const qor::platform::FileIndex m_index;      
-        ref_of<TTFObject>::type m_object;  
-        
-    private:
-        static const char* s_fontResourceType;
-        
-    };
-
+        m_designator = 0;
+        m_data = reinterpret_cast<byte*>(&m_designator);        
+    }
+    
 }}}//qor::framework::res
-
-#endif//QOR_PP_H_FRAMEWORK_RESOURCES_FONTRESOURCE

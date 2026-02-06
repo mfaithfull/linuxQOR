@@ -104,7 +104,7 @@ namespace qor{ namespace workflow{
     {
         if( !m_StateStack.empty() )
         {
-            return m_StateStack.top();
+            return m_StateStack.top().Clone();
         }
         return nullptr;
     }
@@ -119,7 +119,7 @@ namespace qor{ namespace workflow{
         if(initialState && m_StateStack.empty())
         {
             m_initialState = initialState;
-            m_StateStack.push(initialState);
+            m_StateStack.push(initialState.Clone());
             m_complete = false;
         }
     }
@@ -137,7 +137,7 @@ namespace qor{ namespace workflow{
                 }
                 m_StateStack.pop();
             }
-            m_StateStack.push(newState);
+            m_StateStack.push(newState.Clone());
         }
     }
 
@@ -153,8 +153,7 @@ namespace qor{ namespace workflow{
                     currentState->Suspend();
                 }
             }
-            m_StateStack.push(newState);
-            //newState->Enter();
+            m_StateStack.push(newState.Clone());
         }
     }
 
@@ -170,10 +169,10 @@ namespace qor{ namespace workflow{
             m_StateStack.pop();		
             if(!m_StateStack.empty())
             {
-           		currentState = CurrentState();
-                if(currentState)
+                ref_of<State>::type newCurrentState = CurrentState();
+                if(newCurrentState)
                 {
-        	        currentState->Resume();
+        	        newCurrentState->Resume();
                 }
             }
             else

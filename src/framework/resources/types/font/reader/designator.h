@@ -22,58 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_FONTRESOURCE
-#define QOR_PP_H_FRAMEWORK_RESOURCES_FONTRESOURCE
+#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_TTF_READER_STATES_DESIGNATOR
+#define QOR_PP_H_FRAMEWORK_RESOURCES_TTF_READER_STATES_DESIGNATOR
 
-#include <string>
-
-#include "../../resource.h"
-#include "src/platform/filesystem/path.h"
-#include "src/platform/filesystem/fileindex.h"
-#include "ttfobject.h"
+#include "src/components/deserializer/state.h"
 
 namespace qor{ namespace framework{ namespace res {
-
-    enum FontType
-    {
-        Unknown,
-        TrueType,
-        OpenTypePS,
-        PostScriptType1,
-    };
-
-    class qor_pp_module_interface(QOR_RESOURCES) Font : public Resource
+    
+    class DesignatorState : public qor::components::serial::DeserializerState
     {
     public:
 
-        static const char* StaticType();
-
-        Font(ResourceManager* manager, const platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index)
-        {            
-            m_fontType = Unknown;
-            Name();
+        DesignatorState(qor::components::serial::Deserializer* deserializer);
+        virtual ~DesignatorState() = default;    
+        
+        uint32_t GetObject()
+        {
+            return m_designator;
         }
         
-        virtual ~Font() = default;
-
-        virtual const char* Type();
-        virtual void Name();
-        virtual void Locate();
-        virtual void Claim();
-                
-        ref_of<TTFObject>::type GetObject();
-
     protected:
-
-        FontType m_fontType;
-        const qor::platform::FileIndex m_index;      
-        ref_of<TTFObject>::type m_object;  
-        
-    private:
-        static const char* s_fontResourceType;
-        
+        uint32_t m_designator;
     };
 
 }}}//qor::framework::res
 
-#endif//QOR_PP_H_FRAMEWORK_RESOURCES_FONTRESOURCE
+#endif//QOR_PP_H_FRAMEWORK_RESOURCES_TTF_READER_STATES_DESIGNATOR

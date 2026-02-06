@@ -39,7 +39,7 @@ namespace qor{ namespace components{
         BaseDeserializerSink();
         virtual ~BaseDeserializerSink() = default;
 
-        virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 ) = 0;   
+        virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );   
         
         serial::Deserializer& Deserializer()
         {
@@ -73,9 +73,9 @@ namespace qor{ namespace components{
 
         virtual ~DeserializerSink() = default;
 
-        virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 )
+        ref_of<TObjectState>::type GetObject()
         {
-            return false;
+            return m_objectState;
         }
 
     protected:

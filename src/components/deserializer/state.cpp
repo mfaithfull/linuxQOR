@@ -35,14 +35,7 @@ namespace qor { namespace components { namespace serial {
     DeserializerState::DeserializerState(Deserializer* deserializer, size_t size, arch::Endian endian) : workflow::State(deserializer), m_size(size), m_endian(endian)
     {
         m_result = UNINITIALIZED;                
-        if(m_endian == arch::endian)
-        {
-            m_index = 0;
-        }
-        else
-        {
-            m_index = m_size - 1;
-        }
+        m_index = (m_endian == arch::endian) ? 0 : m_size - 1;//index to begining or end depending if data source endian(ness) is same as host.
 
         Enter = [this]()
         {            
@@ -53,36 +46,35 @@ namespace qor { namespace components { namespace serial {
                 GetContext()->ConsumeOctet();
 
                 if(m_endian == arch::endian)
-                {
-                    ++m_index;
+                {                    
+                    if(m_index == m_size)//We just wrote the last byte
+                    {
+                        m_result = SUCCESS;
+                        Workflow()->PopState();
+                    }
+                    else                //More to write
+                    {
+                        ++m_index;
+                    }
                 }
                 else
                 {
-                    --m_index;
+                    if(m_index == 0)//We just wrote the last byte in reverse order
+                    {
+                        m_result = SUCCESS;
+                        Workflow()->PopState();
+                    }
+                    else            //More to write
+                    {
+                        --m_index;
+                    }
                 }
             }
             else
             {
-                m_result = MORE_DATA;                
+                m_result = MORE_DATA;//Pipeline ran out of data. Read more data and re-Enter to continue.       
             }
         };
-
-        Leave = [this]()
-        {
-            if(m_result == FAILURE)
-            {
-                //Fail();
-            }
-            else if(m_result == SUCCESS)
-            {
-                //Emit();
-            }
-            else if(m_result == MORE_DATA)
-            {
-                //std::cout << "Ran out of data before we could decide. Reenter with more data to try again." << std::endl;
-            }
-        };
-
     }
 
     Context* DeserializerState::GetContext()

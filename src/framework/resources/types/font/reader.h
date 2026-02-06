@@ -31,7 +31,10 @@
 #include "src/framework/pipeline/podbuffer.h"
 #include "src/framework/pipeline/pipeline.h"
 #include "src/components/framework/pipeline/sinks/deserializersink/deserializersink.h"
+#include "src/components/deserializer/state.h"
 #include "ttfobject.h"
+#include "reader/designator.h"
+#include "reader/ttfinitial.h"
 
 namespace qor{ namespace framework{ namespace res { 
 
@@ -39,33 +42,33 @@ namespace qor{ namespace framework{ namespace res {
     {
     public:
 
-        TTFReader() : m_byteBuffer(8192)//, m_sink(m_byteBuffer)
+        TTFReader() : m_byteBuffer(32767)
         {        
         }
-
-        /*
+        
         uint32_t ReadDesignator(const qor::pipeline::Plug& sourceConnector)
         {
             size_t unitsPumped = 0;
-            components::DeserializerSink<DeserializerState> sink;
+            components::DeserializerSink<DesignatorState> sink(m_byteBuffer);
             pipeline::Pipeline(
                 sourceConnector,
                 sink,
                 qor::pipeline::Element::Push
             ).Connect().Pump(unitsPumped, sizeof(uint32_t));
-        }*/
+            return sink.GetObject()->GetObject();            
+        }
 
         ref_of<TTFObject>::type operator()(const qor::pipeline::Plug& sourceConnector)
-        {        
-            /*
+        {                    
+            components::DeserializerSink<TTFInitialState> sink(m_byteBuffer);
             qor::pipeline::Pipeline(
                 sourceConnector,
-                m_sink,
+                sink,
                 qor::pipeline::Element::Push
-            ).Connect().PumpAll();*/
+            ).Connect().PumpAll();
                     
-            //auto finalNode = m_sink.Deserializer().PopNode();
-            //return finalNode;
+            auto ttfState = sink.GetObject();
+            
             return ref_of<TTFObject>::type();
         }
 
@@ -76,8 +79,7 @@ namespace qor{ namespace framework{ namespace res {
 
     private:
 
-        pipeline::PODBuffer<byte> m_byteBuffer;
-        //qor::components::DeserializerSink<TTFObject> m_sink;
+        pipeline::PODBuffer<byte> m_byteBuffer;        
     };
 
 }}}//qor::framework::res

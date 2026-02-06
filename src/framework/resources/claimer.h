@@ -115,7 +115,7 @@ namespace qor{ namespace framework{
             return m_resource;
         }
 
-        void WaitForResouce(ResourceType*& res)
+        void WaitForResource(ResourceType*& res)
         {
             std::unique_lock<std::mutex> lock(m_mutex);
             m_cond.wait(lock);

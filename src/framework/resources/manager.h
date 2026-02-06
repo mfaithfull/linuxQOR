@@ -54,6 +54,7 @@ namespace qor{ namespace framework{
         virtual void AddPath(const platform::Path& path, Resource* batchKey = nullptr){}                      //|.
         virtual void AddFile(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
         virtual void AddJSON(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
+        virtual void AddFont(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
         virtual void BeginBatch(Resource* batchKey){}                                                         //|.
         virtual void EndBatch(Resource* batchKey){}											                  //|.
 

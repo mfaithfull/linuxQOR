@@ -55,7 +55,7 @@ namespace qor{ namespace network{ namespace nswindows{
         int domain = AddressFamilyToWindows(AF);        
         int type = TypeToWindows(Type, AF == network::sockets::eAddressFamily::AF_Unix ? true : false);
         int protocol = ProtocolToWindows(Protocol);
-        WSAPROTOCOL_INFO protocolInfo;
+        //WSAPROTOCOL_INFO protocolInfo;
         unsigned long flags = WSA_FLAG_OVERLAPPED;
         m_socket = WS2::WSASocket(domain, type, protocol, nullptr, 0, flags);
     }

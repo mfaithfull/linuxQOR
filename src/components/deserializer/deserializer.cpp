@@ -46,7 +46,11 @@ namespace qor { namespace components { namespace serial {
         try{   
             while(!IsComplete() && m_context->HasUnreadData())
             {
-                CurrentState()->Enter();
+                auto ref = CurrentState().operator->();
+                if(ref)
+                {
+                    ref->Enter();                
+                }
             }
             if(IsComplete())
             {

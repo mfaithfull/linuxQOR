@@ -84,17 +84,17 @@ namespace qor{ namespace framework{ namespace nswindows{
 
         switch(OSPriority)
         {
-            case IDLE_PRIORITY_CLASS:
+        case IDLE_PRIORITY_CLASS:
             return qor::framework::ICurrentProcess::Priority::idle;
-            case BELOW_NORMAL_PRIORITY_CLASS:
+        case BELOW_NORMAL_PRIORITY_CLASS:
             return qor::framework::ICurrentProcess::Priority::below_normal;
-            case NORMAL_PRIORITY_CLASS:
+        case NORMAL_PRIORITY_CLASS:
             return qor::framework::ICurrentProcess::Priority::normal;
-            case ABOVE_NORMAL_PRIORITY_CLASS:
+        case ABOVE_NORMAL_PRIORITY_CLASS:
             return qor::framework::ICurrentProcess::Priority::above_normal;
-            case HIGH_PRIORITY_CLASS:
+        case HIGH_PRIORITY_CLASS:
             return qor::framework::ICurrentProcess::Priority::high;
-            case REALTIME_PRIORITY_CLASS:
+        case REALTIME_PRIORITY_CLASS:
             return qor::framework::ICurrentProcess::Priority::realtime;
         }
 
@@ -106,22 +106,22 @@ namespace qor{ namespace framework{ namespace nswindows{
         DWORD OSPriority = NORMAL_PRIORITY_CLASS;
         switch(priority)
         {
-            case qor::framework::ICurrentProcess::Priority::idle:
+        case qor::framework::ICurrentProcess::Priority::idle:
             OSPriority = IDLE_PRIORITY_CLASS;
             break;
-            case qor::framework::ICurrentProcess::Priority::below_normal:
+        case qor::framework::ICurrentProcess::Priority::below_normal:
             OSPriority = BELOW_NORMAL_PRIORITY_CLASS;
             break;
-            case qor::framework::ICurrentProcess::Priority::normal:
+        case qor::framework::ICurrentProcess::Priority::normal:
             OSPriority = IDLE_PRIORITY_CLASS;
             break;
-            case qor::framework::ICurrentProcess::Priority::above_normal:
+        case qor::framework::ICurrentProcess::Priority::above_normal:
             OSPriority = ABOVE_NORMAL_PRIORITY_CLASS;
             break;
-            case qor::framework::ICurrentProcess::Priority::high:
+        case qor::framework::ICurrentProcess::Priority::high:
             OSPriority = HIGH_PRIORITY_CLASS;
             break;
-            case qor::framework::ICurrentProcess::Priority::realtime:
+        case qor::framework::ICurrentProcess::Priority::realtime:
             OSPriority = REALTIME_PRIORITY_CLASS;
             break;
         }

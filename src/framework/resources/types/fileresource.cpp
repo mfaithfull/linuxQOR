@@ -83,10 +83,17 @@ namespace qor{ namespace framework{ namespace res {
         if(type == "JSON")
         {
             m_manager->AddJSON(m_index);
+            return;
+        }
+        if(type == "font")
+        {
+            m_manager->AddFont(m_index);
+            return;
         }
         if(type == "bitmap")
         {
             //Create bitmap image resource from the file.
+            return;
         }
         //If the file has been marked as monitor then set up file system monitoring
         if(m_monitor)

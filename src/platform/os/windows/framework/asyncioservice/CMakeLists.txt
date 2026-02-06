@@ -10,7 +10,7 @@ timedscheduleoperation.cpp timerqueue.cpp timerthreadstate.cpp iocompletionport.
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_WINDOWSASYNCIOSERVICE)
+target_compile_definitions(${target} PRIVATE QOR_WINDOWSASYNCIOSERVICE)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_injection 
 qor_asyncioservice qor_error qor_sockets winqor_common winqor_api_winsock2)
 

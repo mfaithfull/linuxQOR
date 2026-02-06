@@ -46,25 +46,25 @@ namespace qor{ namespace framework{ namespace nswindows{
         int OSPriority = THREAD_PRIORITY_NORMAL;
         switch(priority)
         {
-            case ICurrentThread::Priority::above_normal:
+        case ICurrentThread::Priority::above_normal:
             OSPriority = THREAD_PRIORITY_ABOVE_NORMAL;
             break;
-            case ICurrentThread::Priority::below_normal:
+        case ICurrentThread::Priority::below_normal:
             OSPriority = THREAD_PRIORITY_BELOW_NORMAL;
             break;
-            case ICurrentThread::Priority::highest:
+        case ICurrentThread::Priority::highest:
             OSPriority = THREAD_PRIORITY_HIGHEST;
             break;
-            case ICurrentThread::Priority::idle:
+        case ICurrentThread::Priority::idle:
             OSPriority = THREAD_PRIORITY_IDLE;
             break;
-            case ICurrentThread::Priority::lowest:
+        case ICurrentThread::Priority::lowest:
             OSPriority = THREAD_PRIORITY_LOWEST;
             break;
-            case ICurrentThread::Priority::normal:
+        case ICurrentThread::Priority::normal:
             OSPriority = THREAD_PRIORITY_NORMAL;
             break;
-            case ICurrentThread::Priority::realtime:
+        case ICurrentThread::Priority::realtime:
             OSPriority = THREAD_PRIORITY_TIME_CRITICAL;
             break;
         }
@@ -77,22 +77,22 @@ namespace qor{ namespace framework{ namespace nswindows{
 
         switch(priority)
         {
-            case THREAD_PRIORITY_ABOVE_NORMAL:
-                return ICurrentThread::Priority::above_normal;
-            case THREAD_PRIORITY_BELOW_NORMAL:
-                return ICurrentThread::Priority::below_normal;
-            case THREAD_PRIORITY_HIGHEST:
-                return ICurrentThread::Priority::highest;
-            case THREAD_PRIORITY_IDLE:
-            return ICurrentThread::Priority::idle;
-            case THREAD_PRIORITY_LOWEST:
-                return ICurrentThread::Priority::lowest;
-            case THREAD_PRIORITY_NORMAL:
-                return ICurrentThread::Priority::normal;
-            case THREAD_PRIORITY_TIME_CRITICAL:
-                return ICurrentThread::Priority::realtime;
-            default:
-               return std::nullopt;
+        case THREAD_PRIORITY_ABOVE_NORMAL:
+            return ICurrentThread::Priority::above_normal;
+        case THREAD_PRIORITY_BELOW_NORMAL:
+            return ICurrentThread::Priority::below_normal;
+        case THREAD_PRIORITY_HIGHEST:
+            return ICurrentThread::Priority::highest;
+        case THREAD_PRIORITY_IDLE:
+        return ICurrentThread::Priority::idle;
+        case THREAD_PRIORITY_LOWEST:
+            return ICurrentThread::Priority::lowest;
+        case THREAD_PRIORITY_NORMAL:
+            return ICurrentThread::Priority::normal;
+        case THREAD_PRIORITY_TIME_CRITICAL:
+            return ICurrentThread::Priority::realtime;
+        default:
+            return std::nullopt;
         }        
     }
 

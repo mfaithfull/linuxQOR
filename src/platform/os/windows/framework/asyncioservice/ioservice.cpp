@@ -297,8 +297,7 @@ namespace qor { namespace framework { namespace nswindows {
 
     void IOService::PostWakeUpEvent() noexcept
     {
-        m_IOCP->PostQueuedCompletionStatus(0,0,nullptr);
-        //(void)::PostQueuedCompletionStatus(m_IOCP.Handle().Use(), 0, 0, nullptr);
+        m_IOCP->PostQueuedCompletionStatus(0,0,nullptr);        
     }
 
     TimerThreadState* IOService::EnsureTimerThreadStarted()

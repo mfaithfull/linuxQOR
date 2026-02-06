@@ -39,6 +39,7 @@
 #include "rdapp.h"
 #include "src/framework/role/getfeature.h"
 #include "src/framework/resources/types/json/jsonresource.h"
+#include "src/framework/resources/types/font/fontresource.h"
 #include "src/framework/resources/claimer.h"
 
 const char* logTag = "resourced";
@@ -118,10 +119,14 @@ int main(const int argc, const char** argv, char** env)
         {            
             auto resourceHub = GetFeature<ResourceHub>();
             Path fontPath("F:/Develop/thorvg-1.0-pre33/thorvg-1.0-pre33/examples/resources/font");
-            Claimer<res::JSON> claimer(resourceHub, fontPath);
-            res::JSON* jsonResouce = nullptr;
-            claimer.WaitForResouce(jsonResouce);
-            auto jsonObject = jsonResouce->GetObject();
+            Claimer<res::Font> font_claimer(resourceHub, fontPath);
+            //Claimer<res::JSON> json_claimer(resourceHub, fontPath);
+            //res::JSON* jsonResouce = nullptr;
+            //json_claimer.WaitForResource(jsonResouce);
+            //auto jsonObject = jsonResouce->GetObject();
+            res::Font* fontResource = nullptr;
+            font_claimer.WaitForResource(fontResource);
+            auto ttfObject = fontResource->GetObject();
             return 0;
         }
     ));

@@ -41,15 +41,18 @@ namespace qor{ namespace framework{ namespace res {
 
     struct table_directory
     {
-        union 
-        {
-            char tag_c[4];
-            uint32_t	tag;
-        };
+        uint32_t    tag;
         uint32_t	checkSum;
         uint32_t	offset;
         uint32_t	length;
     };
+
+    struct cmap_header
+    {
+	    uint16_t version;
+	    uint16_t numberSubtables;
+    };
+
 
     struct font_directory
     {
