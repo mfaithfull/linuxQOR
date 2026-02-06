@@ -35,6 +35,7 @@
 const char* appName = "HTTPRequest Read";
 qor_pp_implement_module(appName)
 qor_pp_module_requires(IFileSystem);
+qor_pp_module_requires(ICurrentThread);
 
 int main()
 {

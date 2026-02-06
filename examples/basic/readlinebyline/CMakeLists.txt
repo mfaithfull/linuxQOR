@@ -10,7 +10,7 @@ include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 add_executable(${target} linebyline_main.cpp linebylineworkflow.cpp)
 
-target_compile_definitions(${target} PRIVATE -DQOR_PP_EXECUTABLE)
+target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
     target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
@@ -25,3 +25,12 @@ qor_error qor_linereader qor_stdoutsink qor_fileconnector)
 endif()
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
+
+if (WIN32)
+  add_custom_command(
+    TARGET linebyline POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:linebyline> $<TARGET_FILE_DIR:linebyline>
+    COMMAND_EXPAND_LISTS
+  )
+endif ()

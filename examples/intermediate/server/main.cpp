@@ -70,7 +70,7 @@ int main(const int argc, const char** argv, char** env)
             role->AddFeature<LogAggregatorService>(
                 [&logHandler](ref_of<LogAggregatorService>::type logAggregator)->void
                 {
-                    connect(logHandler, &DefaultLogHandler::forward, 
+                    connect(logHandler, logHandler.GetForwardSignal(), 
                         logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, ConnectionKind::QueuedConnection);
                     auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
                     auto logPath = fileSystem->ApplicationLogPath() / logTag;
@@ -81,7 +81,7 @@ int main(const int argc, const char** argv, char** env)
         }
     ).RunWorkflow(new_ref<NetworkServer>(12345, new_ref<echo::EchoProtocol>()));
 
-    disconnect(logHandler, &DefaultLogHandler::forward, 
+    disconnect(logHandler, logHandler.GetForwardSignal(), 
         AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<LogAggregatorService>(qor_shared)->Receiver(),
          &LogReceiver::ReceiveLog);
 }

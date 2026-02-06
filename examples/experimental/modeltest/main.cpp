@@ -141,7 +141,7 @@ int main()
             {
                 Model<BMPHeader> bmpHeader;                
                 bmpHeader.Set<0>(0x424D);
-                bmpHeader.Set<1>(0x1000);
+                bmpHeader.Set("bcSize", 0x1000);
 
                 auto size = bmpHeader.Get<uint32_t>("bcSize");
                 return EXIT_SUCCESS;

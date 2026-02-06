@@ -24,7 +24,16 @@ if(CMAKE_SYSTEM_NAME MATCHES Windows)
 qor_platform qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector 
 qor_http qor_parsersink qor_parser qor_asyncioservice qor_sockets qor_socketconnector qor_json qor_base64encodefilter
 qor_base64decodefilter qor_optionparser qor_stdoutsink qor_loghandler qor_log
-winqor_filesystem)
+winqor_asyncioservice winqor_filesystem winqor_thread)
 endif()
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
+
+if (WIN32)
+  add_custom_command(
+    TARGET ${target} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
+    COMMAND_EXPAND_LISTS
+  )
+endif ()

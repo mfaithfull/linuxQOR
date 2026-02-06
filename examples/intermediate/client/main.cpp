@@ -40,7 +40,7 @@ qor_pp_module_requires(ICurrentThread)
 void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
 {
     qor::connect(
-        logHandler, &qor::DefaultLogHandler::forward, 
+        logHandler, logHandler.GetForwardSignal(), 
         logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog, 
         qor::ConnectionKind::QueuedConnection);
 
