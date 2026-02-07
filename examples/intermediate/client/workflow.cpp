@@ -33,7 +33,7 @@ ClientWorkflow::ClientWorkflow() :
     receive(new_ref<State>(this))
 {    
     qor_pp_ofcontext;
-    m_client.SetProtocol(new_ref<echo::EchoProtocol>());
+    m_client.SetProtocol(new_ref<echo::EchoProtocol>());    
     m_client.Configure("localhost", 12345);
 
     connect->Enter = [this]()->void

@@ -57,7 +57,7 @@ namespace qor { namespace framework { namespace nswindows {
             return true;
         }
 
-        virtual qor::framework::IOTask Send(platform::IODescriptor * ioDescriptor, const byte * buffer, size_t len, int flags) const
+        virtual qor::framework::IOTask Send(platform::IODescriptor * ioDescriptor, const byte * buffer, size_t len, int flags)
         {
             co_return qor::framework::AsyncIOResult{
                 .result = co_await SocketSendOperation(ioDescriptor, buffer, len),
@@ -65,7 +65,7 @@ namespace qor { namespace framework { namespace nswindows {
             };
         }
 
-        virtual qor::framework::IOTask Read(platform::IODescriptor * ioDescriptor, byte * buffer, size_t len) const
+        virtual qor::framework::IOTask Read(platform::IODescriptor * ioDescriptor, byte * buffer, size_t len)
         {
             co_return qor::framework::AsyncIOResult{
                 .status_code = -1,//co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len),
@@ -73,7 +73,7 @@ namespace qor { namespace framework { namespace nswindows {
             };
         }
 
-        virtual qor::framework::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual qor::framework::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
             co_return qor::framework::AsyncIOResult{
                 .result = co_await SocketRecvOperation(ioDescriptor, buffer, len),
@@ -81,7 +81,7 @@ namespace qor { namespace framework { namespace nswindows {
             };
         }
 
-        virtual qor::framework::IOTask Listen(platform::IODescriptor * ioDescriptor, int backlog) const
+        virtual qor::framework::IOTask Listen(platform::IODescriptor * ioDescriptor, int backlog)
         {
             co_return qor::framework::AsyncIOResult{
                 .status_code = -1,//co_await ListenOperation(*m_Ring, ioDescriptor->m_fd, 0),
@@ -89,7 +89,7 @@ namespace qor { namespace framework { namespace nswindows {
             };
         }
 
-        virtual qor::framework::IOTask Bind(platform::IODescriptor * ioDescriptor, const network::Address & Address) const
+        virtual qor::framework::IOTask Bind(platform::IODescriptor * ioDescriptor, const network::Address & Address)
         {
             //Windows doesn't provide async bind
             co_return qor::framework::AsyncIOResult{
@@ -98,11 +98,10 @@ namespace qor { namespace framework { namespace nswindows {
             };
         }
 
-        virtual qor::framework::IOTask Accept(platform::IODescriptor * ioDescriptor, const network::Address & Address, network::Socket * new_socket) const
+        virtual qor::framework::IOTask Accept(platform::IODescriptor * ioDescriptor, const network::Address & Address, network::Socket * new_socket)
         {
             sockaddr addr;
-            int len = 0;
-            //co_await m_eventProcessor->Schedule();
+            int len = 0;            
             int status = co_await SocketAcceptOperation(ioDescriptor, new_socket);
 
             co_return qor::framework::AsyncIOResult{

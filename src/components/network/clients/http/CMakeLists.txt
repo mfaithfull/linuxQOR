@@ -7,7 +7,7 @@ add_library(${target} qor_httpclient.cpp protohttpclient.cpp httpsocketclient.cp
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_HTTPCLIENT)
+target_compile_definitions(${target} PRIVATE QOR_HTTPCLIENT)
 target_link_libraries(${target} qor_http qor_module qor_host qor_datastructures qor_objectcontext qor_thread qor_sync qor_injection)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

@@ -78,7 +78,7 @@ namespace qor{ namespace components {
     /*
     NetworkClient:
         A client that uses a socket connector at the device end of it's pipelines.
-        It writes to the socket on Send and Read from it on Receive.
+        It writes to the socket on Send and Reads from it on Receive.
         Configuration for the socket is exposed and this client is independent of whatever protocol is plugged in.        
     Usage:
         Construct an instance

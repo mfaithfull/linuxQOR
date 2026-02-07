@@ -31,7 +31,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-using Headers = std::unordered_multimap<std::string, std::string, case_ignore::hash, case_ignore::equal_to>;
+    using Headers = std::unordered_multimap<std::string, std::string, case_ignore::hash, case_ignore::equal_to>;
 
 }}}}//qor::components::protocols::http
 

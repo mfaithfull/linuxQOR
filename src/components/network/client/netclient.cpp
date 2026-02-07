@@ -41,6 +41,7 @@ namespace qor{ namespace components {
         else
         { 
             SetupRequestPipeline();
+            SetupResponsePipeline();
             //Now the pipeline is setup, connect the socket
             return m_socketClientConnector->Connect();
         }
