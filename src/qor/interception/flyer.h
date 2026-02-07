@@ -48,7 +48,8 @@ namespace qor {
 
             if(!prev.IsNull())
 			{                
-				m_pPrevious = prev;
+				m_previous = prev;
+                m_pPrevious = reinterpret_cast<const TypedAnyPointer< baseT >*>(m_previous.Ptr())->operator baseT *();
             }
             return true;
         }
@@ -56,14 +57,15 @@ namespace qor {
 		bool Pop()
 		{
             const GUID* luid = guid_of<T>::guid();
-            TypedAny< T > wrapper(dynamic_cast<T*>(m_pPrevious));
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, wrapper);
+            //TypedAny< T > wrapper(dynamic_cast<T*>(m_pPrevious));
+        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, m_previous);
 			return true;
 		}
 
     protected:
 
         typedef baseT base_type;
+        AnyObject m_previous;
         baseT* m_pPrevious;
     };
 
