@@ -162,8 +162,9 @@ namespace qor{ namespace components{
         else
         {
             m_Socket->Shutdown(network::sockets::eShutdown::ShutdownReadWrite);
-        }
+        }        
         m_connected = false;
+        m_Socket.Dispose();
     }
 
     bool SocketConnector::SetNonBlocking(bool nonBlocking)

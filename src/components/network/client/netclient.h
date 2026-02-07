@@ -121,7 +121,8 @@ namespace qor{ namespace components {
         }
 
         bool Connect();
-
+        void Disconnect();
+        
     protected:
     
         ref_of<components::SocketConnector>::type m_socketClientConnector;

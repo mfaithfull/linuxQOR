@@ -74,13 +74,13 @@ namespace qor{ namespace workflow{
                 PopState();
             }
         }
-        catch(const Error* error)
+        catch(const Error& error)
         {
-            std::cerr << error->what().Content() << '\n';
+            std::cerr << "Workflow failed due to: " << error.what().Content() << '\n';
         }
         catch(const std::exception& e)
         {
-            std::cerr << e.what() << '\n';
+            std::cerr << "Workflow failed due to: " << e.what() << '\n';
         }
         catch(...)
         {

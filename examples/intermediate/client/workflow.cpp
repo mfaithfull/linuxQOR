@@ -75,7 +75,8 @@ ClientWorkflow::ClientWorkflow() :
         if(m_client.Receive())
         {
             debug("Echo received.");
-            SetComplete(EXIT_SUCCESS);            
+            m_client.Disconnect();
+            SetComplete(EXIT_SUCCESS);
         }
         else
         {

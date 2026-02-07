@@ -137,7 +137,7 @@ namespace qor { namespace components { namespace parser {
                     m_result.m_position = GetContext()->GetPosition();
                     GetContext()->ConsumeOctet();
                     m_result.token = m_token;
-                    ++m_result.length;              
+                    ++m_result.length;
                     m_result.code = Result::SUCCESS;
                 }
                 else
@@ -150,9 +150,8 @@ namespace qor { namespace components { namespace parser {
             }
             else
             {
+                m_result.code = Result::MORE_DATA;//Need more data
                 Fail();
-                m_result.code = Result::MORE_DATA;
-                return;//Need more data
             }
         };
     }

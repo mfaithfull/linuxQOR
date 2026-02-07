@@ -82,7 +82,7 @@ namespace qor{ namespace network{ namespace nswindows{
     void Sockets::Setup()
     {
         WORD wVersionRequested;
-        WSADATA wsaData;
+        WSADATA wsaData = {0};
         int err;        
         wVersionRequested = MAKEWORD(2, 2);
 

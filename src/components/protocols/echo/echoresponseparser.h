@@ -65,6 +65,16 @@ namespace qor { namespace components { namespace protocols { namespace echo {
                 ).template AsRef<qor::components::parser::Node>()
             );
         }
+        virtual void Fail()
+        {
+            if(m_result.code == qor::components::parser::Result::MORE_DATA)
+            {
+                //we're simply out of data. That's fine for an echo. Echo what we have
+                m_result.code = qor::components::parser::Result::SUCCESS;                
+                Workflow()->SetComplete();
+            }            
+            Workflow()->PopState();
+        }
     };
 
     class response : public qor::components::parser::OneOrMore

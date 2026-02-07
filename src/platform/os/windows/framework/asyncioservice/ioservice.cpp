@@ -262,7 +262,7 @@ namespace qor { namespace framework { namespace nswindows {
                 unsigned long errorCode = ok ? Success : qor::nswindows::api::Kernel32::GetLastError();
 
                 auto* state = static_cast<io_state*>(reinterpret_cast<struct overlapped*>(overlapped));
-                if(state && state->m_callback)
+                if(state && state->m_callback && state->m_callback != ((io_state::callback_type*)0xdddddddddddddddd))
                 {
                     state->m_callback( state, errorCode, numberofBytesTransferred, completionKey);
                 }

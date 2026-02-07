@@ -47,6 +47,12 @@ namespace qor{ namespace components {
         }
     }
 
+    void NetworkClient::Disconnect()
+    {
+        qor_pp_ofcontext;
+        m_socketClientConnector->Disconnect();
+    }
+
     void NetworkClient::SetupRequestPipeline()
     {
         //Wire up outgoing/request side:
