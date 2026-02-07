@@ -32,6 +32,10 @@
 #include "../library.h"
 #include "errorcheck.h"
 
+namespace {
+	size_t s_winsockInitCount = 0;
+}
+
 namespace qor { namespace nswindows { namespace api {
 
 	SOCKET WS2::accept( SOCKET s, sockaddr* addr, int* addrlen )
@@ -355,6 +359,10 @@ namespace qor { namespace nswindows { namespace api {
 	int WS2::shutdown( SOCKET s, int how )
 	{
 		qor_pp_fcontext;
+		if(s_winsockInitCount == 0)
+		{
+			return -1;//Winsock has already gone away
+		}
 		CheckReturn< int, TCheckWinsockFailureValue< int, SOCKET_ERROR> >::TType iResult;
 #if		( _WIN32_WINNT >= 0x0500 )
 		qor_pp_useswinapi( ws2_32, shutdown );
@@ -1643,6 +1651,7 @@ namespace qor { namespace nswindows { namespace api {
 #if		( _WIN32_WINNT >= 0x0500 )
 		qor_pp_useswinapi( ws2_32, WSAStartup );
 		iResult = Library::Call< int, WORD, LPWSADATA >( pFunc, wVersionRequested, lpWSAData );
+		s_winsockInitCount++;
 #else
 		qor_pp_unref2( wVersionRequested, lpWSAData );
 		continuable("Requires Windows 2000 Professional");
@@ -1653,11 +1662,16 @@ namespace qor { namespace nswindows { namespace api {
 	
 	int WS2::WSACleanup( void )
 	{
+		if(s_winsockInitCount == 0)
+		{
+			return 0;
+		}
 		qor_pp_fcontext;
 		CheckReturn< int, CheckNonZeroIsWinsockFailure< int> >::TType iResult;
 #if		( _WIN32_WINNT >= 0x0500 )
 		qor_pp_useswinapi( ws2_32, WSACleanup );
 		iResult = Library::Call< int >( pFunc );
+		--s_winsockInitCount;
 #else
 		continuable("Requires Windows 2000 Professional");
 #endif
