@@ -108,6 +108,9 @@ namespace qor{ namespace components {
             m_protocol = protocol;
         }
 
+        void SetSink(pipeline::Element* sink, const pipeline::Buffer& sinkBuffer);
+        void SetSource(pipeline::Element* source, const pipeline::Buffer& sourceBuffer);
+
         void Configure(const std::string &host, int port, const std::string &ip = "", network::sockets::eAddressFamily address_family = network::sockets::eAddressFamily::AF_INet, network::addrinfo_flags socket_flags = 0, bool tcp_nodelay = false, bool ipv6_v6only = false, time_t timeout_sec = 0)
         {
             m_socketClientConnector->Configure(host, port, ip, address_family, socket_flags, tcp_nodelay, ipv6_v6only, timeout_sec);
@@ -128,8 +131,8 @@ namespace qor{ namespace components {
         ref_of<components::SocketConnector>::type m_socketClientConnector;
         ref_of<pipeline::Protocol>::type m_protocol;
 
-        void SetupRequestPipeline();
-        void SetupResponsePipeline();
+        //void SetupRequestPipeline();
+        //void SetupResponsePipeline();
 
     };
 

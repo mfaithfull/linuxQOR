@@ -27,13 +27,15 @@
 
 #include "sdk/using_framework.h"
 #include "sdk/components/network.h"
+#include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
+#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
 
 class ClientWorkflow : public Workflow
 {
 public:
 
     ClientWorkflow();
-    virtual ~ClientWorkflow() = default;
+    virtual ~ClientWorkflow() noexcept(true) = default;
 
 private:
 
@@ -42,6 +44,12 @@ private:
     State::ref receive;    
 
     NetworkClient m_client;
+
+    pipeline::ByteBuffer m_requestBuffer;
+    pipeline::ByteBuffer m_responseBuffer;
+    components::StdInSource m_source;
+    components::StdOutSink m_sink;
+
 };
 
 #endif//QOR_PP_H_EXAMPLES_CLIENT_WORKFLOW

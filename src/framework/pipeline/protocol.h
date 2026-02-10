@@ -57,35 +57,16 @@ namespace qor{ namespace pipeline{
             return qor::network::sockets::eProtocol::IPProto_IP;
         }
 
-        virtual qor::ref_of<qor::pipeline::Source>::type GetSource()
+        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter()
         {
-            qor::ref_of<qor::pipeline::Source>::type source;
-            return source;
+            return ref_of<qor::pipeline::InlineFilter<byte>>::type();            
         }
 
-        virtual qor::ref_of<qor::pipeline::Sink>::type GetSink()
+        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter()
         {
-            qor::ref_of<qor::pipeline::Sink>::type sink;
-            return sink;
+            return ref_of<qor::pipeline::InlineFilter<byte>>::type();
         }
 
-        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetFilter()
-        {
-            qor::ref_of<qor::pipeline::InlineFilter<byte>>::type filter;
-            return filter;
-        }
-
-        virtual qor::ref_of<qor::pipeline::ByteBuffer>::type GetRequestBuffer()
-        {
-            qor::ref_of<qor::pipeline::ByteBuffer>::type buffer;
-            return buffer;
-        }
-
-        virtual qor::ref_of<qor::pipeline::ByteBuffer>::type GetResponseBuffer()
-        {
-            qor::ref_of<qor::pipeline::ByteBuffer>::type buffer;
-            return buffer;
-        }
     };
 
 }}//qor::pipeline

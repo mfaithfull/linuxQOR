@@ -29,8 +29,8 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/asyncioservice/asyncioservice.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
-#include "src/components/framework/pipeline/connectors/socketconnector/socketsessionsource.h"
-#include "src/components/framework/pipeline/connectors/socketconnector/socketsessionsink.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketsource.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketsink.h"
 #include "src/framework/pipeline/pipeline.h"
 #include "src/framework/pipeline/podbuffer.h"
 #include "echorequestfilter.h"
@@ -51,8 +51,8 @@ private:
     qor::ref_of<qor::network::Socket>::type m_socket;
     qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
     qor::ref_of<qor::components::SocketConnector>::type m_socketSessionConnector;
-    qor::ref_of<qor::components::SocketSessionSource>::type m_socketSource;
-    qor::ref_of<qor::components::SocketSessionSink>::type m_socketSink;
+    qor::ref_of<qor::components::SocketSource>::type m_socketSource;
+    qor::ref_of<qor::components::SocketSink>::type m_socketSink;
 
 };
 

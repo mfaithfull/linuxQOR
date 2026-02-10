@@ -14,6 +14,8 @@ using namespace qor::framework;
 
 #define appName "Line by line"
 
+qor_pp_module_requires(ICurrentThread)
+
 int main(const int argc, const char** argv, char**)
 {	
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();

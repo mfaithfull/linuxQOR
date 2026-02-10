@@ -36,6 +36,9 @@
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
+    //Client side parser for interpretting response
+    //Belongs to the EchoResponseFilter
+    
     enum class echoResponseToken : uint64_t
     {
         responseChar = static_cast<uint64_t>(qor::components::parser::eToken::Max) + 1ull,

@@ -56,7 +56,7 @@ namespace qor{ namespace components {
                 qor_pp_ofcontext;
                 log::inform("Servicing a connected client {0}", m_socket->m_fd);
                 auto application = framework::AppBuilder().TheApplication();
-                auto ioService = application(qor_shared).GetRole()->GetFeature<framework::AsyncIOService>();
+                auto ioService = application(qor_shared).GetRole(qor_shared)->GetFeature<framework::AsyncIOService>();                
                 m_ioSession = ioService(qor_shared).GetSession();
 
                 m_pipeline = new_ref<SessionPipeline>(m_socket, m_ioSession, protocol);
@@ -76,9 +76,9 @@ namespace qor{ namespace components {
             disconnect->Enter = [this]()->void
             {
                 qor_pp_ofcontext;
-                log::inform("Disconnecting client {0}", m_socket->m_fd);
-                SetResult(EXIT_SUCCESS);
-                SetComplete();
+                log::inform("Disconnecting client {0}", m_socket->m_fd);                
+                m_socket->Shutdown(network::sockets::ShutdownReadWrite);
+                SetComplete(EXIT_SUCCESS);
                 PopState();
             };
 
@@ -92,10 +92,12 @@ namespace qor{ namespace components {
 
     private:
     
+        //The 3 states of a per-client session
         ref_of<workflow::State>::type connected;
         ref_of<workflow::State>::type running;
         ref_of<workflow::State>::type disconnect;
 
+        //session data
         ref_of<network::Socket>::type m_socket;        
         ref_of<framework::AsyncIOContext::Session>::type m_ioSession;
         ref_of<SessionPipeline>::type m_pipeline;

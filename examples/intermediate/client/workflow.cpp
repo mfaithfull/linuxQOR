@@ -33,7 +33,19 @@ ClientWorkflow::ClientWorkflow() :
     receive(new_ref<State>(this))
 {    
     qor_pp_ofcontext;
-    m_client.SetProtocol(new_ref<echo::EchoProtocol>());    
+        
+    //Setup the protocol, buffers and std::iostream source and sink
+    auto echoProtocol = new_ref<echo::EchoProtocol>();
+    size_t maxEchoSize = echoProtocol->GetMaxEchoSize();
+    m_requestBuffer.SetCapacity(maxEchoSize);
+    m_responseBuffer.SetCapacity(maxEchoSize);        
+    m_source.SetBuffer(m_requestBuffer);
+    m_sink.SetBuffer(m_responseBuffer);
+
+    //Wire up the standard Network client to use our provided source, sink and buffers with the Echo Protocol on local port 12345
+    m_client.SetProtocol(echoProtocol);        
+    m_client.SetSource(&m_source, m_requestBuffer);
+    m_client.SetSink(&m_sink, m_responseBuffer);        
     m_client.Configure("localhost", 12345);
 
     connect->Enter = [this]()->void
@@ -47,7 +59,7 @@ ClientWorkflow::ClientWorkflow() :
         else
         {
             std::string err(strerror(errno));
-            impact("Failed to connect to service on port 12345 @ localhost: {0}", err);
+            impact("Failed to connect to Echo service on port 12345 @ localhost: {0}", err);
             SetResult(EXIT_FAILURE);
             SetComplete();
         }

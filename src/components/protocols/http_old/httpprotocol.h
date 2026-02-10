@@ -39,27 +39,21 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
         virtual ~HttpProtocol(){}
 
-        qor::ref_of<qor::pipeline::Source>::type GetSource()
+        ref_of<pipeline::InlineFilter<byte>>::type GetRequestFilter()
         {            
-            return m_source;
+            return m_requestFilter;
         }
 
-        qor::ref_of<qor::pipeline::Sink>::type GetSink()
-        {
-            return m_sink;
-        }
-
-        qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetFilter()
+        ref_of<pipeline::InlineFilter<byte>>::type GetResponseFilter()
         {            
-            return m_filter;
+            //return m_responseFilter;
+            return ref_of<pipeline::InlineFilter<byte>>::type();
         }
 
     private:
 
-        qor::ref_of<HttpRequestSource>::type m_source;
-        qor::ref_of<HttpResponseSink>::type m_sink;
-        qor::ref_of<HttpServiceFilter>::type m_filter;
-
+        qor::ref_of<HttpServiceFilter>::type m_requestFilter;
+        //qor::ref_of<HttpClientFilter>::type m_responseFilter;
     };
 }}}}
 

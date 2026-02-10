@@ -39,46 +39,26 @@ namespace qor { namespace components { namespace protocols { namespace http {
         HTTPProtocol();
         virtual ~HTTPProtocol(){}
 
-        virtual qor::network::sockets::eAddressFamily GetAddressFamily() const
+        virtual network::sockets::eAddressFamily GetAddressFamily() const
         {
-            return qor::network::sockets::eAddressFamily::AF_INet;
+            return network::sockets::eAddressFamily::AF_INet;
         }
 
-        virtual qor::ref_of<qor::pipeline::Source>::type GetSource() override
+        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter() override
         {            
-            return m_source;
+            return m_requestFilter;
         }
 
-        virtual qor::ref_of<qor::pipeline::Sink>::type GetSink() override
-        {
-            return m_sink;
-        }
-
-        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetFilter() override
+        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter() override
         {            
-            return m_filter;
-        }
-
-        virtual qor::ref_of<qor::pipeline::ByteBuffer>::type GetRequestBuffer() override
-        {
-            return m_requestBuffer;
-        }
-
-        virtual qor::ref_of<qor::pipeline::ByteBuffer>::type GetResponseBuffer() override
-        {
-            return m_responseBuffer;
+            //return m_responseFilter;//TODO:
+            return ref_of<qor::pipeline::InlineFilter<byte>>::type();
         }
 
     private:
 
-        static constexpr size_t requestBufferSize = 16384;
-        static constexpr size_t responseBufferSize = 16384;
-        
-        qor::ref_of<qor::pipeline::ByteBuffer>::type m_requestBuffer;
-        qor::ref_of<qor::pipeline::ByteBuffer>::type m_responseBuffer;
-        qor::ref_of<HTTPSource>::type m_source;
-        qor::ref_of<HTTPSink>::type m_sink;
-        qor::ref_of<HTTPFilter>::type m_filter;
+        ref_of<HTTPFilter>::type m_requestFilter;
+        ref_of<HTTPFilter>::type m_responseFilter;
 
     };
 }}}}

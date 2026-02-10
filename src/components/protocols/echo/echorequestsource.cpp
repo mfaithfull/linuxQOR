@@ -22,5 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+//client side source generating echo request 
+//TODO: Move this to Client code
 #include "src/configuration/configuration.h"
 #include "echorequestsource.h"

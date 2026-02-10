@@ -86,7 +86,6 @@ namespace qor{ namespace pipeline{
         if( GetFlowMode() == FlowMode::Push )
         {
             return ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0) ? true : false;
-
         }
         return true;
     }

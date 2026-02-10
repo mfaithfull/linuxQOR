@@ -31,6 +31,8 @@
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
+    //Server side protocol filter
+    
     class qor_pp_module_interface(QOR_ECHO) EchoServiceFilter : public qor::pipeline::InlineFilter<qor::byte>
     {
     public:

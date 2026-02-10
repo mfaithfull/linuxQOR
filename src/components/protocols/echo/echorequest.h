@@ -29,6 +29,8 @@
 
 namespace qor { namespace components { namespace protocols { namespace echo {
     
+    //Server side request object parser from request data
+    
     class EchoRequest
     {
     public:

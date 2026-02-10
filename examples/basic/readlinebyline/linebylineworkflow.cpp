@@ -61,7 +61,7 @@ LineByLineWorkflow::LineByLineWorkflow() : state0(new_ref<qor::workflow::State>(
         FileConnector connector;
         source.SetPlug(&connector);
     
-        auto filesystem = ThePlatform()->GetSubsystem<FileSystem>();
+        auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
         FileIndex newIndex(filesystem->CurrentPath(), "linebyline_source.txt");
 
         LineReader filter;
@@ -81,6 +81,7 @@ LineByLineWorkflow::LineByLineWorkflow() : state0(new_ref<qor::workflow::State>(
         size_t unitsPumped = 0;
         do
         {
+            unitsPumped = 0;
             testPipeline.PumpSome(unitsPumped, 16384);
         } while (unitsPumped > 0);
         

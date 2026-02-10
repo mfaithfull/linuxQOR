@@ -29,9 +29,11 @@
 #include "echorequestsource.h"
 #include "echoresponsesink.h"
 #include "echoservicefilter.h"
+#include "echoresponsefilter.h"
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
+    //Request and response pipeline protocol
     class qor_pp_module_interface(QOR_ECHO) EchoProtocol : public qor::pipeline::Protocol
     {
     public:
@@ -41,43 +43,30 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         EchoProtocol();
         virtual ~EchoProtocol(){}
 
-        virtual qor::network::sockets::eAddressFamily GetAddressFamily() const
+        virtual network::sockets::eAddressFamily GetAddressFamily() const
         {
-            return qor::network::sockets::eAddressFamily::AF_INet;
+            return network::sockets::eAddressFamily::AF_INet;
         }
 
-        virtual qor::ref_of<qor::pipeline::Source>::type GetSource() override
+        virtual ref_of<pipeline::InlineFilter<byte>>::type GetRequestFilter() override
         {            
-            return m_source;
+            return m_requestFilter;
         }
 
-        virtual qor::ref_of<qor::pipeline::Sink>::type GetSink() override
-        {
-            return m_sink;
-        }
-
-        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetFilter() override
+        virtual ref_of<pipeline::InlineFilter<byte>>::type GetResponseFilter() override
         {            
-            return m_filter;
+            return m_responseFilter;
         }
 
-        virtual qor::ref_of<qor::pipeline::ByteBuffer>::type GetRequestBuffer() override
+        size_t GetMaxEchoSize()
         {
-            return m_requestBuffer;
-        }
-
-        virtual qor::ref_of<qor::pipeline::ByteBuffer>::type GetResponseBuffer() override
-        {
-            return m_responseBuffer;
+            return maxEchoSize;
         }
 
     private:
 
-        qor::ref_of<qor::pipeline::ByteBuffer>::type m_requestBuffer;
-        qor::ref_of<qor::pipeline::ByteBuffer>::type m_responseBuffer;
-        qor::ref_of<EchoRequestSource>::type m_source;
-        qor::ref_of<EchoResponseSink>::type m_sink;
-        qor::ref_of<EchoServiceFilter>::type m_filter;
+        ref_of<EchoServiceFilter>::type m_requestFilter;
+        ref_of<EchoResponseFilter>::type m_responseFilter;
 
     };
 }}}}

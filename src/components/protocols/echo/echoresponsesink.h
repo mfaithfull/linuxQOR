@@ -27,8 +27,10 @@
 
 #include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
 
+//TODO: Move this to Client code
 namespace qor { namespace components { namespace protocols { namespace echo {
 
+    //Client side sink for writing out response to user
     using EchoResponseSink = qor::components::StdOutSink;
 
 }}}}//qor::components::protocols::echo

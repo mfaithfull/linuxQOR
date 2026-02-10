@@ -57,7 +57,7 @@ using namespace qor::components;
 void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
 {    
     connect(
-        logHandler, &DefaultLogHandler::forward, 
+        logHandler, logHandler.GetForwardSignal(), 
         logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
         ConnectionKind::QueuedConnection);
 

@@ -46,6 +46,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         void SetRequest(ref_of<HTTPRequest>::type request)
         {
             m_request = request;
+            //TODO: Reset the RequestGenerator with a new request
         }
 
     protected:
@@ -55,6 +56,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         bool Push(size_t& unitsRead, size_t unitsToRead);
 
         ref_of<HTTPRequest>::type m_request;
+        //Add a RequestGenerator instance
     };
 
 

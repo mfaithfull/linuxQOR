@@ -29,7 +29,10 @@
 using namespace qor;
 using namespace qor::components::parser;
 
+//Server side parser for interpretting request
+
 namespace qor { namespace components { namespace protocols { namespace echo {
+    
     void request::Prepare()
     {
         GetParser()->PushNode(new_ref<RequestNode>().template AsRef<Node>());

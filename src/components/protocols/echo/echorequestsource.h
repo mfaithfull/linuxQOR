@@ -27,8 +27,10 @@
 
 #include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
 
+//TODO: Move this to Client code
 namespace qor { namespace components { namespace protocols { namespace echo {
 
+    //client side source generating echo request 
     using EchoRequestSource = qor::components::StdInSource;
 
 }}}}//qor::components::protocols::echo

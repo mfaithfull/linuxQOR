@@ -26,6 +26,7 @@
 
 #include "socketsource.h"
 #include "src/framework/pipeline/sink.h"
+#include "src/qor/error/error.h"
 
 namespace qor{ namespace components{ 
 
@@ -38,9 +39,9 @@ namespace qor{ namespace components{
         }
         else
         {
-            //TODO: No connection
+            continuable("Attempting to read from disconnected socket.");
         }
-        if( result == -1)
+        if(result == -1)
         {
             return 0;
         }

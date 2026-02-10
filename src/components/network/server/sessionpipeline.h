@@ -30,8 +30,8 @@
 #include "src/framework/pipeline/pipeline.h"
 #include "src/framework/pipeline/protocol.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
-#include "src/components/framework/pipeline/connectors/socketconnector/socketsessionsource.h"
-#include "src/components/framework/pipeline/connectors/socketconnector/socketsessionsink.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketsource.h"
+#include "src/components/framework/pipeline/connectors/socketconnector/socketsink.h"
 
 namespace qor{ namespace components {
 
@@ -43,31 +43,34 @@ namespace qor{ namespace components {
             ref_of<network::Socket>::type socket, 
             ref_of<framework::AsyncIOContext::Session>::type ioSession,
             ref_of<pipeline::Protocol>::type protocol
-        ) : m_socket(socket), m_ioSession(ioSession)
+        ) : m_filter(protocol->GetRequestFilter()), m_socket(socket), m_ioSession(ioSession),m_socketSessionConnector(m_socket, m_ioSession)
         {
-            m_filter = protocol->GetFilter();
-            
-            m_socketSessionConnector = new_ref<SocketConnector>(m_socket, m_ioSession);
+            //Setup the pipeline
             SetFlowMode(Element::FlowMode::Push);
-
-            m_socketSource = new_ref<SocketSessionSource>();
-            m_socketSource->SetPlug(m_socketSessionConnector);
-            SetSource(m_socketSource, m_filter.operator->());
             
-            m_socketSink = new_ref<SocketSessionSink>();
-            m_socketSink->SetPlug(m_socketSessionConnector);
-            SetSink(m_socketSink, m_filter.operator->());
+            //The source comes from the socket connector and uses the protocol filter as it's write buffer
+            m_socketSource.SetPlug(&m_socketSessionConnector);
+            SetSource(&m_socketSource, m_filter.operator->());
+                        
+            //The sink goes back to the socket connector and also uses the protocol filter as it's read buffer
+            m_socketSink.SetPlug(&m_socketSessionConnector);
+            SetSink(&m_socketSink, m_filter.operator->());
 
-            m_socketSource->SetSink(m_socketSink);
-            m_socketSink->SetSource(m_socketSource);
+            //Connect the source and the sink
+            m_socketSource.SetSink(&m_socketSink);
+            m_socketSink.SetSource(&m_socketSource);
+
+            //Set the buffer capacity
             GetSink()->GetBuffer()->SetCapacity(m_ioBufferSize);
             GetSource()->GetBuffer()->SetCapacity(m_ioBufferSize);
-            m_socketSessionConnector->Connect();
+
+            //Connect the socket session. In practice this is null as we are passed an already connected socket
+            m_socketSessionConnector.Connect();
         }
 
         virtual ~SessionPipeline()
         {
-            m_socketSessionConnector->Disconnect();
+            m_socketSessionConnector.Disconnect();
         }
 
     private:
@@ -76,9 +79,9 @@ namespace qor{ namespace components {
         ref_of<pipeline::InlineFilter<byte>>::type m_filter;
         ref_of<network::Socket>::type m_socket;
         ref_of<framework::AsyncIOContext::Session>::type m_ioSession;
-        ref_of<components::SocketConnector>::type m_socketSessionConnector;
-        ref_of<components::SocketSessionSource>::type m_socketSource;
-        ref_of<components::SocketSessionSink>::type m_socketSink;
+        components::SocketConnector m_socketSessionConnector;
+        components::SocketSource m_socketSource;
+        components::SocketSink m_socketSink;
 
     };
 

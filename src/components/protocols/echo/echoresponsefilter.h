@@ -32,6 +32,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
+    //Buffer analogue used client side to hold and parse response    
     class qor_pp_module_interface(QOR_ECHO) EchoResponseFilter : public qor::pipeline::InlineFilter<qor::byte>
     {
     public:

@@ -46,17 +46,20 @@ namespace qor{ namespace components {
         
     private:
     
-        qor::ref_of<qor::workflow::State>::type bind;
-        qor::ref_of<qor::workflow::State>::type listen;
-        qor::ref_of<qor::workflow::State>::type accept;
+        //The 3 states of a network server workflow
+        ref_of<workflow::State>::type bind;
+        ref_of<workflow::State>::type listen;
+        ref_of<workflow::State>::type accept;
 
-        qor::ref_of<qor::network::Sockets>::type m_sockets;
-        qor::ref_of<qor::framework::AsyncIOService>::type m_io;
-        qor::ref_of<qor::framework::ThreadPool>::type m_threadPool;
-        qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
+        //Subsystems and features needed
+        ref_of<network::Sockets>::type m_sockets;
+        ref_of<framework::AsyncIOService>::type m_io;
+        ref_of<framework::ThreadPool>::type m_threadPool;
+        ref_of<framework::AsyncIOContext::Session>::type m_ioSession;
 
+        //Port and socket for connections to the server
         unsigned m_port;
-        qor::ref_of<qor::network::Socket>::type m_serverSocket;
+        ref_of<network::Socket>::type m_serverSocket;
     };
 
 }}//qor::components

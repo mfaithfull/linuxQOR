@@ -33,6 +33,7 @@
 #include "netserver.h"
 #include "netsession.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
+#include "src/components/framework/logaggregator/logaggregator.h"
 
 using namespace qor;
 using namespace qor::framework;
@@ -53,13 +54,18 @@ namespace qor{ namespace components{
         bind->Enter = [this, protocol]()->void
         {
             qor_pp_ofcontext;
+
+            //Get the required features from the Application Role
             auto application = AppBuilder().TheApplication();
             auto role = application(qor_shared).GetRole();
             m_io = role(qor_shared).GetFeature<AsyncIOService>();
             m_threadPool = role(qor_shared).GetFeature<ThreadPool>();
             m_sockets = ThePlatform()(qor_shared).GetSubsystem<Sockets>();
 
+            //Get a session for async IO
             m_ioSession = m_io->GetSession();
+
+            //Set the socket for server connection
             m_serverSocket = m_sockets->CreateSocket(
                 protocol->GetAddressFamily(), 
                 protocol->FramingType(), 
@@ -69,6 +75,7 @@ namespace qor{ namespace components{
             serverAddress.sa_family = protocol->GetAddressFamily();
             serverAddress.SetPort(m_port);
 
+            //Bind Server socket
             auto result = m_serverSocket->Bind(serverAddress);
 
             if( result < 0 )
@@ -87,7 +94,8 @@ namespace qor{ namespace components{
         listen->Enter = [this]()->void
         {
             qor_pp_ofcontext;
-            auto result = m_serverSocket->Listen(2);
+            //Listen on connection port
+            auto result = m_serverSocket->Listen(2);//TODO: Make the backlog parameter configurable
 
             if( result < 0)
             {
@@ -106,6 +114,7 @@ namespace qor{ namespace components{
         {
             qor_pp_ofcontext;
             Address ClientAddress;
+            //Accept connections
             auto ClientSocket = m_serverSocket->Accept(m_ioSession, ClientAddress);
             
             if(!ClientSocket->IsAlive())
@@ -116,17 +125,31 @@ namespace qor{ namespace components{
             {
                 auto addr = ClientAddress.GetIPV4Address();
                 log::inform("Accepted client connection: {0}:{1}", ClientSocket->m_fd, addr );
+                //Handle the connected client in it's own task
                 m_threadPool->PostTask(
-                    [this, ClientSocket, protocol](){
-                    CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));
-                    new_ref<NetworkSession>(ClientSocket, protocol)->Run(
-                        [](Workflow& clientSession)
-                        {
-                            clientSession.m_errorHandler = new_ref<DefaultErrorHandler>();
-                            clientSession.m_logHander = new_ref<DefaultLogHandler>();
-                        }
-                    );
-                });
+                    //Note: this lambda runs on a pool thread
+                    [this, ClientSocket, protocol]()
+                    {   
+                        //Rename the thread for debugging to indicate which client session it's servicing
+                        CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));
+                        //Run a client session
+                        new_ref<NetworkSession>(ClientSocket, protocol)->Run(
+                            [](Workflow& clientSession)
+                            {
+                                //Configure the client session with it's own error and log handlers
+                                clientSession.m_errorHandler = new_ref<DefaultErrorHandler>();
+                                clientSession.m_logHander = new_ref<DefaultLogHandler>();
+                                auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<components::LogAggregatorService>();
+                                if(logAggregator.IsNotNull())
+                                {
+                                    connect(clientSession.m_logHander(qor_shared), clientSession.m_logHander->GetForwardSignal(), 
+                                        logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
+                                        ConnectionKind::QueuedConnection);
+                                }                                
+                            }
+                        );
+                    }
+                );
             }
         };
 

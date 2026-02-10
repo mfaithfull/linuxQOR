@@ -27,17 +27,12 @@
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
+    //Server side request and response protocol pipeline
+    
     EchoProtocol::EchoProtocol() : qor::pipeline::Protocol()
     {
-        m_requestBuffer = new_ref<qor::pipeline::ByteBuffer>();
-        m_requestBuffer->SetCapacity(maxEchoSize);
-        m_responseBuffer = new_ref<qor::pipeline::ByteBuffer>();
-        m_responseBuffer->SetCapacity(maxEchoSize);
-        m_source = new_ref<EchoRequestSource>();
-        m_source->SetBuffer(m_requestBuffer.operator const qor::pipeline::ByteBuffer &());
-        m_sink = new_ref<EchoResponseSink>();
-        m_sink->SetBuffer(m_responseBuffer.operator const qor::pipeline::ByteBuffer &());
-        m_filter = new_ref<EchoServiceFilter>();
+        m_requestFilter = new_ref<EchoServiceFilter>();
+        m_responseFilter = new_ref<EchoResponseFilter>();
     }
     
 }}}}//qor::components::protocols::echo

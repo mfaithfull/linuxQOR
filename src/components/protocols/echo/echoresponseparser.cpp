@@ -30,6 +30,8 @@
 using namespace qor;
 using namespace qor::components::parser;
 
+//Client side parser for interpretting response
+
 namespace qor { namespace components { namespace protocols { namespace echo {
 
     void response::Prepare()

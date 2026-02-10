@@ -61,6 +61,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     size_t HTTPSource::Read(char* space, size_t charsToRead)
     {
+        //TODO: Set up the RequestGenerator Context to enable the writing of the next charToRead chars
+        //Run the RequestGenerator Workflow until it completes or runs out of space        
         size_t charsRead = 0;
         /*
         while(m_it != m_data.end() && charsRead < charsToRead)

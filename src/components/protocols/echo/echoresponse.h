@@ -29,6 +29,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace echo {
     
+    //Response parsed from data returned to client
     class EchoResponse
     {
     public:

@@ -68,6 +68,7 @@ namespace qor{ namespace components{
         bool SetNonBlocking(bool nonBlocking);
         
         //ISocket implementation over owned socket instance
+
         virtual int32_t Bind(const qor::network::Address& Address)
         {
             return m_Socket->Bind(Address);
@@ -132,7 +133,7 @@ namespace qor{ namespace components{
         {
             if(m_Session.IsNotNull())
             {
-            return sync_wait(m_Socket->Receive(*m_Session, buf, len));
+                return sync_wait(m_Socket->Receive(*m_Session, buf, len));
             }
             else
             {

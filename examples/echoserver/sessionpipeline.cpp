@@ -40,11 +40,11 @@ SessionPipeline::SessionPipeline(
     m_socketSessionConnector = new_ref<SocketConnector>(m_socket, m_ioSession);
     SetFlowMode(Element::FlowMode::Push);
 
-    m_socketSource = new_ref<SocketSessionSource>();
+    m_socketSource = new_ref<SocketSource>();
     m_socketSource->SetPlug(m_socketSessionConnector);
     SetSource(m_socketSource, &m_filter);
     
-    m_socketSink = new_ref<SocketSessionSink>();
+    m_socketSink = new_ref<SocketSink>();
     m_socketSink->SetPlug(m_socketSessionConnector);
     SetSink(m_socketSink, &m_filter);
 

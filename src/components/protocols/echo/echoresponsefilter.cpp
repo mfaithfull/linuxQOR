@@ -33,6 +33,8 @@ using namespace qor::workflow;
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
+    //Client side protocol filter
+
     void EchoResponseFilter::Filter(byte* space, byte* data, size_t& itemCount)
     {
         EchoResponse response = Parse(data, itemCount);

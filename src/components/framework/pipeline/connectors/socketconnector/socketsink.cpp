@@ -26,6 +26,7 @@
 
 #include "socketsink.h"
 #include "src/framework/pipeline/source.h"
+#include "src/qor/error/error.h"
 
 namespace qor{ namespace components{ 
 
@@ -35,6 +36,10 @@ namespace qor{ namespace components{
         if(m_Connector && m_Connector->IsConnected())
         {
             result = (int32_t)m_Connector->Send((const char*)data, (int32_t)bytesToWrite);
+        }
+        else
+        {
+            continuable("Attempting to write to disconnected socket.");
         }
         return result;
     }
