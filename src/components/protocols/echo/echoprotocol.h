@@ -26,8 +26,6 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_PROTOCOL
 
 #include "src/framework/pipeline/protocol.h"
-#include "echorequestsource.h"
-#include "echoresponsesink.h"
 #include "echoservicefilter.h"
 #include "echoresponsefilter.h"
 

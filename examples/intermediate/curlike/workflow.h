@@ -22,7 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//client side source generating echo request 
-//TODO: Move this to Client code
-#include "src/configuration/configuration.h"
-#include "echorequestsource.h"
+#ifndef QOR_PP_H_EXAMPLES_CURLIKE_WORKFLOW
+#define QOR_PP_H_EXAMPLES_CURLIKE_WORKFLOW
+
+#include "src/framework/workflow/workflow.h"
+#include "httpclient.h"
+#include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
+#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
+
+class ClientWorkflow : public qor::workflow::Workflow
+{
+public:
+
+    ClientWorkflow();
+    virtual ~ClientWorkflow() noexcept(true) = default;
+
+private:
+
+    qor::workflow::State::ref connect;    
+    qor::workflow::State::ref send;
+    qor::workflow::State::ref receive;    
+
+    HTTPClient m_client;
+
+    qor::pipeline::ByteBuffer m_requestBuffer;
+    qor::pipeline::ByteBuffer m_responseBuffer;
+    qor::components::StdInSource m_source;
+    qor::components::StdOutSink m_sink;
+
+};
+
+#endif//QOR_PP_H_EXAMPLES_CURLIKE_WORKFLOW

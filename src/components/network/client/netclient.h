@@ -39,7 +39,7 @@ namespace qor{ namespace components {
     //This doesn't assume anything about what the pipelines are connected to, local or remote, or what data is flowing
     //It doesn't therefore know how to connect up the pipelines, this must be specialized
     //It does assume simple bufferred, stateless, pipelines which can be reset for each send/receive
-    //If you do something more complex that Send and Receive can be overridden
+    //If you do something more complex than that Send and Receive can be overridden
     class qor_pp_module_interface(QOR_NETCLIENT) BaseClient
     {
     public:
@@ -130,9 +130,6 @@ namespace qor{ namespace components {
     
         ref_of<components::SocketConnector>::type m_socketClientConnector;
         ref_of<pipeline::Protocol>::type m_protocol;
-
-        //void SetupRequestPipeline();
-        //void SetupResponsePipeline();
 
     };
 

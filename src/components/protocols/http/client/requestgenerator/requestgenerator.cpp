@@ -22,17 +22,15 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_REQUESTSOURCE
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_REQUESTSOURCE
+#include "src/configuration/configuration.h"
+#include "requestgenerator.h"
 
-#include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
+namespace qor { namespace components { namespace protocols { namespace http {
+    
+    HTTPRequestGenerator::HTTPRequestGenerator()
+    {
 
-//TODO: Move this to Client code
-namespace qor { namespace components { namespace protocols { namespace echo {
+    }
 
-    //client side source generating echo request 
-    using EchoRequestSource = qor::components::StdInSource;
+}}}}//qor::components::protocols::http
 
-}}}}//qor::components::protocols::echo
-
-#endif // QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_REQUESTSOURCE

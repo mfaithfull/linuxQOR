@@ -22,56 +22,40 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR_STATE
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR_STATE
 
-#include "src/framework/pipeline/protocol.h"
-#include "client/requestsource/source.h"
-#include "client/responsesink/sink.h"
-#include "filter.h"
+#include <iostream>
+#include "src/platform/compiler/compiler.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/framework/workflow/workflow.h"
+#include "src/platform/architecture/detectarchitecture.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
-
-    class qor_pp_module_interface(QOR_HTTP) HTTPProtocol : public qor::pipeline::Protocol
+    
+    class qor_pp_module_interface(QOR_HTTP) RequestGenerator;
+    
+    class qor_pp_module_interface(QOR_HTTP) RequestGenState : public qor::workflow::State
     {
     public:
 
-        HTTPProtocol();
-        virtual ~HTTPProtocol(){}
+        RequestGenState(RequestGenerator* generator, size_t size, arch::Endian endian);
+        virtual ~RequestGenState() = default;                
 
-        virtual network::sockets::eAddressFamily GetAddressFamily() const
-        {
-            return network::sockets::eAddressFamily::AF_INet;
-        }
+    protected:
 
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter() override
-        {            
-            return m_requestFilter;
-        }
+        class Context* GetContext();
+        workflow::Workflow* Workflow();
+        class HTTPRequestGenerator* GetRequestGenerator();
 
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter() override
-        {            
-            //return m_responseFilter;//TODO:
-            return ref_of<qor::pipeline::InlineFilter<byte>>::type();
-        }
-
-        virtual size_t GetRequestBufferSize()
-        {
-            return 16384;
-        }
-
-        virtual size_t GetResponseBufferSize()
-        {
-            return 16384;
-        }
-
-    private:
-
-        ref_of<HTTPFilter>::type m_requestFilter;
-        ref_of<HTTPFilter>::type m_responseFilter;
-
+        arch::Endian m_endian;//endianness of the source
+        byte* m_data;
+        size_t m_index;
+        size_t m_size;
+        
     };
-}}}}
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
+}}}}//qor::components::protocols::http
 
+#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR_STATE

@@ -1,3 +1,4 @@
+
 // Copyright Querysoft Limited 2008 - 2025
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -22,34 +23,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTNODE
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTNODE
-
-#include <string>
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
-#include "tokendefs.h"
-#include "src/components/parser/parser.h"
-#include "../request.h"
+#include "src/configuration/configuration.h"
+#include "context.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
-    
-    class RequestNode : public parser::NodeAdapter<HTTPRequest>
+
+    size_t Context::GetPosition()
     {
-    public:
-
-        RequestNode() : parser::NodeAdapter<HTTPRequest>(static_cast<uint64_t>(httpRequestToken::request))
-        {
-        }
-
-        RequestNode(qor::ref_of<HTTPRequest>::type request) : parser::NodeAdapter<HTTPRequest>(request, static_cast<uint64_t>(httpRequestToken::request))
-        {
-        }
-
-        virtual ~RequestNode() = default;
-
-    };
+        return m_position;
+    }
     
-}}}}//qor::components::protocols::http
+    bool Context::ConsumeOctet()
+    {
+        ++m_position;
+        return m_position < m_size;
+    }
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTNODE
+    bool Context::GetOctet(byte*& data)
+    {
+        if(m_position < m_size)
+        {
+            data = m_octetStream + m_position;
+            return true;
+        }
+        return false;
+    }
+
+}}}}//qor::components::protocols::http

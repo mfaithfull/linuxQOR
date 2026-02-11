@@ -22,56 +22,50 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATORCONTEXT
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATORCONTEXT
 
-#include "src/framework/pipeline/protocol.h"
-#include "client/requestsource/source.h"
-#include "client/responsesink/sink.h"
-#include "filter.h"
+#include "src/platform/compiler/compiler.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/framework/pipeline/pipeline.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class qor_pp_module_interface(QOR_HTTP) HTTPProtocol : public qor::pipeline::Protocol
+    class qor_pp_module_interface(QOR_HTTP) Context
     {
     public:
 
-        HTTPProtocol();
-        virtual ~HTTPProtocol(){}
+        Context() : m_octetStream(nullptr), m_position(0), m_size(0)
+        {}
 
-        virtual network::sockets::eAddressFamily GetAddressFamily() const
+        Context(byte* data, size_t itemCount) : m_octetStream(data), m_position(0), m_size(itemCount)
+        {}
+
+        bool GetOctet(byte*& data);
+        bool ConsumeOctet();
+        size_t GetPosition();
+
+        void SetData(byte* data, size_t itemCount)
         {
-            return network::sockets::eAddressFamily::AF_INet;
+            m_octetStream = data;
+            m_position = 0;
+            m_size = itemCount;
         }
 
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter() override
-        {            
-            return m_requestFilter;
-        }
-
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter() override
-        {            
-            //return m_responseFilter;//TODO:
-            return ref_of<qor::pipeline::InlineFilter<byte>>::type();
-        }
-
-        virtual size_t GetRequestBufferSize()
+        bool HasUnreadData()
         {
-            return 16384;
-        }
-
-        virtual size_t GetResponseBufferSize()
-        {
-            return 16384;
+            return m_size - m_position > 0;
         }
 
     private:
-
-        ref_of<HTTPFilter>::type m_requestFilter;
-        ref_of<HTTPFilter>::type m_responseFilter;
+    
+        byte* m_octetStream;
+        size_t m_position;
+        size_t m_size;
 
     };
-}}}}
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
+}}}}//qor::components::protocols::http
 
+#endif //QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATORCONTEXT

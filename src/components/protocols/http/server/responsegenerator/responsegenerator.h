@@ -22,56 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEGENERATOR
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEGENERATOR
 
-#include "src/framework/pipeline/protocol.h"
-#include "client/requestsource/source.h"
-#include "client/responsesink/sink.h"
-#include "filter.h"
+#include <string>
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/framework/workflow/workflow.h"
+#include "../../request/request.h"
+#include "context.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
-
-    class qor_pp_module_interface(QOR_HTTP) HTTPProtocol : public qor::pipeline::Protocol
+    
+    class qor_pp_module_interface(QOR_HTTP) HTTPResponseGenerator : public qor::workflow::Workflow
     {
+
     public:
 
-        HTTPProtocol();
-        virtual ~HTTPProtocol(){}
+        HTTPResponseGenerator();
+        virtual ~HTTPResponseGenerator() = default;
 
-        virtual network::sockets::eAddressFamily GetAddressFamily() const
+        Context* GetContext() const
         {
-            return network::sockets::eAddressFamily::AF_INet;
+            return m_context;
         }
 
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter() override
-        {            
-            return m_requestFilter;
-        }
-
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter() override
-        {            
-            //return m_responseFilter;//TODO:
-            return ref_of<qor::pipeline::InlineFilter<byte>>::type();
-        }
-
-        virtual size_t GetRequestBufferSize()
+        void SetContext(ref_of<class Context>::type context)
         {
-            return 16384;
+            m_context = context;
         }
 
-        virtual size_t GetResponseBufferSize()
-        {
-            return 16384;
-        }
+        int Write();
 
     private:
 
-        ref_of<HTTPFilter>::type m_requestFilter;
-        ref_of<HTTPFilter>::type m_responseFilter;
+        ref_of<class Context>::type m_context;
 
+    protected:
+
+        ref_of<HTTPRequest>::type m_request;
     };
-}}}}
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
 
+}}}}//qor::components::protocols::http
+
+#endif // QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEGENERATOR

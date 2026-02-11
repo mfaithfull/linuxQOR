@@ -22,44 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTSOURCE
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTSOURCE
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR
 
 #include <string>
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/pipeline/iosource.h"
-#include "request.h"
+#include "src/framework/workflow/workflow.h"
+#include "../../request/request.h"
+#include "context.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
-    class qor_pp_module_interface(QOR_HTTP) HTTPSource : public pipeline::Source
+    class qor_pp_module_interface(QOR_HTTP) HTTPRequestGenerator : public qor::workflow::Workflow
     {
 
     public:
 
-        HTTPSource();
-        virtual ~HTTPSource() = default;
+        HTTPRequestGenerator();
+        virtual ~HTTPRequestGenerator() = default;
 
-        virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
-
-        void SetRequest(ref_of<HTTPRequest>::type request)
+        Context* GetContext() const
         {
-            m_request = request;
-            //TODO: Reset the RequestGenerator with a new request
+            return m_context;
         }
+
+        void SetContext(ref_of<class Context>::type context)
+        {
+            m_context = context;
+        }
+
+        int Write();
+
+    private:
+
+        ref_of<class Context>::type m_context;
 
     protected:
 
-        size_t Read(char* space, size_t charsToRead);
-        bool Pull(size_t& unitsRead, size_t unitsToRead);
-        bool Push(size_t& unitsRead, size_t unitsToRead);
-
         ref_of<HTTPRequest>::type m_request;
-        //Add a RequestGenerator instance
     };
 
 
 }}}}//qor::components::protocols::http
 
-#endif // QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTSOURCE
+#endif // QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR

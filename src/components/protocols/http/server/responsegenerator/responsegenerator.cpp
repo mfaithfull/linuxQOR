@@ -22,7 +22,15 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//Client side sink for writing out response to user
-//TODO: Move this to Client code
 #include "src/configuration/configuration.h"
-#include "echoresponsesink.h"
+#include "responsegenerator.h"
+
+namespace qor { namespace components { namespace protocols { namespace http {
+    
+    HTTPResponseGenerator::HTTPResponseGenerator()
+    {
+
+    }
+
+}}}}//qor::components::protocols::http
+

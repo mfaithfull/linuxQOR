@@ -4,8 +4,8 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(target qor_echo)
 
 add_library(${target} SHARED qor_echo.cpp echoprotocol.cpp
-echorequestsource.cpp echoresponsefilter.cpp echoresponseparser.cpp
-echoresponsesink.cpp echoservicefilter.cpp echorequestparser.cpp)
+echoresponsefilter.cpp echoresponseparser.cpp
+echoservicefilter.cpp echorequestparser.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

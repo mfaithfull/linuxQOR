@@ -22,56 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTNODE
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTNODE
 
-#include "src/framework/pipeline/protocol.h"
-#include "client/requestsource/source.h"
-#include "client/responsesink/sink.h"
-#include "filter.h"
+#include <string>
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "tokendefs.h"
+#include "src/components/parser/parser.h"
+#include "../../request/request.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
-
-    class qor_pp_module_interface(QOR_HTTP) HTTPProtocol : public qor::pipeline::Protocol
+    
+    class RequestNode : public components::parser::NodeAdapter<HTTPRequest>
     {
     public:
 
-        HTTPProtocol();
-        virtual ~HTTPProtocol(){}
-
-        virtual network::sockets::eAddressFamily GetAddressFamily() const
+        RequestNode() : parser::NodeAdapter<HTTPRequest>(static_cast<uint64_t>(httpRequestToken::request))
         {
-            return network::sockets::eAddressFamily::AF_INet;
         }
 
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter() override
-        {            
-            return m_requestFilter;
-        }
-
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter() override
-        {            
-            //return m_responseFilter;//TODO:
-            return ref_of<qor::pipeline::InlineFilter<byte>>::type();
-        }
-
-        virtual size_t GetRequestBufferSize()
+        RequestNode(qor::ref_of<HTTPRequest>::type request) : parser::NodeAdapter<HTTPRequest>(request, static_cast<uint64_t>(httpRequestToken::request))
         {
-            return 16384;
         }
 
-        virtual size_t GetResponseBufferSize()
-        {
-            return 16384;
-        }
-
-    private:
-
-        ref_of<HTTPFilter>::type m_requestFilter;
-        ref_of<HTTPFilter>::type m_responseFilter;
+        virtual ~RequestNode() = default;
 
     };
-}}}}
+    
+}}}}//qor::components::protocols::http
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
-
+#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTNODE

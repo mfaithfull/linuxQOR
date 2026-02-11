@@ -26,8 +26,8 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_SERVICEFILTER
 
 #include "src/framework/pipeline/inlinefilter.h"
-#include "request/parser/requestnode.h"
-#include "request/parser/requesttoken.h"
+#include "server/requestparser/requestnode.h"
+#include "server/requestparser/requesttoken.h"
 #include "request/request.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {

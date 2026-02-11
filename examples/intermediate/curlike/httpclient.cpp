@@ -23,14 +23,39 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "protocol.h"
 
-namespace qor { namespace components { namespace protocols { namespace http {
+#include "httpclient.h"
 
-    HTTPProtocol::HTTPProtocol() : qor::pipeline::Protocol()
+HTTPClient::HTTPClient()
+{
+    auto httpProtocol = qor::new_ref<qor::components::protocols::http::HTTPProtocol>();    
+    m_requestBuffer.SetCapacity(httpProtocol->GetRequestBufferSize()); //TODO: provide configuration
+    m_responseBuffer.SetCapacity(httpProtocol->GetResponseBufferSize()); //TODO: provide configuration        
+    m_source.SetBuffer(m_requestBuffer);
+    m_sink.SetBuffer(m_responseBuffer);
+
+    //Wire up the standard Network client to use our provided source, sink and buffers with the HTTP Protocol on local port 8080
+    m_client.SetProtocol(httpProtocol);        
+    m_client.SetSource(&m_source, m_requestBuffer);
+    m_client.SetSink(&m_sink, m_responseBuffer);        
+    m_client.Configure("localhost", 8080); //TODO: provide configuration
+}
+
+bool HTTPClient::Send(qor::ref_of<qor::components::protocols::http::HTTPRequest>::type req)
+{
+    if(Connect())
     {
-        m_requestFilter = new_ref<HTTPFilter>();
-        m_responseFilter = new_ref<HTTPFilter>();
+        //TODO: Feed the req object into a RequestGenerator to stream it to the Pipeline
+        m_source.SetRequest(req);
+        return m_client.Send();        
     }
-    
-}}}}//qor::components::protocols::http
+    return false;
+}
+
+qor::components::protocols::http::HTTPResponse HTTPClient::Receive()
+{
+    //TODO:Feed the raw response data from the pipeline through a ResponseParser to get an HTTPResponse object
+    qor::components::protocols::http::HTTPResponse failure;
+    failure.SetValue("Failed to Receieve a response from server");
+    return failure;
+}

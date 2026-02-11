@@ -22,17 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_RESPONSESINK
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_RESPONSESINK
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSENODE
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSENODE
 
-#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
+#include <string>
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/components/parser/parser.h"
+#include "responseparser.h"
+#include "../../response/response.h"
 
-//TODO: Move this to Client code
-namespace qor { namespace components { namespace protocols { namespace echo {
+namespace qor { namespace components { namespace protocols { namespace http {
 
-    //Client side sink for writing out response to user
-    using EchoResponseSink = qor::components::StdOutSink;
+    class ResponseNode : public qor::components::parser::NodeAdapter<HTTPResponse>
+    {
+    public:
 
-}}}}//qor::components::protocols::echo
+        ResponseNode() : qor::components::parser::NodeAdapter<HTTPResponse>(static_cast<uint64_t>(httpResponseToken::response))
+        {
+        }
 
-#endif // QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_RESPONSESINK
+        ResponseNode(qor::ref_of<HTTPResponse>::type response) : qor::components::parser::NodeAdapter<HTTPResponse>(response, static_cast<uint64_t>(httpResponseToken::response))
+        {
+        }
+
+        virtual ~ResponseNode() = default;
+
+    };
+
+}}}}//qor::components::protocols::http
+
+#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSENODE

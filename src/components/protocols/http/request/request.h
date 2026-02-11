@@ -195,6 +195,10 @@ namespace qor { namespace components { namespace protocols { namespace http {
             return !content_type.rfind("multipart/form-data", 0);
         }
 
+        static std::string AppendQueryParams(const std::string &path, const qor::components::protocols::http::Params &params);
+        static std::string ParamsToQueryStr(const qor::components::protocols::http::Params &params);
+        static std::string EncodeQueryComponent(const std::string &component, bool space_as_plus = true);
+
     private:
         
         std::string m_method;
