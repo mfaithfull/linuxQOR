@@ -10,6 +10,7 @@ filter.cpp
 client/requestsource/source.cpp
 client/requestgenerator/requestgenerator.cpp 
 client/requestgenerator/context.cpp
+client/requestgenerator/state.cpp
 server/requestparser/requestparser.cpp
 server/requestparser/authoritytoken.cpp
 server/requestparser/dec_octettoken.cpp

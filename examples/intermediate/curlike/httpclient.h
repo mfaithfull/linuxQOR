@@ -174,6 +174,9 @@ protected:
 
 private:
 
+    std::string m_host;
+    int m_port;
+
     qor::components::NetworkClient m_client;
     qor::pipeline::ByteBuffer m_requestBuffer;
     qor::pipeline::ByteBuffer m_responseBuffer;

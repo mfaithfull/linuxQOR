@@ -42,7 +42,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         Context(byte* data, size_t itemCount) : m_space(data), m_position(0), m_size(itemCount)
         {}
 
-        bool PutOctet(byte& data);
+        bool PutOctet(byte data);
         size_t GetPosition();
 
         void SetSpace(byte* data, size_t itemCount)

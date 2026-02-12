@@ -33,7 +33,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         return m_position;
     }
     
-    bool Context::PutOctet(byte& data)
+    bool Context::PutOctet(byte data)
     {
         if(m_position < m_size)
         {

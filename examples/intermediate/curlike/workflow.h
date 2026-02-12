@@ -45,11 +45,6 @@ private:
 
     HTTPClient m_client;
 
-    qor::pipeline::ByteBuffer m_requestBuffer;
-    qor::pipeline::ByteBuffer m_responseBuffer;
-    qor::components::StdInSource m_source;
-    qor::components::StdOutSink m_sink;
-
 };
 
 #endif//QOR_PP_H_EXAMPLES_CURLIKE_WORKFLOW

@@ -30,52 +30,14 @@
 #include "context.h"
 #include "requestgenerator.h"
 
+using namespace qor;
+using namespace qor::log;
+using namespace qor::workflow;
+
 namespace qor { namespace components { namespace protocols { namespace http {
-
-    RequestGenState::RequestGenState(RequestGenerator* requestGenerator) : workflow::State(requestGenerator)
+    
+    RequestGenState::RequestGenState(HTTPRequestGenerator* requestGenerator) : State(requestGenerator)
     {
-        /*        
-        m_index = (m_endian == arch::endian) ? 0 : m_size - 1;//index to begining or end depending if data source endian(ness) is same as host.
-
-        Enter = [this]()
-        {            
-            byte* data = nullptr;
-            if(GetContext()->GetOctet(data))
-            {
-                m_data[m_index] = *data;                    
-                GetContext()->ConsumeOctet();
-
-                if(m_endian == arch::endian)
-                {                    
-                    if(m_index == m_size)//We just wrote the last byte
-                    {
-                        m_result = SUCCESS;
-                        Workflow()->PopState();
-                    }
-                    else                //More to write
-                    {
-                        ++m_index;
-                    }
-                }
-                else
-                {
-                    if(m_index == 0)//We just wrote the last byte in reverse order
-                    {
-                        m_result = SUCCESS;
-                        Workflow()->PopState();
-                    }
-                    else            //More to write
-                    {
-                        --m_index;
-                    }
-                }
-            }
-            else
-            {
-                m_result = MORE_DATA;//Pipeline ran out of data. Read more data and re-Enter to continue.       
-            }
-        };
-        */
     }
 
     Context* RequestGenState::GetContext()
@@ -93,4 +55,134 @@ namespace qor { namespace components { namespace protocols { namespace http {
         return dynamic_cast<HTTPRequestGenerator*>(m_Workflow);
     }
     
+
+    RequestGenInitial::RequestGenInitial(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {            
+            Workflow()->PushState(new_ref<RequestGenTrailers>(GetRequestGenerator()));
+            Workflow()->PushState(new_ref<RequestGenBody>(GetRequestGenerator()));
+            Workflow()->PushState(new_ref<RequestGenHeaders>(GetRequestGenerator()));
+            Workflow()->PushState(new_ref<RequestGenLine>(GetRequestGenerator()));
+        };
+
+        Resume = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
+    RequestGenChar::RequestGenChar(HTTPRequestGenerator* generator, byte character) : RequestGenState(generator)
+    {
+        Enter = [this, character]()
+        {
+            GetContext()->PutOctet(character);
+            Workflow()->PopState();
+        };
+    }
+
+    RequestGenString::RequestGenString(HTTPRequestGenerator* generator, std::string str) : RequestGenState(generator), m_str(str)
+    {        
+        m_it = m_str.begin();
+        Enter = [this, str]()
+        {
+            if(m_it != m_str.end())
+            {                
+                Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), (byte)(*m_it)));
+            }
+            else
+            {
+                Workflow()->PopState();
+            }
+        };
+
+        Resume = [this]()
+        {
+            ++m_it;
+        };
+    }
+
+
+    RequestGenCRLF::RequestGenCRLF(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {            
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), 0x10));//LF
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), 0x13));//CR
+        };
+
+        Resume = [this]()
+        {
+            Workflow()->PopState();
+        };
+    };
+
+    RequestGenMethod::RequestGenMethod(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {
+            auto reqGen = GetRequestGenerator();
+            auto req = reqGen->GetRequest();
+            Workflow()->SetState(new_ref<RequestGenString>(reqGen, req->GetMethod()));
+        };
+    }
+
+    RequestGenURI::RequestGenURI(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
+    RequestGenVersion::RequestGenVersion(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
+    RequestGenLine::RequestGenLine(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {
+            Workflow()->PushState(new_ref<RequestGenCRLF>(GetRequestGenerator()));
+            Workflow()->PushState(new_ref<RequestGenVersion>(GetRequestGenerator()));
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), ' '));
+            Workflow()->PushState(new_ref<RequestGenURI>(GetRequestGenerator()));
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), ' '));
+            Workflow()->PushState(new_ref<RequestGenMethod>(GetRequestGenerator()));
+        };
+
+        Resume = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
+    RequestGenHeaders::RequestGenHeaders(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
+    RequestGenBody::RequestGenBody(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
+    RequestGenTrailers::RequestGenTrailers(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
 }}}}//qor::components::protocols::http

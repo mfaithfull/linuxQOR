@@ -33,6 +33,11 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     }
 
+    void HTTPSource::SetRequest(ref_of<HTTPRequest>::type request)
+    {        
+        m_generator.SetRequest(request);
+    }
+
     bool HTTPSource::Read(size_t& unitsRead, size_t unitsToRead)
     {        
         return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;

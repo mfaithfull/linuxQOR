@@ -26,6 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR_STATE
 
 #include <iostream>
+#include <string>
 #include "src/platform/compiler/compiler.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
@@ -34,25 +35,118 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
-    class qor_pp_module_interface(QOR_HTTP) RequestGenerator;
+    class qor_pp_module_interface(QOR_HTTP) HTTPRequestGenerator;
     
     class qor_pp_module_interface(QOR_HTTP) RequestGenState : public qor::workflow::State
     {
     public:
 
-        RequestGenState(RequestGenerator* generator);
-        virtual ~RequestGenState() = default;                
+        RequestGenState(HTTPRequestGenerator* generator);
+        virtual ~RequestGenState() = default;
 
     protected:
 
         class Context* GetContext();
         workflow::Workflow* Workflow();
-        class HTTPRequestGenerator* GetRequestGenerator();
+        HTTPRequestGenerator* GetRequestGenerator();
         
         byte* m_data;
         size_t m_index;
         size_t m_size;
         
+    };
+
+    class qor_pp_module_interface(QOR_HTTP) RequestGenInitial : public RequestGenState
+    {
+    public:
+
+        RequestGenInitial(HTTPRequestGenerator* generator);
+        virtual ~RequestGenInitial() = default;
+    };
+
+    class RequestGenTrailers : public RequestGenState
+    {
+    public:
+
+        RequestGenTrailers(HTTPRequestGenerator* generator);
+        virtual ~RequestGenTrailers() = default;
+    };
+
+    class RequestGenBody : public RequestGenState
+    {
+    public:
+
+        RequestGenBody(HTTPRequestGenerator* generator);
+        virtual ~RequestGenBody() = default;
+    };
+
+    class RequestGenHeaders : public RequestGenState
+    {
+    public:
+
+        RequestGenHeaders(HTTPRequestGenerator* generator);
+        virtual ~RequestGenHeaders() = default;
+    };
+
+    class RequestGenLine : public RequestGenState
+    {
+    public:
+
+        RequestGenLine(HTTPRequestGenerator* generator);
+        virtual ~RequestGenLine() = default;
+    };
+
+    class RequestGenVersion : public RequestGenState
+    {
+    public:
+
+        RequestGenVersion(HTTPRequestGenerator* generator);
+        virtual ~RequestGenVersion() = default;
+    };
+
+    class RequestGenURI : public RequestGenState
+    {
+    public:
+
+        RequestGenURI(HTTPRequestGenerator* generator);
+        virtual ~RequestGenURI() = default;
+    };
+
+    class RequestGenMethod : public RequestGenState
+    {
+    public:
+
+        RequestGenMethod(HTTPRequestGenerator* generator);
+        virtual ~RequestGenMethod() = default;
+    };
+
+    class RequestGenCRLF : public RequestGenState
+    {
+    public:
+
+        RequestGenCRLF(HTTPRequestGenerator* generator);
+        virtual ~RequestGenCRLF() = default;
+    };
+
+    class RequestGenString : public RequestGenState
+    {
+    public:
+
+        RequestGenString(HTTPRequestGenerator* generator, std::string str);
+        virtual ~RequestGenString() = default;
+
+    private:
+
+        std::string::iterator m_it;
+        std::string m_str;
+    };
+
+    class RequestGenChar : public RequestGenState
+    {
+    public:
+
+        RequestGenChar(HTTPRequestGenerator* generator, byte character);
+        virtual ~RequestGenChar() = default;
     };
 
     //TODO: Start with Char and then String then build up Request line and test it in combination with the request parser

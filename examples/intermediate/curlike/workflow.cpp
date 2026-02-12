@@ -38,14 +38,16 @@ using namespace qor::workflow;
 ClientWorkflow::ClientWorkflow() : 
     connect(new_ref<State>(this)),
     send(new_ref<State>(this)),
-    receive(new_ref<State>(this))
+    receive(new_ref<State>(this)),
+    m_client("www.microsoft.com", 80)
 {    
     qor_pp_ofcontext;
         
     connect->Enter = [this]()->void
     {
         qor_pp_ofcontext;
-                
+          
+        m_client.Get("index.html");
         /*
         if( m_client.Connect() )
         { 
@@ -55,8 +57,10 @@ ClientWorkflow::ClientWorkflow() :
         {
             std::string err(strerror(errno));
             impact("Failed to connect to Echo service on port 12345 @ localhost: {0}", err);
+            */
             SetResult(EXIT_FAILURE);
             SetComplete();
+            /*
         }
         */
     };

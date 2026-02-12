@@ -26,7 +26,7 @@
 
 #include "httpclient.h"
 
-HTTPClient::HTTPClient()
+HTTPClient::HTTPClient(const std::string &host, int port) : m_host(host), m_port(port)
 {
     auto httpProtocol = qor::new_ref<qor::components::protocols::http::HTTPProtocol>();    
     m_requestBuffer.SetCapacity(httpProtocol->GetRequestBufferSize()); //TODO: provide configuration
@@ -38,14 +38,18 @@ HTTPClient::HTTPClient()
     m_client.SetProtocol(httpProtocol);        
     m_client.SetSource(&m_source, m_requestBuffer);
     m_client.SetSink(&m_sink, m_responseBuffer);        
-    m_client.Configure("localhost", 8080); //TODO: provide configuration
+    m_client.Configure(m_host, port);
+}
+
+HTTPClient::HTTPClient(const std::string &host, int port, const std::string &client_cert_path, const std::string &client_key_path) : HTTPClient(host, port)
+{
+
 }
 
 bool HTTPClient::Send(qor::ref_of<qor::components::protocols::http::HTTPRequest>::type req)
 {
     if(Connect())
     {
-        //TODO: Feed the req object into a RequestGenerator to stream it to the Pipeline
         m_source.SetRequest(req);
         return m_client.Send();        
     }
