@@ -36,31 +36,30 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public:
 
-        Context() : m_octetStream(nullptr), m_position(0), m_size(0)
+        Context() : m_space(nullptr), m_position(0), m_size(0)
         {}
 
-        Context(byte* data, size_t itemCount) : m_octetStream(data), m_position(0), m_size(itemCount)
+        Context(byte* data, size_t itemCount) : m_space(data), m_position(0), m_size(itemCount)
         {}
 
-        bool GetOctet(byte*& data);
-        bool ConsumeOctet();
+        bool PutOctet(byte& data);
         size_t GetPosition();
 
-        void SetData(byte* data, size_t itemCount)
+        void SetSpace(byte* data, size_t itemCount)
         {
-            m_octetStream = data;
+            m_space = data;
             m_position = 0;
             m_size = itemCount;
         }
 
-        bool HasUnreadData()
+        bool HasSpace()
         {
             return m_size - m_position > 0;
         }
 
     private:
     
-        byte* m_octetStream;
+        byte* m_space;
         size_t m_position;
         size_t m_size;
 

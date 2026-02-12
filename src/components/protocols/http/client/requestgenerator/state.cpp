@@ -32,7 +32,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    RequestGenState::RequestGenState(RequestGenerator* requestGenerator, size_t size, arch::Endian endian) : workflow::State(requestGenerator), m_size(size), m_endian(endian)
+    RequestGenState::RequestGenState(RequestGenerator* requestGenerator) : workflow::State(requestGenerator)
     {
         /*        
         m_index = (m_endian == arch::endian) ? 0 : m_size - 1;//index to begining or end depending if data source endian(ness) is same as host.

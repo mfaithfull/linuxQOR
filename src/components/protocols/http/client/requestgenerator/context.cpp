@@ -33,17 +33,11 @@ namespace qor { namespace components { namespace protocols { namespace http {
         return m_position;
     }
     
-    bool Context::ConsumeOctet()
-    {
-        ++m_position;
-        return m_position < m_size;
-    }
-
-    bool Context::GetOctet(byte*& data)
+    bool Context::PutOctet(byte& data)
     {
         if(m_position < m_size)
         {
-            data = m_octetStream + m_position;
+            m_space[m_position++] = data;
             return true;
         }
         return false;

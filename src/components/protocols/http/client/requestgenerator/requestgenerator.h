@@ -39,9 +39,10 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     public:
 
-        HTTPRequestGenerator();
+        HTTPRequestGenerator(ref_of<Context>::type context);
         virtual ~HTTPRequestGenerator() = default;
-
+        virtual int Run();
+        
         Context* GetContext() const
         {
             return m_context;
@@ -50,13 +51,11 @@ namespace qor { namespace components { namespace protocols { namespace http {
         void SetContext(ref_of<class Context>::type context)
         {
             m_context = context;
-        }
-
-        int Write();
+        }        
 
     private:
 
-        ref_of<class Context>::type m_context;
+        ref_of<Context>::type m_context;
 
     protected:
 

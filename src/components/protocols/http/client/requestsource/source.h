@@ -31,6 +31,7 @@
 #include "src/framework/pipeline/iosource.h"
 #include "../../request/request.h"
 #include "../requestgenerator/requestgenerator.h"
+#include "../requestgenerator/context.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
@@ -46,18 +47,18 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
         void SetRequest(ref_of<HTTPRequest>::type request)
         {
-            m_request = request;
-            //TODO: Reset the RequestGenerator with a new request
+            m_request = request;            
         }
 
     protected:
 
-        size_t Read(char* space, size_t charsToRead);
+        size_t Read(byte* space, size_t charsToRead);
         bool Pull(size_t& unitsRead, size_t unitsToRead);
         bool Push(size_t& unitsRead, size_t unitsToRead);
 
         ref_of<HTTPRequest>::type m_request;
         HTTPRequestGenerator m_generator;
+        ref_of<Context>::type m_context;
     };
 
 

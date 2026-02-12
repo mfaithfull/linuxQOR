@@ -40,7 +40,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public:
 
-        RequestGenState(RequestGenerator* generator, size_t size, arch::Endian endian);
+        RequestGenState(RequestGenerator* generator);
         virtual ~RequestGenState() = default;                
 
     protected:
@@ -48,14 +48,65 @@ namespace qor { namespace components { namespace protocols { namespace http {
         class Context* GetContext();
         workflow::Workflow* Workflow();
         class HTTPRequestGenerator* GetRequestGenerator();
-
-        arch::Endian m_endian;//endianness of the source
+        
         byte* m_data;
         size_t m_index;
         size_t m_size;
         
     };
 
+    //TODO: Start with Char and then String then build up Request line and test it in combination with the request parser
+
+    //RequestLine
+        //Method
+            //String
+        //SP
+            //Char
+        //Request-URI
+            //String
+        //SP
+            //Char
+        //HTTP-Version
+            //String &| Char
+        //CRLF
+            //Char
+    //Headers
+        //* Header
+            //(General-Header | Request-Header | Entity-Header) CRLF
+            //Request-Header
+                //Accept |
+                //Accept-Charset |
+                //Accept-Encoding |
+                //Accept-Language |
+                //Authorization |
+                //Expect |
+                //From |
+                //Host |
+                //If-Match |
+                //If-Modified-Since |
+                //If-None-Match |
+                //If-Range |
+                //If-Unmodified-Since |
+                //Max-Forwards
+                //Proxy-Authorization |
+                //Range
+                //Referer
+                //TE
+                //User-Agent
+        //CRLF
+    //Body
+    //Trailers (basically the same logic as headers)
+
+    /*Accept         = "Accept" ":"
+                        #( media-range [ accept-params ] )
+
+       media-range    = ( "* / *"           #Without spaces
+                        | ( type "/" "*" )
+                        | ( type "/" subtype )
+                        ) *( ";" parameter )
+       accept-params  = ";" "q" "=" qvalue *( accept-extension )
+       accept-extension = ";" token [ "=" ( token | quoted-string ) ]
+    */
 }}}}//qor::components::protocols::http
 
 #endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR_STATE

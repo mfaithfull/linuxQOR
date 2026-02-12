@@ -52,8 +52,6 @@ namespace qor { namespace components { namespace protocols { namespace http {
             m_context = context;
         }
 
-        int Write();
-
     private:
 
         ref_of<class Context>::type m_context;

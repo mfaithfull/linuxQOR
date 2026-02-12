@@ -202,6 +202,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
     private:
         
         std::string m_method;
+        //TODO: Add a proper URI object for the Request-URI
         std::string m_path;
         Params m_params;
         Headers m_headers;

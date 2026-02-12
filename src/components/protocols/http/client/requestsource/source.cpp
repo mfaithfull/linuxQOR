@@ -28,7 +28,8 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    HTTPSource::HTTPSource()
+    HTTPSource::HTTPSource() :
+        m_context(new_ref<Context>()), m_generator(m_context)
     {
     }
 
@@ -43,14 +44,14 @@ namespace qor { namespace components { namespace protocols { namespace http {
         if(buffer)
         {
             byte* space = buffer->WriteRequest(unitsToRead);            
-            size_t charsRead = Read((char*)space, (buffer->GetUnitSize() * unitsToRead) / sizeof(char));
+            size_t charsRead = Read(space, (buffer->GetUnitSize() * unitsToRead) / sizeof(char));
             if(charsRead > 0)
             {
                 unitsRead = (charsRead * sizeof(char)) / buffer->GetUnitSize();
                 buffer->WriteAcknowledge(unitsRead);
                 OnReadSuccess(unitsRead);
             }
-            else //EOF
+            else
             {
                 OnEndOfData();
             }
@@ -59,18 +60,11 @@ namespace qor { namespace components { namespace protocols { namespace http {
         return false;
     }
 
-    size_t HTTPSource::Read(char* space, size_t charsToRead)
+    size_t HTTPSource::Read(byte* space, size_t charsToRead)
     {
-        //TODO: Set up the RequestGenerator Context to enable the writing of the next charToRead chars
-        //Run the RequestGenerator Workflow until it completes or runs out of space        
-        size_t charsRead = 0;
-        /*
-        while(m_it != m_data.end() && charsRead < charsToRead)
-        {
-            space[charsRead++] = *m_it++;
-        }
-        */
-        return charsRead;
+        m_context->SetSpace(space, charsToRead);                        
+        m_generator.Run();
+        return m_context->GetPosition();        
     }
 
     bool HTTPSource::Push(size_t& unitsRead, size_t unitsToRead)
