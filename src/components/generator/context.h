@@ -36,10 +36,10 @@ namespace qor { namespace components { namespace generator {
     {
     public:
 
-        Context() : m_octetStream(nullptr), m_position(0), m_size(0)
+        Context() : m_space(nullptr), m_position(0), m_size(0)
         {}
 
-        Context(byte* data, size_t itemCount) : m_octetStream(data), m_position(0), m_size(itemCount)
+        Context(byte* data, size_t itemCount) : m_space(data), m_position(0), m_size(itemCount)
         {}
 
         bool PutOctet(byte data);
@@ -47,7 +47,7 @@ namespace qor { namespace components { namespace generator {
 
         void SetSpace(byte* data, size_t itemCount)
         {
-            m_octetStream = data;
+            m_space = data;
             m_position = 0;
             m_size = itemCount;
         }
@@ -59,7 +59,7 @@ namespace qor { namespace components { namespace generator {
 
     private:
     
-        byte* m_octetStream;
+        byte* m_space;
         size_t m_position;
         size_t m_size;
 

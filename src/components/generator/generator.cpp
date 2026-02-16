@@ -32,7 +32,7 @@
 
 namespace qor { namespace components { namespace generator {
 
-    int Generator::Generate()
+    int Generator::Run()
     {   
         m_complete = false;
         if(m_StateStack.empty())

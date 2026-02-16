@@ -5,9 +5,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-add_subdirectory(basic)
-add_subdirectory(intermediate)
-add_subdirectory(echoserver)
-add_subdirectory(hydra)
-add_subdirectory(experimental)
-add_subdirectory(advanced)
+add_subdirectory(httpserver)
+

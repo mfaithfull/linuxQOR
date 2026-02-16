@@ -29,8 +29,8 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/workflow/workflow.h"
-#include "../../request/request.h"
-#include "context.h"
+#include "../../response/response.h"
+#include "src/components/parser/context.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
@@ -39,28 +39,35 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     public:
 
-        HTTPResponseGenerator();
+        HTTPResponseGenerator(ref_of<parser::Context>::type context);
         virtual ~HTTPResponseGenerator() = default;
+        virtual int Run();
 
-        Context* GetContext() const
+        inline parser::Context* GetContext()
         {
             return m_context;
         }
 
-        void SetContext(ref_of<class Context>::type context)
+        inline void SetContext(ref_of<parser::Context>::type context)
         {
             m_context = context;
         }
 
+        inline ref_of<HTTPResponse>::type GetResponse()
+        {
+            return m_response;
+        }
+
+        inline void SetResponse(ref_of<HTTPResponse>::type response)
+        {
+            m_response = response;
+        }
+
     private:
 
-        ref_of<class Context>::type m_context;
-
-    protected:
-
-        ref_of<HTTPRequest>::type m_request;
+        ref_of<parser::Context>::type m_context;
+        ref_of<HTTPResponse>::type m_response;
     };
-
 
 }}}}//qor::components::protocols::http
 

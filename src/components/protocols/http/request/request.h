@@ -65,6 +65,11 @@ namespace qor { namespace components { namespace protocols { namespace http {
             return m_path;
         }
 
+        std::string GetURI() const
+        {
+            return m_path;//TODO: URI object ?
+        }
+
         void SetParams(const Params& params)
         {
             m_params = params;

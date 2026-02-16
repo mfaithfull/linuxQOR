@@ -145,6 +145,7 @@ namespace qor{ namespace components{
                                     connect(clientSession.m_logHander(qor_shared), clientSession.m_logHander->GetForwardSignal(), 
                                         logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
                                         ConnectionKind::QueuedConnection);
+                                    logAggregator->Receiver().WriteToStandardOutput();
                                 }                                
                             }
                         );

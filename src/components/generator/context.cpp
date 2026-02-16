@@ -37,7 +37,7 @@ namespace qor { namespace components { namespace generator {
     {
         if(m_position < m_size)
         {
-            m_octetStream[m_position++] = data;
+            m_space[m_position++] = data;
             return true;
         }
         return false;

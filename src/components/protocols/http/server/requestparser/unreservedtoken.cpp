@@ -38,7 +38,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void unreserved::Emit()
     {
-        //std::cout << "Emitting an unreserved." << std::endl;
+        std::cout << "Emitting an unreserved." << std::endl;
         char c= '\0';
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)

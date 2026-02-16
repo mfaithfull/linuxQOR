@@ -187,8 +187,7 @@ namespace qor { namespace components { namespace parser {
             else
             {
                 Fail();
-                m_result.code = Result::MORE_DATA;
-                return;//Need more data to continue
+                m_result.code = Result::MORE_DATA;//Need more data to continue
             }            
         };
     }

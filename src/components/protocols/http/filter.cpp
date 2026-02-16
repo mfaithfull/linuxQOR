@@ -38,17 +38,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
         HTTPRequest request = Parse(data, itemCount);
 
-        std::string input = "";
+        ref_of<HTTPResponse>::type response = new_ref<HTTPResponse>();
+        
+        //TODO: Fill out Response        
 
-        //qor::log::inform("Handling request, {0} bytes.", itemCount);
-
-        size_t inputSize = input.size();
-        if(inputSize > itemCount)
-        {
-            inputSize = itemCount;
-        }
-        memcpy(space, input.data(), inputSize);
-        itemCount = inputSize;
+        HTTPResponseGenerator responseGenerator(new_ref<parser::Context>(space, itemCount));
+        responseGenerator.SetResponse(response);        
+        responseGenerator.Run();
     }
 
     ref_of<HTTPRequest>::type HTTPFilter::Parse(byte* data, size_t& itemCount)
@@ -57,7 +53,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         ref_of<request>::type requestState = new_ref<request>(&HTTPRequestParser);
 
         HTTPRequestParser.SetInitialState(requestState.AsRef<State>());
-        HTTPRequestParser.Run();
+        HTTPRequestParser.Parse();
         
         auto requestNode = HTTPRequestParser.PopNode().template AsRef<RequestNode>();
         return requestNode->GetObject();

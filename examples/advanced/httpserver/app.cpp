@@ -22,56 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_GENERATOR_NODE
-#define QOR_PP_H_COMPONENTS_GENERATOR_NODE
+#include "src/configuration/configuration.h"
+#include "app.h"
 
-#include <cstdint>
-#include <string>
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
+qor::SingletonRedirector<qor::framework::Application, HTTPServerApp> HTTPServerApp::m_sRedirect;
 
-namespace qor { namespace components { namespace generator {
+//TODO: Options for Thread count, AsyncIO pool, port, any configuration we add to the protocol itself
 
-    class Node
+const char* HTTPServerApp::ProvideShortOptionString()
+{
+    return "p";
+}
+
+qor::components::optparser::Option* HTTPServerApp::ProvideLongOptions()
+{
+    static qor::components::optparser::Option longOptions[] =
     {
-    public:
-
-        Node()
-        {
-        }
-
-        virtual ~Node() = default;
-
+    //   NAME       ARGUMENT				                    FLAG	SHORTNAME
+        {"port",    qor::components::optparser::Option::required_argument,       nullptr, 'p'},
+        {nullptr,   0,						                    nullptr, 0}
     };
+    return longOptions;
+}
 
-    template<class T>
-    class NodeAdapter : public Node
+void HTTPServerApp::ReceiveOptionParameter(char c, const char* value)
+{
+    switch (c)
     {
-    public:
+    case 'p':        
+        break;
+    }
+}
 
-        NodeAdapter() : Node()
-        {
-            m_t = qor::new_ref<T>();
-        }
+void HTTPServerApp::ReceiveLongOption(const char* option, const char* value)
+{
+    if (strncmp(option, "port", 4) == 0)
+    {        
+    }
+}
 
-        NodeAdapter(qor::ref_of<T>::type object) : Node()
-        {
-            m_t = object;
-        }
-
-
-        virtual ~NodeAdapter() = default;
-
-        typename ref_of<T>::type GetObject()
-        {
-            return m_t;
-        }
-
-    protected:
-
-        typename ref_of<T>::type m_t;
-    };
-
-}}}//qor::components::generator
-
-#endif//QOR_PP_H_COMPONENTS_GENERATOR_NODE

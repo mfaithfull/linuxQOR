@@ -32,13 +32,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void protocol_name::Prepare()
     {
-        //std::cout << "Looking for a protocol name." << std::endl;
+        std::cout << "Looking for a protocol name." << std::endl;
         GetParser()->PushNode(new_ref<ProtocolNameNode>());
     }
 
     void protocol_name::Emit()
     {
-        //std::cout << "Emitting a protocol name." << std::endl;
+        std::cout << "Emitting a protocol name." << std::endl;
         auto node = GetParser()->PopNode();
         std::string name;
         while(node.IsNotNull() && node->GetToken() != m_token)

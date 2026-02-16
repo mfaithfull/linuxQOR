@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR_STATE
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR_STATE
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEGENERATOR_STATE
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEGENERATOR_STATE
 
 #include <iostream>
 #include <string>
@@ -31,147 +31,51 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/workflow/workflow.h"
-#include "src/platform/architecture/detectarchitecture.h"
+#include "src/components/parser/context.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
-    class qor_pp_module_interface(QOR_HTTP) HTTPRequestGenerator;
+    class qor_pp_module_interface(QOR_HTTP) HTTPResponseGenerator;
     
-    class qor_pp_module_interface(QOR_HTTP) RequestGenState : public qor::workflow::State
+    class qor_pp_module_interface(QOR_HTTP) ResponseGenState : public qor::workflow::State
     {
     public:
 
-        RequestGenState(HTTPRequestGenerator* generator);
-        virtual ~RequestGenState() = default;
+        ResponseGenState(HTTPResponseGenerator* generator);
+        virtual ~ResponseGenState() = default;
 
     protected:
 
-        class Context* GetContext();
+        parser::Context* GetContext();
         workflow::Workflow* Workflow();
-        HTTPRequestGenerator* GetRequestGenerator();
+        HTTPResponseGenerator* GetResponseGenerator();
     };
 
-    class qor_pp_module_interface(QOR_HTTP) RequestGenInitial : public RequestGenState
+    class qor_pp_module_interface(QOR_HTTP) ResponseGenInitial : public ResponseGenState
     {
     public:
 
-        RequestGenInitial(HTTPRequestGenerator* generator);
-        virtual ~RequestGenInitial() = default;
+        ResponseGenInitial(HTTPResponseGenerator* generator);
+        virtual ~ResponseGenInitial() = default;
     };
 
-    class RequestGenGeneralTrailers : public RequestGenState
-    {
-    public:
-        RequestGenGeneralTrailers(HTTPRequestGenerator* generator);
-        virtual ~RequestGenGeneralTrailers() = default;
-    };
-
-    class RequestGenTrailer : public RequestGenState
-    {
-    public:
-        RequestGenTrailer(HTTPRequestGenerator* generator, const std::pair<const std::string,std::string>& trailer);
-        virtual ~RequestGenTrailer() = default;
-
-    private:
-        std::pair<const std::string,std::string> m_trailer;
-    };
-
-    class RequestGenTrailers : public RequestGenState
+    class ResponseGenCRLF : public ResponseGenState
     {
     public:
 
-        RequestGenTrailers(HTTPRequestGenerator* generator);
-        virtual ~RequestGenTrailers() = default;
-    };
-
-    class RequestGenBody : public RequestGenState
-    {
-    public:
-
-        RequestGenBody(HTTPRequestGenerator* generator);
-        virtual ~RequestGenBody() = default;
-    };
-
-    class RequestGenHeader : public RequestGenState
-    {
-    public:
-        RequestGenHeader(HTTPRequestGenerator* generator, const std::pair<const std::string,std::string>& header);
-        virtual ~RequestGenHeader() = default;
-
-    private:
-        std::pair<const std::string,std::string> m_header;
-    };
-
-    class RequestGenGeneralHeaders : public RequestGenState
-    {
-    public:
-        RequestGenGeneralHeaders(HTTPRequestGenerator* generator);
-        virtual ~RequestGenGeneralHeaders() = default;
-    };
-
-    class RequestGenHeaders : public RequestGenState
-    {
-    public:
-
-        RequestGenHeaders(HTTPRequestGenerator* generator);
-        virtual ~RequestGenHeaders() = default;
+        ResponseGenCRLF(HTTPResponseGenerator* generator);
+        virtual ~ResponseGenCRLF() = default;
 
     private:
         bool m_EnteredAtLeastOnce;
     };
 
-    class RequestGenLine : public RequestGenState
+    class ResponseGenString : public ResponseGenState
     {
     public:
 
-        RequestGenLine(HTTPRequestGenerator* generator);
-        virtual ~RequestGenLine() = default;
-    };
-
-    class RequestGenVersion : public RequestGenState
-    {
-    public:
-
-        RequestGenVersion(HTTPRequestGenerator* generator);
-        virtual ~RequestGenVersion() = default;
-
-    private:
-        bool m_EnteredAtLeastOnce;
-    };
-
-    class RequestGenURI : public RequestGenState
-    {
-    public:
-
-        RequestGenURI(HTTPRequestGenerator* generator);
-        virtual ~RequestGenURI() = default;
-    };
-
-    class RequestGenMethod : public RequestGenState
-    {
-    public:
-
-        RequestGenMethod(HTTPRequestGenerator* generator);
-        virtual ~RequestGenMethod() = default;
-    };
-
-    class RequestGenCRLF : public RequestGenState
-    {
-    public:
-
-        RequestGenCRLF(HTTPRequestGenerator* generator);
-        virtual ~RequestGenCRLF() = default;
-
-    private:
-        bool m_EnteredAtLeastOnce;
-    };
-
-    class RequestGenString : public RequestGenState
-    {
-    public:
-
-        RequestGenString(HTTPRequestGenerator* generator, std::string str);
-        virtual ~RequestGenString() = default;
+        ResponseGenString(HTTPResponseGenerator* generator, std::string str);
+        virtual ~ResponseGenString() = default;
 
     private:
 
@@ -180,12 +84,12 @@ namespace qor { namespace components { namespace protocols { namespace http {
         bool m_EnteredAtLeastOnce;
     };
 
-    class RequestGenChar : public RequestGenState
+    class ResponseGenChar : public ResponseGenState
     {
     public:
 
-        RequestGenChar(HTTPRequestGenerator* generator, byte character);
-        virtual ~RequestGenChar() = default;
+        ResponseGenChar(HTTPResponseGenerator* generator, byte character);
+        virtual ~ResponseGenChar() = default;
 
     private:
 
@@ -271,4 +175,4 @@ namespace qor { namespace components { namespace protocols { namespace http {
     */
 }}}}//qor::components::protocols::http
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR_STATE
+#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEGENERATOR_STATE

@@ -4,6 +4,7 @@
 #include "sdk/using_qor.h"
 
 #include "src/components/protocols/echo/echoprotocol.h"
+#include "src/components/protocols/http/protocol.h"
 
 using namespace  qor::components::protocols;
 

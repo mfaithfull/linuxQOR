@@ -29,6 +29,7 @@
 #include "server/requestparser/requestnode.h"
 #include "server/requestparser/requesttoken.h"
 #include "request/request.h"
+#include "server/responsegenerator/responsegenerator.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
@@ -36,12 +37,16 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public:
 
-        HTTPFilter(size_t itemCount = 0) : qor::pipeline::InlineFilter<qor::byte>(itemCount){}
+        HTTPFilter(size_t itemCount = 0) : qor::pipeline::InlineFilter<qor::byte>(itemCount)
+        {            
+        }
 
         virtual ~HTTPFilter() = default;
 
         qor::ref_of<HTTPRequest>::type Parse(qor::byte* data, size_t& itemCount);
         virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount);
+
+    private:
 
     };
 

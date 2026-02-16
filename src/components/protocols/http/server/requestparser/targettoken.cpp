@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void target::Prepare()
     {
-        //std::cout << "Looking for a target." << std::endl;
+        std::cout << "Looking for a target." << std::endl;
         GetParser()->PushNode(new_ref<TargetNode>());
     }
 
     void target::Emit()
     {
-        //std::cout << "Emitting a target." << std::endl;
+        std::cout << "Emitting a target." << std::endl;
         uriForm form;
         UriOriginForm originURI;
         UriAbsoluteForm absoluteURI;

@@ -49,4 +49,14 @@ namespace qor { namespace components { namespace parser {
         return false;
     }
 
+    bool Context::PutOctet(byte data)
+    {
+        if(m_position < m_size)
+        {
+            m_octetStream[m_position++] = data;
+            return true;
+        }
+        return false;
+    }    
+
 }}}//qor::components::parser

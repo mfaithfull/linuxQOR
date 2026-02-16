@@ -78,10 +78,22 @@ namespace qor { namespace framework { namespace nswindows {
 			dword_t numberOfBytesTransferred,
 			[[maybe_unused]] ulongptr_t completionKey) noexcept
 		{
-			auto* operation = static_cast<win32_overlapped_operation*>(ioState);
+			auto* operation = static_cast<win32_overlapped_operation*>(ioState);			
 			operation->m_errorCode = errorCode;
 			operation->m_numberOfBytesTransferred = numberOfBytesTransferred;
-			operation->m_awaitingCoroutine.resume();
+			if(operation->m_errorCode != 0)
+			{
+				//early error catch
+				operation->m_errorCode = operation->m_errorCode;
+			}			
+			if((uint64_t)(operation->m_awaitingCoroutine.address()) != 0xdddddddddddddddd)
+			{
+				operation->m_awaitingCoroutine.resume();
+			}
+			else
+			{
+				operation->m_awaitingCoroutine = operation->m_awaitingCoroutine;
+			}
 		}
 
 		std::coroutine_handle<> m_awaitingCoroutine;

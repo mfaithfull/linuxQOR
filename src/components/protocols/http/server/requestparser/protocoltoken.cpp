@@ -32,13 +32,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void protocol::Prepare()
     {
-        //std::cout << "Looking for a protocol." << std::endl;
+        std::cout << "Looking for a protocol." << std::endl;
         GetParser()->PushNode(new_ref<ProtocolNode>());
     }
 
     void protocol::Emit()
     {
-        //std::cout << "Emitting a protocol." << std::endl;
+        std::cout << "Emitting a protocol." << std::endl;
         std::string name;
         std::string protocolVersion;
 

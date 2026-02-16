@@ -71,13 +71,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void method::Prepare()
     {
-        //std::cout << "Looking for a method." << std::endl;
+        std::cout << "Looking for a method." << std::endl;
         GetParser()->PushNode(new_ref<MethodNode>());
     }
 
     void method::Emit()
     {
-        //std::cout << "Emitting a method." << std::endl;
+        std::cout << "Emitting a method." << std::endl;
         auto node = GetParser()->PopNode();
         std::string methodName;
         while(node.IsNotNull() && node->GetToken() != m_token)
@@ -126,13 +126,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void field_name::Prepare()
     {
-        //std::cout << "Looking for a field name." << std::endl;
+        std::cout << "Looking for a field name." << std::endl;
         GetParser()->PushNode(new_ref<FieldNameNode>());
     }
 
     void field_name::Emit()
     {
-        //std::cout << "Emitting a field name." << std::endl;
+        std::cout << "Emitting a field name." << std::endl;
         auto node = GetParser()->PopNode();
         std::vector<char> fieldNameChars;
         while(node.IsNotNull() && node->GetToken() != m_token)
@@ -183,13 +183,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void protocol_version::Prepare()
     {
-        //std::cout << "Looking for a protocol version." << std::endl;
+        std::cout << "Looking for a protocol version." << std::endl;
         GetParser()->PushNode(new_ref<ProtocolVersionNode>());
     }
 
     void protocol_version::Emit()
     {
-        //std::cout << "Emitting a protocol version." << std::endl;
+        std::cout << "Emitting a protocol version." << std::endl;
         auto node = GetParser()->PopNode();
         std::string version;
         while(node.IsNotNull() && node->GetToken() != m_token)

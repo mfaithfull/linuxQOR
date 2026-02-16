@@ -43,6 +43,8 @@ namespace qor { namespace components { namespace parser {
         {}
 
         bool GetOctet(byte*& data);
+        bool PutOctet(byte data);
+
         bool ConsumeOctet();
         size_t GetPosition();
 
@@ -54,6 +56,11 @@ namespace qor { namespace components { namespace parser {
         }
 
         bool HasUnparsedData()
+        {
+            return m_size - m_position > 0;
+        }
+
+        bool HasSpace()
         {
             return m_size - m_position > 0;
         }

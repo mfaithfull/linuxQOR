@@ -23,13 +23,60 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+
+#include <stack>
+#include <iostream>
+
 #include "responsegenerator.h"
+#include "state.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
-    HTTPResponseGenerator::HTTPResponseGenerator()
+    HTTPResponseGenerator::HTTPResponseGenerator(ref_of<parser::Context>::type context) : workflow::Workflow(), m_context(context)
     {
+        SetInitialState(new_ref<ResponseGenInitial>(this));
+    }
 
+    int HTTPResponseGenerator::Run()
+    {   
+        m_complete = false;
+        if(m_StateStack.empty())
+        {
+            serious("No initial state set for HTTPRequestGenerator.");
+            return -1;
+        }
+        try{   
+            while(!IsComplete() && m_context->HasSpace())
+            {
+                auto ref = CurrentState().operator->();
+                if(ref)
+                {
+                    ref->Enter();                
+                }
+            }
+            if(IsComplete())
+            {
+            }
+            if(!m_context->HasSpace())
+            {
+                
+            }
+        }
+        catch(const Error* error)
+        {
+            std::cerr << error->what().Content() << '\n';
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        catch(...)
+        {
+            std::cerr << "HTTPRequestGenerator failed due to unhandled exception.\n";
+        }
+
+        std::cout << "Stack on exit has " << m_StateStack.size() << " states." << std::endl;
+        return m_result;
     }
 
 }}}}//qor::components::protocols::http

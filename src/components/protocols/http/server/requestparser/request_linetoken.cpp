@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void request_line::Prepare()
     {
-        //std::cout << "Looking for a request line." << std::endl;
+        std::cout << "Looking for a request line." << std::endl;
         GetParser()->PushNode(new_ref<RequestLineNode>());
     }
 
     void request_line::Emit()
     {
-        //std::cout << "Emitting a request line." << std::endl;
+        std::cout << "Emitting a request line." << std::endl;
         std::string method;
         std::string protocolName;
         std::string protocolVersion;

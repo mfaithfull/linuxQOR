@@ -78,7 +78,10 @@ namespace qor
 					// to m_continuation.
 					if (promise.m_state.exchange(true, std::memory_order_acq_rel))
 					{
-						promise.m_continuation.resume();
+						if(promise.m_continuation != nullptr)
+						{
+							promise.m_continuation.resume();
+						}					
 					}
 				}
 #endif

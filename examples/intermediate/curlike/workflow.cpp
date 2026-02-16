@@ -39,7 +39,7 @@ ClientWorkflow::ClientWorkflow() :
     connect(new_ref<State>(this)),
     send(new_ref<State>(this)),
     receive(new_ref<State>(this)),
-    m_client("www.microsoft.com", 80)
+    m_client("localhost", 5080)
 {    
     qor_pp_ofcontext;
         

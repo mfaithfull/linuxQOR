@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void uri_absolute_path::Prepare()
     {
-        //std::cout << "Looking for a uri_absolute_path." << std::endl;
+        std::cout << "Looking for a uri_absolute_path." << std::endl;
         GetParser()->PushNode(new_ref<UriAbsolutePathNode>());
     }
 
     void uri_absolute_path::Emit()
     {
-        //std::cout << "Emitting a uri_absolute_path." << std::endl;
+        std::cout << "Emitting a uri_absolute_path." << std::endl;
         std::vector<std::string> segments;
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)

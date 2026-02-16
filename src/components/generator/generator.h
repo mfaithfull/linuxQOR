@@ -26,14 +26,13 @@
 #define QOR_PP_H_COMPONENTS_GENERATOR_GENERATOR
 
 #include <stack>
-//#include <iostream>
+#include <string>
 
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/workflow/workflow.h"
 #include "context.h"
 #include "result.h"
-#include "node.h"
 
 namespace qor { namespace components { namespace generator {
 
@@ -42,49 +41,30 @@ namespace qor { namespace components { namespace generator {
     
     public:
 
-        Generator() : workflow::Workflow()
+        inline Generator() : workflow::Workflow()
         {
         }
 
-        Generator(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context)
+        inline Generator(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context)
         {
         }
 
-        Context* GetContext() const
+        virtual ~Generator() = default;
+        virtual int Run();
+
+        inline Context* GetContext()
         {
             return m_context;
         }
 
-        void PushNode(ref_of<Node>::type node)
-        {
-            if(node.IsNotNull())
-            {
-                m_nodes.push(node);
-            }
-        }
-
-        ref_of<Node>::type PopNode()
-        {
-            ref_of<Node>::type result;
-            if(!m_nodes.empty())
-            {
-                result = m_nodes.top();
-                m_nodes.pop();
-            }
-            return result;
-        }
-
-        void SetContext(ref_of<Context>::type context)
+        inline void SetContext(ref_of<Context>::type context)
         {
             m_context = context;
-        }
-
-        int Generate();
+        }        
         
-    private:
+    protected:
 
         ref_of<Context>::type m_context;
-        std::stack<ref_of<Node>::type> m_nodes;
     };
 
 }}}//qor::components::generator

@@ -74,18 +74,33 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     RequestGenChar::RequestGenChar(HTTPRequestGenerator* generator, byte character) : RequestGenState(generator)
     {
+        m_EnteredAtLeastOnce = false;
+
         Enter = [this, character]()
         {
+            m_EnteredAtLeastOnce = true;
+            std::cout << (char)character;
             GetContext()->PutOctet(character);
             Workflow()->PopState();
+        };
+
+        Resume = [this]()
+        {
+            if(m_EnteredAtLeastOnce)
+            {
+                Workflow()->PopState();
+            }
         };
     }
 
     RequestGenString::RequestGenString(HTTPRequestGenerator* generator, std::string str) : RequestGenState(generator), m_str(str)
     {        
         m_it = m_str.begin();
+        m_EnteredAtLeastOnce = false;
+
         Enter = [this, str]()
         {
+            m_EnteredAtLeastOnce = true;
             if(m_it != m_str.end())
             {                
                 Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), (byte)(*m_it)));
@@ -98,22 +113,31 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
         Resume = [this]()
         {
-            ++m_it;
+            if(m_EnteredAtLeastOnce == true)
+            {
+                ++m_it;
+            }
         };
     }
 
 
     RequestGenCRLF::RequestGenCRLF(HTTPRequestGenerator* generator) : RequestGenState(generator)
     {
+        m_EnteredAtLeastOnce = false;
+        
         Enter = [this]()
         {            
-            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), 0x10));//LF
-            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), 0x13));//CR
+            m_EnteredAtLeastOnce = true;            
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), 0x0A));//LF
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), 0x0D));//CR
         };
 
         Resume = [this]()
         {
-            Workflow()->PopState();
+            if(m_EnteredAtLeastOnce)
+            {
+                Workflow()->PopState();
+            }
         };
     };
 
@@ -131,15 +155,34 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
         Enter = [this]()
         {
-            Workflow()->PopState();
+            auto reqGen = GetRequestGenerator();
+            auto req = reqGen->GetRequest();
+            Workflow()->SetState(new_ref<RequestGenChar>(GetRequestGenerator(), '/'));
+            //Workflow()->SetState(new_ref<RequestGenString>(reqGen, req->GetURI()));
+            //"http:" "//" host [ ":" port ] [ abs_path [ "?" query ]]
         };
     }
 
     RequestGenVersion::RequestGenVersion(HTTPRequestGenerator* generator) : RequestGenState(generator)
     {
+        m_EnteredAtLeastOnce = false;
+
         Enter = [this]()
         {
-            Workflow()->PopState();
+            m_EnteredAtLeastOnce  = true;
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), '1'));
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), '.'));
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), '1'));
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), '/'));
+            Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), "HTTP"));
+        };
+
+        Resume = [this]()
+        {
+            if(m_EnteredAtLeastOnce)
+            {
+                Workflow()->PopState();
+            }
         };
     }
 
@@ -163,7 +206,60 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     RequestGenHeaders::RequestGenHeaders(HTTPRequestGenerator* generator) : RequestGenState(generator)
     {
+        m_EnteredAtLeastOnce = false;
+
         Enter = [this]()
+        {
+            m_EnteredAtLeastOnce = true;
+            //TODO: separate lists of headers for each sub type or filter them?
+            Workflow()->PushState(new_ref<RequestGenCRLF>(GetRequestGenerator()));
+            //Workflow()->PushState(new_ref<RequestGenEntityHeaders>)(GetRequestGenerator());
+            //Workflow()->PushState(new_ref<RequestGenRequestHeaders>)(GetRequestGenerator());
+            Workflow()->PushState(new_ref<RequestGenGeneralHeaders>(GetRequestGenerator()));
+        };
+
+        Resume = [this]()
+        {
+            if(m_EnteredAtLeastOnce)
+            {
+                Workflow()->PopState();
+            }
+        };
+    }
+
+    RequestGenGeneralHeaders::RequestGenGeneralHeaders(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {
+            auto reqGen = GetRequestGenerator();
+            auto req = reqGen->GetRequest();
+            for(auto header : req->GetHeaders())
+            {
+                Workflow()->PushState(new_ref<RequestGenHeader>(GetRequestGenerator(), header));
+            }
+            if(req->GetHeaders().size() == 0 )
+            {
+                Workflow()->PopState();
+            }
+        };
+
+        Resume = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
+    RequestGenHeader::RequestGenHeader(HTTPRequestGenerator* generator, const std::pair<const std::string,std::string>& header) : RequestGenState(generator), m_header(header)
+    {
+        Enter = [this]()
+        {
+            //TODO: Proper Header objects with derivatives for general, request and entity headers
+            Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), m_header.second));
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), ':'));
+            Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), m_header.first));
+        };
+
+        Resume = [this]()
         {
             Workflow()->PopState();
         };
@@ -172,6 +268,14 @@ namespace qor { namespace components { namespace protocols { namespace http {
     RequestGenBody::RequestGenBody(HTTPRequestGenerator* generator) : RequestGenState(generator)
     {
         Enter = [this]()
+        {            
+            //TODO: This is whole other can of worms where Content Providers and secondary data pipelines come in
+            //Mime gets involved and multiple providers for things like separator headers and content length
+            //What goes here must alo match the headers weve already written or it becomes unparsable
+            Workflow()->PushState(new_ref<RequestGenCRLF>(GetRequestGenerator()));            
+        };
+
+        Resume = [this]()
         {
             Workflow()->PopState();
         };
@@ -181,8 +285,52 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
         Enter = [this]()
         {
+            //TODO: separate lists of trailers for each sub type or filter them?
+            Workflow()->PushState(new_ref<RequestGenCRLF>(GetRequestGenerator()));
+            //Workflow()->PushState(new_ref<RequestGenEntityHeaders>)(GetRequestGenerator());
+            //Workflow()->PushState(new_ref<RequestGenRequestHeaders>)(GetRequestGenerator());
+            Workflow()->PushState(new_ref<RequestGenGeneralTrailers>(GetRequestGenerator()));
+        };
+
+        Resume = [this]()
+        {
             Workflow()->PopState();
         };
     }
+
+    RequestGenGeneralTrailers::RequestGenGeneralTrailers(HTTPRequestGenerator* generator) : RequestGenState(generator)
+    {
+        Enter = [this]()
+        {
+            auto reqGen = GetRequestGenerator();
+            auto req = reqGen->GetRequest();
+            for(auto trailer : req->GetTrailers())
+            {
+                Workflow()->PushState(new_ref<RequestGenTrailer>(GetRequestGenerator(), trailer));
+            }
+        };
+
+        Resume = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
+    RequestGenTrailer::RequestGenTrailer(HTTPRequestGenerator* generator, const std::pair<const std::string,std::string>& trailer) : RequestGenState(generator), m_trailer(trailer)
+    {
+        Enter = [this]()
+        {
+            //TODO: Proper Trailer objects with derivatives for general, request and entity trailers
+            Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), m_trailer.second));
+            Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), ':'));
+            Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), m_trailer.first));
+        };
+
+        Resume = [this]()
+        {
+            Workflow()->PopState();
+        };
+    }
+
 
 }}}}//qor::components::protocols::http
