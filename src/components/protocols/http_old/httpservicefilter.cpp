@@ -33,7 +33,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         m_it = m_data.begin();
     }
 
-    void HttpServiceFilter::Filter(byte* space, byte* data, size_t& itemCount)
+    void HttpServiceFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
     {
         //HttpRequest request = Parse(data, itemCount);
 
@@ -44,7 +44,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         SetData(cannedResponse);
 
         size_t charsRead = 0;
-        while(m_it != m_data.end() && charsRead < itemCount)
+        while(m_it != m_data.end() && charsRead < writeCount)
         {
             space[charsRead++] = *m_it++;
         }        

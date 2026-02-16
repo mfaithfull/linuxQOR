@@ -27,7 +27,7 @@
 
 namespace qor{ namespace components{ 
 
-    void Base64EncodeFilter::Filter(qor::byte* space, qor::byte* data, size_t& unitsToProcess)
+    void Base64EncodeFilter::Filter(qor::byte* space, qor::byte* data, size_t& unitsToProcess, size_t& writeCount)
     {
         static const char* base64_chars = 
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -38,6 +38,7 @@ namespace qor{ namespace components{
         {
             //byte* data = sourceBuffer->ReadRequest(unitsToProcess);
             size_t output_space = (unitsToProcess + 2 ) / 3 * 4;
+            output_space = std::min(output_space, writeCount);
             //byte* space = sinkBuffer->WriteRequest(output_space);
             int val = 0, valb = -6;
             unsigned char* c = data;
@@ -63,8 +64,6 @@ namespace qor{ namespace components{
             {
                 space[outindex++] = '=';
             }
-            //sinkBuffer->WriteAcknowledge(outindex);
-            //sourceBuffer->ReadAcknowledge(index);
             unitsToProcess = outindex;            
         }
     }

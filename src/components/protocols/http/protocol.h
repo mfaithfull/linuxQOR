@@ -50,9 +50,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
 
         virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter() override
-        {            
-            //return m_responseFilter;//TODO:
-            return ref_of<qor::pipeline::InlineFilter<byte>>::type();
+        {                        
+            return m_responseFilter;
         }
 
         virtual size_t GetRequestBufferSize()

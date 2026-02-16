@@ -38,7 +38,7 @@ namespace qor{ namespace components{
 
         virtual ~Base64EncodeFilter() = default;
 
-        virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount);
+        virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount, size_t& writeCount);
 
     };
 

@@ -31,7 +31,7 @@ using namespace qor::components;
 using namespace qor::components::parser;
 using namespace qor::workflow;
 
-void EchoResponseFilter::Filter(byte* space, byte* data, size_t& itemCount)
+void EchoResponseFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
 {
     EchoResponse response = Parse(data, itemCount);
 
@@ -47,8 +47,10 @@ void EchoResponseFilter::Filter(byte* space, byte* data, size_t& itemCount)
     {
         outputSize = itemCount;
     }
-    memcpy(space, output.data(), outputSize);
-    itemCount = outputSize;
+
+    itemCount = std::min(writeCount, outputSize);
+    memcpy(space, output.data(), itemCount);
+    writeCount = itemCount;
 }
 
 ref_of<EchoResponse>::type EchoResponseFilter::Parse(byte* data, size_t& itemCount)

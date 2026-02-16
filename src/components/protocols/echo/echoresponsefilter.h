@@ -43,7 +43,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         virtual ~EchoResponseFilter() = default;
 
         qor::ref_of<EchoResponse>::type Parse(qor::byte* data, size_t& itemCount);
-        virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount);
+        virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount, size_t& writeCount);
 
     };
 

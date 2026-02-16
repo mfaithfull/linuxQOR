@@ -39,7 +39,7 @@ public:
     virtual ~EchoRequestFilter() = default;
 
     qor::ref_of<EchoRequest>::type Parse(qor::byte* data, size_t& itemCount);
-    virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount);
+    virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount, size_t& writeCount);
 
 };
 

@@ -57,9 +57,6 @@ namespace qor{ namespace components {
         }
         else
         { 
-            //SetupRequestPipeline();
-            //SetupResponsePipeline();
-            //Now the pipeline is setup, connect the socket
             return m_socketClientConnector->Connect();
         }
     }
@@ -69,46 +66,5 @@ namespace qor{ namespace components {
         qor_pp_ofcontext;
         m_socketClientConnector->Disconnect();
     }
-
-    //void NetworkClient::SetupRequestPipeline()
-    //{
-        //Wire up outgoing/request side:
-
-        //Client requests are naturally Push mode               
-        //m_requestPipeline->SetFlowMode(Element::FlowMode::Push);
-
-        //TODO: Change this so that the ultimate sink and the buffer come from the Client of this library
-        ////Set the outgoing socket buffer to be the Request buffer written by the protocol
-        //m_socketClientConnector->GetSink()->SetBuffer(m_protocol->GetRequestBuffer().operator const ByteBuffer &());
-        ////Set the source of the outgoing pipeline to be the protocol
-        //m_requestPipeline->SetSource(m_protocol->GetSource());
-        //TODO:
-
-        //Set the sink of the outgoing pipeline to be the socket
-        //m_requestPipeline->SetSink(m_socketClientConnector->GetSink());
-
-        //Set the sink on the protocol (pipeline source) to be the socket
-        //m_requestPipeline->GetSource()->SetSink(m_socketClientConnector->GetSink());
-    //}
-
-    //void NetworkClient::SetupResponsePipeline()
-    //{
-        //Wire up incoming/response side:
-
-        //Responses arriving at the client are also Push mode, from the other end. We are expecting to be driven by the reader
-        //m_responsePipeline->SetFlowMode(Element::FlowMode::Push);
-
-        //Set the incoming pipeline source to be the incoming socket connection
-        //m_responsePipeline->SetSource(m_socketClientConnector->GetSource());
-
-        //Set the incoming pipeline sink to be the protocol
-        //m_responsePipeline->SetSink((Element*)m_protocol->GetSink());
-
-        //Set the buffer for the incoming socket connection to be the protocol response buffer
-        //m_responsePipeline->GetSource()->SetBuffer(m_protocol->GetResponseBuffer().operator const ByteBuffer &());
-
-        //Set the sink on the incoming socket connection to be the protocol
-        //m_responsePipeline->GetSource()->SetSink(m_protocol->GetSink());
-    //}
 
 }}//qor::components

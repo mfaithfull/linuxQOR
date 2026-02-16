@@ -35,7 +35,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
     //Client side protocol filter
 
-    void EchoResponseFilter::Filter(byte* space, byte* data, size_t& itemCount)
+    void EchoResponseFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
     {
         EchoResponse response = Parse(data, itemCount);
 
@@ -51,8 +51,9 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         {
             outputSize = itemCount;
         }
-        memcpy(space, output.data(), outputSize);
-        itemCount = outputSize;
+        itemCount = std::min(outputSize, writeCount);
+        memcpy(space, output.data(), itemCount);
+        writeCount = itemCount;
     }
 
     ref_of<EchoResponse>::type EchoResponseFilter::Parse(byte* data, size_t& itemCount)

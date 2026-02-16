@@ -34,17 +34,17 @@ using namespace qor::workflow;
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    void HTTPFilter::Filter(byte* space, byte* data, size_t& itemCount)
+    void HTTPFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
     {
         HTTPRequest request = Parse(data, itemCount);
-
         ref_of<HTTPResponse>::type response = new_ref<HTTPResponse>();
         
         //TODO: Fill out Response        
 
-        response::Generator responseGenerator(new_ref<parser::Context>(space, itemCount));
-        responseGenerator.SetResponse(response);        
+        response::Generator responseGenerator(new_ref<parser::Context>(space, writeCount));
+        responseGenerator.SetResponse(response);
         responseGenerator.Run();
+        writeCount = responseGenerator.GetContext()->GetPosition();
     }
 
     ref_of<HTTPRequest>::type HTTPFilter::Parse(byte* data, size_t& itemCount)

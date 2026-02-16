@@ -103,31 +103,36 @@ namespace qor{ namespace pipeline{
             m_sourceBuffer.WriteAcknowledge(itemCount);            
             //Process data to sink buffer
             pod_t* data = m_sourceBuffer.ReadRequest(itemCount);
-            DoFilter(data, itemCount);
-            m_sourceBuffer.ReadAcknowledge(itemCount);
+            size_t writeCount = 0;
+            if(DoFilter(data, itemCount, writeCount))
+            {
+                m_sourceBuffer.ReadAcknowledge(itemCount);
+                itemCount = writeCount;
+            }
 
             return m_sourceBuffer.WriteCapacity();
         }
 
     protected:
 
-        virtual void Filter(pod_t* space, pod_t* data, size_t& itemCount)
+        virtual void Filter(pod_t* space, pod_t* data, size_t& itemCount, size_t& writeCount)
         {
-            ::memcpy((void*)space, (const void*)data, itemCount * sizeof(pod_t));
+            ::memcpy((void*)space, (const void*)data, std::min(itemCount, writeCount) * sizeof(pod_t));
         }
 
     private:
 
-        virtual bool DoFilter(pod_t* data, size_t& itemCount)
+        virtual bool DoFilter(pod_t* data, size_t& itemCount, size_t& writeCount)
         {
             if(itemCount > 0)
             {
-                pod_t* space = m_sinkBuffer.WriteRequest(itemCount);
-                if(itemCount > 0)
+                writeCount = m_sinkBuffer.WriteCapacity();
+                pod_t* space = m_sinkBuffer.WriteRequest(writeCount);
+                if(writeCount > 0)
                 {
-                    Filter(space, data, itemCount);
-                    m_sinkBuffer.WriteAcknowledge(itemCount);
-                    if(itemCount > 0)
+                    Filter(space, data, itemCount, writeCount);
+                    m_sinkBuffer.WriteAcknowledge(writeCount);
+                    if(writeCount > 0)
                     {
                         return true;
                     }
