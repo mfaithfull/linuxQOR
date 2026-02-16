@@ -30,19 +30,19 @@
 #include "responsegenerator.h"
 #include "state.h"
 
-namespace qor { namespace components { namespace protocols { namespace http {
+namespace qor { namespace components { namespace protocols { namespace http { namespace response {
     
-    HTTPResponseGenerator::HTTPResponseGenerator(ref_of<parser::Context>::type context) : workflow::Workflow(), m_context(context)
+    Generator::Generator(ref_of<parser::Context>::type context) : workflow::Workflow(), m_context(context)
     {
-        SetInitialState(new_ref<ResponseGenInitial>(this));
+        SetInitialState(new_ref<Initial>(this));
     }
 
-    int HTTPResponseGenerator::Run()
+    int Generator::Run()
     {   
         m_complete = false;
         if(m_StateStack.empty())
         {
-            serious("No initial state set for HTTPRequestGenerator.");
+            serious("No initial state set for Generator.");
             return -1;
         }
         try{   
@@ -56,15 +56,16 @@ namespace qor { namespace components { namespace protocols { namespace http {
             }
             if(IsComplete())
             {
+                note("HTTP response generation completed in the available buffer space.");
             }
-            if(!m_context->HasSpace())
+            else if(!m_context->HasSpace())
             {
-                
+                note("HTTP response generation ran out of buffer space. Continue after sending partial reponse.");
             }
         }
-        catch(const Error* error)
+        catch(const Error& error)
         {
-            std::cerr << error->what().Content() << '\n';
+            std::cerr << error.what().Content() << '\n';
         }
         catch(const std::exception& e)
         {
@@ -72,12 +73,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
         catch(...)
         {
-            std::cerr << "HTTPRequestGenerator failed due to unhandled exception.\n";
+            std::cerr << "HTTP Response Generator failed due to unhandled exception.\n";
         }
 
-        std::cout << "Stack on exit has " << m_StateStack.size() << " states." << std::endl;
+        std::string noteString = std::format("Stack on exit has {0} states.", m_StateStack.size());
+        note(noteString);
         return m_result;
     }
 
-}}}}//qor::components::protocols::http
+}}}}}//qor::components::protocols::http::response
 

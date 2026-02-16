@@ -65,6 +65,10 @@ namespace qor { namespace framework { namespace nswindows {
 		{
 		}
 
+		virtual ~SocketRecvOperation()
+		{			
+		}
+
 	private:		
 
 		bool try_start() noexcept { return m_impl.try_start(*this); }

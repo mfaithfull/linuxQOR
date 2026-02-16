@@ -32,15 +32,15 @@
 #include "../../response/response.h"
 #include "src/components/parser/context.h"
 
-namespace qor { namespace components { namespace protocols { namespace http {
+namespace qor { namespace components { namespace protocols { namespace http { namespace response {
     
-    class qor_pp_module_interface(QOR_HTTP) HTTPResponseGenerator : public qor::workflow::Workflow
+    class qor_pp_module_interface(QOR_HTTP) Generator : public workflow::Workflow
     {
 
     public:
 
-        HTTPResponseGenerator(ref_of<parser::Context>::type context);
-        virtual ~HTTPResponseGenerator() = default;
+        Generator(ref_of<parser::Context>::type context);
+        virtual inline ~Generator() = default;
         virtual int Run();
 
         inline parser::Context* GetContext()
@@ -69,6 +69,6 @@ namespace qor { namespace components { namespace protocols { namespace http {
         ref_of<HTTPResponse>::type m_response;
     };
 
-}}}}//qor::components::protocols::http
+}}}}}//qor::components::protocols::http::response
 
 #endif // QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEGENERATOR

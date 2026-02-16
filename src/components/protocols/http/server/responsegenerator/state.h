@@ -33,49 +33,131 @@
 #include "src/framework/workflow/workflow.h"
 #include "src/components/parser/context.h"
 
-namespace qor { namespace components { namespace protocols { namespace http {
+namespace qor { namespace components { namespace protocols { namespace http { namespace response {
     
-    class qor_pp_module_interface(QOR_HTTP) HTTPResponseGenerator;
+    class qor_pp_module_interface(QOR_HTTP) Generator;
     
-    class qor_pp_module_interface(QOR_HTTP) ResponseGenState : public qor::workflow::State
+    class qor_pp_module_interface(QOR_HTTP) State : public workflow::State
     {
     public:
 
-        ResponseGenState(HTTPResponseGenerator* generator);
-        virtual ~ResponseGenState() = default;
+        inline State(Generator* generator) : workflow::State(generator)
+        {}
+        virtual inline ~State() = default;
 
     protected:
 
-        parser::Context* GetContext();
-        workflow::Workflow* Workflow();
-        HTTPResponseGenerator* GetResponseGenerator();
+        inline parser::Context* GetContext()
+        {
+            return dynamic_cast<Generator*>(m_Workflow)->GetContext();
+        }
+
+        inline workflow::Workflow* Workflow()
+        {
+            return dynamic_cast<workflow::Workflow*>(m_Workflow);
+        }
+
+        Generator* GetGenerator()
+        {
+            return dynamic_cast<Generator*>(m_Workflow);
+        }
     };
 
-    class qor_pp_module_interface(QOR_HTTP) ResponseGenInitial : public ResponseGenState
+    class Char : public State
     {
     public:
 
-        ResponseGenInitial(HTTPResponseGenerator* generator);
-        virtual ~ResponseGenInitial() = default;
+        inline Char(Generator* generator, byte character) : State(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this, character]()
+            {
+                m_EnteredAtLeastOnce = true;
+                std::cout << (char)character;
+                GetContext()->PutOctet(character);
+                Workflow()->PopState();
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce)
+                {
+                    Workflow()->PopState();
+                }
+            };
+        }
+
+        virtual inline ~Char() = default;
+
+    private:
+
+        bool m_EnteredAtLeastOnce;
     };
 
-    class ResponseGenCRLF : public ResponseGenState
+    class CRLF : public State
     {
     public:
 
-        ResponseGenCRLF(HTTPResponseGenerator* generator);
-        virtual ~ResponseGenCRLF() = default;
+        inline CRLF(Generator* generator) : State(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+            
+            Enter = [this]()
+            {            
+                m_EnteredAtLeastOnce = true;            
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), 0x0A));//LF
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), 0x0D));//CR
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce)
+                {
+                    Workflow()->PopState();
+                }
+            };
+        }
+
+        virtual inline ~CRLF() = default;
 
     private:
         bool m_EnteredAtLeastOnce;
     };
 
-    class ResponseGenString : public ResponseGenState
+    class String : public State
     {
     public:
 
-        ResponseGenString(HTTPResponseGenerator* generator, std::string str);
-        virtual ~ResponseGenString() = default;
+        inline String(Generator* generator, std::string str) : State(generator), m_str(str)
+        {
+            m_it = m_str.begin();
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this, str]()
+            {
+                m_EnteredAtLeastOnce = true;
+                if(m_it != m_str.end())
+                {                
+                    Workflow()->PushState(new_ref<Char>(GetGenerator(), (byte)(*m_it)));
+                }
+                else
+                {
+                    Workflow()->PopState();
+                }
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce == true)
+                {
+                    ++m_it;
+                }
+            };
+
+        }
+
+        virtual inline ~String() = default;
 
     private:
 
@@ -84,95 +166,236 @@ namespace qor { namespace components { namespace protocols { namespace http {
         bool m_EnteredAtLeastOnce;
     };
 
-    class ResponseGenChar : public ResponseGenState
+    class ReasonPhrase : public State
     {
     public:
 
-        ResponseGenChar(HTTPResponseGenerator* generator, byte character);
-        virtual ~ResponseGenChar() = default;
+        inline ReasonPhrase(Generator* generator) : State(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this]()
+            {
+                m_EnteredAtLeastOnce = true;
+                Workflow()->SetState(new_ref<String>(GetGenerator(), "Not Found"));
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce == true)
+                {
+                    Workflow()->PopState();
+                }
+            };
+
+        }
+
+        virtual inline ~ReasonPhrase() = default;
 
     private:
 
         bool m_EnteredAtLeastOnce;
     };
 
-    //RequestLine
-        //Method
-            //String
-        //SP
-            //Char
-        //Request-URI
-            //String
-        //SP
-            //Char
-        //HTTP-Version
-            //String &| Char
-        //CRLF
-            //Char
-    //Headers
-        //* Header
-            //(General-Header | Request-Header | Entity-Header) CRLF
-            //General-Header
-                //Cache-Control |
-                //Connection |
-                //Date |
-                //Pragma |
-                //Trailer |
-                //Transfer-Encoding |
-                //Upgrade |
-                //Via |
-                //Warning |
-            //Request-Header
-                //Accept |
-                //Accept-Charset |
-                //Accept-Encoding |
-                //Accept-Language |
-                //Authorization |
-                //Expect |
-                //From |
-                //Host |
-                //If-Match |
-                //If-Modified-Since |
-                //If-None-Match |
-                //If-Range |
-                //If-Unmodified-Since |
-                //Max-Forwards
-                //Proxy-Authorization |
-                //Range
-                //Referer
-                //TE
-                //User-Agent
-            //entity-header
-                //Allow |
-                //Content-Encoding |
-                //Content-Language |
-                //Content-Length |
-                //Content-Location |
-                //Content-MD5 |
-                //Content-Range |
-                //Content-Type |
-                //Expires |
-                //Last-Modified |
-                //extension-header |
-                    //message-header
-                        //field-name ":" [ field-value ]
-                        //field-name     = token
-                        //field-value    = *( field-content | LWS )
-                        //field-content  = <the OCTETs making up the field-value and consisting of either *TEXT or combinations of token, separators, and quoted-string>
-        //CRLF
-    //Body
-    //Trailers (basically the same logic as headers)
+    class StatusCode : public State
+    {
+    public:
 
-    /*Accept         = "Accept" ":"
-                        #( media-range [ accept-params ] )
+        inline StatusCode(Generator* generator) : State(generator)
+        {
+            m_EnteredAtLeastOnce = false;
 
-       media-range    = ( "* / *"           #Without spaces
-                        | ( type "/" "*" )
-                        | ( type "/" subtype )
-                        ) *( ";" parameter )
-       accept-params  = ";" "q" "=" qvalue *( accept-extension )
-       accept-extension = ";" token [ "=" ( token | quoted-string ) ]
-    */
-}}}}//qor::components::protocols::http
+            Enter = [this]()
+            {
+                m_EnteredAtLeastOnce = true;
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), '4'));
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), '0'));
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), '4'));
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce == true)
+                {
+                    Workflow()->PopState();
+                }
+            };
+
+        }
+
+        virtual inline ~StatusCode() = default;
+
+    private:
+
+        bool m_EnteredAtLeastOnce;
+    };
+
+    //TTP-Version   = "HTTP" "/" 1*DIGIT "." 1*DIGIT
+    class Version : public State
+    {
+    public:
+
+        inline Version(Generator* generator) : State(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this]()
+            {
+                m_EnteredAtLeastOnce = true;
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), '1'));
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), '.'));
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), '1'));
+                Workflow()->PushState(new_ref<String>(GetGenerator(), "HTTP/"));
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce == true)
+                {
+                    Workflow()->PopState();
+                }
+            };
+
+        }
+
+        virtual inline ~Version() = default;
+
+    private:
+
+        bool m_EnteredAtLeastOnce;
+    };
+
+    //Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
+    class StatusLine : public State
+    {
+    public:
+
+        inline StatusLine(Generator* generator) : State(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this]()
+            {
+                m_EnteredAtLeastOnce = true;
+                Workflow()->PushState(new_ref<CRLF>(GetGenerator()));
+                Workflow()->PushState(new_ref<ReasonPhrase>(GetGenerator()));
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), ' '));
+                Workflow()->PushState(new_ref<StatusCode>(GetGenerator()));
+                Workflow()->PushState(new_ref<Char>(GetGenerator(), ' '));
+                Workflow()->PushState(new_ref<Version>(GetGenerator()));
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce == true)
+                {
+                    Workflow()->PopState();
+                }
+            };
+
+        }
+
+        virtual inline ~StatusLine() = default;
+
+    private:
+
+        bool m_EnteredAtLeastOnce;
+    };
+
+    class Headers : public State
+    {
+    public:
+
+        inline Headers(Generator* generator) : State(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this]()
+            {
+                m_EnteredAtLeastOnce = true;
+                Workflow()->PopState();
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce == true)
+                {
+                    Workflow()->PopState();
+                }
+            };
+
+        }
+
+        virtual inline ~Headers() = default;
+
+    private:
+
+        bool m_EnteredAtLeastOnce;
+    };
+
+    class Body : public State
+    {
+    public:
+
+        inline Body(Generator* generator) : State(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this]()
+            {
+                m_EnteredAtLeastOnce = true;
+                Workflow()->PopState();
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce == true)
+                {
+                    Workflow()->PopState();
+                }
+            };
+
+        }
+
+        virtual inline ~Body() = default;
+
+    private:
+
+        bool m_EnteredAtLeastOnce;
+    };
+
+    class qor_pp_module_interface(QOR_HTTP) Initial : public State
+    {
+    public:
+
+        inline Initial(Generator* generator) : State(generator)
+        {
+            Enter = [this]()
+            {                            
+                Workflow()->PushState(new_ref<Body>(GetGenerator()));
+                Workflow()->PushState(new_ref<CRLF>(GetGenerator()));
+                Workflow()->PushState(new_ref<Headers>(GetGenerator()));
+                Workflow()->PushState(new_ref<StatusLine>(GetGenerator()));
+            };
+
+            Resume = [this]()
+            {
+                Workflow()->PopState();
+            };
+        }
+
+        virtual ~Initial() = default;
+    };
+
+/*
+Response      = Status-Line
+                       *(( general-header
+                        | response-header
+                        | entity-header ) CRLF)
+                       CRLF
+                       [ message-body ]
+*/
+
+}}}}}//qor::components::protocols::http::response
 
 #endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEGENERATOR_STATE

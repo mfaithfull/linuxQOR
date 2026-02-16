@@ -139,7 +139,7 @@ public:
         */
         if(Send(std::move(req)))
         {
-            return Receive();
+            return Receive();            
         }
         //TODO: return a stock failure to send packaged as a Response
         qor::components::protocols::http::HTTPResponse failure;

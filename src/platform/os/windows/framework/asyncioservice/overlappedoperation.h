@@ -53,6 +53,10 @@ namespace qor { namespace framework { namespace nswindows {
 		{
 		}
 
+		virtual ~win32_overlapped_operation()
+		{			
+		}
+
 	public:
 
 		bool await_ready() const noexcept { return false; }

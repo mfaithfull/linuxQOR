@@ -42,7 +42,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         
         //TODO: Fill out Response        
 
-        HTTPResponseGenerator responseGenerator(new_ref<parser::Context>(space, itemCount));
+        response::Generator responseGenerator(new_ref<parser::Context>(space, itemCount));
         responseGenerator.SetResponse(response);        
         responseGenerator.Run();
     }

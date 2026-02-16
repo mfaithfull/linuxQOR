@@ -49,7 +49,6 @@ server/requestparser/userinfotoken.cpp
 client/responsesink/sink.cpp 
 client/responseparser/responseparser.cpp
 server/responsegenerator/responsegenerator.cpp
-server/responsegenerator/state.cpp
 request/request.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

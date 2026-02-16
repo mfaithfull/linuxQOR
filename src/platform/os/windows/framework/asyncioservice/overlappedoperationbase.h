@@ -55,6 +55,10 @@ namespace qor { namespace framework { namespace nswindows {
 		{
 		}
 
+		virtual ~win32_overlapped_operation_base()
+		{
+		}
+
 		_OVERLAPPED* get_overlapped() noexcept
 		{
 			return reinterpret_cast<_OVERLAPPED*>(
