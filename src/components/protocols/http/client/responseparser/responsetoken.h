@@ -22,34 +22,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSENODE
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSENODE
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSETOKEN
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSETOKEN
 
-#include <string>
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
-#include "src/components/parser/parser.h"
-#include "responseparser.h"
-#include "../../response/response.h"
+#include "src/components/parser/state.h"
+#include "src/components/parser/rfc5234.h"
+#include "tokendefs.h"
+#include "src/components/parser/oneormore.h"
+#include "src/components/parser/nodes/char.h"
+#include "request_linetoken.h"
+#include "field_linetoken.h"
 
 namespace qor { namespace components { namespace protocols { namespace http { namespace response {
 
-    class ResponseNode : public qor::components::parser::NodeAdapter<HTTPResponse>
+    class qor_pp_module_interface(QOR_HTTP) Initial : public qor::components::parser::Sequence
     {
-    public:
+    public: initial(qor::components::parser::Parser* parser) :
+                qor::components::parser::Sequence( parser,
+                    new_ref<status_line>(parser),
+                    new_ref<qor::components::parser::Sequence>( parser,
+                        new_ref<qor::components::parser::ZeroOrMore>( parser,
+                            new_ref<field_line>(parser)
+                        ),
+                        new_ref<qor::components::parser::CRLF>(parser)
+                    ),
+                    static_cast<uint64_t>(httpResponseToken::response))
+            {}
 
-        ResponseNode() : qor::components::parser::NodeAdapter<HTTPResponse>(static_cast<uint64_t>(httpResponseToken::response))
+        virtual ~initial() = default;
+
+        virtual void Prepare();
+        virtual void Emit();
+        virtual void Fail()
         {
+            auto node = GetParser()->PopNode();
+            if(node.IsNotNull() && node->GetToken() != m_token)
+            {
+                GetParser()->PushNode(node);
+            }
         }
-
-        ResponseNode(qor::ref_of<HTTPResponse>::type response) : qor::components::parser::NodeAdapter<HTTPResponse>(response, static_cast<uint64_t>(httpResponseToken::response))
-        {
-        }
-
-        virtual ~ResponseNode() = default;
-
     };
-
+    
 }}}}}//qor::components::protocols::http::response
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSENODE
+#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSETOKEN

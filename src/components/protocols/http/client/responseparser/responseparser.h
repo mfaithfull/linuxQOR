@@ -34,7 +34,7 @@
 #include "src/components/parser/oneormore.h"
 #include "src/components/parser/nodes/char.h"
 
-namespace qor { namespace components { namespace protocols { namespace http {
+namespace qor { namespace components { namespace protocols { namespace http { namespace response {
 
     enum class httpResponseToken : uint64_t
     {
@@ -67,15 +67,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
     };
 
-    class response : public qor::components::parser::OneOrMore
+    class Initial : public qor::components::parser::OneOrMore
     {
-    public: response(qor::components::parser::Parser* parser) :
-                qor::components::parser::OneOrMore( parser,
-                    qor::new_ref<responseChar>(parser).template AsRef<qor::components::parser::ParserState>(),
+    public: Initial(qor::components::parser::Parser* parser) :
+                components::parser::OneOrMore( parser,
+                    new_ref<responseChar>(parser),
                     static_cast<uint64_t>(httpResponseToken::response))
             {}
 
-        virtual ~response() = default;
+        virtual ~Initial() = default;
 
         virtual void Prepare();
         virtual void Emit();
@@ -89,6 +89,6 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
     };
 
-}}}}//qor::components::protocols::http
+}}}}}//qor::components::protocols::http::response
 
 #endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEPARSER

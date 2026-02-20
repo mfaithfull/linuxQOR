@@ -26,6 +26,9 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSE
 
 #include <string>
+#include "../headers/headers.h"
+#include "../version.h"
+#include "src/qor/error/error.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
@@ -33,7 +36,11 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public:
 
-        HTTPResponse() = default;
+        HTTPResponse() : m_version{1,1}
+        {
+            m_statusCode = 500;
+        }
+
         virtual ~HTTPResponse() = default;
 
         void SetValue(const std::string& value)
@@ -46,9 +53,45 @@ namespace qor { namespace components { namespace protocols { namespace http {
             return m_response;
         }
         
+        void SetStatus(const unsigned int status)
+        {
+            if(status >= 100 && status < 600)
+            {
+                m_statusCode = status;
+            }
+            else
+            {
+                warning("Invalid Status Code not set. Value must be > 99 and < 600");
+            }
+        }
+
+        unsigned int GetStatus()
+        {
+            return m_statusCode;
+        }
+
+        void SetVersion(const HTTPVersion& version)
+        {
+            m_version = version;
+        }
+
+        HTTPVersion GetVersion()
+        {
+            return m_version;
+        }
+
+        Headers& GetHeaders()
+        {
+            return m_headers;
+        }
+
     private:
 
         std::string m_response;
+
+        Headers m_headers;
+        unsigned int m_statusCode;
+        HTTPVersion m_version;
     };
 
 }}}}//qor::components::protocols::http

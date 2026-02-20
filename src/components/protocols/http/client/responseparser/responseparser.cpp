@@ -30,14 +30,14 @@
 using namespace qor;
 using namespace qor::components::parser;
 
-namespace qor { namespace components { namespace protocols { namespace http {
+namespace qor { namespace components { namespace protocols { namespace http { namespace response {
 
-    void response::Prepare()
+    void Initial::Prepare()
     {
         GetParser()->PushNode(new_ref<ResponseNode>().template AsRef<Node>());
     }
 
-    void response::Emit()
+    void Initial::Emit()
     {
         std::vector<char> chars;
         auto node = GetParser()->PopNode();
@@ -76,4 +76,4 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
     }
 
-}}}}//qor::components::protocols::http
+}}}}}//qor::components::protocols::http::response

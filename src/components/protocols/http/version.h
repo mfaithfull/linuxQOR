@@ -22,57 +22,18 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
-
-#include "src/framework/pipeline/protocol.h"
-#include "client/requestsource/source.h"
-#include "client/responsesink/sink.h"
-#include "filter.h"
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_VERSION
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_VERSION
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class qor_pp_module_interface(QOR_HTTP) HTTPProtocol : public qor::pipeline::Protocol
+    struct HTTPVersion
     {
-    public:
-
-        HTTPProtocol();
-        virtual ~HTTPProtocol(){}
-
-        virtual network::sockets::eAddressFamily GetAddressFamily() const
-        {
-            return network::sockets::eAddressFamily::AF_INet;
-        }
-
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter() override
-        {            
-            return m_requestFilter;
-        }
-
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter() override
-        {                        
-            return m_responseFilter;
-        }
-
-        virtual size_t GetRequestBufferSize()
-        {
-            return 16384;
-        }
-
-        virtual size_t GetResponseBufferSize()
-        {
-            return 16384;
-        }
-
-        static std::string GetReasonPhrase(unsigned int statusCode);
-
-    private:
-
-        ref_of<HTTPFilter>::type m_requestFilter;
-        ref_of<HTTPFilter>::type m_responseFilter;
-
+        unsigned int major;
+        unsigned int minor; 
     };
+    
 }}}}
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
+#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_VERSION
 

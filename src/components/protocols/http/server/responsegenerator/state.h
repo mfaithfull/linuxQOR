@@ -32,6 +32,7 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/workflow/workflow.h"
 #include "src/components/parser/context.h"
+#include "../../protocol.h"
 
 namespace qor { namespace components { namespace protocols { namespace http { namespace response {
     
@@ -176,12 +177,18 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
             Enter = [this]()
             {
+                note("Entered Reason Phrase");
                 m_EnteredAtLeastOnce = true;
-                Workflow()->SetState(new_ref<String>(GetGenerator(), "Not Found"));
+                auto gen = GetGenerator();
+                auto response = gen->GetResponse();
+                unsigned int code = response->GetStatus();
+                std::string phrase = HTTPProtocol::GetReasonPhrase(code);
+                Workflow()->SetState(new_ref<String>(gen, phrase));
             };
 
             Resume = [this]()
             {
+                note("Resumed Reason Phrase");
                 if(m_EnteredAtLeastOnce == true)
                 {
                     Workflow()->PopState();
@@ -203,18 +210,22 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
         inline StatusCode(Generator* generator) : State(generator)
         {
-            m_EnteredAtLeastOnce = false;
+            m_EnteredAtLeastOnce = false;            
 
             Enter = [this]()
             {
+                note("Entered Status Code");
                 m_EnteredAtLeastOnce = true;
-                Workflow()->PushState(new_ref<Char>(GetGenerator(), '4'));
-                Workflow()->PushState(new_ref<Char>(GetGenerator(), '0'));
-                Workflow()->PushState(new_ref<Char>(GetGenerator(), '4'));
+                auto gen = GetGenerator();
+                auto response = gen->GetResponse();
+                unsigned int code = response->GetStatus();
+                std::string status = std::format("{0}", code);
+                Workflow()->SetState(new_ref<String>(gen, status));
             };
 
             Resume = [this]()
             {
+                note("Resumed Status Code");
                 if(m_EnteredAtLeastOnce == true)
                 {
                     Workflow()->PopState();
@@ -230,7 +241,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         bool m_EnteredAtLeastOnce;
     };
 
-    //TTP-Version   = "HTTP" "/" 1*DIGIT "." 1*DIGIT
+    //HTTP-Version   = "HTTP" "/" 1*DIGIT "." 1*DIGIT
     class Version : public State
     {
     public:
@@ -241,15 +252,24 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
             Enter = [this]()
             {
+                note("Entered Version");
                 m_EnteredAtLeastOnce = true;
-                Workflow()->PushState(new_ref<Char>(GetGenerator(), '1'));
-                Workflow()->PushState(new_ref<Char>(GetGenerator(), '.'));
-                Workflow()->PushState(new_ref<Char>(GetGenerator(), '1'));
-                Workflow()->PushState(new_ref<String>(GetGenerator(), "HTTP/"));
+                auto gen = GetGenerator();
+                auto response = gen->GetResponse();
+                HTTPVersion version = response->GetVersion();
+
+                std::string major = std::format("{0}", version.major);
+                std::string minor = std::format("{0}", version.minor);
+
+                Workflow()->PushState(new_ref<String>(gen, minor));
+                Workflow()->PushState(new_ref<Char>(gen, '.'));
+                Workflow()->PushState(new_ref<String>(gen, major));
+                Workflow()->PushState(new_ref<String>(gen, "HTTP/"));
             };
 
             Resume = [this]()
             {
+                note("Resumed Version");
                 if(m_EnteredAtLeastOnce == true)
                 {
                     Workflow()->PopState();
@@ -276,6 +296,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
             Enter = [this]()
             {
+                note("Entered Status Line");
                 m_EnteredAtLeastOnce = true;
                 Workflow()->PushState(new_ref<CRLF>(GetGenerator()));
                 Workflow()->PushState(new_ref<ReasonPhrase>(GetGenerator()));
@@ -287,6 +308,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
             Resume = [this]()
             {
+                note("Resumed Status Line");
                 if(m_EnteredAtLeastOnce == true)
                 {
                     Workflow()->PopState();
@@ -302,6 +324,42 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         bool m_EnteredAtLeastOnce;
     };
 
+    class Header : public State
+    {
+    public:
+        inline Header(Generator* generator, std::pair<const std::string, std::string> header) : State(generator), m_key(header.first), m_value(header.second)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this]()
+            {
+                note("Entered Header");
+                m_EnteredAtLeastOnce = true;
+                auto gen = GetGenerator();
+                Workflow()->PushState(new_ref<String>(gen, m_value));
+                Workflow()->PushState(new_ref<Char>(gen, ':'));
+                Workflow()->PushState(new_ref<String>(gen, m_key));
+            };
+
+            Resume = [this]()
+            {
+                note("Resumed Header");
+                if(m_EnteredAtLeastOnce == true)
+                {
+                    Workflow()->PopState();
+                }
+            };
+        }
+
+        virtual inline ~Header() = default;
+
+    private:
+
+        bool m_EnteredAtLeastOnce;
+        std::string m_key;
+        std::string m_value;
+    };
+
     class Headers : public State
     {
     public:
@@ -312,12 +370,23 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
             Enter = [this]()
             {
+                note("Entered Headers");
                 m_EnteredAtLeastOnce = true;
-                Workflow()->PopState();
+                auto gen = GetGenerator();
+                auto response = gen->GetResponse();
+                for(auto header : response->GetHeaders())
+                {
+                    Workflow()->PushState(new_ref<Header>(gen, header));
+                }
+                if(response->GetHeaders().size() == 0 )
+                {
+                    Workflow()->PopState();
+                }
             };
 
             Resume = [this]()
             {
+                note("Resumed Headers");
                 if(m_EnteredAtLeastOnce == true)
                 {
                     Workflow()->PopState();
@@ -343,12 +412,14 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
             Enter = [this]()
             {
+                note("Entered Body");
                 m_EnteredAtLeastOnce = true;
                 Workflow()->PopState();
             };
 
             Resume = [this]()
             {
+                note("Resumed Body");
                 if(m_EnteredAtLeastOnce == true)
                 {
                     Workflow()->PopState();
@@ -364,27 +435,30 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         bool m_EnteredAtLeastOnce;
     };
 
-    class qor_pp_module_interface(QOR_HTTP) Initial : public State
+    class qor_pp_module_interface(QOR_HTTP) GenerateResponse : public State
     {
     public:
 
-        inline Initial(Generator* generator) : State(generator)
+        inline GenerateResponse(Generator* generator) : State(generator)
         {
             Enter = [this]()
-            {                            
-                Workflow()->PushState(new_ref<Body>(GetGenerator()));
-                Workflow()->PushState(new_ref<CRLF>(GetGenerator()));
-                Workflow()->PushState(new_ref<Headers>(GetGenerator()));
-                Workflow()->PushState(new_ref<StatusLine>(GetGenerator()));
+            {                
+                note("Entered Initial");
+                auto gen = GetGenerator();
+                Workflow()->PushState(new_ref<Body>(gen));
+                Workflow()->PushState(new_ref<CRLF>(gen));
+                Workflow()->PushState(new_ref<Headers>(gen));
+                Workflow()->PushState(new_ref<StatusLine>(gen));
             };
 
             Resume = [this]()
             {
+                note("Resumed Initial");
                 Workflow()->PopState();
             };
         }
 
-        virtual ~Initial() = default;
+        virtual ~GenerateResponse() = default;
     };
 
 /*

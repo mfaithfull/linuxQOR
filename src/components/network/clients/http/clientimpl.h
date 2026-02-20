@@ -44,7 +44,7 @@ namespace qor{ namespace components{ namespace network{
     using UploadProgress = std::function<bool(size_t current, size_t total)>;
     using ContentReceiverWithProgress = std::function<bool(const char *data, size_t data_length, size_t offset, size_t total_length)>;
     using ContentReceiver = std::function<bool(const char *data, size_t data_length)>;
-    using ResponseHandler = std::function<bool(const protocols::http::Response &response)>;
+    using ResponseHandler = std::function<bool(const protocols::http::Response &aresponse)>;
     using Params = std::multimap<std::string, std::string>;
     using ContentProvider = std::function<bool(size_t offset, size_t length,  protocols::http::DataSink &sink)>;
     using ContentProviderWithoutLength = std::function<bool(size_t offset,  protocols::http::DataSink &sink)>;

@@ -26,7 +26,12 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSESINK
 
 #include <string>
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 #include "src/framework/pipeline/sink.h"
+#include "../../response/response.h"
+#include "../responseparser/responseparser.h"
+#include "src/components/parser/context.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
@@ -34,19 +39,20 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public:
 
-        HTTPSink() = default;
+        HTTPSink();
         virtual ~HTTPSink() = default;
 
         virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );
-        std::string GetData();
+        ref_of<HTTPResponse>::type GetResponse();
 
     protected:
 
+        virtual size_t Write(byte* data, size_t bytesToWrite);
         bool Pull(size_t& unitsWritten, size_t unitsToWrite);
         bool Push(size_t& unitsWritten, size_t unitsToWrite);
-        virtual size_t Write(byte* data, size_t bytesToWrite);
-
-        std::string m_data;
+        
+        ref_of<parser::Context>::type m_context;
+        /*HTTPResponse*/parser::Parser m_parser;
     };
 
 }}}}//qor::components::protocols::http

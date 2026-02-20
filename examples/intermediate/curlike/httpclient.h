@@ -34,7 +34,7 @@
 #include "src/components/protocols/http/protocol.h"
 #include "src/components/protocols/http/response/response.h"
 
-using ResponseHandler = std::function<bool(const qor::components::protocols::http::HTTPResponse &response)>;
+using ResponseHandler = std::function<bool(const qor::components::protocols::http::HTTPResponse &aresponse)>;
 
 class HTTPClient
 {

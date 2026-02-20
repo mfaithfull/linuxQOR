@@ -25,14 +25,27 @@
 #include "src/configuration/configuration.h"
 #include "sink.h"
 #include "src/framework/pipeline/source.h"
+#include "../responseparser/responsenode.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    std::string HTTPSink::GetData()
+    HTTPSink::HTTPSink() :
+        m_context(new_ref<parser::Context>())
     {
-        return m_data;
+        m_parser.SetInitialState(new_ref<response::Initial>(&m_parser));
     }
-    
+
+    ref_of<HTTPResponse>::type HTTPSink::GetResponse()
+    {        
+        auto responseNode = m_parser.PopNode().template AsRef<response::ResponseNode>();
+        if(responseNode.IsNotNull())
+        {
+            return responseNode->GetObject();
+        }
+        //TODO: warning
+        return ref_of<HTTPResponse>::type();
+    }    
+
     bool HTTPSink::Write(size_t& unitsWritten, size_t unitsToWrite)
     {
         return (unitsToWrite == 0 || Pull(unitsWritten, unitsToWrite)) ? Push(unitsWritten, unitsWritten) : false;
@@ -72,8 +85,9 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     size_t HTTPSink::Write(byte* data, size_t bytesToWrite)
     {
-        m_data.append(std::string((const char*)(data), bytesToWrite));
-        return bytesToWrite;
+        m_context->SetData(data, bytesToWrite);
+        m_parser.Run();
+        return m_context->GetPosition();
     }
 
 }}}}//qor::components::protocols::http
