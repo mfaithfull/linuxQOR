@@ -60,9 +60,8 @@ qor::components::protocols::http::HTTPResponse HTTPClient::Receive()
 {
     if(m_client.Receive())
     {
-        
-    }
-    //TODO:Feed the raw response data from the pipeline through a ResponseParser to get an HTTPResponse object
+        return m_sink.GetResponse();
+    }    
     qor::components::protocols::http::HTTPResponse failure;
     failure.SetValue("Failed to Receieve a response from server");
     return failure;

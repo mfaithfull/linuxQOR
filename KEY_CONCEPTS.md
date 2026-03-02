@@ -14,7 +14,7 @@ Probably not at all.
 Why don't we have utilities folders or files anymore?
 Maybe your project still does. Where should that code be instead?
 In the framework. Over the years frameworks and standard libraries have improved to include a lot of the utilities that we used to have to write ourselves.
-So frameworks are important, they've become more and more important as they've taken on more work. Maybe its time to look again at the layering of application over framework that has evolved over the years. 
+So frameworks are important and they've become more and more important as they've taken on more work. Maybe its time to look again at the layering of application over framework that has evolved over the years. 
 
 
 Building frameworks is not like building applications. There is no spec, no requirements other than to make it easier to build applications. There are just ideas and experience.
@@ -35,7 +35,7 @@ Truly separating concerns and controlling dependencies is one of the three harde
 # Self aware software
 
 By now we hopefully all understand the costs and benefits of unit testing and TDD. 
-What is unit testing and other level of automated testing? 
+What is unit testing and other levels of automated testing? 
 What is happening when you run a unit test?
 You're getting a software system to test itself. You don't do the actual testing, the software does it and then reports the pass or fail. In a way this is the most basic and also the most important aspect of self aware software. The software knows what it's supposed to do and not do and can assess it's own fitness.
 
@@ -66,18 +66,18 @@ Hmm. We could definitely do better there. Apple spent a fortune writing an emula
 How about software connecting itself together?
 Libraries linking at compile time. Dynamic libraries wiring up interface at load time. Signals and delegates and internal lock free message queues connecting components at runtime. RPC and service busses and Kafka and internet protocols connecting outside the process boundary.
 
-That stuff is getting pretty good. It's a bit of a mess with all these different technologies. Each having their own way to do everything from connecting and disconnecting to security and encryption but we have a lot of good options now for getting one piece of software to talk to another in a standardised way. This is the foundation of modern micro services, where we pay the price of spending most of our time and effort sending and receiving messages, to get the benefits of scalability, independent deployability and being able to dive up large projects across multiple teams without inevitable disaster. The probability is somewhat reduced anyway.
+That stuff is getting pretty good. It's a bit of a mess with all these different technologies. Each having their own way to do everything from connecting and disconnecting to security and encryption but we have a lot of good options now for getting one piece of software to talk to another in a standardised way. This is the foundation of modern micro services, where we pay the price of spending most of our time and effort sending and receiving messages, to get the benefits of scalability, independent deployability and being able to divide up large projects across multiple teams without inevitable disaster. The probability is somewhat reduced anyway.
 
 Just one more aspect of Self aware software. Back to the low level.
 What have we not mentioned?
 
 Reflection. Code that can literally examine itself and act on what it finds.
-this is commonly used to automate serialization. So you don't have to write a read function and a write function for every type of object you want to be able to store in a file. You have functions for the built in types and reflection allows the code to reverse engineer the sequence of built in types from your aggregate type definitions, your struct and classes, and generate code to read and write whole objects at a time.
+this is commonly used to automate serialization. So you don't have to write a read function and a write function for every type of object you want to be able to store in a file. You have functions for the built in types and reflection allows the code to reverse engineer the sequence of built in types from your aggregate type definitions, your structs and classes, and generate code to read and write whole objects at a time.
 Serialization is just one of the things you can do with reflection. It's potentially useful for testing, debugging, tracing, monitoring, performance measurement and all kinds of introspecting things.
 Reflection is the basis for Aspect Oriented Programming, something we'll definitely talk more about.
 
 So what does this all add up to?
-All these things we've just talked about can be encapsulated in the idea of Self aware code. Software that looks at itself and operates on itself in some way. We've been inventing and reinventing these things for years without realizing that they're all part of the same idea. Making the software more self aware.
+All these things we've just talked about can be encapsulated in the idea of Self Aware Code. Software that looks at itself and operates on itself in some way. We've been inventing and reinventing these things for years without realizing that they're all part of the same idea. Making the software more self aware.
 
 All of these are things you probably want to use in your application but none of them do you want to have to write in each application. All these things belong in the framework. The framework should facilitate SOC and SAC.
 

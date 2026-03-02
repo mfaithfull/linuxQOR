@@ -26,21 +26,3 @@
 #include "src/configuration/configuration.h"
 #include "context.h"
 
-namespace qor { namespace components { namespace protocols { namespace http {
-
-    size_t Context::GetPosition()
-    {
-        return m_position;
-    }
-    
-    bool Context::PutOctet(byte data)
-    {
-        if(m_position < m_size)
-        {
-            m_space[m_position++] = data;
-            return true;
-        }
-        return false;
-    }
-
-}}}}//qor::components::protocols::http

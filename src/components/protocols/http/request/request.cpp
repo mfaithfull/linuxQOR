@@ -29,6 +29,12 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
+    HTTPRequest::HTTPRequest()
+    {
+        m_version.major = 1;
+        m_version.minor = 1;
+    }
+
     std::string HTTPRequest::AppendQueryParams(const std::string &path, const qor::components::protocols::http::Params &params) 
     {
         std::string path_with_query = path;

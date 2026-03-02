@@ -40,6 +40,11 @@ namespace qor { namespace components { namespace protocols { namespace http { na
     {
         responseChar = static_cast<uint64_t>(qor::components::parser::eToken::Max) + 1ull,
         response,
+        status_line,
+        specificString,
+        version,
+        status_code,
+        reason_phrase,
     };
 
     static const std::map<const uint64_t, const std::string> httpResponseTokenNames = {{
@@ -86,6 +91,161 @@ namespace qor { namespace components { namespace protocols { namespace http { na
             {
                 GetParser()->PushNode(node);
             }
+        }
+    };
+
+    class SpecificString : public parser::OneOrMore
+    {
+    public: SpecificString(parser::Parser* parser, const std::string& specific) : parser::OneOrMore(parser,
+                new_ref<parser::CHAR>(parser),
+                static_cast<uint64_t>(httpResponseToken::specificString)
+            )
+            {}
+
+        virtual ~SpecificString() = default;
+        virtual void Prepare()
+        {
+
+        }
+
+        virtual void Emit()
+        {
+
+        }
+
+        virtual void Fail()
+        {
+
+        }
+
+    };
+
+    class VersionParser : public parser::Sequence
+    {
+    public: VersionParser( parser::Parser* parser) : 
+                parser::Sequence( parser,
+                    new_ref<SpecificString>(parser, "HTTP"),
+                    new_ref<parser::Sequence>(parser,
+                        new_ref<parser::Specific>(parser, '/'),
+                        new_ref<parser::Sequence>(parser,
+                            new_ref<parser::DIGIT>(parser),
+                            new_ref<parser::Sequence>(parser,
+                                new_ref<parser::Specific>(parser, '.'),
+                                new_ref<parser::DIGIT>(parser)
+                            )
+                        )
+                    ),
+                    static_cast<uint64_t>(httpResponseToken::version)
+                )
+            {}
+
+        virtual ~VersionParser() = default;
+        virtual void Prepare()
+        {
+
+        }
+
+        virtual void Emit()
+        {
+
+        }
+        
+        virtual void Fail()
+        {
+
+        }
+    };
+
+    class ReasonPhraseParser : public parser::OneOrMore
+    {
+    public: ReasonPhraseParser(parser::Parser* parser) :
+                parser::OneOrMore( parser,
+                    new_ref<parser::ALPHA>(parser),
+                    static_cast<uint64_t>(httpResponseToken::reason_phrase)
+                )
+            {}
+        virtual ~ReasonPhraseParser() = default;
+        virtual void Prepare()
+        {
+
+        }
+
+        virtual void Emit()
+        {
+
+        }
+        
+        virtual void Fail()
+        {
+
+        }
+    };
+
+    class StatusCodeParser : public parser::Sequence
+    {
+    public: StatusCodeParser(parser::Parser* parser) :
+                parser::Sequence( parser,
+                    new_ref<parser::DIGIT>(parser),
+                    new_ref<parser::Sequence>(parser,
+                        new_ref<parser::DIGIT>(parser),
+                        new_ref<parser::DIGIT>(parser)
+                    ),
+                    static_cast<uint64_t>(httpResponseToken::status_code)
+                )
+            {}
+        virtual ~StatusCodeParser() = default;
+        virtual void Prepare()
+        {
+
+        }
+
+        virtual void Emit()
+        {
+
+        }
+        
+        virtual void Fail()
+        {
+
+        }
+    };
+    
+    class StatusLineParser : public parser::Sequence
+    {
+    public: StatusLineParser(parser::Parser* parser) : 
+                parser::Sequence( parser, 
+                    new_ref<VersionParser>(parser),
+                    new_ref<parser::Sequence>(parser,
+                        new_ref<parser::SP>(parser),
+                        new_ref<parser::Sequence>(parser,
+                            new_ref<StatusCodeParser>(parser),
+                            new_ref<parser::Sequence>(parser,
+                                new_ref<parser::SP>(parser),
+                                new_ref<parser::Sequence>(parser,
+                                    new_ref<ReasonPhraseParser>(parser),
+                                    new_ref<parser::CRLF>(parser)
+                                )
+                            )
+                        )                        
+                    ),
+                    static_cast<uint64_t>(httpResponseToken::status_line)
+                )
+            {}
+
+        virtual ~StatusLineParser() = default;
+        virtual void Prepare()
+        {
+
+        }
+
+        virtual void Emit()
+        {
+
+        }
+        
+        virtual void Fail()
+        {
+
         }
     };
 

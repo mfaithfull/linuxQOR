@@ -35,14 +35,15 @@
 #include "../headers/headers.h"
 #include "progress.h"
 #include "content.h"
+#include "../version.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
-    class HTTPRequest
+    class qor_pp_module_interface(QOR_HTTP) HTTPRequest
     {
     public:
 
-        HTTPRequest() = default;
+        HTTPRequest();
         virtual ~HTTPRequest() = default;
 
         void SetMethod(const std::string& method)
@@ -108,6 +109,17 @@ namespace qor { namespace components { namespace protocols { namespace http {
         const std::string& GetBody()
         {
             return m_body;
+        }
+
+        void SetVersion(unsigned int major, unsigned int minor)
+        {
+            m_version.major = major;
+            m_version.minor = minor;
+        }
+
+        HTTPVersion GetVersion()
+        {
+            return m_version;
         }
 
         void AddAcceptContentType(const std::string& acceptContentType)
@@ -224,7 +236,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         ContentProvider m_contentProvider;
         size_t m_authorizationCount = 0;
         std::chrono::time_point<std::chrono::steady_clock> m_startTime = (std::chrono::steady_clock::time_point::min)();
-
+        HTTPVersion m_version;
     };
 
 }}}}//qor::components::protocols::http

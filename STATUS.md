@@ -1,4 +1,7 @@
-End of JAN 2026. Reached another inflection point. The QOR now probably qualifies as a large project given that I've lost count of the number pf modules. The oprganiztional structire is holding however and neither dependencies of or sizes have got out of control. This kind of proves it works at least at this scale. Nothing scales forever but the QOR structire is probably good for anything I can linearly write myself in a year or two.
+1st March 2026. Serialization over pipelines now occuring although not heavily supported. We have working if incomplete examples of serialization and deserialization with parsing and generating of the file content. Lots of tidying up and consolidation to be done. Font loading has been started and the techniques are now being applied to HTTP Requests and Responses.
+========================================================================================================================
+
+End of JAN 2026. Reached another inflection point. The QOR now probably qualifies as a large project given that I've lost count of the number pf modules. The oprganiztional structure is holding however and neither dependencies of or sizes have got out of control. This kind of proves it works at least at this scale. Nothing scales forever but the QOR structure is probably good for anything I can linearly write myself in a year or two.
 The next logical step is a to get a real grip on serialization over pipelines. This opens up loading fonts and images and
 a return the the web server to write out responses.
 

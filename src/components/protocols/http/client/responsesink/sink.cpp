@@ -29,21 +29,14 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    HTTPSink::HTTPSink() :
-        m_context(new_ref<parser::Context>())
+    HTTPSink::HTTPSink() : m_context(new_ref<parser::Context>())
     {
         m_parser.SetInitialState(new_ref<response::Initial>(&m_parser));
     }
 
     ref_of<HTTPResponse>::type HTTPSink::GetResponse()
-    {        
-        auto responseNode = m_parser.PopNode().template AsRef<response::ResponseNode>();
-        if(responseNode.IsNotNull())
-        {
-            return responseNode->GetObject();
-        }
-        //TODO: warning
-        return ref_of<HTTPResponse>::type();
+    {
+        return m_response;
     }    
 
     bool HTTPSink::Write(size_t& unitsWritten, size_t unitsToWrite)
@@ -72,7 +65,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                     buffer->ReadAcknowledge(unitsWritten);
                     OnWriteSuccess(unitsWritten);
                 }
-                else //EOF?
+                else
                 {
                     return false;
                 }
@@ -86,7 +79,12 @@ namespace qor { namespace components { namespace protocols { namespace http {
     size_t HTTPSink::Write(byte* data, size_t bytesToWrite)
     {
         m_context->SetData(data, bytesToWrite);
-        m_parser.Run();
+        m_parser.Parse();
+        if(m_parser.IsComplete())
+        {
+            auto responseNode = m_parser.PopNode().template AsRef<response::ResponseNode>();
+            m_response = responseNode->GetObject();
+        }
         return m_context->GetPosition();
     }
 

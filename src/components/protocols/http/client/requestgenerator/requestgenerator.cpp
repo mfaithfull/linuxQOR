@@ -45,7 +45,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
             serious("No initial state set for HTTPRequestGenerator.");
             return -1;
         }
-        try{   
+        try
+        {   
             while(!IsComplete() && m_context->HasSpace())
             {
                 auto ref = CurrentState().operator->();
@@ -56,15 +57,16 @@ namespace qor { namespace components { namespace protocols { namespace http {
             }
             if(IsComplete())
             {
+                note("Generator completed successfuly within available buffer.");
             }
             if(!m_context->HasSpace())
             {
-                
+                note("Filled output buffer. Run generator again after flushing.");
             }
         }
-        catch(const Error* error)
+        catch(const Error& error)
         {
-            std::cerr << error->what().Content() << '\n';
+            std::cerr << error.what().Content() << '\n';
         }
         catch(const std::exception& e)
         {
@@ -75,7 +77,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
             std::cerr << "HTTPRequestGenerator failed due to unhandled exception.\n";
         }
 
-        std::cout << "Stack on exit has " << m_StateStack.size() << " states." << std::endl;
+        std::string stackNote = std::format("Stack on exit has {0} states.", m_StateStack.size());
+        note(stackNote);
         return m_result;
     }
 

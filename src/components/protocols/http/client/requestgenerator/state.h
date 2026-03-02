@@ -32,6 +32,10 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/workflow/workflow.h"
 #include "src/platform/architecture/detectarchitecture.h"
+#include "src/components/qor/threadmemory/smallobjectheap/smallobjectheap.h"
+#include "src/components/qor/threadmemory/smallobjectsource.h"
+#include "context.h"
+#include "requestgenerator.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
@@ -40,47 +44,206 @@ namespace qor { namespace components { namespace protocols { namespace http {
     class qor_pp_module_interface(QOR_HTTP) RequestGenState : public qor::workflow::State
     {
     public:
+        
+        inline RequestGenState(HTTPRequestGenerator* requestGenerator) : qor::workflow::State(requestGenerator)
+        {
+        }
 
-        RequestGenState(HTTPRequestGenerator* generator);
-        virtual ~RequestGenState() = default;
+        virtual inline ~RequestGenState() = default;
 
     protected:
 
-        class Context* GetContext();
-        workflow::Workflow* Workflow();
-        HTTPRequestGenerator* GetRequestGenerator();
+        inline class Context* GetContext()
+        {
+            return dynamic_cast<HTTPRequestGenerator*>(m_Workflow)->GetContext();
+        }
+
+        inline workflow::Workflow* Workflow()
+        {
+            return dynamic_cast<workflow::Workflow*>(m_Workflow);
+        }
+
+        inline HTTPRequestGenerator* GetRequestGenerator()
+        {
+            return dynamic_cast<HTTPRequestGenerator*>(m_Workflow);
+        }
+
     };
 
-    class qor_pp_module_interface(QOR_HTTP) RequestGenInitial : public RequestGenState
+    class RequestGenChar : public RequestGenState
     {
     public:
 
-        RequestGenInitial(HTTPRequestGenerator* generator);
-        virtual ~RequestGenInitial() = default;
+        inline RequestGenChar(HTTPRequestGenerator* generator, byte character) : RequestGenState(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this, character]()
+            {
+                m_EnteredAtLeastOnce = true;
+                std::cout << (char)character;
+                GetContext()->PutOctet(character);
+                Workflow()->PopState();
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce)
+                {
+                    Workflow()->PopState();
+                }
+            };
+        }
+
+        inline virtual ~RequestGenChar() = default;
+
+    private:
+
+        bool m_EnteredAtLeastOnce;
     };
 
-    class RequestGenGeneralTrailers : public RequestGenState
+    class RequestGenString : public RequestGenState
     {
     public:
-        RequestGenGeneralTrailers(HTTPRequestGenerator* generator);
-        virtual ~RequestGenGeneralTrailers() = default;
+
+        inline RequestGenString(HTTPRequestGenerator* generator, std::string str) : RequestGenState(generator), m_str(str)
+        {        
+            m_it = m_str.begin();
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this, str]()
+            {
+                m_EnteredAtLeastOnce = true;
+                if(m_it != m_str.end())
+                {                
+                    Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), (byte)(*m_it)));
+                }
+                else
+                {
+                    Workflow()->PopState();
+                }
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce == true)
+                {
+                    ++m_it;
+                }
+            };
+        }
+
+        inline virtual ~RequestGenString() = default;
+
+    private:
+
+        std::string::iterator m_it;
+        std::string m_str;
+        bool m_EnteredAtLeastOnce;
+    };
+
+    class RequestGenCRLF : public RequestGenState
+    {
+    public:
+
+        inline RequestGenCRLF(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+            
+            Enter = [this]()
+            {            
+                m_EnteredAtLeastOnce = true;            
+                Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), 0x0A));//LF
+                Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), 0x0D));//CR
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce)
+                {
+                    Workflow()->PopState();
+                }
+            };
+        };
+
+        inline virtual ~RequestGenCRLF() = default;
+
+    private:
+        bool m_EnteredAtLeastOnce;
     };
 
     class RequestGenTrailer : public RequestGenState
     {
     public:
-        RequestGenTrailer(HTTPRequestGenerator* generator, const std::pair<const std::string,std::string>& trailer);
+
+        inline RequestGenTrailer(HTTPRequestGenerator* generator, const std::pair<const std::string,std::string>& trailer) : RequestGenState(generator), m_trailer(trailer)
+        {
+            Enter = [this]()
+            {
+                //TODO: Proper Trailer objects with derivatives for general, request and entity trailers
+                Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), m_trailer.second));
+                Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), ':'));
+                Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), m_trailer.first));
+            };
+
+            Resume = [this]()
+            {
+                Workflow()->PopState();
+            };
+        }
+
         virtual ~RequestGenTrailer() = default;
 
     private:
         std::pair<const std::string,std::string> m_trailer;
     };
 
+    class RequestGenGeneralTrailers : public RequestGenState
+    {
+    public:
+        
+        inline RequestGenGeneralTrailers(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            Enter = [this]()
+            {
+                auto reqGen = GetRequestGenerator();
+                auto req = reqGen->GetRequest();
+                for(auto trailer : req->GetTrailers())
+                {
+                    Workflow()->PushState(new_ref<RequestGenTrailer>(GetRequestGenerator(), trailer));
+                }
+            };
+
+            Resume = [this]()
+            {
+                Workflow()->PopState();
+            };
+        }
+
+        virtual ~RequestGenGeneralTrailers() = default;
+    };
+
     class RequestGenTrailers : public RequestGenState
     {
     public:
 
-        RequestGenTrailers(HTTPRequestGenerator* generator);
+        inline RequestGenTrailers(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            Enter = [this]()
+            {
+                //TODO: separate lists of trailers for each sub type or filter them?
+                Workflow()->PushState(new_ref<RequestGenCRLF>(GetRequestGenerator()));
+                //Workflow()->PushState(new_ref<RequestGenEntityHeaders>)(GetRequestGenerator());
+                //Workflow()->PushState(new_ref<RequestGenRequestHeaders>)(GetRequestGenerator());
+                Workflow()->PushState(new_ref<RequestGenGeneralTrailers>(GetRequestGenerator()));
+            };
+
+            Resume = [this]()
+            {
+                Workflow()->PopState();
+            };
+        }
+
         virtual ~RequestGenTrailers() = default;
     };
 
@@ -88,14 +251,45 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public:
 
-        RequestGenBody(HTTPRequestGenerator* generator);
+        inline RequestGenBody(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            Enter = [this]()
+            {            
+                //TODO: This is a whole other can of worms where Content Providers and secondary data pipelines come in
+                //Mime gets involved and multiple providers for things like separator headers and content length
+                //What goes here must also match the headers weve already written or it becomes unparsable
+                Workflow()->PushState(new_ref<RequestGenCRLF>(GetRequestGenerator()));            
+            };
+
+            Resume = [this]()
+            {
+                Workflow()->PopState();
+            };
+        }
+
         virtual ~RequestGenBody() = default;
     };
 
     class RequestGenHeader : public RequestGenState
     {
     public:
-        RequestGenHeader(HTTPRequestGenerator* generator, const std::pair<const std::string,std::string>& header);
+
+        inline RequestGenHeader(HTTPRequestGenerator* generator, const std::pair<const std::string,std::string>& header) : RequestGenState(generator), m_header(header)
+        {
+            Enter = [this]()
+            {
+                //TODO: Proper Header objects with derivatives for general, request and entity headers
+                Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), m_header.second));
+                Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), ':'));
+                Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), m_header.first));
+            };
+
+            Resume = [this]()
+            {
+                Workflow()->PopState();
+            };
+        }
+
         virtual ~RequestGenHeader() = default;
 
     private:
@@ -105,7 +299,29 @@ namespace qor { namespace components { namespace protocols { namespace http {
     class RequestGenGeneralHeaders : public RequestGenState
     {
     public:
-        RequestGenGeneralHeaders(HTTPRequestGenerator* generator);
+
+        inline RequestGenGeneralHeaders(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            Enter = [this]()
+            {
+                auto reqGen = GetRequestGenerator();
+                auto req = reqGen->GetRequest();
+                for(auto header : req->GetHeaders())
+                {
+                    Workflow()->PushState(new_ref<RequestGenHeader>(GetRequestGenerator(), header));
+                }
+                if(req->GetHeaders().size() == 0)
+                {
+                    Workflow()->PopState();
+                }
+            };
+
+            Resume = [this]()
+            {
+                Workflow()->PopState();
+            };
+        }
+
         virtual ~RequestGenGeneralHeaders() = default;
     };
 
@@ -113,27 +329,69 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public:
 
-        RequestGenHeaders(HTTPRequestGenerator* generator);
+        inline RequestGenHeaders(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this]()
+            {
+                m_EnteredAtLeastOnce = true;
+                //TODO: separate lists of headers for each sub type or filter them?
+                Workflow()->PushState(new_ref<RequestGenCRLF>(GetRequestGenerator()));
+                //Workflow()->PushState(new_ref<RequestGenEntityHeaders>)(GetRequestGenerator());
+                //Workflow()->PushState(new_ref<RequestGenRequestHeaders>)(GetRequestGenerator());
+                Workflow()->PushState(new_ref<RequestGenGeneralHeaders>(GetRequestGenerator()));
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce)
+                {
+                    Workflow()->PopState();
+                }
+            };
+        }
+
         virtual ~RequestGenHeaders() = default;
 
     private:
         bool m_EnteredAtLeastOnce;
     };
 
-    class RequestGenLine : public RequestGenState
-    {
-    public:
-
-        RequestGenLine(HTTPRequestGenerator* generator);
-        virtual ~RequestGenLine() = default;
-    };
-
     class RequestGenVersion : public RequestGenState
     {
     public:
 
-        RequestGenVersion(HTTPRequestGenerator* generator);
-        virtual ~RequestGenVersion() = default;
+        inline RequestGenVersion(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            m_EnteredAtLeastOnce = false;
+
+            Enter = [this]()
+            {
+                m_EnteredAtLeastOnce  = true;
+                auto reqGen = GetRequestGenerator();
+                auto req = reqGen->GetRequest();
+                auto version = req->GetVersion();
+                std::string major = std::format("{0}", version.major);
+                std::string minor = std::format("{0}", version.minor);
+
+                Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), minor));
+                Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), '.'));
+                Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), major));
+                Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), '/'));
+                Workflow()->PushState(new_ref<RequestGenString>(GetRequestGenerator(), "HTTP"));
+            };
+
+            Resume = [this]()
+            {
+                if(m_EnteredAtLeastOnce)
+                {
+                    Workflow()->PopState();
+                }
+            };
+        }
+
+        inline virtual ~RequestGenVersion() = default;
 
     private:
         bool m_EnteredAtLeastOnce;
@@ -143,54 +401,86 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public:
 
-        RequestGenURI(HTTPRequestGenerator* generator);
-        virtual ~RequestGenURI() = default;
+        inline RequestGenURI(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            Enter = [this]()
+            {
+                auto reqGen = GetRequestGenerator();
+                auto req = reqGen->GetRequest();
+                Workflow()->SetState(new_ref<RequestGenChar>(GetRequestGenerator(), '/'));
+                //Workflow()->SetState(new_ref<RequestGenString>(reqGen, req->GetURI()));
+                //"http:" "//" host [ ":" port ] [ abs_path [ "?" query ]]
+            };
+        }
+
+        inline virtual ~RequestGenURI() = default;
     };
 
     class RequestGenMethod : public RequestGenState
     {
     public:
 
-        RequestGenMethod(HTTPRequestGenerator* generator);
-        virtual ~RequestGenMethod() = default;
+        inline RequestGenMethod(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            Enter = [this]()
+            {
+                auto reqGen = GetRequestGenerator();
+                auto req = reqGen->GetRequest();
+                Workflow()->SetState(new_ref<RequestGenString>(reqGen, req->GetMethod()));
+            };
+        }
+
+        inline virtual ~RequestGenMethod() = default;
     };
 
-    class RequestGenCRLF : public RequestGenState
+    class RequestGenLine : public RequestGenState
     {
     public:
 
-        RequestGenCRLF(HTTPRequestGenerator* generator);
-        virtual ~RequestGenCRLF() = default;
+        inline RequestGenLine(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            Enter = [this]()
+            {
+                Workflow()->PushState(new_ref<RequestGenCRLF>(GetRequestGenerator()));
+                Workflow()->PushState(new_ref<RequestGenVersion>(GetRequestGenerator()));
+                Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), ' '));
+                Workflow()->PushState(new_ref<RequestGenURI>(GetRequestGenerator()));
+                Workflow()->PushState(new_ref<RequestGenChar>(GetRequestGenerator(), ' '));
+                Workflow()->PushState(new_ref<RequestGenMethod>(GetRequestGenerator()));
+            };
 
-    private:
-        bool m_EnteredAtLeastOnce;
+            Resume = [this]()
+            {
+                Workflow()->PopState();
+            };
+        }
+
+        virtual ~RequestGenLine() = default;
     };
 
-    class RequestGenString : public RequestGenState
+    class qor_pp_module_interface(QOR_HTTP) RequestGenInitial : public RequestGenState
     {
     public:
 
-        RequestGenString(HTTPRequestGenerator* generator, std::string str);
-        virtual ~RequestGenString() = default;
+        inline RequestGenInitial(HTTPRequestGenerator* generator) : RequestGenState(generator)
+        {
+            Enter = [this]()
+            {            
+                Workflow()->PushState(new_ref<RequestGenTrailers>(GetRequestGenerator()));
+                Workflow()->PushState(new_ref<RequestGenBody>(GetRequestGenerator()));
+                Workflow()->PushState(new_ref<RequestGenHeaders>(GetRequestGenerator()));
+                Workflow()->PushState(new_ref<RequestGenLine>(GetRequestGenerator()));
+            };
 
-    private:
+            Resume = [this]()
+            {
+                Workflow()->PopState();
+            };
+        }
 
-        std::string::iterator m_it;
-        std::string m_str;
-        bool m_EnteredAtLeastOnce;
+        inline virtual ~RequestGenInitial() = default;
     };
 
-    class RequestGenChar : public RequestGenState
-    {
-    public:
-
-        RequestGenChar(HTTPRequestGenerator* generator, byte character);
-        virtual ~RequestGenChar() = default;
-
-    private:
-
-        bool m_EnteredAtLeastOnce;
-    };
 
     //RequestLine
         //Method
@@ -270,5 +560,12 @@ namespace qor { namespace components { namespace protocols { namespace http {
        accept-extension = ";" token [ "=" ( token | quoted-string ) ]
     */
 }}}}//qor::components::protocols::http
+
+/*
+namespace qor {
+    qor_pp_declare_source_of(components::protocols::http::RequestGenLine, components::threadmemory::SmallObjectSource) 
+    qor_pp_declare_source_of(typename ref_of<components::protocols::http::RequestGenLine>::type, components::threadmemory::SmallObjectSource) 
+}//qor
+*/
 
 #endif//QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTGENERATOR_STATE

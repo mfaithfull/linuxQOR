@@ -32,7 +32,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
-    class HTTPResponse
+    class qor_pp_module_interface(QOR_HTTP) HTTPResponse
     {
     public:
 

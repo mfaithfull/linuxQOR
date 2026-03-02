@@ -52,9 +52,10 @@ namespace qor { namespace components { namespace protocols { namespace http {
         bool Push(size_t& unitsWritten, size_t unitsToWrite);
         
         ref_of<parser::Context>::type m_context;
-        /*HTTPResponse*/parser::Parser m_parser;
+        parser::Parser m_parser;
+        ref_of<HTTPResponse>::type m_response;
     };
 
 }}}}//qor::components::protocols::http
 
-#endif // QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSESINK
+#endif// QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSESINK
