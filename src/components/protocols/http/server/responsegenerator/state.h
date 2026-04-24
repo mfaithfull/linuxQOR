@@ -58,7 +58,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
             return dynamic_cast<workflow::Workflow*>(m_Workflow);
         }
 
-        Generator* GetGenerator()
+        inline Generator* GetGenerator()
         {
             return dynamic_cast<Generator*>(m_Workflow);
         }
@@ -137,7 +137,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
             Enter = [this, str]()
             {
-                m_EnteredAtLeastOnce = true;
+                m_EnteredAtLeastOnce = true;                
                 if(m_it != m_str.end())
                 {                
                     Workflow()->PushState(new_ref<Char>(GetGenerator(), (byte)(*m_it)));

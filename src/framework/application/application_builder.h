@@ -54,7 +54,9 @@ namespace qor{ namespace framework{
             auto app = new_ref<AppClass>();
             AutoRedirect(app.template AsRef<Application>());
             app(qor_shared).SetName(appName);
+            app.Lock();
             config_function(app);
+            app.Unlock();
             return app.template AsRef<Application>();
         }
 

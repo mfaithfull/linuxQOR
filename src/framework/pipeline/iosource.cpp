@@ -77,17 +77,16 @@ namespace qor{ namespace pipeline{
             }
             return true;
         }
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
     //push the requested amount of data up the pipeline
     bool iosource_base::Push(size_t& unitsRead, size_t unitsToRead)
     {
-        if( GetFlowMode() == FlowMode::Push )
-        {
-            return ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0) ? true : false;
-        }
-        return true;
+        return ( GetFlowMode() == FlowMode::Push ) ? (ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0)) : true;
     }
 
 }}//qor::components

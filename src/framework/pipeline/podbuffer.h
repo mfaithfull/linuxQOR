@@ -54,7 +54,7 @@ namespace qor{ namespace pipeline{
             if(&src != this)
             {
                 Buffer::operator = (src);
-                memcpy(m_pAllocation, src.m_pAllocation, sizeof(pod_t) * m_allocationCount);                
+                memcpy(m_pAllocation, src.m_pAllocation, sizeof(pod_t) * std::min(m_allocationCount, src.m_allocationCount));                
             }
             return *this;
         }

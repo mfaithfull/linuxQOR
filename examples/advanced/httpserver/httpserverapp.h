@@ -26,10 +26,10 @@
 #define QOR_PP_H_EXAMPLES_HTTPSERVER_APP
 
 #include <string>
-#include "src/qor/instance/singleton.h"
-#include "src/framework/application/application.h"
+#include "src/qor/error/defaulterrorhandler.h"
+#include "src/qor/log/defaultloghandler.h"
 #include "src/framework/application/application_builder.h"
-#include "src/components/framework/optionparser/ioptionable.h"
+#include "src/components/framework/optionparser/getter.h"
 
 class HTTPServerApp : public qor::framework::Application, public qor::components::optparser::IOptionable
 {
@@ -39,16 +39,13 @@ private:
 
 public:
 
-    constexpr static const char* Name = "HTTP Server";
+    constexpr static const char* Name = "QOR HTTP Server";                  //Human readable application name
+    constexpr static const char* logTag = "httpserver";                     //Filesystem compatible name part for log files
 
-    HTTPServerApp() = default;
-    virtual ~HTTPServerApp() = default;
+    HTTPServerApp();
+    virtual ~HTTPServerApp();
 
-    void CustomConfigure()
-    {
-    }
-
-    //IOptionable interface
+    //IOptionable interface for command line options
     virtual const char* ProvideShortOptionString();                         //Implement to tell the parser what short options we support
     virtual qor::components::optparser::Option* ProvideLongOptions();       //Implement to tell the parser what long options we support
     virtual void ReceiveOptionSwitch(char c){}                              //Implement to receive switch options
@@ -56,11 +53,26 @@ public:
     virtual void ReceiveLongOption(const char* option, const char* value);  //Implement to receive long options
     virtual void ReceiveNonOption(const char* parameter){}                  //Implement to receive non option command line strings
 
+    //HTTPServerApp specific interface
+    HTTPServerApp& UseAggregatedLogging();                                  //Call to turn on Aggregated Logging. Requires aggregator component
+    const qor::DefaultErrorHandler& GetErrorHandler() const;
+    const qor::DefaultLogHandler& GetLogHandler() const;
+    int RunMultithreaded(const qor::ref_of<HTTPServerApp>::type&);               //App specific default Run function wraps running of workflow
+
+private:
+
+    void SetupAggregatedLogging() const;
+    void ShutdownAggregatedLogging() const;
+
+    bool m_useAggregatedLogging;
+    qor::DefaultErrorHandler m_errorHandler;
+    qor::DefaultLogHandler m_logHandler;
+    
 };
 
-namespace qor
-{
-    qor_pp_declare_instancer_of(HTTPServerApp, SingletonInstancer);
-}
+namespace qor{  
+    qor_pp_declare_instancer_of(HTTPServerApp, SingletonInstancer); 
+    qor_pp_declare_sync_of(HTTPServerApp, RecursiveMutex);
+}    //Make sure HTTPServerApp is instanced as a singleton with RecusiveMutex protection
 
 #endif//QOR_PP_H_EXAMPLES_HTTPSERVER_APP

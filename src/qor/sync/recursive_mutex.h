@@ -34,14 +34,15 @@ namespace qor{
     {
     public:
 
-        RecursiveMutex() = default;
+        RecursiveMutex();
         virtual ~RecursiveMutex() = default;
 
         virtual void Acquire();
         virtual void Release();
+        virtual bool IsLocked() const;
 
     private:
-
+        size_t m_Locked;
         std::recursive_mutex m_Impl;
     };
 

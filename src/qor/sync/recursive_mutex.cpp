@@ -27,14 +27,25 @@
 
 namespace qor{
 
-    void RecursiveMutex::Acquire()
+    RecursiveMutex::RecursiveMutex(): m_Locked {0}
     {
+    }
+
+    void RecursiveMutex::Acquire()
+    {        
         m_Impl.lock();
+        m_Locked++;
     }
 
     void RecursiveMutex::Release()
+    {   
+        m_Locked--;
+        m_Impl.unlock();        
+    }
+    
+    bool RecursiveMutex::IsLocked() const
     {
-        m_Impl.unlock();
+        return m_Locked > 0 ? true : false;
     }
         
 }//qor

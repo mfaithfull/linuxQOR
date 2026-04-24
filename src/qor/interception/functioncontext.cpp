@@ -29,6 +29,7 @@
 namespace qor {
 
 	FunctionContext::FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool bCoverage, AnyObject ObjContext) : m_ObjContext(ObjContext)
+		, m_bTraceCalls(false)
 		, m_uiLocked(0)
 		, m_TraceDepth(1)
 		, m_szFuncName(szFuncName)

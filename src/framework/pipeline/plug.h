@@ -65,9 +65,6 @@ namespace qor{ namespace pipeline{
     protected:
 
         bool m_connected;
-
-    private:
-
         SyncObject* m_syncobject;
     };
 

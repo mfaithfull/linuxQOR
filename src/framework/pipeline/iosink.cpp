@@ -57,14 +57,14 @@ namespace qor{ namespace pipeline{
         return (unitsToWrite == 0 || Pull(unitsWritten, unitsToWrite)) ? Push(unitsWritten, unitsWritten) : false;
     }
 
-    //pull the requested amount of data from the stream
+    //pull the requested amount of data from the source to the buffer
     bool iosink_base::Pull(size_t& unitsWritten, size_t unitsToWrite)
     {
         return GetFlowMode() == FlowMode::Pull ? 
         (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0 || unitsToWrite == 0) ? true : false) : true;
     }
 
-    //push the requested amount of data out of the door
+    //push the requested amount of data from the buffer to the sink
     bool iosink_base::Push(size_t& unitsWritten, size_t unitsToWrite)
     {
         if(unitsToWrite > 0)
@@ -79,16 +79,22 @@ namespace qor{ namespace pipeline{
                     unitsWritten = bytesWritten / buffer->GetUnitSize();
                     buffer->ReadAcknowledge(unitsWritten);
                     OnWriteSuccess(unitsWritten);
+                    return true;
                 }
-                else //EOF?
+                else
                 {
-                    return false;
-                }
-                return true;
+                    return false;//Nothing was written, the sink should have raised an error if that's a problem
+                }                
             }
-            return false;
+            else
+            {
+                return false;//TODO: Raise no source buffer error
+            }
         }
-        return true;
+        else
+        {
+            return true;//Writing zero units always succeeds
+        }
     }
 
 }}//qor::components

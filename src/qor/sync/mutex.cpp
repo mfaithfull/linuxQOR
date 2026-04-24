@@ -30,11 +30,18 @@ namespace qor{
     void Mutex::Acquire()
     {
         m_Impl.lock();
+        m_Locked = true;
     }
 
     void Mutex::Release()
     {
+        m_Locked = false;
         m_Impl.unlock();
     }
         
+    bool Mutex::IsLocked() const
+    {
+        return m_Locked;
+    }
+
 }//qor

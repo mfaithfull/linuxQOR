@@ -8,7 +8,7 @@ include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 set(target httpserver)
 
-add_executable(${target} httpserver_main.cpp app.cpp)
+add_executable(${target} httpserverapp.cpp)
 
 target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE)
 

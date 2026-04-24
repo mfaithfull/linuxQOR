@@ -54,11 +54,10 @@ namespace qor{ namespace components {
             connected->Enter = [this,protocol]()->void
             {
                 qor_pp_ofcontext;
-                log::inform("Servicing a connected client {0}", m_socket->m_fd);
+                log::debug("Servicing a connected client {0}", m_socket->m_fd);
                 auto application = framework::AppBuilder().TheApplication();
                 auto ioService = application(qor_shared).GetRole(qor_shared)->GetFeature<framework::AsyncIOService>();                
                 m_ioSession = ioService(qor_shared).GetSession();
-
                 m_pipeline = new_ref<SessionPipeline>(m_socket, m_ioSession, protocol);
                 SetState(running);
             };
@@ -76,7 +75,7 @@ namespace qor{ namespace components {
             disconnect->Enter = [this]()->void
             {
                 qor_pp_ofcontext;
-                log::inform("Disconnecting client {0}", m_socket->m_fd);                
+                log::debug("Disconnecting client {0}", m_socket->m_fd);                
                 m_socket->Shutdown(network::sockets::ShutdownReadWrite);
                 SetComplete(EXIT_SUCCESS);
                 PopState();
@@ -87,7 +86,9 @@ namespace qor{ namespace components {
 
         ~NetworkSession()
         {
+#ifndef NDEBUG
             framework::CurrentThread::GetCurrent().SetName("pool");//reset the thread name as we're about to hand it back to the pool
+#endif//DEBUG
         }
 
     private:

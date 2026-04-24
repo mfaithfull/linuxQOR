@@ -39,9 +39,10 @@ namespace qor{
 
         virtual void Acquire();
         virtual void Release();
+        virtual bool IsLocked() const;
 
     private:
-
+        bool m_Locked;
         std::mutex m_Impl;
     };
 

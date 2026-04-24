@@ -61,7 +61,7 @@ namespace qor{
         //Nailing down the address of the forward signal within the build of the log module, by using it,
         //prevents the 'optimization'.
         typedef void (DefaultLogHandler::*forwardFn)(std::string);
-        forwardFn GetForwardSignal();
+        forwardFn GetForwardSignal() const;
 
     private:
 

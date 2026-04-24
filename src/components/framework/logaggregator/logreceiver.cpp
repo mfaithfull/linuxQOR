@@ -46,6 +46,7 @@ namespace qor { namespace components{
     
     void LogReceiver::WriteToStandardOutput(bool write)
     {
+        std::scoped_lock<std::mutex> lock(m_mutex);
         m_writeToStandardOutput = write;
     }
 
@@ -61,6 +62,7 @@ namespace qor { namespace components{
         std::string strFileName;
         FileIndex index;
         size_t fileSize = 0;
+        std::scoped_lock<std::mutex> lock(m_mutex);
         do
         {
             strFileName = std::format("{0}{1}.log",fileNamePrefix, m_logRollNumber);
@@ -69,28 +71,26 @@ namespace qor { namespace components{
      
         FileIndex logFileIndex(path, strFileName);
 
+        m_refLogFile = filesystem->Open(logFileIndex, 
+            OpenFor::ReadWrite, logFileIndex.Exists() ? WithFlags::Append :
+            WithFlags::CreateNew | WithFlags::Exclusive
+        );
+        if(m_refLogFile.IsNotNull())
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
-            m_refLogFile = filesystem->Open(logFileIndex, 
-                OpenFor::ReadWrite, logFileIndex.Exists() ? WithFlags::Append :
-                WithFlags::CreateNew | WithFlags::Exclusive
-            );
-            if(m_refLogFile.IsNotNull())
-            {
-                m_writeToFileSystem = true;
-            }
+            m_writeToFileSystem = true;
         }
     }
 
     void LogReceiver::WriteToPipeline(bool write)
     {
+        std::scoped_lock<std::mutex> lock(m_mutex);
         m_writeToPipeline = write;
     }
 
     void LogReceiver::Stop()
     {
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock<std::mutex> lock(m_mutex);
             m_running = false;
         }
         m_alarm.notify_one();
@@ -100,7 +100,7 @@ namespace qor { namespace components{
     void LogReceiver::queueSlot(PendingSlot data, ConnectionKind type)
     {
         SlotBase* receiver = data.receiver();
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::scoped_lock<std::mutex> lock(m_mutex);
         m_array.push_back(std::move(data));
         m_alarm.notify_one();
     }

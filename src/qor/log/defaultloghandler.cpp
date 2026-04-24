@@ -36,7 +36,7 @@ namespace qor {
         qor_pp_emit(forward,logMessage);
     }
 
-    DefaultLogHandler::forwardFn DefaultLogHandler::GetForwardSignal() 
+    DefaultLogHandler::forwardFn DefaultLogHandler::GetForwardSignal() const
     {
         return &DefaultLogHandler::forward;
     }

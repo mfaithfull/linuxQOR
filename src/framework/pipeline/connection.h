@@ -73,7 +73,7 @@ namespace qor{ namespace pipeline{
 
         virtual void OnConnected(void)
         {
-            SetSyncObject(m_sync);	//Once connected always use the internal SyncObject for IO        
+            //SetSyncObject(m_syncobject);	//Once connected always use the internal SyncObject for IO        
         }
 
         virtual void SetReadOnly()
@@ -143,8 +143,7 @@ namespace qor{ namespace pipeline{
         bool m_readable;
         bool m_async;
         Element* m_source;
-        Element* m_sink;
-        SyncObject* m_sync;
+        Element* m_sink;        
     };
 
 }}//qor::pipeline

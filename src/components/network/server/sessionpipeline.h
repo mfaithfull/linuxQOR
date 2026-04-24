@@ -52,7 +52,7 @@ namespace qor{ namespace components {
             m_socketSource.SetPlug(&m_socketSessionConnector);
             SetSource(&m_socketSource, m_filter.operator->());
                         
-            //The sink goes back to the socket connector and also uses the protocol filter as it's read buffer
+            //The sink goes back to the socket connector and uses the protocol filter as it's read buffer
             m_socketSink.SetPlug(&m_socketSessionConnector);
             SetSink(&m_socketSink, m_filter.operator->());
 
@@ -64,7 +64,7 @@ namespace qor{ namespace components {
             GetSink()->GetBuffer()->SetCapacity(m_ioBufferSize);
             GetSource()->GetBuffer()->SetCapacity(m_ioBufferSize);
 
-            //Connect the socket session. In practice this is null as we are passed an already connected socket
+            //Connect the socket session. In practice this is noop as we are passed an already connected socket
             m_socketSessionConnector.Connect();
         }
 
@@ -75,7 +75,7 @@ namespace qor{ namespace components {
 
     private:
 
-        const size_t m_ioBufferSize = 1024;
+        const size_t m_ioBufferSize = 2048; //TODO: Make this configurable
         ref_of<pipeline::InlineFilter<byte>>::type m_filter;
         ref_of<network::Socket>::type m_socket;
         ref_of<framework::AsyncIOContext::Session>::type m_ioSession;

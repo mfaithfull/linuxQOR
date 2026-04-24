@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_ROLE_INTERFFACE
-#define QOR_PP_H_ROLE_INTERFFACE
+#ifndef QOR_PP_H_ROLE_INTERFACE
+#define QOR_PP_H_ROLE_INTERFACE
 
 #include "ifeature.h"
 #include "src/qor/injection/typeidentity.h"
@@ -51,15 +51,15 @@ namespace qor{ namespace framework{
         template< class TFeature >
         void AddFeature()
         {
-            AddFeature( guid_of<TFeature>::guid(), new_ref<TFeature>().template AsRef<IFeature>());
+            AddFeature(guid_of<TFeature>::guid(), new_ref<TFeature>().template AsRef<IFeature>());
         }
 
         template< class TFeature, typename feature_config_func>
         void AddFeature(feature_config_func&& configure)
         {
-			ref_of<IFeature>::type feature = new_ref<TFeature>().template AsRef<IFeature>();
-			configure(feature.template AsRef<TFeature>());
-            AddFeature( guid_of<TFeature>::guid(), feature);
+			ref_of<IFeature>::type feature = new_ref<TFeature>();
+            AddFeature(guid_of<TFeature>::guid(), feature.template AsRef<IFeature>());
+			configure(feature);            
         }
 
         template< class TFeature >
@@ -72,4 +72,4 @@ namespace qor{ namespace framework{
 
 }}//qor::framework
 
-#endif//QOR_PP_H_WORKFLOW_INTERFFACE
+#endif//QOR_PP_H_ROLE_INTERFACE

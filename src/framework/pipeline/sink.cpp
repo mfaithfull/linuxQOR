@@ -95,8 +95,7 @@ namespace qor{ namespace pipeline{
     }
 
     void Sink::SetPlug(Element* plug)
-    {
-        
+    {        
     }
 
     Element* Sink::GetPlug() const
@@ -111,7 +110,5 @@ namespace qor{ namespace pipeline{
         GetBuffer()->ReadAcknowledge(unitsWritten);        
         return true;
     }
-
-    
 
 }}//qor::pipeline

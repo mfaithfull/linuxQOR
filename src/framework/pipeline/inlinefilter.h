@@ -30,6 +30,9 @@
 
 namespace qor{ namespace pipeline{
 
+    //A pair of buffers that behave as one buffer and copy data between write source and sink as necessary
+    //Override the plain copying filter function to do transformation instead of just copying.
+
     template< class pod_t >
     class InlineFilter : public Buffer
     {

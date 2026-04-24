@@ -219,6 +219,11 @@ namespace qor{
 				m_Section.Release();
 			}
 
+			bool IsLocked() const
+			{
+				return m_Section.IsLocked();
+			}
+
 			template< class TDerived >
 			bool Configure()
 			{
@@ -389,7 +394,7 @@ namespace qor{
 		operator T* (void) const
 		{
 #ifndef NDEBUG			
-			if(m_p && m_p->LockIsReal() && m_p->m_ulRefCount != 0)
+			if(m_p && m_p->LockIsReal() && !m_p->IsLocked() && m_p->m_ulRefCount != 0)
 			{
 				throw std::logic_error("Synchronised object being accessed without auto locking. Did you forget a (qor_shared) ?");
 			}
@@ -424,7 +429,7 @@ namespace qor{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
 #ifndef NDEBUG
-			if(m_p->LockIsReal())
+			if(m_p->LockIsReal() && !m_p->IsLocked() && m_p->m_ulRefCount != 0)
 			{
 				throw std::logic_error("Synchronised object being accessed without auto locking. Did you forget a (qor_shared) ?");
 			}
@@ -439,7 +444,7 @@ namespace qor{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
 #ifndef NDEBUG
-			if(m_p->LockIsReal())
+			if(m_p->LockIsReal() && !m_p->IsLocked() && m_p->m_ulRefCount != 0)
 			{
 				throw std::logic_error("Synchronised object being accessed without auto locking. Did you forget a (qor_shared) ?");
 			}
