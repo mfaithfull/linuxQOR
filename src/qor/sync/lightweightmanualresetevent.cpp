@@ -33,7 +33,7 @@ namespace qor{ namespace detail{
 
     #include <system_error>
 
-    LightManualResetEvent::LightManualResetEvent(bool initiallySet) : m_isSet(initiallySet)
+    LightManualResetEvent::LightManualResetEvent(bool initiallySet) noexcept : m_isSet(initiallySet)
     {
     }
     
@@ -41,20 +41,20 @@ namespace qor{ namespace detail{
     {
     }
     
-    void LightManualResetEvent::set() noexcept
+    void LightManualResetEvent::Set() noexcept
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         m_isSet = true;
         m_cv.notify_all();
     }
     
-    void LightManualResetEvent::reset() noexcept
+    void LightManualResetEvent::Reset() noexcept
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         m_isSet = false;
     }
     
-    void LightManualResetEvent::wait() noexcept
+    void LightManualResetEvent::Wait() noexcept
     {
         std::unique_lock<std::mutex> lock(m_mutex);
         m_cv.wait(lock, [this] { return m_isSet; });

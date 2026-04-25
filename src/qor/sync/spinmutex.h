@@ -41,7 +41,7 @@ namespace qor
 		/// \return
 		/// true if the lock was acquired, false if the lock was already held
 		/// and could not be immediately acquired.
-		bool try_lock() noexcept;
+		bool TryLock() noexcept;
 
 		/// Block the current thread until the lock is acquired.
 		///
@@ -49,13 +49,13 @@ namespace qor
 		///
 		/// This has 'acquire' memory semantics and synchronises
 		/// with prior calls to unlock().
-		void lock() noexcept;
+		void Lock() noexcept;
 
 		/// Release the lock.
 		///
 		/// This has 'release' memory semantics and synchronises with
 		/// lock() and try_lock().
-		void unlock() noexcept;
+		void Unlock() noexcept;
 
 	private:
 

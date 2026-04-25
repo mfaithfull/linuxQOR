@@ -34,23 +34,8 @@ namespace qor{ namespace test
 {
     std::string const version { "0.1 based on YAFFUT 1.1" };
 
-
     class Factory final
     {
-    private:
-
-        std::list<TestCase> m_Tests;
-        int m_registeredCount;
-
-        Factory() : m_registeredCount(0) 
-        {
-        }
-
-        static bool EqualsSuiteName(std::string const& name, std::string const& s)
-        {
-            return (s.find(name) != std::string::npos);
-        }
-        
     public:
 		
     	static Factory& Instance()
@@ -175,6 +160,19 @@ namespace qor{ namespace test
             reporter.TestCaseEnded(info);
         }
 
+    private:
+
+        std::list<TestCase> m_Tests;
+        int m_registeredCount;
+
+        Factory() : m_registeredCount(0) 
+        {
+        }
+
+        static bool EqualsSuiteName(std::string const& name, std::string const& s)
+        {
+            return (s.find(name) != std::string::npos);
+        }
     };
 
 }}//qor::test

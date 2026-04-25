@@ -98,7 +98,7 @@ int main(const int argc, const char** argv, char** env)
 int HTTPServerApp::RunMultithreaded(const ref_of<HTTPServerApp>::type& owningref)
 {
     qor_pp_ofcontext;
-    log::inform("httpserver starting up");
+    log::inform("httpserver starting up");    
     owningref.Unlock();
     int result = RunWorkflow(new_ref<NetworkServer>(5080, new_ref<http::HTTPProtocol>()));
     owningref.Lock();

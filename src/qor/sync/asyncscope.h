@@ -47,7 +47,7 @@ namespace qor
 		}
 
 		template<typename AWAITABLE>
-		void spawn(AWAITABLE&& awaitable)
+		void Spawn(AWAITABLE&& awaitable)
 		{
 			[](AsyncScope* scope, std::decay_t<AWAITABLE> awaitable) -> oneway_task
 			{
@@ -57,7 +57,7 @@ namespace qor
 			}(this, std::forward<AWAITABLE>(awaitable));
 		}
 
-		[[nodiscard]] auto join() noexcept
+		[[nodiscard]] auto Join() noexcept
 		{
 			class awaiter
 			{

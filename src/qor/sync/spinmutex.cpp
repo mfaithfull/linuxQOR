@@ -35,24 +35,24 @@ namespace qor{
 	{
 	}
 
-	bool SpinMutex::try_lock() noexcept
+	bool SpinMutex::TryLock() noexcept
 	{
 		return !m_isLocked.exchange(true, std::memory_order_acquire);
 	}
 
-	void SpinMutex::lock() noexcept
+	void SpinMutex::Lock() noexcept
 	{
 		SpinWait wait;
-		while (!try_lock())
+		while (!TryLock())
 		{
 			while (m_isLocked.load(std::memory_order_relaxed))
 			{
-				wait.spin_one();
+				wait.SpinOne();
 			}
 		}
 	}
 
-	void SpinMutex::unlock() noexcept
+	void SpinMutex::Unlock() noexcept
 	{
 		m_isLocked.store(false, std::memory_order_release);
 	}

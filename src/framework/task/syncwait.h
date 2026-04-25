@@ -40,7 +40,7 @@ namespace qor
 		auto task = detail::make_sync_wait_task(std::forward<AWAITABLE>(awaitable));
 		detail::LightManualResetEvent event;
 		task.start(event);
-		event.wait();
+		event.Wait();
 		return task.result();
 	}
 }

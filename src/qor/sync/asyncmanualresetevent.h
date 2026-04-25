@@ -33,58 +33,58 @@ namespace qor
 {
 	class AsyncManualResetEventOperation;
 
-	/// An async manual-reset event is a coroutine synchronisation abstraction
-	/// that allows one or more coroutines to wait until some thread calls
-	/// set() on the event.
-	///
-	/// When a coroutine awaits a 'set' event the coroutine continues without
-	/// suspending. Otherwise, if it awaits a 'not set' event the coroutine is
-	/// suspended and is later resumed inside the call to 'set()'.
-	///
-	/// \seealso AsyncAutoResetEvent
+	// An async manual-reset event is a coroutine synchronisation abstraction
+	// that allows one or more coroutines to wait until some thread calls
+	// set() on the event.
+	//
+	// When a coroutine awaits a 'set' event the coroutine continues without
+	// suspending. Otherwise, if it awaits a 'not set' event the coroutine is
+	// suspended and is later resumed inside the call to 'set()'.
+	//
+	// \seealso AsyncAutoResetEvent
 	class qor_pp_module_interface(QOR_SYNC) AsyncManualResetEvent
 	{
 	public:
 
-		/// Initialise the event to either 'set' or 'not set' state.
-		///
-		/// \param initiallySet
-		/// If 'true' then initialises the event to the 'set' state, otherwise
-		/// initialises the event to the 'not set' state.
+		// Initialise the event to either 'set' or 'not set' state.
+		//
+		// \param initiallySet
+		// If 'true' then initialises the event to the 'set' state, otherwise
+		// initialises the event to the 'not set' state.
 		AsyncManualResetEvent(bool initiallySet = false) noexcept;
 
 		~AsyncManualResetEvent();
 
-		/// Wait for the event to enter the 'set' state.
-		///
-		/// If the event is already 'set' then the coroutine continues without
-		/// suspending.
-		///
-		/// Otherwise, the coroutine is suspended and later resumed when some
-		/// thread calls 'set()'. The coroutine will be resumed inside the next
-		/// call to 'set()'.
+		// Wait for the event to enter the 'set' state.
+		//
+		// If the event is already 'set' then the coroutine continues without
+		// suspending.
+		//
+		// Otherwise, the coroutine is suspended and later resumed when some
+		// thread calls 'set()'. The coroutine will be resumed inside the next
+		// call to 'set()'.
 		AsyncManualResetEventOperation operator co_await() const noexcept;
 
 		/// Query if the event is currently in the 'set' state.
-		bool is_set() const noexcept;
+		bool isSet() const noexcept;
 
-		/// Set the state of the event to 'set'.
-		///
-		/// If there are pending coroutines awaiting the event then all
-		/// pending coroutines are resumed within this call.
-		/// Any coroutines that subsequently await the event will continue
-		/// without suspending.
-		///
-		/// This operation is a no-op if the event was already 'set'.
-		void set() noexcept;
+		// Set the state of the event to 'set'.
+		//
+		// If there are pending coroutines awaiting the event then all
+		// pending coroutines are resumed within this call.
+		// Any coroutines that subsequently await the event will continue
+		// without suspending.
+		//
+		// This operation is a no-op if the event was already 'set'.
+		void Set() noexcept;
 
-		/// Set the state of the event to 'not-set'.
-		///
-		/// Any coroutines that subsequently await the event will suspend
-		/// until some thread calls 'set()'.
-		///
-		/// This is a no-op if the state was already 'not set'.
-		void reset() noexcept;
+		// Set the state of the event to 'not-set'.
+		//
+		// Any coroutines that subsequently await the event will suspend
+		// until some thread calls 'set()'.
+		//
+		// This is a no-op if the state was already 'not set'.
+		void Reset() noexcept;
 
 	private:
 

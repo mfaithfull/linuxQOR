@@ -68,8 +68,7 @@ namespace qor{
         assert(m_waiters == nullptr);
     }
 
-    AsyncAutoResetEventOperation
-    AsyncAutoResetEvent::operator co_await() const noexcept
+    AsyncAutoResetEventOperation AsyncAutoResetEvent::operator co_await() const noexcept
     {
         std::uint64_t oldState = m_state.load(std::memory_order_relaxed);
         if (local::get_set_count(oldState) > local::get_waiter_count(oldState))
@@ -90,7 +89,7 @@ namespace qor{
         return AsyncAutoResetEventOperation{ *this };
     }
 
-    void AsyncAutoResetEvent::set() noexcept
+    void AsyncAutoResetEvent::Set() noexcept
     {
         std::uint64_t oldState = m_state.load(std::memory_order_relaxed);
         do
@@ -118,7 +117,7 @@ namespace qor{
         }
     }
 
-    void AsyncAutoResetEvent::reset() noexcept
+    void AsyncAutoResetEvent::Reset() noexcept
     {
         std::uint64_t oldState = m_state.load(std::memory_order_relaxed);
         while (local::get_set_count(oldState) > local::get_waiter_count(oldState))

@@ -41,7 +41,7 @@ namespace qor{
         assert(m_waiters == nullptr);
     }
 
-    bool AsyncMutex::try_lock() noexcept
+    bool AsyncMutex::TryLock() noexcept
     {
         // Try to atomically transition from nullptr (not-locked) -> this (locked-no-waiters).
         auto oldState = not_locked;
@@ -52,17 +52,17 @@ namespace qor{
             std::memory_order_relaxed);
     }
 
-    AsyncMutexLockOperation AsyncMutex::lock_async() noexcept
+    AsyncMutexLockOperation AsyncMutex::LockAsync() noexcept
     {
         return AsyncMutexLockOperation{ *this };
     }
 
-    AsyncMutexScopedLockOperation AsyncMutex::scoped_lock_async() noexcept
+    AsyncMutexScopedLockOperation AsyncMutex::ScopedLockAsync() noexcept
     {
         return AsyncMutexScopedLockOperation{ *this };
     }
 
-    void AsyncMutex::unlock()
+    void AsyncMutex::Unlock()
     {
         assert(m_state.load(std::memory_order_relaxed) != not_locked);
 

@@ -36,77 +36,68 @@ namespace qor
 	class AsyncMutexLockOperation;
 	class AsyncMutexScopedLockOperation;
 
-	/// A mutex that can be locked asynchronously using 'co_await'.
-	///
-	/// Ownership of the mutex is not tied to any particular thread.
-	/// This allows the coroutine owning the lock to transition from
-	/// one thread to another while holding a lock.
-	///
-	/// Implementation is lock-free, using only std::atomic values for
-	/// synchronisation. Awaiting coroutines are suspended without blocking
-	/// the current thread if the lock could not be acquired synchronously.
+	// A mutex that can be locked asynchronously using 'co_await'.
+	//
+	// Ownership of the mutex is not tied to any particular thread.
+	// This allows the coroutine owning the lock to transition from
+	// one thread to another while holding a lock.
+	//
+	// Implementation is lock-free, using only std::atomic values for
+	// synchronisation. Awaiting coroutines are suspended without blocking
+	// the current thread if the lock could not be acquired synchronously.
 	class qor_pp_module_interface(QOR_SYNC) AsyncMutex
 	{
 	public:
 
-		/// \brief
-		/// Construct to a mutex that is not currently locked.
+		// Construct to a mutex that is not currently locked.
 		AsyncMutex() noexcept;
 
-		/// Destroys the mutex.
-		///
-		/// Behaviour is undefined if there are any outstanding coroutines
-		/// still waiting to acquire the lock.
+		// Destroys the mutex.
+		// Behaviour is undefined if there are any outstanding coroutines
+		// still waiting to acquire the lock.
 		~AsyncMutex();
 
-		/// \brief
-		/// Attempt to acquire a lock on the mutex without blocking.
-		///
-		/// \return
-		/// true if the lock was acquired, false if the mutex was already locked.
-		/// The caller is responsible for ensuring unlock() is called on the mutex
-		/// to release the lock if the lock was acquired by this call.
-		bool try_lock() noexcept;
+		// Attempt to acquire a lock on the mutex without blocking.
+		//
+		// true if the lock was acquired, false if the mutex was already locked.
+		// The caller is responsible for ensuring unlock() is called on the mutex
+		// to release the lock if the lock was acquired by this call.
+		bool TryLock() noexcept;
 
-		/// \brief
-		/// Acquire a lock on the mutex asynchronously.
-		///
-		/// If the lock could not be acquired synchronously then the awaiting
-		/// coroutine will be suspended and later resumed when the lock becomes
+		// Acquire a lock on the mutex asynchronously.
+		//
+		// If the lock could not be acquired synchronously then the awaiting
+		// coroutine will be suspended and later resumed when the lock becomes
 		/// available. If suspended, the coroutine will be resumed inside the
-		/// call to unlock() from the previous lock owner.
-		///
-		/// \return
-		/// An operation object that must be 'co_await'ed to wait until the
-		/// lock is acquired. The result of the 'co_await m.lock_async()'
-		/// expression has type 'void'.
-		AsyncMutexLockOperation lock_async() noexcept;
+		// call to unlock() from the previous lock owner.
+		//		
+		// An operation object that must be 'co_await'ed to wait until the
+		// lock is acquired. The result of the 'co_await m.lock_async()'
+		// expression has type 'void'.
+		AsyncMutexLockOperation LockAsync() noexcept;
 
-		/// \brief
-		/// Acquire a lock on the mutex asynchronously, returning an object that
-		/// will call unlock() automatically when it goes out of scope.
-		///
-		/// If the lock could not be acquired synchronously then the awaiting
-		/// coroutine will be suspended and later resumed when the lock becomes
-		/// available. If suspended, the coroutine will be resumed inside the
-		/// call to unlock() from the previous lock owner.
-		///
-		/// \return
-		/// An operation object that must be 'co_await'ed to wait until the
-		/// lock is acquired. The result of the 'co_await m.scoped_lock_async()'
-		/// expression returns an 'AsyncMutexLock' object that will call
-		/// this->mutex() when it destructs.
-		AsyncMutexScopedLockOperation scoped_lock_async() noexcept;
-
-		/// \brief
-		/// Unlock the mutex.
-		///
-		/// Must only be called by the current lock-holder.
-		///
-		/// If there are lock operations waiting to acquire the
-		/// mutex then the next lock operation in the queue will
-		/// be resumed inside this call.
-		void unlock();
+		// Acquire a lock on the mutex asynchronously, returning an object that
+		// will call unlock() automatically when it goes out of scope.
+		//
+		// If the lock could not be acquired synchronously then the awaiting
+		// coroutine will be suspended and later resumed when the lock becomes
+		// available. If suspended, the coroutine will be resumed inside the
+		// call to unlock() from the previous lock owner.
+		//		
+		// An operation object that must be 'co_await'ed to wait until the
+		// lock is acquired. The result of the 'co_await m.scoped_lock_async()'
+		// expression returns an 'AsyncMutexLock' object that will call
+		// this->mutex() when it destructs.
+		AsyncMutexScopedLockOperation ScopedLockAsync() noexcept;
+		
+		// Unlock the mutex.
+		//
+		// Must only be called by the current lock-holder.
+		//
+		// If there are lock operations waiting to acquire the
+		// mutex then the next lock operation in the queue will
+		// be resumed inside this call.
+		void Unlock();
 
 	private:
 
@@ -136,14 +127,13 @@ namespace qor
 
 	};
 
-	/// \brief
-	/// An object that holds onto a mutex lock for its lifetime and
-	/// ensures that the mutex is unlocked when it is destructed.
-	///
-	/// It is equivalent to a std::lock_guard object but requires
-	/// that the result of co_await AsyncMutex::lock_async() is
-	/// passed to the constructor rather than passing the AsyncMutex
-	/// object itself.
+	// An object that holds onto a mutex lock for its lifetime and
+	// ensures that the mutex is unlocked when it is destructed.
+	//
+	// It is equivalent to a std::lock_guard object but requires
+	// that the result of co_await AsyncMutex::lock_async() is
+	// passed to the constructor rather than passing the AsyncMutex
+	// object itself.
 	class qor_pp_module_interface(QOR_SYNC) AsyncMutexLock
 	{
 	public:
@@ -163,7 +153,7 @@ namespace qor
 		{
 			if (m_mutex != nullptr)
 			{
-				m_mutex->unlock();
+				m_mutex->Unlock();
 			}
 		}
 

@@ -39,6 +39,8 @@ namespace qor{
         m_Impl.unlock();
     }
         
+    //Note results are inherently unreliable in an actual mutithreaded environment. 
+    //They only really make sense in a startup, single threaded situation.
     bool Mutex::IsLocked() const
     {
         return m_Locked;

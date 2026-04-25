@@ -34,7 +34,7 @@ namespace qor{
     {
     public:
 
-        Mutex() = default;
+        Mutex() noexcept = default;
         virtual ~Mutex() = default;
 
         virtual void Acquire();

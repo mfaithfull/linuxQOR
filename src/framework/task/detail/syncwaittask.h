@@ -78,7 +78,7 @@ namespace qor{	namespace detail{
 
 				void await_suspend(coroutine_handle_t coroutine) const noexcept
 				{
-					coroutine.promise().m_event->set();
+					coroutine.promise().m_event->Set();
 				}
 
 				void await_resume() noexcept {}
@@ -161,7 +161,7 @@ namespace qor{	namespace detail{
 
 				void await_suspend(coroutine_handle_t coroutine) const noexcept
 				{
-					coroutine.promise().m_event->set();
+					coroutine.promise().m_event->Set();
 				}
 
 				void await_resume() noexcept {}

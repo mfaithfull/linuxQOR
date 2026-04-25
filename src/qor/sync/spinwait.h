@@ -34,9 +34,9 @@ namespace qor{
 	public:
 
 		SpinWait() noexcept;
-		bool next_spin_will_yield() const noexcept;
-		void spin_one() noexcept;
-		void reset() noexcept;
+		bool NextSpinWillYield() const noexcept;
+		void SpinOne() noexcept;
+		void Reset() noexcept;
 
 	private:
 

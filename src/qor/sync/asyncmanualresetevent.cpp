@@ -41,7 +41,7 @@ namespace qor{
             m_state.load(std::memory_order_relaxed) == static_cast<void*>(this));
     }
 
-    bool AsyncManualResetEvent::is_set() const noexcept
+    bool AsyncManualResetEvent::isSet() const noexcept
     {
         return m_state.load(std::memory_order_acquire) == static_cast<const void*>(this);
     }
@@ -51,7 +51,7 @@ namespace qor{
         return AsyncManualResetEventOperation{ *this };
     }
 
-    void AsyncManualResetEvent::set() noexcept
+    void AsyncManualResetEvent::Set() noexcept
     {
         void* const setState = static_cast<void*>(this);
 
@@ -73,7 +73,7 @@ namespace qor{
         }
     }
 
-    void AsyncManualResetEvent::reset() noexcept
+    void AsyncManualResetEvent::Reset() noexcept
     {
         void* oldState = static_cast<void*>(this);
         m_state.compare_exchange_strong(oldState, nullptr, std::memory_order_relaxed);
@@ -85,7 +85,7 @@ namespace qor{
 
     bool AsyncManualResetEventOperation::await_ready() const noexcept
     {
-        return m_event.is_set();
+        return m_event.isSet();
     }
 
     bool AsyncManualResetEventOperation::await_suspend( std::coroutine_handle<> awaiter) noexcept

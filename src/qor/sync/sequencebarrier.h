@@ -44,19 +44,19 @@ namespace qor
 	template<typename SEQUENCE, typename TRAITS, typename SCHEDULER>
 	class sequence_barrier_wait_operation;
 
-	/// A sequence barrier is a synchronisation primitive that allows a single-producer
-	/// and multiple-consumers to coordinate with respect to a monotonically increasing
-	/// sequence number.
-	///
-	/// A single producer advances the sequence number by publishing new sequence numbers in a
-	/// monotonically increasing order. One or more consumers can query the last-published
-	/// sequence number and can wait until a particular sequence number has been published.
-	///
-	/// A sequence barrier can be used to represent a cursor into a thread-safe producer/consumer
-	/// ring-buffer.
-	///
-	/// See the LMAX Disruptor pattern for more background:
-	/// https://lmax-exchange.github.io/disruptor/files/Disruptor-1.0.pdf
+	// A sequence barrier is a synchronisation primitive that allows a single-producer
+	// and multiple-consumers to coordinate with respect to a monotonically increasing
+	// sequence number.
+	//
+	// A single producer advances the sequence number by publishing new sequence numbers in a
+	// monotonically increasing order. One or more consumers can query the last-published
+	// sequence number and can wait until a particular sequence number has been published.
+	//
+	// A sequence barrier can be used to represent a cursor into a thread-safe producer/consumer
+	// ring-buffer.
+	//
+	// See the LMAX Disruptor pattern for more background:
+	// https://lmax-exchange.github.io/disruptor/files/Disruptor-1.0.pdf
 	template< typename SEQUENCE = std::size_t, typename TRAITS = detail::sequence_of<SEQUENCE> >
 	class SequenceBarrier
 	{

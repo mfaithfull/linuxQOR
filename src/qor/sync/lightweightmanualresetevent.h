@@ -36,15 +36,13 @@ namespace qor{ namespace detail{
     {
     public:
 
-        LightManualResetEvent(bool initiallySet = false);
+        LightManualResetEvent(bool initiallySet = false) noexcept;
 
         ~LightManualResetEvent();
 
-        void set() noexcept;
-
-        void reset() noexcept;
-
-        void wait() noexcept;
+        void Set() noexcept;
+        void Reset() noexcept;
+        void Wait() noexcept;
 
     private:
 

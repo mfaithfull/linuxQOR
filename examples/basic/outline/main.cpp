@@ -67,7 +67,7 @@ int main()
     /*The QOR Application class is a context for running 
     Workflows and anything else that meets the 
     requirements for a runable object
-    Our Application instance is a shared global resource so
+    Our Application instance is a shared, global resource so
     we access it with synchronisation even though this app
     is safely single threaded.*/
     return outlineApp(qor_shared).Run
@@ -87,7 +87,7 @@ int main()
                 /*The traditional C++ Hello world*/
                 std::cout << "Hello from the QOR Outline application." << std::endl;
 
-                /*This is the integer that the runnable lambda
+                /*This is the integer value that this lambda
                 and then the main function will return*/
                 return EXIT_SUCCESS;
             }
@@ -108,7 +108,7 @@ void AccessLibraries()
         [](Module* module)
         {
             std::cout << "Module: " << module->Name() << " : " << module->Version() << std::endl;
-            /*Visit all the static libraries linked into the module.*/
+            /*Visit all the QOR static libraries linked into the module.*/
             module->VisitLibraries(
                 [](Library* library)
                 {

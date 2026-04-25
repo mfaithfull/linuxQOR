@@ -153,14 +153,14 @@ namespace qor{
 		{
 			return false;
 		}
-
+/*
 		void Lock() const
 		{
 		}
 
 		void Unlock() const
 		{
-		}
+		}*/
 
 	protected:
 
