@@ -36,7 +36,6 @@
 
 using namespace qor;
 using namespace qor::test;
-//using namespace qor::framework;
 
 struct AsyncMutexTestSuite{};
 
@@ -44,8 +43,8 @@ qor_pp_test_suite_case(AsyncMutexTestSuite, try_lock)
 {
 	AsyncMutex mutex;
 
-	qor_pp_assert_that(mutex.try_lock());
-	qor_pp_assert_that(mutex.try_lock()).isFalse();
-	mutex.unlock();
-	qor_pp_assert_that(mutex.try_lock());
+	qor_pp_assert_that(mutex.TryLock());
+	qor_pp_assert_that(mutex.TryLock()).isFalse();
+	mutex.Unlock();
+	qor_pp_assert_that(mutex.TryLock());
 }

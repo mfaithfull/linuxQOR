@@ -43,34 +43,34 @@ struct AsyncLatchTestSuite{};
 qor_pp_test_suite_case(AsyncLatchTestSuite, latch_constructed_with_zero_count_is_initially_ready)
 {
 	AsyncLatch latch(0);
-	qor_pp_assert_that(latch.is_ready());
+	qor_pp_assert_that(latch.isReady());
 }
 
 qor_pp_test_suite_case(AsyncLatchTestSuite, latch_constructed_with_negative_count_is_initially_ready)
 {
 	AsyncLatch latch(-3);
-	qor_pp_assert_that(latch.is_ready());
+	qor_pp_assert_that(latch.isReady());
 }
 
 qor_pp_test_suite_case(AsyncLatchTestSuite, count_down_and_is_ready)
 {
 	AsyncLatch latch(3);
-	qor_pp_assert_that(!latch.is_ready());
+	qor_pp_assert_that(!latch.isReady());
 	latch.count_down();
-	qor_pp_assert_that(!latch.is_ready());
+	qor_pp_assert_that(!latch.isReady());
 	latch.count_down();
-	qor_pp_assert_that(!latch.is_ready());
+	qor_pp_assert_that(!latch.isReady());
 	latch.count_down();
-	qor_pp_assert_that(latch.is_ready());
+	qor_pp_assert_that(latch.isReady());
 }
 
 qor_pp_test_suite_case(AsyncLatchTestSuite, count_down_by_n)
 {
 	AsyncLatch latch(5);
 	latch.count_down(3);
-	qor_pp_assert_that(!latch.is_ready());
+	qor_pp_assert_that(!latch.isReady());
 	latch.count_down(2);
-	qor_pp_assert_that(latch.is_ready());
+	qor_pp_assert_that(latch.isReady());
 }
 
 qor_pp_test_suite_case(AsyncLatchTestSuite, single_awaiter)

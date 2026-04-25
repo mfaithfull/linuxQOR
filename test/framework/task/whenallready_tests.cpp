@@ -81,7 +81,7 @@ qor_pp_test_suite_case(WhenallReadyTestSuite, when_all_ready_with_one_task)
 	{
 		qor_pp_assert_that(started);
 		qor_pp_assert_that(!finished);
-		event.set();
+		event.Set();
 		qor_pp_assert_that(finished);
 		co_return;
 	}()));
@@ -121,11 +121,11 @@ qor_pp_test_suite_case(WhenallReadyTestSuite, when_all_ready_with_multiple_tasks
 		qor_pp_assert_that(started1);
 		qor_pp_assert_that(started2);
 
-		event2.set();
+		event2.Set();
 
 		qor_pp_assert_that(!whenAllAwaitableFinished);
 
-		event1.set();
+		event1.Set();
 
 		qor_pp_assert_that(whenAllAwaitableFinished);
 
@@ -151,7 +151,7 @@ qor_pp_test_suite_case(WhenallReadyTestSuite, when_all_ready_with_all_task_types
 	}(),
 		[&]() -> task<>
 	{
-		event.set();
+		event.Set();
 		co_return;
 	}()));
 }
@@ -197,7 +197,7 @@ qor_pp_test_suite_case(WhenallReadyTestSuite, when_all_ready_with_vector_T)
 		qor_pp_assert_that(startedCount == 10u);
 		qor_pp_assert_that(finishedCount == 0u);
 
-		event.set();
+		event.Set();
 
 		qor_pp_assert_that(finishedCount == 10u);
 
@@ -246,7 +246,7 @@ qor_pp_test_suite_case(WhenallReadyTestSuite, when_all_ready_with_vector_shared_
 		qor_pp_assert_that(startedCount == 10u);
 		qor_pp_assert_that(finishedCount == 0u);
 
-		event.set();
+		event.Set();
 
 		qor_pp_assert_that(finishedCount == 10u);
 

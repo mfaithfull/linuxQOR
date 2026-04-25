@@ -40,29 +40,29 @@ struct AsyncManualRestEventTestSuite{};
 qor_pp_test_suite_case(AsyncManualRestEventTestSuite, default_constructor_initially_not_set)
 {
 	AsyncManualResetEvent event;
-	qor_pp_assert_that(!event.is_set());
+	qor_pp_assert_that(!event.isSet());
 }
 
 qor_pp_test_suite_case(AsyncManualRestEventTestSuite, construct_event_initially_set)
 {
 	AsyncManualResetEvent event{ true };
-	qor_pp_assert_that(event.is_set());
+	qor_pp_assert_that(event.isSet());
 }
 
 qor_pp_test_suite_case(AsyncManualRestEventTestSuite, set_and_reset)
 {
 	AsyncManualResetEvent event;
-	qor_pp_assert_that(!event.is_set());
-	event.set();
-	qor_pp_assert_that(event.is_set());
-	event.set();
-	qor_pp_assert_that(event.is_set());
-	event.reset();
-	qor_pp_assert_that(!event.is_set());
-	event.reset();
-	qor_pp_assert_that(!event.is_set());
-	event.set();
-	qor_pp_assert_that(event.is_set());
+	qor_pp_assert_that(!event.isSet());
+	event.Set();
+	qor_pp_assert_that(event.isSet());
+	event.Set();
+	qor_pp_assert_that(event.isSet());
+	event.Reset();
+	qor_pp_assert_that(!event.isSet());
+	event.Reset();
+	qor_pp_assert_that(!event.isSet());
+	event.Set();
+	qor_pp_assert_that(event.isSet());
 }
 
 qor_pp_test_suite_case(AsyncManualRestEventTestSuite, await_not_set_event)
@@ -83,12 +83,12 @@ qor_pp_test_suite_case(AsyncManualRestEventTestSuite, await_not_set_event)
 		qor_pp_assert_that(!completed1);
 		qor_pp_assert_that(!completed2);
 
-		event.reset();
+		event.Reset();
 
 		qor_pp_assert_that(!completed1);
 		qor_pp_assert_that(!completed2);
 
-		event.set();
+		event.Set();
 
 		qor_pp_assert_that(completed1);
 		qor_pp_assert_that(completed2);

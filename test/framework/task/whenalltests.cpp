@@ -89,7 +89,7 @@ qor_pp_test_suite_case(WhenallTestSuite, when_all_with_one_arg)
 	{
 		qor_pp_assert_that(started);
 		qor_pp_assert_that(!finished);
-		event.set();
+		event.Set();
 		qor_pp_assert_that(finished);
 		co_return;
 	}()));
@@ -105,19 +105,19 @@ qor_pp_test_suite_case(WhenallTestSuite, when_all_with_awaitables)
 		};
 
 		AsyncManualResetEvent event;
-		event.set();
+		event.Set();
 
 		AsyncMutex mutex;
 
 		auto[eventResult, mutexLock, number] = co_await when_all(
 			std::ref(event),
-			mutex.scoped_lock_async(),
+			mutex.ScopedLockAsync(),
 			makeTask(123) | fmap([](int x) { return x + 1; }));
 
 		(void)eventResult;
 		(void)mutexLock;
 		qor_pp_assert_that(number == 124);
-		qor_pp_assert_that(!mutex.try_lock());
+		qor_pp_assert_that(!mutex.TryLock());
 	}());
 }
 
@@ -144,7 +144,7 @@ qor_pp_test_suite_case(WhenallTestSuite, when_all_with_all_task_types)
 		run(event),
 		[&]() -> task<>
 	{
-		event.set();
+		event.Set();
 		co_return;
 	}()));
 }
@@ -257,11 +257,11 @@ qor_pp_test_suite_case(WhenallTestSuite, when_all_with_vector_task)
 		qor_pp_assert_that(startedCount == 3);
 		qor_pp_assert_that(!finished);
 
-		event1.set();
+		event1.Set();
 
 		qor_pp_assert_that(!finished);
 
-		event2.set();
+		event2.Set();
 
 		qor_pp_assert_that(finished);
 		co_return;
@@ -305,11 +305,11 @@ qor_pp_test_suite_case(WhenallTestSuite, when_all_with_vector_shared_task)
 		qor_pp_assert_that(startedCount == 3);
 		qor_pp_assert_that(!finished);
 
-		event1.set();
+		event1.Set();
 
 		qor_pp_assert_that(!finished);
 
-		event2.set();
+		event2.Set();
 
 		qor_pp_assert_that(finished);
 
@@ -347,9 +347,9 @@ namespace
 			[&]() -> task<>
 		{
 			qor_pp_assert_that(!whenAllCompleted);
-			event2.set();
+			event2.Set();
 			qor_pp_assert_that(!whenAllCompleted);
-			event1.set();
+			event1.Set();
 			qor_pp_assert_that(whenAllCompleted);
 			co_return;
 		}()));
@@ -420,9 +420,9 @@ namespace
 			[&]() -> task<>
 		{
 			qor_pp_assert_that(!whenAllComplete);
-			event2.set();
+			event2.Set();
 			qor_pp_assert_that(!whenAllComplete);
-			event1.set();
+			event1.Set();
 			qor_pp_assert_that(whenAllComplete);
 			co_return;
 		}()));

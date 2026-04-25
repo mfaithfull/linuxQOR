@@ -69,7 +69,7 @@ qor_pp_test_suite_case(AsyncAutoResetEventTestSuite, testSingleWaiter)
 		qor_pp_assert_that(started).isTrue();
 		qor_pp_assert_that(finished).isFalse();
 
-		event.set();
+		event.Set();
 
 		qor_pp_assert_that(finished).isTrue();
 
@@ -97,12 +97,12 @@ qor_pp_test_suite_case(AsyncAutoResetEventTestSuite, testMultipleWaiters)
 		qor_pp_assert_that(completed1).isFalse();
 		qor_pp_assert_that(completed2).isFalse();
 
-		event.set();
+		event.Set();
 
 		qor_pp_assert_that(completed1).isTrue();
 		qor_pp_assert_that(completed2).isFalse();
 
-		event.set();
+		event.Set();
 
 		qor_pp_assert_that(completed2).isTrue();
 
@@ -131,14 +131,14 @@ qor_pp_test_suite_case(AsyncAutoResetEventTestSuite, testMultiThreaded)
 			co_await tp.Schedule();
 			co_await event;
 			++value;
-			event.set();
+			event.Set();
 		};
 
 		auto startSignaller = [&]() -> task<>
 		{
 			co_await tp.Schedule();
 			value = 5;
-			event.set();
+			event.Set();
 		};
 
 		std::vector<task<>> tasks;
