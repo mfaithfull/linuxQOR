@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "requestnode.h"
+#include "nodes/requestnode.h"
 #include "requesttoken.h"
 #include "src/qor/error/error.h"
 
@@ -34,12 +34,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void request::Prepare()
     {
-        //std::cout << "Looking for a request." << std::endl;
+        log::debug("Expecting an HTTP request.");
         GetParser()->PushNode(new_ref<RequestNode>().template AsRef<Node>());
     }
 
     void request::Emit()
     {        
+        log::debug("Emitting an HTTP request.");
         std::string method;
         std::string protocolVersion;
         Target uri;
@@ -79,7 +80,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             }
             else
             {              
-                serious("Request parsing failed. Unexpected token.");
+                continuable("Request parsing failed. Unexpected token.");
             }
 
             node = GetParser()->PopNode();
@@ -91,12 +92,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
             if(requestNode.IsNotNull())
             {
                 requestNode->GetObject()->SetMethod(method);
-                //requestNode->GetObject()->SetProtocolVersion(protocolVersion);
+                requestNode->GetObject()->SetVersion(1,1);//TODO:
                 requestNode->GetObject()->SetPath(uri.GetPath());
                 requestNode->GetObject()->SetParams(params);
                 requestNode->GetObject()->SetHeaders(m_headers);
             }            
             GetParser()->PushNode(node);
+            log::debug("Parsed an HTTP request.");
         }
     }
     

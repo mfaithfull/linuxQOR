@@ -81,7 +81,7 @@ namespace qor { namespace test
 
         void TestCaseStarting(const TestCase& info)
         {
-            std::cout << std::endl << info.m_At << info.m_Name << std::flush;
+            //std::cout << std::endl << info.m_At << info.m_Name << std::flush;
         }
 
         void TestCaseEnded(const TestCase& info)
@@ -89,14 +89,15 @@ namespace qor { namespace test
             if(info.m_Passed)
             {
                 ++m_pass;
-                std::cout << " [OK]";                
+                //std::cout << " [OK]";                
             }
             else
-            {
+            {                
                 ++m_fail;
+                std::cout << std::endl << info.m_At << info.m_Name << std::flush;
                 std::cout << " [FAIL]";
-            }
-            std::cout << ", #" << info.m_Index << std::flush;
+                std::cout << ", #" << info.m_Index << std::flush;
+            }        
         }
 
         void TestRunEnded()

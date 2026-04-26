@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void pchar::Prepare()
     {
-        std::cout << "Looking for a pchar." << std::endl;
+        log::debug("Expecting a pchar.");
         GetParser()->PushNode(new_ref<PCharNode>());
     }
 
     void pchar::Emit()
     {
-        std::cout << "Emitting a pchar." << std::endl;
+        log::debug("Emitting a pchar.");        
         char c = '\0';
         auto node = GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() != m_token)
@@ -49,7 +49,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            //std::cout << tokenName << std::endl;
+            log::debug(tokenName);
 
             if( token == static_cast<uint64_t>(parser::eToken::Char))
             {

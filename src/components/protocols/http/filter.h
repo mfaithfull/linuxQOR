@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_SERVICEFILTER
 
 #include "src/framework/pipeline/inlinefilter.h"
-#include "server/requestparser/requestnode.h"
+#include "server/requestparser/nodes/requestnode.h"
 #include "server/requestparser/requesttoken.h"
 #include "request/request.h"
 #include "server/responsegenerator/responsegenerator.h"

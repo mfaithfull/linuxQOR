@@ -25,19 +25,19 @@
 #include "src/configuration/configuration.h"
 
 #include "tokentoken.h"
-#include "tokennode.h"
+#include "nodes/tokennode.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
     void token::Prepare()
     {
-        std::cout << "Looking for a token." << std::endl;
+        log::debug("Looking for a basic token.");
         GetParser()->PushNode(new_ref<TokenNode>());
     }
 
     void token::Emit()
     {
-        std::cout << "Emitting a token." << std::endl;
+        log::debug("Emitting a basic token.");
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -49,7 +49,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            //std::cout << tokenName << std::endl;
+            log::debug(tokenName);            
             node = GetParser()->PopNode();
         }
 
@@ -71,13 +71,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void method::Prepare()
     {
-        std::cout << "Looking for a method." << std::endl;
+        log::debug("Expecting a method.");
         GetParser()->PushNode(new_ref<MethodNode>());
     }
 
     void method::Emit()
     {
-        std::cout << "Emitting a method." << std::endl;
+        log::debug("Emitting a method.");
         auto node = GetParser()->PopNode();
         std::string methodName;
         while(node.IsNotNull() && node->GetToken() != m_token)
@@ -90,15 +90,14 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            //std::cout << tokenName << std::endl;
+            log::debug(tokenName);
 
             if(token == static_cast<uint64_t>(httpRequestToken::tchar))
             {
                 auto tcharNode = node.AsRef<TCharNode>();
                 char c = tcharNode->GetObject()->m_char;
                 char U = toupper(c);
-                methodName = std::string(&U,1) + methodName;
-                //methodName.push_back(toupper(c));
+                methodName = std::string(&U,1) + methodName;                
             }
             node = GetParser()->PopNode();
         }
@@ -109,7 +108,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             if(methodNode.IsNotNull())
             {
                 methodNode->GetObject()->m_methodName = methodName;
-                std::cout << "Method: " << methodName << std::endl;
+                //std::cout << "Method: " << methodName << std::endl;
             }
             GetParser()->PushNode(node);
         }
@@ -126,13 +125,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void field_name::Prepare()
     {
-        std::cout << "Looking for a field name." << std::endl;
+        log::debug("Expecting a field name.");
         GetParser()->PushNode(new_ref<FieldNameNode>());
     }
 
     void field_name::Emit()
     {
-        std::cout << "Emitting a field name." << std::endl;
+        log::debug("Emitting a field name.");
         auto node = GetParser()->PopNode();
         std::vector<char> fieldNameChars;
         while(node.IsNotNull() && node->GetToken() != m_token)
@@ -166,7 +165,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             {
                 std::string fieldName(fieldNameChars.rbegin(), fieldNameChars.rend());
                 fieldnameNode->GetObject()->m_fieldName = fieldName;
-                std::cout << "Field Name: " << fieldName << std::endl;
+                //std::cout << "Field Name: " << fieldName << std::endl;
             }
             GetParser()->PushNode(node);
         }
@@ -183,13 +182,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void protocol_version::Prepare()
     {
-        std::cout << "Looking for a protocol version." << std::endl;
+        log::debug("Expecting a protocol version.");
         GetParser()->PushNode(new_ref<ProtocolVersionNode>());
     }
 
     void protocol_version::Emit()
     {
-        std::cout << "Emitting a protocol version." << std::endl;
+        log::debug("Emitting a protocol version.");
         auto node = GetParser()->PopNode();
         std::string version;
         while(node.IsNotNull() && node->GetToken() != m_token)
@@ -202,7 +201,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            //std::cout << tokenName << std::endl;
+            log::debug(tokenName);
 
             if(token == static_cast<uint64_t>(httpRequestToken::tchar))
             {
@@ -224,7 +223,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             if(versionNode.IsNotNull())
             {
                 versionNode->GetObject()->m_version = version;
-                std::cout << "Protocol Version: " << version << std::endl;
+                //std::cout << "Protocol Version: " << version << std::endl;
             }
             GetParser()->PushNode(node);
         }

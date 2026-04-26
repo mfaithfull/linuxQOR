@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void IPv4address::Prepare()
     {
-        std::cout << "Looking for an IPv4address." << std::endl;
+        log::debug("Expecting an IPv4address.");        
         GetParser()->PushNode(new_ref<IPv4AddressNode>());
     }
 
     void IPv4address::Emit()
     {
-        std::cout << "Emitting an IPv4address." << std::endl;
+        log::debug("Emitting an IPv4address.");
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -48,7 +48,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            std::cout << tokenName << std::endl;
+            log::debug(tokenName);
+            
             node = GetParser()->PopNode();
         }
 

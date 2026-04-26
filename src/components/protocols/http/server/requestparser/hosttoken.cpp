@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void host::Prepare()
     {
-        std::cout << "Looking for a host." << std::endl;
+        log::debug("Expecting a host.");
         GetParser()->PushNode(new_ref<HostNode>());
     }
 
     void host::Emit()
     {
-        std::cout << "Emitting a host." << std::endl;
+        log::debug("Emitting a host.");        
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -48,7 +48,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            std::cout << tokenName << std::endl;
+            log::debug(tokenName);
+
             node = GetParser()->PopNode();
         }
 

@@ -31,17 +31,16 @@
 #include "src/components/parser/oneormore.h"
 #include "src/components/parser/nodes/char.h"
 #include "tchartoken.h"
-#include "tokennode.h"
-#include "methodnode.h"
-#include "fieldnamenode.h"
-#include "protocolversionnode.h"
+#include "nodes/tokennode.h"
+#include "nodes/methodnode.h"
+#include "nodes/fieldnamenode.h"
+#include "nodes/protocolversionnode.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
     class qor_pp_module_interface(QOR_HTTP) token : public parser::OneOrMore    
     {
-    public: token(parser::Parser* parser) :
-                parser::OneOrMore(parser,
+    public: token(parser::Parser* parser) : parser::OneOrMore(parser,
                     new_ref<tchar>(parser),
                     static_cast<uint64_t>(httpRequestToken::token)
                 )

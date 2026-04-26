@@ -30,10 +30,10 @@
 #include "tokendefs.h"
 #include "src/components/parser/oneormore.h"
 #include "src/components/parser/nodes/char.h"
-#include "request_linenode.h"
+#include "nodes/request_linenode.h"
 #include "targettoken.h"
 #include "tokentoken.h"
-#include "protocoltoken.h"
+#include "protocol/protocoltoken.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

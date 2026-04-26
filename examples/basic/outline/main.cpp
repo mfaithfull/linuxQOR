@@ -66,11 +66,8 @@ int main()
 
     /*The QOR Application class is a context for running 
     Workflows and anything else that meets the 
-    requirements for a runable object
-    Our Application instance is a shared, global resource so
-    we access it with synchronisation even though this app
-    is safely single threaded.*/
-    return outlineApp(qor_shared).Run
+    requirements for a runable object*/
+    return outlineApp()->Run
     (
         /*Here we make a runable object from a simple
         lamda with the make_runnable utility function.

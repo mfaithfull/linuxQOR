@@ -71,7 +71,7 @@ components/pipeline/test_ofstreamsink.cpp
 components/protocols/http/test_httpfilter.cpp
 platform/test_network.cpp)
 
-target_compile_definitions(QORTest PRIVATE -DQOR_PP_EXECUTABLE)
+target_compile_definitions(QORTest PRIVATE CONSOLE QOR_PP_EXECUTABLE)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(QORTest qor_compiler qor_host qor_datastructures qor_objectcontext 

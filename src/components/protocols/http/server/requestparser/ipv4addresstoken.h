@@ -30,7 +30,7 @@
 #include "tokendefs.h"
 #include "src/components/parser/oneormore.h"
 #include "src/components/parser/nodes/char.h"
-#include "ipv4addressnode.h"
+#include "nodes/ipv4addressnode.h"
 #include "dec_octettoken.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {

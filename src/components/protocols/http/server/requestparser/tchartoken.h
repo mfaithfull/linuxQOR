@@ -27,6 +27,7 @@
 
 #include <map>
 
+#include "src/qor/log/log.h"
 #include "src/components/parser/state.h"
 #include "src/components/parser/rfc5234.h"
 #include "tokendefs.h"
@@ -34,7 +35,7 @@
 #include "src/components/parser/oneormore.h"
 #include "src/components/parser/nodes/char.h"
 #include "src/components/parser/nodes/digit.h"
-#include "tcharnode.h"
+#include "nodes/tcharnode.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
@@ -69,13 +70,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
         virtual ~tchar() = default;
 
         virtual void Prepare(){
-            //std::cout << "Looking for a tchar." << std::endl;
+            qor::log::debug("Looking for a tchar.");
             GetParser()->PushNode(new_ref<TCharNode>());
         }
 
         virtual void Emit()
         {
-            //std::cout << "Emitting a tchar." << std::endl;
+            qor::log::debug("Emitting a tchar.");            
             char c = '\0';
             auto node = GetParser()->PopNode();
             if(node.IsNotNull() && node->GetToken() != m_token)
@@ -88,7 +89,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
                     tokenName = f->second;
                 }
                 
-                //std::cout << tokenName << std::endl;
+                qor::log::debug("tokenName");
+
                 ref_of<parser::Char>::type charNode;
                 ref_of<parser::Digit>::type digitNode;
 

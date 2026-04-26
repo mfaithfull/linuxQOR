@@ -31,13 +31,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void sub_delims::Prepare()
     {
-        std::cout << "Looking for a sub delimiter." << std::endl;
+        log::debug("Expecting a sub delimiter.");
         GetParser()->PushNode(new_ref<Sub_DelimsNode>());
     }
 
     void sub_delims::Emit()
     {
-        std::cout << "Emitting a sub_delim." << std::endl;
+        log::debug("Emitting a sub delimiter.");        
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -49,7 +49,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            std::cout << tokenName << std::endl;
+            log::debug(tokenName);
             node = GetParser()->PopNode();
         }
 

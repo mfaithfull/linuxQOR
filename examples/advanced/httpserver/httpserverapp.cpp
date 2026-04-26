@@ -92,16 +92,14 @@ int main(const int argc, const char** argv, char** env)
         }
     );
     
-    return app.AsRef<HTTPServerApp>(qor_shared)->RunMultithreaded(app);    
+    return app.AsRef<HTTPServerApp>()->Run();    
 }
 
-int HTTPServerApp::RunMultithreaded(const ref_of<HTTPServerApp>::type& owningref)
+int HTTPServerApp::Run()
 {
     qor_pp_ofcontext;
-    log::inform("httpserver starting up");    
-    owningref.Unlock();
-    int result = RunWorkflow(new_ref<NetworkServer>(5080, new_ref<http::HTTPProtocol>()));
-    owningref.Lock();
+    log::inform("httpserver starting up");        
+    int result = RunWorkflow(new_ref<NetworkServer>(5080, new_ref<http::HTTPProtocol>()));    
     log::inform("httpserver shutting down");
     return result;
 }

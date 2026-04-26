@@ -26,6 +26,10 @@
 
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
+#include "src/qor/error/error.h"
+#include "src/qor/error/handler.h"
+#include "src/qor/log/defaultloghandler.h"
+
 #include "src/components/protocols/http/filter.h"
 
 using namespace qor;
@@ -46,3 +50,21 @@ qor_pp_test_suite_case(HTTPTestSuite, canInstanceHTTPFilter)
     qor_pp_assert_that(httpFilter.IsNotNull()).isTrue();
 }
 
+qor_pp_test_suite_case(HTTPTestSuite, canFilterHTTP)
+{
+    DefaultLogHandler logHandler;
+    logHandler.WriteToStandardOutput();
+
+    auto httpFilter = new_ref<HTTPFilter>();
+    byte space[10000];
+    auto http = "GET /hello.htm HTTP/1.1\r\n\
+User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\r\n\
+Host: www.tutorialspoint.com\r\n\
+Accept-Language: en-usn\r\n\
+Accept-Encoding: gzip, deflate\r\n\
+Connection: Keep-Alive\r\n\r\n";
+    byte* data = reinterpret_cast<byte*>(const_cast<char*>((&http[0])));
+    size_t itemCount = strlen(http);
+    size_t writeCount = 0;
+    httpFilter->Filter(space, data, itemCount, writeCount);
+}

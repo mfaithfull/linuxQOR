@@ -30,7 +30,7 @@
 #include "tokendefs.h"
 #include "src/components/parser/oneormore.h"
 #include "src/components/parser/nodes/char.h"
-#include "pct_encodednode.h"
+#include "nodes/pct_encodednode.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void dec_octet::Prepare()
     {
-        std::cout << "Looking for a dec_octet." << std::endl;
+        log::debug("Expecting a dec_octet.");
         GetParser()->PushNode(new_ref<DecOctetNode>());
     }
 
     void dec_octet::Emit()
     {
-        std::cout << "Emitting a dec_octet." << std::endl;
+        log::debug("Emitting a dec_octet.");
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -48,7 +48,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            std::cout << tokenName << std::endl;
+            log::debug(tokenName);
             node = GetParser()->PopNode();
         }
 

@@ -57,7 +57,7 @@ public:
     HTTPServerApp& UseAggregatedLogging();                                  //Call to turn on Aggregated Logging. Requires aggregator component
     const qor::DefaultErrorHandler& GetErrorHandler() const;
     const qor::DefaultLogHandler& GetLogHandler() const;
-    int RunMultithreaded(const qor::ref_of<HTTPServerApp>::type&);               //App specific default Run function wraps running of workflow
+    int Run();                                                              //App specific default Run function wraps running of workflow
 
 private:
 

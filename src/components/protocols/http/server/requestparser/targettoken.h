@@ -30,11 +30,11 @@
 #include "tokendefs.h"
 #include "src/components/parser/oneormore.h"
 #include "src/components/parser/nodes/char.h"
-#include "targetnode.h"
-#include "uri_origin_formtoken.h"
-#include "uri_absolute_formtoken.h"
-#include "uri_authority_formtoken.h"
-#include "uri_asterisk_formtoken.h"
+#include "nodes/targetnode.h"
+#include "uri/uri_origin_formtoken.h"
+#include "uri/uri_absolute_formtoken.h"
+#include "uri/uri_authority_formtoken.h"
+#include "uri/uri_asterisk_formtoken.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

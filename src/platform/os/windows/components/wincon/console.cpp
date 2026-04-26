@@ -35,21 +35,23 @@ namespace qor { bool qor_pp_module_interface(QOR_WINCONSOLE) ImplementsIConsole(
 
 namespace qor { namespace components{ namespace nswindows {
 
-	Console::Console() : m_redirected(false), m_allocated(false)
+	Console::Console() : m_redirected(false), m_allocated(false), m_outFile(nullptr), m_inFile(nullptr), m_errFile(nullptr)
 	{
 		auto hstdin = m_helper.GetStdHandle(ConsoleHelper::hStdIn);
-		if (hstdin.IsNull() || hstdin.IsInvalid())
+		if (hstdin.IsNull() || hstdin.IsInvalid() || (Kernel32::GetFileType(hstdin.Use()) != FILE_TYPE_CHAR) )
 		{
+			m_helper.Free();
 			m_helper.Alloc();
 			m_allocated = true;
 			ResetIn();
 		}
 
 		auto hstdout = m_helper.GetStdHandle(ConsoleHelper::hStdOut);
-		if (hstdout.IsNull() || hstdout.IsInvalid())
+		if (hstdout.IsNull() || hstdout.IsInvalid() || (Kernel32::GetFileType(hstdin.Use()) != FILE_TYPE_CHAR))
 		{
 			if (!m_allocated)
 			{
+				m_helper.Free();
 				m_helper.Alloc();
 				ResetIn();
 				ResetErr();
@@ -57,11 +59,13 @@ namespace qor { namespace components{ namespace nswindows {
 			ResetOut();
 		}
 
-		DWORD mode = 0;
-		Kernel32::GetConsoleMode(hstdin.Use(), &mode);
-		mode &= ~(ENABLE_LINE_INPUT);
-		Kernel32::SetConsoleMode(hstdin.Use(), mode);
-
+		if (!hstdin.IsNull() && !hstdin.IsInvalid() && (Kernel32::GetFileType(hstdin.Use()) == FILE_TYPE_CHAR) )
+		{
+			DWORD mode = 0;
+			Kernel32::GetConsoleMode(hstdin.Use(), &mode);
+			mode &= ~(ENABLE_LINE_INPUT);
+			Kernel32::SetConsoleMode(hstdin.Use(), mode);
+		}
 	}
 
 	string_t Console::ReadLine()

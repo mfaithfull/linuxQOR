@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void pct_encoded::Prepare()
     {
-        std::cout << "Looking for a pct encoded." << std::endl;
+        log::debug("Expecting a pct encoded.");
         GetParser()->PushNode(new_ref<Pct_EncodedNode>());
     }
 
     void pct_encoded::Emit()
     {
-        std::cout << "Emitting a pct_encoded." << std::endl;
+        log::debug("Emitting a pct_encoded.");
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -48,7 +48,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            std::cout << tokenName << std::endl;
+            log::debug(tokenName);
             node = GetParser()->PopNode();
         }
 

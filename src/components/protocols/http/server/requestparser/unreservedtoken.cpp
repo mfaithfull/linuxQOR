@@ -26,19 +26,19 @@
 
 #include "src/components/parser/parser.h"
 #include "unreservedtoken.h"
-#include "unreservednode.h"
+#include "nodes/unreservednode.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
     void unreserved::Prepare()
     {
-        //std::cout << "Looking for an unreserved." << std::endl;
+        log::debug("Expecting an unreserved.");
         GetParser()->PushNode(new_ref<UnreservedNode>());
     }
 
     void unreserved::Emit()
     {
-        std::cout << "Emitting an unreserved." << std::endl;
+        log::debug("Emitting an unreserved.");
         char c= '\0';
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
@@ -51,7 +51,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            //std::cout << tokenName << std::endl;
+            log::debug(tokenName);
 
             if( token == static_cast<uint64_t>(parser::eToken::Char) ||
                 token == static_cast<uint64_t>(parser::eToken::Alpha) || 

@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void target::Prepare()
     {
-        std::cout << "Looking for a target." << std::endl;
+        log::debug("Expecting a target.");
         GetParser()->PushNode(new_ref<TargetNode>());
     }
 
     void target::Emit()
     {
-        std::cout << "Emitting a target." << std::endl;
+        log::debug("Emitting a target.");        
         uriForm form;
         UriOriginForm originURI;
         UriAbsoluteForm absoluteURI;
@@ -52,7 +52,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            //std::cout << tokenName << std::endl;
+            log::debug(tokenName);            
 
             if(token == static_cast<uint64_t>(httpRequestToken::uri_origin_form))
             {
@@ -87,7 +87,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             }
             else
             {
-                continuable("Unexpected token");
+                continuable("Unexpected token: {0}", tokenName);
             }
             node = GetParser()->PopNode();
         }

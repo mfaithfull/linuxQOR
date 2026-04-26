@@ -31,13 +31,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void userinfo::Prepare()
     {
-        std::cout << "Looking for a userinfo." << std::endl;
+        log::debug("Expecting a userinfo.");
         GetParser()->PushNode(new_ref<UserInfoNode>());
     }
 
     void userinfo::Emit()
     {
-        std::cout << "Emitting a userinfo." << std::endl;
+        log::debug("Emitting a userinfo.");
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -49,7 +49,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            std::cout << tokenName << std::endl;
+            log::debug(tokenName);
             node = GetParser()->PopNode();
         }
 

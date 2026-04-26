@@ -31,7 +31,7 @@
 #include "src/components/parser/oneormore.h"
 #include "src/components/parser/nodes/char.h"
 #include "request_linetoken.h"
-#include "field_linetoken.h"
+#include "field/field_linetoken.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

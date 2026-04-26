@@ -30,7 +30,7 @@
 #include "tokendefs.h"
 #include "src/components/parser/oneormore.h"
 #include "src/components/parser/nodes/char.h"
-#include "reg_namenode.h"
+#include "nodes/reg_namenode.h"
 #include "unreservedtoken.h"
 #include "pct_encodedtoken.h"
 #include "sub_delimstoken.h"
