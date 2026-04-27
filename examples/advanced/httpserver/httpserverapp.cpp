@@ -60,7 +60,7 @@ SingletonRedirector<Application, HTTPServerApp> HTTPServerApp::m_sRedirect;
 int main(const int argc, const char** argv, char** env)
 {	
     qor_pp_fcontext;
-    auto app = AppBuilder().Build<HTTPServerApp>(HTTPServerApp::Name,
+    return AppBuilder().Build<HTTPServerApp>(HTTPServerApp::Name,
         [argc,argv,env](ref_of<HTTPServerApp>::type server)
         {
             ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
@@ -90,16 +90,14 @@ int main(const int argc, const char** argv, char** env)
 
             server->UseAggregatedLogging();            
         }
-    );
-    
-    return app.AsRef<HTTPServerApp>()->Run();    
+    ).As<HTTPServerApp>()->Run();
 }
 
 int HTTPServerApp::Run()
 {
     qor_pp_ofcontext;
-    log::inform("httpserver starting up");        
-    int result = RunWorkflow(new_ref<NetworkServer>(5080, new_ref<http::HTTPProtocol>()));    
+    log::inform("httpserver starting up");            
+    int result = RunWorkflow(new_ref<NetworkServer>(5080, new_ref<http::HTTPProtocol>()));        
     log::inform("httpserver shutting down");
     return result;
 }

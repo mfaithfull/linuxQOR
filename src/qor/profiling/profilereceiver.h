@@ -60,8 +60,6 @@ namespace qor {
 		virtual void Profile(const std::chrono::duration<int64_t, std::milli> duration, IFunctionContext* fContext)
 		{
 		    issue<log::Informative, const std::string&>(std::format("Profile: {0}", duration), fContext);
-
-			//log::inform("Profile: {0}", duration);
 		}
 	};
 

@@ -22,40 +22,21 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include "host.h"
-#include "../../qor/module/moduleregistry.h"
+//A minimal basic QOR application using the QOR SDK
 
-namespace {
-    static qor::ModuleRegistry _theModuleRegistry;
+#include "sdk/using_framework.h"
+
+const char* appName = "Basic";
+qor_pp_implement_module(appName)
+
+int main()
+{
+    return AppBuilder().Build(appName)->Run(
+        make_runable(
+            []()->int
+            {
+                std::cout << "Hello from the QOR Basic application." << std::endl;
+                return EXIT_SUCCESS;
+            }
+        ));
 }
-
-namespace qor{ namespace framework{
-
-    Module* TheHost()
-    {
-        return &(ThisModule());
-    }
-    
-    Host::Host() : Module( "Querysoft Open Runtime: Host Module", qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__, false)
-    {
-        m_ModuleReg = &_theModuleRegistry;
-        m_ModuleReg->Register(*this);
-    }
-
-    Module& Host::Instance()
-    {
-        return *(TheHost());
-    }
-    
-	void Host::RegisterModule( Module* pModule)
-	{
-        m_ModuleReg->Register(*pModule);
-	}
-
-	void Host::UnregisterModule( Module* pModule)
-	{
-        m_ModuleReg->Unregister(*pModule);
-	}
-
-}}//qor::framework

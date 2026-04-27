@@ -39,13 +39,13 @@ template <typename T>
 class PriorityQueueSubject : public virtual Base,
                              public proposition::HasSizePropositions<PriorityQueueSubject<T>, T>,
                              public proposition::IsEmptyPropositions<PriorityQueueSubject<T>, T> {
-  const T d_value;
+    const T d_value;
 
- protected:
-  const T* getValue() const override { return &d_value; }
+protected:
+    const T* getValue() const override { return &d_value; }
 
- public:
-  PriorityQueueSubject(const bool failOnError, const char* file, int line, const T& v)
+public:
+    PriorityQueueSubject(const bool failOnError, const char* file, int line, const T& v)
       : Base(failOnError, file, line), d_value(v) {}
 };
 

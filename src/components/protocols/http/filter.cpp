@@ -36,7 +36,14 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void HTTPFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
     {
-        HTTPRequest request = Parse(data, itemCount);
+        ref_of<HTTPRequest>::type request = Parse(data, itemCount);
+        
+        if(request.IsNull())
+        {
+            //TODO: return a Bad Request Response
+            return;
+        }
+
         ref_of<HTTPResponse>::type response = new_ref<HTTPResponse>();
         
         //TODO: Fill out Response        
@@ -56,6 +63,10 @@ namespace qor { namespace components { namespace protocols { namespace http {
         HTTPRequestParser.Parse();
         
         auto requestNode = HTTPRequestParser.PopNode().template AsRef<RequestNode>();
+        if(requestNode.IsNull())
+        {
+            return ref_of<HTTPRequest>::type();
+        }
         return requestNode->GetObject();
     }
 

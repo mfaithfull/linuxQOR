@@ -38,10 +38,10 @@ namespace qor{
         Module( const char* name, const char* version, bool _register = true);
         virtual ~Module() noexcept;		
 
-		virtual bool RegisterLibrary( Library* pLibrary );			                                //Register a static library as part of this module
-		virtual void UnregisterLibrary( Library* pLibrary );		                                //Unregister a static library from this module
+		virtual bool RegisterLibrary(Library* pLibrary);			                            //Register a static library as part of this module
+		virtual void UnregisterLibrary(Library* pLibrary);		                                //Unregister a static library from this module
 
-        inline void VisitLibraries( void(f)(Library*))
+        inline void VisitLibraries(void(f)(Library*))
         {
             for(Library* it = m_pStaticLibraryList; it != nullptr; it = const_cast<Library*>(it->Next()))
             {
@@ -49,8 +49,8 @@ namespace qor{
             }
         }
 
-        virtual void RegisterModule( Module* pModule);
-        virtual void UnregisterModule( Module* pModule);
+        virtual void RegisterModule(Module* pModule);
+        virtual void UnregisterModule(Module* pModule);
 
         ModuleRegistry* Modules();
 

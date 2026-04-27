@@ -40,14 +40,14 @@ class SetSubject : public virtual Base,
                    public proposition::IsEmptyPropositions<SetSubject<C>, C>,
                    public proposition::IsEqualToPropositions<SetSubject<C>, C>,
                    public proposition::HasSizePropositions<SetSubject<C>, C> {
-  const C& d_value;
+    const C& d_value;
 
- public:
-  SetSubject(const bool failOnError, const char* file, int line, const C& v)
+public:
+    SetSubject(const bool failOnError, const char* file, int line, const C& v)
       : Base(failOnError, file, line), d_value(v) {}
 
- protected:
-  const C* getValue() const override { return &d_value; }
+protected:
+    const C* getValue() const override { return &d_value; }
 };
 
 }}}//qor::assert::subject

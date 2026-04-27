@@ -32,7 +32,7 @@
 namespace qor{ namespace assert{ namespace subject{
 
     /*Base class that holds shared information between the subject classes and the
-    propositoin mixins.
+    proposition mixins.
 
     The subject class will intilize the Base superclass and the proposition
     classes will use the functions to retrive the data. Virtual inheritance is

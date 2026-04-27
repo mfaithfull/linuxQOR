@@ -36,9 +36,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public:
 
-        HTTPResponse() : m_version{1,1}
+        HTTPResponse() : m_version{1,1}, m_statusCode{404}
         {
-            m_statusCode = 500;
         }
 
         virtual ~HTTPResponse() = default;

@@ -35,38 +35,38 @@
 
 namespace qor{ namespace assert{ namespace proposition{
 
-template <typename T, typename U>
-class IsEqualToPropositions : public virtual subject::Base 
-{
- protected:
-  virtual const U* getValue() const = 0;
-
- public:
-  T& isEqualTo(const U& other) 
-  {
-    if (!(*getValue() == other)) 
+    template <typename T, typename U>
+    class IsEqualToPropositions : public virtual subject::Base 
     {
-      util::FailMessage::create()
-          .file(getFile())
-          .line(getLine())
-          .fact(" not equal to", other)
-          .fact("Got", *getValue());
-    }
-    return *dynamic_cast<T*>(this);
-  }
+    protected:
+        virtual const U* getValue() const = 0;
 
-  T& isNotEqualTo(const U& other) 
-  {
-    if (*getValue() == other) 
-    {
-      util::FailMessage::create()
-          .file(getFile())
-          .line(getLine())
-          .fact(" not equal to", other)
-          .fact("Got", *getValue());
-    }
-    return *dynamic_cast<T*>(this);
-  }
-};
+    public:
+        T& isEqualTo(const U& other) 
+        {
+            if (!(*getValue() == other)) 
+            {
+            util::FailMessage::create()
+                .file(getFile())
+                .line(getLine())
+                .fact(" not equal to", other)
+                .fact("Got", *getValue());
+            }
+            return *dynamic_cast<T*>(this);
+        }
+
+        T& isNotEqualTo(const U& other) 
+        {
+            if (*getValue() == other) 
+            {
+            util::FailMessage::create()
+                .file(getFile())
+                .line(getLine())
+                .fact(" not equal to", other)
+                .fact("Got", *getValue());
+            }
+            return *dynamic_cast<T*>(this);
+        }
+    };
 
 }}}//qor::assert::proposition

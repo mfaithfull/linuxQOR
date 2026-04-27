@@ -45,7 +45,7 @@ namespace qor{
 
 		inline void Register(Module& module)
 		{
-            m_Modules.push_back(&module);
+            m_Modules.emplace_back(&module);
 		}
 		
 		inline void Unregister(Module& module)
@@ -57,7 +57,7 @@ namespace qor{
             }
 		}
 
-        inline void VisitModules( void(f)(Module*))
+        inline void VisitModules(void(f)(Module*))
         {
             std::for_each( m_Modules.begin(), m_Modules.end(), f );
         }
@@ -68,6 +68,5 @@ namespace qor{
 	};
 
 }//qor
-
 
 #endif//QOR_PP_H_MODULEREGISTRY

@@ -70,7 +70,6 @@ namespace qor{ namespace framework{
 			other.m_pCurrent = nullptr;
 		}
 	
-
 		template<typename _Callable, typename... _Args,	typename = std::enable_if_t<!std::is_same_v<std::remove_cvref_t<_Callable>,Thread>>>
 	 	explicit Thread(_Callable&& __f, _Args&&... __args) : m_std_thread(std::forward<_Callable>(__f), std::forward<_Args>(__args)...), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) ) { }
 		

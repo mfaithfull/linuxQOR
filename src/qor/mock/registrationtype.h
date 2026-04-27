@@ -32,23 +32,23 @@
 #include <limits>
 
 namespace qor { namespace mock {
-                
-        struct RegistrationType
-        {
-            RegistrationType(unsigned int min, unsigned int max) : minimum(min), maximum(max) {}
 
-            unsigned int minimum;
-            unsigned int maximum;
-        };
-        
-        inline bool operator==(RegistrationType const& rhs, RegistrationType const& lhs)
-        {
-            return rhs.minimum == lhs.minimum && rhs.maximum == lhs.maximum;
-        }
+    struct RegistrationType
+    {
+        RegistrationType(unsigned int min, unsigned int max) : minimum(min), maximum(max) {}
 
-        const RegistrationType Any = RegistrationType(1, (std::numeric_limits<unsigned int>::max)());
-        const RegistrationType Never = RegistrationType((std::numeric_limits<unsigned int>::min)(), (std::numeric_limits<unsigned int>::min)());
-        const RegistrationType Once = RegistrationType(1, 1);        
+        unsigned int minimum;
+        unsigned int maximum;
+    };
+    
+    inline bool operator==(RegistrationType const& rhs, RegistrationType const& lhs)
+    {
+        return rhs.minimum == lhs.minimum && rhs.maximum == lhs.maximum;
+    }
+
+    const RegistrationType Any = RegistrationType(1, (std::numeric_limits<unsigned int>::max)());
+    const RegistrationType Never = RegistrationType((std::numeric_limits<unsigned int>::min)(), (std::numeric_limits<unsigned int>::min)());
+    const RegistrationType Once = RegistrationType(1, 1);        
 
 }}//qor::mock
 

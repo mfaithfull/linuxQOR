@@ -32,7 +32,7 @@ namespace qor{ namespace framework{
 
 namespace qor{
 	
-    Module::Module( const char* name, const char* version, bool _register) : Library( name, version, false), m_pStaticLibraryList( nullptr ), m_ModuleReg(nullptr)
+    Module::Module(const char* name, const char* version, bool _register) : Library(name, version, false), m_pStaticLibraryList(nullptr), m_ModuleReg(nullptr)
 	{
 		if(_register)
 		{

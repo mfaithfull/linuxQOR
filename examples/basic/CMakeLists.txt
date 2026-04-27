@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
+add_subdirectory(basic)
 add_subdirectory(outline)
 add_subdirectory(options)
 add_subdirectory(roller)

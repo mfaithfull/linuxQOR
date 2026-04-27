@@ -31,7 +31,7 @@
 
 namespace qor {
     
-	class FunctionProfiler
+	class FunctionProfiler final
 	{
 
 	public:

@@ -65,6 +65,8 @@ Accept-Encoding: gzip, deflate\r\n\
 Connection: Keep-Alive\r\n\r\n";
     byte* data = reinterpret_cast<byte*>(const_cast<char*>((&http[0])));
     size_t itemCount = strlen(http);
-    size_t writeCount = 0;
+    size_t writeCount = 9999;
     httpFilter->Filter(space, data, itemCount, writeCount);
+    qor_pp_assert_that(writeCount == 26).isTrue();
+    qor_pp_assert_that(strncmp((const char*)space, "HTTP/1.1 404 Not Found\r\n\r\n", writeCount) == 0).isTrue();
 }

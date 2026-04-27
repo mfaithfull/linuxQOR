@@ -29,7 +29,7 @@
 
 namespace qor {
     
-	class NullProfiler
+	class NullProfiler final
 	{
 
 	public:

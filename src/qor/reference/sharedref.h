@@ -25,6 +25,9 @@
 #ifndef QOR_PP_H_SHAREDREF
 #define QOR_PP_H_SHAREDREF
 
+#define qor_shared )(
+#define qor_shared_ref )()(
+
 namespace qor{
 
 	//A counted reference class for managed objects

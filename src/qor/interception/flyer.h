@@ -55,10 +55,8 @@ namespace qor {
         }
 
 		bool Pop()
-		{
-            const GUID* luid = guid_of<T>::guid();
-            //TypedAny< T > wrapper(dynamic_cast<T*>(m_pPrevious));
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(luid, m_previous);
+		{            
+        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(guid_of<T>::guid(), m_previous);
 			return true;
 		}
 

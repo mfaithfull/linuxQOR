@@ -31,9 +31,6 @@
 #include "src/qor/memory/memory.h"
 #include "sharedref.h"
 
-#define qor_shared )(
-#define qor_shared_ref )()(
-	
 namespace qor{
 
 	//The outer public reference class is an augmented pointer to the inner shared reference
@@ -44,7 +41,7 @@ namespace qor{
 
 		typedef detail::SharedRef<T> _tInternalRef;
 
-		class Access
+		class Access final
 		{
 		public:
 			Access(const Ref& r) : m(r)
@@ -73,7 +70,7 @@ namespace qor{
 
 		Ref(const detail::SharedRef<T>* pt) : m_p(pt)
 		{
-			if (m_p != nullptr)
+			if (m_p)
 			{
 				m_p->AddRef();
 			}
@@ -81,7 +78,7 @@ namespace qor{
 
 		Ref(const Ref< T >& Src) : m_p(Src.m_p)
 		{
-			if (m_p != nullptr)
+			if (m_p)
 			{
 				m_p->AddRef();
 			}
@@ -99,7 +96,7 @@ namespace qor{
 			{
 				Dispose();
 				m_p = Src.m_p;
-				if (m_p != nullptr)
+				if (m_p)
 				{
 					m_p->AddRef();
 				}
@@ -113,7 +110,7 @@ namespace qor{
 			{
 				Dispose();
 				m_p = Src.m_p;
-				if (m_p != nullptr)
+				if (m_p)
 				{
 					m_p->AddRef();
 				}
@@ -215,7 +212,7 @@ namespace qor{
 
 		Ref<T>& DeOwn()
 		{
-			if (m_p != nullptr)
+			if (m_p)
 			{
 				(const_cast<detail::SharedRef<T>*>(m_p))->Release();
 			}
@@ -225,7 +222,7 @@ namespace qor{
 
 		Ref<T>& Reset()
 		{
-			if (m_p != nullptr)
+			if (m_p)
 			{
 				(const_cast<detail::SharedRef<T>*>(m_p))->Reset();
 			}
@@ -235,7 +232,7 @@ namespace qor{
 
 		void Attach(T* pt)
 		{
-			if( m_p->ptr() == nullptr)
+			if( m_p && m_p->ptr() == nullptr)
 			{
 				m_p->Attach(pt);
 			}
@@ -257,13 +254,13 @@ namespace qor{
 			return Ref< TDerived >();
 		}
 
-		Ref< T > Clone()
+		Ref<T> Clone()
 		{
 			if(m_p)
 			{
 				return Ref<T>(m_p);
 			}
-			return Ref< T > ();
+			return Ref<T> ();
 		}
 
 		bool IsNull(void) const
@@ -295,7 +292,7 @@ namespace qor{
 
 		void Lock() const
 		{
-			if (m_p != nullptr)
+			if (m_p)
 			{
 				m_p->Lock();
 			}
@@ -303,7 +300,7 @@ namespace qor{
 
 		void Unlock() const
 		{
-			if (m_p != nullptr)
+			if (m_p)
 			{
 				m_p->Unlock();
 			}
