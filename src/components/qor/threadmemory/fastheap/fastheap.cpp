@@ -63,11 +63,6 @@ namespace qor{ namespace components{ namespace threadmemory{
         }
     }
 
-    FastHeap::~FastHeap()
-    {
-
-    }
-
     void* FastHeap::Allocate(size_t byteCount)
     {
         FastBucket* bucket = Bucket(byteCount);

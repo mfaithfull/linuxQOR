@@ -62,11 +62,6 @@ namespace qor{ namespace components{ namespace threadmemory{
         //On GNU Linux the system heap has a per thread arena already so the ThreadHeap is just the heap
     }
 
-    ThreadHeap::~ThreadHeap()
-    {
-
-    }
-
     byte* ThreadHeap::Allocate(size_t byteCount)
     {
         return new byte[byteCount];

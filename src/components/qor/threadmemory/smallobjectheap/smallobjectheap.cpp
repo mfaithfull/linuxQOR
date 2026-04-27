@@ -41,7 +41,7 @@ namespace qor {
     namespace detail {
 
         template<>
-        ThreadInstanceHolder<components::threadmemory::SmallObjectHeap>* theThreadInstanceHolder<components::threadmemory::SmallObjectHeap>()
+        qor_pp_export ThreadInstanceHolder<components::threadmemory::SmallObjectHeap>* theThreadInstanceHolder<components::threadmemory::SmallObjectHeap>()
         {
             return GetCurrentSmallObjectHeap();
         }

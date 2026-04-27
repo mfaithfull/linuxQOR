@@ -46,7 +46,7 @@ namespace qor{ namespace components{ namespace threadmemory{
     public:
 
         ThreadHeap();
-        ~ThreadHeap();
+        virtual ~ThreadHeap() = default;
 
         byte* Allocate(size_t byteCount);
         void Free(byte* allocation);

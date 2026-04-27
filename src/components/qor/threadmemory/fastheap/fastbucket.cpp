@@ -90,6 +90,7 @@ namespace qor{ namespace components{ namespace threadmemory{
         if (m_ToSPage == nullptr)
         {
             m_ToSPage = m_basePage = new StackPage(m_pageUnits);
+            m_ToSPage->Initialise();
             m_pages = 1;
         }
     }
@@ -99,6 +100,7 @@ namespace qor{ namespace components{ namespace threadmemory{
         m_ToSPage->SetNext(new StackPage(m_pageUnits));
         m_ToSPage->Next()->SetPrevious(m_ToSPage);
         m_ToSPage = m_ToSPage->Next();
+        m_ToSPage->Initialise();
         m_pages++;
     }
 
@@ -112,14 +114,12 @@ namespace qor{ namespace components{ namespace threadmemory{
     }
 
     void* FastBucket::Allocate(size_t byteCount)
-    {
-        m_ToSPage->Initialise();
+    {        
         void* mem = m_ToSPage->Allocate(byteCount);
 
         if (mem == nullptr && (byteCount < (m_pageUnits * StackPage::c_pageSize)))
         {
             PushPage();
-            m_ToSPage->Initialise();
             mem = m_ToSPage->Allocate(byteCount);
 
             if(mem == nullptr)

@@ -42,7 +42,9 @@ namespace qor{ namespace components{ namespace threadmemory{
     SmallObjectBucket::SmallObjectBucket(size_t unitSize) : 
         m_unitSize(sizeof(int*) + unitSize), m_lastPage(nullptr),
          m_allocCount(0), m_pageCache(nullptr), m_cacheLimit(0),
-         m_cacheCount(0) {}
+         m_cacheCount(0) 
+    {        
+    }
 
     SmallObjectBucket::~SmallObjectBucket()
     {
@@ -69,7 +71,7 @@ namespace qor{ namespace components{ namespace threadmemory{
             {
                 size_t mapWords = 1 + (32 / m_unitSize) + (m_allocCount / 4096);//use larger pages as the bucket grows
                 page = new(new_ref<FastHeap>()->Allocate(sizeof(SmallObjectPage))) SmallObjectPage(m_unitSize, mapWords);	//construct a page object in the allocated memory
-                //cache this page as the last one we dealt with and return the page
+                //record this page as the last one we dealt with and return the page
             }
         }
 
@@ -79,12 +81,11 @@ namespace qor{ namespace components{ namespace threadmemory{
             result = page->Allocate();				//Allocate within the page
             if (result)
             {
-                m_allocCount++;							//Increment the count of allocations
-                *(reinterpret_cast<SmallObjectPage**>(result - sizeof(int*))) = page;
+                m_allocCount++;						//Increment the count of allocations
+                *(reinterpret_cast<SmallObjectPage**>(result - sizeof(int*))) = page;//Add a page back pointer to the allocation
             }
         }
         return result;
-
     }
 
     bool SmallObjectBucket::IsEmpty()
@@ -96,11 +97,11 @@ namespace qor{ namespace components{ namespace threadmemory{
     {
         if (element != nullptr)																		//If there's an element to delete
         {
-            SmallObjectPage* page = *(reinterpret_cast<SmallObjectPage**>(element - sizeof(int*)));
+            SmallObjectPage* page = *(reinterpret_cast<SmallObjectPage**>(element - sizeof(int*))); //Get the page from the back pointer
             if (page && page->Free(element) )														//Free the element within the page
             {
                 m_allocCount--;																		//Decrement the allocation count
-                if (page->IsEmpty())																	//If the page is empty
+                if (page->IsEmpty())																//If the page is empty
                 {
                     if (m_lastPage == page)															//invalidate recent page cache
                     {

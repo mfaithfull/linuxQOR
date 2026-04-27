@@ -34,8 +34,7 @@ namespace qor{ namespace components{ namespace threadmemory{
     {
         size_t mapBytes = (sizeof(size_t) * m_mapWords);
         m_pageByteCount = mapBytes + (mapBytes * 8 * unitBytes);
-        m_map = reinterpret_cast<size_t*>(
-            new_ref<FastHeap>()->Allocate(m_pageByteCount));
+        m_map = reinterpret_cast<size_t*>(new_ref<FastHeap>()->Allocate(m_pageByteCount));
         memset(m_map, 0, mapBytes);
         m_memory = reinterpret_cast<byte*>(m_map + m_mapWords);
         m_prev = nullptr;
