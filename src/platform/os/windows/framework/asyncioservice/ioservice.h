@@ -32,7 +32,7 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/task/cancellation/cancellationtoken.h"
 #include "src/platform/os/windows/common/handles/handle.h"
-#include "iocompletionport.h"
+#include "sync/iocompletionport.h"
 
 namespace qor { namespace framework { namespace nswindows {
 
@@ -40,7 +40,7 @@ namespace qor { namespace framework { namespace nswindows {
     class ScheduleOperation;
     class TimedScheduleOperation;
 
-    class IOService
+    class IOService final
     {
     public:
 

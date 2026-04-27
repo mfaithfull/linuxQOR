@@ -3,10 +3,25 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target winqor_asyncioservice)
 
-add_library(${target} SHARED winqor_asyncioservice.cpp asyncioservice.cpp iocpinitiator.cpp iocpeventprocessor.cpp socketacceptimpl.cpp
-socketconnectimpl.cpp socketdisconnectimpl.cpp socketrecvfromimpl.cpp
-socketrecvimpl.cpp socketsendimpl.cpp sendtoop.h socketsendtoimpl.cpp ioservice.cpp scheduleoperation.cpp
-timedscheduleoperation.cpp timerqueue.cpp timerthreadstate.cpp iocompletionport.cpp waitabletimerevent.cpp autoresetevent.cpp)
+add_library(${target} SHARED winqor_asyncioservice.cpp
+asyncioservice.cpp
+iocpinitiator.cpp
+iocpeventprocessor.cpp
+ioservice.cpp 
+timer/timerqueue.cpp 
+timer/timerthreadstate.cpp 
+sync/iocompletionport.cpp 
+timer/waitabletimerevent.cpp 
+sync/autoresetevent.cpp
+operations/socketrecvimpl.cpp
+operations/socketacceptimpl.cpp
+operations/scheduleoperation.cpp
+operations/socketconnectimpl.cpp
+operations/socketdisconnectimpl.cpp
+operations/socketrecvfromimpl.cpp
+operations/socketsendimpl.cpp
+operations/socketsendtoimpl.cpp
+operations/timedscheduleoperation.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

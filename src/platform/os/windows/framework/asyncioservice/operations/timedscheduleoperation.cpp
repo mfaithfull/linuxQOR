@@ -26,8 +26,8 @@
 
 #include <chrono>
 #include "timedscheduleoperation.h"
-#include "ioservice.h"
-#include "timerthreadstate.h"
+#include "../ioservice.h"
+#include "../timer/timerthreadstate.h"
 
 namespace qor { namespace framework { namespace nswindows {
 

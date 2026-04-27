@@ -27,8 +27,8 @@
 #include <cassert>
 #include "timerthreadstate.h"
 #include "timerqueue.h"
-#include "timedscheduleoperation.h"
-#include "ioservice.h"
+#include "../operations/timedscheduleoperation.h"
+#include "../ioservice.h"
 #include "src/platform/os/windows/common/constants.h"
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"

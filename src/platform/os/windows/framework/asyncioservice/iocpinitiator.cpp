@@ -28,11 +28,3 @@
 #include "iocpeventprocessor.h"
 
 qor_pp_module_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOInitiator)
-
-namespace qor { namespace framework { namespace nswindows {
-
-    IOCPInitiator::IOCPInitiator()
-    {
-
-    }
-}}}//qor::framework::nswindows

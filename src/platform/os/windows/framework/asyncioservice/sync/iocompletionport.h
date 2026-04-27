@@ -22,16 +22,37 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCOMPLETIONPORT
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCOMPLETIONPORT
 
-#include "scheduleoperation.h"
-#include "ioservice.h"
+#include <cstdint>
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "overlapped.h"
+
+namespace qor { namespace platform{ 
+    struct IODescriptor;
+}}//qor::platform
+
 namespace qor { namespace framework { namespace nswindows {
 
-    void ScheduleOperation::await_suspend(std::coroutine_handle<> awaiter) noexcept
+	class IOCompletionPort
     {
-        m_awaiter = awaiter;
-        m_service.ScheduleImpl(this);
-    }
-    
+    public:
+
+        IOCompletionPort(std::uint32_t concurrenyHint);
+        ~IOCompletionPort() = default;
+
+        const platform::nswindows::Handle& Handle();
+        bool PostQueuedCompletionStatus(unsigned long numberOfBytesTransferred, unsigned long long completionKey, overlapped* pOverlapped);
+        bool GetQueuedCompletionStatus(unsigned long& numberOfBytesTransferred, unsigned long long& completionKey, overlapped*& pOverlapped, unsigned long timeoutms);
+        bool Enroll(platform::IODescriptor& ioDescriptor) const;
+
+    private:
+
+        platform::nswindows::Handle m_handle;
+    };
+
 }}}//qor::framework::nswindows
+
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCOMPLETIONPORT
+

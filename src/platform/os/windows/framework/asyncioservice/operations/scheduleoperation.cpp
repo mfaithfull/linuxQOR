@@ -22,42 +22,16 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERTHREADSTATE
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERTHREADSTATE
+#include "src/configuration/configuration.h"
 
-#include <chrono>
-#include "src/framework/thread/thread.h"
-#include "src/platform/os/windows/common/handles/handle.h"
-#include "waitabletimerevent.h"
-#include "autoresetevent.h"
-
+#include "scheduleoperation.h"
+#include "../ioservice.h"
 namespace qor { namespace framework { namespace nswindows {
 
-    class TimedScheduleOperation;
-    class TimerThreadState final
+    void ScheduleOperation::await_suspend(std::coroutine_handle<> awaiter) noexcept
     {
-    public:
-
-        TimerThreadState();
-        ~TimerThreadState();
-        TimerThreadState(const TimerThreadState& other) = delete;
-        TimerThreadState& operator=(const TimerThreadState& other) = delete;
-
-        void RequestTimerCancellation() noexcept;
-        void Run() noexcept;
-        void WakeUpTimerThread() noexcept;
-
-        ref_of<AutoResetEvent>::type m_wakeUpEvent;
-        ref_of<WaitableTimerEvent>::type m_waitableTimerEvent;
-
-        std::atomic<TimedScheduleOperation*> m_newlyQueuedTimers;
-        std::atomic<bool> m_timerCancellationRequested;
-        std::atomic<bool> m_shutDownRequested;
-
-        Thread m_thread;
-
-    };
+        m_awaiter = awaiter;
+        m_service.ScheduleImpl(this);
+    }
     
-}}}//qor::framework//nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERQUEUE
+}}}//qor::framework::nswindows

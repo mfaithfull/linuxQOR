@@ -29,7 +29,3 @@
 #include "src/qor/error/error.h"
 
 qor_pp_module_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOEventProcessor)
-
-namespace qor { namespace framework { namespace nswindows {
-
-}}}//qor::framework::nswindows

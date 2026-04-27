@@ -33,9 +33,9 @@
 #undef max
 #include "iocpeventprocessor.h"
 #include "src/framework/asyncioservice/asyncioinitiator.h"
-#include "recvop.h"
-#include "acceptop.h"
-#include "sendop.h"
+#include "operations/recvop.h"
+#include "operations/acceptop.h"
+#include "operations/sendop.h"
 #include "src/platform/network/socket.h"
 
 namespace qor { namespace framework { namespace nswindows {
@@ -44,7 +44,7 @@ namespace qor { namespace framework { namespace nswindows {
     {
     public:
 
-        IOCPInitiator();
+        IOCPInitiator() = default;
         virtual ~IOCPInitiator() noexcept = default;
 
         virtual void ConnectToProcessor(qor::framework::AsyncIOEventProcessor * processor)

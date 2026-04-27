@@ -22,39 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_AUTORESETEVENT
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_AUTORESETEVENT
 
-#include <system_error>
-#include "autoresetevent.h"
-#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
+#include "src/platform/os/windows/common/handles/handle.h"
+
+#include <cstdint>
+#include "overlapped.h"
 
 namespace qor { namespace framework { namespace nswindows {
 
-    AutoResetEvent::AutoResetEvent() : m_handle(::CreateEventW(nullptr, FALSE, FALSE, nullptr))
+	class AutoResetEvent final
     {
-		if (m_handle.IsInvalid())
-		{
-			const DWORD errorCode = ::GetLastError();
-			throw std::system_error
-			{
-				static_cast<int>(errorCode),
-				std::system_category(),
-				"Error creating manual reset event: CreateEventW"
-			};
-		}        
-    }
+    public:
 
-    AutoResetEvent::~AutoResetEvent()
-    {}
+        AutoResetEvent();
+        ~AutoResetEvent() = default;
 
-    const platform::nswindows::Handle& AutoResetEvent::Handle()
-    {
-        return m_handle;
-    }
+        const platform::nswindows::Handle& Handle();
 
-    bool AutoResetEvent::Set()
-    {
-        return ::SetEvent(m_handle.Use());
-    }
+        bool Set();
+
+    private:
+
+        platform::nswindows::Handle m_handle;
+    };
 
 }}}//qor::framework::nswindows
+
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_AUTORESETEVENT
+

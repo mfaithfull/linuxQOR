@@ -28,7 +28,7 @@
 #include <chrono>
 #include "src/framework/asyncioservice/asyncioeventprocessor.h"
 #include "ioservice.h"
-#include "scheduleoperation.h"
+#include "operations/scheduleoperation.h"
 
 namespace qor { namespace framework { namespace nswindows {
 

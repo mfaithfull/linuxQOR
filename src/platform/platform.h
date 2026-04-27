@@ -39,7 +39,7 @@ application features*/
 
 namespace qor{ namespace platform{
 
-    class qor_pp_module_interface(QOR_PLATFORM) Platform
+    class qor_pp_module_interface(QOR_PLATFORM) Platform final
     {
     public:
 

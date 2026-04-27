@@ -22,35 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_WAITABLETIMEREVENT
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_WAITABLETIMEREVENT
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERTHREADSTATE
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERTHREADSTATE
 
+#include <chrono>
+#include "src/framework/thread/thread.h"
 #include "src/platform/os/windows/common/handles/handle.h"
-
-#include <cstdint>
-
-#include "overlapped.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "waitabletimerevent.h"
+#include "../sync/autoresetevent.h"
 
 namespace qor { namespace framework { namespace nswindows {
 
-	class WaitableTimerEvent
+    class TimedScheduleOperation;
+    class TimerThreadState final
     {
     public:
 
-        WaitableTimerEvent();
-        ~WaitableTimerEvent();
+        TimerThreadState();
+        ~TimerThreadState();
+        TimerThreadState(const TimerThreadState& other) = delete;
+        TimerThreadState& operator=(const TimerThreadState& other) = delete;
 
-        const platform::nswindows::Handle& Handle();
+        void RequestTimerCancellation() noexcept;
+        void Run() noexcept;
+        void WakeUpTimerThread() noexcept;
 
-        bool Set( platform::nswindows::LARGE_INTEGER dueTime, long period, bool resumeFromSuspend);
+        ref_of<AutoResetEvent>::type m_wakeUpEvent;
+        ref_of<WaitableTimerEvent>::type m_waitableTimerEvent;
 
-    private:
+        std::atomic<TimedScheduleOperation*> m_newlyQueuedTimers;
+        std::atomic<bool> m_timerCancellationRequested;
+        std::atomic<bool> m_shutDownRequested;
 
-        platform::nswindows::Handle m_handle;
+        Thread m_thread;
+
     };
+    
+}}}//qor::framework//nswindows
 
-}}}//qor::framework::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_WAITABLETIMEREVENT
-
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERQUEUE

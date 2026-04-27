@@ -22,33 +22,67 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_AUTORESETEVENT
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_AUTORESETEVENT
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPEDOPERATIONBASE
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPEDOPERATIONBASE
 
-#include "src/platform/os/windows/common/handles/handle.h"
-
-#include <cstdint>
-#include "overlapped.h"
+#include <system_error>
+#include <coroutine>
+#include "../iostate.h"
+#include "../wsabuffer.h"
 
 namespace qor { namespace framework { namespace nswindows {
 
-	class AutoResetEvent
-    {
-    public:
+	class win32_overlapped_operation_base : protected io_state
+	{
+	public:
 
-        AutoResetEvent();
-        ~AutoResetEvent();
+		win32_overlapped_operation_base( io_state::callback_type* callback) noexcept : io_state(callback)
+			, m_errorCode(0)
+			, m_numberOfBytesTransferred(0)
+		{
+		}
 
-        const platform::nswindows::Handle& Handle();
+		win32_overlapped_operation_base( void* pointer, io_state::callback_type* callback) noexcept
+			: io_state(pointer, callback)
+			, m_errorCode(0)
+			, m_numberOfBytesTransferred(0)
+		{
+		}
 
-        bool Set();
+		win32_overlapped_operation_base( std::uint64_t offset, io_state::callback_type* callback) noexcept : io_state(offset, callback)
+			, m_errorCode(0)
+			, m_numberOfBytesTransferred(0)
+		{
+		}
 
-    private:
+		virtual ~win32_overlapped_operation_base()
+		{
+		}
 
-        platform::nswindows::Handle m_handle;
-    };
+		_OVERLAPPED* get_overlapped() noexcept
+		{
+			return reinterpret_cast<_OVERLAPPED*>(
+				static_cast<overlapped*>(this));
+		}
+
+		std::size_t get_result()
+		{
+			if (m_errorCode != 0)
+			{
+				throw std::system_error{
+					static_cast<int>(m_errorCode),
+					std::system_category()
+				};
+			}
+
+			return m_numberOfBytesTransferred;
+		}
+
+		dword_t m_errorCode;
+		dword_t m_numberOfBytesTransferred;
+
+	};
 
 }}}//qor::framework::nswindows
 
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_AUTORESETEVENT
-
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPEDOPERATIONBASE

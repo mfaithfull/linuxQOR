@@ -28,7 +28,7 @@
 #include <cassert>
 #include <chrono>
 #include "timerqueue.h"
-#include "timedscheduleoperation.h"
+#include "operations/timedscheduleoperation.h"
 
 namespace qor { namespace framework { namespace nswindows {
 
