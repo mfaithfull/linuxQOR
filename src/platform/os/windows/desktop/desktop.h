@@ -30,7 +30,7 @@
 
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSDESKTOP) ImplementsDesktop(); }
 
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{
 
     class qor_pp_module_interface(QOR_WINDOWSDESKTOP) Desktop : public qor::components::Desktop
     {
