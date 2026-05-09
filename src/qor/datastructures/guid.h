@@ -30,7 +30,7 @@
 
 namespace qor{
     
-    struct GUID;
+    struct qor_pp_module_interface(QOR_DATASTRUCTURES) GUID;
     
     bool qor_pp_module_interface(QOR_DATASTRUCTURES) IsEqualGUID(const GUID& rguid1, const GUID& rguid2);
 
