@@ -22,23 +22,52 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_BRUSH
+#define QOR_PP_H_WINDOWS_GUI_BRUSH
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include <string>
+
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "../view/drawing/point.h"
+#include "gdiobject.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    struct LogBrush
+    {
+        unsigned int        m_style;
+        unsigned long       m_colour;
+        unsigned long long  m_hatch;
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) Brush : public GDIObject
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
+        Brush();
+        Brush(int);
+        Brush(const PrimitiveHandle& h);
+        virtual ~Brush();
+
+        static Brush CreateIndirect(const LogBrush& logBrush);
+        static Brush CreateDIBPattern(void* hglbDIBPacked, unsigned int fuColorSpec);
+        static Brush CreateHatch(int fnStyle, unsigned long clrref);
+        static Brush CreatePattern(Handle& bitmap);
+        static Brush CreateSolid(unsigned long crColor);
+
+        bool GetOrg(const Handle& deviceContext, Point& pt);
+        bool SetOrg(const Handle& deviceContext, int x, int y, Point& pt);
     };
-    
+
+    class qor_pp_module_interface(QOR_WINGUI) SysBrush : public Brush
+    {
+    public:
+
+        SysBrush(int nIndex);
+        virtual ~SysBrush();
+    };
+
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI
+#endif//QOR_PP_H_WINDOWS_GUI_BRUSH

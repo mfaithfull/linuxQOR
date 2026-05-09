@@ -24,24 +24,28 @@
 
 #include "src/configuration/configuration.h"
 
-#include "gui.h"
-#include "window.h"
-#include "src/platform/os/windows/common/stringconv.h"
-#include "src/platform/os/windows/api_layer/user/user32.h"
-#include "src/platform/os/windows/api_layer/shell/shell.h"
-#include "src/platform/os/windows/api_layer/comctl32/comctl32.h"
+#include "rendered.h"
+#include "../messages.h"
 
-using namespace qor::nswindows::api;
-
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
     
-    void GUI::Quit(int exitCode)
+    bool RenderedWindowHandler::ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
-        User32::PostQuitMessage(exitCode);
+        return ProcessHook(window, lResult, msg, wParam, lParam) ||
+            BaseWindowHandler::ProcessMessage(window, lResult, msg, wParam, lParam) ||
+            (m_nonClient.IsNotNull() && m_nonClient->ProcessMessage(window, lResult, msg, wParam, lParam)) ||
+            (m_ncRendering.IsNotNull() && m_ncRendering->ProcessMessage(window, lResult, msg, wParam, lParam)) ||
+            (m_rendering.IsNotNull() && m_rendering->ProcessMessage(window, lResult, msg, wParam, lParam)) ||
+            (m_iconized.IsNotNull() && m_iconized->ProcessMessage(window, lResult, msg, wParam, lParam)) ||
+            (m_font.IsNotNull() && m_font->ProcessMessage(window, lResult, msg, wParam, lParam)) ||
+            (m_cursor.IsNotNull() && m_cursor->ProcessMessage(window, lResult, msg, wParam, lParam)) ||
+            (m_dwm.IsNotNull() && m_dwm->ProcessMessage(window, lResult, msg, wParam, lParam)) ||
+            HandleMessage(window, lResult, msg, wParam, lParam);
     }
 
-    bool GUI::InitCommonControlsEx(struct InitCommonControlsEx& init)
+    bool RenderedWindowHandler::HandleMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
-        return ComCtl32::InitCommonControlsEx(reinterpret_cast<LPINITCOMMONCONTROLSEX>(&init)) ? true : false;
+        return false;        
     }
-}}}//qor::platform::nswindows
+
+}}}}}//qor::platform::nswindows::gui::view

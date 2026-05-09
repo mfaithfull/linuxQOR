@@ -22,23 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_CARET
+#define QOR_PP_H_WINDOWS_GUI_CARET
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include <string>
+
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "../view/drawing/rect.h"
+#include "../view/drawing/point.h"
+#include "../window.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    class qor_pp_module_interface(QOR_WINGUI) Caret
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
+        static bool Create(Window& window, Handle* bitmap, int width, int height);
+        static bool Destroy();
+        static unsigned int GetBlinkTime();
+        static bool SetBlinkTime(unsigned int umseconds);
+        static bool GetPosition(Point& pt);
+        static bool SetPosition(int x, int y);
+        static bool Show(Handle& hWnd);
+        static bool Hide(Handle& hWnd);
     };
-    
+
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI
+#endif//QOR_PP_H_WINDOWS_GUI_CARET

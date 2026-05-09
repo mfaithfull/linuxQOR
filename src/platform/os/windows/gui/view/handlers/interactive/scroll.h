@@ -22,23 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_SCROLL
+#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_SCROLL
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "../parts/part.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    class qor_pp_module_interface(QOR_WINGUI) ScrollHandler : public BaseWindowPartHandler
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
-}}}//qor::platform::nswindows
+        ScrollHandler() = default;
+        virtual ~ScrollHandler() noexcept = default;
 
-#endif//QOR_PP_H_WINDOWS_GUI
+        virtual bool ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
+        virtual bool OnVScroll(Window& window, unsigned long long wParam, long long lParam);
+        virtual bool OnHScroll(Window& window, unsigned long long wParam, long long lParam);
+    };
+
+
+}}}}}//qor::platform::nswindows::gui::view
+
+#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_SCROLL

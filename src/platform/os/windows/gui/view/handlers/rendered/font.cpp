@@ -22,23 +22,45 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#include "src/configuration/configuration.h"
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "font.h"
+#include "../../messages.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    bool FontHandler::ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
-    public:
+        if(!ProcessHook(window, lResult, msg, wParam, lParam))
+        {
+            switch (msg)
+            {
+                case wmSetFont:
+                {
+                    Font font(PrimitiveHandle((void*)(wParam)));
+                    bool bRedraw = LoWord(lParam) ? true : false;
+                    OnSetFont(window, font, bRedraw);
+                    return true;
+                }
+                case wmGetFont:
+                {
+                    PrimitiveHandle fontHandle = OnGetFont(window);
+                    lResult = reinterpret_cast<long long>(fontHandle.Use());
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
-}}}//qor::platform::nswindows
+    void FontHandler::OnSetFont(Window& window, Font font, bool bRedraw)
+    {
+    }
 
-#endif//QOR_PP_H_WINDOWS_GUI
+    PrimitiveHandle FontHandler::OnGetFont(Window& window)
+    {
+        return PrimitiveHandle(0);
+    }
+
+}}}}}//qor::platform::nswindows::gui::view

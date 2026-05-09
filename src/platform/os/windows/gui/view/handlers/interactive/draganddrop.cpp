@@ -22,23 +22,40 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#include "src/configuration/configuration.h"
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "draganddrop.h"
+#include "../../messages.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    bool DragAndDropHandler::ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
-    public:
+        if(ProcessHook(window, lResult, msg, wParam, lParam))
+        {
+            return true;
+        }
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
+        switch (msg)
+        {
+            case wmDropFiles:
+            {
+                void* hDrop = reinterpret_cast<void*>(wParam);
+                if(OnDropFiles(window, hDrop))
+                {
+                    lResult = 0;
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool DragAndDropHandler::OnDropFiles(Window& window, void* hDrop)
+    {
+        return false;
+    }
     
-}}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_WINDOWS_GUI
+}}}}}//qor::platform::nswindows::gui::view
+    

@@ -22,23 +22,41 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#include "src/configuration/configuration.h"
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "cursor.h"
+#include "../../messages.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    CursorHandler::CursorHandler() : BaseWindowPartHandler()
     {
-    public:
+    }
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
-}}}//qor::platform::nswindows
+    bool CursorHandler::ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
+    {
+        if(!ProcessHook(window, lResult, msg, wParam, lParam))
+        {
+            switch (msg)
+            {
+                case wmSetCursor:
+                {
+                    Window wndOver(PrimitiveHandle((void*)(wParam)));
+                    unsigned short hitTestCode = LoWord( lParam );
+                    unsigned short mouseMsgId = HiWord( lParam );
+                    lResult = OnSetCursor(window, wndOver, hitTestCode, mouseMsgId) ? 1 : 0;
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
 
-#endif//QOR_PP_H_WINDOWS_GUI
+    bool CursorHandler::OnSetCursor(Window& window, Window& wndOver, unsigned short hitTestCode, unsigned short mouseMsgId)
+    {
+        return false;
+    }
+
+}}}}}//qor::platform::nswindows::gui::view
+

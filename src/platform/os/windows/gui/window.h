@@ -27,10 +27,10 @@
 
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
-#include "menu.h"
-#include "message.h"
-#include "acceleratortable.h"
-#include "rect.h"
+#include "controllers/menu.h"
+#include "view/handlers/message.h"
+#include "view/handlers/acceleratortable.h"
+#include "view/drawing/rect.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
@@ -86,6 +86,9 @@ namespace qor{ namespace platform { namespace nswindows{
 
         Handle m_handle;
     };
+    
+    typedef bool (* wndenumproc)(Window*, long long);
+    typedef bool (* propenumproc)(Window*, const TCHAR*, void*);
     
 }}}//qor::platform::nswindows
 

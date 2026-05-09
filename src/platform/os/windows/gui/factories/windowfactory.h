@@ -22,23 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_WINDOWFACTORY
+#define QOR_PP_H_WINDOWS_GUI_WINDOWFACTORY
 
-#include "window.h"
 #include "src/platform/os/windows/common/structures.h"
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "../window.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    //Make Window instances from a WindowClass and a WindowViewState
+    //Each Window has a Controller and a Handler
+    class qor_pp_module_interface(QOR_WINGUI) WindowFactory
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
-}}}//qor::platform::nswindows
+        WindowFactory() = default;
+        virtual ~WindowFactory() = default;
 
-#endif//QOR_PP_H_WINDOWS_GUI
+        /*
+        Add Class, make a pair of the Class and its Registration object and store them potentially with a Style object
+        Make Class, make an instance of the named class: Find its Class Object and Create a Window with a Controller and a Handler
+        Give the Window the relevent style settings from the factory
+        We should be able to override the window Position, Size and Style but not the class information of basic Window Type
+        Provide a set of Builtin Types covering the Basic Controls, Common Controls, Frames, Dialogs and Message Boxes
+        */
+    };
+
+}}}//qor::platform::nswindow
+
+#endif//QOR_PP_H_WINDOWS_GUI_WINDOWFACTORY

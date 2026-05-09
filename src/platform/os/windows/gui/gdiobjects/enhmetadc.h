@@ -22,23 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_ENHMETADEVICECONTEXT
+#define QOR_PP_H_WINDOWS_GUI_ENHMETADEVICECONTEXT
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "../view/drawing/rect.h"
+#include "brush.h"
+#include "../view/drawing/size.h"
+#include "palette.h"
+#include "gdiobject.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    class EnhancedMetaDeviceContext : public GDIObject
     {
     public:
-
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
+        EnhancedMetaDeviceContext();
+        EnhancedMetaDeviceContext(const PrimitiveHandle& h);
+        virtual ~EnhancedMetaDeviceContext();
     };
     
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI
+#endif//QOR_PP_H_WINDOWS_GUI_ENHMETADEVICECONTEXT

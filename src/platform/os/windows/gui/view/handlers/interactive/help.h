@@ -22,23 +22,35 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_HELP
+#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_HELP
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "../parts/part.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    struct HelpInfo             /* Structure pointed to by lParam of WM_HELP */
+    {
+        unsigned int        cbSize;             /* Size in bytes of this struct  */
+        int                 iContextType;       /* Either HELPINFO_WINDOW or HELPINFO_MENUITEM */
+        int                 iCtrlId;            /* Control Id or a Menu item Id. */
+        void*               hItemHandle;        /* hWnd of control or hMenu.     */
+        unsigned long long  dwContextId;        /* Context Id associated with this item */
+        Point               MousePos;           /* Mouse Position in screen co-ordinates */
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) HelpHandler : public BaseWindowPartHandler
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
-}}}//qor::platform::nswindows
+        HelpHandler() = default;
+        virtual ~HelpHandler() noexcept = default;
 
-#endif//QOR_PP_H_WINDOWS_GUI
+        virtual bool ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
+        virtual bool OnHelp(Window& window, HelpInfo& helpInfo);
+    };
+
+
+}}}}}//qor::platform::nswindows::gui::view
+
+#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_HELP

@@ -22,23 +22,33 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_TOPLEVEL
+#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_TOPLEVEL
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "interactive.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    class qor_pp_module_interface(QOR_WINGUI) TopLevelWindowHandler : public InteractiveWindowHandler
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
-}}}//qor::platform::nswindows
+        TopLevelWindowHandler() = default;
+        virtual ~TopLevelWindowHandler() noexcept = default;
 
-#endif//QOR_PP_H_WINDOWS_GUI
+        virtual bool ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
+        virtual void OnActivateApp(bool bActivate, unsigned long dwThreadID);
+        virtual void OnEnterIdle(unsigned short wWhy, Window& who);
+        virtual void OnSysCommand(unsigned long long nID, unsigned short wYPos, unsigned short wXPos, bool bAcceleratorUsed, bool bMnemonic);
+        virtual void OnDropFiles(void* hDropInfo);
+        virtual bool OnQueryEndSession(bool bLoggingOff);
+        virtual void OnEndSession(bool bEnd, bool bLoggingOff);
+        virtual bool OnQueryNewPalette();
+        virtual void OnPaletteChanged(Window& changeSource);
+        virtual void OnCommand(Window& window, unsigned short wNotify, unsigned short wID, long long lParam);
+
+    };
+
+}}}}}//qor::platform::nswindows::gui::view
+
+#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_TOPLEVEL

@@ -22,23 +22,58 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_CURSOR
+#define QOR_PP_H_WINDOWS_GUI_CURSOR
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include <string>
+
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "../view/drawing/rect.h"
+#include "../view/drawing/point.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    //Information about the global cursor.
+    struct CursorInfo
+    {
+        unsigned long   cbSize;
+        unsigned long   flags;
+        void* hCursor;
+        Point   ptScreenPos;
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) Cursor
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
+        Cursor(const PrimitiveHandle& h);
+        Cursor(const Cursor& src);
+        Cursor(void* hInst, int xHotSpot, int yHotSpot, int nWidth, int nHeight, const void* pvANDPlane, const void* pvXORPlane);
+        Cursor(void* hInstance, const std::string& cursorName);
+        Cursor(const std::string& fileName);
+        virtual ~Cursor();
+
+        Cursor Clone();
+        const Handle& GetHandle() const;
+
+        bool Clip(const Rect& rect);
+        bool GetClip(Rect& rect);
+        static Cursor GetCurrent();
+        bool GetInfo(CursorInfo& ci);
+        bool GetPosition(Point& point);
+        bool GetPhysicalPosition(Point& point);
+        bool SetPosition(int x, int y);
+        bool SetPhysicalPosition(int x, int y);
+        static bool Show(bool show);
+        void SetAsCurrent();
+        bool SetAsSystemCursor(unsigned long id);
+
+    protected:
+        bool m_bNeedsDestroy;
+        Handle m_handle;
     };
-    
+
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI
+#endif//QOR_PP_H_WINDOWS_GUI_CURSOR

@@ -22,23 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_MESSAGE
+#define QOR_PP_H_WINDOWS_GUI_MESSAGE
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "../drawing/point.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    struct Message
     {
-    public:
-
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
+        void*               hwnd;
+        unsigned int        message;
+        unsigned long long  wParam;
+        long long           lParam;
+        unsigned long       time;
+        Point               pt;
+#ifdef _MAC
+        unsigned long       lPrivate;
+#endif
     };
     
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI
+#endif//QOR_PP_H_WINDOWS_GUI_MESSAGE

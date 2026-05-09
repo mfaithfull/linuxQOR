@@ -22,23 +22,41 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#include "src/configuration/configuration.h"
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "part.h"
+#include "../../messages.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    BaseWindowPartHandler::BaseWindowPartHandler() : 
+    m_nextHookHandler{nullptr}
+    {        
+    }
+
+    BaseWindowPartHandler* BaseWindowPartHandler::HookHandler(BaseWindowPartHandler* controller)
     {
-    public:
+        BaseWindowPartHandler* result = nullptr;
+        if (m_nextHookHandler == nullptr)
+        {
+            m_nextHookHandler = controller;
+        }
+        else
+        {
+            result = m_nextHookHandler->HookHandler(controller);
+        }
+        return result;
+    }
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
+    bool BaseWindowPartHandler::ProcessMessage(Window& Window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
+    {
+        return ProcessHook(Window, lResult, msg, wParam, lParam);
+    }
+
+    bool BaseWindowPartHandler::ProcessHook(Window& Window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
+    {
+        return m_nextHookHandler ? m_nextHookHandler->ProcessMessage(Window, lResult, msg, wParam, lParam) : false;
+    }
+
+}}}}}//qor::platform::nswindows::gui::view
     
-}}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_WINDOWS_GUI

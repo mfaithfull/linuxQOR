@@ -34,6 +34,9 @@
 #define MakeWord(a, b) ((unsigned short)(((unsigned char)(((unsigned long long)(a)) & 0xff)) | ((unsigned short)((unsigned char)(((unsigned long long)(b)) & 0xff))) << 8))
 #define MakeLong(a, b) ((long)(((unsigned short)(((unsigned long long)(a)) & 0xffff)) | ((unsigned long)((unsigned short)(((unsigned long long)(b)) & 0xffff))) << 16))
 
+#define GetXLParam(lp) ((int)(short)LoWord(lp))
+#define GetYLParam(lp) ((int)(short)HiWord(lp))
+
 namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
 	static const unsigned short wmNull = 0x0000;
@@ -268,15 +271,13 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
 	static const unsigned short wmPrintClient = 0x0318;
 	static const unsigned short wmThemeChanged = 0x031A;
 	static const unsigned short wmDWMCompositionChanged = 0x031E;
-	static const unsigned short wmDWMNonClientRenderingChanged = 0x031F;
+	static const unsigned short wmDWMNonClientRenderingChanged = 0x031F;	
+	static const unsigned short wmDWMColorizationColourChanged = 0x0320;
+	static const unsigned short wmDWMWindowMaximizedChange = 0x0321;
+	static const unsigned short wmDWMSendIconicThumbnail = 0x0323;
+	static const unsigned short wmDWMSendIconicLivePreviewBitmap = 0x0326;
 
-/*
-#define WM_DWMCOLORIZATIONCOLORCHANGED  0x0320
-#define WM_DWMWINDOWMAXIMIZEDCHANGE     0x0321
-#define WM_DWMSENDICONICTHUMBNAIL           0x0323
-#define WM_DWMSENDICONICLIVEPREVIEWBITMAP   0x0326
-#define WM_GETTITLEBARINFOEX            0x033F
-*/
+
 	static const unsigned short wmUser = 0x0400;
 	static const unsigned short wmApp = 0x8000;
 

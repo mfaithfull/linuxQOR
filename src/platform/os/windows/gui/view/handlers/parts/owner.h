@@ -22,23 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASEPARTS_OWNER
+#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASEPARTS_OWNER
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "part.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    class qor_pp_module_interface(QOR_WINGUI) OwnerHandler : public BaseWindowPartHandler
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
-}}}//qor::platform::nswindows
+        OwnerHandler() = default;
+        virtual ~OwnerHandler() noexcept = default;
+        virtual bool ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
+        virtual bool OnEnterIdle(Window& window, unsigned long long wReason, Window& causeWnd);
+        virtual bool OnEnterMenuLoop(Window& window, bool bTrack);
+        virtual bool OnExitMenuLoop(Window& window, bool bShortcut);
 
-#endif//QOR_PP_H_WINDOWS_GUI
+    };
+
+}}}}}//qor::platform::nswindows::gui::view
+
+#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASEPARTS_OWNER

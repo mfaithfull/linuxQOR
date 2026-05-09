@@ -22,23 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_RENDERED_DWM
+#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_RENDERED_DWM
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "../parts/part.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    class qor_pp_module_interface(QOR_WINGUI) DesktopWindowManagerHandler : public BaseWindowPartHandler
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
-}}}//qor::platform::nswindows
+        DesktopWindowManagerHandler() = default;
+        virtual ~DesktopWindowManagerHandler() noexcept = default;
 
-#endif//QOR_PP_H_WINDOWS_GUI
+        virtual bool ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
+        virtual bool OnCompositionChanged(Window& window);
+        virtual bool OnNonClientRenderingChanged(Window& window, bool enabled);        
+        virtual bool OnColorizationColourChanged(Window& window, unsigned long long wParam, long long lParam);
+        virtual bool OnWindowMaximizedChange(Window& window, bool maximized);
+        virtual bool OnSendIconicThumbnail(Window& window, int xMax, int yMax);
+        virtual bool OnSendIconicLivePreviewBitmap(Window& window);
+    };
+
+}}}}}//qor::platform::nswindows::gui::view
+
+#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_RENDERED_DWM

@@ -22,23 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#include "src/configuration/configuration.h"
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "devicechange.h"
+#include "../../messages.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    bool DeviceChangeHandler::ProcessMessage(Window& Window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
-    public:
+        if(!ProcessHook(Window, lResult, msg, wParam, lParam))
+        {
+            switch (msg)
+            {
+                case wmDeviceChange:
+                {
+                    lResult = OnDeviceChange(Window, wParam, lParam);
+                    return true;
+                }            
+            }
+            return false;
+        }
+        return true;
+    }
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
+    long long DeviceChangeHandler::OnDeviceChange(Window& Window, unsigned long long wParam, long long lParam)
+    {
+        return Window.DefWindowProcT(wmDeviceChange, wParam, lParam);
+    }
+
+}}}}}//qor::platform::nswindows::gui::view
     
-}}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_WINDOWS_GUI

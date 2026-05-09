@@ -22,23 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#include "src/configuration/configuration.h"
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "user.h"
+#include "../../messages.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
-    {
-    public:
-
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
+    UserHandler::UserHandler() : BaseWindowPartHandler()
+    {        
+    }
     
-}}}//qor::platform::nswindows
+    bool UserHandler::ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
+    {
+        if(!ProcessHook(window, lResult, msg, wParam, lParam))
+        {
+            switch (msg)
+            {
+                case wmUserChanged:
+                {
+                    lResult = OnUserChanged(window) ? 0 : window.DefWindowProcT(msg, wParam, lParam);
+                    return true;
+                }            
+            }
+            return false;
+        }
+        return true;        
+    }
 
-#endif//QOR_PP_H_WINDOWS_GUI
+    //Not supported as of Windows Vista
+    bool UserHandler::OnUserChanged(Window& window)
+    {
+        return false;
+    }
+
+}}}}}//qor::platform::nswindows::gui::view
+    

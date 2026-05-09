@@ -22,23 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#include "src/configuration/configuration.h"
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "timer.h"
+#include "../../messages.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    bool TimerHandler::ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
-    public:
+        if(!ProcessHook(window, lResult, msg, wParam, lParam))
+        {
+            switch (msg)
+            {
+                case wmTimer:
+                {
+                    lResult = OnTimer(window, wParam, lParam) ? 0 : window.DefWindowProcT(msg, wParam, lParam);
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;        
+    }
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
+    bool TimerHandler::OnTimer(Window& window, unsigned long long wParam, long long lParam)
+    {
+        return false;
+    }
+
+}}}}}//qor::platform::nswindows::gui::view
     
-}}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_WINDOWS_GUI

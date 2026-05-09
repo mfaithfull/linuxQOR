@@ -22,23 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_MONITOR
+#define QOR_PP_H_WINDOWS_GUI_MONITOR
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "../gdiobjects/devicecontext.h"
+#include "../view/drawing/rect.h"
+#include "../window.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    typedef int (__stdcall* MonitorEnumProc)(void*, void*, Rect*, long long);
+
+    struct MonitorInfo
+    {
+        unsigned long   cbSize;
+        Rect            rcMonitor;
+        Rect            rcWork;
+        unsigned long   flags;
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) Monitor
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
+        Monitor();
+        Monitor(const PrimitiveHandle& h);
+        Monitor(const Monitor& m);
+
+        const Handle& GetHandle() const;
+
+        static bool Enumerate(DeviceContext* dc, const Rect& lprcClip, MonitorEnumProc lpfnEnum, long long data);
+        bool GetInfo(MonitorInfo& info);
+        static Monitor FromPoint(const Point& pt, unsigned long flags);
+        static Monitor FromRect(const Rect& rc, unsigned long flags);
+        static Monitor FromWindow(const Window& w, unsigned long flags);
+        
+    protected:
+
+        Handle m_handle;
     };
     
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI
+#endif//QOR_PP_H_WINDOWS_GUI_MONITOR

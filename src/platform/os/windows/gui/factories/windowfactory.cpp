@@ -22,23 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#include "src/configuration/configuration.h"
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "windowfactory.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+#include "src/platform/os/windows/common/stringconv.h"
+#include "src/platform/os/windows/api_layer/user/user32.h"
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
-    {
-    public:
+using namespace qor::nswindows::api;
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
+namespace qor{ namespace platform { namespace nswindows{
+
+    /*
+        static HWND CreateWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
+        static HWND CreateWindowExT(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
+
+        static BOOL DestroyWindow(HWND hWnd);
+    */
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI

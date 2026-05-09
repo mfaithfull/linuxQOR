@@ -22,23 +22,40 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI
-#define QOR_PP_H_WINDOWS_GUI
+#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_RENDERED
+#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_RENDERED
 
-#include "window.h"
-#include "src/platform/os/windows/common/structures.h"
+#include "base.h"
+#include "rendered/nc.h"
+#include "rendered/ncrender.h"
+#include "rendered/rendering.h"
+#include "rendered/iconized.h"
+#include "rendered/font.h"
+#include "rendered/cursor.h"
+#include "rendered/dwm.h"
 
-//All types on this interface must be portable
-namespace qor{ namespace platform { namespace nswindows{ 
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) GUI
+    class qor_pp_module_interface(QOR_WINGUI) RenderedWindowHandler : public BaseWindowHandler
     {
     public:
 
-        static void Quit(int exitCode);
-        static bool InitCommonControlsEx(struct InitCommonControlsEx& init);
-    };
-    
-}}}//qor::platform::nswindows
+        RenderedWindowHandler() = default;
+        virtual ~RenderedWindowHandler() noexcept = default;
 
-#endif//QOR_PP_H_WINDOWS_GUI
+        virtual bool ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
+        bool HandleMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
+
+        ref_of< NonClientHandler >::type m_nonClient;
+        ref_of< NonClientRenderingHandler >::type m_ncRendering;
+        ref_of< RenderingHandler >::type m_rendering;
+        ref_of< IconizedHandler >::type m_iconized;
+        ref_of< FontHandler >::type m_font;
+        ref_of< CursorHandler >::type m_cursor;
+        ref_of< DesktopWindowManagerHandler >::type m_dwm;
+
+    };
+
+}}}}}//qor::platform::nswindows::gui::view
+
+#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_RENDERED
