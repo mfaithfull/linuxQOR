@@ -10,23 +10,13 @@ include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 add_executable(${target} main.cpp)
 
-target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE qor_pp_ver_major=1 )
-
-if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application)
-endif()
-
-if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_log qor_pipeline qor_asyncioservice qor_property)
-endif()
-
-include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 
 if (WIN32)
   add_custom_command(
     TARGET ${target} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_RUNTIME_DLLS:outline> $<TARGET_FILE_DIR:outline>
+            $<TARGET_RUNTIME_DLLS:basic> $<TARGET_FILE_DIR:basic>
     COMMAND_EXPAND_LISTS
   )
 endif ()

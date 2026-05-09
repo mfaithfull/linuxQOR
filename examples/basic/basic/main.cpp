@@ -22,20 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//A minimal basic QOR application using the QOR SDK
+//A minimal basic QOR application
 
-#include "sdk/using_framework.h"
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/framework/application/application_builder.h"
 
-const char* appName = "Basic";
-qor_pp_implement_module(appName)
+constexpr const char* appName = "BasicApp";
+qor::Module& ThisModule(void)
+{ 
+    static qor::Module QORModule(appName, "1.0.0");
+    return QORModule;
+}
 
 int main()
 {
-    return AppBuilder().Build(appName)->Run(
-        make_runable(
+    return qor::framework::AppBuilder().Build(appName)->Run(
+        qor::framework::make_runable(
             []()->int
             {
-                std::cout << "Hello from the QOR Basic application." << std::endl;
+                std::cout << "Hello from a basic QOR application." << std::endl;
                 return EXIT_SUCCESS;
             }
         ));
