@@ -296,8 +296,7 @@ namespace qor { namespace nswindows { namespace api {
         static HDC GetDC(HWND hWnd);
         static HDC GetDCEx(HWND hWnd, HRGN hrgnClip, DWORD flags);
         static int ReleaseDC(HWND hWnd, HDC hDC);
-
-        //--------------------------------------------------------------------------------
+        
         //String functions
         LPSTR CharLowerA(LPSTR lpsz);
         LPWSTR CharLowerW(LPWSTR lpwsz);
@@ -334,7 +333,6 @@ namespace qor { namespace nswindows { namespace api {
         int wvsprintfA(LPSTR lpOutput, LPCSTR lpFmt, va_list arglist);
         int wvsprintfW(LPWSTR lpOutput, LPCWSTR lpFmt, va_list arglist);
         
-        //--------------------------------------------------------------------------------
         //Button Control functions
         BOOL CheckDlgButton(HWND hDlg, int nIDButton, UINT uCheck);
         BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton, int nIDLastButton, int nIDCheckButton);
@@ -464,7 +462,6 @@ namespace qor { namespace nswindows { namespace api {
         static LRESULT DefMDIChildProcT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
         static BOOL TranslateMDISysAccel(HWND hWndClient, LPMSG lpMsg);
 
-        //--------------------------------------------------------------------------------
         //Dynamic Data Exchange functions
         BOOL DdeAbandonTransaction(DWORD idInst, HCONV hConv, DWORD idTransaction) const;
         LPBYTE DdeAccessData(HDDEDATA hData, LPDWORD pcbDataSize, DWORD idInst) const;
@@ -501,7 +498,6 @@ namespace qor { namespace nswindows { namespace api {
         LPARAM ReuseDDElParam(LPARAM lParam, UINT msgIn, UINT msgOut, UINT_PTR uiLo, UINT_PTR uiHi) const;
         BOOL UnpackDDElParam(UINT msg, LPARAM lParam, PUINT_PTR puiLo, PUINT_PTR puiHi) const;
         
-		//--------------------------------------------------------------------------------
         //Raw Input functions
         LRESULT DefRawInputProc(PRAWINPUT* paRawInput, INT nInput, UINT cbSizeHeader);
         UINT GetRawInputBuffer(PRAWINPUT pData, PUINT pcbSize, UINT cbSizeHeader);
@@ -511,13 +507,11 @@ namespace qor { namespace nswindows { namespace api {
         UINT GetRegisteredRawInputDevices(PRAWINPUTDEVICE pRawInputDevices, PUINT puiNumDevices, UINT cbSize);
         BOOL RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize);
         
-		//--------------------------------------------------------------------------------
         //List Box functions
         int DlgDirList(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType);
         BOOL DlgDirSelectEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDListBox);
         DWORD GetListBoxInfo(HWND hwnd);
 
-        //--------------------------------------------------------------------------------
         //Combo Box functions
         int DlgDirListComboBox(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype);
         BOOL DlgDirSelectComboBoxEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox);
@@ -541,7 +535,6 @@ namespace qor { namespace nswindows { namespace api {
         static DWORD GetTabbedTextExtentT(HDC hDC, LPCTSTR lpString, int nCount, int nTabPositions, CONST LPINT lpnTabStopPositions);
         static LONG TabbedTextOutT(HDC hDC, int X, int Y, LPCTSTR lpString, int nCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin);
         
-        //--------------------------------------------------------------------------------
         //ScrollBar functions
         BOOL EnableScrollBar(HWND hWnd, UINT wSBFlags, UINT wArrows);
         BOOL GetScrollBarInfo(HWND hwnd, LONG idObject, ::PSCROLLBARINFO psbi);
@@ -610,7 +603,6 @@ namespace qor { namespace nswindows { namespace api {
 
         //TODO: DesktopWindowManager
 
-        //--------------------------------------------------------------------------------
         //Shell functions
         BOOL SetMenuContextHelpId(HMENU hmenu, DWORD dwContextHelpId);
         DWORD GetMenuContextHelpId(HMENU hmenu);
@@ -618,7 +610,6 @@ namespace qor { namespace nswindows { namespace api {
         DWORD GetWindowContextHelpId(HWND hwnd);
         BOOL WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData);
 
-        //--------------------------------------------------------------------------------
         //System Information functions
         DWORD GetSysColor(int nIndex);
         int GetSystemMetrics(int nIndex);
@@ -628,42 +619,34 @@ namespace qor { namespace nswindows { namespace api {
         //Brush functions
         static HBRUSH GetSysColorBrush(int nIndex);
         
-        //--------------------------------------------------------------------------------
         //Authorization functions
         BOOL GetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSD, DWORD nLength, LPDWORD lpnLengthNeeded);
         BOOL SetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSID);
 
-        //--------------------------------------------------------------------------------
         //Active Accessibility functions
         HWINEVENTHOOK SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC lpfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwflags);
         BOOL UnhookWinEvent(HWINEVENTHOOK hWinEventHook);
         BOOL IsWinEventHookInstalled(DWORD dwEvent);
         void NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild);
 
-        //--------------------------------------------------------------------------------
         //Timer functions
         BOOL KillTimer(HWND hWnd, UINT_PTR uIDEvent);
         UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
 
-        //--------------------------------------------------------------------------------
         //Bitmap functions
         HBITMAP LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
 
-        //--------------------------------------------------------------------------------
         //Synchronization functions
         DWORD MsgWaitForMultipleObjects(DWORD nCount, const HANDLE* pHandles, BOOL bWaitAll, DWORD dwMilliseconds, DWORD dwWakeMask);
         DWORD MsgWaitForMultipleObjectsEx(DWORD nCount, const HANDLE* pHandles, DWORD dwMilliseconds, DWORD dwWakeMask, DWORD dwFlags);
 
-        //--------------------------------------------------------------------------------
         //Printing functions
         BOOL PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags);
 
-        //--------------------------------------------------------------------------------
         //Device Management functions
         HDEVNOTIFY RegisterDeviceNotification(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags);
         BOOL UnregisterDeviceNotification(HDEVNOTIFY Handle);
 
-        //--------------------------------------------------------------------------------
         //Power Management functions
         HPOWERNOTIFY RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags);
         BOOL UnregisterPowerSettingNotification(HPOWERNOTIFY Handle);
