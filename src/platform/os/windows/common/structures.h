@@ -74,9 +74,11 @@ namespace qor{ namespace platform { namespace nswindows {
 
 #if qor_pp_unicode
     typedef wchar_t TCHAR;   
+    typedef std::wstring tstring;
 #   define qor_pp_text(quote) L##quote
 #else
     typedef char TCHAR;
+    typedef std::string tstring;
 #   define qor_pp_text(quote) quote
 #endif 
 
@@ -175,7 +177,7 @@ namespace qor{ namespace platform { namespace nswindows {
 
     struct DisplayDevice
     {
-        unsigned long  cb;
+        unsigned long  cb{sizeof(DisplayDevice)};
         TCHAR  DeviceName[32];
         TCHAR  DeviceString[128];
         unsigned long  StateFlags;
@@ -194,7 +196,7 @@ namespace qor{ namespace platform { namespace nswindows {
 
     struct DeviceMode 
     {
-        TCHAR  dmDeviceName[CchDeviceName];
+        TCHAR dmDeviceName[CchDeviceName];
         unsigned short dmSpecVersion;
         unsigned short dmDriverVersion;
         unsigned short dmSize;
@@ -213,15 +215,15 @@ namespace qor{ namespace platform { namespace nswindows {
                 short dmCopies;
                 short dmDefaultSource;
                 short dmPrintQuality;
-            } DUMMYSTRUCTNAME;
+            };
             // display only fields
             struct 
             {
                 PointL dmPosition;
                 unsigned long  dmDisplayOrientation;
                 unsigned long  dmDisplayFixedOutput;
-            } DUMMYSTRUCTNAME2;
-        } DUMMYUNIONNAME;
+            };
+        };
         short dmColor;
         short dmDuplex;
         short dmYResolution;
@@ -236,7 +238,7 @@ namespace qor{ namespace platform { namespace nswindows {
         {
             unsigned long  dmDisplayFlags;
             unsigned long  dmNup;
-        } DUMMYUNIONNAME2;
+        };
         unsigned long  dmDisplayFrequency;    
         unsigned long  dmICMMethod;
         unsigned long  dmICMIntent;

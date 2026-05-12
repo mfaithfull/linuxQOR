@@ -60,6 +60,21 @@ namespace qor{ namespace platform { namespace nswindows {
 	static constexpr unsigned long ICC_STANDARD_CLASSES   = 0x00004000;
 	static constexpr unsigned long ICC_LINK_CLASS         = 0x00008000;
 
+	constexpr int swHide		= 0;	//Hides the window and activates another window.
+	constexpr int swNormal		= 1;	//Activates and displays a window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position. An application should specify this flag when displaying the window for the first time.
+	constexpr int swMinimized	= 2;	//Activates the window and displays it as a minimized window.
+	constexpr int swMaximized	= 3;	//Activates the window and displays it as a maximized window.
+	constexpr int swNoActivate	= 4;	//Displays a window in its most recent size and position. This value is similar to SW_SHOWNORMAL, except that the window is not activated.
+	constexpr int swShow		= 5;	//Activates the window and displays it in its current size and position.
+	constexpr int swMinimize	= 6;	//Minimizes the specified window and activates the next top-level window in the Z order.
+	constexpr int swMinNoActive	= 7;	//Displays the window as a minimized window. This value is similar to SW_SHOWMINIMIZED, except the window is not activated.
+	constexpr int swShowNA		= 8;	//Displays the window in its current size and position. This value is similar to SW_SHOW, except that the window is not activated.
+	constexpr int swRestore		= 9;	//Activates and displays the window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position. An application should specify this flag when restoring a minimized window.
+	constexpr int swDefault		=10;	//Sets the show state based on the SW_ value specified in the STARTUPINFO structure passed to the CreateProcess function by the program that started the application.
+	constexpr int swForceMin	=11;	//Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.
+
+	static const int TitleBarChildren = 5;
+	static const int DeviceNameSize = 32;
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS

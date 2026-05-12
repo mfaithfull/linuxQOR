@@ -63,7 +63,7 @@ namespace qor { namespace platform { namespace nswindows {
 
 	protected:
 
-		void* m_h;
+		void* m_h{nullptr};
 
 	};
 
@@ -120,8 +120,8 @@ namespace qor { namespace platform { namespace nswindows {
 		bool GetInformation(unsigned long* flags);
 		bool SetInformation(unsigned long mask, unsigned long flags);
 
-		void* m_h;
-		bool m_needsClose;
+		void* m_h{nullptr};
+		bool m_needsClose{false};
 	};
 
 }}}//qor::platform::nswindows
