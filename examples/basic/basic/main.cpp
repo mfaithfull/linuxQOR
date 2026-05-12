@@ -28,21 +28,24 @@
 #include "src/qor/module/module.h"
 #include "src/framework/application/application_builder.h"
 
-constexpr const char* appName = "BasicApp";
-qor::Module& ThisModule(void)
+using namespace qor;                                //Use the basic namespaces from the QOR
+using namespace qor::framework;
+
+constexpr const char* appName = "BasicApp";         //Give our application a baked in name
+
+Module& ThisModule(void)                            //Every QOR module, including executable modules, must provide this
 { 
-    static qor::Module QORModule(appName, "1.0.0");
+    static Module QORModule(appName, "1.0.0");      //A module singleton Module object with name and version
     return QORModule;
 }
 
-int main()
+int main()                                          //Standard C/C++ entry point
 {
-    return qor::framework::AppBuilder().Build(appName)->Run(
-        qor::framework::make_runable(
-            []()->int
+    return AppBuilder().Build(appName)->Run(        //Use the QOR AppBuilder factory to make an App and then Run it
+        make_runable(                               //Convert the lambda to a Runable Object 
+            []()->int                               //A simple lambda returning an int
             {
                 std::cout << "Hello from a basic QOR application." << std::endl;
-                return EXIT_SUCCESS;
-            }
-        ));
+                return EXIT_SUCCESS;                //Standard succes return code (0) is returned from the program
+            }));
 }
