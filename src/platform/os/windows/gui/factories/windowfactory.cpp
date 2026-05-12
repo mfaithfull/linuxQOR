@@ -25,19 +25,115 @@
 #include "src/configuration/configuration.h"
 
 #include "windowfactory.h"
-
 #include "src/platform/os/windows/common/stringconv.h"
+#include "../perthread.h"
+
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
 using namespace qor::nswindows::api;
 
+#undef RegisterClass
+#undef GetClassName
+
 namespace qor{ namespace platform { namespace nswindows{
 
-    /*
-        static HWND CreateWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
-        static HWND CreateWindowExT(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance, LPVOID lpParam);
+    WindowFactory::WindowFactory(void* instance) : m_instance(instance)
+    {        
+    }
 
-        static BOOL DestroyWindow(HWND hWnd);
-    */
+    long long qor_pp_compiler_stdcallconvention WindowFactory::WndProc(void* hwnd, unsigned int msg, unsigned long long wParam, long long lParam)
+    {
+        Window* window = (Window*)(User32::GetPropT((HWND)hwnd, TEXT("QOR")));
+
+        if(window == nullptr)
+        {
+            auto perThread = new_ref<PerThread>();
+            ref_of<Window>::type windowRef = perThread->GetWindowCreationInProgress();
+            window = windowRef.operator->();
+            if(window)
+            {
+                User32::SetPropT((HWND)(hwnd), TEXT("QOR"), (HANDLE)(window));
+                window->SetHandle(PrimitiveHandle(hwnd));
+            }
+        }
+
+        if(window != nullptr)
+        {
+            auto handler = window->GetHandler();
+            long long lResult = -1;
+            if(handler.IsNotNull() && handler->ProcessMessage(*window, lResult, msg, wParam, lParam))
+            {
+                return lResult == -1 ? DefWindowProc((HWND)hwnd, msg, wParam, lParam) : lResult;
+            }
+        }
+
+        return DefWindowProc((HWND)hwnd, msg, wParam, lParam);
+    }
+
+    ref_of<WindowClass>::type WindowFactory::AddWindowClass(const tstring& windowClassName)
+    {
+        ref_of<WindowClass>::type windowClass;
+        auto it = m_windowClassMap.find(windowClassName);
+        if(it == m_windowClassMap.end())
+        {
+            windowClass = new_ref<WindowClass>();
+            windowClass->SetName(windowClassName.c_str());
+            windowClass->SetInstance(PrimitiveHandle(m_instance));
+            windowClass->SetClassExtra(0);
+            windowClass->SetWindowExtra(0);
+            windowClass->SetIcon(Icon(IDI_APPLICATION));
+            windowClass->SetCursor(Cursor(IDC_ARROW));
+            windowClass->SetBackgroundBrush(Brush(COLOR_WINDOW));    
+            windowClass->SetSmallIcon(Icon(nullptr));
+            windowClass->SetMessageFunction(WndProc);
+            m_windowClassMap.insert(std::make_pair(windowClassName, windowClassData{ windowClass, nullptr}));
+        }
+        return windowClass;
+    }
+
+    bool WindowFactory::RegisterClass(ref_of<WindowClass>::type windowClass, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler)
+    {
+        return RegisterClass(windowClass->Name(), handler);
+    }
+
+    bool WindowFactory::RegisterClass(const tstring& windowClassName, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler)
+    {
+        bool result = false;
+        auto it = m_windowClassMap.find(windowClassName);
+        if(it != m_windowClassMap.end())
+        {
+            it->second.registration = new WindowClassRegistration(it->second.windowClass()());
+            it->second.handler = handler;
+            result = true;
+        }
+        return result;
+    }
+
+    ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type WindowFactory::GetHandlerForClass(const tstring& className)
+    {
+        ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler;        
+        auto it = m_windowClassMap.find(className.c_str());
+        if(it != m_windowClassMap.end())
+        {
+            handler = it->second.handler;
+        }
+        return handler;
+    }
+
+    ref_of<WindowController>::type WindowFactory::Create(ref_of<WindowClass>::type windowClass, const tstring& windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, ref_of<Window>::type parent, ref_of<Menu>::type menu, void* param)
+    {
+        return Create(windowClass->Name(), windowName, style, exStyle, x, y, width, height, parent, menu, param);
+    }
+
+    ref_of<WindowController>::type WindowFactory::Create(tstring className, const tstring& windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, ref_of<Window>::type parent, ref_of<Menu>::type menu, void* param)
+    {
+        ref_of<Window>::type window = new_ref<Window>();
+        window->SetHandler(GetHandlerForClass(className));
+        auto perThread = new_ref<PerThread>();
+        perThread->SetWindowCreationInProgress(window);
+        User32::CreateWindowExT(exStyle, className.c_str(), windowName.c_str(), style, x, y, width, height, (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), (HMENU)(menu.IsNotNull() ? menu->GetHandle().Use() : nullptr), (HINSTANCE)(m_instance), param);
+        return new_ref<WindowController>(window);
+    }
+
 }}}//qor::platform::nswindows
 

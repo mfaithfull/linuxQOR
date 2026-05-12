@@ -22,59 +22,64 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_CURSOR
-#define QOR_PP_H_WINDOWS_GUI_CURSOR
+#ifndef QOR_PP_H_WINDOWS_GUI_MENUBUILDER
+#define QOR_PP_H_WINDOWS_GUI_MENUBUILDER
 
-#include <string>
-
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/newref.h"
+#include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
-#include "../view/drawing/rect.h"
-#include "../view/drawing/point.h"
+#include "src/platform/os/windows/gui/controllers/menu.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    //Information about the global cursor.
-    struct CursorInfo
+    struct MenuItemTemplateHeader
     {
-        unsigned long   cbSize;
-        unsigned long   flags;
-        void* hCursor;
-        Point   ptScreenPos;
+        unsigned short version{0};
+        unsigned short offset{0};
     };
 
-    class qor_pp_module_interface(QOR_WINGUI) Cursor
+    struct MenuItemTemplate
+    {
+        unsigned short mtOption;
+        unsigned short mtID;
+        TCHAR mtString[1];
+    };
+
+    struct MenuExTemplateHeader
+    {
+        unsigned short version{1};
+        unsigned short offset{4};
+        unsigned long helpId;
+    };
+
+    struct MenuExTemplateItem 
+    {
+        unsigned long dwType;
+        unsigned long dwState;
+        unsigned int  uId;
+        unsigned short  wFlags;        
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) MenuBuilder
     {
     public:
 
-        Cursor(const PrimitiveHandle& h);
-        Cursor(const Cursor& src);
-        Cursor(void* hInst, int xHotSpot, int yHotSpot, int nWidth, int nHeight, const void* pvANDPlane, const void* pvXORPlane);
-        Cursor(void* hInstance, const std::string& cursorName);
-        Cursor(const std::string& fileName);
-        Cursor(const wchar_t* id);
-        virtual ~Cursor();
+        MenuBuilder() = default;
+        virtual ~MenuBuilder() = default;
 
-        Cursor Clone();
-        const Handle& GetHandle() const;
+        void SetHelpId(unsigned long helpId);
+        unsigned int AddItem(const tstring& item, unsigned long type, unsigned long state, unsigned short flags);
+        ref_of<Menu>::type Build();
 
-        bool Clip(const Rect& rect);
-        bool GetClip(Rect& rect);
-        static Cursor GetCurrent();
-        bool GetInfo(CursorInfo& ci);
-        bool GetPosition(Point& point);
-        bool GetPhysicalPosition(Point& point);
-        bool SetPosition(int x, int y);
-        bool SetPhysicalPosition(int x, int y);
-        static bool Show(bool show);
-        void SetAsCurrent();
-        bool SetAsSystemCursor(unsigned long id);
-
-    protected:
-        bool m_bNeedsDestroy;
-        Handle m_handle;
+    private:
+        size_t CalcBufferNeeded();        
+        unsigned long m_helpId{0};
+        std::vector<std::pair<MenuExTemplateItem, tstring>> m_items{};
     };
 
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI_CURSOR
+#endif//QOR_PP_H_WINDOWS_GUI_MENUBUILDER

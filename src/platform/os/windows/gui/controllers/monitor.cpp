@@ -27,6 +27,8 @@
 #include "monitor.h"
 #include "src/platform/os/windows/common/stringconv.h"
 #include "src/platform/os/windows/api_layer/user/user32.h"
+#include "src/platform/os/windows/api_layer/shcore/shcore.h"
+#include "src/platform/os/windows/api_layer/gdi/gdi32.h"
 
 using namespace qor::nswindows::api;
 
@@ -49,6 +51,178 @@ namespace qor{ namespace platform { namespace nswindows{
         return m_handle;
     }
 
+    bool Monitor::GetInfo(MonitorInfo& info)
+    {
+        return User32::GetMonitorInfoT((HMONITOR)(m_handle.Use()), reinterpret_cast<::LPMONITORINFO>(&info)) ? true : false;
+    }
+
+    bool Monitor::GetInfo(MonitorInfoEx& info)
+    {
+        info.cbSize = sizeof(MonitorInfoEx);
+        return User32::GetMonitorInfoT((HMONITOR)(m_handle.Use()), reinterpret_cast<::LPMONITORINFO>(&info)) ? true : false;
+    }
+
+    void Monitor::GetWorkarea(int& xPos, int& yPos, int& width, int& height)
+    {
+        MonitorInfo info;
+        xPos = 0; yPos = 0, width = 0; height = 0;
+        if(GetInfo(info))
+        {
+            xPos = info.rcWork.m_left;
+            yPos = info.rcWork.m_top;
+            width = info.rcWork.m_right - info.rcWork.m_left;
+            height = info.rcWork.m_bottom - info.rcWork.m_top;
+        }
+    }
+
+    tstring Monitor::GetDeviceName()
+    {
+        tstring name;
+        MonitorInfoEx info;
+        if(GetInfo(info))
+        {
+            name = info.szDevice;
+        }
+        return name;
+    }
+
+    bool Monitor::GetDeviceMode(DeviceMode& dm)
+    {        
+        memset(&dm,0,sizeof(DeviceMode));
+        dm.dmSize = sizeof(DeviceMode);
+        tstring deviceName = GetDeviceName();
+        return User32::EnumDisplaySettingsExT(deviceName.c_str(), ENUM_CURRENT_SETTINGS, reinterpret_cast<DEVMODE*>(&dm), EDS_ROTATEDMODE) ? true : false;
+    }
+
+    bool Monitor::GetPosition(int& xPos, int& yPos)
+    {
+        DeviceMode dm;
+        if(GetDeviceMode(dm))
+        {
+            xPos = dm.dmPosition.x;
+            yPos = dm.dmPosition.y;
+            return true;
+        }
+        return false;
+    }
+
+    bool Monitor::GetBitsPerPixel(int& redBits, int&greenBits, int& blueBits)
+    {
+        DeviceMode dm;
+        if(GetDeviceMode(dm))
+        {
+            int bpp  = static_cast<int>(dm.dmBitsPerPel);
+            if(bpp == 32)
+            {
+                bpp = 24;
+            }
+
+            redBits = greenBits = blueBits = bpp / 3;
+            int delta = bpp - (redBits * 3);
+            if (delta >= 1)
+            {
+                greenBits++;
+            }
+                    
+            if (delta == 2)
+            {
+                redBits++;
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    void Monitor::GetContentScale(float& xscale, float& yscale)
+    {
+        unsigned int xdpi, ydpi;
+
+        xscale = 0.f;
+        yscale = 0.f;
+                
+        if(ShCore::GetDpiForMonitor((HMONITOR)(GetHandle().Use()), MDT_EFFECTIVE_DPI, &xdpi, &ydpi) != S_OK)
+        {
+            const HDC dc = User32::GetDC(NULL);
+            xdpi = GDI32::GetDeviceCaps(dc, LOGPIXELSX);
+            ydpi = GDI32::GetDeviceCaps(dc, LOGPIXELSY);
+            User32::ReleaseDC(NULL, dc);
+        }
+
+        xscale = xdpi / (float) USER_DEFAULT_SCREEN_DPI;
+        yscale = ydpi / (float) USER_DEFAULT_SCREEN_DPI;
+    }
+
+
+    int qor_pp_compiler_stdcallconvention Monitor::CreateCallback(void* handle, void* dc, Rect* rect, long long data)
+    {
+        MONITORINFOEXW mi;
+        ZeroMemory(&mi, sizeof(mi));
+        mi.cbSize = sizeof(mi);
+
+        if (GetMonitorInfoW((HMONITOR)handle, (MONITORINFO*) &mi))
+        {
+            std::vector<Monitor>* vecMonitors = reinterpret_cast<std::vector<Monitor>*>(data);
+            PrimitiveHandle h(handle);
+            Monitor m(h);            
+            vecMonitors->emplace_back(m);
+        }
+
+        return TRUE;
+    }
+
+    bool Monitor::CreateMonitors(DisplayAdapter& adapter, DisplayDevice device, std::vector<Monitor>& vecMonitors)
+    {
+        DEVMODEW dm;
+        User32::EnumDisplaySettingsT(adapter.m_name.c_str(), ENUM_CURRENT_SETTINGS, &dm);
+
+        Rect rc
+        {
+            dm.dmPosition.x,
+            dm.dmPosition.y,
+            dm.dmPosition.x + static_cast<long>(dm.dmPelsWidth),
+            dm.dmPosition.y + static_cast<long>(dm.dmPelsHeight)
+        };
+
+        return User32::EnumDisplayMonitors(NULL, reinterpret_cast<LPRECT>(&rc), (MONITORENUMPROC)(&Monitor::CreateCallback), (LPARAM) &vecMonitors) ? true : false;
+    }
+
+    std::vector<Monitor> Monitor::EumerateMonitors(DisplayAdapter& adapter)
+    {
+        std::vector<Monitor> vecMonitors;
+        unsigned long iDevice = 0;
+        DisplayDevice displayDevice;
+        while(User32::EnumDisplayDevicesT(adapter.m_name.c_str(), iDevice++, reinterpret_cast<PDISPLAY_DEVICE>(&displayDevice), 0))
+        {
+            if(displayDevice.StateFlags & DISPLAY_DEVICE_ACTIVE)
+            {
+                CreateMonitors(adapter, displayDevice, vecMonitors);                
+            }
+            ZeroMemory(&displayDevice, sizeof(DisplayDevice));
+            displayDevice.cb = sizeof(DisplayDevice);
+        }
+        return vecMonitors;
+    }
+
+    std::vector<DisplayAdapter> Monitor::EumerateAdapters()
+    {
+        std::vector<DisplayAdapter> vecAdapters;
+        unsigned long iDevice = 0;
+        DisplayDevice displayDevice;
+        
+        while(User32::EnumDisplayDevicesT(nullptr, iDevice++, reinterpret_cast<PDISPLAY_DEVICE>(&displayDevice), 0))
+        {
+            if(displayDevice.StateFlags & DISPLAY_DEVICE_ACTIVE)
+            {
+                DisplayAdapter adapter{ displayDevice.DeviceName, displayDevice.DeviceString, displayDevice.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE ? true : false };
+                vecAdapters.emplace_back(adapter);
+            }
+            ZeroMemory(&displayDevice, sizeof(DisplayDevice));
+            displayDevice.cb = sizeof(DisplayDevice);
+        }
+        return vecAdapters;
+    }
+
     bool Monitor::Enumerate(DeviceContext* dc, const Rect& lprcClip, MonitorEnumProc lpfnEnum, long long data)
     {
         return User32::EnumDisplayMonitors( 
@@ -57,11 +231,6 @@ namespace qor{ namespace platform { namespace nswindows{
             reinterpret_cast<MONITORENUMPROC>(lpfnEnum), data) ? true : false;
     }
 
-    bool Monitor::GetInfo(MonitorInfo& info)
-    {
-        return User32::GetMonitorInfoT((HMONITOR)(m_handle.Use()), reinterpret_cast<::LPMONITORINFO>(&info)) ? true : false;
-    }
-    
     Monitor Monitor::FromPoint(const Point& pt, unsigned long flags)
     {
         Monitor m( User32::MonitorFromPoint(*(reinterpret_cast<const POINT*>(&pt)), flags) );

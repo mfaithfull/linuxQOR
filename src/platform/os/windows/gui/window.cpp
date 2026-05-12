@@ -26,6 +26,8 @@
 
 #include "window.h"
 #include "src/platform/os/windows/common/stringconv.h"
+#include "view/handlers/base.h"
+
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
 #undef TranslateAccelerator
@@ -37,6 +39,28 @@ namespace qor{ namespace platform { namespace nswindows{
     const Handle& Window::GetHandle() const
     {
         return m_handle;
+    }
+
+    void Window::SetHandle(const PrimitiveHandle& h)
+    {
+        m_handle = h.Use();
+        m_handle.DontClose();
+    }
+
+    Window::Window()
+    {        
+        m_handle = nullptr;
+        m_handle.DontClose();
+    }
+
+    void Window::SetHandler(ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler)
+    {
+        m_handler = handler;
+    }
+
+    qor::ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type Window::GetHandler()
+    {
+        return m_handler;
     }
 
     Window::Window( const TCHAR* className, const TCHAR* windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, Window* parent, const Menu& menu, const PrimitiveHandle& hInstance, void* param)

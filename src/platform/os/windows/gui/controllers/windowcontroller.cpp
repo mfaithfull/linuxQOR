@@ -38,7 +38,7 @@ using namespace qor::nswindows::api;
 #undef TranslateAccelerator
 #undef EnumProps
 
-#define WINDOW_HANDLE (HWND)(m_window.GetHandle().Use())
+#define WINDOW_HANDLE (HWND)(m_window->GetHandle().Use())
 namespace qor{ namespace platform { namespace nswindows{
 
     bool WindowController::Enable(bool enable)
@@ -448,6 +448,11 @@ namespace qor{ namespace platform { namespace nswindows{
         return menu;
     }
 
+    int WindowController::GetMenuItemFromPoint(Menu* menu, Point& point)
+    {
+        return User32::MenuItemFromPoint(WINDOW_HANDLE, (HMENU)(menu ? menu->GetHandle().Use() : nullptr), *(reinterpret_cast<POINT*>(&point)));
+    }
+
     bool WindowController::HiliteMenuItem(ref_of<Menu>::type menu, unsigned int itemHilite, unsigned int hilite)
     {
         return User32::HiliteMenuItem(WINDOW_HANDLE, (HMENU)(menu->GetHandle().Use()), itemHilite, hilite) ? true : false;
@@ -637,12 +642,12 @@ namespace qor{ namespace platform { namespace nswindows{
 
     void WindowController::DragAcceptFiles(bool accept)
     {
-        Shell::DragAcceptFiles((HWND)(m_window.GetHandle().Use()), accept ? TRUE : FALSE);
+        Shell::DragAcceptFiles(WINDOW_HANDLE, accept ? TRUE : FALSE);
     }
 
     void WindowController::DwmEnableBlurBehindWindow(const Dwm_BlurBehind* pBlurBehind)
     {
-        HRESULT hresult = DWM::EnableBlurBehindWindow((HWND)(m_window.GetHandle().Use()), reinterpret_cast<const DWM_BLURBEHIND*>(pBlurBehind));
+        HRESULT hresult = DWM::EnableBlurBehindWindow(WINDOW_HANDLE, reinterpret_cast<const DWM_BLURBEHIND*>(pBlurBehind));
         if(hresult != S_OK)
         {
             //TODO: Proces the HRESULT into an error

@@ -61,7 +61,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return true;
     }
     
-    bool MessageHandler::RouteMessage(AcceleratorTable& acceleratorTable)
+    bool MessageHandler::RouteMessage(ref_of<AcceleratorTable>::type acceleratorTable)
     {
         Message message;
         if (!Get(&message, 0, 0, 0))
@@ -70,7 +70,7 @@ namespace qor{ namespace platform { namespace nswindows{
         }
         
         Window window(PrimitiveHandle(message.hwnd));
-        if(!acceleratorTable.Translate(window, message))
+        if(!acceleratorTable->Translate(window, message))
         {
             Translate(&message);
             Dispatch(&message);
@@ -78,7 +78,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return true;
     }
         
-    int MessageHandler::MessageLoop(AcceleratorTable& acceleratorTable)
+    int MessageHandler::MessageLoop(ref_of<AcceleratorTable>::type acceleratorTable)
     {
         Message message;
         bool bIdle = true;//For tracking the idle time state
@@ -101,7 +101,7 @@ namespace qor{ namespace platform { namespace nswindows{
             do
             {
                 // pump message, but quit on WM_QUIT
-                if (!RouteMessage(acceleratorTable))
+                if (!(acceleratorTable.IsNull() ? RouteMessage() : RouteMessage(acceleratorTable)))
                 {
                     return 0;
                 }

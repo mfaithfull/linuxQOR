@@ -25,9 +25,16 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_WINDOWFACTORY
 #define QOR_PP_H_WINDOWS_GUI_WINDOWFACTORY
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/newref.h"
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
+#include "src/platform/os/windows/gui/controllers/menu.h"
+#include "windowclassregistration.h"
 #include "../window.h"
+#include "../controllers/windowcontroller.h"
+#include "../view/handlers/abstractwindowhandler.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
@@ -38,7 +45,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     public:
 
-        WindowFactory() = default;
+        WindowFactory(void* instance);
         virtual ~WindowFactory() = default;
 
         /*
@@ -48,8 +55,30 @@ namespace qor{ namespace platform { namespace nswindows{
         We should be able to override the window Position, Size and Style but not the class information of basic Window Type
         Provide a set of Builtin Types covering the Basic Controls, Common Controls, Frames, Dialogs and Message Boxes
         */
+
+        ref_of<WindowController>::type Create(tstring className, const tstring& windowName, unsigned long style = (0x00000000L | 0x00C00000L | 0x00080000L | 0x00040000L | 0x00020000L | 0x00010000L), unsigned long exStyle = 0, int x = ((int)0x80000000), int y = ((int)0x80000000), int width = ((int)0x80000000), int height = ((int)0x80000000), ref_of<Window>::type parent = ref_of<Window>::type(), ref_of<Menu>::type menu = ref_of<Menu>::type(), void* param = nullptr);
+        ref_of<WindowController>::type Create(ref_of<WindowClass>::type windowClass, const tstring& windowName, unsigned long style = (0x00000000L | 0x00C00000L | 0x00080000L | 0x00040000L | 0x00020000L | 0x00010000L), unsigned long exStyle = 0, int x = ((int)0x80000000), int y = ((int)0x80000000), int width = ((int)0x80000000), int height = ((int)0x80000000), ref_of<Window>::type parent = ref_of<Window>::type(), ref_of<Menu>::type menu = ref_of<Menu>::type(), void* param = nullptr);
+        ref_of<WindowClass>::type AddWindowClass(const tstring& windowClassName);
+        bool RegisterClass(ref_of<WindowClass>::type windowClass, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
+        bool RegisterClass(const tstring& windowClassName, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
+
+    private:
+
+        static long long qor_pp_compiler_stdcallconvention WndProc(void* hwnd, unsigned int msg, unsigned long long wParam, long long lParam);
+        ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type GetHandlerForClass(const tstring& className);
+
+        struct windowClassData
+        {
+            ref_of<WindowClass>::type windowClass;
+            WindowClassRegistration* registration{nullptr};
+            ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler;
+        };
+
+        std::map< tstring, windowClassData > m_windowClassMap;
+
+        void* m_instance;
     };
 
-}}}//qor::platform::nswindow
+}}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_WINDOWS_GUI_WINDOWFACTORY

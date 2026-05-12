@@ -72,14 +72,21 @@ namespace qor{ namespace platform { namespace nswindows{
         void SetPropertyEnumProc(propenumproc proc);
         propenumproc GetPropertyEnumProc();
 
+        void SetWindowCreationInProgress(ref_of<Window>::type window);
+        ref_of<Window>::type GetWindowCreationInProgress();
+
+        unsigned int NextResourceId();
+        
     private:
 
+        ref_of<Window>::type m_inProgress;
         wndenumproc m_windowEnumProc;
         propenumproc m_properrtyEnumProc;
         std::map<void*, Window*> m_windowHandleMap;
         std::map<void*, Menu*> m_menuHandleMap;
         std::map<void*, DeviceContext*> m_deviceContextHandleMap;
         std::map<void*, Monitor*> m_monitorHandleMap;
+        unsigned int m_nextResourceId{100};
     };
 }}}
 

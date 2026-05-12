@@ -41,6 +41,7 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     bool BaseWindowHandler::ProcessMessage(Window& Window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
 			return ProcessHook(Window, lResult, msg, wParam, lParam) ||
+                (m_lifetime.IsNotNull() && m_lifetime->ProcessMessage(Window, lResult, msg, wParam, lParam)) ||
 				(m_timer.IsNotNull() && m_timer->ProcessMessage(Window, lResult, msg, wParam, lParam)) ||
 				(m_owner.IsNotNull() && m_owner->ProcessMessage(Window, lResult, msg, wParam, lParam)) ||
 				(m_style.IsNotNull() && m_style->ProcessMessage(Window, lResult, msg, wParam, lParam)) ||
@@ -54,59 +55,6 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     //Handle the base messages here.
     bool BaseWindowHandler::HandleMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
-        switch (msg)
-        {
-            case wmNull:
-                //Deliberately ignore WM_NULL as per spec
-                return true;
-            case wmCreate:
-            {
-                CreateStruct* pCreateStruct = reinterpret_cast<CreateStruct*>(lParam);
-                lResult = OnCreate(window, pCreateStruct);
-                return true;
-            }
-            case wmDestroy:
-            {
-                lResult = OnDestroy(window, msg, wParam, lParam);
-                return true;
-            }
-            case wmActivate:
-            {
-                lResult = OnActivate(window, msg, wParam, lParam);
-                return true;
-            }
-            case wmMouseActivate:
-            {
-                lResult = OnMouseActivate(window, msg, wParam, lParam);
-                return true;
-            }
-            case wmEnable:
-            {
-                bool bEnable = wParam ? true : false;
-                OnEnable(window, bEnable);
-                lResult = 0;
-                return true;
-            }
-            case wmClose:
-            {
-                OnClose(window);
-                lResult = 0;
-                return true;
-            }
-            case 0x0017/*WM_SYSTEMERROR*/:
-            {
-                OnSystemError(window, lResult, msg, wParam, lParam);
-                lResult = 0;
-                return true;
-            }
-            case wmSysCommand:
-            {
-                OnSysCommand(window, msg, wParam, lParam);
-                lResult = 0;
-                return true;
-            }
-        };
-
         return false;
     }
 
@@ -122,43 +70,6 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
             pResult = m_nextHookController->HookController(controller);
         }
         return pResult;
-    }
-
-    void BaseWindowHandler::OnSystemError(Window& window, long long& lResult, unsigned int uMsg, unsigned long long wParam, long long lParam)
-    {
-        lResult = 0;
-    }
-
-    long BaseWindowHandler::OnCreate(Window& window, CreateStruct* pCreateStruct)
-    {
-        return 0;
-    }
-
-    void BaseWindowHandler::OnEnable(Window& window, bool bEnable)
-    {
-    }
-
-    void BaseWindowHandler::OnClose(Window& window)
-    {
-    }
-
-    long long BaseWindowHandler::OnDestroy(Window& window, unsigned int uMsg, unsigned long long wParam, long long lParam)
-    {
-        return 0;
-    }
-
-    long long BaseWindowHandler::OnActivate(Window& window, unsigned int uMsg, unsigned long long wParam, long long lParam)
-    {
-        return 0;
-    }
-
-    long long BaseWindowHandler::OnMouseActivate(Window& window, unsigned int uMsg, unsigned long long wParam, long long lParam)
-    {
-        return 0;
-    }
-
-    void BaseWindowHandler::OnSysCommand(Window& window, unsigned int uMsg, unsigned long long wParam, long long lParam)
-    {        
     }
 
 }}}}}//qor::platform::nswindows::gui::view

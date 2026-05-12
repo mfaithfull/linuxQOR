@@ -22,36 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_KEYBOARD
-#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_KEYBOARD
+#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_ABSTRACT
+#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_ABSTRACT
 
-#include "../parts/part.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
+
+namespace qor{ namespace platform { namespace nswindows{ 
+    class qor_pp_module_interface(QOR_WINGUI) Window;
+}}}//qor::platform::nswindow
 
 namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    class qor_pp_module_interface(QOR_WINGUI) KeyboardHandler : public BaseWindowPartHandler
+    class qor_pp_module_interface(QOR_WINGUI) AbstractWindowHandler
     {
     public:
 
-        KeyboardHandler() = default;
-        virtual ~KeyboardHandler() noexcept = default;
+        AbstractWindowHandler() = default;
+        virtual ~AbstractWindowHandler() noexcept = default;
 
-        virtual bool ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
-
-        virtual bool OnInputLangChangeRequest(Window& Window, unsigned long long wParam, long long lParam);
-        virtual bool OnInputLangChange(Window& Window, unsigned long long wParam, long long lParam);
-        virtual bool OnKeyDown(Window& Window, unsigned long long wParam, long long lParam);
-        virtual bool OnKeyUp(Window& Window, unsigned long long wParam, long long lParam);
-        virtual bool OnChar(Window& Window, unsigned long long wParam, long long lParam);
-        virtual bool OnDeadChar(Window& Window, unsigned long long wParam, long long lParam);
-        virtual bool OnSysKeyDown(Window& Window, unsigned long long wParam, long long lParam);
-        virtual bool OnSysKeyUp(Window& Window, unsigned long long wParam, long long lParam);
-        virtual bool OnSysChar(Window& Window, unsigned long long wParam, long long lParam);
-        virtual bool OnSysDeadChar(Window& Window, unsigned long long wParam, long long lParam);
+        virtual bool ProcessMessage(Window& Window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam) = 0;
 
     };
 
-
 }}}}}//qor::platform::nswindows::gui::view
 
-#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_KEYBOARD
+#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_ABSTRACT

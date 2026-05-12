@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_MONITOR
 #define QOR_PP_H_WINDOWS_GUI_MONITOR
 
+#include <vector>
+
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "../gdiobjects/devicecontext.h"
 #include "../view/drawing/rect.h"
@@ -35,14 +37,26 @@ namespace qor{ namespace platform { namespace nswindows{
 
     typedef int (__stdcall* MonitorEnumProc)(void*, void*, Rect*, long long);
 
-    struct MonitorInfo
+    struct DisplayAdapter
     {
-        unsigned long   cbSize;
-        Rect            rcMonitor;
-        Rect            rcWork;
-        unsigned long   flags;
+        tstring m_name;
+        tstring m_description;
+        bool m_primary{false};
     };
 
+    struct MonitorInfo
+    {
+        unsigned long   cbSize{sizeof(MonitorInfo)};
+        Rect            rcMonitor{0,0,0,0};
+        Rect            rcWork{0,0,0,0};
+        unsigned long   flags{0};
+    };
+
+    struct MonitorInfoEx : MonitorInfo 
+    {
+        TCHAR szDevice[DeviceNameSize];
+    };
+    
     class qor_pp_module_interface(QOR_WINGUI) Monitor
     {
     public:
@@ -52,16 +66,29 @@ namespace qor{ namespace platform { namespace nswindows{
         Monitor(const Monitor& m);
 
         const Handle& GetHandle() const;
-
-        static bool Enumerate(DeviceContext* dc, const Rect& lprcClip, MonitorEnumProc lpfnEnum, long long data);
         bool GetInfo(MonitorInfo& info);
+        bool GetInfo(MonitorInfoEx& info);
+        void GetWorkarea(int& xPos, int& yPos, int& width, int& height);
+        tstring GetDeviceName();
+        bool GetDeviceMode(DeviceMode& dm);
+        bool GetPosition(int& xPos, int& yPos);
+        void GetContentScale(float& xscale, float& yscale);
+        bool GetBitsPerPixel(int& redBits, int&greenBits, int& blueBits);
+
+        static bool Enumerate(DeviceContext* dc, const Rect& lprcClip, MonitorEnumProc lpfnEnum, long long data);        
         static Monitor FromPoint(const Point& pt, unsigned long flags);
         static Monitor FromRect(const Rect& rc, unsigned long flags);
-        static Monitor FromWindow(const Window& w, unsigned long flags);
+        static Monitor FromWindow(const Window& w, unsigned long flags);        
+        static bool CreateMonitors(DisplayAdapter& adapter, DisplayDevice device, std::vector<Monitor>& vecMonitors);
+        static std::vector<DisplayAdapter> EumerateAdapters();
+        static std::vector<Monitor> EumerateMonitors(DisplayAdapter& adapter);
         
     protected:
-
         Handle m_handle;
+
+    private:
+        static int qor_pp_compiler_stdcallconvention CreateCallback(void* handle, void* dc, Rect* rect, long long data);
+        
     };
     
 }}}//qor::platform::nswindows

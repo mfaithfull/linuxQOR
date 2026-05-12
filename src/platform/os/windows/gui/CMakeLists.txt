@@ -15,6 +15,7 @@ controllers/mouse.cpp
 controllers/windowcontroller.cpp
 factories/windowclassregistration.cpp
 factories/windowfactory.cpp
+factories/menubuilder.cpp
 gdiobjects/bitmap.cpp
 gdiobjects/brush.cpp
 gdiobjects/colourspace.cpp
@@ -65,12 +66,14 @@ view/handlers/rendered/ncrender.cpp
 view/handlers/rendered/dwm.cpp
 view/handlers/rendered/rendering.cpp
 view/handlers/rendered/font.cpp
+view/handlers/parts/lifetime.cpp
+controllers/popupmenu.cpp
 )
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE QOR_WINGUI)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
-qor_interception qor_signals winqor_api_kernel winqor_api_user winqor_api_gdi winqor_api_shell winqor_api_comctl32 winqor_api_dwm winqor_common winqor_sharedbootstrap)
+qor_interception qor_signals winqor_api_kernel winqor_api_user winqor_api_gdi winqor_api_shell winqor_api_shcore winqor_api_comctl32 winqor_api_dwm winqor_common winqor_sharedbootstrap)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

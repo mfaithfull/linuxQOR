@@ -22,52 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASEPARTS_MENU
-#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASEPARTS_MENU
+#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASEPARTS_LIFETIME
+#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASEPARTS_LIFETIME
 
 #include "part.h"
 
 namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    struct MDINextMenu
-    {
-        void*   hmenuIn;
-        void*   hmenuNext;
-        void*   hwndNext;
+    struct CreateStruct
+    {        
+        void*           lpCreateParams;
+        void*           hInstance;
+        void*           hMenu;
+        void*           hwndParent;
+        int             cy;
+        int             cx;
+        int             y;
+        int             x;
+        long            style;
+        const TCHAR*    lpszName;
+        const TCHAR*    lpszClass;
+        unsigned long   dwExStyle;
     };
 
-    struct MenuGetObjectInfo
-    {
-        unsigned long dwFlags;
-        unsigned int uPos;
-        void* hmenu;
-        void* riid;
-        void* pvObj;
-    };
-
-    class qor_pp_module_interface(QOR_WINGUI) MenuHandler : public BaseWindowPartHandler
+    class qor_pp_module_interface(QOR_WINGUI) LifetimeHandler : public BaseWindowPartHandler
     {
     public:
 
-        MenuHandler() = default;
-        virtual ~MenuHandler() noexcept = default;
+        LifetimeHandler() = default;
+        virtual ~LifetimeHandler() noexcept = default;
 
         virtual bool ProcessMessage(Window& Wnd, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
-        virtual bool OnContextMenu(Window& Wnd, Window& refWnd, unsigned short wXPos, unsigned short wYPos);
-        virtual bool OnInitMenu(Window& Wnd, Menu& refMenu);
-        virtual bool OnInitMenuPopup(Window& Wnd, Menu& hMenu, unsigned short wPos, bool bWindowMenu);
-        virtual bool OnMenuSelect(Window& Wnd, Menu& hMenu, unsigned short index, unsigned short flags);
-        virtual long OnMenuChar(Window& Wnd, Menu& hMenu, unsigned short wCharCode, unsigned short wMenuType);
-        virtual void OnNextMenu(Window& Wnd, unsigned long long wParam, MDINextMenu* nextMenu);
-        virtual long OnGetObject(Window& Wnd, MenuGetObjectInfo* pMenuObjectInfo);
-        virtual void OnRButtonUp(Window& Wnd, Menu& hMenu, unsigned long long wParam);
-        virtual void OnMenuCommand(Window& Wnd, Menu& hMenu, unsigned long long iIndex, unsigned short wItemID);
-        virtual long OnMenuDrag(Window& Wnd, Menu& hMenu, unsigned short wParam);
-        virtual bool OnDestroyedMenuPopup(Window& Wnd, Menu& hMenu, unsigned short wDestroyedMenu);        
 
+        virtual void OnSystemError(Window& Window, long long& lResult, unsigned int uMsg, unsigned long long wParam, long long lParam);
+        virtual bool OnCreate(Window& window, CreateStruct* pCreateStruct);
+        virtual bool OnEnable(Window& Window, bool bEnable);
+        virtual bool OnClose(Window& Window);
+        virtual long long OnDestroy(Window& Window, unsigned int uMsg, unsigned long long wParam, long long lParam);
+        virtual long long OnActivate(Window& Window, unsigned int uMsg, unsigned long long wParam, long long lParam);
+        virtual long long OnMouseActivate(Window& Window, unsigned int uMsg, unsigned long long wParam, long long lParam);        
     };
 
 
 }}}}}//qor::platform::nswindows::gui::view
 
-#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASEPARTS_MENU
+#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASEPARTS_LIFETIME

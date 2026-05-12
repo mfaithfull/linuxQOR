@@ -67,6 +67,13 @@ namespace qor{ namespace platform { namespace nswindows{
         m_handle = User32::LoadCursorFromFileT(to_tstring(fileName.c_str()).c_str());
         m_bNeedsDestroy = true;
     }
+
+    Cursor::Cursor(const wchar_t* id)
+    {
+        m_handle = User32::LoadCursorT( reinterpret_cast<HINSTANCE>(nullptr), id);
+        m_handle.DontClose();
+        m_bNeedsDestroy = false;
+    }
     
     Cursor::~Cursor()
     {

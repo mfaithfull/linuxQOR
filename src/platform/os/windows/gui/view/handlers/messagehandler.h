@@ -25,6 +25,9 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_MESSAGEHANDLER
 #define QOR_PP_H_WINDOWS_GUI_MESSAGEHANDLER
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/newref.h"
 #include "message.h"
 #include "acceleratortable.h"
 #include "../../window.h"
@@ -102,8 +105,8 @@ namespace qor{ namespace platform { namespace nswindows{
         }
         
         virtual bool RouteMessage(void);
-        virtual bool RouteMessage(AcceleratorTable& acceleratorTable);
-        virtual int MessageLoop(AcceleratorTable& acceleratorTable);
+        virtual bool RouteMessage(ref_of<AcceleratorTable>::type acceleratorTable);
+        virtual int MessageLoop(ref_of<AcceleratorTable>::type acceleratorTable = ref_of<AcceleratorTable>::type());
         
         virtual void Quit(int nExitCode)
         {

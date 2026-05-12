@@ -27,29 +27,41 @@
 #include "toplevel.h"
 #include "../messages.h"
 
+#include "src/platform/os/windows/api_layer/user/user32.h"
+
 namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
     
+    long long TopLevelLifetimeHandler::OnDestroy(Window& window, unsigned int uMsg, unsigned long long wParam, long long lParam)
+    {
+        qor::nswindows::api::User32::PostQuitMessage(EXIT_SUCCESS);//The app exits when this window is destroyed.
+        return 0;
+    }
+
+    TopLevelWindowHandler::TopLevelWindowHandler()
+    {        
+        m_lifetime = new_ref<TopLevelLifetimeHandler>();
+    }
+
     bool TopLevelWindowHandler::ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
-        bool bProcessed = ProcessHook(window, lResult, msg, wParam, lParam);
-
-        if (!bProcessed)
+        if(ProcessHook(window, lResult, msg, wParam, lParam))
         {
-            switch (msg)
-            {
+            return true;
+        }
 
+        switch (msg)
+        {
             case wmEnterIdle:
-            {
-                lResult = window.DefWindowProcT(msg, wParam, lParam);
+            {                
                 Window w(PrimitiveHandle((void*)(lParam)));
-                OnEnterIdle(static_cast< unsigned short>(wParam), w);
-                bProcessed = true;
+                if(OnEnterIdle(static_cast< unsigned short>(wParam), w))
+                {
+                    lResult = 0;
+                }
+                return true;
             }
-            break;
-
             case wmSysCommand:
-            {
-                window.DefWindowProcT(msg, wParam, lParam);
+            {                
                 unsigned short wYPos = 0;
                 unsigned short wXPos = LoWord(lParam);
                 unsigned short wData = HiWord(lParam);
@@ -59,100 +71,173 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
                 {
                     wYPos = wData;
                 }
-                OnSysCommand(wParam, wYPos, wXPos, bAcceleratorUsed, bMnemonic);
-                lResult = 0;
-                bProcessed = true;
+                unsigned short code = wParam & 0XFFF0;
+                if(OnSysCommand(window, code, wYPos, wXPos, bAcceleratorUsed, bMnemonic, wParam, lParam))
+                {
+                    lResult = 0;
+                }
+                return true;
             }
-            break;
-
             case wmDropFiles:
             {
                 void* hDropInfo = reinterpret_cast<void*>(wParam);
                 OnDropFiles(hDropInfo);
                 lResult = 0;
-                bProcessed = true;
+                return true;
             }
-            break;
-
             case wmQueryEndSession:
             {
                 bool bLoggingOff = (lParam & EndSessionLogOff) > 0 ? true : false;
                 lResult = OnQueryEndSession(bLoggingOff) ? true : false;
-                bProcessed = true;
+                return true;
             }
-            break;
-
             case wmEndSession:
             {
                 bool bEnd = wParam ? true : false;
                 bool bLoggingOff = (lParam & EndSessionLogOff) > 0 ? true : false;
                 OnEndSession(bEnd, bLoggingOff);
                 lResult = 0;
-                bProcessed = true;
+                return true;
             }
-            break;
-
             case wmQueryNewPalette:
             {
                 lResult = OnQueryNewPalette() ? true : false;
                 window.DefWindowProcT(msg, wParam, lParam);
-                bProcessed = true;
+                return true;
             }
-            break;
-
             case wmPaletteChanged:
             {
                 window.DefWindowProcT(msg, wParam, lParam);
                 Window w(PrimitiveHandle((void*)(wParam)));
                 OnPaletteChanged(w);
-                bProcessed = true;
+                return true;
             }
-            break;
-            
             case wmCommand:
             {
                 unsigned short wNotify = HiWord(wParam);
                 unsigned short wID = LoWord(wParam);
-                OnCommand(window, wNotify, wID, lParam);
-                lResult = 0;
-                bProcessed = true;
+                if(OnCommand(window, wNotify, wID, lParam))
+                {
+                    lResult = 0;
+                }
+                return true;
             }
-            break;
             case wmActivateApp:
             {
                 bool bActivate = wParam ? true : false;
                 unsigned long dwThreadID = static_cast< unsigned long >(lParam);
-                OnActivateApp(bActivate, dwThreadID);
-                lResult = 0;
-                bProcessed = true;
+                if(OnActivateApp(bActivate, dwThreadID))
+                {
+                    lResult = 0;
+                }                
+                return true;
             }
-            break;
-
             case wmDeviceChange:
             {
                 lResult = window.DefWindowProcT(msg, wParam, lParam);
-                bProcessed = true;
+                return true;
             }
-            break;
-
-            default:
-                bProcessed = InteractiveWindowHandler::ProcessMessage(window, lResult, msg, wParam, lParam);
+            case wmGetTitleBarInfoEx:
+            {
+                if(OnGetTitleBarInfo(reinterpret_cast<TitleBarInfoEx*>(lParam)))
+                {
+                    lResult = 0;
+                }
+                return true;
             }
         }
+        return InteractiveWindowHandler::ProcessMessage(window, lResult, msg, wParam, lParam);
+    }
 
-        if(!bProcessed)
+    bool TopLevelWindowHandler::OnEnterIdle(unsigned short wWhy, Window& who)
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommand(Window& window, unsigned short code, unsigned short wYPos, unsigned short wXPos, bool bAcceleratorUsed, bool bMnemonic, unsigned long long wParam, long long lParam)
+    {
+        switch(code)
         {
-            lResult = window.DefWindowProcT(msg, wParam, lParam);
+            case scClose:
+            {
+                return OnSysCommandClose(window, wParam, lParam);
+            }
+            case scContextHelp:
+            {
+                return OnSysCommandContextHelp();//Changes the cursor to a question mark with a pointer. If the user then clicks a control in the dialog box, the control receives a WM_HELP message.
+            }
+            case scDefault:
+            {
+                return OnSysCommandDefault();//Selects the default item; the user double-clicked the window menu.
+            }
+            case scHotKey:
+            {
+                return OnSysCommandHotKey();//Activates the window associated with the application-specified hot key. The lParam parameter identifies the window to activate.
+            }
+            case scHScroll:
+            {
+                return OnSysCommandHScroll();//Scrolls horizontally.
+            }
+            case scVScroll:
+            {
+                return OnSysCommandVScroll();//Scrolls vertically.
+            }
+            case scKeyMenu:
+            {
+                return OnSysCommandKeyMenu();//Retrieves the window menu as a result of a keystroke.
+            }
+            case scMaximize:
+            {
+                return OnSysCommandMaximize();//Maximizes the window.
+            }
+            case scMinimize:
+            {
+                return OnSysCommandMinimize();//Minimizes the window.
+            }
+            case scMonitorPower:
+            {
+                return OnSysCommandMonitorPower();
+                /*Sets the state of the display. This command supports devices that have power-saving features, such as a battery-powered personal computer.
+                The lParam parameter can have the following values:
+                -1 (the display is powering on)
+                1 (the display is going to low power)
+                2 (the display is being shut off)
+                */
+            }
+            case scMouseMenu:
+            {
+                return OnSysCommandMouseMenu();//Retrieves the window menu as a result of a mouse click.
+            }
+            case scMove:
+            {
+                return OnSysCommandMove();//Moves the window.
+            }
+            case scNextWindow:
+            {
+                return OnSysCommandNextWindow();//Moves to the next window.
+            }
+            case scPrevWindow:
+            {
+                return OnSysCommandPrevWindow();//Moves to the previous window.
+            }
+            case scRestore:
+            {
+                return OnSysCommandRestore();//Restores the window to its normal position and size.
+            }
+            case scScreenSave:
+            {
+                return OnSysCommandScreenSaver();//Executes the screen saver application specified in the [boot] section of the System.ini file.
+            }
+            case scSize:
+            {
+                return OnSysCommandSize();//Sizes the window.
+            }
+            case scTaskList:
+            {
+                return OnSysCommandTaskList();//Activates the Start menu.
+            }
         }
-        return bProcessed;
-    }
-
-    void TopLevelWindowHandler::OnEnterIdle(unsigned short wWhy, Window& who)
-    {
-    }
-
-    void TopLevelWindowHandler::OnSysCommand(unsigned long long nID, unsigned short wYPos, unsigned short wXPos, bool bAcceleratorUsed, bool bMnemonic)
-    {
+        return false;
     }
 
     void TopLevelWindowHandler::OnDropFiles(void* hDropInfo)
@@ -177,13 +262,110 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     {
     }
     
-    void TopLevelWindowHandler::OnCommand(Window& Window, unsigned short wNotify, unsigned short wID, long long lParam)
+    bool TopLevelWindowHandler::OnCommand(Window& Window, unsigned short wNotify, unsigned short wID, long long lParam)
     {
+        return false;
     }
 
-    void TopLevelWindowHandler::OnActivateApp(bool bActivate, unsigned long threadId)
+    bool TopLevelWindowHandler::OnActivateApp(bool bActivate, unsigned long threadId)
     {
+        return false;
     }
 
+    bool TopLevelWindowHandler::OnSysCommandClose(Window& window, unsigned long long wParam, long long lParam)
+    {
+        window.DefWindowProcT(wmSysCommand, wParam, lParam);
+        return true;
+    }
 
+    bool TopLevelWindowHandler::OnSysCommandContextHelp()
+    {
+        return false;
+    }
+    
+    bool TopLevelWindowHandler::OnSysCommandDefault()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandHotKey()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandHScroll()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandVScroll()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandKeyMenu()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandMaximize()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandMinimize()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandMonitorPower()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandMouseMenu()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandMove()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandNextWindow()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandPrevWindow()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandRestore()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandScreenSaver()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandSize()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnSysCommandTaskList()
+    {
+        return false;
+    }
+
+    bool TopLevelWindowHandler::OnGetTitleBarInfo(TitleBarInfoEx* titleBarInfo)
+    {
+        return false;
+    }
+    
 }}}}}//qor::platform::nswindows::gui::view

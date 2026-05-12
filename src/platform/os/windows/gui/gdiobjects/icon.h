@@ -69,6 +69,7 @@ namespace qor{ namespace platform { namespace nswindows{
         Icon(byte* pbIconBits, unsigned long cbIconBits, bool fIcon, unsigned long dwVer, int cxDesired, int cyDesired, unsigned int uFlags);
         Icon(IconInfo& iconinfo);
         Icon(void* hInstance, std::string lpIconName);
+        Icon(const wchar_t* id);
         virtual ~Icon();
         const Handle& GetHandle() const;
         Icon Clone();

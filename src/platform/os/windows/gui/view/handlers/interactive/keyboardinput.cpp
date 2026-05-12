@@ -118,20 +118,6 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
                 }
                 return true;
             }
-            case wmCommand:
-            {
-                unsigned short wCode = HiWord(wParam);
-
-                if (wCode == 1)
-                {
-                    unsigned short wAccelID = LoWord(wParam);
-                    if(OnCommand(window, wAccelID))
-                    {
-                        lResult = 0;
-                    }
-                }
-                return true;
-            }
         }
 
         return false;
@@ -187,11 +173,6 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     }
 
     bool KeyboardHandler::OnSysDeadChar(Window& window, unsigned long long wParam, long long lParam)
-    {
-        return false;
-    }
-
-    bool KeyboardHandler::OnCommand(Window& window, unsigned short wAccelID)
     {
         return false;
     }

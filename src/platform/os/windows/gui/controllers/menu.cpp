@@ -26,15 +26,20 @@
 
 #include "menu.h"
 #include "src/platform/os/windows/common/stringconv.h"
+#include "../window.h"
+#include "../perthread.h"
+
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
 using namespace qor::nswindows::api;
 
+#define MENU_HANDLE ((HMENU)(m_handle.Use()))
+
 namespace qor{ namespace platform { namespace nswindows{
     
-    Menu::Menu()
+    Menu::Menu() : m_handle(User32::CreateMenu())
     {
-        m_handle = 0;
+        m_handle.DontClose();
     }
 
     Menu::Menu(int m) : m_handle(m)
@@ -67,4 +72,139 @@ namespace qor{ namespace platform { namespace nswindows{
         return User32::EnableMenuItem((HMENU)(m_handle.Use()), uIDEnableItem, uEnable) ? true : false;
     }
 
+    bool Menu::Append(unsigned int flags, unsigned long long idNewItem, const tstring& newItem)
+    {
+        return User32::AppendMenuT(MENU_HANDLE, flags, idNewItem, newItem.c_str()) ? true : false;
+    }
+
+    unsigned int Menu::AppendTextItem(const tstring& newTextItem)
+    {
+        auto perThread = new_ref<PerThread>();
+        unsigned int id = perThread->NextResourceId();
+        if(User32::AppendMenuT(MENU_HANDLE, 0x00000000, id, newTextItem.c_str()))
+        {
+            return id;
+        }
+        return -1;
+    }
+
+    bool Menu::AppendSubMenu(ref_of<Menu>::type subMenu, const tstring& subMenuName)
+    {
+        return User32::AppendMenuT(MENU_HANDLE, MF_POPUP, (unsigned long long)(subMenu->GetHandle().Use()), subMenuName.c_str()) ? true : false;
+    }
+
+    bool Menu::CheckRadioItem(unsigned int idFirst, unsigned int idLast, unsigned int idCheck, unsigned int flags)
+    {
+        return User32::CheckMenuRadioItem(MENU_HANDLE, idFirst, idLast, idCheck, flags) ? true : false;
+    }
+
+    bool Menu::Delete(unsigned int position, unsigned int flags)
+    {
+        return User32::DeleteMenu(MENU_HANDLE, position, flags) ? true : false;
+    }
+
+    bool Menu::Destroy()
+    {
+        return User32::DestroyMenu(MENU_HANDLE) ? true : false;
+    }
+
+    bool Menu::End()
+    {
+        return User32::EndMenu() ? true : false;
+    }
+
+    unsigned int Menu::GetDefaultItem(unsigned int byPos, unsigned int flags)
+    {
+        return User32::GetMenuDefaultItem(MENU_HANDLE, byPos, flags);
+    }
+
+    bool Menu::GetInfo(MenuInfo& menuInfo)
+    {
+        return User32::GetMenuInfo(MENU_HANDLE, reinterpret_cast<LPCMENUINFO>(&menuInfo)) ? true : false;
+    }
+
+    int Menu::GetItemCount()
+    {
+        return User32::GetMenuItemCount(MENU_HANDLE);
+    }
+
+    unsigned int Menu::GetItemID(int pos)
+    {
+        return User32::GetMenuItemID(MENU_HANDLE, pos);
+    }
+
+    bool Menu::GetItemInfo(unsigned int item, bool byPosition, MenuItemInfo& menuItemInfo)
+    {
+        return User32::GetMenuItemInfoT(MENU_HANDLE, item, byPosition, reinterpret_cast<LPMENUITEMINFO>(&menuItemInfo)) ? true : false;
+    }
+
+    bool Menu::GetItemRect(Window* window, unsigned int item, Rect& rcItem)
+    {
+        return User32::GetMenuItemRect(window ? (HWND)(window->GetHandle().Use()) : (HWND)(nullptr),MENU_HANDLE, item, reinterpret_cast<LPRECT>(&rcItem)) ? true : false;
+    }
+
+    unsigned int Menu::GetState(unsigned int id, unsigned int flags)
+    {
+        return User32::GetMenuState(MENU_HANDLE, id, flags);
+    }
+
+    int Menu::GetString(unsigned int idItem, tstring& item, unsigned int flags)
+    {
+        item.reserve(1024);
+        return User32::GetMenuStringT(MENU_HANDLE, idItem, item.data(), static_cast<int>(item.capacity()), flags);
+    }
+
+    Menu* Menu::GetSubMenu(int pos)
+    {
+        Menu* subMenu;
+        auto perThread = new_ref<PerThread>();
+        HMENU hmenu = User32::GetSubMenu(MENU_HANDLE, pos);
+        subMenu = perThread->MenuFromHandle(hmenu);
+        return subMenu;
+    }
+
+    bool Menu::HiliteItem(Window* window, unsigned int itemHilite, unsigned int hilite)
+    {
+        return User32::HiliteMenuItem((HWND)(window ? window->GetHandle().Use() : nullptr), MENU_HANDLE, itemHilite, hilite) ? true : false;
+    }
+
+    bool Menu::InsertSubMenu(unsigned int position, unsigned int flags, void* idNewItem, const tstring& newItem)
+    {
+        return User32::InsertMenuT(MENU_HANDLE, position, flags, idNewItem, newItem.c_str()) ? true : false;
+    }
+
+    bool Menu::InsertItem(unsigned int item, bool byPosition, const MenuItemInfo& itemInfo)
+    {
+        return User32::InsertMenuItemT(MENU_HANDLE, item, byPosition, reinterpret_cast<LPCMENUITEMINFO>(&itemInfo)) ? true : false;
+    }
+
+    bool Menu::Modify(unsigned int position, unsigned int flags, void* idNewItem, const tstring& newText)
+    {
+        return User32::ModifyMenuT(MENU_HANDLE, position, flags, idNewItem, newText.c_str()) ? true : false;
+    }
+
+    bool Menu::Remove(unsigned int position, unsigned int flags)
+    {
+        return User32::RemoveMenu(MENU_HANDLE, position, flags) ? true : false;
+    }
+
+    bool Menu::SetDefaultItem(unsigned int item, unsigned int byPos)
+    {
+        return User32::SetMenuDefaultItem(MENU_HANDLE, item, byPos) ? true : false;
+    }
+
+    bool Menu::SetInfo(const MenuInfo& info)
+    {
+        return User32::SetMenuInfo(MENU_HANDLE, reinterpret_cast<LPCMENUINFO>(&info)) ? true : false;
+    }
+
+    bool Menu::SetItemInfo(unsigned int item, bool byPosition, const MenuItemInfo& itemInfo)
+    {
+        return User32::SetMenuItemInfoT(MENU_HANDLE, item, byPosition, reinterpret_cast<LPMENUITEMINFO>(const_cast<MenuItemInfo*>(&itemInfo))) ? true : false;
+    }
+
+    bool Menu::SetItemBitmaps(unsigned int position, unsigned int flags, Bitmap* bitmapUnchecked, Bitmap* bitmapChecked)
+    {
+        return User32::SetMenuItemBitmaps(MENU_HANDLE, position, flags, (HBITMAP)(nullptr), (HBITMAP)(nullptr)) ? true : false;
+    }
 }}}//qor::platform::nswindows

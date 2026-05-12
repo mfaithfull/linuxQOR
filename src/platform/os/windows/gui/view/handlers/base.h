@@ -28,6 +28,7 @@
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
+#include "abstractwindowhandler.h"
 #include "../../window.h"
 #include "parts/style.h"
 #include "parts/basetext.h"
@@ -36,26 +37,11 @@
 #include "parts/user.h"
 #include "parts/devicechange.h"
 #include "parts/menu.h"
+#include "parts/lifetime.h"
 
 namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    struct CreateStruct
-    {        
-        void*           lpCreateParams;
-        void*           hInstance;
-        void*           hMenu;
-        void*           hwndParent;
-        int             cy;
-        int             cx;
-        int             y;
-        int             x;
-        long            style;
-        const TCHAR*    lpszName;
-        const TCHAR*    lpszClass;
-        unsigned long   dwExStyle;
-    };
-
-    class qor_pp_module_interface(QOR_WINGUI) BaseWindowHandler
+    class qor_pp_module_interface(QOR_WINGUI) BaseWindowHandler : public AbstractWindowHandler
     {
     public:
 
@@ -66,15 +52,8 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
         virtual bool ProcessMessage(Window& Window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
         bool HandleMessage(Window& Window, long long& lResult, unsigned int uMsg, unsigned long long wParam, long long lParam);
         virtual BaseWindowHandler* HookController(BaseWindowHandler* controller);        
-        virtual void OnSystemError(Window& Window, long long& lResult, unsigned int uMsg, unsigned long long wParam, long long lParam);
-        virtual long OnCreate(Window& window, CreateStruct* pCreateStruct);
-        virtual void OnEnable(Window& Window, bool bEnable);
-        virtual void OnClose(Window& Window);
-        virtual long long OnDestroy(Window& Window, unsigned int uMsg, unsigned long long wParam, long long lParam);
-        virtual long long OnActivate(Window& Window, unsigned int uMsg, unsigned long long wParam, long long lParam);
-        virtual long long OnMouseActivate(Window& Window, unsigned int uMsg, unsigned long long wParam, long long lParam);
-        virtual void OnSysCommand(Window& Window, unsigned int uMsg, unsigned long long wParam, long long lParam);
 
+        ref_of< LifetimeHandler >::type m_lifetime;
         ref_of< StyleHandler >::type m_style;
         ref_of< UserHandler >::type m_user;
         ref_of< BaseTextHandler >::type m_baseText;

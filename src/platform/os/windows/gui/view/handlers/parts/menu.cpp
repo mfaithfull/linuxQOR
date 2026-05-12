@@ -127,13 +127,6 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
                     lResult = OnMenuDrag(Wnd, menu, static_cast<unsigned short>(wParam));
                     return true;
                 }
-                case wmCommand:
-                {
-                    unsigned short code = HiWord(wParam);
-                    unsigned short id = LoWord(wParam);
-                    lResult = OnCommand(Wnd, code, id, lParam) ? 0 : Wnd.DefWindowProcT(msg, wParam, lParam);
-                    return true;
-                }
             }
             return false;
         }
@@ -155,8 +148,9 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
         return false;
     }
 
-    bool MenuHandler::OnMenuSelect(Window& Wnd, Menu& hMenu, unsigned short wIndex, unsigned short wFlags)
+    bool MenuHandler::OnMenuSelect(Window& Wnd, Menu& hMenu, unsigned short index, unsigned short flags)
     {
+        //TODO: when we get here with a non zero index we need to issue an actual command realted to the menu item
         return false;
     }
 
@@ -204,12 +198,6 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     {
         return false;
     }
-
-    bool MenuHandler::OnCommand(Window& Wnd, unsigned short code, unsigned short id, long long handle)    
-    {
-        return false;
-    }
-
 
 }}}}}//qor::platform::nswindows::gui::view
     

@@ -29,24 +29,56 @@
 
 namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
+    struct TitleBarInfoEx
+    {
+        unsigned long cbSize{sizeof(TitleBarInfoEx)};
+        Rect rcTitleBar;
+        unsigned long rgstate[TitleBarChildren + 1];
+        Rect rgrect[TitleBarChildren + 1];
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) TopLevelLifetimeHandler : public LifetimeHandler
+    {
+        long long OnDestroy(Window& window, unsigned int uMsg, unsigned long long wParam, long long lParam);
+    };
+
     class qor_pp_module_interface(QOR_WINGUI) TopLevelWindowHandler : public InteractiveWindowHandler
     {
     public:
 
-        TopLevelWindowHandler() = default;
+        TopLevelWindowHandler();
         virtual ~TopLevelWindowHandler() noexcept = default;
 
         virtual bool ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
-        virtual void OnActivateApp(bool bActivate, unsigned long dwThreadID);
-        virtual void OnEnterIdle(unsigned short wWhy, Window& who);
-        virtual void OnSysCommand(unsigned long long nID, unsigned short wYPos, unsigned short wXPos, bool bAcceleratorUsed, bool bMnemonic);
+        virtual bool OnActivateApp(bool bActivate, unsigned long dwThreadID);
+        virtual bool OnEnterIdle(unsigned short wWhy, Window& who);
+        virtual bool OnSysCommand(Window& window, unsigned short code, unsigned short wYPos, unsigned short wXPos, bool bAcceleratorUsed, bool bMnemonic, unsigned long long wParam, long long lParam);
         virtual void OnDropFiles(void* hDropInfo);
         virtual bool OnQueryEndSession(bool bLoggingOff);
         virtual void OnEndSession(bool bEnd, bool bLoggingOff);
         virtual bool OnQueryNewPalette();
         virtual void OnPaletteChanged(Window& changeSource);
-        virtual void OnCommand(Window& window, unsigned short wNotify, unsigned short wID, long long lParam);
+        virtual bool OnCommand(Window& window, unsigned short wNotify, unsigned short wID, long long lParam);
+        virtual bool OnGetTitleBarInfo(TitleBarInfoEx* titleBarInfo);
 
+        virtual bool OnSysCommandClose(Window& window, unsigned long long wParam, long long lParam);
+        virtual bool OnSysCommandContextHelp();
+        virtual bool OnSysCommandDefault();
+        virtual bool OnSysCommandHotKey();
+        virtual bool OnSysCommandHScroll();
+        virtual bool OnSysCommandVScroll();
+        virtual bool OnSysCommandKeyMenu();
+        virtual bool OnSysCommandMaximize();
+        virtual bool OnSysCommandMinimize();
+        virtual bool OnSysCommandMonitorPower();
+        virtual bool OnSysCommandMouseMenu();
+        virtual bool OnSysCommandMove();
+        virtual bool OnSysCommandNextWindow();
+        virtual bool OnSysCommandPrevWindow();
+        virtual bool OnSysCommandRestore();
+        virtual bool OnSysCommandScreenSaver();
+        virtual bool OnSysCommandSize();
+        virtual bool OnSysCommandTaskList();
     };
 
 }}}}}//qor::platform::nswindows::gui::view

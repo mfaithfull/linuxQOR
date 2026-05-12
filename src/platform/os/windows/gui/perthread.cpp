@@ -28,6 +28,18 @@
 
 namespace qor{ namespace platform { namespace nswindows{
 
+    void PerThread::SetWindowCreationInProgress(ref_of<Window>::type window)
+    {
+        m_inProgress = window;
+    }
+
+    ref_of<Window>::type PerThread::GetWindowCreationInProgress()
+    {
+        ref_of<Window>::type window = m_inProgress;
+        m_inProgress.Dispose();
+        return window;
+    }
+
     bool PerThread::AddWindow(Window* window)
     {
         auto it = m_windowHandleMap.find(window->GetHandle().Use());
@@ -180,6 +192,11 @@ namespace qor{ namespace platform { namespace nswindows{
         return monitor;
     }
 
+    unsigned int PerThread::NextResourceId()
+    {
+        return ++m_nextResourceId;
+    }
+
 }}}
 
 thread_local qor::detail::ThreadInstanceHolder<qor::platform::nswindows::PerThread> ThreadInstanceHolderPerThread;
@@ -193,7 +210,7 @@ namespace qor {
     namespace detail {
 
         template<>
-        ThreadInstanceHolder<qor::platform::nswindows::PerThread>* theThreadInstanceHolder<qor::platform::nswindows::PerThread>()
+        qor_pp_export ThreadInstanceHolder<qor::platform::nswindows::PerThread>* theThreadInstanceHolder<qor::platform::nswindows::PerThread>()
         {
             return GetCurrentPerThread();
         }

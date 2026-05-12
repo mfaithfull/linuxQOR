@@ -22,59 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_CURSOR
-#define QOR_PP_H_WINDOWS_GUI_CURSOR
+#ifndef QOR_PP_H_WINDOWS_GUI_POPUPMENU
+#define QOR_PP_H_WINDOWS_GUI_POPUPMENU
 
-#include <string>
-
-#include "src/platform/os/windows/common/handles/handle.h"
-#include "../view/drawing/rect.h"
-#include "../view/drawing/point.h"
+#include "menu.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    //Information about the global cursor.
-    struct CursorInfo
+    struct TrackMenuParams
     {
-        unsigned long   cbSize;
-        unsigned long   flags;
-        void* hCursor;
-        Point   ptScreenPos;
+        unsigned int    cbSize{sizeof(TrackMenuParams)};    //Size of structure
+        Rect            rcExclude;                          //Screen coordinates of rectangle to exclude when positioning
     };
 
-    class qor_pp_module_interface(QOR_WINGUI) Cursor
+    class qor_pp_module_interface(QOR_WINGUI) PopupMenu : public Menu
     {
     public:
 
-        Cursor(const PrimitiveHandle& h);
-        Cursor(const Cursor& src);
-        Cursor(void* hInst, int xHotSpot, int yHotSpot, int nWidth, int nHeight, const void* pvANDPlane, const void* pvXORPlane);
-        Cursor(void* hInstance, const std::string& cursorName);
-        Cursor(const std::string& fileName);
-        Cursor(const wchar_t* id);
-        virtual ~Cursor();
+        PopupMenu();
+        PopupMenu(int);
+        PopupMenu(const PrimitiveHandle& h);
+        PopupMenu(const PopupMenu& m);
 
-        Cursor Clone();
-        const Handle& GetHandle() const;
-
-        bool Clip(const Rect& rect);
-        bool GetClip(Rect& rect);
-        static Cursor GetCurrent();
-        bool GetInfo(CursorInfo& ci);
-        bool GetPosition(Point& point);
-        bool GetPhysicalPosition(Point& point);
-        bool SetPosition(int x, int y);
-        bool SetPhysicalPosition(int x, int y);
-        static bool Show(bool show);
-        void SetAsCurrent();
-        bool SetAsSystemCursor(unsigned long id);
-
-    protected:
-        bool m_bNeedsDestroy;
-        Handle m_handle;
+        bool Track(unsigned int flags, int x, int y, Window* window, TrackMenuParams& params);
     };
-
+    
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI_CURSOR
+#endif//QOR_PP_H_WINDOWS_GUI_POPUPMENU

@@ -32,6 +32,8 @@
 #include "../gdiobjects/icon.h"
 #include "../gdiobjects/cursor.h"
 
+#include "../view/handlers/base.h"
+
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
@@ -65,21 +67,22 @@ namespace qor{ namespace platform { namespace nswindows{
         void SetBackgroundBrush(const Brush& brush);
         void SetMenuName(const TCHAR* menuName);
         void SetName(const TCHAR* name);
-        void SetSmallIcon(const class Icon& icon);        
-
+        void SetSmallIcon(const class Icon& icon);     
+        
     protected:
 
-        unsigned int m_style;
-        messageFunc m_messageFunc;
-        int m_classExtra;
-        int m_windowExtra;
-        PrimitiveHandle m_hInstance;
-        Handle m_hIcon;
-        Handle m_hCursor;
-        Handle m_hbrBackground;
-        const TCHAR* m_className;
-        const TCHAR* m_menuName;
-        Handle m_hIconSm;
+        unsigned int m_style{0};
+        messageFunc m_messageFunc{nullptr};
+        int m_classExtra{0};
+        int m_windowExtra{0};
+        PrimitiveHandle m_hInstance{nullptr};
+        Handle m_hIcon{nullptr};
+        Handle m_hCursor{nullptr};
+        Handle m_hbrBackground{nullptr};
+        tstring m_className;
+        tstring m_menuName;
+        Handle m_hIconSm{nullptr};
+       
     };
 
     class qor_pp_module_interface(QOR_WINGUI) WindowClassRegistration

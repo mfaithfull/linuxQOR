@@ -86,7 +86,7 @@ namespace qor{ namespace platform { namespace nswindows{
     #endif
     };
 
-    struct UpdateLayeredWindowInfo
+    struct qor_pp_module_interface(QOR_WINGUI) UpdateLayeredWindowInfo
     {
         unsigned long cbSize{sizeof(UpdateLayeredWindowInfo)};
         void* hdcDst;
@@ -100,7 +100,7 @@ namespace qor{ namespace platform { namespace nswindows{
         const Rect* prcDirty;
     };
 
-    struct AltTabInfo
+    struct qor_pp_module_interface(QOR_WINGUI) AltTabInfo
     {
         unsigned long cbSize{sizeof(AltTabInfo)};
         int cItems;
@@ -114,7 +114,7 @@ namespace qor{ namespace platform { namespace nswindows{
     };
 
     //Menubar information
-    struct MenuBarInfo
+    struct qor_pp_module_interface(QOR_WINGUI) MenuBarInfo
     {
         unsigned long cbSize{sizeof(MenuBarInfo)};
         Rect rcBar;          // rect of bar, popup, item
@@ -125,7 +125,7 @@ namespace qor{ namespace platform { namespace nswindows{
         int fUnused:30;     // reserved
     };
 
-    struct PaintStruct
+    struct qor_pp_module_interface(QOR_WINGUI) PaintStruct
     {
         void*           hdc;
         int             fErase;
@@ -135,13 +135,11 @@ namespace qor{ namespace platform { namespace nswindows{
         unsigned char   rgbReserved[32];
     };
 
-
-
     class qor_pp_module_interface(QOR_WINGUI) WindowController
     {
     public:
 
-        explicit WindowController(Window& window) : m_window(window)
+        explicit WindowController(ref_of<Window>::type window) : m_window(window)
         {
             m_perThread = new_ref<PerThread>();
         }
@@ -208,8 +206,8 @@ namespace qor{ namespace platform { namespace nswindows{
         bool SetPos(Window* insertAfter, int x, int y, int cx, int cy, unsigned int flags);
         bool SetText(std::wstring& text);
         bool ShowOwnedPopups(bool show);
-        bool Show(int cmd);
-        bool ShowAsync(int cmd);
+        bool Show(int how = swNormal);
+        bool ShowAsync(int how = swNormal);
         void SwitchToThis(bool altTab);
         unsigned short TileChildren(unsigned int how, Rect& rc, std::vector<ref_of<Window>::type>& children);
         bool UpdateLayered(ref_of<DeviceContext>::type dcDst, Point& ptDest, Size& size, ref_of<DeviceContext>::type dcSrc, Point& ptSrc, unsigned long crKey, BlendFunction* blend, unsigned long flags);
@@ -220,6 +218,7 @@ namespace qor{ namespace platform { namespace nswindows{
         bool GetMenuBarInfo(long idObject, long idItem, MenuBarInfo& mbi);
         bool GetMenuItemRect(ref_of<Menu>::type menu, unsigned int item, Rect& rc);
         Menu* GetSystemMenu(bool revert);
+        int GetMenuItemFromPoint(Menu* menu, Point& point);
         bool HiliteMenuItem(ref_of<Menu>::type menu, unsigned int itemHilite, unsigned int hilite);
         int MenuItemFromPoint(ref_of<Menu>::type menu, Point screenPoint);
         bool SetMenu(ref_of<Menu>::type menu);
@@ -300,7 +299,7 @@ namespace qor{ namespace platform { namespace nswindows{
 
     private:
 
-        Window& m_window;
+        ref_of<Window>::type m_window;
         ref_of<PerThread>::type m_perThread;
     };
 

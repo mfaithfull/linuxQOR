@@ -25,10 +25,45 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_MENU
 #define QOR_PP_H_WINDOWS_GUI_MENU
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/newref.h"
+#include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
+#include "src/platform/os/windows/gui/view/drawing/rect.h"
+#include "src/platform/os/windows/gui/gdiobjects/bitmap.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
+
+    struct MenuInfo
+    {
+        unsigned long   cbSize{sizeof(MenuInfo)};
+        unsigned long   fMask{0};
+        unsigned long   dwStyle{0};
+        unsigned int    cyMax{0};
+        void*  hbrBack{nullptr};
+        unsigned long   dwContextHelpID{0};
+        unsigned long long dwMenuData{0};
+    };
+
+    struct MenuItemInfo
+    {
+        unsigned int     cbSize{sizeof(MenuItemInfo)};
+        unsigned int     fMask;
+        unsigned int     fType;         // used if MIIM_TYPE (4.0) or MIIM_FTYPE (>4.0)
+        unsigned int     fState;        // used if MIIM_STATE
+        unsigned int     wID;           // used if MIIM_ID
+        void*           hSubMenu;      // used if MIIM_SUBMENU
+        void*           hbmpChecked;   // used if MIIM_CHECKMARKS
+        void*           hbmpUnchecked; // used if MIIM_CHECKMARKS
+        unsigned long long dwItemData;   // used if MIIM_DATA
+        TCHAR*   dwTypeData;    // used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
+        unsigned int     cch;           // used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
+        void*           hbmpItem;      // used if MIIM_BITMAP    
+    };
+
+    class qor_pp_module_interface(QOR_WINGUI) Window;
 
     class qor_pp_module_interface(QOR_WINGUI) Menu
     {
@@ -41,8 +76,38 @@ namespace qor{ namespace platform { namespace nswindows{
 
         const Handle& GetHandle() const;
         unsigned long CheckItem(unsigned int uIDCheckItem, unsigned int uCheck);
-        bool EnableItem(unsigned int uIDEnableItem, unsigned int uEnable);
+        bool EnableItem(unsigned int idEnableItem, unsigned int enable);
+        bool Append(unsigned int flags, unsigned long long idNewItem, const tstring& newItem);
+        unsigned int AppendTextItem(const tstring& newTextItem);
+        bool AppendSubMenu(ref_of<Menu>::type subMenu, const tstring& subMenuName);
+        bool CheckRadioItem(unsigned int idFirst, unsigned int idLast, unsigned int idCheck, unsigned int flags);
+        bool Delete(unsigned int position, unsigned int flags);
+        bool Destroy();
+        bool End();
+        unsigned int GetDefaultItem(unsigned int byPos, unsigned int flags);
+        bool GetInfo(MenuInfo& menuInfo);
+        int GetItemCount();
+        unsigned int GetItemID(int pos);
+        bool GetItemInfo(unsigned int item, bool byPosition, MenuItemInfo& menuItemInfo);
+        bool GetItemRect(Window* window, unsigned int item, Rect& rcItem);
+        unsigned int GetState(unsigned int id, unsigned int flags);
+        int GetString(unsigned int idItem, tstring& item, unsigned int flags);
+        Menu* GetSubMenu(int pos);
+        bool HiliteItem(Window* window, unsigned int itemHilite, unsigned int hilite);
+        bool InsertSubMenu(unsigned int position, unsigned int flags, void* idNewItem, const tstring& newItem);
+        bool InsertItem(unsigned int item, bool byPosition, const MenuItemInfo& itemInfo);
+        bool Modify(unsigned int position, unsigned int flags, void* idNewItem, const tstring& newItem);
+        bool Remove(unsigned int position, unsigned int flags);
+        bool SetDefaultItem(unsigned int item, unsigned int byPos);
+        bool SetInfo(const MenuInfo& info);
+        bool SetItemInfo(unsigned int item, bool byPosition, const MenuItemInfo& itemInfo);
+        bool SetItemBitmaps(unsigned int position, unsigned int flags, Bitmap* bitmapUnchecked, Bitmap* bitmapChecked);
 
+        /*                                        
+        static BOOL IsMenu(HMENU hMenu);
+        static HMENU LoadMenuT(HINSTANCE hInstance, LPCTSTR lpMenuName);
+        static HMENU LoadMenuIndirectT(const void* lpMenuTemplate);        
+        */
     protected:
 
         Handle m_handle;

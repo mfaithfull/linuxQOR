@@ -82,12 +82,12 @@ namespace qor{ namespace platform { namespace nswindows{
 
     const TCHAR* WindowClass::MenuName()
     {
-        return m_menuName;
+        return m_menuName.c_str();
     }
     
     const TCHAR* WindowClass::Name()
     {
-        return m_className;
+        return m_className.c_str();
     }
 
     const Handle& WindowClass::SmallIcon()

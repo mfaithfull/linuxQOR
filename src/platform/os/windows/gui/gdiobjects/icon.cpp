@@ -69,10 +69,19 @@ namespace qor{ namespace platform { namespace nswindows{
     {
         m_handle = User32::LoadIconT(reinterpret_cast<HINSTANCE>(hInstance), to_tstring(lpIconName.c_str()).c_str());
     }
+
+    Icon::Icon(const wchar_t* id)
+    {
+        m_handle = User32::LoadIconT(reinterpret_cast<HINSTANCE>(nullptr), id);
+        m_handle.DontClose();
+    }
     
     Icon::~Icon()
     {
-        User32::DestroyIcon(reinterpret_cast<HICON>(m_handle.Use()));
+        if(m_handle.NeedsClose())
+        {
+            User32::DestroyIcon(reinterpret_cast<HICON>(m_handle.Use()));
+        }
     }
     
     const Handle& Icon::GetHandle() const

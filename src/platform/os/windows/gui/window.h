@@ -25,11 +25,16 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_WINDOW
 #define QOR_PP_H_WINDOWS_GUI_WINDOW
 
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/newref.h"
+#include "src/platform/os/windows/common/constants.h"
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "controllers/menu.h"
 #include "view/handlers/message.h"
 #include "view/handlers/acceleratortable.h"
+#include "view/handlers/abstractwindowhandler.h"
 #include "view/drawing/rect.h"
 
 //All types on this interface must be portable
@@ -42,12 +47,17 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     public:
 
+        Window();
         Window( const TCHAR* className, const TCHAR* windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, Window* parent, const Menu& menu, const PrimitiveHandle& hInstance, void* param);
         Window(const PrimitiveHandle& h);
 
         const Handle& GetHandle() const;
+        void SetHandle(const PrimitiveHandle& h);
 
-        bool Show(int how);
+        void SetHandler(qor::ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
+        qor::ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type GetHandler();
+
+        bool Show(int how = swNormal);
         bool Update();
         bool Destroy();
         bool GetClientRect(Rect& rc);
@@ -85,6 +95,10 @@ namespace qor{ namespace platform { namespace nswindows{
     protected:
 
         Handle m_handle;
+
+    private:
+
+        qor::ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type m_handler;
     };
     
     typedef bool (* wndenumproc)(Window*, long long);

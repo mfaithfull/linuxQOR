@@ -276,8 +276,8 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
 	static const unsigned short wmDWMWindowMaximizedChange = 0x0321;
 	static const unsigned short wmDWMSendIconicThumbnail = 0x0323;
 	static const unsigned short wmDWMSendIconicLivePreviewBitmap = 0x0326;
-
-
+	static const unsigned short wmGetTitleBarInfoEx = 0x033F;
+	
 	static const unsigned short wmUser = 0x0400;
 	static const unsigned short wmApp = 0x8000;
 
@@ -298,6 +298,26 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
 
     static const int nfrANSI = 1;
     static const int nfrUnicode = 2;
+
+	constexpr unsigned short	scSize         = 0xF000;
+	constexpr unsigned short	scMove         = 0xF010;
+	constexpr unsigned short	scMinimize     = 0xF020;
+	constexpr unsigned short	scMaximize     = 0xF030;
+	constexpr unsigned short	scNextWindow   = 0xF040;
+	constexpr unsigned short	scPrevWindow   = 0xF050;
+	constexpr unsigned short	scClose        = 0xF060;
+	constexpr unsigned short	scVScroll      = 0xF070;
+	constexpr unsigned short	scHScroll      = 0xF080;
+	constexpr unsigned short	scMouseMenu    = 0xF090;
+	constexpr unsigned short	scKeyMenu      = 0xF100;
+	constexpr unsigned short	scArrange      = 0xF110;
+	constexpr unsigned short	scRestore      = 0xF120;
+	constexpr unsigned short	scTaskList     = 0xF130;
+	constexpr unsigned short	scScreenSave   = 0xF140;
+	constexpr unsigned short	scHotKey       = 0xF150;
+	constexpr unsigned short	scDefault      = 0xF160;
+	constexpr unsigned short	scMonitorPower = 0xF170;
+	constexpr unsigned short	scContextHelp  = 0xF180;
 
 }}}}}//qor::platform::nswindows::gui::view
 
