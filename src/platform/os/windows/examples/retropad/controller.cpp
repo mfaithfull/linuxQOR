@@ -18,15 +18,15 @@ using namespace qor::platform::nswindows;
 using namespace qor::platform::nswindows::gui;
 using namespace qor::platform::nswindows::gui::view;
 
-RetroPadTopLevelWindowController::RetroPadTopLevelWindowController() : qor::platform::nswindows::gui::view::TopLevelWindowController()
+RetroPadTopLevelWindowController::RetroPadTopLevelWindowController() : qor::platform::nswindows::gui::view::TopLevelWindowHandler()
 {
-    m_focus = qor::new_ref<FocusController>();
-    qor::connect(m_focus(qor_shared), &FocusController::SetFocusSignal, *this, &RetroPadTopLevelWindowController::OnSetFocus);
+    m_focus = qor::new_ref<FocusHandler>();
+    qor::connect(m_focus(qor_shared), &FocusHandler::SetFocusSignal, *this, &RetroPadTopLevelWindowController::OnSetFocus);
 }
 
 RetroPadTopLevelWindowController::~RetroPadTopLevelWindowController() noexcept(true)
 {
-    qor::disconnect(m_focus(qor_shared), &FocusController::SetFocusSignal, *this, &RetroPadTopLevelWindowController::OnSetFocus);
+    qor::disconnect(m_focus(qor_shared), &FocusHandler::SetFocusSignal, *this, &RetroPadTopLevelWindowController::OnSetFocus);
 }
 
 long RetroPadTopLevelWindowController::OnCreate(qor::platform::nswindows::Window& window, qor::platform::nswindows::gui::view::CreateStruct* pCreateStruct)
@@ -231,7 +231,7 @@ LRESULT MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         //The Window hasn't been created yet so use a temporary controller for the class of window
         RetroPadTopLevelWindowController windowController;
-        windowController.m_rendering = qor::new_ref<RenderingController>();
+        windowController.m_rendering = qor::new_ref<RenderingHandler>();
         windowController.m_ncRendering = qor::new_ref<RetroPadNonClientRenderingController>();
         LRESULT result = 0;
         windowController.ProcessMessage(w, result, msg, wParam, lParam);

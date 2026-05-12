@@ -16,10 +16,10 @@
 #include "model.h"
 #include "viewmodel.h"
 
-class RetroPadNonClientRenderingController : public qor::platform::nswindows::gui::view::NonClientRenderingController
+class RetroPadNonClientRenderingController : public qor::platform::nswindows::gui::view::NonClientRenderingHandler
 {
 public:
-    RetroPadNonClientRenderingController() : qor::platform::nswindows::gui::view::NonClientRenderingController()
+    RetroPadNonClientRenderingController() : qor::platform::nswindows::gui::view::NonClientRenderingHandler()
     {        
     }
 
@@ -31,7 +31,7 @@ public:
     }
 };
 
-class RetroPadTopLevelWindowController : public qor::platform::nswindows::gui::view::TopLevelWindowController, public virtual qor::SlotBase
+class RetroPadTopLevelWindowController : public qor::platform::nswindows::gui::view::TopLevelWindowHandler, public virtual qor::SlotBase
 {
 public:
     RetroPadTopLevelWindowController();

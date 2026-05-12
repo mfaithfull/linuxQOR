@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-set(target minimal)
+set(target menu)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

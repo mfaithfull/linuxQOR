@@ -6,7 +6,7 @@
 #include "src/platform/os/windows/gui/window.h"
 #include "src/platform/os/windows/gui/view/controllers/toplevel.h"
 
-class WindowClassController : public qor::platform::nswindows::gui::view::TopLevelWindowController
+class WindowClassController : public qor::platform::nswindows::gui::view::TopLevelWindowHandler
 {
 public:
 

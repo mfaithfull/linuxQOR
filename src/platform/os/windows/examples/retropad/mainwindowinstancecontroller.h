@@ -10,7 +10,7 @@
 #include "src/platform/os/windows/gui/view/controllers/interactive/focus.h"
 #include "viewmodel.h"
 
-class MainWindowFocusController : public qor::platform::nswindows::gui::view::FocusController
+class MainWindowFocusController : public qor::platform::nswindows::gui::view::FocusHandler
 {
 public:
 
@@ -24,7 +24,7 @@ private:
     ViewState* m_view;
 };
 
-class MainWindowNonClientRenderController : public qor::platform::nswindows::gui::view::NonClientRenderingController
+class MainWindowNonClientRenderController : public qor::platform::nswindows::gui::view::NonClientRenderingHandler
 {
 public:
 
@@ -37,7 +37,7 @@ private:
     ViewState* m_view;
 };
 
-class MainWindowDragAndDropController : public qor::platform::nswindows::gui::view::DragAndDropController
+class MainWindowDragAndDropController : public qor::platform::nswindows::gui::view::DragAndDropHandler
 {
 public:
 
@@ -50,7 +50,7 @@ private:
     ViewState* m_view;
 };
 
-class MainWindowMenuController : public qor::platform::nswindows::gui::view::MenuController
+class MainWindowMenuController : public qor::platform::nswindows::gui::view::MenuHandler
 {
 public:
 
@@ -63,7 +63,7 @@ private:
     ViewState* m_view;
 };
 
-class MainWindowInstanceController : public qor::platform::nswindows::gui::view::TopLevelWindowController
+class MainWindowInstanceController : public qor::platform::nswindows::gui::view::TopLevelWindowHandler
 {
 public:
 
