@@ -5,7 +5,7 @@ To ease the learning curve we need some good tutorial material.
 Examples:
 
 basic:
-
+basic - a minimal QOR application
 outline - a QOR Hello World example that also shows how the QOR module system manages static and dynamic libraries
 options - Add command line parameters to your QOR Application
 roller - Give your application a Role and Features
