@@ -73,6 +73,6 @@ private:
 namespace qor{  
     qor_pp_declare_instancer_of(HTTPServerApp, SingletonInstancer); 
     qor_pp_declare_sync_of(HTTPServerApp, RecursiveMutex);
-}    //Make sure HTTPServerApp is instanced as a singleton with RecusiveMutex protection
+}
 
 #endif//QOR_PP_H_EXAMPLES_HTTPSERVER_APP

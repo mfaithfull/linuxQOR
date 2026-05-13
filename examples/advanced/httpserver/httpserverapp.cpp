@@ -50,7 +50,7 @@ qor_pp_module_requires(Sockets)
 qor_pp_module_requires(AsyncIOService)
 qor_pp_module_requires(LogAggregatorService)
 
-//Name and provide this top level executable module
+//Name and provide a top level executable module
 qor_pp_implement_module(HTTPServerApp::Name)
 
 //Replace the default framework Application singleton class with HTTPServerApp
