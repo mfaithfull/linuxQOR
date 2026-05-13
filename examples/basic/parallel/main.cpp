@@ -84,9 +84,7 @@ int main()
                 }
             );
         }
-    ).Run(
-    make_runable(
-        [&logHandler]()->int
+    ).Run([&logHandler]()->int
         {            
             qor_pp_fcontext;
             auto threadPool = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<ThreadPool>();
@@ -94,7 +92,7 @@ int main()
             size_t runningTaskCount = threadPool->GetCountOfTasksRunning();
 
             debug("{0} thread is in use by the log aggregator. \
-This log message will be written out by the aggregator while the Main thread that logged it continues in parallel.",runningTaskCount);
+    This log message will be written out by the aggregator while the Main thread that logged it continues in parallel.",runningTaskCount);
 
             /*Now we submit a task to the pool that will run on the remaining spare thread*/
             std::future<int> taskResult = threadPool->SubmitTask( 
@@ -120,8 +118,7 @@ This log message will be written out by the aggregator while the Main thread tha
             }
 
             return 0;
-        }
-    ));
+        });
 }
 
 /*The initial setting up of the log aggregator and connecting the main thread to it*/

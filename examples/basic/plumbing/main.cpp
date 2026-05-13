@@ -48,7 +48,6 @@ int main()
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build(appName)->SetRole<Role>().Run(
-    make_runable(
         []()->int
         {
             /*Retrieve the file system singleton from the platform.
@@ -77,8 +76,7 @@ int main()
             PipelineFileProcessor(fileSystem, index);
         
             return 0;
-        }
-    ));
+        });
 }
 
 void TraditionalFileRead(FileSystem::ref fileSystem, FileIndex& index)

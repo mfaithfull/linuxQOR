@@ -47,15 +47,10 @@ int main(const int argc, const char** argv, char** env)
             optparser::OptionGetter options(argc, argv, app(qor_shared));
         }
     )->Run(
-
-        make_runable(
-
-            []()->int
-            {
-                std::cout << "Hello world." << std::endl;
-
-                return EXIT_SUCCESS;
-            }
-        )
+        []()->int
+        {
+            std::cout << "Hello world." << std::endl;
+            return EXIT_SUCCESS;
+        }
     );
 }

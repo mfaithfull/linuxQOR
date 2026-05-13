@@ -111,7 +111,6 @@ int main(const int argc, const char** argv, char** env)
             
         }
     ).Run(
-    make_runable(
         [&logHandler]()->int
         {
             qor::events::EventQueue eventQueue(100);
@@ -128,6 +127,5 @@ int main(const int argc, const char** argv, char** env)
 
             assert(cevt.a == 101);
             return 0;
-        }
-    ));
+        });
 }

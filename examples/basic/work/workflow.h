@@ -28,7 +28,7 @@
 #include "sdk/using_framework.h"
 
 /*A workflow is a stack of states forming a state machine
-The state at the topp of the stack is repeatedly Entered
+The state at the top of the stack is repeatedly Entered
 until the stack is empty. States can pop themselves from
 the stack or push other states onto it.
 It's all a way of controlling the flow of a program

@@ -41,26 +41,24 @@ int main()
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build(appName)->SetRole<Role>().Run(
-    make_runable(
-    []()->int
-    {
-        JSONReader reader;
-        
-        std::cout << reader(
-            FileConnector(
-                FileIndex(
-                    ThePlatform(qor_shared)->
-                        GetSubsystem<FileSystem>()->
-                            CurrentPath(), "test.json"
-                ),
-                reader.Buffer(),
-                WithFlags::None,
-                ShareMode::Owner_Read,
-                OpenFor::ReadOnly
-            )
-        ).ToString();
+        []()->int
+        {
+            JSONReader reader;
+            
+            std::cout << reader(
+                FileConnector(
+                    FileIndex(
+                        ThePlatform(qor_shared)->
+                            GetSubsystem<FileSystem>()->
+                                CurrentPath(), "test.json"
+                    ),
+                    reader.Buffer(),
+                    WithFlags::None,
+                    ShareMode::Owner_Read,
+                    OpenFor::ReadOnly
+                )
+            ).ToString();
 
-        return 0;
-    }
-    ));
+            return 0;
+        });
 }

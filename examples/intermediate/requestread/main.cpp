@@ -42,26 +42,24 @@ int main()
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build(appName)->SetRole<Role>().Run(
-    make_runable(
-    []()->int
-    {
-        RequestReader reader;
-        
-        auto request = reader(
-            FileConnector(
-                FileIndex(
-                    ThePlatform(qor_shared)->
-                        GetSubsystem<FileSystem>()->
-                            CurrentPath(), "request.txt"
-                ),
-                reader.Buffer(),
-                WithFlags::None,
-                ShareMode::Owner_Read,
-                OpenFor::ReadOnly
-            )
-        );
+        []()->int
+        {
+            RequestReader reader;
+            
+            auto request = reader(
+                FileConnector(
+                    FileIndex(
+                        ThePlatform(qor_shared)->
+                            GetSubsystem<FileSystem>()->
+                                CurrentPath(), "request.txt"
+                    ),
+                    reader.Buffer(),
+                    WithFlags::None,
+                    ShareMode::Owner_Read,
+                    OpenFor::ReadOnly
+                )
+            );
 
-        return 0;
-    }
-    ));
+            return 0;
+        });
 }

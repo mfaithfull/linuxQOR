@@ -33,19 +33,18 @@ using namespace qor::framework;
 
 constexpr const char* appName = "BasicApp";         //Give our application a baked in name
 
-Module& ThisModule(void)                            //Every QOR module, including executable modules, must provide this
+Module& ThisModule(void)                            //Every QOR module must provide an implementation of ThisModule
 { 
-    static Module QORModule(appName, "1.0.0");      //A module singleton Module object with name and version
+    static Module QORModule(appName, "1.0.0");      //A module singleton object with name and version
     return QORModule;
 }
 
 int main()                                          //Standard C/C++ entry point
 {
-    return AppBuilder().Build(appName)->Run(        //Use the QOR AppBuilder factory to make an App and then Run it
-        make_runable(                               //Convert the lambda to a Runable Object 
-            []()->int                               //A simple lambda returning an int
-            {
-                std::cout << "Hello from a basic QOR application." << std::endl;
-                return EXIT_SUCCESS;                //Standard succes return code (0) is returned from the program
-            }));
+    return AppBuilder().Build(appName)->Run(        //Use the AppBuilder factory to make an App and then Run it
+        []()->int                                   //We provide a simple lambda to be executed
+        {
+            std::cout << "Hello from a basic QOR application." << std::endl;
+            return EXIT_SUCCESS;                    //Standard succes return code (0) is returned from the program
+        });
 }

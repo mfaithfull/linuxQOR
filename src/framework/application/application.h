@@ -92,6 +92,12 @@ namespace qor{ namespace framework{
 			return RunWorkflow(workflow.template AsRef<workflow::IWorkflow>());
 		}
 
+        template<typename Tlambda>
+        int Run(Tlambda&& func)
+        {
+            return Run(new_ref<RunableFunc>(func).template AsRef<IRunable>());
+        }
+
         int Run( ref_of<IRunable>::type runable )
         {
             int result = -1;

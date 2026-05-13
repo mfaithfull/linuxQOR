@@ -77,7 +77,7 @@ int main()
         [](ref_of<IRole>::type role)    
         {
             /*Here we configure the application Role by adding features
-            We add a ThreadPool. A common features required by application roles*/
+            We add a ThreadPool. A common feature required by application roles*/
             role->AddFeature<ThreadPool>(
 
                 /*Added features can be customised by passing a lamda
@@ -103,34 +103,29 @@ int main()
             );
         }
     ).Run(
+        []()->int
+        {
+            /*The Application Role and Features are all shared objects
+            so we need to access them with synchronisation. 
+            Application is a singleton that is really our custom App class.
+            The AppBuilder provides a way to get the instance from anywhere.
+            We have to request conversion to a custom App reference
+            Then get the Role and retrieve from it our CustomFeature by
+            it's unique ID. We know it's real type so we can ask for the
+            reference to be converted into a CustomFeature reference.
+            Finally this gives us access to the SayHello function*/
+            
+            AppBuilder().TheApplication().//The Application is really the single App instance
+            AsRef<App>(qor_shared)->//Converts the reference into an custom App reference
+            GetRole(qor_shared)->//Get the IRole interface on the CustomRole instance
+            GetFeature(&CustomFeatureGUID).//Lookup the CustomFeature by it's unique ID
+            AsRef<CustomFeature>(qor_shared)->//Convert the reference from an IFeature to a CustomFeature
+            SayHello();
 
-        make_runable(
+            /*This is clearly massive overkill for a one line program but
+            provides a structure to support large complex applications
+            without forcing you to use all of it.*/
 
-            []()->int
-            {
-                /*The Application Role and Features are all shared objects
-                so we need to access them with synchronisation. 
-                Application is a singleton that is really our custom App class.
-                The AppBuilder provides a way to get the instance from anywhere.
-                We have to request conversion to a custom App reference
-                Then get the Role and retrieve from it our CustomFeature by
-                it's unique ID. We know it's real type so we can ask for the
-                reference to be converted into a CustomFeature reference.
-                Finally this gives us access to the SayHello function*/
-                
-                AppBuilder().TheApplication().//The Application is really the single App instance
-                AsRef<App>(qor_shared)->//Converts the reference into an App reference
-                GetRole(qor_shared)->//Get the IRole interface on the CustomRole instance
-                GetFeature(&CustomFeatureGUID).//Lookup the CustomFeature by it's unique ID
-                AsRef<CustomFeature>(qor_shared)->//Convert the reference from an IFeature to a CustomFeature
-                SayHello();
-
-                /*This is clearly massive overkill for a one line program but
-                provides a structure to support large complex applications
-                without forcing you to use all of it.*/
-
-                return EXIT_SUCCESS;
-            }
-        )
-    );
+            return EXIT_SUCCESS;
+        });
 }

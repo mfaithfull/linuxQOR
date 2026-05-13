@@ -62,33 +62,25 @@ int main()
     /*Build an Application*/
     auto outlineApp = AppBuilder().Build(appName);
 
-    /*We'll skip configuraing the application in this simple case*/
+    /*We'll skip configuring the application in this simple case*/
 
     /*The QOR Application class is a context for running 
     Workflows and anything else that meets the 
     requirements for a runable object*/
     return outlineApp()->Run
     (
-        /*Here we make a runable object from a simple
-        lamda with the make_runnable utility function.
-        Why is this needed?
-        This bakes in exception handling
-        and allows many other good things later.*/
-        make_runable(
+        /*A minimal lambda that is runnable
+        i.e. it takes no parameters and returns
+        an integer*/
+        []()->int
+        {
+            /*The traditional C++ Hello world*/
+            std::cout << "Hello from the QOR Outline application." << std::endl;
 
-            /*A minimal lambda that is runnable
-            i.e. it takes no parameters and returns
-            an integer*/
-            []()->int
-            {
-                /*The traditional C++ Hello world*/
-                std::cout << "Hello from the QOR Outline application." << std::endl;
-
-                /*This is the integer value that this lambda
-                and then the main function will return*/
-                return EXIT_SUCCESS;
-            }
-        )
+            /*This is the integer value that this lambda
+            and then the main function will return*/
+            return EXIT_SUCCESS;
+        }
     );
 }
 

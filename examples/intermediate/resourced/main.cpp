@@ -71,8 +71,6 @@ void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAg
 
 qor_pp_implement_module(ResourcedApp::Name)
 
-//bool HandlePathUpdate(Resource* res, ResourceStatus status);
-
 int main(const int argc, const char** argv, char** env)
 {    
     qor_pp_fcontext;
@@ -114,7 +112,6 @@ int main(const int argc, const char** argv, char** env)
             );
         }
     ).Run(
-    make_runable(
         [&logHandler]()->int
         {            
             auto resourceHub = GetFeature<ResourceHub>();
@@ -128,6 +125,5 @@ int main(const int argc, const char** argv, char** env)
             font_claimer.WaitForResource(fontResource);
             auto ttfObject = fontResource->GetObject();
             return 0;
-        }
-    ));
+        });
 }
