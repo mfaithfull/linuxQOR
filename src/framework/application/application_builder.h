@@ -27,6 +27,9 @@
 
 #include "application.h"
 
+#define qor_pp_redirect_app_class(_MYAPP)\
+qor::SingletonRedirector<qor::framework::Application, _MYAPP> _MYAPP::m_sRedirect;
+
 namespace qor{ namespace framework{
 
     class qor_pp_module_interface(QOR_APPLICATION) AppBuilder

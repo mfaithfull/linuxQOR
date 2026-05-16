@@ -35,6 +35,9 @@
 #include "src/platform/platform.h"
 #include "irunable.h"
 
+#define qor_pp_declare_app_class(_MYAPP)\
+private: static qor::SingletonRedirector<qor::framework::Application, _MYAPP> m_sRedirect;
+
 namespace qor{ namespace framework{
 
     class qor_pp_module_interface(QOR_APPLICATION) Application
