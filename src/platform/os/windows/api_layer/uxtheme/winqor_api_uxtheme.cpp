@@ -23,21 +23,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <string>
-#include "src/platform/os/windows/common/structures.h"
+#include "src/qor/module/module.h"
 
-extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
-extern "C" int main();
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Windows API UX Theme Module",
+		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-int __stdcall WinMain(void* hinst, void* hinstPrev, char* pszCmdLine, int nCmdShow)
-{ 
-    return main(); 
+	return QORModule;
 }
-
-namespace qor{ namespace platform { namespace nswindows {
-    void* GetInstance()
-    {
-        return ((void*)(&__ImageBase));
-    }
-}}}//qor::platform::nswindows
-

@@ -23,21 +23,38 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <string>
-#include "src/platform/os/windows/common/structures.h"
+#include "src/qor/module/module.h"
+#include "src/qor/interception/functioncontext.h"
+#include "src/qor/error/error.h"
 
-extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
-extern "C" int main();
+//Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
+#include "user32.h"
+#include "../returncheck.h"
+#include "../library.h"
 
-int __stdcall WinMain(void* hinst, void* hinstPrev, char* pszCmdLine, int nCmdShow)
-{ 
-    return main(); 
-}
+#undef WinHelp
 
-namespace qor{ namespace platform { namespace nswindows {
-    void* GetInstance()
+namespace qor { namespace nswindows { namespace api {
+
+    BOOL User32::SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId)
     {
-        return ((void*)(&__ImageBase));
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, SetWindowContextHelpId);
+        return Library::Call<BOOL, HWND, DWORD>(pFunc, hwnd, dwContextHelpId);
     }
-}}}//qor::platform::nswindows
 
+    DWORD User32::GetWindowContextHelpId(HWND hwnd)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, GetWindowContextHelpId);
+        return Library::Call<DWORD, HWND>(pFunc, hwnd);
+    }
+
+    BOOL User32::WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapiAW(user32, WinHelp);
+        return Library::Call<BOOL, HWND, LPCTSTR, UINT, ULONG_PTR>(pFunc, hWndMain, lpszHelp, uCommand, dwData);
+    }
+
+}}}//qor::nswindows::api

@@ -23,21 +23,22 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <string>
-#include "src/platform/os/windows/common/structures.h"
+#include "src/qor/module/module.h"
+#include "src/qor/interception/functioncontext.h"
+#include "src/qor/error/error.h"
 
-extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
-extern "C" int main();
+//Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
+#include "user32.h"
+#include "../returncheck.h"
+#include "../library.h"
 
-int __stdcall WinMain(void* hinst, void* hinstPrev, char* pszCmdLine, int nCmdShow)
-{ 
-    return main(); 
-}
+namespace qor { namespace nswindows { namespace api {
 
-namespace qor{ namespace platform { namespace nswindows {
-    void* GetInstance()
+    void User32::NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild)
     {
-        return ((void*)(&__ImageBase));
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, NotifyWinEvent);
+        return Library::voidCall<DWORD, HWND, LONG, LONG>( pFunc, dwEvent, hwnd, idObject, idChild );
     }
-}}}//qor::platform::nswindows
-
+    
+}}}//qor::nswindows::api

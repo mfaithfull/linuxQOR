@@ -16,7 +16,8 @@ pen.cpp
 painting.cpp
 path.cpp
 printing.cpp
-region.cpp)
+region.cpp
+wgl.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

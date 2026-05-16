@@ -23,21 +23,29 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <string>
-#include "src/platform/os/windows/common/structures.h"
+#include "src/qor/module/module.h"
+#include "src/qor/interception/functioncontext.h"
+#include "src/qor/error/error.h"
 
-extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
-extern "C" int main();
+//Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
+#include "user32.h"
+#include "../returncheck.h"
+#include "../library.h"
 
-int __stdcall WinMain(void* hinst, void* hinstPrev, char* pszCmdLine, int nCmdShow)
-{ 
-    return main(); 
-}
+namespace qor { namespace nswindows { namespace api {
 
-namespace qor{ namespace platform { namespace nswindows {
-    void* GetInstance()
+    HDEVNOTIFY User32::RegisterDeviceNotification(HANDLE hRecipient, LPVOID notificationFilter, DWORD Flags)
     {
-        return ((void*)(&__ImageBase));
+        qor_pp_fcontext;
+        qor_pp_useswinapiAW(user32, RegisterDeviceNotification);
+        return Library::Call< HDEVNOTIFY, HANDLE, LPVOID, DWORD >(pFunc, hRecipient, notificationFilter, Flags);
     }
-}}}//qor::platform::nswindows
 
+    BOOL User32::UnregisterDeviceNotification(HDEVNOTIFY handle)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, UnregisterDeviceNotification);
+        return Library::Call< BOOL, HDEVNOTIFY >(pFunc, handle);
+    }
+
+}}}//qor::nswindows::api

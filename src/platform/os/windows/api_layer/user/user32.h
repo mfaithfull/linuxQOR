@@ -27,6 +27,11 @@
 
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
+#include <WinUser.h>
+
+#undef RegisterDeviceNotification
+#undef WinHelp
+
 namespace qor { namespace nswindows { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPI) User32
@@ -94,6 +99,7 @@ namespace qor { namespace nswindows { namespace api {
         //Window functions
         static BOOL AdjustWindowRect(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu);
         static BOOL AdjustWindowRectEx(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle);
+        static BOOL AdjustWindowRectExForDpi(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi);
         static BOOL AllowSetForegroundWindow(DWORD dwProcessId);
         static BOOL AnimateWindow(HWND hwnd, DWORD dwTime, DWORD dwFlags);
         static BOOL AnyPopup(void);
@@ -567,8 +573,8 @@ namespace qor { namespace nswindows { namespace api {
         static BOOL ExitWindowsEx(UINT uFlags, DWORD dwReason);
         static BOOL LockWorkStation(void);
         static BOOL ShutdownBlockReasonCreate(HWND hWnd, LPCWSTR pwszReason);
-        static BOOL WINAPI ShutdownBlockReasonDestroy(HWND hWnd);
-        static BOOL WINAPI ShutdownBlockReasonQuery(HWND hWnd, LPWSTR pwszBuff, DWORD* pcchBuff);
+        static BOOL ShutdownBlockReasonDestroy(HWND hWnd);
+        static BOOL ShutdownBlockReasonQuery(HWND hWnd, LPWSTR pwszBuff, DWORD* pcchBuff);
                 
         //Filled Shapes functions
         static int FillRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr);
@@ -598,17 +604,17 @@ namespace qor { namespace nswindows { namespace api {
         static BOOL UnregisterClassT(LPCTSTR lpClassName, HINSTANCE hInstance);
 
         void DisableProcessWindowsGhosting(void);
-        LRESULT SendIMEMessageEx(HWND hwnd, LPARAM lParam);
+        static LRESULT SendIMEMessageEx(HWND hwnd, LPARAM lParam);
         BOOL WINNLSEnableIME(HWND hwnd, BOOL bFlag);//Obselete do not use
 
-        //TODO: DesktopWindowManager
+        static UINT GetDpiForWindow(HWND hwnd);
 
         //Shell functions
         BOOL SetMenuContextHelpId(HMENU hmenu, DWORD dwContextHelpId);
         DWORD GetMenuContextHelpId(HMENU hmenu);
-        BOOL SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId);
-        DWORD GetWindowContextHelpId(HWND hwnd);
-        BOOL WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData);
+        static BOOL SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId);
+        static DWORD GetWindowContextHelpId(HWND hwnd);
+        static BOOL WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData);
 
         //System Information functions
         DWORD GetSysColor(int nIndex);
@@ -627,11 +633,11 @@ namespace qor { namespace nswindows { namespace api {
         HWINEVENTHOOK SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC lpfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwflags);
         BOOL UnhookWinEvent(HWINEVENTHOOK hWinEventHook);
         BOOL IsWinEventHookInstalled(DWORD dwEvent);
-        void NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild);
+        static void NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild);
 
         //Timer functions
-        BOOL KillTimer(HWND hWnd, UINT_PTR uIDEvent);
-        UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
+        static BOOL KillTimer(HWND hWnd, UINT_PTR uIDEvent);
+        static UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
 
         //Bitmap functions
         HBITMAP LoadBitmap(HINSTANCE hInstance, LPCTSTR lpBitmapName);
@@ -644,8 +650,8 @@ namespace qor { namespace nswindows { namespace api {
         BOOL PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags);
 
         //Device Management functions
-        HDEVNOTIFY RegisterDeviceNotification(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags);
-        BOOL UnregisterDeviceNotification(HDEVNOTIFY Handle);
+        static HDEVNOTIFY RegisterDeviceNotification(HANDLE hRecipient, LPVOID NotificationFilter, DWORD Flags);
+        static BOOL UnregisterDeviceNotification(HDEVNOTIFY Handle);
 
         //Power Management functions
         HPOWERNOTIFY RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags);

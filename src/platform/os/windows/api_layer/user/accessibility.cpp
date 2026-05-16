@@ -23,21 +23,29 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <string>
-#include "src/platform/os/windows/common/structures.h"
+#include "src/qor/module/module.h"
+#include "src/qor/interception/functioncontext.h"
+#include "src/qor/error/error.h"
 
-extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
-extern "C" int main();
+//Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
+#include "user32.h"
+#include "../returncheck.h"
+#include "../library.h"
 
-int __stdcall WinMain(void* hinst, void* hinstPrev, char* pszCmdLine, int nCmdShow)
-{ 
-    return main(); 
-}
+namespace qor { namespace nswindows { namespace api {
 
-namespace qor{ namespace platform { namespace nswindows {
-    void* GetInstance()
+    BOOL User32::KillTimer(HWND hWnd, UINT_PTR uIDEvent)
     {
-        return ((void*)(&__ImageBase));
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, KillTimer);
+        return Library::Call<BOOL, HWND, UINT_PTR>( pFunc, hWnd, uIDEvent);
     }
-}}}//qor::platform::nswindows
 
+    UINT_PTR User32::SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, SetTimer);
+        return Library::Call<UINT_PTR, HWND, UINT_PTR, UINT, TIMERPROC>(pFunc, hWnd, nIDEvent, uElapse, lpTimerFunc);
+    }
+
+}}}//qor::nswindows::api

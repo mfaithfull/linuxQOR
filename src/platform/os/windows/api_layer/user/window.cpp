@@ -48,6 +48,13 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, ::LPRECT, DWORD, BOOL, DWORD>(pFunc, lpRect, dwStyle, bMenu, dwExStyle);
     }
 
+    BOOL User32::AdjustWindowRectExForDpi(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, AdjustWindowRectExForDpi);
+        return Library::Call<BOOL, ::LPRECT, DWORD, BOOL, DWORD, UINT>(pFunc, lpRect, dwStyle, bMenu, dwExStyle, dpi);
+    }
+
     BOOL User32::AllowSetForegroundWindow(DWORD dwProcessId)
     {
         qor_pp_fcontext;
@@ -617,6 +624,13 @@ namespace qor { namespace nswindows { namespace api {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, WindowFromPoint);
         return Library::Call<HWND, ::POINT>(pFunc, Point);
+    }
+
+    UINT User32::GetDpiForWindow(HWND hwnd)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, GetDpiForWindow);
+        return Library::Call<UINT, HWND>(pFunc, hwnd);
     }
 
 }}}//qor::nswindows::api

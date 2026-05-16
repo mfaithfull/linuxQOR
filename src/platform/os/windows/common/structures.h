@@ -25,6 +25,9 @@
 #ifndef QOR_PP_H_OS_WINDOWS_COMMON_STRUCTURES
 #define QOR_PP_H_OS_WINDOWS_COMMON_STRUCTURES
 
+#include "src/platform/compiler/compiler.h"
+#include "src/platform/os/windows/gui/view/drawing/rect.h"
+
 struct ImageDOSHeader
 {												// DOS .EXE header
     unsigned short e_magic;                     // Magic number
@@ -329,6 +332,117 @@ namespace qor{ namespace platform { namespace nswindows {
         long long           lCustData;          // data passed to hook fn.
         FindReplaceHookProc lpfnHook;           // ptr. to hook fn. or NULL
         const TCHAR*        lpTemplateName;     // custom template name
+    };
+
+    struct PointFloat 
+    {
+        float   x;
+        float   y;
+    };
+
+    struct GlyphMetricsFloat
+    {
+        float       gmfBlackBoxX;
+        float       gmfBlackBoxY;
+        PointFloat  gmfptGlyphOrigin;
+        float       gmfCellIncX;
+        float       gmfCellIncY;
+    };
+
+    constexpr int wglFontLines = 0;
+    constexpr int wglFontPolygons = 1;
+
+    struct LayerPlaneDescriptor
+    { 
+        unsigned short  nSize;
+        unsigned short  nVersion;
+        unsigned long dwFlags;
+        unsigned char  iPixelType;
+        unsigned char  cColorBits;
+        unsigned char  cRedBits;
+        unsigned char  cRedShift;
+        unsigned char  cGreenBits;
+        unsigned char  cGreenShift;
+        unsigned char  cBlueBits;
+        unsigned char  cBlueShift;
+        unsigned char  cAlphaBits;
+        unsigned char  cAlphaShift;
+        unsigned char  cAccumBits;
+        unsigned char  cAccumRedBits;
+        unsigned char  cAccumGreenBits;
+        unsigned char  cAccumBlueBits;
+        unsigned char  cAccumAlphaBits;
+        unsigned char  cDepthBits;
+        unsigned char  cStencilBits;
+        unsigned char  cAuxBuffers;
+        unsigned char  iLayerPlane;
+        unsigned char  bReserved;
+        unsigned long crTransparent;
+    };
+
+    struct WGLSwap
+    {
+        void* hdc;
+        unsigned int uiFlags;
+    };
+
+    //Pixel format descriptor
+    struct PixelFormatDescriptor
+    {
+        unsigned short  nSize{sizeof(PixelFormatDescriptor)};
+        unsigned short  nVersion{1};
+        unsigned long dwFlags{0};
+        unsigned char  iPixelType{0};
+        unsigned char  cColorBits{0};
+        unsigned char  cRedBits{0};
+        unsigned char  cRedShift{0};
+        unsigned char  cGreenBits{0};
+        unsigned char  cGreenShift{0};
+        unsigned char  cBlueBits{0};
+        unsigned char  cBlueShift{0};
+        unsigned char  cAlphaBits{0};
+        unsigned char  cAlphaShift{0};
+        unsigned char  cAccumBits{0};
+        unsigned char  cAccumRedBits{0};
+        unsigned char  cAccumGreenBits{0};
+        unsigned char  cAccumBlueBits{0};
+        unsigned char  cAccumAlphaBits{0};
+        unsigned char  cDepthBits{0};
+        unsigned char  cStencilBits{0};
+        unsigned char  cAuxBuffers{0};
+        unsigned char  iLayerType{0};
+        unsigned char  bReserved{0};
+        unsigned long dwLayerMask{0};
+        unsigned long dwVisibleMask{0};
+        unsigned long dwDamageMask{0};
+    };
+
+    struct DevBroadcastDeviceInterface
+    {
+        unsigned long       dbcc_size;
+        unsigned long       dbcc_devicetype;
+        unsigned long       dbcc_reserved;
+        GUID                dbcc_classguid;
+        TCHAR               dbcc_name[1];
+    };
+
+    struct DevBroadcastHeader
+    {
+        unsigned long       dbch_size;
+        unsigned long       dbch_devicetype;
+        unsigned long       dbch_reserved;
+    };
+
+    typedef void (qor_pp_compiler_stdcallconvention* TimerProc)(void*, unsigned int, unsigned long long, unsigned long);
+
+    struct PaintStruct
+    {
+        void*           hdc;
+        int             fErase;
+        Rect            rcPaint;
+        int             fRestore;
+        int             fIncUpdate;
+        unsigned char   rgbReserved[32];
     };
 
 }}}//qor::platform::nswindows

@@ -27,6 +27,8 @@
 
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
+#include <wingdi.h>
+
 namespace qor { namespace nswindows { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPIGDI) GDI32
@@ -279,15 +281,14 @@ namespace qor { namespace nswindows { namespace api {
         HENHMETAFILE SetEnhMetaFileBits(UINT cbBuffer, CONST BYTE* lpData);
         HMETAFILE SetMetaFileBitsEx(UINT nSize, CONST BYTE* lpData);
         HENHMETAFILE SetWinMetaFileBits(UINT cbBuffer, CONST BYTE* lpbBuffer, HDC hdcRef, CONST::METAFILEPICT* lpmfp);
-
-        //--------------------------------------------------------------------------------
+        
         //OpenGl extension functions
-        int ChoosePixelFormat(HDC hdc, CONST::PIXELFORMATDESCRIPTOR* ppfd);
-        int DescribePixelFormat(HDC hdc, int iPixelFormat, UINT nBytes, ::LPPIXELFORMATDESCRIPTOR ppfd);
-        UINT GetEnhMetaFilePixelFormat(HENHMETAFILE hemf, DWORD cbBuffer, CONST::PIXELFORMATDESCRIPTOR* ppfd);
-        int GetPixelFormat(HDC hdc);
-        BOOL SetPixelFormat(HDC hdc, int iPixelFormat, CONST::PIXELFORMATDESCRIPTOR* ppfd);
-        BOOL SwapBuffers(HDC hdc);
+        static int ChoosePixelFormat(HDC hdc, CONST::PIXELFORMATDESCRIPTOR* ppfd);
+        static int DescribePixelFormat(HDC hdc, int iPixelFormat, UINT nBytes, ::LPPIXELFORMATDESCRIPTOR ppfd);
+        static UINT GetEnhMetaFilePixelFormat(HENHMETAFILE hemf, DWORD cbBuffer, CONST::PIXELFORMATDESCRIPTOR* ppfd);
+        static int GetPixelFormat(HDC hdc);
+        static BOOL SetPixelFormat(HDC hdc, int iPixelFormat, CONST::PIXELFORMATDESCRIPTOR* ppfd);
+        static BOOL SwapBuffers(HDC hdc);
 
         //Painting functions
         static BOOL GdiFlush(VOID);
@@ -356,6 +357,25 @@ namespace qor { namespace nswindows { namespace api {
         static int SetPolyFillMode(HDC hdc, int iPolyFillMode);
         static BOOL SetRectRgn(HRGN hrgn, int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 
+        //WGL functions
+        static BOOL wglCopyContext(HGLRC, HGLRC, UINT);
+        static HGLRC wglCreateContext(HDC);
+        static HGLRC wglCreateLayerContext(HDC, int);
+        static BOOL  wglDeleteContext(HGLRC);
+        static HGLRC wglGetCurrentContext(VOID);
+        static HDC   wglGetCurrentDC(VOID);
+        static PROC  wglGetProcAddress(LPCSTR);
+        static BOOL  wglMakeCurrent(HDC, HGLRC);
+        static BOOL  wglShareLists(HGLRC, HGLRC);
+        static BOOL  wglUseFontBitmapsT(HDC, DWORD, DWORD, DWORD);
+        static BOOL  wglUseFontOutlinesT(HDC, DWORD, DWORD, DWORD, FLOAT, FLOAT, int, LPGLYPHMETRICSFLOAT);
+        static BOOL  wglDescribeLayerPlane(HDC, int, int, UINT, LPLAYERPLANEDESCRIPTOR);
+        static int   wglSetLayerPaletteEntries(HDC, int, int, int, CONST COLORREF *);
+        static int   wglGetLayerPaletteEntries(HDC, int, int, int, COLORREF *);
+        static BOOL  wglRealizeLayerPalette(HDC, int, BOOL);
+        static BOOL  wglSwapLayerBuffers(HDC, UINT);
+        static DWORD wglSwapMultipleBuffers(UINT, CONST WGLSWAP *);
+     
     };
 
 }}}//qor::nswindows::api

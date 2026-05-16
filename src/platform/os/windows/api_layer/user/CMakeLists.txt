@@ -4,12 +4,15 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(target winqor_api_user)
 
 add_library(${target} SHARED winqor_api_user.cpp
+accessibility.cpp
 processthread.cpp
 errorhandling.cpp
 windowclass.cpp
 brush.cpp
 cursor.cpp
+help.cpp
 icon.cpp
+ime.cpp
 message.cpp
 dialog.cpp
 accelerator.cpp
@@ -30,8 +33,10 @@ filledshapes.cpp
 windowproperties.cpp
 systemshutdown.cpp
 text.cpp
+timer.cpp
 mouse.cpp
-mdi.cpp)
+mdi.cpp
+devicemanagement.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 

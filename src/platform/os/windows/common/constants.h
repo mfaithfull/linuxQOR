@@ -41,7 +41,7 @@ namespace qor{ namespace platform { namespace nswindows {
 	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
 	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
 	static constexpr unsigned long Std_Error_Handle = ((unsigned long)-12);
-
+/*
 	static constexpr unsigned long ICC_LISTVIEW_CLASSES   = 0x00000001; // listview, header
 	static constexpr unsigned long ICC_TREEVIEW_CLASSES   = 0x00000002; // treeview, tooltips
 	static constexpr unsigned long ICC_BAR_CLASSES        = 0x00000004; // toolbar, statusbar, trackbar, tooltips
@@ -59,7 +59,7 @@ namespace qor{ namespace platform { namespace nswindows {
 	static constexpr unsigned long ICC_NATIVEFNTCTL_CLASS = 0x00002000;   // native font control
 	static constexpr unsigned long ICC_STANDARD_CLASSES   = 0x00004000;
 	static constexpr unsigned long ICC_LINK_CLASS         = 0x00008000;
-
+*/
 	constexpr int swHide		= 0;	//Hides the window and activates another window.
 	constexpr int swNormal		= 1;	//Activates and displays a window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position. An application should specify this flag when displaying the window for the first time.
 	constexpr int swMinimized	= 2;	//Activates the window and displays it as a minimized window.
@@ -75,6 +75,61 @@ namespace qor{ namespace platform { namespace nswindows {
 
 	static const int TitleBarChildren = 5;
 	static const int DeviceNameSize = 32;
+
+	//WGL
+	// LAYERPLANEDESCRIPTOR flags
+	constexpr unsigned long LPDDoubleBuffer        = 0x00000001;
+	constexpr unsigned long LPDStereo              = 0x00000002;
+	constexpr unsigned long LPDSuppportGDI         = 0x00000010;
+	constexpr unsigned long LPDSupportOpenGL      = 0x00000020;
+	constexpr unsigned long LPDShareDepth         = 0x00000040;
+	constexpr unsigned long LPDShareStencil       = 0x00000080;
+	constexpr unsigned long LPDShareAccum         = 0x00000100;
+	constexpr unsigned long LPDSwapExchange       = 0x00000200;
+	constexpr unsigned long LPDSwapCopy           = 0x00000400;
+	constexpr unsigned long LPDTransparent         = 0x00001000;
+
+	constexpr int LPDTypeRGBA        = 0;
+	constexpr int LPDTypeColourIndex = 1;
+
+	// wglSwapLayerBuffers flags
+	constexpr unsigned long WGLSwapMainPlane      = 0x00000001;
+	constexpr unsigned long WGLSwapOverlay1       = 0x00000002;
+	constexpr unsigned long WGLSwapOverlay2       = 0x00000004;
+	constexpr unsigned long WGLSwapOverlay3       = 0x00000008;
+	constexpr unsigned long WGLSwapOverlay4       = 0x00000010;
+	constexpr unsigned long WGLSwapOverlay5       = 0x00000020;
+	constexpr unsigned long WGLSwapOverlay6       = 0x00000040;
+	constexpr unsigned long WGLSwapOverlay7       = 0x00000080;
+	constexpr unsigned long WGLSwapOverlay8       = 0x00000100;
+	constexpr unsigned long WGLSwapOverlay9       = 0x00000200;
+	constexpr unsigned long WGLSwapOverlay10      = 0x00000400;
+	constexpr unsigned long WGLSwapOverlay11      = 0x00000800;
+	constexpr unsigned long WGLSwapOverlay12      = 0x00001000;
+	constexpr unsigned long WGLSwapOverlay13      = 0x00002000;
+	constexpr unsigned long WGLSwapOverlay14      = 0x00004000;
+	constexpr unsigned long WGLSwapOverlay15      = 0x00008000;
+	constexpr unsigned long WGLSwapUnderlay1      = 0x00010000;
+	constexpr unsigned long WGLSwapUnderlay2      = 0x00020000;
+	constexpr unsigned long WGLSwapUnderlay3      = 0x00040000;
+	constexpr unsigned long WGLSwapUnderlay4      = 0x00080000;
+	constexpr unsigned long WGLSwapUnderlay5      = 0x00100000;
+	constexpr unsigned long WGLSwapUnderlay6      = 0x00200000;
+	constexpr unsigned long WGLSwapUnderlay7      = 0x00400000;
+	constexpr unsigned long WGLSwapUnderlay8      = 0x00800000;
+	constexpr unsigned long WGLSwapUnderlay9      = 0x01000000;
+	constexpr unsigned long WGLSwapUnderlay10     = 0x02000000;
+	constexpr unsigned long WGLSwapUnderlay11     = 0x04000000;
+	constexpr unsigned long WGLSwapUnderlay12     = 0x08000000;
+	constexpr unsigned long WGLSwapUnderlay13     = 0x10000000;
+	constexpr unsigned long WGLSwapUnderlay14     = 0x20000000;
+	constexpr unsigned long WGLSwapUnderlay15     = 0x40000000;
+
+	constexpr int WGLSwapMultipleMax = 16;
+
+	constexpr unsigned long DBTDevTypeDeviceInterface = 0x00000005;  // device interface class
+	constexpr unsigned long DBTDevTypeHandle = 0x00000006;  // file system handle
+
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
