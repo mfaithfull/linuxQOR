@@ -38,6 +38,14 @@
 #include "../gdiobjects/region.h"
 #include "../perthread.h"
 
+#ifdef SendMessage
+#   undef SendMessage
+#   undef GetProp
+#   undef RemoveProp
+#   undef SetProp
+#   undef GetClassName
+#endif
+
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
@@ -125,28 +133,25 @@ namespace qor{ namespace platform { namespace nswindows{
         int fUnused:30;     // reserved
     };
 
-    struct qor_pp_module_interface(QOR_WINGUI) PaintStruct
-    {
-        void*           hdc;
-        int             fErase;
-        Rect            rcPaint;
-        int             fRestore;
-        int             fIncUpdate;
-        unsigned char   rgbReserved[32];
-    };
-
     class qor_pp_module_interface(QOR_WINGUI) WindowController
     {
     public:
 
-        explicit WindowController(ref_of<Window>::type window) : m_window(window)
+        WindowController()
         {
             m_perThread = new_ref<PerThread>();
         }
 
+        WindowController(ref_of<Window>::type window) : m_window(window)
+        {
+            m_perThread = new_ref<PerThread>();
+            m_window->SetController(this);
+        }
+
         virtual ~WindowController() = default;
 
-        //User
+        bool AdjustRect(Rect& rect, unsigned long style, bool menu, unsigned long exStyle);
+        bool AdjustRectForDpi(Rect& rect, unsigned long style, bool menu, unsigned long exStyle, unsigned int dpi);
         bool Enable(bool enable);
         bool IsEnabled();
         bool RegisterHotKey(int id, unsigned int modifiers, unsigned int vk);
@@ -204,6 +209,10 @@ namespace qor{ namespace platform { namespace nswindows{
         Window* SetParent(ref_of<Window>::type newParent);
         bool SetPlacement(const WindowPlacement& placement);
         bool SetPos(Window* insertAfter, int x, int y, int cx, int cy, unsigned int flags);
+        bool SetPosTop(int x, int y, int cx, int cy, unsigned int flags);
+        bool SetPosBottom(int x, int y, int cx, int cy, unsigned int flags);
+        bool SetPosTopmost(int x, int y, int cx, int cy, unsigned int flags);
+        bool SetPosNoTopmost(int x, int y, int cx, int cy, unsigned int flags);
         bool SetText(std::wstring& text);
         bool ShowOwnedPopups(bool show);
         bool Show(int how = swNormal);
@@ -229,7 +238,7 @@ namespace qor{ namespace platform { namespace nswindows{
         bool EndPaint(const PaintStruct& paint);
         bool GetUpdateRect(Rect& rect, bool erase);
         int GetUpdateRgn(ref_of<Region>::type region, bool erase);
-        DeviceContext* GetDC();
+        ref_of<DeviceContext>::type GetDC();
         int GetRgn(ref_of<Region>::type region);
         int GetRgnBox(Rect& rc);
         bool InvalidateRect(const Rect* rect, bool erase);
@@ -240,8 +249,8 @@ namespace qor{ namespace platform { namespace nswindows{
         bool Update();
         bool ValidateRect(const Rect* rect);
         bool ValidateRgn(ref_of<Region>::type region);        
-        DeviceContext* GetADC();
-        DeviceContext* GetADC(ref_of<Region>::type rgnClip, unsigned flags);
+        ref_of<DeviceContext>::type GetADC();
+        ref_of<DeviceContext>::type GetADC(ref_of<Region>::type rgnClip, unsigned flags);
         int ReleaseDC(ref_of<DeviceContext>::type dc);
         bool ClientToScreen(Point& point);
         bool ScreenToClient(Point& point);
@@ -255,31 +264,30 @@ namespace qor{ namespace platform { namespace nswindows{
         int EnumProps(propenumproc lpEnumFunc);
 /*        
         static int EnumPropsExT(HWND hWnd, PROPENUMPROCEX lpEnumFunc, LPARAM lParam);
-        static HANDLE GetPropT(HWND hWnd, LPCTSTR lpString);
-        static HANDLE RemovePropT(HWND hWnd, LPCTSTR lpString);
-        static BOOL SetPropT(HWND hWnd, LPCTSTR lpString, HANDLE hData);
-
-        static BOOL FlashWindow(HWND hWnd, BOOL bInvert);
-        static ULONG_PTR GetClassLongPtrT(HWND hWnd, int nIndex);
-        static int GetClassNameT(HWND hWnd, LPTSTR lpClassName, int nMaxCount);
-        static WORD GetClassWord(HWND hWnd, int nIndex);
-        static LONG GetWindowLongT(HWND hWnd, int nIndex);
-        static ULONG_PTR SetClassLongPtrT(HWND hWnd, int nIndex, LONG_PTR dwNewLong);
-        static WORD SetClassWord(HWND hWnd, int nIndex, WORD wNewWord);
-        static LONG SetWindowLongT(HWND hWnd, int nIndex, LONG dwNewLong);
-        static LONG_PTR SetWindowLongPtrT(HWND hWnd, int nIndex, LONG_PTR dwNewLong);
-        static LONG_PTR GetWindowLongPtrT(HWND hWnd, int nIndex);
-
-        LRESULT SendIMEMessageEx(HWND hwnd, LPARAM lParam);
-
-        BOOL SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId);
-        DWORD GetWindowContextHelpId(HWND hwnd);
-        BOOL WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData);
-        void NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild);
-
-        BOOL KillTimer(HWND hWnd, UINT_PTR uIDEvent);
-        UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
-
+        */
+        void* GetProp(const TCHAR* name);
+        void* RemoveProp(const TCHAR* name);
+        bool SetProp(const TCHAR* name, void* data);
+        bool Flash(bool bInvert);
+        unsigned long long GetClassLongPtrT(int index);
+        long long SendMessage(unsigned int msg, unsigned long long wParam, long long lParam);
+        int GetClassName(tstring& className, int maxCount);
+        unsigned short GetClassWord(int index);
+        long GetWindowLongT(int index);
+        long SetWindowLongT(int index, long newLong);
+        unsigned long long SetClassLongPtrT(int index, long long newValue);
+        unsigned short SetClassWord(int index, unsigned short newValue);
+        long long SetWindowLongPtrT(int index, long long newValue);
+        long long GetWindowLongPtrT(int index);
+        long long SendIMEMessageEx(long long param);
+        unsigned int GetDPI();
+        bool SetContextHelpId(unsigned long contextHelpId);
+        unsigned long GetContextHelpId();
+        bool Help(const tstring& help, unsigned int command, unsigned long long data);
+        void NotifyEvent(unsigned long event, long object, long child);
+        bool KillTimer(unsigned long long idEvent);
+        unsigned long long SetTimer(unsigned long long idEvent, unsigned int elapse, TimerProc timerFunc);
+        /*                                
         BOOL PrintWindow(HWND hwnd, HDC hdcBlt, UINT nFlags);
 */
         //Shell interaction
@@ -288,7 +296,7 @@ namespace qor{ namespace platform { namespace nswindows{
         //DWM interaction
         void DwmEnableBlurBehindWindow(const Dwm_BlurBehind* pBlurBehind);
 
-        //HRESULT ExtendFrameIntoClientArea(HWND hWnd, const MARGINS* pMarInset);
+        //long ExtendFrameIntoClientArea(const MARGINS* pMarInset);
         //HRESULT GetWindowAttribute(HWND hwnd,DWORD dwAttribute, PVOID pvAttribute, DWORD cbAttribute);
         //HRESULT InvalidateIconicBitmaps(HWND hwnd);
         //HRESULT RegisterThumbnail(HWND hwndDestination, HWND hwndSource, PHTHUMBNAIL phThumbnailId);
@@ -297,7 +305,16 @@ namespace qor{ namespace platform { namespace nswindows{
         //HRESULT SetWindowAttribute(HWND hwnd, DWORD dwAttribute, LPCVOID pvAttribute, DWORD cbAttribute);
         //HRESULT TransitionOwnedWindow(HWND hwnd, DWMTRANSITION_OWNEDWINDOW_TARGET target);
 
-    private:
+        void SetTheme(const wchar_t* subAppName, const wchar_t* subIdList);
+
+        Window* SetFocus();
+        bool Destroy();
+
+        ref_of<Window>::type GetWindow();
+        unsigned long GetStyle() const;
+        virtual unsigned short GetId() const;
+        
+    protected:
 
         ref_of<Window>::type m_window;
         ref_of<PerThread>::type m_perThread;

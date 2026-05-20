@@ -47,7 +47,7 @@ namespace qor{ namespace platform { namespace nswindows{
 
         Brush();
         Brush(int);
-        Brush(const PrimitiveHandle& h);
+        Brush(const PrimitiveHandle& h, bool takeOwnership);
         virtual ~Brush();
 
         static Brush CreateIndirect(const LogBrush& logBrush);
@@ -55,6 +55,14 @@ namespace qor{ namespace platform { namespace nswindows{
         static Brush CreateHatch(int fnStyle, unsigned long clrref);
         static Brush CreatePattern(Handle& bitmap);
         static Brush CreateSolid(unsigned long crColor);
+        static Brush BlackBrush();
+        static Brush DarkGrayBrush();
+        static Brush DCBrush();
+        static Brush GrayBrush();
+        static Brush HollowBrush();
+        static Brush LightGrayBrush();
+        static Brush NullBrush();
+        static Brush WhiteBrush();
 
         bool GetOrg(const Handle& deviceContext, Point& pt);
         bool SetOrg(const Handle& deviceContext, int x, int y, Point& pt);

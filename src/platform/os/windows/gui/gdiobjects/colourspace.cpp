@@ -36,7 +36,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {        
     }
 
-    ColourSpace::ColourSpace(const PrimitiveHandle& h) : GDIObject(h, OColourSpace)
+    ColourSpace::ColourSpace(const PrimitiveHandle& h, bool takeOwnership) : GDIObject(h, OColourSpace, takeOwnership)
     {
     }
 
@@ -50,7 +50,7 @@ namespace qor{ namespace platform { namespace nswindows{
     }
     ColourSpace ColourSpace::Create(LogColourSpace* lpLogColorSpace)
     {
-        ColourSpace cs(GDI32::CreateColorSpaceT(reinterpret_cast<LPLOGCOLORSPACE>(lpLogColorSpace)));
+        ColourSpace cs(GDI32::CreateColorSpaceT(reinterpret_cast<LPLOGCOLORSPACE>(lpLogColorSpace)), true);
         return cs;
     }
 
@@ -61,7 +61,7 @@ namespace qor{ namespace platform { namespace nswindows{
 
     ColourSpace ColourSpace::Get(const Handle& deviceContext)
     {
-        ColourSpace cs(GDI32::GetColorSpace((HDC)(deviceContext.Use())));
+        ColourSpace cs(GDI32::GetColorSpace((HDC)(deviceContext.Use())), false);
         return cs;
     }
 

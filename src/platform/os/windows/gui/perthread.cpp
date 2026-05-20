@@ -126,7 +126,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return menu;
     }
 
-    bool PerThread::AddDeviceContext(DeviceContext* dc)
+    bool PerThread::AddDeviceContext(ref_of<DeviceContext>::type dc)
     {
         auto it = m_deviceContextHandleMap.find(dc->GetHandle().Use());
         if(it == m_deviceContextHandleMap.end())
@@ -137,7 +137,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return false;
     }
 
-    bool PerThread::RemoveDeviceContext(DeviceContext* dc)
+    bool PerThread::RemoveDeviceContext(ref_of<DeviceContext>::type dc)
     {
         auto it = m_deviceContextHandleMap.find(dc->GetHandle().Use());
         if(it != m_deviceContextHandleMap.end())
@@ -148,13 +148,17 @@ namespace qor{ namespace platform { namespace nswindows{
         return false;
     }
 
-    DeviceContext* PerThread::DeviceContextFromHandle(void* hDC)
+    ref_of<DeviceContext>::type PerThread::DeviceContextFromHandle(void* hDC)
     {
-        DeviceContext* dc = nullptr;
+        ref_of<DeviceContext>::type dc = nullptr;
         auto it = m_deviceContextHandleMap.find(hDC);
         if(it != m_deviceContextHandleMap.end())
         {
             dc = it->second;
+        }
+        if(hDC != nullptr && dc.IsNull())
+        {
+            dc = new_ref<DeviceContext>(PrimitiveHandle(hDC), false);            
         }
         return dc;
     }

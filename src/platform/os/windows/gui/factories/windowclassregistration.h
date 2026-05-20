@@ -31,8 +31,8 @@
 #include "../gdiobjects/brush.h"
 #include "../gdiobjects/icon.h"
 #include "../gdiobjects/cursor.h"
-
 #include "../view/handlers/base.h"
+#include "classstyle.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
@@ -57,7 +57,7 @@ namespace qor{ namespace platform { namespace nswindows{
         const TCHAR* Name();
         const Handle& SmallIcon();
 
-        void SetStyle(int style);
+        void SetStyle(unsigned int style);
         void SetMessageFunction(messageFunc f);
         void SetClassExtra(int extra);
         void SetWindowExtra(int extra);

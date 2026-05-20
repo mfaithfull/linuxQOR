@@ -49,11 +49,11 @@ namespace qor{ namespace platform { namespace nswindows{
         char            Buffer[1];
     };
 
-    class Region : public GDIObject
+    class qor_pp_module_interface(QOR_WINGUI) Region : public GDIObject
     {
     public:
         Region();
-        Region(const PrimitiveHandle& h);
+        Region(const PrimitiveHandle& h, bool takeOwnerShip);
         virtual ~Region();
 
         bool operator == (const Region& cmp);

@@ -33,6 +33,10 @@ namespace qor{ namespace platform { namespace nswindows{
 
     class Bitmap : public GDIObject
     {
+    public:
+        Bitmap();
+        Bitmap(const PrimitiveHandle& h, bool takeOwnership);
+        virtual ~Bitmap();
 
     };
     

@@ -39,7 +39,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     public:
         EnhancedMetaDeviceContext();
-        EnhancedMetaDeviceContext(const PrimitiveHandle& h);
+        EnhancedMetaDeviceContext(const PrimitiveHandle& h, bool takeOwnership);
         virtual ~EnhancedMetaDeviceContext();
     };
     

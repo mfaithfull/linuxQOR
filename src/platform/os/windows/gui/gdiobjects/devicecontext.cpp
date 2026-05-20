@@ -37,7 +37,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {        
     }
 
-    DeviceContext::DeviceContext(const PrimitiveHandle& h) : GDIObject(h, ODeviceContext), m_mustBeReleased(false), m_hWnd(0)
+    DeviceContext::DeviceContext(const PrimitiveHandle& h, bool takeOwnership) : GDIObject(h, ODeviceContext, takeOwnership), m_mustBeReleased(false), m_hWnd(0)
     {
     }
 
@@ -61,7 +61,7 @@ namespace qor{ namespace platform { namespace nswindows{
 
     DeviceContext DeviceContext::FromWindow(const Handle& hWnd)
     {
-        DeviceContext dc( User32::GetDC((HWND)(hWnd.Use())));
+        DeviceContext dc( User32::GetDC((HWND)(hWnd.Use())), false);
         dc.m_hWnd = hWnd;
         dc.MustRelease();
         return dc;
@@ -69,7 +69,7 @@ namespace qor{ namespace platform { namespace nswindows{
 
     DeviceContext DeviceContext::FromWindow(const Handle& hWnd, const Handle& hRgnClip, unsigned long flags)
     {
-        DeviceContext dc( User32::GetDCEx((HWND)(hWnd.Use()), (HRGN)(hRgnClip.Use()), flags) );
+        DeviceContext dc( User32::GetDCEx((HWND)(hWnd.Use()), (HRGN)(hRgnClip.Use()), flags), false);
         dc.m_hWnd = hWnd;
         dc.MustRelease();
         return dc;
@@ -371,13 +371,13 @@ namespace qor{ namespace platform { namespace nswindows{
 
     DeviceContext DeviceContext::CreateCompatible(const DeviceContext& deviceContext)
     {
-        DeviceContext dc(GDI32::CreateCompatibleDC((HDC)(deviceContext.GetHandle().Use())));
+        DeviceContext dc(GDI32::CreateCompatibleDC((HDC)(deviceContext.GetHandle().Use())), true);
         return dc;
     }
 
     DeviceContext DeviceContext::Create(const TCHAR* driver, const TCHAR* device, const TCHAR* output, const DeviceMode* initData)
     {
-        DeviceContext dc(GDI32::CreateDCT(driver, device, output, reinterpret_cast<const DEVMODE*>(initData)));
+        DeviceContext dc(GDI32::CreateDCT(driver, device, output, reinterpret_cast<const DEVMODE*>(initData)), true);
         return dc;
     }
 
@@ -393,7 +393,7 @@ namespace qor{ namespace platform { namespace nswindows{
 
     DeviceContext DeviceContext::CreateICT(const TCHAR* driver, const TCHAR* device, const TCHAR* output, const DeviceMode* initData)
     {
-        DeviceContext dc(GDI32::CreateICT(driver, device, output, reinterpret_cast<const DEVMODE*>(initData)));
+        DeviceContext dc(GDI32::CreateICT(driver, device, output, reinterpret_cast<const DEVMODE*>(initData)), true);
         return dc;
     }
 

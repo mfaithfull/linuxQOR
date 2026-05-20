@@ -35,7 +35,7 @@ namespace qor{ namespace platform { namespace nswindows{
     Region::Region() : GDIObject(ORegion)
     {}
     
-    Region::Region(const PrimitiveHandle& h) : GDIObject(h, ORegion)
+    Region::Region(const PrimitiveHandle& h, bool takeOwnerShip) : GDIObject(h, ORegion, takeOwnerShip)
     {}
 
     Region::~Region()
@@ -84,56 +84,56 @@ namespace qor{ namespace platform { namespace nswindows{
     Region Region::CreateElliptic(int left, int top, int right, int bottom)
     {
         PrimitiveHandle ph(GDI32::CreateEllipticRgn(left, top, right, bottom));
-        Region rgn(ph);
+        Region rgn(ph, true);
         return rgn;        
     }
 
     Region Region::CreateElliptic(const Rect& r)
     {
         PrimitiveHandle ph(GDI32::CreateEllipticRgnIndirect(reinterpret_cast<const RECT*>(&r)));
-        Region rgn(ph);
+        Region rgn(ph, true);
         return rgn;
     }
 
     Region Region::CreatePolygon(const Point* pt, int countPoints, int polyFillMode)
     {
         PrimitiveHandle ph(GDI32::CreatePolygonRgn(reinterpret_cast<const POINT*>(pt), countPoints, polyFillMode));
-        Region rgn(ph);
+        Region rgn(ph, true);
         return rgn;
     }
 
     Region Region::CreatePolyPolygon(const Point* pt, const int* polyCounts, int count, int polyFillMode)
     {
         PrimitiveHandle ph(GDI32::CreatePolyPolygonRgn(reinterpret_cast<const POINT*>(pt), polyCounts, count, polyFillMode));
-        Region rgn(ph);
+        Region rgn(ph, true);
         return rgn;
     }
 
     Region Region::CreateRect(int left, int top, int right, int bottom)
     {
         PrimitiveHandle ph(GDI32::CreateRectRgn(left, top, right, bottom));
-        Region rgn(ph);
+        Region rgn(ph, true);
         return rgn;
     }
 
     Region Region::CreateRect(const Rect& r)
     {
         PrimitiveHandle ph(GDI32::CreateRectRgnIndirect(reinterpret_cast<const RECT*>(&r)));
-        Region rgn(ph);
+        Region rgn(ph, true);
         return rgn;
     }
 
     Region Region::CreateRoundRect(int left, int top, int right, int bottom, int widthEllipse, int heightEllipse)
     {
         PrimitiveHandle ph(GDI32::CreateRoundRectRgn(left, top, right, bottom, widthEllipse, heightEllipse));
-        Region rgn(ph);
+        Region rgn(ph, true);
         return rgn;
     }
 
     Region Region::Create( const XForm* xform, unsigned long count, const RgnData* rgnData)
     {
         PrimitiveHandle ph(GDI32::ExtCreateRegion(reinterpret_cast<const XFORM*>(xform), count, reinterpret_cast<const RGNDATA*>(rgnData)));
-        Region rgn(ph);
+        Region rgn(ph, true);
         return rgn;
     }
 

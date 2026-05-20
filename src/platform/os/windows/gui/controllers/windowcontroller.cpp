@@ -31,15 +31,41 @@
 #include "src/platform/os/windows/api_layer/user/user32.h"
 #include "src/platform/os/windows/api_layer/dwm/dwm.h"
 #include "src/platform/os/windows/api_layer/shell/shell.h"
+#include "src/platform/os/windows/api_layer/uxtheme/uxtheme.h"
 
 using namespace qor::nswindows::api;
 #undef GetModuleFileName
 #undef GetAltTabInfo
 #undef TranslateAccelerator
 #undef EnumProps
+#undef SendMessage
+#undef GetProp
+#undef SetProp
+#undef RemoveProp
+#undef GetClassName
 
 #define WINDOW_HANDLE (HWND)(m_window->GetHandle().Use())
 namespace qor{ namespace platform { namespace nswindows{
+
+    ref_of<Window>::type WindowController::GetWindow()
+    {
+        return m_window;
+    }
+
+    unsigned long WindowController::GetStyle() const
+    {
+        return static_cast<unsigned long>(User32::GetWindowLongPtrT(WINDOW_HANDLE, GWL_STYLE));
+    }
+
+    bool WindowController::AdjustRect(Rect& rect, unsigned long style, bool menu, unsigned long exStyle)
+    {
+        return User32::AdjustWindowRectEx(reinterpret_cast<LPRECT>(&rect), style, menu ? TRUE : FALSE, exStyle) ? true : false;
+    }
+
+    bool WindowController::AdjustRectForDpi(Rect& rect, unsigned long style, bool menu, unsigned long exStyle, unsigned int dpi)
+    {
+        return User32::AdjustWindowRectExForDpi(reinterpret_cast<LPRECT>(&rect), style, menu ? TRUE : FALSE, exStyle, dpi) ? true : false;
+    }
 
     bool WindowController::Enable(bool enable)
     {
@@ -361,6 +387,26 @@ namespace qor{ namespace platform { namespace nswindows{
         return User32::SetWindowPos(WINDOW_HANDLE, insertAfter ? (HWND)(insertAfter->GetHandle().Use()) : (HWND)nullptr, x, y, cx, cy, flags) ? true : false;
     }
 
+    bool WindowController::SetPosTop(int x, int y, int cx, int cy, unsigned int flags)
+    {
+        return User32::SetWindowPos(WINDOW_HANDLE, HWND_TOP, x, y, cx, cy, flags) ? true : false;
+    }
+
+    bool WindowController::SetPosBottom(int x, int y, int cx, int cy, unsigned int flags)
+    {
+        return User32::SetWindowPos(WINDOW_HANDLE, HWND_BOTTOM, x, y, cx, cy, flags) ? true : false;
+    }
+
+    bool WindowController::SetPosTopmost(int x, int y, int cx, int cy, unsigned int flags)
+    {
+        return User32::SetWindowPos(WINDOW_HANDLE, HWND_TOPMOST, x, y, cx, cy, flags) ? true : false;
+    }
+
+    bool WindowController::SetPosNoTopmost(int x, int y, int cx, int cy, unsigned int flags)
+    {
+        return User32::SetWindowPos(WINDOW_HANDLE, HWND_NOTOPMOST, x, y, cx, cy, flags) ? true : false;
+    }
+
     bool WindowController::SetText(std::wstring& text)
     {
         return User32::SetWindowTextT(WINDOW_HANDLE, text.c_str()) ? true : false;
@@ -501,11 +547,15 @@ namespace qor{ namespace platform { namespace nswindows{
         return User32::GetUpdateRgn(WINDOW_HANDLE, (HRGN)(region->GetHandle().Use()), erase ? TRUE : FALSE);
     }
 
-    DeviceContext* WindowController::GetDC()
+    ref_of<DeviceContext>::type WindowController::GetDC()
     {
-        DeviceContext* dc = nullptr;
+        ref_of<DeviceContext>::type dc;
         HDC hdc = User32::GetWindowDC(WINDOW_HANDLE);
-        dc = m_perThread->DeviceContextFromHandle(hdc);
+        if(hdc != nullptr)
+        {
+            dc = m_perThread->DeviceContextFromHandle(hdc);
+            dc->MustRelease();
+        }
         return dc;
     }
 
@@ -559,19 +609,27 @@ namespace qor{ namespace platform { namespace nswindows{
         return User32::ValidateRgn(WINDOW_HANDLE, (HRGN)(region->GetHandle().Use())) ? true : false;
     }
 
-    DeviceContext* WindowController::GetADC()
+    ref_of<DeviceContext>::type WindowController::GetADC()
     {
-        DeviceContext* dc = nullptr;
+        ref_of<DeviceContext>::type dc;
         HDC hdc = User32::GetDC(WINDOW_HANDLE);
-        dc = m_perThread->DeviceContextFromHandle(hdc);
+        if(hdc != nullptr)
+        {
+            dc = m_perThread->DeviceContextFromHandle(hdc);
+            dc->MustRelease();
+        }
         return dc;
     }
 
-    DeviceContext* WindowController::GetADC(ref_of<Region>::type rgnClip, unsigned flags)
+    ref_of<DeviceContext>::type WindowController::GetADC(ref_of<Region>::type rgnClip, unsigned flags)
     {
-        DeviceContext* dc = nullptr;
+        ref_of<DeviceContext>::type dc;
         HDC hdc = User32::GetDCEx(WINDOW_HANDLE, (HRGN)(rgnClip->GetHandle().Use()), flags);
-        dc = m_perThread->DeviceContextFromHandle(hdc);
+        if(hdc != nullptr)
+        {
+            dc = m_perThread->DeviceContextFromHandle(hdc);
+            dc->MustRelease();
+        }
         return dc;
     }
 
@@ -639,6 +697,118 @@ namespace qor{ namespace platform { namespace nswindows{
         return result;
     }
 
+    void* WindowController::GetProp(const TCHAR* name)
+    {
+        return User32::GetPropT(WINDOW_HANDLE, name);
+    }
+
+    void* WindowController::RemoveProp(const TCHAR* name)
+    {
+        return User32::RemovePropT(WINDOW_HANDLE, name);
+    }
+
+    bool WindowController::SetProp(const TCHAR* name, void* data)
+    {
+        return User32::SetPropT(WINDOW_HANDLE, name, data) ? true : false;
+    }
+
+    bool WindowController::Flash(bool invert)
+    {
+        return User32::FlashWindow(WINDOW_HANDLE, invert ? 1 : 0) ? true : false;
+    }
+
+    unsigned long long WindowController::GetClassLongPtrT(int index)
+    {
+        return User32::GetClassLongPtrT(WINDOW_HANDLE, index);
+    }
+
+    long long WindowController::SendMessage(unsigned int msg, unsigned long long wParam, long long lParam)
+    {
+        return User32::SendMessageT(WINDOW_HANDLE, msg, wParam, lParam);
+    }
+
+    int WindowController::GetClassName(tstring& className, int maxCount)
+    {
+        className.reserve(maxCount);
+        int result = User32::GetClassNameT(WINDOW_HANDLE, className.data(), maxCount);
+        className.shrink_to_fit();
+        return result;
+    }
+
+    unsigned short WindowController::GetClassWord(int index)
+    {
+        return User32::GetClassWord(WINDOW_HANDLE, index);
+    }
+
+    long WindowController::GetWindowLongT(int index)
+    {
+        return User32::GetWindowLongT(WINDOW_HANDLE, index);
+    }
+
+    long WindowController::SetWindowLongT(int index, long newLong)
+    {
+        return User32::SetWindowLongT(WINDOW_HANDLE, index, newLong);
+    }
+
+    unsigned long long WindowController::SetClassLongPtrT(int index, long long newValue)
+    {
+        return User32::SetClassLongPtrT(WINDOW_HANDLE, index, newValue);
+    }
+
+    unsigned short WindowController::SetClassWord(int index, unsigned short newValue)
+    {
+        return User32::SetClassWord(WINDOW_HANDLE, index, newValue);
+    }
+
+    long long WindowController::SetWindowLongPtrT(int index, long long newValue)
+    {
+        return User32::SetWindowLongPtrT(WINDOW_HANDLE, index, newValue);
+    }
+
+    long long WindowController::GetWindowLongPtrT(int index)
+    {
+        return User32::GetWindowLongPtrT(WINDOW_HANDLE, index);
+    }
+
+    long long WindowController::SendIMEMessageEx(long long param)
+    {
+        return User32::SendIMEMessageEx(WINDOW_HANDLE, param);
+    }
+
+    unsigned int WindowController::GetDPI()
+    {
+        return User32::GetDpiForWindow(WINDOW_HANDLE);
+    }
+
+    bool WindowController::SetContextHelpId(unsigned long contextHelpId)
+    {
+        return User32::SetWindowContextHelpId(WINDOW_HANDLE, contextHelpId);
+    }
+
+    unsigned long WindowController::GetContextHelpId()
+    {
+        return User32::GetWindowContextHelpId(WINDOW_HANDLE);
+    }
+
+    bool WindowController::Help(const tstring& help, unsigned int command, unsigned long long data)
+    {
+        return User32::WinHelp(WINDOW_HANDLE, help.c_str(), command, data) ? true : false;
+    }
+
+    void WindowController::NotifyEvent(unsigned long event, long object, long child)
+    {
+        return User32::NotifyWinEvent(event, WINDOW_HANDLE, object, child);
+    }
+
+    bool WindowController::KillTimer(unsigned long long idEvent)
+    {
+        return User32::KillTimer(WINDOW_HANDLE, idEvent);
+    }
+
+    unsigned long long WindowController::SetTimer(unsigned long long idEvent, unsigned int elapse, TimerProc timerFunc)
+    {
+        return User32::SetTimer(WINDOW_HANDLE, idEvent, elapse, reinterpret_cast<TIMERPROC>(timerFunc));
+    }
 
     void WindowController::DragAcceptFiles(bool accept)
     {
@@ -652,6 +822,35 @@ namespace qor{ namespace platform { namespace nswindows{
         {
             //TODO: Proces the HRESULT into an error
         }
+    }
+
+    void WindowController::SetTheme(const wchar_t* subAppName, const wchar_t* subIdList)
+    {
+        HRESULT hr = UXTheme::SetWindowTheme(WINDOW_HANDLE, subAppName, subIdList);
+        if(hr != S_OK)
+        {
+            //TODO:: Process the HRESULT into an error
+        }
+    }
+
+    Window* WindowController::SetFocus()
+    {
+        Window* window = nullptr;
+        HWND hwnd = User32::SetFocus(WINDOW_HANDLE);
+        window = m_perThread->FromHandle(hwnd);
+        return window;
+    }
+
+    bool WindowController::Destroy()
+    {
+        bool result = User32::DestroyWindow(WINDOW_HANDLE) ? true : false;
+        m_window.Dispose();
+        return result;
+    }
+
+    unsigned short WindowController::GetId() const
+    {
+        return 0;
     }
 
 }}}//qor::platform::nswindows

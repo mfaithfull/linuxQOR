@@ -105,13 +105,14 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     {
         // This window is being asked to provide a bitmap to show in Peek preview.
         // This indicates the thumbnail in the taskbar is being previewed.
+        /*
         Rect rectWindow = {0, 0, 0, 0};
         if (window.GetClientRect(rectWindow))
         {
             int width = rectWindow.m_right - rectWindow.m_left;
             int height = rectWindow.m_bottom - rectWindow.m_top;
         }
-
+        */
         /*
         hbm = CreateDIB(width, height);
         if (hbm)

@@ -26,6 +26,7 @@
 
 #include "toplevel.h"
 #include "../messages.h"
+#include "../../controllers/windowcontroller.h"
 
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
@@ -40,6 +41,22 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     TopLevelWindowHandler::TopLevelWindowHandler()
     {        
         m_lifetime = new_ref<TopLevelLifetimeHandler>();
+    }
+
+    void TopLevelWindowHandler::SetCommandCallback(ref_of<WindowController>::type ctrl, unsigned short notification, cmd_callback cb)
+    {
+        unsigned short id = ctrl->GetId();
+        Command cmd{ ctrl, cb};
+        unsigned long key = MakeKey(id, notification);
+        auto it = m_commandMap.find(key);
+        if( it == m_commandMap.end())
+        {
+            m_commandMap.insert(std::make_pair(key, cmd));
+        }
+        else
+        {
+            it->second = cmd;
+        }
     }
 
     bool TopLevelWindowHandler::ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
@@ -262,8 +279,13 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     {
     }
     
-    bool TopLevelWindowHandler::OnCommand(Window& Window, unsigned short wNotify, unsigned short wID, long long lParam)
-    {
+    bool TopLevelWindowHandler::OnCommand(Window& window, unsigned short notification, unsigned short id, long long param)
+    {        
+        auto it = m_commandMap.find(MakeKey(id, notification));
+        if(it != m_commandMap.end())
+        {
+            return it->second.cb(window, it->second.ctrl);
+        }
         return false;
     }
 

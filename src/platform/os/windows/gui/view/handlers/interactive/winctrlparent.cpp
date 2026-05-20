@@ -40,49 +40,49 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
         {
             case wmCtlColorMsgBox:
             {
-                DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                 Window msgBox(PrimitiveHandle((void*)(lParam)));
                 lResult = reinterpret_cast<long long>(OnCtlColourMsgBox(window, dc, msgBox).GetHandle().Use());
                 return true;
             }
             case wmCtlColorEdit:
             {
-                DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                 Window edit(PrimitiveHandle((void*)(lParam)));
                 lResult = reinterpret_cast<long long>(OnCtlColour(window, dc, edit, wmCtlColorEdit).GetHandle().Use());
                 return true;
             }
             case wmCtlColorListBox:
             {
-                DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                 Window listBox(PrimitiveHandle((void*)(lParam)));
                 lResult = reinterpret_cast<long long>(OnCtlColour(window, dc, listBox, wmCtlColorListBox).GetHandle().Use());
                 return true;
             }
             case wmCtlColorBtn:
             {
-                DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                 Window button(PrimitiveHandle((void*)(lParam)));
                 lResult = reinterpret_cast<long long>(OnCtlColour(window, dc, button,wmCtlColorBtn).GetHandle().Use());
                 return true;
             }
             case wmCtlColorDlg:
             {
-                DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                 Window dlg(PrimitiveHandle((void*)(lParam)));
                 lResult = reinterpret_cast<long long>(OnCtlColourDialog(window, dc, dlg).GetHandle().Use());
                 return true;
             }
             case wmCtlColorScrollbar:
             {
-                DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                 Window scrollBar(PrimitiveHandle((void*)(lParam)));
                 lResult = reinterpret_cast<long long>(OnCtlColour(window, dc, scrollBar, wmCtlColorStatic).GetHandle().Use());
                 return true;
             }
             case wmCtlColorStatic:
             {
-                DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                 Window staticWindow(PrimitiveHandle((void*)(lParam)));
                 lResult = reinterpret_cast<long long>(OnCtlColour(window, dc, staticWindow, wmCtlColorStatic).GetHandle().Use());
                 return true;
@@ -136,18 +136,18 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     
     Brush WinCtrlParentHandler::OnCtlColourMsgBox(Window& window, DeviceContext& dc, Window& msgBox)
     {        
-        return Brush(PrimitiveHandle((void*)window.DefWindowProcT(wmCtlColorMsgBox, (unsigned long long)dc.GetHandle().Use(), (long long)msgBox.GetHandle().Use())));
+        return Brush(PrimitiveHandle((void*)window.DefWindowProcT(wmCtlColorMsgBox, (unsigned long long)dc.GetHandle().Use(), (long long)msgBox.GetHandle().Use())), false);
     }
     
     Brush WinCtrlParentHandler::OnCtlColour(Window& window, DeviceContext& dc, Window& child, unsigned int msg)
     {   
-       return Brush(PrimitiveHandle((void*)window.DefWindowProcT(msg, (unsigned long long)(dc.GetHandle().Use()), (long long)(child.GetHandle().Use()))));
+       return Brush(PrimitiveHandle((void*)window.DefWindowProcT(msg, (unsigned long long)(dc.GetHandle().Use()), (long long)(child.GetHandle().Use()))), false);
     }
 
     
     Brush WinCtrlParentHandler::OnCtlColourDialog(Window& window, DeviceContext& dc, Window& dlg)
     {        
-        return Brush(PrimitiveHandle((void*)(window.DefWindowProcT(wmCtlColorDlg, (unsigned long long)(dc.GetHandle().Use()), (long long)(dlg.GetHandle().Use())))));
+        return Brush(PrimitiveHandle((void*)(window.DefWindowProcT(wmCtlColorDlg, (unsigned long long)(dc.GetHandle().Use()), (long long)(dlg.GetHandle().Use())))), false);
     }
 
     void WinCtrlParentHandler::OnDrawItem(Window& window, unsigned long long wParam, DrawItemStruct* itemStruct)

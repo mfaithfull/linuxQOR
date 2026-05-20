@@ -69,7 +69,7 @@ namespace qor{ namespace platform { namespace nswindows{
     public:
 
         ColourSpace();
-        ColourSpace(const PrimitiveHandle& h);
+        ColourSpace(const PrimitiveHandle& h, bool takeOwnership);
         ~ColourSpace();
 
         static ColourSpace Create(LogColourSpace* lpLogColorSpace);

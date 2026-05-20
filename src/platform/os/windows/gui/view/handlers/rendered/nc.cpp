@@ -38,7 +38,7 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
                 case wmNCCreate:
                 {
                     CreateStruct* create = reinterpret_cast<CreateStruct*>(lParam);
-                    lResult = OnNCCreate(window, create) ? 1 : 0;
+                    lResult = OnNCCreate(window, create) ? 1 : 0;                    
                     return true;
                 }
                 case wmNCActivate:
@@ -46,12 +46,13 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
                     bool active = wParam ? true : false;
                     bool repaint = lParam != -1ll;
                     void* prevWindow = repaint ? (void*)lParam : nullptr;
-                    lResult = OnNCActivate(window, active, repaint, prevWindow) ? 1 : 0;
+                    OnNCActivate(window, active, repaint, prevWindow) ? 1 : 0;                    
+                    lResult = window.DefWindowProcT(msg, wParam, lParam);
                     return true;
                 }
                 case wmNCDestroy:
                 {
-                    lResult = OnNCDestroy(window);
+                    lResult = OnNCDestroy(window) ? 1 : 0;
                     return true;
                 }
             }

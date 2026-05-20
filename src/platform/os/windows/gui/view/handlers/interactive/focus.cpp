@@ -41,7 +41,8 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
 
     void FocusHandler::SetFocus(Window& window)
     {
-        window.SetFocus();
+        //TODO:
+        //window.SetFocus();
     }
 
     bool FocusHandler::ProcessMessage(Window& window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)

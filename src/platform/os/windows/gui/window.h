@@ -36,12 +36,15 @@
 #include "view/handlers/acceleratortable.h"
 #include "view/handlers/abstractwindowhandler.h"
 #include "view/drawing/rect.h"
+#include "view/layout/layout.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
     typedef int (__stdcall* PropEnumProc)(void*, const TCHAR*, void*);
     typedef int (__stdcall* PropEnumProcEx)(void*, TCHAR*, void*, unsigned long long);
+
+    class qor_pp_module_interface(QOR_WINGUI) WindowController;
 
     class qor_pp_module_interface(QOR_WINGUI) Window
     {
@@ -50,6 +53,7 @@ namespace qor{ namespace platform { namespace nswindows{
         Window();
         Window( const TCHAR* className, const TCHAR* windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, Window* parent, const Menu& menu, const PrimitiveHandle& hInstance, void* param);
         Window(const PrimitiveHandle& h);
+        virtual ~Window()= default;
 
         const Handle& GetHandle() const;
         void SetHandle(const PrimitiveHandle& h);
@@ -57,48 +61,27 @@ namespace qor{ namespace platform { namespace nswindows{
         void SetHandler(qor::ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
         qor::ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type GetHandler();
 
-        bool Show(int how = swNormal);
-        bool Update();
-        bool Destroy();
-        bool GetClientRect(Rect& rc);
-        bool GetWindowRect(Rect& rc);
-        bool Move(int x, int y, int width, int height, bool repaint);
-        Menu GetMenu();
-        long long ProcessMessage(unsigned int msg, unsigned long long wParam, long long lParam);
+        void SetLayout(qor::ref_of<qor::platform::nswindows::gui::view::LayoutItem>::type layout);
+        qor::ref_of<qor::platform::nswindows::gui::view::LayoutItem>::type GetLayout();
 
-        int TranslateAccel(const AcceleratorTable& accTable, Message* lpMsg);
-        bool SetText(const TCHAR* lpString);
-        int GetTextLength();
-        int GetText(TCHAR* lpString, int maxCount);
-        bool SetForeground();
-        void SetFocus();
-        void SetPointer(int index, void* ptr);
-        long long GetPointer(int index);
-
-        int EnumProperties(PropEnumProc enumProc);
-        int EnumPropertiesEx(PropEnumProcEx enumProc, long long param);
-        void* GetProperty(const TCHAR*);
-        void* RemoveProperty(const TCHAR*);
-        bool SetProperty(const TCHAR*, void* data);
-
-        bool DragDetect(Point p);
-        Handle SetCapture();
-
-        Handle GetDeviceContext();
         long long DefWindowProcT(unsigned int msg, unsigned long long wparam, long long lparam);
-
 
         decltype([](unsigned int msg, unsigned long long wParam, long long lParam)->long long{
             return 0;
         }) m_messageProc;
 
+        WindowController* GetController();
+        void SetController(WindowController* controller);
+        
     protected:
 
         Handle m_handle;
 
-    private:
-
         qor::ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type m_handler;
+        qor::ref_of<qor::platform::nswindows::gui::view::LayoutItem>::type m_layout;
+
+    private:
+        WindowController* m_controller{nullptr};
     };
     
     typedef bool (* wndenumproc)(Window*, long long);

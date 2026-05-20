@@ -87,6 +87,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {
         Cursor c(PrimitiveHandle(User32::CopyCursorT(
             reinterpret_cast<HCURSOR>(m_handle.Use()))));
+        c.m_bNeedsDestroy = true;
         return c;
     }
 

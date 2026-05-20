@@ -27,10 +27,12 @@
 #include "windowfactory.h"
 #include "src/platform/os/windows/common/stringconv.h"
 #include "../perthread.h"
+#include "../view/layout/layout.h"
 
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
 using namespace qor::nswindows::api;
+using namespace qor::platform::nswindows::gui::view;
 
 #undef RegisterClass
 #undef GetClassName
@@ -109,6 +111,18 @@ namespace qor{ namespace platform { namespace nswindows{
         return result;
     }
 
+    bool WindowFactory::SetHandlerForBuiltinClass(const tstring& windowClassName, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler)
+    {
+        bool result = false;
+        auto it = m_windowClassMap.find(windowClassName);
+        if(it != m_windowClassMap.end())
+        {
+            it->second.handler = handler;
+            result = true;
+        }
+        return result;
+    }
+
     ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type WindowFactory::GetHandlerForClass(const tstring& className)
     {
         ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler;        
@@ -127,12 +141,100 @@ namespace qor{ namespace platform { namespace nswindows{
 
     ref_of<WindowController>::type WindowFactory::Create(tstring className, const tstring& windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, ref_of<Window>::type parent, ref_of<Menu>::type menu, void* param)
     {
-        ref_of<Window>::type window = new_ref<Window>();
+        ref_of<Window>::type window = new_ref<Window>();        
         window->SetHandler(GetHandlerForClass(className));
+        window->SetLayout(new_ref<VertcialLayout>());
         auto perThread = new_ref<PerThread>();
         perThread->SetWindowCreationInProgress(window);
         User32::CreateWindowExT(exStyle, className.c_str(), windowName.c_str(), style, x, y, width, height, (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), (HMENU)(menu.IsNotNull() ? menu->GetHandle().Use() : nullptr), (HINSTANCE)(m_instance), param);
         return new_ref<WindowController>(window);
+    }
+
+    ref_of<ButtonController>::type WindowFactory::CreateButton(ref_of<Window>::type parent, const tstring& buttonText, unsigned long style, unsigned long exStyle, int x, int y, int width, int height)
+    {
+        auto perThread = new_ref<PerThread>();
+        auto button = new_ref<ButtonController>(new_ref<Button>(
+            PrimitiveHandle(
+                User32::CreateWindowExT(exStyle, L"BUTTON", buttonText.c_str(), style | WS_CHILD | WS_VISIBLE, x, y, width, height, 
+                    (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), 
+                    (HMENU)(unsigned long long)(perThread->NextResourceId()), 
+                    (HINSTANCE)GetWindowLongPtr((HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), GWLP_HINSTANCE), 
+                    nullptr))));
+        if(parent.IsNotNull())
+        {
+            auto layout = parent->GetLayout().AsRef<Layout>();
+            if(layout.IsNotNull())
+            {
+                layout->AddItem(button->GetWindow()->GetLayout());
+            }
+        }
+        return button;
+    }
+
+    ref_of<EditController>::type WindowFactory::CreateEdit(ref_of<Window>::type parent, unsigned long style, unsigned long exStyle, int x, int y, int width, int height)
+    {                
+        auto perThread = new_ref<PerThread>();
+        auto edit = new_ref<EditController>(new_ref<Edit>(
+            PrimitiveHandle(
+                User32::CreateWindowExT(
+                    exStyle, L"EDIT", L"", style | WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL, x, y, width, height,
+                    (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr),
+                    (HMENU)(unsigned long long)(perThread->NextResourceId()),
+                    (HINSTANCE)GetWindowLongPtr((HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), GWLP_HINSTANCE),
+                    nullptr))));
+        if(parent.IsNotNull())
+        {
+            auto layout = parent->GetLayout().AsRef<Layout>();
+            if(layout.IsNotNull())
+            {
+                layout->AddItem(edit->GetWindow()->GetLayout());
+            }
+        }
+        return edit;
+    }
+
+    ref_of<ListBoxController>::type WindowFactory::CreateListBox(ref_of<Window>::type parent, unsigned long style, unsigned long exStyle, int x, int y, int width, int height)
+    {
+        auto perThread = new_ref<PerThread>();
+        auto listbox = new_ref<ListBoxController>(new_ref<ListBox>(
+            PrimitiveHandle(
+                User32::CreateWindowExT(
+                    exStyle, L"LISTBOX", L"", style | WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL, x, y, width, height,
+                    (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr),
+                    (HMENU)(unsigned long long)(perThread->NextResourceId()),
+                    (HINSTANCE)GetWindowLongPtr((HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), GWLP_HINSTANCE),
+                    nullptr))));
+        if(parent.IsNotNull())
+        {
+            auto layout = parent->GetLayout().AsRef<Layout>();
+            if(layout.IsNotNull())
+            {
+                layout->AddItem(listbox->GetWindow()->GetLayout());
+            }
+        }
+        return listbox;
+    }
+
+    ref_of<ComboBoxController>::type WindowFactory::CreateComboBox(ref_of<Window>::type parent, unsigned long style, unsigned long exStyle, int x, int y, int width, int height)
+    {
+        auto perThread = new_ref<PerThread>();
+        auto combobox = new_ref<ComboBoxController>(new_ref<ComboBox>(
+            PrimitiveHandle(
+                User32::CreateWindowExT(
+                    exStyle, L"COMBOBOX", L"", style | WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL, x, y, width, height,
+                    (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr),
+                    (HMENU)(unsigned long long)(perThread->NextResourceId()),
+                    (HINSTANCE)GetWindowLongPtr((HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), GWLP_HINSTANCE),
+                    nullptr))));
+        if(parent.IsNotNull())
+        {
+            auto layout = parent->GetLayout().AsRef<Layout>();
+            if(layout.IsNotNull())
+            {
+                layout->AddItem(combobox->GetWindow()->GetLayout());
+            }
+        }
+        return combobox;
     }
 
 }}}//qor::platform::nswindows

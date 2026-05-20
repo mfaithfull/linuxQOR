@@ -54,7 +54,7 @@ namespace qor{ namespace platform { namespace nswindows{
     public:
 
         GDIObject(GDIObjectType objType);
-        GDIObject(const PrimitiveHandle& h, GDIObjectType objType);
+        GDIObject(const PrimitiveHandle& h, GDIObjectType objType, bool takeOwnership);
         virtual ~GDIObject();
 
         const Handle& GetHandle() const;
@@ -63,6 +63,7 @@ namespace qor{ namespace platform { namespace nswindows{
 
         Handle m_handle;
         GDIObjectType m_objType;
+        bool m_owner;
     };
 
 }}}//qor::platform::nswindows

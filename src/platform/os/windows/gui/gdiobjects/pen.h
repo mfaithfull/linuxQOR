@@ -40,15 +40,19 @@ namespace qor{ namespace platform { namespace nswindows{
         unsigned long   lopnColor;
     };
 
-    class Pen : public GDIObject
+    class qor_pp_module_interface(QOR_WINGUI) Pen : public GDIObject
     {
         Pen();
-        Pen(const PrimitiveHandle& h);
+        Pen(const PrimitiveHandle& h, bool takeOwnerShip);
         virtual ~Pen();
 
         static Pen Create(int style, int width, unsigned long crColour);
         static Pen Create(const LogPen* lgpn);
         static Pen Create(unsigned long penStyle, unsigned long width, const LogBrush* lplb, unsigned long styleCount, const unsigned long* style);
+        static Pen WhitePen();
+        static Pen BlackPen();
+        static Pen NullPen();
+        static Pen DCColourPen();
     };
     
 }}}//qor::platform::nswindows

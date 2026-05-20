@@ -37,11 +37,11 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     }
 
-    Brush::Brush(int colour) : GDIObject(colour, OBrush)
+    Brush::Brush(int colour) : GDIObject(colour, OBrush, true)
     {
     }
 
-    Brush::Brush(const PrimitiveHandle& h) : GDIObject(h, OBrush)
+    Brush::Brush(const PrimitiveHandle& h, bool takeOwnership) : GDIObject(h, OBrush, takeOwnership)
     {
     }
 
@@ -51,31 +51,31 @@ namespace qor{ namespace platform { namespace nswindows{
 
     Brush Brush::CreateIndirect(const LogBrush& logBrush)
     {
-        Brush b(GDI32::CreateBrushIndirect(reinterpret_cast<const LOGBRUSH*>(&logBrush)));
+        Brush b(GDI32::CreateBrushIndirect(reinterpret_cast<const LOGBRUSH*>(&logBrush)), true);
         return b;
     }
 
     Brush Brush::CreateDIBPattern(void* hglbDIBPacked, unsigned int fuColorSpec)
     {
-        Brush b(GDI32::CreateDIBPatternBrush(hglbDIBPacked, fuColorSpec));
+        Brush b(GDI32::CreateDIBPatternBrush(hglbDIBPacked, fuColorSpec), true);
         return b;
     }
     
     Brush Brush::CreateHatch(int fnStyle, unsigned long clrref)
     {
-        Brush b(GDI32::CreateHatchBrush(fnStyle, clrref));
+        Brush b(GDI32::CreateHatchBrush(fnStyle, clrref), true);
         return b;
     }
 
     Brush Brush::CreatePattern(Handle& bitmap)
     {
-        Brush b(GDI32::CreatePatternBrush((HBITMAP)(bitmap.Use())));
+        Brush b(GDI32::CreatePatternBrush((HBITMAP)(bitmap.Use())), true);
         return b;
     }
 
     Brush Brush::CreateSolid(unsigned long crColor)
     {
-        Brush b(GDI32::CreateSolidBrush(crColor));
+        Brush b(GDI32::CreateSolidBrush(crColor), true);
         return b;
     }
 
@@ -89,11 +89,51 @@ namespace qor{ namespace platform { namespace nswindows{
         return GDI32::SetBrushOrgEx((HDC)(deviceContext.Use()), x, y, reinterpret_cast<LPPOINT>(&pt)) ? true : false;
     }
 
+    Brush Brush::BlackBrush()
+    {
+        return Brush(PrimitiveHandle(GDI32::GetStockObject(BLACK_BRUSH)), false);
+    }
+
+    Brush Brush::DarkGrayBrush()
+    {
+        return Brush(PrimitiveHandle(GDI32::GetStockObject(DKGRAY_BRUSH)), false);
+    }
+
+    Brush Brush::DCBrush()
+    {
+        return Brush(PrimitiveHandle(GDI32::GetStockObject(DC_BRUSH)), false);
+    }
+
+    Brush Brush::GrayBrush()
+    {
+        return Brush(PrimitiveHandle(GDI32::GetStockObject(GRAY_BRUSH)), false);
+    }
+
+    Brush Brush::HollowBrush()
+    {
+        return Brush(PrimitiveHandle(GDI32::GetStockObject(HOLLOW_BRUSH)), false);
+    }
+
+    Brush Brush::LightGrayBrush()
+    {
+        return Brush(PrimitiveHandle(GDI32::GetStockObject(LTGRAY_BRUSH)), false);
+    }
+
+    Brush Brush::NullBrush()
+    {
+        return Brush(PrimitiveHandle(GDI32::GetStockObject(NULL_BRUSH)), false);
+    }
+
+    Brush Brush::WhiteBrush()
+    {
+        return Brush(PrimitiveHandle(GDI32::GetStockObject(WHITE_BRUSH)), false);
+    }
     
     SysBrush::SysBrush(int nIndex) : Brush()
     {        
         m_handle = User32::GetSysColorBrush(nIndex);
         m_handle.DontClose();
+        m_owner = false;
     }
 
     SysBrush::~SysBrush()

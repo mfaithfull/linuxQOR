@@ -46,6 +46,14 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
     {
     public:
 
+        typedef bool(*cmd_callback)(Window& window, WindowController* ctrl);
+
+        struct Command
+        {
+            WindowController* ctrl;
+            cmd_callback cb;
+        };
+
         TopLevelWindowHandler();
         virtual ~TopLevelWindowHandler() noexcept = default;
 
@@ -79,6 +87,18 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
         virtual bool OnSysCommandScreenSaver();
         virtual bool OnSysCommandSize();
         virtual bool OnSysCommandTaskList();
+
+        void SetCommandCallback(ref_of<WindowController>::type ctrl, unsigned short notification, cmd_callback cb);
+
+    private:
+
+        unsigned long MakeKey(unsigned short id, unsigned short notification)
+        {
+            unsigned long lid = (static_cast<unsigned long>(id)) << 16;
+            return lid | (static_cast<unsigned long>(notification));
+        }
+
+        std::map<unsigned long, Command> m_commandMap;
     };
 
 }}}}}//qor::platform::nswindows::gui::view

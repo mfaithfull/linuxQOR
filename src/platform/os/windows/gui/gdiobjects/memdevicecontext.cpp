@@ -36,7 +36,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {        
     }
 
-    MemDeviceContext::MemDeviceContext(const PrimitiveHandle& h) : GDIObject(h, OMemDC)
+    MemDeviceContext::MemDeviceContext(const PrimitiveHandle& h, bool takeOwnership) : GDIObject(h, OMemDC, takeOwnership)
     {        
     }
 

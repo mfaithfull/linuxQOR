@@ -30,16 +30,6 @@
 
 namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-    struct PaintStruct
-    {
-        void*           hdc;
-        int             fErase;
-        Rect            rcPaint;
-        int             fRestore;
-        int             fIncUpdate;
-        unsigned char   rgbReserved[32];
-    };
-
     class qor_pp_module_interface(QOR_WINGUI) ClipboardHandler : public BaseWindowPartHandler
     {
     public:

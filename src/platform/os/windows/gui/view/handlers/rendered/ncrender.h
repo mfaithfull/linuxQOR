@@ -47,7 +47,7 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
         
         virtual long long OnNCCalcSize(Window& window, bool indicateValidClientArea, Rect* proposedWindowRect, NCCalcSizeParams* ncCalcSizeParams);
         virtual bool OnNCPaint(Window& window, unsigned long long wParam);
-        virtual long long OnNCHitTest(Window& window, int x, int y, unsigned long long wParam, long long lParam);        
+        virtual long long OnNCHitTest(Window& window, int x, int y, unsigned long long wParam, long long lParam);
     };
 
 }}}}}//qor::platform::nswindows::gui::view

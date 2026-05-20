@@ -81,6 +81,7 @@ namespace qor{ namespace platform { namespace nswindows{
         if(m_handle.NeedsClose())
         {
             User32::DestroyIcon(reinterpret_cast<HICON>(m_handle.Use()));
+            m_handle.DontClose();
         }
     }
     

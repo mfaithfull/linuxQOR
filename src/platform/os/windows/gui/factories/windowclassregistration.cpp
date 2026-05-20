@@ -95,7 +95,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return m_hIconSm;
     }
 
-    void WindowClass::SetStyle(int style)
+    void WindowClass::SetStyle(unsigned int style)
     {
         m_style = style;
     }

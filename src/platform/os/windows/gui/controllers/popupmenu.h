@@ -41,7 +41,7 @@ namespace qor{ namespace platform { namespace nswindows{
     public:
 
         PopupMenu();
-        PopupMenu(int);
+        PopupMenu(int id);
         PopupMenu(const PrimitiveHandle& h);
         PopupMenu(const PopupMenu& m);
 

@@ -53,16 +53,17 @@ namespace qor{ namespace platform { namespace nswindows{
     public:
 
         Palette();
-        Palette(const PrimitiveHandle& h);
-        ~Palette();
+        Palette(const PrimitiveHandle& h, bool takeOwnerShip);
+        virtual ~Palette();
         const Handle& GetHandle() const;
         bool Animate(unsigned int iStartIndex, unsigned int cEntries, const PaletteEntry* ppe);
         static Palette CreateHalftone(const Handle& deviceContext);
         static Palette Create(const LogPalette* lplgpl);
+        static Palette Default();
         unsigned int GetNearestIndex(unsigned long crColor);
         unsigned int GetEntries(unsigned int iStartIndex, unsigned int nEntries, PaletteEntry* lppe);
         bool Resize(unsigned int nEntries);
-        Handle Select(Handle& hdc, bool bForceBackground);
+        //Handle Select(Handle& hdc, bool bForceBackground);
         unsigned int SetEntries(unsigned int iStart, unsigned int cEntries, const PaletteEntry* lppe);
 
     protected:

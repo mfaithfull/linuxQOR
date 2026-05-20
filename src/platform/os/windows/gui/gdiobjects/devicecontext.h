@@ -234,11 +234,11 @@ namespace qor{ namespace platform { namespace nswindows{
     typedef void (__stdcall* LineDDAProc)(int, int, long long);
     typedef int (__stdcall* FontEumProc)(const LogFont*, const TextMetric*, unsigned long, long long);
 
-    class DeviceContext : public GDIObject
+    class qor_pp_module_interface(QOR_WINGUI) DeviceContext : public GDIObject
     {
     public:
         DeviceContext();
-        DeviceContext(const PrimitiveHandle& h);
+        DeviceContext(const PrimitiveHandle& h, bool takeOwnership);
         virtual ~DeviceContext();
 
         static DeviceContext FromWindow(const Handle& hWnd);
@@ -416,12 +416,13 @@ namespace qor{ namespace platform { namespace nswindows{
         static BOOL CreateScalableFontResourceT(DWORD fdwHidden, LPCTSTR lpszFontRes, LPCTSTR lpszFontFile, LPCTSTR lpszCurrentPath);
         static BOOL EnableEUDC(BOOL fEnableEUDC);
 */
+        void MustRelease();
+        
     protected:
         bool m_mustBeReleased;
 
     private:
-        Handle m_hWnd;
-        void MustRelease();
+        Handle m_hWnd;        
     };
     
 }}}//qor::platform::nswindows

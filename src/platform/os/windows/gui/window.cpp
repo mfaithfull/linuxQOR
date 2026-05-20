@@ -27,6 +27,7 @@
 #include "window.h"
 #include "src/platform/os/windows/common/stringconv.h"
 #include "view/handlers/base.h"
+#include "controllers/windowcontroller.h"
 
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
@@ -41,16 +42,25 @@ namespace qor{ namespace platform { namespace nswindows{
         return m_handle;
     }
 
+    WindowController* Window::GetController()
+    {
+        return m_controller;
+    }
+
     void Window::SetHandle(const PrimitiveHandle& h)
     {
         m_handle = h.Use();
         m_handle.DontClose();
     }
 
+    void Window::SetController(WindowController* controller)
+    {
+        m_controller = controller;
+    }
+
     Window::Window()
     {        
         m_handle = nullptr;
-        m_handle.DontClose();
     }
 
     void Window::SetHandler(ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler)
@@ -61,6 +71,16 @@ namespace qor{ namespace platform { namespace nswindows{
     qor::ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type Window::GetHandler()
     {
         return m_handler;
+    }
+
+    void Window::SetLayout(qor::ref_of<qor::platform::nswindows::gui::view::LayoutItem>::type layout)
+    {
+        m_layout = layout;
+    }
+
+    qor::ref_of<qor::platform::nswindows::gui::view::LayoutItem>::type Window::GetLayout()
+    {
+        return m_layout;
     }
 
     Window::Window( const TCHAR* className, const TCHAR* windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, Window* parent, const Menu& menu, const PrimitiveHandle& hInstance, void* param)
@@ -79,131 +99,6 @@ namespace qor{ namespace platform { namespace nswindows{
     Window::Window(const PrimitiveHandle& h) : m_handle(h.Use())
     {
         m_handle.DontClose();
-    }
-
-    bool Window::Show(int how)
-    {
-        return User32::ShowWindow((HWND)(m_handle.Use()), how) ? true : false;
-    }
-
-    bool Window::Update()
-    {
-        return User32::UpdateWindow((HWND)(m_handle.Use())) ? true : false;
-    }
-
-    bool Window::Destroy()
-    {
-        return User32::DestroyWindow((HWND)(m_handle.Use())) ? true : false;
-    }
-
-    bool Window::GetClientRect(qor::platform::nswindows::Rect& rc)
-    {
-        return User32::GetClientRect((HWND)(m_handle.Use()), reinterpret_cast<LPRECT>(&rc)) ? true : false;
-    }
-
-    bool Window::GetWindowRect(qor::platform::nswindows::Rect& rc)
-    {
-        return User32::GetWindowRect((HWND)(m_handle.Use()), reinterpret_cast<LPRECT>(&rc)) ? true : false;
-    }
-
-    bool Window::Move(int x, int y, int width, int height, bool repaint)
-    {
-        return User32::MoveWindow((HWND)(m_handle.Use()), x, y, width, height, repaint ? 1 : 0) ? true : false;
-    }
-
-    Menu Window::GetMenu()
-    {
-        Menu m( User32::GetMenu((HWND)(m_handle.Use())) );
-        return m;
-    }
-
-    long long Window::ProcessMessage(unsigned int msg, unsigned long long wParam, long long lParam)
-    {
-        return User32::SendMessageT((HWND)(m_handle.Use()), msg, wParam, lParam );
-    }
-
-    int Window::TranslateAccel(const AcceleratorTable& accTable, Message* lpMsg)
-    {
-        return User32::TranslateAcceleratorT((HWND)(m_handle.Use()), (HACCEL)(accTable.GetHandle().Use()), (LPMSG)(lpMsg));
-    }
-
-    bool Window::SetText(LPCTSTR lpString)
-    {
-        return User32::SetWindowTextT((HWND)(m_handle.Use()), lpString) ? true : false;
-    }
-
-    int Window::GetTextLength()
-    {
-        return User32::GetWindowTextLengthT((HWND)(m_handle.Use()));
-    }
-
-    int Window::GetText(TCHAR* lpString, int maxCount)
-    {
-        return User32::GetWindowTextT((HWND)(m_handle.Use()), lpString, maxCount);
-    }
-
-    bool Window::SetForeground()
-    {
-        return User32::SetForegroundWindow((HWND)(m_handle.Use())) ? true : false;
-    }
-
-    void Window::SetFocus()
-    {
-        User32::SetFocus((HWND)(m_handle.Use()));
-    }
-
-    void Window::SetPointer(int index, void* ptr)
-    {
-        User32::SetWindowLongPtrT((HWND)(m_handle.Use()), index, (LONG_PTR)(ptr));
-    }
-
-    long long Window::GetPointer(int index)
-    {
-        return User32::GetWindowLongPtrT((HWND)(m_handle.Use()), index);
-    }
-
-    int Window::EnumProperties(PropEnumProc enumProc)
-    {
-        return User32::EnumPropsT((HWND)(m_handle.Use()), reinterpret_cast<PROPENUMPROC>(enumProc));
-    }
-
-    int Window::EnumPropertiesEx(PropEnumProcEx enumProc, long long param)
-    {
-        return User32::EnumPropsExT((HWND)(m_handle.Use()), reinterpret_cast<PROPENUMPROCEX>(enumProc), param);
-    }
-
-    void* Window::GetProperty(const TCHAR* property)
-    {
-        return User32::GetPropT((HWND)(m_handle.Use()), property);
-    }
-
-    void* Window::RemoveProperty(const TCHAR* property)
-    {
-        return User32::RemovePropT((HWND)(m_handle.Use()), property);
-    }
-
-    bool Window::SetProperty(const TCHAR* property, void* data)
-    {
-        return User32::SetPropT((HWND)(m_handle.Use()), property, (HANDLE)(data));
-    }
-
-    bool Window::DragDetect(Point p)
-    {
-        return User32::DragDetect((HWND)(m_handle.Use()), *(reinterpret_cast<POINT*>(&p))) ? true : false;
-    }
-
-    Handle Window::SetCapture()
-    {
-        Handle h(User32::SetCapture((HWND)(m_handle.Use())));
-        h.DontClose();
-        return h;
-    }
-
-    Handle Window::GetDeviceContext()
-    {
-        Handle h(User32::GetDC((HWND)(m_handle.Use())));
-        h.DontClose();
-        return h;
     }
 
     long long Window::DefWindowProcT(unsigned int msg, unsigned long long wparam, long long lparam)

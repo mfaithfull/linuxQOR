@@ -4,18 +4,32 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(target winqor_gui)
 
 add_library(${target} SHARED winqor_gui.cpp
-desktop.cpp
 gui.cpp
 perthread.cpp
 window.cpp
+windows/dialog.cpp
+windows/button.cpp
+windows/edit.cpp
+windows/static.cpp
+windows/messagebox.cpp
+windows/desktop.cpp
+windows/listbox.cpp
+windows/combobox.cpp
 controllers/caret.cpp
 controllers/menu.cpp
 controllers/monitor.cpp
 controllers/mouse.cpp
 controllers/windowcontroller.cpp
+controllers/buttoncontroller.cpp
+controllers/editcontroller.cpp
+controllers/listboxcontroller.cpp
+controllers/comboboxcontroller.cpp
 factories/windowclassregistration.cpp
 factories/windowfactory.cpp
 factories/menubuilder.cpp
+factories/windowstyle.cpp
+factories/classstyle.cpp
+factories/dialogbuilder.cpp
 gdiobjects/bitmap.cpp
 gdiobjects/brush.cpp
 gdiobjects/colourspace.cpp
@@ -67,13 +81,22 @@ view/handlers/rendered/dwm.cpp
 view/handlers/rendered/rendering.cpp
 view/handlers/rendered/font.cpp
 view/handlers/parts/lifetime.cpp
+view/handlers/dialoghandler.cpp
 controllers/popupmenu.cpp
+painting/bufferedpainting.cpp
+painting/themedata.cpp
+painting/paintsession.cpp
+painting/windowpainter.cpp
+view/layout/layout.cpp
+view/layout/windowlayoutitem.cpp
 )
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE QOR_WINGUI)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
-qor_interception qor_signals winqor_api_kernel winqor_api_user winqor_api_gdi winqor_api_shell winqor_api_shcore winqor_api_comctl32 winqor_api_dwm winqor_common winqor_sharedbootstrap)
+qor_interception qor_signals 
+winqor_api_kernel winqor_api_user winqor_api_gdi winqor_api_shell winqor_api_shcore winqor_api_comctl32 winqor_api_dwm winqor_api_uxtheme
+winqor_common winqor_sharedbootstrap)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

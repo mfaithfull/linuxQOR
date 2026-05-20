@@ -32,4 +32,16 @@ using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
     
+    Bitmap::Bitmap() : GDIObject(OBitmap)
+    {
+    }
+
+    Bitmap::Bitmap(const PrimitiveHandle& h, bool takeOwnership) : GDIObject(h, OBitmap, takeOwnership)
+    {
+    }
+
+    Bitmap::~Bitmap()
+    {        
+    }
+
 }}}//qor::platform::nswindows

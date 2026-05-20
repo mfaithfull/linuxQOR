@@ -37,34 +37,62 @@ namespace qor{ namespace platform { namespace nswindows{
 
     }
     
-    Pen::Pen(const PrimitiveHandle& h) : GDIObject(h, OPen)
+    Pen::Pen(const PrimitiveHandle& h, bool takeOwnerShip) : GDIObject(h, OPen, takeOwnerShip)
     {
 
     }
     
     Pen::~Pen()
     {
-
+        
     }
 
     Pen Pen::Create(int style, int width, unsigned long crColour)
     {        
         PrimitiveHandle ph(GDI32::CreatePen(style, width, crColour));        
-        Pen p(ph);
+        Pen p(ph, true);
         return p;
     }
 
     Pen Pen::Create(const LogPen* lgpn)
     {
         PrimitiveHandle ph(GDI32::CreatePenIndirect(reinterpret_cast<const LOGPEN*>(lgpn)));
-        Pen p(ph);
+        Pen p(ph, true);
         return p;
     }
 
     Pen Pen::Create(unsigned long penStyle, unsigned long width, const LogBrush* lplb, unsigned long styleCount, const unsigned long* style)
     {
         PrimitiveHandle ph(GDI32::ExtCreatePen(penStyle, width, reinterpret_cast<const LOGBRUSH*>(lplb), styleCount, style));
-        Pen p(ph);
+        Pen p(ph, true);
+        return p;
+    }
+
+    Pen Pen::WhitePen()
+    {
+        PrimitiveHandle ph(GDI32::GetStockObject(WHITE_PEN));
+        Pen p(ph, false);
+        return p;
+    }
+
+    Pen Pen::BlackPen()
+    {
+        PrimitiveHandle ph(GDI32::GetStockObject(BLACK_PEN));
+        Pen p(ph, false);
+        return p;
+    }
+
+    Pen Pen::NullPen()
+    {
+        PrimitiveHandle ph(GDI32::GetStockObject(NULL_PEN));
+        Pen p(ph, false);
+        return p;
+    }
+
+    Pen Pen::DCColourPen()
+    {
+        PrimitiveHandle ph(GDI32::GetStockObject(DC_PEN));
+        Pen p(ph, false);
         return p;
     }
 

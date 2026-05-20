@@ -37,7 +37,7 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
             {
                 case wmSetFont:
                 {
-                    Font font(PrimitiveHandle((void*)(wParam)));
+                    Font font(PrimitiveHandle((void*)(wParam)), false);
                     bool bRedraw = LoWord(lParam) ? true : false;
                     OnSetFont(window, font, bRedraw);
                     return true;

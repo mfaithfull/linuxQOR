@@ -56,7 +56,7 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
                 }
                 case wmEraseBackground:
                 {
-                    DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                    DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                     if(OnEraseBackground(window, dc))
                     {
                         lResult = 0;
@@ -185,7 +185,7 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
                 }
                 case wmPrint:
                 {
-                    DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                    DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                     if(OnPrint(window, dc, lParam))
                     {
                         lResult = 0;
@@ -194,7 +194,7 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
                 }
                 case wmPrintClient:
                 {
-                    DeviceContext dc(PrimitiveHandle((void*)(wParam)));
+                    DeviceContext dc(PrimitiveHandle((void*)(wParam)), false);
                     if(OnPrintClient(window, dc, lParam))
                     {
                         lResult = 0;

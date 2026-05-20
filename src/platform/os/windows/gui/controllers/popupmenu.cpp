@@ -37,7 +37,7 @@ using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
     
-    PopupMenu::PopupMenu() : Menu( User32::CreatePopupMenu())
+    PopupMenu::PopupMenu() : Menu(User32::CreatePopupMenu())
     {
     }
 

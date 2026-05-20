@@ -94,4 +94,15 @@ namespace qor{ namespace platform { namespace nswindows{
         return r;
     }
 
+    long Rect::Width()
+    {
+        return m_right - m_left;
+    }
+
+    long Rect::Height()
+    {
+        return m_bottom - m_top;
+    }
+
+
 }}}//qor::platform::nswindows

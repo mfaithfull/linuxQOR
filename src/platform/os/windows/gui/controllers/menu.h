@@ -70,7 +70,7 @@ namespace qor{ namespace platform { namespace nswindows{
     public:
 
         Menu();
-        Menu(int);
+        Menu(int id);
         Menu(const PrimitiveHandle& h);
         Menu(const Menu& m);
 

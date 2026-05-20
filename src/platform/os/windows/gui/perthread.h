@@ -58,9 +58,9 @@ namespace qor{ namespace platform { namespace nswindows{
         bool RemoveMenu(Menu* menu);
         Menu* MenuFromHandle(void* hMenu);
 
-        bool AddDeviceContext(DeviceContext* dc);
-        bool RemoveDeviceContext(DeviceContext* dc);
-        DeviceContext* DeviceContextFromHandle(void* hDC);
+        bool AddDeviceContext(ref_of<DeviceContext>::type dc);
+        bool RemoveDeviceContext(ref_of<DeviceContext>::type dc);
+        ref_of<DeviceContext>::type DeviceContextFromHandle(void* hDC);
 
         bool AddMonitor(Monitor* mon);
         bool RemoveMonitor(Monitor* mon);
@@ -84,7 +84,7 @@ namespace qor{ namespace platform { namespace nswindows{
         propenumproc m_properrtyEnumProc;
         std::map<void*, Window*> m_windowHandleMap;
         std::map<void*, Menu*> m_menuHandleMap;
-        std::map<void*, DeviceContext*> m_deviceContextHandleMap;
+        std::map<void*, ref_of<DeviceContext>::type> m_deviceContextHandleMap;
         std::map<void*, Monitor*> m_monitorHandleMap;
         unsigned int m_nextResourceId{100};
     };

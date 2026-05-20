@@ -41,7 +41,7 @@ namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespac
                     NCCalcSizeParams* ncCalcSizeParams = indicateValidClientArea ? reinterpret_cast<NCCalcSizeParams*>(lParam) : nullptr;
                     Rect* proposedWindowRect = indicateValidClientArea ? nullptr : reinterpret_cast<Rect*>(lParam);
                     long long result = OnNCCalcSize(window, indicateValidClientArea, proposedWindowRect, ncCalcSizeParams);
-                    lResult = !indicateValidClientArea ? 0 : result;                    
+                    lResult = !indicateValidClientArea ? window.DefWindowProcT(msg, wParam, lParam) : result;
                     return true;
                 }
                 case wmNCPaint:

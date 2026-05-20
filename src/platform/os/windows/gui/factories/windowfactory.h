@@ -33,8 +33,14 @@
 #include "src/platform/os/windows/gui/controllers/menu.h"
 #include "windowclassregistration.h"
 #include "../window.h"
+#include "../windows/button.h"
 #include "../controllers/windowcontroller.h"
+#include "../controllers/buttoncontroller.h"
+#include "../controllers/editcontroller.h"
+#include "../controllers/listboxcontroller.h"
+#include "../controllers/comboboxcontroller.h"
 #include "../view/handlers/abstractwindowhandler.h"
+#include "windowstyle.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
@@ -61,6 +67,11 @@ namespace qor{ namespace platform { namespace nswindows{
         ref_of<WindowClass>::type AddWindowClass(const tstring& windowClassName);
         bool RegisterClass(ref_of<WindowClass>::type windowClass, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
         bool RegisterClass(const tstring& windowClassName, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
+        bool SetHandlerForBuiltinClass(const tstring& windowClassName, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
+        ref_of<ButtonController>::type CreateButton(ref_of<Window>::type parent, const tstring& buttonText, unsigned long style, unsigned long exStyle, int x, int y, int width, int height);
+        ref_of<EditController>::type CreateEdit(ref_of<Window>::type parent, unsigned long style, unsigned long exStyle, int x, int y, int width, int height);
+        ref_of<ListBoxController>::type CreateListBox(ref_of<Window>::type parent, unsigned long style, unsigned long exStyle, int x, int y, int width, int height);
+        ref_of<ComboBoxController>::type CreateComboBox(ref_of<Window>::type parent, unsigned long style, unsigned long exStyle, int x, int y, int width, int height);
 
     private:
 

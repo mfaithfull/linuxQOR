@@ -26,6 +26,10 @@
 #define QOR_PP_H_WINDOWS_GUI_FONT
 
 #include "src/platform/compiler/compiler.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/newref.h"
+#include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "gdiobject.h"
 
@@ -33,6 +37,8 @@
 namespace qor{ namespace platform { namespace nswindows{ 
 
     constexpr int LFFaceSize = 32;
+    constexpr int LFFullFaceSize = 64;
+    constexpr int MMMaxNumAxes = 16;
 
     struct LogFont
     {
@@ -49,23 +55,43 @@ namespace qor{ namespace platform { namespace nswindows{
         byte      lfClipPrecision;
         byte      lfQuality;
         byte      lfPitchAndFamily;
-#if qor_pp_unicode
-        wchar_t     lfFaceName[LFFaceSize];
-#else
-        char      lfFaceName[LFFaceSize];
-#endif
+        TCHAR     lfFaceName[LFFaceSize];
+    };
+
+    struct EnumLogFontEx
+    {
+        LogFont     elfLogFont;
+        TCHAR       elfFullName[LFFullFaceSize];
+        TCHAR       elfStyle[LFFaceSize];
+        TCHAR       elfScript[LFFaceSize];
+    };
+
+    struct DesignVector
+    {
+        unsigned long  dvReserved;
+        unsigned long  dvNumAxes;
+        long   dvValues[MMMaxNumAxes];
+    };
+
+    struct EnumLogFontExDV
+    {
+        EnumLogFontEx elfEnumLogfontEx;
+        DesignVector   elfDesignVector;
     };
 
     class qor_pp_module_interface(QOR_WINGUI) Font : public GDIObject
     {
     public:
         Font();
-        Font(const PrimitiveHandle& h);
+        Font(const PrimitiveHandle& h, bool takeOwnership);
         virtual ~Font();
 
-/*
-        static HFONT CreateFontT(int nHeight, int nWidth, int nEscapement, int nOrientation, int fnWeight, DWORD fdwItalic, DWORD fdwUnderline, DWORD fdwStrikeOut, DWORD fdwCharSet, DWORD fdwOutputPrecision, DWORD fdwClipPrecision, DWORD fdwQuality, DWORD fdwPitchAndFamily, LPCTSTR lpszFace);
-        static HFONT CreateFontIndirectT(CONST::LOGFONT* lplf);
+        LogFont GetLogFont() const;
+        static ref_of<Font>::type Create(int height, int width, int escapement, int orientation, int weight, unsigned long italic, unsigned long underline, unsigned long strikeOut, unsigned long charSet, unsigned long outputPrecision, unsigned long clipPrecision, unsigned long quality, unsigned long pitchAndFamily, const tstring& lpszFace);
+        static ref_of<Font>::type Create(const LogFont* font);
+        static ref_of<Font>::type Create(const EnumLogFontExDV* enumlfex);
+/*        
+        
         static HFONT CreateFontIndirectExT(CONST::ENUMLOGFONTEXDV* penumlfex);
 
 */        

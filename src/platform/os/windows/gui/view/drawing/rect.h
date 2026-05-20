@@ -30,7 +30,7 @@
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    struct Rect
+    struct qor_pp_module_interface(QOR_WINGUI) Rect
     {
         long m_left;
         long m_top;
@@ -48,19 +48,10 @@ namespace qor{ namespace platform { namespace nswindows{
         bool SetEmpty();
         static Rect FromSubtraction(const Rect& rc1, const Rect& rc2);
         static Rect FromUnion(const Rect& rc1, const Rect& rc2);
+
+        long Width();
+        long Height();
     };
-    /*        static BOOL CopyRect(::LPRECT lprcDst, CONST::RECT* lprcSrc);
-        static BOOL EqualRect(CONST::RECT* lprc1, CONST::RECT* lprc2);
-        static BOOL InflateRect(::LPRECT lprc, int dx, int dy);
-        static BOOL IntersectRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
-        static BOOL IsRectEmpty(CONST::RECT* lprc);
-        static BOOL OffsetRect(::LPRECT lprc, int dx, int dy);
-        static BOOL PtInRect(CONST::RECT* lprc, POINT pt);
-        static BOOL SetRect(::LPRECT lprc, int xLeft, int yTop, int xRight, int yBottom);
-        static BOOL SetRectEmpty(::LPRECT lprc);
-        static BOOL SubtractRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
-        static BOOL UnionRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
-*/
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_WINDOWS_GUI_RECT

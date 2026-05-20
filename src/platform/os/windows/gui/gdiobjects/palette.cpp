@@ -36,13 +36,12 @@ namespace qor{ namespace platform { namespace nswindows{
     {        
     }
 
-    Palette::Palette(const PrimitiveHandle& h) : GDIObject(h, OPalette)
+    Palette::Palette(const PrimitiveHandle& h, bool takeOwnerShip) : GDIObject(h, OPalette, takeOwnerShip)
     {
     }
 
     Palette::~Palette()
-    {
-        //TODO:
+    {        
     }
 
     const Handle& Palette::GetHandle() const
@@ -57,13 +56,20 @@ namespace qor{ namespace platform { namespace nswindows{
 
     Palette Palette::CreateHalftone(const Handle& deviceContext)
     {
-        Palette p(GDI32::CreateHalftonePalette((HDC)(deviceContext.Use())));
+        Palette p(GDI32::CreateHalftonePalette((HDC)(deviceContext.Use())), true);
         return p;
     }
 
     Palette Palette::Create(const LogPalette* lplgpl)
     {
-        Palette p(GDI32::CreatePalette(reinterpret_cast<const LOGPALETTE*>(lplgpl)));
+        Palette p(GDI32::CreatePalette(reinterpret_cast<const LOGPALETTE*>(lplgpl)), true);
+        return p;
+    }
+
+    Palette Palette::Default()
+    {
+        PrimitiveHandle h(GDI32::GetStockObject(DEFAULT_PALETTE));
+        Palette p(h, false);
         return p;
     }
 
@@ -81,7 +87,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {
         return GDI32::ResizePalette((HPALETTE)(m_handle.Use()), nEntries) ? true : false;
     }
-
+/*
     Handle Palette::Select(Handle& hdc, bool bForceBackground)
     {        
         PrimitiveHandle ph (
@@ -91,7 +97,7 @@ namespace qor{ namespace platform { namespace nswindows{
         h.DontClose();
         return h;
     }
-
+*/
     unsigned int Palette::SetEntries(unsigned int iStart, unsigned int cEntries, const PaletteEntry* lppe)
     {
         return GDI32::SetPaletteEntries((HPALETTE)(m_handle.Use()), iStart, cEntries, reinterpret_cast<const PALETTEENTRY*>(lppe));

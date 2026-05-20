@@ -36,7 +36,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {        
     }
 
-    EnhancedMetaDeviceContext::EnhancedMetaDeviceContext(const PrimitiveHandle& h) : GDIObject(h, OEnhMetaDC)
+    EnhancedMetaDeviceContext::EnhancedMetaDeviceContext(const PrimitiveHandle& h, bool takeOwnership) : GDIObject(h, OEnhMetaDC, takeOwnership)
     {        
     }
 

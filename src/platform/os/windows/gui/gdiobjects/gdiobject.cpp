@@ -34,18 +34,19 @@ using namespace qor::nswindows::api;
 namespace qor{ namespace platform { namespace nswindows{
     
 
-    GDIObject::GDIObject(GDIObjectType objType) : m_handle(0), m_objType(objType)
+    GDIObject::GDIObject(GDIObjectType objType) : m_handle(0), m_objType(objType), m_owner(true)
     {        
     }
 
-    GDIObject::GDIObject(const PrimitiveHandle& h, GDIObjectType objType) : m_handle(h.Use()), m_objType(objType)
+    GDIObject::GDIObject(const PrimitiveHandle& h, GDIObjectType objType, bool takeOwnership = true) : 
+        m_handle(h.Use()), m_objType(objType), m_owner(takeOwnership)
     {
         m_handle.DontClose();
     }
     
     GDIObject::~GDIObject()
     {
-        if(!m_handle.IsInvalid())
+        if(m_owner && !m_handle.IsInvalid())
         {
             GDI32::DeleteObject(m_handle.Use());
             m_handle.Drop();
