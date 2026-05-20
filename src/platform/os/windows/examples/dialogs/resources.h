@@ -1,0 +1,3 @@
+#define IDC_MYBUTTON 1001
+
+#define IDD_TEST 50001

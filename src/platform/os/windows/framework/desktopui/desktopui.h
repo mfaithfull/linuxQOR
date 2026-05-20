@@ -22,26 +22,26 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/platform/os/windows/exebootstrap/winqorexeboot.h"
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
-#include "src/platform/os/windows/gui/view/handlers/messagehandler.h"
-#include "src/platform/os/windows/gui/view/handlers/toplevel.h"
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
 
-using namespace qor;
-using namespace qor::platform::nswindows;
-using namespace qor::platform::nswindows::gui::view;
-using namespace std;
+#include <vector>
+#include <coroutine>
+#include "src/framework/desktopui/desktopui.h"
 
-int main()
-{
-    WindowFactory factory(GetInstance());
-    MessageHandler messageHandler;
+qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
 
-    auto windowClass =  factory.AddWindowClass(L"Minimal");
-                        factory.RegisterClass(windowClass, new_ref<TopLevelWindowHandler>());
-    auto controller =   factory.Create(windowClass, L"Minimal Desktop Windows App");
+namespace qor{ namespace framework{ namespace nswindows{
 
-                        controller->Show();
-    return              messageHandler.MessageLoop();
-}
+    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
+    {
+    public:
+        
+        DesktopUI();
+        virtual ~DesktopUI() noexcept = default;
+
+    };
+
+}}}//qor::framework::nswindows
+
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI

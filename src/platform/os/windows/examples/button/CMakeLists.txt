@@ -4,18 +4,16 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
-set(target menu)
+set(target button)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-add_executable(${target} main.cpp)
+add_executable(${target} button.cpp)
 set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE true)
 target_compile_definitions(${target} PRIVATE WINDOWS UNICODE _UNICODE QOR_PP_EXECUTABLE qor_pp_ver_major=1 )
 
-target_link_libraries(${target} winqor_exebootstrap qor_module qor_host qor_compiler qor_platform 
-winqor_api_kernel winqor_api_user winqor_api_shell winqor_api_uxtheme 
-winqor_common winqor_gui
-user32 gdi32 comdlg32 comctl32 shell32 uxtheme)
+target_link_libraries(${target} winqor_exebootstrap qor_module qor_host qor_compiler qor_platform winqor_api_kernel winqor_api_shell winqor_common winqor_gui
+user32 gdi32 comdlg32 comctl32 shell32)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 

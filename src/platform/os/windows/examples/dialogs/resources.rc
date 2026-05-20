@@ -1,0 +1,8 @@
+#include <windows.h>
+#include "resources.h"
+
+IDD_TEST DIALOGEX 0, 0, 200, 150
+CAPTION "Res Dialog"
+{
+    DEFPUSHBUTTON "OK", IDC_MYBUTTON, 13, 128, 50, 14
+}

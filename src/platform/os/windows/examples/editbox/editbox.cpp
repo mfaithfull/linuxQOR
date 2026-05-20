@@ -27,21 +27,53 @@
 #include "src/platform/os/windows/gui/factories/windowfactory.h"
 #include "src/platform/os/windows/gui/view/handlers/messagehandler.h"
 #include "src/platform/os/windows/gui/view/handlers/toplevel.h"
+#include "src/platform/os/windows/gui/windows/messagebox.h"
 
 using namespace qor;
 using namespace qor::platform::nswindows;
 using namespace qor::platform::nswindows::gui::view;
 using namespace std;
 
+class EditBoxRenderingHandler : public RenderingHandler
+{
+public:
+
+    virtual void OnSize(Window& window, unsigned long long wParam, long long lParam)
+    {
+        Rect rc;
+        window.GetController()->GetClientRect(rc);
+        auto layout = window.GetLayout();
+        Size position { rc.m_left, rc.m_top };
+        Size extent {rc.Width(), rc.Height()};
+        layout->Place(position, extent);
+    }
+};
+
 int main()
 {
     WindowFactory factory(GetInstance());
     MessageHandler messageHandler;
 
-    auto windowClass =  factory.AddWindowClass(L"Minimal");
-                        factory.RegisterClass(windowClass, new_ref<TopLevelWindowHandler>());
-    auto controller =   factory.Create(windowClass, L"Minimal Desktop Windows App");
+    auto windowClass =  factory.AddWindowClass(L"Main");
+    auto handler     =  new_ref<TopLevelWindowHandler>();
+    auto rendering   =  new_ref<EditBoxRenderingHandler>();
+                        handler->m_rendering = rendering;
+                        factory.RegisterClass(windowClass, handler);
+    auto window =       factory.Create(windowClass, L"Edit Box App");
+    
+    auto edit1 =        factory.CreateEdit(window->GetWindow(), Edit::SMultiline, 0, 1, 1, 100, 30);
+    auto edit2 =        factory.CreateEdit(window->GetWindow(), Edit::SMultiline, 0, 1, 1, 100, 30);
+    auto combo =        factory.CreateComboBox(window->GetWindow(), 0, 0, 1, 1, 100, 30);
+                        handler->SetCommandCallback(edit1, Edit::NChange, [](Window& window, WindowController* ctrl)->bool
+                        {
+                            EditController* edit = dynamic_cast<EditController*>(ctrl);
+                            if(edit)
+                            {
+                                auto text = edit->GetText();
+                            }
+                            return true;
+                        });
+                        window->Show();
 
-                        controller->Show();
     return              messageHandler.MessageLoop();
 }

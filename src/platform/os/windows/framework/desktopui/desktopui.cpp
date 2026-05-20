@@ -23,25 +23,15 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/platform/os/windows/exebootstrap/winqorexeboot.h"
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
-#include "src/platform/os/windows/gui/view/handlers/messagehandler.h"
-#include "src/platform/os/windows/gui/view/handlers/toplevel.h"
 
-using namespace qor;
-using namespace qor::platform::nswindows;
-using namespace qor::platform::nswindows::gui::view;
-using namespace std;
+#include "desktopui.h"
 
-int main()
-{
-    WindowFactory factory(GetInstance());
-    MessageHandler messageHandler;
+qor_pp_module_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
 
-    auto windowClass =  factory.AddWindowClass(L"Minimal");
-                        factory.RegisterClass(windowClass, new_ref<TopLevelWindowHandler>());
-    auto controller =   factory.Create(windowClass, L"Minimal Desktop Windows App");
+namespace qor{ namespace framework{ namespace nswindows{
 
-                        controller->Show();
-    return              messageHandler.MessageLoop();
-}
+    DesktopUI::DesktopUI()
+    {        
+    }
+
+}}}//qor::framework::nswindows

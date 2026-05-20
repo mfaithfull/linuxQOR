@@ -23,25 +23,21 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/platform/os/windows/exebootstrap/winqorexeboot.h"
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
-#include "src/platform/os/windows/gui/view/handlers/messagehandler.h"
-#include "src/platform/os/windows/gui/view/handlers/toplevel.h"
+#include "src/qor/module/module.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/internalfactory.h"
+#include "src/qor/injection/typeregentry.h"
+#include "src/qor/reference/newref.h"
+#include "desktopui.h"
 
-using namespace qor;
-using namespace qor::platform::nswindows;
-using namespace qor::platform::nswindows::gui::view;
-using namespace std;
-
-int main()
+qor::Module& ThisModule(void)
 {
-    WindowFactory factory(GetInstance());
-    MessageHandler messageHandler;
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Desktop UI Module", 
+        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-    auto windowClass =  factory.AddWindowClass(L"Minimal");
-                        factory.RegisterClass(windowClass, new_ref<TopLevelWindowHandler>());
-    auto controller =   factory.Create(windowClass, L"Minimal Desktop Windows App");
+	//Register the Windows specific implementations
+	static qor::TypeRegEntry< qor::framework::nswindows::DesktopUI, qor::framework::DesktopUI > regDesktopUI;
 
-                        controller->Show();
-    return              messageHandler.MessageLoop();
+	return QORModule;
 }
