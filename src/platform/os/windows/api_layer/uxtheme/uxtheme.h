@@ -27,13 +27,14 @@
 
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 #include <Uxtheme.h>
+#include <vsstyle.h>
+#include <vssym32.h>
 
 namespace qor { namespace nswindows { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPIUXTHEME) UXTheme
 	{
 	public:
-        
         static HANIMATIONBUFFER BeginBufferedAnimation(HWND hwnd, HDC hdcTarget, const RECT* prcTarget, BP_BUFFERFORMAT dwFormat, BP_PAINTPARAMS* pPaintParams, BP_ANIMATIONPARAMS* pAnimationParams, HDC* phdcFrom, HDC* phdcTo);
         static HPAINTBUFFER BeginBufferedPaint(HDC hdcTarget, const RECT* prcTarget, BP_BUFFERFORMAT dwFormat, BP_PAINTPARAMS* pPaintParams, HDC* phdc);
         static BOOL BeginPanningFeedback(HWND hwnd);
@@ -66,8 +67,6 @@ namespace qor { namespace nswindows { namespace api {
         static HRESULT GetThemeAnimationTransform(HTHEME hTheme, int iStoryboardId, int iTargetId, DWORD dwTransformIndex, TA_TRANSFORM* pTransform, DWORD cbSize, DWORD* pcbSizeOut);
         static DWORD GetThemeAppProperties();
         static HRESULT GetThemeBackgroundContentRect(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pBoundingRect, LPRECT pContentRect);
-
-        //TODO: Implement these
         static HRESULT GetThemeBackgroundExtent(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pContentRect, LPRECT pExtentRect);
         static HRESULT GetThemeBackgroundRegion(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect, HRGN* pRegion);
         static HRESULT GetThemeBitmap(HTHEME hTheme, int iPartId, int iStateId, int iPropId, ULONG dwFlags, HBITMAP* phBitmap);
@@ -98,7 +97,6 @@ namespace qor { namespace nswindows { namespace api {
         static HRESULT GetThemeTextMetrics(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, TEXTMETRICW* ptm);
         static HRESULT GetThemeTimingFunction(HTHEME hTheme, int iTimingFunctionId, TA_TIMINGFUNCTION* pTimingFunction, DWORD cbSize, DWORD* pcbSizeOut);
         static HRESULT GetThemeTransitionDuration(HTHEME hTheme,int iPartId, int iStateIdFrom, int iStateIdTo, int iPropId, DWORD* pdwDuration);
-        
         static HTHEME GetWindowTheme(HWND hwnd);
         static HRESULT HitTestThemeBackground(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, DWORD dwOptions, LPCRECT pRect, HRGN hrgn, POINT ptTest, WORD* pwHitTestCode);
         static BOOL IsAppThemed();

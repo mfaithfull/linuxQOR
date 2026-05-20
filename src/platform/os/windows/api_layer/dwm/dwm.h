@@ -35,6 +35,7 @@ namespace qor { namespace nswindows { namespace api {
 	{
 	public:
 
+        static BOOL DwmDefWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult);
         static HRESULT EnableBlurBehindWindow(HWND hWnd, const DWM_BLURBEHIND* pBlurBehind);
         static HRESULT EnableComposition(bool enable);
         static HRESULT EnableMMCSS(bool enableMMCSS);

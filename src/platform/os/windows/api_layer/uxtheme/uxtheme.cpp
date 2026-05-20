@@ -261,7 +261,188 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<HRESULT, HTHEME, HDC, int, int, LPCRECT, LPRECT>(pFunc, hTheme, hdc, iPartId, iStateId, pBoundingRect, pContentRect);
     }
 
-    //
+    HRESULT UXTheme::GetThemeBackgroundExtent(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pContentRect, LPRECT pExtentRect)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeBackgroundRegion(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT pRect, HRGN* pRegion)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeBitmap(HTHEME hTheme, int iPartId, int iStateId, int iPropId, ULONG dwFlags, HBITMAP* phBitmap)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeBool(HTHEME hTheme, int iPartId, int iStateId, int iPropId, BOOL* pfVal)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeColor(HTHEME hTheme, int iPartId, int iStateId, int iPropId, COLORREF* pColor)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeDocumentationProperty(LPCWSTR pszThemeName, LPCWSTR pszPropertyName, LPWSTR pszValueBuff, int cchMaxValChars)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeEnumValue(HTHEME hTheme, int iPartId, int iStateId, int iPropId, int* piVal)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeFilename(HTHEME hTheme, int iPartId, int iStateId, int iPropId, LPWSTR pszThemeFileName, int cchMaxBuffChars)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeFont(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, int iPropId, LOGFONTW* pFont)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeInt(HTHEME hTheme, int iPartId, int iStateId, int iPropId, int* piVal)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeIntList(HTHEME hTheme, int iPartId, int iStateId, int iPropId, INTLIST* pIntList)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeMargins(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, int iPropId, LPCRECT prc, MARGINS* pMargins)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeMetric(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, int iPropId, int* piVal)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemePartSize(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCRECT prc, THEMESIZE eSize, SIZE* psz)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemePosition(HTHEME hTheme, int iPartId, int iStateId, int iPropId, POINT* pPoint)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemePropertyOrigin(HTHEME hTheme, int iPartId, int iStateId, int iPropId, PROPERTYORIGIN* pOrigin)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeRect(HTHEME hTheme, int iPartId, int iStateId, int iPropId, LPRECT pRect)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeStream(HTHEME hTheme, int iPartId, int iStateId, int iPropId, VOID** ppvStream, DWORD* pcbStream, HINSTANCE hInst)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeString(HTHEME hTheme, int iPartId, int iStateId, int iPropId, LPWSTR pszBuff, int cchMaxBuffChars)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    BOOL UXTheme::GetThemeSysBool(HTHEME hTheme, int iBoolId)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    COLORREF UXTheme::GetThemeSysColor(HTHEME hTheme, int iColorId)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HBRUSH UXTheme::GetThemeSysColorBrush(HTHEME hTheme, int iColorId)
+    {
+        //TODO:
+        return nullptr;
+    }
+
+    HRESULT UXTheme::GetThemeSysFont(HTHEME hTheme, int iFontId, LOGFONTW* plf)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeSysInt(HTHEME hTheme, int iIntId, int* piValue)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    int UXTheme::GetThemeSysSize(HTHEME hTheme, int iSizeId)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(uxtheme, GetThemeSysSize);
+        return Library::Call<int, HTHEME, int>(pFunc, hTheme, iSizeId);
+    }
+
+    HRESULT UXTheme::GetThemeSysString(HTHEME hTheme, int iStringId, LPWSTR pszStringBuff, int cchMaxStringChars)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeTextExtent(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, LPCWSTR pszText, int cchCharCount, DWORD dwTextFlags, LPCRECT pBoundingRect, LPRECT pExtentRect)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeTextMetrics(HTHEME hTheme, HDC hdc, int iPartId, int iStateId, TEXTMETRICW* ptm)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeTimingFunction(HTHEME hTheme, int iTimingFunctionId, TA_TIMINGFUNCTION* pTimingFunction, DWORD cbSize, DWORD* pcbSizeOut)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+    HRESULT UXTheme::GetThemeTransitionDuration(HTHEME hTheme,int iPartId, int iStateIdFrom, int iStateIdTo, int iPropId, DWORD* pdwDuration)
+    {
+        //TODO:
+        return S_OK;
+    }
+
+
     HTHEME UXTheme::GetWindowTheme(HWND hwnd)
     {
         qor_pp_fcontext;
@@ -320,7 +501,7 @@ namespace qor { namespace nswindows { namespace api {
 
     HTHEME UXTheme::OpenThemeData(HWND hwnd, LPCWSTR pszClassList)
     {
-        qor_pp_fcontext;
+        qor_pp_fcontext;        
         qor_pp_useswinapi(uxtheme, OpenThemeData);
         return Library::Call<HTHEME, HWND, LPCWSTR>(pFunc, hwnd, pszClassList);
     }

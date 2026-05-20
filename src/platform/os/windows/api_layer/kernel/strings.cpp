@@ -28,32 +28,17 @@
 #include "src/qor/error/error.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
-#include "user32.h"
+#include "kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
 #include "../returncheck.h"
 #include "../library.h"
 
 namespace qor { namespace nswindows { namespace api {
 
-    int User32::FillRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr)
+    int Kernel32::MultiByteToWideChar(unsigned int codePage, unsigned long flags, const char* multiByteString, int countBytesMultiByte, wchar_t* wideString, int countCharsWide)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, FillRect);
-        return Library::Call< int, HDC, CONST ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
+        qor_pp_useswinapi(kernel32, MultiByteToWideChar );
+        return Library::Call< int, UINT, DWORD, LPCCH, int, LPWSTR, int >(pFunc, codePage, flags, multiByteString, countBytesMultiByte, wideString, countCharsWide);
     }
-
-    int User32::FrameRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr)
-    {
-        qor_pp_fcontext;
-        qor_pp_useswinapi(user32, FrameRect);
-        return Library::Call< int, HDC, CONST ::RECT*, HBRUSH >(pFunc, hDC, lprc, hbr);
-    }
-
-    BOOL User32::InvertRect(HDC hDC, CONST::RECT* lprc)
-    {
-        qor_pp_fcontext;
-        qor_pp_useswinapi(user32, InvertRect);
-        return Library::Call< BOOL, HDC, CONST ::RECT* >(pFunc, hDC, lprc);
-    }
-
 
 }}}//qor::nswindows::api

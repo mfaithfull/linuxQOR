@@ -164,7 +164,7 @@ namespace qor { namespace nswindows { namespace api {
     int User32::MessageBoxTimeout(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType, WORD wLanguageId, DWORD dwMilliseconds)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, MessageBoxTimeout);
+        qor_pp_useswinapiAW(user32, MessageBoxTimeout);
         return Library::Call<int, HWND, LPCTSTR, LPCTSTR, UINT, WORD, DWORD>(pFunc, hWnd, lpText, lpCaption, uType, wLanguageId, dwMilliseconds);
     }
 

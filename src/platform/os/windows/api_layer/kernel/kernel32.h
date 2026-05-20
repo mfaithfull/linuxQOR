@@ -433,6 +433,9 @@ namespace qor { namespace nswindows { namespace api {
 
 		//Sync API
 		static DWORD WaitForMultipleObjectsEx(DWORD nCount, const void** lpHandles, BOOL bWaitAll, DWORD dwMilliseconds, BOOL bAlertable);
+
+		//String
+		static int MultiByteToWideChar(unsigned int codePage, unsigned long flags, const char* multiByteString, int countBytesMultiByte, wchar_t* wideString, int countCharsWide);
 	};
 
 }}}//qor::nswindows::api

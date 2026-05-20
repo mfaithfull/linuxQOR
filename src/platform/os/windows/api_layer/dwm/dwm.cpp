@@ -34,6 +34,13 @@
 
 namespace qor { namespace nswindows { namespace api {
 
+    BOOL DWM::DwmDefWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(dwmapi, DwmDefWindowProc);
+        return Library::Call<BOOL, HWND, UINT, WPARAM, LPARAM, LRESULT*>(pFunc, hWnd, msg, wParam, lParam, plResult);
+    }
+
     HRESULT DWM::EnableBlurBehindWindow(HWND hWnd, const DWM_BLURBEHIND* pBlurBehind)
     {
         qor_pp_fcontext;        

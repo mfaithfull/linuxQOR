@@ -27,10 +27,15 @@
 
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-#include <WinUser.h>
-
 #undef RegisterDeviceNotification
 #undef WinHelp
+#undef SystemParametersInfo
+#undef GetRawInputDeviceInfo
+#undef DlgDirList
+#undef DlgDirSelectEx
+#undef DlgDirListComboBox
+#undef DlgDirSelectComboBoxEx
+#undef LoadBitmap
 
 namespace qor { namespace nswindows { namespace api {
 
