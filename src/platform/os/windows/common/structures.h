@@ -445,6 +445,28 @@ namespace qor{ namespace platform { namespace nswindows {
         unsigned char   rgbReserved[32];
     };
 
+    struct HelpInfo                                     // Structure pointed to by lParam of WM_HELP
+    {
+        unsigned int    cbSize{sizeof(HelpInfo)};       // Size in bytes of this struct
+        int     iContextType;                           // Either HELPINFO_WINDOW or HELPINFO_MENUITEM
+        int     iCtrlId;                                // Control Id or a Menu item Id.
+        void*  hItemHandle;                             // hWnd of control or hMenu.
+        unsigned long long dwContextId;                 // Context Id associated with this item
+        Point   MousePos;                               // Mouse Position in screen co-ordinates
+    };
+
+    struct CompareItemStruct
+    {
+        unsigned int            CtlType;
+        unsigned int            CtlID;
+        void*                   hwndItem;
+        unsigned int            itemID1;
+        unsigned long long      itemData1;
+        unsigned int            itemID2;
+        unsigned long long      itemData2;
+        unsigned long           dwLocaleId;
+    };
+
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_STRUCTURES

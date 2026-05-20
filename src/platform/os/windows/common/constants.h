@@ -130,6 +130,218 @@ namespace qor{ namespace platform { namespace nswindows {
 	constexpr unsigned long DBTDevTypeDeviceInterface = 0x00000005;  // device interface class
 	constexpr unsigned long DBTDevTypeHandle = 0x00000006;  // file system handle
 
+	constexpr unsigned long DCXWindow           	= 0x00000001;
+	constexpr unsigned long DCXCache            	= 0x00000002;
+	constexpr unsigned long DCXNoResetAttrs			= 0x00000004;
+	constexpr unsigned long DCXClipChildren			= 0x00000008;
+	constexpr unsigned long DCXClipSiblings			= 0x00000010;
+	constexpr unsigned long DCXParentClip			= 0x00000020;
+	constexpr unsigned long DCXExcludeRegion		= 0x00000040;
+	constexpr unsigned long DCXIntersectRegion		= 0x00000080;
+	constexpr unsigned long DCXExcludeUpdate		= 0x00000100;
+	constexpr unsigned long DCXIntersectUpdate		= 0x00000200;
+	constexpr unsigned long DCXLockWindowUpdate		= 0x00000400;
+	constexpr unsigned long DCXValidate         	= 0x00200000;
+
+	constexpr unsigned int DCActive					 = 0x0001;		//The function uses the colors that denote an active caption.
+	constexpr unsigned int DCButtons				 = 0x1000;		//If set, the function draws the buttons in the caption bar (to minimize, restore, or close an application).
+	constexpr unsigned int DCGradient				 = 0x0020;		//When this flag is set, the function uses COLOR_GRADIENTACTIVECAPTION (if the DC_ACTIVE flag was set) or COLOR_GRADIENTINACTIVECAPTION for the title-bar color.
+																	//If this flag is not set, the function uses COLOR_ACTIVECAPTION or COLOR_INACTIVECAPTION for both colors.
+	constexpr unsigned int DCIcon					 = 0x0004;		//The function draws the icon when drawing the caption text.
+	constexpr unsigned int DCInButton				 = 0x0010;		//The function draws the caption as a button.
+	constexpr unsigned int DCSmallCap				 = 0x0002;		//The function draws a small caption, using the current small caption font.
+	constexpr unsigned int DCText					 = 0x0008;
+
+	constexpr unsigned int SMCXSCREEN             = 0;
+	constexpr unsigned int SMCYSCREEN             = 1;
+	constexpr unsigned int SMCXVSCROLL            = 2;
+	constexpr unsigned int SMCYHSCROLL            = 3;
+	constexpr unsigned int SMCYCAPTION            = 4;
+	constexpr unsigned int SMCXBORDER             = 5;
+	constexpr unsigned int SMCYBORDER             = 6;
+	constexpr unsigned int SMCXDLGFRAME           = 7;
+	constexpr unsigned int SMCYDLGFRAME           = 8;
+	constexpr unsigned int SMCYVTHUMB             = 9;
+	constexpr unsigned int SMCXHTHUMB             = 10;
+	constexpr unsigned int SMCXICON               = 11;
+	constexpr unsigned int SMCYICON               = 12;
+	constexpr unsigned int SMCXCURSOR             = 13;
+	constexpr unsigned int SMCYCURSOR             = 14;
+	constexpr unsigned int SMCYMENU               = 15;
+	constexpr unsigned int SMCXFULLSCREEN         = 16;
+	constexpr unsigned int SMCYFULLSCREEN         = 17;
+	constexpr unsigned int SMCYKANJIWINDOW        = 18;
+	constexpr unsigned int SMMOUSEPRESENT         = 19;
+	constexpr unsigned int SMCYVSCROLL            = 20;
+	constexpr unsigned int SMCXHSCROLL            = 21;
+	constexpr unsigned int SMDEBUG                = 22;
+	constexpr unsigned int SMSWAPBUTTON           = 23;
+	constexpr unsigned int SMRESERVED1            = 24;
+	constexpr unsigned int SMRESERVED2            = 25;
+	constexpr unsigned int SMRESERVED3            = 26;
+	constexpr unsigned int SMRESERVED4            = 27;
+	constexpr unsigned int SMCXMIN                = 28;
+	constexpr unsigned int SMCYMIN                = 29;
+	constexpr unsigned int SMCXSIZE               = 30;
+	constexpr unsigned int SMCYSIZE               = 31;
+	constexpr unsigned int SMCXFRAME              = 32;
+	constexpr unsigned int SMCYFRAME              = 33;
+	constexpr unsigned int SMCXMINTRACK           = 34;
+	constexpr unsigned int SMCYMINTRACK           = 35;
+	constexpr unsigned int SMCXDOUBLECLK          = 36;
+	constexpr unsigned int SMCYDOUBLECLK          = 37;
+	constexpr unsigned int SMCXICONSPACING        = 38;
+	constexpr unsigned int SMCYICONSPACING        = 39;
+	constexpr unsigned int SMMENUDROPALIGNMENT    = 40;
+	constexpr unsigned int SMPENWINDOWS           = 41;
+	constexpr unsigned int SMDBCSENABLED          = 42;
+	constexpr unsigned int SMCMOUSEBUTTONS        = 43;
+
+	constexpr unsigned int SMCXFIXEDFRAME           = SMCXDLGFRAME;
+	constexpr unsigned int SMCYFIXEDFRAME           = SMCYDLGFRAME;
+	constexpr unsigned int SMCXSIZEFRAME            = SMCXFRAME;
+	constexpr unsigned int SMCYSIZEFRAME            = SMCYFRAME;
+	constexpr unsigned int SMSECURE               = 44;
+	constexpr unsigned int SMCXEDGE               = 45;
+	constexpr unsigned int SMCYEDGE               = 46;
+	constexpr unsigned int SMCXMINSPACING         = 47;
+	constexpr unsigned int SMCYMINSPACING         = 48;
+	constexpr unsigned int SMCXSMICON             = 49;
+	constexpr unsigned int SMCYSMICON             = 50;
+	constexpr unsigned int SMCYSMCAPTION          = 51;
+	constexpr unsigned int SMCXSMSIZE             = 52;
+	constexpr unsigned int SMCYSMSIZE             = 53;
+	constexpr unsigned int SMCXMENUSIZE           = 54;
+	constexpr unsigned int SMCYMENUSIZE           = 55;
+	constexpr unsigned int SMARRANGE              = 56;
+	constexpr unsigned int SMCXMINIMIZED          = 57;
+	constexpr unsigned int SMCYMINIMIZED          = 58;
+	constexpr unsigned int SMCXMAXTRACK           = 59;
+	constexpr unsigned int SMCYMAXTRACK           = 60;
+	constexpr unsigned int SMCXMAXIMIZED          = 61;
+	constexpr unsigned int SMCYMAXIMIZED          = 62;
+	constexpr unsigned int SMNETWORK              = 63;
+	constexpr unsigned int SMCLEANBOOT            = 67;
+	constexpr unsigned int SMCXDRAG               = 68;
+	constexpr unsigned int SMCYDRAG               = 69;
+	constexpr unsigned int SMSHOWSOUNDS           = 70;
+	constexpr unsigned int SMCXMENUCHECK          = 71;   // Use instead of GetMenuCheckMarkDimensions()
+	constexpr unsigned int SMCYMENUCHECK          = 72;
+	constexpr unsigned int SMSLOWMACHINE          = 73;
+	constexpr unsigned int SMMIDEASTENABLED       = 74;
+	constexpr unsigned int SMMOUSEWHEELPRESENT    = 75;
+	constexpr unsigned int SMXVIRTUALSCREEN       = 76;
+	constexpr unsigned int SMYVIRTUALSCREEN       = 77;
+	constexpr unsigned int SMCXVIRTUALSCREEN      = 78;
+	constexpr unsigned int SMCYVIRTUALSCREEN      = 79;
+	constexpr unsigned int SMCMONITORS            = 80;
+	constexpr unsigned int SMSAMEDISPLAYFORMAT    = 81;
+	constexpr unsigned int SMIMMENABLED           = 82;
+	constexpr unsigned int SMCXFOCUSBORDER        = 83;
+	constexpr unsigned int SMCYFOCUSBORDER        = 84;
+	constexpr unsigned int SMTABLETPC             = 86;
+	constexpr unsigned int SMMEDIACENTER          = 87;
+	constexpr unsigned int SMSTARTER              = 88;
+	constexpr unsigned int SMSERVERR2             = 89;
+	constexpr unsigned int SMMOUSEHORIZONTALWHEELPRESENT    = 91;
+	constexpr unsigned int SMCXPADDEDBORDER       = 92;
+	constexpr unsigned int SMDIGITIZER            = 94;
+	constexpr unsigned int SMMAXIMUMTOUCHES       = 95;
+	constexpr unsigned int SMREMOTESESSION        = 0x1000;
+	constexpr unsigned int SMSHUTTINGDOWN           = 0x2000;
+	constexpr unsigned int SMREMOTECONTROL          = 0x2001;
+	constexpr unsigned int SMCARETBLINKINGENABLED   = 0x2002;
+	constexpr unsigned int SMCONVERTIBLESLATEMODE   = 0x2003;
+	constexpr unsigned int SMSYSTEMDOCKED           = 0x2004;
+
+	enum WINDOWPARTS {
+		WPCAPTION = 1,
+		WPSMALLCAPTION = 2,
+		WPMINCAPTION = 3,
+		WPSMALLMINCAPTION = 4,
+		WPMAXCAPTION = 5,
+		WPSMALLMAXCAPTION = 6,
+		WPFRAMELEFT = 7,
+		WPFRAMERIGHT = 8,
+		WPFRAMEBOTTOM = 9,
+		WPSMALLFRAMELEFT = 10,
+		WPSMALLFRAMERIGHT = 11,
+		WPSMALLFRAMEBOTTOM = 12,
+		WPSYSBUTTON = 13,
+		WPMDISYSBUTTON = 14,
+		WPMINBUTTON = 15,
+		WPMDIMINBUTTON = 16,
+		WPMAXBUTTON = 17,
+		WPCLOSEBUTTON = 18,
+		WPSMALLCLOSEBUTTON = 19,
+		WPMDICLOSEBUTTON = 20,
+		WPRESTOREBUTTON = 21,
+		WPMDIRESTOREBUTTON = 22,
+		WPHELPBUTTON = 23,
+		WPMDIHELPBUTTON = 24,
+		WPHORZSCROLL = 25,
+		WPHORZTHUMB = 26,
+		WPVERTSCROLL = 27,
+		WPVERTTHUMB = 28,
+		WPDIALOG = 29,
+		WPCAPTIONSIZINGTEMPLATE = 30,
+		WPSMALLCAPTIONSIZINGTEMPLATE = 31,
+		WPFRAMELEFTSIZINGTEMPLATE = 32,
+		WPSMALLFRAMELEFTSIZINGTEMPLATE = 33,
+		WPFRAMERIGHTSIZINGTEMPLATE = 34,
+		WPSMALLFRAMERIGHTSIZINGTEMPLATE = 35,
+		WPFRAMEBOTTOMSIZINGTEMPLATE = 36,
+		WPSMALLFRAMEBOTTOMSIZINGTEMPLATE = 37,
+		WPFRAME = 38,
+		WPBORDER = 39,
+	};
+
+	enum CAPTIONSTATES 
+	{
+		CSActive = 1,
+		CSInactive = 2,
+		CSDisabled = 3,
+	};
+	
+	enum FRAMESTATES 
+	{
+		FSActive = 1,
+		FSInactive = 2,
+	};
+
+	enum FRAMELEFTSTATES 
+	{
+		FRLActive = 1,
+		FRLInactive = 2,
+	};
+
+	constexpr long long	HTError			=-2;	//On the screen background or on a dividing line between windows (same as HTNOWHERE, except that the DefWindowProc function produces a system beep to indicate an error).
+	constexpr long long	HTTransparent	= -1;	//In a window currently covered by another window in the same thread (the message will be sent to underlying windows in the same thread until one of them returns a code that is not HTTRANSPARENT).
+	constexpr long long	HTNowhere		= 0;	//On the screen background or on a dividing line between windows.
+	constexpr long long	HTClient		= 1;	//In a client area.
+	constexpr long long	HTCaption		= 2;	//In a title bar.
+	constexpr long long	HTSysMenu		= 3;	//In a window menu or in a Close button in a child window.
+	constexpr long long	HTSize			= 4;	//In a size box (same as HTGROWBOX).
+	constexpr long long	HTGrowBox		= 4;	//In a size box (same as HTSIZE).
+	constexpr long long	HTMenu			= 5;	//In a menu.
+	constexpr long long	HTHScroll		= 6;	//In a horizontal scroll bar.
+	constexpr long long	HTVScroll		= 7;	//In the vertical scroll bar.
+	constexpr long long	HTMinButton		= 8;	//In a Minimize button.
+	constexpr long long	HTReduce		= 8;	//In a Minimize button.
+	constexpr long long	HTMaxButton		= 9;	//In a Maximize button.
+	constexpr long long	HTZoom			= 9;
+	constexpr long long	HTLeft			= 10;	//In the left border of a resizable window (the user can click the mouse to resize the window horizontally).
+	constexpr long long	HTRight			= 11;	//In the right border of a resizable window (the user can click the mouse to resize the window horizontally).	
+	constexpr long long	HTTop			= 12;	//In the upper-horizontal border of a window.
+	constexpr long long	HTTopLeft		= 13;	//In the upper-left corner of a window border.
+	constexpr long long	HTTopRight		= 14;	//In the upper-right corner of a window border.	
+	constexpr long long	HTBottom		= 15;	//In the lower-horizontal border of a resizable window (the user can click the mouse to resize the window vertically).
+	constexpr long long	HTBottomLeft	= 16;	//In the lower-left corner of a border of a resizable window (the user can click the mouse to resize the window diagonally).
+	constexpr long long	HTBottomRight	= 17;	//In the lower-right corner of a border of a resizable window (the user can click the mouse to resize the window diagonally).
+	constexpr long long	HTBorder		= 18;	//In the border of a window that does not have a sizing border.
+	constexpr long long	HTClose			= 20;	//In a Close button.	
+	constexpr long long	HTHelp			= 21;	//In a Help button.	
+
 }}}//qor::platform::nswindows
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS
