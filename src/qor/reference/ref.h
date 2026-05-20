@@ -245,7 +245,7 @@ namespace qor{
 		}
 
 		template< class TDerived >
-		Ref< TDerived > AsRef(void)
+		Ref< TDerived > AsRef(void) const
 		{
 			if (m_p && ( dynamic_cast<TDerived*>(m_p->ptr()) != nullptr ))
 			{
