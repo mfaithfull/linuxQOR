@@ -89,6 +89,7 @@ painting/paintsession.cpp
 painting/windowpainter.cpp
 view/layout/layout.cpp
 view/layout/windowlayoutitem.cpp
+view/layout/vbox.cpp
 )
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
