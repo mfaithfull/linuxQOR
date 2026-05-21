@@ -24,30 +24,29 @@
 
 #include "src/configuration/configuration.h"
 
-#include "listbox.h"
-#include "src/platform/os/windows/common/stringconv.h"
-#include "../view/handlers/base.h"
-#include "../view/layout/windowlayoutitem.h"
+#include "mdiclient.h"
+#include "../messages.h"
 
-#include "src/platform/os/windows/api_layer/user/user32.h"
-
-using namespace qor::nswindows::api;
-using namespace qor::platform::nswindows::gui::view;
-
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
     
-    ListBox::ListBox() : Window()
+    bool MDIClientHandler::ProcessMessage(Window& Window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam)
     {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
+        switch (msg)
+        {
+            case wmMDIActivate:
+            {
+                return false;
+            }
+            case wmMDIDestroy:
+            {                
+                return false;
+            }
+            case wmMDIGetActive:
+            {
+                return false;
+            }
+        }
+        return false;
     }
-
-    ListBox::ListBox(const PrimitiveHandle& h) : Window(h)
-    {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
-    }
-
-}}}//qor::platform::nswindows
+    
+}}}}}//qor::platform::nswindows::gui::view

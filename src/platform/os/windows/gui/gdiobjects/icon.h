@@ -28,6 +28,7 @@
 #include <string>
 
 #include "src/platform/compiler/compiler.h"
+#include "gdiobject.h"
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "src/platform/os/windows/common/constants.h"
 #include "src/platform/os/windows/common/structures.h"
@@ -61,8 +62,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     public:
 
-        explicit Icon(const PrimitiveHandle& h);
-        Icon(const Handle& h);
+        explicit Icon(const PrimitiveHandle& h, bool own = true);
         Icon(const Icon& src);
         Icon(void* hInstance, int nWidth, int nHeight, byte cPlanes, byte cBitsPixel, const byte* lpbANDbits, const byte* lpbXORbits);
         Icon(byte* presbits, unsigned long dwResSize, bool fIcon, unsigned long dwVer);
@@ -71,7 +71,7 @@ namespace qor{ namespace platform { namespace nswindows{
         Icon(void* hInstance, std::string lpIconName);
         Icon(const wchar_t* id);
         virtual ~Icon();
-        const Handle& GetHandle() const;
+        const PrimitiveHandle& GetHandle() const;
         Icon Clone();
         bool Draw(void* hDC, int X, int Y);
         bool DrawEx(void* hdc, int xLeft, int yTop, void* hIcon, int cxWidth, int cyWidth, unsigned int istepIfAniCur, const Handle& hbrFlickerFreeDraw, unsigned int diFlags);
@@ -82,8 +82,11 @@ namespace qor{ namespace platform { namespace nswindows{
         static unsigned int PrivateExtractT(const std::string& lpszFile, int nIconIndex, int cxIcon, int cyIcon, void** phicon, unsigned int* piconid, unsigned int nIcons, unsigned int flags);
 
     protected:
+        
+        PrimitiveHandle m_handle;
 
-        Handle m_handle;
+    private:
+        bool m_owning;
     };
 
 }}}//qor::platform::nswindows

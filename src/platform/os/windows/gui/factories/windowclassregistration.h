@@ -50,12 +50,12 @@ namespace qor{ namespace platform { namespace nswindows{
         int ClassExtra();
         int WindowExtra();
         const PrimitiveHandle& Instance();
-        const Handle& Icon();
-        const Handle& Cursor();
+        const PrimitiveHandle& Icon();
+        const PrimitiveHandle& Cursor();
         const Handle& BackgroundBrush();
         const TCHAR* MenuName();
         const TCHAR* Name();
-        const Handle& SmallIcon();
+        const PrimitiveHandle& SmallIcon();
 
         void SetStyle(unsigned int style);
         void SetMessageFunction(messageFunc f);
@@ -76,12 +76,12 @@ namespace qor{ namespace platform { namespace nswindows{
         int m_classExtra{0};
         int m_windowExtra{0};
         PrimitiveHandle m_hInstance{nullptr};
-        Handle m_hIcon{nullptr};
-        Handle m_hCursor{nullptr};
+        PrimitiveHandle m_hIcon{nullptr};
+        PrimitiveHandle m_hCursor{nullptr};
         Handle m_hbrBackground{nullptr};
         tstring m_className;
         tstring m_menuName;
-        Handle m_hIconSm{nullptr};
+        PrimitiveHandle m_hIconSm{nullptr};
        
     };
 

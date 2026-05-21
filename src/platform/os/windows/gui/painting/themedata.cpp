@@ -29,6 +29,8 @@
 
 #include "src/platform/os/windows/api_layer/uxtheme/uxtheme.h"
 
+#undef DrawTextEx
+
 using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
@@ -61,6 +63,11 @@ namespace qor{ namespace platform { namespace nswindows{
         return UXTheme::GetThemeSysSize((HTHEME)(m_handle.Use()), sizeId);
     }
 
+    long ThemeData::GetSysFont(int fontId, LogFont& logFont)
+    {
+        return UXTheme::GetThemeSysFont((HTHEME)(m_handle.Use()), fontId, reinterpret_cast<LOGFONTW*>(&logFont));
+    }
+
     long ThemeData::DrawBackground(DeviceContext& dc, int partId, int stateId, const Rect& rect, Rect& clipRect)
     {
         return UXTheme::DrawThemeBackground((HTHEME)(m_handle.Use()), (HDC)(dc.GetHandle().Use()), partId, stateId, reinterpret_cast<LPCRECT>(&rect), reinterpret_cast<LPCRECT>(&clipRect));
@@ -69,6 +76,16 @@ namespace qor{ namespace platform { namespace nswindows{
     long ThemeData::DrawEdge(DeviceContext& dc, int partId, int stateId, const Rect& destRect,unsigned int edge, unsigned int flags, Rect& contentRect)
     {
         return UXTheme::DrawThemeEdge((HTHEME)(m_handle.Use()), (HDC)(dc.GetHandle().Use()), partId, stateId, reinterpret_cast<LPCRECT>(&destRect), edge, flags, reinterpret_cast<LPRECT>(&contentRect));
+    }
+
+    long ThemeData::DrawTextEx(DeviceContext& dc, int partId, int stateId, const std::wstring& text, unsigned long flags, Rect& rect)
+    {
+        return UXTheme::DrawThemeTextEx((HTHEME)(m_handle.Use()), (HDC)(dc.GetHandle().Use()), partId, stateId, text.c_str(), static_cast<int>(text.size()), flags, reinterpret_cast<LPRECT>(&rect), nullptr);
+    }
+
+    long ThemeData::DrawTextEx(DeviceContext& dc, int partId, int stateId, const std::wstring& text, unsigned long flags, Rect& rect, const DTTOpts& options)
+    {
+        return UXTheme::DrawThemeTextEx((HTHEME)(m_handle.Use()), (HDC)(dc.GetHandle().Use()), partId, stateId, text.c_str(), static_cast<int>(text.size()), flags, reinterpret_cast<LPRECT>(&rect), reinterpret_cast<const DTTOPTS *>(&options));
     }
 
 }}}//qor::platform::nswindow

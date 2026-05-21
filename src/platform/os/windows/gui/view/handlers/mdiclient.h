@@ -22,32 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_MDICLIENT
+#define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_MDICLIENT
 
-#include "listbox.h"
-#include "src/platform/os/windows/common/stringconv.h"
-#include "../view/handlers/base.h"
-#include "../view/layout/windowlayoutitem.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 
-#include "src/platform/os/windows/api_layer/user/user32.h"
+#include "abstractwindowhandler.h"
+#include "../../window.h"
 
-using namespace qor::nswindows::api;
-using namespace qor::platform::nswindows::gui::view;
+namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 
-namespace qor{ namespace platform { namespace nswindows{
-    
-    ListBox::ListBox() : Window()
+    class qor_pp_module_interface(QOR_WINGUI) MDIClientHandler : public AbstractWindowHandler
     {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
-    }
+    public:
 
-    ListBox::ListBox(const PrimitiveHandle& h) : Window(h)
-    {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
-    }
+        MDIClientHandler() = default;
+        virtual ~MDIClientHandler() = default;
+        
+        virtual bool ProcessMessage(Window& Window, long long& lResult, unsigned int msg, unsigned long long wParam, long long lParam);
 
-}}}//qor::platform::nswindows
+    };
+
+}}}}}//qor::platform::nswindows::gui::view
+
+#endif//QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASE

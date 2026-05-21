@@ -24,10 +24,10 @@
 
 #include "src/configuration/configuration.h"
 
-#include "listbox.h"
+#include "mdiclient.h"
 #include "src/platform/os/windows/common/stringconv.h"
 #include "../view/handlers/base.h"
-#include "../view/layout/windowlayoutitem.h"
+#include "../view/layout/vbox.h"
 
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
@@ -36,18 +36,18 @@ using namespace qor::platform::nswindows::gui::view;
 
 namespace qor{ namespace platform { namespace nswindows{
     
-    ListBox::ListBox() : Window()
-    {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
+    MDIClient::MDIClient() : Window()
+    {                
+        SetLayout(new_ref<VBox>(this));
+        m_layout->SetMinSize(Size{64,64});//TEMP:
+        m_layout->SetMaxSize(Size{16384,16384});
     }
 
-    ListBox::ListBox(const PrimitiveHandle& h) : Window(h)
+    MDIClient::MDIClient(const PrimitiveHandle& h) : Window(h)
     {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
+        SetLayout(new_ref<VBox>(this));
+        m_layout->SetMinSize(Size{64,64});//TEMP:
+        m_layout->SetMaxSize(Size{16384,16384});
     }
 
 }}}//qor::platform::nswindows

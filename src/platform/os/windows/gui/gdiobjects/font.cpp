@@ -58,9 +58,9 @@ namespace qor{ namespace platform { namespace nswindows{
         return new_ref<Font>(PrimitiveHandle(GDI32::CreateFontT(height, width, escapement, orientation, weight, italic, underline, strikeOut, charSet, outputPrecision, clipPrecision, quality, pitchAndFamily, face.c_str())), true);
     }
     
-    ref_of<Font>::type Font::Create(const LogFont* font)
+    ref_of<Font>::type Font::Create(const LogFont& font)
     {
-        return new_ref<Font>(PrimitiveHandle(GDI32::CreateFontIndirectT(reinterpret_cast< const ::LOGFONT*>(font))), true);
+        return new_ref<Font>(PrimitiveHandle(GDI32::CreateFontIndirectT(reinterpret_cast< const ::LOGFONT*>(&font))), true);
     }
 
     ref_of<Font>::type Font::Create(const EnumLogFontExDV* enumlfex)

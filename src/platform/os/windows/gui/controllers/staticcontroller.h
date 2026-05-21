@@ -22,32 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_WINDOWS_GUI_CONTROLLERS_STATIC
+#define QOR_PP_H_WINDOWS_GUI_CONTROLLERS_STATIC
 
-#include "listbox.h"
-#include "src/platform/os/windows/common/stringconv.h"
-#include "../view/handlers/base.h"
-#include "../view/layout/windowlayoutitem.h"
+#include "windowcontroller.h"
+#include "../windows/static.h"
+#include "../gdiobjects/bitmap.h"
+#include "../gdiobjects/cursor.h"
+#include "../gdiobjects/enhmetafile.h"
+#include "../gdiobjects/icon.h"
 
-#include "src/platform/os/windows/api_layer/user/user32.h"
 
-using namespace qor::nswindows::api;
-using namespace qor::platform::nswindows::gui::view;
+//All types on this interface must be portable
+namespace qor{ namespace platform { namespace nswindows{ 
 
-namespace qor{ namespace platform { namespace nswindows{
-    
-    ListBox::ListBox() : Window()
+    class qor_pp_module_interface(QOR_WINGUI) StaticController : public WindowController
     {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
-    }
+    public:
 
-    ListBox::ListBox(const PrimitiveHandle& h) : Window(h)
-    {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
-    }
+        StaticController();        
+        StaticController(ref_of<Static>::type button);
+        virtual ~StaticController() = default;
+
+        ref_of<Bitmap>::type GetBitmap() const;
+        ref_of<Cursor>::type GetCursor() const;
+        ref_of<EnhancedMetaFile>::type GetEnhMetaFile() const;
+        ref_of<Icon>::type GetIcon() const;
+        ref_of<Bitmap>::type SetBitmap(ref_of<Bitmap>::type bitmap) const;
+        ref_of<Cursor>::type SetCursor(ref_of<Cursor>::type cursor) const;
+        ref_of<EnhancedMetaFile>::type SetEnhMetaFile(ref_of<EnhancedMetaFile>::type metaFile) const;
+        ref_of<Icon>::type SetIcon(ref_of<Icon>::type icon) const;
+        virtual unsigned short GetId() const;
+    };
 
 }}}//qor::platform::nswindows
+
+#endif//QOR_PP_H_WINDOWS_GUI_CONTROLLERS_STATIC

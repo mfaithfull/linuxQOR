@@ -81,9 +81,6 @@ namespace qor{ namespace platform { namespace nswindows{
         Static();        
         Static(const PrimitiveHandle& h);
 
-    protected:
-    
-
     };
         
 }}}//qor::platform::nswindows

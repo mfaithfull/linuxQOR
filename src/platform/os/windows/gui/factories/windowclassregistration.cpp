@@ -65,12 +65,12 @@ namespace qor{ namespace platform { namespace nswindows{
         return m_hInstance;
     }
 
-    const Handle& WindowClass::Icon()
+    const PrimitiveHandle& WindowClass::Icon()
     {
         return m_hIcon;
     }
     
-    const Handle& WindowClass::Cursor()
+    const PrimitiveHandle& WindowClass::Cursor()
     {
         return m_hCursor;
     }
@@ -90,7 +90,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return m_className.c_str();
     }
 
-    const Handle& WindowClass::SmallIcon()
+    const PrimitiveHandle& WindowClass::SmallIcon()
     {
         return m_hIconSm;
     }

@@ -33,6 +33,16 @@ namespace qor{ namespace platform { namespace nswindows{
 
     class EnhancedMetaFile : public GDIObject
     {
+    public:
+
+        explicit EnhancedMetaFile(const PrimitiveHandle& h, bool own = true);
+
+    protected:
+        
+        PrimitiveHandle m_handle;
+
+    private:
+        bool m_owning;
 
     };
     

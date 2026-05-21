@@ -32,69 +32,67 @@ using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
 
-    Icon::Icon(const PrimitiveHandle& h) : m_handle(h.Use())
+    Icon::Icon(const PrimitiveHandle& h, bool own) : m_handle(h.Use()), m_owning(own)
     {
-        m_handle.DontClose();
     }
     
-    Icon::Icon(const Handle& h) : m_handle(h)
-    {
-    }
-
-    Icon::Icon(const Icon& src) : m_handle( User32::CopyIcon(reinterpret_cast<HICON>(src.m_handle.Use())))
+    Icon::Icon(const Icon& src) : m_handle( User32::CopyIcon(reinterpret_cast<HICON>(src.m_handle.Use()))), m_owning(true)
     {
     }
 
     Icon::Icon(void* hInstance, int nWidth, int nHeight, byte cPlanes, byte cBitsPixel, const byte* lpbANDbits, const byte* lpbXORbits)
     {
         m_handle = User32::CreateIcon(reinterpret_cast<HINSTANCE>(hInstance), nWidth, nHeight, cPlanes, cBitsPixel, lpbANDbits, lpbXORbits);
+        m_owning = true;
     }
 
     Icon::Icon(byte* presbits, unsigned long dwResSize, bool fIcon, unsigned long dwVer)
     {
         m_handle = User32::CreateIconFromResource(presbits, dwResSize, fIcon ? 1:0, dwVer);
+        m_owning = true;
     }
 
     Icon::Icon(byte* pbIconBits, unsigned long cbIconBits, bool fIcon, unsigned long dwVer, int cxDesired, int cyDesired, unsigned int uFlags)
     {
         m_handle = User32::CreateIconFromResourceEx(pbIconBits, cbIconBits, fIcon ? 1:0, dwVer, cxDesired, cyDesired, uFlags);
+        m_owning = true;
     }
 
     Icon::Icon(IconInfo& iconinfo)
     {
         m_handle = User32::CreateIconIndirect(reinterpret_cast<const ::ICONINFO*>(&iconinfo));
+        m_owning = true;
     }
 
     Icon::Icon(void* hInstance, std::string lpIconName)
     {
         m_handle = User32::LoadIconT(reinterpret_cast<HINSTANCE>(hInstance), to_tstring(lpIconName.c_str()).c_str());
+        m_owning = true;
     }
 
     Icon::Icon(const wchar_t* id)
     {
         m_handle = User32::LoadIconT(reinterpret_cast<HINSTANCE>(nullptr), id);
-        m_handle.DontClose();
+        m_owning = true;
     }
     
     Icon::~Icon()
     {
-        if(m_handle.NeedsClose())
+        if(m_owning)
         {
             User32::DestroyIcon(reinterpret_cast<HICON>(m_handle.Use()));
-            m_handle.DontClose();
         }
     }
     
-    const Handle& Icon::GetHandle() const
+    const PrimitiveHandle& Icon::GetHandle() const
     {
         return m_handle;
     }
     
     Icon Icon::Clone()
     {
-        Handle h(User32::CopyIcon(reinterpret_cast<HICON>(m_handle.Use())));
-        Icon i(h);
-        return i;
+        PrimitiveHandle h(User32::CopyIcon(reinterpret_cast<HICON>(m_handle.Use())));
+        return Icon(h, true);
     }
 
     bool Icon::Draw(void* hDC, int X, int Y)

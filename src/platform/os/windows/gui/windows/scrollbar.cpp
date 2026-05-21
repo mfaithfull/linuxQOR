@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 
-#include "listbox.h"
+#include "scrollbar.h"
 #include "src/platform/os/windows/common/stringconv.h"
 #include "../view/handlers/base.h"
 #include "../view/layout/windowlayoutitem.h"
@@ -36,17 +36,17 @@ using namespace qor::platform::nswindows::gui::view;
 
 namespace qor{ namespace platform { namespace nswindows{
     
-    ListBox::ListBox() : Window()
-    {
+    ScrollBar::ScrollBar() : Window()
+    {                
         SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
+        m_layout->SetMinSize(Size{10,10});//TEMP:
         m_layout->SetMaxSize(Size{500,500});
     }
 
-    ListBox::ListBox(const PrimitiveHandle& h) : Window(h)
+    ScrollBar::ScrollBar(const PrimitiveHandle& h) : Window(h)
     {
         SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
+        m_layout->SetMinSize(Size{10,10});//TEMP:
         m_layout->SetMaxSize(Size{500,500});
     }
 

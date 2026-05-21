@@ -103,44 +103,6 @@ public:
             if(dc)
             {
                 //Do nothing as we don't really have a non client area anymore
-                /*
-                // Paint into this DC 
-                Rect rc;
-                controller->GetRect(rc);
-                rc.m_right = rc.m_right-rc.m_left;
-                rc.m_left = 0;
-                rc.m_bottom = rc.m_bottom - rc.m_top;
-                rc.m_top = 0;
-                dc->FillRect(rc, Brush::DarkGrayBrush());
-                rc.m_bottom = 32;
-                controller->DrawCaption(dc, &rc, DCGradient | DCIcon | DCText | (customWindowActive ? DCActive : 0));
-
-                auto themeData = new_ref<ThemeData>(window, L"Window");
-                
-                rc.m_bottom = rc.m_top + themeData->GetSysSize(SMCYSIZE) + themeData->GetSysSize(SMCXPADDEDBORDER) * 2;
-                themeData->DrawBackground(dc()(), WPCAPTION, customWindowActive ? CSActive : CSInactive, rc, rc);
-                
-         
-                // load the caption font and save the old one
-                LOGFONTW captionfont = {};
-                GetThemeSysFont(htheme, TMT_CAPTIONFONT, &captionfont);
-                HFONT newfont = CreateFontIndirect(&captionfont);
-                HGDIOBJ oldfont = SelectObject(hdc, newfont);
-
-                // center the font and draw
-                rect.top += GetThemeSysSize(htheme, SM_CXPADDEDBORDER);
-                DrawThemeTextEx(htheme, hdc, WP_CAPTION, CS_ACTIVE, CUSTOM_CAPTION, -1, DT_CENTER, &rect, NULL);
-
-                // cleanup fonts
-                SelectObject(hdc, oldfont);
-                DeleteObject(newfont);
-
-                // adjust draw location, load icon and draw
-                rect.left += GetThemeSysSize(htheme, SM_CXPADDEDBORDER) * 2;
-                rect.top += GetThemeSysSize(htheme, SM_CXPADDEDBORDER);
-                HICON icon = (HICON) LoadImage(NULL, MAKEINTRESOURCE(IDI_APPLICATION), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE);
-                DrawIconEx(hdc, rect.left, rect.top, icon, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0, NULL, DI_NORMAL);
-                */
             }
         }
         return true;
@@ -206,7 +168,7 @@ public:
         {
             Rect rc;
             controller->GetClientRect(rc);
-            dc.FillRect(rc, Brush::DarkGrayBrush());
+            //dc.FillRect(rc, Brush::DarkGrayBrush());
         }
         return true;
     }
@@ -220,6 +182,33 @@ public:
             controller->GetClientRect(rc);
             auto paintSession = new_ref<PaintSession>(&window);
             auto dc = paintSession->GetDC();
+
+            auto themeData = new_ref<ThemeData>(window, L"Window");
+            
+            rc.m_bottom = rc.m_top + themeData->GetSysSize(SMCYSIZE) + themeData->GetSysSize(SMCXPADDEDBORDER) * 2;
+            themeData->DrawBackground(dc()(), WPCAPTION, true ? CSActive : CSInactive, rc, rc);
+                    
+            // load the caption font and save the old one
+            LogFont captionfont = {};
+            themeData->GetSysFont(ThemeData::CaptionFont, captionfont);
+            auto newFont = Font::Create(captionfont);
+            auto oldFont = dc->SelectObject(newFont->GetHandle());
+            
+            // center the font and draw
+            rc.m_top += themeData->GetSysSize(SMCXPADDEDBORDER);
+            themeData->DrawTextEx(dc()(), WPCAPTION, CSActive, L"Custom Caption", DTCenter, rc);
+
+            // cleanup fonts
+            dc->SelectObject(oldFont);
+            
+            // adjust draw location, load icon and draw
+            rc.m_left += themeData->GetSysSize(SMCXPADDEDBORDER) * 2;
+            rc.m_top += themeData->GetSysSize(SMCXPADDEDBORDER);
+            //auto icon = new_ref<Icon>(NULL, MAKEINTRESOURCE(IDI_APPLICATION), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE);
+            ////HICON icon = (HICON) LoadImage(NULL, MAKEINTRESOURCE(IDI_APPLICATION), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE);
+            //icon->DrawEx(dc()(), rect.left, rect.top, icon, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0, NULL, DI_NORMAL);
+            
+            controller->GetClientRect(rc);
             Size size;
             dc->GetTextExtentPoint32T(L"Hello, Windows!", 15, &size);
             dc->TextOutT((rc.Width()/2)-(size.m_x/2), (rc.Height()/2) - (size.m_y/2), L"Hello, Windows!", 15); 

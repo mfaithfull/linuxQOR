@@ -24,30 +24,29 @@
 
 #include "src/configuration/configuration.h"
 
-#include "listbox.h"
+#include "scrollbarcontroller.h"
+#include "../perthread.h"
+#include "src/platform/os/windows/gui/view/messages.h"
 #include "src/platform/os/windows/common/stringconv.h"
-#include "../view/handlers/base.h"
-#include "../view/layout/windowlayoutitem.h"
-
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
 using namespace qor::nswindows::api;
-using namespace qor::platform::nswindows::gui::view;
+
+#define WINDOW_HANDLE (HWND)(m_window->GetHandle().Use())
 
 namespace qor{ namespace platform { namespace nswindows{
+
+    ScrollBarController::ScrollBarController() : WindowController(){}
+    ScrollBarController::ScrollBarController(ref_of<ScrollBar>::type scrollbar) : WindowController(scrollbar.AsRef<Window>())
+    {
+        scrollbar->SetController(this);
+    }
+
+    unsigned short ScrollBarController::GetId() const
+    {
+        return static_cast<unsigned short>(User32::GetDlgCtrlID(WINDOW_HANDLE));
+    }
     
-    ListBox::ListBox() : Window()
-    {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
-    }
-
-    ListBox::ListBox(const PrimitiveHandle& h) : Window(h)
-    {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
-    }
-
 }}}//qor::platform::nswindows
+
+#undef WINDOW_HANDLE

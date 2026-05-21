@@ -88,13 +88,8 @@ namespace qor{ namespace platform { namespace nswindows{
 
         LogFont GetLogFont() const;
         static ref_of<Font>::type Create(int height, int width, int escapement, int orientation, int weight, unsigned long italic, unsigned long underline, unsigned long strikeOut, unsigned long charSet, unsigned long outputPrecision, unsigned long clipPrecision, unsigned long quality, unsigned long pitchAndFamily, const tstring& lpszFace);
-        static ref_of<Font>::type Create(const LogFont* font);
+        static ref_of<Font>::type Create(const LogFont& font);
         static ref_of<Font>::type Create(const EnumLogFontExDV* enumlfex);
-/*        
-        
-        static HFONT CreateFontIndirectExT(CONST::ENUMLOGFONTEXDV* penumlfex);
-
-*/        
     };
     
 }}}//qor::platform::nswindows

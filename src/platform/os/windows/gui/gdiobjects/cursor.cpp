@@ -33,16 +33,15 @@ using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
 
-    Cursor::Cursor(const PrimitiveHandle& h) : m_handle(h.Use()), m_bNeedsDestroy(false)
-    {
-        m_handle.DontClose();
+    Cursor::Cursor(const PrimitiveHandle& h, bool own) : m_handle(h.Use()), m_owning(own)
+    {        
     }
 
-    Cursor::Cursor(const Cursor& src) : m_bNeedsDestroy(src.m_bNeedsDestroy),m_handle(src.m_handle)
+    Cursor::Cursor(const Cursor& src) : m_owning(false),m_handle(src.m_handle)
     {
     }
 
-    const Handle& Cursor::GetHandle() const
+    const PrimitiveHandle& Cursor::GetHandle() const
     {
         return m_handle;
     }
@@ -51,7 +50,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {
         m_handle = User32::CreateCursor(
             reinterpret_cast<HINSTANCE>(hInst), xHotSpot, yHotSpot, nWidth, nHeight, pvANDPlane, pvXORPlane);
-        m_bNeedsDestroy = true;
+        m_owning = true;
     }
 
     Cursor::Cursor(void* hInstance, const std::string& cursorName)
@@ -59,35 +58,34 @@ namespace qor{ namespace platform { namespace nswindows{
         m_handle = User32::LoadCursorT(
             reinterpret_cast<HINSTANCE>(hInstance),
             to_tstring(cursorName.c_str()).c_str());
-        m_bNeedsDestroy = false;
+        m_owning = false;
     }
     
     Cursor::Cursor(const std::string& fileName)
     {
         m_handle = User32::LoadCursorFromFileT(to_tstring(fileName.c_str()).c_str());
-        m_bNeedsDestroy = true;
+        m_owning = true;
     }
 
     Cursor::Cursor(const wchar_t* id)
     {
         m_handle = User32::LoadCursorT( reinterpret_cast<HINSTANCE>(nullptr), id);
-        m_handle.DontClose();
-        m_bNeedsDestroy = false;
+        m_owning = false;
     }
     
     Cursor::~Cursor()
     {
-        if(m_bNeedsDestroy)
+        if(m_owning)
         {
             User32::DestroyCursor(reinterpret_cast<HCURSOR>(m_handle.Use()));
+            m_owning = false;
         }
     }
 
     Cursor Cursor::Clone()
     {
         Cursor c(PrimitiveHandle(User32::CopyCursorT(
-            reinterpret_cast<HCURSOR>(m_handle.Use()))));
-        c.m_bNeedsDestroy = true;
+            reinterpret_cast<HCURSOR>(m_handle.Use()))), true);
         return c;
     }
 
@@ -114,7 +112,7 @@ namespace qor{ namespace platform { namespace nswindows{
     Cursor Cursor::GetCurrent()
     {
         PrimitiveHandle h(User32::GetCursor());
-        Cursor c(h);
+        Cursor c(h, false);
         return c;
     }
 

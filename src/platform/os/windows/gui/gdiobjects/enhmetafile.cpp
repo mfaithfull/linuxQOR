@@ -32,5 +32,8 @@ using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
     
-
+    EnhancedMetaFile::EnhancedMetaFile(const PrimitiveHandle& h, bool own) : GDIObject(h,OEnhMetaFile,own)
+    {
+    }
+    
 }}}//qor::platform::nswindows

@@ -47,7 +47,7 @@ namespace qor{ namespace platform { namespace nswindows{
     {
     public:
 
-        Cursor(const PrimitiveHandle& h);
+        explicit Cursor(const PrimitiveHandle& h, bool own = true);
         Cursor(const Cursor& src);
         Cursor(void* hInst, int xHotSpot, int yHotSpot, int nWidth, int nHeight, const void* pvANDPlane, const void* pvXORPlane);
         Cursor(void* hInstance, const std::string& cursorName);
@@ -56,7 +56,7 @@ namespace qor{ namespace platform { namespace nswindows{
         virtual ~Cursor();
 
         Cursor Clone();
-        const Handle& GetHandle() const;
+        const PrimitiveHandle& GetHandle() const;
 
         bool Clip(const Rect& rect);
         bool GetClip(Rect& rect);
@@ -71,8 +71,11 @@ namespace qor{ namespace platform { namespace nswindows{
         bool SetAsSystemCursor(unsigned long id);
 
     protected:
-        bool m_bNeedsDestroy;
-        Handle m_handle;
+        PrimitiveHandle m_handle;
+
+    private:
+        bool m_owning;
+
     };
 
 }}}//qor::platform::nswindows

@@ -22,32 +22,25 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_WINDOWS_GUI_CONTROLLERS_MDICLIENT
+#define QOR_PP_H_WINDOWS_GUI_CONTROLLERS_MDICLIENT
 
-#include "listbox.h"
-#include "src/platform/os/windows/common/stringconv.h"
-#include "../view/handlers/base.h"
-#include "../view/layout/windowlayoutitem.h"
+#include "windowcontroller.h"
+#include "../windows/mdiclient.h"
 
-#include "src/platform/os/windows/api_layer/user/user32.h"
+namespace qor{ namespace platform { namespace nswindows{ 
 
-using namespace qor::nswindows::api;
-using namespace qor::platform::nswindows::gui::view;
-
-namespace qor{ namespace platform { namespace nswindows{
-    
-    ListBox::ListBox() : Window()
+    class qor_pp_module_interface(QOR_WINGUI) MDIClientController : public WindowController
     {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
-    }
+    public:
 
-    ListBox::ListBox(const PrimitiveHandle& h) : Window(h)
-    {
-        SetLayout(new_ref<WindowLayoutItem>(this));
-        m_layout->SetMinSize(Size{300,10});//TEMP:
-        m_layout->SetMaxSize(Size{500,500});
-    }
+        MDIClientController();        
+        MDIClientController(ref_of<MDIClient>::type mdiclient);
+        virtual ~MDIClientController() = default;
+        virtual unsigned short GetId() const;
+        
+    };
 
 }}}//qor::platform::nswindows
+
+#endif//QOR_PP_H_WINDOWS_GUI_CONTROLLERS_MDICLIENT

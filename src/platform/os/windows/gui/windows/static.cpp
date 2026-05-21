@@ -37,13 +37,17 @@ using namespace qor::platform::nswindows::gui::view;
 namespace qor{ namespace platform { namespace nswindows{
     
     Static::Static() : Window()
-    {        
+    {                
         SetLayout(new_ref<WindowLayoutItem>(this));
+        m_layout->SetMinSize(Size{10,10});//TEMP:
+        m_layout->SetMaxSize(Size{500,500});
     }
 
     Static::Static(const PrimitiveHandle& h) : Window(h)
     {
         SetLayout(new_ref<WindowLayoutItem>(this));
+        m_layout->SetMinSize(Size{10,10});//TEMP:
+        m_layout->SetMaxSize(Size{500,500});
     }
 
 }}}//qor::platform::nswindows
