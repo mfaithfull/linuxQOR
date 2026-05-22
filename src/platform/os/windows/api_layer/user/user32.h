@@ -524,9 +524,9 @@ namespace qor { namespace nswindows { namespace api {
         DWORD GetListBoxInfo(HWND hwnd);
 
         //Combo Box functions
-        int DlgDirListComboBox(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype);
-        BOOL DlgDirSelectComboBoxEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox);
-        BOOL GetComboBoxInfo(HWND hwndCombo, PCOMBOBOXINFO pcbi);
+        static int DlgDirListComboBox(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype);
+        static BOOL DlgDirSelectComboBoxEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox);
+        static BOOL GetComboBoxInfo(HWND hwndCombo, PCOMBOBOXINFO pcbi);
         
         //Mouse functions
         static BOOL DragDetect(HWND hwnd, ::POINT pt);
@@ -547,18 +547,18 @@ namespace qor { namespace nswindows { namespace api {
         static LONG TabbedTextOutT(HDC hDC, int X, int Y, LPCTSTR lpString, int nCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin);
         
         //ScrollBar functions
-        BOOL EnableScrollBar(HWND hWnd, UINT wSBFlags, UINT wArrows);
-        BOOL GetScrollBarInfo(HWND hwnd, LONG idObject, ::PSCROLLBARINFO psbi);
-        BOOL GetScrollInfo(HWND hwnd, int fnBar, ::LPSCROLLINFO lpsi);
-        int GetScrollPos(HWND hWnd, int nBar);
-        BOOL GetScrollRange(HWND hWnd, int nBar, LPINT lpMinPos, LPINT lpMaxPos);
-        BOOL ScrollDC(HDC hDC, int dx, int dy, const ::RECT *lprcScroll, const ::RECT *lprcClip, HRGN hrgnUpdate, ::LPRECT lprcUpdate);
-        BOOL ScrollWindow(HWND hWnd, int XAmount, int YAmount, const ::RECT* lpRect, const ::RECT* lpClipRect);
-        int ScrollWindowEx(HWND hWnd, int dx, int dy, const ::RECT* prcScroll, const ::RECT* prcClip, HRGN hrgnUpdate, ::LPRECT prcUpdate, UINT flags);
-        int SetScrollInfo(HWND hwnd, int fnBar, ::LPCSCROLLINFO lpsi, BOOL fRedraw);
-        int SetScrollPos(HWND hWnd, int nBar, int nPos, BOOL bRedraw);
-        BOOL SetScrollRange(HWND hWnd, int nBar, int nMinPos, int nMaxPos, BOOL bRedraw);
-        BOOL ShowScrollBar(HWND hWnd, int wBar, BOOL bShow);
+        static BOOL EnableScrollBar(HWND hWnd, UINT wSBFlags, UINT wArrows);
+        static BOOL GetScrollBarInfo(HWND hwnd, LONG idObject, ::PSCROLLBARINFO psbi);
+        static BOOL GetScrollInfo(HWND hwnd, int fnBar, ::LPSCROLLINFO lpsi);
+        static int GetScrollPos(HWND hWnd, int nBar);
+        static BOOL GetScrollRange(HWND hWnd, int nBar, LPINT lpMinPos, LPINT lpMaxPos);
+        static BOOL ScrollDC(HDC hDC, int dx, int dy, const ::RECT *lprcScroll, const ::RECT *lprcClip, HRGN hrgnUpdate, ::LPRECT lprcUpdate);
+        static BOOL ScrollWindow(HWND hWnd, int XAmount, int YAmount, const ::RECT* lpRect, const ::RECT* lpClipRect);
+        static int ScrollWindowEx(HWND hWnd, int dx, int dy, const ::RECT* prcScroll, const ::RECT* prcClip, HRGN hrgnUpdate, ::LPRECT prcUpdate, UINT flags);
+        static int SetScrollInfo(HWND hwnd, int fnBar, ::LPCSCROLLINFO lpsi, BOOL fRedraw);
+        static int SetScrollPos(HWND hWnd, int nBar, int nPos, BOOL bRedraw);
+        static BOOL SetScrollRange(HWND hWnd, int nBar, int nMinPos, int nMaxPos, BOOL bRedraw);
+        static BOOL ShowScrollBar(HWND hWnd, int wBar, BOOL bShow);
         
         //Monitor functions
         static BOOL EnumDisplayMonitors(HDC hdc, LPCRECT lprcClip, ::MONITORENUMPROC lpfnEnum, LPARAM dwData);

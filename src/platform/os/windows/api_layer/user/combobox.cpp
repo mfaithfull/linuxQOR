@@ -22,27 +22,38 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_DESKTOP
-#define QOR_PP_H_OS_WINDOWS_DESKTOP
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
+#include "src/qor/interception/functioncontext.h"
+#include "src/qor/error/error.h"
 
-#define QOR_PP_IMPLEMENTS_DESKTOP
-#include "src/components/framework/desktop/desktop.h"
+//Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
+#include "user32.h"
+#include "../returncheck.h"
+#include "../library.h"
 
-namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSDESKTOP) ImplementsDesktop(); }
+namespace qor { namespace nswindows { namespace api {
 
-namespace qor{ namespace platform { namespace nswindows{
 
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOP) Desktop : public qor::components::Desktop
+    int User32::DlgDirListComboBox(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype)
     {
-    public:
-        Desktop() = default;
-        virtual ~Desktop() noexcept = default;
+        qor_pp_fcontext;
+        qor_pp_useswinapi(User32, DlgDirListComboBox);
+        return Library::Call<int, HWND, LPTSTR, int, int, UINT>(pFunc, hDlg, lpPathSpec, nIDComboBox, nIDStaticPath, uFiletype);
+    }
 
-        virtual void Setup();
-        virtual void Shutdown();
+    BOOL User32::DlgDirSelectComboBoxEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(User32, DlgDirSelectComboBoxEx);
+        return Library::Call<BOOL, HWND, LPTSTR, int, int>(pFunc, hDlg, lpString, nCount, nIDComboBox);
+    }
 
-    };
+    BOOL User32::GetComboBoxInfo(HWND hwndCombo, PCOMBOBOXINFO pcbi)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(User32, GetComboBoxInfo);
+        return Library::Call<BOOL, HWND, PCOMBOBOXINFO>(pFunc, hwndCombo, pcbi);
+    }
 
-}}}//qor::platform::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_DESKTOP
+}}}//qor::nswindows::api

@@ -36,7 +36,9 @@ text.cpp
 timer.cpp
 mouse.cpp
 mdi.cpp
-devicemanagement.cpp)
+devicemanagement.cpp
+combobox.cpp
+scrollbar.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
