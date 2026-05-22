@@ -37,9 +37,9 @@
 #include "src/qor/instance/threadsingleton.h"
 
 #include "window.h"
-#include "controllers/menu.h"
+#include "controllers/i_m/menu.h"
 #include "gdiobjects/devicecontext.h"
-#include "controllers/monitor.h"
+#include "controllers/i_m/monitor.h"
 
 namespace qor{ namespace platform { namespace nswindows{ 
 

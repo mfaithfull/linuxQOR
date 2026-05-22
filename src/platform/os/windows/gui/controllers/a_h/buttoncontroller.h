@@ -22,64 +22,39 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_MENUBUILDER
-#define QOR_PP_H_WINDOWS_GUI_MENUBUILDER
+#ifndef QOR_PP_H_WINDOWS_GUI_CONTROLLERS_BUTTON
+#define QOR_PP_H_WINDOWS_GUI_CONTROLLERS_BUTTON
 
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
-#include "src/platform/os/windows/common/structures.h"
-#include "src/platform/os/windows/common/handles/handle.h"
-#include "src/platform/os/windows/gui/controllers/i_m/menu.h"
+#include "../windowcontroller.h"
+#include "../../windows/a_h/button.h"
+#include "../../gdiobjects/cursor.h"
+#include "../../gdiobjects/icon.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    struct MenuItemTemplateHeader
-    {
-        unsigned short version{0};
-        unsigned short offset{0};
-    };
-
-    struct MenuItemTemplate
-    {
-        unsigned short mtOption;
-        unsigned short mtID;
-        TCHAR mtString[1];
-    };
-
-    struct MenuExTemplateHeader
-    {
-        unsigned short version{1};
-        unsigned short offset{4};
-        unsigned long helpId;
-    };
-
-    struct MenuExTemplateItem 
-    {
-        unsigned long dwType;
-        unsigned long dwState;
-        unsigned int  uId;
-        unsigned short  wFlags;        
-    };
-
-    class qor_pp_module_interface(QOR_WINGUI) MenuBuilder
+    class qor_pp_module_interface(QOR_WINGUI) ButtonController : public WindowController
     {
     public:
 
-        MenuBuilder() = default;
-        virtual ~MenuBuilder() = default;
-
-        void SetHelpId(unsigned long helpId);
-        unsigned int AddItem(const tstring& item, unsigned long type, unsigned long state, unsigned short flags);
-        ref_of<Menu>::type Build();
-
-    private:
-        size_t CalcBufferNeeded();        
-        unsigned long m_helpId{0};
-        std::vector<std::pair<MenuExTemplateItem, tstring>> m_items{};
+        ButtonController();        
+        ButtonController(ref_of<Button>::type button);
+        virtual ~ButtonController() = default;
+        ref_of<Bitmap>::type GetBitmap() const;
+        ref_of<Bitmap>::type SetBitmap(ref_of<Bitmap>::type bitmap) const;
+        unsigned int GetButtonStyle() const;
+        void SetButtonStyle(unsigned long style, bool redraw) const;
+        int GetCheck() const;
+        void SetCheck(int checkState) const;
+        ref_of<Cursor>::type GetCursor() const;
+        ref_of<Cursor>::type SetCursor(ref_of<Cursor>::type cursor) const;
+        ref_of<Icon>::type GetIcon() const;
+        ref_of<Icon>::type SetIcon(ref_of<Icon>::type icon) const;
+        unsigned int GetState() const;
+        void SetState(unsigned int state) const;
+        virtual unsigned short GetId() const;
     };
 
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI_MENUBUILDER
+#endif//QOR_PP_H_WINDOWS_GUI_CONTROLLERS_BUTTON

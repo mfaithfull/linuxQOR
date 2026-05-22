@@ -54,6 +54,12 @@ namespace qor { namespace framework{
         virtual void Setup();
         virtual void Shutdown();
 
+        //provide toolkits and rendering backends
+        //provide parameters and metrics of the actual desktop
+        //provide widgets that map onto the tookit and renderingapi in use.
+        //provide singleton objects for the GUI, such as window class registration
+        //provide access to the per thread GUI singletons for the toolkit and the renderingapi in use
+        //provide a universal system to connect UI interactions to application events.
     };
     } //framework
 

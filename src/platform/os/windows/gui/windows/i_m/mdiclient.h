@@ -22,64 +22,29 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_MENUBUILDER
-#define QOR_PP_H_WINDOWS_GUI_MENUBUILDER
+#ifndef QOR_PP_H_WINDOWS_GUI_MDICLIENT
+#define QOR_PP_H_WINDOWS_GUI_MDICLIENT
 
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
-#include "src/platform/os/windows/common/structures.h"
-#include "src/platform/os/windows/common/handles/handle.h"
-#include "src/platform/os/windows/gui/controllers/i_m/menu.h"
+#include "../../window.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    struct MenuItemTemplateHeader
-    {
-        unsigned short version{0};
-        unsigned short offset{0};
-    };
-
-    struct MenuItemTemplate
-    {
-        unsigned short mtOption;
-        unsigned short mtID;
-        TCHAR mtString[1];
-    };
-
-    struct MenuExTemplateHeader
-    {
-        unsigned short version{1};
-        unsigned short offset{4};
-        unsigned long helpId;
-    };
-
-    struct MenuExTemplateItem 
-    {
-        unsigned long dwType;
-        unsigned long dwState;
-        unsigned int  uId;
-        unsigned short  wFlags;        
-    };
-
-    class qor_pp_module_interface(QOR_WINGUI) MenuBuilder
+    class qor_pp_module_interface(QOR_WINGUI) MDIClient : public Window
     {
     public:
 
-        MenuBuilder() = default;
-        virtual ~MenuBuilder() = default;
+        //MDIClient Styles
+ 
+        //Notifications
+        //static const int NClicked        = 0;
 
-        void SetHelpId(unsigned long helpId);
-        unsigned int AddItem(const tstring& item, unsigned long type, unsigned long state, unsigned short flags);
-        ref_of<Menu>::type Build();
+        MDIClient();        
+        MDIClient(const PrimitiveHandle& h);
+        virtual ~MDIClient() = default;
 
-    private:
-        size_t CalcBufferNeeded();        
-        unsigned long m_helpId{0};
-        std::vector<std::pair<MenuExTemplateItem, tstring>> m_items{};
     };
-
+        
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI_MENUBUILDER
+#endif//QOR_PP_H_WINDOWS_GUI_MDICLIENT

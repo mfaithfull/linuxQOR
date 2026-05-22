@@ -22,64 +22,47 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_MENUBUILDER
-#define QOR_PP_H_WINDOWS_GUI_MENUBUILDER
+#ifndef QOR_PP_H_WINDOWS_GUI_MOUSE
+#define QOR_PP_H_WINDOWS_GUI_MOUSE
 
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
-#include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
-#include "src/platform/os/windows/gui/controllers/i_m/menu.h"
+#include "../../gdiobjects/devicecontext.h"
+#include "../../view/drawing/rect.h"
+#include "../../window.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    struct MenuItemTemplateHeader
+    struct MouseMovePoint
     {
-        unsigned short version{0};
-        unsigned short offset{0};
+        int   x;
+        int   y;
+        unsigned long time;
+        unsigned long long dwExtraInfo;
     };
 
-    struct MenuItemTemplate
+    struct TrackMouseEvent
     {
-        unsigned short mtOption;
-        unsigned short mtID;
-        TCHAR mtString[1];
+        unsigned long cbSize;
+        unsigned long dwFlags;
+        void*  hwndTrack;
+        unsigned long dwHoverTime;
     };
 
-    struct MenuExTemplateHeader
-    {
-        unsigned short version{1};
-        unsigned short offset{4};
-        unsigned long helpId;
-    };
-
-    struct MenuExTemplateItem 
-    {
-        unsigned long dwType;
-        unsigned long dwState;
-        unsigned int  uId;
-        unsigned short  wFlags;        
-    };
-
-    class qor_pp_module_interface(QOR_WINGUI) MenuBuilder
+    class qor_pp_module_interface(QOR_WINGUI) Mouse
     {
     public:
 
-        MenuBuilder() = default;
-        virtual ~MenuBuilder() = default;
-
-        void SetHelpId(unsigned long helpId);
-        unsigned int AddItem(const tstring& item, unsigned long type, unsigned long state, unsigned short flags);
-        ref_of<Menu>::type Build();
-
-    private:
-        size_t CalcBufferNeeded();        
-        unsigned long m_helpId{0};
-        std::vector<std::pair<MenuExTemplateItem, tstring>> m_items{};
+        static Handle GetCapture();
+        static unsigned int GetDoubleClickTime();
+        static int GetMovePointsEx(unsigned int cbSize, MouseMovePoint* pt, MouseMovePoint* pointBuffer, int pointCount, unsigned long resolution);
+        static void _event(unsigned long flags, unsigned long dx, unsigned long dy, unsigned long data, unsigned long long extraInfo);
+        static bool ReleaseCapture();
+        static bool SetDoubleClickTime(unsigned int interval);
+        static bool SwapMouseButton(bool fSwap);
+        static bool TrackMouseEvent(struct TrackMouseEvent* eventTrack);
     };
-
+    
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI_MENUBUILDER
+#endif//QOR_PP_H_WINDOWS_GUI_MOUSE

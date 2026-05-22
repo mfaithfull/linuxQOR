@@ -30,7 +30,7 @@
 #include "src/qor/reference/newref.h"
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
-#include "../windows/dialog.h"
+#include "../windows/a_h/dialog.h"
 
 namespace qor{ namespace platform { namespace nswindows{ 
 

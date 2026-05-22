@@ -31,7 +31,7 @@
 #include "src/platform/os/windows/common/constants.h"
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"
-#include "controllers/menu.h"
+#include "controllers/i_m/menu.h"
 #include "view/handlers/message.h"
 #include "view/handlers/acceleratortable.h"
 #include "view/handlers/abstractwindowhandler.h"
