@@ -25,6 +25,7 @@
 #ifndef QOR_PP_H_TESTFAILURE
 #define QOR_PP_H_TESTFAILURE
 
+#include <sstream>
 #include "detail/hascoutsupport.h"
 #include "detail/extrainformation.h"
 

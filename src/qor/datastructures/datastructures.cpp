@@ -22,7 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
+#include "src/configuration/configuration.h"
 #include "../module/module.h"
 
 qor::Module& ThisModule(void)

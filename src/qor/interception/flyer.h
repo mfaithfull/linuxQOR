@@ -44,11 +44,10 @@ namespace qor {
             const GUID* luid = guid_of<T>::guid();
             TypedAny< T > wrapper(instance);
 
-            AnyObject prev = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
+            m_previous = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
 
-            if(!prev.IsNull())
+            if(!m_previous.IsNull())
 			{                
-				m_previous = prev;
                 m_pPrevious = reinterpret_cast<const TypedAnyPointer< baseT >*>(m_previous.Ptr())->operator baseT *();
             }
             return true;

@@ -7,7 +7,7 @@ add_library(${target} SHARED datastructures.cpp guid.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE -DQOR_DATASTRUCTURES)
+target_compile_definitions(${target} PRIVATE QOR_DATASTRUCTURES)
 target_link_libraries(${target} qor_module qor_host)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

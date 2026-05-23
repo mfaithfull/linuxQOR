@@ -115,7 +115,7 @@ namespace qor {
             TheTypeRegistry()->Register( *(guid_of<I>::guid()), TypedAny< IndirectFactory<I> >(dynamic_cast< IndirectFactory<I>* >(this)));
         }
 
-        ~TypeRegEntry()
+        virtual ~TypeRegEntry()
         {
             TheTypeRegistry()->Unregister( *(guid_of<I>::guid()));
         }
@@ -127,10 +127,9 @@ namespace qor {
 
         virtual void Destruct( I* pt, size_t count = 1) const
         {
-            InternalFactory<T>::Destruct(dynamic_cast<T*>(pt), count);
+            InternalFactory<T>::Destruct(dynamic_cast<T*>(pt), count);            
         }
     };
-
 
 }//qor
 
