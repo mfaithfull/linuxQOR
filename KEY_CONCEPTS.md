@@ -3,7 +3,7 @@
 Back in the bad old days it was very common in the source tree of a project to see a folder or a file called utilities, utility or utils. 
 Have you ever seen that?
 What was in the utilities folder?
-A whole bunch of unrelated things usually which were needed in order to make the application work but weren't really specific to the application and didn't in and of themselves meet any of its requirements. 
+A whole bunch of unrelated things usually which were needed in order to make the application work but weren't really specific to the application and didn't, in and of themselves, meet any of its requirements. 
 Maybe your application needed a particular sort algorithm that the libraries on your system didn't provide or there was some hinky thing that you kept needing to do with the files your supplier was sending you to skip over their custom headers.
 How important were those things?
 Well, likely critical because otherwise no one would have written them given that they didn't by themselves meet any application requirement.
@@ -29,7 +29,7 @@ Now if you think about that, that's an oxymoron. The definition of broken is tha
 So if we change the behaviour then it will, by definition, be broken. 
 Unless of course the requirements have changed and we all know that never happens.
 
-Truly separating concerns and controlling dependencies is one of the three hardest things in software along with concurrency and bootstrapping, maybe the hardest, so this not easy and is never going to be perfect. We should however go as hard as we can to drive out unnecessary coupling at all levels.
+Truly separating concerns and controlling dependencies is one of the three hardest things in software along with concurrency and bootstrapping, maybe the hardest, so this is not easy and is never going to be perfect. We should however go as hard as we can to drive out unnecessary coupling at all levels.
 
 
 # Self aware software

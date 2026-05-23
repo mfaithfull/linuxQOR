@@ -4,7 +4,6 @@ The QOR takes inspiration and some large chunks of code from the Boost libraries
 http://www.boost.org
 In partcular the preprocessor library and the pfr reflection library as well as our top level license
 
-
 qor_test is forked from Yaffut by mrAtari
 https://github.com/mrAtari/yaffut
 
@@ -23,7 +22,6 @@ If you're a developer with less than fifteen years experience and you're not on 
 
 The rculist in qor_datastructres and the whole of qor_signals is forked from Copper Spice csSignal library
 https://github.com/copperspice/cs_signal
-
 
 The thread pool implementation in qor_thread is adapted from BS thread_pool.
 https://github.com/bshoshany/thread-pool
