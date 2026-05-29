@@ -5,7 +5,7 @@ Next steps:
 Take the interactive parts out of the Unit tests and give them their own executables so the tests run uninterrrupted.
 Tie up running an Application with a pluggable MainLoop with Windows and Linux implementations
 Get genuine async file reading and writing going on Windows and Linux through the same interface so we can write basic file processing apps
-Probably write one or more processors to pull aparts the Unicode database as we have before but also to write optimised maps for lookups we might need to files
+Probably write one or more processors to pull parts the Unicode database as we have before but also to write optimised maps for lookups we might need to files
 A from file resource loader for strings and images at least would be useful. Palettes too for styling. These should be simple enough.
 We could do with a general character set concept with tokenization similar to what's prototyped in the ConsoleUI.
 How do we best hook up a UI to a Workflow in such a way that the Workflow generates the UI and the UI drives the Workflow?

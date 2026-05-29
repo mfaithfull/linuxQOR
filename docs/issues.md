@@ -60,7 +60,7 @@ e.g.
 
 inform("That thing that was executing, called {0}, has completed successfully. The result was {0}", Name, Result);
 
-Log handler work just like error handlers and there's a 
+Log handlers work just like error handlers and there's a 
 
 DefaultLogHandler
 
