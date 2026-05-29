@@ -79,28 +79,28 @@ namespace qor { namespace nswindows { namespace api {
     BOOL WGL::CopyContext(HGLRC unnamedParam1, HGLRC unnamedParam2, UINT unnamedParam3)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglCopyContext);
+        qor_pp_useswinapi(opengl32, wglCopyContext);
         return Library::Call<BOOL, HGLRC, HGLRC, UINT>(pFunc, unnamedParam1, unnamedParam2, unnamedParam3);
     }
 
     HGLRC WGL::CreateContext(HDC hdc)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglCreateContext);
+        qor_pp_useswinapi(opengl32, wglCreateContext);
         return Library::Call<HGLRC, HDC>(pFunc, hdc);
     }
 
     HGLRC WGL::CreateLayerContext(HDC hdc, int layer)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglCreateLayerContext);
+        qor_pp_useswinapi(opengl32, wglCreateLayerContext);
         return Library::Call<HGLRC, HDC, int>(pFunc, hdc, layer);
     }
 
     BOOL WGL::DeleteContext(HGLRC context)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglDeleteContext);
+        qor_pp_useswinapi(opengl32, wglDeleteContext);
         return Library::Call<BOOL, HGLRC>(pFunc, context);
     }
 
@@ -135,56 +135,56 @@ namespace qor { namespace nswindows { namespace api {
     PROC WGL::GetProcAddress(LPCSTR extensionFunction)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglGetProcAddress);
+        qor_pp_useswinapi(opengl32, wglGetProcAddress);
         return Library::Call<PROC, LPCSTR>(pFunc, extensionFunction);
     }
 
     BOOL WGL::MakeCurrent(HDC hdc, HGLRC context)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglMakeCurrent);
+        qor_pp_useswinapi(opengl32, wglMakeCurrent);
         return Library::Call<BOOL, HDC, HGLRC>(pFunc, hdc, context);
     }
 
     BOOL WGL::RealizeLayerPalette(HDC hdc, int plane, BOOL realize)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglRealizeLayerPalette);
+        qor_pp_useswinapi(opengl32, wglRealizeLayerPalette);
         return Library::Call<BOOL, HDC, int, BOOL>(pFunc, hdc, plane, realize);
     }
 
     int WGL::SetLayerPaletteEntries(HDC hdc, int plane, int firstEntry, int entryCount, const COLORREF* entries)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglSetLayerPaletteEntries);
+        qor_pp_useswinapi(opengl32, wglSetLayerPaletteEntries);
         return Library::Call<int, HDC, int, int, int, const COLORREF*>(pFunc, hdc, plane, firstEntry, entryCount, entries);
     }
 
     BOOL WGL::ShareLists(HGLRC hglrc1, HGLRC hglrc2)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglShareLists);
+        qor_pp_useswinapi(opengl32, wglShareLists);
         return Library::Call<BOOL, HGLRC, HGLRC>(pFunc, hglrc1, hglrc2);
     }
 
     BOOL WGL::SwapLayerBuffers(HDC hdc, UINT planes)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, wglSwapLayerBuffers);
+        qor_pp_useswinapi(opengl32, wglSwapLayerBuffers);
         return Library::Call<BOOL, HDC, UINT>(pFunc, hdc, planes);
     }
 
     BOOL WGL::UseFontBitmaps(HDC hdc, DWORD firstGlyph, DWORD glyphCount, DWORD startingDisplayList)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapiAW(gdi32, wglUseFontBitmaps);
+        qor_pp_useswinapiAW(opengl32, wglUseFontBitmaps);
         return Library::Call<BOOL, HDC, DWORD, DWORD, DWORD>(pFunc, hdc, firstGlyph, glyphCount, startingDisplayList);
     }
 
     BOOL WGL::UseFontOutlines(HDC hdc, DWORD firstSetOfGlyphs, DWORD glyphCount, DWORD startingDisplayList, FLOAT maximumChordalDeviation, FLOAT negativeExtrusion, int format, LPGLYPHMETRICSFLOAT metrics)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapiAW(gdi32, wglUseFontOutlines);
+        qor_pp_useswinapiAW(opengl32, wglUseFontOutlines);
         return Library::Call<BOOL, HDC, DWORD, DWORD, DWORD, FLOAT, FLOAT, int, LPGLYPHMETRICSFLOAT>(pFunc, hdc, firstSetOfGlyphs, glyphCount, startingDisplayList, maximumChordalDeviation, negativeExtrusion, format, metrics);
     }
 

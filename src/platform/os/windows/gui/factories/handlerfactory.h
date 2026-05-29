@@ -22,35 +22,46 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#ifndef QOR_PP_H_WINDOWS_GUI_HANDLERFACTORY
+#define QOR_PP_H_WINDOWS_GUI_HANDLERFACTORY
 
-#include "src/framework/desktopui/desktopui.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/reference/newref.h"
+#include "src/platform/os/windows/common/structures.h"
+#include "src/platform/os/windows/common/handles/handle.h"
+#include "windowclassregistration.h"
+#include "../window.h"
+#include "../view/handlers/abstractwindowhandler.h"
 
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
-
-qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
-
-namespace qor{ namespace framework{ namespace nswindows{
-
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
+namespace qor{ namespace platform { namespace nswindows{ 
+    
+    class AbstractHandlerFactory
     {
     public:
-        
-        DesktopUI();
-        virtual ~DesktopUI() noexcept;
-        
-        int Run() override;
-        
-        ref_of<qor::platform::nswindows::WindowFactory>::type GetWindowFactory();
-        
-    private:
 
-        ref_of<qor::platform::nswindows::WindowFactory>::type m_windowFactory;
+        AbstractHandlerFactory() = default;
+        virtual ~AbstractHandlerFactory() = default;
+
+        virtual ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type Create() = 0;
+
     };
 
-    DesktopUI& TheDesktopUI();
+    template< class T >
+    class HandlerFactory : public AbstractHandlerFactory
+    {
+    public:
 
-}}}//qor::framework::nswindows
+        HandlerFactory() = default;
+        virtual ~HandlerFactory() = default;
 
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+        virtual ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type Create()
+        {
+            return new_ref< T >();
+        }
+
+    };
+
+}}}//qor::platform::nswindows
+
+#endif//QOR_PP_H_WINDOWS_GUI_WINDOWFACTORY

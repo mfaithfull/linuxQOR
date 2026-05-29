@@ -22,35 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#include "src/configuration/configuration.h"
 
-#include "src/framework/desktopui/desktopui.h"
+#include "header.h"
+#include "src/platform/os/windows/common/stringconv.h"
+#include "../../view/handlers/base.h"
+#include "../../view/layout/windowlayoutitem.h"
 
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
+#include "src/platform/os/windows/api_layer/user/user32.h"
 
-qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
+using namespace qor::nswindows::api;
+using namespace qor::platform::nswindows::gui::view;
 
-namespace qor{ namespace framework{ namespace nswindows{
+namespace qor{ namespace platform { namespace nswindows{
+    
+    Header::Header() : Window()
+    {        
+        SetLayout(new_ref<WindowLayoutItem>(this));
+        m_layout->SetMinSize(Size{300,10});//TEMP:
+        m_layout->SetMaxSize(Size{500,500});
+    }
 
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
+    Header::Header(const PrimitiveHandle& h) : Window(h)
     {
-    public:
-        
-        DesktopUI();
-        virtual ~DesktopUI() noexcept;
-        
-        int Run() override;
-        
-        ref_of<qor::platform::nswindows::WindowFactory>::type GetWindowFactory();
-        
-    private:
+        SetLayout(new_ref<WindowLayoutItem>(this));
+        m_layout->SetMinSize(Size{300,10});//TEMP:
+        m_layout->SetMaxSize(Size{500,500});
+    }
 
-        ref_of<qor::platform::nswindows::WindowFactory>::type m_windowFactory;
-    };
-
-    DesktopUI& TheDesktopUI();
-
-}}}//qor::framework::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+}}}//qor::platform::nswindows

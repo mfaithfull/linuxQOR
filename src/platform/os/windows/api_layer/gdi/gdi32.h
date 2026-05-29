@@ -358,6 +358,7 @@ namespace qor { namespace nswindows { namespace api {
         static BOOL SetRectRgn(HRGN hrgn, int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 
         //WGL functions
+        /* in OpenGL
         static BOOL wglCopyContext(HGLRC, HGLRC, UINT);
         static HGLRC wglCreateContext(HDC);
         static HGLRC wglCreateLayerContext(HDC, int);
@@ -374,7 +375,7 @@ namespace qor { namespace nswindows { namespace api {
         static int   wglGetLayerPaletteEntries(HDC, int, int, int, COLORREF *);
         static BOOL  wglRealizeLayerPalette(HDC, int, BOOL);
         static BOOL  wglSwapLayerBuffers(HDC, UINT);
-        static DWORD wglSwapMultipleBuffers(UINT, CONST WGLSWAP *);
+        static DWORD wglSwapMultipleBuffers(UINT, CONST WGLSWAP *);*/
      
     };
 

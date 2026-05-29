@@ -24,8 +24,8 @@
 
 #include "src/configuration/configuration.h"
 #include "src/platform/os/windows/exebootstrap/winqorexeboot.h"
-#include "src/platform/os/windows/gui/windows/messagebox.h"
-#include "src/platform/os/windows/gui/windows/dialog.h"
+#include "src/platform/os/windows/gui/windows/i_m/messagebox.h"
+#include "src/platform/os/windows/gui/windows/a_h/dialog.h"
 #include "src/platform/os/windows/gui/factories/windowstyle.h"
 
 using namespace qor;

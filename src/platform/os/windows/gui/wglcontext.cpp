@@ -22,35 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#include "src/configuration/configuration.h"
 
-#include "src/framework/desktopui/desktopui.h"
+#include "wglcontext.h"
+#include "perthread.h"
+#include "src/platform/os/windows/common/stringconv.h"
+#include "src/platform/os/windows/api_layer/gdi/gdi32.h"
+#include "src/platform/os/windows/api_layer/opengl/opengl.h"
 
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
+using namespace qor::nswindows::api;
 
-qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
-
-namespace qor{ namespace framework{ namespace nswindows{
-
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
+namespace qor{ namespace platform { namespace nswindows{
+    
+    WGLContext::WGLContext(ref_of<DeviceContext>::type dc, int layer)
     {
-    public:
-        
-        DesktopUI();
-        virtual ~DesktopUI() noexcept;
-        
-        int Run() override;
-        
-        ref_of<qor::platform::nswindows::WindowFactory>::type GetWindowFactory();
-        
-    private:
+        //m_h = GDI32::wglCreateContext((HDC)(dc->GetHandle().Use()));
+        m_h = WGL::CreateLayerContext((HDC)(dc->GetHandle().Use()), layer);
+    }
 
-        ref_of<qor::platform::nswindows::WindowFactory>::type m_windowFactory;
-    };
+    WGLContext::~WGLContext()
+    {
+        auto guiThread = new_ref<PerThread>();
+        guiThread->MakeThisWGLContextNotCurrent(this);
+        WGL::DeleteContext((HGLRC)(m_h.Use()));
+    }
 
-    DesktopUI& TheDesktopUI();
+    PrimitiveHandle WGLContext::GetHandle()
+    {
+        return m_h;
+    }
 
-}}}//qor::framework::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+}}}//qor::platform::nswindows

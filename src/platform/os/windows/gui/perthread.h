@@ -40,6 +40,9 @@
 #include "controllers/i_m/menu.h"
 #include "gdiobjects/devicecontext.h"
 #include "controllers/i_m/monitor.h"
+#include "wglcontext.h"
+#include "openglsession.h"
+#include "view/handlers/messagehandler.h"
 
 namespace qor{ namespace platform { namespace nswindows{ 
 
@@ -49,6 +52,8 @@ namespace qor{ namespace platform { namespace nswindows{
 
         PerThread() = default;
         ~PerThread() = default;
+
+        int Run();
 
         bool AddWindow(Window* window);
         bool RemoveWindow(Window* window);
@@ -76,7 +81,12 @@ namespace qor{ namespace platform { namespace nswindows{
         ref_of<Window>::type GetWindowCreationInProgress();
 
         unsigned int NextResourceId();
+        bool SetCurrentWGLContext(ref_of<DeviceContext>::type dc, ref_of<WGLContext>::type context);
+        bool ClearCurrentWGLContext();
+        bool MakeThisWGLContextNotCurrent(WGLContext* context);
         
+        OpenGLSession& OGLSession();
+
     private:
 
         ref_of<Window>::type m_inProgress;
@@ -87,6 +97,9 @@ namespace qor{ namespace platform { namespace nswindows{
         std::map<void*, ref_of<DeviceContext>::type> m_deviceContextHandleMap;
         std::map<void*, Monitor*> m_monitorHandleMap;
         unsigned int m_nextResourceId{100};
+        WGLContext* m_currentWGLContext{nullptr};
+        OpenGLSession m_openGLSession;
+        MessageHandler m_messageHandler;
     };
 }}}
 

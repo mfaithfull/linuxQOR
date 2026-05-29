@@ -23,18 +23,55 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include "src/qor/assert/assert.h"
+#include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/exebootstrap/winqorexeboot.h"
 #include "src/platform/os/windows/gui/factories/windowfactory.h"
 #include "src/platform/os/windows/gui/view/handlers/messagehandler.h"
 #include "src/platform/os/windows/gui/view/handlers/toplevel.h"
 #include "src/platform/os/windows/gui/painting/themedata.h"
 #include "src/platform/os/windows/gui/painting/paintsession.h"
+#include "src/platform/os/windows/gui/view/messages.h"
 
 using namespace qor;
 using namespace qor::platform::nswindows;
 using namespace qor::platform::nswindows::gui::view;
 using namespace std;
 
+/*
+The Window Factory singleton should be owned by the DesktopGUI feature
+It should auto register the known types on construction
+We should really be using the QOR class factory and overall traits system to do the whole window registration and handler factory thing
+
+a new_ref on a WindowClass derivative should go and find the factory, Add and Register the class once it's constructed.
+
+https://github.com/wingtk/gvsbuild/blob/main/README.md
+
+Ultimately I want to be able to do something like
+    auto mainWindow = new_ref<MainWindow>("Title");
+    //mainWindow->SetLayout<VBox>()
+    mainWindow->Add<CustomMenuBar>(SomesortOfSpecificationOrConfigFunciton);
+    mainWindow->Add<DockingSideFrame>(Layout::Start);
+    mainWindow->Show();
+    gui->RunPolling();
+
+    Add will need a specialization for actual Menus and 'non client' controls. The general case will just be to add child windows to the layout
+    with an override for Adding a layout to the layout. 
+    Add will need to return the Window when we add child windows and the added layout when we add a layout so calls can be chained. Tricky.
+
+
+
+Package up a WGLMainWindow as a known registered type.
+Preregister all the builtin types so that the factory itself can report them as available
+Package up an EGLMainWindow in a similar way, with options for framing and transparency.
+Try a custom EGLChildWindow that can be integrated with other controls
+We could even paint with OpenGL in the background of an MDIClient. That would be fun. Have the MDI Frames floating in a fish tank.
+Then we need a frame optional, transparent optional OpenGLES 2/3 Main window we can use as a "CanvasWindow"
+It should also be possible in that case to do a child version "CanvasCtrl"
+Next a VulkanMainWindow and some Vulkan examples
+
+
+*/
 class CustomNonClientHandler : public NonClientHandler
 {
 public:
@@ -163,14 +200,22 @@ public:
 
     virtual bool OnEraseBackground(Window& window, DeviceContext& dc)
     {
-        WindowController* controller = window.GetController();
-        if(controller)
-        {
-            Rect rc;
-            controller->GetClientRect(rc);
-            //dc.FillRect(rc, Brush::DarkGrayBrush());
-        }
         return true;
+    }
+
+    virtual void OnSize(Window& window, unsigned long long wParam, long long lParam)
+    {
+        m_width = LoWord(lParam); m_height = HiWord(lParam);         
+
+        auto guiThread = new_ref<PerThread>();
+        guiThread->ClearCurrentWGLContext();
+        m_context.Dispose();        
+        CreateDIB(m_width, m_height);
+        CreateRenderingContext();
+        guiThread->SetCurrentWGLContext(m_dcDIB, m_context);
+        InitScene();
+        ResizeScene(m_width, m_height);
+        RenderScene();
     }
 
     virtual bool OnPaint(Window& window)
@@ -178,42 +223,165 @@ public:
         WindowController* controller = window.GetController();
         if(controller)
         {
-            Rect rc;
-            controller->GetClientRect(rc);
-            auto paintSession = new_ref<PaintSession>(&window);
-            auto dc = paintSession->GetDC();
-
-            auto themeData = new_ref<ThemeData>(window, L"Window");
-            
-            rc.m_bottom = rc.m_top + themeData->GetSysSize(SMCYSIZE) + themeData->GetSysSize(SMCXPADDEDBORDER) * 2;
-            themeData->DrawBackground(dc()(), WPCAPTION, true ? CSActive : CSInactive, rc, rc);
-                    
-            // load the caption font and save the old one
-            LogFont captionfont = {};
-            themeData->GetSysFont(ThemeData::CaptionFont, captionfont);
-            auto newFont = Font::Create(captionfont);
-            auto oldFont = dc->SelectObject(newFont->GetHandle());
-            
-            // center the font and draw
-            rc.m_top += themeData->GetSysSize(SMCXPADDEDBORDER);
-            themeData->DrawTextEx(dc()(), WPCAPTION, CSActive, L"Custom Caption", DTCenter, rc);
-
-            // cleanup fonts
-            dc->SelectObject(oldFont);
-            
-            // adjust draw location, load icon and draw
-            rc.m_left += themeData->GetSysSize(SMCXPADDEDBORDER) * 2;
-            rc.m_top += themeData->GetSysSize(SMCXPADDEDBORDER);
-            //auto icon = new_ref<Icon>(NULL, MAKEINTRESOURCE(IDI_APPLICATION), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE);
-            ////HICON icon = (HICON) LoadImage(NULL, MAKEINTRESOURCE(IDI_APPLICATION), IMAGE_ICON, 0, 0, LR_SHARED | LR_DEFAULTSIZE);
-            //icon->DrawEx(dc()(), rect.left, rect.top, icon, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0, NULL, DI_NORMAL);
-            
+            PaintSession ps(&window);
+            ref_of<DeviceContext>::type dc = ps.GetDC();
+            Rect rc;            
+            RenderScene(); // OpenGL -> DIB
+            Blit(dc()());  // DIB -> hDC
             controller->GetClientRect(rc);
             Size size;
             dc->GetTextExtentPoint32T(L"Hello, Windows!", 15, &size);
             dc->TextOutT((rc.Width()/2)-(size.m_x/2), (rc.Height()/2) - (size.m_y/2), L"Hello, Windows!", 15); 
         }
         return true;
+    }
+
+private:
+
+    int m_width{240};
+    int m_height{240}; 
+    ref_of<DeviceContext>::type m_dcDIB;
+    int m_cxDIB{0}; 
+    int m_cyDIB{0};
+    BitmapInfoHeader m_BIH;
+    ref_of<Bitmap>::type m_bmpDIB;
+    void* m_bmp{nullptr};
+    ref_of<WGLContext>::type m_context;
+
+    bool InitScene()
+    {
+        auto guiThread = new_ref<PerThread>();
+        auto& gl = guiThread->OGLSession();
+        gl.Enable(OpenGLSession::ALPHA_TEST);
+        gl.Enable(OpenGLSession::DEPTH_TEST);        
+        gl.Enable(OpenGLSession::COLOR_MATERIAL);
+        gl.Enable(OpenGLSession::LIGHTING);          
+        gl.Enable(OpenGLSession::LIGHT0);            
+        gl.Enable(OpenGLSession::BLEND);             
+        gl.BlendFunc(OpenGLSession::SRC_ALPHA, OpenGLSession::ONE_MINUS_SRC_ALPHA);
+        gl.ClearColor(0, 0, 0, 0);
+        return 0;
+    }
+
+    void ResizeScene(int width,int height)
+    {
+        auto guiThread = new_ref<PerThread>();
+        auto& gl = guiThread->OGLSession();
+        gl.Viewport(0,0,width,height);
+        gl.MatrixMode(OpenGLSession::PROJECTION);
+        gl.LoadIdentity();
+        gl.MatrixMode(OpenGLSession::MODELVIEW);
+        gl.LoadIdentity();
+    }
+
+    void RenderScene()
+    {   
+        auto guiThread = new_ref<PerThread>();
+        auto& gl = guiThread->OGLSession();
+        gl.Clear(OpenGLSession::COLOR_BUFFER_BIT | OpenGLSession::DEPTH_BUFFER_BIT );
+        gl.PushMatrix();
+        gl.Color3f(0, 1, 1);
+        gl.Begin(OpenGLSession::TRIANGLES);                  // Drawing Using Triangles
+            gl.Color3f(1.0f,0.0f,0.0f);                      // Set The Color To Red
+            gl.Vertex3f( 0.0f, 1.0f, 0.0f);                  // Top
+            gl.Color3f(0.0f,1.0f,0.0f);                      // Set The Color To Green
+            gl.Vertex3f(-1.0f,-1.0f, 0.0f);                  // Bottom Left
+            gl.Color3f(0.0f,0.0f,1.0f);                      // Set The Color To Blue
+            gl.Vertex3f( 1.0f,-1.0f, 0.0f);                  // Bottom Right
+        gl.End();
+        gl.PopMatrix();
+        gl.Flush();
+    }
+
+    // DIB -> hDC
+    void Blit(DeviceContext& dest)
+    {
+        if(m_dcDIB.IsNotNull())
+        {
+            dest.BitBlt(0, 0, m_width, m_height, m_dcDIB()(), 0, 0, SRCCOPY);
+        }
+    }
+
+    void CreateDIB(int cx, int cy)
+    {
+        qor_pp_assert_that(cx > 0); 
+        qor_pp_assert_that(cy > 0);
+
+        m_cxDIB = cx ;
+        m_cyDIB = cy ;
+        
+        m_BIH.biWidth = cx;   
+        m_BIH.biHeight = cy;  
+        m_BIH.biPlanes = 1;   
+        m_BIH.biBitCount = 24;    
+        m_BIH.biCompression = BIRGB;
+
+        if(m_dcDIB.IsNotNull()) 
+        {
+            m_dcDIB.Dispose();
+        }
+
+        m_dcDIB = DeviceContext::CreateForDIB();
+
+        qor_pp_assert_that(m_dcDIB.IsNotNull());
+
+        if(m_bmpDIB.IsNotNull())
+        {
+            m_bmpDIB.Dispose();
+        }
+
+        m_bmpDIB = new_ref<DIBSection>(m_dcDIB, (BitmapInfo*)(&m_BIH), DIBRGBCOLORS, &m_bmp, nullptr, 0);
+
+        qor_pp_assert_that(m_bmpDIB.IsNotNull());
+        qor_pp_assert_that(m_bmp != nullptr);
+
+        if(m_bmpDIB.IsNotNull())
+        {
+            m_dcDIB->SelectObject(m_bmpDIB->GetHandle());
+        }
+    }
+
+    bool CreateRenderingContext()
+    {
+        PixelFormatDescriptor pfd;
+        unsigned long dwFlags = PFDSUPPORTOPENGL | PFDDRAWTOBITMAP;
+        pfd.nVersion = 1;          
+        pfd.dwFlags = dwFlags;
+        pfd.iPixelType = PFDTYPERGBA;
+        pfd.cColorBits = 24;
+        pfd.cDepthBits = 32;
+        pfd.iLayerType = PFDMAINPLANE;
+
+        int PixelFormat = m_dcDIB->ChoosePixelFormat(&pfd);
+        if (PixelFormat == 0)
+        {
+            return false;
+        }
+
+        bool bResult = m_dcDIB->SetPixelFormat(PixelFormat, &pfd);
+        if (bResult==false)
+        {
+            return false;
+        }
+
+        m_context = new_ref<WGLContext>(m_dcDIB);
+        return m_context.IsNotNull();
+    }
+
+};
+
+class CustomHandlerFactory : public HandlerFactory<TopLevelWindowHandler>
+{
+    virtual ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type Create()
+    {
+        auto styledHandler =new_ref<TopLevelWindowHandler>();
+        auto ncrHandler    =new_ref<CustomNonClientRenderingHandler>();
+                            styledHandler->m_ncRendering = ncrHandler;
+        auto ncHandler   =  new_ref<CustomNonClientHandler>();
+                            styledHandler->m_nonClient = ncHandler;
+        auto rendering   =  new_ref<CustomRenderingHandler>();
+                            styledHandler->m_rendering = rendering;
+        return styledHandler;
     }
 };
 
@@ -223,22 +391,15 @@ int main()
     MessageHandler messageHandler;
 
     auto windowClass =  factory.AddWindowClass(L"MainWindow");
-                        factory.RegisterClass(windowClass, new_ref<TopLevelWindowHandler>());
+                        factory.RegisterClass(windowClass, new_ref<HandlerFactory<TopLevelWindowHandler>>());
 
-    auto styledHandler =new_ref<TopLevelWindowHandler>();
-    auto ncrHandler    =new_ref<CustomNonClientRenderingHandler>();
-                        styledHandler->m_ncRendering = ncrHandler;
-    auto ncHandler   =  new_ref<CustomNonClientHandler>();
-                        styledHandler->m_nonClient = ncHandler;
-    auto rendering   =  new_ref<CustomRenderingHandler>();
-                        styledHandler->m_rendering = rendering;
-
-    auto styledClass =  factory.AddWindowClass(L"StyledWindow");
+    auto customClass =  factory.AddWindowClass(L"CustomWindow");
     ClassStyle          cs;
                         cs.SetHRedraw(true);
                         cs.SetVRedraw(true);
-                        styledClass->SetStyle(cs);
-                        factory.RegisterClass(styledClass, styledHandler);
+                        customClass->SetStyle(cs);
+                        factory.RegisterClass(customClass, new_ref<CustomHandlerFactory>());
+
 
     auto controller =   factory.Create(windowClass, L"Main Window Experiments");
                         controller->Show();
@@ -260,8 +421,9 @@ int main()
                         exStyle.SetControlParent(true);
                         exStyle.SetLayered(true);
 
-    auto second =       factory.Create(styledClass, L"Custom Top Level Window", style, exStyle);
+    auto second =       factory.Create(customClass, L"Custom Top Level Window", style, exStyle);
                         second->SetTheme(L" ", L" ");
+                        second->SetColourKey(0x0);
                         second->Show();
                         second->Update();
 

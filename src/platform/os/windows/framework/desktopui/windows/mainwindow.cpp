@@ -22,35 +22,25 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#include "src/configuration/configuration.h"
 
-#include "src/framework/desktopui/desktopui.h"
+#include "mainwindow.h"
+#include "../desktopui.h"
 
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
-
-qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
+qor_pp_module_provide(QOR_WINDOWSDESKTOPUI, IMainWindowImpl)
 
 namespace qor{ namespace framework{ namespace nswindows{
 
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
-    {
-    public:
-        
-        DesktopUI();
-        virtual ~DesktopUI() noexcept;
-        
-        int Run() override;
-        
-        ref_of<qor::platform::nswindows::WindowFactory>::type GetWindowFactory();
-        
-    private:
+    MainWindow::MainWindow() : ui::IMainWindowImpl(L"Untitled")
+    {        
+        auto factory = TheDesktopUI().GetWindowFactory();
+        m_controller = factory(qor_shared).CreateMain(qor_pp_text("Untitled"));
+    }
 
-        ref_of<qor::platform::nswindows::WindowFactory>::type m_windowFactory;
-    };
-
-    DesktopUI& TheDesktopUI();
+    MainWindow::MainWindow(const std::wstring& title) : ui::IMainWindowImpl(title)
+    {        
+        auto factory = TheDesktopUI().GetWindowFactory();
+        m_controller = factory(qor_shared).CreateMain(title);
+    }
 
 }}}//qor::framework::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI

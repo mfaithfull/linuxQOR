@@ -22,35 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI_MAINWINDOW
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI_MAINWINDOW
 
-#include "src/framework/desktopui/desktopui.h"
+#include "src/framework/desktopui/windows/imainwindowimpl.h"
+#include "src/platform/os/windows/common/structures.h"
+#include "src/platform/os/windows/gui/controllers/windowcontroller.h"
 
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
-
-qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
+qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, IMainWindowImpl)
 
 namespace qor{ namespace framework{ namespace nswindows{
 
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
+    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) MainWindow : public qor::ui::IMainWindowImpl
     {
     public:
         
-        DesktopUI();
-        virtual ~DesktopUI() noexcept;
-        
-        int Run() override;
-        
-        ref_of<qor::platform::nswindows::WindowFactory>::type GetWindowFactory();
-        
-    private:
+        MainWindow();
+        MainWindow(const std::wstring& title);
+        virtual ~MainWindow() noexcept = default;
 
-        ref_of<qor::platform::nswindows::WindowFactory>::type m_windowFactory;
+    protected:
+
+        ref_of<qor::platform::nswindows::WindowController>::type m_controller;
     };
-
-    DesktopUI& TheDesktopUI();
 
 }}}//qor::framework::nswindows
 
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI_MAINWINDOW

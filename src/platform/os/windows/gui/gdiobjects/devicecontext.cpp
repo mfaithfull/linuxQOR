@@ -28,6 +28,7 @@
 #include "src/platform/os/windows/common/stringconv.h"
 #include "src/platform/os/windows/api_layer/user/user32.h"
 #include "src/platform/os/windows/api_layer/gdi/gdi32.h"
+#include "src/platform/os/windows/api_layer/opengl/opengl.h"
 
 using namespace qor::nswindows::api;
 
@@ -74,10 +75,20 @@ namespace qor{ namespace platform { namespace nswindows{
         dc.MustRelease();
         return dc;
     }
+
+    ref_of<DeviceContext>::type DeviceContext::CreateForDIB()
+    {
+        return new_ref<DeviceContext>(PrimitiveHandle(GDI32::CreateCompatibleDC(nullptr)), true);
+    }
         
     int DeviceContext::Release()
     {
         return User32::ReleaseDC((HWND)(m_hWnd.Use()), (HDC)(m_handle.Use()));
+    }
+
+    bool DeviceContext::BitBlt(int xDest, int yDest, int width, int height, DeviceContext& src, int xSrc, int ySrc, unsigned long rop)
+    {
+        return GDI32::BitBlt((HDC)(m_handle.Use()), xDest, yDest, width, height, (HDC)(src.GetHandle().Use()), xSrc, ySrc, rop) ? true : false;
     }
 
     int DeviceContext::FillRect(const Rect& rc, const Brush& br) const
@@ -858,6 +869,31 @@ namespace qor{ namespace platform { namespace nswindows{
     int DeviceContext::SetPolyFillMode(int polyFillMode)
     {
         return GDI32::SetPolyFillMode((HDC)(m_handle.Use()), polyFillMode);
+    }
+
+    int DeviceContext::ChoosePixelFormat(const PixelFormatDescriptor* pfd)
+    {
+        return WGL::ChoosePixelFormat((HDC)(m_handle.Use()), reinterpret_cast<const PIXELFORMATDESCRIPTOR*>(pfd));
+    }
+
+    int DeviceContext::DescribePixelFormat(int pixelFormat, unsigned int bytes, PixelFormatDescriptor* pfd)
+    {
+        return WGL::DescribePixelFormat((HDC)(m_handle.Use()), pixelFormat, bytes, reinterpret_cast<LPPIXELFORMATDESCRIPTOR>(pfd));
+    }
+
+    int DeviceContext::GetPixelFormat()
+    {
+        return WGL::GetPixelFormat((HDC)(m_handle.Use()));
+    }
+
+    bool DeviceContext::SetPixelFormat(int format, const PixelFormatDescriptor* pfd)
+    {
+        return WGL::SetPixelFormat((HDC)(m_handle.Use()), format, reinterpret_cast<const PIXELFORMATDESCRIPTOR*>(pfd));
+    }
+
+    bool DeviceContext::SwapBuffers()
+    {
+        return WGL::SwapBuffers((HDC)(m_handle.Use()));
     }
 
 }}}//qor::platform::nswindows

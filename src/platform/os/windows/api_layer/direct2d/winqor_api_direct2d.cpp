@@ -22,35 +22,13 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#include "src/configuration/configuration.h"
+#include "src/qor/module/module.h"
 
-#include "src/framework/desktopui/desktopui.h"
+qor::Module& ThisModule(void)
+{
+	static qor::Module QORModule("Querysoft Open Runtime: Windows API Direct2D Module",
+		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
 
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
-
-qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
-
-namespace qor{ namespace framework{ namespace nswindows{
-
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
-    {
-    public:
-        
-        DesktopUI();
-        virtual ~DesktopUI() noexcept;
-        
-        int Run() override;
-        
-        ref_of<qor::platform::nswindows::WindowFactory>::type GetWindowFactory();
-        
-    private:
-
-        ref_of<qor::platform::nswindows::WindowFactory>::type m_windowFactory;
-    };
-
-    DesktopUI& TheDesktopUI();
-
-}}}//qor::framework::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+	return QORModule;
+}

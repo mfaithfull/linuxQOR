@@ -23,54 +23,90 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
-#include "bitmap.h"
-#include "src/platform/os/windows/common/stringconv.h"
-#include "devicecontext.h"
-#include "src/platform/os/windows/api_layer/user/user32.h"
-#include "src/platform/os/windows/api_layer/gdi/gdi32.h"
+#include "openglsession.h"
+#include "src/platform/os/windows/api_layer/opengl/opengl.h"
 
 using namespace qor::nswindows::api;
 
 namespace qor{ namespace platform { namespace nswindows{
-    
-    Bitmap::Bitmap() : GDIObject(OBitmap)
+
+    OpenGLSession::OpenGLSession() : m_opengldll("opengl32")
     {
+
     }
 
-    Bitmap::Bitmap(const PrimitiveHandle& h, bool takeOwnership) : GDIObject(h, OBitmap, takeOwnership)
+    OpenGLSession::~OpenGLSession()
     {
+        
     }
 
-    Bitmap::~Bitmap()
-    {        
-    }
-
-    DIB::DIB() : Bitmap()
+    void OpenGLSession::Begin(unsigned int mode)
     {
-        //GDI32::CreateDIBitmap(hdc, bitmapinfoheader, initFlags, init, bitmapinfo, usage);        
+        GL::Begin(mode);
     }
 
-    DIB::DIB(const PrimitiveHandle& h, bool takeOwnership) : Bitmap(h, takeOwnership)
+    void OpenGLSession::BlendFunc(unsigned int sfactor, unsigned int dfactor)
     {
+        GL::BlendFunc(sfactor, dfactor);
     }
 
-    DIB::~DIB()
-    {        
-    }
-
-    DIBSection::DIBSection(ref_of<DeviceContext>::type dc, const BitmapInfo* bmpi, unsigned int usage, void** bits, void* section, unsigned long offset) : Bitmap()
+    void OpenGLSession::Clear(unsigned int mask)
     {
-        m_handle = GDI32::CreateDIBSection((HDC)(dc->GetHandle().Use()), reinterpret_cast<CONST::BITMAPINFO*>(bmpi), usage, bits, (HANDLE)(section), offset);
-        m_owner = true;
-    }    
+        GL::Clear(mask);
+    }
 
-    DIBSection::DIBSection(const PrimitiveHandle& h, bool takeOwnership) : Bitmap(h, takeOwnership)
+    void OpenGLSession::ClearColor(float red, float green, float blue, float alpha)
     {
+        GL::ClearColor(red, green, blue, alpha);
     }
 
-    DIBSection::~DIBSection()
-    {        
+    void OpenGLSession::Color3f(float red, float green, float blue)
+    {
+        GL::Color3f(red, green, blue);
     }
 
-}}}//qor::platform::nswindows
+    void OpenGLSession::Enable(unsigned int cap)
+    {
+        GL::Enable(cap);
+    }
+
+    void OpenGLSession::End(void)
+    {
+        GL::End();
+    }
+
+    void OpenGLSession::Flush(void)
+    {
+        GL::Flush();
+    }
+
+    void OpenGLSession::LoadIdentity(void)
+    {
+        GL::LoadIdentity();
+    }
+
+    void OpenGLSession::MatrixMode(unsigned int mode)
+    {
+        GL::MatrixMode(mode);
+    }
+
+    void OpenGLSession::PopMatrix(void)
+    {
+        GL::PopMatrix();
+    }
+
+    void OpenGLSession::PushMatrix(void)
+    {
+        GL::PushMatrix();
+    }
+
+    void OpenGLSession::Vertex3f(float x, float y, float z)
+    {
+        GL::Vertex3f(x, y, z);
+    }
+
+    void OpenGLSession::Viewport(int x, int y, int width, int height)
+    {
+        GL::Viewport(x, y, width, height);
+    }
+}}}

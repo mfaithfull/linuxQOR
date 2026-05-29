@@ -39,7 +39,7 @@ int main()
     MessageHandler messageHandler;
 
     auto windowClass =  factory.AddWindowClass(L"Minimal");
-                        factory.RegisterClass(windowClass, new_ref<TopLevelWindowHandler>());
+                        factory.RegisterClass(windowClass, new_ref<HandlerFactory<TopLevelWindowHandler>>());
     auto controller =   factory.Create(windowClass, L"Minimal Desktop Windows App");
 
                         controller->Show();

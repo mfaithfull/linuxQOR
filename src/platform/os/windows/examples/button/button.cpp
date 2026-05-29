@@ -27,7 +27,7 @@
 #include "src/platform/os/windows/gui/factories/windowfactory.h"
 #include "src/platform/os/windows/gui/view/handlers/messagehandler.h"
 #include "src/platform/os/windows/gui/view/handlers/toplevel.h"
-#include "src/platform/os/windows/gui/windows/messagebox.h"
+#include "src/platform/os/windows/gui/windows/i_m/messagebox.h"
 
 using namespace qor;
 using namespace qor::platform::nswindows;
@@ -40,11 +40,12 @@ int main()
     MessageHandler messageHandler;
 
     auto windowClass =  factory.AddWindowClass(L"Main");
-    auto handler     =  new_ref<TopLevelWindowHandler>();
-                        factory.RegisterClass(windowClass, handler);
+    auto handlerFac  =  new_ref<HandlerFactory<TopLevelWindowHandler>>();
+                        factory.RegisterClass(windowClass, handlerFac);
     auto window =       factory.Create(windowClass, L"Button App");                        
     auto button =       factory.CreateButton(window->GetWindow(), L"OK!", BSDEFPUSHBUTTON, 0, 1, 1, 50, 60);
-                        handler->SetCommandCallback(button, Button::NClicked, [](Window& window, WindowController* ctrl)->bool
+                        window->GetWindow()->GetHandler().AsRef<TopLevelWindowHandler>()
+                        ->SetCommandCallback(button, Button::NClicked, [](Window& window, WindowController* ctrl)->bool
                         {
                             MessageBox(nullptr, L"Button clicked", L"Alert!", MBICONINFORMATION, 6500);
                             return true;

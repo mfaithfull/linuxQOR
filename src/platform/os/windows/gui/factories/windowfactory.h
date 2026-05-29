@@ -41,6 +41,7 @@
 #include "../controllers/a_h/comboboxcontroller.h"
 #include "../view/handlers/abstractwindowhandler.h"
 #include "windowstyle.h"
+#include "handlerfactory.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 
@@ -54,20 +55,13 @@ namespace qor{ namespace platform { namespace nswindows{
         WindowFactory(void* instance);
         virtual ~WindowFactory() = default;
 
-        /*
-        Add Class, make a pair of the Class and its Registration object and store them potentially with a Style object
-        Make Class, make an instance of the named class: Find its Class Object and Create a Window with a Controller and a Handler
-        Give the Window the relevent style settings from the factory
-        We should be able to override the window Position, Size and Style but not the class information of basic Window Type
-        Provide a set of Builtin Types covering the Basic Controls, Common Controls, Frames, Dialogs and Message Boxes
-        */
-
         ref_of<WindowController>::type Create(tstring className, const tstring& windowName, unsigned long style = (0x00000000L | 0x00C00000L | 0x00080000L | 0x00040000L | 0x00020000L | 0x00010000L), unsigned long exStyle = 0, int x = ((int)0x80000000), int y = ((int)0x80000000), int width = ((int)0x80000000), int height = ((int)0x80000000), ref_of<Window>::type parent = ref_of<Window>::type(), ref_of<Menu>::type menu = ref_of<Menu>::type(), void* param = nullptr);
         ref_of<WindowController>::type Create(ref_of<WindowClass>::type windowClass, const tstring& windowName, unsigned long style = (0x00000000L | 0x00C00000L | 0x00080000L | 0x00040000L | 0x00020000L | 0x00010000L), unsigned long exStyle = 0, int x = ((int)0x80000000), int y = ((int)0x80000000), int width = ((int)0x80000000), int height = ((int)0x80000000), ref_of<Window>::type parent = ref_of<Window>::type(), ref_of<Menu>::type menu = ref_of<Menu>::type(), void* param = nullptr);
         ref_of<WindowClass>::type AddWindowClass(const tstring& windowClassName);
-        bool RegisterClass(ref_of<WindowClass>::type windowClass, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
-        bool RegisterClass(const tstring& windowClassName, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
-        bool SetHandlerForBuiltinClass(const tstring& windowClassName, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler);
+        bool RegisterClass(ref_of<WindowClass>::type windowClass, ref_of<AbstractHandlerFactory>::type handlerFactory);
+        bool RegisterClass(const tstring& windowClassName, ref_of<AbstractHandlerFactory>::type handlerFactory);
+        bool SetHandlerForBuiltinClass(const tstring& windowClassName, ref_of<AbstractHandlerFactory>::type handlerFactory);
+        ref_of<WindowController>::type CreateMain(const tstring& windowName, unsigned long style = (0x00000000L | 0x00C00000L | 0x00080000L | 0x00040000L | 0x00020000L | 0x00010000L), unsigned long exStyle = 0, int x = ((int)0x80000000), int y = ((int)0x80000000), int width = ((int)0x80000000), int height = ((int)0x80000000), ref_of<Window>::type parent = ref_of<Window>::type(), ref_of<Menu>::type menu = ref_of<Menu>::type(), void* param = nullptr);
         ref_of<ButtonController>::type CreateButton(ref_of<Window>::type parent, const tstring& buttonText, unsigned long style, unsigned long exStyle, int x, int y, int width, int height);
         ref_of<EditController>::type CreateEdit(ref_of<Window>::type parent, unsigned long style, unsigned long exStyle, int x, int y, int width, int height);
         ref_of<ListBoxController>::type CreateListBox(ref_of<Window>::type parent, unsigned long style, unsigned long exStyle, int x, int y, int width, int height);
@@ -76,13 +70,13 @@ namespace qor{ namespace platform { namespace nswindows{
     private:
 
         static long long qor_pp_compiler_stdcallconvention WndProc(void* hwnd, unsigned int msg, unsigned long long wParam, long long lParam);
-        ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type GetHandlerForClass(const tstring& className);
+        ref_of<AbstractHandlerFactory>::type GetHandlerFactoryForClass(const tstring& className);
 
         struct windowClassData
         {
             ref_of<WindowClass>::type windowClass;
             WindowClassRegistration* registration{nullptr};
-            ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler;
+            ref_of<AbstractHandlerFactory>::type m_handlerFactory;
         };
 
         std::map< tstring, windowClassData > m_windowClassMap;

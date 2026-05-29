@@ -7,6 +7,7 @@ add_library(${target} SHARED winqor_gui.cpp
 gui.cpp
 perthread.cpp
 window.cpp
+wglcontext.cpp
 windows/a_h/animation.cpp
 windows/a_h/button.cpp
 windows/a_h/combobox.cpp
@@ -15,11 +16,13 @@ windows/a_h/datetimepicker.cpp
 windows/a_h/desktop.cpp
 windows/a_h/dialog.cpp
 windows/a_h/edit.cpp
+windows/a_h/flatscrollbar.cpp
 windows/s_s/static.cpp
 windows/i_m/messagebox.cpp
 windows/i_m/listbox.cpp
 windows/s_s/scrollbar.cpp
 windows/i_m/mdiclient.cpp
+controllers/a_h/animationcontroller.cpp
 controllers/a_h/caret.cpp
 controllers/i_m/menu.cpp
 controllers/i_m/monitor.cpp
@@ -97,7 +100,8 @@ painting/windowpainter.cpp
 view/layout/layout.cpp
 view/layout/windowlayoutitem.cpp
 view/layout/vbox.cpp
-windows/a_h/flatscrollbar.cpp
+openglsession.cpp
+factories/windowclass.cpp
 )
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
@@ -105,7 +109,9 @@ include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 target_compile_definitions(${target} PRIVATE QOR_WINGUI)
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
 qor_interception qor_signals 
-winqor_api_kernel winqor_api_user winqor_api_gdi winqor_api_shell winqor_api_shcore winqor_api_comctl32 winqor_api_dwm winqor_api_uxtheme
-winqor_common winqor_sharedbootstrap)
+winqor_api_kernel winqor_api_user winqor_api_gdi winqor_api_shell 
+winqor_api_shcore winqor_api_comctl32 winqor_api_dwm winqor_api_uxtheme
+winqor_api_opengl
+winqor_dynamiclibrary winqor_common winqor_sharedbootstrap)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

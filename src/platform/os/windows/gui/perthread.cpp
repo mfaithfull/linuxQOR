@@ -26,7 +26,19 @@
 
 #include "perthread.h"
 
+#include "src/platform/os/windows/api_layer/gdi/gdi32.h"
+#include "src/platform/os/windows/api_layer/opengl/opengl.h"
+
+#undef AddMonitor
+
+using namespace qor::nswindows::api;
+
 namespace qor{ namespace platform { namespace nswindows{
+
+    int PerThread::Run()
+    {
+        return m_messageHandler.MessageLoop();
+    }
 
     void PerThread::SetWindowCreationInProgress(ref_of<Window>::type window)
     {
@@ -199,6 +211,33 @@ namespace qor{ namespace platform { namespace nswindows{
     unsigned int PerThread::NextResourceId()
     {
         return ++m_nextResourceId;
+    }
+
+    bool PerThread::SetCurrentWGLContext(ref_of<DeviceContext>::type dc, ref_of<WGLContext>::type context)
+    {
+        m_currentWGLContext = context;
+        return WGL::MakeCurrent((HDC)(dc->GetHandle().Use()), (HGLRC)(context->GetHandle().Use())) ? true : false;
+    }
+    
+    bool PerThread::ClearCurrentWGLContext()
+    {
+        m_currentWGLContext = nullptr;
+        return WGL::MakeCurrent((HDC)(nullptr), (HGLRC)(nullptr)) ? true : false;
+    }
+
+    bool PerThread::MakeThisWGLContextNotCurrent(WGLContext* context)
+    {
+        if(context == m_currentWGLContext)
+        {
+            ClearCurrentWGLContext();
+            return true;
+        }
+        return false;
+    }
+
+    OpenGLSession& PerThread::OGLSession()
+    {
+        return m_openGLSession;
     }
 
 }}}

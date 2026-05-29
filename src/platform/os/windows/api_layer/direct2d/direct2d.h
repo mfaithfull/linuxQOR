@@ -22,35 +22,36 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#ifndef QOR_PP_H_OS_WINDOWS_API_DIRECT2D
+#define QOR_PP_H_OS_WINDOWS_API_DIRECT2D
 
-#include "src/framework/desktopui/desktopui.h"
+#include "src/platform/os/windows/api_layer/user/user32.h"
 
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
+#include <d2d1.h>
+#include <d2d1_1.h>
+#include <d2d1_1helper.h>
+#include <d2d1_2.h>
+#include <d2d1_3.h>
+#include <d2d1_3helper.h>
+#include <d2d1effectauthor.h>
+#include <d2d1effectauthor_1.h>
+#include <d2d1effecthelpers.h>
+#include <d2d1effecthelpers.hlsli>
+#include <d2d1effects.h>
+#include <d2d1effects_1.h>
+#include <d2d1effects_2.h>
+#include <d2d1helper.h>
+#include <d2d1svg.h>
+#include <dcommon.h>
 
-qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
+namespace qor { namespace nswindows { namespace api {
 
-namespace qor{ namespace framework{ namespace nswindows{
+	class qor_pp_module_interface(QOR_WINAPIDIRECT2D) Direct2D
+	{
+	public:
 
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
-    {
-    public:
-        
-        DesktopUI();
-        virtual ~DesktopUI() noexcept;
-        
-        int Run() override;
-        
-        ref_of<qor::platform::nswindows::WindowFactory>::type GetWindowFactory();
-        
-    private:
-
-        ref_of<qor::platform::nswindows::WindowFactory>::type m_windowFactory;
     };
 
-    DesktopUI& TheDesktopUI();
+}}}//qor::nswindows::api
 
-}}}//qor::framework::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#endif//QOR_PP_H_OS_WINDOWS_API_DIRECT2D

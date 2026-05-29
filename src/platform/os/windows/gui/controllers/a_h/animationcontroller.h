@@ -22,35 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#ifndef QOR_PP_H_WINDOWS_GUI_CONTROLLERS_ANIMATION
+#define QOR_PP_H_WINDOWS_GUI_CONTROLLERS_ANIMATION
 
-#include "src/framework/desktopui/desktopui.h"
+#include "../windowcontroller.h"
+#include "../../windows/a_h/animation.h"
+#include "../../gdiobjects/cursor.h"
+#include "../../gdiobjects/icon.h"
 
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
+//All types on this interface must be portable
+namespace qor{ namespace platform { namespace nswindows{ 
 
-qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
-
-namespace qor{ namespace framework{ namespace nswindows{
-
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
+    class qor_pp_module_interface(QOR_WINGUI) AnimationController : public WindowController
     {
     public:
-        
-        DesktopUI();
-        virtual ~DesktopUI() noexcept;
-        
-        int Run() override;
-        
-        ref_of<qor::platform::nswindows::WindowFactory>::type GetWindowFactory();
-        
-    private:
 
-        ref_of<qor::platform::nswindows::WindowFactory>::type m_windowFactory;
+        AnimationController();        
+        AnimationController(ref_of<Animation>::type animation);
+        virtual ~AnimationController() = default;
+        virtual unsigned short GetId() const;
     };
 
-    DesktopUI& TheDesktopUI();
+}}}//qor::platform::nswindows
 
-}}}//qor::framework::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#endif//QOR_PP_H_WINDOWS_GUI_CONTROLLERS_ANIMATION

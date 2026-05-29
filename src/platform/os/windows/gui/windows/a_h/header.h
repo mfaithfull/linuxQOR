@@ -22,35 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#ifndef QOR_PP_H_WINDOWS_GUI_HEADER
+#define QOR_PP_H_WINDOWS_GUI_HEADER
 
-#include "src/framework/desktopui/desktopui.h"
+#include "../../window.h"
 
-#include "src/platform/os/windows/gui/factories/windowfactory.h"
+namespace qor{ namespace platform { namespace nswindows{ 
 
-qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
-
-namespace qor{ namespace framework{ namespace nswindows{
-
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
+    class qor_pp_module_interface(QOR_WINGUI) Header : public Window
     {
     public:
-        
-        DesktopUI();
-        virtual ~DesktopUI() noexcept;
-        
-        int Run() override;
-        
-        ref_of<qor::platform::nswindows::WindowFactory>::type GetWindowFactory();
-        
-    private:
 
-        ref_of<qor::platform::nswindows::WindowFactory>::type m_windowFactory;
+        Header();        
+        Header(const PrimitiveHandle& h);
+        virtual ~Header() = default;        
     };
+        
+}}}//qor::platform::nswindows
 
-    DesktopUI& TheDesktopUI();
-
-}}}//qor::framework::nswindows
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
+#endif//QOR_PP_H_WINDOWS_GUI_HEADER

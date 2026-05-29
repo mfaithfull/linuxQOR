@@ -25,13 +25,42 @@
 #include "src/configuration/configuration.h"
 
 #include "desktopui.h"
+#include "src/platform/os/windows/gui/perthread.h"
+
+extern "C" const ImageDOSHeader __ImageBase;//This must be injected by the Compiler for Windows builds
 
 qor_pp_module_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
 
 namespace qor{ namespace framework{ namespace nswindows{
 
-    DesktopUI::DesktopUI()
+    namespace {
+        DesktopUI* _theDesktopUI = nullptr;
+    }
+
+    DesktopUI& TheDesktopUI()
+    {
+        return *_theDesktopUI;
+    }
+
+    DesktopUI::DesktopUI() : m_windowFactory(new_ref<qor::platform::nswindows::WindowFactory>((void*)(&__ImageBase)))
     {        
+        _theDesktopUI = this;
+    }
+
+    DesktopUI::~DesktopUI() noexcept
+    {
+        _theDesktopUI = nullptr;
+    }
+
+    ref_of<qor::platform::nswindows::WindowFactory>::type DesktopUI::GetWindowFactory()
+    {
+        return m_windowFactory;
+    }
+
+    int DesktopUI::Run()
+    {
+        auto guiThread = new_ref<qor::platform::nswindows::PerThread>();
+        return guiThread->Run();
     }
 
 }}}//qor::framework::nswindows

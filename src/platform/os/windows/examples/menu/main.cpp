@@ -28,8 +28,8 @@
 #include "src/platform/os/windows/gui/factories/menubuilder.h"
 #include "src/platform/os/windows/gui/view/handlers/messagehandler.h"
 #include "src/platform/os/windows/gui/view/handlers/toplevel.h"
-#include "src/platform/os/windows/gui/controllers/menu.h"
-#include "src/platform/os/windows/gui/controllers/popupmenu.h"
+#include "src/platform/os/windows/gui/controllers/i_m/menu.h"
+#include "src/platform/os/windows/gui/controllers/n_r/popupmenu.h"
 
 using namespace qor;
 using namespace qor::platform::nswindows;
@@ -46,15 +46,25 @@ public:
     }
 };
 
+class WithMenuHandlerFactory : public HandlerFactory<TopLevelWindowHandler>
+{
+    virtual ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type Create()
+    {
+        auto topLevel    =  new_ref<TopLevelWindowHandler>();
+        auto menuHandler =  new_ref<TestMenuHandler>();
+        topLevel->m_menu = menuHandler;
+        return topLevel;
+    }
+};
+
 int main()
 {
     WindowFactory factory(GetInstance());    
     MessageHandler messageHandler;
 
                         //Create the main window
-    auto windowClass =  factory.AddWindowClass(L"WithMenu");
-    auto topLevel    =  new_ref<TopLevelWindowHandler>();
-                        factory.RegisterClass(windowClass, topLevel);
+    auto windowClass =  factory.AddWindowClass(L"WithMenu");    
+                        factory.RegisterClass(windowClass, new_ref<WithMenuHandlerFactory>());
     auto controller  =  factory.Create(windowClass, L"Menu Testbed");
 
                         //Build and attach the content of the window
@@ -66,8 +76,6 @@ int main()
     auto itemIdHelp  =  menuBar->AppendTextItem(L"Help");
                         menuBar->AppendSubMenu(fileMenu, L"File");
                         controller->SetMenu(menuBar);
-    auto menuHandler =  new_ref<TestMenuHandler>();
-                        topLevel->m_menu = menuHandler;
                         //Show the window and run the message loop
                         controller->Show();
     return              messageHandler.MessageLoop();

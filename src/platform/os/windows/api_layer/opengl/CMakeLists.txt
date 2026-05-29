@@ -3,11 +3,13 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 
 set(target winqor_api_opengl)
 
-add_library(${target} SHARED winqor_api_opengl.cpp opengl.cpp)
+add_library(${target} SHARED winqor_api_opengl.cpp 
+opengl.cpp
+gl.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE QOR_WINAPIOPENGL PUBLIC ${global_defines})
-target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_error qor_issue winqor_api_user winqor_api_kernel)
+target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_error qor_issue winqor_api_user winqor_api_kernel opengl32 glu32)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

@@ -22,29 +22,46 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_WINDOWS_GUI_WINDOWCLASSEGISTRATION
-#define QOR_PP_H_WINDOWS_GUI_WINDOWCLASSEGISTRATION
+#ifndef QOR_PP_H_WINDOWS_GUI_WGLCONTEXT
+#define QOR_PP_H_WINDOWS_GUI_WGLCONTEXT
 
-#include <string>
-
-#include "windowclass.h"
+#include "gdiobjects/devicecontext.h"
 
 namespace qor{ namespace platform { namespace nswindows{ 
 
-    typedef long long (__stdcall *messageFunc)(void*, unsigned int, unsigned long long, long long);
-
-    class qor_pp_module_interface(QOR_WINGUI) WindowClassRegistration
+    class qor_pp_module_interface(QOR_WINGUI) WGLContext
     {
     public:
 
-        WindowClassRegistration(WindowClass& wc);
-        virtual ~WindowClassRegistration();
+        WGLContext(ref_of<DeviceContext>::type dc, int layer = 0);
+        ~WGLContext();
 
-    protected:
-        unsigned short m_Atom;
-        WindowClass m_windowClass;
+        PrimitiveHandle GetHandle();
+        //static ref_of<WGLContext>::type GetCurrent();
+        //static HDC   wglGetCurrentDC(VOID);
+        /*
+                
+        static BOOL wglCopyContext(HGLRC, HGLRC, UINT);
+        //static BOOL  wglDeleteContext(HGLRC);
+        
+        static PROC  wglGetProcAddress(LPCSTR);        
+        static BOOL  wglShareLists(HGLRC, HGLRC);
+        static BOOL  wglUseFontBitmapsT(HDC, DWORD, DWORD, DWORD);
+        static BOOL  wglUseFontOutlinesT(HDC, DWORD, DWORD, DWORD, FLOAT, FLOAT, int, LPGLYPHMETRICSFLOAT);
+        static BOOL  wglDescribeLayerPlane(HDC, int, int, UINT, LPLAYERPLANEDESCRIPTOR);
+        static int   wglSetLayerPaletteEntries(HDC, int, int, int, CONST COLORREF *);
+        static int   wglGetLayerPaletteEntries(HDC, int, int, int, COLORREF *);
+        static BOOL  wglRealizeLayerPalette(HDC, int, BOOL);
+        static BOOL  wglSwapLayerBuffers(HDC, UINT);
+        static DWORD wglSwapMultipleBuffers(UINT, CONST WGLSWAP *);
+        */
+
+    private:
+
+        PrimitiveHandle m_h;
+
     };
-
+    
 }}}//qor::platform::nswindows
 
-#endif//QOR_PP_H_WINDOWS_GUI_WINDOWCLASSEGISTRATION
+#endif//QOR_PP_H_WINDOWS_GUI_WGLCONTEXT

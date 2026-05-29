@@ -243,11 +243,13 @@ namespace qor{ namespace platform { namespace nswindows{
 
         static DeviceContext FromWindow(const Handle& hWnd);
         static DeviceContext FromWindow(const Handle& hWnd, const Handle& hRgnClip, unsigned long flags);
+        static ref_of<DeviceContext>::type CreateForDIB();
 
         int Release();
 
         const Handle& GetHandle() const;
 
+        bool BitBlt(int xDest, int yDest, int width, int height, DeviceContext& src, int xSrc, int ySrc, unsigned long dwRop);
         int FillRect(const Rect& rc, const Brush& br) const;
         int FrameRect(const Rect& rc, const Brush& br) const;
         bool InvertRect(const Rect& rc) const;
@@ -418,6 +420,12 @@ namespace qor{ namespace platform { namespace nswindows{
 */
         void MustRelease();
         
+        int ChoosePixelFormat(const PixelFormatDescriptor* pfd);
+        int DescribePixelFormat(int iPixelFormat, unsigned int nBytes, PixelFormatDescriptor* pfd);
+        int GetPixelFormat();
+        bool SetPixelFormat(int format, const PixelFormatDescriptor* pfd);
+        bool SwapBuffers();
+
     protected:
         bool m_mustBeReleased;
 

@@ -28,6 +28,7 @@
 #include "src/platform/os/windows/common/stringconv.h"
 #include "../perthread.h"
 #include "../view/layout/layout.h"
+#include "../view/handlers/toplevel.h"
 
 #include "src/platform/os/windows/api_layer/user/user32.h"
 
@@ -41,6 +42,8 @@ namespace qor{ namespace platform { namespace nswindows{
 
     WindowFactory::WindowFactory(void* instance) : m_instance(instance)
     {        
+        auto windowClass = AddWindowClass(L"MainWindow");
+        RegisterClass(windowClass, new_ref<HandlerFactory<TopLevelWindowHandler>>());
     }
 
     long long qor_pp_compiler_stdcallconvention WindowFactory::WndProc(void* hwnd, unsigned int msg, unsigned long long wParam, long long lParam)
@@ -93,45 +96,45 @@ namespace qor{ namespace platform { namespace nswindows{
         return windowClass;
     }
 
-    bool WindowFactory::RegisterClass(ref_of<WindowClass>::type windowClass, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler)
+    bool WindowFactory::RegisterClass(ref_of<WindowClass>::type windowClass, ref_of<AbstractHandlerFactory>::type handlerFactory)
     {
-        return RegisterClass(windowClass->Name(), handler);
+        return RegisterClass(windowClass->Name(), handlerFactory);
     }
 
-    bool WindowFactory::RegisterClass(const tstring& windowClassName, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler)
+    bool WindowFactory::RegisterClass(const tstring& windowClassName, ref_of<AbstractHandlerFactory>::type handlerFactory)
     {
         bool result = false;
         auto it = m_windowClassMap.find(windowClassName);
         if(it != m_windowClassMap.end())
         {
             it->second.registration = new WindowClassRegistration(it->second.windowClass()());
-            it->second.handler = handler;
+            it->second.m_handlerFactory = handlerFactory;
             result = true;
         }
         return result;
     }
 
-    bool WindowFactory::SetHandlerForBuiltinClass(const tstring& windowClassName, ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler)
+    bool WindowFactory::SetHandlerForBuiltinClass(const tstring& windowClassName, ref_of<AbstractHandlerFactory>::type handlerFactory)
     {
         bool result = false;
         auto it = m_windowClassMap.find(windowClassName);
         if(it != m_windowClassMap.end())
         {
-            it->second.handler = handler;
+            it->second.m_handlerFactory = handlerFactory;
             result = true;
         }
         return result;
     }
 
-    ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type WindowFactory::GetHandlerForClass(const tstring& className)
+    ref_of<AbstractHandlerFactory>::type WindowFactory::GetHandlerFactoryForClass(const tstring& className)
     {
-        ref_of<qor::platform::nswindows::gui::view::AbstractWindowHandler>::type handler;        
+        ref_of<AbstractHandlerFactory>::type handlerFactory;
         auto it = m_windowClassMap.find(className.c_str());
         if(it != m_windowClassMap.end())
         {
-            handler = it->second.handler;
+            handlerFactory = it->second.m_handlerFactory;
         }
-        return handler;
+        return handlerFactory;
     }
 
     ref_of<WindowController>::type WindowFactory::Create(ref_of<WindowClass>::type windowClass, const tstring& windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, ref_of<Window>::type parent, ref_of<Menu>::type menu, void* param)
@@ -142,7 +145,8 @@ namespace qor{ namespace platform { namespace nswindows{
     ref_of<WindowController>::type WindowFactory::Create(tstring className, const tstring& windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, ref_of<Window>::type parent, ref_of<Menu>::type menu, void* param)
     {
         ref_of<Window>::type window = new_ref<Window>();        
-        window->SetHandler(GetHandlerForClass(className));
+        auto handlerFactory = GetHandlerFactoryForClass(className);
+        window->SetHandler(handlerFactory->Create());
         window->SetLayout(new_ref<VertcialLayout>());
         auto perThread = new_ref<PerThread>();
         perThread->SetWindowCreationInProgress(window);
@@ -150,12 +154,26 @@ namespace qor{ namespace platform { namespace nswindows{
         return new_ref<WindowController>(window);
     }
 
+    ref_of<WindowController>::type WindowFactory::CreateMain(const tstring& windowName, unsigned long style, unsigned long exStyle, int x, int y, int width, int height, ref_of<Window>::type parent, ref_of<Menu>::type menu, void* param)
+    {
+        ref_of<Window>::type window = new_ref<Window>();        
+        auto handlerFactory = GetHandlerFactoryForClass(qor_pp_text("MainWindow"));
+        window->SetHandler(handlerFactory->Create());
+        window->SetLayout(new_ref<VertcialLayout>());
+        auto perThread = new_ref<PerThread>();
+        perThread->SetWindowCreationInProgress(window);
+        User32::CreateWindowExT(exStyle, qor_pp_text("MainWindow"), windowName.c_str(), style, x, y, width, height, (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), (HMENU)(menu.IsNotNull() ? menu->GetHandle().Use() : nullptr), (HINSTANCE)(m_instance), param);
+        auto controller = new_ref<WindowController>(window);
+        controller->ShowAsync();
+        return controller;
+    }
+
     ref_of<ButtonController>::type WindowFactory::CreateButton(ref_of<Window>::type parent, const tstring& buttonText, unsigned long style, unsigned long exStyle, int x, int y, int width, int height)
     {
         auto perThread = new_ref<PerThread>();
         auto button = new_ref<ButtonController>(new_ref<Button>(
             PrimitiveHandle(
-                User32::CreateWindowExT(exStyle, L"BUTTON", buttonText.c_str(), style | WS_CHILD | WS_VISIBLE, x, y, width, height, 
+                User32::CreateWindowExT(exStyle, qor_pp_text("BUTTON"), buttonText.c_str(), style | WS_CHILD | WS_VISIBLE, x, y, width, height, 
                     (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), 
                     (HMENU)(unsigned long long)(perThread->NextResourceId()), 
                     (HINSTANCE)GetWindowLongPtr((HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), GWLP_HINSTANCE), 
@@ -177,7 +195,7 @@ namespace qor{ namespace platform { namespace nswindows{
         auto edit = new_ref<EditController>(new_ref<Edit>(
             PrimitiveHandle(
                 User32::CreateWindowExT(
-                    exStyle, L"EDIT", L"", style | WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL, x, y, width, height,
+                    exStyle, qor_pp_text("EDIT"), qor_pp_text(""), style | WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL, x, y, width, height,
                     (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr),
                     (HMENU)(unsigned long long)(perThread->NextResourceId()),
                     (HINSTANCE)GetWindowLongPtr((HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), GWLP_HINSTANCE),
@@ -199,7 +217,7 @@ namespace qor{ namespace platform { namespace nswindows{
         auto listbox = new_ref<ListBoxController>(new_ref<ListBox>(
             PrimitiveHandle(
                 User32::CreateWindowExT(
-                    exStyle, L"LISTBOX", L"", style | WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL, x, y, width, height,
+                    exStyle, qor_pp_text("LISTBOX"), qor_pp_text(""), style | WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL, x, y, width, height,
                     (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr),
                     (HMENU)(unsigned long long)(perThread->NextResourceId()),
                     (HINSTANCE)GetWindowLongPtr((HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), GWLP_HINSTANCE),
@@ -221,7 +239,7 @@ namespace qor{ namespace platform { namespace nswindows{
         auto combobox = new_ref<ComboBoxController>(new_ref<ComboBox>(
             PrimitiveHandle(
                 User32::CreateWindowExT(
-                    exStyle, L"COMBOBOX", L"", style | WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL, x, y, width, height,
+                    exStyle, qor_pp_text("COMBOBOX"), qor_pp_text(""), style | WS_BORDER | WS_CHILD | WS_VISIBLE | WS_VSCROLL, x, y, width, height,
                     (HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr),
                     (HMENU)(unsigned long long)(perThread->NextResourceId()),
                     (HINSTANCE)GetWindowLongPtr((HWND)(parent.IsNotNull() ? parent->GetHandle().Use() : nullptr), GWLP_HINSTANCE),

@@ -4,6 +4,7 @@ project(QOR VERSION 0.1.0 LANGUAGES C CXX)
 set(target winqor_desktopui)
 
 add_library(${target} SHARED winqor_desktopui.cpp desktopui.cpp
+    windows/mainwindow.cpp
 )
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

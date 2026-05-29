@@ -44,17 +44,8 @@ namespace qor{ namespace platform { namespace nswindows{
 
         }
     }
-
-    Loader::~Loader()
-    {
-        m_h.Close();
-    }
-
-    const Handle& Loader::GetHandle() const
-    {
-        return m_h;
-    }
     */
+   
     EGLDisplay EGL::StaticGetDisplay (EGLNativeDisplayType display_id)
     {
         return ::eglGetDisplay(display_id);

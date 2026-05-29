@@ -30,6 +30,7 @@
 #include "src/qor/injection/typeregentry.h"
 #include "src/qor/reference/newref.h"
 #include "desktopui.h"
+#include "windows/mainwindow.h"
 
 qor::Module& ThisModule(void)
 {
@@ -38,6 +39,6 @@ qor::Module& ThisModule(void)
 
 	//Register the Windows specific implementations
 	static qor::TypeRegEntry< qor::framework::nswindows::DesktopUI, qor::framework::DesktopUI > regDesktopUI;
-
+	static qor::TypeRegEntryWithParams< qor::framework::nswindows::MainWindow, qor::ui::IMainWindowImpl, const std::wstring& > regIMainWindowImpl;
 	return QORModule;
 }
