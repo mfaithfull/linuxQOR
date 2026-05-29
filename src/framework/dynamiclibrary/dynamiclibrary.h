@@ -34,7 +34,7 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/role/ifeature.h"
 
-namespace qor{ bool qor_pp_import ImplementsDynamicLibrary();}
+namespace qor{ bool qor_pp_module_external(QOR_DYNAMICLIBARY) ImplementsDynamicLibrary();}
 
 namespace qor { namespace framework{
   

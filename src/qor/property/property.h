@@ -113,10 +113,11 @@ namespace qor {
 						);
 						if (it != v.end())
 						{
-							auto propval = it->Value();
+							auto propval = it->Value();//TODO: need to recurse here if it->GetType() is a container
 							value = propval.template Get<VT>();
 						}
 					}
+					//TODO: need cases for Map, Null, Property and Value with recursion for Map
 				}
 			);
 

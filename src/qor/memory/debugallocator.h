@@ -93,7 +93,7 @@ namespace qor{
             T* pResult = reinterpret_cast<T*>(pMem);
             for (size_t element = 0; pMem && element < count; element++)
             {
-                new(pMem)T(std::forward<_p>(p1)...);
+                new(pMem)T(std::forward<_p&&>(p1)...);
                 pMem += sizeof(T);
             }
             return pResult;

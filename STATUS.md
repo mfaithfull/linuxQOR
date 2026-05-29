@@ -1,3 +1,9 @@
+End of May 2026. A lot of Win32, especially GUI primitives, has been added. Some project level restructuring is under way to acommodate cross platform GUI. A lot of experimental code and tech examples have been done. The next stage will likely be consolidation and a push for even more quality of the fundamentals to support a larger project.
+Multiple test executables will be needed as the test themselves will otherwise become to bulky and take too long.
+We'll need to separate operational tests like the Thread Pool performance stuff from simple, loop unrolled, unit tests that can be rapidly iterated. Some CMake work required for multiple executables in a build.
+
+========================================================================================================================
+
 1st March 2026. Serialization over pipelines now occuring although not heavily supported. We have working if incomplete examples of serialization and deserialization with parsing and generating of the file content. Lots of tidying up and consolidation to be done. Font loading has been started and the techniques are now being applied to HTTP Requests and Responses.
 ========================================================================================================================
 
