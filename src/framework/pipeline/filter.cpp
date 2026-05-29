@@ -157,12 +157,15 @@ namespace qor{ namespace pipeline{
 
     bool Filter::Read(size_t& unitsRead, size_t unitsToRead)
     {
+        return (GetFlowMode() == FlowMode::Pull) ? 
+        (ReadFilter(unitsRead, unitsRead)) : ActualSource()->Read(unitsRead, unitsToRead);
+/*
         return ActualSource()->Read(unitsRead, unitsToRead) ? 
         (
             (GetFlowMode() == FlowMode::Pull) ? 
                 (ReadFilter(unitsRead, unitsRead)): true
         ) : false;
-
+*/
     }
 
     bool Filter::Write(size_t& unitsWritten, size_t unitsToWrite)

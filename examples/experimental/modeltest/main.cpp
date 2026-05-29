@@ -60,7 +60,7 @@ public:
     }
 
     template<std::size_t I>
-    auto Get()
+    auto At()
     {
         return qor_reflection::detail::sequence_tuple::get<I>(m_value);
     }
@@ -129,23 +129,16 @@ qor_pp_implement_module("testModel")
 
 int main()
 {
-   return qor::framework::AppBuilder().Build<qor::framework::Application>("testModel")->SetRole<qor::framework::Role>(
-        [](qor::ref_of<qor::framework::IRole>::type role)    
+   return qor::framework::AppBuilder().Build<qor::framework::Application>("testModel")->Run(
+        []()->int
         {
+            Model<BMPHeader> bmpHeader;                
+            bmpHeader.Set<0>(0x424D);
+            bmpHeader.Set("bcSize", 0x1000);
+
+            auto size = bmpHeader.Get<uint32_t>("bcSize");
+            uint16_t width = bmpHeader.Get<decltype(width)>("bcWidth");
+            return EXIT_SUCCESS;
         }
-    ).Run(
-
-        qor::framework::make_runable(
-
-            []()->int
-            {
-                Model<BMPHeader> bmpHeader;                
-                bmpHeader.Set<0>(0x424D);
-                bmpHeader.Set("bcSize", 0x1000);
-
-                auto size = bmpHeader.Get<uint32_t>("bcSize");
-                return EXIT_SUCCESS;
-            }
-        )
     );
 }

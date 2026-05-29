@@ -236,7 +236,14 @@ namespace qor{ namespace pipeline{
             } while (Filter::Pump(unitsPumped, unitsToPump));
         }
 
-        virtual void InsertFilter(Filter* pFilter, FilterPos Pos = BeforeSink);
+        bool PumpOne()
+        {
+            size_t unitsPumped = 0;
+            size_t unitsToPump = 1;
+            return Filter::Pump(unitsPumped, unitsToPump);
+        }
+
+        virtual Pipeline& InsertFilter(Filter* filter, FilterPos Pos = BeforeSink);
         virtual Pipeline& InsertInlineFilter(const Buffer& filter, FilterPos Pos = BeforeSink);
 
         virtual void ResetStream(size_t streamSize = 0)

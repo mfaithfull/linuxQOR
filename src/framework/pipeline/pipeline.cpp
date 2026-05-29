@@ -42,9 +42,42 @@ namespace qor{ namespace pipeline{
         return false;
     }
 
-    void Pipeline::InsertFilter(Filter* pFilter, FilterPos Pos)
+    Pipeline& Pipeline::InsertFilter(Filter* filter, FilterPos Pos)
     {
-
+        switch(Pos)
+        {
+        case FilterPos::AfterSource:
+            {
+                if(m_source)
+                {
+                    auto sink = m_source->GetSink();
+                    m_source->SetSink(filter);
+                    filter->SetSource(m_source);
+                    if(sink)
+                    {
+                        filter->SetSink(sink);
+                        sink->SetSource(filter);
+                    }
+                }
+            }
+            break;
+        case FilterPos::BeforeSink:
+            {
+                if(m_sink)
+                {
+                    auto source = m_sink->GetSource();
+                    filter->SetSink(m_sink);                                        
+                    m_sink->SetSource(filter);
+                    if(source)
+                    {
+                        filter->SetSource(source);
+                        source->SetSink(filter);
+                    }
+                }
+            }
+            break;
+        }
+        return *this;
     }
 
     Pipeline& Pipeline::InsertInlineFilter(const Buffer& filter, FilterPos Pos)
