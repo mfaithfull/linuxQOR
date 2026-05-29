@@ -36,10 +36,8 @@ namespace qor{ namespace components{
 
         if(unitsToProcess)
         {
-            //byte* data = sourceBuffer->ReadRequest(unitsToProcess);
             size_t output_space = (unitsToProcess + 2 ) / 3 * 4;
             output_space = std::min(output_space, writeCount);
-            //byte* space = sinkBuffer->WriteRequest(output_space);
             int val = 0, valb = -6;
             unsigned char* c = data;
             size_t index = 0;

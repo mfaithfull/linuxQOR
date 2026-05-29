@@ -74,49 +74,45 @@ int main()
             role->AddFeature<TermScreen>();
         }
     ).Run(
+        []()->int
+        {
+            auto screen = ScreenInteractive::TerminalOutput();
 
-        make_runable(
+            int selected = 0;
+            auto menu = Container::Vertical(
+                {
+                    MenuEntry(" 1. rear", Coloured(Colour::Red)),
+                    MenuEntry(" 2. drown", Coloured(Colour::Yellow)),
+                    MenuEntry(" 3. nail", Coloured(Colour::Green)),
+                    MenuEntry(" 4. quit", Coloured(Colour::Cyan)),
+                    MenuEntry(" 5. decorative", Coloured(Colour::Blue)),
+                    MenuEntry(" 7. costume"),
+                    MenuEntry(" 8. pick"),
+                    MenuEntry(" 9. oral"),
+                    MenuEntry("11. minister"),
+                    MenuEntry("12. football"),
+                    MenuEntry("13. welcome"),
+                    MenuEntry("14. copper"),
+                    MenuEntry("15. inhabitant"),
+                },
+                &selected);
 
-            []()->int
-            {
-                auto screen = ScreenInteractive::TerminalOutput();
+            // Display the menu together with a border
+            auto renderer = Renderer(menu, [&] 
+                {
+                    return vbox(
+                        {
+                            hbox(text("selected = "), text(std::to_string(selected))),
+                            separator(),
+                            menu->Render() | frame,
+                        }
+                    ) | border | bgcolor(Colour::Black);
+                });
 
-                int selected = 0;
-                auto menu = Container::Vertical(
-                    {
-                        MenuEntry(" 1. rear", Coloured(Colour::Red)),
-                        MenuEntry(" 2. drown", Coloured(Colour::Yellow)),
-                        MenuEntry(" 3. nail", Coloured(Colour::Green)),
-                        MenuEntry(" 4. quit", Coloured(Colour::Cyan)),
-                        MenuEntry(" 5. decorative", Coloured(Colour::Blue)),
-                        MenuEntry(" 7. costume"),
-                        MenuEntry(" 8. pick"),
-                        MenuEntry(" 9. oral"),
-                        MenuEntry("11. minister"),
-                        MenuEntry("12. football"),
-                        MenuEntry("13. welcome"),
-                        MenuEntry("14. copper"),
-                        MenuEntry("15. inhabitant"),
-                    },
-                    &selected);
+            screen.Loop(renderer);
 
-                // Display the menu together with a border
-                auto renderer = Renderer(menu, [&] 
-                    {
-                        return vbox(
-                            {
-                                hbox(text("selected = "), text(std::to_string(selected))),
-                                separator(),
-                                menu->Render() | frame,
-                            }
-                        ) | border | bgcolor(Colour::Black);
-                    });
-
-                screen.Loop(renderer);
-
-                std::cout << "Selected element = " << selected << std::endl;
-                return EXIT_SUCCESS;
-            }
-        )
+            std::cout << "Selected element = " << selected << std::endl;
+            return EXIT_SUCCESS;
+        }
     );
 }

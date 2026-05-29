@@ -181,7 +181,7 @@ void r_set_clip_rect(mu_Rect rect) {
 
 void r_clear(mu_Color clr) {
   flush();
-  opengl->learColor(clr.r / 255., clr.g / 255., clr.b / 255., clr.a / 255.);
+  opengl->ClearColor(clr.r / 255., clr.g / 255., clr.b / 255., clr.a / 255.);
   opengl->Clear(GL_COLOR_BUFFER_BIT);
 }
 
