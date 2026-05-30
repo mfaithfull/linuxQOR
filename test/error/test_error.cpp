@@ -44,6 +44,9 @@ class SeriousHandler : public qor::IssueHandler<qor::Serious>
     }
 };
 
+
+//TODO: This is currently an operational test. Turn it into a unit test
+
 qor_pp_test_suite_case(ErrorTestSuite, canRaiseASeriousError)
 {
     SeriousHandler serious_handler;

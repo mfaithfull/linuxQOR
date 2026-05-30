@@ -38,6 +38,8 @@ qor_pp_test_suite_case(FunctionContextTestSuite, canInstantiateAFunctionContext)
     qor_pp_ofcontext;
 }
 
+//TODO: This is an operational test. Turn it into a unit test.
+
 void canChainNonMemberFunctionContext()
 {
     qor_pp_fcontext;

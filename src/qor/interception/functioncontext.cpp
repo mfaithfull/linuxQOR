@@ -147,15 +147,6 @@ namespace qor {
         qor::framework::CurrentThread::GetCurrent().Context().UnregisterFunctionContext(this, m_pParent);
 
         Unlock();
-		/*
-		m_uiLocked = (unsigned int) - 1;
-		m_TraceDepth = 1001;
-		m_szFuncName = "deleted";
-		m_szFile = "deleted";
-		m_szModule = "deleted";
-		m_uiLine = (unsigned int) - 1;
-		m_pParent = nullptr;
-		*/
 	}
 
 	const char* FunctionContext::Name() const

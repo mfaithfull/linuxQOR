@@ -39,12 +39,12 @@
 using namespace qor;
 using namespace qor::test;
 using namespace qor::framework;
-using namespace qor::workflow;
 using namespace qor::platform;
 
-struct ApplicationTestSuite{};
 
-qor_pp_test_suite_case(ApplicationTestSuite, canBuildAnApplication)
+//TODO: This is an operational test. Move it to operational tests or make it a unit test
+
+qor_pp_test_case(canBuildAnApplication)
 {
     auto app = AppBuilder().Build("QOR Test Application")->        
         SetRole<Role>(

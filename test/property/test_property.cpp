@@ -119,10 +119,6 @@ qor_pp_test_suite_case(PropertyTestSuite, canMakeAVectorValue)
                 {
                     auto value = prop.Value().Get<int>();
                 }
-
-                //auto value = prop.GetValue();
-                
-                //Here we need to know what the real type of the Value was
                 break;
             }
         }

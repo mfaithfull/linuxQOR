@@ -40,8 +40,6 @@ using namespace qor;
 using namespace qor::test;
 
 
-struct SingletonTestSuite{};
-
 class Test_Singleton
 {
 private:
@@ -63,13 +61,13 @@ public:
 
 namespace qor{ qor_pp_declare_instancer_of(Test_Singleton, SingletonInstancer); }
 
-qor_pp_test_suite_case(SingletonTestSuite, canCreateSingleSingleton)
+qor_pp_test_case(canCreateSingleSingleton)
 {
     auto ref = new_ref<Test_Singleton>();
     qor_pp_assert_that( &(ref()()) ).isNotNull();
 }
 
-qor_pp_test_suite_case(SingletonTestSuite, twoSingletonRefsReferToSameObject)
+qor_pp_test_case(twoSingletonRefsReferToSameObject)
 {
     auto ref1 = new_ref<Test_Singleton>();
     auto ref2 = new_ref<Test_Singleton>();
@@ -77,7 +75,7 @@ qor_pp_test_suite_case(SingletonTestSuite, twoSingletonRefsReferToSameObject)
     qor_pp_assert_that( ref1 == ref2 ).isTrue();
 }
 
-qor_pp_test_suite_case(SingletonTestSuite, SingletonCantBeReleasedAndReacquiredWithNewInstance)
+qor_pp_test_case(SingletonCantBeReleasedAndReacquiredWithNewInstance)
 {
     
     {

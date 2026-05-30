@@ -382,6 +382,6 @@ namespace qor{ namespace mock{
         return os;
     }
 
-}}//qor::ext
+}}//qor::mock
 
 #endif//QOR_PP_H_TESTMOCK_MOCKREPOSITORY

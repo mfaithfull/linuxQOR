@@ -126,18 +126,19 @@ bool globalRelativeParamCheckResult = false;
 
 namespace qor {
 
+    template< typename paramType, unsigned int compareIndex >
     class LargerThan
     {
     public:
         
-        static void Check(int value) 
+        static void Check(paramType value) 
         {
             FunctionContextLock fcl;
-            CallContext* pCallContext = dynamic_cast<CallContext*>(fcl.CallContextPtr());
+            CallContext* pCallContext = fcl.CallContextPtr();
             if(pCallContext)
             {
-                ParameterBase& ParamBase = pCallContext->Parameters()[pCallContext->m_ucParamCount - 2];
-                int* pParam = reinterpret_cast<int*>(ParamBase.m_p);
+                ParameterBase& ParamBase = pCallContext->Parameters()[compareIndex];
+                paramType* pParam = reinterpret_cast<paramType*>(ParamBase.m_p);
                 if( pParam)
                 {
                     if( value > *pParam)
@@ -157,7 +158,7 @@ namespace qor {
     
 }//qor
 
-int doSomethingRelative( CheckedParam<int, LargerThan> a, CheckedParam<int> b) //a must be larger than b
+int doSomethingRelative( CheckedParam<int, LargerThan<int, 0>> a, CheckedParam<int> b) //a must be larger than b
 {
     qor_pp_fcontext;
     return a + b;

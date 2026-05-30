@@ -46,7 +46,7 @@ namespace qor{ namespace mock {
 
     inline std::wostream& operator << (std::wostream& os, NotPrintable const&)
     {
-        os << "???";
+        os << L"???";
         return os;
     }
     

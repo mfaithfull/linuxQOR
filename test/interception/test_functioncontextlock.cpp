@@ -37,5 +37,5 @@ qor_pp_test_suite_case(FunctionContextLockTestSuite, canInstantiateAFunctionCont
 {
     qor_pp_ofcontext;
     FunctionContextLock fcl;
+    qor_pp_assert_that(_FContext_.Locked()).isTrue();
 }
-

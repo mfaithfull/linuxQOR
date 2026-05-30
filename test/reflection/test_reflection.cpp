@@ -31,20 +31,19 @@
 using namespace qor;
 using namespace qor::test;
 
-
-struct RelectionTestSuite{};
-
-struct some_person {
+struct some_person 
+{
     std::string name;
     unsigned birth_year;
 };
 
-struct foo {            // defining structure
+struct foo 
+{            // defining structure
     int some_integer;
     char c;
 };
 
-qor_pp_test_suite_case(RelectionTestSuite, canDoReflection101)
+qor_pp_test_case(canDoReflection101)
 {
     some_person val{"Edgar Allan Poe", 1809};
 
@@ -55,16 +54,16 @@ qor_pp_test_suite_case(RelectionTestSuite, canDoReflection101)
     qor_pp_assert_that(true).isTrue();
 }
 
-constexpr std::string_view n1 = qor_reflection::get_name<0, some_person>(); // returns "some_integer"
-constexpr std::string_view n2 = qor_reflection::get_name<1, some_person>(); // returns "c"
+constexpr std::string_view n1 = qor_reflection::get_name<0, some_person>();
+constexpr std::string_view n2 = qor_reflection::get_name<1, some_person>();
 
-qor_pp_test_suite_case(RelectionTestSuite, canGetNamesbyReflection)
+qor_pp_test_case(canGetNamesbyReflection)
 {
     qor_pp_assert_that(n1 == "name");
     qor_pp_assert_that(n2 == "birth_year");
 }
 
-qor_pp_test_suite_case(RelectionTestSuite, canGetFieldsByIndex)
+qor_pp_test_case(canGetFieldsByIndex)
 {
     foo f {777, '!'};
     auto& r1 = qor_reflection::get<0>(f); // accessing field with index 0, returns reference to `foo::some_integer`

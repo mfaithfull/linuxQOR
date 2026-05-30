@@ -29,25 +29,16 @@
 using namespace qor;
 using namespace qor::test;
 
-struct CompilerTestSuite
-{
-	CompilerTestSuite()
-	{
-	}
+struct TestDemangleTypeName{};
 
-	~CompilerTestSuite()
-	{
-	}
-};
-
-qor_pp_test_suite_case(CompilerTestSuite, DemangleIsNotEmpty)
+qor_pp_test_case(DemangleIsNotEmpty)
 {
-    std::string unmangled(qor::compiler::demangle<CompilerTestSuite>());    
+    std::string unmangled(qor::compiler::demangle<TestDemangleTypeName>());    
 	unequal(unmangled, "", qor_pp_compiler_at);
 }
 
-qor_pp_test_suite_case(CompilerTestSuite, DemangleReturnsClassName)
+qor_pp_test_case(DemangleReturnsClassName)
 {
-    std::string unmangled(qor::compiler::demangle<CompilerTestSuite>());    
-    equal("CompilerTestSuite", unmangled, qor_pp_compiler_at);
+    std::string unmangled(qor::compiler::demangle<TestDemangleTypeName>());    
+    equal("TestDemangleTypeName", unmangled, qor_pp_compiler_at);
 }

@@ -47,7 +47,7 @@ namespace qor{ namespace mock{
             {
                 if (withComma)
                 {
-                    os << ",";
+                    os << L",";
                 }
                 os << arg;
             }

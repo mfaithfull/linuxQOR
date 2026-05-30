@@ -54,7 +54,7 @@ namespace qor {
 		
             ParameterPass(T& _t) : ParameterBase()
 			{
-				m_p = &_t;//Capture the parameter reference on construction
+				m_p = &_t;//Capture the parameter address on construction
 			}
 
 			ParameterPass(const ParameterBase& src) : ParameterBase(src){}
