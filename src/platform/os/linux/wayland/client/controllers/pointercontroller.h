@@ -36,12 +36,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Pointer;
     class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) PointerController : public SlotBase
+    class qor_pp_module_interface(QOR_LINWAYLAND) PointerHandler : public SlotBase
     {
     public:
 
-        PointerController(ref_of<Pointer>::type pointer);
-        virtual ~PointerController();
+        PointerHandler(ref_of<Pointer>::type pointer);
+        virtual ~PointerHandler();
 
         virtual void OnEnter(uint32_t serial, Surface* surface, int32_t sx, int32_t sy);        
         virtual void OnLeave(uint32_t serial, Surface* surface);        

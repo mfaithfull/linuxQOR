@@ -54,6 +54,7 @@ namespace qor { namespace framework{
         virtual void Setup();
         virtual void Shutdown();
 
+        virtual int Run();
         //provide toolkits and rendering backends
         //provide parameters and metrics of the actual desktop
         //provide widgets that map onto the tookit and renderingapi in use.

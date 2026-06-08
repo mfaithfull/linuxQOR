@@ -1,12 +1,8 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-
 set(target winqor_exebootstrap)
 
 add_library(${target} winqorexeboot.cpp)
 
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_link_libraries(${target})
-
-include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

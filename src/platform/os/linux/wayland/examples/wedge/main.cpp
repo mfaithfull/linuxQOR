@@ -114,11 +114,11 @@ public:
     ui::renderer::Canvas* m_canvas;
 };
 
-class customKeyboardController : public wl::KeyboardController
+class customKeyboardController : public wl::KeyboardHandler
 {
 public:
 
-    customKeyboardController(wl::XDGSession* session, ref_of<wl::Keyboard>::type keyboard) : wl::KeyboardController(keyboard), m_session(session)
+    customKeyboardController(wl::XDGSession* session, ref_of<wl::Keyboard>::type keyboard) : wl::KeyboardHandler(keyboard), m_session(session)
     {        
     }
 

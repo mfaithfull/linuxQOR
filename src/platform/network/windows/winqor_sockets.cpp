@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include <buildnumber.h>
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
@@ -34,14 +35,19 @@
 #include "sockets.h"
 #include "socket.h"
 
-qor::Module& ThisModule(void)
+extern "C"
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Sockets Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Windows Sockets Module", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
 
-	//Register the Windows specific implementations provided by this module
-	static qor::TypeRegEntry< qor::network::nswindows::Sockets, qor::network::Sockets > regSockets;
-	static qor::TypeRegEntryWithParams< qor::network::nswindows::Socket, qor::network::Socket, qor::network::sockets::eAddressFamily&, qor::network::sockets::eType&, qor::network::sockets::eProtocol& > regSocket;
-
-	return QORModule;
+		//Register the Windows specific implementations provided by this module
+		static qor::TypeRegEntry< qor::network::nswindows::Sockets, qor::network::Sockets > regSockets;
+		static qor::TypeRegEntryWithParams< qor::network::nswindows::Socket, qor::network::Socket, qor::network::sockets::eAddressFamily&, qor::network::sockets::eType&, qor::network::sockets::eProtocol& > regSocket;
+		return QORModule;
+	}
 }

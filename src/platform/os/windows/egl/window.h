@@ -31,10 +31,10 @@
 #include "src/platform/os/windows/common/stringconv.h"
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/gui/window.h"
-#include "src/platform/os/windows/gui/windowclassregistration.h"
-#include "src/platform/os/windows/gui/icon.h"
-#include "src/platform/os/windows/gui/cursor.h"
-#include "src/platform/os/windows/gui/brush.h"
+#include "src/platform/os/windows/gui/factories/windowclassregistration.h"
+#include "src/platform/os/windows/gui/gdiobjects/icon.h"
+#include "src/platform/os/windows/gui/gdiobjects/cursor.h"
+#include "src/platform/os/windows/gui/gdiobjects/brush.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace nswindows{ 

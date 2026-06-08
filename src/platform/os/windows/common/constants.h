@@ -372,23 +372,23 @@ namespace qor{ namespace platform { namespace nswindows {
 */
 
 	// Ternary raster operations
-	constexpr unsigned long	SRCCOPY             =0x00CC0020; /* dest = source                   */
-	constexpr unsigned long	SRCPAINT            =0x00EE0086; /* dest = source OR dest           */
-	constexpr unsigned long	SRCAND              =0x008800C6; /* dest = source AND dest          */
-	constexpr unsigned long	SRCINVERT           =0x00660046; /* dest = source XOR dest          */
-	constexpr unsigned long	SRCERASE            =0x00440328; /* dest = source AND (NOT dest )   */
-	constexpr unsigned long	NOTSRCCOPY          =0x00330008; /* dest = (NOT source)             */
-	constexpr unsigned long	NOTSRCERASE         =0x001100A6; /* dest = (NOT src) AND (NOT dest) */
-	constexpr unsigned long	MERGECOPY           =0x00C000CA; /* dest = (source AND pattern)     */
-	constexpr unsigned long	MERGEPAINT          =0x00BB0226; /* dest = (NOT source) OR dest     */
-	constexpr unsigned long	PATCOPY             =0x00F00021; /* dest = pattern                  */
-	constexpr unsigned long	PATPAINT            =0x00FB0A09; /* dest = DPSnoo                   */
-	constexpr unsigned long	PATINVERT           =0x005A0049; /* dest = pattern XOR dest         */
-	constexpr unsigned long	DSTINVERT           =0x00550009; /* dest = (NOT dest)               */
-	constexpr unsigned long	BLACKNESS           =0x00000042; /* dest = BLACK                    */
-	constexpr unsigned long	WHITENESS           =0x00FF0062; /* dest = WHITE                    */
-	constexpr unsigned long	NOMIRRORBITMAP      =0x80000000; /* Do not Mirror the bitmap in this call */
-	constexpr unsigned long	CAPTUREBLT          =0x40000000; /* Include layered windows */
+	constexpr unsigned long	SrcCopy             =0x00CC0020; /* dest = source                   */
+	constexpr unsigned long	SrcPaint            =0x00EE0086; /* dest = source OR dest           */
+	constexpr unsigned long	SrcAnd              =0x008800C6; /* dest = source AND dest          */
+	constexpr unsigned long	Srcinvert           =0x00660046; /* dest = source XOR dest          */
+	constexpr unsigned long	SrcErase            =0x00440328; /* dest = source AND (NOT dest )   */
+	constexpr unsigned long	NotSrcCopy          =0x00330008; /* dest = (NOT source)             */
+	constexpr unsigned long	NotSrcErase         =0x001100A6; /* dest = (NOT src) AND (NOT dest) */
+	constexpr unsigned long	MergeCopy           =0x00C000CA; /* dest = (source AND pattern)     */
+	constexpr unsigned long	MergePaint          =0x00BB0226; /* dest = (NOT source) OR dest     */
+	constexpr unsigned long	PatCopy             =0x00F00021; /* dest = pattern                  */
+	constexpr unsigned long	PatPaint            =0x00FB0A09; /* dest = DPSnoo                   */
+	constexpr unsigned long	PatInvert           =0x005A0049; /* dest = pattern XOR dest         */
+	constexpr unsigned long	DstInvert           =0x00550009; /* dest = (NOT dest)               */
+	constexpr unsigned long	Blackness           =0x00000042; /* dest = BLACK                    */
+	constexpr unsigned long	Whiteness           =0x00FF0062; /* dest = WHITE                    */
+	constexpr unsigned long	NoMirrorBitmap      =0x80000000; /* Do not Mirror the bitmap in this call */
+	constexpr unsigned long	CaptureBlt          =0x40000000; /* Include layered windows */
 
 	//PIXELFORMATDESCRIPTOR flags
 	constexpr unsigned long	PFDDOUBLEBUFFER            =0x00000001;

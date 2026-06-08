@@ -23,11 +23,18 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "../../configuration/configuration.h"
+#include <buildnumber.h>
 #include "../module/module.h"
 
-qor::Module& ThisModule(void)
+extern "C"
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Issue Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
-	return QORModule;
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Issue Module", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
+		return QORModule;
+	}
 }

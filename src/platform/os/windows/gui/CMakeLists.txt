@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-
 set(target winqor_gui)
 
 add_library(${target} SHARED winqor_gui.cpp
@@ -104,14 +101,17 @@ openglsession.cpp
 factories/windowclass.cpp
 )
 
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE QOR_WINGUI)
+target_compile_definitions(${target} PRIVATE QOR_WINGUI
+qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
+qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
+qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
+
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
 qor_interception qor_signals 
 winqor_api_kernel winqor_api_user winqor_api_gdi winqor_api_shell 
 winqor_api_shcore winqor_api_comctl32 winqor_api_dwm winqor_api_uxtheme
 winqor_api_opengl
 winqor_dynamiclibrary winqor_common winqor_sharedbootstrap)
-
-include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")

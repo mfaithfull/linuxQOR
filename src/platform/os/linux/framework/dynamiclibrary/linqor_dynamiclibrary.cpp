@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include <buildnumber.h>
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
@@ -31,13 +32,18 @@
 #include "src/qor/reference/newref.h"
 #include "dynamiclibrary.h"
 
-qor::Module& ThisModule(void)
+extern "C"
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Linux Dynamic Library Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Linux Dynamic Library Module", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
 
-	//Register the Windows specific implementations
-	static qor::TypeRegEntryWithParams< qor::nslinux::framework::DynamicLibrary, qor::framework::DynamicLibrary, const std::string& > regDynamicLibrary;
-
-	return QORModule;
+		//Register the Linux specific implementations
+		static qor::TypeRegEntryWithParams< qor::nslinux::framework::DynamicLibrary, qor::framework::DynamicLibrary, const std::string& > regDynamicLibrary;
+		return QORModule;
+	}
 }

@@ -25,6 +25,7 @@
 #include "sdk/using_platform.h"
 #include "sdk/using_framework.h"
 #include "sdk/components/framework.h"
+#include <buildnumber.h>
 #include "workflow.h"
 
 const char* appName = "Example Client";

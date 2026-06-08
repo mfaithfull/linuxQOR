@@ -1,12 +1,12 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-
 set(target qor_compiler)
-
-include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 add_library(${target} compiler.cpp)
 
-target_compile_definitions(${target} PRIVATE -DQOR_COMPILER)
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
+target_compile_definitions(${target} PRIVATE QOR_COMPILER
+qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
+qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
+qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
+

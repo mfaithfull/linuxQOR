@@ -26,6 +26,7 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
+#include <buildnumber.h>
 #include "src/framework/application/application_builder.h"
 
 using namespace qor;                                //Use the basic namespaces from the QOR
@@ -33,10 +34,12 @@ using namespace qor::framework;
 
 constexpr const char* appName = "BasicApp";         //Give our application a name
 
-Module& ThisModule(void)                            //Every QOR module must provide an implementation of ThisModule
-{ 
-    static Module QORModule(appName, "1.0.0");      //A module singleton object with name and version
-    return QORModule;
+extern "C"{
+    Module& ThisModule(void)                                        //Every QOR module must provide an implementation of ThisModule
+    { 
+        static Module QORModule(appName, qor_pp_stringize(qor_pp_ver_project));      //A module singleton object with name and version
+        return QORModule;
+    }
 }
 
 int main()                                          //Standard C/C++ entry point

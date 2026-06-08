@@ -330,7 +330,7 @@ namespace qor { namespace components { namespace nswindows {
 		bool result = false;
 		try
 		{
-			DWORD NumberOfMouseButtons = 0;
+			unsigned long NumberOfMouseButtons = 0;
 			result = Kernel32::GetNumberOfConsoleMouseButtons(&NumberOfMouseButtons);
 			if (result)
 			{

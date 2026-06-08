@@ -32,83 +32,83 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    PointerController::PointerController(ref_of<Pointer>::type pointer) : m_pointer(pointer)
+    PointerHandler::PointerHandler(ref_of<Pointer>::type pointer) : m_pointer(pointer)
     {
         if(m_pointer)
         {
-            connect(*m_pointer, &Pointer::EnterEvent, *this, &PointerController::OnEnter);
-            connect(*m_pointer, &Pointer::LeaveEvent, *this, &PointerController::OnLeave);
-            connect(*m_pointer, &Pointer::MotionEvent, *this, &PointerController::OnMotion);
-            connect(*m_pointer, &Pointer::ButtonEvent, *this, &PointerController::OnButton);
-            connect(*m_pointer, &Pointer::AxisEvent, *this, &PointerController::OnAxis);
-            connect(*m_pointer, &Pointer::AxisDiscreteEvent, *this, &PointerController::OnAxisDiscrete);
-            connect(*m_pointer, &Pointer::AxisSourceEvent, *this, &PointerController::OnAxisSource);
-            connect(*m_pointer, &Pointer::AxisStopEvent,*this, &PointerController::OnAxisStop);
-            connect(*m_pointer, &Pointer::FrameEvent, *this, &PointerController::OnFrame);
+            connect(*m_pointer, &Pointer::EnterEvent, *this, &PointerHandler::OnEnter);
+            connect(*m_pointer, &Pointer::LeaveEvent, *this, &PointerHandler::OnLeave);
+            connect(*m_pointer, &Pointer::MotionEvent, *this, &PointerHandler::OnMotion);
+            connect(*m_pointer, &Pointer::ButtonEvent, *this, &PointerHandler::OnButton);
+            connect(*m_pointer, &Pointer::AxisEvent, *this, &PointerHandler::OnAxis);
+            connect(*m_pointer, &Pointer::AxisDiscreteEvent, *this, &PointerHandler::OnAxisDiscrete);
+            connect(*m_pointer, &Pointer::AxisSourceEvent, *this, &PointerHandler::OnAxisSource);
+            connect(*m_pointer, &Pointer::AxisStopEvent,*this, &PointerHandler::OnAxisStop);
+            connect(*m_pointer, &Pointer::FrameEvent, *this, &PointerHandler::OnFrame);
         }
         else
         {
-            continuable("No pointer specified for new PointerController.");
+            continuable("No pointer specified for new PointerHandler.");
         }
     }
 
-    PointerController::~PointerController()
+    PointerHandler::~PointerHandler()
     {
         if(m_pointer)
         {
-            disconnect(*m_pointer, &Pointer::FrameEvent, *this, &PointerController::OnFrame);
-            disconnect(*m_pointer, &Pointer::AxisStopEvent,*this, &PointerController::OnAxisStop);
-            disconnect(*m_pointer, &Pointer::AxisSourceEvent, *this, &PointerController::OnAxisSource);
-            disconnect(*m_pointer, &Pointer::AxisDiscreteEvent, *this, &PointerController::OnAxisDiscrete);
-            disconnect(*m_pointer, &Pointer::AxisEvent, *this, &PointerController::OnAxis);
-            disconnect(*m_pointer, &Pointer::ButtonEvent, *this, &PointerController::OnButton);
-            disconnect(*m_pointer, &Pointer::MotionEvent, *this, &PointerController::OnMotion);
-            disconnect(*m_pointer, &Pointer::LeaveEvent, *this, &PointerController::OnLeave);
-            disconnect(*m_pointer, &Pointer::EnterEvent, *this, &PointerController::OnEnter);
+            disconnect(*m_pointer, &Pointer::FrameEvent, *this, &PointerHandler::OnFrame);
+            disconnect(*m_pointer, &Pointer::AxisStopEvent,*this, &PointerHandler::OnAxisStop);
+            disconnect(*m_pointer, &Pointer::AxisSourceEvent, *this, &PointerHandler::OnAxisSource);
+            disconnect(*m_pointer, &Pointer::AxisDiscreteEvent, *this, &PointerHandler::OnAxisDiscrete);
+            disconnect(*m_pointer, &Pointer::AxisEvent, *this, &PointerHandler::OnAxis);
+            disconnect(*m_pointer, &Pointer::ButtonEvent, *this, &PointerHandler::OnButton);
+            disconnect(*m_pointer, &Pointer::MotionEvent, *this, &PointerHandler::OnMotion);
+            disconnect(*m_pointer, &Pointer::LeaveEvent, *this, &PointerHandler::OnLeave);
+            disconnect(*m_pointer, &Pointer::EnterEvent, *this, &PointerHandler::OnEnter);
         }
     }
 
-    void PointerController::OnEnter(uint32_t serial, Surface* surface, int32_t sx, int32_t sy)
+    void PointerHandler::OnEnter(uint32_t serial, Surface* surface, int32_t sx, int32_t sy)
     {
 
     }
 
-    void PointerController::OnLeave(uint32_t serial, Surface* surface)
+    void PointerHandler::OnLeave(uint32_t serial, Surface* surface)
     {
 
     }
 
-    void PointerController::OnMotion(uint32_t time, int32_t sx, int32_t sy)
+    void PointerHandler::OnMotion(uint32_t time, int32_t sx, int32_t sy)
     {
 
     }
 
-    void PointerController::OnButton(uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
+    void PointerHandler::OnButton(uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
     {
 
     }
 
-    void PointerController::OnAxis(uint32_t time, uint32_t axis, int32_t value)
+    void PointerHandler::OnAxis(uint32_t time, uint32_t axis, int32_t value)
     {
 
     }
 
-    void PointerController::OnFrame()
+    void PointerHandler::OnFrame()
     {
 
     }
 
-    void PointerController::OnAxisDiscrete(uint32_t axis, int32_t discrete)
+    void PointerHandler::OnAxisDiscrete(uint32_t axis, int32_t discrete)
     {
 
     }
     
-    void PointerController::OnAxisSource(uint32_t axisSource)
+    void PointerHandler::OnAxisSource(uint32_t axisSource)
     {
 
     }
 
-    void PointerController::OnAxisStop(uint32_t time, uint32_t axis)
+    void PointerHandler::OnAxisStop(uint32_t time, uint32_t axis)
     {
         
     }

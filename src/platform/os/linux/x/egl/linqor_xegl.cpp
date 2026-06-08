@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include <buildnumber.h>
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
@@ -31,10 +32,16 @@
 #include "src/qor/injection/typeregentry.h"
 #include "src/qor/reference/newref.h"
 
-qor::Module& ThisModule(void)
+extern "C"
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Linux X EGL",
-		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Linux X EGL", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
 
-	return QORModule;
+		return QORModule;
+	}
 }

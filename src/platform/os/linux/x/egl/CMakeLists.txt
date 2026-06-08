@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-
-
 set(target linqor_xegl)
 
 add_library(${target} SHARED linqor_xegl.cpp eglsession.cpp eglwindow.cpp egldisplay.cpp)
@@ -9,8 +5,13 @@ add_library(${target} SHARED linqor_xegl.cpp eglsession.cpp eglwindow.cpp egldis
 target_include_directories(${target} PRIVATE)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 
-target_compile_definitions(${target} PRIVATE QOR_LINWLEGL)
+target_compile_definitions(${target} PRIVATE QOR_LINWLEGL
+qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
+qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
+qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
+
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
 qor_interception qor_log linq_thread linqor_x qor_egl
 X11)

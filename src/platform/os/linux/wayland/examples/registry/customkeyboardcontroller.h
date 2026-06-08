@@ -29,11 +29,11 @@
 #include "sdk/platform/os/linux/wayland.h"
 #include "customwindow.h"
 
-class customKeyboardController : public wl::KeyboardController
+class customKeyboardController : public wl::KeyboardHandler
 {
 public:
 
-    customKeyboardController(wl::XDGSession* session) : wl::KeyboardController(session->GetKeyboard()), m_session(session)
+    customKeyboardController(wl::XDGSession* session) : wl::KeyboardHandler(session->GetKeyboard()), m_session(session)
     {        
     }
 

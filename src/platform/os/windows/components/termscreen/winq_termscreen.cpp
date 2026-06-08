@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include <buildnumber.h>
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
@@ -33,12 +34,19 @@
 
 #include "termscreen.h"
 
-qor::Module& ThisModule(void)
+extern "C"
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Terminal Screen Module",
-		qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Windows Terminal Screen Module", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
 
-	//Register the Windows specific implementation of TermScreen
-	static qor::TypeRegEntry< qor::components::nswindows::tui::TermScreen, qor::components::tui::TermScreen> regTermScreen;
-	return QORModule;
+		//Register the Windows specific implementation of TermScreen
+		static qor::TypeRegEntry< qor::components::nswindows::tui::TermScreen, qor::components::tui::TermScreen> regTermScreen;
+		return QORModule;
+	}
 }
+
