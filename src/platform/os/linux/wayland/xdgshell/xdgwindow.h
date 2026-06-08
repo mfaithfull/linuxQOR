@@ -47,7 +47,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGWindow
     {
     public:
-        XDGWindow(qor::ref_of<XDGSession>::type session);
+        XDGWindow(qor::ref_of<XDGSession>::type session, unsigned int width, unsigned int height);
         virtual ~XDGWindow();
         qor::ref_of<XDGSurface>::type GetXDGSurface();
         virtual void DoConfiguration();

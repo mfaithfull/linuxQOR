@@ -47,7 +47,7 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    XDGPopupWindow::XDGPopupWindow(ref_of<XDGSession>::type session, XDGWindow* parent, ref_of<XDGPositioner>::type positioner) : XDGWindow(session), m_parent(parent), m_positioner(positioner)
+    XDGPopupWindow::XDGPopupWindow(ref_of<XDGSession>::type session, XDGWindow* parent, ref_of<XDGPositioner>::type positioner) : XDGWindow(session, 64, 64), m_parent(parent), m_positioner(positioner)
     {                
         AddXDGPopupAdaptor();
     }

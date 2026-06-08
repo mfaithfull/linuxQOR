@@ -31,7 +31,7 @@ class SelfDrawnTopLevelWaylandWindow : public wl::XDGTopLevelWindow
 {
 public:
 
-    SelfDrawnTopLevelWaylandWindow(qor::ref_of<wl::XDGSession>::type session) : wl::XDGTopLevelWindow(session), m_session(session)
+    SelfDrawnTopLevelWaylandWindow(qor::ref_of<wl::XDGSession>::type session, int width, int height) : wl::XDGTopLevelWindow(session, width, height), m_session(session)
     {
         pixels = nullptr;
         m_curBuffer = 0;
@@ -118,11 +118,10 @@ protected:
 class ExampleWindow : public SelfDrawnTopLevelWaylandWindow
 {
 public:
-    ExampleWindow(qor::ref_of<wl::XDGSession>::type session) : SelfDrawnTopLevelWaylandWindow(session)
+
+    ExampleWindow(qor::ref_of<wl::XDGSession>::type session) : SelfDrawnTopLevelWaylandWindow(session, 640, 480)
     {
         m_popup = nullptr;
-        SetWidth(640);
-        SetHeight(480);
         DoConfiguration();//Need to this for every XDGWindow to connect up the callbacks to our derived class
 
         m_positioner = m_session->GetXDGWMBase()->CreatePositioner();

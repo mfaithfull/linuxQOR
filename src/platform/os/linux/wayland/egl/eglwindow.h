@@ -80,7 +80,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
         }
 
         virtual void DrawFrame()//Override to actually draw your frame and Swap the Buffers.
-        {            
+        {
+            RequestPerFrameCallback();         
         }
 
     protected:

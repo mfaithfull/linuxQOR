@@ -33,7 +33,7 @@
 #include "sdk/using_framework.h"
 #include "sdk/platform/os/linux/wayland.h"  //Linux specific. NOTE: This sample is Linux only
 
-#include "bindmem.h"                        //Headers specific to this sample
+#include "bindmem.h"                        //wayland sample headers
 #include "sharedmem.h"
 #include "custompopup.h"
 #include "customwindow.h"
@@ -46,7 +46,7 @@ int waylandExampleRun(ref_of<wl::XDGSession>::type session)
     window->SetTitle("Wayland XDG Example");                    //Set window properties
     customKeyboardController keycon(session);                   //Setup a Keyboard controller to catch Esc and quit the Session
     customPointerController pointercon(session, window);        //Setup a Pointer controller to catch clicks    
-    return session->Run();                                      //Loop until the Session is ended. Press Esc to quit.
+    return session->Run();                                      //Loop until the Session is ended. Note: Press Esc to quit.
 }
 
 int waylandExampleCommon()
@@ -57,20 +57,20 @@ int waylandExampleCommon()
     return waylandExampleRun(session);
 }
 
-const char* appName = "registry";
+const char* appName = "yutani";
 qor_pp_implement_module(appName)                            //Make this executable a QOR Module.
 qor_pp_module_requires(WaylandClient)                       //Persuade the linker to link the WaylandClient implementation
 
 int main(int argc, char **argv) 
 {    
-    auto registryApp = AppBuilder().Build(appName);         //Create the QOR Application container singleton
+    auto yutani = AppBuilder().Build(appName);              //Create the QOR Application container singleton
 
-    registryApp->SetRole<Role>(                             //Set the Role to an instance of the base Role type
-        [](ref_of<IRole>::type role)                        //We're given the IRole instance to configure
-        {
+    yutani->SetRole<Role>(                                  //Set the Role to an instance of the base Role type
+        [](ref_of<IRole>::type role)                        
+        {                                                   //We're given the IRole instance interface to configure
             role->AddFeature<WaylandClient>();              //Add the WaylandClient Feature
         }
-    ).Run(                                                  //Run the returned Application to manage the added features
+    ).Run(                                                  //Run the Application to manage the features
         make_runable(                                       //This turns a function int(...) into a Runable object
             []()->int
             {

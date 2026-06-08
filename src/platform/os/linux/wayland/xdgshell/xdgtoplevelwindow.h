@@ -40,7 +40,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWLXDGSHELL) XDGTopLevelWindow : public XDGWindow
     {
     public:
-        XDGTopLevelWindow(qor::ref_of<XDGSession>::type session);
+        XDGTopLevelWindow(qor::ref_of<XDGSession>::type session, unsigned int width, unsigned int height);
         virtual ~XDGTopLevelWindow();
         
         virtual void OnXDGTopLevelConfigured(int32_t width, int32_t height, struct wl_array* states);

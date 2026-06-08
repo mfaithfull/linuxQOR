@@ -47,7 +47,7 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    XDGWindow::XDGWindow(qor::ref_of<XDGSession>::type session) : m_display(session->GetDisplay()), m_width{64}, m_height{64}
+    XDGWindow::XDGWindow(qor::ref_of<XDGSession>::type session, unsigned int width, unsigned int height) : m_display(session->GetDisplay()), m_width(width), m_height(height)
     {                
         auto surface = session->GetCompositor()->CreateSurface();//Make a Surface        
         m_xdgSurface = session->GetXDGWMBase()->GetXDGSurface(surface);//Get an XDG Surface adapter for the surface
@@ -92,10 +92,8 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
     void XDGWindow::OnXDGSurfaceConfigured()
     {
-        /* Override in derived class 
-            XDG Surface configured
-            This event is called when an XDG surface has been configured by the compositor.
-        */
+        //This event is called when an XDG surface has been configured by the compositor. 
+        //Override this to handle configuration changes
     }
     
 }}}}//qor::platform::nslinux::wl

@@ -43,7 +43,7 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    WEGLWindow::WEGLWindow(ref_of<XDGSession>::type session, int x, int y, unsigned int width, unsigned int height) : XDGTopLevelWindow(session), m_eglWindow(nullptr)
+    WEGLWindow::WEGLWindow(ref_of<XDGSession>::type session, int x, int y, unsigned int width, unsigned int height) : XDGTopLevelWindow(session, width, height), m_eglWindow(nullptr)
     {
     }
 

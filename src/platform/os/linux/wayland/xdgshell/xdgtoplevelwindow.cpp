@@ -47,7 +47,7 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    XDGTopLevelWindow::XDGTopLevelWindow(qor::ref_of<XDGSession>::type session) : XDGWindow(session)
+    XDGTopLevelWindow::XDGTopLevelWindow(qor::ref_of<XDGSession>::type session, unsigned int width, unsigned int height) : XDGWindow(session, width, height)
     {                
         AddXDGTopLevelAdaptor();
     }
