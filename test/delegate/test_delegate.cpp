@@ -79,7 +79,7 @@ qor_pp_test_suite_case(DelegateTestSuite, canConstructDelegateOnConstMemberFunct
     DelegateTestTarget target;
       
     Delegate<double(int, char, const char*)> d;
-    auto dConst = decltype(d)::Create<DelegateTestTarget, &DelegateTestTarget::ConstInstanceFunction>(&target);
+    auto dConst = decltype(d)::Create<DelegateTestTarget, &DelegateTestTarget::ConstInstanceFunction>(&target);    
 }
 
 qor_pp_test_suite_case(DelegateTestSuite, canCallDelegateOnConstMemberFunction)
@@ -104,9 +104,10 @@ qor_pp_test_suite_case(DelegateTestSuite, canCallDelegateOnStatictMemberFunction
     qor_pp_assert_that(dFunc(2, 'C', "Static function call")).isEqualTo(0.3);
 }
     
+//TODO: tidy this up. What are we testing here?
+
 qor_pp_test_suite_case(DelegateTestSuite, canCallDelegateOnLambda)
-{    
-        
+{            
     Delegate<double(int, char, const char*)> d;
     
     int touchPoint = 1;

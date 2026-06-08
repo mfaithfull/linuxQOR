@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-
 add_subdirectory(api_layer)
 add_subdirectory(exebootstrap)
 add_subdirectory(sharedbootstrap)
@@ -14,4 +11,3 @@ add_subdirectory(examples)
 add_subdirectory(egl)
 add_subdirectory(opengles)
 add_subdirectory(com)
-

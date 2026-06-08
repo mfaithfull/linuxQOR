@@ -1,16 +1,14 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
-
 set(target plumbing)
-
-include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 add_executable(${target} main.cpp)
 
-target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE)
+include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
+
+target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE
+qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
+qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
+qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
     target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
@@ -25,8 +23,6 @@ qor_log qor_loghandler qor_sockets qor_asyncioservice qor_base64decodefilter qor
 qor_property qor_stdoutsink
 winqor_filesystem winqor_thread)
 endif()
-
-include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 
 if (WIN32)
   add_custom_command(

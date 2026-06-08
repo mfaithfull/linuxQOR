@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-
 set(target qor_tui)
 
 add_library(${target} SHARED qor_tui.cpp
@@ -85,11 +82,13 @@ widgets/toggle.cpp
 widgets/window.cpp
 )
 
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-target_compile_definitions(${target} PRIVATE UNICODE QOR_TUI)
+target_compile_definitions(${target} PRIVATE UNICODE QOR_TUI
+qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
+qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
+qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
+
 target_link_libraries(${target} qor_module qor_datastructures qor_objectcontext qor_role qor_application qor_workflow qor_signals qor_error
 qor_property)
-
-include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
-

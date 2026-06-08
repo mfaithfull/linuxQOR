@@ -40,8 +40,6 @@ namespace qor {
         IFunctionContext() = default;
         virtual ~IFunctionContext() = default;
 
-    //protected:
-
         virtual unsigned int Lock() = 0;
         virtual unsigned int Unlock() = 0;
         virtual bool Locked() const = 0;

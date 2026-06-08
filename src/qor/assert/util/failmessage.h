@@ -113,8 +113,6 @@ namespace qor{ namespace assert { namespace util {
         ~FailMessage() noexcept(false)
         {
             throw qor::test::failure(d_file.c_str(), d_buffer.str().c_str());
-
-            //GTEST_MESSAGE_AT_(d_file.c_str(), d_line, d_buffer.str().c_str(), ::testing::TestPartResult::kFatalFailure);
         }
     };
     

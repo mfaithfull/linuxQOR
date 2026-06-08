@@ -1,15 +1,9 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
-
+project(Basic VERSION 1.0.0 DESCRIPTION "Basic QOR Example" LANGUAGES CXX)
 set(target basic)
-
+add_executable(${target} main.cpp )
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
-
-add_executable(${target} main.cpp)
-
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
+target_compile_definitions(${target} PRIVATE qor_pp_ver_project=${PROJECT_VERSION})
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application)
 
 if (WIN32)

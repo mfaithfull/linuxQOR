@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include <buildnumber.h>
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
@@ -32,13 +33,20 @@
 #include "desktopui.h"
 #include "windows/mainwindow.h"
 
-qor::Module& ThisModule(void)
+extern "C"
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Windows Desktop UI Module", 
-        qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Windows Desktop UI Module", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
 
-	//Register the Windows specific implementations
-	static qor::TypeRegEntry< qor::framework::nswindows::DesktopUI, qor::framework::DesktopUI > regDesktopUI;
-	static qor::TypeRegEntryWithParams< qor::framework::nswindows::MainWindow, qor::ui::IMainWindowImpl, const std::wstring& > regIMainWindowImpl;
-	return QORModule;
+		//Register the Windows specific implementations
+		static qor::TypeRegEntry< qor::framework::nswindows::DesktopUI, qor::framework::DesktopUI > regDesktopUI;
+		static qor::TypeRegEntryWithParams< qor::framework::nswindows::MainWindow, qor::ui::IMainWindowImpl, const std::wstring& > regIMainWindowImpl;
+		return QORModule;
+	}
 }
+

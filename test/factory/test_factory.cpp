@@ -74,7 +74,7 @@ public:
 
 namespace qor{qor_pp_declare_factory_of(Test_Widget, InternalFactory);}
 
-qor_pp_test_suite_case(FactoryTestSuite, defaultSinlgeItemConstructionAndDestruction)
+qor_pp_test_suite_case(FactoryTestSuite, defaultSingleItemConstructionAndDestruction)
 {
     {
         auto p = qor::factory_of<Test_Widget>::type::Construct();

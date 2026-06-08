@@ -28,7 +28,6 @@
 #include <optional>
 #include "src/platform/filesystem/ifilesystem.h"
 #include "src/platform/filesystem/fileindex.h"
-//#include "src/platform/filesystem/path.h"
 
 namespace qor
 {

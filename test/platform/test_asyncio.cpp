@@ -61,6 +61,9 @@ qor_pp_test_suite_case(AsyncIOTestSuite, EXPERIMENTAL)
 
 }
 
+//TODO: All of the below can go now. We've successfully implemented AyncIO and it probably requires operational not unit tests
+//If unit tests can be devised, which they certainly can for parts of it with Mocks, they should go here.
+
 off_t get_file_size(int fd) 
 {
     struct stat st;

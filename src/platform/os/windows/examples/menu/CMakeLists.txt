@@ -1,23 +1,20 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
-
 set(target menu)
 
+add_executable(${target} main.cpp)
+
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-add_executable(${target} main.cpp)
 set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE true)
-target_compile_definitions(${target} PRIVATE WINDOWS UNICODE _UNICODE QOR_PP_EXECUTABLE qor_pp_ver_major=1 )
+target_compile_definitions(${target} PRIVATE WINDOWS UNICODE _UNICODE QOR_PP_EXECUTABLE
+qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
+qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
+qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 target_link_libraries(${target} winqor_exebootstrap qor_module qor_host qor_compiler qor_platform 
 winqor_api_kernel winqor_api_user winqor_api_shell winqor_api_uxtheme 
 winqor_common winqor_gui
 user32 gdi32 comdlg32 comctl32 shell32 uxtheme)
-
-include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 
 add_custom_command(
 TARGET ${target} POST_BUILD

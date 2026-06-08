@@ -34,62 +34,62 @@
 
 namespace qor{ namespace platform { namespace nslinux{ namespace wl{
 
-    KeyboardController::KeyboardController(ref_of<Keyboard>::type keyboard) : m_keyboard(keyboard)
+    KeyboardHandler::KeyboardHandler(ref_of<Keyboard>::type keyboard) : m_keyboard(keyboard)
     {
         if(m_keyboard)
         {
-            connect(*m_keyboard, &Keyboard::EnterEvent, *this, &KeyboardController::OnEnter);
-            connect(*m_keyboard, &Keyboard::KeyEvent, *this, &KeyboardController::OnKey);
-            connect(*m_keyboard, &Keyboard::KeyMapEvent, *this, &KeyboardController::OnKeymap);
-            connect(*m_keyboard, &Keyboard::LeaveEvent, *this, &KeyboardController::OnLeave);
-            connect(*m_keyboard, &Keyboard::ModifiersEvent, *this, &KeyboardController::OnModifiers);
-            connect(*m_keyboard, &Keyboard::RepeatEvent, *this, &KeyboardController::OnRepeatInfo);
+            connect(*m_keyboard, &Keyboard::EnterEvent, *this, &KeyboardHandler::OnEnter);
+            connect(*m_keyboard, &Keyboard::KeyEvent, *this, &KeyboardHandler::OnKey);
+            connect(*m_keyboard, &Keyboard::KeyMapEvent, *this, &KeyboardHandler::OnKeymap);
+            connect(*m_keyboard, &Keyboard::LeaveEvent, *this, &KeyboardHandler::OnLeave);
+            connect(*m_keyboard, &Keyboard::ModifiersEvent, *this, &KeyboardHandler::OnModifiers);
+            connect(*m_keyboard, &Keyboard::RepeatEvent, *this, &KeyboardHandler::OnRepeatInfo);
         }
         else
         {
-            continuable("No keyboard specified for new KeyboardController.");
+            continuable("No keyboard specified for new KeyboardHandler.");
         }
     }
 
-    KeyboardController::~KeyboardController()
+    KeyboardHandler::~KeyboardHandler()
     {
         if(m_keyboard)
         {
-            disconnect(*m_keyboard, &Keyboard::RepeatEvent, *this, &KeyboardController::OnRepeatInfo);
-            disconnect(*m_keyboard, &Keyboard::ModifiersEvent, *this, &KeyboardController::OnModifiers);
-            disconnect(*m_keyboard, &Keyboard::LeaveEvent, *this, &KeyboardController::OnLeave);
-            disconnect(*m_keyboard, &Keyboard::KeyMapEvent, *this, &KeyboardController::OnKeymap);
-            disconnect(*m_keyboard, &Keyboard::KeyEvent, *this, &KeyboardController::OnKey);
-            disconnect(*m_keyboard, &Keyboard::EnterEvent, *this, &KeyboardController::OnEnter);            
+            disconnect(*m_keyboard, &Keyboard::RepeatEvent, *this, &KeyboardHandler::OnRepeatInfo);
+            disconnect(*m_keyboard, &Keyboard::ModifiersEvent, *this, &KeyboardHandler::OnModifiers);
+            disconnect(*m_keyboard, &Keyboard::LeaveEvent, *this, &KeyboardHandler::OnLeave);
+            disconnect(*m_keyboard, &Keyboard::KeyMapEvent, *this, &KeyboardHandler::OnKeymap);
+            disconnect(*m_keyboard, &Keyboard::KeyEvent, *this, &KeyboardHandler::OnKey);
+            disconnect(*m_keyboard, &Keyboard::EnterEvent, *this, &KeyboardHandler::OnEnter);            
         }
 
     }
 
-    void KeyboardController::OnEnter(Keyboard*, uint32_t serial, Surface* surface, ref_of<std::vector<byte>>::type data)
+    void KeyboardHandler::OnEnter(Keyboard*, uint32_t serial, Surface* surface, ref_of<std::vector<byte>>::type data)
     {        
     }
     
-    void KeyboardController::OnLeave(Keyboard*, uint32_t serial, Surface* surface)
+    void KeyboardHandler::OnLeave(Keyboard*, uint32_t serial, Surface* surface)
     {
 
     }
 
-    void KeyboardController::OnKey(Keyboard*, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+    void KeyboardHandler::OnKey(Keyboard*, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
     {
 
     }
 
-    void KeyboardController::OnModifiers(Keyboard*, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group)
+    void KeyboardHandler::OnModifiers(Keyboard*, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group)
     {
 
     }
 
-    void KeyboardController::OnRepeatInfo(Keyboard*, int32_t rate, int32_t delay)
+    void KeyboardHandler::OnRepeatInfo(Keyboard*, int32_t rate, int32_t delay)
     {
 
     }
 
-    void KeyboardController::OnKeymap(Keyboard*, uint32_t format, int32_t fd, uint32_t size)
+    void KeyboardHandler::OnKeymap(Keyboard*, uint32_t format, int32_t fd, uint32_t size)
     {
 
     }

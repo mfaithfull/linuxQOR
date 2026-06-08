@@ -30,11 +30,11 @@
 #include "sdk/platform/os/linux/wayland.h"
 #include "customwindow.h"
 
-class customPointerController : public wl::PointerController
+class customPointerController : public wl::PointerHandler
 {
 public:
     customPointerController(wl::XDGSession* session, ExampleWindow* window) : 
-        wl::PointerController(session->GetPointer()), m_session(session), m_window(window)
+        wl::PointerHandler(session->GetPointer()), m_session(session), m_window(window)
     {
     }
 

@@ -77,8 +77,7 @@ namespace qor
 		const char* m_szModule;
 		IFunctionContext* m_pParent;
 		AnyObject m_ObjContext;
-		unsigned int m_uiLine;
-		//IThread* m_pThread;
+		unsigned int m_uiLine;		
 		CallContext m_CallContext;		
 		qor_pp_profiling_object m_Profiler;	
 

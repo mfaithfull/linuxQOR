@@ -22,9 +22,10 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
+#include "src/configuration/configuration.h"
+#include <buildnumber.h>
 #include "host.h"
-#include "../../qor/module/moduleregistry.h"
+#include "src/qor/module/moduleregistry.h"
 
 namespace {
     static qor::ModuleRegistry _theModuleRegistry;
@@ -37,7 +38,11 @@ namespace qor{ namespace framework{
         return &(ThisModule());
     }
     
-    Host::Host() : Module( "Querysoft Open Runtime: Host Module", qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__, false)
+    Host::Host() : Module( "Querysoft Open Runtime: Host Module", 
+        qor_pp_stringize(qor_pp_ver_major) "."
+        qor_pp_stringize(qor_pp_ver_minor) "."
+        qor_pp_stringize(qor_pp_ver_patch) "."
+        qor_pp_stringize(qor_pp_buildnumber), false)
     {
         m_ModuleReg = &_theModuleRegistry;
         m_ModuleReg->Register(*this);

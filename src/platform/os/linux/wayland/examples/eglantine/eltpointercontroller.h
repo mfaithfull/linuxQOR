@@ -30,7 +30,7 @@
 
 class eltSession;
 
-class eltPointerController : public qor::platform::nslinux::wl::PointerController
+class eltPointerController : public qor::platform::nslinux::wl::PointerHandler
 {
     public:
 

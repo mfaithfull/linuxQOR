@@ -47,4 +47,9 @@ namespace qor { namespace framework{
     {
     }
 
+    int DesktopUI::Run()
+    {
+        return EXIT_FAILURE;
+    }
+
 }}//qor::framework

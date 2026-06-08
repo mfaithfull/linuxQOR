@@ -30,7 +30,7 @@
 
 class eltSession;
 
-class eltKeyboardController : public qor::platform::nslinux::wl::KeyboardController
+class eltKeyboardController : public qor::platform::nslinux::wl::KeyboardHandler
 {
 public:
 

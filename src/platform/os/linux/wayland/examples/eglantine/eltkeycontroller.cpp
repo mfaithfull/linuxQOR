@@ -26,7 +26,7 @@
 #include "eltkeycontroller.h"
 #include "eltsession.h"
 
-eltKeyboardController::eltKeyboardController(eltSession* session, qor::ref_of<qor::platform::nslinux::wl::Keyboard>::type keyboard) : qor::platform::nslinux::wl::KeyboardController(keyboard), m_session(session)
+eltKeyboardController::eltKeyboardController(eltSession* session, qor::ref_of<qor::platform::nslinux::wl::Keyboard>::type keyboard) : qor::platform::nslinux::wl::KeyboardHandler(keyboard), m_session(session)
 {}
 
 eltKeyboardController::~eltKeyboardController()

@@ -79,7 +79,7 @@ namespace qor{
 }//qor
 
 static qor::Library _qor_module("Querysoft Open Runtime: Module Library", 
-    qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." __DATE__ "_" __TIME__);
+    qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." qor_pp_stringize(qor_pp_buildnumber));
 
 qor::Library& qor_module()
 {

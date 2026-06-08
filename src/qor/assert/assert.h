@@ -26,8 +26,8 @@
 //Copyright 2021 Sean Nash
 //under BSD 3 clause license
 
-#ifndef QOR_PP_H_ASSERTCC
-#define QOR_PP_H_ASSERTCC
+#ifndef QOR_PP_H_ASSERT
+#define QOR_PP_H_ASSERT
 
 #include <array>
 #include <deque>
@@ -265,4 +265,4 @@ namespace qor{ namespace assert{
 
 }}//qor::assert
 
-#endif//QOR_PP_H_ASSERTCC
+#endif//QOR_PP_H_ASSERT

@@ -48,16 +48,100 @@
 using namespace qor::platform::nslinux;
 using namespace qor::components;
 
-#include "sharedmem.h"
-#include "custompopup.h"
-#include "customwindow.h"
-#include "custompointercontroller.h"
-#include "customkeyboardcontroller.h"
+class CustomWindow : public EGLWindowWrapper<wl::WEGLWindow>
+{
+public:
 
-//Declare an EGL session type that wraps up Linux EGL on a Wayland Display
-typedef EGLSessionWrapper<wl::XDGSession, EglDisplay> SessionType;      
+    CustomWindow(ref_of<EGLSessionWrapper<wl::XDGSession, EglDisplay>>::type session, const std::vector<int32_t>& contextAttributes, int x, int y, unsigned int width, unsigned int height) : 
+        qor::components::EGLWindowWrapper<wl::WEGLWindow>(session, contextAttributes, x, y, width, height), m_session(session)
+    {
+        m_canvas = nullptr;
+        m_gl = GetFeature<OpenGLESFeature>();                        
+        SetWidth(width);
+        SetHeight(height);
+        DoConfiguration();//Need to this for every XDGWindow to connect up the callbacks to our derived class
+                
+        m_canvas = ui::renderer::GlCanvas::gen(m_gl);
+        auto shape3 = ui::renderer::Shape::gen();
+        shape3->appendCircle(200, 200, 150, 100);    //cx, cy, radiusW, radiusH
+        shape3->fill(0, 255, 255);                   //r, g, b
+        m_canvas->push(shape3);
+        
+        DrawFrame();
+    }
 
-int waylandExampleRun(ref_of<SessionType>::type session)
+    virtual ~CustomWindow()
+    {        
+        delete m_canvas;
+    }
+
+    virtual void OnResize()//Override to handle resize happing to this window, e.g. from a Window Manager
+    {   
+        if(m_canvas)
+        {
+            static_cast<ui::renderer::GlCanvas*>(m_canvas)->target(m_eglContext->Use(), 0, m_width, m_height, ui::renderer::ColorSpace::ABGR8888S);         
+        }
+    }
+
+    void DrawFrame(uint32_t serial = 0)
+    {        
+        m_canvas->draw(true);
+        m_canvas->sync();
+        Present();
+    }
+
+    virtual void OnXDGTopLevelConfigured(int32_t new_width, int32_t new_height, struct wl_array* states)
+    {
+        if (new_width == 0 || new_height == 0)
+        {
+            return;
+        }
+
+        if (m_width != new_width || m_height != new_height)
+        {
+            m_width = new_width;
+            m_height = new_height;
+            OnResize();
+        }
+    }
+
+    virtual void OnClose()
+    {
+        m_session->End();
+    }
+    
+    ref_of<EGLSessionWrapper<wl::XDGSession, EglDisplay>>::type m_session;    
+    ref_of<OpenGLESFeature>::type m_gl;
+    ui::renderer::Canvas* m_canvas;
+};
+
+class customKeyboardController : public wl::KeyboardHandler
+{
+public:
+
+    customKeyboardController(wl::XDGSession* session, ref_of<wl::Keyboard>::type keyboard) : wl::KeyboardHandler(keyboard), m_session(session)
+    {        
+    }
+
+    virtual ~customKeyboardController() = default;
+
+    virtual void OnKey(wl::Keyboard*, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+    {
+        if(m_session)
+        {
+            if(key == 1 && state == 1)
+            {
+                m_session->End();
+            }
+        }
+    }
+
+protected:
+
+    wl::XDGSession* m_session;    
+};
+
+int waylandExampleRun(ref_of<EGLSessionWrapper<wl::XDGSession, EglDisplay>>::type session)
 {
     std::vector<int32_t> contextAttributes = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
     auto window = new_ref<CustomWindow>(session,contextAttributes, 0, 0, 640, 480);     //Create a Top Level EGL window

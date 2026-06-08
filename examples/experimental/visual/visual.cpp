@@ -33,7 +33,9 @@
 #include "src/components/framework/logaggregator/logaggregator.h"
 #include "src/platform/filesystem/filesystem.h"
 #include "src/framework/desktopui/desktopui.h"
+#include "src/framework/desktopui/windows/mainwindow.h"
 #include "visual.h"
+#include "src/framework/role/getfeature.h"
 
 using namespace qor;
 using namespace qor::log;
@@ -81,7 +83,9 @@ int main(const int argc, const char** argv, char** env)
             [&logHandler]()->int
             {            
                 qor_pp_fcontext;
-                auto gui = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<DesktopUI>();
+                auto gui = GetFeature<DesktopUI>();
+                auto mainWindow = qor::new_ref< qor::ui::MainWindow >(L"Visual");                
+                gui->Run();
                 return EXIT_SUCCESS;
             });
 }

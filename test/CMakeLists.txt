@@ -1,8 +1,5 @@
-cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 LANGUAGES C CXX)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
+set(target QORTest)
+
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 add_subdirectory(mock)
 
@@ -71,7 +68,12 @@ components/pipeline/test_ofstreamsink.cpp
 components/protocols/http/test_httpfilter.cpp
 platform/test_network.cpp)
 
-target_compile_definitions(QORTest PRIVATE CONSOLE QOR_PP_EXECUTABLE)
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
+
+target_compile_definitions(QORTest PRIVATE CONSOLE QOR_PP_EXECUTABLE
+qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
+qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
+qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(QORTest qor_compiler qor_host qor_datastructures qor_objectcontext 

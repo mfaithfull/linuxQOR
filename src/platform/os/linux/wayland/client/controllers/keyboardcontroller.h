@@ -36,12 +36,12 @@ namespace qor{ namespace platform { namespace nslinux{ namespace wl{
     class qor_pp_module_interface(QOR_LINWAYLAND) Keyboard;
     class qor_pp_module_interface(QOR_LINWAYLAND) Surface;
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) KeyboardController : public SlotBase
+    class qor_pp_module_interface(QOR_LINWAYLAND) KeyboardHandler : public SlotBase
     {
     public:
 
-        KeyboardController(ref_of<Keyboard>::type keyboard);
-        virtual ~KeyboardController();
+        KeyboardHandler(ref_of<Keyboard>::type keyboard);
+        virtual ~KeyboardHandler();
 
         virtual void OnEnter(Keyboard*, uint32_t serial, Surface* surface, ref_of<std::vector<byte>>::type data);
         virtual void OnLeave(Keyboard*, uint32_t serial, Surface* surface);

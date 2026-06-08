@@ -298,7 +298,7 @@ private:
     {
         if(m_dcDIB.IsNotNull())
         {
-            dest.BitBlt(0, 0, m_width, m_height, m_dcDIB()(), 0, 0, SRCCOPY);
+            dest.BitBlt(0, 0, m_width, m_height, m_dcDIB()(), 0, 0, SrcCopy);
         }
     }
 
@@ -390,8 +390,8 @@ int main()
     WindowFactory factory(GetInstance());
     MessageHandler messageHandler;
 
-    auto windowClass =  factory.AddWindowClass(L"MainWindow");
-                        factory.RegisterClass(windowClass, new_ref<HandlerFactory<TopLevelWindowHandler>>());
+    //auto windowClass =  factory.AddWindowClass(L"MainWindow");
+                        //factory.RegisterClass(windowClass, new_ref<HandlerFactory<TopLevelWindowHandler>>());
 
     auto customClass =  factory.AddWindowClass(L"CustomWindow");
     ClassStyle          cs;
@@ -401,7 +401,7 @@ int main()
                         factory.RegisterClass(customClass, new_ref<CustomHandlerFactory>());
 
 
-    auto controller =   factory.Create(windowClass, L"Main Window Experiments");
+    auto controller =   factory.Create(L"MainWindow", L"Main Window Experiments");
                         controller->Show();
                         controller->Update();
 
@@ -435,7 +435,7 @@ int main()
                         exStyle.SetToolWindow(true);
                         exStyle.SetTopMost(true);                        
 
-    auto tool =         factory.Create(windowClass, L"ToolWindow", style, exStyle, 0, 0, 500, 100);
+    auto tool =         factory.Create(L"MainWindow", L"ToolWindow", style, exStyle, 0, 0, 500, 100);
                         tool->Show();
                         tool->Update();
 

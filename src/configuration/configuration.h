@@ -24,13 +24,13 @@
 
 /*The root internal header file for the entire QOR project
 * This should be the first include in every translation unit
-* It will become the PCH root include
 */
 
 #ifndef QOR_PP_H_CONFIGURATION
 #define QOR_PP_H_CONFIGURATION
 
 #define qor_pp_profiling_enabled
+#define qor_pp_configindex_unicode 63
 #define qor_pp_unicode 1
 #include <string>
 
@@ -52,26 +52,9 @@
 
 #define qor_pp_module_interface( _X ) qor_pp_if(qor_pp_is_empty(_X), qor_pp_import, qor_pp_export)
 #define qor_pp_module_external( _X ) qor_pp_if(qor_pp_is_empty(_X), qor_pp_export, qor_pp_import)
-#define qor_pp_module_requires(_X) \
-bool qor_pp_cat(requires,_X) = qor::qor_pp_cat(Implements,_X)();
-
-#define qor_pp_module_will_provide(_M, _X)
-namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(); }
-
-#define qor_pp_module_provide(_M, _X) \
-namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(){ return true; } }//qor
-
-#ifndef qor_pp_ver_major
-#   define qor_pp_ver_major 0
-#endif
-
-#ifndef qor_pp_ver_minor
-#   define qor_pp_ver_minor 0
-#endif
-
-#ifndef qor_pp_ver_patch
-#   define qor_pp_ver_patch 0
-#endif
+#define qor_pp_module_requires(_X) bool qor_pp_cat(requires,_X) = qor::qor_pp_cat(Implements,_X)();
+#define qor_pp_module_will_provide(_M, _X) namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(); }
+#define qor_pp_module_provide(_M, _X) namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(){ return true; } }//qor
 
 #if (qor_pp_unicode && (qor_pp_os_target == qor_pp_os_windows))
 typedef char16_t char_t;
@@ -83,5 +66,9 @@ typedef std::basic_string<char> string_t;
 
 #define qor_pp_use_x 0
 #define qor_pp_use_wayand 1
+
+namespace qor {
+    constexpr uint64_t qor_config = 0 | ( static_cast<unsigned long long>(qor_pp_unicode) << qor_pp_configindex_unicode);
+}//qor
 
 #endif//QOR_PP_H_CONFIGURATION

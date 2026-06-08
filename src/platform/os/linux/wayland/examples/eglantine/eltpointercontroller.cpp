@@ -26,7 +26,7 @@
 #include "eltpointercontroller.h"
 #include "eltsession.h"
 
-eltPointerController::eltPointerController(eltSession* session, qor::ref_of<qor::platform::nslinux::wl::Pointer>::type pointer) : qor::platform::nslinux::wl::PointerController(pointer), m_session(session)
+eltPointerController::eltPointerController(eltSession* session, qor::ref_of<qor::platform::nslinux::wl::Pointer>::type pointer) : qor::platform::nslinux::wl::PointerHandler(pointer), m_session(session)
 {}
 
 eltPointerController::~eltPointerController()

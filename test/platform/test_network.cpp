@@ -75,6 +75,8 @@ qor_pp_test_suite_case(NetworkTestSuite, canCreateSocket)
     subsystem->Shutdown();
 }
 
+//TODO: This is an opperational test. Not a unit test belongs elsewhere
+/*
 qor_pp_test_suite_case(NetworkTestSuite, canConnectSocket)
 {    
     auto subsystem = new_ref<Sockets>();
@@ -91,3 +93,4 @@ qor_pp_test_suite_case(NetworkTestSuite, canConnectSocket)
     auto result = socket->Connect(address);
     subsystem->Shutdown();
 }
+*/
