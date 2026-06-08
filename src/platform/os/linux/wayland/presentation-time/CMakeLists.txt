@@ -5,7 +5,7 @@ presentation.cpp feedback.cpp
 listeners/presentationlistener.cpp
 listeners/feedbacklistener.cpp)
 
-add_executable(${target} main.cpp eltkeycontroller.cpp eltpointercontroller.cpp eltsession.cpp)
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 target_compile_definitions(${target} PRIVATE QOR_LINWLPRESENTATIONTIME

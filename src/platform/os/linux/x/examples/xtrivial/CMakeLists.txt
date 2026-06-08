@@ -1,9 +1,9 @@
 set(target xtrivial)
 
+add_executable(${target} main.cpp)
+
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
-
-add_executable(${target} main.cpp)
 
 target_include_directories(${target} PRIVATE
 "/usr/include/X11")

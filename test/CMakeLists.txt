@@ -80,7 +80,7 @@ target_link_libraries(QORTest qor_compiler qor_host qor_datastructures qor_objec
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
-linq_filesystem linq_thread linq_process uring linq_console qor_stdfstreamconnector 
+linqor_filesystem linqor_thread linqor_process uring linqor_console qor_stdfstreamconnector 
 qor_stdifstreamsource qor_stdofstreamsink qor_sockets linqor_sockets qor_log qor_loghandler qor_logaggregator
 qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter qor_http)
 endif()

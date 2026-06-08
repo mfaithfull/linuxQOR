@@ -32,6 +32,7 @@
 #define qor_pp_profiling_enabled
 #define qor_pp_configindex_unicode 63
 #define qor_pp_unicode 1
+#include <cstdint>
 #include <string>
 
 #include "../platform/os/systems.h"

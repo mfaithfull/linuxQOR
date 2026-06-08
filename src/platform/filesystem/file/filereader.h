@@ -69,7 +69,7 @@ namespace qor{ namespace platform{
 		template< class T >
 		void ReadStruct(T& t, arch::Endian endian = arch::network) const
 		{
-			qor_reflection::for_each_field(t, [this](auto& value, std::size_t i)
+			qor_reflection::for_each_field(t, [this, endian](auto& value, std::size_t i)
 				{
                     Read(value, endian);
 				}
