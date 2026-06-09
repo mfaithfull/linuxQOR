@@ -12,7 +12,7 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_thread qor_tui
-linqor_termscreen linq_thread)
+linqor_termscreen linqor_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

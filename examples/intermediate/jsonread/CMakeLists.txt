@@ -14,7 +14,7 @@ if(CMAKE_SYSTEM_NAME MATCHES Linux)
     target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector 
 qor_json qor_parsersink qor_parser
-linq_filesystem)
+linqor_filesystem)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

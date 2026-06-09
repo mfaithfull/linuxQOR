@@ -23,9 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
+#include "src/qor/error/error.h"
+#include "src/qor/log/informative.h"
 #include "source.h"
 #include "sink.h"
+#include "plug.h"
 
 namespace qor{ namespace pipeline{
 
@@ -100,12 +102,49 @@ namespace qor{ namespace pipeline{
         return nullptr;
     }
 
+    const char* Source::Name() const
+    {
+        return "Source";
+    }
+
+    bool Source::CheckComplete()
+    {
+        log::inform("|{0}", Name());
+        if(GetFlowMode() == Element::FlowMode::Push)
+        {
+            if(m_sink && m_sink->IsSink())
+            {
+                auto actualSink = dynamic_cast<Sink*>(m_sink);
+                return actualSink->CheckComplete();
+            }
+            else
+            {
+                warning("{0} is in push mode but has no sink or sink is not a valid sink.", Name());
+            }
+        }
+        else
+        {
+            if(!GetBuffer())
+            {
+                warning("{0} has no buffer.", Name());
+                return false;
+            }
+            if(GetPlug() && GetPlug()->IsPlug())
+            {                
+                return dynamic_cast<Plug*>(GetPlug())->CheckComplete();
+            }
+            else
+            {
+                warning("{0} is in pull mode but has no plug or plug is not a valid plug.", Name());
+            }
+        }
+        return false;
+    }
+
 
     bool NullSource::Read(size_t& unitsRead, size_t unitsToRead)
-    {
-        //GetBuffer()->WriteRequest(unitsToRead);
-        unitsRead = unitsToRead;
-        //GetBuffer()->WriteAcknowledge(unitsRead);        
+    {        
+        unitsRead = unitsToRead;        
         return true;
     }
 

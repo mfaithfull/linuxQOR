@@ -17,7 +17,7 @@ qor_logaggregator qor_loghandler qor_http qor_netclient qor_fileconnector qor_ba
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} ${qor_libraries}
-linqor_sockets linq_console linq_thread linq_filesystem)
+linqor_sockets linqor_console linqor_thread linqor_filesystem)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

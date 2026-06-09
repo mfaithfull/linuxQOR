@@ -23,9 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
+#include "src/qor/error/error.h"
+#include "src/qor/log/informative.h"
 #include "sink.h"
 #include "source.h"
+#include "plug.h"
 
 namespace qor{ namespace pipeline{
 
@@ -101,6 +103,45 @@ namespace qor{ namespace pipeline{
     Element* Sink::GetPlug() const
     {
         return nullptr;
+    }
+
+    const char* Sink::Name() const
+    {
+        return "Sink";
+    }
+
+    bool Sink::CheckComplete()
+    {
+        log::inform("|{0}", Name());
+        if(GetFlowMode() == Element::FlowMode::Push)
+        {
+            if(!GetBuffer())
+            {
+                warning("{0} has no buffer.", Name());
+                return false;
+            }
+            if(GetPlug() && GetPlug()->IsPlug())
+            {                
+                return dynamic_cast<Plug*>(GetPlug())->CheckComplete();
+            }
+            else
+            {
+                warning("{0} is in push mode but has no plug or plug is not a valid plug.", Name());
+            }
+        }
+        else
+        {
+            if(GetSource() && GetSource()->IsSource())
+            {
+                auto actualSource = dynamic_cast<Source*>(GetSource());
+                return actualSource->CheckComplete();
+            }
+            else
+            {
+                warning("{0} is in pull mode but has no source or source is not a valid source.", Name());
+            }
+        }
+        return false;
     }
 
     bool NullSink::Write(size_t& unitsWritten, size_t unitsToWrite)

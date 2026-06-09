@@ -14,7 +14,7 @@ set(portable_libraries qor_compiler qor_host qor_datastructures qor_objectcontex
 qor_thread qor_sync qor_application qor_gl)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-set(os_libraries linq_thread)
+set(os_libraries linqor_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

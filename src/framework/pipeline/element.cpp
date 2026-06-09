@@ -139,4 +139,9 @@ namespace qor{ namespace pipeline{
         }
     }
 
+    const char* Element::Name() const
+    {
+        return "Element";
+    }
+
 }}//qor::pipeline

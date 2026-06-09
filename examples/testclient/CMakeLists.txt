@@ -15,7 +15,7 @@ if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_error qor_sockets qor_socketclient
 qor_httpclient qor_pipeline qor_socketconnector qor_log
-linqor_sockets linq_thread)
+linqor_sockets linqor_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

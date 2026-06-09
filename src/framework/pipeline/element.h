@@ -66,6 +66,7 @@ namespace qor{ namespace pipeline{
         virtual bool HasSink();
         virtual FlowMode GetFlowMode();
         virtual void SetFlowMode(FlowMode flowmode);
+        virtual const char* Name() const;
 
     protected:
 

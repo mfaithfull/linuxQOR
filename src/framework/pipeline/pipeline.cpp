@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
+#include "src/qor/error/error.h"
 #include "pipeline.h"
 
 namespace qor{ namespace pipeline{
@@ -112,6 +112,34 @@ namespace qor{ namespace pipeline{
             break;
         }
         return *this;
+    }
+
+    bool Pipeline::CheckComplete()
+    {
+        bool bComplete = false;        
+        if(HasSource() && HasSink())
+        {
+            if(m_flowmode == FlowMode::Push)
+            {
+                bComplete = dynamic_cast<Source*>(m_source)->CheckComplete();
+            }
+            else
+            {
+                bComplete = dynamic_cast<Sink*>(m_sink)->CheckComplete();
+            }
+        }
+        else
+        {
+            if(!HasSource())
+            {
+                warning("Pipeline source is not set.");
+            }
+            else
+            {
+                warning("Pipeline sink is not set.");
+            }
+        }
+        return bComplete;
     }
 }}//qor::pipeline
 

@@ -19,7 +19,7 @@ qor_application qor_module qor_host qor_compiler qor_datastructures qor_objectco
  qor_randomsource qor_stdoutsink)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-    set(os_libraries linq_filesystem linq_thread linqor_sockets)
+    set(os_libraries linqor_filesystem linqor_thread linqor_sockets)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

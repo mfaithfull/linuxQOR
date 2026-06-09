@@ -97,4 +97,9 @@ namespace qor{ namespace pipeline{
         }
     }
 
+    const char* iosink_base::Name() const
+    {
+        return "iosink_base";
+    }
+
 }}//qor::components

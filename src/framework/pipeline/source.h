@@ -63,6 +63,8 @@ namespace qor{ namespace pipeline{
         virtual bool IsSource();
         virtual void SetPlug(Element* plug);
         virtual Element* GetPlug() const;
+        virtual bool CheckComplete();
+        virtual const char* Name() const override;
 
     protected:
 

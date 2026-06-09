@@ -15,7 +15,7 @@ qor_thread qor_sync qor_application qor_role qor_error qor_log qor_desktopui
 qor_logaggregator)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-set(os_libraries linq_thread)
+set(os_libraries linqor_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

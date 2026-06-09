@@ -220,5 +220,9 @@ namespace qor{ namespace pipeline{
         return true;
     }
 
+    const char* Filter::Name() const
+    {
+        return "Filter";
+    }
 
 }}//qor::pipeline

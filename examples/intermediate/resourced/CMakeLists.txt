@@ -14,7 +14,7 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_thread qor_signals qor_task 
 qor_log qor_loghandler qor_logaggregator qor_filesystem qor_resources
-linq_thread linq_filesystem)
+linqor_thread linqor_filesystem)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

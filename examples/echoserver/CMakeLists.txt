@@ -16,7 +16,7 @@ qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor
 qor_asyncioservice qor_socketconnector qor_log qor_logaggregator qor_loghandler qor_parser)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-set(os_libraries linqor_sockets linqor_asyncioservice linq_filesystem linq_thread)
+set(os_libraries linqor_sockets linqor_asyncioservice linqor_filesystem linqor_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

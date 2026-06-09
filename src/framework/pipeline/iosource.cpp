@@ -89,4 +89,9 @@ namespace qor{ namespace pipeline{
         return ( GetFlowMode() == FlowMode::Push ) ? (ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0)) : true;
     }
 
+    const char* iosource_base::Name() const
+    {
+        return "iosource_base";
+    }
+
 }}//qor::components

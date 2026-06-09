@@ -53,6 +53,7 @@ namespace qor{ namespace pipeline{
         virtual bool Pump(size_t& unitsPumped, size_t unitsToPump, std::function<bool(size_t&, size_t)> filterFn);
         virtual bool ReadFilter(size_t& unitsProcessed, size_t unitsToProcess);
         virtual bool WriteFilter(size_t& unitsProcessed, size_t unitsToProcess);
+        virtual const char* Name() const override;
 
     protected:
         virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);

@@ -11,7 +11,6 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
-qor_interception linq_thread linqor_x linqor_xrender X11)
+qor_interception linqor_thread linqor_x linqor_xrender X11)
 
-include ("${CMAKE_SOURCE_DIR}/cmake/postbuild.cmake")
 

@@ -11,7 +11,7 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_thread linq_thread linqor_opengles)
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_thread linqor_thread linqor_opengles)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

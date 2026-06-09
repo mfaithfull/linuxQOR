@@ -13,7 +13,7 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
     target_link_libraries(${target} qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_pipeline 
-linq_filesystem linq_thread
+linqor_filesystem linqor_thread
 qor_error qor_linereader qor_stdoutsink qor_fileconnector)
 endif()
 

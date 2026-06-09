@@ -24,7 +24,7 @@
 
 //A documented application with a Pipeline using the QOR SDK
 
-/*For a more basic documented example of the flow of a QOR application
+/*For a simpler example of the flow of a QOR application
 see the roller example*/
 
 #include "sdk/using_framework.h"

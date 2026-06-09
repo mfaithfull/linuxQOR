@@ -23,8 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-
+#include "src/qor/error/error.h"
+#include "src/qor/log/informative.h"
 #include "plug.h"
+#include "source.h"
+#include "sink.h"
 
 namespace qor{ namespace pipeline{
 
@@ -119,6 +122,33 @@ namespace qor{ namespace pipeline{
     void Plug::SetSyncObject(SyncObject* syncobject)
     {
         m_syncobject = syncobject;
+    }
+
+    const char* Plug::Name() const
+    {
+        return "Plug";
+    }
+
+    bool Plug::CheckComplete()
+    {
+        log::inform("T{0}", Name());
+        if(GetFlowMode() == Element::FlowMode::Push)
+        {
+            if(GetSink() && GetSink()->IsSink())
+            {
+                auto actualSink = dynamic_cast<Sink*>(GetSink());
+                return actualSink->CheckComplete();
+            }
+            else
+            {
+                warning("Plug is in push mode but has no sink or sink is not a valid sink.");
+            }
+        }
+        else
+        {
+            return true;
+        }
+        return false;
     }
 
 }}//qor::pipeline

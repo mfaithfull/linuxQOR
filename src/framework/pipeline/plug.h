@@ -61,7 +61,9 @@ namespace qor{ namespace pipeline{
         virtual const bool AsyncConnection() const;
         virtual SyncObject* GetSyncObject();
         virtual void SetSyncObject(SyncObject* syncobject);
-
+        virtual bool CheckComplete();
+        virtual const char* Name() const override;
+        
     protected:
 
         bool m_connected;

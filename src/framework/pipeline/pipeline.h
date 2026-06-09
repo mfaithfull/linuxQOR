@@ -25,7 +25,6 @@
 #ifndef QOR_PP_H_FRAMEWORK_PIPELINE
 #define QOR_PP_H_FRAMEWORK_PIPELINE
 
-//#include "src/qor/reference/reference.h"
 #include "element.h"
 #include "filter.h"
 #include "inlinefilter.h"
@@ -46,7 +45,6 @@ namespace qor{ namespace pipeline{
         Pipeline();
         virtual ~Pipeline() = default;
         Pipeline( const Pipeline& src ) = delete;
-        //Pipeline& operator = (const Pipeline& src);
 
         Pipeline(Connection* SourceConnection, Connection* SinkConnection, Element::FlowMode flowmode = Element::FlowMode::Pull) : m_flowmode(flowmode)
         {
@@ -228,6 +226,7 @@ namespace qor{ namespace pipeline{
 
         void PumpAll()
         {
+            CheckComplete();
             size_t unitsPumped = 0;
             size_t unitsToPump = 0;
             do
@@ -251,6 +250,8 @@ namespace qor{ namespace pipeline{
             ActualSink()->GetBuffer()->Reset(streamSize);
             ActualSource()->GetBuffer()->Reset(streamSize);
         }
+
+        bool CheckComplete();
         
     protected:
 

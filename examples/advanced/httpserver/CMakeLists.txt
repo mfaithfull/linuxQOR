@@ -17,7 +17,7 @@ qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_proper
 qor_sockets qor_asyncioservice qor_socketconnector qor_http qor_parser qor_generator qor_netserver)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-set(os_libraries linqor_sockets linqor_asyncioservice linq_filesystem linq_thread)
+set(os_libraries linqor_sockets linqor_asyncioservice linqor_filesystem linqor_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
