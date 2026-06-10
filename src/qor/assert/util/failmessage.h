@@ -74,6 +74,30 @@ namespace qor{ namespace assert { namespace util {
             return *this;
         }
 
+        FailMessage& fact(const std::string& key, const wchar_t& value) 
+        {
+            d_buffer << key << ": " << static_cast<char>(value) << "\n";
+            return *this;
+        }
+        
+        FailMessage& fact(const std::string& key, const char32_t& value) 
+        {
+            d_buffer << key << ": " << static_cast<char>(value) << "\n";
+            return *this;
+        }
+
+        FailMessage& fact(const std::string& key, const char16_t& value) 
+        {
+            d_buffer << key << ": " << static_cast<char>(value) << "\n";
+            return *this;
+        }
+
+        FailMessage& fact(const std::string& key, const char8_t& value) 
+        {
+            d_buffer << key << ": " << static_cast<char>(value) << "\n";
+            return *this;
+        }
+
         template<typename T, typename std::enable_if<std::is_same<T, bool>::value>::type* = nullptr>
         FailMessage& fact(const std::string& key, bool value) 
         {
