@@ -66,7 +66,14 @@ components/console/test_console.cpp components/console/test_consoleui.cpp
 components/pipeline/test_ifstreamsource.cpp
 components/pipeline/test_ofstreamsink.cpp
 components/protocols/http/test_httpfilter.cpp
-platform/test_network.cpp)
+platform/test_network.cpp
+text/test_constbuffer.cpp
+text/test_mutablebuffer.cpp
+text/test_localstring.cpp
+text/test_codestring.cpp
+iterators/test_iterators.cpp
+text/test_ucs4string.cpp
+text/test_ucs2string.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 
@@ -77,7 +84,7 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(QORTest qor_compiler qor_host qor_datastructures qor_objectcontext 
-qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_signals 
+qor_thread qor_interception qor_injection qor_sync qor_text qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
 linqor_filesystem linqor_thread linqor_process uring linqor_console qor_stdfstreamconnector 

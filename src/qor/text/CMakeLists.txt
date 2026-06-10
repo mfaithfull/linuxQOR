@@ -1,8 +1,10 @@
-set(target qor_sync)
+set(target qor_text)
 
-add_library(${target} SHARED qor_sync.cpp mutex.cpp recursive_mutex.cpp 
-asyncautoresetevent.cpp asyncmanualresetevent.cpp asyncmutex.cpp lightweightmanualresetevent.cpp
-spinmutex.cpp spinwait.cpp)
+add_library(${target} SHARED 
+codepage/codepage.cpp
+codepage/codepages/ascii.cpp
+codepage/codepages/utf16.cpp
+codepage/codepages/isolatin1.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
