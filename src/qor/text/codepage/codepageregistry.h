@@ -26,7 +26,6 @@
 #define QOR_PP_H_CODEPAGEREGISTRY
 
 #include <map>
-#include "src/qor/datastructures/guid.h"
 #include "src/qor/objectcontext/typedany.h"
 #include "codepage.h"
 

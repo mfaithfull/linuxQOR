@@ -787,7 +787,7 @@ namespace qor{
         //Increment the reference count to share content between owning instances
         unsigned short AddRef() const
         {
-            return m_p == nullptr ? 0 : InternalBaseFooter()->RefCount++, InternalBaseHeader()->RefCount++;
+            return m_p == nullptr ? 0 : static_cast<unsigned short>(InternalBaseFooter()->RefCount++), static_cast<unsigned short>(InternalBaseHeader()->RefCount++);
         }
 
         //Decrement the reference count and Free when it hits zero

@@ -30,9 +30,10 @@
 
 namespace qor
 {
+#if(qor_pp_compiler == qor_pp_compiler_gcc)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"    
-    
+#endif    
     template<typename dataT>
     class rawiterator : public std::iterator<std::bidirectional_iterator_tag, dataT, ptrdiff_t, dataT*, dataT&>
     {
@@ -110,7 +111,9 @@ namespace qor
 
         rawiterator<dataT> base(){rawiterator<dataT> forwardIterator(this->m_ptr); ++forwardIterator; return forwardIterator;}
     };
+#if(qor_pp_compiler == qor_pp_compiler_gcc)
 #pragma GCC diagnostic pop
+#endif
 }
 
 #endif//QOR_PP_H_ITERATORS_RAW

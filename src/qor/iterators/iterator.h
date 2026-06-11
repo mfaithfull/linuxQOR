@@ -27,8 +27,14 @@
 
 namespace qor{
 
+#if(qor_pp_compiler == qor_pp_compiler_gcc)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"    
+#endif
+
+#if(qor_pp_compiler == qor_pp_compiler_msvc)
+#define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+#endif
 
     template<typename containerT, typename AdvanceDistanceFunctorT, typename BeginEndFunctorT>
     class Iterator : public std::iterator< std::random_access_iterator_tag,
@@ -281,7 +287,11 @@ namespace qor{
             }
         }
     };
+
+#if(qor_pp_compiler == qor_pp_compiler_gcc)    
 #pragma GCC diagnostic pop
+#endif
+
 }
 
 #endif//QOR_PP_H_ITERATORS_SMART
