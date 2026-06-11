@@ -181,8 +181,7 @@ qor_pp_test_case(canGetLength)
 qor_pp_test_case(canGetBuffer)
 {
     constexpr auto cb = ConstBuffer<char>("Hello");
-
-    qor_pp_assert_that(cb.GetBuffer().operator const char *()).isEqualTo("Hello");
+    qor_pp_assert_that(std::string(cb.GetBuffer().operator const char *())).isEqualTo(std::string("Hello"));
 }
 
 qor_pp_test_case(copyConstructorCopiesBuffer)
@@ -190,7 +189,7 @@ qor_pp_test_case(copyConstructorCopiesBuffer)
     constexpr auto cb1 = ConstBuffer<char>("Hello");
     constexpr auto cb2 = cb1;
 
-    qor_pp_assert_that(cb2.GetBuffer().operator const char *()).isEqualTo("Hello");
+    qor_pp_assert_that(std::string(cb2.GetBuffer().operator const char *())).isEqualTo(std::string("Hello"));
     qor_pp_assert_that(cb2.GetCharCount()).isEqualTo(5);
 }
 
@@ -199,7 +198,7 @@ qor_pp_test_case(moveConstructorMovesBuffer)
     constexpr auto cb1 = ConstBuffer<char>("Hello");
     constexpr auto cb2 = std::move(cb1);
 
-    qor_pp_assert_that(cb2.GetBuffer().operator const char *()).isEqualTo("Hello");
+    qor_pp_assert_that(std::string(cb2.GetBuffer().operator const char *())).isEqualTo(std::string("Hello"));
     qor_pp_assert_that(cb2.GetCharCount()).isEqualTo(5);
 }
 
@@ -211,7 +210,7 @@ qor_pp_test_case(copyAssignmentCopiesBuffer)
 
     cb3 = cb1;
 
-    qor_pp_assert_that(cb3.GetBuffer().operator const char *()).isEqualTo("Hello");
+    qor_pp_assert_that(std::string(cb3.GetBuffer().operator const char *())).isEqualTo(std::string("Hello"));
     qor_pp_assert_that(cb3.GetCharCount()).isEqualTo(5);
 }
 
@@ -223,7 +222,7 @@ qor_pp_test_case(moveAssignmentMovesBuffer)
 
     cb3 = std::move(cb1);
 
-    qor_pp_assert_that(cb3.GetBuffer().operator const char *()).isEqualTo("Hello");
+    qor_pp_assert_that(std::string(cb3.GetBuffer().operator const char *())).isEqualTo(std::string("Hello"));
     qor_pp_assert_that(cb3.GetCharCount()).isEqualTo(5);
 }
 
