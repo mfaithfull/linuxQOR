@@ -34,14 +34,27 @@
 namespace qor{
 
     template< typename C >
-    class CodeString : public AbstractString< ConstBuffer<C> >
+    class CodeString : public AbstractString< 
+        CodeString< C >, 
+        ConstBuffer< C >,
+        rawiterator< const C >,
+        rawiterator< const C >,
+        rawreverseiterator< const C >,
+        rawreverseiterator< const C > >
     {
     public:
 
-        typedef AbstractString< ConstBuffer<C> > base;
+        typedef AbstractString< 
+            CodeString< C >, 
+            ConstBuffer< C >,
+            rawiterator< const C >,
+            rawiterator< const C >,
+            rawreverseiterator< const C >,
+            rawreverseiterator< const C > > base;
+
         typedef ConstBuffer<C> BufferT;
         typedef typename encoding_of<C>::CodePageT defaultEncodingT;
-        typedef typename base::viewT viewT;
+        typedef typename BufferT::View viewT;
         typedef rawiterator<const C> iterator;
         typedef rawiterator<const C> const_iterator;
         typedef rawreverseiterator<const C> reverse_iterator;
@@ -173,7 +186,7 @@ namespace qor{
             m_buffer.ConstReverseVisit(std::forward<func_t>(func), startIndex);
         }
 
-        Mib GetEncoding()
+        virtual Mib GetEncoding() const override
         {
             return defaultEncodingT::GetMib();
         }

@@ -73,7 +73,8 @@ text/test_localstring.cpp
 text/test_codestring.cpp
 iterators/test_iterators.cpp
 text/test_ucs4string.cpp
-text/test_ucs2string.cpp)
+text/test_ucs2string.cpp
+text/test_utf8string.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 

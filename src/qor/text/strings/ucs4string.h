@@ -33,14 +33,27 @@
 
 namespace qor{
 
-    class UCS4String : public AbstractString< MutableBuffer<char32_t> >
+    class UCS4String : public AbstractString< 
+        UCS4String, 
+        MutableBuffer<char32_t>,
+        rawiterator<char32_t>,
+        rawiterator<const char32_t>,
+        rawreverseiterator<char32_t>,
+        rawreverseiterator<const char32_t> >
     {
     public:
 
-        typedef AbstractString< MutableBuffer<char32_t> > base;
+        typedef AbstractString< 
+            UCS4String, 
+            MutableBuffer<char32_t>,
+            rawiterator<char32_t>,
+            rawiterator<const char32_t>,
+            rawreverseiterator<char32_t>,
+            rawreverseiterator<const char32_t> > base;
+            
         typedef MutableBuffer<char32_t> BufferT;
         typedef typename encoding_of<char32_t>::CodePageT defaultEncodingT;
-        typedef typename base::viewT viewT;
+        typedef typename BufferT::View viewT;
         typedef rawiterator<char32_t> iterator;
         typedef rawiterator<const char32_t> const_iterator;
         typedef rawreverseiterator<char32_t> reverse_iterator;
@@ -172,7 +185,7 @@ namespace qor{
             m_buffer.ConstReverseVisit(std::forward<func_t>(func), startIndex);
         }
 
-        Mib GetEncoding()
+        virtual Mib GetEncoding() const override
         {
             return defaultEncodingT::GetMib();
         }
@@ -185,6 +198,16 @@ namespace qor{
         UCS4String Left(size_t charCount) const
         {
             return UCS4String(base::Left(charCount));
+        }
+
+        UCS4String Right(size_t charCount) const
+        {
+            return UCS4String(base::Right(charCount));
+        }
+
+        UCS4String Mid(size_t from, size_t charCount) const
+        {
+            return UCS4String(base::Mid(from, charCount));
         }
 
     protected:

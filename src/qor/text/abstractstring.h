@@ -28,6 +28,8 @@
 #include <stdexcept>
 #include <string>
 #include "src/qor/text/codepage/codepages.h"
+#include "src/qor/iterators/iterators.h"
+#include "src/qor/text/codepage/codepageregistry.h"
 
 namespace qor{
 
@@ -43,27 +45,21 @@ namespace qor{
         typedef UTF16CodePage CodePageT;
     };
 
-    template< typename BufferT>
+    template<typename ImplT, typename BufferT, 
+    typename iterator = ImplT::iterator, 
+    typename const_iterator = ImplT::const_iterator,
+    typename reverse_iterator = ImplT::reverse_iterator,
+    typename const_reverse_iterator = ImplT::const_reverse_iterator>
     class AbstractString
     {
     public:
+        
         typedef typename BufferT::iterator::value_type CharT;
-        typedef typename BufferT::iterator iterator;
-        typedef typename BufferT::const_iterator const_iterator;
-        typedef typename BufferT::reverse_iterator reverse_iterator;
-        typedef typename BufferT::const_reverse_iterator const_reverse_iterator;
-        typedef typename BufferT::View viewT;
-
-        AbstractString(){}
-
-        virtual ~AbstractString()
-        {
-        }
 
         virtual size_t Length() const = 0;
         virtual bool IsEmpty() const = 0;
         virtual void Reset() = 0;
-        virtual viewT GetBuffer() = 0;
+        virtual typename BufferT::View GetBuffer() = 0;
         virtual CharT At(size_t index) const = 0;
         virtual std::basic_string<typename std::remove_cv<CharT>::type> ToStdString() const = 0;
 
@@ -72,6 +68,7 @@ namespace qor{
             return ToStdString();
         }
 
+        virtual Mib GetEncoding() const = 0;
         virtual iterator begin() const = 0;
         virtual const_iterator cbegin() const = 0;
         virtual iterator end() const = 0;
@@ -87,8 +84,105 @@ namespace qor{
             {
                 charCount = Length();
             }
-            return BufferT(begin().getConstPtr(), charCount);
+            
+            AbstractCharacterCodec< CharT >* Codec = GetCodec();
+            BufferT output;            
+            size_t capacity = output.Capacity();
+            const_iterator it = cbegin();
+            while(it != cend() && charCount > 0)
+            {
+                const CharT* input = it++;
+                CodePoint cp = Codec->Decode(input, charCount);
+                EncodeIntoOutput(output, capacity, Codec, cp);
+            }
+            return output;
         }
+
+        BufferT Right(size_t charCount) const
+        {
+            if (charCount > Length()){ charCount = Length(); }
+            BufferT output;            
+            const_iterator it = cbegin();            
+            size_t offsetCount = Length() - charCount;
+            OffsetIterator(it, offsetCount);
+            WriteUpToCount(it, charCount, output);
+            return output;
+        }
+
+        BufferT Mid(size_t from, size_t charCount) const
+        {
+            if(from > Length()){ from = Length(); }
+            
+            BufferT output;            
+            const_iterator it = cbegin();     
+            OffsetIterator(it, from);
+            WriteUpToCount(it, charCount, output);
+            return output;
+        }
+
+    protected:
+
+        inline void OffsetIterator(const_iterator& it, size_t offsetCount) const
+        {
+            while(offsetCount-- > 0)
+            {
+                ++it;
+            }
+        }
+
+        inline void ReverseOffsetIterator(const_iterator& it, size_t offsetCount) const
+        {
+            while(offsetCount-- > 0)
+            {
+                --it;
+            }
+        }
+
+        inline void WriteUpToCount(const_iterator& it, size_t& charCount, BufferT& output) const
+        {
+            AbstractCharacterCodec< CharT >* Codec = GetCodec();
+            size_t capacity = output.Capacity();
+            while(it != cend() && charCount > 0)
+            {
+                const CharT* input = it++;
+                CodePoint cp = Codec->Decode(input, charCount);                
+                EncodeIntoOutput(output, capacity, Codec, cp);
+            }
+        }
+
+        inline void EncodeIntoOutput(BufferT& output, size_t& capacity, AbstractCharacterCodec< CharT >* Codec, const CodePoint& cp) const
+        {
+            if(capacity < 6)
+            {
+                output.GrowToAtLeast(output.Capacity() + 6);
+                capacity = output.Capacity() - output.Length();
+            }
+            CharT interBuffer[6]{0};
+            CharT* space = interBuffer;
+            Codec->Encode(cp, space, capacity);
+            output.Write(interBuffer, space - &interBuffer[0]);
+        }
+
+        AbstractCharacterCodec< CharT >* GetCodec() const
+        {
+            AbstractCharacterCodec< CharT >* Codec = GetCodecCache();
+            if(Codec)
+            {
+                return Codec;
+            }
+            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
+            Codec = Registration;
+            if(Codec == nullptr)
+            {
+                throw std::logic_error("No CodePage registered for encoding");
+            }
+            SetCodecCache(Codec);
+            return Codec;
+        }
+
+        virtual void UpdateLength() const{}
+        virtual AbstractCharacterCodec< CharT >* GetCodecCache() const{ return nullptr; }
+        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* codec) const{}
 
     };
 }//qor

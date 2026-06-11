@@ -53,6 +53,7 @@ namespace qor
 		else
 		{
 			*space++ = c;
+			--available;
 		}
 		return true;    	
 	}
@@ -60,7 +61,7 @@ namespace qor
 	CodePoint UTF16CodePage::Decode(const char16_t*& chars, size_t& available) const
 	{
 		uint32_t cp = 0xFFFD;// Replacement character for invalid input
-		if (chars != nullptr && available > 0)
+		if (chars != nullptr && available-- > 0)
 		{
 			char16_t c = *chars;
 

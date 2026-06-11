@@ -30,12 +30,18 @@
 
 namespace qor
 {
-#if(qor_pp_compiler == qor_pp_compiler_gcc)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"    
-#endif    
+    template<typename _Category, typename _Tp, typename _Distance = ptrdiff_t, typename _Pointer = _Tp*, typename _Reference = _Tp&>
+    struct iterator_base
+    {
+        typedef _Category  iterator_category; // One of the iterator_tags tag types link.
+        typedef _Tp        value_type;        // The type "pointed to" by the iterator.
+        typedef _Distance  difference_type;   // Distance between iterators is represented as this type.      
+        typedef _Pointer   pointer;           // This type represents a pointer-to-value_type.      
+        typedef _Reference reference;         // This type represents a reference-to-value_type.
+    };
+
     template<typename dataT>
-    class rawiterator : public std::iterator<std::bidirectional_iterator_tag, dataT, ptrdiff_t, dataT*, dataT&>
+    class rawiterator : public iterator_base<std::bidirectional_iterator_tag, dataT, ptrdiff_t, dataT*, dataT&>
     {
     public:
 
@@ -71,6 +77,11 @@ namespace qor
         }
         //const dataT& operator*()const{return *m_ptr;}
         dataT* operator->() const noexcept
+        {
+            return m_ptr;
+        }
+
+        operator dataT*() const noexcept    //It's important to be able to decay iterators to pointers
         {
             return m_ptr;
         }
@@ -111,9 +122,6 @@ namespace qor
 
         rawiterator<dataT> base(){rawiterator<dataT> forwardIterator(this->m_ptr); ++forwardIterator; return forwardIterator;}
     };
-#if(qor_pp_compiler == qor_pp_compiler_gcc)
-#pragma GCC diagnostic pop
-#endif
 }
 
 #endif//QOR_PP_H_ITERATORS_RAW

@@ -56,3 +56,31 @@ qor_pp_test_case(canConvertASCIIStringToUCS4)
     auto convertedString = ACSIIString.ToUCS4();
     qor_pp_assert_that(convertedString.ToStdString() == UCS4String(U"Converted").ToStdString()).isTrue();
 }
+
+qor_pp_test_case(canGetLeftCharsFromLocalString)
+{
+    LocalString<char> str("Hello World");
+    auto result = str.Left(5);
+    qor_pp_assert_that(result.Length()).isEqualTo(5);
+    qor_pp_assert_that(result[0]).isEqualTo('H');
+    qor_pp_assert_that(result.At(4)).isEqualTo('o');
+}
+
+qor_pp_test_case(canGetRightCharsFromLocalString)
+{
+    LocalString<char> str("Hello World");
+    auto result = str.Right(5);
+    qor_pp_assert_that(result.Length()).isEqualTo(5);
+    qor_pp_assert_that(result[0]).isEqualTo('W');
+    qor_pp_assert_that(result.At(4)).isEqualTo('d');
+}
+
+qor_pp_test_case(canHoldISOLatin1CharsInLocalString)
+{
+    LocalString<char8_t> str(u8"avlsmænd og urtemænd, 121 soldater, 97 daglejere, 139 enlige kvinder og");
+    str.SetEncoding(Mib::ISOLatin1);
+    auto result = str.Left(9);
+    qor_pp_assert_that(result.Length()).isEqualTo(9);
+    qor_pp_assert_that(result[0]).isEqualTo('a');
+    qor_pp_assert_that(result.At(8)).isEqualTo('d');
+}

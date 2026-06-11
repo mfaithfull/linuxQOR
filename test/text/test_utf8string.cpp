@@ -29,25 +29,48 @@
 #include <ranges>
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/qor/text/strings/ucs2string.h"
+#include "src/qor/text/strings/utf8string.h"
 
 using namespace qor;
 using namespace qor::test;
 
-qor_pp_test_case(canInstanceUCS2String)
+qor_pp_test_case(canInstanceUTF8String)
 {
-    UCS2String ucs2str(u"Hello World");
-    qor_pp_assert_that(ucs2str.Length()).isEqualTo(11);
-    qor_pp_assert_that(ucs2str[0]).isEqualTo('H');
-    qor_pp_assert_that(ucs2str.At(10)).isEqualTo('d');
+    UTF8String utf8str(u8"Hello World");
+    qor_pp_assert_that(utf8str.Length()).isEqualTo(11);
+    qor_pp_assert_that(utf8str[0]).isEqualTo('H');
+    qor_pp_assert_that(utf8str.At(10)).isEqualTo('d');
 }
 
-qor_pp_test_case(canGetMiddleOfUCS2String)
+qor_pp_test_case(canGetLeftCharsFromUTF8String)
 {
-    UCS2String ucs2str(u"Hello World");
-    auto middle = ucs2str.Mid(4, 3);
-    qor_pp_assert_that(middle.Length()).isEqualTo(3);
-    qor_pp_assert_that(middle[0]).isEqualTo('o');
-    qor_pp_assert_that(middle.At(2)).isEqualTo('W');
+    UTF8String utf8str(u8"Hello World");
+    auto result = utf8str.Left(5);
+    qor_pp_assert_that(result.Length()).isEqualTo(5);
+    qor_pp_assert_that(result[0]).isEqualTo('H');
+    qor_pp_assert_that(result.At(4)).isEqualTo('o');
 }
 
+qor_pp_test_case(canGetRightCharsFromUTF8String)
+{
+    UTF8String utf8str(u8"Hello World");
+    auto result = utf8str.Right(5);
+    qor_pp_assert_that(result.Length()).isEqualTo(5);
+    qor_pp_assert_that(result[0]).isEqualTo('W');
+    qor_pp_assert_that(result.At(4)).isEqualTo('d');
+}
+
+qor_pp_test_case(canHoldMultiByteCharsInUTF8String)
+{
+    UTF8String korean(u8"﻿중앙일보 - 사건/사회 - 극지탐험　협회결");
+    size_t length = korean.Length();
+    qor_pp_assert_that(korean.IsEmpty()).isFalse();
+}
+
+qor_pp_test_case(canGetRightCharsInUTF8String)
+{
+    UTF8String korean(u8"﻿중앙일보 - 사건/사회 - 극지탐험　협회결");
+    auto result = korean.Right(3);
+    qor_pp_assert_that(result.Length()).isEqualTo(3);
+    qor_pp_assert_that(result[1]).isEqualTo(UTF8String(u8"회")[0]);
+}

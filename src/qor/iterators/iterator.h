@@ -27,17 +27,8 @@
 
 namespace qor{
 
-#if(qor_pp_compiler == qor_pp_compiler_gcc)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"    
-#endif
-
-#if(qor_pp_compiler == qor_pp_compiler_msvc)
-#define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
-#endif
-
     template<typename containerT, typename AdvanceDistanceFunctorT, typename BeginEndFunctorT>
-    class Iterator : public std::iterator< std::random_access_iterator_tag,
+    class Iterator : public iterator_base< std::random_access_iterator_tag,
                                         typename std::iterator_traits<decltype(BeginEndFunctorT::begin(std::declval<containerT&>()))>::value_type,
                                         typename std::iterator_traits<decltype(BeginEndFunctorT::begin(std::declval<containerT&>()))>::difference_type,
                                         typename std::iterator_traits<decltype(BeginEndFunctorT::begin(std::declval<containerT&>()))>::pointer,
@@ -106,6 +97,7 @@ namespace qor{
         dataTRef operator*(){return (*m_ptr);}
         const dataTRef operator*()const{return (*m_ptr);}
         iterator operator->(){return m_ptr;}
+        operator const dataT*() const noexcept {return (m_ptr);}//allow decay to underlying iterator
 
         bool operator==(const Iterator<containerT,AdvanceDistanceFunctorT,BeginEndFunctorT>& iterator) const
         {
@@ -287,10 +279,6 @@ namespace qor{
             }
         }
     };
-
-#if(qor_pp_compiler == qor_pp_compiler_gcc)    
-#pragma GCC diagnostic pop
-#endif
 
 }
 

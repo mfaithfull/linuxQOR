@@ -120,7 +120,10 @@ namespace qor{
         {
             sEncodedBufferHeader* old = reinterpret_cast<sEncodedBufferHeader*>(pOld);
             sEncodedBufferHeader* _new = reinterpret_cast<sEncodedBufferHeader*>(pNew);
-            _new->Encoding = old->Encoding;
+            if(old && _new)
+            {
+                _new->Encoding = old->Encoding;
+            }
         }
 
         void SetEncoding(Mib charSet)
@@ -132,7 +135,7 @@ namespace qor{
             }
         }
 
-        Mib GetEncoding()
+        Mib GetEncoding() const
         {
             sEncodedBufferHeader* header = reinterpret_cast<sEncodedBufferHeader*>(base::GetHeader(m_p));
             if(header)
