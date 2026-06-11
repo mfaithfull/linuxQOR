@@ -56,6 +56,8 @@ namespace qor{
         
         typedef typename BufferT::iterator::value_type CharT;
 
+        static constexpr size_t kMaxCodeUnitsPerCodePoint = 6;
+
         virtual size_t Length() const = 0;
         virtual bool IsEmpty() const = 0;
         virtual void Reset() = 0;
@@ -152,12 +154,12 @@ namespace qor{
 
         inline void EncodeIntoOutput(BufferT& output, size_t& capacity, AbstractCharacterCodec< CharT >* Codec, const CodePoint& cp) const
         {
-            if(capacity < 6)
+            if(capacity < kMaxCodeUnitsPerCodePoint)
             {
-                output.GrowToAtLeast(output.Capacity() + 6);
+                output.GrowToAtLeast(output.Capacity() + kMaxCodeUnitsPerCodePoint);
                 capacity = output.Capacity() - output.Length();
             }
-            CharT interBuffer[6]{0};
+            CharT interBuffer[kMaxCodeUnitsPerCodePoint]{0};
             CharT* space = interBuffer;
             Codec->Encode(cp, space, capacity);
             output.Write(interBuffer, space - &interBuffer[0]);
