@@ -112,12 +112,13 @@ namespace qor{ namespace pipeline{
 
     bool Sink::CheckComplete()
     {
-        log::inform("|{0}", Name());
+        auto name = Name();
+        log::inform("|{0}", name);
         if(GetFlowMode() == Element::FlowMode::Push)
         {
             if(!GetBuffer())
             {
-                warning("{0} has no buffer.", Name());
+                warning("{0} has no buffer.", name);
                 return false;
             }
             if(GetPlug() && GetPlug()->IsPlug())
@@ -126,7 +127,7 @@ namespace qor{ namespace pipeline{
             }
             else
             {
-                warning("{0} is in push mode but has no plug or plug is not a valid plug.", Name());
+                warning("{0} is in push mode but has no plug or plug is not a valid plug.", name);
             }
         }
         else
@@ -138,7 +139,7 @@ namespace qor{ namespace pipeline{
             }
             else
             {
-                warning("{0} is in pull mode but has no source or source is not a valid source.", Name());
+                warning("{0} is in pull mode but has no source or source is not a valid source.", name);
             }
         }
         return false;

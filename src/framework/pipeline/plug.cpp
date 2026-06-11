@@ -131,7 +131,8 @@ namespace qor{ namespace pipeline{
 
     bool Plug::CheckComplete()
     {
-        log::inform("T{0}", Name());
+        auto name = Name();
+        log::inform("T{0}", name);
         if(GetFlowMode() == Element::FlowMode::Push)
         {
             if(GetSink() && GetSink()->IsSink())
