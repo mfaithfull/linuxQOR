@@ -123,6 +123,11 @@ namespace qor
 		{
 			encoded_length = 2;
 		}
+		else if (cp.Value() >= SurrogateHighStart && cp.Value() <= SurrogateLowEnd)
+		{
+			encoded_length = ReplacementCharacterStringLength;
+			cp = ReplacementCodePoint;
+		}
 		else if (cp.Value() <= MaxBasicMultilingualPlane)
 		{
 			encoded_length = 3;
@@ -194,7 +199,7 @@ namespace qor
 	{
 		uint32_t cp = ReplacementCodePoint;// Replacement character for invalid input
 
-		if (chars != nullptr || available != 0)
+		if (chars != nullptr && available != 0)
 		{
 			char8_t c = *chars++;			
 

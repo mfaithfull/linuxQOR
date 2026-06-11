@@ -107,7 +107,14 @@ namespace qor
                         {
                             uint8_t decoded_length = codepoint_decoded_length[value];
                             --remainingSteps;
-                            std::advance(iter,decoded_length);
+                            if(decoded_length > distanceFromIterToEnd)
+                            {
+                                iter = endIter;
+                            }
+                            else
+                            {
+                                std::advance(iter,decoded_length);
+                            }
                         }
                     }
                 }
