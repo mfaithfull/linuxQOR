@@ -44,8 +44,15 @@ qor_pp_test_case(canInstanceLocalString)
 
 qor_pp_test_case(canSetEncodingOnLocalString)
 {
-    LocalString<char> latin1String("ISOLatin1");
+    LocalString<char8_t> latin1String(u8"ISOLatin1");
     latin1String.SetEncoding(Mib::ISOLatin1);
     qor_pp_assert_that(latin1String.GetEncoding() == Mib::ISOLatin1).isTrue();
 }
 
+qor_pp_test_case(canConvertASCIIStringToUCS4)
+{
+    LocalString<char> ACSIIString("Converted");
+    ACSIIString.SetEncoding(Mib::ASCII);
+    auto convertedString = ACSIIString.ToUCS4();
+    qor_pp_assert_that(convertedString.ToStdString() == UCS4String(U"Converted").ToStdString()).isTrue();
+}

@@ -141,20 +141,26 @@ namespace qor{
 		UTF32 = 1017,			
 	};
 
+	template< typename C >
+	struct AbstractCharacterCodec
+	{
+		virtual inline bool Encode(const CodePoint & codePoint, C*& space, size_t& available) const = 0;
+		virtual inline CodePoint Decode(const C*& chars, size_t& available) const = 0;
+	};
+
 	template< typename C, Mib M >
-	class CodePageBase
+	class CodePageBase : public AbstractCharacterCodec< C >
 	{
 	public:
 		
 		virtual ~CodePageBase() = default;
-		virtual inline C Encode(const CodePoint & codePoint) const = 0;
-		virtual inline CodePoint Decode(C character) const = 0;
+		virtual inline bool Encode(const CodePoint & codePoint, C*& space, size_t& available) const = 0;
+		virtual inline CodePoint Decode(const C*& chars, size_t& available) const = 0;
 		
 		static const Mib inline GetMib()
 		{ 
 			return M;
-		}
-		
+		}		
 	};
 
 }//qor

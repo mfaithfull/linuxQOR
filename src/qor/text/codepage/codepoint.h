@@ -41,12 +41,22 @@ namespace qor{
         {
         }
 
+        CodePoint(const CodePoint&& src) : m_codePoint(src.m_codePoint)
+        {
+        }
+
         CodePoint& operator = (const CodePoint& src)
         {
             m_codePoint = src.m_codePoint;
             return *this;
-        }
+        }        
 
+        CodePoint& operator = (const CodePoint&& src)
+        {
+            m_codePoint = src.m_codePoint;
+            return *this;
+        }
+        
         bool operator == (const CodePoint& cmp) const
         {
             return m_codePoint == cmp.m_codePoint;
@@ -84,6 +94,11 @@ namespace qor{
         uint32_t inline Value(void) const
         {
             return m_codePoint;
+        }
+
+        char32_t inline UChar() const
+        {
+            return static_cast<char32_t>(m_codePoint);
         }
 
 	private:

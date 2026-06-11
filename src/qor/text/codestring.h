@@ -143,7 +143,7 @@ namespace qor{
 
         reverse_iterator rbegin() const
         {
-            return iterator(m_buffer.rbegin());
+            return reverse_iterator(m_buffer.rbegin());
         }
 
         const_reverse_iterator crbegin() const

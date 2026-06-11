@@ -29,9 +29,9 @@
 
 namespace
 {
-	constexpr std::string aliases[] = {"ISO-8859-1"};
+	const std::string aliases[] = {"ISO-8859-1"};
 
-    std::map<uint32_t, char> codePointToChar = {
+    const std::map<uint32_t, char8_t> codePointToChar = {
         {0x00000000, 0x00},
         {0x00000001, 0x01},
         {0x00000002, 0x02},
@@ -290,7 +290,7 @@ namespace
         {0x000000FF, 0xFF}
     };
 
-    std::array<uint32_t, 0x00000100> charToCodePoint = 
+    const std::array<uint32_t, 0x00000100> charToCodePoint = 
     {
         0x00000000,
         0x00000001,
@@ -557,18 +557,31 @@ namespace qor
 	{
 	}
 	
-	char ISOLatin1CodePage::Encode(const CodePoint& codePoint) const
+	bool ISOLatin1CodePage::Encode(const CodePoint & codePoint, char8_t*& space, size_t& available) const
 	{
+		if(available < 1 || space == nullptr)
+		{
+			return false;
+		}
+
+        char8_t c = 255;
         auto it = codePointToChar.find(codePoint.Value());
         if(it != codePointToChar.end())
         {
-            return it->second;
+            c = it->second;
         }
-    	return 255;	
+		*space++ = c;
+        --available;
+		return true;    	
 	}
 
-	CodePoint ISOLatin1CodePage::Decode(char character) const
+	CodePoint ISOLatin1CodePage::Decode(const char8_t*& chars, size_t& available) const
 	{
-		return CodePoint(charToCodePoint[abs(character)]);
+        uint32_t cp = 255;
+        if (chars != nullptr && available-- > 0)
+        {
+            cp = charToCodePoint[*chars++];
+        }
+		return CodePoint(cp);
 	}
 }//qor

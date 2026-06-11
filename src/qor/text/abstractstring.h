@@ -47,12 +47,12 @@ namespace qor{
     class AbstractString
     {
     public:
-        typedef BufferT::iterator::value_type CharT;
-        typedef BufferT::iterator iterator;
-        typedef BufferT::const_iterator const_iterator;
-        typedef BufferT::reverse_iterator reverse_iterator;
-        typedef BufferT::const_reverse_iterator const_reverse_iterator;
-        typedef BufferT::View viewT;
+        typedef typename BufferT::iterator::value_type CharT;
+        typedef typename BufferT::iterator iterator;
+        typedef typename BufferT::const_iterator const_iterator;
+        typedef typename BufferT::reverse_iterator reverse_iterator;
+        typedef typename BufferT::const_reverse_iterator const_reverse_iterator;
+        typedef typename BufferT::View viewT;
 
         AbstractString(){}
 

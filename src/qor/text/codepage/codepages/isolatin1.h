@@ -29,15 +29,15 @@
 
 namespace qor{
 
-	class qor_pp_module_interface(QOR_TEXT) ISOLatin1CodePage : public CodePage< char, Mib::ISOLatin1 >
+	class qor_pp_module_interface(QOR_TEXT) ISOLatin1CodePage : public CodePage< char8_t, Mib::ISOLatin1 >
 	{
 	public:		
 
 		ISOLatin1CodePage();
 		virtual ~ISOLatin1CodePage() = default;
 
-		virtual char Encode(const CodePoint & codePoint) const override;
-		virtual CodePoint Decode(char character) const override;
+		virtual bool Encode(const CodePoint & codePoint, char8_t*& space, size_t& available) const override;
+		virtual CodePoint Decode(const char8_t*& chars, size_t& available) const override;
     };
 
 	template<>

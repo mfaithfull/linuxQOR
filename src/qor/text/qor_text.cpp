@@ -25,6 +25,8 @@
 #include "../../configuration/configuration.h"
 #include <buildnumber.h>
 #include "../module/module.h"
+#include "codepage/codepages.h"
+#include "codepage/codepageregentry.h"
 
 extern "C"
 {
@@ -35,6 +37,11 @@ extern "C"
 			qor_pp_stringize(qor_pp_ver_minor) "." \
 			qor_pp_stringize(qor_pp_ver_patch) "." \
 			qor_pp_stringize(qor_pp_buildnumber));
+
+		static qor::ASCIICodePage sASCIICodePage;
+		static qor::CodePageRegEntry< char, qor::Mib::ASCII > regASCIICodePage(&sASCIICodePage);
 		return QORModule;
 	}
+
+
 }

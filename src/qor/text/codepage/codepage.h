@@ -40,7 +40,7 @@ namespace qor{
 
 		CodePage(const std::string& name, const std::string& MIMEName, const std::string* aliases = nullptr, uint32_t aliasCount = 0) : CodePageBase< C, M >(), m_name(name), m_MIMEName(MIMEName)
 		{
-			while (aliasCount--)
+			while (aliases != nullptr && aliasCount--)
 			{
 				std::string alias(aliases[aliasCount]);
 				m_aliases.push_back(alias);
@@ -49,8 +49,8 @@ namespace qor{
 
 		virtual ~CodePage() = default;
 
-		virtual inline charT Encode(const CodePoint & codePoint) const = 0;
-		virtual inline CodePoint Decode(charT character) const = 0;
+		virtual inline bool Encode(const CodePoint & codePoint, C*& space, size_t& available) const = 0;
+		virtual inline CodePoint Decode(const charT*& chars, size_t& available) const = 0;
 
 	protected:
 

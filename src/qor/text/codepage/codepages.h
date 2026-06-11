@@ -27,5 +27,6 @@
 
 #include "codepages/ascii.h"
 #include "codepages/utf16.h"
+#include "codepages/isolatin1.h"
 
 #endif//QOR_PP_H_TEXT_CODEPAGE_CODEPAGES

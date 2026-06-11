@@ -32,21 +32,25 @@ namespace qor
 	{
 	}
 	
-	char ASCIICodePage::Encode(const CodePoint& codePoint) const
+	bool ASCIICodePage::Encode(const CodePoint & codePoint, char*& space, size_t& available) const
 	{
-		if (codePoint.Value() > 0x7F)
+		if(available < 1 || space == nullptr)
 		{
-			return 0;
+			return false;
 		}
-		return static_cast<char>(codePoint.Value());
+		char c = codePoint.Value() > 0x7F ? '?' : static_cast<char>(codePoint.UChar());
+		*space++ = c;
+		available--;
+		return true;
 	}
 
-	CodePoint ASCIICodePage::Decode(char character) const
+	CodePoint ASCIICodePage::Decode(const char*& chars, size_t& available) const
 	{
-		if (character > 0x7F)
+		uint32_t cp = ' ';
+		if (chars != nullptr && *chars >= 0 && available-- > 0)
 		{
-			character = 0;
+			cp = static_cast<uint32_t>(*chars++);
 		}
-		return CodePoint(static_cast<uint32_t>(character));
+		return CodePoint(cp);
 	}
 }//qor

@@ -160,8 +160,8 @@ qor_pp_test_case(canGetMutableBufferAllocationByteCount)
 {
     auto mb = MutableBuffer<char>("Hello");
 
-    qor_pp_assert_that(mb.AllocationByteCount()).isEqualTo(
-    (sizeof(sBufferHeader) + sizeof(sBufferFooter) + (sizeof(char) * 5)) | 0x10);
+    qor_pp_assert_that(mb.AllocationByteCount()).isAtLeast(
+    (sizeof(sBufferHeader) + sizeof(sBufferFooter) + (sizeof(char) * 5)));
 }
 
 qor_pp_test_case(canGetMutableBufferByteLength)

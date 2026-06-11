@@ -29,7 +29,9 @@
 #include <string>
 #include "src/qor/text/abstractstring.h"
 #include "src/qor/text/buffers/encodedbuffer.h"
+#include "src/qor/text/strings/ucs4string.h"
 #include "src/qor/iterators/iterators.h"
+#include "src/qor/text/codepage/codepageregistry.h"
 
 namespace qor{
 
@@ -94,7 +96,7 @@ namespace qor{
             m_buffer.Reset();
         }
 
-        BufferT::View GetBuffer()
+        typename BufferT::View GetBuffer()
         {
             return m_buffer.GetBuffer();
         }
@@ -179,6 +181,32 @@ namespace qor{
         void SetEncoding(Mib charSet)
         {
             m_buffer.SetEncoding(charSet);
+        }
+
+        UCS4String ToUCS4()
+        {
+            UCS4String output(Length());            
+            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
+            AbstractCharacterCodec< C >* Codec = Registration;
+            if(Codec == nullptr)
+            {
+                throw std::logic_error("No CodePage registered for encoding");
+            }
+            {
+                auto buffer = output.GetBuffer();
+                char32_t* outptr = buffer.operator char32_t *();
+                size_t outCounter = 0;
+                const C* inptr = m_buffer.template GetData<C>();
+                size_t inAvailable = Length();
+                while(inAvailable > 0)
+                {   
+                    CodePoint cp = Codec->Decode(inptr, inAvailable);
+                    *outptr++ = cp.UChar();
+                    outCounter++;
+                }
+                buffer.Validate(outCounter);
+            }
+            return output;   
         }
 
         LocalString< C > Left(size_t charCount) const

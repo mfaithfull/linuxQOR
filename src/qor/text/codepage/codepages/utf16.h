@@ -36,8 +36,8 @@ namespace qor{
 		UTF16CodePage();
 		virtual ~UTF16CodePage() = default;
 
-		virtual char16_t Encode(const CodePoint & codePoint) const override;
-		virtual CodePoint Decode(char16_t character) const override;
+		virtual bool Encode(const CodePoint & codePoint, char16_t*& space, size_t& available) const override;
+		virtual CodePoint Decode(const char16_t*& chars, size_t& available) const override;
     };
 
 	template<>

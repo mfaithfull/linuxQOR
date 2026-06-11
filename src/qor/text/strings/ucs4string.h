@@ -100,7 +100,7 @@ namespace qor{
             return m_buffer.GetBuffer();
         }
 
-        char32_t& operator[](size_t index) const
+        const char32_t& operator[](size_t index) const
         {
             return m_buffer[index];
         }
@@ -142,7 +142,7 @@ namespace qor{
 
         reverse_iterator rbegin() const
         {
-            return iterator(m_buffer.rbegin());
+            return reverse_iterator(m_buffer.rbegin());
         }
 
         const_reverse_iterator crbegin() const

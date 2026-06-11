@@ -37,22 +37,43 @@ namespace qor
 	{
 	}
 	
-	char16_t UTF16CodePage::Encode(const CodePoint& codePoint) const
+	bool UTF16CodePage::Encode(const CodePoint & codePoint, char16_t*& space, size_t& available) const
 	{
-		if (codePoint.Value() > 0x7FFF)
+		if(available < 1 || space == nullptr)
 		{
-			return 0;
+			return false;
 		}
-		return codePoint.Value();
+
+		char16_t c = codePoint.Value() > 0xFFFF ? 0xFFFD : static_cast<char16_t>(codePoint.UChar());
+
+		if (c >= 0xD800 && c <= 0xDFFF)
+		{
+			//TODO: Handle surrogates
+		}
+		else
+		{
+			*space++ = c;
+		}
+		return true;    	
 	}
 
-	CodePoint UTF16CodePage::Decode(char16_t character) const
+	CodePoint UTF16CodePage::Decode(const char16_t*& chars, size_t& available) const
 	{
-		if (character > 0x7FFF)
+		uint32_t cp = 0xFFFD;// Replacement character for invalid input
+		if (chars != nullptr && available > 0)
 		{
-			character = 0;
+			char16_t c = *chars;
+
+			if (c >= 0xD800 && c <= 0xDFFF)
+			{
+				//TODO: Handle surrogates
+			}
+			else
+			{
+				cp = static_cast<uint32_t>(c);
+			}
 		}
-		return CodePoint(character);
+		return CodePoint(cp);
 	}
 
 }//qor

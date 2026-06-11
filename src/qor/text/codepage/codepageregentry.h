@@ -22,30 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEXT_CODEPAGE_ASCII
-#define QOR_PP_H_TEXT_CODEPAGE_ASCII
+#ifndef QOR_PP_H_CODEPAGEREGENTRY
+#define QOR_PP_H_CODEPAGEREGENTRY
 
-#include "../codepage.h"
+#include "codepageregistry.h"
+#include "codepage.h"
 
-namespace qor{
+namespace qor {
 
-	class qor_pp_module_interface(QOR_TEXT) ASCIICodePage : public CodePage< char, Mib::ASCII >
-	{
-	public:		
+    template< typename C, Mib M = Mib::C >
+    class CodePageRegEntry
+    {
+    public:
 
-		ASCIICodePage();
-		virtual ~ASCIICodePage() = default;
+        inline CodePageRegEntry(CodePage< C, M >* cp)
+        {
+            TheCodePageRegistry()->Register( M, TypedAny< AbstractCharacterCodec< C > >(cp));
+        }
 
-		virtual bool Encode(const CodePoint & codePoint, char*& space, size_t& available) const override;
-		virtual CodePoint Decode(const char*& chars, size_t& available) const override;
+        virtual ~CodePageRegEntry()
+        {
+            TheCodePageRegistry()->Unregister(M);
+        }
     };
-
-	template<>
-	struct charset_of<Mib::ASCII>
-	{
-		typedef ASCIICodePage type;
-	};
 
 }//qor
 
-#endif//QOR_PP_H_TEXT_CODEPAGE_ASCII
+#endif//QOR_PP_H_TYPEREGENTRY
