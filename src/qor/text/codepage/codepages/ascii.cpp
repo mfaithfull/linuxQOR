@@ -47,9 +47,10 @@ namespace qor
 	CodePoint ASCIICodePage::Decode(const char*& chars, size_t& available) const
 	{
 		uint32_t cp = 255;
-		if (chars != nullptr && *chars >= 0 && available-- > 0)
+		if (chars != nullptr && available > 0)
 		{
 			cp = static_cast<uint32_t>(*chars++);
+			--available;
 		}
 		return CodePoint(cp);
 	}

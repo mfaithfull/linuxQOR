@@ -106,14 +106,21 @@ namespace qor
                         else
                         {
                             uint8_t decoded_length = codepoint_decoded_length[value];
-                            --remainingSteps;
-                            if(decoded_length > distanceFromIterToEnd)
-                            {
-                                iter = endIter;
+                            if(decoded_length == 0 || decoded_length > 6)
+                            {   //malformed UTF-8 sequence, skip
+                                std::advance(iter,1);
                             }
                             else
                             {
-                                std::advance(iter,decoded_length);
+                                --remainingSteps;
+                                if(decoded_length >= distanceFromIterToEnd)
+                                {
+                                    iter = endIter;
+                                }
+                                else
+                                {
+                                    std::advance(iter,decoded_length);
+                                }
                             }
                         }
                     }
@@ -131,12 +138,9 @@ namespace qor
                     while(remainingSteps > 0)
                     {
                         typename iteratorT::value_type value = *iter--;
-                        if(value >= 0x80 && value <= 0xBF)//Detect continuation byte
-                        {                            
-                        }
-                        else
-                        {
-                            --remainingSteps;
+                        if(value < 0x80 || value > 0xBF)//ignore continuation bytes
+                        {   
+                            --remainingSteps;                         
                         }
                     }
                 }

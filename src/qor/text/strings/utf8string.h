@@ -36,7 +36,7 @@ namespace qor{
 
     //UTF-8 Strings have UTF-8 encoding and variable width (1-4 bytes) characters
     //You Shouldn't use these directly with std ranges and algorithms as the 
-    //custom iterator for UTF8String is incompatible whith their assumption of
+    //custom iterator for UTF8String is incompatible with their assumption of
     //fixed width encoding.
     class UTF8String : public AbstractString< 
         UTF8String, 

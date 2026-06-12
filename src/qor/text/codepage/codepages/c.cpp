@@ -34,22 +34,23 @@ namespace qor
 	
 	bool CCodePage::Encode(const CodePoint & codePoint, char*& space, size_t& available) const
 	{
-		if(available < 1 || space == nullptr)
+		if(available == 0 || space == nullptr)
 		{
 			return false;
 		}
 		char c = codePoint.Value() > 0x7F ? '?' : static_cast<char>(codePoint.UChar());
 		*space++ = c;
-		available--;
+		--available;
 		return true;
 	}
 
 	CodePoint CCodePage::Decode(const char*& chars, size_t& available) const
 	{
 		uint32_t cp = 255;
-		if (chars != nullptr && *chars >= 0 && available-- > 0)
+		if (chars != nullptr && available > 0)
 		{
 			cp = static_cast<uint32_t>(*chars++);
+			--available;
 		}
 		return CodePoint(cp);
 	}

@@ -46,7 +46,7 @@ namespace qor{
     template< typename C, Mib defaultMib = Mib::C >
     class LocalString : public AbstractString< 
         LocalString< C, defaultMib >, 
-        EncodedBuffer< C >,
+        EncodedBuffer< C, defaultMib >,
         rawiterator< C >,
         rawiterator< const C >,
         rawreverseiterator< C >,
@@ -56,17 +56,17 @@ namespace qor{
         
         typedef AbstractString< 
             LocalString< C, defaultMib >, 
-            EncodedBuffer< C >,
+            EncodedBuffer< C, defaultMib >,
             rawiterator< C >,
             rawiterator< const C >,
             rawreverseiterator< C >,
             rawreverseiterator< const C > > base;        
 
-        typedef EncodedBuffer<C> BufferT;
-        typedef rawiterator<C> iterator;
-        typedef rawiterator<const C> const_iterator;
-        typedef rawreverseiterator<C> reverse_iterator;
-        typedef rawreverseiterator<const C> const_reverse_iterator;
+        typedef EncodedBuffer< C, defaultMib > BufferT;
+        typedef rawiterator< C > iterator;
+        typedef rawiterator< const C > const_iterator;
+        typedef rawreverseiterator< C > reverse_iterator;
+        typedef rawreverseiterator< const C > const_reverse_iterator;
 
         LocalString() noexcept : m_buffer(){ }
 
