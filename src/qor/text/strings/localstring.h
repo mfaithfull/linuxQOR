@@ -25,19 +25,27 @@
 #ifndef QOR_PP_H_TEXT_LOCALSTRING
 #define QOR_PP_H_TEXT_LOCALSTRING
 
+#ifndef QOR_PP_H_TEXT_STRINGS_STRINGS
+#   error "don't include localstring.h directly, include src/qor/text/strings/strings.h"
+#endif
+
 #include <stdexcept>
 #include <string>
 #include "src/qor/text/abstractstring.h"
 #include "src/qor/text/buffers/encodedbuffer.h"
-#include "src/qor/text/strings/ucs4string.h"
 #include "src/qor/iterators/iterators.h"
 #include "src/qor/text/codepage/codepageregistry.h"
 
 namespace qor{
 
-    template< typename C >
+    //LocalStrings have fixed character size but variable encoding
+    //Set the Encoding to the CodePage of the locale in use
+    //but remember to use an appropriate character width for your 
+    //locale. A European LocalString might be LocalString< char8_t >
+    //whereas a CJK LocalString might be LocalString< char16_t >
+    template< typename C, Mib defaultMib = Mib::C >
     class LocalString : public AbstractString< 
-        LocalString< C >, 
+        LocalString< C, defaultMib >, 
         EncodedBuffer< C >,
         rawiterator< C >,
         rawiterator< const C >,
@@ -47,7 +55,7 @@ namespace qor{
     public:
         
         typedef AbstractString< 
-            LocalString< C >, 
+            LocalString< C, defaultMib >, 
             EncodedBuffer< C >,
             rawiterator< C >,
             rawiterator< const C >,
@@ -60,30 +68,20 @@ namespace qor{
         typedef rawreverseiterator<C> reverse_iterator;
         typedef rawreverseiterator<const C> const_reverse_iterator;
 
+        LocalString() noexcept : m_buffer(){ }
+
         template<size_t N>
-        LocalString(const C(&str)[N]) : m_buffer(str)        
-        {            
-        }
+        LocalString(const C(&str)[N]) : m_buffer(str){ }
 
-        LocalString(const BufferT& buffer) : m_buffer(buffer)
-        {            
-        }
+        LocalString(const BufferT& buffer) : m_buffer(buffer){ }
 
-        LocalString(const LocalString& src) : m_buffer(src.m_buffer)
-        {            
-        }
+        LocalString(const LocalString& src) : m_buffer(src.m_buffer){ }
 
-        LocalString(LocalString&& src) noexcept : m_buffer(std::move(src.m_buffer))
-        {            
-        }
+        LocalString(LocalString&& src) noexcept : m_buffer(std::move(src.m_buffer)){ }
 
-        LocalString( const C* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount )
-        {            
-        }
+        LocalString( const C* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount ){ }
 
-        virtual ~LocalString()
-        {
-        }
+        virtual ~LocalString() = default;
 
         LocalString& operator = (const LocalString& src)
         {
@@ -94,37 +92,47 @@ namespace qor{
             return *this;
         }
 
-        size_t Length() const
+        size_t Length() const override
         {
             return m_buffer.Length();
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const override
         {
             return m_buffer.IsEmpty();
         }
 
-        void Reset(void)
+        void Reset(void) override
         {
             m_buffer.Reset();
         }
 
-        typename BufferT::View GetBuffer()
+        typename BufferT::View GetBuffer() override
         {
             return m_buffer.GetBuffer();
         }
 
-        const C& operator[](size_t index) const
+        C operator[](size_t index) const
         {
             return m_buffer[index];
         }
 
-        C At(size_t index) const
+        C At(size_t index) const override
         {
             return m_buffer.At(index);
         }
 
-        std::basic_string<C> ToStdString() const
+        LocalString< C, defaultMib > Clone() const override
+        {
+            return LocalString< C, defaultMib >(m_buffer);
+        }
+
+        static LocalString< C, defaultMib > EmptyString()
+        {
+            return LocalString< C, defaultMib >();
+        }
+
+        std::basic_string<C> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }
@@ -134,56 +142,49 @@ namespace qor{
             return ToStdString();
         }
 
-        iterator begin() const
+        size_t size() const override
+        {
+            return m_buffer.Length();
+        }
+
+        iterator begin() const override
         {
             return iterator(m_buffer.begin());
         }
 
-        const_iterator cbegin() const
+        const_iterator cbegin() const override
         {
             return const_iterator(m_buffer.cbegin());
         }
 
-        iterator end() const
+        iterator end() const override
         {
             return iterator(m_buffer.end());
         }
 
-        const_iterator cend() const
+        const_iterator cend() const override
         {
             return const_iterator(m_buffer.cend());
         }
 
-        reverse_iterator rbegin() const
+        reverse_iterator rbegin() const override
         {
             return reverse_iterator(m_buffer.rbegin());
         }
 
-        const_reverse_iterator crbegin() const
+        const_reverse_iterator crbegin() const override
         {
             return const_reverse_iterator(m_buffer.crbegin());
         }
 
-        reverse_iterator rend() const
+        reverse_iterator rend() const override
         {
             return reverse_iterator(m_buffer.rend());
         }
 
-        const_reverse_iterator crend() const
+        const_reverse_iterator crend() const override
         {
             return const_reverse_iterator(m_buffer.crend());
-        }
-
-        template<typename func_t>
-        void ConstVisit(func_t&& func, size_t startIndex = 0) const
-        {
-            m_buffer.ConstVisit(std::forward<func_t>(func), startIndex);
-        }
-
-        template<typename func_t>
-        void ConstReverseVisit(func_t&& func, size_t startIndex = (size_t)(-1)) const
-        {
-            m_buffer.ConstReverseVisit(std::forward<func_t>(func), startIndex);
         }
 
         virtual Mib GetEncoding() const override
@@ -222,22 +223,13 @@ namespace qor{
             return output;   
         }
 
-        LocalString< C > Left(size_t charCount) const
-        {
-            return LocalString< C >(base::Left(charCount));
-        }
-
-        LocalString< C > Right(size_t charCount) const
-        {
-            return LocalString< C >(base::Right(charCount));
-        }
-
-        LocalString< C > Mid(size_t from, size_t charCount) const
-        {
-            return LocalString< C >(base::Mid(from, charCount));
-        }
-
     protected:
+
+        virtual BufferT CloneBuffer() const
+        {
+            return BufferT(m_buffer);
+        }
+
         BufferT m_buffer;        
     };
 }//qor

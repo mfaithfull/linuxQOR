@@ -2,6 +2,7 @@ set(target qor_text)
 
 add_library(${target} SHARED 
 qor_text.cpp
+codepage/codepages/c.cpp
 codepage/codepages/ascii.cpp
 codepage/codepages/utf16.cpp
 codepage/codepages/isolatin1.cpp

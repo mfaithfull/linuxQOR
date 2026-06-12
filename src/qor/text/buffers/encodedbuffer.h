@@ -46,19 +46,18 @@ namespace qor{
         static const unsigned short FooterSize{sizeof(sBufferFooter)};
     };
 
-    template< typename T >
+    template< typename T, Mib defaultMib = Mib::C>
     class EncodedBuffer : public MutableBuffer<T, EncodedBufferLayout>
     {
     public:
         
         typedef MutableBuffer<T, EncodedBufferLayout> base;
-        typedef base::iterator iteratorT;
-        typedef typename encoding_of<T>::CodePageT defaultEncodingT;
+        typedef base::iterator iteratorT;        
         using MutableBuffer<T, EncodedBufferLayout>::m_p;
 
         EncodedBuffer() : base()
         {
-            SetEncoding(defaultEncodingT::GetMib());
+            SetEncoding(defaultMib);
         }
 
         EncodedBuffer(const EncodedBuffer& src) : base(src)
@@ -68,23 +67,23 @@ namespace qor{
 
         EncodedBuffer(const ConstBuffer<T>& src) : base(src)
         {
-            SetEncoding(defaultEncodingT::GetMib());
+            SetEncoding(defaultMib);
         }
 
         EncodedBuffer(const ConstBuffer<T>&& src) : base(src)
         {
-            SetEncoding(defaultEncodingT::GetMib());
+            SetEncoding(defaultMib);
         }
 
         template<size_t N>
         EncodedBuffer(T(&str)[N]) : base(str)
         {
-            SetEncoding(defaultEncodingT::GetMib());
+            SetEncoding(defaultMib);
         }
 
         EncodedBuffer( const T* pBuffer, size_t stCount ) : base(pBuffer, stCount)
         {
-            SetEncoding(defaultEncodingT::GetMib());
+            SetEncoding(defaultMib);
         }
 
         EncodedBuffer(EncodedBuffer&& src) noexcept : base(src)
@@ -94,7 +93,7 @@ namespace qor{
 
         EncodedBuffer(size_t initialUnitCapacity) : base(initialUnitCapacity)
         {
-            SetEncoding(defaultEncodingT::GetMib());
+            SetEncoding(defaultMib);
         }
 
         EncodedBuffer& operator = ( EncodedBuffer&& src ) noexcept 
@@ -111,12 +110,10 @@ namespace qor{
             return *this;
         }
 
-        virtual ~EncodedBuffer()
-        {
-        }
+        virtual ~EncodedBuffer() = default;
 
         //Overrride this to write additional Header data 
-        virtual void HeaderOnCopy(byte* pOld, byte* pNew)
+        virtual void HeaderOnCopy(byte* pOld, byte* pNew) override
         {
             sEncodedBufferHeader* old = reinterpret_cast<sEncodedBufferHeader*>(pOld);
             sEncodedBufferHeader* _new = reinterpret_cast<sEncodedBufferHeader*>(pNew);

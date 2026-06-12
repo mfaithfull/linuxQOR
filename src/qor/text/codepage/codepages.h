@@ -25,6 +25,7 @@
 #ifndef QOR_PP_H_TEXT_CODEPAGE_CODEPAGES
 #define QOR_PP_H_TEXT_CODEPAGE_CODEPAGES
 
+#include "codepages/c.h"
 #include "codepages/ascii.h"
 #include "codepages/utf16.h"
 #include "codepages/isolatin1.h"

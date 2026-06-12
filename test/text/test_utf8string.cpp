@@ -29,7 +29,7 @@
 #include <ranges>
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/qor/text/strings/utf8string.h"
+#include "src/qor/text/strings/strings.h"
 
 using namespace qor;
 using namespace qor::test;
@@ -83,4 +83,11 @@ qor_pp_test_case(canUseUTF8StringWithRangesViewsAndAlgorithms)
     std::basic_string<char8_t> cmp(u8"Something easy.");
     bool check = (temp == cmp) ? true : false;
     qor_pp_assert_that(check).isTrue();
+}
+
+qor_pp_test_case(canEraseFromUTF8String)
+{
+    UTF8String input{u8"Something NOT good"};
+    auto output = input.Erase(10,4);
+    qor_pp_assert_that(output.ToStdString() == std::basic_string<char8_t>(u8"Something good")).isTrue();
 }

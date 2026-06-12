@@ -27,7 +27,7 @@
 
 #include <stdexcept>
 #include <string>
-#include "src/qor/text/visitorresult.h"
+#include "src/qor/text/buffers/visitorresult.h"
 #include "src/qor/iterators/iterators.h"
 
 namespace qor{
@@ -156,7 +156,7 @@ namespace qor{
 
         constexpr bool IsEmpty(void) const
         {
-            return m_p == nullptr || m_charCount == 0 || At(0) == T(0);
+            return m_p == nullptr || m_charCount == 0 || m_p[0] == T(0);
         }
 
         constexpr T At(size_t index) const

@@ -29,10 +29,11 @@
 #include <string>
 #include "src/qor/text/abstractstring.h"
 #include "src/qor/text/buffers/mutablebuffer.h"
-#include "src/qor/text/localstring.h"
+#include "src/qor/text/strings/localstring.h"
 
 namespace qor{
 
+    //CodeStrings wrap text embedded in the code and therefore have immutable contents and fixed character size and encoding
     template< typename C >
     class CodeString : public AbstractString< 
         CodeString< C >, 
@@ -61,29 +62,17 @@ namespace qor{
         typedef rawreverseiterator<const C> const_reverse_iterator;
 
         template<size_t N>
-        CodeString(const C(&str)[N]) : m_buffer(str)        
-        {
-        }
+        CodeString(const C(&str)[N]) noexcept : m_buffer(str){ }
 
-        CodeString(const BufferT& buffer) : m_buffer(buffer)
-        {
-        }
+        CodeString(const BufferT& buffer) : m_buffer(buffer){ }
 
-        CodeString(const CodeString& src) : m_buffer(src.m_buffer)
-        {
-        }
+        CodeString(const CodeString& src) : m_buffer(src.m_buffer){ }
 
-        CodeString(CodeString&& src) noexcept : m_buffer(std::move(src.m_buffer))
-        {
-        }
+        CodeString(CodeString&& src) noexcept : m_buffer(std::move(src.m_buffer)){ }
 
-        CodeString( const C* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount )
-        {
-        }
+        CodeString( const C* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount ){ }
 
-        virtual ~CodeString()
-        {
-        }
+        virtual ~CodeString() = default;
 
         CodeString& operator = (const CodeString& src)
         {
@@ -94,17 +83,17 @@ namespace qor{
             return *this;
         }
 
-        size_t Length() const
+        size_t Length() const override
         {
             return m_buffer.Length();
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const override
         {
             return m_buffer.IsEmpty();
         }
 
-        void Reset(void)
+        void Reset(void) override
         {
             //Embedded strings are immutable so Reset does nothing
         }
@@ -114,76 +103,69 @@ namespace qor{
             return m_buffer.GetBuffer();
         }
 
-        const C& operator[](size_t index) const
+        C operator[](size_t index) const
         {
             return m_buffer[index];
         }
 
-        const C At(size_t index) const
+        const C At(size_t index) const override
         {
             return m_buffer.At(index);
         }
 
-        std::basic_string<C> ToStdString() const
+        CodeString< C > Clone() const override
+        {
+            return CodeString< C >(m_buffer);
+        }
+
+        std::basic_string<C> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }
 
-        operator std::basic_string<C>() const
+        size_t size() const override
         {
-            return ToStdString();
+            return m_buffer.size();
         }
-
-        iterator begin() const
+        
+        iterator begin() const override
         {
             return iterator(m_buffer.begin());
         }
 
-        const_iterator cbegin() const
+        const_iterator cbegin() const override
         {
             return const_iterator(m_buffer.cbegin());
         }
 
-        iterator end() const
+        iterator end() const override
         {
             return iterator(m_buffer.end());
         }
 
-        const_iterator cend() const
+        const_iterator cend() const override
         {
             return const_iterator(m_buffer.cend());
         }
 
-        reverse_iterator rbegin() const
+        reverse_iterator rbegin() const override
         {
             return reverse_iterator(m_buffer.rbegin());
         }
 
-        const_reverse_iterator crbegin() const
+        const_reverse_iterator crbegin() const override
         {
             return const_reverse_iterator(m_buffer.crbegin());
         }
 
-        reverse_iterator rend() const
+        reverse_iterator rend() const override
         {
             return reverse_iterator(m_buffer.rend());
         }
 
-        const_reverse_iterator crend() const
+        const_reverse_iterator crend() const override
         {
             return const_reverse_iterator(m_buffer.crend());
-        }
-
-        template<typename func_t>
-        void ConstVisit(func_t&& func, size_t startIndex = 0) const
-        {
-            m_buffer.ConstVisit(std::forward<func_t>(func), startIndex);
-        }
-
-        template<typename func_t>
-        void ConstReverseVisit(func_t&& func, size_t startIndex = (size_t)(-1)) const
-        {
-            m_buffer.ConstReverseVisit(std::forward<func_t>(func), startIndex);
         }
 
         virtual Mib GetEncoding() const override
@@ -191,27 +173,13 @@ namespace qor{
             return defaultEncodingT::GetMib();
         }
 
-        void SetEncoding(Mib charSet)
-        {
-            //Can't set encoding on immutable string
-        }
-
-        LocalString< C > Left(size_t charCount) const
-        {
-            return LocalString< C >(base::Left(charCount));
-        }
-
-        LocalString< C > Right(size_t charCount) const
-        {
-            return LocalString< C >(base::Right(charCount));
-        }
-
-        LocalString< C > Mid(size_t from, size_t charCount) const
-        {
-            return LocalString< C >(base::Mid(from, charCount));
-        }
-
     protected:
+
+        virtual BufferT CloneBuffer() const
+        {
+            return BufferT(m_buffer);
+        }
+        
         BufferT m_buffer;
     };
 

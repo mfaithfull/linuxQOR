@@ -40,6 +40,12 @@ namespace qor{
     };
 
     template<>
+    struct encoding_of< char8_t >
+    {
+        typedef UTF8CodePage CodePageT;
+    };
+
+    template<>
     struct encoding_of< char16_t >
     {
         typedef UTF16CodePage CodePageT;
@@ -56,21 +62,18 @@ namespace qor{
         
         typedef typename BufferT::iterator::value_type CharT;
 
-        static constexpr size_t kMaxCodeUnitsPerCodePoint = 6;
+        //All string classes must implement and expose
 
         virtual size_t Length() const = 0;
         virtual bool IsEmpty() const = 0;
         virtual void Reset() = 0;
         virtual typename BufferT::View GetBuffer() = 0;
         virtual CharT At(size_t index) const = 0;
+        virtual ImplT Clone() const = 0;
+        virtual BufferT CloneBuffer() const = 0;        
         virtual std::basic_string<typename std::remove_cv<CharT>::type> ToStdString() const = 0;
-
-        operator std::basic_string<typename std::remove_cv<CharT>::type>() const
-        {
-            return ToStdString();
-        }
-
         virtual Mib GetEncoding() const = 0;
+        virtual size_t size() const = 0;
         virtual iterator begin() const = 0;
         virtual const_iterator cbegin() const = 0;
         virtual iterator end() const = 0;
@@ -80,49 +83,114 @@ namespace qor{
         virtual reverse_iterator rend() const = 0;
         virtual const_reverse_iterator crend() const = 0;
 
-        BufferT Left(size_t charCount) const
+        operator std::basic_string<typename std::remove_cv<CharT>::type>() const
         {
-            if (charCount > Length())
-            {
-                charCount = Length();
-            }
-            
-            AbstractCharacterCodec< CharT >* Codec = GetCodec();
-            BufferT output;            
-            size_t capacity = output.Capacity();
-            const_iterator it = cbegin();
-            while(it != cend() && charCount > 0)
-            {
-                const CharT* input = it++;
-                CodePoint cp = Codec->Decode(input, charCount);
-                EncodeIntoOutput(output, capacity, Codec, cp);
-            }
-            return output;
+            return ToStdString();
         }
 
-        BufferT Right(size_t charCount) const
+        //All string classes inherit and expose
+
+        ImplT Left(size_t charCount) const
         {
-            if (charCount > Length()){ charCount = Length(); }
+            if(charCount == 0)
+            {
+                return BufferT();
+            }
+            if(charCount >= Length())
+            {
+                return CloneBuffer();
+            }
+            BufferT output;            
+            const_iterator it = cbegin();
+            WriteUpToCount(it, charCount, output);
+            return ImplT(output);
+        }
+
+        ImplT Right(size_t charCount) const
+        {
+            if( charCount == 0)
+            {
+                return BufferT();
+            }
+            if (charCount >= Length())
+            {
+                return CloneBuffer();
+            }
             BufferT output;            
             const_iterator it = cbegin();            
             size_t offsetCount = Length() - charCount;
             OffsetIterator(it, offsetCount);
             WriteUpToCount(it, charCount, output);
-            return output;
+            return ImplT(output);
         }
 
-        BufferT Mid(size_t from, size_t charCount) const
+        ImplT Mid(size_t from, size_t charCount) const
         {
-            if(from > Length()){ from = Length(); }
-            
+            if(from >= Length() || charCount == 0)
+            { 
+                return BufferT();
+            }
+            if(from + charCount > Length())
+            {
+                charCount = Length() - from;
+            }
             BufferT output;            
             const_iterator it = cbegin();     
             OffsetIterator(it, from);
             WriteUpToCount(it, charCount, output);
-            return output;
+            return ImplT(output);
+        }
+
+        ImplT Erase(size_t from, size_t charCount) const
+        {
+            if(from >= Length() || charCount == 0)
+            {
+                return CloneBuffer();
+            }
+            if(from + charCount > Length())
+            {
+                charCount = Length() - from;
+            }
+            BufferT output;
+            const_iterator in = cbegin();                        
+            WriteUpToCount(in, from, output);
+            OffsetIterator(in, charCount);
+            WriteRemaining(in, output);
+            return ImplT(output);
         }
 
     protected:
+
+        //Optionally string classes may override
+
+        virtual void UpdateLength() const{}
+        virtual AbstractCharacterCodec< CharT >* GetCodecCache() const{ return nullptr; }
+        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* codec) const{}
+        
+        //Implementation details used by AbstractString and derived classes
+
+        AbstractCharacterCodec< CharT >* GetCodec() const
+        {
+            AbstractCharacterCodec< CharT >* Codec = GetCodecCache();
+            if(Codec)
+            {
+                return Codec;
+            }
+            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
+            Codec = Registration;
+            if(Codec == nullptr)
+            {
+                throw std::logic_error("No CodePage registered for encoding");
+            }
+            SetCodecCache(Codec);
+            return Codec;
+        }
+
+    private:
+
+        //Implementation details used only by AbstractString
+
+        static constexpr size_t kMaxCodeUnitsPerCodePoint{6};
 
         inline void OffsetIterator(const_iterator& it, size_t offsetCount) const
         {
@@ -137,6 +205,19 @@ namespace qor{
             while(offsetCount-- > 0)
             {
                 --it;
+            }
+        }
+
+        inline void WriteRemaining(const_iterator& in, BufferT& output) const
+        {
+            AbstractCharacterCodec< CharT >* Codec = GetCodec();
+            size_t capacity = output.Capacity();
+            while(in != cend())
+            {
+                size_t charCount = cend() - in;
+                const CharT* input = in++;                
+                CodePoint cp = Codec->Decode(input, charCount);
+                EncodeIntoOutput(output, capacity, Codec, cp);
             }
         }
 
@@ -164,27 +245,6 @@ namespace qor{
             Codec->Encode(cp, space, capacity);
             output.Write(interBuffer, space - &interBuffer[0]);
         }
-
-        AbstractCharacterCodec< CharT >* GetCodec() const
-        {
-            AbstractCharacterCodec< CharT >* Codec = GetCodecCache();
-            if(Codec)
-            {
-                return Codec;
-            }
-            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
-            Codec = Registration;
-            if(Codec == nullptr)
-            {
-                throw std::logic_error("No CodePage registered for encoding");
-            }
-            SetCodecCache(Codec);
-            return Codec;
-        }
-
-        virtual void UpdateLength() const{}
-        virtual AbstractCharacterCodec< CharT >* GetCodecCache() const{ return nullptr; }
-        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* codec) const{}
 
     };
 }//qor

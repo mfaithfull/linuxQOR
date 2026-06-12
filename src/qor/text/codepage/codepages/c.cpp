@@ -23,23 +23,34 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <algorithm>
-#include <iostream>
-#include <iomanip>
-#include <ranges>
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/qor/text/strings/strings.h"
 
-using namespace qor;
-using namespace qor::test;
+#include "c.h"
 
-qor_pp_test_case(canInstanceUCS4String)
+namespace qor
 {
-    UCS4String ucs4str(U"Hello World");
-    qor_pp_assert_that(ucs4str.Length()).isEqualTo(11);
-    qor_pp_assert_that(ucs4str[0]).isEqualTo('H');
-    qor_pp_assert_that(ucs4str.At(10)).isEqualTo('d');
-}
+	CCodePage::CCodePage() : CodePage("'C'", "'C'")
+	{
+	}
+	
+	bool CCodePage::Encode(const CodePoint & codePoint, char*& space, size_t& available) const
+	{
+		if(available < 1 || space == nullptr)
+		{
+			return false;
+		}
+		char c = codePoint.Value() > 0x7F ? '?' : static_cast<char>(codePoint.UChar());
+		*space++ = c;
+		available--;
+		return true;
+	}
 
-
+	CodePoint CCodePage::Decode(const char*& chars, size_t& available) const
+	{
+		uint32_t cp = 255;
+		if (chars != nullptr && *chars >= 0 && available-- > 0)
+		{
+			cp = static_cast<uint32_t>(*chars++);
+		}
+		return CodePoint(cp);
+	}
+}//qor

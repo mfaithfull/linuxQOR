@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEXT_UCS2STRING
-#define QOR_PP_H_TEXT_UCS2STRING
+#ifndef QOR_PP_H_TEXT_SIMPLESTRING
+#define QOR_PP_H_TEXT_SIMPLESTRING
 
 #include <stdexcept>
 #include <string>
@@ -33,58 +33,50 @@
 
 namespace qor{
 
-    class UCS2String : public AbstractString< 
-        UCS2String, 
-        MutableBuffer<char16_t>,
-        rawiterator<char16_t>,
-        rawiterator<const char16_t>,
-        rawreverseiterator<char16_t>,
-        rawreverseiterator<const char16_t> >
+    //Simple strings have fixed width characters and fixed encoding
+    template< typename charT >
+    class SimpleString : public AbstractString< 
+        SimpleString< charT >, 
+        MutableBuffer< charT >,
+        rawiterator< charT >,
+        rawiterator< const charT >,
+        rawreverseiterator< charT >,
+        rawreverseiterator< const charT> >
     {
     public:
 
         typedef AbstractString< 
-            UCS2String,
-            MutableBuffer<char16_t>,
-            rawiterator<char16_t>,
-            rawiterator<const char16_t>,
-            rawreverseiterator<char16_t>,
-            rawreverseiterator<const char16_t> > base;
+            SimpleString< charT >, 
+            MutableBuffer< charT >,
+            rawiterator< charT >,
+            rawiterator< const charT >,
+            rawreverseiterator< charT >,
+            rawreverseiterator< const charT > > base;
             
-        typedef MutableBuffer<char16_t> BufferT;
-        typedef typename encoding_of<char16_t>::CodePageT defaultEncodingT;
+        typedef MutableBuffer< charT > BufferT;
+        typedef typename encoding_of< charT >::CodePageT defaultEncodingT;
         typedef typename BufferT::View viewT;
-        typedef rawiterator<char16_t> iterator;
-        typedef rawiterator<const char16_t> const_iterator;
-        typedef rawreverseiterator<char16_t> reverse_iterator;
-        typedef rawreverseiterator<const char16_t> const_reverse_iterator;
+        typedef rawiterator< charT > iterator;
+        typedef rawiterator< const charT > const_iterator;
+        typedef rawreverseiterator< charT > reverse_iterator;
+        typedef rawreverseiterator< const charT > const_reverse_iterator;
+
+        SimpleString() noexcept : m_buffer(){ }
 
         template<size_t N>
-        UCS2String(const char16_t(&str)[N]) : m_buffer(str)        
-        {
-        }
+        SimpleString(const charT(&str)[N]) : m_buffer(str){ }
 
-        UCS2String(const BufferT& buffer) : m_buffer(buffer)
-        {
-        }
+        SimpleString(const BufferT& buffer) : m_buffer(buffer){ }
 
-        UCS2String(const UCS2String& src) : m_buffer(src.m_buffer)
-        {
-        }
+        SimpleString(const SimpleString& src) : m_buffer(src.m_buffer){ }
 
-        UCS2String(UCS2String&& src) noexcept : m_buffer(std::move(src.m_buffer))
-        {
-        }
+        SimpleString(SimpleString&& src) noexcept : m_buffer(std::move(src.m_buffer)){ }
 
-        UCS2String(const char16_t* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount )
-        {
-        }
+        SimpleString( const charT* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount ){ }
 
-        virtual ~UCS2String()
-        {
-        }
+        virtual ~SimpleString() = default;
 
-        UCS2String& operator = (const UCS2String& src)
+        SimpleString& operator = (const SimpleString& src)
         {
             if (this != &src)
             {
@@ -93,17 +85,17 @@ namespace qor{
             return *this;
         }
 
-        size_t Length() const
+        size_t Length() const override
         {
             return m_buffer.Length();
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const override
         {
             return m_buffer.IsEmpty();
         }
 
-        void Reset(void)
+        void Reset(void) override
         {
             m_buffer.Reset();
         }
@@ -113,76 +105,74 @@ namespace qor{
             return m_buffer.GetBuffer();
         }
 
-        const char16_t& operator[](size_t index) const
+        charT operator[](size_t index) const
         {
             return m_buffer[index];
         }
 
-        char16_t At(size_t index) const
+        charT At(size_t index) const override
         {
             return m_buffer.At(index);
         }
 
-        std::basic_string<char16_t> ToStdString() const
+        SimpleString Clone() const override
+        {
+            return SimpleString< charT >(m_buffer);
+        }
+
+        static SimpleString EmptyString()
+        {
+            return SimpleString< charT >();
+        }
+
+        std::basic_string<charT> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }
 
-        operator std::basic_string<char16_t>() const
+        size_t size() const override
         {
-            return ToStdString();
+            return Length();
         }
 
-        iterator begin() const
+        iterator begin() const override
         {
             return iterator(m_buffer.begin());
         }
 
-        const_iterator cbegin() const
+        const_iterator cbegin() const override
         {
             return const_iterator(m_buffer.cbegin());
         }
 
-        iterator end() const
+        iterator end() const override
         {
             return iterator(m_buffer.end());
         }
 
-        const_iterator cend() const
+        const_iterator cend() const override
         {
             return const_iterator(m_buffer.cend());
         }
 
-        reverse_iterator rbegin() const
+        reverse_iterator rbegin() const override
         {
             return reverse_iterator(m_buffer.rbegin());
         }
 
-        const_reverse_iterator crbegin() const
+        const_reverse_iterator crbegin() const override
         {
             return const_reverse_iterator(m_buffer.crbegin());
         }
 
-        reverse_iterator rend() const
+        reverse_iterator rend() const override
         {
             return reverse_iterator(m_buffer.rend());
         }
 
-        const_reverse_iterator crend() const
+        const_reverse_iterator crend() const override
         {
             return const_reverse_iterator(m_buffer.crend());
-        }
-
-        template<typename func_t>
-        void ConstVisit(func_t&& func, size_t startIndex = 0) const
-        {
-            m_buffer.ConstVisit(std::forward<func_t>(func), startIndex);
-        }
-
-        template<typename func_t>
-        void ConstReverseVisit(func_t&& func, size_t startIndex = (size_t)(-1)) const
-        {
-            m_buffer.ConstReverseVisit(std::forward<func_t>(func), startIndex);
         }
 
         virtual Mib GetEncoding() const override
@@ -190,30 +180,16 @@ namespace qor{
             return defaultEncodingT::GetMib();
         }
 
-        void SetEncoding(Mib charSet)
-        {
-            //UCS2String has fixed encoding
-        }
-
-        UCS2String Left(size_t charCount) const
-        {
-            return UCS2String(base::Left(charCount));
-        }
-
-        UCS2String Right(size_t charCount) const
-        {
-            return UCS2String(base::Right(charCount));
-        }
-
-        UCS2String Mid(size_t from, size_t charCount) const
-        {
-            return UCS2String(base::Mid(from, charCount));
-        }
-
     protected:
+
+        virtual BufferT CloneBuffer() const override
+        {
+            return BufferT(m_buffer);
+        }
+
         BufferT m_buffer;
     };
 
 }//qor
 
-#endif//QOR_PP_H_TEXT_UCS2STRING
+#endif//QOR_PP_H_TEXT_SIMPLESTRING

@@ -29,7 +29,7 @@
 #include <ranges>
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/qor/text/localstring.h"
+#include "src/qor/text/strings/strings.h"
 
 using namespace qor;
 using namespace qor::test;

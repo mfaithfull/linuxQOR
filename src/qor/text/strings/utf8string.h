@@ -29,11 +29,15 @@
 #include <string>
 #include "src/qor/text/abstractstring.h"
 #include "src/qor/text/buffers/mutablebuffer.h"
-#include "src/qor/text/iterators/unitchariterator.h"
+#include "src/qor/text/iterators/utf8iterator.h"
 #include "src/qor/text/codepage/codepages/utf8.h"
 
 namespace qor{
 
+    //UTF-8 Strings have UTF-8 encoding and variable width (1-4 bytes) characters
+    //You Shouldn't use these directly with std ranges and algorithms as the 
+    //custom iterator for UTF8String is incompatible whith their assumption of
+    //fixed width encoding.
     class UTF8String : public AbstractString< 
         UTF8String, 
         MutableBuffer<char8_t>,
@@ -60,8 +64,10 @@ namespace qor{
         typedef typename UTF8ReverseIterator<BufferT>::Iterator reverse_iterator;
         typedef typename UTF8ConstReverseIterator<BufferT>::Iterator const_reverse_iterator;
 
+        UTF8String() noexcept : m_buffer(), m_cachedLength(0) { }
+
         template<size_t N>
-        UTF8String(const char8_t(&str)[N]) : m_buffer(str)        
+        UTF8String(const char8_t(&str)[N]) noexcept : m_buffer(str)        
         {
             UpdateLength();
         }
@@ -86,9 +92,7 @@ namespace qor{
             UpdateLength();            
         }
 
-        virtual ~UTF8String()
-        {
-        }
+        virtual ~UTF8String() = default;
 
         UTF8String& operator = (const UTF8String& src)
         {
@@ -100,23 +104,23 @@ namespace qor{
             return *this;
         }
 
-        size_t Length() const
+        size_t Length() const override
         {
             return m_cachedLength;
         }
 
-        bool IsEmpty() const
+        bool IsEmpty() const override
         {
             return m_buffer.IsEmpty();
         }
 
-        void Reset(void)
+        void Reset(void) override
         {
             m_buffer.Reset();
             m_cachedLength = 0;
         }
 
-        virtual viewT GetBuffer() //override
+        virtual viewT GetBuffer() override
         {
             return m_buffer.GetBuffer();
         }
@@ -142,77 +146,77 @@ namespace qor{
             }
         }
 
-        char8_t At(size_t index) const
+        char8_t At(size_t index) const override
         {
             return m_buffer.At(index);
         }
 
-        std::basic_string<char8_t> ToStdString() const
+        UTF8String Clone() const override
+        {
+            return UTF8String(*this);
+        }
+
+        static UTF8String EmptyString()
+        {
+            return UTF8String();
+        }
+
+        std::basic_string<char8_t> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }
 
-        operator std::basic_string<char8_t>() const
+        size_t size() const override
         {
-            return ToStdString();
+            return Length();
         }
 
-        iterator begin() const
+        iterator begin() const override
         {
             iterator it(m_buffer);
             return it.begin();
         }
 
-        const_iterator cbegin() const
+        const_iterator cbegin() const override
         {
             const_iterator it(m_buffer);
             return it.begin();
         }
 
-        iterator end() const
+        iterator end() const override
         {
             iterator it(m_buffer);
             return it.end();
         }
 
-        const_iterator cend() const
+        const_iterator cend() const override
         {
             const_iterator it(m_buffer);
             return it.end();
         }
 
-        reverse_iterator rbegin() const
+        reverse_iterator rbegin() const override
         {
             reverse_iterator it(m_buffer);
             return it.begin();
         }
 
-        const_reverse_iterator crbegin() const
+        const_reverse_iterator crbegin() const override
         {
             const_reverse_iterator it(m_buffer);
             return it.begin();
         }
 
-        reverse_iterator rend() const
+        reverse_iterator rend() const override
         {
             reverse_iterator it(m_buffer);
             return it.end();
         }
 
-        const_reverse_iterator crend() const
+        const_reverse_iterator crend() const override
         {
             const_reverse_iterator it(m_buffer);
             return it.end();
-        }
-
-        template<typename func_t>
-        void ConstVisit(func_t&& func, size_t startIndex = 0) const
-        {
-        }
-
-        template<typename func_t>
-        void ConstReverseVisit(func_t&& func, size_t startIndex = (size_t)(-1)) const
-        {
         }
 
         virtual Mib GetEncoding() const override
@@ -220,31 +224,11 @@ namespace qor{
             return defaultEncodingT::GetMib();
         }
 
-        void SetEncoding(Mib charSet)
-        {
-            //UTF8String has fixed encoding
-        }
-
-        UTF8String Left(size_t charCount) const
-        {
-            return UTF8String(base::Left(charCount));
-        }
-
-        UTF8String Right(size_t charCount) const
-        {
-            return UTF8String(base::Right(charCount));
-        }
-
-        UTF8String Mid(size_t from, size_t charCount) const
-        {
-            return UTF8String(base::Mid(from, charCount));
-        }
-
     protected:
-
-        //Recalculate character count after buffer change
-        virtual void UpdateLength() const
+        
+        virtual void UpdateLength() const override
         {            
+            //Recalculate character count after buffer change
             m_cachedLength = 0;
             auto it = cbegin();
             while(it++ != cend())
@@ -253,14 +237,19 @@ namespace qor{
             }
         }
 
-        virtual AbstractCharacterCodec< CharT >* GetCodecCache() const
+        virtual AbstractCharacterCodec< CharT >* GetCodecCache() const override
         { 
             return m_cachedCodec; 
         }
 
-        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* codec) const
+        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* codec) const override
         {
             m_cachedCodec = codec;
+        }
+
+        virtual BufferT CloneBuffer() const override
+        {
+            return BufferT(m_buffer);
         }
 
         BufferT m_buffer;

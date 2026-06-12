@@ -22,24 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include <algorithm>
-#include <iostream>
-#include <iomanip>
-#include <ranges>
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/qor/text/strings/strings.h"
+#ifndef QOR_PP_H_TEXT_CODEPAGE_C
+#define QOR_PP_H_TEXT_CODEPAGE_C
 
-using namespace qor;
-using namespace qor::test;
+#include "../codepage.h"
 
-qor_pp_test_case(canInstanceUCS4String)
-{
-    UCS4String ucs4str(U"Hello World");
-    qor_pp_assert_that(ucs4str.Length()).isEqualTo(11);
-    qor_pp_assert_that(ucs4str[0]).isEqualTo('H');
-    qor_pp_assert_that(ucs4str.At(10)).isEqualTo('d');
-}
+namespace qor{
 
+	class qor_pp_module_interface(QOR_TEXT) CCodePage : public CodePage< char, Mib::C >
+	{
+	public:		
 
+		CCodePage();
+		virtual ~CCodePage() = default;
+
+		virtual bool Encode(const CodePoint & codePoint, char*& space, size_t& available) const override;
+		virtual CodePoint Decode(const char*& chars, size_t& available) const override;
+    };
+
+	template<>
+	struct charset_of<Mib::C>
+	{
+		typedef CCodePage type;
+	};
+
+}//qor
+
+#endif//QOR_PP_H_TEXT_CODEPAGE_C

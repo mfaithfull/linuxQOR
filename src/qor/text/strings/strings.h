@@ -22,24 +22,23 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include <algorithm>
-#include <iostream>
-#include <iomanip>
-#include <ranges>
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/qor/text/strings/strings.h"
+#ifndef QOR_PP_H_TEXT_STRINGS_STRINGS
+#define QOR_PP_H_TEXT_STRINGS_STRINGS
 
-using namespace qor;
-using namespace qor::test;
+#include "simplestring.h"
 
-qor_pp_test_case(canInstanceUCS4String)
-{
-    UCS4String ucs4str(U"Hello World");
-    qor_pp_assert_that(ucs4str.Length()).isEqualTo(11);
-    qor_pp_assert_that(ucs4str[0]).isEqualTo('H');
-    qor_pp_assert_that(ucs4str.At(10)).isEqualTo('d');
-}
+namespace qor{
+    typedef SimpleString< char16_t > UCS2String;
+    typedef SimpleString< char32_t > UCS4String;
+}//qor
 
+#include "localstring.h"
 
+namespace qor{
+    typedef LocalString< char8_t, Mib::ISOLatin1 > ISOLatin1String;
+}//qor
+
+#include "codestring.h"
+#include "utf8string.h"
+
+#endif//QOR_PP_H_TEXT_STRINGS_STRINGS
