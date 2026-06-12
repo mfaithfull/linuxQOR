@@ -22,24 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEXT_STRINGS_STRINGS
-#define QOR_PP_H_TEXT_STRINGS_STRINGS
+#ifndef QOR_PP_H_TEXT_CODEPAGE_ISOLATIN2
+#define QOR_PP_H_TEXT_CODEPAGE_ISOLATIN2
 
-#include "simplestring.h"
-
-namespace qor{
-    typedef SimpleString< char16_t > UCS2String;
-    typedef SimpleString< char32_t > UCS4String;
-}//qor
-
-#include "localstring.h"
+#include "../codepage.h"
 
 namespace qor{
-    typedef LocalString< char8_t, Mib::ISOLatin1 > ISOLatin1String;
-    typedef LocalString< char8_t, Mib::ISOLatin2 > ISOLatin2String;
+
+	class qor_pp_module_interface(QOR_TEXT) ISOLatin2CodePage : public CodePage< char8_t, Mib::ISOLatin2 >
+	{
+	public:		
+
+		ISOLatin2CodePage();
+		virtual ~ISOLatin2CodePage() = default;
+
+		virtual bool Encode(const CodePoint & codePoint, char8_t*& space, size_t& available) const override;
+		virtual CodePoint Decode(const char8_t*& chars, size_t& available) const override;
+    };
+
+	template<>
+	struct charset_of<Mib::ISOLatin2>
+	{
+		typedef ISOLatin2CodePage type;
+	};
+
 }//qor
 
-#include "codestring.h"
-#include "utf8string.h"
-
-#endif//QOR_PP_H_TEXT_STRINGS_STRINGS
+#endif//QOR_PP_H_TEXT_CODEPAGE_ISOLATIN1

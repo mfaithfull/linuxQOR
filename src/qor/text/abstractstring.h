@@ -51,6 +51,17 @@ namespace qor{
         typedef UTF16CodePage CodePageT;
     };
 
+    template<typename IteratorT, typename CharT>
+    bool WhileBlank(IteratorT& it)
+    {
+        CharT c = *it;
+        if(isblank( c ))
+        {
+            return true;
+        }
+        return false;
+    }
+
     template<typename ImplT, typename BufferT, 
     typename iterator = ImplT::iterator, 
     typename const_iterator = ImplT::const_iterator,
@@ -159,6 +170,76 @@ namespace qor{
             return ImplT(output);
         }
 
+        ImplT Trim() const
+        {
+            BufferT output;
+            const_iterator start = cbegin();
+            OffsetIterator<const_iterator>(start, &WhileBlank<const_iterator, CharT>);
+            const_reverse_iterator end = crbegin();
+            OffsetIterator<const_reverse_iterator>(end, &WhileBlank<const_reverse_iterator, CharT>);
+            if( end.getPtr() - start.getPtr() <= 0 )
+            {
+                return ImplT();
+            }
+            WriteUpTo(start, output, end);
+            return ImplT(output);
+        }
+
+        ImplT TrimLeft() const
+        {
+            BufferT output;
+            const_iterator start = cbegin();
+            OffsetIterator<const_iterator>(start, &WhileBlank<const_iterator, CharT>);
+            if(start == cend())
+            {
+                return ImplT();
+            }
+            WriteRemaining(start, output);
+            return ImplT(output);
+        }
+
+        ImplT TrimRight() const
+        {
+            BufferT output;
+            const_iterator start = cbegin();
+            const_reverse_iterator end = crbegin();
+            OffsetIterator<const_reverse_iterator>(end, &WhileBlank<const_reverse_iterator, CharT>);
+            if( end.getPtr() - start.getPtr() <= 0 )
+            {
+                return ImplT();
+            }
+            WriteUpTo(start, output, end);
+            return ImplT(output);
+        }
+
+        ImplT Fill(CharT c) const
+        {
+            BufferT output;
+            FillUpToCount(c, Length(), output);
+            return ImplT(output);
+        }
+
+        ImplT Fill(CharT c, size_t count) const
+        {
+            BufferT output;
+            FillUpToCount(c, count, output);
+            return ImplT(output);
+        }
+
+        ImplT Fill(CodePoint cp) const
+        {
+            BufferT output;
+            FillUpToCount(cp, Length(), output);
+            return ImplT(output);
+        }
+
+        ImplT Fill(CodePoint cp, size_t count) const
+        {
+            BufferT output;
+            FillUpToCount(cp, count, output);
+            return ImplT(output);
+        }
+
     protected:
 
         //Optionally string classes may override
@@ -194,7 +275,17 @@ namespace qor{
 
         inline void OffsetIterator(const_iterator& it, size_t offsetCount) const
         {
-            while(offsetCount-- > 0)
+            while(offsetCount > 0)
+            {
+                --offsetCount;
+                ++it;
+            }
+        }
+
+        template<typename iterator_type>
+        inline void OffsetIterator(iterator_type& it, bool(*pred)(iterator_type&)) const
+        {
+            while(pred(it))
             {
                 ++it;
             }
@@ -202,9 +293,23 @@ namespace qor{
 
         inline void ReverseOffsetIterator(const_iterator& it, size_t offsetCount) const
         {
-            while(offsetCount-- > 0)
+            while(offsetCount > 0)
             {
+                --offsetCount;
                 --it;
+            }
+        }
+        
+        inline void WriteUpTo(const_iterator& in, BufferT& output, const_reverse_iterator end) const
+        {
+            AbstractCharacterCodec< CharT >* Codec = GetCodec();
+            size_t capacity = output.Capacity();
+            while(in.getPtr() <= end.getPtr())
+            {
+                size_t charCount = cend() - in;
+                const CharT* input = in++;                
+                CodePoint cp = Codec->Decode(input, charCount);
+                EncodeIntoOutput(output, capacity, Codec, cp);
             }
         }
 
@@ -221,6 +326,25 @@ namespace qor{
             }
         }
 
+        inline void FillUpToCount(CharT c, size_t count, BufferT& output) const
+        {            
+            size_t capacity = output.Capacity();
+            while(count-- > 0)
+            {                
+                WriteIntoOutput(output, capacity, c);
+            }
+        }
+
+        inline void FillUpToCount(CodePoint cp, size_t count, BufferT& output) const
+        {
+            AbstractCharacterCodec< CharT >* Codec = GetCodec();
+            size_t capacity = output.Capacity();
+            while(count-- > 0)
+            {
+                EncodeIntoOutput(output, capacity, Codec, cp);
+            }
+        }
+
         inline void WriteUpToCount(const_iterator& it, size_t& charCount, BufferT& output) const
         {
             AbstractCharacterCodec< CharT >* Codec = GetCodec();
@@ -231,6 +355,17 @@ namespace qor{
                 CodePoint cp = Codec->Decode(input, charCount);                
                 EncodeIntoOutput(output, capacity, Codec, cp);
             }
+        }
+
+        inline void WriteIntoOutput(BufferT& output, size_t& capacity, CharT c) const
+        {
+            if(capacity < sizeof(CharT))
+            {
+                output.GrowToAtLeast(output.Capacity() + sizeof(CharT));
+                capacity = output.Capacity() - output.Length();
+            }
+            output.Write(&c, 1);
+            --capacity;
         }
 
         inline void EncodeIntoOutput(BufferT& output, size_t& capacity, AbstractCharacterCodec< CharT >* Codec, const CodePoint& cp) const

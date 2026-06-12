@@ -75,6 +75,13 @@ qor_pp_test_case(canGetRightCharsFromLocalString)
     qor_pp_assert_that(result.At(4)).isEqualTo('d');
 }
 
+qor_pp_test_case(canTrimLocalString)
+{
+    LocalString<char> str("  Spacy String . ");
+    auto result = str.Trim();
+    qor_pp_assert_that(result.ToStdString()).isEqualTo(std::string("Spacy String ."));
+}
+
 qor_pp_test_case(canHoldISOLatin1CharsInLocalString)
 {
     ISOLatin1String str(u8"avlsmænd og urtemænd, 121 soldater, 97 daglejere, 139 enlige kvinder og");    

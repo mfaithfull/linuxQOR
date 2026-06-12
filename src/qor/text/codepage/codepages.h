@@ -30,5 +30,6 @@
 #include "codepages/utf16.h"
 #include "codepages/isolatin1.h"
 #include "codepages/utf8.h"
+#include "codepages/isolatin2.h"
 
 #endif//QOR_PP_H_TEXT_CODEPAGE_CODEPAGES

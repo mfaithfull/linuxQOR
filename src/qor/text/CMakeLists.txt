@@ -7,6 +7,7 @@ codepage/codepages/ascii.cpp
 codepage/codepages/utf16.cpp
 codepage/codepages/isolatin1.cpp
 codepage/codepages/utf8.cpp
+codepage/codepages/isolatin2.cpp
 codepage/codepageregistry.cpp
 codepage/codepages.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
