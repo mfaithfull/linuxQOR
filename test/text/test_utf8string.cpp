@@ -74,3 +74,13 @@ qor_pp_test_case(canGetRightCharsInUTF8String)
     qor_pp_assert_that(result.Length()).isEqualTo(3);
     qor_pp_assert_that(result[1]).isEqualTo(UTF8String(u8"회")[0]);
 }
+
+qor_pp_test_case(canUseUTF8StringWithRangesViewsAndAlgorithms)
+{
+    UTF8String test{u8"    Something easy."};    
+    auto conv = std::views::drop_while(test, ::isspace);
+    std::basic_string<char8_t> temp(conv.begin(), conv.end());
+    std::basic_string<char8_t> cmp(u8"Something easy.");
+    bool check = (temp == cmp) ? true : false;
+    qor_pp_assert_that(check).isTrue();
+}

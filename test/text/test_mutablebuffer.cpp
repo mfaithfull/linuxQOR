@@ -880,7 +880,6 @@ qor_pp_test_case(canUseWithUTF8CharactersAndEmptyMutableBufferAndZeroCountAndEmb
     qor_pp_assert_that(exceptionThrown).isTrue();
 }
 
-
 qor_pp_test_case(canUseMutableBufferWithRangesViewsAndAlgorithms)
 {
     auto text = MutableBuffer<char>{"     Hello World"};    

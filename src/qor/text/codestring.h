@@ -201,6 +201,16 @@ namespace qor{
             return LocalString< C >(base::Left(charCount));
         }
 
+        LocalString< C > Right(size_t charCount) const
+        {
+            return LocalString< C >(base::Right(charCount));
+        }
+
+        LocalString< C > Mid(size_t from, size_t charCount) const
+        {
+            return LocalString< C >(base::Mid(from, charCount));
+        }
+
     protected:
         BufferT m_buffer;
     };

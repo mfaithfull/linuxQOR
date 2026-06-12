@@ -169,7 +169,7 @@ namespace qor{
 
         ptrdiff_t operator-(const Iterator<containerT,AdvanceDistanceFunctorT,BeginEndFunctorT>& iterator) const
         {
-            return AdvanceDistanceFunctorT::distance(this->getDistanceFromBeginToIter(), iterator.getDistanceFromBeginToIter(), this->getDistanceFromIterToEnd(), iterator.getDistanceFromIterToEnd());
+            return AdvanceDistanceFunctorT::template distance<Iterator<containerT,AdvanceDistanceFunctorT,BeginEndFunctorT>>(iterator.getDistanceFromBeginToIter(), this->getDistanceFromBeginToIter(), this->getDistanceFromIterToEnd(), iterator.getDistanceFromIterToEnd());
         }
 
         void setContainerPtr(containerT& container)
