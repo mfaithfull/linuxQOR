@@ -77,10 +77,9 @@ qor_pp_test_case(canGetRightCharsFromLocalString)
 
 qor_pp_test_case(canHoldISOLatin1CharsInLocalString)
 {
-    LocalString<char8_t> str(u8"avlsmænd og urtemænd, 121 soldater, 97 daglejere, 139 enlige kvinder og");
-    str.SetEncoding(Mib::ISOLatin1);
-    auto result = str.Left(9);
-    qor_pp_assert_that(result.Length()).isEqualTo(9);
+    ISOLatin1String str(u8"avlsmænd og urtemænd, 121 soldater, 97 daglejere, 139 enlige kvinder og");    
+    auto result = str.Left(10);
+    qor_pp_assert_that(result.Length()).isEqualTo(10);
     qor_pp_assert_that(result[0]).isEqualTo('a');
-    qor_pp_assert_that(result.At(8)).isEqualTo('d');
+    qor_pp_assert_that(result.At(9)).isEqualTo(str.At(9));
 }

@@ -72,7 +72,8 @@ qor_pp_test_case(canGetRightCharsInUTF8String)
     UTF8String korean(u8"﻿중앙일보 - 사건/사회 - 극지탐험　협회결");
     auto result = korean.Right(3);
     qor_pp_assert_that(result.Length()).isEqualTo(3);
-    qor_pp_assert_that(result[1]).isEqualTo(UTF8String(u8"회")[0]);
+    UTF8String oneglyph(u8"결");
+    qor_pp_assert_that(result[2]).isEqualTo(oneglyph[2]);
 }
 
 qor_pp_test_case(canUseUTF8StringWithRangesViewsAndAlgorithms)

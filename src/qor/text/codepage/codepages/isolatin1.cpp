@@ -559,7 +559,7 @@ namespace qor
 	
 	bool ISOLatin1CodePage::Encode(const CodePoint & codePoint, char8_t*& space, size_t& available) const
 	{
-		if(available < 1 || space == nullptr)
+		if(available == 0 || space == nullptr)
 		{
 			return false;
 		}
