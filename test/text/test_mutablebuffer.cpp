@@ -178,12 +178,12 @@ qor_pp_test_case(canGetMutableBufferLength)
     qor_pp_assert_that(mb.Length()).isEqualTo(5);
 }
 
-qor_pp_test_case(canGetMutableBuffer)
+qor_pp_test_case(canGetMutableBufferView)
 {
     auto mb = MutableBuffer<char>("Hello");
 
-    auto buffer = mb.GetBuffer();
-    qor_pp_assert_that(std::string(buffer)).isEqualTo(std::string("Hello"));    
+    auto view = mb.view();
+    qor_pp_assert_that(std::string(view.operator char *())).isEqualTo(std::string("Hello"));
 }
 
 qor_pp_test_case(copyConstructorCopiesMutableBuffer)
@@ -892,7 +892,7 @@ qor_pp_test_case(canGetViewOnMutableBuffer)
 {
     auto text = MutableBuffer<char8_t>{u8"Hello World"};
     {
-        auto view = text.GetBuffer();
+        auto view = text.view();
         char8_t* p = view;
         size_t len = 0;
         while(p != nullptr && *p++ != 0)

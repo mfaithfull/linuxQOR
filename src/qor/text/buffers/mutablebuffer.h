@@ -79,15 +79,22 @@ namespace qor{
         {
         public:
 
+            using Traits_type            = std::char_traits< T >;
+            static constexpr size_t npos = size_t(-1);
+
+            View() noexcept : m_view() { }
+
             View(MutableBuffer<T, LayoutT>& buffer) : m_buffer(buffer)
             {
                 m_buffer.PrepareToModify();
                 m_buffer.AddRef();
+                m_view = std::basic_string_view< T >(m_buffer.GetData(), m_buffer.Capacity());
             }
 
             View(const View& src) : m_buffer(src.m_buffer), m_validatedLength(src.m_validatedLength)
             {
                 m_buffer.AddRef();
+                m_view = std::basic_string_view< T >(m_buffer.GetData(), m_buffer.Capacity());
             }
 
             T* operator -> () const
@@ -118,80 +125,329 @@ namespace qor{
                 }
             }
 
-            void Validate(size_t charCount)
+            inline void Validate(size_t charCount)
             {
                 m_validatedLength = charCount;
             }
 
+            inline constexpr const_iterator begin() const noexcept
+            {
+                return m_view.begin();
+            }
+
+            inline constexpr const_iterator end() const noexcept
+            {
+                return m_view.end();
+            }
+
+            inline constexpr const_iterator cbegin() const noexcept
+            {
+                return m_view.cbegin();
+            }
+
+            inline constexpr const_iterator cend() const noexcept
+            {
+                return m_view.cend();
+            }
+            
+            inline constexpr const_reverse_iterator rbegin() const noexcept
+            {
+                return m_view.rbegin();
+            }
+
+            inline constexpr const_reverse_iterator rend() const noexcept
+            {
+                return m_view.rend();
+            }
+
+            inline constexpr const_reverse_iterator crbegin() const noexcept
+            {
+                return m_view.crbegin();
+            }
+
+            inline constexpr const_reverse_iterator crend() const noexcept
+            {
+                return m_view.crend();
+            }
+
+            // capacity
+            constexpr size_t size() const noexcept
+            {
+                return m_view.size();
+            }
+
+            constexpr size_t length() const noexcept
+            {
+                return m_view.length();
+            }
+
+            constexpr size_t max_size() const noexcept
+            {
+                return m_view.max_size();
+            }
+
+            constexpr bool empty() const noexcept
+            {
+                return m_view.empty();
+            }
+
+            // element access
+            constexpr const_reference operator[](size_t pos) const
+            {
+                return m_view.operator[](pos);
+            }
+
+            constexpr const_reference at(size_t pos) const
+            {
+                return m_view.at(pos);
+            }
+
+            constexpr const_reference front() const
+            {
+                return m_view.front();
+            }
+
+            constexpr const_reference back() const
+            {
+                return m_view.back();
+            }
+
+            constexpr const_pointer data() const noexcept
+            {
+                return m_view.data();
+            }
+
+            // modifiers
+            constexpr void remove_prefix(size_t n)
+            {
+                return m_view.remove_prefix(n);
+            }
+            
+            constexpr void remove_suffix(size_t n)
+            {
+                return m_view.remove_suffix(n);
+            }
+
+            /*
+            constexpr void swap(View& v) noexcept
+            {
+                return m_view.swap(v.m_view);
+            }*/
+
+            // string operations
+            inline constexpr size_type copy(T* s, size_t n, size_t pos = 0) const
+            {
+                return m_view.copy(s, n, pos);
+            }
+
+            inline constexpr std::basic_string_view< T > substr(size_t pos = 0, size_t n = npos) const
+            {
+                return m_view.substr(pos, n);
+            }
+
+            inline constexpr int compare(View v) const noexcept
+            {
+                return m_view.compare( v.m_view );
+            }
+
+            inline constexpr int compare(size_t pos1, size_t n1, std::basic_string_view< T > s) const
+            {
+                return m_view.compare( pos1, n1, s );
+            }
+
+            inline constexpr int compare(size_t pos1, size_t n1, std::basic_string_view< T > s, size_t pos2, size_t n2) const
+            {
+                return m_view.compare(pos1, n1, s, pos2, n2);
+            }
+
+            inline constexpr int compare(const T* s) const
+            {
+                return m_view.compare(s);
+            }
+
+            inline constexpr int compare(size_t pos1, size_t n1, const T* s) const
+            {
+                return m_view.compare(pos1, n1, s);
+            }
+
+            inline constexpr int compare(size_t pos1, size_t n1, const T* s, size_t n2) const
+            {
+                return m_view.compare(pos1, n1, s, n2);
+            }
+
+            inline constexpr bool starts_with(std::basic_string_view< T > x) const noexcept
+            {
+                return m_view.starts_with(x);
+            }
+
+            inline constexpr bool starts_with(T x) const noexcept
+            {
+                return m_view.starts_with(x);
+            }
+
+            inline constexpr bool starts_with(const T* x) const
+            {
+                return m_view.starts_with(x);
+            }
+
+            inline constexpr bool ends_with(std::basic_string_view< T > x) const noexcept
+            {
+                return m_view.ends_with(x);
+            }
+
+            inline constexpr bool ends_with(T x) const noexcept
+            {
+                return m_view.ends_with(x);
+            }
+
+            inline constexpr bool ends_with(const T* x) const
+            {
+                return m_view.ends_with(x);
+            }
+
+            inline constexpr bool contains(std::basic_string_view< T > x) const noexcept
+            {
+                return m_view.contains(x);
+            }
+
+            inline constexpr bool contains(T x) const noexcept
+            {
+                return m_view.contains(x);
+            }
+
+            inline constexpr bool contains(const T* x) const
+            {
+                return m_view.contains(x);
+            }
+
+            // searching
+            inline constexpr size_t find(std::basic_string_view< T > s, size_t pos = 0) const noexcept
+            {
+                return m_view.find(s, pos);
+            }
+
+            inline constexpr size_t find(T c, size_t pos = 0) const noexcept
+            {
+                return m_view.find(c, pos);
+            }
+            
+            inline constexpr size_t find(const T* s, size_t pos, size_t n) const
+            {
+                return m_view.find(s, pos, n);
+            }
+
+            inline constexpr size_t find(const T* s, size_t pos = 0) const
+            {
+                return m_view.find(s, pos);
+            }
+
+            inline constexpr size_t rfind(std::basic_string_view< T > s, size_t pos = npos) const noexcept
+            {
+                return m_view.rfind(s, pos);
+            }
+
+            inline constexpr size_t rfind(T c, size_t pos = npos) const noexcept
+            {
+                return m_view.rfind(c, pos);
+            }
+
+            inline constexpr size_t rfind(const T* s, size_t pos, size_t n) const
+            {
+                return m_view.rfind(s, pos, n);
+            }
+
+            inline constexpr size_t rfind(const T* s, size_t pos = npos) const
+            {
+                return m_view.rfind(s, pos);
+            }
+
+            inline constexpr size_t find_first_of(std::basic_string_view< T > s, size_t pos = 0) const noexcept
+            {
+                return m_view.find_first_of(s, pos);
+            }
+
+            inline constexpr size_t find_first_of(T c, size_t pos = 0) const noexcept
+            {
+                return m_view.find_first_of(c, pos);
+            }
+
+            inline constexpr size_t find_first_of(const T* s, size_t pos, size_t n) const
+            {
+                return m_view.find_first_of(s, pos, n);
+            }
+
+            inline constexpr size_t find_first_of(const T* s, size_t pos = 0) const
+            {
+                return m_view.find_first_of(s, pos);
+            }
+
+            inline constexpr size_t find_last_of(std::basic_string_view< T > s, size_t pos = npos) const noexcept
+            {
+                return m_view.find_last_of(s, pos);
+            }
+
+            inline constexpr size_t find_last_of(T c, size_t pos = npos) const noexcept
+            {
+                return m_view.find_last_of(c, pos);
+            }
+
+            inline constexpr size_t find_last_of(const T* s, size_t pos, size_t n) const
+            {
+                return m_view.find_last_of(s, pos, n);
+            }
+
+            inline constexpr size_t find_last_of(const T* s, size_t pos = npos) const
+            {
+                return m_view.find_last_of(s, pos);
+            }
+
+            inline constexpr size_t find_first_not_of(std::basic_string_view< T > s, size_t pos = 0) const noexcept
+            {
+                return m_view.find_first_not_of(s, pos);
+            }
+
+            inline constexpr size_t find_first_not_of(T c, size_t pos = 0) const noexcept
+            {
+                return m_view.find_first_not_of(c, pos);
+            }
+
+            inline constexpr size_t find_first_not_of(const T* s, size_t pos, size_t n) const
+            {
+                return m_view.find_first_not_of(s, pos, n);
+            }
+
+            inline constexpr size_t find_first_not_of(const T* s, size_t pos = 0) const
+            {
+                return m_view.find_first_not_of(s, pos);
+            }
+
+            inline constexpr size_t find_last_not_of(std::basic_string_view< T > s, size_t pos = npos) const noexcept
+            {
+                return m_view.find_last_not_of(s, pos);
+            }
+
+            inline constexpr size_t find_last_not_of(T c, size_t pos = npos) const noexcept
+            {
+                return m_view.find_first_not_of(c, pos);
+            }
+
+            inline constexpr size_t find_last_not_of(const T* s, size_t pos, size_t n) const
+            {
+                return m_view.find_last_not_of(s, pos, n);
+            }
+
+            inline constexpr size_t find_last_not_of(const T* s, size_t pos = npos) const
+            {
+                return m_view.find_last_not_of(s, pos);
+            }
+            
         private:
             size_t m_validatedLength = 0;
             MutableBuffer<T, LayoutT>& m_buffer;
+            std::basic_string_view< T > m_view;
         };
 
         friend class View;
-
-        class NullableView
-        {
-        public:
-
-            NullableView(MutableBuffer<T, LayoutT>& buffer) : m_buffer(buffer)
-            {
-                m_buffer.PrepareToModify();
-                m_buffer.AddRef();
-            }
-
-            NullableView(const NullableView& src) : m_buffer(src.m_buffer), m_validatedLength(src.m_validatedLength)
-            {
-                m_buffer.AddRef();
-            }
-
-            T* operator -> () const
-            {
-                if(m_buffer.Length() == 0)
-                {
-                    return nullptr;
-                }
-                return m_buffer.m_p;
-            }
-
-            operator T*()
-            {
-                if(m_buffer.Length() == 0)
-                {
-                    return nullptr;
-                }
-                return m_buffer.m_p;
-            }
-
-            bool IsNotNull()
-            {
-                T* p = operator T*();
-                return p == nullptr ? false : true;
-            }
-
-            virtual ~NullableView()
-            {
-                if(m_validatedLength)
-                {
-                    m_buffer.ValidateBuffer(m_validatedLength);
-                }
-                else
-                {
-                    m_buffer.ReleaseBuffer(m_buffer.m_p);
-                }
-            }
-
-            void Validate(size_t charCount)
-            {
-                m_validatedLength = charCount;
-            }
-
-        private:
-            size_t m_validatedLength = 0;
-            MutableBuffer<T, LayoutT>& m_buffer;
-        };
-
-        friend class NullableView;
 
         MutableBuffer()
         {
@@ -210,7 +466,7 @@ namespace qor{
             auto buffer = GetBufferSetLength(src.Length());
             if(buffer.IsNotNull())
             {
-                memcpy(static_cast<T*>(buffer), src.GetBuffer(), src.ByteLength());
+                memcpy(static_cast<T*>(buffer), src.GetData(), src.ByteLength());
                 buffer.Validate(src.Length());              
             }
         }
@@ -220,7 +476,7 @@ namespace qor{
             auto buffer = GetBufferSetLength(src.Length());
             if(buffer.IsNotNull())
             {
-                memcpy(static_cast<T*>(buffer), src.GetBuffer(), src.ByteLength());
+                memcpy(static_cast<T*>(buffer), src.GetData(), src.ByteLength());
                 buffer.Validate(src.Length());
             }
         }
@@ -293,22 +549,14 @@ namespace qor{
         }
 
         //Overrride this to write additional Header data 
-        virtual void HeaderOnCopy(byte* oldHeader, byte* newHeader)
-        {
-        }
+        virtual void HeaderOnCopy(byte* oldHeader, byte* newHeader){ }
 
         //Overrride this to write additional Footer data
-        virtual void FooterOnCopy(byte* oldFooter, byte* newFooter)
-        {
-        }
+        virtual void FooterOnCopy(byte* oldFooter, byte* newFooter){ }
 
-        virtual void HeaderOnWrite(byte* header)
-        {
-        }
+        virtual void HeaderOnWrite(byte* header){ }
 
-        virtual void FooterOnWrite(byte* footer)
-        {            
-        }
+        virtual void FooterOnWrite(byte* footer){ }
 
         inline size_t GetCharCount() const
         {
@@ -402,21 +650,15 @@ namespace qor{
             return View(*this);
         }
         
-        View GetBuffer()
+        View view()
         {                        
             return View(*this);
         }
         
-        NullableView GetNullableBuffer()
+        //Returns a raw Read Only pointer to the content or nullptr if the buffer is empty        
+        const T* GetData() const
         {
-            return NullableView(*this);
-        }
-
-        //Returns a raw Read Only pointer to the content or nullptr if the buffer is empty
-        template< typename _char_type_t = T>
-        const _char_type_t* GetData() const
-        {
-            return m_p == nullptr ? nullptr : reinterpret_cast<_char_type_t*>(m_p);
+            return m_p == nullptr ? nullptr : m_p;
         }
 
         T At(size_t index) const
@@ -498,7 +740,7 @@ namespace qor{
         
         MutableBuffer<T, LayoutT>& Append(const MutableBuffer<T, LayoutT>& src)
         {
-            return Append(src.template GetData<T>(), src.Length());
+            return Append(src.GetData(), src.Length());
         }
 
         MutableBuffer<T, LayoutT>& Insert(size_t index, const MutableBuffer<T, LayoutT>& src)
@@ -549,7 +791,7 @@ namespace qor{
             {
                 if (InternalRefCount() > 1)
                 {	
-                    SetCapacity(InternalLen() | 0x10);//CoW
+                    SetCapacity(InternalLen() | 0x1F);
                 }
 
                 if ((index + itemCount) < Length())
@@ -632,11 +874,19 @@ namespace qor{
 
         reverse_iterator rbegin() const
         {
+            if(InternalLen() == 0)
+            {
+                return rend();
+            }
             return reverse_iterator(m_p + InternalLen() - 1);
         }
 
         const_reverse_iterator crbegin() const
         {
+            if(InternalLen() == 0)
+            {
+                return crend();
+            }
             return const_reverse_iterator(m_p + InternalLen() - 1);
         }
 
@@ -656,7 +906,7 @@ namespace qor{
 
         //If you use the internal memory as a raw buffer the in use length will not be tracked.
         //Call ValidateBuffer( unitCount ) to set the in use length. 
-        //Use ValidateBuffer() to set the in use length up to a NULL terminator. Make sure that there is one!
+        //Use ValidateBuffer() to set the in use length to Capacity.
         bool ValidateBuffer(size_t unitCount = (size_t)(-1))
         {
             bool bResult = false;
