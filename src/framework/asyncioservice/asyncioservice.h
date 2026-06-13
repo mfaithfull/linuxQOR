@@ -41,7 +41,7 @@
 #include "asyncioinitiator.h"
 #include "asynciocontext.h"
 
-namespace qor{ bool qor_pp_import ImplementsAsyncIOService();}
+namespace qor{ bool qor_pp_module_interface(QOR_ASYNCIOSERVICE) ImplementsAsyncIOService();}
 
 namespace qor { namespace framework{
   
