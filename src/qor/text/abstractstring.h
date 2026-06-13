@@ -52,10 +52,10 @@ namespace qor{
     };
 
     template<typename IteratorT, typename CharT>
-    bool WhileBlank(IteratorT& it)
+    bool WhileBlank(IteratorT& it, const std::locale& locale)
     {
-        CharT c = *it;
-        if(isblank( c ))
+        CharT c = *it;        
+        if(std::isblank<CharT>(c, locale))
         {
             return true;
         }
@@ -78,7 +78,7 @@ namespace qor{
         virtual size_t Length() const = 0;
         virtual bool IsEmpty() const = 0;
         virtual void Reset() = 0;
-        virtual typename BufferT::View GetBuffer() = 0;
+        virtual typename BufferT::View GetBuffer() = 0;        
         virtual CharT At(size_t index) const = 0;
         virtual ImplT Clone() const = 0;
         virtual BufferT CloneBuffer() const = 0;        
@@ -212,35 +212,33 @@ namespace qor{
             return ImplT(output);
         }
 
-        ImplT Fill(CharT c) const
-        {
-            BufferT output;
-            FillUpToCount(c, Length(), output);
-            return ImplT(output);
+        void Fill(CharT c)
+        {            
+            FillUpToCount(c, Length());
         }
 
-        ImplT Fill(CharT c, size_t count) const
+        void Fill(CharT c, size_t count)
         {
-            BufferT output;
-            FillUpToCount(c, count, output);
-            return ImplT(output);
+            FillUpToCount(c, count);
         }
 
-        ImplT Fill(CodePoint cp) const
+        void Fill(const CodePoint& cp)
         {
-            BufferT output;
-            FillUpToCount(cp, Length(), output);
-            return ImplT(output);
+            FillUpToCount(cp, Length());
         }
 
-        ImplT Fill(CodePoint cp, size_t count) const
+        void Fill(const CodePoint& cp, size_t count)
         {
-            BufferT output;
-            FillUpToCount(cp, count, output);
-            return ImplT(output);
+            FillUpToCount(cp, count);
         }
 
     protected:
+
+        //derived classes must override this if they have a modifiable buffer but shouldn't expose it
+        virtual BufferT* GetModifiableBufferObject()
+        {
+            return nullptr;
+        }
 
         //Optionally string classes may override
 
@@ -283,9 +281,10 @@ namespace qor{
         }
 
         template<typename iterator_type>
-        inline void OffsetIterator(iterator_type& it, bool(*pred)(iterator_type&)) const
+        inline void OffsetIterator(iterator_type& it, bool(*pred)(iterator_type&, const std::locale&)) const
         {
-            while(pred(it))
+            auto locale = std::locale("", LC_CTYPE);
+            while(pred(it, locale))
             {
                 ++it;
             }
@@ -326,12 +325,43 @@ namespace qor{
             }
         }
 
+        inline void FillUpToCount(CharT c, size_t count)
+        {   
+            BufferT* buffer = GetModifiableBufferObject();
+            if(buffer)
+            {
+                buffer->Reset();
+                while(count-- > 0)
+                {                
+                    buffer->Write(&c, 1);        
+                }
+            }
+        }
+
         inline void FillUpToCount(CharT c, size_t count, BufferT& output) const
         {            
             size_t capacity = output.Capacity();
             while(count-- > 0)
             {                
                 WriteIntoOutput(output, capacity, c);
+            }
+        }
+
+        inline void FillUpToCount(CodePoint cp, size_t count)
+        {   
+            BufferT* buffer = GetModifiableBufferObject();
+            if(buffer)
+            {
+                AbstractCharacterCodec< CharT >* Codec = GetCodec();
+                buffer.Reset();
+                CharT interBuffer[kMaxCodeUnitsPerCodePoint]{0};
+                while(count-- > 0)
+                {                          
+                    size_t capacity = kMaxCodeUnitsPerCodePoint;
+                    CharT* space = interBuffer;
+                    Codec->Encode(cp, space, capacity);
+                    buffer->Write(interBuffer, space - &interBuffer[0]);
+                }
             }
         }
 

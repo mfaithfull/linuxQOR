@@ -173,6 +173,32 @@ namespace qor{
             return defaultEncodingT::GetMib();
         }
 
+        SimpleString< char32_t > ToUCS4()
+        {
+            SimpleString< char32_t > output(Length());            
+            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
+            AbstractCharacterCodec< C >* Codec = Registration;
+            if(Codec == nullptr)
+            {
+                throw std::logic_error("No CodePage registered for encoding");
+            }
+            {
+                auto buffer = output.GetBuffer();
+                char32_t* outptr = buffer.operator char32_t *();
+                size_t outCounter = 0;
+                const C* inptr = m_buffer.template GetData<C>();
+                size_t inAvailable = Length();
+                while(inAvailable > 0)
+                {   
+                    CodePoint cp = Codec->Decode(inptr, inAvailable);
+                    *outptr++ = cp.UChar();
+                    outCounter++;
+                }
+                buffer.Validate(outCounter);
+            }
+            return output;   
+        }
+
     protected:
 
         virtual BufferT CloneBuffer() const

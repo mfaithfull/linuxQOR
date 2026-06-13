@@ -42,4 +42,11 @@ qor_pp_test_case(canInstanceUCS4String)
     qor_pp_assert_that(ucs4str.At(10)).isEqualTo('d');
 }
 
-
+qor_pp_test_case(canFillAnExistingUCS4StringwithFixedChars)
+{
+    UCS4String ucs4str(U"Hello World");
+    ucs4str.Fill(U'-');
+    qor_pp_assert_that(ucs4str.Length()).isEqualTo(11);
+    qor_pp_assert_that(ucs4str[0]).isEqualTo('-');
+    qor_pp_assert_that(ucs4str.At(10)).isEqualTo('-');
+}

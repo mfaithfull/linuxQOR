@@ -230,6 +230,11 @@ namespace qor{
             return BufferT(m_buffer);
         }
 
+        virtual BufferT* GetModifiableBufferObject()
+        {
+            return &m_buffer;
+        }
+
         BufferT m_buffer;        
     };
 }//qor

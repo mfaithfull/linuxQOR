@@ -22,79 +22,79 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEXT_UTF8STRING
-#define QOR_PP_H_TEXT_UTF8STRING
+#ifndef QOR_PP_H_TEXT_UTF16STRING
+#define QOR_PP_H_TEXT_UTF16STRING
 
 #include <stdexcept>
 #include <string>
 #include "src/qor/text/abstractstring.h"
 #include "src/qor/text/buffers/mutablebuffer.h"
-#include "src/qor/text/iterators/utf8iterator.h"
-#include "src/qor/text/codepage/codepages/utf8.h"
+#include "src/qor/text/iterators/utf16iterator.h"
+#include "src/qor/text/codepage/codepages/utf16.h"
 
 namespace qor{
 
-    //UTF-8 Strings have UTF-8 encoding and variable width (1-4 bytes per character)
+    //UTF-16 Strings have UTF-16 encoding and variable width (2 or 4 bytes per character)
     //You Shouldn't use these directly with std ranges and algorithms as the 
-    //custom iterator for UTF8String is incompatible with their assumption of
+    //custom iterator for UTF16String is incompatible with their assumption of
     //fixed width encoding.
-    class UTF8String : public AbstractString< 
-        UTF8String, 
-        MutableBuffer<char8_t>,
-        UTF8Iterator< MutableBuffer<char8_t> >::Iterator,
-        UTF8ConstIterator< MutableBuffer<char8_t> >::Iterator,
-        UTF8ReverseIterator< MutableBuffer<char8_t> >::Iterator,
-        UTF8ConstReverseIterator< MutableBuffer<char8_t> >::Iterator >
+    class UTF16String : public AbstractString< 
+        UTF16String, 
+        MutableBuffer16,
+        UTF16Iterator< MutableBuffer16 >::Iterator,
+        UTF16ConstIterator< MutableBuffer16 >::Iterator,
+        UTF16ReverseIterator< MutableBuffer16 >::Iterator,
+        UTF16ConstReverseIterator< MutableBuffer16 >::Iterator >
     {
     public:
 
         typedef AbstractString< 
-        UTF8String, 
-        MutableBuffer<char8_t>,
-        UTF8Iterator< MutableBuffer<char8_t> >::Iterator,
-        UTF8ConstIterator< MutableBuffer<char8_t> >::Iterator,
-        UTF8ReverseIterator< MutableBuffer<char8_t> >::Iterator,
-        UTF8ConstReverseIterator< MutableBuffer<char8_t> >::Iterator > base;
+        UTF16String, 
+        MutableBuffer16,
+        UTF16Iterator< MutableBuffer16 >::Iterator,
+        UTF16ConstIterator< MutableBuffer16 >::Iterator,
+        UTF16ReverseIterator< MutableBuffer16 >::Iterator,
+        UTF16ConstReverseIterator< MutableBuffer16 >::Iterator > base;
 
-        typedef MutableBuffer<char8_t> BufferT;
-        typedef UTF8CodePage defaultEncodingT;
+        typedef MutableBuffer16 BufferT;
+        typedef UTF16CodePage defaultEncodingT;
         typedef typename BufferT::View viewT;
-        typedef typename UTF8Iterator<BufferT>::Iterator iterator;
-        typedef typename UTF8ConstIterator<BufferT>::Iterator const_iterator;
-        typedef typename UTF8ReverseIterator<BufferT>::Iterator reverse_iterator;
-        typedef typename UTF8ConstReverseIterator<BufferT>::Iterator const_reverse_iterator;
+        typedef typename UTF16Iterator<BufferT>::Iterator iterator;
+        typedef typename UTF16ConstIterator<BufferT>::Iterator const_iterator;
+        typedef typename UTF16ReverseIterator<BufferT>::Iterator reverse_iterator;
+        typedef typename UTF16ConstReverseIterator<BufferT>::Iterator const_reverse_iterator;
 
-        UTF8String() noexcept : m_buffer(), m_cachedLength(0) { }
+        UTF16String() noexcept : m_buffer(), m_cachedLength(0) { }
 
         template<size_t N>
-        UTF8String(const char8_t(&str)[N]) noexcept : m_buffer(str)        
+        UTF16String(const char16_t(&str)[N]) noexcept : m_buffer(str)        
         {
             UpdateLength();
         }
 
-        UTF8String(const BufferT& buffer) : m_buffer(buffer)
+        UTF16String(const BufferT& buffer) : m_buffer(buffer)
         {
             UpdateLength();
         }
 
-        UTF8String(const UTF8String& src) : m_buffer(src.m_buffer)
+        UTF16String(const UTF16String& src) : m_buffer(src.m_buffer)
         {
             m_cachedLength = src.Length();
         }
 
-        UTF8String(UTF8String&& src) noexcept : m_buffer(std::move(src.m_buffer))
+        UTF16String(UTF16String&& src) noexcept : m_buffer(std::move(src.m_buffer))
         {
             m_cachedLength = src.Length();
         }
 
-        UTF8String(const char8_t* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount )
+        UTF16String(const char16_t* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount )
         {
             UpdateLength();            
         }
 
-        virtual ~UTF8String() = default;
+        virtual ~UTF16String() = default;
 
-        UTF8String& operator = (const UTF8String& src)
+        UTF16String& operator = (const UTF16String& src)
         {
             if (this != &src)
             {
@@ -134,34 +134,34 @@ namespace qor{
             }
             if(it != end())
             {
-                AbstractCharacterCodec< CharT >* Codec = GetCodec();
-                const CharT* input = it;
+                AbstractCharacterCodec< char16_t >* Codec = GetCodec();
+                const char16_t* input = it;
                 size_t charCount = 1;
                 CodePoint cp = Codec->Decode(input, charCount);
                 return cp.UChar();
             }
             else
             {
-                throw std::out_of_range("Index out of range accessing UTF8String At {index}");
+                throw std::out_of_range("Index out of range accessing UTF16String At {index}");
             }
         }
 
-        char8_t At(size_t index) const override
+        char16_t At(size_t index) const override
         {
             return m_buffer.At(index);
         }
 
-        UTF8String Clone() const override
+        UTF16String Clone() const override
         {
-            return UTF8String(*this);
+            return UTF16String(*this);
         }
 
-        static UTF8String EmptyString()
+        static UTF16String EmptyString()
         {
-            return UTF8String();
+            return UTF16String();
         }
 
-        std::basic_string<char8_t> ToStdString() const override
+        std::basic_string<char16_t> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }
@@ -228,7 +228,7 @@ namespace qor{
         {
             SimpleString< char32_t > output(Length());            
             AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
-            AbstractCharacterCodec< CharT >* Codec = Registration;
+            AbstractCharacterCodec< char16_t >* Codec = Registration;
             if(Codec == nullptr)
             {
                 throw std::logic_error("No CodePage registered for encoding");
@@ -237,7 +237,7 @@ namespace qor{
                 auto buffer = output.GetBuffer();
                 char32_t* outptr = buffer.operator char32_t *();
                 size_t outCounter = 0;
-                const CharT* inptr = m_buffer.template GetData<CharT>();
+                const char16_t* inptr = m_buffer.template GetData<char16_t>();
                 size_t inAvailable = Length();
                 while(inAvailable > 0)
                 {   
@@ -263,12 +263,12 @@ namespace qor{
             }
         }
 
-        virtual AbstractCharacterCodec< CharT >* GetCodecCache() const override
+        virtual AbstractCharacterCodec< char16_t >* GetCodecCache() const override
         { 
             return m_cachedCodec; 
         }
 
-        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* codec) const override
+        virtual void SetCodecCache(AbstractCharacterCodec< char16_t >* codec) const override
         {
             m_cachedCodec = codec;
         }
@@ -285,9 +285,9 @@ namespace qor{
 
         BufferT m_buffer;
         mutable size_t m_cachedLength{0};
-        mutable AbstractCharacterCodec< char8_t >* m_cachedCodec{nullptr};
+        mutable AbstractCharacterCodec< char16_t >* m_cachedCodec{nullptr};
     };
 
 }//qor
 
-#endif//QOR_PP_H_TEXT_UTF8STRING
+#endif//QOR_PP_H_TEXT_UTF16STRING

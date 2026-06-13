@@ -149,7 +149,7 @@ namespace qor
 	{
 		CodePoint rcodePoint(codePoint.Value());
 
-		if(available < 1 || space == nullptr)
+		if(available == 0 || space == nullptr)
 		{
 			return false;
 		}

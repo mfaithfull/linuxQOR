@@ -28,8 +28,9 @@
 #include "simplestring.h"
 
 namespace qor{
-    typedef SimpleString< char16_t > UCS2String;
     typedef SimpleString< char32_t > UCS4String;
+    typedef SimpleString< char16_t > UCS2String;
+    typedef SimpleString< char > ASCIIString;    
 }//qor
 
 #include "localstring.h"
@@ -41,5 +42,6 @@ namespace qor{
 
 #include "codestring.h"
 #include "utf8string.h"
+#include "utf16string.h"
 
 #endif//QOR_PP_H_TEXT_STRINGS_STRINGS

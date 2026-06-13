@@ -947,6 +947,11 @@ namespace qor{
         }
 
     };
+
+    typedef MutableBuffer<char> MutableBuffer7;
+    typedef MutableBuffer<char8_t> MutableBuffer8;
+    typedef MutableBuffer<char16_t> MutableBuffer16;
+    typedef MutableBuffer<char32_t> MutableBuffer32;
 }//qor
 
 #endif//QOR_PP_H_TEXT_MUTABLEBUFFER
