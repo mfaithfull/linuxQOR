@@ -25,14 +25,17 @@
 #ifndef QOR_PP_H_TEXT_CONSTBUFFER
 #define QOR_PP_H_TEXT_CONSTBUFFER
 
-#include <stdexcept>
 #include <string>
 #include "src/qor/iterators/iterators.h"
 
 namespace qor{
 
+    namespace text{
+        extern void OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress);
+    }
+
     template< typename T >
-    class ConstBuffer final
+    struct ConstBuffer final
     {
     public:
 
@@ -72,9 +75,6 @@ namespace qor{
         private:
             const ConstBuffer<T>& m_buffer;
         };
-
-        ConstBuffer() = delete;
-        ~ConstBuffer() = default;
 
         template<size_t N>
         constexpr ConstBuffer(const T(&str)[N]) : m_p(static_cast<const T*>(str)), m_unitCount(N - 1)
@@ -156,7 +156,7 @@ namespace qor{
         {
             if (m_p == nullptr || index >= Length())
             {
-                throw std::out_of_range("Index out of range accessing Buffer<{T}> At {index}");
+                text::OutOfRangeError(index, Length(), sizeof(T), m_p);
             }
             return m_p[index];
         }
@@ -165,7 +165,7 @@ namespace qor{
         {
             if (m_p == nullptr || index >= Length())
             {
-                throw std::out_of_range("Index out of range accessing Buffer<{T}> At {index}");
+                text::OutOfRangeError(index, Length(), sizeof(T), m_p);
             }
             return m_p[index];
         }
@@ -220,7 +220,7 @@ namespace qor{
             return const_reverse_iterator(m_p - 1);
         }
 
-    protected:
+    private:
 
         const T* m_p;
         size_t m_unitCount;

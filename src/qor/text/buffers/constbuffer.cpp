@@ -22,16 +22,17 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEXT_VISITORRESULT
-#define QOR_PP_H_TEXT_VISITORRESULT
+#include "src/configuration/configuration.h"
+#include <stdexcept>
+#include "constbuffer.h"
+#include "src/qor/error/error.h"
 
-namespace qor{
-    enum class VisitorResult
+namespace qor{ namespace text {
+
+    void qor_pp_export OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress)
     {
-        End,
-        More,
-        Begin,
-    };
-}//qor
+        continuable("Buffer index out of range accesssing index {0} of {1} elements of size {2} bytes in buffer at {3:p}", index, length, elementSize, bufferAddress);
+    }
 
-#endif//QOR_PP_H_TEXT_VISITORRESULT
+}}//qor::text
+

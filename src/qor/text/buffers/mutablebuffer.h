@@ -25,11 +25,10 @@
 #ifndef QOR_PP_H_TEXT_MUTABLEBUFFER
 #define QOR_PP_H_TEXT_MUTABLEBUFFER
 
-#include <stdexcept>
 #include <string>
+#include <string.h>
+#include "src/platform/compiler/compiler.h"
 #include "src/qor/text/buffers/constbuffer.h"
-#include "src/qor/text/buffers/bufferfreedwhilesharedexception.h"
-#include "src/qor/text/buffers/bufferoverrunexception.h"
 #include "src/qor/iterators/iterators.h"
 
 #ifdef min
@@ -37,6 +36,12 @@
 #endif//min
 
 namespace qor{
+
+    namespace text{
+        extern void OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress);
+        extern void BufferFreeWhileSharedError(const void* bufferAddress, unsigned short refCount);
+        extern void BufferOverrunError(const void* bufferAddress, unsigned short headerRefCount, unsigned short footerRefCount);
+    }
 
     struct sBufferHeader
     {
@@ -548,12 +553,6 @@ namespace qor{
             Release();
         }
 
-        //Overrride this to write additional Header data
-        virtual void HeaderOnCopy(byte* oldHeader, byte* newHeader){ }
-
-        //Overrride this to write additional Footer data
-        virtual void FooterOnCopy(byte* oldFooter, byte* newFooter){ }
-
         inline size_t GetUnitCount() const
         {
             return Length();
@@ -641,7 +640,7 @@ namespace qor{
         {
             if (m_p == nullptr || index >= Length())
             {
-                throw std::out_of_range("Index out of range accessing MutableBuffer At {index} out of {length}");
+                text::OutOfRangeError(index, Length(), sizeof(T), m_p);
             }				
             return m_p[index];
         }
@@ -664,7 +663,7 @@ namespace qor{
         {
             if (index >= Length() || m_p == nullptr)
             {
-                throw std::out_of_range("Index out of range accessing MutableBuffer At {index} out of {length}.");
+                text::OutOfRangeError(index, Length(), sizeof(T), m_p);
             }
             return m_p[index];
         }
@@ -784,27 +783,27 @@ namespace qor{
             return *this;
         }
 
-        iterator begin() const
+        inline iterator begin() const
         {
             return iterator(m_p);
         }
 
-        const_iterator cbegin() const
+        inline const_iterator cbegin() const
         {
             return const_iterator(m_p);
         }
 
-        iterator end() const
+        inline iterator end() const
         {
             return iterator(m_p + InternalLen());
         }
 
-        const_iterator cend() const
+        inline const_iterator cend() const
         {
             return const_iterator(m_p + InternalLen());
         }
 
-        reverse_iterator rbegin() const
+        inline reverse_iterator rbegin() const
         {
             if(InternalLen() == 0)
             {
@@ -813,7 +812,7 @@ namespace qor{
             return reverse_iterator(m_p + InternalLen() - 1);
         }
 
-        const_reverse_iterator crbegin() const
+        inline const_reverse_iterator crbegin() const
         {
             if(InternalLen() == 0)
             {
@@ -822,15 +821,21 @@ namespace qor{
             return const_reverse_iterator(m_p + InternalLen() - 1);
         }
 
-        reverse_iterator rend() const
+        inline reverse_iterator rend() const
         {
             return reverse_iterator(m_p - 1);
         }
 
-        const_reverse_iterator crend() const
+        inline const_reverse_iterator crend() const
         {
             return const_reverse_iterator(m_p - 1);
         }
+
+        //Overrride this to write any additional Header data
+        virtual void HeaderOnCopy(byte* oldHeader, byte* newHeader){ }
+
+        //Overrride this to write any additional Footer data
+        virtual void FooterOnCopy(byte* oldFooter, byte* newFooter){ }
 
     protected:
 
@@ -956,7 +961,7 @@ namespace qor{
             {
                 if (InternalBaseFooter()->RefCount != 0)
                 {
-                    throw bufferfreedwhilesharedexception("Buffer data freed while shared");
+                    text::BufferFreeWhileSharedError(m_p, InternalBaseFooter()->RefCount);
                 }
                 byte* pData = (reinterpret_cast<byte*>(const_cast<T*>(m_p))) - ClassHeaderByteSize();
                 delete[] pData;
@@ -964,23 +969,8 @@ namespace qor{
             m_p = nullptr;
         }
 
-        //Free the entire buffer memory, header, content and footer
-        static void Free(const T* pT)
-        {
-            if (pT != nullptr)
-            {
-                if (InternalBaseFooter(pT)->RefCount != 0)
-                {
-                    throw bufferfreedwhilesharedexception("Buffer data freed while shared");
-                }
-                byte* pData = (reinterpret_cast<byte*>(const_cast<T*>(pT))) - ClassHeaderByteSize();
-                delete[] pData;
-            }
-        }
-
-        //Before we hand out a modifiable buffer 
-        //make sure we aren't sharing a buffer and 
-        //that any string we do have is null terminated
+        //Before we hand out a modifiable buffer. 
+        //make sure we aren't sharing a buffer and that any string we do have is null terminated
         inline void PrepareToModify()
         {
             if (InternalRefCount() > 1)
@@ -1021,7 +1011,7 @@ namespace qor{
         {
             if(InternalBaseHeader()->RefCount != InternalBaseFooter()->RefCount)
             {
-                throw bufferoverrunexception("Buffer overrun detected. Header and Footer reference counts do not match.");
+                text::BufferOverrunError(m_p, InternalBaseHeader()->RefCount, InternalBaseFooter()->RefCount);                
             }
         }
 
