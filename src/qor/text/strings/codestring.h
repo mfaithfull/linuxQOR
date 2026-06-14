@@ -98,9 +98,9 @@ namespace qor{
             //Embedded strings are immutable so Reset does nothing
         }
 
-        virtual viewT GetBuffer() override
+        virtual viewT view() override
         {
-            return m_buffer.GetBuffer();
+            return m_buffer.view();
         }
 
         C operator[](size_t index) const

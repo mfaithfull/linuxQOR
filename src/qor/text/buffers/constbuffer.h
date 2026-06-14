@@ -49,17 +49,13 @@ namespace qor{
         typedef rawreverseiterator<const T> reverse_iterator;
         typedef rawreverseiterator<const T> const_reverse_iterator;
 
-        class View
+        class View : public std::basic_string_view< T >
         {
         public:
 
-            constexpr View(const ConstBuffer<T>& buffer) : m_buffer(buffer)
-            {
-            }
-
-            View(const View& src) : m_buffer(src.m_buffer)
-            {
-            }
+            constexpr View() noexcept : std::basic_string_view< T >(){ }
+            constexpr View(const ConstBuffer<T>& buffer) : std::basic_string_view< T >(buffer.GetData(), buffer.Length()), m_buffer(buffer) { }
+            constexpr View(const View& src) : std::basic_string_view< T >(src), m_buffer(src.m_buffer){ }
 
             constexpr const T* operator -> () const
             {
@@ -79,11 +75,6 @@ namespace qor{
 
             virtual ~View()
             {
-            }
-
-            constexpr void Validate(size_t charCount)
-            {
-                //No validation on immutable buffers
             }
 
         private:
@@ -124,7 +115,7 @@ namespace qor{
             return *this;
         }
 
-        constexpr View GetBuffer() const
+        constexpr View view() const
         {
             return View(*this);
         }
@@ -157,6 +148,11 @@ namespace qor{
         constexpr bool IsEmpty(void) const
         {
             return m_p == nullptr || m_charCount == 0 || m_p[0] == T(0);
+        }
+
+        const T* GetData() const
+        {
+            return m_p == nullptr ? nullptr : m_p;
         }
 
         constexpr T At(size_t index) const

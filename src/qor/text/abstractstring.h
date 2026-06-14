@@ -78,7 +78,7 @@ namespace qor{
         virtual size_t Length() const = 0;
         virtual bool IsEmpty() const = 0;
         virtual void Reset() = 0;
-        virtual typename BufferT::View GetBuffer() = 0;        
+        virtual typename BufferT::View view() = 0;
         virtual CharT At(size_t index) const = 0;
         virtual ImplT Clone() const = 0;
         virtual BufferT CloneBuffer() const = 0;        

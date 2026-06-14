@@ -120,9 +120,9 @@ namespace qor{
             m_cachedLength = 0;
         }
 
-        virtual viewT GetBuffer() override
+        virtual viewT view() override
         {
-            return m_buffer.GetBuffer();
+            return m_buffer.view();
         }
 
         const char32_t operator[](size_t index) const

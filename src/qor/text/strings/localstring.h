@@ -107,9 +107,9 @@ namespace qor{
             m_buffer.Reset();
         }
 
-        typename BufferT::View GetBuffer() override
+        typename BufferT::View view() override
         {
-            return m_buffer.GetBuffer();
+            return m_buffer.view();
         }
 
         C operator[](size_t index) const
@@ -207,10 +207,10 @@ namespace qor{
                 throw std::logic_error("No CodePage registered for encoding");
             }
             {
-                auto buffer = output.GetBuffer();
+                auto buffer = output.view();
                 char32_t* outptr = buffer.operator char32_t *();
                 size_t outCounter = 0;
-                const C* inptr = m_buffer.template GetData<C>();
+                const C* inptr = m_buffer.template GetData();
                 size_t inAvailable = Length();
                 while(inAvailable > 0)
                 {   
