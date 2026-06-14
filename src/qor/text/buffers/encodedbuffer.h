@@ -34,6 +34,7 @@ namespace qor{
     struct sEncodedBufferHeader
     {
         Mib Encoding;                               //Encoding of Text
+        //This structure must end with a copy of sBufferHeader
         size_t Alloc;								//Byte length of allocation for string, header, footer and all
         size_t RefCount;							//Reference count for CoW
         size_t Len;									//Unit count in use
@@ -52,8 +53,8 @@ namespace qor{
     public:
         
         typedef MutableBuffer<T, EncodedBufferLayout> base;
-        typedef base::iterator iteratorT;        
-        using MutableBuffer<T, EncodedBufferLayout>::m_p;
+        //typedef base::iterator iteratorT;        
+        //using MutableBuffer<T, EncodedBufferLayout>::m_p;
 
         EncodedBuffer() : base()
         {
@@ -86,7 +87,7 @@ namespace qor{
             SetEncoding(defaultMib);
         }
 
-        EncodedBuffer(EncodedBuffer&& src) noexcept : base(src)
+        EncodedBuffer(EncodedBuffer&& src) noexcept : base(std::move(src))
         {
             SetEncoding(src.GetEncoding());
         }
@@ -112,20 +113,19 @@ namespace qor{
 
         virtual ~EncodedBuffer() = default;
 
-        //Overrride this to write additional Header data 
         virtual void HeaderOnCopy(byte* pOld, byte* pNew) override
         {
             sEncodedBufferHeader* old = reinterpret_cast<sEncodedBufferHeader*>(pOld);
             sEncodedBufferHeader* _new = reinterpret_cast<sEncodedBufferHeader*>(pNew);
-            if(old && _new)
+            if(_new)
             {
-                _new->Encoding = old->Encoding;
+                _new->Encoding = old ? old->Encoding : defaultMib;
             }
         }
 
         void SetEncoding(Mib charSet)
         {
-            sEncodedBufferHeader* header = reinterpret_cast<sEncodedBufferHeader*>(base::GetHeader(m_p));
+            sEncodedBufferHeader* header = reinterpret_cast<sEncodedBufferHeader*>(base::GetHeader());
             if(header)
             {
                 header->Encoding = charSet;
@@ -134,7 +134,7 @@ namespace qor{
 
         Mib GetEncoding() const
         {
-            sEncodedBufferHeader* header = reinterpret_cast<sEncodedBufferHeader*>(base::GetHeader(m_p));
+            sEncodedBufferHeader* header = reinterpret_cast<sEncodedBufferHeader*>(base::GetHeader());
             if(header)
             {
                 return header->Encoding;
@@ -145,4 +145,4 @@ namespace qor{
     };
 }//qor
 
-#endif//QOR_PP_H_TEXT_MUTABLEBUFFER
+#endif//QOR_PP_H_TEXT_ENCODEDBUFFER

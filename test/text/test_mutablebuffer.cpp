@@ -37,37 +37,9 @@ using namespace qor::test;
 qor_pp_test_case(canInstanceMutableBufferFromCompiledBuffer)
 {
     auto mb = MutableBuffer<char>("Hello World");
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(11);
+    qor_pp_assert_that(mb.Length()).isEqualTo(11);
     qor_pp_assert_that(mb[0]).isEqualTo('H');
     qor_pp_assert_that(mb.At(10)).isEqualTo('d');
-}
-
-qor_pp_test_case(canVisitMutableBuffer)
-{
-    auto mb = MutableBuffer<char>("Hello World");
-
-    size_t index = 0;
-    mb.Visit([&](const auto& buffer, const char* s, size_t i) {
-        qor_pp_assert_that(s[i]).isEqualTo(buffer[i]);
-        qor_pp_assert_that(s[i]).isEqualTo("Hello World"[i]);
-        index++;
-        return VisitorResult::More;
-    });
-    qor_pp_assert_that(index).isEqualTo(11);
-}
-
-qor_pp_test_case(canVisitMutableBufferInReverse)
-{
-    auto mb = MutableBuffer<char>("Hello World");
-
-    size_t index = 0;
-    mb.ReverseVisit([&](const auto& buffer, const char* s, size_t i) {
-        qor_pp_assert_that(s[i]).isEqualTo(buffer[i]);
-        qor_pp_assert_that(s[i]).isEqualTo("Hello World"[i]);
-        index++;
-        return VisitorResult::More;
-    });
-    qor_pp_assert_that(index).isEqualTo(11);
 }
 
 qor_pp_test_case(canConvertMutableBufferToStdString)
@@ -387,7 +359,7 @@ qor_pp_test_case(canUseMutableBufferWithEmbeddedNullCharacters)
 {
     auto mb = MutableBuffer<char>("He\0lo");
 
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(mb.Length()).isEqualTo(5);
     qor_pp_assert_that(mb[0]).isEqualTo('H');
     qor_pp_assert_that(mb[1]).isEqualTo('e');
     qor_pp_assert_that(mb[2]).isEqualTo('\0');
@@ -398,7 +370,7 @@ qor_pp_test_case(canUseMutableBufferWithEmbeddedNullCharacters)
 qor_pp_test_case(canUseMutableBufferWithEmbeddedNullCharactersAndNonZeroCount)
 {
     auto mb = MutableBuffer<char>("He\0lo", 5);
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(mb.Length()).isEqualTo(5);
     qor_pp_assert_that(mb[0]).isEqualTo('H');
     qor_pp_assert_that(mb[1]).isEqualTo('e');
     qor_pp_assert_that(mb[2]).isEqualTo('\0');
@@ -409,7 +381,7 @@ qor_pp_test_case(canUseMutableBufferWithEmbeddedNullCharactersAndNonZeroCount)
 qor_pp_test_case(canUseMutableBufferWithEmbeddedNullCharactersAndCountLessThanStringLength)
 {
     auto mb = MutableBuffer<char>("He\0lo", 3);
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(3);
+    qor_pp_assert_that(mb.Length()).isEqualTo(3);
     qor_pp_assert_that(mb[0]).isEqualTo('H');
     qor_pp_assert_that(mb[1]).isEqualTo('e');
     qor_pp_assert_that(mb[2]).isEqualTo('\0');
@@ -418,7 +390,7 @@ qor_pp_test_case(canUseMutableBufferWithEmbeddedNullCharactersAndCountLessThanSt
 qor_pp_test_case(canUseMutableBufferWithEmbeddedNullCharactersAndCountGreaterThanStringLength)
 {
     auto mb = MutableBuffer<char>("He\0lo", 10);
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(10);
+    qor_pp_assert_that(mb.Length()).isEqualTo(10);
     qor_pp_assert_that(mb[0]).isEqualTo('H');
     qor_pp_assert_that(mb[1]).isEqualTo('e');
     qor_pp_assert_that(mb[2]).isEqualTo('\0');
@@ -430,7 +402,7 @@ qor_pp_test_case(canUseMutableBufferWithEmbeddedNullCharactersAndCountGreaterTha
 qor_pp_test_case(canUseMutableBufferWithNonNullptrAndCountGreaterThanStringLengthAndEmbeddedNullCharacters)
 {
     auto mb = MutableBuffer<char>("He\0lo", 10);
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(10);
+    qor_pp_assert_that(mb.Length()).isEqualTo(10);
     qor_pp_assert_that(mb[0]).isEqualTo('H');
     qor_pp_assert_that(mb[1]).isEqualTo('e');
     qor_pp_assert_that(mb[2]).isEqualTo('\0');
@@ -442,14 +414,14 @@ qor_pp_test_case(canUseMutableBufferWithNonNullptrAndCountGreaterThanStringLengt
 qor_pp_test_case(canUseMutableBufferWithNonNullptrAndZeroCountAndEmbeddedNullCharacters)
 {
     auto mb = MutableBuffer<char>("He\0lo", 0);
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(0);
+    qor_pp_assert_that(mb.Length()).isEqualTo(0);
     qor_pp_assert_that(mb.IsEmpty()).isTrue();
 }
 
 qor_pp_test_case(canUseMutableBufferWithNullptrAndNonZeroCountAndEmbeddedNullCharacters)
 {
     auto mb = MutableBuffer<char>(nullptr, 5);
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(0);
+    qor_pp_assert_that(mb.Length()).isEqualTo(0);
     qor_pp_assert_that(mb.IsEmpty()).isTrue();
 }
 
@@ -520,7 +492,7 @@ qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithEmptyBufferAndEmbedde
 qor_pp_test_case(canUseMutableBufferWithUTF8CharactersAndNonZeroCountLessThanStringLength)
 {
     auto mb = MutableBuffer<char8_t>(u8"He\0lo", 3);
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(3);
+    qor_pp_assert_that(mb.Length()).isEqualTo(3);
     qor_pp_assert_that(mb[0]).isEqualTo(u8'H');
     qor_pp_assert_that(mb[1]).isEqualTo(u8'e');
     qor_pp_assert_that(mb[2]).isEqualTo(u8'\0');
@@ -529,7 +501,7 @@ qor_pp_test_case(canUseMutableBufferWithUTF8CharactersAndNonZeroCountLessThanStr
 qor_pp_test_case(canUseMutableBufferWithUTF8CharactersAndNonZeroCountGreaterThanStringLength)
 {
     auto mb = MutableBuffer<char8_t>(u8"He\0lo", 10);
-    qor_pp_assert_that(mb.GetCharCount()).isEqualTo(10);
+    qor_pp_assert_that(mb.Length()).isEqualTo(10);
     qor_pp_assert_that(mb[0]).isEqualTo(u8'H');
     qor_pp_assert_that(mb[1]).isEqualTo(u8'e');
     qor_pp_assert_that(mb[2]).isEqualTo(u8'\0');

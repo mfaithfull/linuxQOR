@@ -40,7 +40,7 @@ namespace qor{
 
     struct sBufferHeader
     {
-        size_t Alloc;								//Byte length of allocation for string, header, footer and all
+        size_t Alloc;								//Byte length of allocation for units, header, footer and all
         size_t RefCount;							//Reference count for CoW
         size_t Len;									//Unit count in use
     };
@@ -74,6 +74,8 @@ namespace qor{
         typedef rawiterator<const T> const_iterator;
         typedef rawreverseiterator<T> reverse_iterator;
         typedef rawreverseiterator<const T> const_reverse_iterator;
+
+        static const size_t scRounding = 0x10;//ensure buffer sizes are rounded up to nearest 16
 
         class View
         {
@@ -117,11 +119,11 @@ namespace qor{
             {
                 if(m_validatedLength)
                 {
-                    m_buffer.ValidateBuffer(m_validatedLength);
+                    m_buffer.Validate(m_validatedLength);
                 }
                 else
                 {
-                    m_buffer.ReleaseBuffer(m_buffer.m_p);
+                    m_buffer.Release();
                 }
             }
 
@@ -449,77 +451,75 @@ namespace qor{
 
         friend class View;
 
-        MutableBuffer()
+        MutableBuffer() : m_p{nullptr}{ }
+
+        /*When a buffer is copied we just point at the same data and increment the reference count
+        If neither 'copy' is changed the copying is essentially free. If either is changed a real
+        copy will be made because the RefCount will be > 1*/
+        MutableBuffer(const MutableBuffer& src) : m_p{src.m_p}
         {
-            m_p = nullptr;            
+            AddRef();            
         }
 
-        MutableBuffer(const MutableBuffer& src)
+        //Whan a buffer is moved we steal the pointer. The move source is left empty.
+        MutableBuffer(MutableBuffer&& src) noexcept : m_p{src.m_p}
         {
-            m_p = src.m_p;
-            AddRef();
+            src.m_p = nullptr;
         }
 
-        MutableBuffer(const ConstBuffer<T>& src)
+        //To get a mutable buffer from a const buffer we must copy the contents.
+        MutableBuffer(const ConstBuffer<T>& src) : m_p{nullptr}
         {
-            m_p = nullptr;
-            auto buffer = GetBufferSetLength(src.Length());
-            if(buffer.IsNotNull())
+            if(src.Length() > 0)
             {
-                memcpy(static_cast<T*>(buffer), src.GetData(), src.ByteLength());
-                buffer.Validate(src.Length());              
+                auto view = GetViewWithCapacity(src.Length());
+                memcpy(static_cast<T*>(view), src.GetData(), src.ByteLength());
+                view.Validate(src.Length());
             }
         }
 
-        MutableBuffer(const ConstBuffer<T>&& src) : m_p(nullptr)
+        MutableBuffer(const ConstBuffer<T>&& src) : m_p{nullptr}
         {
-            auto buffer = GetBufferSetLength(src.Length());
-            if(buffer.IsNotNull())
+            if(src.Length() > 0)
             {
-                memcpy(static_cast<T*>(buffer), src.GetData(), src.ByteLength());
-                buffer.Validate(src.Length());
+                auto view = GetViewWithCapacity(src.Length());
+                memcpy(static_cast<T*>(view), src.GetData(), src.ByteLength());
+                view.Validate(src.Length());
             }
         }
 
         template<size_t N>
-        MutableBuffer(T(&str)[N])
+        MutableBuffer(T(&str)[N]) : m_p{nullptr}
         {
-            auto buffer = GetBufferSetLength(N-1);
-            if(buffer.IsNotNull())
+            if(N > 1)
             {
-                memcpy(static_cast<T*>(buffer), str, N * sizeof(T));                
-                buffer.Validate(N-1);
+                auto view = GetViewWithCapacity(N - 1);
+                memcpy(static_cast<T*>(view), str, N - 1 * sizeof(T));
+                view.Validate(N - 1);
             }            
         }
 
-        MutableBuffer(const T* pBuffer, size_t stCount ) : m_p(nullptr)
+        MutableBuffer(const T* pBuffer, size_t unitCount ) : m_p{nullptr}
         {
-            if(stCount == 0)
+            if(unitCount > 0)
             {
-                return;
-            }
-            if(pBuffer == nullptr || pBuffer[0] == T(0))//NOTE: Source strings beginning with null are not allowed, no copy will be made.
-            {                
-                SetCapacity(stCount);
-                return;
-            }
-            auto buffer = GetBufferSetLength(stCount);
-            if(buffer.IsNotNull())
-            {
-                memcpy(static_cast<T*>(buffer), pBuffer, stCount * sizeof(T));
-                buffer.Validate(stCount);
+                //NOTE: Source strings beginning with null are not allowed, no copy will be made.
+                //However capacity will be reserved.
+                if(pBuffer == nullptr || pBuffer[0] == T(0))
+                {                
+                    SetCapacity(unitCount);                    
+                }
+                else
+                {
+                    auto view = GetViewWithCapacity(unitCount);
+                    memcpy(static_cast<T*>(view), pBuffer, unitCount * sizeof(T));
+                    view.Validate(unitCount);
+                }
             }
         }
 
-        MutableBuffer(MutableBuffer&& src) noexcept
+        MutableBuffer(size_t initialUnitCapacity) : m_p{nullptr}
         {
-            m_p = src.m_p;
-            src.m_p = nullptr;
-        }
-
-        MutableBuffer(size_t initialUnitCapacity)
-        {
-            m_p = nullptr;
             SetCapacity(initialUnitCapacity);
         }
 
@@ -548,30 +548,26 @@ namespace qor{
             Release();
         }
 
-        //Overrride this to write additional Header data 
+        //Overrride this to write additional Header data
         virtual void HeaderOnCopy(byte* oldHeader, byte* newHeader){ }
 
         //Overrride this to write additional Footer data
         virtual void FooterOnCopy(byte* oldFooter, byte* newFooter){ }
 
-        virtual void HeaderOnWrite(byte* header){ }
-
-        virtual void FooterOnWrite(byte* footer){ }
-
-        inline size_t GetCharCount() const
+        inline size_t GetUnitCount() const
         {
             return Length();
         }
 
         inline size_t AllocationByteCount() const
         {
-            return AllocationByteCount(m_p);
+            return m_p ? InternalBaseHeader()->Alloc : 0;
         }
 
         //In use unit count.
         inline size_t Length() const
         {
-            return m_p == nullptr ? 0 : InternalBaseHeader()->Len;
+            return m_p ? InternalBaseHeader()->Len : 0;
         }
 
         inline size_t size() const //for iterators
@@ -579,21 +575,22 @@ namespace qor{
             return Length();
         }
 
-        size_t ByteLength() const
+        inline size_t ByteLength() const
         {
             return Length() * sizeof(T);
         }
 
-        bool IsEmpty(void) const
+        inline bool IsEmpty(void) const
         {
             return Length() == 0;
         }
 
-        //Returns unit capacity
+        //Returns unit capacity. How many units this buffer can store
         inline size_t Capacity() const
         {
-            return m_p == nullptr ? 0 : 
-                (AllocationByteCount() - (ClassHeaderByteSize() + ClassFooterByteSize())) / sizeof(T);
+            return m_p ?
+                (AllocationByteCount() - (ClassHeaderByteSize() + ClassFooterByteSize())) / sizeof(T)
+                : 0;
         }
 
         void Reset(void)
@@ -608,34 +605,8 @@ namespace qor{
             }
         }
 
-        size_t GrowToAtLeast(size_t newUnitCount)
-        {
-            size_t newCapacity = 0;
-            if (m_p == nullptr)
-            {
-                newCapacity = newUnitCount | 0x1F;//Round the allocation size up to prevent frequent reallocations
-                SetCapacity(newCapacity);
-            }
-            else
-            {
-                size_t oldSize = Capacity();								//Available units without reallocation
-                size_t newSize = static_cast<size_t>((InternalLen() + newUnitCount) * 1.5);		//New units required after append plus padding for efficient growth
-
-                if (InternalRefCount() > 1 || (newSize > oldSize))	//CoW 
-                {
-                    newCapacity = (newSize > oldSize) ? newSize : oldSize;
-                    SetCapacity(newCapacity);
-                }
-                else
-                {
-                    newCapacity = Capacity();
-                }
-            }
-            return newCapacity;
-        }
-
         //Reserve memory for the content in advance if you plan to make many small appends
-        void Reserve(size_t unitCount)
+        inline void Reserve(size_t unitCount)
         {
             if (unitCount > Capacity())
             {
@@ -644,52 +615,56 @@ namespace qor{
         }
 
         //Returns view to space for unitCount elements. Existing contents up to that count are preserved.
-        View GetBufferSetLength(size_t unitCount)
+        inline View GetViewWithCapacity(size_t unitCount)
         {
             SetCapacity(unitCount);
             return View(*this);
         }
         
-        View view()
+        inline View view()
         {                        
             return View(*this);
         }
         
         //Returns a raw Read Only pointer to the content or nullptr if the buffer is empty        
-        const T* GetData() const
+        inline const T* GetData() const
         {
-            return m_p == nullptr ? nullptr : m_p;
+            return m_p;
+        }
+
+        inline const T* c_str() const
+        {
+            return m_p;
         }
 
         T At(size_t index) const
         {
             if (m_p == nullptr || index >= Length())
             {
-                throw std::out_of_range("Index out of range accessing Buffer<{T}> At {index}");
+                throw std::out_of_range("Index out of range accessing MutableBuffer At {index} out of {length}");
             }				
             return m_p[index];
         }
 
         bool Set(size_t index, const T& item)
         {
-            bool bResult = false;
             if (index < Length())
             {
                 if (InternalRefCount() > 1)
                 {	//Copy On Write
-                    SetCapacity(InternalLen() | 0x10);
+                    Reallocate(Capacity());
                 }
                 m_p[index] = item;
-                bResult = true;
+                return true;
             }
-            return bResult;
+            return false;
         }
 
         T& operator[](size_t index) const
         {
             if (index >= Length() || m_p == nullptr)
             {
-                throw std::out_of_range("Index out of range accessing Buffer<{T}> At {index}");
+                throw std::out_of_range("Index out of range accessing MutableBuffer At {index} out of {length}.");
             }
             return m_p[index];
         }
@@ -697,11 +672,7 @@ namespace qor{
         std::basic_string<T> ToStdString() const
         {
             std::basic_string<T> s;
-            s.resize(Length());
-            for (size_t i = 0; i < Length(); i++)
-            {
-                s[i] = m_p[i];
-            }            
+            s.assign(m_p, Length());
             return s;
         }
 
@@ -713,32 +684,37 @@ namespace qor{
         //Write with CoW semantics as a resizable buffer.
         void Write(const T* sourceData, size_t sourceUnitCount)
         {
-            unsigned short usRefCount = InternalRefCount();
-            if (sourceUnitCount > (Capacity()-InternalLen()) || usRefCount > 1)
+            if(sourceUnitCount == 0)
+            {
+                return;
+            }
+            if( m_p == nullptr )
+            {
+                SetCapacity(sourceUnitCount);
+            }
+            else if( sourceUnitCount > (Capacity()-InternalLen()) || InternalRefCount() > 1)
             {
                 SetCapacity(InternalLen() + sourceUnitCount);
             }
 
-            size_t counter = 0;
-            while (counter < sourceUnitCount && Length() < Capacity())
+            for(size_t counter = 0; counter < sourceUnitCount; counter++)
             {
-                m_p[InternalLen()++] = sourceData[counter++];
+                m_p[InternalLen()++] = sourceData[counter];
             }
         }
 
-        MutableBuffer<T, LayoutT>& Append(const T* itemArray, size_t srcUnitCount)
+        inline MutableBuffer<T, LayoutT>& Append(const T* itemArray, size_t srcUnitCount)
         {
-            GrowToAtLeast(Length() + srcUnitCount);
             Write(itemArray, srcUnitCount);
             return *this;
         }
 
-        MutableBuffer<T, LayoutT>& Append(const T item)
+        inline MutableBuffer<T, LayoutT>& Append(const T item)
         {
             return Append(const_cast<const T*>(&item), 1);
         }
         
-        MutableBuffer<T, LayoutT>& Append(const MutableBuffer<T, LayoutT>& src)
+        inline MutableBuffer<T, LayoutT>& Append(const MutableBuffer<T, LayoutT>& src)
         {
             return Append(src.GetData(), src.Length());
         }
@@ -754,27 +730,25 @@ namespace qor{
             {
                 size_t srcLen = src.Length();
                 size_t oldSize = InternalLen();
-                size_t newSize = static_cast<size_t>((oldSize + srcLen) *1.5);		//New units required after insertion
+                size_t newSize = static_cast<size_t>((oldSize + srcLen));		//New units required after insertion
 
                 if (InternalRefCount() > 1 || (newSize > Capacity()))	//CoW 
                 {
-                    SetCapacity(newSize | 0x10);
+                    Reallocate(newSize);
                 }
 
                 size_t counter = oldSize;
-                while (counter > index)
+                while (counter >= index)
                 {
                     m_p[counter + srcLen] = m_p[counter];			//Move the tail to its new position
-                    counter--;
+                    --counter;
                 }
-
-                m_p[counter + srcLen] = m_p[counter];
 
                 counter = 0;
                 while (counter < srcLen)
                 {
                     m_p[index + counter] = src.At(counter);		//Insert elements from the source buffer
-                    counter++;
+                    ++counter;
                 }
                 InternalLen() += srcLen;
             }
@@ -791,7 +765,7 @@ namespace qor{
             {
                 if (InternalRefCount() > 1)
                 {	
-                    SetCapacity(InternalLen() | 0x1F);
+                    Reallocate(Capacity());
                 }
 
                 if ((index + itemCount) < Length())
@@ -808,48 +782,6 @@ namespace qor{
                 }
             }
             return *this;
-        }
-
-        //Process the buffer through a functor one unit at a time			
-        template<typename func_t>
-        void Visit(func_t&& func, size_t startIndex = 0)
-        {
-            while (m_p && startIndex < InternalLen() && func(*this, m_p, startIndex++) == VisitorResult::More)
-            {
-            }
-        }
-
-        template<typename func_t>
-        void ConstVisit(func_t&& func, size_t startIndex = 0) const
-        {
-            while (m_p && startIndex < InternalLen() && func(*this, m_p, startIndex++) == VisitorResult::More)
-            {
-            }
-        }
-
-        //Process the buffer backwards through a functor one unit at a time
-        template<typename func_t>
-        void ReverseVisit(func_t&& func, size_t startIndex = (size_t)(-1))
-        {
-            if (startIndex == (size_t)(-1))
-            {
-                startIndex = Length() - 1;
-            }
-            while (m_p && startIndex != (size_t)(-1) && func(*this, m_p, startIndex--) == VisitorResult::More)
-            {
-            }
-        }
-
-        template<typename func_t>
-        void ConstReverseVisit(func_t&& func, size_t startIndex = (size_t)(-1)) const
-        {
-            if (startIndex == (size_t)(-1))
-            {
-                startIndex = Length() - 1;
-            }
-            while (m_p && startIndex != (size_t)(-1) && func(*this, m_p, startIndex--) == VisitorResult::More)
-            {
-            }
         }
 
         iterator begin() const
@@ -904,16 +836,70 @@ namespace qor{
 
         T* m_p;
 
+        inline byte* GetHeader() const
+        {
+            return m_p ? ((reinterpret_cast<byte*>(const_cast<T*>(m_p))) - ClassHeaderByteSize()) : nullptr;
+        }
+
+        inline byte* GetFooter() const
+        {
+            return m_p ? 
+                (((reinterpret_cast<byte*>(const_cast<T*>(m_p))) - ClassHeaderByteSize()) + AllocationByteCount() - ClassFooterByteSize())
+                : nullptr;
+        }
+
+    private:
+
+        static inline constexpr unsigned short ClassHeaderByteSize(void)
+        {
+            return LayoutT::HeaderSize;
+        }
+              
+        static inline constexpr unsigned short ClassFooterByteSize(void)
+        {
+            return LayoutT::FooterSize;
+        }
+
+        inline sBufferHeader* InternalBaseHeader() const
+        {
+            return m_p ? reinterpret_cast<sBufferHeader*>((reinterpret_cast<byte*>(const_cast<T*>(m_p))) - sizeof(sBufferHeader)): nullptr;
+        }
+
+        inline sBufferFooter* InternalBaseFooter(void) const
+        {
+            return m_p ? 
+                (reinterpret_cast<sBufferFooter*>(((reinterpret_cast<byte*>(m_p)) - ClassHeaderByteSize()) + AllocationByteCount())) - 1 
+                : nullptr;
+        }
+
+        //Get the unit count in use from the header
+        inline size_t& InternalLen() const
+        {
+            return InternalBaseHeader()->Len;
+        }
+
+        //Get the reference count from the footer
+        inline unsigned short InternalRefCount() const
+        {
+            return m_p ? InternalBaseFooter()->RefCount : 0;
+        }
+
+        //Increment the reference count to share content between owning instances
+        inline unsigned short AddRef() const
+        {
+            return m_p ? static_cast<unsigned short>(InternalBaseFooter()->RefCount++), static_cast<unsigned short>(InternalBaseHeader()->RefCount++) : 0;
+        }
+
         //If you use the internal memory as a raw buffer the in use length will not be tracked.
-        //Call ValidateBuffer( unitCount ) to set the in use length. 
-        //Use ValidateBuffer() to set the in use length to Capacity.
-        bool ValidateBuffer(size_t unitCount = (size_t)(-1))
+        //Call Validate( unitCount ) to set the in use length. 
+        //Use Validate() to set the in use length to Capacity.
+        //Returns true if the Length is successfully set.
+        bool Validate(size_t unitCount = (size_t)(-1))
         {
             bool bResult = false;
 
             if(m_p)
-            {
-                BufferOverrunCheck();
+            {                
                 if (unitCount != (size_t)(-1))
                 {
                     if (unitCount <= Capacity())
@@ -926,142 +912,35 @@ namespace qor{
                         InternalLen() = Capacity();
                     }
                 }
-                ReleaseBuffer(m_p);
+                Release();
             }
             return bResult;
         }
 
         //Release a previously retrieved buffer
-        void ReleaseBuffer(const T* pT)
+        unsigned short Release()
         {
-            if (pT != nullptr)
-            {
-                unsigned short usRefCount = --(InternalBaseFooter(pT)->RefCount);
-                InternalBaseHeader(pT)->RefCount = static_cast<size_t>(usRefCount);
-                if (usRefCount == 0)
-                {
-                    Free(pT);
-                }
-            }
-        }
-
-        inline size_t AllocationByteCount(const T* pT) const
-        {
-            return pT == nullptr ? 0 : InternalBaseHeader(pT)->Alloc;
-        }
-
-        //Return the size of header        
-        inline unsigned short ClassHeaderByteSize(void) const
-        {
-            return LayoutT::HeaderSize;
-        }
-
-        //Return the size of footer        
-        inline unsigned short ClassFooterByteSize(void) const
-        {
-            return LayoutT::FooterSize;
-        }
-
-        inline sBufferHeader* InternalBaseHeader() const
-        {
-            return m_p == nullptr ? nullptr : InternalBaseHeader(m_p);
-        }
-
-        inline sBufferHeader* InternalBaseHeader(const T* pT) const
-        {
-            byte* p = reinterpret_cast<byte*>(const_cast<T*>(pT));				
-            return p == nullptr ? nullptr : reinterpret_cast<sBufferHeader*>(p - sizeof(sBufferHeader));
-        }
-
-        byte* GetHeader(const T* pT) const
-        {
-            byte* pHeader = nullptr;
-            if (pT)
-            {
-                pHeader = (reinterpret_cast<byte*>(const_cast<T*>(pT))) - ClassHeaderByteSize();
-            }
-            return pHeader;
-        }
-
-        //Get a pointer to the base Footer
-        sBufferFooter* InternalBaseFooter(void) const
-        {
-            sBufferFooter* pFooter = nullptr;
             if (m_p)
             {
-                size_t size = AllocationByteCount();
-                byte* pAlloc = (reinterpret_cast<byte*>(m_p)) - ClassHeaderByteSize();
-                pFooter = (reinterpret_cast<sBufferFooter*>(pAlloc + size)) - 1;
+                BufferOverrunCheck();
+                unsigned short usOldRefCount = InternalBaseFooter()->RefCount;
+                if (usOldRefCount == 0)
+                {
+                    return 0;
+                }
+
+                unsigned short usRefCount = --(InternalBaseFooter()->RefCount);
+                InternalBaseHeader()->RefCount = static_cast<size_t>(usRefCount);
+                if (usRefCount == 0)
+                {
+                    Free();
+                }
+                return usRefCount;
             }
-            return pFooter;
-        }
-
-        //Get a pointer to the base Footer
-        sBufferFooter* InternalBaseFooter(const T* pT) const
-        {
-            sBufferFooter* pFooter = nullptr;
-            if (pT)
-            {
-                size_t size = AllocationByteCount(pT);
-                byte* pAlloc = (reinterpret_cast<byte*>(const_cast<T*>(pT))) - ClassHeaderByteSize();
-                pFooter = (reinterpret_cast<sBufferFooter*>(pAlloc + size)) - 1;
-            }
-            return pFooter;
-        }
-
-        //Get a pointer to the Footer
-        byte* GetFooter(const T* pT) const
-        {
-            byte* pFooter = nullptr;
-            if (pT)
-            {
-                size_t size = AllocationByteCount(pT);
-                byte* pAlloc = (reinterpret_cast<byte*>(const_cast<T*>(pT))) - ClassHeaderByteSize();
-                pFooter = (pAlloc + size - ClassFooterByteSize());
-            }
-            return pFooter;
-        }
-
-        //Get the unit count in use from the header
-        size_t& InternalLen() const
-        {
-            return InternalBaseHeader()->Len;
-        }
-
-        //Get the reference count from the footer
-        unsigned short InternalRefCount() const
-        {
-            return m_p == nullptr ? 0 : InternalBaseFooter()->RefCount;
-        }
-
-        //Increment the reference count to share content between owning instances
-        unsigned short AddRef() const
-        {
-            return m_p == nullptr ? 0 : static_cast<unsigned short>(InternalBaseFooter()->RefCount++), static_cast<unsigned short>(InternalBaseHeader()->RefCount++);
-        }
-
-        //Decrement the reference count and Free when it hits zero
-        virtual unsigned short Release()
-        {
-            if (m_p == nullptr)
+            else
             {
                 return 0;
             }
-
-            unsigned short usOldRefCount = InternalBaseFooter()->RefCount;
-            if (usOldRefCount == 0)
-            {
-                return 0;
-            }
-
-            unsigned short usRefCount = --(InternalBaseFooter()->RefCount);
-            InternalBaseHeader()->RefCount = static_cast<size_t>(usRefCount);
-            if (usRefCount == 0)
-            {
-                Free();
-                m_p = nullptr;
-            }
-            return usRefCount;
         }
 
         //Sets or resets the allocation based on the required unit count.
@@ -1070,34 +949,31 @@ namespace qor{
             Reallocate(unitCount);
         }
 
-    private:
-
         //Free the entire buffer memory, header, content and footer
         void Free()
         {
-            Free(m_p);
+            if (m_p)
+            {
+                if (InternalBaseFooter()->RefCount != 0)
+                {
+                    throw bufferfreedwhilesharedexception("Buffer data freed while shared");
+                }
+                byte* pData = (reinterpret_cast<byte*>(const_cast<T*>(m_p))) - ClassHeaderByteSize();
+                delete[] pData;
+            }
             m_p = nullptr;
         }
 
         //Free the entire buffer memory, header, content and footer
-        void Free(const T* pT)
+        static void Free(const T* pT)
         {
             if (pT != nullptr)
             {
-#ifndef NDEBUG
                 if (InternalBaseFooter(pT)->RefCount != 0)
                 {
                     throw bufferfreedwhilesharedexception("Buffer data freed while shared");
                 }
-#endif // !NDEBUG
-
-                size_t bytesToFree = AllocationByteCount(pT);
-                byte* pData = reinterpret_cast<byte*>(const_cast<T*>(pT));
-                pData -= ClassHeaderByteSize();
-#ifndef NDEBUG
-                memset(pData, 0xFB, bytesToFree);//mark memory as deleted
-#endif
-                /*TODO: bytesToFree < 100 ? memory::SmallObjectSource::Free(pData, static_cast<uint32_t>(bytesToFree)) : memory::FastSource::Free(pData, static_cast<uint32_t>(bytesToFree));*/
+                byte* pData = (reinterpret_cast<byte*>(const_cast<T*>(pT))) - ClassHeaderByteSize();
                 delete[] pData;
             }
         }
@@ -1105,7 +981,7 @@ namespace qor{
         //Before we hand out a modifiable buffer 
         //make sure we aren't sharing a buffer and 
         //that any string we do have is null terminated
-        void PrepareToModify()
+        inline void PrepareToModify()
         {
             if (InternalRefCount() > 1)
             {
@@ -1122,7 +998,6 @@ namespace qor{
             pHeader->Alloc = size;
             pHeader->RefCount = refCount;
             pHeader->Len = charCount;
-            HeaderOnWrite(pNewHeader);
         }
 
         //Write the footer for a newly (re)allocated buffer
@@ -1131,10 +1006,9 @@ namespace qor{
             memset(pNewFooter, 0, ClassFooterByteSize());
             sBufferFooter* pFooter = reinterpret_cast<sBufferFooter*>(pNewFooter + ClassFooterByteSize() - sizeof(sBufferFooter));
             pFooter->RefCount = refCount;
-            FooterOnWrite(pNewFooter);
         }
 
-        void EnsureNullTermined()
+        inline void EnsureNullTermined()
         {
             if(m_p && Length() && m_p[Length()-1] != T(0))
             {
@@ -1153,42 +1027,35 @@ namespace qor{
 
         void Reallocate(size_t unitCount)
         {
-            //Allocate new memory				
+            //Allocation size is size of content + header + footer
             size_t size = (ClassHeaderByteSize() + ClassFooterByteSize() + (sizeof(T) * unitCount));
-            size |= 0x1F;//Round the allocation size up to the nearest 16 bytes for better memory management efficiency
-            /*TODO: byte* pAlloc = reinterpret_cast<byte*>( size < 100 ? 
-                memory::SmallObjectSource::Source(static_cast<uint32_t>(size)) : 
-                memory::FastSource::Source(static_cast<uint32_t>(size)) );*/
+            size |= scRounding;
             byte* pAlloc = new byte[size];
 #ifndef NDEBUG
             memset(pAlloc, 0, size);//clear the buffer to zero for easier debugging
 #endif //!NDEBUG
-            byte* pNewData = pAlloc + ClassHeaderByteSize();
 
-            //Write the new header
-            byte* pOldHeader = m_p == nullptr ? nullptr : GetHeader(m_p);
-            byte* pNewHeader = pAlloc;
-
-            WriteHeader(pNewHeader, size, 1, pOldHeader ? std::min(Length(), unitCount) : 0);
+            //Write the new header, copying any old header
+            byte* pOldHeader = (m_p == nullptr) ? nullptr : GetHeader();
+            WriteHeader(pAlloc, size, 1, pOldHeader ? std::min(Length(), unitCount) : 0);
             
             //Write the new footer
-            byte* pOldFooter = m_p == nullptr ? nullptr : GetFooter(m_p);
-            byte* pNewFooter = pAlloc + size - ClassFooterByteSize();
-            
+            byte* pOldFooter = m_p == nullptr ? nullptr : GetFooter();
+            byte* pNewFooter = pAlloc + size - ClassFooterByteSize();            
             WriteFooter(pNewFooter, 1);//Initial reference count of 1
         
-            HeaderOnCopy(pOldHeader, pNewHeader);//Defer any extra header fields in derived classes to a handler function they will need to override
-            FooterOnCopy(pOldFooter, pNewFooter);//Defer any extra footer fields in derived classes to a handler function they will need to provide
+            //Derived classes that may extend the header and footer get an oportunity to copy extra data
+            HeaderOnCopy(pOldHeader, pAlloc);
+            FooterOnCopy(pOldFooter, pNewFooter);
 
-            //Get the bytes of the old buffer
-            byte* pOldData = reinterpret_cast<byte*>(m_p);
-
-            //Copy data bytes from the old buffer
+            //Copy data, if any, from the old buffer to the new
+            byte* pOldData = reinterpret_cast<byte*>(m_p);//Get the bytes of the old buffer
+            byte* pNewData = pAlloc + ClassHeaderByteSize();//The new content will go after the header
+            
             if (pOldData)
             {
                 //Only copy up to the length of the shorter of the two buffers
-                size_t shorter = unitCount > Capacity() ? Capacity() : unitCount;
-                memcpy(pNewData, pOldData, shorter * sizeof(T));					
+                memcpy(pNewData, pOldData, std::min(Length(), unitCount) * sizeof(T));					
                 Release();//Release the old data
             }
 

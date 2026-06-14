@@ -211,36 +211,30 @@ namespace qor{
         inline void WriteRemaining(const_iterator& in, BufferT& output) const
         {
             AbstractCharacterCodec< CharT >* Codec = GetCodec();
-            size_t capacity = output.Capacity();
             while(in != cend())
             {
                 size_t charCount = cend() - in;
                 const CharT* input = in++;                
                 CodePoint cp = Codec->Decode(input, charCount);
-                EncodeIntoOutput(output, capacity, Codec, cp);
+                EncodeIntoOutput(output, Codec, cp);
             }
         }
 
         inline void WriteUpToCount(const_iterator& it, size_t& charCount, BufferT& output) const
         {
             AbstractCharacterCodec< CharT >* Codec = GetCodec();
-            size_t capacity = output.Capacity();
             while(it != cend() && charCount > 0)
             {
                 const CharT* input = it++;
                 CodePoint cp = Codec->Decode(input, charCount);                
-                EncodeIntoOutput(output, capacity, Codec, cp);
+                EncodeIntoOutput(output, Codec, cp);
             }
         }
 
-        inline void EncodeIntoOutput(BufferT& output, size_t& capacity, AbstractCharacterCodec< CharT >* Codec, const CodePoint& cp) const
+        inline void EncodeIntoOutput(BufferT& output, AbstractCharacterCodec< CharT >* Codec, const CodePoint& cp) const
         {
-            if(capacity < kMaxCodeUnitsPerCodePoint)
-            {
-                output.GrowToAtLeast(output.Capacity() + kMaxCodeUnitsPerCodePoint);
-                capacity = output.Capacity() - output.Length();
-            }
             CharT interBuffer[kMaxCodeUnitsPerCodePoint]{0};
+            size_t capacity = kMaxCodeUnitsPerCodePoint;
             CharT* space = interBuffer;
             Codec->Encode(cp, space, capacity);
             output.Write(interBuffer, space - &interBuffer[0]);
