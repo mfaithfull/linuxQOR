@@ -29,12 +29,12 @@
 
 namespace qor{ namespace text {
 
-    void qor_pp_export BufferFreeWhileSharedError(const void* bufferAddress, unsigned short refCount)
+    void qor_pp_module_interface(QOR_TEXT) BufferFreeWhileSharedError(const void* bufferAddress, unsigned short refCount)
     {
         serious("Attempted to free buffer at {0:p} while reference count == {1}.", bufferAddress, refCount);
     }
 
-    void qor_pp_export BufferOverrunError(const void* bufferAddress, unsigned short headerRefCount, unsigned short footerRefCount)
+    void qor_pp_module_interface(QOR_TEXT) BufferOverrunError(const void* bufferAddress, unsigned short headerRefCount, unsigned short footerRefCount)
     {
         serious("Buffer overrun detected on buffer at {0:p}. footer {1} does not match header {2}", bufferAddress, footerRefCount, headerRefCount);
     }

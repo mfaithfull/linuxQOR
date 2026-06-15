@@ -44,6 +44,8 @@ extern "C"
 		static qor::ISOLatin1CodePage sISOLatin1CodePage;
 		static qor::UTF8CodePage sUTF8CodePage;
 		static qor::ISOLatin2CodePage sISOLatin2CodePage;
+		static qor::ISO8859_3CodePage sISO8859_3CodePage;
+		static qor::ISO8859_4CodePage sISO8859_4CodePage;
 
 		static qor::CodePageRegEntry< char, qor::Mib::C > regCCodePage(&sCCodePage);
 		static qor::CodePageRegEntry< char, qor::Mib::ASCII > regASCIICodePage(&sASCIICodePage);
@@ -51,6 +53,8 @@ extern "C"
 		static qor::CodePageRegEntry< char8_t, qor::Mib::ISOLatin1 > regISOLatin1CodePage(&sISOLatin1CodePage);
 		static qor::CodePageRegEntry< char8_t, qor::Mib::UTF8 > regUTF8CodePage(&sUTF8CodePage);
 		static qor::CodePageRegEntry< char8_t, qor::Mib::ISOLatin2> regISOLatin2CodePage(&sISOLatin2CodePage);
+		static qor::CodePageRegEntry< char8_t, qor::Mib::ISOLatin3> regISO8859_3CodePage(&sISO8859_3CodePage);
+		static qor::CodePageRegEntry< char8_t, qor::Mib::ISOLatin4> regISO8859_4CodePage(&sISO8859_4CodePage);
 		
 		return QORModule;
 	}

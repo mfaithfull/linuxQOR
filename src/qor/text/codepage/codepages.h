@@ -31,5 +31,7 @@
 #include "codepages/isolatin1.h"
 #include "codepages/utf8.h"
 #include "codepages/isolatin2.h"
+#include "codepages/iso8859-3.h"
+#include "codepages/iso8859-4.h"
 
 #endif//QOR_PP_H_TEXT_CODEPAGE_CODEPAGES

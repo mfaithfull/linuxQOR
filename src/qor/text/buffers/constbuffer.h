@@ -31,7 +31,7 @@
 namespace qor{
 
     namespace text{
-        extern void OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress);
+        qor_pp_module_interface(QOR_TEXT) void OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress);
     }
 
     template< typename T >

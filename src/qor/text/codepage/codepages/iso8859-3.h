@@ -22,17 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include <stdexcept>
-#include "constbuffer.h"
-#include "src/qor/error/error.h"
+#ifndef QOR_PP_H_TEXT_CODEPAGE_I8859_3
+#define QOR_PP_H_TEXT_CODEPAGE_I8859_3
 
-namespace qor{ namespace text {
+#include "../codepage.h"
 
-    void qor_pp_module_interface(QOR_TEXT) OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress)
-    {
-        continuable("Buffer index out of range accesssing index {0} of {1} elements of size {2} bytes in buffer at {3:p}", index, length, elementSize, bufferAddress);
-    }
+namespace qor{
 
-}}//qor::text
+	class qor_pp_module_interface(QOR_TEXT) ISO8859_3CodePage : public CodePage< char8_t, Mib::ISOLatin3 >
+	{
+	public:		
 
+		ISO8859_3CodePage();
+		virtual ~ISO8859_3CodePage() = default;
+
+		virtual bool Encode(const CodePoint & codePoint, char8_t*& space, size_t& available) const override;
+		virtual CodePoint Decode(const char8_t*& chars, size_t& available) const override;
+    };
+
+	template<>
+	struct charset_of<Mib::ISOLatin3>
+	{
+		typedef ISO8859_3CodePage type;
+	};
+
+}//qor
+
+#endif//QOR_PP_H_TEXT_CODEPAGE_I8859_3

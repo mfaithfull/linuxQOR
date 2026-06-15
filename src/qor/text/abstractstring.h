@@ -299,6 +299,18 @@ namespace qor{
             }
         }
 
+        inline void WriteUpTo(const_iterator& in, BufferT& output, const_reverse_iterator end) const
+        {
+            AbstractCharacterCodec< CharT >* Codec = GetCodec();            
+            while(in.getPtr() <= end.getPtr())
+            {
+                size_t charCount = cend() - in;
+                const CharT* input = in++;                
+                CodePoint cp = Codec->Decode(input, charCount);
+                EncodeIntoOutput(output, Codec, cp);
+            }
+        }
+
         inline void WriteRemaining(const_iterator& in, BufferT& output) const
         {
             AbstractCharacterCodec< CharT >* Codec = GetCodec();
@@ -308,6 +320,37 @@ namespace qor{
                 const CharT* input = in++;                
                 CodePoint cp = Codec->Decode(input, charCount);
                 EncodeIntoOutput(output, Codec, cp);
+            }
+        }
+
+        inline void FillUpToCount(CharT c, size_t count)
+        {   
+            BufferT* buffer = GetModifiableBufferObject();
+            if(buffer)
+            {
+                buffer->Reset();
+                while(count-- > 0)
+                {                
+                    buffer->Write(&c, 1);        
+                }
+            }
+        }
+
+        inline void FillUpToCount(CodePoint cp, size_t count)
+        {   
+            BufferT* buffer = GetModifiableBufferObject();
+            if(buffer)
+            {
+                AbstractCharacterCodec< CharT >* Codec = GetCodec();
+                buffer.Reset();
+                CharT interBuffer[kMaxCodeUnitsPerCodePoint]{0};
+                while(count-- > 0)
+                {                          
+                    size_t capacity = kMaxCodeUnitsPerCodePoint;
+                    CharT* space = interBuffer;
+                    Codec->Encode(cp, space, capacity);
+                    buffer->Write(interBuffer, space - &interBuffer[0]);
+                }
             }
         }
 

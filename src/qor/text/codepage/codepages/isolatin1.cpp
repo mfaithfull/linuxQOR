@@ -29,7 +29,7 @@
 
 namespace
 {
-	const std::string aliases[] = {"ISO-8859-1"};
+	const std::string aliases[] = {"iso-ir-100","ISO_8859-1","ISO-8859-1","latin1","l1","IBM819","CP819","csISOLatin1"};
 
     const std::map<uint32_t, char8_t> codePointToChar = {
         {0x00000000, 0x00},
@@ -553,7 +553,7 @@ namespace
 
 namespace qor
 {
-	ISOLatin1CodePage::ISOLatin1CodePage() : CodePage("ISOLatin1", "ISOLatin1", aliases, 1)
+	ISOLatin1CodePage::ISOLatin1CodePage() : CodePage("ISO_8859-1:1987", "ISO-8859-1", aliases, 8)
 	{
 	}
 	

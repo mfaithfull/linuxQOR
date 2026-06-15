@@ -38,9 +38,9 @@
 namespace qor{
 
     namespace text{
-        extern void OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress);
-        extern void BufferFreeWhileSharedError(const void* bufferAddress, unsigned short refCount);
-        extern void BufferOverrunError(const void* bufferAddress, unsigned short headerRefCount, unsigned short footerRefCount);
+        qor_pp_module_interface(QOR_TEXT) void OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress);
+        qor_pp_module_interface(QOR_TEXT) void BufferFreeWhileSharedError(const void* bufferAddress, unsigned short refCount);
+        qor_pp_module_interface(QOR_TEXT) void BufferOverrunError(const void* bufferAddress, unsigned short headerRefCount, unsigned short footerRefCount);
     }
 
     struct sBufferHeader
@@ -1011,7 +1011,7 @@ namespace qor{
         {
             if(InternalBaseHeader()->RefCount != InternalBaseFooter()->RefCount)
             {
-                text::BufferOverrunError(m_p, InternalBaseHeader()->RefCount, InternalBaseFooter()->RefCount);                
+                text::BufferOverrunError(m_p, static_cast<unsigned short>(InternalBaseHeader()->RefCount), InternalBaseFooter()->RefCount);                
             }
         }
 

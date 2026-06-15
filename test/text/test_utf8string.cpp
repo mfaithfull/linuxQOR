@@ -73,7 +73,7 @@ qor_pp_test_case(canGetRightCharsInUTF8String)
     auto result = korean.Right(3);
     qor_pp_assert_that(result.Length()).isEqualTo(3);
     UTF8String oneglyph(u8"결");
-    qor_pp_assert_that(result[2]).isEqualTo(oneglyph[0]);
+    qor_pp_assert_that(result[2]).isEqualTo(oneglyph[2]);
 }
 
 qor_pp_test_case(canUseUTF8StringWithRangesViewsAndAlgorithms)

@@ -120,9 +120,9 @@ namespace qor{
             m_cachedLength = 0;
         }
 
-        virtual viewT GetBuffer() override
+        virtual viewT view() override
         {
-            return m_buffer.GetBuffer();
+            return m_buffer.view();
         }
 
         const char32_t operator[](size_t index) const
@@ -234,10 +234,10 @@ namespace qor{
                 throw std::logic_error("No CodePage registered for encoding");
             }
             {
-                auto buffer = output.GetBuffer();
-                char32_t* outptr = buffer.operator char32_t *();
+                auto view = output.view();
+                char32_t* outptr = view.operator char32_t *();
                 size_t outCounter = 0;
-                const char16_t* inptr = m_buffer.template GetData<char16_t>();
+                const char16_t* inptr = m_buffer.GetData();
                 size_t inAvailable = Length();
                 while(inAvailable > 0)
                 {   
@@ -245,7 +245,7 @@ namespace qor{
                     *outptr++ = cp.UChar();
                     outCounter++;
                 }
-                buffer.Validate(outCounter);
+                view.Validate(outCounter);
             }
             return output;   
         }
