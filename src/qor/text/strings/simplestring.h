@@ -104,7 +104,7 @@ namespace qor{
             m_buffer.Reset();
         }
 
-        virtual viewT view() override
+        virtual viewT view() const override
         {
             return m_buffer.view();
         }

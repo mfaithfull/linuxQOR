@@ -118,7 +118,7 @@ namespace qor{
             m_buffer.Reset();
         }
 
-        inline typename BufferT::View view() override
+        inline typename BufferT::View view() const override
         {
             return m_buffer.view();
         }

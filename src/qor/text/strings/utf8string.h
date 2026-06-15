@@ -129,7 +129,7 @@ namespace qor{
             m_cachedLength = 0;
         }
 
-        virtual viewT view() override
+        virtual viewT view() const override
         {
             return m_buffer.view();
         }

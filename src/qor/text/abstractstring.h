@@ -84,7 +84,7 @@ namespace qor{
         virtual size_t Length() const = 0;
         virtual bool IsEmpty() const = 0;
         virtual void Reset() = 0;
-        virtual typename BufferT::View view() = 0;
+        virtual typename BufferT::View view() const = 0;
         virtual CharT At(size_t index) const = 0;
         virtual ImplT Clone() const = 0;
         virtual BufferT CloneBuffer() const = 0;        
@@ -103,6 +103,12 @@ namespace qor{
         operator std::basic_string<typename std::remove_cv<CharT>::type>() const
         {
             return ToStdString();
+        }
+
+        bool operator == (const AbstractString& cmp) const
+        {
+            /*Ignoring normalisation for now, strings of exactly the same type are equal if their buffers are equal*/
+            return cmp.view() == view();
         }
 
         //All string classes inherit and expose

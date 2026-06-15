@@ -57,12 +57,12 @@ namespace qor{
                 return m_buffer.m_p;
             }
 
-            constexpr operator const T*()
+            constexpr operator const T*() const
             {
                 return m_buffer.m_p;
             }
 
-            constexpr bool IsNotNull()
+            constexpr bool IsNotNull() const
             {
                 const T* p = operator const T*();
                 return p == nullptr ? false : true;

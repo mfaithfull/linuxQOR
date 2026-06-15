@@ -98,7 +98,7 @@ namespace qor{
             //Embedded strings are immutable so Reset does nothing
         }
 
-        virtual inline viewT view() override
+        virtual inline viewT view() const override
         {
             return m_buffer.view();
         }

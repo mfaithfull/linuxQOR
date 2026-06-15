@@ -82,26 +82,16 @@ namespace qor{
 
         static const size_t scRounding = 0x10;//ensure buffer sizes are rounded up to nearest 16
 
-        class View
+        //A smart pointer to the buffer that can be handed to APIs like system calls to be written to and then validated
+        //with the length written.
+        class Data
         {
         public:
 
-            using Traits_type            = std::char_traits< T >;
-            static constexpr size_t npos = size_t(-1);
-
-            View() noexcept : m_view() { }
-
-            View(MutableBuffer<T, LayoutT>& buffer) : m_buffer(buffer)
+            Data(MutableBuffer<T, LayoutT>& buffer) : m_buffer(buffer)
             {
                 m_buffer.PrepareToModify();
                 m_buffer.AddRef();
-                m_view = std::basic_string_view< T >(m_buffer.GetData(), m_buffer.Capacity());
-            }
-
-            View(const View& src) : m_buffer(src.m_buffer), m_validatedLength(src.m_validatedLength)
-            {
-                m_buffer.AddRef();
-                m_view = std::basic_string_view< T >(m_buffer.GetData(), m_buffer.Capacity());
             }
 
             T* operator -> () const
@@ -114,13 +104,22 @@ namespace qor{
                 return m_buffer.m_p;
             }
 
+            T& operator[](size_t index) const
+            {
+                if (m_buffer.m_p == nullptr || index >= m_buffer.Capacity())
+                {
+                    text::OutOfRangeError(index, m_buffer.Capacity(), sizeof(T), m_buffer.m_p);
+                }
+                return m_buffer.m_p[index];
+            }
+
             bool IsNotNull()
             {
                 T* p = operator T*();
                 return p == nullptr ? false : true;
             }
 
-            virtual ~View()
+            virtual ~Data()
             {
                 if(m_validatedLength)
                 {
@@ -137,321 +136,34 @@ namespace qor{
                 m_validatedLength = charCount;
             }
 
-            inline constexpr const_iterator begin() const noexcept
-            {
-                return m_view.begin();
-            }
-
-            inline constexpr const_iterator end() const noexcept
-            {
-                return m_view.end();
-            }
-
-            inline constexpr const_iterator cbegin() const noexcept
-            {
-                return m_view.cbegin();
-            }
-
-            inline constexpr const_iterator cend() const noexcept
-            {
-                return m_view.cend();
-            }
-            
-            inline constexpr const_reverse_iterator rbegin() const noexcept
-            {
-                return m_view.rbegin();
-            }
-
-            inline constexpr const_reverse_iterator rend() const noexcept
-            {
-                return m_view.rend();
-            }
-
-            inline constexpr const_reverse_iterator crbegin() const noexcept
-            {
-                return m_view.crbegin();
-            }
-
-            inline constexpr const_reverse_iterator crend() const noexcept
-            {
-                return m_view.crend();
-            }
-
-            // capacity
-            constexpr size_t size() const noexcept
-            {
-                return m_view.size();
-            }
-
-            constexpr size_t length() const noexcept
-            {
-                return m_view.length();
-            }
-
-            constexpr size_t max_size() const noexcept
-            {
-                return m_view.max_size();
-            }
-
-            constexpr bool empty() const noexcept
-            {
-                return m_view.empty();
-            }
-
-            // element access
-            constexpr const_reference operator[](size_t pos) const
-            {
-                return m_view.operator[](pos);
-            }
-
-            constexpr const_reference at(size_t pos) const
-            {
-                return m_view.at(pos);
-            }
-
-            constexpr const_reference front() const
-            {
-                return m_view.front();
-            }
-
-            constexpr const_reference back() const
-            {
-                return m_view.back();
-            }
-
-            constexpr const_pointer data() const noexcept
-            {
-                return m_view.data();
-            }
-
-            // modifiers
-            constexpr void remove_prefix(size_t n)
-            {
-                return m_view.remove_prefix(n);
-            }
-            
-            constexpr void remove_suffix(size_t n)
-            {
-                return m_view.remove_suffix(n);
-            }
-
-            /*
-            constexpr void swap(View& v) noexcept
-            {
-                return m_view.swap(v.m_view);
-            }*/
-
-            // string operations
-            inline constexpr size_type copy(T* s, size_t n, size_t pos = 0) const
-            {
-                return m_view.copy(s, n, pos);
-            }
-
-            inline constexpr std::basic_string_view< T > substr(size_t pos = 0, size_t n = npos) const
-            {
-                return m_view.substr(pos, n);
-            }
-
-            inline constexpr int compare(View v) const noexcept
-            {
-                return m_view.compare( v.m_view );
-            }
-
-            inline constexpr int compare(size_t pos1, size_t n1, std::basic_string_view< T > s) const
-            {
-                return m_view.compare( pos1, n1, s );
-            }
-
-            inline constexpr int compare(size_t pos1, size_t n1, std::basic_string_view< T > s, size_t pos2, size_t n2) const
-            {
-                return m_view.compare(pos1, n1, s, pos2, n2);
-            }
-
-            inline constexpr int compare(const T* s) const
-            {
-                return m_view.compare(s);
-            }
-
-            inline constexpr int compare(size_t pos1, size_t n1, const T* s) const
-            {
-                return m_view.compare(pos1, n1, s);
-            }
-
-            inline constexpr int compare(size_t pos1, size_t n1, const T* s, size_t n2) const
-            {
-                return m_view.compare(pos1, n1, s, n2);
-            }
-
-            inline constexpr bool starts_with(std::basic_string_view< T > x) const noexcept
-            {
-                return m_view.starts_with(x);
-            }
-
-            inline constexpr bool starts_with(T x) const noexcept
-            {
-                return m_view.starts_with(x);
-            }
-
-            inline constexpr bool starts_with(const T* x) const
-            {
-                return m_view.starts_with(x);
-            }
-
-            inline constexpr bool ends_with(std::basic_string_view< T > x) const noexcept
-            {
-                return m_view.ends_with(x);
-            }
-
-            inline constexpr bool ends_with(T x) const noexcept
-            {
-                return m_view.ends_with(x);
-            }
-
-            inline constexpr bool ends_with(const T* x) const
-            {
-                return m_view.ends_with(x);
-            }
-
-            inline constexpr bool contains(std::basic_string_view< T > x) const noexcept
-            {
-                return m_view.contains(x);
-            }
-
-            inline constexpr bool contains(T x) const noexcept
-            {
-                return m_view.contains(x);
-            }
-
-            inline constexpr bool contains(const T* x) const
-            {
-                return m_view.contains(x);
-            }
-
-            // searching
-            inline constexpr size_t find(std::basic_string_view< T > s, size_t pos = 0) const noexcept
-            {
-                return m_view.find(s, pos);
-            }
-
-            inline constexpr size_t find(T c, size_t pos = 0) const noexcept
-            {
-                return m_view.find(c, pos);
-            }
-            
-            inline constexpr size_t find(const T* s, size_t pos, size_t n) const
-            {
-                return m_view.find(s, pos, n);
-            }
-
-            inline constexpr size_t find(const T* s, size_t pos = 0) const
-            {
-                return m_view.find(s, pos);
-            }
-
-            inline constexpr size_t rfind(std::basic_string_view< T > s, size_t pos = npos) const noexcept
-            {
-                return m_view.rfind(s, pos);
-            }
-
-            inline constexpr size_t rfind(T c, size_t pos = npos) const noexcept
-            {
-                return m_view.rfind(c, pos);
-            }
-
-            inline constexpr size_t rfind(const T* s, size_t pos, size_t n) const
-            {
-                return m_view.rfind(s, pos, n);
-            }
-
-            inline constexpr size_t rfind(const T* s, size_t pos = npos) const
-            {
-                return m_view.rfind(s, pos);
-            }
-
-            inline constexpr size_t find_first_of(std::basic_string_view< T > s, size_t pos = 0) const noexcept
-            {
-                return m_view.find_first_of(s, pos);
-            }
-
-            inline constexpr size_t find_first_of(T c, size_t pos = 0) const noexcept
-            {
-                return m_view.find_first_of(c, pos);
-            }
-
-            inline constexpr size_t find_first_of(const T* s, size_t pos, size_t n) const
-            {
-                return m_view.find_first_of(s, pos, n);
-            }
-
-            inline constexpr size_t find_first_of(const T* s, size_t pos = 0) const
-            {
-                return m_view.find_first_of(s, pos);
-            }
-
-            inline constexpr size_t find_last_of(std::basic_string_view< T > s, size_t pos = npos) const noexcept
-            {
-                return m_view.find_last_of(s, pos);
-            }
-
-            inline constexpr size_t find_last_of(T c, size_t pos = npos) const noexcept
-            {
-                return m_view.find_last_of(c, pos);
-            }
-
-            inline constexpr size_t find_last_of(const T* s, size_t pos, size_t n) const
-            {
-                return m_view.find_last_of(s, pos, n);
-            }
-
-            inline constexpr size_t find_last_of(const T* s, size_t pos = npos) const
-            {
-                return m_view.find_last_of(s, pos);
-            }
-
-            inline constexpr size_t find_first_not_of(std::basic_string_view< T > s, size_t pos = 0) const noexcept
-            {
-                return m_view.find_first_not_of(s, pos);
-            }
-
-            inline constexpr size_t find_first_not_of(T c, size_t pos = 0) const noexcept
-            {
-                return m_view.find_first_not_of(c, pos);
-            }
-
-            inline constexpr size_t find_first_not_of(const T* s, size_t pos, size_t n) const
-            {
-                return m_view.find_first_not_of(s, pos, n);
-            }
-
-            inline constexpr size_t find_first_not_of(const T* s, size_t pos = 0) const
-            {
-                return m_view.find_first_not_of(s, pos);
-            }
-
-            inline constexpr size_t find_last_not_of(std::basic_string_view< T > s, size_t pos = npos) const noexcept
-            {
-                return m_view.find_last_not_of(s, pos);
-            }
-
-            inline constexpr size_t find_last_not_of(T c, size_t pos = npos) const noexcept
-            {
-                return m_view.find_first_not_of(c, pos);
-            }
-
-            inline constexpr size_t find_last_not_of(const T* s, size_t pos, size_t n) const
-            {
-                return m_view.find_last_not_of(s, pos, n);
-            }
-
-            inline constexpr size_t find_last_not_of(const T* s, size_t pos = npos) const
-            {
-                return m_view.find_last_not_of(s, pos);
-            }
-            
         private:
             size_t m_validatedLength = 0;
             MutableBuffer<T, LayoutT>& m_buffer;
-            std::basic_string_view< T > m_view;
+        };
+
+        friend class Data;
+
+        //std::basic_string_view adapter
+        class View : public std::basic_string_view< T >
+        {
+        public:
+
+            View() noexcept : std::basic_string_view< T >(){ }
+
+            View(const MutableBuffer<T, LayoutT>& buffer) : std::basic_string_view< T >(buffer.GetData(), buffer.Length()), m_buffer((buffer))
+            {                
+            }
+
+            View(const View& src) : std::basic_string_view< T >(src), m_buffer(src.m_buffer)
+            {
+            }
+
+            virtual ~View()
+            {
+            }
+            
+        private:            
+            const MutableBuffer<T, LayoutT>& m_buffer;            
         };
 
         friend class View;
@@ -477,9 +189,9 @@ namespace qor{
         {
             if(src.Length() > 0)
             {
-                auto view = GetViewWithCapacity(src.Length());
-                memcpy(static_cast<T*>(view), src.GetData(), src.ByteLength());
-                view.Validate(src.Length());
+                auto ptr = data(src.Length());
+                memcpy(static_cast<T*>(ptr), src.GetData(), src.ByteLength());
+                ptr.Validate(src.Length());
             }
         }
 
@@ -487,9 +199,9 @@ namespace qor{
         {
             if(src.Length() > 0)
             {
-                auto view = GetViewWithCapacity(src.Length());
-                memcpy(static_cast<T*>(view), src.GetData(), src.ByteLength());
-                view.Validate(src.Length());
+                auto ptr = data(src.Length());
+                memcpy(static_cast<T*>(ptr), src.GetData(), src.ByteLength());
+                ptr.Validate(src.Length());
             }
         }
 
@@ -498,9 +210,9 @@ namespace qor{
         {
             if(N > 1)
             {
-                auto view = GetViewWithCapacity(N - 1);
-                memcpy(static_cast<T*>(view), str, N - 1 * sizeof(T));
-                view.Validate(N - 1);
+                auto ptr = data(N - 1);
+                memcpy(static_cast<T*>(ptr), str, N - 1 * sizeof(T));
+                ptr.Validate(N - 1);
             }            
         }
 
@@ -516,9 +228,9 @@ namespace qor{
                 }
                 else
                 {
-                    auto view = GetViewWithCapacity(unitCount);
-                    memcpy(static_cast<T*>(view), pBuffer, unitCount * sizeof(T));
-                    view.Validate(unitCount);
+                    auto ptr = data(unitCount);
+                    memcpy(static_cast<T*>(ptr), pBuffer, unitCount * sizeof(T));
+                    ptr.Validate(unitCount);
                 }
             }
         }
@@ -614,13 +326,20 @@ namespace qor{
         }
 
         //Returns view to space for unitCount elements. Existing contents up to that count are preserved.
-        inline View GetViewWithCapacity(size_t unitCount)
+        inline Data data(size_t unitCount = 0)
         {
-            SetCapacity(unitCount);
-            return View(*this);
+            if( unitCount == 0)
+            {
+                unitCount = Capacity();
+            }
+            else
+            {
+                SetCapacity(unitCount);
+            }
+            return Data(*this);
         }
         
-        inline View view()
+        inline View view() const
         {                        
             return View(*this);
         }
@@ -980,7 +699,7 @@ namespace qor{
             EnsureNullTermined();
         }
 
-        //Write the header for an newly (re)allocated buffer
+        //Write the header for a newly (re)allocated buffer
         void WriteHeader(byte* pNewHeader, size_t size, size_t refCount, size_t charCount)
         {
             memset(pNewHeader, 0, ClassHeaderByteSize());

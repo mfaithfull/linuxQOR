@@ -103,7 +103,7 @@ qor_pp_test_case(canUseUTF8StringWithRangesViewsAndAlgorithmsAndMultibyteInCerta
     auto conv = std::views::drop_while(test, pred);
     UTF8String temp(conv.begin(), conv.end());
     UTF8String cmp(u8"어려운 무언가를");
-    qor_pp_assert_that(temp[0] == cmp[0]).isTrue();
+    qor_pp_assert_that(temp == cmp).isTrue();
 }
 
 qor_pp_test_case(canTranscodeAUTF8StringToALocalString)
