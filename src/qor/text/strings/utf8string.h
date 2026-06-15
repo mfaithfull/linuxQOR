@@ -87,11 +87,20 @@ namespace qor{
             m_cachedLength = src.Length();
         }
 
+        //NOTE: These assume the sources are valid pointers into valid UTF-8 encoded text
+        //If not you will get junk and may triggger a buffer overrun error or snakes or
+        //zombies or anything really.
+
         UTF8String(const char8_t* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount )
         {
             UpdateLength();            
         }
 
+        UTF8String(iterator from, iterator to) : m_buffer(from, to - from)
+        {
+            UpdateLength();
+        }
+        
         virtual ~UTF8String() = default;
 
         UTF8String& operator = (const UTF8String& src)
@@ -151,103 +160,77 @@ namespace qor{
             return m_buffer.At(index);
         }
 
-        UTF8String Clone() const override
+        inline UTF8String Clone() const override
         {
             return UTF8String(*this);
         }
 
-        static UTF8String EmptyString()
+        static inline UTF8String EmptyString()
         {
             return UTF8String();
         }
 
-        std::basic_string<char8_t> ToStdString() const override
+        inline std::basic_string<char8_t> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }
 
-        size_t size() const override
+        inline size_t size() const override
         {
             return Length();
         }
 
-        iterator begin() const override
+        inline iterator begin() const override
         {
             iterator it(m_buffer);
             return it.begin();
         }
 
-        const_iterator cbegin() const override
+        inline const_iterator cbegin() const override
         {
             const_iterator it(m_buffer);
             return it.begin();
         }
 
-        iterator end() const override
+        inline iterator end() const override
         {
             iterator it(m_buffer);
             return it.end();
         }
 
-        const_iterator cend() const override
+        inline const_iterator cend() const override
         {
             const_iterator it(m_buffer);
             return it.end();
         }
 
-        reverse_iterator rbegin() const override
+        inline reverse_iterator rbegin() const override
         {
             reverse_iterator it(m_buffer);
             return it.begin();
         }
 
-        const_reverse_iterator crbegin() const override
+        inline const_reverse_iterator crbegin() const override
         {
             const_reverse_iterator it(m_buffer);
             return it.begin();
         }
 
-        reverse_iterator rend() const override
+        inline reverse_iterator rend() const override
         {
             reverse_iterator it(m_buffer);
             return it.end();
         }
 
-        const_reverse_iterator crend() const override
+        inline const_reverse_iterator crend() const override
         {
             const_reverse_iterator it(m_buffer);
             return it.end();
         }
 
-        virtual Mib GetEncoding() const override
+        virtual inline Mib GetEncoding() const override
         {
             return defaultEncodingT::GetMib();
-        }
-
-        SimpleString< char32_t > ToUCS4()
-        {
-            SimpleString< char32_t > output(Length());            
-            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
-            AbstractCharacterCodec< CharT >* Codec = Registration;
-            if(Codec == nullptr)
-            {
-                throw std::logic_error("No CodePage registered for encoding");
-            }
-            {
-                auto view = output.view();
-                char32_t* outptr = view.operator char32_t *();
-                size_t outCounter = 0;
-                const CharT* inptr = m_buffer.GetData();
-                size_t inAvailable = Length();
-                while(inAvailable > 0)
-                {   
-                    CodePoint cp = Codec->Decode(inptr, inAvailable);
-                    *outptr++ = cp.UChar();
-                    outCounter++;
-                }
-                view.Validate(outCounter);
-            }
-            return output;   
         }
 
     protected:

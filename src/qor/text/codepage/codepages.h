@@ -28,6 +28,7 @@
 #include "codepages/c.h"
 #include "codepages/ascii.h"
 #include "codepages/utf16.h"
+#include "codepages/utf32.h"
 #include "codepages/isolatin1.h"
 #include "codepages/utf8.h"
 #include "codepages/isolatin2.h"

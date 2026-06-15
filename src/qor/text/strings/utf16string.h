@@ -87,9 +87,18 @@ namespace qor{
             m_cachedLength = src.Length();
         }
 
+        //NOTE: These assume the sources are valid pointers into valid UTF-8 encoded text
+        //If not you will get junk and may triggger a buffer overrun error or snakes or
+        //zombies or worse.
+
         UTF16String(const char16_t* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount )
         {
             UpdateLength();            
+        }
+
+        UTF16String(iterator from, iterator to) : m_buffer(from, to - from)
+        {
+            UpdateLength();
         }
 
         virtual ~UTF16String() = default;
@@ -222,32 +231,6 @@ namespace qor{
         virtual Mib GetEncoding() const override
         {
             return defaultEncodingT::GetMib();
-        }
-
-        SimpleString< char32_t > ToUCS4()
-        {
-            SimpleString< char32_t > output(Length());            
-            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
-            AbstractCharacterCodec< char16_t >* Codec = Registration;
-            if(Codec == nullptr)
-            {
-                throw std::logic_error("No CodePage registered for encoding");
-            }
-            {
-                auto view = output.view();
-                char32_t* outptr = view.operator char32_t *();
-                size_t outCounter = 0;
-                const char16_t* inptr = m_buffer.GetData();
-                size_t inAvailable = Length();
-                while(inAvailable > 0)
-                {   
-                    CodePoint cp = Codec->Decode(inptr, inAvailable);
-                    *outptr++ = cp.UChar();
-                    outCounter++;
-                }
-                view.Validate(outCounter);
-            }
-            return output;   
         }
 
     protected:

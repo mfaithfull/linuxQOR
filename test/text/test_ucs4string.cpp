@@ -50,3 +50,10 @@ qor_pp_test_case(canFillAnExistingUCS4StringwithFixedChars)
     qor_pp_assert_that(ucs4str[0]).isEqualTo('-');
     qor_pp_assert_that(ucs4str.At(10)).isEqualTo('-');
 }
+
+qor_pp_test_case(canTranscodeAUCS4StringToUTF8String)
+{
+    UCS4String ucs4str(U"Hello World");
+    UTF8String utf8str = ucs4str.Transcode<UTF8String>();
+    qor_pp_assert_that(utf8str.Length()).isEqualTo(11);
+}

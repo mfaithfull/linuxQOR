@@ -22,36 +22,42 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEXT_STRINGS_STRINGS
-#define QOR_PP_H_TEXT_STRINGS_STRINGS
+#include "src/configuration/configuration.h"
 
-#include "../codepage/codepages.h"
-#include "simplestring.h"
+#include "utf32.h"
 
-namespace qor{
-    typedef SimpleString< char32_t > UCS4String;
-    typedef SimpleString< char16_t > UCS2String;
-    typedef SimpleString< char > ASCIIString;
-    //if you extend this set of specialisation you also need to override encoding_of to declare a CodePage for the character type
-    //e.g.
-    /*
-    template<>
-    struct encoding_of< char64_t >
-    {
-        typedef UTF64CodePage CodePageT;
-    };
-    */
+namespace
+{
+	std::string aliases[] = {"csUTF32"};
+}//
+
+namespace qor
+{
+	UTF32CodePage::UTF32CodePage() : CodePage("UTF-32", "UTF-32", aliases, 1)
+	{
+	}
+	
+	bool UTF32CodePage::Encode(const CodePoint & codePoint, char32_t*& space, size_t& available) const
+	{
+		if(available < 1 || space == nullptr)
+		{
+			return false;
+		}
+
+    	*space++ = codePoint.UChar();
+	    --available;		
+		return true;    	
+	}
+
+	CodePoint UTF32CodePage::Decode(const char32_t*& chars, size_t& available) const
+	{
+        uint32_t cp = 0xFFFD;
+		if (chars != nullptr && available > 0)
+		{
+			cp = static_cast<uint32_t>(*chars++);
+    		--available;
+		}
+		return CodePoint(cp);
+	}
+
 }//qor
-
-#include "localstring.h"
-
-namespace qor{
-    typedef LocalString< char8_t, Mib::ISOLatin1 > ISOLatin1String;
-    typedef LocalString< char8_t, Mib::ISOLatin2 > ISOLatin2String;
-}//qor
-
-#include "codestring.h"
-#include "utf8string.h"
-#include "utf16string.h"
-
-#endif//QOR_PP_H_TEXT_STRINGS_STRINGS

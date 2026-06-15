@@ -83,125 +83,99 @@ namespace qor{
             return *this;
         }
 
-        size_t Length() const override
+        inline size_t Length() const override
         {
             return m_buffer.Length();
         }
 
-        bool IsEmpty() const override
+        inline bool IsEmpty() const override
         {
             return m_buffer.IsEmpty();
         }
 
-        void Reset(void) override
+        inline void Reset(void) override
         {
             //Embedded strings are immutable so Reset does nothing
         }
 
-        virtual viewT view() override
+        virtual inline viewT view() override
         {
             return m_buffer.view();
         }
 
-        C operator[](size_t index) const
+        inline C operator[](size_t index) const
         {
             return m_buffer[index];
         }
 
-        const C At(size_t index) const override
+        inline const C At(size_t index) const override
         {
             return m_buffer.At(index);
         }
 
-        CodeString< C > Clone() const override
+        inline CodeString< C > Clone() const override
         {
             return CodeString< C >(m_buffer);
         }
 
-        std::basic_string<C> ToStdString() const override
+        inline std::basic_string<C> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }
 
-        size_t size() const override
+        inline size_t size() const override
         {
             return m_buffer.size();
         }
         
-        iterator begin() const override
+        inline iterator begin() const override
         {
             return iterator(m_buffer.begin());
         }
 
-        const_iterator cbegin() const override
+        inline const_iterator cbegin() const override
         {
             return const_iterator(m_buffer.cbegin());
         }
 
-        iterator end() const override
+        inline iterator end() const override
         {
             return iterator(m_buffer.end());
         }
 
-        const_iterator cend() const override
+        inline const_iterator cend() const override
         {
             return const_iterator(m_buffer.cend());
         }
 
-        reverse_iterator rbegin() const override
+        inline reverse_iterator rbegin() const override
         {
             return reverse_iterator(m_buffer.rbegin());
         }
 
-        const_reverse_iterator crbegin() const override
+        inline const_reverse_iterator crbegin() const override
         {
             return const_reverse_iterator(m_buffer.crbegin());
         }
 
-        reverse_iterator rend() const override
+        inline reverse_iterator rend() const override
         {
             return reverse_iterator(m_buffer.rend());
         }
 
-        const_reverse_iterator crend() const override
+        inline const_reverse_iterator crend() const override
         {
             return const_reverse_iterator(m_buffer.crend());
         }
 
-        virtual Mib GetEncoding() const override
+        virtual inline Mib GetEncoding() const override
         {
             return defaultEncodingT::GetMib();
         }
 
-        SimpleString< char32_t > ToUCS4()
-        {
-            SimpleString< char32_t > output(Length());            
-            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
-            AbstractCharacterCodec< C >* Codec = Registration;
-            if(Codec == nullptr)
-            {
-                throw std::logic_error("No CodePage registered for encoding");
-            }
-            {
-                auto view = output.view();
-                char32_t* outptr = view.operator char32_t *();
-                size_t outCounter = 0;
-                const C* inptr = m_buffer.GetData();
-                size_t inAvailable = Length();
-                while(inAvailable > 0)
-                {   
-                    CodePoint cp = Codec->Decode(inptr, inAvailable);
-                    *outptr++ = cp.UChar();
-                    outCounter++;
-                }
-                view.Validate(outCounter);
-            }
-            return output;   
-        }
-
     protected:
 
-        virtual BufferT CloneBuffer() const
+        virtual inline BufferT CloneBuffer() const
         {
             return BufferT(m_buffer);
         }

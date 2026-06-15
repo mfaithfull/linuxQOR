@@ -41,6 +41,7 @@ extern "C"
 		static qor::CCodePage sCCodePage;
 		static qor::ASCIICodePage sASCIICodePage;
 		static qor::UTF16CodePage sUTF16CodePage;
+		static qor::UTF32CodePage sUTF32CodePage;
 		static qor::ISOLatin1CodePage sISOLatin1CodePage;
 		static qor::UTF8CodePage sUTF8CodePage;
 		static qor::ISOLatin2CodePage sISOLatin2CodePage;
@@ -50,6 +51,7 @@ extern "C"
 		static qor::CodePageRegEntry< char, qor::Mib::C > regCCodePage(&sCCodePage);
 		static qor::CodePageRegEntry< char, qor::Mib::ASCII > regASCIICodePage(&sASCIICodePage);
 		static qor::CodePageRegEntry< char16_t, qor::Mib::UTF16 > regUTF16CodePage(&sUTF16CodePage);
+		static qor::CodePageRegEntry< char32_t, qor::Mib::UTF32 > regUTF32CodePage(&sUTF32CodePage);
 		static qor::CodePageRegEntry< char8_t, qor::Mib::ISOLatin1 > regISOLatin1CodePage(&sISOLatin1CodePage);
 		static qor::CodePageRegEntry< char8_t, qor::Mib::UTF8 > regUTF8CodePage(&sUTF8CodePage);
 		static qor::CodePageRegEntry< char8_t, qor::Mib::ISOLatin2> regISOLatin2CodePage(&sISOLatin2CodePage);

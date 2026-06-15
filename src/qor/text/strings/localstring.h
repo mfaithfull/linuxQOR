@@ -68,10 +68,13 @@ namespace qor{
         typedef rawreverseiterator< C > reverse_iterator;
         typedef rawreverseiterator< const C > const_reverse_iterator;
 
-        LocalString() noexcept : m_buffer(){ }
+        inline LocalString() noexcept : m_buffer((size_t)1){ }
 
         template<size_t N>
-        LocalString(const C(&str)[N]) : m_buffer(str){ }
+        inline LocalString(const C(&str)[N], Mib charSet = defaultMib) : m_buffer(str)
+        {
+            SetEncoding(charSet);
+        }
 
         LocalString(const BufferT& buffer) : m_buffer(buffer){ }
 
@@ -79,7 +82,15 @@ namespace qor{
 
         LocalString(LocalString&& src) noexcept : m_buffer(std::move(src.m_buffer)){ }
 
-        LocalString( const C* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount ){ }
+        LocalString( const C* pBuffer, size_t stCount, Mib charSet = defaultMib) : m_buffer( pBuffer, stCount )
+        { 
+            SetEncoding(charSet);
+        }
+
+        LocalString(iterator from, iterator to, Mib charSet = defaultMib) : m_buffer(from, to - from)
+        { 
+            SetEncoding(charSet);
+        }
 
         virtual ~LocalString() = default;
 
@@ -92,47 +103,47 @@ namespace qor{
             return *this;
         }
 
-        size_t Length() const override
+        inline size_t Length() const override
         {
             return m_buffer.Length();
         }
 
-        bool IsEmpty() const override
+        inline bool IsEmpty() const override
         {
             return m_buffer.IsEmpty();
         }
 
-        void Reset(void) override
+        inline void Reset(void) override
         {
             m_buffer.Reset();
         }
 
-        typename BufferT::View view() override
+        inline typename BufferT::View view() override
         {
             return m_buffer.view();
         }
 
-        C operator[](size_t index) const
+        inline C operator[](size_t index) const
         {
             return m_buffer[index];
         }
 
-        C At(size_t index) const override
+        inline C At(size_t index) const override
         {
             return m_buffer.At(index);
         }
 
-        LocalString< C, defaultMib > Clone() const override
+        inline LocalString< C, defaultMib > Clone() const override
         {
             return LocalString< C, defaultMib >(m_buffer);
         }
 
-        static LocalString< C, defaultMib > EmptyString()
+        static inline LocalString< C, defaultMib > EmptyString()
         {
             return LocalString< C, defaultMib >();
         }
 
-        std::basic_string<C> ToStdString() const override
+        inline std::basic_string<C> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }
@@ -142,95 +153,69 @@ namespace qor{
             return ToStdString();
         }
 
-        size_t size() const override
+        inline size_t size() const override
         {
             return m_buffer.Length();
         }
 
-        iterator begin() const override
+        inline iterator begin() const override
         {
             return iterator(m_buffer.begin());
         }
 
-        const_iterator cbegin() const override
+        inline const_iterator cbegin() const override
         {
             return const_iterator(m_buffer.cbegin());
         }
 
-        iterator end() const override
+        inline iterator end() const override
         {
             return iterator(m_buffer.end());
         }
 
-        const_iterator cend() const override
+        inline const_iterator cend() const override
         {
             return const_iterator(m_buffer.cend());
         }
 
-        reverse_iterator rbegin() const override
+        inline reverse_iterator rbegin() const override
         {
             return reverse_iterator(m_buffer.rbegin());
         }
 
-        const_reverse_iterator crbegin() const override
+        inline const_reverse_iterator crbegin() const override
         {
             return const_reverse_iterator(m_buffer.crbegin());
         }
 
-        reverse_iterator rend() const override
+        inline reverse_iterator rend() const override
         {
             return reverse_iterator(m_buffer.rend());
         }
 
-        const_reverse_iterator crend() const override
+        inline const_reverse_iterator crend() const override
         {
             return const_reverse_iterator(m_buffer.crend());
         }
 
-        virtual Mib GetEncoding() const override
+        virtual inline Mib GetEncoding() const override
         {
             return m_buffer.GetEncoding();
         }
 
-        void SetEncoding(Mib charSet)
+        inline void SetEncoding(Mib charSet)
         {
             m_buffer.SetEncoding(charSet);
         }
 
-        UCS4String ToUCS4()
-        {
-            UCS4String output(Length());            
-            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
-            AbstractCharacterCodec< C >* Codec = Registration;
-            if(Codec == nullptr)
-            {
-                throw std::logic_error("No CodePage registered for encoding");
-            }
-            {
-                auto view = output.view();
-                char32_t* outptr = view.operator char32_t *();
-                size_t outCounter = 0;
-                const C* inptr = m_buffer.GetData();
-                size_t inAvailable = Length();
-                while(inAvailable > 0)
-                {   
-                    CodePoint cp = Codec->Decode(inptr, inAvailable);
-                    *outptr++ = cp.UChar();
-                    outCounter++;
-                }
-                view.Validate(outCounter);
-            }
-            return output;   
-        }
-
     protected:
 
-        virtual BufferT CloneBuffer() const
+        virtual inline BufferT CloneBuffer() const
         {
             return BufferT(m_buffer);
         }
 
-        virtual BufferT* GetModifiableBufferObject()
+        virtual inline BufferT* GetModifiableBufferObject()
         {
             return &m_buffer;
         }

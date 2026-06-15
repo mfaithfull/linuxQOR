@@ -53,7 +53,7 @@ qor_pp_test_case(canConvertASCIIStringToUCS4)
 {
     LocalString<char> ACSIIString("Converted");
     ACSIIString.SetEncoding(Mib::ASCII);
-    auto convertedString = ACSIIString.ToUCS4();
+    auto convertedString = ACSIIString.Transcode<UCS4String>();
     qor_pp_assert_that(convertedString.ToStdString() == UCS4String(U"Converted").ToStdString()).isTrue();
 }
 

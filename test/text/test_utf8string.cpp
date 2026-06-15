@@ -24,11 +24,13 @@
 
 #include "src/configuration/configuration.h"
 #include <algorithm>
+#include <functional>
 #include <iostream>
 #include <iomanip>
 #include <ranges>
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
+#include "src/qor/delegate/delegate.h"
 #include "src/qor/text/strings/strings.h"
 
 using namespace qor;
@@ -91,4 +93,25 @@ qor_pp_test_case(canEraseFromUTF8String)
     UTF8String input{u8"Something NOT good"};
     auto output = input.Erase(10,4);
     qor_pp_assert_that(output.ToStdString() == std::basic_string<char8_t>(u8"Something good")).isTrue();
+}
+
+qor_pp_test_case(canUseUTF8StringWithRangesViewsAndAlgorithmsAndMultibyteInCertainCases)
+{    
+    std::locale locale("");
+    auto pred = std::bind(std::isspace<char>, std::placeholders::_1, std::ref<std::locale>(locale));
+    UTF8String test{u8"    어려운 무언가를"};
+    auto conv = std::views::drop_while(test, pred);
+    UTF8String temp(conv.begin(), conv.end());
+    UTF8String cmp(u8"어려운 무언가를");
+    qor_pp_assert_that(temp[0] == cmp[0]).isTrue();
+}
+
+qor_pp_test_case(canTranscodeAUTF8StringToALocalString)
+{
+    UTF8String danish(u8"Den 10. december 1948 vedtog og offentliggjorde FNs tredie generalforsamling Verdenserklæringen om Menneskerettighederne. Erklæringen blev vedtaget med 48 landes ja-stemmer Ingen lande stemte imod. 8 lande afstod.\
+      Umiddelbart efter denne historiske begivenhed henstillede generalforsamlingen til alle medlemslande, at de offentliggjorde erklæringens fulde tekst. De skulle desuden \"foranstalte, at den bliver omdelt, fremlagt, læst og forklaret i særdeleshed i skoler og andre undervisningsinstitutioner, uden hensyn til de forskellige landes og områders politiske forhold\".\
+      Erklæringens officielle tekst findes på FNs seks officielle sprog: arabisk, engelsk, fransk, kinesisk, russisk og spansk. Endvidere har en lang række af FNs medlemslande fulgt generalforsamlingens opfordring og oversat erklæringen til det nationale sprog. Den danske oversættelse på de følgende sider er udarbejdet af udenrigsministeriet.\
+      Ved henvendelse til FNs nordiske informationskontor i København kan man gratis rekvirere eksemplarer af erklæringen på henholdsvis FNs officielle sprog, de øvrige nordiske sprog samt et begrænset antal andre sprog.");
+    LocalString<char8_t, Mib::ISOLatin1> localDanish = danish.Transcode<LocalString<char8_t, Mib::ISOLatin1>>();
+    qor_pp_assert_that(localDanish.Length()).isEqualTo(danish.Length());
 }

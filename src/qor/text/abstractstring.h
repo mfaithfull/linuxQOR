@@ -51,6 +51,12 @@ namespace qor{
         typedef UTF16CodePage CodePageT;
     };
 
+    template<>
+    struct encoding_of< char32_t >
+    {
+        typedef UTF32CodePage CodePageT;
+    };
+
     template<typename IteratorT, typename CharT>
     bool WhileBlank(IteratorT& it, const std::locale& locale)
     {
@@ -100,16 +106,31 @@ namespace qor{
         }
 
         //All string classes inherit and expose
+        template<class Target>
+        Target Transcode()
+        {
+            if(IsEmpty())
+            {
+                return Target();
+            }
+
+            typename Target::BufferT output{};
+            Target temp;
+            AbstractCharacterCodec< typename Target::BufferT::iterator::value_type >* targetCodec = temp.GetCodec();
+            const_iterator it = cbegin();
+            TranscodeCount(it, Length(), output, targetCodec);
+            return Target(output);
+        }
 
         ImplT Left(size_t charCount) const
         {
             if(charCount == 0)
             {
-                return BufferT();
+                return ImplT();
             }
             if(charCount >= Length())
             {
-                return CloneBuffer();
+                return ImplT(CloneBuffer());
             }
             BufferT output;            
             const_iterator it = cbegin();
@@ -232,22 +253,8 @@ namespace qor{
             FillUpToCount(cp, count);
         }
 
-    protected:
-
-        //derived classes must override this if they have a modifiable buffer but shouldn't expose it
-        virtual BufferT* GetModifiableBufferObject()
-        {
-            return nullptr;
-        }
-
-        //Optionally string classes may override
-
-        virtual void UpdateLength() const{}
-        virtual AbstractCharacterCodec< CharT >* GetCodecCache() const{ return nullptr; }
-        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* codec) const{}
-        
-        //Implementation details used by AbstractString and derived classes
-
+        //Implementation detail used by AbstractString and derived classes
+        //has to be public due to use by template members e.g. Transcode.
         AbstractCharacterCodec< CharT >* GetCodec() const
         {
             AbstractCharacterCodec< CharT >* Codec = GetCodecCache();
@@ -265,6 +272,20 @@ namespace qor{
             return Codec;
         }
 
+    protected:
+
+        //derived classes must override this if they have a modifiable buffer but shouldn't expose it
+        virtual BufferT* GetModifiableBufferObject()
+        {
+            return nullptr;
+        }
+
+        //Optionally string classes may override
+
+        virtual void UpdateLength() const{}
+        virtual AbstractCharacterCodec< CharT >* GetCodecCache() const{ return nullptr; }
+        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* codec) const{}
+        
     private:
 
         //Implementation details used only by AbstractString
@@ -273,11 +294,7 @@ namespace qor{
 
         inline void OffsetIterator(const_iterator& it, size_t offsetCount) const
         {
-            while(offsetCount > 0)
-            {
-                --offsetCount;
-                ++it;
-            }
+            it += offsetCount;
         }
 
         template<typename iterator_type>
@@ -365,15 +382,27 @@ namespace qor{
             }
         }
 
-        inline void EncodeIntoOutput(BufferT& output, AbstractCharacterCodec< CharT >* Codec, const CodePoint& cp) const
+        template<typename TargetBufferT = BufferT, typename TargetCodecT = AbstractCharacterCodec< CharT > >
+        inline void EncodeIntoOutput(TargetBufferT& output, TargetCodecT* Codec, const CodePoint& cp) const
         {
-            CharT interBuffer[kMaxCodeUnitsPerCodePoint]{0};
+            typename TargetBufferT::iterator::value_type interBuffer[kMaxCodeUnitsPerCodePoint]{0};
             size_t capacity = kMaxCodeUnitsPerCodePoint;
-            CharT* space = interBuffer;
+            typename TargetBufferT::iterator::value_type* space = interBuffer;
             Codec->Encode(cp, space, capacity);
             output.Write(interBuffer, space - &interBuffer[0]);
         }
 
+        template<typename TargetBufferT, typename TargetCodec>
+        inline void TranscodeCount(const_iterator& it, size_t charCount, TargetBufferT& output, TargetCodec* targetCodec) const
+        {
+            AbstractCharacterCodec< CharT >* sourceCodec = GetCodec();
+            while(it != cend() && charCount > 0)
+            {
+                const CharT* input = it++;
+                CodePoint cp = sourceCodec->Decode(input, charCount);                
+                EncodeIntoOutput<TargetBufferT>(output, targetCodec, cp);
+            }
+        }
     };
 }//qor
 

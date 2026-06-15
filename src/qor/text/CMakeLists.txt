@@ -5,6 +5,7 @@ qor_text.cpp
 codepage/codepages/c.cpp
 codepage/codepages/ascii.cpp
 codepage/codepages/utf16.cpp
+codepage/codepages/utf32.cpp
 codepage/codepages/isolatin1.cpp
 codepage/codepages/utf8.cpp
 codepage/codepages/isolatin2.cpp

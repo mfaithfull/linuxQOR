@@ -72,7 +72,11 @@ namespace qor{
 
         SimpleString(SimpleString&& src) noexcept : m_buffer(std::move(src.m_buffer)){ }
 
+        //These assume that the source data/iterators are valid
+        //Garbage in will beget garbage out at best
         SimpleString( const charT* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount ){ }
+
+        SimpleString(iterator from, iterator to) : m_buffer(from, to - from){ }
 
         virtual ~SimpleString() = default;
 
@@ -115,7 +119,7 @@ namespace qor{
             return m_buffer.At(index);
         }
 
-        SimpleString< charT > Clone() const override
+        SimpleString< charT > virtual Clone() const override
         {
             return SimpleString< charT >(m_buffer);
         }
@@ -178,32 +182,6 @@ namespace qor{
         virtual Mib GetEncoding() const override
         {
             return defaultEncodingT::GetMib();
-        }
-
-        SimpleString< char32_t > ToUCS4()
-        {
-            SimpleString< char32_t > output(Length());            
-            AnyObject Registration = TheCodePageRegistry()->GetCodePage(GetEncoding());
-            AbstractCharacterCodec< charT >* Codec = Registration;
-            if(Codec == nullptr)
-            {
-                throw std::logic_error("No CodePage registered for encoding");
-            }
-            {
-                auto view = output.view();
-                char32_t* outptr = view.operator char32_t *();
-                size_t outCounter = 0;
-                const charT* inptr = m_buffer.GetData();
-                size_t inAvailable = Length();
-                while(inAvailable > 0)
-                {   
-                    CodePoint cp = Codec->Decode(inptr, inAvailable);
-                    *outptr++ = cp.UChar();
-                    outCounter++;
-                }
-                view.Validate(outCounter);
-            }
-            return output;   
         }
 
     protected:

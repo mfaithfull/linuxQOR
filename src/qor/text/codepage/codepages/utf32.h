@@ -22,36 +22,30 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEXT_STRINGS_STRINGS
-#define QOR_PP_H_TEXT_STRINGS_STRINGS
+#ifndef QOR_PP_H_TEXT_CODEPAGE_UTF32
+#define QOR_PP_H_TEXT_CODEPAGE_UTF32
 
-#include "../codepage/codepages.h"
-#include "simplestring.h"
+#include "../codepage.h"
 
 namespace qor{
-    typedef SimpleString< char32_t > UCS4String;
-    typedef SimpleString< char16_t > UCS2String;
-    typedef SimpleString< char > ASCIIString;
-    //if you extend this set of specialisation you also need to override encoding_of to declare a CodePage for the character type
-    //e.g.
-    /*
-    template<>
-    struct encoding_of< char64_t >
-    {
-        typedef UTF64CodePage CodePageT;
+
+	class qor_pp_module_interface(QOR_TEXT) UTF32CodePage : public CodePage< char32_t, Mib::UTF32 >
+	{
+	public:
+
+		UTF32CodePage();
+		virtual ~UTF32CodePage() = default;
+
+		virtual bool Encode(const CodePoint & codePoint, char32_t*& space, size_t& available) const override;
+		virtual CodePoint Decode(const char32_t*& chars, size_t& available) const override;
     };
-    */
+
+	template<>
+	struct charset_of<Mib::UTF32>
+	{
+		typedef UTF32CodePage type;
+	};
+
 }//qor
 
-#include "localstring.h"
-
-namespace qor{
-    typedef LocalString< char8_t, Mib::ISOLatin1 > ISOLatin1String;
-    typedef LocalString< char8_t, Mib::ISOLatin2 > ISOLatin2String;
-}//qor
-
-#include "codestring.h"
-#include "utf8string.h"
-#include "utf16string.h"
-
-#endif//QOR_PP_H_TEXT_STRINGS_STRINGS
+#endif//QOR_PP_H_TEXT_CODEPAGE_UTF32
