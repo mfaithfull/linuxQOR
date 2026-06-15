@@ -25,22 +25,17 @@
 #ifndef QOR_PP_H_TEXT_CONSTBUFFER
 #define QOR_PP_H_TEXT_CONSTBUFFER
 
-#include <stdexcept>
 #include <string>
-#include "src/qor/text/buffers/visitorresult.h"
 #include "src/qor/iterators/iterators.h"
 
 namespace qor{
 
-    struct ConstBufferLayout
-    {
-    public:
-        static const unsigned short HeaderSize{0};
-        static const unsigned short FooterSize{0};
-    };
+    namespace text{
+        extern void OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress);
+    }
 
     template< typename T >
-    class ConstBuffer final
+    struct ConstBuffer final
     {
     public:
 
@@ -81,27 +76,24 @@ namespace qor{
             const ConstBuffer<T>& m_buffer;
         };
 
-        ConstBuffer() = delete;
-        ~ConstBuffer() = default;
-
         template<size_t N>
-        constexpr ConstBuffer(const T(&str)[N]) : m_p(static_cast<const T*>(str)), m_charCount(N - 1)
+        constexpr ConstBuffer(const T(&str)[N]) : m_p(static_cast<const T*>(str)), m_unitCount(N - 1)
         {
         }
 
-        constexpr ConstBuffer( const T* pBuffer, size_t stCount ) : m_p( pBuffer ), m_charCount( stCount )
+        constexpr ConstBuffer( const T* pBuffer, size_t unitCount ) : m_p( pBuffer ), m_unitCount( unitCount )
         {
             if(m_p && m_p[0] == T(0))
             {
-                m_charCount = 0;
+                m_unitCount = 0;
             }
         }
 
-        constexpr ConstBuffer(const ConstBuffer& src) : m_p(src.m_p), m_charCount(src.m_charCount)
+        constexpr ConstBuffer(const ConstBuffer& src) : m_p(src.m_p), m_unitCount(src.m_unitCount)
         {
         }
 
-        constexpr ConstBuffer(ConstBuffer&& src) noexcept : m_p(src.m_p), m_charCount(src.m_charCount)
+        constexpr ConstBuffer(ConstBuffer&& src) noexcept : m_p(src.m_p), m_unitCount(src.m_unitCount)
         {
         }
 
@@ -110,7 +102,7 @@ namespace qor{
             if( this != &src )
             {
                 m_p = src.m_p;
-                m_charCount = src.m_charCount;
+                m_unitCount = src.m_unitCount;
             }
             return *this;
         }
@@ -120,62 +112,67 @@ namespace qor{
             return View(*this);
         }
 
-        constexpr size_t GetCharCount() const
+        constexpr size_t GetUnitCount() const
         {
-            return m_charCount;
+            return m_unitCount;
         }
 
         constexpr size_t AllocationByteCount() const
         {
-            return m_charCount * sizeof(T);
+            return m_unitCount * sizeof(T);
         }
 
         constexpr size_t Length() const
         {
-            return m_charCount;
+            return m_unitCount;
         }
 
         constexpr size_t size() const //for iterators
         {
-            return m_charCount;
+            return m_unitCount;
         }
 
         constexpr size_t ByteLength() const
         {
-            return m_charCount * sizeof(T);
+            return m_unitCount * sizeof(T);
         }
 
         constexpr bool IsEmpty(void) const
         {
-            return m_p == nullptr || m_charCount == 0 || m_p[0] == T(0);
+            return m_p == nullptr || m_unitCount == 0 || m_p[0] == T(0);
         }
 
-        const T* GetData() const
+        constexpr const T* GetData() const
         {
-            return m_p == nullptr ? nullptr : m_p;
+            return m_p;
+        }
+
+        constexpr const T* c_str() const
+        {
+            return m_p;
         }
 
         constexpr T At(size_t index) const
         {
             if (m_p == nullptr || index >= Length())
             {
-                throw std::out_of_range("Index out of range accessing Buffer<{T}> At {index}");
+                text::OutOfRangeError(index, Length(), sizeof(T), m_p);
             }
             return m_p[index];
         }
 
-        constexpr const T& operator[](size_t index) const
+        constexpr T operator[](size_t index) const
         {
             if (m_p == nullptr || index >= Length())
             {
-                throw std::out_of_range("Index out of range accessing Buffer<{T}> At {index}");
+                text::OutOfRangeError(index, Length(), sizeof(T), m_p);
             }
             return m_p[index];
         }
 
         constexpr std::basic_string<T> ToStdString() const
         {
-            return std::basic_string<T>(m_p, m_charCount);
+            return std::basic_string<T>(m_p, m_unitCount);
         }
 
         constexpr operator std::basic_string<T>() const
@@ -195,27 +192,27 @@ namespace qor{
 
         constexpr iterator end() const
         {
-            return iterator(m_p + m_charCount);
+            return iterator(m_p + m_unitCount);
         }
 
         constexpr const_iterator cend() const
         {
-            return const_iterator(m_p + m_charCount);
+            return const_iterator(m_p + m_unitCount);
         }
 
         constexpr reverse_iterator rbegin() const
         {
-            return iterator(m_p + m_charCount - 1);
+            return reverse_iterator(m_p + m_unitCount - 1);
         }
 
         constexpr const_reverse_iterator crbegin() const
         {
-            return const_reverse_iterator(m_p + m_charCount - 1);
+            return const_reverse_iterator(m_p + m_unitCount - 1);
         }
 
         constexpr reverse_iterator rend() const
         {
-            return iterator(m_p - 1);
+            return reverse_iterator(m_p - 1);
         }
 
         constexpr const_reverse_iterator crend() const
@@ -223,32 +220,10 @@ namespace qor{
             return const_reverse_iterator(m_p - 1);
         }
 
-        template<typename func_t>
-        void ConstVisit(func_t&& func, size_t startIndex = 0) const
-        {
-            while (m_p && startIndex < m_charCount && 
-                func(*this, m_p, startIndex++) == VisitorResult::More)
-            {
-            }
-        }
-
-        template<typename func_t>
-        void ConstReverseVisit(func_t&& func, size_t startIndex = (size_t)(-1)) const
-        {
-            if (startIndex == (size_t)(-1))
-            {
-                startIndex = Length() - 1;
-            }
-            while (m_p && startIndex != (size_t)(-1) && 
-                func(*this, m_p, startIndex--) == VisitorResult::More)
-            {
-            }
-        }        
-
-    protected:
+    private:
 
         const T* m_p;
-        size_t m_charCount;
+        size_t m_unitCount;
     };
 
 }//qor

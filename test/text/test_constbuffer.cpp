@@ -29,6 +29,7 @@
 #include <ranges>
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
+#include "src/qor/error/error.h"
 #include "src/qor/text/buffers/constbuffer.h"
 
 using namespace qor;
@@ -38,37 +39,9 @@ qor_pp_test_case(canInstanceFromCompiledBuffer)
 {
     constexpr auto cb = ConstBuffer<char>("Hello World");
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(11);
+    qor_pp_assert_that(cb.Length()).isEqualTo(11);
     qor_pp_assert_that(cb[0]).isEqualTo('H');
     qor_pp_assert_that(cb.At(10)).isEqualTo('d');
-}
-
-qor_pp_test_case(canVisitBuffer)
-{
-    constexpr auto cb = ConstBuffer<char>("Hello World");
-
-    size_t index = 0;
-    cb.ConstVisit([&](const auto& buffer, const char* s, size_t i) {
-        qor_pp_assert_that(s[i]).isEqualTo(buffer[i]);
-        qor_pp_assert_that(s[i]).isEqualTo("Hello World"[i]);
-        index++;
-        return VisitorResult::More;
-    });
-    qor_pp_assert_that(index).isEqualTo(11);
-}
-
-qor_pp_test_case(canVisitBufferInReverse)
-{
-    constexpr auto cb = ConstBuffer<char>("Hello World");
-
-    size_t index = 0;
-    cb.ConstReverseVisit([&](const auto& buffer, const char* s, size_t i) {
-        qor_pp_assert_that(s[i]).isEqualTo(buffer[i]);
-        qor_pp_assert_that(s[i]).isEqualTo("Hello World"[i]);
-        index++;
-        return VisitorResult::More;
-    });
-    qor_pp_assert_that(index).isEqualTo(11);
 }
 
 qor_pp_test_case(canConvertToStdString)
@@ -134,7 +107,7 @@ qor_pp_test_case(outOfRangeAccessThrows)
     {
         cb.At(5);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -150,7 +123,7 @@ qor_pp_test_case(outOfRangeIndexOperatorThrows)
     {
         cb[5];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -190,7 +163,7 @@ qor_pp_test_case(copyConstructorCopiesBuffer)
     constexpr auto cb2 = cb1;
 
     qor_pp_assert_that(cb2.view() == std::string("Hello")).isTrue();
-    qor_pp_assert_that(cb2.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb2.Length()).isEqualTo(5);
 }
 
 qor_pp_test_case(moveConstructorMovesBuffer)
@@ -199,7 +172,7 @@ qor_pp_test_case(moveConstructorMovesBuffer)
     constexpr auto cb2 = std::move(cb1);
 
     qor_pp_assert_that(cb2.view() == std::string("Hello")).isTrue();
-    qor_pp_assert_that(cb2.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb2.Length()).isEqualTo(5);
 }
 
 qor_pp_test_case(copyAssignmentCopiesBuffer)
@@ -211,7 +184,7 @@ qor_pp_test_case(copyAssignmentCopiesBuffer)
     cb3 = cb1;
 
     qor_pp_assert_that(cb3.view() == std::string("Hello")).isTrue();
-    qor_pp_assert_that(cb3.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb3.Length()).isEqualTo(5);
 }
 
 qor_pp_test_case(moveAssignmentMovesBuffer)
@@ -223,14 +196,14 @@ qor_pp_test_case(moveAssignmentMovesBuffer)
     cb3 = std::move(cb1);
 
     qor_pp_assert_that(cb3.view() == std::string("Hello")).isTrue();
-    qor_pp_assert_that(cb3.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb3.Length()).isEqualTo(5);
 }
 
 qor_pp_test_case(canUseWithWideCharacters)
 {
     constexpr auto cb = ConstBuffer<wchar_t>(L"Hello");
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb.Length()).isEqualTo(5);
     qor_pp_assert_that(cb[0]).isEqualTo(L'H');
     qor_pp_assert_that(cb.At(4)).isEqualTo(L'o');
 }
@@ -239,7 +212,7 @@ qor_pp_test_case(canUseWithUTF8Characters)
 {
     constexpr auto cb = ConstBuffer<char8_t>(u8"Hello");
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb.Length()).isEqualTo(5);
     qor_pp_assert_that(cb[0]).isEqualTo(u8'H');
     qor_pp_assert_that(cb.At(4)).isEqualTo(u8'o');
 }
@@ -248,7 +221,7 @@ qor_pp_test_case(canUseWithUTF16Characters)
 {
     constexpr auto cb = ConstBuffer<char16_t>(u"Hello");
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb.Length()).isEqualTo(5);
     qor_pp_assert_that(cb[0]).isEqualTo(u'H');
     qor_pp_assert_that(cb.At(4)).isEqualTo(u'o');
 }
@@ -257,7 +230,7 @@ qor_pp_test_case(canUseWithUTF32Characters)
 {
     constexpr auto cb = ConstBuffer<char32_t>(U"Hello");
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb.Length()).isEqualTo(5);
     qor_pp_assert_that(cb[0]).isEqualTo(U'H');
     qor_pp_assert_that(cb.At(4)).isEqualTo(U'o');
 }
@@ -266,7 +239,7 @@ qor_pp_test_case(canUseWithEmptyString)
 {
     constexpr auto cb = ConstBuffer<char>("");
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(0);
+    qor_pp_assert_that(cb.Length()).isEqualTo(0);
     qor_pp_assert_that(cb.IsEmpty()).isTrue();
 }
 
@@ -274,7 +247,7 @@ qor_pp_test_case(canUseWithNullptr)
 {
     constexpr ConstBuffer<char> cb(nullptr, 0);
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(0);
+    qor_pp_assert_that(cb.Length()).isEqualTo(0);
     qor_pp_assert_that(cb.IsEmpty()).isTrue();
 }
 
@@ -282,7 +255,7 @@ qor_pp_test_case(canUseWithNullptrAndNonZeroCount)
 {
     constexpr ConstBuffer<char> cb(nullptr, 5);
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb.Length()).isEqualTo(5);
     qor_pp_assert_that(cb.IsEmpty()).isTrue();
 }
 
@@ -290,7 +263,7 @@ qor_pp_test_case(canUseWithNonNullptrAndZeroCount)
 {
     constexpr ConstBuffer<char> cb("Hello", 0);
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(0);
+    qor_pp_assert_that(cb.Length()).isEqualTo(0);
     qor_pp_assert_that(cb.IsEmpty()).isTrue();
 }
 
@@ -298,7 +271,7 @@ qor_pp_test_case(canUseWithNonNullptrAndCountLessThanStringLength)
 {
     constexpr ConstBuffer<char> cb("Hello", 3);
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(3);
+    qor_pp_assert_that(cb.Length()).isEqualTo(3);
     qor_pp_assert_that(cb.IsEmpty()).isFalse();
     qor_pp_assert_that(cb[0]).isEqualTo('H');
     qor_pp_assert_that(cb[1]).isEqualTo('e');
@@ -309,7 +282,7 @@ qor_pp_test_case(canUseWithNonNullptrAndCountGreaterThanStringLength)
 {
     constexpr ConstBuffer<char> cb("Hello", 10);
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(10);
+    qor_pp_assert_that(cb.Length()).isEqualTo(10);
     qor_pp_assert_that(cb.IsEmpty()).isFalse();
     qor_pp_assert_that(cb[0]).isEqualTo('H');
     qor_pp_assert_that(cb[1]).isEqualTo('e');
@@ -328,7 +301,7 @@ qor_pp_test_case(outOfRangeAccessWithNullptrThrows)
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -344,7 +317,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithNullptrThrows)
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -360,7 +333,7 @@ qor_pp_test_case(outOfRangeAccessWithEmptyBufferThrows)
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -376,7 +349,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithEmptyBufferThrows)
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -387,7 +360,7 @@ qor_pp_test_case(canUseWithEmbeddedNullCharacters)
 {
     constexpr auto cb = ConstBuffer<char>("He\0lo");
 
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb.Length()).isEqualTo(5);
     qor_pp_assert_that(cb[0]).isEqualTo('H');
     qor_pp_assert_that(cb[1]).isEqualTo('e');
     qor_pp_assert_that(cb[2]).isEqualTo('\0');
@@ -398,7 +371,7 @@ qor_pp_test_case(canUseWithEmbeddedNullCharacters)
 qor_pp_test_case(canUseWithEmbeddedNullCharactersAndNonZeroCount)
 {
     constexpr auto cb = ConstBuffer<char>("He\0lo", 5);
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb.Length()).isEqualTo(5);
     qor_pp_assert_that(cb[0]).isEqualTo('H');
     qor_pp_assert_that(cb[1]).isEqualTo('e');
     qor_pp_assert_that(cb[2]).isEqualTo('\0');
@@ -409,7 +382,7 @@ qor_pp_test_case(canUseWithEmbeddedNullCharactersAndNonZeroCount)
 qor_pp_test_case(canUseWithEmbeddedNullCharactersAndCountLessThanStringLength)
 {
     constexpr auto cb = ConstBuffer<char>("He\0lo", 3);
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(3);
+    qor_pp_assert_that(cb.Length()).isEqualTo(3);
     qor_pp_assert_that(cb[0]).isEqualTo('H');
     qor_pp_assert_that(cb[1]).isEqualTo('e');
     qor_pp_assert_that(cb[2]).isEqualTo('\0');
@@ -418,7 +391,7 @@ qor_pp_test_case(canUseWithEmbeddedNullCharactersAndCountLessThanStringLength)
 qor_pp_test_case(canUseWithEmbeddedNullCharactersAndCountGreaterThanStringLength)
 {
     constexpr auto cb = ConstBuffer<char>("He\0lo", 10);
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(10);
+    qor_pp_assert_that(cb.Length()).isEqualTo(10);
     qor_pp_assert_that(cb[0]).isEqualTo('H');
     qor_pp_assert_that(cb[1]).isEqualTo('e');
     qor_pp_assert_that(cb[2]).isEqualTo('\0');
@@ -430,7 +403,7 @@ qor_pp_test_case(canUseWithEmbeddedNullCharactersAndCountGreaterThanStringLength
 qor_pp_test_case(canUseWithNonNullptrAndCountGreaterThanStringLengthAndEmbeddedNullCharacters)
 {
     constexpr auto cb = ConstBuffer<char>("He\0lo", 10);
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(10);
+    qor_pp_assert_that(cb.Length()).isEqualTo(10);
     qor_pp_assert_that(cb[0]).isEqualTo('H');
     qor_pp_assert_that(cb[1]).isEqualTo('e');
     qor_pp_assert_that(cb[2]).isEqualTo('\0');
@@ -442,14 +415,14 @@ qor_pp_test_case(canUseWithNonNullptrAndCountGreaterThanStringLengthAndEmbeddedN
 qor_pp_test_case(canUseWithNonNullptrAndZeroCountAndEmbeddedNullCharacters)
 {
     constexpr auto cb = ConstBuffer<char>("He\0lo", 0);
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(0);
+    qor_pp_assert_that(cb.Length()).isEqualTo(0);
     qor_pp_assert_that(cb.IsEmpty()).isTrue();
 }
 
 qor_pp_test_case(canUseWithNullptrAndNonZeroCountAndEmbeddedNullCharacters)
 {
     constexpr auto cb = ConstBuffer<char>(nullptr, 5);
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(5);
+    qor_pp_assert_that(cb.Length()).isEqualTo(5);
     qor_pp_assert_that(cb.IsEmpty()).isTrue();
 }
 
@@ -462,7 +435,7 @@ qor_pp_test_case(outOfRangeAccessWithNullptrAndNonZeroCountThrows)
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -478,7 +451,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithNullptrAndNonZeroCountThrows)
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -494,7 +467,7 @@ qor_pp_test_case(outOfRangeAccessWithEmptyBufferAndEmbeddedNullCharactersThrows)
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -510,7 +483,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithEmptyBufferAndEmbeddedNullCharacters
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -520,7 +493,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithEmptyBufferAndEmbeddedNullCharacters
 qor_pp_test_case(canUseWithUTF8CharactersAndNonZeroCountLessThanStringLength)
 {
     constexpr auto cb = ConstBuffer<char8_t>(u8"He\0lo", 3);
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(3);
+    qor_pp_assert_that(cb.Length()).isEqualTo(3);
     qor_pp_assert_that(cb[0]).isEqualTo(u8'H');
     qor_pp_assert_that(cb[1]).isEqualTo(u8'e');
     qor_pp_assert_that(cb[2]).isEqualTo(u8'\0');
@@ -529,7 +502,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndNonZeroCountLessThanStringLength)
 qor_pp_test_case(canUseWithUTF8CharactersAndNonZeroCountGreaterThanStringLength)
 {
     constexpr auto cb = ConstBuffer<char8_t>(u8"He\0lo", 10);
-    qor_pp_assert_that(cb.GetCharCount()).isEqualTo(10);
+    qor_pp_assert_that(cb.Length()).isEqualTo(10);
     qor_pp_assert_that(cb[0]).isEqualTo(u8'H');
     qor_pp_assert_that(cb[1]).isEqualTo(u8'e');
     qor_pp_assert_that(cb[2]).isEqualTo(u8'\0');
@@ -547,7 +520,7 @@ qor_pp_test_case(outOfRangeAccessWithUTF8CharactersAndNullptrThrows)
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -563,7 +536,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithUTF8CharactersAndNullptrThrows)
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -579,7 +552,7 @@ qor_pp_test_case(outOfRangeAccessWithUTF8CharactersAndEmptyBufferThrows)
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -595,7 +568,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithUTF8CharactersAndEmptyBufferThrows)
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -611,7 +584,7 @@ qor_pp_test_case(outOfRangeAccessWithUTF8CharactersAndNonNullptrAndZeroCountThro
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -627,7 +600,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithUTF8CharactersAndNonNullptrAndZeroCo
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -643,7 +616,7 @@ qor_pp_test_case(outOfRangeAccessWithUTF8CharactersAndNullptrAndNonZeroCountThro
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -659,7 +632,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithUTF8CharactersAndNullptrAndNonZeroCo
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -675,7 +648,7 @@ qor_pp_test_case(outOfRangeAccessWithUTF8CharactersAndEmptyBufferAndNonZeroCount
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -691,7 +664,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithUTF8CharactersAndEmptyBufferAndNonZe
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -707,7 +680,7 @@ qor_pp_test_case(outOfRangeAccessWithUTF8CharactersAndNullptrAndNonZeroCountAndE
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -723,7 +696,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithUTF8CharactersAndNullptrAndNonZeroCo
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -739,7 +712,7 @@ qor_pp_test_case(outOfRangeAccessWithUTF8CharactersAndEmptyBufferAndNonZeroCount
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -749,7 +722,7 @@ qor_pp_test_case(outOfRangeAccessWithUTF8CharactersAndEmptyBufferAndNonZeroCount
 qor_pp_test_case(outOfRangeIndexOperatorWithUTF8CharactersAndEmptyBufferAndNonZeroCountAndEmbeddedNullCharactersThrows)
 {
     constexpr auto cb = ConstBuffer<char8_t>(u8"", 5);
-    qor_pp_test_assert_throw(cb[0], std::out_of_range);
+    qor_pp_test_assert_throw(cb[0], Continuable);
 }
 
 qor_pp_test_case(canUseWithUTF8CharactersAndNullptrAndNonZeroCountAndEmbeddedNullCharactersThrows)
@@ -761,7 +734,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndNullptrAndNonZeroCountAndEmbeddedNul
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -777,7 +750,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndNullptrAndNonZeroCountAndEmbeddedNul
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -793,7 +766,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndEmptyBufferAndNonZeroCountAndEmbedde
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -809,7 +782,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndEmptyBufferAndNonZeroCountAndEmbedde
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -825,7 +798,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndNullptrAndZeroCountAndEmbeddedNullCh
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -841,7 +814,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndNullptrAndZeroCountAndEmbeddedNullCh
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -857,7 +830,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndEmptyBufferAndZeroCountAndEmbeddedNu
     {
         cb.At(0);
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }
@@ -873,7 +846,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndEmptyBufferAndZeroCountAndEmbeddedNu
     {
         cb[0];
     }
-    catch (const std::out_of_range&)
+    catch (const Continuable&)
     {
         exceptionThrown = true;
     }

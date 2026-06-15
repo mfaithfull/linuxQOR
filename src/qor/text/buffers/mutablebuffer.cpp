@@ -22,26 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEXT_BUFFERFREEDWHILESHAREDEXCEPTION
-#define QOR_PP_H_TEXT_BUFFERFREEDWHILESHAREDEXCEPTION
-
+#include "src/configuration/configuration.h"
 #include <stdexcept>
+#include "mutablebuffer.h"
+#include "src/qor/error/error.h"
 
-namespace qor
-{
-	class bufferfreedwhilesharedexception : public std::logic_error
-	{
-	public:
-		using base_type = std::logic_error;
+namespace qor{ namespace text {
 
-		explicit bufferfreedwhilesharedexception(const std::string& message) : base_type(message.c_str())
-		{
-		}
+    void qor_pp_export BufferFreeWhileSharedError(const void* bufferAddress, unsigned short refCount)
+    {
+        serious("Attempted to free buffer at {0:p} while reference count == {1}.", bufferAddress, refCount);
+    }
 
-		explicit bufferfreedwhilesharedexception(const char* message) : base_type(message)
-		{
-		}
-	};
-}//qor
+    void qor_pp_export BufferOverrunError(const void* bufferAddress, unsigned short headerRefCount, unsigned short footerRefCount)
+    {
+        serious("Buffer overrun detected on buffer at {0:p}. footer {1} does not match header {2}", bufferAddress, footerRefCount, headerRefCount);
+    }
 
-#endif//QOR_PP_H_TEXT_BUFFERFREEDWHILESHAREDEXCEPTION
+}}//qor::text
+

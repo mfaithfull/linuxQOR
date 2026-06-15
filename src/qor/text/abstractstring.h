@@ -298,114 +298,34 @@ namespace qor{
                 --it;
             }
         }
-        
-        inline void WriteUpTo(const_iterator& in, BufferT& output, const_reverse_iterator end) const
-        {
-            AbstractCharacterCodec< CharT >* Codec = GetCodec();
-            size_t capacity = output.Capacity();
-            while(in.getPtr() <= end.getPtr())
-            {
-                size_t charCount = cend() - in;
-                const CharT* input = in++;                
-                CodePoint cp = Codec->Decode(input, charCount);
-                EncodeIntoOutput(output, capacity, Codec, cp);
-            }
-        }
 
         inline void WriteRemaining(const_iterator& in, BufferT& output) const
         {
             AbstractCharacterCodec< CharT >* Codec = GetCodec();
-            size_t capacity = output.Capacity();
             while(in != cend())
             {
                 size_t charCount = cend() - in;
                 const CharT* input = in++;                
                 CodePoint cp = Codec->Decode(input, charCount);
-                EncodeIntoOutput(output, capacity, Codec, cp);
-            }
-        }
-
-        inline void FillUpToCount(CharT c, size_t count)
-        {   
-            BufferT* buffer = GetModifiableBufferObject();
-            if(buffer)
-            {
-                buffer->Reset();
-                while(count-- > 0)
-                {                
-                    buffer->Write(&c, 1);        
-                }
-            }
-        }
-
-        inline void FillUpToCount(CharT c, size_t count, BufferT& output) const
-        {            
-            size_t capacity = output.Capacity();
-            while(count-- > 0)
-            {                
-                WriteIntoOutput(output, capacity, c);
-            }
-        }
-
-        inline void FillUpToCount(CodePoint cp, size_t count)
-        {   
-            BufferT* buffer = GetModifiableBufferObject();
-            if(buffer)
-            {
-                AbstractCharacterCodec< CharT >* Codec = GetCodec();
-                buffer.Reset();
-                CharT interBuffer[kMaxCodeUnitsPerCodePoint]{0};
-                while(count-- > 0)
-                {                          
-                    size_t capacity = kMaxCodeUnitsPerCodePoint;
-                    CharT* space = interBuffer;
-                    Codec->Encode(cp, space, capacity);
-                    buffer->Write(interBuffer, space - &interBuffer[0]);
-                }
-            }
-        }
-
-        inline void FillUpToCount(CodePoint cp, size_t count, BufferT& output) const
-        {
-            AbstractCharacterCodec< CharT >* Codec = GetCodec();
-            size_t capacity = output.Capacity();
-            while(count-- > 0)
-            {
-                EncodeIntoOutput(output, capacity, Codec, cp);
+                EncodeIntoOutput(output, Codec, cp);
             }
         }
 
         inline void WriteUpToCount(const_iterator& it, size_t& charCount, BufferT& output) const
         {
             AbstractCharacterCodec< CharT >* Codec = GetCodec();
-            size_t capacity = output.Capacity();
             while(it != cend() && charCount > 0)
             {
                 const CharT* input = it++;
                 CodePoint cp = Codec->Decode(input, charCount);                
-                EncodeIntoOutput(output, capacity, Codec, cp);
+                EncodeIntoOutput(output, Codec, cp);
             }
         }
 
-        inline void WriteIntoOutput(BufferT& output, size_t& capacity, CharT c) const
+        inline void EncodeIntoOutput(BufferT& output, AbstractCharacterCodec< CharT >* Codec, const CodePoint& cp) const
         {
-            if(capacity < sizeof(CharT))
-            {
-                output.GrowToAtLeast(output.Capacity() + sizeof(CharT));
-                capacity = output.Capacity() - output.Length();
-            }
-            output.Write(&c, 1);
-            --capacity;
-        }
-
-        inline void EncodeIntoOutput(BufferT& output, size_t& capacity, AbstractCharacterCodec< CharT >* Codec, const CodePoint& cp) const
-        {
-            if(capacity < kMaxCodeUnitsPerCodePoint)
-            {
-                output.GrowToAtLeast(output.Capacity() + kMaxCodeUnitsPerCodePoint);
-                capacity = output.Capacity() - output.Length();
-            }
             CharT interBuffer[kMaxCodeUnitsPerCodePoint]{0};
+            size_t capacity = kMaxCodeUnitsPerCodePoint;
             CharT* space = interBuffer;
             Codec->Encode(cp, space, capacity);
             output.Write(interBuffer, space - &interBuffer[0]);

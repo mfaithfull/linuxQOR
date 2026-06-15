@@ -44,14 +44,11 @@ int main()
         []()->int
         {
             JSONReader reader;
+            auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
             
             std::cout << reader(
                 FileConnector(
-                    FileIndex(
-                        ThePlatform(qor_shared)->
-                            GetSubsystem<FileSystem>()->
-                                CurrentPath(), "test.json"
-                    ),
+                    FileIndex(filesystem->CurrentPath(), "test.json"),
                     reader.Buffer(),
                     WithFlags::None,
                     ShareMode::Owner_Read,
