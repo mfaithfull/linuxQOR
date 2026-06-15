@@ -87,8 +87,8 @@ namespace qor{
             m_cachedLength = src.Length();
         }
 
-        //NOTE: These assume the sources are valid pointers into valid UTF-8 encoded text
-        //If not you will get junk and may triggger a buffer overrun error or snakes or
+        //NOTE: These assume the sources are valid pointers into valid UTF-16 encoded text
+        //If not you will get junk and may trigger a buffer overrun error or snakes or
         //zombies or worse.
 
         UTF16String(const char16_t* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount )
