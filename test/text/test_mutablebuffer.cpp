@@ -872,6 +872,6 @@ qor_pp_test_case(canGetDataOfMutableBuffer)
             ++len;        
         }
         ptr.Validate(len);
-    }//View expires here and validates length of buffer
+    }//Data handle expires here and validates length of buffer
     qor_pp_assert_that(text.Length()).isEqualTo(11);
 }

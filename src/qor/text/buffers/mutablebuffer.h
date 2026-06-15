@@ -211,7 +211,7 @@ namespace qor{
             if(N > 1)
             {
                 auto ptr = data(N - 1);
-                memcpy(static_cast<T*>(ptr), str, N - 1 * sizeof(T));
+                memcpy(static_cast<T*>(ptr), str, (N - 1) * sizeof(T));
                 ptr.Validate(N - 1);
             }            
         }
