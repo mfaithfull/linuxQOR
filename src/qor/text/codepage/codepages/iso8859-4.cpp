@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <stdint.h>
+#include <cstdint>
 #include <array>
 #include <map>
 #include "iso8859-4.h"

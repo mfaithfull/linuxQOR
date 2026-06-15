@@ -183,10 +183,10 @@ namespace qor{
                 throw std::logic_error("No CodePage registered for encoding");
             }
             {
-                auto buffer = output.GetBuffer();
-                char32_t* outptr = buffer.operator char32_t *();
+                auto view = output.view();
+                char32_t* outptr = view.operator char32_t *();
                 size_t outCounter = 0;
-                const C* inptr = m_buffer.template GetData<C>();
+                const C* inptr = m_buffer.GetData();
                 size_t inAvailable = Length();
                 while(inAvailable > 0)
                 {   
@@ -194,7 +194,7 @@ namespace qor{
                     *outptr++ = cp.UChar();
                     outCounter++;
                 }
-                buffer.Validate(outCounter);
+                view.Validate(outCounter);
             }
             return output;   
         }

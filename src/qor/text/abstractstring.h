@@ -283,7 +283,7 @@ namespace qor{
         template<typename iterator_type>
         inline void OffsetIterator(iterator_type& it, bool(*pred)(iterator_type&, const std::locale&)) const
         {
-            auto locale = std::locale("", LC_CTYPE);
+            auto locale = std::locale("");
             while(pred(it, locale))
             {
                 ++it;

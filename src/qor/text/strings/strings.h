@@ -25,6 +25,7 @@
 #ifndef QOR_PP_H_TEXT_STRINGS_STRINGS
 #define QOR_PP_H_TEXT_STRINGS_STRINGS
 
+#include "../codepage/codepages.h"
 #include "simplestring.h"
 
 namespace qor{
