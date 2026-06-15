@@ -69,11 +69,11 @@ qor_pp_test_case(canHoldMultiByteCharsInUTF16String)
 
 qor_pp_test_case(canGetRightCharsInUTF16String)
 {
-    UTF16String korean(u"﻿중앙일보 - 사건/사회 - 극지탐험　협회결");
-    auto result = korean.Right(3);
+    UTF16String korean16(u"﻿중앙일보 - 사건/사회 - 극지탐험　협회결");    
+    auto result = korean16.Right(3);
     qor_pp_assert_that(result.Length()).isEqualTo(3);
     UTF16String oneglyph(u"결");
-    qor_pp_assert_that(result[2]).isEqualTo(oneglyph[2]);
+    qor_pp_assert_that(result[2]).isEqualTo(oneglyph[0]);
 }
 
 qor_pp_test_case(canUseUTF16StringWithRangesViewsAndAlgorithms)
