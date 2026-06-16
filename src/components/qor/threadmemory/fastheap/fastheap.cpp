@@ -88,7 +88,7 @@ namespace qor{ namespace components{ namespace threadmemory{
         }
         else
         {
-            throw memoryexception("Memory to free at %X not found in Fast Heap.");
+            throw memoryexception("Memory to free at {0:p} not found in Fast Heap.", (void*)allocation);
         }
     }
 

@@ -82,21 +82,25 @@ namespace qor{ namespace components{ namespace threadmemory{
             if(bucket)
             {
                 memory = bucket->Allocate();
-                m_totalAlloc += bucket->UnitSize();
+                if(memory)
+                {
+                    m_totalAlloc += bucket->UnitSize();
+                    if(m_totalAlloc > m_peakAlloc)
+                    {
+                        m_peakAlloc = m_totalAlloc;
+                    }
+                }
+                else
+                {
+                    throw memoryexception("The Small Object Heap has run out of space. Total allocation {0} bytes.", m_totalAlloc);
+                }
+            }
+            else
+            {
+                throw memoryexception("Small Object Heap bucket not fond for request of size {0} bytes.", size);
             }
         }
 
-        if(memory)
-        {
-            if(m_totalAlloc > m_peakAlloc)
-            {
-                m_peakAlloc = m_totalAlloc;
-            }
-        }
-        else
-        {
-            throw memoryexception( "The Small Object Heap has run out of space.");
-        }
         return memory;
     }
 
@@ -116,7 +120,7 @@ namespace qor{ namespace components{ namespace threadmemory{
             }
             else
             {
-                throw memoryexception( "The Small Object Heap can't find bucket.");
+                throw memoryexception("The Small Object Heap can't free block at {0:p} from bucket at {1:p}.", (void*)memory, (void*)bucket);
             }
         }
         else

@@ -34,7 +34,7 @@
 
 namespace qor{
 
-    class ReleaseAllocator final
+    struct ReleaseAllocator final
     {
     private:
 
@@ -49,14 +49,15 @@ namespace qor{
         static byte* RawAllocate(size_t count)
         {
             size_t allocSize = sizeof(Info) + (count * sizeof(T));
-
             byte* pMem = source_of< T >::type::Source(allocSize);
-
-            Info* pInfo = reinterpret_cast<Info*>(pMem);
-            pInfo->Count = count;
-            pInfo->Size = allocSize;
-            pInfo->pBackRef = nullptr;
-            pMem += sizeof(Info);
+            if(pMem)
+            {
+                Info* pInfo = reinterpret_cast<Info*>(pMem);
+                pInfo->Count = count;
+                pInfo->Size = allocSize;
+                pInfo->pBackRef = nullptr;
+                pMem += sizeof(Info);
+            }
             return pMem;
         }
 
@@ -66,24 +67,26 @@ namespace qor{
         static T* Allocate(size_t count = 1)
         {
             byte* pMem = RawAllocate<T>(count);
-            for (size_t element = 0; element < count; element++)
+            T* pResult = reinterpret_cast<T*>(pMem);
+            for (size_t element = 0; pMem && element < count; element++)
             {
                 new(pMem)T();
                 pMem += sizeof(T);
             }
-            return reinterpret_cast<T*>(pMem);
+            return pResult;
         }
         
         template< class T, typename... _p >
         static T* Allocate(size_t count, _p... p1)
         {
             byte* pMem = RawAllocate<T>(count);
-            for (size_t element = 0; element < count; element++)
+            T* pResult = reinterpret_cast<T*>(pMem);
+            for (size_t element = 0; pMem && element < count; element++)
             {
-                new(pMem)T(p1...);
+                new(pMem)T(std::forward<_p&&>(p1)...);
                 pMem += sizeof(T);
             }
-            return reinterpret_cast<T*>(pMem);
+            return pResult;
         }
         
         template< class T >
@@ -94,16 +97,16 @@ namespace qor{
                 byte* pMem = reinterpret_cast<byte*>(pT) - sizeof(Info);
                 Info* pInfo = reinterpret_cast<Info*>(pMem);
                 size_t allocSize = sizeof(Info) + (pInfo->Count * sizeof(T));
-                if (allocSize != pInfo->Size)
+                if (allocSize > pInfo->Size)
                 {
-                    throw memoryexception("Size of item at %X being freed %u does not match byte count allocated %u.");
+                    throw memoryexception("Size of item at {0:p} being freed {1} is larger than the byte count allocated {2}.", (void*)pMem, allocSize, pInfo->Size);
                 }
                 for (size_t element = 0; element < pInfo->Count; element++)
                 {
                     pT->~T();
                     pT++;
                 }
-                source_of< T >::type::Free(pMem, pInfo->Size);
+                source_of< T >::type::Free(pMem, allocSize);
             }
         }
         

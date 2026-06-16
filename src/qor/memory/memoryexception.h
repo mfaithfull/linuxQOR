@@ -26,6 +26,7 @@
 #define QOR_PP_H_MEMORY_EXCEPTION
 
 #include <stdexcept>
+#include <format>
 
 namespace qor{
 
@@ -34,7 +35,8 @@ namespace qor{
 	public:
 		using base_type = std::logic_error;
 
-		explicit memoryexception(const std::string& message) : base_type(message.c_str())
+		template <typename... Args>
+		memoryexception(const std::string& fmt, Args&&... args) : base_type(std::vformat(fmt, std::make_format_args(args...)))
 		{
 		}
 

@@ -112,7 +112,7 @@ namespace qor{ namespace components{ namespace threadmemory{
             }
             else
             {
-                throw memoryexception("Memory to delete %X not found in Small Object Heap.");
+                throw memoryexception("Memory to free ar {0:p} not found in Small Object Heap.", (void*)element);
             }
         }        
         return true;

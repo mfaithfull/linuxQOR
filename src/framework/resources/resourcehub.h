@@ -46,7 +46,7 @@
 #include "types/font/fontresource.h"
 
 #ifndef QOR_PP_IMPLEMENTS_RESOURCEHUB
-namespace qor{ bool qor_pp_import ImplementsResourceHub();}
+namespace qor{ bool qor_pp_module_interface(QOR_RESOURCES) ImplementsResourceHub();}
 #endif
 qor_pp_module_will_provide(QOR_RESOURCES, ResourceHub)
 

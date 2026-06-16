@@ -30,7 +30,7 @@
 
 namespace qor{
 
-    class DefaultSource final
+    struct DefaultSource final
     {
     public:
     

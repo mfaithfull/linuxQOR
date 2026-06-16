@@ -38,7 +38,7 @@
 #include "logreceiver.h"
 
 #ifndef QOR_LOGAGGREGATOR
-namespace qor{ bool qor_pp_import ImplementsLogAggregatorService();}
+namespace qor{ bool qor_pp_module_interface(QOR_LOGAGGREGATOR) ImplementsLogAggregatorService();}
 #endif
 qor_pp_module_will_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
 
