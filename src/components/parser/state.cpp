@@ -48,6 +48,10 @@ namespace qor { namespace components { namespace parser {
             }
             else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
             {
+                if(m_token == 0)
+                {
+                    m_token = m_result.token;
+                }
                 Emit();
             }
             else if(m_result.code == Result::MORE_DATA)
@@ -175,6 +179,7 @@ namespace qor { namespace components { namespace parser {
                     m_result.token = m_token;
                     m_result.length = 1;
                     m_result.code = Result::SUCCESS;
+                    log::debug("Matched {0}", (char)m_matchingOctet);
                 }
                 else if(data)
                 {
@@ -313,7 +318,7 @@ namespace qor { namespace components { namespace parser {
         };
     }
 
-    //Matches a sequence begging with head and followed by tail, which may itself be a sequence
+    //Matches a sequence beggining with head and followed by tail, which may itself be a sequence
     Sequence::Sequence(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser,token),
         m_head(head), m_tail(tail), m_internalState(0)
     {

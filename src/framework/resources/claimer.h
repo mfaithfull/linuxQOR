@@ -51,6 +51,7 @@ namespace qor{ namespace framework{
             hub->AddFile(file);
         }
 
+        //Gets called from ResourceHub on a pool thread
         bool Callback(Resource* res, ResourceStatus status)
         {
             if(res)

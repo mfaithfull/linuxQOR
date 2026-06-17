@@ -94,7 +94,9 @@ namespace qor { namespace components { namespace parser {
             static_cast<uint64_t>(eToken::HexDigit)
         ){}
         virtual ~HEXDIGIT() = default;
+        virtual void Prepare();
         virtual void Emit();
+        virtual void Fail();
     };
 
     class qor_pp_module_interface(QOR_PARSER) WSP : public AnyOneOf

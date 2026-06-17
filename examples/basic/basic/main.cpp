@@ -22,7 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//A minimal basic QOR application
+//A minimal QOR application
 
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
@@ -35,7 +35,7 @@ using namespace qor::framework;
 constexpr const char* appName = "BasicApp";         //Give our application a name
 
 extern "C"{
-    Module& ThisModule(void)                                        //Every QOR module must provide an implementation of ThisModule
+    Module& ThisModule(void)                        //Every QOR module must provide an implementation of ThisModule
     { 
         static Module QORModule(appName, qor_pp_stringize(qor_pp_ver_project));      //A module singleton object with name and version
         return QORModule;

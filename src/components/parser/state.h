@@ -226,9 +226,7 @@ namespace qor { namespace components { namespace parser {
             };
         }
 
-        virtual ~deferred()
-        {
-        }
+        virtual ~deferred() = default;
 
     private:
 

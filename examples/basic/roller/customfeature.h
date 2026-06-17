@@ -40,12 +40,12 @@ public:
 
     virtual void Setup() 
     {
-        //Do one time setup for CustomRole here
+        //Do one time setup for CustomFeature here
     }
 
     virtual void Shutdown() 
     {
-        //Shutdown and cleanup CustomRole here
+        //Shutdown and cleanup CustomFeature here
     }
 
     /*Add whatever else your feature requires*/

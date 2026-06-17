@@ -27,35 +27,178 @@
 #include "sdk/using_framework.h"
 #include "sdk/using_platform.h"
 #include "sdk/components/framework.h"
-#include "src/components/json/parser.h"
-#include "src/components/json/nodes/object.h"
+#include "src/components/json/parser/_3/object.h"
+#include "src/components/json/parser/_1/array.h"
+#include "src/components/json/parser/_3/number.h"
+#include "src/components/json/parser/nodes/object.h"
+#include "src/components/json/model/array.h"
+#include "src/components/json/model/number.h"
 #include "src/components/framework/pipeline/sinks/parsersink/parsersink.h"
 #include "jsonreader.h"
 
-const char* appName = "JSON Read";
-qor_pp_implement_module(appName)
+qor_pp_module_requires(ICurrentThread);
 qor_pp_module_requires(IFileSystem);
+qor_pp_module_requires(LogAggregatorService)
 
-int main()
+constexpr const char* appName = "JSON Read";
+constexpr const char* logTag = "jsonread";
+
+using namespace qor;
+using namespace qor::platform;
+using namespace qor::framework;
+using namespace qor::components;
+
+void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
+{    
+    connect(
+        logHandler, logHandler.GetForwardSignal(), 
+        logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
+        ConnectionKind::QueuedConnection);
+
+    auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
+    auto logPath = fileSystem(qor_shared).ApplicationLogPath() / logTag;
+
+    //Configure the log aggregator to write to the file system and to standard output
+    logAggregator(qor_shared).Receiver().WriteToFileSystem(logPath, logTag);
+    logAggregator(qor_shared).Receiver().WriteToStandardOutput(true);
+}
+
+qor_pp_implement_module(appName)
+
+int main(const int argc, const char** argv, char** env)
 {
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
+    qor_pp_fcontext;
+    DefaultLogHandler logHandler(log::Level::Debug);
 
-    return AppBuilder().Build(appName)->SetRole<Role>().Run(
-        []()->int
+    return AppBuilder().Build(appName)->SetRole<Role>(
+        [&logHandler](ref_of<IRole>::type role)
         {
-            JSONReader reader;
+
+            role->AddFeature<ThreadPool>(
+                [](ref_of<ThreadPool>::type threadPool)
+                {
+                    threadPool->SetThreadCount(6);
+                    qor::framework::CurrentThread::GetCurrent().SetName("Main");
+                }
+            );
+            
+            role->AddFeature<LogAggregatorService>(
+                [&logHandler](LogAggregatorService::ref logAggregator)->void
+                {
+                    SetupLogging(logHandler, logAggregator);
+                }
+            );
+
+        }
+    ).Run(
+        [&logHandler]()->int
+        {
+            
             auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
             
-            std::cout << reader(
-                FileConnector(
-                    FileIndex(filesystem->CurrentPath(), "test.json"),
-                    reader.Buffer(),
-                    WithFlags::None,
-                    ShareMode::Owner_Read,
-                    OpenFor::ReadOnly
-                )
-            ).ToString();
+            Path testsPath("F:/Develop/JSONTestSuite/test_parsing");
 
-            return 0;
+            JSONPartReader<qor::components::parser::json::array, qor::components::model::json::Array> arrayReader;
+            auto jsonArray = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_arraysWithSpaces.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto array_empty = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_empty.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto array_empty_string = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_empty-string.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto array_ending_with_newline = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_ending_with_newline.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto array_false = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_false.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto array_heterogeneous = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_heterogeneous.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto array_null = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_null.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto array_with_1_and_newline = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_with_1_and_newline.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto array_with_leading_space = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_with_leading_space.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto array_with_several_null = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_with_several_null.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto array_with_trailing_space = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_array_with_trailing_space.json"),
+                arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto jsonNumber = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto number0e_1 = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_0e+1.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+                    
+            //JSONPartReader<qor::components::parser::json::number, qor::components::model::json::Number> numberReader;
+
+            JSONReader reader;
+            auto jsonObject = reader(
+                FileConnector(FileIndex(testsPath, "y_object_basic.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto object_duplicated_key = reader(
+                FileConnector(FileIndex(testsPath, "y_object_duplicated_key.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto object_duplicated_key_and_value = reader(
+                FileConnector(FileIndex(testsPath, "y_object_duplicated_key_and_value.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto object_empty = reader(
+                FileConnector(FileIndex(testsPath, "y_object_empty.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto object_empty_key = reader(
+                FileConnector(FileIndex(testsPath, "y_object_empty_key.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto object_escaped_null_in_key = reader(
+                FileConnector(FileIndex(testsPath, "y_object_escaped_null_in_key.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto object_extreme_numbers = reader(
+                FileConnector(FileIndex(testsPath, "y_object_extreme_numbers.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto object_long_strings = reader(
+                FileConnector(FileIndex(testsPath, "y_object_long_strings.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto object_simple = reader(
+                FileConnector(FileIndex(testsPath, "y_object_simple.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto object_string_unicode = reader(
+                FileConnector(FileIndex(testsPath, "y_object_string_unicode.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
+            auto object_with_newlines = reader(
+                FileConnector(FileIndex(testsPath, "y_object_with_newlines.json"),
+                    reader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+                    
+            return EXIT_SUCCESS;
         });
 }

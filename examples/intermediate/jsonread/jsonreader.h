@@ -25,28 +25,24 @@
 #include "sdk/using_framework.h"
 #include "sdk/using_platform.h"
 #include "sdk/components/framework.h"
-#include "src/components/json/parser.h"
-#include "src/components/json/nodes/object.h"
+#include "src/components/json/parser/_3/object.h"
 
-class JSONReader
+template< class JasonPartObjectT, class JasonModelObjectT >
+class JSONPartReader
 {
 public:
 
-    JSONReader() : m_byteBuffer(2048), m_sink(m_byteBuffer)
+    JSONPartReader() : m_byteBuffer(2048), m_sink(m_byteBuffer)
     {        
     }
 
-    components::json::Object operator()(const pipeline::Plug& sourceConnector)
-    {        
-        Pipeline(
-            sourceConnector,
-            m_sink,
-            Element::Push
-        ).Connect().PumpAll();
-      
+    ref_of<JasonModelObjectT>::type operator()(const pipeline::Plug& sourceConnector)
+    {           
+        m_sink.Reset();
+        Pipeline(sourceConnector, m_sink, Element::Push).Connect().PumpAll();
         m_sink.Parser().FinalParse();
         auto finalNode = m_sink.Parser().PopNode();
-        return finalNode.AsRef<components::json::Object>();
+        return finalNode.AsRef< components::parser::NodeAdapter< JasonModelObjectT > >()->GetObject();
     }
 
     const pipeline::Buffer& Buffer()
@@ -57,5 +53,34 @@ public:
 private:
 
     pipeline::PODBuffer<byte> m_byteBuffer;
-    ParserSink<components::json::parser::object> m_sink;
+    ParserSink< JasonPartObjectT > m_sink;
+
+};
+
+class JSONReader
+{
+public:
+
+    JSONReader() : m_byteBuffer(2048), m_sink(m_byteBuffer)
+    {        
+    }
+
+    ref_of<components::model::json::Object>::type operator()(const pipeline::Plug& sourceConnector)
+    {           
+        m_sink.Reset();
+        Pipeline(sourceConnector, m_sink, Element::Push).Connect().PumpAll();
+        m_sink.Parser().FinalParse();
+        auto finalNode = m_sink.Parser().PopNode();
+        return finalNode.AsRef<components::parser::json::ObjectNode>()->GetObject();
+    }
+
+    const pipeline::Buffer& Buffer()
+    {
+        return m_byteBuffer;
+    }
+
+private:
+
+    pipeline::PODBuffer<byte> m_byteBuffer;
+    ParserSink<components::parser::json::object> m_sink;
 };

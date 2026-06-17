@@ -31,11 +31,11 @@ see the roller example*/
 #include "sdk/using_platform.h"
 #include "sdk/components/framework.h"
 
-const char* appName = "Plumbing";
+constexpr const char* appName = "Plumbing";
 qor_pp_implement_module(appName)
 
-bool requiresCurrentThread = ImplementsICurrentThread();
-bool requiresFileSystem = ImplementsIFileSystem();
+qor_pp_module_requires(ICurrentThread);
+qor_pp_module_requires(IFileSystem);
 
 void TraditionalFileRead(FileSystem::ref filesystem, FileIndex& index);
 void PipelineFileProcessor(FileSystem::ref filesystem, FileIndex& index);
@@ -64,7 +64,7 @@ int main()
             if(!index.Exists())
             {
                 std::cout << "Please place a file called alice.txt in the folder " << index.GetPath().ToString() << " to make this example work. The file contents will be encoded into output.txt" << std::endl;
-                return 0;
+                return EXIT_FAILURE;
             }
 
             /*If we want to do simple step by step processing
@@ -72,10 +72,10 @@ int main()
             TraditionalFileRead(fileSystem, index);
 
             /*However what if we want to transcode the whole file
-            to base64 encoding and write it out to another file?*/
+            to base64 and write it out to another file?*/
             PipelineFileProcessor(fileSystem, index);
         
-            return 0;
+            return EXIT_SUCCESS;
         });
 }
 
@@ -142,8 +142,8 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, FileIndex& input)
         FileConnector(output,WithFlags::CreateNew,ShareMode::Owner_Write,OpenFor::ReadWrite),
         Element::Push).
         InsertInlineFilter(Base64EncodeFilter(8192)).
-        Connect().
-        PumpAll();
+            Connect().
+            PumpAll();
     */
 }
 

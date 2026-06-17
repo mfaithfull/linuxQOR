@@ -38,7 +38,8 @@ namespace qor { namespace components { namespace parser {
         m_complete = false;
         if(m_StateStack.empty())
         {
-            return m_result;        }
+            return m_result;        
+        }
         else
         {
             std::cout << "Stack on entry has " << m_StateStack.size() << " states." << std::endl;
@@ -102,9 +103,9 @@ namespace qor { namespace components { namespace parser {
                 std::cout << "All available data consumed." << std::endl;
             }
         }
-        catch(const Error* error)
+        catch(const Error& error)
         {
-            std::cerr << error->what().Content() << '\n';
+            std::cerr << error.what().Content() << '\n';
         }
         catch(const std::exception& e)
         {

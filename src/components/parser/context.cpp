@@ -57,6 +57,11 @@ namespace qor { namespace components { namespace parser {
             return true;
         }
         return false;
-    }    
+    }
+
+    void Context::Diagnostic()
+    {
+        return;
+    }
 
 }}}//qor::components::parser

@@ -65,6 +65,8 @@ namespace qor { namespace components { namespace parser {
             return m_size - m_position > 0;
         }
 
+        void Diagnostic();
+
     private:
     
         byte* m_octetStream;

@@ -25,8 +25,8 @@
 #include "sdk/using_framework.h"
 #include "sdk/using_platform.h"
 #include "sdk/components/framework.h"
-#include "src/components/protocols/http/request/parser/requesttoken.h"
-#include "src/components/protocols/http/request/parser/requestnode.h"
+#include "src/components/protocols/http/server/requestparser/requesttoken.h"
+#include "src/components/protocols/http/server/requestparser/nodes/requestnode.h"
 
 class RequestReader
 {

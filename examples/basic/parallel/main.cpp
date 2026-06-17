@@ -31,11 +31,11 @@ see the plumbing project*/
 #include "sdk/using_framework.h"
 #include "sdk/components/framework.h"
 
-const char* appName = "Parallel";
+constexpr const char* appName = "Parallel";
 qor_pp_implement_module(appName)
 
 /*A valid partial file name to identify logs from this app*/
-const char* logTag = "parallel";
+constexpr const char* logTag = "parallel";
 
 qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
@@ -48,12 +48,12 @@ int main()
 {    
     /*This context macro is used to gather data about the point of execution 
     for use by logging and error handling. It sets up a Function Context
-    making the code self aware of which function is executing on which obejct
-    in which module at which line in which file and on which thread.*/
+    making the code self aware of which function is executing, on which object,
+    in which module, at which line, in which file and on which thread.*/
     qor_pp_fcontext;
 
     /*Set up a default log handler to handle logs on the main thread
-    this flyer will be available on all functions in this thread during
+    this flyer will be available in all functions on this thread during
     it's lifetime*/
     DefaultLogHandler logHandler(Level::Debug);
 
@@ -64,7 +64,7 @@ int main()
         [&logHandler](ref_of<IRole>::type role)
         {
             qor_pp_fcontext;
-            /*Add the ThreaPool feature to the Role for this application*/
+            /*Add the ThreaPool feature to the Role*/
             role->AddFeature<ThreadPool>(
                 [](ref_of<ThreadPool>::type threadPool)
                 {
@@ -85,7 +85,7 @@ int main()
             );
         }
     ).Run([&logHandler]()->int
-        {            
+        {
             qor_pp_fcontext;
             auto threadPool = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<ThreadPool>();
 

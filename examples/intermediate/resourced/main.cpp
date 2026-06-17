@@ -42,7 +42,7 @@
 #include "src/framework/resources/types/font/fontresource.h"
 #include "src/framework/resources/claimer.h"
 
-const char* logTag = "resourced";
+constexpr const char* logTag = "resourced";
 
 qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
@@ -81,7 +81,7 @@ int main(const int argc, const char** argv, char** env)
         ResourcedApp::Name,
         [argc,argv,env](ref_of<ResourcedApp>::type app)
         {   
-            /*Parse the options from the command line and pass them to the OptionsApp*/
+            /*Parse the options from the command line and pass them to the ResourcedApp*/
             qor::components::optparser::OptionGetter options(argc, argv, app(qor_shared));
         }
     )->SetRole<Role>(

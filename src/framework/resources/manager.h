@@ -40,7 +40,7 @@
 
 namespace qor{ namespace framework{
 
-	//Asynchronous resource manager
+	//Asynchronous resource manager base class
     class qor_pp_module_interface(QOR_RESOURCES) ResourceManager : public SlotBase
     {
     public:

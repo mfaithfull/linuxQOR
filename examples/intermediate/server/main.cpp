@@ -30,7 +30,9 @@
 
 #include "server.h"
 
-const char* logTag = "server";
+constexpr const char* logTag = "server";
+
+qor_pp_implement_module(Server::Name)
 
 qor_pp_module_requires(Sockets)
 qor_pp_module_requires(AsyncIOService)
@@ -57,14 +59,14 @@ int main(const int argc, const char** argv, char** env)
             role->AddFeature<ThreadPool>(
                 [](ref_of<ThreadPool>::type threadPool)->void
                 {
-                    threadPool->SetThreadCount(16);
+                    threadPool->SetThreadCount(8);
                     CurrentThread::Get().SetName("Main");
                 }                
             );
             role->AddFeature<AsyncIOService>(
                 [](ref_of<AsyncIOService>::type ioService)->void
                 {
-                    PoolInstancer::SetPoolSize<AsyncIOContext>(4);
+                    PoolInstancer::SetPoolSize<AsyncIOContext>(2);
                 }
             );
             role->AddFeature<LogAggregatorService>(
@@ -86,4 +88,3 @@ int main(const int argc, const char** argv, char** env)
          &LogReceiver::ReceiveLog);
 }
 
-qor_pp_implement_module(Server::Name)

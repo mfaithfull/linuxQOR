@@ -34,7 +34,7 @@ namespace qor{ namespace framework{
     enum ResourceStatus
     {
         Unknown,        //No resource of this name is known. Default initial state until a URI is assigned
-        Named,          //Resource has a URI but may no have any other existance. Can still be used as a agreed atom but that's all.
+        Named,          //Resource has a URI but may not have any other existance. Can still be used as an agreed atom but that's all.
         Located,        //Resource confirmed to exist, file, path, etc is a real thing as least for now.
         Claimed,        //We have opened the file/thing and if possible locked it/assigned it to a ResourceHub instance
         Available,      //The resource has been loaded, parsed and is immediately available as a Model

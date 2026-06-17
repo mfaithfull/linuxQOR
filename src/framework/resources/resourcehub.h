@@ -111,7 +111,7 @@ namespace qor{ namespace framework{
         //This is especially useful where models are just proxies for resources that remain on disk for example due to size.
         //One of the possible responses to the Claimed notification should be to make a proxy availble as a Model.
         //If we implement full Vanquo request forwarding then the user can run as many resource hubs as they like. 
-        //They will all collaborate if we can give them a way to find one another. That will require a UDP client and server as we as 
+        //They will all collaborate if we can give them a way to find one another. That will require a UDP client and server as well as 
         //something shared between the in process instances and host local instances. Broadcast signals should be enough between threads.
         //A Pipe/Unix Socket will be needed between processes.
         //Resource requests for a URI containing host, process and thread data go out

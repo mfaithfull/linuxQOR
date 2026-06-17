@@ -22,7 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//A documented minimal outline application using the QOR SDK
+//A documented outline application using the QOR SDK
 
 /*Include the QOR framweork for structural elements
 like the Application class
@@ -36,30 +36,26 @@ namespace so be more specific with your includes for a
 #include "src/qor/module/moduleregistry.h"  //exceptional include not provided by the SDK, inernal header for module introspection only.
 #include "src/framework/host/host.h"        //exceptional include not provided by the SDK, inernal header for module introspection only.
 
-/*For conveniece we provide one global and immutable
-definition of the application name*/
-const char* appName = "Outline";
+/*For conveniece we provide one global and immutable definition of the application name*/
+constexpr const char* appName = "Outline";
 
 /*Our application is a module in the QOR ecosystem
 The qor_pp_implement_module macro gives us a named, versioned module object
 Every QOR executable must:
 1. Link the qor_module static library to become a module
 2. Link the qor_host module to become the host for other modules
-3. #define QOR_PP_EXECUTABLE for it's build (This requirement may get removed)
-4. provide an executable module instance equivalent to this macro.
-Optionally #define qor_pp_ver_major, qor_pp_ver_minor & qor_pp_ver_patch
-at compilation time to encode that version into the module object.*/
+3. provide an executable module instance equivalent to this macro.
+*/
 qor_pp_implement_module(appName)
 
 void AccessLibraries();
 
-/*A QOR application is just a C++ application
-An empty int main(){return 0;} would work but isn't very interesting*/
+/*A QOR application is just a C++ application*/
 int main()
 {
     AccessLibraries();
 
-    /*Build an Application*/
+    /*Build an Application object*/
     auto outlineApp = AppBuilder().Build(appName);
 
     /*We'll skip configuring the application in this simple case*/
@@ -77,8 +73,7 @@ int main()
             /*The traditional C++ Hello world*/
             std::cout << "Hello from the QOR Outline application." << std::endl;
 
-            /*This is the integer value that this lambda
-            and then the main function will return*/
+            /*This is the integer value that this lambda and then the main function will return*/
             return EXIT_SUCCESS;
         }
     );
@@ -86,7 +81,7 @@ int main()
 
 /*This (for science only) function can be used to access 
 every loaded QOR library.
-This is intentionally not thread safe so use only when
+This is intentionally not thread safe so usable only when
 single threaded at startup.
 Diagnostically something like this can be useful for tracking
 down dependency issues.*/

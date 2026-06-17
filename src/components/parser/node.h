@@ -71,7 +71,7 @@ namespace qor { namespace components { namespace parser {
 
         virtual ~NodeAdapter() = default;
 
-        typename ref_of<T>::type GetObject()
+        typename ref_of<T>::type GetObject() const
         {
             return m_t;
         }

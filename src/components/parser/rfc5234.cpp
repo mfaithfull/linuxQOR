@@ -30,6 +30,7 @@
 #include "rfc5234.h"
 #include "nodes/digit.h"
 #include "nodes/char.h"
+#include "nodes/hexdigit.h"
 
 namespace qor { namespace components { namespace parser {
 
@@ -51,12 +52,41 @@ namespace qor { namespace components { namespace parser {
         GetParser()->PushNode(new_ref<Char>(ctlVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
     
+    void HEXDIGIT::Prepare()
+    {
+        //log::debug("Looking for a HEX DIGIT...");
+        GetParser()->PushNode(new_ref<HexDigit>(0));
+    }
+
     void HEXDIGIT::Emit()
     {
-        unsigned int hexVal = (m_result.first >= '0' && m_result.first <= '9') ? m_result.first - '0' :
-        ((m_result.first >= 'a' && m_result.first <= 'f') ? m_result.first - 'a' + 10 :
-            ((m_result.first >= 'A' && m_result.first <= 'F') ? m_result.first - 'A' + 10 : 0));
-        GetParser()->PushNode(new_ref<Digit>(hexVal).AsRef<Node>());
+        log::debug("Emitting a HEX DIGIT");
+
+        unsigned int hexVal = 0;
+        auto node = GetParser()->PopNode();
+        if(node.IsNotNull() && node->GetToken() == static_cast<uint64_t>(eToken::Digit))
+        {
+            hexVal = node.AsRef<Digit>()->GetValue();
+            node = GetParser()->PopNode();
+        }
+        else
+        {
+            hexVal = (m_result.first >= '0' && m_result.first <= '9') ? m_result.first - '0' :
+                        ((m_result.first >= 'a' && m_result.first <= 'f') ? m_result.first - 'a' + 10 :
+                            ((m_result.first >= 'A' && m_result.first <= 'F') ? m_result.first - 'A' + 10 : 0));
+        }
+        
+        GetParser()->PushNode(new_ref<HexDigit>(hexVal));
+    }
+
+    void HEXDIGIT::Fail()
+    {
+        //log::debug("...Didn't find a HEX DIGIT.");
+        auto node = GetParser()->PopNode();
+        if(node.IsNotNull() && node->GetToken() != m_token)
+        {
+            GetParser()->PushNode(node);
+        }
     }
 
     void BIT::Emit()

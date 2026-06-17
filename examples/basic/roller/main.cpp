@@ -22,7 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-//A documented application with a Role using the QOR SDK
+//A documented application with a Custom Role using the QOR SDK
 
 /*For a more basic documented example of the flow of a QOR application
 see the outline project*/
@@ -38,9 +38,9 @@ The Role manages the Setup and Shutdown of the Features*/
 base Role class is usually sufficient*/
 #include "customrole.h"
 
-/*Here we incluse a custom Feature class. You can implement the features
+/*Here we include a custom Feature class. You can implement the features
 of your application as custom QOR Features or just use the builtin ones
-and add your own way manage custom functionality*/
+and add your own way to manage custom functionality*/
 #include "customfeature.h"
 
 qor_pp_implement_module(App::Name)
@@ -55,15 +55,7 @@ qor_pp_module_requires(ICurrentThread)
 
 int main()
 {
-    /*We must request the AppBuilder to build a base Application class
-    rather than our custom derived App. 
-    We've already redirected the factory so it will really give us a
-    custom App instance. However we must always go through the 
-    base Application singleton factory.
-    Only ever do this in one translation unit (as this owns the factory)
-    and use AppBuilder().TheApplication().AsRef<App>() to access
-    your custom application in every case.*/
-   return AppBuilder().Build<Application>(
+   return AppBuilder().Build<App>(
         App::Name,
         [](ref_of<App>::type app)
         {   
@@ -71,7 +63,7 @@ int main()
             app->CustomConfigure();
         }
     )->SetRole<CustomRole>(
-        /*The Build function gives us an App on which we can call SetRole with our Role class*/
+        /*The Build function gives us an App on which we can call SetRole with our CustomRole class*/
 
         /*Whatever the type of your Role you'll always get an IRole interface on this customisation point*/
         [](ref_of<IRole>::type role)    
@@ -92,8 +84,7 @@ int main()
                 }
             );
 
-            /*You can add whatever Features you need including of course
-            custom features*/
+            /*You can add whatever Features you need including of course custom features*/
             role->AddFeature<CustomFeature>(
                 /*These get customisation points just like builtin Featues*/
                 [](ref_of<CustomFeature>::type customFeature)->void

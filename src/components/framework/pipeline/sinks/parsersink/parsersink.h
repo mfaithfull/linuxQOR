@@ -74,6 +74,12 @@ namespace qor{ namespace components{
 
         virtual ~ParserSink() = default;
 
+        void Reset()
+        {
+            m_objectState = new_ref<TObjectState>(&m_parser);
+            m_parser.SetInitialState(m_objectState);
+        }
+
     protected:
 
         ref_of<TObjectState>::type m_objectState;

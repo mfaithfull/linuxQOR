@@ -24,21 +24,18 @@
 
 //A documented application with a Workflow using the QOR SDK
 
-/*For a more basic documented example of the flow of a QOR application
-see the roller project*/
-
 #include "sdk/using_framework.h"
 
 /*Workflows are always custom, specific overrides.
 Here we include a simple one.*/
-
 #include "workflow.h"
-const char* appName = "Work";
+
+constexpr const char* appName = "Work";
 qor_pp_implement_module(appName)
 
 int main()
 {
-    /*The workflow becomes the runnable components for our Application*/
+    /*The workflow becomes the runnable component for our Application*/
     return AppBuilder().Build(appName)->SetRole<Role>().RunWorkflow<CustomWorkflow>();
 }
 

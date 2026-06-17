@@ -127,7 +127,7 @@ namespace qor{ namespace pipeline{
             }
             else
             {
-                warning("{0} is in push mode but has no plug or plug is not a valid plug.", name);
+                //warning("{0} is in push mode but has no plug or plug is not a valid plug.", name);
             }
         }
         else
