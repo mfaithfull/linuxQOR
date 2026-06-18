@@ -35,7 +35,7 @@ namespace qor { namespace components{ namespace parser{ namespace json {
     {
     public:
 
-        CharacterNode(char c = 'c') : NodeAdapter< model::json::Character >(static_cast<uint64_t>(jsonToken::character))
+        CharacterNode(unsigned int c = 'c') : NodeAdapter< model::json::Character >(static_cast<uint64_t>(jsonToken::character))
         {
             GetObject()->SetValue(c);
         }

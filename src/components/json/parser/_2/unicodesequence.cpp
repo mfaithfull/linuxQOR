@@ -29,6 +29,7 @@
 #include "unicodesequence.h"
 #include "../nodes/unicodesequence.h"
 #include "../nodes/character.h"
+#include "src/components/parser/nodes/hexdigit.h"
 
 namespace qor { namespace components { namespace parser { namespace json {
 
@@ -41,7 +42,8 @@ namespace qor { namespace components { namespace parser { namespace json {
     void unicodeSequence::Emit()
     {
         log::debug("Emitting a Unicode Sequence");
-        char cValue = 0;
+        int magnitude = 1;
+        char32_t cValue = 0;
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -64,12 +66,25 @@ namespace qor { namespace components { namespace parser { namespace json {
                     continuable("Unrecognized token {0}", token);
                 }
             }
+
+            if(token == static_cast<uint64_t>(eToken::HexDigit))
+            {
+                auto digitNode = node.AsRef<HexDigit>();
+                unsigned int digitVal = digitNode->GetValue();
+                cValue += digitVal * magnitude;
+                magnitude *= 16;
+            }
+            else
+            {
+                continuable("Unexpected: {0}", tokenName);
+            }
+
             node = GetParser()->PopNode();                
         };
 
         if(node.IsNotNull())
         {
-            log::debug("Unicode Sequence: {0}", cValue);
+            log::debug("Unicode Sequence: {0}", (unsigned int)cValue);
             GetParser()->PushNode(new_ref<CharacterNode>(cValue));
         }
     }

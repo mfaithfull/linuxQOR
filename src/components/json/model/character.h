@@ -34,12 +34,12 @@ namespace qor { namespace components{ namespace model { namespace json {
     public:
 
         Character() : m_value(0){ }
-        Character(char c) : m_value(c){ }
+        Character(unsigned int c) : m_value(c){ }
         virtual ~Character() = default;
-        char GetValue() {return m_value;}
-        void SetValue(char c) { m_value = c; }
+        unsigned int GetValue() {return m_value;}
+        void SetValue(unsigned int c) { m_value = c; }
     private:
-        char m_value;
+        unsigned int m_value;
     };
 
 }}}}//qor::components::model::json
