@@ -27,6 +27,7 @@
 #include <cassert>
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
+#include "src/components/parser/nodes/digit.h"
 #include "exp.h"
 #include "../nodes/exp.h"
 
@@ -41,15 +42,61 @@ namespace qor { namespace components { namespace parser { namespace json {
     void exp::Emit()
     {
         log::debug("Emitting an Exp: ");
+        int value = 0;
+        int magnitude = 1;
+        int sign = 1;
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
-            //std::cout << " consuming a token: " << node->GetToken() << std::endl;
+            uint64_t token = node->GetToken();
+            if(token == static_cast<uint64_t>(eToken::Digit))
+            {
+                auto digitNode = node.AsRef<Digit>();
+                unsigned int digitVal = digitNode->GetValue();
+                value += digitVal * magnitude;
+                magnitude *= 10;
+            }
+            else if( node->GetToken() == static_cast<uint64_t>(jsonToken::plus))
+            {
+                sign = 1;                
+            }
+            else if(node->GetToken() == static_cast<uint64_t>(jsonToken::minus))
+            {
+                sign = -1;                
+            }
+            else if(token == static_cast<uint64_t>(jsonToken::_e))
+            {
+            }
+            else
+            {
+                auto f = jsonTokenNames.find((jsonToken)token);
+                std::string tokenName;
+                if(f != jsonTokenNames.end())
+                {
+                    tokenName = f->second;
+                }
+                else
+                {
+                    auto g = tokenNames.find(token);
+                    if( g != tokenNames.end())
+                    {
+                        tokenName = g->second;
+                    }
+                    else
+                    {
+                        continuable("Unrecognized token {0}", token);
+                    }
+                }
+
+                continuable("Unexpected: {0}", tokenName);
+            }
             node = GetParser()->PopNode();
         }
 
         if(node.IsNotNull())
         {
+            auto expNode = node.AsRef<ExpNode>();
+            expNode->GetObject()->SetValue(value * sign);
             GetParser()->PushNode(node);
         }
     }

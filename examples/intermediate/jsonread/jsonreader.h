@@ -61,7 +61,7 @@ class JSONReader
 {
 public:
 
-    JSONReader() : m_byteBuffer(2048), m_sink(m_byteBuffer)
+    JSONReader() : m_byteBuffer(64), m_sink(m_byteBuffer)
     {        
     }
 

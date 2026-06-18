@@ -50,10 +50,7 @@ namespace qor { namespace components { namespace parser { namespace json {
                     )
                 ),
                 new_ref<end_array>(parser)
-            ),
-        static_cast<uint64_t>(jsonToken::array))
-    {
-    }
+            ),static_cast<uint64_t>(jsonToken::array)){ }
 
     void array::Prepare()
     {
@@ -69,7 +66,7 @@ namespace qor { namespace components { namespace parser { namespace json {
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = jsonTokenNames.find(token);
+            auto f = jsonTokenNames.find((jsonToken)token);
             std::string tokenName;
             if(f != jsonTokenNames.end())
             {

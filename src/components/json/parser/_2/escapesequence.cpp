@@ -46,7 +46,7 @@ namespace qor { namespace components { namespace parser { namespace json {
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = jsonTokenNames.find(token);
+            auto f = jsonTokenNames.find((jsonToken)token);
             std::string tokenName;
             if(f != jsonTokenNames.end())
             {
@@ -69,8 +69,6 @@ namespace qor { namespace components { namespace parser { namespace json {
 
         if(node.IsNotNull())
         {            
-            //auto numberNode = node.AsRef<NumberNode>();
-            //numberNode->GetObject()->SetValue(value);
             log::debug("Escaped Sequence to: {0}", cValue);
             GetParser()->PushNode(new_ref<CharacterNode>(cValue));
         }

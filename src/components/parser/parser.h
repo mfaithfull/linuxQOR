@@ -72,16 +72,6 @@ namespace qor { namespace components { namespace parser {
             return result;
         }
 
-        ref_of<Node>::type TopNode()
-        {
-            ref_of<Node>::type result;
-            if(!m_nodes.empty())
-            {
-                result = m_nodes.top();
-            }
-            return result;
-        }
-
         void SetContext(ref_of<class Context>::type context)
         {
             m_context = context;

@@ -38,7 +38,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void _true::Emit()
     {        
-        log::debug("Emitting a true");
+        log::debug("Emitting a true.");
         auto trueNode = new_ref<_TrueNode>();
         GetParser()->PushNode(trueNode);
     }

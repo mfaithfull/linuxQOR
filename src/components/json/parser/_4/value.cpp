@@ -82,40 +82,40 @@ namespace qor { namespace components { namespace parser { namespace json {
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = jsonTokenNames.find(token);
+            auto f = jsonTokenNames.find((jsonToken)token);
             std::string tokenName;
             if(f != jsonTokenNames.end())
             {
                 tokenName = f->second;
             }
 
-            switch(token)
+            switch((jsonToken)token)
             {
-            case static_cast<uint64_t>(jsonToken::_false):
+            case jsonToken::_false:
                 vt = model::json::ValueType::_false;
                 valueNode = node;
                 break;
-            case static_cast<uint64_t>(jsonToken::_true):
+            case jsonToken::_true:
                 vt = model::json::ValueType::_true;
                 valueNode = node;
                 break;
-            case static_cast<uint64_t>(jsonToken::_null):
+            case jsonToken::_null:
                 vt = model::json::ValueType::_null;
                 valueNode = node;
                 break;
-            case static_cast<uint64_t>(jsonToken::object):
+            case jsonToken::object:
                 vt = model::json::ValueType::object;
                 valueNode = node;
                 break;
-            case static_cast<uint64_t>(jsonToken::array):
+            case jsonToken::array:
                 vt = model::json::ValueType::array;
                 valueNode = node;
                 break;
-            case static_cast<uint64_t>(jsonToken::number):
+            case jsonToken::number:
                 vt = model::json::ValueType::number;
                 valueNode = node;
                 break;
-            case static_cast<uint64_t>(jsonToken::string):
+            case jsonToken::string:
                 vt = model::json::ValueType::string;
                 valueNode = node;
                 break;
@@ -177,7 +177,7 @@ namespace qor { namespace components { namespace parser { namespace json {
                     break;
                     default:
                     {
-                        continuable("JSON Object member must be false, true, null, object, array, number or string.");
+                        continuable("JSON Value must be false, true, null, object, array, number or string.");
                     }
 
                 }

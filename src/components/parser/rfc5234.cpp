@@ -54,7 +54,7 @@ namespace qor { namespace components { namespace parser {
     
     void HEXDIGIT::Prepare()
     {
-        //log::debug("Looking for a HEX DIGIT...");
+        log::debug("Looking for a HEX DIGIT...");
         GetParser()->PushNode(new_ref<HexDigit>(0));
     }
 
@@ -81,7 +81,7 @@ namespace qor { namespace components { namespace parser {
 
     void HEXDIGIT::Fail()
     {
-        //log::debug("...Didn't find a HEX DIGIT.");
+        log::debug("...Didn't find a HEX DIGIT.");
         auto node = GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() != m_token)
         {

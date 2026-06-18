@@ -49,7 +49,7 @@ namespace qor { namespace components { namespace parser { namespace json {
         double value = 0.0;        
         int sign = 1;
         double frac = 0.0;
-        long exp = 0;
+        int exp = 0;
 
         auto node = GetParser()->PopNode();
         do{
@@ -91,14 +91,20 @@ namespace qor { namespace components { namespace parser { namespace json {
                 else if(token == static_cast<uint64_t>(jsonToken::exp))
                 {
                     auto expNode = node.AsRef<ExpNode>();
-                    //TODO: Sort out exponent
+                    if(expNode.IsNotNull())
+                    {
+                        exp = expNode->GetObject()->GetValue();
+                    }                    
                     node = GetParser()->PopNode();
                     token = node->GetToken();
                 }
                 else if(token == static_cast<uint64_t>(jsonToken::fraction))
                 {
                     auto fractionNode = node.AsRef<FractionNode>();
-                    //TODO: Sort out fractions
+                    if(fractionNode.IsNotNull())
+                    {
+                        frac = fractionNode->GetObject()->GetValue();
+                    }
                     node = GetParser()->PopNode();
                     token = node->GetToken();
                     if(node.IsNull() || node->GetToken() == m_token)
@@ -108,7 +114,7 @@ namespace qor { namespace components { namespace parser { namespace json {
                 }
                 else
                 {
-                    auto f = jsonTokenNames.find(token);
+                    auto f = jsonTokenNames.find((jsonToken)token);
                     std::string tokenName;
                     if(f != jsonTokenNames.end())
                     {
@@ -123,6 +129,7 @@ namespace qor { namespace components { namespace parser { namespace json {
         if(node.IsNotNull())
         {
             auto numberNode = node.AsRef<NumberNode>();
+            value = ((value + frac) * sign) * pow(10, exp);
             numberNode->GetObject()->SetValue(value);
             log::debug("Number: {0}", value);
             GetParser()->PushNode(node);

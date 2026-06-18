@@ -160,9 +160,7 @@ namespace qor { namespace components { namespace parser {
 
         Sequence(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
 
-        virtual ~Sequence()
-        {
-        };
+        virtual ~Sequence() = default;
         
     private:
         

@@ -43,13 +43,14 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void integer::Emit()
     {
+        log::debug("Emitting an Integer.");
         int value = 0;
         int magnitude = 1;
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = jsonTokenNames.find(token);
+            auto f = jsonTokenNames.find((jsonToken)token);
             std::string tokenName;
             if(f != jsonTokenNames.end())
             {

@@ -48,7 +48,7 @@ namespace qor { namespace components { namespace parser {
             }
             else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
             {
-                if(m_token == 0)
+                if(m_token == 0 && m_result.token != 0)
                 {
                     m_token = m_result.token;
                 }
@@ -269,7 +269,7 @@ namespace qor { namespace components { namespace parser {
 
         Resume = [this]()
         {
-            m_result.code = Result::SUCCESS;
+            //m_result.code = Result::SUCCESS;
             m_result.length = 0;             
             if(m_head->m_result.code == Result::SUCCESS && m_head->m_result.length > 0)
             {
@@ -278,8 +278,31 @@ namespace qor { namespace components { namespace parser {
                 m_result.token = m_head->m_result.token;                
             }
             m_result.m_position = m_head->m_result.m_position;
+            m_result.code = m_head->m_result.code;
             Workflow()->PopState();
         };
+
+        Leave = [this]()
+        {
+            if(m_result.code == Result::FAILURE)
+            {
+                Fail();
+            }
+            else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
+            {
+                if(m_token == 0 && m_result.token != 0)
+                {
+                    m_token = m_result.token;
+                }
+                Emit();
+            }
+            else if(m_result.code == Result::MORE_DATA)
+            {
+                std::cout << "Ran out of data before we could decide. Reenter with more data to try again." << std::endl;
+            }
+            m_result.code = Result::SUCCESS;
+        };
+
     }
 
     //Matches Zero or more sequential instances of the head state. None is fine. There's no limit except running out of RAM

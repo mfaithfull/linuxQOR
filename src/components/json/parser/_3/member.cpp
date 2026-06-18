@@ -58,13 +58,14 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void member::Emit()
     {
+        log::debug("Emitting a Member.");
         std::string name;
         ref_of<ValueNode>::type value;
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = jsonTokenNames.find(token);
+            auto f = jsonTokenNames.find((jsonToken)token);
             std::string tokenName;
             if(f != jsonTokenNames.end())
             {
@@ -79,7 +80,7 @@ namespace qor { namespace components { namespace parser { namespace json {
                 node = GetParser()->PopNode();
 
                 uint64_t token2 = node->GetToken();
-                auto f2 = jsonTokenNames.find(token2);
+                auto f2 = jsonTokenNames.find((jsonToken)token2);
                 std::string tokenName2;
                 if(f2 != jsonTokenNames.end())
                 {

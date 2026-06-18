@@ -31,10 +31,16 @@ namespace qor { namespace components{ namespace model{ namespace json {
     {
     public:
 
-        Exp(){ }
+        Exp() : m_value(0){ }
         virtual ~Exp() = default;
 
+        int GetValue(){ return m_value; }
+        void SetValue(int value){ m_value = value;}
+        
     private:
+
+        int m_value;        
+
     };
 
 }}}}//qor::components::model::json

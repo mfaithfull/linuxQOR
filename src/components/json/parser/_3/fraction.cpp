@@ -29,6 +29,7 @@
 #include "src/qor/reference/newref.h"
 #include "fraction.h"
 #include "../nodes/fraction.h"
+#include "src/components/parser/nodes/digit.h"
 
 namespace qor { namespace components { namespace parser { namespace json {
 
@@ -40,17 +41,61 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void fraction::Emit()
     {
-        std::cout << "Emitting a fraction: " << std::endl;
+        log::debug("Emitting a Fraction.");
+        double value = 0.0;
+        double magnitude = 10;
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
-            //TODO:collect and store the decimal fractional value
-            //std::cout << " consuming a token: " << node->GetToken() << std::endl;
+            uint64_t token = node->GetToken();
+            auto f = jsonTokenNames.find((jsonToken)token);
+            std::string tokenName;
+            if(f != jsonTokenNames.end())
+            {
+                tokenName = f->second;
+            }
+            else
+            {
+                auto g = tokenNames.find(token);
+                if( g != tokenNames.end())
+                {
+                    tokenName = g->second;
+                }
+                else
+                {
+                    continuable("Unrecognized token {0}", token);
+                }
+            }
+
+            if(token == static_cast<uint64_t>(eToken::Digit))
+            {
+                auto digitNode = node.AsRef<Digit>();
+                double digitVal = 0.0 + digitNode->GetValue();
+                if(value > 0)
+                {
+                    value /= 10;
+                }
+                if( digitVal > 0 )
+                {
+                    value += digitVal / 10;
+                }
+            }
+            else if(token == static_cast<uint64_t>(jsonToken::decimal_point))
+            {
+                //TODO: prevent further non fraction tokens
+            }
+            else
+            {
+                continuable("Unexpected: {0}", tokenName);
+            }
+            
             node = GetParser()->PopNode();
         }
 
         if(node.IsNotNull())
         {
+            auto fractionNode = node.AsRef<FractionNode>();
+            fractionNode->GetObject()->SetValue(value);
             GetParser()->PushNode(node);
         }
     }
