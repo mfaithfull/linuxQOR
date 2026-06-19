@@ -31,7 +31,7 @@
 
 namespace qor{ 
 
-    Error::Error(Severity s, const std::string& message) : Issue()
+    Error::Error(Severity s, const std::string& message) : Issue<SeverityWhat>()
     {
         auto pContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
         m_when = new_ref<When>();
@@ -41,6 +41,8 @@ namespace qor{
         }
         m_what = new_ref<SeverityWhat>(message, s);
     }
+
+    Error::Error(const Error & src) : Issue<SeverityWhat>(src) {}
 
     Error& Error::operator = (const Error& src)
     {

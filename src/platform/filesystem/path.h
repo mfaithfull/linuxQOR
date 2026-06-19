@@ -44,11 +44,11 @@ namespace qor{ namespace platform{
         Path operator / (const std::string& folder) const;
 
         Path Parent() const;
-        const std::string Separator() const;
-        const std::string SelfIndicator() const;
-        const std::string ParentIndicator() const;
-        const unsigned short MaxElementLength() const;
-        const std::string RootIndicator() const;
+        std::string Separator() const;
+        std::string SelfIndicator() const;
+        std::string ParentIndicator() const;
+        unsigned short MaxElementLength() const;
+        std::string RootIndicator() const;
 
         std::string ToString() const;
         std::string ToString(std::string FileName) const;

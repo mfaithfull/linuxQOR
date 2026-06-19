@@ -36,6 +36,7 @@ namespace qor{
     public:
 
         Error(Severity s, const std::string& message);
+        Error(const Error & src);
         virtual ~Error() noexcept = default;
         Error& operator = (const Error & src);
         virtual void Handle();
@@ -53,14 +54,15 @@ namespace qor{
     class SeverityTemplateIssue : public Error
     {
     public:
-        SeverityTemplateIssue(const std::string& message) : Error(S, message) {}
+        SeverityTemplateIssue(const std::string& message) : Error(S, message) { }
+        SeverityTemplateIssue(const SeverityTemplateIssue& src) : Error(src) { }
         virtual ~SeverityTemplateIssue() noexcept = default;
         SeverityTemplateIssue& operator = (const SeverityTemplateIssue& src)
         {
             Error::operator=(src);
             return *this;
         }
-        const Severity GetSeverity() const { return S; }
+        Severity GetSeverity() const { return S; }
 
     };
 

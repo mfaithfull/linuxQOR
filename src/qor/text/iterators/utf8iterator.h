@@ -148,7 +148,7 @@ namespace qor
         }
 
         template<typename iteratorT>
-        static ptrdiff_t distance(const ptrdiff_t& distanceFromBeginToIter1, const ptrdiff_t& distanceFromBeginToIter2, const ptrdiff_t& distanceFromIterToEnd1, const ptrdiff_t& distanceFromIterToEnd2)
+        static ptrdiff_t distance(const ptrdiff_t& distanceFromBeginToIter1, const ptrdiff_t& distanceFromBeginToIter2, const ptrdiff_t& /*distanceFromIterToEnd1*/, const ptrdiff_t& /*distanceFromIterToEnd2*/)
         {
             //Pointer distances will always be >= character distances 
             //and they will always reach zero at the same time 

@@ -39,7 +39,7 @@ namespace qor{
             return new uint8_t[byteCount];
         }
 
-        static inline void Free(uint8_t* memory, size_t ignored)
+        static inline void Free(uint8_t* memory, size_t /*ignored*/)
         {
             delete[] memory;
         }

@@ -552,10 +552,10 @@ namespace qor{
         }
 
         //Overrride this to write any additional Header data
-        virtual void HeaderOnCopy(byte* oldHeader, byte* newHeader){ }
+        virtual void HeaderOnCopy(byte* /*oldHeader*/, byte* /*newHeader*/){ }
 
         //Overrride this to write any additional Footer data
-        virtual void FooterOnCopy(byte* oldFooter, byte* newFooter){ }
+        virtual void FooterOnCopy(byte* /*oldFooter*/, byte* /*newFooter*/){ }
 
     protected:
 

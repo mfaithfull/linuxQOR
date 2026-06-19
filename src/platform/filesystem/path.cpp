@@ -60,27 +60,27 @@ namespace qor{ namespace platform{
         return parent;
     }
 
-    const std::string Path::Separator() const
+    std::string Path::Separator() const
     {
         return Path::s_separator;
     }
 
-    const std::string Path::SelfIndicator() const
+    std::string Path::SelfIndicator() const
     {
         return Path::s_selfIndicator;
     }
 
-    const std::string Path::ParentIndicator() const
+    std::string Path::ParentIndicator() const
     {
         return Path::s_parentIndicator;
     }
 
-    const unsigned short Path::MaxElementLength() const
+    unsigned short Path::MaxElementLength() const
     {
         return Path::s_maxElementLength;
     }
 
-    const std::string Path::RootIndicator() const
+    std::string Path::RootIndicator() const
     {
         return Path::s_rootIndicator;
     }

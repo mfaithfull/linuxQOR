@@ -40,8 +40,12 @@ namespace qor{ namespace components{ namespace threadmemory{
     }
 
     StackPage::StackPage(size_t pageUnits) : 
-        m_pageUnits(pageUnits), m_next(nullptr), m_prev(nullptr), 
-        m_memoryBase(nullptr), m_ToS(nullptr), m_items(0) {}
+        m_memoryBase(nullptr),
+        m_pageUnits(pageUnits), 
+        m_ToS(nullptr), 
+        m_next(nullptr), 
+        m_prev(nullptr), 
+        m_items(0){ }
 
     StackPage::~StackPage()
     {

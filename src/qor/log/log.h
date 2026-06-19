@@ -34,9 +34,10 @@ namespace qor{ namespace log {
     class qor_pp_module_interface(QOR_LOG) Log : public Issue<LevelWhat>
     {
     public:
-
+        
         Log(Level s, const std::string& message);
         Log(Level s, const std::string& message, IFunctionContext* fContext);
+        Log(const Log& src);
         virtual ~Log() noexcept = default;
         Log& operator = (const Log & src);
         virtual void Handle();
@@ -65,7 +66,7 @@ namespace qor{ namespace log {
             return *this;
         }
         
-        const Level GetLevel() const { return S; }
+        Level GetLevel() const { return S; }
     };
 
 }}//qor::log

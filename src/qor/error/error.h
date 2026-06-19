@@ -58,6 +58,7 @@ namespace qor{
     {
     public:
         Serious(const std::string& message);
+        Serious(const Serious& src);
         virtual ~Serious() noexcept = default;
         Serious& operator = (const Serious& src);
         virtual void Handle();

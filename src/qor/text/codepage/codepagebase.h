@@ -157,7 +157,7 @@ namespace qor{
 		virtual inline bool Encode(const CodePoint & codePoint, C*& space, size_t& available) const = 0;
 		virtual inline CodePoint Decode(const C*& chars, size_t& available) const = 0;
 		
-		static const Mib inline GetMib()
+		static Mib inline GetMib()
 		{ 
 			return M;
 		}		

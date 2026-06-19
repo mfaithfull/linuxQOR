@@ -22,7 +22,7 @@ assert/stack.cpp assert/string.cpp assert/string_view.cpp
 assert/unique_ptr.cpp assert/unordered_map.cpp assert/unordered_multimap.cpp 
 assert/unordered_set.cpp assert/user_class.cpp assert/user_subject.cpp 
 assert/weak_ptr.cpp datastructures/guid.cpp
-framework/host.cpp profiling/test_profiling.cpp
+framework/host.cpp
 factory/test_factory.cpp reference/test_ref.cpp
 objectcontext/test_objectcontext.cpp
 observer/test_chainlink.cpp observer/test_observer.cpp
@@ -34,7 +34,7 @@ issue/test_issue.cpp error/test_error.cpp framework/test_signals.cpp
 reflection/test_reflection.cpp framework/test_pipeline.cpp
 framework/test_workflow.cpp application/test_application.cpp
 components/test_optionparser.cpp
-platform/test_filesystem.cpp framework/test_threadpool.cpp
+platform/test_filesystem.cpp
 framework/task/asyncautoresetevent_tests.cpp
 framework/task/asyncgenerator_tests.cpp
 framework/task/asynclatch_tests.cpp
@@ -112,3 +112,5 @@ if (WIN32)
     COMMAND_EXPAND_LISTS
   )
 endif ()
+
+add_subdirectory(operational)

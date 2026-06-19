@@ -55,7 +55,7 @@ namespace qor{ namespace framework{
         ICurrentThread() = default;
         virtual ~ICurrentThread() noexcept = default;
 
-        virtual bool SetPriority(ICurrentThread::Priority priority)
+        virtual bool SetPriority(ICurrentThread::Priority /*priority*/)
         {
             return false;
         }
@@ -65,7 +65,7 @@ namespace qor{ namespace framework{
             return Priority::normal;
         }
 
-        virtual bool SetName(const std::string& name)
+        virtual bool SetName(const std::string& /*name*/)
         {
             return false;
         }
@@ -75,7 +75,7 @@ namespace qor{ namespace framework{
             return std::nullopt;
         }
 
-        virtual bool SetAffinity(const std::vector<bool>& affinity)
+        virtual bool SetAffinity(const std::vector<bool>& /*affinity*/)
         {
             return false;
         }

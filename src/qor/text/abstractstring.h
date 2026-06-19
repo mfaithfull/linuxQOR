@@ -315,7 +315,7 @@ namespace qor{
 
         virtual void UpdateLength() const{}
         virtual AbstractCharacterCodec< CharT >* GetCodecCache() const{ return nullptr; }
-        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* codec) const{}
+        virtual void SetCodecCache(AbstractCharacterCodec< CharT >* /*codec*/) const{}
         
     private:
 

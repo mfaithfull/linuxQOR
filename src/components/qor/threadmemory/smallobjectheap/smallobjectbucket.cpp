@@ -40,9 +40,12 @@ namespace qor{ namespace components{ namespace threadmemory{
     }
 
     SmallObjectBucket::SmallObjectBucket(size_t unitSize) : 
-        m_unitSize(sizeof(int*) + unitSize), m_lastPage(nullptr),
-         m_allocCount(0), m_pageCache(nullptr), m_cacheLimit(0),
-         m_cacheCount(0) 
+        m_unitSize(sizeof(int*) + unitSize)
+        , m_lastPage(nullptr)
+        , m_allocCount(0)
+        , m_pageCache(nullptr)
+        , m_cacheCount(0) 
+        , m_cacheLimit(0)
     {        
     }
 

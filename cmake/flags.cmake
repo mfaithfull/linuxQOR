@@ -1,5 +1,5 @@
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fvisibility=hidden -fconcepts-diagnostics-depth=3 -Wno-attributes -Wall")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fcoroutines -fvisibility=hidden -fconcepts-diagnostics-depth=3 -Wno-attributes -Wall -Wextra --coverage")
 endif()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /GR /utf-8")

@@ -28,9 +28,9 @@
 
 namespace qor{
 
-    Serious::Serious(const std::string& message) : SeverityTemplateIssue<Severity::Serious_Error>(message)
-    {
-    }
+    Serious::Serious(const std::string& message) : SeverityTemplateIssue<Severity::Serious_Error>(message){ }
+
+    Serious::Serious(const Serious& src) : SeverityTemplateIssue<Severity::Serious_Error>(src){ }
 
     Serious& Serious::operator = (const Serious& src)
     {

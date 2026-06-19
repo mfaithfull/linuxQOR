@@ -53,7 +53,7 @@ namespace qor { namespace framework{
         virtual void Stop() { m_StopRequested = true; }
         virtual void Reset() { m_StopRequested = false;}
 
-        virtual bool Enroll(platform::IODescriptor& ioDescriptor) const {return false;}
+        virtual bool Enroll(platform::IODescriptor& /*ioDescriptor*/) const {return false;}
 
     protected:
 

@@ -54,7 +54,7 @@ public:
     virtual void Profile(const std::chrono::duration<int64_t, std::milli> durationMilliseconds, IFunctionContext* fContext)
     {
         m_recordedDuration = durationMilliseconds;
-	    issue<log::Informative, const std::string&>(std::format("Profile: {0}ms", durationMilliseconds), fContext);
+	    issue<log::Informative, const std::string&>(std::format("Profile: {0}", durationMilliseconds), fContext);
     }
 };
 

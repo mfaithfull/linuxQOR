@@ -161,6 +161,7 @@ namespace qor
 		case 0:
 			*space++ = static_cast<char8_t>(rcodePoint.UChar());
 			--available;
+			break;
 		case 1:
 			*space++ = static_cast<char8_t>(rcodePoint.UChar());
 			--available;

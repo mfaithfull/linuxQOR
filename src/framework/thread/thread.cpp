@@ -29,13 +29,7 @@ namespace qor{ namespace framework{
 
 	Thread::Thread() : m_std_thread(
 		Delegate<void(void)>::Create<Thread, &Thread::Setup>(this)
-	), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
-	{	
-	}
-
-    Thread::~Thread()
-	{
-	}
+	), m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this)){ }
 
 	std::thread::id Thread::GetID()
 	{

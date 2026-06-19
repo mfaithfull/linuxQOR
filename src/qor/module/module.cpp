@@ -86,9 +86,9 @@ namespace qor{
 		}
 	}
 
-	void Module::RegisterModule( Module* pModule){}
+	void Module::RegisterModule(Module*){}
 
-	void Module::UnregisterModule( Module* pModule){}
+	void Module::UnregisterModule(Module*){}
 
     ModuleRegistry* Module::Modules()
     {

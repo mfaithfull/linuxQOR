@@ -28,7 +28,7 @@
 
 namespace qor {
 
-	FunctionContext::FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool bCoverage, AnyObject ObjContext) : 		
+	FunctionContext::FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool /*bCoverage*/, AnyObject ObjContext) : 		
 		 m_bTraceCalls(false)
 		, m_uiLocked(0)
 		, m_TraceDepth(1)
@@ -161,7 +161,7 @@ namespace qor {
 		return m_ObjContext;
 	}
 
-	void FunctionContext::Profile(const std::chrono::duration<int64_t, std::milli> duration, IFunctionContext* /*ignore*/)
+	void FunctionContext::Profile(const std::chrono::duration<int64_t, std::milli> /*duration*/, IFunctionContext* /*ignore*/)
 	{
 		/*
         auto profileHandler = new_ref< ProfileReceiver >();

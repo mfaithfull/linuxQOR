@@ -64,7 +64,7 @@ namespace qor{ namespace pipeline{
             return m_writable;
         }
 
-        virtual const bool AsyncConnection() const
+        virtual bool AsyncConnection() const
         {
             return m_async;
         }

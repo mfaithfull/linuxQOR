@@ -57,7 +57,7 @@ namespace qor
     template< class T >
     struct factoryFunctor< T, Ref< T > >
     {
-        static void Destruct(size_t count, T* pt)
+        static void Destruct(size_t /*count*/, T* pt)
         {
             allocator_of<T>::type::Free(pt);
         }

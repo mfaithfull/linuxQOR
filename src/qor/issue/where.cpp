@@ -125,7 +125,7 @@ namespace qor{
         return m_inInstance;
     }
 
-    const unsigned int Where::GetLine(void) const
+    unsigned int Where::GetLine(void) const
     {
         return m_line;
     }

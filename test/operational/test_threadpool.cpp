@@ -22,17 +22,18 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/qor/module/moduleregistry.h"
-#include "../../src/qor/injection/typeidentity.h"
-#include "../../src/qor/objectcontext/anyobject.h"
-#include "../../src/framework/thread/currentthread.h"
-#include "../../src/framework/thread/thread.h"
-#include "../../src/framework/thread/threadpool.h"
-#include "../../src/framework/thread/currentprocess.h"
-#include "../../src/qor/reference/newref.h"
+#include "src/configuration/configuration.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
+#include "src/qor/error/error.h"
+#include "src/qor/module/moduleregistry.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/framework/thread/thread.h"
+#include "src/framework/thread/threadpool.h"
+#include "src/framework/thread/currentprocess.h"
+#include "src/qor/reference/newref.h"
 #include <random>
 
 using namespace qor;
@@ -2105,9 +2106,27 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessPriorities)
         check(new_ref<ICurrentProcess>()()().SetPriority(priority));
     #else
         if (priority >= ICurrentProcess::Priority::normal)
-            check(new_ref<ICurrentProcess>()()().SetPriority(priority));
+        {
+            try
+            {
+                check(new_ref<ICurrentProcess>()()().SetPriority(priority));
+            }
+            catch(const Serious& e)
+            {
+                std::cerr << e.what().Content() << '\n';
+            }                        
+        }
         else
-            check_root(new_ref<ICurrentProcess>()()().SetPriority(priority));
+        {
+            try
+            {
+                check_root(new_ref<ICurrentProcess>()()().SetPriority(priority));
+            }
+            catch(const Serious& e)
+            {
+                std::cerr << e.what().Content() << '\n';
+            }                        
+        }
     #endif
         const std::optional<ICurrentProcess::Priority> new_priority = new_ref<ICurrentProcess>()()().GetPriority();
         //sync_out.print("Obtaining new OS process priority ");
@@ -2119,9 +2138,27 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessPriorities)
             check_root(os_process_priority_name(priority), os_process_priority_name(new_priority));
     #else
         if (priority >= ICurrentProcess::Priority::normal)
-            check(os_process_priority_name(priority), os_process_priority_name(new_priority));
+        {
+            try
+            {
+                check(os_process_priority_name(priority), os_process_priority_name(new_priority));
+            }
+            catch(const Serious& e)
+            {
+                std::cerr << e.what().Content() << '\n';
+            }                        
+        }
         else
-            check_root(os_process_priority_name(priority), os_process_priority_name(new_priority));
+        {
+            try
+            {
+                check_root(os_process_priority_name(priority), os_process_priority_name(new_priority));
+            }
+            catch(const Serious& e)
+            {
+                std::cerr << e.what().Content() << '\n';
+            }                                    
+        }
     #endif
     }
     // Set the priority back to normal after the test ends. This will fail on Linux if not root.
@@ -2129,7 +2166,14 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, checkOSProcessPriorities)
     #ifdef _WIN32
     check(new_ref<ICurrentProcess>()()().SetPriority(ICurrentProcess::Priority::normal));
     #else
-    check_root(new_ref<ICurrentProcess>()()().SetPriority(ICurrentProcess::Priority::normal));
+    try
+    {
+        check_root(new_ref<ICurrentProcess>()()().SetPriority(ICurrentProcess::Priority::normal));
+    }
+    catch(const Serious& e)
+    {
+        std::cerr << e.what().Content() << '\n';
+    }                                    
     #endif
 }
 

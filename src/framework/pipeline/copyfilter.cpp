@@ -54,7 +54,8 @@ namespace qor{ namespace pipeline{
         return false;
     }
 
-    bool CopyFilter::Process( byte* dest, byte* source, size_t sourceUnits, size_t sourceUnitSize, size_t destUnitSize)
+    
+    bool CopyFilter::Process( byte* dest, byte* source, size_t sourceUnits, size_t sourceUnitSize, size_t /*destUnitSize*/)
     {
         memcpy(dest, source, sourceUnits * sourceUnitSize);
         return true;

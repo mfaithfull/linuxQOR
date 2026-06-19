@@ -44,8 +44,8 @@ namespace qor{ namespace pipeline{
         Plug();
         virtual ~Plug();
 
-        virtual void SetSink(Element* ignored){};
-        virtual void SetSource(Element* ignored){};
+        virtual void SetSink(Element* /*ignored*/){};
+        virtual void SetSource(Element* /*ignored*/){};
         virtual Element* GetSink() const { return nullptr; }
         virtual Element* GetSource() const { return nullptr; }
 
@@ -58,7 +58,7 @@ namespace qor{ namespace pipeline{
         virtual void OnDisconnected();
         virtual void OnDisconnectionError();
         bool IsConnected() const;
-        virtual const bool AsyncConnection() const;
+        virtual bool AsyncConnection() const;
         virtual SyncObject* GetSyncObject();
         virtual void SetSyncObject(SyncObject* syncobject);
         virtual bool CheckComplete();

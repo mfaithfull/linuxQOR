@@ -109,7 +109,7 @@ namespace qor{ namespace pipeline{
         return m_connected;
     }
 
-    const bool Plug::AsyncConnection() const
+    bool Plug::AsyncConnection() const
     {
         return false;
     }

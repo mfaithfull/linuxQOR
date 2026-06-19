@@ -55,6 +55,8 @@ namespace qor{ namespace log {
         m_what = new_ref<LevelWhat>(message,l);
     }
 
+    Log::Log(const Log& src) : Issue<LevelWhat>(src){ }
+
     Log& Log::operator = (const Log& src)
     {
         Issue<LevelWhat>::operator = (src);

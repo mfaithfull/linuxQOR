@@ -100,13 +100,13 @@ namespace qor{
 	public:
 
 		template< class T >
-		static inline void Release(T* pt, size_t count = 1)
+		static inline void Release(T* /*pt*/, size_t /*count = 1*/)
 		{
             detail::theThreadInstanceHolder<T>()->Release();
 		}
 
 		template< class T >
-		static inline auto Instance(size_t count = 1)
+		static inline auto Instance(size_t /*count = 1*/)
 		{
             return detail::theThreadInstanceHolder<T>()->Instance();
 		}

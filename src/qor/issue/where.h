@@ -46,7 +46,7 @@ namespace qor{
         void SetFile(const char* szFile);
         const char* GetFile(void) const;
         void SetLine(const unsigned int uiLine);
-        const unsigned int GetLine(void) const;
+        unsigned int GetLine(void) const;
         void SetFunction(const char* pszFunction);
         const char* GetFunction(void) const;
         const AnyObject& GetObjectContext(void) const;

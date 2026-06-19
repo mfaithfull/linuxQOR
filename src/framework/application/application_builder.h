@@ -39,11 +39,11 @@ namespace qor{ namespace framework{
         AppBuilder();
         virtual ~AppBuilder() = default;
 
-        ref_of<Application>::type Build(const std::string& appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr);
+        ref_of<Application>::type Build(const std::string& appName/*, const int argc = 0, const char** argv = nullptr, const char** env = nullptr*/);
         ref_of<Application>::type TheApplication();
 
         template< class AppClass >
-        ref_of<Application>::type Build(const std::string& appName, const int argc = 0, const char** argv = nullptr, const char** env = nullptr)
+        ref_of<Application>::type Build(const std::string& appName/*, const int argc = 0, const char** argv = nullptr, const char** env = nullptr*/)
         {
             auto application = new_ref<AppClass>().template AsRef<Application>();
             AutoRedirect(application);

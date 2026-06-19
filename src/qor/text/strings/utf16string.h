@@ -134,7 +134,7 @@ namespace qor{
             return m_buffer.view();
         }
 
-        const char32_t operator[](size_t index) const
+        char32_t operator[](size_t index) const
         {
             iterator it = begin();
             while(it != end() && index-- > 0)

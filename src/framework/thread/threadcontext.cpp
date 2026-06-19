@@ -37,7 +37,7 @@ namespace qor{ namespace framework{
 
     }
 
-    IFunctionContext* ThreadContext::RegisterFunctionContext(IFunctionContext * pFContext)
+    IFunctionContext* ThreadContext::RegisterFunctionContext(IFunctionContext* pFContext)
     {
 		IFunctionContext* pParent = m_pCurrentContext;
 		m_pCurrentContext = pFContext;
@@ -48,7 +48,7 @@ namespace qor{ namespace framework{
 		return pParent;
     }
     
-    void ThreadContext::UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent)
+    void ThreadContext::UnregisterFunctionContext(IFunctionContext*, IFunctionContext* pParent)
     {
 		if (m_pCurrentContext == m_pRootContext)
 		{

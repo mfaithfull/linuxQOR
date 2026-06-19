@@ -6,7 +6,7 @@
 int main( int argc, char* argv[] )
 {
     XtAppContext app_context;
-    Widget toplevel, hello;
+    Widget toplevel;
 
     toplevel = XtVaAppInitialize(
         &app_context,
@@ -18,7 +18,7 @@ int main( int argc, char* argv[] )
         NULL,
         NULL);
 
-    hello = XtVaCreateManagedWidget( "hello", labelWidgetClass, toplevel, NULL);
+    [[maybe_unused]]Widget hello = XtVaCreateManagedWidget( "hello", labelWidgetClass, toplevel, NULL);
 
     XtRealizeWidget(toplevel);
     XtAppMainLoop(app_context);

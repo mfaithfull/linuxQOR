@@ -40,15 +40,41 @@ namespace qor{
     public:
 
         Issue() = default;
+        
+        Issue(const Issue& src)
+        {
+            if(src.m_what.IsNotNull())
+            {
+                m_what = new_ref<WhatT>(src.m_what);
+            }
+            if(src.m_when.IsNotNull())
+            {
+                m_when = new_ref<When>(src.m_when);
+            }
+            if( src.m_where.IsNotNull() )
+            {
+                m_where = new_ref<Where>(src.m_where);
+            }
+        }
+
         virtual ~Issue() noexcept = default;
 
         Issue& operator = (const Issue& src)
         {
             if(&src != this)
             {
-                m_what = new_ref<WhatT>(src.m_what);
-                m_when = new_ref<When>(src.m_when);
-                m_where = new_ref<Where>(src.m_where);
+                if(src.m_what.IsNotNull())
+                {
+                    m_what = new_ref<WhatT>(src.m_what);
+                }
+                if(src.m_when.IsNotNull())
+                {
+                    m_when = new_ref<When>(src.m_when);
+                }
+                if( src.m_where.IsNotNull() )
+                {
+                    m_where = new_ref<Where>(src.m_where);
+                }
             }
             return *this;
         }

@@ -53,7 +53,7 @@ namespace qor{ namespace framework{
 			other.m_pCurrent = nullptr;			
 		}
 
-		virtual ~Thread();
+		virtual ~Thread() = default;
 	
 		Thread&	operator=(const Thread&) = delete;
 	

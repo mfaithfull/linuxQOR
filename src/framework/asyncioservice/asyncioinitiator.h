@@ -45,7 +45,7 @@ namespace qor { namespace framework{
         AsyncIOInitiator() = default;
         virtual ~AsyncIOInitiator() noexcept = default;
 
-        virtual void ConnectToProcessor(qor::framework::AsyncIOEventProcessor* processor)
+        virtual void ConnectToProcessor(qor::framework::AsyncIOEventProcessor* /*processor*/)
         {            
         }
 

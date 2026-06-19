@@ -81,7 +81,7 @@ namespace qor { namespace test
 
         void TestCaseStarting(const TestCase& info)
         {
-            //std::cout << std::endl << info.m_At << info.m_Name << std::flush;
+            std::cout << std::endl << info.m_At << info.m_Name << std::flush;
         }
 
         void TestCaseEnded(const TestCase& info)
