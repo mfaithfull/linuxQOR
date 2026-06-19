@@ -39,11 +39,11 @@ namespace qor{ namespace framework{
             try{
                 feature.second->Setup();
             }
-            catch(qor::Error* err)
+            catch(const qor::Error& err)
             {
-                serious("Feature setup failed with error {0}.", err->HasWhat() ? err->what().Content() : "");
+                serious("Feature setup failed with error {0}.", err.HasWhat() ? err.what().Content() : "");
             }
-            catch(std::exception e)
+            catch(const std::exception& e)
             {
                 std::string s(e.what());
                 fatal("Feature setup failed with exception {0}.", s);
@@ -63,11 +63,11 @@ namespace qor{ namespace framework{
             {
                 feature->second->Shutdown();
             }
-            catch(qor::Error* err)
+            catch(const qor::Error& err)
             {
-                warning("Feature shutdown failed with error {0}.", err->HasWhat() ? err->what().Content() : "");
+                warning("Feature shutdown failed with error {0}.", err.HasWhat() ? err.what().Content() : "");
             }
-            catch(std::exception e)
+            catch(const std::exception& e)
             {
                 std::string s(e.what());
                 warning("Feature shutdown failed with exception {0}.", s);

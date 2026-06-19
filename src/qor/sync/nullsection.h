@@ -39,7 +39,7 @@ namespace qor{
 		virtual void Acquire(void){}
 
 		virtual void Release(void){}
-		virtual bool IsLocked(void){return false;}
+		virtual bool IsLocked(void) const {return false;}
 	};
 
 }//qor

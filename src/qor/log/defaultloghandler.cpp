@@ -41,7 +41,10 @@ namespace qor {
         return &DefaultLogHandler::forward;
     }
 
-    DefaultLogHandler::DefaultLogHandler(log::Level logLevel) : qor::IssueHandler<log::Log>(), m_level(logLevel), m_writeToStandardOutput(false), m_forward(true)
+    DefaultLogHandler::DefaultLogHandler(log::Level logLevel) : qor::IssueHandler<log::Log>()
+        , m_forward(true)
+        , m_writeToStandardOutput(false)
+        , m_level(logLevel)
     {
     }
 

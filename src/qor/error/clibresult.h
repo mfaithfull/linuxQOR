@@ -104,8 +104,10 @@ namespace qor{
             }
         }
 
+#if(qor_pp_compiler == qor_pp_compiler_msvc)
 #pragma warning(push)
 #pragma warning(disable: 4996)
+#endif
         std::string GetErrorMessage() 
         {
             auto it = error_map.find(m_result);
@@ -120,7 +122,9 @@ namespace qor{
             }
             return "Unknown error";
         }
+#if(qor_pp_compiler == qor_pp_compiler_msvc)        
 #pragma warning(pop)
+#endif
         int m_result;
         static std::map<int, const char*> error_map;
     };

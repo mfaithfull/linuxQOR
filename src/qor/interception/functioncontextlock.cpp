@@ -29,7 +29,7 @@
 
 namespace qor {
 
-    FunctionContextLock::FunctionContextLock() : m_pFunctionContext(nullptr), m_pParentCallContext(nullptr), m_pCallContext(nullptr), m_ulLevel((unsigned long)-1)
+    FunctionContextLock::FunctionContextLock() : m_pCallContext(nullptr), m_pParentCallContext(nullptr), m_pFunctionContext(nullptr), m_ulLevel((unsigned long)-1)
     {
         m_pFunctionContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
         if (m_pFunctionContext)

@@ -47,7 +47,7 @@
 #include "src/platform/compiler/compiler.h"
 #include "teacup.h"
 #include "src/qor/memory/stddeleter.h"
-#include "src/qor/memory/stdallocator.h"
+//#include "src/qor/memory/stdallocator.h"
 
 namespace qor{ namespace detail {
 

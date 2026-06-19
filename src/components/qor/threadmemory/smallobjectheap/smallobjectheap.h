@@ -58,9 +58,9 @@ namespace qor{ namespace components{ namespace threadmemory{
 
         byte* DeferToFastAllocator(size_t size);
         void DeferToFastFree(void* mem, size_t size);
-        void FreeBucket(int bucketIndex, SmallObjectBucket* bucket);
-        int BucketIndex(size_t allocSize);					            //Get the bucket index from the size of allocation
-        SmallObjectBucket* Bucket(int bucketIndex);                     //Get the bucket from the index
+        void FreeBucket(size_t bucketIndex, SmallObjectBucket* bucket);
+        size_t BucketIndex(size_t allocSize);					        //Get the bucket index from the size of allocation
+        SmallObjectBucket* Bucket(size_t bucketIndex);                  //Get the bucket from the index
 
         SmallObjectBucket* m_buckets[sc_rootBuckets];		            //Array of buckets to contain allocations        
         size_t m_totalAlloc;							                //The total allocated bytes

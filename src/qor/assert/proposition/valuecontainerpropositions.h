@@ -44,7 +44,7 @@ namespace qor{ namespace assert{ namespace proposition{
 
         T& contains(const U& other) 
         {
-            if (!getValue()->value() == other) 
+            if (!(getValue()->value() == other)) 
             {
                 util::FailMessage::create()
                 .file(getFile())

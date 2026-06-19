@@ -50,11 +50,11 @@ namespace qor{
         BaseIssueHandler(){}
 
 		virtual ~BaseIssueHandler(){}
-
+/*
         virtual bool Handle(const Issue<What>& issue)
         {
             return false;//false here means failure to resolve the issue
-        }        
+        }*/        
     };
     
     template<class T>

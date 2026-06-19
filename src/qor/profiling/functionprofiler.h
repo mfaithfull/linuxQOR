@@ -36,7 +36,7 @@ namespace qor {
 
 	public:
 
-		FunctionProfiler(IProfileReceiver* receiver, bool enabled)  : m_Receviver(receiver), m_bProfileEnabled(enabled), m_startTime(std::chrono::high_resolution_clock::now()){};
+		FunctionProfiler(IProfileReceiver* receiver, bool enabled)  : m_bProfileEnabled(enabled), m_startTime(std::chrono::high_resolution_clock::now()),m_Receviver(receiver){};
 		
         ~FunctionProfiler()
         {

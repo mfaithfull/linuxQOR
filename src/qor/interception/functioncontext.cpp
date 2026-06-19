@@ -28,28 +28,30 @@
 
 namespace qor {
 
-	FunctionContext::FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool bCoverage, AnyObject ObjContext) : m_ObjContext(ObjContext)
-		, m_bTraceCalls(false)
+	FunctionContext::FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool bCoverage, AnyObject ObjContext) : 		
+		 m_bTraceCalls(false)
 		, m_uiLocked(0)
 		, m_TraceDepth(1)
 		, m_szFuncName(szFuncName)
 		, m_szFile(szFile)
 		, m_szModule(szModule)
-		, m_uiLine(uiLine)
 		, m_pParent(nullptr)
+		, m_ObjContext(ObjContext)
+		, m_uiLine(uiLine)		
 		, m_CallContext()
 		, m_Profiler(this, bProfile)
 	{
 		Init();
 	}
 
-	FunctionContext::FunctionContext() : m_uiLocked(0)
+	FunctionContext::FunctionContext() : 
+		m_uiLocked(0)
 		, m_TraceDepth(1)
 		, m_szFuncName(nullptr)
 		, m_szFile(nullptr)
 		, m_szModule(nullptr)
-		, m_uiLine(0)
 		, m_pParent(nullptr)
+		, m_uiLine(0)		
 		, m_CallContext()
 		, m_Profiler(this, false)
 	{

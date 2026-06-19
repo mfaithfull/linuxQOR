@@ -60,7 +60,7 @@ namespace qor{ namespace components{ namespace threadmemory{
 
     SmallObjectHeap::~SmallObjectHeap()
     {
-        for(unsigned int bucketIndex = 0; bucketIndex < sc_rootBuckets; ++bucketIndex)
+        for(size_t bucketIndex = 0; bucketIndex < sc_rootBuckets; ++bucketIndex)
         {
             if(m_buckets[bucketIndex] != nullptr)
             {
@@ -160,15 +160,15 @@ namespace qor{ namespace components{ namespace threadmemory{
         new_ref<FastHeap>()->Free(mem, size);
     }
 
-    void SmallObjectHeap::FreeBucket(int bucketIndex, SmallObjectBucket* bucket)
+    void SmallObjectHeap::FreeBucket(size_t bucketIndex, SmallObjectBucket* bucket)
     {
         m_buckets[bucketIndex] = nullptr;
         delete bucket;
     }
 
-    int SmallObjectHeap::BucketIndex(size_t allocSize)
+    size_t SmallObjectHeap::BucketIndex(size_t allocSize)
     {
-        int bucketIndex = 0;
+        size_t bucketIndex = 0;
         SmallObjectBucket* bucket = nullptr;
         do
         {
@@ -182,10 +182,10 @@ namespace qor{ namespace components{ namespace threadmemory{
         return bucketIndex;
     }
 
-    SmallObjectBucket* SmallObjectHeap::Bucket(int bucketIndex)          //Get the bucket from the index
+    SmallObjectBucket* SmallObjectHeap::Bucket(size_t bucketIndex)          //Get the bucket from the index
     {
         SmallObjectBucket* bucket = nullptr;
-        if (bucketIndex >= 0 && bucketIndex < sc_rootBuckets)
+        if (bucketIndex < sc_rootBuckets)
         {
             bucket = m_buckets[bucketIndex];
         }

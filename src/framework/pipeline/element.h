@@ -62,7 +62,7 @@ namespace qor{ namespace pipeline{
         virtual Element* GetSource();
         virtual bool HasSource();
         virtual void SetSink(Element* sink) = 0;
-        virtual Element* GetSink();
+        virtual Element* GetSink() const;
         virtual bool HasSink();
         virtual FlowMode GetFlowMode();
         virtual void SetFlowMode(FlowMode flowmode);
