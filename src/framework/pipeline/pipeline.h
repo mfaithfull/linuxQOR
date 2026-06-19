@@ -217,7 +217,7 @@ namespace qor{ namespace pipeline{
         }
 
         virtual void Run(void);
-        bool Pump(void);
+        //bool Pump(void);
 
         virtual bool Pump(size_t& unitsPumped, size_t unitsToPump)
         {

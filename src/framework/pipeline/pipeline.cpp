@@ -37,10 +37,11 @@ namespace qor{ namespace pipeline{
 
     }
 
+    /*
     bool Pipeline::Pump(void)
     {
         return false;
-    }
+    }*/
 
     Pipeline& Pipeline::InsertFilter(Filter* filter, FilterPos Pos)
     {

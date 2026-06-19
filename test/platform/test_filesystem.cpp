@@ -106,7 +106,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, openAndWriteToANewFile)
         auto refFile = m_fileSystem->Create(newIndex, WithFlags::CreateNew);
         refFile->Flush();
         auto status = refFile->GetStatus();        
-        auto fileType = refFile->GetType();
+        //auto fileType = refFile->GetType();
         static const char* message = "Content written to a file!";
         size_t len = strlen(message);
         refFile->Write((byte*)message, len);        

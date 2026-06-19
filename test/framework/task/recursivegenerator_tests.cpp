@@ -81,7 +81,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, throw_before_first_yield)
 		auto iter = gen.begin();
 		qor_pp_assert_that(false);
 	}
-	catch (MyException)
+	catch (const MyException&)
 	{
 		qor_pp_assert_that(true);
 	}
@@ -105,7 +105,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, throw_after_first_yield)
 		++iter;
 		qor_pp_assert_that(false);
 	}
-	catch (MyException)
+	catch (const MyException&)
 	{
 		qor_pp_assert_that(true);
 	}
@@ -254,7 +254,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, exception_thrown_from_recurs
 		{
 			co_yield f(1, f);
 		}
-		catch (SomeException)
+		catch (const SomeException&)
 		{
 		}
 
@@ -288,7 +288,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, exceptions_thrown_from_neste
 			{
 				co_yield f(4, f);
 			}
-			catch (SomeException)
+			catch (const SomeException&)
 			{
 			}
 
@@ -303,7 +303,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, exceptions_thrown_from_neste
 			{
 				co_yield f(3, f);
 			}
-			catch (SomeException)
+			catch (const SomeException&)
 			{
 				caught = true;
 			}
@@ -339,7 +339,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, exceptions_thrown_from_neste
 		++iter;
 		qor_pp_assert_that(false);
 	}
-	catch (SomeException)
+	catch (const SomeException&)
 	{
 	}
 

@@ -58,7 +58,7 @@ qor_pp_test_case (checkClassArgumentsChecked)
     {
         iamock->f("bye");
     }
-    catch (qor::mock::ExpectationException)
+    catch (const qor::mock::ExpectationException&)
     {
         exceptionCaught = true;
     }

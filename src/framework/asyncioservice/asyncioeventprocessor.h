@@ -43,7 +43,10 @@ namespace qor { namespace framework{
     {
     public:
 
-        AsyncIOEventProcessor() : m_StopRequested(false), m_freeRun(false) {}
+        AsyncIOEventProcessor() : 
+        m_freeRun(false),
+        m_StopRequested(false){ }
+        
         virtual ~AsyncIOEventProcessor() noexcept = default;
 
         virtual int Run();

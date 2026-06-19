@@ -34,7 +34,7 @@ namespace qor{
     {
     public:
 
-        ProxyObserver(Impl& impl) : m_impl(impl), AbstractObserver< Observed >() {}
+        ProxyObserver(Impl& impl) : AbstractObserver< Observed >(), m_impl(impl) {}
 
         ProxyObserver(const ProxyObserver& src) : AbstractObserver< Observed >(src), m_impl(src.m_impl) {}
         virtual ~ProxyObserver() noexcept = default;

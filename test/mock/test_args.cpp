@@ -60,7 +60,7 @@ qor_pp_test_case (checkArgumentsChecked)
 	{
 		iamock->f(2);
 	}
-	catch (qor::mock::ExpectationException)
+	catch (const qor::mock::ExpectationException&)
 	{
 		exceptionCaught = true;
 	}

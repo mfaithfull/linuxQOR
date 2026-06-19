@@ -144,8 +144,8 @@ namespace qor{ namespace pipeline{
             return false;
         }
 
-        PODBuffer<pod_t> m_sinkBuffer;
         PODBuffer<pod_t> m_sourceBuffer;
+        PODBuffer<pod_t> m_sinkBuffer;        
     };
 
 }}//qor::pipeline

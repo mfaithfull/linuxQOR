@@ -76,7 +76,7 @@ qor_pp_test_case (checkRefArgumentsChecked)
 	{
 		iamock->f(y);
 	}
-	catch (qor::mock::ExpectationException)
+	catch (const qor::mock::ExpectationException&)
 	{
 		exceptionCaught = true;
 	}

@@ -35,7 +35,10 @@ namespace qor{ namespace pipeline{
     {
     public:
 
-        Connection() : Plug(), m_async(false), m_writable(true), m_readable(true)
+        Connection() : Plug()
+            , m_writable(true)
+            , m_readable(true)
+            , m_async(false)
         {
         }
 
