@@ -29,7 +29,7 @@
 
 namespace qor{ namespace text {
 
-    struct qor_pp_module_interface(QOR_TEXT) ITextErrorDI
+    struct ITextErrorDI
     {
         virtual void continuable(const std::string& message) = 0;
         virtual void serious(const std::string& message) = 0;

@@ -29,7 +29,7 @@
 
 namespace qor
 { 
-    ITextErrorImpl* TextErrorInstance()
+    qor_pp_module_interface(QOR_ERROR) ITextErrorImpl* TextErrorInstance()
     {
         static ITextErrorImpl s_impl;
         return &s_impl;

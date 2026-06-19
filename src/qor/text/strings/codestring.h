@@ -120,7 +120,7 @@ namespace qor{
 
         inline const std::basic_string< typename std_string_char_for< C >::type > ToStdString() const override
         {
-            return m_buffer.ToStdString< typename std_string_char_for< C >::type >();
+            return m_buffer.template ToStdString< typename std_string_char_for< C >::type >();
         }
 
         inline size_t size() const override

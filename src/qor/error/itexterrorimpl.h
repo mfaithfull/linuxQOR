@@ -26,12 +26,12 @@
 
 namespace qor{ 
 
-    struct ITextErrorImpl : public text::ITextErrorDI
+    struct qor_pp_module_interface(QOR_ERROR) ITextErrorImpl : public text::ITextErrorDI
     {
         virtual void continuable(const std::string& message);
         virtual void serious(const std::string& message);
     };
 
-    extern ITextErrorImpl* TextErrorInstance();
+    qor_pp_module_interface(QOR_ERROR) ITextErrorImpl* TextErrorInstance();
 
 }//qor

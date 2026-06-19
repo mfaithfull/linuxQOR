@@ -28,7 +28,7 @@
 
 namespace qor{ namespace text {
 
-    ITextErrorDI*& TextErrorImpl()
+    qor_pp_module_interface(QOR_TEXT) ITextErrorDI*& TextErrorImpl()
     {
         static ITextErrorDI* s_impl{nullptr};
         return s_impl;

@@ -86,7 +86,7 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(QORTest qor_compiler qor_host qor_datastructures qor_objectcontext 
-qor_thread qor_interception qor_injection qor_sync qor_text qor_issue qor_error qor_signals 
+qor_thread qor_interception qor_injection qor_sync qor_text qor_issue qor_error qor_text qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
 linqor_filesystem linqor_thread linqor_process uring linqor_console qor_stdfstreamconnector 
