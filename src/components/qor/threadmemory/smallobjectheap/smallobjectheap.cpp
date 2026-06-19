@@ -108,7 +108,7 @@ namespace qor{ namespace components{ namespace threadmemory{
     {
         if(size <= 1024 * 64)
         {
-            int bucketIndex = BucketIndex(size);
+            size_t bucketIndex = BucketIndex(size);
             SmallObjectBucket* bucket = m_buckets[bucketIndex];
             if(bucket && bucket->Free(memory))
             {

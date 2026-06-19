@@ -42,15 +42,15 @@ namespace test_complex {
 
     qor_pp_test_suite_case(ComplexTests, IsEqualTo) 
     {
-        std::complex<int> a(1, 2);
-        std::complex<int> b(1, 2);
+        std::complex<float> a(1.0, 2.0);
+        std::complex<float> b(1.0, 2.0);
         qor_pp_assert_that(a).isEqualTo(b);
     }
 
     qor_pp_test_suite_case(ComplexTests, IsNotEqualTo) 
     {
-        std::complex<int> a(1, 2);
-        std::complex<int> b(3, 2);
+        std::complex<float> a(1.0, 2.0);
+        std::complex<float> b(3.0, 2.0);
         qor_pp_expect_that(a).isNotEqualTo(b);
     }
 
@@ -65,9 +65,9 @@ qor_pp_test_suite_case(ComplexTests, IsNotEqualTo_Failure) {
 
     qor_pp_test_suite_case(ComplexTests, IsIn) 
     {
-        std::complex<int> a(1, 2);
-        qor_pp_assert_that(a).isIn({std::complex<int>(1, 2), std::complex<int>(2, 3)});
-        std::vector<std::complex<int>> v{ std::complex<int>(1, 2), std::complex<int>(2, 2), std::complex<int>(2, 3) };
+        std::complex<float> a(1, 2);
+        qor_pp_assert_that(a).isIn({std::complex<float>(1, 2), std::complex<float>(2, 3)});
+        std::vector<std::complex<float>> v{ std::complex<float>(1, 2), std::complex<float>(2, 2), std::complex<float>(2, 3) };
         qor_pp_assert_that(a).isIn(v);
     }
 
