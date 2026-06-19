@@ -40,20 +40,20 @@ namespace qor { namespace components { namespace parser {
     
     public:
 
-        Parser() : workflow::Workflow(), m_final(false)
-        {
-        }
-
-        Parser(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context)
-        {
-        }
-
-        Context* GetContext() const
+        inline Parser() : workflow::Workflow(), m_final(false){ }
+        inline Parser(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context){ }
+        virtual ~Parser() = default;
+        inline Context* GetContext() const
         {
             return m_context;
         }
 
-        void PushNode(ref_of<Node>::type node)
+        inline void SetContext(ref_of<class Context>::type context)
+        {
+            m_context = context;
+        }
+
+        inline void PushNode(ref_of<Node>::type node)
         {
             if(node.IsNotNull())
             {
@@ -72,21 +72,27 @@ namespace qor { namespace components { namespace parser {
             return result;
         }
 
-        void SetContext(ref_of<class Context>::type context)
-        {
-            m_context = context;
-        }
-
         int Parse();
         int FinalParse();
 
-        bool IsFinal()
+        inline bool IsFinal()
         {
             return m_final;
         }
+
+        inline bool IsInError()
+        {
+            return m_inError;
+        }
         
     private:
-        bool m_final;
+
+        void Drain();
+        void InnerParse();
+        int SafeParse();
+
+        bool m_inError{false};
+        bool m_final{false};
         ref_of<class Context>::type m_context;
         std::stack<ref_of<Node>::type> m_nodes;
     };

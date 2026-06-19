@@ -31,7 +31,7 @@ namespace qor{ namespace log {
 
     enum class Level
     {
-        Debug = 0,      //Everything
+        Debug = 0,      //Everything but only in Debug builds
         Informative,    //Things that are done, normal flow, completions, opens, closes
         Important,      //Things that are unexpected or off the happy path, missing resources, exceptions, failures
         Impactful,      //Things that will change the flow of control and functional outcomes, exceptions, serious errors

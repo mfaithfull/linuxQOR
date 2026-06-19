@@ -387,10 +387,11 @@ namespace qor{
             return m_p[index];
         }
 
-        std::basic_string<T> ToStdString() const
+        template<typename C = T>
+        const std::basic_string<C> ToStdString() const
         {
-            std::basic_string<T> s;
-            s.assign(m_p, Length());
+            std::basic_string<C> s;
+            s.assign((const C*)m_p, Length());
             return s;
         }
 

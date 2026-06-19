@@ -24,6 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "error.h"
+#include "handler.h"
 
 namespace qor{
 
@@ -37,9 +38,30 @@ namespace qor{
         return *this;
     }
 
+    void Warning::Handle()
+    {
+        auto warningHandler = new_ref< IssueHandler<Warning> >();
+        if(!warningHandler.IsNull())
+        {
+            Resolve(warningHandler->Handle(*this));
+        }
+        else
+        {
+            auto handler = new_ref< IssueHandler<Error> >();
+            if(!handler.IsNull())
+            {
+                Resolve(handler->Handle(*this));
+            }
+            else
+            {
+                Resolve(false);
+            }
+        }
+    }
+
     void Warning::Escalate(void) const
     {
-        continuable("Warning ignored: {0}", m_what->Content());
+        continuable("Escalated Warning: {0}", m_what->Content());
     }
 
 }//qor

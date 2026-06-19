@@ -30,15 +30,15 @@
 
 namespace qor { namespace components{ namespace parser{
 
-    class Digit : public Node
+    class DigitNode : public Node
     {
     public:
 
-        Digit(int digitVal) : Node(static_cast<uint64_t>(eToken::Digit)) , m_value(digitVal)
+        DigitNode(int digitVal) : Node(static_cast<uint64_t>(eToken::Digit)) , m_value(digitVal)
         {
         }
         
-        virtual ~Digit() = default;
+        virtual ~DigitNode() = default;
 
         unsigned int GetValue()
         {

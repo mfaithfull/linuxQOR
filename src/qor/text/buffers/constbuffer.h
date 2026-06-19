@@ -170,9 +170,10 @@ namespace qor{
             return m_p[index];
         }
 
-        constexpr std::basic_string<T> ToStdString() const
+        template<typename C = T>
+        constexpr const std::basic_string<C> ToStdString() const
         {
-            return std::basic_string<T>(m_p, m_unitCount);
+            return std::basic_string<C>((const C*)m_p, m_unitCount);
         }
 
         constexpr operator std::basic_string<T>() const

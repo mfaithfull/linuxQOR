@@ -24,6 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "error.h"
+#include "handler.h"
 
 namespace qor{
 
@@ -35,6 +36,15 @@ namespace qor{
     {
         SeverityTemplateIssue<Severity::Note>::operator = (src);
         return *this;
+    }
+
+    void Note::Handle()
+    {
+        auto noteHandler = new_ref< IssueHandler<Note> >();
+        if(!noteHandler.IsNull())
+        {
+            noteHandler->Handle(*this);
+        }
     }
     
 }//qor

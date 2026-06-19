@@ -24,6 +24,9 @@
 
 //JSON parsing example
 
+#include "src/configuration/configuration.h"
+#include "src/qor/log/no_logs.h"
+
 #include "sdk/using_framework.h"
 #include "sdk/using_platform.h"
 #include "sdk/components/framework.h"
@@ -48,6 +51,8 @@ using namespace qor::platform;
 using namespace qor::framework;
 using namespace qor::components;
 
+qor_pp_implement_module(appName)
+
 void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
 {    
     connect(
@@ -63,8 +68,6 @@ void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAg
     logAggregator(qor_shared).Receiver().WriteToStandardOutput(true);
 }
 
-qor_pp_implement_module(appName)
-
 int main(const int argc, const char** argv, char** env)
 {
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
@@ -74,11 +77,10 @@ int main(const int argc, const char** argv, char** env)
     return AppBuilder().Build(appName)->SetRole<Role>(
         [&logHandler](ref_of<IRole>::type role)
         {
-
             role->AddFeature<ThreadPool>(
                 [](ref_of<ThreadPool>::type threadPool)
                 {
-                    threadPool->SetThreadCount(6);
+                    threadPool->SetThreadCount(2);
                     qor::framework::CurrentThread::GetCurrent().SetName("Main");
                 }
             );
@@ -89,17 +91,15 @@ int main(const int argc, const char** argv, char** env)
                     SetupLogging(logHandler, logAggregator);
                 }
             );
-
         }
     ).Run(
         [&logHandler]()->int
-        {
-            
+        {            
             auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
-            
             Path testsPath("F:/Develop/JSONTestSuite/test_parsing");
 
             JSONPartReader<qor::components::parser::json::array, qor::components::model::json::Array> arrayReader;
+
             auto jsonArray = arrayReader(
                 FileConnector(FileIndex(testsPath, "y_array_arraysWithSpaces.json"),
                     arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
@@ -152,8 +152,6 @@ int main(const int argc, const char** argv, char** env)
                 FileConnector(FileIndex(testsPath, "y_number_0e+1.json"),
                     arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
                     
-            //JSONPartReader<qor::components::parser::json::number, qor::components::model::json::Number> numberReader;
-
             JSONReader reader;
             auto jsonObject = reader(
                 FileConnector(FileIndex(testsPath, "y_object_basic.json"),

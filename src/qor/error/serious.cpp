@@ -61,7 +61,7 @@ namespace qor{
 
     void Serious::Escalate() const
     {
-        throw(this);
+        throw(*this);
     }
     
     void Serious::Ignore() const

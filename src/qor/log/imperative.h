@@ -42,7 +42,7 @@ namespace qor{ namespace log {
     template< typename... _p >
     void imperative(const std::string& message, _p&&... p1)
     {
-        issue<Imperative, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+        issue<Imperative, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(p1...)));
     }
 
     inline void imperative(const std::string& message)

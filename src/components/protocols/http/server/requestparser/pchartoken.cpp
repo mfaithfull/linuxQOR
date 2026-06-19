@@ -53,7 +53,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
             if( token == static_cast<uint64_t>(parser::eToken::Char))
             {
-                auto charNode = node.AsRef<parser::Char>();
+                auto charNode = node.AsRef<parser::CharNode>();
                 c = charNode->GetValue();
             }
             else if(token == static_cast<uint64_t>(httpRequestToken::unreserved))

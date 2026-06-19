@@ -35,9 +35,6 @@
 namespace qor{
 
     //UTF-8 Strings have UTF-8 encoding and variable width (1-4 bytes per character)
-    //You Shouldn't use these directly with std ranges and algorithms as the 
-    //custom iterator for UTF8String is incompatible with their assumption of
-    //fixed width encoding.
     class UTF8String : public AbstractString< 
         UTF8String, 
         MutableBuffer<char8_t>,
@@ -48,15 +45,16 @@ namespace qor{
     {
     public:
 
+        typedef char8_t CharT;
         typedef AbstractString< 
         UTF8String, 
-        MutableBuffer<char8_t>,
-        UTF8Iterator< MutableBuffer<char8_t> >::Iterator,
-        UTF8ConstIterator< MutableBuffer<char8_t> >::Iterator,
-        UTF8ReverseIterator< MutableBuffer<char8_t> >::Iterator,
-        UTF8ConstReverseIterator< MutableBuffer<char8_t> >::Iterator > base;
+        MutableBuffer<CharT>,
+        UTF8Iterator< MutableBuffer<CharT> >::Iterator,
+        UTF8ConstIterator< MutableBuffer<CharT> >::Iterator,
+        UTF8ReverseIterator< MutableBuffer<CharT> >::Iterator,
+        UTF8ConstReverseIterator< MutableBuffer<CharT> >::Iterator > base;
 
-        typedef MutableBuffer<char8_t> BufferT;
+        typedef MutableBuffer<CharT> BufferT;
         typedef UTF8CodePage defaultEncodingT;
         typedef typename BufferT::View viewT;
         typedef typename UTF8Iterator<BufferT>::Iterator iterator;
@@ -67,7 +65,13 @@ namespace qor{
         UTF8String() noexcept : m_buffer(), m_cachedLength(0) { }
 
         template<size_t N>
-        UTF8String(const char8_t(&str)[N]) noexcept : m_buffer(str)        
+        UTF8String(const char(&str)[N]) noexcept : m_buffer((const char8_t*)str, N - 1)
+        {
+            UpdateLength();
+        }
+
+        template<size_t N>
+        UTF8String(const char8_t(&str)[N]) noexcept : m_buffer(str)
         {
             UpdateLength();
         }
@@ -90,6 +94,11 @@ namespace qor{
         //NOTE: These assume the sources are valid pointers into valid UTF-8 encoded text
         //If not you will get junk and may triggger a buffer overrun error or snakes or
         //zombies or anything really.
+
+        UTF8String(const char* pBuffer, size_t stCount ) : m_buffer( (const char8_t*)pBuffer, stCount )
+        {
+            UpdateLength();            
+        }
 
         UTF8String(const char8_t* pBuffer, size_t stCount ) : m_buffer( pBuffer, stCount )
         {
@@ -155,7 +164,7 @@ namespace qor{
             }
         }
 
-        char8_t At(size_t index) const override
+        CharT At(size_t index) const override
         {
             return m_buffer.At(index);
         }
@@ -170,9 +179,9 @@ namespace qor{
             return UTF8String();
         }
 
-        inline std::basic_string<char8_t> ToStdString() const override
+        inline const std::basic_string<char> ToStdString() const override
         {
-            return m_buffer.ToStdString();
+            return m_buffer.ToStdString<char>();
         }
 
         inline size_t size() const override
@@ -268,7 +277,7 @@ namespace qor{
 
         BufferT m_buffer;
         mutable size_t m_cachedLength{0};
-        mutable AbstractCharacterCodec< char8_t >* m_cachedCodec{nullptr};
+        mutable AbstractCharacterCodec< CharT >* m_cachedCodec{nullptr};
     };
 
 }//qor

@@ -22,34 +22,65 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODES_HEXDIGIT
-#define QOR_PP_H_COMPONENTS_PARSER_NODES_HEXDIGIT
+#ifndef QOR_PP_H_COMPONENTS_GENERATOR_NODE
+#define QOR_PP_H_COMPONENTS_GENERATOR_NODE
 
-#include "../node.h"
-#include "../tokens.h"
+#include <cstdint>
+#include <string>
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/reference/newref.h"
 
-namespace qor { namespace components{ namespace parser{
+namespace qor { namespace components { namespace generator {
 
-    class HexDigitNode : public Node
+    class Node
     {
     public:
 
-        HexDigitNode(int digitVal) : Node(static_cast<uint64_t>(eToken::HexDigit)) , m_value(digitVal)
+        Node(uint64_t token) : m_token(token)
         {
         }
-        
-        virtual ~HexDigitNode() = default;
 
-        unsigned int GetValue()
+        virtual ~Node() = default;
+
+        uint64_t GetToken() const
         {
-            return m_value;
+            return m_token;
         }
+
+        virtual std::string ToString() const {return "<anonymous node>";}
 
     private:
-    
-        unsigned int m_value;
+        
+        uint64_t m_token;        
     };
 
-}}}//qor::components::parser
+    template<class T>
+    class NodeAdapter : public Node
+    {
+    public:
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODES_HEXDIGIT
+        NodeAdapter(uint64_t token) : Node(token)
+        {
+            m_t = qor::new_ref<T>();
+        }
+
+        NodeAdapter(qor::ref_of<T>::type response, uint64_t token) : Node(token)
+        {
+            m_t = response;
+        }
+
+        virtual ~NodeAdapter() = default;
+
+        typename ref_of<T>::type GetObject() const
+        {
+            return m_t;
+        }
+
+    protected:
+
+        typename ref_of<T>::type m_t;
+    };
+
+}}}//qor::components::generator
+
+#endif//QOR_PP_H_COMPONENTS_GENERATOR_NODE

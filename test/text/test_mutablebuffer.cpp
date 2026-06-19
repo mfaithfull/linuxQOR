@@ -106,7 +106,7 @@ qor_pp_test_case(outOfRangeMutableBufferAccessThrows)
     {
         mb.At(5);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -122,7 +122,7 @@ qor_pp_test_case(outOfRangeMutableBufferIndexOperatorThrows)
     {
         mb[5];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -300,7 +300,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithNullptrThrows)
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -316,7 +316,7 @@ qor_pp_test_case(outOfRangeIndexOperatorToMutableBufferWithNullptrThrows)
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -332,7 +332,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithEmptyBufferThrows)
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -348,7 +348,7 @@ qor_pp_test_case(outOfRangeIndexOperatorWithEmptyMutableBufferThrows)
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -434,7 +434,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithNullptrAndNonZeroCountThrows
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -450,7 +450,7 @@ qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithNullptrAndNonZeroCoun
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -466,7 +466,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithEmptyBufferAndEmbeddedNullCh
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -482,7 +482,7 @@ qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithEmptyBufferAndEmbedde
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -519,7 +519,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithUTF8CharactersAndNullptrThro
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -535,7 +535,7 @@ qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithUTF8CharactersAndNull
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -551,7 +551,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithUTF8CharactersAndEmptyBuffer
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -567,7 +567,7 @@ qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithUTF8CharactersAndEmpt
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -583,7 +583,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithUTF8CharactersAndNonNullptrA
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -599,7 +599,7 @@ qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithUTF8CharactersAndNonN
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -615,7 +615,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithUTF8CharactersAndNullptrAndN
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -631,7 +631,7 @@ qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithUTF8CharactersAndNull
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -647,7 +647,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithUTF8CharactersAndEmptyBuffer
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -663,7 +663,7 @@ qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithUTF8CharactersAndEmpt
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -679,7 +679,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithUTF8CharactersAndNullptrAndN
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -695,7 +695,7 @@ qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithUTF8CharactersAndNull
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -711,7 +711,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithUTF8CharactersAndEmptyBuffer
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -721,7 +721,7 @@ qor_pp_test_case(outOfRangeAccessToMutableBufferWithUTF8CharactersAndEmptyBuffer
 qor_pp_test_case(outOfRangeIndexOperatorOnMutableBufferWithUTF8CharactersAndEmptyBufferAndNonZeroCountAndEmbeddedNullCharactersThrows)
 {
     auto mb = MutableBuffer<char8_t>(u8"", 5);
-    qor_pp_test_assert_throw(mb[0], Continuable);
+    qor_pp_test_assert_throw(mb[0], Serious);
 }
 
 qor_pp_test_case(canUseMutableBufferWithUTF8CharactersAndNullptrAndNonZeroCountAndEmbeddedNullCharactersThrows)
@@ -733,7 +733,7 @@ qor_pp_test_case(canUseMutableBufferWithUTF8CharactersAndNullptrAndNonZeroCountA
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -749,7 +749,7 @@ qor_pp_test_case(canUseMutableBufferWithUTF8CharactersAndNullptrAndNonZeroCountA
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -765,7 +765,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndEmptyMutableBufferAndNonZeroCountAnd
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -781,7 +781,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndEmptyMutableBufferAndNonZeroCountAnd
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -797,7 +797,7 @@ qor_pp_test_case(canUseMutableBufferWithUTF8CharactersAndNullptrAndZeroCountAndE
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -813,7 +813,7 @@ qor_pp_test_case(canUseMutableBufferWithUTF8CharactersAndNullptrAndZeroCountAndE
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -829,7 +829,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndEmptyMutableBufferAndZeroCountAndEmb
     {
         mb.At(0);
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }
@@ -845,7 +845,7 @@ qor_pp_test_case(canUseWithUTF8CharactersAndEmptyMutableBufferAndZeroCountAndEmb
     {
         mb[0];
     }
-    catch (const Continuable&)
+    catch (const Serious&)
     {
         exceptionThrown = true;
     }

@@ -32,7 +32,7 @@ class JSONPartReader
 {
 public:
 
-    JSONPartReader() : m_byteBuffer(64), m_sink(m_byteBuffer)
+    JSONPartReader() : m_byteBuffer(12), m_sink(m_byteBuffer)
     {        
     }
 
@@ -61,7 +61,7 @@ class JSONReader
 {
 public:
 
-    JSONReader() : m_byteBuffer(64), m_sink(m_byteBuffer)
+    JSONReader() : m_byteBuffer(12), m_sink(m_byteBuffer)
     {        
     }
 

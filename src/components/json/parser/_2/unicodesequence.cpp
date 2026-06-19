@@ -69,7 +69,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
             if(token == static_cast<uint64_t>(eToken::HexDigit))
             {
-                auto digitNode = node.AsRef<HexDigit>();
+                auto digitNode = node.AsRef<HexDigitNode>();
                 unsigned int digitVal = digitNode->GetValue();
                 cValue += digitVal * magnitude;
                 magnitude *= 16;

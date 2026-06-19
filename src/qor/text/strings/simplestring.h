@@ -129,7 +129,7 @@ namespace qor{
             return SimpleString< charT >();
         }
 
-        std::basic_string<charT> ToStdString() const override
+        const std::basic_string<charT> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }

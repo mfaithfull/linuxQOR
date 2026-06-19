@@ -143,9 +143,9 @@ namespace qor{
             return LocalString< C, defaultMib >();
         }
 
-        inline std::basic_string<C> ToStdString() const override
+        inline const std::basic_string< typename std_string_char_for< C >::type > ToStdString() const override
         {
-            return m_buffer.ToStdString();
+            return m_buffer.ToStdString< typename std_string_char_for< C >::type >();
         }
 
         operator std::basic_string<C>() const

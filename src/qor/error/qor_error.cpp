@@ -25,6 +25,7 @@
 #include "../../configuration/configuration.h"
 #include <buildnumber.h>
 #include "../module/module.h"
+#include "itexterrorimpl.h"
 
 extern "C"
 {
@@ -35,6 +36,8 @@ extern "C"
 			qor_pp_stringize(qor_pp_ver_minor) "." \
 			qor_pp_stringize(qor_pp_ver_patch) "." \
 			qor_pp_stringize(qor_pp_buildnumber));
+
+		qor::text::TextErrorImpl() = qor::TextErrorInstance();
 		return QORModule;
 	}
 }

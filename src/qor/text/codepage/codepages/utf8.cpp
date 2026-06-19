@@ -89,7 +89,7 @@ namespace
         7, 7                    /* 0xFE - 0xFF */
     };
 
-	static const char8_t SequenceMask[7] = 
+	static const unsigned char SequenceMask[7] = 
 	{
 		0x00, 0x7F, 0x1F, 0x0F,
 		0x07, 0x03, 0x01
@@ -159,31 +159,31 @@ namespace qor
 		switch (encoded_length)
 		{
 		case 0:
-			*space++ = static_cast<char>(rcodePoint.UChar());
+			*space++ = static_cast<char8_t>(rcodePoint.UChar());
 			--available;
 		case 1:
-			*space++ = static_cast<char>(rcodePoint.UChar());
+			*space++ = static_cast<char8_t>(rcodePoint.UChar());
 			--available;
 			break;
 
 		case 2:
-			*space++ = (char)(rcodePoint.UChar() >>   6)         | 0xC0;
-			*space++ = (char)(rcodePoint.UChar()         & 0x3F) | 0x80;
+			*space++ = (char8_t)(rcodePoint.UChar() >>   6)         | 0xC0;
+			*space++ = (char8_t)(rcodePoint.UChar()         & 0x3F) | 0x80;
 			available -= 2;
 			break;
 
 		case 3:
-			*space++ = (char)(rcodePoint.UChar()  >> 12)         | 0xE0;
-			*space++ = (char)((rcodePoint.UChar() >>  6) & 0x3F) | 0x80;
-			*space++ = (char)(rcodePoint.UChar()         & 0x3F) | 0x80;
+			*space++ = (char8_t)(rcodePoint.UChar()  >> 12)         | 0xE0;
+			*space++ = (char8_t)((rcodePoint.UChar() >>  6) & 0x3F) | 0x80;
+			*space++ = (char8_t)(rcodePoint.UChar()         & 0x3F) | 0x80;
 			available -= 3;
 			break;
 
 		case 4:
-			*space++ = (char)(rcodePoint.UChar()  >> 18)         | 0xF0;
-			*space++ = (char)((rcodePoint.UChar() >> 12) & 0x3F) | 0x80;
-			*space++ = (char)((rcodePoint.UChar() >>  6) & 0x3F) | 0x80;
-			*space++ = (char)(rcodePoint.UChar()         & 0x3F) | 0x80;
+			*space++ = (char8_t)(rcodePoint.UChar()  >> 18)         | 0xF0;
+			*space++ = (char8_t)((rcodePoint.UChar() >> 12) & 0x3F) | 0x80;
+			*space++ = (char8_t)((rcodePoint.UChar() >>  6) & 0x3F) | 0x80;
+			*space++ = (char8_t)(rcodePoint.UChar()         & 0x3F) | 0x80;
 			available -= 4;
 			break;
 

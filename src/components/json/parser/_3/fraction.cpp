@@ -69,7 +69,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
             if(token == static_cast<uint64_t>(eToken::Digit))
             {
-                auto digitNode = node.AsRef<Digit>();
+                auto digitNode = node.AsRef<DigitNode>();
                 double digitVal = 0.0 + digitNode->GetValue();
                 if(value > 0)
                 {

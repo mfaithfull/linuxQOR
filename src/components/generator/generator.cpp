@@ -32,6 +32,57 @@
 
 namespace qor { namespace components { namespace generator {
 
+    void Generator::InnerGenerate()
+    {
+        while(!IsComplete() && m_context->HasSpace())
+        {
+            CurrentState()->Enter();
+        }
+        if(IsComplete())
+        {
+            log::debug("Generation complete.");
+        }
+        if(!m_context->HasSpace())
+        {
+            log::debug("Output buffer full.");
+        }
+    }
+
+    int Generator::Generate()
+    {
+        m_complete = false;
+        if(m_StateStack.empty())
+        {
+            serious("No initial state set for Generator.");
+            return -1;
+        }
+        else
+        {
+            log::debug("Stack on entry has {0} states.", m_StateStack.size());
+            log::debug("Queue on entry has {0} entries.", m_nodes.size());
+        }
+        try
+        {
+            InnerGenerate();
+        }
+        catch(const Error& error)
+        {
+            std::cerr << error.what().Content() << '\n';
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        catch(...)
+        {
+            std::cerr << "Generator failed due to unhandled exception.\n";
+        }
+        
+        log::debug("Stack on exit has {0} states.", m_StateStack.size());
+        log::debug("Queue on exit has {0} entries.", m_nodes.size());
+        return m_result;
+    }
+
     int Generator::Run()
     {   
         m_complete = false;

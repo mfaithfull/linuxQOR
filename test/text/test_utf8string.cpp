@@ -92,7 +92,7 @@ qor_pp_test_case(canEraseFromUTF8String)
 {
     UTF8String input{u8"Something NOT good"};
     auto output = input.Erase(10,4);
-    qor_pp_assert_that(output.ToStdString() == std::basic_string<char8_t>(u8"Something good")).isTrue();
+    qor_pp_assert_that(output.ToStdString()).isEqualTo(std::string("Something good"));
 }
 
 qor_pp_test_case(canUseUTF8StringWithRangesViewsAndAlgorithmsAndMultibyteInCertainCases)

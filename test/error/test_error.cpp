@@ -44,6 +44,17 @@ class SeriousHandler : public qor::IssueHandler<qor::Serious>
     }
 };
 
+class NoteHandler : public qor::IssueHandler<qor::Note>
+{
+    public:
+
+    virtual bool Handle(const Note& note)
+    {
+        String recovered(note.what().Content().data(), note.what().Content().size());
+        return recovered == String(u8"A 사건/사회 note.");        
+    }
+};
+
 
 //TODO: This is currently an operational test. Turn it into a unit test
 
@@ -54,4 +65,11 @@ qor_pp_test_suite_case(ErrorTestSuite, canRaiseASeriousError)
     serious( "A serious error occured." );
 
     qor_pp_assert_that( true ).isTrue();
+}
+
+qor_pp_test_suite_case(ErrorTestSuite, canRaiseANoteFromUTF8)
+{
+    NoteHandler note_handler;
+    
+    note(String(u8"A 사건/사회 note.").ToStdString());
 }

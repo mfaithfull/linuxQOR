@@ -37,25 +37,25 @@ namespace qor { namespace components { namespace parser {
     void DIGIT::Emit()
     {
         int digitVal = m_result.first - '0';
-        GetParser()->PushNode(new_ref<Digit>(digitVal).AsRef<Node>());
+        GetParser()->PushNode(new_ref<DigitNode>(digitVal).AsRef<Node>());
     }
 
     void VCHAR::Emit()
     {
         char charVal = (char)m_result.first;
-        GetParser()->PushNode(new_ref<Char>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
+        GetParser()->PushNode(new_ref<CharNode>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
 
     void CTL::Emit()
     {
         char ctlVal = (char)m_result.first;
-        GetParser()->PushNode(new_ref<Char>(ctlVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
+        GetParser()->PushNode(new_ref<CharNode>(ctlVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
     
     void HEXDIGIT::Prepare()
     {
         log::debug("Looking for a HEX DIGIT...");
-        GetParser()->PushNode(new_ref<HexDigit>(0));
+        GetParser()->PushNode(new_ref<HexDigitNode>(0));
     }
 
     void HEXDIGIT::Emit()
@@ -66,7 +66,7 @@ namespace qor { namespace components { namespace parser {
         auto node = GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() == static_cast<uint64_t>(eToken::Digit))
         {
-            hexVal = node.AsRef<Digit>()->GetValue();
+            hexVal = node.AsRef<DigitNode>()->GetValue();
             node = GetParser()->PopNode();
         }
         else
@@ -76,7 +76,7 @@ namespace qor { namespace components { namespace parser {
                             ((m_result.first >= 'A' && m_result.first <= 'F') ? m_result.first - 'A' + 10 : 0));
         }
         
-        GetParser()->PushNode(new_ref<HexDigit>(hexVal));
+        GetParser()->PushNode(new_ref<HexDigitNode>(hexVal));
     }
 
     void HEXDIGIT::Fail()
@@ -93,19 +93,19 @@ namespace qor { namespace components { namespace parser {
     {
         unsigned int bitVal = m_result.first == '0' ? 0 : 
         (m_result.first == '1' ? 1 : 0);
-        GetParser()->PushNode(new_ref<Digit>(bitVal).AsRef<Node>());
+        GetParser()->PushNode(new_ref<DigitNode>(bitVal).AsRef<Node>());
     }
 
     void CHAR::Emit()
     {
         char charVal = (char)m_result.first;
-        GetParser()->PushNode(new_ref<Char>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
+        GetParser()->PushNode(new_ref<CharNode>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
 
     void ALPHA::Emit()
     {
         char charVal = (char)m_result.first;
-        GetParser()->PushNode(new_ref<Char>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
+        GetParser()->PushNode(new_ref<CharNode>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
 
 }}}//qor::components::parser

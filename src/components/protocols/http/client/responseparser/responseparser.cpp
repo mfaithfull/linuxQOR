@@ -47,7 +47,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
             
             if(token == static_cast<uint64_t>(httpResponseToken::responseChar))
             {
-                auto characterNode = node.AsRef<Char>();
+                auto characterNode = node.AsRef<CharNode>();
                 char c = characterNode->GetValue();
                 chars.push_back(c);
             }

@@ -269,7 +269,6 @@ namespace qor { namespace components { namespace parser {
 
         Resume = [this]()
         {
-            //m_result.code = Result::SUCCESS;
             m_result.length = 0;             
             if(m_head->m_result.code == Result::SUCCESS && m_head->m_result.length > 0)
             {
@@ -296,16 +295,12 @@ namespace qor { namespace components { namespace parser {
                 }
                 Emit();
             }
-            else if(m_result.code == Result::MORE_DATA)
-            {
-                std::cout << "Ran out of data before we could decide. Reenter with more data to try again." << std::endl;
-            }
             m_result.code = Result::SUCCESS;
         };
 
     }
 
-    //Matches Zero or more sequential instances of the head state. None is fine. There's no limit except running out of RAM
+    //Matches Zero or more sequential instances of the head state. None is fine. There's no limit except memory
     ZeroOrMore::ZeroOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser,token),
         m_head(head), m_first(true)
     {
@@ -314,7 +309,7 @@ namespace qor { namespace components { namespace parser {
             Prepare();
             m_first = true;
             m_result.length = 0;
-            Workflow()->PushState(m_head.AsRef<workflow::State>());
+            Workflow()->PushState(m_head);
         };
 
         Resume = [this]()
@@ -331,7 +326,7 @@ namespace qor { namespace components { namespace parser {
                 }
                 m_result.length += m_head->m_result.length;
                 m_head->Reset();
-                Workflow()->PushState(m_head.AsRef<workflow::State>());
+                Workflow()->PushState(m_head);
             }
             else
             {
@@ -372,13 +367,9 @@ namespace qor { namespace components { namespace parser {
                     m_internalState = 1;
                     Workflow()->PushState(m_tail.AsRef<workflow::State>());
                 }
-                else
-                {
-                    std::cout << "More data required" << std::endl;
-                }
                 break;
             case 1://tail
-                if(m_tail->m_result.code == Result::SUCCESS || GetParser()->IsFinal())
+                if(m_tail->m_result.code == Result::SUCCESS)
                 {
                     m_result.code = Result::SUCCESS;
                     m_result.length = m_head->m_result.length + m_tail->m_result.length;
@@ -392,8 +383,14 @@ namespace qor { namespace components { namespace parser {
                     Workflow()->PopState();
                 }
                 else
-                {
-                    std::cout << "More data required" << std::endl;
+                {                    
+                    if(GetParser()->IsFinal())//Try to succeed
+                    {
+                        m_result.code = Result::SUCCESS;
+                        m_result.length = m_head->m_result.length + m_tail->m_result.length;
+                        m_result.token = m_token;
+                        Workflow()->PopState();
+                    }
                 }
                 break;
             }

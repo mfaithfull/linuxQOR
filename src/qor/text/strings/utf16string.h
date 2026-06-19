@@ -113,12 +113,12 @@ namespace qor{
             return *this;
         }
 
-        size_t Length() const override
+        inline size_t Length() const override
         {
             return m_cachedLength;
         }
 
-        bool IsEmpty() const override
+        inline bool IsEmpty() const override
         {
             return m_buffer.IsEmpty();
         }
@@ -129,7 +129,7 @@ namespace qor{
             m_cachedLength = 0;
         }
 
-        virtual viewT view() const override
+        virtual inline viewT view() const override
         {
             return m_buffer.view();
         }
@@ -155,80 +155,80 @@ namespace qor{
             }
         }
 
-        char16_t At(size_t index) const override
+        inline char16_t At(size_t index) const override
         {
             return m_buffer.At(index);
         }
 
-        UTF16String Clone() const override
+        inline UTF16String Clone() const override
         {
             return UTF16String(*this);
         }
 
-        static UTF16String EmptyString()
+        inline static UTF16String EmptyString()
         {
             return UTF16String();
         }
 
-        std::basic_string<char16_t> ToStdString() const override
+        inline const std::basic_string<char16_t> ToStdString() const override
         {
             return m_buffer.ToStdString();
         }
 
-        size_t size() const override
+        inline size_t size() const override
         {
             return Length();
         }
 
-        iterator begin() const override
+        inline iterator begin() const override
         {
             iterator it(m_buffer);
             return it.begin();
         }
 
-        const_iterator cbegin() const override
+        inline const_iterator cbegin() const override
         {
             const_iterator it(m_buffer);
             return it.begin();
         }
 
-        iterator end() const override
+        inline iterator end() const override
         {
             iterator it(m_buffer);
             return it.end();
         }
 
-        const_iterator cend() const override
+        inline const_iterator cend() const override
         {
             const_iterator it(m_buffer);
             return it.end();
         }
 
-        reverse_iterator rbegin() const override
+        inline reverse_iterator rbegin() const override
         {
             reverse_iterator it(m_buffer);
             return it.begin();
         }
 
-        const_reverse_iterator crbegin() const override
+        inline const_reverse_iterator crbegin() const override
         {
             const_reverse_iterator it(m_buffer);
             return it.begin();
         }
 
-        reverse_iterator rend() const override
+        inline reverse_iterator rend() const override
         {
             reverse_iterator it(m_buffer);
             return it.end();
         }
 
-        const_reverse_iterator crend() const override
+        inline const_reverse_iterator crend() const override
         {
             const_reverse_iterator it(m_buffer);
             return it.end();
         }
 
-        virtual Mib GetEncoding() const override
+        virtual inline Mib GetEncoding() const override
         {
             return defaultEncodingT::GetMib();
         }
@@ -246,12 +246,12 @@ namespace qor{
             }
         }
 
-        virtual AbstractCharacterCodec< char16_t >* GetCodecCache() const override
+        virtual inline AbstractCharacterCodec< char16_t >* GetCodecCache() const override
         { 
             return m_cachedCodec; 
         }
 
-        virtual void SetCodecCache(AbstractCharacterCodec< char16_t >* codec) const override
+        virtual inline void SetCodecCache(AbstractCharacterCodec< char16_t >* codec) const override
         {
             m_cachedCodec = codec;
         }

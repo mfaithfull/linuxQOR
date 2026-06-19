@@ -51,7 +51,7 @@ namespace qor { namespace components { namespace parser { namespace json {
             uint64_t token = node->GetToken();
             if(token == static_cast<uint64_t>(eToken::Digit))
             {
-                auto digitNode = node.AsRef<Digit>();
+                auto digitNode = node.AsRef<DigitNode>();
                 unsigned int digitVal = digitNode->GetValue();
                 value += digitVal * magnitude;
                 magnitude *= 10;

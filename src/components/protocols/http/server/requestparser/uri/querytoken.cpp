@@ -64,7 +64,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             }
             else if(token == static_cast<uint64_t>(parser::eToken::Char))
             {
-                auto charNode = node.AsRef<parser::Char>();
+                auto charNode = node.AsRef<parser::CharNode>();
                 if(charNode.IsNotNull())
                 {
                     queryChars.push_back(charNode->GetValue());

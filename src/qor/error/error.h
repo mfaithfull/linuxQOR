@@ -27,6 +27,7 @@
 
 #include <format>
 #include "severityissue.h"
+#include "src/qor/text/strings/strings.h"
 
 namespace qor{ 
 
@@ -44,7 +45,7 @@ namespace qor{
     template< typename... _p >
     void fatal(const std::string& message, _p&&... p1)
     {
-        issue<Fatal, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+        issue<Fatal, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(p1...)));
     }
 
     inline void fatal(const std::string& message)
@@ -67,7 +68,7 @@ namespace qor{
     template< typename... _p >
     void serious(const std::string& message, _p&&... p1)
     {
-        issue<Serious, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+        issue<Serious, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(p1...)));
     }
 
     inline void serious(const std::string& message)
@@ -81,13 +82,15 @@ namespace qor{
         Continuable(const std::string& message);
         virtual ~Continuable() noexcept = default;
         Continuable& operator = (const Continuable& src);
+        virtual void Handle();
         virtual void Escalate() const;
+        virtual void Ignore() const;
     };
     
     template< typename... _p >
     void continuable(const std::string& message, _p&&... p1)
     {
-        issue<Continuable, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+        issue<Continuable, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(p1...)));
     }
 
     inline void continuable(const std::string& message)
@@ -102,13 +105,14 @@ namespace qor{
         Warning(const std::string& message);
         virtual ~Warning() noexcept = default;
         Warning& operator = (const Warning& src);
+        virtual void Handle();
         virtual void Escalate() const;
     };
     
     template< typename... _p >
     void warning(const std::string& message, _p&&... p1)
     {
-        issue<Warning, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+        issue<Warning, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(p1...)));
     }
 
     inline void warning(const std::string& message)
@@ -123,19 +127,20 @@ namespace qor{
         Note(const std::string& message);
         virtual ~Note() noexcept = default;
         Note& operator = (const Note& src);
+        virtual void Handle();
         virtual void Escalate() const {}
     };
 
     template< typename... _p >
     void note(const std::string& message, _p&&... p1)
     {
-        issue<Note, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(std::forward<_p>(p1)...)));
+        issue<Note, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(p1...)));
     }
 
     inline void note(const std::string& message)
     {
         issue<Note, const std::string&>(message);
-    }    
+    }
 
 }//qor
 

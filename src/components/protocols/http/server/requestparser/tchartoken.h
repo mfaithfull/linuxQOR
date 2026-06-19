@@ -91,8 +91,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 
                 qor::log::debug("tokenName");
 
-                ref_of<parser::Char>::type charNode;
-                ref_of<parser::Digit>::type digitNode;
+                ref_of<parser::CharNode>::type charNode;
+                ref_of<parser::DigitNode>::type digitNode;
 
                 if( token == static_cast<uint64_t>(parser::eToken::Char) ||
                  token == static_cast<uint64_t>(parser::eToken::Alpha) || 
@@ -101,15 +101,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
                     switch (token)
                     {
                         case static_cast<uint64_t>(parser::eToken::Char):
-                            charNode = node.AsRef<parser::Char>();
+                            charNode = node.AsRef<parser::CharNode>();
                             c = charNode->GetValue();
                         break;
                         case static_cast<uint64_t>(parser::eToken::Alpha):
-                            charNode = node.AsRef<parser::Char>();
+                            charNode = node.AsRef<parser::CharNode>();
                             c = charNode->GetValue();
                         break;
                         case static_cast<uint64_t>(parser::eToken::Digit):
-                            digitNode = node.AsRef<parser::Digit>();
+                            digitNode = node.AsRef<parser::DigitNode>();
                             c = digitNode->GetValue();
                         break;
                     }

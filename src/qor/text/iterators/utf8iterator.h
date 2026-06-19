@@ -97,7 +97,7 @@ namespace qor
                     ptrdiff_t remainingSteps = howManyStepsToAdvanceIter;
                     while(remainingSteps > 0)
                     {
-                        typename iteratorT::value_type value = *iter;//should be a char8_t for UTF-8
+                        typename iteratorT::value_type value = *iter;//should be a char for UTF-8
                         if(value <= 0x7F)
                         {
                             --remainingSteps;

@@ -30,15 +30,15 @@
 
 namespace qor { namespace components{ namespace parser{
 
-    class Char : public Node
+    class CharNode : public Node
     {
     public:
 
-        Char(char charVal, uint64_t token) : Node(token) , m_value(charVal)
+        CharNode(char charVal, uint64_t token) : Node(token) , m_value(charVal)
         {
         }
 
-        virtual ~Char() = default;
+        virtual ~CharNode() = default;
 
         char GetValue()
         {

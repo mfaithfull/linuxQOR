@@ -22,34 +22,21 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODES_HEXDIGIT
-#define QOR_PP_H_COMPONENTS_PARSER_NODES_HEXDIGIT
+#ifndef QOR_PP_H_TEXT_ITEXTERRORDI
+#define QOR_PP_H_TEXT_ITEXTERRORDI
 
-#include "../node.h"
-#include "../tokens.h"
+#include <string>
 
-namespace qor { namespace components{ namespace parser{
+namespace qor{ namespace text {
 
-    class HexDigitNode : public Node
+    struct qor_pp_module_interface(QOR_TEXT) ITextErrorDI
     {
-    public:
-
-        HexDigitNode(int digitVal) : Node(static_cast<uint64_t>(eToken::HexDigit)) , m_value(digitVal)
-        {
-        }
-        
-        virtual ~HexDigitNode() = default;
-
-        unsigned int GetValue()
-        {
-            return m_value;
-        }
-
-    private:
-    
-        unsigned int m_value;
+        virtual void continuable(const std::string& message) = 0;
+        virtual void serious(const std::string& message) = 0;
     };
 
-}}}//qor::components::parser
+    qor_pp_module_interface(QOR_TEXT) ITextErrorDI*& TextErrorImpl();
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODES_HEXDIGIT
+}}//qor::text
+
+#endif//QOR_PP_H_TEXT_ITEXTERRORDI

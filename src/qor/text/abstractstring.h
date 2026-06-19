@@ -34,6 +34,31 @@
 namespace qor{
 
     template< typename C >
+    struct std_string_char_for
+    {
+        typedef C type;
+    };
+
+    template<>
+    struct std_string_char_for< char8_t >
+    {
+        typedef char type;
+    };
+
+    template<>
+    struct std_string_char_for< std::enable_if<sizeof(wchar_t)==2, char16_t > >
+    {
+        typedef wchar_t type;
+    };
+
+    template<>
+    struct std_string_char_for< std::enable_if<sizeof(wchar_t)==4, char32_t > >
+    {
+        typedef wchar_t type;
+    };
+
+
+    template< typename C >
     struct encoding_of
     {
         typedef ASCIICodePage CodePageT;
@@ -55,7 +80,7 @@ namespace qor{
     struct encoding_of< char32_t >
     {
         typedef UTF32CodePage CodePageT;
-    };
+    };    
 
     template<typename IteratorT, typename CharT>
     bool WhileBlank(IteratorT& it, const std::locale& locale)
@@ -88,7 +113,7 @@ namespace qor{
         virtual CharT At(size_t index) const = 0;
         virtual ImplT Clone() const = 0;
         virtual BufferT CloneBuffer() const = 0;        
-        virtual std::basic_string<typename std::remove_cv<CharT>::type> ToStdString() const = 0;
+        virtual const std::basic_string< typename std_string_char_for< std::remove_cv_t<CharT> >::type > ToStdString() const = 0;
         virtual Mib GetEncoding() const = 0;
         virtual size_t size() const = 0;
         virtual iterator begin() const = 0;

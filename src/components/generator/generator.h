@@ -33,6 +33,7 @@
 #include "src/framework/workflow/workflow.h"
 #include "context.h"
 #include "result.h"
+#include "node.h"
 
 namespace qor { namespace components { namespace generator {
 
@@ -41,18 +42,10 @@ namespace qor { namespace components { namespace generator {
     
     public:
 
-        inline Generator() : workflow::Workflow()
-        {
-        }
-
-        inline Generator(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context)
-        {
-        }
-
+        inline Generator() : workflow::Workflow(){ }
+        inline Generator(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context){ }
         virtual ~Generator() = default;
-        virtual int Run();
-
-        inline Context* GetContext()
+        inline Context* GetContext() const
         {
             return m_context;
         }
@@ -61,10 +54,35 @@ namespace qor { namespace components { namespace generator {
         {
             m_context = context;
         }        
-        
-    protected:
+
+        inline void QueueNode(ref_of<Node>::type node)
+        {
+            if(node.IsNotNull())
+            {
+                m_nodes.push_back(node);
+            }
+        }
+
+        ref_of<Node>::type DequeueNode()
+        {
+            ref_of<Node>::type result;
+            if(!m_nodes.empty())
+            {
+                result = m_nodes.front();
+                m_nodes.pop_front();
+            }
+            return result;
+        }
+
+        virtual int Run();        
+        int Generate();
+
+    private:
+
+        void InnerGenerate();
 
         ref_of<Context>::type m_context;
+        std::deque<ref_of<Node>::type> m_nodes;
     };
 
 }}}//qor::components::generator

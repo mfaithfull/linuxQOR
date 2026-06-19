@@ -24,6 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "error.h"
+#include "handler.h"
 
 namespace qor{
 
@@ -37,9 +38,35 @@ namespace qor{
         return *this;
     }
 
+    void Continuable::Handle()
+    {
+        auto continuableHandler = new_ref< IssueHandler<Continuable> >();
+        if(!continuableHandler.IsNull())
+        {
+            Resolve(continuableHandler->Handle(*this));
+        }
+        else
+        {
+            auto handler = new_ref< IssueHandler<Error> >();
+            if(!handler.IsNull())
+            {
+                Resolve(handler->Handle(*this));
+            }
+            else
+            {
+                Resolve(false);
+            }
+        }
+    }
+
     void Continuable::Escalate(void) const
     {
-        throw(*this);
+        serious(String(u8"Escalated continuable issue: {0}").ToStdString(), m_what->Content());
+    }
+
+    void Continuable::Ignore() const
+    {
+        warning("Ignoring a continuable issue. {0}", m_what->Content());
     }
     
 }//qor
