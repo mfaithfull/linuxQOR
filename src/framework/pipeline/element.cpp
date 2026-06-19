@@ -109,7 +109,7 @@ namespace qor{ namespace pipeline{
         return false;
     }
 
-    Element* Element::GetSink()
+    Element* Element::GetSink() const
     {
         return nullptr;
     }
