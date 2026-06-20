@@ -67,23 +67,23 @@ namespace qor{ namespace platform{
         };
 
         IFile(){}
-        IFile(const FileIndex& index, int openFor, int withFlags){}
-        IFile(const IODescriptor& iod){}
+        IFile(const FileIndex& /*index*/, int /*openFor*/, int /*withFlags*/){}
+        IFile(const IODescriptor& /*iod*/){}
         virtual bool SupportsPosition(){ return false; }
         virtual uint64_t GetPosition(){ return 0; }
-        virtual long SetPosition(long offset, int whence){return 0;}
-        virtual uint64_t SetPosition(uint64_t newPosition){return 0;}
-        virtual uint64_t SetPositionRelative(int64_t offset){return 0;}
-        virtual void Truncate(uint64_t length){}
-        virtual void Reserve(uint64_t length){}
+        virtual long SetPosition(long /*offset*/, int /*whence*/){return 0;}
+        virtual uint64_t SetPosition(uint64_t /*newPosition*/){return 0;}
+        virtual uint64_t SetPositionRelative(int64_t /*offset*/){return 0;}
+        virtual void Truncate(uint64_t /*length*/){}
+        virtual void Reserve(uint64_t /*length*/){}
         virtual uint64_t GetSize(){return 0;}
         virtual void Flush(){}
         virtual Type GetType(){return Unknown;}
         virtual ref_of<IFile>::type ReOpen(){ ref_of<IFile>::type result; return result;}
         virtual std::filesystem::file_status GetStatus(){return std::filesystem::file_status();}
         virtual void SetStatus(int){}
-        virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1){return 0;}
-        virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1){return 0;}
+        virtual int64_t Read(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/ = -1){return 0;}
+        virtual int64_t Write(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/ = -1){return 0;}
     };
 
     }//platform

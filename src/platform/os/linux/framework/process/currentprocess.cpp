@@ -131,7 +131,8 @@ namespace qor{ namespace nslinux{ namespace framework{
         if(!bResult)
         {
             int e = errno;
-            continuable(std::format("Failed to set process priority for process {} to {}\n", getpid(), ipriority));
+            pid_t id = getpid();
+            continuable(std::format("Failed to set process priority for process {} to {}. Error {}.\n", id, ipriority, e));
         }
         return bResult;
     }

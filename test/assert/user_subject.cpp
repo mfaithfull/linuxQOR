@@ -88,7 +88,7 @@ namespace test_user_subject
 
 namespace qor{ namespace assert
 {
-    auto assert_that_internal( Adl dummy, const bool failOnError, const char* file, int line, const test_user_subject::Foo& foo) 
+    auto assert_that_internal( [[maybe_unused]]Adl dummy, const bool failOnError, const char* file, int line, const test_user_subject::Foo& foo) 
     { // v needs to be a reference otherwise GenericSubject  will store a reference to a temporary
         return test_user_subject::FooSubject(false, file, line, foo);
     }

@@ -41,11 +41,11 @@ namespace qor{ namespace nslinux{
 
         Folder(const class platform::Path& path) : platform::Folder(path)
         {
-
         }
         
-        Folder& operator = (const Folder& src)
+        Folder& operator = (const Folder& /*src*/)
         {
+            //TODO:
             return *this;
         }
 

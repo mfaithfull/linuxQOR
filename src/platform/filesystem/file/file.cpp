@@ -28,7 +28,7 @@
 
 namespace qor{ namespace platform{
 
-    static ref_of<IFile>::type Open(const FileIndex& index, int openFor, int withFlags)
+    ref_of<IFile>::type File::Open(const FileIndex& index, int openFor, int withFlags)
     {        
         return new_ref<IFile>(index, openFor, withFlags);
     }
@@ -37,7 +37,7 @@ namespace qor{ namespace platform{
     {
     }
 
-    File::File(const File& src) : m_index(src.m_index)
+    File::File(const File& src) : IFile(), m_index(src.m_index)
     {
         *this = src;
     }
@@ -59,7 +59,7 @@ namespace qor{ namespace platform{
     {//derived class owns platform specific resource and handles close in its destructor
     }
 
-    int File::ChangeMode(unsigned int mode)
+    int File::ChangeMode(unsigned int /*mode*/)
     {
         return -1;
     }
@@ -69,7 +69,7 @@ namespace qor{ namespace platform{
         return 0;
     }
 
-    uint64_t File::SetPosition(uint64_t newPosition)
+    uint64_t File::SetPosition(uint64_t /*newPosition*/)
     {
         return 0;
     }
@@ -93,21 +93,15 @@ namespace qor{ namespace platform{
         return false;
     }
 
-    uint64_t File::SetPositionRelative(int64_t offset)
+    uint64_t File::SetPositionRelative(int64_t /*offset*/)
     {
         serious("Empty base implementation.");
         return 0;
     }
 
-    void File::Truncate(uint64_t length)
-    {
+    void File::Truncate(uint64_t /*length*/){ }
 
-    }
-
-    void File::Reserve(uint64_t length)
-    {
-
-    }
+    void File::Reserve(uint64_t /*length*/){ }
 
     uint64_t File::GetSize()
     {
@@ -126,17 +120,14 @@ namespace qor{ namespace platform{
         return status;
     }
 
-    void File::SetStatus(int)
-    {
-        
-    }
+    void File::SetStatus(int){ }
 
-    int64_t File::Read(byte* buffer, size_t byteCount, int64_t offset)
+    int64_t File::Read(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/)
     {
         return 0;
     }
 
-    int64_t File::Write(byte* buffer, size_t byteCount, int64_t offset)
+    int64_t File::Write(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/)
     {
         return 0;
     }

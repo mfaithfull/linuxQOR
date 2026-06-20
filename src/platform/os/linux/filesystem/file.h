@@ -86,7 +86,7 @@ namespace qor{ namespace nslinux{
         static void Check_close_Result(int result);
         static void ErrorOnOpen(int err);
 
-        int m_fd;
+        int m_fd{0};
     };
 }}//qor::nslinux
 

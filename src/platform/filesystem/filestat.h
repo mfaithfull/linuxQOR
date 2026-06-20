@@ -36,8 +36,8 @@ namespace qor{ namespace platform{
 	{
 	public:
 
-        IFileStat() {};
-        IFileStat(FileIndex& fileindex) {};
+        IFileStat() { };
+        IFileStat(FileIndex& /*fileindex*/) { };
         virtual ~IFileStat() noexcept = default;
 
         virtual bool IsValid() { return false; }

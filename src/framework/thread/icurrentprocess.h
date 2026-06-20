@@ -58,7 +58,7 @@ namespace qor{ namespace framework{
             return std::nullopt;
         }
 
-        virtual bool SetAffinity(const std::vector<bool>& affinity)
+        virtual bool SetAffinity(const std::vector<bool>& /*affinity*/)
         {
             return false;
         }
@@ -68,7 +68,7 @@ namespace qor{ namespace framework{
             return std::nullopt;
         }
 
-        virtual bool SetPriority(const Priority priority)
+        virtual bool SetPriority(const Priority /*priority*/)
         {
             return false;
         }

@@ -28,19 +28,13 @@
 
 namespace qor{ namespace framework{
 
-    DynamicLibrary::DynamicLibrary()
-    {
-    }
+    DynamicLibrary::DynamicLibrary(){ }
 
-    DynamicLibrary::DynamicLibrary(const std::string& libName)
-    {
-    }
+    DynamicLibrary::DynamicLibrary(const std::string& /*libName*/){ }
 
-    DynamicLibrary::~DynamicLibrary()
-    {        
-    }
+    DynamicLibrary::~DynamicLibrary(){ }
     
-    DynamicLibrary::DynProc DynamicLibrary::GetProcAddress(const std::string& procName)
+    DynamicLibrary::DynProc DynamicLibrary::GetProcAddress(const std::string& /*procName*/)
     {
         DynamicLibrary::DynProc result = nullptr;
         return result;

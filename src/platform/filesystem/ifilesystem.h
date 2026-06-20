@@ -100,9 +100,9 @@ namespace qor{ namespace platform{
         virtual std::string ParentIndicator() const { return ".."; }
         virtual std::string RootIndicator() const { return "/"; }
         virtual unsigned short MaxElementLength() const { return 256; }
-        virtual ref_of<IFile>::type Create(const FileIndex& index, const int withFlags) const { ref_of<IFile>::type noresult; return noresult;}
-        virtual ref_of<IFile>::type Open(const FileIndex& index, const int openFor, const int withFlags) const {ref_of<IFile>::type noresult; return noresult;}
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const {return false;}
+        virtual ref_of<IFile>::type Create(const FileIndex& /*index*/, const int /*withFlags*/) const { ref_of<IFile>::type noresult; return noresult;}
+        virtual ref_of<IFile>::type Open(const FileIndex& /*index*/, const int /*openFor*/, const int /*withFlags*/) const {ref_of<IFile>::type noresult; return noresult;}
+        virtual bool Move(const platform::FileIndex& /*srcIndex*/, const platform::FileIndex& /*destIndex*/) const {return false;}
         virtual Path CurrentPath() const {
             std::filesystem::path stdpath = std::filesystem::current_path();
             Path currentPath(stdpath.string());

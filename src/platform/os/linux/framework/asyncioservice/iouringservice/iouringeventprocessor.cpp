@@ -38,7 +38,7 @@ namespace qor{ namespace nslinux{ namespace framework{
         io_uring_cqe *temp = nullptr;
         __kernel_timespec ts{ .tv_sec = 0, .tv_nsec = 50000 /*/ (1 << scale)*/ };
         sigset_t sigmask;
-        memset(&sigmask, sizeof(sigset_t), 0);        
+        memset(&sigmask, 0, sizeof(sigset_t));
         unsigned wait_nr = uring.ExpectationCount();
         if( wait_nr == 0)
         {

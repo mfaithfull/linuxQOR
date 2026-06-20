@@ -158,13 +158,13 @@ namespace qor{ namespace platform{
         return Path(m_dirent.path().generic_string());
     }
     
-    ref_of<IFile>::type Create(const int openFor, const int withFlags, const int inMode)
+    ref_of<IFile>::type Create(const int /*openFor*/, const int /*withFlags*/, const int /*inMode*/)
     {
         ref_of<IFile>::type result;
         return result;
     }
 
-    ref_of<IFile>::type FileIndex::Open(const int openFor, const int withFlags, const int inMode)    
+    ref_of<IFile>::type FileIndex::Open(const int /*openFor*/, const int /*withFlags*/, const int /*inMode*/)    
     {
         ref_of<IFile>::type result;
         return result;

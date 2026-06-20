@@ -76,7 +76,7 @@
 namespace qor{ namespace assert{
 
     template <typename T, typename ::std::enable_if<::std::is_same<T, bool>::value>::type* = nullptr>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, T v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, T v) 
     {
         return subject::BoolSubject(failOnError, file, line, v);
     }
@@ -84,85 +84,85 @@ namespace qor{ namespace assert{
     template <typename T,
             typename std::enable_if<!std::is_same<T, bool>::value>::type* = nullptr,
             typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, T v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, T v) 
     {
         return subject::IntegralSubject<T>(failOnError, file, line, v);
     }
 
     template <typename T>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::complex<T> v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::complex<T> v) 
     {
         return subject::ComplexSubject(failOnError, file, line, v);
     }
 
     template <typename T, typename std::enable_if<std::is_floating_point<T>::value, T>::type* = nullptr>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, T v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, T v) 
     {
         return subject::FloatingSubject<T>(failOnError, file, line, v);
     }
 
     template <typename T, size_t N>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::array<T, N>& v) 
+    auto assert_that_internal([[maybe_unused]], bool failOnError, const char* file, int line, std::array<T, N>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T, typename A>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::vector<T, A>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::vector<T, A>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T, typename A>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::list<T, A>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::list<T, A>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T, typename A>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::deque<T, A>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::deque<T, A>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T, typename A>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::forward_list<T, A>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::forward_list<T, A>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }
 
     template <typename T>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::optional<T> v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::optional<T> v) 
     {
         return subject::OptionalSubject(failOnError, file, line, v);
     }
 
     template <typename T, typename std::enable_if<std::is_pointer<T>::value, T>::type* = nullptr>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, T v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, T v) 
     {
         return subject::PointerSubject<T>(failOnError, file, line, v);
     }
 
     template <typename T>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::shared_ptr<T> v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::shared_ptr<T> v) 
     {
         return subject::SharedPtrSubject(failOnError, file, line, v);
     }
 
     template <typename T, typename Deleter>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::unique_ptr<T, Deleter>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::unique_ptr<T, Deleter>& v) 
     {
         return subject::UniquePtrSubject(failOnError, file, line, v);
     }
 
     template <typename T>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::weak_ptr<T>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::weak_ptr<T>& v) 
     {
         return subject::WeakPtrSubject(failOnError, file, line, v);
     }
 
     template <typename Key, typename T, typename Compare, typename Allocator>
-    auto assert_that_internal(Adl dummy,
+    auto assert_that_internal([[maybe_unused]]Adl dummy,
                             bool failOnError,
                             const char* file,
                             int line,
@@ -172,7 +172,7 @@ namespace qor{ namespace assert{
     }
 
     template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator>
-    auto assert_that_internal(Adl dummy,
+    auto assert_that_internal([[maybe_unused]]Adl dummy,
                             bool failOnError,
                             const char* file,
                             int line,
@@ -182,7 +182,7 @@ namespace qor{ namespace assert{
     }
 
     template <typename Key, typename T, typename Compare, typename Allocator>
-    auto assert_that_internal(Adl dummy,
+    auto assert_that_internal([[maybe_unused]]Adl dummy,
                             bool failOnError,
                             const char* file,
                             int line,
@@ -192,7 +192,7 @@ namespace qor{ namespace assert{
     }
 
     template <typename Key, typename T, typename Hash, typename KeyEqual, typename Allocator>
-    auto assert_that_internal(Adl dummy,
+    auto assert_that_internal([[maybe_unused]]Adl dummy,
                             bool failOnError,
                             const char* file,
                             int line,
@@ -202,13 +202,13 @@ namespace qor{ namespace assert{
     }
 
     template <typename Key, typename Compare, typename Allocator>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::set<Key, Compare, Allocator>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::set<Key, Compare, Allocator>& v) 
     {
         return subject::SetSubject(failOnError, file, line, v);
     }
 
     template <typename Key, typename Hash, typename KeyEqual, typename Allocator>
-    auto assert_that_internal(Adl dummy,
+    auto assert_that_internal([[maybe_unused]]Adl dummy,
                             bool failOnError,
                             const char* file,
                             int line,
@@ -218,7 +218,7 @@ namespace qor{ namespace assert{
     }
 
     template <typename CharT, typename Traits>
-    auto assert_that_internal(Adl dummy,
+    auto assert_that_internal([[maybe_unused]]Adl dummy,
                             bool failOnError,
                             const char* file,
                             int line,
@@ -228,7 +228,7 @@ namespace qor{ namespace assert{
     }
 
     template <typename CharT, typename Traits>
-    auto assert_that_internal(Adl dummy,
+    auto assert_that_internal([[maybe_unused]]Adl dummy,
                             bool failOnError,
                             const char* file,
                             int line,
@@ -238,13 +238,13 @@ namespace qor{ namespace assert{
     }
 
     template <typename E, typename C>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::stack<E, C>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::stack<E, C>& v) 
     {
         return subject::StackSubject(failOnError, file, line, v);
     }
 
     template <typename Type, typename Container, typename Compare>
-    auto assert_that_internal(Adl dummy,
+    auto assert_that_internal([[maybe_unused]]Adl dummy,
                             bool failOnError,
                             const char* file,
                             int line,

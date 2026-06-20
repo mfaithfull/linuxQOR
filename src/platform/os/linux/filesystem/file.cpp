@@ -55,7 +55,7 @@ namespace qor{ namespace nslinux{
         }
     }
 
-    File::File(const platform::FileIndex& direntry, int openFor, int withFlags) : m_fd(-1) , platform::File(direntry) 
+    File::File(const platform::FileIndex& direntry, int openFor, int withFlags) : platform::File(direntry), m_fd(-1)
     {
         int mode = 0;
         if( ( (withFlags & platform::WithFlags::CreateNew) | (withFlags & platform::WithFlags::TempFile) ) != 0 )
@@ -403,7 +403,7 @@ namespace qor{ namespace nslinux{
 
     uint64_t File::Validate_lseek64_Result(uint64_t result)
     {
-        if(result == -1)
+        if(result == (uint64_t)(-1))
         {
             switch(errno)
             {

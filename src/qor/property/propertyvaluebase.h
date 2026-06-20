@@ -44,7 +44,13 @@ namespace qor {
 
 		PropertyValueBase() : pvt(PVT_Null), m_p(nullptr) {}
 
-		PropertyValueBase(const PropertyValueBase & src) : pvt(PVT_Null), m_p(nullptr) {}
+		PropertyValueBase(const PropertyValueBase & src) : pvt(PVT_Null), m_p(nullptr) 
+		{
+			if(&src != this)
+			{
+				//TODO: Copy property
+			}
+		}
 
 		virtual ~PropertyValueBase()
 		{
