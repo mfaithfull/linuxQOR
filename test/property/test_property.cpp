@@ -108,6 +108,8 @@ qor_pp_test_suite_case(PropertyTestSuite, canMakeAVectorValue)
         {
             switch (prop.GetType())
             {
+            case PVT_Null:
+                break;
             case PVT_Property:
                 break;
             case PVT_Map:
@@ -117,7 +119,7 @@ qor_pp_test_suite_case(PropertyTestSuite, canMakeAVectorValue)
             case PVT_Value:
                 if (prop.CheckValueType<int>())
                 {
-                    auto value = prop.Value().Get<int>();
+                    [[maybe_unused]]auto value = prop.Value().Get<int>();
                 }
                 break;
             }

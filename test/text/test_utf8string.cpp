@@ -67,6 +67,7 @@ qor_pp_test_case(canHoldMultiByteCharsInUTF8String)
     UTF8String korean(u8"﻿중앙일보 - 사건/사회 - 극지탐험　협회결");
     size_t length = korean.Length();
     qor_pp_assert_that(korean.IsEmpty()).isFalse();
+    qor_pp_assert_that(length).isGreaterThan(10);
 }
 
 qor_pp_test_case(canGetRightCharsInUTF8String)

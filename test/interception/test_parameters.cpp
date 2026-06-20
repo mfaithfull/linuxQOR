@@ -42,12 +42,12 @@ public:
 
     ReturnInterceptor() : returnAssingmentCount(0), returnCount(0) {}
 
-    virtual void OnReturnAssignment( CallContext* pCall )
+    virtual void OnReturnAssignment( CallContext* /*call*/ )
     {
         returnAssingmentCount++;
     }
 
-    virtual void OnReturn(CallContext* pCall)
+    virtual void OnReturn(CallContext* /*call*/)
     {
         returnCount++;
     }
