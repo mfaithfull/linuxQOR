@@ -42,8 +42,7 @@ namespace qor { namespace components { namespace parser { namespace json {
     void fraction::Emit()
     {
         log::debug("Emitting a Fraction.");
-        double value = 0.0;
-        double magnitude = 10;
+        double value = 0.0;        
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {

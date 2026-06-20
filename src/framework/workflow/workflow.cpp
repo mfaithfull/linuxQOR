@@ -39,9 +39,7 @@ namespace qor{ namespace workflow{
         Leave = std::bind(&Workflow::Leave, workflow);
     }
 
-    Workflow::Workflow() : m_complete(true), m_initialState(nullptr), m_result(0)
-    {
-    }
+    Workflow::Workflow(){ }
 
     Workflow::Workflow(const Workflow& src) : Workflow()
     {

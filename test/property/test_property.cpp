@@ -108,6 +108,8 @@ qor_pp_test_suite_case(PropertyTestSuite, canMakeAVectorValue)
         {
             switch (prop.GetType())
             {
+            case PVT_Null:
+                break;
             case PVT_Property:
                 break;
             case PVT_Map:

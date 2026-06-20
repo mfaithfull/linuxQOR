@@ -96,8 +96,8 @@ namespace qor{ namespace workflow{
 
     protected:
     
-        int m_result;
-        bool m_complete;
+        int m_result{0};
+        bool m_complete{false};
         ref_of<State>::type m_initialState;
         std::stack< ref_of<State>::type > m_StateStack;
 

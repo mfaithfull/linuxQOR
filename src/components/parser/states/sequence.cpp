@@ -35,7 +35,7 @@ namespace qor {
 
             //Matches a sequence beggining with head and followed by tail, which may itself be a sequence
             Sequence::Sequence(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser, token),
-                m_head(head), m_tail(tail), m_internalState(0)
+                m_internalState(0), m_head(head), m_tail(tail)
             {
                 Enter = [this]()
                     {

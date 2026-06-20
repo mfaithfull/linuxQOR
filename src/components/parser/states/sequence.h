@@ -41,7 +41,7 @@ namespace qor {
 
             private:
 
-                unsigned int m_internalState;
+                unsigned int m_internalState{0};
                 ref_of<ParserState>::type m_head;
                 ref_of<ParserState>::type m_tail;
             };
