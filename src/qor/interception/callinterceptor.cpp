@@ -32,12 +32,12 @@ namespace qor {
 	CallInterceptor::CallInterceptor() : Flyer< CallInterceptor, FlyStrapBase >()
 	{
 		Push();
-		if( m_pPrevious )
+		if( m_Previous )
 		{
-			FlyStrapBase* pFlyStrapBase = dynamic_cast< FlyStrapBase* >( m_pPrevious );
-			if( pFlyStrapBase )
+			FlyStrapBase* flyStrapBase = dynamic_cast< FlyStrapBase* >( m_Previous );
+			if( flyStrapBase )
 			{
-				pFlyStrapBase->OnDeactivate();
+				flyStrapBase->OnDeactivate();
 			}
 		}
 		OnActivate();
@@ -45,57 +45,57 @@ namespace qor {
 
 	CallInterceptor::~CallInterceptor()
 	{
-		FlyStrap* pNext = Next( (FlyStrap*)(nullptr) );
+		FlyStrap* next = Next( (FlyStrap*)(nullptr) );
 
-		if( pNext )
+		if( next )
 		{
-			pNext->UnStrap();
+			next->UnStrap();
 		}
 
-		if( m_pPrevious )
+		if( m_Previous )
 		{
-			FlyStrapBase* pFlyStrapBase = dynamic_cast< FlyStrapBase* >( m_pPrevious );
-			if( pFlyStrapBase )
+			FlyStrapBase* flyStrapBase = dynamic_cast< FlyStrapBase* >( m_Previous );
+			if( flyStrapBase )
 			{
-				pFlyStrapBase->OnReactivate();
+				flyStrapBase->OnReactivate();
 			}
 		}
 		Pop();
 	}
 
-	void CallInterceptor::CallMade( CallContext* pCall, IFunctionContext* pFunction)
+	void CallInterceptor::CallMade( CallContext* call, IFunctionContext* function)
 	{
-		FlyStrap* pNext = Next( (FlyStrap*)(nullptr) );
-		if( pNext )
+		FlyStrap* next = Next( (FlyStrap*)(nullptr) );
+		if( next )
 		{
-			pNext->CallPre( pCall, pFunction );
+			next->CallPre( call, function );
 		}
 	}
 
-	void CallInterceptor::OnReturnAssignment( CallContext* pCall )
+	void CallInterceptor::OnReturnAssignment( CallContext* call )
 	{
-		FlyStrap* pNext = Next( (FlyStrap*)(nullptr) );
-		if( pNext )
+		FlyStrap* next = Next( (FlyStrap*)(nullptr) );
+		if( next )
 		{
-			pNext->CallOnReturnAssignment( pCall );
+			next->CallOnReturnAssignment( call );
 		}
 	}
 
-	void CallInterceptor::OnReturn(CallContext* pCall)
+	void CallInterceptor::OnReturn(CallContext* call)
 	{
-		FlyStrap* pNext = Next((FlyStrap*)(nullptr));
-		if (pNext)
+		FlyStrap* next = Next((FlyStrap*)(nullptr));
+		if(next)
 		{
-			pNext->OnReturn(pCall);
+			next->OnReturn(call);
 		}
 	}
 
-	void CallInterceptor::CallCompleted( CallContext* pCall )
+	void CallInterceptor::CallCompleted( CallContext* call )
 	{
-		FlyStrap* pNext = Next( (FlyStrap*)(nullptr) );
-		if( pNext )
+		FlyStrap* next = Next( (FlyStrap*)(nullptr) );
+		if( next )
 		{
-			pNext->CallPost( pCall );
+			next->CallPost( call );
 		}
 	}
 

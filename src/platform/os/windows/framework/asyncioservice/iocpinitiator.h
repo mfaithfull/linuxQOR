@@ -99,9 +99,7 @@ namespace qor { namespace framework { namespace nswindows {
         }
 
         virtual qor::framework::IOTask Accept(platform::IODescriptor * ioDescriptor, const network::Address & Address, network::Socket * new_socket)
-        {
-            //sockaddr addr;
-            int len = 0;            
+        {            
             int status = co_await SocketAcceptOperation(ioDescriptor, new_socket);
 
             co_return qor::framework::AsyncIOResult{

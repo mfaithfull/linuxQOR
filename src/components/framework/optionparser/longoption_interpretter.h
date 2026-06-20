@@ -114,7 +114,7 @@ namespace qor{ namespace components{ namespace optparser {
             return (pfound == nullptr) ? HandleLongOptionUnrecognized(prefix) : ConsumeLongOption(nameend, pfound, option_index, prefix);
         }
     
-        bool HandleLongOptionAbbreviations(int n_options, size_t namelen, int& option_index, const Option* pfound, const char* prefix)
+        bool HandleLongOptionAbbreviations(int n_options, size_t namelen, int& option_index, const Option* pfound, const char* /*prefix*/)
         {
             // Didn't find an exact match, so look for abbreviations.
             const Option* p;
@@ -207,7 +207,7 @@ namespace qor{ namespace components{ namespace optparser {
             }
         }
     
-        int HandleLongOptionUnrecognized(const char* prefix)
+        int HandleLongOptionUnrecognized(const char* /*prefix*/)
         {
             // Can't find it as a long option.  If this is not getopt_long_only,
             //or the option starts with '--' or is not a valid short option, then it's an error.
@@ -249,7 +249,7 @@ namespace qor{ namespace components{ namespace optparser {
             return pfound->val;
         }
     
-        bool CheckForLongOptionArgumentRequired(const Option* pfound, const char* prefix)
+        bool CheckForLongOptionArgumentRequired(const Option* pfound, const char* /*prefix*/)
         {
             bool bResult = false;
             if (itArgument.NotAtEnd())
@@ -268,7 +268,7 @@ namespace qor{ namespace components{ namespace optparser {
             return bResult;
         }
     
-        bool CheckForLongOptionArgumentDisallowed(char* nameend, const Option* pfound, const char* prefix)
+        bool CheckForLongOptionArgumentDisallowed(char* nameend, const Option* pfound, const char* /*prefix*/)
         {
             bool bResult = false;
             if (pfound->has_arg)

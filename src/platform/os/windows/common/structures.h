@@ -218,14 +218,14 @@ namespace qor{ namespace platform { namespace nswindows {
                 short dmCopies;
                 short dmDefaultSource;
                 short dmPrintQuality;
-            };
+            }_printer_fields;
             // display only fields
             struct 
             {
                 PointL dmPosition;
                 unsigned long  dmDisplayOrientation;
                 unsigned long  dmDisplayFixedOutput;
-            };
+            }_display_fields;
         };
         short dmColor;
         short dmDuplex;

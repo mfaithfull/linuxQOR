@@ -87,14 +87,12 @@ namespace qor { namespace nswindows { namespace api {
 		AutoErrorCheck() = default;
 		virtual ~AutoErrorCheck()= default;
 
-		virtual bool Test(TValue& value)
+		virtual bool Test(TValue& /*value*/)
 		{
 			return false;
 		}
 
-		virtual void DefaultInit(TValue& value)
-		{
-		}
+		virtual void DefaultInit(TValue& /*value*/){ }
 
 		static void Check(TValue& value, AutoErrorCheck* pInstance)
 		{

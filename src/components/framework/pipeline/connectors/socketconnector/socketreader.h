@@ -49,7 +49,7 @@ namespace qor{ namespace components{
 
     protected:
         
-        virtual bool Write(size_t& unitsWritten, size_t unitstoWrite){ return false; }
+        virtual bool Write(size_t& /*unitsWritten*/, size_t /*unitstoWrite*/){ return false; }
         ref_of<SocketConnector>::type m_connector;
         SocketSource m_source;
         pipeline::NullSink m_sink;

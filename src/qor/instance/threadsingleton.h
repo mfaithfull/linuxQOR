@@ -34,9 +34,7 @@
 
 //The thread singleton instancer gives out the per thread instance each time unless it it destroyed by there being no more references to it. Then it gives a new one
 
-namespace qor{
-
-    namespace detail {
+namespace qor{ namespace detail {
 
         template <class T> class ThreadInstanceHolder;
         
@@ -47,23 +45,23 @@ namespace qor{
         class ThreadInstanceHolder final
         {
         public:
-            constexpr ThreadInstanceHolder() : bInitialised(false) {}
+            constexpr ThreadInstanceHolder() : initialised(false) { }
 
             ~ThreadInstanceHolder() noexcept
             {
-                if(bInitialised)
+                if(initialised)
                 {
                     theRef.Dispose();
-                    bInitialised = false;
+                    initialised = false;
                 }
             }
 
             typename ref_of<T>::type Instance()
             {
-                if (!bInitialised)
+                if (!initialised)
                 {
                     theRef = factory_of<T>::type::Construct();
-                    bInitialised = true;
+                    initialised = true;
                 }
                 return theRef;
             }
@@ -71,26 +69,26 @@ namespace qor{
             template< typename... _p >
             inline auto Instance(size_t uiCount, _p&&... p1)
             {
-                if (!bInitialised)
+                if (!initialised)
                 {
                     theRef = factory_of<T>::type::Construct(uiCount, std::forward<_p>(p1)...);
-                    bInitialised = true;
+                    initialised = true;
                 }
                 return theRef;
             }
 
             void Release()
             {
-                if(bInitialised)
+                if(initialised)
                 {
                     factory_of<T>::type::Destruct(theRef);
-                    bInitialised = false;
+                    initialised = false;
                 }
             }
 
         public:
             ref_of<T>::type theRef;
-            bool bInitialised;
+            bool initialised;
         };
         
     }//detail
@@ -100,7 +98,7 @@ namespace qor{
 	public:
 
 		template< class T >
-		static inline void Release(T* /*pt*/, size_t /*count = 1*/)
+		static inline void Release(T* /*t*/, size_t /*count = 1*/)
 		{
             detail::theThreadInstanceHolder<T>()->Release();
 		}

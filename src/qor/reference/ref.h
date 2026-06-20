@@ -68,7 +68,7 @@ namespace qor{
 
 		constexpr Ref() : m_p(nullptr) {}
 
-		Ref(const detail::SharedRef<T>* pt) : m_p(pt)
+		Ref(const detail::SharedRef<T>* t) : m_p(t)
 		{
 			if (m_p)
 			{
@@ -138,7 +138,7 @@ namespace qor{
 		operator T* (void) const
 		{
 #ifndef NDEBUG			
-			if(m_p && m_p->LockIsReal() && !m_p->IsLocked() && m_p->m_ulRefCount != 0)
+			if(m_p && m_p->LockIsReal() && !m_p->IsLocked() && m_p->m_RefCount != 0)
 			{
 				throw std::logic_error("Synchronised object being accessed without auto locking. Did you forget a (qor_shared) ?");
 			}
@@ -173,7 +173,7 @@ namespace qor{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
 #ifndef NDEBUG
-			if(m_p->LockIsReal() && !m_p->IsLocked() && m_p->m_ulRefCount != 0)
+			if(m_p->LockIsReal() && !m_p->IsLocked() && m_p->m_RefCount != 0)
 			{
 				throw std::logic_error("Synchronised object being accessed without auto locking. Did you forget a (qor_shared) ?");
 			}
@@ -188,7 +188,7 @@ namespace qor{
 				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
 #ifndef NDEBUG
-			if(m_p->LockIsReal() && !m_p->IsLocked() && m_p->m_ulRefCount != 0)
+			if(m_p->LockIsReal() && !m_p->IsLocked() && m_p->m_RefCount != 0)
 			{
 				throw std::logic_error("Synchronised object being accessed without auto locking. Did you forget a (qor_shared) ?");
 			}
@@ -275,7 +275,7 @@ namespace qor{
 
 		bool IsOwner(void) const
 		{
-			return (m_p && m_p->m_ulRefCount == 1) ? true : false;
+			return (m_p && m_p->m_RefCount == 1) ? true : false;
 		}
 
 		template< class TDerived >

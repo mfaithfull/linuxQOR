@@ -31,9 +31,7 @@
 namespace qor{
 
 	SpinMutex::SpinMutex() noexcept
-		: m_isLocked(false)
-	{
-	}
+		: m_isLocked(false){ }
 
 	bool SpinMutex::TryLock() noexcept
 	{

@@ -41,7 +41,7 @@ namespace qor { namespace framework { namespace nswindows {
 
         virtual int Run()
         {
-            uint64_t eventCount = m_service.ProcessEvents();
+            //uint64_t eventCount = m_service.ProcessEvents();
             return 0;
         }
 

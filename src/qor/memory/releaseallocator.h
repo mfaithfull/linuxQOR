@@ -42,23 +42,23 @@ namespace qor{
         {
             size_t Count;
             size_t Size;
-            void* pBackRef;
+            void* BackRef;
         };
      
         template< class T >
         static byte* RawAllocate(size_t count)
         {
             size_t allocSize = sizeof(Info) + (count * sizeof(T));
-            byte* pMem = source_of< T >::type::Source(allocSize);
-            if(pMem)
+            byte* mem = source_of< T >::type::Source(allocSize);
+            if(mem)
             {
-                Info* pInfo = reinterpret_cast<Info*>(pMem);
-                pInfo->Count = count;
-                pInfo->Size = allocSize;
-                pInfo->pBackRef = nullptr;
-                pMem += sizeof(Info);
+                Info* info = reinterpret_cast<Info*>(mem);
+                info->Count = count;
+                info->Size = allocSize;
+                info->BackRef = nullptr;
+                mem += sizeof(Info);
             }
-            return pMem;
+            return mem;
         }
 
     public:
@@ -66,68 +66,68 @@ namespace qor{
         template< class T >
         static T* Allocate(size_t count = 1)
         {
-            byte* pMem = RawAllocate<T>(count);
-            T* pResult = reinterpret_cast<T*>(pMem);
-            for (size_t element = 0; pMem && element < count; element++)
+            byte* mem = RawAllocate<T>(count);
+            T* result = reinterpret_cast<T*>(mem);
+            for (size_t element = 0; mem && element < count; element++)
             {
-                new(pMem)T();
-                pMem += sizeof(T);
+                new(mem)T();
+                mem += sizeof(T);
             }
-            return pResult;
+            return result;
         }
         
         template< class T, typename... _p >
         static T* Allocate(size_t count, _p... p1)
         {
-            byte* pMem = RawAllocate<T>(count);
-            T* pResult = reinterpret_cast<T*>(pMem);
-            for (size_t element = 0; pMem && element < count; element++)
+            byte* mem = RawAllocate<T>(count);
+            T* result = reinterpret_cast<T*>(mem);
+            for (size_t element = 0; mem && element < count; element++)
             {
-                new(pMem)T(std::forward<_p&&>(p1)...);
-                pMem += sizeof(T);
+                new(mem)T(std::forward<_p&&>(p1)...);
+                mem += sizeof(T);
             }
-            return pResult;
+            return result;
         }
         
         template< class T >
-        static void Free(T * pT)
+        static void Free(T * t)
         {
-            if (pT != nullptr)
+            if (t != nullptr)
             {
-                byte* pMem = reinterpret_cast<byte*>(pT) - sizeof(Info);
-                Info* pInfo = reinterpret_cast<Info*>(pMem);
-                size_t allocSize = sizeof(Info) + (pInfo->Count * sizeof(T));
-                if (allocSize > pInfo->Size)
+                byte* mem = reinterpret_cast<byte*>(t) - sizeof(Info);
+                Info* info = reinterpret_cast<Info*>(mem);
+                size_t allocSize = sizeof(Info) + (info->Count * sizeof(T));
+                if (allocSize > info->Size)
                 {
-                    throw memoryexception("Size of item at {0:p} being freed {1} is larger than the byte count allocated {2}.", (void*)pMem, allocSize, pInfo->Size);
+                    throw memoryexception("Size of item at {0:p} being freed {1} is larger than the byte count allocated {2}.", (void*)mem, allocSize, info->Size);
                 }
-                for (size_t element = 0; element < pInfo->Count; element++)
+                for (size_t element = 0; element < info->Count; element++)
                 {
-                    pT->~T();
-                    pT++;
+                    t->~T();
+                    t++;
                 }
-                source_of< T >::type::Free(pMem, allocSize);
+                source_of< T >::type::Free(mem, allocSize);
             }
         }
         
         template< class T >
-        static T* Reallocate(T * pT, size_t oldCount, size_t newCount, bool bPreserve = true)
+        static T* Reallocate(T* t, size_t oldCount, size_t newCount, bool preserve = true)
         {
-            if (!bPreserve)
+            if (!preserve)
             {
-                Free(pT);
+                Free(t);
                 return Allocate< T >(newCount);
             }
 
-            T* pNewT = Allocate< T >(newCount);
+            T* newT = Allocate< T >(newCount);
             size_t element = 0;
             while (element < oldCount && element < newCount)
             {
-                pNewT[element] = pT[element];
+                newT[element] = t[element];
                 element++;
             }
-            Free(pT);
-            return pNewT;
+            Free(t);
+            return newT;
         }
 
     private:

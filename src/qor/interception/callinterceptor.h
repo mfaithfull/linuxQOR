@@ -37,14 +37,17 @@
 
 namespace qor {
 
+    //Declare a GUID for CallInterceptor
     constexpr GUID CallInterceptorGUID = {0x00000001, 0x0000, 0x0000, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0}};
     class qor_pp_module_interface(QOR_INTERCEPTION) CallInterceptor;
 
+    //Override the ref_of trait for CallInteceptor to make it use a FlyerRef
     template<> struct ref_of< CallInterceptor >
     {
         typedef qor::FlyerRef< CallInterceptor > type;
     };
 
+    //Attach the CallIterceptor GUID to the CallInterceptor type with the guid_of trait
     template<> struct guid_of< CallInterceptor >
     {
         static const GUID* guid()
@@ -58,10 +61,10 @@ namespace qor {
     public:
 		CallInterceptor();
 		virtual ~CallInterceptor();
-		virtual void CallMade( CallContext* pCall, IFunctionContext* pFunction );
-		virtual void OnReturnAssignment( CallContext* pCall );
-		virtual void OnReturn(CallContext* pCall);
-		virtual void CallCompleted( CallContext* pCall );
+		virtual void CallMade( CallContext* call, IFunctionContext* function );
+		virtual void OnReturnAssignment( CallContext* call );
+		virtual void OnReturn(CallContext* call);
+		virtual void CallCompleted( CallContext* call );
     };
 
 }//qor

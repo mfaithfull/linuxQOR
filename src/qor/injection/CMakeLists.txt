@@ -1,3 +1,5 @@
+project(QOR VERSION 1.0.0 DESCRIPTION "QOR Dependency Injection Module" LANGUAGES CXX)
+
 set(target qor_injection)
 
 add_library(${target} SHARED qor_injection.cpp typeregistry.cpp)

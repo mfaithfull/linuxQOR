@@ -35,35 +35,32 @@ namespace qor {
     {
     public:
 
-        Flyer() : m_pPrevious( nullptr ){}
-        virtual ~Flyer() = default;
-
         bool Push()
         {
             typename ref_of< T >::type instance( dynamic_cast<T*>(this) );
             const GUID* luid = guid_of<T>::guid();
             TypedAny< T > wrapper(instance);
 
-            m_previous = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
+            m_anyPrevious = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
 
-            if(!m_previous.IsNull())
+            if(!m_anyPrevious.IsNull())
 			{                
-                m_pPrevious = reinterpret_cast<const TypedAnyPointer< baseT >*>(m_previous.Ptr())->operator baseT *();
+                m_Previous = reinterpret_cast<const TypedAnyPointer< baseT >*>(m_anyPrevious.Ptr())->operator baseT *();
             }
             return true;
         }
 
 		bool Pop()
 		{            
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(guid_of<T>::guid(), m_previous);
+        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(guid_of<T>::guid(), m_anyPrevious);
 			return true;
 		}
 
     protected:
 
         typedef baseT base_type;
-        AnyObject m_previous;
-        baseT* m_pPrevious;
+        AnyObject m_anyPrevious;
+        baseT* m_Previous{nullptr};
     };
 
 }//qor

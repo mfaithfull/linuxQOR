@@ -31,7 +31,7 @@ namespace {
 
 namespace qor{
 
-    TypeRegistry* TheTypeRegistry()
+    qor_pp_module_interface(QOR_INJECTION) TypeRegistry* TheTypeRegistry()
     {
         return &(_theTypeRegistry);
     }

@@ -28,6 +28,9 @@
 #include "src/platform/compiler/compiler.h"
 #include "defaultsource.h"
 
+//allocator trait for type T that determines where it's raw memory comes from
+//e.g. from the global OS heap or a special arena
+
 namespace qor{
 
     template<typename T>

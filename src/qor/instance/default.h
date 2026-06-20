@@ -35,7 +35,7 @@
 
 namespace qor{
 
-    template<typename T> struct factory_of;
+    //template<typename T> struct factory_of;
     
     //The default instancer gives out unconstrained freshly constructed instance references from the per type factory
 	class DefaultInstancer final
@@ -43,21 +43,21 @@ namespace qor{
 	public:
 
 		template< class T >
-		static inline void Release(T* pt, size_t uiCount = 1)
+		static inline void Release(T* t, size_t count = 1)
 		{
-			factory_of<T>::type::Destruct(pt, uiCount);
+			factory_of<T>::type::Destruct(t, count);
 		}
 
 		template< class T >
-		static inline auto Instance(size_t uiCount = 1)
+		static inline auto Instance(size_t count = 1)
 		{
-			return factory_of<T>::type::Construct(uiCount);
+			return factory_of<T>::type::Construct(count);
 		}
 		
 		template< class T, typename... _p >
-		static inline auto Instance(size_t uiCount, _p&&... p1)
+		static inline auto Instance(size_t count, _p&&... p1)
 		{
-			return factory_of<T>::type::Construct(uiCount, p1...);
+			return factory_of<T>::type::Construct(count, p1...);
 		}
 
 	private:

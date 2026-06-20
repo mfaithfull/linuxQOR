@@ -25,6 +25,8 @@
 #ifndef QOR_PP_H_INSTANCE
 #define QOR_PP_H_INSTANCE
 
+//Instancer trait class. Used to imbue a type with instance limits. 
+//To make it's instances pooled or a singleton
 namespace qor{
 
     class DefaultInstancer;

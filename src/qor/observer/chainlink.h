@@ -33,9 +33,7 @@ namespace qor{
     {
     public:
 
-		ChainLink() noexcept : m_prev(nullptr), m_next(nullptr) 
-		{
-		}
+		ChainLink() noexcept{ }
 
 		ChainLink(const ChainLink& src) noexcept
 		{
@@ -65,61 +63,62 @@ namespace qor{
 			return m_next;
 		}
 
-		static void AddBefore(ChainLink* &pFirst, ChainLink* pNew)
+		static void AddBefore(ChainLink* &first, ChainLink* _new)
 		{
-			if (pNew)
+			if (_new)
 			{
-				if (pFirst != 0)
+				if (first != nullptr)
 				{
-					pFirst->Prev() = pNew;
-					pNew->Next() = pFirst;
+					first->Prev() = _new;
+					_new->Next() = first;
 				}
 
-				pFirst = pNew;
+				first = _new;
 			}
 		}
 
-		static void Remove(ChainLink* &pFirst, ChainLink* pOld)
+		static void Remove(ChainLink* &first, ChainLink* old)
 		{
-			if (pFirst == pOld)
+			if (first == old)
 			{
-				pFirst = pOld->Next();
+				first = old->Next();
 			}
 
-			if (pOld)
+			if (old)
 			{
-				if (pOld->Prev())
+				if (old->Prev())
 				{
-					pOld->Prev()->Next() = pOld->Next();
-                    pOld->Prev() = nullptr;
+					old->Prev()->Next() = old->Next();                    
 				}
 
-				if (pOld->Next())
+				if (old->Next())
 				{
-					pOld->Next()->Prev() = pOld->Prev();
-                    pOld->Next() = nullptr;
+					old->Next()->Prev() = old->Prev();
+                    
 				}
+				old->Next() = nullptr;
+				old->Prev() = nullptr;
 			}
 		}
 
 		template< class TDerived >
-		static void Walk(ChainLink* pFirst, void(*pFunc)(TDerived*))
+		static void Walk(ChainLink* first, void(*func)(TDerived*))
 		{
-			while (pFirst != 0)
+			while (first != nullptr)
 			{
-				TDerived* pDerived = dynamic_cast<TDerived*>(pFirst);
-				if (pDerived)
+				TDerived* derived = dynamic_cast<TDerived*>(first);
+				if (derived)
 				{
-					(pFunc)(pDerived);
+					(func)(derived);
 				}
-				pFirst = pFirst->Next();
+				first = first->Next();
 			}
 		}
 
     protected:
 
-		ChainLink* m_prev;
-		ChainLink* m_next;
+		ChainLink* m_prev{nullptr};
+		ChainLink* m_next{nullptr};
 
     };
 }//qor

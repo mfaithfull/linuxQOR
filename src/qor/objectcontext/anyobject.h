@@ -35,9 +35,9 @@ namespace qor{
     {
     public:
 
-        template< typename T > AnyObject(const T* pt)
+        template< typename T > AnyObject(const T* t)
         {
-            m_p = new (m_backing)TypedAnyPointer< T >(pt);
+            m_p = new (m_backing)TypedAnyPointer< T >(t);
         }
 
 		AnyObject();

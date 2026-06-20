@@ -50,34 +50,34 @@ namespace qor
 	public:
 
 		FunctionContext();
-		FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool bCoverage, AnyObject ObjContext = AnyObject::NullObject());
+		FunctionContext(const char* funcName, const char* file, unsigned int line, const char* module, bool profile, bool coverage, AnyObject objContext = AnyObject::NullObject());
 		virtual ~FunctionContext();
 		bool Locked() const;
 		virtual unsigned int Lock();
 		virtual unsigned int Unlock();
-		bool Trace(bool bNewTrace);
-		virtual ICallContext* GetCallContext(void);
-		const char* File(void) const;
-		const char* Name(void) const;
-		unsigned int Line(void) const;
+		bool Trace(bool newTrace);
+		virtual ICallContext* GetCallContext();
+		const char* File() const;
+		const char* Name() const;
+		unsigned int Line() const;
 		virtual IFunctionContext* GetParent() const;
-		virtual void SetParent(IFunctionContext* pParent);
+		virtual void SetParent(IFunctionContext* parent);
 		virtual unsigned int TraceDepth();
-		AnyObject TypedAny(void) const;
-		virtual const char* Module(void) const;
+		AnyObject TypedAny() const;
+		virtual const char* Module() const;
         virtual void Profile(const std::chrono::duration<int64_t, std::milli>, IFunctionContext* fContext);
 
 	protected:
 		
-		bool m_bTraceCalls;
-		unsigned int m_uiLocked;
-		unsigned int m_TraceDepth;
-		const char* m_szFuncName;
-		const char* m_szFile;
-		const char* m_szModule;
-		IFunctionContext* m_pParent;
+		bool m_traceCalls{false};
+		unsigned int m_locked{0};
+		unsigned int m_traceDepth{1};
+		const char* m_funcName{nullptr};
+		const char* m_file{nullptr};
+		const char* m_module{nullptr};
+		IFunctionContext* m_Parent{nullptr};
 		AnyObject m_ObjContext;
-		unsigned int m_uiLine;		
+		unsigned int m_line{0};
 		CallContext m_CallContext;		
 		qor_pp_profiling_object m_Profiler;	
 

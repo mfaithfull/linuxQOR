@@ -35,12 +35,10 @@ namespace qor {
     {
     public:
 
-        ICallContext() = default;
-        virtual ~ICallContext() = default;
         virtual void CallMade(IFunctionContext*) = 0;
-        virtual void CallCompleted(void) = 0;
-        virtual void OnReturnAssignment(void) = 0;
-        virtual void OnReturn(void) = 0;
+        virtual void CallCompleted() = 0;
+        virtual void OnReturnAssignment() = 0;
+        virtual void OnReturn() = 0;
 
     };
 }//qor

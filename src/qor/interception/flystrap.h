@@ -38,37 +38,37 @@ namespace qor {
         FlyStrap( FlyStrapBase* );
 		virtual ~FlyStrap() = default;
 
-		virtual bool PreCondition( CallContext* pCall, IFunctionContext* pFunction );		
-		virtual bool OnAssignmentCondition( CallContext* pCall );
-		virtual bool PostCondition( CallContext* pCall );
-		virtual bool Pre( CallContext* pCall, IFunctionContext* pFunction );
-		virtual bool OnReturnAssignment( CallContext* pCall );
-		virtual bool OnReturn( CallContext* pCall );
-		virtual bool Post( CallContext* pCall );
+		virtual bool PreCondition( CallContext* call, IFunctionContext* function );		
+		virtual bool OnAssignmentCondition( CallContext* call );
+		virtual bool PostCondition( CallContext* call );
+		virtual bool Pre( CallContext* call, IFunctionContext* function );
+		virtual bool OnReturnAssignment( CallContext* call );
+		virtual bool OnReturn( CallContext* call );
+		virtual bool Post( CallContext* call );
 
 		template< class T > void Strap()
 		{
-			FlyStrapBase* pJoinPoint = nullptr;
+			FlyStrapBase* joinPoint = nullptr;
             auto lookup = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Lookup( guid_of<T>::guid() );
 						
 			if (!lookup.IsNull())
 			{
-				typename ref_of< T >::type pInstance(lookup);
-				if(!pInstance.IsNull())
+				typename ref_of< T >::type instance(lookup);
+				if(!instance.IsNull())
 				{
-					pJoinPoint = const_cast< FlyStrapBase* >( pInstance.template As<const FlyStrapBase>() );
+					joinPoint = const_cast< FlyStrapBase* >( instance.template As<const FlyStrapBase>() );
 				}
 			}
 
-			if( pJoinPoint )
+			if( joinPoint )
 			{
-				pJoinPoint->StrapOn( this );
+				joinPoint->StrapOn(this);
 			}
 		}
 
-		bool CallPre( CallContext* pCall, IFunctionContext* pFunction );
-		bool CallOnReturnAssignment( CallContext* pCall );
-		bool CallPost( CallContext* pCall );
+		bool CallPre( CallContext* call, IFunctionContext* function );
+		bool CallOnReturnAssignment( CallContext* call );
+		bool CallPost( CallContext* call );
 
 	};
 

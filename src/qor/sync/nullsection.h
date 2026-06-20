@@ -35,10 +35,8 @@ namespace qor{
 
 		NullSection() = default;
 		virtual ~NullSection() = default;
-
-		virtual void Acquire(void){}
-
-		virtual void Release(void){}
+		virtual void Acquire(){}
+		virtual void Release(){}
 		virtual bool IsLocked(void) const {return false;}
 	};
 

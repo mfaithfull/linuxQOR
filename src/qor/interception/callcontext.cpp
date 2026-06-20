@@ -29,30 +29,9 @@
 
 namespace qor{
 
-	ParameterBase::ParameterBase(const ParameterBase& src)
-	{
-		*this = src;
-	}
-
-	ParameterBase& ParameterBase::operator = (const ParameterBase& src)
-	{
-		m_p = src.m_p;
-		return *this;
-	}
-
 	void ParameterBase::Clear(void)
 	{
 		m_p = nullptr;
-	}
-
-	CallContext::CallContext()
-	{
-		m_ucParamCount = 0;
-	}
-
-	CallContext::~CallContext()
-	{
-		//Cleanup();
 	}
 
 	void CallContext::CallMade(IFunctionContext* pCalledContext)
@@ -106,9 +85,9 @@ namespace qor{
 
 	void CallContext::OutOfLineRegistration(ParameterBase& Param)
 	{
-		if (m_ucParamCount < 9)
+		if (m_paramCount < 9)
 		{
-			m_aParameters[m_ucParamCount++] = Param;
+			m_aParameters[m_paramCount++] = Param;
 		}
 	}
 

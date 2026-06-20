@@ -38,26 +38,26 @@ namespace qor {
 
 		FlyStrapBase();
 		virtual ~FlyStrapBase() = default;
-		void StrapOn( FlyStrapBase* pStrap );		
-		virtual void UnStrap( void );
-		virtual void OnDeactivate( void );
-		virtual void OnReactivate( void );
-		virtual void OnActivate( void );
+		void StrapOn( FlyStrapBase* strap );
+		virtual void UnStrap();
+		virtual void OnDeactivate();
+		virtual void OnReactivate();
+		virtual void OnActivate();
 
-		template< class TFSDerived > TFSDerived* Next( TFSDerived* pdummy = nullptr )
+		template< class TFSDerived > TFSDerived* Next( TFSDerived* dummy = nullptr )
 		{
-			TFSDerived* pNext = pdummy;
+			TFSDerived* next = dummy;
 			if( m_pNext )
 			{
-				pNext = dynamic_cast< TFSDerived* >( m_pNext->Item() );
+				next = dynamic_cast< TFSDerived* >( m_pNext->Item() );
 			}
-			return pNext;
+			return next;
 		}
 
 	protected:
 
-		virtual void BeforeStrapOn( FlyStrapBase* pStrap );
-		virtual void AfterStrapOn( FlyStrapBase* pStrap );
+		virtual void BeforeStrapOn( FlyStrapBase* strap );
+		virtual void AfterStrapOn( FlyStrapBase* strap );
 
 	};
 

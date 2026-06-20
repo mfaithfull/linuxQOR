@@ -29,8 +29,7 @@
 #define qor_shared_ref )()(
 
 namespace qor{
-
-	//A counted reference class for managed objects
+	
 	template< class T > class Ref;
 	template< typename T> void internal_del_ref(T* p);
 		
@@ -83,7 +82,7 @@ namespace qor{
 		public:
 		
 			template< typename... _p >
-			SharedRef(size_t count, _p&&... p1) : m_p(nullptr), m_ulRefCount(0), m_Section()
+			SharedRef(size_t count, _p&&... p1) : m_p(nullptr), m_RefCount(0), m_Section()
 			{
 				//This is where the underlying raw object gets allocated iff its type is constructable
 				m_p = AllocateOnlyConcreteTypesFunctor<R, is_abstract::value>::template Allocate<_p...>(count, std::forward<_p>(p1)...);
@@ -100,7 +99,7 @@ namespace qor{
 				}
 			}
 
-			SharedRef(R* pr) : m_p(pr), m_ulRefCount(0), m_Section()
+			SharedRef(R* pr) : m_p(pr), m_RefCount(0), m_Section()
 			{
 				if(m_p != nullptr)
 				{
@@ -116,7 +115,7 @@ namespace qor{
     
 
 			//The same as above but for default constructed target types
-			SharedRef(size_t count) : m_p(nullptr), m_ulRefCount(0), m_Section()
+			SharedRef(size_t count) : m_p(nullptr), m_RefCount(0), m_Section()
 			{
                 if(!is_abstract::value)
                 {
@@ -134,7 +133,7 @@ namespace qor{
 				}
 			}
 			
-			SharedRef() : m_p(nullptr), m_ulRefCount(0), m_Section()
+			SharedRef() : m_p(nullptr), m_RefCount(0), m_Section()
 			{
 			}
 
@@ -151,7 +150,7 @@ namespace qor{
 			{
 				if (m_p)
 				{
-					throw new std::logic_error("An object still exists when its owning reference is destroyed.");
+					throw new std::logic_error("An object still exists when its owning reference has been destroyed.");
 				}
 				m_p = nullptr;
 			}
@@ -164,7 +163,7 @@ namespace qor{
 			unsigned long AddRef(void) const
 			{
 				Lock();
-				unsigned long ulResult = ++m_ulRefCount;
+				unsigned long ulResult = ++m_RefCount;
 				Unlock();
 				return ulResult;
 			}
@@ -172,7 +171,7 @@ namespace qor{
 			unsigned long Release(void)
 			{
 				Lock();
-				unsigned long ulResult = m_ulRefCount > 0 ? --m_ulRefCount : 0;
+				unsigned long ulResult = m_RefCount > 0 ? --m_RefCount : 0;
 				Unlock();
 
 				if (ulResult == 0)
@@ -222,8 +221,8 @@ namespace qor{
 			template< class TDerived >
 			bool Configure()
 			{
-				bool bResult = false;
-				if (m_ulRefCount == 1)
+				bool result = false;
+				if (m_RefCount == 1)
 				{
 					instancer_of<R>::type::template Release<R>(m_p, 1);
 					m_p = nullptr;
@@ -232,17 +231,17 @@ namespace qor{
 					{
 						int** ppBack = ((int**)m_p) - 1;
 						*ppBack = (int*)(this);
-						bResult = true;
+						result = true;
 					}
 				}
-				return bResult;
+				return result;
 			}
 			
 			template< class TDerived, typename... _p >
 			bool Configure( _p&& ... p1)
 			{
-				bool bResult = false;
-				if (m_ulRefCount == 1)
+				bool result = false;
+				if (m_RefCount == 1)
 				{
 					instancer_of<R>::type::template Release<R>(m_p, 1);
 					m_p = nullptr;
@@ -251,10 +250,10 @@ namespace qor{
 					{
 						int** ppBack = ((int**)m_p) - 1;
 						*ppBack = (int*)(this);
-						bResult = true;
+						result = true;
 					}
 				}
-				return bResult;
+				return result;
 			}
 
 		private:
@@ -269,7 +268,7 @@ namespace qor{
 				if (m_p == nullptr)
 				{
 					m_p = pt;
-					m_ulRefCount = 0;
+					m_RefCount = 0;
 					int** ppBack = ((int**)m_p) - 1;
 					*ppBack = (int*)(this);
 				}
@@ -278,7 +277,7 @@ namespace qor{
 		protected:
 
 			mutable R* m_p;
-			mutable std::atomic< unsigned long > m_ulRefCount;
+			mutable std::atomic< unsigned long > m_RefCount;
 			mutable typename sync_of< R >::type m_Section;
 		};
 

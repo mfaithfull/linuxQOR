@@ -55,9 +55,6 @@ namespace qor{
 
         Impl& m_impl;
 
-    private:
-
-        ProxyObserver() = delete;
     };
 
 }//qor

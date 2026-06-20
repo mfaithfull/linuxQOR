@@ -25,6 +25,10 @@
 #ifndef QOR_PP_H_FACTORY
 #define QOR_PP_H_FACTORY
 
+//factory_of type trait. Use to override the defualt use of InternalFactory
+//for types that have an ExternalFactory. i.e. their factory must be looked
+//up at runtime
+
 namespace qor{
 
     template< class T > class InternalFactory;
@@ -44,6 +48,6 @@ template<> struct factory_of< _CLASS >\
     typedef _FACTORY< _CLASS > type;\
 };
 
-//Example: qor_pp_declare_factory_of(IFeature, ExternalFactory);
+//Example: qor_pp_declare_factory_of(SomeFeature, ExternalFactory);
 
 #endif//QOR_PP_H_FACTORY

@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Interception Module" LANGUAGES CXX)
 set(target qor_interception)
 
 add_library(${target} SHARED qor_interception.cpp callcontext.cpp functioncontext.cpp

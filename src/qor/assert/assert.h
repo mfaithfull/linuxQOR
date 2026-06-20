@@ -256,7 +256,7 @@ namespace qor{ namespace assert{
 #if __cpp_lib_span >= 202002L
 
     template <typename T, std::size_t Extent>
-    auto assert_that_internal(Adl dummy, bool failOnError, const char* file, int line, std::span<T, Extent>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::span<T, Extent>& v) 
     {
         return subject::SpanSubject(failOnError, file, line, v);
     }

@@ -32,23 +32,21 @@
 
 namespace qor {
 
-    FlyStrapBase::FlyStrapBase() : tflink< FlyStrapBase* >( this )
-	{
-	}
+    FlyStrapBase::FlyStrapBase() : tflink< FlyStrapBase* >( this ){ }
 
-	void FlyStrapBase::BeforeStrapOn( FlyStrapBase* /*pStrap*/ )
+	void FlyStrapBase::BeforeStrapOn( FlyStrapBase* /*strap*/ )
 	{
 		//default implementation does nothing
 	}
 
-	void FlyStrapBase::StrapOn( FlyStrapBase* pStrap )
+	void FlyStrapBase::StrapOn( FlyStrapBase* strap )
 	{
-		BeforeStrapOn( pStrap );
-		Append( pStrap );
-		AfterStrapOn( pStrap );
+		BeforeStrapOn( strap );
+		Append( strap );
+		AfterStrapOn( strap );
 	}
 
-	void FlyStrapBase::AfterStrapOn( FlyStrapBase* /*pStrap*/ )
+	void FlyStrapBase::AfterStrapOn( FlyStrapBase* /*strap*/ )
 	{
 		//default implementation does nothing
 	}

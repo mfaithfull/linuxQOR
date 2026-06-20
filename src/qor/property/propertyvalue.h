@@ -41,9 +41,9 @@ namespace qor {
 	{
 	public:
 
-		PropertyValue() : m_pv(nullptr), m_pm(nullptr), m_pp(nullptr) {}
+		PropertyValue(){ }
 
-		PropertyValue(const PropertyValue& src) : PropertyValueBase(src), m_pv(nullptr), m_pm(nullptr), m_pp(nullptr)
+		PropertyValue(const PropertyValue& src) : PropertyValueBase(src)
 		{
 			*this = src;
 		}
@@ -145,9 +145,9 @@ namespace qor {
 
 		PropertyBase* InternalCreateProperty(PropertyBase* pb);
 
-		PropertyVector* m_pv;
-		PropertyMap* m_pm;
-		PropertyBase* m_pp;
+		PropertyVector* m_pv{nullptr};
+		PropertyMap* m_pm{nullptr};
+		PropertyBase* m_pp{nullptr};
 
 	};
 

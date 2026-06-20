@@ -28,6 +28,9 @@
 #include <type_traits>
 #include <memory>
 
+//Utility lifetime management class for task library
+//Not part of the QOR public interface. UAYOR
+
 namespace qor{ namespace detail{
 
 	template<typename T>

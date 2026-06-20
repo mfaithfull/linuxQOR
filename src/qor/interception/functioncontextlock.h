@@ -29,26 +29,26 @@
 
 namespace qor {
 
-    class qor_pp_module_interface(QOR_INTERCEPTION) FunctionContextLock
+    class qor_pp_module_interface(QOR_INTERCEPTION) FunctionContextLock final
     {
     public:
 
         FunctionContextLock();
         ~FunctionContextLock();
 
-        CallContext* CallContextPtr(void);
-        CallContext* ParentCallContextPtr(void);
-        unsigned long Level(void);
+        CallContext* CallContextPtr();
+        CallContext* ParentCallContextPtr();
+        unsigned long Level();
 
     private:
 
         FunctionContextLock(const FunctionContextLock&);
         FunctionContextLock& operator=(const FunctionContextLock&);
 
-        CallContext* m_pCallContext;
-        CallContext* m_pParentCallContext;
-        IFunctionContext* m_pFunctionContext;
-        unsigned long m_ulLevel;
+        CallContext* m_CallContext{nullptr};
+        CallContext* m_ParentCallContext{nullptr};
+        IFunctionContext* m_FunctionContext{nullptr};
+        unsigned long m_Level{(unsigned long)(-1)};
     };
 
 }//qor

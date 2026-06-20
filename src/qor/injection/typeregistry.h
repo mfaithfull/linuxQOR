@@ -36,7 +36,6 @@ namespace qor{
 
     class qor_pp_module_interface(QOR_INJECTION) TypeRegistry final
 	{
-
 	public:
 
 		inline TypeRegistry() noexcept = default;
@@ -56,7 +55,7 @@ namespace qor{
 			m_regMap.erase(m_regMap.find(classID));
 		}
 
-		//Get the factory for creating instances of a class by ID
+		//Get the factory for creating instances of a class by GUID
 		inline AnyObject GetFactory(GUID classID)
 		{
 			auto it = m_regMap.find(classID);

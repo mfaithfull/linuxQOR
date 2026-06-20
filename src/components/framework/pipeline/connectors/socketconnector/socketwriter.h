@@ -102,7 +102,7 @@ namespace qor{ namespace components{
             return (const void*)&const_cast<T&>(t);
         }
 
-        virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1 ) { return false; }
+        virtual bool Read(size_t& /*unitsRead*/, size_t /*unitsToRead*/ = 1 ) { return false; }
         ref_of<SocketConnector>::type m_connector;
         SocketSink m_sink;
         pipeline::NullSource m_source;

@@ -37,21 +37,18 @@ namespace qor {
     {
     public:
 
-        IFunctionContext() = default;
-        virtual ~IFunctionContext() = default;
-
         virtual unsigned int Lock() = 0;
         virtual unsigned int Unlock() = 0;
         virtual bool Locked() const = 0;
-        virtual ICallContext* GetCallContext(void) = 0;
+        virtual ICallContext* GetCallContext() = 0;
         virtual IFunctionContext* GetParent() const = 0;
-        virtual void SetParent(IFunctionContext* pParent) = 0;
+        virtual void SetParent(IFunctionContext* parent) = 0;
         virtual unsigned int TraceDepth() = 0;
-        virtual const char* File(void) const = 0;
-        virtual const char* Name(void) const = 0;
-        virtual unsigned int Line(void) const = 0;
-        virtual AnyObject TypedAny(void) const = 0;
-        virtual const char* Module(void) const = 0;
+        virtual const char* File() const = 0;
+        virtual const char* Name() const = 0;
+        virtual unsigned int Line() const = 0;
+        virtual AnyObject TypedAny() const = 0;
+        virtual const char* Module() const = 0;
 
     };
 }//qor

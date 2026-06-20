@@ -33,14 +33,9 @@ namespace qor {
 	{
 	public:
 
-		inline ParameterBase() { m_p = nullptr; }
-		ParameterBase(const ParameterBase& src);
-		ParameterBase& operator = (const ParameterBase& src);
-		virtual ~ParameterBase() {};
-
 		inline void Clear(void);
 
-		void* m_p;
+		void* m_p{nullptr};
 	};
 
     class qor_pp_module_interface(QOR_INTERCEPTION) CallContext : public ICallContext
@@ -52,9 +47,9 @@ namespace qor {
         {
         public:
 		
-            ParameterPass(T& _t) : ParameterBase()
+            ParameterPass(T& t) : ParameterBase()
 			{
-				m_p = &_t;//Capture the parameter address on construction
+				m_p = &t;//Capture the parameter address on construction
 			}
 
 			ParameterPass(const ParameterBase& src) : ParameterBase(src){}
@@ -75,34 +70,30 @@ namespace qor {
 			}
         };
 
-        template< typename T > void qor_pp_forceinline Register(T& _t)
+        template< typename T > void qor_pp_forceinline Register(T& t)
         {
-            ParameterPass< T > paramt(_t);
+            ParameterPass< T > paramt(t);
             OutOfLineRegistration(paramt);
         }
 
-        template< typename T > void qor_pp_forceinline RegisterReturn(T& _t)
+        template< typename T > void qor_pp_forceinline RegisterReturn(T& t)
         {
-            ParameterPass< T > ReturnValue( _t );
+            ParameterPass< T > ReturnValue( t );
             m_ReturnValue = ReturnValue;
         }
 
-        CallContext(/*const IThread* pThreadContext*/);
-        virtual ~CallContext();
-
         virtual void CallMade(IFunctionContext*);
-        virtual void CallCompleted(void);
-        virtual void OnReturnAssignment(void);
-        virtual void OnReturn(void);
+        virtual void CallCompleted();
+        virtual void OnReturnAssignment();
+        virtual void OnReturn();
     
-		ParameterBase* Parameters(void);						//Access to the array of registered parameters
-		ParameterBase* ReturnValue(void);						//Access to the return value
+		ParameterBase* Parameters();						//Access to the array of registered parameters
+		ParameterBase* ReturnValue();						//Access to the return value
     
 		void qor_pp_noinline OutOfLineRegistration(ParameterBase& Param);
 		ParameterBase m_aParameters[10];
 		ParameterBase m_ReturnValue;							//Return value
-		unsigned char m_ucParamCount;
-		//const IThread* m_threadContext;
+		unsigned char m_paramCount{0};
 
     };
 }//qor

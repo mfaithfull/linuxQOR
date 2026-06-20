@@ -36,13 +36,9 @@ namespace qor{
 		using base_type = std::logic_error;
 
 		template <typename... Args>
-		memoryexception(const std::string& fmt, Args&&... args) : base_type(std::vformat(fmt, std::make_format_args(args...)))
-		{
-		}
+		memoryexception(const std::string& fmt, Args&&... args) : base_type(std::vformat(fmt, std::make_format_args(args...))){ }
 
-		explicit memoryexception(const char* message) : base_type(message)
-		{
-		}
+		explicit memoryexception(const char* message) : base_type(message){ }
 	};
 
 }//qor

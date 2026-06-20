@@ -62,14 +62,14 @@ namespace qor{
             }
         }
 
-        void AddObserver( ChainLink* pNew )
+        void AddObserver( ChainLink* _new )
         {
-            ChainLink::AddBefore( m_first, pNew );
+            ChainLink::AddBefore( m_first, _new );
         }
 
-        void RemoveObserver( ChainLink* pOld )
+        void RemoveObserver( ChainLink* old )
         {
-            ChainLink::Remove( m_first, pOld );
+            ChainLink::Remove( m_first, old );
         }
 
     private:

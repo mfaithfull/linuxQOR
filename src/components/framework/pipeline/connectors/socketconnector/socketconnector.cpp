@@ -39,8 +39,8 @@ namespace qor{ namespace components{
         m_addressFamily = qor::network::sockets::AF_Unspecified;
         m_socketFlags = 0;
         m_tcpNodelay = false;
-        bool m_ipv6Only = false;
-        time_t m_timeoutSec = 0;
+        m_ipv6Only = false;
+        m_timeoutSec = 0;
 
         m_sink = new_ref<qor::components::SocketSink>();
         m_source = new_ref<qor::components::SocketSource>();
@@ -113,7 +113,7 @@ namespace qor{ namespace components{
     {
         for(auto address : addresses)
         {
-            m_remoteAddress.sa_family = address.family;
+            m_remoteAddress.sa_family = static_cast<unsigned short>(address.family);
             m_remoteAddress.SetPort( address.address.sa.IPAddress.sin_port);
             memcpy(m_remoteAddress.sa.sa_data, address.address.sa.sa_data, address.address.byte_size);
             m_Socket = socketsSubsystem->CreateSocket(address.family, address.socktype, address.protocol, ref_of<qor::framework::AsyncIOContext::Session>::type());

@@ -28,6 +28,8 @@
 #include "ref.h"
 #include "flyerref.h"
 
+//trait that attaches a smart reference to a type
+
 namespace qor{
 
     template<typename T>

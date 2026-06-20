@@ -29,40 +29,40 @@
 
 namespace qor {
 
-    FunctionContextLock::FunctionContextLock() : m_pCallContext(nullptr), m_pParentCallContext(nullptr), m_pFunctionContext(nullptr), m_ulLevel((unsigned long)-1)
+    FunctionContextLock::FunctionContextLock()
     {
-        m_pFunctionContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
-        if (m_pFunctionContext)
+        m_FunctionContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
+        if (m_FunctionContext)
         {
-            m_ulLevel = m_pFunctionContext->Lock();
-            m_pCallContext = dynamic_cast<CallContext*>(m_pFunctionContext->GetCallContext());
-            if (m_pFunctionContext->GetParent())
+            m_Level = m_FunctionContext->Lock();
+            m_CallContext = dynamic_cast<CallContext*>(m_FunctionContext->GetCallContext());
+            if (m_FunctionContext->GetParent())
             {
-                m_pParentCallContext = dynamic_cast<CallContext*>(m_pFunctionContext->GetParent()->GetCallContext());
+                m_ParentCallContext = dynamic_cast<CallContext*>(m_FunctionContext->GetParent()->GetCallContext());
             }
         }
     }
     
     CallContext* FunctionContextLock::CallContextPtr(void)
     {
-        return m_pCallContext;
+        return m_CallContext;
     }
 
     CallContext* FunctionContextLock::ParentCallContextPtr(void)
     {
-        return m_pParentCallContext;
+        return m_ParentCallContext;
     }
     
     unsigned long FunctionContextLock::Level(void)
     {
-        return m_ulLevel;
+        return m_Level;
     }
     
     FunctionContextLock::~FunctionContextLock()
     {
-        if (m_pFunctionContext != nullptr)
+        if (m_FunctionContext != nullptr)
         {
-            m_pFunctionContext->Unlock();
+            m_FunctionContext->Unlock();
         }
     }
 

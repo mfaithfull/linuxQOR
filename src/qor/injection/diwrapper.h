@@ -35,10 +35,6 @@ namespace qor{
 	template<typename Interface>
 	class DIWrapper final
 	{
-	private:
-
-		typename ref_of<Interface>::type m_instance;
-
 	public:
 
 		template< typename... _p >
@@ -63,6 +59,10 @@ namespace qor{
 		{
 			return m_instance;
 		}
+
+	private:
+
+		typename ref_of<Interface>::type m_instance;
 	};
 
 }//qor

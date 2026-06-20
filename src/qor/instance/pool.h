@@ -36,6 +36,7 @@
 
 namespace qor{
 
+    //Trait to determine the pool size for a type
     template<typename T>
     struct pool_size_of
     {
@@ -110,11 +111,11 @@ namespace qor{
                 return instance;
             }
                
-            void Release(T* pinstance)
+            void Release(T* instance)
             {
                 Lock lock(m);
-                pinstance->Deflate();
-                m_FreeList.push_back(pinstance);
+                instance->Deflate();
+                m_FreeList.push_back(instance);
             }
 
             void SetSize(size_t max)
@@ -130,9 +131,9 @@ namespace qor{
             void Drain()
             {                
                 Lock lock(m);
-                for(T* pt : m_FreeList)
+                for(T* t : m_FreeList)
                 {
-                    factory_of<T>::type::Destruct(pt, 1);
+                    factory_of<T>::type::Destruct(t, 1);
                 }
                 m_FreeList.erase(m_FreeList.begin(), m_FreeList.end());
                 m_instanceCount = 0;
@@ -142,7 +143,6 @@ namespace qor{
             size_t maxCount;
             std::list<T*> m_FreeList;
             size_t m_instanceCount;
-            bool bInitialised;
             RecursiveMutex m;
         };
 
@@ -153,9 +153,9 @@ namespace qor{
 	public:
 
 		template< class T >
-		static inline void Release(T* pt, size_t /*count*/ = 1)
+		static inline void Release(T* t, size_t /*count*/ = 1)
 		{
-			Holder<T>().Release(pt);
+			Holder<T>().Release(t);
 		}
 
 		template< class T >

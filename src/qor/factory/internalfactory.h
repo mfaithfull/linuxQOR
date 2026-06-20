@@ -32,41 +32,45 @@
 
 namespace qor
 {
+    //factoryFunctor template specializations for each of the Reference types.
+    //Each creates and destroys/recycles objects in terms of a of 
+    //the ref_of< T >::type for that object
+
     template< class T, class Tref >
     struct factoryFunctor
     {
-        static void Destruct(size_t count, T* pt)
+        static void Destruct(size_t count, T* t)
         {
-            allocator_of<T>::type::Free(pt);
+            allocator_of<T>::type::Free(t);
         }
 
         static Tref Construct(size_t count)
         {
-            T* pt = allocator_of<T>::type::Allocate(count);
-            return Tref(pt, true, count);
+            T* t = allocator_of<T>::type::Allocate(count);
+            return Tref(t, true, count);
         }
 
         template< typename... _p >
         static Tref Construct(size_t count, _p... p1)
         {
-            T* pt = allocator_of<T>::type::Allocate(count, p1...);
-            return Tref(pt, true, count);
+            T* t = allocator_of<T>::type::Allocate(count, p1...);
+            return Tref(t, true, count);
         }
     };
 
     template< class T >
     struct factoryFunctor< T, Ref< T > >
     {
-        static void Destruct(size_t /*count*/, T* pt)
+        static void Destruct(size_t /*count*/, T* t)
         {
-            allocator_of<T>::type::Free(pt);
+            allocator_of<T>::type::Free(t);
         }
 
         static Ref< T > Construct(size_t count)
         {
-            void* pMem = source_of< Ref< T > >::type::Source(sizeof(detail::SharedRef< T >));
-            detail::SharedRef< T >* pShared = new(pMem) detail::SharedRef< T >(count);
-            return pShared->_Ref();
+            void* mem = source_of< Ref< T > >::type::Source(sizeof(detail::SharedRef< T >));
+            detail::SharedRef< T >* shared = new(mem) detail::SharedRef< T >(count);
+            return shared->_Ref();
         }
 
         template< typename... _p >
@@ -78,11 +82,11 @@ namespace qor
             )->_Ref();
         }
 
-        static Ref< T > ConstructFromExisting(T* pt)
+        static Ref< T > ConstructFromExisting(T* t)
         {
             return (
                 new(source_of< Ref<T> >::type::Source(sizeof(detail::SharedRef< T >)))
-                detail::SharedRef< T >(pt)
+                detail::SharedRef< T >(t)
             )->_Ref();
         }
     };
@@ -90,10 +94,10 @@ namespace qor
     template< class T >
     struct factoryFunctor< T, FlyerRef< T > >
     {
-        static void Destruct(size_t count, T* pt)
+        static void Destruct(size_t count, T* t)
         {
             framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(
-                guid_of<T>::guid(), TypedAny<T>(pt->m_pPrevious)
+                guid_of<T>::guid(), TypedAny<T>(t->m_pPrevious)
             );
         }
 
@@ -109,7 +113,8 @@ namespace qor
         }
     };
 
-
+    //Uses the appropriate factoryFunctor specialization
+    //To create and destroy instances of T
     template< class T >
     class InternalFactory final
     {
@@ -120,9 +125,9 @@ namespace qor
 
     public:
 
-        static void Destruct(T* pt, size_t count = 1)
+        static void Destruct(T* t, size_t count = 1)
         {
-            factoryFunctor< T, typename ref_of<T>::type >::Destruct(count, pt);
+            factoryFunctor< T, typename ref_of<T>::type >::Destruct(count, t);
         }
         
         static ref_of<T>::type Construct(size_t count = 1)
@@ -136,9 +141,9 @@ namespace qor
 			return factoryFunctor< T, typename ref_of<T>::type >::template Construct<_p...>(count, std::forward<_p>(p1)...);
         }
 
-        static ref_of<T>::type ConstructFromExisting(T* pt)
+        static ref_of<T>::type ConstructFromExisting(T* t)
         {
-            return factoryFunctor< T, typename ref_of<T>::type >::ConstructFromExisting(pt);
+            return factoryFunctor< T, typename ref_of<T>::type >::ConstructFromExisting(t);
         }
     };
 }//qor

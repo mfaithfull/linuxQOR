@@ -32,76 +32,76 @@ namespace qor {
 
     FlyStrap::FlyStrap() : FlyStrapBase() {}
 
-    FlyStrap::FlyStrap( FlyStrapBase* pJoinPoint ) : FlyStrapBase()
+    FlyStrap::FlyStrap( FlyStrapBase* joinPoint ) : FlyStrapBase()
     {
-        if( pJoinPoint )
+        if( joinPoint )
         {
-            pJoinPoint->StrapOn( this );
+            joinPoint->StrapOn(this);
         }
     }
 
-    bool FlyStrap::CallPre( CallContext* pCall, IFunctionContext* pFunction )
+    bool FlyStrap::CallPre( CallContext* call, IFunctionContext* function )
     {
-        bool bResult = ( PreCondition( pCall, pFunction ) && Pre( pCall, pFunction) );
-        FlyStrap* pNext = Next((FlyStrap*)(nullptr));
-        if( pNext != nullptr)
+        bool result = ( PreCondition( call, function ) && Pre( call, function) );
+        FlyStrap* next = Next((FlyStrap*)(nullptr));
+        if( next != nullptr)
         {
-            bResult = pNext->CallPre( pCall, pFunction );            
+            result = next->CallPre( call, function );            
         }
-        return bResult;
+        return result;
     }
 
-    bool FlyStrap::CallOnReturnAssignment( CallContext* pCall )
+    bool FlyStrap::CallOnReturnAssignment( CallContext* call )
 	{
-		FlyStrap* pNext = Next( (FlyStrap*)(nullptr) );
-		if( pNext != nullptr )
+		FlyStrap* next = Next( (FlyStrap*)(nullptr) );
+		if( next != nullptr )
 		{
-			pNext->CallOnReturnAssignment( pCall );
+			next->CallOnReturnAssignment( call );
 		}
-		return ( OnAssignmentCondition( pCall ) && OnReturnAssignment( pCall ) );
+		return ( OnAssignmentCondition( call ) && OnReturnAssignment( call ) );
 	}
 
-	bool FlyStrap::CallPost( CallContext* pCall )
+	bool FlyStrap::CallPost( CallContext* call )
 	{
-		FlyStrap* pNext = Next( (FlyStrap*)(nullptr) );
-		if( pNext != nullptr )
+		FlyStrap* next = Next( (FlyStrap*)(nullptr) );
+		if( next != nullptr )
 		{
-			pNext->CallPost( pCall );
+			next->CallPost( call );
 		}
-		return ( PostCondition( pCall ) && Post( pCall ) );
+		return ( PostCondition( call ) && Post( call ) );
 	}
 
-	bool FlyStrap::Pre( CallContext* /*pCall*/, IFunctionContext* /*pFunction*/ )
+	bool FlyStrap::Pre( CallContext* /*call*/, IFunctionContext* /*function*/ )
 	{
 		return true;
 	}
 
-	bool FlyStrap::Post( CallContext* /*pCall*/ )
+	bool FlyStrap::Post( CallContext* /*call*/ )
 	{
 		return true;
 	}
 
-	bool FlyStrap::OnReturnAssignment( CallContext* /*pCall*/ )
+	bool FlyStrap::OnReturnAssignment( CallContext* /*call*/ )
 	{
 		return true;
 	}
 
-	bool FlyStrap::OnReturn(CallContext* /*pCall*/)
+	bool FlyStrap::OnReturn(CallContext* /*call*/)
 	{
 		return true;
 	}
 
-	bool FlyStrap::PreCondition( CallContext* /*pCall*/, IFunctionContext* /*pFunction*/ )
+	bool FlyStrap::PreCondition( CallContext* /*call*/, IFunctionContext* /*function*/ )
 	{
 		return false;
 	}
 
-	bool FlyStrap::OnAssignmentCondition( CallContext* /*pCall*/ )
+	bool FlyStrap::OnAssignmentCondition( CallContext* /*call*/ )
 	{
 		return false;
 	}
 
-	bool FlyStrap::PostCondition( CallContext* /*pCall*/ )
+	bool FlyStrap::PostCondition( CallContext* /*call*/ )
 	{
 		return false;
 	}

@@ -68,8 +68,8 @@ namespace qor{ namespace components {
 
     std::string LogHandler::MessageText(const std::string_view& level, const std::string& what, const std::string& where, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const
     {
-        //TODO: Need to understand why Windows std C++ library can't format a nanosecond TimePoint
-        return std::format("{0}: \"{1}\" \nLogged from {2} at time TODO:",level, what, where/*, when*/);
+        auto nscount = when.time_since_epoch().count();        
+        return std::format("{0}: \"{1}\" \nLogged from {2} at time {3}:",level, what, where, nscount);
     }
 
     LogHandler& LogHandler::Forward(bool forward)

@@ -43,7 +43,7 @@ namespace qor{
         {
         public:
 
-            SingletonInstanceHolder() : bInitialised(false), redirected(false) {}
+            SingletonInstanceHolder() : initialised(false), redirected(false) {}
 
             virtual ~SingletonInstanceHolder()
             {
@@ -54,10 +54,10 @@ namespace qor{
                 else
                 {
                     Lock lock(m);
-                    if(bInitialised)
+                    if(initialised)
                     {
                         theRef.Dispose();
-                        bInitialised = false;
+                        initialised = false;
                     }
                 }
             }
@@ -71,10 +71,10 @@ namespace qor{
                 else
                 {
                     Lock lock(m);
-                    if( !bInitialised )
+                    if(!initialised)
                     {                
                         theRef = factory_of<T>::type::Construct(count);                    
-                        bInitialised = true;
+                        initialised = true;
                     }
                     else if(theRef.IsNull())
                     {
@@ -94,10 +94,10 @@ namespace qor{
                 else
                 {
                     Lock lock(m);
-                    if( !bInitialised )
+                    if( !initialised )
                     {                                    
                         theRef = factory_of<T>::type::Construct(count, std::forward<_p>(p1)...);
-                        bInitialised = true;
+                        initialised = true;
                     }
                     else if(theRef.IsNull())
                     {
@@ -116,7 +116,7 @@ namespace qor{
                 else
                 {
                     Lock lock(m);
-                    if(bInitialised)
+                    if(initialised)
                     {
                         factory_of<T>::type::Destruct(theRef);
                         theRef.Reset();
@@ -135,9 +135,9 @@ namespace qor{
             void AutoRedirect(ref_of<T>::type ref)
             {
                 Lock lock(m);
-                if(!bInitialised)
+                if(!initialised)
                 {
-                    bInitialised = true;
+                    initialised = true;
                     theRef = ref;
                 }
             }
@@ -146,7 +146,7 @@ namespace qor{
 
             static constexpr size_t count = 1;
             ref_of<T>::type theRef;
-            bool bInitialised;
+            bool initialised;
             bool redirected;
             RecursiveMutex m;
             SingletonInstanceHolder<T>* redirect;
@@ -159,7 +159,7 @@ namespace qor{
 	public:
 
 		template< class T >
-		static inline void Release(T* /*pt*/, size_t /*count = ignored_count*/)
+		static inline void Release(T* /*t*/, size_t /*count = ignored_count*/)
 		{
 			Holder<T>().Release();
 		}

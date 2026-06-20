@@ -42,9 +42,9 @@ namespace qor {
 	{
 	public:
 
-		PropertyValueBase() : pvt(PVT_Null), m_p(nullptr) {}
+		PropertyValueBase(){ }
 
-		PropertyValueBase(const PropertyValueBase & src) : pvt(PVT_Null), m_p(nullptr) 
+		PropertyValueBase(const PropertyValueBase & src)
 		{
 			if(&src != this)
 			{
@@ -83,8 +83,8 @@ namespace qor {
 
 	protected:
 
-		PVT pvt;
-		UnsafeAnyProperty* m_p;
+		PVT pvt{PVT_Null};
+		UnsafeAnyProperty* m_p{nullptr};
 	};
 
 }//qor

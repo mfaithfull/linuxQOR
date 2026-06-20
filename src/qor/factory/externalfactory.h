@@ -30,7 +30,8 @@
 
 namespace qor
 {
-    //Gets the internal factory for the implementation of T, from the type registry, and defers to it.
+    //Gets the indirect factory for the implementation of T, from the type registry, and defers to it.
+
     template< class T >
     class ExternalFactory final 
     {
@@ -43,57 +44,59 @@ namespace qor
 
         typedef IndirectFactory<T>* reg_entry_ptr_t;
 
-        static void Destruct(T* pt, size_t count = 1)
+        static void Destruct(T* t, size_t count = 1)
         {
-            AnyObject Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
-			if (Registration.IsNull())
+            AnyObject registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
+            IndirectFactory<T>* factory = registration;
+			if(factory)
 			{
-				//throw std::logic_error("Template ID Factory cannot Destruct an unregistered class.");
-                InternalFactory<T>::Destruct(pt, count);
+                factory->Destruct(t, count);				                
 			}
 			else
 			{
-                IndirectFactory<T>* pFactory = Registration;
-				pFactory->Destruct(pt,count);
+                return;
+                //Singleton's with external factories have to be leaked here on process shutdown as they're no longer even 
+                //registered with the TypeRegistry which itself may have gone before they are destroyed.
+                //throw std::logic_error("ExternalFactory cannot Destruct an unregistered type.");
 			}
         }
         
         static typename ref_of<T>::type Construct(size_t count = 1)
         {
-            AnyObject Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
-            if(Registration.IsNull())
+            AnyObject registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
+            IndirectFactory<T>* factory = registration;
+            if(factory)
             {
-                throw std::logic_error("Template ID Factory cannot Construct an unregistered class.");
+                return factory->Construct(count).template AsRef<T>();
             }
             else
             {
-                IndirectFactory<T>* pFactory = Registration;
-                return pFactory->Construct(count).template AsRef<T>();
+                throw std::logic_error("ExternalFactory cannot Construct an unregistered type.");
             }            
         }
 
 		template< typename... _p >
 		static typename ref_of<T>::type Construct(size_t count, _p&&... p1)
 		{
-			AnyObject Registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
-			if (Registration.IsNull())
+			AnyObject registration = TheTypeRegistry()->GetFactory(*(guid_of<T>::guid()));
+            IndirectFactory<T>* baseFactory = registration;
+			if(baseFactory)
 			{
-				throw std::logic_error("Template ID Factory cannot Construct an unregistered class.");
-			}
-			else
-			{
-                IndirectFactory<T>* pBaseFactory = Registration;
-                IndirectFactorywithParams<T, _p...>* pFactory = dynamic_cast<IndirectFactorywithParams<T, _p...>*>(pBaseFactory);
-                if(pFactory == nullptr)
+                IndirectFactorywithParams<T, _p...>* factory = dynamic_cast<IndirectFactorywithParams<T, _p...>*>(baseFactory);
+                if(factory)
                 {
-                    //warning ("Couldn't find a factory with matching parameters.");
-                    pFactory = reinterpret_cast<IndirectFactorywithParams<T, _p...>*>(pBaseFactory);
-                    return pFactory->Construct(count, p1...).template AsRef<T>();                    
+                    return factory->Construct(count, p1...).template AsRef<T>();
                 }
                 else
                 {
-                    return pFactory->Construct(count, p1...).template AsRef<T>();
-                }
+                    //throw std::logic_error("ExternalFactory couldn't find a factory with mataching parameters");
+                    factory = reinterpret_cast<IndirectFactorywithParams<T, _p...>*>(baseFactory);
+                    return factory->Construct(count, p1...).template AsRef<T>();
+                }				
+			}
+			else
+			{
+                throw std::logic_error("ExternalFactory cannot Construct an unregistered type.");
 			}
 		}
 

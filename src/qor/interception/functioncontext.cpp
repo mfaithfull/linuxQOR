@@ -28,30 +28,31 @@
 
 namespace qor {
 
-	FunctionContext::FunctionContext(const char* szFuncName, const char* szFile, unsigned int uiLine, const char* szModule, bool bProfile, bool /*bCoverage*/, AnyObject ObjContext) : 		
-		 m_bTraceCalls(false)
-		, m_uiLocked(0)
-		, m_TraceDepth(1)
-		, m_szFuncName(szFuncName)
-		, m_szFile(szFile)
-		, m_szModule(szModule)
-		, m_pParent(nullptr)
-		, m_ObjContext(ObjContext)
-		, m_uiLine(uiLine)		
+	FunctionContext::FunctionContext(const char* funcName, const char* file, unsigned int line, const char* module, bool profile, bool /*coverage*/, AnyObject objContext) :
+		 m_traceCalls(false)
+		, m_locked(0)
+		, m_traceDepth(1)
+		, m_funcName(funcName)
+		, m_file(file)
+		, m_module(module)
+		, m_Parent(nullptr)
+		, m_ObjContext(objContext)
+		, m_line(line)		
 		, m_CallContext()
-		, m_Profiler(this, bProfile)
+		, m_Profiler(this, profile)
 	{
 		Init();
 	}
 
 	FunctionContext::FunctionContext() : 
-		m_uiLocked(0)
-		, m_TraceDepth(1)
-		, m_szFuncName(nullptr)
-		, m_szFile(nullptr)
-		, m_szModule(nullptr)
-		, m_pParent(nullptr)
-		, m_uiLine(0)		
+		m_traceCalls(false)
+		, m_locked(0)
+		, m_traceDepth(1)
+		, m_funcName(nullptr)
+		, m_file(nullptr)
+		, m_module(nullptr)
+		, m_Parent(nullptr)
+		, m_line(0)		
 		, m_CallContext()
 		, m_Profiler(this, false)
 	{
@@ -60,23 +61,23 @@ namespace qor {
 
 	bool FunctionContext::Locked() const
 	{
-		return m_uiLocked > 0;
+		return m_locked > 0;
 	}
 
 	unsigned int FunctionContext::Lock()
 	{
-		return ++m_uiLocked;
+		return ++m_locked;
 	}
 
 	unsigned int FunctionContext::Unlock()
 	{
-		return m_uiLocked--;
+		return --m_locked;
 	}
 
-	bool FunctionContext::Trace(bool bNewTrace)
+	bool FunctionContext::Trace(bool newTrace)
 	{
-		bool bTrace = m_bTraceCalls;
-		m_bTraceCalls = bNewTrace;
+		bool bTrace = m_traceCalls;
+		m_traceCalls = newTrace;
 		return bTrace;
 	}
 
@@ -89,16 +90,16 @@ namespace qor {
 	{
 		Lock();
 
-        m_pParent = qor::framework::CurrentThread::GetCurrent().Context().RegisterFunctionContext(this);
+        m_Parent = qor::framework::CurrentThread::GetCurrent().Context().RegisterFunctionContext(this);
 
-		if (m_pParent)
+		if (m_Parent)
 		{
-			m_TraceDepth = m_pParent->TraceDepth() + 1;
-			if (!m_pParent->Locked())
+			m_traceDepth = m_Parent->TraceDepth() + 1;
+			if (!m_Parent->Locked())
 			{
-				if (m_pParent->GetCallContext())
+				if (m_Parent->GetCallContext())
 				{
-					m_pParent->GetCallContext()->CallMade(this);//Tell calling context we have reached called function body
+					m_Parent->GetCallContext()->CallMade(this);//Tell calling context we have reached called function body
 				}
 			}
 		}
@@ -107,53 +108,53 @@ namespace qor {
 
 	const char* FunctionContext::File() const
 	{
-		return m_szFile;
+		return m_file;
 	}
 
 	const char* FunctionContext::Module() const
 	{
-		return m_szModule;
+		return m_module;
 	}
 
 	unsigned int FunctionContext::Line() const
 	{
-		return m_uiLine;
+		return m_line;
 	}
 
 	IFunctionContext* FunctionContext::GetParent() const
 	{
-		return m_pParent;
+		return m_Parent;
 	}
 
 	void FunctionContext::SetParent(IFunctionContext* pParent)
 	{
-		m_pParent = pParent;
+		m_Parent = pParent;
 	}
 
 	unsigned int FunctionContext::TraceDepth()
 	{
-		return m_TraceDepth;
+		return m_traceDepth;
 	}
 
 	FunctionContext::~FunctionContext()
 	{
 		Lock();
-		if (m_pParent)
+		if (m_Parent)
 		{
-			if (!m_pParent->Locked() && m_pParent->GetCallContext())
+			if (!m_Parent->Locked() && m_Parent->GetCallContext())
 			{
-				m_pParent->GetCallContext()->CallCompleted();//Tell call context we have completed sub function body
+				m_Parent->GetCallContext()->CallCompleted();//Tell call context we have completed sub function body
 			}
 		}
 
-        qor::framework::CurrentThread::GetCurrent().Context().UnregisterFunctionContext(this, m_pParent);
+        qor::framework::CurrentThread::GetCurrent().Context().UnregisterFunctionContext(this, m_Parent);
 
         Unlock();
 	}
 
 	const char* FunctionContext::Name() const
 	{
-		return m_szFuncName;
+		return m_funcName;
 	}
 
 	AnyObject FunctionContext::TypedAny() const

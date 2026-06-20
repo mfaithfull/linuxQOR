@@ -44,7 +44,7 @@ namespace qor{
 		{
 		}
 
-        FlyerRef(const T* pt) : m_p(const_cast<T*>(pt))
+        FlyerRef(const T* t) : m_p(const_cast<T*>(t))
 		{
 		}
 
