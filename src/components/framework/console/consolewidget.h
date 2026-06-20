@@ -43,7 +43,7 @@ namespace qor { namespace components {
         Position Move(Position newPosition);
         Size Resize(Size newSize);
 
-        virtual Size Layout(int width, int height) { return {0,0};}
+        virtual Size Layout(int /*width*/, int /*height*/) { return {0,0};}
         virtual Size GetMinimumSize() { return {0,0};}
         virtual Size GetDefaultSize() { return {0,0};}
         virtual Size GetMaximumSize() { return {0,0};}
@@ -51,7 +51,7 @@ namespace qor { namespace components {
         ref_of<ConsoleView>::type View();
         Position GetPosition() {return m_position;}
         Size GetSize() {return m_size;}
-        virtual bool HandleInput(string_t input) {return false;}
+        virtual bool HandleInput(string_t /*input*/) {return false;}
 
     protected:
 

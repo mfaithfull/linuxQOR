@@ -48,7 +48,7 @@ namespace qor {
     template <std::size_t I>
     struct PropertyGenerator<I, I>
     {
-        template <class T, class R> static void Generate(PropertyVector& container, const T& value, const R& org_val) noexcept {}
+        template <class T, class R> static void Generate(PropertyVector& /*container*/, const T& /*value*/, const R& /*org_val*/) noexcept {}
     };
 }
 

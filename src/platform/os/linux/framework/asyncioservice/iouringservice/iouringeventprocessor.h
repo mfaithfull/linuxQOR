@@ -52,7 +52,7 @@ namespace qor{ namespace nslinux{ namespace framework{
                 {
                     std::mutex dummy;
                     std::unique_lock<std::mutex> lock(dummy);
-                    auto timeout_status = uring.m_cond.wait_for(lock, std::chrono::seconds(5));//wait while there is nothing to do
+                    [[maybe_unused]]auto timeout_status = uring.m_cond.wait_for(lock, std::chrono::seconds(5));//wait while there is nothing to do
                 }
 
                 int result = 0;//Keep doing IO until we're told to stop or there are no pending coroutines to be resumed

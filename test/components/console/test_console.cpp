@@ -71,13 +71,13 @@ qor_pp_test_suite_case(ConsoleTestSuite, canWriteLineToConsole)
 qor_pp_test_suite_case(ConsoleTestSuite, canReadCharFromConsole)
 {
     auto console = new_ref<Console>();
-    char_t c = console->ReadChar();
+    //TODO: Move to interative test[[maybe_unused]]char_t c = console->ReadChar();
     qor_pp_assert_that(console.IsNotNull()).isTrue();
 }
 
 qor_pp_test_suite_case(ConsoleTestSuite, canReadLineFromConsole)
 {
     auto console = new_ref<Console>();
-    string_t line = console->ReadLine();
+    //TODO: Move to interative test string_t line = console->ReadLine();
     qor_pp_assert_that(console.IsNotNull()).isTrue();
 }

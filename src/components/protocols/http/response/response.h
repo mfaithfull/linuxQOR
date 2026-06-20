@@ -89,8 +89,9 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_response;
 
         Headers m_headers;
-        unsigned int m_statusCode;
         HTTPVersion m_version;
+        unsigned int m_statusCode;
+        
     };
 
 }}}}//qor::components::protocols::http

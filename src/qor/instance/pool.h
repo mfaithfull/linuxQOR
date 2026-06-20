@@ -49,7 +49,7 @@ namespace qor{
         class PoolInstanceHolder final
         {
         public:
-            PoolInstanceHolder() : m_instanceCount(0), maxCount(poolSize) {}
+            PoolInstanceHolder() : maxCount(poolSize), m_instanceCount(0) {}
 
             ~PoolInstanceHolder()
             {

@@ -59,7 +59,7 @@ namespace qor { namespace components {
         AddMenuItem(menuItem);
     }
 
-    Size ConsoleMenuWidget::Layout(int width, int height)
+    Size ConsoleMenuWidget::Layout(int /*width*/, int /*height*/)
     {
         m_size = GetSize();
         return m_size;
@@ -67,13 +67,13 @@ namespace qor { namespace components {
 
     Size ConsoleMenuWidget::GetSize()
     {
-        int maxWidth = 0;
-        int maxHeight = static_cast<int>(m_contents.size() + 4);//Add 2 for box, 1 for menu title, one for title separator
+        size_t maxWidth = 0;
+        size_t maxHeight = (m_contents.size() + 4);//Add 2 for box, 1 for menu title, one for title separator
         for( ref_of<MenuItem>::type item : m_contents)
         {
             if(item->itemText.size() > maxWidth)
             {
-                maxWidth = static_cast<int>(item->itemText.size());
+                maxWidth = item->itemText.size();
             }
         }
         Size maxsize = {maxWidth + 4, maxHeight};

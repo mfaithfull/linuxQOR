@@ -42,12 +42,12 @@ public:
 
     }
 
-    void CallMade( CallContext* pCall, IFunctionContext* pFunction )
+    void CallMade( CallContext* /*call*/, IFunctionContext* /*function*/ )
     {
         callCount++;
     }
 
-    virtual void CallCompleted( CallContext* pCall )
+    virtual void CallCompleted( CallContext* /*call*/ )
     {
         callCompletedCount++;
     }

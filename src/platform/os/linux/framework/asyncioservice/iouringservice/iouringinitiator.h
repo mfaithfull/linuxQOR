@@ -100,7 +100,7 @@ namespace qor{ namespace nslinux{ namespace framework{
         {
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
             co_return qor::framework::AsyncIOResult{
-                .status_code = co_await ListenOperation(*m_Ring, ioDescriptor->m_fd, 0),
+                .status_code = co_await ListenOperation(*m_Ring, ioDescriptor->m_fd, backlog),
                 .ioObject = ioDescriptor
             };
         }
@@ -119,7 +119,7 @@ namespace qor{ namespace nslinux{ namespace framework{
             };
         }
 
-        virtual qor::framework::IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* new_socket)
+        virtual qor::framework::IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& /*Address*/, network::Socket* new_socket)
         {            
             sockaddr addr;
             socklen_t len = 0;

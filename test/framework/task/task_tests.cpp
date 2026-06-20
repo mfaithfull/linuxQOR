@@ -184,7 +184,7 @@ qor_pp_test_suite_case(TaskTestSuite, passing_parameter_by_value_to_task_corouti
 {
 	counted::reset_counts();
 
-	auto f = [](counted arg) -> task<>
+	auto f = [](counted /*arg*/) -> task<>
 	{
 		co_return;
 	};

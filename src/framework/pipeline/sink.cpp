@@ -43,7 +43,7 @@ namespace qor{ namespace pipeline{
 
     Sink::Sink() : m_source(nullptr) {}
 
-    Sink::Sink( const Sink& src)
+    Sink::Sink( const Sink& src) : Element(src)
     {
         *this = src;        
     }

@@ -78,7 +78,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, throw_before_first_yield)
 	auto gen = f();
 	try
 	{
-		auto iter = gen.begin();
+		[[maybe_unused]]auto iter = gen.begin();
 		qor_pp_assert_that(false);
 	}
 	catch (const MyException&)
@@ -159,7 +159,7 @@ qor_pp_test_suite_case(RecursiveGeneratorTestSuite, recursive_destroying_generat
 	{
 		auto g = f();
 		auto it = g.begin();
-		auto itEnd = g.end();
+		[[maybe_unused]]auto itEnd = g.end();
 		qor_pp_assert_that(*it == 1u);
 		qor_pp_assert_that(!destructed);
 	}

@@ -62,7 +62,7 @@ qor_pp_test_suite_case(DelegateTestSuite, canConstructDelegateOnMemberFunction)
     DelegateTestTarget target;
       
     Delegate<double(int, char, const char*)> d;
-    auto dInstance = decltype(d)::Create<DelegateTestTarget, &DelegateTestTarget::InstanceFunction>(&target);
+    [[maybe_unused]]auto dInstance = decltype(d)::Create<DelegateTestTarget, &DelegateTestTarget::InstanceFunction>(&target);
 }
 
 qor_pp_test_suite_case(DelegateTestSuite, canCallDelegateOnMemberFunction)
@@ -79,7 +79,7 @@ qor_pp_test_suite_case(DelegateTestSuite, canConstructDelegateOnConstMemberFunct
     DelegateTestTarget target;
       
     Delegate<double(int, char, const char*)> d;
-    auto dConst = decltype(d)::Create<DelegateTestTarget, &DelegateTestTarget::ConstInstanceFunction>(&target);    
+    [[maybe_unused]]auto dConst = decltype(d)::Create<DelegateTestTarget, &DelegateTestTarget::ConstInstanceFunction>(&target);    
 }
 
 qor_pp_test_suite_case(DelegateTestSuite, canCallDelegateOnConstMemberFunction)
@@ -94,7 +94,7 @@ qor_pp_test_suite_case(DelegateTestSuite, canCallDelegateOnConstMemberFunction)
 qor_pp_test_suite_case(DelegateTestSuite, canConstructDelegateOnStatictMemberFunction)
 {
     Delegate<double(int, char, const char*)> d;
-    auto dFunc = decltype(d)::Create<&DelegateTestTarget::StaticFunction>();
+    [[maybe_unused]]auto dFunc = decltype(d)::Create<&DelegateTestTarget::StaticFunction>();
 }
 
 qor_pp_test_suite_case(DelegateTestSuite, canCallDelegateOnStatictMemberFunction)

@@ -377,7 +377,7 @@ namespace qor{ namespace network{
 			}
 		}
 
-		assert((c - &buffer[0]) <= sizeof(buffer));
+		assert(((unsigned long)(c - &buffer[0])) <= sizeof(buffer));
 
 		return std::string{ &buffer[0], c };
 	}

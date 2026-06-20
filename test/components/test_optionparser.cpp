@@ -134,7 +134,7 @@ public:
 
 	}
 
-    virtual void ReceiveNonOption(const char* parameter)
+    virtual void ReceiveNonOption(const char* /*parameter*/)
     {
         //printf("%s ", parameter);
     }

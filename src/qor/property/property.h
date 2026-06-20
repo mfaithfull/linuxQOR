@@ -99,7 +99,7 @@ namespace qor {
 		T ToStruct()
 		{
 			T result;
-			qor_reflection::for_each_field_with_name(result, [this](std::string_view name, auto& value, std::size_t i)
+			qor_reflection::for_each_field_with_name(result, [this](std::string_view name, auto& value, std::size_t /*i*/)
 				{
 					if (this->GetType() == PVT_Vector)
 					{

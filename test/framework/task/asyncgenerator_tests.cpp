@@ -160,7 +160,7 @@ qor_pp_test_suite_case(AsyncGeneratorTestSuite, destructors_of_values_in_scope_a
 		bool aDestructed = false;
 		bool bDestructed = false;
 
-		auto makeGenerator = [&](set_to_true_on_destruction a) -> AsyncGenerator<std::uint32_t>
+		auto makeGenerator = [&](set_to_true_on_destruction /*a*/) -> AsyncGenerator<std::uint32_t>
 		{
 			set_to_true_on_destruction b(&bDestructed);
 			co_yield 1;

@@ -172,7 +172,7 @@ namespace qor {
         }
 
         template <ret_t(*TMethod)(params_t...)>
-        static ret_t FunctionStub(void* this_ptr, params_t... params) 
+        static ret_t FunctionStub(void* /*this_ptr*/, params_t... params) 
         {
             return (TMethod)(params...);
         }

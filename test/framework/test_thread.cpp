@@ -69,7 +69,7 @@ class SelfAwareWorker : public Thread
 
     virtual void Run()
     {
-        ThreadContext& context = CurrentThread::GetCurrent().Context();
+        [[maybe_unused]]ThreadContext& context = CurrentThread::GetCurrent().Context();
         std::cout << " Worker thread has access to its mutable context.";
     }
 };

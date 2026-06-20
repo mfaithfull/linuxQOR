@@ -48,7 +48,7 @@ qor_pp_test_case(canBuildAnApplication)
 {
     auto app = AppBuilder().Build("QOR Test Application")->        
         SetRole<Role>(
-            [](ref_of<IRole>::type role)
+            [](ref_of<IRole>::type /*role*/)
             {
             }
         );

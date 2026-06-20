@@ -56,7 +56,7 @@ namespace test_user_class
 
 namespace qor{ namespace assert{
 
-    auto assert_that_internal( [[maybe_unused]]Adl dummy, const bool failOnError, const char* file, int line, const test_user_class::A& v) 
+    auto assert_that_internal( [[maybe_unused]]Adl dummy, const bool /*failOnError*/, const char* file, int line, const test_user_class::A& v) 
     {
         // v needs to be a reference otherwise UserClassTests will store a reference to a temporary
         return subject::GenericSubject(false, file, line, v);

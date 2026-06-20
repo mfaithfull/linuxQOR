@@ -172,9 +172,9 @@ namespace qor{ namespace platform{
         }
         else
         {
-            for(unsigned int loop = sizeof(float) -1; loop >=0; --loop)
+            for(unsigned int loop = sizeof(float); loop > 0; --loop)
             {
-                m_file->Write( p + loop, 1);
+                m_file->Write( p + loop - 1, 1);
             }
         }
     }
