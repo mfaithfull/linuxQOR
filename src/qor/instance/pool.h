@@ -153,13 +153,13 @@ namespace qor{
 	public:
 
 		template< class T >
-		static inline void Release(T* pt, size_t count = 1)
+		static inline void Release(T* pt, size_t /*count*/ = 1)
 		{
 			Holder<T>().Release(pt);
 		}
 
 		template< class T >
-		static inline auto Instance(size_t count = 1)
+		static inline auto Instance(size_t /*count*/ = 1)
 		{
             return Holder<T>().Instance();
 		}

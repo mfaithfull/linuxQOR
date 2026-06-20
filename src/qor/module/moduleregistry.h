@@ -33,7 +33,6 @@ namespace qor{
 
     class qor_pp_export ModuleRegistry final
 	{
-
 	public:
 
 		inline ModuleRegistry() noexcept = default;

@@ -32,63 +32,63 @@ namespace qor{ namespace framework{
 
 namespace qor{
 	
-    Module::Module(const char* name, const char* version, bool _register) : Library(name, version, false), m_pStaticLibraryList(nullptr), m_ModuleReg(nullptr)
+    Module::Module(const char* name, const char* version, bool doRegister) : Library(name, version, false)
 	{
-		if(_register)
+		if(doRegister)
 		{
-			Module* phost = framework::TheHost();
-			phost->RegisterModule(this);
+			Module* host = framework::TheHost();
+			host->RegisterModule(this);
 		}
 	}
 	
 	Module::~Module() noexcept
 	{
-		Module* phost = framework::TheHost();
-		phost->UnregisterModule(this);
+		Module* host = framework::TheHost();
+		host->UnregisterModule(this);
 	}
 
-	bool Module::RegisterLibrary( Library* pLibrary )
+	bool Module::RegisterLibrary(Library* library)
 	{
-		if (pLibrary)
+		if (library)
 		{
-			if (m_pStaticLibraryList == nullptr)
+			if (m_StaticLibraryList == nullptr)
 			{
-				m_pStaticLibraryList = pLibrary;
+				m_StaticLibraryList = library;
 			}
 			else
 			{
-				m_pStaticLibraryList->Append(pLibrary);
+				m_StaticLibraryList->Append(library);
 			}
 		}
-		return pLibrary != nullptr;
+		return library != nullptr;
 	}
 	
-	void Module::UnregisterLibrary( Library* pLibrary )
+	void Module::UnregisterLibrary(Library* library)
 	{
-		Library* pSearch = m_pStaticLibraryList;
-		if (pSearch == pLibrary)
+		Library* search = m_StaticLibraryList;
+		if (search == library)
 		{
-			m_pStaticLibraryList = const_cast<Library*>(pLibrary->Next());
+			m_StaticLibraryList = const_cast<Library*>(library->Next());
 		}
 		else
 		{
-			while (pSearch != nullptr)
+			while (search != nullptr)
 			{
-				if (pSearch->Next() == pLibrary)
+				if (search->Next() == library)
 				{
-					pSearch->SetNext(pLibrary->Next());
+					search->SetNext(library->Next());
 				}
                 else
                 {
-                    pSearch = const_cast<Library*>(pSearch->Next());
+                    search = const_cast<Library*>(search->Next());
                 }
 			}
 		}
 	}
 
-	void Module::RegisterModule(Module*){}
+	void Module::RegisterModule(Module*){ }
 
-	void Module::UnregisterModule(Module*){}
+	void Module::UnregisterModule(Module*){ }
 
     ModuleRegistry* Module::Modules()
     {

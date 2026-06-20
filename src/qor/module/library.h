@@ -34,10 +34,10 @@ namespace qor{
 
         Library( const char* name, const char* version, bool bRegister = true);
         virtual ~Library() noexcept;
-		const char* Name( void ) const;
-        virtual const char* Version(void) const;
+		const char* Name() const;
+        virtual const char* Version() const;
 
-        void Append( const Library* pLast );                //Append to the end of the chain
+        void Append(const Library* pLast);                  //Append to the end of the chain
 		const Library* Next() const;                        //Get the next library in the chain
 		void SetNext(const Library* pNext);					//Set the next library in the chain
 
@@ -45,7 +45,7 @@ namespace qor{
 
 		const char* m_Name;							        //The internal library name, not necessarily related to any file name
         const char* m_Version;
-        const Library* m_pNext;								//Pointer to next static library forming a chain
+        const Library* m_Next;								//Pointer to next static library forming a chain
 	
 	private:
 	

@@ -96,9 +96,7 @@ namespace qor{ namespace pipeline{
         return dynamic_cast<Source*>(m_source);
     }
 
-    void Sink::SetPlug(Element* plug)
-    {        
-    }
+    void Sink::SetPlug(Element* /*plug*/){ }
 
     Element* Sink::GetPlug() const
     {

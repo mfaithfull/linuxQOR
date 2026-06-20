@@ -31,7 +31,7 @@
 
 extern "C" __declspec(dllexport) int __stdcall DllMain(void* /*hModule*/, unsigned long ul_reason_for_call, void* /*lpReserved*/)
 {
-    qor::Module& module = ThisModule();
+    [[maybe_unused]]qor::Module& module = ThisModule();
 	switch (ul_reason_for_call)
 	{
 	case 1://DLL_PROCESS_ATTACH:

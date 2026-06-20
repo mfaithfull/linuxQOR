@@ -29,17 +29,18 @@
 
 namespace qor{
 	
-	Library::Library( const char* name, const char* version, bool bRegister) : m_Name(name), m_Version(version), m_pNext(nullptr)
+	Library::Library( const char* name, const char* version, bool doRegister) : 
+		m_Name(name), 
+		m_Version(version), 
+		m_Next(nullptr)
 	{
-		if(bRegister)
+		if(doRegister)
 		{
 			ThisModule().RegisterLibrary(this); //Register this library into the chain of the owning module
 		}
 	}
 	
-	Library::~Library() noexcept
-	{
-	}
+	Library::~Library() noexcept = default;
 
 	const char* Library::Name() const
 	{
@@ -53,33 +54,33 @@ namespace qor{
 		
 	const Library* Library::Next() const
 	{
-		return m_pNext;
+		return m_Next;
 	}
 	
-	void Library::SetNext(const Library* pNext)
+	void Library::SetNext(const Library* next)
 	{
-		m_pNext = pNext;
+		m_Next = next;
 	}
 
-	void Library::Append( const Library* pLast )
+	void Library::Append( const Library* last )
 	{
-		Library* pEnd = this;
+		Library* end = this;
 
-		while( pEnd->m_pNext != nullptr && pEnd != pLast )
+		while( end->m_Next != nullptr && end != last )
 		{
-			pEnd = const_cast<Library*>(pEnd->m_pNext);
+			end = const_cast<Library*>(end->m_Next);
 		}
 
-		if( pEnd != pLast )
+		if( end != last )
 		{
-			pEnd->m_pNext = pLast;
+			end->m_Next = last;
 		}
 	}
 
 }//qor
 
-static qor::Library _qor_module("Querysoft Open Runtime: Module Library", 
-    qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." qor_pp_stringize(qor_pp_buildnumber));
+static qor::Library _qor_module("Querysoft Open Runtime: Module Library",\
+qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch));
 
 qor::Library& qor_module()
 {

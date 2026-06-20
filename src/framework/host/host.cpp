@@ -53,14 +53,14 @@ namespace qor{ namespace framework{
         return *(TheHost());
     }
     
-	void Host::RegisterModule( Module* pModule)
+	void Host::RegisterModule(Module* module)
 	{
-        m_ModuleReg->Register(*pModule);
+        m_ModuleReg->Register(*module);
 	}
 
-	void Host::UnregisterModule( Module* pModule)
+	void Host::UnregisterModule(Module* module)
 	{
-        m_ModuleReg->Unregister(*pModule);
+        m_ModuleReg->Unregister(*module);
 	}
 
 }}//qor::framework

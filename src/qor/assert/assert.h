@@ -102,7 +102,7 @@ namespace qor{ namespace assert{
     }
 
     template <typename T, size_t N>
-    auto assert_that_internal([[maybe_unused]], bool failOnError, const char* file, int line, std::array<T, N>& v) 
+    auto assert_that_internal([[maybe_unused]]Adl dummy, bool failOnError, const char* file, int line, std::array<T, N>& v) 
     {
         return subject::IteratorsSubject(failOnError, file, line, v.cbegin(), v.cend());
     }

@@ -31,17 +31,18 @@ namespace qor{ namespace framework{
 
     qor_pp_module_interface(QOR_PP_HOST)Module* TheHost();
 
-    class qor_pp_module_interface(QOR_PP_HOST) Host : public qor::Module
+    class qor_pp_module_interface(QOR_PP_HOST) Host final : public qor::Module
     {
 
     public:
 
         Host();
+        virtual ~Host() = default;
 
         static Module& Instance();
 
-        virtual void RegisterModule(Module* pModule);
-        virtual void UnregisterModule(Module* pModule);
+        virtual void RegisterModule(Module* module);
+        virtual void UnregisterModule(Module* module);
 
     };
 

@@ -38,11 +38,11 @@ namespace qor{
 
 		typedef C charT;
 
-		CodePage(const std::string& name, const std::string& MIMEName, const std::string* aliases = nullptr, uint32_t aliasCount = 0) : CodePageBase< C, M >(), m_name(name), m_MIMEName(MIMEName)
+		CodePage(const std::string& name, const std::string& MIMEName, const std::string* aliasArray = nullptr, uint32_t aliasCount = 0) : CodePageBase< C, M >(), m_name(name), m_MIMEName(MIMEName)
 		{
-			while (aliases != nullptr && aliasCount--)
+			while (aliasArray != nullptr && aliasCount--)
 			{
-				std::string alias(aliases[aliasCount]);
+				std::string alias(aliasArray[aliasCount]);
 				m_aliases.push_back(alias);
 			}
 		}

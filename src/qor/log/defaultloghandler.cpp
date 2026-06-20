@@ -74,8 +74,9 @@ namespace qor {
     }
 
     std::string DefaultLogHandler::MessageText(const std::string_view& level, const std::string& what, const std::string& where, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const
-    {
-        return std::vformat("{0}:time_point??: |{2} \"{1}\"\n", std::make_format_args(level, what, where/*, when*/));
+    {                
+        auto nscount = when.time_since_epoch().count();
+        return std::vformat("{0}:{3}: |{2} \"{1}\"\n", std::make_format_args(level, what, where, nscount));
     }
 
     DefaultLogHandler& DefaultLogHandler::Forward(bool forward)

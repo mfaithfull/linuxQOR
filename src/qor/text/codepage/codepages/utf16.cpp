@@ -76,7 +76,7 @@ namespace qor
 				available --;
 				if(available > 0)
 				{
-					char16_t c = *chars++;
+					c = *chars++;
 					char32_t lowDecode = (c - 0XDC00);
 					cp = static_cast<uint32_t>(highDecode + lowDecode);	
 				}

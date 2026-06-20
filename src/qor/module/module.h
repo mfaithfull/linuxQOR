@@ -29,7 +29,7 @@
 
 namespace qor{
     
-    class ModuleRegistry;
+    class qor_pp_export ModuleRegistry;
 
 	class Module : public Library
     {
@@ -38,34 +38,32 @@ namespace qor{
         Module( const char* name, const char* version, bool _register = true);
         virtual ~Module() noexcept;		
 
-		virtual bool RegisterLibrary(Library* pLibrary);			                            //Register a static library as part of this module
-		virtual void UnregisterLibrary(Library* pLibrary);		                                //Unregister a static library from this module
+		virtual bool RegisterLibrary(Library* library);			                            //Register a static library as part of this module
+		virtual void UnregisterLibrary(Library* library);		                            //Unregister a static library from this module
 
         inline void VisitLibraries(void(f)(Library*))
         {
-            for(Library* it = m_pStaticLibraryList; it != nullptr; it = const_cast<Library*>(it->Next()))
+            for(Library* it = m_StaticLibraryList; it != nullptr; it = const_cast<Library*>(it->Next()))
             {
                 f(it);
             }
         }
 
-        virtual void RegisterModule(Module* pModule);
-        virtual void UnregisterModule(Module* pModule);
+        virtual void RegisterModule(Module* module);
+        virtual void UnregisterModule(Module* module);
 
         ModuleRegistry* Modules();
 
     protected:
 
-        Library* m_pStaticLibraryList;
+        Library* m_StaticLibraryList{nullptr};
 	
         Module() = delete;
         Module(const Module&) = delete;
         Module& operator = (const Module&) = delete;
 
-        ModuleRegistry* m_ModuleReg;
-
+        ModuleRegistry* m_ModuleReg{nullptr};
     };
-
 }//qor
 
 extern "C" qor::Module& ThisModule();       //Each and every module that includes this header must provide a ThisModule function returning its module representation object.
@@ -75,7 +73,7 @@ extern "C"{\
     qor::Module& ThisModule(void)\
     {\
 	    static qor::Module QORModule(_X, \
-            qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch) "." qor_pp_stringize(qor_pp_buildnumber));\
+            qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch));\
 	    return QORModule;\
     }\
 }

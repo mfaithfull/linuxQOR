@@ -234,7 +234,7 @@ namespace qor
 
 					for (src_index = 1; src_index < decoded_length; ++src_index)
 					{
-						char8_t c = *chars++;
+						c = *chars++;
 
 						// Check if next byte is valid
 
@@ -257,7 +257,7 @@ namespace qor
 
 					for (src_index = 1; src_index < decoded_length; ++src_index)
 					{
-						char8_t c = *chars++;
+						c = *chars++;
 
 						// Check if next byte is valid
 

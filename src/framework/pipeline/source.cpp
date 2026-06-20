@@ -53,7 +53,7 @@ namespace qor{ namespace pipeline{
         m_sink = sink;
     }
 
-    void Source::SetSource(Element* source)
+    void Source::SetSource(Element* /*source*/)
     {
         //a Source can't have a source. Do nothing
     }
@@ -93,9 +93,7 @@ namespace qor{ namespace pipeline{
         return dynamic_cast<Sink*>(m_sink);
     }
 
-    void Source::SetPlug(Element* plug)
-    {  
-    }
+    void Source::SetPlug(Element* /*plug*/){}
 
     Element* Source::GetPlug() const
     {

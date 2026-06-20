@@ -25,8 +25,11 @@
 #include "../../configuration/configuration.h"
 #include "host.h"
 
-qor::Module& ThisModule(void)
+extern "C"
 {
-	static qor::framework::Host host;
-	return host;
+	qor::Module& ThisModule(void)
+	{
+		static qor::framework::Host host;
+		return host;
+	}
 }
