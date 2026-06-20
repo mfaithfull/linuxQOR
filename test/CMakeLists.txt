@@ -1,7 +1,6 @@
 set(target QORTest)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
-add_subdirectory(mock)
 
 add_executable(QORTest test_main.cpp test_test.cpp test_compiler.cpp 
 mock/test_mock.cpp mock/test_isvirtual.cpp mock/test_args.cpp

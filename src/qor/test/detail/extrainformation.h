@@ -32,7 +32,7 @@ namespace qor{ namespace test { namespace detail {
 	template <typename Expected, typename Actual, bool has_extra = false>
 	struct extra_information
 	{
-		static void print(std::ostringstream& os, const Expected& e, const Actual& a) 
+		static void print(std::ostringstream& /*os*/, const Expected& /*e*/, const Actual& /*a*/)
 		{
 		}
 	};

@@ -54,7 +54,7 @@ namespace qor{ namespace components{
 
     protected:
         
-        virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1 ) { return false; }
+        virtual bool Read(size_t& /*unitsRead*/, size_t /*unitsToRead*/ = 1) { return false; }
         void Setup();
         bool m_Setup;
         pipeline::ByteBuffer m_buffer;

@@ -42,7 +42,7 @@ namespace qor{
         virtual bool IsLocked() const;
 
     private:
-        bool m_Locked;
+        bool m_Locked{ false };
         std::mutex m_Impl;
     };
 

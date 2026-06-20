@@ -26,9 +26,9 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTPARSER_IPV4ADDRESSNODE
 
 #include "src/components/parser/state.h"
-#include "src/components/parser/rfc5234.h"
+#include "src/components/parser/states/rfc5234.h"
 #include "src/components/parser/parser.h"
-#include "src/components/parser/oneormore.h"
+#include "src/components/parser/states/oneormore.h"
 #include "src/components/parser/nodes/char.h"
 #include "../tokendefs.h"
 

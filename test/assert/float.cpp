@@ -40,9 +40,9 @@ namespace test_float {
 
     qor_pp_test_suite_case(Float, IsNan) 
     {
-        float number0 = std::numeric_limits<float>::quiet_NaN();
+        constexpr float number0 = std::numeric_limits<float>::quiet_NaN();
         qor_pp_assert_that(number0).isNan();
-        float number1 = std::numeric_limits<float>::signaling_NaN();
+        constexpr float number1 = std::numeric_limits<float>::signaling_NaN();
         qor_pp_assert_that(number1).isNan();
         //TODO: EXPECT_FATAL_FAILURE(qor_pp_assert_that(2.2).isNan(), "");
     }
@@ -63,7 +63,7 @@ namespace test_float {
 
     qor_pp_test_suite_case(Float, IsNotFinite) 
     {
-        float number0 = std::numeric_limits<float>::signaling_NaN();
+        constexpr float number0 = std::numeric_limits<float>::signaling_NaN();
         qor_pp_assert_that(number0).isNotFinite();
         //TODO: EXPECT_FATAL_FAILURE(qor_pp_assert_that(1.2).isNotFinite(), "");
     }

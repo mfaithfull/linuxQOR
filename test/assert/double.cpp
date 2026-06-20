@@ -40,9 +40,9 @@ namespace test_double {
 
     qor_pp_test_suite_case(DoubleTests, IsNan) 
     {
-        double number0 = std::numeric_limits<double>::quiet_NaN();
+        constexpr double number0 = std::numeric_limits<double>::quiet_NaN();
         qor_pp_assert_that(number0).isNan();
-        double number1 = std::numeric_limits<double>::signaling_NaN();
+        constexpr double number1 = std::numeric_limits<double>::signaling_NaN();
         qor_pp_assert_that(number1).isNan();
         //TODO: EXPECT_FATAL_FAILURE(qor_pp_assert_that(2.2).isNan(), "");
     }
@@ -63,7 +63,7 @@ namespace test_double {
 
     qor_pp_test_suite_case(DoubleTests, IsNotFinite) 
     {
-        double number0 = std::numeric_limits<double>::signaling_NaN();
+        constexpr double number0 = std::numeric_limits<double>::signaling_NaN();
         qor_pp_assert_that(number0).isNotFinite();
         //TODO: EXPECT_FATAL_FAILURE(qor_pp_assert_that(1.2).isNotFinite(), "");
     }

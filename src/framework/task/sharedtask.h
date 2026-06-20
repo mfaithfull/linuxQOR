@@ -47,7 +47,7 @@ namespace qor{
 		struct shared_task_waiter
 		{
 			std::coroutine_handle<> m_continuation;
-			shared_task_waiter* m_next;
+			shared_task_waiter* m_next{ nullptr };
 		};
 
 		class shared_task_promise_base

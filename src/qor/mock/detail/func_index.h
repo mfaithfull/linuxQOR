@@ -36,7 +36,7 @@ namespace qor{ namespace mock{
     // function-index-of-type
     class func_index {
     public:
-        int lci;
+        int lci{ 0 };
         virtual int f0(int) { return lci = 0; }			virtual int f1(int) { return lci = 1; }			virtual int f2(int) { return lci = 2; }			virtual int f3(int) { return lci = 3; }
         virtual int f4(int) { return lci = 4; }			virtual int f5(int) { return lci = 5; }			virtual int f6(int) { return lci = 6; }			virtual int f7(int) { return lci = 7; }
         virtual int f8(int) { return lci = 8; }			virtual int f9(int) { return lci = 9; }			virtual int f10(int) { return lci = 10; }		virtual int f11(int) { return lci = 11; }

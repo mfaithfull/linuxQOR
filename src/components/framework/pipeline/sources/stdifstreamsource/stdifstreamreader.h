@@ -55,7 +55,7 @@ namespace qor{ namespace components{
 
     protected:
         
-        virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 ) { return false; }
+        virtual bool Write(size_t& /*unitsWritten*/, size_t /*unitstoWrite*/ = 1) { return false; }
         void Setup();
         bool m_Setup;
         pipeline::ByteBuffer m_buffer;

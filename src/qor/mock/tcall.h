@@ -46,7 +46,7 @@ namespace qor{ namespace mock{
         
         void printArgs(std::ostream& os) const override
         {
-            if (sizeof...(Args) == 0)
+            if constexpr (sizeof...(Args) == 0)
                 os << "()";
             else if (args)
                 args->print(os);

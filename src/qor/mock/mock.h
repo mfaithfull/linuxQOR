@@ -44,7 +44,7 @@ namespace qor{ namespace mock{
 
         typedef void (*funcptr)();
         friend class MockRepository;
-        unsigned char remaining[sizeof(T)];
+        unsigned char remaining[sizeof(T)]{};
 
         void NotImplemented()
         {
@@ -82,9 +82,12 @@ namespace qor{ namespace mock{
 
             funcTables[0] = funcTable;
             *(void**)this = funcTable;
-            for (unsigned int i = 1; i < sizeof(remaining) / sizeof(funcptr); i++)
+            if constexpr (sizeof(remaining) > sizeof(funcptr))
             {
-                ((void**)this)[i] = (void*)notimplementedfuncs;
+                for (unsigned int i = 1; i < sizeof(remaining) / sizeof(funcptr); i++)
+                {
+                    ((void**)this)[i] = (void*)notimplementedfuncs;
+                }
             }
         }
         

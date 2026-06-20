@@ -248,7 +248,7 @@ namespace qor{ namespace platform{
 
     void FileReader::Read(short& s, arch::Endian endian) const
     {
-        if(sizeof(int16_t) > sizeof(short))
+        if constexpr (sizeof(int16_t) > sizeof(short))
         {
             warning("coersing int16_t to a short looses data on this platform");
         }
@@ -258,7 +258,7 @@ namespace qor{ namespace platform{
 
     void FileReader::Read(unsigned short& us, arch::Endian endian) const
     {
-        if(sizeof(uint16_t) > sizeof(unsigned short))
+        if constexpr (sizeof(uint16_t) > sizeof(unsigned short))
         {
             warning("coersing uint16_t to a unsigned short looses data on this platform");
         }
@@ -278,7 +278,7 @@ namespace qor{ namespace platform{
 
     void FileReader::Read(unsigned int& ui, arch::Endian endian) const
     {
-        if(sizeof(uint32_t) > sizeof(unsigned int))
+        if constexpr (sizeof(uint32_t) > sizeof(unsigned int))
         {
             warning("coersing uint32_t to unsigned int looses data on this platform");
         }
@@ -288,7 +288,7 @@ namespace qor{ namespace platform{
 
     void FileReader::Read(long& l, arch::Endian endian) const
     {
-        if(sizeof(int32_t) > sizeof(long))
+        if constexpr (sizeof(int32_t) > sizeof(long))
         {
             warning("coersing int32_t to long looses data on this platform");
         }
@@ -298,7 +298,7 @@ namespace qor{ namespace platform{
 
     void FileReader::Read(unsigned long& ul, arch::Endian endian) const
     {
-        if(sizeof(uint32_t) > sizeof(unsigned long))
+        if constexpr (sizeof(uint32_t) > sizeof(unsigned long))
         {
             warning("coersing uint32_t to unsigned long looses data on this platform");
         }
@@ -308,7 +308,7 @@ namespace qor{ namespace platform{
 
     void FileReader::Read(long long& ll, arch::Endian endian) const
     {
-        if(sizeof(int64_t) > sizeof(long long))
+        if constexpr (sizeof(int64_t) > sizeof(long long))
         {
             warning("coersing int64_t to long long looses data on this platform");
         }
@@ -318,7 +318,7 @@ namespace qor{ namespace platform{
 
     void FileReader::Read(unsigned long long& ull, arch::Endian endian) const
     {
-        if(sizeof(uint64_t) > sizeof(unsigned long long))
+        if constexpr (sizeof(uint64_t) > sizeof(unsigned long long))
         {
             warning("coersing uint64_t to unsigned long long looses data on this platform");
         }
@@ -328,7 +328,7 @@ namespace qor{ namespace platform{
 
     void FileReader::Read(float& f, arch::Endian endian) const
     {
-        if(sizeof(uint32_t) != sizeof(float))
+        if constexpr (sizeof(uint32_t) != sizeof(float))
         {
             serious("coersing 4 bytes to float is incompatble with this platform");
             f = 0.0;
@@ -342,7 +342,7 @@ namespace qor{ namespace platform{
 
     void FileReader::Read(double& d, arch::Endian endian) const
     {
-        if(sizeof(uint64_t) != sizeof(double))
+        if constexpr (sizeof(uint64_t) != sizeof(double))
         {
             serious("coersing 8 bytes to double is incompatble with this platform");
             d = 0.0;

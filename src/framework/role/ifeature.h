@@ -45,7 +45,7 @@ namespace qor{ namespace framework{
 
     protected:
 
-        IRole* m_Role;
+        IRole* m_Role{ nullptr };
 
     private:
         IFeature(const IFeature&) = delete;

@@ -42,7 +42,7 @@ namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFi
 namespace qor{ namespace platform { namespace nswindows{    
 
 
-    unsigned long File::GetDesiredAccess(int openFor, int withFlags)
+    unsigned long File::GetDesiredAccess(int openFor, int /*withFlags*/)
     {
         unsigned long desiredAccess = 0;
         switch(openFor)
@@ -65,7 +65,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return desiredAccess;
     }
     
-    unsigned long File::GetShareMode(int openFor, int withFlags)
+    unsigned long File::GetShareMode(int /*openFor*/, int withFlags)
     {
         unsigned long shareMode = 0;
         if((static_cast<unsigned>(WithFlags::Exclusive) & withFlags) != 0)
@@ -97,7 +97,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return creationDisposition;
     }
 
-    unsigned long File::GetFlagsAndAttributes(int openFor, int withFlags)
+    unsigned long File::GetFlagsAndAttributes(int openFor, int /*withFlags*/)
     {        
         return FILE_ATTRIBUTE_NORMAL;
     }
@@ -283,7 +283,7 @@ namespace qor{ namespace platform { namespace nswindows{
         return numberofBytesWritten;
     }
     
-    int File::ChangeMode(unsigned int mode)
+    int File::ChangeMode(unsigned int /*mode*/)
     {
         return -1;
     }
@@ -294,13 +294,15 @@ namespace qor{ namespace platform { namespace nswindows{
         return nullref;
     }
 
-    int File::AsyncRead(byte* buffer, size_t byteCount, off_t offset)
+    int File::AsyncRead(byte* /*buffer*/, size_t /*byteCount*/, off_t /*offset*/)
     {
+        //TODO:
         return -1;
     }
 
-    int File::AsyncWrite(byte* buffer, size_t byteCount, off_t offset)
+    int File::AsyncWrite(byte* /*buffer*/, size_t /*byteCount*/, off_t /*offset*/)
     {
+        //TODO:
         return -1;
     }
 

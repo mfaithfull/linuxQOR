@@ -388,7 +388,10 @@ namespace qor{
             {
                 text::OutOfRangeError(index, Length(), sizeof(T), m_p);
             }
-            return m_p[index];
+            else
+            {
+                return m_p[index];
+            }
         }
 
         template<typename C = T>

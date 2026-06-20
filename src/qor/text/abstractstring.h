@@ -132,8 +132,7 @@ namespace qor{
 
         bool operator == (const AbstractString& cmp) const
         {
-            /*Ignoring normalisation for now, strings of exactly the same type are equal if their buffers are equal*/
-            return cmp.view() == view();
+            return this->view() == cmp.view();
         }
 
         //All string classes inherit and expose

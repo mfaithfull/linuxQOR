@@ -145,8 +145,8 @@ namespace qor{ namespace pipeline{
         bool m_writable;
         bool m_readable;
         bool m_async;
-        Element* m_source;
-        Element* m_sink;        
+        Element* m_source{ nullptr };
+        Element* m_sink{ nullptr };
     };
 
 }}//qor::pipeline

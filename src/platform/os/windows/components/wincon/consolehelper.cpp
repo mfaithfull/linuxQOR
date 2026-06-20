@@ -259,7 +259,7 @@ namespace qor { namespace components { namespace nswindows {
 		return result;
 	}
 
-	bool ConsoleHelper::GetHistoryInfo(ConsoleHistoryInfo& consoleHistoryInfo)
+	bool ConsoleHelper::GetHistoryInfo(ConsoleHistoryInfo& /*consoleHistoryInfo*/)
 	{
 		qor_pp_ofcontext;
 		bool result = false;
@@ -356,7 +356,7 @@ namespace qor { namespace components { namespace nswindows {
 	{
 		qor_pp_ofcontext;
 		HANDLE h = nullptr;
-		DWORD handle = -1;
+		DWORD handle = (DWORD)(-1);
 		try 
 		{
 			switch(nStdHandle)
@@ -390,7 +390,7 @@ namespace qor { namespace components { namespace nswindows {
 	bool ConsoleHelper::SetCtrlHandler(CtrlHandlerCallback handlerRoutine, bool add)
 	{
 		qor_pp_ofcontext;
-		bool result;
+		bool result = false;
 		try
 		{
 			result = Kernel32::SetConsoleCtrlHandler(handlerRoutine, add);
@@ -432,7 +432,7 @@ namespace qor { namespace components { namespace nswindows {
 		bool result = false;
 		try
 		{
-			DWORD h = -1;
+			DWORD h = (DWORD)(-1);
 			switch (stdHandle)
 			{
 			case hStdIn:

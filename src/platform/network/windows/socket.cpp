@@ -95,7 +95,7 @@ namespace qor{ namespace network{ namespace nswindows{
         return WS2::listen(m_socket, iBacklog);
     }
  
-    ref_of<network::Socket>::type Socket::Accept(network::Address& Address)
+    ref_of<network::Socket>::type Socket::Accept(network::Address& /*Address*/)
     {
         ref_of<network::Socket>::type newsocket;
         sockaddr addr;
@@ -123,14 +123,14 @@ namespace qor{ namespace network{ namespace nswindows{
         return WS2::connect(m_socket, (const sockaddr*)&addr, len);
     }
  
-    int32_t Socket::GetPeerName(network::Address& Address)
+    int32_t Socket::GetPeerName(network::Address& /*Address*/)
     {
         sockaddr addr;
         socklen_t len;
         return WS2::getpeername(m_socket, &addr, &len);
     }
  
-    int32_t Socket::GetSockName(network::Address& Address)
+    int32_t Socket::GetSockName(network::Address& /*Address*/)
     {
         sockaddr addr;
         socklen_t len;
@@ -213,7 +213,7 @@ namespace qor{ namespace network{ namespace nswindows{
 
     bool Socket::SetNonBlocking(bool nonBlocking)
     {
-        u_long mode = 1;  // 1 to enable non-blocking socket
+        u_long mode = nonBlocking ? 1 : 0;  // 1 to enable non-blocking socket
         return WS2::ioctlsocket(m_socket, FIONBIO, &mode) == 0 ? true : false;
     }
 
@@ -256,7 +256,6 @@ namespace qor{ namespace network{ namespace nswindows{
     {
         int noDelayOpt = nodelay ? 1 : 0;
         return SetSockOpt(IPPROTO_TCP, TCP_NODELAY, (const char*)&noDelayOpt, sizeof(int)) == 0;
-        return false;
     }
 
     bool Socket::SetIPv6Only(bool ipv6Only)
@@ -329,7 +328,7 @@ namespace qor{ namespace network{ namespace nswindows{
         return result;
     }
 
-    int Socket::TypeToWindows(const network::sockets::eType& Type, bool closeOnExec)
+    int Socket::TypeToWindows(const network::sockets::eType& Type, bool /*closeOnExec*/)
     {
         int type = SOCK_STREAM;
         switch(Type)

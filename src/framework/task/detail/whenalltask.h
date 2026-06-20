@@ -161,9 +161,9 @@ namespace qor{	namespace detail{
 			}
 		}
 
-		WhenAllCounter* m_counter;
-		std::exception_ptr m_exception;
-		std::add_pointer_t<RESULT> m_result;
+		WhenAllCounter* m_counter{ nullptr };
+		std::exception_ptr m_exception{};
+		std::add_pointer_t<RESULT> m_result{};
 
 	};
 

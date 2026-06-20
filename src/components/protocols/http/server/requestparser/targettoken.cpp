@@ -37,7 +37,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
     void target::Emit()
     {
         log::debug("Emitting a target.");        
-        uriForm form;
+        uriForm form = form_origin;
         UriOriginForm originURI;
         UriAbsoluteForm absoluteURI;
         UriAuthorityForm authorityURI;

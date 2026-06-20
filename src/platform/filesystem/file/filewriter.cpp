@@ -198,7 +198,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const char c, arch::Endian endian) const
     {
-        if(sizeof(char) > 1)
+        if constexpr(sizeof(char) > 1)
         {
             warning("coersing char to byte for serialization looses data on this platform.");
         }
@@ -207,7 +207,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const unsigned char c, arch::Endian endian) const
     {
-        if(sizeof(unsigned char) > 1)
+        if constexpr(sizeof(unsigned char) > 1)
         {
             warning("coersing unsigned char to byte for serialization looses data on this platform.");
         }
@@ -216,7 +216,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const bool b, arch::Endian endian) const
     {
-        if(sizeof(bool) > 1)
+        if constexpr(sizeof(bool) > 1)
         {
             warning("coersing bool to byte for serialization looses data on this platform.");
         }
@@ -225,7 +225,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const short s, arch::Endian endian) const
     {
-        if(sizeof(short) > sizeof(int16_t))
+        if constexpr(sizeof(short) > sizeof(int16_t))
         {
             warning("coersing short to int16_t for serialization looses data on this platform");
         }
@@ -235,7 +235,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const unsigned short s, arch::Endian endian) const
     {
-        if(sizeof(unsigned short) > sizeof(uint16_t))
+        if constexpr(sizeof(unsigned short) > sizeof(uint16_t))
         {
             warning("coersing unsigned short to uint16_t for serialization looses data on this platform");
         }
@@ -245,7 +245,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const int i, arch::Endian endian) const
     {
-        if(sizeof(int) > sizeof(int32_t))
+        if constexpr(sizeof(int) > sizeof(int32_t))
         {
             warning("coersing int to int32_t for serialization looses data on this platform");
         }
@@ -255,7 +255,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const unsigned int ui, arch::Endian endian) const
     {
-        if(sizeof(unsigned int) > sizeof(uint32_t))
+        if constexpr(sizeof(unsigned int) > sizeof(uint32_t))
         {
             warning("coersing unsigned int to uint32_t for serialization looses data on this platform");
         }
@@ -265,7 +265,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const long l, arch::Endian endian) const
     {
-        if(sizeof(long) > sizeof(int32_t))
+        if constexpr (sizeof(long) > sizeof(int32_t))
         {
             warning("coersing long to int32_t for serialization looses data on this platform");
         }
@@ -275,7 +275,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const unsigned long ul, arch::Endian endian) const
     {
-        if(sizeof(unsigned long) > sizeof(uint32_t))
+        if constexpr(sizeof(unsigned long) > sizeof(uint32_t))
         {
             warning("coersing unsigned long to uint32_t for serialization looses data on this platform");
         }
@@ -285,7 +285,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const long long ll, arch::Endian endian) const
     {
-        if(sizeof(long long) > sizeof(int64_t))
+        if constexpr(sizeof(long long) > sizeof(int64_t))
         {
             warning("coersing long long to int64_t for serialization looses data on this platform");
         }
@@ -296,7 +296,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const unsigned long long ull, arch::Endian endian) const
     {
-        if(sizeof(unsigned long long) > sizeof(uint64_t))
+        if constexpr (sizeof(unsigned long long) > sizeof(uint64_t))
         {
             warning("coersing unsigned long long to uint64_t for serialization looses data on this platform");
         }
@@ -306,7 +306,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const float f, arch::Endian endian) const
     {
-        if(sizeof(float) > sizeof(uint32_t))
+        if constexpr (sizeof(float) > sizeof(uint32_t))
         {
             warning("coersing float to 4 bytes for serialization looses data on this platform. Will use 8 byte type.");
             double d = f;
@@ -321,7 +321,7 @@ namespace qor{ namespace platform{
 
     void FileWriter::Write(const double d, arch::Endian endian) const
     {
-        if(sizeof(double) > sizeof(uint64_t))
+        if constexpr(sizeof(double) > sizeof(uint64_t))
         {
             serious("coersing double to 8 bytes for serialization looses data on this platfrom. Output would be corrupt.");
         }

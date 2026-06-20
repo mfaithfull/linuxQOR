@@ -45,7 +45,7 @@ namespace qor{
     private:
 
         iterator m_ptr;
-        containerPtrT m_containerPtr;
+        containerPtrT m_containerPtr{ nullptr };
 
     public:
 

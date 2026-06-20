@@ -39,7 +39,7 @@ namespace qor{ namespace components{
             size_t output_space = (unitsToProcess + 2 ) / 3 * 4;
             output_space = std::min(output_space, writeCount);
             int val = 0, valb = -6;
-            unsigned char* c = data;
+            //unsigned char* c = data;
             size_t index = 0;
             size_t outindex = 0;
             while(index < unitsToProcess && outindex < output_space)

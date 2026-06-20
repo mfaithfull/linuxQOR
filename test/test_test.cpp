@@ -54,8 +54,8 @@ qor_pp_test_case(Check_qor_pp_test_check_FailThrowsFailureWithContainedCheckExpr
 
 struct MyType
 {
-	bool operator==(const MyType& other) const { return true; }
-	bool operator!=(const MyType& other) const { return false; }
+	bool operator==(const MyType& /*other*/) const { return true; }
+	bool operator!=(const MyType& /*other*/) const { return false; }
 };
 
 
@@ -67,8 +67,8 @@ std::ostream& operator<<(std::ostream& out, const MyType&)
 
 struct TWithoutStream
 {
-	bool operator==(const TWithoutStream& other) const { return true; }
-	bool operator!=(const TWithoutStream& other) const { return false; }
+	bool operator==(const TWithoutStream& /*other*/) const { return true; }
+	bool operator!=(const TWithoutStream& /*other*/) const { return false; }
 };
 
 

@@ -54,7 +54,7 @@ struct counted
 
 	counted() : id(default_construction_count++) {}
 	counted(const counted& other) : id(other.id) { ++copy_construction_count; }
-	counted(counted&& other) : id(other.id) { ++move_construction_count; other.id = -1; }
+	counted(counted&& other) noexcept : id(other.id) { ++move_construction_count; other.id = -1; }
 	~counted() { ++destruction_count; }
 
 };

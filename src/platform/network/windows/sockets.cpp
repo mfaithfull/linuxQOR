@@ -41,7 +41,7 @@ using namespace qor::nswindows::api;
 
 namespace qor{ namespace network{ namespace nswindows{
 
-    void AddressInfoFlagsToWindows(const network::addrinfo_flags& flags, int& out)
+    void AddressInfoFlagsToWindows(const network::addrinfo_flags& /*flags*/, int& out)
     {
         out = 0;
         //TODO:
@@ -63,7 +63,7 @@ namespace qor{ namespace network{ namespace nswindows{
         addressinfo.protocol = Socket::ProtocolFromWindows(info.ai_protocol);
         addressinfo.family = Socket::AddressFamilyFromWindows(info.ai_family);
         addressinfo.canonname = info.ai_canonname == nullptr ? "" : std::string(info.ai_canonname);
-        addressinfo.address.sa_family = addressinfo.family;
+        addressinfo.address.sa_family = static_cast<unsigned short>(addressinfo.family);
         memcpy(addressinfo.address.sa.sa_data, info.ai_addr->sa_data, info.ai_addrlen);
     }
 
@@ -95,7 +95,7 @@ namespace qor{ namespace network{ namespace nswindows{
 
     void Sockets::Shutdown()
     {
-        int err = WS2::WSACleanup();
+        [[maybe_unused]]int err = WS2::WSACleanup();
     }
 
     int Sockets::GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results) const

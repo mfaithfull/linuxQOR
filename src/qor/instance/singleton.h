@@ -149,7 +149,7 @@ namespace qor{
             bool initialised;
             bool redirected;
             RecursiveMutex m;
-            SingletonInstanceHolder<T>* redirect;
+            SingletonInstanceHolder<T>* redirect{ nullptr };
         };
 
     }//detail

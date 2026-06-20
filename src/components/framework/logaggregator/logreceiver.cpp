@@ -97,9 +97,9 @@ namespace qor { namespace components{
         m_running = false;
     }
 
-    void LogReceiver::queueSlot(PendingSlot data, ConnectionKind type)
+    void LogReceiver::queueSlot(PendingSlot data, ConnectionKind /*type*/)
     {
-        SlotBase* receiver = data.receiver();
+        //SlotBase* receiver = data.receiver();
         std::scoped_lock<std::mutex> lock(m_mutex);
         m_array.push_back(std::move(data));
         m_alarm.notify_one();

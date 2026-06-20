@@ -117,7 +117,7 @@ qor_pp_test_suite_case(PropertyTestSuite, canMakeAVectorValue)
             case PVT_Value:
                 if (prop.CheckValueType<int>())
                 {
-                    auto value = prop.Value().Get<int>();
+                    [[maybe_unused]]auto value = prop.Value().Get<int>();
                 }
                 break;
             }

@@ -35,12 +35,12 @@ namespace qor {
         ReturnCheckBase() = default;
         virtual ~ReturnCheckBase() = default;
 
-        virtual bool Test(TValue& value)
+        virtual bool Test(TValue& /*value*/)
         {
             return false;
         }
 
-        virtual void DefaultInit(TValue& value)
+        virtual void DefaultInit(TValue& /*value*/)
         {
         }
 
@@ -63,7 +63,7 @@ namespace qor {
     {
     public:
 
-        virtual bool Test(TValue& value)
+        virtual bool Test(TValue& /*value*/)
         {
             return true;
         }

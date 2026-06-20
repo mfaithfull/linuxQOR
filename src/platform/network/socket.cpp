@@ -198,7 +198,7 @@ namespace qor{ namespace network{
     std::size_t Socket::ID(void)
     {
         //Provide an override implementation specific to your platform
-        return -1;
+        return (std::size_t)( -1);
     }
 
     int32_t Socket::GetLastError(void)

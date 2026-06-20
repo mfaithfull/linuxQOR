@@ -37,7 +37,7 @@ qor_pp_test_case(iterateOverConstBuffer)
     LinearIterator< ConstBuffer<char> > it(charBuffer);
     while(it != it.end())
     {
-        char a = *it;
+        [[maybe_unused]]char a = *it;
         ++it;
     };    
 }
@@ -48,7 +48,7 @@ qor_pp_test_case(iterateOverEncodedBuffer)
     LinearIterator< EncodedBuffer<char16_t> > it(utf16Buffer);
     while(it != it.end())
     {
-        char16_t c = *it;
+        [[maybe_unused]]char16_t c = *it;
         ++it;
     };
 }

@@ -35,8 +35,8 @@ namespace qor { namespace test
 		private:
 
 			std::list<std::string> m_Failures;
-			size_t m_fail, m_pass;
-			clock_t m_start, m_end;
+            size_t m_fail{ 0 }, m_pass{ 0 };
+            clock_t m_start{ 0 }, m_end{ 0 };
 			
 			void ReportSummary()
 			{

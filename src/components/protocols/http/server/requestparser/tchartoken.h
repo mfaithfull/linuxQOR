@@ -29,10 +29,11 @@
 
 #include "src/qor/log/log.h"
 #include "src/components/parser/state.h"
-#include "src/components/parser/rfc5234.h"
+#include "src/components/parser/states/rfc5234.h"
 #include "tokendefs.h"
 #include "src/components/parser/parser.h"
-#include "src/components/parser/oneormore.h"
+#include "src/components/parser/states/oneormore.h"
+#include "src/components/parser/states/anyoneofset.h"
 #include "src/components/parser/nodes/char.h"
 #include "src/components/parser/nodes/digit.h"
 #include "nodes/tcharnode.h"

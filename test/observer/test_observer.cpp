@@ -47,7 +47,7 @@ class ObservingView
 
     ObservingView() : m_ObservationCount(0) {}
 
-    void Update(ModelTarget& target)
+    void Update(ModelTarget& /*target*/)
     {
         ++m_ObservationCount;
         std::cout << " Target observed.";

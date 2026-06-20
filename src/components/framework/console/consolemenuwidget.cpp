@@ -76,7 +76,7 @@ namespace qor { namespace components {
                 maxWidth = item->itemText.size();
             }
         }
-        Size maxsize = {maxWidth + 4, maxHeight};
+        Size maxsize = {static_cast<long>(maxWidth + 4), static_cast<long>(maxHeight)};
         return maxsize;
     }
 

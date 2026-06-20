@@ -28,10 +28,10 @@
 #include <map>
 
 #include "src/components/parser/state.h"
-#include "src/components/parser/rfc5234.h"
+#include "src/components/parser/states/rfc5234.h"
 #include "src/components/parser/tokens.h"
 #include "src/components/parser/parser.h"
-#include "src/components/parser/oneormore.h"
+#include "src/components/parser/states/oneormore.h"
 #include "src/components/parser/nodes/char.h"
 
 namespace qor { namespace components { namespace protocols { namespace http { namespace response {
@@ -96,7 +96,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
     class SpecificString : public parser::OneOrMore
     {
-    public: SpecificString(parser::Parser* parser, const std::string& specific) : parser::OneOrMore(parser,
+    public: SpecificString(parser::Parser* parser, const std::string& /*specific*/) : parser::OneOrMore(parser,
                 new_ref<parser::CHAR>(parser),
                 static_cast<uint64_t>(httpResponseToken::specificString)
             )
