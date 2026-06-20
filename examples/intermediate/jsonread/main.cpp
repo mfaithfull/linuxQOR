@@ -25,7 +25,6 @@
 //JSON parsing example
 
 #include "src/configuration/configuration.h"
-#include "src/qor/log/no_logs.h"
 
 #include "sdk/using_framework.h"
 #include "sdk/using_platform.h"
@@ -68,7 +67,7 @@ void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAg
     logAggregator(qor_shared).Receiver().WriteToStandardOutput(true);
 }
 
-int main(const int argc, const char** argv, char** env)
+int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
 {
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
     qor_pp_fcontext;

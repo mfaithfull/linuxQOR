@@ -25,7 +25,12 @@
 #ifndef QOR_PP_H_COMPONENTS_PARSER_RFC5234
 #define QOR_PP_H_COMPONENTS_PARSER_RFC5234
 
-#include "state.h"
+#include "../state.h"
+#include "specific.h"
+#include "oneofarange.h"
+#include "anyoneof.h"
+#include "sequence.h"
+#include "zeroormore.h"
 
 namespace qor { namespace components { namespace parser {
 
@@ -74,8 +79,8 @@ namespace qor { namespace components { namespace parser {
     class qor_pp_module_interface(QOR_PARSER) CTL : public AnyOneOf
     { public : CTL(Parser* parser) : 
         AnyOneOf(parser, 
-            new_ref<OneOfARange>(parser, 0x00, 0x1f, static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(), 
-            new_ref<Specific>(parser, 0x7f, static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(),
+            new_ref<OneOfARange>(parser, 0x00, 0x1f, static_cast<uint64_t>(eToken::Lexical)), 
+            new_ref<Specific>(parser, 0x7f, static_cast<uint64_t>(eToken::Lexical)),
             static_cast<uint64_t>(eToken::Control)
         ){} 
         virtual ~CTL() = default;
@@ -83,14 +88,15 @@ namespace qor { namespace components { namespace parser {
     };
 
     class qor_pp_module_interface(QOR_PARSER) HEXDIGIT : public AnyOneOf
-    { public : HEXDIGIT(Parser* parser) :
+    { 
+    public : HEXDIGIT(Parser* parser) :
         AnyOneOf(parser,
-            new_ref<DIGIT>(parser).AsRef<ParserState>(),
+            new_ref<DIGIT>(parser),
             new_ref<AnyOneOf>(parser,
-                new_ref<OneOfARange>(parser, 'A', 'F', static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(),
-                new_ref<OneOfARange>(parser, 'a', 'f', static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(),
+                new_ref<OneOfARange>(parser, 'A', 'F', static_cast<uint64_t>(eToken::Lexical)),
+                new_ref<OneOfARange>(parser, 'a', 'f', static_cast<uint64_t>(eToken::Lexical)),
                 static_cast<uint64_t>(eToken::Lexical)
-            ).AsRef<ParserState>(),
+            ),
             static_cast<uint64_t>(eToken::HexDigit)
         ){}
         virtual ~HEXDIGIT() = default;
@@ -102,8 +108,8 @@ namespace qor { namespace components { namespace parser {
     class qor_pp_module_interface(QOR_PARSER) WSP : public AnyOneOf
     { public: WSP(Parser* parser) :
         AnyOneOf(parser,
-            new_ref<SP>(parser).AsRef<ParserState>(),
-            new_ref<HTAB>(parser).AsRef<ParserState>(),
+            new_ref<SP>(parser),
+            new_ref<HTAB>(parser),
             static_cast<uint64_t>(eToken::WhiteSpace)
         ){}
         virtual ~WSP() = default;
@@ -112,7 +118,7 @@ namespace qor { namespace components { namespace parser {
 
     class qor_pp_module_interface(QOR_PARSER) CRLF : public Sequence
     { public : CRLF(Parser* parser) :
-        Sequence(parser, new_ref<CR>(parser).AsRef<ParserState>(), new_ref<LF>(parser).AsRef<ParserState>(), static_cast<uint64_t>(eToken::CarriageReturnLineFeed)){}
+        Sequence(parser, new_ref<CR>(parser), new_ref<LF>(parser), static_cast<uint64_t>(eToken::CarriageReturnLineFeed)){}
         virtual ~CRLF() = default;
         virtual void Emit(){}
     };
@@ -121,10 +127,10 @@ namespace qor { namespace components { namespace parser {
     { public : LWSP(Parser* parser) :
         ZeroOrMore(parser,
             new_ref<AnyOneOf>(parser,
-                new_ref<WSP>(parser).AsRef<ParserState>(),
-                new_ref<CRLF>(parser).AsRef<ParserState>(),
+                new_ref<WSP>(parser),
+                new_ref<CRLF>(parser),
                 static_cast<uint64_t>(eToken::Lexical)
-            ).AsRef<ParserState>(),
+            ),
             static_cast<uint64_t>(eToken::LinearWhiteSpace)
         ){}
         virtual ~LWSP() = default;
@@ -134,8 +140,8 @@ namespace qor { namespace components { namespace parser {
     class qor_pp_module_interface(QOR_PARSER) BIT : public AnyOneOf
     { public : BIT(Parser* parser) :
         AnyOneOf(parser,
-            new_ref<Specific>(parser, '0', static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(),
-            new_ref<Specific>(parser, '1', static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(),
+            new_ref<Specific>(parser, '0', static_cast<uint64_t>(eToken::Lexical)),
+            new_ref<Specific>(parser, '1', static_cast<uint64_t>(eToken::Lexical)),
             static_cast<uint64_t>(eToken::Bit)
         ){}
         virtual ~BIT() = default;
@@ -151,8 +157,8 @@ namespace qor { namespace components { namespace parser {
     class qor_pp_module_interface(QOR_PARSER) ALPHA : public AnyOneOf
     { public: ALPHA(Parser* parser) :
         AnyOneOf(parser,
-            new_ref<OneOfARange>(parser, 0x41, 0x5A, static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(),
-            new_ref<OneOfARange>(parser, 0x61, 0x7A, static_cast<uint64_t>(eToken::Lexical)).AsRef<ParserState>(),
+            new_ref<OneOfARange>(parser, 0x41, 0x5A, static_cast<uint64_t>(eToken::Lexical)),
+            new_ref<OneOfARange>(parser, 0x61, 0x7A, static_cast<uint64_t>(eToken::Lexical)),
             static_cast<uint64_t>(eToken::Alpha)
         ){}
         virtual ~ALPHA() = default;

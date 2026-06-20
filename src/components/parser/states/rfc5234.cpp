@@ -26,11 +26,11 @@
 #include "src/configuration/configuration.h"
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/error/error.h"
-#include "parser.h"
+#include "../parser.h"
 #include "rfc5234.h"
-#include "nodes/digit.h"
-#include "nodes/char.h"
-#include "nodes/hexdigit.h"
+#include "../nodes/digit.h"
+#include "../nodes/char.h"
+#include "../nodes/hexdigit.h"
 
 namespace qor { namespace components { namespace parser {
 

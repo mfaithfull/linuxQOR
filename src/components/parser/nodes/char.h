@@ -34,9 +34,7 @@ namespace qor { namespace components{ namespace parser{
     {
     public:
 
-        CharNode(char charVal, uint64_t token) : Node(token) , m_value(charVal)
-        {
-        }
+        CharNode(char charVal, uint64_t token) : Node(token) , m_value(charVal){ }
 
         virtual ~CharNode() = default;
 

@@ -30,17 +30,19 @@
 
 namespace qor{
     
+	//NOTE: T must be default constructable
+
 	template< class T >
 	class tflink
 	{
 	public:	
 
-		tflink()
+		tflink() : m_Item( T() )
 		{
 			m_pNext = nullptr;
 		}
 
-		tflink( T _t ) : m_Item( _t )
+		tflink( T t ) : m_Item( t )
 		{
 			m_pNext = nullptr;
 		}

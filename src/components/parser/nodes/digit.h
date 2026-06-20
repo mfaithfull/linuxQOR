@@ -34,9 +34,7 @@ namespace qor { namespace components{ namespace parser{
     {
     public:
 
-        DigitNode(int digitVal) : Node(static_cast<uint64_t>(eToken::Digit)) , m_value(digitVal)
-        {
-        }
+        DigitNode(int digitVal) : Node(static_cast<uint64_t>(eToken::Digit)) , m_value(digitVal){ }
         
         virtual ~DigitNode() = default;
 

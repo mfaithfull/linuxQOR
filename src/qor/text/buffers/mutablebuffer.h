@@ -360,8 +360,12 @@ namespace qor{
             if (m_p == nullptr || index >= Length())
             {
                 text::OutOfRangeError(index, Length(), sizeof(T), m_p);
+                return T(0);
             }				
-            return m_p[index];
+            else
+            {
+                return m_p[index];
+            }
         }
 
         bool Set(size_t index, const T& item)

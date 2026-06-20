@@ -25,9 +25,9 @@
 #include "src/configuration/configuration.h"
 
 #include "src/platform/compiler/compiler.h"
-#include "state.h"
-#include "context.h"
-#include "parser.h"
+#include "anyoneofset.h"
+#include "../context.h"
+#include "../parser.h"
 
 namespace qor { namespace components { namespace parser {
 

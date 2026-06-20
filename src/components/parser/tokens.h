@@ -30,10 +30,11 @@
 
 namespace qor { namespace components { namespace parser {
 
+    //RFC5234 tokens
     enum class eToken : uint64_t
     {
-        Lexical = 0,
-        Octet = 1ull << 32,
+        Lexical = 1,
+        Octet,
         CarriageReturn,
         LineFeed,
         HorizontalTab,
@@ -49,28 +50,27 @@ namespace qor { namespace components { namespace parser {
         Bit,
         Char,
         Alpha,
-
         Max,
     };
 
-    inline const std::map<uint64_t, std::string> tokenNames = {{
-        {static_cast< uint64_t>(eToken::Lexical), "Lexical"},
-        {static_cast< uint64_t>(eToken::Octet), "Octet"},
-        {static_cast< uint64_t>(eToken::CarriageReturn), "CarriageReturn"},
-        {static_cast< uint64_t>(eToken::LineFeed), "LineFeed"},
-        {static_cast< uint64_t>(eToken::HorizontalTab), "HorizontalTab"},
-        {static_cast< uint64_t>(eToken::DoubleQuote), "DoubleQuote"},
-        {static_cast< uint64_t>(eToken::Space), "Space"},
-        {static_cast< uint64_t>(eToken::Digit), "Digit"},
-        {static_cast< uint64_t>(eToken::VisibleChar), "VisibleChar"},
-        {static_cast< uint64_t>(eToken::Control), "Control"},
-        {static_cast< uint64_t>(eToken::HexDigit), "HexDigit"},
-        {static_cast< uint64_t>(eToken::WhiteSpace), "WhiteSpace"},
-        {static_cast< uint64_t>(eToken::LinearWhiteSpace), "LinearWhiteSpace"},
-        {static_cast< uint64_t>(eToken::CarriageReturnLineFeed), "CarriageReturnLineFeed"},
-        {static_cast< uint64_t>(eToken::Bit), "Bit"},
-        {static_cast< uint64_t>(eToken::Char), "Char"},
-        {static_cast< uint64_t>(eToken::Alpha), "Alpha"},
+    inline const std::map<eToken, std::string> tokenNames = {{
+        {eToken::Lexical, "Lexical"},
+        {eToken::Octet, "Octet"},
+        {eToken::CarriageReturn, "CarriageReturn"},
+        {eToken::LineFeed, "LineFeed"},
+        {eToken::HorizontalTab, "HorizontalTab"},
+        {eToken::DoubleQuote, "DoubleQuote"},
+        {eToken::Space, "Space"},
+        {eToken::Digit, "Digit"},
+        {eToken::VisibleChar, "VisibleChar"},
+        {eToken::Control, "Control"},
+        {eToken::HexDigit, "HexDigit"},
+        {eToken::WhiteSpace, "WhiteSpace"},
+        {eToken::LinearWhiteSpace, "LinearWhiteSpace"},
+        {eToken::CarriageReturnLineFeed, "CarriageReturnLineFeed"},
+        {eToken::Bit, "Bit"},
+        {eToken::Char, "Char"},
+        {eToken::Alpha, "Alpha"},
     }};
 
 }}}//qor::components::parser

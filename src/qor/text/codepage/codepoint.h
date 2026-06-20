@@ -33,17 +33,11 @@ namespace qor{
 	{
 	public:
     
-        CodePoint(uint32_t codePoint) : m_codePoint(codePoint)
-        {
-        }
+        CodePoint(uint32_t codePoint) noexcept : m_codePoint(codePoint){ }
 
-        CodePoint(const CodePoint& src) : m_codePoint(src.m_codePoint)
-        {
-        }
+        CodePoint(const CodePoint& src) noexcept : m_codePoint(src.m_codePoint){ }
 
-        CodePoint(const CodePoint&& src) : m_codePoint(src.m_codePoint)
-        {
-        }
+        CodePoint(const CodePoint&& src) noexcept : m_codePoint(src.m_codePoint){ }
 
         CodePoint& operator = (const CodePoint& src)
         {
@@ -51,7 +45,7 @@ namespace qor{
             return *this;
         }        
 
-        CodePoint& operator = (const CodePoint&& src)
+        CodePoint& operator = (const CodePoint&& src) noexcept
         {
             m_codePoint = src.m_codePoint;
             return *this;

@@ -22,27 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_ONEORMORE
-#define QOR_PP_H_COMPONENTS_PARSER_ONEORMORE
+#ifndef QOR_PP_H_COMPONENTS_PARSER_STATES_SEQUENCE
+#define QOR_PP_H_COMPONENTS_PARSER_STATES_SEQUENCE
 
-#include "state.h"
+#include "../state.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor {
+    namespace components {
+        namespace parser {
 
-    class qor_pp_module_interface(QOR_PARSER) OneOrMore : public ParserState
-    {
-    public:
+            class qor_pp_module_interface(QOR_PARSER) Sequence : public ParserState
+            {
+            public:
 
-        OneOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+                Sequence(Parser * parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
 
-        virtual ~OneOrMore() = default;
+                virtual ~Sequence() = default;
 
-    private:
-        
-        ref_of<ParserState>::type m_head;
-        bool m_first;
-    };
+            private:
 
-}}}//qor::components::parser
+                unsigned int m_internalState;
+                ref_of<ParserState>::type m_head;
+                ref_of<ParserState>::type m_tail;
+            };
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_ONEORMORE
+        }
+    }
+}
+
+#endif//QOR_PP_H_COMPONENTS_PARSER_STATES_SEQUENCE

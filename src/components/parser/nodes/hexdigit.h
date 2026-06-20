@@ -34,9 +34,7 @@ namespace qor { namespace components{ namespace parser{
     {
     public:
 
-        HexDigitNode(int digitVal) : Node(static_cast<uint64_t>(eToken::HexDigit)) , m_value(digitVal)
-        {
-        }
+        HexDigitNode(int digitVal) : Node(static_cast<uint64_t>(eToken::HexDigit)) , m_value(digitVal){ }
         
         virtual ~HexDigitNode() = default;
 

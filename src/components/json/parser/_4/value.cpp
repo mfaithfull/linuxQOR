@@ -76,7 +76,7 @@ namespace qor { namespace components { namespace parser { namespace json {
     void value::Emit()
     {
         log::debug("Emiting a Value:");
-        model::json::ValueType vt;
+        model::json::ValueType vt = model::json::ValueType::_null;
         ref_of<Node>::type valueNode;
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)

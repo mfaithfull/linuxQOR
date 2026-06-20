@@ -22,63 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
-#define QOR_PP_H_COMPONENTS_PARSER_NODE
+#ifndef QOR_PP_H_COMPONENTS_PARSER_STATES_ANYONEOFSET
+#define QOR_PP_H_COMPONENTS_PARSER_STATES_ANYONEOFSET
 
-#include <cstdint>
-#include <string>
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "../state.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor {
+    namespace components {
+        namespace parser {
+            class qor_pp_module_interface(QOR_PARSER) AnyOneOfSet : public ParserState
+            {
+            public:
 
-    class Node
-    {
-    public:
+                AnyOneOfSet(Parser * parser, std::vector<ref_of<ParserState>::type>*set, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
 
-        Node(uint64_t token) : m_token(token){ }
+                virtual ~AnyOneOfSet()
+                {
+                    delete m_set;
+                }
 
-        virtual ~Node() = default;
+            private:
 
-        uint64_t GetToken() const
-        {
-            return m_token;
+                std::vector<ref_of<ParserState>::type>* m_set;
+                std::vector<ref_of<ParserState>::type>::iterator m_it;
+            };
         }
+    }
+}
 
-        virtual std::string ToString() const {return "<anonymous node>";}
-
-    private:
-        
-        uint64_t m_token;        
-    };
-
-    template<class T>
-    class NodeAdapter : public Node
-    {
-    public:
-
-        NodeAdapter(uint64_t token) : Node(token)
-        {
-            m_t = qor::new_ref<T>();
-        }
-
-        NodeAdapter(qor::ref_of<T>::type response, uint64_t token) : Node(token)
-        {
-            m_t = response;
-        }
-
-        virtual ~NodeAdapter() = default;
-
-        typename ref_of<T>::type GetObject() const
-        {
-            return m_t;
-        }
-
-    protected:
-
-        typename ref_of<T>::type m_t;
-    };
-
-}}}//qor::components::parser
-
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODE
+#endif//QOR_PP_H_COMPONENTS_PARSER_STATES_ANYONEOFSET

@@ -77,7 +77,7 @@ namespace qor { namespace components { namespace parser { namespace json {
                 }
                 else
                 {
-                    auto g = tokenNames.find(token);
+                    auto g = tokenNames.find((eToken)token);
                     if( g != tokenNames.end())
                     {
                         tokenName = g->second;

@@ -26,9 +26,6 @@
 #define QOR_PP_H_COMPONENTS_PARSER_CONTEXT
 
 #include "src/platform/compiler/compiler.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/reference/newref.h"
-#include "src/framework/pipeline/pipeline.h"
 
 namespace qor { namespace components { namespace parser {
 
@@ -36,7 +33,7 @@ namespace qor { namespace components { namespace parser {
     {
     public:
 
-        Context() : m_octetStream(nullptr), m_position(0), m_size(0){ }
+        Context(){ }
 
         Context(byte* data, size_t itemCount) : m_octetStream(data), m_position(0), m_size(itemCount){ }
 
@@ -67,9 +64,9 @@ namespace qor { namespace components { namespace parser {
 
     private:
     
-        byte* m_octetStream;
-        size_t m_position;
-        size_t m_size;
+        byte* m_octetStream{ nullptr };
+        size_t m_position{ 0 };
+        size_t m_size{ 0 };
 
     };
 

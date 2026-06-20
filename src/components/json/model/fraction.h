@@ -39,7 +39,7 @@ namespace qor { namespace components{ namespace model{ namespace json {
  
     private:
 
-        double m_value;        
+        double m_value{ 0.0 };
     };
 
 }}}}//qor::components::model::json
