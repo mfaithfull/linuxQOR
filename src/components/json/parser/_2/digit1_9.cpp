@@ -37,7 +37,7 @@ namespace qor { namespace components { namespace parser { namespace json {
     {        
         int digitVal = m_result.first - '0';
         log::debug("Emitting a digit: {0}", digitVal);
-        GetParser()->PushNode(new_ref<Digit1_9Node>(digitVal));
+        GetParser()->PushNode(new_ref<Digit1_9Node>((char)digitVal));
     }
 
 }}}}//qor::components::parser::json

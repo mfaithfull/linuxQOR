@@ -26,6 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PARSER_RESULT
 
 #include <cstdint>
+#include "src/platform/compiler/compiler.h"
 #include "tokens.h"
 
 namespace qor { namespace components { namespace parser {
@@ -42,11 +43,11 @@ namespace qor { namespace components { namespace parser {
             SUCCESS,
         };
 
-        eResultCode code;
-        uint16_t first;
-        size_t length;
-        size_t m_position;
-        uint64_t token;
+        eResultCode code{UNINITIALIZED};
+        byte first{0};
+        size_t length{0};
+        size_t m_position{0};
+        uint64_t token{0};
     };
     
 }}}//qor::components::parser

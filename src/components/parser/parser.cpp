@@ -29,6 +29,7 @@
 
 #include "src/platform/compiler/compiler.h"
 #include "parser.h"
+#include "src/qor/log/debug.h"
 
 namespace qor { namespace components { namespace parser {
 
@@ -124,6 +125,14 @@ namespace qor { namespace components { namespace parser {
             return -1;
         }
         return SafeParse();
+    }
+
+    void Parser::Diagnostic()
+    {
+        std::string finalParse = m_final ? "Yes" : "No";
+        std::string inError = m_inError ? "Yes" : "No";
+
+        log::debug("Parser diagnostics: In final parse = {0}, In Error = {1}, Node stack size = {2}, State stack size = {3}", finalParse, inError, m_nodes.size(), m_StateStack.size());
     }
 
 }}}//qor::components::parser

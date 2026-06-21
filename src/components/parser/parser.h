@@ -57,6 +57,11 @@ namespace qor { namespace components { namespace parser {
         {
             if(node.IsNotNull())
             {
+                if(node->GetToken() == static_cast<uint64_t>(eToken::Lexical))
+                {
+                    //Why are we pushing a lexical node?
+                    Diagnostic();
+                }
                 m_nodes.push(node);
             }
         }
@@ -84,6 +89,8 @@ namespace qor { namespace components { namespace parser {
         {
             return m_inError;
         }
+
+        void Diagnostic();
         
     private:
 

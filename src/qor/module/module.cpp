@@ -27,7 +27,11 @@
 #include "module.h"
 
 namespace qor{ namespace framework{
+#ifndef QOR_HOST
 	qor_pp_import Module* TheHost();
+#else
+	qor_pp_export Module* TheHost();
+#endif
 }}
 
 namespace qor{

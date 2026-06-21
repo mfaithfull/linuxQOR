@@ -38,21 +38,21 @@ namespace qor { namespace components { namespace parser { namespace json {
             Sequence(parser, 
                 new_ref<escape>(parser),
                 new_ref<AnyOneOf>(parser, 
-                    new_ref<Specific>(parser, 0x22, static_cast<uint64_t>(jsonToken::quotation_mark)),
+                    new_ref<Specific>(parser, (byte)0x22, static_cast<uint64_t>(jsonToken::quotation_mark)),
                     new_ref<AnyOneOf>(parser,
-                        new_ref<Specific>(parser, 0x5C),// '\\'
+                        new_ref<Specific>(parser, (byte)0x5C),// '\\'
                         new_ref<AnyOneOf>(parser,
-                            new_ref<Specific>(parser, 0x2F),//  '/'
+                            new_ref<Specific>(parser, (byte)0x2F),//  '/'
                             new_ref<AnyOneOf>(parser,
-                                new_ref<Specific>(parser, 0x62),// 'b'
+                                new_ref<Specific>(parser, (byte)0x62),// 'b'
                                 new_ref<AnyOneOf>(parser,
-                                    new_ref<Specific>(parser, 0x66),// 'f'
+                                    new_ref<Specific>(parser, (byte)0x66),// 'f'
                                     new_ref<AnyOneOf>(parser,
-                                        new_ref<Specific>(parser, 0x6E),// 'n'
+                                        new_ref<Specific>(parser, (byte)0x6E),// 'n'
                                         new_ref<AnyOneOf>(parser,
-                                            new_ref<Specific>(parser, 0x72),// 'r'
+                                            new_ref<Specific>(parser, (byte)0x72),// 'r'
                                             new_ref<AnyOneOf>(parser,
-                                                new_ref<Specific>(parser, 0x74),// 't'
+                                                new_ref<Specific>(parser, (byte)0x74),// 't'
                                                 new_ref<unicodeSequence>(parser)
                                             )
                                         )

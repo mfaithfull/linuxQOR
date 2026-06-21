@@ -34,7 +34,7 @@ namespace qor { namespace components { namespace parser { namespace json {
     public: 
         unicodeSequence(Parser* parser) :
             Sequence(parser, 
-                new_ref<Specific>(parser, 0x75),// 'u'
+                new_ref<Specific>(parser, (byte)0x75),// 'u'
                 new_ref<Sequence>(parser,
                     new_ref<HEXDIGIT>(parser),
                     new_ref<Sequence>(parser,

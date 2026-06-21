@@ -33,8 +33,8 @@ namespace qor { namespace components { namespace parser { namespace json {
     {
         public: _e(Parser* parser) :
             AnyOneOf(parser, 
-                new_ref<Specific>(parser, 0x65),
-                new_ref<Specific>(parser, 0x45),
+                new_ref<Specific>(parser, (byte)0x65),
+                new_ref<Specific>(parser, (byte)0x45),
                 static_cast<uint64_t>(jsonToken::_e)){ }
         virtual ~_e() = default;
     };

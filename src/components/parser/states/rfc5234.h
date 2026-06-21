@@ -79,8 +79,8 @@ namespace qor { namespace components { namespace parser {
     class qor_pp_module_interface(QOR_PARSER) CTL : public AnyOneOf
     { public : CTL(Parser* parser) : 
         AnyOneOf(parser, 
-            new_ref<OneOfARange>(parser, 0x00, 0x1f, static_cast<uint64_t>(eToken::Lexical)), 
-            new_ref<Specific>(parser, 0x7f, static_cast<uint64_t>(eToken::Lexical)),
+            new_ref<OneOfARange>(parser, (byte)0x00, (byte)0x1f, static_cast<uint64_t>(eToken::Lexical)), 
+            new_ref<Specific>(parser, (byte)0x7f, static_cast<uint64_t>(eToken::Lexical)),
             static_cast<uint64_t>(eToken::Control)
         ){} 
         virtual ~CTL() = default;
@@ -157,8 +157,8 @@ namespace qor { namespace components { namespace parser {
     class qor_pp_module_interface(QOR_PARSER) ALPHA : public AnyOneOf
     { public: ALPHA(Parser* parser) :
         AnyOneOf(parser,
-            new_ref<OneOfARange>(parser, 0x41, 0x5A, static_cast<uint64_t>(eToken::Lexical)),
-            new_ref<OneOfARange>(parser, 0x61, 0x7A, static_cast<uint64_t>(eToken::Lexical)),
+            new_ref<OneOfARange>(parser, (byte)0x41, (byte)0x5A, static_cast<uint64_t>(eToken::Lexical)),
+            new_ref<OneOfARange>(parser, (byte)0x61, (byte)0x7A, static_cast<uint64_t>(eToken::Lexical)),
             static_cast<uint64_t>(eToken::Alpha)
         ){}
         virtual ~ALPHA() = default;

@@ -30,6 +30,7 @@
 #include "../_2/end_array.h"
 #include "../nodes/array.h"
 #include "../nodes/value.h"
+#include "../helpers.h"
 
 namespace qor { namespace components { namespace parser { namespace json {
 
@@ -66,12 +67,6 @@ namespace qor { namespace components { namespace parser { namespace json {
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = jsonTokenNames.find((jsonToken)token);
-            std::string tokenName;
-            if(f != jsonTokenNames.end())
-            {
-                tokenName = f->second;
-            }
 
             if(token == static_cast<uint64_t>(jsonToken::value))
             {
@@ -80,6 +75,10 @@ namespace qor { namespace components { namespace parser { namespace json {
             }
             else
             {
+                std::string tokenName = GetTokenName(token);
+                GetContext()->Diagnostic();
+                GetParser()->Diagnostic();
+                _sleep(100);
                 continuable("Unexpected: {0}", tokenName);
             }
             node = GetParser()->PopNode();

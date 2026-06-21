@@ -46,6 +46,10 @@ namespace qor { namespace components { namespace parser {
         ParserState(Parser* parser, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
         virtual ~ParserState() = default;
         virtual void Reset();
+        uint64_t GetToken();
+        class Parser* GetParser();
+        class Context* GetContext();
+
         Result m_result;
 
     protected:
@@ -53,10 +57,9 @@ namespace qor { namespace components { namespace parser {
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();
-        class Context* GetContext();
-        workflow::Workflow* Workflow();
-        class Parser* GetParser();
-        uint64_t m_token;
+        
+        workflow::Workflow* Workflow();        
+        uint64_t m_token{0};
     };
 
     class qor_pp_module_interface(QOR_PARSER) AcceptAll : public ParserState

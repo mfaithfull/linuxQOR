@@ -46,9 +46,9 @@ namespace qor { namespace components { namespace parser {
             {
                 Fail();
             }
-            else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
+            else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != static_cast<uint64_t>(eToken::Lexical))
             {
-                if(m_token == 0 && m_result.token != 0)
+                if(m_token == static_cast<uint64_t>(eToken::Lexical) && m_result.token != static_cast<uint64_t>(eToken::Lexical))
                 {
                     m_token = m_result.token;
                 }
@@ -67,6 +67,11 @@ namespace qor { namespace components { namespace parser {
         m_result.first = 0;
         m_result.m_position = 0;
         m_result.length = 0;
+    }
+
+    uint64_t ParserState::GetToken()
+    {
+        return m_token;
     }
 
     Context* ParserState::GetContext()

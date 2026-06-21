@@ -25,6 +25,7 @@
 
 #include "src/configuration/configuration.h"
 #include "context.h"
+#include "src/qor/log/debug.h"
 
 namespace qor { namespace components { namespace parser {
 
@@ -61,7 +62,8 @@ namespace qor { namespace components { namespace parser {
 
     void Context::Diagnostic()
     {
-        return;
+        std::string sample((char*)(m_octetStream + m_position - 1), std::min(m_size - m_position, (size_t)10));
+        log::debug("Context diagnostics:\nstream size: {0}, position: {1}\ndata sample: {2}", m_size, m_position, sample);
     }
 
 }}}//qor::components::parser

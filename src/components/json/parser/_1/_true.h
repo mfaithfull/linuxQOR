@@ -34,12 +34,12 @@ namespace qor { namespace components { namespace parser { namespace json {
     {
         public: _true(Parser* parser) :
             Sequence(parser,
-                new_ref<Specific>(parser, 0x74),
+                new_ref<Specific>(parser, (byte)0x74),
                 new_ref<Sequence>(parser,
-                    new_ref<Specific>(parser, 0x72),
+                    new_ref<Specific>(parser, (byte)0x72),
                     new_ref<Sequence>(parser,
-                        new_ref<Specific>(parser, 0x75),
-                        new_ref<Specific>(parser, 0x65)
+                        new_ref<Specific>(parser, (byte)0x75),
+                        new_ref<Specific>(parser, (byte)0x65)
                     )
                 ),
             static_cast<uint64_t>(jsonToken::_true)){ }

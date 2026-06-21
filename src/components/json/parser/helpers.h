@@ -57,47 +57,48 @@ namespace qor { namespace components { namespace parser { namespace json {
     template<class StateT>
     void StandardPrepare(ParserState& state)
     {
-        std::string tokenName = GetTokenName(state.m_token)
+        std::string tokenName = GetTokenName(state.GetToken());
         log::debug("Looking for a {0}...", tokenName);
         state.GetParser()->PushNode(new_ref<StateT>().AsRef<Node>());
     }
 
     void StandardFail(ParserState& state)
     {   
-        std::string tokenName = GetTokenName(state.m_token)
+        std::string tokenName = GetTokenName(state.GetToken());
         log::debug("...Didn't find a {0}.", tokenName);
         ref_of<Node>::type node = state.GetParser()->PopNode();
-        if(node.IsNotNull() && node->GetToken() != state.m_token)
+        if(node.IsNotNull() && node->GetToken() != state.GetToken())
         {
-            parser->PushNode(node);
+            state.GetParser()->PushNode(node);
         }
     }
 
+    template<class NodeT>
     void TrivialEmit(ParserState& state)
     {
-        std::string tokenName = GetTokenName(state.m_token)
+        std::string tokenName = GetTokenName(state.GetToken());
         log::debug("Emitting a {0}.", tokenName);
-        GetParser()->PushNode(new_ref<_TrueNode>());
+        state.GetParser()->PushNode(new_ref<NodeT>());
     }
 
     template<class NodeT>
     void SimpleEmit(ParserState& state)
     {
-        std::string thisTokenName = GetTokenName(state.m_token)
+        std::string thisTokenName = GetTokenName(state.GetToken());
         log::debug("Building {0}", thisTokenName);
         
-        auto node = GetParser()->PopNode();
-        while(node.IsNotNull() && node->GetToken() != m_token)
+        auto node = state.GetParser()->PopNode();
+        while(node.IsNotNull() && node->GetToken() != state.GetToken())
         {
             uint64_t token = node->GetToken();
             std::string tokenName = GetTokenName(token);
             log::debug("Consuming {0}", tokenName);
-            node = GetParser()->PopNode();                
+            node = state.GetParser()->PopNode();                
         };
 
         if(node.IsNotNull())
         {                        
-            GetParser()->PushNode(new_ref<NodeT>());
+            state.GetParser()->PushNode(new_ref<NodeT>());
             log::debug("Emitted {0}", thisTokenName);
         }
     }

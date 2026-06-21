@@ -34,6 +34,7 @@ namespace qor { namespace components { namespace parser {
     public:
         Specific(Parser* parser, byte matchingOctet, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
         virtual ~Specific() = default;
+        virtual void Emit(){}
     private:
         byte m_matchingOctet;
     };

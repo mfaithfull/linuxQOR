@@ -36,7 +36,7 @@ namespace qor { namespace components { namespace parser { namespace json {
             Sequence(parser,
                 new_ref<ws>(parser),
                 new_ref<Sequence>(parser,
-                    new_ref<Specific>(parser, 0x7D),
+                    new_ref<Specific>(parser, (byte)0x7D),
                     new_ref<ws>(parser)
                 ),
             static_cast<uint64_t>(jsonToken::end_object)){ }

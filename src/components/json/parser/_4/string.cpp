@@ -68,7 +68,7 @@ namespace qor { namespace components { namespace parser { namespace json {
             if(token == static_cast<uint64_t>(jsonToken::character))
             {
                 auto characterNode = node.AsRef<CharacterNode>();
-                char c = characterNode->GetObject()->GetValue();
+                char c = static_cast<char>(characterNode->GetObject()->GetValue());
                 stringValue = std::string(&c,1) + stringValue;
             }
             else if(token == static_cast<uint64_t>(eToken::Digit))

@@ -33,10 +33,10 @@ namespace qor { namespace components { namespace parser { namespace json {
     {        
     public: unescaped(Parser* parser) :
                 AnyOneOf(parser,
-                    new_ref<OneOfARange>(parser, 0x20, 0x21, static_cast<uint64_t>(eToken::Lexical)),
+                    new_ref<OneOfARange>(parser, (byte)0x20, (byte)0x21, static_cast<uint64_t>(eToken::Lexical)),
                     new_ref<AnyOneOf>(parser,
-                        new_ref<OneOfARange>(parser, 0x23, 0x5B, static_cast<uint64_t>(eToken::Lexical)),
-                        new_ref<OneOfARange>(parser, 0x5D, 0x10FFFF, static_cast<uint64_t>(eToken::Lexical)),
+                        new_ref<OneOfARange>(parser, (byte)0x23, (byte)0x5B, static_cast<uint64_t>(eToken::Lexical)),
+                        new_ref<OneOfARange>(parser, (byte)0x5D, (byte)(0xFF)/*0x10FFFF*/, static_cast<uint64_t>(eToken::Lexical)),
                         static_cast<uint64_t>(eToken::Lexical)
                     ),
                     static_cast<uint64_t>(jsonToken::unescaped)){ }
