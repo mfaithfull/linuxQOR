@@ -45,8 +45,7 @@ namespace qor { namespace components { namespace parser {
 
         Resume = [this]()
             {
-                //m_result.code = Result::SUCCESS;
-                //m_result.token = m_token;
+                m_result.code = m_head->m_result.code;
                 if (m_head->m_result.code == Result::SUCCESS)
                 {
                     if (m_first)
@@ -68,13 +67,13 @@ namespace qor { namespace components { namespace parser {
 
         Leave = [this]()
             {
+                m_result.token = m_token;
                 if (m_result.code == Result::FAILURE)
                 {
                     Fail();
                 }
-                else if (m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != static_cast<uint64_t>(eToken::Lexical))
-                {
-                    m_token = m_result.token;
+                else if (m_result.code == Result::SUCCESS)
+                {                    
                     Emit();
                 }
                 m_result.code = Result::SUCCESS;
