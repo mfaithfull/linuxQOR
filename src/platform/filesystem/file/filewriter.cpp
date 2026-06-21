@@ -188,9 +188,9 @@ namespace qor{ namespace platform{
         }
         else
         {
-            for(unsigned int loop = sizeof(double) -1; loop >=0; --loop)
+            for(unsigned int loop = sizeof(double); loop > 0; --loop)
             {
-                m_file->Write( p + loop, 1);
+                m_file->Write( p + loop - 1, 1);
             }
         }
     }

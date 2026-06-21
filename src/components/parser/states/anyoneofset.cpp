@@ -72,7 +72,7 @@ namespace qor { namespace components { namespace parser {
                 }
                 else
                 {                    
-                    Workflow()->PushState((*m_it).AsRef<workflow::State>());
+                    Workflow()->PushState((*m_it));
                 }
             }
         };

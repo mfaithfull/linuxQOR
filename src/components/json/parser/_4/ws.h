@@ -36,7 +36,8 @@ namespace qor { namespace components { namespace parser { namespace json {
               %x0D )              ; Carriage return*/
     class qor_pp_module_interface(QOR_JSON) ws : public ZeroOrMore
     {
-        public: ws(Parser* parser) :
+    public: 
+        ws(Parser* parser) :
             ZeroOrMore(parser,
                 new_ref<AnyOneOf>(parser,
                     new_ref<WSP>(parser),

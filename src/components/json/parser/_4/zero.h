@@ -31,7 +31,8 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     class qor_pp_module_interface(QOR_JSON) zero : public Specific
     {
-        public: zero(Parser* parser) : Specific(parser, 0x30, static_cast<uint64_t>(jsonToken::zero)){ }
+    public: 
+        zero(Parser* parser) : Specific(parser, 0x30, static_cast<uint64_t>(jsonToken::zero)){ }
         virtual ~zero() = default;
     };
 

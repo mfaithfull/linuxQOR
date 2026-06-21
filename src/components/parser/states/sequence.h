@@ -27,27 +27,22 @@
 
 #include "../state.h"
 
-namespace qor {
-    namespace components {
-        namespace parser {
+namespace qor { namespace components { namespace parser {
 
-            class qor_pp_module_interface(QOR_PARSER) Sequence : public ParserState
-            {
-            public:
+    class qor_pp_module_interface(QOR_PARSER) Sequence : public ParserState
+    {
+    public:
 
-                Sequence(Parser * parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        Sequence(Parser * parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        virtual ~Sequence() = default;
 
-                virtual ~Sequence() = default;
+    private:
 
-            private:
+        unsigned int m_internalState{0};
+        ref_of<ParserState>::type m_head;
+        ref_of<ParserState>::type m_tail;
+    };
 
-                unsigned int m_internalState{0};
-                ref_of<ParserState>::type m_head;
-                ref_of<ParserState>::type m_tail;
-            };
-
-        }
-    }
-}
+}}}//qor::components::parser
 
 #endif//QOR_PP_H_COMPONENTS_PARSER_STATES_SEQUENCE

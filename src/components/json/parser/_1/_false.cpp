@@ -39,8 +39,7 @@ namespace qor { namespace components { namespace parser { namespace json {
     void _false::Emit()
     {        
         log::debug("Emitting a false.");
-        auto falseNode = new_ref<_FalseNode>();
-        GetParser()->PushNode(falseNode);
+        GetParser()->PushNode(new_ref<_FalseNode>());
     }
 
     void _false::Fail()

@@ -47,9 +47,9 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         reason_phrase,
     };
 
-    static const std::map<const uint64_t, const std::string> httpResponseTokenNames = {{
-        {static_cast< const uint64_t>(httpResponseToken::responseChar), "responseChar"},
-        {static_cast< const uint64_t>(httpResponseToken::response), "response"},
+    static const std::map<const httpResponseToken, const std::string> httpResponseTokenNames = {{
+        {httpResponseToken::responseChar, "responseChar"},
+        {httpResponseToken::response, "response"},
     }};
 
     class responseChar : public qor::components::parser::OneOfARange

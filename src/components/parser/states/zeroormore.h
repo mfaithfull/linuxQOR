@@ -27,28 +27,21 @@
 
 #include "../state.h"
 
-namespace qor {
-    namespace components {
-        namespace parser {
+namespace qor { namespace components { namespace parser {
 
-            class qor_pp_module_interface(QOR_PARSER) ZeroOrMore : public ParserState
-            {
-            public:
+    class qor_pp_module_interface(QOR_PARSER) ZeroOrMore : public ParserState
+    {
+    public:
 
-                ZeroOrMore(Parser * parser, ref_of<ParserState>::type head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        ZeroOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        virtual ~ZeroOrMore() = default;
 
-                virtual ~ZeroOrMore()
-                {
-                }
+    private:
 
-            private:
+        ref_of<ParserState>::type m_head;
+        bool m_first;
+    };
 
-                ref_of<ParserState>::type m_head;
-                bool m_first;
-            };
-
-        }
-    }
-}
+}}}//qor::components::parser
 
 #endif//QOR_PP_H_COMPONENTS_PARSER_STATES_ZEROORMORE

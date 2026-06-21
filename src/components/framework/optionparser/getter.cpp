@@ -122,7 +122,7 @@ namespace qor{ namespace components{ namespace optparser {
 		}
 
 		if (
-			itArgument.AtEnd() && HandleEndOfOptions(result) || // If we have done all the ARGV-elements, stop the scan and back over any non-options that we skipped and permuted.
+			(itArgument.AtEnd() && HandleEndOfOptions(result)) || // If we have done all the ARGV-elements, stop the scan and back over any non-options that we skipped and permuted.
 			(itArgument.AtNonOption() && HandleNonOption(result)) || // If we have come to a non-option and did not permute it, either stop the scan or describe it to the caller and pass it by.
 			(longOptioninterpretter.HasLongOptions() && HandleLongOption(result))
 			)// We have found another option-ARGV-element. Check whether it might be a long option.

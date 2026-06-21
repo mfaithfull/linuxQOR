@@ -42,7 +42,7 @@ public:
         Pipeline(sourceConnector, m_sink, Element::Push).Connect().PumpAll();
         m_sink.Parser().FinalParse();
         auto finalNode = m_sink.Parser().PopNode();
-        return finalNode.AsRef< components::parser::NodeAdapter< JasonModelObjectT > >()->GetObject();
+        return finalNode.template AsRef< components::parser::NodeAdapter< JasonModelObjectT > >()->GetObject();
     }
 
     const pipeline::Buffer& Buffer()

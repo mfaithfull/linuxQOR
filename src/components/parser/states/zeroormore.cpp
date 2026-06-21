@@ -29,46 +29,57 @@
 #include "../context.h"
 #include "../parser.h"
 
-namespace qor {
-    namespace components {
-        namespace parser {
+namespace qor { namespace components { namespace parser {
 
-            //Matches Zero or more sequential instances of the head state. None is fine. There's no limit except memory
-            ZeroOrMore::ZeroOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser, token),
-                m_head(head), m_first(true)
+    //Matches Zero or more sequential instances of the head state. None is fine. There's no limit except memory
+    ZeroOrMore::ZeroOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser, token),
+        m_head(head), m_first(true)
+    {
+        Enter = [this]()
             {
-                Enter = [this]()
-                    {
-                        Prepare();
-                        m_first = true;
-                        m_result.length = 0;
-                        Workflow()->PushState(m_head);
-                    };
+                Prepare();
+                m_first = true;
+                m_result.length = 0;
+                Workflow()->PushState(m_head);
+            };
 
-                Resume = [this]()
+        Resume = [this]()
+            {
+                //m_result.code = Result::SUCCESS;
+                //m_result.token = m_token;
+                if (m_head->m_result.code == Result::SUCCESS)
+                {
+                    if (m_first)
                     {
-                        m_result.code = Result::SUCCESS;
-                        m_result.token = m_token;
-                        if (m_head->m_result.code == Result::SUCCESS)
-                        {
-                            if (m_first)
-                            {
-                                m_result.first = m_head->m_result.first;
-                                m_result.m_position = m_head->m_result.m_position;
-                                m_first = false;
-                            }
-                            m_result.length += m_head->m_result.length;
-                            m_head->Reset();
-                            Workflow()->PushState(m_head);
-                        }
-                        else
-                        {
-                            m_result.m_position = m_head->m_result.m_position;
-                            Workflow()->PopState();
-                        }
-                    };
-            }
+                        m_result.first = m_head->m_result.first;
+                        m_result.m_position = m_head->m_result.m_position;
+                        m_first = false;
+                    }
+                    m_result.length += m_head->m_result.length;
+                    m_head->Reset();
+                    Workflow()->PushState(m_head);
+                }
+                else
+                {
+                    m_result.m_position = m_head->m_result.m_position;
+                    Workflow()->PopState();
+                }
+            };
 
-        }
+        Leave = [this]()
+            {
+                if (m_result.code == Result::FAILURE)
+                {
+                    Fail();
+                }
+                else if (m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != static_cast<uint64_t>(eToken::Lexical))
+                {
+                    m_token = m_result.token;
+                    Emit();
+                }
+                m_result.code = Result::SUCCESS;
+            };
+
     }
-}//qor::components::parser
+
+}}}//qor::components::parser

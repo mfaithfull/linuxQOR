@@ -30,7 +30,7 @@ namespace qor{ namespace pipeline{
 
     Filter::Filter() : Sink(), Source() {}
 
-    Filter::Filter(const Filter& src) : Sink(), Source()
+    Filter::Filter(const Filter& src) : Sink(), Source(), Element()
     {
         *this = src;
     }

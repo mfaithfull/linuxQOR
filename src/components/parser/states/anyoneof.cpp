@@ -37,7 +37,7 @@ namespace qor { namespace components { namespace parser {
             {
                 Prepare();
                 m_internalState = 0;
-                Workflow()->PushState(m_head.AsRef<workflow::State>());
+                Workflow()->PushState(m_head);
             };
 
         Resume = [this]()
@@ -61,7 +61,7 @@ namespace qor { namespace components { namespace parser {
                     else
                     {
                         m_internalState = 1;
-                        Workflow()->PushState(m_tail.AsRef<workflow::State>());
+                        Workflow()->PushState(m_tail);
                     }
                     break;
                 case 1:

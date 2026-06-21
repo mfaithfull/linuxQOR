@@ -32,8 +32,7 @@ namespace qor { namespace components { namespace parser {
     class qor_pp_module_interface(QOR_PARSER) Specific : public ParserState
     {
     public:
-
-        Specific(Parser * parser, byte matchingOctet, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+        Specific(Parser* parser, byte matchingOctet, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
         virtual ~Specific() = default;
     private:
         byte m_matchingOctet;

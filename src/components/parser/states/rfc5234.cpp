@@ -75,6 +75,11 @@ namespace qor { namespace components { namespace parser {
                         ((m_result.first >= 'a' && m_result.first <= 'f') ? m_result.first - 'a' + 10 :
                             ((m_result.first >= 'A' && m_result.first <= 'F') ? m_result.first - 'A' + 10 : 0));
         }
+
+        if(node.IsNotNull() && node->GetToken() != static_cast<uint64_t>(eToken::HexDigit))
+        {
+            continuable("Unexpected token: Expected HexDigit token {0} got {1}.", static_cast<uint64_t>(eToken::HexDigit), node->GetToken());
+        }
         
         GetParser()->PushNode(new_ref<HexDigitNode>(hexVal));
     }

@@ -39,8 +39,7 @@ namespace qor { namespace components { namespace parser { namespace json {
     void _null::Emit()
     {        
         log::debug("Emitting a null.");
-        auto nullNode = new_ref<_NullNode>();
-        GetParser()->PushNode(nullNode);
+        GetParser()->PushNode(new_ref<_NullNode>());
     }
 
     void _null::Fail()

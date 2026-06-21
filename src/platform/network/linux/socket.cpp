@@ -47,7 +47,7 @@ namespace qor{ namespace nslinux{
         m_fd = sock;
     }
 
-    Socket::Socket(const Socket& src)
+    Socket::Socket(const Socket& src) : network::Socket()
     {
         m_fd = ::fcntl(src.m_fd, F_DUPFD, 0);
     }
@@ -95,7 +95,7 @@ namespace qor{ namespace nslinux{
         return ::listen(m_fd, iBacklog);
     }
  
-    ref_of<network::Socket>::type Socket::Accept(network::Address& Address)
+    ref_of<network::Socket>::type Socket::Accept(network::Address& /*Address*/)
     {
         ref_of<network::Socket>::type newsocket;
         sockaddr addr;
@@ -123,14 +123,14 @@ namespace qor{ namespace nslinux{
         return ::connect(m_fd, (const sockaddr*)&addr, len);
     }
  
-    int32_t Socket::GetPeerName(network::Address& Address)
+    int32_t Socket::GetPeerName(network::Address& /*Address*/)
     {
         sockaddr addr;
         socklen_t len;
         return ::getpeername(m_fd, &addr, &len);
     }
  
-    int32_t Socket::GetSockName(network::Address& Address)
+    int32_t Socket::GetSockName(network::Address& /*Address*/)
     {
         sockaddr addr;
         socklen_t len;

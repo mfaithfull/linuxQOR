@@ -29,52 +29,48 @@
 #include "../context.h"
 #include "../parser.h"
 
-namespace qor {
-    namespace components {
-        namespace parser {
+namespace qor { namespace components { namespace parser {
 
-            //Matches if the head state if it's present. If it's not that's fine, we just move on.
-            Optional::Optional(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser, token),
-                m_head(head), m_first(true)
+    //Matches the head state if it's present. If it's not that's fine, we just move on.
+    Optional::Optional(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser, token),
+        m_head(head), m_first(true)
+    {
+        Enter = [this]()
             {
-                Enter = [this]()
-                    {
-                        Prepare();
-                        Workflow()->PushState(m_head.AsRef<workflow::State>());
-                    };
+                Prepare();
+                Workflow()->PushState(m_head.AsRef<workflow::State>());
+            };
 
-                Resume = [this]()
-                    {
-                        m_result.length = 0;
-                        if (m_head->m_result.code == Result::SUCCESS && m_head->m_result.length > 0)
-                        {
-                            m_result.first = m_head->m_result.first;
-                            m_result.length += m_head->m_result.length;
-                            m_result.token = m_head->m_result.token;
-                        }
-                        m_result.m_position = m_head->m_result.m_position;
-                        m_result.code = m_head->m_result.code;
-                        Workflow()->PopState();
-                    };
+        Resume = [this]()
+            {
+                m_result.length = 0;
+                if (m_head->m_result.code == Result::SUCCESS && m_head->m_result.length > 0)
+                {
+                    m_result.first = m_head->m_result.first;
+                    m_result.length += m_head->m_result.length;
+                    m_result.token = m_head->m_result.token;
+                }
+                m_result.m_position = m_head->m_result.m_position;
+                m_result.code = m_head->m_result.code;
+                Workflow()->PopState();
+            };
 
-                Leave = [this]()
+        Leave = [this]()
+            {
+                if (m_result.code == Result::FAILURE)
+                {
+                    Fail();
+                }
+                else if (m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
+                {
+                    if (m_token == 0 && m_result.token != 0)
                     {
-                        if (m_result.code == Result::FAILURE)
-                        {
-                            Fail();
-                        }
-                        else if (m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != 0)
-                        {
-                            if (m_token == 0 && m_result.token != 0)
-                            {
-                                m_token = m_result.token;
-                            }
-                            Emit();
-                        }
-                        m_result.code = Result::SUCCESS;
-                    };
+                        m_token = m_result.token;
+                    }
+                    Emit();
+                }
+                m_result.code = Result::SUCCESS;
+            };
 
-            }
-        }
     }
-}//qor::components::parser
+}}}//qor::components::parser

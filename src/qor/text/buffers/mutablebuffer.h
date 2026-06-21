@@ -382,11 +382,12 @@ namespace qor{
             return false;
         }
 
-        T& operator[](size_t index) const
+        T operator[](size_t index) const
         {
             if (index >= Length() || m_p == nullptr)
             {
                 text::OutOfRangeError(index, Length(), sizeof(T), m_p);
+                return T(0);
             }
             else
             {
