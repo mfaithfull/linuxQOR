@@ -54,7 +54,7 @@ namespace qor{ namespace components {
         //Subsystems and features needed
         ref_of<network::Sockets>::type m_sockets;
         ref_of<framework::AsyncIOService>::type m_io;
-        ref_of<framework::ThreadPool>::type m_threadPool;
+        ref_of<thread::ThreadPool>::type m_threadPool;
         ref_of<framework::AsyncIOContext::Session>::type m_ioSession;
 
         //Port and socket for connections to the server

@@ -45,7 +45,6 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::framework;
 
 struct SingleConsumerAsyncAutoResetEventTestSuite{};
 
@@ -79,7 +78,7 @@ qor_pp_test_suite_case(SingleConsumerAsyncAutoResetEventTestSuite, single_waiter
 
 qor_pp_test_suite_case(SingleConsumerAsyncAutoResetEventTestSuite, scaare_multi_threaded)
 {
-	ThreadPool tp;
+	thread::ThreadPool tp;
 	tp.Setup();
 
 	sync_wait([&]() -> task<>

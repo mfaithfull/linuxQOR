@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FRAMEWORK_THREADPOOL_COMMON_IDX_TYPE
 #define QOR_PP_H_FRAMEWORK_THREADPOOL_COMMON_IDX_TYPE
 
-namespace qor { namespace framework{
+namespace qor { namespace thread{
 
     //A meta-programming template to determine the common type of two integer types. Unlike `std::common_type`, this template maintains correct signedness.
     //Enable A dummy parameter to enable SFINAE in specializations.

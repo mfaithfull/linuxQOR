@@ -49,7 +49,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
             
             if(token == static_cast<uint64_t>(echoResponseToken::responseChar))
             {
-                auto characterNode = node.AsRef<Char>();
+                auto characterNode = node.AsRef<CharNode>();
                 char c = characterNode->GetValue();
                 chars.push_back(c);
             }

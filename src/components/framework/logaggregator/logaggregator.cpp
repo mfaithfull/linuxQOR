@@ -42,14 +42,14 @@ namespace qor { namespace components{
 
     void LogAggregatorService::Setup()
     {
-        m_threadPool = m_Role->GetFeature<framework::ThreadPool>();
+        m_threadPool = m_Role->GetFeature<thread::ThreadPool>();
         
         if(m_threadPool.IsNotNull())
         {
             m_threadPool->PostTask(
                 [this]()->void
                 {
-                    qor::framework::CurrentThread::GetCurrent().SetName("Log Aggregator");
+                    CurrentThread::GetCurrent().SetName("Log Aggregator");
                     m_receiver.Listen();
                 }
             );

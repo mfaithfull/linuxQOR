@@ -35,13 +35,8 @@ namespace qor{ namespace events{
     {
     public:
 
-        Source(uint32_t categoryId, size_t stockSize, EventQueue* queue) : m_category(categoryId), m_queue(queue), m_stock(stockSize)
-        {
-        }
-
-        ~Source()
-        {
-        }
+        Source(uint32_t categoryId, size_t stockSize, EventQueue* queue) : m_category(categoryId), m_queue(queue), m_stock(stockSize){}
+        ~Source() noexcept = default;
 
         event_type* GetMessage(uint32_t eventId)
         {

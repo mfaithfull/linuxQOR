@@ -31,7 +31,7 @@ namespace {
     static qor::ModuleRegistry _theModuleRegistry;
 }
 
-namespace qor{ namespace framework{
+namespace qor{
 
     Module* TheHost()
     {
@@ -63,4 +63,4 @@ namespace qor{ namespace framework{
         m_ModuleReg->Unregister(*module);
 	}
 
-}}//qor::framework
+}//qor

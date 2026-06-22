@@ -33,7 +33,7 @@
 #include "currentthread.h"
 #include "src/qor/delegate/delegate.h"
 
-namespace qor{ namespace framework{
+namespace qor{
 
     class qor_pp_module_interface(QOR_THREAD) Thread
     {
@@ -93,6 +93,6 @@ namespace qor{ namespace framework{
 		std::stop_callback< Delegate<void(void)> > m_callback;
     };
 
-}}//qor::framework
+}//qor
 
 #endif//QOR_PP_H_FRAMEWORK_THREAD

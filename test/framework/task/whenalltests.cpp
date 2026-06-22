@@ -34,7 +34,7 @@
 #include "src/framework/task/whenall.h"
 #include "src/qor/sync/asyncmanualresetevent.h"
 #include "src/qor/sync/asyncmutex.h"
-#include "src/framework/task/fmap.h"
+#include "src/framework/task/detail/fmap.h"
 #include "src/framework/task/sharedtask.h"
 #include "src/framework/task/syncwait.h"
 #include "src/framework/task/task.h"

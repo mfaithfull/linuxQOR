@@ -35,7 +35,7 @@ namespace qor
 
 namespace qor { namespace components {
 
-        class qor_pp_module_interface(QOR_CONSOLE) Console : public framework::IFeature
+        class qor_pp_module_interface(QOR_CONSOLE) Console : public IFeature
         {
         public:
 

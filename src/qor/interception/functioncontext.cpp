@@ -90,7 +90,7 @@ namespace qor {
 	{
 		Lock();
 
-        m_Parent = qor::framework::CurrentThread::GetCurrent().Context().RegisterFunctionContext(this);
+        m_Parent = CurrentThread::GetCurrent().Context().RegisterFunctionContext(this);
 
 		if (m_Parent)
 		{
@@ -147,7 +147,7 @@ namespace qor {
 			}
 		}
 
-        qor::framework::CurrentThread::GetCurrent().Context().UnregisterFunctionContext(this, m_Parent);
+        CurrentThread::GetCurrent().Context().UnregisterFunctionContext(this, m_Parent);
 
         Unlock();
 	}

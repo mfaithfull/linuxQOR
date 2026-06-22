@@ -44,7 +44,6 @@
 using namespace qor;
 using namespace qor::test;
 using namespace qor::detail;
-using namespace qor::framework;
 
 struct SequenceBarrierTestSuite{};
 
@@ -166,7 +165,7 @@ qor_pp_test_suite_case(SequenceBarrierTestSuite, wait_until_published_multiple_a
 
 qor_pp_test_suite_case(SequenceBarrierTestSuite, sbts_multi_threaded_usage_single_consumer)
 {
-	ThreadPool tp;
+	thread::ThreadPool tp;
 	tp.Setup();
 
 	SequenceBarrier<std::size_t> writeBarrier;

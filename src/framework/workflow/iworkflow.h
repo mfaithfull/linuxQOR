@@ -25,10 +25,12 @@
 #ifndef QOR_PP_H_WORKFLOW_INTERFFACE
 #define QOR_PP_H_WORKFLOW_INTERFFACE
 
+#include "../application/irunable.h"
+
 namespace qor{ namespace workflow{
 
     //Base abstract interface for all workflows
-    class IWorkflow
+    class IWorkflow : public IRunable
     {
     public:
 

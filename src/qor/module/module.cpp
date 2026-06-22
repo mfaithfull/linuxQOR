@@ -26,13 +26,9 @@
 #include "src/platform/compiler/compiler.h"
 #include "module.h"
 
-namespace qor{ namespace framework{
-#ifndef QOR_HOST
+namespace qor{
 	qor_pp_import Module* TheHost();
-#else
-	qor_pp_export Module* TheHost();
-#endif
-}}
+}
 
 namespace qor{
 	
@@ -40,14 +36,14 @@ namespace qor{
 	{
 		if(doRegister)
 		{
-			Module* host = framework::TheHost();
+			Module* host = TheHost();
 			host->RegisterModule(this);
 		}
 	}
 	
 	Module::~Module() noexcept
 	{
-		Module* host = framework::TheHost();
+		Module* host = TheHost();
 		host->UnregisterModule(this);
 	}
 

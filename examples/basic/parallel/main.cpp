@@ -65,13 +65,13 @@ int main()
         {
             qor_pp_fcontext;
             /*Add the ThreaPool feature to the Role*/
-            role->AddFeature<ThreadPool>(
-                [](ref_of<ThreadPool>::type threadPool)
+            role->AddFeature<thread::ThreadPool>(
+                [](ref_of<thread::ThreadPool>::type threadPool)
                 {
                     /*Put 2 threads in the pool in addition to the main thread already executing*/
                     threadPool->SetThreadCount(2);
                     /*Label the main thread so we can idenity in the logs*/
-                    qor::framework::CurrentThread::GetCurrent().SetName("Main");
+                    CurrentThread::GetCurrent().SetName("Main");
                 }
             );
 
@@ -87,7 +87,7 @@ int main()
     ).Run([&logHandler]()->int
         {
             qor_pp_fcontext;
-            auto threadPool = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<ThreadPool>();
+            auto threadPool = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<thread::ThreadPool>();
 
             size_t runningTaskCount = threadPool->GetCountOfTasksRunning();
 
@@ -142,7 +142,7 @@ int ParallelTask()
 {
     qor_pp_fcontext;
     /*This runs on a pool thread*/
-    qor::framework::CurrentThread::GetCurrent().SetName("Task");
+    CurrentThread::GetCurrent().SetName("Task");
 
     /*Put a log handler on this thread*/
     DefaultLogHandler secondaryLogHandler(Level::Debug);

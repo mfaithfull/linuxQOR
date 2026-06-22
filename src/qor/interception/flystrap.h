@@ -49,7 +49,7 @@ namespace qor {
 		template< class T > void Strap()
 		{
 			FlyStrapBase* joinPoint = nullptr;
-            auto lookup = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Lookup( guid_of<T>::guid() );
+            auto lookup = CurrentThread::GetCurrent().Context().GetFlyerMap().Lookup( guid_of<T>::guid() );
 						
 			if (!lookup.IsNull())
 			{

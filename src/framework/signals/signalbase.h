@@ -48,7 +48,7 @@
 #include <unordered_set>
 #include <memory>
 #include "src/platform/compiler/compiler.h"
-#include "bento.h"
+#include "detail/bento.h"
 #include "src/qor/datastructures/rcuguarded.h"
 #include "src/qor/datastructures/rculist.h"
 

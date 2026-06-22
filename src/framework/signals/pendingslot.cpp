@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "pendingslot.h"
-#include "bento.h"
+#include "detail/bento.h"
 
 namespace qor
 {    

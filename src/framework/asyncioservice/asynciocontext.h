@@ -44,7 +44,7 @@ namespace qor { namespace framework{
 
     public:
 
-        AsyncIOContext(ref_of<ThreadPool>::type threadPool);
+        AsyncIOContext(ref_of<thread::ThreadPool>::type threadPool);
         ~AsyncIOContext();        
         
         virtual void Inflate();
@@ -164,7 +164,7 @@ namespace qor { namespace framework{
 
         ref_of<AsyncIOInitiator>::type m_initiator;
         ref_of<AsyncIOEventProcessor>::type m_processor;
-        ref_of<ThreadPool>::type m_threadPool;
+        ref_of<thread::ThreadPool>::type m_threadPool;
         std::future<int> m_processorResult;        
         Mutex m_access;
         friend class Session;

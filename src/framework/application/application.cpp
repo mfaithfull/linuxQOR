@@ -26,7 +26,7 @@
 #include "application.h"
 #include "src/framework/role/role.h"
 
-namespace qor{ namespace framework{
+namespace qor{
 
     Application& Application::SetRole(ref_of<IRole>::type role)
     {
@@ -87,4 +87,4 @@ namespace qor{ namespace framework{
         return result;
     }
 
-}}//qor::framework
+}//qor

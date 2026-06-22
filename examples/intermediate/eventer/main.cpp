@@ -50,7 +50,6 @@ qor_pp_module_requires(ICurrentThread)
 
 using namespace qor;
 using namespace qor::platform;
-using namespace qor::framework;
 using namespace qor::components;
 
 void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
@@ -94,11 +93,11 @@ int main(const int argc, const char** argv, char** env)
         {
             qor_pp_fcontext;
 
-            role->AddFeature<ThreadPool>(
-                [](ref_of<ThreadPool>::type threadPool)
+            role->AddFeature<thread::ThreadPool>(
+                [](ref_of<thread::ThreadPool>::type threadPool)
                 {
                     threadPool->SetThreadCount(6);
-                    qor::framework::CurrentThread::GetCurrent().SetName("Main");
+                    CurrentThread::GetCurrent().SetName("Main");
                 }
             );
             

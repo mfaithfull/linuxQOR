@@ -36,9 +36,9 @@
 #include "irunable.h"
 
 #define qor_pp_declare_app_class(_MYAPP)\
-private: static qor::SingletonRedirector<qor::framework::Application, _MYAPP> m_sRedirect;
+private: static qor::SingletonRedirector<qor::Application, _MYAPP> m_sRedirect;
 
-namespace qor{ namespace framework{
+namespace qor{
 
     class qor_pp_module_interface(QOR_APPLICATION) Application
     {
@@ -130,9 +130,9 @@ namespace qor{ namespace framework{
         ref_of<workflow::IWorkflow>::type m_Workflow;
 
     };
-}
-    qor_pp_declare_instancer_of(framework::Application, SingletonInstancer);
+
+    qor_pp_declare_instancer_of(Application, SingletonInstancer);
     
-}//qor::framework
+}//qor
 
 #endif//QOR_PP_H_APPLICATION

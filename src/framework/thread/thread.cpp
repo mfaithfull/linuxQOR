@@ -23,9 +23,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include <stdexcept>
+#include <iostream>
 #include "thread.h"
+//#include "src/qor/error/error.h"
 
-namespace qor{ namespace framework{
+namespace qor{
 
 	Thread::Thread() : m_std_thread(
 		Delegate<void(void)>::Create<Thread, &Thread::Setup>(this)
@@ -77,14 +80,19 @@ namespace qor{ namespace framework{
 		{
 			Run();			
 		}
-		catch(const std::exception&)
+		/*
+		catch(const Serious& s)
 		{
-			//TODO:
-			//std::cerr << e.what() << '\n';
+			std::cerr << s.what().Content() << std::endl;
+		}
+		*/
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << std::endl;
 		}
 		catch(...)
 		{
-			//something worse
+			std::cerr << "Unhandled exception." << std::endl;
 		}
 	}
 
@@ -92,4 +100,4 @@ namespace qor{ namespace framework{
 	{
 	}
 
-}}//qor::framework
+}//qor

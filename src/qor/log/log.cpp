@@ -32,7 +32,7 @@ namespace qor{ namespace log {
 
     Log::Log(Level l, const std::string& message) : Issue()
     {
-        auto context = framework::CurrentThread::GetCurrent().Context().FunctionContext();
+        auto context = CurrentThread::GetCurrent().Context().FunctionContext();
         m_when = new_ref<When>();
         if(context != nullptr)
         {
@@ -45,7 +45,7 @@ namespace qor{ namespace log {
     {
         if(fContext == nullptr)
         {
-            fContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
+            fContext = CurrentThread::GetCurrent().Context().FunctionContext();
         }
         m_when = new_ref<When>();
         if(fContext != nullptr)

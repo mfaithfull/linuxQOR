@@ -46,8 +46,8 @@
 #include "src/platform/compiler/compiler.h"
 
 namespace qor{
-    
-    class SlotBase;
+        
+    class qor_pp_module_interface(QOR_SIGNALSLOTS) SlotBase;
 
     namespace detail
     {        

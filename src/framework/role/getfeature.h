@@ -36,7 +36,7 @@ namespace qor{
     template< class TFeature >
     typename ref_of<TFeature>::type GetFeature()
     {
-        return framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<TFeature>();
+        return AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<TFeature>();
     }
 }
 

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FRAMEWORK_THREADPOOL_MULTIFUTURE
 #define QOR_PP_H_FRAMEWORK_THREADPOOL_MULTIFUTURE
 
-namespace qor { namespace framework{
+namespace qor { namespace thread{
 
     //A helper template to facilitate waiting for and/or getting the results of multiple futures at once.
     template <typename T>
@@ -129,6 +129,6 @@ namespace qor { namespace framework{
 
     };
     
-}}//qor::framework
+}}//qor::thread
 
 #endif//QOR_PP_H_FRAMEWORK_THREADPOOL_MULTIFUTURE

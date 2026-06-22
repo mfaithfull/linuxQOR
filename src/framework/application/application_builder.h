@@ -26,11 +26,12 @@
 #define QOR_PP_H_APPLICATION_BUILDER
 
 #include "application.h"
+#include "src/qor/error/error.h"
 
 #define qor_pp_redirect_app_class(_MYAPP)\
-qor::SingletonRedirector<qor::framework::Application, _MYAPP> _MYAPP::m_sRedirect;
+qor::SingletonRedirector<qor::Application, _MYAPP> _MYAPP::m_sRedirect;
 
-namespace qor{ namespace framework{
+namespace qor{
 
     class qor_pp_module_interface(QOR_APPLICATION) AppBuilder
     {
@@ -58,7 +59,22 @@ namespace qor{ namespace framework{
             AutoRedirect(app.template AsRef<Application>());
             app(qor_shared).SetName(appName);
             app.Lock();
-            config_function(app);
+            try
+            {
+                config_function(app);
+            }
+            catch(const Serious& s)
+            {
+                std::cerr << s.what().Content() << std::endl;
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << std::endl;
+            }
+            catch(...)
+            {
+                std::cerr << "Unhandled exception" << std::endl;
+            }
             app.Unlock();
             return app.template AsRef<Application>();
         }
@@ -68,6 +84,6 @@ namespace qor{ namespace framework{
         void AutoRedirect(ref_of<Application>::type application);
     };
     
-}}//qor::framework
+}//qor
 
 #endif//QOR_PP_H_APPLICATION_BUILDER

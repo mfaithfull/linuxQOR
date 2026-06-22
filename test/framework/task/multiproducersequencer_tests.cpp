@@ -45,14 +45,13 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::framework;
 
 struct MultiProducerSequencerTestSuite{};
 
 namespace
 {
 	task<> one_at_a_time_producer(
-		ThreadPool& tp,
+		thread::ThreadPool& tp,
 		multi_producer_sequencer<std::size_t>& sequencer,
 		std::uint64_t buffer[],
 		std::uint64_t iterationCount)
@@ -78,7 +77,7 @@ namespace
 	}
 
 	task<> batch_producer(
-		ThreadPool& tp,
+		thread::ThreadPool& tp,
 		multi_producer_sequencer<std::size_t>& sequencer,
 		std::uint64_t buffer[],
 		std::uint64_t iterationCount,
@@ -105,7 +104,7 @@ namespace
 	}
 
 	task<std::uint64_t> consumer(
-		ThreadPool& tp,
+		thread::ThreadPool& tp,
 		const multi_producer_sequencer<std::size_t>& sequencer,
 		SequenceBarrier<std::size_t>& readBarrier,
 		const std::uint64_t buffer[],
@@ -142,7 +141,7 @@ namespace
 
 qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_batch_single_consumer)
 {
-	ThreadPool tp{3};
+	thread::ThreadPool tp{3};
 	tp.Setup();
 //	static_thread_pool tp{ 3 };
 
@@ -189,7 +188,7 @@ qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_batch_sing
 
 qor_pp_test_suite_case(MultiProducerSequencerTestSuite, two_producers_single_single_consumer)
 {
-	ThreadPool tp;
+	thread::ThreadPool tp;
 	tp.Setup();
 	//static_thread_pool tp{ 3 };
 

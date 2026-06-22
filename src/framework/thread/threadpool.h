@@ -72,7 +72,7 @@
 #include "pool/common_index_type.h"
 #include "src/framework/role/ifeature.h"
 
-namespace qor { namespace framework{
+namespace qor { namespace thread{
 
     struct qor_pp_module_interface(QOR_THREAD) wait_deadlock : public std::runtime_error
     {
@@ -640,10 +640,10 @@ namespace qor { namespace framework{
     template <std::ptrdiff_t LeastMaxValue = std::counting_semaphore<>::max()>
     using counting_semaphore = std::counting_semaphore<LeastMaxValue>;
 
-    }//qor::framework
+    }//qor::thread
 
     constexpr GUID ThreadPoolGUID = {0x801bc441, 0x7b30, 0x4591, {0xba, 0xea, 0xd9, 0x87, 0x49, 0x6f, 0x4f, 0x63}};
-    qor_pp_declare_guid_of(framework::ThreadPool,ThreadPoolGUID);
+    qor_pp_declare_guid_of(thread::ThreadPool,ThreadPoolGUID);
 }//qor
 
 #endif // QOR_PP_H_FRAMEWORK_THREADPOOL

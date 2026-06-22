@@ -33,11 +33,11 @@ qor_pp_module_provide(QOR_WINDOWSDLL, DynamicLibrary)
 
 namespace qor{ namespace framework{ namespace nswindows{
     
-    DynamicLibrary::DynamicLibrary() : qor::framework::DynamicLibrary()
+    DynamicLibrary::DynamicLibrary() : qor::DynamicLibrary()
     {
     }
 
-    DynamicLibrary::DynamicLibrary(const std::string& libName) : qor::framework::DynamicLibrary(libName)
+    DynamicLibrary::DynamicLibrary(const std::string& libName) : qor::DynamicLibrary(libName)
     {
         m_handle = reinterpret_cast<void*>(qor::nswindows::api::Kernel32::LoadLibrary(qor::platform::nswindows::to_tstring(libName.c_str()).c_str()));
     }

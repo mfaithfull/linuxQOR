@@ -33,13 +33,9 @@ namespace qor{ namespace events{
     {
     public:
 
-        Sink(EventQueue* queue) : m_queue(queue)
-        {
-        }
+        Sink(EventQueue* queue) : m_queue(queue) { }
 
-        ~Sink()
-        {
-        }
+        ~Sink() noexcept = default;
 
         bool Peek()
         {

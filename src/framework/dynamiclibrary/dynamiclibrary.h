@@ -34,10 +34,10 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/role/ifeature.h"
 
-namespace qor{ bool qor_pp_module_interface(QOR_DYNAMICLIBARY) ImplementsDynamicLibrary();}
-
-namespace qor { namespace framework{
+namespace qor { 
   
+    bool qor_pp_module_interface(QOR_DYNAMICLIBARY) ImplementsDynamicLibrary();
+
     class qor_pp_module_interface(QOR_DYNAMICLIBARY) DynamicLibrary
     {
     public:
@@ -51,11 +51,10 @@ namespace qor { namespace framework{
         virtual DynProc GetProcAddress(const std::string& procName);      
         
     };
-    } //framework
 
-    qor_pp_declare_factory_of(framework::DynamicLibrary, ExternalFactory);
+    qor_pp_declare_factory_of(DynamicLibrary, ExternalFactory);
     constexpr GUID DynamicLibraryGUID = {0x106DCCF1, 0x6ECD, 0x4518, {0x91, 0x0F, 0x7D, 0xE3, 0xE6, 0xD5, 0xD3, 0x8C}};    
-    qor_pp_declare_guid_of(framework::DynamicLibrary,DynamicLibraryGUID);
+    qor_pp_declare_guid_of(DynamicLibrary,DynamicLibraryGUID);
 
 }//qor
 

@@ -99,8 +99,8 @@ namespace qor{ namespace platform { namespace nswindows{
         DeviceMode dm;
         if(GetDeviceMode(dm))
         {
-            xPos = dm.dmPosition.x;
-            yPos = dm.dmPosition.y;
+            xPos = dm._display_fields.dmPosition.x;
+            yPos = dm._display_fields.dmPosition.y;
             return true;
         }
         return false;

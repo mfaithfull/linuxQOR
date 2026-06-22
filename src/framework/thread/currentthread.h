@@ -28,7 +28,7 @@
 #include <thread>
 
 #include "src/platform/compiler/compiler.h"
-#include "threadcontext.h"
+#include "detail/threadcontext.h"
 #include "icurrentthread.h"
 
 namespace qor
@@ -40,9 +40,11 @@ namespace qor
 #endif
 }
 
-namespace qor{ namespace framework{
+namespace qor{
 
-    class qor_pp_module_interface(QOR_THREAD) ThreadPool;       //forward declare ThreadPool class
+    namespace thread{
+        class qor_pp_module_interface(QOR_THREAD) ThreadPool;       //forward declare ThreadPool class
+    }
     class qor_pp_module_interface(QOR_THREAD) CurrentThread;
 
 
@@ -55,7 +57,7 @@ namespace qor{ namespace framework{
     class qor_pp_module_interface(QOR_THREAD) CurrentThread final
     {
         friend class qor_pp_module_interface(QOR_THREAD) Thread;
-        friend class ThreadPool;
+        friend class thread::ThreadPool;
     public:
 
         static const CurrentThread& GetCurrent();
@@ -82,7 +84,7 @@ namespace qor{ namespace framework{
         void Sleep(unsigned long ulMilliseconds) const;
         void _Yield() const;
 
-        ThreadContext& Context() const;
+        detail::ThreadContext& Context() const;
 
         virtual bool SetPriority(ICurrentThread::Priority priority) const;
         virtual std::optional<ICurrentThread::Priority> GetPriority() const;
@@ -102,9 +104,9 @@ namespace qor{ namespace framework{
         void SetPool(std::optional<void*> pool);
         void SetIndex(std::optional<std::size_t> index);
 
-        mutable ThreadContext m_Context;
+        mutable detail::ThreadContext m_Context;
     };
 
-}}//qor::framework
+}//qor
 
 #endif//QOR_PP_H_FRAMEWORK_CURRENTTHREAD

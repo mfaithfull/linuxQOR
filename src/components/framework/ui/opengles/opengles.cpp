@@ -33,8 +33,6 @@
 
 namespace qor { namespace components{
 
-    using namespace qor::framework;
-    
     OpenGLESFeature::OpenGLESFeature()
     {        
     }

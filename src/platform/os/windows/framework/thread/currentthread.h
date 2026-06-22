@@ -34,7 +34,7 @@ namespace qor
 
 namespace qor{ namespace framework{ namespace nswindows{
 
-    class qor_pp_module_interface(QOR_WINDOWSTHREAD) CurrentThread : public qor::framework::ICurrentThread
+    class qor_pp_module_interface(QOR_WINDOWSTHREAD) CurrentThread : public qor::ICurrentThread
     {
     public:
         CurrentThread() = default;

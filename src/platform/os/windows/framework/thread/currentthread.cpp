@@ -71,7 +71,7 @@ namespace qor{ namespace framework{ namespace nswindows{
         return SetThreadPriority(GetCurrentThread(), static_cast<int>(OSPriority)) != 0;
     }
 
-    std::optional< qor::framework::ICurrentThread::Priority > CurrentThread::GetPriority() const
+    std::optional< qor::ICurrentThread::Priority > CurrentThread::GetPriority() const
     {
         const int priority = GetThreadPriority(GetCurrentThread());
 

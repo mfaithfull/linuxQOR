@@ -29,7 +29,7 @@ extern "C"
 {
 	qor::Module& ThisModule(void)
 	{
-		static qor::framework::Host host;
+		static qor::Host host;
 		return host;
 	}
 }

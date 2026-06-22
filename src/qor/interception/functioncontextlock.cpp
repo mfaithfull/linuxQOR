@@ -31,7 +31,7 @@ namespace qor {
 
     FunctionContextLock::FunctionContextLock()
     {
-        m_FunctionContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
+        m_FunctionContext = CurrentThread::GetCurrent().Context().FunctionContext();
         if (m_FunctionContext)
         {
             m_Level = m_FunctionContext->Lock();

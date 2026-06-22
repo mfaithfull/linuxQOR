@@ -68,7 +68,7 @@ namespace qor { namespace framework{
 
     private:        
 
-        ref_of<ThreadPool>::type m_threadPool;
+        ref_of<thread::ThreadPool>::type m_threadPool;
         unsigned m_contextCount;
         ref_of<AsyncIOContext>::type* m_contextArray;
         size_t m_contextIndex;

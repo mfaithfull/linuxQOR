@@ -28,8 +28,7 @@
 #include "whenallready.h"
 #include "awaitabletraits.h"
 #include "isawaitable.h"
-#include "fmap.h"
-
+#include "detail/fmap.h"
 #include "detail/unwrapreference.h"
 
 #include <tuple>

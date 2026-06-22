@@ -28,7 +28,7 @@
 #include <functional>
 #include "src/framework/thread/thread.h"
 
-namespace qor { namespace framework{
+namespace qor { namespace thread{
 
     class ThreadPool;                                                   //forward declare ThreadPool class
 #ifdef __cpp_lib_move_only_function
@@ -39,8 +39,8 @@ namespace qor { namespace framework{
     using function_t = std::function<S...>;
 #endif
     using task_t = function_t<void()>;                                  //The type of tasks in the task queue.
-    using thread_t = Thread;                                            //The type of threads to use.
+    using thread_t = qor::Thread;                                            //The type of threads to use.
 
-}}//qor::framework    
+}}//qor::thread    
 
 #endif//QOR_PP_H_FRAMEWORK_THREADPOOL_TYPES

@@ -42,7 +42,7 @@ namespace qor{
         m_moduleContext = ThisModule().Name();
         //m_processContext = HostProcess::ThisProcess();
         std::stringstream ss;
-        ss << framework::CurrentThread::GetCurrent().GetID();
+        ss << CurrentThread::GetCurrent().GetID();
         m_thread = ss.str();
         m_inInstance = false;
         m_inException = false;
@@ -58,7 +58,7 @@ namespace qor{
         m_moduleContext = module == nullptr ? ThisModule().Name() : module;
         //m_processContext = HostProcess::ThisProcess();
         std::stringstream ss;
-        ss << framework::CurrentThread::GetCurrent().GetID();
+        ss << CurrentThread::GetCurrent().GetID();
         m_thread = ss.str();
     }
 
@@ -72,7 +72,7 @@ namespace qor{
         m_moduleContext = module == nullptr ? ThisModule().Name() : module;
         if(!ObjContext.IsNull()) { SetObjectContext(ObjContext); };
         //m_processContext = HostProcess::ThisProcess();
-        std::optional<std::string> maybeName = framework::CurrentThread::GetCurrent().GetName();
+        std::optional<std::string> maybeName = CurrentThread::GetCurrent().GetName();
         if(maybeName.has_value())
         {
             m_thread = maybeName.value();
@@ -80,7 +80,7 @@ namespace qor{
         else
         {
             std::stringstream ss;
-            ss << framework::CurrentThread::GetCurrent().GetID();
+            ss << CurrentThread::GetCurrent().GetID();
             m_thread = ss.str();
         }
     }

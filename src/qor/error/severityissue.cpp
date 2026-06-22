@@ -33,7 +33,7 @@ namespace qor{
 
     Error::Error(Severity s, const std::string& message) : Issue<SeverityWhat>()
     {
-        auto pContext = framework::CurrentThread::GetCurrent().Context().FunctionContext();
+        auto pContext = CurrentThread::GetCurrent().Context().FunctionContext();
         m_when = new_ref<When>();
         if(pContext != nullptr)
         {

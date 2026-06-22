@@ -42,7 +42,7 @@ extern "C"
 			qor_pp_stringize(qor_pp_ver_patch) "." \
 			qor_pp_stringize(qor_pp_buildnumber));
 
-		static qor::TypeRegEntry< qor::framework::ThreadPool, qor::framework::ThreadPool > reg;
+		static qor::TypeRegEntry< qor::thread::ThreadPool, qor::thread::ThreadPool > reg;
 		return QORModule;
 	}
 }

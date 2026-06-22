@@ -31,7 +31,7 @@
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/datastructures/guid.h"
 
-namespace qor{ namespace framework{
+namespace qor{ namespace detail{
 
     //Thread local container for Flyer instances by GUID. Each Flyer type has 1 current instance, the top of its notional stack.
     class qor_pp_module_interface(QOR_THREAD) FlyerMap final
@@ -98,6 +98,6 @@ namespace qor{ namespace framework{
         std::map< GUID, AnyObject > m_Map;
     };
 
-}}//qor::framework
+}}//qor::detail
 
 #endif//QOR_PP_H_FLYERMAP

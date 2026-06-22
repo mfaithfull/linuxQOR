@@ -31,13 +31,13 @@ qor_pp_module_will_provide(QOR_WINDOWSDLL, DynamicLibrary)
 
 namespace qor{ namespace framework{ namespace nswindows{
 
-    class qor_pp_module_interface(QOR_WINDOWSDLL) DynamicLibrary : public qor::framework::DynamicLibrary
+    class qor_pp_module_interface(QOR_WINDOWSDLL) DynamicLibrary : public qor::DynamicLibrary
     {
     public:
         DynamicLibrary();
         DynamicLibrary(const std::string& libName);
         virtual ~DynamicLibrary();
-        virtual qor::framework::DynamicLibrary::DynProc GetProcAddress(const std::string& procName);
+        virtual qor::DynamicLibrary::DynProc GetProcAddress(const std::string& procName);
         
     private:
 

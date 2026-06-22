@@ -59,7 +59,7 @@ namespace qor{ namespace components{
             auto application = AppBuilder().TheApplication();
             auto role = application(qor_shared).GetRole();
             m_io = role(qor_shared).GetFeature<AsyncIOService>();
-            m_threadPool = role(qor_shared).GetFeature<ThreadPool>();
+            m_threadPool = role(qor_shared).GetFeature<thread::ThreadPool>();
             m_sockets = ThePlatform()(qor_shared).GetSubsystem<Sockets>();
 
             //Get a session for async IO

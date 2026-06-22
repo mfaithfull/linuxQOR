@@ -33,8 +33,8 @@
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"
 
-namespace qor{ namespace framework{
-
+namespace qor
+{
     //Base interface for platform specific clas representing the containing process
     class ICurrentProcess
     {
@@ -74,12 +74,10 @@ namespace qor{ namespace framework{
         }
     };
     
-    }//qor::framework
-
-    qor_pp_declare_instancer_of(framework::ICurrentProcess, SingletonInstancer);
-    qor_pp_declare_factory_of(framework::ICurrentProcess, ExternalFactory);
+    qor_pp_declare_instancer_of(ICurrentProcess, SingletonInstancer);
+    qor_pp_declare_factory_of(ICurrentProcess, ExternalFactory);
     constexpr GUID ICurrentProcessGUID = {0x57fd8b55, 0xa793, 0x4510, { 0xab, 0x66, 0xf7, 0x5a, 0x00, 0xb6, 0x13, 0x23}};
-    qor_pp_declare_guid_of(framework::ICurrentProcess,ICurrentProcessGUID);
+    qor_pp_declare_guid_of(ICurrentProcess,ICurrentProcessGUID);
 
 }//qor
 

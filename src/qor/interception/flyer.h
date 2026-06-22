@@ -41,7 +41,7 @@ namespace qor {
             const GUID* luid = guid_of<T>::guid();
             TypedAny< T > wrapper(instance);
 
-            m_anyPrevious = framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
+            m_anyPrevious = CurrentThread::GetCurrent().Context().GetFlyerMap().Configure( luid, wrapper);
 
             if(!m_anyPrevious.IsNull())
 			{                
@@ -52,7 +52,7 @@ namespace qor {
 
 		bool Pop()
 		{            
-        	framework::CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(guid_of<T>::guid(), m_anyPrevious);
+        	CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(guid_of<T>::guid(), m_anyPrevious);
 			return true;
 		}
 

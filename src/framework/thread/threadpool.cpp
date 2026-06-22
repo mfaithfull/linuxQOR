@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "threadpool.h"
 
-namespace qor{ namespace framework{
+namespace qor{ namespace thread{
 
     void ThreadPool::Setup()
     {
@@ -155,4 +155,4 @@ namespace qor{ namespace framework{
         CurrentThread::GetMutableCurrent().SetPool(std::nullopt);
     }
 
-}}//qor::framework
+}}//qor::thread

@@ -1,6 +1,6 @@
 set(target qor_thread)
 
-add_library(${target} SHARED qor_thread.cpp currentthread.cpp thread.cpp threadcontext.cpp threadpool.cpp)
+add_library(${target} SHARED qor_thread.cpp currentthread.cpp thread.cpp detail/threadcontext.cpp threadpool.cpp)
 
 find_package(Threads REQUIRED)
 if(THREADS_HAVE_PTHREAD_ARG)

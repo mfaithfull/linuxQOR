@@ -204,17 +204,6 @@ namespace qor{ namespace events{
 
     protected:
         
-        /*
-        event_t* EndOfBuffer(void)
-        {
-            event_t* pResult = nullptr;
-            if (this->m_allocationCount > 0)
-            {
-                pResult = m_pAllocation + this->m_allocationCount;
-            }
-            return pResult;
-        }*/
-        
         event_t* AddressOf(size_type index)
         {
             event_t* pResult = nullptr;

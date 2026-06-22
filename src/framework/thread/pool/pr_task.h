@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FRAMEWORK_THREADPOOL_PRTASK
 #define QOR_PP_H_FRAMEWORK_THREADPOOL_PRTASK
 
-namespace qor { namespace framework{
+namespace qor { namespace thread{
 
     using priority_t = std::int8_t;     //A type used to indicate the priority of a task. Defined to be a signed integer with a width of exactly 8 bits (-128 to +127).
 
@@ -51,6 +51,6 @@ namespace qor { namespace framework{
         priority_t priority = 0;
     };
 
-}}//qor::framework
+}}//qor::thread
 
 #endif//QOR_PP_H_FRAMEWORK_THREADPOOL_PRTASK

@@ -45,7 +45,7 @@ namespace qor { namespace framework{
 
     void AsyncIOService::Setup()
     {
-        m_threadPool = m_Role->GetFeature<ThreadPool>();
+        m_threadPool = m_Role->GetFeature<thread::ThreadPool>();
 
         //Take all the AsyncIOContext(s) from the pool.
         m_contextCount = (unsigned int)PoolInstancer::GetPoolSize<AsyncIOContext>();

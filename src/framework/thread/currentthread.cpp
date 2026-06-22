@@ -29,33 +29,31 @@
 namespace qor{
     
     namespace detail {
-        thread_local ThreadInstanceHolder<framework::ICurrentThread> ThreadInstanceHolderCurrentPlatformThread;
-        thread_local ThreadInstanceHolder<framework::CurrentThread> ThreadInstanceHolderCurrentThread;
+        thread_local ThreadInstanceHolder<ICurrentThread> ThreadInstanceHolderCurrentPlatformThread;
+        thread_local ThreadInstanceHolder<CurrentThread> ThreadInstanceHolderCurrentThread;
         
-        qor_pp_export ThreadInstanceHolder<framework::ICurrentThread>* GetCurrentPlatformThreadHolder()
+        qor_pp_export ThreadInstanceHolder<ICurrentThread>* GetCurrentPlatformThreadHolder()
         {
             return &ThreadInstanceHolderCurrentPlatformThread;
         }
 
-        qor_pp_export ThreadInstanceHolder<framework::CurrentThread>* GetCurrentThreadHolder()
+        qor_pp_export ThreadInstanceHolder<CurrentThread>* GetCurrentThreadHolder()
         {
             return &ThreadInstanceHolderCurrentThread;
         }
 
         template<>
-        qor_pp_export ThreadInstanceHolder<framework::ICurrentThread>* theThreadInstanceHolder<framework::ICurrentThread>()
+        qor_pp_export ThreadInstanceHolder<ICurrentThread>* theThreadInstanceHolder<ICurrentThread>()
         {
             return GetCurrentPlatformThreadHolder();
         }
 
         template<>
-        qor_pp_export ThreadInstanceHolder<framework::CurrentThread>* theThreadInstanceHolder<framework::CurrentThread>()
+        qor_pp_export ThreadInstanceHolder<CurrentThread>* theThreadInstanceHolder<CurrentThread>()
         {
             return GetCurrentThreadHolder();
         }
     }
-
-    namespace framework{
 
     qor_pp_thread_local std::optional<std::size_t> pool_index = std::nullopt;
     qor_pp_thread_local std::optional<void*> parent_pool = std::nullopt;
@@ -82,28 +80,22 @@ namespace qor{
 
 	const CurrentThread& CurrentThread::GetCurrent()
 	{
-        return detail::GetCurrentThreadHolder()->Instance().operator const qor::framework::CurrentThread &();
+        return detail::GetCurrentThreadHolder()->Instance().operator const qor::CurrentThread &();
 	}
 
 	const CurrentThread& CurrentThread::Get()
 	{
-        return detail::GetCurrentThreadHolder()->Instance().operator const qor::framework::CurrentThread &();
+        return detail::GetCurrentThreadHolder()->Instance().operator const qor::CurrentThread &();
 	}
 
-    void CurrentThread::Init()
-    {
-    }
+    void CurrentThread::Init(){ }
 
-    void CurrentThread::Destroy()
-    {
-    }
-
+    void CurrentThread::Destroy(){ }
 
 	CurrentThread& CurrentThread::GetMutableCurrent()
 	{
         return detail::GetCurrentThreadHolder()->Instance()()();
 	}
-
 
     std::thread::id CurrentThread::GetID() const
     {
@@ -120,7 +112,7 @@ namespace qor{
 		std::this_thread::yield();
 	}
 
-    ThreadContext& CurrentThread::Context() const
+    detail::ThreadContext& CurrentThread::Context() const
     {
         return m_Context;
     }
@@ -155,4 +147,4 @@ namespace qor{
         return new_ref<ICurrentThread>()->GetAffinity();
     }
 
-}}//qor::framework
+}//qor

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FRAMEWORK_THREADPOOL_BLOCKS
 #define QOR_PP_H_FRAMEWORK_THREADPOOL_BLOCKS
 
-namespace qor { namespace framework{
+namespace qor { namespace thread{
 
     //A helper template to divide a range into blocks. Used by `PostBlocks()`, `SubmitBlocks()`, `PostLoop()`, and `SubmitLoop()`.
     //T The type of the indices. Should be a signed or unsigned integer.

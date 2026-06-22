@@ -27,8 +27,9 @@
 
 #include <functional>
 #include <iostream>
+#include "src/qor/reference/newref.h"
 
-namespace qor{ namespace framework{
+namespace qor{
 
     class IRunable
     {
@@ -44,9 +45,7 @@ namespace qor{ namespace framework{
     {
     public:
 
-        RunableFunc( std::function< int(void) >&& func ) : m_func(std::move(func))
-        {            
-        }
+        RunableFunc( std::function< int(void) >&& func ) : m_func(std::move(func)){}
 
         virtual ~RunableFunc() = default;
 
@@ -58,9 +57,13 @@ namespace qor{ namespace framework{
             }
             catch(const std::exception& e)
             {
-                std::cerr << e.what() << '\n';
+                std::cerr << e.what() << std::endl;
             }
-            return -1;
+            catch(...)
+            {
+                std::cerr << "Unhandled exception." << std::endl;
+            }
+            return EXIT_FAILURE;
         }
 
     private:
@@ -74,6 +77,6 @@ namespace qor{ namespace framework{
         return new_ref<RunableFunc>(func).template AsRef<IRunable>();
     }
 
-}}//qor::framework
+}//qor
 
 #endif//QOR_PP_H_RUNABLE

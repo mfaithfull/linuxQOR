@@ -44,7 +44,7 @@
 #include "slotbase.h"
 #include "pendingslot.h"
 #include "signalbase.h"
-#include "bento.h"
+#include "detail/bento.h"
 
 namespace qor
 {

@@ -33,7 +33,7 @@
 #include <functional>
 #include <cassert>
 
-#include "src/framework/task/fmap.h"
+#include "src/framework/task/detail/fmap.h"
 
 namespace qor
 {

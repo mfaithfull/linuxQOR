@@ -26,7 +26,7 @@
 
 #include "dynamiclibrary.h"
 
-namespace qor{ namespace framework{
+namespace qor{
 
     DynamicLibrary::DynamicLibrary(){ }
 
@@ -40,4 +40,4 @@ namespace qor{ namespace framework{
         return result;
     }
     
-}}//qor::framework
+}//qor

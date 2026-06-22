@@ -39,7 +39,7 @@ namespace qor { namespace framework{
         return m_processor->Enroll(ioDescriptor);
     }
 
-    AsyncIOContext::AsyncIOContext(ref_of<ThreadPool>::type threadPool) : m_threadPool(threadPool)
+    AsyncIOContext::AsyncIOContext(ref_of<thread::ThreadPool>::type threadPool) : m_threadPool(threadPool)
     {
         m_initiator = new_ref<AsyncIOInitiator>();
         if(m_initiator->RequiresBackgroundProcessor())

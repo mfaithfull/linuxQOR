@@ -63,7 +63,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         {
             char charValue = (char)m_result.first;
             GetParser()->PushNode(
-                qor::new_ref<qor::components::parser::Char>(
+                qor::new_ref<qor::components::parser::CharNode>(
                     charValue,static_cast<uint64_t>(echoResponseToken::responseChar)
                 ).template AsRef<qor::components::parser::Node>()
             );

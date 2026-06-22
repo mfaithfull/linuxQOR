@@ -34,8 +34,8 @@
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/instance/threadsingleton.h"
 
-namespace qor{ namespace framework{
-
+namespace qor
+{
     //Base interface for platform specific class representing the current thread of execution
     class ICurrentThread
     {
@@ -86,12 +86,10 @@ namespace qor{ namespace framework{
         }
     };
     
-    }//qor::framework
-
-    qor_pp_declare_instancer_of(framework::ICurrentThread, ThreadSingletonInstancer);    
-    qor_pp_declare_factory_of(framework::ICurrentThread, ExternalFactory);
+    qor_pp_declare_instancer_of(ICurrentThread, ThreadSingletonInstancer);    
+    qor_pp_declare_factory_of(ICurrentThread, ExternalFactory);
     constexpr GUID ICurrentThreadGUID = {0x6d4deb2e, 0x05d5, 0x40b0, { 0xbc, 0x25, 0x9d, 0xa9, 0x3d, 0x55, 0xa1, 0xd6}};
-    qor_pp_declare_guid_of(framework::ICurrentThread,ICurrentThreadGUID);
+    qor_pp_declare_guid_of(ICurrentThread,ICurrentThreadGUID);
 
 }//qor
 

@@ -47,7 +47,6 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::framework;
 
 struct AsyncAutoResetEventTestSuite{};
 
@@ -117,7 +116,7 @@ qor_pp_test_suite_case(AsyncAutoResetEventTestSuite, testMultipleWaiters)
 
 qor_pp_test_suite_case(AsyncAutoResetEventTestSuite, testMultiThreaded)
 {
-	ThreadPool tp;
+	thread::ThreadPool tp;
 	tp.Setup();
 
 	auto run = [&]() -> task<>

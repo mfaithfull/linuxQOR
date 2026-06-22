@@ -49,15 +49,15 @@
 
 namespace qor{
 
-    class SignalBase;
-    class SlotBase;
+    class qor_pp_module_interface(QOR_SIGNALSLOTS) SignalBase;
+    class qor_pp_module_interface(QOR_SIGNALSLOTS) SlotBase;
     enum class ConnectionKind;
 
     namespace detail 
     {
         class BentoAbstract;
         class TeaCupAbstract;
-    }
+    }//detail
 
     class qor_pp_module_interface(QOR_SIGNALSLOTS) PendingSlot
     {

@@ -42,7 +42,6 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::framework;
 
 struct SyncWaitTestSuite{};
 
@@ -87,7 +86,7 @@ qor_pp_test_suite_case(SyncWaitTestSuite, sync_wait_multiple_threads)
 	// which will sometimes complete before this thread calls event.wait()
 	// inside sync_wait(). Thus we're roughly testing the thread-safety of
 	// sync_wait().
-	ThreadPool tp{ 1 };
+	thread::ThreadPool tp{ 1 };
 	tp.Setup();
 
 	int value = 0;

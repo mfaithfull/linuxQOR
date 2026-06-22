@@ -34,7 +34,6 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::framework;
 
 class TestPushButton : public SignalBase
 {

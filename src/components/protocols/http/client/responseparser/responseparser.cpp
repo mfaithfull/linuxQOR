@@ -53,7 +53,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
             }
             else
             {
-                auto f = httpResponseTokenNames.find(token);
+                auto f = httpResponseTokenNames.find((httpResponseToken)token);
                 std::string tokenName;
                 if(f != httpResponseTokenNames.end())
                 {

@@ -28,9 +28,9 @@
 #include <map>
 #include "irole.h"
 
-namespace qor{ namespace framework{
+namespace qor{
 
-    //Base Role implementation. This can be extended but is a fully functional feature container.
+    //Base Role implementation. This fully functional feature container can be extended if required.
     class qor_pp_module_interface(QOR_ROLE) Role : public IRole
     {
     public:
@@ -47,6 +47,6 @@ namespace qor{ namespace framework{
         std::map<GUID, ref_of<IFeature>::type > m_mapFeatures;
     };
 
-}}//qor::framework
+}//qor
 
 #endif//QOR_PP_H_ROLE

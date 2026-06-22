@@ -45,13 +45,12 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::framework;
 
 struct SingleProducerSequencerTestSuite{};
 
 qor_pp_test_suite_case(SingleProducerSequencerTestSuite, multi_threaded_usage_single_consumer)
 {
-	ThreadPool tp;
+	thread::ThreadPool tp;
 	tp.Setup();
 
 	constexpr std::size_t bufferSize = 256;

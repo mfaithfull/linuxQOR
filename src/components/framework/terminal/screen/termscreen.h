@@ -35,7 +35,7 @@ namespace qor{ bool qor_pp_import ImplementsTermScreen(); }
 
 namespace qor { namespace components{ namespace tui {
 
-    class qor_pp_module_interface(QOR_TUI) TermScreen : public framework::IFeature
+    class qor_pp_module_interface(QOR_TUI) TermScreen : public IFeature
     {
     public:
 

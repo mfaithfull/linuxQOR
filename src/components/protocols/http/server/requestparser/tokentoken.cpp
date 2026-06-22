@@ -42,7 +42,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = httpRequestTokenNames.find(token);
+            auto f = httpRequestTokenNames.find((httpRequestToken)token);
             std::string tokenName;
             if(f != httpRequestTokenNames.end())
             {
@@ -83,7 +83,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = httpRequestTokenNames.find(token);
+            auto f = httpRequestTokenNames.find((httpRequestToken)token);
             std::string tokenName;
             if(f != httpRequestTokenNames.end())
             {
@@ -137,7 +137,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = httpRequestTokenNames.find(token);
+            auto f = httpRequestTokenNames.find((httpRequestToken)token);
             std::string tokenName;
             if(f != httpRequestTokenNames.end())
             {
@@ -194,7 +194,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = httpRequestTokenNames.find(token);
+            auto f = httpRequestTokenNames.find((httpRequestToken)token);
             std::string tokenName;
             if(f != httpRequestTokenNames.end())
             {

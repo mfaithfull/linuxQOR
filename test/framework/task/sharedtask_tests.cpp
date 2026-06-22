@@ -34,7 +34,7 @@
 #include "src/framework/task/syncwait.h"
 #include "src/framework/task/whenallready.h"
 #include "src/qor/sync/singleconsumerevent.h"
-#include "src/framework/task/fmap.h"
+#include "src/framework/task/detail/fmap.h"
 #include "counted.h"
 
 using namespace qor;

@@ -34,7 +34,7 @@ namespace qor{
 
 namespace qor{ namespace framework{ namespace nswindows{
 
-    class qor_pp_module_interface(QOR_WINDOWSPROCESS) CurrentProcess : public qor::framework::ICurrentProcess
+    class qor_pp_module_interface(QOR_WINDOWSPROCESS) CurrentProcess : public qor::ICurrentProcess
     {
     public:
         
@@ -43,8 +43,8 @@ namespace qor{ namespace framework{ namespace nswindows{
 
         std::optional<std::vector<bool>> GetAffinity();
         bool SetAffinity(const std::vector<bool>& affinity);
-        std::optional<qor::framework::ICurrentProcess::Priority> GetPriority();
-        bool SetPriority(const qor::framework::ICurrentProcess::Priority priority);
+        std::optional<qor::ICurrentProcess::Priority> GetPriority();
+        bool SetPriority(const qor::ICurrentProcess::Priority priority);
         
     };
 

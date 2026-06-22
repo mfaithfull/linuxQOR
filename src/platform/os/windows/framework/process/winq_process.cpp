@@ -44,7 +44,7 @@ extern "C"
 			qor_pp_stringize(qor_pp_ver_patch) "." \
 			qor_pp_stringize(qor_pp_buildnumber));
 
-		static qor::TypeRegEntry< qor::framework::nswindows::CurrentProcess, qor::framework::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
+		static qor::TypeRegEntry< qor::framework::nswindows::CurrentProcess, qor::ICurrentProcess > reg;  //Register the Windows specific implementation of ICurrentProcess
 		return QORModule;
 	}
 }

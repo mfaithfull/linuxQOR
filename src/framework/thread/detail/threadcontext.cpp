@@ -22,52 +22,34 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
-#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#include "src/configuration/configuration.h"
+#include "threadcontext.h"
 
-#include <thread>
-#include <vector>
+namespace qor{ namespace detail{
 
-#include "src/platform/compiler/compiler.h"
-#include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/thread/flyermap.h"
+    ThreadContext::ThreadContext() : m_pRootContext(nullptr), m_pCurrentContext(nullptr){ }
 
-namespace qor{ namespace framework{
-
-	//Additional state for QOR threads beyond what std library threads provide
-	//Per thread state is only created if it's used via the CurrentThread thread-singletonS
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext
+    IFunctionContext* ThreadContext::RegisterFunctionContext(IFunctionContext* pFContext)
     {
-
-    public:
-
-        ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext();
-
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
-
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
+		IFunctionContext* pParent = m_pCurrentContext;
+		m_pCurrentContext = pFContext;
+		if (pParent == nullptr)
 		{
-			return m_FlyerMap;
+			m_pRootContext = m_pCurrentContext;
 		}
-
-		inline IFunctionContext* FunctionContext()
+		return pParent;
+    }
+    
+    void ThreadContext::UnregisterFunctionContext(IFunctionContext*, IFunctionContext* pParent)
+    {
+		if (m_pCurrentContext == m_pRootContext)
 		{
-			return m_pCurrentContext;
+			m_pCurrentContext = nullptr;
 		}
+		else
+		{
+			m_pCurrentContext = pParent;
+		}		
+    }
 
-    private:
-
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;
-        std::vector< void* > m_aThreadLocalStorage;
-        FlyerMap m_FlyerMap;
-
-    };
-
-}}//qor::framework
-
-#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT
+}}//qor::detail

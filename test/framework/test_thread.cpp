@@ -34,7 +34,6 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::framework;
 
 struct ThreadTestSuite{};
 
@@ -69,7 +68,7 @@ class SelfAwareWorker : public Thread
 
     virtual void Run()
     {
-        [[maybe_unused]]ThreadContext& context = CurrentThread::GetCurrent().Context();
+        [[maybe_unused]]qor::detail::ThreadContext& context = CurrentThread::GetCurrent().Context();
         std::cout << " Worker thread has access to its mutable context.";
     }
 };

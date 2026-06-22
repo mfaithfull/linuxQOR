@@ -32,7 +32,7 @@
 #include "src/qor/assert/assert.h"
 #include "src/framework/task/generator/recursivegenerator.h"
 #include "src/qor/sync/onscopeexit.h"
-#include "src/framework/task/fmap.h"
+#include "src/framework/task/detail/fmap.h"
 
 using namespace qor;
 using namespace qor::test;

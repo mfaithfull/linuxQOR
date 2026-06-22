@@ -38,7 +38,6 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::framework;
 using namespace qor::platform;
 
 

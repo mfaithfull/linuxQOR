@@ -27,7 +27,7 @@
 
 #include "../../qor/module/module.h"
 
-namespace qor{ namespace framework{
+namespace qor{
 
     qor_pp_module_interface(QOR_PP_HOST)Module* TheHost();
 
@@ -46,6 +46,6 @@ namespace qor{ namespace framework{
 
     };
 
-}}//qor::framework
+}//qor
 
 #endif//QOR_PP_H_FRAMEWORK_HOST

@@ -30,7 +30,6 @@
 #include "src/framework/application/application_builder.h"
 
 using namespace qor;                                //Use the basic namespaces from the QOR
-using namespace qor::framework;
 
 constexpr const char* appName = "BasicApp";         //Give our application a name
 

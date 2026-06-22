@@ -25,13 +25,11 @@
 #include "src/configuration/configuration.h"
 #include "application_builder.h"
 
-namespace qor{ namespace framework{
+namespace qor{
 
-    AppBuilder::AppBuilder()
-    {
-    }
+    AppBuilder::AppBuilder(){}
 
-    ref_of<Application>::type AppBuilder::Build(const std::string& name/*, const int argc, const char** argv, const char** env*/)
+    ref_of<Application>::type AppBuilder::Build(const std::string& name)
     {
         auto application = new_ref<Application>();
         application->Name() = name;
@@ -49,4 +47,4 @@ namespace qor{ namespace framework{
         SingletonInstancer::AutoRedirect<Application>(application);
     }
     
-}}//qor::framework
+}//qor

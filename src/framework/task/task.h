@@ -285,14 +285,13 @@ namespace qor
 		};
 	}
 
-	/// \brief
-	/// A task represents an operation that produces a result both lazily
-	/// and asynchronously.
-	///
-	/// When you call a coroutine that returns a task, the coroutine
-	/// simply captures any passed parameters and returns exeuction to the
-	/// caller. Execution of the coroutine body does not start until the
-	/// coroutine is first co_await'ed.
+	// A task represents an operation that produces a result both lazily
+	// and asynchronously.
+	//
+	// When you call a coroutine that returns a task, the coroutine
+	// simply captures any passed parameters and returns exeuction to the
+	// caller. Execution of the coroutine body does not start until the
+	// coroutine is first co_await'ed.
 	template<typename T = void>
 	class [[nodiscard]] task
 	{
@@ -309,8 +308,7 @@ namespace qor
 			std::coroutine_handle<promise_type> m_coroutine;
 
 			awaitable_base(std::coroutine_handle<promise_type> coroutine) noexcept
-				: m_coroutine(coroutine)
-			{}
+				: m_coroutine(coroutine){ }
 
 			bool await_ready() const noexcept
 			{
