@@ -29,9 +29,9 @@
 #include <coroutine>
 #include "overlappedoperationcancellable.h"
 #include "overlappedoperation.h"
-#include "src/framework/task/cancellation/cancellationtoken.h"
-#include "src/platform/network/socket.h"
-#include "src/platform/network/ipendpoint.h"
+#include "src/framework/parallel/task/cancellation/cancellationtoken.h"
+#include "src/framework/io/network/socket.h"
+#include "src/framework/io/network/ipendpoint.h"
 
 namespace qor { namespace framework { namespace nswindows {
 

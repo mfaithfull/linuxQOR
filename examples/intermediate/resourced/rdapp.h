@@ -28,7 +28,7 @@
 #include <string>
 
 #include "src/qor/instance/singleton.h"
-#include "src/framework/application/application.h"
+#include "src/framework/app/application/application.h"
 #include "src/qor/sync/recursive_mutex.h"
 #include "src/components/framework/optionparser/ioptionable.h"
 

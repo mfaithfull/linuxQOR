@@ -28,7 +28,7 @@
 #include <stack>
 #include <iostream>
 
-#include "src/framework/workflow/workflow.h"
+#include "src/framework/app/workflow/workflow.h"
 #include "context.h"
 #include "result.h"
 #include "node.h"

@@ -28,7 +28,7 @@
 #include <stack>
 #include <iostream>
 
-#include "src/framework/workflow/workflow.h"
+#include "src/framework/app/workflow/workflow.h"
 
 namespace qor { namespace components { namespace serial {
 

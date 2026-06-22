@@ -33,7 +33,7 @@
 #include <MSWSock.h>
 #include <Windows.h>
 
-#include "src/platform/network/ipendpoint.h"
+#include "src/framework/io/network/ipendpoint.h"
 
 namespace qor { namespace network { namespace nswindows {
 

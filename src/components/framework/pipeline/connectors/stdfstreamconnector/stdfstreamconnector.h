@@ -26,8 +26,8 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_STDFSTREAM
 
 #include <fstream>
-#include "src/platform/filesystem/fileindex.h"
-#include "src/framework/pipeline/plug.h"
+#include "src/framework/io/filesystem/fileindex.h"
+#include "src/framework/io/pipeline/plug.h"
 
 namespace qor{ namespace components{ 
 

@@ -26,9 +26,9 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEGENERATOR
 
 #include <string>
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/workflow/workflow.h"
+#include "src/framework/app/workflow/workflow.h"
 #include "../../response/response.h"
 #include "src/components/parser/context.h"
 

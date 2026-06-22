@@ -25,10 +25,10 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_APP
 #define QOR_PP_H_EXAMPLES_ECHOSERVER_APP
 
-#include "src/framework/application/application.h"
+#include "src/framework/app/application/application.h"
 #include "src/components/framework/optionparser/ioptionable.h"
 
-class EchoServerApp : public qor::framework::Application, public qor::components::optparser::IOptionable
+class EchoServerApp : public qor::Application, public qor::components::optparser::IOptionable
 {
 public:
 

@@ -25,16 +25,16 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/application/application_builder.h"
-#include "src/framework/role/role.h"
+#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/role/role.h"
 #include "src/platform/platform.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/workflow/workflow.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/app/workflow/workflow.h"
 
 using namespace qor;
 using namespace qor::test;

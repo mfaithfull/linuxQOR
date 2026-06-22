@@ -25,9 +25,9 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_CLIENTWORKFLOW
 #define QOR_PP_H_EXAMPLES_ECHOSERVER_CLIENTWORKFLOW
 
-#include "src/framework/workflow/workflow.h"
-#include "src/platform/network/sockets.h"
-#include "src/platform/network/socket.h"
+#include "src/framework/app/workflow/workflow.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/io/network/socket.h"
 #include "sessionpipeline.h"
 #include "errorhandler.h"
 #include "serverloghandler.h"
@@ -38,7 +38,7 @@ class ClientSessionWorkflow : public qor::workflow::Workflow
 public:
 
     ClientSessionWorkflow(
-        qor::ref_of<qor::framework::AsyncIOContext::Session>::type sharedContext,
+        qor::ref_of<qor::async::AsyncIOContext::Session>::type sharedContext,
         qor::ref_of<qor::network::Socket>::type socket);
         
     virtual ~ClientSessionWorkflow();
@@ -54,7 +54,7 @@ private:
     qor::ref_of<qor::workflow::State>::type echo;
     qor::ref_of<qor::workflow::State>::type disconnect;
 
-    qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
+    qor::ref_of<qor::async::AsyncIOContext::Session>::type m_ioSession;
     qor::ref_of<qor::network::Socket>::type m_socket;
     qor::ref_of<SessionPipeline>::type m_pipeline;    
 };

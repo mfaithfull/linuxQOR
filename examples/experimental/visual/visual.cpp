@@ -29,17 +29,17 @@
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/error/error.h"
 #include "src/qor/log/defaultloghandler.h"
-#include "src/framework/role/role.h"
+#include "src/framework/app/role/role.h"
 #include "src/components/framework/logaggregator/logaggregator.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/framework/desktopui/desktopui.h"
-#include "src/framework/desktopui/windows/mainwindow.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/ui/desktopui/desktopui.h"
+#include "src/framework/ui/desktopui/windows/mainwindow.h"
 #include "visual.h"
-#include "src/framework/role/getfeature.h"
+#include "src/framework/app/role/getfeature.h"
 
 using namespace qor;
 using namespace qor::log;
-using namespace qor::framework;
+//using namespace qor::framework;
 using namespace qor::platform;
 using namespace qor::components;
 
@@ -65,11 +65,11 @@ int main(const int argc, const char** argv, char** env)
         [&logHandler](ref_of<IRole>::type role)
         {
             qor_pp_fcontext;            
-            role->AddFeature<ThreadPool>(
-                [](ref_of<ThreadPool>::type threadPool)
+            role->AddFeature<thread::ThreadPool>(
+                [](ref_of<thread::ThreadPool>::type threadPool)
                 {                    
                     threadPool->SetThreadCount(2);                    
-                    qor::framework::CurrentThread::GetCurrent().SetName("Main");
+                    CurrentThread::GetCurrent().SetName("Main");
                 });
                         
             role->AddFeature<LogAggregatorService>(
@@ -78,12 +78,12 @@ int main(const int argc, const char** argv, char** env)
                     SetupLogging(logHandler, logAggregator);
                 });
 
-            role->AddFeature<DesktopUI>();
+            role->AddFeature<ui::DesktopUI>();
         }).Run(
             [&logHandler]()->int
             {            
                 qor_pp_fcontext;
-                auto gui = GetFeature<DesktopUI>();
+                auto gui = GetFeature<ui::DesktopUI>();
                 auto mainWindow = qor::new_ref< qor::ui::MainWindow >(L"Visual");                
                 gui->Run();
                 return EXIT_SUCCESS;

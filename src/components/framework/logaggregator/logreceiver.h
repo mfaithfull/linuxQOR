@@ -28,18 +28,18 @@
 #include <atomic>
 #include <coroutine>
 #include "src/qor/error/error.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/instance/singleton.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/role/ifeature.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/signals/signal.h"
+#include "src/framework/app/role/ifeature.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/event/signals/signal.h"
 #include "src/components/framework/loghandler/loghandler.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/platform/filesystem/path.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/io/filesystem/path.h"
 
 namespace qor { namespace components{
   

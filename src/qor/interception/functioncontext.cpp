@@ -24,7 +24,7 @@
 
 #include "../../configuration/configuration.h"
 #include "functioncontext.h"
-#include "src/framework/thread/thread.h"
+#include "src/framework/parallel/thread/thread.h"
 
 namespace qor {
 

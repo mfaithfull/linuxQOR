@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALSTATE
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALSTATE
 
-#include "src/framework/workflow/workflow.h"
+#include "src/framework/app/workflow/workflow.h"
 
 //Semantic UI component representing a state of a VisualWorkflow
 

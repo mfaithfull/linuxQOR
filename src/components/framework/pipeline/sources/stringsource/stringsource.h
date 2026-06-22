@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STRING
 
 #include <string>
-#include "src/framework/pipeline/iosource.h"
+#include "src/framework/io/pipeline/iosource.h"
 
 namespace qor{ namespace components{ 
 

@@ -27,15 +27,15 @@
  
 #include <atomic>
 #include <coroutine>
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/instance/singleton.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/role/ifeature.h"
-#include "src/platform/network/address.h"
-#include "src/framework/thread/threadpool.h"
+#include "src/framework/app/role/ifeature.h"
+#include "src/framework/io/network/address.h"
+#include "src/framework/parallel/thread/threadpool.h"
 #include "asynciotypes.h"
 #include "asyncioeventprocessor.h"
 #include "asyncioinitiator.h"

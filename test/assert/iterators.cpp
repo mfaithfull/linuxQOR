@@ -26,12 +26,12 @@
 //Copyright 2021 Sean Nash
 //under BSD 3 clause license
 
-#include "../../src/configuration/configuration.h"
+#include "src/configuration/configuration.h"
 
 #include <vector>
 
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
 
 namespace test_iterators {
 

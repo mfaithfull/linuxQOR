@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESTAT
 #define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESTAT
 
-#include "src/platform/filesystem/filestat.h"
+#include "src/framework/io/filesystem/filestat.h"
 
 namespace qor
 {

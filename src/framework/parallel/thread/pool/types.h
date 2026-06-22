@@ -26,7 +26,7 @@
 #define QOR_PP_H_FRAMEWORK_THREADPOOL_TYPES
 
 #include <functional>
-#include "src/framework/thread/thread.h"
+#include "src/framework/parallel/thread/thread.h"
 
 namespace qor { namespace thread{
 

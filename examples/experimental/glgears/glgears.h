@@ -26,7 +26,7 @@
 #define QOR_PP_H_EXAMPLES_GLGEARS
 
 #include <string>
-#include "src/framework/application/application_builder.h"
+#include "src/framework/app/application/application_builder.h"
 #include "src/framework/gl/session.h"
 #include "src/framework/gl/window/window.h"
 

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_SOCKET
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_SOCKET
 
-#include "src/framework/pipeline/iosink.h"
+#include "src/framework/io/pipeline/iosink.h"
 #include "socketconnector.h"
 
 namespace qor{ namespace components{ 

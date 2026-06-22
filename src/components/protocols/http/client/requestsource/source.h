@@ -26,9 +26,9 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTSOURCE
 
 #include <string>
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/pipeline/iosource.h"
+#include "src/framework/io/pipeline/iosource.h"
 #include "../../request/request.h"
 #include "../requestgenerator/requestgenerator.h"
 #include "../requestgenerator/context.h"

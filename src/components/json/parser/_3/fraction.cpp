@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include <cassert>
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "fraction.h"
 #include "../nodes/fraction.h"

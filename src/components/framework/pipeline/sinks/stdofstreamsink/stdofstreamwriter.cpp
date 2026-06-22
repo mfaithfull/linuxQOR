@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "stdofstreamwriter.h"
-#include "src/platform/filesystem/filesystem.h"
+#include "src/framework/io/filesystem/filesystem.h"
 
 namespace qor{ namespace components{ 
 

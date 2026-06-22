@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_SERVICEFILTER
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_SERVICEFILTER
 
-#include "src/framework/pipeline/inlinefilter.h"
+#include "src/framework/io/pipeline/inlinefilter.h"
 #include "requestnode.h"
 #include "echorequest.h"
 

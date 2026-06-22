@@ -28,9 +28,9 @@
 #include <iostream>
 
 #include "logaggregator.h"
-#include "src/framework/role/role.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/app/role/role.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/parallel/thread/currentthread.h"
 
 qor_pp_module_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
 

@@ -26,9 +26,9 @@
 #define QOR_PP_H_COMPONENTS_GENERATOR_CONTEXT
 
 #include "src/platform/compiler/compiler.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/pipeline/pipeline.h"
+#include "src/framework/io/pipeline/pipeline.h"
 
 namespace qor { namespace components { namespace generator {
 

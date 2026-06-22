@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PIPELINE_BASE64ENCODEFILTER
 #define QOR_PP_H_PIPELINE_BASE64ENCODEFILTER
 
-#include "src/framework/pipeline/inlinefilter.h"
+#include "src/framework/io/pipeline/inlinefilter.h"
 
 namespace qor{ namespace components{
 

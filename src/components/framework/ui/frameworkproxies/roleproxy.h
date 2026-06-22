@@ -27,7 +27,7 @@
 
 #include <string>
 #include "src/qor/observer/observer.h"
-#include "src/framework/application/application_builder.h"
+#include "src/framework/app/application/application_builder.h"
 
 namespace qor{ namespace components{ 
     

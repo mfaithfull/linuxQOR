@@ -30,9 +30,9 @@
 #include "src/qor/assert/assert.h"
 #include "src/qor/sync/asynclatch.h"
 #include "src/qor/sync/singleconsumerevent.h"
-#include "src/framework/task/task.h"
-#include "src/framework/task/whenallready.h"
-#include "src/framework/task/syncwait.h"
+#include "src/framework/parallel/task/task.h"
+#include "src/framework/parallel/task/whenallready.h"
+#include "src/framework/parallel/task/syncwait.h"
 
 using namespace qor;
 using namespace qor::test;

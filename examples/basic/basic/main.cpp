@@ -27,7 +27,7 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
 #include <buildnumber.h>
-#include "src/framework/application/application_builder.h"
+#include "src/framework/app/application/application_builder.h"
 
 using namespace qor;                                //Use the basic namespaces from the QOR
 

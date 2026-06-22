@@ -23,12 +23,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/framework/role/role.h"
-#include "src/framework/workflow/workflow.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/platform/network/sockets.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/app/role/role.h"
+#include "src/framework/app/workflow/workflow.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/components/framework/logaggregator/logaggregator.h"
 #include "src/components/network/server/netserver.h"
 #include "src/components/protocols/http/protocol.h"

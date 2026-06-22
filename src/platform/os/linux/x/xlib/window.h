@@ -29,7 +29,7 @@
 #include <format>
 #include <vector>
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
 #include "display.h"

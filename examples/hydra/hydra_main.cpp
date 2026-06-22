@@ -53,7 +53,7 @@ int main(const int argc, const char** argv, char**)
         [&logHandler](ref_of<IRole>::type role)
         {
             role->AddFeature<ThreadPool>(
-                [](ref_of<ThreadPool>::type threadPool)->void
+                [](ref_of<thread::ThreadPool>::type threadPool)->void
                 {
                     threadPool->SetThreadCount(16);
                     CurrentThread::GetCurrent().SetName("Main thread");

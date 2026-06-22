@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_PARSER
 
 #include <string>
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/io/pipeline/sink.h"
 #include "src/components/parser/parser.h"
 #include "src/components/parser/state.h"
 #include "src/components/parser/context.h"

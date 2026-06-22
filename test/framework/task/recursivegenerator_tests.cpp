@@ -30,9 +30,9 @@
 
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/framework/task/generator/recursivegenerator.h"
+#include "src/framework/parallel/task/generator/recursivegenerator.h"
 #include "src/qor/sync/onscopeexit.h"
-#include "src/framework/task/detail/fmap.h"
+#include "src/framework/parallel/task/detail/fmap.h"
 
 using namespace qor;
 using namespace qor::test;

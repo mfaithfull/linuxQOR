@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/framework/thread/thread.h"
+#include "src/framework/parallel/thread/thread.h"
 #include "socket.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -65,17 +65,17 @@ namespace qor{ namespace nslinux{
         ::close(m_fd);
     }
     
-    int32_t Socket::Bind(const qor::framework::AsyncIOInterface& ioContext, const network::Address& Address)
+    int32_t Socket::Bind(const qor::async::AsyncIOInterface& ioContext, const network::Address& Address)
     {
         return sync_wait(ioContext.Bind(this, Address));
     }
     
-    int32_t Socket::Listen(const qor::framework::AsyncIOInterface& ioContext, int32_t backlog)
+    int32_t Socket::Listen(const qor::async::AsyncIOInterface& ioContext, int32_t backlog)
     {
         return sync_wait(ioContext.Listen(this, backlog));
     }
 
-    task<int32_t> Socket::AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket)
+    task<int32_t> Socket::AcceptAsync(const qor::async::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket)
     {
         return ioContext.Accept(this, Address, Socket);
     }
@@ -147,7 +147,7 @@ namespace qor{ namespace nslinux{
         return ::setsockopt(m_fd, level, optname, optval, optlen);
     }
  
-    task<int32_t> Socket::AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
+    task<int32_t> Socket::AsyncReceive(const qor::async::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
     {
         return ioContext.Recv(this, (byte*)pBuffer, iLen);
     }
@@ -172,7 +172,7 @@ namespace qor{ namespace nslinux{
         return ::recvfrom(m_fd, Buffer, iLen, iFlags, (sockaddr*)&addr, &socklen);
     }
  
-    task<int32_t> Socket::AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+    task<int32_t> Socket::AsyncSend(const qor::async::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
     {
         return ioContext.Send(this, (byte*)Buffer, iLen, 0);
     }
@@ -200,7 +200,7 @@ namespace qor{ namespace nslinux{
         return ::shutdown(m_fd, iHow);
     }
  
-    task<int32_t> Socket::AsyncShutdown(const qor::framework::AsyncIOInterface& ioContext,  network::sockets::eShutdown how)
+    task<int32_t> Socket::AsyncShutdown(const qor::async::AsyncIOInterface& ioContext,  network::sockets::eShutdown how)
     {
         int iHow = 0;
         iHow = ( how & network::sockets::eShutdown::ShutdownRead ) ? SHUT_RD : iHow;

@@ -27,17 +27,17 @@
  
 #include <atomic>
 #include <coroutine>
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/instance/singleton.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/role/ifeature.h"
+#include "src/framework/app/role/ifeature.h"
 
 namespace qor{ bool qor_pp_module_interface(QOR_DESKTOPUI) ImplementsDesktopUI();}
 
-namespace qor { namespace framework{
+namespace qor { namespace ui{
   
     class qor_pp_module_interface(QOR_DESKTOPUI) DesktopUI : public IFeature
     {
@@ -62,12 +62,12 @@ namespace qor { namespace framework{
         //provide access to the per thread GUI singletons for the toolkit and the renderingapi in use
         //provide a universal system to connect UI interactions to application events.
     };
-    } //framework
+    } //ui
 
-    qor_pp_declare_instancer_of(framework::DesktopUI, SingletonInstancer);
-    qor_pp_declare_factory_of(framework::DesktopUI, ExternalFactory);                                
+    qor_pp_declare_instancer_of(ui::DesktopUI, SingletonInstancer);
+    qor_pp_declare_factory_of(ui::DesktopUI, ExternalFactory);                                
     constexpr GUID DesktopUIGUID = {0x76426824, 0x4A0B, 0x4B18, {0x8F, 0xFC, 0x15, 0x3A, 0x78, 0xED, 0xFE, 0x03}};
-    qor_pp_declare_guid_of(framework::DesktopUI,DesktopUIGUID);
+    qor_pp_declare_guid_of(ui::DesktopUI,DesktopUIGUID);
 
 }//qor
 

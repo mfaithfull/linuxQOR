@@ -32,7 +32,7 @@
 #include <optional>
 #include <coroutine>
 
-#include "src/framework/task/awaitabletraits.h"
+#include "src/framework/parallel/task/awaitabletraits.h"
 #include "sequencetraits.h"
 #include "src/qor/factory/manuallifetime.h"
 

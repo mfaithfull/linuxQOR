@@ -25,10 +25,10 @@
 #ifndef QOR_PP_H_COMPONENTS_NETWORK_SESSION_PIPELINE
 #define QOR_PP_H_COMPONENTS_NETWORK_SESSION_PIPELINE
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/pipeline/pipeline.h"
-#include "src/framework/pipeline/protocol.h"
+#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/io/pipeline/protocol.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketsource.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketsink.h"
@@ -41,7 +41,7 @@ namespace qor{ namespace components {
 
         SessionPipeline(
             ref_of<network::Socket>::type socket, 
-            ref_of<framework::AsyncIOContext::Session>::type ioSession,
+            ref_of<async::AsyncIOContext::Session>::type ioSession,
             ref_of<pipeline::Protocol>::type protocol
         ) : m_filter(protocol->GetRequestFilter()), m_socket(socket), m_ioSession(ioSession),m_socketSessionConnector(m_socket, m_ioSession)
         {
@@ -78,7 +78,7 @@ namespace qor{ namespace components {
         const size_t m_ioBufferSize = 2048; //TODO: Make this configurable
         ref_of<pipeline::InlineFilter<byte>>::type m_filter;
         ref_of<network::Socket>::type m_socket;
-        ref_of<framework::AsyncIOContext::Session>::type m_ioSession;
+        ref_of<async::AsyncIOContext::Session>::type m_ioSession;
         components::SocketConnector m_socketSessionConnector;
         components::SocketSource m_socketSource;
         components::SocketSink m_socketSink;

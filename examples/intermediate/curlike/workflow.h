@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_EXAMPLES_CURLIKE_WORKFLOW
 #define QOR_PP_H_EXAMPLES_CURLIKE_WORKFLOW
 
-#include "src/framework/workflow/workflow.h"
+#include "src/framework/app/workflow/workflow.h"
 #include "httpclient.h"
 #include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
 #include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"

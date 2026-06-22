@@ -26,8 +26,8 @@
 #define QOR_PP_H_FRAMEWORK_ASYNCIOTYPES
  
 #include <coroutine>
-#include "src/framework/task/task.h"
-#include "src/platform/io/iodescriptor.h"
+#include "src/framework/parallel/task/task.h"
+#include "src/framework/io/iodescriptor.h"
 
 namespace qor { namespace async{
   

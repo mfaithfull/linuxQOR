@@ -28,9 +28,9 @@
 #include <cstdint>
 #include <chrono>
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/task/cancellation/cancellationtoken.h"
+#include "src/framework/parallel/task/cancellation/cancellationtoken.h"
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "sync/iocompletionport.h"
 

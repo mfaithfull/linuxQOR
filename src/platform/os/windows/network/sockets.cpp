@@ -25,11 +25,11 @@
 #include "src/configuration/configuration.h"
 
 #include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/platform/io/iodescriptor.h"
-#include "src/platform/network/windows/sockets.h"
-#include "src/platform/network/windows/socket.h"
+#include "src/framework/io/iodescriptor.h"
+#include "src/platform/os/windows/network/sockets.h"
+#include "src/platform/os/windows/network/socket.h"
 #include "src/qor/error/error.h"
 #include "src/framework/parallel/asyncioservice/asynciocontext.h"
 

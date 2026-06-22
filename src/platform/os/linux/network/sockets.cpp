@@ -29,10 +29,10 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/platform/network/linux/sockets.h"
-#include "src/platform/network/linux/socket.h"
+#include "src/framework/io/network/linux/sockets.h"
+#include "src/framework/io/network/linux/socket.h"
 
 qor_pp_module_provide(LINQOR_SOCKETS,Sockets)
 
@@ -72,7 +72,7 @@ namespace qor{ namespace nslinux{
         memcpy(addressinfo.address.sa.sa_data, info.ai_addr->sa_data, info.ai_addrlen);
     }
 
-    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<framework::AsyncIOContext::Session>::type ioSession) const
+    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<async::AsyncIOContext::Session>::type ioSession) const
     {
         ref_of<network::Socket>::type socket = new_ref<Socket>(AF, Type, Protocol).AsRef<network::Socket>();
         if( ioSession.IsNotNull())
@@ -103,7 +103,7 @@ namespace qor{ namespace nslinux{
                 Socket::AddressFamilyFromLinux(rp->ai_family), 
                 Socket::TypeFromLinux(rp->ai_socktype),
                 Socket::ProtocolFromLinux(rp->ai_protocol),
-                ref_of<framework::AsyncIOContext::Session>::type());
+                ref_of<async::AsyncIOContext::Session>::type());
             if(socket.IsNull())
             {
                 continue;

@@ -28,7 +28,7 @@
 #include <coroutine>
 #include <cassert>
 
-#include "src/framework/task/awaitabletraits.h"
+#include "src/framework/parallel/task/awaitabletraits.h"
 
 #include "whenallcounter.h"
 #include "voidvalue.h"

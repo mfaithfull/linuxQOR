@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PLATFORM_NETWORK_LINUX_SOCKETS
 #define QOR_PP_H_PLATFORM_NETWORK_LINUX_SOCKETS
 
-#include "src/platform/network/sockets.h"
+#include "src/framework/io/network/sockets.h"
 
 qor_pp_module_will_provide(LINQOR_SOCKETS,Sockets)
 
@@ -37,7 +37,7 @@ namespace qor{ namespace nslinux{
 
         Sockets() = default;
         virtual ~Sockets() = default;
-        virtual ref_of<network::Socket>::type CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<framework::AsyncIOContext::Session>::type ioSession) const;
+        virtual ref_of<network::Socket>::type CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<async::AsyncIOContext::Session>::type ioSession) const;
         virtual int GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results) const;
 
     private:        

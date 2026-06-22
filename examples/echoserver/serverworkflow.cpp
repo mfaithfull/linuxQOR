@@ -33,16 +33,15 @@
 #include "src/qor/log/impactful.h"
 #include "src/qor/log/important.h"
 #include "src/qor/log/imperative.h"
-#include "src/framework/pipeline/podbuffer.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
-#include "src/framework/task/syncwait.h"
-#include "src/framework/thread/threadpool.h"
+#include "src/framework/io/pipeline/podbuffer.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
+#include "src/framework/parallel/task/syncwait.h"
+#include "src/framework/parallel/thread/threadpool.h"
 #include "echoserverapp.h"
 #include "serverworkflow.h"
 #include "clientsessionworkflow.h"
 
 using namespace qor;
-using namespace qor::framework;
 using namespace qor::workflow;
 using namespace qor::pipeline;
 using namespace qor::platform;
@@ -60,8 +59,8 @@ ServerWorkflow::ServerWorkflow() :
     {
         qor_pp_ofcontext;
         auto application = new_ref<EchoServerApp>();
-        m_io = application(qor_shared).GetRole()->GetFeature<AsyncIOService>();
-        m_threadPool = application(qor_shared).GetRole()->GetFeature<ThreadPool>();
+        m_io = application(qor_shared).GetRole()->GetFeature<async::AsyncIOService>();
+        m_threadPool = application(qor_shared).GetRole()->GetFeature<thread::ThreadPool>();
         m_sockets = ThePlatform(qor_shared)->GetSubsystem<Sockets>();
         m_ioSession = m_io->GetSession();
         m_serverSocket = m_sockets->CreateSocket(eAddressFamily::AF_INet, eType::Sock_Stream, eProtocol::IPProto_IP, m_ioSession);

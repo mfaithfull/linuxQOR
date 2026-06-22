@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DYNAMICLIBRARY
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DYNAMICLIBRARY
 
-#include "src/framework/dynamiclibrary/dynamiclibrary.h"
+#include "src/framework/app/dynamiclibrary/dynamiclibrary.h"
 
 qor_pp_module_will_provide(QOR_WINDOWSDLL, DynamicLibrary)
 

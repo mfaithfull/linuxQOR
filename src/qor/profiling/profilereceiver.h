@@ -28,7 +28,7 @@
 #include <chrono>
 
 #include "iprofilereceiver.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/objectcontext/typedany.h"
 #include "src/qor/reference/flyerref.h"
 #include "src/qor/reference/reference.h"

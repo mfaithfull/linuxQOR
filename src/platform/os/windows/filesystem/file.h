@@ -25,9 +25,9 @@
 #ifndef QOR_PP_H_WINDOWS_FILESYSTEM_FILE
 #define QOR_PP_H_WINDOWS_FILESYSTEM_FILE
 
-#include "src/platform/filesystem/file/file.h"
-#include "src/platform/filesystem/fileindex.h"
-#include "src/platform/filesystem/path.h"
+#include "src/framework/io/filesystem/file/file.h"
+#include "src/framework/io/filesystem/fileindex.h"
+#include "src/framework/io/filesystem/path.h"
 #include "src/platform/os/windows/common/structures.h"
 
 //Declaration must match the one in src/system/filesystem/ifile.h

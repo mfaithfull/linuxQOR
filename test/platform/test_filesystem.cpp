@@ -30,11 +30,11 @@
 #include "src/qor/assert/assert.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/platform/filesystem/folder.h"
-#include "src/framework/pipeline/podbuffer.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/io/filesystem/folder.h"
+#include "src/framework/io/pipeline/podbuffer.h"
 
 using namespace qor;
 using namespace qor::test;

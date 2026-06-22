@@ -25,12 +25,12 @@
 #ifndef QOR_PP_H_FRAMEWORK_TASK_SCHEDULE_ON
 #define QOR_PP_H_FRAMEWORK_TASK_SCHEDULE_ON
 
-#include "src/framework/task/task.h"
-#include "src/framework/task/sharedtask.h"
-#include "src/framework/task/generator/asyncgenerator.h"
-#include "src/framework/task/awaitabletraits.h"
+#include "src/framework/parallel/task/task.h"
+#include "src/framework/parallel/task/sharedtask.h"
+#include "src/framework/parallel/task/generator/asyncgenerator.h"
+#include "src/framework/parallel/task/awaitabletraits.h"
 
-#include "src/framework/task/detail/removervaluereference.h"
+#include "src/framework/parallel/task/detail/removervaluereference.h"
 
 namespace qor
 {

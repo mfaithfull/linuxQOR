@@ -27,10 +27,10 @@
 
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/reference/reference.h"
-#include "src/platform/network/sockets.h"
-#include "src/platform/network/socket.h"
-#include "src/framework/pipeline/pipeline.h"
-#include "src/framework/pipeline/protocol.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/io/network/socket.h"
+#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/io/pipeline/protocol.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
 
 namespace qor{ namespace components {

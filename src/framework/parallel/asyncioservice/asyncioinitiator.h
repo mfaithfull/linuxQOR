@@ -26,8 +26,8 @@
 #define QOR_PP_H_FRAMEWORK_ASYNCIOINITIATOR
  
 #include "asynciotypes.h"
-#include "src/platform/io/iodescriptor.h"
-#include "src/platform/network/address.h"
+#include "src/framework/io/iodescriptor.h"
+#include "src/framework/io/network/address.h"
 #include "asyncioeventprocessor.h"
 #include "src/qor/error/error.h"
 

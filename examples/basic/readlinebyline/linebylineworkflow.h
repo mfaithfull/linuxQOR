@@ -25,9 +25,9 @@
 #ifndef QOR_PP_H_EXAMPLES_LINEBYLINE_WORKFLOW
 #define QOR_PP_H_EXAMPLES_LINEBYLINE_WORKFLOW
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/workflow/workflow.h"
+#include "src/framework/app/workflow/workflow.h"
 
 class LineByLineWorkflow : public qor::workflow::Workflow
 {

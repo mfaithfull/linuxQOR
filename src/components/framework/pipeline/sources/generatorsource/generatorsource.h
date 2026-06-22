@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_GENERATOR
 
 #include <string>
-#include "src/framework/pipeline/iosource.h"
+#include "src/framework/io/pipeline/iosource.h"
 #include "src/components/generator/generator.h"
 #include "src/components/generator/state.h"
 #include "src/components/generator/context.h"

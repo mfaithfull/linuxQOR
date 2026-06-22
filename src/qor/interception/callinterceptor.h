@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_CALLINTERCEPTOR
 #define QOR_PP_H_CALLINTERCEPTOR
 
-#include "src/framework/thread/thread.h"
+#include "src/framework/parallel/thread/thread.h"
 #include "src/qor/objectcontext/typedany.h"
 #include "src/qor/reference/flyerref.h"
 #include "src/qor/reference/reference.h"

@@ -28,8 +28,8 @@
 
 #include "asyncioservice.h"
 #include "src/qor/sync/onscopeexit.h"
-#include "src/framework/role/role.h"
-#include "src/framework/thread/threadpool.h"
+#include "src/framework/app/role/role.h"
+#include "src/framework/parallel/thread/threadpool.h"
 
 namespace qor { namespace async{
 

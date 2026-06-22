@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PIPELINE_LINEREADER
 #define QOR_PP_H_PIPELINE_LINEREADER
 
-#include "src/framework/pipeline/filter.h"
+#include "src/framework/io/pipeline/filter.h"
 
 namespace qor{ namespace components{
 

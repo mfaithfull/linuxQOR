@@ -27,7 +27,7 @@
 
 #include <coroutine>
 #include "iouring.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
 
 namespace qor{ namespace nslinux{ namespace framework{
 

@@ -35,15 +35,14 @@
 #include "src/qor/log/impactful.h"
 #include "src/qor/log/important.h"
 #include "src/qor/log/imperative.h"
-#include "src/framework/application/application_builder.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/app/application/application_builder.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/components/framework/logaggregator/logaggregator.h"
-#include "src/framework/task/syncwait.h"
+#include "src/framework/parallel/task/syncwait.h"
 #include "echoserverapp.h"
 #include "clientsessionworkflow.h"
 
 using namespace qor;
-using namespace qor::framework;
 using namespace qor::workflow;
 using namespace qor::pipeline;
 using namespace qor::platform;
@@ -52,7 +51,7 @@ using namespace qor::network::sockets;
 using namespace qor::components;
 
 ClientSessionWorkflow::ClientSessionWorkflow(
-    ref_of<qor::framework::AsyncIOContext::Session>::type ioSession, ref_of<Socket>::type socket) : 
+    ref_of<qor::async::AsyncIOContext::Session>::type ioSession, ref_of<Socket>::type socket) : 
     m_logHandler(log::Level::Debug),
     connected(new_ref<workflow::State>(this)),
     echo(new_ref<workflow::State>(this)),
@@ -77,7 +76,7 @@ ClientSessionWorkflow::ClientSessionWorkflow(
         qor_pp_ofcontext;
         qor::log::inform("Servicing a connected client {0}", m_socket->m_fd);
         
-        auto ioSession = AppBuilder().TheApplication(qor_shared)->GetRole()->GetFeature<AsyncIOService>(qor_shared)->GetSession();
+        auto ioSession = AppBuilder().TheApplication(qor_shared)->GetRole()->GetFeature<async::AsyncIOService>(qor_shared)->GetSession();
         m_pipeline = new_ref<SessionPipeline>(m_socket, ioSession);
         SetState(echo);
     };

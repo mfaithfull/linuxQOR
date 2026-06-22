@@ -38,9 +38,9 @@
 #include <netdb.h>
 #include <fcntl.h>
 
-#include "src/framework/thread/thread.h"
-#include "src/platform/network/sockets.h"
-#include "src/platform/network/socket.h"
+#include "src/framework/parallel/thread/thread.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/io/network/socket.h"
 #include "durationdetails.h"
 #include "error.h"
 #include "src/components/network/clients/itransportclient.h"

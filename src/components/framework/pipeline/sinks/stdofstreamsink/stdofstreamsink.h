@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOFSTREAM
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOFSTREAM
 
-#include "src/framework/pipeline/iosink.h"
+#include "src/framework/io/pipeline/iosink.h"
 #include "src/components/framework/pipeline/connectors/stdfstreamconnector/stdofstreamconnector.h"
 
 namespace qor{ namespace components{ 

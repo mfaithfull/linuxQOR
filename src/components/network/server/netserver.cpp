@@ -29,14 +29,13 @@
 
 #include "src/qor/error/defaulterrorhandler.h"
 #include "src/qor/log/defaultloghandler.h"
-#include "src/framework/application/application_builder.h"
+#include "src/framework/app/application/application_builder.h"
 #include "netserver.h"
 #include "netsession.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
 #include "src/components/framework/logaggregator/logaggregator.h"
 
 using namespace qor;
-using namespace qor::framework;
 using namespace qor::pipeline;
 using namespace qor::network;
 using namespace qor::network::sockets;
@@ -58,7 +57,7 @@ namespace qor{ namespace components{
             //Get the required features from the Application Role
             auto application = AppBuilder().TheApplication();
             auto role = application(qor_shared).GetRole();
-            m_io = role(qor_shared).GetFeature<AsyncIOService>();
+            m_io = role(qor_shared).GetFeature<async::AsyncIOService>();
             m_threadPool = role(qor_shared).GetFeature<thread::ThreadPool>();
             m_sockets = ThePlatform()(qor_shared).GetSubsystem<Sockets>();
 

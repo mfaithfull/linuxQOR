@@ -27,7 +27,7 @@
 
 #include <string>
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
 //All types on this interface must be portable

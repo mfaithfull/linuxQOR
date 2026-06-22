@@ -22,7 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
+#include "src/configuration/configuration.h"
 
 #include <algorithm>
 #include <coroutine>
@@ -39,13 +39,13 @@
 #include "src/qor/module/moduleregistry.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/framework/thread/thread.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/thread/currentprocess.h"
+#include "src/framework/parallel/thread/currentthread.h"
+#include "src/framework/parallel/thread/thread.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/parallel/thread/currentprocess.h"
 #include "src/qor/reference/newref.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/platform/filesystem/folder.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/io/filesystem/folder.h"
 
 
 using namespace qor;

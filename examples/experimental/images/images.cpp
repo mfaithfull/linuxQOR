@@ -29,17 +29,17 @@
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/error/error.h"
 #include "src/qor/log/defaultloghandler.h"
-#include "src/framework/role/role.h"
+#include "src/framework/app/role/role.h"
 #include "src/components/framework/logaggregator/logaggregator.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/framework/pipeline/pipeline.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/io/pipeline/pipeline.h"
 #include "src/components/framework/pipeline/connectors/fileconnector/fileconnector.h"
 #include "src/components/framework/pipeline/filters/jpegdecodefilter/jpegdecodefilter.h"
 #include "src/framework/resources/image/imagesink.h"
 
 #include "images.h"
 
-#include "src/framework/role/getfeature.h"
+#include "src/framework/app/role/getfeature.h"
 
 using namespace qor;
 using namespace qor::log;

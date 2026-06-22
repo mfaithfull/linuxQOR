@@ -26,8 +26,8 @@
 #define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM
 
 #include <optional>
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/platform/filesystem/fileindex.h"
+#include "src/framework/io/filesystem/ifilesystem.h"
+#include "src/framework/io/filesystem/fileindex.h"
 
 namespace qor
 {

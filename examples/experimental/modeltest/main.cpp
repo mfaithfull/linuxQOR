@@ -25,8 +25,8 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
 #include "src/qor/reference/reference.h"
-#include "src/framework/application/application_builder.h"
-#include "src/framework/role/role.h"
+#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/role/role.h"
 #include "src/qor/reflection/reflection.h"
 #include <string>
 #include <sstream>
@@ -129,7 +129,7 @@ qor_pp_implement_module("testModel")
 
 int main()
 {
-   return qor::framework::AppBuilder().Build<qor::framework::Application>("testModel")->Run(
+   return qor::AppBuilder().Build<qor::Application>("testModel")->Run(
         []()->int
         {
             Model<BMPHeader> bmpHeader;                

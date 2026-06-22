@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKET
 #define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKET
 
-#include "src/framework/pipeline/iosource.h"
+#include "src/framework/io/pipeline/iosource.h"
 #include "socketconnector.h"
 
 namespace qor{ namespace components{ 

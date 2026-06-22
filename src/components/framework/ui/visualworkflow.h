@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALWORKFLOW
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_VISUALWORKFLOW
 
-#include "src/framework/workflow/workflow.h"
+#include "src/framework/app/workflow/workflow.h"
 #include "model.h"
 #include "view.h"
 #include "visualstate.h"

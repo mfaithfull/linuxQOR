@@ -26,16 +26,16 @@
 #define QOR_PP_H_COMPONENTS_NETWORK_SESSION
 
 #include "src/qor/interception/functioncontext.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/framework/workflow/workflow.h"
-#include "src/platform/network/sockets.h"
-#include "src/platform/network/socket.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
-#include "src/framework/application/application.h"
+#include "src/framework/parallel/thread/currentthread.h"
+#include "src/framework/app/workflow/workflow.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/io/network/socket.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
+#include "src/framework/app/application/application.h"
 #include "src/qor/log/debug.h"
 #include "src/qor/error/error.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/pipeline/pipeline.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/io/pipeline/pipeline.h"
 #include "sessionpipeline.h"
 
 namespace qor{ namespace components {
@@ -56,7 +56,7 @@ namespace qor{ namespace components {
                 qor_pp_ofcontext;
                 log::debug("Servicing a connected client {0}", m_socket->m_fd);
                 auto application = AppBuilder().TheApplication();
-                auto ioService = application(qor_shared).GetRole(qor_shared)->GetFeature<framework::AsyncIOService>();                
+                auto ioService = application(qor_shared).GetRole(qor_shared)->GetFeature<async::AsyncIOService>();                
                 m_ioSession = ioService(qor_shared).GetSession();
                 m_pipeline = new_ref<SessionPipeline>(m_socket, m_ioSession, protocol);
                 SetState(running);
@@ -100,7 +100,7 @@ namespace qor{ namespace components {
 
         //session data
         ref_of<network::Socket>::type m_socket;        
-        ref_of<framework::AsyncIOContext::Session>::type m_ioSession;
+        ref_of<async::AsyncIOContext::Session>::type m_ioSession;
         ref_of<SessionPipeline>::type m_pipeline;
 
     };

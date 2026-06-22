@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_DESERIALIZER
 
 #include <string>
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/io/pipeline/sink.h"
 #include "src/components/deserializer/deserializer.h"
 #include "src/components/deserializer/context.h"
 

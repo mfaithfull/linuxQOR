@@ -30,8 +30,8 @@
 #include <chrono>
 #include <optional>
 #include <atomic>
-#include "src/framework/task/cancellation/cancellationtoken.h"
-#include "src/framework/task/cancellation/cancellationregistration.h"
+#include "src/framework/parallel/task/cancellation/cancellationtoken.h"
+#include "src/framework/parallel/task/cancellation/cancellationregistration.h"
 #include "scheduleoperation.h"
 
 namespace qor { namespace framework { namespace nswindows {

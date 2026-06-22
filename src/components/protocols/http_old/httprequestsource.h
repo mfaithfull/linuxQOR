@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTSOURCE
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTSOURCE
 
-#include "src/framework/pipeline/source.h"
+#include "src/framework/io/pipeline/source.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

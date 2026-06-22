@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_GL_WINDOWPIMPL
 #define QOR_PP_H_GL_WINDOWPIMPL
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"

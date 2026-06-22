@@ -31,7 +31,7 @@
 
 #include "src/qor/log/log.h"
 #include "src/qor/log/handler.h"
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 
 namespace qor{ namespace components {
 

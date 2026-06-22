@@ -26,7 +26,7 @@
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERTHREADSTATE
 
 #include <chrono>
-#include "src/framework/thread/thread.h"
+#include "src/framework/parallel/thread/thread.h"
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "waitabletimerevent.h"
 #include "../sync/autoresetevent.h"

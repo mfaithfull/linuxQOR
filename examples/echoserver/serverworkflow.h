@@ -25,10 +25,10 @@
 #ifndef QOR_PP_H_EXAMPLES_SERVER_WORKFLOW
 #define QOR_PP_H_EXAMPLES_SERVER_WORKFLOW
 
-#include "src/framework/workflow/workflow.h"
-#include "src/platform/network/sockets.h"
-#include "src/platform/network/socket.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/app/workflow/workflow.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/io/network/socket.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
 
 class ServerWorkflow : public qor::workflow::Workflow
 {
@@ -44,10 +44,10 @@ private:
     qor::ref_of<qor::workflow::State>::type accept;
 
     const qor::network::Sockets* m_sockets;
-    qor::ref_of<qor::framework::AsyncIOService>::type m_io;
-    qor::ref_of<qor::framework::ThreadPool>::type m_threadPool;
+    qor::ref_of<qor::async::AsyncIOService>::type m_io;
+    qor::ref_of<qor::thread::ThreadPool>::type m_threadPool;
         
-    qor::ref_of<qor::framework::AsyncIOContext::Session>::type m_ioSession;
+    qor::ref_of<qor::async::AsyncIOContext::Session>::type m_ioSession;
     qor::network::Address m_serverAddress;
     qor::ref_of<qor::network::Socket>::type m_serverSocket;
 };

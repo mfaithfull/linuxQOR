@@ -36,7 +36,7 @@
 #include "operations/recvop.h"
 #include "operations/acceptop.h"
 #include "operations/sendop.h"
-#include "src/platform/network/socket.h"
+#include "src/framework/io/network/socket.h"
 
 namespace qor { namespace framework { namespace nswindows {
 

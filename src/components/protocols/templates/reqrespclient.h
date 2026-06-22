@@ -25,10 +25,10 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSECLIENT
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSECLIENT
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/application/irunable.h"
-#include "src/framework/pipeline/pipeline.h"
+#include "src/framework/app/application/irunable.h"
+#include "src/framework/io/pipeline/pipeline.h"
 
 template<class Req, class Resp>
 class RequestResponseClientProtocol : public qor::framework::IRunable

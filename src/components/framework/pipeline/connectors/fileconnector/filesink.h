@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE
 
-#include "src/framework/pipeline/iosink.h"
+#include "src/framework/io/pipeline/iosink.h"
 #include "fileconnector.h"
 
 namespace qor{ namespace components{

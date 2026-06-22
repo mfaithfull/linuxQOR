@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_STDOFSTREAM
 
 #include <fstream>
-#include "src/platform/filesystem/fileindex.h"
+#include "src/framework/io/filesystem/fileindex.h"
 #include "stdfstreamconnector.h"
 
 namespace qor{ namespace components{ 

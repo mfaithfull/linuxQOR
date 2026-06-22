@@ -26,9 +26,9 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSESINK
 
 #include <string>
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/io/pipeline/sink.h"
 #include "../../response/response.h"
 #include "../responseparser/responseparser.h"
 #include "src/components/parser/context.h"

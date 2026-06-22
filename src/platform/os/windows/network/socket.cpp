@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/framework/thread/thread.h"
+#include "src/framework/parallel/thread/thread.h"
 #include "socket.h"
 #include "src/platform/os/windows/framework/asyncioservice/asyncioservice.h"
 

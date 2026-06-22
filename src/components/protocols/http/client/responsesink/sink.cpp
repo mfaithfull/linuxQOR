@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "sink.h"
-#include "src/framework/pipeline/source.h"
+#include "src/framework/io/pipeline/source.h"
 #include "../responseparser/responsenode.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {

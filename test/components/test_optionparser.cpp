@@ -22,13 +22,13 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
+#include "src/configuration/configuration.h"
 
 #include <string.h>
 
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/components/framework/optionparser/getter.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
+#include "src/components/framework/optionparser/getter.h"
 
 using namespace qor;
 using namespace qor::test;

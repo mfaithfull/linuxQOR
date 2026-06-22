@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include <cassert>
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/components/parser/nodes/digit.h"
 #include "digit1_9.h"

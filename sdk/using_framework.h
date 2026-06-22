@@ -5,8 +5,9 @@
 #include "using_qor.h"
 #include "framework.h"
 
-using namespace qor::framework;
 using namespace qor::pipeline;
 using namespace qor::workflow;
+using namespace qor::async;
+using namespace qor::thread;
 
 #endif//QOR_PP_H_SDK_USING_FRAMEWORK

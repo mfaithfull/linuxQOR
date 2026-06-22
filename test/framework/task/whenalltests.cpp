@@ -31,13 +31,13 @@
 
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/framework/task/whenall.h"
+#include "src/framework/parallel/task/whenall.h"
 #include "src/qor/sync/asyncmanualresetevent.h"
 #include "src/qor/sync/asyncmutex.h"
-#include "src/framework/task/detail/fmap.h"
-#include "src/framework/task/sharedtask.h"
-#include "src/framework/task/syncwait.h"
-#include "src/framework/task/task.h"
+#include "src/framework/parallel/task/detail/fmap.h"
+#include "src/framework/parallel/task/sharedtask.h"
+#include "src/framework/parallel/task/syncwait.h"
+#include "src/framework/parallel/task/task.h"
 #include "counted.h"
 
 

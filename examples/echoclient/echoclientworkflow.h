@@ -25,12 +25,12 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_WORKFLOW
 #define QOR_PP_H_EXAMPLES_ECHOCLIENT_WORKFLOW
 
-#include "src/framework/workflow/workflow.h"
-#include "src/platform/network/sockets.h"
-#include "src/platform/network/socket.h"
+#include "src/framework/app/workflow/workflow.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/io/network/socket.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
 #include "src/components/framework/console/console.h"
-#include "src/framework/pipeline/podbuffer.h"
+#include "src/framework/io/pipeline/podbuffer.h"
 #include "echorequestpipeline.h"
 #include "echoresponsepipeline.h"
 #include "echoclienterrorhandler.h"

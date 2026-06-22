@@ -30,7 +30,7 @@
 
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/thread/detail/flyermap.h"
+#include "src/framework/parallel/thread/detail/flyermap.h"
 
 namespace qor{ namespace detail{
 

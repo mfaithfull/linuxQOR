@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
 
-#include "src/framework/desktopui/desktopui.h"
+#include "src/framework/ui/desktopui/desktopui.h"
 
 #include "src/platform/os/windows/gui/factories/windowfactory.h"
 
@@ -33,7 +33,7 @@ qor_pp_module_will_provide(QOR_WINDOWSDESKTOPUI, DesktopUI)
 
 namespace qor{ namespace framework{ namespace nswindows{
 
-    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::framework::DesktopUI
+    class qor_pp_module_interface(QOR_WINDOWSDESKTOPUI) DesktopUI : public qor::ui::DesktopUI
     {
     public:
         

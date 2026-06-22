@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FRAMEWORK_DESKTOPUI_IMAINWINDOWIMPL
 #define QOR_PP_H_FRAMEWORK_DESKTOPUI_IMAINWINDOWIMPL
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/reference/newref.h"
 #include "iwindowimpl.h"

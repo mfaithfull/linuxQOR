@@ -1,6 +1,6 @@
 #include "src/configuration/configuration.h"
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/platform/os/windows/gui/windowclassregistration.h"
 #include "src/platform/os/windows/gui/window.h"

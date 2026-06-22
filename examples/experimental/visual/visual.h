@@ -26,9 +26,9 @@
 #define QOR_PP_H_EXAMPLES_VISUAL
 
 #include <string>
-#include "src/framework/application/application_builder.h"
+#include "src/framework/app/application/application_builder.h"
 
-class Visual final : public qor::framework::Application
+class Visual final : public qor::Application
 {
     qor_pp_declare_app_class(Visual);
 

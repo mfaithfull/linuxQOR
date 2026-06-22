@@ -4,12 +4,12 @@
 
 #include "src/qor/module/module.h"
 #include "src/platform/platform.h"
-#include "src/framework/application/application_builder.h"
-#include "src/framework/role/role.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/platform/network/sockets.h"
-#include "src/framework/workflow/workflow.h"
+#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/role/role.h"
+#include "src/framework/parallel/thread/currentthread.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/app/workflow/workflow.h"
 #include "src/components/network/clients/http/httpsocketclient.h"
 
 using namespace qor;

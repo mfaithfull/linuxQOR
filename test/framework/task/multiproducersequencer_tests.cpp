@@ -30,18 +30,18 @@
 #include <coroutine>
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/framework/task/multiproducersequencer.h"
+#include "src/framework/parallel/task/multiproducersequencer.h"
 #include "src/qor/sync/sequencebarrier.h"
 #include "src/qor/sync/sequencetraits.h"
 #include "src/qor/sync/onscopeexit.h"
-#include "src/framework/task/syncwait.h"
-#include "src/framework/task/whenall.h"
-#include "src/framework/task/task.h"
+#include "src/framework/parallel/task/syncwait.h"
+#include "src/framework/parallel/task/whenall.h"
+#include "src/framework/parallel/task/task.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/framework/thread/thread.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/thread/currentprocess.h"
+#include "src/framework/parallel/thread/currentthread.h"
+#include "src/framework/parallel/thread/thread.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/parallel/thread/currentprocess.h"
 
 using namespace qor;
 using namespace qor::test;

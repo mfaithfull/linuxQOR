@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_PIPELINE_FILTERS_JPEGDECODE
 
 #include <stdlib.h>
-#include "src/framework/pipeline/filter.h"
+#include "src/framework/io/pipeline/filter.h"
 
 namespace qor{ namespace components{
 

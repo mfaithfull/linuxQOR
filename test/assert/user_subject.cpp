@@ -26,14 +26,14 @@
 //Copyright 2021 Sean Nash
 //under BSD 3 clause license
 
-#include "../../src/configuration/configuration.h"
+#include "src/configuration/configuration.h"
 
-#include "../../src/qor/assert/adl.h"
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/qor/assert/proposition/isequaltopropositions.h"
-#include "../../src/qor/assert/subject/base.h"
-#include "../../src/qor/assert/util/failmessage.h"
+#include "src/qor/assert/adl.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
+#include "src/qor/assert/proposition/isequaltopropositions.h"
+#include "src/qor/assert/subject/base.h"
+#include "src/qor/assert/util/failmessage.h"
 
 namespace test_user_subject
 {

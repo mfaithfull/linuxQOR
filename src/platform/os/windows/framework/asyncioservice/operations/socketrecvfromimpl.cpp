@@ -32,7 +32,7 @@
 # include <Windows.h>
 
 #include "recvfromop.h"
-#include "src/platform/network/windows/addresshelpers.h"
+#include "src/platform/os/windows/network/addresshelpers.h"
 
 namespace qor { namespace framework { namespace nswindows {
 

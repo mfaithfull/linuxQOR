@@ -26,9 +26,9 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_AGGREGATE
 
 #include <string>
-#include "src/framework/pipeline/iosource.h"
+#include "src/framework/io/pipeline/iosource.h"
 #include "src/qor/reflection/reflection.h"
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/io/pipeline/sink.h"
 
 namespace qor{ namespace components{ 
 

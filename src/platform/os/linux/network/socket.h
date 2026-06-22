@@ -29,8 +29,8 @@
 #include "src/qor/reference/newref.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/factory/externalfactory.h"
-#include "src/platform/network/socket.h"
-#include "src/platform/network/sockets.h"
+#include "src/framework/io/network/socket.h"
+#include "src/framework/io/network/sockets.h"
 
 namespace qor{ namespace nslinux{
 
@@ -45,23 +45,23 @@ namespace qor{ namespace nslinux{
         virtual ~Socket();        
 
         virtual int32_t Bind(const network::Address& Address);
-        virtual int32_t Bind(const qor::framework::AsyncIOInterface& ioContext, const network::Address& Address);
+        virtual int32_t Bind(const qor::async::AsyncIOInterface& ioContext, const network::Address& Address);
         virtual int32_t Listen(int32_t iBacklog);
-        virtual int32_t Listen(const qor::framework::AsyncIOInterface& ioContext, int32_t iBacklog);
+        virtual int32_t Listen(const qor::async::AsyncIOInterface& ioContext, int32_t iBacklog);
         virtual ref_of<network::Socket>::type Accept(network::Address& Address);
-        virtual task<int32_t> AcceptAsync(const qor::framework::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket);
+        virtual task<int32_t> AcceptAsync(const qor::async::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket);
         virtual int32_t Connect(const network::Address& Address);
         virtual int32_t GetPeerName(network::Address& Address);
         virtual int32_t GetSockName(network::Address& Address);
         virtual int32_t GetSockOpt(int32_t iLevel, int32_t iOptName, char* pOptVal, int32_t* pOptLen);
         virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen);
-        virtual task<int32_t> AsyncReceive(const qor::framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
+        virtual task<int32_t> AsyncReceive(const qor::async::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
         virtual int32_t Receive(char* buf, int32_t len, int32_t flags);
         virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, network::Address& From);
-        virtual task<int32_t> AsyncSend(const qor::framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
+        virtual task<int32_t> AsyncSend(const qor::async::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
         virtual int32_t Send(const char* Buffer, int32_t iLen);
         virtual int32_t SendTo(const char* Buffer, int32_t iLen, int32_t iFlags, const network::Address& To);
-        virtual task<int32_t> AsyncShutdown(const qor::framework::AsyncIOInterface& ioContext, network::sockets::eShutdown how);
+        virtual task<int32_t> AsyncShutdown(const qor::async::AsyncIOInterface& ioContext, network::sockets::eShutdown how);
         virtual int32_t Shutdown(network::sockets::eShutdown how);        
         virtual std::size_t ID(void);
         virtual int32_t GetLastError(void);

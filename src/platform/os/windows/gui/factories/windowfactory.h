@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_WINDOWFACTORY
 #define QOR_PP_H_WINDOWS_GUI_WINDOWFACTORY
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/reference/newref.h"
 #include "src/platform/os/windows/common/structures.h"

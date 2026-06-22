@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOUT
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOUT
 
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/io/pipeline/sink.h"
 
 namespace qor{ namespace components{ 
 

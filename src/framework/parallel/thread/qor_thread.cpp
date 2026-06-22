@@ -25,8 +25,8 @@
 #include "src/configuration/configuration.h"
 #include <buildnumber.h>
 #include "src/qor/module/module.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/factory/internalfactory.h"
 #include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"

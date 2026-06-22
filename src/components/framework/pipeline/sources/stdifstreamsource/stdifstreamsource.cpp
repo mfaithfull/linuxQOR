@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include <stdio.h>
 #include "stdifstreamsource.h"
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/io/pipeline/sink.h"
 
 namespace qor{ namespace components{ 
 

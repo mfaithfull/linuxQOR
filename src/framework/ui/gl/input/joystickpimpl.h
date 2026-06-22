@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_GL_JOYSTICKPIMPL
 #define QOR_PP_H_GL_JOYSTICKPIMPL
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"

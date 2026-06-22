@@ -24,12 +24,12 @@
 
 #include "src/configuration/configuration.h"
 #include "src/platform/platform.h"
-#include "src/framework/pipeline/podbuffer.h"
-#include "src/framework/pipeline/pipeline.h"
+#include "src/framework/io/pipeline/podbuffer.h"
+#include "src/framework/io/pipeline/pipeline.h"
 #include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
 #include "src/components/framework/pipeline/connectors/fileconnector/fileconnector.h"
 #include "src/components/framework/pipeline/connectors/fileconnector/filesource.h"
-#include "src/platform/filesystem/filesystem.h"
+#include "src/framework/io/filesystem/filesystem.h"
 #include "linebylineworkflow.h"
 #include "src/components/framework/pipeline/filters/linereader/linereader.h"
 

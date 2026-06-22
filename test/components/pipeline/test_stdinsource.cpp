@@ -30,12 +30,12 @@
 #include "src/qor/assert/assert.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/pipeline/pipeline.h"
-#include "src/framework/pipeline/podbuffer.h"
+#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/io/pipeline/podbuffer.h"
 #include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/io/pipeline/sink.h"
 
 using namespace qor;
 using namespace qor::test;

@@ -26,7 +26,7 @@
 #include <buildnumber.h>
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/factory/internalfactory.h"
 #include "src/qor/injection/typeregentry.h"
 #include "src/qor/reference/newref.h"
@@ -44,7 +44,7 @@ extern "C"
 			qor_pp_stringize(qor_pp_buildnumber));
 
 		//Register the Windows specific implementations
-		static qor::TypeRegEntry< qor::framework::nswindows::DesktopUI, qor::framework::DesktopUI > regDesktopUI;
+		static qor::TypeRegEntry< qor::framework::nswindows::DesktopUI, qor::ui::DesktopUI > regDesktopUI;
 		static qor::TypeRegEntryWithParams< qor::framework::nswindows::MainWindow, qor::ui::IMainWindowImpl, const std::wstring& > regIMainWindowImpl;
 		return QORModule;
 	}

@@ -22,14 +22,14 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/qor/module/module.h"
-#include "../../src/qor/interception/functioncontextlock.h"
-#include "../../src/qor/interception/callinterceptor.h"
-#include "../../src/qor/interception/parameters/return.h"
-#include "../../src/qor/interception/parameters/checkedparam.h"
+#include "src/configuration/configuration.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
+#include "src/qor/module/module.h"
+#include "src/qor/interception/functioncontextlock.h"
+#include "src/qor/interception/callinterceptor.h"
+#include "src/qor/interception/parameters/return.h"
+#include "src/qor/interception/parameters/checkedparam.h"
 
 using namespace qor;
 using namespace qor::test;

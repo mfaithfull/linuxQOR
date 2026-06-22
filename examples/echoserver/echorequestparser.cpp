@@ -44,7 +44,7 @@ void request::Emit()
         
         if(token == static_cast<uint64_t>(echoRequestToken::requestChar))
         {
-            auto characterNode = node.AsRef<Char>();
+            auto characterNode = node.AsRef<CharNode>();
             char c = characterNode->GetValue();
             chars.push_back(c);
         }

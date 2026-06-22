@@ -26,7 +26,7 @@
 #define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_INTERACTIVE_FOCUS
 
 #include "../parts/part.h"
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 
 namespace qor{ namespace platform { namespace nswindows{ namespace gui{ namespace view{
 

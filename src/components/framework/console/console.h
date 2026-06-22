@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE
 
-#include "src/framework/role/ifeature.h"
+#include "src/framework/app/role/ifeature.h"
 #include "iconsole.h"
 
 namespace qor

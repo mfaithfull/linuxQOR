@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIFSTREAM
 #define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIFSTREAM
 
-#include "src/framework/pipeline/iosource.h"
+#include "src/framework/io/pipeline/iosource.h"
 #include "src/components/framework/pipeline/connectors/stdfstreamconnector/stdifstreamconnector.h"
 
 namespace qor{ namespace components{ 

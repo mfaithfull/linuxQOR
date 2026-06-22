@@ -22,15 +22,15 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
+#include "src/configuration/configuration.h"
 
 #include <condition_variable>
 
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/framework/thread/currentthread.h"
-#include "../../src/framework/thread/thread.h"
-#include "../../src/framework/signals/signal.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
+#include "src/framework/parallel/thread/currentthread.h"
+#include "src/framework/parallel/thread/thread.h"
+#include "src/framework/event/signals/signal.h"
 
 using namespace qor;
 using namespace qor::test;

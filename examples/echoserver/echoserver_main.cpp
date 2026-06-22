@@ -1,14 +1,14 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
 #include "src/platform/platform.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/framework/application/application_builder.h"
-#include "src/framework/role/role.h"
-#include "src/framework/thread/threadpool.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/role/role.h"
+#include "src/framework/parallel/thread/threadpool.h"
 #include "src/components/framework/optionparser/getter.h"
-#include "src/framework/pipeline/pipeline.h"
-#include "src/platform/network/sockets.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/components/framework/logaggregator/logaggregator.h"
 #include "src/qor/instance/pool.h"
 
@@ -19,7 +19,6 @@
 
 using namespace qor;
 using namespace qor::platform;
-using namespace qor::framework;
 using namespace qor::components;
 using namespace qor::components::optparser;
 using namespace qor::pipeline;
@@ -50,17 +49,17 @@ int main(const int argc, const char** argv, char**)
     )->SetRole<Role>(                                   //What features it has
         [&logHandler](ref_of<IRole>::type role)
         {
-            role->AddFeature<ThreadPool>(
-                [](ref_of<ThreadPool>::type threadPool)->void
+            role->AddFeature<thread::ThreadPool>(
+                [](ref_of<thread::ThreadPool>::type threadPool)->void
                 {
                     threadPool(qor_shared).SetThreadCount(16);
                     CurrentThread::GetCurrent().SetName("Server Main");
                 }
             );
-            role->AddFeature<AsyncIOService>(
-                [](ref_of<AsyncIOService>::type ioService)->void
+            role->AddFeature<async::AsyncIOService>(
+                [](ref_of<async::AsyncIOService>::type ioService)->void
                 {
-                    PoolInstancer::SetPoolSize<AsyncIOContext>(4);
+                    PoolInstancer::SetPoolSize<async::AsyncIOContext>(4);
                 }
             );
             role->AddFeature<LogAggregatorService>(

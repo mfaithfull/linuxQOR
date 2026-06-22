@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FLYER
 #define QOR_PP_H_FLYER
 
-#include "src/framework/thread/thread.h"
+#include "src/framework/parallel/thread/thread.h"
 #include "src/qor/objectcontext/typedany.h"
 
 namespace qor {

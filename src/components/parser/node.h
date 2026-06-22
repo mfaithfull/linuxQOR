@@ -27,7 +27,7 @@
 
 #include <cstdint>
 #include <string>
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
 namespace qor { namespace components { namespace parser {

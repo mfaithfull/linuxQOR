@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_CURRENTTHREAD
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_CURRENTTHREAD
 
-#include "src/framework/thread/icurrentthread.h"
+#include "src/framework/parallel/thread/icurrentthread.h"
 
 namespace qor
 {

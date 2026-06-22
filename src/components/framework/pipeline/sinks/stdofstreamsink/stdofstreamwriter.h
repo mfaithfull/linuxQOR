@@ -26,9 +26,9 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINK_STDOFSTREAMWRITER
 
 #include <functional>
-#include "src/framework/pipeline/pipeline.h"
-#include "src/framework/pipeline/podbuffer.h"
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/io/pipeline/podbuffer.h"
+#include "src/framework/io/pipeline/sink.h"
 #include "src/components/framework/pipeline/connectors/stdfstreamconnector/stdifstreamconnector.h"
 #include "stdofstreamsink.h"
 

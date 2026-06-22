@@ -26,7 +26,7 @@
 #include "display.h"
 #include "context.h"
 #include "constants.h"
-#include "src/framework/application/application_builder.h"
+#include "src/framework/app/application/application_builder.h"
 #include "egl.h"
 
 namespace qor { namespace components{
@@ -42,7 +42,7 @@ namespace qor { namespace components{
 
     bool EGLDisplay::Initialize()
     {
-        auto egl = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::EGLFeature>();        
+        auto egl = qor::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::EGLFeature>();        
         
         egl(qor_shared).BindAPI(EGL_OPENGL_ES_API);
         

@@ -26,7 +26,7 @@
 #include <buildnumber.h>
 #include "src/qor/module/module.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/factory/internalfactory.h"
 #include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"

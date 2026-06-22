@@ -26,10 +26,10 @@
 
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "file.h"
-#include "src/platform/filesystem/ifilesystem.h"
+#include "src/framework/io/filesystem/ifilesystem.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>

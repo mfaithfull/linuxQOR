@@ -37,10 +37,10 @@
 #include "src/qor/assert/assert.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/platform/network/sockets.h"
-#include "src/platform/network/address.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/io/network/address.h"
 
 using namespace qor;
 using namespace qor::test;
@@ -84,7 +84,7 @@ qor_pp_test_suite_case(NetworkTestSuite, canConnectSocket)
     eAddressFamily addressFamily = eAddressFamily::AF_INet;
     eType type = eType::Sock_Stream;
     eProtocol protocol = eProtocol::IPProto_TCP;
-    auto socket = subsystem->CreateSocket(addressFamily, type, protocol,ref_of<qor::framework::AsyncIOContext::Session>::type());
+    auto socket = subsystem->CreateSocket(addressFamily, type, protocol,ref_of<qor::async::AsyncIOContext::Session>::type());
 
     Address address;
     address.sa_family = eAddressFamily::AF_INet;

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKETS
 #define QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKETS
 
-#include "src/platform/network/sockets.h"
+#include "src/framework/io/network/sockets.h"
 
 qor_pp_module_will_provide(WINQOR_SOCKETS,Sockets)
 

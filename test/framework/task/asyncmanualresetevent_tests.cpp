@@ -27,9 +27,9 @@
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
 #include "src/qor/sync/asyncmanualresetevent.h"
-#include "src/framework/task/task.h"
-#include "src/framework/task/syncwait.h"
-#include "src/framework/task/whenallready.h"
+#include "src/framework/parallel/task/task.h"
+#include "src/framework/parallel/task/syncwait.h"
+#include "src/framework/parallel/task/whenallready.h"
 
 using namespace qor;
 using namespace qor::test;

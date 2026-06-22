@@ -29,8 +29,8 @@
 #include "src/qor/reference/newref.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/factory/externalfactory.h"
-#include "src/platform/network/socket.h"
-#include "src/platform/network/sockets.h"
+#include "src/framework/io/network/socket.h"
+#include "src/framework/io/network/sockets.h"
 
 namespace qor{ namespace network{ namespace nswindows{
 

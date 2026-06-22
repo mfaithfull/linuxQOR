@@ -26,15 +26,15 @@
 #define QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR
  
 #include "src/qor/datastructures/guid.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/sync/asyncmanualresetevent.h"
-#include "src/framework/task/task.h"
-#include "src/framework/task/syncwait.h"
-#include "src/platform/io/iodescriptor.h"
+#include "src/framework/parallel/task/task.h"
+#include "src/framework/parallel/task/syncwait.h"
+#include "src/framework/io/iodescriptor.h"
 #include "src/qor/error/error.h"
 
 namespace qor { namespace async{

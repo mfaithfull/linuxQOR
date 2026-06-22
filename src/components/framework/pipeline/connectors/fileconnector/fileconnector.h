@@ -25,9 +25,9 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_FILE
 #define QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_FILE
 
-#include "src/framework/pipeline/connection.h"
-#include "src/platform/filesystem/ifilesystem.h"
-#include "src/platform/filesystem/fileindex.h"
+#include "src/framework/io/pipeline/connection.h"
+#include "src/framework/io/filesystem/ifilesystem.h"
+#include "src/framework/io/filesystem/fileindex.h"
 
 namespace qor{ namespace components{ 
 

@@ -33,7 +33,7 @@
 #include <poll.h>
 #include <coroutine>
 #include "iouringeventprocessor.h"
-#include "src/framework/asyncioservice/asyncioinitiator.h"
+#include "src/framework/parallel/asyncioservice/asyncioinitiator.h"
 #include "readop.h"
 #include "listenop.h"
 #include "bindop.h"
@@ -41,7 +41,7 @@
 #include "sendop.h"
 #include "shutdownop.h"
 #include "recvop.h"
-#include "src/platform/network/socket.h"
+#include "src/framework/io/network/socket.h"
 #include "src/qor/log/informative.h"
 
 namespace qor{ namespace nslinux{ namespace framework{

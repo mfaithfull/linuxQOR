@@ -27,7 +27,7 @@
 
 #include "log.h"
 #include "handler.h"
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 
 namespace qor{
 

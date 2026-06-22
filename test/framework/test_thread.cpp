@@ -22,15 +22,15 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/qor/module/moduleregistry.h"
-#include "../../src/qor/injection/typeidentity.h"
-#include "../../src/qor/objectcontext/anyobject.h"
-#include "../../src/framework/thread/currentthread.h"
-#include "../../src/framework/thread/thread.h"
-#include "../../src/qor/reference/newref.h"
+#include "src/configuration/configuration.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
+#include "src/qor/module/moduleregistry.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/framework/parallel/thread/currentthread.h"
+#include "src/framework/parallel/thread/thread.h"
+#include "src/qor/reference/newref.h"
 
 using namespace qor;
 using namespace qor::test;

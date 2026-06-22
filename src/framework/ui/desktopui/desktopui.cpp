@@ -27,9 +27,9 @@
 #include <cassert>
 
 #include "desktopui.h"
-#include "src/framework/role/role.h"
+#include "src/framework/app/role/role.h"
 
-namespace qor { namespace framework{
+namespace qor { namespace ui{
 
     DesktopUI::DesktopUI()
     {
@@ -52,4 +52,4 @@ namespace qor { namespace framework{
         return EXIT_FAILURE;
     }
 
-}}//qor::framework
+}}//qor::ui

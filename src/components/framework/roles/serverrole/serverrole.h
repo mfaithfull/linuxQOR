@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_ROLES_SERVER
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_ROLES_SERVER
 
-#include "src/framework/role/irole.h"
+#include "src/framework/app/role/irole.h"
 
 namespace qor{ namespace components{ 
 

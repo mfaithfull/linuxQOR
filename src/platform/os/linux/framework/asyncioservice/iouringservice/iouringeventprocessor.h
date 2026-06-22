@@ -27,7 +27,7 @@
 
 #include <chrono>
 #include "iouring.h"
-#include "src/framework/asyncioservice/asyncioeventprocessor.h"
+#include "src/framework/parallel/asyncioservice/asyncioeventprocessor.h"
 
 namespace qor{ namespace nslinux{ namespace framework{
 

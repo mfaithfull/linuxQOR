@@ -28,7 +28,7 @@
 using namespace qor;
 using namespace qor::network;
 using namespace qor::components;
-using namespace qor::framework;
+using namespace qor::async;
 
 SessionPipeline::SessionPipeline(
         ref_of<Socket>::type socket, 

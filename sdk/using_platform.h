@@ -4,13 +4,13 @@
 #include "using_qor.h"
 #include "src/platform/compiler/compiler.h"
 #include "src/platform/platform.h"
-#include "src/platform/network/sockets.h"
-#include "src/platform/network/socket.h"
-#include "src/platform/filesystem/filesystem.h"
-#include "src/platform/filesystem/path.h"
-#include "src/platform/filesystem/fileindex.h"
-#include "src/platform/filesystem/file/file.h"
-#include "src/platform/filesystem/file/filereader.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/io/network/socket.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/io/filesystem/path.h"
+#include "src/framework/io/filesystem/fileindex.h"
+#include "src/framework/io/filesystem/file/file.h"
+#include "src/framework/io/filesystem/file/filereader.h"
 
 using namespace qor::platform;
 using namespace qor::network;

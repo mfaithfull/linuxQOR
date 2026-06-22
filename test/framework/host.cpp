@@ -22,11 +22,11 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../src/configuration/configuration.h"
-#include "../../src/framework/host/host.h"
-#include "../../src/qor/test/test.h"
-#include "../../src/qor/assert/assert.h"
-#include "../../src/qor/module/moduleregistry.h"
+#include "src/configuration/configuration.h"
+#include "src/framework/app/host/host.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
+#include "src/qor/module/moduleregistry.h"
 
 using namespace qor;
 using namespace qor::test;

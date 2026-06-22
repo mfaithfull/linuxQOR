@@ -27,7 +27,7 @@
 
 #include <vector>
 #include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/reference.h"
 #include "src/qor/reference/newref.h"
 #include "consolewidget.h"

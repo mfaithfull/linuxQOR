@@ -26,21 +26,21 @@
 
 #include <cassert>
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/qor/module/module.h"
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/error/error.h"
 #include "src/qor/log/defaultloghandler.h"
-#include "src/framework/role/role.h"
+#include "src/framework/app/role/role.h"
 #include "src/platform/platform.h"
-#include "src/platform/filesystem/filesystem.h"
+#include "src/framework/io/filesystem/filesystem.h"
 #include "src/components/framework/logaggregator/logaggregator.h"
-#include "src/framework/application/application_builder.h"
+#include "src/framework/app/application/application_builder.h"
 #include "src/components/framework/optionparser/getter.h"
-#include "src/framework/role/getfeature.h"
-#include "src/framework/events/eventsource.h"
-#include "src/framework/events/eventsink.h"
+#include "src/framework/app/role/getfeature.h"
+#include "src/framework/event/events/eventsource.h"
+#include "src/framework/event/events/eventsink.h"
 
 const char* logTag = "eventer";
 

@@ -30,9 +30,9 @@
 #include <optional>
 #include <atomic>
 #include "overlappedoperationbase.h"
-#include "src/framework/task/cancellation/cancellationtoken.h"
-#include "src/framework/task/cancellation/cancellationregistration.h"
-#include "src/framework/task/cancellation/operationcancelled.h"
+#include "src/framework/parallel/task/cancellation/cancellationtoken.h"
+#include "src/framework/parallel/task/cancellation/cancellationregistration.h"
+#include "src/framework/parallel/task/cancellation/operationcancelled.h"
 
 namespace qor { namespace framework { namespace nswindows {
 

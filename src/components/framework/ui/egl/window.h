@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_WINDOW
 
-#include "src/framework/role/ifeature.h"
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/app/role/ifeature.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "display.h"
 #include "context.h"

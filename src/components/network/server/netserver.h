@@ -26,15 +26,15 @@
 #define QOR_PP_H_COMPONENTS_NETWORK_SERVER
 
 #include "src/qor/interception/functioncontext.h"
-#include "src/framework/workflow/workflow.h"
-#include "src/platform/network/sockets.h"
-#include "src/platform/network/socket.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
-#include "src/framework/application/application.h"
+#include "src/framework/app/workflow/workflow.h"
+#include "src/framework/io/network/sockets.h"
+#include "src/framework/io/network/socket.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
+#include "src/framework/app/application/application.h"
 #include "src/qor/log/debug.h"
 #include "src/qor/error/error.h"
-#include "src/framework/thread/threadpool.h"
-#include "src/framework/pipeline/protocol.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/io/pipeline/protocol.h"
 
 namespace qor{ namespace components {
 
@@ -53,9 +53,9 @@ namespace qor{ namespace components {
 
         //Subsystems and features needed
         ref_of<network::Sockets>::type m_sockets;
-        ref_of<framework::AsyncIOService>::type m_io;
+        ref_of<async::AsyncIOService>::type m_io;
         ref_of<thread::ThreadPool>::type m_threadPool;
-        ref_of<framework::AsyncIOContext::Session>::type m_ioSession;
+        ref_of<async::AsyncIOContext::Session>::type m_ioSession;
 
         //Port and socket for connections to the server
         unsigned m_port;

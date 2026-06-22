@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "socketsource.h"
-#include "src/framework/pipeline/sink.h"
+#include "src/framework/io/pipeline/sink.h"
 #include "src/qor/error/error.h"
 
 namespace qor{ namespace components{ 

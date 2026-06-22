@@ -70,7 +70,7 @@
 #include "pool/blocks.h"
 #include "currentthread.h"
 #include "pool/common_index_type.h"
-#include "src/framework/role/ifeature.h"
+#include "src/framework/app/role/ifeature.h"
 
 namespace qor { namespace thread{
 

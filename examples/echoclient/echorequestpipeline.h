@@ -25,13 +25,13 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_REQUESTPIPELINE
 #define QOR_PP_H_EXAMPLES_ECHOCLIENT_REQUESTPIPELINE
 
-#include "src/framework/thread/currentthread.h"
+#include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/asyncioservice/asyncioservice.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketconnector.h"
 #include "src/components/framework/pipeline/connectors/socketconnector/socketsink.h"
-#include "src/framework/pipeline/pipeline.h"
-#include "src/framework/pipeline/podbuffer.h"
+#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/io/pipeline/podbuffer.h"
 #include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
 #include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
 #include "echorequest.h"

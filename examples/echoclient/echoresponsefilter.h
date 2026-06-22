@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORESPONSEFILTER
 #define QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORESPONSEFILTER
 
-#include "src/framework/pipeline/inlinefilter.h"
+#include "src/framework/io/pipeline/inlinefilter.h"
 #include "echoresponseparser.h"
 #include "nodes/responsenode.h"
 #include "echoresponse.h"
