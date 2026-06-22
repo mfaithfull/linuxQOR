@@ -1,6 +1,6 @@
 
-Sfumato is often used to render human faces and create atmospheric effects. It allows artists to depict features with a sense of realism and softness, making subjects appear more lifelike. 
-The technique is typically applied in oil painting, where artists layer thin washes of colour to achieve the desired effect.
+"Sfumato is often used to render human faces and create atmospheric effects. It allows artists to depict features with a sense of realism and softness, making subjects appear more lifelike. 
+The technique is typically applied in oil painting, where artists layer thin washes of colour to achieve the desired effect."
 
 It was famously employed by Leonardo da Vinci, who described it as blending colours without lines or borders, resembling the effect of smoke.
 

@@ -8,7 +8,7 @@ qor_compiler(static)    Required to adapt to the differences between what compil
 qor_platform            Required to adapt to the target operating system
 qor_application         Required for the qor::Application and qor::AppBuilder clases
 
-See the outline example examples/basic/outline for a minimal QOR executable project
+See the outline example examples/basic/basic for a minimal QOR executable project
 
 Linking to these libraries will also require these other modules from the QOR to be available at runtime
 
@@ -21,13 +21,15 @@ qor_error
 qor_sync
 qor_role
 
+on Windows you'll need to link them all at link time. On Linux the linker will work out the transitive dependensies for you.
+
 Beyond this the answer is you have to link to what you use. 
 When you use something declared in a QOR header you need to link to the QOR library that implements it.
 If this is too difficult to keep track of and you're using almost everything anyway then linking to all
 the QOR libraries, the QOR Framework libraries, and the QOR Platform libraries for your platform is safe,
 although not super efficient.
 If you use optional components from the qor::components namespace you must
-link these individually as there are less gaurentees here. It may not be possible, and is not advisable to try,
+link these individually as there are less gaurentees here. It may not be possible, and is not advisable,
 to link all the QOR commponents as you won't need them all and they may clash due to providing alternative
 implementations of the same declarations.
 

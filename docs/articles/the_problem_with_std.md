@@ -13,4 +13,3 @@ If your background is in any language where the standard runtime provides these 
 The real problem then with the C++ standard library is not what it is, it's expecting it to provide the building blocks for your application. Unless you're building something really small and simple, it won't. You'll need 3rd party libraries for every substantial aspect of your substantial application, even relatively small stuff like logging.
 
 There are other issues like the essentially unreadable library source code which need to be dealt with ahead of extending it to provide more things but I'll leave those to the experts.
-

@@ -8,9 +8,9 @@ You don't pay for what you don't use.
 What you do use is just as efficient as what you could reasonably write by hand.
 In general, this means that no feature should be added to C++ that would impose any overhead, whether in time or space, greater than a programmer would introduce without using the feature.
 
-The only two features in the language that do not follow the zero-overhead principle are runtime type identification and exceptions, and are why most compilers include a switch to turn them off." - cpprefernce.com - https://en.cppreference.com/w/cpp/language/Zero-overhead_principle.html
+The only two features in the language that do not follow the zero-overhead principle are runtime type identification and exceptions, and are why most compilers include a switch to turn them off." - cppreference.com - https://en.cppreference.com/w/cpp/language/Zero-overhead_principle.html
 
-I recently heard an experienced C++ developer say this was probably the only principle all C++ developers agree on.
+I recently heard an experienced C++ developer say this was probably the only principle all C++ developers agree on. Really?
 
 Here then is the hole in our thinking. We look for zero overhead abstractions as if we were trying to extend the language and when we don't find one we just write linear code without considering abstractions at all. I'm interested in what happens when instead we trade some overhead. We choose to pay a price for some powerful abstractions and prefer that to avoiding them.
 

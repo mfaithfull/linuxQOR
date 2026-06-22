@@ -28,8 +28,3 @@ Application
 All of these are also customisation points if you need them to be. Custom Features being the easiest and
 most obviously necessary.
 
-
-
-
-
-

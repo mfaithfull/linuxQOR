@@ -2,6 +2,7 @@ The QOR makes extensive use of traits to attach information to types
 
 For example these traits are used for memory management
 
+qor::guid_of<T>::guid is a globally unique identifier for the type T
 qor::instancer_of<T>::type is the class used to determine whether you get a new T or a recycled one and where from
 qor::factory_of<T>:: type is the factory used to provide and recycle instances
 qor::allocator_of<T>::type is the class used by the instancer to allocate instances of T 
