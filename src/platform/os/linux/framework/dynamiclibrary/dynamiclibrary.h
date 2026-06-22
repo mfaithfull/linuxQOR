@@ -25,19 +25,19 @@
 #ifndef QOR_PP_H_OS_LINUX_FRAMEWORK_DYNAMICLIBRARY
 #define QOR_PP_H_OS_LINUX_FRAMEWORK_DYNAMICLIBRARY
 
-#include "src/framework/dynamiclibrary/dynamiclibrary.h"
+#include "src/framework/app/dynamiclibrary/dynamiclibrary.h"
 
 qor_pp_module_will_provide(QOR_LINUXDYNLIB, DynamicLibrary)
 
 namespace qor{ namespace nslinux{ namespace framework{
 
-    class qor_pp_module_interface(QOR_LINUXDYNLIB) DynamicLibrary : public qor::framework::DynamicLibrary
+    class qor_pp_module_interface(QOR_LINUXDYNLIB) DynamicLibrary : public qor::DynamicLibrary
     {
     public:
         DynamicLibrary();
         DynamicLibrary(const std::string& libName);
         virtual ~DynamicLibrary();
-        virtual qor::framework::DynamicLibrary::DynProc GetProcAddress(const std::string& procName);
+        virtual qor::DynamicLibrary::DynProc GetProcAddress(const std::string& procName);
     };
 
 }}}//qor::nslinux::framework

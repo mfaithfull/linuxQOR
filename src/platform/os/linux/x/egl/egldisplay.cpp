@@ -34,7 +34,7 @@ namespace qor{ namespace platform { namespace nslinux{ namespace x{
 
     XEGLDisplay::XEGLDisplay() : qor::components::EGLDisplay()
     {
-        auto xclient = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::platform::nslinux::XClient>();
+        auto xclient = qor::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::platform::nslinux::XClient>();
         m_xdisplay = xclient(qor_shared).GetDisplay(0);
     }
 

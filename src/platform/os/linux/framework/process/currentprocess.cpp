@@ -81,49 +81,49 @@ namespace qor{ namespace nslinux{ namespace framework{
         return sched_setaffinity(getpid(), sizeof(cpu_set_t), &cpu_set) == 0;
     }
 
-    std::optional<qor::framework::ICurrentProcess::Priority> CurrentProcess::GetPriority()
+    std::optional<qor::ICurrentProcess::Priority> CurrentProcess::GetPriority()
     {
         const int nice_val = getpriority(PRIO_PROCESS, static_cast<id_t>(getpid()));
         switch (nice_val)
         {
         case static_cast<int>(PRIO_MAX - 2):
-            return qor::framework::ICurrentProcess::Priority::idle;
+            return qor::ICurrentProcess::Priority::idle;
         case static_cast<int>(PRIO_MAX / 2):
-            return qor::framework::ICurrentProcess::Priority::below_normal;
+            return qor::ICurrentProcess::Priority::below_normal;
         case 0:
-            return qor::framework::ICurrentProcess::Priority::normal;
+            return qor::ICurrentProcess::Priority::normal;
         case static_cast<int>(PRIO_MIN / 3):
-            return qor::framework::ICurrentProcess::Priority::above_normal;
+            return qor::ICurrentProcess::Priority::above_normal;
         case static_cast<int>(PRIO_MIN * 2 / 3):
-            return qor::framework::ICurrentProcess::Priority::high;
+            return qor::ICurrentProcess::Priority::high;
         case static_cast<int>(PRIO_MIN):
-            return qor::framework::ICurrentProcess::Priority::realtime;
+            return qor::ICurrentProcess::Priority::realtime;
         default:
             return std::nullopt;
         }
     }
 
-    bool CurrentProcess::SetPriority(const qor::framework::ICurrentProcess::Priority priority)
+    bool CurrentProcess::SetPriority(const qor::ICurrentProcess::Priority priority)
     {
         int ipriority = 0;
         switch(priority)
         {
-            case qor::framework::ICurrentProcess::Priority::idle:
+            case qor::ICurrentProcess::Priority::idle:
             ipriority = static_cast<int>(PRIO_MAX - 2);
             break;
-            case qor::framework::ICurrentProcess::Priority::below_normal:
+            case qor::ICurrentProcess::Priority::below_normal:
             ipriority = static_cast<int>(PRIO_MAX / 2);
             break;
-            case qor::framework::ICurrentProcess::Priority::normal:
+            case qor::ICurrentProcess::Priority::normal:
             ipriority = 0;
             break;
-            case qor::framework::ICurrentProcess::Priority::above_normal:
+            case qor::ICurrentProcess::Priority::above_normal:
             ipriority = static_cast<int>(PRIO_MIN / 3);
             break;
-            case qor::framework::ICurrentProcess::Priority::high:
+            case qor::ICurrentProcess::Priority::high:
             ipriority = static_cast<int>(PRIO_MIN * 2 / 3 );
             break;
-            case qor::framework::ICurrentProcess::Priority::realtime:
+            case qor::ICurrentProcess::Priority::realtime:
             ipriority = static_cast<int>(PRIO_MIN);
             break;
         }

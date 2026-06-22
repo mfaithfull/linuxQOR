@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "src/framework/app/role/role.h"
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 #define QOR_PP_IMPLEMENTS_RESOURCEHUB
 #include "resourcehub.h"
 #include "types/pathresource.h"

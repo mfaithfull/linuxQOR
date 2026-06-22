@@ -35,7 +35,7 @@ namespace qor{ bool qor_pp_import ImplementsCairoFeature(); }
 
 namespace qor { namespace components{
 
-    class qor_pp_module_interface(QOR_CAIRO) CairoFeature : public framework::IFeature
+    class qor_pp_module_interface(QOR_CAIRO) CairoFeature : public IFeature
     {
     public:
 

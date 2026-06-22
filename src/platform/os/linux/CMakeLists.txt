@@ -1,5 +1,6 @@
 add_subdirectory(filesystem)
 add_subdirectory(framework)
+add_subdirectory(network)
 add_subdirectory(components)
 add_subdirectory(gtk)
 #add_subdirectory(desktop)

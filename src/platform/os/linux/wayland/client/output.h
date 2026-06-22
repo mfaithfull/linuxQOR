@@ -26,7 +26,7 @@
 #define QOR_PP_H_LINUX_WAYLAND_OUTPUT
 
 #include <stdint.h>
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 
 struct wl_output;
 struct wl_output_listener;

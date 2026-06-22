@@ -427,14 +427,14 @@ namespace qor{ namespace platform { namespace nslinux{
     {
         if(hint == qor::components::EGLPlatformHint::X)
         {
-            auto xClient = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<XClient>();
+            auto xClient = qor::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<XClient>();
             auto xDisplay = xClient(qor_shared).GetDisplay(":0");
             auto eglDisplay = new_ref<EglDisplay>((void*)0x31D5);//EGL_PLATFORM_X11_KHR
             return new_ref<qor::components::EGLSessionWrapper<x::XEGLSession, EglDisplay>>(xDisplay, eglDisplay);            
         }
         else
         {            
-            auto waylandClient = qor::framework::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<WaylandClient>();
+            auto waylandClient = qor::AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<WaylandClient>();
             auto waylandDisplay = waylandClient(qor_shared).GetDisplay();              //Get the default local display
             auto eglDisplay = new_ref<EglDisplay>((void*)0x31D8);//EGL_PLATFORM_WAYLAND_KHR
             return new_ref<qor::components::EGLSessionWrapper<wl::XDGSession, EglDisplay>>(waylandDisplay, eglDisplay);    

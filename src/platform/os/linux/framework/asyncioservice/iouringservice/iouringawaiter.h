@@ -35,7 +35,7 @@ namespace qor{ namespace nslinux{ namespace framework{
     {
         IOUring::SQE entry;
         IOUring* m_ring;
-        qor::framework::AsyncIORequest requestData;
+        qor::async::AsyncIORequest requestData;
         
         IOUringAwaiter(IOUring::SQE& sqe, IOUring* ring) : entry(sqe), m_ring(ring) {}
 

@@ -35,7 +35,7 @@
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/signals/slotbase.h"
+#include "src/framework/event/signals/slotbase.h"
 #include "resource.h"
 
 namespace qor{ namespace framework{

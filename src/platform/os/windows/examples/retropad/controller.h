@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "src/framework/signals/slotbase.h"
+#include "src/framework/event/signals/slotbase.h"
 #include "src/platform/os/windows/gui/window.h"
 #include "src/platform/os/windows/gui/windowclassregistration.h"
 #include "src/platform/os/windows/gui/icon.h"

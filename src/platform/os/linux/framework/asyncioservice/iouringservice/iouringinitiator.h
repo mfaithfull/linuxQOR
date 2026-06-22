@@ -46,66 +46,66 @@
 
 namespace qor{ namespace nslinux{ namespace framework{
 
-    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) IOUringInitiator : public qor::framework::AsyncIOInitiator
+    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) IOUringInitiator : public qor::async::AsyncIOInitiator
     {
     public:
                 
-        IOUringInitiator();
+        IOUringInitiator() = default;
         virtual ~IOUringInitiator() noexcept = default;
 
-        virtual void ConnectToProcessor(qor::framework::AsyncIOEventProcessor* processor);
+        virtual void ConnectToProcessor(qor::async::AsyncIOEventProcessor* processor);
 
-        virtual qor::framework::IOTask Send(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
+        virtual qor::async::IOTask Send(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
         {                     
             m_Ring->m_guard.lock();
             return Send2(ioDescriptor, buffer, len, flags);
         }
 
-        qor::framework::IOTask Send2(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
+        qor::async::IOTask Send2(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
         {
             int result = co_await SendOperation(*m_Ring, ioDescriptor->m_fd, buffer, len, flags);
             
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = result,
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
+        virtual qor::async::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
             m_Ring->m_guard.lock();
             return Recv2(ioDescriptor, buffer, len);
         }
 
-        qor::framework::IOTask Recv2(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
+        qor::async::IOTask Recv2(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
             int result = co_await RecvOperation(*m_Ring, ioDescriptor->m_fd, buffer, len);
             
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = result,
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
+        virtual qor::async::IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len), 
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog)
+        virtual qor::async::IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog)
         {
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = co_await ListenOperation(*m_Ring, ioDescriptor->m_fd, backlog),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address)
+        virtual qor::async::IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address)
         {
             sockaddr_in addr;        
             memset(&addr, 0, sizeof(struct sockaddr_in));
@@ -113,13 +113,13 @@ namespace qor{ namespace nslinux{ namespace framework{
             addr.sin_addr.s_addr = Address.sa.IPAddress.sin_addr.S_un.S_addr;
             addr.sin_port = Address.sa.IPAddress.sin_port;                
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = co_await BindOperation(*m_Ring, ioDescriptor->m_fd, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& /*Address*/, network::Socket* new_socket)
+        virtual qor::async::IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& /*Address*/, network::Socket* new_socket)
         {            
             sockaddr addr;
             socklen_t len = 0;
@@ -127,22 +127,22 @@ namespace qor{ namespace nslinux{ namespace framework{
             int socket_number = co_await AcceptOperation(*m_Ring, ioDescriptor->m_fd, &addr, &len, 0);
 
             new_socket->m_fd = socket_number;
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = socket_number,
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Shutdown(platform::IODescriptor* ioDescriptor, int how)
+        virtual qor::async::IOTask Shutdown(platform::IODescriptor* ioDescriptor, int how)
         {
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
             return Shutdown2(ioDescriptor, how);
         }
 
-        qor::framework::IOTask Shutdown2(platform::IODescriptor* ioDescriptor, int how)
+        qor::async::IOTask Shutdown2(platform::IODescriptor* ioDescriptor, int how)
         {
             co_await ShutdownOperation(*m_Ring, ioDescriptor->m_fd, how);
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = 0,
                 .ioObject = ioDescriptor
             };
@@ -150,7 +150,7 @@ namespace qor{ namespace nslinux{ namespace framework{
 
     protected:
 
-        IOUring* m_Ring;
+        IOUring* m_Ring{nullptr};
     };
 
 }}}//qor::nslinux::framework

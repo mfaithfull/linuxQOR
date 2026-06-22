@@ -44,7 +44,7 @@ extern "C"
 			qor_pp_stringize(qor_pp_ver_patch) "." \
 			qor_pp_stringize(qor_pp_buildnumber));
 
-		static qor::TypeRegEntry< qor::nslinux::framework::CurrentThread, qor::framework::ICurrentThread > reg;  //Register the Linux specific implementation of ICurrentThread
+		static qor::TypeRegEntry< qor::nslinux::framework::CurrentThread, qor::ICurrentThread > reg;  //Register the Linux specific implementation of ICurrentThread
 		return QORModule;
 	}
 }

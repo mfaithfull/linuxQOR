@@ -31,11 +31,11 @@
 
 namespace qor{ namespace nslinux{ namespace framework{
 
-    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) IOUringEventProcessor : public qor::framework::AsyncIOEventProcessor
+    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) IOUringEventProcessor : public qor::async::AsyncIOEventProcessor
     {
     public:
         
-        IOUringEventProcessor() : qor::framework::AsyncIOEventProcessor(), uring(256) {}
+        IOUringEventProcessor() : qor::async::AsyncIOEventProcessor(), uring(256) {}
         virtual ~IOUringEventProcessor() noexcept = default;
         
         const IOUring& Ring() const{ return uring; }

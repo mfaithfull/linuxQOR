@@ -50,7 +50,7 @@ namespace qor{ namespace platform { namespace nslinux{
 
     typedef int (*ErrorHandler) (void*, ErrorEvent*);
 
-    class qor_pp_module_interface(QOR_LINX) XClient : public qor::framework::IFeature
+    class qor_pp_module_interface(QOR_LINX) XClient : public qor::IFeature
     {
     public:
 

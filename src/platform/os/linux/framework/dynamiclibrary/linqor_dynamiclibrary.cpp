@@ -43,7 +43,7 @@ extern "C"
 			qor_pp_stringize(qor_pp_buildnumber));
 
 		//Register the Linux specific implementations
-		static qor::TypeRegEntryWithParams< qor::nslinux::framework::DynamicLibrary, qor::framework::DynamicLibrary, const std::string& > regDynamicLibrary;
+		static qor::TypeRegEntryWithParams< qor::nslinux::framework::DynamicLibrary, qor::DynamicLibrary, const std::string& > regDynamicLibrary;
 		return QORModule;
 	}
 }

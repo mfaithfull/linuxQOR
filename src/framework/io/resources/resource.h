@@ -27,7 +27,7 @@
 
 #include <string>
 
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 
 namespace qor{ namespace framework{
 

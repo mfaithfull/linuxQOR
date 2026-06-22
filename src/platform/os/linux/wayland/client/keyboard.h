@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 
 struct wl_keyboard;
 struct wl_keyboard_listener;

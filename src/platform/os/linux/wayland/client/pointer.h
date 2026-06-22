@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 
 struct wl_pointer;
 struct wl_pointer_listener;

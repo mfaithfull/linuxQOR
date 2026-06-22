@@ -23,18 +23,16 @@
 // DEALINGS IN THE SOFTWARE.
 
 //A minimal QOR application
-
-#include "src/configuration/configuration.h"
-#include "src/qor/module/module.h"
-#include <buildnumber.h>
-#include "src/framework/app/application/application_builder.h"
+#include "src/configuration/configuration.h"        //Every QOR cpp file must include this first.
+#include "src/qor/module/module.h"                  //Module definition as we're defining a new module
+#include "src/framework/app/application/application_builder.h"  //Bring in the AppBuilder so we can make and Application
 
 using namespace qor;                                //Use the basic namespaces from the QOR
 
 constexpr const char* appName = "BasicApp";         //Give our application a name
 
-extern "C"{
-    Module& ThisModule(void)                        //Every QOR module must provide an implementation of ThisModule
+extern "C"{                                         //This bolierplate block can be replace with - qor_pp_implement_module(appname)
+    Module& ThisModule()                            //Every QOR module must provide an implementation of - Module& ThisModule()
     { 
         static Module QORModule(appName, qor_pp_stringize(qor_pp_ver_project));      //A module singleton object with name and version
         return QORModule;
@@ -43,10 +41,10 @@ extern "C"{
 
 int main()                                          //Standard C/C++ entry point
 {
-    return AppBuilder().Build(appName)->Run(        //Use the AppBuilder factory to make an App and then Run it
+    return AppBuilder().Build(appName)->Run(        //Use the AppBuilder factory to make an Application and then Run it
         []()->int                                   //We provide a simple lambda to be executed
         {
             std::cout << "Hello from a basic QOR application." << std::endl;
-            return EXIT_SUCCESS;                    //Standard succes return code (0) is returned from the program
+            return EXIT_SUCCESS;                    //Standard success return code (0) is returned from the program
         });
 }

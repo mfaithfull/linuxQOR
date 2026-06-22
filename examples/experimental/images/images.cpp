@@ -35,7 +35,7 @@
 #include "src/framework/io/pipeline/pipeline.h"
 #include "src/components/framework/pipeline/connectors/fileconnector/fileconnector.h"
 #include "src/components/framework/pipeline/filters/jpegdecodefilter/jpegdecodefilter.h"
-#include "src/framework/resources/image/imagesink.h"
+#include "src/framework/io/resources/image/imagesink.h"
 
 #include "images.h"
 
@@ -43,7 +43,6 @@
 
 using namespace qor;
 using namespace qor::log;
-using namespace qor::framework;
 using namespace qor::pipeline;
 using namespace qor::platform;
 using namespace qor::components;
@@ -70,11 +69,11 @@ int main(const int argc, const char** argv, char** env)
         [&logHandler](ref_of<IRole>::type role)
         {
             qor_pp_fcontext;            
-            role->AddFeature<ThreadPool>(
-                [](ref_of<ThreadPool>::type threadPool)
+            role->AddFeature<thread::ThreadPool>(
+                [](ref_of<thread::ThreadPool>::type threadPool)
                 {                    
                     threadPool->SetThreadCount(2);                    
-                    qor::framework::CurrentThread::GetCurrent().SetName("Main");
+                    CurrentThread::GetCurrent().SetName("Main");
                 });
                         
             role->AddFeature<LogAggregatorService>(

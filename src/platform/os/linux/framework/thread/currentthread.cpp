@@ -105,7 +105,7 @@ namespace qor{ namespace nslinux{ namespace framework{
 
     }
 
-    std::optional< qor::framework::ICurrentThread::Priority > CurrentThread::GetPriority() const
+    std::optional< qor::ICurrentThread::Priority > CurrentThread::GetPriority() const
     {
             // On Linux, we distill the choices of scheduling policy, priority, and "nice" value into 7 pre-defined levels, for simplicity and portability. The total number of possible combinations of policies and priorities is much larger, so if the value was set via any means other than `this_thread::set_os_thread_priority()`, it may not match one of our pre-defined values.
             int policy = 0;

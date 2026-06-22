@@ -47,7 +47,6 @@ constexpr const char* logTag = "jsonread";
 
 using namespace qor;
 using namespace qor::platform;
-using namespace qor::framework;
 using namespace qor::components;
 
 qor_pp_implement_module(appName)
@@ -76,11 +75,11 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
     return AppBuilder().Build(appName)->SetRole<Role>(
         [&logHandler](ref_of<IRole>::type role)
         {
-            role->AddFeature<ThreadPool>(
-                [](ref_of<ThreadPool>::type threadPool)
+            role->AddFeature<thread::ThreadPool>(
+                [](ref_of<thread::ThreadPool>::type threadPool)
                 {
                     threadPool->SetThreadCount(2);
-                    qor::framework::CurrentThread::GetCurrent().SetName("Main");
+                    CurrentThread::GetCurrent().SetName("Main");
                 }
             );
             

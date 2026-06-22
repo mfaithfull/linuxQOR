@@ -47,7 +47,7 @@ qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOInitiator)
 
 namespace qor{ namespace nslinux{ namespace framework{
 
-    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) AsyncIOService : public qor::framework::AsyncIOService
+    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) AsyncIOService : public qor::async::AsyncIOService
     {
     public:
         

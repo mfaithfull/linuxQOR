@@ -40,7 +40,7 @@ namespace qor{ namespace platform { namespace nslinux{
     
     namespace wl{ class qor_pp_module_interface(QOR_LINWAYLAND) Display;}//wl
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) WaylandClient : public qor::framework::IFeature
+    class qor_pp_module_interface(QOR_LINWAYLAND) WaylandClient : public qor::IFeature
     {
     public:
 

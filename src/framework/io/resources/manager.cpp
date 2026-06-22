@@ -26,7 +26,7 @@
 
 #include "resourcehub.h"
 #include "src/qor/error/error.h"
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/framework/app/role/getfeature.h"

@@ -34,7 +34,7 @@ namespace qor
 
 namespace qor{ namespace nslinux{ namespace framework{
 
-    class qor_pp_module_interface(QOR_LINUXTHREAD) CurrentThread : public qor::framework::ICurrentThread
+    class qor_pp_module_interface(QOR_LINUXTHREAD) CurrentThread : public qor::ICurrentThread
     {
     public:
         CurrentThread() = default;

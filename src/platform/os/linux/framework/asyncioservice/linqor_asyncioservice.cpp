@@ -46,9 +46,9 @@ extern "C"
 			qor_pp_stringize(qor_pp_buildnumber));
 
 		//Register the Linux specific implementations
-		static qor::TypeRegEntry< qor::nslinux::framework::AsyncIOService, qor::framework::AsyncIOService > regAsyncIOService;
-		static qor::TypeRegEntry< qor::nslinux::framework::IOUringEventProcessor, qor::framework::AsyncIOEventProcessor > regAsyncIOEventProcessor;
-		static qor::TypeRegEntry< qor::nslinux::framework::IOUringInitiator, qor::framework::AsyncIOInitiator > regAsyncIOInitiator;
+		static qor::TypeRegEntry< qor::nslinux::framework::AsyncIOService, qor::async::AsyncIOService > regAsyncIOService;
+		static qor::TypeRegEntry< qor::nslinux::framework::IOUringEventProcessor, qor::async::AsyncIOEventProcessor > regAsyncIOEventProcessor;
+		static qor::TypeRegEntry< qor::nslinux::framework::IOUringInitiator, qor::async::AsyncIOInitiator > regAsyncIOInitiator;
 		return QORModule;
 	}
 }

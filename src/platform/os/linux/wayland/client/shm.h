@@ -29,7 +29,7 @@
 
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/signals/signal.h"
+#include "src/framework/event/signals/signal.h"
 
 struct wl_shm;
 struct wl_shm_listener;

@@ -54,12 +54,12 @@ namespace qor { namespace components { namespace parser { namespace json {
         return tokenName;
     }
 
-    template<class StateT>
+    template<class NodeT>
     void StandardPrepare(ParserState& state)
     {
         std::string tokenName = GetTokenName(state.GetToken());
         log::debug("Looking for a {0}...", tokenName);
-        state.GetParser()->PushNode(new_ref<StateT>().AsRef<Node>());
+        state.GetParser()->PushNode(new_ref<NodeT>().template AsRef<Node>());
     }
 
     void StandardFail(ParserState& state)

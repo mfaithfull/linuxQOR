@@ -30,11 +30,11 @@ qor_pp_module_provide(QOR_LINUXDYNLIB, DynamicLibrary)
 
 namespace qor{ namespace nslinux{ namespace framework{
     
-    DynamicLibrary::DynamicLibrary() : qor::framework::DynamicLibrary()
+    DynamicLibrary::DynamicLibrary() : qor::DynamicLibrary()
     {
     }
 
-    DynamicLibrary::DynamicLibrary(const std::string& libName) : qor::framework::DynamicLibrary(libName)
+    DynamicLibrary::DynamicLibrary(const std::string& libName) : qor::DynamicLibrary(libName)
     {
     }
         
