@@ -36,13 +36,9 @@ qor_pp_module_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
 
 namespace qor { namespace components{
 
-    LogAggregatorService::LogAggregatorService()
-    {
-    }
+    LogAggregatorService::LogAggregatorService() = default;
 
-    LogAggregatorService::~LogAggregatorService() noexcept
-    {
-    }
+    LogAggregatorService::~LogAggregatorService() noexcept = default;
 
     void LogAggregatorService::Setup()
     {

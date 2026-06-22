@@ -58,6 +58,10 @@ namespace qor { namespace components { namespace parser {
             {
                 std::cout << "Ran out of data before we could decide. Reenter with more data to try again." << std::endl;
             }
+            else if(GetParser()->IsFinal() && m_result.token != static_cast<uint64_t>(eToken::Lexical))
+            {
+                Emit();
+            }
         };
     }
 

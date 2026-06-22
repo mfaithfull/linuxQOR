@@ -26,14 +26,13 @@
 
 #include "parsersink.h"
 #include "src/framework/pipeline/source.h"
+#include "src/qor/interception/functioncontext.h"
 
 namespace qor{ namespace components{ 
 
     BaseParserSink::BaseParserSink() : 
         m_context(new_ref<qor::components::parser::Context>()),
-        m_parser(m_context)
-    {
-    }
+        m_parser(m_context){ }
    
     bool BaseParserSink::Write(size_t& unitsWritten, size_t unitsToWrite)
     {
@@ -42,32 +41,50 @@ namespace qor{ namespace components{
 
     bool BaseParserSink::Pull(size_t& unitsWritten, size_t unitsToWrite)
     {
+        qor_pp_ofcontext;
         return GetFlowMode() == FlowMode::Pull ? 
         (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0 || unitsToWrite == 0) ? true : false) : true;
     }
 
     bool BaseParserSink::Push(size_t& unitsWritten, size_t unitsToWrite)
     {
+        qor_pp_ofcontext;
         if(unitsToWrite > 0)
         {
             pipeline::Buffer* buffer = GetBuffer();
             if(buffer)
             {
                 byte* data = buffer->ReadRequest(unitsToWrite);
-                size_t bytesParsed = Parse(data, buffer->GetUnitSize() * unitsToWrite);
-                if(bytesParsed > 0)
+                if(unitsToWrite > 0)
                 {
-                    unitsWritten = bytesParsed / buffer->GetUnitSize();
-                    buffer->ReadAcknowledge(unitsWritten);
-                    OnWriteSuccess(unitsWritten);
+                    size_t bytesParsed = Parse(data, buffer->GetUnitSize() * unitsToWrite);
+                    if(bytesParsed > 0)
+                    {
+                        unitsWritten = bytesParsed / buffer->GetUnitSize();
+                        buffer->ReadAcknowledge(unitsWritten);
+                        OnWriteSuccess(unitsWritten);
+                    }
+                    else
+                    {
+                        log::debug("Parse did not consume any data?");
+                    }
                 }
-                else //EOF?
+                else
                 {
+                    SetEOD();
                     return false;
                 }
                 return true;
             }
+            else
+            {
+                serious("No buffer on Pipeline Sink.");
+            }
             return false;
+        }
+        else
+        {
+            log::debug("Pushed 0 units.");
         }
         return true;
     }

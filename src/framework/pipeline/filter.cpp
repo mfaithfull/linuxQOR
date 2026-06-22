@@ -25,6 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "filter.h"
+#include "src/qor/log/debug.h"
 
 namespace qor{ namespace pipeline{
 
@@ -135,23 +136,30 @@ namespace qor{ namespace pipeline{
             size_t unitsPumpedAtOnce = 0;
             if(GetFlowMode() == FlowMode::Pull)
             {
+                log::debug("Pulling for {0} units", unitsToPump);
                 working = ActualSink()->Write(unitsPumpedAtOnce, unitsToPump);
                 if(unitsPumpedAtOnce == 0)
                 {
+                    log::debug("Nothing pulled will retry.");
                     break;
                 }
+                log::debug("Pulled for {0} units", unitsPumpedAtOnce);
             }
             else
             {
+                log::debug("Pushing {0} units", unitsToPump);
                 working = ActualSource()->Read(unitsPumpedAtOnce, unitsToPump);
                 if(unitsPumpedAtOnce == 0)
                 {
+                    log::debug("Nothing pushed will retry.");
                     break;
                 }
+                log::debug("Pushed {0} units", unitsPumpedAtOnce);
             }
             unitsToPump -= unitsPumpedAtOnce;
             unitsPumped += unitsPumpedAtOnce;
         };
+        log::debug("Pipeline is {0}.", working ? "active" : "deactivated");
         return working;
     }
 

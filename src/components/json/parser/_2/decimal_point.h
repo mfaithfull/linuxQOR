@@ -31,7 +31,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     class qor_pp_module_interface(QOR_JSON) decimal_point : public Specific
     {
-        public: decimal_point(Parser* parser) : Specific(parser, 0x2E, static_cast<uint64_t>(jsonToken::decimal_point)){ }
+        public: decimal_point(Parser* parser) : Specific(parser, (byte)0x2E, static_cast<uint64_t>(jsonToken::decimal_point)){ }
         virtual ~decimal_point() = default;
     };
 

@@ -78,7 +78,7 @@ namespace qor { namespace components { namespace parser { namespace json {
                 std::string tokenName = GetTokenName(token);
                 GetContext()->Diagnostic();
                 GetParser()->Diagnostic();
-                _sleep(100);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 continuable("Unexpected: {0}", tokenName);
             }
             node = GetParser()->PopNode();
@@ -88,9 +88,14 @@ namespace qor { namespace components { namespace parser { namespace json {
         {
             for(auto it = values.rbegin(); it != values.rend(); ++it)
             {
-                node.AsRef<ArrayNode>()->GetObject()->m_values.push_back(*it);
+                node.AsRef<ArrayNode>()->GetObject()->m_values.push_back((*it)->GetObject());
             }
             GetParser()->PushNode(node);
+        }
+        else
+        {
+            GetContext()->Diagnostic();
+            GetParser()->Diagnostic();
         }
     }
 

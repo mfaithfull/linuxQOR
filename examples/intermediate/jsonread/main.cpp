@@ -151,6 +151,74 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
                 FileConnector(FileIndex(testsPath, "y_number_0e+1.json"),
                     arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
                     
+            auto number_0e1 = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_0e1.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_after_space = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_after_space.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_double_close_to_zero = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_double_close_to_zero.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_int_with_exp = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_int_with_exp.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_minus_zero = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_minus_zero.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_negative_int = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_negative_int.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_negative_one = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_negative_one.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_negative_zero = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_negative_zero.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_real_capital_e = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_real_capital_e.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_real_capital_e_neg_exp = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_real_capital_e_neg_exp.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_real_capital_e_pos_exp = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_real_capital_e_pos_exp.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_real_exponent = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_real_exponent.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_real_fraction_exponent = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_real_fraction_exponent.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_real_neg_exp = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_real_neg_exp.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_real_pos_exponent = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_real_pos_exponent.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_simple_int = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_simple_int.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+            
+            auto number_simple_real = arrayReader(
+                FileConnector(FileIndex(testsPath, "y_number_simple_real.json"),
+                    arrayReader.Buffer(), WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly));
+
             JSONReader reader;
             auto jsonObject = reader(
                 FileConnector(FileIndex(testsPath, "y_object_basic.json"),

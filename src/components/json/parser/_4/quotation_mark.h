@@ -31,7 +31,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     class qor_pp_module_interface(QOR_JSON) quotation_mark : public Specific
     {
-        public: quotation_mark(Parser* parser) : Specific(parser, 0x22, static_cast<uint64_t>(jsonToken::quotation_mark)){ } 
+        public: quotation_mark(Parser* parser) : Specific(parser, (byte)0x22, static_cast<uint64_t>(jsonToken::quotation_mark)){ } 
         virtual ~quotation_mark() = default;
         virtual void Prepare()
         {
@@ -45,8 +45,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
         void Fail()
         {
-            log::debug("...Didn't find a quotation mark.");
-            GetParser()->GetContext()->Diagnostic();
+            log::debug("...Didn't find a quotation mark.");            
         }
 
     };

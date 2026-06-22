@@ -60,7 +60,6 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void object::Prepare()
     {
-        //Push a node onto the stack in expectation of an object
         log::debug("Looking for an Object...");
         GetParser()->PushNode(new_ref<ObjectNode>());
     }

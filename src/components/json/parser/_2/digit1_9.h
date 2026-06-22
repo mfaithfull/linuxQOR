@@ -31,7 +31,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     class qor_pp_module_interface(QOR_JSON) digit1_9 : public OneOfARange
     {
-        public: digit1_9(Parser* parser) : OneOfARange(parser, 0x31, 0x39, static_cast<uint64_t>(jsonToken::digit1_9)){ }
+        public: digit1_9(Parser* parser) : OneOfARange(parser, (byte)0x31, (byte)0x39, static_cast<uint64_t>(jsonToken::digit1_9)){ }
         virtual ~digit1_9() = default;
         virtual void Emit();
     };

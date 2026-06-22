@@ -33,7 +33,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void _null::Prepare()
     {
-        log::debug("Looking for a null...");
+        //log::debug("Looking for a null...");
     }
 
     void _null::Emit()
@@ -44,7 +44,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void _null::Fail()
     {
-        log::debug("...Didn't find a null.");
+        //log::debug("...Didn't find a null.");
     }
 
 }}}}//qor::components::parser::json

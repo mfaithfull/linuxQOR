@@ -29,6 +29,7 @@
 #include "filter.h"
 #include "inlinefilter.h"
 #include "connection.h"
+#include "src/qor/log/debug.h"
 
 namespace qor{ namespace pipeline{
 
@@ -224,7 +225,7 @@ namespace qor{ namespace pipeline{
             return Filter::Pump(unitsPumped, unitsToPump);
         }
 
-        void PumpAll()
+        size_t PumpAll()
         {
             CheckComplete();
             size_t unitsPumped = 0;
@@ -232,7 +233,13 @@ namespace qor{ namespace pipeline{
             do
             {
                 unitsToPump = m_flowmode == FlowMode::Push ? m_source->GetBuffer()->WriteCapacity() : m_sink->GetBuffer()->WriteCapacity();
-            } while (Filter::Pump(unitsPumped, unitsToPump));
+                log::debug("Capacity for {0} units.", unitsToPump);
+                if(unitsToPump == 0)
+                {
+                    log::debug("Buffer full. Pipeline stalled.");
+                }
+            } while (unitsToPump > 0 && Filter::Pump(unitsPumped, unitsToPump));
+            return unitsPumped;
         }
 
         bool PumpOne()

@@ -39,8 +39,16 @@ public:
     ref_of<JasonModelObjectT>::type operator()(const pipeline::Plug& sourceConnector)
     {           
         m_sink.Reset();
-        Pipeline(sourceConnector, m_sink, Element::Push).Connect().PumpAll();
-        m_sink.Parser().FinalParse();
+        m_byteBuffer.Reset();
+        size_t unitsPumped = Pipeline(sourceConnector, m_sink, Element::Push).Connect().PumpAll();
+        if(unitsPumped > 0)
+        {
+            m_sink.Parser().FinalParse();
+        }
+        else
+        {
+            log::Debug("No more data");
+        }
         auto finalNode = m_sink.Parser().PopNode();
         return finalNode.template AsRef< components::parser::NodeAdapter< JasonModelObjectT > >()->GetObject();
     }

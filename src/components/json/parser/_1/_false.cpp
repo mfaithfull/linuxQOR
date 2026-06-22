@@ -33,7 +33,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void _false::Prepare()
     {
-        log::debug("Looking for a false...");
+        //log::debug("Looking for a false...");
     }
 
     void _false::Emit()
@@ -44,7 +44,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void _false::Fail()
     {
-        log::debug("...Didn't find a false.");
+        //log::debug("...Didn't find a false.");
     }
 
 }}}}//qor::components::parser::json

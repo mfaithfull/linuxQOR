@@ -74,6 +74,10 @@ namespace qor { namespace components { namespace parser {
                 result = m_nodes.top();
                 m_nodes.pop();
             }
+            if(m_nodes.empty())
+            {
+                Diagnostic();
+            }
             return result;
         }
 

@@ -30,6 +30,7 @@
 #include "src/components/parser/parser.h"
 #include "src/components/parser/state.h"
 #include "src/components/parser/context.h"
+#include "src/qor/log/debug.h"
 
 namespace qor{ namespace components{ 
 
@@ -47,6 +48,11 @@ namespace qor{ namespace components{
             return m_parser;
         }
 
+        void SetEOD()
+        {
+            m_EOD = true;
+        }
+
     protected:
 
         bool Pull(size_t& unitsWritten, size_t unitsToWrite);
@@ -54,7 +60,8 @@ namespace qor{ namespace components{
         virtual size_t Parse(byte* data, size_t bytesToParse) = 0;
 
         qor::ref_of<qor::components::parser::Context>::type m_context;
-        qor::components::parser::Parser m_parser;        
+        qor::components::parser::Parser m_parser;      
+        bool m_EOD{false};
     };
 
     template<class TObjectState>
@@ -76,8 +83,15 @@ namespace qor{ namespace components{
 
         void Reset()
         {
-            m_objectState = new_ref<TObjectState>(&m_parser);
-            m_parser.SetInitialState(m_objectState);
+            if(!m_EOD)
+            {
+                m_objectState = new_ref<TObjectState>(&m_parser);
+                m_parser.SetInitialState(m_objectState);
+            }
+            else
+            {
+                log::Debug("EOD");
+            }
         }
 
     protected:
@@ -86,8 +100,10 @@ namespace qor{ namespace components{
 
         virtual size_t Parse(byte* data, size_t bytesToParse)
         {
+            log::debug("Routing {0} bytes to Parser.", bytesToParse);
             m_context->SetData(data, bytesToParse);                        
             m_parser.Parse();
+            log::debug("Parser consumed {0} bytes.", m_context->GetPosition());
             return m_context->GetPosition();
         }
     };

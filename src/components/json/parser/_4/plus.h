@@ -31,7 +31,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     class qor_pp_module_interface(QOR_JSON) plus : public Specific
     {
-        public: plus(Parser* parser) : Specific(parser, 0x2B, static_cast<uint64_t>(jsonToken::plus)){ }
+        public: plus(Parser* parser) : Specific(parser, (byte)0x2B, static_cast<uint64_t>(jsonToken::plus)){ }
         virtual ~plus() = default;
     };
 

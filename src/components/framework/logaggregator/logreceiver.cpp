@@ -42,7 +42,7 @@ namespace qor { namespace components{
         m_logRollNumber(0),
         m_totalSizeLimit(100 * 1024 * 1024),
         m_fileSizeLimit(10 * 1024 * 1024)
-    {}
+    { }
     
     void LogReceiver::WriteToStandardOutput(bool write)
     {
@@ -134,7 +134,7 @@ namespace qor { namespace components{
     {
         if(m_writeToStandardOutput)
         {
-            std::cout << logEntry << std::endl;
+            std::cout << logEntry;// << std::endl;
         }
 
         if(m_writeToFileSystem)
@@ -144,7 +144,7 @@ namespace qor { namespace components{
 
         if(m_writeToPipeline)
         {
-
+            //TODO:
         }
     }
 

@@ -47,7 +47,7 @@ namespace qor { namespace components { namespace parser {
             }
             if(IsComplete())
             {
-                log::debug("Parse complete.");                
+                log::debug("Parse complete.");
                 break;
             }
         }        
@@ -81,7 +81,7 @@ namespace qor { namespace components { namespace parser {
         }
         try
         {
-            log::debug("Stack on entry has {0} states.", m_StateStack.size());
+            log::debug("Stack on entry has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
             m_final ? Drain() : InnerParse();
         }
         catch(const Error& error)
@@ -100,23 +100,36 @@ namespace qor { namespace components { namespace parser {
             m_inError = true;
         }
 
-        log::debug("Stack on exit has {0} states.", m_StateStack.size());
+        log::debug("Stack on exit has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
         return m_result;
     }
 
     int Parser::FinalParse()
     {
+        if(m_final)
+        {
+            return m_result;
+        }
         m_final = true;
+        log::debug("Entering final phase.");
         m_complete = false;
         if(m_StateStack.empty())
         {
             return m_result;        
         }
-        return SafeParse();
+        auto result = SafeParse();
+        log::debug("Final phase complete.");
+        log::debug("Stack has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
+        if(m_StateStack.size() == 0 && m_nodes.size() == 1 && m_complete == false)
+        {
+            log::debug("This should be the end. Should not come back.");
+        }
+        return result;
     }
 
     int Parser::Parse()
     {   
+        log::debug("Pass starting.");
         m_final = false;
         m_complete = false;
         if(m_StateStack.empty())
@@ -124,7 +137,9 @@ namespace qor { namespace components { namespace parser {
             serious("No initial state set for Parser.");
             return -1;
         }
-        return SafeParse();
+        int result = SafeParse();
+        log::debug("Pass complete.");
+        return result;
     }
 
     void Parser::Diagnostic()
@@ -133,6 +148,12 @@ namespace qor { namespace components { namespace parser {
         std::string inError = m_inError ? "Yes" : "No";
 
         log::debug("Parser diagnostics: In final parse = {0}, In Error = {1}, Node stack size = {2}, State stack size = {3}", finalParse, inError, m_nodes.size(), m_StateStack.size());
+
+        if(m_nodes.size() > 0)
+        {
+            auto node = m_nodes.top();
+            node->Diagnostic();
+        }
     }
 
 }}}//qor::components::parser

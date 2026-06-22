@@ -46,6 +46,7 @@ namespace qor { namespace components { namespace parser {
         }
 
         virtual std::string ToString() const {return "<anonymous node>";}
+        virtual void Diagnostic(){}
 
     private:
         

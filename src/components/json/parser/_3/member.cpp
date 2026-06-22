@@ -51,8 +51,7 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void member::Prepare()
     {
-        log::debug("Looking for a Member...");
-        //Push a node onto the stack in expectation of a member
+        log::debug("Looking for a Member...");        
         GetParser()->PushNode(new_ref<MemberNode>());
     }
 
