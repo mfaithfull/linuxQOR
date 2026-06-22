@@ -12,16 +12,14 @@ For FAQs please see FAQ.md
 For an explanation of the source layout please see LAYOUT.md
 For latest changes please see CHANGES.md
 
-The QOR is intended to be self aware software with very strong separation of concerns.
+The QOR is intended to be Self Aware Software with very trong Separation Of Concerns.
 For what this means and why you'd want that in a framework see the article KEY_CONCEPTS.md
 
 The outcomes of this approach are intended to be:
 
 
 The QOR should be testable
-
 The QOR should be easy to extend
-
 The QOR should be flexible. Use what you need and the rest won't bother you with breaking changes.
 
 The QOR will not give you the highest possible performance implementation
@@ -43,4 +41,4 @@ C++ modules? Maybe but not yet.
 Pre compiled headers (PCHs)? Yes, heavily. Both to speed up builds and to prepare for C++ modules in the future.
 
 A note not to confuse C++ modules (A technology we aren't using yet) with QOR modules. 
-The QOR module terminonolgy will be used heavily to refer to what are .DLL(s) in Windows, .so(s) in Linux, runtime loadable libraries.
+The QOR module terminonolgy will be used heavily to refer to what are .DLL(s) in Windows, .so(s) in Linux, runtime loadable, dynamic, libraries.

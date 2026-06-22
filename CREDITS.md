@@ -10,7 +10,7 @@ https://github.com/mrAtari/yaffut
 qor_mock is forked from HippoMocks
 https://www.hippomocks.com/
 
-qor_refelction is forked from the non boost dependent implementation of pfr
+qor_reflection is forked from the non boost dependent implementation of pfr
 https://github.com/apolukhin/pfr_non_boost
 
 qor_objectcontext is inspired by Henney's Any / Boost.Any
@@ -26,4 +26,8 @@ https://github.com/copperspice/cs_signal
 The thread pool implementation in qor_thread is adapted from BS thread_pool.
 https://github.com/bshoshany/thread-pool
 
+The AsyncIO and Tasks libraries are adapted from Lewis Baker's CPP Coro library.
 
+The custom container iterators are adapted from blIterators
+
+"I've never written an original line of code in my life." - Level9 Z80 Assembler guru. circa 1987
