@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HANDLE GDI32::AddFontMemResourceEx(PVOID pbFont, DWORD cbFont, PVOID pdv, DWORD* pcFonts)
     {
@@ -416,4 +416,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, DWORD*, LPCHARSETINFO, DWORD >(pFunc, pSrc, lpCs, dwFlags);
     }
 
-}}}//qor:nswindows::api
+}}}//qor:win::api

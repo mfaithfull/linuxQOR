@@ -29,7 +29,7 @@
 
 #include <dwmapi.h>
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPIDWM) DWM
 	{
@@ -61,6 +61,6 @@ namespace qor { namespace nswindows { namespace api {
         static HRESULT UpdateThumbnailProperties(HTHUMBNAIL hThumbnailId, const DWM_THUMBNAIL_PROPERTIES* ptnProperties);
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_DWM

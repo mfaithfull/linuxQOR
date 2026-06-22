@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HANDLE Kernel32::GetCurrentProcess(void)
     {
@@ -42,4 +42,4 @@ namespace qor { namespace nswindows { namespace api {
         return h;
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

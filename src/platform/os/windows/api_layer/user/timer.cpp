@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     void User32::NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild)
     {
@@ -41,4 +41,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::voidCall<DWORD, HWND, LONG, LONG>( pFunc, dwEvent, hwnd, idObject, idChild );
     }
     
-}}}//qor::nswindows::api
+}}}//qor::win::api

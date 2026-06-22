@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HWND User32::CreateDialogIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE lpTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM lParamInit)
     {
@@ -189,4 +189,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, HWND, int, LPCTSTR>(pFunc, hDlg, nIDDlgItem, lpString);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

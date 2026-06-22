@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HPROPSHEETPAGE ComCtl32::CreatePropertySheetPageT(LPCPROPSHEETPAGE lppsp)
     {
@@ -405,5 +405,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, const LPINITCOMMONCONTROLSEX>(pFunc, lpInitCtrls);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

@@ -30,7 +30,7 @@
 #include <CommCtrl.h>
 #include <OleIdl.h>
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPICOMCTL) ComCtl32
 	{
@@ -90,6 +90,6 @@ namespace qor { namespace nswindows { namespace api {
         static BOOL InitCommonControlsEx(const LPINITCOMMONCONTROLSEX lpInitCtrls);
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_COMCTL32

@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HKL User32::ActivateKeyboardLayout(HKL hkl, UINT Flags)
     {
@@ -272,5 +272,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< SHORT, TCHAR, HKL >(pFunc, ch, dwhkl);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

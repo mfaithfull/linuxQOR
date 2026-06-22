@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL DWM::DwmDefWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult)
     {
@@ -195,4 +195,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<HRESULT, HTHUMBNAIL, const DWM_THUMBNAIL_PROPERTIES*>(pFunc, hThumbnailId, ptnProperties);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

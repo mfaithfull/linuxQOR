@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     DWORD Kernel32::WaitForMultipleObjectsEx(DWORD nCount, const void**lpHandles, BOOL bWaitAll, DWORD dwMilliseconds, BOOL bAlertable)
     {
@@ -47,4 +47,4 @@ namespace qor { namespace nswindows { namespace api {
         return result;
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

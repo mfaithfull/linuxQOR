@@ -33,7 +33,7 @@
 #	include <Callobj.h>
 #endif//__MINGW32__
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPIOLE32) OLE32
 	{
@@ -242,6 +242,6 @@ namespace qor { namespace nswindows { namespace api {
         static HRESULT DoDragDrop(LPDATAOBJECT pDataObj, LPDROPSOURCE pDropSource, DWORD dwOKEffects, LPDWORD pdwEffect);
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_OLE32

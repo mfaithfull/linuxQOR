@@ -1,0 +1,7 @@
+add_subdirectory(button)
+add_subdirectory(dialogs)
+add_subdirectory(editbox)
+add_subdirectory(mainwindow)
+add_subdirectory(menu)
+add_subdirectory(minimal)
+#add_subdirectory(retropad)

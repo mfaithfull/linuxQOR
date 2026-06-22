@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 		
 	BOOL Kernel32::DisableThreadLibraryCalls(HMODULE hModule)
 	{
@@ -131,4 +131,4 @@ namespace qor { namespace nswindows { namespace api {
 		return bResult;
 	}
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

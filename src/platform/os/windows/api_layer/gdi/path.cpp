@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL GDI32::AbortPath(HDC hdc)
     {
@@ -125,5 +125,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HDC >(pFunc, hdc);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

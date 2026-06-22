@@ -27,7 +27,7 @@
 
 #include "../baseparts/interfacemember.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
     class qor_pp_module_interface(WINQL_COM) ClassFactoryImpl : public InterfaceImplBase< IClassFactory >
     {
@@ -42,7 +42,7 @@ namespace qor{ namespace platform { namespace nswindows{
 
     };
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_WINDOWS_COM_SERVER_MODULE_CLASSFACTORY
 

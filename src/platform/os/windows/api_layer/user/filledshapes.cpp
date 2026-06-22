@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     int User32::FillRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr)
     {
@@ -56,4 +56,4 @@ namespace qor { namespace nswindows { namespace api {
     }
 
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

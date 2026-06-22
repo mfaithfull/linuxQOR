@@ -34,7 +34,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     //Returns the last Win32 error, in string format. Returns an empty string if there is no error.
     std::string GetLastErrorAsString()
@@ -98,4 +98,4 @@ namespace qor { namespace nswindows { namespace api {
         }   
         return false;     
     }
-}}}//qor::nswindows::api
+}}}//qor::win::api

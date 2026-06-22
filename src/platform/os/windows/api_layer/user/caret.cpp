@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::CreateCaret(HWND hWnd, HBITMAP hBitmap, int nWidth, int nHeight)
     {
@@ -90,4 +90,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HWND >(pFunc, hWnd);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

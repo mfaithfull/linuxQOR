@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     void Shell::DragAcceptFiles(HWND hWnd, BOOL fAccept)
     {
@@ -41,5 +41,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::voidCall< HWND, BOOL >(pFunc, hWnd, fAccept);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

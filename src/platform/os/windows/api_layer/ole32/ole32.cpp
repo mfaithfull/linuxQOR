@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	HRESULT OLE32::BindMoniker( LPMONIKER pmk, DWORD grfOpt, const ::IID& iidResult, LPVOID* ppvResult )
 	{
@@ -1825,4 +1825,4 @@ namespace qor { namespace nswindows { namespace api {
 		return hResult;
 	}
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

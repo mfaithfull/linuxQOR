@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     int GDI32::ExcludeClipRect(HDC hdc, int nLeftRect, int nTopRect, int nRightRect, int nBottomRect)
     {
@@ -125,5 +125,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< int, HDC, HRGN >(pFunc, hdc, hrgn);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

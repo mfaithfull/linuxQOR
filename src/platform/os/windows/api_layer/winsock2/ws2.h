@@ -241,14 +241,11 @@ typedef enum _WSC_PROVIDER_INFO_TYPE
 
 #endif
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     class qor_pp_module_interface(QOR_WINAPI_WINSOCK2) WS2 final
     {
     public:
-
-        WS2() = default;
-        ~WS2()= default;
 
         static SOCKET accept(SOCKET s, sockaddr* addr, int* addrlen);
         static BOOL AcceptEx(SOCKET sListenSocket, SOCKET sAcceptSocket, PVOID lpOutputBuffer, DWORD dwReceiveDataLength, DWORD dwLocalAddressLength, DWORD dwRemoteAddressLength, LPDWORD lpdwBytesReceived, LPOVERLAPPED lpOverlapped);
@@ -390,7 +387,7 @@ namespace qor { namespace nswindows { namespace api {
 
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_WINDOWS_API_WS2
 

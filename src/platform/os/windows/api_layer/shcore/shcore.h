@@ -28,7 +28,7 @@
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 #include <shellscalingapi.h>
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPISHCORE) ShCore
 	{
@@ -37,6 +37,6 @@ namespace qor { namespace nswindows { namespace api {
         static HRESULT GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY);
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_SHCORE

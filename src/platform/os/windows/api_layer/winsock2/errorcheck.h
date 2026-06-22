@@ -25,7 +25,7 @@
 #include "src/qor/error/error.h"
 #include "../returncheck.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     extern void WSALastErrorHandler();
 
@@ -118,4 +118,4 @@ namespace qor { namespace nswindows { namespace api {
 
 	};
 
-}}}//qor:nswindows::api
+}}}//qor:win::api

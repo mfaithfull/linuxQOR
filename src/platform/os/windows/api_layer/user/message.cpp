@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     long User32::BroadcastSystemMessageT(DWORD dwFlags, LPDWORD lpdwRecipients, UINT uiMessage, WPARAM wParam, LPARAM lParam)
     {
@@ -202,4 +202,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL>(pFunc);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

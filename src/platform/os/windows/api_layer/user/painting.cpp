@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HDC User32::BeginPaint(HWND hwnd, ::LPPAINTSTRUCT lpPaint)
     {
@@ -209,4 +209,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<HWND, HDC>(pFunc, hDC);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

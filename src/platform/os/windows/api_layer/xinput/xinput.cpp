@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     void XInput::Enable(bool enable)
     {
@@ -83,4 +83,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<DWORD, DWORD, XINPUT_VIBRATION*>(pFunc, dwUserIndex, pVibration);
     }
     
-}}}//qor::nswindows::api
+}}}//qor::win::api

@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL GDI32::GdiFlush()
     {
@@ -111,5 +111,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< int, HDC, int >(pFunc, hdc, fnDrawMode);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

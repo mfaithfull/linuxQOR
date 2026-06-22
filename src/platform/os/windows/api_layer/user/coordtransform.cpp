@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::ClientToScreen(HWND hWnd, ::LPPOINT lpPoint)
     {
@@ -55,4 +55,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< int, HWND, HWND, ::LPPOINT, UINT >(pFunc, hWndFrom, hWndTo, lpPoints, cPoints);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

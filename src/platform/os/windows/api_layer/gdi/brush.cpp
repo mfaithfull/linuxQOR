@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HBRUSH GDI32::CreateBrushIndirect(CONST::LOGBRUSH* lplb)
     {
@@ -90,5 +90,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HDC, int, int, ::LPPOINT >(pFunc, hdc, nXOrg, nYOrg, lppt);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

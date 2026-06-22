@@ -26,7 +26,7 @@
 #define QOR_PP_H_OS_WINDOWS_COMMON_STRUCTURES
 
 #include "src/platform/compiler/compiler.h"
-#include "src/platform/os/windows/gui/view/drawing/rect.h"
+#include "src/platform/os/windows/ui/gui/view/drawing/rect.h"
 
 struct ImageDOSHeader
 {												// DOS .EXE header
@@ -55,7 +55,7 @@ struct ImageDOSHeader
 #	define __ImageBase _image_base__
 #endif
 
-namespace qor{ namespace platform { namespace nswindows {
+namespace qor{ namespace platform { namespace win {
 
     typedef union _LARGE_INTEGER {
         struct {
@@ -467,6 +467,6 @@ namespace qor{ namespace platform { namespace nswindows {
         unsigned long           dwLocaleId;
     };
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_STRUCTURES

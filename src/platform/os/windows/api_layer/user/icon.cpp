@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HICON User32::CopyIcon(HICON hIcon)
     {
@@ -132,4 +132,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<UINT, LPCTSTR, int, int, int, HICON*, UINT*, UINT, UINT>(pFunc, lpszFile, nIconIndex, cxIcon, cyIcon, phicon, piconid, nIcons, flags);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

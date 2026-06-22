@@ -24,7 +24,7 @@
 
 #include "src/qor/error/error.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	//Generic validated return value class
 	//TReturn is the type of the return value
@@ -283,4 +283,4 @@ namespace qor { namespace nswindows { namespace api {
 		}
 	};
 
-}}}//qor:nswindows::api
+}}}//qor:win::api

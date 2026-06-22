@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::DragDetect(HWND hwnd, ::POINT pt)
     {
@@ -104,4 +104,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL >(pFunc, lpEventTrack);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

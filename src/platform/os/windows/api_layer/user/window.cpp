@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::AdjustWindowRect(::LPRECT lpRect, DWORD dwStyle, BOOL bMenu)
     {
@@ -633,5 +633,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<UINT, HWND>(pFunc, hwnd);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

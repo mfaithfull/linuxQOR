@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     int GDI32::CombineRgn(HRGN hrgnDest, HRGN hrgnSrc1, HRGN hrgnSrc2, int fnCombineMode)
     {
@@ -188,5 +188,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HRGN, int, int, int, int >(pFunc, hrgn, nLeftRect, nTopRect, nRightRect, nBottomRect);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

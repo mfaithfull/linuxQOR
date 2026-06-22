@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     void GL::Begin(GLenum mode)
     {
@@ -132,4 +132,4 @@ namespace qor { namespace nswindows { namespace api {
         Library::voidCall<GLint, GLint, GLsizei, GLsizei>(pFunc, x, y, width, height);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

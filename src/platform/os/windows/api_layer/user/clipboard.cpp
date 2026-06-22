@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::AddClipboardFormatListener(HWND hwnd)
     {
@@ -174,4 +174,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< HWND, HWND >(pFunc, hWndNewViewer);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

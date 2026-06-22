@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL GDI32::AnimatePalette(HPALETTE hpal, UINT iStartIndex, UINT cEntries, CONST::PALETTEENTRY* ppe)
     {
@@ -258,5 +258,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HDC, ULONG, ULONG >(pFunc, hdc, u1, u2);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

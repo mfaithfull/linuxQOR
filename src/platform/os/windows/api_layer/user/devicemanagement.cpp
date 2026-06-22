@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HDEVNOTIFY User32::RegisterDeviceNotification(HANDLE hRecipient, LPVOID notificationFilter, DWORD Flags)
     {
@@ -48,4 +48,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HDEVNOTIFY >(pFunc, handle);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

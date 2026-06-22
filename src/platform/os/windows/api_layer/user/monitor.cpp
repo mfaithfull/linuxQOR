@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::EnumDisplayMonitors(HDC hdc, LPCRECT lprcClip, ::MONITORENUMPROC lpfnEnum, LPARAM dwData)
     {
@@ -69,4 +69,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<HMONITOR, HWND, DWORD>(pFunc, hwnd, dwFlags);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

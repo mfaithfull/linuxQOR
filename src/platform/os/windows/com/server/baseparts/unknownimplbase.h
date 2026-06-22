@@ -30,9 +30,9 @@
 
 #include "src/platform/compiler/compiler.h"
 #include "../../interfaces.h"
-#include "src/platform/os/windows/definitions/errors.h"
+#include "src/platform/os/windows/common/errors.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
 	class qor_pp_module_interface(WINQL_COM) COObjectBase;
 	typedef std::map< GUID, void* > InterfaceMap;
@@ -163,7 +163,7 @@ namespace qor{ namespace platform { namespace nswindows{
         IUnknownDeferBase& operator = (const IUnknownDeferBase&) = delete;
     };
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_WINDOWS_COM_SERVER_BASE_UNKNOWNIMPL
 

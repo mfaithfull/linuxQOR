@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     int User32::DrawTextT(HDC hDC, LPCTSTR lpString, int nCount, ::LPRECT lpRect, UINT uFormat)
     {
@@ -62,4 +62,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< LONG, HDC, int, int, LPCTSTR, int, int, CONST ::LPINT, int >(pFunc, hDC, X, Y, lpString, nCount, nTabPositions, lpnTabStopPositions, nTabOrigin);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HWND User32::CreateMDIWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HINSTANCE hInstance, LPARAM lParam)
     {
@@ -62,4 +62,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HWND, LPMSG >(pFunc, hWndClient, lpMsg);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

@@ -33,7 +33,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL GDI32::CombineTransform(::LPXFORM lpxformResult, CONST::XFORM* lpxform1, CONST::XFORM* lpxform2)
     {
@@ -196,4 +196,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HDC, CONST ::XFORM* >(pFunc, hdc, lpXform);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

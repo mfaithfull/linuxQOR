@@ -29,7 +29,7 @@
 
 #include <xinput.h>
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPIXINPUT) XInput
 	{
@@ -43,6 +43,6 @@ namespace qor { namespace nswindows { namespace api {
         static DWORD SetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_XINPUT

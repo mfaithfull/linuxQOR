@@ -33,9 +33,9 @@
 #include "serverobjectbase.h"
 #include "src/platform/os/windows/api_layer/ole32/ole32.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
-    using namespace qor::nswindows::api;
+    using namespace qor::win::api;
 
     template<> long ServerObjectBase<>::QueryClientBlanket(unsigned long* pulAuthnSvc, unsigned long* pulAuthzSvc, wchar_t** pServerPrincName, unsigned long* pulAuthnLevel, unsigned long* pulImplLevel, void* pPrivs, unsigned long* pulCapabilities)
     {        
@@ -47,4 +47,4 @@ namespace qor{ namespace platform { namespace nswindows{
         return OLE32::CoTestCancel();
     }
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win

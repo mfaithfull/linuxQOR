@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::AppendMenuT(HMENU hMenu, UINT uFlags, UINT_PTR uIDNewItem, LPCTSTR lpNewItem)
     {
@@ -307,4 +307,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, HMENU, UINT, int, int, HWND, ::LPTPMPARAMS>(pFunc, hmenu, fuFlags, x, y, hwnd, lptpm);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

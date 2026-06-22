@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HBRUSH User32::GetSysColorBrush(int nIndex)
     {
@@ -41,5 +41,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< HBRUSH >(pFunc, nIndex);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

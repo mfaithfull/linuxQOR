@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HRESULT ShCore::GetDpiForMonitor(HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY)
     {
@@ -41,5 +41,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<HRESULT, HMONITOR, MONITOR_DPI_TYPE, UINT*, UINT*>(pFunc, hmonitor, dpiType, dpiX, dpiY);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

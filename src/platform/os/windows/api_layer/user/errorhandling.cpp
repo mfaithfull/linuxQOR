@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::FlashWindow(HWND hWnd, BOOL bInvert)
     {
@@ -64,5 +64,5 @@ namespace qor { namespace nswindows { namespace api {
         Library::voidCall< DWORD, DWORD >(pFunc, dwErrCode, dwType );
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     int Kernel32::MultiByteToWideChar(unsigned int codePage, unsigned long flags, const char* multiByteString, int countBytesMultiByte, wchar_t* wideString, int countCharsWide)
     {
@@ -41,4 +41,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< int, UINT, DWORD, LPCCH, int, LPWSTR, int >(pFunc, codePage, flags, multiByteString, countBytesMultiByte, wideString, countCharsWide);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

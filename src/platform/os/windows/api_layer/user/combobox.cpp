@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 
     int User32::DlgDirListComboBox(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype)
@@ -56,4 +56,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, HWND, PCOMBOBOXINFO>(pFunc, hwndCombo, pcbi);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

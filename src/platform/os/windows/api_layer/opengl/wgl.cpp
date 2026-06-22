@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL WGL::wglCopyContext(HGLRC source, HGLRC destination, UINT attribFlags)
     {
@@ -160,4 +160,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, UINT, const WGLSWAP*>(pFunc, c, swap);
     }
 
-}}}//qor:nswindows::api
+}}}//qor:win::api

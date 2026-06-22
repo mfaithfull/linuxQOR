@@ -32,17 +32,17 @@
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "src/platform/os/windows/api_layer/ole32/ole32.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
     long ClientBase::QueryProxyBlanket(void* pProxy, unsigned long* pwAuthnSvc, unsigned long* pAuthzSvc, wchar_t** pServerPrincName, unsigned long* pAuthnLevel, unsigned long* pImpLevel, void** pAuthInfo, unsigned long* pCapabilities)
     {
-        return qor::nswindows::api::OLE32::CoQueryProxyBlanket(reinterpret_cast<::IUnknown*>(pProxy), pwAuthnSvc, pAuthzSvc, pServerPrincName, pAuthnLevel, pImpLevel, reinterpret_cast<RPC_AUTH_IDENTITY_HANDLE*>(pAuthInfo), pCapabilities);
+        return qor::win::api::OLE32::CoQueryProxyBlanket(reinterpret_cast<::IUnknown*>(pProxy), pwAuthnSvc, pAuthzSvc, pServerPrincName, pAuthnLevel, pImpLevel, reinterpret_cast<RPC_AUTH_IDENTITY_HANDLE*>(pAuthInfo), pCapabilities);
     }
 
     long ClientBase::SetProxyBlanket(IUnknown* pProxy, unsigned long ulAuthnSvc, unsigned long ulAuthzSvc, wchar_t* pServicePrincName, unsigned long ulAuthnLevel, unsigned long ulImpLevel, void* pAuthInfo, unsigned long ulCapabilities)
     {
-        return qor::nswindows::api::OLE32::CoSetProxyBlanket(reinterpret_cast<::IUnknown*>(pProxy), ulAuthnSvc, ulAuthzSvc, pServicePrincName, ulAuthnLevel, ulImpLevel, reinterpret_cast<RPC_AUTH_IDENTITY_HANDLE>(pAuthInfo), ulCapabilities);
+        return qor::win::api::OLE32::CoSetProxyBlanket(reinterpret_cast<::IUnknown*>(pProxy), ulAuthnSvc, ulAuthzSvc, pServicePrincName, ulAuthnLevel, ulImpLevel, reinterpret_cast<RPC_AUTH_IDENTITY_HANDLE>(pAuthInfo), ulCapabilities);
     }
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 

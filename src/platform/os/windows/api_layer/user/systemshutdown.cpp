@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::ExitWindowsEx(UINT uFlags, DWORD dwReason)
     {
@@ -69,4 +69,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HWND, LPWSTR, DWORD* >(pFunc, hWnd, pwszBuff, pcchBuff);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

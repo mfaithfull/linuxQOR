@@ -27,7 +27,7 @@
 
 #include "extendedimp.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
     template< class TInterface >
     class ServerObjectComponent : public TInterface, public IUnknownDeferBase, public COObjectBase
@@ -56,7 +56,7 @@ namespace qor{ namespace platform { namespace nswindows{
         }
     };
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_WINDOWS_COM_SERVER_BASE_SERVEROBJECTCOMPONENT
 

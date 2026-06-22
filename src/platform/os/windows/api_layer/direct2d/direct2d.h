@@ -36,7 +36,7 @@
 #include <d2d1effectauthor.h>
 #include <d2d1effectauthor_1.h>
 #include <d2d1effecthelpers.h>
-#include <d2d1effecthelpers.hlsli>
+//#include <d2d1effecthelpers.hlsli>
 #include <d2d1effects.h>
 #include <d2d1effects_1.h>
 #include <d2d1effects_2.h>
@@ -44,7 +44,7 @@
 #include <d2d1svg.h>
 #include <dcommon.h>
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPIDIRECT2D) Direct2D
 	{
@@ -52,6 +52,6 @@ namespace qor { namespace nswindows { namespace api {
 
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_DIRECT2D

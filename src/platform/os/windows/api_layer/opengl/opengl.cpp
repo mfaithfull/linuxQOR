@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     int WGL::ChoosePixelFormat(HDC hdc, const PIXELFORMATDESCRIPTOR* ppfd)
     {
@@ -188,4 +188,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, HDC, DWORD, DWORD, DWORD, FLOAT, FLOAT, int, LPGLYPHMETRICSFLOAT>(pFunc, hdc, firstSetOfGlyphs, glyphCount, startingDisplayList, maximumChordalDeviation, negativeExtrusion, format, metrics);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

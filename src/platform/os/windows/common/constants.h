@@ -36,7 +36,7 @@
 #define Wait_Object0       	((Status_Wait0 ) + 0 )
 #define MaxPath          			260
 
-namespace qor{ namespace platform { namespace nswindows {
+namespace qor{ namespace platform { namespace win {
 
 	static constexpr unsigned long Std_Input_Handle = ((unsigned long)-10);
 	static constexpr unsigned long Std_Output_Handle = ((unsigned long)-11);
@@ -422,6 +422,6 @@ namespace qor{ namespace platform { namespace nswindows {
 	constexpr int PFDOVERLAYPLANE    = 1;
 	constexpr int PFDUNDERLAYPLANE   = (-1);
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_OS_WINDOWS_COMMON_CONSTANTS

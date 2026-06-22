@@ -33,7 +33,7 @@
 	static const std::type_index _TypeIndex(void);								\
 	static const char* _TypeName(void)
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
 	class qor_pp_module_interface(WINQL_COM) COObjectBase
 	{
@@ -51,7 +51,7 @@ namespace qor{ namespace platform { namespace nswindows{
 		long m_lStatus;
 	};
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_WINDOWS_COM_SERVER_BASE_COOBJECT
 

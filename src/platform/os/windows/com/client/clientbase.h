@@ -29,7 +29,7 @@
 #include "../server/baseparts/coobjectbase.h"
 #include "../server/baseparts/unknownimplbase.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
     enum CLSCTX
     {
@@ -141,6 +141,6 @@ namespace qor{ namespace platform { namespace nswindows{
         ClientBase& operator = (const ClientBase&) = delete;
     };
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_OS_WINDOWS_COM_CLIENT_BASE

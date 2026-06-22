@@ -30,7 +30,7 @@
 #include <vsstyle.h>
 #include <vssym32.h>
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPIUXTHEME) UXTheme
 	{
@@ -114,6 +114,6 @@ namespace qor { namespace nswindows { namespace api {
         static BOOL UpdatePanningFeedback(HWND hwnd, LONG lTotalOverpanOffsetX, LONG lTotalOverpanOffsetY, BOOL fInInertia);
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_UXTHEME

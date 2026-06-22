@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HANDLE CopyImage(HANDLE hImage, UINT uType, int cxDesired, int cyDesired, UINT fuFlags)
     {
@@ -48,4 +48,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< HANDLE, HINSTANCE, LPCTSTR, UINT, int, int, UINT >( pFunc, hinst, lpszName, uType, cxDesired, cyDesired, fuLoad);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

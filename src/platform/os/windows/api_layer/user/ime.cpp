@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     LRESULT User32::SendIMEMessageEx(HWND hwnd, LPARAM lParam)
     {
@@ -41,4 +41,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< LRESULT, HWND, LPARAM >(pFunc, hwnd, lParam);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

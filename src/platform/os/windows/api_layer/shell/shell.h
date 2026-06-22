@@ -27,7 +27,7 @@
 
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPISHELL) Shell
 	{
@@ -37,6 +37,6 @@ namespace qor { namespace nswindows { namespace api {
         
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_SHELL

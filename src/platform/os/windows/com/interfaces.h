@@ -27,7 +27,7 @@
 
 //Common Object Model interface definitions for the Microsoft Windows Operating System
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
 	extern "C" const GUID __declspec(selectany) NULL_GUID = { 0x00000000, 0x0000, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
@@ -1911,6 +1911,6 @@ namespace qor{ namespace platform { namespace nswindows{
         virtual long qor_pp_compiler_stdcallconvention DisableRedrawRegions() = 0;
     };
 	*/
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_WINQFRAMEWORK_INTERFACES

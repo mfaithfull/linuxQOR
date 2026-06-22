@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_HANDLE_HANDLE
 #define QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_HANDLE_HANDLE
 
-namespace qor { namespace platform { namespace nswindows {
+namespace qor { namespace platform { namespace win {
 
 	class qor_pp_module_interface(QOR_WINCOMMON) PrimitiveHandle
 	{
@@ -124,6 +124,6 @@ namespace qor { namespace platform { namespace nswindows {
 		bool m_needsClose{false};
 	};
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_PLATFORM_OS_WINDOWS_COMMON_HANDLE_HANDLE

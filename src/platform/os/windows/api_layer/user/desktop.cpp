@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HDESK User32::OpenDesktopT(LPCTSTR lpszDesktop, DWORD dwFlags, BOOL fInherit, ACCESS_MASK dwDesiredAccess)
     {
@@ -160,4 +160,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HDESK, ::WNDENUMPROC, LPARAM >(pFunc, hDesktop, lpfn, lParam);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

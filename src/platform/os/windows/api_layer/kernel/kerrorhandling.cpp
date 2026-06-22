@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	BOOL Kernel32::Beep(DWORD dwFreq, DWORD dwDuration)
 	{
@@ -244,4 +244,4 @@ namespace qor { namespace nswindows { namespace api {
 		return hr;
 	}
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

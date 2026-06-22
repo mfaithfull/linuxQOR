@@ -25,7 +25,7 @@
 #include <excpt.h>
 #include "src/qor/error/error.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class Library
 	{
@@ -92,4 +92,4 @@ namespace qor { namespace nswindows { namespace api {
 
 	};
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

@@ -32,7 +32,7 @@
 
 #include "unknownimplbase.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
     IUnknownDeferBase::IUnknownDeferBase(IUnknownImplBase<>* pImpl) : m_pImpl(pImpl)
     {
@@ -64,4 +64,4 @@ namespace qor{ namespace platform { namespace nswindows{
         return m_pImpl->Internal_QueryInterface(riid, ppvObject);
     }
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win

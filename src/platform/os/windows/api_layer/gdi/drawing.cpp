@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL GDI32::AngleArc(HDC hdc, int X, int Y, DWORD dwRadius, FLOAT eStartAngle, FLOAT eSweepAngle)
     {
@@ -186,5 +186,5 @@ namespace qor { namespace nswindows { namespace api {
             pFunc, hdc, nLeftRect, nTopRect, nRightRect, nBottomRect, nWidth, nHeight);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

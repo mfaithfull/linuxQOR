@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::CallMsgFilterT(LPMSG lpMsg, int nCode)
     {
@@ -62,4 +62,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HHOOK >(pFunc, hhk);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

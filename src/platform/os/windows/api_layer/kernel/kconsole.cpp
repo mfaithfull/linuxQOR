@@ -33,7 +33,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	BOOL Kernel32::AddConsoleAlias(LPTSTR Source, LPTSTR Target, LPTSTR ExeName)
 	{
@@ -583,7 +583,7 @@ namespace qor { namespace nswindows { namespace api {
 		Win32ErrorHandler _;
 		CheckReturn< BOOL, BoolCheck >::TType bResult;
 #	if ( _WIN32_WINNT >= 0x0600 )
-		qor_pp_useswinapi( kernel32,SetConsoleHistoryInfo);
+		qor_pp_useswinapi(kernel32,SetConsoleHistoryInfo);
 		bResult = Library::Call< BOOL, ::PCONSOLE_HISTORY_INFO >(pFunc, lpConsoleHistoryInfo);
 #	else
 		qor_pp_unref(lpConsoleHistoryInfo);
@@ -731,4 +731,4 @@ namespace qor { namespace nswindows { namespace api {
 		return dwResult;
 	}
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

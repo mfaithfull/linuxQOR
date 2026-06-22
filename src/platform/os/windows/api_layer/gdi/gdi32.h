@@ -29,7 +29,7 @@
 
 #include <wingdi.h>
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPIGDI) GDI32
 	{
@@ -254,7 +254,6 @@ namespace qor { namespace nswindows { namespace api {
         static BOOL TextOutT(HDC hdc, int nXStart, int nYStart, LPCTSTR lpString, int cbString);
         static BOOL TranslateCharsetInfo(DWORD* pSrc, LPCHARSETINFO lpCs, DWORD dwFlags);
 
-        //--------------------------------------------------------------------------------
         //MetaFile and EnhMetaFile functions
         HENHMETAFILE CloseEnhMetaFile(HDC hdc);
         HMETAFILE CloseMetaFile(HDC hdc);
@@ -379,6 +378,6 @@ namespace qor { namespace nswindows { namespace api {
      
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_GDI

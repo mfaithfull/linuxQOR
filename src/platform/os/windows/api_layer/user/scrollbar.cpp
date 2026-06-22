@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::EnableScrollBar(HWND hWnd, UINT wSBFlags, UINT wArrows)
     {
@@ -120,4 +120,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, HWND, int, BOOL>(pFunc, hWnd, wBar, bShow);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

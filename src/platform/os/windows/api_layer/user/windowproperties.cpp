@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     int User32::EnumPropsT(HWND hWnd, PROPENUMPROC lpEnumFunc)
     {
@@ -69,4 +69,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HWND, LPCTSTR, HANDLE >(pFunc, hWnd, lpString, hData);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::CopyRect(::LPRECT lprcDst, CONST::RECT* lprcSrc)
     {
@@ -111,4 +111,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, ::LPRECT, CONST ::RECT*, CONST RECT* >(pFunc, lprcDst, lprcSrc1, lprcSrc2);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

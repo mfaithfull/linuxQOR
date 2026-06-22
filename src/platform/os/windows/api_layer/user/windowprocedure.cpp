@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     LRESULT User32::CallWindowProcT(WNDPROC lpPrevWndFunc, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
     {
@@ -48,4 +48,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<LRESULT, HWND, UINT, WPARAM, LPARAM>(pFunc, hWnd, Msg, wParam, lParam);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

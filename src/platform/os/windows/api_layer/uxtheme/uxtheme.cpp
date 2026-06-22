@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HANIMATIONBUFFER UXTheme::BeginBufferedAnimation(HWND hwnd, HDC hdcTarget, const RECT* prcTarget, BP_BUFFERFORMAT dwFormat, BP_PAINTPARAMS* pPaintParams, BP_ANIMATIONPARAMS* pAnimationParams, HDC* phdcFrom, HDC* phdcTo)
     {
@@ -548,5 +548,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, HWND, LONG, LONG, BOOL>(pFunc, hwnd, lTotalOverpanOffsetX, lTotalOverpanOffsetY, fInInertia);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

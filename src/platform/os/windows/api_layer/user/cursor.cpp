@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::ClipCursor(const RECT* lpRect)
     {
@@ -146,4 +146,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, HCURSOR, DWORD >(pFunc, hcur, id);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     LONG User32::ChangeDisplaySettingsT(::LPDEVMODE lpDevMode, DWORD dwflags)
     {
@@ -91,4 +91,4 @@ namespace qor { namespace nswindows { namespace api {
     }
 
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

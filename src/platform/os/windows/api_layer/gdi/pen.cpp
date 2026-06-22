@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HPEN GDI32::CreatePen(int fnPenStyle, int nWidth, COLORREF crColor)
     {
@@ -55,5 +55,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< HPEN, DWORD, DWORD, CONST ::LOGBRUSH*, DWORD, CONST DWORD* >(pFunc, dwPenStyle, dwWidth, lplb, dwStyleCount, lpStyle);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

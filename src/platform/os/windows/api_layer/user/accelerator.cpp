@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     int User32::CopyAcceleratorTableT(HACCEL hAccelSrc, LPACCEL lpAccelDst, int cAccelEntries)
     {
@@ -69,4 +69,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<int, HWND, HACCEL, LPMSG>(pFunc, hWnd, hAccTable, lpMsg);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

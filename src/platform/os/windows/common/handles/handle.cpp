@@ -29,9 +29,9 @@
 #include "src/platform/os/windows/common/constants.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-using namespace qor::nswindows::api;
+using namespace qor::win::api;
 
-namespace qor { namespace platform { namespace nswindows {
+namespace qor { namespace platform { namespace win {
 
 	PrimitiveHandle::PrimitiveHandle() : m_h(nullptr)
 	{		
@@ -237,4 +237,4 @@ namespace qor { namespace platform { namespace nswindows {
 		return nullptr;
 	}
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win

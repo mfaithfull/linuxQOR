@@ -31,10 +31,10 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
-	class qor_pp_module_interface(QOR_WINAPIOPENGL) WGL
-	{
+    class qor_pp_module_interface(QOR_WINAPIOPENGL) WGL
+    {
 	public:
         static int ChoosePixelFormat(HDC hdc, const PIXELFORMATDESCRIPTOR *ppfd);
         static int DescribePixelFormat(HDC hdc, int iPixelFormat, UINT nBytes, LPPIXELFORMATDESCRIPTOR ppfd);
@@ -430,6 +430,6 @@ WINGDIAPI void APIENTRY glVertexPointer (GLint size, GLenum type, GLsizei stride
         static void Viewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
     };
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_OPENGL

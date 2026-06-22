@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::KillTimer(HWND hWnd, UINT_PTR uIDEvent)
     {
@@ -48,4 +48,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<UINT_PTR, HWND, UINT_PTR, UINT, TIMERPROC>(pFunc, hWnd, nIDEvent, uElapse, lpTimerFunc);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

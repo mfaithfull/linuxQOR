@@ -34,7 +34,7 @@
 
 #undef WinHelp
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId)
     {
@@ -57,4 +57,4 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call<BOOL, HWND, LPCTSTR, UINT, ULONG_PTR>(pFunc, hWndMain, lpszHelp, uCommand, dwData);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

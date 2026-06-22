@@ -27,7 +27,7 @@
 
 #include "src/qor/error/defaulterrorhandler.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     class qor_pp_module_interface(QOR_WINAPI) Win32ErrorHandler : public qor::IssueHandler<qor::Error>
     {
@@ -36,6 +36,6 @@ namespace qor { namespace nswindows { namespace api {
         virtual bool Handle(const qor::Error& error);
     };
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_KERNEL_ERRHANDLER

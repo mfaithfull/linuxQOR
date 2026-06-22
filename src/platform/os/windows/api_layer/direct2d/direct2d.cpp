@@ -32,6 +32,6 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
-}}}//qor::nswindows::api
+namespace qor { namespace win { namespace api {
+}}}//qor::win::api
 

@@ -32,7 +32,7 @@
 
 #include "coobjectbase.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
     COObjectBase::COObjectBase()
     {
@@ -61,4 +61,4 @@ namespace qor{ namespace platform { namespace nswindows{
         return m_lStatus;
     }
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win

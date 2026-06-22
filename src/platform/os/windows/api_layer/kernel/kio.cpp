@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HANDLE Kernel32::CreateIoCompletionPort( HANDLE FileHandle, HANDLE ExistingCompletionPort, ULONG_PTR CompletionKey, DWORD NumberOfConcurrentThreads )
     {
@@ -66,4 +66,4 @@ namespace qor { namespace nswindows { namespace api {
 		return bResult;
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

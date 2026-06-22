@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::GetClassInfoT(HINSTANCE hInstance, LPCTSTR lpClassName, LPWNDCLASS lpWndClass)
     {
@@ -132,5 +132,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< BOOL, LPCTSTR, HINSTANCE >(pFunc, lpClassName, hInstance);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

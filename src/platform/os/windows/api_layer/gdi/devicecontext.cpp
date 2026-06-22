@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     HDC GDI32::CreateCompatibleDC(HDC hdc)
     {
@@ -210,4 +210,4 @@ namespace qor { namespace nswindows { namespace api {
             pFunc, hdcDest, xoriginDest, yoriginDest, wDest, hDest, hdcSrc, xoriginSrc, yoriginSrc, wSrc, hSrc, ftn);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

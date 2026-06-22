@@ -55,18 +55,18 @@ typedef enum _WER_REGISTER_FILE_TYPE
 
 //Local definitions for dealing with Windows API
 #define _ATXT( _X ) ( #_X )
-#define _AC( X ) ((char8_t)(_X))
+#define _AC( X ) ((char)(_X))
 #define _WTXT( _X ) ( L#_X )
 #define _WC( _X ) ((char16_t)(_X))
 
 #if ( qor_pp_unicode )
 #	define _TXT( _X ) ( _WTXT( _X ) )
 #	define _C( _X ) _WC( _X )
-typedef std::wstring stdstring;
+//typedef std::wstring stdstring;
 #else
 #	define _TXT( _X ) ( _ATXT( _X ) )
 #	define _C( _X ) _AC( _X )
-typedef std::string stdstring;
+//typedef std::string stdstring;
 #endif
 
 #define qor_pp_useswinapi( _MODULE, _NAME ) static const Library::DefProc pFunc = reinterpret_cast< Library::DefProc>( Kernel32::GetProcAddress( reinterpret_cast< ::HMODULE >( Kernel32::GetModuleHandle(_TXT(_MODULE)) ), _ATXT(_NAME) ) )
@@ -76,7 +76,7 @@ typedef std::string stdstring;
 #	define qor_pp_useswinapiAW( _MODULE, _NAME ) qor_pp_useswinapi( _MODULE, _NAME##A )
 #endif
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
 	class qor_pp_module_interface(QOR_WINAPI) Kernel32
 	{
@@ -438,6 +438,6 @@ namespace qor { namespace nswindows { namespace api {
 		static int MultiByteToWideChar(unsigned int codePage, unsigned long flags, const char* multiByteString, int countBytesMultiByte, wchar_t* wideString, int countCharsWide);
 	};
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
 #endif//QOR_PP_H_OS_WINDOWS_API_KERNEL

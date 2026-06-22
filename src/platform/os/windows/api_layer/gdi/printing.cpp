@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     int GDI32::AbortDoc(HDC hdc)
     {
@@ -90,5 +90,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< int, HDC >(pFunc, hDC);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 

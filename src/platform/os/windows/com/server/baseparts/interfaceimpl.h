@@ -27,7 +27,7 @@
 
 #include "serverobjectcomponent.h"
 
-namespace qor{ namespace platform { namespace nswindows{
+namespace qor{ namespace platform { namespace win{
 
     template< class TInterface, class TBase = ServerObjectComponent< TInterface > >
     class InterfaceImplBase : public TBase
@@ -44,7 +44,7 @@ namespace qor{ namespace platform { namespace nswindows{
         virtual ~InterfaceImplBase() = default;
     };
 
-}}}//qor::platform::nswindows
+}}}//qor::platform::win
 
 #endif//QOR_PP_H_WINDOWS_COM_SERVER_BASE_INTERFACEIMPL
 

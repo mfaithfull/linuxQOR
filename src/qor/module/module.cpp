@@ -29,6 +29,9 @@
 namespace qor{
 	qor_pp_import Module* TheHost();
 }
+/*We'll get a linker warning when, and only when, we link this file into qor_host which implements TheHost
+In every other case linking in this library will make the module import TheHost from qor_host. The warning is
+harmless so we supress in, in the qor_host build only.*/
 
 namespace qor{
 	

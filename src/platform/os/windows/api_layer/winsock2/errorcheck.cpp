@@ -29,7 +29,7 @@
 #include "../library.h"
 #include "errorcheck.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     void WSALastErrorHandler()
     {
@@ -53,4 +53,4 @@ namespace qor { namespace nswindows { namespace api {
         continuable(errorDescription);
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api

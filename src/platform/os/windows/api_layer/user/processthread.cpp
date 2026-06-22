@@ -32,7 +32,7 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-namespace qor { namespace nswindows { namespace api {
+namespace qor { namespace win { namespace api {
 
     BOOL User32::AttachThreadInput(DWORD idAttach, DWORD idAttachTo, BOOL fAttach)
     {
@@ -75,5 +75,5 @@ namespace qor { namespace nswindows { namespace api {
         return Library::Call< DWORD, HANDLE, DWORD >(pFunc, hProcess, dwMilliseconds );
     }
 
-}}}//qor::nswindows::api
+}}}//qor::win::api
 
