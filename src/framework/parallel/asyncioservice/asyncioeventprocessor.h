@@ -22,64 +22,52 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-
-#include "asynciocontext.h"
-#include "src/framework/thread/threadpool.h"
+#ifndef QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR
+#define QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR
+ 
+#include "src/qor/datastructures/guid.h"
 #include "src/framework/thread/currentthread.h"
+#include "src/qor/interception/functioncontext.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/sync/asyncmanualresetevent.h"
+#include "src/framework/task/task.h"
+#include "src/framework/task/syncwait.h"
+#include "src/platform/io/iodescriptor.h"
+#include "src/qor/error/error.h"
 
-namespace qor { namespace framework{
-
-    bool AsyncIOContext::Enroll(platform::IODescriptor& ioDescriptor) const
+namespace qor { namespace async{
+  
+    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOEventProcessor
     {
-        return m_processor->Enroll(ioDescriptor);
-    }
+    public:
 
-    AsyncIOContext::AsyncIOContext(ref_of<thread::ThreadPool>::type threadPool) : m_threadPool(threadPool)
-    {
-        m_initiator = new_ref<AsyncIOInitiator>();
-        if(m_initiator->RequiresBackgroundProcessor())
-        {
-            m_processor = new_ref<AsyncIOEventProcessor>();
-        }
-        m_initiator->ConnectToProcessor(m_processor);
-        Inflate();
-    }
+        AsyncIOEventProcessor() : 
+        m_freeRun(false),
+        m_StopRequested(false){ }
+        
+        virtual ~AsyncIOEventProcessor() noexcept = default;
 
-    AsyncIOContext::~AsyncIOContext()
-    {
-    }
+        virtual int Run();
+        virtual void Stop() { m_StopRequested = true; }
+        virtual void Reset() { m_StopRequested = false;}
 
-    void AsyncIOContext::Inflate()
-    {
-        if(m_processor.IsNotNull())
-        {
-            m_processor->Reset();
-            m_processorResult = m_threadPool->SubmitTask( [this]()
-            {
-                CurrentThread::GetCurrent().SetName("IO Thread");
-                return m_processor->Run();
-            });
-        }
-    }
+        virtual bool Enroll(platform::IODescriptor& /*ioDescriptor*/) const {return false;}
 
-    void AsyncIOContext::Deflate()
-    {
-        if(m_processor.IsNotNull())
-        {
-            m_processor->Stop();
-            m_processorResult.get();
-        }
-    }
+    protected:
 
-    ref_of<AsyncIOContext::Session>::type AsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
-    }
+        virtual int Event(){return 0;};
+        bool m_freeRun;
+        bool m_StopRequested;
+    };
 
+    }//async
 
-}}//qor::framework
+    qor_pp_declare_factory_of(async::AsyncIOEventProcessor, ExternalFactory);    
+    constexpr GUID AsyncIOEventProcessorGUID = {0xe92b1e2d, 0x2295, 0x4f5e, {0xb0, 0xba, 0xea, 0xb9, 0x97, 0x27, 0xb5, 0x22}};
+    qor_pp_declare_guid_of(async::AsyncIOEventProcessor,AsyncIOEventProcessorGUID);
+
+}//qor
+
+#endif//QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR

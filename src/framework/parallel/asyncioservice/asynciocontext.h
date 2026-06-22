@@ -37,7 +37,7 @@
 #include "src/qor/log/informative.h"
 #include "src/qor/sync/mutex.h"
 
-namespace qor { namespace framework{
+namespace qor { namespace async{
   
     class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOContext : public AsyncIOInterface
     {
@@ -170,10 +170,10 @@ namespace qor { namespace framework{
         friend class Session;
     };
 
-    }//framework
+    }//async
 
-    qor_pp_declare_instancer_of(framework::AsyncIOContext, PoolInstancer);
+    qor_pp_declare_instancer_of(async::AsyncIOContext, PoolInstancer);
 
-}//qor::framework
+}//qor::async
 
 #endif//QOR_PP_H_FRAMEWORK_ASYNCIOCONTEXT

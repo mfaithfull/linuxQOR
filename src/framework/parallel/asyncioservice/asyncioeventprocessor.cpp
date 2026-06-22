@@ -23,30 +23,20 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include <buildnumber.h>
-#include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/framework/thread/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
-#include "asyncioservice.h"
-#include "iocpinitiator.h"
 
-extern "C"
-{
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Async IO Service Module", 
-			qor_pp_stringize(qor_pp_ver_major) "." \
-			qor_pp_stringize(qor_pp_ver_minor) "." \
-			qor_pp_stringize(qor_pp_ver_patch) "." \
-			qor_pp_stringize(qor_pp_buildnumber));
+#include "asyncioeventprocessor.h"
+#include "src/qor/error/commonerrormessages.h"
 
-		//Register the Windows specific implementations
-		static qor::TypeRegEntry< qor::framework::nswindows::AsyncIOService, qor::async::AsyncIOService > regAsyncIOService;
-		static qor::TypeRegEntry< qor::framework::nswindows::IOCPEventProcessor, qor::async::AsyncIOEventProcessor > regAsyncIOEventProcessor;
-		static qor::TypeRegEntry< qor::framework::nswindows::IOCPInitiator, qor::async::AsyncIOInitiator > regAsyncIOInitiator;
-		return QORModule;
-	}
-}
+namespace qor { namespace async{
+
+    int AsyncIOEventProcessor::Run()
+    {
+        qor_pp_ofcontext;
+        fatal(Error_empty_base_called);
+        while(!m_StopRequested)
+        {
+        }
+        return 0;
+    }
+
+}}//qor::async

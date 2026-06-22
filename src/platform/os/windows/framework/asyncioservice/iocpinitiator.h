@@ -32,7 +32,7 @@
 #undef min
 #undef max
 #include "iocpeventprocessor.h"
-#include "src/framework/asyncioservice/asyncioinitiator.h"
+#include "src/framework/parallel/asyncioservice/asyncioinitiator.h"
 #include "operations/recvop.h"
 #include "operations/acceptop.h"
 #include "operations/sendop.h"
@@ -40,14 +40,14 @@
 
 namespace qor { namespace framework { namespace nswindows {
 
-    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPInitiator : public qor::framework::AsyncIOInitiator
+    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPInitiator : public qor::async::AsyncIOInitiator
     {
     public:
 
         IOCPInitiator() = default;
         virtual ~IOCPInitiator() noexcept = default;
 
-        virtual void ConnectToProcessor(qor::framework::AsyncIOEventProcessor * processor)
+        virtual void ConnectToProcessor(qor::async::AsyncIOEventProcessor * processor)
         {
             m_eventProcessor = dynamic_cast<IOCPEventProcessor*>(processor);
         }
@@ -57,52 +57,52 @@ namespace qor { namespace framework { namespace nswindows {
             return true;
         }
 
-        virtual qor::framework::IOTask Send(platform::IODescriptor * ioDescriptor, const byte * buffer, size_t len, int flags)
+        virtual qor::async::IOTask Send(platform::IODescriptor * ioDescriptor, const byte * buffer, size_t len, int flags)
         {
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .result = co_await SocketSendOperation(ioDescriptor, buffer, len),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Read(platform::IODescriptor * ioDescriptor, byte * buffer, size_t len)
+        virtual qor::async::IOTask Read(platform::IODescriptor * ioDescriptor, byte * buffer, size_t len)
         {
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = -1,//co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
+        virtual qor::async::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .result = co_await SocketRecvOperation(ioDescriptor, buffer, len),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Listen(platform::IODescriptor * ioDescriptor, int backlog)
+        virtual qor::async::IOTask Listen(platform::IODescriptor * ioDescriptor, int backlog)
         {
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = -1,//co_await ListenOperation(*m_Ring, ioDescriptor->m_fd, 0),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Bind(platform::IODescriptor * ioDescriptor, const network::Address & Address)
+        virtual qor::async::IOTask Bind(platform::IODescriptor * ioDescriptor, const network::Address & Address)
         {
             //Windows doesn't provide async bind
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = -1,//co_await BindOperation(*m_Ring, ioDescriptor->m_fd, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::framework::IOTask Accept(platform::IODescriptor * ioDescriptor, const network::Address & Address, network::Socket * new_socket)
+        virtual qor::async::IOTask Accept(platform::IODescriptor * ioDescriptor, const network::Address & Address, network::Socket * new_socket)
         {            
             int status = co_await SocketAcceptOperation(ioDescriptor, new_socket);
 
-            co_return qor::framework::AsyncIOResult{
+            co_return qor::async::AsyncIOResult{
                 .status_code = status,
                 .ioObject = ioDescriptor
             };

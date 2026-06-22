@@ -27,8 +27,8 @@
 
 #include <vector>
 #include <coroutine>
-#include "src/framework/asyncioservice/asyncioservice.h"
-#include "src/framework/asyncioservice/asyncioeventprocessor.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
+#include "src/framework/parallel/asyncioservice/asyncioeventprocessor.h"
 
 qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOService)
 qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOEventProcessor)
@@ -36,7 +36,7 @@ qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOInitiator)
 
 namespace qor{ namespace framework{ namespace nswindows{
 
-    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) AsyncIOService : public qor::framework::AsyncIOService
+    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) AsyncIOService : public qor::async::AsyncIOService
     {
     public:
         

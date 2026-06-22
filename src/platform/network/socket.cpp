@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "src/framework/thread/thread.h"
 #include "socket.h"
-#include "src/framework/asyncioservice/asynciotypes.h"
+#include "src/framework/parallel/asyncioservice/asynciotypes.h"
 #include "src/framework/task/syncwait.h"
 
 namespace qor{ namespace network{
@@ -40,7 +40,7 @@ namespace qor{ namespace network{
         m_objectType = guid_of<Socket>::guid();
     }
 
-    task<int32_t> Socket::AcceptAsync(const framework::AsyncIOInterface& /*ioContext*/, Address& /*ClientAddress*/, Socket* /*Socket*/)
+    task<int32_t> Socket::AcceptAsync(const async::AsyncIOInterface& /*ioContext*/, Address& /*ClientAddress*/, Socket* /*Socket*/)
     {
         //Provide an override implementation specific to your platform
          return []()->task<int32_t>
@@ -49,7 +49,7 @@ namespace qor{ namespace network{
         }();
     }
 
-    ref_of<Socket>::type Socket::Accept(const framework::AsyncIOInterface& ioContext, Address& ClientAddress)
+    ref_of<Socket>::type Socket::Accept(const async::AsyncIOInterface& ioContext, Address& ClientAddress)
     {        
         ref_of<network::Socket>::type clientSocket = new_ref<network::Socket>(
             network::sockets::eAddressFamily::AF_INet, 
@@ -67,7 +67,7 @@ namespace qor{ namespace network{
         return -1;
     }
 
-    int32_t Socket::Bind(const framework::AsyncIOInterface& /*ioWaiter*/, const Address& /*Address*/)
+    int32_t Socket::Bind(const async::AsyncIOInterface& /*ioWaiter*/, const Address& /*Address*/)
     {
         //Provide an override implementation specific to your platform
         return -1;
@@ -79,7 +79,7 @@ namespace qor{ namespace network{
         return -1;
     }
 
-    int32_t Socket::Listen(const framework::AsyncIOInterface& /*ioWaiter*/, int32_t /*iBacklog*/)
+    int32_t Socket::Listen(const async::AsyncIOInterface& /*ioWaiter*/, int32_t /*iBacklog*/)
     {
         return -1;
     }
@@ -121,7 +121,7 @@ namespace qor{ namespace network{
         return -1;
     }
 
-    task<int32_t> Socket::AsyncReceive(const framework::AsyncIOInterface& /*ioContext*/, char* /*pBuffer*/, int32_t /*iLen*/)
+    task<int32_t> Socket::AsyncReceive(const async::AsyncIOInterface& /*ioContext*/, char* /*pBuffer*/, int32_t /*iLen*/)
     {
         //Provide an override implementation specific to your platform        
         return []()->task<int32_t>
@@ -130,7 +130,7 @@ namespace qor{ namespace network{
         }();
     }
 
-    task<int32_t> Socket::Receive(const framework::AsyncIOInterface& ioContext, char* Buffer, int32_t iLen)
+    task<int32_t> Socket::Receive(const async::AsyncIOInterface& ioContext, char* Buffer, int32_t iLen)
     {
         return AsyncReceive(ioContext, Buffer, iLen);
     }
@@ -147,10 +147,10 @@ namespace qor{ namespace network{
         return -1;
     }
 
-    task<int32_t> Socket::AsyncSend(const framework::AsyncIOInterface& /*ioContext*/, const char* /*Buffer*/, int32_t /*iLen*/)
+    task<int32_t> Socket::AsyncSend(const async::AsyncIOInterface& /*ioContext*/, const char* /*Buffer*/, int32_t /*iLen*/)
     {
         //Provide an override implementation specific to your platform
-        qor::framework::AsyncIOResult result;
+        qor::async::AsyncIOResult result;
         return []()->task<int32_t>
         {
             co_return -1;
@@ -158,7 +158,7 @@ namespace qor{ namespace network{
 
     }
 
-    task<int32_t> Socket::Send(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+    task<int32_t> Socket::Send(const async::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
     {
         return AsyncSend(ioContext, Buffer, iLen);
     }
@@ -181,12 +181,12 @@ namespace qor{ namespace network{
         return -1;
     }
 
-    task<int32_t> Socket::Shutdown(const framework::AsyncIOInterface& ioContext, sockets::eShutdown how)
+    task<int32_t> Socket::Shutdown(const async::AsyncIOInterface& ioContext, sockets::eShutdown how)
     {
         return AsyncShutdown(ioContext, how);
     }
 
-    task<int32_t> Socket::AsyncShutdown(const framework::AsyncIOInterface& /*ioContext*/, sockets::eShutdown /*how*/)
+    task<int32_t> Socket::AsyncShutdown(const async::AsyncIOInterface& /*ioContext*/, sockets::eShutdown /*how*/)
     {
         //Provide an override implementation specific to your platform
         return []()->task<int32_t>

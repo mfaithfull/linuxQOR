@@ -27,7 +27,7 @@
 #include "asyncioinitiator.h"
 #include "src/qor/error/commonerrormessages.h"
 
-namespace qor { namespace framework{
+namespace qor { namespace async{
 
     IOTask AsyncIOInitiator::Bind(platform::IODescriptor* /*ioDescriptor*/, const network::Address& /*Address*/)
     {
@@ -78,4 +78,4 @@ namespace qor { namespace framework{
         co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
     }
 
-}}//qor::framework
+}}//qor::async

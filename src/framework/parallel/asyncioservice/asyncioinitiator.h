@@ -35,7 +35,7 @@ namespace qor { namespace network{
     class Socket;
 }}//qor::network
 
-namespace qor { namespace framework{
+namespace qor { namespace async{
   
     //queues up async io requests
     class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOInitiator
@@ -45,7 +45,7 @@ namespace qor { namespace framework{
         AsyncIOInitiator() = default;
         virtual ~AsyncIOInitiator() noexcept = default;
 
-        virtual void ConnectToProcessor(qor::framework::AsyncIOEventProcessor* /*processor*/)
+        virtual void ConnectToProcessor(AsyncIOEventProcessor* /*processor*/)
         {            
         }
 
@@ -63,11 +63,11 @@ namespace qor { namespace framework{
         virtual IOTask Shutdown(platform::IODescriptor* ioDescriptor, int how);
     };
 
-    }//framework
+    }//async
 
-    qor_pp_declare_factory_of(framework::AsyncIOInitiator, ExternalFactory);    
+    qor_pp_declare_factory_of(async::AsyncIOInitiator, ExternalFactory);    
     constexpr GUID AsyncIOInitiatorGUID = {0xf21b2107, 0x2f64, 0x432e, {0xbe, 0xd5, 0x74, 0xae, 0xaf, 0x2c, 0x88, 0x10}};
-    qor_pp_declare_guid_of(framework::AsyncIOInitiator,AsyncIOInitiatorGUID);
+    qor_pp_declare_guid_of(async::AsyncIOInitiator,AsyncIOInitiatorGUID);
 
 }//qor
 

@@ -24,19 +24,43 @@
 
 #include "src/configuration/configuration.h"
 
-#include "asyncioeventprocessor.h"
-#include "src/qor/error/commonerrormessages.h"
+#include <cassert>
 
-namespace qor { namespace framework{
+#include "asyncioservice.h"
+#include "src/qor/sync/onscopeexit.h"
+#include "src/framework/role/role.h"
+#include "src/framework/thread/threadpool.h"
 
-    int AsyncIOEventProcessor::Run()
+namespace qor { namespace async{
+
+    AsyncIOService::AsyncIOService()
     {
-        qor_pp_ofcontext;
-        fatal(Error_empty_base_called);
-        while(!m_StopRequested)
-        {
-        }
-        return 0;
+        m_contextArray = nullptr;
+        m_contextIndex = 0;
     }
 
-}}//qor::framework
+    void AsyncIOService::Setup()
+    {
+        m_threadPool = m_Role->GetFeature<thread::ThreadPool>();
+
+        //Take all the AsyncIOContext(s) from the pool.
+        m_contextCount = (unsigned int)PoolInstancer::GetPoolSize<AsyncIOContext>();
+        m_contextArray = new ref_of<AsyncIOContext>::type [m_contextCount];
+        for(unsigned context = 0; context < m_contextCount; context++)
+        {
+            m_contextArray[context] = new_ref<AsyncIOContext>(m_threadPool);
+        }
+    }
+    
+    void AsyncIOService::Shutdown()
+    {
+        for(unsigned context = 0; context < m_contextCount; context++)
+        {
+            delete m_contextArray[context];
+            m_contextArray[context] = nullptr;
+        }
+        delete m_contextArray;
+        m_contextArray = nullptr;
+    }
+
+}}//qor::async

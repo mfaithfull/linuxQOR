@@ -26,7 +26,7 @@
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/asyncioservice/asynciocontext.h"
+#include "src/framework/parallel/asyncioservice/asynciocontext.h"
 #include "sockets.h"
 
 namespace qor{ namespace network{
@@ -39,7 +39,7 @@ namespace qor{ namespace network{
     {
     }
 
-    ref_of<Socket>::type Sockets::CreateSocket(sockets::eAddressFamily /*AF*/, sockets::eType /*Type*/, sockets::eProtocol /*Protocol*/, ref_of<framework::AsyncIOContext::Session>::type /*ioSession*/) const
+    ref_of<Socket>::type Sockets::CreateSocket(sockets::eAddressFamily /*AF*/, sockets::eType /*Type*/, sockets::eProtocol /*Protocol*/, ref_of<async::AsyncIOContext::Session>::type /*ioSession*/) const
     {
         ref_of<Socket>::type nulref;
         return nulref;

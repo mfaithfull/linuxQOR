@@ -26,17 +26,17 @@
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPEVENTPROCESSOR
 
 #include <chrono>
-#include "src/framework/asyncioservice/asyncioeventprocessor.h"
+#include "src/framework/parallel/asyncioservice/asyncioeventprocessor.h"
 #include "ioservice.h"
 #include "operations/scheduleoperation.h"
 
 namespace qor { namespace framework { namespace nswindows {
 
-    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPEventProcessor : public qor::framework::AsyncIOEventProcessor
+    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPEventProcessor : public qor::async::AsyncIOEventProcessor
     {
     public:
 
-        IOCPEventProcessor() : qor::framework::AsyncIOEventProcessor() {}
+        IOCPEventProcessor() : qor::async::AsyncIOEventProcessor() {}
         virtual ~IOCPEventProcessor() noexcept = default;
 
         virtual int Run()

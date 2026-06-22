@@ -32,8 +32,8 @@
 #include "src/qor/factory/externalfactory.h"
 #include "address.h"
 #include "socketdefs.h"
-#include "src/framework/asyncioservice/asynciotypes.h"
-#include "src/framework/asyncioservice/asynciointerface.h"
+#include "src/framework/parallel/asyncioservice/asynciotypes.h"
+#include "src/framework/parallel/asyncioservice/asynciointerface.h"
 #include "src/platform/io/iodescriptor.h"
 #include "isocket.h"
 
@@ -51,28 +51,28 @@ namespace qor{ namespace network{
         Socket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol);
 
         virtual int32_t Bind(const Address& Address);                
-        virtual int32_t Bind(const framework::AsyncIOInterface& ioContext, const Address& Address);
+        virtual int32_t Bind(const async::AsyncIOInterface& ioContext, const Address& Address);
         virtual int32_t Listen(int32_t iBacklog);
-        virtual int32_t Listen(const framework::AsyncIOInterface& ioContext, int32_t iBacklog);
+        virtual int32_t Listen(const async::AsyncIOInterface& ioContext, int32_t iBacklog);
         virtual ref_of<Socket>::type Accept(Address& Address);
-                ref_of<Socket>::type Accept(const framework::AsyncIOInterface& ioContext, Address& Address);
-        virtual task<int32_t> AcceptAsync(const framework::AsyncIOInterface& ioContext, Address& Address, Socket* Socket);
+                ref_of<Socket>::type Accept(const async::AsyncIOInterface& ioContext, Address& Address);
+        virtual task<int32_t> AcceptAsync(const async::AsyncIOInterface& ioContext, Address& Address, Socket* Socket);
         virtual int32_t Connect(const Address& Address);
         virtual int32_t GetPeerName(Address& Address);
         virtual int32_t GetSockName(Address& Address);
         virtual int32_t GetSockOpt(int32_t iLevel, int32_t iOptName, char* pOptVal, int32_t* pOptLen);
         virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen);        
         virtual int32_t Receive(char* buf, int32_t len, int32_t flags);
-                task<int32_t> Receive(const framework::AsyncIOInterface& ioContext, char* Buffer, int32_t iLen);
-        virtual task<int32_t> AsyncReceive(const framework::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
+                task<int32_t> Receive(const async::AsyncIOInterface& ioContext, char* Buffer, int32_t iLen);
+        virtual task<int32_t> AsyncReceive(const async::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
         virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, Address& From);        
         virtual int32_t Send(const char* Buffer, int32_t iLen);
-                task<int32_t> Send(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
-        virtual task<int32_t> AsyncSend(const framework::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
+                task<int32_t> Send(const async::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
+        virtual task<int32_t> AsyncSend(const async::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
         virtual int32_t SendTo(const char* Buffer, int32_t iLen, int32_t iFlags, const Address& To);
         virtual int32_t Shutdown(sockets::eShutdown how);
-                task<int32_t> Shutdown(const framework::AsyncIOInterface& ioContext, sockets::eShutdown how);
-        virtual task<int32_t> AsyncShutdown(const framework::AsyncIOInterface& ioContext, sockets::eShutdown how);
+                task<int32_t> Shutdown(const async::AsyncIOInterface& ioContext, sockets::eShutdown how);
+        virtual task<int32_t> AsyncShutdown(const async::AsyncIOInterface& ioContext, sockets::eShutdown how);
         virtual std::size_t ID(void);
         virtual int32_t GetLastError(void);
         virtual bool SetNonBlocking(bool nonBlocking);

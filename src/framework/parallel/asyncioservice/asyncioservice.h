@@ -43,14 +43,14 @@
 
 namespace qor{ bool qor_pp_module_interface(QOR_ASYNCIOSERVICE) ImplementsAsyncIOService();}
 
-namespace qor { namespace framework{
+namespace qor { namespace async{
   
     class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOService : public IFeature
     {
     public:
 
         AsyncIOService();
-        virtual ~AsyncIOService();
+        virtual ~AsyncIOService() noexcept = default;
 
 		AsyncIOService(AsyncIOService&& other) = delete;
 		AsyncIOService(const AsyncIOService& other) = delete;
@@ -74,12 +74,12 @@ namespace qor { namespace framework{
         size_t m_contextIndex;
         
     };
-    } //framework
+    } //async
 
-    qor_pp_declare_instancer_of(framework::AsyncIOService, SingletonInstancer);
-    qor_pp_declare_factory_of(framework::AsyncIOService, ExternalFactory);
+    qor_pp_declare_instancer_of(async::AsyncIOService, SingletonInstancer);
+    qor_pp_declare_factory_of(async::AsyncIOService, ExternalFactory);
     constexpr GUID AsyncIOServiceGUID = {0x6201abca, 0xf405, 0x4709, {0xa9, 0x86, 0x26, 0x82, 0xeb, 0x66, 0xfd, 0xc6}};
-    qor_pp_declare_guid_of(framework::AsyncIOService,AsyncIOServiceGUID);
+    qor_pp_declare_guid_of(async::AsyncIOService,AsyncIOServiceGUID);
 
 }//qor
 

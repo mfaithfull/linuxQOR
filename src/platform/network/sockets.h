@@ -29,7 +29,7 @@
 #include "src/platform/isubsystem.h"
 #include "socket.h"
 #include "addressinfo.h"
-#include "src/framework/asyncioservice/asynciocontext.h"
+#include "src/framework/parallel/asyncioservice/asynciocontext.h"
 
 //All libraries providing an implementation of Sockets also need to export this function so that the linker can find them
 namespace qor{ bool qor_pp_module_interface(QOR_SOCKETS) ImplementsSockets();}
@@ -47,7 +47,7 @@ namespace qor{ namespace network{
         virtual void Setup();
         virtual void Shutdown();
 
-        virtual ref_of<Socket>::type CreateSocket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol, ref_of<framework::AsyncIOContext::Session>::type ioSession) const;
+        virtual ref_of<Socket>::type CreateSocket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol, ref_of<async::AsyncIOContext::Session>::type ioSession) const;
         virtual int GetAddressInfo(const std::string& node, const std::string& service, const AddressInfo& hints, std::vector<AddressInfo>& results) const;
 
     private:

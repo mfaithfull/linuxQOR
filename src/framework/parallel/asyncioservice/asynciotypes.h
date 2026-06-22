@@ -29,7 +29,7 @@
 #include "src/framework/task/task.h"
 #include "src/platform/io/iodescriptor.h"
 
-namespace qor { namespace framework{
+namespace qor { namespace async{
   
     struct AsyncIOResult 
     {
@@ -49,6 +49,6 @@ namespace qor { namespace framework{
         int statusCode{-1};
     };
 
-}}//qor::framework
+}}//qor::async
 
 #endif//QOR_PP_H_FRAMEWORK_ASYNCIOTYPES

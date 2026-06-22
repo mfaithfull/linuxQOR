@@ -32,11 +32,10 @@ namespace qor { namespace network {
     class qor_pp_module_interface(QOR_SOCKETS) Socket;
 }}//qor::network
 
-namespace qor { namespace framework{
+namespace qor { namespace async{
   
     class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOInterface
     {
-
     public:
 
         AsyncIOInterface() = default;
@@ -52,8 +51,6 @@ namespace qor { namespace framework{
         virtual inline bool Enroll(platform::IODescriptor& ioDescriptor) const = 0;
     };
 
-    }//framework
-
-}//qor::framework
+}}//qor::async
 
 #endif//QOR_PP_H_FRAMEWORK_ASYNCIOINTERFACE

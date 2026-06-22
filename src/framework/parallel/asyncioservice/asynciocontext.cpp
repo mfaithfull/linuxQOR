@@ -24,47 +24,62 @@
 
 #include "src/configuration/configuration.h"
 
-#include <cassert>
-
-#include "asyncioservice.h"
-#include "src/qor/sync/onscopeexit.h"
-#include "src/framework/role/role.h"
+#include "asynciocontext.h"
 #include "src/framework/thread/threadpool.h"
+#include "src/framework/thread/currentthread.h"
+#include "src/qor/factory/factory.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/factory/externalfactory.h"
+#include "src/qor/reference/newref.h"
 
-namespace qor { namespace framework{
+namespace qor { namespace async{
 
-    AsyncIOService::AsyncIOService()
+    bool AsyncIOContext::Enroll(platform::IODescriptor& ioDescriptor) const
     {
-        m_contextArray = nullptr;
-        m_contextIndex = 0;
+        return m_processor->Enroll(ioDescriptor);
     }
 
-    AsyncIOService::~AsyncIOService()
+    AsyncIOContext::AsyncIOContext(ref_of<thread::ThreadPool>::type threadPool) : m_threadPool(threadPool)
     {
-    }
-
-    void AsyncIOService::Setup()
-    {
-        m_threadPool = m_Role->GetFeature<thread::ThreadPool>();
-
-        //Take all the AsyncIOContext(s) from the pool.
-        m_contextCount = (unsigned int)PoolInstancer::GetPoolSize<AsyncIOContext>();
-        m_contextArray = new ref_of<AsyncIOContext>::type [m_contextCount];
-        for(unsigned context = 0; context < m_contextCount; context++)
+        m_initiator = new_ref<AsyncIOInitiator>();
+        if(m_initiator->RequiresBackgroundProcessor())
         {
-            m_contextArray[context] = new_ref<AsyncIOContext>(m_threadPool);
+            m_processor = new_ref<AsyncIOEventProcessor>();
+        }
+        m_initiator->ConnectToProcessor(m_processor);
+        Inflate();
+    }
+
+    AsyncIOContext::~AsyncIOContext()
+    {
+    }
+
+    void AsyncIOContext::Inflate()
+    {
+        if(m_processor.IsNotNull())
+        {
+            m_processor->Reset();
+            m_processorResult = m_threadPool->SubmitTask( [this]()
+            {
+                CurrentThread::GetCurrent().SetName("IO Thread");
+                return m_processor->Run();
+            });
         }
     }
-    
-    void AsyncIOService::Shutdown()
+
+    void AsyncIOContext::Deflate()
     {
-        for(unsigned context = 0; context < m_contextCount; context++)
+        if(m_processor.IsNotNull())
         {
-            delete m_contextArray[context];
-            m_contextArray[context] = nullptr;
+            m_processor->Stop();
+            m_processorResult.get();
         }
-        delete m_contextArray;
-        m_contextArray = nullptr;
     }
 
-}}//qor::framework
+    ref_of<AsyncIOContext::Session>::type AsyncIOContext::GetSession()
+    {
+        return new_ref<Session>(this);
+    }
+
+
+}}//qor::async
