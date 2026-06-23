@@ -10,12 +10,12 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-set(portable_libraries qor_compiler qor_host qor_datastructures qor_objectcontext
+set(portable_libraries qor_module qor_compiler qor_host qor_datastructures qor_objectcontext
 qor_thread qor_sync qor_application qor_role qor_error qor_log qor_desktopui
 qor_logaggregator)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-set(os_libraries linqor_thread)
+set(os_libraries linqor_thread linqor_filesystem linqor_desktopui)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)

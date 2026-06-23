@@ -1,0 +1,3 @@
+add_subdirectory(dynamiclibrary)
+add_subdirectory(process)
+add_subdirectory(thread)

@@ -36,8 +36,8 @@ namespace qor{ namespace ui {
     {
     public:
 
-        IMainWindowImpl(){}
-        IMainWindowImpl(const std::wstring& title){}
+        IMainWindowImpl() = default;
+        IMainWindowImpl(const std::wstring& /*title*/){ }
         virtual ~IMainWindowImpl() = default;
 
     };

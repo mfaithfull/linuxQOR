@@ -30,7 +30,7 @@
 
 class Visual final : public qor::Application
 {
-    qor_pp_declare_app_class(Visual);
+    qor_pp_declare_app_class(Visual)
 
 public:
 

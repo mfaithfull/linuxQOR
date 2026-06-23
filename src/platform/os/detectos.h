@@ -50,7 +50,6 @@
 #   define qor_pp_os_root_folder linux
 //qor_pp_compiler_message( "Build targetting Linux Operating Systems." )
 #elif (qor_pp_os_target == qor_pp_os_windows)
-
 #   define qor_pp_os_root_folder windows
 #   ifdef _WIN64
 #       define qor_pp_os_64bit
@@ -58,10 +57,9 @@ qor_pp_compiler_message( "Build targetting 64 bit Microsoft Windows Operating Sy
 #       else
 qor_pp_compiler_message( "Build targetting 32 bit Microsoft Windows Operating Systems." )
 #   endif
-
 #elif (qor_pp_os_target == qor_pp_os_mac)
-#   define qor_pp_os_root_folder mac
-qor_pp_compiler_message( "Build targetting Apple Mac Operating Systems." )
+#   define qor_pp_os_root_folder osx
+qor_pp_compiler_message( "Build targetting Apple OSX." )
 #endif
 
 #endif//QOR_PP_H_OS
