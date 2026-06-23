@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_NETWORK_SESSION_PIPELINE
 #define QOR_PP_H_COMPONENTS_NETWORK_SESSION_PIPELINE
 
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/io/pipeline/pipeline.h"
 #include "src/framework/io/pipeline/protocol.h"

@@ -28,7 +28,7 @@
 #include "src/qor/injection/typeidentity.h"
 #include "console.h"
 #include "src/framework/io/filesystem/ifilesystem.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/factory/internalfactory.h"
 #include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"

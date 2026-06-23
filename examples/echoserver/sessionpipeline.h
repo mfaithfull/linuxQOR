@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_SESSIONPIPELINE
 #define QOR_PP_H_EXAMPLES_ECHOSERVER_SESSIONPIPELINE
 
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketconnector.h"

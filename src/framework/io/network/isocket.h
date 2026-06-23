@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PLATFORM_NETWORK_ISOCKET
 #define QOR_PP_H_PLATFORM_NETWORK_ISOCKET
 
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/reference/newref.h"
 #include "src/qor/factory/factory.h"

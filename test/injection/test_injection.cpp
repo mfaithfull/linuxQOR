@@ -31,7 +31,7 @@
 #include "src/qor/factory/externalfactory.h"
 #include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/qor/injection/diwrapper.h"
 

@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENT_THREADMEMORY_HEAP
 
 #include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/instance/instance.h"

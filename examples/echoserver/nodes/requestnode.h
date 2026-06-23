@@ -26,7 +26,7 @@
 #define QOR_PP_H_EXAMPLES_ECHOSERVER_NODES_REQUEST
 
 #include <string>
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/components/io/parser/parser.h"
 #include "../echorequestparser.h"

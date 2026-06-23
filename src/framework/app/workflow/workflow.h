@@ -28,7 +28,7 @@
 #include <stack>
 #include <functional>
 
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "iworkflow.h"
 #include "src/qor/delegate/delegate.h"

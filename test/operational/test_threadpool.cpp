@@ -29,10 +29,10 @@
 #include "src/qor/module/moduleregistry.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/framework/parallel/thread/thread.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/parallel/thread/currentprocess.h"
+#include "src/qor/current/currentprocess.h"
 #include "src/qor/reference/newref.h"
 #include <random>
 

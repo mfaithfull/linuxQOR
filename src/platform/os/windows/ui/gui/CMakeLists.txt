@@ -109,7 +109,7 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_thread 
+target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_error qor_issue qor_current 
 qor_interception qor_signals 
 winqor_api_kernel winqor_api_user winqor_api_gdi winqor_api_shell 
 winqor_api_shcore winqor_api_comctl32 winqor_api_dwm winqor_api_uxtheme

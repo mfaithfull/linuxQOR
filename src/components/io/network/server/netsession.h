@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_NETWORK_SESSION
 
 #include "src/qor/interception/functioncontext.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/framework/app/workflow/workflow.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/network/socket.h"

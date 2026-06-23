@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_MDICLIENT
 #define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_MDICLIENT
 
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 
 #include "abstractwindowhandler.h"

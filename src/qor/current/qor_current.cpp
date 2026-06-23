@@ -22,51 +22,21 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_FRAMEWORK_THREADCONTEXT
-#define QOR_PP_H_FRAMEWORK_THREADCONTEXT
+#include "src/configuration/configuration.h"
+#include <buildnumber.h>
+#include "src/qor/module/module.h"
+#include "src/qor/current/currentthread.h"
 
-#include <thread>
-#include <vector>
+extern "C"
+{
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Current Process/Thread Module", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
 
-#include "src/platform/compiler/compiler.h"
-#include "src/qor/interception/ifunctioncontext.h"
-#include "src/framework/parallel/thread/detail/flyermap.h"
-
-namespace qor{ namespace detail{
-
-	//Additional state for QOR threads beyond what std library threads provide
-	//Per thread state is only created if it's used via the CurrentThread thread-singleton
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext final
-    {
-    public:
-
-        ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext() = default;
-
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
-
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
-		{
-			return m_FlyerMap;
-		}
-
-		inline IFunctionContext* FunctionContext()
-		{
-			return m_pCurrentContext;
-		}
-
-    private:
-
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;
-        std::vector< void* > m_aThreadLocalStorage;
-        FlyerMap m_FlyerMap;
-
-    };
-
-}}//qor::detail
-
-#endif//QOR_PP_H_FRAMEWORK_THREADCONTEXT
+		return QORModule;
+	}
+}

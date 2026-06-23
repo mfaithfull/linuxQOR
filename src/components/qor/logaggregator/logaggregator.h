@@ -27,7 +27,7 @@
  
 #include <atomic>
 #include <coroutine>
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/instance/singleton.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"

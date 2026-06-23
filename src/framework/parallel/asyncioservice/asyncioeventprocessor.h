@@ -26,7 +26,7 @@
 #define QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR
  
 #include "src/qor/datastructures/guid.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"

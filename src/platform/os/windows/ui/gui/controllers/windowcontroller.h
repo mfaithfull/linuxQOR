@@ -27,7 +27,7 @@
 
 #include <vector>
 
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/reference/newref.h"
 #include "src/platform/os/windows/common/structures.h"

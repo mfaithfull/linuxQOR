@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 
 struct wl_seat;

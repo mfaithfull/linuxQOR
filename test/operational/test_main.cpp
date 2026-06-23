@@ -2,7 +2,7 @@
 #include <buildnumber.h>
 #include "src/qor/test/test.h"
 #include "src/qor/module/module.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 
 int main(int argc, const char** argv, char**)
 {	

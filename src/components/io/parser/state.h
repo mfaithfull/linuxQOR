@@ -27,7 +27,7 @@
 
 #include <iostream>
 #include "src/platform/compiler/compiler.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/app/workflow/workflow.h"
 #include "result.h"

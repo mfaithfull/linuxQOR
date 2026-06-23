@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_JSON_MODEL_VALUE
 
 #include "valuemodel.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 
 namespace qor { namespace components{ namespace model{ namespace json {

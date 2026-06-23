@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "severityissue.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "error.h"
 #include "handler.h"
 

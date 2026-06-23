@@ -33,7 +33,7 @@
 #include "src/qor/reference/reference.h"
 #include "src/framework/io/filesystem/path.h"
 #include "src/framework/io/filesystem/fileindex.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/event/signals/slotbase.h"
 #include "resource.h"

@@ -1,6 +1,6 @@
 set(target qor_thread)
 
-add_library(${target} SHARED qor_thread.cpp currentthread.cpp thread.cpp detail/threadcontext.cpp threadpool.cpp)
+add_library(${target} SHARED qor_thread.cpp thread.cpp threadpool.cpp)
 
 find_package(Threads REQUIRED)
 if(THREADS_HAVE_PTHREAD_ARG)
@@ -18,4 +18,4 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_injection)
+target_link_libraries(${target} qor_module qor_host qor_datastructures qor_objectcontext qor_current qor_sync qor_injection)

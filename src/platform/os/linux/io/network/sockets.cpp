@@ -29,7 +29,7 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/platform/os/linux/io/network/sockets.h"
 #include "src/platform/os/linux/io/network/socket.h"

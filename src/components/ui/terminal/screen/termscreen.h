@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_TERMINAL_SCREEN_TERMSCREEN
 
 #include "src/framework/app/role/ifeature.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 
 #ifndef QOR_PP_IMPLEMENTS_TERMSCREEN

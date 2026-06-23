@@ -26,7 +26,7 @@
 
 #include "asynciocontext.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"

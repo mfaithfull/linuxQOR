@@ -26,7 +26,7 @@
 #define QOR_PP_H_EXAMPLES_ECHOCLIENT_NODES_RESPONSE
 
 #include <string>
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/components/io/parser/parser.h"
 #include "../echoresponseparser.h"

@@ -30,7 +30,7 @@
 #include <type_traits>
 
 #include "src/platform/compiler/compiler.h"
-#include "currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/delegate/delegate.h"
 
 namespace qor{

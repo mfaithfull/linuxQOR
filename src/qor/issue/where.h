@@ -27,7 +27,7 @@
 
 //#include <iosfwd>		// std::basic_ostream
 #include <string>
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/qor/module/module.h"
 
 namespace qor{ 

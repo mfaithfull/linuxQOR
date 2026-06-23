@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "functioncontextlock.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 
 namespace qor {
 

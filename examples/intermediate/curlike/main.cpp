@@ -31,7 +31,7 @@
 #include "src/platform/platform.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/filesystem/filesystem.h"
-#include "src/framework/parallel/thread/currentthread.h"
+#include "src/qor/current/currentthread.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/app/application/builder.h"
