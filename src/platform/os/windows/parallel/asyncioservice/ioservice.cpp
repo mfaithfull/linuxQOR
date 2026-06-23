@@ -31,7 +31,7 @@
 #include "ioservice.h"
 #include "operations/scheduleoperation.h"
 #include "timer/timerthreadstate.h"
-#include "src/qor/sync/onscopeexit.h"
+#include "src/framework/parallel/sync/onscopeexit.h"
 #include "sync/iocompletionport.h"
 #include "iostate.h"
 #include "src/platform/os/windows/common/constants.h"

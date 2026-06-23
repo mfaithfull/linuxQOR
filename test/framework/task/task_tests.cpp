@@ -31,7 +31,7 @@
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
 #include "src/framework/parallel/task/task.h"
-#include "src/qor/sync/singleconsumerevent.h"
+#include "src/framework/parallel/sync/singleconsumerevent.h"
 #include "src/framework/parallel/task/syncwait.h"
 #include "src/framework/parallel/task/whenallready.h"
 #include "src/framework/parallel/task/detail/fmap.h"

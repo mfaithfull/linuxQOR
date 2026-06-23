@@ -29,8 +29,8 @@
 
 #include "src/qor/reference/reference.h"
 #include "src/qor/factory/factory.h"
-#include "src/qor/sync/recursive_mutex.h"
-#include "src/qor/sync/lock.h"
+#include "src/framework/parallel/sync/recursive_mutex.h"
+#include "src/framework/parallel/sync/lock.h"
 
 //The singleton instancer gives out the same instance each time unless it it destroyed by there being no more references to it. Then it gives a new one
 

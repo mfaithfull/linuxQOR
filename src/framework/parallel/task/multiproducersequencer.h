@@ -29,9 +29,9 @@
 #include <cstdint>
 #include <cassert>
 
-#include "src/qor/sync/sequencebarrier.h"
+#include "src/framework/parallel/sync/sequencebarrier.h"
 #include "sequencerange.h"
-#include "src/qor/sync/sequencetraits.h"
+#include "src/framework/parallel/sync/sequencetraits.h"
 #include "src/qor/factory/manuallifetime.h"
 
 namespace qor

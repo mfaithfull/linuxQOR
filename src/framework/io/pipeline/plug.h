@@ -26,7 +26,7 @@
 #define QOR_PP_H_PIPELINE_PLUG
 
 #include "src/framework/event/signals/signal.h"
-#include "src/qor/sync/syncobject.h"
+#include "src/framework/parallel/sync/syncobject.h"
 #include "src/framework/io/pipeline/element.h"
 
 namespace qor{ namespace pipeline{

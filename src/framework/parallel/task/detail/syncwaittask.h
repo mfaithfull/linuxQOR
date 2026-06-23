@@ -31,7 +31,7 @@
 #include <utility>
 
 #include "src/framework/parallel/task/awaitabletraits.h"
-#include "src/qor/sync/lightweightmanualresetevent.h"
+#include "src/framework/parallel/sync/lightweightmanualresetevent.h"
 
 namespace qor{	namespace detail{
 

@@ -1,7 +1,6 @@
 add_subdirectory(module)
 add_subdirectory(datastructures)
 add_subdirectory(objectcontext)
-add_subdirectory(sync)
 add_subdirectory(injection)
 add_subdirectory(interception)
 add_subdirectory(issue)

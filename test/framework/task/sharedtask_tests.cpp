@@ -33,7 +33,7 @@
 #include "src/framework/parallel/task/task.h"
 #include "src/framework/parallel/task/syncwait.h"
 #include "src/framework/parallel/task/whenallready.h"
-#include "src/qor/sync/singleconsumerevent.h"
+#include "src/framework/parallel/sync/singleconsumerevent.h"
 #include "src/framework/parallel/task/detail/fmap.h"
 #include "counted.h"
 

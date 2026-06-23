@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include "src/qor/sync/sequencetraits.h"
+#include "src/framework/parallel/sync/sequencetraits.h"
 
 namespace qor{
 

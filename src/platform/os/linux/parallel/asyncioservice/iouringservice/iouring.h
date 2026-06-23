@@ -32,7 +32,7 @@
 #include <condition_variable>
 
 #include "src/platform/compiler/compiler.h"
-#include "src/qor/sync/asyncmanualresetevent.h"
+#include "src/framework/parallel/sync/asyncmanualresetevent.h"
 
 namespace qor{ namespace async{ namespace lin{
 

@@ -41,9 +41,9 @@
 #include "src/framework/parallel/task/syncwait.h"
 #include "src/framework/parallel/task/whenall.h"
 #include "src/framework/parallel/task/whenallready.h"
-#include "src/qor/sync/onscopeexit.h"
+#include "src/framework/parallel/sync/onscopeexit.h"
 
-#include "src/qor/sync/asyncautoresetevent.h"
+#include "src/framework/parallel/sync/asyncautoresetevent.h"
 
 using namespace qor;
 using namespace qor::test;

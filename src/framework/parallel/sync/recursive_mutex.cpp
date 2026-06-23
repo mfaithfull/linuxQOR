@@ -22,25 +22,28 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_SYNC_OBJECT
-#define QOR_PP_H_SYNC_OBJECT
-
+#include "src/configuration/configuration.h"
+#include "recursive_mutex.h"
 
 namespace qor{
-		
-    class qor_pp_module_interface(QOR_SYNC) SyncObject
+
+    RecursiveMutex::RecursiveMutex(): m_Locked {0}{ }
+
+    void RecursiveMutex::Acquire()
+    {        
+        m_Impl.lock();
+        m_Locked++;
+    }
+
+    void RecursiveMutex::Release()
+    {   
+        m_Locked--;
+        m_Impl.unlock();        
+    }
+    
+    bool RecursiveMutex::IsLocked() const
     {
-    public:
-
-        SyncObject() = default;
-        virtual ~SyncObject() = default;
-
-        virtual void Acquire(void) {};
-        virtual void Release(void) {};
-        virtual bool IsLocked(void) const {return false;}
-
-    };
-
+        return m_Locked > 0 ? true : false;
+    }
+        
 }//qor
-
-#endif//QOR_PP_H_SYNC_OBJECT

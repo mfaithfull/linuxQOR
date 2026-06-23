@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FRAMEWORK_TASK_SINGLE_PRODUCER_SEQUENCER
 #define QOR_PP_H_FRAMEWORK_TASK_SINGLE_PRODUCER_SEQUENCER
 
-#include "src/qor/sync/sequencebarrier.h"
+#include "src/framework/parallel/sync/sequencebarrier.h"
 #include "sequencerange.h"
 
 namespace qor{

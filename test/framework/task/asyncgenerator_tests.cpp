@@ -29,7 +29,7 @@
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
 #include "src/framework/parallel/task/generator/asyncgenerator.h"
-#include "src/qor/sync/singleconsumerevent.h"
+#include "src/framework/parallel/sync/singleconsumerevent.h"
 #include "src/framework/parallel/task/task.h"
 #include "src/framework/parallel/task/syncwait.h"
 #include "src/framework/parallel/task/whenall.h"

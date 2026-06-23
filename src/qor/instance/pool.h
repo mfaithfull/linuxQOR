@@ -29,8 +29,8 @@
 #include <list>
 #include "src/qor/reference/reference.h"
 #include "src/qor/factory/factory.h"
-#include "src/qor/sync/recursive_mutex.h"
-#include "src/qor/sync/lock.h"
+#include "src/framework/parallel/sync/recursive_mutex.h"
+#include "src/framework/parallel/sync/lock.h"
 
 //The pool instancer gives out one of a limited pool of reusable resources
 

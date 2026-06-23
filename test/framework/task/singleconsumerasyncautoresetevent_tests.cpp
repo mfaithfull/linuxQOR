@@ -30,7 +30,7 @@
 
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/qor/sync/singleconsumerasyncautoresetevent.h"
+#include "src/framework/parallel/sync/singleconsumerasyncautoresetevent.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/framework/parallel/thread/currentthread.h"
@@ -41,7 +41,7 @@
 #include "src/framework/parallel/task/syncwait.h"
 #include "src/framework/parallel/task/whenall.h"
 #include "src/framework/parallel/task/whenallready.h"
-#include "src/qor/sync/onscopeexit.h"
+#include "src/framework/parallel/sync/onscopeexit.h"
 
 using namespace qor;
 using namespace qor::test;

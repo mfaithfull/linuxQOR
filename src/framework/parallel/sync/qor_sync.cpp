@@ -23,29 +23,18 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "recursive_mutex.h"
+#include <buildnumber.h>
+#include "src/qor/module/module.h"
 
-namespace qor{
-
-    RecursiveMutex::RecursiveMutex(): m_Locked {0}
-    {
-    }
-
-    void RecursiveMutex::Acquire()
-    {        
-        m_Impl.lock();
-        m_Locked++;
-    }
-
-    void RecursiveMutex::Release()
-    {   
-        m_Locked--;
-        m_Impl.unlock();        
-    }
-    
-    bool RecursiveMutex::IsLocked() const
-    {
-        return m_Locked > 0 ? true : false;
-    }
-        
-}//qor
+extern "C"
+{
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Synchronisation Primitives Module", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
+		return QORModule;
+	}
+}

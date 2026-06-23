@@ -27,7 +27,7 @@
 
 #include <string>
 
-#include "src/qor/sync/recursive_mutex.h"
+#include "src/framework/parallel/sync/recursive_mutex.h"
 
 #include "platformimpl.h"
 

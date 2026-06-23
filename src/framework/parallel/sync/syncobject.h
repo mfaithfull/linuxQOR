@@ -22,19 +22,25 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
-#include <buildnumber.h>
-#include "../module/module.h"
+#ifndef QOR_PP_H_SYNC_OBJECT
+#define QOR_PP_H_SYNC_OBJECT
 
-extern "C"
-{
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Synchronisation Primitives Module", 
-			qor_pp_stringize(qor_pp_ver_major) "." \
-			qor_pp_stringize(qor_pp_ver_minor) "." \
-			qor_pp_stringize(qor_pp_ver_patch) "." \
-			qor_pp_stringize(qor_pp_buildnumber));
-		return QORModule;
-	}
-}
+
+namespace qor{
+		
+    class qor_pp_module_interface(QOR_SYNC) SyncObject
+    {
+    public:
+
+        SyncObject() = default;
+        virtual ~SyncObject() = default;
+
+        virtual void Acquire(void) = 0;
+        virtual void Release(void) = 0;
+        virtual bool IsLocked(void) const {return false;}
+
+    };
+
+}//qor
+
+#endif//QOR_PP_H_SYNC_OBJECT

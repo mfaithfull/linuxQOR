@@ -27,7 +27,7 @@
 #include <cassert>
 
 #include "asyncioservice.h"
-#include "src/qor/sync/onscopeexit.h"
+#include "src/framework/parallel/sync/onscopeexit.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/threadpool.h"
 

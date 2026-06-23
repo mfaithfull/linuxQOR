@@ -32,9 +32,9 @@
 #include "src/qor/log/important.h"
 #include "src/qor/log/imperative.h"
 #include "src/qor/log/defaultloghandler.h"
-#include "src/qor/sync/sync.h"
-#include "src/qor/sync/mutex.h"
-#include "src/qor/sync/recursive_mutex.h"
-#include "src/qor/sync/nullsection.h"
+#include "src/framework/parallel/sync/sync.h"
+#include "src/framework/parallel/sync/mutex.h"
+#include "src/framework/parallel/sync/recursive_mutex.h"
+#include "src/framework/parallel/sync/nullsection.h"
 
 #endif//QOR_PP_H_SDK_QOR

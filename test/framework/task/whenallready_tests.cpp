@@ -35,7 +35,7 @@
 #include "src/framework/parallel/task/task.h"
 #include "src/framework/parallel/task/sharedtask.h"
 #include "src/framework/parallel/task/syncwait.h"
-#include "src/qor/sync/asyncmanualresetevent.h"
+#include "src/framework/parallel/sync/asyncmanualresetevent.h"
 
 #include "counted.h"
 

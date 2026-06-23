@@ -35,7 +35,7 @@
 #include "src/framework/parallel/thread/threadpool.h"
 #include "asynciointerface.h"
 #include "src/qor/log/informative.h"
-#include "src/qor/sync/mutex.h"
+#include "src/framework/parallel/sync/mutex.h"
 
 namespace qor { namespace async{
   

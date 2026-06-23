@@ -31,7 +31,7 @@
 #include "src/qor/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/factory/externalfactory.h"
-#include "src/qor/sync/asyncmanualresetevent.h"
+#include "src/framework/parallel/sync/asyncmanualresetevent.h"
 #include "src/framework/parallel/task/task.h"
 #include "src/framework/parallel/task/syncwait.h"
 #include "src/framework/io/iodescriptor.h"

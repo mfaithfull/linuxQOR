@@ -26,7 +26,7 @@
 #define QOR_PP_H_FLYERREF
 
 #include <atomic>
-#include "src/qor/sync/sync.h"
+#include "src/framework/parallel/sync/sync.h"
 #include "src/qor/instance/instance.h"
 #include "src/qor/memory/memory.h"
 

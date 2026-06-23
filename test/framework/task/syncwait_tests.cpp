@@ -38,7 +38,7 @@
 #include "src/framework/parallel/thread/currentprocess.h"
 #include "src/framework/parallel/task/task.h"
 #include "src/framework/parallel/task/sharedtask.h"
-#include "src/qor/sync/onscopeexit.h"
+#include "src/framework/parallel/sync/onscopeexit.h"
 
 using namespace qor;
 using namespace qor::test;

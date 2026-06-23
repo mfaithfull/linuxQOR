@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_SYNC_WAIT
 #define QOR_PP_H_SYNC_WAIT
 
-#include "src/qor/sync/lightweightmanualresetevent.h"
+#include "src/framework/parallel/sync/lightweightmanualresetevent.h"
 #include "src/framework/parallel/task/detail/syncwaittask.h"
 #include "src/framework/parallel/task/awaitabletraits.h"
 
