@@ -34,13 +34,14 @@
 #include "src/qor/instance/singleton.h"
 #include "src/platform/platform.h"
 #include "irunable.h"
+#include "../optionparser/ioptionable.h"
 
 #define qor_pp_declare_app_class(_MYAPP)\
 private: static qor::SingletonRedirector<qor::Application, _MYAPP> m_sRedirect;
 
 namespace qor{
 
-    class qor_pp_module_interface(QOR_APPLICATION) Application
+    class qor_pp_module_interface(QOR_APPLICATION) Application : public app::IOptionable
     {
     public:
 
@@ -120,6 +121,13 @@ namespace qor{
             }
             return result;
         }
+
+		virtual const char* ProvideShortOptionString();
+		virtual app::Option* ProvideLongOptions();
+		virtual void ReceiveOptionSwitch(char c);
+		virtual void ReceiveOptionParameter(char c, const char*);
+		virtual void ReceiveLongOption(const char* option, const char* value);
+		virtual void ReceiveNonOption(const char* parameter);
 
     private:
 

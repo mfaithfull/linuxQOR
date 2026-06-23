@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "src/qor/error/error.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 #include "src/platform/os/linux/ui/x/egl/eglsession.h"
 #include "src/platform/os/linux/ui/x/egl/eglwindow.h"
 #include "src/platform/os/linux/ui/x/xlib/xlib.h"

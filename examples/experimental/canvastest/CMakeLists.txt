@@ -3,7 +3,7 @@ set(target canvastest)
 add_executable(${target} main.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
-target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE qor_pp_ver_project=${PROJECT_VERSION})
+target_compile_definitions(${target} PRIVATE  qor_pp_ver_project=${PROJECT_VERSION})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_egl qor_opengles qor_renderer qor_canvas 

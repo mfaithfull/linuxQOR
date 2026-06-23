@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 #include "opengles.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 #include "src/components/ui/egl/egl.h"
 #include "src/components/ui/egl/display.h"
 #include "src/components/ui/egl/window.h"

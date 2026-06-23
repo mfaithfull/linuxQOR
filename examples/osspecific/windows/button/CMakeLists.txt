@@ -6,7 +6,7 @@ add_executable(${target} button.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE true)
-target_compile_definitions(${target} PRIVATE WINDOWS UNICODE _UNICODE QOR_PP_EXECUTABLE 
+target_compile_definitions(${target} PRIVATE WINDOWS UNICODE _UNICODE  
 qor_pp_ver_project=${PROJECT_VERSION})
 
 target_link_libraries(${target} winqor_exebootstrap qor_module qor_host qor_compiler qor_platform winqor_api_kernel winqor_api_shell winqor_common winqor_gui

@@ -87,4 +87,36 @@ namespace qor{
         return result;
     }
 
+    const char* Application::ProvideShortOptionString()
+    {
+        return "?";
+    }
+
+    app::Option* Application::ProvideLongOptions()
+    {
+        static app::Option longOptions[] =
+        {
+            //NAME      ARGUMENT				           FLAG	        SHORTNAME
+            {"usage",   app::Option::required_argument,    nullptr,     'u'},
+            {nullptr,   0,						           nullptr,     0}
+        };
+        return longOptions;
+    }
+
+    void Application::ReceiveOptionSwitch(char c)
+    {
+    }
+
+    void Application::ReceiveOptionParameter(char c, const char*)
+    {
+    }
+
+    void Application::ReceiveLongOption(const char* option, const char* value)
+    {
+    }
+
+    void Application::ReceiveNonOption(const char* parameter)
+    {
+    }
+
 }//qor

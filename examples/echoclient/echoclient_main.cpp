@@ -26,7 +26,7 @@
 #include "src/qor/module/module.h"
 #include "src/platform/platform.h"
 #include "src/framework/io/network/sockets.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/components/qor/logaggregator/logaggregator.h"

@@ -27,7 +27,7 @@
 
 #include "option.h"
 
-namespace qor{ namespace app{ namespace optparser {
+namespace qor{ namespace app{
 
     struct Context
     {
@@ -40,6 +40,6 @@ namespace qor{ namespace app{ namespace optparser {
 		bool m_RaiseErrors;
     };
 
-}}}//qor::app::optparser
+}}//qor::app
 
 #endif//QOR_PP_H_OPTIONPARSER_CONTEXT

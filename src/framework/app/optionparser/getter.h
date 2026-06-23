@@ -35,7 +35,7 @@
 
 #include <string.h>
 
-namespace qor{ namespace app{ namespace optparser {
+namespace qor{ namespace app{
 
 	class qor_pp_module_interface(QOR_OPTIONPARSER) OptionGetter
 	{
@@ -73,6 +73,6 @@ namespace qor{ namespace app{ namespace optparser {
 
 	};
 
-}}}//qor::app::optparser
+}}//qor::app
 
 #endif//QOR_PP_H_OPTIONPARSER_GETTER

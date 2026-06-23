@@ -29,7 +29,7 @@ target_include_directories(${target} PRIVATE
 /usr/include/glib-2.0 
 /usr/lib/x86_64-linux-gnu/glib-2.0/include)
 
-target_compile_definitions(${target} PRIVATE QOR_PP_EXECUTABLE
+target_compile_definitions(${target} PRIVATE 
 qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})

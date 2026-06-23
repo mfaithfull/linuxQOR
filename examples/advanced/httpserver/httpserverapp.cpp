@@ -65,7 +65,7 @@ int main(const int argc, const char** argv, char** env)
             ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
             ThePlatform(qor_shared)->AddSubsystem<Sockets>();
 
-            app::optparser::OptionGetter options(argc, argv, server(qor_shared));
+            app::OptionGetter options(argc, argv, server(qor_shared));
 
             server->SetRole<Role>(
                 [](ref_of<IRole>::type role)
@@ -123,16 +123,16 @@ const char* HTTPServerApp::ProvideShortOptionString()
     return "p";
 }
 
-app::optparser::Option* HTTPServerApp::ProvideLongOptions()
+app::Option* HTTPServerApp::ProvideLongOptions()
 {
-    static app::optparser::Option longOptions[] =
+    static app::Option longOptions[] =
     {
     //   NAME       ARGUMENT				                    FLAG	SHORTNAME
-        {"port",    app::optparser::Option::required_argument,       nullptr, 'p'},
-        {"threads", app::optparser::Option::required_argument,       nullptr, 't'},
-        {"io",      app::optparser::Option::required_argument,       nullptr, 'o'},
-        {"logpath", app::optparser::Option::required_argument,    nullptr, 'l'},
-        {"url",     app::optparser::Option::required_argument,        nullptr, 'u'},
+        {"port",    app::Option::required_argument,       nullptr, 'p'},
+        {"threads", app::Option::required_argument,       nullptr, 't'},
+        {"io",      app::Option::required_argument,       nullptr, 'o'},
+        {"logpath", app::Option::required_argument,    nullptr, 'l'},
+        {"url",     app::Option::required_argument,        nullptr, 'u'},
         {nullptr,   0,						                    nullptr, 0}
     };
     return longOptions;

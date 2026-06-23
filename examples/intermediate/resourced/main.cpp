@@ -34,7 +34,7 @@
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/resources/resourcehub.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 #include "src/framework/app/optionparser/getter.h"
 #include "rdapp.h"
 #include "src/framework/app/role/getfeature.h"
@@ -82,7 +82,7 @@ int main(const int argc, const char** argv, char** env)
         [argc,argv,env](ref_of<ResourcedApp>::type app)
         {   
             /*Parse the options from the command line and pass them to the ResourcedApp*/
-            qor::components::optparser::OptionGetter options(argc, argv, app(qor_shared));
+            qor::app::OptionGetter options(argc, argv, app(qor_shared));
         }
     )->SetRole<Role>(
         [&logHandler](ref_of<IRole>::type role)

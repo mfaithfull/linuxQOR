@@ -31,7 +31,7 @@
 #include "option.h"
 #include "argument_iterator.h"
 
-namespace qor{ namespace app{ namespace optparser {
+namespace qor{ namespace app{
 
     //Helper to match long options
     class LongOptInterpretter
@@ -299,6 +299,6 @@ namespace qor{ namespace app{ namespace optparser {
 
     };
 
-}}}//qor::app::optparser
+}}//qor::app
 
 #endif//QOR_PP_H_OPTIONPARSER_LONGOPTIONINTERPRETTER

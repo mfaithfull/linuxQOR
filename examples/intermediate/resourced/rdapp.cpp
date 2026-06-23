@@ -33,12 +33,12 @@ const char* ResourcedApp::ProvideShortOptionString()
     return "f";
 }
 
-qor::components::optparser::Option* ResourcedApp::ProvideLongOptions()
+qor::app::Option* ResourcedApp::ProvideLongOptions()
 {
-    static qor::components::optparser::Option longOptions[] =
+    static qor::app::Option longOptions[] =
     {
     //   NAME       ARGUMENT				                    FLAG	SHORTNAME
-        {"file",    qor::components::optparser::Option::required_argument,       nullptr, 'f'},
+        {"file",    qor::app::Option::required_argument,       nullptr, 'f'},
         {nullptr,   0,						                    nullptr, 0}
     };
     return longOptions;

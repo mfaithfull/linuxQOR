@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OPTIONPARSER_OPTION
 #define QOR_PP_H_OPTIONPARSER_OPTION
 
-namespace qor{ namespace app{ namespace optparser {
+namespace qor{ namespace app{
 
     struct Option
     {
@@ -39,6 +39,6 @@ namespace qor{ namespace app{ namespace optparser {
         int val;
     };
 
-}}}//qor::app::optparser
+}}//qor::app
 
 #endif//QOR_PP_H_OPTIONPARSER_OPTION

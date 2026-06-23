@@ -27,7 +27,7 @@
 
 #include "getter.h"
 
-namespace qor{ namespace app{ namespace optparser {
+namespace qor{ namespace app{
 	
 	OptionGetter::OptionGetter(const int argc, const char** argv) : nonOpts(itArgument), 
     longOptioninterpretter(m_optionsContext, shortOptionInterpretter, itArgument)
@@ -283,4 +283,4 @@ namespace qor{ namespace app{ namespace optparser {
 		m_optionsContext.m_pNextChar = nullptr;
 	}
 
-}}}//qor::app::optparser
+}}//qor::app

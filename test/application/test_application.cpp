@@ -29,7 +29,7 @@
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/platform/platform.h"
 #include "src/framework/io/filesystem/filesystem.h"

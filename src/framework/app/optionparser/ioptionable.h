@@ -27,16 +27,13 @@
 
 #include "option.h"
 
-namespace qor{ namespace app{ namespace optparser {
+namespace qor{ namespace app{
 
     //Implement this interface to be able to get command line options passed to your application
     class IOptionable
 	{
 	public:
 		
-		IOptionable() = default;
-		virtual ~IOptionable() = default;
-
 		virtual const char* ProvideShortOptionString() = 0;
 		virtual Option* ProvideLongOptions() = 0;
 		virtual void ReceiveOptionSwitch(char c) = 0;
@@ -45,6 +42,6 @@ namespace qor{ namespace app{ namespace optparser {
 		virtual void ReceiveNonOption(const char* parameter) = 0;
 	};
 
-}}}//qor::app::optparser
+}}//qor::app
 
 #endif//QOR_PP_H_OPTIONPARSER_INTERFACE

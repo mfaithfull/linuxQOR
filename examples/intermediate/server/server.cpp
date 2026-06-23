@@ -32,12 +32,12 @@ const char* Server::ProvideShortOptionString()
     return "f";
 }
 
-optparser::Option* Server::ProvideLongOptions()
+Option* Server::ProvideLongOptions()
 {
-    static optparser::Option longOptions[] =
+    static Option longOptions[] =
     {
     //   NAME       ARGUMENT				                    FLAG	SHORTNAME
-        {"file",    optparser::Option::required_argument,       nullptr, 'f'},
+        {"file",    Option::required_argument,       nullptr, 'f'},
         {nullptr,   0,						                    nullptr, 0}
     };
     return longOptions;

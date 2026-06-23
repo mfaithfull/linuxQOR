@@ -51,7 +51,7 @@ int main(const int argc, const char** argv, char** env)
     return AppBuilder().Build<Server>(Server::Name,
         [argc,argv,env](ref_of<Server>::type server)
         {
-            optparser::OptionGetter options(argc, argv, server(qor_shared));
+            app::OptionGetter options(argc, argv, server(qor_shared));
         }
     )->SetRole<Role>(
         [&logHandler](ref_of<IRole>::type role)

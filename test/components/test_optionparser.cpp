@@ -37,7 +37,7 @@ using namespace qor::test;
 struct OptionParserTestSuite{};
 
 
-class TestOptionable : public app::optparser::IOptionable
+class TestOptionable : public app::IOptionable
 {
 private:
 
@@ -57,17 +57,17 @@ public:
     TestOptionable() = default;
     virtual ~TestOptionable() = default;
 
-    virtual app::optparser::Option* ProvideLongOptions()
+    virtual app::Option* ProvideLongOptions()
 	{
-		static app::optparser::Option longOptions[] =
+		static app::Option longOptions[] =
 		{
 		/*   NAME       ARGUMENT				                FLAG	SHORTNAME */
-			{"add",     app::optparser::Option::required_argument, nullptr, 0},
-			{"append",  app::optparser::Option::no_argument,       nullptr, 0},
-			{"delete",  app::optparser::Option::required_argument, nullptr, 0},
-			{"verbose", app::optparser::Option::no_argument,       nullptr, 0},
-			{"create",  app::optparser::Option::required_argument, nullptr, 'c'},
-			{"file",    app::optparser::Option::required_argument, nullptr, 0},
+			{"add",     app::Option::required_argument, nullptr, 0},
+			{"append",  app::Option::no_argument,       nullptr, 0},
+			{"delete",  app::Option::required_argument, nullptr, 0},
+			{"verbose", app::Option::no_argument,       nullptr, 0},
+			{"create",  app::Option::required_argument, nullptr, 'c'},
+			{"file",    app::Option::required_argument, nullptr, 0},
 			{nullptr,   0,						              nullptr, 0}
 		};
 		return longOptions;
@@ -144,7 +144,7 @@ qor_pp_test_suite_case(OptionParserTestSuite, canRetrieveOptionalPrameters)
 {
     const char* args[] = {"the program name goes here", "-a", "-b", "--create", "fog", "--file", "C:\\data\\somename.duf", "-2", "-d6"};
     TestOptionable testOptionable;
-    app::optparser::OptionGetter optionGetter(9, args);
+    app::OptionGetter optionGetter(9, args);
     optionGetter.SetOptions(testOptionable.ProvideShortOptionString(), testOptionable.ProvideLongOptions());
     optionGetter.GetOptions(testOptionable, false, false);
 }

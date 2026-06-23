@@ -26,7 +26,7 @@
 #include "display.h"
 #include "context.h"
 #include "constants.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 #include "egl.h"
 
 namespace qor { namespace components{

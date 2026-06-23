@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_MODEL_APPLICATION
 
 #include "model.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 
 namespace qor{ namespace components{
 

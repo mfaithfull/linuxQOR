@@ -35,7 +35,7 @@
 #include "src/qor/log/impactful.h"
 #include "src/qor/log/important.h"
 #include "src/qor/log/imperative.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/parallel/task/syncwait.h"

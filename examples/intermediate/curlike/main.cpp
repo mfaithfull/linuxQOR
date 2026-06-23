@@ -34,7 +34,7 @@
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/app/role/role.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "workflow.h"
 

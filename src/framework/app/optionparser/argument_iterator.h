@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-namespace qor{ namespace app{ namespace optparser {
+namespace qor{ namespace app{
 
     //Manages the walk through the elements of argv parameter as passed to main
     class arg_iter
@@ -163,6 +163,6 @@ namespace qor{ namespace app{ namespace optparser {
 
     };
 
-}}}//qor::app::optparser
+}}//qor::app
 
 #endif//QOR_PP_H_OPTIONPARSER_ARGITERATOR

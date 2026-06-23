@@ -27,7 +27,7 @@
 
 #include "argument_iterator.h"
 
-namespace qor{ namespace app{ namespace optparser {
+namespace qor{ namespace app{
 
     //Keeps track of any non option parameters, juggling them to the end of the list
     //Augments the functionality of the argument iterator
@@ -147,6 +147,6 @@ namespace qor{ namespace app{ namespace optparser {
 		int m_LastNonOpt;//'last_nonopt' is the index after the last of them.
     };
 
-}}}//qor::app::optparser
+}}//qor::app
 
 #endif//QOR_PP_H_OPTIONPARSER_NONOPTTRACKER

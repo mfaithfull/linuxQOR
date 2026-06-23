@@ -32,7 +32,7 @@
 #include "src/qor/sync/recursive_mutex.h"
 #include "src/framework/app/optionparser/ioptionable.h"
 
-class ResourcedApp : public qor::framework::Application, public qor::components::optparser::IOptionable
+class ResourcedApp : public qor::Application
 {
 
 public:
@@ -44,7 +44,7 @@ public:
 
     //IOptionable interface
     virtual const char* ProvideShortOptionString();                         //Implement to tell the parser what short options we support
-    virtual qor::components::optparser::Option* ProvideLongOptions();       //Implement to tell the parser what long options we support
+    virtual qor::app::Option* ProvideLongOptions();       //Implement to tell the parser what long options we support
     virtual void ReceiveOptionSwitch(char c){}                              //Implement to receive switch options
     virtual void ReceiveOptionParameter(char c, const char* value);         //Implement to receive options parameters
     virtual void ReceiveLongOption(const char* option, const char* value);  //Implement to receive long options

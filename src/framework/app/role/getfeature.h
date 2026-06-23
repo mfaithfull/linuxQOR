@@ -30,7 +30,7 @@
 //Application class has been defined.
 
 #include "src/qor/reference/reference.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 
 namespace qor{
     template< class TFeature >

@@ -28,7 +28,7 @@
 
 #include "egldisplay.h"
 #include "src/platform/os/linux/ui/x/xlib/xlib.h"
-#include "src/framework/app/application/application_builder.h"
+#include "src/framework/app/application/builder.h"
 
 namespace qor{ namespace ui { namespace lin{ namespace x{
 

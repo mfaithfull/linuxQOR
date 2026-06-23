@@ -28,7 +28,7 @@
 #include "src/framework/app/application/application.h"
 #include "src/framework/app/optionparser/ioptionable.h"
 
-class EchoServerApp : public qor::Application, public qor::app::optparser::IOptionable
+class EchoServerApp : public qor::Application
 {
 public:
 
@@ -37,7 +37,7 @@ public:
         
         //IOptionable interface
         virtual const char* ProvideShortOptionString();
-        virtual qor::app::optparser::Option* ProvideLongOptions();
+        virtual qor::app::Option* ProvideLongOptions();
         virtual void ReceiveOptionSwitch(char c){}
         virtual void ReceiveOptionParameter(char c, const char* value);
         virtual void ReceiveLongOption(const char* option, const char* value);
