@@ -1,0 +1,5 @@
+add_subdirectory(deserializer)
+add_subdirectory(generator)
+add_subdirectory(network)
+add_subdirectory(parser)
+add_subdirectory(pipeline)

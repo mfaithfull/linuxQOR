@@ -3,8 +3,8 @@
 
 #include "sdk/using_qor.h"
 
-#include "src/components/framework/loghandler/loghandler.h"
-#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/components/qor/loghandler/loghandler.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 
 using namespace qor::components;
 

@@ -29,7 +29,7 @@
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
-#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/components/network/server/netserver.h"
 #include "src/components/protocols/http/protocol.h"
 #include "httpserverapp.h"

@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/error/error.h"
 
-#include "src/platform/os/linux/wayland/client/output.h"
+#include "src/platform/os/linux/ui/wayland/client/output.h"
 
 #include "feedbacklistener.h"
 #include "../feedback.h"

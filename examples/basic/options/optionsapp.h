@@ -33,7 +33,7 @@
 /*To customise the Application class we derive from it.
 Here we add the IOptionable interface to declare our derived
 Application as something that can receive options*/
-class OptionsApp : public Application, public optparser::IOptionable
+class OptionsApp : public Application, public app::optparser::IOptionable
 {
 private:
 

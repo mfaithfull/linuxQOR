@@ -1,8 +1,0 @@
-add_subdirectory(optionparser)
-add_subdirectory(pipeline)
-add_subdirectory(console)
-add_subdirectory(roles)
-add_subdirectory(logaggregator)
-add_subdirectory(loghandler)
-add_subdirectory(ui)
-add_subdirectory(terminal)

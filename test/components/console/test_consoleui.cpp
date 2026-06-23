@@ -30,13 +30,13 @@
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/components/framework/console/console.h"
-#include "src/components/framework/console/consolerenderer.h"
-#include "src/components/framework/console/consolecompositor.h"
-#include "src/components/framework/console/consolewidget.h"
-#include "src/components/framework/console/consoleviewcontroller.h"
-#include "src/components/framework/console/consolecolumnwidget.h"
-#include "src/components/framework/console/consolemenuwidget.h"
+#include "src/components/ui/console/console.h"
+#include "src/components/ui/console/consolerenderer.h"
+#include "src/components/ui/console/consolecompositor.h"
+#include "src/components/ui/console/consolewidget.h"
+#include "src/components/ui/console/consoleviewcontroller.h"
+#include "src/components/ui/console/consolecolumnwidget.h"
+#include "src/components/ui/console/consolemenuwidget.h"
 
 using namespace qor;
 using namespace qor::test;

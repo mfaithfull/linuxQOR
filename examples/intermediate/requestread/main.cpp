@@ -27,9 +27,9 @@
 #include "sdk/using_framework.h"
 #include "sdk/using_platform.h"
 #include "sdk/components/framework.h"
-#include "src/components/json/parser.h"
-#include "src/components/json/nodes/object.h"
-#include "src/components/framework/pipeline/sinks/parsersink/parsersink.h"
+#include "src/components/protocols/json/parser.h"
+#include "src/components/protocols/json/nodes/object.h"
+#include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
 #include "requestreader.h"
 
 const char* appName = "HTTPRequest Read";

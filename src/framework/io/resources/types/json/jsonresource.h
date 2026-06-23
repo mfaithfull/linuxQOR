@@ -30,7 +30,7 @@
 #include "../../resource.h"
 #include "src/framework/io/filesystem/path.h"
 #include "src/framework/io/filesystem/fileindex.h"
-#include "src/components/json/model/object.h"
+#include "src/components/protocols/json/model/object.h"
 
 namespace qor{ namespace framework{ namespace res {
 

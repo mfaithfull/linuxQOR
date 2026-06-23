@@ -26,9 +26,9 @@
 #include "src/qor/error/error.h"
 
 #include "xdgtoplevel.h"
-#include "src/platform/os/linux/wayland/client/output.h"
-#include "src/platform/os/linux/wayland/client/seat.h"
-#include "src/platform/os/linux/wayland/client/session.h"
+#include "src/platform/os/linux/ui/wayland/client/output.h"
+#include "src/platform/os/linux/ui/wayland/client/seat.h"
+#include "src/platform/os/linux/ui/wayland/client/session.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>

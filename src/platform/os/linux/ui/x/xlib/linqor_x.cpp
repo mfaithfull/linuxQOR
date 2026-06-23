@@ -45,7 +45,7 @@ extern "C"
 			qor_pp_stringize(qor_pp_buildnumber));
 
 		//Register the Linux specific implementations
-		static qor::TypeRegEntry< qor::platform::lin::XClient, qor::platform::lin::XClient > regXClient;
+		static qor::TypeRegEntry< qor::ui::lin::XClient, qor::ui::lin::XClient > regXClient;
 		return QORModule;
 	}
 }

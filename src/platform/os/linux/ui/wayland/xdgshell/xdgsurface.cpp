@@ -29,8 +29,8 @@
 #include "xdgtoplevel.h"
 #include "xdgpopup.h"
 #include "xdgpositioner.h"
-#include "src/platform/os/linux/wayland/client/session.h"
-#include "src/platform/os/linux/wayland/client/surface.h"
+#include "src/platform/os/linux/ui/wayland/client/session.h"
+#include "src/platform/os/linux/ui/wayland/client/surface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>

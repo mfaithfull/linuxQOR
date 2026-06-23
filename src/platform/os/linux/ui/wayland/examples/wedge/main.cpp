@@ -31,17 +31,17 @@
 #include <string.h>
 
 #include "sdk/using_framework.h"
-#include "src/components/framework/ui/egl/egl.h"
-#include "src/components/framework/ui/egl/display.h"
-#include "src/components/framework/ui/egl/context.h"
-#include "src/components/framework/ui/egl/window.h"
-#include "src/components/framework/ui/egl/session.h"
+#include "src/components/ui/egl/egl.h"
+#include "src/components/ui/egl/display.h"
+#include "src/components/ui/egl/context.h"
+#include "src/components/ui/egl/window.h"
+#include "src/components/ui/egl/session.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
 #include "src/components/framework/ui/renderer/thor.h"
 
 #include "sdk/platform/os/linux/wayland.h"
-#include "src/platform/os/linux/wayland/egl/eglwindow.h"
+#include "src/platform/os/linux/ui/wayland/egl/eglwindow.h"
 #include "src/platform/os/linux/egl/display.h"
 #include "src/qor/delegate/bindmember.h"
 

@@ -43,7 +43,7 @@
 
 qor_pp_module_provide(QOR_LINX, XClient)
 
-namespace qor{ namespace platform { namespace lin{
+namespace qor{ namespace ui { namespace lin{
 
     int XClient::HandleLibErrors(void* display, ErrorEvent* errEvent)
     {
@@ -89,4 +89,4 @@ namespace qor{ namespace platform { namespace lin{
         return XFree(data);
     }
 
-}}}//qor::platform::lin
+}}}//qor::ui::lin

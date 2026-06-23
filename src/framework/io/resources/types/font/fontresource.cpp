@@ -27,7 +27,7 @@
 #include "src/framework/io/filesystem/folder.h"
 #include "fontresource.h"
 #include "reader.h"
-#include "src/components/framework/pipeline/connectors/fileconnector/fileconnector.h"
+#include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
 
 namespace qor{ namespace framework{ namespace res {
 

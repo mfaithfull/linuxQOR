@@ -31,7 +31,7 @@
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
-#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
+#include "src/platform/os/linux/ui/wayland/xdgshell/listeners/xdgsurfacelistener.h"
 #include "xdgwindow.h"
 
 namespace qor{ namespace ui { namespace lin{ namespace wl{

@@ -4,10 +4,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "src/components/framework/ui/egl/egl.h"
-#include "src/components/framework/ui/egl/display.h"
-#include "src/components/framework/ui/egl/context.h"
-#include "src/components/framework/ui/egl/window.h"
+#include "src/components/ui/egl/egl.h"
+#include "src/components/ui/egl/display.h"
+#include "src/components/ui/egl/context.h"
+#include "src/components/ui/egl/window.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
 #include "src/components/framework/ui/opengles/glwindow.h"

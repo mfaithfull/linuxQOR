@@ -26,8 +26,8 @@
 #include "src/configuration/configuration.h"
 
 #include "fieldparser.h"
-#include "src/components/parser/nodes/digit.h"
-#include "src/components/parser/nodes/char.h"
+#include "src/components/io/parser/nodes/digit.h"
+#include "src/components/io/parser/nodes/char.h"
 #include "nodes/token.h"
 #include "nodes/fieldcontent.h"
 #include "nodes/field.h"

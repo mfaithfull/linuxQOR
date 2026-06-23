@@ -28,17 +28,16 @@
 
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/components/framework/optionparser/getter.h"
+#include "src/framework/app/optionparser/getter.h"
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::components;
 
 
 struct OptionParserTestSuite{};
 
 
-class TestOptionable : public optparser::IOptionable
+class TestOptionable : public app::optparser::IOptionable
 {
 private:
 
@@ -58,17 +57,17 @@ public:
     TestOptionable() = default;
     virtual ~TestOptionable() = default;
 
-    virtual optparser::Option* ProvideLongOptions()
+    virtual app::optparser::Option* ProvideLongOptions()
 	{
-		static optparser::Option longOptions[] =
+		static app::optparser::Option longOptions[] =
 		{
 		/*   NAME       ARGUMENT				                FLAG	SHORTNAME */
-			{"add",     optparser::Option::required_argument, nullptr, 0},
-			{"append",  optparser::Option::no_argument,       nullptr, 0},
-			{"delete",  optparser::Option::required_argument, nullptr, 0},
-			{"verbose", optparser::Option::no_argument,       nullptr, 0},
-			{"create",  optparser::Option::required_argument, nullptr, 'c'},
-			{"file",    optparser::Option::required_argument, nullptr, 0},
+			{"add",     app::optparser::Option::required_argument, nullptr, 0},
+			{"append",  app::optparser::Option::no_argument,       nullptr, 0},
+			{"delete",  app::optparser::Option::required_argument, nullptr, 0},
+			{"verbose", app::optparser::Option::no_argument,       nullptr, 0},
+			{"create",  app::optparser::Option::required_argument, nullptr, 'c'},
+			{"file",    app::optparser::Option::required_argument, nullptr, 0},
 			{nullptr,   0,						              nullptr, 0}
 		};
 		return longOptions;
@@ -145,7 +144,7 @@ qor_pp_test_suite_case(OptionParserTestSuite, canRetrieveOptionalPrameters)
 {
     const char* args[] = {"the program name goes here", "-a", "-b", "--create", "fog", "--file", "C:\\data\\somename.duf", "-2", "-d6"};
     TestOptionable testOptionable;
-    optparser::OptionGetter optionGetter(9, args);
+    app::optparser::OptionGetter optionGetter(9, args);
     optionGetter.SetOptions(testOptionable.ProvideShortOptionString(), testOptionable.ProvideLongOptions());
     optionGetter.GetOptions(testOptionable, false, false);
 }

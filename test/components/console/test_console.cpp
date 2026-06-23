@@ -30,7 +30,7 @@
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/components/framework/console/console.h"
+#include "src/components/ui/console/console.h"
 
 using namespace qor;
 using namespace qor::test;

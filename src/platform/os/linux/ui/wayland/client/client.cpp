@@ -32,7 +32,7 @@
 
 qor_pp_module_provide(QOR_LINWAYLAND, WaylandClient)
 
-namespace qor{ namespace platform { namespace lin{
+namespace qor{ namespace ui { namespace lin{
 
     void WaylandClient::Setup()
     {        
@@ -52,4 +52,4 @@ namespace qor{ namespace platform { namespace lin{
         return qor::new_ref<wl::Display>(fd);
     }
 
-}}}//qor::platform::lin
+}}}//qor::ui::lin

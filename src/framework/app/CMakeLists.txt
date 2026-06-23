@@ -1,5 +1,6 @@
 add_subdirectory(application)
 add_subdirectory(dynamiclibrary)
 add_subdirectory(host)
+add_subdirectory(optionparser)
 add_subdirectory(role)
 add_subdirectory(workflow)

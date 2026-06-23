@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "iouringeventprocessor.h"
-#include "src/platform/os/linux/framework/asyncioservice/asyncioservice.h"
+#include "src/platform/os/linux/parallel/asyncioservice/asyncioservice.h"
 #include "src/qor/error/error.h"
 #include "src/qor/log//informative.h"
 

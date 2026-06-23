@@ -25,12 +25,12 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORPARSER
 #define QOR_PP_H_EXAMPLES_ECHOCLIENT_ECHORPARSER
 
-#include "src/components/parser/state.h"
-#include "src/components/parser/rfc5234.h"
-#include "src/components/parser/tokens.h"
-#include "src/components/parser/parser.h"
-#include "src/components/parser/oneormore.h"
-#include "src/components/parser/nodes/char.h"
+#include "src/components/io/parser/state.h"
+#include "src/components/io/parser/rfc5234.h"
+#include "src/components/io/parser/tokens.h"
+#include "src/components/io/parser/parser.h"
+#include "src/components/io/parser/oneormore.h"
+#include "src/components/io/parser/nodes/char.h"
 
 enum class echoResponseToken : uint64_t
 {

@@ -26,7 +26,7 @@
 #include <iostream>
 #include "echoclientworkflow.h"
 #include "src/platform/platform.h"
-#include "src/components/framework/console/console.h"
+#include "src/components/ui/console/console.h"
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/log/debug.h"
 #include "src/qor/log/informative.h"

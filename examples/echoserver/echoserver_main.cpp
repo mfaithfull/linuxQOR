@@ -5,11 +5,11 @@
 #include "src/framework/app/application/application_builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/components/framework/optionparser/getter.h"
+#include "src/framework/app/optionparser/getter.h"
 #include "src/framework/io/pipeline/pipeline.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
-#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/qor/instance/pool.h"
 
 #include "echoserverapp.h"
@@ -20,7 +20,7 @@
 using namespace qor;
 using namespace qor::platform;
 using namespace qor::components;
-using namespace qor::components::optparser;
+using namespace qor::app::optparser;
 using namespace qor::pipeline;
 using namespace qor::network;
 using namespace qor::log;

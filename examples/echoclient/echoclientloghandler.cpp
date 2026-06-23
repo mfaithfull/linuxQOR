@@ -27,7 +27,7 @@
 #include <iostream>
 #include "src/qor/error/error.h"
 #include "echoclientloghandler.h"
-#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/qor/reflection/reflection.h"
 
 ClientLogHandler::ClientLogHandler(qor::log::Level logLevel) : qor::components::LogHandler(logLevel)

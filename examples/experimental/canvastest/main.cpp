@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "sdk/using_framework.h"
-#include "src/components/framework/ui/egl/egl.h"
+#include "src/components/ui/egl/egl.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/canvas/canvas.h"
 #include "src/components/framework/ui/layout/elements.h"

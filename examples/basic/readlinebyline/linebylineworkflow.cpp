@@ -26,12 +26,12 @@
 #include "src/platform/platform.h"
 #include "src/framework/io/pipeline/podbuffer.h"
 #include "src/framework/io/pipeline/pipeline.h"
-#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
-#include "src/components/framework/pipeline/connectors/fileconnector/fileconnector.h"
-#include "src/components/framework/pipeline/connectors/fileconnector/filesource.h"
+#include "src/components/io/pipeline/sinks/stdoutsink/stdoutsink.h"
+#include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
+#include "src/components/io/pipeline/connectors/fileconnector/filesource.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "linebylineworkflow.h"
-#include "src/components/framework/pipeline/filters/linereader/linereader.h"
+#include "src/components/io/pipeline/filters/linereader/linereader.h"
 
 using namespace qor;
 using namespace qor::workflow;

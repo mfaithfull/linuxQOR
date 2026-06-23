@@ -25,11 +25,11 @@
 #include "src/configuration/configuration.h"
 
 #include "sdk/using_framework.h"
-#include "src/components/framework/ui/egl/egl.h"
-#include "src/components/framework/ui/egl/surface.h"
-#include "src/components/framework/ui/egl/context.h"
-#include "src/components/framework/ui/egl/window.h"
-#include "src/components/framework/ui/egl/session.h"
+#include "src/components/ui/egl/egl.h"
+#include "src/components/ui/egl/surface.h"
+#include "src/components/ui/egl/context.h"
+#include "src/components/ui/egl/window.h"
+#include "src/components/ui/egl/session.h"
 #include "src/components/framework/ui/opengles/opengles.h"
 #include "src/components/framework/ui/opengles/constants.h"
 

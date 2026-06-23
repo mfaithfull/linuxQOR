@@ -30,7 +30,7 @@
 #include "src/qor/instance/singleton.h"
 #include "src/framework/app/application/application.h"
 #include "src/qor/sync/recursive_mutex.h"
-#include "src/components/framework/optionparser/ioptionable.h"
+#include "src/framework/app/optionparser/ioptionable.h"
 
 class ResourcedApp : public qor::framework::Application, public qor::components::optparser::IOptionable
 {

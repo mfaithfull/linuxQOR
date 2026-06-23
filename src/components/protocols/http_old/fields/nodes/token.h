@@ -28,7 +28,7 @@
 #include "src/configuration/configuration.h"
 
 #include <string>
-#include "src/components/parser/parser.h"
+#include "src/components/io/parser/parser.h"
 #include "src/components/protocols/http/fields/fieldparser.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {

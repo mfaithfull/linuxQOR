@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/components/parser/parser.h"
+#include "src/components/io/parser/parser.h"
 #include "pct_encodedtoken.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {

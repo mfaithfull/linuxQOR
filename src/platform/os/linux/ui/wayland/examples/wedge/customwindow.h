@@ -26,7 +26,7 @@
 #define QOR_PP_H_LINUX_WAYLAND_EXAMPLES_CUSTOMWINDOW
 
 #include "sdk/platform/os/linux/wayland.h"
-#include "src/platform/os/linux/wayland/egl/eglwindow.h"
+#include "src/platform/os/linux/ui/wayland/egl/eglwindow.h"
 
 class CustomWindow : public EGLWindowWrapper<wl::WEGLWindow>
 {

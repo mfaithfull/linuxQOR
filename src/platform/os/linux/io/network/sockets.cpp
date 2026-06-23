@@ -31,8 +31,8 @@
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/platform/os/linux/network/sockets.h"
-#include "src/platform/os/linux/network/socket.h"
+#include "src/platform/os/linux/io/network/sockets.h"
+#include "src/platform/os/linux/io/network/socket.h"
 
 qor_pp_module_provide(LINQOR_SOCKETS,Sockets)
 

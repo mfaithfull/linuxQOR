@@ -23,11 +23,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "sdk/using_framework.h"
-#include "src/components/framework/ui/egl/egl.h"
-#include "src/components/framework/ui/egl/display.h"
-#include "src/components/framework/ui/egl/context.h"
-#include "src/components/framework/ui/egl/window.h"
-#include "src/components/framework/ui/egl/session.h"
+#include "src/components/ui/egl/egl.h"
+#include "src/components/ui/egl/display.h"
+#include "src/components/ui/egl/context.h"
+#include "src/components/ui/egl/window.h"
+#include "src/components/ui/egl/session.h"
 
 #include <string>
 #include <sstream>

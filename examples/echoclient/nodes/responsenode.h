@@ -28,7 +28,7 @@
 #include <string>
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
-#include "src/components/parser/parser.h"
+#include "src/components/io/parser/parser.h"
 #include "../echoresponseparser.h"
 #include "../echoresponse.h"
 

@@ -31,8 +31,9 @@
 #include "src/qor/reference/newref.h"
 #include "src/qor/interception/functioncontext.h"
 
-#include "src/platform/os/linux/wayland/client/callback.h"
-#include "src/platform/os/linux/wayland/xdgshell/xdgtoplevelwindow.h"
+#include "src/platform/os/linux/ui/wayland/client/callback.h"
+#include "src/platform/os/linux/ui/wayland/xdgshell/xdgtoplevelwindow.h"
+#include "src/platform/os/linux/ui/wayland/xdgshell/xdgwmbase.h"
 
 struct wl_egl_window;
 

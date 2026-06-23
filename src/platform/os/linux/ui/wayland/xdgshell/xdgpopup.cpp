@@ -28,7 +28,7 @@
 #include "xdgpopup.h"
 #include "xdgpositioner.h"
 #include "xdgpopupwindow.h"
-#include "src/platform/os/linux/wayland/client/seat.h"
+#include "src/platform/os/linux/ui/wayland/client/seat.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>

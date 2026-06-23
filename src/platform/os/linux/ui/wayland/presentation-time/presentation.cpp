@@ -28,7 +28,7 @@
 #include "presentation.h"
 #include "feedback.h"
 
-#include "src/platform/os/linux/wayland/client/surface.h"
+#include "src/platform/os/linux/ui/wayland/client/surface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>

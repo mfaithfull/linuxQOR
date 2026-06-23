@@ -25,8 +25,8 @@
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
-#include "src/platform/os/linux/wayland/client/keyboard.h"
-#include "src/platform/os/linux/wayland/client/controllers/keyboardcontroller.h"
+#include "src/platform/os/linux/ui/wayland/client/keyboard.h"
+#include "src/platform/os/linux/ui/wayland/client/controllers/keyboardcontroller.h"
 
 class eltSession;
 

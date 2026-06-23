@@ -28,7 +28,7 @@
 #include <string>
 #include "src/framework/app/application/application_builder.h"
 
-class Images final : public qor::framework::Application
+class Images final : public qor::Application
 {
     qor_pp_declare_app_class(Images);
 

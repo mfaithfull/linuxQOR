@@ -25,11 +25,11 @@
 #ifndef QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER
 #define QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER
 
-#include "src/components/json/parser.h"
-#include "src/components/json/nodes/object.h"
+#include "src/components/protocols/json/parser.h"
+#include "src/components/protocols/json/nodes/object.h"
 #include "src/framework/io/pipeline/podbuffer.h"
 #include "src/framework/io/pipeline/pipeline.h"
-#include "src/components/framework/pipeline/sinks/parsersink/parsersink.h"
+#include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
 
 namespace qor{ namespace framework{ namespace res {
 

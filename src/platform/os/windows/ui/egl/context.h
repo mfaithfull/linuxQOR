@@ -26,7 +26,7 @@
 #define QOR_PP_H_WINDOWS_EGL_CONTEXT
 
 #include "display.h"
-#include "src/components/framework/ui/egl/context.h"
+#include "src/components/ui/egl/context.h"
 
 //All types on this interface must be portable
 namespace qor{ namespace platform { namespace win{ 

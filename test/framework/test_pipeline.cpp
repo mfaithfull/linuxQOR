@@ -32,11 +32,11 @@
 #include "src/framework/io/pipeline/podbuffer.h"
 #include "src/framework/io/pipeline/copyfilter.h"
 #include "src/framework/io/pipeline/iosource.h"
-#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
-#include "src/components/framework/pipeline/sources/stringsource/stringsource.h"
-#include "src/components/framework/pipeline/filters/base64encodefilter/base64encodefilter.h"
-#include "src/components/framework/pipeline/filters/base64decodefilter/base64decodefilter.h"
-#include "src/components/framework/pipeline/sinks/stringsink/stringsink.h"
+#include "src/components/io/pipeline/sinks/stdoutsink/stdoutsink.h"
+#include "src/components/io/pipeline/sources/stringsource/stringsource.h"
+#include "src/components/io/pipeline/filters/base64encodefilter/base64encodefilter.h"
+#include "src/components/io/pipeline/filters/base64decodefilter/base64decodefilter.h"
+#include "src/components/io/pipeline/sinks/stringsink/stringsink.h"
 
 using namespace qor;
 using namespace qor::test;

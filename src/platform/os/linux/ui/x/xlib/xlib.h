@@ -34,7 +34,7 @@
 namespace qor{ bool qor_pp_module_interface(QOR_LINX) ImplementsXClient(); }
 
 //All types on this interface must be portable
-namespace qor{ namespace platform { namespace lin{
+namespace qor{ namespace ui { namespace lin{
     
     namespace x {class qor_pp_module_interface(QOR_LINX) Display; }//x
 
@@ -74,8 +74,8 @@ namespace qor{ namespace platform { namespace lin{
     }}
 
     constexpr GUID XClientGUID = {0x8adf8a00, 0xa678, 0x4f3c, {0x9d, 0x04, 0xeb, 0x1e, 0xeb, 0x36, 0x25, 0x54}};
-    qor_pp_declare_guid_of(platform::lin::XClient,XClientGUID);
+    qor_pp_declare_guid_of(ui::lin::XClient,XClientGUID);
 
-}//qor::platform::lin
+}//qor::ui::lin
 
 #endif//QOR_PP_H_LINUX_X

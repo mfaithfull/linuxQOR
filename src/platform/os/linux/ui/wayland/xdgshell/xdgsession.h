@@ -30,13 +30,13 @@
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
-#include "src/platform/os/linux/wayland/client/session.h"
-#include "src/platform/os/linux/wayland/client/keyboard.h"
-#include "src/platform/os/linux/wayland/client/pointer.h"
-#include "src/platform/os/linux/wayland/client/touch.h"
-#include "src/platform/os/linux/wayland/client/listeners/keyboardlistener.h"
-#include "src/platform/os/linux/wayland/client/listeners/pointerlistener.h"
-#include "src/platform/os/linux/wayland/client/listeners/touchlistener.h"
+#include "src/platform/os/linux/ui/wayland/client/session.h"
+#include "src/platform/os/linux/ui/wayland/client/keyboard.h"
+#include "src/platform/os/linux/ui/wayland/client/pointer.h"
+#include "src/platform/os/linux/ui/wayland/client/touch.h"
+#include "src/platform/os/linux/ui/wayland/client/listeners/keyboardlistener.h"
+#include "src/platform/os/linux/ui/wayland/client/listeners/pointerlistener.h"
+#include "src/platform/os/linux/ui/wayland/client/listeners/touchlistener.h"
 
 namespace qor{ namespace ui { namespace lin{ namespace wl{
 
@@ -52,7 +52,7 @@ namespace qor{ namespace ui { namespace lin{ namespace wl{
     {
     public:
         XDGSession(ref_of<Display>::type display);
-        virtual ~XDGSession();
+        virtual ~XDGSession() = default;
 
         void End() { m_ended = true; }
         bool Ended() { return m_ended; }

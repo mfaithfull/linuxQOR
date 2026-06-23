@@ -34,8 +34,8 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/io/pipeline/pipeline.h"
 #include "src/framework/io/pipeline/podbuffer.h"
-#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
-#include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
+#include "src/components/io/pipeline/sinks/stdoutsink/stdoutsink.h"
+#include "src/components/io/pipeline/sources/stdinsource/stdinsource.h"
 #include "src/framework/io/pipeline/source.h"
 
 using namespace qor;

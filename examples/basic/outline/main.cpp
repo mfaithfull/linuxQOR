@@ -34,7 +34,7 @@ namespace so be more specific with your includes for a
 
 #include "sdk/using_framework.h"
 #include "src/qor/module/moduleregistry.h"  //exceptional include not provided by the SDK, inernal header for module introspection only.
-#include "src/framework/host/host.h"        //exceptional include not provided by the SDK, inernal header for module introspection only.
+#include "src/framework/app/host/host.h"        //exceptional include not provided by the SDK, inernal header for module introspection only.
 
 /*For conveniece we provide one global and immutable definition of the application name*/
 constexpr const char* appName = "Outline";

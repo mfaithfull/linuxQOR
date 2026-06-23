@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "echoserverapp.h"
 
-using namespace qor::components::optparser;
+using namespace qor::app::optparser;
 
 const char* EchoServerApp::ProvideShortOptionString()
 {
@@ -34,10 +34,10 @@ const char* EchoServerApp::ProvideShortOptionString()
 
 Option* EchoServerApp::ProvideLongOptions()
 {
-    static qor::components::optparser::Option longOptions[] =
+    static qor::app::optparser::Option longOptions[] =
     {
     //   NAME       ARGUMENT				                                FLAG	SHORTNAME
-        {"port",    qor::components::optparser::Option::required_argument, nullptr, 'p'},
+        {"port",    qor::app::optparser::Option::required_argument, nullptr, 'p'},
         {nullptr,   0,						                               nullptr, 0}
     };
     return longOptions;

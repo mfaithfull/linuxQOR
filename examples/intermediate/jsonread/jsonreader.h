@@ -25,7 +25,7 @@
 #include "sdk/using_framework.h"
 #include "sdk/using_platform.h"
 #include "sdk/components/framework.h"
-#include "src/components/json/parser/_3/object.h"
+#include "src/components/protocols/json/parser/_3/object.h"
 
 template< class JasonPartObjectT, class JasonModelObjectT >
 class JSONPartReader

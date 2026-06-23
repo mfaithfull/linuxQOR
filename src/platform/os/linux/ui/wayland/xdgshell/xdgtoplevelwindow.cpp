@@ -26,12 +26,12 @@
 
 #include "src/qor/error/error.h"
 
-#include "src/platform/os/linux/wayland/client/compositor.h"
-#include "src/platform/os/linux/wayland/client/surface.h"
-#include "src/platform/os/linux/wayland/client/display.h"
-#include "src/platform/os/linux/wayland/client/registry.h"
-#include "src/platform/os/linux/wayland/client/seat.h"
-#include "src/platform/os/linux/wayland/client/session.h"
+#include "src/platform/os/linux/ui/wayland/client/compositor.h"
+#include "src/platform/os/linux/ui/wayland/client/surface.h"
+#include "src/platform/os/linux/ui/wayland/client/display.h"
+#include "src/platform/os/linux/ui/wayland/client/registry.h"
+#include "src/platform/os/linux/ui/wayland/client/seat.h"
+#include "src/platform/os/linux/ui/wayland/client/session.h"
 
 #include "xdgwmbase.h"
 #include "xdgsurface.h"

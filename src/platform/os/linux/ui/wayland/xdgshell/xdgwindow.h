@@ -30,8 +30,8 @@
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
-#include "src/platform/os/linux/wayland/client/session.h"
-#include "src/platform/os/linux/wayland/client/keyboard.h"
+#include "src/platform/os/linux/ui/wayland/client/session.h"
+#include "src/platform/os/linux/ui/wayland/client/keyboard.h"
 
 namespace qor{ namespace ui { namespace lin{ namespace wl{
 

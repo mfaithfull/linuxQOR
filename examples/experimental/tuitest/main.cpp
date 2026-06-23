@@ -23,13 +23,13 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "sdk/using_framework.h"
-#include "src/components/framework/terminal/dom/elements.h"
-#include "src/components/framework/terminal/dom/node.h"
-#include "src/components/framework/terminal/screen/colour.h"
-#include "src/components/framework/terminal/screen/screen.h"
-#include "src/components/framework/terminal/screen/termscreen.h"
-#include "src/components/framework/terminal/ui/component.h"
-#include "src/components/framework/terminal/ui/screeninteractive.h"
+#include "src/components/ui/terminal/dom/elements.h"
+#include "src/components/ui/terminal/dom/node.h"
+#include "src/components/ui/terminal/screen/colour.h"
+#include "src/components/ui/terminal/screen/screen.h"
+#include "src/components/ui/terminal/screen/termscreen.h"
+#include "src/components/ui/terminal/ui/component.h"
+#include "src/components/ui/terminal/ui/screeninteractive.h"
 
 
 #include <string>

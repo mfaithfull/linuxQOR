@@ -45,7 +45,7 @@ using namespace qor;
 using namespace qor::workflow;
 using namespace qor::pipeline;
 using namespace qor::platform;
-using namespace qor::components::optparser;
+using namespace qor::app::optparser;
 using namespace qor::network;
 using namespace qor::network::sockets;
 

@@ -27,8 +27,8 @@
 
 #include "sdk/using_framework.h"
 #include "sdk/components/network.h"
-#include "src/components/framework/pipeline/sources/stdinsource/stdinsource.h"
-#include "src/components/framework/pipeline/sinks/stdoutsink/stdoutsink.h"
+#include "src/components/io/pipeline/sources/stdinsource/stdinsource.h"
+#include "src/components/io/pipeline/sinks/stdoutsink/stdoutsink.h"
 
 class ClientWorkflow : public Workflow
 {

@@ -35,9 +35,9 @@
 #include "src/framework/app/role/role.h"
 #include "src/platform/platform.h"
 #include "src/framework/io/filesystem/filesystem.h"
-#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/app/application/application_builder.h"
-#include "src/components/framework/optionparser/getter.h"
+#include "src/framework/app/optionparser/getter.h"
 #include "src/framework/app/role/getfeature.h"
 #include "src/framework/event/events/eventsource.h"
 #include "src/framework/event/events/eventsink.h"
@@ -80,7 +80,7 @@ struct customEvent
     }
 };
 
-int main(const int argc, const char** argv, char** env)
+int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
 {    
     qor_pp_fcontext;
     DefaultLogHandler logHandler(log::Level::Debug);

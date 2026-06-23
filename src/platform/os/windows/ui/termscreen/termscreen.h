@@ -28,7 +28,7 @@
 #include <string>
 
 #define QOR_PP_IMPLEMENTS_TERMSCREEN
-#include "src/components/framework/terminal/screen/termscreen.h"
+#include "src/components/ui/terminal/screen/termscreen.h"
 
 namespace qor{ bool qor_pp_module_interface(QOR_WINTERMSCREEN) ImplementsTermScreenFeature(); }
 

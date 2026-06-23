@@ -25,11 +25,11 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTPARSER_TOKENTOKEN
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTPARSER_TOKENTOKEN
 
-#include "src/components/parser/state.h"
-#include "src/components/parser/states/rfc5234.h"
+#include "src/components/io/parser/state.h"
+#include "src/components/io/parser/states/rfc5234.h"
 #include "tokendefs.h"
-#include "src/components/parser/states/oneormore.h"
-#include "src/components/parser/nodes/char.h"
+#include "src/components/io/parser/states/oneormore.h"
+#include "src/components/io/parser/nodes/char.h"
 #include "tchartoken.h"
 #include "nodes/tokennode.h"
 #include "nodes/methodnode.h"

@@ -36,7 +36,7 @@ namespace qor{ bool qor_pp_module_interface(QOR_LINWAYLAND) ImplementsWaylandCli
 struct wl_display;
 
 //All types on this interface must be portable
-namespace qor{ namespace platform { namespace lin{
+namespace qor{ namespace ui { namespace lin{
     
     namespace wl{ class qor_pp_module_interface(QOR_LINWAYLAND) Display;}//wl
 
@@ -59,8 +59,8 @@ namespace qor{ namespace platform { namespace lin{
     }}
     
     constexpr GUID WaylandClientGUID = {0x6cc53713, 0xbb78, 0x4782, {0xb3, 0x1c, 0xbb, 0xdf, 0xdd, 0x32, 0xf4, 0x69}};
-    qor_pp_declare_guid_of(platform::lin::WaylandClient,WaylandClientGUID);
+    qor_pp_declare_guid_of(ui::lin::WaylandClient,WaylandClientGUID);
 
-}//qor::platform::lin
+}//qor::ui::lin
 
 #endif//QOR_PP_H_LINUX_WAYLAND

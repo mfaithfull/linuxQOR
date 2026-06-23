@@ -26,12 +26,12 @@
 
 #include "src/qor/error/error.h"
 
-#include "src/platform/os/linux/wayland/client/compositor.h"
-#include "src/platform/os/linux/wayland/client/surface.h"
-#include "src/platform/os/linux/wayland/client/display.h"
-#include "src/platform/os/linux/wayland/client/registry.h"
-#include "src/platform/os/linux/wayland/client/seat.h"
-#include "src/platform/os/linux/wayland/client/session.h"
+#include "src/platform/os/linux/ui/wayland/client/compositor.h"
+#include "src/platform/os/linux/ui/wayland/client/surface.h"
+#include "src/platform/os/linux/ui/wayland/client/display.h"
+#include "src/platform/os/linux/ui/wayland/client/registry.h"
+#include "src/platform/os/linux/ui/wayland/client/seat.h"
+#include "src/platform/os/linux/ui/wayland/client/session.h"
 
 #include "xdgwmbase.h"
 #include "xdgsurface.h"
@@ -51,7 +51,7 @@ namespace qor{ namespace ui { namespace lin{ namespace wl{
         auto xdgWmBaseInfo = GetGlobal("xdg_wm_base");
         if(xdgWmBaseInfo)
         {            
-            m_xdgWmBase = new_ref<qor::platform::lin::wl::XDGWMBase>(m_Registry, xdgWmBaseInfo->Name, xdgWmBaseInfo->Version); //Use the XDG WM Base Extension info returned earlier to bind the extension object.
+            m_xdgWmBase = new_ref<qor::ui::lin::wl::XDGWMBase>(m_Registry, xdgWmBaseInfo->Name, xdgWmBaseInfo->Version); //Use the XDG WM Base Extension info returned earlier to bind the extension object.
             m_xdgWmBase->AddListener(m_xdgWmBaseListener, nullptr);//Add a listener to handle incoming from the XDG WM Base Extension
 
             auto seats = GetSeats();
@@ -130,10 +130,6 @@ namespace qor{ namespace ui { namespace lin{ namespace wl{
         {
             serious("XDGSession failed to initialise. No xdg_wm_base Wayland protocol object available.");
         }
-    }
-
-    XDGSession::~XDGSession()
-    {
     }
 
     int XDGSession::Run()

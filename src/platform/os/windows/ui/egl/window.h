@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_WINDOWS_EGL_WINDOW
 #define QOR_PP_H_WINDOWS_EGL_WINDOW
 
-#include "src/components/framework/ui/egl/window.h"
-#include "src/components/framework/ui/egl/context.h"
+#include "src/components/ui/egl/window.h"
+#include "src/components/ui/egl/context.h"
 
 #include "src/platform/os/windows/common/stringconv.h"
 #include "src/platform/os/windows/common/structures.h"

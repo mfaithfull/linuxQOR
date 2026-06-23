@@ -27,7 +27,7 @@
 
 #include <vector>
 #include <termios.h>
-#include "src/components/framework/console/iconsole.h"
+#include "src/components/ui/console/iconsole.h"
 
 namespace qor
 {

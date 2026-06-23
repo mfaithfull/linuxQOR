@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_WINDOWS_COMPONENTS_CONSOLE
 #define QOR_PP_H_OS_WINDOWS_COMPONENTS_CONSOLE
 
-#include "src/components/framework/console/iconsole.h"
+#include "src/components/ui/console/iconsole.h"
 #include "consolehelper.h"
 
 namespace qor

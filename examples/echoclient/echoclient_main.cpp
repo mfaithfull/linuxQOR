@@ -29,7 +29,7 @@
 #include "src/framework/app/application/application_builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/currentthread.h"
-#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/framework/io/filesystem/path.h"
 

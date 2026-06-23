@@ -37,7 +37,7 @@
 #include "src/qor/log/imperative.h"
 #include "src/framework/app/application/application_builder.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
-#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/parallel/task/syncwait.h"
 #include "echoserverapp.h"
 #include "clientsessionworkflow.h"

@@ -25,8 +25,8 @@
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 
-#include "src/platform/os/linux/wayland/client/pointer.h"
-#include "src/platform/os/linux/wayland/client/controllers/pointercontroller.h"
+#include "src/platform/os/linux/ui/wayland/client/pointer.h"
+#include "src/platform/os/linux/ui/wayland/client/controllers/pointercontroller.h"
 
 class eltSession;
 

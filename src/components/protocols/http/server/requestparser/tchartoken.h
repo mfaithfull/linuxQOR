@@ -28,14 +28,14 @@
 #include <map>
 
 #include "src/qor/log/log.h"
-#include "src/components/parser/state.h"
-#include "src/components/parser/states/rfc5234.h"
+#include "src/components/io/parser/state.h"
+#include "src/components/io/parser/states/rfc5234.h"
 #include "tokendefs.h"
-#include "src/components/parser/parser.h"
-#include "src/components/parser/states/oneormore.h"
-#include "src/components/parser/states/anyoneofset.h"
-#include "src/components/parser/nodes/char.h"
-#include "src/components/parser/nodes/digit.h"
+#include "src/components/io/parser/parser.h"
+#include "src/components/io/parser/states/oneormore.h"
+#include "src/components/io/parser/states/anyoneofset.h"
+#include "src/components/io/parser/nodes/char.h"
+#include "src/components/io/parser/nodes/digit.h"
 #include "nodes/tcharnode.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {

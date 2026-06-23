@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_LOGHANDLER
 #define QOR_PP_H_EXAMPLES_ECHOSERVER_LOGHANDLER
 
-#include "src/components/framework/loghandler/loghandler.h"
+#include "src/components/qor/loghandler/loghandler.h"
 
 class ServerLogHandler : public qor::components::LogHandler
 {

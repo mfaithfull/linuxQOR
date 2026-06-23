@@ -30,7 +30,7 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/io/pipeline/podbuffer.h"
 #include "src/framework/io/pipeline/pipeline.h"
-#include "src/components/framework/pipeline/sinks/deserializersink/deserializersink.h"
+#include "src/components/io/pipeline/sinks/deserializersink/deserializersink.h"
 #include "src/components/deserializer/state.h"
 #include "ttfobject.h"
 #include "reader/designator.h"

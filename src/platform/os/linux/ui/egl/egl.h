@@ -28,11 +28,11 @@
 #include <string>
 
 #define QOR_PP_IMPLEMENTS_EGL
-#include "src/components/framework/ui/egl/egl.h"
-#include "src/components/framework/ui/egl/display.h"
-#include "src/components/framework/ui/egl/context.h"
-#include "src/components/framework/ui/egl/window.h"
-#include "src/components/framework/ui/egl/session.h"
+#include "src/components/ui/egl/egl.h"
+#include "src/components/ui/egl/display.h"
+#include "src/components/ui/egl/context.h"
+#include "src/components/ui/egl/window.h"
+#include "src/components/ui/egl/session.h"
 #include <EGL/egl.h>
 
 namespace qor{ bool qor_pp_module_interface(QOR_LINEGL) ImplementsEGLFeature(); }

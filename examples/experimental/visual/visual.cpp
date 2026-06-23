@@ -30,7 +30,7 @@
 #include "src/qor/error/error.h"
 #include "src/qor/log/defaultloghandler.h"
 #include "src/framework/app/role/role.h"
-#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/framework/ui/desktopui/desktopui.h"
 #include "src/framework/ui/desktopui/windows/mainwindow.h"

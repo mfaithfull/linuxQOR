@@ -34,8 +34,8 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/io/pipeline/pipeline.h"
 #include "src/framework/io/pipeline/podbuffer.h"
-#include "src/components/framework/pipeline/sources/stdifstreamsource/stdifstreamsource.h"
-#include "src/components/framework/pipeline/sources/stdifstreamsource/stdifstreamreader.h"
+#include "src/components/io/pipeline/sources/stdifstreamsource/stdifstreamsource.h"
+#include "src/components/io/pipeline/sources/stdifstreamsource/stdifstreamreader.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/filesystem.h"
 

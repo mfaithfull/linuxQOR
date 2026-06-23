@@ -138,7 +138,7 @@ namespace qor{ namespace ui { namespace lin{ namespace x{
         FontInfoHolder& operator = (FontInfoHolder& src) = delete;
         ~FontInfoHolder();
 
-        std::vector<qor::platform::lin::x::Font> vecFonts;
+        std::vector<qor::ui::lin::x::Font> vecFonts;
 
     private:
         FontStruct* m_fontInfo;

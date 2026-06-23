@@ -28,16 +28,16 @@
 #include "xdgwmbase.h"
 #include "xdgsurface.h"
 #include "xdgpositioner.h"
-#include "src/platform/os/linux/wayland/client/registry.h"
-#include "src/platform/os/linux/wayland/client/surface.h"
+#include "src/platform/os/linux/ui/wayland/client/registry.h"
+#include "src/platform/os/linux/ui/wayland/client/surface.h"
 
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 #include "xdg-shell.h"
-#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgpopuplistener.h"
-#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgsurfacelistener.h"
-#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgtoplevellistener.h"
-#include "src/platform/os/linux/wayland/xdgshell/listeners/xdgwmbaselistener.h"
+#include "src/platform/os/linux/ui/wayland/xdgshell/listeners/xdgpopuplistener.h"
+#include "src/platform/os/linux/ui/wayland/xdgshell/listeners/xdgsurfacelistener.h"
+#include "src/platform/os/linux/ui/wayland/xdgshell/listeners/xdgtoplevellistener.h"
+#include "src/platform/os/linux/ui/wayland/xdgshell/listeners/xdgwmbaselistener.h"
 #include "xdgsession.h"
 
 namespace qor{ namespace ui { namespace lin{ namespace wl{

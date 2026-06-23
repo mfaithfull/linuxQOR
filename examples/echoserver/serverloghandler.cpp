@@ -28,7 +28,7 @@
 #include <format>
 #include "src/qor/error/error.h"
 #include "serverloghandler.h"
-#include "src/components/framework/logaggregator/logaggregator.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 
 ServerLogHandler::ServerLogHandler(qor::log::Level logLevel) : qor::components::LogHandler(logLevel)
 {

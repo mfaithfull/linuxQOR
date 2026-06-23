@@ -25,10 +25,10 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTPARSER_PATH_ROOTLESSTOKEN
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTPARSER_PATH_ROOTLESSTOKEN
 
-#include "src/components/parser/state.h"
-#include "src/components/parser/states/rfc5234.h"
-#include "src/components/parser/states/oneormore.h"
-#include "src/components/parser/nodes/char.h"
+#include "src/components/io/parser/state.h"
+#include "src/components/io/parser/states/rfc5234.h"
+#include "src/components/io/parser/states/oneormore.h"
+#include "src/components/io/parser/nodes/char.h"
 #include "../tokendefs.h"
 #include "../nodes/path_rootlessnode.h"
 #include "segment_nztoken.h"
