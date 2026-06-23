@@ -11,11 +11,12 @@ replace the built in QOR Role completely.*/
 class CustomRole : public Role
 {
 public:
-    CustomRole() = default;
+    CustomRole();
     virtual ~CustomRole() = default;
 
     virtual void Setup();
     virtual void Shutdown();
+
     /*It's also possible to override AddFeature but unlikely you'd ever need to.
     unless you really need to do something highly custom on every feature add.
     In almost all cases the Setup function on the individual Feature is a better

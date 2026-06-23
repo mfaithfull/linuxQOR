@@ -15,11 +15,7 @@ class App : public Application
 {
 private:
 
-    /*There are some arcane requirements that come with overriding the 
-    default application class.
-    Because Application is a singleton we must redirect the Application
-    factory to use the OptionsApp Factory at static initialisation time*/
-    static SingletonRedirector<Application, App> m_sRedirect;
+    qor_pp_declare_app_class(App)
 
 public:
 

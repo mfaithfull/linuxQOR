@@ -11,11 +11,11 @@
 /*QOR Applications each have a Role. The Role is a container of Features.
 The Role manages the Setup and Shutdown of the Features*/
 
-/*Here we include a custom Role class. This is not usually needed as the 
+/*Include a custom Role class. This is not usually needed as the 
 base Role class is usually sufficient*/
 #include "customrole.h"
 
-/*Here we include a custom Feature class. You can implement the features
+/*Include a custom Feature class. You can implement the features
 of your application as custom QOR Features or just use the builtin ones
 and add your own way to manage custom functionality*/
 #include "customfeature.h"
@@ -42,21 +42,8 @@ int main()
                 
         [](ref_of<IRole>::type role)        //Note: Whatever the derived type of your Role you'll always get an IRole interface on this customisation point
         {
-                                            //Here we configure the Role by adding features
-            role->AddFeature<ThreadPool>(   //We add a ThreadPool.
-
-                //Added features can be customised by passing a lamda
-                //as a customisation point just like for Applications and Roles
-                [](ref_of<ThreadPool>::type threadPool)->void
-                {                    
-                    threadPool->SetThreadCount(4);  //Customise the thread pool with 4 threads
-                    /*Now we are going to have more than one thread showing up in the debugger
-                    It's time to name the one we're running on now, to idenify it.*/
-                    CurrentThread::Get().SetName("Main thread");
-                }
-            );
-
-            //You can add whatever Features you need including of course custom features
+            //Here we configure the Role by adding features
+            //You can add whatever Features you need including custom features
             role->AddFeature<CustomFeature>(
                 //These get customisation points just like builtin Featues
                 [](ref_of<CustomFeature>::type customFeature)->void
@@ -70,23 +57,23 @@ int main()
         {
             /*The Application Role and Features are all shared objects
             so we need to access them with synchronisation. 
-            Application is a singleton that is really our custom App class.
+            Application is a singleton that is really our App class.
             The AppBuilder provides a way to get the instance from anywhere.
-            We have to request conversion to a custom App reference
+            We have to request conversion to an App reference
             Then get the Role and retrieve from it our CustomFeature by
             it's unique ID. We know it's real type so we can ask for the
             reference to be converted into a CustomFeature reference.
             Finally this gives us access to the SayHello function*/
             
             AppBuilder().TheApplication().//Gets the global Application
-            AsRef<App>(qor_shared)->//Converts the reference into an custom App reference
+            AsRef<App>(qor_shared)->//Converts the reference into an App reference
             GetRole(qor_shared)->//Gets the IRole interface on the CustomRole instance
             GetFeature(&CustomFeatureGUID).//Lookup the CustomFeature by it's unique ID
             AsRef<CustomFeature>(qor_shared)->//Convert the reference from an IFeature to a CustomFeature
             SayHello();
 
             /*This is clearly massive overkill for a one line program but
-            you aren't building a one line program.*/
+            you likely aren't building a one line program.*/
 
             return EXIT_SUCCESS;
         });

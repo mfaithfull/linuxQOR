@@ -9,4 +9,4 @@ the single App instance
 This makes it safe for QOR code to use new_ref<Application>() to access
 the App instance without needing to know about App iff
 it is derived from Application*/
-SingletonRedirector<Application, App> App::m_sRedirect;
+qor_pp_redirect_app_class(App)
