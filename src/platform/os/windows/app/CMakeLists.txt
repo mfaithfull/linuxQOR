@@ -1,3 +1,4 @@
 add_subdirectory(dynamiclibrary)
 add_subdirectory(exebootstrap)
+add_subdirectory(process)
 add_subdirectory(sharedbootstrap)

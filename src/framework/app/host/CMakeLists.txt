@@ -11,7 +11,7 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")    
-    target_link_options(${target} PRIVATE "/ignore:4099")
+    target_link_options(${target} PRIVATE "/ignore:4217")
     target_link_libraries(${target} qor_module winqor_sharedbootstrap)
 endif()
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")

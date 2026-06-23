@@ -31,11 +31,11 @@
 #include "src/framework/app/application/application_builder.h"
 #include "src/framework/app/optionparser/getter.h"
 
-class HTTPServerApp : public qor::framework::Application, public qor::components::optparser::IOptionable
+class HTTPServerApp : public qor::Application, public qor::app::optparser::IOptionable
 {
 private:
 
-    static qor::SingletonRedirector<qor::framework::Application, HTTPServerApp> m_sRedirect;
+    static qor::SingletonRedirector<qor::Application, HTTPServerApp> m_sRedirect;
 
 public:
 
@@ -47,7 +47,7 @@ public:
 
     //IOptionable interface for command line options
     virtual const char* ProvideShortOptionString();                         //Implement to tell the parser what short options we support
-    virtual qor::components::optparser::Option* ProvideLongOptions();       //Implement to tell the parser what long options we support
+    virtual qor::app::optparser::Option* ProvideLongOptions();              //Implement to tell the parser what long options we support
     virtual void ReceiveOptionSwitch(char c){}                              //Implement to receive switch options
     virtual void ReceiveOptionParameter(char c, const char* value);         //Implement to receive options parameters
     virtual void ReceiveLongOption(const char* option, const char* value);  //Implement to receive long options

@@ -30,7 +30,7 @@
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
-#include "src/components/network/server/netserver.h"
+#include "src/components/io/network/server/netserver.h"
 #include "src/components/protocols/http/protocol.h"
 #include "httpserverapp.h"
 
@@ -38,7 +38,6 @@
 using namespace qor;
 using namespace qor::log;
 using namespace qor::platform;
-using namespace qor::framework;
 using namespace qor::network;
 using namespace qor::components;
 using namespace qor::components::protocols;
@@ -66,22 +65,22 @@ int main(const int argc, const char** argv, char** env)
             ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
             ThePlatform(qor_shared)->AddSubsystem<Sockets>();
 
-            optparser::OptionGetter options(argc, argv, server(qor_shared));
+            app::optparser::OptionGetter options(argc, argv, server(qor_shared));
 
             server->SetRole<Role>(
                 [](ref_of<IRole>::type role)
                 {
-                    role->AddFeature<ThreadPool>(
-                        [](ref_of<ThreadPool>::type threadPool)->void
+                    role->AddFeature<thread::ThreadPool>(
+                        [](ref_of<thread::ThreadPool>::type threadPool)->void
                         {
                             threadPool->SetThreadCount(8);
                             CurrentThread::Get().SetName("Main");
                         }                
                     );
-                    role->AddFeature<AsyncIOService>(
-                        [](ref_of<AsyncIOService>::type ioService)->void
+                    role->AddFeature<async::AsyncIOService>(
+                        [](ref_of<async::AsyncIOService>::type ioService)->void
                         {
-                            PoolInstancer::SetPoolSize<AsyncIOContext>(3);
+                            PoolInstancer::SetPoolSize<async::AsyncIOContext>(3);
                         }
                     );
                     role->AddFeature<LogAggregatorService>();
@@ -124,16 +123,16 @@ const char* HTTPServerApp::ProvideShortOptionString()
     return "p";
 }
 
-optparser::Option* HTTPServerApp::ProvideLongOptions()
+app::optparser::Option* HTTPServerApp::ProvideLongOptions()
 {
-    static optparser::Option longOptions[] =
+    static app::optparser::Option longOptions[] =
     {
     //   NAME       ARGUMENT				                    FLAG	SHORTNAME
-        {"port",    optparser::Option::required_argument,       nullptr, 'p'},
-        {"threads", optparser::Option::required_argument,       nullptr, 't'},
-        {"io",      optparser::Option::required_argument,       nullptr, 'o'},
-        {"logpath",    optparser::Option::required_argument,    nullptr, 'l'},
-        {"url",    optparser::Option::required_argument,        nullptr, 'u'},
+        {"port",    app::optparser::Option::required_argument,       nullptr, 'p'},
+        {"threads", app::optparser::Option::required_argument,       nullptr, 't'},
+        {"io",      app::optparser::Option::required_argument,       nullptr, 'o'},
+        {"logpath", app::optparser::Option::required_argument,    nullptr, 'l'},
+        {"url",     app::optparser::Option::required_argument,        nullptr, 'u'},
         {nullptr,   0,						                    nullptr, 0}
     };
     return longOptions;

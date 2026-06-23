@@ -28,8 +28,8 @@
 #include "src/framework/parallel/thread/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/io/iodescriptor.h"
-#include "src/platform/os/windows/network/sockets.h"
-#include "src/platform/os/windows/network/socket.h"
+#include "src/platform/os/windows/io/network/sockets.h"
+#include "src/platform/os/windows/io/network/socket.h"
 #include "src/qor/error/error.h"
 #include "src/framework/parallel/asyncioservice/asynciocontext.h"
 

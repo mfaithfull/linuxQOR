@@ -26,7 +26,7 @@
 
 #include "src/framework/parallel/thread/thread.h"
 #include "socket.h"
-#include "src/platform/os/windows/framework/asyncioservice/asyncioservice.h"
+#include "src/platform/os/windows/parallel/asyncioservice/asyncioservice.h"
 
 #include "src/platform/os/windows/api_layer/winsock2/ws2.h"
 
