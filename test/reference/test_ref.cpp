@@ -24,6 +24,8 @@
 
 #include "src/configuration/configuration.h"
 
+#include <memory>
+
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
 #include "src/qor/current/currentthread.h"
@@ -64,9 +66,107 @@ public:
 
 namespace qor{ qor_pp_declare_factory_of(Test_Biscuit, InternalFactory); }
 
-qor_pp_test_suite_case(ReferenceTestSuite, canGetAWidgetRef)
+class StandardObject
+{
+private:
+
+    int m_extra{0};
+public:
+
+    StandardObject()
+    {        
+    }
+
+    StandardObject(int extra) : m_extra(extra)
+    {        
+    }
+
+    ~StandardObject()
+    {
+    }
+
+    int Test()
+    {
+        if(m_extra == 0)
+        {
+            return 42;
+        }
+        else
+        {
+            return m_extra;
+        }
+    }
+
+};
+
+namespace qor{
+    template<> struct ref_of< StandardObject >
+    {
+        typedef std::unique_ptr< StandardObject, void(*)(StandardObject*) > type;
+    };
+}
+
+class RefCountedType
+{
+private:
+
+    int m_extra{0};
+public:
+
+    RefCountedType()
+    {        
+    }
+
+    RefCountedType(int extra) : m_extra(extra)
+    {        
+    }
+
+    ~RefCountedType()
+    {
+    }
+
+    int Test()
+    {
+        if(m_extra == 0)
+        {
+            return 42;
+        }
+        else
+        {
+            return m_extra;
+        }
+    }
+
+};
+
+namespace qor{
+    template<> struct ref_of< RefCountedType >
+    {
+        typedef std::shared_ptr< RefCountedType > type;
+    };
+}
+
+qor_pp_test_suite_case(ReferenceTestSuite, canGetABiscuitRef)
 {
     auto ref = qor::new_ref<Test_Biscuit>();
     qor_pp_assert_that(ref.operator Test_Biscuit *()).isNotNull();
+}
+
+qor_pp_test_suite_case(ReferenceTestSuite, canGetAStdRef)
+{
+    auto ref = qor::new_ref<StandardObject>();
+    qor_pp_assert_that(ref->Test()).isEqualTo(42);
+}
+
+qor_pp_test_suite_case(ReferenceTestSuite, canGetAStdRefWithParams)
+{
+    auto ref = qor::new_ref<StandardObject>(26);
+    qor_pp_assert_that(ref->Test()).isEqualTo(26);
+}
+
+qor_pp_test_suite_case(ReferenceTestSuite, canGetAStdSahredWithParams)
+{
+    auto ref = qor::new_ref<RefCountedType>(26);
+    qor_pp_assert_that(ref->Test()).isEqualTo(26);
 }
 

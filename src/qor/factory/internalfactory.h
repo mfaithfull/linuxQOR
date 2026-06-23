@@ -59,6 +59,64 @@ namespace qor
     };
 
     template< class T >
+    struct factoryFunctor< T, std::unique_ptr< T, void(*)(T*) > >
+    {
+        static void Destruct(size_t /*count*/, T* t)
+        {
+            allocator_of<T>::type::Free(t);
+        }
+
+        static std::unique_ptr< T, void(*)(T*) > Construct(size_t count)
+        {
+            T* t = allocator_of<T>::type::template Allocate< T >(count);
+            return std::unique_ptr<T, void(*)(T*)>(t, qor::internal_del_ref<T>);
+        }
+
+        template< typename... _p >
+        static std::unique_ptr< T, void(*)(T*) > Construct(size_t count, _p&&... p1)
+        {
+            T* t = allocator_of<T>::type::template Allocate<T, _p...>(count, std::forward<_p>(p1)...);
+            return std::unique_ptr<T, void(*)(T*)>(t, qor::internal_del_ref<T>);
+        }
+
+        static std::unique_ptr< T, void(*)(T*) > ConstructFromExisting(T* t)
+        {
+            std::unique_ptr< T > ptr(t, qor::internal_del_ref<T>);
+            return ptr;
+        }
+
+    };
+
+    template< class T >
+    struct factoryFunctor< T, std::shared_ptr< T > >
+    {
+        static void Destruct(size_t /*count*/, T* t)
+        {
+            allocator_of<T>::type::Free(t);
+        }
+
+        static std::shared_ptr< T > Construct(size_t count)
+        {
+            T* t = allocator_of<T>::type::template Allocate< T >(count);
+            return std::shared_ptr<T>(t, qor::internal_del_ref<T>);
+        }
+
+        template< typename... _p >
+        static std::shared_ptr< T > Construct(size_t count, _p&&... p1)
+        {
+            T* t = allocator_of<T>::type::template Allocate<T, _p...>(count, std::forward<_p>(p1)...);
+            return std::shared_ptr<T>(t, qor::internal_del_ref<T>);
+        }
+
+        static std::shared_ptr< T > ConstructFromExisting(T* t)
+        {
+            std::shared_ptr< T > ptr(t, qor::internal_del_ref<T>);
+            return ptr;
+        }
+
+    };
+
+    template< class T >
     struct factoryFunctor< T, Ref< T > >
     {
         static void Destruct(size_t /*count*/, T* t)
