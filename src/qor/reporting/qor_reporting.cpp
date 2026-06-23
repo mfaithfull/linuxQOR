@@ -22,18 +22,19 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include <stdexcept>
-#include <format>
-#include "src/qor/reporting/ierrorreporting.h"
-#include "constbuffer.h"
+#include "../../configuration/configuration.h"
+#include <buildnumber.h>
+#include "../module/module.h"
 
-namespace qor{ namespace text {
-
-    void qor_pp_module_interface(QOR_TEXT) OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress)
-    {
-        IErrorReporting().continuable(std::vformat("Buffer index out of range accesssing index {0} of {1} elements of size {2} bytes in buffer at {3:p}", std::make_format_args(index, length, elementSize, bufferAddress)));
-    }
-
-}}//qor::text
-
+extern "C"
+{
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Reporting Proxy Module", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
+		return QORModule;
+	}
+}

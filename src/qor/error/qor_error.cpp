@@ -25,7 +25,7 @@
 #include "../../configuration/configuration.h"
 #include <buildnumber.h>
 #include "../module/module.h"
-#include "itexterrorimpl.h"
+#include "reportingimpl.h"
 
 extern "C"
 {
@@ -37,7 +37,11 @@ extern "C"
 			qor_pp_stringize(qor_pp_ver_patch) "." \
 			qor_pp_stringize(qor_pp_buildnumber));
 
-		qor::text::TextErrorImpl() = qor::TextErrorInstance();
+		static qor::ReportingImpl reportingImpl;
+		qor::ErrorImpl()= dynamic_cast<qor::IErrorReporting*>(&reportingImpl);
+		qor::AssertionFailureImpl() = dynamic_cast<qor::IAssertionFailureReporting*>(&reportingImpl);
+		qor::TestFailureImpl() = dynamic_cast<qor::ITestFailureReporting*>(&reportingImpl);
+
 		return QORModule;
 	}
 }

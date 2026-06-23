@@ -22,16 +22,44 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../text/buffers/itexterrordi.h"
+#include "../../configuration/configuration.h"
+#include "error.h"
+#include "reportingimpl.h"
 
-namespace qor{ 
-
-    struct qor_pp_module_interface(QOR_ERROR) ITextErrorImpl : public text::ITextErrorDI
+namespace qor
+{ 
+    void ReportingImpl::note(const std::string& message)
     {
-        virtual void continuable(const std::string& message);
-        virtual void serious(const std::string& message);
-    };
+        qor::note(message);
+    }
 
-    qor_pp_module_interface(QOR_ERROR) ITextErrorImpl* TextErrorInstance();
+    void ReportingImpl::warning(const std::string& message)
+    {
+        qor::warning(message);
+    }
 
+    void ReportingImpl::continuable(const std::string& message)
+    {
+        qor::continuable(message);
+    }
+
+    void ReportingImpl::serious(const std::string& message)
+    {
+        qor::serious(message);
+    }
+
+    void ReportingImpl::fatal(const std::string& message)
+    {
+        qor::fatal(message);
+    }
+
+    void ReportingImpl::AssertionFailure(const std::string& message)
+    {
+        qor::serious(message);
+    }
+
+    void ReportingImpl::TestFailure(const std::string& message)
+    {
+        qor::serious(message);
+    }
 }//qor

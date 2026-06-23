@@ -22,18 +22,21 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include <stdexcept>
-#include <format>
 #include "src/qor/reporting/ierrorreporting.h"
-#include "constbuffer.h"
+#include "src/qor/reporting/iassertionfailurereporting.h"
+#include "src/qor/reporting/itestfailurereporting.h"
 
-namespace qor{ namespace text {
+namespace qor{ 
 
-    void qor_pp_module_interface(QOR_TEXT) OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress)
+    struct qor_pp_module_interface(QOR_ERROR) ReportingImpl : public IErrorReporting, public IAssertionFailureReporting, public ITestFailureReporting
     {
-        IErrorReporting().continuable(std::vformat("Buffer index out of range accesssing index {0} of {1} elements of size {2} bytes in buffer at {3:p}", std::make_format_args(index, length, elementSize, bufferAddress)));
-    }
+        virtual void note(const std::string& message);
+        virtual void warning(const std::string& message);
+        virtual void continuable(const std::string& message);
+        virtual void serious(const std::string& message);
+        virtual void fatal(const std::string& message);
+        virtual void AssertionFailure(const std::string& message);
+        virtual void TestFailure(const std::string& message);
+    };
 
-}}//qor::text
-
+}//qor

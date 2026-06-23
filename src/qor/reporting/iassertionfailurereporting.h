@@ -22,21 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_TEXT_ITEXTERRORDI
-#define QOR_PP_H_TEXT_ITEXTERRORDI
+namespace qor{ 
 
-#include <string>
-
-namespace qor{ namespace text {
-
-    struct ITextErrorDI
+    struct qor_pp_module_interface(QOR_REPORTING) IAssertionFailureReporting
     {
-        virtual void continuable(const std::string& message) = 0;
-        virtual void serious(const std::string& message) = 0;
-    };
+        virtual void AssertionFailure(const std::string& message);
+    };    
 
-    qor_pp_module_interface(QOR_TEXT) ITextErrorDI*& TextErrorImpl();
-
-}}//qor::text
-
-#endif//QOR_PP_H_TEXT_ITEXTERRORDI
+    qor_pp_module_interface(QOR_REPORTING) IAssertionFailureReporting*& AssertionFailureImpl();
+}//qor

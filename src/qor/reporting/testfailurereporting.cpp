@@ -23,25 +23,26 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "../../configuration/configuration.h"
-#include "error.h"
-#include "itexterrorimpl.h"
-
+#include <iostream>
+#include "itestfailurereporting.h"
 
 namespace qor
 { 
-    qor_pp_module_interface(QOR_ERROR) ITextErrorImpl* TextErrorInstance()
+    qor_pp_module_interface(QOR_REPORTING) ITestFailureReporting*& TestFailureImpl()
     {
-        static ITextErrorImpl s_impl;
-        return &s_impl;
+        static ITestFailureReporting* s_defaultimpl{nullptr};
+        return s_defaultimpl;
     }
 
-    void ITextErrorImpl::continuable(const std::string& message)
+    void ITestFailureReporting::TestFailure(const std::string& message)
     {
-        qor::continuable(message);
-    }
-
-    void ITextErrorImpl::serious(const std::string& message)
-    {
-        qor::serious(message);
+        if(TestFailureImpl())
+        {
+            TestFailureImpl()->TestFailure(message);            
+        }
+        else
+        {
+            std::cout << "Test failure: " << message << std::endl;
+        }
     }
 }//qor

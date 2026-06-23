@@ -22,17 +22,27 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "itexterrordi.h"
+#include "../../configuration/configuration.h"
+#include <iostream>
+#include "iassertionfailurereporting.h"
 
-
-namespace qor{ namespace text {
-
-    qor_pp_module_interface(QOR_TEXT) ITextErrorDI*& TextErrorImpl()
+namespace qor
+{ 
+    qor_pp_module_interface(QOR_REPORTING) IAssertionFailureReporting*& AssertionFailureImpl()
     {
-        static ITextErrorDI* s_impl{nullptr};
-        return s_impl;
+        static IAssertionFailureReporting* s_defaultimpl{nullptr};
+        return s_defaultimpl;
     }
 
-}}//qor::text
-
+    void IAssertionFailureReporting::AssertionFailure(const std::string& message)
+    {
+        if(AssertionFailureImpl())
+        {
+            AssertionFailureImpl()->AssertionFailure(message);            
+        }
+        else
+        {
+            std::cout << "Assertion failure: " << message << std::endl;
+        }
+    }
+}//qor
