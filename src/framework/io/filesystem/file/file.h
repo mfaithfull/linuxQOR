@@ -63,9 +63,8 @@ namespace qor{ namespace io{
         virtual uint64_t SetPositionRelative(int64_t offset);
         virtual void Truncate(uint64_t length);
         virtual void Reserve(uint64_t length);
-        virtual void Flush();
-        
-        virtual ref_of<IFile>::type ReOpen();
+        virtual void Flush();        
+        virtual ref_of<IFile>::type ReOpen();        
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
 

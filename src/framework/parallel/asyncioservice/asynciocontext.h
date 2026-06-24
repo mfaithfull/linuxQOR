@@ -64,9 +64,15 @@ namespace qor { namespace async{
             co_return ioResult.status_code;
         }
 
-        virtual inline task<int> Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual inline task<int> Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) const
         {
-            auto ioResult = co_await m_initiator->Read(ioDescriptor, buffer, len);
+            auto ioResult = co_await m_initiator->Read(ioDescriptor, buffer, len, offset);
+            co_return ioResult.status_code;
+        }
+
+        virtual inline task<int> Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) const
+        {
+            auto ioResult = co_await m_initiator->Write(ioDescriptor, buffer, len, offset);
             co_return ioResult.status_code;
         }
 

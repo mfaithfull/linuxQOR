@@ -80,10 +80,10 @@ namespace qor{ namespace io{
     //right now these jst naievely flip the byte order
     //we may need them to handle word ordering for different types. 
 
-    int16_t FileReader::ReadInt16(arch::Endian endian) const
+    int16_t FileReader::ReadInt16() const
     {
         int16_t s = 0;
-        if(endian == arch::host || (endian == qor::arch::endian))
+        if(m_endian == arch::host || (m_endian == qor::arch::endian))
         {            
             m_file->Read((byte*)&s, 2);            
         }
@@ -95,10 +95,10 @@ namespace qor{ namespace io{
         return s;
     }
 
-    uint16_t FileReader::ReadUInt16(arch::Endian endian) const
+    uint16_t FileReader::ReadUInt16() const
     {
         uint16_t s = 0;
-        if(endian == arch::host || (endian == qor::arch::endian))
+        if(m_endian == arch::host || (m_endian == qor::arch::endian))
         {            
             m_file->Read((byte*)&s, 2);            
         }
@@ -110,10 +110,10 @@ namespace qor{ namespace io{
         return s;
     }
 
-    int32_t FileReader::ReadInt32(arch::Endian endian) const
+    int32_t FileReader::ReadInt32() const
     {
         int32_t i = 0;
-        if(endian == arch::host || (endian == qor::arch::endian))
+        if(m_endian == arch::host || (m_endian == qor::arch::endian))
         {            
             m_file->Read((byte*)&i, 4);
         }
@@ -130,10 +130,10 @@ namespace qor{ namespace io{
         return i;
     }
 
-    uint32_t FileReader::ReadUInt32(arch::Endian endian) const
+    uint32_t FileReader::ReadUInt32() const
     {
         uint32_t i = 0;
-        if(endian == arch::host || (endian == qor::arch::endian))
+        if(m_endian == arch::host || (m_endian == qor::arch::endian))
         {            
             m_file->Read((byte*)&i, 4);
         }
@@ -150,10 +150,10 @@ namespace qor{ namespace io{
         return i;
     }
     
-    int64_t FileReader::ReadInt64(arch::Endian endian) const
+    int64_t FileReader::ReadInt64() const
     {
         int64_t i = 0;
-        if(endian == arch::host || (endian == qor::arch::endian))
+        if(m_endian == arch::host || (m_endian == qor::arch::endian))
         {            
             m_file->Read((byte*)&i, 8);
         }
@@ -170,10 +170,10 @@ namespace qor{ namespace io{
         return i;
     }
 
-    uint64_t FileReader::ReadUInt64(arch::Endian endian) const
+    uint64_t FileReader::ReadUInt64() const
     {
         uint64_t i = 0;
-        if(endian == arch::host || (endian == qor::arch::endian))
+        if(m_endian == arch::host || (m_endian == qor::arch::endian))
         {            
             m_file->Read((byte*)&i, 8);
         }
@@ -190,10 +190,10 @@ namespace qor{ namespace io{
         return i;
     }
     
-    float FileReader::ReadFloat(arch::Endian endian) const
+    float FileReader::ReadFloat() const
     {
         float f = 0.0f;
-        if(endian == arch::host || (endian == qor::arch::endian))
+        if(m_endian == arch::host || (m_endian == qor::arch::endian))
         {
             m_file->Read((byte*)&f, sizeof(float));
         }
@@ -210,10 +210,10 @@ namespace qor{ namespace io{
         return f;
     }
 
-    double FileReader::ReadDouble(arch::Endian endian) const
+    double FileReader::ReadDouble() const
     {
         double d = 0.0;
-        if(endian == arch::host || (endian == qor::arch::endian))
+        if(m_endian == arch::host || (m_endian == qor::arch::endian))
         {
             m_file->Read((byte*)&d, sizeof(double));
         }
@@ -230,103 +230,103 @@ namespace qor{ namespace io{
         return d;
     }
 
-    void FileReader::Read(unsigned char& b, arch::Endian /*endian*/) const
+    void FileReader::Read(unsigned char& b) const
     {
         b = ReadByte();
     }
 
-    void FileReader::Read(char& c, arch::Endian /*endian*/) const
+    void FileReader::Read(char& c) const
     {
         c = ReadChar();
     }
 
-    void FileReader::Read(bool& b, arch::Endian /*endian*/) const
+    void FileReader::Read(bool& b) const
     {
         byte v = ReadByte();
         b = v ? true : false;
     }
 
-    void FileReader::Read(short& s, arch::Endian endian) const
+    void FileReader::Read(short& s) const
     {
         if constexpr (sizeof(int16_t) > sizeof(short))
         {
             warning("coersing int16_t to a short looses data on this platform");
         }
-        int16_t v = ReadInt16(endian);
+        int16_t v = ReadInt16();
         s = v;
     }
 
-    void FileReader::Read(unsigned short& us, arch::Endian endian) const
+    void FileReader::Read(unsigned short& us) const
     {
         if constexpr (sizeof(uint16_t) > sizeof(unsigned short))
         {
             warning("coersing uint16_t to a unsigned short looses data on this platform");
         }
-        uint16_t v = ReadUInt16(endian);
+        uint16_t v = ReadUInt16();
         us = v;
     }
 
-    void FileReader::Read(int& i, arch::Endian endian) const
+    void FileReader::Read(int& i) const
     {
         if(sizeof(int32_t) > sizeof(int))
         {
             warning("coersing int32_t to int looses data on this platform");
         }
-        int32_t v = ReadInt32(endian);
+        int32_t v = ReadInt32();
         i = v;
     }
 
-    void FileReader::Read(unsigned int& ui, arch::Endian endian) const
+    void FileReader::Read(unsigned int& ui) const
     {
         if constexpr (sizeof(uint32_t) > sizeof(unsigned int))
         {
             warning("coersing uint32_t to unsigned int looses data on this platform");
         }
-        uint32_t v = ReadUInt32(endian);
+        uint32_t v = ReadUInt32();
         ui = v;
     }
 
-    void FileReader::Read(long& l, arch::Endian endian) const
+    void FileReader::Read(long& l) const
     {
         if constexpr (sizeof(int32_t) > sizeof(long))
         {
             warning("coersing int32_t to long looses data on this platform");
         }
-        int32_t v = ReadInt32(endian);
+        int32_t v = ReadInt32();
         l = v;
     }
 
-    void FileReader::Read(unsigned long& ul, arch::Endian endian) const
+    void FileReader::Read(unsigned long& ul) const
     {
         if constexpr (sizeof(uint32_t) > sizeof(unsigned long))
         {
             warning("coersing uint32_t to unsigned long looses data on this platform");
         }
-        uint32_t v = ReadUInt32(endian);
+        uint32_t v = ReadUInt32();
         ul = v;
     }
 
-    void FileReader::Read(long long& ll, arch::Endian endian) const
+    void FileReader::Read(long long& ll) const
     {
         if constexpr (sizeof(int64_t) > sizeof(long long))
         {
             warning("coersing int64_t to long long looses data on this platform");
         }
-        int64_t v = ReadInt64(endian);
+        int64_t v = ReadInt64();
         ll = v;
     }
 
-    void FileReader::Read(unsigned long long& ull, arch::Endian endian) const
+    void FileReader::Read(unsigned long long& ull) const
     {
         if constexpr (sizeof(uint64_t) > sizeof(unsigned long long))
         {
             warning("coersing uint64_t to unsigned long long looses data on this platform");
         }
-        uint64_t v = ReadUInt64(endian);
+        uint64_t v = ReadUInt64();
         ull = v;
     }
 
-    void FileReader::Read(float& f, arch::Endian endian) const
+    void FileReader::Read(float& f) const
     {
         if constexpr (sizeof(uint32_t) != sizeof(float))
         {
@@ -335,12 +335,12 @@ namespace qor{ namespace io{
         }
         else
         {
-            int32_t v = ReadInt32(endian);
+            int32_t v = ReadInt32();
             f = *(reinterpret_cast<float*>(&v));
         }
     }
 
-    void FileReader::Read(double& d, arch::Endian endian) const
+    void FileReader::Read(double& d) const
     {
         if constexpr (sizeof(uint64_t) != sizeof(double))
         {
@@ -349,7 +349,7 @@ namespace qor{ namespace io{
         }
         else
         {
-            uint64_t v = ReadUInt64(endian);
+            uint64_t v = ReadUInt64();
             d = *(reinterpret_cast<double*>(&v));
         }
     }

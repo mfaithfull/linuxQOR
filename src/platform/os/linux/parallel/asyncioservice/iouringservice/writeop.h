@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE_IOURING_READOP
-#define QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE_IOURING_READOP
+#ifndef QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE_IOURING_WRITEOP
+#define QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE_IOURING_WRITEOP
 
 #include <system_error>
 #include <coroutine>
@@ -31,13 +31,13 @@
 
 namespace qor{ namespace async{ namespace lin{
 
-    class ReadOperation
+    class WriteOperation
     {
         public:
 
-        ReadOperation(IOUring &uring, int fd ,byte* buffer, int32_t len, long offset) : m_sqe(uring.GetSQE())
+        WriteOperation(IOUring &uring, int fd ,byte* buffer, int32_t len, long offset) : m_sqe(uring.GetSQE())
         {
-            m_sqe.PrepareRead( fd, buffer, len, offset);
+            m_sqe.PrepareWrite(fd, buffer, len, offset);
             m_ring = const_cast<IOUring*>(&uring);
         }
         
@@ -53,4 +53,4 @@ namespace qor{ namespace async{ namespace lin{
 
 }}}//qor::async::lin
 
-#endif//QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE_READOP
+#endif//QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE_IOURING_WRITEOP

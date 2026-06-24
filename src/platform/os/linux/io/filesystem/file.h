@@ -28,6 +28,7 @@
 #include "src/framework/io/filesystem/file/file.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/path.h"
+#include "src/platform/os/linux/parallel/asyncioservice/asyncioservice.h"
 
 //Declaration must match the one in src/system/filesystem/ifile.h
 namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFile(); }
@@ -57,15 +58,14 @@ namespace qor{ namespace io { namespace lin{
         virtual void Flush() override;
         virtual ref_of<IFile>::type ReOpen() override;
 
-        
-        int SyncToSystem();                
-        int AsyncRead(byte* buffer, size_t byteCount, off_t offset);
-        int AsyncWrite(byte* buffer, size_t byteCount, off_t offset);
+        task<int> AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
+        task<int> AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
         
     private:
 
+        int SyncToSystem(); 
         int GetDescriptor() const; 
         int ChangeAccess(unsigned int mode);        
         int GetOperatingMode();

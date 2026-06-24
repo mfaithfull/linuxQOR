@@ -57,7 +57,8 @@ namespace qor { namespace async{
         virtual IOTask Bind(io::IODescriptor* ioDescriptor, const network::Address& Address);
         virtual IOTask Listen(io::IODescriptor* ioDescriptor, int backlog);
         virtual IOTask Accept(io::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket);
-        virtual IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len);
+        virtual IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset);
+        virtual IOTask Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset);
         virtual IOTask Send(io::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags);
         virtual IOTask Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len);
         virtual IOTask Shutdown(io::IODescriptor* ioDescriptor, int how);

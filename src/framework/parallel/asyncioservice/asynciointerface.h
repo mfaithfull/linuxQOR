@@ -43,7 +43,8 @@ namespace qor { namespace async{
 
         virtual inline task<int> Send(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const = 0;
         virtual inline task<int> Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
-        virtual inline task<int> Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
+        virtual inline task<int> Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) const = 0;
+        virtual inline task<int> Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) const = 0;
         virtual inline task<int> Listen(io::IODescriptor* ioDescriptor, int backlog) const = 0;
         virtual inline task<int> Shutdown(io::IODescriptor* ioDescriptor, int how) const = 0;
         virtual inline task<int> Bind(io::IODescriptor* ioDescriptor, const network::Address& Address) const = 0;

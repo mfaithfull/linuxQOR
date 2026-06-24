@@ -188,34 +188,14 @@ namespace qor{ namespace io{ namespace lin{
     }
 
 
-    int File::AsyncRead(byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
-        aiocb cb;
-    	memset(&cb, 0, sizeof(aiocb));
-	    cb.aio_nbytes = byteCount;
-	    cb.aio_fildes = m_fd;
-	    cb.aio_offset = offset;
-	    cb.aio_buf = buffer;
-        aio_read(&cb);
-        const aiocb* const list[1] = {&cb};
-        //TODO here we should co_await an awaiter which does this on a pool thread
-        aio_suspend(list, 1, nullptr);
-        return aio_return(&cb);
+        return ioContext.Read(this, buffer, byteCount, offset);
     }
 
-    int File::AsyncWrite(byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
-        aiocb cb;
-        memset(&cb, 0, sizeof(aiocb));
-        cb.aio_nbytes = byteCount;
-        cb.aio_fildes = m_fd;
-        cb.aio_offset = offset;
-        cb.aio_buf = buffer;
-        aio_write(&cb);
-        const aiocb* const list[1] = {&cb};
-        //TODO here we should co_await an awaiter which does this on a pool thread
-        aio_suspend(list, 1, nullptr);
-        return aio_return(&cb);
+        return ioContext.Write(this, buffer, byteCount, offset);
     }
 
     int64_t File::Read(byte* buffer, size_t byteCount, off_t offset)

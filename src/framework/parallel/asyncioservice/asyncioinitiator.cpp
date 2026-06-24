@@ -50,7 +50,14 @@ namespace qor { namespace async{
         co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
     }
 
-    IOTask AsyncIOInitiator::Read(io::IODescriptor* /*ioDescriptor*/, byte* /*buffer*/, size_t /*len*/)
+    IOTask AsyncIOInitiator::Read(io::IODescriptor* /*ioDescriptor*/, byte* /*buffer*/, size_t /*len*/, long /*offset*/)
+    {
+        qor_pp_ofcontext;
+        fatal(Error_empty_base_called);
+        co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
+    }
+
+    IOTask AsyncIOInitiator::Write(io::IODescriptor* /*ioDescriptor*/, byte* /*buffer*/, size_t /*len*/, long /*offset*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);

@@ -35,6 +35,7 @@
 #include "iouringeventprocessor.h"
 #include "src/framework/parallel/asyncioservice/asyncioinitiator.h"
 #include "readop.h"
+#include "writeop.h"
 #include "listenop.h"
 #include "bindop.h"
 #include "acceptop.h"
@@ -87,11 +88,20 @@ namespace qor{ namespace async{ namespace lin{
             };
         }
 
-        virtual qor::async::IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len)
+        virtual qor::async::IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset)
         {
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
             co_return qor::async::AsyncIOResult{
-                .status_code = co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len), 
+                .status_code = co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len, offset), 
+                .ioObject = ioDescriptor
+            };
+        }
+
+        virtual qor::async::IOTask Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset)
+        {
+            m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
+            co_return qor::async::AsyncIOResult{
+                .status_code = co_await WriteOperation(*m_Ring, ioDescriptor->m_fd, buffer, len, offset), 
                 .ioObject = ioDescriptor
             };
         }
