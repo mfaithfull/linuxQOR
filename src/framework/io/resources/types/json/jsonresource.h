@@ -40,7 +40,7 @@ namespace qor{ namespace framework{ namespace res {
 
         static const char* StaticType();
 
-        JSON(ResourceManager* manager, const platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index)
+        JSON(ResourceManager* manager, const io::filesystem::Index& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index)
         {            
             Name();
         }
@@ -56,7 +56,7 @@ namespace qor{ namespace framework{ namespace res {
         
     protected:
 
-        const qor::platform::FileIndex m_index;
+        const io::filesystem::Index m_index;
         ref_of<components::model::json::Object>::type m_object;
         
     private:

@@ -29,7 +29,7 @@
 #include "path.h"
 #include "fileindex.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{ namespace filesystem{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) Folder
 	{
@@ -45,7 +45,7 @@ namespace qor{ namespace platform{
         bool Move( class Path& destParent);
         bool Rename( const string_t& name);
         bool Delete();
-        void Enumerate( const std::function <bool (FileIndex&)>& f ) const;
+        void Enumerate( const std::function <bool (Index&)>& f ) const;
         void CreateSymLinkTo( class Path& target);
         class Path Path();
     protected:
@@ -53,6 +53,6 @@ namespace qor{ namespace platform{
         class Path m_path;
     };
 
-}}//qor::platform
+}}}//qor::io::filesystem
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_FOLDER

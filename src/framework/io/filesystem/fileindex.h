@@ -31,25 +31,25 @@
 #include "src/qor/reference/reference.h"
 #include "file/ifile.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{ namespace filesystem {
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex
+    class qor_pp_module_interface(QOR_FILESYSTEM) Index
 	{
 	public:
 
-        FileIndex();
-        FileIndex(const Path & Path, const std::string& FileName);
-        FileIndex(const std::filesystem::directory_entry& dirent);
-        FileIndex(const FileIndex&);
-        FileIndex& operator = (const FileIndex&);
-        virtual ~FileIndex() = default;
+        Index();
+        Index(const filesystem::Path & Path, const std::string& FileName);
+        Index(const std::filesystem::directory_entry& dirent);
+        Index(const Index&);
+        Index& operator = (const Index&);
+        virtual ~Index() = default;
 
-        void Set(const Path & path, const std::string& fileName);
+        void Set(const filesystem::Path & path, const std::string& fileName);
         bool Exists(void) const;
-        bool Copy(const FileIndex & Destination, std::filesystem::copy_options copyOptions = std::filesystem::copy_options::none) const;
+        bool Copy(const Index & Destination, std::filesystem::copy_options copyOptions = std::filesystem::copy_options::none) const;
         bool Delete() const;
-        bool Move(const FileIndex & Destination) const;
-        bool Rename( const FileIndex & Destination );
+        bool Move(const Index & Destination) const;
+        bool Rename( const Index & Destination );
         bool Resize( std::uintmax_t newSize );
         bool IsBlockFile() const;
         bool IsCharacterFile() const;
@@ -64,7 +64,7 @@ namespace qor{ namespace platform{
         std::filesystem::file_status Status() const;
         std::filesystem::file_status SymLinkStatus() const;
         std::string ToString() const;
-        Path GetPath(void) const;
+        filesystem::Path GetPath(void) const;
         ref_of<IFile>::type Create(const int openFor, const int withFlags, const int inMode);
         ref_of<IFile>::type Open(const int openFor, const int withFlags, const int inMode);
         
@@ -72,6 +72,6 @@ namespace qor{ namespace platform{
         std::filesystem::directory_entry m_dirent;
     };
 
-}}//qor::platform
+}}}//qor::io::filesystem
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILEINDEX

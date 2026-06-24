@@ -43,7 +43,8 @@ using namespace qor;
 using namespace qor::test;
 using namespace qor::pipeline;
 using namespace qor::components;
-using namespace qor::platform;
+using namespace qor::io;
+using namespace qor::io:filesystem;
 
 struct stdifstreamTestSuite{};
 
@@ -79,7 +80,7 @@ qor_pp_test_suite_case(stdifstreamTestSuite, canSetupstdifstreamReader)
 {
     auto fileSystem = new_ref<FileSystem>();
     fileSystem->Setup();
-    FileIndex testFile(fileSystem->CurrentPath(), "employees-10-level_10KB.json");
+    Index testFile(fileSystem->CurrentPath(), "employees-10-level_10KB.json");
     stdifstreamReader reader(testFile);
 
     size_t unitsRead = 0;

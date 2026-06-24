@@ -29,7 +29,7 @@
 #include "src/qor/reflection/reflection.h"
 #include "file.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
     template <std::size_t I, std::size_t N> struct StructWriter;
 
@@ -38,7 +38,7 @@ namespace qor{ namespace platform{
 	public:
 
         FileWriter(ref_of<IFile>::type file);
-        FileWriter(FileIndex index, OpenFor use);
+        FileWriter(filesystem::Index index, OpenFor use);
         virtual ~FileWriter() = default;
 
         void WriteLine(const std::string& line, const std::string& end = "\n") const;
@@ -78,7 +78,7 @@ namespace qor{ namespace platform{
     private:
 
         ref_of<IFile>::type m_file;
-        FileIndex m_index;
+        filesystem::Index m_index;
     };
 
     template <std::size_t I, std::size_t N> 
@@ -99,6 +99,6 @@ namespace qor{ namespace platform{
         template <class T, class R> static void Write(FileWriter& container, const T& value, const R& org_val, arch::Endian endian = arch::network) noexcept {}
     };
 
-}}//qor::platform
+}}//qor::io
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILE_READER

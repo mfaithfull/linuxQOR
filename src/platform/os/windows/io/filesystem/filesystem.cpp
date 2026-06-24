@@ -36,35 +36,30 @@
 //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileSystem requirement. 
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem() { return true; } }//qor
 
-namespace qor{ namespace platform { namespace win{
+namespace qor{ namespace io { namespace win{
 
-    void FileSystem::Setup()
-    {
-    }
+    void FileSystem::Setup(){ }
 
     void FileSystem::Shutdown()
     {
         SyncToSystem();
     }
 
-    void FileSystem::SyncToSystem() const
-    {
-        
-    }
+    void FileSystem::SyncToSystem() const { }
 
-    ref_of<platform::IFile>::type FileSystem::Create(const platform::FileIndex& index, int withFlags) const
+    ref_of<IFile>::type FileSystem::Create(const filesystem::Index& index, int withFlags) const
     {        
         auto ref = Open(index, OpenFor::ReadWrite, withFlags);
         ref.AsRef<File>()->ChangeMode(Owner_Read | Owner_Write);
         return ref;
     }
 
-    ref_of<platform::IFile>::type FileSystem::Open(const platform::FileIndex& index, int openFor, int withFlags) const
+    ref_of<IFile>::type FileSystem::Open(const filesystem::Index& index, int openFor, int withFlags) const
     {        
-        return new_ref<File>(index, openFor, withFlags).template AsRef<platform::IFile>();
+        return new_ref<File>(index, openFor, withFlags).template AsRef<IFile>();
     }
 
-    bool FileSystem::Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
+    bool FileSystem::Move(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const
     {
         if(destIndex.IsDirectory())
         {
@@ -87,9 +82,9 @@ namespace qor{ namespace platform { namespace win{
         return false;
     }
 
-    bool FileSystem::Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
+    bool FileSystem::Rename(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const
     {
         return rename(srcIndex.ToString().c_str(), destIndex.ToString().c_str()) == 0 ? true : false;
     }
 
-}}}//qor::platform::win
+}}}//qor::io::win

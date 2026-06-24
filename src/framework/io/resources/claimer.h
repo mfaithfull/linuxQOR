@@ -44,7 +44,7 @@ namespace qor{ namespace framework{
             hub->AddPath(path);
         }
 
-        Claimer(ref_of<ResourceHub>::type hub, platform::FileIndex& file)
+        Claimer(ref_of<ResourceHub>::type hub, io::filesystem::Index& file)
         {
             m_resource = nullptr;
             hub->SubscribeForAllByPath(file.ToString(), bindMemberFunction(&Claimer<ResourceType>::Callback, this));

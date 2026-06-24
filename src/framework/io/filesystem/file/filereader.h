@@ -29,14 +29,14 @@
 #include "src/qor/reflection/reflection.h"
 #include "file.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) FileReader
 	{
 	public:
 
         FileReader(ref_of<IFile>::type file);
-        FileReader(FileIndex index, OpenFor use);
+        FileReader(filesystem::Index index, OpenFor use);
         virtual ~FileReader() = default;
 
         std::string ReadLine() const;
@@ -79,9 +79,9 @@ namespace qor{ namespace platform{
     private:
 
         ref_of<IFile>::type m_file;
-        FileIndex m_index;
+        filesystem::Index m_index;
     };
 
-}}//qor::platform
+}}//qor::io
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILE_READER

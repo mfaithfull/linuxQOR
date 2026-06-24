@@ -30,14 +30,14 @@
 #include "src/qor/factory/externalfactory.h"
 #include "fileindex.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) IFileStat
 	{
 	public:
 
         IFileStat() { };
-        IFileStat(FileIndex& /*fileindex*/) { };
+        IFileStat(filesystem::Index& /*fileindex*/) { };
         virtual ~IFileStat() noexcept = default;
 
         virtual bool IsValid() { return false; }
@@ -45,11 +45,11 @@ namespace qor{ namespace platform{
         virtual bool IsDir()  { return false; }
     };
 
-    }//platform
+    }//io
 
-    qor_pp_declare_factory_of(platform::IFileStat, ExternalFactory);    
+    qor_pp_declare_factory_of(io::IFileStat, ExternalFactory);    
     constexpr GUID IFileStatGUID = {0xade47a4c, 0x2b2f, 0x4a31, {0x91, 0xd1, 0x38, 0x60, 0xdb, 0x24, 0x84, 0x35}};
-    qor_pp_declare_guid_of(platform::IFileStat,IFileStatGUID);
+    qor_pp_declare_guid_of(io::IFileStat,IFileStatGUID);
 
 }//qor
 

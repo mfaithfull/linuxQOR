@@ -30,14 +30,13 @@
 #include "src/framework/io/filesystem/fileindex.h"
 
 namespace qor
-{
-    ////Declaration must match the one in src/system/filesystem/filesystem.h
+{    
     bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileSystem();
 }
 
-namespace qor{ namespace platform { namespace win{ 
+namespace qor{ namespace io { namespace win{ 
 
-    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::platform::IFileSystem
+    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileSystem : public qor::io::IFileSystem
     {
     public:
         FileSystem() = default;
@@ -46,14 +45,13 @@ namespace qor{ namespace platform { namespace win{
         virtual void Setup();
         virtual void Shutdown();
 
-        virtual ref_of<platform::IFile>::type Create(const platform::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<platform::IFile>::type Open(const platform::FileIndex& index, const int openFor, const int withFlags) const;        
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-
+        virtual ref_of<IFile>::type Create(const filesystem::Index& index, const int withFlags) const;        
+        virtual ref_of<IFile>::type Open(const filesystem::Index& index, const int openFor, const int withFlags) const;        
+        virtual bool Move(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const;
+        virtual bool Rename(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const;
         void SyncToSystem() const;
     };
 
-}}}//qor::platform::win
+}}}//qor::io::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FILESYSTEM

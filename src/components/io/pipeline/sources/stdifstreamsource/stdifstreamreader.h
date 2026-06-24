@@ -43,10 +43,10 @@ namespace qor{ namespace components{
 
         stdifstreamReader();
         stdifstreamReader(const std::string& fileName, size_t bufferByteCapacity = 4096);
-        stdifstreamReader(platform::FileIndex& fileIndex, size_t bufferByteCapacity = 4096);
+        stdifstreamReader(io::filesystem::Index& fileIndex, size_t bufferByteCapacity = 4096);
         virtual ~stdifstreamReader() = default;
 
-        void SetFile(platform::FileIndex& fileIndex);
+        void SetFile(io::filesystem::Index& fileIndex);
         void SetBufferCapacity(size_t itemCount);
 
         virtual bool Read(size_t& unitsRead, size_t unitsToRead);

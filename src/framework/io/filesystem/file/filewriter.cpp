@@ -29,14 +29,14 @@
 #include "src/platform/architecture/detectarchitecture.h"
 #include "src/framework/io/filesystem/filesystem.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
     FileWriter::FileWriter(ref_of<IFile>::type file)
     {
         m_file = file;
     }
 
-    FileWriter::FileWriter(FileIndex index, OpenFor use)
+    FileWriter::FileWriter(filesystem::Index index, OpenFor use)
     {
         auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
         m_file = fileSystem->Open(index, use);
@@ -329,4 +329,4 @@ namespace qor{ namespace platform{
         WriteUInt64(ui, endian);
     }
 
-}}//qor::platform
+}}//qor::io

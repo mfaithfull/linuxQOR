@@ -58,7 +58,7 @@ namespace qor{ namespace lin{
         sync();
     }
 
-    ref_of<platform::IFile>::type FileSystem::Create(const platform::FileIndex& index, int withFlags) const
+    ref_of<platform::IFile>::type FileSystem::Create(const io::filesystem::Index& index, int withFlags) const
     {
         int flags = withFlags |= platform::WithFlags::CreateNew | platform::WithFlags::Truncate;
         auto ref = Open(index, platform::OpenFor::WriteOnly, flags);
@@ -66,12 +66,12 @@ namespace qor{ namespace lin{
         return ref;
     }
 
-    ref_of<platform::IFile>::type FileSystem::Open(const platform::FileIndex& index, int openFor, int withFlags) const
+    ref_of<platform::IFile>::type FileSystem::Open(const io::filesystem::Index& index, int openFor, int withFlags) const
     {        
         return new_ref<File>(index, openFor, withFlags).template AsRef<platform::IFile>();
     }
 
-    bool FileSystem::Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
+    bool FileSystem::Move(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const
     {
         if(destIndex.IsDirectory())
         {
@@ -94,15 +94,15 @@ namespace qor{ namespace lin{
         return false;
     }
 
-    bool FileSystem::Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
+    bool FileSystem::Rename(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const
     {
         return rename(srcIndex.ToString().c_str(), destIndex.ToString().c_str()) == 0 ? true : false;
     }
 
     ////int openat(int fd, index.ToString().c_str(), int oflag, ...);
 
-    platform::Path FileSystem::ApplicationLogPath() const
+    io::filesystem::Path FileSystem::ApplicationLogPath() const
     {
-        return platform::Path("/var/log/");
+        return io::filesystem::Path("/var/log/");
     }
 }}//qor::lin

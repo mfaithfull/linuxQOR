@@ -26,7 +26,7 @@
 
 #include "path.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{ namespace filesystem {
 
     std::string Path::s_rootIndicator;
     std::string Path::s_selfIndicator;
@@ -34,13 +34,9 @@ namespace qor{ namespace platform{
     unsigned short Path::s_maxElementLength;
     std::string Path::s_separator;
 
-    Path::Path() : m_path()
-    {        
-    }
+    Path::Path() : m_path(){ }
 
-    Path::Path(const std::string& path) : m_path(path)
-    {
-    }
+    Path::Path(const std::string& path) : m_path(path){ }
     
     Path& Path::operator /= (const std::string& folder)
     {
@@ -165,4 +161,4 @@ namespace qor{ namespace platform{
         return m_path.compare(compare.m_path) == 0 ? true : false;
     }
 
-}}//qor::platform
+}}}//qor::io::filesystem

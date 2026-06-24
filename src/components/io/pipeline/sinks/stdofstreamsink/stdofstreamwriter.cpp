@@ -34,22 +34,22 @@ namespace qor{ namespace components{
 
     stdofstreamWriter::stdofstreamWriter(const std::string& fileName, size_t bufferByteCapacity) : pipeline::Pipeline(), m_Setup(false)
     {
-        auto fileSystem = new_ref<platform::FileSystem>();
+        auto fileSystem = new_ref<io::FileSystem>();
         fileSystem->Setup();
-        platform::FileIndex file(fileSystem->CurrentPath(), fileName);
+        io::filesystem::Index file(fileSystem->CurrentPath(), fileName);
         SetFile(file);
         SetBufferCapacity(bufferByteCapacity);
         Setup();
     }
 
-    stdofstreamWriter::stdofstreamWriter(platform::FileIndex& fileIndex, size_t bufferByteCapacity) : pipeline::Pipeline(), m_Setup(false)
+    stdofstreamWriter::stdofstreamWriter(io::filesystem::Index& fileIndex, size_t bufferByteCapacity) : pipeline::Pipeline(), m_Setup(false)
     {
         SetFile(fileIndex);
         SetBufferCapacity(bufferByteCapacity);
         Setup();
     }
 
-    void stdofstreamWriter::SetFile(platform::FileIndex& fileIndex)
+    void stdofstreamWriter::SetFile(io::filesystem::Index& fileIndex)
     {
         m_connector.SetFile(fileIndex);
     }

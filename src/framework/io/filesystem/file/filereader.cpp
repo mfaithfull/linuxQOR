@@ -29,14 +29,14 @@
 #include "src/platform/architecture/detectarchitecture.h"
 #include "src/framework/io/filesystem/filesystem.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
     FileReader::FileReader(ref_of<IFile>::type file)
     {
         m_file = file;
     }
 
-    FileReader::FileReader(FileIndex index, OpenFor use)
+    FileReader::FileReader(filesystem::Index index, OpenFor use)
     {
         auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
         m_file = fileSystem->Open(index, use);
@@ -354,4 +354,4 @@ namespace qor{ namespace platform{
         }
     }
 
-}}//qor::platform
+}}//qor::io

@@ -54,7 +54,7 @@ namespace qor{ namespace framework{ namespace res {
 
     void Path::Locate()
     {
-        qor::platform::FileIndex index(m_path.ToString(), "");
+        io::filesystem::Index index(m_path.ToString(), "");
         if(index.Exists())
         {
             Resource::Locate();            
@@ -101,7 +101,7 @@ namespace qor{ namespace framework{ namespace res {
             {
                 manager->BeginBatch(batch);
                 folder.Enumerate(
-                    [manager, includeSubFolders, batch](qor::platform::FileIndex& index)->bool
+                    [manager, includeSubFolders, batch](io::filesystem::Index& index)->bool
                     {
                         if(includeSubFolders && index.IsDirectory())
                         {
@@ -125,7 +125,7 @@ namespace qor{ namespace framework{ namespace res {
         }
     }
 
-    bool Path::IsARequestedPath(const qor::platform::FileIndex& index)
+    bool Path::IsARequestedPath(const io::filesystem::Index& index)
     {        
         if(m_recurse && index.IsDirectory())
         {
@@ -134,7 +134,7 @@ namespace qor{ namespace framework{ namespace res {
         return false;
     }
 
-    bool Path::IsARequestedResource(const qor::platform::FileIndex& index)
+    bool Path::IsARequestedResource(const io::filesystem::Index& index)
     {        
         return true;
     }

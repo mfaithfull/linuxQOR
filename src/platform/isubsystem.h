@@ -27,7 +27,7 @@
 
 //Base interface for platform sub systems
 
-namespace qor{ namespace platform{
+namespace qor{
 
     class qor_pp_module_interface(QOR_PLATFORM) ISubsystem
     {
@@ -46,6 +46,6 @@ namespace qor{ namespace platform{
 
     };
 
-}}//qor::platform
+}//qor
 
 #endif//QOR_PP_H_PLATFORM_SUBSYSTEM_INTERFACE

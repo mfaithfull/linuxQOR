@@ -43,10 +43,10 @@ namespace qor{ namespace components{
 
         stdofstreamWriter();
         stdofstreamWriter(const std::string& fileName, size_t bufferByteCapacity = 4096);
-        stdofstreamWriter(platform::FileIndex& fileIndex, size_t bufferByteCapacity = 4096);
+        stdofstreamWriter(io::filesystem::Index& fileIndex, size_t bufferByteCapacity = 4096);
         virtual ~stdofstreamWriter() = default;
 
-        void SetFile(platform::FileIndex& fileIndex);
+        void SetFile(io::filesystem::Index& fileIndex);
         void SetBufferCapacity(size_t itemCount);
 
         virtual bool Write(size_t& unitsWritten, size_t unitstoWrite);

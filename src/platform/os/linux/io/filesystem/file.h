@@ -33,7 +33,7 @@
 namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFile(); }
 
 //All types on this interface must be portable
-namespace qor{ namespace lin{ 
+namespace qor{ namespace io { namespace lin{ 
 
     class qor_pp_module_interface(QOR_LINUXFILESYSTEM) File : public platform::File
     {
@@ -42,8 +42,8 @@ namespace qor{ namespace lin{
 
         File();
         File(const File& src);
-        File(const platform::Path& path, const std::string& fileName, int openFor, int withFlags) : File(platform::FileIndex(path,fileName),openFor,withFlags) {}
-        File(const platform::FileIndex& direntry, int openFor, int withFlags);
+        File(const platform::Path& path, const std::string& fileName, int openFor, int withFlags) : File(io::filesystem::Index(path,fileName),openFor,withFlags) {}
+        File(const io::filesystem::Index& direntry, int openFor, int withFlags);
         File(int fd);
         ~File();
 
@@ -88,7 +88,7 @@ namespace qor{ namespace lin{
 
         int m_fd{0};
     };
-}}//qor::lin
+}}}//qor::io::lin
 
 #endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILE
 

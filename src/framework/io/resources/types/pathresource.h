@@ -67,8 +67,8 @@ namespace qor{ namespace framework{ namespace res {
     private:
         static const char* s_pathResourceType;// = "Path";        
 
-        bool IsARequestedPath(const qor::platform::FileIndex& index);
-        bool IsARequestedResource(const qor::platform::FileIndex& index);
+        bool IsARequestedPath(const io::filesystem::Index& index);
+        bool IsARequestedResource(const io::filesystem::Index& index);
     };
 
 }}}//qor::framework::res

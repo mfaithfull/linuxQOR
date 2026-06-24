@@ -27,20 +27,20 @@
 #include <filesystem>
 #include "fileindex.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{ namespace filesystem {
 
-    FileIndex::FileIndex() : m_dirent() {}
+    Index::Index() : m_dirent() {}
     
-    FileIndex::FileIndex(const Path & path, const std::string& fileName) : m_dirent(std::filesystem::path(path.ToString(fileName))){}
+    Index::Index(const filesystem::Path & path, const std::string& fileName) : m_dirent(std::filesystem::path(path.ToString(fileName))){}
 
-    FileIndex::FileIndex(const std::filesystem::directory_entry& dirent) : m_dirent(dirent) {}
+    Index::Index(const std::filesystem::directory_entry& dirent) : m_dirent(dirent) {}
 
-    FileIndex::FileIndex(const FileIndex& src)
+    Index::Index(const Index& src)
     {
         *this = src;
     }
 
-    FileIndex& FileIndex::operator = (const FileIndex& src)
+    Index& Index::operator = (const Index& src)
     {
         if(&src != this)
         {
@@ -49,113 +49,113 @@ namespace qor{ namespace platform{
         return *this;
     }
 
-    void FileIndex::Set(const Path & path, const std::string& fileName)
+    void Index::Set(const filesystem::Path & path, const std::string& fileName)
     {
         std::filesystem::directory_entry dirent(std::filesystem::path(path.ToString(fileName)));
         m_dirent = dirent;
     }
     
-    bool FileIndex::Exists(void) const
+    bool Index::Exists(void) const
     {
         return m_dirent.exists();
     }
 
-    bool FileIndex::Copy(const FileIndex & Destination, std::filesystem::copy_options copyOptions) const
+    bool Index::Copy(const Index & Destination, std::filesystem::copy_options copyOptions) const
     {
         return std::filesystem::copy_file(m_dirent.path(), Destination.ToString(), copyOptions);
     }
 
-    bool FileIndex::Delete() const
+    bool Index::Delete() const
     {
         return std::filesystem::remove(m_dirent.path());
     }
 
-    bool FileIndex::Move(const FileIndex & Destination) const
+    bool Index::Move(const Index & Destination) const
     {
         std::filesystem::rename(m_dirent.path(), Destination.ToString());
         return true;
     }
 
-    bool FileIndex::Rename(const FileIndex & Destination)
+    bool Index::Rename(const Index & Destination)
     {
         m_dirent.replace_filename(Destination.ToString());
         return true;
     }
 
-    bool FileIndex::Resize( std::uintmax_t newSize )
+    bool Index::Resize( std::uintmax_t newSize )
     {
         std::filesystem::resize_file(m_dirent.path(), newSize);
         return true;
     }
 
-    bool FileIndex::IsBlockFile() const
+    bool Index::IsBlockFile() const
     {
         return std::filesystem::is_block_file(m_dirent.path());
     }
 
-    bool FileIndex::IsCharacterFile() const
+    bool Index::IsCharacterFile() const
     {
         return std::filesystem::is_character_file(m_dirent.path());
     }
 
-    bool FileIndex::IsDirectory() const
+    bool Index::IsDirectory() const
     {
         return std::filesystem::is_directory(m_dirent.path());
     }
 
-    bool FileIndex::IsFIFO() const
+    bool Index::IsFIFO() const
     {
         return std::filesystem::is_fifo(m_dirent.path());
     }
 
-    bool FileIndex::IsOther() const
+    bool Index::IsOther() const
     {
         return std::filesystem::is_other(m_dirent.path());
     }
 
-    bool FileIndex::IsRegularFile() const
+    bool Index::IsRegularFile() const
     {
         return std::filesystem::is_regular_file(m_dirent.path());
     }
 
-    bool FileIndex::IsSocket() const
+    bool Index::IsSocket() const
     {
         return std::filesystem::is_socket(m_dirent.path());
     }
 
-    bool FileIndex::IsSymLink() const
+    bool Index::IsSymLink() const
     {
         return std::filesystem::is_symlink(m_dirent.path());
     }
 
-    std::uintmax_t FileIndex::Size() const
+    std::uintmax_t Index::Size() const
     {
         return std::filesystem::file_size(m_dirent.path());
     }
     
-    std::filesystem::file_time_type FileIndex::LastWriteTime() const
+    std::filesystem::file_time_type Index::LastWriteTime() const
     {
         return m_dirent.last_write_time();
     }
 
-    std::filesystem::file_status FileIndex::Status() const
+    std::filesystem::file_status Index::Status() const
     {
         return m_dirent.status();
     }
 
-    std::filesystem::file_status FileIndex::SymLinkStatus() const
+    std::filesystem::file_status Index::SymLinkStatus() const
     {
         return m_dirent.symlink_status();
     }
 
-    std::string FileIndex::ToString() const
+    std::string Index::ToString() const
     {        
         return m_dirent.path().generic_string();
     }
 
-    Path FileIndex::GetPath() const
+    filesystem::Path Index::GetPath() const
     {
-        return Path(m_dirent.path().generic_string());
+        return filesystem::Path(m_dirent.path().generic_string());
     }
     
     ref_of<IFile>::type Create(const int /*openFor*/, const int /*withFlags*/, const int /*inMode*/)
@@ -164,10 +164,10 @@ namespace qor{ namespace platform{
         return result;
     }
 
-    ref_of<IFile>::type FileIndex::Open(const int /*openFor*/, const int /*withFlags*/, const int /*inMode*/)    
+    ref_of<IFile>::type Index::Open(const int /*openFor*/, const int /*withFlags*/, const int /*inMode*/)    
     {
         ref_of<IFile>::type result;
         return result;
     }
 
-}}//qor::platform
+}}}//qor::io::filesystem

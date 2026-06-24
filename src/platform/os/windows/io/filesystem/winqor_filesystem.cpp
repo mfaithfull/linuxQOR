@@ -50,9 +50,9 @@ extern "C"
 			qor_pp_stringize(qor_pp_buildnumber));
 
 		//Register the Windows specific implementations
-		static qor::TypeRegEntry< qor::platform::win::FileSystem, qor::platform::IFileSystem > regIFileSystem;  
-		static qor::TypeRegEntry< qor::platform::win::FileStat, qor::platform::IFileStat > regIFileStat;
-		static qor::TypeRegEntryWithParams< qor::platform::win::File, qor::platform::IFile, const qor::platform::FileIndex&, int&, int& > regIFile;
+		static qor::TypeRegEntry< qor::io::win::FileSystem, qor::io::IFileSystem > regIFileSystem;  
+		static qor::TypeRegEntry< qor::io::win::FileStat, qor::io::IFileStat > regIFileStat;
+		static qor::TypeRegEntryWithParams< qor::io::win::File, qor::io::IFile, const qor::io::filesystem::Index&, int&, int& > regIFile;
 		return QORModule;
 	}
 }

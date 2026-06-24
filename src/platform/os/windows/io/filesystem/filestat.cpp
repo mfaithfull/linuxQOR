@@ -29,13 +29,13 @@
 //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileStat requirement. 
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileStat() { return true; } }//qor
 
-namespace qor{ namespace platform { namespace win{
+namespace qor{ namespace io { namespace win{
     
     FileStat::FileStat() : IFileStat(), m_IsValid(false)
     {
     }
 
-    FileStat::FileStat(platform::FileIndex& fileindex) : IFileStat(fileindex)
+    FileStat::FileStat(io::filesystem::Index& fileindex) : IFileStat(fileindex)
     {
         m_IsValid = false;
         int statresult = ::stat(fileindex.GetPath().ToString().c_str(), &m_st);
@@ -70,4 +70,4 @@ namespace qor{ namespace platform { namespace win{
         return false;
     }
 
-}}}//qor::platform::win
+}}}//qor::io::win

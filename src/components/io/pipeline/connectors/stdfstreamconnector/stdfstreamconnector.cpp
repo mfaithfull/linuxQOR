@@ -28,7 +28,7 @@
 
 namespace qor{ namespace components{ 
 
-    stdfstreamConnector::stdfstreamConnector(platform::FileIndex& fileIndex) : Plug()
+    stdfstreamConnector::stdfstreamConnector(io::filesystem::Index& fileIndex) : Plug()
     {
         SetFile(fileIndex);
     }
@@ -37,7 +37,7 @@ namespace qor{ namespace components{
     {
     }
 
-    void stdfstreamConnector::SetFile(platform::FileIndex& fileIndex)
+    void stdfstreamConnector::SetFile(io::filesystem::Index& fileIndex)
     {
         m_filePath = fileIndex.GetPath().ToString();
     }

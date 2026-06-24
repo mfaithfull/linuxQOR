@@ -55,7 +55,7 @@ namespace qor{ namespace lin{
         }
     }
 
-    File::File(const platform::FileIndex& direntry, int openFor, int withFlags) : platform::File(direntry), m_fd(-1)
+    File::File(const io::filesystem::Index& direntry, int openFor, int withFlags) : platform::File(direntry), m_fd(-1)
     {
         int mode = 0;
         if( ( (withFlags & platform::WithFlags::CreateNew) | (withFlags & platform::WithFlags::TempFile) ) != 0 )

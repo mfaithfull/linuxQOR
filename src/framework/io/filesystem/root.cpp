@@ -26,11 +26,9 @@
 
 #include "root.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{ namespace filesystem{
 
-    Root::Root() : m_path()
-    {
-    }
+    Root::Root() : m_path(){ }
 
     void Root::Setup()
     {
@@ -60,4 +58,4 @@ namespace qor{ namespace platform{
         return m_path.RootIndicator();
     }
 
-}}//qor::platform
+}}}//qor::io::filesystem

@@ -42,9 +42,12 @@ namespace qor{
 #endif
 }
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) FileIndex;
+    namespace filesystem
+    {
+        class qor_pp_module_interface(QOR_FILESYSTEM) Index;
+    }
 
     class qor_pp_module_interface(QOR_FILESYSTEM) IFile
 	{
@@ -67,7 +70,7 @@ namespace qor{ namespace platform{
         };
 
         IFile(){}
-        IFile(const FileIndex& /*index*/, int /*openFor*/, int /*withFlags*/){}
+        IFile(const filesystem::Index& /*index*/, int /*openFor*/, int /*withFlags*/){}
         IFile(const IODescriptor& /*iod*/){}
         virtual bool SupportsPosition(){ return false; }
         virtual uint64_t GetPosition(){ return 0; }
@@ -88,9 +91,9 @@ namespace qor{ namespace platform{
 
     }//platform
 
-    qor_pp_declare_factory_of(platform::IFile, ExternalFactory);    
+    qor_pp_declare_factory_of(io::IFile, ExternalFactory);    
     constexpr GUID IFileGUID = {0xee642d7a, 0x621f, 0x40d0, {0xb1, 0xf3, 0x40, 0xbb, 0xde, 0x20, 0x49, 0x05}};
-    qor_pp_declare_guid_of(platform::IFile,IFileGUID);
+    qor_pp_declare_guid_of(io::IFile,IFileGUID);
 
 }//qor
 

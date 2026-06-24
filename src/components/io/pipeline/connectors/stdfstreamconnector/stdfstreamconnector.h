@@ -36,14 +36,14 @@ namespace qor{ namespace components{
     public:
 
 		stdfstreamConnector() = default;
-		stdfstreamConnector(platform::FileIndex& fileIndex);
+		stdfstreamConnector(io::filesystem::Index& fileIndex);
 		virtual ~stdfstreamConnector();
 
         //Plug interface
         virtual bool Connect();													//Device specific connection
         virtual void Disconnect(void);											//Device specific disconnection
 
-        virtual void SetFile(platform::FileIndex& fileIndex);
+        virtual void SetFile(io::filesystem::Index& fileIndex);
         
 	protected:
 

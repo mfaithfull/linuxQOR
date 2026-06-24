@@ -32,15 +32,15 @@
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/ifilesystem.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File : public platform::IODescriptor, public IFile
+    class qor_pp_module_interface(QOR_FILESYSTEM) File : public IODescriptor, public IFile
 	{
 	public:
 
         File();
         File(const File& src);
-        File(const FileIndex& index);
+        File(const filesystem::Index& index);
         File& operator = (const File&);
         virtual ~File();     
         
@@ -63,13 +63,13 @@ namespace qor{ namespace platform{
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
 
-        static ref_of<IFile>::type Open(const FileIndex& index, int openFor, int withFlags);
+        static ref_of<IFile>::type Open(const filesystem::Index& index, int openFor, int withFlags);
         
     protected:
 
-        FileIndex m_index;
+        filesystem::Index m_index;
     };
 
-}}//qor::platform
+}}//qor::io
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILE

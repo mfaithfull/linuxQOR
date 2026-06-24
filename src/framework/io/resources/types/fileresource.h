@@ -39,7 +39,7 @@ namespace qor{ namespace framework{ namespace res {
 
         static const char* StaticType();
 
-        File(ResourceManager* manager, const qor::platform::FileIndex& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index), m_monitor(false)
+        File(ResourceManager* manager, const io::filesystem::Index& index, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_index(index), m_monitor(false)
         {            
             Name();
         }
@@ -55,7 +55,7 @@ namespace qor{ namespace framework{ namespace res {
 
     protected:
 
-        const qor::platform::FileIndex m_index;
+        const io::filesystem::Index m_index;
         bool m_monitor;
         
     private:

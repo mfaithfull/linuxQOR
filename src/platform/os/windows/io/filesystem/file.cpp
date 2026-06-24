@@ -35,12 +35,12 @@
 #undef CreateFile
 
 using namespace qor::win::api;
+using namespace qor::platform::win;
 
 //Export this trivial function so the linker will pull in this library to fulfil the ImplementsIFile requirement.
 namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFile() { return true; } }//qor
 
-namespace qor{ namespace platform { namespace win{    
-
+namespace qor{ namespace io { namespace win{    
 
     unsigned long File::GetDesiredAccess(int openFor, int /*withFlags*/)
     {
@@ -107,7 +107,7 @@ namespace qor{ namespace platform { namespace win{
         m_handle = INVALID_HANDLE_VALUE;
     }
     
-    File::File(const platform::IODescriptor& iod)
+    File::File(const io::IODescriptor& iod)
     {
         m_handle = iod.m_handle;
     }
@@ -118,7 +118,7 @@ namespace qor{ namespace platform { namespace win{
         m_objectType = src.m_objectType;
     }
 
-    File::File(const platform::FileIndex& direntry, int openFor, int withFlags) : platform::File(direntry) 
+    File::File(const filesystem::Index& direntry, int openFor, int withFlags) : io::File(direntry) 
     {
         unsigned long desiredAccess = GetDesiredAccess(openFor, withFlags);
         unsigned long shareMode = GetShareMode(openFor, withFlags);
@@ -144,9 +144,9 @@ namespace qor{ namespace platform { namespace win{
 
     uint64_t File::GetPosition()
     {
-        LARGE_INTEGER position;
+        platform::win::LARGE_INTEGER position;
         position.QuadPart = 0;
-        LARGE_INTEGER newPos;
+        platform::win::LARGE_INTEGER newPos;
         SetPointerEx(position, &newPos, FILE_CURRENT);
         return newPos.QuadPart; 
     }
@@ -169,51 +169,51 @@ namespace qor{ namespace platform { namespace win{
             method = FILE_CURRENT;
         };
         uint64_t offset64 = offset;
-        LARGE_INTEGER position;
+        platform::win::LARGE_INTEGER position;
         position.QuadPart = offset64;
-        LARGE_INTEGER newPos;
+        platform::win::LARGE_INTEGER newPos;
         SetPointerEx(position, &newPos, method);
         return static_cast<long>(newPos.QuadPart);
     }
 
     uint64_t File::SetPosition(uint64_t newPosition)
     {
-        LARGE_INTEGER position;
+        platform::win::LARGE_INTEGER position;
         position.QuadPart = newPosition;
-        LARGE_INTEGER newPos;
+        platform::win::LARGE_INTEGER newPos;
         SetPointerEx(position, &newPos, FILE_BEGIN);
         return newPos.QuadPart;
     }
 
     uint64_t File::SetPositionRelative(int64_t offset)
     {
-        LARGE_INTEGER position;
+        platform::win::LARGE_INTEGER position;
         position.QuadPart = offset;
-        LARGE_INTEGER newPos;
+        platform::win::LARGE_INTEGER newPos;
         SetPointerEx(position, &newPos, FILE_CURRENT);
         return newPos.QuadPart;        
     }
 
     void File::Truncate(uint64_t length)
     {
-        LARGE_INTEGER position;
+        platform::win::LARGE_INTEGER position;
         position.QuadPart = length;
-        LARGE_INTEGER newPosition;
+        platform::win::LARGE_INTEGER newPosition;
         SetPointerEx(position, &newPosition, FILE_BEGIN);
         SetEnd();        
     }
 
     void File::Reserve(uint64_t length)
     {
-        LARGE_INTEGER beggining  = {0};
-        LARGE_INTEGER newPosition;
+        platform::win::LARGE_INTEGER beggining  = {0};
+        platform::win::LARGE_INTEGER newPosition;
         Truncate(length);
         SetPointerEx(beggining, &newPosition, FILE_BEGIN); // reset
     }
 
     uint64_t File::GetSize()
     {
-        LARGE_INTEGER fileSize;
+        platform::win::LARGE_INTEGER fileSize;
         fileSize.QuadPart = 0;
         if(!Kernel32::GetFileSizeEx(m_handle, reinterpret_cast<::PLARGE_INTEGER>(&fileSize)))
         {            
@@ -250,7 +250,7 @@ namespace qor{ namespace platform { namespace win{
 
     ref_of<IFile>::type File::ReOpen()
     {
-        platform::IODescriptor iod;
+        IODescriptor iod;
         iod.m_handle = Kernel32::ReOpenFile(m_handle, FILE_GENERIC_READ | FILE_GENERIC_WRITE | FILE_GENERIC_EXECUTE, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, 0);
         return new_ref<IFile>(iod);
     }
@@ -288,9 +288,9 @@ namespace qor{ namespace platform { namespace win{
         return -1;
     }
 
-    ref_of<platform::IFile>::type File::Duplicate()
+    ref_of<IFile>::type File::Duplicate()
     {
-        ref_of<platform::IFile>::type nullref;
+        ref_of<IFile>::type nullref;
         return nullref;
     }
 
@@ -415,7 +415,7 @@ namespace qor{ namespace platform { namespace win{
         return Kernel32::SetFilePointer(m_handle, distanceToMove, &distanceToMoveHigh, moveMethod);
     }
 
-    bool File::SetPointerEx( LARGE_INTEGER distanceToMove, LARGE_INTEGER* newFilePointer, unsigned long moveMethod )
+    bool File::SetPointerEx( platform::win::LARGE_INTEGER distanceToMove, platform::win::LARGE_INTEGER* newFilePointer, unsigned long moveMethod )
     {
         return Kernel32::SetFilePointerEx(m_handle, *(reinterpret_cast<::LARGE_INTEGER*>(&distanceToMove)), reinterpret_cast<::PLARGE_INTEGER>(newFilePointer), moveMethod) ? true : false;
     }
@@ -457,4 +457,4 @@ namespace qor{ namespace platform { namespace win{
         reinterpret_cast<LPOVERLAPPED>(overlapped)) ? true : false;
     }
 
-}}}//qor::platform::win
+}}}//qor::io::win

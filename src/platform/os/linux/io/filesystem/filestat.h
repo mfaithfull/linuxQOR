@@ -32,13 +32,13 @@ namespace qor
     bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFileStat();//Declaration must match the one in src/system/filesystem/filestat.h
 }
 
-namespace qor{ namespace lin{ 
+namespace qor{ namespace io{ namespace lin{ 
 
     class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileStat : public qor::platform::IFileStat
     {
     public:
         FileStat();
-        FileStat(platform::FileIndex& fileindex);
+        FileStat(io::filesystem::Index& fileindex);
         virtual ~FileStat() noexcept = default;
 
         virtual bool IsValid();
@@ -53,6 +53,6 @@ namespace qor{ namespace lin{
         bool m_IsValid;
     };
 
-}}//qor::lin
+}}}//qor::io::lin
 
 #endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESTAT

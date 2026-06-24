@@ -32,13 +32,14 @@ namespace qor
     bool qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) ImplementsIFileStat();//Declaration must match the one in src/system/filesystem/filestat.h
 }
 
-namespace qor{ namespace platform { namespace win{
+namespace qor{ namespace io { namespace win{
 
-    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileStat : public qor::platform::IFileStat
+    class qor_pp_module_interface(QOR_WINDOWSFILESYSTEM) FileStat : public IFileStat
     {
     public:
+
         FileStat();
-        FileStat(platform::FileIndex& fileindex);
+        FileStat(filesystem::Index& fileindex);
         virtual ~FileStat() noexcept = default;
 
         virtual bool IsValid();
@@ -53,6 +54,6 @@ namespace qor{ namespace platform { namespace win{
         bool m_IsValid;
     };
 
-}}}//qor::platform::win
+}}}//qor::io::win
 
 #endif//QOR_PP_H_PLATFORM_WINDOWS_FILESYSTEM_FILESTAT

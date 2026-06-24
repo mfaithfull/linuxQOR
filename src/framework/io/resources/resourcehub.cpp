@@ -84,17 +84,17 @@ namespace qor{ namespace framework{
         new res::Path(this, path, batchKey);        
     }
 
-    void ResourceHub::AddFile(const qor::platform::FileIndex& index, Resource* batchKey)
+    void ResourceHub::AddFile(const io::filesystem::Index& index, Resource* batchKey)
     {
         new res::File(this, index, batchKey);        
     }
 
-    void ResourceHub::AddJSON(const platform::FileIndex& file, Resource* batchKey)
+    void ResourceHub::AddJSON(const io::filesystem::Index& file, Resource* batchKey)
     {
         new res::JSON(this, file, batchKey);
     }
 
-    void ResourceHub::AddFont(const platform::FileIndex& file, Resource* batchKey)
+    void ResourceHub::AddFont(const io::filesystem::Index& file, Resource* batchKey)
     {
         new res::Font(this, file, batchKey);
     }

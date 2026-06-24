@@ -43,7 +43,7 @@ namespace qor{ namespace components{
 
     }
 
-    FileConnector::FileConnector(const platform::FileIndex& fileIndex, 
+    FileConnector::FileConnector(const io::filesystem::Index& fileIndex, 
         const platform::WithFlags mode, 
         const platform::ShareMode share,
         const platform::OpenFor openfor) : Plug()
@@ -51,7 +51,7 @@ namespace qor{ namespace components{
         m_Mode = mode;
         m_OpenFor = openfor;
         m_Share = share;
-        m_pFileIndex = &(const_cast<platform::FileIndex&>(fileIndex));
+        m_pFileIndex = &(const_cast<io::filesystem::Index&>(fileIndex));
 
         m_sink = new_ref<FileSink>();
         m_source = new_ref<FileSource>();
@@ -60,7 +60,7 @@ namespace qor{ namespace components{
 
     }
 
-    FileConnector::FileConnector(const platform::FileIndex& fileIndex, 
+    FileConnector::FileConnector(const io::filesystem::Index& fileIndex, 
         const pipeline::Buffer& buffer, 
         const platform::WithFlags mode, 
         const platform::ShareMode share,
@@ -70,7 +70,7 @@ namespace qor{ namespace components{
         m_sink->SetBuffer(buffer);
     }
 
-    FileConnector::FileConnector(const platform::FileIndex& fileIndex, 
+    FileConnector::FileConnector(const io::filesystem::Index& fileIndex, 
         pipeline::Buffer& buffer, 
         const platform::WithFlags mode, 
         const platform::ShareMode share,
@@ -144,7 +144,7 @@ namespace qor{ namespace components{
         return m_Share;
     }
 
-    void FileConnector::SetFile(platform::FileIndex& fileIndex)
+    void FileConnector::SetFile(io::filesystem::Index& fileIndex)
     {
         m_pFileIndex = &fileIndex;
     }

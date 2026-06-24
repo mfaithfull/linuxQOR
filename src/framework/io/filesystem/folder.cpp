@@ -28,7 +28,7 @@
 #include "folder.h"
 #include "src/qor/error/error.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{ namespace filesystem {
 
     Folder::Folder(const Folder& src)
     {
@@ -76,11 +76,11 @@ namespace qor{ namespace platform{
         return std::filesystem::remove(m_path);
     }
 
-    void Folder::Enumerate( const std::function <bool (FileIndex&)>& f ) const
+    void Folder::Enumerate( const std::function <bool (Index&)>& f ) const
     {
         for (auto const& dir_entry : std::filesystem::directory_iterator{m_path}) 
         {
-            FileIndex item(dir_entry);
+            Index item(dir_entry);
             if( !f(item) )
             {
                 break;
@@ -98,4 +98,4 @@ namespace qor{ namespace platform{
         return m_path;
     }
 
-}}//qor::platform
+}}}//qor::io::filesystem

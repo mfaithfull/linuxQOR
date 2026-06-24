@@ -36,7 +36,7 @@ namespace qor
     bool qor_pp_import ImplementsIFileSystem();//All libraries providing an implementation of IFileSystem also need to export this function so that the linker can find them
 }
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) FileSystem : public ISubsystem
     {
@@ -50,36 +50,36 @@ namespace qor{ namespace platform{
         virtual void Setup();
         virtual void Shutdown();
 
-        const Root& GetRoot() const;
-        Path CurrentPath() const;
-        void CurrentPath(Path& path) const;
+        const filesystem::Root& GetRoot() const;
+        filesystem::Path CurrentPath() const;
+        void CurrentPath(filesystem::Path& path) const;
 
-        ref_of<IFile>::type Create(const FileIndex& index, const int withFlags) const;
-        std::optional<Folder> Create(const Path& path) const;
-        std::optional<Folder> MakeDir(const Path& path) const;
-        std::optional<Folder> NewFolder(const Path& path) const;
-        ref_of<IFile>::type Open(const FileIndex& index, const int openFor = OpenFor::ReadWrite, const int withFlags = 0) const;
-        bool Delete(const FileIndex& index) const;
-        bool RemoveDir(const Path& path) const;
-        bool DeleteFolder(const Path& path) const;
-        bool Copy(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        bool Rename(platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
+        ref_of<IFile>::type Create(const filesystem::Index& index, const int withFlags) const;
+        std::optional<filesystem::Folder> Create(const filesystem::Path& path) const;
+        std::optional<filesystem::Folder> MakeDir(const filesystem::Path& path) const;
+        std::optional<filesystem::Folder> NewFolder(const filesystem::Path& path) const;
+        ref_of<IFile>::type Open(const filesystem::Index& index, const int openFor = OpenFor::ReadWrite, const int withFlags = 0) const;
+        bool Delete(const filesystem::Index& index) const;
+        bool RemoveDir(const filesystem::Path& path) const;
+        bool DeleteFolder(const filesystem::Path& path) const;
+        bool Copy(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const;
+        bool Move(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const;
+        bool Rename(filesystem::Index& srcIndex, const filesystem::Index& destIndex) const;
 
-        std::filesystem::space_info Space(const Path& path) const;
-        Path TempFolder() const;
-        Path ApplicationLogPath() const;
+        std::filesystem::space_info Space(const filesystem::Path& path) const;
+        filesystem::Path TempFolder() const;
+        filesystem::Path ApplicationLogPath() const;
                 
     private:
 
         ref_of<IFileSystem>::type m_pimpl;
-        Root m_root;
+        filesystem::Root m_root;
     };
     
-    }//qor::platform
+    }//qor::io
     
     constexpr GUID FileSystemGUID = {0x3eea49d1, 0x3bc7, 0x429b, {0xb8, 0x0a, 0x70, 0xe3, 0xcf, 0x87, 0x05, 0xe0}};
-    qor_pp_declare_guid_of(platform::FileSystem,FileSystemGUID);
+    qor_pp_declare_guid_of(io::FileSystem,FileSystemGUID);
 }//qor
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILESYSTEM

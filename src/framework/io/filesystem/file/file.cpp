@@ -26,9 +26,9 @@
 
 #include "file.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
-    ref_of<IFile>::type File::Open(const FileIndex& index, int openFor, int withFlags)
+    ref_of<IFile>::type File::Open(const filesystem::Index& index, int openFor, int withFlags)
     {        
         return new_ref<IFile>(index, openFor, withFlags);
     }
@@ -42,7 +42,7 @@ namespace qor{ namespace platform{
         *this = src;
     }
 
-    File::File(const FileIndex& index) : m_index(index)//open mode including sharing and access
+    File::File(const filesystem::Index& index) : m_index(index)//open mode including sharing and access
     {
     }
 
@@ -132,4 +132,4 @@ namespace qor{ namespace platform{
         return 0;
     }
 
-}}//qor::platform
+}}//qor::io

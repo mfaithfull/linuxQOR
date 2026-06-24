@@ -27,7 +27,7 @@
 
 #include "src/qor/datastructures/guid.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
     struct IODescriptor
     {
@@ -39,7 +39,7 @@ namespace qor{ namespace platform{
         };
         const GUID* m_objectType;        
     };
-}}//qor::platform
+}}//qor::io
 
 #endif//QOR_PP_H_OS_PLATFORM_IO_DESC
 

@@ -31,6 +31,7 @@
 #include "src/platform/platform.h"
 
 using namespace qor::platform;
+using namespace qor::io;
 
 namespace qor { namespace components{
 
@@ -50,17 +51,17 @@ namespace qor { namespace components{
         m_writeToStandardOutput = write;
     }
 
-    void LogReceiver::WriteToFileSystem(Path path, const std::string& fileNamePrefix)
+    void LogReceiver::WriteToFileSystem(filesystem::Path path, const std::string& fileNamePrefix)
     {
         auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
 
-        FileIndex pathIndex(path,"");
+        filesystem::Index pathIndex(path,"");
         if(!pathIndex.Exists())
         {
             filesystem->MakeDir(path);
         }
         std::string strFileName;
-        FileIndex index;
+        filesystem::Index index;
         size_t fileSize = 0;
         std::scoped_lock<std::mutex> lock(m_mutex);
         do
@@ -69,7 +70,7 @@ namespace qor { namespace components{
             index.Set(path, strFileName);
         }while(index.Exists() && (++m_logRollNumber < m_logRollLimit) && ((fileSize += index.Size()) < m_totalSizeLimit));
      
-        FileIndex logFileIndex(path, strFileName);
+        filesystem::Index logFileIndex(path, strFileName);
 
         m_refLogFile = filesystem->Open(logFileIndex, 
             OpenFor::ReadWrite, logFileIndex.Exists() ? WithFlags::Append :

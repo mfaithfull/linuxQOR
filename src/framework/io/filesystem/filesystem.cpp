@@ -29,7 +29,7 @@
 #include "filesystem.h"
 #include "path.h"
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
 
     FileSystem::FileSystem()
     {
@@ -40,51 +40,51 @@ namespace qor{ namespace platform{
     {
         if(m_pimpl.IsNotNull())
         {
-            Path::s_separator = m_pimpl->PathSeparator();
-            Path::s_selfIndicator = m_pimpl->SelfIndicator();
-            Path::s_parentIndicator = m_pimpl->ParentIndicator();
-            Path::s_maxElementLength = m_pimpl->MaxElementLength();
-            Path::s_rootIndicator = m_pimpl->RootIndicator();
+            filesystem::Path::s_separator = m_pimpl->PathSeparator();
+            filesystem::Path::s_selfIndicator = m_pimpl->SelfIndicator();
+            filesystem::Path::s_parentIndicator = m_pimpl->ParentIndicator();
+            filesystem::Path::s_maxElementLength = m_pimpl->MaxElementLength();
+            filesystem::Path::s_rootIndicator = m_pimpl->RootIndicator();
         }
         m_root.Setup();
     }
 
     void FileSystem::Shutdown(){}
 
-    const Root& FileSystem::GetRoot() const
+    const filesystem::Root& FileSystem::GetRoot() const
     {
         return m_root;
     }
 
-    Path FileSystem::CurrentPath() const
+    filesystem::Path FileSystem::CurrentPath() const
     {
         std::filesystem::path stdpath = std::filesystem::current_path();
-        Path currentPath(stdpath.string());
+        filesystem::Path currentPath(stdpath.string());
         return currentPath;
     }
 
-    void FileSystem::CurrentPath(Path& path) const
+    void FileSystem::CurrentPath(filesystem::Path& path) const
     {
         std::filesystem::current_path(path);
     }
 
-    ref_of<IFile>::type FileSystem::Create(const FileIndex& index, const int withFlags) const
+    ref_of<IFile>::type FileSystem::Create(const filesystem::Index& index, const int withFlags) const
     {
         return m_pimpl->Create(index, withFlags);
     }
 
-    std::optional<Folder> FileSystem::Create(const Path& path) const
+    std::optional<filesystem::Folder> FileSystem::Create(const filesystem::Path& path) const
     {
         return MakeDir(path);
     }
 
-    std::optional<Folder> FileSystem::MakeDir(const Path& path) const
+    std::optional<filesystem::Folder> FileSystem::MakeDir(const filesystem::Path& path) const
     {
-        std::optional<Folder> folder;
+        std::optional<filesystem::Folder> folder;
         try{
             if(std::filesystem::create_directory(path))
             {
-                folder.emplace(Folder(path));                
+                folder.emplace(filesystem::Folder(path));                
             }
         }
         catch(std::filesystem::filesystem_error& fse)
@@ -94,13 +94,13 @@ namespace qor{ namespace platform{
         return folder;
     }
 
-    std::optional<Folder> FileSystem::NewFolder(const Path& path) const
+    std::optional<filesystem::Folder> FileSystem::NewFolder(const filesystem::Path& path) const
     {
         return MakeDir(path);
     }
 
 
-    bool FileSystem::Delete(const FileIndex& index) const
+    bool FileSystem::Delete(const filesystem::Index& index) const
     {
         try{
             return std::filesystem::remove(index.GetPath());
@@ -112,7 +112,7 @@ namespace qor{ namespace platform{
         return false;
     }
 
-    bool FileSystem::RemoveDir(const Path& path) const
+    bool FileSystem::RemoveDir(const filesystem::Path& path) const
     {
         try
         {
@@ -125,17 +125,17 @@ namespace qor{ namespace platform{
         return false;            
     }
     
-    bool FileSystem::DeleteFolder(const Path& path) const
+    bool FileSystem::DeleteFolder(const filesystem::Path& path) const
     {
         return RemoveDir(path);
     }
 
-    ref_of<IFile>::type FileSystem::Open(const FileIndex& index, const int openFor, const int withFlags) const
+    ref_of<IFile>::type FileSystem::Open(const filesystem::Index& index, const int openFor, const int withFlags) const
     {
         return m_pimpl->Open(index, openFor, withFlags);
     }
 
-    bool FileSystem::Copy(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
+    bool FileSystem::Copy(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const
     {
         try
         {
@@ -150,12 +150,12 @@ namespace qor{ namespace platform{
         return false;
     }
 
-    bool FileSystem::Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
+    bool FileSystem::Move(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const
     {
         return srcIndex.Move(destIndex);
     }
 
-    bool FileSystem::Rename(platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const
+    bool FileSystem::Rename(filesystem::Index& srcIndex, const filesystem::Index& destIndex) const
     {
         {
             try
@@ -171,20 +171,20 @@ namespace qor{ namespace platform{
         }
     }
 
-    std::filesystem::space_info FileSystem::Space(const Path& path) const
+    std::filesystem::space_info FileSystem::Space(const filesystem::Path& path) const
     {
         return std::filesystem::space(path);
     }
 
-    Path FileSystem::TempFolder() const
+    filesystem::Path FileSystem::TempFolder() const
     {
-        Path tempPath(std::filesystem::temp_directory_path().generic_string());
+        filesystem::Path tempPath(std::filesystem::temp_directory_path().generic_string());
         return tempPath;
     }
 
-    Path FileSystem::ApplicationLogPath() const
+    filesystem::Path FileSystem::ApplicationLogPath() const
     {
         return m_pimpl->ApplicationLogPath();
     }
 
-}}//qor::platform
+}}//qor::io

@@ -38,7 +38,8 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::platform;
+using namespace qor::io;
+using namespace qor::io::filesystem;
 
 struct FileSystemTestSuite
 {
@@ -70,7 +71,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolderRegularFile
 {
     Folder currentFolder(m_fileSystem->CurrentPath());
     std::cout << std::endl;
-    currentFolder.Enumerate( [](FileIndex& i) ->bool {
+    currentFolder.Enumerate( [](Index& i) ->bool {
         if(i.IsRegularFile())
         {
             std::cout << i.ToString() << std::endl;
@@ -82,7 +83,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolderRegularFile
 
 qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFile)
 {
-    FileIndex newIndex(m_fileSystem->CurrentPath(), "TestTemp");
+    Index newIndex(m_fileSystem->CurrentPath(), "TestTemp");
     {
         auto refFile = m_fileSystem->Create(newIndex, WithFlags::CreateNew);
     }
@@ -101,7 +102,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFolder)
 
 qor_pp_test_suite_case(FileSystemTestSuite, openAndWriteToANewFile)
 {
-    FileIndex newIndex(m_fileSystem->CurrentPath(), "testfile2.txt");
+    Index newIndex(m_fileSystem->CurrentPath(), "testfile2.txt");
     {
         auto refFile = m_fileSystem->Create(newIndex, WithFlags::CreateNew);
         refFile->Flush();
@@ -117,7 +118,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, openAndWriteToANewFile)
 
 qor_pp_test_suite_case(FileSystemTestSuite, writeAndReadBackFileContents)
 {
-    FileIndex newIndex(m_fileSystem->CurrentPath(), "testfile3.txt");
+    Index newIndex(m_fileSystem->CurrentPath(), "testfile3.txt");
     {
         static const char* message = "{\
 \"name\": \"John Doe\",\

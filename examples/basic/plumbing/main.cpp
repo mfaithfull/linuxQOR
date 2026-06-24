@@ -15,8 +15,8 @@ qor_pp_implement_module(appName)
 qor_pp_module_requires(ICurrentThread);
 qor_pp_module_requires(IFileSystem);
 
-void TraditionalFileRead(FileSystem::ref filesystem, FileIndex& index);
-void PipelineFileProcessor(FileSystem::ref filesystem, FileIndex& index);
+void TraditionalFileRead(FileSystem::ref filesystem, filesystem::Index& index);
+void PipelineFileProcessor(FileSystem::ref filesystem, filesystem::Index& index);
 
 int main()
 {
@@ -35,9 +35,9 @@ int main()
             /*All the functions on the fileSystem object are const so 
             once we have it, it's safe to use without synchronisation*/
 
-            /*A FileIndex is how we refer to a specific file without opening it.
+            /*A filesystem::Index is how we refer to a specific file without opening it.
             Internally it's a directory entry, which is just the index of a file*/
-            FileIndex index(fileSystem->CurrentPath(), "alice.txt");
+            io::filesystem::Index index(fileSystem->CurrentPath(), "alice.txt");
 
             if(!index.Exists())
             {
@@ -57,7 +57,7 @@ int main()
         });
 }
 
-void TraditionalFileRead(FileSystem::ref fileSystem, FileIndex& index)
+void TraditionalFileRead(FileSystem::ref fileSystem, filesystem::Index& index)
 {
     auto file = fileSystem->Open(index, OpenFor::ReadOnly);         //Obtain a file object from the file system    
     FileReader reader(file);                                        //Initialise a reader for the file    
@@ -70,9 +70,9 @@ void TraditionalFileRead(FileSystem::ref fileSystem, FileIndex& index)
     //std::cout << (FileReader(index, OpenFor::ReadOnly).ReadLine()) << std::endl;
 }
 
-void PipelineFileProcessor(FileSystem::ref fileSystem, FileIndex& input)
+void PipelineFileProcessor(FileSystem::ref fileSystem, io::filesystem::Index& input)
 {    
-    FileIndex output(fileSystem->CurrentPath(), "output.txt");      //An output file to go with the input file
+    io::filesystem::Index output(fileSystem->CurrentPath(), "output.txt");      //An output file to go with the input file
 
     if(output.Exists())                                             //Clean up any old output
     {

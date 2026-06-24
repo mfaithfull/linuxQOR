@@ -53,13 +53,13 @@ namespace qor{ namespace lin{
                 
         consider whether we need a separate directory entry file object if we want to be able to mess with dirents, probably.*/
 
-        virtual ref_of<platform::IFile>::type Create(const platform::FileIndex& index, const int withFlags) const;        
-        virtual ref_of<platform::IFile>::type Open(const platform::FileIndex& index, const int openFor, const int withFlags) const;        
-        virtual bool Move(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
-        virtual bool Rename(const platform::FileIndex& srcIndex, const platform::FileIndex& destIndex) const;
+        virtual ref_of<io::IFile>::type Create(const io::filesystem::Index& index, const int withFlags) const;        
+        virtual ref_of<io::IFile>::type Open(const io::filesystem::Index& index, const int openFor, const int withFlags) const;        
+        virtual bool Move(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const;
+        virtual bool Rename(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const;
 
         void SyncToSystem() const;
-        virtual platform::Path ApplicationLogPath() const;
+        virtual io::filesystem::Path ApplicationLogPath() const;
 
     };
 

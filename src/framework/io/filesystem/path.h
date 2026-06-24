@@ -28,11 +28,15 @@
 #include <string>
 #include <filesystem>
 
-namespace qor{ namespace platform{
+namespace qor{ namespace io{
+    class qor_pp_module_interface(QOR_FILESYSTEM) FileSystem;
+}}//qor::io
+
+namespace qor{ namespace io{ namespace filesystem{
 
     class qor_pp_module_interface(QOR_FILESYSTEM) Path
     {
-        friend class FileSystem;
+        friend class qor::io::FileSystem;
 
     public:
 
@@ -91,6 +95,6 @@ namespace qor{ namespace platform{
 
     };
     
-}}//qor::platform
+}}}//qor::io::filesystem
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_PATH

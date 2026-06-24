@@ -28,7 +28,7 @@
 
 namespace qor{ namespace components{ 
 
-    stdofstreamConnector::stdofstreamConnector(platform::FileIndex& fileIndex) : stdfstreamConnector(fileIndex)
+    stdofstreamConnector::stdofstreamConnector(io::filesystem::Index& fileIndex) : stdfstreamConnector(fileIndex)
     {
     }
 

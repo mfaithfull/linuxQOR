@@ -52,9 +52,9 @@ namespace qor{ namespace framework{
         void ReceiveResourceUpdate(Resource* res, ResourceStatus status);                                     //|
         //This is the interface to be implemented by an actual resource manager----------------------------------.
         virtual void AddPath(const platform::Path& path, Resource* batchKey = nullptr){}                      //|.
-        virtual void AddFile(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
-        virtual void AddJSON(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
-        virtual void AddFont(const platform::FileIndex& file, Resource* batchKey = nullptr){}                 //|.
+        virtual void AddFile(const io::filesystem::Index& file, Resource* batchKey = nullptr){}               //|.
+        virtual void AddJSON(const io::filesystem::Index& file, Resource* batchKey = nullptr){}               //|.
+        virtual void AddFont(const io::filesystem::Index& file, Resource* batchKey = nullptr){}               //|.
         virtual void BeginBatch(Resource* batchKey){}                                                         //|.
         virtual void EndBatch(Resource* batchKey){}											                  //|.
 

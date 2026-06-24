@@ -41,7 +41,7 @@ LineByLineWorkflow::LineByLineWorkflow() : state0(new_ref<qor::workflow::State>(
         source.SetPlug(&connector);
     
         auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
-        FileIndex newIndex(filesystem->CurrentPath(), "linebyline_source.txt");
+        io::filesystem::Index newIndex(filesystem->CurrentPath(), "linebyline_source.txt");
 
         LineReader filter;
         filter.SetFlowMode(Element::FlowMode::Push);

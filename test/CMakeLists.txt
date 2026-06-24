@@ -113,3 +113,4 @@ if (WIN32)
 endif ()
 
 add_subdirectory(operational)
+add_subdirectory(filesystem)

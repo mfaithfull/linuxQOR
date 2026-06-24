@@ -57,7 +57,7 @@ qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)
 
 void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator);
-void PipelineFileProcessor(FileIndex& input);
+void PipelineFileProcessor(io::filesystem::Index& input);
 
 int main(const int argc, const char** argv, char** env)
 {	
@@ -88,7 +88,7 @@ int main(const int argc, const char** argv, char** env)
                 qor_pp_fcontext;
 
                 auto fileSystem = ThePlatform()(qor_shared).GetSubsystem<FileSystem>();            
-                FileIndex index(fileSystem->CurrentPath(), "test1.jpg");
+                io::filesystem::Index index(fileSystem->CurrentPath(), "test1.jpg");
                 PipelineFileProcessor(index);
 
                 return EXIT_SUCCESS;
@@ -105,7 +105,7 @@ void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAg
     connect(logHandler, logHandler.GetForwardSignal(), aggregator.Receiver(), &LogReceiver::ReceiveLog, ConnectionKind::QueuedConnection);
 }
 
-void PipelineFileProcessor(FileIndex& input)
+void PipelineFileProcessor(io::filesystem::Index& input)
 {
     Image output;    
     JPEGDecodeFilter filter;

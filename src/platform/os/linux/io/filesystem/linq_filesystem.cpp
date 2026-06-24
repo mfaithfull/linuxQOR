@@ -50,9 +50,9 @@ extern "C"
 			qor_pp_stringize(qor_pp_buildnumber));
 
 		//Register the Linux specific implementations
-		static qor::TypeRegEntry< qor::lin::FileSystem, qor::platform::IFileSystem > regIFileSystem;  
-		static qor::TypeRegEntry< qor::lin::FileStat, qor::platform::IFileStat > regIFileStat;
-		static qor::TypeRegEntryWithParams< qor::lin::File, qor::platform::IFile, qor::platform::FileIndex&, int&, int& > regIFile;
+		static qor::TypeRegEntry< qor::lin::FileSystem, qor::io::IFileSystem > regIFileSystem;  
+		static qor::TypeRegEntry< qor::lin::FileStat, qor::io::IFileStat > regIFileStat;
+		static qor::TypeRegEntryWithParams< qor::lin::File, qor::io::IFile, qor::io::filesystem::Index&, int&, int& > regIFile;
 		return QORModule;
 	}
 }

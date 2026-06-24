@@ -36,15 +36,15 @@ namespace qor{ namespace components{
     public:
 
 		FileConnector();
-		FileConnector(const platform::FileIndex & fileIndex, 
+		FileConnector(const io::filesystem::Index & fileIndex, 
             const platform::WithFlags mode = platform::WithFlags::CreateNew,
             const platform::ShareMode access = platform::ShareMode::Owner_Read, 
             const platform::OpenFor openfor = platform::OpenFor::ReadWrite);
-		FileConnector(const platform::FileIndex & fileIndex, const pipeline::Buffer& buffer,
+		FileConnector(const io::filesystem::Index & fileIndex, const pipeline::Buffer& buffer,
             const platform::WithFlags mode = platform::WithFlags::CreateNew,
             const platform::ShareMode access = platform::ShareMode::Owner_Read, 
             const platform::OpenFor openfor = platform::OpenFor::ReadWrite);
-		FileConnector(const platform::FileIndex & fileIndex, pipeline::Buffer& buffer,
+		FileConnector(const io::filesystem::Index & fileIndex, pipeline::Buffer& buffer,
             const platform::WithFlags mode = platform::WithFlags::CreateNew,
             const platform::ShareMode access = platform::ShareMode::Owner_Read, 
             const platform::OpenFor openfor = platform::OpenFor::ReadWrite);
@@ -64,11 +64,11 @@ namespace qor{ namespace components{
 		void SetShare(platform::ShareMode share);
 		platform::ShareMode GetShare(void);
 
-		void SetFile(platform::FileIndex & fileIndex);
+		void SetFile(io::filesystem::Index & fileIndex);
 
-		platform::FileIndex& FileIndex(void) 
+		io::filesystem::Index& FileIndex(void) 
         { 
-            return *m_pFileIndex; 					//The underlying FileIndex
+            return *m_pFileIndex; 					//The underlying filesystem::Index
         }
 
 		ref_of<platform::IFile>::type File(void) 
@@ -81,10 +81,10 @@ namespace qor{ namespace components{
 
 	protected:
 
-        platform::FileIndex* m_pFileIndex;
-        platform::WithFlags m_Mode;
-        platform::OpenFor m_OpenFor;
-        platform::ShareMode m_Share;
+        io::filesystem::Index* m_pFileIndex;
+        io::WithFlags m_Mode;
+        io::OpenFor m_OpenFor;
+        io::ShareMode m_Share;
 
         ref_of<pipeline::Sink>::type m_sink;
         ref_of<pipeline::Source>::type m_source;

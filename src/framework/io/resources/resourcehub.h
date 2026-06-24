@@ -73,9 +73,9 @@ namespace qor{ namespace framework{
         virtual void BeginBatch(Resource* batchKey);
         virtual void EndBatch(Resource* batchKey);
         virtual void AddPath(const platform::Path& path, Resource* batchKey = nullptr);//Add a Path resource, return a URI by which it will be indexed
-        virtual void AddFile(const platform::FileIndex& file, Resource* batchKey = nullptr);//Add a File resource, return a URI by which it will be indexed
-        virtual void AddJSON(const platform::FileIndex& file, Resource* batchKey = nullptr);
-        virtual void AddFont(const platform::FileIndex& file, Resource* batchKey = nullptr);
+        virtual void AddFile(const io::filesystem::Index& file, Resource* batchKey = nullptr);//Add a File resource, return a URI by which it will be indexed
+        virtual void AddJSON(const io::filesystem::Index& file, Resource* batchKey = nullptr);
+        virtual void AddFont(const io::filesystem::Index& file, Resource* batchKey = nullptr);
         
         void SubscribeForNamesByPath(const std::string& uriPathPart, const std::function<bool(Resource*)>& onNamedcallback);
         void SubscribeForLocationsByPath(const std::string& uriPathPart, const std::function<bool(Resource*)>& onLocatedcallback);

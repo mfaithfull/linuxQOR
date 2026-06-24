@@ -22,34 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_STDOFSTREAM
-#define QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_STDOFSTREAM
+#include "src/configuration/configuration.h"
 
-#include <fstream>
-#include "src/framework/io/filesystem/fileindex.h"
-#include "stdfstreamconnector.h"
+#include "src/qor/test/test.h"
+#include "src/qor/assert/assert.h"
+#include "src/framework/io/filesystem/filesystem.h"
 
-namespace qor{ namespace components{ 
+using namespace qor;
+//using namespace qor::io;
 
-    class qor_pp_module_interface(QOR_STDFSTREAMCONNECTOR) stdofstreamConnector : public stdfstreamConnector
-    {
-    public:
+struct FileSystemSmokeTestSuite{};
 
-		stdofstreamConnector() = default;
-		stdofstreamConnector(io::filesystem::Index& fileIndex);
-		virtual ~stdofstreamConnector();
+qor_pp_test_suite_case(FileSystemSmokeTestSuite, CanMakeAFileSystemObject)
+{    
+    auto filesys = new_ref<FileSystem>();
+    filesys->Setup();
+    filesys->Shutdown();
+    qor_pp_assert_that(true);
+}
 
-        //Plug interface
-        virtual bool Connect();													//Device specific connection
-        virtual void Disconnect(void);											//Device specific disconnection
-
-        std::ofstream& Stream();
-
-	protected:
-
-        std::ofstream m_ofstream;
-    };
-
-}}//qor::components
-
-#endif//QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_STDOFSTREAM

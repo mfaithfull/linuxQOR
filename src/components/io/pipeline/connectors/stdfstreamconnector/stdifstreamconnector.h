@@ -36,7 +36,7 @@ namespace qor{ namespace components{
     public:
 
 		stdifstreamConnector() = default;
-		stdifstreamConnector(platform::FileIndex& fileIndex);
+		stdifstreamConnector(io::filesystem::Index& fileIndex);
 		virtual ~stdifstreamConnector();
 
         virtual bool Connect();													//Device specific connection

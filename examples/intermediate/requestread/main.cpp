@@ -48,7 +48,7 @@ int main()
             
             auto request = reader(
                 FileConnector(
-                    FileIndex(
+                    io::filesystem::Index(
                         ThePlatform(qor_shared)->
                             GetSubsystem<FileSystem>()->
                                 CurrentPath(), "request.txt"

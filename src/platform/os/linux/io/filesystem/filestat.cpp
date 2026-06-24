@@ -34,11 +34,11 @@ namespace qor{
     }
 }//qor
 
-namespace qor{ namespace lin{ 
+namespace qor{ namespace io { namespace lin{ 
     
     FileStat::FileStat() : IFileStat(), m_IsValid(false){}
 
-    FileStat::FileStat(platform::FileIndex& fileindex) : IFileStat(fileindex)
+    FileStat::FileStat(io::filesystem::Index& fileindex) : IFileStat(fileindex)
     {
         m_IsValid = false;
         int statresult = ::stat(fileindex.GetPath().ToString().c_str(), &m_st);
@@ -73,4 +73,4 @@ namespace qor{ namespace lin{
         return IsValid()  && S_ISBLK(m_st.st_mode);
     }
 
-}}//qor::lin
+}}}//qor::io::lin
