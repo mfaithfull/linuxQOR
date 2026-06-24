@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILEDESCRIPTOR
 #define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILEDESCRIPTOR
 
-namespace qor{ namespace lin{ 
+namespace qor{ namespace io{ namespace lin{ 
 
     class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileDescriptor
     {
@@ -273,7 +273,7 @@ namespace qor{ namespace lin{
         
         int m_fd;
     };
-}}//qor::lin
+}}}//qor::io::lin
 
 #endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILE
 

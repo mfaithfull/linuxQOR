@@ -34,9 +34,9 @@ namespace qor
     bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFileSystem();//Declaration must match the one in src/system/filesystem/filesystem.h
 }
 
-namespace qor{ namespace lin{ 
+namespace qor{ namespace io{ namespace lin{ 
 
-    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileSystem : public qor::platform::IFileSystem
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileSystem : public io::IFileSystem
     {
     public:
         FileSystem() = default;
@@ -53,8 +53,8 @@ namespace qor{ namespace lin{
                 
         consider whether we need a separate directory entry file object if we want to be able to mess with dirents, probably.*/
 
-        virtual ref_of<io::IFile>::type Create(const io::filesystem::Index& index, const int withFlags) const;        
-        virtual ref_of<io::IFile>::type Open(const io::filesystem::Index& index, const int openFor, const int withFlags) const;        
+        virtual ref_of<IFile>::type Create(const io::filesystem::Index& index, const int withFlags) const;        
+        virtual ref_of<IFile>::type Open(const io::filesystem::Index& index, const int openFor, const int withFlags) const;        
         virtual bool Move(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const;
         virtual bool Rename(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const;
 
@@ -63,6 +63,6 @@ namespace qor{ namespace lin{
 
     };
 
-}}//qor::lin
+}}}//qor::io::lin
 
 #endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILESYSTEM

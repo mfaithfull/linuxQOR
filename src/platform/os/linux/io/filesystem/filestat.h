@@ -34,7 +34,7 @@ namespace qor
 
 namespace qor{ namespace io{ namespace lin{ 
 
-    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileStat : public qor::platform::IFileStat
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) FileStat : public IFileStat
     {
     public:
         FileStat();

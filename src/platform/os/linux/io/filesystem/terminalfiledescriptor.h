@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_TERMFILEDESCRIPTOR
 #define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_TERMFILEDESCRIPTOR
 
-namespace qor{ namespace lin{ 
+namespace qor{ namespace io { namespace lin{ 
 
     class qor_pp_module_interface(QOR_LINUXFILESYSTEM) TerminalFileDescriptor : public FileDescriptor
     {
@@ -117,6 +117,6 @@ namespace qor{ namespace lin{
             return ::unlockpt(m_fd);
         }
     };
-}}
+}}}//qor::io::lin
 
 #endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_TERMFILEDESCRIPTOR

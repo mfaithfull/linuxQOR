@@ -42,11 +42,9 @@ namespace qor{
     }
 }//qor
 
-namespace qor{ namespace lin{ 
+namespace qor{ namespace io{ namespace lin{ 
 
-    void FileSystem::Setup()
-    {
-    }
+    void FileSystem::Setup(){ }
 
     void FileSystem::Shutdown()
     {
@@ -58,17 +56,17 @@ namespace qor{ namespace lin{
         sync();
     }
 
-    ref_of<platform::IFile>::type FileSystem::Create(const io::filesystem::Index& index, int withFlags) const
+    ref_of<IFile>::type FileSystem::Create(const io::filesystem::Index& index, int withFlags) const
     {
-        int flags = withFlags |= platform::WithFlags::CreateNew | platform::WithFlags::Truncate;
-        auto ref = Open(index, platform::OpenFor::WriteOnly, flags);
-        ref.AsRef<File>()->ChangeMode(platform::Owner_Read | platform::Owner_Write);
+        int flags = withFlags |= WithFlags::CreateNew | WithFlags::Truncate;
+        auto ref = Open(index, OpenFor::WriteOnly, flags);
+        ref.AsRef<File>()->ChangeMode(Owner_Read | Owner_Write);
         return ref;
     }
 
-    ref_of<platform::IFile>::type FileSystem::Open(const io::filesystem::Index& index, int openFor, int withFlags) const
+    ref_of<IFile>::type FileSystem::Open(const io::filesystem::Index& index, int openFor, int withFlags) const
     {        
-        return new_ref<File>(index, openFor, withFlags).template AsRef<platform::IFile>();
+        return new_ref<File>(index, openFor, withFlags).template AsRef<IFile>();
     }
 
     bool FileSystem::Move(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const
@@ -105,4 +103,4 @@ namespace qor{ namespace lin{
     {
         return io::filesystem::Path("/var/log/");
     }
-}}//qor::lin
+}}}//qor::io::lin

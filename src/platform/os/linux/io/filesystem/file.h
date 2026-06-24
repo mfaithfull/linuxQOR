@@ -35,21 +35,21 @@ namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFile
 //All types on this interface must be portable
 namespace qor{ namespace io { namespace lin{ 
 
-    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) File : public platform::File
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) File : public io::File
     {
     public:
         //anything we do with an fd that takes effect within the context of the file rather than the owning filesystem
 
         File();
         File(const File& src);
-        File(const platform::Path& path, const std::string& fileName, int openFor, int withFlags) : File(io::filesystem::Index(path,fileName),openFor,withFlags) {}
+        File(const io::filesystem::Path& path, const std::string& fileName, int openFor, int withFlags) : File(io::filesystem::Index(path,fileName),openFor,withFlags) {}
         File(const io::filesystem::Index& direntry, int openFor, int withFlags);
         File(int fd);
         ~File();
 
         virtual bool SupportsPosition() override;
         virtual int ChangeMode(unsigned int mode);        
-        ref_of<platform::IFile>::type Duplicate();                               
+        ref_of<IFile>::type Duplicate();                               
         virtual void Truncate(uint64_t length);
                 
         int Truncate(off_t length);

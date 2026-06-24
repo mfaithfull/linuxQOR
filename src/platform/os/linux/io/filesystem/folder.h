@@ -29,15 +29,15 @@
 
 //All types on this interface must be portable
 
-namespace qor{ namespace lin{ 
+namespace qor{ namespace io { namespace filesystem{ namespace lin{ 
 
-    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) Folder : public platform::Folder
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) Folder : public filesystem::Folder
     {
     public:
 
-        Folder(const Folder& src) : platform::Folder(src){}
+        Folder(const Folder& src) : filesystem::Folder(src){}
 
-        Folder(const class platform::Path& path) : platform::Folder(path){}
+        Folder(const class filesystem::Path& path) : filesystem::Folder(path){}
         
         Folder& operator = (const Folder& /*src*/)
         {
@@ -50,7 +50,8 @@ namespace qor{ namespace lin{
     private:
 
     };
-}}//qor::lin
+    
+}}}}//qor::io::filesystem::lin
 
 #endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FOLDER
 

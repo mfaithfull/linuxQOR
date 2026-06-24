@@ -42,6 +42,6 @@
 
 #include "filedescriptor.h"
 
-namespace qor{ namespace lin{    
-}}
+namespace qor{ namespace io{ namespace lin{    
+}}}
 

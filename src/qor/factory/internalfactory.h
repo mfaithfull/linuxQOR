@@ -26,6 +26,7 @@
 #define QOR_PP_H_INTERNALFACTORY
 
 //The purpose of a factory is create and dispose of instances of a type.
+#include <memory>
 
 #include "src/qor/memory/memory.h"
 #include "src/qor/reference/reference.h"

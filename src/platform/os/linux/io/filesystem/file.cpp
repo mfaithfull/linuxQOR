@@ -41,7 +41,7 @@
 //Export this trivial function so the linker will pull in this library to fulfil the ImplementsIFile requirement.
 namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFile() { return true; } }//qor
 
-namespace qor{ namespace lin{    
+namespace qor{ namespace io{ namespace lin{    
 
     File::File() : m_fd(-1){}
     
@@ -55,35 +55,35 @@ namespace qor{ namespace lin{
         }
     }
 
-    File::File(const io::filesystem::Index& direntry, int openFor, int withFlags) : platform::File(direntry), m_fd(-1)
+    File::File(const io::filesystem::Index& direntry, int openFor, int withFlags) : io::File(direntry), m_fd(-1)
     {
         int mode = 0;
-        if( ( (withFlags & platform::WithFlags::CreateNew) | (withFlags & platform::WithFlags::TempFile) ) != 0 )
+        if( ( (withFlags & WithFlags::CreateNew) | (withFlags & WithFlags::TempFile) ) != 0 )
         {
-            mode |= (( (openFor & platform::OpenFor::Exec) != 0) ? S_IXUSR : 0);
-            mode |= (( (openFor & (platform::OpenFor::ReadOnly | platform::OpenFor::ReadWrite)) != 0) ? S_IRUSR : 0);
-            mode |= (( (openFor & (platform::OpenFor::WriteOnly | platform::OpenFor::ReadWrite)) != 0) ? S_IWUSR : 0);
+            mode |= (( (openFor & OpenFor::Exec) != 0) ? S_IXUSR : 0);
+            mode |= (( (openFor & (OpenFor::ReadOnly | OpenFor::ReadWrite)) != 0) ? S_IRUSR : 0);
+            mode |= (( (openFor & (OpenFor::WriteOnly | OpenFor::ReadWrite)) != 0) ? S_IWUSR : 0);
         }
         int oflags = 0;        
-        oflags |= (( (openFor & platform::OpenFor::ReadOnly) != 0) ? O_RDONLY : 0);
-        oflags |= (( (openFor & platform::OpenFor::WriteOnly) != 0) ? O_WRONLY : 0);
-        oflags |= (( (openFor & platform::OpenFor::ReadWrite) != 0) ? O_RDWR : 0);
+        oflags |= (( (openFor & OpenFor::ReadOnly) != 0) ? O_RDONLY : 0);
+        oflags |= (( (openFor & OpenFor::WriteOnly) != 0) ? O_WRONLY : 0);
+        oflags |= (( (openFor & OpenFor::ReadWrite) != 0) ? O_RDWR : 0);
 
-        oflags |= (( (withFlags & platform::WithFlags::Append) != 0) ? O_APPEND : 0);
-        oflags |= (( (withFlags & platform::WithFlags::CloseExec) != 0) ? O_CLOEXEC : 0);
-        //oflags |= (( (withFlags & platform::WithFlags::CloseFork) != 0) ? O_CLOEXEC : 0);
-        oflags |= (( (withFlags & platform::WithFlags::CreateNew) != 0) ? O_CREAT : 0);
-        oflags |= (( (withFlags & platform::WithFlags::Directory) != 0) ? O_DIRECTORY : 0);
-        oflags |= (( (withFlags & platform::WithFlags::DSync) != 0) ? O_DSYNC : 0);
-        oflags |= (( (withFlags & platform::WithFlags::Exclusive) != 0) ? O_EXCL : 0);
-        oflags |= (( (withFlags & platform::WithFlags::NoCTTY) != 0) ? O_NOCTTY : 0);
-        oflags |= (( (withFlags & platform::WithFlags::NoFollow) != 0) ? O_NOFOLLOW : 0);
-        oflags |= (( (withFlags & platform::WithFlags::NonBlock) != 0) ? O_NONBLOCK : 0);
-        oflags |= (( (withFlags & platform::WithFlags::RSync) != 0) ? O_RSYNC : 0);
-        oflags |= (( (withFlags & platform::WithFlags::Sync) != 0) ? O_SYNC : 0);
-        oflags |= (( (withFlags & platform::WithFlags::Truncate) != 0) ? O_TRUNC : 0);
-        //oflags |= (( (withFlags & platform::IFileSystem::WithFlags::TTYInit) != 0) ? O_TTY_INIT : 0);
-        oflags |= (( (withFlags & platform::WithFlags::TempFile) != 0) ? O_TMPFILE : 0);
+        oflags |= (( (withFlags & WithFlags::Append) != 0) ? O_APPEND : 0);
+        oflags |= (( (withFlags & WithFlags::CloseExec) != 0) ? O_CLOEXEC : 0);
+        //oflags |= (( (withFlags & WithFlags::CloseFork) != 0) ? O_CLOEXEC : 0);
+        oflags |= (( (withFlags & WithFlags::CreateNew) != 0) ? O_CREAT : 0);
+        oflags |= (( (withFlags & WithFlags::Directory) != 0) ? O_DIRECTORY : 0);
+        oflags |= (( (withFlags & WithFlags::DSync) != 0) ? O_DSYNC : 0);
+        oflags |= (( (withFlags & WithFlags::Exclusive) != 0) ? O_EXCL : 0);
+        oflags |= (( (withFlags & WithFlags::NoCTTY) != 0) ? O_NOCTTY : 0);
+        oflags |= (( (withFlags & WithFlags::NoFollow) != 0) ? O_NOFOLLOW : 0);
+        oflags |= (( (withFlags & WithFlags::NonBlock) != 0) ? O_NONBLOCK : 0);
+        oflags |= (( (withFlags & WithFlags::RSync) != 0) ? O_RSYNC : 0);
+        oflags |= (( (withFlags & WithFlags::Sync) != 0) ? O_SYNC : 0);
+        oflags |= (( (withFlags & WithFlags::Truncate) != 0) ? O_TRUNC : 0);
+        //oflags |= (( (withFlags & IFileSystem::WithFlags::TTYInit) != 0) ? O_TTY_INIT : 0);
+        oflags |= (( (withFlags & WithFlags::TempFile) != 0) ? O_TMPFILE : 0);
 
         m_fd = open(direntry.ToString().c_str(), oflags, mode);        
         
@@ -110,17 +110,17 @@ namespace qor{ namespace lin{
     int File::ChangeMode(unsigned int mode)
     {
         unsigned int linuxMode = 0;
-        linuxMode |= ( (mode & platform::Owner_Read) != 0 ? S_IRUSR : 0 );
-        linuxMode |= ( (mode & platform::Owner_Write) != 0 ? S_IWUSR : 0 );
-        linuxMode |= ( (mode & platform::Owner_Execute) != 0 ? S_IXUSR : 0 );
+        linuxMode |= ( (mode & Owner_Read) != 0 ? S_IRUSR : 0 );
+        linuxMode |= ( (mode & Owner_Write) != 0 ? S_IWUSR : 0 );
+        linuxMode |= ( (mode & Owner_Execute) != 0 ? S_IXUSR : 0 );
 
-        linuxMode |= ( (mode & platform::Group_Read) != 0 ? S_IRGRP : 0 );
-        linuxMode |= ( (mode & platform::Group_Write) != 0 ? S_IWGRP : 0 );
-        linuxMode |= ( (mode & platform::Group_Execute) != 0 ? S_IXGRP : 0 );
+        linuxMode |= ( (mode & Group_Read) != 0 ? S_IRGRP : 0 );
+        linuxMode |= ( (mode & Group_Write) != 0 ? S_IWGRP : 0 );
+        linuxMode |= ( (mode & Group_Execute) != 0 ? S_IXGRP : 0 );
 
-        linuxMode |= ( (mode & platform::Other_Read) != 0 ? S_IROTH : 0 );
-        linuxMode |= ( (mode & platform::Other_Write) != 0 ? S_IWOTH : 0 );
-        linuxMode |= ( (mode & platform::Other_Execute) != 0 ? S_IXOTH : 0 );
+        linuxMode |= ( (mode & Other_Read) != 0 ? S_IROTH : 0 );
+        linuxMode |= ( (mode & Other_Write) != 0 ? S_IWOTH : 0 );
+        linuxMode |= ( (mode & Other_Execute) != 0 ? S_IXOTH : 0 );
         return ChangeAccess(linuxMode);
     }
 
@@ -134,10 +134,10 @@ namespace qor{ namespace lin{
         return Validate_posix_fadvise_Result(::posix_fadvise(m_fd, offset, length, advise));
     }
 
-    ref_of<platform::IFile>::type File::Duplicate()
+    ref_of<IFile>::type File::Duplicate()
     {
         int fd = Validate_fcntl_Result(::fcntl(m_fd, F_DUPFD, 0));
-        return new_ref<File>(fd).template AsRef<platform::IFile>();
+        return new_ref<File>(fd).template AsRef<IFile>();
     }
 
     int File::GetDescriptor() const
@@ -706,4 +706,4 @@ namespace qor{ namespace lin{
             break;
         }
     }
-}}//qor::lin
+}}}//qor::io::lin
