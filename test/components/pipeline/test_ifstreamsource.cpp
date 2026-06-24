@@ -44,7 +44,7 @@ using namespace qor::test;
 using namespace qor::pipeline;
 using namespace qor::components;
 using namespace qor::io;
-using namespace qor::io:filesystem;
+using namespace qor::io::filesystem;
 
 struct stdifstreamTestSuite{};
 

@@ -29,49 +29,49 @@
 
 namespace qor { namespace async{
 
-    IOTask AsyncIOInitiator::Bind(platform::IODescriptor* /*ioDescriptor*/, const network::Address& /*Address*/)
+    IOTask AsyncIOInitiator::Bind(io::IODescriptor* /*ioDescriptor*/, const network::Address& /*Address*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);
         co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
     }
 
-    IOTask AsyncIOInitiator::Listen(platform::IODescriptor* /*ioDescriptor*/, int /*backlog*/)
+    IOTask AsyncIOInitiator::Listen(io::IODescriptor* /*ioDescriptor*/, int /*backlog*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);
         co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
     }
 
-    IOTask AsyncIOInitiator::Accept(platform::IODescriptor* /*ioDescriptor*/, const network::Address& /*Address*/, network::Socket* /*Socket*/)
+    IOTask AsyncIOInitiator::Accept(io::IODescriptor* /*ioDescriptor*/, const network::Address& /*Address*/, network::Socket* /*Socket*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);
         co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
     }
 
-    IOTask AsyncIOInitiator::Read(platform::IODescriptor* /*ioDescriptor*/, byte* /*buffer*/, size_t /*len*/)
+    IOTask AsyncIOInitiator::Read(io::IODescriptor* /*ioDescriptor*/, byte* /*buffer*/, size_t /*len*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);
         co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
     }
 
-    IOTask AsyncIOInitiator::Send(platform::IODescriptor* /*ioDescriptor*/, const byte* /*buffer*/, size_t /*len*/, int /*flags*/)
+    IOTask AsyncIOInitiator::Send(io::IODescriptor* /*ioDescriptor*/, const byte* /*buffer*/, size_t /*len*/, int /*flags*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);
         co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
     }
 
-    IOTask AsyncIOInitiator::Recv(platform::IODescriptor* /*ioDescriptor*/, byte* /*buffer*/, size_t /*len*/)
+    IOTask AsyncIOInitiator::Recv(io::IODescriptor* /*ioDescriptor*/, byte* /*buffer*/, size_t /*len*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);
         co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
     }
 
-    IOTask AsyncIOInitiator::Shutdown(platform::IODescriptor* /*ioDescriptor*/, int /*how*/)
+    IOTask AsyncIOInitiator::Shutdown(io::IODescriptor* /*ioDescriptor*/, int /*how*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);

@@ -55,7 +55,7 @@ namespace qor { namespace components{
         void Listen();
 
         void WriteToStandardOutput(bool write = true);
-        void WriteToFileSystem(platform::Path path, const std::string& fileNamePrefix);
+        void WriteToFileSystem(io::filesystem::Path path, const std::string& fileNamePrefix);
         void WriteToPipeline(bool write = true);
 
     private:        
@@ -73,7 +73,7 @@ namespace qor { namespace components{
         unsigned int m_logRollNumber;
         size_t m_totalSizeLimit;
         size_t m_fileSizeLimit;
-        qor::ref_of<qor::platform::IFile>::type m_refLogFile;
+        qor::ref_of<qor::io::IFile>::type m_refLogFile;
     };
 }}//qor::components
 

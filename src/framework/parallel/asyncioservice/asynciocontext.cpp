@@ -34,7 +34,7 @@
 
 namespace qor { namespace async{
 
-    bool AsyncIOContext::Enroll(platform::IODescriptor& ioDescriptor) const
+    bool AsyncIOContext::Enroll(io::IODescriptor& ioDescriptor) const
     {
         return m_processor->Enroll(ioDescriptor);
     }

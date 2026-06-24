@@ -41,14 +41,14 @@ namespace qor { namespace async{
         AsyncIOInterface() = default;
         virtual ~AsyncIOInterface() = default;
 
-        virtual inline task<int> Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const = 0;
-        virtual inline task<int> Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
-        virtual inline task<int> Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
-        virtual inline task<int> Listen(platform::IODescriptor* ioDescriptor, int backlog) const = 0;
-        virtual inline task<int> Shutdown(platform::IODescriptor* ioDescriptor, int how) const = 0;
-        virtual inline task<int> Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const = 0;
-        virtual inline task<int> Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const = 0;
-        virtual inline bool Enroll(platform::IODescriptor& ioDescriptor) const = 0;
+        virtual inline task<int> Send(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const = 0;
+        virtual inline task<int> Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
+        virtual inline task<int> Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const = 0;
+        virtual inline task<int> Listen(io::IODescriptor* ioDescriptor, int backlog) const = 0;
+        virtual inline task<int> Shutdown(io::IODescriptor* ioDescriptor, int how) const = 0;
+        virtual inline task<int> Bind(io::IODescriptor* ioDescriptor, const network::Address& Address) const = 0;
+        virtual inline task<int> Accept(io::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const = 0;
+        virtual inline bool Enroll(io::IODescriptor& ioDescriptor) const = 0;
     };
 
 }}//qor::async

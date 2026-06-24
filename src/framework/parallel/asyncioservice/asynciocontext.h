@@ -50,45 +50,45 @@ namespace qor { namespace async{
         virtual void Inflate();
         virtual void Deflate();
 
-        virtual bool Enroll(platform::IODescriptor& ioDescriptor) const;
+        virtual bool Enroll(io::IODescriptor& ioDescriptor) const;
 
-        virtual inline task<int> Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
+        virtual inline task<int> Send(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
         {
             auto ioResult = co_await m_initiator->Send(ioDescriptor, buffer, len, flags);
             co_return ioResult.status_code;
         }
 
-        virtual inline task<int> Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual inline task<int> Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
         {
             auto ioResult = co_await m_initiator->Recv(ioDescriptor, buffer, len);                
             co_return ioResult.status_code;
         }
 
-        virtual inline task<int> Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+        virtual inline task<int> Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
         {
             auto ioResult = co_await m_initiator->Read(ioDescriptor, buffer, len);
             co_return ioResult.status_code;
         }
 
-        virtual inline task<int> Shutdown(platform::IODescriptor* ioDescriptor, int how) const
+        virtual inline task<int> Shutdown(io::IODescriptor* ioDescriptor, int how) const
         {
             auto ioResult = co_await m_initiator->Shutdown(ioDescriptor, how);
             co_return ioResult.status_code;
         }
 
-        virtual inline task<int> Listen(platform::IODescriptor* ioDescriptor, int backlog) const
+        virtual inline task<int> Listen(io::IODescriptor* ioDescriptor, int backlog) const
         {
             auto ioResult = co_await m_initiator->Listen(ioDescriptor, backlog);
             co_return ioResult.status_code;
         }
 
-        virtual inline task<int> Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
+        virtual inline task<int> Bind(io::IODescriptor* ioDescriptor, const network::Address& Address) const
         {
             auto ioResult = co_await m_initiator->Bind(ioDescriptor, Address);
             co_return ioResult.status_code;
         }
 
-        virtual inline task<int> Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
+        virtual inline task<int> Accept(io::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
         {
             auto ioResult = co_await m_initiator->Accept(ioDescriptor, Address, Socket);
             co_return ioResult.status_code;
@@ -105,49 +105,49 @@ namespace qor { namespace async{
 
             virtual ~Session() = default;
 
-            virtual inline bool Enroll(platform::IODescriptor& ioDescriptor) const
+            virtual inline bool Enroll(io::IODescriptor& ioDescriptor) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.Enroll(ioDescriptor);
             }
 
-            virtual inline task<int> Send(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
+            virtual inline task<int> Send(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.Send(ioDescriptor, buffer, len, flags);
             }
 
-            virtual inline task<int> Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+            virtual inline task<int> Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.Recv(ioDescriptor, buffer, len);
             }
 
-            virtual inline task<int> Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+            virtual inline task<int> Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.Read(ioDescriptor, buffer, len);
             }
 
-            virtual inline task<int> Shutdown(platform::IODescriptor* ioDescriptor, int how) const
+            virtual inline task<int> Shutdown(io::IODescriptor* ioDescriptor, int how) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.Shutdown(ioDescriptor, how);
             }
             
-            virtual inline task<int> Listen(platform::IODescriptor* ioDescriptor, int backlog) const
+            virtual inline task<int> Listen(io::IODescriptor* ioDescriptor, int backlog) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.Listen(ioDescriptor, backlog);
             }
 
-            virtual inline task<int> Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address) const
+            virtual inline task<int> Bind(io::IODescriptor* ioDescriptor, const network::Address& Address) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.Bind(ioDescriptor, Address);
             }
 
-            virtual inline task<int> Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
+            virtual inline task<int> Accept(io::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket) const
             {
                 Lock lock(m_sharedContext.m_access);
                 return m_sharedContext.Accept(ioDescriptor, Address, Socket);

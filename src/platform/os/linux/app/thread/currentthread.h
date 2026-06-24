@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_LINUX_FRAMEWORK_CURRENTTHREAD
 #define QOR_PP_H_OS_LINUX_FRAMEWORK_CURRENTTHREAD
 
-#include "src/framework/parallel/thread/icurrentthread.h"
+#include "src/qor/current/icurrentthread.h"
 
 namespace qor
 {

@@ -38,7 +38,7 @@ namespace qor { namespace async{
             int status_code;
             unsigned long long result{ 0 };
         };
-        platform::IODescriptor* ioObject;
+        io::IODescriptor* ioObject;
     };
 
     using IOTask = task<AsyncIOResult>;

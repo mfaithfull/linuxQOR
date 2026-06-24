@@ -54,13 +54,13 @@ namespace qor { namespace async{
             return true;
         }
 
-        virtual IOTask Bind(platform::IODescriptor* ioDescriptor, const network::Address& Address);
-        virtual IOTask Listen(platform::IODescriptor* ioDescriptor, int backlog);
-        virtual IOTask Accept(platform::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket);
-        virtual IOTask Read(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len);
-        virtual IOTask Send(platform::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags);
-        virtual IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len);
-        virtual IOTask Shutdown(platform::IODescriptor* ioDescriptor, int how);
+        virtual IOTask Bind(io::IODescriptor* ioDescriptor, const network::Address& Address);
+        virtual IOTask Listen(io::IODescriptor* ioDescriptor, int backlog);
+        virtual IOTask Accept(io::IODescriptor* ioDescriptor, const network::Address& Address, network::Socket* Socket);
+        virtual IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len);
+        virtual IOTask Send(io::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags);
+        virtual IOTask Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len);
+        virtual IOTask Shutdown(io::IODescriptor* ioDescriptor, int how);
     };
 
     }//async

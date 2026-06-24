@@ -44,7 +44,7 @@
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::platform;
+using namespace qor::io;
 using namespace qor::network;
 using namespace qor::network::sockets;
 
