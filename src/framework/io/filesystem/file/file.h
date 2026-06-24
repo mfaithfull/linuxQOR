@@ -39,27 +39,33 @@ namespace qor{ namespace io{
 	public:
 
         File();
+        File(int fd);
         File(const File& src);
         File(const filesystem::Index& index);
         File& operator = (const File&);
         virtual ~File();     
         
-        virtual int ChangeMode(unsigned int mode);
+        //implemented on File and Index. Equivalent, just uses file as a wrapper for Index
+        virtual uint64_t GetSize();
+        virtual uintmax_t GetHardLinkCount();
+        virtual FileTime GetLastWriteTime();
+        virtual filesystem::Permissions GetPermissions();
+        virtual void SetPermissions(const filesystem::Permissions permissions, const filesystem::PermissionOptions options);
+        virtual void ReSize(uintmax_t size);
+        virtual FileStatus GetStatus();
+        virtual FileStatus GetSymLinkStatus();
+        virtual Type GetType();
         
-        bool SetEOF();
-
         virtual bool SupportsPosition();
         virtual uint64_t GetPosition();
+        virtual long SetPosition(long offset, int whence);
         virtual uint64_t SetPosition(uint64_t newPosition);
         virtual uint64_t SetPositionRelative(int64_t offset);
         virtual void Truncate(uint64_t length);
         virtual void Reserve(uint64_t length);
-        virtual uint64_t GetSize();
         virtual void Flush();
-        virtual Type GetType();
+        
         virtual ref_of<IFile>::type ReOpen();
-        virtual std::filesystem::file_status GetStatus();
-        virtual void SetStatus(int);
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
 

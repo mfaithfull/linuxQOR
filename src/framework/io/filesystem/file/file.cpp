@@ -33,8 +33,13 @@ namespace qor{ namespace io{
         return new_ref<IFile>(index, openFor, withFlags);
     }
 
-    File::File()
+    //Base implementation of File
+
+    File::File(){ }
+
+    File::File(int fd) : IFile()
     {
+        IODescriptor::m_fd = fd;
     }
 
     File::File(const File& src) : IFile(), m_index(src.m_index)
@@ -42,9 +47,7 @@ namespace qor{ namespace io{
         *this = src;
     }
 
-    File::File(const filesystem::Index& index) : m_index(index)//open mode including sharing and access
-    {
-    }
+    File::File(const filesystem::Index& index) : m_index(index){ }
 
     File& File::operator = (const File& src)
     {
@@ -55,42 +58,102 @@ namespace qor{ namespace io{
         return *this;
     }
 
-    File::~File()
-    {//derived class owns platform specific resource and handles close in its destructor
+    File::~File(){/*derived class owns platform specific resource and handles close in its destructor*/}
+
+    uint64_t File::GetSize()
+    {
+        return std::filesystem::file_size(m_index.GetPath());
     }
 
-    int File::ChangeMode(unsigned int /*mode*/)
+    uintmax_t File::GetHardLinkCount()
     {
-        return -1;
+        return std::filesystem::hard_link_count(m_index.GetPath());
+    }
+
+    FileTime File::GetLastWriteTime()
+    {
+        return std::filesystem::last_write_time(m_index.GetPath());
+    }
+
+    filesystem::Permissions File::GetPermissions()
+    {
+        return static_cast<filesystem::Permissions>(std::filesystem::status(m_index.GetPath()).permissions());
+    }
+
+    void File::SetPermissions(const filesystem::Permissions permissions, const filesystem::PermissionOptions options)
+    {
+        try
+        {
+            std::filesystem::permissions(m_index.GetPath(), 
+                static_cast<std::filesystem::perms>(permissions), 
+                static_cast<std::filesystem::perm_options>(options));        
+        }
+        catch(std::filesystem::filesystem_error& fse)
+        {
+            continuable(fse.what());
+        }
+    }
+
+    void File::ReSize(uintmax_t size)
+    {
+        std::filesystem::resize_file(m_index.GetPath(), size);
     }
     
+    FileStatus File::GetStatus()
+    {
+        try
+        {
+            return std::filesystem::status(m_index.GetPath());
+        }
+        catch(std::filesystem::filesystem_error& fse)
+        {
+            continuable(fse.what());
+        }
+        return FileStatus();
+    }
+
+    FileStatus File::GetSymLinkStatus()
+    {
+        try
+        {
+            return std::filesystem::symlink_status(m_index.GetPath());
+        }
+        catch(std::filesystem::filesystem_error& fse)
+        {
+            continuable(fse.what());
+        }
+        return FileStatus();        
+    }
+
+    IFile::Type File::GetType()
+    {
+        return static_cast<IFile::Type>(std::filesystem::status(m_index.GetPath()).type());
+    }
+
+    //Empty base implementations
+    //Don't call these, override them per OS
+    bool File::SupportsPosition()
+    {
+        serious("Empty base implementation.");
+        return false;
+    }
+
     uint64_t File::GetPosition()
     {
+        serious("Empty base implementation.");
+        return 0;
+    }
+
+    long File::SetPosition(long /*offset*/, int /*whence*/)
+    {
+        serious("Empty base implementation.");
         return 0;
     }
 
     uint64_t File::SetPosition(uint64_t /*newPosition*/)
     {
+        serious("Empty base implementation.");
         return 0;
-    }
-
-    void File::Flush()
-    {        
-    }
-
-    IFile::Type File::GetType()
-    {
-        return Unknown;
-    }
-
-    bool File::SetEOF()
-    {
-        return false;
-    }
-
-    bool File::SupportsPosition()
-    {
-        return false;
     }
 
     uint64_t File::SetPositionRelative(int64_t /*offset*/)
@@ -99,36 +162,37 @@ namespace qor{ namespace io{
         return 0;
     }
 
-    void File::Truncate(uint64_t /*length*/){ }
+    void File::Truncate(uint64_t /*length*/)
+    { 
+        serious("Empty base implementation.");
+    }
 
-    void File::Reserve(uint64_t /*length*/){ }
-
-    uint64_t File::GetSize()
+    void File::Reserve(uint64_t /*length*/)
     {
-        return std::filesystem::file_size(m_index.GetPath());
+        serious("Empty base implementation.");
+    }
+
+    void File::Flush()
+    {
+        serious("Empty base implementation.");
     }
 
     ref_of<IFile>::type File::ReOpen()
     {
+        serious("Empty base implementation.");
         ref_of<IFile>::type newfile;
         return newfile;
     }
 
-    std::filesystem::file_status File::GetStatus()
-    {
-        std::filesystem::file_status status = std::filesystem::status(m_index.GetPath());
-        return status;
-    }
-
-    void File::SetStatus(int){ }
-
     int64_t File::Read(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/)
     {
+        serious("Empty base implementation.");
         return 0;
     }
 
     int64_t File::Write(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/)
     {
+        serious("Empty base implementation.");
         return 0;
     }
 

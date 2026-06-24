@@ -32,11 +32,10 @@
 #include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"
 #include "src/qor/reference/newref.h"
-#include "src/framework/io/filesystem/filestat.h"
+#include "src/framework/io/filesystem/stat.h"
 
 #include <sys/stat.h>
 #include "filesystem.h"
-#include "filestat.h"
 #include "file.h"
 
 extern "C"
@@ -50,8 +49,7 @@ extern "C"
 			qor_pp_stringize(qor_pp_buildnumber));
 
 		//Register the Linux specific implementations
-		static qor::TypeRegEntry< qor::io::lin::FileSystem, qor::io::IFileSystem > regIFileSystem;  
-		static qor::TypeRegEntry< qor::io::lin::FileStat, qor::io::IFileStat > regIFileStat;
+		static qor::TypeRegEntry< qor::io::lin::FileSystem, qor::io::IFileSystem > regIFileSystem;  		
 		static qor::TypeRegEntryWithParams< qor::io::lin::File, qor::io::IFile, qor::io::filesystem::Index&, int&, int& > regIFile;
 		return QORModule;
 	}

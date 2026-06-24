@@ -51,7 +51,7 @@ namespace qor{ namespace io{ namespace lin{
         report quotas and available spaces
         manage access, ownership, status, times of files
                 
-        consider whether we need a separate directory entry file object if we want to be able to mess with dirents, probably.*/
+        */
 
         virtual ref_of<IFile>::type Create(const io::filesystem::Index& index, const int withFlags) const;        
         virtual ref_of<IFile>::type Open(const io::filesystem::Index& index, const int openFor, const int withFlags) const;        

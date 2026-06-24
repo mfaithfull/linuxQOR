@@ -196,7 +196,7 @@ namespace qor{ namespace io{
     }
 
 
-    void FileWriter::Write(const char c, arch::Endian endian) const
+    void FileWriter::Write(const char c, arch::Endian /*endian*/) const
     {
         if constexpr(sizeof(char) > 1)
         {
@@ -205,7 +205,7 @@ namespace qor{ namespace io{
         WriteChar(c);
     }
 
-    void FileWriter::Write(const unsigned char c, arch::Endian endian) const
+    void FileWriter::Write(const unsigned char c, arch::Endian /*endian*/) const
     {
         if constexpr(sizeof(unsigned char) > 1)
         {
@@ -214,7 +214,7 @@ namespace qor{ namespace io{
         WriteByte(c);
     }
 
-    void FileWriter::Write(const bool b, arch::Endian endian) const
+    void FileWriter::Write(const bool b, arch::Endian /*endian*/) const
     {
         if constexpr(sizeof(bool) > 1)
         {

@@ -60,7 +60,7 @@ namespace qor{ namespace io{ namespace lin{
     {
         int flags = withFlags |= WithFlags::CreateNew | WithFlags::Truncate;
         auto ref = Open(index, OpenFor::WriteOnly, flags);
-        ref.AsRef<File>()->ChangeMode(Owner_Read | Owner_Write);
+        ref.AsRef<io::File>()->SetPermissions(filesystem::Permissions::OwnerRead | filesystem::Permissions::OwnerWrite, filesystem::PermissionOptions::Add);
         return ref;
     }
 

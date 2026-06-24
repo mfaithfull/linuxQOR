@@ -230,17 +230,17 @@ namespace qor{ namespace io{
         return d;
     }
 
-    void FileReader::Read(unsigned char& b, arch::Endian endian) const
+    void FileReader::Read(unsigned char& b, arch::Endian /*endian*/) const
     {
         b = ReadByte();
     }
 
-    void FileReader::Read(char& c, arch::Endian endian) const
+    void FileReader::Read(char& c, arch::Endian /*endian*/) const
     {
         c = ReadChar();
     }
 
-    void FileReader::Read(bool& b, arch::Endian endian) const
+    void FileReader::Read(bool& b, arch::Endian /*endian*/) const
     {
         byte v = ReadByte();
         b = v ? true : false;

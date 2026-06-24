@@ -32,17 +32,20 @@
 #include "src/qor/error/error.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/io/iodescriptor.h"
+#include "../permissions.h"
 
-//All libraries providing an implementation of IFile also need to export this function so that the linker can find them
 namespace qor{
 #ifdef QOR_FILESYSTEM
     bool qor_pp_import ImplementsIFile(void);
 #else
-    bool qor_pp_export ImplementsIFile(void);
+    bool qor_pp_export ImplementsIFile(void);//All libraries providing an implementation of IFile need to export this function so that the linker can find them
 #endif
 }
 
 namespace qor{ namespace io{
+
+    using FileTime = std::filesystem::file_time_type;
+    using FileStatus = std::filesystem::file_status;
 
     namespace filesystem
     {
@@ -53,13 +56,17 @@ namespace qor{ namespace io{
 	{
 	public:
 
-        enum Type
-        {
-            Unknown,
-            Char,
-            Disk,
-            Pipe,
-            Remote
+        enum class Type : std::underlying_type_t<std::filesystem::file_type> {
+            None        = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::none),
+            NotFound    = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::not_found),
+            Regular     = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::regular),
+            Folder      = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::directory),
+            SymLink     = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::symlink),
+            Block       = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::block),
+            Character   = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::character),
+            FIFO        = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::fifo),
+            Socket      = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::socket),
+            Unknown     = static_cast< std::underlying_type_t<std::filesystem::file_type> >(std::filesystem::file_type::unknown)
         };
 
         enum Whence
@@ -72,6 +79,17 @@ namespace qor{ namespace io{
         IFile(){}
         IFile(const filesystem::Index& /*index*/, int /*openFor*/, int /*withFlags*/){}
         IFile(const IODescriptor& /*iod*/){}
+
+        virtual uint64_t GetSize(){return 0;}
+        virtual uintmax_t GetHardLinkCount(){return 0;}
+        virtual FileTime GetLastWriteTime(){return FileTime{};}
+        virtual filesystem::Permissions GetPermissions(){return filesystem::Permissions::Unknown;}
+        virtual void SetPermissions(const filesystem::Permissions /*permissions*/, const filesystem::PermissionOptions /*options*/){return;}
+        virtual void ReSize(uintmax_t /*size*/){return;}
+        virtual FileStatus GetStatus(){return FileStatus();}
+        virtual FileStatus GetSymLinkStatus(){return FileStatus();}
+        virtual Type GetType(){return Type::Unknown;}
+
         virtual bool SupportsPosition(){ return false; }
         virtual uint64_t GetPosition(){ return 0; }
         virtual long SetPosition(long /*offset*/, int /*whence*/){return 0;}
@@ -79,17 +97,14 @@ namespace qor{ namespace io{
         virtual uint64_t SetPositionRelative(int64_t /*offset*/){return 0;}
         virtual void Truncate(uint64_t /*length*/){}
         virtual void Reserve(uint64_t /*length*/){}
-        virtual uint64_t GetSize(){return 0;}
         virtual void Flush(){}
-        virtual Type GetType(){return Unknown;}
         virtual ref_of<IFile>::type ReOpen(){ ref_of<IFile>::type result; return result;}
-        virtual std::filesystem::file_status GetStatus(){return std::filesystem::file_status();}
-        virtual void SetStatus(int){}
+
         virtual int64_t Read(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/ = -1){return 0;}
         virtual int64_t Write(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/ = -1){return 0;}
     };
 
-    }//platform
+    }//io
 
     qor_pp_declare_factory_of(io::IFile, ExternalFactory);    
     constexpr GUID IFileGUID = {0xee642d7a, 0x621f, 0x40d0, {0xb1, 0xf3, 0x40, 0xbb, 0xde, 0x20, 0x49, 0x05}};

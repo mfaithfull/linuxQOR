@@ -24,53 +24,66 @@
 
 #include "src/configuration/configuration.h"
 
-#include <sys/stat.h>
-#include "filestat.h"
+#include <filesystem>
+#include "stat.h"
 
-namespace qor{
-    bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFileStat() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIFileStat requirement. 
-    {
-        return true;
-    }
-}//qor
-
-namespace qor{ namespace io { namespace lin{ 
+namespace qor{ namespace io{ namespace filesystem {
+        
+    Stat::Stat(const filesystem::Index& index) : m_index(index){ }
     
-    FileStat::FileStat() : IFileStat(), m_IsValid(false){}
-
-    FileStat::FileStat(io::filesystem::Index& fileindex) : IFileStat(fileindex)
+    bool Stat::IsBlockFile()
     {
-        m_IsValid = false;
-        int statresult = ::stat(fileindex.GetPath().ToString().c_str(), &m_st);
-        if(statresult != -1)
-        {
-            m_IsValid = true;
-        }
+        return std::filesystem::is_block_file(m_index.GetPath());
     }
 
-    bool FileStat::IsValid()
+    bool Stat::IsCharacterFile()
     {
-        return m_IsValid;
+        return std::filesystem::is_character_file(m_index.GetPath());
     }
 
-    bool FileStat::IsFile()
+    bool Stat::IsDir()
     {
-        return IsValid() && S_ISREG(m_st.st_mode);
-    }
-    
-    bool FileStat::IsDir()
-    {
-        return IsValid() && S_ISDIR(m_st.st_mode);
+        return std::filesystem::is_directory(m_index.GetPath());
     }
 
-    bool FileStat::IsCharacter()
+    bool Stat::IsEmpty()
     {
-        return IsValid() && S_ISCHR(m_st.st_mode);
+        return std::filesystem::is_empty(m_index.GetPath());
     }
 
-    bool FileStat::IsBlock()
+    bool Stat::IsFIFO()
     {
-        return IsValid()  && S_ISBLK(m_st.st_mode);
+        return std::filesystem::is_fifo(m_index.GetPath());
     }
 
-}}}//qor::io::lin
+    bool Stat::IsOther()
+    {
+        return std::filesystem::is_other(m_index.GetPath());
+    }
+
+    bool Stat::IsRegularFile()
+    {
+        return std::filesystem::is_regular_file(m_index.GetPath());
+    }
+
+    bool Stat::IsSocket()
+    {
+        return std::filesystem::is_socket(m_index.GetPath());
+    }
+
+    bool Stat::IsSymLink()
+    {
+        return std::filesystem::is_symlink(m_index.GetPath());
+    }
+
+    bool Stat::IsValid() 
+    { 
+        return std::filesystem::exists(m_index.GetPath());
+    }
+
+    bool Stat::IsFile() 
+    { 
+        return std::filesystem::is_regular_file(m_index.GetPath());
+    }    
+
+}}}//qor::io::filesystem

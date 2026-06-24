@@ -30,27 +30,34 @@
 #include "src/qor/factory/externalfactory.h"
 #include "fileindex.h"
 
-namespace qor{ namespace io{
+namespace qor{ namespace io{ namespace filesystem {
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) IFileStat
+    class qor_pp_module_interface(QOR_FILESYSTEM) Stat
 	{
 	public:
 
-        IFileStat() { };
-        IFileStat(filesystem::Index& /*fileindex*/) { };
-        virtual ~IFileStat() noexcept = default;
+        Stat() { };
+        Stat(const filesystem::Index& index);
+        virtual ~Stat() noexcept = default;
 
-        virtual bool IsValid() { return false; }
-        virtual bool IsFile() { return false; }
-        virtual bool IsDir()  { return false; }
+        bool IsBlockFile();
+        bool IsCharacterFile();
+        bool IsEmpty();
+        bool IsFIFO();
+        bool IsOther();
+        bool IsRegularFile();
+        bool IsSocket();
+        bool IsSymLink();
+        bool IsValid();
+        bool IsFile();
+        bool IsDir();
+
+    protected:
+
+        Index m_index;        
+
     };
 
-    }//io
-
-    qor_pp_declare_factory_of(io::IFileStat, ExternalFactory);    
-    constexpr GUID IFileStatGUID = {0xade47a4c, 0x2b2f, 0x4a31, {0x91, 0xd1, 0x38, 0x60, 0xdb, 0x24, 0x84, 0x35}};
-    qor_pp_declare_guid_of(io::IFileStat,IFileStatGUID);
-
-}//qor
+}}}//qor::io::filesystem
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILESTAT

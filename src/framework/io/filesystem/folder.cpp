@@ -46,9 +46,15 @@ namespace qor{ namespace io{ namespace filesystem {
         return *this;     
     }
 
-    void Folder::Create(class Path& newFolder)
+    bool Folder::Exists()
+    {
+        return std::filesystem::exists(m_path);
+    }
+
+    Folder Folder::Create(class Path& newFolder)
     {
         std::filesystem::create_directory(newFolder);
+        return Folder(newFolder);
     }
 
     bool Folder::Copy( class Path& destParent )
@@ -56,11 +62,25 @@ namespace qor{ namespace io{ namespace filesystem {
         return std::filesystem::copy_file(m_path.operator std::filesystem::path(), destParent);
     }
 
-    bool Folder::Move( class Path& destParent)
+    bool Folder::Move(class Path& destParent)
     {
         try
         {
             std::filesystem::rename(m_path.operator const std::filesystem::path(), destParent.operator const std::filesystem::path());
+            return true;
+        }
+        catch(std::filesystem::filesystem_error& fse)
+        {
+            continuable(fse.what());
+        }
+        return false;
+    }
+
+    bool Folder::Rename(const string_t& name)
+    {
+        try
+        {
+            std::filesystem::rename(m_path, m_path.Parent() / name);
             return true;
         }
         catch(std::filesystem::filesystem_error& fse)
@@ -85,6 +105,26 @@ namespace qor{ namespace io{ namespace filesystem {
             {
                 break;
             }
+        }
+    }
+
+    Permissions Folder::GetPermissions()
+    {
+        Permissions perms = static_cast<Permissions>(std::filesystem::status(m_path).permissions());
+        return perms;
+    }
+
+    void Folder::SetPermissions(const Permissions& permissions, const PermissionOptions& options)
+    {
+        try
+        {
+            std::filesystem::permissions(m_path, 
+                static_cast<std::filesystem::perms>(permissions), 
+                static_cast<std::filesystem::perm_options>(options));        
+        }
+        catch(std::filesystem::filesystem_error& fse)
+        {
+            continuable(fse.what());
         }
     }
 

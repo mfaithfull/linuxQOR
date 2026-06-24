@@ -38,7 +38,7 @@ namespace qor{ namespace io { namespace lin{
     class qor_pp_module_interface(QOR_LINUXFILESYSTEM) File : public io::File
     {
     public:
-        //anything we do with an fd that takes effect within the context of the file rather than the owning filesystem
+        //file descriptor operations Linux implementations
 
         File();
         File(const File& src);
@@ -48,14 +48,17 @@ namespace qor{ namespace io { namespace lin{
         ~File();
 
         virtual bool SupportsPosition() override;
-        virtual int ChangeMode(unsigned int mode);        
-        ref_of<IFile>::type Duplicate();                               
-        virtual void Truncate(uint64_t length);
-                
-        int Truncate(off_t length);
-        int SyncToSystem();
-        virtual uint64_t GetPosition() override;
-        off_t SetPosition(off_t offset, int whence);
+        virtual uint64_t GetPosition() override;        
+        virtual long SetPosition(off_t offset, int whence) override;
+        virtual uint64_t SetPosition(uint64_t newPosition) override;
+        virtual uint64_t SetPositionRelative(int64_t offset) override;
+        virtual void Truncate(uint64_t length) override;
+        virtual void Reserve(uint64_t length) override;
+        virtual void Flush() override;
+        virtual ref_of<IFile>::type ReOpen() override;
+
+        
+        int SyncToSystem();                
         int AsyncRead(byte* buffer, size_t byteCount, off_t offset);
         int AsyncWrite(byte* buffer, size_t byteCount, off_t offset);
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
@@ -86,7 +89,6 @@ namespace qor{ namespace io { namespace lin{
         static void Check_close_Result(int result);
         static void ErrorOnOpen(int err);
 
-        int m_fd{0};
     };
 }}}//qor::io::lin
 

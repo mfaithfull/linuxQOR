@@ -33,7 +33,11 @@
 
 namespace qor
 {
-    bool qor_pp_import ImplementsIFileSystem();//All libraries providing an implementation of IFileSystem also need to export this function so that the linker can find them
+#ifdef QOR_FILESYSTEM    
+    bool qor_pp_import ImplementsIFileSystem();
+#else
+    bool qor_pp_export ImplementsIFileSystem();//All libraries providing an implementation of IFileSystem need to export this function so that the linker can find them
+#endif
 }
 
 namespace qor{ namespace io{

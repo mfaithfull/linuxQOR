@@ -38,18 +38,18 @@ namespace qor{ namespace io{ namespace filesystem {
 	public:
 
         Index();
-        Index(const filesystem::Path & Path, const std::string& FileName);
+        Index(const filesystem::Path& Path, const std::string& FileName);
         Index(const std::filesystem::directory_entry& dirent);
         Index(const Index&);
         Index& operator = (const Index&);
         virtual ~Index() = default;
 
-        void Set(const filesystem::Path & path, const std::string& fileName);
+        void Set(const filesystem::Path& path, const std::string& fileName);
         bool Exists(void) const;
-        bool Copy(const Index & Destination, std::filesystem::copy_options copyOptions = std::filesystem::copy_options::none) const;
+        bool Copy(const Index& Destination, std::filesystem::copy_options copyOptions = std::filesystem::copy_options::none) const;
         bool Delete() const;
-        bool Move(const Index & Destination) const;
-        bool Rename( const Index & Destination );
+        bool Move(const Index& Destination) const;
+        bool Rename( const Index& Destination );
         bool Resize( std::uintmax_t newSize );
         bool IsBlockFile() const;
         bool IsCharacterFile() const;

@@ -66,25 +66,6 @@ namespace qor{ namespace io{
         TempFile = 1 << 14,
     };
 
-    enum ShareMode
-    {
-        SetUserIDOnExecution    =04000,
-        SetGroupIDOnExecution   =02000,
-        DirRestrictedDelFlag    =01000,
-        Owner_ReadWiteExecute   = 0700,
-        Owner_Read              = 0400,
-        Owner_Write             = 0200,
-        Owner_Execute           = 0100,
-        Group_ReadWriteExecute  =  070,
-        Group_Read              =  040,
-        Group_Write             =  020,
-        Group_Execute           =  010,
-        Other_ReadWriteExecute  =   07,
-        Other_Read              =   04,
-        Other_Write             =   02,
-        Other_Execute           =   01
-    };
-
     class qor_pp_module_interface(QOR_FILESYSTEM) IFileSystem
     {
     public:

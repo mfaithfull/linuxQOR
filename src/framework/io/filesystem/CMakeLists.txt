@@ -1,7 +1,8 @@
 set(target qor_filesystem)
 
 add_library(${target} SHARED qor_filesystem.cpp filesystem.cpp path.cpp root.cpp fileindex.cpp folder.cpp 
-file/file.cpp file/filereader.cpp file/filewriter.cpp)
+file/file.cpp file/filereader.cpp file/filewriter.cpp
+stat.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

@@ -43,20 +43,21 @@ namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFile
 
 namespace qor{ namespace io{ namespace lin{    
 
-    File::File() : m_fd(-1){}
+    File::File() : io::File(-1){}
     
-    File::File(int fd) : m_fd(fd){}
+    File::File(int fd) : io::File(fd){}
 
     File::File(const File& src) : File()
     {
         if(src.m_fd != -1)
         {
-            m_fd = Validate_fcntl_Result(fcntl(src.m_fd, F_DUPFD, 0));
+            IODescriptor::m_fd = Validate_fcntl_Result(fcntl(src.m_fd, F_DUPFD, 0));
         }
     }
 
-    File::File(const io::filesystem::Index& direntry, int openFor, int withFlags) : io::File(direntry), m_fd(-1)
+    File::File(const io::filesystem::Index& direntry, int openFor, int withFlags) : io::File(direntry)
     {
+        IODescriptor::m_fd = -1;
         int mode = 0;
         if( ( (withFlags & WithFlags::CreateNew) | (withFlags & WithFlags::TempFile) ) != 0 )
         {
@@ -107,37 +108,52 @@ namespace qor{ namespace io{ namespace lin{
         return lseek(m_fd, 0, SEEK_CUR) != -1 ? true : false;        
     }
 
-    int File::ChangeMode(unsigned int mode)
+    uint64_t File::GetPosition()
     {
-        unsigned int linuxMode = 0;
-        linuxMode |= ( (mode & Owner_Read) != 0 ? S_IRUSR : 0 );
-        linuxMode |= ( (mode & Owner_Write) != 0 ? S_IWUSR : 0 );
-        linuxMode |= ( (mode & Owner_Execute) != 0 ? S_IXUSR : 0 );
-
-        linuxMode |= ( (mode & Group_Read) != 0 ? S_IRGRP : 0 );
-        linuxMode |= ( (mode & Group_Write) != 0 ? S_IWGRP : 0 );
-        linuxMode |= ( (mode & Group_Execute) != 0 ? S_IXGRP : 0 );
-
-        linuxMode |= ( (mode & Other_Read) != 0 ? S_IROTH : 0 );
-        linuxMode |= ( (mode & Other_Write) != 0 ? S_IWOTH : 0 );
-        linuxMode |= ( (mode & Other_Execute) != 0 ? S_IXOTH : 0 );
-        return ChangeAccess(linuxMode);
+        return Validate_lseek64_Result(::lseek64(m_fd, 0, SEEK_CUR));
     }
 
-    int File::ChangeAccess(unsigned int mode)
+    long File::SetPosition(off_t offset, int whence)
     {
-        return Validate_fchmod_Result(::fchmod(m_fd, static_cast<mode_t>(mode)));
+        return Validate_lseek_Result(::lseek(m_fd, offset, whence));
     }
+
+    uint64_t File::SetPosition(uint64_t newPosition)
+    {
+        return static_cast<uint64_t>(Validate_lseek64_Result(::lseek64(m_fd, newPosition, SEEK_SET)));
+    }
+
+    uint64_t File::SetPositionRelative(int64_t offset)
+    {
+        return static_cast<uint64_t>(Validate_lseek64_Result(::lseek64(m_fd, offset, SEEK_CUR)));
+    }
+
+    void File::Truncate(uint64_t length)
+    {
+        ::ftruncate(m_fd, length);
+    }
+
+    void File::Reserve(uint64_t length)
+    {
+        Validate_posix_fallocate_Result(::posix_fallocate(m_fd, 0, length));
+    }
+
+    void File::Flush()
+    {
+        ::fdatasync(m_fd);
+    }
+
+    ref_of<IFile>::type File::ReOpen()
+    {
+        int fd = Validate_fcntl_Result(::fcntl(m_fd, F_DUPFD, 0));
+        return new_ref<File>(fd).template AsRef<IFile>();
+    }
+
+
 
     int File::AdviseOnUsage(off_t offset, off_t length, int advise)
     {
         return Validate_posix_fadvise_Result(::posix_fadvise(m_fd, offset, length, advise));
-    }
-
-    ref_of<IFile>::type File::Duplicate()
-    {
-        int fd = Validate_fcntl_Result(::fcntl(m_fd, F_DUPFD, 0));
-        return new_ref<File>(fd).template AsRef<IFile>();
     }
 
     int File::GetDescriptor() const
@@ -165,35 +181,12 @@ namespace qor{ namespace io{ namespace lin{
         return Validate_fcntl_Result(::fcntl(m_fd, F_SETFL, flags));
     }
 
-    int File::ReserveSpace(off_t offset, off_t length)
-    {
-        return Validate_posix_fallocate_Result(::posix_fallocate(m_fd, offset, length));
-    }
-
-    int File::Truncate(off_t length)
-    {
-        return Validate_ftruncate_Result(::ftruncate(m_fd, length));
-    }
-
-    void File::Truncate(uint64_t length)
-    {
-        ::ftruncate(m_fd, length);
-    }
 
     int File::SyncToSystem()
     {
         return Validate_fsync_Result(::fsync(m_fd));
     }
 
-    uint64_t File::GetPosition()
-    {
-        return Validate_lseek64_Result(::lseek64(m_fd, 0, SEEK_CUR));
-    }
-
-    off_t File::SetPosition(off_t offset, int whence)
-    {
-        return Validate_lseek_Result(::lseek(m_fd, offset, whence));
-    }
 
     int File::AsyncRead(byte* buffer, size_t byteCount, off_t offset)
     {
