@@ -143,10 +143,10 @@ namespace qor{ namespace io{ namespace lin{
         ::fdatasync(m_fd);
     }
 
-    ref_of<File>::type File::ReOpen()
+    ref_of<io::File>::type File::ReOpen(int openFor, int withFlags)
     {
         int fd = Validate_fcntl_Result(::fcntl(m_fd, F_DUPFD, 0));
-        return new_ref<File>(fd).template AsRef<File>();
+        return new_ref<io::File>(fd);
     }
 
 
