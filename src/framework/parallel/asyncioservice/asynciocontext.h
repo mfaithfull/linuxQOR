@@ -45,7 +45,7 @@ namespace qor { namespace async{
     public:
 
         AsyncIOContext(ref_of<thread::ThreadPool>::type threadPool);
-        ~AsyncIOContext();        
+        ~AsyncIOContext() = default;        
         
         virtual void Inflate();
         virtual void Deflate();
@@ -129,10 +129,16 @@ namespace qor { namespace async{
                 return m_sharedContext.Recv(ioDescriptor, buffer, len);
             }
 
-            virtual inline task<int> Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) const
+            virtual inline task<int> Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) const
             {
                 Lock lock(m_sharedContext.m_access);
-                return m_sharedContext.Read(ioDescriptor, buffer, len);
+                return m_sharedContext.Read(ioDescriptor, buffer, len, offset);
+            }
+
+            virtual inline task<int> Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) const
+            {
+                Lock lock(m_sharedContext.m_access);
+                return m_sharedContext.Write(ioDescriptor, buffer, len, offset);
             }
 
             virtual inline task<int> Shutdown(io::IODescriptor* ioDescriptor, int how) const

@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_SENDOP
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_SENDOP
+#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_READOP
+#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_READOP
 
 #include <system_error>
 #include <coroutine>
@@ -34,69 +34,60 @@
 
 namespace qor { namespace framework { namespace win {
 
-	class SocketSendOperationImpl
+	class ReadOperationImpl
 	{
 	public:
 
-		SocketSendOperationImpl(io::IODescriptor* s,
-			const void* buffer,
-			std::size_t byteCount) noexcept
-			: m_socket(s)
-			, m_buffer(const_cast<void*>(buffer), byteCount)
-		{
-		}
+		ReadOperationImpl(io::IODescriptor* s, void* buffer, size_t byteCount, long offset) noexcept
+			: m_file(s)
+			, m_buffer(buffer, byteCount){ }
 
 		bool try_start(win32_overlapped_operation_base& operation) noexcept;
 		void cancel(win32_overlapped_operation_base& operation) noexcept;
 
 	private:
 
-		io::IODescriptor* m_socket;
+		io::IODescriptor* m_file;
 		wsabuf m_buffer;
 
 	};
 
-	class SocketSendOperation : public win32_overlapped_operation<SocketSendOperation>
+	class ReadOperation : public win32_overlapped_operation<ReadOperation>
 	{
-		friend class win32_overlapped_operation<SocketSendOperation>;
+		friend class win32_overlapped_operation<ReadOperation>;
 
 	public:
 
-		SocketSendOperation(io::IODescriptor* s, const void* buffer, std::size_t byteCount) noexcept
-			: m_impl(s, buffer, byteCount)
-		{
-		}
+		ReadOperation(io::IODescriptor* s, void* buffer, size_t byteCount, long offset) noexcept
+			: m_impl(s, buffer, byteCount, offset){ }
 
 	private:
 
 		bool try_start() noexcept { return m_impl.try_start(*this); }
 
-		SocketSendOperationImpl m_impl;
+		ReadOperationImpl m_impl;
 
 	};
 
-	class SocketSendOperationCancellable : public win32_overlapped_operation_cancellable<SocketSendOperationCancellable>
+	class ReadOperationCancellable : public win32_overlapped_operation_cancellable<ReadOperationCancellable>
 	{
-		friend class win32_overlapped_operation_cancellable<SocketSendOperationCancellable>;
+		friend class win32_overlapped_operation_cancellable<ReadOperationCancellable>;
 
 	public:
 
-		SocketSendOperationCancellable(io::IODescriptor* s, const void* buffer,
-			std::size_t byteCount,
+		ReadOperationCancellable(io::IODescriptor* s, void* buffer, std::size_t byteCount, long offset,
 			CancellationToken&& ct) noexcept
-			: win32_overlapped_operation_cancellable<SocketSendOperationCancellable>(std::move(ct))
-			, m_impl(s, buffer, byteCount)
-		{
-		}
+			: win32_overlapped_operation_cancellable<ReadOperationCancellable>(std::move(ct))
+			, m_impl(s, buffer, byteCount, offset) { }
 
 	private:
 		
 		bool try_start() noexcept { return m_impl.try_start(*this); }
 		void cancel() noexcept { return m_impl.cancel(*this); }
 
-		SocketSendOperationImpl m_impl;
+		ReadOperationImpl m_impl;
 	};
 
 }}}//qor::framework::win
 
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_SENDOP
+#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_READOP

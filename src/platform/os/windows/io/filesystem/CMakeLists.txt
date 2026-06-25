@@ -1,6 +1,6 @@
 set(target winqor_filesystem)
 
-add_library(${target} SHARED winqor_filesystem.cpp filesystem.cpp filestat.cpp file.cpp)
+add_library(${target} SHARED winqor_filesystem.cpp filesystem.cpp file.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

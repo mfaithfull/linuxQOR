@@ -177,11 +177,23 @@ namespace qor{ namespace io{
         serious("Empty base implementation.");
     }
 
-    ref_of<IFile>::type File::ReOpen()
+    ref_of<IFile>::type File::ReOpen(int /*openFor*/, int /*withFlags*/)
     {
         serious("Empty base implementation.");
         ref_of<IFile>::type newfile;
         return newfile;
+    }
+
+    task<int> File::AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    {
+        serious("Empty base implementation.");
+        return task<int>{};
+    }
+
+    task<int> File::AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    {
+        serious("Empty base implementation.");
+        return task<int>{};
     }
 
     int64_t File::Read(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/)

@@ -36,6 +36,8 @@
 #include "operations/recvop.h"
 #include "operations/acceptop.h"
 #include "operations/sendop.h"
+#include "operations/readop.h"
+#include "operations/writeop.h"
 #include "src/framework/io/network/socket.h"
 
 namespace qor { namespace framework { namespace win {
@@ -47,17 +49,17 @@ namespace qor { namespace framework { namespace win {
         IOCPInitiator() = default;
         virtual ~IOCPInitiator() noexcept = default;
 
-        virtual void ConnectToProcessor(qor::async::AsyncIOEventProcessor * processor)
+        virtual void ConnectToProcessor(qor::async::AsyncIOEventProcessor * processor) override
         {
             m_eventProcessor = dynamic_cast<IOCPEventProcessor*>(processor);
         }
 
-        virtual bool RequiresBackgroundProcessor()
+        virtual bool RequiresBackgroundProcessor() override
         {
             return true;
         }
 
-        virtual qor::async::IOTask Send(platform::IODescriptor * ioDescriptor, const byte * buffer, size_t len, int flags)
+        virtual qor::async::IOTask Send(io::IODescriptor * ioDescriptor, const byte * buffer, size_t len, int flags) override
         {
             co_return qor::async::AsyncIOResult{
                 .result = co_await SocketSendOperation(ioDescriptor, buffer, len),
@@ -65,15 +67,23 @@ namespace qor { namespace framework { namespace win {
             };
         }
 
-        virtual qor::async::IOTask Read(platform::IODescriptor * ioDescriptor, byte * buffer, size_t len)
+        virtual qor::async::IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) override
         {
             co_return qor::async::AsyncIOResult{
-                .status_code = -1,//co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len),
+                .result = co_await ReadOperation(ioDescriptor, buffer, len, offset),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Recv(platform::IODescriptor* ioDescriptor, byte* buffer, size_t len)
+        virtual qor::async::IOTask Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) override
+        {
+            co_return qor::async::AsyncIOResult{
+                .result = co_await WriteOperation(ioDescriptor, buffer, len, offset),
+                .ioObject = ioDescriptor
+            };
+        }
+
+        virtual qor::async::IOTask Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) override
         {
             co_return qor::async::AsyncIOResult{
                 .result = co_await SocketRecvOperation(ioDescriptor, buffer, len),
@@ -81,7 +91,7 @@ namespace qor { namespace framework { namespace win {
             };
         }
 
-        virtual qor::async::IOTask Listen(platform::IODescriptor * ioDescriptor, int backlog)
+        virtual qor::async::IOTask Listen(io::IODescriptor * ioDescriptor, int backlog) override
         {
             co_return qor::async::AsyncIOResult{
                 .status_code = -1,//co_await ListenOperation(*m_Ring, ioDescriptor->m_fd, 0),
@@ -89,7 +99,7 @@ namespace qor { namespace framework { namespace win {
             };
         }
 
-        virtual qor::async::IOTask Bind(platform::IODescriptor * ioDescriptor, const network::Address & Address)
+        virtual qor::async::IOTask Bind(io::IODescriptor * ioDescriptor, const network::Address & Address) override
         {
             //Windows doesn't provide async bind
             co_return qor::async::AsyncIOResult{
@@ -98,7 +108,7 @@ namespace qor { namespace framework { namespace win {
             };
         }
 
-        virtual qor::async::IOTask Accept(platform::IODescriptor * ioDescriptor, const network::Address & Address, network::Socket * new_socket)
+        virtual qor::async::IOTask Accept(io::IODescriptor * ioDescriptor, const network::Address & Address, network::Socket * new_socket) override
         {            
             int status = co_await SocketAcceptOperation(ioDescriptor, new_socket);
 

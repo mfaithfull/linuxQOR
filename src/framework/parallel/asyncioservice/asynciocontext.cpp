@@ -50,10 +50,6 @@ namespace qor { namespace async{
         Inflate();
     }
 
-    AsyncIOContext::~AsyncIOContext()
-    {
-    }
-
     void AsyncIOContext::Inflate()
     {
         if(m_processor.IsNotNull())
@@ -80,6 +76,5 @@ namespace qor { namespace async{
     {
         return new_ref<Session>(this);
     }
-
 
 }}//qor::async

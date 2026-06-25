@@ -56,8 +56,7 @@ namespace qor { namespace async{
 		AsyncIOService(const AsyncIOService& other) = delete;
 		AsyncIOService& operator=(AsyncIOService&& other) = delete;
 		AsyncIOService& operator=(const AsyncIOService& other) = delete;
-
-        void SetConcurrency(unsigned short concurrency);
+        
         virtual void Setup();
         virtual void Shutdown();
 

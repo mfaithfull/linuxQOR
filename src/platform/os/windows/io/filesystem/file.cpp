@@ -139,7 +139,7 @@ namespace qor{ namespace io { namespace win{
 
     bool File::SupportsPosition()
     {
-        return GetType() == IFile::Disk;
+        return GetType() == IFile::Type::Regular;
     }
 
     uint64_t File::GetPosition()
@@ -211,17 +211,6 @@ namespace qor{ namespace io { namespace win{
         SetPointerEx(beggining, &newPosition, FILE_BEGIN); // reset
     }
 
-    uint64_t File::GetSize()
-    {
-        platform::win::LARGE_INTEGER fileSize;
-        fileSize.QuadPart = 0;
-        if(!Kernel32::GetFileSizeEx(m_handle, reinterpret_cast<::PLARGE_INTEGER>(&fileSize)))
-        {            
-            continuable("Failed to get file size.");
-        }
-        return fileSize.QuadPart;
-    }
-
     void File::Flush() 
     {
         if(!Kernel32::FlushFileBuffers(m_handle))
@@ -230,29 +219,25 @@ namespace qor{ namespace io { namespace win{
         }
     }
 
-    IFile::Type File::GetType()
+    ref_of<IFile>::type File::ReOpen(int openFor, int withFlags)
     {
-        unsigned long fileType = Kernel32::GetFileType(m_handle);
+        IODescriptor newDescriptor{0};
+        unsigned long desiredAccess = GetDesiredAccess(openFor, withFlags);
+        unsigned long shareMode = GetShareMode(openFor, withFlags);        
+        unsigned long flagsAndAttributes = GetFlagsAndAttributes(openFor, withFlags);
 
-        switch(fileType)
-        {
-            case FILE_TYPE_CHAR://The specified file is a character file, typically an LPT device or a console.
-                return IFile::Char;
-            case FILE_TYPE_DISK://The specified file is a disk file.
-                return IFile::Disk;
-            case FILE_TYPE_PIPE://The specified file is a socket, a named pipe, or an anonymous pipe.
-                return IFile::Pipe;
-            case FILE_TYPE_REMOTE://Unused.
-            default:
-                return IFile::Unknown;
-        }
+        newDescriptor.m_handle = Kernel32::ReOpenFile(IODescriptor::m_handle, desiredAccess, shareMode, flagsAndAttributes);
+        return new_ref<File>(newDescriptor).template AsRef<IFile>();
     }
 
-    ref_of<IFile>::type File::ReOpen()
+    task<int> File::AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
-        IODescriptor iod;
-        iod.m_handle = Kernel32::ReOpenFile(m_handle, FILE_GENERIC_READ | FILE_GENERIC_WRITE | FILE_GENERIC_EXECUTE, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, 0);
-        return new_ref<IFile>(iod);
+        return ioContext.Read(this, buffer, byteCount, offset);
+    }
+
+    task<int> File::AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    {
+        return ioContext.Write(this, buffer, byteCount, offset);
     }
 
     int64_t File::Read(byte* buffer, size_t byteCount, int64_t offset)
@@ -283,28 +268,9 @@ namespace qor{ namespace io { namespace win{
         return numberofBytesWritten;
     }
     
-    int File::ChangeMode(unsigned int /*mode*/)
-    {
-        return -1;
-    }
 
-    ref_of<IFile>::type File::Duplicate()
-    {
-        ref_of<IFile>::type nullref;
-        return nullref;
-    }
 
-    int File::AsyncRead(byte* /*buffer*/, size_t /*byteCount*/, off_t /*offset*/)
-    {
-        //TODO:
-        return -1;
-    }
 
-    int File::AsyncWrite(byte* /*buffer*/, size_t /*byteCount*/, off_t /*offset*/)
-    {
-        //TODO:
-        return -1;
-    }
 
     //Windows facing private and temporary
 

@@ -40,17 +40,12 @@ namespace qor{ namespace io { namespace win{
 
     void FileSystem::Setup(){ }
 
-    void FileSystem::Shutdown()
-    {
-        SyncToSystem();
-    }
-
-    void FileSystem::SyncToSystem() const { }
+    void FileSystem::Shutdown(){ }
 
     ref_of<IFile>::type FileSystem::Create(const filesystem::Index& index, int withFlags) const
     {        
         auto ref = Open(index, OpenFor::ReadWrite, withFlags);
-        ref.AsRef<File>()->ChangeMode(Owner_Read | Owner_Write);
+        ref.AsRef<File>()->SetPermissions(filesystem::Permissions::OwnerRead | filesystem::Permissions::OwnerWrite, filesystem::PermissionOptions::Add);
         return ref;
     }
 

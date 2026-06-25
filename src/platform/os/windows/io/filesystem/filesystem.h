@@ -49,7 +49,7 @@ namespace qor{ namespace io { namespace win{
         virtual ref_of<IFile>::type Open(const filesystem::Index& index, const int openFor, const int withFlags) const;        
         virtual bool Move(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const;
         virtual bool Rename(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const;
-        void SyncToSystem() const;
+                
     };
 
 }}}//qor::io::win

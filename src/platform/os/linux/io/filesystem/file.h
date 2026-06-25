@@ -43,10 +43,10 @@ namespace qor{ namespace io { namespace lin{
 
         File();
         File(const File& src);
-        File(const io::filesystem::Path& path, const std::string& fileName, int openFor, int withFlags) : File(io::filesystem::Index(path,fileName),openFor,withFlags) {}
-        File(const io::filesystem::Index& direntry, int openFor, int withFlags);
+        File(const filesystem::Path& path, const std::string& fileName, int openFor, int withFlags) : File(io::filesystem::Index(path,fileName),openFor,withFlags) {}
+        File(const filesystem::Index& direntry, int openFor, int withFlags);
         File(int fd);
-        ~File();
+        virtual ~File();
 
         virtual bool SupportsPosition() override;
         virtual uint64_t GetPosition() override;        
@@ -57,11 +57,10 @@ namespace qor{ namespace io { namespace lin{
         virtual void Reserve(uint64_t length) override;
         virtual void Flush() override;
         virtual ref_of<IFile>::type ReOpen() override;
-
-        task<int> AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
-        task<int> AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
-        virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
-        virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
+        virtual task<int> AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
+        virtual task<int> AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
+        virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1) override;
+        virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1) override;
         
     private:
 

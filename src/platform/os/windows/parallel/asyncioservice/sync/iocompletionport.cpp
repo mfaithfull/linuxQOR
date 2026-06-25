@@ -55,7 +55,7 @@ namespace qor { namespace framework { namespace win {
         return ::GetQueuedCompletionStatus(m_handle.Use(), &numberOfBytesTransferred, &completionKey, reinterpret_cast<LPOVERLAPPED*>(&pOverlapped), timeoutms);
     }
 
-    bool IOCompletionPort::Enroll(platform::IODescriptor& ioDescriptor) const
+    bool IOCompletionPort::Enroll(io::IODescriptor& ioDescriptor) const
     {
         const HANDLE result = ::CreateIoCompletionPort((HANDLE)ioDescriptor.m_handle, m_handle.Use(), 0, 0);
 

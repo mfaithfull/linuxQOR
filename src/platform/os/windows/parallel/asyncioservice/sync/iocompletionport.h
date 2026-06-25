@@ -29,9 +29,9 @@
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "overlapped.h"
 
-namespace qor { namespace platform{ 
+namespace qor { namespace io{ 
     struct IODescriptor;
-}}//qor::platform
+}}//qor::io
 
 namespace qor { namespace framework { namespace win {
 
@@ -45,7 +45,7 @@ namespace qor { namespace framework { namespace win {
         const platform::win::Handle& Handle();
         bool PostQueuedCompletionStatus(unsigned long numberOfBytesTransferred, unsigned long long completionKey, overlapped* pOverlapped);
         bool GetQueuedCompletionStatus(unsigned long& numberOfBytesTransferred, unsigned long long& completionKey, overlapped*& pOverlapped, unsigned long timeoutms);
-        bool Enroll(platform::IODescriptor& ioDescriptor) const;
+        bool Enroll(io::IODescriptor& ioDescriptor) const;
 
     private:
 

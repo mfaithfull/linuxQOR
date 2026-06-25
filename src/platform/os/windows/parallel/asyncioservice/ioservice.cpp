@@ -321,7 +321,7 @@ namespace qor { namespace framework { namespace win {
         return timerState;
     }
 
-    bool IOService::Enroll(platform::IODescriptor& ioDescriptor) const
+    bool IOService::Enroll(io::IODescriptor& ioDescriptor) const
     {
         return m_IOCP->Enroll(ioDescriptor);
     }

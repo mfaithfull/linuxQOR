@@ -72,7 +72,7 @@ namespace qor{ namespace network{ namespace win{
         auto socket = new_ref<Socket>(AF, Type, Protocol);
         if( ioSession.IsNotNull())
         {
-            platform::IODescriptor iod;            
+            io::IODescriptor iod;            
             iod.m_socket = socket->ID();
             ioSession->Enroll(iod);
         }

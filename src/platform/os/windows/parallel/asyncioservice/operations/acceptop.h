@@ -38,7 +38,7 @@ namespace qor { namespace framework { namespace win {
 	{
 	public:
 
-		SocketAcceptOperationImpl(platform::IODescriptor* listeningSocket, network::Socket* acceptingSocket) noexcept
+		SocketAcceptOperationImpl(io::IODescriptor* listeningSocket, network::Socket* acceptingSocket) noexcept
 			: m_listeningSocket(listeningSocket)
 			, m_acceptingSocket(acceptingSocket)
 		{
@@ -55,7 +55,7 @@ namespace qor { namespace framework { namespace win {
 #	pragma warning(disable : 4324) // Structure padded due to alignment
 #endif
 
-		platform::IODescriptor* m_listeningSocket;
+		io::IODescriptor* m_listeningSocket;
 		network::Socket* m_acceptingSocket;
 		alignas(8) std::uint8_t m_addressBuffer[88];
 
@@ -71,7 +71,7 @@ namespace qor { namespace framework { namespace win {
 
 	public:
 
-		SocketAcceptOperation(platform::IODescriptor* listeningSocket, network::Socket* acceptingSocket) noexcept
+		SocketAcceptOperation(io::IODescriptor* listeningSocket, network::Socket* acceptingSocket) noexcept
 			: m_impl(listeningSocket, acceptingSocket)
 		{
 		}
@@ -91,7 +91,7 @@ namespace qor { namespace framework { namespace win {
 	public:
 
 		SocketAcceptOperationCancellable(
-			platform::IODescriptor* listeningSocket,
+			io::IODescriptor* listeningSocket,
 			network::Socket* acceptingSocket,
 			CancellationToken&& ct) noexcept : 
 			win32_overlapped_operation_cancellable<SocketAcceptOperationCancellable>(std::move(ct)), m_impl(listeningSocket, acceptingSocket)

@@ -45,9 +45,7 @@ namespace qor { namespace async{
         AsyncIOInitiator() = default;
         virtual ~AsyncIOInitiator() noexcept = default;
 
-        virtual void ConnectToProcessor(AsyncIOEventProcessor* /*processor*/)
-        {            
-        }
+        virtual void ConnectToProcessor(AsyncIOEventProcessor* /*processor*/){ }
 
         virtual bool RequiresBackgroundProcessor()
         {

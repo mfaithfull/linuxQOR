@@ -32,6 +32,8 @@
 #include "src/qor/error/error.h"
 #include "src/qor/reference/newref.h"
 #include "src/framework/io/iodescriptor.h"
+#include "src/framework/parallel/task/task.h"
+#include "src/framework/parallel/asyncioservice/asynciointerface.h"
 #include "../permissions.h"
 
 namespace qor{
@@ -98,8 +100,9 @@ namespace qor{ namespace io{
         virtual void Truncate(uint64_t /*length*/){}
         virtual void Reserve(uint64_t /*length*/){}
         virtual void Flush(){}
-        virtual ref_of<IFile>::type ReOpen(){ ref_of<IFile>::type result; return result;}
-
+        virtual ref_of<IFile>::type ReOpen(int /*openFor*/, int /*withFlags*/){ ref_of<IFile>::type result; return result;}
+        virtual task<int> AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset){return task<int>{};}
+        virtual task<int> AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset){return task<int>{};}
         virtual int64_t Read(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/ = -1){return 0;}
         virtual int64_t Write(byte* /*buffer*/, size_t /*byteCount*/, int64_t /*offset*/ = -1){return 0;}
     };

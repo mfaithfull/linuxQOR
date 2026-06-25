@@ -64,7 +64,9 @@ namespace qor{ namespace io{
         virtual void Truncate(uint64_t length);
         virtual void Reserve(uint64_t length);
         virtual void Flush();        
-        virtual ref_of<IFile>::type ReOpen();        
+        virtual ref_of<IFile>::type ReOpen(int openFor, int withFlags);        
+        virtual task<int> AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
+        virtual task<int> AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
 

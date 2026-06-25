@@ -26,18 +26,159 @@
 
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
+#include "src/qor/injection/typeidentity.h"
+#include "src/qor/objectcontext/anyobject.h"
+#include "src/qor/instance/pool.h"
+#include "src/qor/current/currentthread.h"
+#include "src/qor/reference/newref.h"
+#include "src/framework/app/application/builder.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/io/filesystem/folder.h"
+#include "src/framework/io/pipeline/podbuffer.h"
 
 using namespace qor;
-//using namespace qor::io;
+using namespace qor::io;
+using namespace qor::io::filesystem;
 
-struct FileSystemSmokeTestSuite{};
+bool requiresFileSystem = qor::ImplementsIFileSystem();
 
-qor_pp_test_suite_case(FileSystemSmokeTestSuite, CanMakeAFileSystemObject)
+struct FileSystemTestSuite
+{
+    FileSystemTestSuite()
+    {
+        m_fileSystem = new_ref<FileSystem>();
+        m_fileSystem->Setup();
+    }
+
+    ref_of<FileSystem>::type m_fileSystem;
+};
+
+
+qor_pp_test_suite_case(FileSystemTestSuite, canCreatefileSytemInstance)
 {    
-    auto filesys = new_ref<FileSystem>();
-    filesys->Setup();
-    filesys->Shutdown();
-    qor_pp_assert_that(true);
+    qor_pp_assert_that( &(m_fileSystem()()) ).isNotNull();
 }
 
+qor_pp_test_suite_case(FileSystemTestSuite, canGetRootFolder)
+{    
+    Folder rootFolder(m_fileSystem->GetRoot().Path());
+
+    std::cout << rootFolder.Path().ToString();
+    qor_pp_assert_that( rootFolder.Path().ToString().empty() ).isFalse();
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, canEnumerateCurrentFolderRegularFiles)
+{
+    Folder currentFolder(m_fileSystem->CurrentPath());
+    std::cout << std::endl;
+    currentFolder.Enumerate( [](Index& i) ->bool {
+        if(i.IsRegularFile())
+        {
+            std::cout << i.ToString() << std::endl;
+        }
+        return true;
+    });
+    qor_pp_assert_that(true).isTrue();
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFile)
+{
+    Index newIndex(m_fileSystem->CurrentPath(), "TestTemp");
+    {
+        auto refFile = m_fileSystem->Create(newIndex, WithFlags::CreateNew);
+    }
+    m_fileSystem->Delete(newIndex);
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, createAndDeleteANewFolder)
+{
+    Path currentPath(m_fileSystem->CurrentPath());
+    Path testPath = currentPath / "TestFolder";
+    {
+        auto refFile = m_fileSystem->Create(testPath);
+    }
+    m_fileSystem->DeleteFolder(testPath);
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, openAndWriteToANewFile)
+{
+    Index newIndex(m_fileSystem->CurrentPath(), "testfile2.txt");
+    {
+        auto refFile = m_fileSystem->Create(newIndex, WithFlags::CreateNew);
+        refFile->Flush();
+        auto status = refFile->GetStatus();        
+        auto fileType = refFile->GetType();
+        static const char* message = "Content written to a file!";
+        size_t len = strlen(message);
+        refFile->Write((byte*)message, len);        
+    }
+    
+    m_fileSystem->Delete(newIndex);
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, writeAndReadBackFileContents)
+{
+    Index newIndex(m_fileSystem->CurrentPath(), "testfile3.txt");
+    {
+        static const char* message = "{\
+\"name\": \"John Doe\",\
+\"age\": 30,\
+\"isStudent\": false\
+}";
+        {
+            auto refFile = m_fileSystem->Create(newIndex, WithFlags::CreateNew);
+            size_t len = strlen(message);
+            refFile->Write((byte*)message, len);
+        }
+
+        {
+            auto refReadFile = m_fileSystem->Open(newIndex, OpenFor::ReadOnly, WithFlags::Exclusive);
+            auto size = refReadFile->GetSize();
+            pipeline::PODBuffer<byte> byteBuffer;
+            byteBuffer.SetCapacity(size);
+
+            size_t& byteCount = size;
+            byte* address = byteBuffer.WriteRequest(byteCount);
+            auto bytesRead = refReadFile->Read(address, byteCount);
+            qor_pp_assert_that(memcmp(address, message, bytesRead) == 0).isTrue();
+        }
+
+    }
+    m_fileSystem->Delete(newIndex);
+}
+
+qor_pp_test_suite_case(FileSystemTestSuite, writeAsyncAndReadBackFileContents)
+{
+    auto asyncIOService = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::async::AsyncIOService>().AsRef<qor::async::AsyncIOService>();
+    auto session = asyncIOService(qor_shared).GetSession();
+
+    Index newIndex(m_fileSystem->CurrentPath(), "testfile4.txt");
+    {
+        static const char* message = "{\
+\"name\": \"John Doe\",\
+\"age\": 30,\
+\"isStudent\": false\
+}";
+        {
+            auto refFile = m_fileSystem->Create(newIndex, WithFlags::CreateNew);
+            size_t len = strlen(message);
+            int result = sync_wait(refFile->AsyncWrite(session, (byte*)message, len, 0));
+        }
+
+        {
+            auto refReadFile = m_fileSystem->Open(newIndex, OpenFor::ReadOnly, WithFlags::Exclusive);
+            auto size = refReadFile->GetSize();
+            pipeline::PODBuffer<byte> byteBuffer;
+            byteBuffer.SetCapacity(size);
+
+            size_t& byteCount = size;
+            byte* address = byteBuffer.WriteRequest(byteCount);
+            auto bytesRead = sync_wait(refReadFile->AsyncRead(session, address, byteCount, 0));
+            qor_pp_assert_that(memcmp(address, message, bytesRead) == 0).isTrue();
+        }
+    }
+    m_fileSystem->Delete(newIndex);
+
+}

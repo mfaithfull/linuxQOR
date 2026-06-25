@@ -27,6 +27,7 @@
 
 #include "asynciotypes.h"
 #include <future>
+#include "src/framework/io/network/address.h"
 
 namespace qor { namespace network {
     class qor_pp_module_interface(QOR_SOCKETS) Socket;

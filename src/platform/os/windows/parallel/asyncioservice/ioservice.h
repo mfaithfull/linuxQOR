@@ -66,7 +66,7 @@ namespace qor { namespace framework { namespace win {
         void NotifyWorkStarted() noexcept;
         void NotifyWorkFinished() noexcept;
         const platform::win::Handle& NativeIOCPHandle() noexcept;
-        bool Enroll(platform::IODescriptor& ioDescriptor) const;
+        bool Enroll(io::IODescriptor& ioDescriptor) const;
 
     private:
 

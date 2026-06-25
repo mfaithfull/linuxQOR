@@ -57,8 +57,7 @@ namespace qor{ namespace io{ namespace lin{
         virtual ref_of<IFile>::type Open(const io::filesystem::Index& index, const int openFor, const int withFlags) const;        
         virtual bool Move(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const;
         virtual bool Rename(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const;
-
-        void SyncToSystem() const;
+        virtual void SyncToSystem() const;
         virtual io::filesystem::Path ApplicationLogPath() const;
 
     };

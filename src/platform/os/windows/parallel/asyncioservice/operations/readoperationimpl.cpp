@@ -1,3 +1,4 @@
+
 // Copyright Querysoft Limited 2008 - 2025
 //
 // Permission is hereby granted, free of charge, to any person or organization
@@ -22,50 +23,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPEVENTPROCESSOR
-#define QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPEVENTPROCESSOR
+#include "src/configuration/configuration.h"
+#include "readop.h"
 
-#include <chrono>
-#include "src/framework/parallel/asyncioservice/asyncioeventprocessor.h"
-#include "ioservice.h"
-#include "operations/scheduleoperation.h"
+#include "src/platform/os/windows/api_layer/kernel/kernel32.h"
+#include <system_error>
 
 namespace qor { namespace framework { namespace win {
 
-    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPEventProcessor : public qor::async::AsyncIOEventProcessor
-    {
-    public:
-
-        IOCPEventProcessor() : qor::async::AsyncIOEventProcessor() {}
-        virtual ~IOCPEventProcessor() noexcept = default;
-
-        virtual int Run()
-        {
-            //uint64_t eventCount = m_service.ProcessEvents();
-            return 0;
-        }
-
-        virtual void Stop()
-        {
-            m_service.Stop();
-        }
-
-        ScheduleOperation Schedule()
-        {
-            return m_service.Schedule();
-        }
-
-        virtual bool Enroll(io::IODescriptor& ioDescriptor) const
-        {
-            return m_service.Enroll(ioDescriptor);
-        }
-
-    private:
-
-        IOService m_service;
+	bool ReadOperationImpl::try_start(win32_overlapped_operation_base& operation) noexcept
+	{
+        const DWORD numberOfBytesToRead = m_buffer.len <= 0xFFFFFFFF ? static_cast<DWORD>(m_buffer.len) : DWORD(0xFFFFFFFF);
         
-    };
+		DWORD numberOfBytesRead = 0;
+        BOOL ok = qor::win::api::Kernel32::ReadFile(
+            m_file->m_handle, 
+            m_buffer.buf, 
+            numberOfBytesToRead, 
+            &numberOfBytesRead,
+            operation.get_overlapped());
+        DWORD errorCode = ok ? ERROR_SUCCESS : qor::win::api::Kernel32::GetLastError();
+		if (errorCode != ERROR_IO_PENDING)
+		{
+            // Completed synchronously.
+            //
+            // We are assuming that the file-handle has been set to the
+            // mode where synchronous completions do not post a completion
+            // event to the I/O completion port and thus can return without
+            // suspending here.
+
+            operation.m_errorCode = errorCode;
+            operation.m_numberOfBytesTransferred = numberOfBytesRead;
+
+            return false;
+		}
+
+		// Operation will complete asynchronously.
+		return true;
+	}
+
+	void ReadOperationImpl::cancel(win32_overlapped_operation_base& operation) noexcept
+	{
+        qor::win::api::Kernel32::CancelIoEx(reinterpret_cast<HANDLE>(m_file->m_handle), operation.get_overlapped());
+	}
 
 }}}//qor::framework::win
-
-#endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPEVENTPROCESSOR

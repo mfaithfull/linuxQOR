@@ -18,7 +18,9 @@ operations/socketdisconnectimpl.cpp
 operations/socketrecvfromimpl.cpp
 operations/socketsendimpl.cpp
 operations/socketsendtoimpl.cpp
-operations/timedscheduleoperation.cpp)
+operations/timedscheduleoperation.cpp
+operations/writeoperationimpl.cpp
+operations/readoperationimpl.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

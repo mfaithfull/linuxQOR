@@ -38,7 +38,7 @@ namespace qor { namespace framework { namespace win {
 	{
 	public:
 
-		SocketRecvOperationImpl(platform::IODescriptor* s,void* buffer,std::size_t byteCount) noexcept
+		SocketRecvOperationImpl(io::IODescriptor* s,void* buffer,std::size_t byteCount) noexcept
 			: m_socket(s)
 			, m_buffer(buffer, byteCount)
 		{
@@ -49,7 +49,7 @@ namespace qor { namespace framework { namespace win {
 
 	private:
 
-		platform::IODescriptor* m_socket;
+		io::IODescriptor* m_socket;
 		wsabuf m_buffer;
 
 	};
@@ -60,7 +60,7 @@ namespace qor { namespace framework { namespace win {
 
 	public:
 
-		SocketRecvOperation(platform::IODescriptor* s,void* buffer,std::size_t byteCount) noexcept
+		SocketRecvOperation(io::IODescriptor* s,void* buffer,std::size_t byteCount) noexcept
 			: m_impl(s, buffer, byteCount)
 		{
 		}
@@ -84,7 +84,7 @@ namespace qor { namespace framework { namespace win {
 	public:
 
 		socket_recv_operation_cancellable(
-			platform::IODescriptor* s,
+			io::IODescriptor* s,
 			void* buffer,
 			std::size_t byteCount,
 			CancellationToken&& ct) noexcept
