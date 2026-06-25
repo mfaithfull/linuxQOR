@@ -23,7 +23,7 @@ using namespace qor::platform;
 using namespace qor::components;
 using namespace qor::app;
 using namespace qor::pipeline;
-using namespace qor::network;
+using namespace qor::io::network;
 using namespace qor::log;
 
 #define appName "Echo Server"
@@ -35,7 +35,7 @@ qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)
 
 int main(const int argc, const char** argv, char**)
-{	
+{
     ErrorHandler errorHandler;
     ServerLogHandler logHandler(Level::Debug);
 
@@ -66,7 +66,7 @@ int main(const int argc, const char** argv, char**)
             role->AddFeature<LogAggregatorService>(
                 [&logHandler](ref_of<LogAggregatorService>::type logAggregator)->void
                 {
-                    qor::connect(logHandler, &qor::components::LogHandler::forward, 
+                    qor::connect(logHandler, &qor::components::LogHandler::forward,
                         logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog, qor::ConnectionKind::QueuedConnection);
                     auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
                     auto logPath = fileSystem(qor_shared).ApplicationLogPath() / "echoserver";
@@ -79,4 +79,3 @@ int main(const int argc, const char** argv, char**)
 }
 
 qor_pp_implement_module(appName)
-

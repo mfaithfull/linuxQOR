@@ -13,7 +13,7 @@
 #include "src/framework/io/filesystem/file/filereader.h"
 
 using namespace qor::platform;
-using namespace qor::network;
-using namespace qor::network::sockets;
+using namespace qor::io::network;
+using namespace qor::io::network::sockets;
 
 #endif//QOR_PP_H_SDK_USING_PLATFORM

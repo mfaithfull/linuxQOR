@@ -15,7 +15,7 @@
 using namespace qor;
 using namespace qor::platform;
 using namespace qor::framework;
-using namespace qor::network;
+using namespace qor::io::network;
 using namespace qor::workflow;
 using namespace qor::components::network;
 
@@ -23,7 +23,7 @@ using namespace qor::components::network;
 qor_pp_module_requires(Sockets)
 
 int main(const int argc, const char** argv, char**)
-{	
+{
     ThePlatform(qor_shared)->AddSubsystem<Sockets>();
     return AppBuilder().Build(appName)->
     SetRole<Role>([](ref_of<IRole>::type role)
@@ -34,13 +34,13 @@ int main(const int argc, const char** argv, char**)
     {
         HTTPSocketClient cli("192.168.1.1", 8006);
 
-        if (auto res = cli.Get("/hi")) 
+        if (auto res = cli.Get("/hi"))
         {
             std::cout << res->status << std::endl;
             std::cout << res->get_header_value("Content-Type") << std::endl;
             std::cout << res->body << std::endl;
-        } 
-        else 
+        }
+        else
         {
             std::cout << "error code: " << res.error() << std::endl;
         }
