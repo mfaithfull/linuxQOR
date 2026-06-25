@@ -27,7 +27,7 @@
 #include "stringsink.h"
 #include "src/framework/io/pipeline/source.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     std::string StringSink::GetData()
     {
@@ -77,4 +77,4 @@ namespace qor{ namespace components{
         return bytesToWrite;
     }
 
-}}//qor::components
+}}}//qor::pipeline::components

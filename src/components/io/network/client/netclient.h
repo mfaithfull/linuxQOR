@@ -33,7 +33,7 @@
 #include "src/framework/io/pipeline/protocol.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketconnector.h"
 
-namespace qor{ namespace components {
+namespace qor{ namespace io{ namespace components {
 
     //Abstract base client that provides Send and Receive over a pair of Pipelines
     //This doesn't assume anything about what the pipelines are connected to, local or remote, or what data is flowing
@@ -95,7 +95,7 @@ namespace qor{ namespace components {
 
         NetworkClient() : BaseClient()
         {            
-            m_socketClientConnector = new_ref<components::SocketConnector>();
+            m_socketClientConnector = new_ref<SocketConnector>();
         }
 
         NetworkClient(ref_of<pipeline::Protocol>::type protocol) : BaseClient(), m_protocol(protocol)
@@ -128,11 +128,11 @@ namespace qor{ namespace components {
         
     protected:
     
-        ref_of<components::SocketConnector>::type m_socketClientConnector;
+        ref_of<SocketConnector>::type m_socketClientConnector;
         ref_of<pipeline::Protocol>::type m_protocol;
 
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_NETWORK_CLIENT

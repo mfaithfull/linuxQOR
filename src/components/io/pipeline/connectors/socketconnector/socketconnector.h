@@ -33,7 +33,7 @@
 #include "src/framework/io/pipeline/connection.h"
 #include "src/framework/parallel/asyncioservice/asynciocontext.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketConnector : public pipeline::Plug, virtual public qor::network::ISocket
     {
@@ -225,6 +225,6 @@ namespace qor{ namespace components{
         bool AttemptConnections(ref_of<qor::network::Sockets>::type socketsSubsystem, std::vector<qor::network::AddressInfo>& addresses);
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_SOCKET

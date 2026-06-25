@@ -30,10 +30,10 @@ public:
     //IOptionable interface
     virtual const char* ProvideShortOptionString();                         //Implement to tell the parser what short options we support
     virtual app::Option* ProvideLongOptions();                              //Implement to tell the parser what long options we support
-    virtual void ReceiveOptionSwitch(char c);                               //Implement to receive switch options
+    virtual void ReceiveOptionSwitch(char c){}                              //Implement to receive switch options
     virtual void ReceiveOptionParameter(char c, const char* value);         //Implement to receive options parameters
     virtual void ReceiveLongOption(const char* option, const char* value);  //Implement to receive long options
-    virtual void ReceiveNonOption(const char* parameter);                   //Implement to receive non option command line strings
+    virtual void ReceiveNonOption(const char* parameter){}                  //Implement to receive non option command line strings
 
     //Interfaces to provide properties, determined from the options to the rest of the program
     std::string GetFileName();

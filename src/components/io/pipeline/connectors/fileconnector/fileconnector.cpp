@@ -28,53 +28,46 @@
 #include "filesink.h"
 #include "filesource.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     FileConnector::FileConnector() : Plug()
     {
-        m_Mode = platform::WithFlags::None;        
-        m_OpenFor = platform::OpenFor::ReadWrite;
-        m_Share = platform::ShareMode::Owner_ReadWiteExecute;
+        m_Mode = WithFlags::None;        
+        m_OpenFor = OpenFor::ReadWrite;        
 
         m_sink = new_ref<FileSink>();
         m_source = new_ref<FileSource>();
         m_sink->SetPlug(this);
         m_source->SetPlug(this);
-
     }
 
-    FileConnector::FileConnector(const io::filesystem::Index& fileIndex, 
-        const platform::WithFlags mode, 
-        const platform::ShareMode share,
-        const platform::OpenFor openfor) : Plug()
+    FileConnector::FileConnector(const filesystem::Index& fileIndex, 
+        const WithFlags mode, 
+        const OpenFor openfor) : Plug()
     {
         m_Mode = mode;
         m_OpenFor = openfor;
-        m_Share = share;
-        m_pFileIndex = &(const_cast<io::filesystem::Index&>(fileIndex));
+        m_pFileIndex = &(const_cast<filesystem::Index&>(fileIndex));
 
         m_sink = new_ref<FileSink>();
         m_source = new_ref<FileSource>();
         m_sink->SetPlug(this);
         m_source->SetPlug(this);
-
     }
 
-    FileConnector::FileConnector(const io::filesystem::Index& fileIndex, 
+    FileConnector::FileConnector(const filesystem::Index& fileIndex, 
         const pipeline::Buffer& buffer, 
-        const platform::WithFlags mode, 
-        const platform::ShareMode share,
-        const platform::OpenFor openfor) : FileConnector(fileIndex, mode, share, openfor)
+        const WithFlags mode, 
+        const OpenFor openfor) : FileConnector(fileIndex, mode, openfor)
     {
         m_source->SetBuffer(buffer);
         m_sink->SetBuffer(buffer);
     }
 
-    FileConnector::FileConnector(const io::filesystem::Index& fileIndex, 
+    FileConnector::FileConnector(const filesystem::Index& fileIndex, 
         pipeline::Buffer& buffer, 
-        const platform::WithFlags mode, 
-        const platform::ShareMode share,
-        const platform::OpenFor openfor) : FileConnector(fileIndex, mode, share, openfor)
+        const WithFlags mode, 
+        const OpenFor openfor) : FileConnector(fileIndex, mode, openfor)
     {
         m_source->SetBuffer(buffer);
         m_sink->SetBuffer(buffer);
@@ -92,7 +85,7 @@ namespace qor{ namespace components{
     {
         if(!m_connected)
         {
-            m_File = new_ref<platform::IFile>(*m_pFileIndex, static_cast<int>(m_OpenFor), static_cast<int>(m_Mode));
+            m_File = new_ref<IFile>(*m_pFileIndex, static_cast<int>(m_OpenFor), static_cast<int>(m_Mode));
             m_connected = !m_File.IsNull();//->IsOpen();
         }
         return m_connected;
@@ -105,7 +98,7 @@ namespace qor{ namespace components{
     }
     
     bool FileConnector::HandlePendingConnectionResult(bool bConnected)
-    {
+    {        
         if (bConnected)
         {
             return true;
@@ -114,39 +107,29 @@ namespace qor{ namespace components{
         return false;
     }
 
-    void FileConnector::SetMode(platform::WithFlags mode)
+    void FileConnector::SetMode(WithFlags mode)
     {
         m_Mode = mode;
     }
 
-    platform::WithFlags FileConnector::GetMode(void)
+    WithFlags FileConnector::GetMode(void)
     {
         return m_Mode;
     }
 
-    void FileConnector::SetOpenFor(platform::OpenFor openfor)
+    void FileConnector::SetOpenFor(OpenFor openfor)
     {
         m_OpenFor = openfor;
     }
 
-	platform::OpenFor FileConnector::GetOpenFor(void)
+	OpenFor FileConnector::GetOpenFor(void)
     {
         return m_OpenFor;
     }
 
-    void FileConnector::SetShare(platform::ShareMode share)
-    {
-        m_Share = share;
-    }
-    
-    platform::ShareMode FileConnector::GetShare(void)
-    {
-        return m_Share;
-    }
-
-    void FileConnector::SetFile(io::filesystem::Index& fileIndex)
+    void FileConnector::SetFile(filesystem::Index& fileIndex)
     {
         m_pFileIndex = &fileIndex;
     }
 
-}}//qor::components
+}}}//qor::io::components

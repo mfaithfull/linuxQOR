@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include "src/framework/io/pipeline/filter.h"
 
-namespace qor{ namespace components{
+namespace qor{ namespace pipeline{ namespace components{
 
     typedef unsigned char stbi_uc;
     typedef unsigned short stbi_us;    
@@ -147,6 +147,6 @@ namespace qor{ namespace components{
                 
     };
 
-}}//qor::pipeline
+}}}//qor::pipeline::components
 
 #endif//QOR_PP_H_COMPONENTS_FRAMEWORK_PIPELINE_FILTERS_JPEGDECODE

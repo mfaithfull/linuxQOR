@@ -26,9 +26,9 @@
 
 #include "stdifstreamconnector.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io { namespace components{ 
 
-    stdifstreamConnector::stdifstreamConnector(io::filesystem::Index& fileIndex) : stdfstreamConnector(fileIndex)
+    stdifstreamConnector::stdifstreamConnector(filesystem::Index& fileIndex) : stdfstreamConnector(fileIndex)
     {
     }
 
@@ -58,4 +58,4 @@ namespace qor{ namespace components{
         return m_ifstream;
     }
     
-}}//qor::components
+}}}//qor::io::components

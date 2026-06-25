@@ -86,7 +86,7 @@
 
 #define stbi__SOF_progressive(x)   ((x) == 0xc2)
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 /*
 static int      stbi__jpeg_test(stbi__context *s);
 static void    *stbi__jpeg_load(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri);
@@ -804,4 +804,5 @@ static int      stbi__jpeg_info(stbi__context *s, int *x, int *y, int *comp);*/
         unitsProcessed = 1;//We read 1 JPEG
         return true;
     }
-}}//qor::components
+    
+}}}//qor::pipeline::components

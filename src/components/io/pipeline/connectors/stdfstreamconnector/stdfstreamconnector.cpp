@@ -26,7 +26,7 @@
 
 #include "stdfstreamconnector.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     stdfstreamConnector::stdfstreamConnector(io::filesystem::Index& fileIndex) : Plug()
     {
@@ -52,4 +52,4 @@ namespace qor{ namespace components{
         m_connected = false;
     }
     
-}}//qor::components
+}}}//qor::io::components

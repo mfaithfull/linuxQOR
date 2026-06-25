@@ -47,8 +47,8 @@ private:
 
     pipeline::ByteBuffer m_requestBuffer;
     pipeline::ByteBuffer m_responseBuffer;
-    components::StdInSource m_source;
-    components::StdOutSink m_sink;
+    io::components::StdInSource m_source;
+    io::components::StdOutSink m_sink;
 
 };
 

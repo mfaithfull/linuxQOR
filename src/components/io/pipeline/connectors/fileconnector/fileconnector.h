@@ -29,25 +29,22 @@
 #include "src/framework/io/filesystem/ifilesystem.h"
 #include "src/framework/io/filesystem/fileindex.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_FILECONNECTOR) FileConnector : public pipeline::Plug
     {
     public:
 
 		FileConnector();
-		FileConnector(const io::filesystem::Index & fileIndex, 
-            const platform::WithFlags mode = platform::WithFlags::CreateNew,
-            const platform::ShareMode access = platform::ShareMode::Owner_Read, 
-            const platform::OpenFor openfor = platform::OpenFor::ReadWrite);
-		FileConnector(const io::filesystem::Index & fileIndex, const pipeline::Buffer& buffer,
-            const platform::WithFlags mode = platform::WithFlags::CreateNew,
-            const platform::ShareMode access = platform::ShareMode::Owner_Read, 
-            const platform::OpenFor openfor = platform::OpenFor::ReadWrite);
-		FileConnector(const io::filesystem::Index & fileIndex, pipeline::Buffer& buffer,
-            const platform::WithFlags mode = platform::WithFlags::CreateNew,
-            const platform::ShareMode access = platform::ShareMode::Owner_Read, 
-            const platform::OpenFor openfor = platform::OpenFor::ReadWrite);
+		FileConnector(const filesystem::Index & fileIndex, 
+            const WithFlags mode = WithFlags::CreateNew,            
+            const OpenFor openfor = OpenFor::ReadWrite);
+		FileConnector(const filesystem::Index & fileIndex, const pipeline::Buffer& buffer,
+            const WithFlags mode = WithFlags::CreateNew,            
+            const OpenFor openfor = OpenFor::ReadWrite);
+		FileConnector(const filesystem::Index & fileIndex, pipeline::Buffer& buffer,
+            const WithFlags mode = WithFlags::CreateNew,            
+            const OpenFor openfor = OpenFor::ReadWrite);
 		virtual ~FileConnector();
 
         //Plug interface
@@ -55,23 +52,20 @@ namespace qor{ namespace components{
         virtual void Disconnect(void);											//Device specific disconnection
         virtual bool HandlePendingConnectionResult(bool bConnected);			//Handling device specific pending connection states for async connections
 
-    	void SetMode(platform::WithFlags mode);
-	    platform::WithFlags GetMode(void);
+    	void SetMode(WithFlags mode);
+	    WithFlags GetMode(void);
 
-		void SetOpenFor(platform::OpenFor openfor);
-		platform::OpenFor GetOpenFor(void);
+		void SetOpenFor(OpenFor openfor);
+		OpenFor GetOpenFor(void);
 
-		void SetShare(platform::ShareMode share);
-		platform::ShareMode GetShare(void);
+		void SetFile(filesystem::Index & fileIndex);
 
-		void SetFile(io::filesystem::Index & fileIndex);
-
-		io::filesystem::Index& FileIndex(void) 
+		filesystem::Index& FileIndex(void) 
         { 
             return *m_pFileIndex; 					//The underlying filesystem::Index
         }
 
-		ref_of<platform::IFile>::type File(void) 
+		ref_of<IFile>::type File(void) 
         { 
             return m_File; 							//The underlying File
         }
@@ -81,20 +75,19 @@ namespace qor{ namespace components{
 
 	protected:
 
-        io::filesystem::Index* m_pFileIndex;
-        io::WithFlags m_Mode;
-        io::OpenFor m_OpenFor;
-        io::ShareMode m_Share;
+        filesystem::Index* m_pFileIndex;
+        WithFlags m_Mode;
+        OpenFor m_OpenFor;
 
         ref_of<pipeline::Sink>::type m_sink;
         ref_of<pipeline::Source>::type m_source;
 
     private:
 
-        ref_of<platform::IFile>::type m_File;
+        ref_of<IFile>::type m_File;
 
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_FILE

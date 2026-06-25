@@ -27,7 +27,7 @@
 
 #include "src/framework/app/role/irole.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace app{ namespace components{ 
 
     class qor_pp_module_interface(QOR_SERVERROLE) ServerRole : public qor::IRole
     {
@@ -39,6 +39,6 @@ namespace qor{ namespace components{
         virtual void Shutdown();
     };
 
-}}//qor::components
+}}}//qor::app:components
 
 #endif//QOR_PP_H_COMPONENTS_FRAMEWORK_ROLES_SERVER

@@ -28,7 +28,7 @@
 #include "src/framework/io/pipeline/source.h"
 #include "src/qor/error/error.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io { namespace components{ 
 
     size_t SocketSink::WriteBytes(byte* data, size_t bytesToWrite)
     {
@@ -44,4 +44,4 @@ namespace qor{ namespace components{
         return result;
     }
 
-}}//qor::components
+}}}//qor::io::components

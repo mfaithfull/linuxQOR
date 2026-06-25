@@ -29,7 +29,7 @@
 #include "socketsink.h"
 #include "socketsource.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io { namespace components{ 
 
     SocketConnector::SocketConnector() : Plug()
     {
@@ -42,8 +42,8 @@ namespace qor{ namespace components{
         m_ipv6Only = false;
         m_timeoutSec = 0;
 
-        m_sink = new_ref<qor::components::SocketSink>();
-        m_source = new_ref<qor::components::SocketSource>();
+        m_sink = new_ref<SocketSink>();
+        m_source = new_ref<SocketSource>();
         m_sink->SetPlug(this);
         m_source->SetPlug(this);
     }
@@ -181,4 +181,4 @@ namespace qor{ namespace components{
         return m_Socket->SetNonBlocking(nonBlocking);
     }
     
-}}//qor::components
+}}}//qor::io::components

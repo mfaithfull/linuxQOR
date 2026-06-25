@@ -27,7 +27,7 @@
 
 #include "src/framework/io/pipeline/source.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_STDINSOURCE) StdInSource : public pipeline::Source
     {
@@ -47,6 +47,6 @@ namespace qor{ namespace components{
         bool Push(size_t& unitsWritten, size_t unitsToWrite);
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIN

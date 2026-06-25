@@ -27,7 +27,7 @@
 #include "stdoutsink.h"
 #include "src/framework/io/pipeline/source.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     StdOutSink::StdOutSink()
     {
@@ -76,4 +76,4 @@ namespace qor{ namespace components{
         }
         return false;
     }
-}}//qor::components
+}}}//qor::io::components

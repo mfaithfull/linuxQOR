@@ -29,7 +29,7 @@
 #include "src/framework/io/filesystem/fileindex.h"
 #include "stdfstreamconnector.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_STDFSTREAMCONNECTOR) stdofstreamConnector : public stdfstreamConnector
     {
@@ -50,6 +50,6 @@ namespace qor{ namespace components{
         std::ofstream m_ofstream;
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_STDOFSTREAM

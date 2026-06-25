@@ -28,7 +28,7 @@
 #include <string>
 #include "src/framework/io/pipeline/iosource.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline { namespace components{ 
 
     class qor_pp_module_interface(QOR_STRINGSOURCE) StringSource : public pipeline::Source
     {
@@ -52,6 +52,6 @@ namespace qor{ namespace components{
         std::string::iterator m_it;
     };
 
-}}//qor::components
+}}}//qor::pipeline::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STRING

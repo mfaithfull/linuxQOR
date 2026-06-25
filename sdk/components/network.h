@@ -3,10 +3,10 @@
 
 #include "sdk/using_qor.h"
 
-#include "src/components/network/client/netclient.h"
-#include "src/components/network/server/netserver.h"
+#include "src/components/io/network/client/netclient.h"
+#include "src/components/io/network/server/netserver.h"
 
-using namespace qor::components;
+using namespace qor::io::components;
 using namespace qor::network;
 
 #endif//QOR_PP_H_SDK_COMPONENTS_NETWORK

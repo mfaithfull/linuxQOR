@@ -27,7 +27,7 @@
 #include "stdifstreamsource.h"
 #include "src/framework/io/pipeline/sink.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     size_t stdifstreamSource::ReadBytes(byte* space, size_t bytesToRead)
     {
@@ -44,4 +44,4 @@ namespace qor{ namespace components{
         return result;
     }
 
-}}//qor::components
+}}}//qor::io::components

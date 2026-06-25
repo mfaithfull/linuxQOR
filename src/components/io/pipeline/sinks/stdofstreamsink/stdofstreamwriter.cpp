@@ -26,7 +26,7 @@
 #include "stdofstreamwriter.h"
 #include "src/framework/io/filesystem/filesystem.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     stdofstreamWriter::stdofstreamWriter() : pipeline::Pipeline(), m_Setup(false)
     {        
@@ -125,4 +125,4 @@ namespace qor{ namespace components{
         return true;
     }
 
-}}//qor::components
+}}}//qor::io::components

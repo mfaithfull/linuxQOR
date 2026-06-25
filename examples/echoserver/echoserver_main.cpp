@@ -18,6 +18,7 @@
 #include "serverloghandler.h"
 
 using namespace qor;
+using namespace qor::io;
 using namespace qor::platform;
 using namespace qor::components;
 using namespace qor::app;

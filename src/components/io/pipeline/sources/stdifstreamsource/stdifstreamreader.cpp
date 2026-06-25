@@ -26,11 +26,9 @@
 #include "stdifstreamreader.h"
 #include "src/framework/io/filesystem/filesystem.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
-    stdifstreamReader::stdifstreamReader() : pipeline::Pipeline(), m_Setup(false)
-    {        
-    }
+    stdifstreamReader::stdifstreamReader() : pipeline::Pipeline(), m_Setup(false){ }
 
     stdifstreamReader::stdifstreamReader(const std::string& fileName, size_t bufferByteCapacity)
     {
@@ -131,4 +129,4 @@ namespace qor{ namespace components{
         return strText;
     }
 
-}}//qor::components
+}}}//qor::io::components

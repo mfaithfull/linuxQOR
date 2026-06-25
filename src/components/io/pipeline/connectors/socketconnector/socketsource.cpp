@@ -28,7 +28,7 @@
 #include "src/framework/io/pipeline/sink.h"
 #include "src/qor/error/error.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     size_t SocketSource::ReadBytes(byte* space, size_t bytesToRead)
     {
@@ -48,4 +48,4 @@ namespace qor{ namespace components{
         return result;
     }
 
-}}//qor::components
+}}}//qor::io::components

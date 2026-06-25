@@ -28,7 +28,7 @@
 #include "src/framework/io/pipeline/iosource.h"
 #include "fileconnector.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_FILECONNECTOR) FileSource : public pipeline::iosource<FileConnector>
     {
@@ -44,6 +44,6 @@ namespace qor{ namespace components{
        
     };
 
-}}//qor::components
+}}}//qor::io:components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_FILE

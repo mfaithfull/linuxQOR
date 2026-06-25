@@ -29,7 +29,7 @@
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/pipeline/plug.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io { namespace components{ 
 
     class qor_pp_module_interface(QOR_STDFSTREAMCONNECTOR) stdfstreamConnector : public pipeline::Plug
     {
@@ -50,6 +50,6 @@ namespace qor{ namespace components{
         std::string m_filePath;
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_STDFSTREAM

@@ -28,7 +28,7 @@
 #include "src/framework/io/pipeline/source.h"
 #include "src/qor/interception/functioncontext.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     BaseParserSink::BaseParserSink() : 
         m_context(new_ref<qor::components::parser::Context>()),
@@ -89,4 +89,4 @@ namespace qor{ namespace components{
         return true;
     }
 
-}}//qor::components
+}}}//qor::parser::components

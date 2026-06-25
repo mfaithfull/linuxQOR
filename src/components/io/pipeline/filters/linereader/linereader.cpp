@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "linereader.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline { namespace components{ 
 
     bool LineReader::ReadFilter(size_t& unitsProcessed, size_t unitsToProcess)
     {
@@ -81,4 +81,4 @@ namespace qor{ namespace components{
         return false;
     }
 
-}}//qor::components
+}}}//qor::pipeline::components

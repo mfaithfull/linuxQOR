@@ -27,11 +27,11 @@
 
 #include <string>
 #include "src/framework/io/pipeline/iosource.h"
-#include "src/components/generator/generator.h"
-#include "src/components/generator/state.h"
-#include "src/components/generator/context.h"
+#include "src/components/io/generator/generator.h"
+#include "src/components/io/generator/state.h"
+#include "src/components/io/generator/context.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     class qor_pp_module_interface(QOR_GENERATORSOURCE) BaseGeneratorSource : public pipeline::Source
     {
@@ -82,6 +82,6 @@ namespace qor{ namespace components{
         }
     };
 
-}}//qor::components
+}}}//qor::pipeline::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_GENERATOR

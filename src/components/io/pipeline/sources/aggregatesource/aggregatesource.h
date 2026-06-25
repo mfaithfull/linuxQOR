@@ -30,7 +30,7 @@
 #include "src/qor/reflection/reflection.h"
 #include "src/framework/io/pipeline/sink.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     template <std::size_t I, std::size_t N>
     struct ElementWriter
@@ -107,6 +107,6 @@ namespace qor{ namespace components{
         T m_value;
     };
 
-}}//qor::components
+}}}//qor::pipeline::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_AGGREGATE

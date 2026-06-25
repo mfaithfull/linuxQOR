@@ -108,9 +108,10 @@ namespace qor { namespace components{
 
     void LogReceiver::Listen()
     {
+        constexpr std::chrono::milliseconds long_sleep_time(250);
         m_running = true;
         while (m_running) 
-        {
+        {            
             std::unique_lock<std::mutex> lock(m_mutex);
 
             if (!m_array.empty()) 
@@ -127,7 +128,7 @@ namespace qor { namespace components{
                 break;
             }
 
-            m_alarm.wait(lock);
+            m_alarm.wait_for(lock, long_sleep_time);
         }
     }
 

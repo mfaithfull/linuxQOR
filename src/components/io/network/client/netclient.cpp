@@ -28,7 +28,7 @@
 
 using namespace qor::pipeline;
 
-namespace qor{ namespace components {
+namespace qor{ namespace io{ namespace components {
 
     void NetworkClient::SetSink(pipeline::Element* sink, const pipeline::Buffer& sinkBuffer)
     {
@@ -67,4 +67,4 @@ namespace qor{ namespace components {
         m_socketClientConnector->Disconnect();
     }
 
-}}//qor::components
+}}}//qor::io::components

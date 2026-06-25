@@ -32,7 +32,7 @@
 #include "src/components/io/parser/context.h"
 #include "src/qor/log/debug.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     class qor_pp_module_interface(QOR_PARSERSINK) BaseParserSink : public pipeline::Sink
     {
@@ -108,6 +108,6 @@ namespace qor{ namespace components{
         }
     };
 
-}}//qor::components
+}}}//qor::pipeline::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_PARSER

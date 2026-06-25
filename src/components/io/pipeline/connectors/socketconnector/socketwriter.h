@@ -32,7 +32,7 @@
 #include "socketconnector.h"
 #include "socketsink.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketWriter : public pipeline::Pipeline
     {
@@ -108,6 +108,6 @@ namespace qor{ namespace components{
         pipeline::NullSource m_source;
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SINK_SOCKETWRITER

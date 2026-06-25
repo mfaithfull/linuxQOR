@@ -28,7 +28,7 @@
 #include "src/framework/io/pipeline/iosource.h"
 #include "src/components/io/pipeline/connectors/stdfstreamconnector/stdifstreamconnector.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_STDIFSTREAMSOURCE) stdifstreamSource : public pipeline::iosource< stdifstreamConnector >
     {
@@ -68,6 +68,6 @@ namespace qor{ namespace components{
         virtual size_t ReadBytes(byte* space, size_t bytesToRead);
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIFSTREAM

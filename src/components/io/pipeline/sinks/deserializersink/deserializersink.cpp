@@ -27,7 +27,7 @@
 #include "deserializersink.h"
 #include "src/framework/io/pipeline/source.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     BaseDeserializerSink::BaseDeserializerSink() : 
         m_context(new_ref<qor::components::serial::Context>()), m_deserializer(m_context)
@@ -71,4 +71,4 @@ namespace qor{ namespace components{
         return true;
     }
 
-}}//qor::components
+}}}//qor::pipeline::components

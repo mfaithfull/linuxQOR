@@ -28,7 +28,7 @@
 #include "src/framework/io/pipeline/sink.h"
 #include "src/qor/error/error.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     RandomSource::RandomSource()
     {        
@@ -89,4 +89,4 @@ namespace qor{ namespace components{
         return true;
     }
 
-}}//qor::components
+}}}//qor::pipeline::components

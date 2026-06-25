@@ -27,7 +27,7 @@
 #include "aggregatesource.h"
 #include "src/framework/io/pipeline/sink.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
 
-}}//qor::components
+}}}//qor::pipeline::components

@@ -29,7 +29,7 @@
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/pipeline/plug.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io { namespace components{ 
 
     class qor_pp_module_interface(QOR_STDFSTREAMCONNECTOR) stdifstreamConnector : public stdfstreamConnector
     {
@@ -49,6 +49,6 @@ namespace qor{ namespace components{
         std::ifstream m_ifstream;
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_STDIFSTREAM

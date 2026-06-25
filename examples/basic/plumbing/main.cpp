@@ -37,7 +37,7 @@ int main()
 
             /*A filesystem::Index is how we refer to a specific file without opening it.
             Internally it's a directory entry, which is just the index of a file*/
-            io::filesystem::Index index(fileSystem->CurrentPath(), "alice.txt");
+            filesystem::Index index(fileSystem->CurrentPath(), "alice.txt");
 
             if(!index.Exists())
             {
@@ -70,9 +70,9 @@ void TraditionalFileRead(FileSystem::ref fileSystem, filesystem::Index& index)
     //std::cout << (FileReader(index, OpenFor::ReadOnly).ReadLine()) << std::endl;
 }
 
-void PipelineFileProcessor(FileSystem::ref fileSystem, io::filesystem::Index& input)
+void PipelineFileProcessor(FileSystem::ref fileSystem, filesystem::Index& input)
 {    
-    io::filesystem::Index output(fileSystem->CurrentPath(), "output.txt");      //An output file to go with the input file
+    filesystem::Index output(fileSystem->CurrentPath(), "output.txt");      //An output file to go with the input file
 
     if(output.Exists())                                             //Clean up any old output
     {
@@ -84,8 +84,8 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, io::filesystem::Index& in
     /*We use File connectors to connect to the input and output files. These encapsulate everything file related for 
     the pipeline. If we used Socket connectors or Pipe connectors or DBus connectors, the rest of the pipeline would
      be identical and oblivious*/
-    FileConnector inputConnector(input, WithFlags::None, ShareMode::Owner_Read, OpenFor::ReadOnly);
-    FileConnector outputConnector(output, WithFlags::CreateNew, ShareMode::Owner_Read, OpenFor::ReadWrite);
+    io::components::FileConnector inputConnector(input, WithFlags::None, OpenFor::ReadOnly);
+    io::components::FileConnector outputConnector(output, WithFlags::CreateNew, OpenFor::ReadWrite);
 
     //Create a pipeline with the connectors at each end
     Pipeline fileProcessor(inputConnector, outputConnector, Element::Push);

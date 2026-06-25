@@ -32,7 +32,7 @@
 #include "src/components/io/pipeline/connectors/stdfstreamconnector/stdifstreamconnector.h"
 #include "stdifstreamsource.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_STDIFSTREAMSOURCE) stdifstreamReader : public pipeline::Pipeline
     {
@@ -64,6 +64,6 @@ namespace qor{ namespace components{
         pipeline::NullSink m_sink;
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_STDIFSTREAMREADER

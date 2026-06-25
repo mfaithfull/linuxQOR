@@ -26,7 +26,7 @@
 
 #include "serverrole.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace app{ namespace components{ 
 
     void ServerRole::Setup()
     {
@@ -38,4 +38,4 @@ namespace qor{ namespace components{
         
     }
 
-}}//qor::components
+}}}//qor::app::components

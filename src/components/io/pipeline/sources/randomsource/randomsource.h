@@ -29,7 +29,7 @@
 
 #include "src/framework/io/pipeline/source.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     class qor_pp_module_interface(QOR_RANDOMSOURCE) RandomSource : public pipeline::Source
     {
@@ -54,6 +54,6 @@ namespace qor{ namespace components{
         int m_start;
     };
 
-}}//qor::components
+}}}//qor::pipeline::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_RANDOM

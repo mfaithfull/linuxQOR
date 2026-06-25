@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "base64decodefilter.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     bool Base64DecodeFilter::ReadFilter(size_t& unitsProcessed, size_t unitsToProcess)
     {
@@ -91,4 +91,4 @@ namespace qor{ namespace components{
         return false;
     }
 
-}}//qor::components
+}}}//qor::pipeline::components

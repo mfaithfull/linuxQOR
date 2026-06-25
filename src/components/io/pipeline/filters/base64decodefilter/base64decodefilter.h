@@ -27,9 +27,9 @@
 
 #include "src/framework/io/pipeline/filter.h"
 
-namespace qor{ namespace components{
+namespace qor{ namespace pipeline{ namespace components{
 
-    class qor_pp_module_interface(QOR_BASE64DECODE) Base64DecodeFilter : public pipeline::Filter
+    class qor_pp_module_interface(QOR_BASE64DECODE) Base64DecodeFilter : public Filter
     {
     public:
 
@@ -42,6 +42,6 @@ namespace qor{ namespace components{
                 
     };
 
-}}//qor::pipeline
+}}}//qor::pipeline::components
 
 #endif//QOR_PP_H_PIPELINE_BASE64DECODEFILTER

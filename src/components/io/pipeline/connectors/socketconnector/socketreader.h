@@ -31,7 +31,7 @@
 #include "socketconnector.h"
 #include "socketsource.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketReader : public pipeline::Pipeline
     {
@@ -55,6 +55,6 @@ namespace qor{ namespace components{
         pipeline::NullSink m_sink;
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCE_SOCKETREADER

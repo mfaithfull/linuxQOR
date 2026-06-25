@@ -10,7 +10,7 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 set(qor_libraries qor_module qor_host qor_compiler qor_datastructures qor_objectcontext
 qor_platform qor_application qor_thread qor_role qor_workflow qor_optionparser qor_pipeline qor_error qor_sockets
-qor_console qor_socketconnector qor_stdinsource qor_stdoutsink qor_parser qor_log
+qor_console qor_socketconnector qor_stdinsource qor_stdoutsink qor_parser qor_log qor_property
 qor_logaggregator qor_loghandler qor_echo qor_http qor_netclient qor_fileconnector qor_base64encodefilter qor_base64decodefilter)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)

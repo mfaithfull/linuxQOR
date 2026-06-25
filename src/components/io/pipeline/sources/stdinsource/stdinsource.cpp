@@ -29,7 +29,7 @@
 #include "src/framework/io/pipeline/sink.h"
 #include "src/qor/error/error.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     StdInSource::StdInSource() : m_lineMode(true)
     {        
@@ -117,4 +117,4 @@ namespace qor{ namespace components{
         return true;
     }
 
-}}//qor::components
+}}}//qor::io::components

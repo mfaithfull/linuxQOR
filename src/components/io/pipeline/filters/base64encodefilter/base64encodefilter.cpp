@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "base64encodefilter.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline { namespace components{ 
 
     void Base64EncodeFilter::Filter(qor::byte* space, qor::byte* data, size_t& unitsToProcess, size_t& writeCount)
     {
@@ -65,4 +65,4 @@ namespace qor{ namespace components{
             unitsToProcess = outindex;            
         }
     }
-}}//qor::components
+}}}//qor::pipeline::components

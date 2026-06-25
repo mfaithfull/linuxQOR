@@ -27,10 +27,10 @@
 
 #include <string>
 #include "src/framework/io/pipeline/sink.h"
-#include "src/components/deserializer/deserializer.h"
-#include "src/components/deserializer/context.h"
+#include "src/components/io/deserializer/deserializer.h"
+#include "src/components/io/deserializer/context.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
     class qor_pp_module_interface(QOR_DESERIALSINK) BaseDeserializerSink : public pipeline::Sink
     {
@@ -90,6 +90,6 @@ namespace qor{ namespace components{
         }
     };
 
-}}//qor::components
+}}}//qor::pipeline::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_DESERIALIZER

@@ -28,9 +28,9 @@
 #include <string>
 #include "src/framework/io/pipeline/sink.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace pipeline{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_STRINGSINK) StringSink : public pipeline::Sink
+    class qor_pp_module_interface(QOR_STRINGSINK) StringSink : public Sink
     {
     public:
 
@@ -49,6 +49,6 @@ namespace qor{ namespace components{
         std::string m_data;
     };
 
-}}//qor::components
+}}}//qor::pipeline::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STRING

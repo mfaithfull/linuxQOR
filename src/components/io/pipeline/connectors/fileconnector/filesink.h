@@ -28,7 +28,7 @@
 #include "src/framework/io/pipeline/iosink.h"
 #include "fileconnector.h"
 
-namespace qor{ namespace components{
+namespace qor{ namespace io{ namespace components{
 
     class qor_pp_module_interface(QOR_FILECONNECTOR) FileSink : public pipeline::iosink<FileConnector>
     {
@@ -39,6 +39,6 @@ namespace qor{ namespace components{
         virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE

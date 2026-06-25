@@ -27,7 +27,7 @@
 
 #include "src/framework/io/pipeline/sink.h"
 
-namespace qor{ namespace components{ 
+namespace qor{ namespace io{ namespace components{ 
 
     class qor_pp_module_interface(QOR_STDOUTSINK) StdOutSink : public pipeline::Sink
     {
@@ -45,6 +45,6 @@ namespace qor{ namespace components{
 
     };
 
-}}//qor::components
+}}}//qor::io::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOUT
