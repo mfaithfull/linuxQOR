@@ -28,7 +28,7 @@
 #include <stdint.h>
 #include <functional>
 
-#include "src/qor/delegate/bindmember.h"
+#include "src/framework/event/delegate/bindmember.h"
 
 struct wl_callback;
 struct wl_callback_listener;

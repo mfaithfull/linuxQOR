@@ -26,7 +26,7 @@
 #define QOR_PP_H_FRAMEWORK_RESOURCE_CLAIMER
 
 #include "resourcehub.h"
-#include "src/qor/delegate/bindmember.h"
+#include "src/framework/event/delegate/bindmember.h"
 
 namespace qor{ namespace framework{
 

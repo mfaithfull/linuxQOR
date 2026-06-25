@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "src/qor/assert/assert.h"
-#include "src/qor/delegate/delegate.h"
+#include "src/framework/event/delegate/delegate.h"
 #include "src/qor/interception/functioncontext.h"
 #include "src/qor/error/error.h"
 #include "src/qor/log/defaultloghandler.h"

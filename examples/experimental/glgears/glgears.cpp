@@ -34,7 +34,7 @@
 #include "3rdparty/glad/gl.h"
 
 #include "src/qor/assert/assert.h"
-#include "src/qor/delegate/delegate.h"
+#include "src/framework/event/delegate/delegate.h"
 #include "src/qor/error/error.h"
 #include "glgears.h"
 

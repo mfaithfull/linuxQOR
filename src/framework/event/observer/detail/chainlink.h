@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OBSERVER_CHAINLINK
 #define QOR_PP_H_OBSERVER_CHAINLINK
 
-namespace qor{ 
+namespace qor{ namespace detail {
 
     //An entirely weak reference, dynamic allocation free, doubly linked list
     //NOTE: Do not use this across threads
@@ -121,6 +121,6 @@ namespace qor{
 		ChainLink* m_next{nullptr};
 
     };
-}//qor
+}}//qor::detail
 
 #endif//QOR_PP_H_OBSERVER_CHAINLINK

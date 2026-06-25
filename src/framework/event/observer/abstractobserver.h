@@ -22,62 +22,32 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OBSERVER_OBSERVER
-#define QOR_PP_H_OBSERVER_OBSERVER
+#ifndef QOR_PP_H_OBSERVER_ABSTRACT
+#define QOR_PP_H_OBSERVER_ABSTRACT
 
-#include "proxyobserver.h"
+#include "detail/chainlink.h"
 
 namespace qor{ 
 
     template< class Observed >
-    class Observable
+    class AbstractObserver : public detail::ChainLink
     {
     public:
 
-        Observable( Observed& target ) : m_Observed( target ), m_first(nullptr) {}
+        AbstractObserver() : ChainLink() {}
 
-        Observable( const Observable& src) : m_Observed( src.m_Observed )
+        AbstractObserver(const AbstractObserver& src) : ChainLink(src) {}
+        virtual ~AbstractObserver() noexcept = default;
+        
+        AbstractObserver& operator = (const AbstractObserver& src)
         {
-            *this = src;
-        }
-
-        Observable& operator = (const Observable& src )
-        {
-            if( &src != this )
-            {
-                m_first = src.m_first;
-            }
+            ChainLink::operator= (src);
             return *this;
         }
 
-        ~Observable() noexcept = default;
-
-        void Update()
-        {
-            AbstractObserver< Observed >* it = dynamic_cast< AbstractObserver< Observed >* >( m_first );
-            while( nullptr != it )
-            {
-                it->Update( m_Observed );
-                it = dynamic_cast< AbstractObserver< Observed >* >(it->Next());
-            }
-        }
-
-        void AddObserver( ChainLink* _new )
-        {
-            ChainLink::AddBefore( m_first, _new );
-        }
-
-        void RemoveObserver( ChainLink* old )
-        {
-            ChainLink::Remove( m_first, old );
-        }
-
-    private:
-
-        Observed& m_Observed;
-        ChainLink* m_first;
+        virtual void Update(Observed& target) = 0;
     };
 
 }//qor
 
-#endif//QOR_PP_H_OBSERVER_OBSERVER
+#endif//QOR_PP_H_OBSERVER_ABSTRACT

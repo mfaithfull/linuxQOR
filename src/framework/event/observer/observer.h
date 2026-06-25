@@ -22,32 +22,62 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_OBSERVER_ABSTRACT
-#define QOR_PP_H_OBSERVER_ABSTRACT
+#ifndef QOR_PP_H_OBSERVER_OBSERVER
+#define QOR_PP_H_OBSERVER_OBSERVER
 
-#include "chainlink.h"
+#include "proxyobserver.h"
 
 namespace qor{ 
 
     template< class Observed >
-    class AbstractObserver : public ChainLink
+    class Observable
     {
     public:
 
-        AbstractObserver() : ChainLink() {}
+        Observable( Observed& target ) : m_Observed( target ), m_first(nullptr) {}
 
-        AbstractObserver(const AbstractObserver& src) : ChainLink(src) {}
-        virtual ~AbstractObserver() noexcept = default;
-        
-        AbstractObserver& operator = (const AbstractObserver& src)
+        Observable( const Observable& src) : m_Observed( src.m_Observed )
         {
-            ChainLink::operator= (src);
+            *this = src;
+        }
+
+        Observable& operator = (const Observable& src )
+        {
+            if( &src != this )
+            {
+                m_first = src.m_first;
+            }
             return *this;
         }
 
-        virtual void Update(Observed& target) = 0;
+        ~Observable() noexcept = default;
+
+        void Update()
+        {
+            AbstractObserver< Observed >* it = dynamic_cast< AbstractObserver< Observed >* >( m_first );
+            while( nullptr != it )
+            {
+                it->Update( m_Observed );
+                it = dynamic_cast< AbstractObserver< Observed >* >(it->Next());
+            }
+        }
+
+        void AddObserver( detail::ChainLink* _new )
+        {
+            detail::ChainLink::AddBefore( m_first, _new );
+        }
+
+        void RemoveObserver( detail::ChainLink* old )
+        {
+            detail::ChainLink::Remove( m_first, old );
+        }
+
+    private:
+
+        Observed& m_Observed;
+        detail::ChainLink* m_first;
     };
 
 }//qor
 
-#endif//QOR_PP_H_OBSERVER_ABSTRACT
+#endif//QOR_PP_H_OBSERVER_OBSERVER

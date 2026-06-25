@@ -26,7 +26,7 @@
 #define QOR_PP_H_EVENTS_SOURCE
 
 #include "eventqueue.h"
-#include "src/qor/delegate/bindmember.h"
+#include "src/framework/event/delegate/bindmember.h"
 
 namespace qor{ namespace events{
 
