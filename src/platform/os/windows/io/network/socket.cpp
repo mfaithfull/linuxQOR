@@ -30,7 +30,6 @@
 
 #include "src/platform/os/windows/api_layer/winsock2/ws2.h"
 
-using namespace qor::framework::win;
 using namespace qor::win::api;
 
 namespace qor{ namespace io{ namespace network{ namespace win{
