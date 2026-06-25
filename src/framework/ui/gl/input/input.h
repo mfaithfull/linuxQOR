@@ -26,7 +26,7 @@
 #define QOR_PP_H_GL_INPUT
 
 #include <stdint.h>
-#include "src/qor/delegate/delegate.h"
+#include "src/framework/event/delegate/delegate.h"
 #include "../image.h"
 #include "joystick.h"
 #include "mappings.h"

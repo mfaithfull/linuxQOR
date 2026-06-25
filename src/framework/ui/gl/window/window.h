@@ -27,7 +27,7 @@
 
 #include <string>
 
-#include "src/qor/delegate/delegate.h"
+#include "src/framework/event/delegate/delegate.h"
 #include "../monitor/vidmode.h"
 #include "../monitor/monitor.h"
 #include "../cursor/cursor.h"

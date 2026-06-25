@@ -43,7 +43,7 @@
 #include "sdk/platform/os/linux/wayland.h"
 #include "src/platform/os/linux/ui/wayland/egl/eglwindow.h"
 #include "src/platform/os/linux/egl/display.h"
-#include "src/qor/delegate/bindmember.h"
+#include "src/framework/event/delegate/bindmember.h"
 
 using namespace qor::platform::lin;
 using namespace qor::components;

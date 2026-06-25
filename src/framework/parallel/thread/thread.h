@@ -31,7 +31,7 @@
 
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/current/currentthread.h"
-#include "src/qor/delegate/delegate.h"
+#include "src/framework/event/delegate/delegate.h"
 
 namespace qor{
 

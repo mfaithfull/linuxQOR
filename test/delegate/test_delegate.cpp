@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/test/test.h"
 #include "src/qor/assert/assert.h"
-#include "src/qor/delegate/delegate.h"
+#include "src/framework/event/delegate/delegate.h"
 
 using namespace qor;
 using namespace qor::test;

@@ -4,7 +4,7 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
-#include "src/qor/delegate/delegate.h"
+#include "src/framework/event/delegate/delegate.h"
 #include "src/qor/observer/observer.h"
 #include "src/qor/instance/instance.h"
 #include "src/qor/property/property.h"
