@@ -28,7 +28,7 @@
 #include "autoresetevent.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     AutoResetEvent::AutoResetEvent() : m_handle(::CreateEventW(nullptr, FALSE, FALSE, nullptr))
     {
@@ -54,4 +54,4 @@ namespace qor { namespace framework { namespace win {
         return ::SetEvent(m_handle.Use());
     }
 
-}}}//qor::framework::win
+}}}//qor::async::win

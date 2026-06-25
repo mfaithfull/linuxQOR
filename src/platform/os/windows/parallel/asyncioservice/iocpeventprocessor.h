@@ -30,7 +30,7 @@
 #include "ioservice.h"
 #include "operations/scheduleoperation.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPEventProcessor : public qor::async::AsyncIOEventProcessor
     {
@@ -66,6 +66,6 @@ namespace qor { namespace framework { namespace win {
         
     };
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPEVENTPROCESSOR

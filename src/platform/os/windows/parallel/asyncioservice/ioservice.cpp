@@ -37,7 +37,7 @@
 #include "src/platform/os/windows/common/constants.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     IOService::IOService() : IOService(0)
     {
@@ -326,4 +326,4 @@ namespace qor { namespace framework { namespace win {
         return m_IOCP->Enroll(ioDescriptor);
     }
 
-}}}//qor::framework::win
+}}}//qor::async::win

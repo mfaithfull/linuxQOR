@@ -32,13 +32,13 @@
 #include "src/framework/parallel/task/cancellation/cancellationtoken.h"
 #include "src/framework/io/network/socket.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	class socket_disconnect_operation_impl
 	{
 	public:
 
-		socket_disconnect_operation_impl(network::Socket& socket) noexcept
+		socket_disconnect_operation_impl(io::network::Socket& socket) noexcept
 			: m_socket(socket)
 		{
 		}
@@ -49,7 +49,7 @@ namespace qor { namespace framework { namespace win {
 
 	private:
 
-		network::Socket& m_socket;
+		io::network::Socket& m_socket;
 
 	};
 
@@ -59,7 +59,7 @@ namespace qor { namespace framework { namespace win {
 
 	public:
 
-		socket_disconnect_operation(network::Socket& socket) noexcept : m_impl(socket)
+		socket_disconnect_operation(io::network::Socket& socket) noexcept : m_impl(socket)
 		{
 		}
 
@@ -78,7 +78,7 @@ namespace qor { namespace framework { namespace win {
 
 	public:
 
-		socket_disconnect_operation_cancellable(network::Socket& socket, CancellationToken&& ct) noexcept
+		socket_disconnect_operation_cancellable(io::network::Socket& socket, CancellationToken&& ct) noexcept
 			: win32_overlapped_operation_cancellable<socket_disconnect_operation_cancellable>(std::move(ct))
 			, m_impl(socket)
 		{
@@ -94,6 +94,6 @@ namespace qor { namespace framework { namespace win {
 
 	};
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_DISCONNECTOP

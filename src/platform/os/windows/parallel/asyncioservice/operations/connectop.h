@@ -33,13 +33,13 @@
 #include "src/framework/io/network/socket.h"
 #include "src/framework/io/network/ipendpoint.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	class socket_connect_operation_impl
 	{
 	public:
 
-		socket_connect_operation_impl( network::Socket& socket, const network::IPEndpoint& remoteEndPoint) noexcept
+		socket_connect_operation_impl( io::network::Socket& socket, const io::network::IPEndpoint& remoteEndPoint) noexcept
 			: m_socket(socket)
 			, m_remoteEndPoint(remoteEndPoint)
 		{
@@ -51,8 +51,8 @@ namespace qor { namespace framework { namespace win {
 
 	private:
 
-		network::Socket& m_socket;
-		network::IPEndpoint m_remoteEndPoint;
+		io::network::Socket& m_socket;
+		io::network::IPEndpoint m_remoteEndPoint;
 
 	};
 
@@ -62,7 +62,7 @@ namespace qor { namespace framework { namespace win {
 
 	public:
 
-		socket_connect_operation( network::Socket& socket, const network::IPEndpoint& remoteEndPoint) noexcept
+		socket_connect_operation( io::network::Socket& socket, const io::network::IPEndpoint& remoteEndPoint) noexcept
 			: m_impl(socket, remoteEndPoint)
 		{
 		}
@@ -82,7 +82,7 @@ namespace qor { namespace framework { namespace win {
 
 	public:
 
-		socket_connect_operation_cancellable( network::Socket& socket, const network::IPEndpoint& remoteEndPoint, CancellationToken&& ct) noexcept
+		socket_connect_operation_cancellable( io::network::Socket& socket, const io::network::IPEndpoint& remoteEndPoint, CancellationToken&& ct) noexcept
 			: win32_overlapped_operation_cancellable<socket_connect_operation_cancellable>(std::move(ct))
 			, m_impl(socket, remoteEndPoint)
 		{
@@ -98,6 +98,6 @@ namespace qor { namespace framework { namespace win {
 
 	};
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_CONNECTOP

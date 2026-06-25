@@ -29,7 +29,7 @@
 #include <chrono>
 #include <vector>
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     class TimedScheduleOperation;
 
@@ -71,6 +71,6 @@ namespace qor { namespace framework { namespace win {
         TimedScheduleOperation* m_overflowTimers;
     };
     
-}}}//qor::framework//win
+}}}//qor::async//win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMERQUEUE

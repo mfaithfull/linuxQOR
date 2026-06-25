@@ -20,6 +20,4 @@
 #include "src/components/io/pipeline/filters/base64encodefilter/base64encodefilter.h"
 #include "src/components/io/pipeline/filters/base64decodefilter/base64decodefilter.h"
 
-using namespace qor::components;
-
 #endif//QOR_PP_H_SDK_COMPONENTS_FRAMEWORK

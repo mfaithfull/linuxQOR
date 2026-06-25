@@ -1,6 +1,6 @@
 set(target winqor_sockets)
 
-add_library(${target} SHARED winqor_sockets.cpp sockets.cpp socket.cpp addresshelpers.h)
+add_library(${target} SHARED winqor_sockets.cpp sockets.cpp socket.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

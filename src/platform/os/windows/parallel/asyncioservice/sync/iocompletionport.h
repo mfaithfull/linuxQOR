@@ -33,7 +33,7 @@ namespace qor { namespace io{
     struct IODescriptor;
 }}//qor::io
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	class IOCompletionPort
     {
@@ -52,7 +52,7 @@ namespace qor { namespace framework { namespace win {
         platform::win::Handle m_handle;
     };
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCOMPLETIONPORT
 

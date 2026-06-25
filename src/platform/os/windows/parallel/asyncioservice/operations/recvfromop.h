@@ -34,13 +34,13 @@
 #include "src/framework/io/network/socket.h"
 #include "src/framework/io/network/ipendpoint.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	class socket_recv_from_operation_impl
 	{
 	public:
 
-		socket_recv_from_operation_impl( network::Socket& socket, void* buffer, std::size_t byteCount) noexcept
+		socket_recv_from_operation_impl( io::network::Socket& socket, void* buffer, std::size_t byteCount) noexcept
 			: m_socket(socket)
 			, m_buffer(buffer, byteCount)
 		{
@@ -48,11 +48,11 @@ namespace qor { namespace framework { namespace win {
 
 		bool try_start(win32_overlapped_operation_base& operation) noexcept;
 		void cancel(win32_overlapped_operation_base& operation) noexcept;
-		std::tuple<std::size_t, network::IPEndpoint> get_result(win32_overlapped_operation_base& operation);
+		std::tuple<std::size_t, io::network::IPEndpoint> get_result(win32_overlapped_operation_base& operation);
 
 	private:
 
-		network::Socket& m_socket;
+		io::network::Socket& m_socket;
 		wsabuf m_buffer;
 
 		static constexpr std::size_t sockaddrStorageAlignment = 4;
@@ -71,7 +71,7 @@ namespace qor { namespace framework { namespace win {
 	public:
 
 		socket_recv_from_operation(
-			network::Socket& socket,
+			io::network::Socket& socket,
 			void* buffer,
 			std::size_t byteCount) noexcept
 			: m_impl(socket, buffer, byteCount)
@@ -94,7 +94,7 @@ namespace qor { namespace framework { namespace win {
 	public:
 
 		socket_recv_from_operation_cancellable(
-			network::Socket& socket,
+			io::network::Socket& socket,
 			void* buffer,
 			std::size_t byteCount,
 			CancellationToken&& ct) noexcept
@@ -113,6 +113,6 @@ namespace qor { namespace framework { namespace win {
 
 	};
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_RECVFROMOP

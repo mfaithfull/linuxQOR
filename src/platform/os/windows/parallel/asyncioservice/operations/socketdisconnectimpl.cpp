@@ -33,7 +33,7 @@
 
 #include "disconnectop.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	bool socket_disconnect_operation_impl::try_start( win32_overlapped_operation_base& operation) noexcept
 	{
@@ -119,4 +119,4 @@ namespace qor { namespace framework { namespace win {
 		}
 	}
 
-}}}//qor::framework::win
+}}}//qor::async::win

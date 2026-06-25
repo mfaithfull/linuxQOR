@@ -29,11 +29,11 @@
 
 qor_pp_module_will_provide(WINQOR_SOCKETS,Sockets)
 
-namespace qor{ namespace framework {
+namespace qor{ namespace async {
     class AsyncIOContext;
-}}//qor::framework
+}}//qor::async
 
-namespace qor{ namespace network { namespace win{
+namespace qor{ namespace io { namespace network { namespace win{
 
     class qor_pp_module_interface(WINQOR_SOCKETS) Sockets : public network::Sockets
     {
@@ -54,6 +54,6 @@ namespace qor{ namespace network { namespace win{
         Sockets& operator = (const Sockets&) = delete;
     };
 
-}}}//qor::io::network::win
+}}}}//qor::io::network::win
 
 #endif//QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKETS

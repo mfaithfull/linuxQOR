@@ -29,7 +29,7 @@
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 #include <system_error>
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	bool ReadOperationImpl::try_start(win32_overlapped_operation_base& operation) noexcept
 	{
@@ -67,4 +67,4 @@ namespace qor { namespace framework { namespace win {
         qor::win::api::Kernel32::CancelIoEx(reinterpret_cast<HANDLE>(m_file->m_handle), operation.get_overlapped());
 	}
 
-}}}//qor::framework::win
+}}}//qor::async::win

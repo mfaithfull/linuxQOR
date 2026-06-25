@@ -39,7 +39,7 @@ qor_pp_module_provide(WINQOR_SOCKETS,Sockets)
 
 using namespace qor::win::api;
 
-namespace qor{ namespace network{ namespace win{
+namespace qor{ namespace io{ namespace network{ namespace win{
 
     void AddressInfoFlagsToWindows(const network::addrinfo_flags& /*flags*/, int& out)
     {
@@ -135,4 +135,4 @@ namespace qor{ namespace network{ namespace win{
         return (int)results.size();
     }
 
-}}}//qor::io::network::win
+}}}}//qor::io::network::win

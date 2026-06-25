@@ -32,13 +32,13 @@
 #include "src/framework/parallel/task/cancellation/cancellationtoken.h"
 #include "src/framework/io/network/socket.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	class SocketAcceptOperationImpl
 	{
 	public:
 
-		SocketAcceptOperationImpl(io::IODescriptor* listeningSocket, network::Socket* acceptingSocket) noexcept
+		SocketAcceptOperationImpl(io::IODescriptor* listeningSocket, io::network::Socket* acceptingSocket) noexcept
 			: m_listeningSocket(listeningSocket)
 			, m_acceptingSocket(acceptingSocket)
 		{
@@ -56,7 +56,7 @@ namespace qor { namespace framework { namespace win {
 #endif
 
 		io::IODescriptor* m_listeningSocket;
-		network::Socket* m_acceptingSocket;
+		io::network::Socket* m_acceptingSocket;
 		alignas(8) std::uint8_t m_addressBuffer[88];
 
 #if (qor_pp_compiler == qor_pp_compiler_msvc)
@@ -71,7 +71,7 @@ namespace qor { namespace framework { namespace win {
 
 	public:
 
-		SocketAcceptOperation(io::IODescriptor* listeningSocket, network::Socket* acceptingSocket) noexcept
+		SocketAcceptOperation(io::IODescriptor* listeningSocket, io::network::Socket* acceptingSocket) noexcept
 			: m_impl(listeningSocket, acceptingSocket)
 		{
 		}
@@ -92,7 +92,7 @@ namespace qor { namespace framework { namespace win {
 
 		SocketAcceptOperationCancellable(
 			io::IODescriptor* listeningSocket,
-			network::Socket* acceptingSocket,
+			io::network::Socket* acceptingSocket,
 			CancellationToken&& ct) noexcept : 
 			win32_overlapped_operation_cancellable<SocketAcceptOperationCancellable>(std::move(ct)), m_impl(listeningSocket, acceptingSocket)
 		{
@@ -108,6 +108,6 @@ namespace qor { namespace framework { namespace win {
 
 	};
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_ACCEPTOP

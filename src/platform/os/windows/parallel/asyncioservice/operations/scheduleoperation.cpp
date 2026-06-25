@@ -26,7 +26,7 @@
 
 #include "scheduleoperation.h"
 #include "../ioservice.h"
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     void ScheduleOperation::await_suspend(std::coroutine_handle<> awaiter) noexcept
     {
@@ -34,4 +34,4 @@ namespace qor { namespace framework { namespace win {
         m_service.ScheduleImpl(this);
     }
     
-}}}//qor::framework::win
+}}}//qor::async::win

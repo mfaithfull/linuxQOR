@@ -34,17 +34,14 @@ qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOService)
 qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOEventProcessor)
 qor_pp_module_will_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOInitiator)
 
-namespace qor{ namespace framework{ namespace win{
+namespace qor{ namespace async{ namespace win{
 
     class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) AsyncIOService : public qor::async::AsyncIOService
     {
     public:
         
-        AsyncIOService() = default;
-        virtual ~AsyncIOService() noexcept = default;
-
     };
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE

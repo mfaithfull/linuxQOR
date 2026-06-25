@@ -29,7 +29,7 @@
 #include <coroutine>
 #include "iocpawaiter.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     class ListenOperation
     {
@@ -46,6 +46,6 @@ namespace qor { namespace framework { namespace win {
 
     };
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_LISTENOP

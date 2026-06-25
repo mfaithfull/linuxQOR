@@ -34,7 +34,7 @@
 #include "recvfromop.h"
 #include "src/platform/os/windows/io/network/addresshelpers.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	bool socket_recv_from_operation_impl::try_start( win32_overlapped_operation_base& operation) noexcept
 	{
@@ -95,7 +95,7 @@ namespace qor { namespace framework { namespace win {
 			operation.get_overlapped());
 	}
 
-	std::tuple<std::size_t, network::IPEndpoint>
+	std::tuple<std::size_t, io::network::IPEndpoint>
 		socket_recv_from_operation_impl::get_result(win32_overlapped_operation_base& operation)
 	{
 		if (operation.m_errorCode != ERROR_SUCCESS)
@@ -111,4 +111,4 @@ namespace qor { namespace framework { namespace win {
 			qor::io::network::win::sockaddr_to_ip_endpoint(*reinterpret_cast<SOCKADDR*>(&m_sourceSockaddrStorage)));
 	}
 
-}}}//qor::framework::win
+}}}//qor::async::win

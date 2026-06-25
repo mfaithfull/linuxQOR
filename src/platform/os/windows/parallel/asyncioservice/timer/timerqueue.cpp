@@ -30,15 +30,13 @@
 #include "timerqueue.h"
 #include "../operations/timedscheduleoperation.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     TimerQueue::TimerEntry::TimerEntry(TimedScheduleOperation* timer) : 
-                m_dueTime(timer->m_resumeTime), m_timer(timer)
-    {}
+                m_dueTime(timer->m_resumeTime), m_timer(timer){ }
 
     TimerQueue::TimerQueue() noexcept
-        : m_timerEntries(), m_overflowTimers(nullptr)
-    {}        
+        : m_timerEntries(), m_overflowTimers(nullptr){ }
 
     TimerQueue::~TimerQueue()
     {
@@ -175,4 +173,4 @@ namespace qor { namespace framework { namespace win {
         }
     }
 
-}}}//qor::framework//win
+}}}//qor::async//win
