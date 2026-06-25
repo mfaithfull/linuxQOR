@@ -37,7 +37,7 @@ namespace qor{ namespace io{ namespace filesystem {
 	public:
 
         Stat() { };
-        Stat(const filesystem::Index& index);
+        Stat(const Index& index);
         virtual ~Stat() noexcept = default;
 
         bool IsBlockFile();

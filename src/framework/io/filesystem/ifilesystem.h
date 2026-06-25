@@ -34,6 +34,7 @@
 #include "src/qor/error/error.h"
 #include "fileindex.h"
 #include "folder.h"
+#include "file/file.h"
 
 namespace qor{ namespace io{
 
@@ -81,8 +82,8 @@ namespace qor{ namespace io{
         virtual std::string ParentIndicator() const { return ".."; }
         virtual std::string RootIndicator() const { return "/"; }
         virtual unsigned short MaxElementLength() const { return 256; }
-        virtual ref_of<IFile>::type Create(const filesystem::Index& /*index*/, const int /*withFlags*/) const { ref_of<IFile>::type noresult; return noresult;}
-        virtual ref_of<IFile>::type Open(const filesystem::Index& /*index*/, const int /*openFor*/, const int /*withFlags*/) const {ref_of<IFile>::type noresult; return noresult;}
+        virtual ref_of<File>::type Create(const filesystem::Index& /*index*/, const int /*withFlags*/) const { ref_of<File>::type noresult; return noresult;}
+        virtual ref_of<File>::type Open(const filesystem::Index& /*index*/, const int /*openFor*/, const int /*withFlags*/) const {ref_of<File>::type noresult; return noresult;}
         virtual bool Move(const filesystem::Index& /*srcIndex*/, const filesystem::Index& /*destIndex*/) const {return false;}
         virtual filesystem::Path CurrentPath() const {
             std::filesystem::path stdpath = std::filesystem::current_path();

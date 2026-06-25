@@ -79,7 +79,7 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, filesystem::Index& input)
         fileSystem->Delete(output);
     }
 
-    Base64EncodeFilter encode(4096);                                //Set up a base 64 encoder with 4K of buffer space
+    pipeline::components::Base64EncodeFilter encode(4096);                                //Set up a base 64 encoder with 4K of buffer space
 
     /*We use File connectors to connect to the input and output files. These encapsulate everything file related for 
     the pipeline. If we used Socket connectors or Pipe connectors or DBus connectors, the rest of the pipeline would

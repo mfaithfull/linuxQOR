@@ -68,7 +68,7 @@ namespace qor{ namespace io{
         std::filesystem::current_path(path);
     }
 
-    ref_of<IFile>::type FileSystem::Create(const filesystem::Index& index, const int withFlags) const
+    ref_of<File>::type FileSystem::Create(const filesystem::Index& index, const int withFlags) const
     {
         return m_pimpl->Create(index, withFlags);
     }
@@ -130,7 +130,7 @@ namespace qor{ namespace io{
         return RemoveDir(path);
     }
 
-    ref_of<IFile>::type FileSystem::Open(const filesystem::Index& index, const int openFor, const int withFlags) const
+    ref_of<File>::type FileSystem::Open(const filesystem::Index& index, const int openFor, const int withFlags) const
     {
         return m_pimpl->Open(index, openFor, withFlags);
     }

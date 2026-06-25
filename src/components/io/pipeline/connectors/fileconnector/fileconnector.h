@@ -28,6 +28,7 @@
 #include "src/framework/io/pipeline/connection.h"
 #include "src/framework/io/filesystem/ifilesystem.h"
 #include "src/framework/io/filesystem/fileindex.h"
+#include "src/framework/io/filesystem/file/file.h"
 
 namespace qor{ namespace io{ namespace components{ 
 
@@ -65,7 +66,7 @@ namespace qor{ namespace io{ namespace components{
             return *m_pFileIndex; 					//The underlying filesystem::Index
         }
 
-		ref_of<IFile>::type File(void) 
+		ref_of<File>::type File(void) 
         { 
             return m_File; 							//The underlying File
         }
@@ -84,7 +85,7 @@ namespace qor{ namespace io{ namespace components{
 
     private:
 
-        ref_of<IFile>::type m_File;
+        ref_of<io::File>::type m_File;
 
     };
 

@@ -28,10 +28,11 @@
 #include "src/platform/platform.h"
 #include "src/platform/architecture/detectarchitecture.h"
 #include "src/framework/io/filesystem/filesystem.h"
+#include "src/framework/io/filesystem/ifilesystem.h"
 
 namespace qor{ namespace io{
 
-    FileReader::FileReader(ref_of<IFile>::type file)
+    FileReader::FileReader(ref_of<File>::type file)
     {
         m_file = file;
     }

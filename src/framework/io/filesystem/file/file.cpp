@@ -28,26 +28,30 @@
 
 namespace qor{ namespace io{
 
-    ref_of<IFile>::type File::Open(const filesystem::Index& index, int openFor, int withFlags)
+    ref_of<File>::type File::Open(const filesystem::Index& index, int openFor, int withFlags)
     {        
-        return new_ref<IFile>(index, openFor, withFlags);
+        return new_ref<File>(index, openFor, withFlags);
     }
 
     //Base implementation of File
 
     File::File(){ }
 
-    File::File(int fd) : IFile()
+    File::File(int fd) : File()
     {
         IODescriptor::m_fd = fd;
     }
 
-    File::File(const File& src) : IFile(), m_index(src.m_index)
+    File::File(const IODescriptor& descriptor) : IODescriptor(descriptor){ }
+
+    File::File(const File& src) : m_index(src.m_index)
     {
         *this = src;
     }
 
     File::File(const filesystem::Index& index) : m_index(index){ }
+
+    File::File(const filesystem::Index& index, int OpenFor, const int WithFlags) : m_index(index){ }
 
     File& File::operator = (const File& src)
     {
@@ -125,9 +129,9 @@ namespace qor{ namespace io{
         return FileStatus();        
     }
 
-    IFile::Type File::GetType()
+    filesystem::Type File::GetType()
     {
-        return static_cast<IFile::Type>(std::filesystem::status(m_index.GetPath()).type());
+        return static_cast<filesystem::Type>(std::filesystem::status(m_index.GetPath()).type());
     }
 
     //Empty base implementations
@@ -177,10 +181,10 @@ namespace qor{ namespace io{
         serious("Empty base implementation.");
     }
 
-    ref_of<IFile>::type File::ReOpen(int /*openFor*/, int /*withFlags*/)
+    ref_of<File>::type File::ReOpen(int /*openFor*/, int /*withFlags*/)
     {
         serious("Empty base implementation.");
-        ref_of<IFile>::type newfile;
+        ref_of<File>::type newfile;
         return newfile;
     }
 

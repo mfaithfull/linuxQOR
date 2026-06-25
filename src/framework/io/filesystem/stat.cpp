@@ -29,7 +29,7 @@
 
 namespace qor{ namespace io{ namespace filesystem {
         
-    Stat::Stat(const filesystem::Index& index) : m_index(index){ }
+    Stat::Stat(const Index& index) : m_index(index){ }
     
     bool Stat::IsBlockFile()
     {

@@ -31,7 +31,7 @@
 
 namespace qor{ namespace io{
 
-    FileWriter::FileWriter(ref_of<IFile>::type file)
+    FileWriter::FileWriter(ref_of<File>::type file)
     {
         m_file = file;
     }

@@ -58,11 +58,11 @@ namespace qor{ namespace io{
         filesystem::Path CurrentPath() const;
         void CurrentPath(filesystem::Path& path) const;
 
-        ref_of<IFile>::type Create(const filesystem::Index& index, const int withFlags) const;
+        ref_of<File>::type Create(const filesystem::Index& index, const int withFlags) const;
         std::optional<filesystem::Folder> Create(const filesystem::Path& path) const;
         std::optional<filesystem::Folder> MakeDir(const filesystem::Path& path) const;
         std::optional<filesystem::Folder> NewFolder(const filesystem::Path& path) const;
-        ref_of<IFile>::type Open(const filesystem::Index& index, const int openFor = OpenFor::ReadWrite, const int withFlags = 0) const;
+        ref_of<File>::type Open(const filesystem::Index& index, const int openFor = OpenFor::ReadWrite, const int withFlags = 0) const;
         bool Delete(const filesystem::Index& index) const;
         bool RemoveDir(const filesystem::Path& path) const;
         bool DeleteFolder(const filesystem::Path& path) const;

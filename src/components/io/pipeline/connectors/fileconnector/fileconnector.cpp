@@ -85,7 +85,7 @@ namespace qor{ namespace io{ namespace components{
     {
         if(!m_connected)
         {
-            m_File = new_ref<IFile>(*m_pFileIndex, static_cast<int>(m_OpenFor), static_cast<int>(m_Mode));
+            m_File = new_ref<io::File>(*m_pFileIndex, static_cast<int>(m_OpenFor), static_cast<int>(m_Mode));
             m_connected = !m_File.IsNull();//->IsOpen();
         }
         return m_connected;

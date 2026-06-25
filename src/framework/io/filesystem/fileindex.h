@@ -29,7 +29,7 @@
 #include <filesystem>
 #include "path.h"
 #include "src/qor/reference/reference.h"
-#include "file/ifile.h"
+//#include "file/file.h"
 
 namespace qor{ namespace io{ namespace filesystem {
 
@@ -38,13 +38,13 @@ namespace qor{ namespace io{ namespace filesystem {
 	public:
 
         Index();
-        Index(const filesystem::Path& Path, const std::string& FileName);
+        Index(const Path& Path, const std::string& FileName);
         Index(const std::filesystem::directory_entry& dirent);
         Index(const Index&);
         Index& operator = (const Index&);
         virtual ~Index() = default;
 
-        void Set(const filesystem::Path& path, const std::string& fileName);
+        void Set(const Path& path, const std::string& fileName);
         bool Exists(void) const;
         bool Copy(const Index& Destination, std::filesystem::copy_options copyOptions = std::filesystem::copy_options::none) const;
         bool Delete() const;
@@ -64,9 +64,9 @@ namespace qor{ namespace io{ namespace filesystem {
         std::filesystem::file_status Status() const;
         std::filesystem::file_status SymLinkStatus() const;
         std::string ToString() const;
-        filesystem::Path GetPath(void) const;
-        ref_of<IFile>::type Create(const int openFor, const int withFlags, const int inMode);
-        ref_of<IFile>::type Open(const int openFor, const int withFlags, const int inMode);
+        Path GetPath(void) const;
+        //ref_of<File>::type Create(const int openFor, const int withFlags, const int inMode);
+        //ref_of<File>::type Open(const int openFor, const int withFlags, const int inMode);
         
     private:
         std::filesystem::directory_entry m_dirent;

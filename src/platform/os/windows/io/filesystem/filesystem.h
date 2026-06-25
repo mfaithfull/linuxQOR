@@ -45,8 +45,8 @@ namespace qor{ namespace io { namespace win{
         virtual void Setup();
         virtual void Shutdown();
 
-        virtual ref_of<IFile>::type Create(const filesystem::Index& index, const int withFlags) const;        
-        virtual ref_of<IFile>::type Open(const filesystem::Index& index, const int openFor, const int withFlags) const;        
+        virtual ref_of<io::File>::type Create(const filesystem::Index& index, const int withFlags) const;        
+        virtual ref_of<io::File>::type Open(const filesystem::Index& index, const int openFor, const int withFlags) const;        
         virtual bool Move(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const;
         virtual bool Rename(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const;
                 

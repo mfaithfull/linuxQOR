@@ -28,6 +28,7 @@
 #include <cstdint>
 #include "src/qor/reflection/reflection.h"
 #include "file.h"
+#include "../filesystem.h"
 
 namespace qor{ namespace io{
 
@@ -35,7 +36,7 @@ namespace qor{ namespace io{
 	{
 	public:
 
-        FileReader(ref_of<IFile>::type file);
+        FileReader(ref_of<File>::type file);
         FileReader(filesystem::Index index, OpenFor use);
         virtual ~FileReader() = default;
 
@@ -79,7 +80,7 @@ namespace qor{ namespace io{
     private:
 
         arch::Endian m_endian;
-        ref_of<IFile>::type m_file;
+        ref_of<File>::type m_file;
         filesystem::Index m_index;
     };
 

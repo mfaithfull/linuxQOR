@@ -73,7 +73,7 @@ namespace qor { namespace components{
         unsigned int m_logRollNumber;
         size_t m_totalSizeLimit;
         size_t m_fileSizeLimit;
-        qor::ref_of<qor::io::IFile>::type m_refLogFile;
+        qor::ref_of<qor::io::File>::type m_refLogFile;
     };
 }}//qor::components
 

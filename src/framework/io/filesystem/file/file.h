@@ -30,18 +30,19 @@
 #include "ifile.h"
 #include "src/framework/io/iodescriptor.h"
 #include "src/framework/io/filesystem/fileindex.h"
-#include "src/framework/io/filesystem/ifilesystem.h"
 
 namespace qor{ namespace io{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File : public IODescriptor, public IFile
+    class qor_pp_module_interface(QOR_FILESYSTEM) File : public IODescriptor
 	{
 	public:
 
         File();
         File(int fd);
+        File(const IODescriptor& descriptor);
         File(const File& src);
         File(const filesystem::Index& index);
+        File(const filesystem::Index& index, int OpenFor, const int WithFlags = 0);
         File& operator = (const File&);
         virtual ~File();     
         
@@ -54,7 +55,7 @@ namespace qor{ namespace io{
         virtual void ReSize(uintmax_t size);
         virtual FileStatus GetStatus();
         virtual FileStatus GetSymLinkStatus();
-        virtual Type GetType();
+        virtual filesystem::Type GetType();
         
         virtual bool SupportsPosition();
         virtual uint64_t GetPosition();
@@ -64,19 +65,24 @@ namespace qor{ namespace io{
         virtual void Truncate(uint64_t length);
         virtual void Reserve(uint64_t length);
         virtual void Flush();        
-        virtual ref_of<IFile>::type ReOpen(int openFor, int withFlags);        
+        virtual ref_of<File>::type ReOpen(int openFor, int withFlags);        
         virtual task<int> AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
         virtual task<int> AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
 
-        static ref_of<IFile>::type Open(const filesystem::Index& index, int openFor, int withFlags);
+        static ref_of<File>::type Open(const filesystem::Index& index, int openFor, int withFlags);
         
     protected:
 
         filesystem::Index m_index;
     };
+    }//io
 
-}}//qor::io
+    qor_pp_declare_factory_of(io::File, ExternalFactory);    
+    constexpr GUID FileGUID = {0xFA2945F7, 0xEF60, 0x442F, {0x87, 0x1D, 0xD3, 0x9D, 0xED, 0xC1, 0xFE, 0x76}};
+    qor_pp_declare_guid_of(io::File,FileGUID);
+
+}//qor
 
 #endif//QOR_PP_H_PLATFORM_FILESYSTEM_FILE

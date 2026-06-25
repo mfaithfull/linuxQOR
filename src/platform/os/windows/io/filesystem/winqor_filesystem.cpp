@@ -50,7 +50,7 @@ extern "C"
 
 		//Register the Windows specific implementations
 		static qor::TypeRegEntry< qor::io::win::FileSystem, qor::io::IFileSystem > regIFileSystem;  
-		static qor::TypeRegEntryWithParams< qor::io::win::File, qor::io::IFile, const qor::io::filesystem::Index&, int&, int& > regIFile;
+		static qor::TypeRegEntryWithParams< qor::io::win::File, qor::io::File, const qor::io::filesystem::Index&, int&, int& > regFile;
 		return QORModule;
 	}
 }

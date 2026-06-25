@@ -139,7 +139,7 @@ namespace qor{ namespace io { namespace win{
 
     bool File::SupportsPosition()
     {
-        return GetType() == IFile::Type::Regular;
+        return GetType() == filesystem::Type::Regular;
     }
 
     uint64_t File::GetPosition()
@@ -151,18 +151,18 @@ namespace qor{ namespace io { namespace win{
         return newPos.QuadPart; 
     }
 
-    long File::SetPosition(long offset, Whence whence)
+    long File::SetPosition(long offset, filesystem::Whence whence)
     {
         unsigned long method;
         switch(whence)
         {
-            case Set:
+            case filesystem::Set:
                 method = FILE_BEGIN;
             break;
-            case Current:
+            case filesystem::Current:
                 method = FILE_CURRENT;
             break;
-            case End:
+            case filesystem::End:
                 method = FILE_END;
             break;
             default:
@@ -219,7 +219,7 @@ namespace qor{ namespace io { namespace win{
         }
     }
 
-    ref_of<IFile>::type File::ReOpen(int openFor, int withFlags)
+    ref_of<io::File>::type File::ReOpen(int openFor, int withFlags)
     {
         IODescriptor newDescriptor{0};
         unsigned long desiredAccess = GetDesiredAccess(openFor, withFlags);
@@ -227,7 +227,7 @@ namespace qor{ namespace io { namespace win{
         unsigned long flagsAndAttributes = GetFlagsAndAttributes(openFor, withFlags);
 
         newDescriptor.m_handle = Kernel32::ReOpenFile(IODescriptor::m_handle, desiredAccess, shareMode, flagsAndAttributes);
-        return new_ref<File>(newDescriptor).template AsRef<IFile>();
+        return new_ref<io::File>(newDescriptor);
     }
 
     task<int> File::AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)

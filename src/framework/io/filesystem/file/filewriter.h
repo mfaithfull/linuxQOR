@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include "src/qor/reflection/reflection.h"
+#include "../filesystem.h"
 #include "file.h"
 
 namespace qor{ namespace io{
@@ -37,7 +38,7 @@ namespace qor{ namespace io{
 	{
 	public:
 
-        FileWriter(ref_of<IFile>::type file);
+        FileWriter(ref_of<File>::type file);
         FileWriter(filesystem::Index index, OpenFor use);
         virtual ~FileWriter() = default;
 
@@ -77,7 +78,7 @@ namespace qor{ namespace io{
 
     private:
 
-        ref_of<IFile>::type m_file;
+        ref_of<File>::type m_file;
         filesystem::Index m_index;
     };
 

@@ -31,7 +31,7 @@ namespace qor{ namespace io{ namespace filesystem {
 
     Index::Index() : m_dirent() {}
     
-    Index::Index(const filesystem::Path & path, const std::string& fileName) : m_dirent(std::filesystem::path(path.ToString(fileName))){}
+    Index::Index(const Path & path, const std::string& fileName) : m_dirent(std::filesystem::path(path.ToString(fileName))){}
 
     Index::Index(const std::filesystem::directory_entry& dirent) : m_dirent(dirent) {}
 
@@ -49,7 +49,7 @@ namespace qor{ namespace io{ namespace filesystem {
         return *this;
     }
 
-    void Index::Set(const filesystem::Path & path, const std::string& fileName)
+    void Index::Set(const Path & path, const std::string& fileName)
     {
         std::filesystem::directory_entry dirent(std::filesystem::path(path.ToString(fileName)));
         m_dirent = dirent;
@@ -155,19 +155,19 @@ namespace qor{ namespace io{ namespace filesystem {
 
     filesystem::Path Index::GetPath() const
     {
-        return filesystem::Path(m_dirent.path().generic_string());
+        return Path(m_dirent.path().generic_string());
     }
     
-    ref_of<IFile>::type Create(const int /*openFor*/, const int /*withFlags*/, const int /*inMode*/)
-    {
-        ref_of<IFile>::type result;
-        return result;
-    }
+    //ref_of<File>::type Create(const int /*openFor*/, const int /*withFlags*/, const int /*inMode*/)
+    //{
+    //    ref_of<File>::type result;
+    //    return result;
+    //}
 
-    ref_of<IFile>::type Index::Open(const int /*openFor*/, const int /*withFlags*/, const int /*inMode*/)    
-    {
-        ref_of<IFile>::type result;
-        return result;
-    }
-
+    //ref_of<File>::type Index::Open(const int /*openFor*/, const int /*withFlags*/, const int /*inMode*/)    
+    //{
+    //    ref_of<File>::type result;
+    //    return result;
+    //}
+    
 }}}//qor::io::filesystem

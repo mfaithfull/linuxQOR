@@ -51,13 +51,13 @@ namespace qor{ namespace io { namespace win{
 
         virtual bool SupportsPosition() override;
         virtual uint64_t GetPosition() override;
-        virtual long SetPosition(long offset, Whence whence);
+        virtual long SetPosition(long offset, filesystem::Whence whence);
         virtual uint64_t SetPosition(uint64_t newPosition) override;
         virtual uint64_t SetPositionRelative(int64_t offset) override;
         virtual void Truncate(uint64_t length) override;
         virtual void Reserve(uint64_t length) override;
         virtual void Flush() override;
-        virtual ref_of<IFile>::type ReOpen(int openFor, int withFlags) override;
+        virtual ref_of<io::File>::type ReOpen(int openFor, int withFlags) override;
         virtual task<int> AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
         virtual task<int> AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1) override;

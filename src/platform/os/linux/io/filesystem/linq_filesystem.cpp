@@ -50,7 +50,7 @@ extern "C"
 
 		//Register the Linux specific implementations
 		static qor::TypeRegEntry< qor::io::lin::FileSystem, qor::io::IFileSystem > regIFileSystem;  		
-		static qor::TypeRegEntryWithParams< qor::io::lin::File, qor::io::IFile, qor::io::filesystem::Index&, int&, int& > regIFile;
+		static qor::TypeRegEntryWithParams< qor::io::lin::File, qor::io::File, qor::io::filesystem::Index&, int&, int& > regFile;
 		return QORModule;
 	}
 }

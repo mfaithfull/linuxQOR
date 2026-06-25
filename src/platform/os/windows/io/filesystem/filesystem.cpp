@@ -42,16 +42,16 @@ namespace qor{ namespace io { namespace win{
 
     void FileSystem::Shutdown(){ }
 
-    ref_of<IFile>::type FileSystem::Create(const filesystem::Index& index, int withFlags) const
+    ref_of<io::File>::type FileSystem::Create(const filesystem::Index& index, int withFlags) const
     {        
         auto ref = Open(index, OpenFor::ReadWrite, withFlags);
-        ref.AsRef<File>()->SetPermissions(filesystem::Permissions::OwnerRead | filesystem::Permissions::OwnerWrite, filesystem::PermissionOptions::Add);
+        ref->SetPermissions(filesystem::Permissions::OwnerRead | filesystem::Permissions::OwnerWrite, filesystem::PermissionOptions::Add);
         return ref;
     }
 
-    ref_of<IFile>::type FileSystem::Open(const filesystem::Index& index, int openFor, int withFlags) const
+    ref_of<io::File>::type FileSystem::Open(const filesystem::Index& index, int openFor, int withFlags) const
     {        
-        return new_ref<File>(index, openFor, withFlags).template AsRef<IFile>();
+        return new_ref<io::File>(index, openFor, withFlags);
     }
 
     bool FileSystem::Move(const filesystem::Index& srcIndex, const filesystem::Index& destIndex) const

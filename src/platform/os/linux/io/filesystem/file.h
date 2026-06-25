@@ -56,7 +56,7 @@ namespace qor{ namespace io { namespace lin{
         virtual void Truncate(uint64_t length) override;
         virtual void Reserve(uint64_t length) override;
         virtual void Flush() override;
-        virtual ref_of<IFile>::type ReOpen() override;
+        virtual ref_of<File>::type ReOpen() override;
         virtual task<int> AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
         virtual task<int> AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1) override;

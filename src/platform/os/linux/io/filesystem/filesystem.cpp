@@ -56,7 +56,7 @@ namespace qor{ namespace io{ namespace lin{
         sync();
     }
 
-    ref_of<IFile>::type FileSystem::Create(const io::filesystem::Index& index, int withFlags) const
+    ref_of<File>::type FileSystem::Create(const io::filesystem::Index& index, int withFlags) const
     {
         int flags = withFlags |= WithFlags::CreateNew | WithFlags::Truncate;
         auto ref = Open(index, OpenFor::WriteOnly, flags);
@@ -64,9 +64,9 @@ namespace qor{ namespace io{ namespace lin{
         return ref;
     }
 
-    ref_of<IFile>::type FileSystem::Open(const io::filesystem::Index& index, int openFor, int withFlags) const
+    ref_of<File>::type FileSystem::Open(const io::filesystem::Index& index, int openFor, int withFlags) const
     {        
-        return new_ref<File>(index, openFor, withFlags).template AsRef<IFile>();
+        return new_ref<File>(index, openFor, withFlags);
     }
 
     bool FileSystem::Move(const io::filesystem::Index& srcIndex, const io::filesystem::Index& destIndex) const
