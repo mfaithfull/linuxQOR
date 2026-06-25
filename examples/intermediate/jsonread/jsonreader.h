@@ -22,10 +22,10 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "sdk/using_framework.h"
-#include "sdk/using_platform.h"
-#include "sdk/components/framework.h"
+#include "src/components/protocols/json/parser/nodes/object.h"
 #include "src/components/protocols/json/parser/_3/object.h"
+#include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
+#include "src/components/io/parser/parser.h"
 
 template< class JasonPartObjectT, class JasonModelObjectT >
 class JSONPartReader
@@ -40,7 +40,7 @@ public:
     {           
         m_sink.Reset();
         m_byteBuffer.Reset();
-        size_t unitsPumped = Pipeline(sourceConnector, m_sink, Element::Push).Connect().PumpAll();
+        size_t unitsPumped = pipeline::Pipeline(sourceConnector, m_sink, pipeline::Element::Push).Connect().PumpAll();
         if(unitsPumped > 0)
         {
             m_sink.Parser().FinalParse();
@@ -50,7 +50,7 @@ public:
             log::Debug("No more data");
         }
         auto finalNode = m_sink.Parser().PopNode();
-        return finalNode.template AsRef< components::parser::NodeAdapter< JasonModelObjectT > >()->GetObject();
+        return finalNode.template AsRef< qor::components::parser::NodeAdapter< JasonModelObjectT > >()->GetObject();
     }
 
     const pipeline::Buffer& Buffer()
@@ -61,7 +61,7 @@ public:
 private:
 
     pipeline::PODBuffer<byte> m_byteBuffer;
-    ParserSink< JasonPartObjectT > m_sink;
+    pipeline::components::ParserSink< JasonPartObjectT > m_sink;
 
 };
 
@@ -73,13 +73,13 @@ public:
     {        
     }
 
-    ref_of<components::model::json::Object>::type operator()(const pipeline::Plug& sourceConnector)
+    ref_of<qor::components::model::json::Object>::type operator()(const pipeline::Plug& sourceConnector)
     {           
         m_sink.Reset();
-        Pipeline(sourceConnector, m_sink, Element::Push).Connect().PumpAll();
+        pipeline::Pipeline(sourceConnector, m_sink, pipeline::Element::Push).Connect().PumpAll();
         m_sink.Parser().FinalParse();
         auto finalNode = m_sink.Parser().PopNode();
-        return finalNode.AsRef<components::parser::json::ObjectNode>()->GetObject();
+        return finalNode.AsRef<qor::components::parser::json::ObjectNode>()->GetObject();
     }
 
     const pipeline::Buffer& Buffer()
@@ -90,5 +90,5 @@ public:
 private:
 
     pipeline::PODBuffer<byte> m_byteBuffer;
-    ParserSink<components::parser::json::object> m_sink;
+    pipeline::components::ParserSink<qor::components::parser::json::object> m_sink;
 };
