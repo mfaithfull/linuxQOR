@@ -33,7 +33,7 @@
 
 struct _OVERLAPPED;
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 #if (qor_pp_compiler == qor_pp_compiler_msvc)
 #	pragma warning(push)
@@ -69,6 +69,6 @@ namespace qor { namespace framework { namespace win {
 #	pragma warning(pop)
 #endif
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPED

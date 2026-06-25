@@ -29,7 +29,7 @@
 #include "../ioservice.h"
 #include "../timer/timerthreadstate.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     TimedScheduleOperation::TimedScheduleOperation(
         IOService& service,
@@ -99,4 +99,4 @@ namespace qor { namespace framework { namespace win {
         m_cancellationToken.throw_if_cancellation_requested();
     }
     
-}}}//qor::framework::win
+}}}//qor::async::win

@@ -30,7 +30,7 @@
 #include <cstdint>
 #include "overlapped.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	class AutoResetEvent final
     {

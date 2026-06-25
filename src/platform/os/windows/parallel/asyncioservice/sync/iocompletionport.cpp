@@ -29,7 +29,7 @@
 #include "src/framework/io/iodescriptor.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     IOCompletionPort::IOCompletionPort(std::uint32_t concurrencyHint) : m_handle(::CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, concurrencyHint))
     {
@@ -72,4 +72,4 @@ namespace qor { namespace framework { namespace win {
         return m_handle;
     }
 
-}}}//qor::framework::win
+}}}//qor::async::win

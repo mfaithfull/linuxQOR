@@ -33,14 +33,14 @@
 #include "src/framework/io/network/socket.h"
 #include "src/framework/io/network/ipendpoint.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	class socket_send_to_operation_impl
 	{
 	public:
 
-		socket_send_to_operation_impl( network::Socket& s,
-			const network::IPEndpoint& destination,
+		socket_send_to_operation_impl( io::network::Socket& s,
+			const io::network::IPEndpoint& destination,
 			const void* buffer,
 			std::size_t byteCount) noexcept
 			: m_socket(s)
@@ -54,8 +54,8 @@ namespace qor { namespace framework { namespace win {
 
 	private:
 
-		network::Socket& m_socket;
-		network::IPEndpoint m_destination;
+		io::network::Socket& m_socket;
+		io::network::IPEndpoint m_destination;
 		wsabuf m_buffer;
 
 	};
@@ -67,13 +67,11 @@ namespace qor { namespace framework { namespace win {
 	public:
 
 		socket_send_to_operation(
-			network::Socket& s,
-			const network::IPEndpoint& destination,
+			io::network::Socket& s,
+			const io::network::IPEndpoint& destination,
 			const void* buffer,
 			std::size_t byteCount) noexcept
-			: m_impl(s, destination, buffer, byteCount)
-		{
-		}
+			: m_impl(s, destination, buffer, byteCount){ }
 
 	private:		
 
@@ -90,15 +88,13 @@ namespace qor { namespace framework { namespace win {
 	public:
 
 		socket_send_to_operation_cancellable(
-			network::Socket& s,
-			const network::IPEndpoint& destination,
+			io::network::Socket& s,
+			const io::network::IPEndpoint& destination,
 			const void* buffer,
 			std::size_t byteCount,
 			CancellationToken&& ct) noexcept
 			: win32_overlapped_operation_cancellable<socket_send_to_operation_cancellable>(std::move(ct))
-			, m_impl(s, destination, buffer, byteCount)
-		{
-		}
+			, m_impl(s, destination, buffer, byteCount){ }
 
 	private:		
 
@@ -109,6 +105,6 @@ namespace qor { namespace framework { namespace win {
 
 	};
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_SENDTOOP

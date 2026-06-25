@@ -44,9 +44,9 @@ extern "C"
 			qor_pp_stringize(qor_pp_buildnumber));
 
 		//Register the Windows specific implementations
-		static qor::TypeRegEntry< qor::framework::win::AsyncIOService, qor::async::AsyncIOService > regAsyncIOService;
-		static qor::TypeRegEntry< qor::framework::win::IOCPEventProcessor, qor::async::AsyncIOEventProcessor > regAsyncIOEventProcessor;
-		static qor::TypeRegEntry< qor::framework::win::IOCPInitiator, qor::async::AsyncIOInitiator > regAsyncIOInitiator;
+		static qor::TypeRegEntry< qor::async::win::AsyncIOService, qor::async::AsyncIOService > regAsyncIOService;
+		static qor::TypeRegEntry< qor::async::win::IOCPEventProcessor, qor::async::AsyncIOEventProcessor > regAsyncIOEventProcessor;
+		static qor::TypeRegEntry< qor::async::win::IOCPInitiator, qor::async::AsyncIOInitiator > regAsyncIOInitiator;
 		return QORModule;
 	}
 }

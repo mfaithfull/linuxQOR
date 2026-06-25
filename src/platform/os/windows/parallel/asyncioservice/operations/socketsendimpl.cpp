@@ -33,7 +33,7 @@
 
 #include "sendop.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	bool SocketSendOperationImpl::try_start(win32_overlapped_operation_base& operation) noexcept
 	{
@@ -81,4 +81,4 @@ namespace qor { namespace framework { namespace win {
 		(void)::CancelIoEx( reinterpret_cast<HANDLE>(m_socket->m_handle), operation.get_overlapped());
 	}
 
-}}}//qor::framework::win
+}}}//qor::async::win

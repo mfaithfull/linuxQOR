@@ -30,7 +30,7 @@
 #include "src/platform/compiler/compiler.h"
 #include "overlappedoperationbase.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	template<typename OPERATION>
 	class win32_overlapped_operation : protected win32_overlapped_operation_base
@@ -104,7 +104,7 @@ namespace qor { namespace framework { namespace win {
 
 	};
 
-}}}//qor::framework::windows
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_OVERLAPPEDOPERATION
 

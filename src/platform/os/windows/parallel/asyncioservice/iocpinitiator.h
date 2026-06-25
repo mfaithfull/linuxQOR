@@ -40,7 +40,7 @@
 #include "operations/writeop.h"
 #include "src/framework/io/network/socket.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPInitiator : public qor::async::AsyncIOInitiator
     {
@@ -99,7 +99,7 @@ namespace qor { namespace framework { namespace win {
             };
         }
 
-        virtual qor::async::IOTask Bind(io::IODescriptor * ioDescriptor, const network::Address & Address) override
+        virtual qor::async::IOTask Bind(io::IODescriptor * ioDescriptor, const io::network::Address & Address) override
         {
             //Windows doesn't provide async bind
             co_return qor::async::AsyncIOResult{
@@ -108,7 +108,7 @@ namespace qor { namespace framework { namespace win {
             };
         }
 
-        virtual qor::async::IOTask Accept(io::IODescriptor * ioDescriptor, const network::Address & Address, network::Socket * new_socket) override
+        virtual qor::async::IOTask Accept(io::IODescriptor * ioDescriptor, const io::network::Address & Address, io::network::Socket * new_socket) override
         {            
             int status = co_await SocketAcceptOperation(ioDescriptor, new_socket);
 
@@ -123,6 +123,6 @@ namespace qor { namespace framework { namespace win {
         IOCPEventProcessor* m_eventProcessor;
     };
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCPINITIATOR

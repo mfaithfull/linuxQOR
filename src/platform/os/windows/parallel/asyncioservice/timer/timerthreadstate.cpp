@@ -34,7 +34,7 @@
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 #undef max
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     TimerThreadState::TimerThreadState() : 
         m_wakeUpEvent(new_ref<AutoResetEvent>()),
@@ -206,4 +206,4 @@ namespace qor { namespace framework { namespace win {
         m_wakeUpEvent->Set();
     }
 
-}}}//qor::framework::win
+}}}//qor::async::win

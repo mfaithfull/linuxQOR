@@ -28,7 +28,7 @@
 #include "waitabletimerevent.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     WaitableTimerEvent::WaitableTimerEvent() : m_handle(::CreateWaitableTimerW(nullptr, 0, nullptr))
     {
@@ -62,4 +62,4 @@ namespace qor { namespace framework { namespace win {
             resumeFromSuspend ? 1 : 0);
     }
 
-}}}//qor::framework::win
+}}}//qor::async::win

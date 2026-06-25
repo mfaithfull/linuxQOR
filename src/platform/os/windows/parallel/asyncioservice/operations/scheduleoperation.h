@@ -28,7 +28,7 @@
 
 #include <coroutine>
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     class IOService;
 
@@ -59,6 +59,6 @@ namespace qor { namespace framework { namespace win {
         ScheduleOperation* m_next;
     };
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_SCHEDULEOPERATION

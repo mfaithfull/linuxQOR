@@ -36,7 +36,7 @@
 #include "asynciointerface.h"
 #include "src/qor/log/informative.h"
 #include "src/framework/parallel/sync/mutex.h"
-#include "src/framework/io/network/socket.h"
+#include "src/framework/io/network/isocket.h"
 
 namespace qor { namespace async{
 

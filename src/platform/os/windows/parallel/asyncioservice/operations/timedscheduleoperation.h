@@ -34,7 +34,7 @@
 #include "src/framework/parallel/task/cancellation/cancellationregistration.h"
 #include "scheduleoperation.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
     class IOService;
     class TimedScheduleOperation
@@ -70,6 +70,6 @@ namespace qor { namespace framework { namespace win {
         std::atomic<std::uint32_t> m_refCount;
     };
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_TIMEDSCHEDULEOPERATION

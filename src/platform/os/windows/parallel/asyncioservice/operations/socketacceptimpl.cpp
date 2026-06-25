@@ -33,7 +33,7 @@
 
 using namespace qor::win::api;
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	bool SocketAcceptOperationImpl::try_start( win32_overlapped_operation_base& operation) noexcept
 	{
@@ -137,4 +137,4 @@ namespace qor { namespace framework { namespace win {
 		return operation.m_errorCode;
 	}
 
-}}}//qor::framework::win
+}}}//qor::async::win

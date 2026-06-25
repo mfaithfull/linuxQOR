@@ -32,7 +32,7 @@
 #include "src/framework/io/network/socket.h"
 #include "src/framework/io/network/sockets.h"
 
-namespace qor{ namespace network{ namespace win{
+namespace qor{ namespace io{ namespace network{ namespace win{
 
     class qor_pp_module_interface(WINQOR_SOCKETS) Socket : public network::Socket
     {
@@ -88,6 +88,6 @@ namespace qor{ namespace network{ namespace win{
 
     };
 
-}}}//qor::io::network::windows
+}}}}//qor::io::network::win
 
 #endif//QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKET

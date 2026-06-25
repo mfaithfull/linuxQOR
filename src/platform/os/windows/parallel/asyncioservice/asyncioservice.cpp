@@ -28,6 +28,6 @@
 
 qor_pp_module_provide(QOR_WINDOWSASYNCIOSERVICE, AsyncIOService)
 
-namespace qor{ namespace framework{ namespace win{
+namespace qor{ namespace async{ namespace win{
 
-}}}//qor::framework::win
+}}}//qor::async::win

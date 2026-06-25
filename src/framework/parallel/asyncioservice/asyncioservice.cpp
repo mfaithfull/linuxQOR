@@ -56,10 +56,9 @@ namespace qor { namespace async{
     {
         for(unsigned context = 0; context < m_contextCount; context++)
         {
-            delete m_contextArray[context];
-            m_contextArray[context] = nullptr;
+            m_contextArray[context].Dispose();
         }
-        delete m_contextArray;
+        delete [] m_contextArray;
         m_contextArray = nullptr;
     }
 

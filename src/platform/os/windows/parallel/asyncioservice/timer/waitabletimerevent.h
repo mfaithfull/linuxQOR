@@ -32,7 +32,7 @@
 #include "../sync/overlapped.h"
 #include "src/platform/os/windows/common/structures.h"
 
-namespace qor { namespace framework { namespace win {
+namespace qor { namespace async { namespace win {
 
 	class WaitableTimerEvent
     {
@@ -50,7 +50,7 @@ namespace qor { namespace framework { namespace win {
         platform::win::Handle m_handle;
     };
 
-}}}//qor::framework::win
+}}}//qor::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_WAITABLETIMEREVENT
 
