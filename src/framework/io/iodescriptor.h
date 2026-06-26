@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_PLATFORM_IO_DESC
 #define QOR_PP_H_OS_PLATFORM_IO_DESC
 
-#include "src/qor/datastructures/guid.h"
+#include "src/qor/essentials/datastructures/guid.h"
 
 namespace qor{ namespace io{
 

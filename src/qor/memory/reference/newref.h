@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_REFERENCE_NEW
 #define QOR_PP_H_REFERENCE_NEW
 
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/reference.h"
 #include "src/qor/memory/factory/factory.h"
 #include "src/qor/memory/instance/instance.h"

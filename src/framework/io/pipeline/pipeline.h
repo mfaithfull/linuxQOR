@@ -29,7 +29,7 @@
 #include "filter.h"
 #include "inlinefilter.h"
 #include "connection.h"
-#include "src/qor/log/debug.h"
+#include "src/qor/flyers/log/debug.h"
 
 namespace qor{ namespace pipeline{
 

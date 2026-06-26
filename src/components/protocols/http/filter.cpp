@@ -24,8 +24,8 @@
 
 #include "src/configuration/configuration.h"
 #include "filter.h"
-#include "src/qor/error/error.h"
-#include "src/qor/log/informative.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/informative.h"
 
 using namespace qor;
 using namespace qor::components;

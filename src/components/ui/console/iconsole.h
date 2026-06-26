@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE_INTERFACE
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE_INTERFACE
 
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/instance/singleton.h"
 #include "src/qor/memory/factory/factory.h"
 #include "src/qor/memory/factory/externalfactory.h"

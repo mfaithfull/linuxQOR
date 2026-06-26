@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "session.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 
 #include "compositor.h"
 #include "datadevicemanager.h"

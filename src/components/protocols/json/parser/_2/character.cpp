@@ -24,8 +24,8 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/error/error.h"
-#include "src/qor/log/log.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/log.h"
 #include "character.h"
 #include "../nodes/character.h"
 

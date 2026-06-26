@@ -26,7 +26,7 @@
 #define QOR_PP_H_FRAMEWORK_RESOURCES_TTF_READER
 
 #include "src/platform/compiler/compiler.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/pipeline/podbuffer.h"
 #include "src/framework/io/pipeline/pipeline.h"

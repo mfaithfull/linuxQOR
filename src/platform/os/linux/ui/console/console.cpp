@@ -29,8 +29,8 @@
 #include <unistd.h>
 
 #include "console.h"
-#include "src/qor/error/error.h"
-#include "src/qor/error/clibresult.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/error/clibresult.h"
 
 namespace qor {
 	bool qor_pp_module_interface(QOR_LINCONSOLE) ImplementsIConsole() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsIConsole requirement. 

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKET
 #define QOR_PP_H_PLATFORM_NETWORK_WINDOWS_SOCKET
 
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/qor/memory/factory/factory.h"
 #include "src/qor/memory/factory/externalfactory.h"

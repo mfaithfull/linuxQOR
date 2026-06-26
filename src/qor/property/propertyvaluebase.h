@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PROPERTY_PROPERTYVALUEBASE
 #define QOR_PP_H_PROPERTY_PROPERTYVALUEBASE
 
-#include "src/qor/objectcontext/typedanyproperty.h"
+#include "src/qor/essentials/objectcontext/typedanyproperty.h"
 
 namespace qor {
 

@@ -44,8 +44,8 @@
 #define QOR_PP_H_SIGNALS_PENDINGSLOT
 
 #include "src/platform/compiler/compiler.h"
-#include "src/qor/datastructures/rcuguarded.h"
-#include "src/qor/datastructures/rculist.h"
+#include "src/qor/essentials/datastructures/rcuguarded.h"
+#include "src/qor/essentials/datastructures/rculist.h"
 
 namespace qor{
 

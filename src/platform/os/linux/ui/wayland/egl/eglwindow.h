@@ -27,9 +27,9 @@
 
 #include <stdint.h>
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/qor/interception/functioncontext.h"
+#include "src/qor/flyers/interception/functioncontext.h"
 
 #include "src/platform/os/linux/ui/wayland/client/callback.h"
 #include "src/platform/os/linux/ui/wayland/xdgshell/xdgtoplevelwindow.h"

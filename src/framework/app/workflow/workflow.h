@@ -28,12 +28,12 @@
 #include <stack>
 #include <functional>
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "iworkflow.h"
 #include "src/framework/event/delegate/delegate.h"
-#include "src/qor/error/defaulterrorhandler.h"
-#include "src/qor/log/defaultloghandler.h"
+#include "src/qor/flyers/error/defaulterrorhandler.h"
+#include "src/qor/flyers/log/defaultloghandler.h"
 
 namespace qor{ 
 

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_JSON_PARSER_NODES_VALUE
 #define QOR_PP_H_COMPONENTS_JSON_PARSER_NODES_VALUE
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/components/io/parser/node.h"
 #include "../tokens.h"

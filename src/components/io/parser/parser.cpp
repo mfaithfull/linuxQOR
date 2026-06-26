@@ -29,7 +29,7 @@
 
 #include "src/platform/compiler/compiler.h"
 #include "parser.h"
-#include "src/qor/log/debug.h"
+#include "src/qor/flyers/log/debug.h"
 
 namespace qor { namespace components { namespace parser {
 

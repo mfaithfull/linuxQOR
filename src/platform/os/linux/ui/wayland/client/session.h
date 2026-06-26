@@ -27,7 +27,7 @@
 
 #include <string>
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 
 //All types on this interface must be portable

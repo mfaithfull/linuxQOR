@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PLATFORM_FILESYSTEM_FILESTAT
 #define QOR_PP_H_PLATFORM_FILESYSTEM_FILESTAT
 
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/factory/factory.h"
 #include "src/qor/memory/factory/externalfactory.h"
 #include "fileindex.h"

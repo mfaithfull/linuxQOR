@@ -25,15 +25,15 @@
 #ifndef QOR_PP_H_COMPONENTS_NETWORK_SESSION
 #define QOR_PP_H_COMPONENTS_NETWORK_SESSION
 
-#include "src/qor/interception/functioncontext.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/framework/app/workflow/workflow.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/network/socket.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/framework/app/application/application.h"
-#include "src/qor/log/debug.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/log/debug.h"
+#include "src/qor/flyers/error/error.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/io/pipeline/pipeline.h"
 #include "sessionpipeline.h"

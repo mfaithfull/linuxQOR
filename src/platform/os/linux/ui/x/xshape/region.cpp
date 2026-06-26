@@ -26,7 +26,7 @@
 
 #include "region.h"
 #include "src/platform/os/linux/ui/x/xlib/display.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 
 #include <X11/Xlib.h>
 #include <X11/X.h>

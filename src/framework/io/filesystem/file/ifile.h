@@ -26,10 +26,10 @@
 #define QOR_PP_H_PLATFORM_FILESYSTEM_FILE_INTERFACE
 
 #include <vector>
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/factory/factory.h"
 #include "src/qor/memory/factory/externalfactory.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/iodescriptor.h"
 #include "src/framework/parallel/task/task.h"

@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "src/qor/module/module.h"
-#include "src/qor/interception/functioncontext.h"
+#include "src/qor/flyers/interception/functioncontext.h"
 
 #include "ws2.h"
 #include "../kernel/kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h

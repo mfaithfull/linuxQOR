@@ -26,8 +26,8 @@
 #define QOR_PP_H_COMPONENTS_CONSOLE_MENU_WIDGET
 
 #include <vector>
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/reference.h"
 #include "src/qor/memory/reference/newref.h"
 #include "consolewidget.h"

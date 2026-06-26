@@ -29,8 +29,8 @@
 #include <string_view>
 #include <chrono>
 
-#include "src/qor/log/log.h"
-#include "src/qor/log/handler.h"
+#include "src/qor/flyers/log/log.h"
+#include "src/qor/flyers/log/handler.h"
 #include "src/framework/event/signals/signal.h"
 
 namespace qor{ namespace components {

@@ -26,8 +26,8 @@
 #define QOR_PP_H_EXAMPLES_HTTPSERVER_APP
 
 #include <string>
-#include "src/qor/error/defaulterrorhandler.h"
-#include "src/qor/log/defaultloghandler.h"
+#include "src/qor/flyers/error/defaulterrorhandler.h"
+#include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/optionparser/getter.h"
 

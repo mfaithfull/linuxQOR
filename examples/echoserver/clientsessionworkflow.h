@@ -31,7 +31,7 @@
 #include "sessionpipeline.h"
 #include "errorhandler.h"
 #include "serverloghandler.h"
-#include "src/qor/profiling/profilereceiver.h"
+#include "src/qor/tdd/profiling/profilereceiver.h"
 
 class ClientSessionWorkflow : public qor::Workflow
 {

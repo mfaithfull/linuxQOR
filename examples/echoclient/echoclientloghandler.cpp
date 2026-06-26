@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include <iostream>
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 #include "echoclientloghandler.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/qor/reflection/reflection.h"

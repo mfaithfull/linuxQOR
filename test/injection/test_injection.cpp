@@ -24,15 +24,15 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/tdd/tdd.h"
-#include "src/qor/datastructures/guid.h"
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/essentials/datastructures/guid.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/factory/factory.h"
 #include "src/qor/memory/factory/externalfactory.h"
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/memory/injection/typeregistry.h"
+#include "src/qor/memory/injection/typeregentry.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/qor/injection/diwrapper.h"
+#include "src/qor/memory/injection/diwrapper.h"
 
 using namespace qor;
 using namespace qor::test;

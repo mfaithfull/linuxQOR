@@ -28,7 +28,7 @@
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/framework/io/filesystem/path.h"

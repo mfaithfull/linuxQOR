@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_PIPELINE_NETWORK_PROTOCOL
 #define QOR_PP_H_PIPELINE_NETWORK_PROTOCOL
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/network/socketdefs.h"
 #include "source.h"

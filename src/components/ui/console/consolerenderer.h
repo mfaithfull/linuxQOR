@@ -27,7 +27,7 @@
 
 #include <map>
 
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "tokenbuffer.h"
 #include "console.h"
 

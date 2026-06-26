@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_SESSION
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_SESSION
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "display.h"
 #include "egl.h"

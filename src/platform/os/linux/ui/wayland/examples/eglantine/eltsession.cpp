@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include <stdlib.h>
 #include "src/qor/module/module.h"
-#include "src/qor/interception/functioncontext.h"
+#include "src/qor/flyers/interception/functioncontext.h"
 #include "eltsession.h"
 #include "src/platform/os/linux/ui/wayland/client/surface.h"
 #include "src/platform/os/linux/ui/wayland/xdgshell/xdgsurface.h"

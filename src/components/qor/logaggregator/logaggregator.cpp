@@ -30,7 +30,7 @@
 #include "logaggregator.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 
 qor_pp_module_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
 

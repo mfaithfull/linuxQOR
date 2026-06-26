@@ -24,8 +24,8 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/tdd/assert/assert.h"
-#include "src/qor/interception/functioncontext.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/flyers/error/error.h"
 #include "windowpimpl.h"
 
 namespace qor{ namespace gl {

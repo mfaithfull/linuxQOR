@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_BITMAP
 #define QOR_PP_H_WINDOWS_GUI_BITMAP
 
-#include "src/qor/current/currentthread.h"
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/essentials/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "gdiobject.h"

@@ -27,8 +27,8 @@
 
 #include <iostream>
 
-#include "src/qor/error/error.h"
-#include "src/qor/error/handler.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/error/handler.h"
 
 class ErrorHandler : public qor::IssueHandler<qor::Error>
 {

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_ABSTRACT
 #define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_ABSTRACT
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 
 namespace qor{ namespace platform { namespace win{ 

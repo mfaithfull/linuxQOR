@@ -26,9 +26,9 @@
 
 #include "src/qor/tdd/tdd.h"
 
-#include "src/qor/objectcontext/anyobject.h"
-#include "src/qor/current/currentthread.h"
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/essentials/objectcontext/anyobject.h"
+#include "src/qor/essentials/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/factory/factory.h"
 #include "src/qor/memory/instance/instance.h"
 #include "src/qor/memory/reference/ref.h"

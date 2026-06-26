@@ -34,7 +34,7 @@
 #include "src/framework/parallel/task/syncwait.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "asynciointerface.h"
-#include "src/qor/log/informative.h"
+#include "src/qor/flyers/log/informative.h"
 #include "src/framework/parallel/sync/mutex.h"
 #include "src/framework/io/network/isocket.h"
 

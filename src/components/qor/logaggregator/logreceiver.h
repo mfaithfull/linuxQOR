@@ -27,11 +27,11 @@
  
 #include <atomic>
 #include <coroutine>
-#include "src/qor/error/error.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/instance/singleton.h"
 #include "src/qor/memory/factory/factory.h"
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/factory/externalfactory.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/app/role/ifeature.h"

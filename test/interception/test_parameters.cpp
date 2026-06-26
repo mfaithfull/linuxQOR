@@ -25,10 +25,10 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/tdd/tdd.h"
 #include "src/qor/module/module.h"
-#include "src/qor/interception/functioncontextlock.h"
-#include "src/qor/interception/callinterceptor.h"
-#include "src/qor/interception/parameters/return.h"
-#include "src/qor/interception/parameters/checkedparam.h"
+#include "src/qor/flyers/interception/functioncontextlock.h"
+#include "src/qor/flyers/interception/callinterceptor.h"
+#include "src/qor/flyers/interception/parameters/return.h"
+#include "src/qor/flyers/interception/parameters/checkedparam.h"
 
 using namespace qor;
 using namespace qor::test;

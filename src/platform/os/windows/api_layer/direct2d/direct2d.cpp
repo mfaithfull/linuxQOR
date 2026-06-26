@@ -24,8 +24,8 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
-#include "src/qor/interception/functioncontext.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/flyers/error/error.h"
 
 //Windows specific headers must be last to prevent contaminating generic headers with Windows specific types and definitions
 #include "direct2d.h"

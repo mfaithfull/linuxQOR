@@ -23,8 +23,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/parallel/asyncioservice/asynciocontext.h"
 #include "sockets.h"

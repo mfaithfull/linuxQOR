@@ -27,8 +27,8 @@
 #include <string>
 #include <format>
 
-#include "src/qor/error/defaulterrorhandler.h"
-#include "src/qor/log/defaultloghandler.h"
+#include "src/qor/flyers/error/defaulterrorhandler.h"
+#include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/framework/app/application/builder.h"
 #include "netserver.h"
 #include "netsession.h"

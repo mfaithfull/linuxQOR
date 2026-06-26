@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_FRAMEWORK_RESOURCES_IMAGE_CONNECTOR
 #define QOR_PP_H_FRAMEWORK_RESOURCES_IMAGE_CONNECTOR
 
-#include "src/qor/current/currentthread.h"
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/essentials/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/pipeline/connection.h"
 #include "src/framework/io/pipeline/source.h"

@@ -27,12 +27,12 @@
 #include "echoclientworkflow.h"
 #include "src/platform/platform.h"
 #include "src/components/ui/console/console.h"
-#include "src/qor/interception/functioncontext.h"
-#include "src/qor/log/debug.h"
-#include "src/qor/log/informative.h"
-#include "src/qor/log/impactful.h"
-#include "src/qor/log/important.h"
-#include "src/qor/log/imperative.h"
+#include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/flyers/log/debug.h"
+#include "src/qor/flyers/log/informative.h"
+#include "src/qor/flyers/log/impactful.h"
+#include "src/qor/flyers/log/important.h"
+#include "src/qor/flyers/log/imperative.h"
 
 using namespace qor;
 using namespace qor::workflow;

@@ -26,15 +26,15 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/profiling/profiling.h"
+#include "src/qor/tdd/profiling/profiling.h"
 //#include qor_pp_profile_begin
 
-#include "src/qor/interception/functioncontext.h"
-#include "src/qor/log/debug.h"
-#include "src/qor/log/informative.h"
-#include "src/qor/log/impactful.h"
-#include "src/qor/log/important.h"
-#include "src/qor/log/imperative.h"
+#include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/flyers/log/debug.h"
+#include "src/qor/flyers/log/informative.h"
+#include "src/qor/flyers/log/impactful.h"
+#include "src/qor/flyers/log/important.h"
+#include "src/qor/flyers/log/imperative.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/components/qor/logaggregator/logaggregator.h"

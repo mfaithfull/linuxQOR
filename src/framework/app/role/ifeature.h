@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_ROLE_FEATURE_INTERFFACE
 #define QOR_PP_H_ROLE_FEATURE_INTERFFACE
 
-#include "src/qor/injection/typeidentity.h"
+#include "src/qor/memory/injection/typeidentity.h"
 
 namespace qor{ namespace app {
 

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_NETWORK_CLIENT
 #define QOR_PP_H_COMPONENTS_NETWORK_CLIENT
 
-#include "src/qor/interception/functioncontext.h"
+#include "src/qor/flyers/interception/functioncontext.h"
 #include "src/qor/memory/reference/reference.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/network/socket.h"

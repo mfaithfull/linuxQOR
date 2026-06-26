@@ -28,8 +28,8 @@
 #include <iomanip>
 #include <ranges>
 #include "src/qor/tdd/tdd.h"
-#include "src/qor/error/error.h"
-#include "src/qor/text/buffers/mutablebuffer.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/essentials/text/buffers/mutablebuffer.h"
 
 using namespace qor;
 using namespace qor::test;

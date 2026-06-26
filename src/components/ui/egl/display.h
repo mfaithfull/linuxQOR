@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_EGL_DISPLAY
 
 #include "src/framework/app/role/ifeature.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 
 namespace qor { namespace components{

@@ -26,8 +26,8 @@
 
 #include "iouringeventprocessor.h"
 #include "src/platform/os/linux/parallel/asyncioservice/asyncioservice.h"
-#include "src/qor/error/error.h"
-#include "src/qor/log//informative.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log//informative.h"
 
 qor_pp_module_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOEventProcessor)
 

@@ -25,8 +25,8 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/tdd/tdd.h"
 #include "src/qor/module/module.h"
-#include "src/qor/error/error.h"
-#include "src/qor/error/handler.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/error/handler.h"
 
 using namespace qor;
 using namespace qor::test;

@@ -25,10 +25,10 @@
 #include "src/configuration/configuration.h"
 
 #include "resourcehub.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 #include "src/framework/event/signals/signal.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/framework/app/role/getfeature.h"
 
 namespace qor{ namespace framework{

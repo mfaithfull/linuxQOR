@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_SOCKET
 #define QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_SOCKET
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/framework/io/network/socket.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/network/address.h"

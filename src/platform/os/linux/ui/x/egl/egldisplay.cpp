@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 
 #include "egldisplay.h"
 #include "src/platform/os/linux/ui/x/xlib/xlib.h"

@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include <cassert>
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "member.h"
 #include "../_4/string.h"

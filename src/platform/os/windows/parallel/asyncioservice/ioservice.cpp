@@ -25,9 +25,9 @@
 #include "src/configuration/configuration.h"
 
 #include <cassert>
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 #include "ioservice.h"
 #include "operations/scheduleoperation.h"
 #include "timer/timerthreadstate.h"

@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/tdd/tdd.h"
-#include "src/qor/datastructures/guid.h"
+#include "src/qor/essentials/datastructures/guid.h"
 
 using namespace qor;
 using namespace qor::test;

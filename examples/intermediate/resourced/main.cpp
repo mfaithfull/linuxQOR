@@ -23,12 +23,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/qor/module/module.h"
-#include "src/qor/interception/functioncontext.h"
-#include "src/qor/error/error.h"
-#include "src/qor/log/defaultloghandler.h"
+#include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/framework/app/role/role.h"
 #include "src/platform/platform.h"
 #include "src/framework/io/filesystem/filesystem.h"

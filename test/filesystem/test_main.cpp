@@ -1,13 +1,13 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/tdd/test/test.h"
 #include "src/qor/module/module.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/framework/io/filesystem/filesystem.h"
-#include "src/qor/log/defaultloghandler.h"
+#include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/platform/platform.h"
 
 qor_pp_module_requires(AsyncIOService)

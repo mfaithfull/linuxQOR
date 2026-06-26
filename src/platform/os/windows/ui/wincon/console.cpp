@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "console.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
 using namespace qor::win::api;

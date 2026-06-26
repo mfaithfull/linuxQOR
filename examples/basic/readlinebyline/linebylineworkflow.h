@@ -4,7 +4,7 @@
 #ifndef QOR_PP_H_EXAMPLES_LINEBYLINE_WORKFLOW
 #define QOR_PP_H_EXAMPLES_LINEBYLINE_WORKFLOW
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/app/workflow/workflow.h"
 

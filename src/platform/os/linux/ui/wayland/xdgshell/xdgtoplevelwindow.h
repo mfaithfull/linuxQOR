@@ -28,7 +28,7 @@
 #include <stdint.h>
 #include <string>
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 
 #include "xdgwindow.h"

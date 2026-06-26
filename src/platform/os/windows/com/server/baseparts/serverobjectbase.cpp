@@ -24,11 +24,11 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
+#include "src/qor/essentials/objectcontext/anyobject.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/qor/interception/functioncontext.h"
+#include "src/qor/flyers/interception/functioncontext.h"
 
 #include "serverobjectbase.h"
 #include "src/platform/os/windows/api_layer/ole32/ole32.h"

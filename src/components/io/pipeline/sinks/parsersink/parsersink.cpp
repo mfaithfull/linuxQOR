@@ -26,7 +26,7 @@
 
 #include "parsersink.h"
 #include "src/framework/io/pipeline/source.h"
-#include "src/qor/interception/functioncontext.h"
+#include "src/qor/flyers/interception/functioncontext.h"
 
 namespace qor{ namespace pipeline{ namespace components{ 
 

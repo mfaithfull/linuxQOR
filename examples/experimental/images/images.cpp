@@ -26,9 +26,9 @@
 
 #include "src/qor/tdd/assert/assert.h"
 #include "src/framework/event/delegate/delegate.h"
-#include "src/qor/interception/functioncontext.h"
-#include "src/qor/error/error.h"
-#include "src/qor/log/defaultloghandler.h"
+#include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/framework/app/role/role.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/io/filesystem/filesystem.h"

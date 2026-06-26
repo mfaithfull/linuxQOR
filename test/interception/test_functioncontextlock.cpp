@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/tdd/tdd.h"
 #include "src/qor/module/module.h"
-#include "src/qor/interception/functioncontextlock.h"
+#include "src/qor/flyers/interception/functioncontextlock.h"
 
 using namespace qor;
 using namespace qor::test;

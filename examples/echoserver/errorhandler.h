@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_ERRORHANDLER
 #define QOR_PP_H_EXAMPLES_ECHOSERVER_ERRORHANDLER
 
-#include "src/qor/error/error.h"
-#include "src/qor/error/handler.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/error/handler.h"
 
 class ErrorHandler : public qor::IssueHandler<qor::Error>
 {

@@ -36,11 +36,11 @@
 #include "src/framework/parallel/task/syncwait.h"
 #include "src/framework/parallel/task/whenall.h"
 #include "src/framework/parallel/task/task.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/objectcontext/anyobject.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/framework/parallel/thread/thread.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/qor/current/currentprocess.h"
+#include "src/qor/essentials/current/currentprocess.h"
 
 using namespace qor;
 using namespace qor::test;

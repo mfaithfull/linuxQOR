@@ -29,8 +29,8 @@
 
 #include "src/framework/app/host/host.h"
 #include "src/qor/tdd/tdd.h"
-#include "src/qor/profiling/profiling.h"
-#include "src/qor/profiling/profilereceiver.h"
+#include "src/qor/tdd/profiling/profiling.h"
+#include "src/qor/tdd/profiling/profilereceiver.h"
 
 using namespace qor;
 using namespace qor::test;

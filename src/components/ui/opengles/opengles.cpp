@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 #include "opengles.h"
 #include "src/framework/app/application/builder.h"
 #include "src/components/ui/egl/egl.h"

@@ -26,7 +26,7 @@
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_PROCESS
 
 
-#include "src/qor/current/icurrentprocess.h"
+#include "src/qor/essentials/current/icurrentprocess.h"
 
 namespace qor{
     bool qor_pp_module_interface(QOR_WINDOWSPROCESS) ImplementsICurrentProcess();

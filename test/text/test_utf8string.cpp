@@ -30,7 +30,7 @@
 #include <ranges>
 #include "src/qor/tdd/tdd.h"
 #include "src/framework/event/delegate/delegate.h"
-#include "src/qor/text/strings/strings.h"
+#include "src/qor/essentials/text/strings/strings.h"
 
 using namespace qor;
 using namespace qor::test;

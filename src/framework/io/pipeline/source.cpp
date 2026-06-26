@@ -23,8 +23,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/error/error.h"
-#include "src/qor/log/informative.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/informative.h"
 #include "source.h"
 #include "sink.h"
 #include "plug.h"

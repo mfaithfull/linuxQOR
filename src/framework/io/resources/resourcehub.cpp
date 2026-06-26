@@ -26,7 +26,7 @@
 
 #include "src/framework/app/role/role.h"
 #include "src/framework/event/signals/signal.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 #define QOR_PP_IMPLEMENTS_RESOURCEHUB
 #include "resourcehub.h"
 #include "types/pathresource.h"

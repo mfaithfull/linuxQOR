@@ -24,8 +24,8 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/tdd/tdd.h"
-#include "src/qor/iterators/iterators.h"
-#include "src/qor/text/buffers/encodedbuffer.h"
+#include "src/qor/essentials/iterators/iterators.h"
+#include "src/qor/essentials/text/buffers/encodedbuffer.h"
 
 using namespace qor;
 using namespace qor::test;

@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_DIALOG
 #define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_DIALOG
 
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 
 #include "abstractwindowhandler.h"

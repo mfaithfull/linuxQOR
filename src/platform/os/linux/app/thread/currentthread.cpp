@@ -33,9 +33,9 @@
 
 #include <optional>
 
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
+#include "src/qor/essentials/objectcontext/anyobject.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "currentthread.h"
 

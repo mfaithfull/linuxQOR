@@ -26,7 +26,7 @@
 
 #include "client.h"
 #include "display.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 
 #include <wayland-client-core.h>
 

@@ -24,13 +24,13 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/iodescriptor.h"
 #include "src/platform/os/windows/io/network/sockets.h"
 #include "src/platform/os/windows/io/network/socket.h"
-#include "src/qor/error/error.h"
+#include "src/qor/flyers/error/error.h"
 #include "src/framework/parallel/asyncioservice/asynciocontext.h"
 
 #include "src/platform/os/windows/api_layer/winsock2/ws2.h"

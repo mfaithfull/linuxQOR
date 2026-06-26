@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_EXTERNALFACTORY
 #define QOR_PP_H_EXTERNALFACTORY
 
-#include "src/qor/injection/typeregistry.h"
-#include "src/qor/injection/typeregentry.h"
+#include "src/qor/memory/injection/typeregistry.h"
+#include "src/qor/memory/injection/typeregentry.h"
 
 namespace qor
 {

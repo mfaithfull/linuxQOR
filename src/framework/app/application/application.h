@@ -30,7 +30,7 @@
 #include "src/framework/app/role/irole.h"
 #include "src/framework/app/workflow/iworkflow.h"
 #include "src/qor/module/module.h"
-#include "src/qor/current/currentthread.h"
+#include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/instance/singleton.h"
 #include "src/platform/platform.h"
 #include "irunable.h"
