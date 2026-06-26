@@ -28,8 +28,7 @@
 #include <iostream>
 #include <iomanip>
 #include <ranges>
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/event/delegate/delegate.h"
 #include "src/qor/text/strings/strings.h"
 

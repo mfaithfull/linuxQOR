@@ -24,8 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "src/framework/app/host/host.h"
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/qor/module/moduleregistry.h"
 
 using namespace qor;

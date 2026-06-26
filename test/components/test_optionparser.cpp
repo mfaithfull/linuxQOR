@@ -26,8 +26,7 @@
 
 #include <string.h>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/app/optionparser/getter.h"
 
 using namespace qor;

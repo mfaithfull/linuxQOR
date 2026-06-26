@@ -33,7 +33,7 @@
 #define GLAD_GL_IMPLEMENTATION
 #include "3rdparty/glad/gl.h"
 
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/assert/assert.h"
 #include "src/framework/event/delegate/delegate.h"
 #include "src/qor/error/error.h"
 #include "glgears.h"

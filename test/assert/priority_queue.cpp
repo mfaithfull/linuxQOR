@@ -30,8 +30,7 @@
 
 #include <deque>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 
 namespace test_priorityqueue {
 

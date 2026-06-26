@@ -28,8 +28,7 @@
 #include <algorithm>
 #include <ostream>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/parallel/task/generator/recursivegenerator.h"
 #include "src/framework/parallel/sync/onscopeexit.h"
 #include "src/framework/parallel/task/detail/fmap.h"

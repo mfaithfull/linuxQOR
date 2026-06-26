@@ -26,7 +26,7 @@
 
 #include "3rdparty/glad/gl.h"
 
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/assert/assert.h"
 #include "context.h"
 #include "../window/window.h"
 #include "../session.h"

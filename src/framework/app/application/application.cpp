@@ -97,7 +97,7 @@ namespace qor{
         static app::Option longOptions[] =
         {
             //NAME      ARGUMENT				           FLAG	        SHORTNAME
-            {"usage",   app::Option::required_argument,    nullptr,     'u'},
+            {"usage",   app::Option::optional_argument,    nullptr,     'u'},
             {nullptr,   0,						           nullptr,     0}
         };
         return longOptions;
@@ -117,6 +117,10 @@ namespace qor{
 
     void Application::ReceiveNonOption(const char* parameter)
     {
+        if(m_Path.empty())
+        {
+            m_Path = parameter;
+        }
     }
 
 }//qor

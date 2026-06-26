@@ -23,18 +23,18 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/qor/observer/chainlink.h"
+#include "src/qor/tdd/tdd.h"
+#include "src/framework/event/observer/detail/chainlink.h"
 
 using namespace qor;
 using namespace qor::test;
+using namespace qor::detail;
 
 struct ChainLinkTestSuite{};
 
 size_t globalLinkableItemCount = 0;
 
-class LinkableItem : public qor::ChainLink
+class LinkableItem : public qor::detail::ChainLink
 {
 public:
 

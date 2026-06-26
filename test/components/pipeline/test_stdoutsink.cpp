@@ -26,8 +26,7 @@
 
 #include <random>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/current/currentthread.h"
@@ -41,7 +40,7 @@
 using namespace qor;
 using namespace qor::test;
 using namespace qor::pipeline;
-using namespace qor::components;
+using namespace qor::io::components;
 
 struct StdOutSinkTestSuite{};
 

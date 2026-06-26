@@ -31,7 +31,7 @@
 #include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "iworkflow.h"
-#include "src/qor/delegate/delegate.h"
+#include "src/framework/event/delegate/delegate.h"
 #include "src/qor/error/defaulterrorhandler.h"
 #include "src/qor/log/defaultloghandler.h"
 

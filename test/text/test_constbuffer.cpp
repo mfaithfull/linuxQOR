@@ -27,8 +27,7 @@
 #include <iostream>
 #include <iomanip>
 #include <ranges>
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/qor/error/error.h"
 #include "src/qor/text/buffers/constbuffer.h"
 

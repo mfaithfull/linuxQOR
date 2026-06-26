@@ -1,5 +1,5 @@
 #include "src/configuration/configuration.h"
-#include "src/qor/test/test.h"
+#include "src/qor/tdd/test/test.h"
 #include "src/qor/module/module.h"
 #include "src/qor/current/currentthread.h"
 #include "src/framework/app/application/builder.h"

@@ -26,8 +26,7 @@
 
 #include <ostream>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/parallel/sync/asynclatch.h"
 #include "src/framework/parallel/sync/singleconsumerevent.h"
 #include "src/framework/parallel/task/task.h"

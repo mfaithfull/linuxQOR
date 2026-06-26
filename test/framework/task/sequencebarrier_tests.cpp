@@ -27,8 +27,7 @@
 #include <stdio.h>
 #include <thread>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/parallel/sync/sequencebarrier.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"

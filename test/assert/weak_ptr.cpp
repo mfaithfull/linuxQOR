@@ -28,8 +28,7 @@
 
 #include "src/configuration/configuration.h"
 #include <memory>
-#include "src/qor/assert/assert.h"
-#include "src/qor/test/test.h"
+#include "src/qor/tdd/tdd.h"
 
 namespace test_weak_ptr
 {

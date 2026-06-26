@@ -23,8 +23,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/test/test.h"
-#include "src/qor/mock/mocks.h"
+#include "src/qor/tdd/test/test.h"
+#include "src/qor/tdd/mock/mocks.h"
 
 class IA 
 {

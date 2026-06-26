@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/assert/assert.h"
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/app/exebootstrap/winqorexeboot.h"
 #include "src/platform/os/windows/ui/gui/factories/windowfactory.h"

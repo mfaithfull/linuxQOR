@@ -39,9 +39,9 @@ namespace qor { namespace components { namespace protocols { namespace http {
         HTTPProtocol();
         virtual ~HTTPProtocol(){}
 
-        virtual network::sockets::eAddressFamily GetAddressFamily() const
+        virtual io::network::sockets::eAddressFamily GetAddressFamily() const
         {
-            return network::sockets::eAddressFamily::AF_INet;
+            return io::network::sockets::eAddressFamily::AF_INet;
         }
 
         virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter() override

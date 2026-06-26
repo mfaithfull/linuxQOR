@@ -28,12 +28,11 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/assert/adl.h"
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
-#include "src/qor/assert/proposition/isequaltopropositions.h"
-#include "src/qor/assert/subject/base.h"
-#include "src/qor/assert/util/failmessage.h"
+#include "src/qor/tdd/assert/adl.h"
+#include "src/qor/tdd/tdd.h"
+#include "src/qor/tdd/assert/proposition/isequaltopropositions.h"
+#include "src/qor/tdd/assert/subject/base.h"
+#include "src/qor/tdd/assert/util/failmessage.h"
 
 namespace test_user_subject
 {

@@ -28,8 +28,7 @@
 #include <thread>
 
 #include "src/framework/app/host/host.h"
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/qor/profiling/profiling.h"
 #include "src/qor/profiling/profilereceiver.h"
 

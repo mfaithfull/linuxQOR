@@ -27,8 +27,7 @@
 #include <thread>
 #include <ostream>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/parallel/task/singleproducersequencer.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/objectcontext/anyobject.h"

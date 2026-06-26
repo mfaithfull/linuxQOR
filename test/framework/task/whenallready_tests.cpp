@@ -29,8 +29,7 @@
 #include <vector>
 #include <ostream>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/parallel/task/whenall.h"
 #include "src/framework/parallel/task/task.h"
 #include "src/framework/parallel/task/sharedtask.h"

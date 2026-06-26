@@ -29,8 +29,7 @@
 #include <string>
 #include <forward_list>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/parallel/task/generator/generator.h"
 #include "src/framework/parallel/sync/onscopeexit.h"
 #include "src/framework/parallel/task/detail/fmap.h"

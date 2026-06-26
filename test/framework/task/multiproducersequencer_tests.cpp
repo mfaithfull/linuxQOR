@@ -28,8 +28,7 @@
 #include <chrono>
 #include <ostream>
 #include <coroutine>
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/parallel/task/multiproducersequencer.h"
 #include "src/framework/parallel/sync/sequencebarrier.h"
 #include "src/framework/parallel/sync/sequencetraits.h"

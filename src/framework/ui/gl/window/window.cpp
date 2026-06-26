@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/assert/assert.h"
 #include "src/qor/error/error.h"
 #include "window.h"
 #include "../platform.h"

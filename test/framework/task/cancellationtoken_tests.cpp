@@ -28,8 +28,7 @@
 #include <ostream>
 #include <chrono>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/framework/parallel/task/cancellation/cancellationtoken.h"
 #include "src/framework/parallel/task/cancellation/cancellationsource.h"
 #include "src/framework/parallel/task/cancellation/cancellationregistration.h"

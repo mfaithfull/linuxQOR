@@ -28,9 +28,8 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/qor/assert/adl.h"
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/assert/adl.h"
+#include "src/qor/tdd/tdd.h"
 
 namespace test_user_class
 {

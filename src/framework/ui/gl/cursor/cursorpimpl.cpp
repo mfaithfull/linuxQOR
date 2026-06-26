@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/assert/assert.h"
 #include "cursorpimpl.h"
 
 namespace qor{ namespace gl {

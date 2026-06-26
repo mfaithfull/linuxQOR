@@ -133,6 +133,7 @@ namespace qor{
 
         int RunWorkflowInternal();
 
+        std::string m_Path;
         std::string m_Name;
         ref_of<IRole>::type m_Role;
         ref_of<workflow::IWorkflow>::type m_Workflow;

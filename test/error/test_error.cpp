@@ -23,8 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/qor/module/module.h"
 #include "src/qor/error/error.h"
 #include "src/qor/error/handler.h"

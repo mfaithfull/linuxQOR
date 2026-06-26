@@ -26,8 +26,7 @@
 
 #include <condition_variable>
 
-#include "src/qor/test/test.h"
-#include "src/qor/assert/assert.h"
+#include "src/qor/tdd/tdd.h"
 #include "src/qor/current/currentthread.h"
 #include "src/framework/parallel/thread/thread.h"
 #include "src/framework/event/signals/signal.h"

@@ -22,33 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-#include "src/qor/tdd/tdd.h"
-#include "src/qor/current/currentthread.h"
-#include "src/qor/objectcontext/anyobject.h"
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
-#include "src/framework/app/application/builder.h"
-#include "src/framework/app/role/role.h"
-#include "src/platform/platform.h"
-#include "src/framework/io/filesystem/filesystem.h"
-#include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/app/workflow/workflow.h"
+#ifndef QOR_PP_H_TDD
+#define QOR_PP_H_TDD
 
-using namespace qor;
-using namespace qor::test;
-using namespace qor::platform;
+#include "assert/assert.h"
+#include "test/test.h"
+#include "mock/mocks.h"
 
+#endif//QOR_PP_H_TDD
 
-//TODO: This is an operational test. Move it to operational tests or make it a unit test
-
-qor_pp_test_case(canBuildAnApplication)
-{
-    auto app = AppBuilder().Build("QOR Test Application")->        
-        SetRole<Role>(
-            [](ref_of<IRole>::type /*role*/)
-            {
-            }
-        );
-    qor_pp_assert_that(true);//Yay we got here;
-}
