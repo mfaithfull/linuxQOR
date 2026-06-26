@@ -58,9 +58,9 @@ namespace qor { namespace components { namespace protocols { namespace http {
             return dynamic_cast<HTTPRequestGenerator*>(m_Workflow)->GetContext();
         }
 
-        inline workflow::Workflow* Workflow()
+        inline Workflow* Workflow()
         {
-            return dynamic_cast<workflow::Workflow*>(m_Workflow);
+            return dynamic_cast<class Workflow*>(m_Workflow);
         }
 
         inline HTTPRequestGenerator* GetRequestGenerator()

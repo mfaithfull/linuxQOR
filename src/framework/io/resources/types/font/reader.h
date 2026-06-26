@@ -31,7 +31,7 @@
 #include "src/framework/io/pipeline/podbuffer.h"
 #include "src/framework/io/pipeline/pipeline.h"
 #include "src/components/io/pipeline/sinks/deserializersink/deserializersink.h"
-#include "src/components/deserializer/state.h"
+#include "src/components/io/deserializer/state.h"
 #include "ttfobject.h"
 #include "reader/designator.h"
 #include "reader/ttfinitial.h"
@@ -49,7 +49,7 @@ namespace qor{ namespace framework{ namespace res {
         uint32_t ReadDesignator(const qor::pipeline::Plug& sourceConnector)
         {
             size_t unitsPumped = 0;
-            components::DeserializerSink<DesignatorState> sink(m_byteBuffer);
+            qor::pipeline::components::DeserializerSink<DesignatorState> sink(m_byteBuffer);
             pipeline::Pipeline(
                 sourceConnector,
                 sink,
@@ -60,7 +60,7 @@ namespace qor{ namespace framework{ namespace res {
 
         ref_of<TTFObject>::type operator()(const qor::pipeline::Plug& sourceConnector)
         {                    
-            components::DeserializerSink<TTFInitialState> sink(m_byteBuffer);
+            pipeline::components::DeserializerSink<TTFInitialState> sink(m_byteBuffer);
             qor::pipeline::Pipeline(
                 sourceConnector,
                 sink,

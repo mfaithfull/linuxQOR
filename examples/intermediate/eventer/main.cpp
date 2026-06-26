@@ -49,6 +49,7 @@ qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)
 
 using namespace qor;
+using namespace qor::app;
 using namespace qor::platform;
 using namespace qor::io;
 using namespace qor::components;

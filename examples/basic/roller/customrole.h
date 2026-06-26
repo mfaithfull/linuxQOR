@@ -8,7 +8,7 @@ Only derive directly from IRole if you plan to implement
 your own feature storage and retreival mechanism to 
 replace the built in QOR Role completely.*/
 
-class CustomRole : public Role
+class CustomRole : public app::Role
 {
 public:
     CustomRole();

@@ -27,10 +27,10 @@
 
 #include <string>
 #include "src/framework/app/application/builder.h"
-#include "src/framework/gl/session.h"
-#include "src/framework/gl/window/window.h"
+#include "src/framework/ui/gl/session.h"
+#include "src/framework/ui/gl/window/window.h"
 
-class GLGears final : public qor::framework::Application
+class GLGears final : public qor::Application
 {
     qor_pp_declare_app_class(GLGears);
 

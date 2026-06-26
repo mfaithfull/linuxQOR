@@ -53,12 +53,11 @@ namespace qor{ namespace framework{ namespace res {
         TTFReader reader;
 
         auto result = reader.ReadDesignator(
-            qor::components::FileConnector(
+            qor::io::components::FileConnector(
                 m_index,
                 reader.Buffer(),
-                qor::platform::WithFlags::None,
-                qor::platform::ShareMode::Owner_Read,
-                qor::platform::OpenFor::ReadOnly
+                qor::io::WithFlags::None,
+                qor::io::OpenFor::ReadOnly
             )
         );        
 
@@ -95,7 +94,7 @@ namespace qor{ namespace framework{ namespace res {
             TTFReader reader;
 
             auto result = reader(
-                components::FileConnector(m_index, reader.Buffer(), platform::WithFlags::None, platform::ShareMode::Owner_Read, platform::OpenFor::ReadOnly)
+                qor::io::components::FileConnector(m_index, reader.Buffer(), io::WithFlags::None, io::OpenFor::ReadOnly)
             );        
 
             Resource::Claim();

@@ -28,7 +28,7 @@
 #include "src/framework/io/pipeline/iosource.h"
 #include "socketconnector.h"
 
-namespace qor{ namespace io{ namespace components{ 
+namespace qor{ namespace io{ namespace network{ namespace components{ 
 
     class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketSource : public pipeline::iosource<SocketConnector>
     {
@@ -44,6 +44,6 @@ namespace qor{ namespace io{ namespace components{
        
     };
 
-}}}//qor::io::components
+}}}}//qor::io::network::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_SOCKET

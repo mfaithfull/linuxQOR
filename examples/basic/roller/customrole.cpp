@@ -8,11 +8,11 @@
 //before customiztion. 
 CustomRole::CustomRole()
 {
-    IRole::template AddFeature<qor::thread::ThreadPool>(   //We add a ThreadPool.
+    app::IRole::template AddFeature<thread::ThreadPool>(   //We add a ThreadPool.
 
         //Added features can be customised by passing a lamda
         //as a customisation point just like for Applications and Roles
-        [](ref_of<qor::thread::ThreadPool>::type threadPool)->void
+        [](ref_of<thread::ThreadPool>::type threadPool)->void
         {                    
             threadPool->SetThreadCount(4);  //Customise the thread pool with 4 threads
             /*Now that we're going to have more than one thread showing up in the debugger
@@ -30,7 +30,7 @@ void CustomRole::Setup()
     /*Always call the base. 
     Usually call this first and then do extra customisation
     using the features already setup*/
-    Role::Setup();
+    app::Role::Setup();
 
     /*Code here runs after all featues are Setup. This is the first point where all
     services will be available*/
@@ -43,7 +43,7 @@ void CustomRole::Shutdown()
 
     /* Always call the base. 
     Almost always call this last.*/    
-    Role::Shutdown();
+    app::Role::Shutdown();
 
     /*Code here runs after all features are shutdown. There is very little it is 
     safe to do here unless it only uses the Standard Library and statically linked

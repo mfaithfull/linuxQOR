@@ -49,7 +49,7 @@ namespace qor {
     template< typename T > class MulticastDelegate;
 
     template< typename ret_t, typename ...params_t >
-    class Delegate< ret_t(params_t...) > final : private DelegateHolder< ret_t(params_t...) >
+    class Delegate< ret_t(params_t...) > final : private detail::DelegateHolder< ret_t(params_t...) >
     {
     public:
 
@@ -145,13 +145,13 @@ namespace qor {
 
     private:
 
-        Delegate(void* anObject, typename DelegateHolder< ret_t(params_t...) >::stub_type aStub )
+        Delegate(void* anObject, typename detail::DelegateHolder< ret_t(params_t...) >::stub_type aStub )
         {
             m_Invocation.object = anObject;
             m_Invocation.stub = aStub;
         }
 
-        void Assign(void* anObject, typename DelegateHolder< ret_t(params_t...)>::stub_type aStub )
+        void Assign(void* anObject, typename detail::DelegateHolder< ret_t(params_t...)>::stub_type aStub )
         {
             this->m_Invocation.object = anObject;
             this->m_Invocation.stub = aStub;
@@ -185,7 +185,7 @@ namespace qor {
         }
 
         friend class MulticastDelegate< ret_t(params_t...) >;
-		typename DelegateHolder< ret_t(params_t...) >::InvocationElement m_Invocation;
+		typename detail::DelegateHolder< ret_t(params_t...) >::InvocationElement m_Invocation;
 
     };
 

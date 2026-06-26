@@ -37,13 +37,13 @@
 
 namespace qor { namespace components { namespace generator {
 
-    class qor_pp_module_interface(QOR_GENERATOR) Generator : public workflow::Workflow
+    class qor_pp_module_interface(QOR_GENERATOR) Generator : public Workflow
     {
     
     public:
 
-        inline Generator() : workflow::Workflow(){ }
-        inline Generator(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context){ }
+        inline Generator() : Workflow(){ }
+        inline Generator(ref_of<class Context>::type context) : Workflow(), m_context(context){ }
         virtual ~Generator() = default;
         inline Context* GetContext() const
         {

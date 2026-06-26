@@ -27,7 +27,7 @@
 
 #include "src/qor/injection/typeidentity.h"
 
-namespace qor{
+namespace qor{ namespace app {
 
     class IRole;
 
@@ -49,9 +49,10 @@ namespace qor{
 
     private:
         IFeature(const IFeature&) = delete;
+        IFeature(const IFeature&&) = delete;
         IFeature& operator = (const IFeature&) = delete;
     };
 
-}//qor
+}}//qor::app
 
 #endif//QOR_PP_H_ROLE_FEATURE_INTERFFACE

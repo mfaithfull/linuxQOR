@@ -49,7 +49,7 @@ private:
     ref_of<State>::type send;
     ref_of<State>::type receive;    
 
-    ref_of<SocketConnector>::type m_connector;
+    ref_of<qor::io::network::components::SocketConnector>::type m_connector;
     ref_of<RequestPipeline>::type m_requestPipeline;
     ref_of<ResponsePipeline>::type m_responsePipeline;
 

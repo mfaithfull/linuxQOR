@@ -44,7 +44,7 @@ qor_pp_module_will_provide(QOR_LOGAGGREGATOR, LogAggregatorService)
 
 namespace qor { namespace components{
   
-    class qor_pp_module_interface(QOR_LOGAGGREGATOR) LogAggregatorService : public IFeature
+    class qor_pp_module_interface(QOR_LOGAGGREGATOR) LogAggregatorService : public app::IFeature
     {
     public:
 
@@ -65,7 +65,7 @@ namespace qor { namespace components{
 
     private:
     
-        ref_of<qor::thread::ThreadPool>::type m_threadPool;
+        ref_of<thread::ThreadPool>::type m_threadPool;
         LogReceiver m_receiver;        
 
     };

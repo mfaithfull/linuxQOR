@@ -32,12 +32,12 @@ const char* Server::ProvideShortOptionString()
     return "f";
 }
 
-Option* Server::ProvideLongOptions()
+app::Option* Server::ProvideLongOptions()
 {
-    static Option longOptions[] =
+    static app::Option longOptions[] =
     {
     //   NAME       ARGUMENT				                    FLAG	SHORTNAME
-        {"file",    Option::required_argument,       nullptr, 'f'},
+        {"file",    app::Option::required_argument,       nullptr, 'f'},
         {nullptr,   0,						                    nullptr, 0}
     };
     return longOptions;

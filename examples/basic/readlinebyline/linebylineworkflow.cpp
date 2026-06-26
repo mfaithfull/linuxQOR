@@ -13,10 +13,12 @@
 #include "src/components/io/pipeline/filters/linereader/linereader.h"
 
 using namespace qor;
+using namespace qor::io;
 using namespace qor::workflow;
 using namespace qor::pipeline;
 using namespace qor::platform;
-using namespace qor::components;
+using namespace qor::io::components;
+using namespace qor::pipeline::components;
 
 bool requiresFileSystem = ImplementsIFileSystem();
 
@@ -54,7 +56,6 @@ LineByLineWorkflow::LineByLineWorkflow() : state0(new_ref<qor::workflow::State>(
 
         connector.SetFile(newIndex);
         connector.SetOpenFor(OpenFor::ReadOnly);
-        connector.SetShare(ShareMode::Owner_Read);
         connector.Connect();
 
         size_t unitsPumped = 0;

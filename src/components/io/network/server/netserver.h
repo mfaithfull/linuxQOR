@@ -38,7 +38,7 @@
 
 namespace qor{ namespace io{ namespace network{ namespace components {
 
-    class qor_pp_module_interface(QOR_NETSERVER) NetworkServer : public workflow::Workflow
+    class qor_pp_module_interface(QOR_NETSERVER) NetworkServer : public Workflow
     {
     public:
 

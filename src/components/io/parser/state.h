@@ -58,7 +58,7 @@ namespace qor { namespace components { namespace parser {
         virtual void Emit();
         virtual void Fail();
         
-        workflow::Workflow* Workflow();        
+        Workflow* Workflow();        
         uint64_t m_token{0};
     };
 

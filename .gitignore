@@ -36,6 +36,7 @@
 /build/.vs
 /build
 .vscode
+.VSCodeCounter
 
 # CMake
 /cmakebuild

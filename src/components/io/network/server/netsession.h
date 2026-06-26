@@ -40,7 +40,7 @@
 
 namespace qor{ namespace io{ namespace network { namespace components {
 
-    class NetworkSession : public workflow::Workflow
+    class NetworkSession : public Workflow
     {
     public:
 

@@ -52,7 +52,7 @@ namespace qor { namespace components { namespace generator {
         virtual void Emit();
         virtual void Fail();
         class Context* GetContext();
-        workflow::Workflow* Workflow();
+        Workflow* Workflow();
         class Generator* GetGenerator();
     };
 

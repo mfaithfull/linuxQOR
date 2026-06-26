@@ -41,7 +41,7 @@ namespace qor{ namespace pipeline{ namespace components{
 
         virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );   
         
-        serial::Deserializer& Deserializer()
+        qor::components::serial::Deserializer& Deserializer()
         {
             return m_deserializer;
         }
@@ -52,8 +52,8 @@ namespace qor{ namespace pipeline{ namespace components{
         bool Push(size_t& unitsWritten, size_t unitsToWrite);
         virtual size_t Read(byte* data, size_t bytesToParse) = 0;
 
-        ref_of<serial::Context>::type m_context;
-        serial::Deserializer m_deserializer;        
+        ref_of<qor::components::serial::Context>::type m_context;
+        qor::components::serial::Deserializer m_deserializer;        
     };
 
     template<class TObjectState>

@@ -29,9 +29,9 @@
 
 #include "widgetbase.h"
 #include "event.h"
-#include "src/components/framework/ui/layout/reflect.h"
-#include "src/components/framework/ui/layout/size.h"
-#include "src/components/framework/ui/layout/elements.h"
+#include "src/components/ui/layout/reflect.h"
+#include "src/components/ui/layout/size.h"
+#include "src/components/ui/layout/elements.h"
 
 namespace qor{ namespace components{ namespace ui {
 

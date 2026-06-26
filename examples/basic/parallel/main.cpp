@@ -7,6 +7,10 @@
 #include "sdk/using_platform.h"
 #include "sdk/using_framework.h"
 #include "sdk/components/framework.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
+
+using namespace qor::components;
+using namespace qor::app;
 
 constexpr const char* appName = "Parallel";
 qor_pp_implement_module(appName)

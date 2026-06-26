@@ -25,13 +25,13 @@
 #include "src/configuration/configuration.h"
 
 #include "src/framework/app/application/builder.h"
-#include "src/components/framework/ui/opengles/opengles.h"
+#include "src/components/ui/opengles/opengles.h"
 #include "src/components/ui/egl/window.h"
 #include "canvas.h"
 
 namespace qor{ namespace components{ 
 
-    using namespace qor::framework;
+    //using namespace qor::framework;
 
     Canvas::Canvas()
     {

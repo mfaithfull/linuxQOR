@@ -33,14 +33,14 @@
 #include "src/platform/platform.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
-#include "src/framework/resources/resourcehub.h"
+#include "src/framework/io/resources/resourcehub.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/optionparser/getter.h"
 #include "rdapp.h"
 #include "src/framework/app/role/getfeature.h"
-#include "src/framework/resources/types/json/jsonresource.h"
-#include "src/framework/resources/types/font/fontresource.h"
-#include "src/framework/resources/claimer.h"
+#include "src/framework/io/resources/types/json/jsonresource.h"
+#include "src/framework/io/resources/types/font/fontresource.h"
+#include "src/framework/io/resources/claimer.h"
 
 constexpr const char* logTag = "resourced";
 
@@ -50,6 +50,7 @@ qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(ResourceHub)
 
 using namespace qor;
+using namespace qor::io;
 using namespace qor::platform;
 using namespace qor::framework;
 using namespace qor::components;
@@ -84,16 +85,16 @@ int main(const int argc, const char** argv, char** env)
             /*Parse the options from the command line and pass them to the ResourcedApp*/
             qor::app::OptionGetter options(argc, argv, app(qor_shared));
         }
-    )->SetRole<Role>(
-        [&logHandler](ref_of<IRole>::type role)
+    )->SetRole<app::Role>(
+        [&logHandler](ref_of<app::IRole>::type role)
         {
             qor_pp_fcontext;
 
-            role->AddFeature<ThreadPool>(
-                [](ref_of<ThreadPool>::type threadPool)
+            role->AddFeature<thread::ThreadPool>(
+                [](ref_of<thread::ThreadPool>::type threadPool)
                 {
                     threadPool->SetThreadCount(6);
-                    qor::framework::CurrentThread::GetCurrent().SetName("Main");
+                    qor::CurrentThread::GetCurrent().SetName("Main");
                 }
             );
             
@@ -107,7 +108,7 @@ int main(const int argc, const char** argv, char** env)
             role->AddFeature<ResourceHub>(
                 [&role](ref_of<ResourceHub>::type resourceHub)->void
                 {
-                    resourceHub->UseThreadPool(role->GetFeature<ThreadPool>());
+                    resourceHub->UseThreadPool(role->GetFeature<thread::ThreadPool>());
                 }
             );
         }
@@ -115,7 +116,7 @@ int main(const int argc, const char** argv, char** env)
         [&logHandler]()->int
         {            
             auto resourceHub = GetFeature<ResourceHub>();
-            Path fontPath("F:/Develop/thorvg-1.0-pre33/thorvg-1.0-pre33/examples/resources/font");
+            filesystem::Path fontPath("F:/Develop/thorvg-1.0-pre33/thorvg-1.0-pre33/examples/resources/font");
             Claimer<res::Font> font_claimer(resourceHub, fontPath);
             //Claimer<res::JSON> json_claimer(resourceHub, fontPath);
             //res::JSON* jsonResouce = nullptr;

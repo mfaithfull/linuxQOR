@@ -29,7 +29,7 @@
 #include <iostream>
 #include "src/qor/reference/newref.h"
 
-namespace qor{
+namespace qor{ namespace app {
 
     class IRunable
     {
@@ -77,6 +77,6 @@ namespace qor{
         return new_ref<RunableFunc>(func).template AsRef<IRunable>();
     }
 
-}//qor
+}}//qor::app
 
 #endif//QOR_PP_H_RUNABLE

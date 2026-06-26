@@ -41,9 +41,9 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         EchoProtocol();
         virtual ~EchoProtocol(){}
 
-        virtual network::sockets::eAddressFamily GetAddressFamily() const
+        virtual io::network::sockets::eAddressFamily GetAddressFamily() const
         {
-            return network::sockets::eAddressFamily::AF_INet;
+            return io::network::sockets::eAddressFamily::AF_INet;
         }
 
         virtual ref_of<pipeline::InlineFilter<byte>>::type GetRequestFilter() override

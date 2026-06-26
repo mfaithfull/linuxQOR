@@ -68,8 +68,8 @@ namespace qor::components::tui{
 
 int main()
 {
-   return AppBuilder().Build(appName)->SetRole<Role>(
-        [](ref_of<IRole>::type role)    
+   return AppBuilder().Build(appName)->SetRole<app::Role>(
+        [](ref_of<app::IRole>::type role)    
         {
             role->AddFeature<TermScreen>();
         }
@@ -102,7 +102,7 @@ int main()
                 {
                     return vbox(
                         {
-                            hbox(text("selected = "), text(std::to_string(selected))),
+                            hbox(::text("selected = "), ::text(std::to_string(selected))),
                             separator(),
                             menu->Render() | frame,
                         }

@@ -27,7 +27,7 @@
 
 using namespace qor;
 using namespace qor::io::network;
-using namespace qor::io::components;
+using namespace qor::io::network::components;
 using namespace qor::async;
 
 SessionPipeline::SessionPipeline(

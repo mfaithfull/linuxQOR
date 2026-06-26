@@ -14,7 +14,7 @@ It's all a way of controlling the flow of a program
 without having to write loops and function calls
 explicitly. They are provided by the workflow automatically*/
 
-class CustomWorkflow : public qor::workflow::Workflow
+class CustomWorkflow : public qor::Workflow
 {
 public:
 

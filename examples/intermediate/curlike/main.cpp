@@ -41,8 +41,8 @@
 using namespace qor;
 using namespace qor::log;
 using namespace qor::platform;
+using namespace qor::io;
 using namespace qor::io::network;
-using namespace qor::framework;
 using namespace qor::components;
 
 const char* appName = "Example Client";
@@ -77,11 +77,11 @@ int main(const int argc, const char** argv, char**)
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build(appName)->
-        SetRole<Role>(
-            [&logHandler](IRole::ref role)
+        SetRole<app::Role>(
+            [&logHandler](app::IRole::ref role)
             {
-                role->AddFeature<ThreadPool>(
-                    [](ref_of<ThreadPool>::type threadPool)->void
+                role->AddFeature<thread::ThreadPool>(
+                    [](ref_of<thread::ThreadPool>::type threadPool)->void
                     {
                         threadPool->SetThreadCount(1);
                         CurrentThread::Get().SetName("Main");

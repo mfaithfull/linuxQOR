@@ -83,9 +83,9 @@ namespace qor { namespace components { namespace parser {
         return dynamic_cast<Parser*>(m_Workflow)->GetContext();
     }
 
-    workflow::Workflow* ParserState::Workflow()
+    Workflow* ParserState::Workflow()
     {
-        return dynamic_cast<workflow::Workflow*>(m_Workflow);
+        return dynamic_cast<class Workflow*>(m_Workflow);
     }
 
     Parser* ParserState::GetParser()

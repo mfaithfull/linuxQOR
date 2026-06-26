@@ -40,7 +40,7 @@ int main()
         }
     )->SetRole<CustomRole>(                 //...on which we can call SetRole with our CustomRole class
                 
-        [](ref_of<IRole>::type role)        //Note: Whatever the derived type of your Role you'll always get an IRole interface on this customisation point
+        [](ref_of<app::IRole>::type role)        //Note: Whatever the derived type of your Role you'll always get an IRole interface on this customisation point
         {
             //Here we configure the Role by adding features
             //You can add whatever Features you need including custom features

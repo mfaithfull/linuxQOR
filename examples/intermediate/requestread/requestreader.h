@@ -27,6 +27,7 @@
 #include "sdk/components/framework.h"
 #include "src/components/protocols/http/server/requestparser/requesttoken.h"
 #include "src/components/protocols/http/server/requestparser/nodes/requestnode.h"
+#include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
 
 class RequestReader
 {
@@ -56,5 +57,5 @@ public:
 private:
 
     pipeline::PODBuffer<byte> m_byteBuffer;
-    ParserSink<components::protocols::http::request> m_sink;
+    qor::pipeline::components::ParserSink<components::protocols::http::request> m_sink;
 };

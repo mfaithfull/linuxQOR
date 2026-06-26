@@ -41,7 +41,7 @@
 #ifndef QOR_PP_H_DELEGATEHOLDER
 #define QOR_PP_H_DELEGATEHOLDER
 
-namespace qor {
+namespace qor { namespace detail {
 
     template< typename T >
     class DelegateHolder;
@@ -81,6 +81,6 @@ namespace qor {
         };
     };
 
-}//qor
+}}//qor::detail
 
 #endif//QOR_PP_H_DELEGATEHOLDER

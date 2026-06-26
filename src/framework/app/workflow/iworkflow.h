@@ -30,7 +30,7 @@
 namespace qor{ namespace workflow{
 
     //Base abstract interface for all workflows
-    class IWorkflow : public IRunable
+    class IWorkflow : public app::IRunable
     {
     public:
 

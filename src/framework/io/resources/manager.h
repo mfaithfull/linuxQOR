@@ -51,7 +51,7 @@ namespace qor{ namespace framework{
         //This is the interface seen and used by resources----------------------------------------------------//|
         void ReceiveResourceUpdate(Resource* res, ResourceStatus status);                                     //|
         //This is the interface to be implemented by an actual resource manager----------------------------------.
-        virtual void AddPath(const platform::Path& path, Resource* batchKey = nullptr){}                      //|.
+        virtual void AddPath(const io::filesystem::Path& path, Resource* batchKey = nullptr){}                //|.
         virtual void AddFile(const io::filesystem::Index& file, Resource* batchKey = nullptr){}               //|.
         virtual void AddJSON(const io::filesystem::Index& file, Resource* batchKey = nullptr){}               //|.
         virtual void AddFont(const io::filesystem::Index& file, Resource* batchKey = nullptr){}               //|.
@@ -69,7 +69,7 @@ namespace qor{ namespace framework{
         virtual void OnAvailable(Resource* res);                               								  // .
         virtual void OnRemoved(Resource* res);                                								  // .
 
-        ref_of<framework::ThreadPool>::type m_threadPool;
+        ref_of<thread::ThreadPool>::type m_threadPool;
 
     private:        
 

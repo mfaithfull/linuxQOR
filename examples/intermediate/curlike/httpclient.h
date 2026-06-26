@@ -28,7 +28,7 @@
 #include <string>
 #include <regex>
 
-#include "src/components/network/client/netclient.h"
+#include "src/components/io/network/client/netclient.h"
 #include "src/components/protocols/http/client/requestsource/source.h"
 #include "src/components/protocols/http/client/responsesink/sink.h"
 #include "src/components/protocols/http/protocol.h"
@@ -177,7 +177,7 @@ private:
     std::string m_host;
     int m_port;
 
-    qor::components::NetworkClient m_client;
+    qor::io::network::components::NetworkClient m_client;
     qor::pipeline::ByteBuffer m_requestBuffer;
     qor::pipeline::ByteBuffer m_responseBuffer;
     qor::components::protocols::http::HTTPSource m_source;

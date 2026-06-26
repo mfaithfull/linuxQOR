@@ -28,7 +28,7 @@
 #include "src/qor/current/currentthread.h"
 #include "src/qor/reference/newref.h"
 #include "src/components/ui/egl/window.h"
-#include "src/components/framework/ui/renderer/thor.h"
+#include "src/components/ui/renderer/thor.h"
 
 namespace qor { namespace components{
 

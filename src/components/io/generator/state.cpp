@@ -65,9 +65,9 @@ namespace qor { namespace components { namespace generator {
         return dynamic_cast<Generator*>(m_Workflow)->GetContext();
     }
 
-    workflow::Workflow* GeneratorState::Workflow()
+    Workflow* GeneratorState::Workflow()
     {
-        return dynamic_cast<workflow::Workflow*>(m_Workflow);
+        return dynamic_cast<class Workflow*>(m_Workflow);
     }
 
     Generator* GeneratorState::GetGenerator()

@@ -31,7 +31,7 @@
 #include "src/framework/io/pipeline/pipeline.h"
 
 template<class Req, class Resp>
-class RequestResponseClientProtocol : public qor::framework::IRunable
+class RequestResponseClientProtocol : public qor::app::IRunable
 {
 public:
 

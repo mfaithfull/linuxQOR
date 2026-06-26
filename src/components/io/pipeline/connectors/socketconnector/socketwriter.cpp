@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "socketwriter.h"
 
-namespace qor{ namespace io{ namespace components{
+namespace qor{ namespace io{ namespace network{ namespace components{
 
     SocketWriter::SocketWriter() : pipeline::Pipeline()
     {
@@ -91,4 +91,4 @@ namespace qor{ namespace io{ namespace components{
         return s;//TODO((uint64_t)htonl(s & 0xFFFFFFFF) << 32LL) | htonl(s >> 32);
     }
 
-}}}//qor::io::components
+}}}}//qor::io::network::components

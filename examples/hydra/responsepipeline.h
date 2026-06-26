@@ -26,21 +26,22 @@
 #define QOR_PP_H_EXAMPLES_HYDRA_RESPONSEPIPELINE
 
 #include "sdk/using_framework.h"
-#include "sdk/components/framework.h"
+#include "src/components/io/pipeline/sinks/stdoutsink/stdoutsink.h"
+#include "src/components/io/pipeline/connectors/socketconnector/socketsource.h"
 
 class ResponsePipeline : public Pipeline
 {
 public:
 
-    ResponsePipeline(ref_of<SocketConnector>::type connector);
+    ResponsePipeline(ref_of<qor::io::network::components::SocketConnector>::type connector);
     virtual ~ResponsePipeline() = default;
 
 private:    //socket -> stdout
 
     ByteBuffer m_responseBuffer;
-    StdOutSink m_stdOutsink;
-    SocketSource m_socketSource;
-    ref_of<SocketConnector>::type m_socketConnector;
+    qor::io::components::StdOutSink m_stdOutsink;
+    qor::io::network::components::SocketSource m_socketSource;
+    ref_of<qor::io::network::components::SocketConnector>::type m_socketConnector;
 };
 
 #endif // QOR_PP_H_EXAMPLES_HYDRA_RESPONSEPIPELINE

@@ -43,9 +43,13 @@
 
 using namespace qor;
 using namespace qor::log;
+using namespace qor::io;
+using namespace qor::io::components;
 using namespace qor::pipeline;
+using namespace qor::pipeline::components;
 using namespace qor::platform;
 using namespace qor::components;
+using namespace qor::framework;
 
 qor_pp_implement_module(Images::Name)
 qor_pp_redirect_app_class(Images);
@@ -65,8 +69,8 @@ int main(const int argc, const char** argv, char** env)
     DefaultLogHandler logHandler(Level::Debug);
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build<Images>(Images::Name)->SetRole<Role>(
-        [&logHandler](ref_of<IRole>::type role)
+    return AppBuilder().Build<Images>(Images::Name)->SetRole<app::Role>(
+        [&logHandler](ref_of<app::IRole>::type role)
         {
             qor_pp_fcontext;            
             role->AddFeature<thread::ThreadPool>(
@@ -109,7 +113,7 @@ void PipelineFileProcessor(io::filesystem::Index& input)
 {
     Image output;    
     JPEGDecodeFilter filter;
-    Pipeline(FileConnector(input,WithFlags::None,ShareMode::Owner_Read,OpenFor::ReadOnly), ImageSink(output))
+    Pipeline(FileConnector(input,WithFlags::None,OpenFor::ReadOnly), ImageSink(output))
     .InsertFilter(&filter).Connect().PumpOne();
     
 }

@@ -29,7 +29,7 @@
 #include <vector>
 #include "../ttfstructures.h"
 #include "src/qor/reflection/reflection.h"
-#include "src/components/deserializer/structstate.h"
+#include "src/components/io/deserializer/structstate.h"
 
 namespace qor{ namespace framework{ namespace res {
 
@@ -74,9 +74,9 @@ namespace qor{ namespace framework{ namespace res {
             return dynamic_cast<qor::components::serial::Deserializer*>(m_Workflow)->GetContext();
         }
 
-        workflow::Workflow* Workflow()
+        Workflow* Workflow()
         {
-            return dynamic_cast<workflow::Workflow*>(m_Workflow);
+            return dynamic_cast<class Workflow*>(m_Workflow);
         }
 
         class qor::components::serial::Deserializer* GetDeserializer()
@@ -110,9 +110,9 @@ namespace qor{ namespace framework{ namespace res {
             return dynamic_cast<qor::components::serial::Deserializer*>(m_Workflow)->GetContext();
         }
 
-        workflow::Workflow* Workflow()
+        Workflow* Workflow()
         {
-            return dynamic_cast<workflow::Workflow*>(m_Workflow);
+            return dynamic_cast<class Workflow*>(m_Workflow);
         }
 
         qor::components::serial::Deserializer* GetDeserializer()

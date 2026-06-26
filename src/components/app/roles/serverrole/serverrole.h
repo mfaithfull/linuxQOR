@@ -29,7 +29,7 @@
 
 namespace qor{ namespace app{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_SERVERROLE) ServerRole : public qor::IRole
+    class qor_pp_module_interface(QOR_SERVERROLE) ServerRole : public IRole
     {
     public:
 

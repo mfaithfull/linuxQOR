@@ -37,7 +37,7 @@ namespace qor{ namespace framework{
     {
     public:
 
-        Claimer(ref_of<ResourceHub>::type hub, platform::Path& path)
+        Claimer(ref_of<ResourceHub>::type hub, io::filesystem::Path& path)
         {
             m_resource = nullptr;
             hub->SubscribeForAllByPath(path.ToString(), bindMemberFunction(&Claimer<ResourceType>::Callback, this));

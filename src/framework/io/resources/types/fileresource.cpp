@@ -23,6 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#include "src/qor/error/error.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/folder.h"
 #include "fileresource.h"

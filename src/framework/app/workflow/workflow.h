@@ -35,30 +35,33 @@
 #include "src/qor/error/defaulterrorhandler.h"
 #include "src/qor/log/defaultloghandler.h"
 
-namespace qor{ namespace workflow{
+namespace qor{ 
 
     class qor_pp_module_interface(QOR_WORKFLOW) Workflow;
 
-    class qor_pp_module_interface(QOR_WORKFLOW) State
-    {
-    public:
+    namespace workflow{
 
-        typedef ref_of<State>::type ref;
+        class qor_pp_module_interface(QOR_WORKFLOW) State
+        {
+        public:
 
-        std::function<void(void)> Enter;
-        std::function<void(void)> Suspend;
-        std::function<void(void)> Resume;
-        std::function<void(void)> Leave;
+            typedef ref_of<State>::type ref;
 
-        State(Workflow* workflow);
-        virtual ~State() = default;
+            std::function<void(void)> Enter;
+            std::function<void(void)> Suspend;
+            std::function<void(void)> Resume;
+            std::function<void(void)> Leave;
 
-    protected:
+            State(Workflow* workflow);
+            virtual ~State() = default;
 
-        Workflow* m_Workflow;
-    };
+        protected:
 
-    class qor_pp_module_interface(QOR_WORKFLOW) Workflow : public IWorkflow
+            Workflow* m_Workflow;
+        };
+    }//qor::workflow
+
+    class qor_pp_module_interface(QOR_WORKFLOW) Workflow : public workflow::IWorkflow
     {
     public:
 
@@ -74,10 +77,10 @@ namespace qor{ namespace workflow{
             return Run();
         }
         virtual bool IsComplete() const;
-        void SetInitialState(ref_of<State>::type state);
+        void SetInitialState(ref_of<workflow::State>::type state);
         
-        void SetState(ref_of<State>::type state);
-        void PushState(ref_of<State>::type state);
+        void SetState(ref_of<workflow::State>::type state);
+        void PushState(ref_of<workflow::State>::type state);
         void PopState();        
         void SetComplete();
         void SetComplete(int result);
@@ -88,8 +91,8 @@ namespace qor{ namespace workflow{
         virtual void Resume();
         virtual void Leave();
 
-        ref_of<State>::type GetInitialState() const;
-        ref_of<State>::type CurrentState();
+        ref_of<workflow::State>::type GetInitialState() const;
+        ref_of<workflow::State>::type CurrentState();
 
         ref_of<DefaultLogHandler>::type m_logHander;
         ref_of<DefaultErrorHandler>::type m_errorHandler;
@@ -98,11 +101,11 @@ namespace qor{ namespace workflow{
     
         int m_result{0};
         bool m_complete{false};
-        ref_of<State>::type m_initialState;
-        std::stack< ref_of<State>::type > m_StateStack;
+        ref_of<workflow::State>::type m_initialState;
+        std::stack< ref_of<workflow::State>::type > m_StateStack;
 
     };
 
-}}//qor::workflow
+}//qor
 
 #endif//QOR_PP_H_FRAMEWORK_WORKFLOW

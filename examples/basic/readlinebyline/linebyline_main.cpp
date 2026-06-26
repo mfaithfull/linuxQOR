@@ -12,6 +12,8 @@
 #include "linebylineworkflow.h"
 
 using namespace qor;
+using namespace qor::app;
+using namespace qor::io;
 using namespace qor::thread;
 using namespace qor::platform;
 

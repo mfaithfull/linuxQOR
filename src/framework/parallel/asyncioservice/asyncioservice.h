@@ -45,7 +45,7 @@ namespace qor{ bool qor_pp_module_interface(QOR_ASYNCIOSERVICE) ImplementsAsyncI
 
 namespace qor { namespace async{
   
-    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOService : public IFeature
+    class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOService : public app::IFeature
     {
     public:
 

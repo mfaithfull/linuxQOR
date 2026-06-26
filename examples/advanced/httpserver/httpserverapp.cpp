@@ -36,9 +36,12 @@
 
 //qor namespaces in use
 using namespace qor;
+using namespace qor::app;
 using namespace qor::log;
 using namespace qor::platform;
+using namespace qor::io;
 using namespace qor::io::network;
+using namespace qor::io::network::components;
 using namespace qor::components;
 using namespace qor::components::protocols;
 

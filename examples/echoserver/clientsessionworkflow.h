@@ -33,7 +33,7 @@
 #include "serverloghandler.h"
 #include "src/qor/profiling/profilereceiver.h"
 
-class ClientSessionWorkflow : public qor::workflow::Workflow
+class ClientSessionWorkflow : public qor::Workflow
 {
 public:
 

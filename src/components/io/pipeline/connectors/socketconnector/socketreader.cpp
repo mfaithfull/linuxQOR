@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "socketreader.h"
 
-namespace qor{ namespace io{ namespace components{ 
+namespace qor{ namespace io{ namespace network{ namespace components{ 
 
     SocketReader::SocketReader() : pipeline::Pipeline()
     {        
@@ -67,4 +67,4 @@ namespace qor{ namespace io{ namespace components{
         return ActualSource()->Read(unitsRead, unitsToRead);
     }
 
-}}}//qor::io::components
+}}}}//qor::io::network::components

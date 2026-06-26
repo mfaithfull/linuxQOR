@@ -38,7 +38,7 @@ namespace qor{ bool qor_pp_import ImplementsOpenGLESFeature(); }
 namespace qor { namespace components{
 
     class qor_pp_module_interface(QOR_OPENGLES) OpenGLESWindow;
-    class qor_pp_module_interface(QOR_OPENGLES) OpenGLESFeature : public IFeature
+    class qor_pp_module_interface(QOR_OPENGLES) OpenGLESFeature : public app::IFeature
     {
     public:
 

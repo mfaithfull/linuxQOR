@@ -53,7 +53,7 @@ namespace qor{ namespace framework{
             m_threadPool->PostTask(
                 [this]()->void
                 {
-                    qor::framework::CurrentThread::GetCurrent().SetName("Resource Manager");
+                    qor::CurrentThread::GetCurrent().SetName("Resource Manager");
                     Run();
                 }
             );

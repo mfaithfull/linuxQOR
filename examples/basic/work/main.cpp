@@ -16,5 +16,5 @@ qor_pp_implement_module(appName)
 int main()
 {
     //The CustomWorkflow becomes the runnable component for our Application
-    return AppBuilder().Build(appName)->SetRole<Role>().RunWorkflow<CustomWorkflow>();
+    return AppBuilder().Build(appName)->SetRole<app::Role>().RunWorkflow<CustomWorkflow>();
 }

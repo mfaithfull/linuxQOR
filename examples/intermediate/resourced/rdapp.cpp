@@ -25,7 +25,7 @@
 
 #include "rdapp.h"
 
-qor::SingletonRedirector<qor::framework::Application, ResourcedApp> ResourcedApp::m_sRedirect;
+qor::SingletonRedirector<qor::Application, ResourcedApp> ResourcedApp::m_sRedirect;
 
 
 const char* ResourcedApp::ProvideShortOptionString()

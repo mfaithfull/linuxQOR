@@ -6,7 +6,7 @@
 #include <string>
 #include <iostream>
 
-class CustomFeature : public IFeature               //To create a custom feature derive from IFeature
+class CustomFeature : public app::IFeature               //To create a custom feature derive from IFeature
 {
 public:
 

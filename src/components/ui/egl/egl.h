@@ -48,7 +48,7 @@ namespace qor { namespace components{
         Win32
     };
 
-    class qor_pp_module_interface(QOR_EGL) EGLFeature : public IFeature
+    class qor_pp_module_interface(QOR_EGL) EGLFeature : public app::IFeature
     {
     public:
 

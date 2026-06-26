@@ -95,9 +95,9 @@ namespace qor { namespace components { namespace serial {
             return dynamic_cast<Deserializer*>(m_Workflow)->GetContext();
         }
 
-        workflow::Workflow* Workflow()
+        Workflow* Workflow()
         {
-            return dynamic_cast<workflow::Workflow*>(m_Workflow);
+            return dynamic_cast<class Workflow*>(m_Workflow);
         }
 
         class Deserializer* GetDeserializer()
@@ -194,9 +194,9 @@ namespace qor { namespace components { namespace serial {
             return dynamic_cast<Deserializer*>(m_Workflow)->GetContext();
         }
 
-        workflow::Workflow* Workflow()
+        Workflow* Workflow()
         {
-            return dynamic_cast<workflow::Workflow*>(m_Workflow);
+            return dynamic_cast<class Workflow*>(m_Workflow);
         }
 
         class Deserializer* GetDeserializer()
@@ -239,9 +239,9 @@ namespace qor { namespace components { namespace serial {
             return dynamic_cast<Deserializer*>(m_Workflow)->GetContext();
         }
 
-        workflow::Workflow* Workflow()
+        Workflow* Workflow()
         {
-            return dynamic_cast<workflow::Workflow*>(m_Workflow);
+            return dynamic_cast<class Workflow*>(m_Workflow);
         }
 
         class Deserializer* GetDeserializer()

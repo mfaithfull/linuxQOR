@@ -28,7 +28,7 @@
 #include <string>
 
 #define QOR_PP_IMPLEMENTS_OPENGLES
-#include "src/components/framework/ui/opengles/opengles.h"
+#include "src/components/ui/opengles/opengles.h"
 
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/common/handles/handle.h"

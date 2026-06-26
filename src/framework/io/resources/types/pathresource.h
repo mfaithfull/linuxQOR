@@ -39,7 +39,7 @@ namespace qor{ namespace framework{ namespace res {
 
         static const char* StaticType();
 
-        Path(ResourceManager* manager, const qor::platform::Path& path, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_path(path), m_monitor(false), m_recurse(false)
+        Path(ResourceManager* manager, const qor::io::filesystem::Path& path, Resource* batchKey = nullptr) : Resource(manager, batchKey), m_path(path), m_monitor(false), m_recurse(false)
         {            
             Name();
         }
@@ -57,7 +57,7 @@ namespace qor{ namespace framework{ namespace res {
 
     protected:
 
-        const qor::platform::Path m_path;
+        const qor::io::filesystem::Path m_path;
         bool m_monitor;
         std::vector<const char*> m_contentHints;
         std::map<std::string, res::File> m_files;

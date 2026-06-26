@@ -29,7 +29,7 @@
 #include "socketsink.h"
 #include "socketsource.h"
 
-namespace qor{ namespace io { namespace components{
+namespace qor{ namespace io { namespace network{ namespace components{
 
     SocketConnector::SocketConnector() : Plug()
     {
@@ -181,4 +181,4 @@ namespace qor{ namespace io { namespace components{
         return m_Socket->SetNonBlocking(nonBlocking);
     }
 
-}}}//qor::io::components
+}}}}//qor::io::network::components

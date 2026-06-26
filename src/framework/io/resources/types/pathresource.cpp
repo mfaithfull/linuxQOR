@@ -90,8 +90,8 @@ namespace qor{ namespace framework{ namespace res {
     void Path::Claim()
     {        
         //If the path has been marked as a container for certain types, set off a task to scan the path for subsidiary resources
-        auto threadPool = GetFeature<ThreadPool>();
-        qor::platform::Folder folder(m_path);
+        auto threadPool = GetFeature<thread::ThreadPool>();
+        qor::io::filesystem::Folder folder(m_path);
         ResourceManager* manager = m_manager;
         bool includeSubFolders = this->m_recurse;
         Resource* batch = this;

@@ -77,8 +77,8 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
     qor_pp_fcontext;
     DefaultLogHandler logHandler(log::Level::Debug);
 
-    return AppBuilder().Build(appName)->SetRole<Role>(
-        [&logHandler](ref_of<IRole>::type role)
+    return AppBuilder().Build(appName)->SetRole<app::Role>(
+        [&logHandler](ref_of<app::IRole>::type role)
         {
             role->AddFeature<thread::ThreadPool>(
                 [](ref_of<thread::ThreadPool>::type threadPool)

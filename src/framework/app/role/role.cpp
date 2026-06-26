@@ -29,7 +29,7 @@
 #include "src/platform/platform.h"
 #include "src/qor/error/error.h"
 
-namespace qor{
+namespace qor{ namespace app {
 
     void Role::Setup()
     {
@@ -109,5 +109,5 @@ namespace qor{
         }
     }
 
-}//qor
+}}//qor::app
 

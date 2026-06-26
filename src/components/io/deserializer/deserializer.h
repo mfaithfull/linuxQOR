@@ -34,15 +34,15 @@ namespace qor { namespace components { namespace serial {
 
     //A workflow where each state becomes the effective sink of a pipeline
 
-    class qor_pp_module_interface(QOR_SERIAL) Deserializer : public workflow::Workflow
+    class qor_pp_module_interface(QOR_SERIAL) Deserializer : public Workflow
     {
     public:
 
-        Deserializer() : workflow::Workflow()
+        Deserializer() : Workflow()
         {            
         }        
 
-        Deserializer(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context)
+        Deserializer(ref_of<class Context>::type context) : Workflow(), m_context(context)
         {
         }
 

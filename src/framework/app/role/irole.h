@@ -32,7 +32,7 @@
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/reference/newref.h"
 
-namespace qor{
+namespace qor{ namespace app {
 
     //Base interface for Roles. All Roles are derived from this so that the Application can have any Role
     class IRole
@@ -70,6 +70,6 @@ namespace qor{
 
     };
 
-}//qor
+}}//qor::app
 
 #endif//QOR_PP_H_ROLE_INTERFACE

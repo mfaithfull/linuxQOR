@@ -35,13 +35,13 @@
 
 namespace qor { namespace components { namespace parser {
 
-    class qor_pp_module_interface(QOR_PARSER) Parser : public workflow::Workflow
+    class qor_pp_module_interface(QOR_PARSER) Parser : public Workflow
     {
     
     public:
 
-        inline Parser() : workflow::Workflow(), m_final(false){ }
-        inline Parser(ref_of<class Context>::type context) : workflow::Workflow(), m_context(context){ }
+        inline Parser() : Workflow(), m_final(false){ }
+        inline Parser(ref_of<class Context>::type context) : Workflow(), m_context(context){ }
         virtual ~Parser() = default;
         inline Context* GetContext() const
         {

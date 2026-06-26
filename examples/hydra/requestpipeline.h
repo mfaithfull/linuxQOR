@@ -27,20 +27,22 @@
 
 #include "sdk/using_framework.h"
 #include "sdk/components/framework.h"
+#include "src/components/io/pipeline/connectors/socketconnector/socketsink.h"
+#include "src/components/io/pipeline/sources/randomsource/randomsource.h"
 
 class RequestPipeline : public Pipeline
 {
 public:
 
-    RequestPipeline(ref_of<SocketConnector>::type connector);
+    RequestPipeline(ref_of<qor::io::network::components::SocketConnector>::type connector);
     virtual ~RequestPipeline() = default;
 
 private:    //randomish -> socket
 
     ByteBuffer m_requestBuffer;
-    RandomSource m_source;
-    SocketSink m_socketSink;
-    ref_of<SocketConnector>::type m_socketConnector;
+    qor::pipeline::components::RandomSource m_source;
+    qor::io::network::components::SocketSink m_socketSink;
+    ref_of<qor::io::network::components::SocketConnector>::type m_socketConnector;
 };
 
 #endif // QOR_PP_H_EXAMPLES_HYDRA_REQUESTPIPELINE

@@ -23,18 +23,16 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "../../configuration/configuration.h"
+#ifdef NDEBUG
 #include <buildnumber.h>
+#endif
 #include "../module/module.h"
 
 extern "C"
 {
 	qor::Module& ThisModule(void)
 	{
-		static qor::Module QORModule("Querysoft Open Runtime: Interception Module", 
-			qor_pp_stringize(qor_pp_ver_major) "." \
-			qor_pp_stringize(qor_pp_ver_minor) "." \
-			qor_pp_stringize(qor_pp_ver_patch) "." \
-			qor_pp_stringize(qor_pp_buildnumber));
+		static qor::Module QORModule("Querysoft Open Runtime: Interception Module", qor_pp_module_ver_string );
 		return QORModule;
 	}
 }

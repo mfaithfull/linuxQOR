@@ -40,6 +40,8 @@ qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)
 
+using namespace qor::components;
+
 int main(const int argc, const char** argv, char** env)
 {
     DefaultErrorHandler errorHandler;
@@ -53,11 +55,11 @@ int main(const int argc, const char** argv, char** env)
         {
             app::OptionGetter options(argc, argv, server(qor_shared));
         }
-    )->SetRole<Role>(
-        [&logHandler](ref_of<IRole>::type role)
+    )->SetRole<app::Role>(
+        [&logHandler](ref_of<app::IRole>::type role)
         {
-            role->AddFeature<ThreadPool>(
-                [](ref_of<ThreadPool>::type threadPool)->void
+            role->AddFeature<thread::ThreadPool>(
+                [](ref_of<thread::ThreadPool>::type threadPool)->void
                 {
                     threadPool->SetThreadCount(8);
                     CurrentThread::Get().SetName("Main");

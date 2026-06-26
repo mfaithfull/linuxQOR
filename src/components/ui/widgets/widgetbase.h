@@ -28,7 +28,7 @@
 #include <memory>
 #include <vector>
 
-#include "src/components/framework/ui/layout/elements.h"
+#include "src/components/ui/layout/elements.h"
 
 namespace qor{ namespace components{ namespace ui {
 

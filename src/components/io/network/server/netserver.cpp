@@ -39,6 +39,7 @@ using namespace qor;
 using namespace qor::pipeline;
 using namespace qor::io::network;
 using namespace qor::io::network::sockets;
+using namespace qor::components;
 
 namespace qor{ namespace io{ namespace network{ namespace components{
 
@@ -140,7 +141,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
                                 //Configure the client session with it's own error and log handlers
                                 clientSession.m_errorHandler = new_ref<DefaultErrorHandler>();
                                 clientSession.m_logHander = new_ref<DefaultLogHandler>();
-                                auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<components::LogAggregatorService>();
+                                auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::LogAggregatorService>();
                                 if(logAggregator.IsNotNull())
                                 {
                                     connect(clientSession.m_logHander()(), clientSession.m_logHander->GetForwardSignal(),

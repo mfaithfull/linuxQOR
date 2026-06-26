@@ -49,18 +49,18 @@ int main(const int argc, const char** argv, char**)
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build(appName)->
-    SetRole<Role>(
-        [&logHandler](ref_of<IRole>::type role)
+    SetRole<app::Role>(
+        [&logHandler](ref_of<app::IRole>::type role)
         {
-            role->AddFeature<ThreadPool>(
+            role->AddFeature<thread::ThreadPool>(
                 [](ref_of<thread::ThreadPool>::type threadPool)->void
                 {
                     threadPool->SetThreadCount(16);
                     CurrentThread::GetCurrent().SetName("Main thread");
                 }
             );
-            role->AddFeature<LogAggregatorService>(
-                [&logHandler](ref_of<LogAggregatorService>::type logAggregator)->void
+            role->AddFeature<qor::components::LogAggregatorService>(
+                [&logHandler](ref_of<qor::components::LogAggregatorService>::type logAggregator)->void
                 {
                     qor::connect(
                         logHandler, &qor::components::LogHandler::forward, 

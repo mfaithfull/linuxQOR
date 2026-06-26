@@ -38,8 +38,8 @@
 #include "src/framework/app/role/getfeature.h"
 
 using namespace qor;
+using namespace qor::io;
 using namespace qor::log;
-//using namespace qor::framework;
 using namespace qor::platform;
 using namespace qor::components;
 
@@ -61,8 +61,8 @@ int main(const int argc, const char** argv, char** env)
     DefaultLogHandler logHandler(Level::Debug);
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build<Visual>(Visual::Name)->SetRole<Role>(
-        [&logHandler](ref_of<IRole>::type role)
+    return AppBuilder().Build<Visual>(Visual::Name)->SetRole<app::Role>(
+        [&logHandler](ref_of<app::IRole>::type role)
         {
             qor_pp_fcontext;            
             role->AddFeature<thread::ThreadPool>(

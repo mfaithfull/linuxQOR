@@ -34,7 +34,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
-    class qor_pp_module_interface(QOR_HTTP) HTTPRequestGenerator : public qor::workflow::Workflow
+    class qor_pp_module_interface(QOR_HTTP) HTTPRequestGenerator : public Workflow
     {
 
     public:

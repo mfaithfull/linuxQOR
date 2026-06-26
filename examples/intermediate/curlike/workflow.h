@@ -30,7 +30,7 @@
 #include "src/components/io/pipeline/sources/stdinsource/stdinsource.h"
 #include "src/components/io/pipeline/sinks/stdoutsink/stdoutsink.h"
 
-class ClientWorkflow : public qor::workflow::Workflow
+class ClientWorkflow : public qor::Workflow
 {
 public:
 

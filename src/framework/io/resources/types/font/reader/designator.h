@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_FRAMEWORK_RESOURCES_TTF_READER_STATES_DESIGNATOR
 #define QOR_PP_H_FRAMEWORK_RESOURCES_TTF_READER_STATES_DESIGNATOR
 
-#include "src/components/deserializer/state.h"
+#include "src/components/io/deserializer/state.h"
 
 namespace qor{ namespace framework{ namespace res {
     

@@ -22,30 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSESERVER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSESERVER
+#ifndef QOR_PP_H_ESSENTIALS
+#define QOR_PP_H_ESSENTIALS
 
-#include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
-#include "src/framework/app/application/irunable.h"
-#include "src/framework/io/pipeline/pipeline.h"
+#include "../tdd/tdd.h"
+#include "../module/module.h"
+#include "../datastructures/guid.h"
+#include "../objectcontext/anyobject.h"
+#include "../current/currentprocess.h"
+#include "../current/currentthread.h"
+#include "../reporting/iassertionfailurereporting.h"
+#include "../reporting/ierrorreporting.h"
+#include "../reporting/itestfailurereporting.h"
+#include "../iterators/iterator.h"
+#include "../text/strings/strings.h"
 
-template<class Req, class Resp>
-class RequestResponseServerProtocol : public qor::app::IRunable
-{
-public:
-
-    RequestResponseClientProtocol(qor::ref_of<qor::pipeline::Pipeline>::type pipeline) : m_pipeline(pipeline)
-    {}
-    virtual ~RequestResponseClientProtocol() noexcept = default;
-    virtual int Run(void);
-        
-protected:
-
-    qor::ref_of<Req>::type m_request;
-    qor::ref_of<Resp>::type m_response;
-    qor::ref_of<qor::pipeline::Pipeline>::type m_pipeline;
-};
-
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSESERVER
+#endif//QOR_PP_H_ESSENTIALS
 

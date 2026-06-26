@@ -29,15 +29,18 @@
 #include "workflow.h"
 #include "src/qor/error/error.h"
 
-namespace qor{ namespace workflow{
+namespace qor{ 
+    
+    namespace workflow{
 
-    State::State(Workflow* workflow) : m_Workflow(workflow)
-    {
-        Enter = std::bind(&Workflow::Enter, workflow);
-        Suspend = std::bind(&Workflow::Suspend, workflow);
-        Resume = std::bind(&Workflow::Resume, workflow);
-        Leave = std::bind(&Workflow::Leave, workflow);
-    }
+        State::State(Workflow* workflow) : m_Workflow(workflow)
+        {
+            Enter = std::bind(&Workflow::Enter, workflow);
+            Suspend = std::bind(&Workflow::Suspend, workflow);
+            Resume = std::bind(&Workflow::Resume, workflow);
+            Leave = std::bind(&Workflow::Leave, workflow);
+        }
+    }//qor::workflow
 
     Workflow::Workflow(){ }
 
@@ -98,7 +101,7 @@ namespace qor{ namespace workflow{
 
     void Workflow::Leave(){}
 
-    ref_of<State>::type Workflow::CurrentState()
+    ref_of<workflow::State>::type Workflow::CurrentState()
     {
         if( !m_StateStack.empty() )
         {
@@ -107,12 +110,12 @@ namespace qor{ namespace workflow{
         return nullptr;
     }
 
-    ref_of<State>::type Workflow::GetInitialState() const
+    ref_of<workflow::State>::type Workflow::GetInitialState() const
     {
         return m_initialState;
     }
 
-    void Workflow::SetInitialState(ref_of<State>::type initialState)//weak pointer
+    void Workflow::SetInitialState(ref_of<workflow::State>::type initialState)//weak pointer
     {
         if(initialState && m_StateStack.empty())
         {
@@ -122,13 +125,13 @@ namespace qor{ namespace workflow{
         }
     }
 
-    void Workflow::SetState(ref_of<State>::type newState)
+    void Workflow::SetState(ref_of<workflow::State>::type newState)
     {
         if(newState)
         {
             if(!m_StateStack.empty())
             {
-                ref_of<State>::type currentState = CurrentState();
+                ref_of<workflow::State>::type currentState = CurrentState();
                 if(currentState)
                 {
                     currentState->Leave();
@@ -139,13 +142,13 @@ namespace qor{ namespace workflow{
         }
     }
 
-    void Workflow::PushState(ref_of<State>::type newState)
+    void Workflow::PushState(ref_of<workflow::State>::type newState)
     {
         if(newState)
         {
             if(!m_StateStack.empty())
             {
-                ref_of<State>::type currentState = CurrentState();
+                ref_of<workflow::State>::type currentState = CurrentState();
                 if(currentState)
                 {
                     currentState->Suspend();
@@ -159,7 +162,7 @@ namespace qor{ namespace workflow{
     {
         if(!m_StateStack.empty())
         {
-    		ref_of<State>::type currentState = CurrentState();
+    		ref_of<workflow::State>::type currentState = CurrentState();
             if(currentState)
             {
     	    	currentState->Leave();
@@ -167,7 +170,7 @@ namespace qor{ namespace workflow{
             m_StateStack.pop();		
             if(!m_StateStack.empty())
             {
-                ref_of<State>::type newCurrentState = CurrentState();
+                ref_of<workflow::State>::type newCurrentState = CurrentState();
                 if(newCurrentState)
                 {
         	        newCurrentState->Resume();
@@ -201,4 +204,4 @@ namespace qor{ namespace workflow{
         m_result = result;
     }
 
-}}//qor::workflow
+}//qor

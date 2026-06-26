@@ -38,7 +38,7 @@ qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)
 
-void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
+void SetupLogging(DefaultLogHandler& logHandler, qor::components::LogAggregatorService::ref logAggregator)
 {
     qor::connect(
         logHandler, logHandler.GetForwardSignal(), 
@@ -60,8 +60,8 @@ int main(const int argc, const char** argv, char**)
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build(appName)->
-        SetRole<Role>(
-            [&logHandler](IRole::ref role)
+        SetRole<app::Role>(
+            [&logHandler](app::IRole::ref role)
             {
                 role->AddFeature<ThreadPool>(
                     [](ref_of<ThreadPool>::type threadPool)->void
@@ -70,8 +70,8 @@ int main(const int argc, const char** argv, char**)
                         CurrentThread::Get().SetName("Main");
                     }
                 );
-                role->AddFeature<LogAggregatorService>(
-                    [&logHandler](LogAggregatorService::ref logAggregator)->void
+                role->AddFeature<qor::components::LogAggregatorService>(
+                    [&logHandler](qor::components::LogAggregatorService::ref logAggregator)->void
                     {
                         SetupLogging(logHandler, logAggregator);
                     }

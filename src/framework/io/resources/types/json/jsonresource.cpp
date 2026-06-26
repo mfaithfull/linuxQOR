@@ -53,12 +53,11 @@ namespace qor{ namespace framework{ namespace res {
         JSONReader reader;
         
         m_object = reader(
-            qor::components::FileConnector(
+            qor::io::components::FileConnector(
                 m_index,
                 reader.Buffer(),
-                qor::platform::WithFlags::None,
-                qor::platform::ShareMode::Owner_Read,
-                qor::platform::OpenFor::ReadOnly
+                qor::io::WithFlags::None,
+                qor::io::OpenFor::ReadOnly
             )
         );  
         if(m_object.IsNotNull())
@@ -74,7 +73,7 @@ namespace qor{ namespace framework{ namespace res {
         Resource::Claim();
     }
 
-    qor::ref_of<qor::components::json::Object>::type JSON::GetObject()
+    qor::ref_of<qor::components::model::json::Object>::type JSON::GetObject()
     {
         return m_object;
     }

@@ -30,7 +30,7 @@
 #include "src/framework/io/network/socket.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
 
-class ServerWorkflow : public qor::workflow::Workflow
+class ServerWorkflow : public qor::Workflow
 {
 public:
 

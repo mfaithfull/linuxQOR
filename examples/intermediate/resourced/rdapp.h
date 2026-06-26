@@ -52,7 +52,7 @@ public:
 
 private:
     
-    static qor::SingletonRedirector<qor::framework::Application, ResourcedApp> m_sRedirect;
+    static qor::SingletonRedirector<qor::Application, ResourcedApp> m_sRedirect;
 };
 
 namespace qor{ 

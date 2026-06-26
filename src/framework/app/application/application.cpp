@@ -28,7 +28,7 @@
 
 namespace qor{
 
-    Application& Application::SetRole(ref_of<IRole>::type role)
+    Application& Application::SetRole(ref_of<app::IRole>::type role)
     {
         m_Role = role;
         return *this;
@@ -36,10 +36,10 @@ namespace qor{
 
     Application& Application::SetRole()
     {
-        return SetRole<Role>();
+        return SetRole<app::Role>();
     }
 
-    ref_of<IRole>::type Application::GetRole() const
+    ref_of<app::IRole>::type Application::GetRole() const
     {
         return m_Role;
     }

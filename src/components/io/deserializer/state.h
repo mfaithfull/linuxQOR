@@ -54,7 +54,7 @@ namespace qor { namespace components { namespace serial {
     protected:
 
         class Context* GetContext();
-        workflow::Workflow* Workflow();
+        Workflow* Workflow();
         class Deserializer* GetDeserializer();
 
         arch::Endian m_endian;//endianness of the source

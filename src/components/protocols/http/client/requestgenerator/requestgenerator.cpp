@@ -32,7 +32,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
     
-    HTTPRequestGenerator::HTTPRequestGenerator(ref_of<Context>::type context) : workflow::Workflow(), m_context(context)
+    HTTPRequestGenerator::HTTPRequestGenerator(ref_of<Context>::type context) : Workflow(), m_context(context)
     {
         SetInitialState(new_ref<RequestGenInitial>(this));
     }

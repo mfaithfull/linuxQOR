@@ -8,7 +8,7 @@
 #include "src/qor/reference/newref.h"
 #include "src/framework/app/workflow/workflow.h"
 
-class LineByLineWorkflow : public qor::workflow::Workflow
+class LineByLineWorkflow : public qor::Workflow
 {
 public:
 

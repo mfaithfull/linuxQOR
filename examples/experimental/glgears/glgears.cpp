@@ -39,7 +39,6 @@
 #include "glgears.h"
 
 using namespace qor;
-using namespace qor::framework;
 
 qor_pp_module_requires(ICurrentThread)
 qor_pp_implement_module(GLGears::Name)

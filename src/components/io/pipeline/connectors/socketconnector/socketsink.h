@@ -28,7 +28,7 @@
 #include "src/framework/io/pipeline/iosink.h"
 #include "socketconnector.h"
 
-namespace qor{ namespace io{ namespace components{ 
+namespace qor{ namespace io{ namespace network{ namespace components{ 
 
     class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketSink : public pipeline::iosink<SocketConnector>
     {
@@ -39,6 +39,6 @@ namespace qor{ namespace io{ namespace components{
         virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
     };
 
-}}}//qor::io::components
+}}}}//qor::io::network::components
 
 #endif//QOR_PP_H_COMPONENTS_PIPELINE_SINKS_STDOFSTREAM

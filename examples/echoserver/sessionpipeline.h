@@ -50,9 +50,9 @@ private:
     EchoRequestFilter m_filter;
     qor::ref_of<qor::io::network::Socket>::type m_socket;
     qor::ref_of<qor::async::AsyncIOContext::Session>::type m_ioSession;
-    qor::ref_of<qor::io::components::SocketConnector>::type m_socketSessionConnector;
-    qor::ref_of<qor::io::components::SocketSource>::type m_socketSource;
-    qor::ref_of<qor::io::components::SocketSink>::type m_socketSink;
+    qor::ref_of<qor::io::network::components::SocketConnector>::type m_socketSessionConnector;
+    qor::ref_of<qor::io::network::components::SocketSource>::type m_socketSource;
+    qor::ref_of<qor::io::network::components::SocketSink>::type m_socketSink;
 
 };
 

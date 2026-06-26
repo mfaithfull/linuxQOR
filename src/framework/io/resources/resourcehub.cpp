@@ -26,6 +26,7 @@
 
 #include "src/framework/app/role/role.h"
 #include "src/framework/event/signals/signal.h"
+#include "src/qor/error/error.h"
 #define QOR_PP_IMPLEMENTS_RESOURCEHUB
 #include "resourcehub.h"
 #include "types/pathresource.h"
@@ -59,7 +60,7 @@ namespace qor{ namespace framework{
         }
     }
 
-    void ResourceHub::UseThreadPool(ref_of<ThreadPool>::type threadPool)
+    void ResourceHub::UseThreadPool(ref_of<thread::ThreadPool>::type threadPool)
     {
         m_threadPool = threadPool;
     }
@@ -79,7 +80,7 @@ namespace qor{ namespace framework{
         }
     }
 
-    void ResourceHub::AddPath(const qor::platform::Path& path, Resource* batchKey)
+    void ResourceHub::AddPath(const io::filesystem::Path& path, Resource* batchKey)
     {
         new res::Path(this, path, batchKey);        
     }

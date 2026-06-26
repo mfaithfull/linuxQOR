@@ -25,7 +25,7 @@ int main()
     to the Application Role*/
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build(appName)->SetRole<Role>().Run(
+    return AppBuilder().Build(appName)->SetRole<app::Role>().Run(
         []()->int
         {
             /*Retrieve the file system singleton from the platform.

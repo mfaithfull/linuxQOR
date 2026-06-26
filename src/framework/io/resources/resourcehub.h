@@ -53,7 +53,7 @@ qor_pp_module_will_provide(QOR_RESOURCES, ResourceHub)
 namespace qor{ namespace framework{
         
     //Manage resources and subcriptions for recieving updates about them
-    class qor_pp_module_interface(QOR_RESOURCES) ResourceHub : public IFeature, public ResourceManager
+    class qor_pp_module_interface(QOR_RESOURCES) ResourceHub : public app::IFeature, public ResourceManager
     {
 
     public:
@@ -66,13 +66,13 @@ namespace qor{ namespace framework{
         virtual void Setup();
         virtual void Shutdown();
 
-        void UseThreadPool(ref_of<ThreadPool>::type threadPool);
+        void UseThreadPool(ref_of<thread::ThreadPool>::type threadPool);
         //Automatically collect the run location of the executable if possible. Also the launch location/current folder
         //  Any user home folder and Application Data folder assigned or preferred by the OS.
 
         virtual void BeginBatch(Resource* batchKey);
         virtual void EndBatch(Resource* batchKey);
-        virtual void AddPath(const platform::Path& path, Resource* batchKey = nullptr);//Add a Path resource, return a URI by which it will be indexed
+        virtual void AddPath(const io::filesystem::Path& path, Resource* batchKey = nullptr);//Add a Path resource, return a URI by which it will be indexed
         virtual void AddFile(const io::filesystem::Index& file, Resource* batchKey = nullptr);//Add a File resource, return a URI by which it will be indexed
         virtual void AddJSON(const io::filesystem::Index& file, Resource* batchKey = nullptr);
         virtual void AddFont(const io::filesystem::Index& file, Resource* batchKey = nullptr);

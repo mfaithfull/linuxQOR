@@ -49,7 +49,7 @@
 namespace qor {
 
 	template<typename ret_t, typename ...params_t>
-	class MulticastDelegate<ret_t(params_t...)> final : private DelegateHolder<ret_t(params_t...)> 
+	class MulticastDelegate<ret_t(params_t...)> final : private detail::DelegateHolder<ret_t(params_t...)> 
 	{
 	public:
 
@@ -131,7 +131,7 @@ namespace qor {
 			for (auto& item : another.invocationList) // clone, not copy; flattens hierarchy:
 			{
 				this->invocationList.push_back(
-                    allocator_of<typename DelegateHolder<ret_t(params_t...)>::InvocationElement>::type::Allocate((size_t)1, item->object, item->stub));
+                    allocator_of<typename detail::DelegateHolder<ret_t(params_t...)>::InvocationElement>::type::Allocate((size_t)1, item->object, item->stub));
 			}
 			return *this;
 		}
@@ -148,7 +148,7 @@ namespace qor {
 			if (!another.IsNull())
 			{
 				this->invocationList.push_back(
-                    allocator_of<typename DelegateHolder<ret_t(params_t...)>::InvocationElement>::type::template Allocate<typename DelegateHolder<ret_t(params_t...)>::InvocationElement>((size_t)1, another.m_Invocation.object, another.m_Invocation.stub)
+                    allocator_of<typename detail::DelegateHolder<ret_t(params_t...)>::InvocationElement>::type::template Allocate<typename detail::DelegateHolder<ret_t(params_t...)>::InvocationElement>((size_t)1, another.m_Invocation.object, another.m_Invocation.stub)
 				);
 			}
 			return *this;
@@ -188,7 +188,7 @@ namespace qor {
 
 	private:
 
-		std::list<typename DelegateHolder<ret_t(params_t...)>::InvocationElement *> invocationList;
+		std::list<typename detail::DelegateHolder<ret_t(params_t...)>::InvocationElement *> invocationList;
 
 	};
 

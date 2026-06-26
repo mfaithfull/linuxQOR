@@ -29,7 +29,7 @@
 #include "gl.h"
 #include "../render.h"
 #include "../common/math.h"
-#include "src/components/framework/ui/opengles/opengles.h"
+#include "src/components/ui/opengles/opengles.h"
 
 #define MIN_GL_STROKE_WIDTH 1.0f
 #define MIN_GL_STROKE_ALPHA 0.25f

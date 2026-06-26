@@ -39,7 +39,7 @@ namespace qor{ bool qor_pp_module_interface(QOR_DESKTOPUI) ImplementsDesktopUI()
 
 namespace qor { namespace ui{
   
-    class qor_pp_module_interface(QOR_DESKTOPUI) DesktopUI : public IFeature
+    class qor_pp_module_interface(QOR_DESKTOPUI) DesktopUI : public app::IFeature
     {
     public:
 

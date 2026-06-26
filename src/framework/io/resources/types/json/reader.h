@@ -25,8 +25,10 @@
 #ifndef QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER
 #define QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER
 
-#include "src/components/protocols/json/parser.h"
-#include "src/components/protocols/json/nodes/object.h"
+#include "src/components/protocols/json/parser/tokens.h"
+#include "src/components/protocols/json/parser/_3/object.h"
+#include "src/components/protocols/json/parser/nodes/object.h"
+#include "src/components/protocols/json/model/object.h"
 #include "src/framework/io/pipeline/podbuffer.h"
 #include "src/framework/io/pipeline/pipeline.h"
 #include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
@@ -41,7 +43,7 @@ namespace qor{ namespace framework{ namespace res {
         {        
         }
 
-        qor::ref_of<qor::components::json::Object>::type operator()(const qor::pipeline::Plug& sourceConnector)
+        qor::ref_of<qor::components::model::json::Object>::type operator()(const qor::pipeline::Plug& sourceConnector)
         {        
             qor::pipeline::Pipeline(
                 sourceConnector,
@@ -62,7 +64,7 @@ namespace qor{ namespace framework{ namespace res {
     private:
 
         qor::pipeline::PODBuffer<byte> m_byteBuffer;
-        qor::components::ParserSink<qor::components::json::parser::object> m_sink;
+        qor::pipeline::components::ParserSink<qor::components::parser::json::object> m_sink;
     };
 
 }}}//qor::framework::res

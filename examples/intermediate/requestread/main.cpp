@@ -27,8 +27,9 @@
 #include "sdk/using_framework.h"
 #include "sdk/using_platform.h"
 #include "sdk/components/framework.h"
-#include "src/components/protocols/json/parser.h"
-#include "src/components/protocols/json/nodes/object.h"
+#include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
+#include "src/components/protocols/json/parser/tokens.h"
+#include "src/components/protocols/json/parser/nodes/object.h"
 #include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
 #include "requestreader.h"
 
@@ -41,13 +42,13 @@ int main()
 {
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build(appName)->SetRole<Role>().Run(
+    return AppBuilder().Build(appName)->SetRole<app::Role>().Run(
         []()->int
         {
             RequestReader reader;
             
             auto request = reader(
-                FileConnector(
+                io::components::FileConnector(
                     io::filesystem::Index(
                         ThePlatform(qor_shared)->
                             GetSubsystem<FileSystem>()->
@@ -55,7 +56,6 @@ int main()
                     ),
                     reader.Buffer(),
                     WithFlags::None,
-                    ShareMode::Owner_Read,
                     OpenFor::ReadOnly
                 )
             );

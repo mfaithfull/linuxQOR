@@ -48,24 +48,24 @@ namespace qor{
         Application() = default;
         virtual ~Application() = default;
 
-        Application& SetRole( ref_of<IRole>::type role);
+        Application& SetRole( ref_of<app::IRole>::type role);
 
         template<class TRole>
         Application& SetRole()
         {
-            return SetRole( new_ref<TRole>().template AsRef<IRole>() );
+            return SetRole( new_ref<TRole>().template AsRef<app::IRole>() );
         }
 
         template<class TRole, typename TConfigureRole>
         Application& SetRole(TConfigureRole&& config_function)
         {
-            auto role = new_ref<TRole>().template AsRef<IRole>();
+            auto role = new_ref<TRole>().template AsRef<app::IRole>();
             config_function(role);
             return SetRole(role);
         }
 
         Application& SetRole();
-        ref_of<IRole>::type GetRole() const;
+        ref_of<app::IRole>::type GetRole() const;
         Application& SetWorkflow( ref_of<workflow::IWorkflow>::type workflow);
         ref_of<workflow::IWorkflow>::type GetWorkflow() const;
         std::string& Name();
@@ -99,10 +99,10 @@ namespace qor{
         template<typename Tlambda>
         int Run(Tlambda&& func)
         {
-            return Run(new_ref<RunableFunc>(func).template AsRef<IRunable>());
+            return Run(new_ref<app::RunableFunc>(func).template AsRef<app::IRunable>());
         }
 
-        int Run( ref_of<IRunable>::type runable )
+        int Run( ref_of<app::IRunable>::type runable )
         {
             int result = -1;
             if(m_Role.IsNotNull())
@@ -135,7 +135,7 @@ namespace qor{
 
         std::string m_Path;
         std::string m_Name;
-        ref_of<IRole>::type m_Role;
+        ref_of<app::IRole>::type m_Role;
         ref_of<workflow::IWorkflow>::type m_Workflow;
 
     };
