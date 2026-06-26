@@ -19,10 +19,9 @@ using namespace qor::log;
 using namespace qor::platform;
 using namespace qor::thread;
 using namespace qor::async;
-//using namespace qor::components;
 
 int main(int argc, const char** argv, char**)
-{	
+{
 	DefaultLogHandler logHandler(Level::Debug);
 	ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
@@ -37,7 +36,7 @@ int main(int argc, const char** argv, char**)
 				}
 			);
 			role->AddFeature<AsyncIOService>(
-				[](ref_of<AsyncIOService>::type ioService)->void
+				[](ref_of<AsyncIOService>::type /*ioService*/)->void
 				{
 					PoolInstancer::SetPoolSize<AsyncIOContext>(2);
 				}
@@ -54,10 +53,7 @@ extern "C"
 {
 	qor::Module& ThisModule(void)
 	{
-		static qor::Module QORModule("Querysoft Open Runtime: Test FileSystem Module", 
-			qor_pp_stringize(qor_pp_ver_major) "." \
-			qor_pp_stringize(qor_pp_ver_minor) "." \
-			qor_pp_stringize(qor_pp_ver_patch));			
+		static qor::Module QORModule("Querysoft Open Runtime: Test FileSystem Module", qor_pp_module_ver_string );
 		return QORModule;
 	}
 }
