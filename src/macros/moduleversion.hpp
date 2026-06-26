@@ -22,24 +22,13 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "../../configuration/configuration.h"
 #ifdef NDEBUG
-#include <buildnumber.h>
+#define qor_pp_module_ver_string qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber)
+#else
+#define qor_pp_module_ver_string qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch)
 #endif
-#include "../module/module.h"
-#include "reportingimpl.h"
-
-extern "C"
-{
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Error Handler Module", qor_pp_module_ver_string );
-
-		static qor::ReportingImpl reportingImpl;
-		qor::ErrorImpl()= dynamic_cast<qor::IErrorReporting*>(&reportingImpl);
-		qor::AssertionFailureImpl() = dynamic_cast<qor::IAssertionFailureReporting*>(&reportingImpl);
-		qor::TestFailureImpl() = dynamic_cast<qor::ITestFailureReporting*>(&reportingImpl);
-
-		return QORModule;
-	}
-}

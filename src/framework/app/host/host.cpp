@@ -23,7 +23,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#ifdef NDEBUG
 #include <buildnumber.h>
+#endif
 #include "host.h"
 #include "src/qor/module/moduleregistry.h"
 
@@ -38,11 +40,7 @@ namespace qor{
         return &(ThisModule());
     }
     
-    Host::Host() : Module( "Querysoft Open Runtime: Host Module", 
-        qor_pp_stringize(qor_pp_ver_major) "."
-        qor_pp_stringize(qor_pp_ver_minor) "."
-        qor_pp_stringize(qor_pp_ver_patch) "."
-        qor_pp_stringize(qor_pp_buildnumber), false)
+    Host::Host() : Module( "Querysoft Open Runtime: Host Module", qor_pp_module_ver_string, false )
     {
         m_ModuleReg = &_theModuleRegistry;
         m_ModuleReg->Register(*this);

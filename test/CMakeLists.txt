@@ -114,3 +114,4 @@ endif ()
 
 add_subdirectory(operational)
 add_subdirectory(filesystem)
+add_subdirectory(ui)

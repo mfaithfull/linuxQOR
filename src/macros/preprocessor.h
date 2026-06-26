@@ -29,5 +29,6 @@
 //Small modifications and additions have been made, mostly cosmetic. BOOST_PP... macros become qor_pp...
 
 #include "library.hpp"
+#include "moduleversion.hpp"
 
 #endif//QOR_PP_H_PREPROCESSOR
