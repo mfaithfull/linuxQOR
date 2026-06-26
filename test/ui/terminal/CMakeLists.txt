@@ -4,7 +4,8 @@ set(target QORTermTests)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 add_executable(QORTermTests test_main.cpp
-  primary.cpp)
+  primary.cpp
+  tui.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 

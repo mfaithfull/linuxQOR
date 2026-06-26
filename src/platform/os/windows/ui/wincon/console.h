@@ -113,7 +113,7 @@ namespace qor { namespace components { namespace win {
 			m_errFile = _fsopen("CONOUT$", "r+", _SH_DENYNO);
 		}
 
-		virtual void WriteLine(string_t& output);
+		virtual void WriteLine(const string_t& output);
 		virtual string_t ReadLine();
 		virtual char_t ReadChar();
 		virtual void WriteChar(char_t c);

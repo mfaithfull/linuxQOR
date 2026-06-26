@@ -46,7 +46,7 @@ namespace qor { namespace components {
             virtual void Shutdown() {}
 
             string_t ReadLine();
-            void WriteLine(string_t line);
+            void WriteLine(const string_t& line);
             char_t ReadChar();
             void WriteChar(char_t c);
 

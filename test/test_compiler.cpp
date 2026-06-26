@@ -24,7 +24,7 @@
 
 #include "../src/configuration/configuration.h"
 #include "../src/platform/compiler/compiler.h"
-#include "../src/qor/test/test.h"
+#include "../src/qor/tdd/test/test.h"
 
 using namespace qor;
 using namespace qor::test;

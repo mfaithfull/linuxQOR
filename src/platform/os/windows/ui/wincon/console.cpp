@@ -38,7 +38,7 @@ namespace qor { namespace components{ namespace win {
 	Console::Console() : m_redirected(false), m_allocated(false), m_outFile(nullptr), m_inFile(nullptr), m_errFile(nullptr)
 	{
 		auto hstdin = m_helper.GetStdHandle(ConsoleHelper::hStdIn);
-		if (hstdin.IsNull() || hstdin.IsInvalid() || (Kernel32::GetFileType(hstdin.Use()) != FILE_TYPE_CHAR) )
+		if (hstdin.IsNull() || hstdin.IsInvalid() /*|| (Kernel32::GetFileType(hstdin.Use()) != FILE_TYPE_CHAR)*/ )
 		{
 			m_helper.Free();
 			m_helper.Alloc();
@@ -47,7 +47,7 @@ namespace qor { namespace components{ namespace win {
 		}
 
 		auto hstdout = m_helper.GetStdHandle(ConsoleHelper::hStdOut);
-		if (hstdout.IsNull() || hstdout.IsInvalid() || (Kernel32::GetFileType(hstdin.Use()) != FILE_TYPE_CHAR))
+		if (hstdout.IsNull() || hstdout.IsInvalid() /*|| (Kernel32::GetFileType(hstdin.Use()) != FILE_TYPE_CHAR)*/)
 		{
 			if (!m_allocated)
 			{
@@ -59,32 +59,38 @@ namespace qor { namespace components{ namespace win {
 			ResetOut();
 		}
 
-		if (!hstdin.IsNull() && !hstdin.IsInvalid() && (Kernel32::GetFileType(hstdin.Use()) == FILE_TYPE_CHAR) )
+		auto fileType = Kernel32::GetFileType(hstdin.Use());
+
+		if (!hstdin.IsNull() && !hstdin.IsInvalid() && fileType == FILE_TYPE_CHAR )
 		{
 			DWORD mode = 0;
 			Kernel32::GetConsoleMode(hstdin.Use(), &mode);
 			mode &= ~(ENABLE_LINE_INPUT);
 			Kernel32::SetConsoleMode(hstdin.Use(), mode);
 		}
+		if(fileType != FILE_TYPE_CHAR)
+		{
+			m_redirected = true;
+		}
 	}
 
 	string_t Console::ReadLine()
 	{
+		string_t str;
+		DWORD charsRead = 0;
+		bool result = false;
+		str.reserve(1024);
+		str.resize(1024);
 		if (!m_redirected)
 		{
 			DWORD mode = 0;
 			auto hstdin = m_helper.GetStdHandle(ConsoleHelper::hStdIn);
 			Kernel32::GetConsoleMode(hstdin.Use(), &mode);
-			string_t str;
-			DWORD charsRead = 0;
-			str.reserve(1024);
-			str.resize(1024);
 			CONSOLE_READCONSOLE_CONTROL readControl;
 			readControl.nLength = sizeof(CONSOLE_READCONSOLE_CONTROL);
 			readControl.nInitialChars = 0;
 			readControl.dwCtrlWakeupMask = 0x0D;
 			readControl.dwControlKeyState = 0;
-			bool result = false;
 			do
 			{
 				DWORD newCharsRead = 0;				
@@ -105,52 +111,69 @@ namespace qor { namespace components{ namespace win {
 			} while (result);
 			return str;
 		}
+		else
+		{
+			result = Kernel32::ReadFile(m_helper.GetStdHandle(ConsoleHelper::hStdIn).Use(), str.data(), 1023, &charsRead, nullptr);
+			str.resize(charsRead);
+			return str;			
+		}
 		return string_t();
 	}
 
 	char_t Console::ReadChar()//get next key press including key combo stuff - echo by default except it doesn't
 	{
+		bool result = false;
+		char_t c{0};
+		DWORD charsRead = 0;
 		if (!m_redirected)
-		{
-			char_t c;
-			DWORD charsRead = 0;
+		{						
 			CONSOLE_READCONSOLE_CONTROL readControl;
 			readControl.nLength = sizeof(CONSOLE_READCONSOLE_CONTROL);
 			readControl.nInitialChars = 0;
 			readControl.dwCtrlWakeupMask = 0x0D;
 			readControl.dwControlKeyState = 0;
-			bool result = Kernel32::ReadConsole(m_helper.GetStdHandle(ConsoleHelper::hStdIn).Use(), &c, 1, &charsRead, &readControl);
+			result = Kernel32::ReadConsole(m_helper.GetStdHandle(ConsoleHelper::hStdIn).Use(), &c, 1, &charsRead, &readControl);
+		}
+		else
+		{
+			result = Kernel32::ReadFile(m_helper.GetStdHandle(ConsoleHelper::hStdIn).Use(), &c, 1, &charsRead, nullptr);
 			if (result && charsRead == 1)
 			{
-				return c;
+				//Assume this redirected console is in line mode and we can't really just read a single char.
+				//Dispose of the rest of the line for now although we should really buffer it locally.
+				auto waste = ReadLine();
 			}
+		}
+		if (result && charsRead == 1)
+		{			
+			return c;
 		}
 		return 0;
 	}
 
 	void Console::WriteChar(char_t c)
 	{
-		if (!m_redirected)
+		DWORD charsWritten = 0;		
+		bool result = m_redirected ?
+			result = Kernel32::WriteFile(m_helper.GetStdHandle(ConsoleHelper::hStdOut).Use(), &c, 1, &charsWritten, nullptr) :
+			result = Kernel32::WriteConsole(m_helper.GetStdHandle(ConsoleHelper::hStdOut).Use(), &c, 1, &charsWritten, nullptr);
+
+		if (!(result && charsWritten == 1))
 		{
-			DWORD charsWritten = 0;
-			bool result = Kernel32::WriteConsole(m_helper.GetStdHandle(ConsoleHelper::hStdOut).Use(), &c, 1, &charsWritten, nullptr);
-			if (!(result && charsWritten == 1))
-			{
-				continuable("Call to Kernel32::WriteConsole failed");
-			}
+			continuable("Failed to write character to {} Console.", m_redirected ? "redirected" : "local");
 		}
 	}
 
-	void Console::WriteLine(string_t& output)
+	void Console::WriteLine(const string_t& output)
 	{
-		if (!m_redirected)
+		DWORD charsWritten = 0;
+		bool result = m_redirected ? 
+			Kernel32::WriteFile(m_helper.GetStdHandle(ConsoleHelper::hStdOut).Use(), output.data(), static_cast<DWORD>(output.size()), &charsWritten, nullptr) :
+			Kernel32::WriteConsole(m_helper.GetStdHandle(ConsoleHelper::hStdOut).Use(), output.data(), static_cast<DWORD>(output.size()), &charsWritten, nullptr);
+		
+		if (!(result && charsWritten == output.size()))
 		{
-			DWORD charsWritten = 0;
-			bool result = Kernel32::WriteConsole(m_helper.GetStdHandle(ConsoleHelper::hStdOut).Use(), output.data(), static_cast<DWORD>(output.size()), &charsWritten, nullptr);
-			if (!(result && charsWritten == output.size()))
-			{
-				continuable("Call to Kernel32::WriteConsole failed");
-			}
+			continuable("Failed to write line to {} Console.", m_redirected ? "redirected" : "local");
 		}
 	}
 

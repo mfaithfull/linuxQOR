@@ -46,9 +46,10 @@ namespace qor { namespace components {
         return m_pimpl->ReadLine();
     }
 
-    void Console::WriteLine(string_t line)
+    void Console::WriteLine(const string_t& line)
     {
-        std::cout.write(reinterpret_cast<const char*>(line.c_str()), line.size());
+        m_pimpl->WriteLine(line);
+        //std::cout.write(reinterpret_cast<const char*>(line.c_str()), line.size());
     }
     
     char_t Console::ReadChar()
@@ -58,7 +59,8 @@ namespace qor { namespace components {
     
     void Console::WriteChar(char_t c)
     {
-        std::cout.write(reinterpret_cast<char*>(&c), 1);
+        m_pimpl->WriteChar(c);
+        //std::cout.write(reinterpret_cast<char*>(&c), 1);
     }
 
 }}//qor::components

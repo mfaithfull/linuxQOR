@@ -48,7 +48,7 @@ namespace qor { namespace components {
                 return string_t();
             }
 
-            virtual void WriteLine(string_t /*line*/){}
+            virtual void WriteLine(const string_t& /*line*/){}
             
             virtual char_t ReadChar()
             {
