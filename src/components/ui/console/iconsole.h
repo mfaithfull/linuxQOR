@@ -26,10 +26,10 @@
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_CONSOLE_INTERFACE
 
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/instance/singleton.h"
-#include "src/qor/factory/factory.h"
-#include "src/qor/factory/externalfactory.h"
-#include "src/qor/reference/reference.h"
+#include "src/qor/memory/instance/singleton.h"
+#include "src/qor/memory/factory/factory.h"
+#include "src/qor/memory/factory/externalfactory.h"
+#include "src/qor/memory/reference/reference.h"
 
 namespace qor { namespace components {
 

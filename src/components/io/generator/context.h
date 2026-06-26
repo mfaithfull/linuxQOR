@@ -27,7 +27,7 @@
 
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/pipeline/pipeline.h"
 
 namespace qor { namespace components { namespace generator {

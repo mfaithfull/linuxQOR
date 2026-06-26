@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_FRAMEWORK_UI_CANVAS
 
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/components/ui/egl/window.h"
 #include "src/components/ui/renderer/thor.h"
 

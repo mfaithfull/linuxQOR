@@ -26,8 +26,8 @@
 #define QOR_PP_H_PLATFORM_FILESYSTEM_FILESTAT
 
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/factory/factory.h"
-#include "src/qor/factory/externalfactory.h"
+#include "src/qor/memory/factory/factory.h"
+#include "src/qor/memory/factory/externalfactory.h"
 #include "fileindex.h"
 
 namespace qor{ namespace io{ namespace filesystem {

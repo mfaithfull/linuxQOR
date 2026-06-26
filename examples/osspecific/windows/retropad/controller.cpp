@@ -1,7 +1,7 @@
 #include "src/configuration/configuration.h"
 
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/platform/os/windows/ui/gui/windowclassregistration.h"
 #include "src/platform/os/windows/ui/gui/window.h"
 #include "src/platform/os/windows/ui/gui/view/controllers/toplevel.h"

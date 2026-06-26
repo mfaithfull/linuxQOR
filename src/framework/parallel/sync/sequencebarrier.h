@@ -34,7 +34,7 @@
 
 #include "src/framework/parallel/task/awaitabletraits.h"
 #include "sequencetraits.h"
-#include "src/qor/factory/manuallifetime.h"
+#include "src/qor/memory/factory/manuallifetime.h"
 
 namespace qor
 {

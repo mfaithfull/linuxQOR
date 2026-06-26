@@ -27,7 +27,7 @@
 
 #include "src/qor/current/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/pipeline/connection.h"
 #include "src/framework/io/pipeline/source.h"
 #include "src/framework/io/pipeline/iosink.h"

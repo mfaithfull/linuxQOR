@@ -29,7 +29,7 @@
 #include <string>
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/app/workflow/workflow.h"
 #include "src/components/io/parser/context.h"
 #include "../../protocol.h"

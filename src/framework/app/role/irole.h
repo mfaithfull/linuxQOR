@@ -27,10 +27,10 @@
 
 #include "ifeature.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/reference.h"
+#include "src/qor/memory/reference/reference.h"
 #include "src/qor/current/currentthread.h"
 #include "src/qor/objectcontext/anyobject.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 
 namespace qor{ namespace app {
 

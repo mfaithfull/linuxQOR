@@ -26,7 +26,7 @@
 #define QOR_PP_H_WINDOWS_GUI_VIEW_HANDLER_BASE
 
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 
 #include "abstractwindowhandler.h"
 #include "../../window.h"

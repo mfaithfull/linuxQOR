@@ -27,10 +27,10 @@
 
 #include <vector>
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/factory/factory.h"
-#include "src/qor/factory/externalfactory.h"
+#include "src/qor/memory/factory/factory.h"
+#include "src/qor/memory/factory/externalfactory.h"
 #include "src/qor/error/error.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/iodescriptor.h"
 #include "src/framework/parallel/task/task.h"
 #include "src/framework/parallel/asyncioservice/asynciointerface.h"

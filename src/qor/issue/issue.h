@@ -29,8 +29,8 @@
 #include "where.h"
 #include "what.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/reference.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/reference.h"
+#include "src/qor/memory/reference/newref.h"
 
 namespace qor{ 
 

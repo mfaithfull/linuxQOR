@@ -29,7 +29,7 @@
 #include <string>
 
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 
 #include "src/platform/os/linux/ui/wayland/xdgshell/listeners/xdgsurfacelistener.h"
 #include "xdgwindow.h"

@@ -29,7 +29,7 @@
 #include <functional>
 
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "iworkflow.h"
 #include "src/framework/event/delegate/delegate.h"
 #include "src/qor/error/defaulterrorhandler.h"

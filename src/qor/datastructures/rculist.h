@@ -43,7 +43,6 @@
 #include <memory>
 #include <mutex>
 #include "src/qor/memory/memory.h"
-//#include "src/qor/memory/stdallocator.h"
 #include "rcuguarded.h"
 
 //------------------------------------------------------------------------------

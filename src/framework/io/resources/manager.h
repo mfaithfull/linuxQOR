@@ -30,7 +30,7 @@
 #include <functional>
 #include <deque>
 
-#include "src/qor/reference/reference.h"
+#include "src/qor/memory/reference/reference.h"
 #include "src/framework/io/filesystem/path.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/qor/current/currentthread.h"

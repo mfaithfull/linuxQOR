@@ -27,8 +27,8 @@
 
 #include <stddef.h>
 
-#include "src/qor/reference/reference.h"
-#include "src/qor/factory/factory.h"
+#include "src/qor/memory/reference/reference.h"
+#include "src/qor/memory/factory/factory.h"
 
 //The purpose of an instancer is to determine whether to give out an existing instance
 //a new instance or perhaps a recycled instance or to refuse the request.
@@ -68,7 +68,7 @@ namespace qor{
 
 }//qor
 
-#include "src/qor/factory/internalfactory.h"
-#include "src/qor/factory/externalfactory.h"
+#include "src/qor/memory/factory/internalfactory.h"
+#include "src/qor/memory/factory/externalfactory.h"
 
 #endif//QOR_PP_H_INSTANCE_DEFAULT

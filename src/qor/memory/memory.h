@@ -26,9 +26,9 @@
 #define QOR_PP_H_MEMORY
 
 #include "src/platform/compiler/compiler.h"
-#include "defaultsource.h"
+#include "sources/defaultsource.h"
 
-//allocator trait for type T that determines where it's raw memory comes from
+//Trait for type T that determines where it's raw memory comes from
 //e.g. from the global OS heap or a special arena
 
 namespace qor{
@@ -50,8 +50,8 @@ template<> struct source_of< _CLASS >\
 //Example: qor_pp_declare_source_of(MyClass, DefaultSource);
 
 
-#include "debugallocator.h"
-#include "releaseallocator.h"
+#include "allocators/debugallocator.h"
+#include "allocators/releaseallocator.h"
 
 namespace qor{
 

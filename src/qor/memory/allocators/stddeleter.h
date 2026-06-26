@@ -22,49 +22,44 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_REFERENCE_NEW
-#define QOR_PP_H_REFERENCE_NEW
+#ifndef QOR_PP_H_STDDELETER
+#define QOR_PP_H_STDDELETER
 
-#include "src/qor/injection/typeidentity.h"
-#include "src/qor/current/currentthread.h"
-#include "src/qor/reference/reference.h"
-#include "src/qor/factory/factory.h"
-#include "src/qor/instance/instance.h"
-#include "src/qor/instance/default.h"
+#include <memory>
+#include "../memory.h"
 
 namespace qor{
 
-	template< typename T >
-	ref_of<T>::type new_ref()
+	template <class _Ty>
+	struct qor_std_deleter
 	{
-		return instancer_of<T>::type::template Instance<T>(1);
-	}
+		constexpr qor_std_deleter() noexcept = default;
 
-	template< typename T, typename... _p >
-	ref_of<T>::type new_ref(_p&&... p1)
-	{
-		constexpr size_t default_count = 1;
-		return instancer_of<T>::type::template Instance<T>(default_count, std::forward<_p&&>(p1)...);
-	}
+		template <class _Ty2, std::enable_if_t<std::is_convertible_v<_Ty2*, _Ty*>, int> = 0>
+		qor_std_deleter(const qor_std_deleter<_Ty2>&) noexcept {}
 
-	template< typename T >
-	ref_of<T>::type new_array_ref(size_t count)
-	{
-		return instancer_of<T>::type::template Instance<T>(count);
-	}
-	
-	template< typename T, typename... _p >
-	ref_of<T>::type new_array_ref(size_t count, _p&&... p1)
-	{
-		return instancer_of<T>::type::template Instance<T>(count, std::forward<_p&&>(p1)...);
-	}
+		void operator()(const _Ty* _Ptr) const noexcept /* strengthened */ 
+		{
+			static_assert(0 < sizeof(_Ty), "can't delete an incomplete type");
+			source_of<_Ty>::type::Free( reinterpret_cast<byte*>(const_cast<std::remove_cv<_Ty>::type*>(_Ptr)), sizeof(_Ty) );
+		}
+	};
 
-	template< typename T>
-	void internal_del_ref(T* p)
-	{
-		instancer_of<T>::type::template Release<T>(p, 1);
-	}
+	template <class _Ty>
+	struct qor_std_deleter<_Ty[]> { // default deleter for unique_ptr to array of unknown size
+		constexpr qor_std_deleter() noexcept = default;
+
+		template <class _Uty, std::enable_if_t<std::is_convertible_v<_Uty(*)[], _Ty(*)[]>, int> = 0>
+		qor_std_deleter(const qor_std_deleter<_Uty[]>&) noexcept {}
+
+		template <class _Uty, std::enable_if_t<std::is_convertible_v<_Uty(*)[], _Ty(*)[]>, int> = 0>
+		void operator()(_Uty* _Ptr) const noexcept /* strengthened */ 
+		{
+			static_assert(0 < sizeof(_Uty), "can't delete an incomplete type");
+			source_of<_Uty>::type::Free(reinterpret_cast<byte*>(_Ptr), sizeof(_Uty));
+		}
+	};
 
 }//qor
 
-#endif//QOR_PP_H_REFERENCE_NEW
+#endif//QOR_PP_H_STDDELETER

@@ -27,7 +27,7 @@
 
 #include <string>
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/pipeline/sink.h"
 #include "../../response/response.h"
 #include "../responseparser/responseparser.h"

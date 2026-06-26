@@ -29,7 +29,7 @@
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/current/currentthread.h"
 #include "src/framework/parallel/thread/thread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 
 using namespace qor;
 using namespace qor::test;

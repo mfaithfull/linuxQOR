@@ -28,10 +28,10 @@
 #include "src/qor/injection/typeidentity.h"
 #include "src/framework/io/filesystem/ifilesystem.h"
 #include "src/qor/current/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
+#include "src/qor/memory/factory/internalfactory.h"
 #include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/filesystem/filestat.h"
 
 extern "C"

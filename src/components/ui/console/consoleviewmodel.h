@@ -26,8 +26,8 @@
 #define QOR_PP_H_COMPONENTS_CONSOLE_VIEW_MODEL
 
 #include <vector>
-#include "src/qor/reference/reference.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/reference.h"
+#include "src/qor/memory/reference/newref.h"
 #include "consolewidget.h"
 
 /*ConsoleViewModel collects ConsoleWidgetModels built by observation of domain models and injection of Style and Console UI specific data*/

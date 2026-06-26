@@ -32,7 +32,7 @@
 #include "src/framework/parallel/thread/thread.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/qor/current/currentprocess.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include <random>
 
 using namespace qor;

@@ -27,7 +27,7 @@
 
 #include <cassert>
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "object.h"
 #include "../_1/begin_object.h"
 #include "../_2/end_object.h"

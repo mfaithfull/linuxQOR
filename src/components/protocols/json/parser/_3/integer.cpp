@@ -27,7 +27,7 @@
 
 #include <cassert>
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/components/io/parser/nodes/digit.h"
 #include "integer.h"
 #include "../nodes/integer.h"

@@ -29,7 +29,7 @@
 //in use to already be present before it's included. QOR derived code however can safely include this header after any derived
 //Application class has been defined.
 
-#include "src/qor/reference/reference.h"
+#include "src/qor/memory/reference/reference.h"
 #include "src/framework/app/application/builder.h"
 
 namespace qor{

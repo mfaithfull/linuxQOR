@@ -27,8 +27,8 @@
 
 #include <stddef.h>
 
-#include "src/qor/reference/reference.h"
-#include "src/qor/factory/factory.h"
+#include "src/qor/memory/reference/reference.h"
+#include "src/qor/memory/factory/factory.h"
 #include "src/framework/parallel/sync/recursive_mutex.h"
 #include "src/framework/parallel/sync/lock.h"
 

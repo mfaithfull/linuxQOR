@@ -27,9 +27,9 @@
 
 #include "src/qor/current/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
-#include "src/qor/factory/factory.h"
-#include "src/qor/factory/externalfactory.h"
+#include "src/qor/memory/reference/newref.h"
+#include "src/qor/memory/factory/factory.h"
+#include "src/qor/memory/factory/externalfactory.h"
 #include "address.h"
 #include "socketdefs.h"
 #include "src/framework/parallel/asyncioservice/asynciotypes.h"

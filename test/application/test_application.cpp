@@ -27,7 +27,7 @@
 #include "src/qor/current/currentthread.h"
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/platform/platform.h"
@@ -45,8 +45,8 @@ using namespace qor::platform;
 qor_pp_test_case(canBuildAnApplication)
 {
     auto app = AppBuilder().Build("QOR Test Application")->        
-        SetRole<Role>(
-            [](ref_of<IRole>::type /*role*/)
+        SetRole<app::Role>(
+            [](ref_of<app::IRole>::type /*role*/)
             {
             }
         );

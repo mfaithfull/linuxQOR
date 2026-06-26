@@ -27,7 +27,7 @@
 
 #include <atomic>
 #include "src/framework/parallel/sync/sync.h"
-#include "src/qor/instance/instance.h"
+#include "src/qor/memory/instance/instance.h"
 #include "src/qor/memory/memory.h"
 #include "sharedref.h"
 

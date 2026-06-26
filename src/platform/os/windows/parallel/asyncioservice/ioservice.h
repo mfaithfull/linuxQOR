@@ -29,7 +29,7 @@
 #include <chrono>
 
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/parallel/task/cancellation/cancellationtoken.h"
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "sync/iocompletionport.h"

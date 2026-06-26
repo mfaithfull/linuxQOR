@@ -27,7 +27,7 @@
 
 #include <string>
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/pipeline/iosource.h"
 #include "../../request/request.h"
 #include "../requestgenerator/requestgenerator.h"

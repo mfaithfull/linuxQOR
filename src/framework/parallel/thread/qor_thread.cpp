@@ -27,10 +27,10 @@
 #include "src/qor/module/module.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/qor/current/currentthread.h"
-#include "src/qor/factory/internalfactory.h"
+#include "src/qor/memory/factory/internalfactory.h"
 #include "src/qor/injection/typeregistry.h"
 #include "src/qor/injection/typeregentry.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 
 extern "C"
 {

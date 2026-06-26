@@ -30,7 +30,7 @@
 #include <cstring>
 
 #include "src/platform/compiler/compiler.h"
-#include "memoryexception.h"
+#include "../exceptions/memoryexception.h"
 
 //The allocator decides how much memory is required and what to put in it.
 

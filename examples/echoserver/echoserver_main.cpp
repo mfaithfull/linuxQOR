@@ -10,7 +10,7 @@
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/parallel/asyncioservice/asyncioservice.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
-#include "src/qor/instance/pool.h"
+#include "src/qor/memory/instance/pool.h"
 
 #include "echoserverapp.h"
 #include "serverworkflow.h"

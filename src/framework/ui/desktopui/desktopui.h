@@ -28,11 +28,11 @@
 #include <atomic>
 #include <coroutine>
 #include "src/qor/current/currentthread.h"
-#include "src/qor/instance/singleton.h"
-#include "src/qor/factory/factory.h"
+#include "src/qor/memory/instance/singleton.h"
+#include "src/qor/memory/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/factory/externalfactory.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/factory/externalfactory.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/app/role/ifeature.h"
 
 namespace qor{ bool qor_pp_module_interface(QOR_DESKTOPUI) ImplementsDesktopUI();}

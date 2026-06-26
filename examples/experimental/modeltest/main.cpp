@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/module/module.h"
-#include "src/qor/reference/reference.h"
+#include "src/qor/memory/reference/reference.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/qor/reflection/reflection.h"

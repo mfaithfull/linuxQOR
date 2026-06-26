@@ -28,10 +28,10 @@
 #include <optional>
 #include <vector>
 
-#include "src/qor/instance/singleton.h"
-#include "src/qor/factory/factory.h"
+#include "src/qor/memory/instance/singleton.h"
+#include "src/qor/memory/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/factory/externalfactory.h"
+#include "src/qor/memory/factory/externalfactory.h"
 
 namespace qor
 {

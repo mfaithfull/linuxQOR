@@ -28,7 +28,7 @@
 #include "src/qor/current/currentthread.h"
 #include "src/qor/objectcontext/anyobject.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/qor/property/property.h"
 #include "src/qor/property/propertyvector.h"
 #include "src/qor/reflection/reflection.h"

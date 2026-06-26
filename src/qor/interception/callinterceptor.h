@@ -27,8 +27,8 @@
 
 #include "src/framework/parallel/thread/thread.h"
 #include "src/qor/objectcontext/typedany.h"
-#include "src/qor/reference/flyerref.h"
-#include "src/qor/reference/reference.h"
+#include "src/qor/memory/reference/flyerref.h"
+#include "src/qor/memory/reference/reference.h"
 #include "src/qor/injection/typeidentity.h"
 #include "src/qor/datastructures/guid.h"
 #include "callcontext.h"

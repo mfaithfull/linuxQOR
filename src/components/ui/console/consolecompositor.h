@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_COMPONENTS_CONSOLE_COMPOSITOR
 #define QOR_PP_H_COMPONENTS_CONSOLE_COMPOSITOR
 
-#include "src/qor/reference/reference.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/reference.h"
+#include "src/qor/memory/reference/newref.h"
 #include "consoleview.h"
 #include "consoleviewmodel.h"
 #include "size.h"

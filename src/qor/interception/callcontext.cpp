@@ -25,7 +25,7 @@
 #include "../../configuration/configuration.h"
 #include "callcontext.h"
 #include "callinterceptor.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 
 namespace qor{
 

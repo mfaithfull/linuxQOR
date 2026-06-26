@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_INJECTION_DIWRAPPER
 #define QOR_PP_H_INJECTION_DIWRAPPER
 
-#include "src/qor/reference/reference.h"
+#include "src/qor/memory/reference/reference.h"
 
 #define qor_pp_did(INTERFACE, PARAM) DIWrapper<INTERFACE> PARAM = DIWrapper<INTERFACE>()
 #define qor_pp_dii(INTERFACE, PARAM) DIWrapper<INTERFACE> PARAM

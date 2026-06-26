@@ -31,10 +31,10 @@
 #include <deque>
 
 #include "src/qor/current/currentthread.h"
-#include "src/qor/factory/factory.h"
+#include "src/qor/memory/factory/factory.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/factory/externalfactory.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/factory/externalfactory.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/framework/app/role/ifeature.h"
 #include "src/framework/parallel/thread/threadpool.h"
 

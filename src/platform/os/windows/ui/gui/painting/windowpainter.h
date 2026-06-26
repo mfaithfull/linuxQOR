@@ -27,7 +27,7 @@
 
 #include "src/qor/current/currentthread.h"
 #include "src/qor/injection/typeidentity.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 #include "src/platform/os/windows/common/structures.h"
 
 //Painter to paint a window, either for WM_PAINT handling or for Frame painting before UpdateLayeredWindow

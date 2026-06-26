@@ -26,7 +26,7 @@
 #define QOR_PP_H_STDALLOCATOR
 
 #include <memory>
-#include "memory.h"
+#include "../memory.h"
 #include "stddeleter.h"
 
 namespace qor{

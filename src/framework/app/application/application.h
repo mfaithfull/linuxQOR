@@ -31,7 +31,7 @@
 #include "src/framework/app/workflow/iworkflow.h"
 #include "src/qor/module/module.h"
 #include "src/qor/current/currentthread.h"
-#include "src/qor/instance/singleton.h"
+#include "src/qor/memory/instance/singleton.h"
 #include "src/platform/platform.h"
 #include "irunable.h"
 #include "../optionparser/ioptionable.h"

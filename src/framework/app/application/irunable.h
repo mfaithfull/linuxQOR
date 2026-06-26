@@ -27,7 +27,7 @@
 
 #include <functional>
 #include <iostream>
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 
 namespace qor{ namespace app {
 

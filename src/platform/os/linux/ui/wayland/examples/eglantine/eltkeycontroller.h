@@ -23,7 +23,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/qor/current/currentthread.h"
-#include "src/qor/reference/newref.h"
+#include "src/qor/memory/reference/newref.h"
 
 #include "src/platform/os/linux/ui/wayland/client/keyboard.h"
 #include "src/platform/os/linux/ui/wayland/client/controllers/keyboardcontroller.h"

@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_NETWORK_CLIENT
 
 #include "src/qor/interception/functioncontext.h"
-#include "src/qor/reference/reference.h"
+#include "src/qor/memory/reference/reference.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/network/socket.h"
 #include "src/framework/io/pipeline/pipeline.h"

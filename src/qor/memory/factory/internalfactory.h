@@ -29,7 +29,7 @@
 #include <memory>
 
 #include "src/qor/memory/memory.h"
-#include "src/qor/reference/reference.h"
+#include "src/qor/memory/reference/reference.h"
 
 namespace qor
 {

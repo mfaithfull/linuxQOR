@@ -32,7 +32,7 @@
 #include "src/framework/parallel/sync/sequencebarrier.h"
 #include "sequencerange.h"
 #include "src/framework/parallel/sync/sequencetraits.h"
-#include "src/qor/factory/manuallifetime.h"
+#include "src/qor/memory/factory/manuallifetime.h"
 
 namespace qor
 {
