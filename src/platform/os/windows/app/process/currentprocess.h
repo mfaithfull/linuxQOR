@@ -25,7 +25,6 @@
 #ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_PROCESS
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_PROCESS
 
-
 #include "src/qor/essentials/current/icurrentprocess.h"
 
 namespace qor{

@@ -31,7 +31,7 @@ extern "C" int main();
 
 int __stdcall WinMain(void* hinst, void* hinstPrev, char* pszCmdLine, int nCmdShow)
 { 
-    return main(); 
+    return main(); //TODO: Get the proper parameters for main and use them
 }
 
 namespace qor{ namespace win {

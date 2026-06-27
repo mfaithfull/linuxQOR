@@ -84,8 +84,8 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, filesystem::Index& input)
     /*We use File connectors to connect to the input and output files. These encapsulate everything file related for 
     the pipeline. If we used Socket connectors or Pipe connectors or DBus connectors, the rest of the pipeline would
      be identical and oblivious*/
-    io::components::FileConnector inputConnector(input, WithFlags::None, OpenFor::ReadOnly);
-    io::components::FileConnector outputConnector(output, WithFlags::CreateNew, OpenFor::ReadWrite);
+    io::components::FileConnector inputConnector(input, OpenFor::ReadOnly, WithFlags::None);
+    io::components::FileConnector outputConnector(output);
 
     //Create a pipeline with the connectors at each end
     Pipeline fileProcessor(inputConnector, outputConnector, Element::Push);
@@ -97,8 +97,8 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, filesystem::Index& input)
 
     /*This could also be done as a single statement
     Pipeline(
-        FileConnector(input,WithFlags::None,ShareMode::Owner_Read,OpenFor::ReadOnly),
-        FileConnector(output,WithFlags::CreateNew,ShareMode::Owner_Write,OpenFor::ReadWrite),
+        FileConnector(OpenFor::ReadOnly, input,WithFlags::None),
+        FileConnector(output),
         Element::Push).
         InsertInlineFilter(Base64EncodeFilter(8192)).
             Connect().

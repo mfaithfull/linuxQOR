@@ -55,8 +55,8 @@ int main()
                                 CurrentPath(), "request.txt"
                     ),
                     reader.Buffer(),
-                    WithFlags::None,
-                    OpenFor::ReadOnly
+                    OpenFor::ReadOnly,
+                    WithFlags::None                    
                 )
             );
 

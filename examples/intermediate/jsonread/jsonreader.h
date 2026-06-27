@@ -26,17 +26,21 @@
 #include "src/components/protocols/json/parser/_3/object.h"
 #include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
 #include "src/components/io/parser/parser.h"
+#include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
 
-template< class JasonPartObjectT, class JasonModelObjectT >
+template< class JSONPartObjectT, class JSONModelObjectT >
 class JSONPartReader
 {
 public:
 
-    JSONPartReader() : m_byteBuffer(12), m_sink(m_byteBuffer)
-    {        
+    JSONPartReader() : m_byteBuffer(12), m_sink(m_byteBuffer){ }
+
+    ref_of<JSONModelObjectT>::type operator()(const io::filesystem::Index& inFile)
+    {
+        return operator()(io::components::FileConnector(inFile, m_byteBuffer, io::OpenFor::ReadOnly, io::WithFlags::None));
     }
 
-    ref_of<JasonModelObjectT>::type operator()(const pipeline::Plug& sourceConnector)
+    ref_of<JSONModelObjectT>::type operator()(const pipeline::Plug& sourceConnector)
     {           
         m_sink.Reset();
         m_byteBuffer.Reset();
@@ -50,7 +54,7 @@ public:
             log::Debug("No more data");
         }
         auto finalNode = m_sink.Parser().PopNode();
-        return finalNode.template AsRef< qor::components::parser::NodeAdapter< JasonModelObjectT > >()->GetObject();
+        return finalNode.template AsRef< qor::components::parser::NodeAdapter< JSONModelObjectT > >()->GetObject();
     }
 
     const pipeline::Buffer& Buffer()
@@ -61,7 +65,7 @@ public:
 private:
 
     pipeline::PODBuffer<byte> m_byteBuffer;
-    pipeline::components::ParserSink< JasonPartObjectT > m_sink;
+    pipeline::components::ParserSink< JSONPartObjectT > m_sink;
 
 };
 

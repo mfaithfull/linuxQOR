@@ -67,7 +67,7 @@ namespace qor { namespace win { namespace api {
         {
             case Severity::Note:
                 ::OutputDebugStringA(error.what().Content().c_str());
-                return true;//default ignore;
+                return true;
                 break;
             case Severity::Warning:
                 ::OutputDebugStringA(error.what().Content().c_str());
@@ -76,7 +76,6 @@ namespace qor { namespace win { namespace api {
             case Severity::Continuable_Error:
                 {                    
                     std::string message = GetLastErrorAsString();
-                    //std::string Message = MessageText(error.what().GetSeverity(), error.what().Content(), GetWhereClause(error), error.when().TimePoint());
                     ::OutputDebugStringA(std::format("{0}. Windows error status - {1}",error.what().Content(), message).c_str());
                     return false;
                 }

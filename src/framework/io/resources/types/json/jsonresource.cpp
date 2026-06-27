@@ -56,8 +56,8 @@ namespace qor{ namespace framework{ namespace res {
             qor::io::components::FileConnector(
                 m_index,
                 reader.Buffer(),
-                qor::io::WithFlags::None,
-                qor::io::OpenFor::ReadOnly
+                qor::io::OpenFor::ReadOnly,
+                qor::io::WithFlags::None
             )
         );  
         if(m_object.IsNotNull())

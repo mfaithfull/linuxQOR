@@ -37,13 +37,12 @@ namespace qor { namespace win { namespace api {
     DWORD Kernel32::WaitForMultipleObjectsEx(DWORD nCount, const void**lpHandles, BOOL bWaitAll, DWORD dwMilliseconds, BOOL bAlertable)
     {
         qor_pp_fcontext;
+        qor_pp_useswinapi(Kernel32, WaitForMultipleObjectsEx);
 
-        DWORD result = ::WaitForMultipleObjectsEx(nCount, (const HANDLE*)lpHandles, bWaitAll, dwMilliseconds, bAlertable);
+        CheckReturn< DWORD, TCheckFailureValue<DWORD, WAIT_FAILED > >::TType result = 
+            Library::Call< DWORD, DWORD, const HANDLE*, BOOL, DWORD, BOOL >( 
+                pFunc, nCount, (const HANDLE*)lpHandles, bWaitAll, dwMilliseconds, bAlertable);
 
-        if(result == WAIT_FAILED)
-        {
-            //TODO:Go lookup the problem
-        }
         return result;
     }
 

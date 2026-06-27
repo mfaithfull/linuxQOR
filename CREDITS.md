@@ -29,5 +29,6 @@ https://github.com/bshoshany/thread-pool
 The AsyncIO and Tasks libraries are adapted from Lewis Baker's CPP Coro library.
 
 The custom container iterators are adapted from blIterators
+https://github.com/navyenzo/blIteratorAPI/blob/master/readme.md
 
 "I've never written an original line of code in my life." - Level9 Z80 Assembler guru. circa 1987

@@ -56,8 +56,8 @@ namespace qor{ namespace framework{ namespace res {
             qor::io::components::FileConnector(
                 m_index,
                 reader.Buffer(),
-                qor::io::WithFlags::None,
-                qor::io::OpenFor::ReadOnly
+                qor::io::OpenFor::ReadOnly,
+                qor::io::WithFlags::None                
             )
         );        
 
@@ -94,7 +94,7 @@ namespace qor{ namespace framework{ namespace res {
             TTFReader reader;
 
             auto result = reader(
-                qor::io::components::FileConnector(m_index, reader.Buffer(), io::WithFlags::None, io::OpenFor::ReadOnly)
+                qor::io::components::FileConnector(m_index, reader.Buffer(), io::OpenFor::ReadOnly, io::WithFlags::None)
             );        
 
             Resource::Claim();

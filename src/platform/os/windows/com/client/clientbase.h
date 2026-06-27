@@ -62,13 +62,9 @@ namespace qor{ namespace platform { namespace win{
     {
     public:
 
-        CComPtr() : m_p(0)
-        {
-        }
+        CComPtr(){ }
 
-        CComPtr(TInterface* p) : m_p(p)
-        {
-        }
+        CComPtr(TInterface* p) : m_p(p){ }
 
         CComPtr(const CComPtr< TInterface >& src)
         {
@@ -116,12 +112,12 @@ namespace qor{ namespace platform { namespace win{
 
         bool IsNull(void)
         {
-            return m_p == 0 ? true : false;
+            return m_p == nullptr ? true : false;
         }
 
     protected:
 
-        TInterface* m_p;
+        TInterface* m_p{nullptr};
 
     };
 

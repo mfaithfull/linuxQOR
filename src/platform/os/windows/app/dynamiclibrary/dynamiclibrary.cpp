@@ -33,9 +33,7 @@ qor_pp_module_provide(QOR_WINDOWSDLL, DynamicLibrary)
 
 namespace qor{ namespace framework{ namespace win{
     
-    DynamicLibrary::DynamicLibrary() : qor::DynamicLibrary()
-    {
-    }
+    DynamicLibrary::DynamicLibrary() : qor::DynamicLibrary(){ }
 
     DynamicLibrary::DynamicLibrary(const std::string& libName) : qor::DynamicLibrary(libName)
     {

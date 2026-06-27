@@ -113,7 +113,7 @@ void PipelineFileProcessor(io::filesystem::Index& input)
 {
     Image output;    
     JPEGDecodeFilter filter;
-    Pipeline(FileConnector(input,WithFlags::None,OpenFor::ReadOnly), ImageSink(output))
+    Pipeline(FileConnector(input,OpenFor::ReadOnly, WithFlags::None), ImageSink(output))
     .InsertFilter(&filter).Connect().PumpOne();
     
 }

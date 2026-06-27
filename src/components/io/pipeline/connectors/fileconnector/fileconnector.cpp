@@ -41,9 +41,7 @@ namespace qor{ namespace io{ namespace components{
         m_source->SetPlug(this);
     }
 
-    FileConnector::FileConnector(const filesystem::Index& fileIndex, 
-        const WithFlags mode, 
-        const OpenFor openfor) : Plug()
+    FileConnector::FileConnector(const filesystem::Index& fileIndex, const OpenFor openfor, const WithFlags mode) : Plug()
     {
         m_Mode = mode;
         m_OpenFor = openfor;
@@ -55,19 +53,14 @@ namespace qor{ namespace io{ namespace components{
         m_source->SetPlug(this);
     }
 
-    FileConnector::FileConnector(const filesystem::Index& fileIndex, 
-        const pipeline::Buffer& buffer, 
-        const WithFlags mode, 
-        const OpenFor openfor) : FileConnector(fileIndex, mode, openfor)
+    FileConnector::FileConnector(const filesystem::Index& fileIndex, const pipeline::Buffer& buffer, const OpenFor openfor, const WithFlags mode) : 
+        FileConnector(fileIndex, openfor, mode)
     {
         m_source->SetBuffer(buffer);
         m_sink->SetBuffer(buffer);
     }
 
-    FileConnector::FileConnector(const filesystem::Index& fileIndex, 
-        pipeline::Buffer& buffer, 
-        const WithFlags mode, 
-        const OpenFor openfor) : FileConnector(fileIndex, mode, openfor)
+    FileConnector::FileConnector(const filesystem::Index& fileIndex, pipeline::Buffer& buffer, const OpenFor openfor, const WithFlags mode) : FileConnector(fileIndex, openfor, mode)
     {
         m_source->SetBuffer(buffer);
         m_sink->SetBuffer(buffer);

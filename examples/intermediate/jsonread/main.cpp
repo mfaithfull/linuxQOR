@@ -103,170 +103,168 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
 
             JSONPartReader<qor::components::parser::json::array, qor::components::model::json::Array> arrayReader;
 
-            auto jsonArray = arrayReader(
-                FileConnector(Index(testsPath, "y_array_arraysWithSpaces.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+            auto jsonArray = arrayReader(Index(testsPath, "y_array_arraysWithSpaces.json"));
 
             auto array_empty = arrayReader(
                 FileConnector(Index(testsPath, "y_array_empty.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto array_empty_string = arrayReader(
                 FileConnector(Index(testsPath, "y_array_empty-string.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto array_ending_with_newline = arrayReader(
                 FileConnector(Index(testsPath, "y_array_ending_with_newline.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto array_false = arrayReader(
                 FileConnector(Index(testsPath, "y_array_false.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto array_heterogeneous = arrayReader(
                 FileConnector(Index(testsPath, "y_array_heterogeneous.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto array_null = arrayReader(
                 FileConnector(Index(testsPath, "y_array_null.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto array_with_1_and_newline = arrayReader(
                 FileConnector(Index(testsPath, "y_array_with_1_and_newline.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto array_with_leading_space = arrayReader(
                 FileConnector(Index(testsPath, "y_array_with_leading_space.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto array_with_several_null = arrayReader(
                 FileConnector(Index(testsPath, "y_array_with_several_null.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto array_with_trailing_space = arrayReader(
                 FileConnector(Index(testsPath, "y_array_with_trailing_space.json"),
-                arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto jsonNumber = arrayReader(
                 FileConnector(Index(testsPath, "y_number.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto number0e_1 = arrayReader(
                 FileConnector(Index(testsPath, "y_number_0e+1.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
                     
             auto number_0e1 = arrayReader(
                 FileConnector(Index(testsPath, "y_number_0e1.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_after_space = arrayReader(
                 FileConnector(Index(testsPath, "y_number_after_space.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_double_close_to_zero = arrayReader(
                 FileConnector(Index(testsPath, "y_number_double_close_to_zero.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_int_with_exp = arrayReader(
                 FileConnector(Index(testsPath, "y_number_int_with_exp.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_minus_zero = arrayReader(
                 FileConnector(Index(testsPath, "y_number_minus_zero.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_negative_int = arrayReader(
                 FileConnector(Index(testsPath, "y_number_negative_int.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_negative_one = arrayReader(
                 FileConnector(Index(testsPath, "y_number_negative_one.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_negative_zero = arrayReader(
                 FileConnector(Index(testsPath, "y_number_negative_zero.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_real_capital_e = arrayReader(
                 FileConnector(Index(testsPath, "y_number_real_capital_e.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_real_capital_e_neg_exp = arrayReader(
                 FileConnector(Index(testsPath, "y_number_real_capital_e_neg_exp.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_real_capital_e_pos_exp = arrayReader(
                 FileConnector(Index(testsPath, "y_number_real_capital_e_pos_exp.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_real_exponent = arrayReader(
                 FileConnector(Index(testsPath, "y_number_real_exponent.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_real_fraction_exponent = arrayReader(
                 FileConnector(Index(testsPath, "y_number_real_fraction_exponent.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_real_neg_exp = arrayReader(
                 FileConnector(Index(testsPath, "y_number_real_neg_exp.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_real_pos_exponent = arrayReader(
                 FileConnector(Index(testsPath, "y_number_real_pos_exponent.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_simple_int = arrayReader(
                 FileConnector(Index(testsPath, "y_number_simple_int.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto number_simple_real = arrayReader(
                 FileConnector(Index(testsPath, "y_number_simple_real.json"),
-                    arrayReader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                arrayReader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             JSONReader reader;
             auto jsonObject = reader(
                 FileConnector(Index(testsPath, "y_object_basic.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto object_duplicated_key = reader(
                 FileConnector(Index(testsPath, "y_object_duplicated_key.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto object_duplicated_key_and_value = reader(
                 FileConnector(Index(testsPath, "y_object_duplicated_key_and_value.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto object_empty = reader(
                 FileConnector(Index(testsPath, "y_object_empty.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto object_empty_key = reader(
                 FileConnector(Index(testsPath, "y_object_empty_key.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto object_escaped_null_in_key = reader(
                 FileConnector(Index(testsPath, "y_object_escaped_null_in_key.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto object_extreme_numbers = reader(
                 FileConnector(Index(testsPath, "y_object_extreme_numbers.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto object_long_strings = reader(
                 FileConnector(Index(testsPath, "y_object_long_strings.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto object_simple = reader(
                 FileConnector(Index(testsPath, "y_object_simple.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
             
             auto object_string_unicode = reader(
                 FileConnector(Index(testsPath, "y_object_string_unicode.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
 
             auto object_with_newlines = reader(
                 FileConnector(Index(testsPath, "y_object_with_newlines.json"),
-                    reader.Buffer(), WithFlags::None, OpenFor::ReadOnly));
+                reader.Buffer(),  OpenFor::ReadOnly, WithFlags::None));
                     
             return EXIT_SUCCESS;
         });
