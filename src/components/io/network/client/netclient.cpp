@@ -50,7 +50,7 @@ namespace qor{ namespace io{ namespace network{ namespace components {
     bool NetworkClient::Connect()
     {
         qor_pp_ofcontext;
-        if(m_protocol.IsNull())//TODO: Add a pipeline validity test
+        if(m_protocol.IsNull())
         {
             serious("No protocol set for NetworkClient connection.");
             return false;

@@ -42,6 +42,7 @@ public:
 
     ref_of<JSONModelObjectT>::type operator()(const pipeline::Plug& sourceConnector)
     {           
+        m_byteBuffer.Reset();
         m_sink.Reset();
         m_byteBuffer.Reset();
         size_t unitsPumped = pipeline::Pipeline(sourceConnector, m_sink, pipeline::Element::Push).Connect().PumpAll();
@@ -73,12 +74,16 @@ class JSONReader
 {
 public:
 
-    JSONReader() : m_byteBuffer(12), m_sink(m_byteBuffer)
-    {        
+    JSONReader() : m_byteBuffer(2048), m_sink(m_byteBuffer){ }
+
+    ref_of<qor::components::model::json::Object>::type operator()(const io::filesystem::Index& inFile)
+    {
+        return operator()(io::components::FileConnector(inFile, m_byteBuffer, io::OpenFor::ReadOnly, io::WithFlags::None));
     }
 
     ref_of<qor::components::model::json::Object>::type operator()(const pipeline::Plug& sourceConnector)
     {           
+        m_byteBuffer.Reset();
         m_sink.Reset();
         pipeline::Pipeline(sourceConnector, m_sink, pipeline::Element::Push).Connect().PumpAll();
         m_sink.Parser().FinalParse();

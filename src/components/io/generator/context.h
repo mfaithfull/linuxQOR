@@ -36,11 +36,9 @@ namespace qor { namespace components { namespace generator {
     {
     public:
 
-        Context() : m_space(nullptr), m_position(0), m_size(0)
-        {}
+        Context() : m_space(nullptr), m_position(0), m_size(0){ }
 
-        Context(byte* data, size_t itemCount) : m_space(data), m_position(0), m_size(itemCount)
-        {}
+        Context(byte* data, size_t itemCount) : m_space(data), m_position(0), m_size(itemCount){ }
 
         bool PutOctet(byte data);
         size_t GetPosition();

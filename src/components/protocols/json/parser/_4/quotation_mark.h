@@ -35,17 +35,17 @@ namespace qor { namespace components { namespace parser { namespace json {
         virtual ~quotation_mark() = default;
         virtual void Prepare()
         {
-            log::debug("Looking for a quotation mark...");
+            //log::debug("Looking for a quotation mark...");
         }
 
         void Emit()
         {
-            log::debug("Emitting a quotation mark: ");
+            //log::debug("Emitting a quotation mark: ");
         }
 
         void Fail()
         {
-            log::debug("...Didn't find a quotation mark.");            
+            //log::debug("...Didn't find a quotation mark.");            
         }
 
     };

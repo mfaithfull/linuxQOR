@@ -44,17 +44,17 @@ namespace qor { namespace components { namespace parser { namespace json {
         virtual ~unescaped() = default;
         virtual void Prepare()
         {
-            log::debug("Looking for an unescaped character...");
+            //log::debug("Looking for an unescaped character...");
         }
 
         void Emit()
         {
-            log::debug("Emitting an unescaped character: ");
+            //log::debug("Emitting an unescaped character: ");
         }
 
         void Fail()
         {
-            log::debug("...Didn't find an unescaped character.");
+            //log::debug("...Didn't find an unescaped character.");
         }
     };
 

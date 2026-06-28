@@ -31,6 +31,7 @@
 #include "src/components/io/parser/state.h"
 #include "src/components/io/parser/context.h"
 #include "src/qor/flyers/log/debug.h"
+#include "src/qor/flyers/interception/functioncontext.h"
 
 namespace qor{ namespace pipeline{ namespace components{ 
 
@@ -83,8 +84,11 @@ namespace qor{ namespace pipeline{ namespace components{
 
         void Reset()
         {
+            qor_pp_ofcontext;
             if(!m_EOD)
             {
+                log::Debug("Parser Sink Reset");
+                m_context->Reset();
                 m_objectState = new_ref<TObjectState>(&m_parser);
                 m_parser.SetInitialState(m_objectState);
             }
@@ -100,6 +104,7 @@ namespace qor{ namespace pipeline{ namespace components{
 
         virtual size_t Parse(byte* data, size_t bytesToParse)
         {
+            qor_pp_ofcontext;
             log::debug("Routing {0} bytes to Parser.", bytesToParse);
             m_context->SetData(data, bytesToParse);                        
             m_parser.Parse();

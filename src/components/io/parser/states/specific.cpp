@@ -48,7 +48,7 @@ namespace qor {	namespace components { namespace parser {
                         m_result.token = m_token;
                         m_result.length = 1;
                         m_result.code = Result::SUCCESS;
-                        log::debug("Matched '{0}'", (char)m_matchingOctet);
+                        //log::debug("Matched '{0}'", (char)m_matchingOctet);
                     }
                     else if (data)
                     {

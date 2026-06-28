@@ -26,6 +26,7 @@
 
 #include "filter.h"
 #include "src/qor/flyers/log/debug.h"
+#include "src/qor/flyers/interception/functioncontext.h"
 
 namespace qor{ namespace pipeline{
 
@@ -130,6 +131,7 @@ namespace qor{ namespace pipeline{
     //returns true if we got all the units we asked for without breaking the pipe
     bool Filter::Pump(size_t& unitsPumped, size_t unitsToPump)
     {    
+        qor_pp_ofcontext;
         bool working = unitsToPump > 0 ? true : false;
         while(working && unitsToPump > 0)
         {
@@ -140,18 +142,26 @@ namespace qor{ namespace pipeline{
                 working = ActualSink()->Write(unitsPumpedAtOnce, unitsToPump);
                 if(unitsPumpedAtOnce == 0)
                 {
-                    log::debug("Nothing pulled will retry.");
+                    log::debug("Nothing pulled");
+                    if(working)
+                    {
+                        log::debug("Will retry.");
+                    }
                     break;
                 }
                 log::debug("Pulled for {0} units", unitsPumpedAtOnce);
             }
             else
             {
-                log::debug("Pushing {0} units", unitsToPump);
+                log::debug("Pushing up to {0} units", unitsToPump);
                 working = ActualSource()->Read(unitsPumpedAtOnce, unitsToPump);
                 if(unitsPumpedAtOnce == 0)
                 {
-                    log::debug("Nothing pushed will retry.");
+                    log::debug("Nothing pushed.");
+                    if(working)
+                    {
+                        log::debug("Will retry.");
+                    }
                     break;
                 }
                 log::debug("Pushed {0} units", unitsPumpedAtOnce);

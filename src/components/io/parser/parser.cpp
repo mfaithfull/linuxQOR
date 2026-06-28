@@ -28,8 +28,10 @@
 #include <iostream>
 
 #include "src/platform/compiler/compiler.h"
+#include "src/qor/flyers/interception/functioncontext.h"
 #include "parser.h"
 #include "src/qor/flyers/log/debug.h"
+#include "state.h"
 
 namespace qor { namespace components { namespace parser {
 
@@ -38,6 +40,7 @@ namespace qor { namespace components { namespace parser {
     //associated object model.
     void Parser::Drain()
     {
+        qor_pp_ofcontext;
         while(!IsComplete() && m_StateStack.size() > 0)
         {
             PopState();
@@ -47,7 +50,7 @@ namespace qor { namespace components { namespace parser {
             }
             if(IsComplete())
             {
-                log::debug("Parse complete.");
+                //log::debug("Parse complete.");
                 break;
             }
         }        
@@ -58,22 +61,26 @@ namespace qor { namespace components { namespace parser {
     //until all the data is processed into AST Nodes
     void Parser::InnerParse()
     {
+        qor_pp_ofcontext;
+
         while(!IsComplete() && m_context->HasUnparsedData())
         {
             CurrentState()->Enter();
         }
         if(IsComplete())
         {
-            log::debug("Initial parse complete.");
+            //log::debug("Initial parse complete.");
         }
         if(!m_context->HasUnparsedData())
         {
-            log::debug("All available data consumed.");
+            log::debug("Parse ran out of data.");
         }
     }
 
     int Parser::SafeParse()
     {
+        qor_pp_ofcontext;
+
         if(m_inError)
         {
             continuable("Parse error. Parser cannot continue.");
@@ -81,7 +88,7 @@ namespace qor { namespace components { namespace parser {
         }
         try
         {
-            log::debug("Stack on entry has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
+            //log::debug("Stack on entry has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
             m_final ? Drain() : InnerParse();
         }
         catch(const Error& error)
@@ -100,35 +107,55 @@ namespace qor { namespace components { namespace parser {
             m_inError = true;
         }
 
-        log::debug("Stack on exit has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
+        //log::debug("Stack on exit has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
+
+        if(!m_final && m_StateStack.size() == 0 )
+        {
+            log::debug("Parse finished early.");
+            if(m_nodes.size() == 0)
+            {
+                log::debug("Nothing found.");
+            }
+        }
+        /*
+        std::stack< ref_of<workflow::State>::type > copy = m_StateStack; // Copy the stack
+        while (!copy.empty()) 
+        {
+            uint64_t token = copy.top().AsRef<ParserState>()->GetToken();            
+            std::cout << "token: " << token << "\n";
+            copy.pop();
+        }
+        */
         return m_result;
     }
 
     int Parser::FinalParse()
     {
+        qor_pp_ofcontext;
+
         if(m_final)
         {
             return m_result;
         }
         m_final = true;
-        log::debug("Entering final phase.");
+        //log::debug("Entering final parse.");
         m_complete = false;
         if(m_StateStack.empty())
         {
+            //log::debug("Final parse not required.");
+            //log::debug("Stack has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
             return m_result;        
         }
         auto result = SafeParse();
-        log::debug("Final phase complete.");
-        log::debug("Stack has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
-        if(m_StateStack.size() == 0 && m_nodes.size() == 1 && m_complete == false)
-        {
-            log::debug("This should be the end. Should not come back.");
-        }
+        //log::debug("Final parse complete.");
+        //log::debug("Stack has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
         return result;
     }
 
     int Parser::Parse()
     {   
+        qor_pp_ofcontext;
+
         log::debug("Pass starting.");
         m_final = false;
         m_complete = false;
@@ -144,6 +171,8 @@ namespace qor { namespace components { namespace parser {
 
     void Parser::Diagnostic()
     {
+        qor_pp_ofcontext;
+        
         std::string finalParse = m_final ? "Yes" : "No";
         std::string inError = m_inError ? "Yes" : "No";
 

@@ -44,7 +44,7 @@ namespace qor{ namespace io{ namespace network { namespace components {
     {
     public:
 
-        NetworkSession(ref_of<qor::io::network::Socket>::type socket, ref_of<qor::pipeline::Protocol>::type protocol) :
+        NetworkSession(ref_of<network::Socket>::type socket, ref_of<pipeline::Protocol>::type protocol) :
             connected(new_ref<workflow::State>(this)),
             running(new_ref<workflow::State>(this)),
             disconnect(new_ref<workflow::State>(this)),

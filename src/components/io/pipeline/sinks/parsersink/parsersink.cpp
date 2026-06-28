@@ -57,6 +57,8 @@ namespace qor{ namespace pipeline{ namespace components{
                 byte* data = buffer->ReadRequest(unitsToWrite);
                 if(unitsToWrite > 0)
                 {
+                    //std::string strData((const char*)(data), std::min(buffer->GetUnitSize() * unitsToWrite, 40ull));
+                    //log::debug(strData);
                     size_t bytesParsed = Parse(data, buffer->GetUnitSize() * unitsToWrite);
                     if(bytesParsed > 0)
                     {

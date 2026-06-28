@@ -61,12 +61,15 @@ namespace qor{
 
     void Serious::Escalate() const
     {
+#ifndef NDEBUG  //Wait to allow logging to catch up before we throw
+        CurrentThread::GetCurrent().Sleep(1500);
+#endif
         throw(*this);
     }
     
     void Serious::Ignore() const
     {
-        warning("Ignoring a serious issue. Extreme caution advided! {0}", m_what->Content());
+        warning("Ignoring a serious issue. Extreme caution advised! {0}", m_what->Content());
     }
 
 }//qor

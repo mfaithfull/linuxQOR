@@ -46,7 +46,7 @@ namespace qor{ namespace io{ namespace network{ namespace components {
         ) : m_filter(protocol->GetRequestFilter()), m_socket(socket), m_ioSession(ioSession),m_socketSessionConnector(m_socket, m_ioSession)
         {
             //Setup the pipeline
-            SetFlowMode(Element::FlowMode::Push);
+            SetFlowMode(pipeline::Element::FlowMode::Push);
 
             //The source comes from the socket connector and uses the protocol filter as it's write buffer
             m_socketSource.SetPlug(&m_socketSessionConnector);
@@ -79,9 +79,9 @@ namespace qor{ namespace io{ namespace network{ namespace components {
         ref_of<pipeline::InlineFilter<byte>>::type m_filter;
         ref_of<network::Socket>::type m_socket;
         ref_of<async::AsyncIOContext::Session>::type m_ioSession;
-        components::SocketConnector m_socketSessionConnector;
-        components::SocketSource m_socketSource;
-        components::SocketSink m_socketSink;
+        SocketConnector m_socketSessionConnector;
+        SocketSource m_socketSource;
+        SocketSink m_socketSink;
 
     };
 

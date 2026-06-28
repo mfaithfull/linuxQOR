@@ -1,7 +1,6 @@
 set(target qor_json)
 
 add_library(${target} SHARED qor_json.cpp 
-parser/jsonparser.cpp
 parser/_1/array.cpp
 parser/_2/escape.cpp
 parser/_2/character.cpp

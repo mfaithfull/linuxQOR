@@ -44,17 +44,17 @@ namespace qor { namespace components { namespace parser { namespace json {
         virtual ~name_separator() = default;
         virtual void Prepare()
         {
-            log::debug("Looking for a name separator...");
+            //log::debug("Looking for a name separator...");
         }
 
         void Emit()
         {
-            log::debug("Consuming a name separator: ");
+            //log::debug("Consuming a name separator: ");
         }
 
         void Fail()
         {
-            log::debug("...Didn't find a name separator.");
+            //log::debug("...Didn't find a name separator.");
         }
 
     };

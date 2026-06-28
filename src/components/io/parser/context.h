@@ -61,7 +61,8 @@ namespace qor { namespace components { namespace parser {
         }
 
         void Diagnostic();
-
+        void Reset();
+        
     private:
     
         byte* m_octetStream{ nullptr };

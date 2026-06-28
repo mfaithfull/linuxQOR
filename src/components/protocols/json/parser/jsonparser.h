@@ -22,13 +22,11 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
-
 #include "_4/unescaped.h"
 #include "_4/quotation_mark.h"
 #include "_2/escape.h"
 #include "_2/character.h"
-#include "string.h"
+#include "_4/string.h"
 #include "_4/zero.h"
 #include "_4/plus.h"
 #include "_3/minus.h"

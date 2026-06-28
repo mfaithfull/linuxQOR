@@ -46,9 +46,9 @@ namespace qor { namespace components { namespace parser {
             {
                 Fail();
             }
-            else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != static_cast<uint64_t>(eToken::Lexical))
+            else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token > static_cast<uint64_t>(eToken::Lexical))
             {
-                if(m_token == static_cast<uint64_t>(eToken::Lexical) && m_result.token != static_cast<uint64_t>(eToken::Lexical))
+                if(m_token == static_cast<uint64_t>(eToken::Lexical) && m_result.token > static_cast<uint64_t>(eToken::Lexical))
                 {
                     m_token = m_result.token;
                 }
@@ -58,7 +58,7 @@ namespace qor { namespace components { namespace parser {
             {
                 std::cout << "Ran out of data before we could decide. Reenter with more data to try again." << std::endl;
             }
-            else if(GetParser()->IsFinal() && m_result.token != static_cast<uint64_t>(eToken::Lexical))
+            else if(GetParser()->IsFinal() && m_result.token > static_cast<uint64_t>(eToken::Lexical))
             {
                 Emit();
             }

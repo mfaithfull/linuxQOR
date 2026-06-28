@@ -66,4 +66,11 @@ namespace qor { namespace components { namespace parser {
         log::debug("Context diagnostics:\nstream size: {0}, position: {1}\ndata sample: {2}", m_size, m_position, sample);
     }
 
+    void Context::Reset()
+    {
+        m_octetStream = nullptr;
+        m_position = 0;
+        m_size = 0;
+    }
+
 }}}//qor::components::parser

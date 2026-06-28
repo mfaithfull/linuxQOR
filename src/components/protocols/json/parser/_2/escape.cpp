@@ -34,17 +34,17 @@ namespace qor { namespace components { namespace parser { namespace json {
 
     void escape::Prepare()
     {
-        log::debug("Looking for an Escape Character...");
+        //log::debug("Looking for an Escape Character...");
     }
 
     void escape::Emit()
     {
-        log::debug("Emitting an Escape character: ");
+        //log::debug("Emitting an Escape character: ");
     }
 
     void escape::Fail()
     {
-        log::debug("...Didn't find an Escape Character.");
+        //log::debug("...Didn't find an Escape Character.");
     }
 
 }}}}//qor::components::parser::json

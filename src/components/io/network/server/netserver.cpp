@@ -37,9 +37,6 @@
 
 using namespace qor;
 using namespace qor::pipeline;
-using namespace qor::io::network;
-using namespace qor::io::network::sockets;
-using namespace qor::components;
 
 namespace qor{ namespace io{ namespace network{ namespace components{
 
@@ -114,22 +111,22 @@ namespace qor{ namespace io{ namespace network{ namespace components{
         {
             qor_pp_ofcontext;
             Address ClientAddress;
-            //Accept connections
-            auto ClientSocket = m_serverSocket->Accept(m_ioSession, ClientAddress);
-
+            
+            auto ClientSocket = m_serverSocket->Accept(m_ioSession, ClientAddress); //Accept connections
             if(!ClientSocket->IsAlive())
             {
-                serious("Failed to accept client connection. Socket {0} failed is-alive check.", ClientSocket->m_fd );
+                serious("Failed to accept client connection. Socket {0} failed isAlive check.", ClientSocket->m_fd );
             }
             else
             {
                 auto addr = ClientAddress.GetIPV4Address();
                 log::debug("Accepted client connection: {0}:{1}", ClientSocket->m_fd, addr );
-                //Handle the connected client in it's own task
-                m_threadPool->PostTask(
-                    //Note: this lambda runs on a pool thread
+
+                //Handle the connected client in it's own task on a pool thread
+                m_threadPool->PostTask(                    
                     [this, ClientSocket, protocol]()
                     {
+                        qor_pp_ofcontext;
 #ifndef NDBEUG
                         //Rename the thread for debugging to indicate which client session it's servicing
                         CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));
@@ -145,7 +142,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
                                 if(logAggregator.IsNotNull())
                                 {
                                     connect(clientSession.m_logHander()(), clientSession.m_logHander->GetForwardSignal(),
-                                        logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog,
+                                        logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog,
                                         ConnectionKind::QueuedConnection);
                                 }
                             }
