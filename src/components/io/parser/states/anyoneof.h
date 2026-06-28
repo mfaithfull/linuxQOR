@@ -29,6 +29,7 @@
 
 namespace qor { namespace components { namespace parser {
 
+    //Must match either head or tail to succeed
     class qor_pp_module_interface(QOR_PARSER) AnyOneOf : public ParserState
     {
     public:

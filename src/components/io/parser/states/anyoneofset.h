@@ -27,27 +27,27 @@
 
 #include "../state.h"
 
-namespace qor {
-    namespace components {
-        namespace parser {
-            class qor_pp_module_interface(QOR_PARSER) AnyOneOfSet : public ParserState
-            {
-            public:
+namespace qor { namespace components { namespace parser {
 
-                AnyOneOfSet(Parser * parser, std::vector<ref_of<ParserState>::type>*set, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
+    //Must match at least one of the set to succeed
+    //Succeeds on the first match withtout looking further
+    class qor_pp_module_interface(QOR_PARSER) AnyOneOfSet : public ParserState
+    {
+    public:
 
-                virtual ~AnyOneOfSet()
-                {
-                    delete m_set;
-                }
+        AnyOneOfSet(Parser * parser, std::vector<ref_of<ParserState>::type>*set, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
 
-            private:
-
-                std::vector<ref_of<ParserState>::type>* m_set;
-                std::vector<ref_of<ParserState>::type>::iterator m_it;
-            };
+        virtual ~AnyOneOfSet()
+        {
+            delete m_set;//TODO: Use a ref so this isn't necessary
         }
-    }
-}
+
+    private:
+
+        std::vector<ref_of<ParserState>::type>* m_set;
+        std::vector<ref_of<ParserState>::type>::iterator m_it;
+    };
+
+}}}//qor::components::parser
 
 #endif//QOR_PP_H_COMPONENTS_PARSER_STATES_ANYONEOFSET

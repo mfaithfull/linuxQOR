@@ -30,6 +30,7 @@
 
 namespace qor { namespace components{ namespace parser{
 
+    //A byte char node
     class CharNode : public Node
     {
     public:

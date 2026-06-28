@@ -93,17 +93,17 @@ namespace qor { namespace components { namespace parser {
         }
         catch(const Error& error)
         {
-            std::cerr << error.what().Content() << '\n';
+            log::imperative("Parser failed: {0}", error.what().Content());
             m_inError = true;
         }
         catch(const std::exception& e)
         {
-            std::cerr << e.what() << '\n';
+            log::imperative("Parser failed: {0}", e.what());
             m_inError = true;
         }
         catch(...)
         {
-            std::cerr << "Parser failed due to unhandled exception.\n";
+            log::imperative("Parser failed due to unhandled exception.");
             m_inError = true;
         }
 
@@ -156,7 +156,7 @@ namespace qor { namespace components { namespace parser {
     {   
         qor_pp_ofcontext;
 
-        log::debug("Pass starting.");
+        log::debug("Partial parse starting.");
         m_final = false;
         m_complete = false;
         if(m_StateStack.empty())
@@ -165,7 +165,7 @@ namespace qor { namespace components { namespace parser {
             return -1;
         }
         int result = SafeParse();
-        log::debug("Pass complete.");
+        log::debug("Partial parse complete.");
         return result;
     }
 

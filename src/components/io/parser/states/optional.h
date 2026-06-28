@@ -29,6 +29,7 @@
 
 namespace qor { namespace components { namespace parser {
 
+    //Always matches. Will parse one head if it's present
     class qor_pp_module_interface(QOR_PARSER) Optional : public ParserState
     {
     public:

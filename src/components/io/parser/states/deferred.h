@@ -27,74 +27,70 @@
 
 #include "../state.h"
 
-namespace qor {
-    namespace components {
-        namespace parser {
+namespace qor { namespace components { namespace parser {
 
-            template<class T>
-            class deferred : public ParserState
-            {
-            public:
+    template<class T>
+    class deferred : public ParserState
+    {
+    public:
 
-                deferred(Parser* parser) : ParserState(parser)
+        deferred(Parser* parser) : ParserState(parser)
+        {
+            Enter = [this]()
                 {
-                    Enter = [this]()
+                    m_p = new_ref<T>(GetParser());
+                    m_p->Enter();
+                    if (m_p.IsNotNull())
+                    {
+                        m_result = m_p->m_result;
+                    }
+                };
+
+            Resume = [this]()
+                {
+                    if (m_p.IsNotNull())
+                    {
+                        m_result = m_p->m_result;
+                        m_p->Resume();
+                        if (m_p.IsNotNull())
                         {
-                            m_p = new_ref<T>(GetParser());
-                            m_p->Enter();
-                            if (m_p.IsNotNull())
-                            {
-                                m_result = m_p->m_result;
-                            }
-                        };
+                            m_result = m_p->m_result;
+                        }
+                    }
+                };
 
-                    Resume = [this]()
+            Suspend = [this]()
+                {
+                    if (m_p.IsNotNull())
+                    {
+                        m_p->Suspend();
+                        if (m_p.IsNotNull())
                         {
-                            if (m_p.IsNotNull())
-                            {
-                                m_result = m_p->m_result;
-                                m_p->Resume();
-                                if (m_p.IsNotNull())
-                                {
-                                    m_result = m_p->m_result;
-                                }
-                            }
-                        };
+                            m_result = m_p->m_result;
+                        }
+                    }
+                };
 
-                    Suspend = [this]()
+            Leave = [this]()
+                {
+                    if (m_p.IsNotNull())
+                    {
+                        m_p->Leave();
+                        if (m_p.IsNotNull())
                         {
-                            if (m_p.IsNotNull())
-                            {
-                                m_p->Suspend();
-                                if (m_p.IsNotNull())
-                                {
-                                    m_result = m_p->m_result;
-                                }
-                            }
-                        };
-
-                    Leave = [this]()
-                        {
-                            if (m_p.IsNotNull())
-                            {
-                                m_p->Leave();
-                                if (m_p.IsNotNull())
-                                {
-                                    m_result = m_p->m_result;
-                                }
-                            }
-                        };
-                }
-
-                virtual ~deferred() = default;
-
-            private:
-
-                ref_of<T>::type m_p;
-            };
-
+                            m_result = m_p->m_result;
+                        }
+                    }
+                };
         }
-    }
-}//qor::components::parser
+
+        virtual ~deferred() = default;
+
+    private:
+
+        ref_of<T>::type m_p;
+    };
+
+}}}//qor::components::parser
 
 #endif//QOR_PP_H_COMPONENTS_PARSER_STATES_DEFERRED

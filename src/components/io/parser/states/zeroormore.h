@@ -29,6 +29,7 @@
 
 namespace qor { namespace components { namespace parser {
 
+    //Matches zero or more of the head state
     class qor_pp_module_interface(QOR_PARSER) ZeroOrMore : public ParserState
     {
     public:

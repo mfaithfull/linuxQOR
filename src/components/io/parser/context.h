@@ -29,6 +29,7 @@
 
 namespace qor { namespace components { namespace parser {
 
+    //Taps a parser into a pipeline buffer, keeping track where the parser is in the buffer
     class qor_pp_module_interface(QOR_PARSER) Context
     {
     public:

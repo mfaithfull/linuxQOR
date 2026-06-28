@@ -29,6 +29,7 @@
 
 namespace qor { namespace components { namespace parser {
 
+    //matches one specific octet only
     class qor_pp_module_interface(QOR_PARSER) Specific : public ParserState
     {
     public:
