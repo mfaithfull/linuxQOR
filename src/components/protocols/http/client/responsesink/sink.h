@@ -31,7 +31,7 @@
 #include "src/framework/io/pipeline/sink.h"
 #include "../../response/response.h"
 #include "../responseparser/responseparser.h"
-#include "src/components/io/parser/context.h"
+#include "src/components/data/parser/context.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

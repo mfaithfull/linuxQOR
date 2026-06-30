@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_JSON_PARSER_NODES_DECIMAL_POINT
 #define QOR_PP_H_COMPONENTS_JSON_PARSER_NODES_DECIMAL_POINT
 
-#include "src/components/io/parser/node.h"
+#include "src/components/data/parser/node.h"
 #include "../tokens.h"
 #include "../../model/decimal_point.h"
 

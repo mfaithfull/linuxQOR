@@ -29,7 +29,7 @@
 #include "src/qor/memory/reference/newref.h"
 #include "fraction.h"
 #include "../nodes/fraction.h"
-#include "src/components/io/parser/nodes/digit.h"
+#include "src/components/data/parser/nodes/digit.h"
 
 namespace qor { namespace components { namespace parser { namespace json {
 

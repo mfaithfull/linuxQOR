@@ -25,11 +25,11 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTPARSER_AUTHORITYTOKEN
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTPARSER_AUTHORITYTOKEN
 
-#include "src/components/io/parser/state.h"
-#include "src/components/io/parser/states/rfc5234.h"
-#include "src/components/io/parser/states/oneormore.h"
-#include "src/components/io/parser/states/optional.h"
-#include "src/components/io/parser/nodes/char.h"
+#include "src/components/data/parser/state.h"
+#include "src/components/data/parser/states/rfc5234.h"
+#include "src/components/data/parser/states/oneormore.h"
+#include "src/components/data/parser/states/optional.h"
+#include "src/components/data/parser/nodes/char.h"
 #include "../tokendefs.h"
 #include "../nodes/authoritynode.h"
 #include "../userinfotoken.h"

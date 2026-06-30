@@ -28,12 +28,12 @@
 #include <map>
 #include <string>
 
-#include "src/components/io/parser/state.h"
-#include "src/components/io/parser/states/rfc5234.h"
-#include "src/components/io/parser/states/optional.h"
-#include "src/components/io/parser/states/deferred.h"
-#include "src/components/io/parser/tokens.h"
-#include "src/components/io/parser/parser.h"
+#include "src/components/data/parser/state.h"
+#include "src/components/data/parser/states/rfc5234.h"
+#include "src/components/data/parser/states/optional.h"
+#include "src/components/data/parser/states/deferred.h"
+#include "src/components/data/parser/tokens.h"
+#include "src/components/data/parser/parser.h"
 
 namespace qor { namespace components { namespace parser { namespace json {
 

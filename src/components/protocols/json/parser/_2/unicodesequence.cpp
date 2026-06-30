@@ -29,7 +29,7 @@
 #include "unicodesequence.h"
 #include "../nodes/unicodesequence.h"
 #include "../nodes/character.h"
-#include "src/components/io/parser/nodes/hexdigit.h"
+#include "src/components/data/parser/nodes/hexdigit.h"
 
 namespace qor { namespace components { namespace parser { namespace json {
 

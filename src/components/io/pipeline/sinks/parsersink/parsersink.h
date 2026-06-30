@@ -27,9 +27,9 @@
 
 #include <string>
 #include "src/framework/io/pipeline/sink.h"
-#include "src/components/io/parser/parser.h"
-#include "src/components/io/parser/state.h"
-#include "src/components/io/parser/context.h"
+#include "src/components/data/parser/parser.h"
+#include "src/components/data/parser/state.h"
+#include "src/components/data/parser/context.h"
 #include "src/qor/flyers/log/debug.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 

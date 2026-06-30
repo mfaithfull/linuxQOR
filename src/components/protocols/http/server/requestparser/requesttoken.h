@@ -25,11 +25,11 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTTOKEN
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_REQUESTTOKEN
 
-#include "src/components/io/parser/state.h"
-#include "src/components/io/parser/states/rfc5234.h"
+#include "src/components/data/parser/state.h"
+#include "src/components/data/parser/states/rfc5234.h"
 #include "tokendefs.h"
-#include "src/components/io/parser/states/oneormore.h"
-#include "src/components/io/parser/nodes/char.h"
+#include "src/components/data/parser/states/oneormore.h"
+#include "src/components/data/parser/nodes/char.h"
 #include "request_linetoken.h"
 #include "field/field_linetoken.h"
 

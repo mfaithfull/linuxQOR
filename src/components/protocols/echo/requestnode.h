@@ -28,7 +28,7 @@
 #include <string>
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/components/io/parser/parser.h"
+#include "src/components/data/parser/parser.h"
 #include "echorequestparser.h"
 #include "echorequest.h"
 

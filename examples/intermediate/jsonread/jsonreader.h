@@ -22,10 +22,12 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#include "src/framework/io/pipeline/podbuffer.h"
+#include "src/framework/io/pipeline/pipeline.h"
 #include "src/components/protocols/json/parser/nodes/object.h"
 #include "src/components/protocols/json/parser/_3/object.h"
 #include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
-#include "src/components/io/parser/parser.h"
+#include "src/components/data/parser/parser.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
 
 template< class JSONPartObjectT, class JSONModelObjectT >
@@ -35,38 +37,38 @@ public:
 
     JSONPartReader() : m_byteBuffer(12), m_sink(m_byteBuffer){ }
 
-    ref_of<JSONModelObjectT>::type operator()(const io::filesystem::Index& inFile)
+    qor::ref_of<JSONModelObjectT>::type operator()(const qor::io::filesystem::Index& inFile)
     {
-        return operator()(io::components::FileConnector(inFile, m_byteBuffer, io::OpenFor::ReadOnly, io::WithFlags::None));
+        return operator()(qor::io::components::FileConnector(inFile, m_byteBuffer, qor::io::OpenFor::ReadOnly, qor::io::WithFlags::None));
     }
 
-    ref_of<JSONModelObjectT>::type operator()(const pipeline::Plug& sourceConnector)
+    qor::ref_of<JSONModelObjectT>::type operator()(const qor::pipeline::Plug& sourceConnector)
     {           
         m_byteBuffer.Reset();
         m_sink.Reset();
         m_byteBuffer.Reset();
-        size_t unitsPumped = pipeline::Pipeline(sourceConnector, m_sink, pipeline::Element::Push).Connect().PumpAll();
+        size_t unitsPumped = qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
         if(unitsPumped > 0)
         {
             m_sink.Parser().FinalParse();
         }
         else
         {
-            log::Debug("No more data");
+            qor::log::Debug("No more data");
         }
         auto finalNode = m_sink.Parser().PopNode();
         return finalNode.template AsRef< qor::components::parser::NodeAdapter< JSONModelObjectT > >()->GetObject();
     }
 
-    const pipeline::Buffer& Buffer()
+    const qor::pipeline::Buffer& Buffer()
     {
         return m_byteBuffer;
     }
 
 private:
 
-    pipeline::PODBuffer<byte> m_byteBuffer;
-    pipeline::components::ParserSink< JSONPartObjectT > m_sink;
+    qor::pipeline::PODBuffer<qor::byte> m_byteBuffer;
+    qor::pipeline::components::ParserSink< JSONPartObjectT > m_sink;
 
 };
 
@@ -76,28 +78,28 @@ public:
 
     JSONReader() : m_byteBuffer(2048), m_sink(m_byteBuffer){ }
 
-    ref_of<qor::components::model::json::Object>::type operator()(const io::filesystem::Index& inFile)
+    qor::ref_of<qor::components::model::json::Object>::type operator()(const qor::io::filesystem::Index& inFile)
     {
-        return operator()(io::components::FileConnector(inFile, m_byteBuffer, io::OpenFor::ReadOnly, io::WithFlags::None));
+        return operator()(qor::io::components::FileConnector(inFile, m_byteBuffer, qor::io::OpenFor::ReadOnly, qor::io::WithFlags::None));
     }
 
-    ref_of<qor::components::model::json::Object>::type operator()(const pipeline::Plug& sourceConnector)
+    qor::ref_of<qor::components::model::json::Object>::type operator()(const qor::pipeline::Plug& sourceConnector)
     {           
         m_byteBuffer.Reset();
         m_sink.Reset();
-        pipeline::Pipeline(sourceConnector, m_sink, pipeline::Element::Push).Connect().PumpAll();
+        qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
         m_sink.Parser().FinalParse();
         auto finalNode = m_sink.Parser().PopNode();
         return finalNode.AsRef<qor::components::parser::json::ObjectNode>()->GetObject();
     }
 
-    const pipeline::Buffer& Buffer()
+    const qor::pipeline::Buffer& Buffer()
     {
         return m_byteBuffer;
     }
 
 private:
 
-    pipeline::PODBuffer<byte> m_byteBuffer;
-    pipeline::components::ParserSink<qor::components::parser::json::object> m_sink;
+    qor::pipeline::PODBuffer<qor::byte> m_byteBuffer;
+    qor::pipeline::components::ParserSink<qor::components::parser::json::object> m_sink;
 };

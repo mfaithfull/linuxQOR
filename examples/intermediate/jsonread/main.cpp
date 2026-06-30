@@ -26,7 +26,6 @@
 
 #include "src/configuration/configuration.h"
 
-#include "sdk/components/framework.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/components/protocols/json/parser/_3/object.h"

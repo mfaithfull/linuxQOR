@@ -27,10 +27,10 @@
 
 #include <string>
 
-#include "src/components/io/parser/state.h"
-#include "src/components/io/parser/states/rfc5234.h"
-#include "src/components/io/parser/states/oneormore.h"
-#include "src/components/io/parser/nodes/char.h"
+#include "src/components/data/parser/state.h"
+#include "src/components/data/parser/states/rfc5234.h"
+#include "src/components/data/parser/states/oneormore.h"
+#include "src/components/data/parser/nodes/char.h"
 #include "../tokendefs.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {

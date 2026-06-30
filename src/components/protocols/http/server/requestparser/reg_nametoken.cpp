@@ -24,7 +24,7 @@
 
 #include "src/configuration/configuration.h"
 
-#include "src/components/io/parser/parser.h"
+#include "src/components/data/parser/parser.h"
 #include "reg_nametoken.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {

@@ -28,11 +28,11 @@
 
 #include <string>
 
-#include "src/components/io/parser/state.h"
-#include "src/components/io/parser/rfc5234.h"
-#include "src/components/io/parser/tokens.h"
-#include "src/components/io/parser/parser.h"
-#include "src/components/io/parser/oneormore.h"
+#include "src/components/data/parser/state.h"
+#include "src/components/data/parser/rfc5234.h"
+#include "src/components/data/parser/tokens.h"
+#include "src/components/data/parser/parser.h"
+#include "src/components/data/parser/oneormore.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
