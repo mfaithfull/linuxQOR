@@ -39,13 +39,13 @@ namespace qor{ namespace io{ namespace components{
 		FileConnector();
 		FileConnector(const filesystem::Index & fileIndex,
             const OpenFor openfor = OpenFor::ReadWrite,
-            const WithFlags mode = WithFlags::CreateNew);
+            const int mode = WithFlags::CreateNew);
 		FileConnector(const filesystem::Index & fileIndex, const pipeline::Buffer& buffer,
             const OpenFor openfor = OpenFor::ReadWrite,
-            const WithFlags mode = WithFlags::CreateNew);
+            const int mode = WithFlags::CreateNew);
 		FileConnector(const filesystem::Index & fileIndex, pipeline::Buffer& buffer,
             const OpenFor openfor = OpenFor::ReadWrite,
-            const WithFlags mode = WithFlags::CreateNew);
+            const int mode = WithFlags::CreateNew);
 		virtual ~FileConnector();
 
         //Plug interface
@@ -53,8 +53,8 @@ namespace qor{ namespace io{ namespace components{
         virtual void Disconnect();  											//Device specific disconnection
         virtual bool HandlePendingConnectionResult(bool bConnected);			//Handling device specific pending connection states for async connections
 
-    	void SetMode(WithFlags mode);
-	    WithFlags GetMode(void);
+    	void SetMode(int mode);
+	    int GetMode(void);
 		void SetOpenFor(OpenFor openfor);
 		OpenFor GetOpenFor(void);
 		void SetFile(filesystem::Index & fileIndex);
@@ -75,7 +75,7 @@ namespace qor{ namespace io{ namespace components{
 	protected:
 
         filesystem::Index* m_pFileIndex;
-        WithFlags m_Mode;
+        int m_Mode;
         OpenFor m_OpenFor;
         ref_of<pipeline::Sink>::type m_sink;
         ref_of<pipeline::Source>::type m_source;

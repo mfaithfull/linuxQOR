@@ -85,6 +85,18 @@ namespace qor{ namespace pipeline{
             SetSink(sink);            
         }
 
+        Pipeline(Source& source, const Plug& SinkConnection, Element::FlowMode flowmode = Element::FlowMode::Push) : m_flowmode(flowmode)
+        {
+            SetSource(&source);
+            SetSink(SinkConnection.GetSink());
+        }
+
+        Pipeline(const Source& source, const Plug& SinkConnection, Element::FlowMode flowmode = Element::FlowMode::Push) : m_flowmode(flowmode)
+        {
+            SetSource(source);
+            SetSink(SinkConnection.GetSink());
+        }
+
         Pipeline& Connect()
         {
             if(m_sink && m_source)
@@ -132,6 +144,11 @@ namespace qor{ namespace pipeline{
                 source->SetBuffer(buffer);
             }
             SetSource(source);
+        }
+
+        void SetSource(const Source& source)
+        {
+            SetSource( &(const_cast<Source&>(source)));
         }
 
         void SetSource(Element* source)

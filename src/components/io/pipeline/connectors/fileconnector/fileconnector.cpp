@@ -41,7 +41,7 @@ namespace qor{ namespace io{ namespace components{
         m_source->SetPlug(this);
     }
 
-    FileConnector::FileConnector(const filesystem::Index& fileIndex, const OpenFor openfor, const WithFlags mode) : Plug()
+    FileConnector::FileConnector(const filesystem::Index& fileIndex, const OpenFor openfor, const int mode) : Plug()
     {
         m_Mode = mode;
         m_OpenFor = openfor;
@@ -53,14 +53,14 @@ namespace qor{ namespace io{ namespace components{
         m_source->SetPlug(this);
     }
 
-    FileConnector::FileConnector(const filesystem::Index& fileIndex, const pipeline::Buffer& buffer, const OpenFor openfor, const WithFlags mode) : 
+    FileConnector::FileConnector(const filesystem::Index& fileIndex, const pipeline::Buffer& buffer, const OpenFor openfor, const int mode) : 
         FileConnector(fileIndex, openfor, mode)
     {
         m_source->SetBuffer(buffer);
         m_sink->SetBuffer(buffer);
     }
 
-    FileConnector::FileConnector(const filesystem::Index& fileIndex, pipeline::Buffer& buffer, const OpenFor openfor, const WithFlags mode) : FileConnector(fileIndex, openfor, mode)
+    FileConnector::FileConnector(const filesystem::Index& fileIndex, pipeline::Buffer& buffer, const OpenFor openfor, const int mode) : FileConnector(fileIndex, openfor, mode)
     {
         m_source->SetBuffer(buffer);
         m_sink->SetBuffer(buffer);
@@ -78,7 +78,7 @@ namespace qor{ namespace io{ namespace components{
     {
         if(!m_connected)
         {
-            m_File = new_ref<io::File>(*m_pFileIndex, static_cast<int>(m_OpenFor), static_cast<int>(m_Mode));
+            m_File = new_ref<io::File>(*m_pFileIndex, static_cast<int>(m_OpenFor), m_Mode);
             m_connected = !m_File.IsNull();//->IsOpen();
         }
         return m_connected;
@@ -100,12 +100,12 @@ namespace qor{ namespace io{ namespace components{
         return false;
     }
 
-    void FileConnector::SetMode(WithFlags mode)
+    void FileConnector::SetMode(int mode)
     {
         m_Mode = mode;
     }
 
-    WithFlags FileConnector::GetMode(void)
+    int FileConnector::GetMode(void)
     {
         return m_Mode;
     }
