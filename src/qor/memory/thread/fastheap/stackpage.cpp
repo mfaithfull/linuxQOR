@@ -25,19 +25,9 @@
 #include "src/configuration/configuration.h"
 #include <string.h>
 #include "stackpage.h"
-#include "../threadheap/threadheap.h"
 
-namespace qor{ namespace components{ namespace threadmemory{
 
-    void* StackPage::operator new(size_t sz)
-    {
-        return new_ref<ThreadHeap>()->Allocate(sz);
-    }
-
-    void StackPage::operator delete(void* allocation)
-    {
-        new_ref<ThreadHeap>()->Free(reinterpret_cast<byte*>(allocation));
-    }
+namespace qor{ namespace memory{
 
     StackPage::StackPage(size_t pageUnits) : 
         m_memoryBase(nullptr),
@@ -47,52 +37,7 @@ namespace qor{ namespace components{ namespace threadmemory{
         m_prev(nullptr), 
         m_items(0){ }
 
-    StackPage::~StackPage()
-    {
-        new_ref<ThreadHeap>()->Free(m_memoryBase);
-    }
-
-    size_t StackPage::TotalSizeBytes() const
-    {
-        return m_memoryBase ? (m_pageUnits * c_pageSize) : 0;
-    }
-
-    size_t StackPage::AllocatedByteCount() const
-    {
-        return m_ToS - m_memoryBase;
-    }
-
-    size_t StackPage::AllocatedItemsCount(void) const
-    {
-        return m_items;
-    }
-
-    void StackPage::SetSize(size_t pageUnits)
-    {
-        m_pageUnits = pageUnits;
-    }
-
-    StackPage* StackPage::Next() const
-    {
-        return m_next;
-    }
-
-    StackPage* StackPage::Previous() const
-    {
-        return m_prev;
-    }
-
-    void  StackPage::SetNext(StackPage* next)
-    {
-        m_next = next;
-    }
-
-    void  StackPage::SetPrevious(StackPage* prev)
-    {
-        m_prev = prev;
-    }
-
-    void  StackPage::Initialise()
+    void StackPage::Initialise()
     {
         if(m_memoryBase == nullptr && (m_pageUnits > 0))
         {
@@ -161,5 +106,4 @@ namespace qor{ namespace components{ namespace threadmemory{
         return m_ToS;
     }
 
-
-}}}//qor::components::threadmemory
+}}//qor::memory

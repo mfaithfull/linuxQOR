@@ -25,19 +25,8 @@
 #include "src/configuration/configuration.h"
 #include <string.h>
 #include "fastbucket.h"
-#include "../threadheap/threadheap.h"
 
-namespace qor{ namespace components{ namespace threadmemory{
-
-    void* FastBucket::operator new(size_t sz)
-    {
-        return new_ref<ThreadHeap>()->Allocate(sz);
-    }
-
-    void FastBucket::operator delete(void* allocation)
-    {
-        new_ref<ThreadHeap>()->Free(reinterpret_cast<byte*>(allocation));
-    }
+namespace qor{ namespace memory{
 
     FastBucket::FastBucket(size_t pageUnits) : m_pageUnits(pageUnits)
     , m_basePage(nullptr), m_ToSPage(nullptr), m_items(0), m_pages(0) {}
@@ -53,21 +42,6 @@ namespace qor{ namespace components{ namespace threadmemory{
         }
     }
 
-    size_t FastBucket::PageSize() const
-    {
-        return (m_pageUnits * StackPage::c_pageSize);
-    }
-
-    size_t FastBucket::AllocatedItems() const
-    {
-        return m_items;
-    }
-
-    size_t FastBucket::AllocatedPages() const
-    {
-        return m_pages;
-    }
-
     size_t FastBucket::AllocatedSpace() const
     {
         size_t Space = 0;
@@ -78,11 +52,6 @@ namespace qor{ namespace components{ namespace threadmemory{
             page = page->Next();
         }
         return Space;
-    }
-
-    void FastBucket::SetSize(size_t pageUnits)
-    {
-        m_pageUnits = pageUnits;
     }
 
     void FastBucket::Initialise()
@@ -193,5 +162,5 @@ namespace qor{ namespace components{ namespace threadmemory{
         }
     }
 
-}}}//qor::components::threadmemory
+}}//qor::memory
 

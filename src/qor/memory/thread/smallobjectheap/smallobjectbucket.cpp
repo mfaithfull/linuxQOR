@@ -27,7 +27,7 @@
 #include "smallobjectbucket.h"
 #include "../fastheap/fastheap.h"
 
-namespace qor{ namespace components{ namespace threadmemory{
+namespace qor{ namespace memory{
 
     void* SmallObjectBucket::operator new(size_t sz)
     {
@@ -91,11 +91,6 @@ namespace qor{ namespace components{ namespace threadmemory{
         return result;
     }
 
-    bool SmallObjectBucket::IsEmpty()
-    {
-        return m_allocCount == 0 ? true : false;
-    }
-
     bool SmallObjectBucket::Free(byte* element)
     {
         if (element != nullptr)																		//If there's an element to delete
@@ -119,11 +114,6 @@ namespace qor{ namespace components{ namespace threadmemory{
             }
         }        
         return true;
-    }
-
-    size_t SmallObjectBucket::UnitSize() const
-    {
-        return m_unitSize;
     }
 
     void SmallObjectBucket::AddOnePageToCache(SmallObjectPage* page)
@@ -161,4 +151,4 @@ namespace qor{ namespace components{ namespace threadmemory{
         AddOnePageToCache(checkPage);
     }
 
-}}}//qor::components::threadmemory
+}}//qor::memory

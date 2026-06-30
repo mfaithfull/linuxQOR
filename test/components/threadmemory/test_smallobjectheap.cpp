@@ -34,12 +34,12 @@
 #include "src/qor/memory/reference/ref.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/qor/memory/instance/threadsingleton.h"
-#include "src/components/qor/threadmemory/smallobjectheap/smallobjectheap.h"
-#include "src/components/qor/threadmemory/smallobjectsource.h"
+#include "src/qor/memory/thread/smallobjectheap/smallobjectheap.h"
+#include "src/qor/memory/sources/smallobjectsource.h"
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::components::threadmemory;
+using namespace qor::memory;
 
 struct SmallObjectHeapTestSuite{};
 

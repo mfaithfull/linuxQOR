@@ -34,11 +34,11 @@
 #include "src/qor/memory/reference/ref.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/qor/memory/instance/threadsingleton.h"
-#include "src/components/qor/threadmemory/fastheap/fastbucket.h"
+#include "src/qor/memory/thread/fastheap/fastbucket.h"
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::components::threadmemory;
+using namespace qor::memory;
 
 struct FastBucketTestSuite{};
 

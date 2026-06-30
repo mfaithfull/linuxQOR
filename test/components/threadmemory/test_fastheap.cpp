@@ -33,14 +33,14 @@
 #include "src/qor/memory/instance/instance.h"
 #include "src/qor/memory/reference/ref.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/components/qor/threadmemory/fastheap/fastheap.h"
-#include "src/components/qor/threadmemory/fastsource.h"
+#include "src/qor/memory/thread/fastheap/fastheap.h"
+#include "src/qor/memory/sources/fastsource.h"
 
 namespace qor {
     namespace detail {
 
         template<>
-        ThreadInstanceHolder<components::threadmemory::FastHeap>* theThreadInstanceHolder<components::threadmemory::FastHeap>()
+        ThreadInstanceHolder<memory::FastHeap>* theThreadInstanceHolder<memory::FastHeap>()
         {
             return GetFastHeapHolder();
         }
@@ -49,7 +49,7 @@ namespace qor {
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::components::threadmemory;
+using namespace qor::memory;
 
 struct FastHeapTestSuite{};
 

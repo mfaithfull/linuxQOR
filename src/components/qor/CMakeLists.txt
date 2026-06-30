@@ -1,3 +1,2 @@
 add_subdirectory(logaggregator)
 add_subdirectory(loghandler)
-add_subdirectory(threadmemory)

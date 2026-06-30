@@ -22,62 +22,61 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENT_THREADMEMORY_SMALLOBJECTHEAP_BUCKET
-#define QOR_PP_H_COMPONENT_THREADMEMORY_SMALLOBJECTHEAP_BUCKET
+#ifndef QOR_PP_H_MEMORY_THREAD_SMALLOBJECTHEAP_PAGE
+#define QOR_PP_H_MEMORY_THREAD_SMALLOBJECTHEAP_PAGE
 
-#include "smallobjectpage.h"
+#include "src/platform/compiler/compiler.h"
 
-namespace qor{ namespace components{ namespace threadmemory{
+namespace qor{ namespace memory{
 
-    class qor_pp_module_interface(QOR_THREADMEMORY) SmallObjectBucket final
+    class qor_pp_module_interface(QOR_THREADMEMORY) SmallObjectPage final
     {
     public:
 
-        void* operator new(size_t sz);
-        void operator delete(void*);
+        static constexpr size_t sc_WordBits = sizeof(size_t) * 8;
 
-        SmallObjectBucket(size_t unitSize);
-        ~SmallObjectBucket();
+        SmallObjectPage(size_t unitSize, size_t mapWordCount = 1);        
+        ~SmallObjectPage();
 
         byte* Allocate();
-        bool IsEmpty();
+        bool IsEmpty() const;
         bool Free(byte* element);
-        size_t UnitSize() const;
+        bool IsFull() const;
 
-        inline byte GetCacheLimit() const
-        {
-            return m_cacheLimit;
-        }
-
-        inline void SetCacheLimit(byte pages)
-        {
-            m_cacheLimit = pages;
-        }
-
-        inline byte GetCacheCount() const
-        {
-            return m_cacheCount;
-        }
-
-        inline size_t AllocatedItems(void) const
-        {
-            return m_allocCount;
-        }
+        SmallObjectPage* m_prev;
 
     private:
+    
+        inline byte* Memory() const
+        {
+            return m_memory;
+        }    
 
-        void AddOnePageToCache(SmallObjectPage* page);
-        void FlushOnePageFromCache();
-        void FreePage(SmallObjectPage* checkPage);
+        void inline Use(size_t wordIndex, size_t bitIndex)
+        {
+            m_map[wordIndex] |= ( (size_t)(1) << bitIndex);
+        }
 
+        void inline Free(size_t wordIndex, size_t bitIndex)
+        {
+            m_map[wordIndex] &= ~( (size_t)(1) << bitIndex );
+        }
+
+        bool inline IsInUse(size_t wordIndex, size_t bitIndex) const
+        {
+            return (m_map[wordIndex] & ((size_t)(1) << bitIndex)) != 0 ? true : false;
+        }
+
+        size_t* m_map;
+        byte* m_memory;
+        size_t m_mapWords;
         size_t m_unitSize;
-        SmallObjectPage* m_lastPage;
-        size_t m_allocCount;
-        SmallObjectPage* m_pageCache;
-        byte m_cacheCount;
-        byte m_cacheLimit;
+        size_t m_pageByteCount;        
+
+        SmallObjectPage(const SmallObjectPage& src) = delete;
+        SmallObjectPage& operator = (const SmallObjectPage& src) = delete;
     };
 
-}}}//qor::components::threadmemory
+}}//qor::memory
 
-#endif//QOR_PP_H_COMPONENT_THREADMEMORY_SMALLOBJECTHEAP_BUCKET
+#endif//QOR_PP_H_MEMORY_THREAD_SMALLOBJECTHEAP_PAGE

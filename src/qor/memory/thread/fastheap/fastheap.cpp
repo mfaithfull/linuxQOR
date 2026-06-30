@@ -30,24 +30,23 @@
 using namespace qor;
 
 
-thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::FastHeap> ThreadInstanceHolderFastHeap;
+thread_local detail::ThreadInstanceHolder<memory::FastHeap> ThreadInstanceHolderFastHeap;
 
-qor_pp_export qor::detail::ThreadInstanceHolder<components::threadmemory::FastHeap>* GetFastHeapHolder()
+qor_pp_export detail::ThreadInstanceHolder<memory::FastHeap>* GetFastHeapHolder()
 {
     return &ThreadInstanceHolderFastHeap;
 }
 
 namespace qor { namespace detail {
 
-        template<>
-        ThreadInstanceHolder<components::threadmemory::FastHeap>* theThreadInstanceHolder<components::threadmemory::FastHeap>()
-        {
-            return GetFastHeapHolder();
-        }
+    template<>
+    ThreadInstanceHolder<memory::FastHeap>* theThreadInstanceHolder<memory::FastHeap>()
+    {
+        return GetFastHeapHolder();
+    }
 }}
 
-
-namespace qor{ namespace components{ namespace threadmemory{
+namespace qor{ namespace memory{
 
     FastHeap::FastHeap()
     {
@@ -116,4 +115,4 @@ namespace qor{ namespace components{ namespace threadmemory{
         return bucket;
     }
 
-}}}//qor::components::threadmemory
+}}//qor::memory

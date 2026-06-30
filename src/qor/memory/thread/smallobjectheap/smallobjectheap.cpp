@@ -30,9 +30,9 @@
 using namespace qor;
 
 
-thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap> ThreadInstanceHolderSmallObjectHeap;
+thread_local qor::detail::ThreadInstanceHolder<qor::memory::SmallObjectHeap> ThreadInstanceHolderSmallObjectHeap;
 
-qor_pp_export qor::detail::ThreadInstanceHolder<qor::components::threadmemory::SmallObjectHeap>* GetCurrentSmallObjectHeap()
+qor_pp_export qor::detail::ThreadInstanceHolder<qor::memory::SmallObjectHeap>* GetCurrentSmallObjectHeap()
 {
     return &ThreadInstanceHolderSmallObjectHeap;
 }
@@ -41,14 +41,14 @@ namespace qor {
     namespace detail {
 
         template<>
-        qor_pp_export ThreadInstanceHolder<components::threadmemory::SmallObjectHeap>* theThreadInstanceHolder<components::threadmemory::SmallObjectHeap>()
+        qor_pp_export ThreadInstanceHolder<memory::SmallObjectHeap>* theThreadInstanceHolder<memory::SmallObjectHeap>()
         {
             return GetCurrentSmallObjectHeap();
         }
     }
 }
 
-namespace qor{ namespace components{ namespace threadmemory{
+namespace qor{ namespace memory{
 
     SmallObjectHeap::SmallObjectHeap()
     {
@@ -192,5 +192,4 @@ namespace qor{ namespace components{ namespace threadmemory{
         return bucket;
     }
 
-
-}}}//qor::components::threadmemory
+}}//qor::memory

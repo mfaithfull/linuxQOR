@@ -62,7 +62,7 @@ namespace qor{
     void Serious::Escalate() const
     {
 #ifndef NDEBUG  //Wait to allow logging to catch up before we throw
-        CurrentThread::GetCurrent().Sleep(1500);
+        //CurrentThread::GetCurrent().Sleep(1500);
 #endif
         throw(*this);
     }

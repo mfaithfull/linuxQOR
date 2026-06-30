@@ -27,7 +27,7 @@
 #include "smallobjectpage.h"
 #include "../fastheap/fastheap.h"
 
-namespace qor{ namespace components{ namespace threadmemory{
+namespace qor{ namespace memory{
 
     SmallObjectPage::SmallObjectPage(size_t unitBytes, size_t mapWordCount) : 
         m_map(nullptr), m_mapWords(mapWordCount), m_unitSize(unitBytes)
@@ -120,4 +120,4 @@ namespace qor{ namespace components{ namespace threadmemory{
         return bResult;
     }
 
-}}}//qor::components::threadmemory
+}}//qor::memory

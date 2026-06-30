@@ -22,48 +22,71 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP_STACKPAGE
-#define QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP_STACKPAGE
+#ifndef QOR_PP_H_MEMORY_THREAD_SMALLOBJECTHEAP_BUCKET
+#define QOR_PP_H_MEMORY_THREAD_SMALLOBJECTHEAP_BUCKET
 
-#include "src/platform/compiler/compiler.h"
+#include "smallobjectpage.h"
 
-namespace qor{ namespace components{ namespace threadmemory{
+namespace qor{ namespace memory{
 
-    class qor_pp_module_interface(QOR_THREADMEMORY) StackPage final
+    class qor_pp_module_interface(QOR_THREADMEMORY) SmallObjectBucket final
     {
     public:
-
-        static constexpr size_t c_pageSize = 1024 * 64; //64K pages
 
         void* operator new(size_t sz);
         void operator delete(void*);
 
-        StackPage(size_t PageUnits = 1);
-        ~StackPage();
-        size_t TotalSizeBytes() const;
-        size_t AllocatedByteCount() const;
-        size_t AllocatedItemsCount(void) const;
-        void SetSize(size_t pageUnits);
-        StackPage* Next() const;
-        StackPage* Previous() const;
-        void SetNext(StackPage* next);
-        void SetPrevious(StackPage* prev);
-        void Initialise();
-        void* Allocate(size_t byteCount);
-        bool Free(void* memory, size_t byteCount);
+        SmallObjectBucket(size_t unitSize);
+        ~SmallObjectBucket();
+
+        byte* Allocate();
+        
+        inline bool IsEmpty()
+        {
+            return m_allocCount == 0 ? true : false;
+        }
+
+        bool Free(byte* element);
+
+        inline size_t UnitSize() const
+        {
+            return m_unitSize;
+        }
+
+        inline byte GetCacheLimit() const
+        {
+            return m_cacheLimit;
+        }
+
+        inline void SetCacheLimit(byte pages)
+        {
+            m_cacheLimit = pages;
+        }
+
+        inline byte GetCacheCount() const
+        {
+            return m_cacheCount;
+        }
+
+        inline size_t AllocatedItems(void) const
+        {
+            return m_allocCount;
+        }
 
     private:
 
-        byte* Push(size_t byteCount);
-        byte* Pop(size_t byteCount);
-        byte* m_memoryBase;
-        size_t m_pageUnits;
-        byte* m_ToS;
-        StackPage* m_next;
-        StackPage* m_prev;
-        size_t m_items;
+        void AddOnePageToCache(SmallObjectPage* page);
+        void FlushOnePageFromCache();
+        void FreePage(SmallObjectPage* checkPage);
+
+        size_t m_unitSize;
+        SmallObjectPage* m_lastPage;
+        size_t m_allocCount;
+        SmallObjectPage* m_pageCache;
+        byte m_cacheCount;
+        byte m_cacheLimit;
     };
 
-}}}//qor::components::threadmemory
+}}//qor::memory
 
-#endif//QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP_STACKPAGE
+#endif//QOR_PP_H_MEMORY_THREAD_SMALLOBJECTHEAP_BUCKET

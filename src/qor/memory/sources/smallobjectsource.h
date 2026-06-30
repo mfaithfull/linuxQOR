@@ -22,54 +22,40 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_MEMORY_SMALLOBJECTSOURCE
+#define QOR_PP_H_MEMORY_SMALLOBJECTSOURCE
 
+#include <cstdint>
+#include <stddef.h>
+#include "src/platform/compiler/compiler.h"
+#include "src/qor/memory/reference/newref.h"
+#include "src/qor/memory/thread/smallobjectheap/smallobjectheap.h"
 
-#include "threadheap.h"
+namespace qor{ namespace memory{
 
-namespace qor {
-    bool qor_pp_module_interface(QOR_THREADMEMORY) ImplementsThreadHeap()
+    class SmallObjectSource final
     {
-        return true;
-    }
-}
-
-using namespace qor;
-
-thread_local qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap> ThreadInstanceHolderThreadHeap;
-
-qor_pp_export qor::detail::ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>* GetCurrentThreadHeap()
-{
-    return &ThreadInstanceHolderThreadHeap;
-}
-
-namespace qor {
-    namespace detail {
-
-        template<>
-        ThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>* theThreadInstanceHolder<qor::components::threadmemory::ThreadHeap>()
+    public:
+    
+        static byte* Source(size_t byteCount)
         {
-            return GetCurrentThreadHeap();
+            return reinterpret_cast<byte*>(new_ref<SmallObjectHeap>()->Allocate(byteCount));
         }
-    }
-}
 
+        static void Free(byte* memory, size_t byteCount)
+        {
+            new_ref<SmallObjectHeap>()->Free(memory, byteCount);
+        }
 
-namespace qor{ namespace components{ namespace threadmemory{
+    private:
 
-    ThreadHeap::ThreadHeap()
-    {
-        //On GNU Linux the system heap has a per thread arena already so the ThreadHeap is just the heap
-    }
+        SmallObjectSource() = delete;
+        ~SmallObjectSource() = delete;
+        SmallObjectSource(const SmallObjectSource & src) = delete;
+        SmallObjectSource& operator = (const SmallObjectSource & src) = delete;
 
-    byte* ThreadHeap::Allocate(size_t byteCount)
-    {
-        return new byte[byteCount];
-    }
+    };
 
-    void ThreadHeap::Free(byte* allocation)
-    {
-        delete [] allocation;
-    }
+}}//qor::memory
 
-}}}//qor::components::threadmemory
+#endif//QOR_PP_H_MEMORY_SMALLOBJECTSOURCE

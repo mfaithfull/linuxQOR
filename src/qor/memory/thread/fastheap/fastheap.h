@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP
-#define QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP
+#ifndef QOR_PP_H_MEMORY_THREAD_FASTHEAP
+#define QOR_PP_H_MEMORY_THREAD_FASTHEAP
 
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/essentials/objectcontext/anyobject.h"
@@ -36,7 +36,7 @@
 #include "src/qor/memory/instance/threadsingleton.h"
 #include "fastbucket.h"
 
-namespace qor { namespace components { namespace threadmemory {
+namespace qor { namespace memory {
 
         class qor_pp_module_interface(QOR_THREADMEMORY) FastHeap final
         {
@@ -62,11 +62,11 @@ namespace qor { namespace components { namespace threadmemory {
 
         };
 
-    }}//qor::components::threadmemory
+    }//qor::memory
 
-    qor_pp_declare_instancer_of(components::threadmemory::FastHeap, ThreadSingletonInstancer);    
+    qor_pp_declare_instancer_of(memory::FastHeap, ThreadSingletonInstancer);    
 }//qor
 
-qor_pp_module_interface(QOR_THREADMEMORY) qor::detail::ThreadInstanceHolder<qor::components::threadmemory::FastHeap>* GetFastHeapHolder();
+qor_pp_module_interface(QOR_THREADMEMORY) qor::detail::ThreadInstanceHolder<qor::memory::FastHeap>* GetFastHeapHolder();
 
-#endif//QOR_PP_H_COMPONENT_THREADMEMORY_FASTHEAP
+#endif//QOR_PP_H_MEMORY_THREAD_FASTHEAP

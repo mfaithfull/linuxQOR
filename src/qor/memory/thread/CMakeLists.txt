@@ -2,8 +2,8 @@ set(target qor_threadmemory)
 
 add_library(${target} SHARED qor_threadmemory.cpp
 fastheap/stackpage.cpp threadheap/threadheap.cpp fastheap/fastbucket.cpp fastheap/fastheap.cpp
-fastsource.cpp smallobjectheap/smallobjectpage.cpp smallobjectheap/smallobjectbucket.cpp
-smallobjectheap/smallobjectheap.cpp smallobjectsource.cpp)
+smallobjectheap/smallobjectpage.cpp smallobjectheap/smallobjectbucket.cpp
+smallobjectheap/smallobjectheap.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

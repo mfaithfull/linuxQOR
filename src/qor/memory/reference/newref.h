@@ -35,32 +35,32 @@
 namespace qor{
 
 	template< typename T >
-	ref_of<T>::type new_ref()
+	qor_pp_forceinline ref_of<T>::type new_ref()
 	{
 		return instancer_of<T>::type::template Instance<T>(1);
 	}
 
 	template< typename T, typename... _p >
-	ref_of<T>::type new_ref(_p&&... p1)
+	qor_pp_forceinline ref_of<T>::type new_ref(_p&&... p1)
 	{
 		constexpr size_t default_count = 1;
 		return instancer_of<T>::type::template Instance<T>(default_count, std::forward<_p&&>(p1)...);
 	}
 
 	template< typename T >
-	ref_of<T>::type new_array_ref(size_t count)
+	qor_pp_forceinline ref_of<T>::type new_array_ref(size_t count)
 	{
 		return instancer_of<T>::type::template Instance<T>(count);
 	}
 	
 	template< typename T, typename... _p >
-	ref_of<T>::type new_array_ref(size_t count, _p&&... p1)
+	qor_pp_forceinline ref_of<T>::type new_array_ref(size_t count, _p&&... p1)
 	{
 		return instancer_of<T>::type::template Instance<T>(count, std::forward<_p&&>(p1)...);
 	}
 
 	template< typename T>
-	void internal_del_ref(T* p)
+	qor_pp_forceinline void internal_del_ref(T* p)
 	{
 		instancer_of<T>::type::template Release<T>(p, 1);
 	}

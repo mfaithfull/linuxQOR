@@ -22,29 +22,41 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/configuration/configuration.h"
+#ifndef QOR_PP_H_MEMORY_FASTSOURCE
+#define QOR_PP_H_MEMORY_FASTSOURCE
 
-#include "src/qor/essentials/objectcontext/anyobject.h"
-#include "src/qor/essentials/current/currentthread.h"
-#include "src/qor/memory/injection/typeidentity.h"
-#include "src/qor/memory/factory/factory.h"
-#include "src/qor/memory/instance/instance.h"
-#include "src/qor/memory/reference/ref.h"
+#include <cstdint>
+#include <stddef.h>
+
+#include "src/platform/compiler/compiler.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/qor/memory/instance/threadsingleton.h"
-#include "src/components/qor/threadmemory/fastheap/fastheap.h"
-#include "fastsource.h"
+#include "src/qor/memory/thread/fastheap/fastheap.h"
 
-namespace qor{ namespace components{ namespace threadmemory{
+namespace qor{ namespace memory{
 
-    byte* FastSource::Source(size_t byteCount)
+    class qor_pp_module_interface(QOR_THREADMEMORY) FastSource final
     {
-        return reinterpret_cast<byte*>(new_ref<FastHeap>()->Allocate(byteCount));
-    }
+    public:
+    
+        static inline byte* Source(size_t byteCount)
+        {
+            return reinterpret_cast<byte*>(new_ref<FastHeap>()->Allocate(byteCount));
+        }
 
-    void FastSource::Free(byte* memory, size_t byteCount)
-    {
-        new_ref<FastHeap>()->Free(memory, byteCount);
-    }
+        static inline void Free(byte* memory, size_t byteCount)
+        {
+            new_ref<FastHeap>()->Free(memory, byteCount);
+        }
 
-}}}//qor::components::threadmemory
+    private:
+
+        FastSource() = delete;
+        ~FastSource() = delete;
+        FastSource(const FastSource & src) = delete;
+        FastSource& operator = (const FastSource & src) = delete;
+
+    };
+
+}}//qor::memory
+
+#endif//QOR_PP_H_MEMORY_FASTSOURCE

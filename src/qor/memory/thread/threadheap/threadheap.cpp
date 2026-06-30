@@ -22,30 +22,48 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_QOR_THREADMEMORY_FASTSOURCE
-#define QOR_PP_H_COMPONENTS_QOR_THREADMEMORY_FASTSOURCE
+#include "src/configuration/configuration.h"
+#include "threadheap.h"
 
-#include <cstdint>
-#include <stddef.h>
-
-namespace qor{ namespace components{ namespace threadmemory{
-
-    class qor_pp_module_interface(QOR_THREADMEMORY) FastSource final
+namespace qor {
+    bool qor_pp_module_interface(QOR_THREADMEMORY) ImplementsThreadHeap()
     {
-    public:
-    
-        static byte* Source(size_t byteCount);
-        static void Free(byte* memory, size_t byteCount);
+        return true;
+    }
+}
 
-    private:
+using namespace qor;
 
-        FastSource() = delete;
-        ~FastSource() = delete;
-        FastSource(const FastSource & src) = delete;
-        FastSource& operator = (const FastSource & src) = delete;
+thread_local qor::detail::ThreadInstanceHolder<qor::memory::ThreadHeap> ThreadInstanceHolderThreadHeap;
 
-    };
+qor_pp_export qor::detail::ThreadInstanceHolder<qor::memory::ThreadHeap>* GetCurrentThreadHeap()
+{
+    return &ThreadInstanceHolderThreadHeap;
+}
 
-}}}//qor::components::threadmemory
+namespace qor { namespace detail {
+    template<>
+    ThreadInstanceHolder<qor::memory::ThreadHeap>* theThreadInstanceHolder<qor::memory::ThreadHeap>()
+    {
+        return GetCurrentThreadHeap();
+    }
+}}
 
-#endif//QOR_PP_H_COMPONENTS_QOR_THREADMEMORY_FASTSOURCE
+namespace qor{ namespace memory{
+
+    ThreadHeap::ThreadHeap()
+    {
+        //On GNU Linux the system heap has a per thread arena already so the ThreadHeap is just the heap. Thanks Dave Lee!
+    }
+
+    byte* ThreadHeap::Allocate(size_t byteCount)
+    {
+        return new byte[byteCount];
+    }
+
+    void ThreadHeap::Free(byte* allocation)
+    {
+        delete [] allocation;
+    }
+
+}}//qor::memory

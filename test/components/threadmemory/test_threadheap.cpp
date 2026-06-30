@@ -34,12 +34,12 @@
 #include "src/qor/memory/reference/ref.h"
 #include "src/qor/memory/reference/newref.h"
 #include "src/qor/memory/instance/threadsingleton.h"
-#include "src/components/qor/threadmemory/threadheap/threadheap.h"
+#include "src/qor/memory/thread/threadheap/threadheap.h"
 
 namespace qor { namespace detail {
 
     template<>
-    ThreadInstanceHolder<components::threadmemory::ThreadHeap>* theThreadInstanceHolder<components::threadmemory::ThreadHeap>()
+    ThreadInstanceHolder<memory::ThreadHeap>* theThreadInstanceHolder<memory::ThreadHeap>()
     {
         return ::GetCurrentThreadHeap();
     }
@@ -47,7 +47,7 @@ namespace qor { namespace detail {
 
 using namespace qor;
 using namespace qor::test;
-using namespace qor::components::threadmemory;
+using namespace qor::memory;
 
 struct ThreadHeapTestSuite{};
 bool requiresThreadHeap = qor::ImplementsThreadHeap();

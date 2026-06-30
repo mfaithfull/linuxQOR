@@ -22,61 +22,71 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENT_THREADMEMORY_SMALLOBJECTHEAP_PAGE
-#define QOR_PP_H_COMPONENT_THREADMEMORY_SMALLOBJECTHEAP_PAGE
+#ifndef QOR_PP_H_MEMORY_THREAD_FASTHEAP_BUCKET
+#define QOR_PP_H_MEMORY_THREAD_FASTHEAP_BUCKET
 
 #include "src/platform/compiler/compiler.h"
+#include "stackpage.h"
+#include "../threadheap/threadheap.h"
 
-namespace qor{ namespace components{ namespace threadmemory{
+namespace qor{ namespace memory{
 
-    class qor_pp_module_interface(QOR_THREADMEMORY) SmallObjectPage final
+    class qor_pp_module_interface(QOR_THREADMEMORY) FastBucket final
     {
     public:
 
-        static constexpr size_t sc_WordBits = sizeof(size_t) * 8;
+        inline void* operator new(size_t sz)
+        {
+            return new_ref<ThreadHeap>()->Allocate(sz);
+        }
 
-        SmallObjectPage(size_t unitSize, size_t mapWordCount = 1);        
-        ~SmallObjectPage();
+        inline void operator delete(void* allocation)
+        {
+            new_ref<ThreadHeap>()->Free(reinterpret_cast<byte*>(allocation));
+        }
 
-        byte* Allocate();
-        bool IsEmpty() const;
-        bool Free(byte* element);
-        bool IsFull() const;
+        FastBucket(size_t pageUnits = 1);
+        ~FastBucket();
 
-        SmallObjectPage* m_prev;
+        inline size_t PageSize(void) const
+        {
+            return (m_pageUnits * StackPage::c_pageSize);
+        }
+
+        inline size_t AllocatedItems(void) const
+        {
+            return m_items;
+        }
+
+        inline size_t AllocatedPages(void) const
+        {
+            return m_pages;
+        }
+
+        size_t AllocatedSpace(void) const;
+
+        void SetSize(size_t pageUnits)
+        {
+            m_pageUnits = pageUnits;
+        }
+
+        void Initialise();
+        void* Allocate(size_t byteCount);
+        bool Free(void* memory, size_t byteCount);
 
     private:
-    
-        inline byte* Memory() const
-        {
-            return m_memory;
-        }    
 
-        void inline Use(size_t wordIndex, size_t bitIndex)
-        {
-            m_map[wordIndex] |= ( (size_t)(1) << bitIndex);
-        }
+        void PushPage(void);
+        void PopPage(void);
 
-        void inline Free(size_t wordIndex, size_t bitIndex)
-        {
-            m_map[wordIndex] &= ~( (size_t)(1) << bitIndex );
-        }
+        size_t m_pageUnits;
+        StackPage* m_basePage;
+        StackPage* m_ToSPage;
+        size_t m_items;
+        size_t m_pages;
 
-        bool inline IsInUse(size_t wordIndex, size_t bitIndex) const
-        {
-            return (m_map[wordIndex] & ((size_t)(1) << bitIndex)) != 0 ? true : false;
-        }
-
-        size_t* m_map;
-        byte* m_memory;
-        size_t m_mapWords;
-        size_t m_unitSize;
-        size_t m_pageByteCount;        
-
-        SmallObjectPage(const SmallObjectPage& src) = delete;
-        SmallObjectPage& operator = (const SmallObjectPage& src) = delete;
     };
 
-}}}//qor::components::threadmemory
+}}//qor::memory
 
-#endif//QOR_PP_H_COMPONENT_THREADMEMORY_SMALLOBJECTHEAP_PAGE
+#endif//QOR_PP_H_MEMORY_THREAD_FASTHEAP_BUCKET
