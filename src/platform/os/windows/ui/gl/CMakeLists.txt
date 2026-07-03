@@ -14,6 +14,6 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-target_link_libraries(${target} qor_module qor_host qor_objectcontext qor_injection qor_thread qor_issue qor_error qor_gl
+target_link_libraries(${target} qor_module qor_host qor_injection qor_thread qor_issue qor_error qor_gl
 winqor_gui
 dinput8 dwmapi xinput)

@@ -11,14 +11,14 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-    target_link_libraries(${target} qor_module qor_host qor_compiler qor_objectcontext
+    target_link_libraries(${target} qor_module qor_host qor_compiler 
 qor_platform qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector 
 qor_http qor_parsersink qor_parser
 linqor_filesystem)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-    target_link_libraries(${target} qor_module qor_host qor_compiler qor_objectcontext
+    target_link_libraries(${target} qor_module qor_host qor_compiler 
 qor_platform qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector 
 qor_http qor_parsersink qor_parser qor_asyncioservice qor_sockets qor_socketconnector qor_json qor_base64encodefilter
 qor_base64decodefilter qor_optionparser qor_stdoutsink qor_loghandler qor_log

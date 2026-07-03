@@ -25,7 +25,9 @@
 #include "sdk/using_platform.h"
 #include "sdk/using_framework.h"
 #include "sdk/components/framework.h"
+#ifdef NDEBUG
 #include <buildnumber.h>
+#endif
 #include "workflow.h"
 
 const char* appName = "Example Client";

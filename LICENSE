@@ -94,6 +94,21 @@ Portions licensed under the following 2 clause BSD license:
 *
 ***********************************************************************/
 
+/***********************************************************************
+*
+* Copyright (c) 2015-2018 Barbara Geller
+* Copyright (c) 2015-2018 Ansel Sermersheim
+* All rights reserved.
+*
+* This file is part of libguarded
+*
+* libguarded is free software, released under the BSD 2-Clause license.
+* For license details refer to LICENSE provided with this project.
+*
+* https://opensource.org/licenses/BSD-2-Clause
+*
+***********************************************************************/
+
 Portions licensed under the following license:
 ========================================================================
 /**
@@ -136,7 +151,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-
+Portions licensed under the MIT license:
+========================================================================
+https://github.com/navyenzo/blIteratorAPI
+http://www.opensource.org/licenses/mit-license.php
 
 
 NOTE: Expect additional licenses as more existing work is adapted to be included in the QOR

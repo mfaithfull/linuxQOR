@@ -28,7 +28,7 @@ namespace qor{ namespace detail{
         AnyObject& GetByClassID( const GUID* classID )
         {
             auto it = m_Map.find(*classID);
-            return it != m_Map.end() ? it->second : AnyObject::NullObject();
+            return it != m_Map.end() ? it->second : AnyObject::EmptyObject();
         }
 
         AnyObject Configure(const GUID* classID, AnyObject context)

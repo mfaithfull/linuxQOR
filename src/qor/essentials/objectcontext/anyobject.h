@@ -4,25 +4,55 @@
 #ifndef QOR_PP_H_ANYOBJECT
 #define QOR_PP_H_ANYOBJECT
 
+#include <string.h>
 #include "src/qor/essentials/objectcontext/typedanypointer.h"
 #include "src/platform/compiler/compiler.h"
 
 namespace qor{
 
+	class AnyObject;
+
+	constexpr const int size_ptr_obj = sizeof(TypedAnyPointer< AnyObject >);
+
     //A type erased container for a typed pointer to anything
-    class qor_pp_module_interface(QOR_OBJECTCONTEXT) AnyObject
+    class AnyObject
     {
     public:
 
         template< typename T > AnyObject(const T* t)
         {
-            m_p = new (m_backing)TypedAnyPointer< T >(t);
+            m_p = new (&m_backing)TypedAnyPointer< T >(t);
         }
 
-		AnyObject();
-		AnyObject(const AnyObject& src);
-		AnyObject& operator = (const AnyObject& src);
-		virtual ~AnyObject();
+		AnyObject() = default;
+		
+		AnyObject(const AnyObject& src)
+		{
+			*this = src;
+		}
+
+		AnyObject& operator = (const AnyObject& src)
+		{
+			if (src.m_p != nullptr)
+			{
+				memcpy(m_backing, src.m_backing, size_ptr_obj);				
+				m_p = reinterpret_cast<UnsafeAnyPointer*>(&m_backing);
+			}
+			else
+			{
+				m_p = nullptr;
+				Clear();
+			}
+			return *this;
+		}
+
+		virtual ~AnyObject()
+		{
+			if (m_p)
+			{
+				m_p->~UnsafeAnyPointer();
+			}
+		}
 
 		inline bool IsNull() const
 		{
@@ -35,9 +65,12 @@ namespace qor{
 			TypedAnyPointer< T >* op = dynamic_cast< TypedAnyPointer< T >* >(m_p);
 			return op ? op->operator T *() : nullptr;
 		}
-
-		static AnyObject& NullObject(void);
-		static AnyObject nullObject;
+		
+		static AnyObject& EmptyObject()
+		{
+			static AnyObject _emptyObject;
+			return _emptyObject;
+		}
 
 		const UnsafeAnyPointer* Ptr() const
 		{
@@ -46,15 +79,18 @@ namespace qor{
 
     protected:
 
-		UnsafeAnyPointer* m_p;
+		UnsafeAnyPointer* m_p{nullptr};
 
 	private:
 
-		typedef TypedAnyPointer< AnyObject > ObjectContextBasePointer;
-		byte m_backing[sizeof(ObjectContextBasePointer) + sizeof(double)];
+		unsigned char m_backing[size_ptr_obj]{0};
 
-		byte* Local_memcpy(byte* s1, const byte* s2, size_t n);
-		void Clear(void);
+		void Clear()
+		{
+			memset(m_backing, 0, size_ptr_obj);
+			m_p = nullptr;
+		}
+
     };
 
 }//qor

@@ -44,12 +44,12 @@ namespace qor {
 		virtual void OnReactivate();
 		virtual void OnActivate();
 
-		template< class TFSDerived > TFSDerived* Next( TFSDerived* dummy = nullptr )
+		template< class TFSDerived > TFSDerived* Next(TFSDerived* dummy = nullptr)
 		{
 			TFSDerived* next = dummy;
-			if( m_pNext )
+			if( m_Next )
 			{
-				next = dynamic_cast< TFSDerived* >( m_pNext->Item() );
+				next = dynamic_cast< TFSDerived* >(m_Next->Item());
 			}
 			return next;
 		}

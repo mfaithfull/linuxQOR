@@ -17,7 +17,7 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-target_link_libraries(${target} qor_module qor_thread qor_objectcontext qor_sync qor_platform qor_error qor_filesystem
+target_link_libraries(${target} qor_module qor_thread qor_sync qor_platform qor_error qor_filesystem
 qor_application qor_signals qor_log qor_pipeline qor_fileconnector qor_json qor_parsersink qor_parser qor_workflow 
 qor_deserializersink qor_serialize)
 

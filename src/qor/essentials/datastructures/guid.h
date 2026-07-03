@@ -7,9 +7,9 @@
 #include <stdint.h>
 #include <compare>
 
-namespace qor{
-    
-	struct qor_pp_module_interface(QOR_DATASTRUCTURES) GUID //A structure for globally unique identification
+namespace qor
+{
+	struct GUID //A structure for globally unique identification
 	{
 		uint32_t Data1;
 		uint16_t Data2;

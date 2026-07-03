@@ -11,4 +11,4 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH}
 qor_pp_implements_icurrentthread)
 
-target_link_libraries(${target} qor_module qor_host qor_objectcontext qor_injection)
+target_link_libraries(${target} qor_module qor_host qor_injection)

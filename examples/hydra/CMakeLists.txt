@@ -12,7 +12,7 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 set(portable_libraries 
-qor_application qor_module qor_host qor_compiler qor_objectcontext qor_sync
+qor_application qor_module qor_host qor_compiler qor_sync
  qor_thread qor_platform qor_log qor_loghandler qor_logaggregator 
  qor_role qor_workflow qor_filesystem qor_pipeline
  qor_sockets qor_socketconnector

@@ -60,7 +60,7 @@ namespace qor{
 		inline AnyObject GetCodePage(Mib mib)
 		{
 			auto it = m_codePageMap.find(mib);
-			return (it != m_codePageMap.end()) ? it->second : AnyObject::NullObject();
+			return (it != m_codePageMap.end()) ? it->second : AnyObject::EmptyObject();
 		}
 
     private:

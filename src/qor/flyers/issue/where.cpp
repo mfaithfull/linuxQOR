@@ -157,7 +157,7 @@ namespace qor{
 
     const AnyObject& Where::GetObjectContext(void) const
     {
-        return m_inInstance ? m_objContext : AnyObject::NullObject();
+        return m_inInstance ? m_objContext : AnyObject::EmptyObject();
     }
 
     void Where::SetObjectContext(const AnyObject& ObjContext)

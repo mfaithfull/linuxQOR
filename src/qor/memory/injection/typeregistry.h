@@ -60,7 +60,7 @@ namespace qor{
 		inline AnyObject GetFactory(GUID classID)
 		{
 			auto it = m_regMap.find(classID);
-			return (it != m_regMap.end()) ? it->second : AnyObject::NullObject();
+			return (it != m_regMap.end()) ? it->second : AnyObject::EmptyObject();
 		}
 
 	private:

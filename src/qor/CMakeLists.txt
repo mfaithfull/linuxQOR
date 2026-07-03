@@ -1,5 +1,4 @@
 add_subdirectory(module)
-add_subdirectory(essentials/objectcontext)
 add_subdirectory(memory/injection)
 add_subdirectory(memory/thread)
 add_subdirectory(flyers/interception)

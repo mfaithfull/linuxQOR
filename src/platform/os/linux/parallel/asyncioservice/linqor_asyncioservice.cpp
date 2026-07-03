@@ -23,7 +23,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#ifdef NDEBUG
 #include <buildnumber.h>
+#endif
 #include "src/qor/module/module.h"
 #include "src/qor/memory/injection/typeidentity.h"
 #include "src/framework/io/filesystem/ifilesystem.h"
@@ -39,11 +41,7 @@ extern "C"
 {
 	qor::Module& ThisModule(void)
 	{
-		static qor::Module QORModule("Querysoft Open Runtime: Linux Async IO Service Module", 
-			qor_pp_stringize(qor_pp_ver_major) "." \
-			qor_pp_stringize(qor_pp_ver_minor) "." \
-			qor_pp_stringize(qor_pp_ver_patch) "." \
-			qor_pp_stringize(qor_pp_buildnumber));
+		static qor::Module QORModule("Querysoft Open Runtime: Linux Async IO Service Module", qor_pp_module_ver_string );
 
 		//Register the Linux specific implementations
 		static qor::TypeRegEntry< qor::async::lin::AsyncIOService, qor::async::AsyncIOService > regAsyncIOService;

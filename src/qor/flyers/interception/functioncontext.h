@@ -50,7 +50,7 @@ namespace qor
 	public:
 
 		FunctionContext();
-		FunctionContext(const char* funcName, const char* file, unsigned int line, const char* module, bool profile, bool coverage, AnyObject objContext = AnyObject::NullObject());
+		FunctionContext(const char* funcName, const char* file, unsigned int line, const char* module, bool profile, bool coverage, AnyObject objContext = AnyObject::EmptyObject());
 		virtual ~FunctionContext();
 		bool Locked() const;
 		virtual unsigned int Lock();

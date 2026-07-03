@@ -1,2 +1,3 @@
 qor_datastructures
-A library of simple types used everywhere
+A header only library of data structures used everywhere
+Any TU can include these files. No dependencies except the standard library.

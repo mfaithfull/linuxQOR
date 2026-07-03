@@ -34,41 +34,19 @@ namespace qor {
 
     FlyStrapBase::FlyStrapBase() : tflink< FlyStrapBase* >( this ){ }
 
-	void FlyStrapBase::BeforeStrapOn( FlyStrapBase* /*strap*/ )
-	{
-		//default implementation does nothing
-	}
+	void FlyStrapBase::BeforeStrapOn(FlyStrapBase* /*strap*/){ }
 
-	void FlyStrapBase::StrapOn( FlyStrapBase* strap )
+	void FlyStrapBase::StrapOn(FlyStrapBase* strap)
 	{
 		BeforeStrapOn( strap );
 		Append( strap );
 		AfterStrapOn( strap );
 	}
 
-	void FlyStrapBase::AfterStrapOn( FlyStrapBase* /*strap*/ )
-	{
-		//default implementation does nothing
-	}
-
-	void FlyStrapBase::UnStrap()
-	{
-		//default implementation does nothing
-	}
-
-	void FlyStrapBase::OnDeactivate()
-	{
-		//default implementation does nothing
-	}
-
-	void FlyStrapBase::OnReactivate()
-	{
-		//default implementation does nothing
-	}
-
-	void FlyStrapBase::OnActivate()
-	{
-		//default implementation does nothing
-	}
+	void FlyStrapBase::AfterStrapOn( FlyStrapBase* /*strap*/ ){ }
+	void FlyStrapBase::UnStrap(){ }
+	void FlyStrapBase::OnDeactivate(){ }
+	void FlyStrapBase::OnReactivate(){ }
+	void FlyStrapBase::OnActivate(){ }
 
 }//qor

@@ -23,7 +23,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 #include "src/configuration/configuration.h"
+#ifdef NDEBUG
 #include <buildnumber.h>
+#endif
 #include "src/qor/module/module.h"
 #include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/essentials/current/currentthread.h"
@@ -40,11 +42,7 @@ extern "C"
 {
 	qor::Module& ThisModule(void)
 	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Graphics Language Module", 
-			qor_pp_stringize(qor_pp_ver_major) "." \
-			qor_pp_stringize(qor_pp_ver_minor) "." \
-			qor_pp_stringize(qor_pp_ver_patch) "." \
-			qor_pp_stringize(qor_pp_buildnumber));
+		static qor::Module QORModule("Querysoft Open Runtime: Windows Graphics Language Module", qor_pp_module_ver_string );
 
 		//Register the Windows specific implementations
 		static qor::TypeRegEntryWithParams< qor::framework::win::gl::WindowImpl, qor::gl::WindowPimpl, qor::gl::Window*, const qor::gl::Wndconfig&, const qor::gl::Ctxconfig&, const qor::gl::FBconfig& > regWindowPimpl;
