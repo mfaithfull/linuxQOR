@@ -22,30 +22,51 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSESERVER
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSESERVER
+#ifndef QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER
+#define QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER
 
-#include "src/qor/essentials/current/currentthread.h"
-#include "src/qor/memory/reference/newref.h"
-#include "src/framework/app/application/irunable.h"
+#include "src/components/protocols/json/parser/tokens.h"
+#include "src/components/protocols/json/parser/_3/object.h"
+#include "src/components/protocols/json/parser/nodes/object.h"
+#include "src/components/protocols/json/model/object.h"
+#include "src/framework/io/pipeline/podbuffer.h"
 #include "src/framework/io/pipeline/pipeline.h"
+#include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
 
-template<class Req, class Resp>
-class RequestResponseServerProtocol : public qor::app::IRunable
-{
-public:
+namespace qor{ namespace framework{ namespace res {
 
-    RequestResponseClientProtocol(qor::ref_of<qor::pipeline::Pipeline>::type pipeline) : m_pipeline(pipeline)
-    {}
-    virtual ~RequestResponseClientProtocol() noexcept = default;
-    virtual int Run(void);
+    class JSONReader
+    {
+    public:
+
+        JSONReader() : m_byteBuffer(2048), m_sink(m_byteBuffer)
+        {        
+        }
+
+        qor::ref_of<qor::components::model::json::Object>::type operator()(const qor::pipeline::Plug& sourceConnector)
+        {        
+            qor::pipeline::Pipeline(
+                sourceConnector,
+                m_sink,
+                qor::pipeline::Element::Push
+            ).Connect().PumpAll();
         
-protected:
+            m_sink.Parser().FinalParse();
+            auto finalNode = m_sink.Parser().PopNode();
+            return finalNode;
+        }
 
-    qor::ref_of<Req>::type m_request;
-    qor::ref_of<Resp>::type m_response;
-    qor::ref_of<qor::pipeline::Pipeline>::type m_pipeline;
-};
+        const qor::pipeline::Buffer& Buffer()
+        {
+            return m_byteBuffer;
+        }
 
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSESERVER
+    private:
 
+        qor::pipeline::PODBuffer<byte> m_byteBuffer;
+        qor::pipeline::components::ParserSink<qor::components::parser::json::object> m_sink;
+    };
+
+}}}//qor::framework::res
+
+#endif//QOR_PP_H_FRAMEWORK_RESOURCES_JSON_READER

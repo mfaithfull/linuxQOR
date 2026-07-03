@@ -209,10 +209,20 @@ namespace qor{ namespace pipeline{
             }
         }
 
+        inline Plug* GetSourceConnector()
+        {
+            return dynamic_cast<Plug*>(ActualSource()->GetPlug());
+        }
+
         void SetConnector(Element* plug)
         {
             SetSourceConnector(plug);
             SetSinkConnector(plug);
+        }
+
+        inline Plug* GetSinkConnector()
+        {
+            return dynamic_cast<Plug*>(ActualSink()->GetPlug());
         }
 
         virtual Element::FlowMode GetFlowMode()

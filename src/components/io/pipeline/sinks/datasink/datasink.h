@@ -53,6 +53,11 @@ namespace qor{ namespace pipeline {
             m_inputByteOrder = byteOrder;
         }
 
+        inline arch::Endian GetByteOrder()
+        {
+            return m_inputByteOrder;
+        }
+
         template <typename T> requires std::is_standard_layout_v<T> && std::is_trivially_copyable_v<T>
         inline bool Extract(T& value)
         {

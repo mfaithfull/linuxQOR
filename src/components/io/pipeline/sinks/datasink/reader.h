@@ -36,6 +36,7 @@
 #include "src/platform/architecture/cpu.h"
 #include "src/framework/event/delegate/delegate.h"
 #include "datasink.h"
+#include "src/qor/reflection/reflection.h"
 
 namespace qor{ namespace pipeline {
 
@@ -66,7 +67,12 @@ namespace qor{ namespace pipeline {
             m_sink.SetByteOrder(byteOrder);
         }        
 
-        template <typename T> requires std::is_standard_layout_v<T> && std::is_trivially_copyable_v<T>
+        arch::Endian GetByteOrder()
+        {
+            return m_sink.GetByteOrder();
+        }
+
+        template <typename T> requires std::is_arithmetic_v<T>
         inline T Read()
         {
             T t{0};
@@ -74,11 +80,28 @@ namespace qor{ namespace pipeline {
             return t;
         }
 
+        inline bool Read(byte* data, size_t byteCount)
+        {
+            return m_sink.Extract(data, byteCount);
+        }
+
         template <typename T> requires std::is_standard_layout_v<T> && std::is_trivially_copyable_v<T>
         inline Reader& operator >> (T& item)
         {
             m_sink.Extract(item);
             return *this;
+        }
+
+        template <typename T> requires std::is_standard_layout_v<T> && std::is_trivially_copyable_v<T>
+        inline T ReadStructure()
+        {
+			T result{0};
+			qor_reflection::for_each_field(result, [this](auto& value, std::size_t /*i*/)
+				{
+                    *this >> (value);
+				}
+			);
+            return result;
         }
 
     protected:

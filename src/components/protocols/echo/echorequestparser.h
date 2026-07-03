@@ -62,7 +62,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
             GetParser()->PushNode(
                 qor::new_ref<qor::components::parser::CharNode>(
                     charValue,static_cast<uint64_t>(echoRequestToken::requestChar)
-                ).template AsRef<qor::components::parser::Node>()
+                )
             );
         }
         virtual void Fail()
@@ -81,7 +81,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
     {
     public: request(qor::components::parser::Parser* parser) :
                 qor::components::parser::OneOrMore( parser,
-                    qor::new_ref<requestChar>(parser).template AsRef<qor::components::parser::ParserState>(),
+                    qor::new_ref<requestChar>(parser),
                     static_cast<uint64_t>(echoRequestToken::request))
             {}
 

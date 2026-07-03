@@ -138,7 +138,7 @@ namespace qor{ namespace pipeline{
             size_t unitsPumpedAtOnce = 0;
             if(GetFlowMode() == FlowMode::Pull)
             {
-                log::debug("Pulling for {0} units", unitsToPump);
+                //log::debug("Pulling for {0} units", unitsToPump);
                 working = ActualSink()->Write(unitsPumpedAtOnce, unitsToPump);
                 if(unitsPumpedAtOnce == 0)
                 {
@@ -149,11 +149,11 @@ namespace qor{ namespace pipeline{
                     }
                     break;
                 }
-                log::debug("Pulled for {0} units", unitsPumpedAtOnce);
+                //log::debug("Pulled for {0} units", unitsPumpedAtOnce);
             }
             else
             {
-                log::debug("Pushing up to {0} units", unitsToPump);
+                //log::debug("Pushing up to {0} units", unitsToPump);
                 working = ActualSource()->Read(unitsPumpedAtOnce, unitsToPump);
                 if(unitsPumpedAtOnce == 0)
                 {
@@ -164,12 +164,12 @@ namespace qor{ namespace pipeline{
                     }
                     break;
                 }
-                log::debug("Pushed {0} units", unitsPumpedAtOnce);
+                //log::debug("Pushed {0} units", unitsPumpedAtOnce);
             }
             unitsToPump -= unitsPumpedAtOnce;
             unitsPumped += unitsPumpedAtOnce;
         };
-        log::debug("Pipeline is {0}.", working ? "active" : "deactivated");
+        //log::debug("Pipeline is {0}.", working ? "active" : "deactivated");
         return working;
     }
 

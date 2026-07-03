@@ -22,30 +22,20 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSECLIENT
-#define QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSECLIENT
+#include "src/configuration/configuration.h"
+#include <buildnumber.h>
+#include "src/qor/module/module.h"
 
-#include "src/qor/essentials/current/currentthread.h"
-#include "src/qor/memory/reference/newref.h"
-#include "src/framework/app/application/irunable.h"
-#include "src/framework/io/pipeline/pipeline.h"
-
-template<class Req, class Resp>
-class RequestResponseClientProtocol : public qor::app::IRunable
+extern "C"
 {
-public:
+	qor::Module& ThisModule(void)
+	{
+		static qor::Module QORModule("Querysoft Open Runtime: Image Module", 
+			qor_pp_stringize(qor_pp_ver_major) "." \
+			qor_pp_stringize(qor_pp_ver_minor) "." \
+			qor_pp_stringize(qor_pp_ver_patch) "." \
+			qor_pp_stringize(qor_pp_buildnumber));
 
-    RequestResponseClientProtocol(qor::ref_of<qor::pipeline::Pipeline>::type pipeline) : m_pipeline(pipeline)
-    {}
-    virtual ~RequestResponseClientProtocol() noexcept = default;
-    virtual int Run(void) = 0;
-        
-protected:
-
-    qor::ref_of<Req>::type m_request;
-    qor::ref_of<Resp>::type m_response;
-    qor::ref_of<qor::pipeline::Pipeline>::type m_pipeline;
-};
-
-#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_TEMPLATES_REQUESTRESPONSECLIENT
-
+		return QORModule;
+	}
+}
