@@ -1,4 +1,5 @@
-// Copyright Querysoft Limited 2008 - 2025
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
 
 #ifndef QOR_PP_H_TEXT_UNICODE_GENERALCATEGORY
 #define QOR_PP_H_TEXT_UNICODE_GENERALCATEGORY

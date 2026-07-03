@@ -1,5 +1,5 @@
-// Copyright Querysoft Limited 2008 - 2025
-//
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
 
 #include "src/configuration/configuration.h"
 #ifdef NDEBUG
