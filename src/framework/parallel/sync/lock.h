@@ -29,18 +29,21 @@
 
 namespace qor{
 		
-    class qor_pp_module_interface(QOR_SYNC) Lock
+    class Lock final
     {
         friend class Key;
 
     public:
 
-        Lock(SyncObject& SyncObject) : m_SyncObject(SyncObject)
+        inline Lock(SyncObject& SyncObject) : m_SyncObject(SyncObject)
         {
             m_SyncObject.Acquire();
         }
 
-        ~Lock()
+        Lock(const Lock&) = delete;
+        Lock(Lock&&) = delete;
+
+        inline ~Lock()
         {
             m_SyncObject.Release();
         }
@@ -54,12 +57,15 @@ namespace qor{
     {
     public:
 
-        Key(Lock& lock) : m_Lock(lock)
+        inline Key(Lock& lock) : m_Lock(lock)
         {
             m_Lock.m_SyncObject.Release();
         }
 
-        ~Key()
+        Key(const Key&) = delete;
+        Key(Key&&) = delete;
+
+        inline ~Key()
         {
             m_Lock.m_SyncObject.Acquire();
         }        

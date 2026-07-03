@@ -28,7 +28,7 @@
 
 namespace qor{
 		
-    class qor_pp_module_interface(QOR_SYNC) SyncObject
+    class SyncObject
     {
     public:
 

@@ -39,6 +39,7 @@ namespace qor{
 	public:
 
 		inline TypeRegistry() noexcept = default;
+		TypeRegistry(const TypeRegistry&) = delete;
 
 		inline ~TypeRegistry()
 		{

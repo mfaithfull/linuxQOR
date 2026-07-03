@@ -28,8 +28,8 @@
 #include "src/qor/essentials/current/icurrentthread.h"
 
 namespace qor
-{
-    bool qor_pp_module_interface(QOR_WINDOWSTHREAD) ImplementsICurrentThread();//Declaration must match the one in src/framework/thread/thread.h
+{    
+    bool qor_pp_module_interface(QOR_WINDOWSTHREAD) ImplementsICurrentThread();
 }
 
 namespace qor{ namespace win{

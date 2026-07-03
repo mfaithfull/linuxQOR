@@ -29,7 +29,7 @@
 
 namespace qor{
 		
-	class qor_pp_module_interface(QOR_SYNC) NullSection : public SyncObject
+	class NullSection : public SyncObject
 	{
 	public:
 
