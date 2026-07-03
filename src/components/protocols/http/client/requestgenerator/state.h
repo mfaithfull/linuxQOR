@@ -32,8 +32,8 @@
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/app/workflow/workflow.h"
 #include "src/platform/architecture/detectarchitecture.h"
-#include "src/components/qor/threadmemory/smallobjectheap/smallobjectheap.h"
-#include "src/components/qor/threadmemory/smallobjectsource.h"
+#include "src/qor/memory/thread/smallobjectheap/smallobjectheap.h"
+#include "src/qor/memory/sources/smallobjectsource.h"
 #include "context.h"
 #include "requestgenerator.h"
 
