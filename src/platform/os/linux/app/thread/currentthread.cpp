@@ -40,10 +40,9 @@
 #include "currentthread.h"
 
 namespace qor{ 
-    bool qor_pp_module_interface(QOR_LINUXTHREAD) ImplementsICurrentThread() //Implement this trivial function so the linker will pull in this library to fulfil the ImplementsICurrentThread requirement. 
-    {
-        return true;
-    }
+     //Implement this trivial function so the linker will pull in this library 
+     //to fulfil the ImplementsICurrentThread requirement. 
+    bool qor_pp_module_interface(QOR_LINUXTHREAD) ImplementsICurrentThread(){return true;}
 }
 
 namespace qor{ namespace lin{

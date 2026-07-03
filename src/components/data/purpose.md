@@ -1,0 +1,3 @@
+Data handling components. Data transformation filters, sources and sinks for pipelines that dont' necessarily deal with IO
+Data formats, parsing and generating JSON, YAML, CSS...
+Data resources, local file or network based resources. Images, config, data files

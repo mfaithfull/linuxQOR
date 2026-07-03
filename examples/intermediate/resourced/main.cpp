@@ -33,14 +33,14 @@
 #include "src/platform/platform.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
-#include "src/framework/io/resources/resourcehub.h"
+#include "src/framework/data/resources/resourcehub.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/optionparser/getter.h"
 #include "rdapp.h"
 #include "src/framework/app/role/getfeature.h"
-#include "src/framework/io/resources/types/json/jsonresource.h"
-#include "src/framework/io/resources/types/font/fontresource.h"
-#include "src/framework/io/resources/claimer.h"
+#include "src/framework/data/resources/types/json/jsonresource.h"
+#include "src/framework/data/resources/types/font/fontresource.h"
+#include "src/framework/data/resources/claimer.h"
 
 constexpr const char* logTag = "resourced";
 

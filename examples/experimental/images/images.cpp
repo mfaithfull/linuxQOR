@@ -35,7 +35,7 @@
 #include "src/framework/io/pipeline/pipeline.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
 #include "src/components/io/pipeline/filters/jpegdecodefilter/jpegdecodefilter.h"
-#include "src/framework/io/resources/image/imagesink.h"
+#include "src/framework/data/resources/image/imagesink.h"
 
 #include "images.h"
 

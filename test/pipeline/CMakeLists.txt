@@ -2,17 +2,17 @@ set(target QORTestPipelines)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-add_executable(${target} test_main.cpp testwriter.cpp)
+add_executable(${target} test_main.cpp testwriter.cpp testttfreader.cpp)
 
 target_compile_definitions(${target} PRIVATE CONSOLE 
 qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-set(qor_libraries qor_module qor_compiler qor_host qor_datastructures qor_objectcontext qor_arch qor_current qor_thread
+set(qor_libraries qor_module qor_compiler qor_host qor_objectcontext qor_arch qor_current qor_thread
 qor_injection qor_sync qor_text qor_issue qor_error qor_log qor_reporting qor_pipeline qor_platform
 qor_loghandler qor_logaggregator qor_filesystem qor_asyncioservice qor_application qor_role qor_optionparser qor_workflow
-qor_fileconnector qor_datasource qor_datasink)
+qor_ttf qor_fileconnector qor_datasource qor_datasink)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} ${qor_libraries} linqor_filesystem linqor_thread 

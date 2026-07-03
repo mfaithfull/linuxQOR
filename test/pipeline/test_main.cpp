@@ -24,6 +24,7 @@ using namespace qor::async;
 int main(int argc, const char** argv, char**)
 {
 	DefaultLogHandler logHandler(Level::Debug);
+	logHandler.WriteToStandardOutput();
 	ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
 	return AppBuilder().Build<Application>("Test FileSystem")->SetRole<app::Role>(

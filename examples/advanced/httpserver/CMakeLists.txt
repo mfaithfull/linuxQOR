@@ -10,7 +10,7 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-set(portable_libraries qor_compiler qor_host qor_datastructures qor_objectcontext 
+set(portable_libraries qor_compiler qor_host qor_objectcontext 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_log qor_loghandler qor_logaggregator
 qor_signals qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem qor_fileconnector
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console

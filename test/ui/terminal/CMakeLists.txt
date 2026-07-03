@@ -14,7 +14,7 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-set(qor_libraries qor_compiler qor_module qor_host qor_datastructures qor_objectcontext qor_reporting
+set(qor_libraries qor_compiler qor_module qor_host qor_objectcontext qor_reporting
 qor_thread qor_interception qor_injection qor_sync qor_text qor_issue qor_error qor_log qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
 qor_log qor_loghandler qor_logaggregator

@@ -1,4 +1,5 @@
 add_subdirectory(app)
+add_subdirectory(data)
 add_subdirectory(event)
 add_subdirectory(io)
 add_subdirectory(parallel)

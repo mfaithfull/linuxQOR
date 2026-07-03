@@ -10,7 +10,7 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-set(portable_libraries qor_module qor_host qor_datastructures qor_objectcontext qor_sync qor_thread qor_platform qor_error qor_interception
+set(portable_libraries qor_module qor_host qor_objectcontext qor_sync qor_thread qor_platform qor_error qor_interception
 qor_asyncioservice)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
