@@ -126,6 +126,8 @@ namespace qor{
 	{
 		virtual inline bool Encode(const CodePoint & codePoint, C*& space, size_t& available) const = 0;
 		virtual inline CodePoint Decode(const C*& chars, size_t& available) const = 0;
+
+		AbstractCharacterCodec& operator = (const AbstractCharacterCodec&) = delete;
 	};
 
 	template< typename C, Mib M >
@@ -133,6 +135,7 @@ namespace qor{
 	{
 	public:
 		
+		CodePageBase() = default;
 		virtual ~CodePageBase() = default;
 		virtual inline bool Encode(const CodePoint & codePoint, C*& space, size_t& available) const = 0;
 		virtual inline CodePoint Decode(const C*& chars, size_t& available) const = 0;
@@ -141,6 +144,10 @@ namespace qor{
 		{ 
 			return M;
 		}		
+
+	private:
+		CodePageBase(const CodePageBase&) = delete;
+		CodePageBase& operator = (const CodePageBase&) = delete;
 	};
 
 }//qor

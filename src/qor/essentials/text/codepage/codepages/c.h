@@ -8,11 +8,13 @@
 
 namespace qor{
 
-	class qor_pp_module_interface(QOR_TEXT) CCodePage : public CodePage< char, Mib::C >
+	class CCodePage : public CodePage< char, Mib::C >
 	{
 	public:		
 
 		CCodePage();
+		CCodePage(const CCodePage&) = delete;
+		CCodePage& operator = (const CCodePage&) = delete;
 		virtual ~CCodePage() = default;
 
 		virtual bool Encode(const CodePoint & codePoint, char*& space, size_t& available) const override;

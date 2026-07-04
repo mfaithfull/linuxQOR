@@ -8,11 +8,13 @@
 
 namespace qor{
 
-	class qor_pp_module_interface(QOR_TEXT) ISO8859_3CodePage : public CodePage< char8_t, Mib::ISOLatin3 >
+	class ISO8859_3CodePage : public CodePage< char8_t, Mib::ISOLatin3 >
 	{
 	public:		
 
 		ISO8859_3CodePage();
+		ISO8859_3CodePage(const ISO8859_3CodePage&) = delete;
+		ISO8859_3CodePage& operator = (const ISO8859_3CodePage&) = delete;
 		virtual ~ISO8859_3CodePage() = default;
 
 		virtual bool Encode(const CodePoint & codePoint, char8_t*& space, size_t& available) const override;

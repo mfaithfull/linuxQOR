@@ -8,11 +8,12 @@
 
 namespace qor{
 
-	class qor_pp_module_interface(QOR_TEXT) UTF32CodePage : public CodePage< char32_t, Mib::UTF32 >
+	class UTF32CodePage : public CodePage< char32_t, Mib::UTF32 >
 	{
 	public:
 
 		UTF32CodePage();
+		UTF32CodePage& operator = (const UTF32CodePage&) = delete;
 		virtual ~UTF32CodePage() = default;
 
 		virtual bool Encode(const CodePoint & codePoint, char32_t*& space, size_t& available) const override;

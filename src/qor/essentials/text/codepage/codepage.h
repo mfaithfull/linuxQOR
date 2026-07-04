@@ -38,6 +38,12 @@ namespace qor{
 		std::string m_MIMEName;
 		std::vector< std::string > m_aliases;
 
+	private:
+
+		CodePage() = delete;
+		CodePage(const CodePage&) = delete;
+		CodePage& operator = (const CodePage&) = delete;
+
     };
 
 	//A trait to get base character unit type for Mib. Most will be char. UTF16 for example will be char16_t

@@ -8,11 +8,13 @@
 
 namespace qor{
 
-	class qor_pp_module_interface(QOR_TEXT) ASCIICodePage : public CodePage< char, Mib::ASCII >
+	class ASCIICodePage : public CodePage< char, Mib::ASCII >
 	{
 	public:		
 
 		ASCIICodePage();
+		ASCIICodePage(const ASCIICodePage&) = delete;
+		ASCIICodePage& operator = (const ASCIICodePage&) = delete;
 		virtual ~ASCIICodePage() = default;
 
 		virtual bool Encode(const CodePoint & codePoint, char*& space, size_t& available) const override;

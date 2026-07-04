@@ -9,12 +9,12 @@
 
 namespace qor{ namespace text {
 
-    void qor_pp_module_interface(QOR_TEXT) BufferFreeWhileSharedError(const void* bufferAddress, unsigned short refCount)
+    void BufferFreeWhileSharedError(const void* bufferAddress, unsigned short refCount)
     {        
         IErrorReporting().serious(std::vformat("Attempted to free buffer at {0:p} while reference count == {1}.", std::make_format_args(bufferAddress, refCount)));
     }
 
-    void qor_pp_module_interface(QOR_TEXT) BufferOverrunError(const void* bufferAddress, unsigned short headerRefCount, unsigned short footerRefCount)
+    void BufferOverrunError(const void* bufferAddress, unsigned short headerRefCount, unsigned short footerRefCount)
     {
         IErrorReporting().serious(std::vformat("Buffer overrun detected on buffer at {0:p}. footer {1} does not match header {2}", std::make_format_args(bufferAddress, footerRefCount, headerRefCount)));
     }

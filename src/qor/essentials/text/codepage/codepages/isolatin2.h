@@ -8,11 +8,12 @@
 
 namespace qor{
 
-	class qor_pp_module_interface(QOR_TEXT) ISOLatin2CodePage : public CodePage< char8_t, Mib::ISOLatin2 >
+	class ISOLatin2CodePage : public CodePage< char8_t, Mib::ISOLatin2 >
 	{
 	public:		
 
 		ISOLatin2CodePage();
+		ISOLatin2CodePage& operator = (const ISOLatin2CodePage&) = delete;
 		virtual ~ISOLatin2CodePage() = default;
 
 		virtual bool Encode(const CodePoint & codePoint, char8_t*& space, size_t& available) const override;

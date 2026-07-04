@@ -6,7 +6,10 @@
 
 #include "src/qor/essentials/objectcontext/anyobject.h"
 
-namespace qor {
+//Declare an abstract interface for function contexts
+
+namespace qor 
+{
 
 #ifndef QOR_PP_H_ICALLCONTEXT
     class ICallContext;

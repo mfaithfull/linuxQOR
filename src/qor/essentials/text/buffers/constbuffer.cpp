@@ -9,7 +9,7 @@
 
 namespace qor{ namespace text {
 
-    void qor_pp_module_interface(QOR_TEXT) OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress)
+    void OutOfRangeError(size_t index, size_t length, size_t elementSize, const void* bufferAddress)
     {
         IErrorReporting().continuable(std::vformat("Buffer index out of range accesssing index {0} of {1} elements of size {2} bytes in buffer at {3:p}", std::make_format_args(index, length, elementSize, bufferAddress)));
     }

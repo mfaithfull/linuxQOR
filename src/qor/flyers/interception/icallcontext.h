@@ -4,8 +4,10 @@
 #ifndef QOR_PP_H_ICALLCONTEXT
 #define QOR_PP_H_ICALLCONTEXT
 
-namespace qor {
+//Declare an abstrct interface for Call Contexts
 
+namespace qor 
+{
 #ifndef QOR_PP_H_IFUNCTIONCONTEXT
     class IFunctionContext;
 #endif
