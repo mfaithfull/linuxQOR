@@ -40,9 +40,7 @@ namespace qor{ namespace io{ namespace network { namespace components{
     public:
 
 		SocketConnector();
-        SocketConnector(
-            ref_of<qor::io::network::Socket>::type connectedSocket,
-            ref_of<qor::async::AsyncIOContext::Session>::type session);
+        SocketConnector(ref_of<qor::io::network::Socket>::type connectedSocket, ref_of<qor::async::AsyncIOContext::Session>::type session);
 
 		virtual ~SocketConnector() noexcept;
 

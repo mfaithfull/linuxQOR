@@ -29,6 +29,10 @@
 
 namespace qor{ namespace io{ namespace components{ 
 
+    FileSink::FileSink() = default;
+
+    FileSink::~FileSink() = default;
+
     size_t FileSink::WriteBytes(byte* data, size_t bytesToWrite)
     {
         size_t result = 0;

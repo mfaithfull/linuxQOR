@@ -125,4 +125,18 @@ namespace qor{ namespace io{ namespace components{
         m_pFileIndex = &fileIndex;
     }
 
+    filesystem::Index& FileConnector::FileIndex(void)
+    {
+        return *m_pFileIndex; 					//The underlying filesystem::Index
+    }
+
+    ref_of<io::File>::type FileConnector::File(void)
+    {
+        return m_File; 							//The underlying File
+    }
+
+    pipeline::Element* FileConnector::GetSink() const { return m_sink; }
+
+    pipeline::Element* FileConnector::GetSource() const { return m_source; }
+
 }}}//qor::io::components

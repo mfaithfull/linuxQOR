@@ -28,6 +28,10 @@
 
 namespace qor{ namespace io{ namespace components{ 
 
+    FileSource::FileSource() = default;
+
+    FileSource::~FileSource() = default;
+
     size_t FileSource::ReadBytes(byte* space, size_t bytesToRead)
     {
         size_t result = 0;
