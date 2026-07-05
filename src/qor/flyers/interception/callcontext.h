@@ -8,11 +8,14 @@
 
 namespace qor {
 
-    class qor_pp_module_interface(QOR_INTERCEPTION) ParameterBase
+    class ParameterBase
 	{
 	public:
 
-		inline void Clear(void);
+		inline void Clear(void)
+		{
+			m_p = nullptr;
+		}
 
 		void* m_p{nullptr};
 	};

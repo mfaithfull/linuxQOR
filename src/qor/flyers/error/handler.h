@@ -25,8 +25,8 @@ namespace qor{
     class BaseIssueHandler
     {
     public:
-        BaseIssueHandler(){}
-		virtual ~BaseIssueHandler(){}      
+        BaseIssueHandler() = default;
+		virtual ~BaseIssueHandler() = default;      
     };
     
     template<class T>

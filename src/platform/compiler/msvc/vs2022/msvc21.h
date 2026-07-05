@@ -34,8 +34,8 @@ namespace qor { namespace compiler {
 
     public:
     
-        MSVCCompiler21() = default;
-        virtual ~MSVCCompiler21() = default;
+        inline MSVCCompiler21() = default;
+        inline virtual ~MSVCCompiler21() = default;
 
         template< typename T>
         static std::string demangle()

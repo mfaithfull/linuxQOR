@@ -19,7 +19,7 @@ namespace qor{
 
     namespace thread
     {
-        class qor_pp_module_interface(QOR_THREAD) ThreadPool;       //forward declare ThreadPool class
+        class ThreadPool;       //forward declare ThreadPool class
     }
 
 #ifdef QOR_CURRENT   //Anything other than the qor_current library doesn't need to know about these
@@ -30,8 +30,8 @@ namespace qor{
     //Represent the currently executing thread. Applies whether we have one thread or many.
     class CurrentThread final
     {
-        friend class qor_pp_module_interface(QOR_THREAD) Thread;
-        friend class qor_pp_module_interface(QOR_THREAD) thread::ThreadPool;
+        friend class Thread;
+        friend class thread::ThreadPool;
 
     public:
     

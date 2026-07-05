@@ -1,7 +1,8 @@
 set(target qor_log)
 
 add_library(qor_log SHARED qor_log.cpp log.cpp debug.cpp important.cpp
-impactful.cpp informative.cpp imperative.cpp defaultloghandler.cpp)
+impactful.cpp informative.cpp imperative.cpp defaultloghandler.cpp
+levelwhat.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

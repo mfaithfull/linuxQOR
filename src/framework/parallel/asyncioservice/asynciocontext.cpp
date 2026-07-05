@@ -25,56 +25,8 @@
 #include "src/configuration/configuration.h"
 
 #include "asynciocontext.h"
-#include "src/framework/parallel/thread/threadpool.h"
-#include "src/qor/essentials/current/currentthread.h"
-#include "src/qor/memory/factory/factory.h"
-#include "src/qor/memory/injection/typeidentity.h"
-#include "src/qor/memory/factory/externalfactory.h"
-#include "src/qor/memory/reference/newref.h"
 
 namespace qor { namespace async{
 
-    bool AsyncIOContext::Enroll(io::IODescriptor& ioDescriptor) const
-    {
-        return m_processor->Enroll(ioDescriptor);
-    }
-
-    AsyncIOContext::AsyncIOContext(ref_of<thread::ThreadPool>::type threadPool) : m_threadPool(threadPool)
-    {
-        m_initiator = new_ref<AsyncIOInitiator>();
-        if(m_initiator->RequiresBackgroundProcessor())
-        {
-            m_processor = new_ref<AsyncIOEventProcessor>();
-        }
-        m_initiator->ConnectToProcessor(m_processor);
-        Inflate();
-    }
-
-    void AsyncIOContext::Inflate()
-    {
-        if(m_processor.IsNotNull())
-        {
-            m_processor->Reset();
-            m_processorResult = m_threadPool->SubmitTask( [this]()
-            {
-                CurrentThread::GetCurrent().SetName("IO Thread");
-                return m_processor->Run();
-            });
-        }
-    }
-
-    void AsyncIOContext::Deflate()
-    {
-        if(m_processor.IsNotNull())
-        {
-            m_processor->Stop();
-            m_processorResult.get();
-        }
-    }
-
-    ref_of<AsyncIOContext::Session>::type AsyncIOContext::GetSession()
-    {
-        return new_ref<Session>(this);
-    }
 
 }}//qor::async

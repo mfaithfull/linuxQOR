@@ -47,7 +47,7 @@ namespace qor{ namespace io { namespace network{
         static constexpr int Invalid_Socket = -1;
 
         Socket();
-        virtual ~Socket() = default;
+        qor_pp_noinline virtual ~Socket() = default;
         Socket(const sockets::eAddressFamily AF, const sockets::eType Type, const sockets::eProtocol Protocol);
 
         virtual int32_t Bind(const Address& Address);

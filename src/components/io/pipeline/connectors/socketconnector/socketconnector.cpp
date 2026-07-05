@@ -115,7 +115,7 @@ namespace qor{ namespace io { namespace network{ namespace components{
         {
             m_remoteAddress.sa_family = static_cast<unsigned short>(address.family);
             m_remoteAddress.SetPort( address.address.sa.IPAddress.sin_port);
-            memcpy(m_remoteAddress.sa.sa_data, address.address.sa.sa_data, address.address.byte_size);
+            memcpy(m_remoteAddress.sa.sa_data, address.address.sa.sa_data, 30/*address.address.byte_size*/);
             m_Socket = socketsSubsystem->CreateSocket(address.family, address.socktype, address.protocol, ref_of<qor::async::AsyncIOContext::Session>::type());
 
             m_connected = m_Socket->Connect(m_remoteAddress) == 0;

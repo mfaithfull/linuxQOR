@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Host Library" LANGUAGES CXX)
 set(target qor_host)
 
 add_library(${target} SHARED host.cpp host_module.cpp)

@@ -92,26 +92,24 @@ namespace qor
     bool connect(const Sender& sender, std::unique_ptr<detail::BentoAbstract/*, qor_std_deleter<detail::BentoAbstract>*/ > signalMethod_Bento, const Receiver& receiver, std::unique_ptr< detail::BentoAbstract/*, qor_std_deleter<detail::BentoAbstract>*/ > slotMethod_Bento, ConnectionKind type = ConnectionKind::AutoConnection, bool uniqueConnection = false);
 
 
-    class qor_pp_module_interface(QOR_SIGNALSLOTS) SignalBase
+    class SignalBase
     {
 
     public:
 
-        virtual ~SignalBase() noexcept(false);
+        qor_pp_module_interface(QOR_SIGNALS) virtual ~SignalBase() noexcept(false);
 
     protected:
 
-        static detail::BentoAbstract*& get_threadLocal_currentSignal();
-
-        int internal_cntConnections(const SlotBase* receiver, const detail::BentoAbstract& signalMethod_Bento) const;
-
-        std::set<SlotBase*> internal_receiverList( const detail::BentoAbstract& signalMethod_Bento) const;
+        qor_pp_module_interface(QOR_SIGNALS) static detail::BentoAbstract*& get_threadLocal_currentSignal();
+        qor_pp_module_interface(QOR_SIGNALS) int internal_cntConnections(const SlotBase* receiver, const detail::BentoAbstract& signalMethod_Bento) const;
+        qor_pp_module_interface(QOR_SIGNALS) std::set<SlotBase*> internal_receiverList( const detail::BentoAbstract& signalMethod_Bento) const;
 
     private:
 
         // part of destructor
-        static std::mutex& get_mutex_beingDestroyed();
-        static std::unordered_set<const SignalBase*>& get_beingDestroyed();
+        qor_pp_module_interface(QOR_SIGNALS) static std::mutex& get_mutex_beingDestroyed();
+        qor_pp_module_interface(QOR_SIGNALS) static std::unordered_set<const SignalBase*>& get_beingDestroyed();
 
         // part of disconnect
         mutable int m_activateBusy = 0;
@@ -127,9 +125,9 @@ namespace qor
         // list of connections from my Signal to some Receiver
         mutable SharedList<ConnectStruct> m_connectList;
 
-        void addConnection( std::unique_ptr< const detail::BentoAbstract/*, qor_std_deleter< const detail::BentoAbstract >*/ > signalMethod, const SlotBase*, std::unique_ptr< const detail::BentoAbstract/*, qor_std_deleter< const detail::BentoAbstract >*/ > slotMethod, ConnectionKind type, SharedList<ConnectStruct>::write_handle senderListHandle) const;
+        qor_pp_module_interface(QOR_SIGNALS) void addConnection( std::unique_ptr< const detail::BentoAbstract/*, qor_std_deleter< const detail::BentoAbstract >*/ > signalMethod, const SlotBase*, std::unique_ptr< const detail::BentoAbstract/*, qor_std_deleter< const detail::BentoAbstract >*/ > slotMethod, ConnectionKind type, SharedList<ConnectStruct>::write_handle senderListHandle) const;
 
-        virtual void handleException(std::exception_ptr data);
+        qor_pp_module_interface(QOR_SIGNALS) virtual void handleException(std::exception_ptr data);
 
         template<class Sender, class SignalClass, class ...SignalArgTypes, class ...Ts>
         friend void activate(Sender& sender, void (SignalClass::* signal)(SignalArgTypes...), Ts &&... Vs);

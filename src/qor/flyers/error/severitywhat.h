@@ -17,12 +17,9 @@ namespace qor{
 
         SeverityWhat(const ref_of<SeverityWhat>::type& src) : What(src->Content()), m_severity(src->m_severity){ }
 
-        virtual ~SeverityWhat() noexcept = default;
+        inline virtual ~SeverityWhat() noexcept = default;
 
-        Severity GetSeverity() const
-        {
-            return m_severity;
-        }
+        inline Severity GetSeverity() const{ return m_severity; }
         
     protected:
 

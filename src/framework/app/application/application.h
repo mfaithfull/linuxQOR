@@ -18,6 +18,9 @@
 #define qor_pp_declare_app_class(_MYAPP)\
 private: static qor::SingletonRedirector<qor::Application, _MYAPP> m_sRedirect;
 
+#define qor_pp_redirect_app_class(_MYAPP)\
+qor::SingletonRedirector<qor::Application, _MYAPP> _MYAPP::m_sRedirect;
+
 namespace qor{
 
     class Application : public app::IOptionable

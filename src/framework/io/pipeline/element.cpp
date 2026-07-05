@@ -35,6 +35,8 @@ namespace qor{ namespace pipeline{
         *this = src;
     }
 
+    Element::~Element() noexcept (false) { }
+
     Element& Element::operator = (const Element& src)
     {
         if(&src != this)

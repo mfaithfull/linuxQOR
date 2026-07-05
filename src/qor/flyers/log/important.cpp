@@ -8,11 +8,15 @@
 
 namespace qor{ namespace log{
 
-    Important::Important(const std::string& message) : LevelTemplateIssue<Level::Important>(message){ }
+    Important::Important(const std::string& message) : Log(Level::Important, message){ }
+
+    Important::Important(const Important& src) : Log(src) { }
+    
+    Important::~Important() noexcept = default;
 
     Important& Important::operator = (const Important& src)
     {
-        LevelTemplateIssue<Level::Important>::operator = (src);
+        Log::operator = (src);
         return *this;
     }
     
@@ -31,6 +35,11 @@ namespace qor{ namespace log{
                 logHandler->Handle(*this);
             }
         }
+    }
+
+    void important(const std::string& message)
+    {
+        issue<Important, const std::string&>(message);
     }
 
 }}//qor::log

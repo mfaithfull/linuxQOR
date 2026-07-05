@@ -47,7 +47,7 @@
 
 namespace qor{
         
-    class qor_pp_module_interface(QOR_SIGNALSLOTS) SlotBase;
+    class qor_pp_module_interface(QOR_SIGNALS) SlotBase;
 
     namespace detail
     {        

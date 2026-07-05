@@ -9,21 +9,23 @@
 
 namespace qor {
 
-    class qor_pp_module_interface(QOR_INTERCEPTION) FlyStrap : public FlyStrapBase
+    class FlyStrap : public FlyStrapBase
 	{
 	public:
 
-        FlyStrap();
-        FlyStrap( FlyStrapBase* );
-		virtual ~FlyStrap() = default;
+        qor_pp_module_interface(QOR_INTERCEPTION) FlyStrap();
+		qor_pp_module_interface(QOR_INTERCEPTION) FlyStrap(const FlyStrap&);
+		FlyStrap& operator = (const FlyStrap&) = delete;
+        qor_pp_module_interface(QOR_INTERCEPTION) FlyStrap( FlyStrapBase* );
+		qor_pp_module_interface(QOR_INTERCEPTION) qor_pp_noinline virtual ~FlyStrap() = default;
 
-		virtual bool PreCondition( CallContext* call, IFunctionContext* function );		
-		virtual bool OnAssignmentCondition( CallContext* call );
-		virtual bool PostCondition( CallContext* call );
-		virtual bool Pre( CallContext* call, IFunctionContext* function );
-		virtual bool OnReturnAssignment( CallContext* call );
-		virtual bool OnReturn( CallContext* call );
-		virtual bool Post( CallContext* call );
+		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool PreCondition( CallContext* call, IFunctionContext* function );		
+		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool OnAssignmentCondition( CallContext* call );
+		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool PostCondition( CallContext* call );
+		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool Pre( CallContext* call, IFunctionContext* function );
+		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool OnReturnAssignment( CallContext* call );
+		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool OnReturn( CallContext* call );
+		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool Post( CallContext* call );
 
 		template< class T > void Strap()
 		{
@@ -45,9 +47,9 @@ namespace qor {
 			}
 		}
 
-		bool CallPre( CallContext* call, IFunctionContext* function );
-		bool CallOnReturnAssignment( CallContext* call );
-		bool CallPost( CallContext* call );
+		qor_pp_module_interface(QOR_INTERCEPTION) bool CallPre( CallContext* call, IFunctionContext* function );
+		qor_pp_module_interface(QOR_INTERCEPTION) bool CallOnReturnAssignment( CallContext* call );
+		qor_pp_module_interface(QOR_INTERCEPTION) bool CallPost( CallContext* call );
 
 	};
 

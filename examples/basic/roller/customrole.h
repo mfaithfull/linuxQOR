@@ -1,14 +1,14 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#include "sdk/using_framework.h"
+#include "src/framework/app/role/role.h"
 
 /*Create a custom Role class by deriving from Role
 Only derive directly from IRole if you plan to implement
 your own feature storage and retreival mechanism to 
 replace the built in QOR Role completely.*/
 
-class CustomRole : public app::Role
+class CustomRole : public qor::app::Role
 {
 public:
     CustomRole();

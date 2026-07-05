@@ -8,11 +8,6 @@
 
 namespace qor{
 
-	void ParameterBase::Clear(void)
-	{
-		m_p = nullptr;
-	}
-
 	void CallContext::CallMade(IFunctionContext* pCalledContext)
 	{
 		//Execution has reached the context of the callee
@@ -60,7 +55,6 @@ namespace qor{
 	{
 		return &m_ReturnValue;
 	}
-
 
 	void CallContext::OutOfLineRegistration(ParameterBase& Param)
 	{

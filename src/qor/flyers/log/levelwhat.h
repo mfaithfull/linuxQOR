@@ -6,6 +6,7 @@
 
 #include "src/qor/flyers/issue/what.h"
 #include "level.h"
+#include "src/qor/memory/reference/reference.h"
 
 namespace qor{ namespace log {
 
@@ -13,16 +14,12 @@ namespace qor{ namespace log {
     {
     public:
 
-        LevelWhat(const ref_of<LevelWhat>::type& src) : What(src->Content()), m_level(src->m_level){ }
-
-        LevelWhat(const std::string& what, Level level) : What(what), m_level(level){ }
-
-        virtual ~LevelWhat() noexcept = default;
-
-        Level GetLevel() const
-        {
-            return m_level;
-        }
+        qor_pp_noinline LevelWhat(const ref_of<LevelWhat>::type& src);
+        qor_pp_noinline LevelWhat(const LevelWhat& src);
+        qor_pp_noinline LevelWhat(const std::string& what, Level level);
+        qor_pp_noinline virtual ~LevelWhat() noexcept;
+        qor_pp_noinline LevelWhat& operator = (const LevelWhat& src);
+        qor_pp_noinline Level GetLevel() const;
         
     protected:
 

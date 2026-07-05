@@ -10,42 +10,18 @@
 
 namespace qor{ namespace log {
 
-    class qor_pp_module_interface(QOR_LOG) Log : public Issue<LevelWhat>
+    class Log : public Issue<LevelWhat>
     {
     public:
         
-        Log(Level s, const std::string& message);
-        Log(Level s, const std::string& message, IFunctionContext* fContext);
-        Log(const Log& src);
-        virtual ~Log() noexcept = default;
-        Log& operator = (const Log & src);
-        virtual void Handle();
-        virtual void Escalate() const {/*nothing to do. Can't escalate a Log issue*/}
-    };
-
-    template<Level S>
-    class LevelTemplateIssue : public Log
-    {
-    public:
-        
-        LevelTemplateIssue(const std::string& message, IFunctionContext* fContext = nullptr) : Log(S, message, fContext) {}
-        LevelTemplateIssue(const LevelTemplateIssue& src) : Log(src) {} 
-        LevelTemplateIssue(LevelTemplateIssue&& src) noexcept : Log(src) {}
-        LevelTemplateIssue& operator=(LevelTemplateIssue&& src) noexcept 
-        {
-            Log::operator = (src);
-            return *this;
-        }
-        
-        virtual ~LevelTemplateIssue() noexcept = default;
-
-        LevelTemplateIssue& operator = (const LevelTemplateIssue& src)
-        {
-            Log::operator=(src);
-            return *this;
-        }
-        
-        Level GetLevel() const { return S; }
+        qor_pp_module_interface(QOR_LOG) Log(Level s, const std::string& message);
+        qor_pp_module_interface(QOR_LOG) Log(Level s, const std::string& message, IFunctionContext* fContext);
+        qor_pp_module_interface(QOR_LOG) Log(const Log& src);
+        qor_pp_module_interface(QOR_LOG) virtual ~Log() noexcept;
+        qor_pp_module_interface(QOR_LOG) Log& operator = (const Log & src);
+        qor_pp_module_interface(QOR_LOG) virtual void Handle();
+        qor_pp_module_interface(QOR_LOG) qor_pp_noinline virtual void Escalate() const;
+        qor_pp_module_interface(QOR_LOG) Level GetLevel() const;
     };
 
 }}//qor::log

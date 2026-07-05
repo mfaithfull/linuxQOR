@@ -1,6 +1,7 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#include "src/configuration/configuration.h"
 #include "app.h"
 
 /*Redirects the Appliation singleton factory to use the App factory

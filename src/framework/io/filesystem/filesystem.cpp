@@ -36,6 +36,8 @@ namespace qor{ namespace io{
         m_pimpl = new_ref<IFileSystem>();
     }
 
+    FileSystem::~FileSystem() noexcept = default;
+
     void FileSystem::Setup()
     {
         if(m_pimpl.IsNotNull())

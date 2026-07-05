@@ -4,13 +4,22 @@
 //An Application with a ThreadPool using the QOR SDK
 //For a simpler example of the flow of a QOR application see the plumbing project
 
-#include "sdk/using_platform.h"
-#include "sdk/using_framework.h"
-#include "sdk/components/framework.h"
+#include "src/configuration/configuration.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
+#include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/log.h"
+#include "src/qor/flyers/log/defaultloghandler.h"
+#include "src/framework/app/application/application.h"
+#include "src/framework/app/application/builder.h"
+#include "src/framework/app/role/role.h"
+#include "src/framework/io/filesystem/filesystem.h"
 
+using namespace qor;
 using namespace qor::components;
 using namespace qor::app;
+using namespace qor::log;
+using namespace qor::io;
 
 constexpr const char* appName = "Parallel";
 qor_pp_implement_module(appName)

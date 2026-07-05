@@ -8,11 +8,15 @@
 
 namespace qor{ namespace log{
 
-    Impactful::Impactful(const std::string& message) : LevelTemplateIssue<Level::Impactful>(message){ }
+    Impactful::Impactful(const std::string& message) : Log(Level::Impactful, message){ }
+
+    Impactful::Impactful(const Impactful& src) : Log(src) { }
+    
+    Impactful::~Impactful() noexcept = default;
 
     Impactful& Impactful::operator = (const Impactful& src)
     {
-        LevelTemplateIssue<Level::Impactful>::operator = (src);
+        Log::operator = (src);
         return *this;
     }
     
@@ -31,6 +35,11 @@ namespace qor{ namespace log{
                 logHandler->Handle(*this);
             }
         }
+    }
+
+    void impact(const std::string& message)
+    {
+        issue<Impactful, const std::string&>(message);
     }
 
 }}//qor::log

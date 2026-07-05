@@ -9,12 +9,12 @@
 
 namespace qor{ namespace log {
 
-    class qor_pp_module_interface(QOR_LOG) Debug : 
-        public LevelTemplateIssue<Level::Debug>
+    class qor_pp_module_interface(QOR_LOG) Debug : public Log
     {
     public:
         Debug(const std::string& message);
-        virtual ~Debug() noexcept = default;
+        Debug(const Debug&);
+        virtual ~Debug() noexcept;
         Debug& operator = (const Debug& src);
         virtual void Handle();
     };
@@ -28,13 +28,7 @@ namespace qor{ namespace log {
 #endif        
     }
 
-    inline void debug(const std::string& message)
-    {
-        //Debug logging will be optimised out of release builds completely
-#ifndef NDEBUG
-        issue<Debug, const std::string&>(message);
-#endif
-    }
+    qor_pp_module_interface(QOR_LOG) void debug(const std::string& message);
 
 }}//qor::log
 

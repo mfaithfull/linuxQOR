@@ -47,8 +47,8 @@ namespace qor{ namespace io { namespace network{
 
         static constexpr int Invalid_Socket = -1;
 
-        ISocket() = default;
-        virtual ~ISocket() = default;
+        inline ISocket() = default;
+        inline virtual ~ISocket() = default;
 
         virtual int32_t Bind(const Address& Address) = 0;
         virtual int32_t Bind(const async::AsyncIOInterface& ioContext, const Address& Address) = 0;

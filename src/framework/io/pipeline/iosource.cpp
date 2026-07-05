@@ -32,6 +32,8 @@ namespace qor{ namespace pipeline{
     {
     }
 
+    iosource_base::~iosource_base() { }
+
     void iosource_base::SetPlug(Element* plug)
     {
         m_plug = plug;

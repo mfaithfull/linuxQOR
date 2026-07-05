@@ -62,4 +62,9 @@ namespace qor { namespace async{
         m_contextArray = nullptr;
     }
 
+    ref_of<AsyncIOContext::Session>::type AsyncIOService::GetSession()
+    {
+        return m_contextArray[m_contextIndex++ % m_contextCount]->GetSession();
+    }
+
 }}//qor::async

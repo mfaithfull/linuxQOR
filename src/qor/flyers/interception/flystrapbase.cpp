@@ -13,6 +13,10 @@ namespace qor {
 
     FlyStrapBase::FlyStrapBase() : tflink< FlyStrapBase* >( this ){ }
 
+	FlyStrapBase::FlyStrapBase(const FlyStrapBase&) : tflink< FlyStrapBase* >( this ){ }
+
+	FlyStrapBase::~FlyStrapBase() = default;
+
 	void FlyStrapBase::BeforeStrapOn(FlyStrapBase* /*strap*/){ }
 
 	void FlyStrapBase::StrapOn(FlyStrapBase* strap)

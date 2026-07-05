@@ -27,6 +27,9 @@
 
 #include <string>
 #include <cstdint>
+#ifndef qor_pp_compiler_include
+#   error Every translation unit that uses QOR headers must first include 'src/configuration/configuration.h'
+#endif
 #include qor_pp_compiler_include
 
 #ifndef qor_pp_compiler_at

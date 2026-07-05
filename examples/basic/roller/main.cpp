@@ -5,8 +5,9 @@
 
 //For a simpler example of the flow of a QOR application see the outline project
 
-#include "sdk/using_framework.h"
+#include "src/configuration/configuration.h"
 #include "app.h"
+#include "src/framework/app/application/builder.h"
 
 /*QOR Applications each have a Role. The Role is a container of Features.
 The Role manages the Setup and Shutdown of the Features*/
@@ -19,6 +20,9 @@ base Role class is usually sufficient*/
 of your application as custom QOR Features or just use the builtin ones
 and add your own way to manage custom functionality*/
 #include "customfeature.h"
+
+using namespace qor;
+using namespace qor::app;
 
 qor_pp_implement_module(App::Name)
 

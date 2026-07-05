@@ -26,6 +26,8 @@ namespace qor
 	public:
 
 		FunctionContext();
+		FunctionContext(const FunctionContext&) = delete;
+		FunctionContext& operator = (const FunctionContext&) = delete;
 		FunctionContext(const char* funcName, const char* file, unsigned int line, const char* module, bool profile, bool coverage, AnyObject objContext = AnyObject::EmptyObject());
 		virtual ~FunctionContext();
 		bool Locked() const;

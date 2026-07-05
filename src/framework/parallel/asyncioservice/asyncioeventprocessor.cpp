@@ -25,18 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include "asyncioeventprocessor.h"
-#include "src/qor/flyers/error/commonerrormessages.h"
 
 namespace qor { namespace async{
-
-    int AsyncIOEventProcessor::Run()
-    {
-        qor_pp_ofcontext;
-        fatal(Error_empty_base_called);
-        while(!m_StopRequested)
-        {
-        }
-        return 0;
-    }
 
 }}//qor::async

@@ -11,17 +11,23 @@
 
 namespace qor{ namespace log{
 
-    Informative::Informative(const std::string& message, IFunctionContext* fContext) : LevelTemplateIssue<Level::Informative>(message,fContext){ }
+    Informative::Informative(const std::string& message, IFunctionContext* fContext) : Log(Level::Informative, message, fContext){ }
+
+    Informative::Informative(const Informative& src) : Log(src) { }
+
+    Informative::Informative(Informative&& src) noexcept = default;
+
+    Informative::~Informative() noexcept = default;
 
     Informative& Informative::operator = (const Informative& src)
     {
-        LevelTemplateIssue<Level::Informative>::operator = (src);
+        Log::operator = (src);
         return *this;
     }
     
     Informative& Informative::operator = (Informative&& src) noexcept
     {
-        LevelTemplateIssue<Level::Informative>::operator = (src);
+        Log::operator = (src);
         return *this;
     }
 
@@ -45,6 +51,11 @@ namespace qor{ namespace log{
                 std::cerr << "No log handler installed." << this->m_what->Content() << std::endl;
             }
         }
+    }
+
+    void inform(const std::string& message)
+    {
+        issue<Informative, const std::string&>(message);
     }
 
 }}//qor::log

@@ -6,13 +6,12 @@
 
 #include <string>
 
-#include "sdk/using_framework.h"
-#include "sdk/components/framework.h"
+#include "sdk/app.h"
 
 /*To customise the Application class we derive from it.
 We implement the IOptionable interface to receive options
 on our derived class*/
-class OptionsApp : public Application
+class OptionsApp : public qor::Application
 {
 private:
 
@@ -29,7 +28,7 @@ public:
 
     //IOptionable interface
     virtual const char* ProvideShortOptionString();                         //Implement to tell the parser what short options we support
-    virtual app::Option* ProvideLongOptions();                              //Implement to tell the parser what long options we support
+    virtual qor::app::Option* ProvideLongOptions();                              //Implement to tell the parser what long options we support
     virtual void ReceiveOptionSwitch(char c){}                              //Implement to receive switch options
     virtual void ReceiveOptionParameter(char c, const char* value);         //Implement to receive options parameters
     virtual void ReceiveLongOption(const char* option, const char* value);  //Implement to receive long options

@@ -40,13 +40,30 @@ namespace qor{ namespace io { namespace network{
     Address::Address()
     {
         sa_family = 0;
-        memset(sa.sa_data, 0, byte_size);
+        memset(sa.sa_data, 0, 30);
     }
 
     Address::Address(unsigned short AddressFamily) : Address()
     {
         sa_family = AddressFamily;
     }
+
+    Address::Address(const Address& src) : 
+        sa_family(src.sa_family),
+        sa(src.sa)
+    { }
+
+    Address& Address::operator = (const Address& src)
+    {
+        if(&src != this)
+        {
+            sa_family = src.sa_family;
+            sa = src.sa;
+        }
+        return *this;
+    }
+
+    Address::~Address() = default;
 
     void Address::SetIPV4Address(unsigned char a, unsigned char b, unsigned char c, unsigned char d)
     {

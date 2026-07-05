@@ -8,11 +8,15 @@
 
 namespace qor{ namespace log{
 
-    Imperative::Imperative(const std::string& message) : LevelTemplateIssue<Level::Imperative>(message){ }
+    Imperative::Imperative(const std::string& message) : Log(Level::Imperative, message){ }
+
+    Imperative::Imperative(const Imperative& src) : Log(src) { }
+
+    Imperative::~Imperative() noexcept = default;
 
     Imperative& Imperative::operator = (const Imperative& src)
     {
-        LevelTemplateIssue<Level::Imperative>::operator = (src);
+        Log::operator = (src);
         return *this;
     }
     
@@ -31,6 +35,11 @@ namespace qor{ namespace log{
                 logHandler->Handle(*this);
             }
         }
+    }
+
+    void imperative(const std::string& message)
+    {
+        issue<Imperative, const std::string&>(message);
     }
 
 }}//qor::log

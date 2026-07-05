@@ -1,8 +1,11 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#include "src/configuration/configuration.h"
 #include "customrole.h"
 #include "src/framework/parallel/thread/threadpool.h"
+
+using namespace qor;
 
 //This Role comes with the ThreadPool feature baked in
 //before customiztion. 

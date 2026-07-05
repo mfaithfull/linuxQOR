@@ -14,6 +14,11 @@ namespace qor {
     {
     public:
 
+        Flyer() : baseT() { }
+        virtual ~Flyer() = default;
+        Flyer(const Flyer& src) = delete;
+        Flyer& operator = (const Flyer& src) = delete;
+
         bool Push()
         {
             typename ref_of< T >::type instance( dynamic_cast<T*>(this) );

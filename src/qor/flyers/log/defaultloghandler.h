@@ -10,28 +10,28 @@
 
 namespace qor{
 
-    class qor_pp_module_interface(QOR_LOG) DefaultLogHandler : public qor::IssueHandler<log::Log>, public SignalBase
+    class DefaultLogHandler : public qor::IssueHandler<log::Log>, public SignalBase
     {
     public:
 
-        DefaultLogHandler(qor::log::Level logLevel = qor::log::Level::Debug);
-        virtual ~DefaultLogHandler() noexcept = default;
+        qor_pp_module_interface(QOR_LOG) DefaultLogHandler(qor::log::Level logLevel /*= qor::log::Level::Debug*/);
+        qor_pp_module_interface(QOR_LOG) virtual ~DefaultLogHandler() noexcept;
         
-        virtual bool Handle(const log::Log& log);
+        qor_pp_module_interface(QOR_LOG) virtual bool Handle(const log::Log& log);
 
-        DefaultLogHandler& Forward(bool forward = true);
-        DefaultLogHandler& WriteToStandardOutput(bool write = true);
-        DefaultLogHandler& WriteToFileSystem();
-        DefaultLogHandler& WriteToPipeline();
+        qor_pp_module_interface(QOR_LOG) DefaultLogHandler& Forward(bool forward = true);
+        qor_pp_module_interface(QOR_LOG) DefaultLogHandler& WriteToStandardOutput(bool write = true);
+        qor_pp_module_interface(QOR_LOG) DefaultLogHandler& WriteToFileSystem();
+        qor_pp_module_interface(QOR_LOG) DefaultLogHandler& WriteToPipeline();
 
     protected:
 
-        virtual std::string WhereText(const char* module, const char* file, const char* function, int line, const std::string& exceptionText, const std::string& instanceText, const std::string& threadText) const;
-        virtual std::string InstanceText(bool inInstance, const qor::AnyObject& any) const;
-        virtual std::string InExceptionText(bool inException) const;
-        virtual std::string MessageText(const std::string_view& level, const std::string& what, const std::string& where, 
-        const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const;
-        qor_pp_signal_func forward(std::string logMessage);
+        qor_pp_module_interface(QOR_LOG) virtual std::string WhereText(const char* module, const char* file, const char* function, int line, const std::string& exceptionText, const std::string& instanceText, const std::string& threadText) const;
+        qor_pp_module_interface(QOR_LOG) virtual std::string InstanceText(bool inInstance, const qor::AnyObject& any) const;
+        qor_pp_module_interface(QOR_LOG) virtual std::string InExceptionText(bool inException) const;
+        qor_pp_module_interface(QOR_LOG) virtual std::string MessageText(const std::string_view& level, const std::string& what, const std::string& where, 
+            const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds>& when) const;
+        qor_pp_module_interface(QOR_LOG) qor_pp_signal_func forward(std::string logMessage);
 
     public:
 
@@ -40,11 +40,11 @@ namespace qor{
         //Nailing down the address of the forward signal within the build of the log module, by using it,
         //prevents the 'optimization'.
         typedef void (DefaultLogHandler::*forwardFn)(std::string);
-        forwardFn GetForwardSignal() const;
+        qor_pp_module_interface(QOR_LOG) qor_pp_noinline forwardFn GetForwardSignal() const;
 
     private:
 
-        std::string GetWhereClause(const log::Log& log) const;
+        qor_pp_module_interface(QOR_LOG) std::string GetWhereClause(const log::Log& log) const;
 
         bool m_forward;
         bool m_writeToStandardOutput;

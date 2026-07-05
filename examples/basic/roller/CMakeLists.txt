@@ -11,13 +11,13 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_thread
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_current qor_platform qor_application qor_role qor_log qor_loghandler qor_error 
 linqor_thread)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_thread
-winqor_thread qor_property qor_log qor_loghandler qor_pipeline qor_error qor_signals qor_asyncioservice)
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_current qor_platform qor_application qor_role qor_log qor_loghandler qor_error
+winqor_thread)
 endif()
 
 if (WIN32)

@@ -9,7 +9,7 @@
 
 namespace qor {
 
-    struct qor_pp_module_interface(QOR_INTERCEPTION) ParamRegister
+    struct ParamRegister
     {
         template< typename T >ParamRegister(T* pParam)
         {

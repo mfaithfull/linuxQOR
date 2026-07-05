@@ -6,7 +6,7 @@
 
 namespace qor {
 
-    class qor_pp_module_interface(QOR_INTERCEPTION) NoCheck
+    class NoCheck
     {
     public:
         

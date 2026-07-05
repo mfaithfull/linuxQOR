@@ -61,12 +61,7 @@ namespace qor{ namespace app{
 		bool HandleLongOption(int& result);
 		char ParseNextShortOption();
 		int ParseSpecialWCase(char& c);
-
-		inline void ParseArgumentCase(char& c, const char* temp)
-		{
-			temp[2] == ':' ? ParseOptionalArgumentCase() : ParseRequiredArgumentCase(c);
-		}
-
+		void ParseArgumentCase(char& c, const char* temp);
 		void ParseRequiredArgumentCase(char& c);
 		void ParseOptionalArgumentCase();
 		int Internal(bool longOnly, bool posixlyCorrect);

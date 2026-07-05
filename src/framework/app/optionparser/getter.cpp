@@ -246,6 +246,11 @@ namespace qor{ namespace app{
 		return longOptioninterpretter.ProcessLongOption("-W ");
 	}
 
+	void OptionGetter::ParseArgumentCase(char& c, const char* temp)
+	{
+		temp[2] == ':' ? ParseOptionalArgumentCase() : ParseRequiredArgumentCase(c);
+	}
+
 	void OptionGetter::ParseRequiredArgumentCase(char& c)
 	{
 		if (*m_optionsContext.m_pNextChar != '\0')

@@ -16,13 +16,13 @@ const char* OptionsApp::ProvideShortOptionString()
     return "f";
 }
 
-app::Option* OptionsApp::ProvideLongOptions()
+qor::app::Option* OptionsApp::ProvideLongOptions()
 {
-    static app::Option longOptions[] =
+    static qor::app::Option longOptions[] =
     {
-    //   NAME       ARGUMENT				                    FLAG	SHORTNAME
-        {"file",    app::Option::required_argument,             nullptr, 'f'},
-        {nullptr,   0,						                    nullptr, 0}
+    //   NAME       ARGUMENT				                        FLAG	SHORTNAME
+        {"file",    qor::app::Option::required_argument,            nullptr, 'f'},
+        {nullptr,   0,						                        nullptr, 0}
     };
     return longOptions;
 }

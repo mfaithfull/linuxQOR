@@ -6,12 +6,12 @@
 
 #include <string>
 
-#include "sdk/using_framework.h"
+#include "src/framework/app/application/application.h"
 
 /*To customise the Application class we derive from it.
 this is optional. The built in Application class is
 usually sufficient*/
-class App : public Application
+class App : public qor::Application
 {
 private:
 

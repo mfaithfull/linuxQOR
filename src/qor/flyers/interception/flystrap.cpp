@@ -10,6 +10,7 @@
 namespace qor {
 
     FlyStrap::FlyStrap() : FlyStrapBase() { }
+	FlyStrap::FlyStrap(const FlyStrap& src) : FlyStrapBase() { }
 
     FlyStrap::FlyStrap( FlyStrapBase* joinPoint ) : FlyStrapBase()
     {

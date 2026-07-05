@@ -25,6 +25,8 @@ namespace qor {
         , m_level(logLevel)
     { }
 
+    DefaultLogHandler::~DefaultLogHandler() noexcept {}
+
     std::string DefaultLogHandler::WhereText(const char* module, const char* file, const char* function, int line, const std::string& exceptionText, const std::string& instanceText, const std::string& threadText) const
     {
         return std::format("Module: {0}| File: {1}| Function: {2}| Line: {3}| {4}| {5}| Thread: {6}", 

@@ -36,6 +36,8 @@ namespace qor{ namespace log {
 
     Log::Log(const Log& src) : Issue<LevelWhat>(src){ }
 
+    Log::~Log() noexcept = default;
+
     Log& Log::operator = (const Log& src)
     {
         Issue<LevelWhat>::operator = (src);
@@ -51,4 +53,7 @@ namespace qor{ namespace log {
         }
     }
 
+    void Log::Escalate() const {/*nothing to do. Can't escalate a Log issue*/}
+
+    Level Log::GetLevel() const { return m_what.IsNotNull() ? m_what->GetLevel() : Level::Imperative; }
 }}//qor::log

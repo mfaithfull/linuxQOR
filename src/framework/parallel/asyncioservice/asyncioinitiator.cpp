@@ -29,6 +29,13 @@
 
 namespace qor { namespace async{
 
+    AsyncIOInitiator::AsyncIOInitiator() { };
+    AsyncIOInitiator::~AsyncIOInitiator() noexcept { };
+
+    void AsyncIOInitiator::ConnectToProcessor(AsyncIOEventProcessor* /*processor*/){ }
+
+    bool AsyncIOInitiator::RequiresBackgroundProcessor(){ return true; }
+
     IOTask AsyncIOInitiator::Bind(io::IODescriptor* /*ioDescriptor*/, const io::network::Address& /*Address*/)
     {
         qor_pp_ofcontext;

@@ -11,7 +11,7 @@ namespace qor {
 
     template< typename TValue > class NoReturnCheck;
 
-    struct qor_pp_module_interface(QOR_INTERCEPTION) ReturnRegister
+    struct ReturnRegister
     {
     public:
         
@@ -21,12 +21,12 @@ namespace qor {
             fcl.ParentCallContextPtr()->RegisterReturn(*pReturn);
         }
 
-        void OnAssignment();
-        void OnReturn();
+        qor_pp_module_interface(QOR_INTERCEPTION) void OnAssignment();
+        qor_pp_module_interface(QOR_INTERCEPTION) void OnReturn();
     };
 
     template< class T, class Check = NoReturnCheck< T > >
-    class qor_pp_module_interface(QOR_INTERCEPTION) CheckedReturn : public ReturnRegister
+    class CheckedReturn : public ReturnRegister
     {
     public:
 

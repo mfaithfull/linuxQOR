@@ -36,8 +36,21 @@ namespace qor{ namespace io{ namespace filesystem {
 
     Path::Path() : m_path(){ }
 
+    Path::Path(const Path& src) : m_path(src.m_path){ }
+
     Path::Path(const std::string& path) : m_path(path){ }
     
+    Path::~Path() = default;
+
+    Path& Path::operator = (const Path& src)
+    {
+        if(&src != this)
+        {
+            m_path = src.m_path;
+        }
+        return *this;
+    }
+
     Path& Path::operator /= (const std::string& folder)
     {
         m_path /= folder;
@@ -159,6 +172,16 @@ namespace qor{ namespace io{ namespace filesystem {
     bool Path::IsSamePath(const Path& compare) const
     {
         return m_path.compare(compare.m_path) == 0 ? true : false;
+    }
+
+    Path::operator std::filesystem::path()
+    {
+        return m_path;
+    }
+
+    Path::operator const std::filesystem::path() const
+    {
+        return m_path;
     }
 
 }}}//qor::io::filesystem

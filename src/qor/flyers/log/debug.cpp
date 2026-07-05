@@ -8,11 +8,13 @@
 
 namespace qor{ namespace log {
 
-    Debug::Debug(const std::string& message) : LevelTemplateIssue<Level::Debug>(message){ }
+    Debug::Debug(const std::string& message) : Log(Level::Debug, message){ }
+    Debug::Debug(const Debug& src) : Log(src) { }
+    Debug::~Debug() { }
 
     Debug& Debug::operator = (const Debug& src)
     {
-        LevelTemplateIssue<Level::Debug>::operator = (src);
+        Log::operator = (src);
         return *this;
     }
     
@@ -33,4 +35,12 @@ namespace qor{ namespace log {
         }
     }
         
+    void debug(const std::string& message)
+    {
+        //Debug logging will be optimised out of release builds completely
+#ifndef NDEBUG
+        issue<Debug, const std::string&>(message);
+#endif
+    }
+
 }}//qor::log

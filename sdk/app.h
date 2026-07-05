@@ -7,3 +7,4 @@
 #include "src/qor/module/module.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
+#include "src/framework/app/optionparser/getter.h"

@@ -8,11 +8,12 @@
 
 namespace qor{ namespace log {
 
-    class qor_pp_module_interface(QOR_LOG) Impactful : public LevelTemplateIssue<Level::Impactful>
+    class qor_pp_module_interface(QOR_LOG) Impactful : public Log
     {
     public:
         Impactful(const std::string& message);
-        virtual ~Impactful() noexcept = default;
+        Impactful(const Impactful&);
+        virtual ~Impactful() noexcept;
         Impactful& operator = (const Impactful& src);
         virtual void Handle();
     };
@@ -23,10 +24,7 @@ namespace qor{ namespace log {
         issue<Impactful, const std::string&>(std::vformat(std::string_view(message), std::make_format_args(p1...)));
     }
 
-    inline void impact(const std::string& message)
-    {
-        issue<Impactful, const std::string&>(message);
-    }
+    qor_pp_module_interface(QOR_LOG) void impact(const std::string& message);
 
 }}//qor::log
 
