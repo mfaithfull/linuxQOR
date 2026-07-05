@@ -61,7 +61,7 @@ namespace qor { namespace win { namespace api {
         return message;
     }
 
-    bool Win32ErrorHandler::Handle(const qor::Error& error)
+    bool Win32ErrorHandler::Handle(const qor::ErrorBase& error)
     {        
         switch(error.what().GetSeverity())
         {

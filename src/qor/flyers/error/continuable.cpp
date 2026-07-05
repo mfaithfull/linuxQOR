@@ -7,11 +7,15 @@
 
 namespace qor{
 
-    Continuable::Continuable(const std::string& message) : SeverityTemplateIssue<Severity::Continuable_Error>(message){ }
+    Continuable::Continuable(const std::string& message) : ErrorBase(message, Severity::Continuable_Error){ }
 
+    Continuable::Continuable(const Continuable& src) : ErrorBase(src){ }
+
+    Continuable::~Continuable() noexcept { }
+    
     Continuable& Continuable::operator = (const Continuable& src)
     {
-        SeverityTemplateIssue<Severity::Continuable_Error>::operator = (src);
+        ErrorBase::operator = (src);
         return *this;
     }
 
@@ -24,7 +28,7 @@ namespace qor{
         }
         else
         {
-            auto handler = new_ref< IssueHandler<Error> >();
+            auto handler = new_ref< IssueHandler<ErrorBase> >();
             if(!handler.IsNull())
             {
                 Resolve(handler->Handle(*this));

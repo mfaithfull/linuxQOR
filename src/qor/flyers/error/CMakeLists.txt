@@ -1,6 +1,6 @@
 set(target qor_error)
 
-add_library(qor_error SHARED qor_error.cpp severityissue.cpp fatal.cpp serious.cpp
+add_library(qor_error SHARED qor_error.cpp errorbase.cpp fatal.cpp serious.cpp
 continuable.cpp warning.cpp note.cpp clibresult.cpp commonerrormessages.cpp 
 defaulterrorhandler.cpp reportingimpl.cpp)
 

@@ -7,11 +7,13 @@
 
 namespace qor{
 
-    Note::Note(const std::string& message) : SeverityTemplateIssue<Severity::Note>(message){ }
+    Note::Note(const std::string& message) : ErrorBase(message, Severity::Note){ }
+    Note::Note(const Note& src) : ErrorBase(src){ }
+    Note::~Note(){ }
 
     Note& Note::operator = (const Note& src)
     {
-        SeverityTemplateIssue<Severity::Note>::operator = (src);
+        ErrorBase::operator = (src);
         return *this;
     }
 
@@ -22,7 +24,12 @@ namespace qor{
         {
             noteHandler->Handle(*this);
         }
-        else{ }//Notes without handlers disappear into oblivion.
+        else
+        {
+            auto handler = new_ref< IssueHandler<ErrorBase> >();
+            Resolve(handler.IsNotNull() ? handler->Handle(*this) : true);
+        }
     }
     
+    void Note::Escalate() const {}
 }//qor

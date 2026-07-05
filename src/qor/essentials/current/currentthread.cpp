@@ -49,6 +49,9 @@ namespace qor
         return pool_index;
     }
 
+    CurrentThread::CurrentThread(){ }
+    CurrentThread::~CurrentThread(){ }
+    
     void CurrentThread::SetPool(std::optional<void*> pool)
     {
         parent_pool = pool;

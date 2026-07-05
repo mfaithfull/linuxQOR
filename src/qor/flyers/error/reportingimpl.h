@@ -7,8 +7,9 @@
 
 namespace qor{ 
 
-    struct qor_pp_module_interface(QOR_ERROR) ReportingImpl : public IErrorReporting, public IAssertionFailureReporting, public ITestFailureReporting
+    class qor_pp_module_interface(QOR_ERROR) ReportingImpl : public IErrorReporting, public IAssertionFailureReporting, public ITestFailureReporting
     {
+    public:
         virtual void note(const std::string& message);
         virtual void warning(const std::string& message);
         virtual void continuable(const std::string& message);

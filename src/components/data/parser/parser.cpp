@@ -91,7 +91,7 @@ namespace qor { namespace components { namespace parser {
             //log::debug("Stack on entry has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
             m_final ? Drain() : InnerParse();
         }
-        catch(const Error& error)
+        catch(const Serious& error)
         {
             log::imperative("Parser failed: {0}", error.what().Content());
             m_inError = true;

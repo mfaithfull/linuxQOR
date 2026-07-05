@@ -4,7 +4,16 @@ add_executable(${target} main.cpp )
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 target_compile_definitions(${target} PRIVATE qor_pp_ver_project=${PROJECT_VERSION})
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application)
+
+if(CMAKE_SYSTEM_NAME MATCHES Windows)
+set(os_libraries winqor_thread)
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES Linux)
+set(os_libraries linqor_thread)
+endif()
+
+target_link_libraries(${target} ${os_libraries} qor_module qor_host qor_compiler qor_platform qor_application)
 
 if (WIN32)
   add_custom_command(

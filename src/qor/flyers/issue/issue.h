@@ -14,7 +14,7 @@
 namespace qor{ 
 
     template< class WhatT >
-    class qor_pp_module_interface(QOR_ISSUE) Issue
+    class Issue
     {
     public:
 

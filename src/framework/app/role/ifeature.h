@@ -32,7 +32,7 @@ namespace qor{ namespace app {
     class IRole;
 
     //Base interface for features. All features are dervied from this so that Roles can manage them
-    class qor_pp_module_interface(QOR_ROLE) IFeature
+    class IFeature
     {
         friend class Role;
     public:

@@ -64,7 +64,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 note("Filled output buffer. Run generator again after flushing.");
             }
         }
-        catch(const Error& error)
+        catch(const Serious& error)
         {
             std::cerr << error.what().Content() << '\n';
         }

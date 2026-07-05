@@ -46,7 +46,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::AddConsoleAlias(to_tstring(source.c_str()).data(), to_tstring(target.c_str()).data(), to_tstring(exeName.c_str()).data());
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -65,7 +65,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::AllocConsole();
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -84,7 +84,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::AttachConsole(static_cast<DWORD>(processId));
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -103,7 +103,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::FreeConsole();
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -122,7 +122,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::GenerateConsoleCtrlEvent(static_cast<DWORD>(ctrlEvent), static_cast<DWORD>(processGroupId));
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -141,7 +141,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::GetConsoleAlias(to_tstring(source.c_str()).data(), to_tstring(target.c_str()).data(), static_cast<DWORD>(target.size()), to_tstring(exeName.c_str()).data());
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -160,7 +160,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::GetConsoleAliases(to_tstring(aliases.c_str()).data(), static_cast<DWORD>(aliases.size()), to_tstring(exeName.c_str()).data());
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -179,7 +179,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::GetConsoleAliasesLength(to_tstring(exeName.c_str()).data());
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -198,7 +198,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::GetConsoleAliasExes(to_tstring(nameBuffer.c_str()).data(), static_cast<DWORD>(nameBuffer.size()));
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -217,7 +217,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::GetConsoleAliasExesLength();
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -238,7 +238,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::GetConsoleDisplayMode(&modeFlags);
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -258,7 +258,7 @@ namespace qor { namespace components { namespace win {
 			//TODO:
 			//result = Kernel32::GetConsoleDisplayMode(&modeFlags);
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -277,7 +277,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::GetConsoleOriginalTitle(to_tstring(consoleTitle.c_str()).data(), static_cast<DWORD>(consoleTitle.size()));
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -302,7 +302,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::GetConsoleTitle(to_tstring(consoleTitle.c_str()).data(), static_cast<DWORD>(consoleTitle.size()));
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -331,7 +331,7 @@ namespace qor { namespace components { namespace win {
 				continuable("Call to Kernel32::GetNumberOfConsoleMouseButtons failed.");
 			}
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -366,7 +366,7 @@ namespace qor { namespace components { namespace win {
 			std.SetProtectFromClose(true);
 			return std;
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -385,7 +385,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::SetConsoleCtrlHandler(handlerRoutine, add);
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -405,7 +405,7 @@ namespace qor { namespace components { namespace win {
 		{
 			result = Kernel32::SetConsoleTitle(to_tstring(consoleTitle.c_str()).c_str());
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}
@@ -437,7 +437,7 @@ namespace qor { namespace components { namespace win {
 			}
 			result = Kernel32::SetStdHandle(h, handle.Use());
 		}
-		catch (Error error)
+		catch (Serious& error)
 		{
 			error.Catch();
 		}

@@ -21,7 +21,7 @@ namespace qor{
         Where(const Where&);
         Where(const ref_of<Where>::type&);
         Where& operator = (const Where&);
-        virtual ~Where() noexcept = default;
+        virtual ~Where() noexcept;
 
         void SetFile(const char* szFile);
         const char* GetFile(void) const;

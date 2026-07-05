@@ -10,10 +10,10 @@
 
 namespace qor{
 
-	class qor_pp_module_interface(QOR_INJECTION) TypeRegistry;
+	class TypeRegistry;
 	qor_pp_module_interface(QOR_INJECTION) TypeRegistry* TheTypeRegistry();
 
-    class qor_pp_module_interface(QOR_INJECTION) TypeRegistry final
+    class TypeRegistry final
 	{
 	public:
 

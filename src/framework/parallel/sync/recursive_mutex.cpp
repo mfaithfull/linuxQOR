@@ -28,6 +28,7 @@
 namespace qor{
 
     RecursiveMutex::RecursiveMutex(): m_Locked {0}{ }
+    RecursiveMutex::~RecursiveMutex(){ }//required to supress autoexporting of =default version by Microsoft Linker
 
     void RecursiveMutex::Acquire()
     {        

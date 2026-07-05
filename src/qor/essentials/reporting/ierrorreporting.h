@@ -24,8 +24,15 @@
 
 namespace qor{ 
 
-    struct qor_pp_module_interface(QOR_REPORTING) IErrorReporting
+    class qor_pp_module_interface(QOR_REPORTING) IErrorReporting
     {
+    public:
+
+        IErrorReporting();
+        IErrorReporting(const IErrorReporting&);
+        IErrorReporting& operator = (const IErrorReporting&);
+        ~IErrorReporting() noexcept;
+
         virtual void note(const std::string& message);
         virtual void warning(const std::string& message);
         virtual void continuable(const std::string& message);

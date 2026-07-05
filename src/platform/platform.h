@@ -39,14 +39,14 @@ application features*/
 
 namespace qor{ namespace platform{
 
-    class qor_pp_module_interface(QOR_PLATFORM) Platform final
+    class Platform final
     {
     public:
 
-        Platform();     
-        ~Platform() = default;
-        void Setup();
-        void Shutdown();
+        qor_pp_module_interface(QOR_PLATFORM) Platform();     
+        qor_pp_module_interface(QOR_PLATFORM) ~Platform();
+        qor_pp_module_interface(QOR_PLATFORM) void Setup();
+        qor_pp_module_interface(QOR_PLATFORM) void Shutdown();
         
         template< class T >
         void AddSubsystem()
@@ -54,7 +54,7 @@ namespace qor{ namespace platform{
             AddSubsystem(guid_of<T>::guid(), new_ref<T>().template AsRef<ISubsystem>());
         }
 
-        void AddSubsystem( const GUID* id, ref_of<ISubsystem>::type subsystem);
+        qor_pp_module_interface(QOR_PLATFORM) void AddSubsystem( const GUID* id, ref_of<ISubsystem>::type subsystem);
 
         template< class T >
         ref_of<T>::type GetSubsystem()
@@ -62,7 +62,7 @@ namespace qor{ namespace platform{
             return GetSubsystem(guid_of<T>::guid()).template AsRef<T>();
         }
 
-        ref_of<ISubsystem>::type GetSubsystem(const GUID* id);
+        qor_pp_module_interface(QOR_PLATFORM) ref_of<ISubsystem>::type GetSubsystem(const GUID* id);
 
     private:
 

@@ -5,16 +5,17 @@
 #define QOR_PP_H_ERROR_ERROR
 
 #include <format>
-#include "severityissue.h"
+#include "errorbase.h"
 #include "src/qor/essentials/text/strings/strings.h"
 
 namespace qor{ 
 
-    class qor_pp_module_interface(QOR_ERROR) Fatal : public SeverityTemplateIssue<Severity::Fatal_Error>
+    class qor_pp_module_interface(QOR_ERROR) Fatal : public ErrorBase
     {
     public:
         Fatal(const std::string& message);
-        virtual ~Fatal() noexcept = default;
+        Fatal(const Fatal& src);
+        virtual ~Fatal() noexcept;
         Fatal& operator = (const Fatal& src);
         virtual void Handle();
         virtual void Escalate() const;
@@ -32,12 +33,12 @@ namespace qor{
         issue<Fatal, const std::string&>(message);
     }    
 
-    class qor_pp_module_interface(QOR_ERROR) Serious : public SeverityTemplateIssue<Severity::Serious_Error>
+    class qor_pp_module_interface(QOR_ERROR) Serious : public ErrorBase
     {
     public:
         Serious(const std::string& message);
         Serious(const Serious& src);
-        virtual ~Serious() noexcept = default;
+        virtual ~Serious() noexcept;
         Serious& operator = (const Serious& src);
         virtual void Handle();
         virtual void Escalate() const;
@@ -55,11 +56,12 @@ namespace qor{
         issue<Serious, const std::string&>(message);
     }    
 
-    class qor_pp_module_interface(QOR_ERROR) Continuable : public SeverityTemplateIssue<Severity::Continuable_Error>
+    class qor_pp_module_interface(QOR_ERROR) Continuable : public ErrorBase
     {
     public:
         Continuable(const std::string& message);
-        virtual ~Continuable() noexcept = default;
+        Continuable(const Continuable& src);
+        virtual ~Continuable() noexcept;
         Continuable& operator = (const Continuable& src);
         virtual void Handle();
         virtual void Escalate() const;
@@ -78,11 +80,12 @@ namespace qor{
     }    
 
 
-    class qor_pp_module_interface(QOR_ERROR) Warning : public SeverityTemplateIssue<Severity::Warning>
+    class qor_pp_module_interface(QOR_ERROR) Warning : public ErrorBase
     {
     public:
         Warning(const std::string& message);
-        virtual ~Warning() noexcept = default;
+        Warning(const Warning& src);
+        virtual ~Warning() noexcept;        
         Warning& operator = (const Warning& src);
         virtual void Handle();
         virtual void Escalate() const;
@@ -99,14 +102,15 @@ namespace qor{
         issue<Warning, const std::string&>(message);
     }    
 
-    class qor_pp_module_interface(QOR_ERROR) Note : public SeverityTemplateIssue<Severity::Note>
+    class qor_pp_module_interface(QOR_ERROR) Note : public ErrorBase
     {
     public:
         Note(const std::string& message);
-        virtual ~Note() noexcept = default;
+        Note(const Note& src);
+        virtual ~Note() noexcept;
         Note& operator = (const Note& src);
         virtual void Handle();
-        virtual void Escalate() const {}
+        virtual void Escalate() const;
     };
 
     template< typename... _p >

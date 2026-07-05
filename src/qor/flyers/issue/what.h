@@ -14,9 +14,10 @@ namespace qor{
     {
     public:
 
-        What(const std::string& what) : m_content(what){ }
-        virtual ~What() noexcept = default;
-
+        What(const std::string& what);
+        What(const What& src);
+        virtual ~What() noexcept;
+        What& operator = (const What&);
         const std::string& Content() const;
 
     private:

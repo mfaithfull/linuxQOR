@@ -7,7 +7,7 @@
 
 namespace qor
 { 
-    bool DefaultErrorHandler::Handle(const qor::Error& error)
+    bool DefaultErrorHandler::Handle(const qor::ErrorBase& error)
     {
         std::cerr << qor::SeverityNames[static_cast<int>(error.what().GetSeverity())] << ": " << error.what().Content() << std::endl;
         return false;   //Default error handler reports errors but does not resolve them

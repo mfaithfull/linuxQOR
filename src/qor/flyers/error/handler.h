@@ -13,16 +13,16 @@
 #include "src/qor/flyers/interception/callcontext.h"
 #include "src/qor/flyers/interception/flyer.h"
 #include "src/qor/flyers/interception/flystrapbase.h"
-#include "severityissue.h"
+#include "errorbase.h"
 
 namespace qor{ 
 
-    class qor_pp_module_interface(QOR_ERROR) BaseIssueHandler;
+    class BaseIssueHandler;
     constexpr GUID BaseIssueHandlerGUID = {0x48467945, 0xfbae, 0x4a8d, { 0xb2, 0xbb, 0xd0, 0x50, 0x10, 0xde, 0x94, 0x02}};
     qor_pp_declare_guid_of(BaseIssueHandler,BaseIssueHandlerGUID);
     qor_pp_declare_ref_of(BaseIssueHandler,FlyerRef);
     
-    class qor_pp_module_interface(QOR_ERROR) BaseIssueHandler
+    class BaseIssueHandler
     {
     public:
         BaseIssueHandler(){}
@@ -51,8 +51,8 @@ namespace qor{
     };    
 
     constexpr GUID SeverityIssueHandlerGUID = {0x88a20115, 0xb7cb, 0x4a45, { 0xa8, 0x8a, 0x72, 0xa3, 0x1b, 0x61, 0x0a, 0x3d}};
-    qor_pp_declare_guid_of(IssueHandler<Error>,SeverityIssueHandlerGUID)
-    qor_pp_declare_ref_of(IssueHandler<Error>,FlyerRef);
+    qor_pp_declare_guid_of(IssueHandler<ErrorBase>,SeverityIssueHandlerGUID)
+    qor_pp_declare_ref_of(IssueHandler<ErrorBase>,FlyerRef);
 
     template<class T> struct ref_of< IssueHandler<T> >
     {

@@ -17,7 +17,7 @@ namespace qor {
 		void* m_p{nullptr};
 	};
 
-    class qor_pp_module_interface(QOR_INTERCEPTION) CallContext : public ICallContext
+    class CallContext : public ICallContext
     {
     public:
 
@@ -61,15 +61,15 @@ namespace qor {
             m_ReturnValue = ReturnValue;
         }
 
-        virtual void CallMade(IFunctionContext*);
-        virtual void CallCompleted();
-        virtual void OnReturnAssignment();
-        virtual void OnReturn();
+        qor_pp_module_interface(QOR_INTERCEPTION) virtual void CallMade(IFunctionContext*);
+        qor_pp_module_interface(QOR_INTERCEPTION) virtual void CallCompleted();
+        qor_pp_module_interface(QOR_INTERCEPTION) virtual void OnReturnAssignment();
+        qor_pp_module_interface(QOR_INTERCEPTION) virtual void OnReturn();
     
-		ParameterBase* Parameters();						//Access to the array of registered parameters
-		ParameterBase* ReturnValue();						//Access to the return value
+		qor_pp_module_interface(QOR_INTERCEPTION) ParameterBase* Parameters();						//Access to the array of registered parameters
+		qor_pp_module_interface(QOR_INTERCEPTION) ParameterBase* ReturnValue();						//Access to the return value
     
-		void qor_pp_noinline OutOfLineRegistration(ParameterBase& Param);
+		qor_pp_module_interface(QOR_INTERCEPTION) void qor_pp_noinline OutOfLineRegistration(ParameterBase& Param);
 		ParameterBase m_aParameters[10];
 		ParameterBase m_ReturnValue;							//Return value
 		unsigned char m_paramCount{0};

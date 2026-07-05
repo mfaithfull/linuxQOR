@@ -18,7 +18,7 @@ namespace qor{
         When(const When&);
         When(const ref_of<When>::type&);
         When& operator = (const When&);
-        virtual ~When() noexcept = default;
+        virtual ~When() noexcept;
 
         std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::nanoseconds> TimePoint() const;
 

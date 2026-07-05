@@ -75,7 +75,7 @@ namespace qor{
                 PopState();
             }
         }
-        catch(const Error& error)
+        catch(const Serious& error)
         {
             std::cerr << "Workflow failed due to: " << error.what().Content() << '\n';
         }

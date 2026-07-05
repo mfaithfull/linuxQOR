@@ -6,29 +6,41 @@
 
 namespace qor{ namespace detail{
 
-    ThreadContext::ThreadContext() : m_pRootContext(nullptr), m_pCurrentContext(nullptr){ }
+	ThreadContext::ThreadContext(){ }//Required to supress auto export of the =default version under Microsoft linker
+	ThreadContext::~ThreadContext(){ }
 
-    IFunctionContext* ThreadContext::RegisterFunctionContext(IFunctionContext* pFContext)
+    IFunctionContext* ThreadContext::RegisterFunctionContext(IFunctionContext* fContext)
     {
-		IFunctionContext* pParent = m_pCurrentContext;
-		m_pCurrentContext = pFContext;
-		if (pParent == nullptr)
+		IFunctionContext* parent = m_CurrentContext;
+		m_CurrentContext = fContext;
+		if (parent == nullptr)
 		{
-			m_pRootContext = m_pCurrentContext;
+			m_RootContext = m_CurrentContext;
 		}
-		return pParent;
+		return parent;
     }
     
-    void ThreadContext::UnregisterFunctionContext(IFunctionContext*, IFunctionContext* pParent)
+    void ThreadContext::UnregisterFunctionContext(IFunctionContext*, IFunctionContext* parent)
     {
-		if (m_pCurrentContext == m_pRootContext)
+		if (m_CurrentContext == m_RootContext)
 		{
-			m_pCurrentContext = nullptr;
+			m_CurrentContext = nullptr;
 		}
 		else
 		{
-			m_pCurrentContext = pParent;
+			m_CurrentContext = parent;
 		}		
     }
+
+	FlyerMap& ThreadContext::GetFlyerMap(void)
+	{
+		return m_FlyerMap;
+	}
+
+	IFunctionContext* ThreadContext::FunctionContext()
+	{
+		return m_CurrentContext;
+	}
+
 
 }}//qor::detail

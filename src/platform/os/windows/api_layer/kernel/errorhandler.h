@@ -29,11 +29,11 @@
 
 namespace qor { namespace win { namespace api {
 
-    class qor_pp_module_interface(QOR_WINAPI) Win32ErrorHandler : public qor::IssueHandler<qor::Error>
+    class qor_pp_module_interface(QOR_WINAPI) Win32ErrorHandler : public qor::IssueHandler<qor::ErrorBase>
     {
     public:
         
-        virtual bool Handle(const qor::Error& error);
+        virtual bool Handle(const qor::ErrorBase& error);
     };
 
 }}}//qor::win::api

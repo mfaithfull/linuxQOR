@@ -13,7 +13,7 @@
 namespace qor{ namespace detail{
 
     //Thread local container for Flyer instances by GUID. Each Flyer type has 1 current instance, the top of its notional stack.
-    class qor_pp_module_interface(QOR_THREAD) FlyerMap final
+    class FlyerMap final
     {
     public:
 

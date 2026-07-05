@@ -23,6 +23,8 @@ namespace qor {
         m_timePoint = src->m_timePoint;
     }
 
+    When::~When() noexcept { }
+
     When& When::operator = (const When& src)
     {
         if (&src != this)

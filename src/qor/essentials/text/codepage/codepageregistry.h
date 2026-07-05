@@ -12,10 +12,10 @@
 
 namespace qor{
 
-	class qor_pp_module_interface(QOR_TEXT) CodePageRegistry;
+	class CodePageRegistry;
 	qor_pp_module_interface(QOR_TEXT) CodePageRegistry* TheCodePageRegistry();
 
-    class qor_pp_module_interface(QOR_TEXT) CodePageRegistry final
+    class CodePageRegistry final
 	{
 
 	public:

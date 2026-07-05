@@ -7,13 +7,15 @@
 
 namespace qor{
 
-    Serious::Serious(const std::string& message) : SeverityTemplateIssue<Severity::Serious_Error>(message){ }
+    Serious::Serious(const std::string& message) : ErrorBase(message, Severity::Serious_Error){ }
 
-    Serious::Serious(const Serious& src) : SeverityTemplateIssue<Severity::Serious_Error>(src){ }
+    Serious::Serious(const Serious& src) : ErrorBase(src){ }
 
+    Serious::~Serious() noexcept { }
+    
     Serious& Serious::operator = (const Serious& src)
     {
-        SeverityTemplateIssue<Severity::Serious_Error>::operator = (src);
+        ErrorBase::operator = (src);
         return *this;
     }
     
@@ -26,7 +28,7 @@ namespace qor{
         }
         else
         {
-            auto handler = new_ref< IssueHandler<Error> >();
+            auto handler = new_ref< IssueHandler<ErrorBase> >();
             Resolve(handler.IsNotNull() ? handler->Handle(*this) : false);
         }
     }

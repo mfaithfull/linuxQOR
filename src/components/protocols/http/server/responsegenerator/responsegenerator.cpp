@@ -72,7 +72,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
                 warning("HTTP response generator quit without reaching completion. Check output.");
             }
         }
-        catch(const Error& error)
+        catch(const Serious& error)
         {
             std::cerr << error.what().Content() << '\n';
         }

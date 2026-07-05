@@ -27,7 +27,8 @@
 
 namespace qor{
 
-    AppBuilder::AppBuilder(){}
+    AppBuilder::AppBuilder() { }
+    AppBuilder::~AppBuilder() noexcept { }
 
     ref_of<Application>::type AppBuilder::Build(const std::string& name)
     {

@@ -34,6 +34,18 @@ namespace qor
         return s_defaultimpl;
     }
 
+
+    IErrorReporting::IErrorReporting() {}
+
+    IErrorReporting::IErrorReporting(const IErrorReporting&) {}
+
+    IErrorReporting& IErrorReporting::operator = (const IErrorReporting&)
+    {
+        return *this;
+    }
+
+    IErrorReporting::~IErrorReporting() noexcept {}
+
     void IErrorReporting::note(const std::string& message)
     {
         if(ErrorImpl())

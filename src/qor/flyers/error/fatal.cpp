@@ -7,11 +7,15 @@
 
 namespace qor{
 
-    Fatal::Fatal(const std::string& message) : SeverityTemplateIssue<Severity::Fatal_Error>(message){ }
+    Fatal::Fatal(const std::string& message) : ErrorBase(message, Severity::Fatal_Error){ }
 
+    Fatal::Fatal(const Fatal& src) : ErrorBase(src) { }
+
+    Fatal::~Fatal() noexcept {}
+    
     Fatal& Fatal::operator = (const Fatal& src)
     {
-        SeverityTemplateIssue<Severity::Fatal_Error>::operator = (src);
+        ErrorBase::operator = (src);
         return *this;
     }
     
@@ -25,7 +29,7 @@ namespace qor{
         }
         else
         {
-            auto handler = new_ref< IssueHandler<Error> >();
+            auto handler = new_ref< IssueHandler<ErrorBase> >();
             if(handler.IsNotNull())
             {
                 handler->Handle(*this);

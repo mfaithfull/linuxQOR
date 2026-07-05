@@ -37,6 +37,8 @@ namespace qor{
 
     Platform::Platform() : setupCompleted(false) {}
 
+    Platform::~Platform(){ }
+    
     void Platform::Setup()
     {
         if(!setupCompleted)

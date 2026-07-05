@@ -22,27 +22,27 @@ namespace qor{
         class qor_pp_module_interface(QOR_THREAD) ThreadPool;       //forward declare ThreadPool class
     }
 
-#ifdef QOR_THREAD   //Anything other than the qor_thread library doesn't need to know about these
+#ifdef QOR_CURRENT   //Anything other than the qor_current library doesn't need to know about these
     extern qor_pp_thread_local std::optional<std::size_t> pool_index;
     extern qor_pp_thread_local std::optional<void*> parent_pool;
 #endif
 
     //Represent the currently executing thread. Applies whether we have one thread or many.
-    class qor_pp_module_interface(QOR_THREAD) CurrentThread final
+    class CurrentThread final
     {
         friend class qor_pp_module_interface(QOR_THREAD) Thread;
-        friend class thread::ThreadPool;
+        friend class qor_pp_module_interface(QOR_THREAD) thread::ThreadPool;
 
     public:
     
-        static const CurrentThread& GetCurrent();
-        static const CurrentThread& Get();
-        CurrentThread() = default;
-        CurrentThread(const CurrentThread & src) = delete;
-        CurrentThread& operator=(CurrentThread const& src) = delete;
-		~CurrentThread() noexcept = default;
+        qor_pp_module_interface(QOR_CURRENT) static const CurrentThread& GetCurrent();
+        qor_pp_module_interface(QOR_CURRENT) static const CurrentThread& Get();
+        qor_pp_module_interface(QOR_CURRENT) CurrentThread();
+        qor_pp_module_interface(QOR_CURRENT) CurrentThread(const CurrentThread & src) = delete;
+        qor_pp_module_interface(QOR_CURRENT) CurrentThread& operator=(CurrentThread const& src) = delete;
+		qor_pp_module_interface(QOR_CURRENT) ~CurrentThread() noexcept;
 
-        std::thread::id GetID(void) const;
+        qor_pp_module_interface(QOR_CURRENT) std::thread::id GetID(void) const;
 
 		template <class _Clock, class _Duration>
 		void SleepUntil(const std::chrono::time_point<_Clock, _Duration>& timePoint) const
@@ -56,26 +56,26 @@ namespace qor{
 			std::this_thread::sleep_for(timePeriod);
 		}
 
-        void Sleep(unsigned long ulMilliseconds) const;
-        void _Yield() const;
-        detail::ThreadContext& Context() const;
-        virtual bool SetPriority(ICurrentThread::Priority priority) const;
-        virtual std::optional<ICurrentThread::Priority> GetPriority() const;
-        virtual bool SetName(const std::string& name) const;
-        virtual std::optional<std::string> GetName() const;
-        virtual bool SetAffinity(const std::vector<bool>& affinity) const;
-        virtual std::optional<std::vector<bool>> GetAffinity() const;
-        std::optional<void*> GetPool() const noexcept;
-        std::optional<std::size_t> GetPoolIndex() const noexcept;
+        qor_pp_module_interface(QOR_CURRENT) void Sleep(unsigned long ulMilliseconds) const;
+        qor_pp_module_interface(QOR_CURRENT) void _Yield() const;
+        qor_pp_module_interface(QOR_CURRENT) detail::ThreadContext& Context() const;
+        qor_pp_module_interface(QOR_CURRENT) virtual bool SetPriority(ICurrentThread::Priority priority) const;
+        qor_pp_module_interface(QOR_CURRENT) virtual std::optional<ICurrentThread::Priority> GetPriority() const;
+        qor_pp_module_interface(QOR_CURRENT) virtual bool SetName(const std::string& name) const;
+        qor_pp_module_interface(QOR_CURRENT) virtual std::optional<std::string> GetName() const;
+        qor_pp_module_interface(QOR_CURRENT) virtual bool SetAffinity(const std::vector<bool>& affinity) const;
+        qor_pp_module_interface(QOR_CURRENT) virtual std::optional<std::vector<bool>> GetAffinity() const;
+        qor_pp_module_interface(QOR_CURRENT) std::optional<void*> GetPool() const noexcept;
+        qor_pp_module_interface(QOR_CURRENT) std::optional<std::size_t> GetPoolIndex() const noexcept;
 
     private:
 
-        static void Init();
-        static void Destroy();
-        static CurrentThread& GetMutableCurrent();
+        qor_pp_module_interface(QOR_CURRENT) static void Init();
+        qor_pp_module_interface(QOR_CURRENT) static void Destroy();
+        qor_pp_module_interface(QOR_CURRENT) static CurrentThread& GetMutableCurrent();
 
-        void SetPool(std::optional<void*> pool);
-        void SetIndex(std::optional<std::size_t> index);
+        qor_pp_module_interface(QOR_CURRENT) void SetPool(std::optional<void*> pool);
+        qor_pp_module_interface(QOR_CURRENT) void SetIndex(std::optional<std::size_t> index);
 
         mutable detail::ThreadContext m_Context;
     };

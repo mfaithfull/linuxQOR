@@ -67,6 +67,8 @@ namespace qor{
         m_inException = src->m_inException;
     }
 
+    Where::~Where() noexcept { }
+
     Where& Where::operator = (const Where& src)
     {
         if (&src != this)

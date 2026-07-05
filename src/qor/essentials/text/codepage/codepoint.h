@@ -10,7 +10,7 @@
 
 namespace qor{
 
-	class qor_pp_module_interface(QOR_TEXT) CodePoint
+	class CodePoint
 	{
 	public:
     
@@ -64,7 +64,7 @@ namespace qor{
 
         ~CodePoint() = default;
 
-        const char* Name(void);
+        //const char* Name(void);
 
         uint32_t inline Value(void) const
         {

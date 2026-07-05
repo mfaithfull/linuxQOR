@@ -7,11 +7,15 @@
 
 namespace qor{
 
-    Warning::Warning(const std::string& message) : SeverityTemplateIssue<Severity::Warning>(message){ }
+    Warning::Warning(const std::string& message) : ErrorBase(message, Severity::Warning){ }
 
+    Warning::Warning(const Warning& src) : ErrorBase(src){ }
+
+    Warning::~Warning() noexcept { }
+ 
     Warning& Warning::operator = (const Warning& src)
     {
-        SeverityTemplateIssue<Severity::Warning>::operator = (src);
+        ErrorBase::operator = (src);
         return *this;
     }
 
@@ -24,7 +28,7 @@ namespace qor{
         }
         else
         {
-            auto handler = new_ref< IssueHandler<Error> >();
+            auto handler = new_ref< IssueHandler<ErrorBase> >();
             Resolve(handler.IsNotNull() ? handler->Handle(*this) : false);
         }
     }

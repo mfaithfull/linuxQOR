@@ -15,32 +15,24 @@ namespace qor{ namespace detail{
 
 	//Additional state for QOR threads beyond what std library threads provide
 	//Per thread state is only created if it's used via the CurrentThread thread-singleton
-    class qor_pp_module_interface(QOR_THREAD) ThreadContext final
+    class qor_pp_module_interface(QOR_CURRENT) ThreadContext final
     {
     public:
 
         ThreadContext();
 		ThreadContext(const ThreadContext & src) = delete;
 		ThreadContext& operator=(ThreadContext const& src) = delete;
-		~ThreadContext() = default;
+		~ThreadContext();
 
-		virtual IFunctionContext* RegisterFunctionContext(IFunctionContext * pFContext);
-		virtual void UnregisterFunctionContext(IFunctionContext * pFContext, IFunctionContext * pParent);
-
-		inline FlyerMap& GetFlyerMap(void)    //Flyer type-instance map
-		{
-			return m_FlyerMap;
-		}
-
-		inline IFunctionContext* FunctionContext()
-		{
-			return m_pCurrentContext;
-		}
+		IFunctionContext* RegisterFunctionContext(IFunctionContext* fContext);
+		void UnregisterFunctionContext(IFunctionContext* fContext, IFunctionContext* parent);
+		FlyerMap& GetFlyerMap(void);
+		IFunctionContext* FunctionContext();
 
     private:
 
-        IFunctionContext* m_pRootContext;
-        IFunctionContext* m_pCurrentContext;        
+        IFunctionContext* m_RootContext{nullptr};
+        IFunctionContext* m_CurrentContext{nullptr};
         FlyerMap m_FlyerMap;
 
     };
