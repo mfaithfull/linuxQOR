@@ -13,6 +13,7 @@ namespace qor
 {
     //All libraries providing an implementation of ICurrentProcess also need to export this function so that the linker can find them
     //Here we import it creating a requirement for an exported implementaton elsewhere
+    //Implementators should include icurrentprocess.h and not this header to avoid linker confusion
     bool qor_pp_import ImplementsICurrentProcess();
 }
 

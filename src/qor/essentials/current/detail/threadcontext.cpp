@@ -6,8 +6,8 @@
 
 namespace qor{ namespace detail{
 
-	ThreadContext::ThreadContext(){ }//Required to supress auto export of the =default version under Microsoft linker
-	ThreadContext::~ThreadContext(){ }
+	ThreadContext::ThreadContext() = default;
+	ThreadContext::~ThreadContext() = default;
 
     IFunctionContext* ThreadContext::RegisterFunctionContext(IFunctionContext* fContext)
     {
@@ -41,6 +41,5 @@ namespace qor{ namespace detail{
 	{
 		return m_CurrentContext;
 	}
-
 
 }}//qor::detail

@@ -23,12 +23,10 @@ namespace qor{
 		void Append(tflink< T >* next )
 		{
 			tflink< T >* end = this;
-
 			while( end->m_Next != nullptr )
 			{
 				end = end->m_Next;
 			}
-
 			end->m_Next = next;
 		}
 

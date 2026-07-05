@@ -1,4 +1,4 @@
-Provides abstractions of the current thread and current process concepts. 
+Provides abstractions of the current thread and current process. 
 The implementations have to be provided by the platform you're targetting, 
 i.e. /src/platform/os/<target_os>/
 needs to contain a working implementation of ICurrentThread and ICurrentProcess

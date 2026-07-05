@@ -20,8 +20,6 @@ namespace qor{ namespace detail{
     public:
 
         ThreadContext();
-		ThreadContext(const ThreadContext & src) = delete;
-		ThreadContext& operator=(ThreadContext const& src) = delete;
 		~ThreadContext();
 
 		IFunctionContext* RegisterFunctionContext(IFunctionContext* fContext);
@@ -35,6 +33,8 @@ namespace qor{ namespace detail{
         IFunctionContext* m_CurrentContext{nullptr};
         FlyerMap m_FlyerMap;
 
+		ThreadContext(const ThreadContext & src) = delete;
+		ThreadContext& operator=(ThreadContext const& src) = delete;
     };
 
 }}//qor::detail

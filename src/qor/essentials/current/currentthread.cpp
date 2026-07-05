@@ -49,8 +49,8 @@ namespace qor
         return pool_index;
     }
 
-    CurrentThread::CurrentThread(){ }
-    CurrentThread::~CurrentThread(){ }
+    CurrentThread::CurrentThread() = default;
+    CurrentThread::~CurrentThread() = default;
     
     void CurrentThread::SetPool(std::optional<void*> pool)
     {

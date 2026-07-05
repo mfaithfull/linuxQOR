@@ -14,7 +14,7 @@
 
 namespace qor
 {
-    //Base interface for platform specific clas representing the containing process
+    //Base interface for platform specific classes representing the containing process
     class ICurrentProcess
     {
     public:
@@ -29,8 +29,8 @@ namespace qor
             realtime
         };
 
-        ICurrentProcess() = default;
-        virtual ~ICurrentProcess() noexcept = default;
+        inline ICurrentProcess() = default;
+        inline virtual ~ICurrentProcess() noexcept = default;
 
         virtual std::optional<std::vector<bool>> GetAffinity()
         {

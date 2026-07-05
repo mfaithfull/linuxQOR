@@ -14,8 +14,6 @@
 
 namespace qor{
 
-    //template<typename T> struct factory_of;
-    
     //The default instancer gives out unconstrained freshly constructed instance references from the per type factory
 	class DefaultInstancer final
 	{

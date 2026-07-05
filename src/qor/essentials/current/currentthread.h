@@ -13,8 +13,10 @@
 namespace qor{
 
     //All libraries providing an implementation of ICurrentThread 
-    //need to export this function so that the linker can find them
-    //Here we import it to create a dependency if we aren't the exporter
+    //need to export this function so that the linker can find them.
+    //They must also define qor_pp_implements_icurrentthread
+    //Here we declare it an import if we're a user of ICurrentThread
+    //or an export if we define qor_pp_implements_icurrentthread as an implementer
     bool qor_pp_module_interface(qor_pp_implements_icurrentthread) ImplementsICurrentThread();
 
     namespace thread
@@ -28,6 +30,8 @@ namespace qor{
 #endif
 
     //Represent the currently executing thread. Applies whether we have one thread or many.
+    //This class has template members so we can't export/import the whole class.
+    //Individual non template members are exported/imported instead
     class CurrentThread final
     {
         friend class Thread;
@@ -38,8 +42,8 @@ namespace qor{
         qor_pp_module_interface(QOR_CURRENT) static const CurrentThread& GetCurrent();
         qor_pp_module_interface(QOR_CURRENT) static const CurrentThread& Get();
         qor_pp_module_interface(QOR_CURRENT) CurrentThread();
-        qor_pp_module_interface(QOR_CURRENT) CurrentThread(const CurrentThread & src) = delete;
-        qor_pp_module_interface(QOR_CURRENT) CurrentThread& operator=(CurrentThread const& src) = delete;
+        CurrentThread(const CurrentThread & src) = delete;
+        CurrentThread& operator=(CurrentThread const& src) = delete;
 		qor_pp_module_interface(QOR_CURRENT) ~CurrentThread() noexcept;
 
         qor_pp_module_interface(QOR_CURRENT) std::thread::id GetID(void) const;

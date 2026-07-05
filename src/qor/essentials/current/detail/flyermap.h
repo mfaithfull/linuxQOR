@@ -17,21 +17,18 @@ namespace qor{ namespace detail{
     {
     public:
 
-        FlyerMap() = default;
+        inline FlyerMap() = default;
         FlyerMap(const FlyerMap&) = delete;
         
-        ~FlyerMap()
-        {
-            m_Map.clear();
-        }
+        inline ~FlyerMap(){ m_Map.clear(); }
 
-        AnyObject& GetByClassID( const GUID* classID )
+        inline AnyObject& GetByClassID( const GUID* classID )
         {
             auto it = m_Map.find(*classID);
             return it != m_Map.end() ? it->second : AnyObject::EmptyObject();
         }
 
-        AnyObject Configure(const GUID* classID, AnyObject context)
+        inline AnyObject Configure(const GUID* classID, AnyObject context)
         {
             AnyObject result;
             if(m_Map.size() > 0)
@@ -47,7 +44,7 @@ namespace qor{ namespace detail{
             return result;
         }
 
-        void Unconfigure(const GUID* classID, AnyObject context)
+        inline void Unconfigure(const GUID* classID, AnyObject context)
         {
             if(classID)
             {
@@ -63,7 +60,7 @@ namespace qor{ namespace detail{
             }
         }
 
-        AnyObject Lookup(const GUID* classID)
+        inline AnyObject Lookup(const GUID* classID)
 		{
 			AnyObject result;
 			auto it = m_Map.find(*classID);

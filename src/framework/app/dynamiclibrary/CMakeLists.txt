@@ -12,8 +12,8 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-    target_link_libraries(${target} qor_module qor_thread winqor_sharedbootstrap winqor_thread)
+    target_link_libraries(${target} qor_module qor_host qor_thread winqor_sharedbootstrap winqor_thread)
 endif()
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-    target_link_libraries(${target} qor_module qor_thread linqor_thread)
+    target_link_libraries(${target} qor_module qor_host qor_thread linqor_thread)
 endif()

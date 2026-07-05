@@ -1,4 +1,4 @@
-project(QOR VERSION 1.0.0 DESCRIPTION "QOR Current Execution Context Library" LANGUAGES CXX)
+project(QOR VERSION 1.0.1 DESCRIPTION "QOR Current Execution Context Library" LANGUAGES CXX)
 set(target qor_current)
 
 add_library(${target} SHARED qor_current.cpp currentthread.cpp detail/threadcontext.cpp)

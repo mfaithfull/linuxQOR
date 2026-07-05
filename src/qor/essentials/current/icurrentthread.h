@@ -31,8 +31,8 @@ namespace qor
             realtime
         };    
 
-        ICurrentThread() = default;
-        virtual ~ICurrentThread() noexcept = default;
+        inline ICurrentThread() = default;
+        inline virtual ~ICurrentThread() noexcept = default;
 
         virtual bool SetPriority(ICurrentThread::Priority /*priority*/)
         {
