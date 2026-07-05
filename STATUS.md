@@ -1,3 +1,12 @@
+
+July 2026. A version 0.5 interim release plan has been put together along with a long list of things that need doing before and after.
+Scrubbing the module export interfaces is under way. It's a pretty major piece of work and won't be complete soon. However the base libraries
+are now clean and some clean examples can be built. Anything using pipeline components won't and that's the next target.
+r/cpp says we need a GUI builder with a better than JSON human readable serialisation format to compete with Qt. They may be right.
+However they also say a lot of other things that we've already done.
+
+========================================================================================================================
+
 June 2026. A lot of quality work on the fundamentals is completed. Builds with all the pedantry turned on are now possible. Many /qor libraries are now clean even with everything cranked up. Some like qor_mock probably never can be given what they do. Pipelines still need a lot of work. The basic RFC5234 parser framework is just about done. Edge cases around tiny buffer sizes and parse completion need bottoming out. Character encoding support is needed and a corresponding generator framework for writing text based files. Along with one for writing portable binary formats.
 Basic UTF-8, UTF-16 and UCS4 String classes are done. Integration with qor_error is worked out although it requires double linking under GCC which is unfortunate and maybe resolvable. Otherwise we'll have to drop the error raising interface into another module.
 With a lot of the /qor and framework libraries stabilized and in routine use and much of the work going on in components we may be in ver 0.5 territory.
