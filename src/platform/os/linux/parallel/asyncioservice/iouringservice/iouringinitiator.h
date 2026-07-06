@@ -47,75 +47,75 @@
 
 namespace qor{ namespace io{ namespace async{ namespace lin{
 
-    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) IOUringInitiator : public qor::async::AsyncIOInitiator
+    class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) IOUringInitiator : public qor::io::async::AsyncIOInitiator
     {
     public:
 
         IOUringInitiator() = default;
         virtual ~IOUringInitiator() noexcept = default;
 
-        virtual void ConnectToProcessor(qor::async::AsyncIOEventProcessor* processor);
+        virtual void ConnectToProcessor(qor::io::async::AsyncIOEventProcessor* processor);
 
-        virtual qor::async::IOTask Send(io::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
+        virtual qor::io::async::IOTask Send(io::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
         {
             m_Ring->m_guard.lock();
             return Send2(ioDescriptor, buffer, len, flags);
         }
 
-        qor::async::IOTask Send2(io::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
+        qor::io::async::IOTask Send2(io::IODescriptor* ioDescriptor, const byte* buffer, size_t len, int flags)
         {
             int result = co_await SendOperation(*m_Ring, ioDescriptor->m_fd, buffer, len, flags);
 
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = result,
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len)
+        virtual qor::io::async::IOTask Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
             m_Ring->m_guard.lock();
             return Recv2(ioDescriptor, buffer, len);
         }
 
-        qor::async::IOTask Recv2(io::IODescriptor* ioDescriptor, byte* buffer, size_t len)
+        qor::io::async::IOTask Recv2(io::IODescriptor* ioDescriptor, byte* buffer, size_t len)
         {
             int result = co_await RecvOperation(*m_Ring, ioDescriptor->m_fd, buffer, len);
 
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = result,
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset)
+        virtual qor::io::async::IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset)
         {
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = co_await ReadOperation(*m_Ring, ioDescriptor->m_fd, buffer, len, offset),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset)
+        virtual qor::io::async::IOTask Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset)
         {
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = co_await WriteOperation(*m_Ring, ioDescriptor->m_fd, buffer, len, offset),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Listen(io::IODescriptor* ioDescriptor, int backlog)
+        virtual qor::io::async::IOTask Listen(io::IODescriptor* ioDescriptor, int backlog)
         {
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = co_await ListenOperation(*m_Ring, ioDescriptor->m_fd, backlog),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Bind(io::IODescriptor* ioDescriptor, const io::network::Address& Address)
+        virtual qor::io::async::IOTask Bind(io::IODescriptor* ioDescriptor, const io::network::Address& Address)
         {
             sockaddr_in addr;
             memset(&addr, 0, sizeof(struct sockaddr_in));
@@ -123,13 +123,13 @@ namespace qor{ namespace io{ namespace async{ namespace lin{
             addr.sin_addr.s_addr = Address.sa.IPAddress.sin_addr.S_un.S_addr;
             addr.sin_port = Address.sa.IPAddress.sin_port;
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = co_await BindOperation(*m_Ring, ioDescriptor->m_fd, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Accept(io::IODescriptor* ioDescriptor, const io::network::Address& /*Address*/, io::network::Socket* new_socket)
+        virtual qor::io::async::IOTask Accept(io::IODescriptor* ioDescriptor, const io::network::Address& /*Address*/, io::network::Socket* new_socket)
         {
             sockaddr addr;
             socklen_t len = 0;
@@ -137,22 +137,22 @@ namespace qor{ namespace io{ namespace async{ namespace lin{
             int socket_number = co_await AcceptOperation(*m_Ring, ioDescriptor->m_fd, &addr, &len, 0);
 
             new_socket->m_fd = socket_number;
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = socket_number,
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Shutdown(io::IODescriptor* ioDescriptor, int how)
+        virtual qor::io::async::IOTask Shutdown(io::IODescriptor* ioDescriptor, int how)
         {
             m_Ring->m_guard.lock();//we must grab the ring to submit to it. The awaiter will unlock before suspending
             return Shutdown2(ioDescriptor, how);
         }
 
-        qor::async::IOTask Shutdown2(io::IODescriptor* ioDescriptor, int how)
+        qor::io::async::IOTask Shutdown2(io::IODescriptor* ioDescriptor, int how)
         {
             co_await ShutdownOperation(*m_Ring, ioDescriptor->m_fd, how);
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = 0,
                 .ioObject = ioDescriptor
             };

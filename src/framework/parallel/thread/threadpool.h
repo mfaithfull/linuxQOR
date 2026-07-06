@@ -58,7 +58,7 @@ namespace qor { namespace thread{
         wait_deadlock() : std::runtime_error("wait_deadlock") {};
     };
 
-    class ThreadPool : public app::IFeature
+    class qor_pp_module_interface_gcc(QOR_THREAD) ThreadPool : public app::IFeature
     {
     public:
 

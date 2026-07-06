@@ -118,7 +118,7 @@ namespace qor{ namespace io{ namespace network{ namespace win{
                 Socket::AddressFamilyFromWindows(rp->ai_family),
                 Socket::TypeFromWindows(rp->ai_socktype),
                 Socket::ProtocolFromWindows(rp->ai_protocol),
-                ref_of<qor::async::AsyncIOContext::Session>::type());
+                ref_of<qor::io::async::AsyncIOContext::Session>::type());
             if(socket.IsNull())
             {
                 continue;

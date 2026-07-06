@@ -35,7 +35,7 @@ namespace qor{ namespace io{ namespace async{ namespace lin{
     {
         IOUring::SQE entry;
         IOUring* m_ring;
-        qor::async::AsyncIORequest requestData;
+        qor::io::async::AsyncIORequest requestData;
 
         IOUringAwaiter(IOUring::SQE& sqe, IOUring* ring) : entry(sqe), m_ring(ring) {}
 

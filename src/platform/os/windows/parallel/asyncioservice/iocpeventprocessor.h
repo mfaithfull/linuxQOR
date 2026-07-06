@@ -32,11 +32,11 @@
 
 namespace qor { namespace io {namespace async { namespace win {
 
-    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPEventProcessor : public qor::async::AsyncIOEventProcessor
+    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPEventProcessor : public qor::io::async::AsyncIOEventProcessor
     {
     public:
 
-        IOCPEventProcessor() : qor::async::AsyncIOEventProcessor() {}
+        IOCPEventProcessor() : qor::io::async::AsyncIOEventProcessor() {}
         virtual ~IOCPEventProcessor() noexcept = default;
 
         virtual int Run()

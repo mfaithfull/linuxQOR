@@ -168,7 +168,7 @@ namespace qor{ namespace io{ namespace async{ namespace lin{
     int IOUring::ConsumeCQEntries()
     {
         return ForEachCQE( [this](IOUring::CQE& cqe){
-            auto *request_data = static_cast<qor::async::AsyncIORequest*>(cqe.GetData());
+            auto *request_data = static_cast<qor::io::async::AsyncIORequest*>(cqe.GetData());
             if(request_data)
             {
                 request_data->statusCode = cqe.GetResult();
@@ -202,7 +202,7 @@ namespace qor{ namespace io{ namespace async{ namespace lin{
         size_t index = 0;
         for(; index < count; ++index )
         {
-            auto *request_data = static_cast<qor::async::AsyncIORequest*>(io_uring_cqe_get_data(cqe));
+            auto *request_data = static_cast<qor::io::async::AsyncIORequest*>(io_uring_cqe_get_data(cqe));
             if(request_data)
             {
                 request_data->statusCode = cqe->res;

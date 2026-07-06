@@ -31,7 +31,7 @@ qor_pp_module_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOInitiator)
 
 namespace qor{ namespace io{ namespace async{ namespace lin{
 
-    void IOUringInitiator::ConnectToProcessor(qor::async::AsyncIOEventProcessor* processor)
+    void IOUringInitiator::ConnectToProcessor(qor::io::async::AsyncIOEventProcessor* processor)
     {
         IOUringEventProcessor* eventProcessor = dynamic_cast<IOUringEventProcessor*>(processor);
         if(eventProcessor)

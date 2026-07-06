@@ -42,14 +42,14 @@
 
 namespace qor { namespace io { namespace async { namespace win {
 
-    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPInitiator : public qor::async::AsyncIOInitiator
+    class qor_pp_module_interface(QOR_WINDOWSASYNCIOSERVICE) IOCPInitiator : public qor::io::async::AsyncIOInitiator
     {
     public:
 
         IOCPInitiator() = default;
         virtual ~IOCPInitiator() noexcept = default;
 
-        virtual void ConnectToProcessor(qor::async::AsyncIOEventProcessor * processor) override
+        virtual void ConnectToProcessor(qor::io::async::AsyncIOEventProcessor * processor) override
         {
             m_eventProcessor = dynamic_cast<IOCPEventProcessor*>(processor);
         }
@@ -59,60 +59,60 @@ namespace qor { namespace io { namespace async { namespace win {
             return true;
         }
 
-        virtual qor::async::IOTask Send(io::IODescriptor * ioDescriptor, const byte * buffer, size_t len, int flags) override
+        virtual qor::io::async::IOTask Send(io::IODescriptor * ioDescriptor, const byte * buffer, size_t len, int flags) override
         {
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .result = co_await SocketSendOperation(ioDescriptor, buffer, len),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) override
+        virtual qor::io::async::IOTask Read(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) override
         {
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .result = co_await ReadOperation(ioDescriptor, buffer, len, offset),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) override
+        virtual qor::io::async::IOTask Write(io::IODescriptor* ioDescriptor, byte* buffer, size_t len, long offset) override
         {
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .result = co_await WriteOperation(ioDescriptor, buffer, len, offset),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) override
+        virtual qor::io::async::IOTask Recv(io::IODescriptor* ioDescriptor, byte* buffer, size_t len) override
         {
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .result = co_await SocketRecvOperation(ioDescriptor, buffer, len),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Listen(io::IODescriptor * ioDescriptor, int backlog) override
+        virtual qor::io::async::IOTask Listen(io::IODescriptor * ioDescriptor, int backlog) override
         {
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = -1,//co_await ListenOperation(*m_Ring, ioDescriptor->m_fd, 0),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Bind(io::IODescriptor * ioDescriptor, const io::network::Address & Address) override
+        virtual qor::io::async::IOTask Bind(io::IODescriptor * ioDescriptor, const io::network::Address & Address) override
         {
             //Windows doesn't provide async bind
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = -1,//co_await BindOperation(*m_Ring, ioDescriptor->m_fd, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)),
                 .ioObject = ioDescriptor
             };
         }
 
-        virtual qor::async::IOTask Accept(io::IODescriptor * ioDescriptor, const io::network::Address & Address, io::network::Socket * new_socket) override
+        virtual qor::io::async::IOTask Accept(io::IODescriptor * ioDescriptor, const io::network::Address & Address, io::network::Socket * new_socket) override
         {
             int status = co_await SocketAcceptOperation(ioDescriptor, new_socket);
 
-            co_return qor::async::AsyncIOResult{
+            co_return qor::io::async::AsyncIOResult{
                 .status_code = status,
                 .ioObject = ioDescriptor
             };

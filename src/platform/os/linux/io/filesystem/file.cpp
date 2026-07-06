@@ -188,12 +188,12 @@ namespace qor{ namespace io{ namespace lin{
     }
 
 
-    task<int> File::AsyncRead(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncRead(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         return ioContext.Read(this, buffer, byteCount, offset);
     }
 
-    task<int> File::AsyncWrite(const qor::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncWrite(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         return ioContext.Write(this, buffer, byteCount, offset);
     }

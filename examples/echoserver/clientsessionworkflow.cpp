@@ -51,7 +51,7 @@ using namespace qor::io::network::sockets;
 using namespace qor::components;
 
 ClientSessionWorkflow::ClientSessionWorkflow(
-    ref_of<qor::async::AsyncIOContext::Session>::type ioSession, ref_of<Socket>::type socket) :
+    ref_of<qor::io::async::AsyncIOContext::Session>::type ioSession, ref_of<Socket>::type socket) :
     m_logHandler(log::Level::Debug),
     connected(new_ref<workflow::State>(this)),
     echo(new_ref<workflow::State>(this)),

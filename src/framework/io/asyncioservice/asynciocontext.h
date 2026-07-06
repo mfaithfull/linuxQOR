@@ -203,6 +203,6 @@ namespace qor { namespace io{ namespace async{
 
     qor_pp_declare_instancer_of(io::async::AsyncIOContext, PoolInstancer);
 
-}//qor::async
+}//qor::io::async
 
 #endif//QOR_PP_H_FRAMEWORK_ASYNCIOCONTEXT

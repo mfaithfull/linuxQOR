@@ -18,7 +18,7 @@ using namespace qor::io;
 using namespace qor::log;
 using namespace qor::platform;
 using namespace qor::thread;
-using namespace qor::async;
+using namespace qor::io::async;
 
 int main(int argc, const char** argv, char**)
 {

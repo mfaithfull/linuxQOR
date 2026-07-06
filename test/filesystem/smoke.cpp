@@ -150,7 +150,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, writeAndReadBackFileContents)
 
 qor_pp_test_suite_case(FileSystemTestSuite, writeAsyncAndReadBackFileContents)
 {
-    auto asyncIOService = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::async::AsyncIOService>().AsRef<qor::async::AsyncIOService>();
+    auto asyncIOService = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::io::async::AsyncIOService>().AsRef<qor::io::async::AsyncIOService>();
     auto session = asyncIOService(qor_shared).GetSession();
 
     Index newIndex(m_fileSystem->CurrentPath(), "testfile4.txt");
