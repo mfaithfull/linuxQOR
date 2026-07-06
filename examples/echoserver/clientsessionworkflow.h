@@ -38,7 +38,7 @@ class ClientSessionWorkflow : public qor::Workflow
 public:
 
     ClientSessionWorkflow(
-        qor::ref_of<qor::async::AsyncIOContext::Session>::type sharedContext,
+        qor::ref_of<qor::io::async::AsyncIOContext::Session>::type sharedContext,
         qor::ref_of<qor::io::network::Socket>::type socket);
 
     virtual ~ClientSessionWorkflow();
@@ -54,7 +54,7 @@ private:
     qor::ref_of<qor::workflow::State>::type echo;
     qor::ref_of<qor::workflow::State>::type disconnect;
 
-    qor::ref_of<qor::async::AsyncIOContext::Session>::type m_ioSession;
+    qor::ref_of<qor::io::async::AsyncIOContext::Session>::type m_ioSession;
     qor::ref_of<qor::io::network::Socket>::type m_socket;
     qor::ref_of<SessionPipeline>::type m_pipeline;
 };

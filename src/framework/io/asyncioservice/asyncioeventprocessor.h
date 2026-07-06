@@ -3,7 +3,7 @@
 
 #ifndef QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR
 #define QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE_ASYNCIOEVENTPROCESSOR
- 
+
 #include "src/qor/essentials/datastructures/guid.h"
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/flyers/interception/functioncontext.h"
@@ -17,16 +17,16 @@
 #include "src/qor/flyers/error/error.h"
 #include "src/qor/flyers/error/commonerrormessages.h"
 
-namespace qor { namespace async{
-  
+namespace qor { namespace io{ namespace async{
+
     class AsyncIOEventProcessor
     {
     public:
 
-        AsyncIOEventProcessor() : 
+        AsyncIOEventProcessor() :
             m_freeRun(false),
             m_StopRequested(false){ }
-        
+
         inline virtual ~AsyncIOEventProcessor() noexcept = default;
 
         virtual int Run()
@@ -51,11 +51,11 @@ namespace qor { namespace async{
         bool m_StopRequested;
     };
 
-    }//async
+    }}//io::async
 
-    qor_pp_declare_factory_of(async::AsyncIOEventProcessor, ExternalFactory);    
+    qor_pp_declare_factory_of(io::async::AsyncIOEventProcessor, ExternalFactory);
     constexpr GUID AsyncIOEventProcessorGUID = {0xe92b1e2d, 0x2295, 0x4f5e, {0xb0, 0xba, 0xea, 0xb9, 0x97, 0x27, 0xb5, 0x22}};
-    qor_pp_declare_guid_of(async::AsyncIOEventProcessor,AsyncIOEventProcessorGUID);
+    qor_pp_declare_guid_of(io::async::AsyncIOEventProcessor,AsyncIOEventProcessorGUID);
 
 }//qor
 

@@ -3,7 +3,7 @@
 
 #ifndef QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE
 #define QOR_PP_H_FRAMEWORK_ASYNCIOSERVICE
- 
+
 #include <atomic>
 #include <coroutine>
 #include "src/qor/essentials/current/currentthread.h"
@@ -22,8 +22,8 @@
 
 namespace qor{ bool qor_pp_module_interface(QOR_ASYNCIOSERVICE) ImplementsAsyncIOService();}
 
-namespace qor { namespace async{
-  
+namespace qor { namespace io{ namespace async{
+
     class qor_pp_module_interface(QOR_ASYNCIOSERVICE) AsyncIOService : public app::IFeature
     {
     public:
@@ -35,26 +35,26 @@ namespace qor { namespace async{
 		AsyncIOService(const AsyncIOService& other) = delete;
 		AsyncIOService& operator=(AsyncIOService&& other) = delete;
 		AsyncIOService& operator=(const AsyncIOService& other) = delete;
-        
+
         virtual void Setup();
         virtual void Shutdown();
 
         ref_of<AsyncIOContext::Session>::type GetSession();
 
-    private:        
+    private:
 
         ref_of<thread::ThreadPool>::type m_threadPool;
         unsigned m_contextCount;
         ref_of<AsyncIOContext>::type* m_contextArray;
         size_t m_contextIndex;
-        
-    };
-    } //async
 
-    qor_pp_declare_instancer_of(async::AsyncIOService, SingletonInstancer);
-    qor_pp_declare_factory_of(async::AsyncIOService, ExternalFactory);
+    };
+    }} //io::async
+
+    qor_pp_declare_instancer_of(io::async::AsyncIOService, SingletonInstancer);
+    qor_pp_declare_factory_of(io::async::AsyncIOService, ExternalFactory);
     constexpr GUID AsyncIOServiceGUID = {0x6201abca, 0xf405, 0x4709, {0xa9, 0x86, 0x26, 0x82, 0xeb, 0x66, 0xfd, 0xc6}};
-    qor_pp_declare_guid_of(async::AsyncIOService,AsyncIOServiceGUID);
+    qor_pp_declare_guid_of(io::async::AsyncIOService,AsyncIOServiceGUID);
 
 }//qor
 

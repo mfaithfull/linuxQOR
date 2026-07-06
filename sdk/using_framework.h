@@ -7,7 +7,7 @@
 
 using namespace qor::pipeline;
 using namespace qor::workflow;
-using namespace qor::async;
+using namespace qor::io::async;
 using namespace qor::thread;
 using namespace qor::io;
 

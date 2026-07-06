@@ -15,8 +15,8 @@
 #endif//
 
 #define qor_pp_profile_enabled false
-#define qor_pp_profile_begin "src/qor/profiling/profile_enable.inl"
-#define qor_pp_profile_end "src/qor/profiling/profile_disable.inl"
+#define qor_pp_profile_begin "src/qor/tdd/profiling/profile_enable.inl"
+#define qor_pp_profile_end "src/qor/tdd/profiling/profile_disable.inl"
 
 #include "nullprofiler.h"
 #include "functionprofiler.h"

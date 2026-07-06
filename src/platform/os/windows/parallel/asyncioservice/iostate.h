@@ -8,7 +8,7 @@
 #include <coroutine>
 #include "sync/overlapped.h"
 
-namespace qor { namespace async { namespace win {
+namespace qor { namespace io { namespace async { namespace win {
 
 	struct io_state : overlapped
 	{
@@ -38,6 +38,6 @@ namespace qor { namespace async { namespace win {
 		callback_type* m_callback;
 	};
 
-}}}//qor::async::win
+}}}}//qor::io::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_IOSTATE

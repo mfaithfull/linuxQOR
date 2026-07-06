@@ -3,7 +3,7 @@
 
 #ifndef QOR_PP_H_FRAMEWORK_THREADPOOL
 #define QOR_PP_H_FRAMEWORK_THREADPOOL
- 
+
 #include <algorithm>
 #include <chrono>
 #include <condition_variable>
@@ -58,16 +58,16 @@ namespace qor { namespace thread{
         wait_deadlock() : std::runtime_error("wait_deadlock") {};
     };
 
-    class ThreadPool : public app::IFeature
+    class qor_pp_module_interface_gcc(QOR_THREAD) ThreadPool : public app::IFeature
     {
     public:
-        
+
         bool wait_deadlock_checks_enabled{true};                                                       //A flag indicating whether wait deadlock checks are enabled.
 
         qor_pp_module_interface(QOR_THREAD) ThreadPool();                                                                                    //Construct a new thread pool. The number of threads will be derived from total number of hardware threads available, as reported by the implementation. This is usually determined by the number of cores in the CPU. If a core is hyperthreaded, it will count as two threads.
 
         qor_pp_module_interface(QOR_THREAD) explicit ThreadPool(const std::size_t num_threads);                                              //Construct a new thread pool with the specified number of threads.
-        
+
         template <qor_pp_threadpool_init_func_concept(F)>                                               //Construct a new thread pool with the specified initialization function.
         explicit ThreadPool(F&& init)
         {
@@ -102,7 +102,7 @@ namespace qor { namespace thread{
                 };
             }
         }
-        
+
         qor_pp_module_interface(QOR_THREAD) void SetThreadCount(const std::size_t num_threads);
 
         //Parallelize a loop by automatically splitting it into blocks and submitting each block separately to the queue, with the specified priority. The block function takes two arguments, the start and end of the block, so that it is only called once per block, but it is up to the user make sure the block function correctly deals with all the indices in each block. Does not return a `MultiFuture`, so the user must use `wait()` or some other method to ensure that the loop finishes executing, otherwise bad things will happen.
@@ -113,7 +113,7 @@ namespace qor { namespace thread{
         //index_after_last The index after the last index in the loop. The loop will iterate from `first_index` to `(index_after_last - 1)` inclusive. In other words, it will be equivalent to `for (T i = first_index; i < index_after_last; ++i)`. Note that if `index_after_last <= first_index`, no blocks will be submitted.
         //block A function that will be called once per block. Should take exactly two arguments: the first index in the block and the index after the last index in the block. `block(start, end)` should typically involve a loop of the form `for (T i = start; i < end; ++i)`.
         //num_blocks The maximum number of blocks to split the loop into. The default is 0, which means the number of blocks will be equal to the number of threads in the pool.
-        //priority The priority of the tasks. Should be between -128 and +127 (a signed 8-bit integer). The default is 0. 
+        //priority The priority of the tasks. Should be between -128 and +127 (a signed 8-bit integer). The default is 0.
         template <typename T1, typename T2, typename T = common_index_type_t<T1, T2>, typename F>
         void PostBlocks(const T1 first_index, const T2 index_after_last, F&& block, const std::size_t num_blocks = 0, const priority_t priority = 0)
         {
@@ -141,7 +141,7 @@ namespace qor { namespace thread{
         // index_after_last The index after the last index in the loop. The loop will iterate from `first_index` to `(index_after_last - 1)` inclusive. In other words, it will be equivalent to `for (T i = first_index; i < index_after_last; ++i)`. Note that if `index_after_last <= first_index`, no blocks will be submitted.
         // loop The function to loop through. Will be called once per index, many times per block. Should take exactly one argument: the loop index.
         // num_blocks The maximum number of blocks to split the loop into. The default is 0, which means the number of blocks will be equal to the number of threads in the pool.
-        // priority The priority of the tasks. Should be between -128 and +127 (a signed 8-bit integer). The default is 0. 
+        // priority The priority of the tasks. Should be between -128 and +127 (a signed 8-bit integer). The default is 0.
         template <typename T1, typename T2, typename T = common_index_type_t<T1, T2>, typename F>
         void PostLoop(const T1 first_index, const T2 index_after_last, F&& loop, const std::size_t num_blocks = 0, const priority_t priority = 0)
         {
@@ -169,7 +169,7 @@ namespace qor { namespace thread{
         // first_index The first index in the sequence.
         // index_after_last The index after the last index in the sequence. The sequence will iterate from `first_index` to `(index_after_last - 1)` inclusive. In other words, it will be equivalent to `for (T i = first_index; i < index_after_last; ++i)`. Note that if `index_after_last <= first_index`, no tasks will be submitted.
         // sequence The function used to define the sequence. Will be called once per index. Should take exactly one argument, the index.
-        // priority The priority of the tasks. Should be between -128 and +127 (a signed 8-bit integer). The default is 0. 
+        // priority The priority of the tasks. Should be between -128 and +127 (a signed 8-bit integer). The default is 0.
         template <typename T1, typename T2, typename T = common_index_type_t<T1, T2>, typename F>
         void PostSequence(const T1 first_index, const T2 index_after_last, F&& sequence, const priority_t priority = 0)
         {
@@ -191,7 +191,7 @@ namespace qor { namespace thread{
         //Submit a function with no arguments and no return value into the task queue, with the specified priority. To submit a function with arguments, enclose it in a lambda expression. Does not return a future, so the user must use `wait()` or some other method to ensure that the task finishes executing, otherwise bad things will happen.
         // F The type of the function.
         // task The function to submit.
-        // priority The priority of the task. Should be between -128 and +127 (a signed 8-bit integer). 
+        // priority The priority of the task. Should be between -128 and +127 (a signed 8-bit integer).
         template <typename F>
         void PostTask(F&& task, const priority_t priority = 0)
         {
@@ -203,7 +203,7 @@ namespace qor { namespace thread{
         }
 
         //Get a vector containing the underlying implementation-defined thread handles for each of the pool's threads, as obtained by `std::thread::native_handle()` (or `std::jthread::native_handle()` in C++20 and later).
-        //return The native thread handles.     
+        //return The native thread handles.
         qor_pp_module_interface(QOR_THREAD) [[nodiscard]] std::vector<thread_t::native_handle_type> GetNativeHandles() const;
         qor_pp_module_interface(QOR_THREAD) [[nodiscard]] std::size_t GetCountOfTasksQueued() const;
         //Get the number of tasks currently being executed by the threads.
@@ -218,7 +218,7 @@ namespace qor { namespace thread{
         qor_pp_module_interface(QOR_THREAD) [[nodiscard]] std::vector<thread_t::id> GetThreadIds() const;
         qor_pp_module_interface(QOR_THREAD) [[nodiscard]] bool IsPaused() const;
 
-        //Pause the pool. The workers will temporarily stop retrieving new tasks out of the queue, although any tasks already executed will keep running until they are finished. Only enabled if the flag `BS:tp::pause` is enabled in the template parameter.        
+        //Pause the pool. The workers will temporarily stop retrieving new tasks out of the queue, although any tasks already executed will keep running until they are finished. Only enabled if the flag `BS:tp::pause` is enabled in the template parameter.
         qor_pp_module_interface(QOR_THREAD) void Pause();
 
         // Purge all the tasks waiting in the queue. Tasks that are currently running will not be affected, but any tasks still waiting in the queue will be discarded, and will never be executed by the threads. Please note that there is no way to restore the purged tasks.
@@ -423,7 +423,7 @@ namespace qor { namespace thread{
             return future;
         }
 
-        // Unpause the pool. The workers will resume retrieving new tasks out of the queue. 
+        // Unpause the pool. The workers will resume retrieving new tasks out of the queue.
         qor_pp_module_interface(QOR_THREAD) void Unpause();
 
         // Wait for tasks to be completed. Normally, this function waits for all tasks, both those that are currently running in the threads and those that are still waiting in the queue. However, if the pool is paused, this function only waits for the currently running tasks (otherwise it would wait forever). Note: To wait for just one specific task, use `SubmitTask()` instead, and call the `wait()` member function of the generated future.
@@ -462,7 +462,7 @@ namespace qor { namespace thread{
         // D An `std::chrono::duration` type used to indicate the time point.
         // timeout_time The time point at which to stop waiting.
         // return `true` if all tasks finished running, `false` if the time point was reached but some tasks are still running.
-        // throws `wait_deadlock` if called from within a thread of the same pool, which would result in a deadlock. 
+        // throws `wait_deadlock` if called from within a thread of the same pool, which would result in a deadlock.
         template <typename C, typename D>
         bool WaitUntil(const std::chrono::time_point<C, D>& timeout_time)
         {
@@ -486,10 +486,22 @@ namespace qor { namespace thread{
             return status;
         }
 
-        qor_pp_module_interface(QOR_THREAD) auto Schedule();
+        inline auto Schedule()
+        {
+            struct Awaiter : std::suspend_always
+            {
+                ThreadPool &tpool;
+                Awaiter(ThreadPool &pool) : tpool{pool} {}
+                void await_suspend(std::coroutine_handle<> handle)
+                {
+                    tpool.PostTask([handle, this]() { handle.resume(); });
+                }
+            };
+            return Awaiter{*this};
+        }
 
     private:
-            
+
         qor_pp_module_interface(QOR_THREAD) void CreateThreads();
         qor_pp_module_interface(QOR_THREAD) static std::size_t DetermineThreadCount(const std::size_t num_threads) noexcept;
         qor_pp_module_interface(QOR_THREAD) task_t PopTask();
@@ -502,7 +514,7 @@ namespace qor { namespace thread{
             SetThreadCount(num_threads);
             CreateThreads();
         }
-        
+
         qor_pp_module_interface(QOR_THREAD) void Worker(const std::stop_token &stop_token, const std::size_t idx);                          //A worker function to be assigned to each thread in the pool. Waits until it is notified by `PostTask()` that a task is available, and then retrieves the task from the queue and executes it. Once the task finishes, the worker notifies `wait()` in case it is waiting.
         ThreadPool(const ThreadPool&) = delete;                                                         // The copy and move constructors and assignment operators are deleted. The thread pool cannot be copied or moved.
         ThreadPool(ThreadPool&&) = delete;
@@ -520,7 +532,7 @@ namespace qor { namespace thread{
         std::size_t thread_count = 0;                                           //The number of threads in the pool.
         std::unique_ptr<thread_t[]> threads = nullptr;                          //A smart pointer to manage the memory allocated for the threads.
         bool waiting = false;                                                   //A flag indicating that `wait()` is active and expects to be notified whenever a task is done.
-    }; 
+    };
 
     using binary_semaphore = std::binary_semaphore;
     template <std::ptrdiff_t LeastMaxValue = std::counting_semaphore<>::max()>

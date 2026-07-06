@@ -27,7 +27,7 @@
 #include "asyncioinitiator.h"
 #include "src/qor/flyers/error/commonerrormessages.h"
 
-namespace qor { namespace async{
+namespace qor { namespace io{ namespace async{
 
     AsyncIOInitiator::AsyncIOInitiator() { };
     AsyncIOInitiator::~AsyncIOInitiator() noexcept { };
@@ -92,4 +92,4 @@ namespace qor { namespace async{
         co_return AsyncIOResult{ .status_code = -1, .ioObject = nullptr};
     }
 
-}}//qor::async
+}}}//qor::io::async

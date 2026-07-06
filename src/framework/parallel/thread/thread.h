@@ -14,7 +14,7 @@
 
 namespace qor{
 
-    class Thread
+    class qor_pp_module_interface_gcc(QOR_APPLICATION) Thread
     {
     public:
 
@@ -29,13 +29,13 @@ namespace qor{
 		Thread&	operator=(const Thread&) = delete;
 		qor_pp_module_interface(QOR_THREAD) Thread&	operator=(Thread&& other) noexcept;
 		qor_pp_module_interface(QOR_THREAD) void swap(Thread& other) noexcept;
-	
+
 		template<typename _Callable, typename... _Args,	typename = std::enable_if_t<!std::is_same_v<std::remove_cvref_t<_Callable>,Thread>>>
-	 	explicit Thread(_Callable&& __f, _Args&&... __args) : 
-			m_std_thread(std::forward<_Callable>(__f), std::forward<_Args>(__args)...), 
-			m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) ) 
+	 	explicit Thread(_Callable&& __f, _Args&&... __args) :
+			m_std_thread(std::forward<_Callable>(__f), std::forward<_Args>(__args)...),
+			m_callback(m_std_thread.get_stop_token(), Delegate<void(void)>::Create<Thread, &Thread::CleanUp>(this) )
 		{ }
-		
+
 		qor_pp_module_interface(QOR_THREAD) std::thread::id GetID();
 		qor_pp_module_interface(QOR_THREAD) void Detach();
 		qor_pp_module_interface(QOR_THREAD) std::stop_source GetStopSource();
@@ -45,12 +45,12 @@ namespace qor{
 		qor_pp_module_interface(QOR_THREAD) bool RequestStop();
 		qor_pp_module_interface(QOR_THREAD) std::jthread& stdThread();
 		qor_pp_module_interface(QOR_THREAD) virtual void Run();
-		
-    private:	
+
+    private:
 
 		qor_pp_module_interface(QOR_THREAD) void Setup();
 		qor_pp_module_interface(QOR_THREAD) void CleanUp();
-		
+
 		CurrentThread* m_pCurrent;
         std::jthread m_std_thread;
 		std::stop_callback< Delegate<void(void)> > m_callback;
