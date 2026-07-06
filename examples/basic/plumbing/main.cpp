@@ -5,9 +5,22 @@
 
 //For a simpler example of the flow of a QOR application see the roller example
 
-#include "sdk/using_framework.h"
-#include "sdk/using_platform.h"
-#include "sdk/components/framework.h"
+#include "src/configuration/configuration.h"
+#include "src/platform/platform.h"
+#include "src/qor/essentials/current/currentthread.h"
+#include "sdk/app.h"
+#include "src/framework/io/filesystem/file/filereader.h"
+#include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
+#include "src/components/data/pipeline/filters/base64encodefilter/base64encodefilter.h"
+#include "src/framework/data/pipeline/pipeline.h"
+
+using namespace qor;
+using namespace qor::platform;
+using namespace qor::app;
+using namespace qor::io;
+using namespace qor::io::components;
+using namespace qor::pipeline;
+using namespace qor::pipeline::components;
 
 constexpr const char* appName = "Plumbing";
 qor_pp_implement_module(appName)
@@ -59,7 +72,7 @@ int main()
 
 void TraditionalFileRead(FileSystem::ref fileSystem, filesystem::Index& index)
 {
-    auto file = fileSystem->Open(index, OpenFor::ReadOnly);         //Obtain a file object from the file system    
+    auto file = fileSystem->Open(index, OpenFor::ReadOnly, WithFlags::None);//Obtain a file object from the file system    
     FileReader reader(file);                                        //Initialise a reader for the file    
     std::string line = reader.ReadLine();                           //Read a line from the file    
     std::cout << line << std::endl;                                 //process the data
@@ -72,36 +85,42 @@ void TraditionalFileRead(FileSystem::ref fileSystem, filesystem::Index& index)
 
 void PipelineFileProcessor(FileSystem::ref fileSystem, filesystem::Index& input)
 {    
-    filesystem::Index output(fileSystem->CurrentPath(), "output.txt");      //An output file to go with the input file
+    //An output file to go with the input file
+    filesystem::Index output(fileSystem->CurrentPath(), "output.txt");      
 
-    if(output.Exists())                                             //Clean up any old output
+    //Clean up any old output
+    if(output.Exists())                                             
     {
         fileSystem->Delete(output);
     }
 
-    pipeline::components::Base64EncodeFilter encode(4096);                                //Set up a base 64 encoder with 4K of buffer space
+    //Set up a base64 encoder with 4K of buffer space
+    Base64EncodeFilter encoder(4096);                          
 
     /*We use File connectors to connect to the input and output files. These encapsulate everything file related for 
     the pipeline. If we used Socket connectors or Pipe connectors or DBus connectors, the rest of the pipeline would
      be identical and oblivious*/
-    io::components::FileConnector inputConnector(input, OpenFor::ReadOnly, WithFlags::None);
-    io::components::FileConnector outputConnector(output);
+    FileConnector inputConnector(input, OpenFor::ReadOnly, WithFlags::None);
+    FileConnector outputConnector(output, OpenFor::ReadWrite, WithFlags::CreateNew);
 
     //Create a pipeline with the connectors at each end
     Pipeline fileProcessor(inputConnector, outputConnector, Element::Push);
-    fileProcessor.InsertInlineFilter(encode);   //Insert the base 64 encoder as a filter
-    fileProcessor.Connect();    //Connect to the sink and the source. This opens the files at both ends
-    fileProcessor.PumpAll();    //Pump all the available data. This will read, encode and write all the data in the inputfile
+    //Insert the base64 encoder as a filter
+    fileProcessor.InsertInlineFilter(encoder);   
+    //Connect to the sink and the source. This opens the files at both ends
+    fileProcessor.Connect();
+    //Pump all the available data. This will read, encode and write all the data in the inputfile
+    fileProcessor.PumpAll();
 
     //Everything we've created here is on the stack so it's all cleaned up and the files closed automatically.
 
     /*This could also be done as a single statement
     Pipeline(
-        FileConnector(OpenFor::ReadOnly, input,WithFlags::None),
-        FileConnector(output),
+        FileConnector(input, OpenFor::ReadOnly, WithFlags::None),
+        FileConnector(output, OpenFor::ReadWrite, WithFlags::CreateNew),
         Element::Push).
-        InsertInlineFilter(Base64EncodeFilter(8192)).
-            Connect().
-            PumpAll();
+        InsertInlineFilter(Base64EncodeFilter(128)).
+    Connect().
+    PumpAll();
     */
 }

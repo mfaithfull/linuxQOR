@@ -13,11 +13,11 @@
 #include "src/components/io/pipeline/connectors/socketconnector/socketwriter.h"
 #include "src/components/io/pipeline/sources/stdinsource/stdinsource.h"
 #include "src/components/io/pipeline/sinks/stdoutsink/stdoutsink.h"
-#include "src/components/io/pipeline/sources/randomsource/randomsource.h"
+#include "src/components/data/pipeline/sources/randomsource/randomsource.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
 #include "src/components/io/pipeline/connectors/fileconnector/filesink.h"
 #include "src/components/io/pipeline/connectors/fileconnector/filesource.h"
-#include "src/components/io/pipeline/filters/base64encodefilter/base64encodefilter.h"
-#include "src/components/io/pipeline/filters/base64decodefilter/base64decodefilter.h"
+#include "src/components/data/pipeline/filters/base64encodefilter/base64encodefilter.h"
+#include "src/components/data/pipeline/filters/base64decodefilter/base64decodefilter.h"
 
 #endif//QOR_PP_H_SDK_COMPONENTS_FRAMEWORK

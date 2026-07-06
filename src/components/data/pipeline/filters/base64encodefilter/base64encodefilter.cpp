@@ -62,7 +62,8 @@ namespace qor{ namespace pipeline { namespace components{
             {
                 space[outindex++] = '=';
             }
-            unitsToProcess = outindex;            
+            unitsToProcess = index;
+            writeCount = outindex;            
         }
     }
 }}}//qor::pipeline::components

@@ -67,7 +67,7 @@ namespace qor{ namespace pipeline{
 
     bool Source::Read(size_t& unitsRead, size_t unitsToRead)
     {
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;        
+        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
     }
 
     void Source::OnReadSuccess(size_t unitsRead)
