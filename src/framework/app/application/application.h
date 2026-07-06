@@ -23,7 +23,7 @@ qor::SingletonRedirector<qor::Application, _MYAPP> _MYAPP::m_sRedirect;
 
 namespace qor{
 
-    class Application : public app::IOptionable
+    class qor_pp_module_interface_gcc(QOR_APPLICATION) Application : public app::IOptionable
     {
     public:
 
@@ -59,7 +59,7 @@ namespace qor{
             ThePlatform(qor_shared)->template AddSubsystem<TSubsystem>();
 			return *this;
 		}
-        
+
         qor_pp_module_interface(QOR_APPLICATION) int RunWorkflow( ref_of<workflow::IWorkflow>::type workflow );
 
         template< class TWorkflow >
@@ -104,7 +104,7 @@ namespace qor{
     };
 
     qor_pp_declare_instancer_of(Application, SingletonInstancer);
-    
+
 }//qor
 
 #endif//QOR_PP_H_APPLICATION

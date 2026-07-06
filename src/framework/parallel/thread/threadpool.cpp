@@ -31,7 +31,7 @@ namespace qor{ namespace thread{
     }
 
     ThreadPool::~ThreadPool() noexcept                                                                          //Destruct the thread pool. Waits for all tasks to complete, then destroys all threads. If a cleanup function was set, it will run in each thread right before it is destroyed. Note that if the pool is paused, then any tasks still in the queue will never be executed.
-    {            
+    {
 #ifdef __cpp_exceptions
         try
         {
@@ -51,7 +51,7 @@ namespace qor{ namespace thread{
 
 
     //Get a vector containing the underlying implementation-defined thread handles for each of the pool's threads, as obtained by `std::thread::native_handle()` (or `std::jthread::native_handle()` in C++20 and later).
-    //return The native thread handles.     
+    //return The native thread handles.
     std::vector<thread_t::native_handle_type> ThreadPool::GetNativeHandles() const
     {
         std::vector<thread_t::native_handle_type> native_handles(thread_count);
@@ -152,20 +152,6 @@ namespace qor{ namespace thread{
         waiting = false;
     }
 
-    auto ThreadPool::Schedule() 
-    {
-        struct Awaiter : std::suspend_always 
-        {
-            ThreadPool &tpool;
-            Awaiter(ThreadPool &pool) : tpool{pool} {}
-            void await_suspend(std::coroutine_handle<> handle) 
-            {
-                tpool.PostTask([handle, this]() { handle.resume(); });
-            }
-        };
-        return Awaiter{*this};
-    }
-
     void ThreadPool::SetThreadCount(const std::size_t num_threads)
     {
         thread_count = DetermineThreadCount(num_threads);
@@ -184,8 +170,8 @@ namespace qor{ namespace thread{
             threads[i] = thread_t(
                 [this, i]
                 (const std::stop_token& stop_token)
-                {               
-                    CurrentThread::Init();                    
+                {
+                    CurrentThread::Init();
                     Worker(stop_token, i);
                     CurrentThread::Destroy();
                 }

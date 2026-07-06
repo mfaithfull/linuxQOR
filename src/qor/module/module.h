@@ -7,7 +7,7 @@
 #include "library.h"
 
 namespace qor{
-    
+
     class ModuleRegistry;
 
 	class Module : public Library
@@ -15,7 +15,7 @@ namespace qor{
     public:
 
         Module(const char* name, const char* version, bool _register = true);
-        virtual ~Module() noexcept;		
+        virtual ~Module() noexcept;
 
 		bool RegisterLibrary(Library* library);         //Register a static library as part of this module
 		void UnregisterLibrary(Library* library);       //Unregister a static library from this module
@@ -28,8 +28,8 @@ namespace qor{
             }
         }
 
-        virtual void RegisterModule(Module* module){ };
-        virtual void UnregisterModule(Module* module){ };
+        virtual void RegisterModule(Module* /*module*/){ };
+        virtual void UnregisterModule(Module* /*module*/){ };
 
         ModuleRegistry* Modules();
 
