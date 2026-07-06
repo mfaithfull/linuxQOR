@@ -31,6 +31,7 @@
 #endif
 
 #include <Windows.h>
+#include <synchapi.h>
 #undef min
 #undef max
 

@@ -30,7 +30,7 @@
 #include "src/framework/app/workflow/workflow.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/network/socket.h"
-#include "src/framework/io/asyncioservice//asyncioservice.h"
+#include "src/framework/io/async/service.h"
 #include "src/framework/app/application/application.h"
 #include "src/qor/flyers/log/debug.h"
 #include "src/qor/flyers/error/error.h"
@@ -56,7 +56,7 @@ namespace qor{ namespace io{ namespace network { namespace components {
                 qor_pp_ofcontext;
                 log::debug("Servicing a connected client {0}", m_socket->m_fd);
                 auto application = AppBuilder().TheApplication();
-                auto ioService = application(qor_shared).GetRole(qor_shared)->GetFeature<async::AsyncIOService>();
+                auto ioService = application(qor_shared).GetRole(qor_shared)->GetFeature<async::Service>();
                 m_ioSession = ioService(qor_shared).GetSession();
                 m_pipeline = new_ref<SessionPipeline>(m_socket, m_ioSession, protocol);
                 SetState(running);
@@ -100,7 +100,7 @@ namespace qor{ namespace io{ namespace network { namespace components {
 
         //session data
         ref_of<network::Socket>::type m_socket;
-        ref_of<async::AsyncIOContext::Session>::type m_ioSession;
+        ref_of<async::Context::Session>::type m_ioSession;
         ref_of<SessionPipeline>::type m_pipeline;
 
     };

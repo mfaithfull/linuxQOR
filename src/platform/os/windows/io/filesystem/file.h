@@ -46,7 +46,7 @@ namespace qor{ namespace io { namespace win{
         File(const File& src);
         File(const filesystem::Path& path, const std::string& fileName, int openFor, int withFlags) : File(filesystem::Index(path,fileName),openFor,withFlags) {}
         File(const filesystem::Index& direntry, int openFor, int withFlags);
-        File(const IODescriptor& iod);
+        File(const Descriptor& iod);
         virtual ~File();
 
         virtual bool SupportsPosition() override;
@@ -58,8 +58,8 @@ namespace qor{ namespace io { namespace win{
         virtual void Reserve(uint64_t length) override;
         virtual void Flush() override;
         virtual ref_of<io::File>::type ReOpen(int openFor, int withFlags) override;
-        virtual task<int> AsyncRead(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
-        virtual task<int> AsyncWrite(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
+        virtual task<int> AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
+        virtual task<int> AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1) override;
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1) override;
 

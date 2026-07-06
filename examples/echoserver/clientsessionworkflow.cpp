@@ -36,7 +36,7 @@
 #include "src/qor/flyers/log/important.h"
 #include "src/qor/flyers/log/imperative.h"
 #include "src/framework/app/application/builder.h"
-#include "src/framework/io/asyncioservice//asyncioservice.h"
+#include "src/framework/io/async/service.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/parallel/task/syncwait.h"
 #include "echoserverapp.h"
@@ -51,7 +51,7 @@ using namespace qor::io::network::sockets;
 using namespace qor::components;
 
 ClientSessionWorkflow::ClientSessionWorkflow(
-    ref_of<qor::io::async::AsyncIOContext::Session>::type ioSession, ref_of<Socket>::type socket) :
+    ref_of<qor::io::async::Context::Session>::type ioSession, ref_of<Socket>::type socket) :
     m_logHandler(log::Level::Debug),
     connected(new_ref<workflow::State>(this)),
     echo(new_ref<workflow::State>(this)),
@@ -76,7 +76,7 @@ ClientSessionWorkflow::ClientSessionWorkflow(
         qor_pp_ofcontext;
         qor::log::inform("Servicing a connected client {0}", m_socket->m_fd);
 
-        auto ioSession = AppBuilder().TheApplication(qor_shared)->GetRole()->GetFeature<async::AsyncIOService>(qor_shared)->GetSession();
+        auto ioSession = AppBuilder().TheApplication(qor_shared)->GetRole()->GetFeature<async::Service>(qor_shared)->GetSession();
         m_pipeline = new_ref<SessionPipeline>(m_socket, ioSession);
         SetState(echo);
     };

@@ -37,7 +37,7 @@ namespace qor{ namespace io{ namespace network{ namespace lin{
 
         Sockets() = default;
         virtual ~Sockets() = default;
-        virtual ref_of<network::Socket>::type CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<async::AsyncIOContext::Session>::type ioSession) const;
+        virtual ref_of<network::Socket>::type CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<async::Context::Session>::type ioSession) const;
         virtual int GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results) const;
 
     private:

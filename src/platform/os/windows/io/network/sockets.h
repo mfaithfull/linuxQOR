@@ -30,7 +30,7 @@
 qor_pp_module_will_provide(WINQOR_SOCKETS,Sockets)
 
 namespace qor{ namespace async {
-    class AsyncIOContext;
+    class Context;
 }}//qor::io::async
 
 namespace qor{ namespace io { namespace network { namespace win{
@@ -45,7 +45,7 @@ namespace qor{ namespace io { namespace network { namespace win{
         virtual void Setup();
         virtual void Shutdown();
 
-        virtual ref_of<network::Socket>::type CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<qor::io::async::AsyncIOContext::Session>::type ioSession) const;
+        virtual ref_of<network::Socket>::type CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<qor::io::async::Context::Session>::type ioSession) const;
         virtual int GetAddressInfo(const std::string& node, const std::string& service, const network::AddressInfo& hints, std::vector<network::AddressInfo>& results) const;
 
     private:

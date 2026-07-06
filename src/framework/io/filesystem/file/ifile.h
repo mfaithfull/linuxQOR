@@ -33,7 +33,7 @@
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/iodescriptor.h"
 #include "src/framework/parallel/task/task.h"
-#include "src/framework/io/asyncioservice//asynciointerface.h"
+#include "src/framework/io/async/interface.h"
 #include "../permissions.h"
 
 namespace qor{

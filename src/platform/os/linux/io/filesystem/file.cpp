@@ -51,13 +51,13 @@ namespace qor{ namespace io{ namespace lin{
     {
         if(src.m_fd != -1)
         {
-            IODescriptor::m_fd = Validate_fcntl_Result(fcntl(src.m_fd, F_DUPFD, 0));
+            Descriptor::m_fd = Validate_fcntl_Result(fcntl(src.m_fd, F_DUPFD, 0));
         }
     }
 
     File::File(const io::filesystem::Index& direntry, int openFor, int withFlags) : io::File(direntry)
     {
-        IODescriptor::m_fd = -1;
+        Descriptor::m_fd = -1;
         int mode = 0;
         if( ( (withFlags & WithFlags::CreateNew) | (withFlags & WithFlags::TempFile) ) != 0 )
         {
@@ -188,12 +188,12 @@ namespace qor{ namespace io{ namespace lin{
     }
 
 
-    task<int> File::AsyncRead(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         return ioContext.Read(this, buffer, byteCount, offset);
     }
 
-    task<int> File::AsyncWrite(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         return ioContext.Write(this, buffer, byteCount, offset);
     }

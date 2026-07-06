@@ -34,7 +34,7 @@
 #include "src/qor/flyers/log/important.h"
 #include "src/qor/flyers/log/imperative.h"
 #include "src/framework/io/pipeline/podbuffer.h"
-#include "src/framework/io/asyncioservice//asyncioservice.h"
+#include "src/framework/io/async/service.h"
 #include "src/framework/parallel/task/syncwait.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "echoserverapp.h"
@@ -59,7 +59,7 @@ ServerWorkflow::ServerWorkflow() :
     {
         qor_pp_ofcontext;
         auto application = new_ref<EchoServerApp>();
-        m_io = application(qor_shared).GetRole()->GetFeature<async::AsyncIOService>();
+        m_io = application(qor_shared).GetRole()->GetFeature<async::Service>();
         m_threadPool = application(qor_shared).GetRole()->GetFeature<thread::ThreadPool>();
         m_sockets = ThePlatform(qor_shared)->GetSubsystem<Sockets>();
         m_ioSession = m_io->GetSession();

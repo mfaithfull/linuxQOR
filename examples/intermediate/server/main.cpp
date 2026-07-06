@@ -35,7 +35,7 @@ constexpr const char* logTag = "server";
 qor_pp_implement_module(Server::Name)
 
 qor_pp_module_requires(Sockets)
-qor_pp_module_requires(AsyncIOService)
+qor_pp_module_requires(Service)
 qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)
@@ -65,10 +65,10 @@ int main(const int argc, const char** argv, char** env)
                     CurrentThread::Get().SetName("Main");
                 }                
             );
-            role->AddFeature<AsyncIOService>(
-                [](ref_of<AsyncIOService>::type ioService)->void
+            role->AddFeature<Service>(
+                [](ref_of<Service>::type ioService)->void
                 {
-                    PoolInstancer::SetPoolSize<AsyncIOContext>(2);
+                    PoolInstancer::SetPoolSize<Context>(2);
                 }
             );
             role->AddFeature<LogAggregatorService>(

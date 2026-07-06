@@ -8,7 +8,7 @@
 #include "src/framework/app/optionparser/getter.h"
 #include "src/framework/io/pipeline/pipeline.h"
 #include "src/framework/io/network/sockets.h"
-#include "src/framework/io/asyncioservice//asyncioservice.h"
+#include "src/framework/io/async/service.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/qor/memory/instance/pool.h"
 
@@ -29,7 +29,7 @@ using namespace qor::log;
 #define appName "Echo Server"
 
 qor_pp_module_requires(Sockets)
-qor_pp_module_requires(AsyncIOService)
+qor_pp_module_requires(Service)
 qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)
@@ -57,10 +57,10 @@ int main(const int argc, const char** argv, char**)
                     CurrentThread::GetCurrent().SetName("Server Main");
                 }
             );
-            role->AddFeature<async::AsyncIOService>(
-                [](ref_of<async::AsyncIOService>::type ioService)->void
+            role->AddFeature<async::Service>(
+                [](ref_of<async::Service>::type ioService)->void
                 {
-                    PoolInstancer::SetPoolSize<async::AsyncIOContext>(4);
+                    PoolInstancer::SetPoolSize<async::Context>(4);
                 }
             );
             role->AddFeature<LogAggregatorService>(

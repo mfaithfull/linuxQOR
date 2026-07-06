@@ -31,7 +31,7 @@
 #include "src/platform/os/windows/io/network/sockets.h"
 #include "src/platform/os/windows/io/network/socket.h"
 #include "src/qor/flyers/error/error.h"
-#include "src/framework/io/asyncioservice//asynciocontext.h"
+#include "src/framework/io/async/context.h"
 
 #include "src/platform/os/windows/api_layer/winsock2/ws2.h"
 
@@ -67,12 +67,12 @@ namespace qor{ namespace io{ namespace network{ namespace win{
         memcpy(addressinfo.address.sa.sa_data, info.ai_addr->sa_data, info.ai_addrlen);
     }
 
-    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<async::AsyncIOContext::Session>::type ioSession) const
+    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<async::Context::Session>::type ioSession) const
     {
         auto socket = new_ref<Socket>(AF, Type, Protocol);
         if( ioSession.IsNotNull())
         {
-            io::IODescriptor iod;
+            io::Descriptor iod;
             iod.m_socket = socket->ID();
             ioSession->Enroll(iod);
         }
@@ -118,7 +118,7 @@ namespace qor{ namespace io{ namespace network{ namespace win{
                 Socket::AddressFamilyFromWindows(rp->ai_family),
                 Socket::TypeFromWindows(rp->ai_socktype),
                 Socket::ProtocolFromWindows(rp->ai_protocol),
-                ref_of<qor::io::async::AsyncIOContext::Session>::type());
+                ref_of<qor::io::async::Context::Session>::type());
             if(socket.IsNull())
             {
                 continue;

@@ -107,7 +107,7 @@ namespace qor{ namespace io { namespace win{
         m_handle = INVALID_HANDLE_VALUE;
     }
 
-    File::File(const io::IODescriptor& iod)
+    File::File(const io::Descriptor& iod)
     {
         m_handle = iod.m_handle;
     }
@@ -221,21 +221,21 @@ namespace qor{ namespace io { namespace win{
 
     ref_of<io::File>::type File::ReOpen(int openFor, int withFlags)
     {
-        IODescriptor newDescriptor{0};
+        Descriptor newDescriptor{0};
         unsigned long desiredAccess = GetDesiredAccess(openFor, withFlags);
         unsigned long shareMode = GetShareMode(openFor, withFlags);
         unsigned long flagsAndAttributes = GetFlagsAndAttributes(openFor, withFlags);
 
-        newDescriptor.m_handle = Kernel32::ReOpenFile(IODescriptor::m_handle, desiredAccess, shareMode, flagsAndAttributes);
+        newDescriptor.m_handle = Kernel32::ReOpenFile(Descriptor::m_handle, desiredAccess, shareMode, flagsAndAttributes);
         return new_ref<io::File>(newDescriptor);
     }
 
-    task<int> File::AsyncRead(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         return ioContext.Read(this, buffer, byteCount, offset);
     }
 
-    task<int> File::AsyncWrite(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         return ioContext.Write(this, buffer, byteCount, offset);
     }

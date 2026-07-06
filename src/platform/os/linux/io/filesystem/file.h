@@ -28,7 +28,7 @@
 #include "src/framework/io/filesystem/file/file.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/path.h"
-#include "src/platform/os/linux/parallel/asyncioservice/asyncioservice.h"
+#include "src/platform/os/linux/parallel/async/asyncioservice.h"
 
 //Declaration must match the one in src/system/filesystem/ifile.h
 namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFile(); }
@@ -57,8 +57,8 @@ namespace qor{ namespace io { namespace lin{
         virtual void Reserve(uint64_t length) override;
         virtual void Flush() override;
         virtual ref_of<io::File>::type ReOpen(int openFor, int withFlags) override;
-        virtual task<int> AsyncRead(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
-        virtual task<int> AsyncWrite(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
+        virtual task<int> AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
+        virtual task<int> AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1) override;
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1) override;
 

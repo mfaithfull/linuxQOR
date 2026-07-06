@@ -30,8 +30,8 @@
 #include <netinet/tcp.h>
 #include <fcntl.h>
 #include <poll.h>
-#include "src/platform/os/linux/parallel/asyncioservice/asyncioservice.h"
-#include "src/platform/os/linux/parallel/asyncioservice/iouringservice/readop.h"
+#include "src/platform/os/linux/parallel/async/service.h"
+#include "src/platform/os/linux/parallel/async/iouringservice/readop.h"
 
 using namespace qor::io::async::lin;
 
@@ -65,17 +65,17 @@ namespace qor{ namespace io{ namespace network{ namespace lin{
         ::close(m_fd);
     }
 
-    int32_t Socket::Bind(const qor::io::async::AsyncIOInterface& ioContext, const network::Address& Address)
+    int32_t Socket::Bind(const qor::io::async::Interface& ioContext, const network::Address& Address)
     {
         return sync_wait(ioContext.Bind(this, Address));
     }
 
-    int32_t Socket::Listen(const qor::io::async::AsyncIOInterface& ioContext, int32_t backlog)
+    int32_t Socket::Listen(const qor::io::async::Interface& ioContext, int32_t backlog)
     {
         return sync_wait(ioContext.Listen(this, backlog));
     }
 
-    task<int32_t> Socket::AcceptAsync(const qor::io::async::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket)
+    task<int32_t> Socket::AcceptAsync(const qor::io::async::Interface& ioContext, network::Address& Address, network::Socket* Socket)
     {
         return ioContext.Accept(this, Address, Socket);
     }
@@ -147,7 +147,7 @@ namespace qor{ namespace io{ namespace network{ namespace lin{
         return ::setsockopt(m_fd, level, optname, optval, optlen);
     }
 
-    task<int32_t> Socket::AsyncReceive(const qor::io::async::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
+    task<int32_t> Socket::AsyncReceive(const qor::io::async::Interface& ioContext, char* pBuffer, int32_t iLen)
     {
         return ioContext.Recv(this, (byte*)pBuffer, iLen);
     }
@@ -172,7 +172,7 @@ namespace qor{ namespace io{ namespace network{ namespace lin{
         return ::recvfrom(m_fd, Buffer, iLen, iFlags, (sockaddr*)&addr, &socklen);
     }
 
-    task<int32_t> Socket::AsyncSend(const qor::io::async::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+    task<int32_t> Socket::AsyncSend(const qor::io::async::Interface& ioContext, const char* Buffer, int32_t iLen)
     {
         return ioContext.Send(this, (byte*)Buffer, iLen, 0);
     }
@@ -200,7 +200,7 @@ namespace qor{ namespace io{ namespace network{ namespace lin{
         return ::shutdown(m_fd, iHow);
     }
 
-    task<int32_t> Socket::AsyncShutdown(const qor::io::async::AsyncIOInterface& ioContext,  network::sockets::eShutdown how)
+    task<int32_t> Socket::AsyncShutdown(const qor::io::async::Interface& ioContext,  network::sockets::eShutdown how)
     {
         int iHow = 0;
         iHow = ( how & network::sockets::eShutdown::ShutdownRead ) ? SHUT_RD : iHow;

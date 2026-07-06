@@ -28,7 +28,7 @@
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/io/asyncioservice//asyncioservice.h"
+#include "src/framework/io/async/service.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/components/io/network/server/netserver.h"
 #include "src/components/protocols/http/protocol.h"
@@ -49,7 +49,7 @@ using namespace qor::components::protocols;
 qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(Sockets)
-qor_pp_module_requires(AsyncIOService)
+qor_pp_module_requires(Service)
 qor_pp_module_requires(LogAggregatorService)
 
 //Name and provide a top level executable module
@@ -80,10 +80,10 @@ int main(const int argc, const char** argv, char** env)
                             CurrentThread::Get().SetName("Main");
                         }
                     );
-                    role->AddFeature<async::AsyncIOService>(
-                        [](ref_of<async::AsyncIOService>::type ioService)->void
+                    role->AddFeature<async::Service>(
+                        [](ref_of<async::Service>::type ioService)->void
                         {
-                            PoolInstancer::SetPoolSize<async::AsyncIOContext>(3);
+                            PoolInstancer::SetPoolSize<async::Context>(3);
                         }
                     );
                     role->AddFeature<LogAggregatorService>();

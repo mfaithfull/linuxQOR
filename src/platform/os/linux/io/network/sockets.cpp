@@ -72,7 +72,7 @@ namespace qor{ namespace io{ namespace network{ namespace lin{
         memcpy(addressinfo.address.sa.sa_data, info.ai_addr->sa_data, info.ai_addrlen);
     }
 
-    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<async::AsyncIOContext::Session>::type ioSession) const
+    ref_of<network::Socket>::type Sockets::CreateSocket(const network::sockets::eAddressFamily AF, const network::sockets::eType Type, const network::sockets::eProtocol Protocol, ref_of<async::Context::Session>::type ioSession) const
     {
         ref_of<network::Socket>::type socket = new_ref<Socket>(AF, Type, Protocol).AsRef<network::Socket>();
         if( ioSession.IsNotNull())
@@ -103,7 +103,7 @@ namespace qor{ namespace io{ namespace network{ namespace lin{
                 Socket::AddressFamilyFromLinux(rp->ai_family),
                 Socket::TypeFromLinux(rp->ai_socktype),
                 Socket::ProtocolFromLinux(rp->ai_protocol),
-                ref_of<async::AsyncIOContext::Session>::type());
+                ref_of<async::Context::Session>::type());
             if(socket.IsNull())
             {
                 continue;

@@ -41,7 +41,7 @@ namespace qor{ namespace io{ namespace network{ namespace components {
 
         SessionPipeline(
             ref_of<network::Socket>::type socket,
-            ref_of<async::AsyncIOContext::Session>::type ioSession,
+            ref_of<async::Context::Session>::type ioSession,
             ref_of<pipeline::Protocol>::type protocol
         ) : m_filter(protocol->GetRequestFilter()), m_socket(socket), m_ioSession(ioSession),m_socketSessionConnector(m_socket, m_ioSession)
         {
@@ -78,7 +78,7 @@ namespace qor{ namespace io{ namespace network{ namespace components {
         const size_t m_ioBufferSize = 2048; //TODO: Make this configurable
         ref_of<pipeline::InlineFilter<byte>>::type m_filter;
         ref_of<network::Socket>::type m_socket;
-        ref_of<async::AsyncIOContext::Session>::type m_ioSession;
+        ref_of<async::Context::Session>::type m_ioSession;
         SocketConnector m_socketSessionConnector;
         SocketSource m_socketSource;
         SocketSink m_socketSink;

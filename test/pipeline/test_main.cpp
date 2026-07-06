@@ -5,12 +5,12 @@
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/io/asyncioservice//asyncioservice.h"
+#include "src/framework/io/async/service.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/platform/platform.h"
 
-qor_pp_module_requires(AsyncIOService)
+qor_pp_module_requires(Service)
 qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(IFileSystem)
 
@@ -37,10 +37,10 @@ int main(int argc, const char** argv, char**)
 					CurrentThread::Get().SetName("Main");
 				}
 			);
-			role->AddFeature<AsyncIOService>(
-				[](ref_of<AsyncIOService>::type /*ioService*/)->void
+			role->AddFeature<Service>(
+				[](ref_of<Service>::type /*ioService*/)->void
 				{
-					PoolInstancer::SetPoolSize<AsyncIOContext>(2);
+					PoolInstancer::SetPoolSize<Context>(2);
 				}
 			);
 		}

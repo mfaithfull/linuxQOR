@@ -31,7 +31,7 @@
 #include "src/framework/io/network/address.h"
 #include "src/framework/io/network/addressinfo.h"
 #include "src/framework/io/pipeline/connection.h"
-#include "src/framework/io/asyncioservice//asynciocontext.h"
+#include "src/framework/io/async/context.h"
 
 namespace qor{ namespace io{ namespace network { namespace components{
 
@@ -40,7 +40,7 @@ namespace qor{ namespace io{ namespace network { namespace components{
     public:
 
 		SocketConnector();
-        SocketConnector(ref_of<qor::io::network::Socket>::type connectedSocket, ref_of<qor::io::async::AsyncIOContext::Session>::type session);
+        SocketConnector(ref_of<qor::io::network::Socket>::type connectedSocket, ref_of<qor::io::async::Context::Session>::type session);
 
 		virtual ~SocketConnector() noexcept;
 
@@ -72,7 +72,7 @@ namespace qor{ namespace io{ namespace network { namespace components{
             return m_Socket->Bind(Address);
         }
 
-        virtual int32_t Bind(const async::AsyncIOInterface& ioContext, const qor::io::network::Address& Address)
+        virtual int32_t Bind(const async::Interface& ioContext, const qor::io::network::Address& Address)
         {
             return m_Socket->Bind(ioContext, Address);
         }
@@ -82,7 +82,7 @@ namespace qor{ namespace io{ namespace network { namespace components{
             return m_Socket->Listen(iBacklog);
         }
 
-        virtual int32_t Listen(const async::AsyncIOInterface& ioContext, int32_t iBacklog)
+        virtual int32_t Listen(const async::Interface& ioContext, int32_t iBacklog)
         {
             return m_Socket->Listen(ioContext, iBacklog);
         }
@@ -92,12 +92,12 @@ namespace qor{ namespace io{ namespace network { namespace components{
             return m_Socket->Accept(Address);
         }
 
-        ref_of<qor::io::network::Socket>::type Accept(const async::AsyncIOInterface& ioContext, qor::io::network::Address& Address)
+        ref_of<qor::io::network::Socket>::type Accept(const async::Interface& ioContext, qor::io::network::Address& Address)
         {
             return m_Socket->Accept(ioContext, Address);
         }
 
-        virtual task<int32_t> AcceptAsync(const async::AsyncIOInterface& ioContext, qor::io::network::Address& Address, qor::io::network::Socket* Socket)
+        virtual task<int32_t> AcceptAsync(const async::Interface& ioContext, qor::io::network::Address& Address, qor::io::network::Socket* Socket)
         {
             return m_Socket->AcceptAsync(ioContext, Address, Socket);
         }
@@ -139,7 +139,7 @@ namespace qor{ namespace io{ namespace network { namespace components{
             }
         }
 
-        virtual task<int32_t> AsyncReceive(const async::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen)
+        virtual task<int32_t> AsyncReceive(const async::Interface& ioContext, char* pBuffer, int32_t iLen)
         {
             return m_Socket->AsyncReceive(ioContext, pBuffer, iLen);
         }
@@ -161,7 +161,7 @@ namespace qor{ namespace io{ namespace network { namespace components{
             }
         }
 
-        virtual task<int32_t> AsyncSend(const async::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen)
+        virtual task<int32_t> AsyncSend(const async::Interface& ioContext, const char* Buffer, int32_t iLen)
         {
             return m_Socket->AsyncSend(ioContext, Buffer, iLen);
         }
@@ -176,12 +176,12 @@ namespace qor{ namespace io{ namespace network { namespace components{
             return m_Socket->Shutdown(how);
         }
 
-        task<int32_t> Shutdown(const async::AsyncIOInterface& ioContext, qor::io::network::sockets::eShutdown how)
+        task<int32_t> Shutdown(const async::Interface& ioContext, qor::io::network::sockets::eShutdown how)
         {
             return m_Socket->Shutdown(ioContext, how);
         }
 
-        virtual task<int32_t> AsyncShutdown(const async::AsyncIOInterface& ioContext, qor::io::network::sockets::eShutdown how)
+        virtual task<int32_t> AsyncShutdown(const async::Interface& ioContext, qor::io::network::sockets::eShutdown how)
         {
             return m_Socket->AsyncShutdown(ioContext, how);
         }
@@ -215,7 +215,7 @@ namespace qor{ namespace io{ namespace network { namespace components{
         qor::io::network::Address m_remoteAddress;
         qor::ref_of<qor::pipeline::Sink>::type m_sink;
         qor::ref_of<qor::pipeline::Source>::type m_source;
-        ref_of<async::AsyncIOContext::Session>::type m_Session;
+        ref_of<async::Context::Session>::type m_Session;
 
     private:
 

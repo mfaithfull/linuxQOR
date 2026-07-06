@@ -33,13 +33,13 @@
 
 namespace qor{ namespace io{
 
-    class qor_pp_module_interface(QOR_FILESYSTEM) File : public IODescriptor
+    class qor_pp_module_interface(QOR_FILESYSTEM) File : public Descriptor
 	{
 	public:
 
         File();
         File(int fd);
-        File(const IODescriptor& descriptor);
+        File(const Descriptor& descriptor);
         File(const File& src);
         File(const filesystem::Index& index);
         File(const filesystem::Index& index, int OpenFor, const int WithFlags = 0);
@@ -66,8 +66,8 @@ namespace qor{ namespace io{
         virtual void Reserve(uint64_t length);
         virtual void Flush();
         virtual ref_of<File>::type ReOpen(int openFor, int withFlags);
-        virtual task<int> AsyncRead(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
-        virtual task<int> AsyncWrite(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset);
+        virtual task<int> AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset);
+        virtual task<int> AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset);
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
 

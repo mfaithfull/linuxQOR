@@ -55,7 +55,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
             //Get the required features from the Application Role
             auto application = AppBuilder().TheApplication();
             auto role = application(qor_shared).GetRole();
-            m_io = role(qor_shared).GetFeature<async::AsyncIOService>();
+            m_io = role(qor_shared).GetFeature<async::Service>();
             m_threadPool = role(qor_shared).GetFeature<thread::ThreadPool>();
             m_sockets = ThePlatform()(qor_shared).GetSubsystem<Sockets>();
 

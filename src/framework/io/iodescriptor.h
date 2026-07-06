@@ -29,7 +29,7 @@
 
 namespace qor{ namespace io{
 
-    struct IODescriptor
+    struct Descriptor
     {
         union 
         {

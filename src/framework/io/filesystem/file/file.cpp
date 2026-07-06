@@ -39,10 +39,10 @@ namespace qor{ namespace io{
 
     File::File(int fd) : File()
     {
-        IODescriptor::m_fd = fd;
+        Descriptor::m_fd = fd;
     }
 
-    File::File(const IODescriptor& descriptor) : IODescriptor(descriptor){ }
+    File::File(const Descriptor& descriptor) : Descriptor(descriptor){ }
 
     File::File(const File& src) : m_index(src.m_index)
     {
@@ -188,13 +188,13 @@ namespace qor{ namespace io{
         return newfile;
     }
 
-    task<int> File::AsyncRead(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         serious("Empty base implementation.");
         return task<int>{};
     }
 
-    task<int> File::AsyncWrite(const qor::io::async::AsyncIOInterface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         serious("Empty base implementation.");
         return task<int>{};

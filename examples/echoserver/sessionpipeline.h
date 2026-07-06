@@ -27,7 +27,7 @@
 
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/framework/io/asyncioservice//asyncioservice.h"
+#include "src/framework/io/async/service.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketconnector.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketsource.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketsink.h"
@@ -41,7 +41,7 @@ public:
 
     SessionPipeline(
         qor::ref_of<qor::io::network::Socket>::type socket,
-        qor::ref_of<qor::io::async::AsyncIOContext::Session>::type session);
+        qor::ref_of<qor::io::async::Context::Session>::type session);
     virtual ~SessionPipeline();
 
 private:
@@ -49,7 +49,7 @@ private:
     const size_t m_ioBufferSize = 1024;
     EchoRequestFilter m_filter;
     qor::ref_of<qor::io::network::Socket>::type m_socket;
-    qor::ref_of<qor::io::async::AsyncIOContext::Session>::type m_ioSession;
+    qor::ref_of<qor::io::async::Context::Session>::type m_ioSession;
     qor::ref_of<qor::io::network::components::SocketConnector>::type m_socketSessionConnector;
     qor::ref_of<qor::io::network::components::SocketSource>::type m_socketSource;
     qor::ref_of<qor::io::network::components::SocketSink>::type m_socketSink;

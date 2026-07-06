@@ -29,7 +29,7 @@
 #include "src/framework/app/workflow/workflow.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/network/socket.h"
-#include "src/framework/io/asyncioservice//asyncioservice.h"
+#include "src/framework/io/async/service.h"
 #include "src/framework/app/application/application.h"
 #include "src/qor/flyers/log/debug.h"
 #include "src/qor/flyers/error/error.h"
@@ -53,9 +53,9 @@ namespace qor{ namespace io{ namespace network{ namespace components {
 
         //Subsystems and features needed
         ref_of<network::Sockets>::type m_sockets;
-        ref_of<async::AsyncIOService>::type m_io;
+        ref_of<async::Service>::type m_io;
         ref_of<thread::ThreadPool>::type m_threadPool;
-        ref_of<async::AsyncIOContext::Session>::type m_ioSession;
+        ref_of<async::Context::Session>::type m_ioSession;
 
         //Port and socket for connections to the server
         unsigned m_port;

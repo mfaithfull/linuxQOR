@@ -70,7 +70,7 @@ qor_pp_test_suite_case(NetworkTestSuite, canCreateSocket)
     eAddressFamily addressFamily = eAddressFamily::AF_INet;
     eType type = eType::Sock_Stream;
     eProtocol protocol = eProtocol::IPProto_TCP;
-    auto socket = subsystem->CreateSocket(addressFamily, type, protocol, ref_of<qor::io::async::AsyncIOContext::Session>::type());
+    auto socket = subsystem->CreateSocket(addressFamily, type, protocol, ref_of<qor::io::async::Context::Session>::type());
     subsystem->Shutdown();
 }
 
@@ -83,7 +83,7 @@ qor_pp_test_suite_case(NetworkTestSuite, canConnectSocket)
     eAddressFamily addressFamily = eAddressFamily::AF_INet;
     eType type = eType::Sock_Stream;
     eProtocol protocol = eProtocol::IPProto_TCP;
-    auto socket = subsystem->CreateSocket(addressFamily, type, protocol,ref_of<qor::io::async::AsyncIOContext::Session>::type());
+    auto socket = subsystem->CreateSocket(addressFamily, type, protocol,ref_of<qor::io::async::Context::Session>::type());
 
     Address address;
     address.sa_family = eAddressFamily::AF_INet;
