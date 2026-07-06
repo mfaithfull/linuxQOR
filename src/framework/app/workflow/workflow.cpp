@@ -40,9 +40,12 @@ namespace qor{
             Resume = std::bind(&Workflow::Resume, workflow);
             Leave = std::bind(&Workflow::Leave, workflow);
         }
+
+        State::~State() = default;
     }//qor::workflow
 
     Workflow::Workflow(){ }
+    Workflow::~Workflow() = default;
 
     Workflow::Workflow(const Workflow& src) : Workflow()
     {

@@ -4,7 +4,7 @@
 #ifndef QOR_PP_H_ROLE
 #define QOR_PP_H_ROLE
 
-#include <map>
+#include "src/qor/essentials/datastructures/fifomap.h"
 #include "irole.h"
 
 namespace qor{ namespace app {
@@ -25,7 +25,7 @@ namespace qor{ namespace app {
 
     protected:
 
-        std::map<GUID, ref_of<IFeature>::type > m_mapFeatures;
+        fifo_map<const GUID*, ref_of<IFeature>::type > m_mapFeatures;
     };
 
 }}//qor

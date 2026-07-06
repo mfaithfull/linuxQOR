@@ -5,6 +5,7 @@
 #include "role.h"
 #include "src/platform/platform.h"
 #include "src/qor/flyers/error/error.h"
+#include "src/framework/parallel/thread/threadpool.h"
 
 namespace qor{ namespace app {
 
@@ -88,7 +89,7 @@ namespace qor{ namespace app {
 
     ref_of<IFeature>::type Role::GetFeature(const GUID* id)
     {
-        auto it = m_mapFeatures.find(*id);
+        auto it = std::find_if(m_mapFeatures.begin(), m_mapFeatures.end(), [id](auto element){return *element.first == *id;});
         if( it != m_mapFeatures.end())
         {
             return (*it).second.Clone();
@@ -106,11 +107,11 @@ namespace qor{ namespace app {
         if(feature.IsNotNull())
         {
             feature->m_Role = this;
-            m_mapFeatures.insert(std::make_pair(*id, feature));
+            m_mapFeatures.emplace(std::make_pair(id, feature));
         }
         else
         {
-            continuable("Cannot add null feature to role.");
+            continuable("Cannot add null feature to Role.");
         }
     }
 

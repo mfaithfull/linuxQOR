@@ -15,8 +15,7 @@ target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qo
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_workflow
-qor_asyncioservice qor_pipeline qor_property)
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_workflow)
 endif()
 
 if (WIN32)

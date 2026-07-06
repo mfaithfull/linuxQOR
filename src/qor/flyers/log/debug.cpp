@@ -39,7 +39,7 @@ namespace qor{ namespace log {
     {
         //Debug logging will be optimised out of release builds completely
 #ifndef NDEBUG
-        //issue<Debug, const std::string&>(message);
+        issue<Debug, const std::string&>(message);
 #endif
     }
 
