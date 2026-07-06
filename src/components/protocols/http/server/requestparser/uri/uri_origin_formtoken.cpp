@@ -31,13 +31,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void uri_origin_form::Prepare()
     {
-        log::debug("Expecting a uri_origin_form.");
+        //log::debug("Expecting a uri_origin_form.");
         GetParser()->PushNode(new_ref<UriOriginFormNode>());
     }
 
     void uri_origin_form::Emit()
     {
-        log::debug("Emitting a uri_origin_form.");
+        //log::debug("Emitting a uri_origin_form.");
         UriAbsolutePath uriPath;
         Query query;
         auto node = GetParser()->PopNode();
@@ -51,7 +51,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            log::debug(tokenName);
+            //log::debug(tokenName);
 
             if(token == static_cast<uint64_t>(httpRequestToken::uri_absolute_path))
             {

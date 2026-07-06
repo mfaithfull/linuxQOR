@@ -119,7 +119,7 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, filesystem::Index& input)
         FileConnector(input, OpenFor::ReadOnly, WithFlags::None),
         FileConnector(output, OpenFor::ReadWrite, WithFlags::CreateNew),
         Element::Push).
-        InsertInlineFilter(Base64EncodeFilter(128)).
+    InsertInlineFilter(Base64EncodeFilter(128)).
     Connect().
     PumpAll();
     */

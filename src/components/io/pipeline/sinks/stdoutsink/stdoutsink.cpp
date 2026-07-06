@@ -14,7 +14,7 @@ namespace qor{ namespace io{ namespace components{
     {
         fflush(stdout);
     }
-
+/*
     bool StdOutSink::Write(size_t& unitsWritten, size_t unitsToWrite)
     {
         return Pull(unitsWritten, unitsToWrite) ? Push(unitsWritten, unitsWritten) : false;
@@ -28,7 +28,7 @@ namespace qor{ namespace io{ namespace components{
             return (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0)) ? true : false;
         }
         return true;
-    }
+    }*/
 
     //push the requested amount of data out of the door
     bool StdOutSink::Push(size_t& unitsWritten, size_t unitsToWrite)

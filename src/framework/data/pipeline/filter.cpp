@@ -123,11 +123,13 @@ namespace qor{ namespace pipeline{
                 working = ActualSink()->Write(unitsPumpedAtOnce, unitsToPump);
                 if(unitsPumpedAtOnce == 0)
                 {
-                    log::debug("Nothing pulled");
+                    //log::debug("Nothing pulled");
+                    /*
                     if(working)
                     {
                         log::debug("Will retry.");
                     }
+                    */
                     break;
                 }
                 //log::debug("Pulled for {0} units", unitsPumpedAtOnce);
@@ -138,11 +140,13 @@ namespace qor{ namespace pipeline{
                 working = ActualSource()->Read(unitsPumpedAtOnce, unitsToPump);
                 if(unitsPumpedAtOnce == 0)
                 {
-                    log::debug("Nothing pushed.");
+                    //log::debug("Nothing pushed.");
+                    /*
                     if(working)
                     {
                         log::debug("Will retry.");
                     }
+                    */
                     break;
                 }
                 //log::debug("Pushed {0} units", unitsPumpedAtOnce);
@@ -157,14 +161,8 @@ namespace qor{ namespace pipeline{
     bool Filter::Read(size_t& unitsRead, size_t unitsToRead)
     {
         return (GetFlowMode() == FlowMode::Pull) ? 
-        (ReadFilter(unitsRead, unitsRead)) : ActualSource()->Read(unitsRead, unitsToRead);
-/*
-        return ActualSource()->Read(unitsRead, unitsToRead) ? 
-        (
-            (GetFlowMode() == FlowMode::Pull) ? 
-                (ReadFilter(unitsRead, unitsRead)): true
-        ) : false;
-*/
+            (ReadFilter(unitsRead, unitsRead)) : 
+            ActualSource()->Read(unitsRead, unitsToRead);
     }
 
     bool Filter::Write(size_t& unitsWritten, size_t unitsToWrite)

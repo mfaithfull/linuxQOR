@@ -93,17 +93,17 @@ namespace qor { namespace components { namespace parser {
         }
         catch(const Serious& error)
         {
-            log::imperative("Parser failed: {0}", error.what().Content());
+            //log::imperative("Parser failed: {0}", error.what().Content());
             m_inError = true;
         }
         catch(const std::exception& e)
         {
-            log::imperative("Parser failed: {0}", e.what());
+            //log::imperative("Parser failed: {0}", e.what());
             m_inError = true;
         }
         catch(...)
         {
-            log::imperative("Parser failed due to unhandled exception.");
+            //log::imperative("Parser failed due to unhandled exception.");
             m_inError = true;
         }
 
@@ -111,11 +111,13 @@ namespace qor { namespace components { namespace parser {
 
         if(!m_final && m_StateStack.size() == 0 )
         {
-            log::debug("Parse finished early.");
+            //log::debug("Parse finished early.");
+            /*
             if(m_nodes.size() == 0)
             {
                 log::debug("Nothing found.");
             }
+            */
         }
         /*
         std::stack< ref_of<workflow::State>::type > copy = m_StateStack; // Copy the stack
@@ -156,7 +158,7 @@ namespace qor { namespace components { namespace parser {
     {   
         qor_pp_ofcontext;
 
-        log::debug("Partial parse starting.");
+        //log::debug("Partial parse starting.");
         m_final = false;
         m_complete = false;
         if(m_StateStack.empty())
@@ -165,7 +167,7 @@ namespace qor { namespace components { namespace parser {
             return -1;
         }
         int result = SafeParse();
-        log::debug("Partial parse complete.");
+        //log::debug("Partial parse complete.");
         return result;
     }
 
@@ -176,7 +178,7 @@ namespace qor { namespace components { namespace parser {
         std::string finalParse = m_final ? "Yes" : "No";
         std::string inError = m_inError ? "Yes" : "No";
 
-        log::debug("Parser diagnostics: In final parse = {0}, In Error = {1}, Node stack size = {2}, State stack size = {3}", finalParse, inError, m_nodes.size(), m_StateStack.size());
+        //log::debug("Parser diagnostics: In final parse = {0}, In Error = {1}, Node stack size = {2}, State stack size = {3}", finalParse, inError, m_nodes.size(), m_StateStack.size());
 
         if(m_nodes.size() > 0)
         {

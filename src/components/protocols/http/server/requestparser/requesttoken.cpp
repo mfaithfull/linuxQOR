@@ -34,13 +34,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void request::Prepare()
     {
-        log::debug("Expecting an HTTP request.");
+        //log::debug("Expecting an HTTP request.");
         GetParser()->PushNode(new_ref<RequestNode>().template AsRef<Node>());
     }
 
     void request::Emit()
     {        
-        log::debug("Emitting an HTTP request.");
+        //log::debug("Emitting an HTTP request.");
         std::string method;
         std::string protocolVersion;
         Target uri;
@@ -98,7 +98,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 requestNode->GetObject()->SetHeaders(m_headers);
             }            
             GetParser()->PushNode(node);
-            log::debug("Parsed an HTTP request.");
+            //log::debug("Parsed an HTTP request.");
         }
     }
     

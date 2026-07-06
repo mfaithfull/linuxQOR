@@ -37,6 +37,7 @@ namespace qor{ namespace pipeline{
         return (unitsToWrite == 0 || Pull(unitsWritten, unitsToWrite)) ? Push(unitsWritten, unitsWritten) : false;
     }
 
+    /*
     //pull the requested amount of data from the source to the buffer
     bool iosink_base::Pull(size_t& unitsWritten, size_t unitsToWrite)
     {
@@ -76,15 +77,16 @@ namespace qor{ namespace pipeline{
             return true;//Writing zero units always succeeds
         }
     }
-
+    */
     const char* iosink_base::Name() const
     {
         return "iosink_base";
     }
 
+    /*
     size_t iosink_base::WriteBytes(byte* data, size_t bytesToWrite)
     {
         fatal("Empty base called. Please overrride bool WriteBytes(byte*, size_t); in your pipeline::io_sink derived class.");
         return 0;
-    }
+    }*/
 }}//qor::components

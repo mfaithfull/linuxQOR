@@ -21,6 +21,11 @@ namespace qor{ namespace io{ namespace components{
         m_filePath = fileIndex.GetPath().ToString();
     }
 
+    std::string stdfstreamConnector::GetFileName()
+    {
+        return m_filePath;
+    }
+
     bool stdfstreamConnector::Connect()
     {
         return IsConnected();

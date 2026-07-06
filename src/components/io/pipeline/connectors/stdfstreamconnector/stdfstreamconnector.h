@@ -22,7 +22,7 @@ namespace qor{ namespace io { namespace components{
         virtual bool Connect();													//Device specific connection
         virtual void Disconnect(void);											//Device specific disconnection
         virtual void SetFile(io::filesystem::Index& fileIndex);
-        
+        std::string GetFileName();
 	protected:
 
         std::string m_filePath;

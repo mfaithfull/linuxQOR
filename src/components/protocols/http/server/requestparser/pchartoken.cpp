@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void pchar::Prepare()
     {
-        log::debug("Expecting a pchar.");
+        //log::debug("Expecting a pchar.");
         GetParser()->PushNode(new_ref<PCharNode>());
     }
 
     void pchar::Emit()
     {
-        log::debug("Emitting a pchar.");        
+        //log::debug("Emitting a pchar.");        
         char c = '\0';
         auto node = GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() != m_token)

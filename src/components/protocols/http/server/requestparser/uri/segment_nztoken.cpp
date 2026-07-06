@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void segment_nz::Prepare()
     {
-        log::debug("Looking for a segment_nz.");
+        //log::debug("Looking for a segment_nz.");
         GetParser()->PushNode(new_ref<SegmentNode>());
     }
 
     void segment_nz::Emit()
     {
-        log::debug("Emitting a segment_nz.");
+        //log::debug("Emitting a segment_nz.");
         auto node = GetParser()->PopNode();
         std::string segmentData;
         while(node.IsNotNull() && !( node->GetToken() == m_token || node->GetToken() == static_cast<uint64_t>(httpRequestToken::segment) ) )
@@ -49,7 +49,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 tokenName = f->second;
             }
             
-            log::debug(tokenName);
+            //log::debug(tokenName);
 
             if(token == static_cast<uint64_t>(httpRequestToken::pchar))
             {

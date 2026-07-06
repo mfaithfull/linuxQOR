@@ -30,13 +30,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void target::Prepare()
     {
-        log::debug("Expecting a target.");
+        //log::debug("Expecting a target.");
         GetParser()->PushNode(new_ref<TargetNode>());
     }
 
     void target::Emit()
     {
-        log::debug("Emitting a target.");        
+        //log::debug("Emitting a target.");        
         uriForm form = form_origin;
         UriOriginForm originURI;
         UriAbsoluteForm absoluteURI;

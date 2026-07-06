@@ -66,18 +66,18 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 }}),
                 static_cast<uint64_t>(httpRequestToken::tchar)
                 )
-        {}
+        { }
 
         virtual ~tchar() = default;
 
         virtual void Prepare(){
-            qor::log::debug("Looking for a tchar.");
+            //qor::log::debug("Looking for a tchar.");
             GetParser()->PushNode(new_ref<TCharNode>());
         }
 
         virtual void Emit()
         {
-            qor::log::debug("Emitting a tchar.");            
+            //qor::log::debug("Emitting a tchar.");            
             char c = '\0';
             auto node = GetParser()->PopNode();
             if(node.IsNotNull() && node->GetToken() != m_token)
@@ -90,7 +90,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                     tokenName = f->second;
                 }
                 
-                qor::log::debug("tokenName");
+                //qor::log::debug("tokenName");
 
                 ref_of<parser::CharNode>::type charNode;
                 ref_of<parser::DigitNode>::type digitNode;

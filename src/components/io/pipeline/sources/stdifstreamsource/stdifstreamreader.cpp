@@ -61,6 +61,10 @@ namespace qor{ namespace io{ namespace components{
         if(!m_connector.IsConnected())
         {
             m_connector.Connect();
+            if(!m_connector.IsConnected())
+            {
+                continuable("Failed to open {0}.", this->m_connector.GetFileName());
+            }
         }
         m_Setup = true;
     }

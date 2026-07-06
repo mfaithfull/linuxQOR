@@ -43,6 +43,10 @@ namespace qor{ namespace pipeline{
         Element* m_source;
         Source* ActualSource();
 
+        virtual bool Push(size_t& unitsWritten, size_t unitsToWrite);
+        virtual bool Pull(size_t& unitsWritten, size_t unitsToWrite);
+        virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
+
     };
 
     class qor_pp_module_interface(QOR_PIPELINE) NullSink : public Sink

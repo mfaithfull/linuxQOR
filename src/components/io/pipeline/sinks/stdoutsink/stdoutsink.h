@@ -15,11 +15,11 @@ namespace qor{ namespace io{ namespace components{
         StdOutSink();
         virtual ~StdOutSink();
 
-        virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
+        //virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
 
     private:
         
-        bool Pull(size_t& unitsWritten, size_t unitstoWrite);
+        //bool Pull(size_t& unitsWritten, size_t unitstoWrite);
         bool Push(size_t& unitsWritten, size_t unitstoWrite);
 
     };

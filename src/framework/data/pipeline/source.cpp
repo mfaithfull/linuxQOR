@@ -159,9 +159,10 @@ namespace qor{ namespace pipeline{
             byte* space = buffer->WriteRequest(unitsToRead);            
             if(!space)
             {
-                OnReadError(0,0);//TODO: Pipeline stall, no space in output buffer
+                continuable("Pipeline stall. No space in source buffer.");
                 return false;
             }
+            
             size_t bytesRead = ReadBytes(space, buffer->GetUnitSize() * unitsToRead);
             if(bytesRead > 0)
             {

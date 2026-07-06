@@ -22,12 +22,12 @@ namespace qor{ namespace pipeline{
         virtual Element* GetPlug() const;
         virtual bool HasPlug();
         virtual const char* Name() const override;
-        virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
+        //virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
 
     protected:
         
-        bool Pull(size_t& unitsWritten, size_t unitsToWrite);
-        bool Push(size_t& unitsWritten, size_t unitsToWrite);
+        //bool Pull(size_t& unitsWritten, size_t unitsToWrite);
+        //bool Push(size_t& unitsWritten, size_t unitsToWrite);
         Plug* ActualPlug();
 
         Element* m_plug;
@@ -58,7 +58,7 @@ namespace qor{ namespace pipeline{
             return m_Connector;
         }
 
-        virtual size_t WriteBytes(byte* space, size_t bytesToRead) = 0;
+        //virtual size_t WriteBytes(byte* space, size_t bytesToRead) = 0;
 
     protected:
         
