@@ -34,7 +34,7 @@
 #include "connectop.h"
 #include "src/platform/os/windows/io/network/addresshelpers.h"
 
-namespace qor { namespace async { namespace win {
+namespace qor { namespace io { namespace async { namespace win {
 
 	bool socket_connect_operation_impl::try_start( win32_overlapped_operation_base& operation) noexcept
 	{
@@ -183,4 +183,4 @@ namespace qor { namespace async { namespace win {
 		}
 	}
 
-}}}//qor::async::win
+}}}}//qor::io::async::win

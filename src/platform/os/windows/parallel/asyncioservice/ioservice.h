@@ -13,7 +13,7 @@
 #include "src/platform/os/windows/common/handles/handle.h"
 #include "sync/iocompletionport.h"
 
-namespace qor { namespace async { namespace win {
+namespace qor { namespace io { namespace async { namespace win {
 
     class TimerThreadState;
     class ScheduleOperation;
@@ -86,6 +86,6 @@ namespace qor { namespace async { namespace win {
         }
     };
 
-}}}//qor::async::win
+}}}}//qor::io::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_IOSERVICE

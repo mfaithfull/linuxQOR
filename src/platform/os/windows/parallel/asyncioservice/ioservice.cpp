@@ -16,7 +16,7 @@
 #include "src/platform/os/windows/common/constants.h"
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"
 
-namespace qor { namespace async { namespace win {
+namespace qor { namespace io { namespace async { namespace win {
 
     IOService::IOService() : IOService(0){ }
 
@@ -161,7 +161,7 @@ namespace qor { namespace async { namespace win {
                 head,
                 operation,
                 std::memory_order_release,
-                std::memory_order_acquire));                    
+                std::memory_order_acquire));
         }
     }
 
@@ -263,7 +263,7 @@ namespace qor { namespace async { namespace win {
                 unsigned long errorCode = qor::win::api::Kernel32::GetLastError();
                 if(errorCode == WAIT_TIMEOUT)
                 {
-                    return false;                    
+                    return false;
                 }
 
                 continuable("Error retrieving item from io_service queue: GetQueuedCompletionStatus");
@@ -273,7 +273,7 @@ namespace qor { namespace async { namespace win {
 
     void IOService::PostWakeUpEvent() noexcept
     {
-        m_IOCP->PostQueuedCompletionStatus(0,0,nullptr);        
+        m_IOCP->PostQueuedCompletionStatus(0,0,nullptr);
     }
 
     TimerThreadState* IOService::EnsureTimerThreadStarted()
@@ -302,4 +302,4 @@ namespace qor { namespace async { namespace win {
         return m_IOCP->Enroll(ioDescriptor);
     }
 
-}}}//qor::async::win
+}}}}//qor::io::async::win

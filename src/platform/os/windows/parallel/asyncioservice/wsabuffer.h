@@ -8,7 +8,7 @@
 #include <coroutine>
 #include "sync/overlapped.h"
 
-namespace qor { namespace async { namespace win {
+namespace qor { namespace io { namespace async { namespace win {
 
 	struct wsabuf
 	{
@@ -22,6 +22,6 @@ namespace qor { namespace async { namespace win {
 		char* buf;
 	};
 
-}}}//qor::async::win
+}}}}//qor::io::async::win
 
 #endif//QOR_PP_H_OS_WINDOWS_FRAMEWORK_ASYNCIOSERVICE_IOCP_WSABUFFER

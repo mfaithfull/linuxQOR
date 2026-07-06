@@ -33,7 +33,7 @@
 #include <poll.h>
 #include <coroutine>
 #include "iouringeventprocessor.h"
-#include "src/framework/parallel/asyncioservice/asyncioinitiator.h"
+#include "src/framework/io/asyncioservice//asyncioinitiator.h"
 #include "readop.h"
 #include "writeop.h"
 #include "listenop.h"
@@ -45,7 +45,7 @@
 #include "src/framework/io/network/socket.h"
 #include "src/qor/flyers/log/informative.h"
 
-namespace qor{ namespace async{ namespace lin{
+namespace qor{ namespace io{ namespace async{ namespace lin{
 
     class qor_pp_module_interface(QOR_LINUXASYNCIOSERVICE) IOUringInitiator : public qor::async::AsyncIOInitiator
     {
@@ -163,6 +163,6 @@ namespace qor{ namespace async{ namespace lin{
         IOUring* m_Ring{nullptr};
     };
 
-}}}//qor::async::lin
+}}}}//qor::io::async::lin
 
 #endif//QOR_PP_H_OS_LINUX_FRAMEWORK_ASYNCIOSERVICE

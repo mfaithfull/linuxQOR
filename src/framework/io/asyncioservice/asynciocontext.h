@@ -22,12 +22,12 @@
 #include "src/qor/memory/factory/externalfactory.h"
 #include "src/qor/memory/reference/newref.h"
 
-namespace qor { namespace async{
+namespace qor { namespace io{ namespace async{
 
     class AsyncIOContext : public AsyncIOInterface
     {
     public:
-        
+
         inline AsyncIOContext(ref_of<thread::ThreadPool>::type threadPool) : m_threadPool(threadPool)
         {
             m_initiator = new_ref<AsyncIOInitiator>();
@@ -62,7 +62,7 @@ namespace qor { namespace async{
                 m_processorResult.get();
             }
         }
-        
+
         inline bool Enroll(io::IODescriptor& ioDescriptor) const
         {
             return m_processor->Enroll(ioDescriptor);
@@ -199,9 +199,9 @@ namespace qor { namespace async{
         friend class Session;
     };
 
-    }//async
+    }}//io::async
 
-    qor_pp_declare_instancer_of(async::AsyncIOContext, PoolInstancer);
+    qor_pp_declare_instancer_of(io::async::AsyncIOContext, PoolInstancer);
 
 }//qor::async
 
