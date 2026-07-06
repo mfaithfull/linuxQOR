@@ -16,10 +16,10 @@ using namespace qor;
 using namespace qor::io;
 using namespace qor::log;
 using namespace qor::platform;
-using namespace qor::async;
+using namespace qor::io::async;
 
 int main(int argc, const char** argv, char**)
-{	
+{
 	DefaultLogHandler logHandler(Level::Debug);
 	ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 

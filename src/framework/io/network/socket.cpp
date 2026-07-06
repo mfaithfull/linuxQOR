@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #include "src/framework/parallel/thread/thread.h"
 #include "socket.h"
-#include "src/framework/parallel/asyncioservice/asynciotypes.h"
+#include "src/framework/io/asyncioservice//asynciotypes.h"
 #include "src/framework/parallel/task/syncwait.h"
 
 namespace qor{ namespace io { namespace network{
@@ -150,7 +150,7 @@ namespace qor{ namespace io { namespace network{
     task<int32_t> Socket::AsyncSend(const async::AsyncIOInterface& /*ioContext*/, const char* /*Buffer*/, int32_t /*iLen*/)
     {
         //Provide an override implementation specific to your platform
-        qor::async::AsyncIOResult result;
+        qor::io::async::AsyncIOResult result;
         return []()->task<int32_t>
         {
             co_return -1;

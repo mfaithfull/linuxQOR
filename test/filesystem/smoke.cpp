@@ -32,7 +32,7 @@
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/parallel/asyncioservice/asyncioservice.h"
+#include "src/framework/io/asyncioservice//asyncioservice.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/framework/io/filesystem/folder.h"
 #include "src/framework/io/pipeline/podbuffer.h"
@@ -150,7 +150,7 @@ qor_pp_test_suite_case(FileSystemTestSuite, writeAndReadBackFileContents)
 
 qor_pp_test_suite_case(FileSystemTestSuite, writeAsyncAndReadBackFileContents)
 {
-    auto asyncIOService = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::async::AsyncIOService>().AsRef<qor::async::AsyncIOService>();
+    auto asyncIOService = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::io::async::AsyncIOService>().AsRef<qor::io::async::AsyncIOService>();
     auto session = asyncIOService(qor_shared).GetSession();
 
     Index newIndex(m_fileSystem->CurrentPath(), "testfile4.txt");

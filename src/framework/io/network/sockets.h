@@ -29,7 +29,7 @@
 #include "src/platform/isubsystem.h"
 #include "socket.h"
 #include "addressinfo.h"
-#include "src/framework/parallel/asyncioservice/asynciocontext.h"
+#include "src/framework/io/asyncioservice//asynciocontext.h"
 
 //All libraries providing an implementation of Sockets also need to export this function so that the linker can find them
 namespace qor{ bool qor_pp_module_interface(QOR_SOCKETS) ImplementsSockets();}

@@ -31,7 +31,7 @@
 #include "src/framework/io/network/address.h"
 #include "src/framework/io/network/addressinfo.h"
 #include "src/framework/io/pipeline/connection.h"
-#include "src/framework/parallel/asyncioservice/asynciocontext.h"
+#include "src/framework/io/asyncioservice//asynciocontext.h"
 
 namespace qor{ namespace io{ namespace network { namespace components{
 
@@ -40,7 +40,7 @@ namespace qor{ namespace io{ namespace network { namespace components{
     public:
 
 		SocketConnector();
-        SocketConnector(ref_of<qor::io::network::Socket>::type connectedSocket, ref_of<qor::async::AsyncIOContext::Session>::type session);
+        SocketConnector(ref_of<qor::io::network::Socket>::type connectedSocket, ref_of<qor::io::async::AsyncIOContext::Session>::type session);
 
 		virtual ~SocketConnector() noexcept;
 

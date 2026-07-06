@@ -5,7 +5,7 @@
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/parallel/asyncioservice/asyncioservice.h"
+#include "src/framework/io/asyncioservice//asyncioservice.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/platform/platform.h"
@@ -19,7 +19,7 @@ using namespace qor::io;
 using namespace qor::log;
 using namespace qor::platform;
 using namespace qor::thread;
-using namespace qor::async;
+using namespace qor::io::async;
 
 int main(int argc, const char** argv, char**)
 {

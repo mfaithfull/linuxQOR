@@ -31,7 +31,7 @@
 #include "src/platform/os/windows/io/network/sockets.h"
 #include "src/platform/os/windows/io/network/socket.h"
 #include "src/qor/flyers/error/error.h"
-#include "src/framework/parallel/asyncioservice/asynciocontext.h"
+#include "src/framework/io/asyncioservice//asynciocontext.h"
 
 #include "src/platform/os/windows/api_layer/winsock2/ws2.h"
 
@@ -118,7 +118,7 @@ namespace qor{ namespace io{ namespace network{ namespace win{
                 Socket::AddressFamilyFromWindows(rp->ai_family),
                 Socket::TypeFromWindows(rp->ai_socktype),
                 Socket::ProtocolFromWindows(rp->ai_protocol),
-                ref_of<qor::async::AsyncIOContext::Session>::type());
+                ref_of<qor::io::async::AsyncIOContext::Session>::type());
             if(socket.IsNull())
             {
                 continue;

@@ -45,20 +45,20 @@ namespace qor{ namespace io{ namespace network{ namespace win{
         virtual ~Socket();
 
         virtual int32_t Bind(const network::Address& Address);
-        virtual int32_t Bind(const qor::async::AsyncIOInterface& ioContext, const network::Address& Address);
+        virtual int32_t Bind(const qor::io::async::AsyncIOInterface& ioContext, const network::Address& Address);
         virtual int32_t Listen(int32_t iBacklog);
-        virtual int32_t Listen(const qor::async::AsyncIOInterface& ioContext, int32_t iBacklog);
+        virtual int32_t Listen(const qor::io::async::AsyncIOInterface& ioContext, int32_t iBacklog);
         virtual ref_of<network::Socket>::type Accept(network::Address& Address);
-        virtual task<int32_t> AcceptAsync(const qor::async::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket);
+        virtual task<int32_t> AcceptAsync(const qor::io::async::AsyncIOInterface& ioContext, network::Address& Address, network::Socket* Socket);
         virtual int32_t Connect(const network::Address& Address);
         virtual int32_t GetPeerName(network::Address& Address);
         virtual int32_t GetSockName(network::Address& Address);
         virtual int32_t GetSockOpt(int32_t iLevel, int32_t iOptName, char* pOptVal, int32_t* pOptLen);
         virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen);
-        virtual task<int32_t> AsyncReceive(const qor::async::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
+        virtual task<int32_t> AsyncReceive(const qor::io::async::AsyncIOInterface& ioContext, char* pBuffer, int32_t iLen);
         virtual int32_t Receive(char* buf, int32_t len, int32_t flags);
         virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, network::Address& From);
-        virtual task<int32_t> AsyncSend(const qor::async::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
+        virtual task<int32_t> AsyncSend(const qor::io::async::AsyncIOInterface& ioContext, const char* Buffer, int32_t iLen);
         virtual int32_t Send(const char* Buffer, int32_t iLen);
         virtual int32_t SendTo(const char* Buffer, int32_t iLen, int32_t iFlags, const network::Address& To);
         virtual int32_t Shutdown(network::sockets::eShutdown how);
