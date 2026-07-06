@@ -4,6 +4,7 @@
 #include "src/configuration/configuration.h"
 
 #include "filesource.h"
+#include "src/qor/flyers/error/error.h"
 
 namespace qor{ namespace io{ namespace components{ 
 
@@ -29,7 +30,7 @@ namespace qor{ namespace io{ namespace components{
         }
         else
         {
-            OnReadError(0,0);
+            continuable("Attempting to read from closed file.");
         }
         return result;
     }

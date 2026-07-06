@@ -29,15 +29,13 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     HTTPSource::HTTPSource() :
-        m_context(new_ref<Context>()), m_generator(m_context)
-    {
-    }
+        m_context(new_ref<Context>()), m_generator(m_context){ }
 
     void HTTPSource::SetRequest(ref_of<HTTPRequest>::type request)
     {        
         m_generator.SetRequest(request);
     }
-
+/*
     bool HTTPSource::Read(size_t& unitsRead, size_t unitsToRead)
     {        
         return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
@@ -64,14 +62,14 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
         return false;
     }
-
-    size_t HTTPSource::Read(byte* space, size_t charsToRead)
+*/
+    size_t HTTPSource::ReadBytes(byte* space, size_t bytesToRead)
     {
-        m_context->SetSpace(space, charsToRead);                        
+        m_context->SetSpace(space, bytesToRead);                        
         m_generator.Run();
         return m_context->GetPosition();        
     }
-
+/*
     bool HTTPSource::Push(size_t& unitsRead, size_t unitsToRead)
     {
         if( GetFlowMode() == FlowMode::Push )
@@ -80,5 +78,5 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
         return true;
     }
-
+*/
 }}}}//qor::components::protocols::http

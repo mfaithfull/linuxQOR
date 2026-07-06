@@ -16,7 +16,7 @@ namespace qor{ namespace pipeline{
         iosource_base();
         virtual ~iosource_base();
 
-        virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
+        //virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
         
         virtual void SetPlug(Element* pPlug);
         virtual Element* GetPlug() const;
@@ -26,8 +26,8 @@ namespace qor{ namespace pipeline{
     protected:
         
         virtual size_t ReadBytes(byte* space, size_t bytesToRead);
-        bool Pull(size_t& unitsRead, size_t unitsToRead);
-        bool Push(size_t& unitsRead, size_t unitsToRead);
+        //virtual bool Pull(size_t& unitsRead, size_t unitsToRead);
+        //virtual bool Push(size_t& unitsRead, size_t unitsToRead);
         Plug* ActualPlug();
 
         Element* m_plug;
@@ -54,8 +54,6 @@ namespace qor{ namespace pipeline{
         }
 
     protected:
-
-        virtual size_t ReadBytes(byte* space, size_t bytesToRead) = 0;
         
         PlugType* m_Connector;
     };

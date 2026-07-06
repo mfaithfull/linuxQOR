@@ -13,11 +13,6 @@ namespace qor{ namespace io{ namespace components{
     StdInSource::StdInSource() : m_lineMode(true){ }
     StdInSource::~StdInSource() = default;
 
-    bool StdInSource::Read(size_t& unitsRead, size_t unitsToRead)
-    {
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
-    }
-
     bool StdInSource::LineMode(bool newMode)
     {
         bool result = m_lineMode;
@@ -56,45 +51,41 @@ namespace qor{ namespace io{ namespace components{
 
     bool StdInSource::Pull(size_t& unitsRead, size_t unitsToRead)
     {
+        if(!unitsToRead)
+        {
+            return true;
+        }
         pipeline::Buffer* buffer = GetBuffer();
         if(buffer)
         {
             byte* space = GetBuffer()->WriteRequest(unitsToRead);
-            if(space && unitsToRead)
+            if(!space)
             {
-                if(LineMode())
-                {                
-                    std::string input = ReadLine(unitsRead,unitsToRead);
-                    memcpy(space, input.data(), unitsRead);
-                }
-                else
-                {
-                    unitsRead = fread(space, GetBuffer()->GetUnitSize(), unitsToRead, stdin);
-                }
-
-                if(unitsRead > 0)
-                {
-                    buffer->WriteAcknowledge(unitsRead);
-                    OnReadSuccess(unitsRead);
-                }
-                else
-                {
-                    OnEndOfData();
-                }
-                return true;
+                continuable("Pipeline stall. No space in source buffer.");
+                return false;
             }
+            if(LineMode())
+            {                
+                std::string input = ReadLine(unitsRead,unitsToRead);
+                memcpy(space, input.data(), unitsRead);
+            }
+            else
+            {
+                unitsRead = fread(space, GetBuffer()->GetUnitSize(), unitsToRead, stdin);
+            }
+
+            if(unitsRead > 0)
+            {
+                buffer->WriteAcknowledge(unitsRead);
+                OnReadSuccess(unitsRead);
+            }
+            else
+            {
+                OnEndOfData();
+            }
+            return true;
         }
         return false;
     }
-
-    bool StdInSource::Push(size_t& unitsRead, size_t unitsToRead)
-    {        
-        if( GetFlowMode() == FlowMode::Push )
-        {
-            ActualSink()->Write(unitsRead, unitsToRead);
-            return unitsRead > 0 ? true : false;
-        }
-        return true;
-    }
-
+    
 }}}//qor::io::components

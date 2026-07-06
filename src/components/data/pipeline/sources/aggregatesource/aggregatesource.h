@@ -60,11 +60,6 @@ namespace qor{ namespace pipeline{ namespace components{
         AggregateSource();
         virtual ~AggregateSource() = default;
         
-        virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1)
-        {        
-            return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
-        }
-
         void SetData(const T& value)
         {
             m_value = value;
@@ -95,15 +90,6 @@ namespace qor{ namespace pipeline{ namespace components{
             return true;
         }
         
-        bool Push(size_t& unitsRead, size_t unitsToRead)
-        {
-            if( GetFlowMode() == FlowMode::Push )
-            {
-                return ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0) ? true : false;
-            }
-            return true;
-        }
-
         T m_value;
     };
 

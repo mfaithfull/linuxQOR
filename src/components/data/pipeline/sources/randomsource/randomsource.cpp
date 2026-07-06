@@ -35,10 +35,7 @@ namespace qor{ namespace pipeline{ namespace components{
         m_start = m_rnd();
     }
 
-    bool RandomSource::Read(size_t& unitsRead, size_t unitsToRead)
-    {
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
-    }
+    RandomSource::~RandomSource() = default;
 
     unsigned int RandomSource::Next()
     {
@@ -52,41 +49,6 @@ namespace qor{ namespace pipeline{ namespace components{
             buffer[i] = Next() % 256;
         }
         return bytesToRead;
-    }
-
-    bool RandomSource::Pull(size_t& unitsRead, size_t unitsToRead)
-    {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
-        {
-            byte* space = GetBuffer()->WriteRequest(unitsToRead);
-            if(space && unitsToRead)
-            {
-                unitsRead = ReadBytes(space, GetBuffer()->GetUnitSize() * unitsToRead);
-
-                if(unitsRead > 0)
-                {
-                    buffer->WriteAcknowledge(unitsRead);
-                    OnReadSuccess(unitsRead);
-                }
-                else //EOF
-                {
-                    OnEndOfData();
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool RandomSource::Push(size_t& unitsRead, size_t unitsToRead)
-    {        
-        if( GetFlowMode() == FlowMode::Push )
-        {
-            ActualSink()->Write(unitsRead, unitsToRead);
-            return unitsRead > 0 ? true : false;
-        }
-        return true;
     }
 
 }}}//qor::pipeline::components

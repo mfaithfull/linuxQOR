@@ -65,10 +65,9 @@ namespace qor{ namespace pipeline{
         return m_sink != nullptr;
     }
 
-    bool Source::Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead)
+    bool Source::Read(size_t& unitsRead, size_t unitsToRead)
     {
-        fatal("Empty base called. Please overrride bool Read(size_t&, size_t); in your pipeline::Source derived class.");
-        return false;
+        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;        
     }
 
     void Source::OnReadSuccess(size_t unitsRead)
@@ -143,6 +142,51 @@ namespace qor{ namespace pipeline{
         return false;
     }
 
+    bool Source::Push(size_t& unitsRead, size_t unitsToRead)
+    {
+        return ( GetFlowMode() == FlowMode::Push ) ? (ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0)) : true;        
+    }
+
+    bool Source::Pull(size_t& unitsRead, size_t unitsToRead)
+    {
+        if(!unitsToRead)
+        {
+            return true;
+        }
+        Buffer* buffer = GetBuffer();
+        if(buffer)
+        {
+            byte* space = buffer->WriteRequest(unitsToRead);            
+            if(!space)
+            {
+                OnReadError(0,0);//TODO: Pipeline stall, no space in output buffer
+                return false;
+            }
+            size_t bytesRead = ReadBytes(space, buffer->GetUnitSize() * unitsToRead);
+            if(bytesRead > 0)
+            {
+                unitsRead = bytesRead / buffer->GetUnitSize();
+                buffer->WriteAcknowledge(unitsRead);
+                OnReadSuccess(unitsRead);
+            }
+            else
+            {
+                OnEndOfData();
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    size_t Source::ReadBytes(byte* space, size_t bytesToRead)
+    {
+        fatal("Empty base called. Please override bool ReadBytes(byte*, size_t); in your pipeline::Source derived class.");
+        return 0;
+    }
+
 
     NullSource::NullSource() : Source() {}
 
@@ -153,5 +197,6 @@ namespace qor{ namespace pipeline{
         unitsRead = unitsToRead;        
         return true;
     }
+
 
 }}//qor::pipeline

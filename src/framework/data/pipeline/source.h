@@ -30,7 +30,7 @@ namespace qor{ namespace pipeline{
         virtual void SetSource(Element* source);
         virtual Element* GetSink(void);
         virtual bool HasSink(void);
-        virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
+        virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1);
         virtual void OnReadSuccess(size_t unitsRead);
         virtual void OnReadError(size_t error, size_t unitsRead);
         virtual void OnEndOfData();
@@ -44,6 +44,11 @@ namespace qor{ namespace pipeline{
 
         Element* m_sink;
         Sink* ActualSink();
+
+        virtual bool Push(size_t& unitsRead, size_t unitsToRead);
+        virtual bool Pull(size_t& unitsRead, size_t unitsToRead);
+        virtual size_t ReadBytes(byte* space, size_t bytesToRead);
+
     };
 
     class qor_pp_module_interface(QOR_PIPELINE) NullSource : public Source

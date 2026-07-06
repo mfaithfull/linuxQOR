@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include "stdifstreamsource.h"
 #include "src/framework/data/pipeline/sink.h"
+#include "src/qor/flyers/error/error.h"
 
 namespace qor{ namespace io{ namespace components{ 
 
@@ -42,7 +43,7 @@ namespace qor{ namespace io{ namespace components{
         }
         else
         {
-            //TODO: No connection
+            continuable("Attempting to read from closed stream.");
         }
         return result;
     }

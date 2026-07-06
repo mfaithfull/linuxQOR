@@ -26,47 +26,39 @@
 #include <stdio.h>
 #include "generatorsource.h"
 #include "src/framework/data/pipeline/sink.h"
+#include "src/qor/flyers/error/error.h"
 
 namespace qor{ namespace pipeline{ namespace components{ 
 
-    BaseGeneratorSource::BaseGeneratorSource()
-    {
-    }
+    BaseGeneratorSource::BaseGeneratorSource(){ }
 
-    bool BaseGeneratorSource::Read(size_t& unitsRead, size_t unitsToRead)
-    {        
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
-    }
+    BaseGeneratorSource::~BaseGeneratorSource() = default;
 
     bool BaseGeneratorSource::Pull(size_t& unitsRead, size_t unitsToRead)
     {
         pipeline::Buffer* buffer = GetBuffer();
         if(buffer)
         {
-            byte* space = buffer->WriteRequest(unitsToRead);            
-            size_t charsRead = Generate((char*)space, (buffer->GetUnitSize() * unitsToRead) / sizeof(char));
+            byte* space = buffer->WriteRequest(unitsToRead);  
+            if(!space)
+            {
+                continuable("Pipeline stall. No space in source buffer.");
+                return false;
+            }                      
+            size_t charsRead = ReadBytes(space, (buffer->GetUnitSize() * unitsToRead) );
             if(charsRead > 0)
             {
                 unitsRead = (charsRead * sizeof(char)) / buffer->GetUnitSize();
                 buffer->WriteAcknowledge(unitsRead);
                 OnReadSuccess(unitsRead);
             }
-            else //EOF
+            else
             {
                 OnEndOfData();
             }
             return true;
         }
         return false;
-    }
-
-    bool BaseGeneratorSource::Push(size_t& unitsRead, size_t unitsToRead)
-    {
-        if( GetFlowMode() == FlowMode::Push )
-        {
-            return ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0) ? true : false;
-        }
-        return true;
     }
 
 }}}//qor::pipeline::components

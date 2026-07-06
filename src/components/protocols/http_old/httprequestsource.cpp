@@ -39,7 +39,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         m_data = data;
         m_it = m_data.begin();
     }
-
+/*
     bool HttpRequestSource::Read(size_t& unitsRead, size_t unitsToRead)
     {        
         return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
@@ -66,17 +66,17 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
         return false;
     }
-
-    size_t HttpRequestSource::Read(char* space, size_t charsToRead)
+*/
+    size_t HttpRequestSource::ReadBytes(char* space, size_t bytesToRead)
     {
         size_t charsRead = 0;
-        while(m_it != m_data.end() && charsRead < charsToRead)
+        while(m_it != m_data.end() && charsRead < bytesToRead)
         {
             space[charsRead++] = *m_it++;
         }
         return charsRead;
     }
-
+/*
     //push the requested amount of data up the pipeline
     bool HttpRequestSource::Push(size_t& unitsRead, size_t unitsToRead)
     {
@@ -86,5 +86,5 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
         return true;
     }
-
+*/
 }}}}//qor::components::protocols::http

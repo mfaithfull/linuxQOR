@@ -27,6 +27,19 @@
 
 namespace qor{ namespace pipeline{
 
+    DataSource::DataSource() = default;
+    DataSource::~DataSource() = default;
+
+    void DataSource::SetCallback( const Delegate<bool(size_t&, size_t)>& callback)
+    {
+        m_callBack = callback;
+    }
+
+    void DataSource::SetByteOrder(const arch::Endian byteOrder)
+    {
+        m_outputByteOrder = byteOrder;
+    }
+
     bool DataSource::Insert(byte* data, size_t byteCount)
     {        
         Buffer* buffer = GetBuffer();    
@@ -55,7 +68,8 @@ namespace qor{ namespace pipeline{
         Buffer* buffer = GetBuffer();
         if(buffer)
         {
-            unitsRead = std::min(unitsToRead, buffer->ReadCapacity());
+            size_t bufferCapacity = buffer->ReadCapacity();
+            unitsRead = std::min(unitsToRead, bufferCapacity);
             if(unitsRead == 0)
             {
                 OnEndOfData();            

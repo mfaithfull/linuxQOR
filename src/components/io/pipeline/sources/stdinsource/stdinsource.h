@@ -17,13 +17,11 @@ namespace qor{ namespace io{ namespace components{
 
         bool LineMode(bool newMode = true);
         string_t ReadLine(size_t& unitsRead, size_t unitsToRead);
-        virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
 
     private:
 
         bool m_lineMode;
-        bool Pull(size_t& unitsRead, size_t unitsToRead);
-        bool Push(size_t& unitsWritten, size_t unitsToWrite);
+        bool Pull(size_t& unitsRead, size_t unitsToRead);        
     };
 
 }}}//qor::io::components

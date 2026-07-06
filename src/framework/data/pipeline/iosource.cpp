@@ -31,7 +31,7 @@ namespace qor{ namespace pipeline{
     {
         return dynamic_cast<pipeline::Plug*>(m_plug);
     }
-
+/*
     bool iosource_base::Read(size_t& unitsRead, size_t unitsToRead)
     {        
         return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
@@ -68,7 +68,7 @@ namespace qor{ namespace pipeline{
     {
         return ( GetFlowMode() == FlowMode::Push ) ? (ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0)) : true;
     }
-
+*/
     const char* iosource_base::Name() const
     {
         return "iosource_base";
