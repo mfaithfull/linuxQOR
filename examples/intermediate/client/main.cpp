@@ -22,13 +22,22 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "sdk/using_platform.h"
-#include "sdk/using_framework.h"
-#include "sdk/components/framework.h"
+#include "src/configuration/configuration.h"
+
 #ifdef NDEBUG
 #include <buildnumber.h>
 #endif
+
+#include "src/framework/app/application/builder.h"
+#include "src/components/io/network/client/netclient.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 #include "workflow.h"
+
+
+using namespace qor;
+using namespace qor::io;
+using namespace qor::io::components;
 
 const char* appName = "Example Client";
 const char* logTag = "client";

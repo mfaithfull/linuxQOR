@@ -29,7 +29,7 @@ using namespace qor::log;
 #define appName "Echo Server"
 
 qor_pp_module_requires(Sockets)
-qor_pp_module_requires(Service)
+//qor_pp_module_requires(Service)
 qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)

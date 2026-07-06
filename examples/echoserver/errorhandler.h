@@ -28,11 +28,11 @@
 #include "src/qor/flyers/error/error.h"
 #include "src/qor/flyers/error/handler.h"
 
-class ErrorHandler : public qor::IssueHandler<qor::Error>
+class ErrorHandler : public qor::IssueHandler<qor::ErrorBase>
 {
 public:
     
-    virtual bool Handle(const qor::Error& error);
+    virtual bool Handle(const qor::ErrorBase& error);
 };
 
 #endif//QOR_PP_H_EXAMPLES_ECHOSERVER_ERRORHANDLER

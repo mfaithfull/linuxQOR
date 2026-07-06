@@ -27,6 +27,7 @@
 
 #include <string>
 #include <limits>
+#include <unordered_set>
 
 namespace case_ignore {
 

@@ -9,26 +9,22 @@
 
 namespace qor{ namespace pipeline{ 
 
-    class qor_pp_module_interface(QOR_PIPELINE) iosource_base : public Source
+    class qor_pp_module_interface_gcc(QOR_PIPELINE) iosource_base : public Source
     {
     public:
 
-        iosource_base();
-        virtual ~iosource_base();
+        qor_pp_module_interface(QOR_PIPELINE) iosource_base();
+        qor_pp_module_interface(QOR_PIPELINE) virtual ~iosource_base();
 
-        //virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
-        
-        virtual void SetPlug(Element* pPlug);
-        virtual Element* GetPlug() const;
-        virtual bool HasPlug();
-        virtual const char* Name() const override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetPlug(Element* pPlug);
+        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetPlug() const;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasPlug();
+        qor_pp_module_interface(QOR_PIPELINE) virtual const char* Name() const override;
 
     protected:
         
-        virtual size_t ReadBytes(byte* space, size_t bytesToRead);
-        //virtual bool Pull(size_t& unitsRead, size_t unitsToRead);
-        //virtual bool Push(size_t& unitsRead, size_t unitsToRead);
-        Plug* ActualPlug();
+        qor_pp_module_interface(QOR_PIPELINE) virtual size_t ReadBytes(byte* space, size_t bytesToRead);
+        qor_pp_module_interface(QOR_PIPELINE) Plug* ActualPlug();
 
         Element* m_plug;
 

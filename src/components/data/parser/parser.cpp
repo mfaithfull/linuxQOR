@@ -30,6 +30,7 @@
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/flyers/interception/functioncontext.h"
 #include "parser.h"
+#include "src/qor/flyers/error/error.h"
 #include "src/qor/flyers/log/debug.h"
 #include "state.h"
 
@@ -91,12 +92,12 @@ namespace qor { namespace components { namespace parser {
             //log::debug("Stack on entry has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
             m_final ? Drain() : InnerParse();
         }
-        catch(const Serious& error)
+        catch(const Serious& /*error*/)
         {
             //log::imperative("Parser failed: {0}", error.what().Content());
             m_inError = true;
         }
-        catch(const std::exception& e)
+        catch(const std::exception& /*e*/)
         {
             //log::imperative("Parser failed: {0}", e.what());
             m_inError = true;

@@ -10,7 +10,7 @@ namespace qor{ namespace pipeline{
 
     iosource_base::iosource_base() : pipeline::Source(), m_plug(nullptr) { }
 
-    iosource_base::~iosource_base() { }
+    iosource_base::~iosource_base() = default;
 
     void iosource_base::SetPlug(Element* plug)
     {
@@ -31,44 +31,7 @@ namespace qor{ namespace pipeline{
     {
         return dynamic_cast<pipeline::Plug*>(m_plug);
     }
-/*
-    bool iosource_base::Read(size_t& unitsRead, size_t unitsToRead)
-    {        
-        return Pull(unitsRead, unitsToRead) ? Push(unitsRead, unitsRead) : false;
-    }
 
-    //pull the requested amount of data from the stream
-    bool iosource_base::Pull(size_t& unitsRead, size_t unitsToRead)
-    {
-        pipeline::Buffer* buffer = GetBuffer();
-        if(buffer)
-        {
-            byte* space = buffer->WriteRequest(unitsToRead);            
-            size_t bytesRead = ReadBytes(space, buffer->GetUnitSize() * unitsToRead);
-            if(bytesRead > 0)
-            {
-                unitsRead = bytesRead / buffer->GetUnitSize();
-                buffer->WriteAcknowledge(unitsRead);
-                OnReadSuccess(unitsRead);
-            }
-            else //EOF
-            {
-                OnEndOfData();
-            }
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    //push the requested amount of data up the pipeline
-    bool iosource_base::Push(size_t& unitsRead, size_t unitsToRead)
-    {
-        return ( GetFlowMode() == FlowMode::Push ) ? (ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0)) : true;
-    }
-*/
     const char* iosource_base::Name() const
     {
         return "iosource_base";

@@ -9,25 +9,21 @@
 
 namespace qor{ namespace pipeline{ 
 
-    class qor_pp_module_interface(QOR_PIPELINE) iosink_base : public Sink
+    class qor_pp_module_interface_gcc(QOR_PIPELINE) iosink_base : public Sink
     {
     public:
 
-        iosink_base();
-        virtual ~iosink_base();
+        qor_pp_module_interface(QOR_PIPELINE) iosink_base();
+        qor_pp_module_interface(QOR_PIPELINE) virtual ~iosink_base();
 
-        virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );
-        
-        virtual void SetPlug(Element* pPlug);
-        virtual Element* GetPlug() const;
-        virtual bool HasPlug();
-        virtual const char* Name() const override;
-        //virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );        
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetPlug(Element* pPlug);
+        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetPlug() const;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasPlug();
+        qor_pp_module_interface(QOR_PIPELINE) virtual const char* Name() const override;        
 
     protected:
         
-        //bool Pull(size_t& unitsWritten, size_t unitsToWrite);
-        //bool Push(size_t& unitsWritten, size_t unitsToWrite);
         Plug* ActualPlug();
 
         Element* m_plug;
@@ -57,8 +53,6 @@ namespace qor{ namespace pipeline{
         {
             return m_Connector;
         }
-
-        //virtual size_t WriteBytes(byte* space, size_t bytesToRead) = 0;
 
     protected:
         

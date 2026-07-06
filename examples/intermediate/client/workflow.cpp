@@ -25,7 +25,11 @@
 #include <iostream>
 
 #include "workflow.h"
-#include "sdk/components/protocols.h"
+#include "src/qor/flyers/log/imperative.h"
+#include "src/qor/flyers/log/impactful.h"
+#include "src/components/protocols/echo/echoprotocol.h"
+
+using namespace qor::components::protocols;
 
 ClientWorkflow::ClientWorkflow() : 
     connect(new_ref<State>(this)),

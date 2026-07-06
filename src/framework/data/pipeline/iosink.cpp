@@ -10,7 +10,7 @@ namespace qor{ namespace pipeline{
 
     iosink_base::iosink_base() : pipeline::Sink(), m_plug(nullptr) { }
 
-    iosink_base::~iosink_base() { }
+    iosink_base::~iosink_base() = default;
 
     void iosink_base::SetPlug(Element* source)
     {

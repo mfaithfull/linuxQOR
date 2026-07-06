@@ -40,7 +40,7 @@ namespace qor{ namespace io{ namespace network { namespace components {
     //It doesn't therefore know how to connect up the pipelines, this must be specialized
     //It does assume simple bufferred, stateless, pipelines which can be reset for each send/receive
     //If you do something more complex than that Send and Receive can be overridden
-    class qor_pp_module_interface(QOR_NETCLIENT) BaseClient
+    class BaseClient
     {
     public:
 

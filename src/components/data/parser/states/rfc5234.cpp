@@ -60,7 +60,7 @@ namespace qor { namespace components { namespace parser {
 
     void HEXDIGIT::Emit()
     {
-        log::debug("Emitting a HEX DIGIT");
+        //log::debug("Emitting a HEX DIGIT");
 
         unsigned int hexVal = 0;
         auto node = GetParser()->PopNode();
