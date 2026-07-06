@@ -8,8 +8,8 @@
 
 namespace qor{ namespace pipeline{
 
-    class qor_pp_module_interface(QOR_PIPELINE) Source;
-    class qor_pp_module_interface(QOR_PIPELINE) Sink;
+    class qor_pp_module_interface_gcc(QOR_PIPELINE) Source;
+    class qor_pp_module_interface_gcc(QOR_PIPELINE) Sink;
 
     //a base class for pipeline elements of various kinds
     class qor_pp_module_interface(QOR_PIPELINE) Element

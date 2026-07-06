@@ -6,6 +6,10 @@
 
 namespace qor{ namespace pipeline { namespace components{ 
 
+    Base64EncodeFilter::Base64EncodeFilter() : 
+            qor::pipeline::InlineFilter<qor::byte>(0)
+    { }
+    
     Base64EncodeFilter::Base64EncodeFilter(size_t itemCount) : 
             qor::pipeline::InlineFilter<qor::byte>(itemCount)
     { }

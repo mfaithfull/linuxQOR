@@ -39,6 +39,11 @@ namespace qor{ namespace pipeline{
         return *this;
     }
 
+    void Sink::SetSink(Element* sink)
+    {
+        //Can't set a sink on a sink
+    }
+
     void Sink::SetSource(Element* source)
     {
         if( source->IsSource() )
@@ -179,6 +184,11 @@ namespace qor{ namespace pipeline{
 
     NullSink::NullSink() : Sink() {}
     NullSink::~NullSink() = default;
+
+    NullSink& NullSink::operator = (const NullSink& src)
+    {
+        return *this;
+    }
 
     bool NullSink::Write(size_t& unitsWritten, size_t unitsToWrite)
     {

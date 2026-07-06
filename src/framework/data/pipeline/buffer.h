@@ -19,7 +19,8 @@ namespace qor{ namespace pipeline{
     {
     public:
 
-        Buffer(size_t unitSize = 1, size_t itemCount = 0);
+        Buffer();
+        Buffer(size_t unitSize, size_t itemCount);
         Buffer(const Buffer& src);
         virtual ~Buffer();
         Buffer& operator = (const Buffer& src);

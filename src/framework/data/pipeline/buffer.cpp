@@ -7,6 +7,11 @@
 
 namespace qor{ namespace pipeline{
 
+    Buffer::Buffer() : m_unitSize(1)
+    {
+        SetCapacity(0);
+    }
+
     Buffer::Buffer(size_t unitSize, size_t itemCount) : m_unitSize(unitSize)
     {
         SetCapacity(itemCount);

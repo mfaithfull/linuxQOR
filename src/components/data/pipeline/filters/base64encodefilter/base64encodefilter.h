@@ -8,13 +8,14 @@
 
 namespace qor{ namespace pipeline{ namespace components{
 
-    class qor_pp_module_interface(QOR_BASE64ENCODE) Base64EncodeFilter : public InlineFilter<byte>
+    class qor_pp_module_interface_gcc(QOR_BASE64ENCODE) Base64EncodeFilter : public InlineFilter<byte>
     {
     public:
 
-        Base64EncodeFilter(size_t itemCount = 0);
-        virtual ~Base64EncodeFilter();
-        virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount, size_t& writeCount);
+        qor_pp_module_interface(QOR_BASE64ENCODE) Base64EncodeFilter();
+        qor_pp_module_interface(QOR_BASE64ENCODE) Base64EncodeFilter(size_t itemCount);
+        qor_pp_module_interface(QOR_BASE64ENCODE) virtual ~Base64EncodeFilter();
+        qor_pp_module_interface(QOR_BASE64ENCODE) virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount, size_t& writeCount);
 
     };
 

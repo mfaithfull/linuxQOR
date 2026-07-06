@@ -28,7 +28,7 @@ namespace qor{ namespace pipeline{
 
     Source::Source() : m_sink(nullptr) {}
     
-    Source::~Source() = default;
+    Source::~Source() { };
 
     Source::Source(const Source& src) : Element(src)
     {
@@ -190,8 +190,13 @@ namespace qor{ namespace pipeline{
 
 
     NullSource::NullSource() : Source() {}
+    
+    NullSource::~NullSource() { };
 
-    NullSource::~NullSource() = default;
+    NullSource& NullSource::operator = (const NullSource& src)
+    {
+        return *this;
+    }
 
     bool NullSource::Read(size_t& unitsRead, size_t unitsToRead)
     {        

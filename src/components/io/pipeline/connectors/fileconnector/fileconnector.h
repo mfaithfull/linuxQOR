@@ -11,30 +11,30 @@
 
 namespace qor{ namespace io{ namespace components{
 
-    class qor_pp_module_interface(QOR_FILECONNECTOR) FileConnector : public pipeline::Plug
+    class qor_pp_module_interface_gcc(QOR_FILECONNECTOR) FileConnector : public pipeline::Plug
     {
     public:
 
-		FileConnector();
-		FileConnector(const filesystem::Index & fileIndex, const OpenFor openfor = OpenFor::ReadWrite, const int mode = WithFlags::CreateNew);
-		FileConnector(const filesystem::Index & fileIndex, const pipeline::Buffer& buffer, const OpenFor openfor = OpenFor::ReadWrite, const int mode = WithFlags::CreateNew);
-		FileConnector(const filesystem::Index & fileIndex, pipeline::Buffer& buffer, const OpenFor openfor = OpenFor::ReadWrite, const int mode = WithFlags::CreateNew);
-		virtual ~FileConnector();
+		qor_pp_module_interface(QOR_FILECONNECTOR) FileConnector();
+		qor_pp_module_interface(QOR_FILECONNECTOR) FileConnector(const filesystem::Index & fileIndex, const OpenFor openfor = OpenFor::ReadWrite, const int mode = WithFlags::CreateNew);
+		qor_pp_module_interface(QOR_FILECONNECTOR) FileConnector(const filesystem::Index & fileIndex, const pipeline::Buffer& buffer, const OpenFor openfor = OpenFor::ReadWrite, const int mode = WithFlags::CreateNew);
+		qor_pp_module_interface(QOR_FILECONNECTOR) FileConnector(const filesystem::Index & fileIndex, pipeline::Buffer& buffer, const OpenFor openfor = OpenFor::ReadWrite, const int mode = WithFlags::CreateNew);
+		qor_pp_module_interface(QOR_FILECONNECTOR) virtual ~FileConnector();
 
         //Plug interface
-        virtual bool Connect();													//Device specific connection
-        virtual void Disconnect();  											//Device specific disconnection
+        qor_pp_module_interface(QOR_FILECONNECTOR) virtual bool Connect();		//Device specific connection
+        qor_pp_module_interface(QOR_FILECONNECTOR) virtual void Disconnect();  	//Device specific disconnection
         //virtual bool HandlePendingConnectionResult(bool bConnected);			//Handling device specific pending connection states for async connections
 
-    	void SetMode(int mode);
-	    int GetMode(void);
-		void SetOpenFor(OpenFor openfor);
-		OpenFor GetOpenFor(void);
-		void SetFile(filesystem::Index & fileIndex);
-		filesystem::Index& FileIndex(void);
-		ref_of<io::File>::type File(void);
-        virtual pipeline::Element* GetSink() const;
-        virtual pipeline::Element* GetSource() const;
+    	qor_pp_module_interface(QOR_FILECONNECTOR) void SetMode(int mode);
+	    qor_pp_module_interface(QOR_FILECONNECTOR) int GetMode(void);
+		qor_pp_module_interface(QOR_FILECONNECTOR) void SetOpenFor(OpenFor openfor);
+		qor_pp_module_interface(QOR_FILECONNECTOR) OpenFor GetOpenFor(void);
+		qor_pp_module_interface(QOR_FILECONNECTOR) void SetFile(filesystem::Index & fileIndex);
+		qor_pp_module_interface(QOR_FILECONNECTOR) filesystem::Index& FileIndex(void);
+		qor_pp_module_interface(QOR_FILECONNECTOR) ref_of<io::File>::type File(void);
+        qor_pp_module_interface(QOR_FILECONNECTOR) virtual pipeline::Element* GetSink() const;
+        qor_pp_module_interface(QOR_FILECONNECTOR) virtual pipeline::Element* GetSource() const;
 
 	protected:
 

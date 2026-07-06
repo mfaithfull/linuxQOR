@@ -43,6 +43,8 @@ namespace qor{ namespace io{
         m_file = fileSystem->Open(index, use);
     }
 
+    FileReader::~FileReader() = default;
+
     std::string FileReader::ReadLine() const
     {
         std::string line;
