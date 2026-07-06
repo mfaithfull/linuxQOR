@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
 
-#include "src/framework/io/pipeline/protocol.h"
+#include "src/framework/data/pipeline/protocol.h"
 #include "httprequestsource.h"
 #include "httpresponsesink.h"
 #include "httpservicefilter.h"

@@ -4,7 +4,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_FILE
 #define QOR_PP_H_COMPONENTS_PIPELINE_SOURCES_FILE
 
-#include "src/framework/io/pipeline/iosource.h"
+#include "src/framework/data/pipeline/iosource.h"
 #include "fileconnector.h"
 
 namespace qor{ namespace io{ namespace components{ 

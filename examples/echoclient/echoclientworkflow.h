@@ -30,7 +30,7 @@
 #include "src/framework/io/network/socket.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketconnector.h"
 #include "src/components/ui/console/console.h"
-#include "src/framework/io/pipeline/podbuffer.h"
+#include "src/framework/data/pipeline/podbuffer.h"
 #include "echorequestpipeline.h"
 #include "echoresponsepipeline.h"
 #include "echoclienterrorhandler.h"

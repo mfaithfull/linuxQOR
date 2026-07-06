@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_PROTOCOL
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_PROTOCOL
 
-#include "src/framework/io/pipeline/protocol.h"
+#include "src/framework/data/pipeline/protocol.h"
 #include "echoservicefilter.h"
 #include "echoresponsefilter.h"
 

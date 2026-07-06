@@ -35,7 +35,7 @@
 #include "src/qor/flyers/log/debug.h"
 #include "src/qor/flyers/error/error.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/pipeline.h"
 #include "sessionpipeline.h"
 
 namespace qor{ namespace io{ namespace network { namespace components {

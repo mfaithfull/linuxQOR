@@ -32,7 +32,7 @@
 #include "src/framework/app/role/role.h"
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/io/filesystem/filesystem.h"
-#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/pipeline.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
 #include "src/components/io/pipeline/filters/jpegdecodefilter/jpegdecodefilter.h"
 #include "src/framework/data/resources/image/imagesink.h"

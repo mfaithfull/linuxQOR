@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSESINK
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSESINK
 
-#include "src/framework/io/pipeline/sink.h"
+#include "src/framework/data/pipeline/sink.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
 

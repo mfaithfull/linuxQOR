@@ -25,8 +25,8 @@
 #include "src/configuration/configuration.h"
 
 #include "src/qor/tdd/tdd.h"
-#include "src/framework/io/pipeline/pipeline.h"
-#include "src/framework/io/pipeline/podbuffer.h"
+#include "src/framework/data/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/podbuffer.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "src/framework/io/filesystem/path.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"

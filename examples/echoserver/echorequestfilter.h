@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUESTFILTER
 #define QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUESTFILTER
 
-#include "src/framework/io/pipeline/inlinefilter.h"
+#include "src/framework/data/pipeline/inlinefilter.h"
 #include "nodes/requestnode.h"
 #include "echorequest.h"
 

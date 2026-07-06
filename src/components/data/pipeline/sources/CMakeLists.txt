@@ -1,0 +1,5 @@
+add_subdirectory(stringsource)
+add_subdirectory(randomsource)
+add_subdirectory(generatorsource)
+add_subdirectory(aggregatesource)
+add_subdirectory(datasource)

@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#include "src/framework/io/pipeline/podbuffer.h"
-#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/podbuffer.h"
+#include "src/framework/data/pipeline/pipeline.h"
 #include "src/components/protocols/json/parser/nodes/object.h"
 #include "src/components/protocols/json/parser/_3/object.h"
 #include "src/components/io/pipeline/sinks/parsersink/parsersink.h"

@@ -6,7 +6,7 @@
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/app/optionparser/getter.h"
-#include "src/framework/io/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/pipeline.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/async/service.h"
 #include "src/components/qor/logaggregator/logaggregator.h"

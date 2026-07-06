@@ -4,7 +4,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_FILE
 #define QOR_PP_H_COMPONENTS_PIPELINE_CONNECTIONS_FILE
 
-#include "src/framework/io/pipeline/connection.h"
+#include "src/framework/data/pipeline/connection.h"
 #include "src/framework/io/filesystem/ifilesystem.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/file/file.h"
@@ -24,7 +24,7 @@ namespace qor{ namespace io{ namespace components{
         //Plug interface
         virtual bool Connect();													//Device specific connection
         virtual void Disconnect();  											//Device specific disconnection
-        virtual bool HandlePendingConnectionResult(bool bConnected);			//Handling device specific pending connection states for async connections
+        //virtual bool HandlePendingConnectionResult(bool bConnected);			//Handling device specific pending connection states for async connections
 
     	void SetMode(int mode);
 	    int GetMode(void);

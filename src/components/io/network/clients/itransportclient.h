@@ -26,7 +26,7 @@
 #define QOR_PP_H_COMPONENTS_NETWORK_CLIENTS_HTTP_ITRANSPORTCLIENT
 
 #include <chrono>
-#include "src/framework/io/pipeline/iosink.h"
+#include "src/framework/data/pipeline/iosink.h"
 
 namespace qor{ namespace io{ namespace network{ namespace components{
 

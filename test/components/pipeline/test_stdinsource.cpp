@@ -31,10 +31,10 @@
 #include "src/qor/essentials/objectcontext/anyobject.h"
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/framework/io/pipeline/pipeline.h"
-#include "src/framework/io/pipeline/podbuffer.h"
+#include "src/framework/data/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/podbuffer.h"
 #include "src/components/io/pipeline/sources/stdinsource/stdinsource.h"
-#include "src/framework/io/pipeline/sink.h"
+#include "src/framework/data/pipeline/sink.h"
 
 using namespace qor;
 using namespace qor::test;

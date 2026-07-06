@@ -28,10 +28,10 @@
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/framework/io/pipeline/connection.h"
-#include "src/framework/io/pipeline/source.h"
-#include "src/framework/io/pipeline/iosink.h"
-#include "src/framework/io/pipeline/iosource.h"
+#include "src/framework/data/pipeline/connection.h"
+#include "src/framework/data/pipeline/source.h"
+#include "src/framework/data/pipeline/iosink.h"
+#include "src/framework/data/pipeline/iosource.h"
 #include "image.h"
 
 namespace qor{ namespace framework{ 

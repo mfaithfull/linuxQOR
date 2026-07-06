@@ -31,8 +31,8 @@
 #include "src/components/io/pipeline/connectors/socketconnector/socketconnector.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketsource.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketsink.h"
-#include "src/framework/io/pipeline/pipeline.h"
-#include "src/framework/io/pipeline/podbuffer.h"
+#include "src/framework/data/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/podbuffer.h"
 #include "echorequestfilter.h"
 
 class SessionPipeline : public qor::pipeline::Pipeline

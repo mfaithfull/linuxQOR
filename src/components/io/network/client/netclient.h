@@ -29,8 +29,8 @@
 #include "src/qor/memory/reference/reference.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/network/socket.h"
-#include "src/framework/io/pipeline/pipeline.h"
-#include "src/framework/io/pipeline/protocol.h"
+#include "src/framework/data/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/protocol.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketconnector.h"
 
 namespace qor{ namespace io{ namespace network { namespace components {

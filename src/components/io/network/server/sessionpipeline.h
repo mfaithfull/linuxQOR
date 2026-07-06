@@ -27,8 +27,8 @@
 
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/framework/io/pipeline/pipeline.h"
-#include "src/framework/io/pipeline/protocol.h"
+#include "src/framework/data/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/protocol.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketconnector.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketsource.h"
 #include "src/components/io/pipeline/connectors/socketconnector/socketsink.h"

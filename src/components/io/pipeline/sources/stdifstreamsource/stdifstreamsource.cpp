@@ -25,9 +25,12 @@
 #include "src/configuration/configuration.h"
 #include <stdio.h>
 #include "stdifstreamsource.h"
-#include "src/framework/io/pipeline/sink.h"
+#include "src/framework/data/pipeline/sink.h"
 
 namespace qor{ namespace io{ namespace components{ 
+
+    stdifstreamSource::stdifstreamSource() = default;
+    stdifstreamSource::~stdifstreamSource() = default;
 
     size_t stdifstreamSource::ReadBytes(byte* space, size_t bytesToRead)
     {

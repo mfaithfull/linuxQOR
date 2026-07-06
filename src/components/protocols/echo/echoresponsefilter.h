@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_RESPONSEFILTER
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_RESPONSEFILTER
 
-#include "src/framework/io/pipeline/inlinefilter.h"
+#include "src/framework/data/pipeline/inlinefilter.h"
 #include "echoresponseparser.h"
 #include "responsenode.h"
 #include "echoresponse.h"

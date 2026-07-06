@@ -1,6 +1,3 @@
-add_subdirectory(datasink)
-add_subdirectory(deserializersink)
-add_subdirectory(parsersink)
 add_subdirectory(stdofstreamsink)
 add_subdirectory(stdoutsink)
-add_subdirectory(stringsink)
+

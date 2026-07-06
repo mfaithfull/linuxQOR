@@ -1,0 +1,4 @@
+add_subdirectory(datasink)
+add_subdirectory(deserializersink)
+add_subdirectory(parsersink)
+add_subdirectory(stringsink)

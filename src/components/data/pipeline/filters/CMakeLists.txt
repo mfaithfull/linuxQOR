@@ -1,0 +1,4 @@
+add_subdirectory(base64decodefilter)
+add_subdirectory(base64encodefilter)
+add_subdirectory(linereader)
+add_subdirectory(jpegdecodefilter)

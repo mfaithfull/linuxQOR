@@ -4,7 +4,7 @@
 #ifndef QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINKS_FILE
 
-#include "src/framework/io/pipeline/iosink.h"
+#include "src/framework/data/pipeline/iosink.h"
 #include "fileconnector.h"
 
 namespace qor{ namespace io{ namespace components{

@@ -5,15 +5,15 @@
 #define QOR_PP_H_COMPONENTS_PIPELINE_SINK_SOCKETWRITER
 
 #include <functional>
-#include "src/framework/io/pipeline/pipeline.h"
-#include "src/framework/io/pipeline/podbuffer.h"
-#include "src/framework/io/pipeline/sink.h"
+#include "src/framework/data/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/podbuffer.h"
+#include "src/framework/data/pipeline/sink.h"
 #include "socketconnector.h"
 #include "socketsink.h"
 
 namespace qor{ namespace io{ namespace network{ namespace components{
 
-    class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketWriter : public pipeline::Pipeline
+    class SocketWriter : public pipeline::Pipeline
     {
     public:
 

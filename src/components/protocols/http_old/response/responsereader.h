@@ -26,9 +26,9 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSEREADER
 
 #include <functional>
-#include "src/framework/io/pipeline/pipeline.h"
-#include "src/framework/io/pipeline/podbuffer.h"
-#include "src/framework/io/pipeline/sink.h"
+#include "src/framework/data/pipeline/pipeline.h"
+#include "src/framework/data/pipeline/podbuffer.h"
+#include "src/framework/data/pipeline/sink.h"
 #include "response.h"
 
 namespace qor { namespace components { namespace protocols { namespace http { 
