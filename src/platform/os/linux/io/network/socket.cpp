@@ -30,8 +30,8 @@
 #include <netinet/tcp.h>
 #include <fcntl.h>
 #include <poll.h>
-#include "src/platform/os/linux/parallel/async/service.h"
-#include "src/platform/os/linux/parallel/async/iouringservice/readop.h"
+#include "src/platform/os/linux/io/async/asyncioservice.h"
+#include "src/platform/os/linux/io/async/iouringservice/readop.h"
 
 using namespace qor::io::async::lin;
 

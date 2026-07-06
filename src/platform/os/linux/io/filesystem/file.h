@@ -28,7 +28,7 @@
 #include "src/framework/io/filesystem/file/file.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/path.h"
-#include "src/platform/os/linux/parallel/async/asyncioservice.h"
+#include "src/platform/os/linux/io/async/asyncioservice.h"
 
 //Declaration must match the one in src/system/filesystem/ifile.h
 namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFile(); }
