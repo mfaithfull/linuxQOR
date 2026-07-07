@@ -66,6 +66,7 @@ int main(const int argc, const char** argv, char**)
 {
     DefaultErrorHandler errorHandler;
     DefaultLogHandler logHandler(Level::Debug);
+    logHandler.WriteToStandardOutput();
 
     ThePlatform(qor_shared)->AddSubsystem<Sockets>();
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();

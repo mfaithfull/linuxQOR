@@ -24,7 +24,7 @@ namespace qor { namespace io { namespace async { namespace win {
 		// it may be possible that the operation will complete immediately
 		// on another thread and then destroy the socket before we get a
 		// chance to read it.
-		const bool skipCompletionOnSuccess = false;//TODO: m_listeningSocket.skip_completion_on_success();
+		const bool skipCompletionOnSuccess = true;//TODO: m_listeningSocket.skip_completion_on_success();
 
 		DWORD bytesReceived = 0;
 		BOOL ok = WS2::AcceptEx(
