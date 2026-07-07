@@ -10,7 +10,7 @@
 #include "src/qor/flyers/interception/ifunctioncontext.h"
 #include "src/qor/flyers/interception/callcontext.h"
 
-//A class for tracking function context 
+//A class for tracking function context
 //Usage: Only ever create these on the stack at the beginning of a function
 
 //Use qor_pp_fcontext in free functions
@@ -46,7 +46,7 @@ namespace qor
         virtual void Profile(const std::chrono::duration<int64_t, std::milli>, IFunctionContext* fContext);
 
 	protected:
-		
+
 		bool m_traceCalls{false};
 		unsigned int m_locked{0};
 		unsigned int m_traceDepth{1};
@@ -56,16 +56,17 @@ namespace qor
 		IFunctionContext* m_Parent{nullptr};
 		AnyObject m_ObjContext;
 		unsigned int m_line{0};
-		CallContext m_CallContext;		
-		qor_pp_profiling_object m_Profiler;	
+		CallContext m_CallContext;
+		qor_pp_profiling_object m_Profiler;
 
 		virtual void Init();
 
 	private:
-		
+
 		void* operator new(size_t, void*) noexcept = delete;	//prevent accidental heap allocation
 	};
 
 }//qor
 
 #endif//QOR_PP_H_FUNCTIONCONTEXT
+//Review 2027/07/07

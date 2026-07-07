@@ -28,7 +28,7 @@ namespace qor {
         class ParameterPass : public ParameterBase
         {
         public:
-		
+
             ParameterPass(T& t) : ParameterBase()
 			{
 				m_p = &t;//Capture the parameter address on construction
@@ -45,7 +45,7 @@ namespace qor {
 			}
 
 			virtual ~ParameterPass() = default;
-		
+
 			T& ParamterRef() 	//Access to the parameter reference
 			{
 				return *(reinterpret_cast<T*>(m_p));
@@ -68,10 +68,10 @@ namespace qor {
         qor_pp_module_interface(QOR_INTERCEPTION) virtual void CallCompleted();
         qor_pp_module_interface(QOR_INTERCEPTION) virtual void OnReturnAssignment();
         qor_pp_module_interface(QOR_INTERCEPTION) virtual void OnReturn();
-    
+
 		qor_pp_module_interface(QOR_INTERCEPTION) ParameterBase* Parameters();						//Access to the array of registered parameters
 		qor_pp_module_interface(QOR_INTERCEPTION) ParameterBase* ReturnValue();						//Access to the return value
-    
+
 		qor_pp_module_interface(QOR_INTERCEPTION) void qor_pp_noinline OutOfLineRegistration(ParameterBase& Param);
 		ParameterBase m_aParameters[10];
 		ParameterBase m_ReturnValue;							//Return value
@@ -81,3 +81,4 @@ namespace qor {
 }//qor
 
 #endif//QOR_PP_H_CALLCONTEXT
+//Review 2027/07/07

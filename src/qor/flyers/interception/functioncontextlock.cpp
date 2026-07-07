@@ -20,7 +20,7 @@ namespace qor {
             }
         }
     }
-    
+
     CallContext* FunctionContextLock::CallContextPtr(void)
     {
         return m_CallContext;
@@ -30,12 +30,12 @@ namespace qor {
     {
         return m_ParentCallContext;
     }
-    
+
     unsigned long FunctionContextLock::Level(void)
     {
         return m_Level;
     }
-    
+
     FunctionContextLock::~FunctionContextLock()
     {
         if (m_FunctionContext != nullptr)
@@ -45,3 +45,4 @@ namespace qor {
     }
 
 }//qor
+//Review 2027/07/07

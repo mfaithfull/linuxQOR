@@ -8,7 +8,7 @@
 
 //Declare an abstract interface for function contexts
 
-namespace qor 
+namespace qor
 {
 
 #ifndef QOR_PP_H_ICALLCONTEXT
@@ -36,3 +36,4 @@ namespace qor
 }//qor
 
 #endif//QOR_PP_H_IFUNCTIONCONTEXT
+//Review 2027/07/07

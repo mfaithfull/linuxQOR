@@ -19,7 +19,7 @@ namespace qor {
         qor_pp_module_interface(QOR_INTERCEPTION) FlyStrap( FlyStrapBase* );
 		qor_pp_module_interface(QOR_INTERCEPTION) qor_pp_noinline virtual ~FlyStrap() = default;
 
-		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool PreCondition( CallContext* call, IFunctionContext* function );		
+		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool PreCondition( CallContext* call, IFunctionContext* function );
 		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool OnAssignmentCondition( CallContext* call );
 		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool PostCondition( CallContext* call );
 		qor_pp_module_interface(QOR_INTERCEPTION) virtual bool Pre( CallContext* call, IFunctionContext* function );
@@ -31,7 +31,7 @@ namespace qor {
 		{
 			FlyStrapBase* joinPoint = nullptr;
             auto lookup = CurrentThread::GetCurrent().Context().GetFlyerMap().Lookup( guid_of<T>::guid() );
-						
+
 			if (!lookup.IsNull())
 			{
 				typename ref_of< T >::type instance(lookup);
@@ -56,3 +56,4 @@ namespace qor {
 }//qor
 
 #endif//QOR_PP_H_FLYSTRAP
+//Review 2027/07/07

@@ -26,7 +26,7 @@ namespace qor {
         FlyStrap* next = Next((FlyStrap*)(nullptr));
         if( next != nullptr)
         {
-            result = next->CallPre( call, function );            
+            result = next->CallPre( call, function );
         }
         return result;
     }
@@ -87,3 +87,4 @@ namespace qor {
 	}
 
 }//qor
+//Review 2027/07/07

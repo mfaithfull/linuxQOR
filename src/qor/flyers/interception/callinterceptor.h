@@ -31,7 +31,7 @@ namespace qor {
     {
         static const GUID* guid()
         {
-            return &CallInterceptorGUID;            
+            return &CallInterceptorGUID;
         }
     };
 
@@ -49,3 +49,4 @@ namespace qor {
 }//qor
 
 #endif//QOR_PP_H_CALLINTERCEPTOR
+//Review 2027/07/07

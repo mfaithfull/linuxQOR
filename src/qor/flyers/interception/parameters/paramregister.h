@@ -21,3 +21,4 @@ namespace qor {
 }//qor
 
 #endif//QOR_PP_H_INTERCEPTION_PARAMETER_REGISTER
+//Review 2027/07/07

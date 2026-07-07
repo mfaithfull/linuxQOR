@@ -11,10 +11,10 @@ namespace qor {
 
     template< typename TValue > class NoReturnCheck;
 
-    struct ReturnRegister
+    struct qor_pp_module_interface_gcc(QOR_INTERCEPTION) ReturnRegister
     {
     public:
-        
+
         template< typename T >ReturnRegister(T* pReturn)
         {
             FunctionContextLock fcl;
@@ -44,7 +44,7 @@ namespace qor {
             Check::Check(m_Param, &AutoCheck);
             OnAssignment();
         }
-        
+
         CheckedReturn& operator = (T& value)
         {
             m_Param = value;
@@ -79,3 +79,4 @@ namespace qor {
 }//qor
 
 #endif//QOR_PP_H_INTERCEPTION_PARAMETERS_RETURN
+//Review 2027/07/07

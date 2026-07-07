@@ -16,14 +16,14 @@ namespace qor {
 		, m_module(module)
 		, m_Parent(nullptr)
 		, m_ObjContext(objContext)
-		, m_line(line)		
+		, m_line(line)
 		, m_CallContext()
 		, m_Profiler(this, profile)
 	{
 		Init();
 	}
 
-	FunctionContext::FunctionContext() : 
+	FunctionContext::FunctionContext() :
 		m_traceCalls(false)
 		, m_locked(0)
 		, m_traceDepth(1)
@@ -31,7 +31,7 @@ namespace qor {
 		, m_file(nullptr)
 		, m_module(nullptr)
 		, m_Parent(nullptr)
-		, m_line(0)		
+		, m_line(0)
 		, m_CallContext()
 		, m_Profiler(this, false)
 	{
@@ -82,7 +82,7 @@ namespace qor {
 				}
 			}
 		}
-		Unlock();		
+		Unlock();
 	}
 
 	const char* FunctionContext::File() const
@@ -153,3 +153,4 @@ namespace qor {
 	}
 
 }//qor
+//Review 2027/07/07
