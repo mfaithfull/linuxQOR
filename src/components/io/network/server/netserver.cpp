@@ -126,18 +126,21 @@ namespace qor{ namespace io{ namespace network{ namespace components{
                 m_threadPool->PostTask(                    
                     [this, ClientSocket, protocol]()
                     {
-                        qor_pp_ofcontext;
 #ifndef NDBEUG
                         //Rename the thread for debugging to indicate which client session it's servicing
                         CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));
 #endif//DEBUG
+                        qor_pp_ofcontext;
+
+                        DefaultErrorHandler defaultErrorHandler;
+                        DefaultLogHandler defaultLogHandler(log::Level::Debug);
+                        defaultLogHandler.WriteToStandardOutput();
+
                         //Run a client session
                         new_ref<NetworkSession>(ClientSocket, protocol)->Run(
-                            [](Workflow& clientSession)
+                            [&defaultLogHandler](Workflow& clientSession)
                             {
                                 //Configure the client session with it's own error and log handlers
-                                DefaultErrorHandler defaultErrorHandler;
-                                DefaultLogHandler defaultLogHandler(log::Level::Informative);
                                 auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::LogAggregatorService>();
                                 if(logAggregator.IsNotNull())
                                 {

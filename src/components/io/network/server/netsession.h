@@ -50,6 +50,7 @@ namespace qor{ namespace io{ namespace network { namespace components {
             disconnect(new_ref<workflow::State>(this)),
             m_socket(socket)
         {
+            log::debug("Setting up a client session {0}", m_socket->m_fd);
 
             connected->Enter = [this,protocol]()->void
             {
@@ -66,10 +67,11 @@ namespace qor{ namespace io{ namespace network { namespace components {
             {
                 qor_pp_ofcontext;
                 size_t unitsPumped = 0;
-                if(!m_pipeline->PumpSome(unitsPumped,0) || unitsPumped == 0)
+                if(!m_pipeline->PumpSome(unitsPumped,-1) || unitsPumped == 0)
                 {
                     SetState(disconnect);
                 }
+                log::debug("Responded to client {0} with {1} bytes.", m_socket->m_fd, unitsPumped);
             };
 
             disconnect->Enter = [this]()->void
@@ -86,6 +88,7 @@ namespace qor{ namespace io{ namespace network { namespace components {
 
         ~NetworkSession()
         {
+            log::debug("Ending client session {0}", m_socket->m_fd);
 #ifndef NDEBUG
             CurrentThread::GetCurrent().SetName("pool");//reset the thread name as we're about to hand it back to the pool
 #endif//DEBUG

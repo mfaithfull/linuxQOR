@@ -30,16 +30,6 @@ namespace qor{ namespace io{ namespace async{ namespace lin{
             if(temp != nullptr)
             {
                 return uring.ConsumeCQEntries();
-                /*
-                if( result == 0)
-                {
-                    return uring.ConsumeCQEntries();
-                }
-                else
-                {
-                    return uring.ConsumeCQEntries(temp, wait_nr);
-                }
-                */
             }
             else
             {
