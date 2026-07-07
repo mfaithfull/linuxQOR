@@ -9,13 +9,16 @@
 
 namespace qor{ namespace io{ namespace network{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketSink : public pipeline::iosink<SocketConnector>
+    class qor_pp_module_interface_gcc(QOR_SOCKETCONNECTOR) SocketSink : public pipeline::iosink<SocketConnector>
     {
     public:
 
-        SocketSink();
-        virtual ~SocketSink();
-        virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
+        qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketSink();
+        qor_pp_module_interface(QOR_SOCKETCONNECTOR) virtual ~SocketSink();
+
+    protected:
+    
+        qor_pp_module_interface(QOR_SOCKETCONNECTOR) virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
     };
 
 }}}}//qor::io::network::components

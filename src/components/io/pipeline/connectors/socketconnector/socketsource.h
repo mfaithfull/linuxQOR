@@ -9,17 +9,17 @@
 
 namespace qor{ namespace io{ namespace network{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketSource : public pipeline::iosource<SocketConnector>
+    class qor_pp_module_interface_gcc(QOR_SOCKETCONNECTOR) SocketSource : public pipeline::iosource<SocketConnector>
     {
     
     public:
 
-        SocketSource();
-        virtual ~SocketSource();
+        qor_pp_module_interface(QOR_SOCKETCONNECTOR) SocketSource();
+        qor_pp_module_interface(QOR_SOCKETCONNECTOR) virtual ~SocketSource();
 
     protected:
 
-        virtual size_t ReadBytes(byte* data, size_t bytesToRead);
+        qor_pp_module_interface(QOR_SOCKETCONNECTOR) virtual size_t ReadBytes(byte* data, size_t bytesToRead);
        
     };
 

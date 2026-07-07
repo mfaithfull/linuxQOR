@@ -14,6 +14,7 @@
 #include "src/framework/parallel/thread/threadpool.h"
 #include "interface.h"
 #include "src/qor/flyers/log/informative.h"
+#include "src/qor/flyers/log/debug.h"
 #include "src/framework/parallel/sync/mutex.h"
 #include "src/framework/io/network/isocket.h"
 #include "src/qor/essentials/current/currentthread.h"
@@ -48,7 +49,7 @@ namespace qor { namespace io{ namespace async{
                 m_processor->Reset();
                 m_processorResult = m_threadPool->SubmitTask( [this]()
                 {
-                    CurrentThread::GetCurrent().SetName("IO Thread");
+                    CurrentThread::GetCurrent().SetName("IO Thread");                    
                     return m_processor->Run();
                 });
             }

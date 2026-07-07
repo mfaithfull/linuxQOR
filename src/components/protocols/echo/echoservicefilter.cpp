@@ -36,6 +36,12 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
     //Server side protocol filter
     
+    EchoServiceFilter::EchoServiceFilter() : qor::pipeline::InlineFilter<qor::byte>(0) { }
+    
+    EchoServiceFilter::EchoServiceFilter(size_t itemCount) : qor::pipeline::InlineFilter<qor::byte>(itemCount) { }
+
+    EchoServiceFilter::~EchoServiceFilter() = default;
+
     void EchoServiceFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
     {
         EchoRequest request = Parse(data, itemCount);
@@ -45,7 +51,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         //qor::log::inform("Handling request, {0} bytes.", itemCount);
         if(input == "quit")
         {
-            fatal("user wants to quit");
+            continuable("user wants to quit");
         }
 
         size_t inputSize = input.size();

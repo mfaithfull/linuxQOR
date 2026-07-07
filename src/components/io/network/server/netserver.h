@@ -17,11 +17,11 @@
 
 namespace qor{ namespace io{ namespace network{ namespace components {
 
-    class qor_pp_module_interface(QOR_NETSERVER) NetworkServer : public Workflow
+    class qor_pp_module_interface_gcc(QOR_NETSERVER) NetworkServer : public Workflow
     {
     public:
 
-        NetworkServer(unsigned port, ref_of<pipeline::Protocol>::type protocol);
+        qor_pp_module_interface(QOR_NETSERVER) NetworkServer(unsigned port, ref_of<pipeline::Protocol>::type protocol);
 
     private:
 

@@ -20,8 +20,8 @@ namespace qor{ namespace io { namespace network{
     {
     public:
 
-        Sockets() = default;
-        virtual ~Sockets() = default;
+        Sockets();
+        virtual ~Sockets();
 
         virtual void Setup();
         virtual void Shutdown();

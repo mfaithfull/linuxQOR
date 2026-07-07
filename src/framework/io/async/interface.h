@@ -9,7 +9,7 @@
 #include "src/framework/io/network/address.h"
 
 namespace qor { namespace io{ namespace network {
-    class qor_pp_module_interface(QOR_SOCKETS) Socket;
+    class qor_pp_module_interface_gcc(QOR_SOCKETS) Socket;
 }}}//qor::io::network
 
 namespace qor { namespace io{ namespace async{

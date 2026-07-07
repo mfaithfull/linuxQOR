@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Network Client Module" LANGUAGES CXX)
 set(target qor_netclient)
 
 add_library(${target} SHARED qor_netclient.cpp netclient.cpp)
@@ -10,5 +11,5 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-target_link_libraries(${target} qor_module qor_host qor_thread qor_sync qor_injection 
-qor_log qor_error qor_pipeline qor_sockets qor_socketconnector)
+target_link_libraries(${target} qor_module qor_host qor_current qor_sync qor_injection 
+qor_issue qor_log qor_error qor_pipeline qor_sockets qor_socketconnector qor_task qor_asyncioservice)

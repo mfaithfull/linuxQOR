@@ -11,6 +11,15 @@
 namespace qor{ namespace io{ namespace components{ 
 
     StdInSource::StdInSource() : m_lineMode(true){ }
+
+    StdInSource::StdInSource(const StdInSource& src) : pipeline::Source(src) { }
+
+    StdInSource& StdInSource::operator = (const StdInSource& src)
+    {
+        pipeline::Source::operator=(src);
+        return *this;
+    }
+
     StdInSource::~StdInSource() = default;
 
     bool StdInSource::LineMode(bool newMode)

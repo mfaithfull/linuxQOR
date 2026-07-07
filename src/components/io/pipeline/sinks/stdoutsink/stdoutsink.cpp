@@ -8,7 +8,15 @@
 
 namespace qor{ namespace io{ namespace components{ 
 
-    StdOutSink::StdOutSink(){ }
+    StdOutSink::StdOutSink() = default;
+
+    StdOutSink::StdOutSink(const StdOutSink& src) : pipeline::Sink(src){ }
+
+    StdOutSink& StdOutSink::operator = (const StdOutSink& src)
+    {
+        pipeline::Sink::operator=(src);
+        return *this;
+    }
 
     StdOutSink::~StdOutSink()
     {

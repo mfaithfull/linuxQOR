@@ -8,18 +8,17 @@
 
 namespace qor{ namespace io{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_STDOUTSINK) StdOutSink : public pipeline::Sink
+    class qor_pp_module_interface_gcc(QOR_STDOUTSINK) StdOutSink : public pipeline::Sink
     {
     public:
 
-        StdOutSink();
-        virtual ~StdOutSink();
-
-        //virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
+        qor_pp_module_interface(QOR_STDOUTSINK) StdOutSink();
+        qor_pp_module_interface(QOR_STDOUTSINK) StdOutSink(const StdOutSink& src);
+        qor_pp_module_interface(QOR_STDOUTSINK) StdOutSink& operator = (const StdOutSink& src);
+        qor_pp_module_interface(QOR_STDOUTSINK) virtual ~StdOutSink();
 
     private:
         
-        //bool Pull(size_t& unitsWritten, size_t unitstoWrite);
         bool Push(size_t& unitsWritten, size_t unitstoWrite);
 
     };

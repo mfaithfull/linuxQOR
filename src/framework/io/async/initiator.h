@@ -22,6 +22,8 @@ namespace qor { namespace io{ namespace async{
     public:
 
         Initiator();
+        Initiator(const Initiator&) = delete;
+        Initiator& operator = (const Initiator&) = delete;
         virtual ~Initiator() noexcept;
         virtual void ConnectToProcessor(EventProcessor* /*processor*/);
         virtual bool RequiresBackgroundProcessor();

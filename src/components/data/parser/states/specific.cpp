@@ -66,4 +66,8 @@ namespace qor {	namespace components { namespace parser {
             };
     }
 
+    Specific::~Specific() = default;
+
+    void Specific::Emit() { }
+
 }}}//qor::components::parser

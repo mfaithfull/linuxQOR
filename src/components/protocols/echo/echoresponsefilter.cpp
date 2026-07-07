@@ -35,6 +35,12 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
     //Client side protocol filter
 
+    EchoResponseFilter::EchoResponseFilter() :  qor::pipeline::InlineFilter<qor::byte>(0) { }
+    
+    EchoResponseFilter::EchoResponseFilter(size_t itemCount) :  qor::pipeline::InlineFilter<qor::byte>(itemCount) { }
+
+    EchoResponseFilter::~EchoResponseFilter() = default;
+
     void EchoResponseFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
     {
         EchoResponse response = Parse(data, itemCount);

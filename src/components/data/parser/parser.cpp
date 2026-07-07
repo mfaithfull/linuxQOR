@@ -36,6 +36,46 @@
 
 namespace qor { namespace components { namespace parser {
 
+    Parser::Parser() : Workflow(), m_final(false){ }
+
+    Parser::Parser(ref_of<class Context>::type context) : Workflow(), m_context(context){ }
+
+    Parser::~Parser() = default;
+
+    Context* Parser::GetContext() const
+    {
+        return m_context;
+    }
+
+    void Parser::SetContext(ref_of<class Context>::type context)
+    {
+        m_context = context;
+    }
+
+    void Parser::PushNode(ref_of<Node>::type node)
+    {
+        if(node.IsNotNull())
+        {
+            m_nodes.push(node);
+        }
+    }
+
+    ref_of<Node>::type Parser::PopNode()
+    {
+        ref_of<Node>::type result;
+        if(!m_nodes.empty())
+        {
+            result = m_nodes.top();
+            m_nodes.pop();
+        }
+        /*
+        if(m_nodes.empty())
+        {
+            Diagnostic();
+        }*/
+        return result;
+    }
+
     //Call once all input data has been converted
     //Drains any remaining stack of AST Nodes into the
     //associated object model.
@@ -170,6 +210,16 @@ namespace qor { namespace components { namespace parser {
         int result = SafeParse();
         //log::debug("Partial parse complete.");
         return result;
+    }
+
+    bool Parser::IsFinal()
+    {
+        return m_final;
+    }
+
+    bool Parser::IsInError()
+    {
+        return m_inError;
     }
 
     void Parser::Diagnostic()

@@ -29,6 +29,20 @@
 
 namespace qor { namespace components { namespace parser {
 
+    Context::Context() = default;
+
+    Context::Context(Context&& src)
+    {
+        m_octetStream = src.m_octetStream;
+        m_position = src.m_position;
+        m_size = src.m_size;
+        src.m_octetStream = nullptr;
+        src.m_position = 0;
+        src.m_size = 0;
+    }
+
+    Context::Context(byte* data, size_t itemCount) : m_octetStream(data), m_position(0), m_size(itemCount){ }
+
     size_t Context::GetPosition()
     {
         return m_position;
@@ -64,6 +78,23 @@ namespace qor { namespace components { namespace parser {
     {
         std::string sample((char*)(m_octetStream + m_position - 1), std::min(m_size - m_position, (size_t)10));
         log::debug("Context diagnostics:\nstream size: {0}, position: {1}\ndata sample: {2}", m_size, m_position, sample);
+    }
+
+    void Context::SetData(byte* data, size_t itemCount)
+    {
+        m_octetStream = data;
+        m_position = 0;
+        m_size = itemCount;
+    }
+
+    bool Context::HasUnparsedData()
+    {
+        return m_size - m_position > 0;
+    }
+
+    bool Context::HasSpace()
+    {
+        return m_size - m_position > 0;
     }
 
     void Context::Reset()

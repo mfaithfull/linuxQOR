@@ -81,4 +81,6 @@ namespace qor { namespace components { namespace parser {
 
     }
 
+    ZeroOrMore::~ZeroOrMore() = default;
+    
 }}}//qor::components::parser

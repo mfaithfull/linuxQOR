@@ -35,4 +35,26 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         m_responseFilter = new_ref<EchoResponseFilter>();
     }
     
+    EchoProtocol::~EchoProtocol() = default;
+
+    io::network::sockets::eAddressFamily EchoProtocol::GetAddressFamily() const
+    {
+        return io::network::sockets::eAddressFamily::AF_INet;
+    }
+
+    ref_of<pipeline::InlineFilter<byte>>::type EchoProtocol::GetRequestFilter()
+    {            
+        return m_requestFilter;
+    }
+
+    ref_of<pipeline::InlineFilter<byte>>::type EchoProtocol::GetResponseFilter()
+    {            
+        return m_responseFilter;
+    }
+
+    size_t EchoProtocol::GetMaxEchoSize()
+    {
+        return maxEchoSize;
+    }
+
 }}}}//qor::components::protocols::echo

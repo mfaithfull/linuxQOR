@@ -23,9 +23,7 @@ namespace qor { namespace io{ namespace async{
     {
     public:
 
-        EventProcessor() :
-            m_freeRun(false),
-            m_StopRequested(false){ }
+        EventProcessor() = default;
 
         inline virtual ~EventProcessor() noexcept = default;
 
@@ -40,15 +38,14 @@ namespace qor { namespace io{ namespace async{
         }
 
         virtual void Stop() { m_StopRequested = true; }
-        virtual void Reset() { m_StopRequested = false;}
-
-        virtual bool Enroll(io::Descriptor& /*ioDescriptor*/) const {return false;}
+        virtual void Reset() { m_StopRequested = false; }
+        virtual bool Enroll(io::Descriptor& /*ioDescriptor*/) const { return false; }
 
     protected:
 
-        virtual int Event(){return 0;};
-        bool m_freeRun;
-        bool m_StopRequested;
+        virtual int Event(){ return 0; };
+        bool m_freeRun{false};
+        bool m_StopRequested{false};
     };
 
     }}//io::async

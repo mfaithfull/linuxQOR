@@ -8,15 +8,16 @@
 
 namespace qor{ namespace io{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_STDINSOURCE) StdInSource : public pipeline::Source
+    class qor_pp_module_interface_gcc(QOR_STDINSOURCE) StdInSource : public pipeline::Source
     {
     public:
 
-        StdInSource();
-        virtual ~StdInSource();
-
-        bool LineMode(bool newMode = true);
-        string_t ReadLine(size_t& unitsRead, size_t unitsToRead);
+        qor_pp_module_interface(QOR_STDINSOURCE) StdInSource();
+        qor_pp_module_interface(QOR_STDINSOURCE) StdInSource(const StdInSource&);
+        qor_pp_module_interface(QOR_STDINSOURCE) StdInSource& operator = (const StdInSource&);
+        qor_pp_module_interface(QOR_STDINSOURCE) virtual ~StdInSource();
+        qor_pp_module_interface(QOR_STDINSOURCE) bool LineMode(bool newMode = true);
+        qor_pp_module_interface(QOR_STDINSOURCE) string_t ReadLine(size_t& unitsRead, size_t unitsToRead);
 
     private:
 

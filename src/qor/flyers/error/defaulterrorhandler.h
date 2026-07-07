@@ -10,11 +10,11 @@
 
 namespace qor{ 
 
-    class qor_pp_module_interface(QOR_ERROR) DefaultErrorHandler : public qor::IssueHandler<qor::ErrorBase>
+    class qor_pp_module_interface_gcc(QOR_ERROR) DefaultErrorHandler : public qor::IssueHandler<qor::ErrorBase>
     {
     public:
         
-        qor_pp_noinline virtual bool Handle(const qor::ErrorBase& error);
+        qor_pp_module_interface(QOR_ERROR) virtual bool Handle(const qor::ErrorBase& error);
     };
 
 }//qor
