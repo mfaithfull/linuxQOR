@@ -29,10 +29,10 @@ namespace qor { namespace components { namespace parser {
         ref_of<Node>::type PopNode();
         int Parse();
         int FinalParse();
-        inline bool IsFinal();
-        inline bool IsInError();
+        bool IsFinal();
+        bool IsInError();
         void Diagnostic();
-        
+
     private:
 
         void Drain();

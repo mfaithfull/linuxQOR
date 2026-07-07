@@ -17,16 +17,16 @@ namespace qor{ namespace pipeline{
 
     qor_pp_signal_func Sink::WriteErrorSignal(size_t unitsWritten, size_t error)
     {
-        qor_pp_signal(WriteErrorSignal, unitsWritten, error);            
+        qor_pp_signal(WriteErrorSignal, unitsWritten, error);
     }
 
     Sink::Sink() : m_source(nullptr) {}
 
     Sink::~Sink() = default;
 
-    Sink::Sink( const Sink& src) : Element(src)
+    Sink::Sink( const Sink& src) : Element(src), SignalBase()
     {
-        *this = src;        
+        *this = src;
     }
 
     Sink& Sink::operator = (const Sink& src)
@@ -39,7 +39,7 @@ namespace qor{ namespace pipeline{
         return *this;
     }
 
-    void Sink::SetSink(Element* sink)
+    void Sink::SetSink(Element* /*sink*/)
     {
         //Can't set a sink on a sink
     }
@@ -64,7 +64,7 @@ namespace qor{ namespace pipeline{
 
     bool Sink::Write(size_t& unitsWritten, size_t unitsToWrite)
     {
-        return (unitsToWrite == 0 || Pull(unitsWritten, unitsToWrite)) ? Push(unitsWritten, unitsWritten) : false;        
+        return (unitsToWrite == 0 || Pull(unitsWritten, unitsToWrite)) ? Push(unitsWritten, unitsWritten) : false;
     }
 
     void Sink::OnWriteSuccess(size_t unitsWritten)
@@ -111,7 +111,7 @@ namespace qor{ namespace pipeline{
                 return false;
             }
             if(GetPlug() && GetPlug()->IsPlug())
-            {                
+            {
                 return dynamic_cast<Plug*>(GetPlug())->CheckComplete();
             }
             else
@@ -137,9 +137,9 @@ namespace qor{ namespace pipeline{
     //pull the requested amount of data from the source to the buffer
     bool Sink::Pull(size_t& unitsWritten, size_t unitsToWrite)
     {
-        return GetFlowMode() == FlowMode::Pull ? 
+        return GetFlowMode() == FlowMode::Pull ?
         (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0 || unitsToWrite == 0) ? true : false) : true;
-    }    
+    }
 
     bool Sink::Push(size_t& unitsWritten, size_t unitsToWrite)
     {
@@ -168,7 +168,7 @@ namespace qor{ namespace pipeline{
             else
             {
                 return false;//Nothing was written, the sink should have raised an error if that's a problem
-            }                
+            }
         }
         else
         {
@@ -176,7 +176,7 @@ namespace qor{ namespace pipeline{
         }
     }
 
-    size_t Sink::WriteBytes(byte* data, size_t bytesToWrite)
+    size_t Sink::WriteBytes(byte* /*data*/, size_t /*bytesToWrite*/)
     {
         fatal("Empty base called. Please overrride bool WriteBytes(byte*, size_t); in your pipeline::Sink derived class.");
         return 0;
@@ -185,7 +185,7 @@ namespace qor{ namespace pipeline{
     NullSink::NullSink() : Sink() {}
     NullSink::~NullSink() = default;
 
-    NullSink& NullSink::operator = (const NullSink& src)
+    NullSink& NullSink::operator = (const NullSink& /*src*/)
     {
         return *this;
     }
@@ -194,7 +194,7 @@ namespace qor{ namespace pipeline{
     {
         GetBuffer()->ReadRequest(unitsToWrite);
         unitsWritten = unitsToWrite;
-        GetBuffer()->ReadAcknowledge(unitsWritten);        
+        GetBuffer()->ReadAcknowledge(unitsWritten);
         return true;
     }
 

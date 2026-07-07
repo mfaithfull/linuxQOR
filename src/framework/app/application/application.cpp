@@ -34,17 +34,17 @@ namespace qor{
 
     ref_of<workflow::IWorkflow>::type Application::GetWorkflow() const
     {
-        return m_Workflow;        
+        return m_Workflow;
     }
-    
+
     std::string& Application::Name()
     {
         return m_Name;
     }
 
-    void Application::SetName(const std::string& name) 
-    { 
-        m_Name = name; 
+    void Application::SetName(const std::string& name)
+    {
+        m_Name = name;
     }
 
     int Application::RunWorkflow( ref_of<workflow::IWorkflow>::type workflow )
@@ -60,7 +60,7 @@ namespace qor{
         {
             m_Role->Setup();
         }
-        
+
         if(m_Workflow.IsNotNull())
         {
             result = m_Workflow->Run();
@@ -90,15 +90,15 @@ namespace qor{
         return longOptions;
     }
 
-    void Application::ReceiveOptionSwitch(char c)
+    void Application::ReceiveOptionSwitch(char /*c*/)
     {
     }
 
-    void Application::ReceiveOptionParameter(char c, const char*)
+    void Application::ReceiveOptionParameter(char /*c*/, const char*)
     {
     }
 
-    void Application::ReceiveLongOption(const char* option, const char* value)
+    void Application::ReceiveLongOption(const char* /*option*/, const char* /*value*/)
     {
     }
 
@@ -117,7 +117,7 @@ namespace qor{
         {
             m_Role->Setup();
         }
-        
+
         if(runable.IsNotNull())
         {
             result = runable->Run();
