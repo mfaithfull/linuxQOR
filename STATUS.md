@@ -1,3 +1,8 @@
+July 2026. Portable Modules are now versioned, identifying those that are ready for 0.5
+HTTP is the next major element to be cleaned up and completed. Needs a couple of systematic refactors and generator
+infrastructure.
+
+========================================================================================================================
 
 July 2026. A version 0.5 interim release plan has been put together along with a long list of things that need doing before and after.
 Scrubbing the module export interfaces is under way. It's a pretty major piece of work and won't be complete soon. However the base libraries

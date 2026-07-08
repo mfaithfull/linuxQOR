@@ -12,5 +12,4 @@ add_subdirectory(roller)
 add_subdirectory(work)
 add_subdirectory(plumbing)
 add_subdirectory(parallel)
-add_subdirectory(readlinebyline)
 

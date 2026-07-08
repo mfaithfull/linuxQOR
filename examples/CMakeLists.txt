@@ -1,7 +1,3 @@
 add_subdirectory(basic)
 add_subdirectory(intermediate)
-add_subdirectory(echoserver)
-add_subdirectory(hydra)
-add_subdirectory(experimental)
 add_subdirectory(advanced)
-add_subdirectory(osspecific)

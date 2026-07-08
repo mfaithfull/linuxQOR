@@ -2,9 +2,13 @@ A folder of basic QOR examples.
 
 All examples are platform independent, terminal/console, programs with no dependencies except QOR libraries.
 
-outline:-
-    The QOR's Hello World example. Not quite the simplest possible QOR app 
+basic:-
+    A QOR Hello World example. Not quite the simplest possible QOR app 
     but small enough to fit in the palm of your hand.
+
+outline:-
+    A self analysing app that gives insight into how QOR apps fit
+    together.
 
 options:-
     Add traditional command line options to your application. 
@@ -24,7 +28,7 @@ plumbing:-
 
 parallel:-
     Launch and use background services and custom parallel tasks. 
-    Signals allow notification across threads enabling log
-    aggregation
+    Signals allow notification across threads enabling, for example,
+    log aggregation.
 
     
