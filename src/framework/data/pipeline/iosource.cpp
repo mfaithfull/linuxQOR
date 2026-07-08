@@ -6,7 +6,7 @@
 #include "sink.h"
 #include "src/qor/flyers/error/error.h"
 
-namespace qor{ namespace pipeline{ 
+namespace qor{ namespace pipeline{
 
     iosource_base::iosource_base() : pipeline::Source(), m_plug(nullptr) { }
 
@@ -37,7 +37,7 @@ namespace qor{ namespace pipeline{
         return "iosource_base";
     }
 
-    size_t iosource_base::ReadBytes(byte* space, size_t bytesToRead)
+    size_t iosource_base::ReadBytes(byte* /*space*/, size_t /*bytesToRead*/)
     {
         fatal("Empty base called. Please overrride bool ReadBytes(byte*, size_t); in your pipeline::io_source derived class.");
         return 0;

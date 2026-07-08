@@ -6,7 +6,7 @@
 #include "filesource.h"
 #include "src/qor/flyers/error/error.h"
 
-namespace qor{ namespace io{ namespace components{ 
+namespace qor{ namespace io{ namespace components{
 
     FileSource::FileSource() = default;
 
@@ -19,11 +19,7 @@ namespace qor{ namespace io{ namespace components{
         {
             result = m_Connector->File()->Read(space, bytesToRead, -1);
 
-            if(result < 0)
-            {
-                OnReadError(result,0);
-            }
-            else if(result == 0)
+            if(result == 0)
             {
                 OnEndOfData();
             }

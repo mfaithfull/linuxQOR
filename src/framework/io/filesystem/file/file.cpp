@@ -30,7 +30,7 @@ namespace qor{ namespace io{
 
     File::File(const filesystem::Index& index) : m_index(index){ }
 
-    File::File(const filesystem::Index& index, int OpenFor, const int WithFlags) : m_index(index){ }
+    File::File(const filesystem::Index& index, int /*OpenFor*/, const int /*WithFlags*/) : m_index(index){ }
 
     File& File::operator = (const File& src)
     {
@@ -167,13 +167,13 @@ namespace qor{ namespace io{
         return newfile;
     }
 
-    task<int> File::AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncRead(const qor::io::async::Interface& /*ioContext*/, byte* /*buffer*/, size_t /*byteCount*/, off_t /*offset*/)
     {
         serious("Empty base implementation.");
         return task<int>{};
     }
 
-    task<int> File::AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> File::AsyncWrite(const qor::io::async::Interface& /*ioContext*/, byte* /*buffer*/, size_t /*byteCount*/, off_t /*offset*/)
     {
         serious("Empty base implementation.");
         return task<int>{};

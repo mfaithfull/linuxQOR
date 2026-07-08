@@ -6,7 +6,7 @@
 #include "filesink.h"
 #include "src/framework/data/pipeline/source.h"
 
-namespace qor{ namespace io{ namespace components{ 
+namespace qor{ namespace io{ namespace components{
 
     FileSink::FileSink() = default;
 
@@ -22,10 +22,6 @@ namespace qor{ namespace io{ namespace components{
         else
         {
             OnWriteError(0,0);
-        }
-        if( result < 0)
-        {
-            OnWriteError(result,0);
         }
         return result;
     }

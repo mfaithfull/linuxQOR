@@ -20,7 +20,7 @@
 #include "src/framework/io/network/socket.h"
 #include "src/framework/io/async/eventprocessor.h"
 
-qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, Service)
+qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOService)
 qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, EventProcessor)
 qor_pp_module_will_provide(QOR_LINUXASYNCIOSERVICE, Initiator)
 

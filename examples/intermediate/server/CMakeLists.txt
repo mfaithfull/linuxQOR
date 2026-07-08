@@ -5,12 +5,12 @@ add_executable(${target} main.cpp server.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 
-target_compile_definitions(${target} PRIVATE 
+target_compile_definitions(${target} PRIVATE
 qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-set(portable_libraries qor_module qor_host qor_compiler 
+set(portable_libraries qor_module qor_host qor_current qor_compiler
 qor_platform qor_application qor_thread qor_role qor_workflow qor_filesystem qor_optionparser qor_pipeline qor_error qor_sockets
 qor_asyncioservice qor_socketconnector qor_log qor_logaggregator qor_loghandler qor_asyncioservice
 qor_netserver qor_echo)

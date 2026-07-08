@@ -45,7 +45,7 @@ namespace qor{ namespace pipeline{
             m_readBegin = src.m_readBegin;
             m_readEnd = src.m_readEnd;
             m_writeBegin = src.m_writeBegin;
-            m_writeEnd = src.m_writeEnd;    
+            m_writeEnd = src.m_writeEnd;
         }
         return *this;
     }
@@ -128,13 +128,13 @@ namespace qor{ namespace pipeline{
         return result;
     }
 
-    byte* Buffer::WriteRequest(size_t& itemCount)
+    byte* Buffer::WriteRequest(size_t& /*itemCount*/)
     {
         fatal("Empty base called. Please override byte* WriteRequest(size_t&); in your pipeline::Buffer derived class.");
         return nullptr;
     }
 
-    byte* Buffer::ReadRequest(size_t& itemCount)
+    byte* Buffer::ReadRequest(size_t& /*itemCount*/)
     {
         fatal("Empty base called. Please override byte* ReadRequest(size_t&); in your pipeline::Buffer derived class.");
         return nullptr;

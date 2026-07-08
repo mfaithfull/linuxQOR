@@ -20,10 +20,10 @@ using namespace qor::pipeline;
 namespace qor{ namespace io{ namespace network{ namespace components{
 
     NetworkServer::NetworkServer(unsigned port, ref_of<Protocol>::type protocol) :
-        m_port(port),
         bind(new_ref<workflow::State>(this)),
         listen(new_ref<workflow::State>(this)),
-        accept(new_ref<workflow::State>(this))
+        accept(new_ref<workflow::State>(this)),
+        m_port(port)
     {
         qor_pp_ofcontext;
 
@@ -90,7 +90,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
         {
             qor_pp_ofcontext;
             Address ClientAddress;
-            
+
             auto ClientSocket = m_serverSocket->Accept(m_ioSession, ClientAddress); //Accept connections
             if(!ClientSocket->IsAlive())
             {
@@ -102,7 +102,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
                 log::debug("Accepted client connection: {0}:{1}", ClientSocket->m_fd, addr );
 
                 //Handle the connected client in it's own task on a pool thread
-                m_threadPool->PostTask(                    
+                m_threadPool->PostTask(
                     [this, ClientSocket, protocol]()
                     {
 #ifndef NDBEUG
@@ -117,7 +117,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
 
                         //Run a client session
                         new_ref<NetworkSession>(ClientSocket, protocol)->Run(
-                            [&defaultLogHandler](Workflow& clientSession)
+                            [&defaultLogHandler](Workflow& /*clientSession*/)
                             {
                                 //Configure the client session with it's own error and log handlers
                                 auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::LogAggregatorService>();

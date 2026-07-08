@@ -27,7 +27,7 @@ namespace qor{ namespace pipeline{
     }
 
     Source::Source() : m_sink(nullptr) {}
-    
+
     Source::~Source() { };
 
     Source::Source(const Source& src) : Element(src)
@@ -74,7 +74,7 @@ namespace qor{ namespace pipeline{
     {
         ReadSuccessSignal(unitsRead);
     }
-    
+
     void Source::OnReadError(size_t error, size_t unitsRead)
     {
         ReadErrorSignal(unitsRead, error);
@@ -84,7 +84,7 @@ namespace qor{ namespace pipeline{
     {
         EndOfDataSignal();
     }
-    
+
     bool Source::IsSource()
     {
         return true;
@@ -131,7 +131,7 @@ namespace qor{ namespace pipeline{
                 return false;
             }
             if(GetPlug() && GetPlug()->IsPlug())
-            {                
+            {
                 return dynamic_cast<Plug*>(GetPlug())->CheckComplete();
             }
             else
@@ -144,7 +144,7 @@ namespace qor{ namespace pipeline{
 
     bool Source::Push(size_t& unitsRead, size_t unitsToRead)
     {
-        return ( GetFlowMode() == FlowMode::Push ) ? (ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0)) : true;        
+        return ( GetFlowMode() == FlowMode::Push ) ? (ActualSink()->Write(unitsRead, unitsToRead) && (unitsRead > 0)) : true;
     }
 
     bool Source::Pull(size_t& unitsRead, size_t unitsToRead)
@@ -156,13 +156,13 @@ namespace qor{ namespace pipeline{
         Buffer* buffer = GetBuffer();
         if(buffer)
         {
-            byte* space = buffer->WriteRequest(unitsToRead);            
+            byte* space = buffer->WriteRequest(unitsToRead);
             if(!space)
             {
                 continuable("Pipeline stall. No space in source buffer.");
                 return false;
             }
-            
+
             size_t bytesRead = ReadBytes(space, buffer->GetUnitSize() * unitsToRead);
             if(bytesRead > 0)
             {
@@ -182,7 +182,7 @@ namespace qor{ namespace pipeline{
         }
     }
 
-    size_t Source::ReadBytes(byte* space, size_t bytesToRead)
+    size_t Source::ReadBytes(byte* /*space*/, size_t /*bytesToRead*/)
     {
         fatal("Empty base called. Please override bool ReadBytes(byte*, size_t); in your pipeline::Source derived class.");
         return 0;
@@ -190,17 +190,17 @@ namespace qor{ namespace pipeline{
 
 
     NullSource::NullSource() : Source() {}
-    
+
     NullSource::~NullSource() { };
 
-    NullSource& NullSource::operator = (const NullSource& src)
+    NullSource& NullSource::operator = (const NullSource& /*src*/)
     {
         return *this;
     }
 
     bool NullSource::Read(size_t& unitsRead, size_t unitsToRead)
-    {        
-        unitsRead = unitsToRead;        
+    {
+        unitsRead = unitsToRead;
         return true;
     }
 

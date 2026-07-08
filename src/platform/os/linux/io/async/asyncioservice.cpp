@@ -5,7 +5,7 @@
 
 #include "asyncioservice.h"
 
-qor_pp_module_provide(QOR_LINUXASYNCIOSERVICE, Service)
+qor_pp_module_provide(QOR_LINUXASYNCIOSERVICE, AsyncIOService)
 
 namespace qor{ namespace io { namespace async{ namespace lin{
 

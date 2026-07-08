@@ -12,7 +12,7 @@
 
 class HTTPServerApp : public qor::Application
 {
-    qor_pp_declare_app_class(HTTPServerApp);                    //Required boiler plate for derived Application classes
+    qor_pp_declare_app_class(HTTPServerApp)                     //Required boiler plate for derived Application classes
 
 public:
 
@@ -25,10 +25,10 @@ public:
     //IOptionable interface for command line options
     virtual const char* ProvideShortOptionString();             //Implement to tell the parser what short options we support
     virtual qor::app::Option* ProvideLongOptions();             //Implement to tell the parser what long options we support
-    virtual void ReceiveOptionSwitch(char c){}                  //Implement to receive switch options
+    virtual void ReceiveOptionSwitch(char /*c*/){}                  //Implement to receive switch options
     virtual void ReceiveOptionParameter(char c, const char* value);//Implement to receive options parameters
     virtual void ReceiveLongOption(const char* option, const char* value);  //Implement to receive long options
-    virtual void ReceiveNonOption(const char* parameter){}      //Implement to receive non option command line strings
+    virtual void ReceiveNonOption(const char* /*parameter*/){}      //Implement to receive non option command line strings
 
     //HTTPServerApp specific interface
     HTTPServerApp& UseAggregatedLogging();                      //Call to turn on Aggregated Logging. Requires Log aggregator component
@@ -44,10 +44,10 @@ private:
     bool m_useAggregatedLogging;
     qor::DefaultErrorHandler m_errorHandler;
     qor::DefaultLogHandler m_logHandler;
-    
+
 };
 
-namespace qor{  
+namespace qor{
     qor_pp_declare_instancer_of(HTTPServerApp, SingletonInstancer); //App classes should be Singletons
     qor_pp_declare_sync_of(HTTPServerApp, RecursiveMutex);          //Protected by a RecursiveMutex
 }

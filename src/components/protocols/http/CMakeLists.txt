@@ -1,12 +1,12 @@
 set(target qor_http)
 
-add_library(${target} SHARED 
-qor_http.cpp 
-protocol.cpp 
+add_library(${target} SHARED
+qor_http.cpp
+protocol.cpp
 filter.cpp
 client/requestsource/source.cpp
 client/responsesink/sink.cpp
-client/requestgenerator/requestgenerator.cpp 
+client/requestgenerator/requestgenerator.cpp
 client/requestgenerator/context.cpp
 client/requestgenerator/state.cpp
 server/requestparser/requestparser.cpp
@@ -44,7 +44,7 @@ server/requestparser/uri/uri_asterisk_formtoken.cpp
 server/requestparser/uri/uri_authority_formtoken.cpp
 server/requestparser/uri/uri_origin_formtoken.cpp
 server/requestparser/userinfotoken.cpp
-client/responsesink/sink.cpp 
+client/responsesink/sink.cpp
 client/responseparser/responseparser.cpp
 server/responsegenerator/responsegenerator.cpp
 request/request.cpp)
@@ -52,10 +52,14 @@ request/request.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
+SET(CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS 1)
+SET(CMAKE_CXX_RESPONSE_FILE_LINK_FLAG "@")
+SET(CMAKE_NINJA_FORCE_RESPONSE_FILE 1 CACHE INTERNAL "")
+
 target_compile_definitions(${target} PRIVATE QOR_HTTP
 qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-target_link_libraries(${target} qor_module qor_thread qor_sync qor_injection 
-qor_parser qor_threadmemory)
+target_link_libraries(${target} qor_module qor_host qor_current qor_sync qor_injection
+qor_parser)

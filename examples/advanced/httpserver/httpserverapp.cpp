@@ -60,7 +60,7 @@ int main(const int argc, const char** argv, char** env)
                         }
                     );
                     role->AddFeature<async::Service>(
-                        [](ref_of<async::Service>::type ioService)->void
+                        [](ref_of<async::Service>::type /*ioService*/)->void
                         {
                             PoolInstancer::SetPoolSize<async::Context>(3);
                         }
@@ -120,7 +120,7 @@ app::Option* HTTPServerApp::ProvideLongOptions()
     return longOptions;
 }
 
-void HTTPServerApp::ReceiveOptionParameter(char c, const char* value)
+void HTTPServerApp::ReceiveOptionParameter(char c, const char* /*value*/)
 {
     switch (c)
     {
@@ -129,7 +129,7 @@ void HTTPServerApp::ReceiveOptionParameter(char c, const char* value)
     }
 }
 
-void HTTPServerApp::ReceiveLongOption(const char* option, const char* value)
+void HTTPServerApp::ReceiveLongOption(const char* option, const char* /*value*/)
 {
     if (strncmp(option, "port", 4) == 0)
     {

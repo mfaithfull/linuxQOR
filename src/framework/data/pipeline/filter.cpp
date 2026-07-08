@@ -11,7 +11,7 @@ namespace qor{ namespace pipeline{
 
     Filter::Filter() : Sink(), Source() {}
 
-    Filter::Filter(const Filter& src) : Sink(), Source(), Element()
+    Filter::Filter(const Filter& src) : Element(), Sink(), Source()
     {
         *this = src;
     }
@@ -87,17 +87,17 @@ namespace qor{ namespace pipeline{
     {
         size_t unitsPumped = 0;
         size_t unitsToPump = GetFlowMode() == FlowMode::Pull ?
-        ActualSink()->GetBuffer()->WriteCapacity() : 
+        ActualSink()->GetBuffer()->WriteCapacity() :
         ActualSource()->GetBuffer()->WriteCapacity();
         PumpSome(unitsPumped, unitsToPump);
         return unitsPumped;
     }
 
-    //Pump up to the ammount requested. 
+    //Pump up to the ammount requested.
     //In Pull mode this is a request to write that much into the sink. It will pull what it needs to achieve that
     //In Push mode this is a request to push that much from the source. What arrives at the sink will depend on any filters present
     bool Filter::PumpSome(size_t& unitsPumped, size_t unitsToPump)
-    {    
+    {
         if(GetFlowMode() == FlowMode::Pull)
         {
             return ActualSink()->Write(unitsPumped, unitsToPump);
@@ -108,10 +108,10 @@ namespace qor{ namespace pipeline{
         }
     }
 
-    //Keep pumping until the requests units have been pumped or the well is empty 
+    //Keep pumping until the requests units have been pumped or the well is empty
     //returns true if we got all the units we asked for without breaking the pipe
     bool Filter::Pump(size_t& unitsPumped, size_t unitsToPump)
-    {    
+    {
         qor_pp_ofcontext;
         bool working = unitsToPump > 0 ? true : false;
         while(working && unitsToPump > 0)
@@ -160,16 +160,16 @@ namespace qor{ namespace pipeline{
 
     bool Filter::Read(size_t& unitsRead, size_t unitsToRead)
     {
-        return (GetFlowMode() == FlowMode::Pull) ? 
-            (ReadFilter(unitsRead, unitsRead)) : 
+        return (GetFlowMode() == FlowMode::Pull) ?
+            (ReadFilter(unitsRead, unitsRead)) :
             ActualSource()->Read(unitsRead, unitsToRead);
     }
 
     bool Filter::Write(size_t& unitsWritten, size_t unitsToWrite)
     {
-        return Pull(unitsWritten, unitsToWrite) ? 
+        return Pull(unitsWritten, unitsToWrite) ?
         (
-            WriteFilter(unitsWritten, unitsWritten) ? 
+            WriteFilter(unitsWritten, unitsWritten) ?
                 ActualSink()->Write(unitsWritten, unitsToWrite) : false
         ) : false;
 
@@ -189,17 +189,17 @@ namespace qor{ namespace pipeline{
     {
         if(GetFlowMode() == FlowMode::Pull)
         {
-            return Pull(unitsPumped, unitsToPump) ? 
+            return Pull(unitsPumped, unitsToPump) ?
             (
-                filterFn(unitsPumped, unitsPumped) ? 
+                filterFn(unitsPumped, unitsPumped) ?
                     Push(unitsPumped,unitsPumped) : false
             ) : false;
         }
         else
         {
-            return filterFn(unitsPumped, unitsPumped) ? 
+            return filterFn(unitsPumped, unitsPumped) ?
             (
-                Push(unitsPumped, unitsToPump) ? 
+                Push(unitsPumped, unitsToPump) ?
                     Pull(unitsPumped, unitsToPump) : false
             ) : false;
         }
