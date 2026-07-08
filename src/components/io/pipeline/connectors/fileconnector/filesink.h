@@ -9,12 +9,15 @@
 
 namespace qor{ namespace io{ namespace components{
 
-    class qor_pp_module_interface(QOR_FILECONNECTOR) FileSink : public pipeline::iosink<FileConnector>
+    class qor_pp_module_interface_gcc(QOR_FILECONNECTOR) FileSink : public pipeline::iosink<FileConnector>
     {
     public:
 
-        FileSink();
-        virtual ~FileSink();
+        qor_pp_module_interface(QOR_FILECONNECTOR) FileSink();
+        qor_pp_module_interface(QOR_FILECONNECTOR) virtual ~FileSink();
+
+    protected:
+
         virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
     };
 

@@ -9,13 +9,12 @@
 
 namespace qor{ namespace io{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_FILECONNECTOR) FileSource : public pipeline::iosource<FileConnector>
-    {
-    
+    class qor_pp_module_interface_gcc(QOR_FILECONNECTOR) FileSource : public pipeline::iosource<FileConnector>
+    {    
     public:
 
-        FileSource();
-        virtual ~FileSource();
+        qor_pp_module_interface(QOR_FILECONNECTOR) FileSource();
+        qor_pp_module_interface(QOR_FILECONNECTOR) virtual ~FileSource();
 
     protected:
 

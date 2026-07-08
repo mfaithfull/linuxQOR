@@ -26,6 +26,7 @@
 
 #include "src/qor/flyers/error/error.h"
 #include "src/qor/flyers/log/log.h"
+#include "src/qor/flyers/log/debug.h"
 #include "value.h"
 #include "../_1/_false.h"
 #include "../_1/_null.h"
@@ -67,6 +68,8 @@ namespace qor { namespace components { namespace parser { namespace json {
             ),
         static_cast<uint64_t>(jsonToken::value)){ }
 
+    value::~value() = default;
+    
     void value::Prepare()
     {
         log::debug("Looking for a Value...");

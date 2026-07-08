@@ -8,6 +8,7 @@ namespace qor{ namespace pipeline { namespace components{
 
     LineReader::LineReader() = default;
     LineReader::~LineReader() = default;
+    LineReader& LineReader::operator = (const LineReader&) = default;
 
     bool LineReader::ReadFilter(size_t& unitsProcessed, size_t unitsToProcess)
     {

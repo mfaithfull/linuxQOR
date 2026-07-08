@@ -28,6 +28,7 @@
 #include <cassert>
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
+#include "src/qor/flyers/error/error.h"
 #include "object.h"
 #include "../_1/begin_object.h"
 #include "../_2/end_object.h"
@@ -58,6 +59,8 @@ namespace qor { namespace components { namespace parser { namespace json {
             ),
         static_cast<uint64_t>(jsonToken::object)){ }
 
+    object::~object() = default;
+    
     void object::Prepare()
     {
         log::debug("Looking for an Object...");

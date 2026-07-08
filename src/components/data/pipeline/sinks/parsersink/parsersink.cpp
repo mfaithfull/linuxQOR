@@ -3,6 +3,7 @@
 
 #include "src/configuration/configuration.h"
 
+#include "src/qor/flyers/error/error.h"
 #include "parsersink.h"
 #include "src/framework/data/pipeline/source.h"
 #include "src/qor/flyers/interception/functioncontext.h"
@@ -74,5 +75,6 @@ namespace qor{ namespace pipeline{ namespace components{
     size_t BaseParserSink::Parse(byte* data, size_t bytesToParse)
     {
         fatal("Empty base called. Please overrride bool Parse(byte*, size_t); in your BaseParserSink derived class.");
+        return 0;
     }
 }}}//qor::parser::components

@@ -14,19 +14,19 @@
 
 namespace qor{ namespace pipeline{ namespace components{ 
 
-    class qor_pp_module_interface(QOR_PARSERSINK) BaseParserSink : public pipeline::Sink
+    class qor_pp_module_interface_gcc(QOR_PARSERSINK) BaseParserSink : public pipeline::Sink
     {
     public:
 
-        BaseParserSink();
-        virtual ~BaseParserSink();
-        qor::components::parser::Parser& Parser();
-        void SetEOD();
+        qor_pp_module_interface(QOR_PARSERSINK) BaseParserSink();
+        qor_pp_module_interface(QOR_PARSERSINK) virtual ~BaseParserSink();
+        qor_pp_module_interface(QOR_PARSERSINK) qor::components::parser::Parser& Parser();
+        qor_pp_module_interface(QOR_PARSERSINK) void SetEOD();
 
     protected:
         
-        bool Push(size_t& unitsWritten, size_t unitsToWrite);
-        virtual size_t Parse(byte* data, size_t bytesToParse);
+        qor_pp_module_interface(QOR_PARSERSINK) bool Push(size_t& unitsWritten, size_t unitsToWrite);
+        qor_pp_module_interface(QOR_PARSERSINK) virtual size_t Parse(byte* data, size_t bytesToParse);
 
         qor::ref_of<qor::components::parser::Context>::type m_context;
         qor::components::parser::Parser m_parser;      

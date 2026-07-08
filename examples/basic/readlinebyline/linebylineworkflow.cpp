@@ -10,7 +10,7 @@
 #include "src/components/io/pipeline/connectors/fileconnector/filesource.h"
 #include "src/framework/io/filesystem/filesystem.h"
 #include "linebylineworkflow.h"
-#include "src/components/io/pipeline/filters/linereader/linereader.h"
+#include "src/components/data/pipeline/filters/linereader/linereader.h"
 
 using namespace qor;
 using namespace qor::io;
@@ -28,8 +28,8 @@ LineByLineWorkflow::LineByLineWorkflow() : state0(new_ref<qor::workflow::State>(
                 
         Pipeline testPipeline;
         testPipeline.SetFlowMode(Element::FlowMode::Push);
-        ByteBuffer InBuffer(16384);
-        ByteBuffer OutBuffer(16384);
+        ByteBuffer InBuffer(1024);
+        ByteBuffer OutBuffer(1024);
 
         StdOutSink sink;
         sink.SetParent(&testPipeline);
@@ -62,7 +62,7 @@ LineByLineWorkflow::LineByLineWorkflow() : state0(new_ref<qor::workflow::State>(
         do
         {
             unitsPumped = 0;
-            testPipeline.PumpSome(unitsPumped, 16384);
+            testPipeline.PumpSome(unitsPumped, 1024);
         } while (unitsPumped > 0);
         
         SetComplete();

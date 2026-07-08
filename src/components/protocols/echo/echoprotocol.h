@@ -10,12 +10,12 @@
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
+    constexpr size_t maxEchoSize = 1024;
+
     //Request and response pipeline protocol
     class qor_pp_module_interface_gcc(QOR_ECHO) EchoProtocol : public qor::pipeline::Protocol
     {
     public:
-
-        qor_pp_module_interface(QOR_ECHO) static constexpr size_t maxEchoSize = 1024;
 
         qor_pp_module_interface(QOR_ECHO) EchoProtocol();
         qor_pp_module_interface(QOR_ECHO) virtual ~EchoProtocol();
