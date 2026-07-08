@@ -5,6 +5,7 @@
 #include "anyoneof.h"
 #include "../context.h"
 #include "../parser.h"
+#include "src/qor/flyers/log/debug.h"
 
 namespace qor { namespace components { namespace parser {
 
@@ -69,5 +70,5 @@ namespace qor { namespace components { namespace parser {
     }
 
     AnyOneOf::~AnyOneOf() = default;
-    
+
 }}}//qor::components::parser

@@ -315,6 +315,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
                 note("Entered Header");
                 m_EnteredAtLeastOnce = true;
                 auto gen = GetGenerator();
+                Workflow()->PushState(new_ref<CRLF>(gen));
                 Workflow()->PushState(new_ref<String>(gen, m_value));
                 Workflow()->PushState(new_ref<Char>(gen, ':'));
                 Workflow()->PushState(new_ref<String>(gen, m_key));
@@ -393,7 +394,10 @@ namespace qor { namespace components { namespace protocols { namespace http { na
             {
                 note("Entered Body");
                 m_EnteredAtLeastOnce = true;
-                Workflow()->PopState();
+                auto gen = GetGenerator();
+                auto response = gen->GetResponse();
+                std::string body = response->GetBody();
+                Workflow()->SetState(new_ref<String>(gen, body));
             };
 
             Resume = [this]()

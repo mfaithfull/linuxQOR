@@ -21,6 +21,7 @@ namespace qor { namespace components { namespace parser {
 
         std::vector<ref_of<ParserState>::type>* m_set;
         std::vector<ref_of<ParserState>::type>::iterator m_it;
+        size_t m_index{0};
     };
 
 }}}//qor::components::parser

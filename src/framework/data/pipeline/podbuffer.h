@@ -33,7 +33,7 @@ namespace qor{ namespace pipeline{
             if(&src != this)
             {
                 Buffer::operator = (src);
-                memcpy(m_pAllocation, src.m_pAllocation, sizeof(pod_t) * std::min(m_allocationCount, src.m_allocationCount));                
+                memcpy(m_pAllocation, src.m_pAllocation, sizeof(pod_t) * std::min(m_allocationCount, src.m_allocationCount));
             }
             return *this;
         }
@@ -81,7 +81,7 @@ namespace qor{ namespace pipeline{
             //Single read can't wrap so cut it off at the next wrap
             if(AddressOf(m_readEnd) + result > EndOfBuffer())
             {
-                result = EndOfBuffer() - AddressOf(m_readEnd);                
+                result = EndOfBuffer() - AddressOf(m_readEnd);
             }
             return result;
         }
@@ -115,14 +115,19 @@ namespace qor{ namespace pipeline{
 
         virtual void SetCapacity(size_t itemCount)
         {
+            if(m_allocationCount == itemCount)
+            {
+                return;
+            }
             //The one and only bit of memory management;
             delete[] m_pAllocation;
             m_pAllocation = (itemCount > 0) ? new pod_t[itemCount] : nullptr;
+            memset(m_pAllocation, 0, sizeof(pod_t) * itemCount);
             Buffer::SetCapacity(itemCount);
         }
 
     protected:
-        
+
         pod_t* EndOfBuffer(void)
         {
             pod_t* pResult = nullptr;
@@ -132,7 +137,7 @@ namespace qor{ namespace pipeline{
             }
             return pResult;
         }
-        
+
         pod_t* AddressOf(size_t index)
         {
             pod_t* pResult = nullptr;
@@ -143,11 +148,11 @@ namespace qor{ namespace pipeline{
             return pResult;
         }
 
-        pod_t* m_pAllocation;        
+        pod_t* m_pAllocation;
     };
 
     typedef PODBuffer< byte > ByteBuffer;
-    
+
 }}//qor::pipeline
 
 #endif//QOR_PP_H_PIPELINE_PODBUFFER

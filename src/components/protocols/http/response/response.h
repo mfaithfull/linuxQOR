@@ -10,7 +10,7 @@
 #include "src/qor/flyers/error/error.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
-    
+
     class HTTPResponse
     {
     public:
@@ -30,7 +30,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         {
             return m_response;
         }
-        
+
         void SetStatus(const unsigned int status)
         {
             if(status >= 100 && status < 600)
@@ -63,6 +63,26 @@ namespace qor { namespace components { namespace protocols { namespace http {
             return m_headers;
         }
 
+        void AddHeader(const std::string& key, const std::string& value)
+        {
+            m_headers.emplace(key,value);
+        }
+
+        void SetHeaders(const Headers& headers)
+        {
+            m_headers = headers;
+        }
+
+        void SetBody(const std::string& body)
+        {
+            m_body = body;
+        }
+
+        std::string GetBody()
+        {
+            return m_body;
+        }
+
     private:
 
         std::string m_response;
@@ -70,7 +90,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
         Headers m_headers;
         HTTPVersion m_version;
         unsigned int m_statusCode;
-        
+        std::string m_body;
+
     };
 
 }}}}//qor::components::protocols::http

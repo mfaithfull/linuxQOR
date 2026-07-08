@@ -4,6 +4,7 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/flyers/error/error.h"
 #include "src/qor/flyers/log/informative.h"
+#include "src/qor/flyers/log/debug.h"
 #include "source.h"
 #include "sink.h"
 #include "plug.h"
@@ -159,6 +160,7 @@ namespace qor{ namespace pipeline{
             byte* space = buffer->WriteRequest(unitsToRead);
             if(!space)
             {
+                log::debug("Buffer capacity: {0}, Write capacity: {1}, Read capacity: {2}, Unit size: {3}", buffer->Capacity(), buffer->WriteCapacity(), buffer->ReadCapacity(), buffer->GetUnitSize());
                 continuable("Pipeline stall. No space in source buffer.");
                 return false;
             }

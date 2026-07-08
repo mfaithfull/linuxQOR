@@ -20,16 +20,32 @@ namespace qor { namespace components { namespace protocols { namespace http {
     void HTTPFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
     {
         ref_of<HTTPRequest>::type request = Parse(data, itemCount);
-        
+        ref_of<HTTPResponse>::type response = new_ref<HTTPResponse>();
+
         if(request.IsNull())
         {
             //TODO: return a Bad Request Response
             return;
         }
 
-        ref_of<HTTPResponse>::type response = new_ref<HTTPResponse>();
-        
-        //TODO: Fill out Response        
+        if(request->GetPath() == "/")
+        {
+            request->SetPath("/index.html");
+        }
+
+        //TODO: Fill out Response
+        if(request->GetMethod() == "GET")
+        {
+            response->SetStatus(200);
+            response->AddHeader("Content-Type", "text/plain");
+            response->SetBody("Hello, World!");
+        }
+        else
+        {
+            response->SetStatus(405);
+            response->AddHeader("Content-Type", "text/plain");
+            response->SetBody("Method Not Allowed");
+        }
 
         response::Generator responseGenerator(new_ref<parser::Context>(space, writeCount));
         responseGenerator.SetResponse(response);
@@ -44,7 +60,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
         HTTPRequestParser.SetInitialState(requestState.AsRef<State>());
         HTTPRequestParser.Parse();
-        
+
         auto requestNode = HTTPRequestParser.PopNode().template AsRef<RequestNode>();
         if(requestNode.IsNull())
         {

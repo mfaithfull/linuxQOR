@@ -52,10 +52,6 @@ request/request.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-SET(CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS 1)
-SET(CMAKE_CXX_RESPONSE_FILE_LINK_FLAG "@")
-SET(CMAKE_NINJA_FORCE_RESPONSE_FILE 1 CACHE INTERNAL "")
-
 target_compile_definitions(${target} PRIVATE QOR_HTTP
 qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}

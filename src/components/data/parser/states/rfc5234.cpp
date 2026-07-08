@@ -4,6 +4,7 @@
 #include "src/configuration/configuration.h"
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/debug.h"
 #include "../parser.h"
 #include "rfc5234.h"
 #include "../nodes/digit.h"
@@ -12,17 +13,18 @@
 
 namespace qor { namespace components { namespace parser {
 
-    DIGIT::DIGIT(Parser* parser) : OneOfARange(parser, 0x30, 0x39, static_cast<uint64_t>(eToken::Digit)) { } 
+    DIGIT::DIGIT(Parser* parser) : OneOfARange(parser, 0x30, 0x39, static_cast<uint64_t>(eToken::Digit)) { }
 
     void DIGIT::Emit()
     {
         int digitVal = m_result.first - '0';
+        log::debug("Emitting a DIGIT {0}.", digitVal);
         GetParser()->PushNode(new_ref<DigitNode>(digitVal).AsRef<Node>());
     }
 
     DIGIT::~DIGIT() = default;
 
-    VCHAR::VCHAR(Parser* parser) : OneOfARange(parser, 0x21, 0x7e, static_cast<uint64_t>(eToken::VisibleChar)) { } 
+    VCHAR::VCHAR(Parser* parser) : OneOfARange(parser, 0x21, 0x7e, static_cast<uint64_t>(eToken::VisibleChar)) { }
 
     void VCHAR::Emit()
     {
@@ -32,15 +34,15 @@ namespace qor { namespace components { namespace parser {
 
     VCHAR::~VCHAR() = default;
 
-    CTL::CTL(Parser* parser) :  AnyOneOf(parser,  new_ref<OneOfARange>(parser, (byte)0x00, (byte)0x1f, static_cast<uint64_t>(eToken::Lexical)), 
-        new_ref<Specific>(parser, (byte)0x7f, static_cast<uint64_t>(eToken::Lexical)), static_cast<uint64_t>(eToken::Control)){ } 
+    CTL::CTL(Parser* parser) :  AnyOneOf(parser,  new_ref<OneOfARange>(parser, (byte)0x00, (byte)0x1f, static_cast<uint64_t>(eToken::Lexical)),
+        new_ref<Specific>(parser, (byte)0x7f, static_cast<uint64_t>(eToken::Lexical)), static_cast<uint64_t>(eToken::Control)){ }
 
     void CTL::Emit()
     {
         char ctlVal = (char)m_result.first;
         GetParser()->PushNode(new_ref<CharNode>(ctlVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
-    
+
     CTL::~CTL() = default;
 
     HEXDIGIT::HEXDIGIT(Parser* parser) : AnyOneOf(parser, new_ref<DIGIT>(parser), new_ref<AnyOneOf>(parser,
@@ -78,7 +80,7 @@ namespace qor { namespace components { namespace parser {
         {
             continuable("Unexpected token: Expected HexDigit token {0} got {1}.", static_cast<uint64_t>(eToken::HexDigit), node->GetToken());
         }
-        
+
         GetParser()->PushNode(new_ref<HexDigitNode>(hexVal));
     }
 
@@ -99,7 +101,7 @@ namespace qor { namespace components { namespace parser {
 
     void BIT::Emit()
     {
-        unsigned int bitVal = m_result.first == '0' ? 0 : 
+        unsigned int bitVal = m_result.first == '0' ? 0 :
         (m_result.first == '1' ? 1 : 0);
         GetParser()->PushNode(new_ref<DigitNode>(bitVal).AsRef<Node>());
     }
@@ -122,7 +124,7 @@ namespace qor { namespace components { namespace parser {
         char charVal = (char)m_result.first;
         GetParser()->PushNode(new_ref<CharNode>(charVal, static_cast<uint64_t>(m_token)).AsRef<Node>());
     }
-    
+
     ALPHA::~ALPHA() = default;
 
 }}}//qor::components::parser
