@@ -1,3 +1,4 @@
+project(QOR VERSION 0.0.1 DESCRIPTION "QOR Thread Memory Module" LANGUAGES CXX)
 set(target qor_threadmemory)
 
 add_library(${target} SHARED qor_threadmemory.cpp

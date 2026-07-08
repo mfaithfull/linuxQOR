@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR App Role Module" LANGUAGES CXX)
 set(target qor_role)
 
 add_library(${target} SHARED qor_role.cpp role.cpp)

@@ -1,3 +1,6 @@
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
 ///////////////////////////////////////////////////////////////////////////////
 // Copyright (c) Lewis Baker
 // Licenced under MIT license. See LICENSE.txt for details.

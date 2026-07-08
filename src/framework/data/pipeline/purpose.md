@@ -4,7 +4,6 @@ A pipeline is a chain of elements from source to sink.
 
 
 client <-- sink <-- buffer <-- source <-- connection to device/file/socket/etc
-
 pipeline    ^--------------------^
 
 Data always flows from source to sink

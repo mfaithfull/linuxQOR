@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Pipeline Module" LANGUAGES CXX)
 set(target qor_pipeline)
 
 add_library(${target} SHARED qor_pipeline.cpp buffer.cpp element.cpp source.cpp iosource.cpp sink.cpp

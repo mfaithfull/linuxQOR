@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Thread Module" LANGUAGES CXX)
 set(target qor_thread)
 
 add_library(${target} SHARED qor_thread.cpp thread.cpp threadpool.cpp)

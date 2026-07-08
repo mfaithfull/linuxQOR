@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR App Option Module" LANGUAGES CXX)
 set(target qor_optionparser)
 
 add_library(${target} SHARED getter.cpp)

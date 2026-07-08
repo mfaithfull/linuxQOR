@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Issue Module" LANGUAGES CXX)
 set(target qor_issue)
 
 add_library(${target} SHARED qor_issue.cpp when.cpp where.cpp what.cpp)

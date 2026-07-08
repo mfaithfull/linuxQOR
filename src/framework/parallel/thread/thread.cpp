@@ -99,8 +99,6 @@ namespace qor{
 		}
 	}
 
-	void Thread::CleanUp()
-	{
-	}
+	void Thread::CleanUp(){ }
 
 }//qor

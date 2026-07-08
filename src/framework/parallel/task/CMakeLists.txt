@@ -1,3 +1,5 @@
+project(QOR VERSION 0.2.0 DESCRIPTION "QOR Task Module" LANGUAGES CXX)
+
 set(target qor_task)
 
 add_library(${target} SHARED qor_task.cpp

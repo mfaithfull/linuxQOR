@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Log Module" LANGUAGES CXX)
 set(target qor_log)
 
 add_library(qor_log SHARED qor_log.cpp log.cpp debug.cpp important.cpp

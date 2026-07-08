@@ -1,3 +1,4 @@
+project(QOR VERSION 0.2.0 DESCRIPTION "QOR Reporting Module" LANGUAGES CXX)
 set(target qor_reporting)
 
 add_library(${target} SHARED qor_reporting.cpp errorreporting.cpp

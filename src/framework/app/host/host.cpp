@@ -25,7 +25,7 @@ namespace qor{
         m_ModuleReg->Register(*this);
     }
 
-    Host::~Host() { }
+    Host::~Host() = default;
 
     Module& Host::Instance()
     {

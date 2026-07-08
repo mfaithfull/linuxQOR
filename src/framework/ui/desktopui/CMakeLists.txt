@@ -1,3 +1,4 @@
+project(QOR VERSION 0.0.1 DESCRIPTION "QOR Desktop UI Module" LANGUAGES CXX)
 set(target qor_desktopui)
 
 add_library(${target} SHARED qor_desktopui.cpp desktopui.cpp

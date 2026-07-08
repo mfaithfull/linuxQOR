@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Compiler Library" LANGUAGES CXX)
 set(target qor_compiler)
 
 add_library(${target} compiler.cpp)

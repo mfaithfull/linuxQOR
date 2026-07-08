@@ -9,7 +9,7 @@
 
 namespace qor{ namespace app {
 
-    Role::Role() { }
+    Role::Role() = default;
 
     Role::Role(const Role& src)
     {
@@ -25,7 +25,7 @@ namespace qor{ namespace app {
         return *this;
     }
 
-    Role::~Role() { }
+    Role::~Role() = default;
 
     void TrySetup(ref_of<IFeature>::type feature)
     {

@@ -1,3 +1,6 @@
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
 #include "src/configuration/configuration.h"
 
 #include <stdio.h>
@@ -10,7 +13,7 @@
 #include "src/framework/parallel/thread/threadpool.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/app/workflow/workflow.h"
-#include "src/components/network/clients/http/httpsocketclient.h"
+#include "src/components/io/network/clients/http/httpsocketclient.h"
 
 using namespace qor;
 using namespace qor::platform;

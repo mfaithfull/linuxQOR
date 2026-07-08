@@ -1,3 +1,4 @@
+project(QOR VERSION 0.0.2 DESCRIPTION "QOR Events Module" LANGUAGES CXX)
 set(target qor_events)
 
 add_library(${target} SHARED qor_events.cpp eventqueue.cpp)

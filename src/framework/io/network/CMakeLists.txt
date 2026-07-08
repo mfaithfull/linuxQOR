@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Network Module" LANGUAGES CXX)
 set(target qor_sockets)
 
 add_library(${target} SHARED qor_sockets.cpp sockets.cpp socket.cpp address.cpp )

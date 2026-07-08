@@ -1,3 +1,4 @@
+project(QOR VERSION 0.0.0 DESCRIPTION "QOR UI GL Module" LANGUAGES CXX)
 set(target qor_gl)
 
 add_library(${target} SHARED qor_gl.cpp

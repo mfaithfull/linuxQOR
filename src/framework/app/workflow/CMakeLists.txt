@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Workflow Module" LANGUAGES CXX)
 set(target qor_workflow)
 
 add_library(${target} SHARED qor_workflow.cpp workflow.cpp)

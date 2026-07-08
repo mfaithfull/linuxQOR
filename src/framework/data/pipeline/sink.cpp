@@ -20,7 +20,7 @@ namespace qor{ namespace pipeline{
         qor_pp_signal(WriteErrorSignal, unitsWritten, error);
     }
 
-    Sink::Sink() : m_source(nullptr) {}
+    Sink::Sink() : m_source(nullptr) { }
 
     Sink::~Sink() = default;
 

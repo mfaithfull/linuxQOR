@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Platform Module" LANGUAGES CXX)
 set(target qor_platform)
 
 add_library(${target} SHARED qor_platform.cpp platform.cpp)

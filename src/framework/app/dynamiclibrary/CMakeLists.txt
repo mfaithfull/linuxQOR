@@ -1,3 +1,4 @@
+project(QOR VERSION 0.0.5 DESCRIPTION "QOR Dynamic Library Module" LANGUAGES CXX)
 set(target qor_dynamiclibrary)
 
 add_library(${target} SHARED qor_dynamiclibrary.cpp

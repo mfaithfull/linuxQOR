@@ -1,3 +1,4 @@
+project(QOR VERSION 0.0.2 DESCRIPTION "QOR Resources Module" LANGUAGES CXX)
 set(target qor_resources)
 
 add_library(${target} SHARED qor_resources.cpp manager.cpp resourcehub.cpp resource.cpp

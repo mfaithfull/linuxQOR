@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Application Module" LANGUAGES CXX)
 set(target qor_application)
 
 add_library(${target} SHARED qor_application.cpp application.cpp builder.cpp)

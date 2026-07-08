@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Sync Module" LANGUAGES CXX)
 set(target qor_sync)
 
 add_library(${target} SHARED qor_sync.cpp mutex.cpp recursive_mutex.cpp 

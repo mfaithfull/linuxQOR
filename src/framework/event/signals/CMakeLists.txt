@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Signals Module" LANGUAGES CXX)
 set(target qor_signals)
 
 add_library(qor_signals SHARED qor_signals.cpp slotbase.cpp signalbase.cpp pendingslot.cpp)

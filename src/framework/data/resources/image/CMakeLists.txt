@@ -1,3 +1,4 @@
+project(QOR VERSION 0.0.1 DESCRIPTION "QOR Image Resource Module" LANGUAGES CXX)
 set(target qor_image)
 
 add_library(${target} SHARED qor_image.cpp imagesink.cpp image.cpp)

@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Error Module" LANGUAGES CXX)
 set(target qor_error)
 
 add_library(qor_error SHARED qor_error.cpp errorbase.cpp fatal.cpp serious.cpp

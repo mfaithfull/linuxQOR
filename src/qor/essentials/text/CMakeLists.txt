@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Text Module" LANGUAGES CXX)
 set(target qor_text)
 
 add_library(${target} SHARED 

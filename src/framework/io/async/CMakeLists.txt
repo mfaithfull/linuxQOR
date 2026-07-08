@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Async IO Module" LANGUAGES CXX)
 set(target qor_asyncioservice)
 
 add_library(${target} SHARED qor_asyncioservice.cpp service.cpp initiator.cpp)

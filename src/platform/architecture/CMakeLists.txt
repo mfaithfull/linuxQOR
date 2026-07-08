@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Architecture Module" LANGUAGES CXX)
 set(target qor_arch)
 
 add_library(${target} SHARED qor_architecture.cpp cpu.cpp)
