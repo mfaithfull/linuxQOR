@@ -4,3 +4,11 @@ These are facilities built on top of the standard library to assist in writing c
 These libraries must be universal, having no operating system, architecture or compiler specifics. They depend only on one another and the standard library.
 
 If you might use something in thousands of functions in your application, it belongs here.
+
+/tdd - header based TDD essentials, testing, asserting, mocking
+/module - the base library for qor modules
+/essentials - basic things like data structures and text
+/memory - object lifetime management, smart pointers, factories, dependency injection...
+/flyers - modules that use the flyer pattern to provide thread local facilities like error handling and logging
+/refelection - pre C++26 refelection from non-boost pfr.
+/property - data modelling based on variant property types - experimental
