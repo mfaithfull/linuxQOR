@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Windows Common Module" LANGUAGES CXX)
 set(target winqor_common)
 
 add_library(${target} SHARED winq_common.cpp handles/handle.cpp constants.h handles/typedhandle.h stringconv.cpp)

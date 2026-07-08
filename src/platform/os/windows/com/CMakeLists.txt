@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Windows COM support Module" LANGUAGES CXX)
 set(target winqor_com)
 
 add_library(${target} SHARED winqor_com.cpp

@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Windows Current Thread Module" LANGUAGES CXX)
 set(target winqor_thread)
 
 add_library(${target} SHARED winqor_thread.cpp currentthread.cpp)

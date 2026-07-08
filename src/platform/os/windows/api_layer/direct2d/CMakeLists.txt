@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Win32 Direct2D Module" LANGUAGES CXX)
 set(target winqor_api_direct2d)
 
 add_library(${target} SHARED winqor_api_direct2d.cpp direct2d.cpp)

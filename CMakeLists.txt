@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10.0)
-project(QOR VERSION 0.1.0 DESCRIPTION "Querysoft Open Runtime" LANGUAGES C CXX)
+project(QOR VERSION 0.5.0 DESCRIPTION "Querysoft Open Runtime" LANGUAGES C CXX)
 set(CMAKE_SUPPRESS_REGENERATION true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 link_directories(${CMAKE_SOURCE_DIR}/lib)

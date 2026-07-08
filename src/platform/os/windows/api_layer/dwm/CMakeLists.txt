@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Win32 DWM Module" LANGUAGES CXX)
 set(target winqor_api_dwm)
 
 add_library(${target} SHARED winqor_api_dwm.cpp dwm.cpp)

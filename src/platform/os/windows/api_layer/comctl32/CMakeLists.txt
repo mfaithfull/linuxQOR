@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Win32 Common Control Module" LANGUAGES CXX)
 set(target winqor_api_comctl32)
 
 add_library(${target} SHARED winqor_api_comctl32.cpp comctl32.cpp)

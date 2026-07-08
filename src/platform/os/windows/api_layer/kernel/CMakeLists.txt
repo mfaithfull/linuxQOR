@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Win32 Kernel Module" LANGUAGES CXX)
 set(target winqor_api_kernel)
 
 add_library(${target} SHARED winqor_api_kernel.cpp kconsole.cpp  kerrorhandling.cpp kdll.cpp khandle.cpp kio.cpp sync.cpp kfile.cpp

@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Windows Current Process Module" LANGUAGES CXX)
 set(target winqor_process)
 
 add_library(${target} SHARED winq_process.cpp currentprocess.cpp)

@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Winsock2 Module" LANGUAGES CXX)
 set(target winqor_api_winsock2)
 
 add_library(${target} SHARED winqor_api_winsock2.cpp ws2.cpp errorcheck.cpp)

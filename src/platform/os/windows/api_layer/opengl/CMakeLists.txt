@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Win32 OpenGL Module" LANGUAGES CXX)
 set(target winqor_api_opengl)
 
 add_library(${target} SHARED winqor_api_opengl.cpp 

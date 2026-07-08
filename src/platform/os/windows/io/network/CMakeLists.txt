@@ -1,3 +1,4 @@
+project(QOR VERSION 0.5.0 DESCRIPTION "QOR Windows Network Module" LANGUAGES CXX)
 set(target winqor_sockets)
 
 add_library(${target} SHARED winqor_sockets.cpp sockets.cpp socket.cpp)
