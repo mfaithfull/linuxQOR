@@ -13,8 +13,7 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 set(portable_libraries qor_compiler qor_host 
 qor_thread qor_interception qor_injection qor_sync qor_issue qor_error qor_log qor_loghandler qor_logaggregator
 qor_signals qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem qor_fileconnector
-qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
-qor_sockets qor_asyncioservice qor_socketconnector qor_http qor_parser qor_generator qor_netserver)
+qor_task qor_platform qor_sockets qor_asyncioservice qor_socketconnector qor_http qor_parser qor_generator qor_netserver)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 set(os_libraries linqor_sockets linqor_asyncioservice linqor_filesystem linqor_thread)
