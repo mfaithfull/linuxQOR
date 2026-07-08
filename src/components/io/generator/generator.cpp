@@ -28,6 +28,7 @@
 #include <iostream>
 
 #include "src/platform/compiler/compiler.h"
+#include "src/qor/flyers/error/error.h"
 #include "generator.h"
 
 namespace qor { namespace components { namespace generator {
@@ -65,7 +66,7 @@ namespace qor { namespace components { namespace generator {
         {
             InnerGenerate();
         }
-        catch(const Error& error)
+        catch(const Serious& error)
         {
             std::cerr << error.what().Content() << '\n';
         }
@@ -109,9 +110,9 @@ namespace qor { namespace components { namespace generator {
                 std::cout << "Out of space." << std::endl;
             }
         }
-        catch(const Error* error)
+        catch(const Serious& error)
         {
-            std::cerr << error->what().Content() << '\n';
+            std::cerr << error.what().Content() << '\n';
         }
         catch(const std::exception& e)
         {
