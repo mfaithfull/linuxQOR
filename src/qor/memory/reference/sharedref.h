@@ -5,6 +5,7 @@
 #define QOR_PP_H_SHAREDREF
 
 #define qor_shared )(
+#define qor_unlocked ).Unlock()(
 
 namespace qor{
 

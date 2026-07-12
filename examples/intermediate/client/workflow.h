@@ -20,7 +20,7 @@ class ClientWorkflow : public Workflow
 public:
 
     ClientWorkflow();
-    virtual ~ClientWorkflow() noexcept(true) = default;
+    virtual ~ClientWorkflow() noexcept = default;
 
 private:
 

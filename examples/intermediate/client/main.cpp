@@ -53,7 +53,7 @@ int main(const int argc, const char** argv, char**)
     ThePlatform(qor_shared)->AddSubsystem<Sockets>();
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build(appName)->
+    return AppBuilder().Build(appName)(qor_unlocked).
         SetRole<app::Role>(
             [&logHandler](app::IRole::ref role)
             {

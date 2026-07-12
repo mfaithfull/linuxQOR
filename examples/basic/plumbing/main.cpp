@@ -38,7 +38,7 @@ int main()
     to the Application Role*/
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build(appName)->SetRole<app::Role>().Run(
+    return AppBuilder().Build(appName)(qor_unlocked).SetRole<app::Role>().Run(
         []()->int
         {
             /*Retrieve the file system singleton from the platform.
@@ -48,8 +48,7 @@ int main()
             /*All the functions on the fileSystem object are const so 
             once we have it, it's safe to use without synchronisation*/
 
-            /*A filesystem::Index is how we refer to a specific file without opening it.
-            Internally it's a directory entry, which is just the index of a file*/
+            /*A filesystem::Index is how we refer to a specific file without opening it.*/
             filesystem::Index index(fileSystem->CurrentPath(), "alice.txt");
 
             if(!index.Exists())

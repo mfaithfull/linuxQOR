@@ -51,7 +51,7 @@ int main(const int argc, const char** argv, char** env)
         {
             app::OptionGetter options(argc, argv, server(qor_shared));
         }
-    )->SetRole<app::Role>(
+    )(qor_unlocked).SetRole<app::Role>(
         [&logHandler](ref_of<app::IRole>::type role)
         {
             role->AddFeature<thread::ThreadPool>(
@@ -62,7 +62,7 @@ int main(const int argc, const char** argv, char** env)
                 }                
             );
             role->AddFeature<async::Service>(
-                [](ref_of<async::Service>::type ioService)->void
+                [](ref_of<async::Service>::type /*ioService*/)->void
                 {
                     PoolInstancer::SetPoolSize<async::Context>(2);
                 }

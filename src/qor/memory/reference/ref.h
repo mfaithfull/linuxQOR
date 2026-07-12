@@ -24,6 +24,33 @@ namespace qor{
 		class Access final
 		{
 		public:
+
+			class Unlocked final
+			{
+			public:
+			
+				Unlocked(const Ref& r) : m(r)
+				{
+					m.Unlock();
+				}
+
+				T* operator -> () const
+				{
+					return m.m_p->ptr();
+				}
+
+				T& operator ()()
+				{
+					return *(m.m_p->ptr());
+				}
+
+				~Unlocked()
+				{
+					m.Lock();
+				}
+				const Ref& m;
+			};
+
 			Access(const Ref& r) : m(r)
 			{
 				m.Lock();
@@ -42,6 +69,11 @@ namespace qor{
 			~Access()
 			{
 				m.Unlock();
+			}
+			
+			Unlocked Unlock() const
+			{
+				return Unlocked(m);
 			}
 			const Ref& m;
 		};	

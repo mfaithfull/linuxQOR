@@ -11,8 +11,9 @@ qor_pp_implement_module(appName)                    //Every QOR application must
 
 int main()                                          //Standard C++ entry point
 {
-    return AppBuilder().Build(appName)->Run(        //Use the AppBuilder factory to make an Application and then Run it
-        []()->int                                   //We provide a simple lambda function to be run in this case
+    return AppBuilder().
+        Build(appName)(qor_shared).Run(             //Use the AppBuilder factory to make an Application and then Run it
+        []()->int                                   //We provide a lambda to be run in this case
         {
             std::cout << "Hello from a basic QOR application." << std::endl;
             return EXIT_SUCCESS;                    //Standard success return code (0) is returned from the program

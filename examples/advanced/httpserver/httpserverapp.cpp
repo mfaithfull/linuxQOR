@@ -71,7 +71,7 @@ int main(const int argc, const char** argv, char** env)
 
             server->UseAggregatedLogging();
         }
-    ).As<HTTPServerApp>()->Run();
+    ).AsRef<HTTPServerApp>()(qor_unlocked).Run();
 }
 
 int HTTPServerApp::Run()
@@ -113,9 +113,9 @@ app::Option* HTTPServerApp::ProvideLongOptions()
         {"port",    app::Option::required_argument,       nullptr, 'p'},
         {"threads", app::Option::required_argument,       nullptr, 't'},
         {"io",      app::Option::required_argument,       nullptr, 'o'},
-        {"logpath", app::Option::required_argument,    nullptr, 'l'},
-        {"url",     app::Option::required_argument,        nullptr, 'u'},
-        {nullptr,   0,						                    nullptr, 0}
+        {"logpath", app::Option::required_argument,       nullptr, 'l'},
+        {"url",     app::Option::required_argument,       nullptr, 'u'},
+        {nullptr,   0,						              nullptr, 0}
     };
     return longOptions;
 }

@@ -11,6 +11,7 @@
 #include "src/qor/module/module.h"
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/instance/singleton.h"
+#include "src/framework/parallel/sync/recursive_mutex.h"
 #include "src/platform/platform.h"
 #include "irunable.h"
 #include "../optionparser/ioptionable.h"
@@ -104,7 +105,7 @@ namespace qor{
     };
 
     qor_pp_declare_instancer_of(Application, SingletonInstancer);
-
+    qor_pp_declare_sync_of(Application, RecursiveMutex);
 }//qor
 
 #endif//QOR_PP_H_APPLICATION

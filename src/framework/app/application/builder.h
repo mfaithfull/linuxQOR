@@ -23,8 +23,8 @@ namespace qor{
         ref_of<Application>::type Build(const std::string& appName/*, const int argc = 0, const char** argv = nullptr, const char** env = nullptr*/)
         {
             auto application = new_ref<AppClass>().template AsRef<Application>();
-            AutoRedirect(application);
-            application->Name() = appName;
+            AutoRedirect(application);            
+            application(qor_shared).Name() = appName;
             return application;
         }
 
@@ -32,9 +32,8 @@ namespace qor{
         ref_of<Application>::type Build(const std::string& appName, TConfigureApp&& config_function)
         {
             auto app = new_ref<AppClass>();
-            AutoRedirect(app.template AsRef<Application>());
-            app(qor_shared).SetName(appName);
-            app.Lock();
+            AutoRedirect(app.template AsRef<Application>());                        
+            app.AsRef<Application>()(qor_shared).Name() = appName;
             try
             {
                 config_function(app);
@@ -50,8 +49,7 @@ namespace qor{
             catch(...)
             {
                 std::cerr << "Unhandled exception" << std::endl;
-            }
-            app.Unlock();
+            }            
             return app.template AsRef<Application>();
         }
 

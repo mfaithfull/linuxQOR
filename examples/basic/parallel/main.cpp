@@ -50,11 +50,11 @@ int main()
     /*We'll need the file system to be able to write logs*/
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build(appName)->SetRole<Role>(
+    return AppBuilder().Build(appName)(qor_unlocked).SetRole<Role>(
         [&logHandler](ref_of<IRole>::type role)
         {
             qor_pp_fcontext;
-            //Add the ThreaPool feature to the Role
+            //Add the ThreadPool feature to the Role
             role->AddFeature<thread::ThreadPool>(
                 [](ref_of<thread::ThreadPool>::type threadPool)
                 {

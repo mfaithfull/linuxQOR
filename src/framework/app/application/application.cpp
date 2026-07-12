@@ -26,7 +26,7 @@ namespace qor{
         return m_Role;
     }
 
-    Application& Application::SetWorkflow( ref_of<workflow::IWorkflow>::type workflow)
+    Application& Application::SetWorkflow(ref_of<workflow::IWorkflow>::type workflow)
     {
         m_Workflow = workflow;
         return *this;
@@ -47,7 +47,7 @@ namespace qor{
         m_Name = name;
     }
 
-    int Application::RunWorkflow( ref_of<workflow::IWorkflow>::type workflow )
+    int Application::RunWorkflow(ref_of<workflow::IWorkflow>::type workflow)
     {
         SetWorkflow(workflow);
         return RunWorkflowInternal();

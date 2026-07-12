@@ -20,7 +20,7 @@ int main(const int argc, const char** argv, char** env)
                                                                 //Parse the options from the command line and pass them to the OptionsApp
             app::OptionGetter options(argc, argv, app(qor_shared));
         }
-    )->Run(
+    )(qor_shared).Run(
         []()->int
         {
             std::cout << "Hello world." << std::endl;

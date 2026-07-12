@@ -36,13 +36,13 @@ qor_pp_module_requires(ICurrentThread)
 
 int main()
 {
-   return AppBuilder().Build<App>(          //The Build function gives us an App...
+    return AppBuilder().Build<App>(          //The Build function gives us an App...
         App::Name,
         [](ref_of<App>::type app)
         {               
-            app->CustomConfigure();         //Here we can do early configuration of the App
+            app(qor_shared).CustomConfigure();         //Here we can do early configuration of the App
         }
-    )->SetRole<CustomRole>(                 //...on which we can call SetRole with our CustomRole class
+    )(qor_unlocked).SetRole<CustomRole>(    //...on which we can call SetRole with our CustomRole class
                 
         [](ref_of<app::IRole>::type role)        //Note: Whatever the derived type of your Role you'll always get an IRole interface on this customisation point
         {

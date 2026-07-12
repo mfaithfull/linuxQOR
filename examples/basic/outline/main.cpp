@@ -24,19 +24,19 @@ void AccessLibraries();
 
 int main()
 {
-    auto outlineApp = AppBuilder().Build(appName);  //Build an Application object
+    //Build an Application object
+    //It must be manually unlocked so it can later be shared by any secondary threads.
+    auto outlineApp = AppBuilder().Build(appName)(qor_unlocked);  
 
     /*The QOR Application class is a context for running Workflows and 
     anything else that meets the requirements for a runable object*/
-    return outlineApp()->Run
-    (
+    return outlineApp.Run(
         //A minimal lambda that is runnable i.e. it takes no parameters and returns an integer
         []()->int
         {            
             AccessLibraries();
             return EXIT_SUCCESS;
-        }
-    );
+        });
 }
 
 /*This (for science only) function can be used to access every loaded QOR library.
