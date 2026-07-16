@@ -10,7 +10,7 @@
 #include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/platform/platform.h"
 
-qor_pp_module_requires(Service)
+qor_pp_module_requires(AsyncIOService)
 qor_pp_module_requires(ICurrentThread)
 
 using namespace qor;
@@ -25,18 +25,18 @@ int main(int argc, const char** argv, char**)
 	DefaultLogHandler logHandler(Level::Debug);
 	ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-	return AppBuilder().Build<Application>("Test FileSystem")->SetRole<Role>(
-		[](ref_of<IRole>::type role)
+	return AppBuilder().Build<Application>("Test FileSystem")->SetRole<app::Role>(
+		[](ref_of<app::IRole>::type role)
 		{
-			role->AddFeature<ThreadPool>(
+			role->template AddFeature<ThreadPool>(
 				[](ref_of<ThreadPool>::type threadPool)->void
 				{
 					threadPool->SetThreadCount(3);
 					CurrentThread::Get().SetName("Main");
 				}
 			);
-			role->AddFeature<Service>(
-				[](ref_of<Service>::type /*ioService*/)->void
+			role->template AddFeature<async::Service>(
+				[](ref_of<async::Service>::type /*ioService*/)->void
 				{
 					PoolInstancer::SetPoolSize<Context>(2);
 				}
