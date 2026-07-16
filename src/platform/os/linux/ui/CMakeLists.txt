@@ -2,7 +2,7 @@
 #add_subdirectory(composition)
 add_subdirectory(console)
 add_subdirectory(egl)
-add_subdirectory(gtk)
+#add_subdirectory(gtk)
 add_subdirectory(opengles)
 #add_subdirectory(renderapis)
 add_subdirectory(termscreen)
