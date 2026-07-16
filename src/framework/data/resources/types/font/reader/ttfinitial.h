@@ -19,11 +19,11 @@ namespace qor{ namespace framework{ namespace res {
         virtual ~TTFOffsetTableState()
         {
         }
-        
+
     protected:
         offset_subtable* m_initialOffsetTable;
     };
-    
+
     class TTFTableDirState : public qor::components::serial::StructureDeserializer<table_directory>::base
     {
     public:
@@ -31,7 +31,7 @@ namespace qor{ namespace framework{ namespace res {
         virtual ~TTFTableDirState()
         {
         }
-        
+
     protected:
         table_directory* m_tableDirectory;
     };
@@ -47,13 +47,13 @@ namespace qor{ namespace framework{ namespace res {
 
         byte* m_data;
         std::vector<byte>* m_blob;
-   
+
         class qor::components::serial::Context* GetContext()
         {
             return dynamic_cast<qor::components::serial::Deserializer*>(m_Workflow)->GetContext();
         }
 
-        Workflow* Workflow()
+        class Workflow* Workflow()
         {
             return dynamic_cast<class Workflow*>(m_Workflow);
         }
@@ -74,7 +74,7 @@ namespace qor{ namespace framework{ namespace res {
         {
             delete[] m_tableDirectory;
         }
-        
+
     protected:
 
         offset_subtable m_initialOffsetTable;
@@ -83,13 +83,13 @@ namespace qor{ namespace framework{ namespace res {
         std::vector<byte> m_blob;
 
         ref_of<TTFOffsetTableState>::type m_offsetTableState;
-    
+
         qor::components::serial::Context* GetContext()
         {
             return dynamic_cast<qor::components::serial::Deserializer*>(m_Workflow)->GetContext();
         }
 
-        Workflow* Workflow()
+        class Workflow* Workflow()
         {
             return dynamic_cast<class Workflow*>(m_Workflow);
         }

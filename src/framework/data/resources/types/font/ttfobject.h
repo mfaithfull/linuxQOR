@@ -6,14 +6,14 @@
 
 //What you get by loading a TTF file.
 
-namespace qor{ namespace framework{ namespace res { 
+namespace qor{ namespace framework{ namespace res {
 
     class qor_pp_module_interface(QOR_RESOURCES) TTFObject
     {
     public:
 
         TTFObject() = default;
-        TTFObject(const TTFObject& src){}
+        TTFObject(const TTFObject& /*src*/){}
         virtual ~TTFObject() = default;
     };
 

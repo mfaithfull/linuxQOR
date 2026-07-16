@@ -9,22 +9,22 @@
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/data/pipeline/podbuffer.h"
 #include "src/framework/data/pipeline/pipeline.h"
-#include "src/components/io/pipeline/sinks/deserializersink/deserializersink.h"
+#include "src/components/data/pipeline/sinks/deserializersink/deserializersink.h"
 #include "src/components/io/deserializer/state.h"
 #include "ttfobject.h"
 #include "reader/designator.h"
 #include "reader/ttfinitial.h"
 
-namespace qor{ namespace framework{ namespace res { 
+namespace qor{ namespace framework{ namespace res {
 
     class qor_pp_module_interface(QOR_RESOURCES) TTFReader
     {
     public:
 
         TTFReader() : m_byteBuffer(32767)
-        {        
+        {
         }
-        
+
         uint32_t ReadDesignator(const qor::pipeline::Plug& sourceConnector)
         {
             size_t unitsPumped = 0;
@@ -34,20 +34,20 @@ namespace qor{ namespace framework{ namespace res {
                 sink,
                 qor::pipeline::Element::Push
             ).Connect().Pump(unitsPumped, sizeof(uint32_t));
-            return sink.GetObject()->GetObject();            
+            return sink.GetObject()->GetObject();
         }
 
         ref_of<TTFObject>::type operator()(const qor::pipeline::Plug& sourceConnector)
-        {                    
+        {
             pipeline::components::DeserializerSink<TTFInitialState> sink(m_byteBuffer);
             qor::pipeline::Pipeline(
                 sourceConnector,
                 sink,
                 qor::pipeline::Element::Push
             ).Connect().PumpAll();
-                    
+
             auto ttfState = sink.GetObject();
-            
+
             return ref_of<TTFObject>::type();
         }
 
@@ -58,7 +58,7 @@ namespace qor{ namespace framework{ namespace res {
 
     private:
 
-        pipeline::PODBuffer<byte> m_byteBuffer;        
+        pipeline::PODBuffer<byte> m_byteBuffer;
     };
 
 }}}//qor::framework::res

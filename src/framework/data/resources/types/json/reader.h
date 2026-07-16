@@ -10,7 +10,7 @@
 #include "src/components/protocols/json/model/object.h"
 #include "src/framework/data/pipeline/podbuffer.h"
 #include "src/framework/data/pipeline/pipeline.h"
-#include "src/components/io/pipeline/sinks/parsersink/parsersink.h"
+#include "src/components/data/pipeline/sinks/parsersink/parsersink.h"
 
 namespace qor{ namespace framework{ namespace res {
 
@@ -21,13 +21,13 @@ namespace qor{ namespace framework{ namespace res {
         JSONReader() : m_byteBuffer(2048), m_sink(m_byteBuffer){ }
 
         qor::ref_of<qor::components::model::json::Object>::type operator()(const qor::pipeline::Plug& sourceConnector)
-        {        
+        {
             qor::pipeline::Pipeline(
                 sourceConnector,
                 m_sink,
                 qor::pipeline::Element::Push
             ).Connect().PumpAll();
-        
+
             m_sink.Parser().FinalParse();
             auto finalNode = m_sink.Parser().PopNode();
             return finalNode;
