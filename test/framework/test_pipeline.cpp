@@ -288,7 +288,7 @@ qor_pp_test_suite_case(PipelineTestSuite, validateStringSink)
 
     StringSink stringSink;
     stringSink.SetParent(&testPipeline);
-    stringSink.SetBuffer(&Buffer);    
+    stringSink.SetBuffer(&Buffer);
 
     StringSource source;
     source.SetBuffer(&Buffer);
