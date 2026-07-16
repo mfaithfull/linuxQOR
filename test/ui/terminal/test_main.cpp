@@ -23,8 +23,8 @@ int main(int argc, const char** argv, char**)
 	DefaultLogHandler logHandler(Level::Debug);
 	ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-	return AppBuilder().Build<Application>("Test FileSystem")->SetRole<Role>(
-		[](ref_of<IRole>::type role)
+	return AppBuilder().Build<Application>("Test FileSystem")->SetRole<app::Role>(
+		[](ref_of<app::IRole>::type role)
 		{
 		}
 	).Run([argv, argc]()->int
