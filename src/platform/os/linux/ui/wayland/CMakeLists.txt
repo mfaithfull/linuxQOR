@@ -1,6 +1,6 @@
 add_subdirectory(client)
 add_subdirectory(xdgshell)
-add_subdirectory(examples)
+#add_subdirectory(examples)
 add_subdirectory(viewporter)
 add_subdirectory(presentation-time)
 add_subdirectory(egl)
