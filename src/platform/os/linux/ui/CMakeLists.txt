@@ -1,4 +1,4 @@
-add_subdirectory(cairo)
+#add_subdirectory(cairo)
 #add_subdirectory(composition)
 add_subdirectory(console)
 add_subdirectory(egl)
