@@ -5,7 +5,7 @@
 namespace qor{ namespace qb{
 
     static inline void* hb_memset (void* s, int c, unsigned int n)
-    {  
+    {
         if (!n) return s; // It's illegal to pass NULL to memset(), even if n is zero.
         return memset (s, c, n);
     }
@@ -63,7 +63,7 @@ namespace qor{ namespace qb{
     }
 
     template <typename V, typename K>
-    static inline V* hb_bsearch (const K& key, V* base, size_t nmemb, size_t stride = sizeof (V), int (*compar)(const void *_key, const void *_item) = _hb_cmp_method<K, V>)
+    static inline V* hb_bsearch (const K& key, V* base, size_t nmemb, size_t stride /*= sizeof (V)*/, int (*compar)(const void *_key, const void *_item) /*= _hb_cmp_method<K, V>*/)
     {
         unsigned pos;
 #pragma GCC diagnostic push

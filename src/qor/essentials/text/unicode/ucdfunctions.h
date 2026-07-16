@@ -10,7 +10,7 @@ namespace qor{ namespace unicode{
 
     class UCDFunctions : public IUnicodeFunctions
     {
-    private:        
+    private:
 
         static const unsigned int SBASE = 0xAC00u;
         static const unsigned int LBASE = 0x1100u;
@@ -27,11 +27,11 @@ namespace qor{ namespace unicode{
         virtual combining_class_t combining_class(codepoint_t cp) override;
         virtual unsigned int eastasian_width(codepoint_t cp);
         virtual general_category_t general_category(codepoint_t cp);
-        virtual typename codepoint_t mirroring(codepoint_t cp);
-        virtual enum class script script(codepoint_t cp);
+        virtual codepoint_t mirroring(codepoint_t cp);
+        virtual enum script script(codepoint_t cp);
         virtual bool compose(codepoint_t a, codepoint_t b, codepoint_t* ab);
         virtual bool decompose(codepoint_t ab, codepoint_t* a, codepoint_t* b);
-        virtual unsigned int decompose_compatability(codepoint_t u, codepoint_t* decomposed);        
+        virtual unsigned int decompose_compatability(codepoint_t u, codepoint_t* decomposed);
 
         inline bool compose_hangul(codepoint_t a, codepoint_t b, codepoint_t* ab)
         {
@@ -68,8 +68,8 @@ namespace qor{ namespace unicode{
                 *a = SBASE + (si / TCOUNT) * TCOUNT;
                 *b = TBASE + (si % TCOUNT);
                 return true;
-            } 
-            else 
+            }
+            else
             {
                 // L,V
                 *a = LBASE + (si / NCOUNT);
@@ -83,4 +83,3 @@ namespace qor{ namespace unicode{
 }}//qor::unicode
 
 #endif//QOR_PP_H_TEXT_UNICODE_UCDFUNCTIONS
-

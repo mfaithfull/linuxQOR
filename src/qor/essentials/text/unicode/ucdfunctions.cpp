@@ -21,7 +21,7 @@ namespace qor{ namespace unicode {
 
         return a < b ? -1 : a > b ? +1 : 0;
     }
-
+/*
     combining_class_t UCDFunctions::combining_class(codepoint_t cp)
     {
         return (combining_class_t) ucd_ccc(cp);
@@ -30,7 +30,7 @@ namespace qor{ namespace unicode {
     unsigned int UCDFunctions::eastasian_width(codepoint_t cp)
     {
         return 1;
-    }
+    }*/
 
     general_category_t UCDFunctions::general_category(codepoint_t cp)
     {
@@ -42,7 +42,7 @@ namespace qor{ namespace unicode {
         return cp + ucd_bmg(cp);
     }
 
-    enum class script UCDFunctions::script(codepoint_t cp)
+    enum script UCDFunctions::script(codepoint_t cp)
     {
         return ucd_sc_map[ucd_sc(cp)];
     }

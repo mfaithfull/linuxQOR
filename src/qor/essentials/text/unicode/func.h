@@ -19,7 +19,7 @@ namespace qor{ namespace unicode{
         virtual unsigned int eastasian_width(codepoint_t _unicode) = 0;
         virtual general_category_t general_category(codepoint_t _unicode) = 0;
         virtual codepoint_t mirroring(codepoint_t _unicode) = 0;
-        virtual script script(codepoint_t _unicode) = 0;
+        virtual enum script script(codepoint_t _unicode) = 0;
         virtual bool compose(codepoint_t a, codepoint_t b, codepoint_t* ab) = 0;
         virtual bool decompose(codepoint_t ab, codepoint_t* a, codepoint_t* b) = 0;
         virtual unsigned int decompose_compatability(codepoint_t u, codepoint_t* decomposed) = 0;
@@ -49,7 +49,7 @@ struct unicode_funcs_t
 
     codepoint_t mirroring (codepoint_t _unicode){ return func.mirroring (this, _unicode, user_data.mirroring); }
 
-    script script(codepoint_t _unicode){ return func.script (this, _unicode, user_data.script); }
+    enum script script(codepoint_t _unicode){ return func.script (this, _unicode, user_data.script); }
 
     qb::bool_t compose(codepoint_t a, codepoint_t b, codepoint_t* ab)
     {
@@ -67,7 +67,7 @@ struct unicode_funcs_t
     unsigned int decompose_compatibility(codepoint_t u, codepoint_t* decomposed)
     {
         unsigned int ret = func.decompose_compatibility(this, u, decomposed, user_data.decompose_compatibility);
-        if(ret == 1 && u == decomposed[0]) 
+        if(ret == 1 && u == decomposed[0])
         {
             decomposed[0] = 0;
             return 0;
@@ -142,7 +142,7 @@ struct unicode_funcs_t
         {
             // BMP
             codepoint_t page = ch >> 8;
-            switch (page) 
+            switch (page)
             {
             case 0x00: return ch == 0x00ADu;
             case 0x03: return ch == 0x034Fu;
@@ -158,7 +158,7 @@ struct unicode_funcs_t
         else
         {
             // Other planes
-            switch (plane) 
+            switch (plane)
             {
             case 0x01: return qb::hb_in_range<codepoint_t> (ch, 0x1D173u, 0x1D17Au);
             case 0x0E: return qb::hb_in_range<codepoint_t> (ch, 0xE0000u, 0xE0FFFu);
@@ -171,7 +171,7 @@ struct unicode_funcs_t
     * https://unicode.org/charts/PDF/U2000.pdf
     * https://docs.microsoft.com/en-us/typography/develop/character-design-standards/whitespace
     */
-    enum space_t 
+    enum space_t
     {
         NOT_SPACE = 0,
         SPACE_EM   = 1,
@@ -263,7 +263,7 @@ struct unicode_funcs_t
         return u;
     }
 
-    struct 
+    struct
     {
         unicode_combining_class_func_t combining_class;
         unicode_eastasian_width_func_t eastasian_width;
@@ -275,7 +275,7 @@ struct unicode_funcs_t
         unicode_decompose_compatibility_func_t decompose_compatibility;
     } func;
 
-    struct 
+    struct
     {
         void* combining_class;
         void* eastasian_width;
@@ -287,9 +287,9 @@ struct unicode_funcs_t
         void* decompose_compatibility;
     } user_data;
 
-    struct 
+    struct
     {
-        qb::destroy_func_t combining_class;        
+        qb::destroy_func_t combining_class;
         qb::destroy_func_t eastasian_width;
         qb::destroy_func_t general_category;
         qb::destroy_func_t mirroring;
