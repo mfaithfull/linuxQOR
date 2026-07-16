@@ -58,8 +58,8 @@ jobs:
           sudo make install
           popd
           popd
-          apt-get update
-          apt-get install -y libegl1-mesa-dev libgles2-mesa-dev libx11-dev libxext-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxkbcommon-dev libwayland-dev libwayland-egl-backend-dev wayland-protocols
+          sudo apt-get update
+          sudo apt-get install -y libegl1-mesa-dev libgles2-mesa-dev libx11-dev libxext-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxkbcommon-dev libwayland-dev libwayland-egl-backend-dev wayland-protocols
         elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
           # Install dependencies using vcpkg on Windows. This example installs the fmt library.
           git clone https://github.com/Microsoft/vcpkg.git
