@@ -10,7 +10,7 @@
 #include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/platform/platform.h"
 
-qor_pp_module_requires(Service)
+qor_pp_module_requires(AsyncIOService)
 qor_pp_module_requires(ICurrentThread)
 qor_pp_module_requires(IFileSystem)
 

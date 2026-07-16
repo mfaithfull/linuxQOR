@@ -50,15 +50,15 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) Plug* GetSinkConnector();
         qor_pp_module_interface(QOR_PIPELINE) virtual Element::FlowMode GetFlowMode() override;
         qor_pp_module_interface(QOR_PIPELINE) void SetFlowMode(Element::FlowMode flowmode);
-        qor_pp_module_interface(QOR_PIPELINE) virtual void Run(void);        
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool Pump(size_t& unitsPumped, size_t unitsToPump);
+        qor_pp_module_interface(QOR_PIPELINE) virtual void Run(void);
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool Pump(size_t& unitsPumped, size_t unitsToPump) override;
         qor_pp_module_interface(QOR_PIPELINE) size_t PumpAll();
         qor_pp_module_interface(QOR_PIPELINE) bool PumpOne();
         qor_pp_module_interface(QOR_PIPELINE) virtual Pipeline& InsertFilter(Filter* filter, FilterPos Pos = BeforeSink);
         qor_pp_module_interface(QOR_PIPELINE) virtual Pipeline& InsertInlineFilter(const Buffer& filter, FilterPos Pos = BeforeSink);
         qor_pp_module_interface(QOR_PIPELINE) virtual void ResetStream(size_t streamSize = 0);
         qor_pp_module_interface(QOR_PIPELINE) bool CheckComplete();
-        
+
     protected:
 
         FlowMode m_flowmode;

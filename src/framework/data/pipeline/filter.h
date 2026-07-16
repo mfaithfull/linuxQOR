@@ -23,7 +23,7 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSink();
         qor_pp_module_interface(QOR_PIPELINE) virtual void SetSource(Element* source);
         qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSource();
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSource();        
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSource();
         qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSource();
         qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSink();
         qor_pp_module_interface(QOR_PIPELINE) virtual size_t PumpSome();
