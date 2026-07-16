@@ -1,7 +1,7 @@
 project(QOR VERSION 0.5.0 DESCRIPTION "QOR Text Module" LANGUAGES CXX)
 set(target qor_text)
 
-add_library(${target} SHARED 
+add_library(${target} SHARED
 qor_text.cpp
 codepage/codepages/c.cpp
 codepage/codepages/ascii.cpp
@@ -27,5 +27,5 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 target_link_libraries(${target} qor_module qor_host qor_reporting)
 
-add_subdirectory(shaping)
+#add_subdirectory(shaping)
 add_subdirectory(unicode)
