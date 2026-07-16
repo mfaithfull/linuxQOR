@@ -11,7 +11,7 @@
 
 namespace qor{ 
     
-    template qor_pp_module_interface(QOR_ERROR) class Issue<SeverityWhat>;
+    template class Issue<SeverityWhat>;
 
     class ErrorBase : public Issue<SeverityWhat>
     {
