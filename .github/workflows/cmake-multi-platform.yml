@@ -47,6 +47,27 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install dependencies
+      # Install dependencies for your project. This example uses apt-get to install dependencies on Linux and vcpkg to install dependencies on Windows.
+      run: |
+        if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+          mkdir liburing
+          pushd liburing
+          git clone https://github.com/axboe/liburing.git
+          pushd liburing
+          ./configure
+          make
+          sudo make install
+          popd
+          popd
+        elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+          # Install dependencies using vcpkg on Windows. This example installs the fmt library.
+          git clone https://github.com/Microsoft/vcpkg.git
+          pushd vcpkg
+          ./bootstrap.sh
+          ./vcpkg install angle
+          popd
+        fi
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
