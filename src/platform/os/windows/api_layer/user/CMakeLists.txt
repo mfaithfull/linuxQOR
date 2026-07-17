@@ -7,6 +7,7 @@ processthread.cpp
 errorhandling.cpp
 windowclass.cpp
 brush.cpp
+console.cpp
 cursor.cpp
 help.cpp
 icon.cpp

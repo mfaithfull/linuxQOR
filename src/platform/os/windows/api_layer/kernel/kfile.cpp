@@ -156,7 +156,15 @@ namespace qor { namespace win { namespace api {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(kernel32, GetFileType);     
-        CheckReturn< DWORD, TCheckFailureValue<DWORD, FILE_TYPE_UNKNOWN> >::TType result = Library::Call<DWORD, HANDLE>(pFunc, hFile);
+        unsigned long result = Library::Call<DWORD, HANDLE>(pFunc, hFile);
+        if(result == FILE_TYPE_UNKNOWN)
+        {
+            unsigned long err = GetLastError();
+            if(err != 0 && err != 6)
+            {
+                continuable("Windows API Error {0}.", err);
+            }
+        }
         return result;
     }
 

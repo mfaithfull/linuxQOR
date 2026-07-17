@@ -43,12 +43,12 @@
 #endif
 
 #if (qor_pp_unicode && (qor_pp_os_target == qor_pp_os_windows))
-typedef char16_t char_t;
+typedef wchar_t char_t;
 #else
 typedef char char_t;
 #endif
 
-typedef std::basic_string<char> string_t;
+typedef std::basic_string<char_t> string_t;
 
 #define qor_pp_use_x 0
 #define qor_pp_use_wayand 1

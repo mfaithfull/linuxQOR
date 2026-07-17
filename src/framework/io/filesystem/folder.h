@@ -22,7 +22,7 @@ namespace qor{ namespace io{ namespace filesystem{
         static Folder Create(Path& newFolder);
         bool Copy(Path& destParent);
         bool Move(Path& destParent);
-        bool Rename(const string_t& name);
+        bool Rename(const std::string& name);
         bool Delete();
         Permissions GetPermissions();
         void SetPermissions(const Permissions& permissions, const PermissionOptions& options);

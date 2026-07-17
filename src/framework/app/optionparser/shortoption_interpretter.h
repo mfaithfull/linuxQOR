@@ -83,7 +83,7 @@ namespace qor{ namespace app{
                 result = REQUIRE_ORDER;
                 Inc();
             }
-            else if (posixlyCorrect || !!getenv("POSIXLY_CORRECT"))
+            else if (posixlyCorrect /*|| !!getenv("POSIXLY_CORRECT")*/)
             {
                 result = REQUIRE_ORDER;
             }

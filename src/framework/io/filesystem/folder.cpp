@@ -57,7 +57,7 @@ namespace qor{ namespace io{ namespace filesystem {
         return false;
     }
 
-    bool Folder::Rename(const string_t& name)
+    bool Folder::Rename(const std::string& name)
     {
         try
         {
