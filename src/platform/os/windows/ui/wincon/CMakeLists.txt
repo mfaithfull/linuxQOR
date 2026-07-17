@@ -1,6 +1,12 @@
 set(target winqor_console)
 
-add_library(${target} SHARED winq_console.cpp consolehelper.cpp console.cpp)
+add_library(${target} SHARED winq_console.cpp 
+consolehelper.cpp 
+console.cpp 
+consolescreenbuffer.cpp
+consoleinput.cpp
+pseudoconsole.cpp
+advcon.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
