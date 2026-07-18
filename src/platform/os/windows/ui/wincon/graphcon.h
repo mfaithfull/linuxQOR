@@ -4,16 +4,18 @@
 #ifndef QOR_PP_H_OS_WINDOWS_UI_ADVANCEDCONSOLE
 #define QOR_PP_H_OS_WINDOWS_UI_ADVANCEDCONSOLE
 
-#include "consolehelper.h"
+#include "console.h"
+
+//Legacy Windows Console in maxed out 'graphics' mode.
 
 namespace qor { namespace ui { namespace win {
 
-	class qor_pp_module_interface(QOR_WINCONSOLE) AdvancedConsole
+	class qor_pp_module_interface(QOR_WINCONSOLE) GraphicalConsole
 	{
 	public:
 
-		AdvancedConsole(void* outFile, void* inFile, int width, int height, int fontw, int fonth);
-		~AdvancedConsole();
+		GraphicalConsole(int width, int height, int fontw, int fonth);
+		~GraphicalConsole();
 		
         int Construct(int width, int height, int fontw, int fonth);
 		void Present();
@@ -30,22 +32,15 @@ namespace qor { namespace ui { namespace win {
 
 	private:
 
-        ConsoleHelper m_helper;
+        Console m_Console;
         int m_nScreenWidth;
 	    int m_nScreenHeight;
 	    qor::platform::win::CharInfo* m_bufScreen;
 	    std::wstring m_sAppName;
-	    //void* m_hOriginalConsole;
-	    //qor::platform::win::ConsoleScreenBufferInfo m_OriginalConsoleInfo;
 	    void* m_hConsole{nullptr};
 	    void* m_hConsoleIn{nullptr};
 	    qor::platform::win::SmallRect m_rectWindow;
-	    //short m_keyOldState[256] = { 0 };
-	    //short m_keyNewState[256] = { 0 };
-	    //bool m_mouseOldState[5] = { 0 };
-	    //bool m_mouseNewState[5] = { 0 };
 	    bool m_bConsoleInFocus = true;	
-	    //bool m_bEnableSound = false;		
 	};
 
 }}}//qor::ui::win

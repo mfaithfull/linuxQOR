@@ -6,7 +6,8 @@ console.cpp
 consolescreenbuffer.cpp
 consoleinput.cpp
 pseudoconsole.cpp
-advcon.cpp)
+graphcon.cpp
+termcon.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

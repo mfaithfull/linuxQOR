@@ -18,13 +18,16 @@ using namespace qor::platform::win;
 
 namespace qor { namespace ui { namespace win {
 
-    ConsoleScreenBuffer::ConsoleScreenBuffer(void* handle) : m_handle(handle)
+    ConsoleScreenBuffer::ConsoleScreenBuffer(void* handle, bool owner) : m_handle(handle), m_owner(owner)
     { }
 
 
     ConsoleScreenBuffer::~ConsoleScreenBuffer()
     {
-        Kernel32::CloseHandle(m_handle);
+        if(m_owner)
+        {
+            Kernel32::CloseHandle(m_handle);
+        }
     }
     
     void* ConsoleScreenBuffer::Handle() const
@@ -94,6 +97,8 @@ namespace qor { namespace ui { namespace win {
 
     bool ConsoleScreenBuffer::GetInfoEx(platform::win::ConsoleScreenBufferInfoEx* screenBufferInfoEx) const
     {
+        memset(screenBufferInfoEx, 0, sizeof(platform::win::ConsoleScreenBufferInfoEx));
+        screenBufferInfoEx->cbSize = sizeof(platform::win::ConsoleScreenBufferInfoEx);
         return m_helper.GetScreenBufferInfoEx(m_handle, screenBufferInfoEx);
     }
 

@@ -22,6 +22,8 @@ namespace qor { namespace ui { namespace win {
 
 		Console();
 		~Console();
+		bool ProbeIsRedirected();
+		void Setup();
 		bool IsRedirected();
 		void Reallocate();
 		void SetOut(int fileHandle);
@@ -66,6 +68,8 @@ namespace qor { namespace ui { namespace win {
 		std::vector< unsigned long > GetProcessList();
 		void* GetWindow();
 		platform::win::ConsoleSelectionInfo GetSelectionInfo();
+
+		unsigned long WriteBytes(char* data, size_t byteCount);
 		
 	private:
 

@@ -20,6 +20,57 @@ namespace qor { namespace ui{ namespace win {
 
 	Console::Console() : m_redirected(false), m_allocated(false), m_outFile(nullptr), m_inFile(nullptr), m_errFile(nullptr)
 	{
+		m_inFile = m_helper.GetStdHandle(ConsoleHelper::hStdIn).Use();
+		if (m_inFile == nullptr || m_inFile == Invalid_Handle_Value)
+		{
+			Reallocate();
+		}
+
+		m_outFile = m_helper.GetStdHandle(ConsoleHelper::hStdOut).Use();
+		m_errFile = m_outFile;		
+		m_redirected = ProbeIsRedirected();				
+	}
+
+	bool Console::ProbeIsRedirected()
+	{
+		bool handleProtection = false;
+		auto fileType = 6;
+		try
+		{
+			fileType = Kernel32::GetFileType(m_inFile);
+		}
+		catch(Serious& error)
+		{
+			error.Catch();
+			std::cerr << error.what().Content() << '\n';
+			handleProtection = true;
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+			handleProtection = true;
+		}
+		if(handleProtection)
+		{
+			//Use handle protection trick to make the handle accessible
+			//Microsoft are likely use hidden attributes on the handle to hide it from us as 'invalid'. These get reset
+			//when we ourselves protect/unprotect the handle from being closed.
+			HANDLE h = Kernel32::GetStdHandle(qor::platform::win::Std_Input_Handle);
+			qor::platform::win::Handle stdinhandle(h);
+			stdinhandle.SetProtectFromClose(false);
+			stdinhandle.Drop();
+			fileType = Kernel32::GetFileType(m_inFile);
+		}
+
+		if(fileType != FILE_TYPE_CHAR)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	void Console::Setup()
+	{
 		auto hstdin = m_helper.GetStdHandle(ConsoleHelper::hStdIn);
 		m_inFile = hstdin.Use();
 		if (hstdin.IsNull() || hstdin.IsInvalid() /*|| (Kernel32::GetFileType(hstdin.Use()) != FILE_TYPE_CHAR)*/ )
@@ -56,7 +107,8 @@ namespace qor { namespace ui{ namespace win {
 		if(fileType != FILE_TYPE_CHAR)
 		{
 			m_redirected = true;
-		}		
+		}
+		Kernel32::SetConsoleOutputCP(65001);
 	}
 
 	Console::~Console()
@@ -153,10 +205,7 @@ namespace qor { namespace ui{ namespace win {
 		m_allocated = true;
 
 		BindCrtHandlesToStdHandles(true, true, true);
-		m_redirected = false;		
-
-		Kernel32::SetConsoleOutputCP(65001);
-		
+		m_redirected = false;						
 	}
 
 	// Source - https://stackoverflow.com/a/25927081
@@ -167,35 +216,44 @@ namespace qor { namespace ui{ namespace win {
 		if (bindStdIn)
 		{
 			FILE* dummyFile;
-			freopen_s(&dummyFile, "CONIN$", "r", stdin);
+			freopen_s(&dummyFile, "CONIN$", "r+", stdin);
 		}
 		if (bindStdOut)
 		{
 			FILE* dummyFile;
-			freopen_s(&dummyFile, "CONOUT$", "w", stdout);
+			freopen_s(&dummyFile, "CONOUT$", "w+", stdout);
 		}
 		if (bindStdErr)
 		{
 			FILE* dummyFile;
-			freopen_s(&dummyFile, "CONOUT$", "w", stderr);
+			freopen_s(&dummyFile, "CONOUT$", "w+", stderr);
 		}
 
 		// Redirect unbuffered stdin from the current standard input handle
 		if (bindStdIn)
 		{
 			m_inFile = Kernel32::CreateFileW(L"CONIN$", GENERIC_READ | GENERIC_WRITE,  FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			//platform::win::Handle stdInHandle(m_inFile);
+			//m_helper.SetStdHandle(ConsoleHelper::hStdIn, stdInHandle);
+			//stdInHandle.Drop();
 		}
 
 		// Redirect unbuffered stdout to the current standard output handle
 		if (bindStdOut)
 		{
 			m_outFile = Kernel32::CreateFileW(L"CONOUT$", GENERIC_READ | GENERIC_WRITE,  FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+			//platform::win::Handle stdOutHandle(m_outFile);
+			//m_helper.SetStdHandle(ConsoleHelper::hStdOut, stdOutHandle);
+			//stdOutHandle.Drop();
 		}
 
 		// Redirect unbuffered stderr to the current standard error handle
 		if (bindStdErr)
 		{
 			m_errFile = m_outFile;
+			//platform::win::Handle stdErrHandle(m_errFile);
+			//m_helper.SetStdHandle(ConsoleHelper::hStdErr, stdErrHandle);
+			//stdErrHandle.Drop();
 		}
 
 		// Clear the error state for each of the C++ standard stream objects. We need to do this, as attempts to access the
@@ -213,6 +271,9 @@ namespace qor { namespace ui{ namespace win {
 			std::cout.clear();
 			std::wclog.clear();
 			std::clog.clear();
+		}
+		if (bindStdErr)
+		{
 			std::wcerr.clear();
 			std::cerr.clear();
 		}
@@ -325,6 +386,15 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
+	unsigned long Console::WriteBytes(char* data, size_t byteCount)
+	{
+		unsigned long bytesWritten = 0;
+		bool result = m_redirected ?
+			Kernel32::WriteFile(m_outFile, data, static_cast<DWORD>(byteCount), &bytesWritten, nullptr) :
+			Kernel32::WriteConsoleA(m_outFile, data, static_cast<DWORD>(byteCount), &bytesWritten, nullptr);
+		return bytesWritten;
+	}
+
 	unsigned long Console::GetDisplayMode()
 	{
 		unsigned long mode = 0;
@@ -347,7 +417,7 @@ namespace qor { namespace ui{ namespace win {
 
 	ref_of<ConsoleScreenBuffer>::type Console::CreateScreenBuffer(unsigned long desiredAccess, unsigned long shareMode, const qor::platform::win::SecurityAttributes* securityAttributes, bool textMode)
 	{
-		return new_ref<ConsoleScreenBuffer>(m_helper.CreateScreenBuffer(desiredAccess, shareMode, securityAttributes, textMode));
+		return new_ref<ConsoleScreenBuffer>(m_helper.CreateScreenBuffer(desiredAccess, shareMode, securityAttributes, textMode), true);
 	}
 
 	ref_of<PseudoConsole>::type Console::CreatePseudo(qor::platform::win::Coord size, unsigned long flags)

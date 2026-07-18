@@ -12,7 +12,7 @@ namespace qor { namespace ui { namespace win {
 	{
 	public:
 
-        ConsoleScreenBuffer(void* handle);
+        ConsoleScreenBuffer(void* handle, bool owner = false);
         ~ConsoleScreenBuffer();
         void* Handle() const;
         unsigned long GetMode() const;
@@ -47,6 +47,7 @@ namespace qor { namespace ui { namespace win {
     private:
         ConsoleHelper m_helper;
         void* m_handle;
+        bool m_owner;
     };
 
 }}}//qor::ui::win

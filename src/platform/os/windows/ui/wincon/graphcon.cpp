@@ -3,25 +3,31 @@
 
 #include "src/configuration/configuration.h"
 
-#include "advcon.h"
+#include "graphcon.h"
 #include "src/qor/flyers/error/error.h"
 #include "src/platform/os/windows/common/constants.h"
 
 namespace qor { namespace ui{ namespace win {
 
-    AdvancedConsole::AdvancedConsole(void* outFile, void* inFile, int width, int height, int fontw, int fonth) : m_hConsole(outFile), m_hConsoleIn(inFile)
+    GraphicalConsole::GraphicalConsole(int width, int height, int fontw, int fonth)
     {        
+		if(m_Console.IsRedirected())
+		{
+			m_Console.Reallocate();
+			//auto newScreenBuffer = m_Console.CreateScreenBuffer();
+			//m_Console.SetActiveScreenBuffer(newScreenBuffer);
+		}
         Construct(width, height, fontw, fonth);
     }
 
-    AdvancedConsole::~AdvancedConsole()
+    GraphicalConsole::~GraphicalConsole()
     {        
 		delete[] m_bufScreen;
     }
 
-	int AdvancedConsole::Construct(int width, int height, int fontw, int fonth)
+	int GraphicalConsole::Construct(int width, int height, int fontw, int fonth)
 	{
-		if (m_hConsole == Invalid_Handle_Value)
+		if(m_Console.OutputFile() == Invalid_Handle_Value)
         {
 			continuable("Bad Handle");
             return -1;
@@ -33,17 +39,18 @@ namespace qor { namespace ui{ namespace win {
 		// Change console visual size to a minimum so ScreenBuffer can shrink
 		// below the actual visual size
 		m_rectWindow = { 0, 0, 1, 1 };
-		m_helper.SetWindowInfo(m_hConsole, true, &m_rectWindow);
+		auto screenBuffer = m_Console.GetActiveScreenBuffer();
+		screenBuffer->SetWindowInfo(true, &m_rectWindow);
 
 		// Set the size of the screen buffer
 		platform::win::Coord coord = { (short)m_nScreenWidth, (short)m_nScreenHeight };
-		if (!m_helper.SetScreenBufferSize(m_hConsole, coord))
+		if (!screenBuffer->SetSize(coord))
         {
 			continuable("SetConsoleScreenBufferSize");
         }
 
 		// Assign screen buffer to the console
-		if (!m_helper.SetActiveScreenBuffer(m_hConsole))
+		if (!m_Console.SetActiveScreenBuffer(screenBuffer))
         {
 			continuable("SetConsoleActiveScreenBuffer");
             return -1;
@@ -59,7 +66,7 @@ namespace qor { namespace ui{ namespace win {
 		cfi.FontWeight = FW_Normal;
 
 		wcscpy_s(cfi.FaceName, L"Consolas");
-		if (!m_helper.SetCurrentFontEx(m_hConsole, false, &cfi))
+		if (!screenBuffer->SetCurrentFontEx(false, &cfi))
         {
 			continuable("SetCurrentConsoleFontEx");
             return -1;
@@ -68,7 +75,7 @@ namespace qor { namespace ui{ namespace win {
 		// Get screen buffer info and check the maximum allowed window size. Return
 		// error if exceeded, so user knows their dimensions/fontsize are too large
         platform::win::ConsoleScreenBufferInfo csbi;
-		if (!m_helper.GetScreenBufferInfo(m_hConsole, &csbi))
+		if (!screenBuffer->GetInfo(&csbi))
         {
 			continuable("GetConsoleScreenBufferInfo");
             return -1;
@@ -89,14 +96,14 @@ namespace qor { namespace ui{ namespace win {
 		// Set Physical Console Window Size
 		m_rectWindow = { 0, 0, static_cast<short>(m_nScreenWidth - 1), static_cast<short>(m_nScreenHeight - 1) };
 
-		if (!m_helper.SetWindowInfo(m_hConsole, true, &m_rectWindow))
+		if (!screenBuffer->SetWindowInfo(true, &m_rectWindow))
         {
 			continuable("SetConsoleWindowInfo");
             return -1;
         }
 
 		// Set flags to allow mouse input
-		if (!m_helper.SetMode(m_hConsoleIn, EnableExtendedFlags | EnableWindowInput | EnableMouseInput))
+		if (!m_Console.GetInput()->SetMode(EnableExtendedFlags | EnableWindowInput | EnableMouseInput))
         {
 			continuable("SetConsoleMode");
             return -1;
@@ -106,18 +113,22 @@ namespace qor { namespace ui{ namespace win {
 		m_bufScreen = new qor::platform::win::CharInfo[m_nScreenWidth*m_nScreenHeight];
 		memset(m_bufScreen, 0, sizeof(qor::platform::win::CharInfo) * m_nScreenWidth * m_nScreenHeight);
 
-		m_helper.SetCtrlHandler((CtrlHandlerCallback)[](unsigned long)->int{
-            return 1;
-        }, true);
+		m_Console.SetCtrlHandler((CtrlHandlerCallback)[](unsigned long)->int
+			{
+				return 1;
+			}, true);
 		return 1;
 	}
 
-	void AdvancedConsole::Present()
+	void GraphicalConsole::Present()
 	{
-		m_helper.WriteOutput(m_hConsole, m_bufScreen, { (short)m_nScreenWidth, (short)m_nScreenHeight }, { 0,0 }, &m_rectWindow);
+		auto screenBuffer = m_Console.GetActiveScreenBuffer();
+		platform::win::ConsoleScreenBufferInfoEx infoEx;
+		m_Console.GetActiveScreenBuffer()->GetInfoEx(&infoEx);
+		m_Console.GetActiveScreenBuffer()->WriteOutput(m_bufScreen, { (short)m_nScreenWidth, (short)m_nScreenHeight }, { 0,0 }, &m_rectWindow);
 	}
 
-	void AdvancedConsole::Draw(int x, int y, short c, short col)
+	void GraphicalConsole::Draw(int x, int y, short c, short col)
 	{
 		if (x >= 0 && x < m_nScreenWidth && y >= 0 && y < m_nScreenHeight)
 		{
@@ -126,7 +137,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
-	void AdvancedConsole::Clip(int &x, int &y)
+	void GraphicalConsole::Clip(int &x, int &y)
 	{
 		if (x < 0) x = 0;
 		if (x >= m_nScreenWidth) x = m_nScreenWidth;
@@ -134,7 +145,7 @@ namespace qor { namespace ui{ namespace win {
 		if (y >= m_nScreenHeight) y = m_nScreenHeight;
 	}
 
-    void AdvancedConsole::Fill(int x1, int y1, int x2, int y2, short c, short col)
+    void GraphicalConsole::Fill(int x1, int y1, int x2, int y2, short c, short col)
 	{
 		Clip(x1, y1);
 		Clip(x2, y2);
@@ -143,7 +154,7 @@ namespace qor { namespace ui{ namespace win {
 				Draw(x, y, c, col);
 	}
 
-	void AdvancedConsole::DrawString(int x, int y, std::wstring c, short col)
+	void GraphicalConsole::DrawString(int x, int y, std::wstring c, short col)
 	{
 		for (size_t i = 0; i < c.size(); i++)
 		{
@@ -152,7 +163,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
-	void AdvancedConsole::DrawStringAlpha(int x, int y, std::wstring c, short col)
+	void GraphicalConsole::DrawStringAlpha(int x, int y, std::wstring c, short col)
 	{
 		for (size_t i = 0; i < c.size(); i++)
 		{
@@ -164,7 +175,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
-	void AdvancedConsole::DrawLine(int x1, int y1, int x2, int y2, short c, short col)
+	void GraphicalConsole::DrawLine(int x1, int y1, int x2, int y2, short c, short col)
 	{
 		int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
 		dx = x2 - x1; dy = y2 - y1;
@@ -216,7 +227,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
-	void AdvancedConsole::DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col)
+	void GraphicalConsole::DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col)
 	{
 		DrawLine(x1, y1, x2, y2, c, col);
 		DrawLine(x2, y2, x3, y3, c, col);
@@ -224,7 +235,7 @@ namespace qor { namespace ui{ namespace win {
 	}
 
 	// https://www.avrfreaks.net/sites/default/files/triangles.c
-	void AdvancedConsole::FillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col)
+	void GraphicalConsole::FillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col)
 	{
 		auto SWAP = [](int &x, int &y) { int t = x; x = y; y = t; };
 		auto drawline = [&](int sx, int ex, int ny) { for (int i = sx; i <= ex; i++) Draw(i, ny, c, col); };
@@ -368,7 +379,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
-	void AdvancedConsole::DrawCircle(int xc, int yc, int r, short c, short col)
+	void GraphicalConsole::DrawCircle(int xc, int yc, int r, short c, short col)
 	{
 		int x = 0;
 		int y = r;
@@ -390,7 +401,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
-    void AdvancedConsole::FillCircle(int xc, int yc, int r, short c, short col)
+    void GraphicalConsole::FillCircle(int xc, int yc, int r, short c, short col)
 	{
 		// Taken from wikipedia
 		int x = 0;
