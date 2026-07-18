@@ -16,13 +16,10 @@ namespace qor{ namespace pipeline{ namespace components{
         StringSink();
         virtual ~StringSink();
 
-        //virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );
         std::string GetData();
 
     protected:
 
-        //bool Pull(size_t& unitsWritten, size_t unitsToWrite);
-        //bool Push(size_t& unitsWritten, size_t unitsToWrite);
         virtual size_t WriteBytes(byte* data, size_t bytesToWrite);
 
         std::string m_data;

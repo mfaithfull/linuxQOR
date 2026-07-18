@@ -40,13 +40,13 @@ namespace qor{ namespace pipeline{
     Pipeline::Pipeline(const Plug& SourceConnection, Sink& sink, Element::FlowMode flowmode) : m_flowmode(flowmode)
     {
         SetSource(SourceConnection.GetSource());
-        SetSink(&sink);            
+        SetSink(&sink);
     }
 
     Pipeline::Pipeline(const Plug& SourceConnection, const Sink& sink, Element::FlowMode flowmode) : m_flowmode(flowmode)
     {
         SetSource(SourceConnection.GetSource());
-        SetSink(sink);            
+        SetSink(sink);
     }
 
     Pipeline::Pipeline(Source& source, const Plug& SinkConnection, Element::FlowMode flowmode) : m_flowmode(flowmode)
@@ -82,7 +82,7 @@ namespace qor{ namespace pipeline{
     bool Pipeline::IsConnected()  //assumes true if there is nothing setup to connect to, like a string source or parser sink.
     {
         bool bConnected = false;
-        bool sinkConnected = true;  
+        bool sinkConnected = true;
         bool sourceConnected = true;
         if(m_sink && m_source)
         {
@@ -90,7 +90,7 @@ namespace qor{ namespace pipeline{
             auto sourcePlug = dynamic_cast<Plug*>(ActualSource()->GetPlug());
             if(sinkPlug)
             {
-                sinkConnected = sinkPlug->IsConnected();                    
+                sinkConnected = sinkPlug->IsConnected();
             }
             if(sourcePlug)
             {
@@ -109,7 +109,7 @@ namespace qor{ namespace pipeline{
         }
         SetSource(source);
     }
-    
+
     void Pipeline::SetSource(const Source& source)
     {
         SetSource( &(const_cast<Source&>(source)));
@@ -265,7 +265,7 @@ namespace qor{ namespace pipeline{
                 if(m_sink)
                 {
                     auto source = m_sink->GetSource();
-                    filter->SetSink(m_sink);                                        
+                    filter->SetSink(m_sink);
                     m_sink->SetSource(filter);
                     if(source)
                     {
@@ -321,7 +321,7 @@ namespace qor{ namespace pipeline{
 
     bool Pipeline::CheckComplete()
     {
-        bool bComplete = false;        
+        bool bComplete = false;
         if(HasSource() && HasSink())
         {
             if(m_flowmode == FlowMode::Push)
@@ -347,4 +347,3 @@ namespace qor{ namespace pipeline{
         return bComplete;
     }
 }}//qor::pipeline
-

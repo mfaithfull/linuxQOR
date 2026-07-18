@@ -22,7 +22,7 @@ namespace qor{ namespace pipeline{ namespace components{
         m_it = m_data.begin();
     }
 
-    size_t StringSource::ReadBytes(byte* space, size_t bytesToRead)    
+    size_t StringSource::ReadBytes(byte* space, size_t bytesToRead)
     {
         size_t bytesRead = 0;
         while(m_it != m_data.end() && bytesRead < bytesToRead)

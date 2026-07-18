@@ -40,11 +40,11 @@ namespace qor{ namespace pipeline {
         {
             return m_buffer;
         }
-            
+
         inline void SetByteOrder(const arch::Endian byteOrder)
         {
             m_sink.SetByteOrder(byteOrder);
-        }        
+        }
 
         arch::Endian GetByteOrder()
         {
@@ -100,9 +100,10 @@ namespace qor{ namespace pipeline {
             m_pipeline.SetSource(source);
             m_pipeline.SetSink(&m_sink);
             m_pipeline.SetFlowMode(Element::Pull);
-            m_sink.SetCallback(Delegate<bool(size_t&,size_t)>::Create<Pipeline, &Pipeline::Pump>(m_pipeline));
+            auto delegate = Delegate<bool(size_t&,size_t)>::Create<Pipeline, &Pipeline::Pump>(&m_pipeline);
+            m_sink.SetCallback(delegate);
             m_pipeline.Connect();
-        }    
+        }
     };
 }}
 

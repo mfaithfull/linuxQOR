@@ -21,7 +21,7 @@ namespace qor{ namespace pipeline {
 
         qor_pp_module_interface(QOR_DATASINK) DataSink();
         qor_pp_module_interface(QOR_DATASINK) virtual ~DataSink();
-        qor_pp_module_interface(QOR_DATASINK) void SetCallback( const Delegate<bool(size_t&, size_t)>& callback);
+        qor_pp_module_interface(QOR_DATASINK) void SetCallback(Delegate<bool(size_t&, size_t)>& callback);
         qor_pp_module_interface(QOR_DATASINK) void SetByteOrder(const arch::Endian byteOrder);
         qor_pp_module_interface(QOR_DATASINK) arch::Endian GetByteOrder();
 
@@ -35,7 +35,7 @@ namespace qor{ namespace pipeline {
         qor_pp_module_interface(QOR_DATASINK) bool Extract(byte* data, size_t byteCount);
 
         protected:
-           
+
         qor_pp_module_interface(QOR_DATASINK) virtual bool Push(size_t& unitsRead, size_t unitsToRead);
         qor_pp_module_interface(QOR_DATASINK) void ExtractBufferValue(size_t size, byte* space, byte* data, size_t totalRead, size_t realRead);
         qor_pp_module_interface(QOR_DATASINK) bool ExtractBufferData(size_t size, byte* space, size_t byteCount, size_t& totalRead);

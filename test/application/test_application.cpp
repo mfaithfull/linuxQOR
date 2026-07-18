@@ -44,7 +44,7 @@ using namespace qor::platform;
 
 qor_pp_test_case(canBuildAnApplication)
 {
-    auto app = AppBuilder().Build("QOR Test Application")->        
+    auto app = AppBuilder().Build("QOR Test Application")(qor_unlocked).
         SetRole<app::Role>(
             [](ref_of<app::IRole>::type /*role*/)
             {

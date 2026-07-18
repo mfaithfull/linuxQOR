@@ -115,7 +115,7 @@ namespace qor{ namespace pipeline{
 
         virtual void SetCapacity(size_t itemCount)
         {
-            if(m_allocationCount == itemCount)
+            if(m_allocationCount == itemCount && m_pAllocation != nullptr)
             {
                 return;
             }
