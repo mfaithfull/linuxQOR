@@ -20,6 +20,7 @@ namespace qor { namespace ui{ namespace win {
 
 	Console::Console() : m_redirected(false), m_allocated(false), m_outFile(nullptr), m_inFile(nullptr), m_errFile(nullptr)
 	{
+		std::cout << "Attempting to setup console..." << std::endl;
 		m_inFile = m_helper.GetStdHandle(ConsoleHelper::hStdIn).Use();
 		if (m_inFile == nullptr || m_inFile == Invalid_Handle_Value)
 		{
@@ -33,6 +34,7 @@ namespace qor { namespace ui{ namespace win {
 
 	bool Console::ProbeIsRedirected()
 	{
+		std::cout << "Testing for redirection..." << std::endl;
 		bool handleProtection = false;
 		auto fileType = 6;
 		try
@@ -41,25 +43,34 @@ namespace qor { namespace ui{ namespace win {
 		}
 		catch(Serious& error)
 		{
-			error.Catch();
-			std::cerr << error.what().Content() << '\n';
 			handleProtection = true;
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << e.what() << '\n';
 			handleProtection = true;
 		}
 		if(handleProtection)
 		{
+			std::cout << "Trying to access redirected handle..." << std::endl;
 			//Use handle protection trick to make the handle accessible
-			//Microsoft are likely use hidden attributes on the handle to hide it from us as 'invalid'. These get reset
+			//Microsoft are likely using hidden attributes on the handle to hide it from us as 'invalid'. These get reset
 			//when we ourselves protect/unprotect the handle from being closed.
 			HANDLE h = Kernel32::GetStdHandle(qor::platform::win::Std_Input_Handle);
 			qor::platform::win::Handle stdinhandle(h);
-			stdinhandle.SetProtectFromClose(false);
-			stdinhandle.Drop();
-			fileType = Kernel32::GetFileType(m_inFile);
+			try
+			{
+				stdinhandle.SetProtectFromClose(true);
+				stdinhandle.SetProtectFromClose(false);
+				fileType = Kernel32::GetFileType(m_inFile);
+			}
+			catch(const Serious& error)
+			{
+			}
+			catch(const std::exception& e)
+			{				
+			}
+			
+			stdinhandle.Drop();			
 		}
 
 		if(fileType != FILE_TYPE_CHAR)

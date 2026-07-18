@@ -414,7 +414,7 @@ namespace qor { namespace win { namespace api {
 	{
 		qor_pp_fcontext;
 		Win32ErrorHandler _;
-		qor_pp_useswinapi(kernel32,ReadConsoleInputEx);
+		qor_pp_useswinapiAW(kernel32,ReadConsoleInputEx);
 		CheckReturn< BOOL, BoolCheck >::TType result = Library::Call<BOOL, HANDLE, ::PINPUT_RECORD, DWORD, LPDWORD, USHORT>(pFunc, hConsoleInput, lpBuffer, nLength, lpNumberOfEventsRead, wFlags);
 		return result;
 	}

@@ -46,7 +46,7 @@ namespace qor{ namespace components{
         Probably need: Minimized, Maximized, Mapped, UnMapped, Withdrawn, Offscreen (i.e. rendering target is image/printer)
         Scrolled, Scaled, Zoomed, Positioned (If it has a user modifiable position), Sorted (contents are ordered by), Filtered
         Dismissed
-        Styled - the style use for Rendering
+        Styled - the style used for Rendering
         */
     protected:
 

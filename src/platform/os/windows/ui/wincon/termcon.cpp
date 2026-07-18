@@ -61,6 +61,7 @@ namespace qor { namespace ui{ namespace win {
         else
         {
             mode |= static_cast<unsigned long>(ConsoleOutputModeFlags::VirtualTerminalProcessing);
+            mode |= static_cast<unsigned long>(ConsoleOutputModeFlags::DisableNewlineAutoReturn);
             if(m_console->GetActiveScreenBuffer()->SetMode(mode))
             {
                 mode = m_console->GetActiveScreenBuffer()->GetMode();

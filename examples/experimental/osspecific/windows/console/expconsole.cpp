@@ -1,17 +1,23 @@
 
 #include "src/configuration/configuration.h"
+
+#include <iostream>
+
 #include "src/platform/os/windows/app/exebootstrap/winqorexeboot.h"
 #include "src/platform/os/windows/ui/wincon/console.h"
-#include "src/platform/os/windows/ui/wincon/advcon.h"
+#include "src/platform/os/windows/ui/wincon/termcon.h"
+#include "src/platform/os/windows/ui/wincon/graphcon.h"
 
 using namespace qor;
 using namespace qor::ui::win;
 using namespace qor::platform::win;
 using namespace std;
 
+qor_pp_module_requires(ICurrentThread);
+
 void ReportInputMode(Console& console)
 {
-    auto inputMode = console.GetInputMode();
+    auto inputMode = console.GetInput()->GetMode();
 
     if(inputMode & static_cast<unsigned long>(ConsoleInputModeFlags::ProcessedInput))
     {
@@ -117,14 +123,14 @@ void ReportInputMode(Console& console)
     {
         console.WriteLine(L"Virtual Terminal Input off.");
         inputMode |= static_cast<unsigned long>(ConsoleInputModeFlags::VertualTerminalInput);
-        console.WriteLine(L"Turning Viirtual Terminal input on.");
+        console.WriteLine(L"Turning Virtual Terminal input on.");
     }
 }
 
 
 void ReportOutputMode(Console& console)
 {
-    auto outputMode = console.GetOutputMode();
+    auto outputMode = console.GetActiveScreenBuffer()->GetMode();
 
     if(outputMode & static_cast<unsigned long>(ConsoleOutputModeFlags::ProcessedOutput))
     {
@@ -182,41 +188,27 @@ void ReportOutputMode(Console& console)
         console.WriteLine(L"LVB Grid Worldwide is off.");
     }
 
-    console.SetOutputMode(outputMode);
+    console.GetActiveScreenBuffer()->SetMode(outputMode);
 }
 
 int main()
 {
-    Console console;
-    if(console.IsRedirected())
-    {        
-        console.Reallocate();
-        console.WriteLine(L"Console redirection detected. Reallocated.");
-    }
+    std::cout << "Experiments on the Windows Console." << std::endl;
 
-    unsigned long mode = console.GetDisplayMode();
+    TermCon terminal;
 
-    if(mode == 0)
-    {
-        console.WriteLine(L"Console is windowed.");
-    }
-
-    if(mode == 1)
-    {
-        console.WriteLine(L"Console is fullscreen borderless.");
-    }
-
-    ReportInputMode(console);
-    ReportOutputMode(console);
-   
-    AdvancedConsole adv(console.OutputFile(), console.InputFile(), 128, 96, 8, 8);
-    adv.DrawTriangle(2,2, 30, 6, 4,20);
-    adv.DrawString(57,48, L"Console Screen", 6);
-    adv.DrawStringAlpha(58,49, L"Alpha String", 5);
-    adv.DrawLine(57,50,70,50, 9608, 3);
-    adv.FillCircle(64, 70, 10, '@', 2);
-    adv.Present();
+    CurrentThread::Get().Sleep(5000);
     
+    GraphicalConsole screen(120, 80, 7, 9);
+
+    screen.DrawTriangle(2,2, 30, 6, 4,20);
+    screen.DrawString(57,48, L"Console Screen", 6);
+    screen.DrawStringAlpha(58,49, L"Alpha String", 5);
+    screen.DrawLine(57,50,70,50, 9608, 3);
+    screen.FillCircle(64, 70, 10, '@', 2);
+    screen.Present();
+    
+    CurrentThread::Get().Sleep(5000);
     return EXIT_SUCCESS;
 }
 

@@ -160,7 +160,7 @@ namespace qor { namespace win { namespace api {
         if(result == FILE_TYPE_UNKNOWN)
         {
             unsigned long err = GetLastError();
-            if(err != 0 && err != 6)
+            if(err != 0)
             {
                 continuable("Windows API Error {0}.", err);
             }

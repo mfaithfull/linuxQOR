@@ -10,7 +10,7 @@ target_compile_definitions(${target} PRIVATE WINDOWS UNICODE _UNICODE
 qor_pp_ver_project=${PROJECT_VERSION})
 
 target_link_libraries(${target} winqor_exebootstrap qor_module qor_host qor_current qor_compiler qor_platform 
-winqor_api_kernel winqor_api_user winqor_console
+winqor_api_kernel winqor_api_user winqor_console winqor_thread
 user32 gdi32 comdlg32 comctl32 shell32)
 
 add_custom_command(
