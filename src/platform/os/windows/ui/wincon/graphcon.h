@@ -35,12 +35,9 @@ namespace qor { namespace ui { namespace win {
         Console m_Console;
         int m_nScreenWidth;
 	    int m_nScreenHeight;
-	    qor::platform::win::CharInfo* m_bufScreen;
+	    qor::platform::win::CharInfo* m_bufScreen{nullptr};
 	    std::wstring m_sAppName;
-	    void* m_hConsole{nullptr};
-	    void* m_hConsoleIn{nullptr};
-	    qor::platform::win::SmallRect m_rectWindow;
-	    bool m_bConsoleInFocus = true;	
+	    qor::platform::win::SmallRect m_rectWindow;	    
 	};
 
 }}}//qor::ui::win

@@ -192,12 +192,12 @@ namespace qor { namespace ui{ namespace win {
 	{
 		HANDLE h = Kernel32::GetStdHandle(qor::platform::win::Std_Input_Handle);
 		qor::platform::win::Handle stdinhandle(h);
-		stdinhandle.SetProtectFromClose(false);
+		//stdinhandle.SetProtectFromClose(false);
 		stdinhandle.Drop();
 
 		h = Kernel32::GetStdHandle(qor::platform::win::Std_Output_Handle);
 		qor::platform::win::Handle stdoutHandle(h);
-		stdoutHandle.SetProtectFromClose(false);
+		//stdoutHandle.SetProtectFromClose(false);
 		stdoutHandle.Drop();
 
 		bool free = m_helper.Free();

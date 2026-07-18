@@ -250,7 +250,8 @@ namespace qor { namespace ui { namespace win {
 			}
 			h = Kernel32::GetStdHandle(handle);
 			Handle std(h);
-			std.SetProtectFromClose(true);
+			//std.SetProtectFromClose(false);
+			std.DontClose();
 			return std;
 		}
 		catch (Serious& error)

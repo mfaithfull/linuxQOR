@@ -17,6 +17,8 @@ namespace qor { namespace ui { namespace win {
         TermCon();
         ~TermCon();
 
+        bool IsValid();
+        
     private:
 
         bool SetupLocalTerminal();
@@ -26,6 +28,7 @@ namespace qor { namespace ui { namespace win {
 
         ref_of<Console>::type m_console;
         ConsoleHelper m_helper;
+        bool m_validTerminal;
     };
 }}}//qor::ui::win
 
