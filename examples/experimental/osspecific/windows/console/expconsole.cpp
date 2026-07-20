@@ -5,8 +5,17 @@
 
 #include "src/platform/os/windows/app/exebootstrap/winqorexeboot.h"
 #include "src/platform/os/windows/ui/wincon/console.h"
-#include "src/platform/os/windows/ui/wincon/termcon.h"
+#include "src/platform/os/windows/ui/terminal/termcon.h"
 #include "src/platform/os/windows/ui/wincon/graphcon.h"
+#include "src/platform/os/windows/ui/wincon/graphconrenderer.h"
+#include "src/framework/ui/uiitem.h"
+#include "src/framework/ui/visible.h"
+#include "src/framework/ui/compound.h"
+#include "src/framework/ui/contained.h"
+#include "src/framework/ui/layout/arrangeable.h"
+#include "src/framework/ui/layout/sizeconstrainer.h"
+#include "src/framework/ui/layout/vbox.h"
+#include "src/framework/ui/layout/alignright.h"
 
 using namespace qor;
 using namespace qor::ui::win;
@@ -191,22 +200,55 @@ void ReportOutputMode(Console& console)
     console.GetActiveScreenBuffer()->SetMode(outputMode);
 }
 
+
+class TestArticle : public qor::ui::Compound, public virtual qor::ui::layout::IArrangeable
+{
+public:
+};
+
+class TestMiddleArticle : public qor::ui::Contained, public virtual qor::ui::Compound, public virtual qor::ui::layout::IArrangeable, public virtual qor::ui::IVisible
+{
+public:
+
+    virtual ~TestMiddleArticle(){}
+};
+
+class TestChildArticle : public qor::ui::Contained, public virtual qor::ui::layout::IArrangeable, public virtual qor::ui::IVisible
+{
+public:
+
+    virtual ~TestChildArticle(){}
+};
+
 int main()
 {
     std::cout << "Experiments on the Windows Console." << std::endl;
 
+    auto testarticle1 = new_ref<TestArticle>();
+
+    auto middle = new_ref<qor::ui::layout::SizeConstrainer<TestMiddleArticle>>(qor::ui::layout::HEIGHT, qor::ui::layout::GREATER_THAN, 10);
+
+    testarticle1->Add(middle);
+
+    middle->Add(new_ref<qor::ui::layout::AlignRight>(new_ref<TestChildArticle>()));
+
+    qor::ui::layout::VBox vbox;
+    vbox.Add(testarticle1);
+    vbox.ComputeRequirement();
+
     TermCon terminal;
 
-    CurrentThread::Get().Sleep(5000);
-    
     GraphicalConsole screen(120, 80, 7, 9);
 
-    screen.DrawTriangle(2,2, 30, 6, 4,20);
-    screen.DrawString(57,48, L"Console Screen", 6);
-    screen.DrawStringAlpha(58,49, L"Alpha String", 5);
-    screen.DrawLine(57,50,70,50, 9608, 3);
-    screen.FillCircle(64, 70, 10, '@', 2);
-    screen.Present();
+    auto surface = screen.CreateSurface();
+    GraphConRenderer renderer(&screen, surface);
+
+    renderer.DrawTriangle(2,2, 30, 6, 4,20);
+    renderer.DrawString(57,48, L"Console Screen", 6);
+    renderer.DrawStringAlpha(58,49, L"Alpha String", 5);
+    renderer.DrawLine(57,50,70,50, 9608, 3);
+    renderer.FillCircle(64, 70, 10, '@', 2);
+    renderer.Present();
     
     CurrentThread::Get().Sleep(5000);
     return EXIT_SUCCESS;
