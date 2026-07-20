@@ -77,7 +77,6 @@ namespace qor { namespace ui { namespace win {
 		return Kernel32::FlushConsoleInputBuffer(hConsoleInput) ? true : false;
 	}
 
-
 	bool ConsoleHelper::Free(void) const
 	{
 		return Kernel32::FreeConsole();

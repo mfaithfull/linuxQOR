@@ -3,190 +3,134 @@
 
 #include "src/configuration/configuration.h"
 
-#include "graphcon.h"
+#include "graphconrenderer.h"
 #include "src/qor/flyers/error/error.h"
 #include "src/platform/os/windows/common/constants.h"
 
 namespace qor { namespace ui{ namespace win {
 
-    GraphicalConsole::GraphicalConsole(int width, int height, int fontw, int fonth)
-    {        
-		if(m_Console.IsRedirected())
-		{
-			m_Console.Reallocate();
-		}
-        Construct(width, height, fontw, fonth);
+    GraphConRenderer::GraphConRenderer(GraphicalConsole* console, GraphConSurface* surface) : m_console(console), m_surface(surface){ }
+
+    GraphConRenderer::~GraphConRenderer() = default;
+
+    void GraphConRenderer::SetSurface(GraphConSurface* surface)
+    {
+        m_surface = surface;
     }
 
-    GraphicalConsole::~GraphicalConsole() = default;
-
-	int GraphicalConsole::Construct(int width, int height, int fontw, int fonth)
+	void GraphConRenderer::Present()
 	{
-		if(m_Console.OutputFile() == Invalid_Handle_Value)
+        if(!m_console || !m_surface)
         {
-			continuable("Bad Handle");
-            return -1;
+            return;
         }
-
-		m_nScreenWidth = width;
-		m_nScreenHeight = height;
-
-		// Change console visual size to a minimum so ScreenBuffer can shrink
-		// below the actual visual size
-		m_rectWindow = { 0, 0, 1, 1 };
-		auto screenBuffer = m_Console.GetActiveScreenBuffer();
-		screenBuffer->SetWindowInfo(true, &m_rectWindow);
-
-		// Set the size of the screen buffer
-		platform::win::Coord coord = { (short)m_nScreenWidth, (short)m_nScreenHeight };
-		if (!screenBuffer->SetSize(coord))
-        {
-			continuable("SetConsoleScreenBufferSize");
-        }
-
-		// Assign screen buffer to the console
-		if (!m_Console.SetActiveScreenBuffer(screenBuffer))
-        {
-			continuable("SetConsoleActiveScreenBuffer");
-            return -1;
-        }
-		
-		// Set the font size now that the screen buffer has been assigned to the console
-        platform::win::ConsoleFontInfoEx cfi;
-		cfi.cbSize = sizeof(cfi);
-		cfi.font = 0;
-		cfi.fontSize.x = fontw;
-		cfi.fontSize.y = fonth;
-		cfi.FontFamily = FF_DontCare;
-		cfi.FontWeight = FW_Normal;
-
-		wcscpy_s(cfi.FaceName, L"Consolas");
-		if (!screenBuffer->SetCurrentFontEx(false, &cfi))
-        {
-			continuable("SetCurrentConsoleFontEx");
-            return -1;
-        }
-
-		// Get screen buffer info and check the maximum allowed window size. Return
-		// error if exceeded, so user knows their dimensions/fontsize are too large
-        platform::win::ConsoleScreenBufferInfo csbi;
-		if (!screenBuffer->GetInfo(&csbi))
-        {
-			continuable("GetConsoleScreenBufferInfo");
-            return -1;
-        }
-
-		if (m_nScreenHeight > csbi.maximumWindowSize.y)
-        {
-			continuable("Screen Height / Font Height Too Big");
-            return -1;
-        }
-
-		if (m_nScreenWidth > csbi.maximumWindowSize.x)
-        {
-			continuable("Screen Width / Font Width Too Big");
-            return -1;
-        }
-
-		// Set Physical Console Window Size
-		m_rectWindow = { 0, 0, static_cast<short>(m_nScreenWidth - 1), static_cast<short>(m_nScreenHeight - 1) };
-
-		if (!screenBuffer->SetWindowInfo(true, &m_rectWindow))
-        {
-			continuable("SetConsoleWindowInfo");
-            return -1;
-        }
-
-		// Set flags to allow mouse input
-		if (!m_Console.GetInput()->SetMode(EnableExtendedFlags | EnableWindowInput | EnableMouseInput))
-        {
-			continuable("SetConsoleMode");
-            return -1;
-        }
-
-		/*
-		// Allocate memory for screen buffer
-		m_bufScreen = new qor::platform::win::CharInfo[m_nScreenWidth*m_nScreenHeight];
-		memset(m_bufScreen, 0, sizeof(qor::platform::win::CharInfo) * m_nScreenWidth * m_nScreenHeight);
-*/
-		m_Console.SetCtrlHandler((CtrlHandlerCallback)[](unsigned long)->int
-			{
-				return 1;
-			}, true);
-		return 1;
+        m_console->Present(m_surface);
 	}
 
-	int GraphicalConsole::Width()
-	{
-		return m_nScreenWidth;
-	}
-
-	int GraphicalConsole::Height()
-	{
-		return m_nScreenHeight;
-	}
-
-	void GraphicalConsole::Present(GraphConSurface* surface)
-	{
-		auto screenBuffer = m_Console.GetActiveScreenBuffer();
-		m_Console.GetActiveScreenBuffer()->WriteOutput((*surface)(), { (short)m_nScreenWidth, (short)m_nScreenHeight }, { 0,0 }, &m_rectWindow);
-
-	}
-
-	ref_of<GraphConSurface>::type GraphicalConsole::CreateSurface()
-	{
-		return new_ref<GraphConSurface>(m_nScreenWidth, m_nScreenHeight);
-	}
-
-/*
-	void GraphicalConsole::Draw(int x, int y, short c, short col)
-	{
-		if (x >= 0 && x < m_nScreenWidth && y >= 0 && y < m_nScreenHeight)
+    void GraphConRenderer::Draw(int x, int y, short c, short col)
+    {
+        if(!m_console || !m_surface)
+        {
+            return;
+        }
+        int width = m_console->Width();
+        int height = m_console->Height();
+        platform::win::CharInfo* buffer = (*m_surface)();
+        if(buffer == nullptr)
+        {
+            return;
+        }
+		if (x >= 0 && x < width && y >= 0 && y < height)
 		{
-			m_bufScreen[y * m_nScreenWidth + x].Char.UnicodeChar = c;
-			m_bufScreen[y * m_nScreenWidth + x].attributes = col;
+			buffer[y * width + x].Char.UnicodeChar = c;
+			buffer[y * width + x].attributes = col;
 		}
-	}
+    }
 
-	void GraphicalConsole::Clip(int &x, int &y)
+	void GraphConRenderer::DrawString(int x, int y, std::wstring c, short col)
 	{
-		if (x < 0) x = 0;
-		if (x >= m_nScreenWidth) x = m_nScreenWidth;
-		if (y < 0) y = 0;
-		if (y >= m_nScreenHeight) y = m_nScreenHeight;
-	}
+        if(!m_console || !m_surface)
+        {
+            return;
+        }
+        int width = m_console->Width();        
+        platform::win::CharInfo* buffer = (*m_surface)();
+        if(buffer == nullptr)
+        {
+            return;
+        }
 
-    void GraphicalConsole::Fill(int x1, int y1, int x2, int y2, short c, short col)
-	{
-		Clip(x1, y1);
-		Clip(x2, y2);
-		for (int x = x1; x < x2; x++)
-			for (int y = y1; y < y2; y++)
-				Draw(x, y, c, col);
-	}
-
-	void GraphicalConsole::DrawString(int x, int y, std::wstring c, short col)
-	{
 		for (size_t i = 0; i < c.size(); i++)
 		{
-			m_bufScreen[y * m_nScreenWidth + x + i].Char.UnicodeChar = c[i];
-			m_bufScreen[y * m_nScreenWidth + x + i].attributes = col;
+			buffer[y * width + x + i].Char.UnicodeChar = c[i];
+			buffer[y * width + x + i].attributes = col;
 		}
 	}
 
-	void GraphicalConsole::DrawStringAlpha(int x, int y, std::wstring c, short col)
+	void GraphConRenderer::DrawStringAlpha(int x, int y, std::wstring c, short col)
 	{
+        if(!m_console || !m_surface)
+        {
+            return;
+        }
+        int width = m_console->Width();        
+        platform::win::CharInfo* buffer = (*m_surface)();
+        if(buffer == nullptr)
+        {
+            return;
+        }
+
 		for (size_t i = 0; i < c.size(); i++)
 		{
 			if (c[i] != L' ')
 			{
-				m_bufScreen[y * m_nScreenWidth + x + i].Char.UnicodeChar = c[i];
-				m_bufScreen[y * m_nScreenWidth + x + i].attributes = col;
+				buffer[y * width + x + i].Char.UnicodeChar = c[i];
+				buffer[y * width + x + i].attributes = col;
 			}
 		}
 	}
 
-	void GraphicalConsole::DrawLine(int x1, int y1, int x2, int y2, short c, short col)
+	void GraphConRenderer::Clip(int &x, int &y)
+	{
+        if(!m_console)
+        {
+            return;
+        }
+        int width = m_console->Width();
+        int height = m_console->Height();
+
+		if (x < 0) 
+        {
+            x = 0;
+        }
+		if (x >= width) 
+        {
+            x = width;
+        }
+		if (y < 0) 
+        {
+            y = 0;
+        }
+		if (y >= height) 
+        {
+            y = height;
+        }
+	}
+
+    void GraphConRenderer::Fill(int x1, int y1, int x2, int y2, short c, short col)
+	{
+		Clip(x1, y1);
+		Clip(x2, y2);
+		for (int x = x1; x < x2; x++)
+        {
+			for (int y = y1; y < y2; y++)
+            {
+				Draw(x, y, c, col);
+            }
+        }
+	}
+
+	void GraphConRenderer::DrawLine(int x1, int y1, int x2, int y2, short c, short col)
 	{
 		int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
 		dx = x2 - x1; dy = y2 - y1;
@@ -195,9 +139,13 @@ namespace qor { namespace ui{ namespace win {
 		if (dy1 <= dx1)
 		{
 			if (dx >= 0)
-				{ x = x1; y = y1; xe = x2; }
+			{ 
+                x = x1; y = y1; xe = x2; 
+            }
 			else
-				{ x = x2; y = y2; xe = x1;}
+			{ 
+                x = x2; y = y2; xe = x1;
+            }
 
 			Draw(x, y, c, col);
 			
@@ -205,10 +153,19 @@ namespace qor { namespace ui{ namespace win {
 			{
 				x = x + 1;
 				if (px<0)
+                {
 					px = px + 2 * dy1;
+                }
 				else
 				{
-					if ((dx<0 && dy<0) || (dx>0 && dy>0)) y = y + 1; else y = y - 1;
+					if ((dx<0 && dy<0) || (dx>0 && dy>0)) 
+                    {
+                        y = y + 1;
+                    } 
+                    else 
+                    {
+                        y = y - 1;
+                    }
 					px = px + 2 * (dy1 - dx1);
 				}
 				Draw(x, y, c, col);
@@ -217,20 +174,33 @@ namespace qor { namespace ui{ namespace win {
 		else
 		{
 			if (dy >= 0)
-				{ x = x1; y = y1; ye = y2; }
+			{ 
+                x = x1; y = y1; ye = y2; 
+            }
 			else
-				{ x = x2; y = y2; ye = y1; }
+			{ 
+                x = x2; y = y2; ye = y1; 
+            }
 
 			Draw(x, y, c, col);
 
-			for (i = 0; y<ye; i++)
+			for(i = 0; y<ye; i++)
 			{
 				y = y + 1;
 				if (py <= 0)
+                {
 					py = py + 2 * dx1;
+                }
 				else
 				{
-					if ((dx<0 && dy<0) || (dx>0 && dy>0)) x = x + 1; else x = x - 1;
+					if ((dx<0 && dy<0) || (dx>0 && dy>0)) 
+                    {
+                        x = x + 1;
+                    } 
+                    else 
+                    {
+                        x = x - 1;
+                    }
 					py = py + 2 * (dx1 - dy1);
 				}
 				Draw(x, y, c, col);
@@ -238,7 +208,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
-	void GraphicalConsole::DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col)
+	void GraphConRenderer::DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col)
 	{
 		DrawLine(x1, y1, x2, y2, c, col);
 		DrawLine(x2, y2, x3, y3, c, col);
@@ -246,7 +216,7 @@ namespace qor { namespace ui{ namespace win {
 	}
 
 	// https://www.avrfreaks.net/sites/default/files/triangles.c
-	void GraphicalConsole::FillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col)
+	void GraphConRenderer::FillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c, short col)
 	{
 		auto SWAP = [](int &x, int &y) { int t = x; x = y; y = t; };
 		auto drawline = [&](int sx, int ex, int ny) { for (int i = sx; i <= ex; i++) Draw(i, ny, c, col); };
@@ -390,7 +360,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
-	void GraphicalConsole::DrawCircle(int xc, int yc, int r, short c, short col)
+	void GraphConRenderer::DrawCircle(int xc, int yc, int r, short c, short col)
 	{
 		int x = 0;
 		int y = r;
@@ -412,7 +382,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 	}
 
-    void GraphicalConsole::FillCircle(int xc, int yc, int r, short c, short col)
+    void GraphConRenderer::FillCircle(int xc, int yc, int r, short c, short col)
 	{
 		// Taken from wikipedia
 		int x = 0;
@@ -436,6 +406,5 @@ namespace qor { namespace ui{ namespace win {
 			if (p < 0) p += 4 * x++ + 6;
 			else p += 4 * (x++ - y--) + 10;
 		}
-	};    
-	*/
+	};        
 }}}//qor::ui::win

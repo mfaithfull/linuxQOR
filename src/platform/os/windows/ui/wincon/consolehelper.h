@@ -136,7 +136,6 @@ namespace qor { namespace ui { namespace win {
 		bool WriteOutput(void* hConsoleOutput, const platform::win::CharInfo* buffer, platform::win::Coord bufferSize, platform::win::Coord bufferCoord, qor::platform::win::SmallRect* writeRegion) const;
 		bool WriteOutputAttribute(void* hConsoleOutput, const unsigned short* attribute, unsigned long length, platform::win::Coord writeCoord, unsigned long& numberOfAttrsWritten) const;
 		bool WriteOutputCharacter(void* hConsoleOutput, const string_t character, unsigned long length, platform::win::Coord writeCoord, unsigned long& numberOfCharsWritten) const;
-
 	};
 
 }}}//qor::ui::win

@@ -5,6 +5,7 @@
 #define QOR_PP_H_OS_WINDOWS_UI_ADVANCEDCONSOLE
 
 #include "console.h"
+#include "graphconsurface.h"
 
 //Legacy Windows Console in maxed out 'graphics' mode.
 
@@ -18,25 +19,16 @@ namespace qor { namespace ui { namespace win {
 		~GraphicalConsole();
 		
         int Construct(int width, int height, int fontw, int fonth);
-		void Present();
-        void Draw(int x, int y, short c = 0x2588, short col = 0x000F);
-        void Clip(int &x, int &y);
-        void Fill(int x1, int y1, int x2, int y2, short c = 0x2588, short col = 0x000F);
-        void DrawString(int x, int y, std::wstring c, short col = 0x000F);
-        void DrawStringAlpha(int x, int y, std::wstring c, short col = 0x000F);
-        void DrawLine(int x1, int y1, int x2, int y2, short c = 0x2588, short col = 0x000F);
-        void DrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);
-        void FillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, short c = 0x2588, short col = 0x000F);
-        void DrawCircle(int xc, int yc, int r, short c = 0x2588, short col = 0x000F);
-        void FillCircle(int xc, int yc, int r, short c = 0x2588, short col = 0x000F);
-
+		int Width();
+		int Height();
+		void Present(GraphConSurface* surface);
+		ref_of<GraphConSurface>::type CreateSurface();
+		
 	private:
 
         Console m_Console;
         int m_nScreenWidth;
 	    int m_nScreenHeight;
-	    qor::platform::win::CharInfo* m_bufScreen{nullptr};
-	    std::wstring m_sAppName;
 	    qor::platform::win::SmallRect m_rectWindow;	    
 	};
 

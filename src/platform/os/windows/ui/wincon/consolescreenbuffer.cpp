@@ -18,9 +18,7 @@ using namespace qor::platform::win;
 
 namespace qor { namespace ui { namespace win {
 
-    ConsoleScreenBuffer::ConsoleScreenBuffer(void* handle, bool owner) : m_handle(handle), m_owner(owner)
-    { }
-
+    ConsoleScreenBuffer::ConsoleScreenBuffer(void* handle, bool owner) : m_handle(handle), m_owner(owner){ }
 
     ConsoleScreenBuffer::~ConsoleScreenBuffer()
     {
