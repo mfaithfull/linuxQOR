@@ -6,7 +6,8 @@
 
 #include <map>
 
-#include "src/qor/memory/injection/typeidentity.h"
+#include "src/framework/ui/common/renderer.h"
+
 #include "../compositor/tokenbuffer.h"
 
 /*Turn a token buffer into WriteLine calls with strings of chars*/
@@ -17,7 +18,7 @@ namespace qor { namespace ui {
 
     namespace sercon {
 
-    class qor_pp_module_interface(QOR_SERIALCONSOLE) Renderer
+    class qor_pp_module_interface(QOR_SERIALCONSOLE) Renderer : public qor::ui::Renderer
     {
     public:
 

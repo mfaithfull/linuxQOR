@@ -308,7 +308,7 @@ namespace qor { namespace ui { namespace sercon {
         {'>',TokenBuffer::Tokens::CHAR_175}
     };
 
-    Renderer::Renderer(SerialConsole* display) : m_buffer(nullptr), m_display(display){ }
+    Renderer::Renderer(SerialConsole* display) : ui::Renderer(), m_buffer(nullptr), m_display(display){ }
 
     Renderer::~Renderer() = default;
 

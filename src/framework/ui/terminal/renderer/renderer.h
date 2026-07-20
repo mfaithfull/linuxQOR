@@ -6,11 +6,26 @@
 
 //A renderer for the the terminal. Triangles, quads, text, effects, etc
 
-namespace qor{ namespace ui{ namespace tty{
+namespace qor{ namespace ui{ 
+    
+    class qor_pp_module_interface(QOR_TERMINAL) Terminal;
+
+    namespace tty{
 
     class Renderer
     {
     public:
+
+        Renderer(Terminal* display);
+        ~Renderer();
+
+        void SwapBuffers();
+        void Present();
+
+    private:
+
+        Terminal* m_display;
+        unsigned char* m_buffer;
 
     };
 

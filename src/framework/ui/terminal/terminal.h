@@ -11,7 +11,7 @@
 #include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/factory/externalfactory.h"
 #include "src/framework/app/role/ifeature.h"
-#include "toolkit/toolkit.h"
+#include "renderer/renderer.h"
 
 namespace qor{
 
@@ -31,6 +31,7 @@ namespace qor{
 
             virtual void Setup();
             virtual void Shutdown();
+            ref_of<tty::Renderer>::type GetRenderer();
 
             //ref_of<ToolKit>::type GetToolkit();
         };

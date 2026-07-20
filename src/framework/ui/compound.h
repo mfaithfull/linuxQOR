@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <cassert>
+#include <algorithm>
 
 #include "src/qor/memory/reference/newref.h"
 #include "uiitem.h"
