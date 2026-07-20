@@ -1,0 +1,244 @@
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
+#include "src/configuration/configuration.h"
+
+#include "src/qor/essentials/current/currentthread.h"
+#include "src/qor/memory/injection/typeidentity.h"
+#include "src/qor/memory/reference/reference.h"
+#include "src/qor/memory/reference/newref.h"
+#include "consoleview.h"
+
+namespace qor { namespace components {
+
+    std::map<char_t, int> ConsoleView::s_LookupToken = 
+    {
+        {'A',TokenBuffer::Tokens::CHAR_A},
+        {'B',TokenBuffer::Tokens::CHAR_B},
+        {'C',TokenBuffer::Tokens::CHAR_C},
+        {'D',TokenBuffer::Tokens::CHAR_D},
+        {'E',TokenBuffer::Tokens::CHAR_E},
+        {'F',TokenBuffer::Tokens::CHAR_F},
+        {'G',TokenBuffer::Tokens::CHAR_G},
+        {'H',TokenBuffer::Tokens::CHAR_H},
+        {'I',TokenBuffer::Tokens::CHAR_I},
+        {'J',TokenBuffer::Tokens::CHAR_J},
+        {'K',TokenBuffer::Tokens::CHAR_K},
+        {'L',TokenBuffer::Tokens::CHAR_L},
+        {'M',TokenBuffer::Tokens::CHAR_M},
+        {'N',TokenBuffer::Tokens::CHAR_N},
+        {'O',TokenBuffer::Tokens::CHAR_O},
+        {'P',TokenBuffer::Tokens::CHAR_P},
+        {'Q',TokenBuffer::Tokens::CHAR_Q},
+        {'R',TokenBuffer::Tokens::CHAR_R},
+        {'S',TokenBuffer::Tokens::CHAR_S},
+        {'T',TokenBuffer::Tokens::CHAR_T},
+        {'U',TokenBuffer::Tokens::CHAR_U},
+        {'V',TokenBuffer::Tokens::CHAR_V},
+        {'W',TokenBuffer::Tokens::CHAR_W},
+        {'X',TokenBuffer::Tokens::CHAR_X},
+        {'Y',TokenBuffer::Tokens::CHAR_Y},
+        {'Z',TokenBuffer::Tokens::CHAR_Z},
+        {'0',TokenBuffer::Tokens::CHAR_0},
+        {'1',TokenBuffer::Tokens::CHAR_1},
+        {'2',TokenBuffer::Tokens::CHAR_2},
+        {'3',TokenBuffer::Tokens::CHAR_3},
+        {'4',TokenBuffer::Tokens::CHAR_4},
+        {'5',TokenBuffer::Tokens::CHAR_5},
+        {'6',TokenBuffer::Tokens::CHAR_6},
+        {'7',TokenBuffer::Tokens::CHAR_7},
+        {'8',TokenBuffer::Tokens::CHAR_8},
+        {'9',TokenBuffer::Tokens::CHAR_9},
+        {'a',TokenBuffer::Tokens::CHAR_a},
+        {'b',TokenBuffer::Tokens::CHAR_b},
+        {'c',TokenBuffer::Tokens::CHAR_c},
+        {'d',TokenBuffer::Tokens::CHAR_d},
+        {'e',TokenBuffer::Tokens::CHAR_e},
+        {'f',TokenBuffer::Tokens::CHAR_f},
+        {'g',TokenBuffer::Tokens::CHAR_g},
+        {'h',TokenBuffer::Tokens::CHAR_h},
+        {'i',TokenBuffer::Tokens::CHAR_i},
+        {'j',TokenBuffer::Tokens::CHAR_j},
+        {'k',TokenBuffer::Tokens::CHAR_k},
+        {'l',TokenBuffer::Tokens::CHAR_l},
+        {'m',TokenBuffer::Tokens::CHAR_m},
+        {'n',TokenBuffer::Tokens::CHAR_n},
+        {'o',TokenBuffer::Tokens::CHAR_o},
+        {'p',TokenBuffer::Tokens::CHAR_p},
+        {'q',TokenBuffer::Tokens::CHAR_q},
+        {'r',TokenBuffer::Tokens::CHAR_r},
+        {'s',TokenBuffer::Tokens::CHAR_s},
+        {'t',TokenBuffer::Tokens::CHAR_t},
+        {'u',TokenBuffer::Tokens::CHAR_u},
+        {'v',TokenBuffer::Tokens::CHAR_v},
+        {'w',TokenBuffer::Tokens::CHAR_w},
+        {'x',TokenBuffer::Tokens::CHAR_x},
+        {'y',TokenBuffer::Tokens::CHAR_y},
+        {'z',TokenBuffer::Tokens::CHAR_z},
+        {'|',TokenBuffer::Tokens::BOX_RIGHT},
+        {'>',TokenBuffer::Tokens::CHAR_175}
+    };
+
+    int ConsoleView::LookupTokenForChar(char_t c)
+    {
+        int token = 0;
+        auto it = s_LookupToken.find(c);
+        if(it != s_LookupToken.end())
+        {
+            token = it->second;
+        }
+        return token;
+    }
+
+    ConsoleView::ConsoleView() : m_nextBuffer(0)
+    {
+        m_renderer = new_ref<ConsoleRenderer>();
+    }
+
+    ConsoleView::~ConsoleView() {}
+
+    unsigned int ConsoleView::GetWidth()
+    {
+        return static_cast<unsigned int>(abs(m_tokenbuffers[m_nextBuffer].GetWidth()));
+    }
+
+    unsigned int ConsoleView::GetHeight()
+    {
+        return static_cast<unsigned int>(abs(m_tokenbuffers[m_nextBuffer].GetHeight()));
+    }
+
+    void ConsoleView::SetWidth(unsigned int width)
+    {
+        m_tokenbuffers[0].SetWidth(static_cast<int>(width));
+        m_tokenbuffers[1].SetWidth(static_cast<int>(width));
+    }
+
+    void ConsoleView::SetHeight(unsigned int height)
+    {
+        m_tokenbuffers[0].SetHeight(static_cast<int>(height));
+        m_tokenbuffers[1].SetHeight(static_cast<int>(height));
+    }
+
+    void ConsoleView::DrawToken(int x, int y, int token)
+    {
+        m_tokenbuffers[m_nextBuffer].SetToken(y, x, token);
+    }
+
+    void ConsoleView::DrawCharacter(int x, int y, char_t c)
+    {
+        DrawToken(x, y, LookupTokenForChar(c));
+    }
+
+    void ConsoleView::DrawWindow(int x, int y, int width, int height)
+    {
+        DrawToken(x, y, TokenBuffer::Tokens::BOX_TOP_LEFT);
+        DrawToken(x + width, y, TokenBuffer::Tokens::BOX_TOP_RIGHT);
+        DrawToken(x, y + height, TokenBuffer::Tokens::BOX_BOTTOM_LEFT);
+        DrawToken(x + width, y + height, TokenBuffer::Tokens::BOX_BOTTOM_RIGHT);
+        for( int xpos = x + 1; xpos < x + width; ++xpos)
+        {
+            DrawToken(xpos,y, TokenBuffer::Tokens::BOX_TOP);
+            DrawToken(xpos,y+height, TokenBuffer::Tokens::BOX_BOTTOM);
+        }
+        for( int ypos = y + 1; ypos < y + height; ++ypos)
+        {
+            DrawToken(x, ypos, TokenBuffer::Tokens::BOX_LEFT);
+            DrawToken(x + width, ypos, TokenBuffer::Tokens::BOX_RIGHT);
+        }
+    }
+
+    void ConsoleView::ClearWindow(int x, int y, int width, int height)
+    {
+        for( int xpos = x; xpos <= x + width; ++xpos)
+        {
+            for( int ypos = y; ypos <= y + height; ++ypos)
+            {
+                DrawToken(xpos, ypos, TokenBuffer::Tokens::BLANK);
+            }
+        }
+    }
+
+    void ConsoleView::FillWindow(int x, int y, int width, int height, int token)
+    {
+        for( int xpos = x; xpos <= x + width; ++xpos)
+        {
+            for( int ypos = y; ypos <= y + height; ++ypos)
+            {
+                DrawToken(xpos, ypos, token);
+            }
+        }
+    }
+
+    void ConsoleView::DrawLabel(int x, int y, string_t label)
+    {
+        int xpos = x;
+        int ypos = y;
+        auto it = label.cbegin();
+        while(it != label.cend())
+        {
+            DrawCharacter(xpos, ypos, *it);
+            xpos++;
+            it++;
+            if( xpos > m_tokenbuffers[m_nextBuffer].GetWidth())
+            {
+                xpos = x;
+                ypos++;
+                if(ypos > m_tokenbuffers[m_nextBuffer].GetHeight())
+                {
+                    return;
+                }
+            }
+        }
+        DrawToken(xpos, ypos, TokenBuffer::Tokens::COLON);
+    }
+
+    void ConsoleView::DrawString(int x, int y, string_t text)
+    {
+        int xpos = x;
+        int ypos = y;
+        auto it = text.cbegin();
+        while(it != text.cend())
+        {
+            DrawCharacter(xpos, ypos, *it);
+            xpos++;
+            it++;
+            if( xpos > m_tokenbuffers[m_nextBuffer].GetWidth())
+            {
+                xpos = x;
+                ypos++;
+                if(ypos > m_tokenbuffers[m_nextBuffer].GetHeight())
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    void ConsoleView::DrawInternalHLine(int x, int y, int length)
+    {
+        DrawToken(x,y,TokenBuffer::Tokens::LEFT_T_JOIN);
+        DrawToken(x+length,y,TokenBuffer::Tokens::RIGHT_T_JOIN);
+        for(int t = x+1; t < x + length - 1 ; ++t)
+        {
+            DrawToken(t,y,TokenBuffer::Tokens::BOX_BOTTOM);
+        }
+    }
+
+    void ConsoleView::Render()
+    {
+        TokenBuffer* old = nullptr;
+        m_renderer->SwapTokenBuffer(old, &m_tokenbuffers[m_nextBuffer]);
+        m_renderer->Render();        
+        m_nextBuffer = (m_nextBuffer + 1) % 2;
+        if(old)
+        {
+            old->Clear();
+        }
+    }
+
+    TokenBuffer* ConsoleView::GetBuffer()
+    {
+        return &m_tokenbuffers[m_nextBuffer];
+    }
+
+}}//qor::components

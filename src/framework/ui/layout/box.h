@@ -1,12 +1,12 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_FRAMEWORK_DESKTOPUI_LAYOUT_BOX
-#define QOR_PP_H_FRAMEWORK_DESKTOPUI_LAYOUT_BOX
+#ifndef QOR_PP_H_FRAMEWORK_UI_LAYOUT_BOX
+#define QOR_PP_H_FRAMEWORK_UI_LAYOUT_BOX
 
 namespace qor{ namespace ui { namespace layout {
 
-    struct qor_pp_module_interface(QOR_DESKTOPUI) Box
+    struct Box
     {
     public:
 
@@ -26,5 +26,5 @@ namespace qor{ namespace ui { namespace layout {
 
 }}}//qor::ui::layout
 
-#endif//QOR_PP_H_FRAMEWORK_DESKTOPUI_LAYOUT_BOX
+#endif//QOR_PP_H_FRAMEWORK_UI_LAYOUT_BOX
 

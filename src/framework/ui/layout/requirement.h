@@ -8,12 +8,12 @@
 
 namespace qor{ namespace ui{ namespace layout { 
 
-    class qor_pp_module_interface(QOR_DESKTOPUI) Node;
+    //class qor_pp_module_interface(QOR_DESKTOPUI) Node;
 
     //Requirement is a structure that defines the layout requirements for a Node
     //It specifies the minimum size required to fully draw the element
 
-    struct qor_pp_module_interface(QOR_DESKTOPUI) Requirement 
+    struct Requirement 
     {
         // The required size to fully draw the element.
         int min_x = 0;

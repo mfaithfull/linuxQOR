@@ -6,7 +6,7 @@
 
 namespace qor{ namespace ui {
     
-    class qor_pp_module_interface(QOR_DESKTOPUI) IWindowImpl
+    class IWindowImpl
     {
     public:
 
