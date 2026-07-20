@@ -11,6 +11,7 @@ namespace qor{ namespace ui{
     
     class IActivatable : public virtual Item
     {
+    public:
         IActivatable() = default;
         virtual ~IActivatable() = default;
         
@@ -19,17 +20,19 @@ namespace qor{ namespace ui{
             if(!m_activation)
             {
                 m_activation = true;
+                //TODO: bubble activation either up or down or maybe both
                 OnActivate();                
             }
         }
 
-        virtual void OnActivate() {}
+        virtual void OnActivate(){ }
 
         void Deactivate()
         {
             if(m_activation)
             {
                 m_activation = false;
+                //TODO: bubble deactivation either up or down or maybe both
                 OnDeactivate();
             }
         }

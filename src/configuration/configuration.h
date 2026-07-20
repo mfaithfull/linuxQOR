@@ -44,8 +44,23 @@
 
 #if (qor_pp_unicode && (qor_pp_os_target == qor_pp_os_windows))
 typedef wchar_t char_t;
+#define _WTXT( _X ) ( L#_X )
+#define _WC( _X ) ((wchar_t)(L#_X))
 #else
 typedef char char_t;
+#endif
+
+#define _ATXT( _X ) ( #_X )
+#define _AC( X ) ((char)(_X))
+//#define _WTXT( _X ) ( u#_X )
+//#define _WC( _X ) ((char16_t)(_X))
+
+#if ( qor_pp_unicode && (qor_pp_os_target == qor_pp_os_windows))
+#	define _TXT( _X ) ( _WTXT( _X ) )
+#	define _C( _X ) _WC( _X )
+#else
+#	define _TXT( _X ) ( _ATXT( _X ) )
+#	define _C( _X ) _AC( _X )
 #endif
 
 typedef std::basic_string<char_t> string_t;

@@ -3,6 +3,8 @@
 
 #include "src/configuration/configuration.h"
 
+#include "src/qor/memory/reference/newref.h"
+
 #include "align.h"
 #include "hbox.h"
 #include "vbox.h"
@@ -13,7 +15,7 @@ namespace qor{ namespace ui{ namespace layout {
     AlignRight::AlignRight(ref_of<Contained>::type contained)
     {
         auto hbox = new_ref<HBox>();
-        hbox->Add(new_ref<Flex>());
+        hbox->Add(new_ref<Spacer>());
         hbox->Add(contained);
         Add(hbox);
     }
@@ -24,7 +26,7 @@ namespace qor{ namespace ui{ namespace layout {
     {
         auto hbox = new_ref<HBox>();
         hbox->Add(contained);
-        hbox->Add(new_ref<Flex>());
+        hbox->Add(new_ref<Spacer>());
         Add(hbox);
     }
 
@@ -35,7 +37,7 @@ namespace qor{ namespace ui{ namespace layout {
     {
         auto vbox = new_ref<VBox>();
         vbox->Add(contained);
-        vbox->Add(new_ref<Flex>());
+        vbox->Add(new_ref<Spacer>());
         Add(vbox);
     }
 
@@ -45,7 +47,7 @@ namespace qor{ namespace ui{ namespace layout {
     AlignBottom::AlignBottom(ref_of<Contained>::type contained)
     {
         auto vbox = new_ref<VBox>();
-        vbox->Add(new_ref<Flex>());
+        vbox->Add(new_ref<Spacer>());
         vbox->Add(contained);
         Add(vbox);
     }
@@ -57,9 +59,9 @@ namespace qor{ namespace ui{ namespace layout {
     HCenter::HCenter(ref_of<Contained>::type contained)
     {
         auto hbox = new_ref<HBox>();
-        hbox->Add(new_ref<Flex>());
+        hbox->Add(new_ref<Spacer>());
         hbox->Add(contained);
-        hbox->Add(new_ref<Flex>());
+        hbox->Add(new_ref<Spacer>());
         Add(hbox);
     }
 
@@ -68,9 +70,9 @@ namespace qor{ namespace ui{ namespace layout {
     VCenter::VCenter(ref_of<Contained>::type contained)
     {
         auto vbox = new_ref<VBox>();
-        vbox->Add(new_ref<Flex>());
+        vbox->Add(new_ref<Spacer>());
         vbox->Add(contained);
-        vbox->Add(new_ref<Flex>());
+        vbox->Add(new_ref<Spacer>());
         Add(vbox);
     }
 

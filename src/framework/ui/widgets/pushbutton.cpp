@@ -4,9 +4,16 @@
 #include "src/configuration/configuration.h"
 
 #include "pushbutton.h"
+#include "../layout/align.h"
+#include "label.h"
 
-namespace qor{ namespace ui{
+namespace qor{ namespace ui{ namespace widgets {
 
+    PushButton::PushButton(const std::string& text)
+    {
+        Add(new_ref<layout::Center>(new_ref<Label>(text)));
+    }
 
+    PushButton::~PushButton() = default;
 
-}}//qor::ui
+}}}//qor::ui::widgets

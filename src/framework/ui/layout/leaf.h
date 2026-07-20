@@ -6,7 +6,7 @@
 #define QOR_PP_H_FRAMEWORK_UI_LAYOUT_LEAF
 
 #include "arrangeable.h"
-#include "../contained.h"
+#include "../common/contained.h"
 
 namespace qor{ namespace ui{ namespace layout {
     

@@ -1,0 +1,24 @@
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
+#ifndef QOR_PP_H_FRAMEWORK_UI_TERMINAL_TOOLKIT_PUSHBUTTON
+#define QOR_PP_H_FRAMEWORK_UI_TERMINAL_TOOLKIT_PUSHBUTTON
+
+#include "src/framework/ui/widgets/pushbutton.h"
+
+namespace qor{ namespace ui { namespace widgets { namespace tty {
+    
+    class PushButton : public widgets::PushButton
+    {
+    public:
+        
+        PushButton() = default;
+        virtual ~PushButton() = default;
+
+        virtual void Render(Renderer* renderer){};//Do TUI specific rendering for PushButton
+    };
+
+}}}}//qor::ui::widgets::tty
+
+#endif//QOR_PP_H_FRAMEWORK_UI_TERMINAL_TOOLKIT_PUSHBUTTON
+

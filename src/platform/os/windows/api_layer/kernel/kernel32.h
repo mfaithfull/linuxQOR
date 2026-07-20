@@ -33,19 +33,19 @@ typedef enum _WER_REGISTER_FILE_TYPE
 #endif
 
 
-//Local definitions for dealing with Windows API
-#define _ATXT( _X ) ( #_X )
-#define _AC( X ) ((char)(_X))
-#define _WTXT( _X ) ( L#_X )
-#define _WC( _X ) ((char16_t)(_X))
+//Local definitions for dealing with Windows API - now promoted to src/configuration/configuration.h
+//#define _ATXT( _X ) ( #_X )
+//#define _AC( X ) ((char)(_X))
+//#define _WTXT( _X ) ( L#_X )
+//#define _WC( _X ) ((char16_t)(_X))
 
-#if ( qor_pp_unicode )
-#	define _TXT( _X ) ( _WTXT( _X ) )
-#	define _C( _X ) _WC( _X )
-#else
-#	define _TXT( _X ) ( _ATXT( _X ) )
-#	define _C( _X ) _AC( _X )
-#endif
+//#if ( qor_pp_unicode )
+//#	define _TXT( _X ) ( _WTXT( _X ) )
+//#	define _C( _X ) _WC( _X )
+//#else
+//#	define _TXT( _X ) ( _ATXT( _X ) )
+//#	define _C( _X ) _AC( _X )
+//#endif
 
 #define qor_pp_useswinapi( _MODULE, _NAME ) static const Library::DefProc pFunc = reinterpret_cast< Library::DefProc>( Kernel32::GetProcAddress( reinterpret_cast< ::HMODULE >( Kernel32::GetModuleHandle(_TXT(_MODULE)) ), _ATXT(_NAME) ) )
 #if ( qor_pp_unicode )

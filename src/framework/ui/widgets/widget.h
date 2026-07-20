@@ -4,18 +4,17 @@
 #ifndef QOR_PP_H_FRAMEWORK_DESKTOPUI_WIDGETS_WIDGET
 #define QOR_PP_H_FRAMEWORK_DESKTOPUI_WIDGETS_WIDGET
 
-#include "../layout/node.h"
+#include "../layout/arrangeable.h"
+#include "../common/renderable.h"
+#include "../common/contained.h"
 
 namespace qor{ namespace ui {
     
-    class qor_pp_module_interface(QOR_DESKTOPUI) Widget : public layout::Node
+    class Widget : public Compound, public virtual Contained, public virtual layout::IArrangeable, public virtual IRenderable
     {
     public:
 
-        Widget() : layout::Node()
-        {            
-        }
-
+        Widget() = default;
         virtual ~Widget() = default;
     };
 

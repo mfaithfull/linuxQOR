@@ -12,6 +12,7 @@
 #include "src/qor/memory/factory/externalfactory.h"
 #include "src/framework/app/role/ifeature.h"
 #include "renderer/renderer.h"
+#include "renderer/colour.h"
 
 namespace qor{
 
@@ -19,9 +20,24 @@ namespace qor{
 
     namespace ui {
         
+        struct Dimensions
+        {
+            int dimx;
+            int dimy;
+        };
+
         class qor_pp_module_interface(QOR_TERMINAL) Terminal : public app::IFeature
         {
         public:
+
+            enum Colour 
+            {
+                Palette1,
+                Palette16,
+                Palette256,
+                TrueColour,
+            };
+
             Terminal();
             ~Terminal() noexcept;
             Terminal(Terminal&& other) = delete;
@@ -32,8 +48,27 @@ namespace qor{
             virtual void Setup();
             virtual void Shutdown();
             ref_of<tty::Renderer>::type GetRenderer();
+            virtual Dimensions Size();
+            Dimensions Fixed(int v);
+            Dimensions Full() ;
 
-            //ref_of<ToolKit>::type GetToolkit();
+            //static void SetFallbackSize(const Dimensions& fallbackSize);
+        };
+
+        class qor_pp_module_interface(QOR_TERMINAL) TerminalColourSupport
+        {
+        public:
+            
+            Terminal::Colour ColourSupport();
+            void SetColourSupport(Terminal::Colour colour);
+
+        protected:
+
+            virtual Terminal::Colour ComputeColourSupport();
+
+            bool m_cached{false};
+            Terminal::Colour m_cached_supported_colour;
+
         };
 
     }//ui

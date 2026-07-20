@@ -5,17 +5,28 @@
 #define QOR_PP_H_FRAMEWORK_DESKTOPUI_WIDGETS_PUSHBUTTON
 
 #include "widget.h"
-#include "../layout/nodes/vbox.h"
+#include "../common/activateable.h"
+#include "../common/focusable.h"
+#include "../common/selectable.h"
+#include "../common/hoverable.h"
 
-namespace qor{ namespace ui {
+namespace qor{ namespace ui { namespace widgets {
     
-    class qor_pp_module_interface(QOR_DESKTOPUI) PushButton : public Widget
+    class PushButton : public Widget, 
+        public virtual IActivatable, 
+        public virtual IFocusable, 
+        public virtual ISelectable, 
+        public virtual IHoverable
     {
     public:
         
+        PushButton(const std::string& text);
+        virtual ~PushButton();
+
+        virtual void OnSelected() {}//TODO: Raise a signal
     };
 
-}}//qor::ui
+}}}//qor::ui::widgets
 
 #endif//QOR_PP_H_FRAMEWORK_DESKTOPUI_WIDGETS_PUSHBUTTON
 

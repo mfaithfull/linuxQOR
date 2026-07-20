@@ -70,7 +70,7 @@ int main(const int argc, const char** argv, char**)
                     }
                 );
                 role->AddFeature<qor::ui::SerialConsole>();
-                //role->AddFeature<qor::ui::Terminal>();
+                role->AddFeature<qor::ui::Terminal>();
             }
         ).Run([]()->int
             {
@@ -108,7 +108,7 @@ int main(const int argc, const char** argv, char**)
                 serconRenderer->FillWindow(0,24,80,1,qor::ui::sercon::TokenBuffer::Tokens::MID_FILL);                
                 serconRenderer->DrawWindow(1,1,60,5);
                 serconRenderer->FillWindow(2,2,58,3, qor::ui::sercon::TokenBuffer::Tokens::DARK_FILL);
-                serconRenderer->DrawString(2,2, L"Hello Serial Console");
+                serconRenderer->DrawString(2,2, _TXT("Hello Serial Console"));
                 serconRenderer->Present();
                 serconRenderer->SwapTokenBuffer(old, old);
 

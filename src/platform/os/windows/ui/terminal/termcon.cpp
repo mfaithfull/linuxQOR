@@ -117,4 +117,21 @@ namespace qor { namespace ui{ namespace win {
         return result;
     }
 
+    Dimensions Terminal::Size()
+    {
+        platform::win::ConsoleScreenBufferInfo csbi;
+
+        if(m_console->GetActiveScreenBuffer()->GetInfo(&csbi))        
+        {
+            return Dimensions{csbi.srWindow.right - csbi.srWindow.left + 1,
+            csbi.srWindow.bottom - csbi.srWindow.top + 1};
+        }        
+        return Dimensions{80,24};
+    }
+
+    Terminal::Colour Terminal::ComputeColourSupport()
+    {
+        return Terminal::Colour::TrueColour;
+    }
+
 }}}//qor::ui::win

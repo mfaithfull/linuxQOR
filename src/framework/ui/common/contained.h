@@ -16,7 +16,7 @@ namespace qor{ namespace ui {
 
     class Compound;
 
-    class qor_pp_module_interface(QOR_UI) Contained : public virtual Item
+    class qor_pp_module_interface(QOR_UICOMMON) Contained : public virtual Item
     {
     public:
 

@@ -19,8 +19,13 @@ namespace qor { namespace ui { namespace win {
 
         virtual void Setup();
         virtual void Shutdown();
+        virtual Dimensions Size();
 
         bool IsValid();
+        
+    protected:
+
+        virtual Colour ComputeColourSupport();
         
     private:
         

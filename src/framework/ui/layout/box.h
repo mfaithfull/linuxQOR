@@ -6,7 +6,7 @@
 
 namespace qor{ namespace ui { namespace layout {
 
-    struct Box
+    struct qor_pp_module_interface(QOR_UILAYOUT) Box
     {
     public:
 

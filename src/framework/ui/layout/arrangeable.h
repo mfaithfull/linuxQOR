@@ -9,7 +9,7 @@
 #include "src/qor/memory/reference/newref.h"
 #include "requirement.h"
 #include "box.h"
-#include "../compound.h"
+#include "../common/compound.h"
 
 namespace qor{ namespace ui{ namespace layout {
     
