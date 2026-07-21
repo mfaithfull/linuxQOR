@@ -20,8 +20,15 @@ namespace qor{ namespace ui{
             if(!m_activation)
             {
                 m_activation = true;
-                //TODO: bubble activation either up or down or maybe both
-                OnActivate();                
+                OnActivate();
+                auto compound = Item::As<Compound>();
+                if(compound)
+                {                
+                    compound->ApplyIf<IActivatable>([](IActivatable* child)
+                    {
+                        child->Activate();
+                    });
+                }
             }
         }
 
@@ -32,7 +39,14 @@ namespace qor{ namespace ui{
             if(m_activation)
             {
                 m_activation = false;
-                //TODO: bubble deactivation either up or down or maybe both
+                auto compound = Item::As<Compound>();
+                if(compound)
+                {                
+                    compound->ApplyIf<IActivatable>([](IActivatable* child)
+                    {
+                        child->Deactivate();
+                    });
+                }
                 OnDeactivate();
             }
         }

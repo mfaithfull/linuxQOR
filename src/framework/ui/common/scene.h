@@ -8,7 +8,7 @@
 #include "renderable.h"
 
 //Base Scene. The retained heirarchy of Items. 
-
+//Should be an ordered collection of layers
 namespace qor { namespace ui { 
 
     class Scene : public Compound, public virtual IRenderable

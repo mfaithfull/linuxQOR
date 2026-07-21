@@ -12,7 +12,7 @@
 
 namespace qor{ namespace ui { namespace widgets {
     
-    class PushButton : public Widget, 
+    class qor_pp_module_interface(QOR_UIWIDGETS) PushButton : public Widget, 
         public virtual IActivatable, 
         public virtual IFocusable, 
         public virtual ISelectable, 

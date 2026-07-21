@@ -9,7 +9,7 @@
 
 namespace qor{ namespace ui{ namespace tty {
 
-    class Colour
+    class qor_pp_module_interface(QOR_TERMINAL) Colour
     {
     public:
 

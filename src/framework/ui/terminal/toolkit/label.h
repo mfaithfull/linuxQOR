@@ -8,7 +8,7 @@
 
 namespace qor{ namespace ui { namespace widgets { namespace tty{
     
-    class Label : public widgets::Label
+    class qor_pp_module_interface(QOR_TERMINAL) Label : public widgets::Label
     {
     public:
         

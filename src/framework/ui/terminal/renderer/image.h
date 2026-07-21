@@ -12,7 +12,7 @@
 
 namespace qor{ namespace ui{ namespace tty {
 
-    class qor_pp_module_interface(QOR_UI) Image 
+    class qor_pp_module_interface(QOR_TERMINAL) Image 
     {
     public:
 

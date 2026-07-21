@@ -8,12 +8,12 @@
 
 namespace qor{ namespace ui { namespace widgets { namespace tty {
     
-    class PushButton : public widgets::PushButton
+    class qor_pp_module_interface(QOR_TERMINAL) PushButton : public widgets::PushButton
     {
     public:
         
         PushButton(const std::string& text);
-        virtual ~PushButton() = default;        
+        virtual ~PushButton();        
     };
 
 }}}}//qor::ui::widgets::tty

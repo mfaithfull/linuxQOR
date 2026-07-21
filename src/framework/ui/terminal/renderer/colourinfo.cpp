@@ -269,12 +269,12 @@ namespace qor{ namespace ui{ namespace tty {
         {"Grey93"             , 255 , 15 , 238 , 238 , 238 , 0   , 0   , 238 } ,
     }};
 
-    ColourInfo GetColourInfo(Colour::Palette256 index) 
+    qor_pp_module_interface(QOR_TERMINAL) ColourInfo GetColourInfo(Colour::Palette256 index) 
     {
         return palette256[index];
     }
 
-    ColourInfo GetColourInfo(Colour::Palette16 index) 
+    qor_pp_module_interface(QOR_TERMINAL) ColourInfo GetColourInfo(Colour::Palette16 index) 
     {
         return palette256[index];
     }

@@ -1129,7 +1129,7 @@ void ScreenInteractive::FetchTerminalEvents() {
         std::chrono::steady_clock::now() - internal_->last_char_time;
     const size_t timeout_microseconds =
         std::chrono::duration_cast<std::chrono::microseconds>(timeout).count();
-    internal_->terminal_input_parser.Timeout(timeout_microseconds);
+    internal_->terminal_input_parser.Timeout(static_cast<int>(timeout_microseconds));
     return;
   }
   internal_->last_char_time = std::chrono::steady_clock::now();

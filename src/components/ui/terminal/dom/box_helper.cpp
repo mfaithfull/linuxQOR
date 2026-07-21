@@ -39,7 +39,7 @@ namespace qor{ namespace components{ namespace tui {
 
             int SafeRatio(int value, int numerator, int denominator) 
             {
-                return static_cast<int64_t>(value) * static_cast<int64_t>(numerator) / std::max(static_cast<int64_t>(denominator), static_cast<int64_t>(1));
+                return static_cast<int>( static_cast<int64_t>(value) * static_cast<int64_t>(numerator) / std::max(static_cast<int64_t>(denominator), static_cast<int64_t>(1)) );
             }
 
             // Called when the size allowed is greater than the requested size. This

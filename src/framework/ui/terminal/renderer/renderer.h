@@ -16,7 +16,7 @@ namespace qor{ namespace ui{
 
     namespace tty{
 
-    class Renderer : public qor::ui::Renderer
+    class qor_pp_module_interface(QOR_TERMINAL) Renderer : public qor::ui::Renderer
     {
     public:
 

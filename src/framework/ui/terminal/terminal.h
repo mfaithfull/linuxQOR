@@ -13,6 +13,7 @@
 #include "src/framework/app/role/ifeature.h"
 #include "renderer/renderer.h"
 #include "renderer/colour.h"
+#include "toolkit/toolkit.h"
 
 namespace qor{
 
@@ -48,6 +49,7 @@ namespace qor{
             virtual void Setup();
             virtual void Shutdown();
             ref_of<tty::Renderer>::type GetRenderer();
+            ref_of<tty::Toolkit>::type GetToolkit();
             virtual Dimensions Size();
             Dimensions Fixed(int v);
             Dimensions Full() ;

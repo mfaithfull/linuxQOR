@@ -21,8 +21,8 @@ namespace qor{ namespace ui{ namespace tty {
         uint8_t value;
     };
 
-    ColourInfo GetColourInfo(Colour::Palette256 index);
-    ColourInfo GetColourInfo(Colour::Palette16 index);
+    qor_pp_module_interface(QOR_TERMINAL) ColourInfo GetColourInfo(Colour::Palette256 index);
+    qor_pp_module_interface(QOR_TERMINAL) ColourInfo GetColourInfo(Colour::Palette16 index);
 
 }}}//qor::ui::tty
 
