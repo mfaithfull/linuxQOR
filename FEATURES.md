@@ -88,7 +88,6 @@ qor_property (shared library)               Experimental
 qor_resources (shared library)              Experimental, Incomplete
 qor_textshaping (shared library)            Experimental
 qor_serialize (shared library)              Experimental
-qor_serverrole (shared library)             Junk
 
 Windows:
 

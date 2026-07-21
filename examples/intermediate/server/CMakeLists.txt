@@ -1,6 +1,6 @@
 set(target server)
 
-add_executable(${target} main.cpp server.cpp)
+add_executable(${target} main.cpp server.cpp serverrole.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
