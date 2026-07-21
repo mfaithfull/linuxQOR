@@ -22,7 +22,7 @@ namespace qor{ namespace ui { namespace widgets {
             m_requirement.min_y = 1;
         }
         
-    private:
+    protected:
 
         std::string m_text;
     };

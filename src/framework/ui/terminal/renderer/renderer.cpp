@@ -24,4 +24,9 @@ namespace qor { namespace ui { namespace tty {
     {
     }
 
+    Surface* Renderer::GetSurface()
+    {
+        return m_currentSurface;
+    }
+
 }}}//qor::ui::sercon

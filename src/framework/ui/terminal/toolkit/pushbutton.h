@@ -12,10 +12,8 @@ namespace qor{ namespace ui { namespace widgets { namespace tty {
     {
     public:
         
-        PushButton() = default;
-        virtual ~PushButton() = default;
-
-        virtual void Render(Renderer* renderer){};//Do TUI specific rendering for PushButton
+        PushButton(const std::string& text);
+        virtual ~PushButton() = default;        
     };
 
 }}}}//qor::ui::widgets::tty

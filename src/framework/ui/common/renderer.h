@@ -6,19 +6,21 @@
 
 #include "src/qor/memory/injection/typeidentity.h"
 #include "src/qor/memory/reference/newref.h"
-#include "scene.h"
+//#include "scene.h"
 
 //Base renderer
 namespace qor { namespace ui { 
+
+    class Scene;
 
     class Renderer
     {
     public:
 
         Renderer() = default;
-        ~Renderer() = default;
+        virtual ~Renderer() = default;
 
-        void Frame(ref_of<Scene>::type scene)
+        void Frame(Scene* scene)
         {
             //Work out how much space there is
             //Layout the scene in the space

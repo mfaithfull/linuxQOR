@@ -24,6 +24,9 @@ namespace qor{ namespace ui { namespace widgets {
         virtual ~PushButton();
 
         virtual void OnSelected() {}//TODO: Raise a signal
+
+    protected:
+        std::string m_text;
     };
 
 }}}//qor::ui::widgets

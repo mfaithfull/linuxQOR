@@ -10,24 +10,15 @@
 #include <functional>
 
 #include "image.h"
-#include "../terminal.h"
 
 namespace qor{ namespace ui{ namespace tty {
-
-    //Define how the Screen's dimensions should look like.
-    namespace Dimension 
-    {
-        qor_pp_module_interface(QOR_TERMINAL) Dimensions Fixed(int);
-        qor_pp_module_interface(QOR_TERMINAL) Dimensions Full();
-    }//Dimension
 
     class qor_pp_module_interface(QOR_TERMINAL) Surface : public Image 
     {
     public:
 
-        Surface(int dimx, int dimy);
-        static Surface Create(Dimensions dimension);
-        static Surface Create(Dimensions width, Dimensions height);
+        Surface(int dimx, int dimy);        
+        static Surface Create(int width, int height);
 
         virtual ~Surface() override = default;
 

@@ -9,7 +9,7 @@
 
 namespace qor{ namespace ui{ namespace widgets {
 
-    PushButton::PushButton(const std::string& text)
+    PushButton::PushButton(const std::string& text) : m_text(text)
     {
         Add(new_ref<layout::Center>(new_ref<Label>(text)));
     }

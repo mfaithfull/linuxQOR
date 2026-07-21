@@ -341,14 +341,9 @@ namespace qor{ namespace ui{ namespace tty {
     }//
 
     // Create a screen with the given dimension along the x-axis and y-axis.
-    Surface Surface::Create(Dimensions width, Dimensions height) 
+    Surface Surface::Create(int width, int height) 
     {
-        return {width.dimx, height.dimy};
-    }
-
-    Surface Surface::Create(Dimensions dimension) 
-    {
-        return {dimension.dimx, dimension.dimy};
+        return {width, height};
     }
 
     Surface::Surface(int dimx, int dimy) : Image{dimx, dimy} { }

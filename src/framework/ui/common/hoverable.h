@@ -11,6 +11,7 @@ namespace qor{ namespace ui{
     
     class IHoverable : public virtual Item
     {
+    public:
         IHoverable() = default;
         virtual ~IHoverable() = default;
         

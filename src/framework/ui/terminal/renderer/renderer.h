@@ -6,24 +6,31 @@
 
 //A renderer for the the terminal. Triangles, quads, text, effects, etc
 
+#include "src/framework/ui/common/renderer.h"
+
+#include "surface.h"
+
 namespace qor{ namespace ui{ 
     
     class qor_pp_module_interface(QOR_TERMINAL) Terminal;
 
     namespace tty{
 
-    class Renderer
+    class Renderer : public qor::ui::Renderer
     {
     public:
 
         Renderer(Terminal* display);
-        ~Renderer();
+        virtual ~Renderer();
 
         void SwapBuffers();
         void Present();
 
+        Surface* GetSurface();
+
     private:
 
+        Surface* m_currentSurface;
         Terminal* m_display;
         unsigned char* m_buffer;
 

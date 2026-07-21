@@ -112,7 +112,7 @@ int main(const int argc, const char** argv, char**)
                 serconRenderer->Present();
                 serconRenderer->SwapTokenBuffer(old, old);
 
-                //auto terminal = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::ui::Terminal>();
+                auto terminal = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::ui::Terminal>();
                 //auto toolkit = terminal(qor_shared).GetToolkit();
                 return EXIT_SUCCESS;
             });
