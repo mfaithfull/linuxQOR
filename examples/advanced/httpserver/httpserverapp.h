@@ -47,9 +47,6 @@ private:
 
 };
 
-namespace qor{
-    qor_pp_declare_instancer_of(HTTPServerApp, SingletonInstancer); //App classes should be Singletons
-    qor_pp_declare_sync_of(HTTPServerApp, RecursiveMutex);          //Protected by a RecursiveMutex
-}
+qor_pp_declare_singleton(HTTPServerApp);
 
 #endif//QOR_PP_H_EXAMPLES_HTTPSERVER_APP
