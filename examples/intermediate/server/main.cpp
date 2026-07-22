@@ -33,7 +33,6 @@ int main(const int argc, const char** argv, char** env)
     ThePlatform(qor_shared)->AddSubsystem<Sockets>();
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build<Server>(Server::Name)(qor_unlocked).
-        SetRole<ServerRole>().
+    return AppBuilder().Build<Server>(Server::Name)(qor_unlocked).SetRole<ServerRole>().
         RunWorkflow(new_ref<NetworkServer>(12345, new_ref<EchoProtocol>()));
 }

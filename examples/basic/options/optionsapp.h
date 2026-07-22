@@ -5,7 +5,6 @@
 #define QOR_PP_H_EXAMPLES_OPTIONS_APP
 
 #include <string>
-
 #include "sdk/app.h"
 
 /*To customise the Application class we derive from it.
@@ -43,15 +42,7 @@ private:
 
 };
 
-namespace qor{
-
-    /*Declare that the OptionsApp uses a Singleton factory.
-    This is done by overloading the type trait template
-    instancer_of<T> such that instancer_of<OptionsApp>::type
-    is SingletonInstancer. This must be done in the qor namespace
-    because that's where the type trait instancer_of lives */
-    qor_pp_declare_instancer_of(OptionsApp, SingletonInstancer);
-    qor_pp_declare_sync_of(OptionsApp, RecursiveMutex);
-}
+//Declare that the OptionsApp to be a Singleton, access protected with a RecursiveMutex
+qor_pp_declare_singleton(OptionsApp);
 
 #endif//QOR_PP_H_EXAMPLES_OPTIONS_APP

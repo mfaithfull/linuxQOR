@@ -20,9 +20,6 @@ public:
     virtual ~Server() = default;
 };
 
-namespace qor{
-    qor_pp_declare_instancer_of(Server, SingletonInstancer);
-    qor_pp_declare_sync_of(Server,RecursiveMutex);
-}
+qor_pp_declare_singleton(Server);
 
 #endif//QOR_PP_H_EXAMPLES_OPTIONS_APP

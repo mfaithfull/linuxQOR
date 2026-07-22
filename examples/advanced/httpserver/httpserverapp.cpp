@@ -49,7 +49,7 @@ int main(const int argc, const char** argv, char** env)
 
             app::OptionGetter options(argc, argv, server(qor_shared));
 
-            server->SetRole<Role>(
+            server(qor_shared).SetRole<Role>(
                 [](ref_of<IRole>::type role)
                 {
                     role->AddFeature<thread::ThreadPool>(
@@ -69,9 +69,9 @@ int main(const int argc, const char** argv, char** env)
                 }
             );
 
-            server->UseAggregatedLogging();
+            server(qor_shared).UseAggregatedLogging();
         }
-    ).AsRef<HTTPServerApp>()(qor_unlocked).Run();
+    )(qor_unlocked).Run();
 }
 
 int HTTPServerApp::Run()

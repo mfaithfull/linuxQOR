@@ -5,10 +5,9 @@
 
 //For a simpler example of the flow of a QOR application see the roller example
 
-#include "src/configuration/configuration.h"
+#include "sdk/app.h"
 #include "src/platform/platform.h"
 #include "src/qor/essentials/current/currentthread.h"
-#include "sdk/app.h"
 #include "src/framework/io/filesystem/file/filereader.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
 #include "src/components/data/pipeline/filters/base64encodefilter/base64encodefilter.h"
@@ -22,11 +21,10 @@ using namespace qor::io::components;
 using namespace qor::pipeline;
 using namespace qor::pipeline::components;
 
-constexpr const char* appName = "Plumbing";
-qor_pp_implement_module(appName)
-
 qor_pp_module_requires(ICurrentThread);
 qor_pp_module_requires(IFileSystem);
+
+qor_pp_implement_module("Plumbing")
 
 void TraditionalFileRead(FileSystem::ref filesystem, filesystem::Index& index);
 void PipelineFileProcessor(FileSystem::ref filesystem, filesystem::Index& index);
@@ -38,7 +36,7 @@ int main()
     to the Application Role*/
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-    return AppBuilder().Build(appName)(qor_unlocked).SetRole<app::Role>().Run(
+    qor_pp_run(
         []()->int
         {
             /*Retrieve the file system singleton from the platform.
@@ -53,7 +51,10 @@ int main()
 
             if(!index.Exists())
             {
-                std::cout << "Please place a file called alice.txt in the folder " << index.GetPath().ToString() << " to make this example work. The file contents will be encoded into output.txt" << std::endl;
+                std::cout << "Please place a file called alice.txt in the folder " 
+                            << index.GetPath().ToString() 
+                            << " to make this example work. The file contents will be encoded into output.txt" 
+                            << std::endl;
                 return EXIT_FAILURE;
             }
 
@@ -62,7 +63,7 @@ int main()
             TraditionalFileRead(fileSystem, index);
 
             /*However what if we want to transcode the whole file
-            to base64 and write it out to another file in one step?*/
+            to base64 and write it out to another file in one go?*/
             PipelineFileProcessor(fileSystem, index);
         
             return EXIT_SUCCESS;
@@ -71,7 +72,8 @@ int main()
 
 void TraditionalFileRead(FileSystem::ref fileSystem, filesystem::Index& index)
 {
-    auto file = fileSystem->Open(index, OpenFor::ReadOnly, WithFlags::None);//Obtain a file object from the file system    
+    //Obtain a file object from the file system    
+    auto file = fileSystem->Open(index, OpenFor::ReadOnly, WithFlags::None);
     FileReader reader(file);                                        //Initialise a reader for the file    
     std::string line = reader.ReadLine();                           //Read a line from the file    
     std::cout << line << std::endl;                                 //process the data
@@ -94,7 +96,7 @@ void PipelineFileProcessor(FileSystem::ref fileSystem, filesystem::Index& input)
     }
 
     //Set up a base64 encoder with 4K of buffer space
-    Base64EncodeFilter encoder(4096);                          
+    Base64EncodeFilter encoder(4096);
 
     /*We use File connectors to connect to the input and output files. These encapsulate everything file related for 
     the pipeline. If we used Socket connectors or Pipe connectors or DBus connectors, the rest of the pipeline would

@@ -1,5 +1,5 @@
 project(QOR VERSION 0.5.0 LANGUAGES CXX)
-add_subdirectory(basic)
+add_subdirectory(helloworld)
 add_subdirectory(outline)
 add_subdirectory(options)
 add_subdirectory(roller)

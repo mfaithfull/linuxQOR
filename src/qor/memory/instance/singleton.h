@@ -12,7 +12,19 @@
 #include "src/framework/parallel/sync/recursive_mutex.h"
 #include "src/framework/parallel/sync/lock.h"
 
-//The singleton instancer gives out the same instance each time unless it it destroyed by there being no more references to it. Then it gives a new one
+//The singleton instancer gives out the same instance each time unless it is destroyed by there being no more references to it. Then it gives a new one
+
+#define qor_pp_declare_singleton(_CLASS)\
+namespace qor{\
+template<> struct instancer_of< _CLASS >\
+{\
+    typedef SingletonInstancer type;\
+};\
+template<> struct sync_of< _CLASS >\
+{\
+    typedef RecursiveMutex type;\
+};\
+}//qor
 
 namespace qor{ namespace detail {
 

@@ -2,29 +2,36 @@
 // SPDX-License-Identifier: BSL-1.0
 
 #include "src/configuration/configuration.h"
-#include "serverrole.h"
+#include "termapprole.h"
+#include "src/framework/parallel/thread/threadpool.h"
+#include "src/framework/io/filesystem/filesystem.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
 
 using namespace qor;
-using namespace qor::app;
 using namespace qor::log;
 using namespace qor::platform;
 using namespace qor::io;
 using namespace qor::components;
 
-void ServerRole::Setup()
+qor_pp_module_requires(LogAggregatorService)
+qor_pp_module_requires(IFileSystem)
+qor_pp_module_requires(ICurrentThread)
+qor_pp_module_requires(Terminal)
+
+TermAppRole::TermAppRole() = default;
+
+TermAppRole::~TermAppRole() = default;
+
+void TermAppRole::Setup()
 {
+    ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
+    
     IRole::AddFeature<thread::ThreadPool>(
         [](ref_of<thread::ThreadPool>::type threadPool)->void
         {
-            threadPool->SetThreadCount(8);
+            threadPool->SetThreadCount(2);
             CurrentThread::Get().SetName("Main");
         }                
-    );
-    IRole::AddFeature<async::Service>(
-        [](ref_of<async::Service>::type /*ioService*/)->void
-        {
-            PoolInstancer::SetPoolSize<async::Context>(2);
-        }
     );
     IRole::AddFeature<LogAggregatorService>(
         [](ref_of<LogAggregatorService>::type logAggregator)->void
@@ -44,10 +51,12 @@ void ServerRole::Setup()
         }
     );
 
-    Role::Setup();
+    IRole::AddFeature<qor::ui::Terminal>();
+
+    qor::app::Role::Setup();
 }
 
-void ServerRole::Shutdown()
+void TermAppRole::Shutdown()
 {
     auto logHandler = new_ref< IssueHandler<Log> >();
     DefaultLogHandler* defaultLogHandler = dynamic_cast<DefaultLogHandler*>(logHandler.operator qor::IssueHandler<Log> *());
@@ -57,5 +66,5 @@ void ServerRole::Shutdown()
             AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<LogAggregatorService>(qor_shared)->Receiver(),
             &LogReceiver::ReceiveLog);
     }
-    Role::Shutdown();
+    qor::app::Role::Shutdown();
 }

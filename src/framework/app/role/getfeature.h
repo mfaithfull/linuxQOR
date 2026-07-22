@@ -16,6 +16,12 @@ namespace qor{
     {
         return AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->template GetFeature<TFeature>();
     }
+
+    template< class TApplication >
+    typename ref_of<TApplication>::type GetApplication()
+    {
+        return AppBuilder().TheApplication().AsRef<TApplication>();
+    }
 }
 
 #endif//QOR_PP_H_ROLE_GETFEATURE

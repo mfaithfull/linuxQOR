@@ -7,9 +7,8 @@
 #include "src/qor/module/moduleregistry.h"  //exceptional include not provided by the SDK, inernal header for module introspection only.
 #include "src/framework/app/host/host.h"    //exceptional include not provided by the SDK, inernal header for module introspection only.
 
-using namespace qor;                                //Use the qor namespace
-
-constexpr const char* appName = "Outline";
+using namespace qor;
+using namespace qor::app;
 
 /*Our application is an executable module in the QOR ecosystem
 The qor_pp_implement_module macro gives us a named, versioned module object
@@ -18,31 +17,23 @@ Every QOR executable must:
 2. Link the qor_host module to become the host for other modules
 3. provide an implementation of qor::Module& ThisModule(void) equivalent to this macro.
 */
-qor_pp_implement_module(appName)
+qor_pp_implement_module("Outline")
 
-void AccessLibraries();
+void AccessModules();
 
 int main()
-{
-    //Build an Application object
-    //It must be manually unlocked so it can later be shared by any secondary threads.
-    auto outlineApp = AppBuilder().Build(appName)(qor_unlocked);  
-
-    /*The QOR Application class is a context for running Workflows and 
-    anything else that meets the requirements for a runable object*/
-    return outlineApp.Run(
-        //A minimal lambda that is runnable i.e. it takes no parameters and returns an integer
-        []()->int
-        {            
-            AccessLibraries();
-            return EXIT_SUCCESS;
-        });
+{    
+    /*The QOR Application is a context for running anything else that meets the requirements for a runable object*/
+    qor_pp_run_role(Role)(
+    []()->int
+    {            
+        AccessModules();
+        return EXIT_SUCCESS;
+    });
 }
 
-/*This (for science only) function can be used to access every loaded QOR library.
-This is intentionally not thread safe so usable only when single threaded at startup.
-Diagnostically something like this can be useful for tracking down dependency issues.*/
-void AccessLibraries()
+/*This (for science only) function can be used to access every loaded QOR module and it's constituent libraries.*/
+void AccessModules()
 {
     //Visit all the QOR modules loaded into this process
     TheHost()->Modules()->VisitModules(

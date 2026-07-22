@@ -10,13 +10,7 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_workflow)
-endif()
-
-if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_workflow)
-endif()
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_application qor_role qor_workflow)
 
 if (WIN32)
   add_custom_command(

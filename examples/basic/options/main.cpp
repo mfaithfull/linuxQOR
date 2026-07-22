@@ -6,8 +6,10 @@
 
 #include "sdk/app.h"
 #include "optionsapp.h"                                         //Include the declaration of our custom application type
+#include "src/framework/app/role/getfeature.h"
 
 using namespace qor;
+using namespace qor::app;
 
 qor_pp_implement_module(OptionsApp::Name)
 
@@ -18,12 +20,12 @@ int main(const int argc, const char** argv, char** env)
         [argc,argv,env](ref_of<OptionsApp>::type app)           //Pass a configuration function for the application to the builder
         {                                                       //capturing the arguments to main so we can pass them to the OptionGetter
                                                                 //Parse the options from the command line and pass them to the OptionsApp
-            app::OptionGetter options(argc, argv, app(qor_shared));
+            OptionGetter options(argc, argv, app(qor_shared));
         }
-    )(qor_shared).Run(
+    )(qor_unlocked).Run(
         []()->int
-        {
-            std::cout << "Hello world." << std::endl;
+        {            
+            std::cout << GetApplication<OptionsApp>(qor_shared)->GetFileName() << std::endl;
             return EXIT_SUCCESS;
         }
     );

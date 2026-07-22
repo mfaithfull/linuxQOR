@@ -1,6 +1,6 @@
 set(target parallel)
 
-add_executable(${target} main.cpp)
+add_executable(${target} main.cpp prole.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")

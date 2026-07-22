@@ -1,6 +1,6 @@
 project(TerminalApp VERSION 0.0.1 LANGUAGES CXX)
 set(target termapp)
-add_executable(${target} main.cpp)
+add_executable(${target} main.cpp termapprole.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 target_compile_definitions(${target} PRIVATE 
