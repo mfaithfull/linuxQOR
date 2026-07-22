@@ -4,6 +4,8 @@
 #include "src/configuration/configuration.h"
 
 #include "terminal.h"
+#include "renderer/renderer.h"
+#include "toolkit/toolkit.h"
 
 namespace qor{ namespace ui{
 
@@ -73,6 +75,16 @@ namespace qor{ namespace ui{
         }
 
         return Terminal::Colour::Palette16;
+    }
+
+    ref_of<tty::Renderer>::type Terminal::GetRenderer()
+    {
+        return new_ref<tty::Renderer>(this);
+    }
+
+    ref_of<tty::Toolkit>::type Terminal::GetToolkit()
+    {
+        return new_ref<tty::Toolkit>();
     }
 
 }}//qor::ui
