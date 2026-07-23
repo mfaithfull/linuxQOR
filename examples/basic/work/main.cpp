@@ -3,7 +3,7 @@
 
 //An Application with a Workflow
 #include "sdk/app.h"
-#include "customworkflow.h"             //Workflows are always overrides of the base Workflow class.
+#include "customworkflow.h"
 
 using namespace qor;
 qor_pp_implement_module("Work")

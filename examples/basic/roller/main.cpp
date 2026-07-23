@@ -6,9 +6,7 @@ QOR Applications each have a Role. The Role is a container of Features.
 The Role manages the Setup and Shutdown of the Features*/
 
 #include "sdk/app.h"
-
-/*Include our custom Role class.*/
-#include "customrole.h"
+#include "customrole.h"                         //Include our custom Role class.
 #include "src/framework/app/role/getfeature.h"  //must be included last to get a shortcut function to Features
 
 using namespace qor;

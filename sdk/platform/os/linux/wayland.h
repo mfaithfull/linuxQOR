@@ -5,6 +5,7 @@
 #include "src/platform/compiler/compiler.h"
 #include "src/platform/platform.h"
 
+#if(qor_pp_os_target = qor_pp_os_linux)
 #include "src/platform/os/linux/ui/wayland/client/client.h"
 #include "src/platform/os/linux/ui/wayland/client/buffer.h"
 #include "src/platform/os/linux/ui/wayland/client/callback.h"
@@ -60,5 +61,6 @@
 #include "src/platform/os/linux/ui/wayland/xdgshell/xdgpositioner.h"
 #include "src/platform/os/linux/ui/wayland/xdgshell/xdgpopup.h"
 #include "src/platform/os/linux/ui/wayland/xdgshell/xdgpopupwindow.h"
+#endif//linux
 
 #endif//QOR_PP_H_SDK_PLATFORM_OS_LINUX_WAYLAND

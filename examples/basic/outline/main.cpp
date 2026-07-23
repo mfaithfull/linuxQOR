@@ -23,7 +23,7 @@ void AccessModules();
 
 int main()
 {    
-    /*The QOR Application is a context for running anything else that meets the requirements for a runable object*/
+    /*The QOR Application is a context for running anything that meets the requirements for a runable object*/
     qor_pp_run_role(Role)(
     []()->int
     {            

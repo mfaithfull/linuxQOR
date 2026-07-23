@@ -14,7 +14,7 @@ It's all a way of controlling the flow of a program
 without having to write loops and function calls
 explicitly. They are provided by the workflow automatically*/
 
-class CustomWorkflow : public qor::Workflow
+class CustomWorkflow : public qor::Workflow //Workflows are always overrides of the base Workflow class.
 {
 public:
 
