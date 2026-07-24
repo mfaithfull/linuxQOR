@@ -117,7 +117,8 @@ namespace qor { namespace components{
     {
         if(m_writeToStandardOutput)
         {
-            std::cout << logEntry;// << std::endl;
+            std::cout << logEntry;
+            std::flush(std::cout);
         }
 
         if(m_writeToFileSystem)

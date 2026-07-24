@@ -19,7 +19,7 @@ qor_pp_export detail::ThreadInstanceHolder<memory::ThreadHeap>* GetCurrentThread
 
 namespace qor { namespace detail {
     template<>
-    ThreadInstanceHolder<qor::memory::ThreadHeap>* theThreadInstanceHolder<qor::memory::ThreadHeap>()
+    qor_pp_export ThreadInstanceHolder<qor::memory::ThreadHeap>* theThreadInstanceHolder<qor::memory::ThreadHeap>()
     {
         return GetCurrentThreadHeap();
     }
