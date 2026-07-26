@@ -14,7 +14,8 @@
 #include "src/framework/parallel/sync/recursive_mutex.h"
 #include "src/platform/platform.h"
 #include "irunable.h"
-#include "../optionparser/ioptionable.h"
+#include "../argparse/iargumented.h"
+//#include "../optionparser/ioptionable.h"
 
 #define qor_pp_declare_app_class(_MYAPP)\
 private: static qor::SingletonRedirector<qor::Application, _MYAPP> m_sRedirect;
@@ -24,9 +25,13 @@ qor::SingletonRedirector<qor::Application, _MYAPP> _MYAPP::m_sRedirect;
 
 namespace qor{
 
-    class qor_pp_module_interface_gcc(QOR_APPLICATION) Application : public app::IOptionable
+    class qor_pp_module_interface_gcc(QOR_APPLICATION) Application : public app::IArgumented
     {
     public:
+
+        static const app::OptConfig defaultOptConfig;
+        static const std::vector<app::NamedArgSpec> defaultNamedArgs;
+        static const std::vector<app::PositionalArgSpec> defaultPositionalArgs;
 
         qor_pp_module_interface(QOR_APPLICATION) Application();
         qor_pp_module_interface(QOR_APPLICATION) virtual ~Application();
@@ -51,7 +56,7 @@ namespace qor{
         qor_pp_module_interface(QOR_APPLICATION) ref_of<app::IRole>::type GetRole() const;
         qor_pp_module_interface(QOR_APPLICATION) Application& SetWorkflow( ref_of<workflow::IWorkflow>::type workflow);
         qor_pp_module_interface(QOR_APPLICATION) ref_of<workflow::IWorkflow>::type GetWorkflow() const;
-        qor_pp_module_interface(QOR_APPLICATION) std::string& Name();
+        qor_pp_module_interface(QOR_APPLICATION) const std::string Name() override;
         qor_pp_module_interface(QOR_APPLICATION) void SetName(const std::string& name);
 
         template<class TSubsystem>
@@ -86,12 +91,15 @@ namespace qor{
         }
 
         qor_pp_module_interface(QOR_APPLICATION) int Run( ref_of<app::IRunable>::type runable );
-		qor_pp_module_interface(QOR_APPLICATION) virtual const char* ProvideShortOptionString();
-		qor_pp_module_interface(QOR_APPLICATION) virtual app::Option* ProvideLongOptions();
-		qor_pp_module_interface(QOR_APPLICATION) virtual void ReceiveOptionSwitch(char c);
-		qor_pp_module_interface(QOR_APPLICATION) virtual void ReceiveOptionParameter(char c, const char*);
-		qor_pp_module_interface(QOR_APPLICATION) virtual void ReceiveLongOption(const char* option, const char* value);
-		qor_pp_module_interface(QOR_APPLICATION) virtual void ReceiveNonOption(const char* parameter);
+
+        qor_pp_module_interface(QOR_APPLICATION) virtual const std::string Description();
+        qor_pp_module_interface(QOR_APPLICATION) virtual const std::string UsageEpilogue();
+        qor_pp_module_interface(QOR_APPLICATION) virtual const std::string OverrideUsage();
+        qor_pp_module_interface(QOR_APPLICATION) virtual const app::OptConfig Config();
+		qor_pp_module_interface(QOR_APPLICATION) virtual const std::vector<app::NamedArgSpec> NamedArguments();
+		qor_pp_module_interface(QOR_APPLICATION) virtual const std::vector<app::PositionalArgSpec> PositionalArguments();
+
+        qor_pp_module_interface(QOR_APPLICATION) void ParseArgs(const int argc, const char** argv);
 
     private:
 

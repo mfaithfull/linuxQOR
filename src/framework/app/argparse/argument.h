@@ -71,22 +71,22 @@ namespace qor { namespace app {
 
 
     /// @brief Supported types for argument
-    /// If needed type is not in this list, then just use e_String
-    enum class ArgTypeCast : int
+    /// If needed type is not in this list, then just use String
+    enum class ArgType : int
     {
-        e_String,
-        e_int,
-        e_longlong,
-        e_double,
-        e_bool
+        String,
+        Int,
+        LongLong,
+        Double,
+        Bool
     };
 
     /// @brief constant to indicate arguments with various
     /// count from 0 to infinite
-    const int kAnyArgCount = -1;
+    const int ArgCountZeroOrMore = -1;
     /// @brief constant to indicate arguments with various
     /// count from 1 to infinite
-    const int kFromOneToInfiniteArgCount = -2;
+    const int ArgCountOneOrMore = -2;
 
 
     class ArgumentParser;
@@ -101,7 +101,7 @@ namespace qor { namespace app {
         /// @param positionalName represents name for positional argument.
         /// @param shortName represents short name for named argument which should be passed with one prefix.
         /// @param longName represents long name for named argument which should be passed with double prefix.
-        /// @param argsCount integer number. You can use "kAnyArgCount", "kFromOneToInfiniteArgCount" for non strict count or any int constant.
+        /// @param argsCount integer number. You can use "ArgCountZeroOrMore", "ArgCountOneOrMore" for non strict count or any int constant.
         /// @param argType type of argument. Defined via enum. Supported types are: int, long long, double and bool and string for all other cases.
         /// @param required Is argument required. Will fail parsing, if required argument are not present.
         /// @param help Your own custom help string start.
@@ -109,9 +109,10 @@ namespace qor { namespace app {
             const std::string& shortName = "",
             const std::string& longName = "",
             const int argsCount = 1,
-            ArgTypeCast argType = ArgTypeCast::e_String,
+            ArgType argType = ArgType::String,
             const bool required = true,
-            const std::string& help = "")
+            const std::string& help = "",
+            void* target = nullptr)
             : m_required(required)
             , m_nargs(argsCount)
             , m_type(argType)
@@ -119,39 +120,42 @@ namespace qor { namespace app {
             , m_shortName(shortName)
             , m_longName(longName)
             , m_help(help)
+            , m_target(target)
         {}
     public:
 
         /// @brief Default constructor positional arguments. You can use class Setters or pass your own values to public members directly.
         /// @param shortName represents short name for named argument which should be passed with one prefix.
         /// @param longName represents long name for named argument which should be passed with double prefix.
-        /// @param argsCount integer number. You can use "kAnyArgCount", "kFromOneToInfiniteArgCount" for non strict count or any int constant.
+        /// @param argsCount integer number. You can use "ArgCountZeroOrMore", "ArgCountOneOrMore" for non strict count or any int constant.
         /// @param argType type of argument. Defined via enum. Supported types are: int, long long, double and bool and string for all other cases.
         /// @param required Is argument required. Will fail parsing, if required argument are not present.
         /// @param help Your own custom help string start.
         static Argument CreateNamedArgument(const std::string& shortName = "",
             const std::string& longName = "",
             const int argsCount = 1,
-            ArgTypeCast argType = ArgTypeCast::e_String,
+            ArgType argType = ArgType::String,
             const bool required = true,
-            const std::string& help = "")
+            const std::string& help = "",
+            void* target = nullptr)
         {
-            return Argument("", shortName, longName, argsCount, argType, required, help);
+            return Argument("", shortName, longName, argsCount, argType, required, help, target);
         }
 
         /// @brief Default function for named arguments. You can use class Setters or pass your own values to public members directly.
         /// @param positionalName represents name for positional argument.
-        /// @param argsCount integer number. You can use "kAnyArgCount", "kFromOneToInfiniteArgCount" for non strict count or any int constant.
+        /// @param argsCount integer number. You can use "ArgCountZeroOrMore", "ArgCountOneOrMore" for non strict count or any int constant.
         /// @param argType type of argument. Defined via enum. Supported types are: int, long long, double and bool and string for all other cases.
         /// @param required Is argument required. Will fail parsing, if required argument are not present.
         /// @param help Your own custom help string start.
         static Argument CreatePositionalArgument(const std::string& positionalName = "",
             const int argsCount = 1,
-            ArgTypeCast argType = ArgTypeCast::e_String,
+            ArgType argType = ArgType::String,
             const bool required = true,
-            const std::string& help = "")
+            const std::string& help = "",
+            void* target = nullptr)
         {
-            return Argument(positionalName, "", "", argsCount, argType, required, help);
+            return Argument(positionalName, "", "", argsCount, argType, required, help, target);
         }
 
         /// @brief required flag argument
@@ -175,7 +179,7 @@ namespace qor { namespace app {
         }
 
         /// @brief variable that indicates count of argument in input
-        /// use "kAnyArgCount" or "kFromOneToInfiniteArgCount" constants
+        /// use "ArgCountZeroOrMore" or "ArgCountOneOrMore" constants
         /// for arguments with variable count. Any other arguments count
         /// will be passed as strict arguments count.
         /// 0 is for flags (arguments that doesn't carry any data)
@@ -184,7 +188,7 @@ namespace qor { namespace app {
 
         /// @brief setter function for m_nargs with desired amount
         /// @param amount int value that indicates  amount of argument.
-        /// Could be "kAnyArgCount" or "kFromOneToInfiniteArgCount", 0 or any other positive integer.
+        /// Could be "ArgCountZeroOrMore" or "ArgCountOneOrMore", 0 or any other positive integer.
         /// @return reference to current argument
         Argument& SetNumberOfArguments(int amount)
         {
@@ -196,7 +200,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetAnyNumberOfArgumentsButAtLeastOne()
         {
-            m_nargs = kFromOneToInfiniteArgCount;
+            m_nargs = ArgCountOneOrMore;
             return *this;
         }
 
@@ -204,7 +208,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetAnyNumberOfArguments()
         {
-            m_nargs = kAnyArgCount;
+            m_nargs = ArgCountZeroOrMore;
             return *this;
         }
 
@@ -218,13 +222,13 @@ namespace qor { namespace app {
 
         /// @brief Variable that hold type of argument.
         /// string by default
-        ArgTypeCast m_type = ArgTypeCast::e_String;
+        ArgType m_type = ArgType::String;
 
         /// @brief Setter function for type of current argument
         /// @param argType setter for type of current argument data.
         /// Any non string types will be casted while parsing.
         /// @return reference to current argument
-        Argument& SetType(ArgTypeCast argType)
+        Argument& SetType(ArgType argType)
         {
             m_type = argType;
             return *this;
@@ -298,7 +302,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetChoices(const std::vector<std::string>& choices)
         {
-            if (m_type != ArgTypeCast::e_String)
+            if (m_type != ArgType::String)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -325,7 +329,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetChoices(const std::vector<int>& choices)
         {
-            if (m_type != ArgTypeCast::e_int)
+            if (m_type != ArgType::Int)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -342,7 +346,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetChoices(const std::vector<long long>& choices)
         {
-            if (m_type != ArgTypeCast::e_longlong)
+            if (m_type != ArgType::LongLong)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -359,7 +363,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetChoices(const std::vector<double>& choices)
         {
-            if (m_type != ArgTypeCast::e_double)
+            if (m_type != ArgType::Double)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -372,7 +376,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(bool defaultArg)
         {
-            if (m_type != ArgTypeCast::e_bool)
+            if (m_type != ArgType::Bool)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -386,7 +390,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(int defaultArg)
         {
-            if (m_type != ArgTypeCast::e_int)
+            if (m_type != ArgType::Int)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -400,7 +404,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(long long defaultArg)
         {
-            if (m_type != ArgTypeCast::e_longlong)
+            if (m_type != ArgType::LongLong)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -414,7 +418,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(double defaultArg)
         {
-            if (m_type != ArgTypeCast::e_double)
+            if (m_type != ArgType::Double)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -428,7 +432,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(std::string defaultArg)
         {
-            if (m_type != ArgTypeCast::e_String)
+            if (m_type != ArgType::String)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -442,7 +446,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(const std::vector<bool>& defaultArg)
         {
-            if (m_type != ArgTypeCast::e_bool)
+            if (m_type != ArgType::Bool)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -456,7 +460,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(const std::vector<int>& defaultArg)
         {
-            if (m_type != ArgTypeCast::e_int)
+            if (m_type != ArgType::Int)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -470,7 +474,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(const std::vector<long long>& defaultArg)
         {
-            if (m_type != ArgTypeCast::e_longlong)
+            if (m_type != ArgType::LongLong)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -484,7 +488,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(const std::vector<double>& defaultArg)
         {
-            if (m_type != ArgTypeCast::e_double)
+            if (m_type != ArgType::Double)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -498,7 +502,7 @@ namespace qor { namespace app {
         /// @return reference to current argument
         Argument& SetDefault(const std::vector<std::string>& defaultArg)
         {
-            if (m_type != ArgTypeCast::e_String)
+            if (m_type != ArgType::String)
             {
                 throw std::runtime_error("wrong type");
             }
@@ -557,9 +561,15 @@ namespace qor { namespace app {
             }
         }
 
+        void* GetTarget()
+        {
+            return m_target;
+        }
+
     private:
         /// @brief type-erased sink installed by BindTo(...); empty when unbound
         std::function<void(const ParsedArgument&)> m_binding = nullptr;
+        void* m_target{nullptr};
 
         bool                     m_hasDefault = false;
         std::vector<bool>        m_defaultBool = {};

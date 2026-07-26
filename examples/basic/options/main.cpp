@@ -17,15 +17,20 @@ int main(const int argc, const char** argv, char** env)
 {    
     return AppBuilder().Build<OptionsApp>(                      //We parameterise the Build function with our custom application type
         OptionsApp::Name,
-        [argc,argv,env](ref_of<OptionsApp>::type app)           //Pass a configuration function for the application to the builder
-        {                                                       //capturing the arguments to main so we can pass them to the OptionGetter
-                                                                //Parse the options from the command line and pass them to the OptionsApp
-            OptionGetter options(argc, argv, app(qor_shared));
+        [argc,argv](ref_of<OptionsApp>::type app)               //Pass a configuration function for the application to the builder
+        {                                                       //capturing the arguments to main so we can pass them to the argument parser
+            app(qor_shared).ParseArgs(argc, argv);              //Parse the argument from the command line and pass them to the OptionsApp
         }
-    )(qor_unlocked).Run(
+    )(qor_unlocked).Run(                                        //Unlock the OptionsApp and Run a simple lambda
         []()->int
         {            
-            std::cout << GetApplication<OptionsApp>(qor_shared)->GetFileName() << std::endl;
+            auto app = GetApplication<OptionsApp>();
+            std::cout << "File name: " << app(qor_shared).GetFileName() << std::endl;
+            long long orderNumber = app(qor_shared).GetOrder();
+            if( orderNumber != 0)
+            {
+                std::cout << "Optional Order Number: " << orderNumber << std::endl;
+            }
             return EXIT_SUCCESS;
         }
     );

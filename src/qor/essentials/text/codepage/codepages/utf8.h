@@ -8,16 +8,16 @@
 
 namespace qor{
 
-	class UTF8CodePage : public CodePage< char8_t, Mib::UTF8 >
+	class qor_pp_module_interface_gcc(QOR_TEXT) UTF8CodePage : public CodePage< char8_t, Mib::UTF8 >
 	{
 	public:
 
-		UTF8CodePage();
+		qor_pp_module_interface(QOR_TEXT) UTF8CodePage();
 		UTF8CodePage& operator = (const UTF8CodePage&) = delete;
-		virtual ~UTF8CodePage() = default;
+		qor_pp_module_interface(QOR_TEXT) virtual ~UTF8CodePage();
 
-		virtual bool Encode(const CodePoint & codePoint, char8_t*& space, size_t& available) const override;
-		virtual CodePoint Decode(const char8_t*& chars, size_t& available) const override;
+		qor_pp_module_interface(QOR_TEXT) virtual bool Encode(const CodePoint & codePoint, char8_t*& space, size_t& available) const override;
+		qor_pp_module_interface(QOR_TEXT) virtual CodePoint Decode(const char8_t*& chars, size_t& available) const override;
     };
 
 	template<>

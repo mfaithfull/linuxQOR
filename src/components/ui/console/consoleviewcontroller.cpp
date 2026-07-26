@@ -43,7 +43,7 @@ namespace qor { namespace components {
         bool handled = false;   
         //Process the input
         //Check for Overall view level intercepts for modifying the view itself
-        if( input == "\\")
+        if( input == _TXT("\\"))
         {
             /*push a layer onto the basic layers widget that contains a menu widget for modifying the view parameters*/
             handled = true;

@@ -13,8 +13,8 @@ namespace qor { namespace app {
     /// Short name could be auto-generated if possible when m_allowAbbrev in ParsedArgument set to true)
     /// @param longName Full name of argument
     /// @param argsCount Count of arguments
-    /// (use kFromOneToInfiniteArgCount or kAnyArgCount for various arguments count)
-    /// @param argType e_String, e_int, e_longlong, e_double, e_bool
+    /// (use ArgCountOneOrMore or ArgCountZeroOrMore for various arguments count)
+    /// @param argType String, Int, LongLong, Double, Bool
     /// @param required Marker if argument should be passed or ignored if missed.
     /// @param help Initial part of help for current argument in case of auto-generated help.
     /// @return instance of Argument
@@ -23,7 +23,7 @@ namespace qor { namespace app {
     inline Argument CreateNamedArgument(const std::string& shortName = "",
         const std::string& longName = "",
         const int argsCount = 1,
-        ArgTypeCast argType = ArgTypeCast::e_String,
+        ArgType argType = ArgType::String,
         const bool required = true,
         const std::string& help = "")
     {
@@ -36,8 +36,8 @@ namespace qor { namespace app {
     /// @code
     ///   parser.AddArgument(argparse::CreateNamedArgument({
     ///       .longName = "numbers",
-    ///       .nargs    = argparse::kFromOneToInfiniteArgCount,
-    ///       .type     = argparse::ArgTypeCast::e_int,
+    ///       .nargs    = argparse::ArgCountOneOrMore,
+    ///       .type     = argparse::ArgType::Int,
     ///       .required = false,
     ///       .help     = "some numbers"}));
     /// @endcode
@@ -47,9 +47,10 @@ namespace qor { namespace app {
         std::string shortName = "";
         std::string longName = "";
         int nargs = 1;
-        ArgTypeCast type = ArgTypeCast::e_String;
+        ArgType type = ArgType::String;
         bool required = true;
         std::string help = "";
+        void* target{nullptr};
     };
 
     /// @brief Keyword-style factory for a named argument. See NamedArgSpec.
@@ -58,7 +59,7 @@ namespace qor { namespace app {
     inline Argument CreateNamedArgument(const NamedArgSpec& spec)
     {
         return Argument::CreateNamedArgument(spec.shortName, spec.longName,
-            spec.nargs, spec.type, spec.required, spec.help);
+            spec.nargs, spec.type, spec.required, spec.help, spec.target);
     }
 
 }}//qor::app

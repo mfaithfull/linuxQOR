@@ -86,6 +86,8 @@ namespace qor
 {
 	UTF8CodePage::UTF8CodePage() : CodePage("UTF-8", "UTF-8", aliases, 1){ }
 	
+	UTF8CodePage::~UTF8CodePage() = default;
+
 	uint8_t GetEncodedLength(CodePoint& cp)
 	{
 		uint8_t encoded_length;

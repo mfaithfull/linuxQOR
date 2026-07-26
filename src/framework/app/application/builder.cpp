@@ -12,7 +12,7 @@ namespace qor{
     ref_of<Application>::type AppBuilder::Build(const std::string& name)
     {
         auto application = new_ref<Application>();
-        application(qor_shared).Name() = name;
+        application(qor_shared).SetName(name);
         return application;
     }
 

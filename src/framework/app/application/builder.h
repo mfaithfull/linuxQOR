@@ -30,7 +30,7 @@ namespace qor{
             auto app = new_ref<AppClass>();
             auto application = app.template AsRef<Application>();
             AutoRedirect(application);            
-            application.template AsRef<Application>()(qor_shared).Name() = appName;
+            application.template AsRef<Application>()(qor_shared).SetName(appName);
             return app;
         }
 
@@ -39,7 +39,7 @@ namespace qor{
         {
             auto app = new_ref<AppClass>();
             AutoRedirect(app.template AsRef<Application>());                        
-            app.template AsRef<Application>()(qor_shared).Name() = appName;
+            app.template AsRef<Application>()(qor_shared).SetName(appName);
             try
             {
                 config_function(app);

@@ -11,15 +11,15 @@ namespace qor { namespace app {
     /// @brief Helper function to create positional argument
     /// @param positionalName Name of positional argument to access from code.
     /// @param argsCount Count of arguments
-    /// (use kFromOneToInfiniteArgCount or kAnyArgCount for various arguments count)
-    /// @param argType e_String, e_int, e_longlong, e_double, e_bool
+    /// (use ArgCountOneOrMore or ArgCountZeroOrMore for various arguments count)
+    /// @param argType String, Int, LongLong, Double, Bool
     /// @param required Marker if argument should be passed or ignored if missed.
     /// @param help Initial part of help for current argument in case of auto-generated help.
     /// @return instance of Argument
     /// @note inline: see CreateNamedArgument -- required for multi-TU inclusion.
     inline Argument CreatePositionalArgument(const std::string& positionalName = "",
         const int argsCount = 1,
-        ArgTypeCast argType = ArgTypeCast::e_String,
+        ArgType argType = ArgType::String,
         const bool required = true,
         const std::string& help = "")
     {
@@ -32,9 +32,10 @@ namespace qor { namespace app {
     {
         std::string name = "";
         int nargs = 1;
-        ArgTypeCast type = ArgTypeCast::e_String;
+        ArgType type = ArgType::String;
         bool required = true;
         std::string help = "";
+        void* target{nullptr};
     };
 
     /// @brief Keyword-style factory for a positional argument. See PositionalArgSpec.
@@ -43,7 +44,7 @@ namespace qor { namespace app {
     inline Argument CreatePositionalArgument(const PositionalArgSpec& spec)
     {
         return Argument::CreatePositionalArgument(spec.name, spec.nargs,
-            spec.type, spec.required, spec.help);
+            spec.type, spec.required, spec.help, spec.target);
     }
 
 }}//qor::app

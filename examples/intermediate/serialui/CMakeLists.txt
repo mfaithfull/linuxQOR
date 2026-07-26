@@ -9,7 +9,7 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 set(qor_libraries qor_module qor_host qor_compiler 
-qor_platform qor_application qor_current qor_thread qor_role qor_optionparser qor_error qor_terminal qor_log qor_logaggregator qor_loghandler)
+qor_platform qor_application qor_current qor_thread qor_role qor_error qor_terminal qor_log qor_logaggregator qor_loghandler)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} ${qor_libraries}

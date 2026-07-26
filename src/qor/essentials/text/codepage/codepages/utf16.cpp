@@ -13,6 +13,8 @@ namespace qor
 {
 	UTF16CodePage::UTF16CodePage() : CodePage("UTF-16", "UTF-16", aliases, 1){ }
 	
+	UTF16CodePage::~UTF16CodePage() = default;
+	
 	bool UTF16CodePage::Encode(const CodePoint & codePoint, char16_t*& space, size_t& available) const
 	{
 		if(available < 1 || space == nullptr)

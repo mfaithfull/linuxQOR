@@ -16,7 +16,7 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 set(qor_libraries qor_compiler qor_module qor_host qor_reporting
 qor_thread qor_interception qor_injection qor_sync qor_text qor_issue qor_error qor_log qor_signals 
-qor_pipeline qor_workflow qor_role qor_application qor_optionparser qor_filesystem 
+qor_pipeline qor_workflow qor_role qor_application qor_filesystem 
 qor_log qor_loghandler qor_logaggregator
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_console)
 

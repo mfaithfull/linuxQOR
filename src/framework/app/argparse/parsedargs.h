@@ -82,27 +82,27 @@ namespace qor{ namespace app {
             arg.m_exists = true;
             arg.m_type = argObj.m_type;
 
-            if (argObj.m_type == ArgTypeCast::e_String)
+            if (argObj.m_type == ArgType::String)
             {
                 arg.m_string = argObj.m_defaultString;
                 arg.m_count = argObj.m_defaultString.size();
             }
-            else if (argObj.m_type == ArgTypeCast::e_bool)
+            else if (argObj.m_type == ArgType::Bool)
             {
                 arg.m_bool = argObj.m_defaultBool;
                 arg.m_count = argObj.m_defaultBool.size();
             }
-            else if (argObj.m_type == ArgTypeCast::e_double)
+            else if (argObj.m_type == ArgType::Double)
             {
                 arg.m_double = argObj.m_defaultDouble;
                 arg.m_count = argObj.m_defaultDouble.size();
             }
-            else if (argObj.m_type == ArgTypeCast::e_longlong)
+            else if (argObj.m_type == ArgType::LongLong)
             {
                 arg.m_longLong = argObj.m_defaultLongLong;
                 arg.m_count = argObj.m_defaultLongLong.size();
             }
-            else if (argObj.m_type == ArgTypeCast::e_int)
+            else if (argObj.m_type == ArgType::Int)
             {
                 arg.m_int = argObj.m_defaultInt;
                 arg.m_count = argObj.m_defaultInt.size();
@@ -182,7 +182,7 @@ namespace qor{ namespace app {
                 return true;
             }
 
-            if (argument->second.m_type == ArgTypeCast::e_String)
+            if (argument->second.m_type == ArgType::String)
             {
                 if (argObj.m_nargs != 0)
                 {
@@ -198,14 +198,14 @@ namespace qor{ namespace app {
                             return InvalidateArgsOutOfChoice(argObj, token);
                         }
                     }
-                    argument->second.m_string.push_back(token);
+                    argument->second.m_string.push_back(token);                    
                 }
                 else
                 {
                     return InvalidateArgsTooMany(argObj);
                 }
             }
-            else if (argument->second.m_type == ArgTypeCast::e_bool)
+            else if (argument->second.m_type == ArgType::Bool)
             {
                 if (argObj.m_nargs != 0)
                 {
@@ -227,7 +227,7 @@ namespace qor{ namespace app {
                     return InvalidateArgsTooMany(argObj);
                 }
             }
-            else if (argument->second.m_type == ArgTypeCast::e_int)
+            else if (argument->second.m_type == ArgType::Int)
             {
                 if (argObj.m_nargs != 0)
                 {
@@ -267,7 +267,7 @@ namespace qor{ namespace app {
                     return InvalidateArgsTooMany(argObj);
                 }
             }
-            else if (argument->second.m_type == ArgTypeCast::e_longlong)
+            else if (argument->second.m_type == ArgType::LongLong)
             {
                 if (argObj.m_nargs != 0)
                 {
@@ -307,7 +307,7 @@ namespace qor{ namespace app {
                     return InvalidateArgsTooMany(argObj);
                 }
             }
-            else if (argument->second.m_type == ArgTypeCast::e_double)
+            else if (argument->second.m_type == ArgType::Double)
             {
                 if (argObj.m_nargs != 0)
                 {

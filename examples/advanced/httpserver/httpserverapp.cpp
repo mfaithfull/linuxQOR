@@ -47,8 +47,8 @@ int main(const int argc, const char** argv, char** env)
             ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
             ThePlatform(qor_shared)->AddSubsystem<Sockets>();
 
-            app::OptionGetter options(argc, argv, server(qor_shared));
-
+            server(qor_shared).ParseArgs(argc, argv);
+            
             server(qor_shared).SetRole<Role>(
                 [](ref_of<IRole>::type role)
                 {

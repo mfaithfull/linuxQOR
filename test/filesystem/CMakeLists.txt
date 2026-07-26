@@ -12,7 +12,7 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 set(qor_libraries qor_module qor_compiler qor_host qor_arch qor_thread qor_current
 qor_injection qor_sync qor_text qor_issue qor_error qor_log qor_reporting qor_pipeline qor_platform
-qor_loghandler qor_logaggregator qor_filesystem qor_asyncioservice qor_application qor_role qor_optionparser)
+qor_loghandler qor_logaggregator qor_filesystem qor_asyncioservice qor_application qor_role)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} ${qor_libraries} linqor_filesystem linqor_thread 

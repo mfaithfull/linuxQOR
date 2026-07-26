@@ -84,7 +84,7 @@ const std::vector<NamedArgSpec> PseudoApplication::namedArgs = {{
         "option",
         "",
         1,
-        ArgTypeCast::e_String,
+        ArgType::String,
         false,
         "This should be an optional -option option."
     }
@@ -94,7 +94,7 @@ const std::vector<PositionalArgSpec> PseudoApplication::positionalArgs = {{
     {
         "first",
         1,
-        ArgTypeCast::e_String,
+        ArgType::String,
         true,
         "Whatever is passed first ends up here"
     }    

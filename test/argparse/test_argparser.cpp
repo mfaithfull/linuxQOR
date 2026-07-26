@@ -22,7 +22,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_named_int_vector)
     parser.AddArgument(CreateNamedArgument()
         .SetLongName("numbers")
         .SetAnyNumberOfArgumentsButAtLeastOne()
-        .SetType(ArgTypeCast::e_int));
+        .SetType(ArgType::Int));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "--numbers", "1", "2", "3" });
     qor_pp_assert_that(obj.IsArgValid());
@@ -40,7 +40,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_short_name_alias)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("n", "numbers",
-        kFromOneToInfiniteArgCount, ArgTypeCast::e_int));
+        ArgCountOneOrMore, ArgType::Int));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "-n", "42" });
     qor_pp_assert_that(obj.IsArgValid());
@@ -52,7 +52,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_single_required_value)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("b", "b_key", 1,
-        ArgTypeCast::e_int, true));
+        ArgType::Int, true));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "-b", "7" });
     qor_pp_assert_that(obj.IsArgValid());
@@ -64,7 +64,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_missing_required_is_invalid)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("b", "b_key", 1,
-        ArgTypeCast::e_int, true));
+        ArgType::Int, true));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{});
     qor_pp_assert_that(!obj.IsArgValid());
@@ -76,7 +76,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_positional_argument)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreatePositionalArgument("int1")
-        .SetType(ArgTypeCast::e_int)
+        .SetType(ArgType::Int)
         .SetRequired(false));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "123" });
@@ -112,7 +112,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_positional_doubles)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreatePositionalArgument("nums")
-        .SetType(ArgTypeCast::e_double)
+        .SetType(ArgType::Double)
         .SetNumberOfArguments(2));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "1.5", "2.5" });
@@ -128,7 +128,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_unknown_argument_is_invalid)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("n", "numbers", 1,
-        ArgTypeCast::e_int, false));
+        ArgType::Int, false));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "--nonexistent", "1" });
     qor_pp_assert_that(!obj.IsArgValid());
@@ -139,7 +139,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_help_generation)
 {
     auto parser = ArgumentParser("prog").SetDescription("desc");
     parser.AddArgument(CreateNamedArgument("n", "numbers", 1,
-        ArgTypeCast::e_int, false, "a number"));
+        ArgType::Int, false, "a number"));
 
     std::string help = parser.GetUsage(80);
     qor_pp_assert_that(!help.empty());
@@ -167,7 +167,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_default_value)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("j", "jobs", 1,
-        ArgTypeCast::e_int, false).SetDefault(4));
+        ArgType::Int, false).SetDefault(4));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{});
     qor_pp_assert_that(obj.IsArgValid());
@@ -182,7 +182,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_required_by_default)
     auto parser = ArgumentParser("prog");
     // No SetRequired(false): this named argument is required by default.
     parser.AddArgument(CreateNamedArgument("n", "name", 1,
-        ArgTypeCast::e_String));
+        ArgType::String));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{});
     qor_pp_assert_that(!obj.IsArgValid());
@@ -218,12 +218,12 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_mixed_positional_and_named)
     qor_pp_assert_that(obj.GetArg("force").GetArgumentExists());
 }
 
-// kAnyArgCount accepts zero or more values.
+// ArgCountZeroOrMore accepts zero or more values.
 qor_pp_test_suite_case(ArgParserTestSuite, test_any_arg_count)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("n", "nums",
-        kAnyArgCount, ArgTypeCast::e_int, false));
+        ArgCountZeroOrMore, ArgType::Int, false));
 
     auto many = parser.ParseArgs(std::vector<std::string>{ "--nums", "1", "2", "3" });
     qor_pp_assert_that(many.IsArgValid());
@@ -238,7 +238,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_custom_prefix)
 {
     auto parser = ArgumentParser("prog").SetPrefixChars('+');
     parser.AddArgument(CreateNamedArgument("n", "num", 1,
-        ArgTypeCast::e_int, true));
+        ArgType::Int, true));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "++num", "5" });
     qor_pp_assert_that(obj.IsArgValid());
@@ -250,7 +250,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_ignore_unknown_args)
 {
     auto parser = ArgumentParser("prog").SetIgnoreUnknownArgs(true);
     parser.AddArgument(CreateNamedArgument("n", "num", 1,
-        ArgTypeCast::e_int, false));
+        ArgType::Int, false));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "--num", "1", "--bogus", "2" });
     qor_pp_assert_that(obj.IsArgValid());
@@ -262,7 +262,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_bool_parsing)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("b", "bits",
-        kFromOneToInfiniteArgCount, ArgTypeCast::e_bool, false));
+        ArgCountOneOrMore, ArgType::Bool, false));
 
     auto ok = parser.ParseArgs(std::vector<std::string>{ "--bits", "true", "False", "TRUE" });
     qor_pp_assert_that(ok.IsArgValid());
@@ -280,7 +280,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_longlong_choices)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("x", "xval", 1,
-        ArgTypeCast::e_longlong, true)
+        ArgType::LongLong, true)
         .SetChoices(std::vector<long long>{ 10, 20, 30 }));
 
     auto ok = parser.ParseArgs(std::vector<std::string>{ "--xval", "20" });
@@ -298,7 +298,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_getters_do_not_dangle)
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreatePositionalArgument("name"));
     parser.AddArgument(CreateNamedArgument("n", "nums",
-        kFromOneToInfiniteArgCount, ArgTypeCast::e_int, false));
+        ArgCountOneOrMore, ArgType::Int, false));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "hello", "--nums", "1", "2" });
     qor_pp_assert_that(obj.IsArgValid());
@@ -316,7 +316,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_getter_throws_when_empty)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("n", "num", 1,
-        ArgTypeCast::e_int, false));
+        ArgType::Int, false));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{}); // num absent
     auto num = obj.GetArg("num");
@@ -328,12 +328,12 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_getter_throws_when_empty)
     qor_pp_assert_that(threw);
 }
 
-// The correctly-spelled kFromOneToInfiniteArgCount constant means "one or more".
+// The correctly-spelled ArgCountOneOrMore constant means "one or more".
 qor_pp_test_suite_case(ArgParserTestSuite, test_from_one_to_infinite_constant)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("n", "nums",
-        kFromOneToInfiniteArgCount, ArgTypeCast::e_int, false));
+        ArgCountOneOrMore, ArgType::Int, false));
 
     // At least one value is accepted...
     auto many = parser.ParseArgs(std::vector<std::string>{ "--nums", "1", "2" });
@@ -351,7 +351,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_set_usage_override)
     auto parser = ArgumentParser("tool").SetDescription("d")
         .SetUsage("tool [OPTIONS] FILE");
     parser.AddArgument(CreateNamedArgument("n", "name", 1,
-        ArgTypeCast::e_String, false));
+        ArgType::String, false));
 
     std::string help = parser.GetUsage(80);
     qor_pp_assert_that(help.find("tool [OPTIONS] FILE") != std::string::npos);
@@ -366,7 +366,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_long_only_no_leading_comma)
 {
     auto parser = ArgumentParser("prog").SetAllowAbbrev(false);
     parser.AddArgument(CreateNamedArgument("", "verbose", 0,
-        ArgTypeCast::e_String, false));
+        ArgType::String, false));
 
     std::string help = parser.GetUsage(80);
     qor_pp_assert_that(help.find("--verbose") != std::string::npos);
@@ -379,7 +379,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_abbrev_generates_short_name)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("", "numbers", 1,
-        ArgTypeCast::e_int, false));
+        ArgType::Int, false));
 
     // Generated "-n" parses like the explicit long name.
     auto obj = parser.ParseArgs(std::vector<std::string>{ "-n", "7" });
@@ -397,11 +397,11 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_abbrev_generation_avoids_collisi
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("n", "name", 1,
-        ArgTypeCast::e_String, false));   // explicit -n
+        ArgType::String, false));   // explicit -n
     parser.AddArgument(CreateNamedArgument("", "numbers", 1,
-        ArgTypeCast::e_int, false));      // 'n' taken -> 'u'
+        ArgType::Int, false));      // 'n' taken -> 'u'
     parser.AddArgument(CreateNamedArgument("", "host", 1,
-        ArgTypeCast::e_String, false));   // 'h' reserved -> 'o'
+        ArgType::String, false));   // 'h' reserved -> 'o'
 
     std::string help = parser.GetUsage(80);
     qor_pp_assert_that(help.find("-u,--numbers") != std::string::npos);
@@ -415,7 +415,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_bool_scalar)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("d", "debug", 1,
-        ArgTypeCast::e_bool, false));
+        ArgType::Bool, false));
 
     auto on = parser.ParseArgs(std::vector<std::string>{ "--debug", "true" });
     qor_pp_assert_that(on.IsArgValid());
@@ -431,9 +431,9 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_abbrev_unambiguous)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("", "verbose", 0,
-        ArgTypeCast::e_String, false));
+        ArgType::String, false));
     parser.AddArgument(CreateNamedArgument("", "output", 1,
-        ArgTypeCast::e_String, false));
+        ArgType::String, false));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "--verb", "--out", "f.txt" });
     qor_pp_assert_that(obj.IsArgValid());
@@ -447,9 +447,9 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_abbrev_ambiguous)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("", "verbose", 0,
-        ArgTypeCast::e_String, false));
+        ArgType::String, false));
     parser.AddArgument(CreateNamedArgument("", "version", 0,
-        ArgTypeCast::e_String, false));
+        ArgType::String, false));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "--ver" });
     qor_pp_assert_that(!obj.IsArgValid());
@@ -461,7 +461,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_abbrev_disabled)
 {
     auto parser = ArgumentParser("prog").SetAllowAbbrev(false);
     parser.AddArgument(CreateNamedArgument("", "verbose", 0,
-        ArgTypeCast::e_String, false));
+        ArgType::String, false));
 
     auto obj = parser.ParseArgs(std::vector<std::string>{ "--verb" });
     qor_pp_assert_that(!obj.IsArgValid());
@@ -472,9 +472,9 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_abbrev_exact_match_wins)
 {
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument("", "ver", 0,
-        ArgTypeCast::e_String, false));
+        ArgType::String, false));
     parser.AddArgument(CreateNamedArgument("", "verbose", 0,
-        ArgTypeCast::e_String, false));
+        ArgType::String, false));
 
     // "--ver" is an exact name AND a prefix of "--verbose"; exact must win.
     auto obj = parser.ParseArgs(std::vector<std::string>{ "--ver" });
@@ -489,7 +489,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_help_formatting)
     parser.AddArgument(CreateNamedArgument("v", "verbose")
         .SetArgumentIsFlag().SetRequired(false));
     parser.AddArgument(CreateNamedArgument("j", "jobs", 1,
-        ArgTypeCast::e_int, false));
+        ArgType::Int, false));
 
     std::string help = parser.GetUsage(80);
 
@@ -510,8 +510,8 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_spec_struct_named_and_positional
 
     NamedArgSpec numsSpec;
     numsSpec.longName = "nums";
-    numsSpec.nargs = kFromOneToInfiniteArgCount;
-    numsSpec.type = ArgTypeCast::e_int;
+    numsSpec.nargs = ArgCountOneOrMore;
+    numsSpec.type = ArgType::Int;
     numsSpec.required = false;
     parser.AddArgument(CreateNamedArgument(numsSpec));
 
@@ -535,8 +535,8 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_designated_initializers_cpp20)
     auto parser = ArgumentParser("prog");
     parser.AddArgument(CreateNamedArgument({
         .longName = "numbers",
-        .nargs    = kFromOneToInfiniteArgCount,
-        .type     = ArgTypeCast::e_int,
+        .nargs    = ArgCountOneOrMore,
+        .type     = ArgType::Int,
         .required = false,
         .help     = "some numbers"}));
     parser.AddArgument(CreatePositionalArgument({
@@ -576,7 +576,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_bind_infers_type)
 {
     int count = 0;
     auto parser = ArgumentParser("prog");
-    // No SetType call: BindTo(int*) must set the type to e_int so "7" parses
+    // No SetType call: BindTo(int*) must set the type to Int so "7" parses
     // as an int rather than staying a string.
     parser.AddArgument(CreateNamedArgument("c", "count", 1).BindTo(&count));
 
@@ -635,7 +635,7 @@ qor_pp_test_suite_case(ArgParserTestSuite, test_bind_not_applied_on_parse_failur
     auto parser = ArgumentParser("prog");
     // Required argument that we will NOT supply, forcing an invalid parse.
     parser.AddArgument(CreateNamedArgument("r", "req", 1)
-        .SetType(ArgTypeCast::e_int));
+        .SetType(ArgType::Int));
     parser.AddArgument(CreateNamedArgument("b", "bound", 1)
         .SetRequired(false)
         .BindTo(&bound));

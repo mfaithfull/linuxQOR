@@ -270,7 +270,7 @@ namespace qor { namespace components {
         {
             return;
         }
-        m_console->WriteLine("\r\n");
+        m_console->WriteLine(_TXT("\r\n"));
         for(int line = 0; line < m_buffer->GetHeight(); ++line)
         {
             string_t lineToWrite;

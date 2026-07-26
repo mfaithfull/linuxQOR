@@ -35,11 +35,61 @@ namespace qor { namespace app {
             }
             for(auto namedArg : argumented.NamedArguments())
             {
-                AddArgument(CreateNamedArgument(namedArg));
+                auto arg = CreateNamedArgument(namedArg);
+                AutoBind(arg);
+                AddArgument(arg);
             }
             for(auto positionalArg : argumented.PositionalArguments())
             {
-                AddArgument(CreatePositionalArgument(positionalArg));
+                auto arg = CreatePositionalArgument(positionalArg);
+                AutoBind(arg);
+                AddArgument(arg);
+            }
+        }
+
+        void AutoBind(Argument& arg)
+        {
+            if(arg.m_nargs == 1 && arg.GetTarget() != nullptr)
+            {
+                switch(arg.m_type)
+                {
+                case ArgType::String:
+                    arg.BindTo(reinterpret_cast<std::string*>(arg.GetTarget()));
+                    break;
+                case ArgType::LongLong:
+                    arg.BindTo(reinterpret_cast<long long*>(arg.GetTarget()));
+                    break;
+                case ArgType::Int:
+                    arg.BindTo(reinterpret_cast<int*>(arg.GetTarget()));
+                    break;
+                case ArgType::Double:
+                    arg.BindTo(reinterpret_cast<double*>(arg.GetTarget()));
+                    break;
+                case ArgType::Bool:
+                    arg.BindTo(reinterpret_cast<bool*>(arg.GetTarget()));
+                    break;
+                }
+            }       
+            else
+            {
+                switch(arg.m_type)
+                {
+                case ArgType::String:
+                    arg.BindTo(reinterpret_cast<std::vector<std::string>*>(arg.GetTarget()));
+                    break;
+                case ArgType::LongLong:
+                    arg.BindTo(reinterpret_cast<std::vector<long long>*>(arg.GetTarget()));
+                    break;
+                case ArgType::Int:
+                    arg.BindTo(reinterpret_cast<std::vector<int>*>(arg.GetTarget()));
+                    break;
+                case ArgType::Double:
+                    arg.BindTo(reinterpret_cast<std::vector<double>*>(arg.GetTarget()));
+                    break;
+                case ArgType::Bool:
+                    arg.BindTo(reinterpret_cast<std::vector<bool>*>(arg.GetTarget()));
+                    break;
+                }
             }
         }
 
@@ -134,23 +184,23 @@ namespace qor { namespace app {
             }
             else if (arg.m_choicesDouble.size() + arg.m_choicesInt.size() + arg.m_choicesLongLong.size() + arg.m_choicesString.size())
             {
-                if (arg.m_type == ArgTypeCast::e_bool)
+                if (arg.m_type == ArgType::Bool)
                 {
                     throw std::runtime_error("No need to declare choice for bool type");
                 }
-                else if (arg.m_type == ArgTypeCast::e_int && arg.m_choicesDouble.size() + arg.m_choicesLongLong.size() + arg.m_choicesString.size())
+                else if (arg.m_type == ArgType::Int && arg.m_choicesDouble.size() + arg.m_choicesLongLong.size() + arg.m_choicesString.size())
                 {
                     throw std::runtime_error("Only int choices should been declared");
                 }
-                else if (arg.m_type == ArgTypeCast::e_longlong && arg.m_choicesDouble.size() + arg.m_choicesInt.size() + arg.m_choicesString.size())
+                else if (arg.m_type == ArgType::LongLong && arg.m_choicesDouble.size() + arg.m_choicesInt.size() + arg.m_choicesString.size())
                 {
                     throw std::runtime_error("Only long long choices should been declared");
                 }
-                else if (arg.m_type == ArgTypeCast::e_double && arg.m_choicesInt.size() + arg.m_choicesLongLong.size() + arg.m_choicesString.size())
+                else if (arg.m_type == ArgType::Double && arg.m_choicesInt.size() + arg.m_choicesLongLong.size() + arg.m_choicesString.size())
                 {
                     throw std::runtime_error("Only double choices should been declared");
                 }
-                else if (arg.m_type == ArgTypeCast::e_String && arg.m_choicesInt.size() + arg.m_choicesLongLong.size() + arg.m_choicesDouble.size())
+                else if (arg.m_type == ArgType::String && arg.m_choicesInt.size() + arg.m_choicesLongLong.size() + arg.m_choicesDouble.size())
                 {
                     throw std::runtime_error("Only string choices should been declared");
                 }
@@ -306,8 +356,8 @@ namespace qor { namespace app {
                 {
                     if (m_arguments[el.positionInArguments].m_required)
                     {
-                        minimumRequiredPositionalCount += m_arguments[el.positionInArguments].m_nargs == kFromOneToInfiniteArgCount ? 1 : m_arguments[el.positionInArguments].m_nargs;
-                        infiniteRequiredPositionalCount = m_arguments[el.positionInArguments].m_nargs == kFromOneToInfiniteArgCount;
+                        minimumRequiredPositionalCount += m_arguments[el.positionInArguments].m_nargs == ArgCountOneOrMore ? 1 : m_arguments[el.positionInArguments].m_nargs;
+                        infiniteRequiredPositionalCount = m_arguments[el.positionInArguments].m_nargs == ArgCountOneOrMore;
                     }
                     else
                     {
@@ -350,7 +400,7 @@ namespace qor { namespace app {
                     if (m_arguments[el.positionInArguments].m_required)
                     {
 
-                        if (m_arguments[el.positionInArguments].m_nargs != kFromOneToInfiniteArgCount)
+                        if (m_arguments[el.positionInArguments].m_nargs != ArgCountOneOrMore)
                         {
                             for (size_t i = 0; i < static_cast<size_t>(m_arguments[el.positionInArguments].m_nargs); ++i)
                             {
@@ -401,8 +451,8 @@ namespace qor { namespace app {
                 if (parsedArg.GetArgumentExists())
                 {
                     if (static_cast<int>(parsedArg.GetArgumentCount()) == el.m_nargs
-                        || el.m_nargs == kAnyArgCount
-                        || (el.m_nargs == kFromOneToInfiniteArgCount && parsedArg.GetArgumentCount() >= 1))
+                        || el.m_nargs == ArgCountZeroOrMore
+                        || (el.m_nargs == ArgCountOneOrMore && parsedArg.GetArgumentCount() >= 1))
                     {
                         continue;
                     }
@@ -723,7 +773,7 @@ namespace qor { namespace app {
                 {
                     m_positionalArgumentNames.emplace_back(m_arguments.size(), arg.m_positionalName);
                 }
-                else if (arg.m_required && (arg.m_nargs == 0 || arg.m_nargs == kAnyArgCount))
+                else if (arg.m_required && (arg.m_nargs == 0 || arg.m_nargs == ArgCountZeroOrMore))
                 {
                     throw std::runtime_error("Required positional argument with name \"" + arg.m_positionalName + "\" cannot be with zero count");
                 }
@@ -753,19 +803,19 @@ namespace qor { namespace app {
             if (arg.m_choicesDouble.size() + arg.m_choicesInt.size() + arg.m_choicesLongLong.size() + arg.m_choicesString.size())
             {
                 showName << "{";
-                if (arg.m_type == ArgTypeCast::e_String)
+                if (arg.m_type == ArgType::String)
                 {
                     MakeChoicesToString<std::string>(showName, arg.m_choicesString);
                 }
-                else if (arg.m_type == ArgTypeCast::e_int)
+                else if (arg.m_type == ArgType::Int)
                 {
                     MakeChoicesToString<int>(showName, arg.m_choicesInt);
                 }
-                else if (arg.m_type == ArgTypeCast::e_double)
+                else if (arg.m_type == ArgType::Double)
                 {
                     MakeChoicesToString<double>(showName, arg.m_choicesDouble);
                 }
-                else if (arg.m_type == ArgTypeCast::e_longlong)
+                else if (arg.m_type == ArgType::LongLong)
                 {
                     MakeChoicesToString<long long>(showName, arg.m_choicesLongLong);
                 }
@@ -804,11 +854,11 @@ namespace qor { namespace app {
                 usage << m_prefix << m_prefix << arg.m_longName;
             }
 
-            if (arg.m_nargs == kAnyArgCount)
+            if (arg.m_nargs == ArgCountZeroOrMore)
             {
                 usage << " [" << showName.str() << "[" << showName.str() << " ...]]";
             }
-            else if (arg.m_nargs == kFromOneToInfiniteArgCount)
+            else if (arg.m_nargs == ArgCountOneOrMore)
             {
                 usage << " [" << showName.str() << " ...]";
             }
@@ -847,19 +897,19 @@ namespace qor { namespace app {
                 if (arg.m_choicesDouble.size() + arg.m_choicesInt.size() + arg.m_choicesLongLong.size() + arg.m_choicesString.size())
                 {
                     showName << "{";
-                    if (arg.m_type == ArgTypeCast::e_String)
+                    if (arg.m_type == ArgType::String)
                     {
                         MakeChoicesToString<std::string>(showName, arg.m_choicesString);
                     }
-                    else if (arg.m_type == ArgTypeCast::e_int)
+                    else if (arg.m_type == ArgType::Int)
                     {
                         MakeChoicesToString<int>(showName, arg.m_choicesInt);
                     }
-                    else if (arg.m_type == ArgTypeCast::e_double)
+                    else if (arg.m_type == ArgType::Double)
                     {
                         MakeChoicesToString<double>(showName, arg.m_choicesDouble);
                     }
-                    else if (arg.m_type == ArgTypeCast::e_longlong)
+                    else if (arg.m_type == ArgType::LongLong)
                     {
                         MakeChoicesToString<long long>(showName, arg.m_choicesLongLong);
                     }
@@ -894,19 +944,19 @@ namespace qor { namespace app {
                 && (arg.m_choicesDouble.size() + arg.m_choicesInt.size() + arg.m_choicesLongLong.size() + arg.m_choicesString.size()))
             {
                 showDesc << " Choices:";
-                if (arg.m_type == ArgTypeCast::e_String)
+                if (arg.m_type == ArgType::String)
                 {
                     MakeChoicesToString<std::string>(showDesc, arg.m_choicesString);
                 }
-                else if (arg.m_type == ArgTypeCast::e_int)
+                else if (arg.m_type == ArgType::Int)
                 {
                     MakeChoicesToString<int>(showDesc, arg.m_choicesInt);
                 }
-                else if (arg.m_type == ArgTypeCast::e_double)
+                else if (arg.m_type == ArgType::Double)
                 {
                     MakeChoicesToString<double>(showDesc, arg.m_choicesDouble);
                 }
-                else if (arg.m_type == ArgTypeCast::e_longlong)
+                else if (arg.m_type == ArgType::LongLong)
                 {
                     MakeChoicesToString<long long>(showDesc, arg.m_choicesLongLong);
                 }
@@ -916,10 +966,10 @@ namespace qor { namespace app {
             showDesc << (arg.m_nargs ? "Args count: " : "");
             switch (arg.m_nargs)
             {
-            case kAnyArgCount:
+            case ArgCountZeroOrMore:
                 showDesc << "any. ";
                 break;
-            case kFromOneToInfiniteArgCount:
+            case ArgCountOneOrMore:
                 showDesc << " at least one. ";
                 break;
             case 0:
@@ -1056,13 +1106,13 @@ namespace qor { namespace app {
         /// actual map which will be used for parsing
         std::map<std::string, KnownNamesStruct> m_knownArgumentNamesInternal;
 
-        std::map<const ArgTypeCast, const std::string> m_enumToString
+        std::map<const ArgType, const std::string> m_enumToString
         {
-            {ArgTypeCast::e_String,     "STRING" },
-            {ArgTypeCast::e_int,        "INT" },
-            {ArgTypeCast::e_longlong,   "LONG_LONG"},
-            {ArgTypeCast::e_double,     "DOUBLE"},
-            {ArgTypeCast::e_bool,       "BOOL"}
+            {ArgType::String,     "STRING" },
+            {ArgType::Int,        "INT" },
+            {ArgType::LongLong,   "LONG_LONG"},
+            {ArgType::Double,     "DOUBLE"},
+            {ArgType::Bool,       "BOOL"}
         };
     };
 

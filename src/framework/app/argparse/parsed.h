@@ -127,35 +127,35 @@ namespace qor { namespace app {
         {
             switch (m_type)
             {
-            case ArgTypeCast::e_String:
+            case ArgType::String:
                 if (m_count == 1)
                 {
                     return m_string.front();
                 }
                 return m_string;
                 break;
-            case ArgTypeCast::e_int:
+            case ArgType::Int:
                 if (m_count == 1)
                 {
                     return m_int.front();
                 }
                 return m_int;
                 break;
-            case ArgTypeCast::e_longlong:
+            case ArgType::LongLong:
                 if (m_count == 1)
                 {
                     return m_longLong.front();
                 }
                 return m_longLong;
                 break;
-            case ArgTypeCast::e_double:
+            case ArgType::Double:
                 if (m_count == 1)
                 {
                     return m_double.front();
                 }
                 return m_double;
                 break;
-            case ArgTypeCast::e_bool:
+            case ArgType::Bool:
             default:
                 if (m_count == 1)
                 {
@@ -188,7 +188,7 @@ namespace qor { namespace app {
         /// @brief flag about is argument exists
         bool        m_exists{ false };
         /// @brief type of argument
-        ArgTypeCast m_type{ ArgTypeCast::e_String };
+        ArgType m_type{ ArgType::String };
         /// @brief count of arguments properties
         size_t      m_count{ 0 };
 
@@ -213,70 +213,70 @@ namespace qor { namespace app {
 
     inline Argument& Argument::BindTo(bool* target)
     {
-        m_type = ArgTypeCast::e_bool;
+        m_type = ArgType::Bool;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsBool(); };
         return *this;
     }
     
     inline Argument& Argument::BindTo(int* target)
     {
-        m_type = ArgTypeCast::e_int;
+        m_type = ArgType::Int;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsInt(); };
         return *this;
     }
 
     inline Argument& Argument::BindTo(long long* target)
     {
-        m_type = ArgTypeCast::e_longlong;
+        m_type = ArgType::LongLong;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsLongLong(); };
         return *this;
     }
 
     inline Argument& Argument::BindTo(double* target)
     {
-        m_type = ArgTypeCast::e_double;
+        m_type = ArgType::Double;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsDouble(); };
         return *this;
     }
 
     inline Argument& Argument::BindTo(std::string* target)
     {
-        m_type = ArgTypeCast::e_String;
+        m_type = ArgType::String;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsString(); };
         return *this;
     }
 
     inline Argument& Argument::BindTo(std::vector<bool>* target)
     {
-        m_type = ArgTypeCast::e_bool;
+        m_type = ArgType::Bool;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsVecBool(); };
         return *this;
     }
 
     inline Argument& Argument::BindTo(std::vector<int>* target)
     {
-        m_type = ArgTypeCast::e_int;
+        m_type = ArgType::Int;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsVecInt(); };
         return *this;
     }
 
     inline Argument& Argument::BindTo(std::vector<long long>* target)
     {
-        m_type = ArgTypeCast::e_longlong;
+        m_type = ArgType::LongLong;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsVecLongLong(); };
         return *this;
     }
 
     inline Argument& Argument::BindTo(std::vector<double>* target)
     {
-        m_type = ArgTypeCast::e_double;
+        m_type = ArgType::Double;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsVecDouble(); };
         return *this;
     }
 
     inline Argument& Argument::BindTo(std::vector<std::string>* target)
     {
-        m_type = ArgTypeCast::e_String;
+        m_type = ArgType::String;
         m_binding = [target](const ParsedArgument& parsed) { *target = parsed.GetAsVecString(); };
         return *this;
     }

@@ -4,8 +4,42 @@
 #include "src/configuration/configuration.h"
 #include "application.h"
 #include "src/framework/app/role/role.h"
+#include "src/framework/app/argparse/argumentparser.h"
 
 namespace qor{
+
+    const app::OptConfig Application::defaultOptConfig{
+        .allowAbbreviation = true,
+        .addHelp = true,
+        .ignoreUnknownArgs = true,
+        .prefixChars = '-'
+    };
+
+    const std::vector<app::NamedArgSpec> Application::defaultNamedArgs = {
+        /*
+        {
+            "option",
+            "",
+            1,
+            ArgType::String,
+            false,
+            "This should be an optional -option option."
+        }
+        */
+    };
+    
+    const std::vector<app::PositionalArgSpec> Application::defaultPositionalArgs = {
+        /*
+        {
+            
+            "first",
+            1,
+            app::ArgType::String,
+            true,
+            "Whatever is passed first ends up here"
+        }
+        */
+    };
 
     Application::Application(){ }
     Application::~Application(){ }
@@ -37,7 +71,7 @@ namespace qor{
         return m_Workflow;
     }
 
-    std::string& Application::Name()
+    const std::string Application::Name()
     {
         return m_Name;
     }
@@ -74,39 +108,44 @@ namespace qor{
         return result;
     }
 
-    const char* Application::ProvideShortOptionString()
+    const std::string Application::Description()
     {
-        return "?";
+        return std::string("QOR Application");
     }
 
-    app::Option* Application::ProvideLongOptions()
+    const std::string Application::UsageEpilogue()
     {
-        static app::Option longOptions[] =
-        {
-            //NAME      ARGUMENT				           FLAG	        SHORTNAME
-            {"usage",   app::Option::optional_argument,    nullptr,     'u'},
-            {nullptr,   0,						           nullptr,     0}
-        };
-        return longOptions;
+        return std::string("Built with the QOR framwork.");
     }
 
-    void Application::ReceiveOptionSwitch(char /*c*/)
+    const std::string Application::OverrideUsage()
     {
+        return std::string();
     }
 
-    void Application::ReceiveOptionParameter(char /*c*/, const char*)
+    const app::OptConfig Application::Config()
     {
+        return defaultOptConfig;
     }
 
-    void Application::ReceiveLongOption(const char* /*option*/, const char* /*value*/)
+    const std::vector<app::NamedArgSpec> Application::NamedArguments()
     {
+        return defaultNamedArgs;
     }
 
-    void Application::ReceiveNonOption(const char* parameter)
+    const std::vector<app::PositionalArgSpec> Application::PositionalArguments()
     {
-        if(m_Path.empty())
-        {
-            m_Path = parameter;
+        return defaultPositionalArgs;
+    }
+
+    void Application::ParseArgs(const int argc, const char** argv)
+    {
+        auto parser = app::ArgumentParser(*this);
+        auto args = parser.ParseArgs(argc,argv);
+        if(!args.IsArgValid())
+        {            
+            std::cout << parser.GetUsage() << std::endl;
+            std::cout << args.GetErrorString() << std::endl;
         }
     }
 
