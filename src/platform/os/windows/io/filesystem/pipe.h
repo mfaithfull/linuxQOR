@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_WINDOWS_FILESYSTEM_FILE
-#define QOR_PP_H_WINDOWS_FILESYSTEM_FILE
+#ifndef QOR_PP_H_WINDOWS_FILESYSTEM_PIPE
+#define QOR_PP_H_WINDOWS_FILESYSTEM_PIPE
 
 #include "src/framework/io/filesystem/pipe/pipe.h"
 #include "src/framework/io/filesystem/fileindex.h"
