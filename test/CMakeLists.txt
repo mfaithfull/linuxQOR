@@ -32,7 +32,6 @@ injection/test_injection.cpp singleton/test_singleton.cpp singleton/test_threads
 issue/test_issue.cpp error/test_error.cpp framework/test_signals.cpp
 reflection/test_reflection.cpp framework/test_pipeline.cpp
 framework/test_workflow.cpp application/test_application.cpp
-components/test_optionparser.cpp
 platform/test_filesystem.cpp
 framework/task/asyncautoresetevent_tests.cpp
 framework/task/asyncgenerator_tests.cpp

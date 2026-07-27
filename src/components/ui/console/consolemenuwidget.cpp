@@ -74,6 +74,18 @@ namespace qor { namespace components {
         return GetSize();
     }
 
+#ifdef qor_pp_unicode
+    std::wstring to_tstring(std::string str)
+    {
+        return L"";
+    }
+#else
+    std::string to_tstring(std::string str)
+    {
+        return str;
+    }
+#endif
+
     void ConsoleMenuWidget::Render()
     {
         int row = 3;
@@ -85,11 +97,11 @@ namespace qor { namespace components {
         {
             if(item->selected)
             {
-                m_view->DrawLabel(column, row, std::format("{:x}>", item->index));
+                m_view->DrawLabel(column, row, to_tstring(std::format("{:x}>", item->index)));
             }
             else
             {
-                m_view->DrawLabel(column, row, std::format("{:x}|", item->index));
+                m_view->DrawLabel(column, row, to_tstring(std::format("{:x}|", item->index)));
             }
             m_view->DrawString(column + 2, row, item->itemText);
             row += 1;
