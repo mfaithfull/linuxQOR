@@ -23,9 +23,8 @@ namespace qor{ namespace io { namespace win{
 
     Pipe::Pipe()
     {
-        Kernel32::CreatePipe(&m_readHandle, &m_writeHandle, nullptr, 0);
+        //Kernel32::CreatePipe(&m_readHandle, &m_writeHandle, nullptr, 0);
     }
-
     
     Pipe::Pipe(const io::Descriptor& iod)
     {
@@ -35,17 +34,22 @@ namespace qor{ namespace io { namespace win{
     Pipe::Pipe(const Pipe& src) : Pipe()
     {
         m_handle = src.m_handle;
-        m_objectType = src.m_objectType;
     }
 
-    Pipe::Pipe(const filesystem::Index& direntry, int openFor, int withFlags) : io::File(direntry)
+    unsigned long Pipe::GetAccess(int openFor)
     {
-        unsigned long desiredAccess = GetDesiredAccess(openFor, withFlags);
-        unsigned long shareMode = GetShareMode(openFor, withFlags);
-        unsigned long creationDisposition = GetCreationDisposition(openFor, withFlags);
-        unsigned long flagsAndAttributes = GetFlagsAndAttributes(openFor, withFlags);
+        return static_cast<unsigned long>(Pipe::Access::Inbound) | static_cast<unsigned long>(Pipe::Access::Outbound);
+    }
 
-        m_handle = this->Create(direntry.ToString().c_str(), desiredAccess, shareMode, nullptr, creationDisposition, flagsAndAttributes, nullptr);
+    unsigned long Pipe::GetPipeMode(int withFlags)
+    {
+        return static_cast<unsigned long>(Pipe::ClientMode::AcceptRemoteClients) | static_cast<unsigned long>(Pipe::Flags::WriteThrough);
+    }
+
+    Pipe::Pipe(const string_t& name, int openFor, int withFlags) : io::Pipe()
+    {
+        string_t pipeName = _TXT("\\\\.\\pipe\\") + name;
+        m_handle = Kernel32::CreateNamedPipe(name.data(), GetAccess(openFor), GetPipeMode(withFlags), PIPE_UNLIMITED_INSTANCES , 4, 4, 50, nullptr);
     }
 
     Pipe::~Pipe()
@@ -69,10 +73,6 @@ namespace qor{ namespace io { namespace win{
 
     int64_t Pipe::Read(byte* buffer, size_t byteCount, int64_t offset)
     {
-        if(offset != -1)
-        {
-            SetPosition(offset);
-        }
         unsigned long numberOfBytesRead = 0;
         if(!Kernel32::ReadFile(m_handle, buffer, (unsigned long)byteCount, &numberOfBytesRead, nullptr))
         {
@@ -83,16 +83,77 @@ namespace qor{ namespace io { namespace win{
 
     int64_t Pipe::Write(byte* buffer, size_t byteCount, int64_t offset)
     {
-        if(offset != -1)
-        {
-            SetPosition(offset);
-        }
         unsigned long numberofBytesWritten = 0;
         if(!Kernel32::WriteFile(m_handle, buffer, (unsigned long)byteCount, &numberofBytesWritten, nullptr))
         {
             continuable("Write failed.");
         }
         return numberofBytesWritten;
+    }
+
+    bool Pipe::Disconnect()
+    {
+        return Kernel32::DisconnectNamedPipe(m_handle) ? true : false;
+    }
+
+    bool Pipe::GetClientComputerName(string_t& clientComputerName)
+    {
+        return Kernel32::GetNamedPipeClientComputerName(m_handle, clientComputerName.data(), static_cast<unsigned long>(clientComputerName.capacity())) ? true : false;
+    }
+
+    bool Pipe::GetClientProcessId(unsigned long& clientProcessId)
+    {
+        return Kernel32::GetNamedPipeClientProcessId(m_handle, &clientProcessId) ? true : false;
+    }
+
+    bool Pipe::GetClientSessionId(unsigned long& clientSessionId)
+    {
+        return Kernel32::GetNamedPipeClientSessionId(m_handle, &clientSessionId) ? true : false;
+    }
+
+    bool Pipe::GetHandleState(unsigned long& state, unsigned long& curInstances, unsigned long& maxCollectionCount, unsigned long& collectDataTimeout, string_t& userName)
+    {
+        return Kernel32::GetNamedPipeHandleState(m_handle, &state, &curInstances, &maxCollectionCount, &collectDataTimeout, userName.data(), static_cast<unsigned long>(userName.capacity()));
+    }
+
+    bool Pipe::GetInfo(unsigned long& flags, unsigned long& outBufferSize, unsigned long& inBufferSize, unsigned long& maxInstances)
+    {
+        return Kernel32::GetNamedPipeInfo(m_handle, &flags, &outBufferSize, &inBufferSize, &maxInstances) ? true : false;
+    }
+
+    bool Pipe::GetServerProcessId(unsigned long& serverProcessId)
+    {
+        return Kernel32::GetNamedPipeServerProcessId(m_handle, &serverProcessId) ? true : false;
+    }
+
+    bool Pipe::GetServerSessionId(unsigned long& serverSessionId)
+    {
+        return Kernel32::GetNamedPipeServerSessionId(m_handle, &serverSessionId) ? true : false;
+    }
+
+    bool Pipe::ImpersonateClient()
+    {
+        return Kernel32::ImpersonateNamedPipeClient(m_handle) ? true : false;
+    }
+
+    bool Pipe::Peek(byte* buffer, unsigned long bufferByteCount, unsigned long& bytesRead, unsigned long& totalBytesAvail, unsigned long& bytesLeftThisMessage)
+    {
+        return Kernel32::PeekNamedPipe(m_handle, buffer, bufferByteCount, &bytesRead, &totalBytesAvail, &bytesLeftThisMessage) ? true : false;
+    }
+
+    bool Pipe::SetHandleState(unsigned long& mode, unsigned long& maxCollectionCount, unsigned long& collectDataTimeout)
+    {
+        return Kernel32::SetNamedPipeHandleState(m_handle, &mode, &maxCollectionCount, &collectDataTimeout) ? true : false;
+    }
+
+    bool Pipe::Transact(byte* inBuffer, unsigned long inBufferByteCount, byte* outBuffer, unsigned long outBufferByteCount, unsigned long& bytesRead, void* overlapped)
+    {
+        return Kernel32::TransactNamedPipe(m_handle, inBuffer, inBufferByteCount, outBuffer, outBufferByteCount, &bytesRead, reinterpret_cast<LPOVERLAPPED>(overlapped)) ? true : false;
+    }
+
+    bool Pipe::Wait(unsigned long timeOut)
+    {
+        return Kernel32::WaitNamedPipe(m_name.data(), timeOut) ? true : false;
     }
 
 }}}//qor::io::win
