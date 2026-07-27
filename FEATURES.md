@@ -1,8 +1,33 @@
 This file will provide the features available in the QOR.
 
-For now it will list the modules and what state of development they're in
+. Almost everything is optional. You have full control. It's just C++ and you use whatever you need.
+. Everything works together out of the box. 
+. Cross platform, not just multi-platform. OS and compiler dependencies are factored out. Easy to port.
+. Almost everything can be overriden or replaced at need where configuration doesn't cut it.
+. Easy Modular system. A pattern and libraries for building 'perfect' C++ DLLs with controlled dependencies and APIs
+. Adding a new module is 5-10 minutes work.
+. Role and Feature based Application framework with argument parsing and full customization.
+. TDD tool set. Assertion, Test and Mocking frameworks that work together.
+. State machine based Workflows.
+. Class registry. An in process ORB for registering implementations of specific interfaces.
+. Policy based smart pointer and integrated memory management system. no more new and delete.
+. Thread Pool
+. Modular data pipelines. Plug together sources, filters and sinks to achieve whatever you need.
+. Extensible error handling system using the flyer pattern.
+. Logging system using the flyer pattern.
+. Pre-C++26 refelection using pfr. 
+. Asynchronous task library
+. Asynchronous IO service
+. Signals and Slots, multithread and native C++ no pre-compiler.
+. Delegates
+. Partial localization support. Classes to support working with many types of Unicode data.
+. Filesystem support over std::filesystem
+. Spin up a network server with a protocol plugin in a few lines
 
-Everything should of course build and does on GitHub's Ubuntu-latest as of 23/07/2026
+
+Below is the list of modules and what state of development they're in
+
+Everything should of course build and does on GitHub's Ubuntu-latest as of 27/07/2026
 
 Stable components are usable now, tested and known to work although not certified perfect of course.
 Working components are known to have worked for some definition of working but have insufficient testing/usage to trust them as yet.
