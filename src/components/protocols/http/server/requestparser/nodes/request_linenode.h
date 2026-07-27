@@ -41,15 +41,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         Target m_target;    
     };
 
-    class RequestLineNode : public parser::NodeAdapter<RequestLine>
+    class RequestLineNode : public data::parser::NodeAdapter<RequestLine>
     {
     public:
 
-        RequestLineNode() : parser::NodeAdapter<RequestLine>(static_cast<uint64_t>(httpRequestToken::request_line))
+        RequestLineNode() : data::parser::NodeAdapter<RequestLine>(static_cast<uint64_t>(httpRequestToken::request_line))
         {
         }
 
-        RequestLineNode(ref_of<RequestLine>::type request_line) : parser::NodeAdapter<RequestLine>(request_line, static_cast<uint64_t>(httpRequestToken::request_line))
+        RequestLineNode(ref_of<RequestLine>::type request_line) : data::parser::NodeAdapter<RequestLine>(request_line, static_cast<uint64_t>(httpRequestToken::request_line))
         {
         }
 

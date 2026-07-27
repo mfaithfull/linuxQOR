@@ -24,7 +24,7 @@ endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
     set(os_libraries winqor_filesystem winqor_thread winqor_sockets
-    qor_property qor_optionparser qor_fileconnector qor_base64encodefilter
+    qor_property qor_fileconnector qor_base64encodefilter
     qor_base64decodefilter)
 endif()
 

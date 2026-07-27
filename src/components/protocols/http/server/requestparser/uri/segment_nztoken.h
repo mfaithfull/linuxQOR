@@ -35,10 +35,10 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class qor_pp_module_interface(QOR_HTTP) segment_nz : public qor::components::parser::OneOrMore
+    class qor_pp_module_interface(QOR_HTTP) segment_nz : public qor::data::parser::OneOrMore
     {
-    public: segment_nz(qor::components::parser::Parser* parser) :
-                qor::components::parser::OneOrMore( parser,
+    public: segment_nz(qor::data::Parser* parser) :
+                qor::data::parser::OneOrMore( parser,
                     new_ref< pchar >(parser),
                     static_cast<uint64_t>(httpRequestToken::segment_nz)
                 )

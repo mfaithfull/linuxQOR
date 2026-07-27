@@ -7,7 +7,7 @@
 #include "../parser.h"
 #include "src/qor/flyers/log/debug.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //Matches any one of a set of child states, represented by a head state and a tail state which may also be compound states
     AnyOneOf::AnyOneOf(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser, token),
@@ -71,4 +71,4 @@ namespace qor { namespace components { namespace parser {
 
     AnyOneOf::~AnyOneOf() = default;
 
-}}}//qor::components::parser
+}}}//qor::data::parser

@@ -40,35 +40,35 @@ namespace qor { namespace components { namespace protocols { namespace http {
                  / "1" 2DIGIT            ; 100-199
                  / "2" %x30-34 DIGIT     ; 200-249
                  / "25" %x30-35          ; 250-255*/
-    class qor_pp_module_interface(QOR_HTTP) dec_octet : public parser::AnyOneOfSet
+    class qor_pp_module_interface(QOR_HTTP) dec_octet : public data::parser::AnyOneOfSet
     {
-    public: dec_octet(parser::Parser* parser) :
-                parser::AnyOneOfSet(parser,
-                    new std::vector<ref_of<parser::ParserState>::type>({{
-                        new_ref<parser::DIGIT>(parser),
-                        new_ref<parser::Sequence>(parser,
-                            new_ref<parser::OneOfARange>(parser, 0x31, 0x39),
-                            new_ref<parser::DIGIT>(parser)
+    public: dec_octet(data::Parser* parser) :
+                data::parser::AnyOneOfSet(parser,
+                    new std::vector<ref_of<data::parser::ParserState>::type>({{
+                        new_ref<data::parser::DIGIT>(parser),
+                        new_ref<data::parser::Sequence>(parser,
+                            new_ref<data::parser::OneOfARange>(parser, 0x31, 0x39),
+                            new_ref<data::parser::DIGIT>(parser)
                         ),
-                        new_ref<parser::Sequence>(parser,
-                            new_ref<parser::Specific>(parser, '1'),
-                            new_ref<parser::Sequence>(parser,
-                                new_ref<parser::DIGIT>(parser),
-                                new_ref<parser::DIGIT>(parser)
+                        new_ref<data::parser::Sequence>(parser,
+                            new_ref<data::parser::Specific>(parser, '1'),
+                            new_ref<data::parser::Sequence>(parser,
+                                new_ref<data::parser::DIGIT>(parser),
+                                new_ref<data::parser::DIGIT>(parser)
                             )
                         ),
-                        new_ref<parser::Sequence>(parser,
-                            new_ref<parser::Specific>(parser, '2'),
-                            new_ref<parser::Sequence>(parser,
-                                new_ref<parser::OneOfARange>(parser, 0x30, 0x34),
-                                new_ref<parser::DIGIT>(parser)
+                        new_ref<data::parser::Sequence>(parser,
+                            new_ref<data::parser::Specific>(parser, '2'),
+                            new_ref<data::parser::Sequence>(parser,
+                                new_ref<data::parser::OneOfARange>(parser, 0x30, 0x34),
+                                new_ref<data::parser::DIGIT>(parser)
                             )
                         ),
-                        new_ref<parser::Sequence>(parser,
-                            new_ref<parser::Specific>(parser, '2'),
-                            new_ref<parser::Sequence>(parser,
-                                new_ref<parser::Specific>(parser,'5'),
-                                new_ref<parser::OneOfARange>(parser, 0x30, 0x35)                                
+                        new_ref<data::parser::Sequence>(parser,
+                            new_ref<data::parser::Specific>(parser, '2'),
+                            new_ref<data::parser::Sequence>(parser,
+                                new_ref<data::parser::Specific>(parser,'5'),
+                                new_ref<data::parser::OneOfARange>(parser, 0x30, 0x35)                                
                             )
                         ),
                         }}),

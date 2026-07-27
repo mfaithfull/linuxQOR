@@ -28,8 +28,8 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    host::host(qor::components::parser::Parser* parser) :
-                    qor::components::parser::AnyOneOfSet(parser,
+    host::host(qor::data::Parser* parser) :
+                    qor::data::parser::AnyOneOfSet(parser,
                             new std::vector<ref_of<ParserState>::type>({{
                                 /*new_ref<IP_literal>(parser),*/
                                 new_ref<IPv4address>(parser),

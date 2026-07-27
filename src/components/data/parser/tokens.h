@@ -1,13 +1,13 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_TOKENS
-#define QOR_PP_H_COMPONENTS_PARSER_TOKENS
+#ifndef QOR_PP_H_DATA_PARSER_TOKENS
+#define QOR_PP_H_DATA_PARSER_TOKENS
 
 #include <map>
 #include <string>
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //RFC5234 tokens
     enum class eToken : uint64_t
@@ -52,6 +52,6 @@ namespace qor { namespace components { namespace parser {
         {eToken::Alpha, "Alpha"},
     }};
 
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_TOKENS
+#endif//QOR_PP_H_DATA_PARSER_TOKENS

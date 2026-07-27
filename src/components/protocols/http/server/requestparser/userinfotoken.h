@@ -17,16 +17,16 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
-    class qor_pp_module_interface(QOR_HTTP) userinfo : public qor::components::parser::ZeroOrMore
+    class qor_pp_module_interface(QOR_HTTP) userinfo : public data::parser::ZeroOrMore
     {
-    public: userinfo(qor::components::parser::Parser* parser) :
-                qor::components::parser::ZeroOrMore(parser,
-                    new_ref<qor::components::parser::AnyOneOfSet>(parser,
+    public: userinfo(data::Parser* parser) :
+                data::parser::ZeroOrMore(parser,
+                    new_ref<data::parser::AnyOneOfSet>(parser,
                         new std::vector<ref_of<ParserState>::type>({{
                             new_ref<unreserved>(parser),
                             new_ref<pct_encoded>(parser),
                             new_ref<sub_delims>(parser),
-                            new_ref<qor::components::parser::Specific>(parser, ':')
+                            new_ref<data::parser::Specific>(parser, ':')
                             }})                            
                     ),
                     static_cast<uint64_t>(httpRequestToken::userinfo)

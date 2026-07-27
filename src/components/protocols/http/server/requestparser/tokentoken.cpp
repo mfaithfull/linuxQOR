@@ -41,7 +41,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void token::Fail()
     {
-        ref_of<parser::Node>::type node = GetParser()->PopNode();
+        ref_of<data::parser::Node>::type node = GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() != m_token)
         {
             GetParser()->PushNode(node);
@@ -49,7 +49,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
     }
 
 
-    method::method(parser::Parser* parser) : parser::OneOrMore(parser, new_ref<tchar>(parser),
+    method::method(data::Parser* parser) : data::parser::OneOrMore(parser, new_ref<tchar>(parser),
                 static_cast<uint64_t>(httpRequestToken::method))
     { }
 
@@ -102,7 +102,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void method::Fail()
     {
-        ref_of<parser::Node>::type node = GetParser()->PopNode();
+        ref_of<data::parser::Node>::type node = GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() != m_token)
         {
             GetParser()->PushNode(node);
@@ -159,14 +159,14 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void field_name::Fail()
     {
-        ref_of<parser::Node>::type node = GetParser()->PopNode();
+        ref_of<data::parser::Node>::type node = GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() != m_token)
         {
             GetParser()->PushNode(node);
         }
     }
 
-    protocol_version::protocol_version(parser::Parser* parser) : parser::OneOrMore(parser,
+    protocol_version::protocol_version(data::Parser* parser) : data::parser::OneOrMore(parser,
         new_ref<tchar>(parser),
         static_cast<uint64_t>(httpRequestToken::protocol_version))
     { }
@@ -224,7 +224,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void protocol_version::Fail()
     {
-        ref_of<parser::Node>::type node = GetParser()->PopNode();
+        ref_of<data::parser::Node>::type node = GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() != m_token)
         {
             GetParser()->PushNode(node);

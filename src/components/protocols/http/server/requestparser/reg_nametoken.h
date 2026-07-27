@@ -38,11 +38,11 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //reg-name      = *( unreserved / pct-encoded / sub-delims )
-    class qor_pp_module_interface(QOR_HTTP) reg_name : public qor::components::parser::ZeroOrMore
+    class qor_pp_module_interface(QOR_HTTP) reg_name : public data::parser::ZeroOrMore
     {
-    public: reg_name(qor::components::parser::Parser* parser) :
-                qor::components::parser::ZeroOrMore(parser,
-                    new_ref<qor::components::parser::AnyOneOfSet>(parser,
+    public: reg_name(data::Parser* parser) :
+                data::parser::ZeroOrMore(parser,
+                    new_ref<data::parser::AnyOneOfSet>(parser,
                         new std::vector<ref_of<ParserState>::type>({{
                             new_ref<unreserved>(parser),
                             new_ref<pct_encoded>(parser),

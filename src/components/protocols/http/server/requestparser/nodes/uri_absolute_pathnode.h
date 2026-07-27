@@ -41,15 +41,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::vector<std::string> m_segments;
     };
 
-    class UriAbsolutePathNode : public parser::NodeAdapter<UriAbsolutePath>
+    class UriAbsolutePathNode : public data::parser::NodeAdapter<UriAbsolutePath>
     {
     public:
 
-        UriAbsolutePathNode() : parser::NodeAdapter<UriAbsolutePath>(static_cast<uint64_t>(httpRequestToken::uri_absolute_path))
+        UriAbsolutePathNode() : data::parser::NodeAdapter<UriAbsolutePath>(static_cast<uint64_t>(httpRequestToken::uri_absolute_path))
         {
         }
 
-        UriAbsolutePathNode(ref_of<UriAbsolutePath>::type uri_absolute_path) : parser::NodeAdapter<UriAbsolutePath>(uri_absolute_path, static_cast<uint64_t>(httpRequestToken::uri_absolute_path))
+        UriAbsolutePathNode(ref_of<UriAbsolutePath>::type uri_absolute_path) : data::parser::NodeAdapter<UriAbsolutePath>(uri_absolute_path, static_cast<uint64_t>(httpRequestToken::uri_absolute_path))
         {
         }
 

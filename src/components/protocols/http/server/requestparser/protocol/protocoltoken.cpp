@@ -29,12 +29,12 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    protocol::protocol(qor::components::parser::Parser* parser) :
-        qor::components::parser::Sequence( parser,
+    protocol::protocol(qor::data::Parser* parser) :
+        qor::data::parser::Sequence( parser,
             new_ref<protocol_name>(parser),
-            new_ref<qor::components::parser::Optional>( parser,
-                new_ref<qor::components::parser::Sequence>( parser,
-                    new_ref<parser::Specific>(parser, '/'),
+            new_ref<qor::data::parser::Optional>( parser,
+                new_ref<qor::data::parser::Sequence>( parser,
+                    new_ref<data::parser::Specific>(parser, '/'),
                     new_ref<protocol_version>(parser)
                     )
                 ),

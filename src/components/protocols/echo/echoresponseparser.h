@@ -19,7 +19,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
     //Belongs to the EchoResponseFilter
     enum class echoResponseToken : uint64_t
     {
-        responseChar = static_cast<uint64_t>(qor::components::parser::eToken::Max) + 1ull,
+        responseChar = static_cast<uint64_t>(qor::data::parser::eToken::Max) + 1ull,
         response,
     };
 
@@ -28,10 +28,10 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         {static_cast< const uint64_t>(echoResponseToken::response), "response"},
     }};
 
-    class responseChar : public qor::components::parser::OneOfARange
+    class responseChar : public qor::data::parser::OneOfARange
     {
-    public: responseChar(qor::components::parser::Parser* parser) :
-                qor::components::parser::OneOfARange(parser,
+    public: responseChar(qor::data::Parser* parser) :
+                qor::data::parser::OneOfARange(parser,
                 0x00,
                 0xFF,
                 static_cast<uint64_t>(echoResponseToken::responseChar))
@@ -42,27 +42,27 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         {
             char charValue = (char)m_result.first;
             GetParser()->PushNode(
-                qor::new_ref<qor::components::parser::CharNode>(
+                qor::new_ref<qor::data::parser::CharNode>(
                     charValue,static_cast<uint64_t>(echoResponseToken::responseChar)
-                ).template AsRef<qor::components::parser::Node>()
+                ).template AsRef<qor::data::parser::Node>()
             );
         }
         virtual void Fail()
         {
-            if(m_result.code == qor::components::parser::Result::MORE_DATA)
+            if(m_result.code == qor::data::parser::Result::MORE_DATA)
             {
                 //we're simply out of data. That's fine for an echo. Echo what we have
-                m_result.code = qor::components::parser::Result::SUCCESS;                
+                m_result.code = qor::data::parser::Result::SUCCESS;                
                 Workflow()->SetComplete();
             }            
             Workflow()->PopState();
         }
     };
 
-    class qor_pp_module_interface(QOR_ECHO) response : public qor::components::parser::OneOrMore
+    class qor_pp_module_interface(QOR_ECHO) response : public qor::data::parser::OneOrMore
     {
     public: 
-        response(qor::components::parser::Parser* parser);
+        response(qor::data::Parser* parser);
         virtual ~response();
         virtual void Prepare();
         virtual void Emit();

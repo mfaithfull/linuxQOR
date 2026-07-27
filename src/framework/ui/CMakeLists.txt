@@ -1,4 +1,5 @@
 add_subdirectory(common)
+add_subdirectory(desktop)
 add_subdirectory(serial)
 add_subdirectory(selector)
 add_subdirectory(layout)

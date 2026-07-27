@@ -36,17 +36,17 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
-    class qor_pp_module_interface(QOR_HTTP) unreserved : public qor::components::parser::AnyOneOfSet
+    class qor_pp_module_interface(QOR_HTTP) unreserved : public qor::data::parser::AnyOneOfSet
     {
-    public: unreserved(qor::components::parser::Parser* parser) :
-                qor::components::parser::AnyOneOfSet(parser,
+    public: unreserved(qor::data::Parser* parser) :
+                qor::data::parser::AnyOneOfSet(parser,
                 new std::vector<ref_of<ParserState>::type>({{
-                    new_ref< qor::components::parser::Specific>(parser, '-'),
-                    new_ref< qor::components::parser::Specific>(parser, '.'),
-                    new_ref< qor::components::parser::Specific>(parser, '_'),
-                    new_ref< qor::components::parser::Specific>(parser, '~'),
-                    new_ref< qor::components::parser::ALPHA>(parser),
-                    new_ref< qor::components::parser::DIGIT>(parser)
+                    new_ref< qor::data::parser::Specific>(parser, '-'),
+                    new_ref< qor::data::parser::Specific>(parser, '.'),
+                    new_ref< qor::data::parser::Specific>(parser, '_'),
+                    new_ref< qor::data::parser::Specific>(parser, '~'),
+                    new_ref< qor::data::parser::ALPHA>(parser),
+                    new_ref< qor::data::parser::DIGIT>(parser)
                     }}),
                     static_cast<uint64_t>(httpRequestToken::unreserved)
                 )

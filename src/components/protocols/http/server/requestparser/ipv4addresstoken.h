@@ -36,21 +36,21 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //IPv4address   = dec-octet "." dec-octet "." dec-octet "." dec-octet
-    class qor_pp_module_interface(QOR_HTTP) IPv4address : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) IPv4address : public data::parser::Sequence
     {
-    public: IPv4address(qor::components::parser::Parser* parser) :
-                qor::components::parser::Sequence(parser,
+    public: IPv4address(data::Parser* parser) :
+                data::parser::Sequence(parser,
                     new_ref<dec_octet>(parser),
-                    new_ref<qor::components::parser::Sequence>(parser,
-                        new_ref<qor::components::parser::Specific>(parser, '.'),
-                        new_ref<qor::components::parser::Sequence>(parser,
+                    new_ref<data::parser::Sequence>(parser,
+                        new_ref<data::parser::Specific>(parser, '.'),
+                        new_ref<data::parser::Sequence>(parser,
                             new_ref<dec_octet>(parser),
-                            new_ref<qor::components::parser::Sequence>(parser,
-                                new_ref<qor::components::parser::Specific>(parser, '.'),
-                                new_ref<qor::components::parser::Sequence>(parser,
+                            new_ref<data::parser::Sequence>(parser,
+                                new_ref<data::parser::Specific>(parser, '.'),
+                                new_ref<data::parser::Sequence>(parser,
                                     new_ref<dec_octet>(parser),
-                                    new_ref<qor::components::parser::Sequence>(parser,
-                                        new_ref<qor::components::parser::Specific>(parser, '.'),
+                                    new_ref<data::parser::Sequence>(parser,
+                                        new_ref<data::parser::Specific>(parser, '.'),
                                         new_ref<dec_octet>(parser)
                                     )
                                 )

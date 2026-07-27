@@ -78,15 +78,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         }
     };
 
-    class TargetNode : public parser::NodeAdapter<Target>
+    class TargetNode : public data::parser::NodeAdapter<Target>
     {
     public:
 
-        TargetNode() : parser::NodeAdapter<Target>(static_cast<uint64_t>(httpRequestToken::target))
+        TargetNode() : data::parser::NodeAdapter<Target>(static_cast<uint64_t>(httpRequestToken::target))
         {
         }
 
-        TargetNode(ref_of<Target>::type target) : parser::NodeAdapter<Target>(target, static_cast<uint64_t>(httpRequestToken::target))
+        TargetNode(ref_of<Target>::type target) : data::parser::NodeAdapter<Target>(target, static_cast<uint64_t>(httpRequestToken::target))
         {
         }
 

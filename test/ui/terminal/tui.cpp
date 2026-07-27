@@ -82,8 +82,8 @@ qor_pp_test_suite_case(ConsoleUITestSuite, checkCompositorComposes)
     auto label1 = new_ref<ConsoleLabelWidget>();
     auto label2 = new_ref<ConsoleLabelWidget>();
 
-    label1->SetText("A Label");
-    label2->SetText("Another longer label");
+    label1->SetText(_TXT("A Label"));
+    label2->SetText(_TXT("Another longer label"));
 
     label1->Layout(80,20);
     label2->Layout(80,20);
@@ -110,10 +110,10 @@ qor_pp_test_suite_case(ConsoleUITestSuite, checkViewControllerControlsView)
     qor_pp_assert_that(model.IsNotNull()).isTrue();
 
     auto columnWidget = new_ref<ConsoleColumnWidget>();
-    columnWidget->AddWidget(new_ref<ConsoleLabelWidget>("Label - 1").template AsRef<ConsoleWidget>());
-    columnWidget->AddWidget(new_ref<ConsoleLabelWidget>("Label - 2").template AsRef<ConsoleWidget>());
-    columnWidget->AddWidget(new_ref<ConsoleLabelWidget>("Label - 3").template AsRef<ConsoleWidget>());
-    columnWidget->AddWidget(new_ref<ConsoleLabelWidget>("Label - 4").template AsRef<ConsoleWidget>());
+    columnWidget->AddWidget(new_ref<ConsoleLabelWidget>(_TXT("Label - 1")).template AsRef<ConsoleWidget>());
+    columnWidget->AddWidget(new_ref<ConsoleLabelWidget>(_TXT("Label - 2")).template AsRef<ConsoleWidget>());
+    columnWidget->AddWidget(new_ref<ConsoleLabelWidget>(_TXT("Label - 3")).template AsRef<ConsoleWidget>());
+    columnWidget->AddWidget(new_ref<ConsoleLabelWidget>(_TXT("Label - 4")).template AsRef<ConsoleWidget>());
     model->AddWidget(columnWidget.template AsRef<ConsoleWidget>());
 
     viewController->Render();
@@ -128,22 +128,22 @@ qor_pp_test_suite_case(ConsoleUITestSuite, checkMenuWidgetMenus)
     auto model = viewController->Model();
     qor_pp_assert_that(model.IsNotNull()).isTrue();
 
-    auto menuWidget = new_ref<ConsoleMenuWidget>("Main");
-    menuWidget->AddMenuItem("Window");
-    menuWidget->AddMenuItem("File");
-    menuWidget->AddMenuItem("Edit");
-    menuWidget->AddMenuItem("Search");
-    menuWidget->AddMenuItem("View");
-    menuWidget->AddMenuItem("Encoding");
-    menuWidget->AddMenuItem("Language");
-    menuWidget->AddMenuItem("Settings");
-    menuWidget->AddMenuItem("Tools");
-    menuWidget->AddMenuItem("Macro");
-    menuWidget->AddMenuItem("Run");
-    menuWidget->AddMenuItem("Plugins");
-    menuWidget->AddMenuItem("Tab");
-    menuWidget->AddMenuItem("Help");
-    menuWidget->AddMenuItem("Exit");
+    auto menuWidget = new_ref<ConsoleMenuWidget>(_TXT("Main"));
+    menuWidget->AddMenuItem(_TXT("Window"));
+    menuWidget->AddMenuItem(_TXT("File"));
+    menuWidget->AddMenuItem(_TXT("Edit"));
+    menuWidget->AddMenuItem(_TXT("Search"));
+    menuWidget->AddMenuItem(_TXT("View"));
+    menuWidget->AddMenuItem(_TXT("Encoding"));
+    menuWidget->AddMenuItem(_TXT("Language"));
+    menuWidget->AddMenuItem(_TXT("Settings"));
+    menuWidget->AddMenuItem(_TXT("Tools"));
+    menuWidget->AddMenuItem(_TXT("Macro"));
+    menuWidget->AddMenuItem(_TXT("Run"));
+    menuWidget->AddMenuItem(_TXT("Plugins"));
+    menuWidget->AddMenuItem(_TXT("Tab"));
+    menuWidget->AddMenuItem(_TXT("Help"));
+    menuWidget->AddMenuItem(_TXT("Exit"));
 
     model->AddWidget(menuWidget.template AsRef<ConsoleWidget>());
     //do

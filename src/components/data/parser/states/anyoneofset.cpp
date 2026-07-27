@@ -9,7 +9,7 @@
 #include "../parser.h"
 #include "src/qor/flyers/log/debug.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //Matches one thing which is the first in the given set that matches. There can be only one. No matches in the set is an error
     AnyOneOfSet::AnyOneOfSet(Parser* parser, std::vector<ref_of<ParserState>::type>* set, uint64_t token) : ParserState(parser,token),
@@ -57,7 +57,7 @@ namespace qor { namespace components { namespace parser {
                 }
                 else
                 {
-                    log::debug("Trying to match {0} of a set of {1} parser states.", m_index, m_set->size());
+                    log::debug("Trying to match {0} of a set of {1} parser states.", m_index + 1, m_set->size());
                     Workflow()->PushState((*m_it));
                 }
             }
@@ -69,4 +69,4 @@ namespace qor { namespace components { namespace parser {
         delete m_set;//TODO: Use a ref so this isn't necessary
     }
 
-}}}//qor::components::parser
+}}}//qor::data::parser

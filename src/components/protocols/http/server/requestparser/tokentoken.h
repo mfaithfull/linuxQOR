@@ -17,9 +17,9 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class qor_pp_module_interface(QOR_HTTP) token : public parser::OneOrMore
+    class qor_pp_module_interface(QOR_HTTP) token : public data::parser::OneOrMore
     {
-    public: token(parser::Parser* parser) : parser::OneOrMore(parser,
+    public: token(data::Parser* parser) : data::parser::OneOrMore(parser,
                     new_ref<tchar>(parser),
                     static_cast<uint64_t>(httpRequestToken::token)
                 )
@@ -31,29 +31,29 @@ namespace qor { namespace components { namespace protocols { namespace http {
         virtual void Fail();
     };
 
-    class qor_pp_module_interface(QOR_HTTP) protocol_version : public parser::OneOrMore
+    class qor_pp_module_interface(QOR_HTTP) protocol_version : public data::parser::OneOrMore
     {
     public:
-        protocol_version(parser::Parser* parser);
+        protocol_version(data::Parser* parser);
         virtual ~protocol_version();
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();
     };
 
-    class qor_pp_module_interface(QOR_HTTP) method : public parser::OneOrMore
+    class qor_pp_module_interface(QOR_HTTP) method : public data::parser::OneOrMore
     {
     public:
-        method(parser::Parser* parser);
+        method(data::Parser* parser);
         virtual ~method();
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();
     };
 
-    class qor_pp_module_interface(QOR_HTTP) field_name : public parser::OneOrMore
+    class qor_pp_module_interface(QOR_HTTP) field_name : public data::parser::OneOrMore
     {
-    public: field_name(parser::Parser* parser) : parser::OneOrMore(parser,
+    public: field_name(data::Parser* parser) : data::parser::OneOrMore(parser,
                     new_ref<tchar>(parser),
                     static_cast<uint64_t>(httpRequestToken::field_name)
                 )

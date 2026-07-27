@@ -41,15 +41,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_scheme;
     };
 
-    class SchemeNode : public parser::NodeAdapter<Scheme>
+    class SchemeNode : public data::parser::NodeAdapter<Scheme>
     {
     public:
 
-        SchemeNode() : parser::NodeAdapter<Scheme>(static_cast<uint64_t>(httpRequestToken::scheme))
+        SchemeNode() : data::parser::NodeAdapter<Scheme>(static_cast<uint64_t>(httpRequestToken::scheme))
         {
         }
 
-        SchemeNode(ref_of<Scheme>::type scheme) : parser::NodeAdapter<Scheme>(scheme, static_cast<uint64_t>(httpRequestToken::scheme))
+        SchemeNode(ref_of<Scheme>::type scheme) : data::parser::NodeAdapter<Scheme>(scheme, static_cast<uint64_t>(httpRequestToken::scheme))
         {
         }
 

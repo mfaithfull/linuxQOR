@@ -39,18 +39,18 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //hier-part     = "//" authority path-abempty / path-absolute / path-rootless / path-empty
-    class qor_pp_module_interface(QOR_HTTP) heir_part : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) heir_part : public qor::data::parser::Sequence
     {
-    public: heir_part(qor::components::parser::Parser* parser) :
-                qor::components::parser::Sequence(parser,
-                    new_ref<qor::components::parser::Sequence>(parser,
-                        new_ref<qor::components::parser::Specific>(parser, '/'),
-                        new_ref<qor::components::parser::Specific>(parser, '/')
+    public: heir_part(qor::data::Parser* parser) :
+                qor::data::parser::Sequence(parser,
+                    new_ref<qor::data::parser::Sequence>(parser,
+                        new_ref<qor::data::parser::Specific>(parser, '/'),
+                        new_ref<qor::data::parser::Specific>(parser, '/')
                     ),
-                    new_ref<qor::components::parser::Optional>(parser,
-                        new_ref<qor::components::parser::AnyOneOfSet>(parser,
+                    new_ref<qor::data::parser::Optional>(parser,
+                        new_ref<qor::data::parser::AnyOneOfSet>(parser,
                             new std::vector<ref_of<ParserState>::type>({{
-                                new_ref<qor::components::parser::Sequence>(parser,
+                                new_ref<qor::data::parser::Sequence>(parser,
                                     new_ref<authority>(parser),
                                     new_ref<path_abempty>(parser)
                                 ),

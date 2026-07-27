@@ -8,7 +8,7 @@
 
 using namespace qor;
 using namespace qor::components;
-using namespace qor::components::parser;
+using namespace qor::data::parser;
 using namespace qor::workflow;
 
 namespace qor { namespace components { namespace protocols { namespace http {
@@ -47,7 +47,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             response->SetBody("Method Not Allowed");
         }
 
-        response::Generator responseGenerator(new_ref<parser::Context>(space, writeCount));
+        response::Generator responseGenerator(new_ref<data::parser::Context>(space, writeCount));
         responseGenerator.SetResponse(response);
         responseGenerator.Run();
         writeCount = responseGenerator.GetContext()->GetPosition();
@@ -55,7 +55,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     ref_of<HTTPRequest>::type HTTPFilter::Parse(byte* data, size_t& itemCount)
     {
-        Parser HTTPRequestParser(new_ref<Context>(data, itemCount));
+        data::Parser HTTPRequestParser(new_ref<Context>(data, itemCount));
         ref_of<request>::type requestState = new_ref<request>(&HTTPRequestParser);
 
         HTTPRequestParser.SetInitialState(requestState.AsRef<State>());

@@ -42,29 +42,29 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //"!" / "#" / "$" / "%" / "&" / "'" / "*" / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~" / DIGIT / ALPHA
-    class tchar : public parser::AnyOneOfSet
+    class tchar : public data::parser::AnyOneOfSet
     {
     public:
-        tchar(qor::components::parser::Parser* parser) :
-                qor::components::parser::AnyOneOfSet(parser,
+        tchar(qor::data::Parser* parser) :
+                qor::data::parser::AnyOneOfSet(parser,
                 new std::vector<ref_of<ParserState>::type>({{
-                    new_ref< qor::components::parser::Specific>(parser,'!'),
-                    new_ref< qor::components::parser::Specific>(parser, '#'),
-                    new_ref< qor::components::parser::Specific>(parser, '$'),
-                    new_ref< qor::components::parser::Specific>(parser, '%'),
-                    new_ref< qor::components::parser::Specific>(parser, '&'),
-                    new_ref< qor::components::parser::Specific>(parser, '\''),
-                    new_ref< qor::components::parser::Specific>(parser, '*'),
-                    new_ref< qor::components::parser::Specific>(parser, '+'),
-                    new_ref< qor::components::parser::Specific>(parser, '-'),
-                    new_ref< qor::components::parser::Specific>(parser, '.'),
-                    new_ref< qor::components::parser::Specific>(parser, '^'),
-                    new_ref< qor::components::parser::Specific>(parser, '_'),
-                    new_ref< qor::components::parser::Specific>(parser, '`'),
-                    new_ref< qor::components::parser::Specific>(parser, '|'),
-                    new_ref< qor::components::parser::Specific>(parser, '~'),
-                    new_ref< qor::components::parser::DIGIT>(parser),
-                    new_ref< qor::components::parser::ALPHA>(parser),
+                    new_ref< qor::data::parser::Specific>(parser,'!'),
+                    new_ref< qor::data::parser::Specific>(parser, '#'),
+                    new_ref< qor::data::parser::Specific>(parser, '$'),
+                    new_ref< qor::data::parser::Specific>(parser, '%'),
+                    new_ref< qor::data::parser::Specific>(parser, '&'),
+                    new_ref< qor::data::parser::Specific>(parser, '\''),
+                    new_ref< qor::data::parser::Specific>(parser, '*'),
+                    new_ref< qor::data::parser::Specific>(parser, '+'),
+                    new_ref< qor::data::parser::Specific>(parser, '-'),
+                    new_ref< qor::data::parser::Specific>(parser, '.'),
+                    new_ref< qor::data::parser::Specific>(parser, '^'),
+                    new_ref< qor::data::parser::Specific>(parser, '_'),
+                    new_ref< qor::data::parser::Specific>(parser, '`'),
+                    new_ref< qor::data::parser::Specific>(parser, '|'),
+                    new_ref< qor::data::parser::Specific>(parser, '~'),
+                    new_ref< qor::data::parser::DIGIT>(parser),
+                    new_ref< qor::data::parser::ALPHA>(parser),
                 }}),
                 static_cast<uint64_t>(httpRequestToken::tchar)
                 )
@@ -94,25 +94,25 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
                 //qor::log::debug("tokenName");
 
-                ref_of<parser::CharNode>::type charNode;
-                ref_of<parser::DigitNode>::type digitNode;
+                ref_of<data::parser::CharNode>::type charNode;
+                ref_of<data::parser::DigitNode>::type digitNode;
 
-                if( token == static_cast<uint64_t>(parser::eToken::Char) ||
-                 token == static_cast<uint64_t>(parser::eToken::Alpha) ||
-                 token == static_cast<uint64_t>(parser::eToken::Digit) )
+                if( token == static_cast<uint64_t>(data::parser::eToken::Char) ||
+                 token == static_cast<uint64_t>(data::parser::eToken::Alpha) ||
+                 token == static_cast<uint64_t>(data::parser::eToken::Digit) )
                 {
                     switch (token)
                     {
-                        case static_cast<uint64_t>(parser::eToken::Char):
-                            charNode = node.AsRef<parser::CharNode>();
+                        case static_cast<uint64_t>(data::parser::eToken::Char):
+                            charNode = node.AsRef<data::parser::CharNode>();
                             c = charNode->GetValue();
                         break;
-                        case static_cast<uint64_t>(parser::eToken::Alpha):
-                            charNode = node.AsRef<parser::CharNode>();
+                        case static_cast<uint64_t>(data::parser::eToken::Alpha):
+                            charNode = node.AsRef<data::parser::CharNode>();
                             c = charNode->GetValue();
                         break;
-                        case static_cast<uint64_t>(parser::eToken::Digit):
-                            digitNode = node.AsRef<parser::DigitNode>();
+                        case static_cast<uint64_t>(data::parser::eToken::Digit):
+                            digitNode = node.AsRef<data::parser::DigitNode>();
                             c = digitNode->GetValue();
                         break;
                     }

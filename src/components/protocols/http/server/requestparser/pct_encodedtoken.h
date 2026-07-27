@@ -35,14 +35,14 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //pct-encoded   = "%" HEXDIG HEXDIG
-    class qor_pp_module_interface(QOR_HTTP) pct_encoded : public parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) pct_encoded : public data::parser::Sequence
     {
-    public: pct_encoded(parser::Parser* parser) :
-                parser::Sequence(parser,
-                    new_ref< parser::Specific>(parser, '%'),
-                    new_ref< parser::Sequence>(parser,
-                        new_ref< parser::HEXDIGIT>(parser),
-                        new_ref< parser::HEXDIGIT>(parser)
+    public: pct_encoded(data::Parser* parser) :
+                data::parser::Sequence(parser,
+                    new_ref< data::parser::Specific>(parser, '%'),
+                    new_ref< data::parser::Sequence>(parser,
+                        new_ref< data::parser::HEXDIGIT>(parser),
+                        new_ref< data::parser::HEXDIGIT>(parser)
                     ),
                     static_cast<uint64_t>(httpRequestToken::pct_encoded)
                 )

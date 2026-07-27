@@ -45,15 +45,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         Port m_port;
     };
 
-    class AuthorityNode : public parser::NodeAdapter<Authority>
+    class AuthorityNode : public data::parser::NodeAdapter<Authority>
     {
     public:
 
-        AuthorityNode() : parser::NodeAdapter<Authority>(static_cast<uint64_t>(httpRequestToken::authority))
+        AuthorityNode() : data::parser::NodeAdapter<Authority>(static_cast<uint64_t>(httpRequestToken::authority))
         {
         }
 
-        AuthorityNode(ref_of<Authority>::type authority) : parser::NodeAdapter<Authority>(authority, static_cast<uint64_t>(httpRequestToken::authority))
+        AuthorityNode(ref_of<Authority>::type authority) : data::parser::NodeAdapter<Authority>(authority, static_cast<uint64_t>(httpRequestToken::authority))
         {
         }
 

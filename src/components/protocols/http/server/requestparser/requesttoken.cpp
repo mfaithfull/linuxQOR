@@ -8,18 +8,18 @@
 #include "src/qor/flyers/log/debug.h"
 
 using namespace qor;
-using namespace qor::components::parser;
+using namespace qor::data::parser;
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    request::request(qor::components::parser::Parser* parser) :
-            qor::components::parser::Sequence( parser,
+    request::request(qor::data::Parser* parser) :
+            qor::data::parser::Sequence( parser,
                 new_ref<request_line>(parser),
-                new_ref<qor::components::parser::Sequence>( parser,
-                    new_ref<qor::components::parser::ZeroOrMore>( parser,
+                new_ref<qor::data::parser::Sequence>( parser,
+                    new_ref<qor::data::parser::ZeroOrMore>( parser,
                         new_ref<field_line>(parser)
                     ),
-                    new_ref<qor::components::parser::CRLF>(parser)
+                    new_ref<qor::data::parser::CRLF>(parser)
                 ),
                 static_cast<uint64_t>(httpRequestToken::request))
     { }
@@ -68,7 +68,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                     }
                 }
             }
-            else if(token == static_cast<uint64_t>(parser::eToken::CarriageReturnLineFeed))
+            else if(token == static_cast<uint64_t>(data::parser::eToken::CarriageReturnLineFeed))
             {
                 log::debug("Reached the end of the header.");
             }

@@ -41,10 +41,10 @@ namespace qor { namespace components { namespace protocols { namespace http {
   field-vchar    = VCHAR / obs-text
   obs-text       = %x80-FF
     */
-    class qor_pp_module_interface(QOR_HTTP) field_value : public qor::components::parser::ZeroOrMore
+    class qor_pp_module_interface(QOR_HTTP) field_value : public data::parser::ZeroOrMore
     {
-    public: field_value(qor::components::parser::Parser* parser) :
-                qor::components::parser::ZeroOrMore(parser,
+    public: field_value(data::Parser* parser) :
+                data::parser::ZeroOrMore(parser,
                     new_ref<field_content>(parser),
                     static_cast<uint64_t>(httpRequestToken::field_value)
                 )

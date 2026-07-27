@@ -1,13 +1,13 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODES_CHAR
-#define QOR_PP_H_COMPONENTS_PARSER_NODES_CHAR
+#ifndef QOR_PP_H_DATA_PARSER_NODES_CHAR
+#define QOR_PP_H_DATA_PARSER_NODES_CHAR
 
 #include "../node.h"
 #include "../tokens.h"
 
-namespace qor { namespace components{ namespace parser{
+namespace qor { namespace data{ namespace parser{
 
     //A byte char node
     class CharNode : public Node
@@ -28,6 +28,6 @@ namespace qor { namespace components{ namespace parser{
         char m_value;
     };
 
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODES_CHAR
+#endif//QOR_PP_H_DATA_PARSER_NODES_CHAR

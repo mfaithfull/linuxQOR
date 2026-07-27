@@ -39,15 +39,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         char m_char;
     };
 
-    class Sub_DelimsNode : public parser::NodeAdapter<Sub_Delims>
+    class Sub_DelimsNode : public data::parser::NodeAdapter<Sub_Delims>
     {
     public:
 
-        Sub_DelimsNode() : parser::NodeAdapter<Sub_Delims>(static_cast<uint64_t>(httpRequestToken::sub_delims))
+        Sub_DelimsNode() : data::parser::NodeAdapter<Sub_Delims>(static_cast<uint64_t>(httpRequestToken::sub_delims))
         {
         }
 
-        Sub_DelimsNode(ref_of<Sub_Delims>::type sub_delims) : parser::NodeAdapter<Sub_Delims>(sub_delims, static_cast<uint64_t>(httpRequestToken::sub_delims))
+        Sub_DelimsNode(ref_of<Sub_Delims>::type sub_delims) : data::parser::NodeAdapter<Sub_Delims>(sub_delims, static_cast<uint64_t>(httpRequestToken::sub_delims))
         {
         }
 

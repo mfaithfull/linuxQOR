@@ -38,15 +38,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_segment;
     };
 
-    class SegmentNode : public parser::NodeAdapter<Segment>
+    class SegmentNode : public data::parser::NodeAdapter<Segment>
     {
     public:
 
-        SegmentNode() : parser::NodeAdapter<Segment>(static_cast<uint64_t>(httpRequestToken::segment))
+        SegmentNode() : data::parser::NodeAdapter<Segment>(static_cast<uint64_t>(httpRequestToken::segment))
         {
         }
 
-        SegmentNode(ref_of<Segment>::type segment) : parser::NodeAdapter<Segment>(segment, static_cast<uint64_t>(httpRequestToken::segment))
+        SegmentNode(ref_of<Segment>::type segment) : data::parser::NodeAdapter<Segment>(segment, static_cast<uint64_t>(httpRequestToken::segment))
         {
         }
 

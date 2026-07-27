@@ -1,15 +1,15 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODE
-#define QOR_PP_H_COMPONENTS_PARSER_NODE
+#ifndef QOR_PP_H_DATA_PARSER_NODE
+#define QOR_PP_H_DATA_PARSER_NODE
 
 #include <cstdint>
 #include <string>
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     class Node
     {
@@ -59,6 +59,6 @@ namespace qor { namespace components { namespace parser {
         typename ref_of<T>::type m_t;
     };
 
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODE
+#endif//QOR_PP_H_DATA_PARSER_NODE

@@ -20,7 +20,7 @@ namespace qor{ namespace pipeline{ namespace components{
 
         qor_pp_module_interface(QOR_PARSERSINK) BaseParserSink();
         qor_pp_module_interface(QOR_PARSERSINK) virtual ~BaseParserSink();
-        qor_pp_module_interface(QOR_PARSERSINK) qor::components::parser::Parser& Parser();
+        qor_pp_module_interface(QOR_PARSERSINK) qor::data::Parser& Parser();
         qor_pp_module_interface(QOR_PARSERSINK) void SetEOD();
 
     protected:
@@ -28,8 +28,8 @@ namespace qor{ namespace pipeline{ namespace components{
         qor_pp_module_interface(QOR_PARSERSINK) bool Push(size_t& unitsWritten, size_t unitsToWrite);
         qor_pp_module_interface(QOR_PARSERSINK) virtual size_t Parse(byte* data, size_t bytesToParse);
 
-        qor::ref_of<qor::components::parser::Context>::type m_context;
-        qor::components::parser::Parser m_parser;      
+        qor::ref_of<qor::data::parser::Context>::type m_context;
+        qor::data::Parser m_parser;      
         bool m_EOD{false};
     };
 

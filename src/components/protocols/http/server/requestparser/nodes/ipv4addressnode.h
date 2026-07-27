@@ -40,15 +40,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         //Use the already existing IPv4Address class
     };
 
-    class IPv4AddressNode : public parser::NodeAdapter<IPv4Address>
+    class IPv4AddressNode : public data::parser::NodeAdapter<IPv4Address>
     {
     public:
 
-        IPv4AddressNode() : parser::NodeAdapter<IPv4Address>(static_cast<uint64_t>(httpRequestToken::IPv4address))
+        IPv4AddressNode() : data::parser::NodeAdapter<IPv4Address>(static_cast<uint64_t>(httpRequestToken::IPv4address))
         {
         }
 
-        IPv4AddressNode(ref_of<IPv4Address>::type ipv4address) : parser::NodeAdapter<IPv4Address>(ipv4address, static_cast<uint64_t>(httpRequestToken::IPv4address))
+        IPv4AddressNode(ref_of<IPv4Address>::type ipv4address) : data::parser::NodeAdapter<IPv4Address>(ipv4address, static_cast<uint64_t>(httpRequestToken::IPv4address))
         {
         }
 

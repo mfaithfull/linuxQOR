@@ -37,15 +37,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {        
     };
 
-    class UriAsteriskFormNode : public parser::NodeAdapter<UriAsteriskForm>
+    class UriAsteriskFormNode : public data::parser::NodeAdapter<UriAsteriskForm>
     {
     public:
 
-        UriAsteriskFormNode() : parser::NodeAdapter<UriAsteriskForm>(static_cast<uint64_t>(httpRequestToken::uri_asterisk_form))
+        UriAsteriskFormNode() : data::parser::NodeAdapter<UriAsteriskForm>(static_cast<uint64_t>(httpRequestToken::uri_asterisk_form))
         {
         }
 
-        UriAsteriskFormNode(ref_of<UriAsteriskForm>::type uri_asterisk_form) : parser::NodeAdapter<UriAsteriskForm>(uri_asterisk_form, static_cast<uint64_t>(httpRequestToken::uri_asterisk_form))
+        UriAsteriskFormNode(ref_of<UriAsteriskForm>::type uri_asterisk_form) : data::parser::NodeAdapter<UriAsteriskForm>(uri_asterisk_form, static_cast<uint64_t>(httpRequestToken::uri_asterisk_form))
         {
         }
 

@@ -33,10 +33,10 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class requestChar : public qor::components::parser::OneOfARange
+    class requestChar : public qor::data::parser::OneOfARange
     {
-    public: requestChar(qor::components::parser::Parser* parser) :
-                qor::components::parser::OneOfARange(parser,
+    public: requestChar(qor::data::Parser* parser) :
+                qor::data::parser::OneOfARange(parser,
                 0x00,
                 0xFF,
                 static_cast<uint64_t>(httpRequestToken::requestChar))
@@ -46,9 +46,9 @@ namespace qor { namespace components { namespace protocols { namespace http {
         {
             char charValue = m_result.first;
             GetParser()->PushNode(
-                qor::new_ref<qor::components::parser::Char>(
+                qor::new_ref<qor::data::parser::Char>(
                     charValue,static_cast<uint64_t>(httpRequestToken::requestChar)
-                ).template AsRef<qor::components::parser::Node>()
+                ).template AsRef<qor::data::parser::Node>()
             );
         }
     };

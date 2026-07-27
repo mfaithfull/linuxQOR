@@ -36,19 +36,19 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
-    class qor_pp_module_interface(QOR_HTTP) scheme : public components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) scheme : public data::parser::Sequence
     {
-    public: scheme(parser::Parser* parser) : 
-                components::parser::Sequence(parser,
-                    new_ref<parser::ALPHA>(parser),
-                    new_ref<parser::ZeroOrMore>(parser,
-                        new_ref<parser::AnyOneOfSet>(parser,
+    public: scheme(data::Parser* parser) : 
+                data::parser::Sequence(parser,
+                    new_ref<data::parser::ALPHA>(parser),
+                    new_ref<data::parser::ZeroOrMore>(parser,
+                        new_ref<data::parser::AnyOneOfSet>(parser,
                             new std::vector<ref_of<ParserState>::type>({{
-                                new_ref<parser::ALPHA>(parser),
-                                new_ref<parser::DIGIT>(parser),
-                                new_ref<parser::Specific>(parser, '+'),
-                                new_ref<parser::Specific>(parser, '-'),
-                                new_ref<parser::Specific>(parser, '.'),
+                                new_ref<data::parser::ALPHA>(parser),
+                                new_ref<data::parser::DIGIT>(parser),
+                                new_ref<data::parser::Specific>(parser, '+'),
+                                new_ref<data::parser::Specific>(parser, '-'),
+                                new_ref<data::parser::Specific>(parser, '.'),
                                 }})                           
                         )
                     ),

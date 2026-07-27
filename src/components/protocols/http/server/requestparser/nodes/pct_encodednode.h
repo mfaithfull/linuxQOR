@@ -39,15 +39,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         byte m_data;
     };
 
-    class Pct_EncodedNode : public parser::NodeAdapter<Pct_Encoded>
+    class Pct_EncodedNode : public data::parser::NodeAdapter<Pct_Encoded>
     {
     public:
 
-        Pct_EncodedNode() : parser::NodeAdapter<Pct_Encoded>(static_cast<uint64_t>(httpRequestToken::pct_encoded))
+        Pct_EncodedNode() : data::parser::NodeAdapter<Pct_Encoded>(static_cast<uint64_t>(httpRequestToken::pct_encoded))
         {
         }
 
-        Pct_EncodedNode(ref_of<Pct_Encoded>::type pct_encoded) : parser::NodeAdapter<Pct_Encoded>(pct_encoded, static_cast<uint64_t>(httpRequestToken::pct_encoded))
+        Pct_EncodedNode(ref_of<Pct_Encoded>::type pct_encoded) : data::parser::NodeAdapter<Pct_Encoded>(pct_encoded, static_cast<uint64_t>(httpRequestToken::pct_encoded))
         {
         }
 

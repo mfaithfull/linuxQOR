@@ -61,7 +61,7 @@ qor_pp_test_suite_case(ConsoleTestSuite, canWriteLineToConsole)
 {
     auto console = new_ref<Console>();
     std::string str;
-    string_t output = "DD";
+    string_t output = _TXT("DD");
     console->WriteLine(output);
     qor_pp_assert_that(console.IsNotNull()).isTrue();
 }

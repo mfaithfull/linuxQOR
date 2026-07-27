@@ -27,7 +27,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
     protected:
 
-        inline parser::Context* GetContext()
+        inline data::parser::Context* GetContext()
         {
             return dynamic_cast<Generator*>(m_Workflow)->GetContext();
         }

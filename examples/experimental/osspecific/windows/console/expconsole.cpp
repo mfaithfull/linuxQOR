@@ -8,14 +8,14 @@
 #include "src/platform/os/windows/ui/terminal/termcon.h"
 #include "src/platform/os/windows/ui/wincon/graphcon.h"
 #include "src/platform/os/windows/ui/wincon/graphconrenderer.h"
-#include "src/framework/ui/uiitem.h"
-#include "src/framework/ui/visible.h"
-#include "src/framework/ui/compound.h"
-#include "src/framework/ui/contained.h"
+#include "src/framework/ui/common/uiitem.h"
+#include "src/framework/ui/common/visible.h"
+#include "src/framework/ui/common/compound.h"
+#include "src/framework/ui/common/contained.h"
 #include "src/framework/ui/layout/arrangeable.h"
 #include "src/framework/ui/layout/sizeconstrainer.h"
 #include "src/framework/ui/layout/vbox.h"
-#include "src/framework/ui/layout/alignright.h"
+#include "src/framework/ui/layout/align.h"
 
 using namespace qor;
 using namespace qor::ui::win;
@@ -236,7 +236,7 @@ int main()
     vbox.Add(testarticle1);
     vbox.ComputeRequirement();
 
-    TermCon terminal;
+    Terminal terminal;
 
     GraphicalConsole screen(120, 80, 7, 9);
 

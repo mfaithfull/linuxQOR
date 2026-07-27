@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_PARSER
-#define QOR_PP_H_COMPONENTS_PARSER_PARSER
+#ifndef QOR_PP_H_DATA_PARSER_PARSER
+#define QOR_PP_H_DATA_PARSER_PARSER
 
 #include <stack>
 #include <iostream>
@@ -12,7 +12,7 @@
 #include "result.h"
 #include "node.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data {
 
     class qor_pp_module_interface(QOR_PARSER) Parser : public Workflow
     {
@@ -21,12 +21,12 @@ namespace qor { namespace components { namespace parser {
         Parser();
         Parser(const Parser&) = delete;
         Parser& operator = (const Parser&) = delete;
-        Parser(ref_of<class Context>::type context);
+        Parser(ref_of<class parser::Context>::type context);
         ~Parser();
-        Context* GetContext() const;
-        void SetContext(ref_of<class Context>::type context);
-        void PushNode(ref_of<Node>::type node);
-        ref_of<Node>::type PopNode();
+        parser::Context* GetContext() const;
+        void SetContext(ref_of<class parser::Context>::type context);
+        void PushNode(ref_of<parser::Node>::type node);
+        ref_of<parser::Node>::type PopNode();
         int Parse();
         int FinalParse();
         bool IsFinal();
@@ -41,10 +41,10 @@ namespace qor { namespace components { namespace parser {
 
         bool m_inError{false};
         bool m_final{false};
-        ref_of<class Context>::type m_context;
-        std::stack<ref_of<Node>::type> m_nodes;
+        ref_of<class parser::Context>::type m_context;
+        std::stack<ref_of<parser::Node>::type> m_nodes;
     };
 
-}}}//qor::components::parser
+}}//qor::data
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_PARSER
+#endif//QOR_PP_H_DATA_PARSER_PARSER

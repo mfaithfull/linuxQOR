@@ -1,13 +1,13 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_NODES_DIGIT
-#define QOR_PP_H_COMPONENTS_PARSER_NODES_DIGIT
+#ifndef QOR_PP_H_DATA_PARSER_NODES_DIGIT
+#define QOR_PP_H_DATA_PARSER_NODES_DIGIT
 
 #include "../node.h"
 #include "../tokens.h"
 
-namespace qor { namespace components{ namespace parser{
+namespace qor { namespace data{ namespace parser{
 
     class DigitNode : public Node
     {
@@ -27,6 +27,6 @@ namespace qor { namespace components{ namespace parser{
         unsigned int m_value;
     };
 
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_NODES_DIGIT
+#endif//QOR_PP_H_DATA_PARSER_NODES_DIGIT

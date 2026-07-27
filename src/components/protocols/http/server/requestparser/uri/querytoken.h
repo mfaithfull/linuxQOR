@@ -36,15 +36,15 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //query         = *( pchar / "/" / "?" )
-    class qor_pp_module_interface(QOR_HTTP) query : public parser::ZeroOrMore
+    class qor_pp_module_interface(QOR_HTTP) query : public data::parser::ZeroOrMore
     {
-    public: query(parser::Parser* parser) :
-                parser::ZeroOrMore(parser,
-                    new_ref<parser::AnyOneOfSet>(parser,
+    public: query(data::Parser* parser) :
+                data::parser::ZeroOrMore(parser,
+                    new_ref<data::parser::AnyOneOfSet>(parser,
                         new std::vector<ref_of<ParserState>::type>({{
                             new_ref< pchar>(parser),
-                            new_ref< parser::Specific>(parser, '/'),
-                            new_ref< parser::Specific>(parser, '?')
+                            new_ref< data::parser::Specific>(parser, '/'),
+                            new_ref< data::parser::Specific>(parser, '?')
                         }})
                     ),
                     static_cast<uint64_t>(httpRequestToken::query)

@@ -40,15 +40,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_version;
     };
 
-    class ProtocolVersionNode : public parser::NodeAdapter<ProtocolVersion>
+    class ProtocolVersionNode : public data::parser::NodeAdapter<ProtocolVersion>
     {
     public:
 
-        ProtocolVersionNode() : parser::NodeAdapter<ProtocolVersion>(static_cast<uint64_t>(httpRequestToken::protocol_version))
+        ProtocolVersionNode() : data::parser::NodeAdapter<ProtocolVersion>(static_cast<uint64_t>(httpRequestToken::protocol_version))
         {
         }
 
-        ProtocolVersionNode(ref_of<ProtocolVersion>::type protocol_version) : parser::NodeAdapter<ProtocolVersion>(protocol_version, static_cast<uint64_t>(httpRequestToken::protocol_version))
+        ProtocolVersionNode(ref_of<ProtocolVersion>::type protocol_version) : data::parser::NodeAdapter<ProtocolVersion>(protocol_version, static_cast<uint64_t>(httpRequestToken::protocol_version))
         {
         }
 

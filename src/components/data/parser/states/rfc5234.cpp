@@ -11,7 +11,7 @@
 #include "../nodes/char.h"
 #include "../nodes/hexdigit.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     DIGIT::DIGIT(Parser* parser) : OneOfARange(parser, 0x30, 0x39, static_cast<uint64_t>(eToken::Digit)) { }
 
@@ -127,4 +127,4 @@ namespace qor { namespace components { namespace parser {
 
     ALPHA::~ALPHA() = default;
 
-}}}//qor::components::parser
+}}}//qor::data::parser

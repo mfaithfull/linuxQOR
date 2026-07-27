@@ -17,7 +17,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
     
     enum class echoRequestToken : uint64_t
     {
-        requestChar = static_cast<uint64_t>(qor::components::parser::eToken::Max) + 1ull,
+        requestChar = static_cast<uint64_t>(qor::data::parser::eToken::Max) + 1ull,
         request,
     };
 
@@ -26,10 +26,10 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         {static_cast< const uint64_t>(echoRequestToken::request), "request"},
     }};
 
-    class requestChar : public qor::components::parser::OneOfARange
+    class requestChar : public qor::data::parser::OneOfARange
     {
-    public: requestChar(qor::components::parser::Parser* parser) :
-                qor::components::parser::OneOfARange(parser,
+    public: requestChar(qor::data::Parser* parser) :
+                qor::data::parser::OneOfARange(parser,
                 0x00,
                 0xFF,
                 static_cast<uint64_t>(echoRequestToken::requestChar))
@@ -39,27 +39,27 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         {
             char charValue = (char)m_result.first;
             GetParser()->PushNode(
-                qor::new_ref<qor::components::parser::CharNode>(
+                qor::new_ref<qor::data::parser::CharNode>(
                     charValue,static_cast<uint64_t>(echoRequestToken::requestChar)
                 )
             );
         }
         virtual void Fail()
         {
-            if(m_result.code == qor::components::parser::Result::MORE_DATA)
+            if(m_result.code == qor::data::parser::Result::MORE_DATA)
             {
                 //we're simply out of data. That's fine for an echo. Echo what we have
-                m_result.code = qor::components::parser::Result::SUCCESS;                
+                m_result.code = qor::data::parser::Result::SUCCESS;                
                 Workflow()->SetComplete();
             }            
             Workflow()->PopState();
         }
     };
 
-    class request : public qor::components::parser::OneOrMore
+    class request : public qor::data::parser::OneOrMore
     {
-    public: request(qor::components::parser::Parser* parser) :
-                qor::components::parser::OneOrMore( parser,
+    public: request(qor::data::Parser* parser) :
+                qor::data::parser::OneOrMore( parser,
                     qor::new_ref<requestChar>(parser),
                     static_cast<uint64_t>(echoRequestToken::request))
             {}

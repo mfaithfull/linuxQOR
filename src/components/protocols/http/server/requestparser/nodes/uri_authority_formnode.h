@@ -41,15 +41,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         unsigned m_port;
     };
 
-    class UriAuthorityFormNode : public parser::NodeAdapter<UriAuthorityForm>
+    class UriAuthorityFormNode : public data::parser::NodeAdapter<UriAuthorityForm>
     {
     public:
 
-        UriAuthorityFormNode() : parser::NodeAdapter<UriAuthorityForm>(static_cast<uint64_t>(httpRequestToken::uri_authority_form))
+        UriAuthorityFormNode() : data::parser::NodeAdapter<UriAuthorityForm>(static_cast<uint64_t>(httpRequestToken::uri_authority_form))
         {
         }
 
-        UriAuthorityFormNode(ref_of<UriAuthorityForm>::type uri_authority_form) : parser::NodeAdapter<UriAuthorityForm>(uri_authority_form, static_cast<uint64_t>(httpRequestToken::uri_authority_form))
+        UriAuthorityFormNode(ref_of<UriAuthorityForm>::type uri_authority_form) : data::parser::NodeAdapter<UriAuthorityForm>(uri_authority_form, static_cast<uint64_t>(httpRequestToken::uri_authority_form))
         {
         }
 

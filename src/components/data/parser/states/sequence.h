@@ -1,12 +1,12 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_STATES_SEQUENCE
-#define QOR_PP_H_COMPONENTS_PARSER_STATES_SEQUENCE
+#ifndef QOR_PP_H_DATA_PARSER_STATES_SEQUENCE
+#define QOR_PP_H_DATA_PARSER_STATES_SEQUENCE
 
 #include "../state.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //Matches head followed by tail
     class qor_pp_module_interface(QOR_PARSER) Sequence : public ParserState
@@ -23,6 +23,6 @@ namespace qor { namespace components { namespace parser {
         ref_of<ParserState>::type m_tail;
     };
 
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_STATES_SEQUENCE
+#endif//QOR_PP_H_DATA_PARSER_STATES_SEQUENCE

@@ -20,7 +20,7 @@ endif()
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
     target_link_libraries(${target} qor_module qor_host qor_compiler 
 qor_platform qor_thread qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector qor_log 
-qor_loghandler qor_sockets qor_asyncioservice qor_optionparser qor_logaggregator
+qor_loghandler qor_sockets qor_asyncioservice qor_logaggregator
 qor_image qor_jpegdecodefilter
 winqor_filesystem winqor_thread)
 endif()

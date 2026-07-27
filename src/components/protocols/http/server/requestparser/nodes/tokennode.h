@@ -39,15 +39,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_token;
     };
 
-    class TokenNode : public parser::NodeAdapter<HTTPRequestToken>
+    class TokenNode : public data::parser::NodeAdapter<HTTPRequestToken>
     {
     public:
 
-        TokenNode() : parser::NodeAdapter<HTTPRequestToken>(static_cast<uint64_t>(httpRequestToken::token))
+        TokenNode() : data::parser::NodeAdapter<HTTPRequestToken>(static_cast<uint64_t>(httpRequestToken::token))
         {
         }
 
-        TokenNode(ref_of<HTTPRequestToken>::type token) : parser::NodeAdapter<HTTPRequestToken>(token, static_cast<uint64_t>(httpRequestToken::token))
+        TokenNode(ref_of<HTTPRequestToken>::type token) : data::parser::NodeAdapter<HTTPRequestToken>(token, static_cast<uint64_t>(httpRequestToken::token))
         {
         }
 

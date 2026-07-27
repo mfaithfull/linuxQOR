@@ -43,15 +43,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::vector<std::string> m_segments;
     };
 
-    class PathAbEmptyNode : public parser::NodeAdapter<PathAbEmpty>
+    class PathAbEmptyNode : public data::parser::NodeAdapter<PathAbEmpty>
     {
     public:
 
-        PathAbEmptyNode() : parser::NodeAdapter<PathAbEmpty>(static_cast<uint64_t>(httpRequestToken::path_abempty))
+        PathAbEmptyNode() : data::parser::NodeAdapter<PathAbEmpty>(static_cast<uint64_t>(httpRequestToken::path_abempty))
         {
         }
 
-        PathAbEmptyNode(ref_of<PathAbEmpty>::type path_abempty) : parser::NodeAdapter<PathAbEmpty>(path_abempty, static_cast<uint64_t>(httpRequestToken::path_abempty))
+        PathAbEmptyNode(ref_of<PathAbEmpty>::type path_abempty) : data::parser::NodeAdapter<PathAbEmpty>(path_abempty, static_cast<uint64_t>(httpRequestToken::path_abempty))
         {
         }
 

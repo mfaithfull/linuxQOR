@@ -18,16 +18,16 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
     public:
 
-        Generator(ref_of<parser::Context>::type context);
+        Generator(ref_of<data::parser::Context>::type context);
         virtual inline ~Generator() = default;
         virtual int Run();
 
-        inline parser::Context* GetContext()
+        inline data::parser::Context* GetContext()
         {
             return m_context;
         }
 
-        inline void SetContext(ref_of<parser::Context>::type context)
+        inline void SetContext(ref_of<data::parser::Context>::type context)
         {
             m_context = context;
         }
@@ -44,7 +44,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
     private:
 
-        ref_of<parser::Context>::type m_context;
+        ref_of<data::parser::Context>::type m_context;
         ref_of<HTTPResponse>::type m_response;
     };
 

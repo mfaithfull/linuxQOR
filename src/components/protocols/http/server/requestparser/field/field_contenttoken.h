@@ -37,18 +37,18 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class qor_pp_module_interface(QOR_HTTP) field_content : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) field_content : public data::parser::Sequence
     {
-    public: field_content(qor::components::parser::Parser* parser) :
-                qor::components::parser::Sequence(parser,
+    public: field_content(data::Parser* parser) :
+                data::parser::Sequence(parser,
                     new_ref<field_vchar>(parser),
-                    new_ref<qor::components::parser::Optional>(parser,
-                        new_ref<qor::components::parser::Sequence>(parser,
-                            new_ref<qor::components::parser::OneOrMore>(parser,
-                                new_ref<qor::components::parser::AnyOneOfSet>(parser,
+                    new_ref<data::parser::Optional>(parser,
+                        new_ref<data::parser::Sequence>(parser,
+                            new_ref<data::parser::OneOrMore>(parser,
+                                new_ref<data::parser::AnyOneOfSet>(parser,
                                     new std::vector<ref_of<ParserState>::type>({{
-                                        new_ref< qor::components::parser::SP>(parser),
-                                        new_ref< qor::components::parser::HTAB>(parser),
+                                        new_ref< data::parser::SP>(parser),
+                                        new_ref< data::parser::HTAB>(parser),
                                         new_ref<field_vchar>(parser)
                                         }})
                                     )

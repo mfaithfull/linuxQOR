@@ -37,14 +37,14 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //origin-form    = absolute-path [ "?" query ]
-    class qor_pp_module_interface(QOR_HTTP) uri_origin_form : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) uri_origin_form : public qor::data::parser::Sequence
     {
-    public: uri_origin_form(qor::components::parser::Parser* parser) :
-                qor::components::parser::Sequence(parser,
+    public: uri_origin_form(qor::data::Parser* parser) :
+                qor::data::parser::Sequence(parser,
                     new_ref<uri_absolute_path>(parser),
-                    new_ref<qor::components::parser::Optional>(parser,
-                        new_ref<qor::components::parser::Sequence>(parser,
-                            new_ref<qor::components::parser::Specific>(parser, '?'),
+                    new_ref<qor::data::parser::Optional>(parser,
+                        new_ref<qor::data::parser::Sequence>(parser,
+                            new_ref<qor::data::parser::Specific>(parser, '?'),
                             new_ref<query>(parser)
                         )
                     ),

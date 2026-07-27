@@ -29,8 +29,8 @@
 #include <string.h>
 #include <assert.h>
 
-#include "src/framework/gl/input/input.h"
-#include "src/framework/gl/image.h"
+#include "src/framework/ui/gl/input/input.h"
+#include "src/framework/ui/gl/image.h"
 
 #define OEMRESOURCE
 #include "src/platform/os/windows/api_layer/kernel/kernel32.h"

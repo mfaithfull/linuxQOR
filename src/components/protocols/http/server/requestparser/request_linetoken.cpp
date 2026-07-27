@@ -7,18 +7,18 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    request_line::request_line(parser::Parser* parser) :
-                parser::Sequence( parser,
+    request_line::request_line(data::Parser* parser) :
+                data::parser::Sequence( parser,
                     new_ref<method>(parser),
-                    new_ref<parser::Sequence>( parser,
-                        new_ref<parser::SP>(parser),
-                        new_ref<parser::Sequence>( parser,
+                    new_ref<data::parser::Sequence>( parser,
+                        new_ref<data::parser::SP>(parser),
+                        new_ref<data::parser::Sequence>( parser,
                             new_ref<target>(parser),
-                            new_ref<parser::Sequence>( parser,
-                                new_ref<parser::SP>(parser),
-                                new_ref<parser::Sequence>(parser,
+                            new_ref<data::parser::Sequence>( parser,
+                                new_ref<data::parser::SP>(parser),
+                                new_ref<data::parser::Sequence>(parser,
                                     new_ref<protocol>(parser),
-                                    new_ref<parser::CRLF>(parser)
+                                    new_ref<data::parser::CRLF>(parser)
                                 )
                             )
                         )

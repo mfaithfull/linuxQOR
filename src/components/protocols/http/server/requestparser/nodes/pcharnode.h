@@ -39,15 +39,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         char m_char;
     };
 
-    class PCharNode : public parser::NodeAdapter<PChar>
+    class PCharNode : public data::parser::NodeAdapter<PChar>
     {
     public:
 
-        PCharNode() : parser::NodeAdapter<PChar>(static_cast<uint64_t>(httpRequestToken::pchar))
+        PCharNode() : data::parser::NodeAdapter<PChar>(static_cast<uint64_t>(httpRequestToken::pchar))
         {
         }
 
-        PCharNode(ref_of<PChar>::type pchar) : parser::NodeAdapter<PChar>(pchar, static_cast<uint64_t>(httpRequestToken::pchar))
+        PCharNode(ref_of<PChar>::type pchar) : data::parser::NodeAdapter<PChar>(pchar, static_cast<uint64_t>(httpRequestToken::pchar))
         {
         }
 

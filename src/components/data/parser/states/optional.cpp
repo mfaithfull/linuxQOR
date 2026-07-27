@@ -8,7 +8,7 @@
 #include "../context.h"
 #include "../parser.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //Matches the head state if it's present. If it's not that's fine, we just move on.
     Optional::Optional(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser, token),
@@ -46,7 +46,7 @@ namespace qor { namespace components { namespace parser {
                     {
                         m_token = m_result.token;
                     }
-                    Emit();
+                    //Emit();//TODO: Do we need this?
                 }
                 m_result.code = Result::SUCCESS;
             };
@@ -55,4 +55,4 @@ namespace qor { namespace components { namespace parser {
 
     Optional::~Optional() = default;
     
-}}}//qor::components::parser
+}}}//qor::data::parser

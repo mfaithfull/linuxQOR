@@ -34,7 +34,7 @@
 
 enum class echoRequestToken : uint64_t
 {
-    requestChar = static_cast<uint64_t>(qor::components::parser::eToken::Max) + 1ull,
+    requestChar = static_cast<uint64_t>(qor::data::parser::eToken::Max) + 1ull,
     request,
 };
 
@@ -43,10 +43,10 @@ static const std::map<const uint64_t, const std::string> echoRequestTokenNames =
     {static_cast< uint64_t>(echoRequestToken::request), "request"},
 }};
 
-class requestChar : public qor::components::parser::OneOfARange
+class requestChar : public qor::data::parser::OneOfARange
 {
-public: requestChar(qor::components::parser::Parser* parser) :
-            qor::components::parser::OneOfARange(parser,
+public: requestChar(qor::data::Parser* parser) :
+            qor::data::parser::OneOfARange(parser,
             0x00,
             0xFF,
             static_cast<uint64_t>(echoRequestToken::requestChar))
@@ -56,18 +56,18 @@ public: requestChar(qor::components::parser::Parser* parser) :
     {
         char charValue = m_result.first;
         GetParser()->PushNode(
-            qor::new_ref<qor::components::parser::CharNode>(
+            qor::new_ref<qor::data::parser::CharNode>(
                 charValue,static_cast<uint64_t>(echoRequestToken::requestChar)
-            ).template AsRef<qor::components::parser::Node>()
+            ).template AsRef<qor::data::parser::Node>()
         );
     }
 };
 
-class request : public qor::components::parser::OneOrMore
+class request : public qor::data::parser::OneOrMore
 {
-public: request(qor::components::parser::Parser* parser) :
-            qor::components::parser::OneOrMore( parser,
-                qor::new_ref<requestChar>(parser).template AsRef<qor::components::parser::ParserState>(),
+public: request(qor::data::Parser* parser) :
+            qor::data::parser::OneOrMore( parser,
+                qor::new_ref<requestChar>(parser).template AsRef<qor::data::parser::ParserState>(),
                 static_cast<uint64_t>(echoRequestToken::request))
         {}
 

@@ -13,14 +13,14 @@
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
-    class RequestNode : public qor::components::parser::NodeAdapter<EchoRequest>
+    class RequestNode : public qor::data::parser::NodeAdapter<EchoRequest>
     {
     public:
 
-        RequestNode() : qor::components::parser::NodeAdapter<EchoRequest>(static_cast<uint64_t>(echoRequestToken::request))
+        RequestNode() : qor::data::parser::NodeAdapter<EchoRequest>(static_cast<uint64_t>(echoRequestToken::request))
         { }
 
-        RequestNode(qor::ref_of<EchoRequest>::type request) : qor::components::parser::NodeAdapter<EchoRequest>(request, static_cast<uint64_t>(echoRequestToken::request))
+        RequestNode(qor::ref_of<EchoRequest>::type request) : qor::data::parser::NodeAdapter<EchoRequest>(request, static_cast<uint64_t>(echoRequestToken::request))
         { }
 
         virtual ~RequestNode() = default;

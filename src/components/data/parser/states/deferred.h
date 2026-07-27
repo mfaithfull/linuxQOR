@@ -1,12 +1,12 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_STATES_DEFERRED
-#define QOR_PP_H_COMPONENTS_PARSER_STATES_DEFERRED
+#ifndef QOR_PP_H_DATA_PARSER_STATES_DEFERRED
+#define QOR_PP_H_DATA_PARSER_STATES_DEFERRED
 
 #include "../state.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     template<class T>
     class deferred : public ParserState
@@ -70,6 +70,6 @@ namespace qor { namespace components { namespace parser {
         ref_of<T>::type m_p;
     };
 
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_STATES_DEFERRED
+#endif//QOR_PP_H_DATA_PARSER_STATES_DEFERRED

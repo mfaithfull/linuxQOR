@@ -29,7 +29,7 @@
 
 using namespace qor;
 using namespace qor::components;
-using namespace qor::components::parser;
+using namespace qor::data::parser;
 using namespace qor::workflow;
 
 void EchoRequestFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)

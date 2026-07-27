@@ -40,15 +40,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_query;       
     };
 
-    class QueryNode : public parser::NodeAdapter<Query>
+    class QueryNode : public data::parser::NodeAdapter<Query>
     {
     public:
 
-        QueryNode() : parser::NodeAdapter<Query>(static_cast<uint64_t>(httpRequestToken::query))
+        QueryNode() : data::parser::NodeAdapter<Query>(static_cast<uint64_t>(httpRequestToken::query))
         {
         }
 
-        QueryNode(ref_of<Query>::type query) : parser::NodeAdapter<Query>(query, static_cast<uint64_t>(httpRequestToken::query))
+        QueryNode(ref_of<Query>::type query) : data::parser::NodeAdapter<Query>(query, static_cast<uint64_t>(httpRequestToken::query))
         {
         }
 

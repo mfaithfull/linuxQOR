@@ -8,3 +8,4 @@
 #add_subdirectory(visual)
 #add_subdirectory(images)
 add_subdirectory(osspecific)
+add_subdirectory(textread)

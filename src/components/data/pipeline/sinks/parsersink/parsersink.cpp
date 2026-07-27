@@ -13,11 +13,11 @@ namespace qor{ namespace pipeline{ namespace components{
     BaseParserSink::~BaseParserSink() = default;        
 
     BaseParserSink::BaseParserSink() : 
-        m_context(new_ref<qor::components::parser::Context>()),
+        m_context(new_ref<qor::data::parser::Context>()),
         m_parser(m_context){ }
    
 
-    qor::components::parser::Parser& BaseParserSink::Parser()
+    qor::data::Parser& BaseParserSink::Parser()
     {
         return m_parser;
     }

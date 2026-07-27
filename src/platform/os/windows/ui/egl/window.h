@@ -46,8 +46,8 @@ namespace qor{ namespace platform { namespace win{
         static long long EglWindowProc(void* window, unsigned int msg, unsigned long long wparam, long long lparam);
 
         EglWindowClass(void* instance) : WindowClass(), m_instance(instance),
-            m_icon(m_instance, ""),
-            m_cursor(NULL, ""),
+            m_icon(m_instance, _TXT("")),
+            m_cursor(NULL, _TXT("")),
             m_backgroundBrush(1)
         {
             SetStyle( 0x0002 | 0x0001 );

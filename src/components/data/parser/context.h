@@ -1,14 +1,14 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_CONTEXT
-#define QOR_PP_H_COMPONENTS_PARSER_CONTEXT
+#ifndef QOR_PP_H_DATA_PARSER_CONTEXT
+#define QOR_PP_H_DATA_PARSER_CONTEXT
 
 #include "src/platform/compiler/compiler.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
-    //Taps a parser into a pipeline buffer, keeping track where the parser is in the buffer
+    //Adapts a parser into a pipeline buffer, keeping track where the parser is in the buffer
     class qor_pp_module_interface(QOR_PARSER) Context
     {
     public:
@@ -34,6 +34,6 @@ namespace qor { namespace components { namespace parser {
 
     };
 
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_CONTEXT
+#endif//QOR_PP_H_DATA_PARSER_CONTEXT

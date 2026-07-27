@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_STATE
-#define QOR_PP_H_COMPONENTS_PARSER_STATE
+#ifndef QOR_PP_H_DATA_PARSER_STATE
+#define QOR_PP_H_DATA_PARSER_STATE
 
 #include <iostream>
 #include "src/platform/compiler/compiler.h"
@@ -13,9 +13,12 @@
 #include "node.h"
 #include "tokens.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { 
 
     class Parser;
+
+    namespace parser {
+        
     class Context;
 
     class qor_pp_module_interface(QOR_PARSER) ParserState : public workflow::State
@@ -50,6 +53,6 @@ namespace qor { namespace components { namespace parser {
     };
 
 
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_STATE
+#endif//QOR_PP_H_DATA_PARSER_STATE

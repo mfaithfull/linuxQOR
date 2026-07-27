@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI_MAINWINDOW
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI_MAINWINDOW
 
-#include "src/framework/ui/desktopui/windows/imainwindowimpl.h"
+#include "src/framework/ui/graphical/windows/imainwindowimpl.h"
 #include "src/platform/os/windows/common/structures.h"
 #include "src/platform/os/windows/ui/gui/controllers/windowcontroller.h"
 

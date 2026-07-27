@@ -76,7 +76,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void protocol_name::Fail()
     {
-        ref_of<parser::Node>::type node = GetParser()->PopNode();
+        ref_of<data::parser::Node>::type node = GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() != m_token)
         {
             GetParser()->PushNode(node);

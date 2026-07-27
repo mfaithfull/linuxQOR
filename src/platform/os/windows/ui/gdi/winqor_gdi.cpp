@@ -25,7 +25,7 @@
 #include "src/configuration/configuration.h"
 #ifdef NDEBUG
 #include <buildnumber.h>
-endif
+#endif
 #include "src/qor/module/module.h"
 
 extern "C"

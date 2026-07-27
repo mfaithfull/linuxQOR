@@ -8,7 +8,7 @@
 #include "../context.h"
 #include "../parser.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //Matches one or more of the head state. Must be at least one, can be any number. First non match breaks the sequence
     OneOrMore::OneOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser,token),
@@ -56,4 +56,4 @@ namespace qor { namespace components { namespace parser {
 
     OneOrMore::~OneOrMore() = default;
     
-}}}//qor::components::parser
+}}}//qor::data::parser

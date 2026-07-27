@@ -42,15 +42,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_host;
     };
 
-    class HostNode : public parser::NodeAdapter<Host>
+    class HostNode : public data::parser::NodeAdapter<Host>
     {
     public:
 
-        HostNode() : parser::NodeAdapter<Host>(static_cast<uint64_t>(httpRequestToken::host))
+        HostNode() : data::parser::NodeAdapter<Host>(static_cast<uint64_t>(httpRequestToken::host))
         {
         }
 
-        HostNode(ref_of<Host>::type host) : parser::NodeAdapter<Host>(host, static_cast<uint64_t>(httpRequestToken::host))
+        HostNode(ref_of<Host>::type host) : data::parser::NodeAdapter<Host>(host, static_cast<uint64_t>(httpRequestToken::host))
         {
         }
 

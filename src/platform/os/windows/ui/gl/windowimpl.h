@@ -25,8 +25,8 @@
 #ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_GL_WINDOW
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_GL_WINDOW
 
-#include "src/framework/gl/window/windowpimpl.h"
-#include "src/framework/gl/window/window.h"
+#include "src/framework/ui/gl/window/windowpimpl.h"
+#include "src/framework/ui/gl/window/window.h"
 #include "src/platform/os/windows/ui/gui/view/drawing/rect.h"
 #include "src/platform/os/windows/ui/gui/window.h"
 #include "src/platform/os/windows/ui/gui/controllers/windowcontroller.h"

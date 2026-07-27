@@ -36,12 +36,12 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //path-abempty  = *( "/" segment )
-    class qor_pp_module_interface(QOR_HTTP) path_abempty : public qor::components::parser::ZeroOrMore
+    class qor_pp_module_interface(QOR_HTTP) path_abempty : public qor::data::parser::ZeroOrMore
     {
-    public: path_abempty(qor::components::parser::Parser* parser) :
-                qor::components::parser::ZeroOrMore(parser,
-                    new_ref<qor::components::parser::Sequence>(parser,
-                        new_ref<qor::components::parser::Specific>(parser, '/'),
+    public: path_abempty(qor::data::Parser* parser) :
+                qor::data::parser::ZeroOrMore(parser,
+                    new_ref<qor::data::parser::Sequence>(parser,
+                        new_ref<qor::data::parser::Specific>(parser, '/'),
                         new_ref<segment>(parser)
                     ),
                     static_cast<uint64_t>(httpRequestToken::path_abempty)

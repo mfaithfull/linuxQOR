@@ -38,7 +38,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
     enum class httpResponseToken : uint64_t
     {
-        responseChar = static_cast<uint64_t>(qor::components::parser::eToken::Max) + 1ull,
+        responseChar = static_cast<uint64_t>(qor::data::parser::eToken::Max) + 1ull,
         response,
         status_line,
         specificString,
@@ -52,10 +52,10 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         {httpResponseToken::response, "response"},
     }};
 
-    class responseChar : public qor::components::parser::OneOfARange
+    class responseChar : public qor::data::parser::OneOfARange
     {
-    public: responseChar(qor::components::parser::Parser* parser) :
-                qor::components::parser::OneOfARange(parser,
+    public: responseChar(qor::data::Parser* parser) :
+                qor::data::parser::OneOfARange(parser,
                 0x00,
                 0xFF,
                 static_cast<uint64_t>(httpResponseToken::responseChar))
@@ -65,17 +65,17 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         {
             char charValue = (char)m_result.first;
             GetParser()->PushNode(
-                qor::new_ref<qor::components::parser::CharNode>(
+                qor::new_ref<qor::data::parser::CharNode>(
                     charValue,static_cast<uint64_t>(httpResponseToken::responseChar)
-                ).template AsRef<qor::components::parser::Node>()
+                ).template AsRef<qor::data::parser::Node>()
             );
         }
     };
 
-    class Initial : public qor::components::parser::OneOrMore
+    class Initial : public qor::data::parser::OneOrMore
     {
-    public: Initial(qor::components::parser::Parser* parser) :
-                components::parser::OneOrMore( parser,
+    public: Initial(qor::data::Parser* parser) :
+                data::parser::OneOrMore( parser,
                     new_ref<responseChar>(parser),
                     static_cast<uint64_t>(httpResponseToken::response))
             {}
@@ -94,10 +94,10 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         }
     };
 
-    class SpecificString : public parser::OneOrMore
+    class SpecificString : public data::parser::OneOrMore
     {
-    public: SpecificString(parser::Parser* parser, const std::string& /*specific*/) : parser::OneOrMore(parser,
-                new_ref<parser::CHAR>(parser),
+    public: SpecificString(data::Parser* parser, const std::string& /*specific*/) : data::parser::OneOrMore(parser,
+                new_ref<data::parser::CHAR>(parser),
                 static_cast<uint64_t>(httpResponseToken::specificString)
             )
             {}
@@ -120,18 +120,18 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
     };
 
-    class VersionParser : public parser::Sequence
+    class VersionParser : public data::parser::Sequence
     {
-    public: VersionParser( parser::Parser* parser) : 
-                parser::Sequence( parser,
+    public: VersionParser( data::Parser* parser) : 
+                data::parser::Sequence( parser,
                     new_ref<SpecificString>(parser, "HTTP"),
-                    new_ref<parser::Sequence>(parser,
-                        new_ref<parser::Specific>(parser, '/'),
-                        new_ref<parser::Sequence>(parser,
-                            new_ref<parser::DIGIT>(parser),
-                            new_ref<parser::Sequence>(parser,
-                                new_ref<parser::Specific>(parser, '.'),
-                                new_ref<parser::DIGIT>(parser)
+                    new_ref<data::parser::Sequence>(parser,
+                        new_ref<data::parser::Specific>(parser, '/'),
+                        new_ref<data::parser::Sequence>(parser,
+                            new_ref<data::parser::DIGIT>(parser),
+                            new_ref<data::parser::Sequence>(parser,
+                                new_ref<data::parser::Specific>(parser, '.'),
+                                new_ref<data::parser::DIGIT>(parser)
                             )
                         )
                     ),
@@ -156,11 +156,11 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         }
     };
 
-    class ReasonPhraseParser : public parser::OneOrMore
+    class ReasonPhraseParser : public data::parser::OneOrMore
     {
-    public: ReasonPhraseParser(parser::Parser* parser) :
-                parser::OneOrMore( parser,
-                    new_ref<parser::ALPHA>(parser),
+    public: ReasonPhraseParser(data::Parser* parser) :
+                data::parser::OneOrMore( parser,
+                    new_ref<data::parser::ALPHA>(parser),
                     static_cast<uint64_t>(httpResponseToken::reason_phrase)
                 )
             {}
@@ -181,14 +181,14 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         }
     };
 
-    class StatusCodeParser : public parser::Sequence
+    class StatusCodeParser : public data::parser::Sequence
     {
-    public: StatusCodeParser(parser::Parser* parser) :
-                parser::Sequence( parser,
-                    new_ref<parser::DIGIT>(parser),
-                    new_ref<parser::Sequence>(parser,
-                        new_ref<parser::DIGIT>(parser),
-                        new_ref<parser::DIGIT>(parser)
+    public: StatusCodeParser(data::Parser* parser) :
+                data::parser::Sequence( parser,
+                    new_ref<data::parser::DIGIT>(parser),
+                    new_ref<data::parser::Sequence>(parser,
+                        new_ref<data::parser::DIGIT>(parser),
+                        new_ref<data::parser::DIGIT>(parser)
                     ),
                     static_cast<uint64_t>(httpResponseToken::status_code)
                 )
@@ -210,20 +210,20 @@ namespace qor { namespace components { namespace protocols { namespace http { na
         }
     };
     
-    class StatusLineParser : public parser::Sequence
+    class StatusLineParser : public data::parser::Sequence
     {
-    public: StatusLineParser(parser::Parser* parser) : 
-                parser::Sequence( parser, 
+    public: StatusLineParser(data::Parser* parser) : 
+                data::parser::Sequence( parser, 
                     new_ref<VersionParser>(parser),
-                    new_ref<parser::Sequence>(parser,
-                        new_ref<parser::SP>(parser),
-                        new_ref<parser::Sequence>(parser,
+                    new_ref<data::parser::Sequence>(parser,
+                        new_ref<data::parser::SP>(parser),
+                        new_ref<data::parser::Sequence>(parser,
                             new_ref<StatusCodeParser>(parser),
-                            new_ref<parser::Sequence>(parser,
-                                new_ref<parser::SP>(parser),
-                                new_ref<parser::Sequence>(parser,
+                            new_ref<data::parser::Sequence>(parser,
+                                new_ref<data::parser::SP>(parser),
+                                new_ref<data::parser::Sequence>(parser,
                                     new_ref<ReasonPhraseParser>(parser),
-                                    new_ref<parser::CRLF>(parser)
+                                    new_ref<data::parser::CRLF>(parser)
                                 )
                             )
                         )                        

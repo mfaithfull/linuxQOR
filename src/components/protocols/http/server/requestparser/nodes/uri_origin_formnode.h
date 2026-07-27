@@ -41,15 +41,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         Query m_query;
     };
 
-    class UriOriginFormNode : public parser::NodeAdapter<UriOriginForm>
+    class UriOriginFormNode : public data::parser::NodeAdapter<UriOriginForm>
     {
     public:
 
-        UriOriginFormNode() : parser::NodeAdapter<UriOriginForm>(static_cast<uint64_t>(httpRequestToken::uri_origin_form))
+        UriOriginFormNode() : data::parser::NodeAdapter<UriOriginForm>(static_cast<uint64_t>(httpRequestToken::uri_origin_form))
         {
         }
 
-        UriOriginFormNode(ref_of<UriOriginForm>::type uri_origin_form) : parser::NodeAdapter<UriOriginForm>(uri_origin_form, static_cast<uint64_t>(httpRequestToken::uri_origin_form))
+        UriOriginFormNode(ref_of<UriOriginForm>::type uri_origin_form) : data::parser::NodeAdapter<UriOriginForm>(uri_origin_form, static_cast<uint64_t>(httpRequestToken::uri_origin_form))
         {
         }
 

@@ -35,11 +35,11 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //port          = *DIGIT
-    class qor_pp_module_interface(QOR_HTTP) port : public qor::components::parser::ZeroOrMore
+    class qor_pp_module_interface(QOR_HTTP) port : public qor::data::parser::ZeroOrMore
     {
-    public: port(qor::components::parser::Parser* parser) : 
-                qor::components::parser::ZeroOrMore( parser,
-                    new_ref<qor::components::parser::DIGIT>(parser),
+    public: port(qor::data::Parser* parser) : 
+                qor::data::parser::ZeroOrMore( parser,
+                    new_ref<qor::data::parser::DIGIT>(parser),
                     static_cast<uint64_t>(httpRequestToken::port)
                 )
         {}

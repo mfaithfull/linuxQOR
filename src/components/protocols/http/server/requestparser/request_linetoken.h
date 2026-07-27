@@ -16,10 +16,10 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class qor_pp_module_interface(QOR_HTTP) request_line : public parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) request_line : public data::parser::Sequence
     {
     public:
-        request_line(parser::Parser* parser);
+        request_line(data::Parser* parser);
         virtual ~request_line();
         virtual void Prepare();
         virtual void Emit();

@@ -37,24 +37,24 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //field-name ":" OWS field-value OWS CRLF
-    class qor_pp_module_interface(QOR_HTTP) field_line : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) field_line : public data::parser::Sequence
     {
-    public: field_line(qor::components::parser::Parser* parser) : 
-                qor::components::parser::Sequence( parser,
+    public: field_line(data::Parser* parser) : 
+                data::parser::Sequence( parser,
                     new_ref<field_name>(parser),
-                    new_ref<qor::components::parser::Sequence>( parser,
-                        new_ref<qor::components::parser::Specific>( parser, ':'),
-                        new_ref<qor::components::parser::Sequence>( parser,
-                            new_ref<qor::components::parser::ZeroOrMore>(parser,
-                                new_ref<qor::components::parser::WSP>(parser)
+                    new_ref<data::parser::Sequence>( parser,
+                        new_ref<data::parser::Specific>( parser, ':'),
+                        new_ref<data::parser::Sequence>( parser,
+                            new_ref<data::parser::ZeroOrMore>(parser,
+                                new_ref<data::parser::WSP>(parser)
                             ),
-                            new_ref<qor::components::parser::Sequence>( parser,
+                            new_ref<data::parser::Sequence>( parser,
                                 new_ref<field_value>(parser),
-                                new_ref<qor::components::parser::Sequence>( parser,
-                                    new_ref<qor::components::parser::ZeroOrMore>(parser,
-                                        new_ref<qor::components::parser::WSP>(parser)
+                                new_ref<data::parser::Sequence>( parser,
+                                    new_ref<data::parser::ZeroOrMore>(parser,
+                                        new_ref<data::parser::WSP>(parser)
                                     ),
-                                    new_ref<qor::components::parser::CRLF>(parser)
+                                    new_ref<data::parser::CRLF>(parser)
                                 )
                             )
                         )

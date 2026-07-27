@@ -45,15 +45,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         Query m_query;
     };
 
-    class UriAbsoluteFormNode : public parser::NodeAdapter<UriAbsoluteForm>
+    class UriAbsoluteFormNode : public data::parser::NodeAdapter<UriAbsoluteForm>
     {
     public:
 
-        UriAbsoluteFormNode() : parser::NodeAdapter<UriAbsoluteForm>(static_cast<uint64_t>(httpRequestToken::uri_absolute_form))
+        UriAbsoluteFormNode() : data::parser::NodeAdapter<UriAbsoluteForm>(static_cast<uint64_t>(httpRequestToken::uri_absolute_form))
         {
         }
 
-        UriAbsoluteFormNode(ref_of<UriAbsoluteForm>::type uri_absolute_form) : parser::NodeAdapter<UriAbsoluteForm>(uri_absolute_form, static_cast<uint64_t>(httpRequestToken::uri_absolute_form))
+        UriAbsoluteFormNode(ref_of<UriAbsoluteForm>::type uri_absolute_form) : data::parser::NodeAdapter<UriAbsoluteForm>(uri_absolute_form, static_cast<uint64_t>(httpRequestToken::uri_absolute_form))
         {
         }
 

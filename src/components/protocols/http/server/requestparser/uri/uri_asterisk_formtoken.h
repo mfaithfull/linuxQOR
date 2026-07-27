@@ -35,10 +35,10 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //asterisk-form = "*"
-    class qor_pp_module_interface(QOR_HTTP) uri_asterisk_form : public qor::components::parser::Specific
+    class qor_pp_module_interface(QOR_HTTP) uri_asterisk_form : public qor::data::parser::Specific
     {
-    public: uri_asterisk_form(qor::components::parser::Parser* parser) :
-                qor::components::parser::Specific(parser, '*',
+    public: uri_asterisk_form(qor::data::Parser* parser) :
+                qor::data::parser::Specific(parser, '*',
                     static_cast<uint64_t>(httpRequestToken::uri_asterisk_form)
                 )
         {}

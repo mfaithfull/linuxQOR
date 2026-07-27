@@ -8,7 +8,7 @@
 #include "../context.h"
 #include "../parser.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //Matches a sequence beggining with head and followed by tail, which may itself be a sequence
     Sequence::Sequence(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser, token),
@@ -73,4 +73,4 @@ namespace qor { namespace components { namespace parser {
 
     Sequence::~Sequence() = default;
     
-}}}//qor::components::parser
+}}}//qor::data::parser

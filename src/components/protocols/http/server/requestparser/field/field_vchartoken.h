@@ -34,12 +34,12 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class qor_pp_module_interface(QOR_HTTP) field_vchar : public qor::components::parser::AnyOneOf
+    class qor_pp_module_interface(QOR_HTTP) field_vchar : public data::parser::AnyOneOf
     {
-    public: field_vchar(qor::components::parser::Parser* parser) :
-                qor::components::parser::AnyOneOf(parser,
-                    new_ref< qor::components::parser::VCHAR>(parser),
-                    new_ref< qor::components::parser::OneOfARange>(parser, 0x80, 0xFF),
+    public: field_vchar(data::Parser* parser) :
+                data::parser::AnyOneOf(parser,
+                    new_ref< data::parser::VCHAR>(parser),
+                    new_ref< data::parser::OneOfARange>(parser, 0x80, 0xFF),
                     static_cast<uint64_t>(httpRequestToken::field_vchar)
                 )
         {}

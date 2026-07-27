@@ -17,11 +17,11 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //protocol         = protocol-name ["/" protocol-version]
-    class qor_pp_module_interface(QOR_HTTP) protocol : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) protocol : public qor::data::parser::Sequence
     {
     public:
 
-        protocol(qor::components::parser::Parser* parser);
+        protocol(qor::data::Parser* parser);
         virtual ~protocol();
         virtual void Prepare();
         virtual void Emit();

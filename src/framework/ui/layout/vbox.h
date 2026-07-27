@@ -8,7 +8,7 @@
 
 namespace qor{ namespace ui{ namespace layout { 
 
-    class VBox : public Arranger 
+    class qor_pp_module_interface(QOR_UILAYOUT) VBox : public Arranger 
     {
     public:
 

@@ -51,10 +51,10 @@ namespace qor { namespace components { namespace protocols { namespace http {
             
             log::debug(tokenName);
             
-            if(token == static_cast<uint64_t>(parser::eToken::Char)
-                || token == static_cast<uint64_t>(parser::eToken::VisibleChar))
+            if(token == static_cast<uint64_t>(data::parser::eToken::Char)
+                || token == static_cast<uint64_t>(data::parser::eToken::VisibleChar))
             {
-                auto charNode = node.AsRef<parser::CharNode>();
+                auto charNode = node.AsRef<data::parser::CharNode>();
                 c = charNode->GetValue();
             }
             else

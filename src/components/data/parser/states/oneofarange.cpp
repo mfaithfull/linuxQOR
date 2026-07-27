@@ -9,7 +9,7 @@
 #include "../parser.h"
 #include "src/qor/flyers/log/debug.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //Octets in a contiguous numerical range. Used for things like 0-9 digits and a-z letters
     OneOfARange::OneOfARange(Parser* parser, byte firstOctet, byte lastOctet, uint64_t token) : ParserState(parser, token),
@@ -52,4 +52,4 @@ namespace qor { namespace components { namespace parser {
 
     OneOfARange::~OneOfARange() = default;
 
-}}}//qor::components::parser
+}}}//qor::data::parser

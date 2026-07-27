@@ -40,15 +40,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         byte m_value;
     };
 
-    class DecOctetNode : public parser::NodeAdapter<DecOctet>
+    class DecOctetNode : public data::parser::NodeAdapter<DecOctet>
     {
     public:
 
-        DecOctetNode() : parser::NodeAdapter<DecOctet>(static_cast<uint64_t>(httpRequestToken::dec_octet))
+        DecOctetNode() : data::parser::NodeAdapter<DecOctet>(static_cast<uint64_t>(httpRequestToken::dec_octet))
         {
         }
 
-        DecOctetNode(ref_of<DecOctet>::type dec_octet) : parser::NodeAdapter<DecOctet>(dec_octet, static_cast<uint64_t>(httpRequestToken::dec_octet))
+        DecOctetNode(ref_of<DecOctet>::type dec_octet) : data::parser::NodeAdapter<DecOctet>(dec_octet, static_cast<uint64_t>(httpRequestToken::dec_octet))
         {
         }
 

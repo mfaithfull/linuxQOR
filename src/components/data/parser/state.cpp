@@ -10,7 +10,7 @@
 #include "context.h"
 #include "parser.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     ParserState::ParserState(Parser* parser, uint64_t token) : workflow::State(parser)
     {
@@ -115,4 +115,4 @@ namespace qor { namespace components { namespace parser {
 
     AcceptAll::~AcceptAll() = default;
 
-}}}//qor::components::parser
+}}}//qor::data::parser

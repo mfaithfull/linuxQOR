@@ -51,8 +51,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
         bool Pull(size_t& unitsWritten, size_t unitsToWrite);
         bool Push(size_t& unitsWritten, size_t unitsToWrite);
         
-        ref_of<parser::Context>::type m_context;
-        parser::Parser m_parser;
+        ref_of<data::parser::Context>::type m_context;
+        data::Parser m_parser;
         ref_of<HTTPResponse>::type m_response;
     };
 

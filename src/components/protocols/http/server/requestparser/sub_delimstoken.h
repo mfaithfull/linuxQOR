@@ -36,22 +36,22 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //sub-delims    = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
-    class qor_pp_module_interface(QOR_HTTP) sub_delims : public parser::AnyOneOfSet
+    class qor_pp_module_interface(QOR_HTTP) sub_delims : public data::parser::AnyOneOfSet
     {
-    public: sub_delims(parser::Parser* parser) :
-                parser::AnyOneOfSet(parser,
+    public: sub_delims(data::Parser* parser) :
+                data::parser::AnyOneOfSet(parser,
                 new std::vector<ref_of<ParserState>::type>({{
-                    new_ref< parser::Specific>(parser, '!'),
-                    new_ref< parser::Specific>(parser, '$'),
-                    new_ref< parser::Specific>(parser, '&'),
-                    new_ref< parser::Specific>(parser, '\''),
-                    new_ref< parser::Specific>(parser, '('),
-                    new_ref< parser::Specific>(parser, ')'),
-                    new_ref< parser::Specific>(parser, '*'),
-                    new_ref< parser::Specific>(parser, '+'),
-                    new_ref< parser::Specific>(parser, ','),
-                    new_ref< parser::Specific>(parser, ';'),
-                    new_ref< parser::Specific>(parser, '='),
+                    new_ref< data::parser::Specific>(parser, '!'),
+                    new_ref< data::parser::Specific>(parser, '$'),
+                    new_ref< data::parser::Specific>(parser, '&'),
+                    new_ref< data::parser::Specific>(parser, '\''),
+                    new_ref< data::parser::Specific>(parser, '('),
+                    new_ref< data::parser::Specific>(parser, ')'),
+                    new_ref< data::parser::Specific>(parser, '*'),
+                    new_ref< data::parser::Specific>(parser, '+'),
+                    new_ref< data::parser::Specific>(parser, ','),
+                    new_ref< data::parser::Specific>(parser, ';'),
+                    new_ref< data::parser::Specific>(parser, '='),
                     }}),
                     static_cast<uint64_t>(httpRequestToken::sub_delims)
                 )

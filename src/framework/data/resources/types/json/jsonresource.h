@@ -9,7 +9,7 @@
 #include "../../resource.h"
 #include "src/framework/io/filesystem/path.h"
 #include "src/framework/io/filesystem/fileindex.h"
-#include "src/components/protocols/json/model/object.h"
+#include "src/components/data/formats/json/model/object.h"
 
 namespace qor{ namespace framework{ namespace res {
 
@@ -31,12 +31,12 @@ namespace qor{ namespace framework{ namespace res {
         virtual void Locate();
         virtual void Claim();
         
-        ref_of<components::model::json::Object>::type GetObject();
+        ref_of<data::model::json::Object>::type GetObject();
         
     protected:
 
         const io::filesystem::Index m_index;
-        ref_of<components::model::json::Object>::type m_object;
+        ref_of<data::model::json::Object>::type m_object;
         
     private:
         static const char* s_jsonResourceType;

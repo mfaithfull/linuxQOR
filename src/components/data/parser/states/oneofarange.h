@@ -1,12 +1,12 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_STATES_ONEOFARANGE
-#define QOR_PP_H_COMPONENTS_PARSER_STATES_ONEOFARANGE
+#ifndef QOR_PP_H_DATA_PARSER_STATES_ONEOFARANGE
+#define QOR_PP_H_DATA_PARSER_STATES_ONEOFARANGE
 
 #include "../state.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //A single byte range match
     class qor_pp_module_interface(QOR_PARSER) OneOfARange : public ParserState
@@ -22,4 +22,4 @@ namespace qor { namespace components { namespace parser {
 
 }}}
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_STATES_ONEOFARANGE
+#endif//QOR_PP_H_DATA_PARSER_STATES_ONEOFARANGE

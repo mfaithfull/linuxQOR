@@ -35,7 +35,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     enum class httpRequestToken : uint64_t
     {
-        requestChar = static_cast<uint64_t>(qor::components::parser::eToken::Max) + 1ull,
+        requestChar = static_cast<uint64_t>(qor::data::parser::eToken::Max) + 1ull,
         tchar,
         unreserved,
         pct_encoded,

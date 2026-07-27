@@ -1,0 +1,196 @@
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
+//JSON parsing example
+
+#include "src/configuration/configuration.h"
+
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/defaultloghandler.h"
+#include "src/framework/app/application/builder.h"
+#include "src/framework/app/role/role.h"
+#include "src/components/data/formats/json/parser/states/_3/object.h"
+#include "src/components/data/formats/json/parser/states/_1/array.h"
+#include "src/components/data/formats/json/parser/states/_3/number.h"
+#include "src/components/data/formats/json/parser/states/_4/value.h"
+#include "src/components/data/formats/json/parser/nodes/object.h"
+#include "src/components/data/formats/json/model/array.h"
+#include "src/components/data/formats/json/model/number.h"
+#include "src/components/qor/logaggregator/logaggregator.h"
+#include "src/components/data/pipeline/sinks/parsersink/parsersink.h"
+#include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
+#include "src/platform/platform.h"
+#include "jsonreader.h"
+
+qor_pp_module_requires(ICurrentThread);
+qor_pp_module_requires(IFileSystem);
+qor_pp_module_requires(LogAggregatorService)
+
+constexpr const char* appName = "JSON Read";
+constexpr const char* logTag = "jsonread";
+
+using namespace qor;
+using namespace qor::log;
+using namespace qor::io;
+using namespace qor::io::filesystem;
+using namespace qor::io::components;
+using namespace qor::components;
+
+qor_pp_implement_module(appName)
+
+void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
+{    
+    connect(
+        logHandler, logHandler.GetForwardSignal(), 
+        logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
+        ConnectionKind::QueuedConnection);
+
+    auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
+    auto logPath = fileSystem(qor_shared).ApplicationLogPath() / logTag;
+
+    //Configure the log aggregator to write to the file system and to standard output
+    logAggregator(qor_shared).Receiver().WriteToFileSystem(logPath, logTag);
+    logAggregator(qor_shared).Receiver().WriteToStandardOutput(true);
+}
+
+int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
+{
+    ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
+    qor_pp_fcontext;
+    DefaultLogHandler logHandler(log::Level::Debug);
+
+    return AppBuilder().Build(appName)(qor_unlocked).SetRole<app::Role>(
+        [&logHandler](ref_of<app::IRole>::type role)
+        {
+            role->AddFeature<thread::ThreadPool>(
+                [](ref_of<thread::ThreadPool>::type threadPool)
+                {
+                    threadPool->SetThreadCount(2);
+                    CurrentThread::GetCurrent().SetName("Main");
+                }
+            );
+            
+            role->AddFeature<LogAggregatorService>(
+                [&logHandler](LogAggregatorService::ref logAggregator)->void
+                {
+                    SetupLogging(logHandler, logAggregator);
+                }
+            );
+        }
+    ).Run(
+        [&logHandler]()->int
+        {            
+            qor_pp_fcontext;
+
+            auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
+            Path testsPath("F:/Develop/linuxQOR/test/data");
+
+            JSONPartReader<qor::data::parser::json::array, qor::data::model::json::Array> arrayReader;
+
+            auto jsonArray = arrayReader(Index(testsPath, "y_array_arraysWithSpaces.json"));
+            auto array_empty = arrayReader(Index(testsPath, "y_array_empty.json"));
+            auto array_empty_string = arrayReader(Index(testsPath, "y_array_empty-string.json"));
+            auto array_ending_with_newline = arrayReader(Index(testsPath, "y_array_ending_with_newline.json"));
+            auto array_false = arrayReader(Index(testsPath, "y_array_false.json"));
+            auto array_heterogeneous = arrayReader(Index(testsPath, "y_array_heterogeneous.json"));
+            auto array_null = arrayReader(Index(testsPath, "y_array_null.json"));
+            auto array_with_1_and_newline = arrayReader(Index(testsPath, "y_array_with_1_and_newline.json"));
+            auto array_with_leading_space = arrayReader(Index(testsPath, "y_array_with_leading_space.json"));
+            auto array_with_several_null = arrayReader(Index(testsPath, "y_array_with_several_null.json"));
+            auto array_with_trailing_space = arrayReader(Index(testsPath, "y_array_with_trailing_space.json"));
+            auto jsonNumber = arrayReader(Index(testsPath, "y_number.json"));
+            auto number0e_1 = arrayReader(Index(testsPath, "y_number_0e+1.json"));
+            auto number_0e1 = arrayReader(Index(testsPath, "y_number_0e1.json"));
+            auto number_after_space = arrayReader(Index(testsPath, "y_number_after_space.json"));
+            auto number_double_close_to_zero = arrayReader(Index(testsPath, "y_number_double_close_to_zero.json"));
+            auto number_int_with_exp = arrayReader(Index(testsPath, "y_number_int_with_exp.json"));
+            auto number_minus_zero = arrayReader(Index(testsPath, "y_number_minus_zero.json"));            
+            auto number_negative_int = arrayReader(Index(testsPath, "y_number_negative_int.json"));
+            auto number_negative_one = arrayReader(Index(testsPath, "y_number_negative_one.json"));
+            auto number_negative_zero = arrayReader(Index(testsPath, "y_number_negative_zero.json"));
+            auto number_real_capital_e = arrayReader(Index(testsPath, "y_number_real_capital_e.json"));
+            auto number_real_capital_e_neg_exp = arrayReader(Index(testsPath, "y_number_real_capital_e_neg_exp.json"));
+            auto number_real_capital_e_pos_exp = arrayReader(Index(testsPath, "y_number_real_capital_e_pos_exp.json"));
+            auto number_real_exponent = arrayReader(Index(testsPath, "y_number_real_exponent.json"));
+            auto number_real_fraction_exponent = arrayReader(Index(testsPath, "y_number_real_fraction_exponent.json"));
+            auto number_real_neg_exp = arrayReader(Index(testsPath, "y_number_real_neg_exp.json"));
+            auto number_real_pos_exponent = arrayReader(Index(testsPath, "y_number_real_pos_exponent.json"));
+            auto number_simple_int = arrayReader(Index(testsPath, "y_number_simple_int.json"));
+            auto number_simple_real = arrayReader(Index(testsPath, "y_number_simple_real.json"));
+
+            JSONReader reader;
+            
+            auto jsonObject = reader(Index(testsPath, "y_object.json"));
+            auto jsonObject_basic = reader(Index(testsPath, "y_object_basic.json"));
+            auto object_duplicated_key = reader(Index(testsPath, "y_object_duplicated_key.json"));
+            auto object_duplicated_key_and_value = reader(Index(testsPath, "y_object_duplicated_key_and_value.json"));
+            auto object_empty = reader(Index(testsPath, "y_object_empty.json"));
+            auto object_empty_key = reader(Index(testsPath, "y_object_empty_key.json"));
+            auto object_escaped_null_in_key = reader(Index(testsPath, "y_object_escaped_null_in_key.json"));
+            auto object_extreme_numbers = reader(Index(testsPath, "y_object_extreme_numbers.json"));
+            auto object_long_strings = reader(Index(testsPath, "y_object_long_strings.json"));
+            auto object_simple = reader(Index(testsPath, "y_object_simple.json"));
+            auto object_string_unicode = reader(Index(testsPath, "y_object_string_unicode.json"));
+            auto object_with_newlines = reader(Index(testsPath, "y_object_with_newlines.json"));
+                    
+            auto string_1_2_3_bytes_UTF8_sequences = arrayReader(Index(testsPath, "y_string_1_2_3_bytes_UTF-8_sequences.json"));
+            auto string_accepted_surrogate_pair = arrayReader(Index(testsPath, "y_string_accepted_surrogate_pair.json"));
+            auto string_accepted_surrogate_pairs = arrayReader(Index(testsPath, "y_string_accepted_surrogate_pairs.json"));
+            auto string_allowed_escapes = arrayReader(Index(testsPath, "y_string_allowed_escapes.json"));
+            auto string_backslash_and_u_escaped_zero = arrayReader(Index(testsPath, "y_string_backslash_and_u_escaped_zero.json"));
+            auto string_backslash_doublequotes = arrayReader(Index(testsPath, "y_string_backslash_doublequotes.json"));
+            auto string_comments = arrayReader(Index(testsPath, "y_string_comments.json"));
+            auto string_double_escape_a = arrayReader(Index(testsPath, "y_string_double_escape_a.json"));
+            auto string_double_escape_n = arrayReader(Index(testsPath, "y_string_double_escape_n.json"));
+            auto string_escaped_control_character = arrayReader(Index(testsPath, "y_string_escaped_control_character.json"));
+            auto string_escaped_noncharacter = arrayReader(Index(testsPath, "y_string_escaped_noncharacter.json"));
+            auto string_in_array = arrayReader(Index(testsPath, "y_string_in_array.json"));
+            auto string_in_array_with_leading_space = arrayReader(Index(testsPath, "y_string_in_array_with_leading_space.json"));
+            auto string_last_surrogates_1_and_2 = arrayReader(Index(testsPath, "y_string_last_surrogates_1_and_2.json"));
+            auto string_nbsp_uescaped = arrayReader(Index(testsPath, "y_string_nbsp_uescaped.json"));
+            auto string_nonCharacterInUTF8_U10FFFF = arrayReader(Index(testsPath, "y_string_nonCharacterInUTF-8_U+10FFFF.json"));
+            auto string_nonCharacterInUTF8_UFFFF = arrayReader(Index(testsPath, "y_string_nonCharacterInUTF-8_U+FFFF.json"));
+            auto string_null_escape = arrayReader(Index(testsPath, "y_string_null_escape.json"));
+            auto string_onebyteutf8 = arrayReader(Index(testsPath, "y_string_one-byte-utf-8.json"));
+            auto string_pi = arrayReader(Index(testsPath, "y_string_pi.json"));
+            auto string_reservedCharacterInUTF8_U1BFFF = arrayReader(Index(testsPath, "y_string_reservedCharacterInUTF-8_U+1BFFF.json"));
+            auto string_simple_ascii = arrayReader(Index(testsPath, "y_string_simple_ascii.json"));
+
+            JSONPartReader<qor::data::parser::json::value, qor::data::model::json::Value> valueReader;
+            
+            auto string_space = valueReader(Index(testsPath, "y_string_space.json"));
+            auto string_surrogates_U1D11E_MUSICAL_SYMBOL_G_CLEF = arrayReader(Index(testsPath, "y_string_surrogates_U+1D11E_MUSICAL_SYMBOL_G_CLEF.json"));
+            auto string_threebyteutf8 = arrayReader(Index(testsPath, "y_string_three-byte-utf-8.json"));
+            auto string_twobyteutf8 = arrayReader(Index(testsPath, "y_string_two-byte-utf-8.json"));
+            auto string_u2028_line_sep = arrayReader(Index(testsPath, "y_string_u+2028_line_sep.json"));
+            auto string_u2029_par_sep = arrayReader(Index(testsPath, "y_string_u+2029_par_sep.json"));
+            auto string_uEscape = arrayReader(Index(testsPath, "y_string_uEscape.json"));
+            auto string_uescaped_newline = arrayReader(Index(testsPath, "y_string_uescaped_newline.json"));
+            auto string_unescaped_char_delete = arrayReader(Index(testsPath, "y_string_unescaped_char_delete.json"));
+            auto string_unicode = arrayReader(Index(testsPath, "y_string_unicode.json"));
+            auto string_unicode_2 = arrayReader(Index(testsPath, "y_string_unicode_2.json"));
+            auto string_unicode_escaped_double_quote = arrayReader(Index(testsPath, "y_string_unicode_escaped_double_quote.json"));
+            auto string_unicode_U1FFFE_nonchar = arrayReader(Index(testsPath, "y_string_unicode_U+1FFFE_nonchar.json"));
+            auto string_unicode_U10FFFE_nonchar = arrayReader(Index(testsPath, "y_string_unicode_U+10FFFE_nonchar.json"));
+            auto string_unicode_U200B_ZERO_WIDTH_SPACE = arrayReader(Index(testsPath, "y_string_unicode_U+200B_ZERO_WIDTH_SPACE.json"));
+            auto string_unicode_U2064_invisible_plus = arrayReader(Index(testsPath, "y_string_unicode_U+2064_invisible_plus.json"));
+            auto string_unicode_UFDD0_nonchar = arrayReader(Index(testsPath, "y_string_unicode_U+FDD0_nonchar.json"));
+            auto string_unicode_UFFFE_nonchar = arrayReader(Index(testsPath, "y_string_unicode_U+FFFE_nonchar.json"));
+            auto string_unicodeEscapedBackslash = arrayReader(Index(testsPath, "y_string_unicodeEscapedBackslash.json"));
+            auto string_utf8 = arrayReader(Index(testsPath, "y_string_utf8.json"));
+            auto string_with_del_character = arrayReader(Index(testsPath, "y_string_with_del_character.json"));            
+            
+            auto structure_lonely_false = valueReader(Index(testsPath, "y_structure_lonely_false.json"));            
+            auto structure_lonely_int = valueReader(Index(testsPath, "y_structure_lonely_int.json"));
+            auto structure_lonely_negative_real = valueReader(Index(testsPath, "y_structure_lonely_negative_real.json"));
+            auto structure_lonely_null = valueReader(Index(testsPath, "y_structure_lonely_null.json"));
+            auto structure_lonely_string = valueReader(Index(testsPath, "y_structure_lonely_string.json"));
+            auto structure_lonely_true = valueReader(Index(testsPath, "y_structure_lonely_true.json"));
+            auto structure_string_empty = valueReader(Index(testsPath, "y_structure_string_empty.json"));
+            auto structure_trailing_newline = valueReader(Index(testsPath, "y_structure_trailing_newline.json"));
+            auto structure_true_in_array = valueReader(Index(testsPath, "y_structure_true_in_array.json"));
+            auto structure_whitespace_array = valueReader(Index(testsPath, "y_structure_whitespace_array.json"));
+
+            return EXIT_SUCCESS;
+        });
+}

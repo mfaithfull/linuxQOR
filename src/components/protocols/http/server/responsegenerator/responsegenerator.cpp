@@ -11,7 +11,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace http { namespace response {
     
-    Generator::Generator(ref_of<parser::Context>::type context) : Workflow(), m_context(context)
+    Generator::Generator(ref_of<data::parser::Context>::type context) : Workflow(), m_context(context)
     {
         SetInitialState(new_ref<GenerateResponse>(this));
     }

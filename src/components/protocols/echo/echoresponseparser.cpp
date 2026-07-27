@@ -7,15 +7,15 @@
 #include "src/qor/flyers/error/error.h"
 
 using namespace qor;
-using namespace qor::components::parser;
+using namespace qor::data::parser;
 
 //Client side parser for interpretting response
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
-    response::response(qor::components::parser::Parser* parser) : qor::components::parser::OneOrMore(
+    response::response(qor::data::Parser* parser) : qor::data::parser::OneOrMore(
         parser, 
-        qor::new_ref<responseChar>(parser).template AsRef<qor::components::parser::ParserState>(), 
+        qor::new_ref<responseChar>(parser).template AsRef<qor::data::parser::ParserState>(), 
         static_cast<uint64_t>(echoResponseToken::response))
     { }
 

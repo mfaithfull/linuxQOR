@@ -41,15 +41,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_value;
     };
 
-    class FieldValueNode : public parser::NodeAdapter<FieldValue>
+    class FieldValueNode : public data::parser::NodeAdapter<FieldValue>
     {
     public:
 
-        FieldValueNode() : parser::NodeAdapter<FieldValue>(static_cast<uint64_t>(httpRequestToken::field_value))
+        FieldValueNode() : data::parser::NodeAdapter<FieldValue>(static_cast<uint64_t>(httpRequestToken::field_value))
         {
         }
 
-        FieldValueNode(ref_of<FieldValue>::type field_value) : parser::NodeAdapter<FieldValue>(field_value, static_cast<uint64_t>(httpRequestToken::field_value))
+        FieldValueNode(ref_of<FieldValue>::type field_value) : data::parser::NodeAdapter<FieldValue>(field_value, static_cast<uint64_t>(httpRequestToken::field_value))
         {
         }
 

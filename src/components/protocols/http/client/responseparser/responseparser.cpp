@@ -28,7 +28,7 @@
 #include "src/qor/flyers/error/error.h"
 
 using namespace qor;
-using namespace qor::components::parser;
+using namespace qor::data::parser;
 
 namespace qor { namespace components { namespace protocols { namespace http { namespace response {
 

@@ -16,10 +16,10 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //IP-literal / IPv4address / reg-name
-    class qor_pp_module_interface(QOR_HTTP) host : public qor::components::parser::AnyOneOfSet
+    class qor_pp_module_interface(QOR_HTTP) host : public qor::data::parser::AnyOneOfSet
     {
     public:
-        host(qor::components::parser::Parser* parser);
+        host(qor::data::Parser* parser);
         virtual ~host();
         virtual void Prepare();
         virtual void Emit();

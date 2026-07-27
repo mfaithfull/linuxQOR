@@ -38,15 +38,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         char m_char;
     };
 
-    class UnreservedNode : public parser::NodeAdapter<Unreserved>
+    class UnreservedNode : public data::parser::NodeAdapter<Unreserved>
     {
     public:
 
-        UnreservedNode() : parser::NodeAdapter<Unreserved>(static_cast<uint64_t>(httpRequestToken::unreserved))
+        UnreservedNode() : data::parser::NodeAdapter<Unreserved>(static_cast<uint64_t>(httpRequestToken::unreserved))
         {
         }
 
-        UnreservedNode(ref_of<Unreserved>::type unreserved) : parser::NodeAdapter<Unreserved>(unreserved, static_cast<uint64_t>(httpRequestToken::unreserved))
+        UnreservedNode(ref_of<Unreserved>::type unreserved) : data::parser::NodeAdapter<Unreserved>(unreserved, static_cast<uint64_t>(httpRequestToken::unreserved))
         {
         }
 

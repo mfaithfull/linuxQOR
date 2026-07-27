@@ -35,7 +35,7 @@
 #include "src/components/qor/logaggregator/logaggregator.h"
 #include "src/framework/data/resources/resourcehub.h"
 #include "src/framework/app/application/builder.h"
-#include "src/framework/app/optionparser/getter.h"
+#include "src/framework/app/argparse/argumentparser.h"
 #include "rdapp.h"
 #include "src/framework/app/role/getfeature.h"
 #include "src/framework/data/resources/types/json/jsonresource.h"
@@ -83,9 +83,9 @@ int main(const int argc, const char** argv, char** env)
         [argc,argv,env](ref_of<ResourcedApp>::type app)
         {   
             /*Parse the options from the command line and pass them to the ResourcedApp*/
-            qor::app::OptionGetter options(argc, argv, app(qor_shared));
+            app(qor_shared).ParseArgs(argc, argv);
         }
-    )->SetRole<app::Role>(
+    )(qor_unlocked).SetRole<app::Role>(
         [&logHandler](ref_of<app::IRole>::type role)
         {
             qor_pp_fcontext;

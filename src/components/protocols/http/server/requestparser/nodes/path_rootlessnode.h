@@ -43,15 +43,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::vector<std::string> m_segments;
     };
 
-    class PathRootlessNode : public parser::NodeAdapter<PathRootless>
+    class PathRootlessNode : public data::parser::NodeAdapter<PathRootless>
     {
     public:
 
-        PathRootlessNode() : parser::NodeAdapter<PathRootless>(static_cast<uint64_t>(httpRequestToken::path_rootless))
+        PathRootlessNode() : data::parser::NodeAdapter<PathRootless>(static_cast<uint64_t>(httpRequestToken::path_rootless))
         {
         }
 
-        PathRootlessNode(ref_of<PathRootless>::type path_rootless) : parser::NodeAdapter<PathRootless>(path_rootless, static_cast<uint64_t>(httpRequestToken::path_rootless))
+        PathRootlessNode(ref_of<PathRootless>::type path_rootless) : data::parser::NodeAdapter<PathRootless>(path_rootless, static_cast<uint64_t>(httpRequestToken::path_rootless))
         {
         }
 

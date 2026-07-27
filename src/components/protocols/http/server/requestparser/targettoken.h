@@ -42,10 +42,10 @@ namespace qor { namespace components { namespace protocols { namespace http {
     / absolute-form
     / authority-form
     / asterisk-form*/
-    class qor_pp_module_interface(QOR_HTTP) target : public qor::components::parser::AnyOneOfSet
+    class qor_pp_module_interface(QOR_HTTP) target : public qor::data::parser::AnyOneOfSet
     {
-    public: target(qor::components::parser::Parser* parser) :
-                qor::components::parser::AnyOneOfSet(parser,
+    public: target(qor::data::Parser* parser) :
+                qor::data::parser::AnyOneOfSet(parser,
                 new std::vector<ref_of<ParserState>::type>({{
                     new_ref< uri_origin_form>(parser),
                     new_ref< uri_absolute_form>(parser),

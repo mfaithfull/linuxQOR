@@ -40,15 +40,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_methodName;
     };
 
-    class MethodNode : public parser::NodeAdapter<Method>
+    class MethodNode : public data::parser::NodeAdapter<Method>
     {
     public:
 
-        MethodNode() : parser::NodeAdapter<Method>(static_cast<uint64_t>(httpRequestToken::method))
+        MethodNode() : data::parser::NodeAdapter<Method>(static_cast<uint64_t>(httpRequestToken::method))
         {
         }
 
-        MethodNode(ref_of<Method>::type method) : parser::NodeAdapter<Method>(method, static_cast<uint64_t>(httpRequestToken::method))
+        MethodNode(ref_of<Method>::type method) : data::parser::NodeAdapter<Method>(method, static_cast<uint64_t>(httpRequestToken::method))
         {
         }
 

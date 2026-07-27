@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_RFC5234
-#define QOR_PP_H_COMPONENTS_PARSER_RFC5234
+#ifndef QOR_PP_H_DATA_PARSER_RFC5234
+#define QOR_PP_H_DATA_PARSER_RFC5234
 
 #include "../state.h"
 #include "specific.h"
@@ -11,7 +11,7 @@
 #include "sequence.h"
 #include "zeroormore.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     class CR : public Specific
     { public: CR(Parser* parser) : Specific(parser, 0x0D, static_cast<uint64_t>(eToken::CarriageReturn)){} 
@@ -134,6 +134,6 @@ namespace qor { namespace components { namespace parser {
         virtual void Emit();
     };
 
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_RFC5234
+#endif//QOR_PP_H_DATA_PARSER_RFC5234

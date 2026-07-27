@@ -1,12 +1,12 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_STATES_ANYONEOF
-#define QOR_PP_H_COMPONENTS_PARSER_STATES_ANYONEOF
+#ifndef QOR_PP_H_DATA_PARSER_STATES_ANYONEOF
+#define QOR_PP_H_DATA_PARSER_STATES_ANYONEOF
 
 #include "../state.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     //Must match either head or tail to succeed
     class qor_pp_module_interface(QOR_PARSER) AnyOneOf : public ParserState
@@ -22,6 +22,6 @@ namespace qor { namespace components { namespace parser {
         ref_of<ParserState>::type m_head;
         ref_of<ParserState>::type m_tail;
     };
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_STATES_ANYONEOF
+#endif//QOR_PP_H_DATA_PARSER_STATES_ANYONEOF

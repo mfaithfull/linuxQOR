@@ -1,14 +1,14 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_COMPONENTS_PARSER_RESULT
-#define QOR_PP_H_COMPONENTS_PARSER_RESULT
+#ifndef QOR_PP_H_DATA_PARSER_RESULT
+#define QOR_PP_H_DATA_PARSER_RESULT
 
 #include <cstdint>
 #include "src/platform/compiler/compiler.h"
 #include "tokens.h"
 
-namespace qor { namespace components { namespace parser {
+namespace qor { namespace data { namespace parser {
 
     class Result
     {
@@ -29,6 +29,6 @@ namespace qor { namespace components { namespace parser {
         uint64_t token{0};
     };
     
-}}}//qor::components::parser
+}}}//qor::data::parser
 
-#endif//QOR_PP_H_COMPONENTS_PARSER_RESULT
+#endif//QOR_PP_H_DATA_PARSER_RESULT

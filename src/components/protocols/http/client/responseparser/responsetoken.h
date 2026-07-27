@@ -26,25 +26,25 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_RESPONSETOKEN
 
 #include "src/components/data/parser/state.h"
-#include "src/components/data/parser/rfc5234.h"
+#include "src/components/data/parser/states/rfc5234.h"
 #include "tokendefs.h"
-#include "src/components/data/parser/oneormore.h"
+#include "src/components/data/parser/states/oneormore.h"
 #include "src/components/data/parser/nodes/char.h"
 #include "request_linetoken.h"
 #include "field_linetoken.h"
 
 namespace qor { namespace components { namespace protocols { namespace http { namespace response {
 
-    class qor_pp_module_interface(QOR_HTTP) Initial : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) Initial : public qor::data::parser::Sequence
     {
-    public: initial(qor::components::parser::Parser* parser) :
-                qor::components::parser::Sequence( parser,
+    public: initial(qor::data::Parser* parser) :
+                qor::data::parser::Sequence( parser,
                     new_ref<status_line>(parser),
-                    new_ref<qor::components::parser::Sequence>( parser,
-                        new_ref<qor::components::parser::ZeroOrMore>( parser,
+                    new_ref<qor::data::parser::Sequence>( parser,
+                        new_ref<qor::data::parser::ZeroOrMore>( parser,
                             new_ref<field_line>(parser)
                         ),
-                        new_ref<qor::components::parser::CRLF>(parser)
+                        new_ref<qor::data::parser::CRLF>(parser)
                     ),
                     static_cast<uint64_t>(httpResponseToken::response))
             {}

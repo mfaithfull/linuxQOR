@@ -43,4 +43,4 @@ namespace qor { namespace components { namespace generator {
         return false;
     }
 
-}}}//qor::components::parser
+}}}//qor::data::parser

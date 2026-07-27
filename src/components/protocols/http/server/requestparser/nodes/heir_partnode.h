@@ -41,15 +41,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_path;
     };
 
-    class HeirPartNode : public parser::NodeAdapter<HeirPart>
+    class HeirPartNode : public data::parser::NodeAdapter<HeirPart>
     {
     public:
 
-        HeirPartNode() : parser::NodeAdapter<HeirPart>(static_cast<uint64_t>(httpRequestToken::heir_part))
+        HeirPartNode() : data::parser::NodeAdapter<HeirPart>(static_cast<uint64_t>(httpRequestToken::heir_part))
         {
         }
 
-        HeirPartNode(ref_of<HeirPart>::type heir_part) : parser::NodeAdapter<HeirPart>(heir_part, static_cast<uint64_t>(httpRequestToken::heir_part))
+        HeirPartNode(ref_of<HeirPart>::type heir_part) : data::parser::NodeAdapter<HeirPart>(heir_part, static_cast<uint64_t>(httpRequestToken::heir_part))
         {
         }
 

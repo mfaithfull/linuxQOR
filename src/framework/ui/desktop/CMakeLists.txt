@@ -1,25 +1,7 @@
 project(QOR VERSION 0.0.1 DESCRIPTION "QOR Desktop UI Module" LANGUAGES CXX)
 set(target qor_desktopui)
 
-add_library(${target} SHARED qor_desktopui.cpp desktopui.cpp
-    layout/box.cpp
-    layout/node.cpp
-    layout/nodes/vbox.cpp
-    layout/nodes/hbox.cpp
-    layout/nodes/size.cpp
-    layout/nodes/reflect.cpp
-    layout/nodes/nodedecorator.cpp
-    layout/nodes/detail/boxhelper.cpp
-    layout/nodes/dbox.cpp
-    layout/functional/compositedecorator.cpp
-    layout/functional/flex.cpp
-    layout/functional/flexboxconfig.cpp
-    layout/functional/flexbox.cpp
-    layout/functional/flexboxhelper.cpp
-    layout/functional/layout.cpp
-    widgets/pushbutton.cpp
-    windows/window.cpp
-    windows/mainwindow.cpp)
+add_library(${target} SHARED qor_desktopui.cpp desktopui.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

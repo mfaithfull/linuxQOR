@@ -35,9 +35,9 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    class qor_pp_module_interface(QOR_HTTP) protocol_name : public parser::OneOrMore
+    class qor_pp_module_interface(QOR_HTTP) protocol_name : public data::parser::OneOrMore
     {
-    public: protocol_name(parser::Parser* parser) : parser::OneOrMore(parser,
+    public: protocol_name(data::Parser* parser) : data::parser::OneOrMore(parser,
                     new_ref<tchar>(parser),
                     static_cast<uint64_t>(httpRequestToken::protocol_name)
                 )

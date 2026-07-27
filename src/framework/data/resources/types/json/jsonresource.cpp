@@ -52,7 +52,7 @@ namespace qor{ namespace framework{ namespace res {
         Resource::Claim();
     }
 
-    qor::ref_of<qor::components::model::json::Object>::type JSON::GetObject()
+    qor::ref_of<qor::data::model::json::Object>::type JSON::GetObject()
     {
         return m_object;
     }

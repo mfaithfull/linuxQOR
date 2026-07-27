@@ -39,21 +39,21 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //authority     = [ userinfo "@" ] host [ ":" port ]
-    class qor_pp_module_interface(QOR_HTTP) authority : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) authority : public data::parser::Sequence
     {
-    public: authority(qor::components::parser::Parser* parser) :
-                qor::components::parser::Sequence(parser,
-                    new_ref<qor::components::parser::Optional>(parser,
-                        new_ref<qor::components::parser::Sequence>(parser,
+    public: authority(data::Parser* parser) :
+                data::parser::Sequence(parser,
+                    new_ref<data::parser::Optional>(parser,
+                        new_ref<data::parser::Sequence>(parser,
                             new_ref<userinfo>(parser),
-                            new_ref<qor::components::parser::Specific>(parser,'@')
+                            new_ref<data::parser::Specific>(parser,'@')
                         )
                     ),
-                    new_ref<qor::components::parser::Sequence>(parser,
+                    new_ref<data::parser::Sequence>(parser,
                         new_ref<host>(parser),
-                        new_ref<qor::components::parser::Optional>(parser,
-                            new_ref<qor::components::parser::Sequence>(parser,
-                                new_ref<qor::components::parser::Specific>(parser,':'),
+                        new_ref<data::parser::Optional>(parser,
+                            new_ref<data::parser::Sequence>(parser,
+                                new_ref<data::parser::Specific>(parser,':'),
                                 new_ref<port>(parser)
                             )
                         )

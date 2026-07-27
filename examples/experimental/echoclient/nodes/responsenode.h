@@ -32,16 +32,16 @@
 #include "../echoresponseparser.h"
 #include "../echoresponse.h"
 
-class ResponseNode : public qor::components::parser::NodeAdapter<EchoResponse>
+class ResponseNode : public qor::data::parser::NodeAdapter<EchoResponse>
 {
 public:
 
-    ResponseNode() : qor::components::parser::NodeAdapter<EchoResponse>(static_cast<uint64_t>(echoResponseToken::response))
+    ResponseNode() : qor::data::parser::NodeAdapter<EchoResponse>(static_cast<uint64_t>(echoResponseToken::response))
     {
     }
 
     ResponseNode(qor::ref_of<EchoResponse>::type response) : 
-        qor::components::parser::NodeAdapter<EchoResponse>(response,static_cast<uint64_t>(echoResponseToken::response))
+        qor::data::parser::NodeAdapter<EchoResponse>(response,static_cast<uint64_t>(echoResponseToken::response))
     {
     }
 

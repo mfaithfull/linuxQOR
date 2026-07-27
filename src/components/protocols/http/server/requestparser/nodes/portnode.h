@@ -39,15 +39,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         unsigned m_port;
     };
 
-    class PortNode : public parser::NodeAdapter<Port>
+    class PortNode : public data::parser::NodeAdapter<Port>
     {
     public:
 
-        PortNode() : parser::NodeAdapter<Port>(static_cast<uint64_t>(httpRequestToken::port))
+        PortNode() : data::parser::NodeAdapter<Port>(static_cast<uint64_t>(httpRequestToken::port))
         {
         }
 
-        PortNode(ref_of<Port>::type port) : parser::NodeAdapter<Port>(port, static_cast<uint64_t>(httpRequestToken::port))
+        PortNode(ref_of<Port>::type port) : data::parser::NodeAdapter<Port>(port, static_cast<uint64_t>(httpRequestToken::port))
         {
         }
 

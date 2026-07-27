@@ -34,15 +34,15 @@
 
 namespace qor { namespace components { namespace protocols { namespace http { namespace response {
 
-    class ResponseNode : public qor::components::parser::NodeAdapter<HTTPResponse>
+    class ResponseNode : public data::parser::NodeAdapter<HTTPResponse>
     {
     public:
 
-        ResponseNode() : qor::components::parser::NodeAdapter<HTTPResponse>(static_cast<uint64_t>(httpResponseToken::response))
+        ResponseNode() : data::parser::NodeAdapter<HTTPResponse>(static_cast<uint64_t>(httpResponseToken::response))
         {
         }
 
-        ResponseNode(qor::ref_of<HTTPResponse>::type response) : qor::components::parser::NodeAdapter<HTTPResponse>(response, static_cast<uint64_t>(httpResponseToken::response))
+        ResponseNode(qor::ref_of<HTTPResponse>::type response) : data::parser::NodeAdapter<HTTPResponse>(response, static_cast<uint64_t>(httpResponseToken::response))
         {
         }
 

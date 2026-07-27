@@ -41,15 +41,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_info;
     };
 
-    class UserInfoNode : public parser::NodeAdapter<UserInfo>
+    class UserInfoNode : public data::parser::NodeAdapter<UserInfo>
     {
     public:
 
-        UserInfoNode() : parser::NodeAdapter<UserInfo>(static_cast<uint64_t>(httpRequestToken::userinfo))
+        UserInfoNode() : data::parser::NodeAdapter<UserInfo>(static_cast<uint64_t>(httpRequestToken::userinfo))
         {
         }
 
-        UserInfoNode(ref_of<UserInfo>::type userinfo) : parser::NodeAdapter<UserInfo>(userinfo, static_cast<uint64_t>(httpRequestToken::userinfo))
+        UserInfoNode(ref_of<UserInfo>::type userinfo) : data::parser::NodeAdapter<UserInfo>(userinfo, static_cast<uint64_t>(httpRequestToken::userinfo))
         {
         }
 

@@ -38,17 +38,17 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
         //"/" [ segment-nz *( "/" segment ) ]
-    class qor_pp_module_interface(QOR_HTTP) uri_absolute_path : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) uri_absolute_path : public qor::data::parser::Sequence
     {
-    public: uri_absolute_path(qor::components::parser::Parser* parser) :
-                qor::components::parser::Sequence(parser,
-                    new_ref<qor::components::parser::Specific>(parser, '/'),
-                    new_ref<qor::components::parser::Optional>(parser,
-                        new_ref<qor::components::parser::Sequence>(parser,
+    public: uri_absolute_path(qor::data::Parser* parser) :
+                data::parser::Sequence(parser,
+                    new_ref<data::parser::Specific>(parser, '/'),
+                    new_ref<data::parser::Optional>(parser,
+                        new_ref<data::parser::Sequence>(parser,
                             new_ref< segment_nz >(parser),
-                            new_ref<qor::components::parser::ZeroOrMore>(parser,
-                                new_ref<qor::components::parser::Sequence>(parser,
-                                    new_ref<qor::components::parser::Specific>(parser, '/'),
+                            new_ref<data::parser::ZeroOrMore>(parser,
+                                new_ref<data::parser::Sequence>(parser,
+                                    new_ref<data::parser::Specific>(parser, '/'),
                                     new_ref< segment >(parser)
                                 )
                             )

@@ -5,7 +5,7 @@
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
 #include "src/framework/parallel/thread/threadpool.h"
-#include "src/framework/app/optionparser/getter.h"
+#include "src/framework/app/argparse/argumentparser.h"
 #include "src/framework/data/pipeline/pipeline.h"
 #include "src/framework/io/network/sockets.h"
 #include "src/framework/io/async/service.h"
@@ -45,9 +45,9 @@ int main(const int argc, const char** argv, char**)
     return AppBuilder().Build<EchoServerApp>(appName,   //What it is
         [argc,argv](ref_of<EchoServerApp>::type app)
         {
-            OptionGetter options(argc, argv, app(qor_shared));
+            app(qor_shared).ParseArgs(argc, argv);
         }
-    )->SetRole<Role>(                                   //What features it has
+    )(qor_unlocked).SetRole<app::Role>(                                   //What features it has
         [&logHandler](ref_of<IRole>::type role)
         {
             role->AddFeature<thread::ThreadPool>(

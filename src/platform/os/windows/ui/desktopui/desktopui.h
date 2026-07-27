@@ -25,7 +25,7 @@
 #ifndef QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_DESKTOPUI
 
-#include "src/framework/ui/desktopui/desktopui.h"
+#include "src/framework/ui/desktop/desktopui.h"
 
 #include "src/platform/os/windows/ui/gui/factories/windowfactory.h"
 

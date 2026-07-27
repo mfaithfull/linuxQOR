@@ -41,15 +41,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
         std::string m_name;
     };
 
-    class RegNameNode : public parser::NodeAdapter<RegName>
+    class RegNameNode : public data::parser::NodeAdapter<RegName>
     {
     public:
 
-        RegNameNode() : parser::NodeAdapter<RegName>(static_cast<uint64_t>(httpRequestToken::reg_name))
+        RegNameNode() : data::parser::NodeAdapter<RegName>(static_cast<uint64_t>(httpRequestToken::reg_name))
         {
         }
 
-        RegNameNode(ref_of<RegName>::type reg_name) : parser::NodeAdapter<RegName>(reg_name, static_cast<uint64_t>(httpRequestToken::reg_name))
+        RegNameNode(ref_of<RegName>::type reg_name) : data::parser::NodeAdapter<RegName>(reg_name, static_cast<uint64_t>(httpRequestToken::reg_name))
         {
         }
 

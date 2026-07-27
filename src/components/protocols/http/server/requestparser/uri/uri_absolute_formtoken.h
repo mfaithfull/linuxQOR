@@ -38,18 +38,18 @@
 namespace qor { namespace components { namespace protocols { namespace http {
 
     //scheme ":" hier-part [ "?" query ]
-    class qor_pp_module_interface(QOR_HTTP) uri_absolute_form : public qor::components::parser::Sequence
+    class qor_pp_module_interface(QOR_HTTP) uri_absolute_form : public qor::data::parser::Sequence
     {
-    public: uri_absolute_form(qor::components::parser::Parser* parser) :
-                qor::components::parser::Sequence(parser,
+    public: uri_absolute_form(qor::data::Parser* parser) :
+                qor::data::parser::Sequence(parser,
                     new_ref<scheme>(parser),
-                    new_ref<qor::components::parser::Sequence>(parser,
-                        new_ref<qor::components::parser::Specific>(parser, ':'),
-                        new_ref<qor::components::parser::Sequence>(parser,
+                    new_ref<qor::data::parser::Sequence>(parser,
+                        new_ref<qor::data::parser::Specific>(parser, ':'),
+                        new_ref<qor::data::parser::Sequence>(parser,
                             new_ref<heir_part>(parser),
-                            new_ref<qor::components::parser::Optional>(parser,
-                                new_ref<qor::components::parser::Sequence>(parser,
-                                    new_ref<qor::components::parser::Specific>(parser, '?'),
+                            new_ref<qor::data::parser::Optional>(parser,
+                                new_ref<qor::data::parser::Sequence>(parser,
+                                    new_ref<qor::data::parser::Specific>(parser, '?'),
                                     new_ref<query>(parser)
                                 )
                             )
