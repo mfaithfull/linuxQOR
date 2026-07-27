@@ -271,6 +271,25 @@ namespace qor { namespace win { namespace api {
 		static BOOL WriteFileEx( HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite, ::LPOVERLAPPED lpOverlapped, ::LPOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine );
 		static BOOL WriteFileGather( HANDLE hFile, ::FILE_SEGMENT_ELEMENT aSegmentArray[], DWORD nNumberOfBytesToWrite, LPDWORD lpReserved, ::LPOVERLAPPED lpOverlapped );
 		
+		//Pipe
+		static BOOL CreatePipe(PHANDLE hReadPipe, PHANDLE hWritePipe, LPSECURITY_ATTRIBUTES lpPipeAttributes, DWORD nSize);
+		static BOOL CallNamedPipe(LPCTSTR lpNamedPipeName, LPVOID lpInBuffer, DWORD nInBufferSize, LPVOID lpOutBuffer, DWORD nOutBufferSize, LPDWORD lpBytesRead, DWORD nTimeOut);
+		static BOOL ConnectNamedPipe(HANDLE hNamedPipe, LPOVERLAPPED lpOverlapped);
+		static HANDLE CreateNamedPipe(LPCTSTR lpName, DWORD dwOpenMode, DWORD dwPipeMode, DWORD nMaxInstances, DWORD nOutBufferSize, DWORD nInBufferSize, DWORD nDefaultTimeOut, LPSECURITY_ATTRIBUTES lpSecurityAttributes);
+		static BOOL DisconnectNamedPipe(HANDLE hNamedPipe);
+		static BOOL GetNamedPipeClientComputerName(HANDLE Pipe, LPTSTR ClientComputerName, ULONG ClientComputerNameLength);
+		static BOOL GetNamedPipeClientProcessId(HANDLE Pipe, PULONG ClientProcessId);
+		static BOOL GetNamedPipeClientSessionId(HANDLE Pipe, PULONG ClientSessionId);
+		static BOOL GetNamedPipeHandleState(HANDLE hNamedPipe, LPDWORD lpState, LPDWORD lpCurInstances, LPDWORD lpMaxCollectionCount, LPDWORD lpCollectDataTimeout, LPTSTR lpUserName, DWORD nMaxUserNameSize);
+		static BOOL GetNamedPipeInfo(HANDLE hNamedPipe, LPDWORD lpFlags, LPDWORD lpOutBufferSize, LPDWORD lpInBufferSize, LPDWORD lpMaxInstances);
+		static BOOL GetNamedPipeServerProcessId(HANDLE Pipe, PULONG ServerProcessId);
+		static BOOL GetNamedPipeServerSessionId(HANDLE Pipe, PULONG ServerSessionId);
+		static BOOL ImpersonateNamedPipeClient(HANDLE hNamedPipe);
+		static BOOL PeekNamedPipe(HANDLE hNamedPipe, LPVOID lpBuffer, DWORD nBufferSize, LPDWORD lpBytesRead, LPDWORD lpTotalBytesAvail, LPDWORD lpBytesLeftThisMessage);
+		static BOOL SetNamedPipeHandleState(HANDLE hNamedPipe, LPDWORD lpMode, LPDWORD lpMaxCollectionCount, LPDWORD lpCollectDataTimeout);
+		static BOOL TransactNamedPipe(HANDLE hNamedPipe, LPVOID lpInBuffer, DWORD nInBufferSize, LPVOID lpOutBuffer, DWORD nOutBufferSize, LPDWORD lpBytesRead, LPOVERLAPPED lpOverlapped);
+		static BOOL WaitNamedPipe(LPCTSTR lpNamedPipeName, DWORD nTimeOut);
+
 		//ProcessAndThread
 		static BOOL AssignProcessToJobObject( HANDLE hJob, HANDLE hProcess );
 		static BOOL BindIoCompletionCallback( HANDLE FileHandle, ::LPOVERLAPPED_COMPLETION_ROUTINE Function, ULONG Flags );

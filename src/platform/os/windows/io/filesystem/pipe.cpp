@@ -23,15 +23,16 @@ namespace qor{ namespace io { namespace win{
 
     Pipe::Pipe()
     {
-        m_handle = INVALID_HANDLE_VALUE;
+        Kernel32::CreatePipe(&m_readHandle, &m_writeHandle, nullptr, 0);
     }
 
+    
     Pipe::Pipe(const io::Descriptor& iod)
     {
         m_handle = iod.m_handle;
     }
 
-    Pipe::Pipe(const Pipe& src) : File()
+    Pipe::Pipe(const Pipe& src) : Pipe()
     {
         m_handle = src.m_handle;
         m_objectType = src.m_objectType;
