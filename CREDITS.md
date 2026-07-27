@@ -34,5 +34,7 @@ https://github.com/navyenzo/blIteratorAPI/blob/master/readme.md
 The fifo_map is from Niels Lohmann.
 https://github.com/nlohmann/fifo_map/blob/master/src/fifo_map.hpp
 
+The fancy argument parser is from simfeo
+https://github.com/simfeo/FancyArgumentParser
 
 "I've never written an original line of code in my life." - Level9 Z80 Assembler guru. circa 1987
