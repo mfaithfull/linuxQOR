@@ -7,7 +7,7 @@
 #include "src/qor/essentials/objectcontext/anyobject.h"
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "file.h"
+#include "pipe.h"
 #include "src/framework/io/filesystem/ifilesystem.h"
 
 #include <sys/types.h>
@@ -17,16 +17,16 @@
 #include <unistd.h>
 #include <aio.h>
 
-//Export this trivial function so the linker will pull in this library to fulfil the ImplementsIFile requirement.
-namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFile() { return true; } }//qor
+//Export this trivial function so the linker will pull in this library to fulfil the ImplementsPipe requirement.
+namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsPipe() { return true; } }//qor
 
 namespace qor{ namespace io{ namespace lin{
 
-    File::File() : io::File(-1){}
+    Pipe::Pipe() : io::Pipe(-1){}
 
-    File::File(int fd) : io::File(fd){}
+    Pipe::Pipe(int fd) : io::Pipe(fd){}
 
-    File::File(const File& src) : File()
+    Pipe::Pipe(const Pipe& src) : Pipe()
     {
         if(src.m_fd != -1)
         {
@@ -34,7 +34,7 @@ namespace qor{ namespace io{ namespace lin{
         }
     }
 
-    File::File(const io::filesystem::Index& direntry, int openFor, int withFlags) : io::File(direntry)
+    Pipe::Pipe(const io::filesystem::Index& direntry, int openFor, int withFlags) : io::Pipe(direntry)
     {
         Descriptor::m_fd = -1;
         int mode = 0;
@@ -69,11 +69,11 @@ namespace qor{ namespace io{ namespace lin{
 
         if(m_fd == -1)
         {
-            File::ErrorOnOpen(errno);
+            Pipe::ErrorOnOpen(errno);
         }
     }
 
-    File::~File()
+    Pipe::~Pipe()
     {
         if(m_fd != -1)
         {
@@ -82,102 +82,54 @@ namespace qor{ namespace io{ namespace lin{
         }
     }
 
-    bool File::SupportsPosition()
-    {
-        return lseek(m_fd, 0, SEEK_CUR) != -1 ? true : false;
-    }
-
-    uint64_t File::GetPosition()
-    {
-        return Validate_lseek64_Result(::lseek64(m_fd, 0, SEEK_CUR));
-    }
-
-    long File::SetPosition(off_t offset, int whence)
-    {
-        return Validate_lseek_Result(::lseek(m_fd, offset, whence));
-    }
-
-    uint64_t File::SetPosition(uint64_t newPosition)
-    {
-        return static_cast<uint64_t>(Validate_lseek64_Result(::lseek64(m_fd, newPosition, SEEK_SET)));
-    }
-
-    uint64_t File::SetPositionRelative(int64_t offset)
-    {
-        return static_cast<uint64_t>(Validate_lseek64_Result(::lseek64(m_fd, offset, SEEK_CUR)));
-    }
-
-    void File::Truncate(uint64_t length)
-    {
-        ::ftruncate(m_fd, length);
-    }
-
-    void File::Reserve(uint64_t length)
-    {
-        Validate_posix_fallocate_Result(::posix_fallocate(m_fd, 0, length));
-    }
-
-    void File::Flush()
-    {
-        ::fdatasync(m_fd);
-    }
-
-    ref_of<io::File>::type File::ReOpen(int /*openFor*/, int /*withFlags*/)
-    {
-        int fd = Validate_fcntl_Result(::fcntl(m_fd, F_DUPFD, 0));
-        return new_ref<io::File>(fd);
-    }
-
-
-
-    int File::AdviseOnUsage(off_t offset, off_t length, int advise)
+    int Pipe::AdviseOnUsage(off_t offset, off_t length, int advise)
     {
         return Validate_posix_fadvise_Result(::posix_fadvise(m_fd, offset, length, advise));
     }
 
-    int File::GetDescriptor() const
+    int Pipe::GetDescriptor() const
     {
         return m_fd;
     }
 
-    int File::GetDescriptorMode()
+    int Pipe::GetDescriptorMode()
     {
         return Validate_fcntl_Result(::fcntl(m_fd, F_GETFD));
     }
 
-    int File::ChangeDescriptorMode(int flags)
+    int Pipe::ChangeDescriptorMode(int flags)
     {
         return Validate_fcntl_Result(::fcntl(m_fd, F_SETFD, flags));
     }
 
-    int File::GetOperatingMode()
+    int Pipe::GetOperatingMode()
     {
         return Validate_fcntl_Result(::fcntl(m_fd, F_GETFL));
     }
 
-    int File::ChangeOperatingMode(int flags)
+    int Pipe::ChangeOperatingMode(int flags)
     {
         return Validate_fcntl_Result(::fcntl(m_fd, F_SETFL, flags));
     }
 
 
-    int File::SyncToSystem()
+    int Pipe::SyncToSystem()
     {
         return Validate_fsync_Result(::fsync(m_fd));
     }
 
 
-    task<int> File::AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> Pipe::AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         return ioContext.Read(this, buffer, byteCount, offset);
     }
 
-    task<int> File::AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
+    task<int> Pipe::AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
     {
         return ioContext.Write(this, buffer, byteCount, offset);
     }
 
-    int64_t File::Read(byte* buffer, size_t byteCount, off_t offset)
+    int64_t Pipe::Read(byte* buffer, size_t byteCount, off_t offset)
     {
         if(offset == -1)
         {
@@ -189,7 +141,7 @@ namespace qor{ namespace io{ namespace lin{
         }
     }
 
-    int64_t File::Write(byte* buffer, size_t byteCount, off_t offset)
+    int64_t Pipe::Write(byte* buffer, size_t byteCount, off_t offset)
     {
         if(offset == -1)
         {
@@ -201,7 +153,7 @@ namespace qor{ namespace io{ namespace lin{
         }
     }
 
-    int64_t File::Validate_write_Result(int64_t result)
+    int64_t Pipe::Validate_write_Result(int64_t result)
     {
         if(result == -1)
         {
@@ -268,7 +220,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    int64_t File::Validate_read_Result(int64_t result)
+    int64_t Pipe::Validate_read_Result(int64_t result)
     {
         if(result == -1)
         {
@@ -331,7 +283,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    off_t File::Validate_lseek_Result(off_t result)
+    off_t Pipe::Validate_lseek_Result(off_t result)
     {
         if(result == -1)
         {
@@ -353,7 +305,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    uint64_t File::Validate_lseek64_Result(uint64_t result)
+    uint64_t Pipe::Validate_lseek64_Result(uint64_t result)
     {
         if(result == (uint64_t)(-1))
         {
@@ -375,7 +327,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    int File::Validate_ftruncate_Result(int result)
+    int Pipe::Validate_ftruncate_Result(int result)
     {
         if(result == -1)
         {
@@ -406,7 +358,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    int File::Validate_posix_fallocate_Result(int result)
+    int Pipe::Validate_posix_fallocate_Result(int result)
     {
         switch(result)
         {
@@ -436,7 +388,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    int File::Validate_fcntl_Result(int result)
+    int Pipe::Validate_fcntl_Result(int result)
     {
         if(result == -1)
         {
@@ -474,7 +426,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    int File::Validate_posix_fadvise_Result(int result)
+    int Pipe::Validate_posix_fadvise_Result(int result)
     {
         switch(result)
         {
@@ -495,7 +447,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    int File::Validate_fchmod_Result(int result)
+    int Pipe::Validate_fchmod_Result(int result)
     {
         switch(result)
         {
@@ -522,7 +474,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    void File::Check_close_Result(int result)
+    void Pipe::Check_close_Result(int result)
     {
         switch (result)
         {
@@ -542,7 +494,7 @@ namespace qor{ namespace io{ namespace lin{
         }
     }
 
-    int File::Validate_fsync_Result(int result)
+    int Pipe::Validate_fsync_Result(int result)
     {
         switch (result)
         {
@@ -566,7 +518,7 @@ namespace qor{ namespace io{ namespace lin{
         return result;
     }
 
-    void File::Check_fsync_Result(int result)
+    void Pipe::Check_fsync_Result(int result)
     {
         switch (result)
         {
@@ -589,7 +541,7 @@ namespace qor{ namespace io{ namespace lin{
         }
     }
 
-    void File::ErrorOnOpen(int err)
+    void Pipe::ErrorOnOpen(int err)
     {
         switch (err)
         {

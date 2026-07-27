@@ -1,3 +1,4 @@
 add_subdirectory(socketconnector)
 add_subdirectory(fileconnector)
+add_subdirectory(pipeconnector)
 add_subdirectory(stdfstreamconnector)

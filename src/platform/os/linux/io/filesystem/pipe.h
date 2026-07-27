@@ -1,41 +1,31 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILE
-#define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILE
+#ifndef QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_PIPE
+#define QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_PIPE
 
-#include "src/framework/io/filesystem/file/file.h"
+#include "src/framework/io/filesystem/pipe/pipe.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/path.h"
 #include "src/platform/os/linux/io/async/asyncioservice.h"
 
 //Declaration must match the one in src/system/filesystem/ifile.h
-namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsIFile(); }
+namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsPipe(); }
 
 //All types on this interface must be portable
 namespace qor{ namespace io { namespace lin{
 
-    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) File : public io::File
+    class qor_pp_module_interface(QOR_LINUXFILESYSTEM) Pipe : public io::Pipe
     {
     public:
-        //file descriptor operations Linux implementations
 
-        File();
-        File(const File& src);
-        File(const filesystem::Path& path, const std::string& fileName, int openFor, int withFlags) : io::File(filesystem::Index(path,fileName),openFor,withFlags) {}
-        File(const filesystem::Index& direntry, int openFor, int withFlags);
-        File(int fd);
-        virtual ~File();
+        Pipe();
+        Pipe(const Pipe& src);
+        Pipe(const filesystem::Path& path, const std::string& fileName, int openFor, int withFlags) : io::Pipe(filesystem::Index(path,fileName),openFor,withFlags) {}
+        Pipe(const filesystem::Index& direntry, int openFor, int withFlags);
+        Pipe(int fd);
+        virtual ~Pipe();
 
-        virtual bool SupportsPosition() override;
-        virtual uint64_t GetPosition() override;
-        virtual long SetPosition(off_t offset, int whence) override;
-        virtual uint64_t SetPosition(uint64_t newPosition) override;
-        virtual uint64_t SetPositionRelative(int64_t offset) override;
-        virtual void Truncate(uint64_t length) override;
-        virtual void Reserve(uint64_t length) override;
-        virtual void Flush() override;
-        virtual ref_of<io::File>::type ReOpen(int openFor, int withFlags) override;
         virtual task<int> AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
         virtual task<int> AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1) override;
@@ -70,4 +60,4 @@ namespace qor{ namespace io { namespace lin{
     };
 }}}//qor::io::lin
 
-#endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_FILE
+#endif//QOR_PP_H_OS_LINUX_SYSTEM_FILESYSTEM_PIPE

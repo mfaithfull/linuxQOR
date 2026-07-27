@@ -1,6 +1,7 @@
 set(target linqor_filesystem)
 
-add_library(${target} SHARED linq_filesystem.cpp filesystem.cpp file.cpp)
+add_library(${target} SHARED linq_filesystem.cpp filesystem.cpp file.cpp
+    pipe.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
