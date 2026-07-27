@@ -74,7 +74,7 @@ namespace qor { namespace components {
         return GetSize();
     }
 
-#ifdef qor_pp_unicode
+#if ( qor_pp_unicode && (qor_pp_os_target == qor_pp_os_windows))
     std::wstring to_tstring(std::string str)
     {
         return L"";
@@ -139,4 +139,3 @@ namespace qor { namespace components {
 
 
 }}//qor::components
-
