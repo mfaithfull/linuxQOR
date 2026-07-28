@@ -63,11 +63,11 @@ namespace qor { namespace data {
         qor_pp_ofcontext;
         while(!IsComplete() && m_StateStack.size() > 0)
         {
-            PopState();
             while(!IsComplete() && m_context->HasUnparsedData())
             {
                 CurrentState()->Enter();
             }
+            PopState();
             if(IsComplete())
             {
                 log::debug("Parse complete.");

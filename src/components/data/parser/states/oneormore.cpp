@@ -14,11 +14,11 @@ namespace qor { namespace data { namespace parser {
     OneOrMore::OneOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser,token),
         m_head(head), m_first(true)
     {
+        m_first = true;
+        m_result.length = 0;
         Enter = [this]()
         {
             Prepare();
-            m_first = true;
-            m_result.length = 0;
             Workflow()->PushState(m_head.AsRef<workflow::State>());
         };
 
@@ -45,11 +45,13 @@ namespace qor { namespace data { namespace parser {
                     m_result.code = Result::FAILURE;
                     m_result.m_position = m_head->m_result.m_position;
                 }
+                m_first = true;                
                 Workflow()->PopState();
             }
             else
             {
-                Workflow()->PopState();
+                Fail();
+                return;                
             }
         };
     }

@@ -18,7 +18,7 @@ namespace qor { namespace data { namespace parser {
         virtual ~AnyOneOfSet();
 
     private:
-
+        void Reset();
         std::vector<ref_of<ParserState>::type>* m_set;
         std::vector<ref_of<ParserState>::type>::iterator m_it;
         size_t m_index{0};

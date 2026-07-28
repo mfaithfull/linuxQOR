@@ -15,24 +15,29 @@ namespace qor { namespace data { namespace parser {
     AnyOneOfSet::AnyOneOfSet(Parser* parser, std::vector<ref_of<ParserState>::type>* set, uint64_t token) : ParserState(parser,token),
         m_set(set)
     {
+        Reset();
+
         Enter = [this]()
         {
             Prepare();
-            m_result.length = 0;
-            m_it = m_set->begin();
-            m_index = 0;
             if (m_it != m_set->end()) {
-                log::debug("Trying to match first of a set of {0} parser states.", m_set->size());
+                log::debug("Trying to match number {0} of a set of {1} parser states.", m_index + 1, m_set->size());
                 Workflow()->PushState((*m_it).AsRef<workflow::State>());
             } else {
-                m_result.code = Result::FAILURE;
-                m_result.length = 0;
+                Reset();
+                m_result.code = Result::FAILURE;                
+                Workflow()->PopState();
             }
         };
 
         Resume = [this]()
         {
             auto parserState = (*m_it);
+            if (parserState->m_result.code == Result::MORE_DATA)
+            {
+                Fail();
+                return;                        
+            }            
             if(parserState->m_result.code == Result::SUCCESS)
             {
                 log::debug("Matched {0} of a set of {1} parser states.", m_index, m_set->size());
@@ -51,7 +56,7 @@ namespace qor { namespace data { namespace parser {
                 {
                     log::debug("Failed to match any of a set of {0} parser states.", m_set->size());
                     m_result.m_position = parserState->m_result.m_position;
-                    m_result.length = 0;
+                    Reset();
                     m_result.code = Result::FAILURE;
                     Workflow()->PopState();
                 }
@@ -62,6 +67,13 @@ namespace qor { namespace data { namespace parser {
                 }
             }
         };
+    }
+
+    void AnyOneOfSet::Reset()
+    {
+        m_result.length = 0;
+        m_it = m_set->begin();
+        m_index = 0;
     }
 
     AnyOneOfSet::~AnyOneOfSet()

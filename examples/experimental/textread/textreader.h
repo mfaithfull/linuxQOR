@@ -55,7 +55,7 @@ class TextReader
 {
 public:
 
-    TextReader() : m_byteBuffer(2048), m_sink(m_byteBuffer){ }
+    TextReader() : m_byteBuffer(1), m_sink(m_byteBuffer){ }
 
     qor::ref_of<std::string>::type operator()(const qor::io::filesystem::Index& inFile)
     {

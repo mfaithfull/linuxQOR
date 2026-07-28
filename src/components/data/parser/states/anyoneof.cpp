@@ -13,11 +13,18 @@ namespace qor { namespace data { namespace parser {
     AnyOneOf::AnyOneOf(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser, token),
     m_internalState(0), m_head(head), m_tail(tail)
     {
+        m_internalState = 0;
         Enter = [this]()
             {
                 Prepare();
-                m_internalState = 0;
-                Workflow()->PushState(m_head);
+                if(m_internalState == 0)
+                {
+                    Workflow()->PushState(m_head);
+                }
+                else if(m_internalState == 1)
+                {
+                    Workflow()->PushState(m_tail);
+                }
             };
 
         Resume = [this]()
@@ -36,7 +43,8 @@ namespace qor { namespace data { namespace parser {
                     }
                     else if (m_head->m_result.code == Result::MORE_DATA)
                     {
-                        Workflow()->PopState();
+                        Fail();
+                        return;                        
                     }
                     else
                     {
@@ -52,14 +60,17 @@ namespace qor { namespace data { namespace parser {
                         m_result.length = m_tail->m_result.length;
                         m_result.token = m_token;
                         m_result.m_position = m_tail->m_result.m_position;
+                        m_internalState = 0;
                         Workflow()->PopState();
                     }
                     else if (m_head->m_result.code == Result::MORE_DATA)
                     {
-                        Workflow()->PopState();
+                        Fail();
+                        return;                        
                     }
                     else
                     {
+                        m_internalState = 0;
                         m_result.m_position = m_head->m_result.m_position;
                         m_result.code = Result::FAILURE;
                         Workflow()->PopState();

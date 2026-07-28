@@ -14,16 +14,16 @@ namespace qor { namespace data { namespace parser {
     ZeroOrMore::ZeroOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token) : ParserState(parser, token),
         m_head(head), m_first(true)
     {
+        m_first = true;
+        m_result.length = 0;
         Enter = [this]()
             {
                 Prepare();
-                m_first = true;
-                m_result.length = 0;
                 Workflow()->PushState(m_head);
             };
 
         Resume = [this]()
-            {
+            {                
                 m_result.code = m_head->m_result.code;                
                 if (m_head->m_result.code == Result::SUCCESS && GetParser()->GetContext()->HasUnparsedData())
                 {
@@ -39,8 +39,13 @@ namespace qor { namespace data { namespace parser {
                 }
                 else
                 {
-                    m_result.m_position = m_head->m_result.m_position;
-                    Workflow()->PopState();
+                    m_first = true;
+                    Fail();
+                    if(GetParser()->GetContext()->HasUnparsedData())
+                    {
+                        Workflow()->PopState();
+                    }
+                    return;                    
                 }
             };
 

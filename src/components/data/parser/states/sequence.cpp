@@ -14,11 +14,18 @@ namespace qor { namespace data { namespace parser {
     Sequence::Sequence(Parser* parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token) : ParserState(parser, token),
         m_internalState(0), m_head(head), m_tail(tail)
     {
+        m_internalState = 0;
         Enter = [this]()
             {
                 Prepare();
-                m_internalState = 0;
-                Workflow()->PushState(m_head);
+                if(m_internalState == 0)                
+                {
+                    Workflow()->PushState(m_head);
+                }
+                else if(m_internalState == 1)
+                {
+                    Workflow()->PushState(m_tail);
+                }
             };
 
         Resume = [this]()
@@ -41,6 +48,11 @@ namespace qor { namespace data { namespace parser {
                         m_internalState = 1;
                         Workflow()->PushState(m_tail);
                     }
+                    else
+                    {
+                        Fail();
+                        return;
+                    }
                     break;
                 case 1://tail
                     if (m_tail->m_result.code == Result::SUCCESS)
@@ -48,12 +60,14 @@ namespace qor { namespace data { namespace parser {
                         m_result.code = Result::SUCCESS;
                         m_result.length = m_head->m_result.length + m_tail->m_result.length;
                         m_result.token = m_token;
+                        m_internalState = 0;
                         Workflow()->PopState();
                     }
                     else if (m_tail->m_result.code == Result::FAILURE)
                     {
                         m_result.code = Result::FAILURE;
                         m_result.length = 0;
+                        m_internalState = 0;
                         Workflow()->PopState();
                     }
                     else
@@ -63,6 +77,7 @@ namespace qor { namespace data { namespace parser {
                             m_result.code = Result::SUCCESS;
                             m_result.length = m_head->m_result.length + m_tail->m_result.length;
                             m_result.token = m_token;
+                            m_internalState = 0;
                             Workflow()->PopState();
                         }
                     }

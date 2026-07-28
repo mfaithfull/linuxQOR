@@ -21,7 +21,12 @@ namespace qor { namespace data { namespace parser {
             };
 
         Resume = [this]()
-            {
+            {                
+                if(m_head->m_result.code == Result::MORE_DATA)
+                {
+                    Fail();
+                    return;
+                }
                 m_result.length = 0;
                 if (m_head->m_result.code == Result::SUCCESS && m_head->m_result.length > 0)
                 {
@@ -45,8 +50,7 @@ namespace qor { namespace data { namespace parser {
                     if (m_token == static_cast<uint64_t>(eToken::Lexical) && m_result.token != static_cast<uint64_t>(eToken::Lexical))
                     {
                         m_token = m_result.token;
-                    }
-                    //Emit();//TODO: Do we need this?
+                    }                    
                 }
                 m_result.code = Result::SUCCESS;
             };

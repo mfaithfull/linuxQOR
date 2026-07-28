@@ -14,7 +14,7 @@ class JSONPartReader
 {
 public:
 
-    JSONPartReader() : m_byteBuffer(128), m_sink(m_byteBuffer){ }
+    JSONPartReader() : m_byteBuffer(1), m_sink(m_byteBuffer){ }
 
     qor::ref_of<JSONModelObjectT>::type operator()(const qor::io::filesystem::Index& inFile)
     {
@@ -55,7 +55,7 @@ class JSONReader
 {
 public:
 
-    JSONReader() : m_byteBuffer(128), m_sink(m_byteBuffer){ }
+    JSONReader() : m_byteBuffer(1), m_sink(m_byteBuffer){ }
 
     qor::ref_of<qor::data::model::json::Object>::type operator()(const qor::io::filesystem::Index& inFile)
     {
