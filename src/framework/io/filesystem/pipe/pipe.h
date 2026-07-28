@@ -9,6 +9,7 @@
 #include "ipipe.h"
 #include "src/framework/io/iodescriptor.h"
 #include "src/framework/io/filesystem/fileindex.h"
+#include "src/framework/io/network/sockets.h"
 
 namespace qor{ namespace io{
 
@@ -21,7 +22,7 @@ namespace qor{ namespace io{
         Pipe(const Descriptor& descriptor);
         Pipe(const Pipe& src);
         Pipe(const filesystem::Index& index);
-        Pipe(const filesystem::Index& index, int OpenFor, const int WithFlags = 0);
+        Pipe(const filesystem::Index& index, const network::sockets::eType& Type);
         Pipe& operator = (const Pipe&);
         virtual ~Pipe();
 
@@ -30,7 +31,7 @@ namespace qor{ namespace io{
         virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1);
         virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1);
 
-        static ref_of<Pipe>::type Open(const filesystem::Index& index, int openFor, int withFlags);
+        static ref_of<Pipe>::type Open(const filesystem::Index& index);
 
     protected:
 

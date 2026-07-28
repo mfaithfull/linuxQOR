@@ -7,9 +7,9 @@
 
 namespace qor{ namespace io{
 
-    ref_of<Pipe>::type Pipe::Open(const filesystem::Index& index, int openFor, int withFlags)
+    ref_of<Pipe>::type Pipe::Open(const filesystem::Index& index)
     {
-        return new_ref<Pipe>(index, openFor, withFlags);
+        return new_ref<Pipe>(index);
     }
 
     //Base implementation of Pipe
@@ -30,7 +30,7 @@ namespace qor{ namespace io{
 
     Pipe::Pipe(const filesystem::Index& index) : m_index(index){ }
 
-    Pipe::Pipe(const filesystem::Index& index, int /*OpenFor*/, const int /*WithFlags*/) : m_index(index){ }
+    Pipe::Pipe(const filesystem::Index& index, const network::sockets::eType& Type) : m_index(index){ }
 
     Pipe& Pipe::operator = (const Pipe& src)
     {

@@ -39,15 +39,13 @@ namespace qor{ namespace io{ namespace lin{
         }
     }
 
-    Pipe::Pipe(const io::filesystem::Index& direntry, const network::sockets::eType& Type, const network::sockets::eProtocol& Protocol) : io::Pipe()
+    Pipe::Pipe(const io::filesystem::Index& /*direntry*/, const network::sockets::eType& Type) : io::Pipe()
     {
         Descriptor::m_fd = -1;
 
         int domain = AF_UNIX;
         int type = TypeToLinux(Type, true);
-        int protocol = ProtocolToLinux(Protocol);
-
-        m_fd = ::socket(domain, type, protocol);
+        m_fd = ::socket(domain, type, 0);
     }
 
     Pipe::~Pipe()
@@ -105,7 +103,7 @@ namespace qor{ namespace io{ namespace lin{
         return newpipe;
     }
 
-    int32_t Pipe::Connect(const network::Address& Address)
+    int32_t Pipe::Connect(const network::Address& /*Address*/)
     {
         return -1;// ::connect(m_fd, (const sockaddr*)&addr, len);
     }
@@ -210,6 +208,36 @@ namespace qor{ namespace io{ namespace lin{
     {
         auto flags = ::fcntl(m_fd, F_GETFL, 0);
         return fcntl(m_fd, F_SETFL, nonBlocking ? (flags | O_NONBLOCK) : (flags & (~O_NONBLOCK))) == 0 ? true : false;
+    }
+
+    int Pipe::TypeToLinux(const network::sockets::eType& Type, bool closeOnExec)
+    {
+        int type = SOCK_STREAM;
+        switch(Type)
+        {
+            case network::sockets::eType::Sock_Stream:
+                type = SOCK_STREAM;
+                break;
+            case network::sockets::eType::Sock_DGram:
+                type = SOCK_DGRAM;
+                break;
+            case network::sockets::eType::Sock_Raw:
+                type = SOCK_RAW;
+                break;
+            case network::sockets::eType::Sock_ReliablyDeliveredMessage:
+                type = SOCK_RDM;
+                break;
+            case network::sockets::eType::Sock_SeqPacket:
+                type = SOCK_SEQPACKET;
+        }
+
+#ifdef SOCK_CLOEXEC
+        if(closeOnExec)
+        {
+            type |= SOCK_CLOEXEC;
+        }
+#endif
+        return type;
     }
 
 }}}//qor::io::lin

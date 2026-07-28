@@ -24,7 +24,7 @@ namespace qor{ namespace io { namespace lin{
         Pipe();
         Pipe(int fd);
         Pipe(const Pipe& src);
-        Pipe(const io::filesystem::Index& direntry, const network::sockets::eType& Type, const network::sockets::eProtocol& Protocol);
+        Pipe(const io::filesystem::Index& direntry, const network::sockets::eType& Type);
         virtual ~Pipe();
 
         virtual int32_t Bind(const network::Address& Address);
@@ -49,20 +49,11 @@ namespace qor{ namespace io { namespace lin{
         virtual std::size_t ID(void);
         virtual int32_t GetLastError(void);
         virtual bool SetNonBlocking(bool nonBlocking);
-        virtual bool IsAlive();
 
         virtual int32_t Peek(char* buf, int32_t len);
-        virtual bool SetRecvTimeout(time_t readTimeoutSec, time_t readTimeoutuSec);
-        virtual bool SetSendTimeout(time_t readTimeoutSec, time_t readTimeoutuSec);
-        virtual bool SetTCPNoDelay(bool nodelay);
-        virtual bool SetIPv6Only(bool ipv6only);
 
-        static int AddressFamilyToLinux(const network::sockets::eAddressFamily& AF);
-        static network::sockets::eAddressFamily AddressFamilyFromLinux(int domain);
         static int TypeToLinux(const network::sockets::eType& Type, bool closeOnExec);
-        static network::sockets::eType TypeFromLinux(int type);
-        static int ProtocolToLinux(const network::sockets::eProtocol& Protocol);
-        static network::sockets::eProtocol ProtocolFromLinux(int protocol);
+        //static network::sockets::eType TypeFromLinux(int type);
 
     private:
 

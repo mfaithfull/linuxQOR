@@ -68,8 +68,8 @@ qor_pp_test_suite_case(stdifstreamTestSuite, canSetupstdifstreamsource)
     source.SetSink(&sink);
     source.SetPlug(&connector);
 
-    size_t unitsRead = 0;
-    size_t unitsToRead = 1;
+    //size_t unitsRead = 0;
+    //size_t unitsToRead = 1;
     //bool result = source.Read(unitsRead, unitsToRead);
     //qor_pp_assert_that(result).isTrue();  
     //Can't read a source that isn't open anymore.

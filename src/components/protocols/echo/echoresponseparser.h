@@ -24,8 +24,8 @@ namespace qor { namespace components { namespace protocols { namespace echo {
     };
 
     static const std::map<const uint64_t, const std::string> echoResponseTokenNames = {{
-        {static_cast< const uint64_t>(echoResponseToken::responseChar), "responseChar"},
-        {static_cast< const uint64_t>(echoResponseToken::response), "response"},
+        {static_cast< uint64_t>(echoResponseToken::responseChar), "responseChar"},
+        {static_cast< uint64_t>(echoResponseToken::response), "response"},
     }};
 
     class responseChar : public qor::data::parser::OneOfARange

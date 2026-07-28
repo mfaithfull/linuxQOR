@@ -24,7 +24,7 @@ qor_pp_module_requires(ICurrentThread)
 
 qor_pp_implement_module(Server::Name)
 
-int main(const int argc, const char** argv, char** env)
+int main()
 {
     DefaultErrorHandler errorHandler;
     DefaultLogHandler logHandler(Level::Debug);
