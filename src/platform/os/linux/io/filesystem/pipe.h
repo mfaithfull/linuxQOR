@@ -7,7 +7,9 @@
 #include "src/framework/io/filesystem/pipe/pipe.h"
 #include "src/framework/io/filesystem/fileindex.h"
 #include "src/framework/io/filesystem/path.h"
-#include "src/platform/os/linux/io/async/asyncioservice.h"
+#include "src/framework/io/network/socket.h"
+#include "src/framework/io/network/sockets.h"
+
 
 //Declaration must match the one in src/system/filesystem/ifile.h
 namespace qor{ bool qor_pp_module_interface(QOR_LINUXFILESYSTEM) ImplementsPipe(); }
@@ -20,42 +22,49 @@ namespace qor{ namespace io { namespace lin{
     public:
 
         Pipe();
-        Pipe(const Pipe& src);
-        Pipe(const filesystem::Path& path, const std::string& fileName, int openFor, int withFlags) : io::Pipe(filesystem::Index(path,fileName),openFor,withFlags) {}
-        Pipe(const filesystem::Index& direntry, int openFor, int withFlags);
         Pipe(int fd);
+        Pipe(const Pipe& src);
+        Pipe(const io::filesystem::Index& direntry, const network::sockets::eType& Type, const network::sockets::eProtocol& Protocol);
         virtual ~Pipe();
 
-        virtual task<int> AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
-        virtual task<int> AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset) override;
-        virtual int64_t Read(byte* buffer, size_t byteCount, int64_t offset = -1) override;
-        virtual int64_t Write(byte* buffer, size_t byteCount, int64_t offset = -1) override;
+        virtual int32_t Bind(const network::Address& Address);
+        virtual int32_t Bind(const qor::io::async::Interface& ioContext, const network::Address& Address);
+        virtual int32_t Listen(int32_t iBacklog);
+        virtual int32_t Listen(const qor::io::async::Interface& ioContext, int32_t iBacklog);
+        virtual ref_of<io::Pipe>::type Accept(io::network::Address& Address);
+        virtual task<int32_t> AcceptAsync(const qor::io::async::Interface& ioContext, network::Address& Address, network::Socket* Socket);
+        virtual int32_t Connect(const network::Address& Address);
+        virtual int32_t GetPeerName(network::Address& Address);
+        virtual int32_t GetSockName(network::Address& Address);
+        virtual int32_t GetSockOpt(int32_t iLevel, int32_t iOptName, char* pOptVal, int32_t* pOptLen);
+        virtual int32_t SetSockOpt(int32_t iLevel, int32_t iOptName, const char* pOptVal, int32_t iOptLen);
+        virtual task<int32_t> AsyncReceive(const qor::io::async::Interface& ioContext, char* pBuffer, int32_t iLen);
+        virtual int32_t Receive(char* buf, int32_t len, int32_t flags);
+        virtual int32_t ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, network::Address& From);
+        virtual task<int32_t> AsyncSend(const qor::io::async::Interface& ioContext, const char* Buffer, int32_t iLen);
+        virtual int32_t Send(const char* Buffer, int32_t iLen);
+        virtual int32_t SendTo(const char* Buffer, int32_t iLen, int32_t iFlags, const network::Address& To);
+        virtual task<int32_t> AsyncShutdown(const qor::io::async::Interface& ioContext, network::sockets::eShutdown how);
+        virtual int32_t Shutdown(network::sockets::eShutdown how);
+        virtual std::size_t ID(void);
+        virtual int32_t GetLastError(void);
+        virtual bool SetNonBlocking(bool nonBlocking);
+        virtual bool IsAlive();
+
+        virtual int32_t Peek(char* buf, int32_t len);
+        virtual bool SetRecvTimeout(time_t readTimeoutSec, time_t readTimeoutuSec);
+        virtual bool SetSendTimeout(time_t readTimeoutSec, time_t readTimeoutuSec);
+        virtual bool SetTCPNoDelay(bool nodelay);
+        virtual bool SetIPv6Only(bool ipv6only);
+
+        static int AddressFamilyToLinux(const network::sockets::eAddressFamily& AF);
+        static network::sockets::eAddressFamily AddressFamilyFromLinux(int domain);
+        static int TypeToLinux(const network::sockets::eType& Type, bool closeOnExec);
+        static network::sockets::eType TypeFromLinux(int type);
+        static int ProtocolToLinux(const network::sockets::eProtocol& Protocol);
+        static network::sockets::eProtocol ProtocolFromLinux(int protocol);
 
     private:
-
-        int SyncToSystem();
-        int GetDescriptor() const;
-        int ChangeAccess(unsigned int mode);
-        int GetOperatingMode();
-        int ChangeDescriptorMode(int flags);
-        int GetDescriptorMode();
-        int AdviseOnUsage(off_t offset, off_t length, int advise);
-        int ReserveSpace(off_t offset, off_t length);
-        int ChangeOperatingMode(int flags);
-
-        static int64_t Validate_write_Result(int64_t result);
-        static int64_t Validate_read_Result(int64_t result);
-        static off_t Validate_lseek_Result(off_t result);
-        static uint64_t Validate_lseek64_Result(uint64_t result);
-        static int Validate_ftruncate_Result(int result);
-        static int Validate_posix_fallocate_Result(int result);
-        static int Validate_fcntl_Result(int result);
-        static int Validate_posix_fadvise_Result(int result);
-        static int Validate_fchmod_Result(int result);
-        static int Validate_fsync_Result(int result);
-        static void Check_fsync_Result(int result);
-        static void Check_close_Result(int result);
-        static void ErrorOnOpen(int err);
 
     };
 }}}//qor::io::lin

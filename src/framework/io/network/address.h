@@ -44,6 +44,11 @@ namespace qor{ namespace io { namespace network{
                 char	irdaServiceName[25];
             }IrDaAddress;
 
+            struct UnixAddress
+            {                
+                char sun_path[108];		/* Path name.  */
+            }UnixAddress;
+
             struct IPAddress
             {
                 unsigned short sin_port;

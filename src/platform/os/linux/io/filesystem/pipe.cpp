@@ -12,8 +12,13 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/un.h>
 #include <errno.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <fcntl.h>
+#include <poll.h>
 #include <unistd.h>
 #include <aio.h>
 
@@ -26,588 +31,185 @@ namespace qor{ namespace io{ namespace lin{
 
     Pipe::Pipe(int fd) : io::Pipe(fd){}
 
-    Pipe::Pipe(const Pipe& src) : Pipe()
+    Pipe::Pipe(const Pipe& src) : io::Pipe()
     {
         if(src.m_fd != -1)
         {
-            Descriptor::m_fd = Validate_fcntl_Result(fcntl(src.m_fd, F_DUPFD, 0));
+            Descriptor::m_fd = fcntl(src.m_fd, F_DUPFD, 0);
         }
     }
 
-    Pipe::Pipe(const io::filesystem::Index& direntry, int openFor, int withFlags) : io::Pipe(direntry)
+    Pipe::Pipe(const io::filesystem::Index& direntry, const network::sockets::eType& Type, const network::sockets::eProtocol& Protocol) : io::Pipe()
     {
         Descriptor::m_fd = -1;
-        int mode = 0;
-        if( ( (withFlags & WithFlags::CreateNew) | (withFlags & WithFlags::TempFile) ) != 0 )
-        {
-            mode |= (( (openFor & OpenFor::Exec) != 0) ? S_IXUSR : 0);
-            mode |= (( (openFor & (OpenFor::ReadOnly | OpenFor::ReadWrite)) != 0) ? S_IRUSR : 0);
-            mode |= (( (openFor & (OpenFor::WriteOnly | OpenFor::ReadWrite)) != 0) ? S_IWUSR : 0);
-        }
-        int oflags = 0;
-        oflags |= (( (openFor & OpenFor::ReadOnly) != 0) ? O_RDONLY : 0);
-        oflags |= (( (openFor & OpenFor::WriteOnly) != 0) ? O_WRONLY : 0);
-        oflags |= (( (openFor & OpenFor::ReadWrite) != 0) ? O_RDWR : 0);
 
-        oflags |= (( (withFlags & WithFlags::Append) != 0) ? O_APPEND : 0);
-        oflags |= (( (withFlags & WithFlags::CloseExec) != 0) ? O_CLOEXEC : 0);
-        //oflags |= (( (withFlags & WithFlags::CloseFork) != 0) ? O_CLOEXEC : 0);
-        oflags |= (( (withFlags & WithFlags::CreateNew) != 0) ? O_CREAT : 0);
-        oflags |= (( (withFlags & WithFlags::Directory) != 0) ? O_DIRECTORY : 0);
-        oflags |= (( (withFlags & WithFlags::DSync) != 0) ? O_DSYNC : 0);
-        oflags |= (( (withFlags & WithFlags::Exclusive) != 0) ? O_EXCL : 0);
-        oflags |= (( (withFlags & WithFlags::NoCTTY) != 0) ? O_NOCTTY : 0);
-        oflags |= (( (withFlags & WithFlags::NoFollow) != 0) ? O_NOFOLLOW : 0);
-        oflags |= (( (withFlags & WithFlags::NonBlock) != 0) ? O_NONBLOCK : 0);
-        oflags |= (( (withFlags & WithFlags::RSync) != 0) ? O_RSYNC : 0);
-        oflags |= (( (withFlags & WithFlags::Sync) != 0) ? O_SYNC : 0);
-        oflags |= (( (withFlags & WithFlags::Truncate) != 0) ? O_TRUNC : 0);
-        //oflags |= (( (withFlags & IFileSystem::WithFlags::TTYInit) != 0) ? O_TTY_INIT : 0);
-        oflags |= (( (withFlags & WithFlags::TempFile) != 0) ? O_TMPFILE : 0);
+        int domain = AF_UNIX;
+        int type = TypeToLinux(Type, true);
+        int protocol = ProtocolToLinux(Protocol);
 
-        m_fd = open(direntry.ToString().c_str(), oflags, mode);
-
-        if(m_fd == -1)
-        {
-            Pipe::ErrorOnOpen(errno);
-        }
+        m_fd = ::socket(domain, type, protocol);
     }
 
     Pipe::~Pipe()
     {
         if(m_fd != -1)
         {
-            Check_fsync_Result(::fsync(m_fd));
-            Check_close_Result(::close(m_fd));
+            ::fsync(m_fd);
+            ::close(m_fd);
         }
     }
 
-    int Pipe::AdviseOnUsage(off_t offset, off_t length, int advise)
+    int32_t Pipe::Bind(const qor::io::async::Interface& ioContext, const network::Address& Address)
     {
-        return Validate_posix_fadvise_Result(::posix_fadvise(m_fd, offset, length, advise));
+        return sync_wait(ioContext.Bind(this, Address));
     }
 
-    int Pipe::GetDescriptor() const
+    int32_t Pipe::Listen(const qor::io::async::Interface& ioContext, int32_t backlog)
+    {
+        return sync_wait(ioContext.Listen(this, backlog));
+    }
+
+    task<int32_t> Pipe::AcceptAsync(const qor::io::async::Interface& ioContext, network::Address& Address, network::Socket* Socket)
+    {
+        return ioContext.Accept(this, Address, Socket);
+    }
+
+    int32_t Pipe::Bind(const network::Address& Address)
+    {
+        sockaddr_un addr;
+        memset(&addr, 0, sizeof(addr));
+        addr.sun_family = AF_UNIX;
+        strncpy(addr.sun_path, Address.sa.UnixAddress.sun_path, sizeof(addr.sun_path)-1);
+        return ::bind(m_fd, (struct sockaddr*)&addr, sizeof(addr));
+    }
+
+    int32_t Pipe::Listen(int32_t iBacklog)
+    {
+        return ::listen(m_fd, iBacklog);
+    }
+
+    ref_of<io::Pipe>::type Pipe::Accept(io::network::Address& /*Address*/)
+    {
+        ref_of<io::Pipe>::type newpipe;
+        sockaddr addr;
+        socklen_t len = 0;
+        int iresult = ::accept(m_fd, &addr, &len);
+        if(iresult == -1)
+        {
+            //TODO:Raise error
+        }
+        else
+        {
+            newpipe = new_ref<Pipe>(iresult).AsRef<io::Pipe>();
+        }
+        return newpipe;
+    }
+
+    int32_t Pipe::Connect(const network::Address& Address)
+    {
+        return -1;// ::connect(m_fd, (const sockaddr*)&addr, len);
+    }
+
+    int32_t Pipe::GetPeerName(network::Address& /*Address*/)
+    {
+        sockaddr addr;
+        socklen_t len;
+        return ::getpeername(m_fd, &addr, &len);
+    }
+
+    int32_t Pipe::GetSockName(network::Address& /*Address*/)
+    {
+        sockaddr addr;
+        socklen_t len;
+        return ::getsockname(m_fd, &addr, &len);
+    }
+
+    int32_t Pipe::GetSockOpt(int32_t level, int32_t optname, char* optval, int32_t* len)
+    {
+        return ::getsockopt(m_fd, level, optname, optval, (socklen_t*)&len);
+    }
+
+    int32_t Pipe::SetSockOpt(int32_t level, int32_t optname, const char* optval, int32_t optlen)
+    {
+        return ::setsockopt(m_fd, level, optname, optval, optlen);
+    }
+
+    task<int32_t> Pipe::AsyncReceive(const qor::io::async::Interface& ioContext, char* pBuffer, int32_t iLen)
+    {
+        return ioContext.Recv(this, (byte*)pBuffer, iLen);
+    }
+
+    int32_t Pipe::Receive(char* buf, int32_t len, int32_t flags)
+    {
+        return ::recv(m_fd, buf, len, flags);
+    }
+
+    int32_t Pipe::Peek(char* buf, int32_t len)
+    {
+        return ::recv(m_fd, buf, len, MSG_PEEK);
+    }
+
+    int32_t Pipe::ReceiveFrom(char* Buffer, int32_t iLen, int32_t iFlags, network::Address& From)
+    {
+        sockaddr_in addr;
+        addr.sin_family = From.sa_family;
+        addr.sin_addr.s_addr = From.sa.IPAddress.sin_addr.S_un.S_addr;
+        addr.sin_port = From.sa.IPAddress.sin_port;
+        socklen_t socklen = sizeof(addr);
+        return ::recvfrom(m_fd, Buffer, iLen, iFlags, (sockaddr*)&addr, &socklen);
+    }
+
+    task<int32_t> Pipe::AsyncSend(const qor::io::async::Interface& ioContext, const char* Buffer, int32_t iLen)
+    {
+        return ioContext.Send(this, (byte*)Buffer, iLen, 0);
+    }
+
+    int32_t Pipe::Send(const char* Buffer, int32_t iLen)
+    {
+        return ::send(m_fd, Buffer, iLen, 0);
+    }
+
+    int32_t Pipe::SendTo(const char* Buffer, int32_t len, int32_t flags, const network::Address& To)
+    {
+        sockaddr_in addr;
+        addr.sin_family = To.sa_family;
+        addr.sin_addr.s_addr = To.sa.IPAddress.sin_addr.S_un.S_addr;
+        addr.sin_port = To.sa.IPAddress.sin_port;
+        return ::sendto(m_fd, Buffer, len, flags, (sockaddr*)&addr, len);
+    }
+
+    int32_t Pipe::Shutdown(network::sockets::eShutdown how)
+    {
+        int iHow = 0;
+        iHow = ( how & network::sockets::eShutdown::ShutdownRead ) ? SHUT_RD : iHow;
+        iHow = ( how & network::sockets::eShutdown::ShutdownWrite ) ? SHUT_WR : iHow;
+        iHow = ( how & network::sockets::eShutdown::ShutdownReadWrite ) ? SHUT_RDWR : iHow;
+        return ::shutdown(m_fd, iHow);
+    }
+
+    task<int32_t> Pipe::AsyncShutdown(const qor::io::async::Interface& ioContext,  network::sockets::eShutdown how)
+    {
+        int iHow = 0;
+        iHow = ( how & network::sockets::eShutdown::ShutdownRead ) ? SHUT_RD : iHow;
+        iHow = ( how & network::sockets::eShutdown::ShutdownWrite ) ? SHUT_WR : iHow;
+        iHow = ( how & network::sockets::eShutdown::ShutdownReadWrite ) ? SHUT_RDWR : iHow;
+        return ioContext.Shutdown(this, iHow);
+    }
+
+    std::size_t Pipe::ID(void)
     {
         return m_fd;
     }
 
-    int Pipe::GetDescriptorMode()
+    int32_t Pipe::GetLastError(void)
     {
-        return Validate_fcntl_Result(::fcntl(m_fd, F_GETFD));
+        return -1;
     }
 
-    int Pipe::ChangeDescriptorMode(int flags)
+    bool Pipe::SetNonBlocking(bool nonBlocking)
     {
-        return Validate_fcntl_Result(::fcntl(m_fd, F_SETFD, flags));
+        auto flags = ::fcntl(m_fd, F_GETFL, 0);
+        return fcntl(m_fd, F_SETFL, nonBlocking ? (flags | O_NONBLOCK) : (flags & (~O_NONBLOCK))) == 0 ? true : false;
     }
 
-    int Pipe::GetOperatingMode()
-    {
-        return Validate_fcntl_Result(::fcntl(m_fd, F_GETFL));
-    }
-
-    int Pipe::ChangeOperatingMode(int flags)
-    {
-        return Validate_fcntl_Result(::fcntl(m_fd, F_SETFL, flags));
-    }
-
-
-    int Pipe::SyncToSystem()
-    {
-        return Validate_fsync_Result(::fsync(m_fd));
-    }
-
-
-    task<int> Pipe::AsyncRead(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
-    {
-        return ioContext.Read(this, buffer, byteCount, offset);
-    }
-
-    task<int> Pipe::AsyncWrite(const qor::io::async::Interface& ioContext, byte* buffer, size_t byteCount, off_t offset)
-    {
-        return ioContext.Write(this, buffer, byteCount, offset);
-    }
-
-    int64_t Pipe::Read(byte* buffer, size_t byteCount, off_t offset)
-    {
-        if(offset == -1)
-        {
-            return Validate_read_Result(::read(m_fd, buffer, byteCount));
-        }
-        else
-        {
-            return Validate_read_Result(::pread(m_fd, buffer, byteCount, offset));
-        }
-    }
-
-    int64_t Pipe::Write(byte* buffer, size_t byteCount, off_t offset)
-    {
-        if(offset == -1)
-        {
-            return Validate_write_Result(::write(m_fd, buffer, byteCount));
-        }
-        else
-        {
-            return Validate_write_Result(::pwrite(m_fd, buffer, byteCount, offset));
-        }
-    }
-
-    int64_t Pipe::Validate_write_Result(int64_t result)
-    {
-        if(result == -1)
-        {
-            switch (errno)
-            {
-            case EAGAIN:
-                continuable("The O_NONBLOCK flag is set for the file descriptor and the thread would be delayed in the write() operation.\nor\nThe file descriptor is for a socket, is marked O_NONBLOCK, and write would block.");
-                break;
-            case EBADF:
-                continuable("The fildes argument is not a valid file descriptor open for writing.");
-                break;
-            case EFBIG:
-                continuable("An attempt was made to write a file that exceeds the implementation-defined maximum file size or the process' file size limit, and there was no room for any bytes to be written.\nor\nThe file is a regular file, nbyte is greater than 0, and the starting position is greater than or equal to the offset maximum established in the open file description associated with fildes.");
-                break;
-            case EINTR:
-                continuable("The write operation was terminated due to the receipt of a signal, and no data was transferred.");
-                break;
-            case EIO:
-                continuable("The process is a member of a background process group attempting to write to its controlling terminal, TOSTOP is set, the process is neither ignoring nor blocking SIGTTOU, and the process group of the process is orphaned. This error may also be returned under implementation-defined conditions.\nor\nA physical I/O error has occurred.");
-                break;
-            case ENOSPC:
-                continuable("There was no free space remaining on the device containing the file.");
-                break;
-            case EPIPE:
-                continuable("An attempt is made to write to a pipe or FIFO that is not open for reading by any process, or that only has one end open. A SIGPIPE signal shall also be sent to the thread.\nor\nA write was attempted on a socket that is shut down for writing, or is no longer connected. In the latter case, if the socket is of type SOCK_STREAM, the SIGPIPE signal is generated to the calling process.");
-                break;
-            case ERANGE:
-                continuable("The transfer request size was outside the range supported by the STREAMS file associated with fildes.");
-                break;
-#if(EWOULDBLOCK != EAGAIN)
-            case EWOULDBLOCK:
-                continuable("The file descriptor is for a socket, is marked O_NONBLOCK, and write would block.");
-                break;
-#endif
-            case ECONNRESET:
-                continuable("A write was attempted on a socket that is not connected.");
-                break;
-            case EINVAL:
-                continuable("The STREAM or multiplexer referenced by fildes is linked (directly or indirectly) downstream from a multiplexer.\nor\nThe offset argument is invalid. The value is negative.");
-                break;
-            case ENOBUFS:
-                continuable("Insufficient resources were available in the system to perform the operation.");
-                break;
-            case ENXIO:
-                continuable("A request was made of a nonexistent device, or the request was outside the capabilities of the device.\nor\nA hangup occurred on the STREAM being written to.");
-                break;
-            case EACCES:
-                continuable("A write was attempted on a socket and the calling process does not have appropriate privileges.");
-                break;
-            case ENETDOWN:
-                continuable("A write was attempted on a socket and the local network interface used to reach the destination is down.");
-                break;
-            case ENETUNREACH:
-                continuable("A write was attempted on a socket and no route to the network is present.");
-                break;
-            case ESPIPE:
-                continuable("fildes is associated with a pipe or FIFO.");
-                break;
-            default:
-                serious("An unknown error has occured.");
-                break;
-            }
-        }
-        return result;
-    }
-
-    int64_t Pipe::Validate_read_Result(int64_t result)
-    {
-        if(result == -1)
-        {
-            switch (errno)
-            {
-            case EAGAIN:
-                continuable("The O_NONBLOCK flag is set for the file descriptor and the process would be delayed.\nor\nThe file descriptor is for a socket, is marked O_NONBLOCK, and no data is waiting to be received.");
-                break;
-            case EBADF:
-                continuable("The fildes argument is not a valid file descriptor open for reading.");
-                break;
-            case EBADMSG:
-                continuable("The file is a STREAM file that is set to control-normal mode and the message waiting to be read includes a control part.");
-                break;
-            case EINTR:
-                continuable("The read operation was terminated due to the receipt of a signal, and no data was transferred.");
-                break;
-            case EINVAL:
-                continuable("The STREAM or multiplexer referenced by fildes is linked (directly or indirectly) downstream from a multiplexer.\nor\nThe offset argument is invalid. The value is negative.");
-                break;
-            case EIO:
-                continuable("The process is a member of a background process attempting to read from its controlling terminal, the process is ignoring or blocking the SIGTTIN signal, or the process group is orphaned. This error may also be generated for implementation-defined reasons.\nor\nA physical I/O error has occurred.");
-                break;
-            case EISDIR:
-                continuable("The fildes argument refers to a directory and the implementation does not allow the directory to be read using read() or pread(). The readdir() function should be used instead.");
-                break;
-            case EOVERFLOW:
-                continuable("The file is a regular file, nbyte is greater than 0, the starting position is before the end-of-file, and the starting position is greater than or equal to the offset maximum established in the open file description associated with fildes.\nor\nThe file is a regular file and an attempt was made to read at or beyond the offset maximum associated with the file.");
-                break;
-#if(EWOULDBLOCK != EAGAIN)
-            case EWOULDBLOCK:
-                continuable("The file descriptor is for a socket, is marked O_NONBLOCK, and no data is waiting to be received.");
-                break;
-#endif
-            case ECONNRESET:
-                continuable("A read was attempted on a socket and the connection was forcibly closed by its peer.");
-                break;
-            case ENOTCONN:
-                continuable("A read was attempted on a socket that is not connected.");
-                break;
-            case ETIMEDOUT:
-                continuable("A read was attempted on a socket and a transmission timeout occurred.");
-                break;
-            case ENOBUFS:
-                continuable("Insufficient resources were available in the system to perform the operation.");
-                break;
-            case ENOMEM:
-                continuable("Insufficient memory was available to fulfill the request.");
-                break;
-            case ENXIO:
-                continuable("A request was made of a nonexistent device, or the request was outside the capabilities of the device.\nor\nA request was outside the capabilities of the device.");
-                break;
-            case ESPIPE:
-                continuable("fildes is associated with a pipe or FIFO");
-                break;
-            default:
-                break;
-            }
-        }
-        return result;
-    }
-
-    off_t Pipe::Validate_lseek_Result(off_t result)
-    {
-        if(result == -1)
-        {
-            switch(errno)
-            {
-            case EBADF:
-                continuable("fd is not an open file descriptor.");
-                break;
-            case EFAULT:
-                continuable("Problem with copying results to user space.");
-                break;
-            case EINVAL:
-                continuable("whence is invalid");
-                break;
-            default:
-                serious("An unknown error has occured.");
-            }
-        }
-        return result;
-    }
-
-    uint64_t Pipe::Validate_lseek64_Result(uint64_t result)
-    {
-        if(result == (uint64_t)(-1))
-        {
-            switch(errno)
-            {
-            case EBADF:
-                continuable("fd is not an open file descriptor.");
-                break;
-            case EFAULT:
-                continuable("Problem with copying results to user space.");
-                break;
-            case EINVAL:
-                continuable("whence is invalid");
-                break;
-            default:
-                serious("An unknown error has occured.");
-            }
-        }
-        return result;
-    }
-
-    int Pipe::Validate_ftruncate_Result(int result)
-    {
-        if(result == -1)
-        {
-            switch(errno)
-            {
-            case EBADF:
-                continuable("The fildes argument is not a file descriptor open for writing.");
-                break;
-            case EINTR:
-                continuable("A signal was caught during execution.");
-                break;
-            case EINVAL:
-                continuable("The length argument was less than 0.\nor\nThe length argument was greater than the maximum file size.\nor\nThe fildes argument references a file that was opened without write permission.\nor\nThe fildes argument is not a file descriptor open for writing.");
-                break;
-            case EFBIG:
-                continuable("The length argument was greater than the maximum file size.\nor\nThe file is a regular file and length is greater than the offset maximum established in the open file description associated with fildes.");
-                break;
-            case EIO:
-                continuable("An I/O error occurred while reading from or writing to a file system.");
-                break;
-            case EROFS:
-                continuable("The named file resides on a read-only file system.");
-                break;
-            default:
-                serious("An unknown error has occured.");
-            }
-        }
-        return result;
-    }
-
-    int Pipe::Validate_posix_fallocate_Result(int result)
-    {
-        switch(result)
-        {
-            case 0:
-            return 0;
-            case EBADF:
-                continuable("fd is not a valid file descriptor, or is not opened for writing.");
-                break;
-            case EFBIG:
-                continuable("offset+len exceeds the maximum file size.");
-                break;
-            case EINVAL:
-                continuable("offset was less than 0, or len was less than or equal to 0.");
-                break;
-            case ENODEV:
-                continuable("fd does not refer to a regular file.");
-                break;
-            case ENOSPC:
-                continuable("There is not enough space left on the device containing the file referred to by fd.");
-                break;
-            case ESPIPE:
-                continuable("fd refers to a pipe.");
-                break;
-            default:
-                serious("An unknown error has occured.");
-        }
-        return result;
-    }
-
-    int Pipe::Validate_fcntl_Result(int result)
-    {
-        if(result == -1)
-        {
-            switch(errno)
-            {
-                case EACCES:
-                case EAGAIN:
-                    continuable("The cmd argument is F_SETLK; the type of lock ( l_type) is a shared (F_RDLCK) or exclusive (F_WRLCK) lock and the segment of a file to be locked is already exclusive-locked by another process, or the type is an exclusive lock and some portion of the segment of a file to be locked is already shared-locked or exclusive-locked by another process.");
-                    break;
-                case EBADF:
-                    continuable("The fildes argument is not a valid open file descriptor, or the argument cmd is F_SETLK or F_SETLKW, the type of lock, l_type, is a shared lock (F_RDLCK), and fildes is not a valid file descriptor open for reading, or the type of lock, l_type, is an exclusive lock (F_WRLCK), and fildes is not a valid file descriptor open for writing.");
-                    break;
-                case EINTR:
-                    continuable("The cmd argument is F_SETLKW and the function was interrupted by a signal.");
-                    break;
-                case EINVAL:
-                    continuable("The cmd argument is invalid, or the cmd argument is F_DUPFD and arg is negative or greater than or equal to {OPEN_MAX}, or the cmd argument is F_GETLK, F_SETLK, or F_SETLKW and the data pointed to by arg is not valid, or fildes refers to a file that does not support locking.");
-                    break;
-                case EMFILE:
-                    continuable("The argument cmd is F_DUPFD and {OPEN_MAX} file descriptors are currently open in the calling process, or no file descriptors greater than or equal to arg are available.");
-                    break;
-                case ENOLCK:
-                    continuable("The argument cmd is F_SETLK or F_SETLKW and satisfying the lock or unlock request would result in the number of locked regions in the system exceeding a system-imposed limit.");
-                    break;
-                case EOVERFLOW:
-                    continuable("One of the values to be returned cannot be represented correctly.\nor\nThe cmd argument is F_GETLK, F_SETLK, or F_SETLKW and the smallest or, if l_len is non-zero, the largest offset of any byte in the requested segment cannot be represented correctly in an object of type off_t.");
-                    break;
-                case EDEADLK:
-                    continuable("The cmd argument is F_SETLKW, the lock is blocked by a lock from another process, and putting the calling process to sleep to wait for that lock to become free would cause a deadlock.");
-                    break;
-                default:
-                    serious("An unknown error has occured.");
-            }
-        }
-        return result;
-    }
-
-    int Pipe::Validate_posix_fadvise_Result(int result)
-    {
-        switch(result)
-        {
-            case 0:
-            return 0;
-            case EBADF:
-                continuable("The fd argument is not a valid file descriptor.");
-                break;
-            case EINVAL:
-                continuable("The value of advice is invalid.");
-                break;
-            case ESPIPE:
-                continuable("The fd argument is associated with a pipe or FIFO");
-                break;
-            default:
-                serious ("An unknown error has occured.");
-        }
-        return result;
-    }
-
-    int Pipe::Validate_fchmod_Result(int result)
-    {
-        switch(result)
-        {
-            case 0:
-            return 0;
-            case EBADF:
-                continuable("The fildes argument is not an open file descriptor.");
-                break;
-            case EPERM:
-                continuable("The effective user ID does not match the owner of the file and the process does not have appropriate privilege.");
-                break;
-            case EROFS:
-                continuable("The file referred to by fildes resides on a read-only file system.");
-                break;
-            case EINTR:
-                continuable("The fchmod() function was interrupted by a signal.");
-                break;
-            case EINVAL:
-                continuable("The value of the mode argument is invalid or the fildes argument refers to a pipe and the implementation disallows execution of fchmod() on a pipe.");
-                break;
-            default:
-                serious("An unknown error has occured.");
-        }
-        return result;
-    }
-
-    void Pipe::Check_close_Result(int result)
-    {
-        switch (result)
-        {
-            case 0:
-            return;
-            case EBADF:
-                continuable("The fildes argument is not a valid file descriptor.");
-                break;
-            case EINTR:
-                continuable("The close() function was interrupted by a signal.");
-                break;
-            case EIO:
-                continuable("An I/O error occurred while reading from or writing to the file system.");
-                break;
-            default:
-                serious("An unknown error occured.");
-        }
-    }
-
-    int Pipe::Validate_fsync_Result(int result)
-    {
-        switch (result)
-        {
-            case 0:
-            return 0;
-            case EBADF:
-                continuable("The fildes argument is not a valid descriptor");
-            break;
-            case EINTR:
-                continuable("The fsync() function was interrupted by a signal.");
-            break;
-            case EINVAL:
-                continuable("The fildes argument does not refer to a file on which this operation is possible.");
-            break;
-            case EIO:
-                continuable("An I/O error occurred while reading from or writing to the file system.");
-            break;
-            default:
-                serious("An unknown error occured.");
-        }
-        return result;
-    }
-
-    void Pipe::Check_fsync_Result(int result)
-    {
-        switch (result)
-        {
-            case 0:
-            return;
-            case EBADF:
-                continuable("The fildes argument is not a valid descriptor");
-            break;
-            case EINTR:
-                continuable("The fsync() function was interrupted by a signal.");
-            break;
-            case EINVAL:
-                continuable("The fildes argument does not refer to a file on which this operation is possible.");
-            break;
-            case EIO:
-                continuable("An I/O error occurred while reading from or writing to the file system.");
-            break;
-            default:
-                serious("An unknown error occured.");
-        }
-    }
-
-    void Pipe::ErrorOnOpen(int err)
-    {
-        switch (err)
-        {
-            case EACCES:
-                continuable("Search permission is denied on a component of the path prefix, or the file exists and the permissions specified by oflag are denied, or the file does not exist and write permission is denied for the parent directory of the file to be created, or O_TRUNC is specified and write permission is denied");
-            break;
-            case EEXIST:
-                continuable("O_CREAT and O_EXCL are set, and the named file exists.");
-            break;
-            case EINTR:
-                continuable("A signal was caught during open().");
-            break;
-            case EINVAL:
-                continuable("The value of the oflag argument is not valid. Or the implementation does not support synchronized I/O for this file.");
-            break;
-            case EIO:
-                continuable("The path argument names a STREAMS file and a hangup or error occurred during the open().");
-            break;
-            case EISDIR:
-                continuable("The named file is a directory and oflag includes O_WRONLY or O_RDWR.");
-            break;
-            case ELOOP:
-                continuable("A loop exists in symbolic links encountered during resolution of the path argument. Or more than {SYMLOOP_MAX} symbolic links were encountered during resolution of the path argument.");
-            break;
-            case EMFILE:
-                continuable("{OPEN_MAX} file descriptors are currently open in the calling process.");
-            break;
-            case ENAMETOOLONG:
-                continuable("The length of the path argument exceeds {PATH_MAX} or a pathname component is longer than {NAME_MAX}. Or as a result of encountering a symbolic link in resolution of the path argument, the length of the substituted pathname string exceeded {PATH_MAX}.");
-            break;
-            case ENFILE:
-                continuable("The maximum allowable number of files is currently open in the system.");
-            break;
-            case ENOENT:
-                continuable("O_CREAT is not set and the named file does not exist; or O_CREAT is set and either the path prefix does not exist or the path argument points to an empty string.");
-            break;
-            case ENOSR:
-                continuable("The path argument names a STREAMS-based file and the system is unable to allocate a STREAM.");
-            break;
-            case ENOSPC:
-                continuable("The directory or file system that would contain the new file cannot be expanded, the file does not exist, and O_CREAT is specified.");
-            break;
-            case ENOTDIR:
-                continuable("A component of the path prefix is not a directory.");
-            break;
-            case ENXIO:
-                continuable("O_NONBLOCK is set, the named file is a FIFO, O_WRONLY is set, and no process has the file open for reading.\nThe named file is a character special or block special file, and the device associated with this special file does not exist.");
-            break;
-            case EOVERFLOW:
-                continuable("The named file is a regular file and the size of the file cannot be represented correctly in an object of type off_t.");
-            break;
-            case EROFS:
-                continuable("The named file resides on a read-only file system and either O_WRONLY, O_RDWR, O_CREAT (if the file does not exist), or O_TRUNC is set in the oflag argument.");
-            break;
-            case EAGAIN:
-                continuable("The path argument names the slave side of a pseudo-terminal device that is locked.");
-            break;
-            case ENOMEM:
-                continuable("The path argument names a STREAMS file and the system is unable to allocate resources.");
-            break;
-            case ETXTBSY:
-                continuable("The file is a pure procedure (shared text) file that is being executed and oflag is O_WRONLY or O_RDWR.");
-            break;
-            default:
-                serious("An unknown error occured.");
-            break;
-        }
-    }
 }}}//qor::io::lin
