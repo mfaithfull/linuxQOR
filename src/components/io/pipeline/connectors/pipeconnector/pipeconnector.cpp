@@ -57,4 +57,9 @@ namespace qor{ namespace io { namespace components{
         m_connected = false;
     }
 
+    ref_of<io::Pipe>::type PipeConnector::Pipe(void)
+    {
+        return m_pipe;
+    }
+
 }}}//qor::io::components
