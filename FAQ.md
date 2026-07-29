@@ -5,7 +5,7 @@
  - A.	A free, open source, C++, cross platform, advanced software framework.
 ---
  - Q.	Is it done yet?
- - A.	No. See [STATUS.md](https://github.com/mfaithfull/linuxQOR/STATUS.md) for the current status.
+ - A.	No. See [STATUS.md](https://github.com/mfaithfull/linuxQOR/blob/main/STATUS.md) for the current status.
 ---
  - Q.	Why would I use the QOR?
  - A.	Because you want to write your application once and run it everywhere, forever, at full speed. You want to be able to read, understand and change if necessary all the source in your product. When a completely new hardware platform, Operating system or toolchain comes along you want to be there first with your existing code.

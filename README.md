@@ -1,29 +1,27 @@
-# linuxQOR
-## Querysoft Open Runtime development - Linux
-
-==A cross platform, modular, C++ application framework==
+# Querysoft Open Runtime
+##A cross platform, modular, C++ application framework###
 
 Author:	Matthew Faithfull:	mfaithfull *at* btopenworld.com
 
 [![CMake on multiple platforms](https://github.com/mfaithfull/linuxQOR/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/mfaithfull/linuxQOR/actions/workflows/cmake-multi-platform.yml)
 
 
- - For licensing please see ==[LICENSE](https://github.com/mfaithfull/linuxQOR/LICENSE)==
+ - For licensing please see [LICENSE](https://github.com/mfaithfull/linuxQOR/blob/main/LICENSE)
 
- - For development status please see ==[STATUS.md](https://github.com/mfaithfull/linuxQOR/STATUS.md)==
+ - For development status please see [STATUS.md](https://github.com/mfaithfull/linuxQOR/blob/main/STATUS.md)
 
- - For acknowledgments please see ==[CREDITS.md](https://github.com/mfaithfull/linuxQOR/CREDITS.md)==
+ - For acknowledgments please see [CREDITS.md](https://github.com/mfaithfull/linuxQOR/blob/main/CREDITS.md)
 
- - For FAQs please see ==[FAQ.md](https://github.com/mfaithfull/linuxQOR/FAQ.md)==
+ - For FAQs please see [FAQ.md](https://github.com/mfaithfull/linuxQOR/blob/main/FAQ.md)
 
- - For an explanation of the source layout please see ==[LAYOUT.md](https://github.com/mfaithfull/linuxQOR/LAYOUT.md)==
+ - For an explanation of the source layout please see [LAYOUT.md](https://github.com/mfaithfull/linuxQOR/blob/main/LAYOUT.md)
 
- - For latest changes please see ==[CHANGES.md](https:://github/com/mfaithfull/linuxQOR/CHANGES.md)==
+ - For latest changes please see [CHANGES.md](https:://github/com/mfaithfull/linuxQOR/blob/main/CHANGES.md)
 
 ---
 
 The QOR is intended to be *Self Aware Software* with very trong *Separation Of Concerns*.
-For what this means and why you'd want that in a framework see the article ==KEY_CONCEPTS.md==
+For what this means and why you'd want that in a framework see the article [KEY_CONCEPTS.md](https:://github/com/mfaithfull/linuxQOR/blob/main/KEY_CONCEPTS.md)
 
 The outcomes of this approach are intended to be:
 
@@ -37,7 +35,7 @@ however you'll get a reliable working implementation sooner than anything more o
 
 ## Development process:
 
-The intent is to use test driven development (==TDD==) to ensure the operation of the QOR. 
+The intent is to use test driven development (**TDD**) to ensure the operation of the QOR. 
 In particular given the intent to support multiple compilers and target platforms, extensive testing is essential
 
 ## Language:
