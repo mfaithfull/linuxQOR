@@ -5,7 +5,7 @@ The QOR project is open for contributions. This is way more than one crazy perso
 How to get started?
 
  - Checkout the code
- - Build some of the example projects (See [BUILDING.md](https://github.com/mfaithfull/linuxQOR/BUILDING.md))
+ - Build some of the example projects (See [BUILDING.md](https://github.com/mfaithfull/linuxQOR/blob/main/BUILDING.md))
  - Read the code (At least until it starts to make sense)
  - Ask questions (Especially if the code isn't making sense)
  - Decide what you'd like to contribute.
