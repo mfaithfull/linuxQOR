@@ -53,7 +53,7 @@ namespace qor{ namespace io { namespace components{
 
     void PipeConnector::Disconnect()
     {
-        //TODO:
+        //m_pipe->
         m_connected = false;
     }
 

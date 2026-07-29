@@ -2,7 +2,7 @@ Querysoft Open Runtime (QOR) Copyright Querysoft Limited 2013-2025
 
 
 Portions licensed under the following Boost license:
-====================================================
+---
 
 Boost Software License - Version 1.0 - August 17th, 2003
 
@@ -29,7 +29,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 Portions licensed under the following HippoMocks license:
-=========================================================
+---
 
 // HippoMocks, a library for using mocks in unit testing of C++ code.
 // Copyright (C) 2008, Bas van Tiel, Christian Rexwinkel, Mike Looijmans,
@@ -52,7 +52,7 @@ Portions licensed under the following HippoMocks license:
 // You can also retrieve it from http://www.gnu.org/licenses/lgpl-2.1.html
 
 Portions licensed under the following 3 clause BSD licesnse:
-============================================================
+---
 
 Copyright 2021 Sean Nash
 
@@ -67,14 +67,14 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Portions licensed under the following license:
-============================================================
+---
 // Copyright (c) 2016-2024 Antony Polukhin
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 Portions licensed under the following 2 clause BSD license:
-============================================================
+---
 
 /***********************************************************************
 *
@@ -110,7 +110,7 @@ Portions licensed under the following 2 clause BSD license:
 ***********************************************************************/
 
 Portions licensed under the following license:
-========================================================================
+---
 /**
  * ██████  ███████       ████████ ██   ██ ██████  ███████  █████  ██████          ██████   ██████   ██████  ██
  * ██   ██ ██      ██ ██    ██    ██   ██ ██   ██ ██      ██   ██ ██   ██         ██   ██ ██    ██ ██    ██ ██
@@ -129,7 +129,7 @@ Portions licensed under the following license:
 
 
 Portions licensed under the following license:
-========================================================================
+---
 
 Copyright 2017 Lewis Baker
 
@@ -152,7 +152,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 Portions licensed under the MIT license:
-========================================================================
+---
 https://github.com/navyenzo/blIteratorAPI
 http://www.opensource.org/licenses/mit-license.php
 
@@ -183,7 +183,7 @@ SOFTWARE.
 */
 
 Argument Parser under the MIT license
-========================================================================
+---
 MIT License
 
 Copyright (c) 2026 simfeo
@@ -207,7 +207,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-
+---
 
 NOTE: Expect additional licenses as more existing work is adapted to be included in the QOR
 source works will be selected to be compatible with the above Boost License terms to the greatest extent possible.
