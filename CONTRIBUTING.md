@@ -11,6 +11,9 @@ How to get started?
  - Decide what you'd like to contribute.
  - Pitch in with suggestions, reviews, extensions, fixes...
 
+What do we need?
+
+The simple answer is everything. From GitHub and vcpkg expertise to UI design to profiling, data structure people, optimisation people, Mac developers, Android people, WASM people, Vulkaneers. If you're reading this you can help.
 
 What can you I work on?
 

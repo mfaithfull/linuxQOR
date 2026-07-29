@@ -16,12 +16,12 @@ Author:	Matthew Faithfull:	mfaithfull *at* btopenworld.com
 
  - For an explanation of the source layout please see [LAYOUT.md](https://github.com/mfaithfull/linuxQOR/blob/main/LAYOUT.md)
 
- - For latest changes please see [CHANGES.md](https:://github/com/mfaithfull/linuxQOR/blob/main/CHANGES.md)
+ - For latest changes please see [CHANGES.md](https://github/com/mfaithfull/linuxQOR/blob/main/CHANGES.md)
 
 ---
 
 The QOR is intended to be *Self Aware Software* with very trong *Separation Of Concerns*.
-For what this means and why you'd want that in a framework see the article [KEY_CONCEPTS.md](https:://github/com/mfaithfull/linuxQOR/blob/main/KEY_CONCEPTS.md)
+For what this means and why you'd want that in a framework see the article [KEY_CONCEPTS.md](https://github.com/mfaithfull/linuxQOR/blob/main/KEY_CONCEPTS.md)
 
 The outcomes of this approach are intended to be:
 

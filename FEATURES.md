@@ -3,8 +3,9 @@ This file will provide the features available in the QOR.
  - Almost everything is optional. You have full control. It's just C++ and you use whatever you need.
  - Everything works together out of the box. 
  - Cross platform, not just multi-platform. OS and compiler dependencies are factored out. Easy to port.
+ - BSD, MIT and Boost licensed.
  - Almost everything can be overriden or replaced at need where configuration doesn't cut it.
- - Easy Modular system. A pattern and libraries for building 'perfect' C++ DLLs with controlled dependencies and APIs
+ - Easy Modular system. A pattern and libraries for building 'perfect' C++ DLLs with controlled dependencies and APIs, No need for header only.
  - Adding a new module is 5-10 minutes work.
  - Role and Feature based Application framework with argument parsing and full customization.
  - TDD tool set. Assertion, Test and Mocking frameworks that work together.
@@ -24,6 +25,9 @@ This file will provide the features available in the QOR.
  - Filesystem support over std::filesystem
  - Spin up a network server with a protocol plugin in a few lines
 
+*Coming eventually (or soon if everyone pitches in): Run a TUI or GUI from the same easy to use scene template.
+The Wayland layer, X Windows layer and Windows GDI layers are written, the layout libary works, The terminal code is mostly ported from FTXUI
+The JSON parser is written. Some assembly is still required.*
 
 Below is the list of modules and what state of development they're in
 
