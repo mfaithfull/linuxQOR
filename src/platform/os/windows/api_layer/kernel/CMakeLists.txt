@@ -2,7 +2,8 @@ project(QOR VERSION 0.5.0 DESCRIPTION "QOR Win32 Kernel Module" LANGUAGES CXX)
 set(target winqor_api_kernel)
 
 add_library(${target} SHARED winqor_api_kernel.cpp kconsole.cpp  kerrorhandling.cpp kdll.cpp khandle.cpp kio.cpp sync.cpp kfile.cpp
-kpipe.cpp errorhandler.cpp process.cpp strings.cpp)
+kpipe.cpp errorhandler.cpp process.cpp strings.cpp
+kheap.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

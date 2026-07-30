@@ -1,9 +1,9 @@
 # Querysoft Open Runtime
-##A cross platform, modular, C++ application framework###
+## A cross platform, modular, C++ application framework
 
 Author:	Matthew Faithfull:	mfaithfull *at* btopenworld.com
 
-[![CMake on multiple platforms](https://github.com/mfaithfull/linuxQOR/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/mfaithfull/linuxQOR/actions/workflows/cmake-multi-platform.yml)
+[![CMake on Ubuntu-latest](https://github.com/mfaithfull/linuxQOR/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/mfaithfull/linuxQOR/actions/workflows/cmake-multi-platform.yml)
 
 
  - For licensing please see [LICENSE](https://github.com/mfaithfull/linuxQOR/blob/main/LICENSE)
@@ -20,7 +20,7 @@ Author:	Matthew Faithfull:	mfaithfull *at* btopenworld.com
 
 ---
 
-The QOR is intended to be *Self Aware Software* with very trong *Separation Of Concerns*.
+The QOR is intended to be *Self Aware Software* with very strong *Separation Of Concerns*.
 For what this means and why you'd want that in a framework see the article [KEY_CONCEPTS.md](https://github.com/mfaithfull/linuxQOR/blob/main/KEY_CONCEPTS.md)
 
 The outcomes of this approach are intended to be:

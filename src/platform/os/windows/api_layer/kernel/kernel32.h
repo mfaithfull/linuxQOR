@@ -81,8 +81,24 @@ namespace qor { namespace win { namespace api {
 		static HRESULT WerUnregisterFile(PCWSTR pwzFilePath);
 		static HRESULT WerUnregisterMemoryBlock(void* pvAddress);
 
-		//Dynamic Link Library functions
+		//Heap functions
+		static HANDLE GetProcessHeap();
+		static DWORD GetProcessHeaps(DWORD NumberOfHeaps, PHANDLE ProcessHeaps);
+		DECLSPEC_ALLOCATOR static LPVOID HeapAlloc(HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes);
+		static SIZE_T HeapCompact(HANDLE hHeap, DWORD dwFlags);
+		static HANDLE HeapCreate(DWORD flOptions, SIZE_T dwInitialSize, SIZE_T dwMaximumSize);
+		static BOOL HeapDestroy(HANDLE hHeap);
+		static BOOL HeapFree(HANDLE hHeap, DWORD dwFlags, _Frees_ptr_opt_ LPVOID lpMem);
+		static BOOL HeapLock(HANDLE hHeap);
+		static BOOL HeapQueryInformation(HANDLE HeapHandle, HEAP_INFORMATION_CLASS HeapInformationClass, PVOID HeapInformation, SIZE_T HeapInformationLength, PSIZE_T ReturnLength);
+		DECLSPEC_ALLOCATOR static LPVOID HeapReAlloc(HANDLE hHeap, DWORD dwFlags, _Frees_ptr_opt_ LPVOID lpMem, SIZE_T dwBytes);
+		static BOOL HeapSetInformation(HANDLE HeapHandle, HEAP_INFORMATION_CLASS HeapInformationClass, PVOID HeapInformation, SIZE_T HeapInformationLength);
+		static SIZE_T HeapSize(HANDLE hHeap, DWORD dwFlags, LPCVOID lpMem);
+		static BOOL HeapUnlock(HANDLE hHeap);
+		static BOOL HeapValidate(HANDLE hHeap, DWORD dwFlags, LPCVOID lpMem);
+		static BOOL HeapWalk(HANDLE hHeap, LPPROCESS_HEAP_ENTRY lpEntry);
 
+		//Dynamic Link Library functions
 		static BOOL DisableThreadLibraryCalls(HMODULE hModule);
 		static BOOL FreeLibrary(HMODULE hModule);
 		static VOID FreeLibraryAndExitThread(HMODULE hModule, DWORD dwExitCode);
