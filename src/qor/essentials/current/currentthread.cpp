@@ -131,4 +131,9 @@ namespace qor
         return new_ref<ICurrentThread>()->GetAffinity();
     }
 
+    std::optional<const ThreadMemorySource*> CurrentThread::GetMemorySource() const
+    {
+        return new_ref<ICurrentThread>()->GetMemorySource();
+    }
+
 }//qor

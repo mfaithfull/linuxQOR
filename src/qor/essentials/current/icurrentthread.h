@@ -15,6 +15,13 @@
 
 namespace qor
 {
+    struct ThreadMemorySource
+    {
+    public:
+        virtual inline byte* Source(size_t byteCount) const = 0;
+        virtual  inline void Free(byte* memory, size_t /*ignored*/) const = 0;
+    };
+
     //Base interface for platform specific class representing the current thread of execution
     class ICurrentThread
     {
@@ -60,6 +67,11 @@ namespace qor
         }
         
         virtual std::optional<std::vector<bool>> GetAffinity()
+        {
+            return std::nullopt;
+        }
+
+        virtual std::optional<const ThreadMemorySource*> GetMemorySource() const
         {
             return std::nullopt;
         }

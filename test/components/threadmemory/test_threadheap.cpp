@@ -51,6 +51,7 @@ using namespace qor::memory;
 
 struct ThreadHeapTestSuite{};
 bool requiresThreadHeap = qor::ImplementsThreadHeap();
+bool requiresICurrentThread = qor::ImplementsICurrentThread();
 
 qor_pp_test_suite_case(ThreadHeapTestSuite, canAllocateAndFreeFromThreadHeap)
 {

@@ -24,10 +24,10 @@ namespace qor
     public:
 
         ThreadHeap();
-        virtual ~ThreadHeap() = default;
+        virtual ~ThreadHeap();
 
-        byte* Allocate(size_t byteCount);
-        void Free(byte* allocation);
+        byte* Allocate(size_t byteCount) const;
+        void Free(byte* allocation) const;
 
     };
 

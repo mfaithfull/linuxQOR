@@ -1,7 +1,8 @@
 project(QOR VERSION 0.5.0 DESCRIPTION "QOR Windows Current Thread Module" LANGUAGES CXX)
 set(target winqor_thread)
 
-add_library(${target} SHARED winqor_thread.cpp currentthread.cpp)
+add_library(${target} SHARED winqor_thread.cpp currentthread.cpp
+    heap.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
@@ -12,4 +13,4 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH}
 qor_pp_implements_icurrentthread)
 
-target_link_libraries(${target} qor_module qor_host qor_sync qor_error)
+target_link_libraries(${target} qor_module qor_host qor_current qor_sync qor_error winqor_common winqor_api_kernel)

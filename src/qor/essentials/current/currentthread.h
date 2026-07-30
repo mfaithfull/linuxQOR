@@ -71,6 +71,7 @@ namespace qor{
         qor_pp_module_interface(QOR_CURRENT) virtual std::optional<std::vector<bool>> GetAffinity() const;
         qor_pp_module_interface(QOR_CURRENT) std::optional<void*> GetPool() const noexcept;
         qor_pp_module_interface(QOR_CURRENT) std::optional<std::size_t> GetPoolIndex() const noexcept;
+        qor_pp_module_interface(QOR_CURRENT) std::optional<const ThreadMemorySource*> GetMemorySource() const;
 
     private:
 

@@ -20,6 +20,9 @@ namespace qor{ bool qor_pp_module_interface(QOR_WINDOWSTHREAD) ImplementsICurren
 
 namespace qor{ namespace win{
 
+    CurrentThread::CurrentThread() : m_source(m_heap) {}
+    CurrentThread::~CurrentThread() noexcept = default;
+
     bool CurrentThread::SetPriority(ICurrentThread::Priority priority)
     {
         int OSPriority = THREAD_PRIORITY_NORMAL;
@@ -164,5 +167,10 @@ namespace qor{ namespace win{
         }
         return affinity;
     }
+
+    std::optional<const ThreadMemorySource*> CurrentThread::GetMemorySource() const
+    {
+        return &m_source;
+    }    
 
 }}//qor::win

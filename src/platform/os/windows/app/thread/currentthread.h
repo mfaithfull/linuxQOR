@@ -5,6 +5,8 @@
 #define QOR_PP_H_OS_WINDOWS_FRAMEWORK_CURRENTTHREAD
 
 #include "src/qor/essentials/current/icurrentthread.h"
+#include "heap.h"
+#include "source.h"
 
 namespace qor
 {    
@@ -16,8 +18,8 @@ namespace qor{ namespace win{
     class qor_pp_module_interface(QOR_WINDOWSTHREAD) CurrentThread : public qor::ICurrentThread
     {
     public:
-        qor_pp_noinline CurrentThread() = default;
-        qor_pp_noinline virtual ~CurrentThread() noexcept = default;
+        CurrentThread();
+        virtual ~CurrentThread() noexcept;
 
         virtual bool SetPriority(ICurrentThread::Priority priority);
         virtual std::optional<ICurrentThread::Priority> GetPriority() const;
@@ -25,6 +27,13 @@ namespace qor{ namespace win{
         virtual std::optional<std::string> GetName();
         virtual bool SetAffinity(const std::vector<bool>& affinity);
         virtual std::optional<std::vector<bool>> GetAffinity();
+        virtual std::optional<const ThreadMemorySource*> GetMemorySource() const;
+
+    private:
+
+        ThreadHeap m_heap;
+        ThreadSource m_source;
+        
     };
 
 }}//qor::win
