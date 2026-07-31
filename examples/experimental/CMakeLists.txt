@@ -7,5 +7,6 @@
 #add_subdirectory(glgears)
 #add_subdirectory(visual)
 #add_subdirectory(images)
+add_subdirectory(flow)
 add_subdirectory(osspecific)
 add_subdirectory(textread)

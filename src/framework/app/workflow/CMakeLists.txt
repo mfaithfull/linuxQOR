@@ -1,7 +1,8 @@
 project(QOR VERSION 0.5.0 DESCRIPTION "QOR Workflow Module" LANGUAGES CXX)
 set(target qor_workflow)
 
-add_library(${target} SHARED qor_workflow.cpp workflow.cpp)
+add_library(${target} SHARED qor_workflow.cpp workflow.cpp
+    fastflow.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
@@ -11,4 +12,4 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-target_link_libraries(${target} qor_module qor_host qor_current qor_issue qor_error qor_log)
+target_link_libraries(${target} qor_module qor_host qor_current qor_issue qor_error qor_log qor_thread qor_threadmemory)

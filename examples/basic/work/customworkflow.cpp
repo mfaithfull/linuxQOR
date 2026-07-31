@@ -72,6 +72,6 @@ CustomWorkflow::CustomWorkflow() :
         PopState();
     };
 
-    //Always set an initial state on your workflow or ot won't operate.
+    //Always set an initial state on your workflow or it won't operate.
     SetInitialState(beggining);
 }
