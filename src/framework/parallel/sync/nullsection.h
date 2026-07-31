@@ -8,12 +8,12 @@
 
 namespace qor{
 		
-	class NullSection : public SyncObject
+	class NullSection final : public SyncObject 
 	{
 	public:
 
-		NullSection() = default;
-		virtual ~NullSection() = default;
+		NullSection(){};
+		virtual ~NullSection(){};
 		virtual void Acquire(){}
 		virtual void Release(){}
 		virtual bool IsLocked(void) const {return false;}

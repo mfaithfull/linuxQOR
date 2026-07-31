@@ -11,8 +11,8 @@ namespace qor{
     {
     public:
 
-        SyncObject() = default;
-        virtual ~SyncObject() = default;
+        SyncObject(){};
+        virtual ~SyncObject(){};
 
         virtual void Acquire(void) = 0;
         virtual void Release(void) = 0;
