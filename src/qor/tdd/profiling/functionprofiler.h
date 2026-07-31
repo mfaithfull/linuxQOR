@@ -20,7 +20,7 @@ namespace qor {
         {
             if (m_profileEnabled && m_Receviver)
             {
-                m_Receviver->Profile( std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_startTime), nullptr);
+                m_Receviver->Profile( std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - m_startTime), nullptr);
             }
         }    
 

@@ -40,7 +40,7 @@ struct ProfilingTestSuite{
 
     void Delay()
     {
-        std::this_thread::sleep_for(128ms);
+        std::this_thread::sleep_for(128us);
     }
 };
 
@@ -48,12 +48,12 @@ class Test_ProfileReporter : public ProfileReceiver
 {
 public:
 
-    std::chrono::duration<int64_t, std::milli> m_recordedDuration;
+    std::chrono::duration<int64_t, std::micro> m_recordedDuration;
 
-    virtual void Profile(const std::chrono::duration<int64_t, std::milli> durationMilliseconds, IFunctionContext* fContext)
+    virtual void Profile(const std::chrono::duration<int64_t, std::micro> durationMicroseconds, IFunctionContext* fContext)
     {
-        m_recordedDuration = durationMilliseconds;
-	    issue<log::Informative, const std::string&>(std::format("Profile: {0}", durationMilliseconds), fContext);
+        m_recordedDuration = durationMicroseconds;
+	    issue<log::Informative, const std::string&>(std::format("Profile: {0}", durationMicroseconds), fContext);
     }
 };
 
@@ -66,7 +66,7 @@ qor_pp_test_suite_case(ProfilingTestSuite, canProfileFunction)
         FunctionProfiler profiler(dynamic_cast<ProfileReceiver*>(&reporter), qor_pp_profile_enabled);
         Delay();
     }
-    qor_pp_assert_that(reporter.m_recordedDuration >= 128ms).isTrue();
+    qor_pp_assert_that(reporter.m_recordedDuration >= 128us).isTrue();
 }
 
 #include qor_pp_profile_end

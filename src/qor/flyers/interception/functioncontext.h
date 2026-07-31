@@ -43,7 +43,7 @@ namespace qor
 		virtual unsigned int TraceDepth();
 		AnyObject TypedAny() const;
 		virtual const char* Module() const;
-        virtual void Profile(const std::chrono::duration<int64_t, std::milli>, IFunctionContext* fContext);
+        virtual void Profile(const std::chrono::duration<int64_t, std::micro>, IFunctionContext* fContext);
 
 	protected:
 

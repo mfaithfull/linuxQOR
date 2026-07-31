@@ -11,7 +11,7 @@ namespace qor {
 
 	struct IProfileReceiver
 	{
-		virtual void Profile(const std::chrono::duration<int64_t, std::milli>, IFunctionContext*) = 0;
+		virtual void Profile(const std::chrono::duration<int64_t, std::micro>, IFunctionContext*) = 0;
 	};
 
 }//qor

@@ -141,7 +141,7 @@ namespace qor {
 		return m_ObjContext;
 	}
 
-	void FunctionContext::Profile(const std::chrono::duration<int64_t, std::milli> /*duration*/, IFunctionContext* /*ignore*/)
+	void FunctionContext::Profile(const std::chrono::duration<int64_t, std::micro> /*duration*/, IFunctionContext* /*ignore*/)
 	{
 		/*
         auto profileHandler = new_ref< ProfileReceiver >();

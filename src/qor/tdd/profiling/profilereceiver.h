@@ -35,9 +35,9 @@ namespace qor {
             Flyer< ProfileReceiver, IProfileReceiver >::Pop();
         }
 
-		virtual void Profile(const std::chrono::duration<int64_t, std::milli> duration, IFunctionContext* fContext)
+		virtual void Profile(const std::chrono::duration<int64_t, std::micro> duration, IFunctionContext* fContext)
 		{
-		    issue<log::Informative, const std::string&>(std::format("Profile: {0}ms", duration), fContext);
+		    issue<log::Informative, const std::string&>(std::format("Profile: {0}us", duration), fContext);
 		}
 	};
 
