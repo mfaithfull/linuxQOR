@@ -29,6 +29,7 @@ namespace qor{ namespace memory{
 
     FastHeap::FastHeap()
     {
+        m_threadHeap = new_ref<ThreadHeap>();
         m_allocIndex = 0;
         m_totalAlloc = 0;
         m_peakAlloc = 0;

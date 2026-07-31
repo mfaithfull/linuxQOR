@@ -34,6 +34,7 @@ namespace qor { namespace memory {
 
         FastBucket* Bucket(size_t byteCount);
 
+        ref_of<ThreadHeap>::type m_threadHeap;
         FastBucket m_initialPages[sc_rootBuckets];
         size_t m_totalAlloc;
         size_t m_peakAlloc;
