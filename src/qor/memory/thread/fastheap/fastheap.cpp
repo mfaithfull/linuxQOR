@@ -19,7 +19,7 @@ qor_pp_export detail::ThreadInstanceHolder<memory::FastHeap>* GetFastHeapHolder(
 namespace qor { namespace detail {
 
     template<>
-    ThreadInstanceHolder<memory::FastHeap>* theThreadInstanceHolder<memory::FastHeap>()
+    qor_pp_export ThreadInstanceHolder<memory::FastHeap>* theThreadInstanceHolder<memory::FastHeap>()
     {
         return GetFastHeapHolder();
     }
