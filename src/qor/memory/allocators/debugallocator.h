@@ -91,7 +91,6 @@ namespace qor{
                     t->~T();
                     t++;
                 }
-                std::memset(mem, 0xFD, allocSize);
                 source_of< T >::type::Free(mem, allocSize);
             }
         }

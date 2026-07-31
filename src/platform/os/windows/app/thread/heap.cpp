@@ -18,6 +18,7 @@ namespace qor{ namespace win{
     ThreadHeap::~ThreadHeap() noexcept
     {
         api::Kernel32::HeapDestroy(m_handle.Use());
+        m_handle.Drop();
     }
 
     byte* ThreadHeap::Alloc(unsigned long flags, size_t bytes) const

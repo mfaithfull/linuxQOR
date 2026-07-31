@@ -4,6 +4,8 @@
 #ifndef QOR_PP_H_SHAREDREF
 #define QOR_PP_H_SHAREDREF
 
+#include <functional>
+
 #define qor_shared )(
 #define qor_unlocked ).Unlock()(
 
@@ -59,6 +61,9 @@ namespace qor{
 
 			typedef typename std::is_abstract<R> is_abstract;
 
+			void(*m_deleter)(R* p);		
+			std::function<void()> m_selfdeleter;
+
 		public:
 
 			template< typename... _p >
@@ -72,6 +77,10 @@ namespace qor{
 					//Insert a link to this into the new objects allocated space so that from the object this shared reference can be found
 					int** ppBack = ((int**)m_p) - 1;
 					*ppBack = (int*)(this);
+					m_deleter = &internal_del_ref<R>;
+					m_selfdeleter = [this]() {
+    					source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
+					};
 				}
 				else
 				{
@@ -85,6 +94,10 @@ namespace qor{
 				{
 					int** ppBack = ((int**)m_p) - 1;
 					*ppBack = (int*)(this);
+					m_deleter = &internal_del_ref<R>;
+					m_selfdeleter = [this]() {
+    					source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
+					};
 				}
 			}
 
@@ -106,6 +119,10 @@ namespace qor{
 				{
 					int** ppBack = ((int**)m_p) - 1;
 					*ppBack = (int*)(this);
+					m_deleter = &internal_del_ref<R>;
+					m_selfdeleter = [this]() {
+    					source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
+					};
 				}
 				else
 				{
@@ -165,11 +182,13 @@ namespace qor{
 			void InternalRelease(void)
 			{
 				Lock();
-				internal_del_ref<R>(m_p);
+				m_deleter(m_p);
+				//internal_del_ref<R>(m_p);
 				m_p = nullptr;//drop our pointer to it
 				Unlock();
 				//Self delete this shared reference. This must be safe as no non shared references exist when the reference count is zero
-				source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
+				m_selfdeleter();
+				//source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
 			}
 
 			//Never call this unless you know the real object has gone for good.
@@ -241,6 +260,16 @@ namespace qor{
 			R* ptr(void) const
 			{
 				return m_p;
+			}
+
+			template<class D>
+			const SharedRef<D>* As() const
+			{
+				if((byte*)m_p == (byte*)(dynamic_cast<D*>(m_p)))
+				{
+					return (const SharedRef<D>*)(const_cast<SharedRef<R>*>(this));
+				}
+				return dynamic_cast<SharedRef<D>*>(const_cast<SharedRef<R>*>(this));
 			}
 
 			void Attach(R* pt) const

@@ -67,7 +67,7 @@ namespace qor{ namespace detail {
 
         public:
             ref_of<T>::type theRef;
-            bool initialised;
+            bool initialised{false};
         };
         
     }//detail
