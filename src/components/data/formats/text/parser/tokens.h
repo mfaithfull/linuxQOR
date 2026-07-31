@@ -46,10 +46,18 @@ namespace qor { namespace data { namespace parser { namespace text {
         {textToken::utf32BEBOM, "UTF-32BE BOM"},
         {textToken::utf32LEBOM, "UTF-32LE BOM"},
         {textToken::utf8char,   "UTF-8 char"},
+        {textToken::utf8leadbyte,   "UTF-8 lead byte"},
+        {textToken::utf8continuationbyte, "UTF-8 continuation byte"},
+        {textToken::utf16char,      "UTF-16 char"},
+        {textToken::utf16lowbyte,   "UTF-16 low byte"},
+        {textToken::utf16highbyte,  "UTF-16 high byte"},
+        {textToken::utf32char,  "UTF-32 char"},
         {textToken::utf16BEchar,"UTF-16BE char"},
         {textToken::utf16LEchar,"UTF-16LE char"},
         {textToken::utf32BEchar,"UTF-32BE char"},
         {textToken::utf32LEchar,"UTF-32LE char"},
+        {textToken::lebom,      "Little Endian BOM"},
+        {textToken::bom,        "BOM"},
         {textToken::text,       "text"}
     }};
 

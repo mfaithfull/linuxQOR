@@ -26,5 +26,5 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
-target_link_libraries(${target} qor_module qor_host qor_current qor_sync qor_injection 
+target_link_libraries(${target} qor_module qor_host qor_current qor_thread qor_threadmemory qor_sync qor_injection 
 qor_workflow qor_pipeline qor_parser qor_issue qor_error qor_log)

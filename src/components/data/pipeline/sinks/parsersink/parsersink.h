@@ -40,7 +40,7 @@ namespace qor{ namespace pipeline{ namespace components{
 
         ParserSink() : BaseParserSink(), m_objectState(new_ref<TObjectState>(&m_parser))
         {
-            m_parser.SetInitialState(m_objectState);
+            m_parser.SetInitialStep(m_objectState);
         }
 
         ParserSink(const pipeline::Buffer& buffer) : ParserSink()
@@ -58,7 +58,7 @@ namespace qor{ namespace pipeline{ namespace components{
                 log::Debug("Parser Sink Reset");
                 m_context->Reset();
                 m_objectState = new_ref<TObjectState>(&m_parser);
-                m_parser.SetInitialState(m_objectState);
+                m_parser.SetInitialStep(m_objectState);
             }
             else
             {

@@ -52,7 +52,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
                 m_result.code = qor::data::parser::Result::SUCCESS;                
                 Workflow()->SetComplete();
             }            
-            Workflow()->PopState();
+            Workflow()->PopStep();
         }
     };
 

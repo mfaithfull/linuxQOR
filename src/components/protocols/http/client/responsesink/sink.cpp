@@ -31,7 +31,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     HTTPSink::HTTPSink() : m_context(new_ref<data::parser::Context>())
     {
-        m_parser.SetInitialState(new_ref<response::Initial>(&m_parser));
+        m_parser.SetInitialStep(new_ref<response::Initial>(&m_parser));
     }
 
     ref_of<HTTPResponse>::type HTTPSink::GetResponse()

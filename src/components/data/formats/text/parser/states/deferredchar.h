@@ -19,13 +19,13 @@ namespace qor { namespace data { namespace parser { namespace text {
     {
     public:
 
-        deferredchar(Parser* parser, textToken type) : ParserState(parser)
+        deferredchar(Parser* parser, textToken type) : ParserState(parser), m_parser(parser)
         {
             SetCharType(type);            
             Init();
         }
 
-        deferredchar(Parser* parser) : ParserState(parser)
+        deferredchar(Parser* parser) : ParserState(parser), m_parser(parser)
         {
             Init();
         }
@@ -50,15 +50,15 @@ namespace qor { namespace data { namespace parser { namespace text {
                 {
                     if(m_p.IsNull())
                     {
-                        GetParser()->Diagnostic();
-                        m_p = CharacterType(GetParser());
+                        //m_parser->Diagnostic();
+                        m_p = CharacterType();
                     }
-                    GetParser()->PushState(m_p);
+                    m_parser->PushStep(m_p);
                 };
 
             Resume = [this]()
                 {
-                    GetParser()->PopState();
+                    m_parser->PopStep();
                 };
 
             Leave = [this]()
@@ -70,11 +70,11 @@ namespace qor { namespace data { namespace parser { namespace text {
                 };
         }
 
-        ref_of<ParserState>::type CharacterType(Parser* parser)
+        ref_of<ParserState>::type CharacterType()
         {
             if(m_charType == textToken::bom)
             {
-                auto node = parser->PopNode();
+                auto node = m_parser->TopNode();
                 if(node.IsNull())
                 {
                     m_charType = textToken::utf8BOM;                
@@ -85,35 +85,41 @@ namespace qor { namespace data { namespace parser { namespace text {
                     if(bomNode.IsNull())
                     {
                         m_charType = textToken::utf8BOM;
-                        parser->PushNode(node);//It's not a BOMNode so put it back where we found it.
                     }
                     else
                     {
                         m_charType = bomNode->GetBOMType();
+                        m_parser->PopNode();
                     }
                 }
             }
             switch(m_charType)
             {
                 case textToken::utf8BOM:
-                return new_ref<utf8char>(parser);
+                return new_ref<utf8char>(m_parser);
                 case textToken::utf16BEBOM:
-                return new_ref<utf16BEchar>(parser);
+                return new_ref<utf16BEchar>(m_parser);
                 case textToken::utf32BEBOM:
-                return new_ref<utf32BEchar>(parser);
+                return new_ref<utf32BEchar>(m_parser);
                 case textToken::utf32LEBOM:
-                return new_ref<utf32LEchar>(parser);
+                return new_ref<utf32LEchar>(m_parser);
                 case textToken::utf16LEBOM:
-                return new_ref<utf16LEchar>(parser);
+                return new_ref<utf16LEchar>(m_parser);
                 default:
-                return new_ref<utf8char>(parser);
+                return new_ref<utf8char>(m_parser);
             }
         }
 
         ref_of<ParserState>::type m_p;
         textToken m_charType{textToken::bom};
+        Parser* m_parser;
     };
 
 }}}}//qor::data::parser::text
+
+namespace qor{
+    qor_pp_declare_source_of(data::parser::text::deferredchar, memory::FastSource)
+    qor_pp_declare_source_of(typename ref_of<data::parser::text::deferredchar>::type, memory::FastSource)
+}
 
 #endif//QOR_PP_H_DATA_TEXT_PARSER_STATES_DEFERREDCHAR

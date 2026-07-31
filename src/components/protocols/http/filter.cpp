@@ -58,7 +58,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         data::Parser HTTPRequestParser(new_ref<Context>(data, itemCount));
         ref_of<request>::type requestState = new_ref<request>(&HTTPRequestParser);
 
-        HTTPRequestParser.SetInitialState(requestState.AsRef<State>());
+        HTTPRequestParser.SetInitialStep(requestState.AsRef<State>());
         HTTPRequestParser.Parse();
 
         auto requestNode = HTTPRequestParser.PopNode().template AsRef<RequestNode>();

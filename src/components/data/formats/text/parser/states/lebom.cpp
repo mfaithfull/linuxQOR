@@ -33,7 +33,7 @@ namespace qor { namespace data { namespace parser { namespace text {
     void LEbom::Emit()
     {
         log::debug("Emitting a Little Endian BOM");
-        ref_of<Node>::type node = GetParser()->PopNode();
+        auto node = GetParser()->TopNode();
         if(node.IsNotNull() && node->GetToken() == static_cast<uint64_t>(textToken::bom))
         {
             auto bomNode = node.AsRef<BOMNode>();
@@ -50,10 +50,6 @@ namespace qor { namespace data { namespace parser { namespace text {
                     bomNode->SetBOMType(textToken::utf16LEBOM);
                 }
             }
-        }
-        if(node.IsNotNull())
-        {
-            GetParser()->PushNode(node);
         }
     }
 

@@ -9,7 +9,7 @@ using namespace qor;
 using namespace qor::components;
 using namespace qor::data;
 using namespace qor::data::parser;
-using namespace qor::workflow;
+using namespace qor::fastflow;
 
 namespace qor { namespace components { namespace protocols { namespace echo {
 
@@ -47,7 +47,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         Parser echoResponseParser(new_ref<Context>(data, itemCount));
         ref_of<response>::type responseState = new_ref<response>(&echoResponseParser);
 
-        echoResponseParser.SetInitialState(responseState.AsRef<State>());
+        echoResponseParser.SetInitialStep(responseState.AsRef<Step>());
         echoResponseParser.Run();
         
         auto responseNode = echoResponseParser.PopNode().template AsRef<ResponseNode>();

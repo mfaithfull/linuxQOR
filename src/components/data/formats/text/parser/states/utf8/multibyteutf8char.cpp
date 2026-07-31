@@ -49,7 +49,7 @@ namespace qor { namespace data { namespace parser { namespace text {
                     }
                     for(uint8_t byteCount = 1; byteCount < decoded_length; byteCount++)
                     {
-                        GetParser()->PushState(new_ref<FollowByte>(GetParser()));
+                        GetParser()->PushStep(new_ref<FollowByte>(GetParser()));
                     }
                 }
             }

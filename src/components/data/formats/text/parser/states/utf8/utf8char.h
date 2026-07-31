@@ -8,7 +8,7 @@
 
 namespace qor { namespace data { namespace parser { namespace text {
     
-    class qor_pp_module_interface(QOR_TEXTFORMAT) utf8char : public AnyOneOf
+    class qor_pp_module_interface(QOR_TEXTFORMAT) utf8char : public OneOfARange//public AnyOneOf
     {
     public: 
         utf8char(Parser* parser);
@@ -17,8 +17,17 @@ namespace qor { namespace data { namespace parser { namespace text {
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();
+
+    private:
+
+        Parser* m_parser;
     };
 
 }}}}//qor::data::parser::text
+
+namespace qor{
+    qor_pp_declare_source_of(data::parser::text::utf8char, memory::FastSource)
+    qor_pp_declare_source_of(typename ref_of<data::parser::text::utf8char>::type, memory::FastSource)
+}
 
 #endif//QOR_PP_H_DATA_TEXT_PARSER_UTF8CHAR

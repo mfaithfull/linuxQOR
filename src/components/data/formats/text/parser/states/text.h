@@ -26,4 +26,9 @@ namespace qor { namespace data { namespace parser { namespace text {
 
 }}}}//qor::data::parser::text
 
+namespace qor{
+    qor_pp_declare_source_of(data::parser::text::text, memory::FastSource)
+    qor_pp_declare_source_of(typename ref_of<data::parser::text::text>::type, memory::FastSource)
+}
+
 #endif//QOR_PP_H_DATA_TEXT_PARSER_TEXT
