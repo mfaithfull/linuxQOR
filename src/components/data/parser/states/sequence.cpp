@@ -20,11 +20,11 @@ namespace qor { namespace data { namespace parser {
                 Prepare();
                 if(m_internalState == 0)                
                 {
-                    Workflow()->PushState(m_head);
+                    Workflow()->PushStep(m_head);
                 }
                 else if(m_internalState == 1)
                 {
-                    Workflow()->PushState(m_tail);
+                    Workflow()->PushStep(m_tail);
                 }
             };
 
@@ -38,7 +38,7 @@ namespace qor { namespace data { namespace parser {
                         m_result.code = m_head->m_result.code;
                         m_result.length = 0;
                         m_result.m_position = m_head->m_result.m_position;
-                        Workflow()->PopState();
+                        Workflow()->PopStep();
                     }
                     else if (m_head->m_result.code == Result::SUCCESS)
                     {
@@ -46,7 +46,7 @@ namespace qor { namespace data { namespace parser {
                         m_result.length = m_head->m_result.length;
                         m_result.m_position = m_head->m_result.m_position;
                         m_internalState = 1;
-                        Workflow()->PushState(m_tail);
+                        Workflow()->PushStep(m_tail);
                     }
                     else
                     {
@@ -61,14 +61,14 @@ namespace qor { namespace data { namespace parser {
                         m_result.length = m_head->m_result.length + m_tail->m_result.length;
                         m_result.token = m_token;
                         m_internalState = 0;
-                        Workflow()->PopState();
+                        Workflow()->PopStep();
                     }
                     else if (m_tail->m_result.code == Result::FAILURE)
                     {
                         m_result.code = Result::FAILURE;
                         m_result.length = 0;
                         m_internalState = 0;
-                        Workflow()->PopState();
+                        Workflow()->PopStep();
                     }
                     else
                     {
@@ -78,7 +78,7 @@ namespace qor { namespace data { namespace parser {
                             m_result.length = m_head->m_result.length + m_tail->m_result.length;
                             m_result.token = m_token;
                             m_internalState = 0;
-                            Workflow()->PopState();
+                            Workflow()->PopStep();
                         }
                     }
                     break;

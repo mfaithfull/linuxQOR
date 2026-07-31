@@ -12,7 +12,7 @@
 
 namespace qor { namespace data { namespace parser {
 
-    ParserState::ParserState(Parser* parser, uint64_t token) : workflow::State(parser)
+    ParserState::ParserState(Parser* parser, uint64_t token) : fastflow::Step(parser)
     {
         m_result.code = Result::UNINITIALIZED;
         m_result.length = 0;
@@ -26,7 +26,7 @@ namespace qor { namespace data { namespace parser {
             }
             else if(m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token > static_cast<uint64_t>(eToken::Lexical))
             {
-                if(m_token == static_cast<uint64_t>(eToken::Lexical) && m_result.token > static_cast<uint64_t>(eToken::Lexical))
+                if(m_token == static_cast<uint64_t>(eToken::Lexical))
                 {
                     m_token = m_result.token;
                 }
@@ -60,17 +60,17 @@ namespace qor { namespace data { namespace parser {
 
     Context* ParserState::GetContext()
     {
-        return dynamic_cast<Parser*>(m_Workflow)->GetContext();
+        return dynamic_cast<Parser*>(m_Fastflow)->GetContext();
     }
 
-    Workflow* ParserState::Workflow()
+    Fastflow* ParserState::Workflow()
     {
-        return dynamic_cast<class Workflow*>(m_Workflow);
+        return dynamic_cast<class Fastflow*>(m_Fastflow);
     }
 
     Parser* ParserState::GetParser()
     {
-        return dynamic_cast<Parser*>(m_Workflow);
+        return dynamic_cast<Parser*>(m_Fastflow);
     }
     
     void ParserState::Prepare()

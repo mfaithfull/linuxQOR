@@ -37,7 +37,7 @@ namespace qor {	namespace data { namespace parser {
                         m_result.m_position = GetContext()->GetPosition();
                         m_result.length = 0;
                     }
-                    Workflow()->PopState();
+                    Workflow()->PopStep();
                 }
                 else
                 {

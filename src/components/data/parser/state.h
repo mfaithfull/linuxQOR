@@ -8,7 +8,7 @@
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
-#include "src/framework/app/workflow/workflow.h"
+#include "src/framework/app/workflow/fastflow.h"
 #include "result.h"
 #include "node.h"
 #include "tokens.h"
@@ -21,7 +21,7 @@ namespace qor { namespace data {
         
     class Context;
 
-    class qor_pp_module_interface(QOR_PARSER) ParserState : public workflow::State
+    class qor_pp_module_interface(QOR_PARSER) ParserState : public fastflow::Step
     {
     public:
 
@@ -40,7 +40,7 @@ namespace qor { namespace data {
         virtual void Emit();
         virtual void Fail();
 
-        class Workflow* Workflow();
+        class Fastflow* Workflow();
         uint64_t m_token{0};
     };
 
@@ -52,7 +52,14 @@ namespace qor { namespace data {
         virtual ~AcceptAll();
     };
 
-
 }}}//qor::data::parser
+
+namespace qor{
+    qor_pp_declare_source_of(data::parser::ParserState, memory::FastSource)
+    qor_pp_declare_source_of(typename ref_of<data::parser::ParserState>::type, memory::FastSource)
+
+    qor_pp_declare_source_of(data::parser::AcceptAll, memory::FastSource)
+    qor_pp_declare_source_of(typename ref_of<data::parser::AcceptAll>::type, memory::FastSource)
+}
 
 #endif//QOR_PP_H_DATA_PARSER_STATE

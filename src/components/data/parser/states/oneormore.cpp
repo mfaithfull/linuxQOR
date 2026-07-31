@@ -19,7 +19,7 @@ namespace qor { namespace data { namespace parser {
         Enter = [this]()
         {
             Prepare();
-            Workflow()->PushState(m_head.AsRef<workflow::State>());
+            Workflow()->PushStep(m_head.AsRef<fastflow::Step>());
         };
 
         Resume = [this]()
@@ -36,7 +36,7 @@ namespace qor { namespace data { namespace parser {
                 m_result.token = m_token;
                 m_result.length += m_head->m_result.length;
                 m_head->Reset();
-                Workflow()->PushState(m_head.AsRef<workflow::State>());
+                Workflow()->PushStep(m_head.AsRef<fastflow::Step>());
             }
             else if(m_head->m_result.code == Result::FAILURE)
             {
@@ -46,7 +46,7 @@ namespace qor { namespace data { namespace parser {
                     m_result.m_position = m_head->m_result.m_position;
                 }
                 m_first = true;                
-                Workflow()->PopState();
+                Workflow()->PopStep();
             }
             else
             {

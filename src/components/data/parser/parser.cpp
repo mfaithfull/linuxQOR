@@ -15,9 +15,9 @@
 
 namespace qor { namespace data {
 
-    Parser::Parser() : Workflow(), m_final(false){ }
+    Parser::Parser() : Fastflow(), m_final(false){ }
 
-    Parser::Parser(ref_of<class parser::Context>::type context) : Workflow(), m_context(context){ }
+    Parser::Parser(ref_of<class parser::Context>::type context) : Fastflow(), m_context(context){ }
 
     Parser::~Parser() = default;
 
@@ -39,6 +39,11 @@ namespace qor { namespace data {
         }
     }
 
+    ref_of<parser::Node>::type& Parser::TopNode()
+    {
+        return m_nodes.top();
+    }
+    
     ref_of<parser::Node>::type Parser::PopNode()
     {
         ref_of<parser::Node>::type result;
@@ -61,13 +66,13 @@ namespace qor { namespace data {
     void Parser::Drain()
     {
         qor_pp_ofcontext;
-        while(!IsComplete() && m_StateStack.size() > 0)
+        while(!IsComplete() && m_StepStack.size() > 0)
         {
             while(!IsComplete() && m_context->HasUnparsedData())
             {
-                CurrentState()->Enter();
+                CurrentStep()->Enter();
             }
-            PopState();
+            PopStep();
             if(IsComplete())
             {
                 log::debug("Parse complete.");
@@ -85,7 +90,7 @@ namespace qor { namespace data {
 
         while(!IsComplete() && m_context->HasUnparsedData())
         {
-            CurrentState()->Enter();
+            CurrentStep()->Enter();
         }
         if(IsComplete())
         {
@@ -108,7 +113,7 @@ namespace qor { namespace data {
         }
         try
         {
-            log::debug("Stack on entry has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
+            log::debug("Stack on entry has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
             m_final ? Drain() : InnerParse();
         }
         catch(const Serious& error)
@@ -127,9 +132,9 @@ namespace qor { namespace data {
             m_inError = true;
         }
 
-        log::debug("Stack on exit has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
+        log::debug("Stack on exit has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
 
-        if(!m_final && m_StateStack.size() == 0 )
+        if(!m_final && m_StepStack.size() == 0 )
         {
             log::debug("Parse finished early.");
 
@@ -140,13 +145,15 @@ namespace qor { namespace data {
 
         }
 
-        std::stack< ref_of<workflow::State>::type > copy = m_StateStack; // Copy the stack
+#ifndef NDEBUG
+        std::stack< ref_of<fastflow::Step>::type, std::vector< ref_of<fastflow::Step>::type > > copy = m_StepStack; // Copy the stack
         while (!copy.empty())
         {
             uint64_t token = copy.top().AsRef<parser::ParserState>()->GetToken();
             std::cout << "token: " << token << "\n";
             copy.pop();
         }
+#endif
 
         return m_result;
     }
@@ -162,15 +169,15 @@ namespace qor { namespace data {
         m_final = true;
         log::debug("Entering final parse.");
         m_complete = false;
-        if(m_StateStack.empty())
+        if(m_StepStack.empty())
         {
             log::debug("Final parse not required.");
-            log::debug("Stack has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
+            log::debug("Stack has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
             return m_result;
         }
         auto result = SafeParse();
         log::debug("Final parse complete.");
-        log::debug("Stack has {0} states, {1} nodes", m_StateStack.size(), m_nodes.size());
+        log::debug("Stack has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
         return result;
     }
 
@@ -181,7 +188,7 @@ namespace qor { namespace data {
         log::debug("Partial parse starting.");
         m_final = false;
         m_complete = false;
-        if(m_StateStack.empty())
+        if(m_StepStack.empty())
         {
             serious("No initial state set for Parser.");
             return -1;
@@ -208,7 +215,7 @@ namespace qor { namespace data {
         std::string finalParse = m_final ? "Yes" : "No";
         std::string inError = m_inError ? "Yes" : "No";
 
-        log::debug("Parser diagnostics: In final parse = {0}, In Error = {1}, Node stack size = {2}, State stack size = {3}", finalParse, inError, m_nodes.size(), m_StateStack.size());
+        log::debug("Parser diagnostics: In final parse = {0}, In Error = {1}, Node stack size = {2}, State stack size = {3}", finalParse, inError, m_nodes.size(), m_StepStack.size());
 
         if(m_nodes.size() > 0)
         {

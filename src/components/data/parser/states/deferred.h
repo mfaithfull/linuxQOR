@@ -38,18 +38,6 @@ namespace qor { namespace data { namespace parser {
                     }
                 };
 
-            Suspend = [this]()
-                {
-                    if (m_p.IsNotNull())
-                    {
-                        m_p->Suspend();
-                        if (m_p.IsNotNull())
-                        {
-                            m_result = m_p->m_result;
-                        }
-                    }
-                };
-
             Leave = [this]()
                 {
                     if (m_p.IsNotNull())

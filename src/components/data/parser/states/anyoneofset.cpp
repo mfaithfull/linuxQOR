@@ -22,11 +22,11 @@ namespace qor { namespace data { namespace parser {
             Prepare();
             if (m_it != m_set->end()) {
                 log::debug("Trying to match number {0} of a set of {1} parser states.", m_index + 1, m_set->size());
-                Workflow()->PushState((*m_it).AsRef<workflow::State>());
+                Workflow()->PushStep((*m_it).AsRef<fastflow::Step>());
             } else {
                 Reset();
                 m_result.code = Result::FAILURE;                
-                Workflow()->PopState();
+                Workflow()->PopStep();
             }
         };
 
@@ -46,7 +46,7 @@ namespace qor { namespace data { namespace parser {
                 m_result.length = parserState->m_result.length;
                 m_result.code = Result::SUCCESS;
                 m_result.token = m_token;
-                Workflow()->PopState();
+                Workflow()->PopStep();
             }
             else
             {
@@ -58,12 +58,12 @@ namespace qor { namespace data { namespace parser {
                     m_result.m_position = parserState->m_result.m_position;
                     Reset();
                     m_result.code = Result::FAILURE;
-                    Workflow()->PopState();
+                    Workflow()->PopStep();
                 }
                 else
                 {
                     log::debug("Trying to match {0} of a set of {1} parser states.", m_index + 1, m_set->size());
-                    Workflow()->PushState((*m_it));
+                    Workflow()->PushStep((*m_it));
                 }
             }
         };

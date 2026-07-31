@@ -17,7 +17,7 @@ namespace qor { namespace data { namespace parser {
         Enter = [this]()
             {
                 Prepare();
-                Workflow()->PushState(m_head.AsRef<workflow::State>());
+                Workflow()->PushStep(m_head.AsRef<fastflow::Step>());
             };
 
         Resume = [this]()
@@ -36,7 +36,7 @@ namespace qor { namespace data { namespace parser {
                 }
                 m_result.m_position = m_head->m_result.m_position;
                 m_result.code = m_head->m_result.code;
-                Workflow()->PopState();
+                Workflow()->PopStep();
             };
 
         Leave = [this]()

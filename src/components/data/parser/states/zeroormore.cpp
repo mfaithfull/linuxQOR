@@ -16,16 +16,18 @@ namespace qor { namespace data { namespace parser {
     {
         m_first = true;
         m_result.length = 0;
+        m_flow = Workflow();
+        m_context = GetParser()->GetContext();
         Enter = [this]()
             {
                 Prepare();
-                Workflow()->PushState(m_head);
+                m_flow->PushStep(m_head);
             };
 
         Resume = [this]()
             {                
                 m_result.code = m_head->m_result.code;                
-                if (m_head->m_result.code == Result::SUCCESS && GetParser()->GetContext()->HasUnparsedData())
+                if (m_head->m_result.code == Result::SUCCESS  && m_context->HasUnparsedData())
                 {
                     if (m_first)
                     {
@@ -35,15 +37,15 @@ namespace qor { namespace data { namespace parser {
                     }
                     m_result.length += m_head->m_result.length;
                     m_head->Reset();
-                    Workflow()->PushState(m_head);
+                    m_flow->PushStep(m_head);
                 }
                 else
                 {
                     m_first = true;
                     Fail();
-                    if(GetParser()->GetContext()->HasUnparsedData())
+                    if(m_context->HasUnparsedData())
                     {
-                        Workflow()->PopState();
+                        m_flow->PopStep();
                     }
                     return;                    
                 }
@@ -55,10 +57,6 @@ namespace qor { namespace data { namespace parser {
                 if (m_result.code == Result::FAILURE)
                 {
                     Fail();
-                }
-                else if (m_result.code == Result::SUCCESS)
-                {                    
-                    //Emit();
                 }
                 m_result.code = Result::SUCCESS;
             };

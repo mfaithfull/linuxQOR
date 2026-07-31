@@ -7,14 +7,14 @@
 #include <stack>
 #include <iostream>
 
-#include "src/framework/app/workflow/workflow.h"
+#include "src/framework/app/workflow/fastflow.h"
 #include "context.h"
 #include "result.h"
 #include "node.h"
 
 namespace qor { namespace data {
 
-    class qor_pp_module_interface(QOR_PARSER) Parser : public Workflow
+    class qor_pp_module_interface(QOR_PARSER) Parser : public Fastflow
     {
     public:
 
@@ -27,6 +27,7 @@ namespace qor { namespace data {
         void SetContext(ref_of<class parser::Context>::type context);
         void PushNode(ref_of<parser::Node>::type node);
         ref_of<parser::Node>::type PopNode();
+        ref_of<parser::Node>::type& TopNode();
         int Parse();
         int FinalParse();
         bool IsFinal();

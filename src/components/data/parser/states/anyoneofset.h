@@ -26,4 +26,9 @@ namespace qor { namespace data { namespace parser {
 
 }}}//qor::data::parser
 
+namespace qor{
+    qor_pp_declare_source_of(data::parser::AnyOneOfSet, memory::FastSource)
+    qor_pp_declare_source_of(typename ref_of<data::parser::AnyOneOfSet>::type, memory::FastSource)
+}
+
 #endif//QOR_PP_H_DATA_PARSER_STATES_ANYONEOFSET

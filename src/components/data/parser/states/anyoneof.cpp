@@ -19,11 +19,11 @@ namespace qor { namespace data { namespace parser {
                 Prepare();
                 if(m_internalState == 0)
                 {
-                    Workflow()->PushState(m_head);
+                    Workflow()->PushStep(m_head.AsRef<fastflow::Step>());
                 }
                 else if(m_internalState == 1)
                 {
-                    Workflow()->PushState(m_tail);
+                    Workflow()->PushStep(m_tail.AsRef<fastflow::Step>());
                 }
             };
 
@@ -39,7 +39,7 @@ namespace qor { namespace data { namespace parser {
                         m_result.length = m_head->m_result.length;
                         m_result.token = m_token;
                         m_result.m_position = m_head->m_result.m_position;
-                        Workflow()->PopState();
+                        Workflow()->PopStep();
                     }
                     else if (m_head->m_result.code == Result::MORE_DATA)
                     {
@@ -49,7 +49,7 @@ namespace qor { namespace data { namespace parser {
                     else
                     {
                         m_internalState = 1;
-                        Workflow()->PushState(m_tail);
+                        Workflow()->PushStep(m_tail.AsRef<fastflow::Step>());
                     }
                     break;
                 case 1:
@@ -61,7 +61,7 @@ namespace qor { namespace data { namespace parser {
                         m_result.token = m_token;
                         m_result.m_position = m_tail->m_result.m_position;
                         m_internalState = 0;
-                        Workflow()->PopState();
+                        Workflow()->PopStep();
                     }
                     else if (m_head->m_result.code == Result::MORE_DATA)
                     {
@@ -73,7 +73,7 @@ namespace qor { namespace data { namespace parser {
                         m_internalState = 0;
                         m_result.m_position = m_head->m_result.m_position;
                         m_result.code = Result::FAILURE;
-                        Workflow()->PopState();
+                        Workflow()->PopStep();
                     }
                     break;
                 }

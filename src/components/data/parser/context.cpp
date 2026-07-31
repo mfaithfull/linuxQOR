@@ -30,7 +30,7 @@ namespace qor { namespace data { namespace parser {
     bool Context::ConsumeOctet()
     {
         ++m_position;
-        log::debug("Context: ConsumeOctet: position: {0}, size: {1}", m_position, m_size);
+        //log::debug("Context: ConsumeOctet: position: {0}, size: {1}", m_position, m_size);
         return m_position < m_size;
     }
 
@@ -39,7 +39,7 @@ namespace qor { namespace data { namespace parser {
         if(m_position < m_size)
         {
             data = m_octetStream + m_position;
-            log::debug("Context: GetOctet: position: {0}, size: {1}, octet: {2:02x}", m_position, m_size, (unsigned char)(*data));
+            //log::debug("Context: GetOctet: position: {0}, size: {1}, octet: {2:02x}", m_position, m_size, (unsigned char)(*data));
             return true;
         }
         return false;
