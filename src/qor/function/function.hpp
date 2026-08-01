@@ -4,7 +4,6 @@
 #ifndef QOR_PP_H_FUNCTION_TEF_FUNCTION_IMPL
 #define QOR_PP_H_FUNCTION_TEF_FUNCTION_IMPL
 
-//#include "error.h"
 #include "type_id.h"
 
 namespace qor { namespace tef {
