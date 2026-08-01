@@ -55,7 +55,7 @@ namespace qor{ namespace pipeline{ namespace components{
             qor_pp_ofcontext;
             if(!m_EOD)
             {
-                log::Debug("Parser Sink Reset");
+                //log::Debug("Parser Sink Reset");
                 m_context->Reset();
                 m_objectState = new_ref<TObjectState>(&m_parser);
                 m_parser.SetInitialStep(m_objectState);

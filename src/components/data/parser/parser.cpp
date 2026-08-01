@@ -15,7 +15,7 @@
 
 namespace qor { namespace data {
 
-    Parser::Parser() : Fastflow(), m_final(false){ }
+    Parser::Parser() : Fastflow(){ }
 
     Parser::Parser(ref_of<class parser::Context>::type context) : Fastflow(), m_context(context){ }
 
@@ -52,11 +52,12 @@ namespace qor { namespace data {
             result = m_nodes.top();
             m_nodes.pop();
         }
-
-        if(m_nodes.empty())
+#ifdef NDEBUG
+        else        
         {
             Diagnostic();
         }
+#endif
         return result;
     }
 
@@ -73,12 +74,8 @@ namespace qor { namespace data {
                 CurrentStep()->Enter();
             }
             PopStep();
-            if(IsComplete())
-            {
-                log::debug("Parse complete.");
-                break;
-            }
         }
+        log::debug("Parse complete.");
     }
 
     //Parses up to the end of the available data
@@ -92,6 +89,7 @@ namespace qor { namespace data {
         {
             CurrentStep()->Enter();
         }
+#ifdef NDEBUG
         if(IsComplete())
         {
             log::debug("Initial parse complete.");
@@ -100,6 +98,7 @@ namespace qor { namespace data {
         {
             log::debug("Parse ran out of data.");
         }
+#endif
     }
 
     int Parser::SafeParse()
