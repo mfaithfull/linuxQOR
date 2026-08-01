@@ -141,7 +141,7 @@ namespace qor{
 		{
 			if (m_p && ( dynamic_cast<D*>(m_p->ptr()) != nullptr ))
 			{
-				return Ref<D>(m_p->As<D>());
+				return Ref<D>(m_p->template As<D>());
 			}
 			return Ref<D>();
 		}
@@ -262,7 +262,7 @@ namespace qor{
 		{
 			if (m_p && ( dynamic_cast<TDerived*>(m_p->ptr()) != nullptr ))
 			{
-				return Ref<TDerived>(m_p->As<TDerived>());
+				return Ref<TDerived>(m_p->template As<TDerived>());
 			}
 			return Ref< TDerived >();
 		}

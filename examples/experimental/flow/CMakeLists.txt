@@ -10,7 +10,13 @@ qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
+if(CMAKE_SYSTEM_NAME MATCHES Linux)
+set(oslibs linqor_thread)
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES Windows)
 set(oslibs winqor_thread)
+endif()
 
 target_link_libraries(${target} ${oslibs} qor_module qor_host qor_compiler qor_application qor_role qor_workflow qor_thread qor_threadmemory)
 
