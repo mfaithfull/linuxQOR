@@ -104,10 +104,10 @@ namespace qor{ namespace detail {
                 redirect->Release();
             }
             else
-            {
-                Lock lock(m);
+            {                
                 if(initialised)
                 {
+                    Lock lock(m);
                     factory_of<T>::type::Destruct(theRef);
                     theRef.Reset();
                 }

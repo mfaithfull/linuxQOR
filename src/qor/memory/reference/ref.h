@@ -232,7 +232,7 @@ namespace qor{
 			m_p = nullptr;
 			return *this;
 		}
-
+		
 		Ref<T>& Reset()
 		{
 			if (m_p)
@@ -247,7 +247,7 @@ namespace qor{
 		{
 			if( m_p && m_p->ptr() == nullptr)
 			{
-				m_p->Attach(pt);
+				const_cast<detail::SharedRef<T>*>(m_p)->Attach(pt);
 			}
 		}
 

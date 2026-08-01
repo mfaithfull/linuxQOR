@@ -20,9 +20,8 @@ namespace qor{
         struct AllocateOnlyConcreteTypesFunctor
         {
             template< typename... _p >
-            static R* Allocate(size_t /*count*/, _p&&... /*pq*/)
+            inline static R* Allocate(size_t /*count*/, _p&&... /*p1*/)
             {
-				//TODO: Raise an error through qor_reporting
                 return nullptr;
             }
         };
@@ -31,7 +30,7 @@ namespace qor{
         struct AllocateOnlyConcreteTypesFunctor<R, false>
         {
             template< typename... _p >
-            static R* Allocate(size_t count, _p&&... p1)
+            inline static R* Allocate(size_t count, _p&&... p1)
             {
                 return allocator_of<R>::type::template Allocate<R>(count, std::forward<_p>(p1)...);
             }
@@ -55,14 +54,11 @@ namespace qor{
 		template< class R >
 		class SharedRef final
 		{
-			friend class ::qor::Ref< R >;
+			friend class qor::Ref< R >;
 
 		private:
 
-			typedef typename std::is_abstract<R> is_abstract;
-
-			void(*m_deleter)(R* p);		
-			std::function<void()> m_selfdeleter;
+			typedef typename std::is_abstract<R> is_abstract;			
 
 		public:
 
@@ -72,40 +68,18 @@ namespace qor{
 				//This is where the underlying raw object gets allocated iff its type is constructable
 				m_p = AllocateOnlyConcreteTypesFunctor<R, is_abstract::value>::template Allocate<_p...>(count, std::forward<_p>(p1)...);
 
-				if (m_p != nullptr)
-				{
-					//Insert a link to this into the new objects allocated space so that from the object this shared reference can be found
-					int** ppBack = ((int**)m_p) - 1;
-					*ppBack = (int*)(this);
-					m_deleter = &internal_del_ref<R>;
-					m_selfdeleter = [this]() {
-    					source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
-					};
-				}
-				else
-				{
-					throw new std::logic_error("Cannot make an instance of an abstract type.");
-				}
+				m_p ? SetDeleter() : throw new std::logic_error("Cannot make an instance of an abstract type.");				
 			}
 
 			SharedRef(R* pr) : m_p(pr), m_RefCount(0), m_Section()
 			{
-				if(m_p != nullptr)
-				{
-					int** ppBack = ((int**)m_p) - 1;
-					*ppBack = (int*)(this);
-					m_deleter = &internal_del_ref<R>;
-					m_selfdeleter = [this]() {
-    					source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
-					};
-				}
+				if(m_p != nullptr){ SetDeleter(); }
 			}
 
-            R* AllocateConcreteType(size_t count)
+            inline R* AllocateConcreteType(size_t count)
             {
                 return allocator_of<R>::type::template Allocate<R>(count);
             }
-
 
 			//The same as above but for default constructed target types
 			SharedRef(size_t count) : m_p(nullptr), m_RefCount(0), m_Section()
@@ -117,12 +91,7 @@ namespace qor{
 
 				if (m_p != nullptr)
 				{
-					int** ppBack = ((int**)m_p) - 1;
-					*ppBack = (int*)(this);
-					m_deleter = &internal_del_ref<R>;
-					m_selfdeleter = [this]() {
-    					source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
-					};
+					SetDeleter();
 				}
 				else
 				{
@@ -131,14 +100,13 @@ namespace qor{
 			}
 
 			SharedRef() : m_p(nullptr), m_RefCount(0), m_Section()
-			{
-			}
+			{ }
 
 			SharedRef(const SharedRef< R >& Src) = delete;
 			SharedRef& operator = (const SharedRef< R >& Src) = delete;
 
 			//Construct and return an outer non shared reference around this inner shared reference
-			Ref< R > _Ref(void) const
+			inline Ref< R > _Ref(void) const
 			{
 				return Ref< R >(this);
 			}
@@ -147,9 +115,8 @@ namespace qor{
 			{
 				if (m_p)
 				{
-					throw new std::logic_error("An object still exists when its owning reference has been destroyed.");
+					throw new std::logic_error("An object still exists when its owning reference has been destroyed. It will leak.");
 				}
-				m_p = nullptr;
 			}
 
 			bool IsNull(void) const
@@ -159,63 +126,31 @@ namespace qor{
 
 			unsigned long AddRef(void) const
 			{
-				Lock();
-				unsigned long ulResult = ++m_RefCount;
-				Unlock();
-				return ulResult;
+				return ++m_RefCount;
 			}
 
 			unsigned long Release(void)
 			{
-				Lock();
-				unsigned long ulResult = m_RefCount > 0 ? --m_RefCount : 0;
-				Unlock();
-
-				if (ulResult == 0)
-				{
-					InternalRelease();
-				}
-				return ulResult;
-			}
-
-			//When the reference count hits zero
-			void InternalRelease(void)
-			{
-				Lock();
-				m_deleter(m_p);
-				//internal_del_ref<R>(m_p);
-				m_p = nullptr;//drop our pointer to it
-				Unlock();
-				//Self delete this shared reference. This must be safe as no non shared references exist when the reference count is zero
-				m_selfdeleter();
-				//source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
+				Lock();				
+				m_RefCount-- == 1 ? m_deleter() : Unlock();
+				return m_RefCount;
 			}
 
 			//Never call this unless you know the real object has gone for good.
-			void Reset(void)
+			inline void Reset(void)
 			{
-				m_p = nullptr;
+				Lock();
+				m_p = nullptr; 
+				Unlock();
 			}
 
-			bool LockIsReal() const
-			{
-				return LockIsRealInternal< typename sync_of<R>::type >::type::value;
-			}
+			constexpr bool LockIsReal() const{ return LockIsRealInternal< typename sync_of<R>::type >::type::value; }
 
-			void Lock() const
-			{
-				m_Section.Acquire();
-			}
+			inline void Lock() const{ m_Section.Acquire(); }
 
-			void Unlock() const
-			{
-				m_Section.Release();
-			}
+			inline void Unlock() const{ m_Section.Release(); }
 
-			bool IsLocked() const
-			{
-				return m_Section.IsLocked();
-			}
+			inline bool IsLocked() const{ return m_Section.IsLocked(); }//Not reliable, just a guide for warning about unlocked access
 
 			template< class TDerived >
 			bool Configure()
@@ -228,8 +163,7 @@ namespace qor{
 					m_p = allocator_of<TDerived>::type::Allocate(1);
 					if (m_p != nullptr)
 					{
-						int** ppBack = ((int**)m_p) - 1;
-						*ppBack = (int*)(this);
+						SetDeleter();
 						result = true;
 					}
 				}
@@ -247,8 +181,7 @@ namespace qor{
 					m_p = allocator_of<TDerived>::type::Allocate(1, std::forward<_p>(p1)...);
 					if (m_p != nullptr)
 					{
-						int** ppBack = ((int**)m_p) - 1;
-						*ppBack = (int*)(this);
+						SetDeleter();
 						result = true;
 					}
 				}
@@ -256,6 +189,19 @@ namespace qor{
 			}
 
 		private:
+
+			void SetDeleter()
+			{
+				int** ppBack = ((int**)m_p) - 1;
+				*ppBack = (int*)(this);
+				m_deleter = [this]() 
+				{					
+					internal_del_ref<R>(m_p);
+					m_p = nullptr;//drop our pointer
+					Unlock();
+    				source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
+				};		
+			}
 
 			R* ptr(void) const
 			{
@@ -267,27 +213,27 @@ namespace qor{
 			{
 				if((byte*)m_p == (byte*)(dynamic_cast<D*>(m_p)))
 				{
-					return (const SharedRef<D>*)(const_cast<SharedRef<R>*>(this));
+					return (const SharedRef<D>*)(this);
 				}
-				return dynamic_cast<SharedRef<D>*>(const_cast<SharedRef<R>*>(this));
+				return (const SharedRef<D>*)(this);
 			}
 
-			void Attach(R* pt) const
+			void Attach(R* pt)
 			{
+				Lock();
 				if (m_p == nullptr)
 				{
 					m_p = pt;
 					m_RefCount = 0;
-					int** ppBack = ((int**)m_p) - 1;
-					*ppBack = (int*)(this);
+					SetDeleter();
 				}
+				Unlock();
 			}
-
-		protected:
 
 			mutable R* m_p;
 			mutable std::atomic< unsigned long > m_RefCount;
 			mutable typename sync_of< R >::type m_Section;
+			std::function<void()> m_deleter;
 		};
 
 	}//detail
