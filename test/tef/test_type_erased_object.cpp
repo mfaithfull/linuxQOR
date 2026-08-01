@@ -435,8 +435,8 @@ qor_pp_test_suite_case(TypeErasedObjectTestSuite, NonCopyableObject)
         //FAIL();
 
     } 
-    catch (Error error) 
+    catch (const Serious& error) 
     {
-        qor_pp_assert_that(Error::kNonCopyableObject == error).isTrue();
+        qor_pp_assert_that(error.what().Content() == "Object not copyable. Type-erased object is not copy-constructible.").isTrue();
     }
 }

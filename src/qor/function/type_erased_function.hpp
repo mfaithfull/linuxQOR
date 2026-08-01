@@ -7,10 +7,10 @@
 namespace qor { namespace tef {
 
     TypeErasedFunction::TypeErasedFunction() noexcept
-        : func_ptr_(nullptr), type_id_(0) {}
+        : func_ptr_(nullptr), type_id_(0) { }
 
     TypeErasedFunction::TypeErasedFunction(TypeId type_id, TypeErasedFuncPtr func_ptr) noexcept
-        : func_ptr_(func_ptr), type_id_(type_id) {}
+        : func_ptr_(func_ptr), type_id_(type_id) { }
 
     TypeErasedFunction::TypeErasedFunction(TypeErasedFunction&& function)
         : func_ptr_(nullptr), type_id_(0) 
@@ -25,7 +25,7 @@ namespace qor { namespace tef {
         if (this == &function)
         return *this;
 
-        MAGIC_FUNC_CHECK(type_id_ == 0 || type_id_ == function.type_id_, Error::kIncompatibleType);
+        check(type_id_ == 0 || type_id_ == function.type_id_, Error::kIncompatibleType);
         object_ = function.object_;
         func_ptr_ = function.func_ptr_;
         type_id_ = function.type_id_;
@@ -37,7 +37,7 @@ namespace qor { namespace tef {
         if (this == &function)
         return *this;
 
-        MAGIC_FUNC_CHECK(type_id_ == 0 || type_id_ == function.type_id_, Error::kIncompatibleType);
+        check(type_id_ == 0 || type_id_ == function.type_id_, Error::kIncompatibleType);
         object_.Reset();
         func_ptr_ = nullptr;
         type_id_ = 0;

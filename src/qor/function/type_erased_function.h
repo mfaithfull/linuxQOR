@@ -61,12 +61,11 @@ namespace qor { namespace tef {
         inline TypeErasedFunction& operator =(std::nullptr_t);
 
     protected:
-        // Type-erased versions of functions.
-        using TypeErasedFuncPtr = void (*)();
+        
+        using TypeErasedFuncPtr = void (*)();       // Type-erased versions of functions.
 
         // Constructor used by derived types.
-        inline TypeErasedFunction(TypeId type_id,
-        TypeErasedFuncPtr func_ptr = nullptr) noexcept;
+        inline TypeErasedFunction(TypeId type_id, TypeErasedFuncPtr func_ptr = nullptr) noexcept;
 
         // Type-erased version of the object associated with the function, if any.
         // Goes intentionally first because it can have alignment requirements.

@@ -4,21 +4,21 @@
 #ifndef QOR_PP_H_FUNCTION_TEF_FUNCTION_IMPL
 #define QOR_PP_H_FUNCTION_TEF_FUNCTION_IMPL
 
-#include "error.h"
+//#include "error.h"
 #include "type_id.h"
 
 namespace qor { namespace tef {
 
     // Does an extra reinterpret cast to void* to avoid MSVC 2015 warnings.
     template <typename T, typename U>
-    T reinterpret_func(U&& target) {
+    T reinterpret_func(U&& target) 
+    {
         return reinterpret_cast<T>(reinterpret_cast<void*>(target));
     }
 
     // Default constructor.
     template <typename Return, typename... Args>
-    Function<Return(Args...)>::Function() noexcept
-        : TypeErasedFunction(get_type_id<FunctionType>()) {}
+    Function<Return(Args...)>::Function() noexcept : TypeErasedFunction(get_type_id<FunctionType>()) { }
 
     // Factory method for function addresses.
     template <typename Return, typename... Args>
@@ -33,9 +33,8 @@ namespace qor { namespace tef {
     template <typename Object, CopyCV<Return(Args...), Object> Object::*func_ptr>
     Function<Return(Args...)> Function<Return(Args...)>::FromMemberFunction(Object* object) 
     {
-        MAGIC_FUNC_DCHECK(object, Error::kInvalidObject);
-        auto function = Function(reinterpret_func<TypeErasedFuncPtr>(
-            &CallMemberFuncAddress<decltype(func_ptr), func_ptr>));
+        debug_check(object, Error::kInvalidObject);
+        auto function = Function(reinterpret_func<TypeErasedFuncPtr>(&CallMemberFuncAddress<decltype(func_ptr), func_ptr>));
         function.object_.StorePointer(object);
         return function;
     }
@@ -45,7 +44,7 @@ namespace qor { namespace tef {
     template <typename Object, CopyCV<Return(Args...), Object> Object::*func_ptr>
     Function<Return(Args...)> Function<Return(Args...)>::FromMemberFunction(const std::shared_ptr<Object>& object) 
     {
-        MAGIC_FUNC_DCHECK(object, Error::kInvalidObject);
+        debug_check(object, Error::kInvalidObject);
         auto function = Function(reinterpret_func<TypeErasedFuncPtr>(
             &CallMemberFuncAddress<decltype(func_ptr), func_ptr>));
         function.object_.StoreObject(object);
@@ -61,7 +60,7 @@ namespace qor { namespace tef {
         // Class is qualified as the member function and Object as the object.
         // This enforces const compatibility and produces more useful build errors.
         typename FunctionTraits<MemberFuncPtr>::Class* class_ptr = object;
-        MAGIC_FUNC_DCHECK(class_ptr, Error::kInvalidObject);
+        debug_check(class_ptr, Error::kInvalidObject);
         func_ptr_ = member_function.func_ptr_;
         object_.StorePointer(class_ptr);
     }
@@ -76,7 +75,7 @@ namespace qor { namespace tef {
         // This enforces const compatibility and produces more useful build errors.
         using Class = typename FunctionTraits<MemberFuncPtr>::Class;
         const std::shared_ptr<Class>& class_object = object;
-        MAGIC_FUNC_DCHECK(class_object, Error::kInvalidObject);
+        debug_check(class_object, Error::kInvalidObject);
         func_ptr_ = member_function.func_ptr_;
         object_.StoreObject(class_object);
     }
@@ -120,7 +119,7 @@ namespace qor { namespace tef {
     template <typename Return, typename... Args>
     Return Function<Return(Args...)>::operator ()(Args... args) const 
     {
-        MAGIC_FUNC_DCHECK(func_ptr_, Error::kInvalidFunction);
+        debug_check(func_ptr_, Error::kInvalidFunction);
 
         // Invoke whatever helper function is set.
         // Each one will take care of undoing type erasure and calling.
@@ -142,7 +141,7 @@ namespace qor { namespace tef {
     template <typename MemberFuncPtr, MemberFuncPtr func_ptr, typename>
     Return Function<Return(Args...)>::CallMemberFuncAddress(void* object, Args... args) 
     {
-        MAGIC_FUNC_DCHECK(object, Error::kInvalidObject);
+        debug_check(object, Error::kInvalidObject);
         using Class = typename FunctionTraits<MemberFuncPtr>::Class;
         return (reinterpret_cast<Class*>(object)->*func_ptr)(std::forward<Args>(args)...);
     }
@@ -151,7 +150,7 @@ namespace qor { namespace tef {
     template <typename Callable>
     Return Function<Return(Args...)>::CallCallable(void* object, Args... args) 
     {
-        MAGIC_FUNC_DCHECK(object, Error::kInvalidObject);
+        //TODO:if(!object){ continuable(tefError.at(Error::kInvalidObject)); }
         using Object = std::remove_reference_t<Callable>;
         return reinterpret_cast<Object*>(object)->operator()(std::forward<Args>(args)...);
     }

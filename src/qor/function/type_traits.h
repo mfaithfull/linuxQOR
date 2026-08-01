@@ -48,23 +48,19 @@ namespace qor { namespace tef {
 
     // Tells if a provided type is a tef::Function.
     template <typename T>
-    using IsFunction = internal::IsFunctionImpl<
-        std::remove_cv_t<std::decay_t<T>>>;
+    using IsFunction = internal::IsFunctionImpl<std::remove_cv_t<std::decay_t<T>>>;
 
     // Tells if a provided type is a tef::MemberFunction.
     template <typename T>
-    using IsMemberFunction = internal::IsMemberFunctionImpl<
-        std::remove_cv_t<std::decay_t<T>>>;
+    using IsMemberFunction = internal::IsMemberFunctionImpl<std::remove_cv_t<std::decay_t<T>>>;
 
     // Tells if a provided type is a std::unique_ptr.
     template <typename T>
-    using IsUniquePtr = internal::IsUniquePtrImpl<
-        std::remove_cv_t<std::decay_t<T>>>;
+    using IsUniquePtr = internal::IsUniquePtrImpl<std::remove_cv_t<std::decay_t<T>>>;
 
     // Tells if a provided type is a std::shared_ptr.
     template <typename T>
-    using IsSharedPtr = internal::IsSharedPtrImpl<
-        std::remove_cv_t<std::decay_t<T>>>;
+    using IsSharedPtr = internal::IsSharedPtrImpl<std::remove_cv_t<std::decay_t<T>>>;
 
     // Tells if a provided type is a free function pointer.
     template <typename T>
@@ -72,9 +68,8 @@ namespace qor { namespace tef {
         std::integral_constant<bool,
             // It's a function pointer if it's a pointer and...
             std::is_pointer<std::remove_reference_t<T>>::value &&
-            // After removing cv cualifications and a pointer it becomes a function.
-            std::is_function<std::remove_pointer_t<
-                std::remove_cv_t<std::remove_reference_t<T>>>>::value>;
+            // After removing cv qualifications and a pointer it becomes a function.
+            std::is_function<std::remove_pointer_t<std::remove_cv_t<std::remove_reference_t<T>>>>::value>;
 
 }}//qor::tef
 

@@ -37,7 +37,7 @@ namespace qor { namespace tef {
     typename MemberFunction<MemberFuncPtr>::ReturnType
     MemberFunction<MemberFuncPtr>::operator ()(ClassType& object, CallArgs&&... args) const 
     {
-        MAGIC_FUNC_DCHECK(func_ptr_, Error::kInvalidFunction);
+        debug_check(func_ptr_, Error::kInvalidFunction);
         using FuncCallPtr = typename Traits::TypeErasedCallType;
         return (*reinterpret_cast<FuncCallPtr>(this->func_ptr_))(&object, std::forward<CallArgs>(args)...);
     }
