@@ -38,8 +38,9 @@ namespace qor { namespace tef {
         }
     }
 
-#if !defined(NDEBUG)    
-    inline void debug_check(bool b, Error error) 
+#if !defined(NDEBUG)   
+    template< typename T>
+    inline void debug_check(T b, Error error) 
     {
 
         if (!b) 

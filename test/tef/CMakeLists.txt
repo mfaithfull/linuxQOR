@@ -8,7 +8,12 @@ add_executable(${target} test_main.cpp
   test_type_erased_object.cpp
   test_type_erased_function.cpp
   test_common.cpp
-  test_member_function.cpp)
+  test_member_function.cpp
+  test_make_function.cpp
+  test_function_traits.cpp
+  test_function_cast.cpp
+  test_allocator.cpp
+  test_function.cpp)
 
 target_compile_definitions(${target} PRIVATE CONSOLE 
 qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
