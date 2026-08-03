@@ -45,8 +45,7 @@ namespace qor { namespace contract {
     template<class First, class... Rest>
     struct unique_types<First, Rest...>
         : std::bool_constant<
-            (!std::is_same_v<First, Rest> && ...) &&
-            unique_types<Rest...>::value> {};
+            (!std::is_same_v<First, Rest> && ...) && unique_types<Rest...>::value> {};
 
     template<class T>
     struct is_vocabulary_set : std::false_type {};

@@ -22,11 +22,14 @@ namespace qor { namespace contract::io {
         explicit output(unsigned char* data)
             : current_(data) {}
 
-        std::size_t write(const void* data, std::size_t size) {
-            if (size == 0) {
+        std::size_t write(const void* data, std::size_t size) 
+        {
+            if (size == 0) 
+            {
                 return 0;
             }
-            if (data == nullptr) {
+            if (data == nullptr) 
+            {
                 assert(data != nullptr);
                 return 0;
             }
@@ -36,7 +39,8 @@ namespace qor { namespace contract::io {
         }
 
         [[nodiscard]]
-        unsigned char* current() const {
+        unsigned char* current() const 
+        {
             return current_;
         }
 
@@ -44,22 +48,27 @@ namespace qor { namespace contract::io {
         unsigned char* current_;
     };
 
-    class checked_output {
+    class checked_output 
+    {
     public:
         checked_output(unsigned char* data, std::size_t size)
             : current_(data)
             , end_(make_end(data, size)) {}
 
-        std::size_t write(const void* data, std::size_t size) {
-            if (size == 0) {
+        std::size_t write(const void* data, std::size_t size) 
+        {
+            if (size == 0) 
+            {
                 return 0;
             }
-            if (data == nullptr) {
+            if (data == nullptr) 
+            {
                 assert(data != nullptr);
                 return 0;
             }
             const auto available = available_size();
-            if (size > available) {
+            if (size > available) 
+            {
                 return 0;
             }
             std::memcpy(current_, data, size);
@@ -68,20 +77,25 @@ namespace qor { namespace contract::io {
         }
 
         [[nodiscard]]
-        unsigned char* current() const {
+        unsigned char* current() const 
+        {
             return current_;
         }
 
     private:
-        static unsigned char* make_end(unsigned char* data, std::size_t size) {
-            if (size == 0) {
+
+        static unsigned char* make_end(unsigned char* data, std::size_t size) 
+        {
+            if (size == 0) 
+            {
                 return data;
             }
             assert(data != nullptr);
             return data + size;
         }
 
-        std::size_t available_size() const noexcept {
+        std::size_t available_size() const noexcept 
+        {
             if (current_ == nullptr || end_ == nullptr) {
                 return 0;
             }
@@ -99,8 +113,10 @@ namespace qor { namespace contract::io {
             : current_(data) {}
 
         [[nodiscard]]
-        const unsigned char* read_view(std::size_t size) {
-            if (size == 0) {
+        const unsigned char* read_view(std::size_t size) 
+        {
+            if (size == 0) 
+            {
                 return current_;
             }
             const unsigned char* data = current_;
@@ -108,11 +124,14 @@ namespace qor { namespace contract::io {
             return data;
         }
 
-        std::size_t read(void* out, std::size_t size) {
-            if (size == 0) {
+        std::size_t read(void* out, std::size_t size) 
+        {
+            if (size == 0) 
+            {
                 return 0;
             }
-            if (out == nullptr) {
+            if (out == nullptr) 
+            {
                 assert(out != nullptr);
                 return 0;
             }
@@ -122,7 +141,8 @@ namespace qor { namespace contract::io {
         }
 
         [[nodiscard]]
-        const unsigned char* current() const {
+        const unsigned char* current() const 
+        {
             return current_;
         }
 
@@ -138,11 +158,14 @@ namespace qor { namespace contract::io {
             , end_(make_end(data, size)) {}
 
         [[nodiscard]]
-        const unsigned char* read_view(std::size_t size) {
-            if (size == 0) {
+        const unsigned char* read_view(std::size_t size) 
+        {
+            if (size == 0) 
+            {
                 return current_;
             }
-            if (size > available_size()) {
+            if (size > available_size()) 
+            {
                 return nullptr;
             }
             const unsigned char* data = current_;
@@ -150,16 +173,20 @@ namespace qor { namespace contract::io {
             return data;
         }
 
-        std::size_t read(void* out, std::size_t size) {
-            if (size == 0) {
+        std::size_t read(void* out, std::size_t size) 
+        {
+            if (size == 0) 
+            {
                 return 0;
             }
-            if (out == nullptr) {
+            if (out == nullptr) 
+            {
                 assert(out != nullptr);
                 return 0;
             }
             const unsigned char* data = read_view(size);
-            if (data == nullptr) {
+            if (data == nullptr) 
+            {
                 return 0;
             }
             std::memcpy(out, data, size);
@@ -167,21 +194,27 @@ namespace qor { namespace contract::io {
         }
 
         [[nodiscard]]
-        const unsigned char* current() const {
+        const unsigned char* current() const 
+        {
             return current_;
         }
 
     private:
-        static const unsigned char* make_end(const unsigned char* data, std::size_t size) {
-            if (size == 0) {
+
+        static const unsigned char* make_end(const unsigned char* data, std::size_t size) 
+        {
+            if (size == 0) 
+            {
                 return data;
             }
             assert(data != nullptr);
             return data + size;
         }
 
-        std::size_t available_size() const noexcept {
-            if (current_ == nullptr || end_ == nullptr) {
+        std::size_t available_size() const noexcept 
+        {
+            if (current_ == nullptr || end_ == nullptr) 
+            {
                 return 0;
             }
             return static_cast<std::size_t>(end_ - current_);

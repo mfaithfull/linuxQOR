@@ -23,21 +23,16 @@ namespace qor{ namespace contract::detail {
     template<class... Fields>
     constexpr void check_flattened_fields() 
     {
-        static_assert(((Fields::id > 0) && ...),
-            "CONTRACT field ids must be positive");
-        static_assert(unique_field_ids<Fields...>::value,
-            "CONTRACT field ids must be unique after BASE offsets are applied");
+        static_assert(((Fields::id > 0) && ...), "CONTRACT field ids must be positive");
+        static_assert(unique_field_ids<Fields...>::value, "CONTRACT field ids must be unique after BASE offsets are applied");
     }
 
     template<class Owner, class Base>
     constexpr void check_base_entry() 
     {
-        static_assert(!std::is_same_v<Base, Owner>,
-            "CONTRACT BASE(Type, offset): Type must not be the owner type itself");
-        static_assert(std::is_base_of_v<Base, Owner>,
-            "CONTRACT BASE(Type, offset): Type must be a base class of owner");
-        static_assert(std::is_convertible_v<Owner*, Base*>,
-            "CONTRACT BASE(Type, offset): Type must be an accessible and unambiguous base class");
+        static_assert(!std::is_same_v<Base, Owner>, "CONTRACT BASE(Type, offset): Type must not be the owner type itself");
+        static_assert(std::is_base_of_v<Base, Owner>, "CONTRACT BASE(Type, offset): Type must be a base class of owner");
+        static_assert(std::is_convertible_v<Owner*, Base*>, "CONTRACT BASE(Type, offset): Type must be an accessible and unambiguous base class");
     }
 
     template<class Tuple>

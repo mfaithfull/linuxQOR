@@ -97,12 +97,9 @@ namespace qor { namespace contract {
         static constexpr int id = DeclaredId;
         static constexpr int base_offset = 0;
 
-        static_assert(kind != field_kind::property || !std::is_void_v<DeclaredValue>,
-            "PROPERTY fields must carry their declared value type");
-        static_assert(kind != field_kind::reference || !std::is_void_v<DeclaredValue>,
-            "REFERENCE fields must carry their declared value type");
-        static_assert(kind != field_kind::member || std::is_member_object_pointer_v<decltype(Member)>,
-            "member fields require a member pointer");
+        static_assert(kind != field_kind::property || !std::is_void_v<DeclaredValue>, "PROPERTY fields must carry their declared value type");
+        static_assert(kind != field_kind::reference || !std::is_void_v<DeclaredValue>, "REFERENCE fields must carry their declared value type");
+        static_assert(kind != field_kind::member || std::is_member_object_pointer_v<decltype(Member)>, "member fields require a member pointer");
 
         using storage_type = typename detail::field_types<kind, Owner, DeclaredValue, Member, identity_type>::storage_type;
         using value_type = typename detail::field_types<kind, Owner, DeclaredValue, Member, identity_type>::value_type;

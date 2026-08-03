@@ -90,7 +90,7 @@ namespace qor { namespace contract {
     // compare chain. always_inline: without it the compiler does not fold this
     // into a caller's loop for wider messages.
     template<class T, class Fn, std::size_t... Is>
-    [[gnu::always_inline]] constexpr bool dispatch_field_by_id_impl(std::uint64_t id, Fn& fn, std::index_sequence<Is...>) 
+    qor_pp_forceinline constexpr bool dispatch_field_by_id_impl(std::uint64_t id, Fn& fn, std::index_sequence<Is...>) 
     {
         bool found = false;
         auto try_field = [&]<std::size_t Index>() 
@@ -115,7 +115,7 @@ namespace qor { namespace contract {
     // uint64_t so wire formats with a wider field id (e.g. compact) and ones with
     // a narrower one (e.g. protobuf's uint32_t field numbers) share one utility.
     template<class T, class Fn>
-    [[gnu::always_inline]] constexpr bool dispatch_field_by_id(std::uint64_t id, Fn&& fn) 
+    qor_pp_forceinline constexpr bool dispatch_field_by_id(std::uint64_t id, Fn&& fn) 
     {
         using object_type = std::remove_cvref_t<T>;
         return detail::dispatch_field_by_id_impl<object_type>(id, fn, std::make_index_sequence<field_count<object_type>()>{});
@@ -129,7 +129,7 @@ namespace qor { namespace contract {
     // name commonly need it for per-field bookkeeping (e.g. duplicate/missing
     // key tracking) that id-keyed formats don't.
     template<class T, class Fn, std::size_t... Is>
-    [[gnu::always_inline]] constexpr bool dispatch_field_by_name_impl(std::string_view name, Fn& fn, std::index_sequence<Is...>) 
+    qor_pp_forceinline constexpr bool dispatch_field_by_name_impl(std::string_view name, Fn& fn, std::index_sequence<Is...>) 
     {
         bool found = false;
         auto try_field = [&]<std::size_t Index>() 
@@ -150,7 +150,7 @@ namespace qor { namespace contract {
     // Calls fn(field, index) for the declared field whose name matches `key` and
     // returns true, or returns false without calling fn if none matches.
     template<class T, class Fn>
-    [[gnu::always_inline]] constexpr bool dispatch_field_by_name(std::string_view key, Fn&& fn) 
+    qor_pp_forceinline constexpr bool dispatch_field_by_name(std::string_view key, Fn&& fn) 
     {
         using object_type = std::remove_cvref_t<T>;
         return detail::dispatch_field_by_name_impl<object_type>(key, fn, std::make_index_sequence<field_count<object_type>()>{});

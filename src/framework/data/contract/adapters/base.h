@@ -27,8 +27,7 @@ namespace qor { namespace contract::adapters::base {
     struct NoField {};
 
     template<class Field>
-    inline constexpr bool has_field_context_v =
-        !std::is_same_v<clean_t<Field>, NoField>;
+    inline constexpr bool has_field_context_v = !std::is_same_v<clean_t<Field>, NoField>;
 
     template<class>
     inline constexpr bool always_false_v = false;
@@ -58,8 +57,7 @@ namespace qor { namespace contract::adapters::base {
     // codec dispatch.
     template<class T>
     inline constexpr bool is_byte_like_element_v =
-        std::is_same_v<T, std::byte> ||
-        (sizeof(T) == 1 && std::is_integral_v<T> && !std::is_same_v<T, bool>);
+        std::is_same_v<T, std::byte> || (sizeof(T) == 1 && std::is_integral_v<T> && !std::is_same_v<T, bool>);
 
     // A trailing run of zero bytes in a fixed-size byte-like buffer is elidable:
     // those bytes are reconstructed as zero on read regardless of what they
