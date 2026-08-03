@@ -79,9 +79,34 @@ namespace attribute_tests {
     struct Base {
         std::uint32_t id = 0;
 
-        CONTRACT(Base,
+        struct contract_fields 
+        { 
+            using id = decltype(qor::contract::make_member_field<Base, 1, &Base::id>(
+                 "id", qor::contract::make_field_attributes(
+                    CONTRACT_DESCRIBE_ATTRIBUTE(field_code{20}),
+                    CONTRACT_DESCRIBE_ATTRIBUTE(label{"base-id"})
+                )
+            ));
+        };
+        
+        friend constexpr auto contract_definition(qor::contract::tag<Base>) 
+        { 
+            return qor::contract::make_contract_with_attributes<Base>(
+                "Base", 
+                qor::contract::make_contract_attributes( 
+                    CONTRACT_DESCRIBE_ATTRIBUTE(type_code{10})
+                ), 
+                qor::contract::make_member_field<Base, 1, &Base::id>(
+                    "id", qor::contract::make_field_attributes(
+                    CONTRACT_DESCRIBE_ATTRIBUTE(field_code{20}),
+                    CONTRACT_DESCRIBE_ATTRIBUTE(label{"base-id"})
+                    )
+                )
+            ); 
+        }        
+        /*CONTRACT(Base,
             ATTRS(type_code{10}),
-            (id, 1, field_code{20}, label{"base-id"}))
+            (id, 1, field_code{20}, label{"base-id"}))*/
     };
 
     struct Middle : Base 
