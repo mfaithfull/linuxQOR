@@ -21,12 +21,12 @@ qor_application qor_role)
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(${target} ${qor_libraries} linqor_filesystem linqor_thread 
-linqor_process linqor_console)
+linqor_process)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(${target} ${qor_libraries} winqor_api_kernel winqor_filesystem 
-winqor_thread winqor_process winqor_console winqor_common) 
+winqor_thread winqor_process winqor_common) 
 endif()
 
 if (WIN32)
