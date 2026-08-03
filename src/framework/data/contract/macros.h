@@ -80,13 +80,13 @@
 #define CONTRACT_PP_BOOL(value) qor_pp_cat(CONTRACT_PP_BOOL_, value)
 
 #define CONTRACT_PP_FOR_EACH_COMMA(macro, ...) \
-    qor_pp_cat(CONTRACT_PP_FOR_EACH_COMMA_, qor_pp_tuple_elem(__VA_ARGS__))(macro, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_PP_FOR_EACH_COMMA_, CONTRACT_PP_NARG(__VA_ARGS__))(macro, __VA_ARGS__)
 
 #define CONTRACT_PP_FOR_EACH_COMMA_ARG(macro, arg, ...) \
-    qor_pp_cat(CONTRACT_PP_FOR_EACH_COMMA_ARG_, qor_pp_tuple_elem(__VA_ARGS__))(macro, arg, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_PP_FOR_EACH_COMMA_ARG_, CONTRACT_PP_NARG(__VA_ARGS__))(macro, arg, __VA_ARGS__)
 
 #define CONTRACT_PP_FOR_EACH_ARG(macro, arg, ...) \
-    qor_pp_cat(CONTRACT_PP_FOR_EACH_ARG_, qor_pp_tuple_elem(__VA_ARGS__))(macro, arg, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_PP_FOR_EACH_ARG_, CONTRACT_PP_NARG(__VA_ARGS__))(macro, arg, __VA_ARGS__)
 
 #define CONTRACT_PP_FOR_EACH_COMMA_1(m, x) m(x)
 #define CONTRACT_PP_FOR_EACH_COMMA_2(m, x, ...) m(x), CONTRACT_PP_FOR_EACH_COMMA_1(m, __VA_ARGS__)
@@ -551,7 +551,7 @@
         __VA_ARGS__)
 
 #define CONTRACT(contract_self_type, ...) \
-    qor_pp_cat(CONTRACT_CONTRACT_, CONTRACT_PP_BOOL(qor_pp_tuple_elem(__VA_ARGS__)))( \
+    qor_pp_cat(CONTRACT_CONTRACT_, CONTRACT_PP_BOOL(CONTRACT_PP_NARG(__VA_ARGS__)))( \
         contract_self_type, __VA_ARGS__)
 
 #endif//QOR_PP_H_CONTRACT_MACROS

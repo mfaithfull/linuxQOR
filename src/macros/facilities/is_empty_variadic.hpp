@@ -13,8 +13,6 @@
 # define QOR_PREPROCESSOR_FACILITIES_IS_EMPTY_VARIADIC_HPP
 #
 # include "../config/config.hpp"
-#
-# if qor_pp_variadics
 # include "../punctuation/is_begin_parens.hpp"
 # include "detail/is_empty.hpp"
 #
@@ -34,23 +32,49 @@
       ) \
     (param) \
 /**/
-#define qor_pp_is_empty_zero(param) 0
+#define qor_pp_IS_EMPTY_ZERO(param) 0
 # else
+# if defined(__cplusplus) && __cplusplus > 201703L
+# include "src/macros/variadic/has_opt.hpp"
 #define qor_pp_is_empty(...) \
     qor_pp_detail_is_empty_iif \
       ( \
-        qor_pp_is_begin_parens \
+      qor_pp_variadic_has_opt() \
+      ) \
+      ( \
+      qor_pp_is_empty_opt, \
+      qor_pp_is_empty_no_opt \
+      ) \
+    (__VA_ARGS__) \
+/**/
+#define qor_pp_is_empty_function2(...) \
+    __VA_OPT__(0,) 1 \
+/**/
+#define qor_pp_is_empty_function(...) \
+    qor_pp_is_empty_function2(__VA_ARGS__) \
+/**/
+#define qor_pp_is_empty_opt(...) \
+    qor_pp_variadic_has_opt_elem0(qor_pp_is_empty_function(__VA_ARGS__),) \
+/**/
+# else
+#define qor_pp_is_empty(...) \
+    qor_pp_is_empty_no_opt(__VA_ARGS__) \
+/**/
+# endif /* defined(__cplusplus) && __cplusplus > 201703L */
+#define qor_pp_is_empty_no_opt(...) \
+    qor_pp_detail_is_empty_iif \
+      ( \
+      qor_pp_is_begin_parens \
         ( \
         __VA_ARGS__ \
         ) \
       ) \
       ( \
-        qor_pp_is_empty_zero, \
-        qor_pp_detail_is_empty_process \
+      qor_pp_is_empty_zero, \
+      qor_pp_detail_is_empty_process \
       ) \
     (__VA_ARGS__) \
 /**/
 #define qor_pp_is_empty_zero(...) 0
-# endif // qor_pp_variadics_msvc && _MSC_VER <= 1400
-# endif // qor_pp_variadics
+# endif /* qor_pp_variadics_msvc && _MSC_VER <= 1400 */
 # endif // QOR_PREPROCESSOR_FACILITIES_IS_EMPTY_VARIADIC_HPP
