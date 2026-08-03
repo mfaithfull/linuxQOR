@@ -8,6 +8,8 @@
 #include "src/configuration/configuration.h"
 #include "src/qor/tdd/tdd.h"
 #include "src/framework/data/contract/contract.h"
+#include "src/framework/data/contract/interface.h"
+#include "src/qor/reflection/core_name.h"
 
 #include <cassert>
 #include <cstdint>
@@ -76,52 +78,154 @@ namespace qor { namespace contract {
 
 namespace attribute_tests {
 
-    struct Base {
+    struct Base 
+    {
         std::uint32_t id = 0;
 
         struct contract_fields 
         { 
             using id = decltype(qor::contract::make_member_field<Base, 1, &Base::id>(
-                 "id", qor::contract::make_field_attributes(
+                qor_reflection::get_name<0, attribute_tests::Base>(), 
+                qor::contract::make_field_attributes(
                     CONTRACT_DESCRIBE_ATTRIBUTE(field_code{20}),
                     CONTRACT_DESCRIBE_ATTRIBUTE(label{"base-id"})
                 )
             ));
         };
-        
-        friend constexpr auto contract_definition(qor::contract::tag<Base>) 
-        { 
-            return qor::contract::make_contract_with_attributes<Base>(
-                "Base", 
-                qor::contract::make_contract_attributes( 
-                    CONTRACT_DESCRIBE_ATTRIBUTE(type_code{10})
-                ), 
-                qor::contract::make_member_field<Base, 1, &Base::id>(
-                    "id", qor::contract::make_field_attributes(
-                    CONTRACT_DESCRIBE_ATTRIBUTE(field_code{20}),
-                    CONTRACT_DESCRIBE_ATTRIBUTE(label{"base-id"})
-                    )
-                )
-            ); 
-        }        
+    
+        friend constexpr auto contract_definition(qor::contract::tag<Base>);
+        friend struct qor::contract::interface_contract_of<Base>;
         /*CONTRACT(Base,
             ATTRS(type_code{10}),
             (id, 1, field_code{20}, label{"base-id"}))*/
     };
+}//attribute_tests
+
+    template<>
+    struct qor::contract::interface_contract_of<attribute_tests::Base>
+    {
+        struct fields
+        {
+            using id = decltype(qor::contract::make_member_field<attribute_tests::Base, 1, &attribute_tests::Base::id>(
+                qor_reflection::get_name<0, attribute_tests::Base>(), 
+                qor::contract::make_field_attributes(
+                    qor::contract::describe_attribute((attribute_tests::field_code{20}), CONTRACT_STRINGIZE(attribute_tests::field_code{20})),
+                    qor::contract::describe_attribute((attribute_tests::label{"base-id"}), CONTRACT_STRINGIZE(attribute_tests::label{"base-id"}))
+                )
+            ));
+        };
+
+        constexpr auto contract_definition(qor::contract::tag<attribute_tests::Base>) 
+        { 
+            return qor::contract::make_contract_with_attributes<attribute_tests::Base>(
+                qor_reflection::nameof<attribute_tests::Base>(),
+                qor::contract::make_contract_attributes(
+                    qor::contract::describe_attribute((attribute_tests::type_code{10}), qor_pp_stringize(attribute_tests::type_code{10}))
+                ), 
+                qor::contract::make_member_field<attribute_tests::Base, 1, &attribute_tests::Base::id>(
+                    qor_reflection::get_name<0, attribute_tests::Base>(),
+                    qor::contract::make_field_attributes(
+                        qor::contract::describe_attribute((attribute_tests::field_code{20}), qor_pp_stringize(attribute_tests::field_code{20})),                        
+                        qor::contract::describe_attribute((attribute_tests::label{"base-id"}), qor_pp_stringize(attribute_tests::label{"base-id"}))
+                    )
+                )
+            ); 
+        }        
+    };
+
+namespace attribute_tests {
+
+    constexpr auto contract_definition(qor::contract::tag<Base>) 
+    { 
+        return qor::contract::make_contract_with_attributes<Base>(
+            qor_reflection::nameof<attribute_tests::Base>(), 
+            qor::contract::make_contract_attributes( 
+                CONTRACT_DESCRIBE_ATTRIBUTE(type_code{10})
+            ), 
+            qor::contract::make_member_field<Base, 1, &Base::id>(
+                qor_reflection::get_name<0, attribute_tests::Base>(), 
+                qor::contract::make_field_attributes(
+                    CONTRACT_DESCRIBE_ATTRIBUTE(field_code{20}),
+                    CONTRACT_DESCRIBE_ATTRIBUTE(label{"base-id"})
+                )
+            )
+        ); 
+    }        
 
     struct Middle : Base 
     {
-        CONTRACT(Middle, BASE(Base, 100))
+        struct contract_fields {  }; 
+        
+        friend constexpr auto contract_definition(qor::contract::tag<Middle>) 
+        { 
+            return qor::contract::make_contract<Middle>(qor_reflection::nameof<attribute_tests::Middle>(), qor::contract::base<Base, 100>{}); 
+        }
+        friend struct qor::contract::interface_contract_of<Base>;
+        //CONTRACT(Middle, BASE(Base, 100))
     };
+
+}//attribute_tests
+
+    template<>
+    struct qor::contract::interface_contract_of<attribute_tests::Middle>
+    {
+        struct fields{};
+
+        friend constexpr auto contract_definition(qor::contract::tag<attribute_tests::Middle>) 
+        { 
+            return qor::contract::make_contract<attribute_tests::Middle>(qor_reflection::nameof<attribute_tests::Middle>(), qor::contract::base<attribute_tests::Base, 100>{}); 
+        }
+    };
+
+namespace attribute_tests {
 
     struct Event : Middle {
         std::uint32_t raw_value = 0;
 
-        CONTRACT(Event,
+        struct contract_fields 
+        {
+            using value = decltype(qor::contract::make_property_field<Event, 2, std::uint32_t>(
+                "value", 
+                qor::contract::make_field_attributes(
+                    CONTRACT_DESCRIBE_ATTRIBUTE(field_code{40}),
+                    CONTRACT_DESCRIBE_ATTRIBUTE(other{50}),
+                    CONTRACT_DESCRIBE_ATTRIBUTE(label{"property"}),
+                    CONTRACT_DESCRIBE_ATTRIBUTE(label{"display"})
+                )
+            ));
+        }; 
+        
+        friend constexpr auto contract_definition(qor::contract::tag<Event>) 
+        { 
+            return qor::contract::make_contract_with_attributes<Event>(
+                qor_reflection::nameof<Event>(),
+                qor::contract::make_contract_attributes( 
+                    CONTRACT_DESCRIBE_ATTRIBUTE(type_code{30}),
+                    CONTRACT_DESCRIBE_ATTRIBUTE(label{"event"})
+                ), 
+                qor::contract::base<Middle, 1000>{},
+                qor::contract::make_property_field<Event, 2, std::uint32_t>(
+                    "value", 
+                    qor::contract::make_field_attributes(
+                        CONTRACT_DESCRIBE_ATTRIBUTE(field_code{40}),
+                        CONTRACT_DESCRIBE_ATTRIBUTE(other{50}),
+                        CONTRACT_DESCRIBE_ATTRIBUTE(label{"property"}),
+                        CONTRACT_DESCRIBE_ATTRIBUTE(label{"display"})
+                    )
+                )                
+            ); 
+
+        }
+
+        /*~, 1(value, 2, std::uint32_t,
+                field_code{40}, other{50}, label{"property"}, label{"display"})(value, 2, std::uint32_t,
+                field_code{40}, other{50}, label{"property"}, label{"display"})*/
+
+        /*CONTRACT(Event,
             ATTRS(type_code{30}, label{"event"}),
             BASE(Middle, 1000),
             PROPERTY(value, 2, std::uint32_t,
-                field_code{40}, other{50}, label{"property"}, label{"display"}))
+                field_code{40}, other{50}, label{"property"}, label{"display"}))*/
         
         std::uint32_t contract_get(const contract_fields::value&) const 
         {
