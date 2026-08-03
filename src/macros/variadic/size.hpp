@@ -41,7 +41,7 @@
 #
 # else
 #
-#    if qor_pp_variaidic_has_opt()
+#    if qor_pp_variadic_has_opt()
 #       define qor_pp_variadic_size_empty(...) 0
 #       define qor_pp_variadic_size(...) qor_pp_iff(qor_pp_check_empty(__VA_ARGS__),qor_pp_variadic_size_empty,qor_pp_variadic_do_size)(__VA_ARGS__)
 #    else
