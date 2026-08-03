@@ -1,8 +1,12 @@
-#pragma once
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
 
 // Copyright 2026 Ilya Korolev
 // Licensed under the Apache License, Version 2.0
 // SPDX-License-Identifier: Apache-2.0
+
+#ifndef QOR_PP_H_TEST_CONTRACT_TEST_TYPES
+#define QOR_PP_H_TEST_CONTRACT_TEST_TYPES
 
 #include "src/framework/data/contract/contract.h"
 
@@ -21,7 +25,7 @@ namespace contract_tests {
         volatile unsigned long long time = 30;
         volatile unsigned long long clock = 40;
 
-        qor_pp_contract(BaseCounters, (count, 1), (error, 2), (time, 3), (clock, 4))
+        CONTRACT(BaseCounters, (count, 1), (error, 2), (time, 3), (clock, 4))
     };
 
     struct CountingAdapter 
@@ -60,7 +64,7 @@ namespace contract_tests {
     {
         std::ostringstream out;
         DebugStringAdapter adapter(out);
-        contract::visit(obj, adapter);
+        qor::contract::visit(obj, adapter);
         return out.str();
     }
 
@@ -69,28 +73,28 @@ namespace contract_tests {
         int timestamp = 7;
         int service = 11;
 
-        qor_pp_contract(RequestBase, (timestamp, 1), (service, 2))
+        CONTRACT(RequestBase, (timestamp, 1), (service, 2))
     };
 
     struct RequestEvent : public RequestBase 
     {
         int user_id = 42;
 
-        qor_pp_contract(RequestEvent, BASE(RequestBase, 1000), (user_id, 1101))
+        CONTRACT(RequestEvent, BASE(RequestBase, 1000), (user_id, 1101))
     };
 
     struct TraceContext 
     {
         int trace_id = 5;
 
-        qor_pp_contract(TraceContext, (trace_id, 1))
+        CONTRACT(TraceContext, (trace_id, 1))
     };
 
     struct RoutedEvent : public RequestBase, public TraceContext 
     {
         int route_id = 9;
 
-        qor_pp_contract(RoutedEvent,
+        CONTRACT(RoutedEvent,
             BASE(RequestBase, 1000),
             BASE(TraceContext, 2000),
             (route_id, 3001))
@@ -100,7 +104,7 @@ namespace contract_tests {
     {
         int raw_count = 0;
 
-        qor_pp_contract(HookedMetric, (raw_count, 1))
+        CONTRACT(HookedMetric, (raw_count, 1))
 
         int contract_get(const contract_fields::raw_count&) const 
         {
@@ -118,7 +122,7 @@ namespace contract_tests {
     {
         int raw_count = 0;
 
-        qor_pp_contract(PlainMetric, (raw_count, 1))
+        CONTRACT(PlainMetric, (raw_count, 1))
     };
 
     struct RequestStat 
@@ -126,7 +130,7 @@ namespace contract_tests {
         std::uint64_t started_ns = 100;
         std::uint64_t finished_ns = 150;
 
-        qor_pp_contract(RequestStat,
+        CONTRACT(RequestStat,
             PROPERTY(duration_ns, 10, std::uint64_t),
             (started_ns, 11),
             (finished_ns, 12))
@@ -148,7 +152,7 @@ namespace contract_tests {
         ReferenceFallbackMetric()
             : raw_count(storage) {}
 
-        qor_pp_contract(ReferenceFallbackMetric, REFERENCE(raw_count, 1))
+        CONTRACT(ReferenceFallbackMetric, REFERENCE(raw_count, 1))
     };
 
     struct ReferenceHookMetric 
@@ -159,7 +163,7 @@ namespace contract_tests {
         ReferenceHookMetric()
             : raw_count(storage) {}
 
-        qor_pp_contract(ReferenceHookMetric, REFERENCE(raw_count, 1))
+        CONTRACT(ReferenceHookMetric, REFERENCE(raw_count, 1))
 
         std::uint64_t contract_get(const contract_fields::raw_count&) const {
             return raw_count * 10;
@@ -179,7 +183,7 @@ namespace contract_tests {
         ReferenceFreeMetric()
             : raw_count(storage) {}
 
-        qor_pp_contract(ReferenceFreeMetric, REFERENCE(raw_count, 1))
+        CONTRACT(ReferenceFreeMetric, REFERENCE(raw_count, 1))
     };
 
     template<class Field>
@@ -200,7 +204,7 @@ namespace contract_tests {
     {
         int raw_count = 0;
 
-        qor_pp_contract(FreeHookMetric, (raw_count, 1))
+        CONTRACT(FreeHookMetric, (raw_count, 1))
     };
 
     template<class Field>
@@ -221,7 +225,7 @@ namespace contract_tests {
     {
         int raw_count = 0;
 
-        qor_pp_contract(FreeTagMetric, (raw_count, 1))
+        CONTRACT(FreeTagMetric, (raw_count, 1))
     };
 
     inline int contract_get(const FreeTagMetric::contract_fields::raw_count&, const FreeTagMetric& metric) 
@@ -240,7 +244,7 @@ namespace contract_tests {
         std::uint64_t low = 20;
         std::uint64_t high = 45;
 
-        qor_pp_contract(FreePropertyStat,
+        CONTRACT(FreePropertyStat,
             PROPERTY(delta, 5, std::uint64_t),
             (low, 6),
             (high, 7))
@@ -263,7 +267,7 @@ namespace contract_tests {
         std::uint64_t low = 30;
         std::uint64_t high = 60;
 
-        qor_pp_contract(FreeTagPropertyStat,
+        CONTRACT(FreeTagPropertyStat,
             PROPERTY(delta, 5, std::uint64_t),
             (low, 6),
             (high, 7))
@@ -292,7 +296,7 @@ namespace contract_tests {
         ReferenceMetric()
             : raw_count(storage) {}
 
-        qor_pp_contract(ReferenceMetric, REFERENCE(raw_count, 1))
+        CONTRACT(ReferenceMetric, REFERENCE(raw_count, 1))
     };
 
     inline std::uint64_t contract_get(const ReferenceMetric::contract_fields::raw_count&, const ReferenceMetric& metric) 
@@ -307,3 +311,6 @@ namespace contract_tests {
     }
 
 }//contract_tests
+
+
+#endif//QOR_PP_H_TEST_CONTRACT_TEST_TYPES

@@ -1,13 +1,21 @@
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
 // Copyright 2026 Ilya Korolev
 // Licensed under the Apache License, Version 2.0
 // SPDX-License-Identifier: Apache-2.0
 
-#include "contract_test_types.hpp"
+#include "src/configuration/configuration.h"
+#include "src/qor/tdd/tdd.h"
 
+#include "../contract_test_types.h"
 
 #include <cassert>
 
-int main() {
+using namespace qor;
+
+qor_pp_test_case(access_hooks_test) 
+{
     using namespace contract_tests;
 
     HookedMetric hooked;
@@ -101,5 +109,4 @@ int main() {
     assert(reference_raw_count.get(reference_metric) == 120);
     assert(reference_raw_count.kind == contract::field_kind::reference);
 
-    return 0;
 }

@@ -1,4 +1,8 @@
-#pragma once
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
+#ifndef QOR_PP_H_CONTRACT_MACROS
+#define QOR_PP_H_CONTRACT_MACROS
 
 // Copyright 2026 Ilya Korolev
 // Licensed under the Apache License, Version 2.0
@@ -6,9 +10,8 @@
 
 #include <type_traits>
 #include <utility>
+#include "src/macros/cat.hpp"
 
-#define CONTRACT_PP_CAT_IMPL(a, b) a##b
-#define CONTRACT_PP_CAT(a, b) CONTRACT_PP_CAT_IMPL(a, b)
 #define CONTRACT_PP_UNPAREN(...) __VA_ARGS__
 #define CONTRACT_PP_FIRST(first, ...) first
 
@@ -17,17 +20,27 @@
 // CONTRACT_PP_FOR_EACH*/BOOL chains below, which must all be extended in
 // lockstep with this). Per-field attribute count (PROPERTY_*/MAKE_ENTRY_*_*)
 // is a separate, independent limit, still 16 - not raised, not requested.
-#define CONTRACT_PP_NARG_IMPL( \
-    _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, \
-    _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, \
-    _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, \
-    _30, _31, _32, N, ...) N
 
 #define CONTRACT_PP_NARG(...) \
-    CONTRACT_PP_NARG_IMPL(0 __VA_OPT__(,) __VA_ARGS__, \
-        32, 31, 30, 29, 28, 27, 26, 25, 24, 23, \
-        22, 21, 20, 19, 18, 17, 16, 15, 14, 13, \
-        12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+         PP_NARG_(__VA_ARGS__,PP_RSEQ_N())
+#define PP_NARG_(...) \
+         PP_ARG_N(__VA_ARGS__)
+#define PP_ARG_N( \
+          _1, _2, _3, _4, _5, _6, _7, _8, _9,_10, \
+         _11,_12,_13,_14,_15,_16,_17,_18,_19,_20, \
+         _21,_22,_23,_24,_25,_26,_27,_28,_29,_30, \
+         _31,_32,_33,_34,_35,_36,_37,_38,_39,_40, \
+         _41,_42,_43,_44,_45,_46,_47,_48,_49,_50, \
+         _51,_52,_53,_54,_55,_56,_57,_58,_59,_60, \
+         _61,_62,_63,N,...) N
+#define PP_RSEQ_N() \
+         63,62,61,60,                   \
+         59,58,57,56,55,54,53,52,51,50, \
+         49,48,47,46,45,44,43,42,41,40, \
+         39,38,37,36,35,34,33,32,31,30, \
+         29,28,27,26,25,24,23,22,21,20, \
+         19,18,17,16,15,14,13,12,11,10, \
+         9,8,7,6,5,4,3,2,1,0
 
 #define CONTRACT_PP_BOOL_0 0
 #define CONTRACT_PP_BOOL_1 1
@@ -62,16 +75,16 @@
 #define CONTRACT_PP_BOOL_30 1
 #define CONTRACT_PP_BOOL_31 1
 #define CONTRACT_PP_BOOL_32 1
-#define CONTRACT_PP_BOOL(value) CONTRACT_PP_CAT(CONTRACT_PP_BOOL_, value)
+#define CONTRACT_PP_BOOL(value) qor_pp_cat(CONTRACT_PP_BOOL_, value)
 
 #define CONTRACT_PP_FOR_EACH_COMMA(macro, ...) \
-    CONTRACT_PP_CAT(CONTRACT_PP_FOR_EACH_COMMA_, CONTRACT_PP_NARG(__VA_ARGS__))(macro, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_PP_FOR_EACH_COMMA_, CONTRACT_PP_NARG(__VA_ARGS__))(macro, __VA_ARGS__)
 
 #define CONTRACT_PP_FOR_EACH_COMMA_ARG(macro, arg, ...) \
-    CONTRACT_PP_CAT(CONTRACT_PP_FOR_EACH_COMMA_ARG_, CONTRACT_PP_NARG(__VA_ARGS__))(macro, arg, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_PP_FOR_EACH_COMMA_ARG_, CONTRACT_PP_NARG(__VA_ARGS__))(macro, arg, __VA_ARGS__)
 
 #define CONTRACT_PP_FOR_EACH_ARG(macro, arg, ...) \
-    CONTRACT_PP_CAT(CONTRACT_PP_FOR_EACH_ARG_, CONTRACT_PP_NARG(__VA_ARGS__))(macro, arg, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_PP_FOR_EACH_ARG_, CONTRACT_PP_NARG(__VA_ARGS__))(macro, arg, __VA_ARGS__)
 
 #define CONTRACT_PP_FOR_EACH_COMMA_1(m, x) m(x)
 #define CONTRACT_PP_FOR_EACH_COMMA_2(m, x, ...) m(x), CONTRACT_PP_FOR_EACH_COMMA_1(m, __VA_ARGS__)
@@ -178,7 +191,7 @@
     qor::contract::describe_attribute((value), CONTRACT_STRINGIZE(value))
 
 #define BASE(type, offset) (CONTRACT_BASE_MARKER, type, offset)
-#define REFERENCE(...) CONTRACT_PP_CAT(CONTRACT_REFERENCE_, CONTRACT_PP_NARG(__VA_ARGS__))(__VA_ARGS__)
+#define REFERENCE(...) qor_pp_cat(CONTRACT_REFERENCE_, CONTRACT_PP_NARG(__VA_ARGS__))(__VA_ARGS__)
 #define CONTRACT_REFERENCE_2(name, id) (CONTRACT_REFERENCE_MARKER, name, id)
 #define CONTRACT_REFERENCE_WITH_ATTRS(name, id, ...) \
     (CONTRACT_REFERENCE_MARKER, name, id, __VA_ARGS__)
@@ -197,7 +210,7 @@
 #define CONTRACT_REFERENCE_15 CONTRACT_REFERENCE_WITH_ATTRS
 #define CONTRACT_REFERENCE_16 CONTRACT_REFERENCE_WITH_ATTRS
 // PROPERTY keeps the legacy 3-argument form and adds an attrs-bearing form.
-#define PROPERTY(...) CONTRACT_PP_CAT(CONTRACT_PROPERTY_, CONTRACT_PP_NARG(__VA_ARGS__))(__VA_ARGS__)
+#define PROPERTY(...) qor_pp_cat(CONTRACT_PROPERTY_, CONTRACT_PP_NARG(__VA_ARGS__))(__VA_ARGS__)
 #define CONTRACT_PROPERTY_3(name, id, type) (CONTRACT_PROPERTY_MARKER, name, id, type)
 #define CONTRACT_PROPERTY_WITH_ATTRS(name, id, type, ...) \
     (CONTRACT_PROPERTY_MARKER, name, id, type, __VA_ARGS__)
@@ -220,16 +233,16 @@
 #define CONTRACT_PP_PROBE() ~, 1
 #define CONTRACT_PP_IS_PROBE(...) CONTRACT_PP_SECOND(__VA_ARGS__, 0)
 
-#define CONTRACT_IS_BASE_MARKER(value) CONTRACT_PP_IS_PROBE(CONTRACT_PP_CAT(CONTRACT_IS_BASE_MARKER_, value))
+#define CONTRACT_IS_BASE_MARKER(value) CONTRACT_PP_IS_PROBE(qor_pp_cat(CONTRACT_IS_BASE_MARKER_, value))
 #define CONTRACT_IS_BASE_MARKER_CONTRACT_BASE_MARKER CONTRACT_PP_PROBE()
 
-#define CONTRACT_IS_PROPERTY_MARKER(value) CONTRACT_PP_IS_PROBE(CONTRACT_PP_CAT(CONTRACT_IS_PROPERTY_MARKER_, value))
+#define CONTRACT_IS_PROPERTY_MARKER(value) CONTRACT_PP_IS_PROBE(qor_pp_cat(CONTRACT_IS_PROPERTY_MARKER_, value))
 #define CONTRACT_IS_PROPERTY_MARKER_CONTRACT_PROPERTY_MARKER CONTRACT_PP_PROBE()
 
-#define CONTRACT_IS_REFERENCE_MARKER(value) CONTRACT_PP_IS_PROBE(CONTRACT_PP_CAT(CONTRACT_IS_REFERENCE_MARKER_, value))
+#define CONTRACT_IS_REFERENCE_MARKER(value) CONTRACT_PP_IS_PROBE(qor_pp_cat(CONTRACT_IS_REFERENCE_MARKER_, value))
 #define CONTRACT_IS_REFERENCE_MARKER_CONTRACT_REFERENCE_MARKER CONTRACT_PP_PROBE()
 
-#define CONTRACT_IS_ATTRS_MARKER(value) CONTRACT_PP_IS_PROBE(CONTRACT_PP_CAT(CONTRACT_IS_ATTRS_MARKER_, value))
+#define CONTRACT_IS_ATTRS_MARKER(value) CONTRACT_PP_IS_PROBE(qor_pp_cat(CONTRACT_IS_ATTRS_MARKER_, value))
 #define CONTRACT_IS_ATTRS_MARKER_CONTRACT_ATTRS_MARKER CONTRACT_PP_PROBE()
 
 // Every entry starts with a marker so the DSL can remain a single tuple form.
@@ -242,15 +255,15 @@
 #define CONTRACT_ENTRY_IS_REFERENCE(entry) CONTRACT_IS_REFERENCE_MARKER(CONTRACT_ENTRY_HEAD(entry))
 #define CONTRACT_ENTRY_IS_ATTRS(entry) CONTRACT_IS_ATTRS_MARKER(CONTRACT_ENTRY_HEAD(entry))
 #define CONTRACT_ENTRY_KIND(entry) \
-    CONTRACT_PP_CAT(CONTRACT_ENTRY_KIND_BASE_, CONTRACT_ENTRY_IS_BASE(entry))(entry)
+    qor_pp_cat(CONTRACT_ENTRY_KIND_BASE_, CONTRACT_ENTRY_IS_BASE(entry))(entry)
 
 #define CONTRACT_ENTRY_KIND_BASE_1(entry) 1
 #define CONTRACT_ENTRY_KIND_BASE_0(entry) \
-    CONTRACT_PP_CAT(CONTRACT_ENTRY_KIND_REFERENCE_, CONTRACT_ENTRY_IS_REFERENCE(entry))(entry)
+    qor_pp_cat(CONTRACT_ENTRY_KIND_REFERENCE_, CONTRACT_ENTRY_IS_REFERENCE(entry))(entry)
 
 #define CONTRACT_ENTRY_KIND_REFERENCE_1(entry) 2
 #define CONTRACT_ENTRY_KIND_REFERENCE_0(entry) \
-    CONTRACT_PP_CAT(CONTRACT_ENTRY_KIND_PROPERTY_, CONTRACT_ENTRY_IS_PROPERTY(entry))(entry)
+    qor_pp_cat(CONTRACT_ENTRY_KIND_PROPERTY_, CONTRACT_ENTRY_IS_PROPERTY(entry))(entry)
 
 #define CONTRACT_ENTRY_KIND_PROPERTY_1(entry) 3
 #define CONTRACT_ENTRY_KIND_PROPERTY_0(entry) 0
@@ -275,16 +288,16 @@
         __VA_OPT__(CONTRACT_PP_FOR_EACH_COMMA(CONTRACT_DESCRIBE_ATTRIBUTE, __VA_ARGS__)))
 
 #define CONTRACT_MAKE_ENTRY(contract_self_type, entry) \
-    CONTRACT_PP_CAT(CONTRACT_MAKE_ENTRY_, CONTRACT_ENTRY_KIND(entry))(contract_self_type, entry)
+    qor_pp_cat(CONTRACT_MAKE_ENTRY_, CONTRACT_ENTRY_KIND(entry))(contract_self_type, entry)
 
 #define CONTRACT_DECLARE_FIELD(contract_self_type, entry) \
-    CONTRACT_PP_CAT(CONTRACT_DECLARE_FIELD_, CONTRACT_ENTRY_KIND(entry))(contract_self_type, entry)
+    qor_pp_cat(CONTRACT_DECLARE_FIELD_, CONTRACT_ENTRY_KIND(entry))(contract_self_type, entry)
 
 #define CONTRACT_DECLARE_FIELD_0(contract_self_type, pair) \
     CONTRACT_DECLARE_FIELD_0_EXPAND(contract_self_type, CONTRACT_PP_UNPAREN pair)
 
 #define CONTRACT_DECLARE_FIELD_0_EXPAND(contract_self_type, ...) \
-    CONTRACT_PP_CAT(CONTRACT_DECLARE_FIELD_0_, CONTRACT_PP_NARG(__VA_ARGS__))(contract_self_type, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_DECLARE_FIELD_0_, CONTRACT_PP_NARG(__VA_ARGS__))(contract_self_type, __VA_ARGS__)
 
 #define CONTRACT_DECLARE_FIELD_0_BUILD(contract_self_type, name, id, ...) \
     using name = decltype(qor::contract::make_member_field<contract_self_type, id, &contract_self_type::name>( \
@@ -318,7 +331,7 @@
     CONTRACT_DECLARE_REFERENCE_FIELD_EXPAND(contract_self_type, CONTRACT_PP_UNPAREN entry)
 
 #define CONTRACT_DECLARE_REFERENCE_FIELD_EXPAND(contract_self_type, ...) \
-    CONTRACT_PP_CAT(CONTRACT_DECLARE_REFERENCE_FIELD_, CONTRACT_PP_NARG(__VA_ARGS__))(contract_self_type, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_DECLARE_REFERENCE_FIELD_, CONTRACT_PP_NARG(__VA_ARGS__))(contract_self_type, __VA_ARGS__)
 
 #define CONTRACT_DECLARE_REFERENCE_FIELD_BUILD(contract_self_type, name, id, ...) \
     struct name : qor::contract::field< \
@@ -365,7 +378,7 @@
 #define CONTRACT_DECLARE_PROPERTY_FIELD(contract_self_type, entry) \
     CONTRACT_DECLARE_PROPERTY_FIELD_EXPAND(contract_self_type, CONTRACT_PP_UNPAREN entry)
 #define CONTRACT_DECLARE_PROPERTY_FIELD_EXPAND(contract_self_type, ...) \
-    CONTRACT_PP_CAT(CONTRACT_DECLARE_PROPERTY_FIELD_, CONTRACT_PP_NARG(__VA_ARGS__))(contract_self_type, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_DECLARE_PROPERTY_FIELD_, CONTRACT_PP_NARG(__VA_ARGS__))(contract_self_type, __VA_ARGS__)
 #define CONTRACT_DECLARE_PROPERTY_FIELD_4(contract_self_type, marker, name, id, type) \
     using name = decltype(qor::contract::make_property_field<contract_self_type, id, type>( \
         CONTRACT_STRINGIZE(name), CONTRACT_MAKE_FIELD_ATTRIBUTES()));
@@ -389,7 +402,7 @@
     CONTRACT_MAKE_ENTRY_0_EXPAND(contract_self_type, CONTRACT_PP_UNPAREN pair)
 
 #define CONTRACT_MAKE_ENTRY_0_EXPAND(contract_self_type, ...) \
-    CONTRACT_PP_CAT(CONTRACT_MAKE_ENTRY_0_, CONTRACT_PP_NARG(__VA_ARGS__))( \
+    qor_pp_cat(CONTRACT_MAKE_ENTRY_0_, CONTRACT_PP_NARG(__VA_ARGS__))( \
         contract_self_type, __VA_ARGS__)
 
 #define CONTRACT_MAKE_ENTRY_0_2(contract_self_type, name, id) \
@@ -425,7 +438,7 @@
     CONTRACT_MAKE_REFERENCE_ENTRY_EXPAND(contract_self_type, CONTRACT_PP_UNPAREN entry)
 
 #define CONTRACT_MAKE_REFERENCE_ENTRY_EXPAND(contract_self_type, ...) \
-    CONTRACT_PP_CAT(CONTRACT_MAKE_REFERENCE_ENTRY_, CONTRACT_PP_NARG(__VA_ARGS__))(contract_self_type, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_MAKE_REFERENCE_ENTRY_, CONTRACT_PP_NARG(__VA_ARGS__))(contract_self_type, __VA_ARGS__)
 
 #define CONTRACT_MAKE_REFERENCE_ENTRY_3(contract_self_type, marker, name, id) \
     typename contract_fields::name{CONTRACT_STRINGIZE(name), CONTRACT_MAKE_FIELD_ATTRIBUTES()}
@@ -453,7 +466,7 @@
     CONTRACT_MAKE_ENTRY_2_EXPAND(contract_self_type, CONTRACT_PP_UNPAREN entry)
 
 #define CONTRACT_MAKE_ENTRY_2_EXPAND(contract_self_type, ...) \
-    CONTRACT_PP_CAT(CONTRACT_MAKE_ENTRY_2_, CONTRACT_PP_NARG(__VA_ARGS__))( \
+    qor_pp_cat(CONTRACT_MAKE_ENTRY_2_, CONTRACT_PP_NARG(__VA_ARGS__))( \
         contract_self_type, __VA_ARGS__)
 
 #define CONTRACT_MAKE_ENTRY_2_4(contract_self_type, marker, name, id, type) \
@@ -497,7 +510,7 @@
 
 // The first entry decides whether the contract has a top-level ATTRS(...) pack.
 #define CONTRACT_DISPATCH(contract_self_type, has_attributes, ...) \
-    CONTRACT_PP_CAT(CONTRACT_DISPATCH_, has_attributes)(contract_self_type, __VA_ARGS__)
+    qor_pp_cat(CONTRACT_DISPATCH_, has_attributes)(contract_self_type, __VA_ARGS__)
 
 // The first entry decides whether the contract starts with ATTRS(...).
 #define CONTRACT_DISPATCH_0(contract_self_type, ...) \
@@ -536,5 +549,7 @@
         __VA_ARGS__)
 
 #define CONTRACT(contract_self_type, ...) \
-    CONTRACT_PP_CAT(CONTRACT_CONTRACT_, CONTRACT_PP_BOOL(CONTRACT_PP_NARG(__VA_ARGS__)))( \
+    qor_pp_cat(CONTRACT_CONTRACT_, CONTRACT_PP_BOOL(CONTRACT_PP_NARG(__VA_ARGS__)))( \
         contract_self_type, __VA_ARGS__)
+
+#endif//QOR_PP_H_CONTRACT_MACROS

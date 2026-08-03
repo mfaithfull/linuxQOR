@@ -3,7 +3,12 @@ set(target QORTestContract)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 add_executable(${target} test_main.cpp
-core/test_attributes.cpp)
+core/test_attributes.cpp
+core/test_base_flattening.cpp
+core/test_attribute_validation.cpp
+core/test_attribute_resolution.cpp
+core/test_adapter_traits.cpp
+core/test_access_hooks.cpp)
 
 target_compile_definitions(${target} PRIVATE CONSOLE 
 qor_pp_ver_major=${PROJECT_VERSION_MAJOR}

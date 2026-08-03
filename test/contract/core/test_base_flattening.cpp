@@ -1,16 +1,23 @@
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
 // Copyright 2026 Ilya Korolev
 // Licensed under the Apache License, Version 2.0
 // SPDX-License-Identifier: Apache-2.0
 
-#include "contract_test_types.hpp"
+#include "src/configuration/configuration.h"
+#include "src/qor/tdd/tdd.h"
+#include "../contract_test_types.h"
 
-#include <contract/adapters/schema.hpp>
+#include "src/framework/data/contract/adapters/schema.h"
 
 #include <cassert>
 
-int main() {
-    using namespace contract_tests;
+using namespace qor;
+using namespace contract_tests;
 
+qor_pp_test_case(test_base_flattening) 
+{
     static_assert(contract::field_count<RequestEvent>() == 3);
 
     RequestEvent event;
@@ -42,5 +49,4 @@ int main() {
     assert(debug_string(routed) == "timestamp=7, service=11, trace_id=55, route_id=9");
     assert(contract::adapters::schema_string<RoutedEvent>() == "1001 timestamp\n1002 service\n2001 trace_id\n3001 route_id");
 
-    return 0;
 }
