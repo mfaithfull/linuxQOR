@@ -40,6 +40,18 @@ namespace qor_reflection {
         return detail::get_name<T, I>();
     }
 
+    template <class T>
+    struct named
+    {
+        T _t;        
+    };
+
+    template<class T>
+    constexpr auto nameof() noexcept
+    {
+        return detail::get_name< named<T>, 0 >();
+    }
+    
     // FIXME: implement this
     // template<class U, class T>
     // constexpr auto get_name() noexcept {
