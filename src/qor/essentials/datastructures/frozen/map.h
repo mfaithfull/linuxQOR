@@ -47,7 +47,8 @@ namespace impl {
             return static_cast<Comparator const&>(*this);
         }
 
-        constexpr CompareKey(Comparator const &comparator) : Comparator(comparator) {}
+        constexpr CompareKey(Comparator const &comparator) : Comparator(comparator) 
+        { }
 
         template <class Key1, class Key2, class Value>
         constexpr auto operator()(std::pair<Key1, Value> const &self, std::pair<Key2, Value> const &other) const -> 
