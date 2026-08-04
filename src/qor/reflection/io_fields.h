@@ -30,14 +30,14 @@
 //     };
 //
 //     std::ostream& operator<<(std::ostream& os, const my_struct& x) {
-//         return os << qor_reflection::io_fields(x);  // Equivalent to: os << "{ " << x.i << " ," <<  x.s << " }"
+//         return os << qor::reflection::io_fields(x);  // Equivalent to: os << "{ " << x.i << " ," <<  x.s << " }"
 //     }
 //
 //     std::istream& operator>>(std::istream& is, my_struct& x) {
-//         return is >> qor_reflection::io_fields(x);  // Equivalent to: is >> "{ " >> x.i >> " ," >>  x.s >> " }"
+//         return is >> qor::reflection::io_fields(x);  // Equivalent to: is >> "{ " >> x.i >> " ," >>  x.s >> " }"
 //     }
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
         template <class T>
         struct io_fields_impl 
@@ -50,17 +50,17 @@ namespace qor_reflection { namespace detail {
         std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& out, io_fields_impl<const T&>&& x) 
         {
             const T& value = x.value;
-            constexpr std::size_t fields_count_val = qor_reflection::detail::fields_count<T>();
+            constexpr std::size_t fields_count_val = qor::reflection::detail::fields_count<T>();
             out << '{';
 #if qor_pp_refl_use_cpp17 || qor_pp_refl_use_loophole
             detail::print_impl<0, fields_count_val>::print(out, detail::tie_as_tuple(value));
 #else
-            ::qor_reflection::detail::for_each_field_dispatcher(
+            qor::reflection::detail::for_each_field_dispatcher(
                 value,
                 [&out](const auto& val) {
                     // We can not reuse `fields_count_val` in lambda because compilers had issues with
                     // passing constexpr variables into lambdas. Computing is again is the most portable solution.
-                    constexpr std::size_t fields_count_val_lambda = qor_reflection::detail::fields_count<T>();
+                    constexpr std::size_t fields_count_val_lambda = qor::reflection::detail::fields_count<T>();
                     detail::print_impl<0, fields_count_val_lambda>::print(out, val);
                 },
                 detail::make_index_sequence<fields_count_val>{}
@@ -80,7 +80,7 @@ namespace qor_reflection { namespace detail {
         std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& in, io_fields_impl<T&>&& x) 
         {
             T& value = x.value;
-            constexpr std::size_t fields_count_val = qor_reflection::detail::fields_count<T>();
+            constexpr std::size_t fields_count_val = qor::reflection::detail::fields_count<T>();
 
             const auto prev_exceptions = in.exceptions();
             in.exceptions( typename std::basic_istream<Char, Traits>::iostate(0) );
@@ -93,12 +93,12 @@ namespace qor_reflection { namespace detail {
 #if qor_pp_refl_use_cpp17 || qor_pp_refl_use_loophole
             detail::read_impl<0, fields_count_val>::read(in, detail::tie_as_tuple(value));
 #else
-            ::qor_reflection::detail::for_each_field_dispatcher(
+            qor::reflection::detail::for_each_field_dispatcher(
                 value,
                 [&in](const auto& val) {
                     // We can not reuse `fields_count_val` in lambda because compilers had issues with
                     // passing constexpr variables into lambdas. Computing is again is the most portable solution.
-                    constexpr std::size_t fields_count_val_lambda = qor_reflection::detail::fields_count<T>();
+                    constexpr std::size_t fields_count_val_lambda = qor::reflection::detail::fields_count<T>();
                     detail::read_impl<0, fields_count_val_lambda>::read(in, val);
                 },
                 detail::make_index_sequence<fields_count_val>{}
@@ -119,14 +119,14 @@ namespace qor_reflection { namespace detail {
         template <class Char, class Traits, class T>
         std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& in, io_fields_impl<const T&>&& ) 
         {
-            static_assert(sizeof(T) && false, "====================> QOR Reflection: Attempt to use istream operator on a qor_reflection::io_fields wrapped type T with const qualifier.");
+            static_assert(sizeof(T) && false, "====================> QOR Reflection: Attempt to use istream operator on a qor::reflection::io_fields wrapped type T with const qualifier.");
             return in;
         }
 
         template <class Char, class Traits, class T>
         std::basic_istream<Char, Traits>& operator>>(std::basic_istream<Char, Traits>& in, io_fields_impl<T>&& ) 
         {
-            static_assert(sizeof(T) && false, "====================> QOR Reflection: Attempt to use istream operator on a qor_reflection::io_fields wrapped temporary of type T.");
+            static_assert(sizeof(T) && false, "====================> QOR Reflection: Attempt to use istream operator on a qor::reflection::io_fields wrapped temporary of type T.");
             return in;
         }
 
@@ -144,14 +144,14 @@ namespace qor_reflection { namespace detail {
     //     };
     //
     //     std::ostream& operator<<(std::ostream& os, const my_struct& x) {
-    //         return os << qor_reflection::io_fields(x);  // Equivalent to: os << "{ " << x.i << " ," <<  x.s << " }"
+    //         return os << qor::reflection::io_fields(x);  // Equivalent to: os << "{ " << x.i << " ," <<  x.s << " }"
     //     }
     //
     //     std::istream& operator>>(std::istream& is, my_struct& x) {
-    //         return is >> qor_reflection::io_fields(x);  // Equivalent to: is >> "{ " >> x.i >> " ," >>  x.s >> " }"
+    //         return is >> qor::reflection::io_fields(x);  // Equivalent to: is >> "{ " >> x.i >> " ," >>  x.s >> " }"
     //     }
     //
-    // Input and output streaming operators for `qor_reflection::io_fields` are symmetric, meaning that you get the original value by streaming it and
+    // Input and output streaming operators for `qor::reflection::io_fields` are symmetric, meaning that you get the original value by streaming it and
     // reading back if each fields streaming operator is symmetric.
 
     template <class T>
@@ -162,6 +162,6 @@ namespace qor_reflection { namespace detail {
 
     qor_pp_refl_end_module_export
 
-}//qor_reflection
+}}//qor::reflection
 
 #endif//QOR_PP_H_REFLECTION_IOFIELDS

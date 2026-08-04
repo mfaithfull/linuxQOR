@@ -19,7 +19,7 @@ import std;
 #include <type_traits>
 #endif
 
-namespace qor_reflection { namespace detail {
+namespace qor { namespace reflection { namespace detail {
 
     // This function serves as a link-time assert. If linker requires it, then
     // `unsafe_declval()` is used at runtime.
@@ -39,6 +39,6 @@ namespace qor_reflection { namespace detail {
         return static_cast<T>(*ptr);
     }
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_UNSAFEDECLVAL

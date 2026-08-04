@@ -24,22 +24,22 @@ import std;
 #include "for_each_field_impl.h"
 #include "make_integer_sequence.h"
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     template <class T, class F>
     constexpr void for_each_field(T&& value, F&& func) 
     {
-        constexpr std::size_t fields_count_val = qor_reflection::detail::fields_count<std::remove_reference_t<T>>();
+        constexpr std::size_t fields_count_val = qor::reflection::detail::fields_count<std::remove_reference_t<T>>();
 
-        ::qor_reflection::detail::for_each_field_dispatcher(
+        qor::reflection::detail::for_each_field_dispatcher(
             value,
             [f = std::forward<F>(func)](auto&& t) mutable 
             {
                 // MSVC related workaround. Its lambdas do not capture constexprs.
                 constexpr std::size_t fields_count_val_in_lambda
-                    = qor_reflection::detail::fields_count<std::remove_reference_t<T>>();
+                    = qor::reflection::detail::fields_count<std::remove_reference_t<T>>();
 
-                ::qor_reflection::detail::for_each_field_impl(
+                qor::reflection::detail::for_each_field_impl(
                     t,
                     std::forward<F>(f),
                     detail::make_index_sequence<fields_count_val_in_lambda>{},
@@ -50,6 +50,6 @@ namespace qor_reflection { namespace detail {
         );
     }
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_FOREACHFIELD

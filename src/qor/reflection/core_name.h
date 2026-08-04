@@ -23,7 +23,7 @@
 
 // Contains functions get_name and names_as_array to know which names each field of any aggregate has.
 
-namespace qor_reflection {
+namespace qor{ namespace reflection {
 
     qor_pp_refl_begin_module_export
 
@@ -31,8 +31,8 @@ namespace qor_reflection {
 
     //     struct my_struct { int i, short s; };
     //
-    //     assert(qor_reflection::get_name<0, my_struct>() == "i");
-    //     assert(qor_reflection::get_name<1, my_struct>() == "s");
+    //     assert(qor::reflection::get_name<0, my_struct>() == "i");
+    //     assert(qor::reflection::get_name<1, my_struct>() == "s");
 
     template <std::size_t I, class T>
     constexpr auto get_name() noexcept 
@@ -49,7 +49,7 @@ namespace qor_reflection {
     // Creates a `std::array` from names of fields of an aggregate `T`.
 
     //     struct my_struct { int i, short s; };
-    //     std::array<std::string_view, 2> a = qor_reflection::names_as_array<my_struct>();
+    //     std::array<std::string_view, 2> a = qor::reflection::names_as_array<my_struct>();
     //     assert(a[0] == "i");
 
     template <class T>
@@ -80,11 +80,11 @@ namespace qor_reflection {
     template <class T, class F>
     constexpr void for_each_field_with_name(T&& value, F&& func) 
     {
-        return qor_reflection::detail::for_each_field_with_name(std::forward<T>(value), std::forward<F>(func));
+        return qor::reflection::detail::for_each_field_with_name(std::forward<T>(value), std::forward<F>(func));
     }
 
     qor_pp_refl_end_module_export
 
-} // namespace qor_reflection
+}}//qor::reflection
 
 #endif//QOR_PP_H_REFLECTION_CORENAME

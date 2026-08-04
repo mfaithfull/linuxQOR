@@ -9,8 +9,6 @@
 #ifndef QOR_PP_H_REFLECTION_FUNCTORS
 #define QOR_PP_H_REFLECTION_FUNCTORS
 
-#pragma once
-
 #include "detail/config.h"
 #include "ops.h"
 #include "detail/functional.h"
@@ -26,11 +24,11 @@
 //
 //     std::unordered_set<
 //         my_struct,
-//         qor_reflection::hash<>,
-//         qor_reflection::equal_to<>
+//         qor::reflection::hash<>,
+//         qor::reflection::equal_to<>
 //     > my_set;
 
-namespace qor_reflection {
+namespace qor{ namespace reflection {
 
     qor_pp_refl_begin_module_export
 
@@ -42,7 +40,7 @@ namespace qor_reflection {
         // return true if each field of x equals the field with same index of y.
         bool operator()(const T& x, const T& y) const 
         {
-            return qor_reflection::eq(x, y);
+            return qor::reflection::eq(x, y);
         }
     };
 
@@ -51,7 +49,7 @@ namespace qor_reflection {
         template <class T, class U>
         bool operator()(const T& x, const U& y) const 
         {
-            return qor_reflection::eq(x, y);
+            return qor::reflection::eq(x, y);
         }
 
         typedef std::true_type is_transparent;
@@ -64,7 +62,7 @@ namespace qor_reflection {
         // return true if at least one field x not equals the field with same index of y.
         bool operator()(const T& x, const T& y) const 
         {
-            return qor_reflection::ne(x, y);
+            return qor::reflection::ne(x, y);
         }
     };
 
@@ -73,7 +71,7 @@ namespace qor_reflection {
         template <class T, class U>
         bool operator()(const T& x, const U& y) const 
         {
-            return qor_reflection::ne(x, y);
+            return qor::reflection::ne(x, y);
         }
 
         typedef std::true_type is_transparent;
@@ -85,7 +83,7 @@ namespace qor_reflection {
         // return true if field of x greater than the field with same index of y and all previous fields of x equal to the same fields of y.
         bool operator()(const T& x, const T& y) const 
         {
-            return qor_reflection::gt(x, y);
+            return qor::reflection::gt(x, y);
         }
     };
 
@@ -94,7 +92,7 @@ namespace qor_reflection {
         template <class T, class U>
         bool operator()(const T& x, const U& y) const 
         {
-            return qor_reflection::gt(x, y);
+            return qor::reflection::gt(x, y);
         }
 
         typedef std::true_type is_transparent;
@@ -106,26 +104,16 @@ namespace qor_reflection {
         // return true if field of x less than the field with same index of y and all previous fields of x equal to the same fields of y.
         bool operator()(const T& x, const T& y) const 
         {
-            return qor_reflection::lt(x, y);
+            return qor::reflection::lt(x, y);
         }
-
-    #ifdef qor_pp_doxygen_invoked
-        /// This typedef exists only if T \b is void
-        typedef std::true_type is_transparent;
-
-        /// This operator allows comparison of \b x and \b y that have different type.
-        /// \pre Exists only if T \b is void.
-        template <class V, class U> bool operator()(const V& x, const U& y) const;
-    #endif
     };
-
 
     template <> struct less<void> 
     {
         template <class T, class U>
         bool operator()(const T& x, const U& y) const 
         {
-            return qor_reflection::lt(x, y);
+            return qor::reflection::lt(x, y);
         }
         typedef std::true_type is_transparent;
     };
@@ -138,7 +126,7 @@ namespace qor_reflection {
         // or if each field of x equals the field with same index of y.
         bool operator()(const T& x, const T& y) const 
         {
-            return qor_reflection::ge(x, y);
+            return qor::reflection::ge(x, y);
         }
     };
 
@@ -147,7 +135,7 @@ namespace qor_reflection {
         template <class T, class U>
         bool operator()(const T& x, const U& y) const 
         {
-            return qor_reflection::ge(x, y);
+            return qor::reflection::ge(x, y);
         }
         typedef std::true_type is_transparent;
     };
@@ -160,7 +148,7 @@ namespace qor_reflection {
         // or if each field of x equals the field with same index of y.
         bool operator()(const T& x, const T& y) const 
         {
-            return qor_reflection::le(x, y);
+            return qor::reflection::le(x, y);
         }
     };
 
@@ -169,7 +157,7 @@ namespace qor_reflection {
         template <class T, class U>
         bool operator()(const T& x, const U& y) const 
         {
-            return qor_reflection::le(x, y);
+            return qor::reflection::le(x, y);
         }
         typedef std::true_type is_transparent;
     };
@@ -180,12 +168,12 @@ namespace qor_reflection {
         // return hash value of x.
         std::size_t operator()(const T& x) const 
         {
-            return qor_reflection::hash_value(x);
+            return qor::reflection::hash_value(x);
         }
     };
 
     qor_pp_refl_end_module_export
 
-}//qor_reflection
+}}//qor::reflection
 
 #endif//QOR_PP_H_REFLECTION_FUNCTORS

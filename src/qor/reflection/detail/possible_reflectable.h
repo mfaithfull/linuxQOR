@@ -20,7 +20,7 @@ import std;
 #include <type_traits> // for std::is_aggregate
 #endif
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     ///////////////////// Returns false when the type exactly wasn't be reflectable
     template <class T, class WhatFor>
@@ -53,6 +53,6 @@ namespace qor_reflection { namespace detail {
 
 #endif
 
-}} // namespace qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_POSSIBLEREFLECTABLE

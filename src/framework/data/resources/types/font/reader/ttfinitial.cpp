@@ -84,7 +84,7 @@ namespace qor { namespace framework { namespace res {
                         GetContext()->SetPosition(m_tableDirectory[m_tableIndex].offset);
                         Workflow()->PushState(
                             new_ref<TTFGISDHeader>(GetDeserializer(), &m_gisd_header, return_pos)
-                                components::serial::StructState<gsid_struct, 0, qor_reflection::detail::fields_count<std::remove_cvref_t<gsid_struct>>()>
+                                components::serial::StructState<gsid_struct, 0, qor::reflection::detail::fields_count<std::remove_cvref_t<gsid_struct>>()>
                                 >(GetDeserializer(), arch::Endian::big, &m_gsid_data));
                         
                     }

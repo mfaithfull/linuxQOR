@@ -24,7 +24,7 @@ import std;
 
 #include "sequence_tuple.h"
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     template <class... Types>
     constexpr auto make_stdarray(const Types&... t) noexcept 
@@ -35,7 +35,7 @@ namespace qor_reflection { namespace detail {
     template <class T, std::size_t... I>
     constexpr auto make_stdarray_from_tietuple(const T& t, std::index_sequence<I...>, int) noexcept 
     {
-        return detail::make_stdarray( qor_reflection::detail::sequence_tuple::get<I>(t)... );
+        return detail::make_stdarray( qor::reflection::detail::sequence_tuple::get<I>(t)... );
     }
 
     template <class T>
@@ -44,6 +44,6 @@ namespace qor_reflection { namespace detail {
         return std::array<std::nullptr_t, 0>{};
     }
 
-}} // namespace qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_STDARRAY

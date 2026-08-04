@@ -126,16 +126,16 @@ namespace qor { namespace components { namespace serial {
                 return false;
             }
 
-            using element_t = decltype(qor_reflection::detail::sequence_tuple::get<I>(value));
-            constexpr std::size_t subFieldCount = qor_reflection::detail::fields_count<std::remove_cvref_t<element_t>>();
+            using element_t = decltype(qor::reflection::detail::sequence_tuple::get<I>(value));
+            constexpr std::size_t subFieldCount = qor::reflection::detail::fields_count<std::remove_cvref_t<element_t>>();
 
             if(subFieldCount == 1)
             {
-                deserializer->PushState(new_ref<PrimitiveState<std::remove_cvref_t<element_t>>>(deserializer, endian, (std::remove_cvref_t<element_t>*)(&qor_reflection::detail::sequence_tuple::get<I>(value))));
+                deserializer->PushState(new_ref<PrimitiveState<std::remove_cvref_t<element_t>>>(deserializer, endian, (std::remove_cvref_t<element_t>*)(&qor::reflection::detail::sequence_tuple::get<I>(value))));
             }
             else if(subFieldCount > 1)
             {
-                deserializer->PushState(new_ref<StructState<element_t, 0, subFieldCount>>(deserializer, endian, (std::remove_cvref_t<element_t>*)(&qor_reflection::detail::sequence_tuple::get<I>(value))));
+                deserializer->PushState(new_ref<StructState<element_t, 0, subFieldCount>>(deserializer, endian, (std::remove_cvref_t<element_t>*)(&qor::reflection::detail::sequence_tuple::get<I>(value))));
             }
             else
             {
@@ -160,13 +160,13 @@ namespace qor { namespace components { namespace serial {
         {
             m_result = UNINITIALIZED;
             m_data = reinterpret_cast<byte*>(m_Object);
-            constexpr std::size_t fieldCount = qor_reflection::detail::fields_count<std::remove_cvref_t<struct_T>>();
+            constexpr std::size_t fieldCount = qor::reflection::detail::fields_count<std::remove_cvref_t<struct_T>>();
 
             Enter = [this]()
             {
                 if(I < fieldCount)
                 {
-                    StateSelector<I, fieldCount>::Select(GetDeserializer(),m_endian,qor_reflection::detail::tie_as_tuple(*m_Object), m_Object);
+                    StateSelector<I, fieldCount>::Select(GetDeserializer(),m_endian,qor::reflection::detail::tie_as_tuple(*m_Object), m_Object);
                 }
                 else
                 {
@@ -255,7 +255,7 @@ namespace qor { namespace components { namespace serial {
     template<class t>
     struct StructureDeserializer
     {
-        typedef StructState<t, 0, qor_reflection::detail::fields_count<std::remove_cvref_t<t>>()> base;
+        typedef StructState<t, 0, qor::reflection::detail::fields_count<std::remove_cvref_t<t>>()> base;
     };
 
 }}}//qor::components::serial

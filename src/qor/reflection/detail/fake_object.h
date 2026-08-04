@@ -19,7 +19,7 @@
 #   pragma clang diagnostic ignored "-Wundefined-var-template"
 #endif
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     // This class has external linkage while T has not sure.
     template <class T>
@@ -35,8 +35,8 @@ namespace qor_reflection { namespace detail {
 
     // For returning non default constructible types, it's exclusively used in member name retrieval.
     //
-    // Neither std::declval nor qor_reflection::detail::unsafe_declval are usable there.
-    // This takes advantage of C++20 features, while qor_reflection::detail::unsafe_declval works
+    // Neither std::declval nor qor::reflection::detail::unsafe_declval are usable there.
+    // This takes advantage of C++20 features, while qor::reflection::detail::unsafe_declval works
     // with the former standards.
     template <class T>
     constexpr const T& fake_object() noexcept 
@@ -44,7 +44,7 @@ namespace qor_reflection { namespace detail {
         return do_not_use_qor_reflection_with_local_types<T>.value;
     }
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #ifdef __clang__
 #   pragma clang diagnostic pop

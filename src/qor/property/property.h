@@ -66,10 +66,10 @@ namespace qor {
 		template< class T >
 		static Property FromStruct(const T& t)
 		{
-			constexpr std::size_t fieldCount = qor_reflection::detail::fields_count<T>();
+			constexpr std::size_t fieldCount = qor::reflection::detail::fields_count<T>();
 			Property result(PropertyName(typeid(T).name()));
 			PropertyVector fields;
-			PropertyGenerator<0, fieldCount>::Generate(fields, qor_reflection::detail::tie_as_tuple(t), t);
+			PropertyGenerator<0, fieldCount>::Generate(fields, qor::reflection::detail::tie_as_tuple(t), t);
 			result.SetValue(PropertyValue().Set(fields));
 			return result;
 		}
@@ -78,7 +78,7 @@ namespace qor {
 		T ToStruct()
 		{
 			T result;
-			qor_reflection::for_each_field_with_name(result, [this](std::string_view name, auto& value, std::size_t /*i*/)
+			qor::reflection::for_each_field_with_name(result, [this](std::string_view name, auto& value, std::size_t /*i*/)
 				{
 					if (this->GetType() == PVT_Vector)
 					{

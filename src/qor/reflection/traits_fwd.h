@@ -13,7 +13,7 @@
 
 #include "detail/config.h"
 
-namespace qor_reflection {
+namespace qor{ namespace reflection {
 
     qor_pp_refl_begin_module_export
 
@@ -22,6 +22,6 @@ namespace qor_reflection {
 
     qor_pp_refl_end_module_export
 
-}//qor_reflection
+}}//qor::reflection
 
 #endif//QOR_PP_H_REFLECTION_TRAITSFWD

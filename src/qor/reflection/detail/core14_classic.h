@@ -37,7 +37,7 @@ import std;
 #   pragma clang diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     template <class T> struct identity 
     {
@@ -618,7 +618,7 @@ namespace qor_reflection { namespace detail {
         using tuple_type = internal_tuple_with_same_alignment_t<type>;
 
         offset_based_getter<type, tuple_type> getter;
-        return qor_reflection::detail::make_flat_tuple_of_references(lvalue, getter, size_t_<0>{}, size_t_<tuple_type::size_v>{});
+        return qor::reflection::detail::make_flat_tuple_of_references(lvalue, getter, size_t_<0>{}, size_t_<tuple_type::size_v>{});
     }
 
     template <class T>
@@ -629,10 +629,10 @@ namespace qor_reflection { namespace detail {
             "====================> QOR Reflection: For safety reasons it is forbidden to reflect unions. See `Reflection of unions` section in the docs for more info."
         );
         static_assert(
-            qor_reflection::detail::is_flat_refelectable<T>( detail::make_index_sequence<qor_reflection::detail::fields_count<T>()>{} ),
+            qor::reflection::detail::is_flat_refelectable<T>( detail::make_index_sequence<qor::reflection::detail::fields_count<T>()>{} ),
             "====================> QOR Reflection: Not possible in C++14 to represent that type without loosing information. Change type definition or enable C++17"
         );
-        return qor_reflection::detail::tie_as_flat_tuple(val);
+        return qor::reflection::detail::tie_as_flat_tuple(val);
     }
 
 
@@ -690,7 +690,7 @@ namespace qor_reflection { namespace detail {
         template <class Field>
         operator Field() const 
         {
-            qor_reflection::detail::for_each_field_in_depth(
+            qor::reflection::detail::for_each_field_in_depth(
                 t,
                 std::forward<F>(f),
                 IndexSeq{},
@@ -719,7 +719,7 @@ namespace qor_reflection { namespace detail {
 
         offset_based_getter<std::remove_cv_t<std::remove_reference_t<T>>, tuple_type> getter;
         std::forward<F>(f)(
-            qor_reflection::detail::make_flat_tuple_of_references(lvalue, getter, size_t_<0>{}, size_t_<sizeof...(Fields)>{})
+            qor::reflection::detail::make_flat_tuple_of_references(lvalue, getter, size_t_<0>{}, size_t_<sizeof...(Fields)>{})
         );
     }
 
@@ -727,7 +727,7 @@ namespace qor_reflection { namespace detail {
     void for_each_field_dispatcher_1(T& t, F&& f, std::index_sequence<I...>, std::true_type /*is_flat_refelectable*/) 
     {
         std::forward<F>(f)(
-            qor_reflection::detail::tie_as_flat_tuple(t)
+            qor::reflection::detail::tie_as_flat_tuple(t)
         );
     }
 
@@ -735,7 +735,7 @@ namespace qor_reflection { namespace detail {
     template <class T, class F, std::size_t... I>
     void for_each_field_dispatcher_1(T& t, F&& f, std::index_sequence<I...>, std::false_type /*is_flat_refelectable*/) 
     {
-        qor_reflection::detail::for_each_field_in_depth(
+        qor::reflection::detail::for_each_field_in_depth(
             t,
             std::forward<F>(f),
             std::index_sequence<I...>{}
@@ -765,6 +765,6 @@ namespace qor_reflection { namespace detail {
 #   pragma clang diagnostic pop
 #endif
 
-}} // namespace qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_CORE14_CLASSIC

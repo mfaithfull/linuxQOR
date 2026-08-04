@@ -27,11 +27,11 @@
 //
 //     comparable_struct s1 {0, 1, "Hello", false, 6,7,8,9,10,11};
 //     comparable_struct s2 {0, 1, "Hello", false, 6,7,8,9,10,11111};
-//     assert(qor_reflection::lt(s1, s2));
+//     assert(qor::reflection::lt(s1, s2));
 //
 // ops for other ways to define operators and more details.
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     ///////////////////// Helper typedefs that are used by all the ops
         template <template <class, class> class Detector, class T, class U>
@@ -80,7 +80,7 @@ namespace qor_reflection { namespace detail {
     template <class T, class U>
     constexpr detail::enable_not_eq_comp_t<T, U> eq(const T& lhs, const U& rhs) noexcept 
     {
-        return qor_reflection::eq_fields(lhs, rhs);
+        return qor::reflection::eq_fields(lhs, rhs);
     }
 
     // overload eq
@@ -96,7 +96,7 @@ namespace qor_reflection { namespace detail {
     template <class T, class U>
     constexpr detail::enable_not_ne_comp_t<T, U> ne(const T& lhs, const U& rhs) noexcept 
     {
-        return qor_reflection::ne_fields(lhs, rhs);
+        return qor::reflection::ne_fields(lhs, rhs);
     }
 
     // overload ne
@@ -112,7 +112,7 @@ namespace qor_reflection { namespace detail {
     template <class T, class U>
     constexpr detail::enable_not_lt_comp_t<T, U> lt(const T& lhs, const U& rhs) noexcept 
     {
-        return qor_reflection::lt_fields(lhs, rhs);
+        return qor::reflection::lt_fields(lhs, rhs);
     }
 
     // overload lt
@@ -128,7 +128,7 @@ namespace qor_reflection { namespace detail {
     template <class T, class U>
     constexpr detail::enable_not_gt_comp_t<T, U> gt(const T& lhs, const U& rhs) noexcept 
     {
-        return qor_reflection::gt_fields(lhs, rhs);
+        return qor::reflection::gt_fields(lhs, rhs);
     }
 
     // overload gt
@@ -143,7 +143,7 @@ namespace qor_reflection { namespace detail {
     template <class T, class U>
     constexpr detail::enable_not_le_comp_t<T, U> le(const T& lhs, const U& rhs) noexcept 
     {
-        return qor_reflection::le_fields(lhs, rhs);
+        return qor::reflection::le_fields(lhs, rhs);
     }
 
     // overload le
@@ -158,7 +158,7 @@ namespace qor_reflection { namespace detail {
     template <class T, class U>
     constexpr detail::enable_not_ge_comp_t<T, U> ge(const T& lhs, const U& rhs) noexcept 
     {
-        return qor_reflection::ge_fields(lhs, rhs);
+        return qor::reflection::ge_fields(lhs, rhs);
     }
 
     // overload ge
@@ -173,7 +173,7 @@ namespace qor_reflection { namespace detail {
     template <class T>
     constexpr detail::enable_not_hashable_t<T> hash_value(const T& value) noexcept 
     {
-        return qor_reflection::hash_fields(value);
+        return qor::reflection::hash_fields(value);
     }
 
     // overload hash_value
@@ -185,6 +185,6 @@ namespace qor_reflection { namespace detail {
 
     qor_pp_refl_end_module_export
 
-}//qor_reflection
+}}//qor::reflection
 
 #endif//QOR_PP_H_REFLECTION_OPS

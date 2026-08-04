@@ -22,7 +22,7 @@ import std;
 #endif
 
 ///////////////////// Tuple that holds its values in the supplied order
-namespace qor_reflection { namespace detail { namespace sequence_tuple {
+namespace qor{ namespace reflection { namespace detail { namespace sequence_tuple {
 
     template <std::size_t N, class T>
     struct base_from_member 
@@ -178,14 +178,14 @@ namespace qor_reflection { namespace detail { namespace sequence_tuple {
     }
 
     template <std::size_t I, class T>
-    using tuple_element = std::remove_reference< decltype(::qor_reflection::detail::sequence_tuple::get<I>( std::declval<T>() )) >;
+    using tuple_element = std::remove_reference< decltype(qor::reflection::detail::sequence_tuple::get<I>( std::declval<T>() )) >;
 
     template <class... Args>
     constexpr auto make_sequence_tuple(Args... args) noexcept 
     {
-        return ::qor_reflection::detail::sequence_tuple::tuple<Args...>{ args... };
+        return qor::reflection::detail::sequence_tuple::tuple<Args...>{ args... };
     }
 
-}}} // namespace qor_reflection::detail::sequence_tuple
+}}}}//qor::reflection::detail::sequence_tuple
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_SEQUENCETUPLE

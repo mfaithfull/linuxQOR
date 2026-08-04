@@ -16,9 +16,9 @@
 #include "for_each_field_impl.h"
 #include "rvalue_t.h"
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
-#ifndef _MSC_VER // MSVC fails to compile the following code, but compiles the structured bindings in core17_generated.hpp
+#if (qor_pp_compiler != qor_pp_compiler_msvc) // MSVC fails to compile the following code, but compiles the structured bindings in core17_generated.hpp
 
     struct do_not_define_std_tuple_size_for_me 
     {
@@ -50,7 +50,7 @@ namespace qor_reflection { namespace detail {
         do_structured_bindings_work<do_not_define_std_tuple_size_for_me>(),
         "====================> QOR Reflection: Your compiler can not handle C++17 structured bindings. Read the above comments for workarounds."
     );
-#endif // #ifndef _MSC_VER
+#endif
 
     template <class T>
     constexpr auto tie_as_tuple(T& val) noexcept 
@@ -59,8 +59,8 @@ namespace qor_reflection { namespace detail {
             !std::is_union<T>::value,
             "====================> QOR Reflection: For safety reasons it is forbidden to reflect unions. See `Reflection of unions` section in the docs for more info."
         );
-        typedef size_t_<qor_reflection::detail::fields_count<T>()> fields_count_tag;
-        return qor_reflection::detail::tie_as_tuple(val, fields_count_tag{});
+        typedef size_t_<qor::reflection::detail::fields_count<T>()> fields_count_tag;
+        return qor::reflection::detail::tie_as_tuple(val, fields_count_tag{});
     }
 
     template <class T, class F, std::size_t... I>
@@ -75,6 +75,6 @@ namespace qor_reflection { namespace detail {
         );
     }
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_CORE17

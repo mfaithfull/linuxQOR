@@ -62,14 +62,14 @@ public:
     template<std::size_t I>
     auto At()
     {
-        return qor_reflection::detail::sequence_tuple::get<I>(m_value);
+        return qor::reflection::detail::sequence_tuple::get<I>(m_value);
     }
     
     template<typename P>
     auto Get(std::string_view prop_name)
     {
         P val;
-        qor_reflection::for_each_field_with_name(m_value, [this,&prop_name,&val](std::string_view name, auto& value, std::size_t i)
+        qor::reflection::for_each_field_with_name(m_value, [this,&prop_name,&val](std::string_view name, auto& value, std::size_t i)
             {
                 if(strncmp(name.data(), prop_name.data(), name.length()) == 0)
                 {
@@ -83,7 +83,7 @@ public:
     template<std::size_t I, typename P>
     void Set(const P& val)
     {
-        qor_reflection::for_each_field(m_value, [this,&val](auto& value, std::size_t i)
+        qor::reflection::for_each_field(m_value, [this,&val](auto& value, std::size_t i)
             {
                 if(i == I)
                 {
@@ -96,7 +96,7 @@ public:
     template<typename P>
     void Set(std::string_view prop_name, const P& val)
     {
-        qor_reflection::for_each_field_with_name(m_value, [this,&prop_name,&val](std::string_view name, auto& value, std::size_t i)
+        qor::reflection::for_each_field_with_name(m_value, [this,&prop_name,&val](std::string_view name, auto& value, std::size_t i)
             {
                 if(strncmp(name.data(), prop_name.data(), name.length()) == 0)
                 {

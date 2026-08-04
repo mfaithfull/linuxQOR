@@ -51,8 +51,8 @@ namespace qor{ namespace io{
 		template< class T >
 		void WriteStruct(const T& t, arch::Endian endian = arch::network) const
 		{
-			constexpr std::size_t fieldCount = qor_reflection::detail::fields_count<T>();
-			StructWriter<0, fieldCount>::Write(*this, qor_reflection::detail::tie_as_tuple(t), t, endian);
+			constexpr std::size_t fieldCount = qor::reflection::detail::fields_count<T>();
+			StructWriter<0, fieldCount>::Write(*this, qor::reflection::detail::tie_as_tuple(t), t, endian);
 		}
 
     private:
@@ -67,7 +67,7 @@ namespace qor{ namespace io{
         template< class T, class R>
         static void Write(FileWriter& writer, const T& value, const R& org_val, arch::Endian endian = arch::network)
         {
-            auto val = qor_reflection::detail::sequence_tuple::get<I>(value);
+            auto val = qor::reflection::detail::sequence_tuple::get<I>(value);
             writer.Write(val, endian);
             StructWriter<I + 1, N>::Write(writer, value, org_val, endian);
         }

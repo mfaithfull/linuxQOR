@@ -19,7 +19,7 @@ import std;
 #include <cstddef>
 #endif
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     ///////////////////// Array that has the constexpr
     template <std::size_t N>
@@ -92,6 +92,6 @@ namespace qor_reflection { namespace detail {
         return a.data[I];
     }
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_SIZEARRAY

@@ -13,8 +13,8 @@
 
 #include "config.h"
 
-// Each core_name provides `qor_reflection::detail::get_name` and
-// `qor_reflection::detail::tie_as_names_tuple` functions.
+// Each core_name provides `qor::reflection::detail::get_name` and
+// `qor::reflection::detail::tie_as_names_tuple` functions.
 //
 // The whole functional of extracting field's names is build on top of those
 // two functions.

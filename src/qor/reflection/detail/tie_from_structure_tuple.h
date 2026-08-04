@@ -25,7 +25,7 @@ import std;
 #include <tuple>
 #endif
 
-namespace qor_reflection { namespace detail {
+namespace qor { namespace reflection { namespace detail {
 
     // A `std::tuple` capable of de-structuring assignment used to support
     // a tie of multiple lvalue references to fields of an aggregate T.
@@ -47,6 +47,6 @@ namespace qor_reflection { namespace detail {
         }
     };
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_TIEFROMSTRUCTTUPLE

@@ -9,8 +9,6 @@
 #ifndef QOR_PP_H_REFLECTION_CORE
 #define QOR_PP_H_REFLECTION_CORE
 
-#pragma once
-
 #include "detail/config.h"
 #include "detail/core.h"
 #include "detail/sequence_tuple.h"
@@ -26,7 +24,7 @@
 
 // Contains all the basic tuple-like interfaces get, tuple_size, tuple_element_t, and others.
 
-namespace qor_reflection {
+namespace qor{ namespace reflection {
 
     qor_pp_refl_begin_module_export
 
@@ -37,11 +35,11 @@ namespace qor_reflection {
     //     struct my_struct { int i, short s; };
     //     my_struct s {10, 11};
     //
-    //     assert(qor_reflection::get<0>(s) == 10);
-    //     qor_reflection::get<1>(s) = 0;
+    //     assert(qor::reflection::get<0>(s) == 10);
+    //     qor::reflection::get<1>(s) = 0;
     //
-    //     assert(qor_reflection::get<int>(s) == 10);
-    //     qor_reflection::get<short>(s) = 11;
+    //     assert(qor::reflection::get<int>(s) == 10);
+    //     qor::reflection::get<short>(s) = 11;
 
     template <std::size_t I, class T>
     constexpr decltype(auto) get(const T& val) noexcept 
@@ -63,7 +61,7 @@ namespace qor_reflection {
     template <std::size_t I, class T>
     constexpr auto get(T&, std::enable_if_t<!std::is_assignable<T, T>::value>* = nullptr) noexcept 
     {
-        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor_reflection::get on non const non assignable type is allowed only in C++17");
+        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor::reflection::get on non const non assignable type is allowed only in C++17");
         return 0;
     }
 #endif
@@ -95,7 +93,7 @@ namespace qor_reflection {
     template <class U, class T>
     constexpr U& get(T&, std::enable_if_t<!std::is_assignable<T, T>::value>* = nullptr) noexcept 
     {
-        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor_reflection::get on non const non assignable type is allowed only in C++17");
+        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor::reflection::get on non const non assignable type is allowed only in C++17");
         return 0;
     }
 #endif
@@ -110,15 +108,15 @@ namespace qor_reflection {
 
     // `tuple_element` has a member typedef `type` that returns the type of a field with index I in aggregate T.
     //
-    //     std::vector< qor_reflection::tuple_element<0, my_structure>::type > v;
+    //     std::vector< qor::reflection::tuple_element<0, my_structure>::type > v;
 
     template <std::size_t I, class T>
-    using tuple_element = detail::sequence_tuple::tuple_element<I, decltype( ::qor_reflection::detail::tie_as_tuple(std::declval<T&>()) ) >;
+    using tuple_element = detail::sequence_tuple::tuple_element<I, decltype( qor::reflection::detail::tie_as_tuple(std::declval<T&>()) ) >;
 
 
     // Type of a field with index `I` in aggregate `T`.
     //
-    //     std::vector< qor_reflection::tuple_element_t<0, my_structure> > v;
+    //     std::vector< qor::reflection::tuple_element_t<0, my_structure> > v;
 
     template <std::size_t I, class T>
     using tuple_element_t = typename tuple_element<I, T>::type;
@@ -127,7 +125,7 @@ namespace qor_reflection {
     //
     //     struct my_struct { int i, short s; };
     //     my_struct s {10, 11};
-    //     std::tuple<int, short> t = qor_reflection::structure_to_tuple(s);
+    //     std::tuple<int, short> t = qor::reflection::structure_to_tuple(s);
     //     assert(get<0>(t) == 10);
 
     template <class T>
@@ -147,10 +145,10 @@ namespace qor_reflection {
     //     struct my_struct { int i, short s; };
     //
     //     const my_struct const_s{1, 2};
-    //     std::apply(foo, qor_reflection::structure_tie(const_s));
+    //     std::apply(foo, qor::reflection::structure_tie(const_s));
     //
     //     my_struct s;
-    //     qor_reflection::structure_tie(s) = std::tuple<int, short>{10, 11};
+    //     qor::reflection::structure_tie(s) = std::tuple<int, short>{10, 11};
     //     assert(s.s == 11);
 
     template <class T>
@@ -181,7 +179,7 @@ namespace qor_reflection {
     template <class T>
     constexpr auto structure_tie(T&, std::enable_if_t<!std::is_assignable<T, T>::value>* = nullptr) noexcept 
     {
-        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor_reflection::structure_tie on non const non assignable type is allowed only in C++17");
+        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor::reflection::structure_tie on non const non assignable type is allowed only in C++17");
         return 0;
     }
 #endif
@@ -190,7 +188,7 @@ namespace qor_reflection {
     template <class T>
     constexpr auto structure_tie(T&&, std::enable_if_t< std::is_rvalue_reference<T&&>::value>* = nullptr) noexcept 
     {
-        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor_reflection::structure_tie on rvalue references is forbidden");
+        static_assert(sizeof(T) && false, "====================> QOR Reflection: Calling qor::reflection::structure_tie on rvalue references is forbidden");
         return 0;
     }
 
@@ -205,13 +203,13 @@ namespace qor_reflection {
     //
     //     struct my_struct { int i, short s; };
     //     int sum = 0;
-    //     qor_reflection::for_each_field(my_struct{20, 22}, [&sum](const auto& field) { sum += field; });
+    //     qor::reflection::for_each_field(my_struct{20, 22}, [&sum](const auto& field) { sum += field; });
     //     assert(sum == 42);
 
     template <class T, class F>
     constexpr void for_each_field(T&& value, F&& func) 
     {
-        return ::qor_reflection::detail::for_each_field(std::forward<T>(value), std::forward<F>(func));
+        return qor::reflection::detail::for_each_field(std::forward<T>(value), std::forward<F>(func));
     }
 
     // std::tie-like function that allows assigning to tied values from aggregates.
@@ -224,7 +222,7 @@ namespace qor_reflection {
     //       return res;
     //     }
     //     auto [p, s] = f();
-    //     qor_reflection::tie_from_structure(p, s) = f();
+    //     qor::reflection::tie_from_structure(p, s) = f();
 
     template <typename... Elements>
     constexpr detail::tie_from_structure_tuple<Elements...> tie_from_structure(Elements&... args) noexcept 
@@ -234,6 +232,6 @@ namespace qor_reflection {
 
     qor_pp_refl_end_module_export
 
-} // namespace qor_reflection
+}}//qor::reflection
 
 #endif//QOR_PP_H_REFLECTION_CORE

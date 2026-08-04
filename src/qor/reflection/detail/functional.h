@@ -22,7 +22,7 @@ import std;
 
 #include "sequence_tuple.h"
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     template <std::size_t I, std::size_t N>
     struct equal_impl 
@@ -30,7 +30,7 @@ namespace qor_reflection { namespace detail {
         template <class T, class U>
         constexpr static bool cmp(const T& v1, const U& v2) noexcept 
         {
-            return ::qor_reflection::detail::sequence_tuple::get<I>(v1) == ::qor_reflection::detail::sequence_tuple::get<I>(v2)
+            return qor::reflection::detail::sequence_tuple::get<I>(v1) == qor::reflection::detail::sequence_tuple::get<I>(v2)
                 && equal_impl<I + 1, N>::cmp(v1, v2);
         }
     };
@@ -51,7 +51,7 @@ namespace qor_reflection { namespace detail {
         template <class T, class U>
         constexpr static bool cmp(const T& v1, const U& v2) noexcept 
         {
-            return ::qor_reflection::detail::sequence_tuple::get<I>(v1) != ::qor_reflection::detail::sequence_tuple::get<I>(v2)
+            return qor::reflection::detail::sequence_tuple::get<I>(v1) != qor::reflection::detail::sequence_tuple::get<I>(v2)
                 || not_equal_impl<I + 1, N>::cmp(v1, v2);
         }
     };
@@ -222,7 +222,7 @@ namespace qor_reflection { namespace detail {
         template <class T>
         constexpr static std::size_t compute(const T& val) noexcept 
         {
-            std::size_t h = detail::compute_hash( ::qor_reflection::detail::sequence_tuple::get<I>(val), 1L );
+            std::size_t h = detail::compute_hash( qor::reflection::detail::sequence_tuple::get<I>(val), 1L );
             detail::hash_combine(h, hash_impl<I + 1, N>::compute(val) );
             return h;
         }
@@ -256,12 +256,12 @@ namespace qor_reflection { namespace detail {
         return visitor_t::cmp(detail::tie_as_tuple(x), detail::tie_as_tuple(y));
 #else
         bool result = true;
-        ::qor_reflection::detail::for_each_field_dispatcher(
+        qor::reflection::detail::for_each_field_dispatcher(
             x,
             [&result, &y](const auto& lhs) 
             {
                 constexpr std::size_t fields_count_rhs_ = detail::fields_count<std::remove_reference_t<U>>();
-                ::qor_reflection::detail::for_each_field_dispatcher(
+                qor::reflection::detail::for_each_field_dispatcher(
                     y,
                     [&result, &lhs](const auto& rhs) 
                     {
@@ -277,6 +277,6 @@ namespace qor_reflection { namespace detail {
 #endif
     }
 
-}} // namespace qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_FUNCTIONAL

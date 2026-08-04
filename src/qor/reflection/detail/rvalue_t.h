@@ -26,7 +26,7 @@ import std;
 //  * better type safety - you can validate at compile time that only rvalue reference is passed into the function
 //  * documentation and readability - rvalue_t<T> is much better than T&&+SFINAE
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     // Binds to rvalues only, no copying allowed.
     template <class T
@@ -38,6 +38,6 @@ namespace qor_reflection { namespace detail {
 
     // Binds to mutable lvalues only
 
-}} //qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_RVALUET

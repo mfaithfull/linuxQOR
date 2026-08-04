@@ -14,7 +14,7 @@
 #include "config.h"
 #include "sequence_tuple.h"
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     template <class T, std::size_t I>
     constexpr auto get_name() noexcept 
@@ -47,6 +47,6 @@ namespace qor_reflection { namespace detail {
         );
     }
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_CORENAME14_DISABLED

@@ -14,8 +14,8 @@ namespace qor {
         template< class T, class R>
         static void Generate(PropertyVector& container, const T& value, const R& org_val)
         {
-            auto val = qor_reflection::detail::sequence_tuple::get<I>(value);
-            auto c = qor_reflection::get_name<I, R>();
+            auto val = qor::reflection::detail::sequence_tuple::get<I>(value);
+            auto c = qor::reflection::get_name<I, R>();
             std::string name(c);
             Property prop(PropertyName(name.c_str()));
             prop.SetValue(PropertyValue().Set(val));

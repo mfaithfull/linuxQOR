@@ -38,7 +38,7 @@ namespace qor{ namespace pipeline{ namespace components{
         template< class T, class R>
         static void Write(pipeline::Buffer& buffer, const T& value, const R& org_val)
         {
-            auto val = qor_reflection::detail::sequence_tuple::get<I>(value);
+            auto val = qor::reflection::detail::sequence_tuple::get<I>(value);
             //buffer.Write(val);
             ElementWriter<I + 1, N>::Write(buffer, value, org_val);
         }
@@ -67,11 +67,11 @@ namespace qor{ namespace pipeline{ namespace components{
 
 		void Read(const T& t)
 		{
-			constexpr std::size_t fieldCount = qor_reflection::detail::fields_count<T>();
+			constexpr std::size_t fieldCount = qor::reflection::detail::fields_count<T>();
             pipeline::Buffer* buffer = GetBuffer();
             if(buffer)
             {		
-			    ElementWriter<0, fieldCount>::Write(*buffer, qor_reflection::detail::tie_as_tuple(t), t);
+			    ElementWriter<0, fieldCount>::Write(*buffer, qor::reflection::detail::tie_as_tuple(t), t);
 			}
 		}
 

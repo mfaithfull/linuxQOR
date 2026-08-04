@@ -21,7 +21,7 @@ import std;
 #include <cstddef>
 #endif
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
 #if qor_pp_refl_use_std_make_integral_sequence == 0
 
@@ -96,6 +96,6 @@ namespace qor_reflection { namespace detail {
     template <typename... T>
     using index_sequence_for = make_index_sequence<sizeof...(T)>;
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_MAKEINTEGERSEQUENCE

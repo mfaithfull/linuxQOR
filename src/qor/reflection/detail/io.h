@@ -28,7 +28,7 @@ import std;
 
 #endif
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     inline auto quoted_helper(const std::string& s) noexcept 
     {
@@ -63,7 +63,7 @@ namespace qor_reflection { namespace detail {
         static void print (Stream& out, const T& value) 
         {
             if (!!I) out << ", ";
-            out << detail::quoted_helper(qor_reflection::detail::sequence_tuple::get<I>(value));
+            out << detail::quoted_helper(qor::reflection::detail::sequence_tuple::get<I>(value));
             print_impl<I + 1, N>::print(out, value);
         }
     };
@@ -88,7 +88,7 @@ namespace qor_reflection { namespace detail {
                 in >> ignore;
                 if (ignore != ' ')  in.setstate(Stream::failbit);
             }
-            in >> detail::quoted_helper( qor_reflection::detail::sequence_tuple::get<I>(value) );
+            in >> detail::quoted_helper( qor::reflection::detail::sequence_tuple::get<I>(value) );
             read_impl<I + 1, N>::read(in, value);
         }
     };
@@ -99,6 +99,6 @@ namespace qor_reflection { namespace detail {
         template <class Stream, class T> static void read (Stream&, const T&) {}
     };
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_IO

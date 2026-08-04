@@ -33,7 +33,7 @@ import std;
 #   pragma clang diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     ///////////////////// min without including <algorithm>
     constexpr std::size_t min_of_size_t(std::size_t a, std::size_t b) noexcept 
@@ -470,7 +470,7 @@ namespace qor_reflection { namespace detail {
         return result;
     }
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #ifdef __clang__
 #   pragma clang diagnostic pop

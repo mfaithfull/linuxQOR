@@ -24,7 +24,7 @@ import std;
 #include "make_integer_sequence.h"
 
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
     template <std::size_t Index>
     using size_t_ = std::integral_constant<std::size_t, Index >;
@@ -109,6 +109,6 @@ namespace qor_reflection { namespace detail {
         );
     }
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_MAKEFLATTUPLEOFREFERENCES

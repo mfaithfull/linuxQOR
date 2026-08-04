@@ -25,7 +25,7 @@ import std;
 #include "rvalue_t.h"
 #include "size_t.h"
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
 	// Our own implementation of std::aligned_storage. On godbolt with MSVC, I have compilation errors
 	// using the standard version, it seems the compiler cannot generate default ctor.
@@ -153,6 +153,6 @@ namespace qor_reflection { namespace detail {
 		index_t<idx> && get(rvalue_t<U> u, size_t_<idx>) const = delete;
 	};
 
-}}//qor_reflection::detail
+}}}//qor::reflection::detail
 
 #endif//QOR_PP_H_REFLECTION_DETAIL_OFFSETBASEDGETTER

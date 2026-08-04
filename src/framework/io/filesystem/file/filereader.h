@@ -49,7 +49,7 @@ namespace qor{ namespace io{
 		template< class T >
 		void ReadStruct(T& t) const
 		{
-			qor_reflection::for_each_field(t, [this](auto& value, std::size_t i)
+			qor::reflection::for_each_field(t, [this](auto& value, std::size_t i)
 				{
                     Read(value);
 				}

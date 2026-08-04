@@ -26,10 +26,10 @@
 //     // ...
 //
 //     comparable_struct s1 {0, 1, "Hello", false, 6,7,8,9,10,11};
-//     std::cout << qor_reflection::io(s1);  // Outputs: {0, 1, H, e, l, l, o, , , 0, 6, 7, 8, 9, 10, 11}
+//     std::cout << qor::reflection::io(s1);  // Outputs: {0, 1, H, e, l, l, o, , , 0, 6, 7, 8, 9, 10, 11}
 //
 
-namespace qor_reflection { namespace detail {
+namespace qor{ namespace reflection { namespace detail {
 
         ///////////////////// Helper typedefs
         template <class Stream, class Type>
@@ -69,7 +69,7 @@ namespace qor_reflection { namespace detail {
         template <class Char, class Traits, class T>
         enable_not_ostreamable_t<std::basic_ostream<Char, Traits>, T> operator<<(std::basic_ostream<Char, Traits>& out, io_impl<T>&& x) 
         {
-            return out << qor_reflection::io_fields(std::forward<T>(x.value));
+            return out << qor::reflection::io_fields(std::forward<T>(x.value));
         }
 
         template <class Char, class Traits, class T>
@@ -81,7 +81,7 @@ namespace qor_reflection { namespace detail {
         template <class Char, class Traits, class T>
         enable_not_istreamable_t<std::basic_istream<Char, Traits>, T> operator>>(std::basic_istream<Char, Traits>& in, io_impl<T>&& x) 
         {
-            return in >> qor_reflection::io_fields(std::forward<T>(x.value));
+            return in >> qor::reflection::io_fields(std::forward<T>(x.value));
         }
 
         template <class Char, class Traits, class T>
@@ -102,7 +102,7 @@ namespace qor_reflection { namespace detail {
     //     my_struct x;
     //     std::stringstream ss;
     //     ss << "{ 12, 13 }";
-    //     ss >> qor_reflection::io(x);
+    //     ss >> qor::reflection::io(x);
     //     assert(x.i == 12);
     //     assert(x.s == 13);
 
@@ -114,6 +114,6 @@ namespace qor_reflection { namespace detail {
 
     qor_pp_refl_end_module_export
 
-} // namespace qor_reflection
+}}//qor::reflection
 
 #endif//QOR_PP_H_REFLECTION_IO
