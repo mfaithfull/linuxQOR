@@ -6,6 +6,9 @@
 
 #include <string>
 
+#undef qor_pp_compiler_supports_symetric_transfer
+#define qor_pp_compiler_supports_symetric_transfer 1
+
 namespace qor { namespace compiler {
 
     class MSVCCompiler21
@@ -44,8 +47,7 @@ namespace qor { namespace compiler {
 
     };
 
-    typedef MSVCCompiler21 CompilerBase;
-
+    typedef MSVCCompiler21 CompilerBase;    
 }}//qor::compiler
 
 #endif//QOR_PP_H_MSVC21

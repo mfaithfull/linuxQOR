@@ -15,9 +15,11 @@
 #   define qor_pp_compiler_todo(_X)
 #   define qor_pp_compiler_message(_X)
 #endif
-#   define qor_pp_compiler_warning(x) qor_pp_compiler_do_pragma(warning ("Warning - " #x))
-
+#define qor_pp_compiler_warning(x) qor_pp_compiler_do_pragma(warning ("Warning - " #x))
 qor_pp_compiler_message("Compiling with GCC 13.3.0")
+
+#undef qor_pp_compiler_supports_symetric_transfer
+#define qor_pp_compiler_supports_symetric_transfer 1
 
 namespace qor { namespace compiler {
 
