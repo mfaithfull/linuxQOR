@@ -13,10 +13,11 @@
 #include <cassert>
 #include <algorithm>
 #include <utility>
+#include "src/platform/compiler/compiler.h"
 
 namespace cppcoro
 {
-#if CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
+#if qor_pp_compiler_supports_symetric_transfer
 	/// This is a scheduler class that schedules coroutines in a round-robin
 	/// fashion once N coroutines have been scheduled to it.
 	///

@@ -12,6 +12,7 @@
 #include <cassert>
 #include <coroutine>
 
+#include "src/platform/compiler/compiler.h"
 #include "awaitabletraits.h"
 #include "brokenpromise.h"
 #include "detail/removervaluereference.h"
@@ -30,7 +31,7 @@ namespace qor
 			{
 				bool await_ready() const noexcept { return false; }
 
-#if CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
+#if qor_pp_compiler_supports_symetric_transfer
 				template<typename PROMISE>
 				std::coroutine_handle<> await_suspend(
 					std::coroutine_handle<PROMISE> coro) noexcept
@@ -71,7 +72,7 @@ namespace qor
 		public:
 
 			task_promise_base() noexcept
-#if !CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
+#if !qor_pp_compiler_supports_symetric_transfer
 				: m_state(false)
 #endif
 			{}
@@ -86,7 +87,7 @@ namespace qor
 				return final_awaitable{};
 			}
 
-#if CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
+#if qor_pp_compiler_supports_symetric_transfer
 			void set_continuation(std::coroutine_handle<> continuation) noexcept
 			{
 				m_continuation = continuation;
@@ -103,7 +104,7 @@ namespace qor
 
 			std::coroutine_handle<> m_continuation;
 
-#if !CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
+#if !qor_pp_compiler_supports_symetric_transfer
 			// Initially false. Set to true when either a continuation is registered
 			// or when the coroutine has run to completion. Whichever operation
 			// successfully transitions from false->true got there first.
@@ -294,7 +295,7 @@ namespace qor
 				return !m_coroutine || m_coroutine.done();
 			}
 
-#if CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
+#if qor_pp_compiler_supports_symetric_transfer
 			std::coroutine_handle<> await_suspend(
 				std::coroutine_handle<> awaitingCoroutine) noexcept
 			{

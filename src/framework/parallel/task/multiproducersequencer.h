@@ -152,7 +152,7 @@ namespace qor
 		void resume_ready_awaiters() noexcept;
 		void add_awaiter(multi_producer_sequencer_wait_operation_base<SEQUENCE, TRAITS>* awaiter) const noexcept;
 
-#if CPPCORO_COMPILER_MSVC
+#if (qor_pp_compiler == qor_pp_compiler_msvc)
 # pragma warning(push)
 # pragma warning(disable : 4324) // C4324: structure was padded due to alignment specifier
 #endif
@@ -167,7 +167,7 @@ namespace qor
 		alignas(qor_pp_cpu_cache_line)
 		mutable std::atomic<multi_producer_sequencer_wait_operation_base<SEQUENCE, TRAITS>*> m_awaiters;
 
-#if CPPCORO_COMPILER_MSVC
+#if (qor_pp_compiler == qor_pp_compiler_msvc)
 # pragma warning(pop)
 #endif
 

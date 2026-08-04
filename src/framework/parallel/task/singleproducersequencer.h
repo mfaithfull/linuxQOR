@@ -117,7 +117,7 @@ namespace qor{
 		template<typename SEQUENCE2, typename TRAITS2, typename SCHEDULER>
 		friend class single_producer_sequencer_claim_one_operation;
 
-#if CPPCORO_COMPILER_MSVC
+#if (qor_pp_compiler == qor_pp_compiler_msvc)
 # pragma warning(push)
 # pragma warning(disable : 4324) // C4324: structure was padded due to alignment specifier
 #endif
@@ -130,7 +130,7 @@ namespace qor{
 
 		SequenceBarrier<SEQUENCE, TRAITS> m_producerBarrier;
 
-#if CPPCORO_COMPILER_MSVC
+#if (qor_pp_compiler == qor_pp_compiler_msvc)
 # pragma warning(pop)
 #endif
 	};

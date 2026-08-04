@@ -27,8 +27,6 @@ namespace qor
 				std::make_tuple(detail::make_when_all_task(std::forward<AWAITABLES>(awaitables))...));
 	}
 
-	// TODO: Generalise this from vector<AWAITABLE> to arbitrary sequence of awaitable.
-
 	template< typename AWAITABLE, typename RESULT = typename awaitable_of<detail::unwrap_reference_t<AWAITABLE>>::await_result_t>
 	[[nodiscard]] auto when_all_ready(std::vector<AWAITABLE> awaitables)
 	{

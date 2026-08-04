@@ -12,6 +12,7 @@
 #include <functional>
 #include <cassert>
 
+#include "src/platform/compiler/compiler.h"
 #include "src/framework/parallel/task/detail/fmap.h"
 
 namespace qor
@@ -19,7 +20,7 @@ namespace qor
 	template<typename T>
 	class AsyncGenerator;
 
-#if CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
+#if qor_pp_compiler_supports_symetric_transfer
 
 	namespace detail
 	{
@@ -424,7 +425,7 @@ namespace qor
 			return AsyncGenerator<T>{ *this };
 		}
 	}
-#else // !CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
+#else // !qor_pp_compiler_supports_symetric_transfer
 
 	namespace detail
 	{
@@ -1038,7 +1039,7 @@ namespace qor
 			return AsyncGenerator<T>{ *this };
 		}
 	}
-#endif // !CPPCORO_COMPILER_SUPPORTS_SYMMETRIC_TRANSFER
+#endif // !qor_pp_compiler_supports_symetric_transfer
 
 	template<typename FUNC, typename T>
 	AsyncGenerator<std::invoke_result_t<FUNC&, decltype(*std::declval<typename AsyncGenerator<T>::iterator&>())>> fmap(FUNC func, AsyncGenerator<T> source)
