@@ -1,4 +1,4 @@
-This file will provide the features available in the QOR.
+A non comprehensive list of QOR features.
 
  - Almost everything is optional. You have full control. It's just C++ and you use whatever you need.
  - Everything works together out of the box. 
@@ -9,7 +9,9 @@ This file will provide the features available in the QOR.
  - Adding a new module is 5-10 minutes work.
  - Role and Feature based Application framework with argument parsing and full customization.
  - TDD tool set. Assertion, Test and Mocking frameworks that work together.
+ - constexpr data structures, map, set, string
  - State machine based Workflows.
+ - Type erased functions
  - Class registry. An in process ORB for registering implementations of specific interfaces.
  - Policy based smart pointer and integrated memory management system. no more new and delete.
  - Thread Pool and integrated async task system
