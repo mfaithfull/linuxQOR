@@ -23,6 +23,7 @@ namespace qor{ namespace dio{
         { }        
     };
 
+    //genertate a ValueAdapter type P templated on T with each member of the type list L as bases also templated on T
     template<template<class...> class P, class T, template<class> class... L>
     struct adapter_apply
     { 

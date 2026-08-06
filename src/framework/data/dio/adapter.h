@@ -7,7 +7,7 @@
 namespace qor{ namespace dio{
 
     //Bind an Adapter to fields of an instance of a domain object to copy them and make them enumerable
-    //The interface interface_t becomes available on over the bound fields. 
+    //The interface interface_t becomes available over the bound fields. 
     //Can be used for outbound conversions and mappings. Fields can be writable but the original object
     //copied from is unaffected.
     template<class interface_t, class storage, typename field_enum>
@@ -22,10 +22,13 @@ namespace qor{ namespace dio{
         template<field_enum f>
         auto& at() { return std::get<static_cast<int>(f)>(*this); }
 
+        //compile time access to the type that will be returned by at<f>()
         template<field_enum f>
         struct type_of_field
         {
-            using type = std::invoke_result_t< decltype(&Adapter<interface_t, storage, field_enum>::template at<f>), Adapter<interface_t, storage, field_enum> >;
+            using type = std::invoke_result_t< 
+                decltype(&Adapter<interface_t, storage, field_enum>::template at<f>), 
+                Adapter<interface_t, storage, field_enum> >;
         };
     };
 

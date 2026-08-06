@@ -7,7 +7,7 @@
 namespace qor{ namespace dio{
 
     //Bind a port to the fields of a domain storage class instance to modify that instance
-    //throught the bound interface.
+    //through the bound interface.
 
     template<class interface_t, class storage, typename field_enum>
     struct Port : public interface_t
@@ -20,10 +20,13 @@ namespace qor{ namespace dio{
         template<field_enum f>
         auto& at() { return std::get<static_cast<int>(f)>(*this); }
 
+        //compile time access to the type that will be returned by at<f>()
         template<field_enum f>
         struct type_of_field
         {
-            using type = std::invoke_result_t< decltype(&Port<interface_t, storage, field_enum>::template at<f>), Port<interface_t, storage, field_enum> >;
+            using type = std::invoke_result_t< 
+                decltype(&Port<interface_t, storage, field_enum>::template at<f>),
+                Port<interface_t, storage, field_enum> >;
         };
 
     private:
