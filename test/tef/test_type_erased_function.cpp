@@ -29,8 +29,8 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, Empty)
 
 qor_pp_test_suite_case(TypeErasedFunctionTestSuite, Assign) 
 {
-    auto function = MF_MakeFunction(&FreeFunction);
-    auto member_function = MF_MakeFunction(&Object::Function);
+    auto function = qor_pp_make_function(&FreeFunction);
+    auto member_function = qor_pp_make_function(&Object::Function);
     try 
     {
         TypeErasedFunction type_erased_function;
@@ -48,7 +48,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, Assign)
         qor_pp_assert_that(0 != type_erased_function.type_id());
 
         // Assigning a new Function of the same type should work.
-        type_erased_function = MF_MakeFunction(&FreeFunction);        
+        type_erased_function = qor_pp_make_function(&FreeFunction);        
 
         // This should throw an invalid cast excepton.
         type_erased_function = member_function;
@@ -82,7 +82,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, Assign)
 
         // Member functions with same argument and return types but different
         // qualifications are considered different types. This should fail.
-        type_erased_function = MF_MakeFunction(&Object::ConstFunction);        
+        type_erased_function = qor_pp_make_function(&Object::ConstFunction);        
 
     } 
     catch (const Serious& error) 

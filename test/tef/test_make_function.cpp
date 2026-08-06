@@ -15,7 +15,7 @@ struct MakeTypeErasedFunctionTestSuite{};
 
 qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, FunctionAddress) 
 {
-    auto function = MF_MakeFunction(&FreeFunction);
+    auto function = qor_pp_make_function(&FreeFunction);
     qor_pp_assert_that((std::is_same<Function<int(bool&, bool&&)>, decltype(function)>::value));
 
     qor_pp_assert_that(!!function);
@@ -73,8 +73,8 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, Lambda)
 
 qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAndObject) 
 {
-    auto member_function = MF_MakeFunction(&Object::Function);
-    auto member_function_const = MF_MakeFunction(&Object::ConstFunction);
+    auto member_function = qor_pp_make_function(&Object::Function);
+    auto member_function_const = qor_pp_make_function(&Object::ConstFunction);
 
     {
         // Test non-const functions with object pointers.
@@ -159,7 +159,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddressAnd
         // Test non-const functions with object pointers.
         int id = rand();
         Object object(id);
-        auto function = MF_MakeFunction(&Object::Function, &object);
+        auto function = qor_pp_make_function(&Object::Function, &object);
         qor_pp_assert_that((std::is_same<Function<int(bool&, bool&&)>, decltype(function)>::value));
         qor_pp_assert_that(&object == function.GetObject());
 
@@ -172,7 +172,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddressAnd
         // Test const functions with object pointers.
         int id = rand();
         Object object(id);
-        auto function = MF_MakeFunction(&Object::ConstFunction, &object);
+        auto function = qor_pp_make_function(&Object::ConstFunction, &object);
         qor_pp_assert_that((std::is_same<Function<int(bool&, bool&&)>, decltype(function)>::value));
         qor_pp_assert_that(&object == function.GetObject());
         bool called = false;
@@ -184,7 +184,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddressAnd
         // Test const functions with const object pointers.
         int id = rand();
         const Object const_object(id);
-        auto function = MF_MakeFunction(&Object::ConstFunction, &const_object);
+        auto function = qor_pp_make_function(&Object::ConstFunction, &const_object);
         qor_pp_assert_that((std::is_same<Function<int(bool&, bool&&)>, decltype(function)>::value));
         qor_pp_assert_that(&const_object == function.GetObject());
         bool called = false;
@@ -196,7 +196,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddressAnd
         // Test non-const functions with shared object pointers.
         int id = rand();
         auto shared_object = std::make_shared<Object>(id);
-        auto function = MF_MakeFunction(&Object::Function, shared_object);
+        auto function = qor_pp_make_function(&Object::Function, shared_object);
         qor_pp_assert_that((std::is_same<Function<int(bool&, bool&&)>, decltype(function)>::value));
         qor_pp_assert_that(shared_object.get() == function.GetObject());
         bool called = false;
@@ -208,7 +208,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddressAnd
         // Test const functions with shared object pointers.
         int id = rand();
         auto shared_object = std::make_shared<Object>(id);
-        auto function = MF_MakeFunction(&Object::ConstFunction, shared_object);
+        auto function = qor_pp_make_function(&Object::ConstFunction, shared_object);
         qor_pp_assert_that((std::is_same<Function<int(bool&, bool&&)>, decltype(function)>::value));
         qor_pp_assert_that(shared_object.get() == function.GetObject());
         bool called = false;
@@ -220,7 +220,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddressAnd
         // Test const functions with shared const object pointers.
         int id = rand();
         auto shared_const_object = std::make_shared<const Object>(id);
-        auto function = MF_MakeFunction(&Object::ConstFunction, shared_const_object);
+        auto function = qor_pp_make_function(&Object::ConstFunction, shared_const_object);
         qor_pp_assert_that((std::is_same<Function<int(bool&, bool&&)>, decltype(function)>::value));
         qor_pp_assert_that(shared_const_object.get() == function.GetObject());
         bool called = false;
@@ -233,7 +233,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddress)
 {
     {
         // Test creating a MemberFunction for a member function address.
-        auto member_function = MF_MakeFunction(&Object::Function);
+        auto member_function = qor_pp_make_function(&Object::Function);
         qor_pp_assert_that((std::is_same<MemberFunction<decltype(&Object::Function)>,decltype(member_function)>::value));
         qor_pp_assert_that(!decltype(member_function)::kIsConst);
         qor_pp_assert_that(!decltype(member_function)::kIsVolatile);
@@ -252,7 +252,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddress)
 
     {
         // Test creating a MemberFunction to a const member function address.
-        auto member_function = MF_MakeFunction(&Object::ConstFunction);
+        auto member_function = qor_pp_make_function(&Object::ConstFunction);
         qor_pp_assert_that((std::is_same<MemberFunction<decltype(&Object::ConstFunction)>, decltype(member_function)>::value));
         qor_pp_assert_that(!!decltype(member_function)::kIsConst);
         qor_pp_assert_that(!decltype(member_function)::kIsVolatile);
@@ -278,7 +278,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddress)
 
     {
         // Test creating a MemberFunction to a volatile member function address.
-        auto member_function = MF_MakeFunction(&Object::VolatileFunction);
+        auto member_function = qor_pp_make_function(&Object::VolatileFunction);
         qor_pp_assert_that((std::is_same<MemberFunction<decltype(&Object::VolatileFunction)>,decltype(member_function)>::value));
         qor_pp_assert_that(!decltype(member_function)::kIsConst);
         qor_pp_assert_that(!!decltype(member_function)::kIsVolatile);
@@ -305,7 +305,7 @@ qor_pp_test_suite_case(MakeTypeErasedFunctionTestSuite, MemberFunctionAddress)
     {
         // Test creating a MemberFunction to a const volatile member function
         // address.
-        auto member_function = MF_MakeFunction(&Object::ConstVolatileFunction);
+        auto member_function = qor_pp_make_function(&Object::ConstVolatileFunction);
         qor_pp_assert_that((std::is_same<MemberFunction<decltype(&Object::ConstVolatileFunction)>,decltype(member_function)>::value));
         qor_pp_assert_that(!!decltype(member_function)::kIsConst);
         qor_pp_assert_that(!!decltype(member_function)::kIsVolatile);

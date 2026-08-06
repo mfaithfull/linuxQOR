@@ -53,7 +53,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FunctionEmpty)
 qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FreeFunctionCall) 
 {
     // Try creating a function with its explicit type and calling it.
-    Function<int(bool&, bool&&)> function = MF_MakeFunction(&FreeFunction);
+    Function<int(bool&, bool&&)> function = qor_pp_make_function(&FreeFunction);
     qor_pp_assert_that((std::is_same<decltype(&FreeFunction),
                 typename decltype(function)::FunctionPointerType>::value));
 
@@ -254,7 +254,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, CallableOverload)
 qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndObjectPointer) 
 {
     // Create a MemberFunction pointing to a member function.
-    auto member_function = MF_MakeFunction(&Object::Function);
+    auto member_function = qor_pp_make_function(&Object::Function);
     qor_pp_assert_that(IsMemberFunction<decltype(member_function)>::value);
     qor_pp_assert_that(!!member_function);
     qor_pp_assert_that(!decltype(member_function)::kIsConst);
@@ -263,7 +263,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndObjectP
     qor_pp_assert_that((get_type_id<decltype(&Object::Function)>()) == member_function.type_id());
 
     // Create a MemberFunction pointing to a const member function.
-    auto const_member_function = MF_MakeFunction(&Object::ConstFunction);
+    auto const_member_function = qor_pp_make_function(&Object::ConstFunction);
     qor_pp_assert_that(IsMemberFunction<decltype(const_member_function)>::value);
     qor_pp_assert_that(!!const_member_function);
     qor_pp_assert_that(!!decltype(const_member_function)::kIsConst);
@@ -272,7 +272,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndObjectP
     qor_pp_assert_that((get_type_id<decltype(&Object::ConstFunction)>()) == const_member_function.type_id());
 
     // Create a MemberFunction pointing to a volatile member function.
-    auto volatile_member_function = MF_MakeFunction(&Object::VolatileFunction);
+    auto volatile_member_function = qor_pp_make_function(&Object::VolatileFunction);
     qor_pp_assert_that(IsMemberFunction<decltype(volatile_member_function)>::value);
     qor_pp_assert_that(!!volatile_member_function);
     qor_pp_assert_that(!decltype(volatile_member_function)::kIsConst);
@@ -281,7 +281,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndObjectP
     qor_pp_assert_that((get_type_id<decltype(&Object::VolatileFunction)>()) == volatile_member_function.type_id());
 
     // Create a MemberFunction pointing to a const_volatile member function.
-    auto const_volatile_member_function = MF_MakeFunction(&Object::ConstVolatileFunction);
+    auto const_volatile_member_function = qor_pp_make_function(&Object::ConstVolatileFunction);
     qor_pp_assert_that(IsMemberFunction<decltype(const_volatile_member_function)>::value);
     qor_pp_assert_that(!!const_volatile_member_function);
     qor_pp_assert_that(!!decltype(const_volatile_member_function)::kIsConst);
@@ -461,7 +461,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndObjectP
 
 qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndObjectPointerVirtual) 
 {
-    auto member_function = MF_MakeFunction(&Object::VirtualFunction);
+    auto member_function = qor_pp_make_function(&Object::VirtualFunction);
     qor_pp_assert_that(IsMemberFunction<decltype(member_function)>::value);
 
     qor_pp_assert_that(!!member_function);
@@ -504,7 +504,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndObjectP
 qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndSharedPointer) 
 {
     // Create a MemberFunction pointing to a member function.
-    auto member_function = MF_MakeFunction(&Object::Function);
+    auto member_function = qor_pp_make_function(&Object::Function);
     qor_pp_assert_that(IsMemberFunction<decltype(member_function)>::value);
     qor_pp_assert_that(!!member_function);
     qor_pp_assert_that(!decltype(member_function)::kIsConst);
@@ -513,7 +513,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndSharedP
     qor_pp_assert_that((get_type_id<decltype(&Object::Function)>()) == member_function.type_id());
 
     // Create a MemberFunction pointing to a const member function.
-    auto const_member_function = MF_MakeFunction(&Object::ConstFunction);
+    auto const_member_function = qor_pp_make_function(&Object::ConstFunction);
     qor_pp_assert_that(IsMemberFunction<decltype(const_member_function)>::value);
     qor_pp_assert_that(!!const_member_function);
     qor_pp_assert_that(!!decltype(const_member_function)::kIsConst);
@@ -522,7 +522,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndSharedP
     qor_pp_assert_that((get_type_id<decltype(&Object::ConstFunction)>()) == const_member_function.type_id());
 
     // Create a MemberFunction pointing to a volatile member function.
-    auto volatile_member_function = MF_MakeFunction(&Object::VolatileFunction);
+    auto volatile_member_function = qor_pp_make_function(&Object::VolatileFunction);
     qor_pp_assert_that(IsMemberFunction<decltype(volatile_member_function)>::value);
     qor_pp_assert_that(!!volatile_member_function);
     qor_pp_assert_that(!decltype(volatile_member_function)::kIsConst);
@@ -532,7 +532,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndSharedP
 
     // Create a MemberFunction pointing to a const_volatile member function.
     auto const_volatile_member_function =
-    MF_MakeFunction(&Object::ConstVolatileFunction);
+    qor_pp_make_function(&Object::ConstVolatileFunction);
     qor_pp_assert_that(IsMemberFunction<
     decltype(const_volatile_member_function)>::value);
     qor_pp_assert_that(!!const_volatile_member_function);
@@ -678,7 +678,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndSharedP
         // Test calling after copying and moving the function.
         int id = rand();
         auto object = std::make_shared<Object>(id);
-        auto member_function = MF_MakeFunction(&Object::Function);
+        auto member_function = qor_pp_make_function(&Object::Function);
         Function<int(bool&, bool&&)> function(member_function, object);
 
         auto function_copy = function;
@@ -728,7 +728,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndSharedP
 
 qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromMemberFunctionAndSharedPointerVirtual) 
 {
-    auto member_function = MF_MakeFunction(&Object::VirtualFunction);
+    auto member_function = qor_pp_make_function(&Object::VirtualFunction);
     qor_pp_assert_that(IsMemberFunction<decltype(member_function)>::value);
 
     qor_pp_assert_that(!!member_function);
@@ -775,7 +775,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // object pointer to it.
         int id = rand();
         Object object(id);
-        auto function = MF_MakeFunction(&Object::Function, &object);
+        auto function = qor_pp_make_function(&Object::Function, &object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(&object == function.GetObject());
@@ -791,7 +791,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // an object pointer to it.
         int id = rand();
         Object object(id);
-        auto function = MF_MakeFunction(&Object::ConstFunction, &object);
+        auto function = qor_pp_make_function(&Object::ConstFunction, &object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(&object == function.GetObject());
@@ -807,7 +807,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // binding an object pointer to it.
         int id = rand();
         Object object(id);
-        auto function = MF_MakeFunction(&Object::VolatileFunction, &object);
+        auto function = qor_pp_make_function(&Object::VolatileFunction, &object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(&object == function.GetObject());
@@ -823,7 +823,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // and binding an object pointer to it.
         int id = rand();
         Object object(id);
-        auto function = MF_MakeFunction(&Object::ConstVolatileFunction, &object);
+        auto function = qor_pp_make_function(&Object::ConstVolatileFunction, &object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(&object == function.GetObject());
@@ -839,7 +839,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // a const object pointer to it.
         int id = rand();
         const Object object(id);
-        auto function = MF_MakeFunction(&Object::ConstFunction, &object);
+        auto function = qor_pp_make_function(&Object::ConstFunction, &object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(&object == function.GetObject());
@@ -855,7 +855,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // binding a volatile object pointer to it.
         int id = rand();
         volatile Object object(id);
-        auto function = MF_MakeFunction(&Object::VolatileFunction, &object);
+        auto function = qor_pp_make_function(&Object::VolatileFunction, &object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(&object == function.GetObject());
@@ -871,7 +871,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // and binding a const volatile object pointer to it.
         int id = rand();
         const volatile Object object(id);
-        auto function = MF_MakeFunction(&Object::ConstVolatileFunction, &object);
+        auto function = qor_pp_make_function(&Object::ConstVolatileFunction, &object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(&object == function.GetObject());
@@ -886,7 +886,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // Test calling after copying and moving the function.
         int id = rand();
         Object object(id);
-        auto function = MF_MakeFunction(&Object::Function, &object);
+        auto function = qor_pp_make_function(&Object::Function, &object);
 
         auto function_copy = function;
         qor_pp_assert_that(!!function_copy);
@@ -912,7 +912,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         try 
         {
             Object* object = nullptr;
-            auto function = MF_MakeFunction(&Object::Function, object);            
+            auto function = qor_pp_make_function(&Object::Function, object);            
         } 
         catch(const Serious& error) 
         {
@@ -927,7 +927,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // Test calling a virtual function using a base object.
         int id = rand();
         Object object(id);
-        auto function = MF_MakeFunction(&Object::VirtualFunction, &object);
+        auto function = qor_pp_make_function(&Object::VirtualFunction, &object);
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(&object == function.GetObject());
         qor_pp_assert_that((get_type_id<int(bool&, bool&&, bool*)>()) == function.type_id());
@@ -943,7 +943,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndObject
         // Test calling a virtual function using a derived object.
         int id = rand();
         DerivedObject derived_object(id);
-        auto function = MF_MakeFunction(&Object::VirtualFunction, &derived_object);
+        auto function = qor_pp_make_function(&Object::VirtualFunction, &derived_object);
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(&derived_object == function.GetObject());
         qor_pp_assert_that((get_type_id<int(bool&, bool&&, bool*)>()) == function.type_id());
@@ -1030,7 +1030,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // object shared pointer to it.
         int id = rand();
         auto object = std::make_shared<Object>(id);
-        auto function = MF_MakeFunction(&Object::Function, object);
+        auto function = qor_pp_make_function(&Object::Function, object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(object.get() == function.GetObject());
@@ -1046,7 +1046,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // an object shared pointer to it.
         int id = rand();
         auto object = std::make_shared<Object>(id);
-        auto function = MF_MakeFunction(&Object::ConstFunction, object);
+        auto function = qor_pp_make_function(&Object::ConstFunction, object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(object.get() == function.GetObject());
@@ -1062,7 +1062,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // binding an object shared pointer to it.
         int id = rand();
         auto object = std::make_shared<Object>(id);
-        auto function = MF_MakeFunction(&Object::VolatileFunction, object);
+        auto function = qor_pp_make_function(&Object::VolatileFunction, object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(object.get() == function.GetObject());
@@ -1078,7 +1078,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // and binding an object shared pointer to it.
         int id = rand();
         auto object = std::make_shared<Object>(id);
-        auto function = MF_MakeFunction(&Object::ConstVolatileFunction, object);
+        auto function = qor_pp_make_function(&Object::ConstVolatileFunction, object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(object.get() == function.GetObject());
@@ -1094,7 +1094,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // a const object shared pointer to it.
         int id = rand();
         auto object = std::make_shared<const Object>(id);
-        auto function = MF_MakeFunction(&Object::ConstFunction, object);
+        auto function = qor_pp_make_function(&Object::ConstFunction, object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(object.get() == function.GetObject());
@@ -1111,7 +1111,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // binding a volatile object shared pointer to it.
         int id = rand();
         auto object = std::make_shared<volatile Object>(id);
-        auto function = MF_MakeFunction(&Object::VolatileFunction, object);
+        auto function = qor_pp_make_function(&Object::VolatileFunction, object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(object.get() == function.GetObject());
@@ -1127,7 +1127,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // and binding a const volatile object shared pointer to it.
         int id = rand();
         auto object = std::make_shared<const volatile Object>(id);
-        auto function = MF_MakeFunction(&Object::ConstVolatileFunction, object);
+        auto function = qor_pp_make_function(&Object::ConstVolatileFunction, object);
 
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(object.get() == function.GetObject());
@@ -1143,7 +1143,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // Test calling after copying and moving the function.
         int id = rand();
         auto object = std::make_shared<Object>(id);
-        auto function = MF_MakeFunction(&Object::Function, object);
+        auto function = qor_pp_make_function(&Object::Function, object);
 
         auto function_copy = function;
         qor_pp_assert_that(!!function_copy);
@@ -1169,7 +1169,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         try 
         {
             std::shared_ptr<Object> object;
-            auto function = MF_MakeFunction(&Object::Function, object);            
+            auto function = qor_pp_make_function(&Object::Function, object);            
         }
         catch(const Serious& error) 
         {
@@ -1180,7 +1180,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
     {
         // Check that the functions keep the object alive.
         auto object = std::make_shared<Object>(0);
-        auto function = MF_MakeFunction(&Object::Function, object);
+        auto function = qor_pp_make_function(&Object::Function, object);
 
         std::weak_ptr<Object> weak_ptr = object;
         object.reset();
@@ -1196,7 +1196,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // Test calling a virtual function using a base object.
         int id = rand();
         auto object = std::make_shared<Object>(id);
-        auto function = MF_MakeFunction(&Object::VirtualFunction, object);
+        auto function = qor_pp_make_function(&Object::VirtualFunction, object);
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(object.get() == function.GetObject());
         qor_pp_assert_that((get_type_id<int(bool&, bool&&, bool*)>()) == function.type_id());
@@ -1212,7 +1212,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, FromFunctionAddressAndShared
         // Test calling a virtual function using a derived object.
         int id = rand();
         auto derived_object = std::make_shared<DerivedObject>(id);
-        auto function = MF_MakeFunction(&Object::VirtualFunction, derived_object);
+        auto function = qor_pp_make_function(&Object::VirtualFunction, derived_object);
         qor_pp_assert_that(!!function);
         qor_pp_assert_that(derived_object.get() == function.GetObject());
         qor_pp_assert_that((get_type_id<int(bool&, bool&&, bool*)>()) == function.type_id());
@@ -1301,7 +1301,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, StdFunction)
     // when pointing to a free function.
     {
         int a = rand();
-        Function<int(int, int)> func1 = MF_MakeFunction(&Sum);
+        Function<int(int, int)> func1 = qor_pp_make_function(&Sum);
         Function<int(int, int)> func2 = std::function<int(int, int)>(func1);
         Function<int(int)> func3 = std::bind(func2, a, std::placeholders::_1);
 
@@ -1340,7 +1340,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, StdFunction)
         Object object(id);
 
         int a = rand();
-        auto member_func = MF_MakeFunction(&Object::Sum);
+        auto member_func = qor_pp_make_function(&Object::Sum);
         Function<int(int, int)> func1(member_func, &object);
         Function<int(int, int)> func2 = std::function<int(int, int)>(func1);
         Function<int(int)> func3 = std::bind(func2, a, std::placeholders::_1);
@@ -1364,7 +1364,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, StdFunction)
         auto object = std::make_shared<Object>(id);
 
         int a = rand();
-        auto member_func = MF_MakeFunction(&Object::Sum);
+        auto member_func = qor_pp_make_function(&Object::Sum);
         Function<int(int, int)> func1(member_func, object);
         Function<int(int, int)> func2 = std::function<int(int, int)>(func1);
         Function<int(int)> func3 = std::bind(func2, a, std::placeholders::_1);
@@ -1388,7 +1388,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, StdFunction)
         Object obj(id);
 
         int a = rand();
-        Function<int(int, int)> func1 = MF_MakeFunction(&Object::Sum, &obj);
+        Function<int(int, int)> func1 = qor_pp_make_function(&Object::Sum, &obj);
         Function<int(int, int)> func2 = std::function<int(int, int)>(func1);
         Function<int(int)> func3 = std::bind(func2, a, std::placeholders::_1);
 
@@ -1409,7 +1409,7 @@ qor_pp_test_suite_case(TypeErasedFunctionTestSuite, StdFunction)
         auto obj = std::make_shared<Object>(id);
 
         int a = rand();
-        Function<int(int, int)> func1 = MF_MakeFunction(&Object::Sum, obj);
+        Function<int(int, int)> func1 = qor_pp_make_function(&Object::Sum, obj);
         Function<int(int, int)> func2 = std::function<int(int, int)>(func1);
         Function<int(int)> func3 = std::bind(func2, a, std::placeholders::_1);
 

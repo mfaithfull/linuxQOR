@@ -43,7 +43,7 @@ qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, _Empty)
 
 qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, CallMemberFunction) 
 {
-    MemberFunction<decltype(&Object::Function)> member_function = MF_MakeFunction(&Object::Function);
+    MemberFunction<decltype(&Object::Function)> member_function = qor_pp_make_function(&Object::Function);
 
     qor_pp_assert_that(!!member_function);
     qor_pp_assert_that(nullptr == member_function.GetObject());
@@ -86,7 +86,7 @@ qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, CallMemberFunction)
 
 qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, CallConstMemberFunction) 
 {
-    MemberFunction<decltype(&Object::ConstFunction)> member_function = MF_MakeFunction(&Object::ConstFunction);
+    MemberFunction<decltype(&Object::ConstFunction)> member_function = qor_pp_make_function(&Object::ConstFunction);
 
     qor_pp_assert_that(!!member_function);
     qor_pp_assert_that(nullptr == member_function.GetObject());
@@ -140,7 +140,7 @@ qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, CallConstMemberFunctio
 qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, CallVolatileMemberFunction) 
 {
     MemberFunction<decltype(&Object::VolatileFunction)>
-    member_function = MF_MakeFunction(&Object::VolatileFunction);
+    member_function = qor_pp_make_function(&Object::VolatileFunction);
 
     qor_pp_assert_that(!!member_function);
     qor_pp_assert_that(nullptr == member_function.GetObject());
@@ -194,7 +194,7 @@ qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, CallVolatileMemberFunc
 qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, CallConstVolatileMemberFunction) 
 {
     MemberFunction<decltype(&Object::ConstVolatileFunction)>
-    member_function = MF_MakeFunction(&Object::ConstVolatileFunction);
+    member_function = qor_pp_make_function(&Object::ConstVolatileFunction);
 
     qor_pp_assert_that(!!member_function);
     qor_pp_assert_that(nullptr == member_function.GetObject());
@@ -268,7 +268,7 @@ qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, CallConstVolatileMembe
 qor_pp_test_suite_case(TypeErasedMemberFunctionTestSuite, CallVirtualMemberFunction) 
 {
     MemberFunction<decltype(&Object::VirtualFunction)>
-        member_function = MF_MakeFunction(&Object::VirtualFunction);
+        member_function = qor_pp_make_function(&Object::VirtualFunction);
 
     qor_pp_assert_that(!!member_function);
     qor_pp_assert_that(nullptr == member_function.GetObject());

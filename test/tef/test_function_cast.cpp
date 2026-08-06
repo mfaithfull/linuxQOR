@@ -26,7 +26,7 @@ qor_pp_test_suite_case(TypeErasedFunctionCastTestSuite, FunctionAddressCast)
 {
     // Test casting back from a type-erased Function pointing to a function
     // address.
-    auto function = MF_MakeFunction(&FreeFunction);
+    auto function = qor_pp_make_function(&FreeFunction);
     TypeErasedFunction type_erased = function;
     qor_pp_assert_that(!!type_erased);
 
@@ -81,7 +81,7 @@ qor_pp_test_suite_case(TypeErasedFunctionCastTestSuite, FunctionCallable)
 
 qor_pp_test_suite_case(TypeErasedFunctionCastTestSuite, MemberFunctionAndObjectCast) 
 {
-    auto member_function = MF_MakeFunction(&Object::Function);
+    auto member_function = qor_pp_make_function(&Object::Function);
 
     {
         // Test casting back from a type-erased Function built by binding a
@@ -147,7 +147,7 @@ qor_pp_test_suite_case(TypeErasedFunctionCastTestSuite, MemberFunctionAddressAnd
         // function address and an object pointer.
         int id = rand();
         Object object(id);
-        auto function = MF_MakeFunction(&Object::Function, &object);
+        auto function = qor_pp_make_function(&Object::Function, &object);
 
         TypeErasedFunction type_erased = function;
         qor_pp_assert_that(!!type_erased);
@@ -175,7 +175,7 @@ qor_pp_test_suite_case(TypeErasedFunctionCastTestSuite, MemberFunctionAddressAnd
         // function address and an object shared pointer.
         int id = rand();
         auto object = std::make_shared<Object>(id);
-        auto function = MF_MakeFunction(&Object::Function, object);
+        auto function = qor_pp_make_function(&Object::Function, object);
 
         TypeErasedFunction type_erased = function;
         qor_pp_assert_that(!!type_erased);
@@ -203,7 +203,7 @@ qor_pp_test_suite_case(TypeErasedFunctionCastTestSuite, MemberFunctionAddressCas
 {
     // Test casting back from a type-erased MemberFunction built from a member
     // function address.
-    auto member_function = MF_MakeFunction(&Object::Function);
+    auto member_function = qor_pp_make_function(&Object::Function);
     TypeErasedFunction type_erased = member_function;
     qor_pp_assert_that(!!type_erased);
 

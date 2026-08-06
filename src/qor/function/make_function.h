@@ -12,22 +12,22 @@
 // Helper macro to create functions that take function addresses as template
 // arguments. Avoids having to write something like
 // make_function<decltype(&Foo::Bar), &Foo::Bar>(&object).
-// Instead, MF_MakeFunction(&Foo::Bar, &object) can be used.
-#ifndef MF_MakeFunction
-#define MF_MakeFunction(x, ...) \
+// Instead, qor_pp_make_function(&Foo::Bar, &object) can be used.
+#ifndef qor_pp_make_function
+#define qor_pp_make_function(x, ...) \
     qor::tef::make_function<decltype((x)), (x)>(__VA_ARGS__)
 #endif
 
 namespace qor { namespace tef {
 
     // Creates a Function object deducing its type when provided a function pointer
-    // as a template argument. Works with MF_MakeFunction.
+    // as a template argument. Works with qor_pp_make_function.
     //
     // Example:
     // void Foo(int x);
-    // auto function = MF_MakeFunction(&Foo); // Function<void(int)>.
+    // auto function = qor_pp_make_function(&Foo); // Function<void(int)>.
     //
-    // Warning: MF_MakeFunction does not work if the function is overloaded
+    // Warning: qor_pp_make_function does not work if the function is overloaded
     // because it's unable to guess which version should be used. In these cases
     // Function<T>::FromFunction must be used directly.
     template <typename FuncPtr, FuncPtr func_ptr>
@@ -39,7 +39,7 @@ namespace qor { namespace tef {
     }
 
     // Creates a MemberFunction object deducing its type when provided a member
-    // function address. Works with MF_MakeFunction.
+    // function address. Works with qor_pp_make_function.
     //
     // Example:
     // struct Object {
@@ -47,9 +47,9 @@ namespace qor { namespace tef {
     // };
     //
     // // Deduced as MemberFunction<void (Object::*)(int)>.
-    // auto member_function = MF_MakeFunction(&Object::Foo);
+    // auto member_function = qor_pp_make_function(&Object::Foo);
     //
-    // WARNING: MF_MakeFunction does not work if the function is overloaded
+    // WARNING: qor_pp_make_function does not work if the function is overloaded
     // because it's unable to guess which version should be used. In these cases
     // MemberFunction<T>::FromMemberFunction must be used directly.
     template <typename FuncPtr, FuncPtr func_ptr>
@@ -60,7 +60,7 @@ namespace qor { namespace tef {
     }
 
     // Creates an Function object deducing its type when provided a member function
-    // address and an object to be bound to it. Works with MF_MakeFunction.
+    // address and an object to be bound to it. Works with qor_pp_make_function.
     //
     // Example:
     // struct Object {
@@ -69,9 +69,9 @@ namespace qor { namespace tef {
     //
     // // Deduced as Function<void(int)>.
     // Object object;
-    // auto function_ref_object = MF_MakeFunction(&Object::Foo, &object);
+    // auto function_ref_object = qor_pp_make_function(&Object::Foo, &object);
     //
-    // WARNING: MF_MakeFunction does not work if the function is overloaded
+    // WARNING: qor_pp_make_function does not work if the function is overloaded
     // because it's unable to guess which version should be used. In these cases
     // Function<T>::FromMemberFunction must be used directly.
     template <typename FuncPtr, FuncPtr func_ptr>
@@ -85,7 +85,7 @@ namespace qor { namespace tef {
 
     // Creates an Function object deducing its type when provided a member function
     // address and an object shared pointer to be bound to it.
-    // Works with MF_MakeFunction.
+    // Works with qor_pp_make_function.
     //
     // Example:
     // struct Object {
@@ -94,10 +94,10 @@ namespace qor { namespace tef {
     //
     // // Deduced as Function<void(int)>.
     // auto shared_object = std::make_shared<Object>();
-    // auto function_shared_object = MF_MakeFunction(
+    // auto function_shared_object = qor_pp_make_function(
     //     &Object::Foo, shared_object);
     //
-    // WARNING: MF_MakeFunction does not work if the function is overloaded
+    // WARNING: qor_pp_make_function does not work if the function is overloaded
     // because it's unable to guess which version should be used. In these cases
     // Function<T>::FromMemberFunction must be used directly.
     template <typename FuncPtr, FuncPtr func_ptr>
@@ -118,7 +118,7 @@ namespace qor { namespace tef {
     // };
     //
     // // Deduced as MemberFunction<void (Object::*)(int)>.
-    // auto member_function = MF_MakeFunction(&Object::Foo);
+    // auto member_function = qor_pp_make_function(&Object::Foo);
     //
     // Object object;
     // auto shared_object = std::make_shared<Object>();

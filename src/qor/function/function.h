@@ -41,11 +41,11 @@ namespace qor { namespace tef {
         Function() noexcept;
 
         // Creates a new Function from the address of a free or static function.
-        // The use of the MF_MakeFunction macro is recommended to deduce the type of
+        // The use of the qor_pp_make_function macro is recommended to deduce the type of
         // the function and simplify the syntax of call. For example:
         //
         // void Foo(int x);
-        // auto function = MF_MakeFunction(&Foo); // Function<void(int)>.
+        // auto function = qor_pp_make_function(&Foo); // Function<void(int)>.
         template <FunctionPointerType func_ptr>
         static Function FromFunction() noexcept;
 
@@ -55,7 +55,7 @@ namespace qor { namespace tef {
         //
         // Raises an error if the provided object pointer is nullptr.
         //
-        // The use of the MF_MakeFunction macro is recommended to deduce the type of
+        // The use of the qor_pp_make_function macro is recommended to deduce the type of
         // the function and simplify the syntax of call. For example:
         //
         // struct Object {
@@ -65,14 +65,14 @@ namespace qor { namespace tef {
         //
         // // Deduced as Function<void(int)>.
         // Object object;
-        // auto function = MF_MakeFunction(&Object::Foo, &object);
+        // auto function = qor_pp_make_function(&Object::Foo, &object);
         //
         // // Deduced as Function<void(int)> too. Objects must respect constness.
         // const Object const_object;
-        // auto const_function1 = MF_MakeFunction(&Object::Bar, &object);
-        // auto const_function2 = MF_MakeFunction(&Object::Bar, &const_object);
+        // auto const_function1 = qor_pp_make_function(&Object::Bar, &object);
+        // auto const_function2 = qor_pp_make_function(&Object::Bar, &const_object);
         //
-        // However, MF_MakeFunction does not work when provided with an overloaded
+        // However, qor_pp_make_function does not work when provided with an overloaded
         // function because it does not know which one to use. In these cases the full
         // function syntax must be used to disambiguate. For example:
         //
@@ -113,7 +113,7 @@ namespace qor { namespace tef {
         //
         // Raises an error if the provided shared pointer is null.
         //
-        // The use of the MF_MakeFunction macro is recommended to deduce the type of
+        // The use of the qor_pp_make_function macro is recommended to deduce the type of
         // the function and simplify the syntax of call. For example:
         //
         // struct Object {
@@ -123,14 +123,14 @@ namespace qor { namespace tef {
         //
         // // Deduced as Function<void(int)>.
         // auto object = std::make_shared<Object>();
-        // auto function = MF_MakeFunction(&Object::Foo, object);
+        // auto function = qor_pp_make_function(&Object::Foo, object);
         //
         // // Deduced as Function<void(int)> too. Objects must respect constness.
         // auto const_object = std::make_shared<const Object>();
-        // auto const_function_1 = MF_MakeFunction(&Object::Bar, object);
-        // auto const_function_2 = MF_MakeFunction(&Object::Bar, const_object);
+        // auto const_function_1 = qor_pp_make_function(&Object::Bar, object);
+        // auto const_function_2 = qor_pp_make_function(&Object::Bar, const_object);
         //
-        // However, MF_MakeFunction does not work when provided with an overloaded
+        // However, qor_pp_make_function does not work when provided with an overloaded
         // function because it does not know which one to use. In these cases the full
         // function syntax must be used to disambiguate. For example:
         //
