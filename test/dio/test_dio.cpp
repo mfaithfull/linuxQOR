@@ -11,11 +11,12 @@
 
 #include "src/qor/tdd/tdd.h"
 #include "src/framework/data/dio/collectionadapter.h"
-#include "src/framework/data/dio/interfaceadapter.h"
+#include "src/framework/data/dio/structureadapter.h"
 #include "src/framework/data/dio/ishelpers.h"
 #include "src/framework/data/dio/port.h"
 #include "src/framework/data/dio/adapter.h"
-#include "src/qor/function/make_function.h"
+#include "src/framework/data/dio/functionadapter.h"
+#include "src/framework/data/dio/interface.h"
 
 namespace domain{
 
@@ -40,7 +41,7 @@ using AmmountAdapter = dio::adapter_apply< dio::ValueAdapter, float,
 using LogAdapter = dio::adapter_apply< dio::CollectionAdapter, std::vector<std::string>, 
     dio::ReadCollection, dio::Append, dio::StreamOutCollection >::type;
 
-using PaymentInterface = dio::InterfaceAdapter<
+using PaymentStructure = dio::StructureAdapter<
         AccNoAdapter,
         AmmountAdapter,
         LogAdapter >;
@@ -53,9 +54,9 @@ enum class paymentfields
 };
 
 template<class storage>
-struct PaymentAdapter : public dio::Adapter<PaymentInterface, storage, paymentfields>
+struct PaymentAdapter : public dio::Adapter<PaymentStructure, storage, paymentfields>
 {
-    PaymentAdapter(storage& src) : dio::Adapter<PaymentInterface, storage, paymentfields>(src,
+    PaymentAdapter(storage& src) : dio::Adapter<PaymentStructure, storage, paymentfields>(src,
         storage::accno, 
         storage::ammount, 
         storage::log)
@@ -63,9 +64,9 @@ struct PaymentAdapter : public dio::Adapter<PaymentInterface, storage, paymentfi
 };
 
 template<class storage>
-struct PaymentPort : public dio::Port<PaymentInterface, storage, paymentfields>
+struct PaymentPort : public dio::Port<PaymentStructure, storage, paymentfields>
 {
-    PaymentPort(storage& src) : dio::Port<PaymentInterface, storage, paymentfields>(src,
+    PaymentPort(storage& src) : dio::Port<PaymentStructure, storage, paymentfields>(src,
         src.accno, 
         src.ammount, 
         src.log)
@@ -76,6 +77,20 @@ void OnPaymentAmmountChange(float ammount)
 {
     std::cout << "ammount changed " << ammount << std::endl;
 }
+
+struct CallTarget
+{
+    size_t size{0};
+
+    void Increase(){ ++size; }
+    size_t Set(size_t newSize){ size_t oldSize = size; size = newSize; return oldSize; }
+};
+
+enum class tf
+{
+    Set,
+    L
+};
 
 qor_pp_test_case(dio_basics)
 {
@@ -116,4 +131,26 @@ qor_pp_test_case(dio_basics)
     port_t pay(data);
     pay.at<paymentfields::ammount>().Set(34.67f);
     pay.at<paymentfields::log>().push_back("Set ammount to 34.67");
+
+    CallTarget target;
+    
+    dio::MemberFunctionAdapter<CallTarget, void, void> fad(target, qor_pp_make_function(&CallTarget::Increase));
+    fad();
+
+    dio::MemberFunctionAdapter<CallTarget, size_t, size_t> setter(target, qor_pp_make_function(&CallTarget::Set));
+
+    size_t result = setter(57000);
+
+    auto lFunc = [&target](size_t newSize) -> size_t
+    {
+        return target.Set(newSize);
+    };
+
+    using SetterInterface = dio::Interface< CallTarget, dio::MemberFunctionAdapter<CallTarget, size_t, size_t>, decltype(lFunc)>;
+
+    SetterInterface iSetter(target, setter, lFunc);
+
+    std::get<static_cast<int>(tf::Set)>(iSetter)(271);
+    std::get<static_cast<int>(tf::L)>(iSetter)(869);
+    
 }

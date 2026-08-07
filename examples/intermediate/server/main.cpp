@@ -26,12 +26,12 @@ qor_pp_implement_module(Server::Name)
 
 int main()
 {
+    ThePlatform(qor_shared)->AddSubsystem<Sockets>();
+    ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
+
     DefaultErrorHandler errorHandler;
     DefaultLogHandler logHandler(Level::Debug);
     logHandler.WriteToStandardOutput();
-
-    ThePlatform(qor_shared)->AddSubsystem<Sockets>();
-    ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
     return AppBuilder().Build<Server>(Server::Name)(qor_unlocked).SetRole<ServerRole>().
         RunWorkflow(new_ref<NetworkServer>(12345, new_ref<EchoProtocol>()));

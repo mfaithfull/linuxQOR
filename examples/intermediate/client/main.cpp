@@ -47,11 +47,11 @@ void SetupLogging(DefaultLogHandler& logHandler, qor::components::LogAggregatorS
 
 int main(const int argc, const char** argv, char**)
 {
-    DefaultErrorHandler errorHandler;
-    DefaultLogHandler logHandler(Level::Debug);    
-
     ThePlatform(qor_shared)->AddSubsystem<Sockets>();
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
+
+    DefaultErrorHandler errorHandler;
+    DefaultLogHandler logHandler(Level::Debug);    
 
     return AppBuilder().Build(appName)(qor_unlocked).
         SetRole<app::Role>(

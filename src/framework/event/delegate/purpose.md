@@ -4,6 +4,3 @@ qor_delegate is a header only library, nothing to build, just
 #include "src/framework/event/delegate/delegate.h"
 or
 #include "src/framework/event/delegate/multicastdelegate.h"
-
-
-

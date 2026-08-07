@@ -1,17 +1,18 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_FRAMEWORK_DIO_INTERFACEADAPTER
-#define QOR_PP_H_FRAMEWORK_DIO_INTERFACEADAPTER
+#ifndef QOR_PP_H_FRAMEWORK_DIO_STRUCTUREADAPTER
+#define QOR_PP_H_FRAMEWORK_DIO_STRUCTUREADAPTER
 
 namespace qor{ namespace dio{
 
+    //Each of the Args should be a ValueAdapter
     template <typename... Args>
-    struct InterfaceAdapter : public std::tuple<Args...>
+    struct StructureAdapter : public std::tuple<Args...>
     {
         using storage_type = std::tuple<Args...>;
 
-        InterfaceAdapter(Args&&... args) : std::tuple<Args...>{std::forward<Args>(args)...}
+        StructureAdapter(Args&&... args) : std::tuple<Args...>{std::forward<Args>(args)...}
         { }
 
         constexpr auto field_count() 
@@ -39,4 +40,4 @@ namespace qor{ namespace dio{
 
 }}//qor::dio
 
-#endif//QOR_PP_H_FRAMEWORK_DIO_INTERFACEADAPTER
+#endif//QOR_PP_H_FRAMEWORK_DIO_STRUCTUREADAPTER

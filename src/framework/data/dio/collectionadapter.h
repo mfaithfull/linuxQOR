@@ -5,12 +5,12 @@
 #define QOR_PP_H_FRAMEWORK_DIO_COLLECTIONADAPTER
 
 #include "valueadapter.h"
-#include "collectionadapters/readcollection.h"
-#include "collectionadapters/writecollection.h"
-#include "collectionadapters/append.h"
-#include "collectionadapters/collectiontostring.h"
-#include "collectionadapters/streamincollection.h"
-#include "collectionadapters/streamoutcollection.h"
+#include "collectionoperations/readcollection.h"
+#include "collectionoperations/writecollection.h"
+#include "collectionoperations/append.h"
+#include "collectionoperations/collectiontostring.h"
+#include "collectionoperations/streamincollection.h"
+#include "collectionoperations/streamoutcollection.h"
 
 namespace qor{ namespace dio{
 

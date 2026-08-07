@@ -6,14 +6,15 @@
 
 #include "src/qor/essentials/traits/typetraits.h"
 
-#include "valueadapters/streamio.h"
-#include "valueadapters/readonly.h"
-#include "valueadapters/readwrite.h"
-#include "valueadapters/tostring.h"
-#include "valueadapters/name.h"
+#include "valueoperations/streamio.h"
+#include "valueoperations/readonly.h"
+#include "valueoperations/readwrite.h"
+#include "valueoperations/tostring.h"
+#include "valueoperations/name.h"
 
 namespace qor{ namespace dio{
 
+    //Each of the Bases should be a valueoperation
     template <typename T, typename... Bases>
     struct ValueAdapter : public Bases...
     {
