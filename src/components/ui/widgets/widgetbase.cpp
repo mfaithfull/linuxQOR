@@ -25,6 +25,7 @@
 #include "src/configuration/configuration.h"
 
 #include <cassert>
+#include <algorithm>
 
 #include "widgetbase.h"
 #include "event.h"
