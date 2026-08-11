@@ -368,7 +368,7 @@ namespace qor{
             if(buffer)
             {
                 AbstractCharacterCodec< CharT >* Codec = GetCodec();
-                buffer.Reset();
+                buffer->Reset();
                 CharT interBuffer[kMaxCodeUnitsPerCodePoint]{0};
                 while(count-- > 0)
                 {                          

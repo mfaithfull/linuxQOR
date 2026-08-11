@@ -39,18 +39,18 @@ CustomWorkflow::CustomWorkflow() :
     };
 
     //Set this only if you need special handling for Suspension
-    beggining->Suspend = [this]()->void{
+    beggining->Suspend = []()->void{
 
         std::cout << "Suspend is called on a State when it does a PushState.\n PushState puts a state on the Workflow stack and this state is suspended until everything above it on the stack is finished." << std::endl;
     };
 
     //Set this only if you need special handling for Resuming
-    beggining->Resume = [this]()->void{
+    beggining->Resume = []()->void{
         std::cout << "Resume is called when a State is once again at the top of the stack as states pushed on top of it have completed." << std::endl;
     };
 
     //Set this if you need special handling for Leaving a state
-    beggining->Leave = [this]()->void{
+    beggining->Leave = []()->void{
         std::cout << "Leave is called when a state is about to be popped from the stack." << std::endl;
     };
 

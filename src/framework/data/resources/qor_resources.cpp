@@ -9,13 +9,10 @@
 
 #include "resourcehub.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Resources Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Resources Module", qor_pp_module_ver_string );
 
-		static qor::TypeRegEntry< qor::framework::ResourceHub, qor::framework::ResourceHub > regResourceHub;
-		return QORModule;
-	}
+	static qor::TypeRegEntry< qor::framework::ResourceHub, qor::framework::ResourceHub > regResourceHub;
+	return QORModule;
 }

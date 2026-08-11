@@ -15,14 +15,10 @@
 
 #include "sercon.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Serial Console Module", qor_pp_module_ver_string );
-		//Register the Windows specific implementation of Serial Console
-		static qor::TypeRegEntry< qor::ui::win::SerCon, qor::ui::SerialConsole > regTerminal;
-		return QORModule;
-	}
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Serial Console Module", qor_pp_module_ver_string );
+	//Register the Windows specific implementation of Serial Console
+	static qor::TypeRegEntry< qor::ui::win::SerCon, qor::ui::SerialConsole > regTerminal;
+	return QORModule;
 }
-

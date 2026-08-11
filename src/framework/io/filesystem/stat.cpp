@@ -9,7 +9,7 @@
 namespace qor{ namespace io{ namespace filesystem {
     
     Stat::Stat() = default;
-    Stat::~Stat() = default;
+    Stat::~Stat() noexcept = default;
     
     Stat::Stat(const Index& index) : m_index(index){ }
     

@@ -34,14 +34,11 @@
 #include "src/qor/memory/reference/newref.h"
 #include "dynamiclibrary.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Dynamic Library Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Dynamic Library Module", qor_pp_module_ver_string );
 
-		//Register the Windows specific implementations
-		static qor::TypeRegEntryWithParams< qor::framework::win::DynamicLibrary, qor::DynamicLibrary, const std::string& > regDynamicLibrary;
-		return QORModule;
-	}
+	//Register the Windows specific implementations
+	static qor::TypeRegEntryWithParams< qor::framework::win::DynamicLibrary, qor::DynamicLibrary, const std::string& > regDynamicLibrary;
+	return QORModule;
 }

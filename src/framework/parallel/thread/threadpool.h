@@ -204,19 +204,19 @@ namespace qor { namespace thread{
 
         //Get a vector containing the underlying implementation-defined thread handles for each of the pool's threads, as obtained by `std::thread::native_handle()` (or `std::jthread::native_handle()` in C++20 and later).
         //return The native thread handles.
-        qor_pp_module_interface(QOR_THREAD) [[nodiscard]] std::vector<thread_t::native_handle_type> GetNativeHandles() const;
-        qor_pp_module_interface(QOR_THREAD) [[nodiscard]] std::size_t GetCountOfTasksQueued() const;
+        [[nodiscard]] qor_pp_module_interface(QOR_THREAD) std::vector<thread_t::native_handle_type> GetNativeHandles() const;
+        [[nodiscard]] qor_pp_module_interface(QOR_THREAD) std::size_t GetCountOfTasksQueued() const;
         //Get the number of tasks currently being executed by the threads.
-        qor_pp_module_interface(QOR_THREAD) [[nodiscard]] std::size_t GetCountOfTasksRunning() const;
+        [[nodiscard]] qor_pp_module_interface(QOR_THREAD) std::size_t GetCountOfTasksRunning() const;
         //Get the total number of unfinished tasks: either still waiting in the queue, or running in a thread. Note that `GetTotalCountOfTasks() == GetCountOfTasksQueued() + GetCountOfTasksRunning()`.
         //return The total number of tasks.
-        qor_pp_module_interface(QOR_THREAD) [[nodiscard]] std::size_t GetTotalCountOfTasks() const;
+        [[nodiscard]] qor_pp_module_interface(QOR_THREAD) std::size_t GetTotalCountOfTasks() const;
         qor_pp_module_interface(QOR_THREAD) std::size_t GetThreadCount() const noexcept;
 
         //Get a vector containing the unique identifiers for each of the pool's threads, as obtained by `std::thread::get_id()` (or `std::jthread::get_id()` in C++20 and later).
         //return The unique thread identifiers.
-        qor_pp_module_interface(QOR_THREAD) [[nodiscard]] std::vector<thread_t::id> GetThreadIds() const;
-        qor_pp_module_interface(QOR_THREAD) [[nodiscard]] bool IsPaused() const;
+        [[nodiscard]] qor_pp_module_interface(QOR_THREAD) std::vector<thread_t::id> GetThreadIds() const;
+        [[nodiscard]] qor_pp_module_interface(QOR_THREAD) bool IsPaused() const;
 
         //Pause the pool. The workers will temporarily stop retrieving new tasks out of the queue, although any tasks already executed will keep running until they are finished. Only enabled if the flag `BS:tp::pause` is enabled in the template parameter.
         qor_pp_module_interface(QOR_THREAD) void Pause();
@@ -494,7 +494,7 @@ namespace qor { namespace thread{
                 Awaiter(ThreadPool &pool) : tpool{pool} {}
                 void await_suspend(std::coroutine_handle<> handle)
                 {
-                    tpool.PostTask([handle, this]() { handle.resume(); });
+                    tpool.PostTask([handle/*, this*/]() { handle.resume(); });
                 }
             };
             return Awaiter{*this};

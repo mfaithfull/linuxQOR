@@ -124,7 +124,7 @@ namespace qor{
 		}
 
 		template< class TDerived, typename... _p >
-		bool Configure(_p... p1)
+		bool Configure(_p... /*p1*/)
 		{
 			return false;
 		}

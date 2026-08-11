@@ -54,7 +54,7 @@ namespace qor{ namespace ui { namespace lin{ namespace x{
         const unsigned long VisualBitsPerRGBMask =	    0x100;
         const unsigned long VisualAllMask =		        0x1FF;
 
-        VisualInfoQuery() : m_info{}, m_mask{0}
+        VisualInfoQuery() : m_mask{0}, m_info{}
         {            
         }
 

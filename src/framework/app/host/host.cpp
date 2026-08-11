@@ -12,11 +12,13 @@ namespace {
     static qor::ModuleRegistry _theModuleRegistry;
 }
 
+extern qor::Module& HostModule(void);
+
 namespace qor{
 
     Module* TheHost()
     {
-        return &(ThisModule());
+        return &(HostModule());
     }
     
     Host::Host() : Module( "Querysoft Open Runtime: Host Module", qor_pp_module_ver_string, false )

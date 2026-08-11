@@ -9,7 +9,7 @@ namespace qor{
 
     Note::Note(const std::string& message) : ErrorBase(message, Severity::Note){ }
     Note::Note(const Note& src) : ErrorBase(src){ }
-    Note::~Note(){ }
+    Note::~Note() noexcept{ }
 
     Note& Note::operator = (const Note& src)
     {

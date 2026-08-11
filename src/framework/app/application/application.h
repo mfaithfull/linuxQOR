@@ -92,12 +92,12 @@ namespace qor{
 
         qor_pp_module_interface(QOR_APPLICATION) int Run( ref_of<app::IRunable>::type runable );
 
-        qor_pp_module_interface(QOR_APPLICATION) virtual const std::string Description();
-        qor_pp_module_interface(QOR_APPLICATION) virtual const std::string UsageEpilogue();
-        qor_pp_module_interface(QOR_APPLICATION) virtual const std::string OverrideUsage();
-        qor_pp_module_interface(QOR_APPLICATION) virtual const app::OptConfig Config();
-		qor_pp_module_interface(QOR_APPLICATION) virtual const std::vector<app::NamedArgSpec> NamedArguments();
-		qor_pp_module_interface(QOR_APPLICATION) virtual const std::vector<app::PositionalArgSpec> PositionalArguments();
+        qor_pp_module_interface(QOR_APPLICATION) virtual const std::string Description() override;
+        qor_pp_module_interface(QOR_APPLICATION) virtual const std::string UsageEpilogue() override;
+        qor_pp_module_interface(QOR_APPLICATION) virtual const std::string OverrideUsage() override;
+        qor_pp_module_interface(QOR_APPLICATION) virtual const app::OptConfig Config() override;
+		qor_pp_module_interface(QOR_APPLICATION) virtual const std::vector<app::NamedArgSpec> NamedArguments() override;
+		qor_pp_module_interface(QOR_APPLICATION) virtual const std::vector<app::PositionalArgSpec> PositionalArguments() override;
 
         qor_pp_module_interface(QOR_APPLICATION) void ParseArgs(const int argc, const char** argv);
 

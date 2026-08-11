@@ -632,13 +632,13 @@ static int      stbi__jpeg_info(stbi__context *s, int *x, int *y, int *comp);*/
         {
             if (z->img_comp[i].raw_data) 
             {
-                delete(z->img_comp[i].raw_data);
+                delete((unsigned char*)(z->img_comp[i].raw_data));
                 z->img_comp[i].raw_data = nullptr;
                 z->img_comp[i].data = nullptr;
             }
             if (z->img_comp[i].raw_coeff) 
             {
-                delete(z->img_comp[i].raw_coeff);
+                delete((unsigned char*)(z->img_comp[i].raw_coeff));
                 z->img_comp[i].raw_coeff = 0;
                 z->img_comp[i].coeff = 0;
             }

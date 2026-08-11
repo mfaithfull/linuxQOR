@@ -25,13 +25,13 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) Sink( const Sink& src);
         qor_pp_module_interface(QOR_PIPELINE) Sink& operator = (const Sink& src);
         
-        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSource(Element* source);
-        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSource();
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSource();
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSource(Element* source) override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSource() const override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSource() override;
         qor_pp_module_interface(QOR_PIPELINE) virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
         qor_pp_module_interface(QOR_PIPELINE) virtual void OnWriteSuccess(size_t unitsWritten);
         qor_pp_module_interface(QOR_PIPELINE) virtual void OnWriteError(size_t error, size_t unitsWritten);
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSink();
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSink() override;
         qor_pp_module_interface(QOR_PIPELINE) virtual void SetPlug(Element* plug);
         qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetPlug() const;
         qor_pp_module_interface(QOR_PIPELINE) virtual bool CheckComplete();
@@ -39,7 +39,7 @@ namespace qor{ namespace pipeline{
 
     protected:
 
-        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSink(Element*);
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSink(Element*) override;
 
         Element* m_source;
         qor_pp_module_interface(QOR_PIPELINE) Source* ActualSource();

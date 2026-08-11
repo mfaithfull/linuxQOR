@@ -14,16 +14,13 @@
 #include "asyncioservice.h"
 #include "iocpinitiator.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Async IO Service Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Async IO Service Module", qor_pp_module_ver_string );
 
-		//Register the Windows specific implementations
-		static qor::TypeRegEntry< qor::io::async::win::Service, qor::io::async::Service > regAsyncIOService;
-		static qor::TypeRegEntry< qor::io::async::win::IOCPEventProcessor, qor::io::async::EventProcessor > regAsyncIOEventProcessor;
-		static qor::TypeRegEntry< qor::io::async::win::IOCPInitiator, qor::io::async::Initiator > regAsyncIOInitiator;
-		return QORModule;
-	}
+	//Register the Windows specific implementations
+	static qor::TypeRegEntry< qor::io::async::win::Service, qor::io::async::Service > regAsyncIOService;
+	static qor::TypeRegEntry< qor::io::async::win::IOCPEventProcessor, qor::io::async::EventProcessor > regAsyncIOEventProcessor;
+	static qor::TypeRegEntry< qor::io::async::win::IOCPInitiator, qor::io::async::Initiator > regAsyncIOInitiator;
+	return QORModule;
 }

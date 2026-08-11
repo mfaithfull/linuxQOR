@@ -14,12 +14,9 @@
 #include "src/qor/memory/injection/typeregentry.h"
 #include "src/qor/memory/reference/newref.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Thread Module", qor_pp_module_ver_string );
-		static qor::TypeRegEntry< qor::win::CurrentThread, qor::ICurrentThread > reg;  //Register the Windows specific implementation of ICurrentThread
-		return QORModule;
-	}
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Thread Module", qor_pp_module_ver_string );
+	static qor::TypeRegEntry< qor::win::CurrentThread, qor::ICurrentThread > reg;  //Register the Windows specific implementation of ICurrentThread
+	return QORModule;
 }

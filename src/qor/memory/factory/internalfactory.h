@@ -19,7 +19,7 @@ namespace qor
     template< class T, class Tref >
     struct factoryFunctor
     {
-        static void Destruct(size_t count, T* t)
+        static void Destruct(size_t /*count*/, T* t)
         {
             allocator_of<T>::type::Free(t);
         }
@@ -132,7 +132,7 @@ namespace qor
     template< class T >
     struct factoryFunctor< T, FlyerRef< T > >
     {
-        static void Destruct(size_t count, T* t)
+        static void Destruct(size_t /*count*/, T* t)
         {
             CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(
                 guid_of<T>::guid(), TypedAny<T>(t->m_pPrevious)

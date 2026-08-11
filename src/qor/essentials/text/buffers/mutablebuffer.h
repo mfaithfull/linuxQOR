@@ -590,7 +590,12 @@ namespace qor{
         //Increment the reference count to share content between owning instances
         inline unsigned short AddRef() const
         {
-            return m_p ? static_cast<unsigned short>(InternalBaseFooter()->RefCount++), static_cast<unsigned short>(InternalBaseHeader()->RefCount++) : 0;
+            if(m_p)
+            {
+                InternalBaseFooter()->RefCount++;
+                return static_cast<unsigned short>(++InternalBaseHeader()->RefCount);
+            }
+            else { return 0;}
         }
 
         //If you use the internal memory as a raw buffer the in use length will not be tracked.

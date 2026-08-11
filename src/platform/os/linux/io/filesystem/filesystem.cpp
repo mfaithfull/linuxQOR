@@ -101,6 +101,6 @@ namespace qor{ namespace io{ namespace lin{
 
     io::filesystem::Path FileSystem::ApplicationLogPath() const
     {
-        return io::filesystem::Path("/var/log/");
+        return io::filesystem::Path("~/.log/");
     }
 }}}//qor::io::lin

@@ -36,13 +36,10 @@
 #include "src/qor/memory/injection/typeregentry.h"
 #include "src/qor/memory/reference/newref.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Linux Process Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Process Module", qor_pp_module_ver_string );
 
-		static qor::TypeRegEntry< qor::lin::CurrentProcess, qor::ICurrentProcess > reg;  //Register the Linux specific implementation of IPlatformThread
-		return QORModule;
-	}
+	static qor::TypeRegEntry< qor::lin::CurrentProcess, qor::ICurrentProcess > reg;  //Register the Linux specific implementation of IPlatformThread
+	return QORModule;
 }

@@ -88,7 +88,7 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             );
         }
     ).Run(
-        [&logHandler]()->int
+        []()->int
         {            
             qor_pp_fcontext;
 

@@ -39,17 +39,17 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) bool IsConnected();  //assumes true if there is nothing setup to connect to, like a string source or parser sink.
         qor_pp_module_interface(QOR_PIPELINE) void SetSource(Element* source, Buffer* buffer);
         qor_pp_module_interface(QOR_PIPELINE) void SetSource(const Source& source);
-        qor_pp_module_interface(QOR_PIPELINE) void SetSource(Element* source);
+        qor_pp_module_interface(QOR_PIPELINE) void SetSource(Element* source) override;
         qor_pp_module_interface(QOR_PIPELINE) void SetSink(Element* sink, Buffer* buffer);
         qor_pp_module_interface(QOR_PIPELINE) void SetSink(const Sink& sink);
-        qor_pp_module_interface(QOR_PIPELINE) void SetSink(Element* sink);
+        qor_pp_module_interface(QOR_PIPELINE) void SetSink(Element* sink) override;
         qor_pp_module_interface(QOR_PIPELINE) void SetSinkConnector(Element* plug);
         qor_pp_module_interface(QOR_PIPELINE) void SetSourceConnector(Element* plug);
         qor_pp_module_interface(QOR_PIPELINE) Plug* GetSourceConnector();
         qor_pp_module_interface(QOR_PIPELINE) void SetConnector(Element* plug);
         qor_pp_module_interface(QOR_PIPELINE) Plug* GetSinkConnector();
         qor_pp_module_interface(QOR_PIPELINE) virtual Element::FlowMode GetFlowMode() override;
-        qor_pp_module_interface(QOR_PIPELINE) void SetFlowMode(Element::FlowMode flowmode);
+        qor_pp_module_interface(QOR_PIPELINE) void SetFlowMode(Element::FlowMode flowmode) override;
         qor_pp_module_interface(QOR_PIPELINE) virtual void Run(void);
         qor_pp_module_interface(QOR_PIPELINE) virtual bool Pump(size_t& unitsPumped, size_t unitsToPump) override;
         qor_pp_module_interface(QOR_PIPELINE) size_t PumpAll();
@@ -57,7 +57,7 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) virtual Pipeline& InsertFilter(Filter* filter, FilterPos Pos = BeforeSink);
         qor_pp_module_interface(QOR_PIPELINE) virtual Pipeline& InsertInlineFilter(const Buffer& filter, FilterPos Pos = BeforeSink);
         qor_pp_module_interface(QOR_PIPELINE) virtual void ResetStream(size_t streamSize = 0);
-        qor_pp_module_interface(QOR_PIPELINE) bool CheckComplete();
+        qor_pp_module_interface(QOR_PIPELINE) bool CheckComplete() override;
 
     protected:
 

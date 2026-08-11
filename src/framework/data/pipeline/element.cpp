@@ -80,7 +80,7 @@ namespace qor{ namespace pipeline{
         return m_buffer != nullptr;
     }
 
-    Element* Element::GetSource()
+    Element* Element::GetSource() const
     {
         return nullptr;
     }

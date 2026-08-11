@@ -14,19 +14,10 @@ compilers should be elsewhere.
 #   define WINCALL __stdcall
 #endif
 
-extern "C" __declspec(dllimport) int WINCALL IsDebuggerPresent();
-extern "C" __declspec(dllimport) void WINCALL DebugBreak();
-#define qor_pp_compiler_debugbreak(e) if (IsDebuggerPresent()) DebugBreak(); else (void)0
+#define qor_pp_compiler_debugbreak(e)
 
-#ifdef __EDG__
-static constexpr int function_base = 3;
-static constexpr int function_stride = 2;
-#else
 static constexpr int function_base = 0;
 static constexpr int function_stride = 1;
-#endif
-
-#define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING
 
 //Calling conventions
 #define qor_pp_compiler_callcon						__cdecl
@@ -34,18 +25,15 @@ static constexpr int function_stride = 1;
 #define qor_pp_compiler_thiscall					//explicit __thiscall not supported? not sure why you'd need it anyway?
 #define qor_pp_compiler_fastcall					__fastcall
 
-#define qor_pp_export			__declspec(dllexport)
-#define qor_pp_import			__declspec(dllimport)
-#define qor_pp_thread_local     __declspec(thread)
-#define qor_pp_forceinline		inline
-#define qor_pp_noinline			__declspec(noinline)
-#define qor_pp_funcsig          __FUNCSIG__
-#define qor_pp_allocator        __declspec(allocator)
+#define qor_pp_export			__attribute__((__visibility__("default")))
+#define qor_pp_import			
+#define qor_pp_thread_local     __thread
+#define qor_pp_forceinline		[[clang::always_inline]]
+#define qor_pp_noinline			__attribute__((noinline))
+#define qor_pp_funcsig          __PRETTY_FUNCTION__
+#define qor_pp_allocator        [[clang::allocator]]
 
-#define qor_pp_assume(X)        __assume(X)
+#define qor_pp_assume(_X)       __builtin_assume(_X)
+//c++ 23 #define qor_pp_assume(_X)       [[assume(_X)]]
 
-#define qor_pp_cpu_cache_line   std::hardware_destructive_interference_size
-
-//Disable this annoyance for now as this is a development library intended to be built by the 'end' user against whaetver STL they have
-#pragma warning( disable : 4251 ) // class ... needs to have dll-interface to be used by clients of class ..
-#pragma warning( disable : 4275 ) //non dll-interface class ... used as base for dll-interface class
+#define qor_pp_cpu_cache_line   64

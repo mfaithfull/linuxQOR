@@ -15,14 +15,10 @@
 
 #include "termcon.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Terminal Module", qor_pp_module_ver_string );
-		//Register the Windows specific implementation of Terminal
-		static qor::TypeRegEntry< qor::ui::win::Terminal, qor::ui::Terminal > regTerminal;
-		return QORModule;
-	}
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Terminal Module", qor_pp_module_ver_string );
+	//Register the Windows specific implementation of Terminal
+	static qor::TypeRegEntry< qor::ui::win::Terminal, qor::ui::Terminal > regTerminal;
+	return QORModule;
 }
-

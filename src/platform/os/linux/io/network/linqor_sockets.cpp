@@ -38,15 +38,12 @@
 #include "sockets.h"
 #include "socket.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Linux Sockets Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Sockets Module", qor_pp_module_ver_string );
 
-		//Register the Linux specific implementations provided by this module
-		static qor::TypeRegEntry< qor::io::network::lin::Sockets, qor::io::network::Sockets > regSockets;
-		static qor::TypeRegEntryWithParams< qor::io::network::lin::Socket, qor::io::network::Socket, qor::io::network::sockets::eAddressFamily&, qor::io::network::sockets::eType&, qor::io::network::sockets::eProtocol& > regSocket;
-		return QORModule;
-	}
+	//Register the Linux specific implementations provided by this module
+	static qor::TypeRegEntry< qor::io::network::lin::Sockets, qor::io::network::Sockets > regSockets;
+	static qor::TypeRegEntryWithParams< qor::io::network::lin::Socket, qor::io::network::Socket, qor::io::network::sockets::eAddressFamily&, qor::io::network::sockets::eType&, qor::io::network::sockets::eProtocol& > regSocket;
+	return QORModule;
 }

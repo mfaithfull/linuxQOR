@@ -52,13 +52,13 @@ namespace qor {
 			}
         };
 
-        template< typename T > void qor_pp_forceinline Register(T& t)
+        template< typename T > qor_pp_forceinline void Register(T& t)
         {
             ParameterPass< T > paramt(t);
             OutOfLineRegistration(paramt);
         }
 
-        template< typename T > void qor_pp_forceinline RegisterReturn(T& t)
+        template< typename T > qor_pp_forceinline void RegisterReturn(T& t)
         {
             ParameterPass< T > ReturnValue( t );
             m_ReturnValue = ReturnValue;

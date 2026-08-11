@@ -24,7 +24,7 @@ namespace qor { namespace data{ namespace parser{ namespace text {
 
         byte GetHighByte()
         {
-            return (byte)((*m_t << 8) && 0xFF00);
+            return (byte)((*m_t << 8) & 0xFF00);
         }
 
         void SetLowByte(byte b)

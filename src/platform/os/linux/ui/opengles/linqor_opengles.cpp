@@ -36,14 +36,11 @@
 
 #include "opengles.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Linux OpenGLES", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Linux OpenGLES", qor_pp_module_ver_string );
 
-		//Register the Windows specific implementations
-		static qor::TypeRegEntry< qor::ui::lin::OpenGLES, qor::components::OpenGLESFeature > regOpenGLES;
-		return QORModule;
-	}
+	//Register the Windows specific implementations
+	static qor::TypeRegEntry< qor::ui::lin::OpenGLES, qor::components::OpenGLESFeature > regOpenGLES;
+	return QORModule;
 }

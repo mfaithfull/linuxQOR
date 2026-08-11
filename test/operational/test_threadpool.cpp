@@ -48,7 +48,8 @@ std::vector<std::thread::id> obtain_unique_threads(ThreadPool& pool)
     const std::size_t num_tasks = pool.GetThreadCount() * 2;
     std::vector<std::thread::id> thread_ids(num_tasks);
     std::atomic<std::size_t> total_count = 0;
-    counting_semaphore sem(0);
+    //clang CTAD issues
+    counting_semaphore< std::counting_semaphore<>::max() > sem(0);
     for (std::thread::id& tid : thread_ids)
     {
         pool.PostTask(
@@ -1336,11 +1337,12 @@ qor_pp_test_suite_case(ThreadPoolTestSuite, monitoringWorks)
     ThreadPool pool(num_threads);
     pool.Setup();
     //sync_out.println("Submitting ", num_threads * 3, " tasks.");
-    counting_semaphore sem(0);
+    //clang CTAD issue
+    counting_semaphore< std::counting_semaphore<>::max() > sem(0);
     for (std::size_t i = 0; i < num_threads * 3; ++i)
     {
         pool.PostTask(
-            [i, &sem]
+            [/*i,*/ &sem]
             {
                 sem.acquire();
                 //sync_out.println("Task ", i, " released.");

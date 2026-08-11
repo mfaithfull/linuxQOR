@@ -56,7 +56,10 @@ namespace qor {
 			return *m_pm;
 		}
 
-		PropertyBase* GetProperty();
+		PropertyBase* GetProperty()
+		{
+			return m_pp;
+		}
 
 		template< class T >
 		PropertyValue& Set(const T& t)
@@ -122,7 +125,11 @@ namespace qor {
 
 	private:
 
-		PropertyBase* InternalCreateProperty(PropertyBase* pb);
+		PropertyBase* InternalCreateProperty(PropertyBase* pb)
+		{
+			Property* prop = new Property(*(dynamic_cast<Property*>(pb)));
+			return prop;
+		}
 
 		PropertyVector* m_pv{nullptr};
 		PropertyMap* m_pm{nullptr};

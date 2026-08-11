@@ -43,12 +43,12 @@ namespace qor{ namespace pipeline{
             return *this;
         }
 
-        virtual size_t WriteCapacity()
+        virtual size_t WriteCapacity() const
         {
             return m_sourceBuffer.WriteCapacity();
         }
 
-        virtual size_t ReadCapacity()
+        virtual size_t ReadCapacity() const
         {
             return m_sinkBuffer.ReadCapacity();
         }

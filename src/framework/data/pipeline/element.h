@@ -38,7 +38,7 @@ namespace qor{ namespace pipeline{
         Buffer* GetBuffer();
         virtual bool HasBuffer();
         virtual void SetSource(Element* source) = 0;
-        virtual Element* GetSource();
+        virtual Element* GetSource() const;
         virtual bool HasSource();
         virtual void SetSink(Element* sink) = 0;
         virtual Element* GetSink() const;

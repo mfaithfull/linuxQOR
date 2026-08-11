@@ -10,7 +10,7 @@ namespace qor{ namespace framework{
 
     const char* Resource::s_baseResourceType = "Base resource type";
 
-    Resource::Resource(ResourceManager* manager, Resource* batchKey) : m_status(Unknown), m_manager(manager), m_batchKey(batchKey)
+    Resource::Resource(ResourceManager* manager, Resource* batchKey) : m_batchKey(batchKey),m_manager(manager),m_status(Unknown)
     {
         qor::connect(*this, &Resource::StatusEvent, *m_manager, &ResourceManager::ReceiveResourceUpdate, qor::ConnectionKind::QueuedConnection);
     }

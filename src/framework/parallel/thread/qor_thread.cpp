@@ -13,13 +13,10 @@
 #include "src/qor/memory/injection/typeregentry.h"
 #include "src/qor/memory/reference/newref.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Thread Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Thread Module", qor_pp_module_ver_string );
 
-		static qor::TypeRegEntry< qor::thread::ThreadPool, qor::thread::ThreadPool > reg;
-		return QORModule;
-	}
+	static qor::TypeRegEntry< qor::thread::ThreadPool, qor::thread::ThreadPool > reg;
+	return QORModule;
 }

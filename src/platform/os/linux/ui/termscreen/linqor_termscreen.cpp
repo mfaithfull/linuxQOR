@@ -36,14 +36,11 @@
 
 #include "termscreen.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Linux Terminal Screen Module", qor_pp_module_ver_string ); 
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Terminal Screen Module", qor_pp_module_ver_string ); 
 
-		//Register the Linux specific implementation of TermScreen
-		static qor::TypeRegEntry< qor::components::tui::lin::TermScreen, qor::components::tui::TermScreen> regTermScreen;
-		return QORModule;
-	}
+	//Register the Linux specific implementation of TermScreen
+	static qor::TypeRegEntry< qor::components::tui::lin::TermScreen, qor::components::tui::TermScreen> regTermScreen;
+	return QORModule;
 }

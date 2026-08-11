@@ -37,15 +37,12 @@
 #include "sockets.h"
 #include "socket.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Sockets Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Sockets Module", qor_pp_module_ver_string );
 
-		//Register the Windows specific implementations provided by this module
-		static qor::TypeRegEntry< qor::io::network::win::Sockets, qor::io::network::Sockets > regSockets;
-		static qor::TypeRegEntryWithParams< qor::io::network::win::Socket, qor::io::network::Socket, qor::io::network::sockets::eAddressFamily&, qor::io::network::sockets::eType&, qor::io::network::sockets::eProtocol& > regSocket;
-		return QORModule;
-	}
+	//Register the Windows specific implementations provided by this module
+	static qor::TypeRegEntry< qor::io::network::win::Sockets, qor::io::network::Sockets > regSockets;
+	static qor::TypeRegEntryWithParams< qor::io::network::win::Socket, qor::io::network::Socket, qor::io::network::sockets::eAddressFamily&, qor::io::network::sockets::eType&, qor::io::network::sockets::eProtocol& > regSocket;
+	return QORModule;
 }

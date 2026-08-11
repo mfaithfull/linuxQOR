@@ -50,7 +50,7 @@ namespace qor
     }
 
     CurrentThread::CurrentThread() = default;
-    CurrentThread::~CurrentThread() = default;
+    CurrentThread::~CurrentThread() noexcept = default;
     
     void CurrentThread::SetPool(std::optional<void*> pool)
     {

@@ -10,7 +10,7 @@ namespace qor{ namespace log {
 
     Debug::Debug(const std::string& message) : Log(Level::Debug, message){ }
     Debug::Debug(const Debug& src) : Log(src) { }
-    Debug::~Debug() { }
+    Debug::~Debug() noexcept { }
 
     Debug& Debug::operator = (const Debug& src)
     {

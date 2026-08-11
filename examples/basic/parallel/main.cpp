@@ -31,7 +31,7 @@ int main()
     DefaultLogHandler logHandler(Level::Debug);
 
     qor_pp_run_role(ParallelAppRole)(
-    [&logHandler]()->int
+    []()->int
     {
         qor_pp_fcontext;
         auto threadPool = GetFeature<thread::ThreadPool>();

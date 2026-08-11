@@ -123,11 +123,8 @@ int main(int argc, const char** argv, char** env)
 	);
 }
 
-extern "C"
+qor_pp_export qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Test ArgParse Module", qor_pp_module_ver_string );
-		return QORModule;
-	}
+    static qor::Module QORModule("Querysoft Open Runtime: Test ArgParse Module", qor_pp_module_ver_string );
+    return QORModule;
 }

@@ -23,7 +23,8 @@ namespace qor{ namespace ui {
         Contained();
         virtual ~Contained();
 
-        constexpr bool Is(const Contained*) const;
+        //clang 18 bug
+        /*constexpr*/ bool Is(const Contained*) const;
         Compound* Parent() const;
         void SetParent(Compound*);
         int Index() const;

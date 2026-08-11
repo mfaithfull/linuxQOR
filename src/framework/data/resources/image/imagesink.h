@@ -28,14 +28,14 @@ namespace qor{ namespace framework{
         }
 
         //pull the requested amount of data from the source to the buffer
-        bool Pull(size_t& unitsWritten, size_t unitsToWrite)
+        bool Pull(size_t& unitsWritten, size_t unitsToWrite) override
         {
             return GetFlowMode() == FlowMode::Pull ? 
             (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0 || unitsToWrite == 0) ? true : false) : true;
         }
 
         //push the requested amount of data from the buffer to the sink
-        bool Push(size_t& unitsWritten, size_t unitsToWrite)
+        bool Push(size_t& unitsWritten, size_t unitsToWrite) override
         {
             if(unitsToWrite > 0)
             {
@@ -67,7 +67,7 @@ namespace qor{ namespace framework{
             }
         }
 
-        size_t WriteBytes(byte* data, size_t bytesToWrite)
+        size_t WriteBytes(byte* data, size_t bytesToWrite) override
         {
             size_t result = 0;
             memcpy(m_image[m_index], data, bytesToWrite);

@@ -26,15 +26,15 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) Source(const Source& src);
         qor_pp_module_interface(QOR_PIPELINE) Source& operator = (const Source& src);
 
-        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSink(Element* pSink);
-        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSource(Element* source);
-        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSink(void);
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSink(void);
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSink(Element* pSink) override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSource(Element* source) override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSink(void) const override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSink(void) override;
         qor_pp_module_interface(QOR_PIPELINE) virtual bool Read(size_t& unitsRead, size_t unitsToRead = 1);
         qor_pp_module_interface(QOR_PIPELINE) virtual void OnReadSuccess(size_t unitsRead);
         qor_pp_module_interface(QOR_PIPELINE) virtual void OnReadError(size_t error, size_t unitsRead);
         qor_pp_module_interface(QOR_PIPELINE) virtual void OnEndOfData();
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSource();
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSource() override;
         qor_pp_module_interface(QOR_PIPELINE) virtual void SetPlug(Element* plug);
         qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetPlug() const;
         qor_pp_module_interface(QOR_PIPELINE) virtual bool CheckComplete();

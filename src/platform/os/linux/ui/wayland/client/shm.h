@@ -411,7 +411,7 @@ namespace qor{ namespace ui { namespace lin{ namespace wl{
     };
 
     class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemoryPool;
-    class qor_pp_module_interface(QOR_LINWAYLAND) ShmListener;
+    struct qor_pp_module_interface(QOR_LINWAYLAND) ShmListener;
     
     class qor_pp_module_interface(QOR_LINWAYLAND) SharedMemory : public SignalBase
     {

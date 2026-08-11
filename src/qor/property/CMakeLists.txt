@@ -1,7 +1,7 @@
 project(QOR VERSION 0.2.0 DESCRIPTION "QOR Property Module" LANGUAGES CXX)
 set(target qor_property)
 
-add_library(${target} SHARED qor_property.cpp propertyvalue.cpp "propertyvaluebase.h" "propertybase.h" "propertygenerator.h")
+add_library(${target} SHARED qor_property.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

@@ -189,12 +189,12 @@ namespace qor{
 
     protected:
 
-        virtual inline BufferT CloneBuffer() const
+        virtual inline BufferT CloneBuffer() const override
         {
             return BufferT(m_buffer);
         }
 
-        virtual inline BufferT* GetModifiableBufferObject()
+        virtual inline BufferT* GetModifiableBufferObject() override
         {
             return &m_buffer;
         }

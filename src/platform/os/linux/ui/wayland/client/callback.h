@@ -35,7 +35,7 @@ struct wl_callback_listener;
 
 namespace qor{ namespace ui { namespace lin{ namespace wl{
 
-    class qor_pp_module_interface(QOR_LINWAYLAND) CallbackListener;
+    struct qor_pp_module_interface(QOR_LINWAYLAND) CallbackListener;
     class qor_pp_module_interface(QOR_LINWAYLAND) Callback
     {
     public:

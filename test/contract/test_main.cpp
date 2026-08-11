@@ -25,6 +25,6 @@ int main(int argc, const char** argv, char** env)
 
 qor::Module& ThisModule(void)
 {
-	static qor::Module QORModule("Querysoft Open Runtime: Test Frozen Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Test Contract Module", qor_pp_module_ver_string );
 	return QORModule;
 }

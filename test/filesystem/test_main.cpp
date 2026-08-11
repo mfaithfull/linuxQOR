@@ -25,7 +25,7 @@ int main(int argc, const char** argv, char**)
 	DefaultLogHandler logHandler(Level::Debug);
 	ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
 
-	return AppBuilder().Build<Application>("Test FileSystem")->SetRole<app::Role>(
+	return AppBuilder().Build<Application>("Test FileSystem")(qor_unlocked).SetRole<app::Role>(
 		[](ref_of<app::IRole>::type role)
 		{
 			role->template AddFeature<ThreadPool>(
@@ -49,11 +49,8 @@ int main(int argc, const char** argv, char**)
 	);
 }
 
-extern "C"
+qor_pp_export qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Test FileSystem Module", qor_pp_module_ver_string );
-		return QORModule;
-	}
+	static qor::Module QORModule("Querysoft Open Runtime: Test FileSystem Module", qor_pp_module_ver_string );
+	return QORModule;
 }
