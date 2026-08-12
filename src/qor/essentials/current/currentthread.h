@@ -32,7 +32,7 @@ namespace qor{
     //Represent the currently executing thread. Applies whether we have one thread or many.
     //This class has template members so we can't export/import the whole class.
     //Individual non template members are exported/imported instead
-    class CurrentThread final
+    class qor_pp_module_interface_gcc(QOR_CURRENT) CurrentThread final
     {
         friend class Thread;
         friend class thread::ThreadPool;

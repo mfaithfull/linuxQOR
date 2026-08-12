@@ -14,7 +14,7 @@
 
 namespace qor{
 
-    class AppBuilder
+    class qor_pp_module_interface_gcc(QOR_APPLICATION) AppBuilder
     {
     public:
     

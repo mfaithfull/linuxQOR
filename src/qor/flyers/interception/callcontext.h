@@ -20,7 +20,7 @@ namespace qor {
 		void* m_p{nullptr};
 	};
 
-    class CallContext : public ICallContext
+    class qor_pp_module_interface_gcc(QOR_INTERCEPTION) CallContext : public ICallContext
     {
     public:
 
