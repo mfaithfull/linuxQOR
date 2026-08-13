@@ -2,7 +2,7 @@ project(QOR VERSION 0.5.0 DESCRIPTION "QOR Pipeline Module" LANGUAGES CXX)
 set(target qor_pipeline)
 
 add_library(${target} SHARED qor_pipeline.cpp buffer.cpp element.cpp source.cpp iosource.cpp sink.cpp
-filter.cpp pipeline.cpp plug.cpp iosink.cpp  copyfilter.cpp)
+filter.cpp pipeline.cpp plug.cpp iosink.cpp copyfilter.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

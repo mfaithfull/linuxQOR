@@ -131,9 +131,10 @@ namespace qor{
 
 			unsigned long Release(void)
 			{
-				Lock();				
-				m_RefCount-- == 1 ? m_deleter() : Unlock();
-				return m_RefCount;
+				Lock();		
+				unsigned long result = --m_RefCount;//Move refcount that's about to be deleted to the stack
+				result == 0 ? m_deleter() : Unlock();
+				return result;
 			}
 
 			//Never call this unless you know the real object has gone for good.
