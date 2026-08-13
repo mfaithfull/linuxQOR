@@ -13,14 +13,14 @@ qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
     target_link_libraries(${target} qor_module qor_host qor_compiler qor_text
 qor_platform qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector 
-qor_textdata qor_parsersink qor_parser qor_log qor_logaggregator qor_thread qor_threadmemory
+qor_textdata qor_parsersink qor_parser qor_unicodetextfilter qor_log qor_logaggregator qor_thread qor_threadmemory
 linqor_thread linqor_filesystem)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
     target_link_libraries(${target} qor_module qor_host qor_compiler qor_text
 qor_platform qor_application qor_filesystem qor_pipeline qor_error qor_fileconnector 
-qor_textdata qor_parsersink qor_parser
+qor_textdata qor_parsersink qor_parser qor_unicodetextfilter
 qor_log qor_loghandler qor_log qor_logaggregator qor_thread qor_threadmemory
 winqor_thread winqor_filesystem)
 endif()

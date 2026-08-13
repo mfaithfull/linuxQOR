@@ -66,6 +66,7 @@ public:
 int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
 {
     ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
+    
     qor_pp_fcontext;
     DefaultLogHandler logHandler(log::Level::Debug);
 
@@ -91,31 +92,10 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
         [&logHandler]()->int
         {            
             qor_pp_fcontext;
-
-            auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
-            Path testsPath("F:/Develop/linuxQOR/test/data");
-
-            //std::string test = "중앙일보";
             
+            Path testsPath("F:/Develop/linuxQOR/test/data");
             TextReader textReader;
-            /*
-            auto text = textReader(Index(testsPath, "noBOM.txt"));
 
-            qor_pp_assert_that(*text).isEqualTo(test);
-            log::debug(text);
-
-            text = textReader(Index(testsPath, "utf8BOM.txt"));
-
-            qor_pp_assert_that(*text).isEqualTo("UTF-8 BOM");
-
-            text = textReader(Index(testsPath, "utf16LEBOM.txt"));
-
-            qor_pp_assert_that(*text).isEqualTo("UTF-16LE BOM");
-
-            text = textReader(Index(testsPath, "utf16BEBOM.txt"));
-
-            qor_pp_assert_that(*text).isEqualTo("UTF-16BE BOM");
-            */
 #include qor_pp_profile_begin
             {
                 Test_ProfileReporter reporter;

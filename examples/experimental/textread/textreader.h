@@ -8,65 +8,25 @@
 #include "src/components/data/pipeline/sinks/parsersink/parsersink.h"
 #include "src/components/data/parser/parser.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
+#include "src/components/data/pipeline/filters/unicodetextfilter/textfilter.h"
 /*
-template< class TextPartObjectT, class TextModelObjectT >
-class TextPartReader
-{
-public:
-
-    TextPartReader() : m_byteBuffer(12), m_sink(m_byteBuffer){ }
-
-    qor::ref_of<TextModelObjectT>::type operator()(const qor::io::filesystem::Index& inFile)
-    {
-        return operator()(qor::io::components::FileConnector(inFile, m_byteBuffer, qor::io::OpenFor::ReadOnly, qor::io::WithFlags::None));
-    }
-
-    qor::ref_of<TextModelObjectT>::type operator()(const qor::pipeline::Plug& sourceConnector)
-    {           
-        m_byteBuffer.Reset();
-        m_sink.Reset();
-        m_byteBuffer.Reset();
-        size_t unitsPumped = qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
-        if(unitsPumped > 0)
-        {
-            m_sink.Parser().FinalParse();
-        }
-        else
-        {
-            qor::log::Debug("No more data");
-        }
-        auto finalNode = m_sink.Parser().PopNode();
-        return finalNode.template AsRef< qor::data::parser::NodeAdapter< TextModelObjectT > >()->GetObject();
-    }
-
-    const qor::pipeline::Buffer& Buffer()
-    {
-        return m_byteBuffer;
-    }
-
-private:
-
-    qor::pipeline::PODBuffer<qor::byte> m_byteBuffer;
-    qor::pipeline::components::ParserSink< TextPartObjectT > m_sink;
-
-};
 */
 class TextReader
 {
 public:
 
-    TextReader() : m_byteBuffer(64), m_sink(m_byteBuffer){ }
+    TextReader() : m_sink(m_textFilter){ }
 
     qor::ref_of<std::string>::type operator()(const qor::io::filesystem::Index& inFile)
     {
-        return operator()(qor::io::components::FileConnector(inFile, m_byteBuffer, qor::io::OpenFor::ReadOnly, qor::io::WithFlags::None));
+        return operator()(qor::io::components::FileConnector(inFile, m_textFilter, qor::io::OpenFor::ReadOnly, qor::io::WithFlags::None));
     }
 
     qor::ref_of<std::string>::type operator()(const qor::pipeline::Plug& sourceConnector)
     {           
-        m_byteBuffer.Reset();
+        m_textFilter.Reset(1, 1);
         m_sink.Reset();
-        qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
+        qor::pipeline::Pipeline (sourceConnector, m_sink, qor::pipeline::Element::Push).InsertInlineFilter(m_textFilter).Connect().PumpAll();
         m_sink.Parser().FinalParse();
         auto finalNode = m_sink.Parser().PopNode();
         return finalNode.AsRef<qor::data::parser::text::TextNode>()->GetObject();
@@ -74,11 +34,11 @@ public:
 
     const qor::pipeline::Buffer& Buffer()
     {
-        return m_byteBuffer;
+        return m_textFilter;
     }
 
 private:
-
-    qor::pipeline::PODBuffer<qor::byte> m_byteBuffer;
+    
+    qor::text::components::UnicodeTextFilter m_textFilter;
     qor::pipeline::components::ParserSink<qor::data::parser::text::text>m_sink;
 };
