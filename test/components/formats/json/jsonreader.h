@@ -8,24 +8,24 @@
 #include "src/components/data/pipeline/sinks/parsersink/parsersink.h"
 #include "src/components/data/parser/parser.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
+#include "src/components/data/pipeline/filters/unicodetextfilter/textfilter.h"
 
 template< class JSONPartObjectT, class JSONModelObjectT >
 class JSONPartReader
 {
 public:
 
-    JSONPartReader() : m_byteBuffer(1), m_sink(m_byteBuffer){ }
+    JSONPartReader() : m_filter(), m_sink(m_filter){ }
 
     qor::ref_of<JSONModelObjectT>::type operator()(const qor::io::filesystem::Index& inFile)
     {
-        return operator()(qor::io::components::FileConnector(inFile, m_byteBuffer, qor::io::OpenFor::ReadOnly, qor::io::WithFlags::None));
+        return operator()(qor::io::components::FileConnector(inFile, m_filter, qor::io::OpenFor::ReadOnly, qor::io::WithFlags::None));
     }
 
     qor::ref_of<JSONModelObjectT>::type operator()(const qor::pipeline::Plug& sourceConnector)
     {           
-        m_byteBuffer.Reset();
-        m_sink.Reset();
-        m_byteBuffer.Reset();
+        m_filter.Reset(6,6);
+        m_sink.Reset();        
         size_t unitsPumped = qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
         if(unitsPumped > 0)
         {
@@ -41,12 +41,12 @@ public:
 
     const qor::pipeline::Buffer& Buffer()
     {
-        return m_byteBuffer;
+        return m_filter;
     }
 
 private:
 
-    qor::pipeline::PODBuffer<qor::byte> m_byteBuffer;
+    qor::text::components::UnicodeTextFilter m_filter;
     qor::pipeline::components::ParserSink< JSONPartObjectT > m_sink;
 
 };
@@ -55,18 +55,18 @@ class JSONReader
 {
 public:
 
-    JSONReader() : m_byteBuffer(1), m_sink(m_byteBuffer){ }
+    JSONReader() : m_filter(), m_sink(m_filter){ }
 
     qor::ref_of<qor::data::model::json::Object>::type operator()(const qor::io::filesystem::Index& inFile)
     {
-        return operator()(qor::io::components::FileConnector(inFile, m_byteBuffer, qor::io::OpenFor::ReadOnly, qor::io::WithFlags::None));
+        return operator()(qor::io::components::FileConnector(inFile, m_filter, qor::io::OpenFor::ReadOnly, qor::io::WithFlags::None));
     }
 
     qor::ref_of<qor::data::model::json::Object>::type operator()(const qor::pipeline::Plug& sourceConnector)
     {           
-        m_byteBuffer.Reset();
+        m_filter.Reset(1,1);
         m_sink.Reset();
-        qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
+        size_t unitsPumped = qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
         m_sink.Parser().FinalParse();
         auto finalNode = m_sink.Parser().PopNode();
         return finalNode.AsRef<qor::data::parser::json::ObjectNode>()->GetObject();
@@ -74,11 +74,11 @@ public:
 
     const qor::pipeline::Buffer& Buffer()
     {
-        return m_byteBuffer;
+        return m_filter;
     }
 
 private:
 
-    qor::pipeline::PODBuffer<qor::byte> m_byteBuffer;
+    qor::text::components::UnicodeTextFilter m_filter;
     qor::pipeline::components::ParserSink<qor::data::parser::json::object> m_sink;
 };
