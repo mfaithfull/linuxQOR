@@ -13,8 +13,7 @@ namespace qor{ namespace pipeline{ namespace components{
     BaseParserSink::~BaseParserSink() = default;        
 
     BaseParserSink::BaseParserSink() : 
-        m_context(new_ref<qor::data::parser::Context>()),
-        m_parser(m_context){ }
+        m_parser(){ }
    
 
     qor::data::Parser& BaseParserSink::Parser()
@@ -35,16 +34,11 @@ namespace qor{ namespace pipeline{ namespace components{
             pipeline::Buffer* buffer = GetBuffer();
             if(buffer)
             {
-                byte* data = buffer->ReadRequest(unitsToWrite);
                 if(unitsToWrite > 0)
                 {
-                    //std::string strData((const char*)(data), std::min(buffer->GetUnitSize() * unitsToWrite, 40ull));
-                    //log::debug(strData);
-                    size_t bytesParsed = Parse(data, buffer->GetUnitSize() * unitsToWrite);
-                    if(bytesParsed > 0)
-                    {
-                        unitsWritten = bytesParsed / buffer->GetUnitSize();
-                        buffer->ReadAcknowledge(unitsWritten);
+                    /*unitsWritten =*/ Parse();//Parse will read buffer incrementally through context
+                    if(unitsWritten > 0)
+                    {                        
                         OnWriteSuccess(unitsWritten);
                     }
                     else
@@ -67,12 +61,12 @@ namespace qor{ namespace pipeline{ namespace components{
         }
         else
         {
-            log::debug("Pushed 0 units.");
+            log::debug("Nothing to Push!");
         }
         return true;
     }
 
-    size_t BaseParserSink::Parse(byte* data, size_t bytesToParse)
+    size_t BaseParserSink::Parse()
     {
         fatal("Empty base called. Please overrride bool Parse(byte*, size_t); in your BaseParserSink derived class.");
         return 0;

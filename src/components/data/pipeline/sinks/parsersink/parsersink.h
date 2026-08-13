@@ -26,10 +26,10 @@ namespace qor{ namespace pipeline{ namespace components{
     protected:
         
         qor_pp_module_interface(QOR_PARSERSINK) bool Push(size_t& unitsWritten, size_t unitsToWrite);
-        qor_pp_module_interface(QOR_PARSERSINK) virtual size_t Parse(byte* data, size_t bytesToParse);
+        qor_pp_module_interface(QOR_PARSERSINK) virtual size_t Parse();
 
-        qor::ref_of<qor::data::parser::Context>::type m_context;
-        qor::data::Parser m_parser;      
+        ref_of<data::AbstractDataContext>::type m_sourceContext;
+        data::Parser m_parser;      
         bool m_EOD{false};
     };
 
@@ -46,6 +46,8 @@ namespace qor{ namespace pipeline{ namespace components{
         ParserSink(const pipeline::Buffer& buffer) : ParserSink()
         {
             SetBuffer(buffer);
+            m_sourceContext = new_ref<data::parser::CodePointContext>(&buffer);
+            m_parser.SetContext(m_sourceContext);
         }
 
         virtual ~ParserSink() = default;
@@ -55,8 +57,7 @@ namespace qor{ namespace pipeline{ namespace components{
             qor_pp_ofcontext;
             if(!m_EOD)
             {
-                //log::Debug("Parser Sink Reset");
-                m_context->Reset();
+                m_sourceContext->Reset();
                 m_objectState = new_ref<TObjectState>(&m_parser);
                 m_parser.SetInitialStep(m_objectState);
             }
@@ -70,14 +71,12 @@ namespace qor{ namespace pipeline{ namespace components{
 
         ref_of<TObjectState>::type m_objectState;
 
-        virtual size_t Parse(byte* data, size_t bytesToParse)
+        virtual size_t Parse()
         {
             qor_pp_ofcontext;
-            log::debug("Routing {0} bytes to Parser.", bytesToParse);
-            m_context->SetData(data, bytesToParse);                        
             m_parser.Parse();
-            log::debug("Parser consumed {0} bytes.", m_context->GetPosition());
-            return m_context->GetPosition();
+            log::debug("Parser consumed {0} bytes.", m_sourceContext->GetPosition());
+            return m_sourceContext->GetPosition();
         }
     };
 
