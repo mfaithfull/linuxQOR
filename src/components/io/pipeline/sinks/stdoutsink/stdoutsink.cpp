@@ -22,23 +22,8 @@ namespace qor{ namespace io{ namespace components{
     {
         fflush(stdout);
     }
-/*
-    bool StdOutSink::Write(size_t& unitsWritten, size_t unitsToWrite)
-    {
-        return Pull(unitsWritten, unitsToWrite) ? Push(unitsWritten, unitsWritten) : false;
-    }
 
-    //pull the requested amount of data from the stream
-    bool StdOutSink::Pull(size_t& unitsWritten, size_t unitsToWrite)
-    {
-        if( GetFlowMode() == FlowMode::Pull )
-        {
-            return (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0)) ? true : false;
-        }
-        return true;
-    }*/
-
-    //push the requested amount of data out of the door
+    //push the requested amount of data out of stdout
     bool StdOutSink::Push(size_t& unitsWritten, size_t unitsToWrite)
     {
         pipeline::Buffer* buffer = GetBuffer();
@@ -49,15 +34,11 @@ namespace qor{ namespace io{ namespace components{
             size_t bytesWritten = fwrite(pData, unitSize, unitsToWrite, stdout);
             if( bytesWritten > 0 )
             {
-                unitsWritten = bytesWritten / buffer->GetUnitSize();
+                unitsWritten = bytesWritten / unitSize;
                 buffer->ReadAcknowledge(unitsWritten);
                 OnWriteSuccess(unitsWritten);                
+                return true;
             }
-            else //EOD?
-            {
-                return false;
-            }
-            return true;
         }
         return false;
     }

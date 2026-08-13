@@ -75,7 +75,8 @@ namespace qor{ namespace io{ namespace components{
             }
             if(LineMode())
             {                
-                string_t input = ReadLine(unitsRead,unitsToRead);
+                string_t input = ReadLine(unitsRead,unitsToRead / sizeof(string_t::value_type));
+                unitsRead *= sizeof(string_t::value_type);
                 memcpy(space, input.data(), unitsRead);
             }
             else
