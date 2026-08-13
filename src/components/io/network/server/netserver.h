@@ -25,6 +25,8 @@ namespace qor{ namespace io{ namespace network{ namespace components {
 
     private:
 
+        static void ServeClient(qor::Ref<qor::io::network::Socket> ClientSocket, ref_of<pipeline::Protocol>::type protocol);
+
         //The 3 states of a network server workflow
         ref_of<workflow::State>::type bind;
         ref_of<workflow::State>::type listen;
@@ -32,11 +34,10 @@ namespace qor{ namespace io{ namespace network{ namespace components {
 
         //Subsystems and features needed
         ref_of<network::Sockets>::type m_sockets;
-        ref_of<async::Service>::type m_io;
         ref_of<thread::ThreadPool>::type m_threadPool;
         ref_of<async::Context::Session>::type m_ioSession;
 
-        //Port and socket for connections to the server
+        //Port and socket for the server to listen on
         unsigned m_port;
         ref_of<network::Socket>::type m_serverSocket;
     };

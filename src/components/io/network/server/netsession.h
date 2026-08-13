@@ -34,19 +34,17 @@ namespace qor{ namespace io{ namespace network { namespace components {
             connected->Enter = [this,protocol]()->void
             {
                 qor_pp_ofcontext;
-                log::debug("Servicing a connected client {0}", m_socket->m_fd);
-                auto application = AppBuilder().TheApplication();
-                auto ioService = application(qor_shared).GetRole(qor_shared)->GetFeature<async::Service>();
-                m_ioSession = ioService(qor_shared).GetSession();
+                log::debug("Servicing a connected client {0}", m_socket->m_fd);                                
+                m_ioSession = AppBuilder().TheApplication()(qor_shared).GetRole(qor_shared)->GetFeature<async::Service>()(qor_shared).GetSession();
                 m_pipeline = new_ref<SessionPipeline>(m_socket, m_ioSession, protocol);
                 SetState(running);
             };
 
             running->Enter = [this]()->void
             {
-                qor_pp_ofcontext;
-                size_t unitsPumped = 0;
-                if(!m_pipeline->PumpSome(unitsPumped,-1) || unitsPumped == 0)
+                qor_pp_ofcontext;                
+                auto unitsPumped = m_pipeline->PumpSome();
+                if(!unitsPumped)
                 {
                     SetState(disconnect);
                 }

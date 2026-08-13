@@ -31,15 +31,11 @@ namespace qor{ namespace io{ namespace network{ namespace components{
         {
             qor_pp_ofcontext;
 
-            //Get the required features from the Application Role
-            auto application = AppBuilder().TheApplication();
-            auto role = application(qor_shared).GetRole();
-            m_io = role(qor_shared).GetFeature<async::Service>();
-            m_threadPool = role(qor_shared).GetFeature<thread::ThreadPool>();
             m_sockets = ThePlatform()(qor_shared).GetSubsystem<Sockets>();
-
-            //Get a session for async IO
-            m_ioSession = m_io->GetSession();
+            //Get the required features from the Application Role
+            auto role = AppBuilder().TheApplication()(qor_shared).GetRole();            
+            m_threadPool = role(qor_shared).GetFeature<thread::ThreadPool>();            
+            m_ioSession = role(qor_shared).GetFeature<async::Service>()->GetSession();//Get a session for async IO
 
             //Create the socket for server connection
             m_serverSocket = m_sockets->CreateSocket(
@@ -47,17 +43,14 @@ namespace qor{ namespace io{ namespace network{ namespace components{
                 protocol->FramingType(),
                 protocol->ProtocolType(), m_ioSession);
 
+            //Bind Server socket
             Address serverAddress;
             serverAddress.sa_family = protocol->GetAddressFamily();
             serverAddress.SetPort(m_port);
-
-            //Bind Server socket
             auto result = m_serverSocket->Bind(serverAddress);
-
             if( result < 0 )
             {
-                std::string s(strerror(result));
-                serious("Can't bind socket to port {0}: {1}", m_port,s);
+                serious("Can't bind socket to port {0}: {1}", m_port, strerror(result));
                 SetComplete(EXIT_FAILURE);
             }
             else
@@ -91,6 +84,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
             qor_pp_ofcontext;
             Address ClientAddress;
 
+            //TODO: Accept needs to be interruptable
             auto ClientSocket = m_serverSocket->Accept(m_ioSession, ClientAddress); //Accept connections
             if(!ClientSocket->IsAlive())
             {
@@ -98,42 +92,49 @@ namespace qor{ namespace io{ namespace network{ namespace components{
             }
             else
             {
-                auto addr = ClientAddress.GetIPV4Address();
-                log::debug("Accepted client connection: {0}:{1}", ClientSocket->m_fd, addr );
+                log::debug("Accepted client connection: {0}:{1}", ClientSocket->m_fd, ClientAddress.GetIPV4Address() );
 
                 //Handle the connected client in it's own task on a pool thread
                 m_threadPool->PostTask(
-                    [this, ClientSocket, protocol]()
+                    [ClientSocket, protocol]()
                     {
-#ifndef NDBEUG
-                        //Rename the thread for debugging to indicate which client session it's servicing
-                        CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));
-#endif//DEBUG
-                        qor_pp_ofcontext;
-
-                        DefaultErrorHandler defaultErrorHandler;
-                        DefaultLogHandler defaultLogHandler(log::Level::Debug);
-                        defaultLogHandler.WriteToStandardOutput();
-
-                        //Run a client session
-                        new_ref<NetworkSession>(ClientSocket, protocol)->Run(
-                            [&defaultLogHandler](Workflow& /*clientSession*/)
-                            {
-                                //Configure the client session with it's own error and log handlers
-                                auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::LogAggregatorService>();
-                                if(logAggregator.IsNotNull())
-                                {
-                                    connect(defaultLogHandler, defaultLogHandler.GetForwardSignal(),
-                                        logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog,
-                                        ConnectionKind::QueuedConnection);
-                                }
-                            }
-                        );
+                        NetworkServer::ServeClient(ClientSocket, protocol);
                     }
                 );
             }
+            //TODO: Quit if Accept was cancelled.
         };
 
         SetInitialState(bind);
     }
+
+    //Serve a client on a pool thread. The only state is the client socket and porotocol references transfered from main server thread
+    void NetworkServer::ServeClient(qor::Ref<qor::io::network::Socket> ClientSocket, ref_of<pipeline::Protocol>::type protocol)
+    {
+#ifndef NDBEUG
+        //Rename the thread for debugging to indicate which client session it's servicing
+        CurrentThread::GetCurrent().SetName(std::format("Client {0}", ClientSocket->m_fd));
+#endif//DEBUG
+
+        //Establish a base function context as if this was a new thread
+        qor_pp_fcontext;
+
+        //Configure the client session with it's own error and log handlers
+        DefaultErrorHandler defaultErrorHandler;
+        DefaultLogHandler defaultLogHandler(log::Level::Debug);
+#ifndef NDBEUG        
+        defaultLogHandler.WriteToStandardOutput();
+#endif//DEBUG
+        auto logAggregator = AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<qor::components::LogAggregatorService>();
+        if(logAggregator.IsNotNull())
+        {
+            connect(defaultLogHandler, defaultLogHandler.GetForwardSignal(),
+                logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog,
+                ConnectionKind::QueuedConnection);
+        }
+
+        //Run a client session workflow
+        int notionalClientResult = new_ref<NetworkSession>(ClientSocket, protocol)->Run();
+    }
+
 }}}}//qor::io::network::components
