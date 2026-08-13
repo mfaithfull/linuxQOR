@@ -16,7 +16,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             Sequence(parser,
                 new_ref<ws>(parser),
                 new_ref<Sequence>(parser,
-                    new_ref<Specific>(parser, (byte)0x3A),
+                    new_ref<Specific<uint32_t>>(parser, 0x3A),
                     new_ref<ws>(parser)
                 ),
             static_cast<uint64_t>(jsonToken::name_separator)){ }

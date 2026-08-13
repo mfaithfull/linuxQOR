@@ -11,7 +11,7 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    escape::escape(Parser* parser) : Specific(parser, 0x5C, static_cast<uint64_t>(jsonToken::escape)){ }
+    escape::escape(Parser* parser) : Specific<uint32_t>(parser, 0x5C, static_cast<uint64_t>(jsonToken::escape)){ }
     escape::~escape() = default;
 
     void escape::Prepare()

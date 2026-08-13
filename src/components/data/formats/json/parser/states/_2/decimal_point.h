@@ -8,9 +8,9 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class decimal_point : public Specific
+    class decimal_point : public Specific<uint32_t>
     {
-        public: decimal_point(Parser* parser) : Specific(parser, (byte)0x2E, static_cast<uint64_t>(jsonToken::decimal_point)){ }
+        public: decimal_point(Parser* parser) : Specific<uint32_t>(parser, (uint32_t)0x2E, static_cast<uint64_t>(jsonToken::decimal_point)){ }
         virtual ~decimal_point() = default;
     };
 

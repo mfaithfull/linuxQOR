@@ -13,12 +13,12 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     _null::_null(Parser* parser) :
         Sequence(parser,
-            new_ref<Specific>(parser, (byte)0x6e),
+            new_ref<Specific<uint32_t>>(parser, (uint32_t)0x6e),
             new_ref<Sequence>(parser,
-                new_ref<Specific>(parser, (byte)0x75),
+                new_ref<Specific<uint32_t>>(parser, (uint32_t)0x75),
                 new_ref<Sequence>(parser,
-                    new_ref<Specific>(parser, (byte)0x6c),
-                    new_ref<Specific>(parser, (byte)0x6c)
+                    new_ref<Specific<uint32_t>>(parser, (uint32_t)0x6c),
+                    new_ref<Specific<uint32_t>>(parser, (uint32_t)0x6c)
                 )
             ),
         static_cast<uint64_t>(jsonToken::_null))

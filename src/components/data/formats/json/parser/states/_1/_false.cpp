@@ -12,14 +12,14 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     _false::_false(Parser* parser) : Sequence(parser,
-            new_ref<Specific>(parser, (byte)0x66),
+            new_ref<Specific<uint32_t>>(parser, (uint32_t)0x66),
             new_ref<Sequence>(parser,
-                new_ref<Specific>(parser, (byte)0x61),
+                new_ref<Specific<uint32_t>>(parser, (uint32_t)0x61),
                 new_ref<Sequence>(parser,
-                    new_ref<Specific>(parser, (byte)0x6c),
+                    new_ref<Specific<uint32_t>>(parser, (uint32_t)0x6c),
                     new_ref<Sequence>(parser,
-                        new_ref<Specific>(parser, (byte)0x73),
-                        new_ref<Specific>(parser, (byte)0x65)
+                        new_ref<Specific<uint32_t>>(parser, (uint32_t)0x73),
+                        new_ref<Specific<uint32_t>>(parser, (uint32_t)0x65)
                     )
                 )
             ),

@@ -8,9 +8,9 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class quotation_mark : public Specific
+    class quotation_mark : public Specific<uint32_t>
     {
-        public: quotation_mark(Parser* parser) : Specific(parser, (byte)0x22, static_cast<uint64_t>(jsonToken::quotation_mark)){ } 
+        public: quotation_mark(Parser* parser) : Specific<uint32_t>(parser, 0x22, static_cast<uint64_t>(jsonToken::quotation_mark)){ } 
         virtual ~quotation_mark() = default;
         virtual void Prepare()
         {

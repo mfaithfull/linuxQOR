@@ -13,15 +13,15 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    digit1_9::digit1_9(Parser* parser) : OneOfARange(parser, (byte)0x31, (byte)0x39, static_cast<uint64_t>(jsonToken::digit1_9)){ }
+    digit1_9::digit1_9(Parser* parser) : OneOfARange_t<uint32_t>(parser, (byte)0x31, (byte)0x39, static_cast<uint64_t>(jsonToken::digit1_9)){ }
 
     digit1_9::~digit1_9() = default;
 
     void digit1_9::Emit()
     {        
-        int digitVal = m_result.first - '0';
+        int digitVal = OneOfARange_t<uint32_t>::m_result.first - '0';
         log::debug("Emitting a digit: {0}", digitVal);
-        GetParser()->PushNode(new_ref<Digit1_9Node>((char)digitVal));
+        OneOfARange_t<uint32_t>::GetParser()->PushNode(new_ref<Digit1_9Node>((char)digitVal));
     }
 
 }}}}//qor::data::parser::json

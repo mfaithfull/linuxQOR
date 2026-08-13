@@ -13,11 +13,11 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    unicodeSequence::unicodeSequence(Parser* parser) : Sequence(parser,  new_ref<Specific>(parser, (byte)0x75),// 'u'
-        new_ref<Sequence>(parser, new_ref<HEXDIGIT>(parser),
-            new_ref<Sequence>(parser, new_ref<HEXDIGIT>(parser),
-                new_ref<Sequence>(parser, new_ref<HEXDIGIT>(parser),
-                    new_ref<HEXDIGIT>(parser)
+    unicodeSequence::unicodeSequence(Parser* parser) : Sequence(parser,  new_ref<Specific<uint32_t>>(parser, (byte)0x75),// 'u'
+        new_ref<Sequence>(parser, new_ref<HEXDIGIT<uint32_t>>(parser),
+            new_ref<Sequence>(parser, new_ref<HEXDIGIT<uint32_t>>(parser),
+                new_ref<Sequence>(parser, new_ref<HEXDIGIT<uint32_t>>(parser),
+                    new_ref<HEXDIGIT<uint32_t>>(parser)
                 )
             )
         ),

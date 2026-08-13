@@ -21,7 +21,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void character::Emit()
     {
-        char charVal = (char)m_result.first;
+        auto charVal = m_result.first;
         log::debug("output char: {0}", charVal);
         GetParser()->PushNode(new_ref<CharacterNode>(charVal));     
     }

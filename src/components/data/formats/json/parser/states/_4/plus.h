@@ -8,9 +8,9 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class plus : public Specific
+    class plus : public Specific<uint32_t>
     {
-        public: plus(Parser* parser) : Specific(parser, (byte)0x2B, static_cast<uint64_t>(jsonToken::plus)){ }
+        public: plus(Parser* parser) : Specific<uint32_t>(parser, 0x2B, static_cast<uint64_t>(jsonToken::plus)){ }
         virtual ~plus() = default;
     };
 

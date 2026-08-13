@@ -19,10 +19,10 @@ namespace qor { namespace data { namespace parser { namespace json {
         ws(Parser* parser) :
             ZeroOrMore(parser,
                 new_ref<AnyOneOf>(parser,
-                    new_ref<WSP>(parser),
+                    new_ref<WSP<uint32_t>>(parser),
                     new_ref<AnyOneOf>(parser,
-                        new_ref<CR>(parser),
-                        new_ref<LF>(parser)
+                        new_ref<CR<uint32_t>>(parser),
+                        new_ref<LF<uint32_t>>(parser)
                     )
                 ),
             static_cast<uint64_t>(jsonToken::ws)){ }

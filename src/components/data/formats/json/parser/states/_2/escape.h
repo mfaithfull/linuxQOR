@@ -8,7 +8,7 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class qor_pp_module_interface(QOR_JSON) escape : public Specific
+    class qor_pp_module_interface(QOR_JSON) escape : public Specific<uint32_t>
     {
     public: 
         escape(Parser* parser);

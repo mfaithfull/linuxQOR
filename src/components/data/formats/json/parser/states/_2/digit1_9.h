@@ -8,7 +8,7 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class qor_pp_module_interface(QOR_JSON) digit1_9 : public OneOfARange
+    class qor_pp_module_interface(QOR_JSON) digit1_9 : public OneOfARange_t<uint32_t>
     {
         public: digit1_9(Parser* parser);
         virtual ~digit1_9();

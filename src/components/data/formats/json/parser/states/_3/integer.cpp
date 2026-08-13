@@ -17,7 +17,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     integer::integer(Parser* parser) : AnyOneOf(parser,  new_ref<zero>(parser),
         new_ref<Sequence>(parser, new_ref<digit1_9>(parser),
-            new_ref<ZeroOrMore>(parser, new_ref<DIGIT>(parser))),
+            new_ref<ZeroOrMore>(parser, new_ref<DIGIT<uint32_t>>(parser))),
         static_cast<uint64_t>(jsonToken::integer))
     { }
     

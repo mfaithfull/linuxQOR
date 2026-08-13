@@ -18,33 +18,33 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     enum class jsonToken : uint64_t
     {
-        unescaped = static_cast<uint64_t>(eToken::Max) + 1ull,
+        unescaped = static_cast<uint64_t>(eToken::Max) + 1ull,//19
         quotation_mark,
         escape,
         character,
         string,
         zero,
-        plus,
+        plus,//25
         minus,
         decimal_point,
         digit1_9,
         _e,
-        integer,
+        integer,//30
         fraction,
         exp,
         number,
         _true,
-        _false,
+        _false,//35
         _null,
         ws,
         value_separator,
         name_separator,
-        end_object,
+        end_object,//40
         end_array,
         begin_object,
         begin_array,
         member,
-        object,
+        object,//45
         array,
         value,
         escape_sequence,

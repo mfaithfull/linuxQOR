@@ -9,10 +9,10 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class zero : public Specific
+    class zero : public Specific<uint32_t>
     {
     public: 
-        zero(Parser* parser) : Specific(parser, (byte)0x30, static_cast<uint64_t>(jsonToken::zero)){ }
+        zero(Parser* parser) : Specific<uint32_t>(parser, 0x30, static_cast<uint64_t>(jsonToken::zero)){ }
         virtual ~zero() = default;
     };
 
