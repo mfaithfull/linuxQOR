@@ -14,7 +14,7 @@ namespace qor{ namespace pipeline{
     //another through the buffer.
     //Both Writes and reads are three step, they reserve space, then attempt to read or write it
     //Then acknowledge how much they have read or written.
-    //This allows for failure and unreliable device interaction without courrupting the buffer
+    //This allows for failure and unreliable device interaction without corrupting the buffer
     class qor_pp_module_interface(QOR_PIPELINE) Buffer
     {
     public:

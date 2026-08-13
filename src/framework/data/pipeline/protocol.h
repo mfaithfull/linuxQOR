@@ -14,6 +14,8 @@
 namespace qor{ namespace pipeline{
 
     //Base type for pipeline compatible network protocols
+    //Protocol objects are stateless factories by design
+    //Safe to pass between threads
     class Protocol
     {
     public:
@@ -36,12 +38,12 @@ namespace qor{ namespace pipeline{
             return qor::io::network::sockets::eProtocol::IPProto_IP;
         }
 
-        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter()
+        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetNewRequestFilter() const
         {
             return ref_of<qor::pipeline::InlineFilter<byte>>::type();
         }
 
-        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter()
+        virtual qor::ref_of<qor::pipeline::InlineFilter<byte>>::type GetNewResponseFilter() const
         {
             return ref_of<qor::pipeline::InlineFilter<byte>>::type();
         }

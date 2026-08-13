@@ -101,7 +101,7 @@ namespace qor{ namespace pipeline{
             ::memcpy((void*)space, (const void*)data, std::min(itemCount, writeCount) * sizeof(pod_t));
         }
 
-    private:
+    protected:
 
         virtual bool DoFilter(pod_t* data, size_t& itemCount, size_t& writeCount)
         {

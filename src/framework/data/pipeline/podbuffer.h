@@ -62,7 +62,7 @@ namespace qor{ namespace pipeline{
             return *this;
         }
 
-        virtual size_t WriteCapacity()
+        virtual size_t WriteCapacity() const
         {
             //The count available to write is the total count - the reserved count
             size_t result = m_allocationCount - static_cast<size_t>(m_writeEnd - m_readBegin);
@@ -74,7 +74,7 @@ namespace qor{ namespace pipeline{
             return result;
         }
 
-        virtual size_t ReadCapacity()
+        virtual size_t ReadCapacity() const
         {
             //Read capacity is what has been written but not read yet
             size_t result = static_cast<size_t>(m_writeBegin - m_readEnd);
@@ -122,13 +122,13 @@ namespace qor{ namespace pipeline{
             //The one and only bit of memory management;
             delete[] m_pAllocation;
             m_pAllocation = (itemCount > 0) ? new pod_t[itemCount] : nullptr;
-            memset(m_pAllocation, 0, sizeof(pod_t) * itemCount);
+            memset(reinterpret_cast<void*>(m_pAllocation), 0, sizeof(pod_t) * itemCount);
             Buffer::SetCapacity(itemCount);
         }
 
     protected:
 
-        pod_t* EndOfBuffer(void)
+        pod_t* EndOfBuffer(void) const
         {
             pod_t* pResult = nullptr;
             if (m_allocationCount > 0)
@@ -138,7 +138,7 @@ namespace qor{ namespace pipeline{
             return pResult;
         }
 
-        pod_t* AddressOf(size_t index)
+        pod_t* AddressOf(size_t index) const
         {
             pod_t* pResult = nullptr;
             if (m_allocationCount > 0)
