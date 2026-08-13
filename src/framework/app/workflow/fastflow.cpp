@@ -24,9 +24,9 @@ namespace qor{
 
     Fastflow::Fastflow()
     {
-        std::vector< ref_of<fastflow::Step>::type > stepVector;
+        std::vector< fastflow::Step* > stepVector;
         stepVector.reserve(64);
-        m_StepStack = std::stack< ref_of<fastflow::Step>::type, std::vector< ref_of<fastflow::Step>::type > >(std::move(stepVector));
+        m_StepStack = std::stack< fastflow::Step*, std::vector< fastflow::Step* > >(std::move(stepVector));
     }
 
     Fastflow::~Fastflow() = default;
@@ -52,7 +52,8 @@ namespace qor{
             serious("No initial step set for fastflow.");
             return -1;
         }
-        try{   
+        try
+        {   
             while(!IsComplete())
             {
                 CurrentStep()->Enter();
@@ -86,7 +87,7 @@ namespace qor{
 
     void Fastflow::Leave(){}
 
-    ref_of<fastflow::Step>::type Fastflow::CurrentStep()
+    fastflow::Step* Fastflow::CurrentStep()
     {
         if( !m_StepStack.empty() )
         {
@@ -95,7 +96,7 @@ namespace qor{
         return nullptr;
     }
 
-    ref_of<fastflow::Step>::type Fastflow::GetInitialStep() const
+    fastflow::Step* Fastflow::GetInitialStep() const
     {
         return m_initialStep;
     }
@@ -105,42 +106,33 @@ namespace qor{
         if(initialStep && m_StepStack.empty())
         {
             m_initialStep = initialStep;
-            m_StepStack.push(initialStep.Clone());
+            m_StepStack.push(initialStep);
             m_complete = false;
         }
     }
 
-    void Fastflow::SetStep(ref_of<fastflow::Step>::type newState)
+    void Fastflow::SetStep(fastflow::Step* newState)
     {
         if(newState)
         {
             if(!m_StepStack.empty())
             {
-                ref_of<fastflow::Step>::type currentStep = CurrentStep();
+                fastflow::Step* currentStep = CurrentStep();
                 if(currentStep)
                 {
                     currentStep->Leave();
                 }
                 m_StepStack.pop();
             }
-            m_StepStack.push(newState.Clone());
+            m_StepStack.push(newState);
         }
     }
 
-    void Fastflow::PushStep(ref_of<fastflow::Step>::type newStep)
+    void Fastflow::PushStep(fastflow::Step* newStep)
     {
         if(newStep)
         {
-            /*
-            if(!m_StepStack.empty())
-            {
-                ref_of<fastflow::Step>::type currentStep = CurrentStep();
-                if(currentStep)
-                {
-                    currentStep->Suspend();
-                }
-            }*/
-            m_StepStack.push(newStep.Clone());
+            m_StepStack.push(newStep);
         }
     }
 
@@ -148,7 +140,7 @@ namespace qor{
     {
         if(!m_StepStack.empty())
         {
-    		ref_of<fastflow::Step>::type currentStep = m_StepStack.top();
+    		fastflow::Step* currentStep = m_StepStack.top();
             if(currentStep)
             {
     	    	currentStep->Leave();
@@ -156,7 +148,7 @@ namespace qor{
             m_StepStack.pop();		
             if(!m_StepStack.empty())
             {
-                ref_of<fastflow::Step>::type newCurrentStep = m_StepStack.top();
+                fastflow::Step* newCurrentStep = m_StepStack.top();
                 if(newCurrentStep)
                 {
         	        newCurrentStep->Resume();

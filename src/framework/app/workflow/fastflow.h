@@ -62,8 +62,8 @@ namespace qor{
 
         qor_pp_module_interface(QOR_WORKFLOW) virtual bool IsComplete() const;
         qor_pp_module_interface(QOR_WORKFLOW) void SetInitialStep(ref_of<fastflow::Step>::type step);
-        qor_pp_module_interface(QOR_WORKFLOW) void SetStep(ref_of<fastflow::Step>::type step);
-        qor_pp_module_interface(QOR_WORKFLOW) void PushStep(ref_of<fastflow::Step>::type step);
+        qor_pp_module_interface(QOR_WORKFLOW) void SetStep(fastflow::Step* step);
+        qor_pp_module_interface(QOR_WORKFLOW) void PushStep(fastflow::Step* step);
         qor_pp_module_interface(QOR_WORKFLOW) void PopStep();
         qor_pp_module_interface(QOR_WORKFLOW) void SetComplete();
         qor_pp_module_interface(QOR_WORKFLOW) void SetComplete(int result);
@@ -73,15 +73,15 @@ namespace qor{
         qor_pp_module_interface(QOR_WORKFLOW) virtual void Resume();
         qor_pp_module_interface(QOR_WORKFLOW) virtual void Leave();
 
-        qor_pp_module_interface(QOR_WORKFLOW) ref_of<fastflow::Step>::type GetInitialStep() const;
-        qor_pp_module_interface(QOR_WORKFLOW) ref_of<fastflow::Step>::type CurrentStep();
+        qor_pp_module_interface(QOR_WORKFLOW) fastflow::Step* GetInitialStep() const;
+        qor_pp_module_interface(QOR_WORKFLOW) fastflow::Step* CurrentStep();
 
     protected:
     
         int m_result{0};
         bool m_complete{false};
         ref_of<fastflow::Step>::type m_initialStep;        
-        std::stack< ref_of<fastflow::Step>::type, std::vector< ref_of<fastflow::Step>::type > > m_StepStack;
+        std::stack< fastflow::Step*, std::vector< fastflow::Step* > > m_StepStack;
 
     };
 
