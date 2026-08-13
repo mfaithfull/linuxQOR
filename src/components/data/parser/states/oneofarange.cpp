@@ -12,28 +12,29 @@
 namespace qor { namespace data { namespace parser {
 
     //Octets in a contiguous numerical range. Used for things like 0-9 digits and a-z letters
-    OneOfARange::OneOfARange(Parser* parser, byte firstOctet, byte lastOctet, uint64_t token) : ParserState(parser, token),
+    OneOfAByteRange::OneOfAByteRange(Parser* parser, byte firstOctet, byte lastOctet, uint64_t token) : ParserState(parser, token),
         m_first(firstOctet), m_last(lastOctet)
     {
-        m_context = GetParser()->GetContext();
+        m_context = dynamic_cast<ByteContext*>(GetParser()->GetContext());
 
         Enter = [this]()
             {
                 Prepare();
                 byte* data = nullptr;
-                if (m_context->GetOctet(data))
+                if (m_context->GetItem(data))
                 {
                     m_result.m_position = m_context->GetPosition();
                     if ((*data >= m_first && *data <= m_last))
                     {                        
                         m_result.first = *data;                        
-                        m_context->ConsumeOctet();
+                        m_context->ConsumeItem();
                         m_result.token = m_token;
                         ++m_result.length;
                         m_result.code = Result::SUCCESS;
                     }
                     else
-                    {                                                
+                    {      
+                        m_context->RejectItem();                                         
                         m_result.code = Result::FAILURE;
                         m_result.length = 0;
                     }
@@ -48,6 +49,6 @@ namespace qor { namespace data { namespace parser {
             };
     }
 
-    OneOfARange::~OneOfARange() = default;
+    OneOfAByteRange::~OneOfAByteRange() = default;
 
 }}}//qor::data::parser

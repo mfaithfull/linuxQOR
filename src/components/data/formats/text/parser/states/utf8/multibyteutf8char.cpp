@@ -20,20 +20,21 @@ namespace qor { namespace data { namespace parser { namespace text {
         {
             Prepare();
 
-            byte* data = nullptr;
-            if (GetContext()->GetOctet(data))
+            uint32_t* data = nullptr;
+            if (GetContext()->GetItem(data))
             {
                 //work out how many more bytes to expect
                 uint8_t decoded_length = codepoint_decoded_length[static_cast<char8_t>(*data)];
                 if(decoded_length < 1 || decoded_length > 6)
                 {
+                    GetContext()->RejectItem();
                     m_result.code = Result::FAILURE;
                 }
                 else
                 {
                     m_result.first = *data;
                     m_result.m_position = GetContext()->GetPosition();
-                    GetContext()->ConsumeOctet();
+                    GetContext()->ConsumeItem();
                     m_result.token = m_token;
                     ++m_result.length;
                     m_result.code = Result::SUCCESS;         

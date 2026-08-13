@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: BSL-1.0
 
 #include "src/configuration/configuration.h"
-
 #include "src/platform/compiler/compiler.h"
+#include "src/qor/flyers/log/debug.h"
 #include "zeroormore.h"
 #include "../context.h"
 #include "../parser.h"
@@ -16,21 +16,23 @@ namespace qor { namespace data { namespace parser {
     {
         m_first = true;
         m_result.length = 0;
-        m_flow = Workflow();
-        m_context = GetParser()->GetContext();
+        m_flow = Workflow();        
         Enter = [this]()
             {
                 Prepare();
+                log::debug("Trying for zero or more.");
                 m_flow->PushStep(m_head);
             };
 
         Resume = [this]()
             {                
+                m_context = GetParser()->GetContext();
                 m_result.code = m_head->m_result.code;                
-                if (m_head->m_result.code == Result::SUCCESS  && m_context->HasUnparsedData())
-                {
+                if (m_head->m_result.code == Result::SUCCESS  && m_context->HasData())
+                {                    
                     if (m_first)
                     {
+                        log::debug("Found at least 1 of zero or more.");
                         m_result.first = m_head->m_result.first;
                         m_result.m_position = m_head->m_result.m_position;
                         m_first = false;
@@ -41,9 +43,9 @@ namespace qor { namespace data { namespace parser {
                 }
                 else
                 {
-                    m_first = true;
-                    Fail();
-                    if(m_context->HasUnparsedData())
+                    m_first = true;                    
+                    m_result.code = Result::FAILURE;
+                    if(m_context->HasData() || GetParser()->IsFinal())
                     {
                         m_flow->PopStep();
                     }

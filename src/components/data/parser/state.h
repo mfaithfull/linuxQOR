@@ -12,15 +12,14 @@
 #include "result.h"
 #include "node.h"
 #include "tokens.h"
+#include "context.h"
 
 namespace qor { namespace data { 
 
-    class Parser;
+    class qor_pp_module_interface(QOR_PARSER) Parser;
 
     namespace parser {
         
-    class Context;
-
     class qor_pp_module_interface(QOR_PARSER) ParserState : public fastflow::Step
     {
     public:
@@ -29,8 +28,8 @@ namespace qor { namespace data {
         virtual ~ParserState();
         virtual void Reset();
         uint64_t GetToken();
-        class Parser* GetParser();
-        class Context* GetContext();
+        Parser* GetParser();
+        data::AbstractDataContext* GetContext();
 
         Result m_result;
 
@@ -40,17 +39,41 @@ namespace qor { namespace data {
         virtual void Emit();
         virtual void Fail();
 
-        class Fastflow* Workflow();
+        Fastflow* Workflow();
         uint64_t m_token{0};
     };
 
-    class qor_pp_module_interface(QOR_PARSER) AcceptAll : public ParserState
+    template<typename item_t>
+    class AcceptAll : public ParserState
     {
     public:
-
-        AcceptAll(Parser* parser);
-        virtual ~AcceptAll();
+        //Will literally accept anything. Don't use this in practice as it will consume all the rest of any data. It's useful for testing
+        AcceptAll(Parser* parser) : ParserState(parser)
+        {
+            Enter = [this]()
+            {            
+                Prepare();
+                item_t* data = nullptr;
+                m_result.code = Result::SUCCESS;
+                if(GetContext()->GetItem(data))
+                {
+                    m_result.first = *data;
+                    m_result.m_position = GetContext()->GetPosition();
+                    GetContext()->ConsumeItem();
+                    m_result.token = static_cast<uint64_t>(eToken::Octet);
+                    ++m_result.length;
+                }
+                else
+                {
+                    return;                
+                }
+            };
+        }
+        virtual ~AcceptAll() = default;
     };
+
+ 
+
 
 }}}//qor::data::parser
 
@@ -58,8 +81,6 @@ namespace qor{
     qor_pp_declare_source_of(data::parser::ParserState, memory::FastSource)
     qor_pp_declare_source_of(typename ref_of<data::parser::ParserState>::type, memory::FastSource)
 
-    qor_pp_declare_source_of(data::parser::AcceptAll, memory::FastSource)
-    qor_pp_declare_source_of(typename ref_of<data::parser::AcceptAll>::type, memory::FastSource)
 }
 
 #endif//QOR_PP_H_DATA_PARSER_STATE

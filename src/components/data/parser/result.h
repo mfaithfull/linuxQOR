@@ -23,7 +23,7 @@ namespace qor { namespace data { namespace parser {
         };
 
         eResultCode code{UNINITIALIZED};
-        byte first{0};
+        uint32_t first{0};
         size_t length{0};
         size_t m_position{0};
         uint64_t token{0};

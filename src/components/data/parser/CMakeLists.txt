@@ -1,7 +1,6 @@
 set(target qor_parser)
 
 add_library(${target} SHARED qor_parser.cpp state.cpp parser.cpp context.cpp 
-states/rfc5234.cpp
 states/oneormore.cpp
 states/anyoneofset.cpp
 states/anyoneof.cpp

@@ -8,6 +8,7 @@
 
 namespace qor { namespace data { namespace parser {
 
+    /*
     Context::Context() = default;
 
     Context::Context(Context&& src)
@@ -84,5 +85,5 @@ namespace qor { namespace data { namespace parser {
         m_position = 0;
         m_size = 0;
     }
-
+*/
 }}}//qor::data::parser

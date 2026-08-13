@@ -22,6 +22,91 @@ namespace qor { namespace data { namespace parser {
         ref_of<ParserState>::type m_head;
         ref_of<ParserState>::type m_tail;
     };
+
+    template< class head_t, class tail_t >
+    class AnyOneOf_t : public ParserState
+    {
+    public:
+
+        AnyOneOf_t(Parser* parser, head_t* head, tail_t* tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical)) : ParserState(parser, token),
+        m_internalState(0), m_head(head), m_tail(tail)
+        {
+            m_internalState = 0;
+            Enter = [this]()
+                {
+                    Prepare();
+                    if(m_internalState == 0)
+                    {
+                        Workflow()->PushStep(m_head);
+                    }
+                    else if(m_internalState == 1)
+                    {
+                        Workflow()->PushStep(m_tail);
+                    }
+                };
+
+            Resume = [this]()
+                {
+                    switch (m_internalState)
+                    {
+                    case 0:
+                        if (m_head->m_result.code == Result::SUCCESS)
+                        {
+                            m_result.code = Result::SUCCESS;
+                            m_result.first = m_head->m_result.first;
+                            m_result.length = m_head->m_result.length;
+                            m_result.token = m_token;
+                            m_result.m_position = m_head->m_result.m_position;
+                            Workflow()->PopStep();
+                        }
+                        else if (m_head->m_result.code == Result::MORE_DATA)
+                        {
+                            Fail();
+                            return;                        
+                        }
+                        else
+                        {
+                            m_internalState = 1;
+                            Workflow()->PushStep(m_tail);
+                        }
+                        break;
+                    case 1:
+                        if (m_tail->m_result.code == Result::SUCCESS)
+                        {
+                            m_result.code = Result::SUCCESS;
+                            m_result.first = m_tail->m_result.first;
+                            m_result.length = m_tail->m_result.length;
+                            m_result.token = m_token;
+                            m_result.m_position = m_tail->m_result.m_position;
+                            m_internalState = 0;
+                            Workflow()->PopStep();
+                        }
+                        else if (m_head->m_result.code == Result::MORE_DATA)
+                        {
+                            Fail();
+                            return;                        
+                        }
+                        else
+                        {
+                            m_internalState = 0;
+                            m_result.m_position = m_head->m_result.m_position;
+                            m_result.code = Result::FAILURE;
+                            Workflow()->PopStep();
+                        }
+                        break;
+                    }
+                };
+        }
+
+        virtual ~AnyOneOf_t() = default;
+
+    private:
+
+        unsigned int m_internalState;
+        head_t* m_head;
+        tail_t* m_tail;
+
+    };
 }}}//qor::data::parser
 
 namespace qor{

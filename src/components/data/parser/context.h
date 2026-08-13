@@ -5,35 +5,12 @@
 #define QOR_PP_H_DATA_PARSER_CONTEXT
 
 #include "src/platform/compiler/compiler.h"
+#include "src/framework/data/pipeline/buffercontext.h"
 
 namespace qor { namespace data { namespace parser {
 
-    //Adapts a parser into a pipeline buffer, keeping track where the parser is in the buffer
-    class qor_pp_module_interface(QOR_PARSER) Context
-    {
-    public:
-
-        Context();
-        Context(Context&& src);
-        Context(byte* data, size_t itemCount);
-        bool GetOctet(byte*& data);
-        bool PutOctet(byte data);
-        bool ConsumeOctet();
-        size_t GetPosition();
-        void SetData(byte* data, size_t itemCount);
-        bool HasUnparsedData();
-        bool HasSpace();
-        void Diagnostic();
-        void Reset();
-        
-    private:
-    
-        byte* m_octetStream{ nullptr };
-        size_t m_position{ 0 };
-        size_t m_size{ 0 };
-
-    };
-
+    using CodePointContext = pipeline::BufferContext<uint32_t>;
+    using ByteContext = pipeline::BufferContext<byte>;
 }}}//qor::data::parser
 
 #endif//QOR_PP_H_DATA_PARSER_CONTEXT

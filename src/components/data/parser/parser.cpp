@@ -17,16 +17,16 @@ namespace qor { namespace data {
 
     Parser::Parser() : Fastflow(){ }
 
-    Parser::Parser(ref_of<class parser::Context>::type context) : Fastflow(), m_context(context){ }
+    Parser::Parser(data::AbstractDataContext* context) : Fastflow(), m_context(context){ }
 
     Parser::~Parser() = default;
 
-    parser::Context* Parser::GetContext() const
+    data::AbstractDataContext* Parser::GetContext() const
     {
         return m_context;
     }
 
-    void Parser::SetContext(ref_of<class parser::Context>::type context)
+    void Parser::SetContext(data::AbstractDataContext* context)
     {
         m_context = context;
     }
@@ -67,13 +67,9 @@ namespace qor { namespace data {
     void Parser::Drain()
     {
         qor_pp_ofcontext;
-        while(!IsComplete() && m_StepStack.size() > 0)
+        while(!IsComplete() && (m_StepStack.size() > 0 ))
         {
-            while(!IsComplete() && m_context->HasUnparsedData())
-            {
-                CurrentStep()->Enter();
-            }
-            PopStep();
+            CurrentStep()->Enter();
         }
         log::debug("Parse complete.");
     }
@@ -85,18 +81,32 @@ namespace qor { namespace data {
     {
         qor_pp_ofcontext;
 
-        while(!IsComplete() && m_context->HasUnparsedData())
+        while(!IsComplete() && (m_context->HasData() && m_StepStack.size() > 0 ))
         {
             CurrentStep()->Enter();
         }
-#ifdef NDEBUG
+#ifndef NDEBUG
         if(IsComplete())
         {
             log::debug("Initial parse complete.");
         }
-        if(!m_context->HasUnparsedData())
+        if(!m_context->HasData())
         {
-            log::debug("Parse ran out of data.");
+            log::debug("Parse ran out of data.");            
+        }
+#endif
+    }
+
+    void Parser::DumpTokenStack()
+    {
+#ifndef NDEBUG
+        std::stack< fastflow::Step*, std::vector< fastflow::Step* > > copy = m_StepStack; // Copy the stack
+        while (!copy.empty())
+        {
+            uint64_t token = dynamic_cast<parser::ParserState*>(copy.top())->GetToken();
+            uint32_t first = dynamic_cast<parser::ParserState*>(copy.top())->m_result.first;
+            std::cout << "token: " << token << " " << first << "\n";
+            copy.pop();
         }
 #endif
     }
@@ -112,7 +122,8 @@ namespace qor { namespace data {
         }
         try
         {
-            log::debug("Stack on entry has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
+            log::debug("Stacks on entry have {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
+            DumpTokenStack();
             m_final ? Drain() : InnerParse();
         }
         catch(const Serious& error)
@@ -131,7 +142,7 @@ namespace qor { namespace data {
             m_inError = true;
         }
 
-        log::debug("Stack on exit has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
+        log::debug("Stacks on exit has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
 
         if(!m_final && m_StepStack.size() == 0 )
         {
@@ -141,19 +152,9 @@ namespace qor { namespace data {
             {
                 log::debug("Nothing found.");
             }
-
         }
 
-#ifndef NDEBUG
-        std::stack< ref_of<fastflow::Step>::type, std::vector< ref_of<fastflow::Step>::type > > copy = m_StepStack; // Copy the stack
-        while (!copy.empty())
-        {
-            uint64_t token = copy.top().AsRef<parser::ParserState>()->GetToken();
-            std::cout << "token: " << token << "\n";
-            copy.pop();
-        }
-#endif
-
+        DumpTokenStack();
         return m_result;
     }
 

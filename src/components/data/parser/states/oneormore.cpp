@@ -18,6 +18,7 @@ namespace qor { namespace data { namespace parser {
         m_result.length = 0;
         Enter = [this]()
         {
+            m_first = true;
             Prepare();
             Workflow()->PushStep(m_head.AsRef<fastflow::Step>());
         };
@@ -47,6 +48,12 @@ namespace qor { namespace data { namespace parser {
                 }
                 m_first = true;                
                 Workflow()->PopStep();
+            }
+            else if(m_head->m_result.code == Result::UNINITIALIZED)
+            {
+                //We reset the head but there was no more data
+                m_result.code = m_first ? Result::FAILURE : Result::SUCCESS;
+                return;
             }
             else
             {

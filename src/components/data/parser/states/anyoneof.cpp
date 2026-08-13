@@ -16,13 +16,15 @@ namespace qor { namespace data { namespace parser {
         m_internalState = 0;
         Enter = [this]()
             {
-                Prepare();
+                Prepare();                
                 if(m_internalState == 0)
                 {
+                    log::debug("Looking for first of two options.");
                     Workflow()->PushStep(m_head.AsRef<fastflow::Step>());
                 }
                 else if(m_internalState == 1)
                 {
+                    log::debug("Looking for second of two options.");
                     Workflow()->PushStep(m_tail.AsRef<fastflow::Step>());
                 }
             };
@@ -34,6 +36,7 @@ namespace qor { namespace data { namespace parser {
                 case 0:
                     if (m_head->m_result.code == Result::SUCCESS)
                     {
+                        log::debug("Found first of two options.");
                         m_result.code = Result::SUCCESS;
                         m_result.first = m_head->m_result.first;
                         m_result.length = m_head->m_result.length;
@@ -43,11 +46,12 @@ namespace qor { namespace data { namespace parser {
                     }
                     else if (m_head->m_result.code == Result::MORE_DATA)
                     {
+                        log::debug("Ran out of data.");
                         Fail();
                         return;                        
                     }
                     else
-                    {
+                    {                        
                         m_internalState = 1;
                         Workflow()->PushStep(m_tail.AsRef<fastflow::Step>());
                     }
@@ -55,6 +59,7 @@ namespace qor { namespace data { namespace parser {
                 case 1:
                     if (m_tail->m_result.code == Result::SUCCESS)
                     {
+                        log::debug("Found second of two options.");
                         m_result.code = Result::SUCCESS;
                         m_result.first = m_tail->m_result.first;
                         m_result.length = m_tail->m_result.length;
@@ -65,11 +70,13 @@ namespace qor { namespace data { namespace parser {
                     }
                     else if (m_head->m_result.code == Result::MORE_DATA)
                     {
+                        log::debug("Ran out of data looking for second of two options.");
                         Fail();
                         return;                        
                     }
                     else
                     {
+                        log::debug("Failed to find either of two options.");
                         m_internalState = 0;
                         m_result.m_position = m_head->m_result.m_position;
                         m_result.code = Result::FAILURE;

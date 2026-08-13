@@ -58,7 +58,7 @@ namespace qor { namespace data { namespace parser {
         return m_token;
     }
 
-    Context* ParserState::GetContext()
+    data::AbstractDataContext* ParserState::GetContext()
     {
         return dynamic_cast<Parser*>(m_Fastflow)->GetContext();
     }
@@ -90,29 +90,5 @@ namespace qor { namespace data { namespace parser {
         //Failures are not final, just a dead end in the parse. Another later branch/option may succeed.
     }
     
-    //Will literally accept anything. Don't use this in practice as it will consume all the rest of any data. It's useful for testing
-    AcceptAll::AcceptAll(Parser* parser) : ParserState(parser)
-    {        
-        Enter = [this]()
-        {            
-            Prepare();
-            byte* data = nullptr;
-            m_result.code = Result::SUCCESS;
-            if(GetContext()->GetOctet(data))
-            {
-                m_result.first = *data;
-                m_result.m_position = GetContext()->GetPosition();
-                GetContext()->ConsumeOctet();
-                m_result.token = static_cast<uint64_t>(eToken::Octet);
-                ++m_result.length;
-            }
-            else
-            {
-                return;                
-            }
-        };
-    }
-
-    AcceptAll::~AcceptAll() = default;
 
 }}}//qor::data::parser

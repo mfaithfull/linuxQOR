@@ -21,10 +21,10 @@ namespace qor { namespace data {
         Parser();
         Parser(const Parser&) = delete;
         Parser& operator = (const Parser&) = delete;
-        Parser(ref_of<class parser::Context>::type context);
+        Parser(data::AbstractDataContext* context);
         ~Parser();
-        parser::Context* GetContext() const;
-        void SetContext(ref_of<class parser::Context>::type context);
+        data::AbstractDataContext* GetContext() const;
+        void SetContext(data::AbstractDataContext* context);
         void PushNode(ref_of<parser::Node>::type node);
         ref_of<parser::Node>::type PopNode();
         ref_of<parser::Node>::type& TopNode();
@@ -40,9 +40,11 @@ namespace qor { namespace data {
         void InnerParse();
         int SafeParse();
 
+        void DumpTokenStack();
+
         bool m_inError{false};
         bool m_final{false};
-        ref_of<class parser::Context>::type m_context;
+        data::AbstractDataContext* m_context{nullptr};
         std::stack<ref_of<parser::Node>::type> m_nodes;
     };
 

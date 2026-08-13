@@ -19,8 +19,74 @@ namespace qor { namespace data { namespace parser {
     private:
 
         Fastflow* m_flow;
-        Context* m_context;
+        data::AbstractDataContext* m_context;
         ref_of<ParserState>::type m_head;
+        bool m_first;
+    };
+
+    template< class head_t >
+    class ZeroOrMore_t : public ParserState
+    {
+    public:
+
+        ZeroOrMore_t(Parser* parser, head_t* head, uint64_t token = static_cast<uint64_t>(eToken::Lexical)) : ParserState(parser, token), 
+            m_head(head)
+        {
+            m_first = true;
+            m_result.length = 0;
+            m_flow = Workflow();
+            m_context = GetParser()->GetContext();
+            Enter = [this]()
+                {
+                    Prepare();
+                    m_flow->PushStep(m_head);
+                };
+
+            Resume = [this]()
+                {                
+                    m_result.code = m_head->m_result.code;                
+                    if (m_head->m_result.code == Result::SUCCESS  && m_context->HasData())
+                    {
+                        if (m_first)
+                        {
+                            m_result.first = m_head->m_result.first;
+                            m_result.m_position = m_head->m_result.m_position;
+                            m_first = false;
+                        }
+                        m_result.length += m_head->m_result.length;
+                        m_head->Reset();
+                        m_flow->PushStep(m_head);
+                    }
+                    else
+                    {
+                        m_first = true;
+                        if(m_context->HasData())
+                        {
+                            m_flow->PopStep();
+                        }
+                        return;                    
+                    }
+                };
+
+            Leave = [this]()
+                {
+                    m_result.token = m_token;
+                    if (m_result.code == Result::FAILURE)
+                    {
+                        Fail();
+                    }
+                    m_result.code = Result::SUCCESS;
+                };
+
+        }
+
+        virtual ~ZeroOrMore_t() = default;
+
+    private:
+
+        Fastflow* m_flow;
+        data::AbstractDataContext* m_context;
+        head_t* m_head;
         bool m_first;
     };
 

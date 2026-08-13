@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: BSL-1.0
 
 #include "src/configuration/configuration.h"
-
 #include "src/platform/compiler/compiler.h"
+#include "src/qor/flyers/log/debug.h"
 #include "sequence.h"
 #include "../context.h"
 #include "../parser.h"
@@ -20,10 +20,12 @@ namespace qor { namespace data { namespace parser {
                 Prepare();
                 if(m_internalState == 0)                
                 {
+                    log::debug("Trying Sequence head.");
                     Workflow()->PushStep(m_head);
                 }
                 else if(m_internalState == 1)
                 {
+                    log::debug("Trying Sequence tail.");
                     Workflow()->PushStep(m_tail);
                 }
             };
@@ -35,6 +37,7 @@ namespace qor { namespace data { namespace parser {
                 case 0://head
                     if (m_head->m_result.code == Result::FAILURE)
                     {
+                        log::debug("Sequence failed at head.");
                         m_result.code = m_head->m_result.code;
                         m_result.length = 0;
                         m_result.m_position = m_head->m_result.m_position;
@@ -42,6 +45,7 @@ namespace qor { namespace data { namespace parser {
                     }
                     else if (m_head->m_result.code == Result::SUCCESS)
                     {
+                        log::debug("Found Sequence head.");
                         m_result.first = m_head->m_result.first;
                         m_result.length = m_head->m_result.length;
                         m_result.m_position = m_head->m_result.m_position;
@@ -49,14 +53,20 @@ namespace qor { namespace data { namespace parser {
                         Workflow()->PushStep(m_tail);
                     }
                     else
-                    {
-                        Fail();
+                    {                        
+                        log::debug("Sequence ran out of data.");
+                        if (GetParser()->IsFinal())
+                        {
+                            Workflow()->PopStep();
+                        }                        
                         return;
                     }
                     break;
                 case 1://tail
+                    
                     if (m_tail->m_result.code == Result::SUCCESS)
                     {
+                        log::debug("Sequence found.");
                         m_result.code = Result::SUCCESS;
                         m_result.length = m_head->m_result.length + m_tail->m_result.length;
                         m_result.token = m_token;
@@ -65,6 +75,7 @@ namespace qor { namespace data { namespace parser {
                     }
                     else if (m_tail->m_result.code == Result::FAILURE)
                     {
+                        log::debug("Sequence failed at tail.");
                         m_result.code = Result::FAILURE;
                         m_result.length = 0;
                         m_internalState = 0;
@@ -72,13 +83,22 @@ namespace qor { namespace data { namespace parser {
                     }
                     else
                     {
-                        if (GetParser()->IsFinal())//Try to succeed
+                        log::debug("Sequence tail ran out of data.");
+                        if (GetParser()->IsFinal())//
                         {
+                            m_result.code = Result::FAILURE;
+                            m_internalState = 0;
+                            /*
                             m_result.code = Result::SUCCESS;
                             m_result.length = m_head->m_result.length + m_tail->m_result.length;
                             m_result.token = m_token;
-                            m_internalState = 0;
+                            
+                            */
                             Workflow()->PopStep();
+                        }
+                        else
+                        {
+                            return;
                         }
                     }
                     break;
@@ -86,6 +106,10 @@ namespace qor { namespace data { namespace parser {
             };
     }
 
+    void Sequence::Prepare()
+    {
+        log::debug("Looking for a sequence...");
+    }
     Sequence::~Sequence() = default;
     
 }}}//qor::data::parser
