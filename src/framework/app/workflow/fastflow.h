@@ -12,6 +12,7 @@
 #include "src/qor/memory/sources/fastsource.h"
 #include "iworkflow.h"
 #include "src/qor/function/tef.h"
+#include "tefallocator.h"
 
 namespace qor{ 
 
@@ -82,7 +83,7 @@ namespace qor{
         bool m_complete{false};
         ref_of<fastflow::Step>::type m_initialStep;        
         std::stack< fastflow::Step*, std::vector< fastflow::Step* > > m_StepStack;
-
+        TEFAllocator m_tefAllocator;
     };
 
 }//qor

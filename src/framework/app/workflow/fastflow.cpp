@@ -14,9 +14,9 @@ namespace qor{
 
         Step::Step(Fastflow* fastflow) : m_Fastflow(fastflow)
         {
-            Enter = std::bind(&Fastflow::Enter, fastflow);
-            Resume = std::bind(&Fastflow::Resume, fastflow);
-            Leave = std::bind(&Fastflow::Leave, fastflow);
+            //Enter = std::bind(&Fastflow::Enter, fastflow);
+            //Resume = std::bind(&Fastflow::Resume, fastflow);
+            //Leave = std::bind(&Fastflow::Leave, fastflow);
         }
 
         Step::~Step() = default;
@@ -24,6 +24,18 @@ namespace qor{
 
     Fastflow::Fastflow()
     {
+        tef::SetCustomAllocator(
+            [](size_t size, size_t alignment, void* context) 
+            {
+                return reinterpret_cast<TEFAllocator*>(context)->Allocate(size, alignment);
+            }, &m_tefAllocator,
+
+            [](void* address, size_t size, size_t alignment, void* context) 
+            {
+                return reinterpret_cast<TEFAllocator*>(context)->Deallocate(address, size, alignment);
+            }, &m_tefAllocator
+        );
+
         std::vector< fastflow::Step* > stepVector;
         stepVector.reserve(64);
         m_StepStack = std::stack< fastflow::Step*, std::vector< fastflow::Step* > >(std::move(stepVector));
