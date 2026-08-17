@@ -11,6 +11,7 @@
 #include "src/components/data/parser/states/rfc5234.h"
 #include "src/components/data/parser/states/optional.h"
 #include "src/components/data/parser/states/deferred.h"
+#include "src/components/data/parser/states/oneofarange.h"
 #include "src/components/data/parser/tokens.h"
 #include "src/components/data/parser/parser.h"
 

@@ -114,6 +114,19 @@ namespace qor{
             return this->view() == cmp.view();
         }
 
+        ImplT operator + (const AbstractString& appended) const
+        {
+            BufferT output;            
+            const_iterator it = cbegin();
+            WriteRemaining(it, output);
+            if(appended.size() > 0)
+            {
+                const_iterator append_it = appended.cbegin();            
+                appended.WriteRemaining(append_it, output);
+            }
+            return ImplT(output);
+        }
+
         //All string classes inherit and expose
         template<class Target>
         Target Transcode()

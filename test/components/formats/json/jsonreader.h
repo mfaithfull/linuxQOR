@@ -24,7 +24,7 @@ public:
 
     qor::ref_of<JSONModelObjectT>::type operator()(const qor::pipeline::Plug& sourceConnector)
     {           
-        m_filter.Reset(6,6);
+        m_filter.Reset(128,128);
         m_sink.Reset();        
         size_t unitsPumped = qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
         if(unitsPumped > 0)
@@ -64,7 +64,7 @@ public:
 
     qor::ref_of<qor::data::model::json::Object>::type operator()(const qor::pipeline::Plug& sourceConnector)
     {           
-        m_filter.Reset(1,1);
+        m_filter.Reset(128,128);
         m_sink.Reset();
         size_t unitsPumped = qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
         m_sink.Parser().FinalParse();

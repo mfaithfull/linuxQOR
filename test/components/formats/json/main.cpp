@@ -9,6 +9,8 @@
 #include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/framework/app/application/builder.h"
 #include "src/framework/app/role/role.h"
+#include "src/qor/tdd/profiling/profiling.h"
+#include "src/qor/tdd/profiling/profilereceiver.h"
 #include "src/components/data/formats/json/parser/states/_3/object.h"
 #include "src/components/data/formats/json/parser/states/_1/array.h"
 #include "src/components/data/formats/json/parser/states/_3/number.h"
@@ -37,6 +39,19 @@ using namespace qor::io::components;
 using namespace qor::components;
 
 qor_pp_implement_module(appName)
+
+class Test_ProfileReporter : public ProfileReceiver
+{
+public:
+
+    std::chrono::duration<int64_t, std::micro> m_recordedDuration;
+
+    virtual void Profile(const std::chrono::duration<int64_t, std::micro> durationMicroseconds, IFunctionContext* fContext)
+    {
+        m_recordedDuration = durationMicroseconds;
+	    issue<log::Informative, const std::string&>(std::format("Profile: {0}", durationMicroseconds), fContext);
+    }
+};
 
 void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
 {    
@@ -86,7 +101,7 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             Path testsPath("F:/Develop/linuxQOR/test/data");
 
             JSONPartReader<qor::data::parser::json::array, qor::data::model::json::Array> arrayReader;
-
+/*
             auto jsonArray = arrayReader(Index(testsPath, "y_array_arraysWithSpaces.json"));
             auto array_empty = arrayReader(Index(testsPath, "y_array_empty.json"));
             auto array_empty_string = arrayReader(Index(testsPath, "y_array_empty-string.json"));
@@ -117,9 +132,9 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             auto number_real_pos_exponent = arrayReader(Index(testsPath, "y_number_real_pos_exponent.json"));
             auto number_simple_int = arrayReader(Index(testsPath, "y_number_simple_int.json"));
             auto number_simple_real = arrayReader(Index(testsPath, "y_number_simple_real.json"));
-
+*/
             JSONReader reader;
-            
+            /*
             auto jsonObject = reader(Index(testsPath, "y_object.json"));
             auto jsonObject_basic = reader(Index(testsPath, "y_object_basic.json"));
             auto object_duplicated_key = reader(Index(testsPath, "y_object_duplicated_key.json"));
@@ -155,9 +170,9 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             auto string_pi = arrayReader(Index(testsPath, "y_string_pi.json"));
             auto string_reservedCharacterInUTF8_U1BFFF = arrayReader(Index(testsPath, "y_string_reservedCharacterInUTF-8_U+1BFFF.json"));
             auto string_simple_ascii = arrayReader(Index(testsPath, "y_string_simple_ascii.json"));
-
+*/
             JSONPartReader<qor::data::parser::json::value, qor::data::model::json::Value> valueReader;
-            
+            /*
             auto string_space = valueReader(Index(testsPath, "y_string_space.json"));
             auto string_surrogates_U1D11E_MUSICAL_SYMBOL_G_CLEF = arrayReader(Index(testsPath, "y_string_surrogates_U+1D11E_MUSICAL_SYMBOL_G_CLEF.json"));
             auto string_threebyteutf8 = arrayReader(Index(testsPath, "y_string_three-byte-utf-8.json"));
@@ -190,6 +205,21 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             auto structure_trailing_newline = valueReader(Index(testsPath, "y_structure_trailing_newline.json"));
             auto structure_true_in_array = valueReader(Index(testsPath, "y_structure_true_in_array.json"));
             auto structure_whitespace_array = valueReader(Index(testsPath, "y_structure_whitespace_array.json"));
+
+            auto number_real_capital_e_pos_exp2 = arrayReader(Index(testsPath, "y_number_real_capital_e_pos_exp_utf8.json"));
+
+            auto object_string_unicode2 = reader(Index(testsPath, "y_object_string_korean.json"));
+            */
+            auto object_string_unicode3 = reader(Index(testsPath, "y_object_string_korean_utf16le.json"));
+            auto object_string_unicode4 = reader(Index(testsPath, "y_object_string_korean_utf16be.json"));
+
+#include qor_pp_profile_begin
+            {
+                Test_ProfileReporter reporter;
+                FunctionProfiler profiler(dynamic_cast<ProfileReceiver*>(&reporter), qor_pp_profile_enabled);
+                auto big_object = reader(Index(testsPath, "data_25mb.json"));
+            }
+#include qor_pp_profile_end
 
             return EXIT_SUCCESS;
         });
