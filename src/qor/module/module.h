@@ -50,7 +50,7 @@ qor::Module& ThisModule();       //Each and every module that includes this head
 
 #define qor_pp_implement_module(_X)\
 \
-    qor_pp_export qor::Module& ThisModule(void)\
+    qor::Module& ThisModule(void)\
     {\
 	    static qor::Module QORModule(_X, \
             qor_pp_stringize(qor_pp_ver_major) "." qor_pp_stringize(qor_pp_ver_minor) "." qor_pp_stringize(qor_pp_ver_patch));\
