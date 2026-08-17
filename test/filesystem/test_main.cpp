@@ -49,7 +49,7 @@ int main(int argc, const char** argv, char**)
 	);
 }
 
-qor_pp_export qor::Module& ThisModule(void)
+qor::Module& ThisModule(void)
 {
 	static qor::Module QORModule("Querysoft Open Runtime: Test FileSystem Module", qor_pp_module_ver_string );
 	return QORModule;
