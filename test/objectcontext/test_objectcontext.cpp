@@ -42,7 +42,7 @@ qor_pp_test_suite_case(ObjectContextTestSuite, canStoreAndRetrieveintPointerInOb
     int* pi = &i;
     TypedAnyPointer<int> objpint(pi);
 
-    auto r = *objpint;
+    auto r = *(objpint.operator int *());
 
     qor_pp_assert_that(r).isEqualTo(i);
     qor_pp_assert_that(objpint.operator int *()).isEqualTo(pi);

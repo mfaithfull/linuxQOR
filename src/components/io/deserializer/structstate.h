@@ -83,10 +83,7 @@ namespace qor { namespace components { namespace serial {
             };
         }
 
-        virtual ~PrimitiveState()
-        {
-            m_result = m_result;
-        }
+        virtual ~PrimitiveState(){ }
 
     protected:
 
@@ -182,10 +179,7 @@ namespace qor { namespace components { namespace serial {
 
         }
 
-        virtual ~StructState()
-        {
-            m_result = m_result;
-        }
+        virtual ~StructState(){ }
 
     protected:
 
@@ -227,10 +221,7 @@ namespace qor { namespace components { namespace serial {
             };
         }
 
-        virtual ~StructState()
-        {
-            m_result = m_result;
-        }
+        virtual ~StructState(){ }
 
     protected:
 

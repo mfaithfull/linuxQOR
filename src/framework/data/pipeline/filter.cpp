@@ -40,7 +40,7 @@ namespace qor{ namespace pipeline{
         }
     }
 
-    Element* Filter::GetSource()
+    Element* Filter::GetSource() const
     {
         return m_source;
     }
@@ -62,7 +62,7 @@ namespace qor{ namespace pipeline{
         }
     }
 
-    Element* Filter::GetSink()
+    Element* Filter::GetSink() const
     {
         return m_sink;
     }

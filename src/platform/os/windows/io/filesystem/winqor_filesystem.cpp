@@ -40,15 +40,12 @@
 #include "filesystem.h"
 #include "file.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows FileSystem Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Windows FileSystem Module", qor_pp_module_ver_string );
 
-		//Register the Windows specific implementations
-		static qor::TypeRegEntry< qor::io::win::FileSystem, qor::io::IFileSystem > regIFileSystem;  
-		static qor::TypeRegEntryWithParams< qor::io::win::File, qor::io::File, const qor::io::filesystem::Index&, int&, int& > regFile;
-		return QORModule;
-	}
+	//Register the Windows specific implementations
+	static qor::TypeRegEntry< qor::io::win::FileSystem, qor::io::IFileSystem > regIFileSystem;  
+	static qor::TypeRegEntryWithParams< qor::io::win::File, qor::io::File, const qor::io::filesystem::Index&, int&, int& > regFile;
+	return QORModule;
 }

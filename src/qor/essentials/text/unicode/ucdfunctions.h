@@ -25,13 +25,13 @@ namespace qor{ namespace unicode{
     public:
 
         virtual combining_class_t combining_class(codepoint_t cp) override;
-        virtual unsigned int eastasian_width(codepoint_t cp);
-        virtual general_category_t general_category(codepoint_t cp);
-        virtual codepoint_t mirroring(codepoint_t cp);
-        virtual enum script script(codepoint_t cp);
-        virtual bool compose(codepoint_t a, codepoint_t b, codepoint_t* ab);
-        virtual bool decompose(codepoint_t ab, codepoint_t* a, codepoint_t* b);
-        virtual unsigned int decompose_compatability(codepoint_t u, codepoint_t* decomposed);
+        virtual unsigned int eastasian_width(codepoint_t cp) override;
+        virtual general_category_t general_category(codepoint_t cp) override;
+        virtual codepoint_t mirroring(codepoint_t cp) override;
+        virtual enum script script(codepoint_t cp) override;
+        virtual bool compose(codepoint_t a, codepoint_t b, codepoint_t* ab) override;
+        virtual bool decompose(codepoint_t ab, codepoint_t* a, codepoint_t* b) override;
+        virtual unsigned int decompose_compatability(codepoint_t u, codepoint_t* decomposed) override;
 
         inline bool compose_hangul(codepoint_t a, codepoint_t b, codepoint_t* ab)
         {

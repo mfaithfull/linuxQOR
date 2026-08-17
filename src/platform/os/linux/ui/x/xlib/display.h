@@ -43,7 +43,7 @@ namespace qor{ namespace ui { namespace lin{ namespace x{
     class qor_pp_module_interface(QOR_LINX) Pixmap;
     class qor_pp_module_interface(QOR_LINX) Font;
     struct qor_pp_module_interface(QOR_LINX) Colour;
-    struct qor_pp_module_interface(QOR_LINX) Image;
+    class qor_pp_module_interface(QOR_LINX) Image;
 
     static const unsigned long None = 0;
     /* Display classes  used in opening the connection
@@ -108,7 +108,7 @@ namespace qor{ namespace ui { namespace lin{ namespace x{
         unsigned long card32;
     };
 
-    struct FontStruct
+    struct qor_pp_module_interface(QOR_LINX) FontStruct
     {
         ExtData*    ext_data;	/* hook for extension to hang data */
         unsigned long        fid;            /* Font id for this font */
@@ -234,7 +234,7 @@ namespace qor{ namespace ui { namespace lin{ namespace x{
         Window RootWindow(int screen_number);
         int ScreenCount();
         const std::string ServerVendor();
-        const int VendorRelease();
+        int VendorRelease();
         int ImageByteOrder();// LSBFirst or MSBFirst
         int BitmapUnit();//scan line length in bits
         int BitmapBitOrder();//LSBFirst or MSBFirst

@@ -14,7 +14,7 @@ using namespace qor;
 using namespace qor::app;
 using namespace qor::platform;
 
-int main(int argc, const char** argv, char** env)
+int main(int argc, const char** argv, char** /*env*/)
 {
 	return AppBuilder().Build<Application>("Test DIO")(qor_unlocked).SetRole<app::Role>().
         Run([argv, argc]()->int
@@ -23,11 +23,8 @@ int main(int argc, const char** argv, char** env)
             });
 }
 
-extern "C"
+qor_pp_export qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Test DIO Module", qor_pp_module_ver_string );
-		return QORModule;
-	}
+	static qor::Module QORModule("Querysoft Open Runtime: Test DIO Module", qor_pp_module_ver_string );
+	return QORModule;
 }

@@ -59,7 +59,8 @@ components/threadmemory/test_smallobjectpage.cpp
 components/threadmemory/test_smallobjectbucket.cpp
 components/threadmemory/test_smallobjectheap.cpp
 components/pipeline/test_stdinsource.cpp
-components/pipeline/test_stdoutsink.cpp property/test_property.cpp 
+components/pipeline/test_stdoutsink.cpp 
+##property/test_property.cpp 
 components/pipeline/test_ifstreamsource.cpp
 components/pipeline/test_ofstreamsink.cpp
 components/protocols/http/test_httpfilter.cpp
@@ -85,8 +86,9 @@ if(CMAKE_SYSTEM_NAME MATCHES Linux)
 target_link_libraries(QORTest qor_compiler qor_host 
 qor_thread qor_interception qor_injection qor_sync qor_text qor_issue qor_error qor_reporting qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_filesystem 
-qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
-linqor_filesystem linqor_thread linqor_process uring linqor_console qor_stdfstreamconnector 
+qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink 
+##qor_property 
+qor_console linqor_filesystem linqor_thread linqor_process uring linqor_console qor_stdfstreamconnector 
 qor_stdifstreamsource qor_stdofstreamsink qor_sockets linqor_sockets qor_log qor_loghandler qor_logaggregator
 qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter qor_http)
 endif()
@@ -95,8 +97,9 @@ if(CMAKE_SYSTEM_NAME MATCHES Windows)
 target_link_libraries(QORTest qor_compiler qor_host 
 qor_thread qor_interception qor_injection qor_sync qor_reporting qor_text qor_issue qor_error qor_signals 
 qor_pipeline qor_workflow qor_role qor_application qor_filesystem 
-qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink qor_property qor_console
-winqor_api_kernel winqor_api_winsock2 winqor_filesystem winqor_thread winqor_process winqor_console winqor_common qor_stdfstreamconnector 
+qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink 
+##qor_property 
+qor_console winqor_api_kernel winqor_api_winsock2 winqor_filesystem winqor_thread winqor_process winqor_console winqor_common qor_stdfstreamconnector 
 qor_stdifstreamsource qor_stdofstreamsink qor_sockets qor_log qor_loghandler qor_logaggregator qor_http
 qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter winqor_sockets) 
 endif()

@@ -150,7 +150,7 @@ namespace qor{ namespace ui { namespace lin{ namespace wl{
         qor_pp_signal(DownEvent, serial, time, surface, id, x_w, y_w);
     }
     
-    void Touch::OnUp(void* context, uint32_t serial, uint32_t time, int32_t id)
+    void Touch::OnUp(void* /*context*/, uint32_t serial, uint32_t time, int32_t id)
     {
         //A touch point has disappeared from the surface.
         UpEvent(serial, time, id);

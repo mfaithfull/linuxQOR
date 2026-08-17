@@ -54,7 +54,7 @@ namespace qor{ namespace components{ namespace tui {
         using Duration = std::chrono::duration<float>;
 
         // Parameter of Component::OnAnimation(param).
-        class Params 
+        class qor_pp_module_interface(QOR_TUI) Params 
         {    
         public:
             explicit Params(Duration duration) : duration_(duration) {}

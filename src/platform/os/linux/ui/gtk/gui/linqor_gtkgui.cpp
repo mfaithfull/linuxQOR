@@ -36,11 +36,8 @@
 #include "src/qor/memory/reference/newref.h"
 #include "src/framework/io/filesystem/filestat.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Linux GTK GUI Module", qor_pp_module_ver_string );
-		return QORModule;
-	}
+	static qor::Module QORModule("Querysoft Open Runtime: Linux GTK GUI Module", qor_pp_module_ver_string );
+	return QORModule;
 }

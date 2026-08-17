@@ -18,14 +18,14 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) virtual ~Filter();
         qor_pp_module_interface(QOR_PIPELINE) Filter(const Filter& src);
         qor_pp_module_interface(QOR_PIPELINE) Filter& operator = (const Filter& src);
-        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSink(Element* sink);
-        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSink();
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSink();
-        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSource(Element* source);
-        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSource();
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSource();
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSource();
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSink();
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSink(Element* sink) override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSink() const override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSink() override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSource(Element* source) override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSource() const override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool HasSource() override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSource() override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsSink() override;
         qor_pp_module_interface(QOR_PIPELINE) virtual size_t PumpSome();
         qor_pp_module_interface(QOR_PIPELINE) virtual bool PumpSome(size_t& unitsPumped, size_t maxUnitsToPump);
         qor_pp_module_interface(QOR_PIPELINE) virtual bool Pump(size_t& unitsPumped, size_t unitsToPump);
@@ -35,13 +35,13 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) virtual const char* Name() const override;
 
     protected:
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1);
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 );
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool Read(size_t& numberOfUnitsRead, size_t numberOfUnitsToRead = 1) override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool Write(size_t& unitsWritten, size_t unitstoWrite = 1 ) override;
 
     private:
 
-        qor_pp_module_interface(QOR_PIPELINE) bool Pull(size_t& unitsRead, size_t unitsToRead);
-        qor_pp_module_interface(QOR_PIPELINE) bool Push(size_t& unitsWritten, size_t unitsToWrite);
+        qor_pp_module_interface(QOR_PIPELINE) bool Pull(size_t& unitsRead, size_t unitsToRead) override;
+        qor_pp_module_interface(QOR_PIPELINE) bool Push(size_t& unitsWritten, size_t unitsToWrite) override;
 
     };
 

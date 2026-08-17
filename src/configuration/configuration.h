@@ -36,7 +36,7 @@
 #define qor_pp_module_will_provide(_M, _X) namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(); }
 #define qor_pp_module_provide(_M, _X) namespace qor{ bool qor_pp_module_interface(_M) qor_pp_cat(Implements,_X)(){ return true; } }//qor
 
-#if (qor_pp_compiler == qor_pp_compiler_gcc)
+#if (qor_pp_compiler == qor_pp_compiler_gcc || qor_pp_compiler ==  qor_pp_compiler_clang)
 #define qor_pp_module_interface_gcc( _X ) qor_pp_module_interface(_X)
 #else
 #define qor_pp_module_interface_gcc( _X )

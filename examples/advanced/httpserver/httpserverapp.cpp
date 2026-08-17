@@ -42,7 +42,7 @@ int main(const int argc, const char** argv, char** env)
 {
     qor_pp_fcontext;
     return AppBuilder().Build<HTTPServerApp>(HTTPServerApp::Name,
-        [argc,argv,env](ref_of<HTTPServerApp>::type server)
+        [argc,argv/*,env*/](ref_of<HTTPServerApp>::type server)
         {
             ThePlatform(qor_shared)->AddSubsystem<FileSystem>();
             ThePlatform(qor_shared)->AddSubsystem<Sockets>();

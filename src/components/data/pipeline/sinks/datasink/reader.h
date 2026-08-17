@@ -74,7 +74,7 @@ namespace qor{ namespace pipeline {
         template <typename T> requires std::is_standard_layout_v<T> && std::is_trivially_copyable_v<T>
         inline T ReadStructure()
         {
-			T result{0};
+			T result{};
 			qor::reflection::for_each_field(result, [this](auto& value, std::size_t /*i*/)
 				{
                     *this >> (value);

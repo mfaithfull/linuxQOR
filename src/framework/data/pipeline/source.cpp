@@ -56,7 +56,7 @@ namespace qor{ namespace pipeline{
         //a Source can't have a source. Do nothing
     }
 
-    Element* Source::GetSink()
+    Element* Source::GetSink() const 
     {
         return m_sink;
     }

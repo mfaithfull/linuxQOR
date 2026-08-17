@@ -34,11 +34,8 @@
 #include "src/qor/memory/injection/typeregentry.h"
 #include "src/qor/memory/reference/newref.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Linux Wayland XDG Shell", qor_pp_module_ver_string );
-		return QORModule;
-	}
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Wayland XDG Shell", qor_pp_module_ver_string );
+	return QORModule;
 }

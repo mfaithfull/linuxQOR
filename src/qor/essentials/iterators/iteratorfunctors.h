@@ -83,8 +83,8 @@ namespace qor{
         template<typename iteratorT>
         static ptrdiff_t distance(const ptrdiff_t& distanceFromBeginToIter1,
                                     const ptrdiff_t& distanceFromBeginToIter2,
-                                    const ptrdiff_t& distanceFromIterToEnd1,
-                                    const ptrdiff_t& distanceFromIterToEnd2)
+                                    const ptrdiff_t& /*distanceFromIterToEnd1*/,
+                                    const ptrdiff_t& /*distanceFromIterToEnd2*/)
         {
             return (distanceFromBeginToIter2 - distanceFromBeginToIter1);
         }
@@ -96,7 +96,7 @@ namespace qor{
         static void advance(iteratorT& iter,
                             const ptrdiff_t& howManyStepsToAdvanceIter,
                             const iteratorT& beginIter,
-                            const iteratorT& endIter,
+                            const iteratorT& /*endIter*/,
                             const ptrdiff_t& distanceFromBeginToIter,
                             const ptrdiff_t& distanceFromIterToEnd)
         {
@@ -133,7 +133,7 @@ namespace qor{
 
         template<typename iteratorT>
         static ptrdiff_t distance(const ptrdiff_t& distanceFromBeginToIter1, const ptrdiff_t& distanceFromBeginToIter2,
-                                    const ptrdiff_t& distanceFromIterToEnd1, const ptrdiff_t& distanceFromIterToEnd2)
+                                    const ptrdiff_t& distanceFromIterToEnd1, const ptrdiff_t& /*distanceFromIterToEnd2*/)
         {
             if(distanceFromBeginToIter1 <= distanceFromBeginToIter2)
             {

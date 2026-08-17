@@ -22,12 +22,12 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) Plug();
         qor_pp_module_interface(QOR_PIPELINE) virtual ~Plug();
 
-        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSink(Element* /*ignored*/);
-        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSource(Element* /*ignored*/);
-        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSink() const;
-        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSource() const;
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSink(Element* /*ignored*/) override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetSource(Element* /*ignored*/) override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSink() const override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetSource() const override;
 
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsPlug();
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool IsPlug() override;
         qor_pp_module_interface(QOR_PIPELINE) virtual bool Connect();
         qor_pp_module_interface(QOR_PIPELINE) virtual void Disconnect();
         //virtual bool HandlePendingConnectionResult(bool connected);

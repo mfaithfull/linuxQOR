@@ -36,14 +36,11 @@
 
 #include "xlib.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: X Client", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: X Client", qor_pp_module_ver_string );
 
-		//Register the Linux specific implementations
-		static qor::TypeRegEntry< qor::ui::lin::XClient, qor::ui::lin::XClient > regXClient;
-		return QORModule;
-	}
+	//Register the Linux specific implementations
+	static qor::TypeRegEntry< qor::ui::lin::XClient, qor::ui::lin::XClient > regXClient;
+	return QORModule;
 }

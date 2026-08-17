@@ -8,7 +8,8 @@
 
 namespace qor{ namespace ui{
 
-    constexpr bool Contained::Is(const Contained*) const { return true; }
+    //clang 18 bug
+    /*constexpr*/ bool Contained::Is(const Contained*) const { return true; }
 
     Contained::Contained() = default;
     

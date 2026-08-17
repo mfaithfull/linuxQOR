@@ -329,7 +329,19 @@ namespace qor{ namespace mock{
         if (conv.u.value & 1)
             return std::pair<int, int>(conv.u.baseoffs / sizeof(void*), conv.u.value / sizeof(void*));
 #endif
-
+#elif (qor_pp_compiler == qor_pp_compiler_clang)
+        union {
+            T t;
+            struct
+            {
+                unsigned long value;
+                unsigned long baseoffs;
+            } u;
+        } conv = {};
+        conv.t = t;
+        // simple Itanium ABI implementation, used by everything but Microsoft and embedded EDG-based compilers
+        if (conv.u.value & 1)
+            return std::pair<int, int>(conv.u.baseoffs / sizeof(void*), conv.u.value / sizeof(void*));
 #elif (qor_pp_compiler == qor_pp_compiler_msvc)
         union {
             T t;

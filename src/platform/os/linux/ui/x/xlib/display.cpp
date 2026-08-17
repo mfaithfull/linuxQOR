@@ -363,7 +363,7 @@ namespace qor{ namespace ui { namespace lin{ namespace x{
         return serverVendor;
     }
 
-    const int Display::VendorRelease()
+    int Display::VendorRelease()
     {
         return XVendorRelease((::Display*)(m_display));
     }

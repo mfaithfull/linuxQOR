@@ -101,7 +101,7 @@ namespace qor { namespace lin {
 		}
 	}
 
-	void Console::WriteLine(string_t& output)
+	void Console::WriteLine(const string_t& output)
 	{
         std::cout.write(output.data(), output.size());
 		if (!std::cout.good()) 

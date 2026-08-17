@@ -40,15 +40,12 @@
 #include "filesystem.h"
 #include "file.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Linux FileSystem Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Linux FileSystem Module", qor_pp_module_ver_string );
 
-		//Register the Linux specific implementations
-		static qor::TypeRegEntry< qor::io::lin::FileSystem, qor::io::IFileSystem > regIFileSystem;  		
-		static qor::TypeRegEntryWithParams< qor::io::lin::File, qor::io::File, qor::io::filesystem::Index&, int&, int& > regFile;
-		return QORModule;
-	}
+	//Register the Linux specific implementations
+	static qor::TypeRegEntry< qor::io::lin::FileSystem, qor::io::IFileSystem > regIFileSystem;  		
+	static qor::TypeRegEntryWithParams< qor::io::lin::File, qor::io::File, qor::io::filesystem::Index&, int&, int& > regFile;
+	return QORModule;
 }

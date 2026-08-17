@@ -60,7 +60,7 @@ namespace qor{ namespace ui { namespace lin{ namespace wl{
             data offer can be used to receive data that another client
             offers to the compositor.
         */}
-        virtual void OnDataEnter(void* context, uint32_t serial, wl_surface* surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer* id)
+        virtual void OnDataEnter(void* /*context*/, uint32_t /*serial*/, wl_surface* /*surface*/, wl_fixed_t /*x*/, wl_fixed_t /*y*/, wl_data_offer* /*id*/)
         {/* Override in derived class 
             data enters a surface
             This event is sent when a drag-and-drop or selection

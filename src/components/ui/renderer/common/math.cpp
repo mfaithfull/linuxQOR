@@ -300,8 +300,8 @@ namespace qor{ namespace components{ namespace ui{ namespace renderer{
         auto c = radius * PATH_KAPPA;  // c = radius * (4/3) * tan(pi/8)
     
         start = {st.x, st.y};
-        ctrl1 = {st.x + radius * cos(angle), st.y + radius * sin(angle)};
-        ctrl2 = {ed.x - c * cos(angle), ed.y - c * sin(angle)};
+        ctrl1 = {static_cast<float>(st.x + radius * cos(angle)), static_cast<float>(st.y + radius * sin(angle))};
+        ctrl2 = {static_cast<float>(ed.x - c * cos(angle)), static_cast<float>(ed.y - c * sin(angle))};
         end = {ed.x, ed.y};
     }
 

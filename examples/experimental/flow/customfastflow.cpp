@@ -39,12 +39,12 @@ CustomFastflow::CustomFastflow() :
     };
 
     //Set this only if you need special handling for Resuming
-    beggining->Resume = [this]()->void{
+    beggining->Resume = []()->void{
         std::cout << "Resume is called when a Step is once again at the top of the stack as steps pushed on top of it have completed." << std::endl;
     };
 
     //Set this if you need special handling for Leaving a state
-    beggining->Leave = [this]()->void{
+    beggining->Leave = []()->void{
         std::cout << "Leave is called when a Step is about to be popped from the stack." << std::endl;
     };
 

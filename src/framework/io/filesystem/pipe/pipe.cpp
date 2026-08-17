@@ -30,7 +30,7 @@ namespace qor{ namespace io{
 
     Pipe::Pipe(const filesystem::Index& index) : m_index(index){ }
 
-    Pipe::Pipe(const filesystem::Index& index, const network::sockets::eType& Type) : m_index(index){ }
+    Pipe::Pipe(const filesystem::Index& index, const network::sockets::eType& /*Type*/) : m_index(index){ }
 
     Pipe& Pipe::operator = (const Pipe& src)
     {

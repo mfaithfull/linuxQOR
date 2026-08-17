@@ -5,6 +5,7 @@
 #define QOR_PP_H_TEXT_UNICODE_SCRIPTS
 
 #include <stdint.h>
+#include <array>
 
 namespace qor{ namespace unicode{
 
@@ -14,7 +15,11 @@ namespace qor{ namespace unicode{
         return ((tag_t)((((uint32_t)(c1)&0xFF)<<24)|(((uint32_t)(c2)&0xFF)<<16)|(((uint32_t)(c3)&0xFF)<<8)|((uint32_t)(c4)&0xFF)));
     }
 
-    constexpr inline uint8_t* untag(tag_t t){ uint8_t a[4]{(uint8_t)(((t)>>24)&0xFF),(uint8_t)(((t)>>16)&0xFF),(uint8_t)(((t)>>8)&0xFF),(uint8_t)((t)&0xFF)}; return a;}
+    constexpr inline std::array<uint8_t,4> untag(tag_t t)
+    { 
+        std::array<uint8_t,4> a{(uint8_t)(((t)>>24)&0xFF),(uint8_t)(((t)>>16)&0xFF),(uint8_t)(((t)>>8)&0xFF),(uint8_t)((t)&0xFF)}; 
+        return a;
+    }
 
     constexpr inline tag_t tag_none(){ return make_tag(0,0,0,0);}
     constexpr inline tag_t tag_max_signed(){ return make_tag(0x7f,0xff,0xff,0xff);}

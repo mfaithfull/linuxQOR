@@ -44,7 +44,7 @@ public:
             PushState(state1);
         };
 
-        initialState->Suspend = [this]()->void{
+        initialState->Suspend = []()->void{
             std::cout << " initial workflow state suspended.";
         };
 
@@ -63,7 +63,7 @@ public:
             PopState();
         };
 
-        state1->Suspend = [this]()->void{
+        state1->Suspend = []()->void{
             std::cout << " workflow state1 suspended.";
         };
 
@@ -72,7 +72,7 @@ public:
             PopState();
         };
 
-        state1->Leave = [this]()->void{
+        state1->Leave = []()->void{
             std::cout << " workflow state1 completed.";            
         };
 

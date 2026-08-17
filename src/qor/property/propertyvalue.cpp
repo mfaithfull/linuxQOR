@@ -5,18 +5,3 @@
 
 #include "property.h"
 #include "propertyvalue.h"
-
-namespace qor {
-
-	PropertyBase* PropertyValue::GetProperty()
-	{
-		return m_pp;
-	}
-
-	PropertyBase* PropertyValue::InternalCreateProperty(PropertyBase* pb)
-	{
-		Property* prop = new Property(*(dynamic_cast<Property*>(pb)));
-		return prop;
-	}
-
-}

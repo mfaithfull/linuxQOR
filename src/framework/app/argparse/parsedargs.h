@@ -324,7 +324,7 @@ namespace qor{ namespace app {
                                 auto it = std::find_if(argObj.m_choicesDouble.begin(), argObj.m_choicesDouble.end(),
                                     [value](const double& doubleVal) -> bool
                                     {
-                                        return std::numeric_limits<double>::epsilon() >= abs(doubleVal - value);
+                                        return std::numeric_limits<double>::epsilon() >= std::abs(doubleVal - value);
                                     });
                                 if (it == argObj.m_choicesDouble.end())
                                 {

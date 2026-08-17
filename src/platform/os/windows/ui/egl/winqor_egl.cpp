@@ -36,14 +36,11 @@
 
 #include "egl.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows EGL Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Windows EGL Module", qor_pp_module_ver_string );
 
-        //Register the Windows specific implementations
-		static qor::TypeRegEntry< qor::platform::win::EGL, qor::components::EGLFeature > regEGL;
-		return QORModule;
-	}
+	//Register the Windows specific implementations
+	static qor::TypeRegEntry< qor::platform::win::EGL, qor::components::EGLFeature > regEGL;
+	return QORModule;
 }

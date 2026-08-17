@@ -52,7 +52,7 @@ namespace qor{ namespace pipeline{
         }
     }
 
-    Element* Sink::GetSource()
+    Element* Sink::GetSource() const
     {
         return m_source;
     }

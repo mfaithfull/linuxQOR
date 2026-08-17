@@ -240,7 +240,7 @@ namespace qor{
             return BufferT(m_buffer);
         }
 
-        virtual BufferT* GetModifiableBufferObject()
+        virtual BufferT* GetModifiableBufferObject() override
         {
             return &m_buffer;
         }

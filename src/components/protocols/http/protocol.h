@@ -17,7 +17,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
         HTTPProtocol();
         virtual ~HTTPProtocol();
-        virtual io::network::sockets::eAddressFamily GetAddressFamily() const;
+        virtual io::network::sockets::eAddressFamily GetAddressFamily() const override;
         virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter() override;
         virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter() override;
         virtual size_t GetRequestBufferSize();

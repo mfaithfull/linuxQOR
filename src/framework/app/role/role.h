@@ -18,8 +18,8 @@ namespace qor{ namespace app {
         Role(const Role&);
         virtual ~Role();
         Role& operator = (const Role& src);
-        qor_pp_noinline virtual void Setup();
-        qor_pp_noinline virtual void Shutdown();
+        qor_pp_noinline virtual void Setup() override;
+        qor_pp_noinline virtual void Shutdown() override;
         virtual void AddFeature( const GUID* id, ref_of<IFeature>::type feature) override;
         virtual ref_of<IFeature>::type GetFeature(const GUID* id) override;
 

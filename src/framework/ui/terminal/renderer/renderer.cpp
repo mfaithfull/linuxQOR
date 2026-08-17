@@ -12,7 +12,7 @@
 
 namespace qor { namespace ui { namespace tty {
 
-    Renderer::Renderer(Terminal* display) : m_buffer(nullptr), m_display(display){ }
+    Renderer::Renderer(Terminal* display) :m_display(display), m_buffer(nullptr){ }
 
     Renderer::~Renderer() = default;
 

@@ -35,16 +35,12 @@
 #include "desktopui.h"
 #include "windows/mainwindow.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Desktop UI Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Desktop UI Module", qor_pp_module_ver_string );
 
-		//Register the Windows specific implementations
-		static qor::TypeRegEntry< qor::framework::win::DesktopUI, qor::ui::DesktopUI > regDesktopUI;
-		static qor::TypeRegEntryWithParams< qor::framework::win::MainWindow, qor::ui::IMainWindowImpl, const std::wstring& > regIMainWindowImpl;
-		return QORModule;
-	}
+	//Register the Windows specific implementations
+	static qor::TypeRegEntry< qor::framework::win::DesktopUI, qor::ui::DesktopUI > regDesktopUI;
+	static qor::TypeRegEntryWithParams< qor::framework::win::MainWindow, qor::ui::IMainWindowImpl, const std::wstring& > regIMainWindowImpl;
+	return QORModule;
 }
-

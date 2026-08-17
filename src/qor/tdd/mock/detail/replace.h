@@ -13,6 +13,8 @@
 #		define qor_pp_mock_cfuncsupport
 #	elif (qor_pp_os_target == qor_pp_os_linux) && (qor_pp_compiler == qor_pp_compiler_gcc)
 #		define qor_pp_mock_cfuncsupport
+#	elif (qor_pp_os_target == qor_pp_os_linux) && (qor_pp_compiler == qor_pp_compiler_clang)
+#		define qor_pp_mock_cfuncsupport
 #	elif defined(qor_pp_os_target == qor_pp_os_mac)
 #		define qor_pp_mock_cfuncsupport
 #	endif

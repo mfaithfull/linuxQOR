@@ -38,17 +38,14 @@
 #include "monitorimpl.h"
 #include "contextimpl.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Graphics Language Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Graphics Language Module", qor_pp_module_ver_string );
 
-		//Register the Windows specific implementations
-		static qor::TypeRegEntryWithParams< qor::framework::win::gl::WindowImpl, qor::gl::WindowPimpl, qor::gl::Window*, const qor::gl::Wndconfig&, const qor::gl::Ctxconfig&, const qor::gl::FBconfig& > regWindowPimpl;
-		static qor::TypeRegEntry< qor::framework::win::gl::Platform, qor::gl::PlatformImpl > regPlatformImpl;
-		static qor::TypeRegEntry< qor::framework::win::gl::MonitorImpl, qor::gl::MonitorPimpl > regMonitorPimpl;
-		static qor::TypeRegEntry< qor::framework::win::gl::ContextImpl, qor::gl::ContextPimpl > regContextPimpl;
-		return QORModule;
-	}
+	//Register the Windows specific implementations
+	static qor::TypeRegEntryWithParams< qor::framework::win::gl::WindowImpl, qor::gl::WindowPimpl, qor::gl::Window*, const qor::gl::Wndconfig&, const qor::gl::Ctxconfig&, const qor::gl::FBconfig& > regWindowPimpl;
+	static qor::TypeRegEntry< qor::framework::win::gl::Platform, qor::gl::PlatformImpl > regPlatformImpl;
+	static qor::TypeRegEntry< qor::framework::win::gl::MonitorImpl, qor::gl::MonitorPimpl > regMonitorPimpl;
+	static qor::TypeRegEntry< qor::framework::win::gl::ContextImpl, qor::gl::ContextPimpl > regContextPimpl;
+	return QORModule;
 }

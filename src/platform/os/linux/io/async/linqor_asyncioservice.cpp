@@ -16,16 +16,13 @@
 #include "iouringservice/iouringeventprocessor.h"
 #include "iouringservice/iouringinitiator.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Linux Async IO Service Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Linux Async IO Service Module", qor_pp_module_ver_string );
 
-		//Register the Linux specific implementations
-		static qor::TypeRegEntry< qor::io::async::lin::Service, qor::io::async::Service > regAsyncIOService;
-		static qor::TypeRegEntry< qor::io::async::lin::IOUringEventProcessor, qor::io::async::EventProcessor > regAsyncIOEventProcessor;
-		static qor::TypeRegEntry< qor::io::async::lin::IOUringInitiator, qor::io::async::Initiator > regAsyncIOInitiator;
-		return QORModule;
-	}
+	//Register the Linux specific implementations
+	static qor::TypeRegEntry< qor::io::async::lin::Service, qor::io::async::Service > regAsyncIOService;
+	static qor::TypeRegEntry< qor::io::async::lin::IOUringEventProcessor, qor::io::async::EventProcessor > regAsyncIOEventProcessor;
+	static qor::TypeRegEntry< qor::io::async::lin::IOUringInitiator, qor::io::async::Initiator > regAsyncIOInitiator;
+	return QORModule;
 }

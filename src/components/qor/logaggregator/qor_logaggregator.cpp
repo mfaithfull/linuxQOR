@@ -29,13 +29,10 @@
 #include "src/qor/module/module.h"
 #include "logaggregator.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Log Aggregator Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Log Aggregator Module", qor_pp_module_ver_string );
 
-        static qor::TypeRegEntry< qor::components::LogAggregatorService, qor::components::LogAggregatorService > regLogAggregatorService;
-		return QORModule;
-	}
+	static qor::TypeRegEntry< qor::components::LogAggregatorService, qor::components::LogAggregatorService > regLogAggregatorService;
+	return QORModule;
 }

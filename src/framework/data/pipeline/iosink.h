@@ -16,9 +16,9 @@ namespace qor{ namespace pipeline{
         qor_pp_module_interface(QOR_PIPELINE) iosink_base();
         qor_pp_module_interface(QOR_PIPELINE) virtual ~iosink_base();
 
-        qor_pp_module_interface(QOR_PIPELINE) virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 );        
-        qor_pp_module_interface(QOR_PIPELINE) virtual void SetPlug(Element* pPlug);
-        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetPlug() const;
+        qor_pp_module_interface(QOR_PIPELINE) virtual bool Write(size_t& unitsWritten, size_t unitsToWrite = 1 ) override;        
+        qor_pp_module_interface(QOR_PIPELINE) virtual void SetPlug(Element* pPlug) override;
+        qor_pp_module_interface(QOR_PIPELINE) virtual Element* GetPlug() const override;
         qor_pp_module_interface(QOR_PIPELINE) virtual bool HasPlug();
         qor_pp_module_interface(QOR_PIPELINE) virtual const char* Name() const override;        
 

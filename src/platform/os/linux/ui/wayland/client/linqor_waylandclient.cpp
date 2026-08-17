@@ -36,14 +36,11 @@
 
 #include "client.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Wayland Client", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Wayland Client", qor_pp_module_ver_string );
 
-		//Register the Linux specific implementations
-		static qor::TypeRegEntry< qor::ui::lin::WaylandClient, qor::ui::lin::WaylandClient > regWaylandClient;
-		return QORModule;
-	}
+	//Register the Linux specific implementations
+	static qor::TypeRegEntry< qor::ui::lin::WaylandClient, qor::ui::lin::WaylandClient > regWaylandClient;
+	return QORModule;
 }

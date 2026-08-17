@@ -14,14 +14,11 @@
 #include "src/qor/memory/injection/typeregentry.h"
 #include "src/qor/memory/reference/newref.h"
 
-extern "C"
+qor::Module& ThisModule(void)
 {
-	qor::Module& ThisModule(void)
-	{
-		static qor::Module QORModule("Querysoft Open Runtime: Windows Console Module", qor_pp_module_ver_string );
+	static qor::Module QORModule("Querysoft Open Runtime: Windows Console Module", qor_pp_module_ver_string );
 
-		//Register the Windows specific implementation of IConsole
-		static qor::TypeRegEntry< qor::ui::win::Console, qor::components::IConsole> reg;
-		return QORModule;
-	}
+	//Register the Windows specific implementation of IConsole
+	static qor::TypeRegEntry< qor::ui::win::Console, qor::components::IConsole> reg;
+	return QORModule;
 }
