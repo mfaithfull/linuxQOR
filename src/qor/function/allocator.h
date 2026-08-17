@@ -35,18 +35,10 @@ namespace qor { namespace tef {
     using DeallocationFunc = bool (*)(void* address, size_t size, size_t alignment, void* context);
 
     // Allows access to the custom allocator, if any.
-    inline std::pair<AllocationFunc, void*>& CustomAllocator() 
-    {
-        static std::pair<AllocationFunc, void*> allocator(nullptr, nullptr);
-        return allocator;
-    }
+    qor_pp_module_interface(QOR_TEF) std::pair<AllocationFunc, void*>& CustomAllocator(); 
 
     // Allows access to the custom deallocator, if any.
-    inline std::pair<DeallocationFunc, void*>& CustomDeallocator() 
-    {
-        static std::pair<DeallocationFunc, void*> deallocator(nullptr, nullptr);
-        return deallocator;
-    }
+    qor_pp_module_interface(QOR_TEF) std::pair<DeallocationFunc, void*>& CustomDeallocator();;
 
     // Sets custom allocator functions to use.
     //
