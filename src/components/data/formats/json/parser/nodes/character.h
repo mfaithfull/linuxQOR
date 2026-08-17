@@ -7,6 +7,8 @@
 #include "src/components/data/parser/node.h"
 #include "../tokens.h"
 #include "../../model/character.h"
+#include "src/qor/essentials/text/strings/strings.h"
+#include "src/qor/essentials/text/codepage/codepages/utf8.h"
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
@@ -22,8 +24,17 @@ namespace qor { namespace data{ namespace parser{ namespace json {
         virtual ~CharacterNode() = default;
         virtual std::string ToString() const override 
         { 
-            char c = static_cast<char>(GetObject()->GetValue());
-            return std::string(&c,1); 
+            char32_t c = static_cast<char32_t>(GetObject()->GetValue());
+            UTF8CodePage codePage;
+            char8_t space[6];
+            char8_t* p = &space[0];
+            size_t available = 1;
+            if(codePage.Encode(c, p, available))
+            {
+                return std::string((const char*)space, (p - &space[0]));
+            }
+
+            return ""; 
         };
     };
 

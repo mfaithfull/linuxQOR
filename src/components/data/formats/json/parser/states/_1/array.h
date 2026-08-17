@@ -18,6 +18,8 @@ namespace qor { namespace data { namespace parser { namespace json {
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();
+    private:
+        Parser* m_parser;
     };
 
 }}}}//qor::data::parser::json

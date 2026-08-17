@@ -13,15 +13,17 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    unicodeSequence::unicodeSequence(Parser* parser) : Sequence(parser,  new_ref<Specific<uint32_t>>(parser, (byte)0x75),// 'u'
-        new_ref<Sequence>(parser, new_ref<HEXDIGIT<uint32_t>>(parser),
-            new_ref<Sequence>(parser, new_ref<HEXDIGIT<uint32_t>>(parser),
-                new_ref<Sequence>(parser, new_ref<HEXDIGIT<uint32_t>>(parser),
-                    new_ref<HEXDIGIT<uint32_t>>(parser)
-                )
-            )
-        ),
-        static_cast<uint64_t>(jsonToken::unicode_sequence))
+    unicodeSequence::unicodeSequence(Parser* parser) : 
+        Sequence_t<Specific<uint32_t>, Sequence_t<HEXDIGIT<uint32_t>, Sequence_t<HEXDIGIT<uint32_t>, Sequence_t<HEXDIGIT<uint32_t>, HEXDIGIT<uint32_t>>>>>(
+        parser,  &s1, &s2, static_cast<uint64_t>(jsonToken::unicode_sequence)),
+        h1(parser), 
+        h2(parser),
+        h3(parser),
+        h4(parser), 
+        s1(parser, 0x75),
+        s2(parser, &h1, &s3), 
+        s3(parser, &h2, &s4), 
+        s4(parser, &h3, &h4)        
     { }
 
     unicodeSequence::~unicodeSequence() = default;
@@ -84,11 +86,11 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void unicodeSequence::Fail()
     {
-        log::debug("...Didn't find a Unicode Sequence.");
-        auto node = GetParser()->PopNode();
-        if(node.IsNotNull() && node->GetToken() != m_token)
+        //log::debug("...Didn't find a Unicode Sequence.");
+        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        if(topToken == m_token)
         {
-            GetParser()->PushNode(node);
+            m_parser->PopNode();
         }
     }
 

@@ -22,7 +22,7 @@ namespace qor { namespace data{ namespace parser{ namespace json {
         virtual ~UnicodeSequenceNode() = default;
         virtual std::string ToString() const override 
         { 
-            return "";//TODO:
+            return "todo:<unicode sequence>";//TODO:
         };
     };
 

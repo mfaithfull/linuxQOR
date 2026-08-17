@@ -12,16 +12,14 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     _true::_true(Parser* parser) :
-        Sequence(parser,
-            new_ref<Specific<uint32_t>>(parser, (uint32_t)0x74),
-            new_ref<Sequence>(parser,
-                new_ref<Specific<uint32_t>>(parser, (uint32_t)0x72),
-                new_ref<Sequence>(parser,
-                    new_ref<Specific<uint32_t>>(parser, (uint32_t)0x75),
-                    new_ref<Specific<uint32_t>>(parser, (uint32_t)0x65)
-                )
-            ),
-        static_cast<uint64_t>(jsonToken::_true))
+        Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Specific<uint32_t> > > >(
+            parser, &m_t, &m_rue, static_cast<uint64_t>(jsonToken::_true)),
+            m_t(parser, 0x74),
+            m_r(parser, 0x72),
+            m_u(parser, 0x75),
+            m_e(parser, 0x65),
+            m_ue(parser, &m_u, &m_e),
+            m_rue(parser, &m_r, &m_ue)
     { }
 
     _true::~_true() = default;
@@ -33,7 +31,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void _true::Emit()
     {
-        log::debug("Emitting a true.");
+        //log::debug("Emitting a true.");
         GetParser()->PushNode(new_ref<_TrueNode>());
     }
 

@@ -15,7 +15,7 @@ namespace qor { namespace data { namespace parser { namespace json {
                     new_ref<OneOfARange_t<uint32_t>>(parser, 0x20, 0x21, static_cast<uint64_t>(eToken::Lexical)),
                     new_ref<AnyOneOf>(parser,
                         new_ref<OneOfARange_t<uint32_t>>(parser, 0x23, 0x5B, static_cast<uint64_t>(eToken::Lexical)),
-                        new_ref<OneOfARange_t<uint32_t>>(parser, 0x5D, 0xFF/*0x10FFFF*/, static_cast<uint64_t>(eToken::Lexical)),
+                        new_ref<OneOfARange_t<uint32_t>>(parser, 0x5D, 0x10FFFF, static_cast<uint64_t>(eToken::Lexical)),
                         static_cast<uint64_t>(eToken::Lexical)
                     ),
                     static_cast<uint64_t>(jsonToken::unescaped)){ }

@@ -34,9 +34,9 @@ namespace qor { namespace data { namespace parser { namespace json {
                 new_ref<AnyOneOf>(parser,
                     new_ref<_true>(parser),
                     new_ref<AnyOneOf>(parser,
-                        new_ref<deferred<object>>(parser),
+                        new_ref<deferred<object>>(parser, static_cast<uint64_t>(jsonToken::object)),
                         new_ref<AnyOneOf>(parser,
-                            new_ref<deferred<array>>(parser),
+                            new_ref<deferred<array>>(parser, static_cast<uint64_t>(jsonToken::array)),
                             new_ref<AnyOneOf>(parser,
                                 new_ref<number>(parser),
                                 new_ref<string>(parser)
@@ -64,12 +64,6 @@ namespace qor { namespace data { namespace parser { namespace json {
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = jsonTokenNames.find((jsonToken)token);
-            std::string tokenName;
-            if(f != jsonTokenNames.end())
-            {
-                tokenName = f->second;
-            }
 
             switch((jsonToken)token)
             {
@@ -102,6 +96,12 @@ namespace qor { namespace data { namespace parser { namespace json {
                 valueNode = node;
                 break;
             default:
+                auto f = jsonTokenNames.find((jsonToken)token);
+                std::string tokenName;
+                if(f != jsonTokenNames.end())
+                {
+                    tokenName = f->second;
+                }
                 continuable("Unexpected: {0}", tokenName);
             }
 
@@ -170,11 +170,11 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void value::Fail()
     {
-        log::debug("...Didn't find a Value.");
-        ref_of<Node>::type node = GetParser()->PopNode();
-        if(node.IsNotNull() && node->GetToken() != m_token)
+        //log::debug("...Didn't find a Value.");
+        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        if(topToken == m_token)
         {
-            GetParser()->PushNode(node);
+            m_parser->PopNode();
         }
     }
 

@@ -11,19 +11,17 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    _false::_false(Parser* parser) : Sequence(parser,
-            new_ref<Specific<uint32_t>>(parser, (uint32_t)0x66),
-            new_ref<Sequence>(parser,
-                new_ref<Specific<uint32_t>>(parser, (uint32_t)0x61),
-                new_ref<Sequence>(parser,
-                    new_ref<Specific<uint32_t>>(parser, (uint32_t)0x6c),
-                    new_ref<Sequence>(parser,
-                        new_ref<Specific<uint32_t>>(parser, (uint32_t)0x73),
-                        new_ref<Specific<uint32_t>>(parser, (uint32_t)0x65)
-                    )
-                )
-            ),
-        static_cast<uint64_t>(jsonToken::_false))
+    _false::_false(Parser* parser) : 
+        Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Specific<uint32_t> > > > >(
+            parser, &m_f, &m_alse, static_cast<uint64_t>(jsonToken::_false)), 
+        m_f(parser, 0x66), 
+        m_a(parser, 0x61), 
+        m_l(parser, 0x6c), 
+        m_s(parser, 0x73),
+        m_e(parser, 0x65),
+        m_se(parser, &m_s, &m_e),
+        m_lse(parser, &m_l, &m_se),
+        m_alse(parser, &m_a, &m_lse)
     { }
 
     _false::~_false() = default;
@@ -35,7 +33,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void _false::Emit()
     {        
-        log::debug("Emitting a false.");
+        //log::debug("Emitting a false.");
         GetParser()->PushNode(new_ref<_FalseNode>());
     }
 

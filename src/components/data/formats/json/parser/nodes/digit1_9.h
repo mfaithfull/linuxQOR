@@ -23,7 +23,7 @@ namespace qor { namespace data{ namespace parser{ namespace json {
         
         virtual std::string ToString() const override 
         { 
-            char c = GetObject()->GetValue();
+            char c = static_cast<char>(GetObject()->GetValue());            
             return std::string(&c,1); 
         };
     };

@@ -14,10 +14,14 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    fraction::fraction(Parser* parser) : Sequence(parser,  new_ref<decimal_point>(parser),
-        new_ref<Sequence>(parser, new_ref<DIGIT<uint32_t>>(parser),
-            new_ref<ZeroOrMore>(parser, new_ref<DIGIT<uint32_t>>(parser))),
-        static_cast<uint64_t>(jsonToken::fraction))
+    fraction::fraction(Parser* parser) : 
+        Sequence_t< decimal_point, Sequence_t< DIGIT<uint32_t>, ZeroOrMore_t< DIGIT<uint32_t> > > >(
+                parser, &dp, &f, static_cast<uint64_t>(jsonToken::fraction)),
+        dp(parser),
+        pd(parser),
+        sd(parser),
+        continuation(parser, &sd),
+        f(parser, &pd, &continuation)
     { }
 
     fraction::~fraction() = default;
@@ -90,11 +94,11 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void fraction::Fail()
     {
-        log::debug("...Didn't find a Fraction.");
-        ref_of<Node>::type node = GetParser()->PopNode();
-        if(node.IsNotNull() && node->GetToken() != m_token)
+        //log::debug("...Didn't find a Fraction.");
+        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        if(topToken == m_token)
         {
-            GetParser()->PushNode(node);
+            m_parser->PopNode();
         }
     }
 

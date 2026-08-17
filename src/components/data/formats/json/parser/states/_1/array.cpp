@@ -31,21 +31,23 @@ namespace qor { namespace data { namespace parser { namespace json {
                     )
                 ),
                 new_ref<end_array>(parser)
-            ),static_cast<uint64_t>(jsonToken::array)){ }
+            ),static_cast<uint64_t>(jsonToken::array)),
+            m_parser(parser)
+    { }
 
     array::~array() = default;
 
     void array::Prepare()
     {
         log::debug("Looking for an Array...");
-        GetParser()->PushNode(new_ref<ArrayNode>().AsRef<Node>());
+        m_parser->PushNode(new_ref<ArrayNode>().AsRef<Node>());
     }
 
     void array::Emit()
     {        
         log::debug("Emitting an Array:");
         std::vector<ref_of<ValueNode>::type> values;
-        auto node = GetParser()->PopNode();
+        auto node = m_parser->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
@@ -58,11 +60,9 @@ namespace qor { namespace data { namespace parser { namespace json {
             else
             {
                 std::string tokenName = GetTokenName(token);
-                //GetContext()->Diagnostic();
-                //GetParser()->Diagnostic();
                 continuable("Unexpected: {0}", tokenName);
             }
-            node = GetParser()->PopNode();
+            node = m_parser->PopNode();
         }
 
         if(node.IsNotNull())
@@ -71,22 +71,17 @@ namespace qor { namespace data { namespace parser { namespace json {
             {
                 node.AsRef<ArrayNode>()->GetObject()->m_values.push_back((*it)->GetObject());
             }
-            GetParser()->PushNode(node);
-        }
-        else
-        {
-            //GetContext()->Diagnostic();
-            //GetParser()->Diagnostic();
+            m_parser->PushNode(node);
         }
     }
 
     void array::Fail()
     {
-        log::debug("...Didn't find an Array.");
-        ref_of<Node>::type node = GetParser()->PopNode();
-        if(node.IsNotNull() && node->GetToken() != m_token)
+        //log::debug("...Didn't find an Array.");
+        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        if(topToken == m_token)
         {
-            GetParser()->PushNode(node);
+            m_parser->PopNode();
         }
     }
 }}}}//qor::data::parser::json

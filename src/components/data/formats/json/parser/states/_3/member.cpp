@@ -9,9 +9,6 @@
 #include "src/qor/flyers/error/error.h"
 #include "src/qor/flyers/log/debug.h"
 #include "member.h"
-#include "../_4/string.h"
-#include "name_separator.h"
-#include "../_4/value.h"
 #include "../../nodes/member.h"
 #include "../../nodes/value.h"
 #include "../../nodes/string.h"
@@ -20,27 +17,24 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     //member = string name-separator value
     member::member(Parser* parser) : 
-        Sequence(parser,
-            new_ref<string>(parser),
-            new_ref<Sequence>(parser,
-                new_ref<name_separator>(parser),
-                new_ref<value>(parser)
-            ),
-        static_cast<uint64_t>(jsonToken::member))
-    {
-    }
+        Sequence_t< string, Sequence_t<name_separator, value> >(parser, &m_str, &m_tail, static_cast<uint64_t>(jsonToken::member)),
+            m_v(parser),
+            m_ns(parser),
+            m_str(parser),
+            m_tail(parser, &m_ns, &m_v)
+    { }
 
     member::~member() = default;
 
     void member::Prepare()
     {
-        log::debug("Looking for a Member...");        
+        //log::debug("Looking for a Member...");        
         GetParser()->PushNode(new_ref<MemberNode>());
     }
 
     void member::Emit()
     {
-        log::debug("Emitting a Member.");
+        //log::debug("Emitting a Member.");
         std::string name;
         ref_of<ValueNode>::type value;
         auto node = GetParser()->PopNode();
@@ -76,7 +70,7 @@ namespace qor { namespace data { namespace parser { namespace json {
                 }
                 else
                 {
-                    continuable("Unexpected: {0}", tokenName2);
+                    //continuable("Unexpected: {0}", tokenName2);
                 }
             }
             else
@@ -97,11 +91,11 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void member::Fail()
     {
-        log::debug("...Didn't find a Member.");
-        ref_of<Node>::type node = GetParser()->PopNode();
-        if(node.IsNotNull() && node->GetToken() != m_token)
+        //log::debug("...Didn't find a Member.");
+        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        if(topToken == m_token)
         {
-            GetParser()->PushNode(node);
+            m_parser->PopNode();
         }
     }
 

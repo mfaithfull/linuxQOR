@@ -13,11 +13,12 @@ namespace qor { namespace data{ namespace model{ namespace json{
     {
     public:
 
-        String(){ }
+        String(){ m_value.reserve(32); }
         virtual ~String() = default;
 
         std::string GetValue() { return m_value; }
         void SetValue(const std::string& stringValue ) {m_value = stringValue;};
+        void Append(const char* ptr, size_t count) { m_value.append(ptr, count); }
 
         virtual ValueType GetType() override
         {

@@ -19,8 +19,8 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     number::number(Parser* parser) : Sequence(parser, new_ref<Optional>(parser,new_ref<minus>(parser)),
             new_ref<Sequence>(parser, new_ref<integer>(parser), 
-                new_ref<Sequence>(parser, new_ref<Optional>(parser, new_ref<fraction>(parser)),
-                    new_ref<Optional>(parser, new_ref<exp>(parser))
+                new_ref<Sequence>(parser, new_ref<Optional>(parser, new_ref<deferred<fraction>>(parser, static_cast<uint64_t>(jsonToken::fraction))),
+                    new_ref<Optional>(parser, new_ref<deferred<exp>>(parser, static_cast<uint64_t>(jsonToken::exp)))
                 )
             ),
             static_cast<uint64_t>(jsonToken::number))

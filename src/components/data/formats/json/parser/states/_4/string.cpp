@@ -12,55 +12,45 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
+    UTF8CodePage string::s_codePage;
+
     string::string(Parser* parser) :
-                Sequence(parser, new_ref<quotation_mark>(parser), 
-                    new_ref<Sequence>(parser, new_ref<ZeroOrMore>(parser, new_ref<character>(parser)),
-                        new_ref<quotation_mark>(parser)
-                    ),
-                    static_cast<uint64_t>(jsonToken::string)
-                )
+        Sequence_t< quotation_mark, Sequence_t< ZeroOrMore_t< character >, quotation_mark > >(parser, &m_qopen, &m_tail, static_cast<uint64_t>(jsonToken::string)),
+            m_qopen(parser),
+            m_qclose(parser),
+            m_char(parser),
+            m_body(parser, &m_char),
+            m_tail(parser, &m_body, &m_qclose)
     { }
 
     string::~string() = default;
 
     void string::Prepare()
     {
-        log::debug("Looking for a String...");
+        //log::debug("Looking for a String...");
         GetParser()->PushNode(new_ref<StringNode>().AsRef<Node>());
     }
 
     void string::Emit()
     {        
-        log::debug("Emitting a String");
-        std::string stringValue;
+        //log::debug("Emitting a String");
+        std::string stringValue;        
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
             uint64_t token = node->GetToken();
-            auto f = jsonTokenNames.find((jsonToken)token);
-            std::string tokenName;
-            if(f != jsonTokenNames.end())
-            {
-                tokenName = f->second;
-            }
-            else
-            {
-                auto g = tokenNames.find((eToken)token);
-                if( g != tokenNames.end())
-                {
-                    tokenName = g->second;
-                }
-                else
-                {
-                    continuable("Unrecognized token {0}", token);
-                }
-            }
             
             if(token == static_cast<uint64_t>(jsonToken::character))
             {
                 auto characterNode = node.AsRef<CharacterNode>();
-                char c = static_cast<char>(characterNode->GetObject()->GetValue());
-                stringValue = std::string(&c,1) + stringValue;
+                char32_t c = static_cast<char32_t>(characterNode->GetObject()->GetValue());
+                char8_t space[6];
+                char8_t* p = &space[0];
+                size_t available = 1;
+                if(s_codePage.Encode(c, p, available))
+                {
+                    stringValue = std::string((const char*)space, (p - &space[0])) + stringValue;
+                }
             }
             else if(token == static_cast<uint64_t>(eToken::Digit))
             {                
@@ -68,6 +58,24 @@ namespace qor { namespace data { namespace parser { namespace json {
             }
             else
             {
+                auto f = jsonTokenNames.find((jsonToken)token);
+                std::string tokenName;
+                if(f != jsonTokenNames.end())
+                {
+                    tokenName = f->second;
+                }
+                else
+                {
+                    auto g = tokenNames.find((eToken)token);
+                    if( g != tokenNames.end())
+                    {
+                        tokenName = g->second;
+                    }
+                    else
+                    {
+                        continuable("Unrecognized token {0}", token);
+                    }
+                }
                 continuable("Unexpected {0}", tokenName);
             }
 
@@ -77,7 +85,7 @@ namespace qor { namespace data { namespace parser { namespace json {
         if(node.IsNotNull())
         {
             auto stringNode = node.AsRef<StringNode>();
-            log::debug("String:{0}", stringValue);
+            //log::debug("String:{0}", stringValue);
             stringNode->GetObject()->SetValue(stringValue);
             GetParser()->PushNode(node);
         }
@@ -85,11 +93,11 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void string::Fail()
     {
-        log::debug("...Didn't find a String.");
-        auto node = GetParser()->PopNode();
-        if(node.IsNotNull() && node->GetToken() != m_token)
+        //log::debug("...Didn't find a String.");
+        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        if(topToken == m_token)
         {
-            GetParser()->PushNode(node);
+            m_parser->PopNode();
         }
     }
 

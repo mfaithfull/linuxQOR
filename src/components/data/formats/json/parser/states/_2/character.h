@@ -10,12 +10,17 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class qor_pp_module_interface(QOR_JSON) character : public AnyOneOf
+    class qor_pp_module_interface(QOR_JSON) character : public AnyOneOf_t< unescaped, deferred<escapeSequence> >
     {
     public: 
         character(Parser* parser);
         virtual ~character();
         virtual void Emit();
+
+    private:
+        unescaped m_un;
+        deferred<escapeSequence> m_escaped;
+        static UTF8CodePage s_codePage;
     };
 
 }}}}//qor::data::parser::json

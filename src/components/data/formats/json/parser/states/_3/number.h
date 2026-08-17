@@ -26,4 +26,9 @@ namespace qor { namespace data { namespace parser { namespace json {
 
 }}}}//qor::data::parser::json
 
+namespace qor{    
+    qor_pp_declare_source_of(data::parser::json::number, memory::FastSource)
+    qor_pp_declare_source_of(typename ref_of<data::parser::json::number>::type, memory::FastSource)
+}
+
 #endif//QOR_PP_H_DATA_JSON_PARSER_NUMBER

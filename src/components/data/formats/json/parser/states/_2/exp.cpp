@@ -98,11 +98,11 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void exp::Fail()
     {
-        log::debug("...Didn't find an Exp.");
-        ref_of<Node>::type node = GetParser()->PopNode();
-        if(node.IsNotNull() && node->GetToken() != m_token)
+        //log::debug("...Didn't find an Exp.");
+        uint64_t topToken = m_parser->TopNode()->GetToken();                
+        if(topToken == m_token)
         {
-            GetParser()->PushNode(node);
+            m_parser->PopNode();
         }
     }
 

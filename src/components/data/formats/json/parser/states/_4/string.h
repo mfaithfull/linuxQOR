@@ -10,7 +10,7 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class qor_pp_module_interface(QOR_JSON) string : public Sequence
+    class qor_pp_module_interface(QOR_JSON) string : public Sequence_t< quotation_mark, Sequence_t< ZeroOrMore_t< character >, quotation_mark > >
     {
     public: 
         string(Parser* parser);
@@ -18,6 +18,15 @@ namespace qor { namespace data { namespace parser { namespace json {
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();
+
+    private:
+
+        quotation_mark m_qopen;
+        quotation_mark m_qclose;
+        character m_char;
+        ZeroOrMore_t< character > m_body;
+        Sequence_t< ZeroOrMore_t< character >, quotation_mark > m_tail;
+        static UTF8CodePage s_codePage;
     };
 
 }}}}//qor::data::parser::json

@@ -15,10 +15,14 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    integer::integer(Parser* parser) : AnyOneOf(parser,  new_ref<zero>(parser),
-        new_ref<Sequence>(parser, new_ref<digit1_9>(parser),
-            new_ref<ZeroOrMore>(parser, new_ref<DIGIT<uint32_t>>(parser))),
-        static_cast<uint64_t>(jsonToken::integer))
+    integer::integer(Parser* parser) : 
+        AnyOneOf_t< zero, Sequence_t<digit1_9, ZeroOrMore_t<DIGIT<uint32_t>>> >
+            (parser, &m_zero, &m_body, static_cast<uint64_t>(jsonToken::integer)),
+        m_zero(parser),
+        m_d(parser),
+        m_td(parser),
+        m_tail(parser, &m_td),
+        m_body(parser, &m_d, &m_tail)
     { }
     
     integer::~integer() = default;
@@ -83,11 +87,11 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void integer::Fail()
     {
-        log::debug("...Didn't find an Integer.");
-        ref_of<Node>::type node = GetParser()->PopNode();
-        if(node.IsNotNull() && node->GetToken() != m_token)
+        //log::debug("...Didn't find an Integer.");
+        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        if(topToken == m_token)
         {
-            GetParser()->PushNode(node);
+            m_parser->PopNode();
         }
     }
 
