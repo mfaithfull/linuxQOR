@@ -137,7 +137,7 @@ namespace qor{ namespace pipeline{
         return result;
     }
 
-    bool Buffer::HasData() const
+    inline bool Buffer::HasData() const
     {
         return m_writeBegin > m_readEnd ? true : false;
     }

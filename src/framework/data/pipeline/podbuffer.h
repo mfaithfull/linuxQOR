@@ -4,6 +4,7 @@
 #ifndef QOR_PP_H_PIPELINE_PODBUFFER
 #define QOR_PP_H_PIPELINE_PODBUFFER
 
+#include<cstring>
 #include "buffer.h"
 
 namespace qor{ namespace pipeline{

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: BSL-1.0
 
 #include "src/configuration/configuration.h"
+#include <cmath>
 #include "textfilter.h"
 
 namespace qor{ namespace text { namespace components {

@@ -14,7 +14,7 @@ namespace qor{ namespace pipeline{
     {
     public:
     
-        InlineProcessor(size_t inItemCount = 0, size_t outItemCount = inItemCount) : Buffer(sizeof(in_t), 0),
+        InlineProcessor(size_t inItemCount = 0, size_t outItemCount = 1) : Buffer(sizeof(in_t), 1),
             m_sourceBuffer(inItemCount),
             m_sinkBuffer(outItemCount)
         { }
