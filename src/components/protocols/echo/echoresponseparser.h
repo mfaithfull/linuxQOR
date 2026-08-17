@@ -28,10 +28,10 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         {static_cast< uint64_t>(echoResponseToken::response), "response"},
     }};
 
-    class responseChar : public qor::data::parser::OneOfARange
+    class responseChar : public qor::data::parser::OneOfAByteRange
     {
     public: responseChar(qor::data::Parser* parser) :
-                qor::data::parser::OneOfARange(parser,
+                qor::data::parser::OneOfAByteRange(parser,
                 0x00,
                 0xFF,
                 static_cast<uint64_t>(echoResponseToken::responseChar))

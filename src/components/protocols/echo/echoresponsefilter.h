@@ -26,7 +26,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
         void HandleResponse(ref_of<EchoResponse>::type Response);
 
-        data::parser::Context m_sourceContext;
+        pipeline::BufferContext<byte> m_sourceContext;
         data::Parser m_responseParser;
     };
 

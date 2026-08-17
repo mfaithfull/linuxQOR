@@ -15,7 +15,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
     //Client side protocol filter
 
-    EchoResponseFilter::EchoResponseFilter() :  qor::pipeline::InlineFilter<qor::byte>(512), m_sourceContext(m_sourceBuffer), m_responseParser(&m_sourceContext)
+    EchoResponseFilter::EchoResponseFilter() :  qor::pipeline::InlineFilter<qor::byte>(512), m_sourceContext(&m_sourceBuffer), m_responseParser(&m_sourceContext)
     {
         ref_of<response>::type responseState = new_ref<response>(&m_responseParser);
         m_responseParser.SetInitialStep(responseState);

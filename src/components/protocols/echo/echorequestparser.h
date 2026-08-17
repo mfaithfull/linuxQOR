@@ -8,6 +8,7 @@
 #include "src/components/data/parser/states/rfc5234.h"
 #include "src/components/data/parser/tokens.h"
 #include "src/components/data/parser/parser.h"
+#include "src/components/data/parser/states/oneofarange.h"
 #include "src/components/data/parser/states/oneormore.h"
 #include "src/components/data/parser/nodes/char.h"
 
@@ -26,10 +27,10 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         {static_cast< uint64_t>(echoRequestToken::request), "request"},
     }};
 
-    class requestChar : public qor::data::parser::OneOfARange
+    class requestChar : public qor::data::parser::OneOfAByteRange
     {
     public: requestChar(qor::data::Parser* parser) :
-                qor::data::parser::OneOfARange(parser,
+                qor::data::parser::OneOfAByteRange(parser,
                 0x00,
                 0xFF,
                 static_cast<uint64_t>(echoRequestToken::requestChar))

@@ -16,7 +16,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
     //Server side protocol filter
     
-    EchoServiceFilter::EchoServiceFilter() : pipeline::InlineFilter<byte>(512), m_sourceContext(m_sourceBuffer), m_requestParser(&m_sourceContext)
+    EchoServiceFilter::EchoServiceFilter() : pipeline::InlineFilter<byte>(512), m_sourceContext(&m_sourceBuffer), m_requestParser(&m_sourceContext)
     { 
         ref_of<qor::components::protocols::echo::request>::type requestState = 
         new_ref<qor::components::protocols::echo::request>(&m_requestParser);
