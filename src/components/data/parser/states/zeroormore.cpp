@@ -20,7 +20,7 @@ namespace qor { namespace data { namespace parser {
         Enter = [this]()
             {
                 Prepare();
-                log::debug("Trying for zero or more.");
+                //log::debug("Trying for zero or more.");
                 m_flow->PushStep(m_head);
             };
 
@@ -32,7 +32,7 @@ namespace qor { namespace data { namespace parser {
                 {                    
                     if (m_first)
                     {
-                        log::debug("Found at least 1 of zero or more.");
+                        //log::debug("Found at least 1 of zero or more.");
                         m_result.first = m_head->m_result.first;
                         m_result.m_position = m_head->m_result.m_position;
                         m_first = false;

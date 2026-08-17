@@ -123,7 +123,7 @@ namespace qor { namespace data {
         try
         {
             log::debug("Stacks on entry have {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
-            DumpTokenStack();
+            //DumpTokenStack();
             m_final ? Drain() : InnerParse();
         }
         catch(const Serious& error)
@@ -154,30 +154,30 @@ namespace qor { namespace data {
             }
         }
 
-        DumpTokenStack();
+        //DumpTokenStack();
         return m_result;
     }
 
     int Parser::FinalParse()
     {
-        qor_pp_ofcontext;
+        //qor_pp_ofcontext;
 
         if(m_final)
         {
             return m_result;
         }
         m_final = true;
-        log::debug("Entering final parse.");
+        //log::debug("Entering final parse.");
         m_complete = false;
         if(m_StepStack.empty())
         {
-            log::debug("Final parse not required.");
-            log::debug("Stack has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
+            //log::debug("Final parse not required.");
+            //log::debug("Stack has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
             return m_result;
         }
         auto result = SafeParse();
-        log::debug("Final parse complete.");
-        log::debug("Stack has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
+        //log::debug("Final parse complete.");
+        //log::debug("Stack has {0} states, {1} nodes", m_StepStack.size(), m_nodes.size());
         return result;
     }
 
@@ -224,4 +224,12 @@ namespace qor { namespace data {
         }
     }
 
+    std::vector< ref_of<fastflow::Step>::type >& Parser::GetStateCache(uint64_t token)
+    {
+        if(m_stateCache.find(token) == m_stateCache.end())
+        {
+            m_stateCache.insert({token, std::vector< ref_of<fastflow::Step>::type >()});
+        }
+        return m_stateCache.at(token);
+    }
 }}//qor::data

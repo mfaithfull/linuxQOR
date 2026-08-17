@@ -34,6 +34,7 @@ namespace qor { namespace data {
         bool IsInError();
         void Diagnostic();
 
+        std::vector< ref_of<fastflow::Step>::type >& GetStateCache(uint64_t token);
     private:
 
         void Drain();
@@ -46,6 +47,7 @@ namespace qor { namespace data {
         bool m_final{false};
         data::AbstractDataContext* m_context{nullptr};
         std::stack<ref_of<parser::Node>::type> m_nodes;
+        std::unordered_map< uint64_t, std::vector< ref_of<fastflow::Step>::type > > m_stateCache;
     };
 
 }}//qor::data

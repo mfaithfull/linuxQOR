@@ -8,6 +8,7 @@
 #include <string>
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
+#include "src/qor/essentials/text/strings/strings.h"
 
 namespace qor { namespace data { namespace parser {
 

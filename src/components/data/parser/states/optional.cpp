@@ -17,7 +17,7 @@ namespace qor { namespace data { namespace parser {
         Enter = [this]()
             {
                 Prepare();
-                log::debug("Looking for Optional item...");
+                //log::debug("Looking for Optional item...");
                 Workflow()->PushStep(m_head.AsRef<fastflow::Step>());
             };
 
@@ -25,7 +25,7 @@ namespace qor { namespace data { namespace parser {
             {                
                 if(m_head->m_result.code == Result::MORE_DATA)
                 {
-                    log::debug("Ran out data looking for Optional item");
+                    //log::debug("Ran out data looking for Optional item");
                     if(GetParser()->IsFinal())
                     {
                         m_result.code = Result::FAILURE;
@@ -36,7 +36,7 @@ namespace qor { namespace data { namespace parser {
                 m_result.length = 0;
                 if (m_head->m_result.code == Result::SUCCESS && m_head->m_result.length > 0)
                 {
-                    log::debug("Optional item found.");
+                    //log::debug("Optional item found.");
                     m_result.first = m_head->m_result.first;
                     m_result.length += m_head->m_result.length;
                     m_result.token = m_head->m_result.token;
@@ -50,7 +50,7 @@ namespace qor { namespace data { namespace parser {
             {
                 if (m_result.code == Result::FAILURE)
                 {
-                    log::debug("Optional item not found.");
+                    //log::debug("Optional item not found.");
                     Fail();
                 }
                 else if (m_result.code == Result::SUCCESS && m_result.length > 0 && m_result.token != static_cast<uint64_t>(eToken::Lexical))

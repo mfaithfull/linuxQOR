@@ -34,8 +34,7 @@ namespace qor { namespace data { namespace parser {
         {
             m_first = true;
             m_result.length = 0;
-            m_flow = Workflow();
-            m_context = GetParser()->GetContext();
+            m_flow = Workflow();            
             Enter = [this]()
                 {
                     Prepare();
@@ -43,7 +42,8 @@ namespace qor { namespace data { namespace parser {
                 };
 
             Resume = [this]()
-                {                
+                {               
+                    m_context = GetParser()->GetContext(); 
                     m_result.code = m_head->m_result.code;                
                     if (m_head->m_result.code == Result::SUCCESS  && m_context->HasData())
                     {
@@ -60,7 +60,7 @@ namespace qor { namespace data { namespace parser {
                     else
                     {
                         m_first = true;
-                        if(m_context->HasData())
+                        if(m_context->HasData() || GetParser()->IsFinal())
                         {
                             m_flow->PopStep();
                         }

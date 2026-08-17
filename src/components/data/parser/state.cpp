@@ -12,7 +12,7 @@
 
 namespace qor { namespace data { namespace parser {
 
-    ParserState::ParserState(Parser* parser, uint64_t token) : fastflow::Step(parser)
+    ParserState::ParserState(Parser* parser, uint64_t token) : fastflow::Step(parser), m_parser(parser)
     {
         m_result.code = Result::UNINITIALIZED;
         m_result.length = 0;
@@ -60,7 +60,7 @@ namespace qor { namespace data { namespace parser {
 
     data::AbstractDataContext* ParserState::GetContext()
     {
-        return dynamic_cast<Parser*>(m_Fastflow)->GetContext();
+        return m_parser->GetContext();
     }
 
     Fastflow* ParserState::Workflow()
@@ -70,7 +70,7 @@ namespace qor { namespace data { namespace parser {
 
     Parser* ParserState::GetParser()
     {
-        return dynamic_cast<Parser*>(m_Fastflow);
+        return m_parser;
     }
     
     void ParserState::Prepare()

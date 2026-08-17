@@ -41,6 +41,7 @@ namespace qor { namespace data {
 
         Fastflow* Workflow();
         uint64_t m_token{0};
+        Parser* m_parser;        
     };
 
     template<typename item_t>
