@@ -16,6 +16,12 @@ HINTS "F:/Develop/Native_SDK/lib/Windows_x86_64")
 find_library( EGL_LIBRARY EGL "EGL 1.4 library"
 HINTS "F:/Develop/Native_SDK/lib/Windows_x86_64" )
 
+if(MSVC)
+    add_link_options(        
+        $<$<CONFIG:RelWithDebInfo>:/INCREMENTAL:NO>
+    )
+endif()
+
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(examples)

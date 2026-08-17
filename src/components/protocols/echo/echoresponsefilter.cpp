@@ -15,17 +15,32 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
     //Client side protocol filter
 
-    EchoResponseFilter::EchoResponseFilter() :  qor::pipeline::InlineFilter<qor::byte>(0) { }
+    EchoResponseFilter::EchoResponseFilter() :  qor::pipeline::InlineFilter<qor::byte>(512), m_sourceContext(m_sourceBuffer), m_responseParser(&m_sourceContext)
+    {
+        ref_of<response>::type responseState = new_ref<response>(&m_responseParser);
+        m_responseParser.SetInitialStep(responseState);
+    }
     
-    EchoResponseFilter::EchoResponseFilter(size_t itemCount) :  qor::pipeline::InlineFilter<qor::byte>(itemCount) { }
-
     EchoResponseFilter::~EchoResponseFilter() = default;
 
-    void EchoResponseFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
-    {
-        EchoResponse response = Parse(data, itemCount);
+    size_t EchoResponseFilter::WriteAcknowledge(size_t& itemCount)
+    {            
+        m_sourceBuffer.WriteAcknowledge(itemCount);
+        
+        int parseResult = m_responseParser.FinalParse();
 
-        std::string output = response.GetValue();
+        if(m_responseParser.IsComplete())
+        {
+            auto responseNode = m_responseParser.PopNode().template AsRef<ResponseNode>();            
+            HandleResponse(responseNode->GetObject());
+        }
+
+        return m_sourceBuffer.WriteCapacity();
+    }
+
+    void EchoResponseFilter::HandleResponse(ref_of<EchoResponse>::type Response)
+    {
+        std::string output = Response->GetValue();
 
         if(output == "quit")
         {
@@ -33,24 +48,16 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         }
 
         size_t outputSize = output.size();
-        if(outputSize > itemCount)
+        byte* space = m_sinkBuffer.WriteRequest(outputSize);
+        if(outputSize > 0)
         {
-            outputSize = itemCount;
+            memcpy(space, output.data(), outputSize);
+            m_sinkBuffer.WriteAcknowledge(outputSize);
         }
-        itemCount = std::min(outputSize, writeCount);
-        memcpy(space, output.data(), itemCount);
-        writeCount = itemCount;
-    }
 
-    ref_of<EchoResponse>::type EchoResponseFilter::Parse(byte* data, size_t& itemCount)
-    {
-        Parser echoResponseParser(new_ref<Context>(data, itemCount));
-        ref_of<response>::type responseState = new_ref<response>(&echoResponseParser);
+        ref_of<response>::type responseState = new_ref<response>(&m_responseParser);
+        m_responseParser.SetInitialStep(responseState);
 
-        echoResponseParser.SetInitialStep(responseState.AsRef<Step>());
-        echoResponseParser.Run();
-        
-        auto responseNode = echoResponseParser.PopNode().template AsRef<ResponseNode>();
-        return responseNode->GetObject();
     }
+    
 }}}}//qor::components::protocols::echo

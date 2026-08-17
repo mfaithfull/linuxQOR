@@ -20,15 +20,9 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         qor_pp_module_interface(QOR_ECHO) EchoProtocol();
         qor_pp_module_interface(QOR_ECHO) virtual ~EchoProtocol();
         qor_pp_module_interface(QOR_ECHO) virtual io::network::sockets::eAddressFamily GetAddressFamily() const;
-        qor_pp_module_interface(QOR_ECHO) virtual ref_of<pipeline::InlineFilter<byte>>::type GetRequestFilter() override;
-        qor_pp_module_interface(QOR_ECHO) virtual ref_of<pipeline::InlineFilter<byte>>::type GetResponseFilter() override;
-        qor_pp_module_interface(QOR_ECHO) size_t GetMaxEchoSize();
-
-    private:
-
-        ref_of<EchoServiceFilter>::type m_requestFilter;
-        ref_of<EchoResponseFilter>::type m_responseFilter;
-
+        qor_pp_module_interface(QOR_ECHO) virtual ref_of<pipeline::InlineFilter<byte>>::type GetNewRequestFilter() const override;
+        qor_pp_module_interface(QOR_ECHO) virtual ref_of<pipeline::InlineFilter<byte>>::type GetNewResponseFilter() const override;
+        qor_pp_module_interface(QOR_ECHO) size_t GetMaxEchoSize() const;
     };
 }}}}
 

@@ -5,6 +5,7 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_RESPONSEFILTER
 
 #include "src/framework/data/pipeline/inlinefilter.h"
+#include "src/components/data/parser/context.h"
 #include "echoresponseparser.h"
 #include "responsenode.h"
 #include "echoresponse.h"
@@ -19,9 +20,14 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         qor_pp_module_interface(QOR_ECHO) EchoResponseFilter();
         qor_pp_module_interface(QOR_ECHO) EchoResponseFilter(size_t itemCount);
         qor_pp_module_interface(QOR_ECHO) virtual ~EchoResponseFilter();
-        qor_pp_module_interface(QOR_ECHO) qor::ref_of<EchoResponse>::type Parse(qor::byte* data, size_t& itemCount);
-        qor_pp_module_interface(QOR_ECHO) virtual void Filter(qor::byte* space, qor::byte* data, size_t& itemCount, size_t& writeCount);
+        qor_pp_module_interface(QOR_ECHO) virtual size_t WriteAcknowledge(size_t& itemCount);
 
+    private:
+
+        void HandleResponse(ref_of<EchoResponse>::type Response);
+
+        data::parser::Context m_sourceContext;
+        data::Parser m_responseParser;
     };
 
 }}}}//qor::components::protocols::echo

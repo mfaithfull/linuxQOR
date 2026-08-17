@@ -16,44 +16,45 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
     //Server side protocol filter
     
-    EchoServiceFilter::EchoServiceFilter() : qor::pipeline::InlineFilter<qor::byte>(0) { }
+    EchoServiceFilter::EchoServiceFilter() : pipeline::InlineFilter<byte>(512), m_sourceContext(m_sourceBuffer), m_requestParser(&m_sourceContext)
+    { 
+        ref_of<qor::components::protocols::echo::request>::type requestState = 
+        new_ref<qor::components::protocols::echo::request>(&m_requestParser);
+        m_requestParser.SetInitialStep(requestState);
+    }
     
-    EchoServiceFilter::EchoServiceFilter(size_t itemCount) : qor::pipeline::InlineFilter<qor::byte>(itemCount) { }
-
     EchoServiceFilter::~EchoServiceFilter() = default;
 
-    void EchoServiceFilter::Filter(byte* space, byte* data, size_t& itemCount, size_t& writeCount)
-    {
-        EchoRequest request = Parse(data, itemCount);
+    size_t EchoServiceFilter::WriteAcknowledge(size_t& itemCount)
+    {            
+        m_sourceBuffer.WriteAcknowledge(itemCount);
+        
+        int parseResult = m_requestParser.FinalParse();
 
-        std::string input = request.GetValue();
-
-        //qor::log::inform("Handling request, {0} bytes.", itemCount);
-        if(input == "quit")
+        if(m_requestParser.IsComplete())
         {
-            continuable("user wants to quit");
+            auto requestNode = m_requestParser.PopNode().template AsRef<RequestNode>();
+            ref_of<EchoRequest>::type Request = requestNode->GetObject();
+            HandleRequest(Request);
         }
 
-        size_t inputSize = input.size();
-        if(inputSize > itemCount)
-        {
-            inputSize = itemCount;
-        }
-        itemCount = std::min(inputSize,writeCount);
-        memcpy(space, input.data(), itemCount);    
-        writeCount = itemCount;    
+        return m_sourceBuffer.WriteCapacity();
     }
 
-    ref_of<EchoRequest>::type EchoServiceFilter::Parse(byte* data, size_t& itemCount)
+    void EchoServiceFilter::HandleRequest(ref_of<EchoRequest>::type Request)
     {
-        Parser echoRequestParser(new_ref<Context>(data, itemCount));
-        ref_of<request>::type requestState = new_ref<request>(&echoRequestParser);
-
-        echoRequestParser.SetInitialStep(requestState.AsRef<Step>());
-        echoRequestParser.Run();
+        //Write out the response to the client
+        std::string data = Request->GetValue(); 
+        size_t itemCount = data.size();
+        byte* space = m_sinkBuffer.WriteRequest(itemCount);
+        if(itemCount > 0)
+        {
+            memcpy(space, data.data(), itemCount);
+            m_sinkBuffer.WriteAcknowledge(itemCount);
+        }
         
-        auto requestNode = echoRequestParser.PopNode().template AsRef<RequestNode>();
-        return requestNode->GetObject();
+        ref_of<request>::type requestState = new_ref<request>(&m_requestParser);
+        m_requestParser.SetInitialStep(requestState);
     }
 
 }}}}//qor::components::protocols::echo

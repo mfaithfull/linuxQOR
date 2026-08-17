@@ -8,11 +8,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
     //Server side request and response protocol pipeline
     
-    EchoProtocol::EchoProtocol() : qor::pipeline::Protocol()
-    {
-        m_requestFilter = new_ref<EchoServiceFilter>();
-        m_responseFilter = new_ref<EchoResponseFilter>();
-    }
+    EchoProtocol::EchoProtocol() : qor::pipeline::Protocol(){ }
     
     EchoProtocol::~EchoProtocol() = default;
 
@@ -21,17 +17,17 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         return io::network::sockets::eAddressFamily::AF_INet;
     }
 
-    ref_of<pipeline::InlineFilter<byte>>::type EchoProtocol::GetRequestFilter()
+    ref_of<pipeline::InlineFilter<byte>>::type EchoProtocol::GetNewRequestFilter() const
     {            
-        return m_requestFilter;
+        return new_ref<EchoServiceFilter>();
     }
 
-    ref_of<pipeline::InlineFilter<byte>>::type EchoProtocol::GetResponseFilter()
+    ref_of<pipeline::InlineFilter<byte>>::type EchoProtocol::GetNewResponseFilter() const
     {            
-        return m_responseFilter;
+        return new_ref<EchoResponseFilter>();
     }
 
-    size_t EchoProtocol::GetMaxEchoSize()
+    size_t EchoProtocol::GetMaxEchoSize() const
     {
         return maxEchoSize;
     }

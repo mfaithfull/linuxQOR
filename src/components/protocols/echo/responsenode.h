@@ -17,11 +17,9 @@ namespace qor { namespace components { namespace protocols { namespace echo {
     {
     public:
 
-        ResponseNode() : qor::data::parser::NodeAdapter<EchoResponse>(static_cast<uint64_t>(echoResponseToken::response))
-        { }
+        ResponseNode() : qor::data::parser::NodeAdapter<EchoResponse>(static_cast<uint64_t>(echoResponseToken::response)){ }
 
-        ResponseNode(qor::ref_of<EchoResponse>::type response) : qor::data::parser::NodeAdapter<EchoResponse>(response,static_cast<uint64_t>(echoResponseToken::response))
-        { }
+        ResponseNode(qor::ref_of<EchoResponse>::type response) : qor::data::parser::NodeAdapter<EchoResponse>(response,static_cast<uint64_t>(echoResponseToken::response)){ }
 
         virtual ~ResponseNode() = default;
 
