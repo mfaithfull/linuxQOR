@@ -51,7 +51,7 @@ namespace qor{ namespace ui { namespace lin{ namespace wl{
         static Compositor* CompositorFrom(wl_compositor* compositor);
 
         explicit Compositor(wl_compositor* compositor);
-        ~Compositor();
+        virtual ~Compositor();
         Compositor(const Compositor&) = delete;
         Compositor& operator=(const Compositor&) = delete;
         Compositor(Compositor&& rhs) noexcept;

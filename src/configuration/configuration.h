@@ -38,8 +38,10 @@
 
 #if (qor_pp_compiler == qor_pp_compiler_gcc || qor_pp_compiler ==  qor_pp_compiler_clang)
 #define qor_pp_module_interface_gcc( _X ) qor_pp_module_interface(_X)
+#define qor_pp_export_non_msvc qor_pp_export
 #else
 #define qor_pp_module_interface_gcc( _X )
+#define qor_pp_export_non_msvc
 #endif
 
 #if (qor_pp_unicode && (qor_pp_os_target == qor_pp_os_windows))
