@@ -50,6 +50,11 @@ namespace qor{ namespace pipeline{
             return m_sinkBuffer.ReadCapacity();
         }
 
+        virtual bool HasData() const
+        {
+            return m_sinkBuffer.HasData();
+        }
+
         virtual byte* WriteRequest(size_t& itemCount)
         {
             return m_sourceBuffer.WriteRequest(itemCount);

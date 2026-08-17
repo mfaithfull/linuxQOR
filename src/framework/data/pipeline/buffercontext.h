@@ -18,28 +18,28 @@ namespace qor{ namespace pipeline{
         BufferContext(const Buffer* buffer) : m_buffer(const_cast<Buffer*>(buffer)){ }
 
         bool GetItem(pod_t*& data)
-        {
-            size_t itemCount = 1;
+        {            
             if(HasData())
             {
+                size_t itemCount = 1;
                 data = reinterpret_cast<pod_t*>(m_buffer->ReadRequest(itemCount));
+                return itemCount == 1;
             }
             else
             {
                 data = nullptr;
-                return 0;
-            }
-            return itemCount == 1;
+                return false;
+            }            
         }
 
-        bool RejectItem()
+        inline bool RejectItem()
         {
             size_t itemCount = 1;
             m_buffer->ReadReject(itemCount);
             return itemCount == 1;
         }
 
-        bool ConsumeItem()
+        inline bool ConsumeItem()
         {
             size_t itemCount = 1;
             m_buffer->ReadAcknowledge(itemCount);
@@ -47,22 +47,22 @@ namespace qor{ namespace pipeline{
             return itemCount == 1;
         }
 
-        size_t GetPosition()
+        inline size_t GetPosition()
         {
             return m_position;
         }
 
-        bool HasData()
+        inline bool HasData()
         {
-            return m_buffer->ReadCapacity() > 0;
+            return m_buffer->HasData();
         }
 
-        bool HasSpace()
+        inline bool HasSpace()
         {
             return m_buffer->WriteCapacity() > 0;
         }
 
-        void Reset()
+        inline void Reset()
         {
             m_buffer->Reset();
             m_position = 0;

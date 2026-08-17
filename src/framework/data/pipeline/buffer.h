@@ -35,8 +35,9 @@ namespace qor{ namespace pipeline{
         virtual size_t ReadAcknowledge(size_t& itemCount);
         virtual size_t ReadReject(size_t& itemCount);
         virtual size_t WriteAcknowledge(size_t& itemCount);
+        virtual size_t WriteReject();
         size_t GetUnitSize() const;
-
+        inline virtual bool HasData() const;
     protected:
 
         void SetUnitSize(size_t unitSize);

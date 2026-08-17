@@ -88,10 +88,11 @@ namespace qor{ namespace pipeline{
 
         virtual byte* WriteRequest(size_t& itemCount)
         {
-            pod_t* pResult = 0;
-            if (itemCount == 0 || itemCount > WriteCapacity())
+            pod_t* pResult = nullptr;
+            size_t writeCapacity = WriteCapacity();
+            if (itemCount == 0 || itemCount > writeCapacity)
             {
-                itemCount = WriteCapacity();
+                itemCount = writeCapacity;
             }
 
             if (itemCount > 0)
@@ -105,9 +106,10 @@ namespace qor{ namespace pipeline{
         virtual byte* ReadRequest(size_t& itemCount)
         {
             pod_t* pResult = AddressOf(m_readBegin);
-            if (itemCount > ReadCapacity())
+            size_t readCapacity = ReadCapacity();
+            if (itemCount > readCapacity)
             {
-                itemCount = static_cast<size_t>(ReadCapacity());
+                itemCount = readCapacity;
             }
             m_readEnd += itemCount;
             return reinterpret_cast<byte*>(pResult);
@@ -128,24 +130,14 @@ namespace qor{ namespace pipeline{
 
     protected:
 
-        pod_t* EndOfBuffer(void) const
+        inline pod_t* EndOfBuffer(void) const
         {
-            pod_t* pResult = nullptr;
-            if (m_allocationCount > 0)
-            {
-                pResult = m_pAllocation + m_allocationCount;
-            }
-            return pResult;
+            return (m_allocationCount > 0) ? m_pAllocation + m_allocationCount : nullptr;
         }
 
-        pod_t* AddressOf(size_t index) const
+        inline pod_t* AddressOf(size_t index) const
         {
-            pod_t* pResult = nullptr;
-            if (m_allocationCount > 0)
-            {
-                pResult = m_pAllocation + (index % m_allocationCount);
-            }
-            return pResult;
+            return (m_allocationCount > 0) ? m_pAllocation + (index % m_allocationCount) : nullptr;
         }
 
         pod_t* m_pAllocation;

@@ -3,7 +3,7 @@
 
 #include "src/configuration/configuration.h"
 #include "src/qor/flyers/error/error.h"
-#include "src/qor/flyers/log/informative.h"
+#include "src/qor/flyers/log/debug.h"
 #include "sink.h"
 #include "source.h"
 #include "plug.h"
@@ -102,7 +102,7 @@ namespace qor{ namespace pipeline{
     bool Sink::CheckComplete()
     {
         auto name = Name();
-        log::inform("|{0}", name);
+        log::debug("|{0}", name);
         if(GetFlowMode() == Element::FlowMode::Push)
         {
             if(!GetBuffer())

@@ -99,6 +99,15 @@ namespace qor{ namespace pipeline{
         return ReadCapacity();
     }
 
+    size_t Buffer::WriteReject()
+    {
+        if(m_writeEnd > m_writeBegin)
+        {
+            m_writeEnd = m_writeBegin;
+        }
+        return WriteCapacity();
+    }
+
     size_t Buffer::WriteAcknowledge(size_t& itemCount)
     {
         if(itemCount > (m_writeEnd - m_writeBegin))
@@ -126,6 +135,11 @@ namespace qor{ namespace pipeline{
     {
         size_t result = static_cast<size_t>(m_writeBegin - m_readEnd);
         return result;
+    }
+
+    bool Buffer::HasData() const
+    {
+        return m_writeBegin > m_readEnd ? true : false;
     }
 
     byte* Buffer::WriteRequest(size_t& /*itemCount*/)
