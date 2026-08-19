@@ -41,17 +41,17 @@ namespace qor { namespace components { namespace protocols { namespace http {
     public: sub_delims(data::Parser* parser) :
                 data::parser::AnyOneOfSet(parser,
                 new std::vector<ref_of<ParserState>::type>({{
-                    new_ref< data::parser::Specific>(parser, '!'),
-                    new_ref< data::parser::Specific>(parser, '$'),
-                    new_ref< data::parser::Specific>(parser, '&'),
-                    new_ref< data::parser::Specific>(parser, '\''),
-                    new_ref< data::parser::Specific>(parser, '('),
-                    new_ref< data::parser::Specific>(parser, ')'),
-                    new_ref< data::parser::Specific>(parser, '*'),
-                    new_ref< data::parser::Specific>(parser, '+'),
-                    new_ref< data::parser::Specific>(parser, ','),
-                    new_ref< data::parser::Specific>(parser, ';'),
-                    new_ref< data::parser::Specific>(parser, '='),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '!'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '$'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '&'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '\''),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '('),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, ')'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '*'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '+'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, ','),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, ';'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '='),
                     }}),
                     static_cast<uint64_t>(httpRequestToken::sub_delims)
                 )

@@ -10,6 +10,7 @@
 #include "src/framework/app/workflow/workflow.h"
 #include "../../response/response.h"
 #include "src/components/data/parser/context.h"
+#include "src/framework/data/pipeline/buffercontext.h"
 
 namespace qor { namespace components { namespace protocols { namespace http { namespace response {
     
@@ -18,16 +19,16 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
     public:
 
-        Generator(ref_of<data::parser::Context>::type context);
+        Generator(ref_of<pipeline::BufferContext<byte>>::type context);
         virtual inline ~Generator() = default;
         virtual int Run();
 
-        inline data::parser::Context* GetContext()
+        inline data::AbstractDataContext* GetContext()
         {
             return m_context;
         }
 
-        inline void SetContext(ref_of<data::parser::Context>::type context)
+        inline void SetContext(ref_of<data::AbstractDataContext>::type context)
         {
             m_context = context;
         }
@@ -44,7 +45,7 @@ namespace qor { namespace components { namespace protocols { namespace http { na
 
     private:
 
-        ref_of<data::parser::Context>::type m_context;
+        ref_of<data::AbstractDataContext>::type m_context;
         ref_of<HTTPResponse>::type m_response;
     };
 

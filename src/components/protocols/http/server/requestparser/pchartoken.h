@@ -43,8 +43,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
     public: pchar(data::Parser* parser) :
                 data::parser::AnyOneOfSet(parser,
                 new std::vector<ref_of<ParserState>::type>({{
-                    new_ref< data::parser::Specific>(parser, ':'),
-                    new_ref< data::parser::Specific>(parser, '@'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, ':'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '@'),
                     new_ref< unreserved>(parser),
                     new_ref< pct_encoded>(parser),
                     new_ref< sub_delims>(parser)

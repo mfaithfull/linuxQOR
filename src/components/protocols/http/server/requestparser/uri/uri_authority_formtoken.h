@@ -43,7 +43,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 qor::data::parser::Sequence(parser,
                     new_ref<host>(parser),
                     new_ref<qor::data::parser::Sequence>(parser,
-                        new_ref<qor::data::parser::Specific>(parser, ':'),
+                        new_ref<qor::data::parser::Specific<uint32_t>>(parser, ':'),
                         new_ref<port>(parser)
                     ),
                     static_cast<uint64_t>(httpRequestToken::uri_authority_form)

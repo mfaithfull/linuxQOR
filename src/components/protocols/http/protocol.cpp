@@ -3,30 +3,29 @@
 
 #include "src/configuration/configuration.h"
 #include "protocol.h"
+#include "client/requestsource/source.h"
+#include "client/responsesink/sink.h"
+
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    HTTPProtocol::HTTPProtocol() : qor::pipeline::Protocol()
-    {
-        m_requestFilter = new_ref<HTTPFilter>();
-        m_responseFilter = new_ref<HTTPFilter>();
-    }
+    HTTPProtocol::HTTPProtocol() : qor::pipeline::Protocol(){ }
 
-    HTTPProtocol::~HTTPProtocol(){}
+    HTTPProtocol::~HTTPProtocol(){ }
 
     io::network::sockets::eAddressFamily HTTPProtocol::GetAddressFamily() const
     {
         return io::network::sockets::eAddressFamily::AF_INet;
     }
 
-    ref_of<qor::pipeline::InlineFilter<byte>>::type HTTPProtocol::GetRequestFilter()
+    qor::ref_of<qor::pipeline::InlineFilter<byte>>::type HTTPProtocol::GetNewRequestFilter() const
     {            
-        return m_requestFilter;
+        return new_ref<HTTPFilter>();
     }
 
-    ref_of<qor::pipeline::InlineFilter<byte>>::type HTTPProtocol::GetResponseFilter()
+    qor::ref_of<qor::pipeline::InlineFilter<byte>>::type HTTPProtocol::GetNewResponseFilter() const
     {                        
-        return m_responseFilter;
+        return new_ref<HTTPFilter>();
     }
 
     size_t HTTPProtocol::GetRequestBufferSize()

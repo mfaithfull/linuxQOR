@@ -42,15 +42,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 data::parser::Sequence(parser,
                     new_ref<dec_octet>(parser),
                     new_ref<data::parser::Sequence>(parser,
-                        new_ref<data::parser::Specific>(parser, '.'),
+                        new_ref<data::parser::Specific<uint32_t>>(parser, '.'),
                         new_ref<data::parser::Sequence>(parser,
                             new_ref<dec_octet>(parser),
                             new_ref<data::parser::Sequence>(parser,
-                                new_ref<data::parser::Specific>(parser, '.'),
+                                new_ref<data::parser::Specific<uint32_t>>(parser, '.'),
                                 new_ref<data::parser::Sequence>(parser,
                                     new_ref<dec_octet>(parser),
                                     new_ref<data::parser::Sequence>(parser,
-                                        new_ref<data::parser::Specific>(parser, '.'),
+                                        new_ref<data::parser::Specific<uint32_t>>(parser, '.'),
                                         new_ref<dec_octet>(parser)
                                     )
                                 )

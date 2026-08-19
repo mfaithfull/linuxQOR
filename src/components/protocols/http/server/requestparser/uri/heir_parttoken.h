@@ -44,8 +44,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
     public: heir_part(qor::data::Parser* parser) :
                 qor::data::parser::Sequence(parser,
                     new_ref<qor::data::parser::Sequence>(parser,
-                        new_ref<qor::data::parser::Specific>(parser, '/'),
-                        new_ref<qor::data::parser::Specific>(parser, '/')
+                        new_ref<qor::data::parser::Specific<uint32_t>>(parser, '/'),
+                        new_ref<qor::data::parser::Specific<uint32_t>>(parser, '/')
                     ),
                     new_ref<qor::data::parser::Optional>(parser,
                         new_ref<qor::data::parser::AnyOneOfSet>(parser,

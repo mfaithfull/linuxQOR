@@ -45,30 +45,30 @@ namespace qor { namespace components { namespace protocols { namespace http {
     public: dec_octet(data::Parser* parser) :
                 data::parser::AnyOneOfSet(parser,
                     new std::vector<ref_of<data::parser::ParserState>::type>({{
-                        new_ref<data::parser::DIGIT>(parser),
+                        new_ref<data::parser::DIGIT<uint32_t>>(parser),
                         new_ref<data::parser::Sequence>(parser,
-                            new_ref<data::parser::OneOfARange>(parser, 0x31, 0x39),
-                            new_ref<data::parser::DIGIT>(parser)
+                            new_ref<data::parser::OneOfARange_t<uint32_t>>(parser, 0x31, 0x39),
+                            new_ref<data::parser::DIGIT<uint32_t>>(parser)
                         ),
                         new_ref<data::parser::Sequence>(parser,
-                            new_ref<data::parser::Specific>(parser, '1'),
+                            new_ref<data::parser::Specific<uint32_t>>(parser, '1'),
                             new_ref<data::parser::Sequence>(parser,
-                                new_ref<data::parser::DIGIT>(parser),
-                                new_ref<data::parser::DIGIT>(parser)
+                                new_ref<data::parser::DIGIT<uint32_t>>(parser),
+                                new_ref<data::parser::DIGIT<uint32_t>>(parser)
                             )
                         ),
                         new_ref<data::parser::Sequence>(parser,
-                            new_ref<data::parser::Specific>(parser, '2'),
+                            new_ref<data::parser::Specific<uint32_t>>(parser, '2'),
                             new_ref<data::parser::Sequence>(parser,
-                                new_ref<data::parser::OneOfARange>(parser, 0x30, 0x34),
-                                new_ref<data::parser::DIGIT>(parser)
+                                new_ref<data::parser::OneOfARange_t<uint32_t>>(parser, 0x30, 0x34),
+                                new_ref<data::parser::DIGIT<uint32_t>>(parser)
                             )
                         ),
                         new_ref<data::parser::Sequence>(parser,
-                            new_ref<data::parser::Specific>(parser, '2'),
+                            new_ref<data::parser::Specific<uint32_t>>(parser, '2'),
                             new_ref<data::parser::Sequence>(parser,
-                                new_ref<data::parser::Specific>(parser,'5'),
-                                new_ref<data::parser::OneOfARange>(parser, 0x30, 0x35)                                
+                                new_ref<data::parser::Specific<uint32_t>>(parser,'5'),
+                                new_ref<data::parser::OneOfARange_t<uint32_t>>(parser, 0x30, 0x35)                                
                             )
                         ),
                         }}),

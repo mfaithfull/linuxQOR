@@ -47,8 +47,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
                             new_ref<data::parser::OneOrMore>(parser,
                                 new_ref<data::parser::AnyOneOfSet>(parser,
                                     new std::vector<ref_of<ParserState>::type>({{
-                                        new_ref< data::parser::SP>(parser),
-                                        new_ref< data::parser::HTAB>(parser),
+                                        new_ref< data::parser::SP<uint32_t>>(parser),
+                                        new_ref< data::parser::HTAB<uint32_t>>(parser),
                                         new_ref<field_vchar>(parser)
                                         }})
                                     )

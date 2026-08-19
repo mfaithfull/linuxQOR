@@ -39,7 +39,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public: port(qor::data::Parser* parser) : 
                 qor::data::parser::ZeroOrMore( parser,
-                    new_ref<qor::data::parser::DIGIT>(parser),
+                    new_ref<qor::data::parser::DIGIT<uint32_t>>(parser),
                     static_cast<uint64_t>(httpRequestToken::port)
                 )
         {}

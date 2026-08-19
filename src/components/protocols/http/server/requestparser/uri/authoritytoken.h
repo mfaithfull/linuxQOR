@@ -46,14 +46,14 @@ namespace qor { namespace components { namespace protocols { namespace http {
                     new_ref<data::parser::Optional>(parser,
                         new_ref<data::parser::Sequence>(parser,
                             new_ref<userinfo>(parser),
-                            new_ref<data::parser::Specific>(parser,'@')
+                            new_ref<data::parser::Specific<uint32_t>>(parser,'@')
                         )
                     ),
                     new_ref<data::parser::Sequence>(parser,
                         new_ref<host>(parser),
                         new_ref<data::parser::Optional>(parser,
                             new_ref<data::parser::Sequence>(parser,
-                                new_ref<data::parser::Specific>(parser,':'),
+                                new_ref<data::parser::Specific<uint32_t>>(parser,':'),
                                 new_ref<port>(parser)
                             )
                         )

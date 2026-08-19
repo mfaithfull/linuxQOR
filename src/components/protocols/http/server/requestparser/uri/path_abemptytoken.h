@@ -41,7 +41,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
     public: path_abempty(qor::data::Parser* parser) :
                 qor::data::parser::ZeroOrMore(parser,
                     new_ref<qor::data::parser::Sequence>(parser,
-                        new_ref<qor::data::parser::Specific>(parser, '/'),
+                        new_ref<qor::data::parser::Specific<uint32_t>>(parser, '/'),
                         new_ref<segment>(parser)
                     ),
                     static_cast<uint64_t>(httpRequestToken::path_abempty)

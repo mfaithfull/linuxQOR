@@ -43,18 +43,18 @@ namespace qor { namespace components { namespace protocols { namespace http {
                 data::parser::Sequence( parser,
                     new_ref<field_name>(parser),
                     new_ref<data::parser::Sequence>( parser,
-                        new_ref<data::parser::Specific>( parser, ':'),
+                        new_ref<data::parser::Specific<uint32_t>>( parser, ':'),
                         new_ref<data::parser::Sequence>( parser,
                             new_ref<data::parser::ZeroOrMore>(parser,
-                                new_ref<data::parser::WSP>(parser)
+                                new_ref<data::parser::WSP<uint32_t>>(parser)
                             ),
                             new_ref<data::parser::Sequence>( parser,
                                 new_ref<field_value>(parser),
                                 new_ref<data::parser::Sequence>( parser,
                                     new_ref<data::parser::ZeroOrMore>(parser,
-                                        new_ref<data::parser::WSP>(parser)
+                                        new_ref<data::parser::WSP<uint32_t>>(parser)
                                     ),
-                                    new_ref<data::parser::CRLF>(parser)
+                                    new_ref<data::parser::CRLF<uint32_t>>(parser)
                                 )
                             )
                         )

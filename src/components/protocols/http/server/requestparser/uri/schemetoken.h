@@ -40,15 +40,15 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public: scheme(data::Parser* parser) : 
                 data::parser::Sequence(parser,
-                    new_ref<data::parser::ALPHA>(parser),
+                    new_ref<data::parser::ALPHA<uint32_t>>(parser),
                     new_ref<data::parser::ZeroOrMore>(parser,
                         new_ref<data::parser::AnyOneOfSet>(parser,
                             new std::vector<ref_of<ParserState>::type>({{
-                                new_ref<data::parser::ALPHA>(parser),
-                                new_ref<data::parser::DIGIT>(parser),
-                                new_ref<data::parser::Specific>(parser, '+'),
-                                new_ref<data::parser::Specific>(parser, '-'),
-                                new_ref<data::parser::Specific>(parser, '.'),
+                                new_ref<data::parser::ALPHA<uint32_t>>(parser),
+                                new_ref<data::parser::DIGIT<uint32_t>>(parser),
+                                new_ref<data::parser::Specific<uint32_t>>(parser, '+'),
+                                new_ref<data::parser::Specific<uint32_t>>(parser, '-'),
+                                new_ref<data::parser::Specific<uint32_t>>(parser, '.'),
                                 }})                           
                         )
                     ),

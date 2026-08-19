@@ -47,7 +47,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             response->SetBody("Method Not Allowed");
         }
 
-        response::Generator responseGenerator(new_ref<data::parser::Context>(space, writeCount));
+        response::Generator responseGenerator(new_ref<pipeline::BufferContext<byte>>(&m_sinkBuffer));
         responseGenerator.SetResponse(response);
         responseGenerator.Run();
         writeCount = responseGenerator.GetContext()->GetPosition();
@@ -55,7 +55,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     ref_of<HTTPRequest>::type HTTPFilter::Parse(byte* data, size_t& itemCount)
     {
-        data::Parser HTTPRequestParser(new_ref<Context>(data, itemCount));
+        data::Parser HTTPRequestParser(new_ref<pipeline::BufferContext<uint32_t>>(&m_sourceBuffer));
         ref_of<request>::type requestState = new_ref<request>(&HTTPRequestParser);
 
         HTTPRequestParser.SetInitialStep(requestState.AsRef<State>());

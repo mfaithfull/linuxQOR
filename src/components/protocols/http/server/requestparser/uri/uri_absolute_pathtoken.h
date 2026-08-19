@@ -42,13 +42,13 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public: uri_absolute_path(qor::data::Parser* parser) :
                 data::parser::Sequence(parser,
-                    new_ref<data::parser::Specific>(parser, '/'),
+                    new_ref<data::parser::Specific<uint32_t>>(parser, '/'),
                     new_ref<data::parser::Optional>(parser,
                         new_ref<data::parser::Sequence>(parser,
                             new_ref< segment_nz >(parser),
                             new_ref<data::parser::ZeroOrMore>(parser,
                                 new_ref<data::parser::Sequence>(parser,
-                                    new_ref<data::parser::Specific>(parser, '/'),
+                                    new_ref<data::parser::Specific<uint32_t>>(parser, '/'),
                                     new_ref< segment >(parser)
                                 )
                             )

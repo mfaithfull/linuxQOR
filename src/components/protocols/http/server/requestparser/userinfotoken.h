@@ -26,7 +26,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                             new_ref<unreserved>(parser),
                             new_ref<pct_encoded>(parser),
                             new_ref<sub_delims>(parser),
-                            new_ref<data::parser::Specific>(parser, ':')
+                            new_ref<data::parser::Specific<uint32_t>>(parser, ':')
                             }})                            
                     ),
                     static_cast<uint64_t>(httpRequestToken::userinfo)

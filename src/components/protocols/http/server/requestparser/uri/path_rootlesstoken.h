@@ -44,7 +44,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
                     new_ref<segment_nz>(parser),
                     new_ref<qor::data::parser::ZeroOrMore>(parser,
                         new_ref<qor::data::parser::Sequence>(parser,
-                            new_ref<qor::data::parser::Specific>(parser, '/'),
+                            new_ref<qor::data::parser::Specific<uint32_t>>(parser, '/'),
                             new_ref<segment>(parser)
                         )
                     ),

@@ -39,10 +39,10 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public: pct_encoded(data::Parser* parser) :
                 data::parser::Sequence(parser,
-                    new_ref< data::parser::Specific>(parser, '%'),
+                    new_ref< data::parser::Specific<uint32_t>>(parser, '%'),
                     new_ref< data::parser::Sequence>(parser,
-                        new_ref< data::parser::HEXDIGIT>(parser),
-                        new_ref< data::parser::HEXDIGIT>(parser)
+                        new_ref< data::parser::HEXDIGIT<uint32_t>>(parser),
+                        new_ref< data::parser::HEXDIGIT<uint32_t>>(parser)
                     ),
                     static_cast<uint64_t>(httpRequestToken::pct_encoded)
                 )

@@ -5,8 +5,6 @@
 #define QOR_PP_H_COMPONENTS_PROTOCOLS_HTTP_PROTOCOL
 
 #include "src/framework/data/pipeline/protocol.h"
-#include "client/requestsource/source.h"
-#include "client/responsesink/sink.h"
 #include "filter.h"
 
 namespace qor { namespace components { namespace protocols { namespace http {
@@ -18,17 +16,11 @@ namespace qor { namespace components { namespace protocols { namespace http {
         HTTPProtocol();
         virtual ~HTTPProtocol();
         virtual io::network::sockets::eAddressFamily GetAddressFamily() const override;
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetRequestFilter() override;
-        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetResponseFilter() override;
+        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetNewRequestFilter() const override;
+        virtual ref_of<qor::pipeline::InlineFilter<byte>>::type GetNewResponseFilter() const override;
         virtual size_t GetRequestBufferSize();
         virtual size_t GetResponseBufferSize();
         static std::string GetReasonPhrase(unsigned int statusCode);
-
-    private:
-
-        ref_of<HTTPFilter>::type m_requestFilter;
-        ref_of<HTTPFilter>::type m_responseFilter;
-
     };
 }}}}
 

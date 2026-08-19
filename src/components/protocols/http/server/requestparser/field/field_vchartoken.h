@@ -38,8 +38,8 @@ namespace qor { namespace components { namespace protocols { namespace http {
     {
     public: field_vchar(data::Parser* parser) :
                 data::parser::AnyOneOf(parser,
-                    new_ref< data::parser::VCHAR>(parser),
-                    new_ref< data::parser::OneOfARange>(parser, 0x80, 0xFF),
+                    new_ref< data::parser::VCHAR<uint32_t>>(parser),
+                    new_ref< data::parser::OneOfARange_t<uint32_t>>(parser, 0x80, 0xFF),
                     static_cast<uint64_t>(httpRequestToken::field_vchar)
                 )
         {}
