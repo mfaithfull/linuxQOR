@@ -11,7 +11,7 @@ int main(int argc, const char** argv, char**)
 	return qor::test::Factory::Instance().main(argc, argv);
 }
 
-qor_pp_export qor::Module& ThisModule(void)
+qor::Module& ThisModule(void)
 {
 	static qor::Module QORModule("Querysoft Open Runtime: Test Executable Module", qor_pp_module_ver_string );
 	return QORModule;

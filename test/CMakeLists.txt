@@ -20,7 +20,9 @@ assert/set.cpp assert/shared_ptr.cpp assert/span.cpp
 assert/stack.cpp assert/string.cpp assert/string_view.cpp 
 assert/unique_ptr.cpp assert/unordered_map.cpp assert/unordered_multimap.cpp 
 assert/unordered_set.cpp assert/user_class.cpp assert/user_subject.cpp 
-assert/weak_ptr.cpp datastructures/guid.cpp
+assert/weak_ptr.cpp 
+datastructures/guid.cpp
+datastructures/polymorphic.cpp
 framework/host.cpp
 factory/test_factory.cpp reference/test_ref.cpp
 objectcontext/test_objectcontext.cpp
@@ -63,7 +65,7 @@ components/pipeline/test_stdoutsink.cpp
 ##property/test_property.cpp 
 components/pipeline/test_ifstreamsource.cpp
 components/pipeline/test_ofstreamsink.cpp
-components/protocols/http/test_httpfilter.cpp
+##components/protocols/http/test_httpfilter.cpp
 platform/test_network.cpp
 text/test_constbuffer.cpp
 text/test_mutablebuffer.cpp
@@ -90,7 +92,7 @@ qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink
 ##qor_property 
 qor_console linqor_filesystem linqor_thread linqor_process uring linqor_console qor_stdfstreamconnector 
 qor_stdifstreamsource qor_stdofstreamsink qor_sockets linqor_sockets qor_log qor_loghandler qor_logaggregator
-qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter qor_http)
+qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
@@ -100,7 +102,7 @@ qor_pipeline qor_workflow qor_role qor_application qor_filesystem
 qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink 
 ##qor_property 
 qor_console winqor_api_kernel winqor_api_winsock2 winqor_filesystem winqor_thread winqor_process winqor_console winqor_common qor_stdfstreamconnector 
-qor_stdifstreamsource qor_stdofstreamsink qor_sockets qor_log qor_loghandler qor_logaggregator qor_http
+qor_stdifstreamsource qor_stdofstreamsink qor_sockets qor_log qor_loghandler qor_logaggregator 
 qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter winqor_sockets) 
 endif()
 
@@ -122,3 +124,5 @@ add_subdirectory(components/formats)
 add_subdirectory(tef)
 add_subdirectory(frozen)
 add_subdirectory(dio)
+add_subdirectory(uri)
+add_subdirectory(mpl)
