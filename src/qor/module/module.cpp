@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: BSL-1.0
 
 #include "src/configuration/configuration.h"
+#include <cstring>
 #include "src/platform/compiler/compiler.h"
 #include "module.h"
 
