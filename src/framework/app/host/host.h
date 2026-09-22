@@ -16,12 +16,12 @@ namespace qor{
     public:
 
         Host();
-        virtual ~Host();
+        virtual ~Host() noexcept;
 
         static Module& Instance();
 
         virtual void RegisterModule(Module* module);
-        virtual void UnregisterModule(Module* module);
+        virtual void UnregisterModule(Module* module) noexcept;
 
     };
 

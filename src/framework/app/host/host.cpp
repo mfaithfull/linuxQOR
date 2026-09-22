@@ -12,13 +12,13 @@ namespace {
     static qor::ModuleRegistry _theModuleRegistry;
 }
 
-extern qor::Module& HostModule(void);
+extern qor::Module& ThisModule(void);
 
 namespace qor{
 
     Module* TheHost()
     {
-        return &(HostModule());
+        return &(ThisModule());
     }
     
     Host::Host() : Module( "Querysoft Open Runtime: Host Module", qor_pp_module_ver_string, false )
@@ -27,7 +27,7 @@ namespace qor{
         m_ModuleReg->Register(*this);
     }
 
-    Host::~Host() = default;
+    Host::~Host() noexcept = default;
 
     Module& Host::Instance()
     {
@@ -36,12 +36,18 @@ namespace qor{
     
 	void Host::RegisterModule(Module* module)
 	{
-        m_ModuleReg->Register(*module);
+        if(m_ModuleReg)
+        {
+            m_ModuleReg->Register(*module);
+        }
 	}
 
-	void Host::UnregisterModule(Module* module)
+	void Host::UnregisterModule(Module* module) noexcept
 	{
-        m_ModuleReg->Unregister(*module);
+        if(m_ModuleReg)
+        {
+            m_ModuleReg->Unregister(*module);
+        }
 	}
 
 }//qor

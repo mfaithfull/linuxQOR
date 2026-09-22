@@ -4,7 +4,7 @@
 #include "src/configuration/configuration.h"
 #include "host.h"
 
-qor::Module& HostModule(void)
+qor::Module& ThisModule()
 {
 	static qor::Host host;
 	return host;

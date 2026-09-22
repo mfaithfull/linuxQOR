@@ -14,7 +14,7 @@
 
 namespace qor { namespace components {
 
-    ConsoleMenuWidget::ConsoleMenuWidget(const string_t& name) : m_selected(0), m_name(name), ConsoleWidget() {}
+    ConsoleMenuWidget::ConsoleMenuWidget(const string_t& name) : ConsoleWidget(), m_selected(0), m_name(name) {}
 
     void ConsoleMenuWidget::AddMenuItem(ref_of<MenuItem>::type item)
     {
