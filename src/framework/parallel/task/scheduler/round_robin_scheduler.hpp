@@ -17,7 +17,7 @@
 
 namespace cppcoro
 {
-#if qor_pp_compiler_supports_symetric_transfer
+//#if qor_pp_compiler_supports_symetric_transfer
 	/// This is a scheduler class that schedules coroutines in a round-robin
 	/// fashion once N coroutines have been scheduled to it.
 	///
@@ -120,7 +120,7 @@ namespace cppcoro
 		const std::coroutine_handle<> m_noop;
 		std::array<std::coroutine_handle<>, N - 1> m_coroutines;
 	};
-#endif
+//#endif
 }
 
 #endif

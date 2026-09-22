@@ -20,7 +20,7 @@ namespace qor
 	template<typename T>
 	class AsyncGenerator;
 
-#if qor_pp_compiler_supports_symetric_transfer
+//#if qor_pp_compiler_supports_symetric_transfer
 
 	namespace detail
 	{
@@ -425,7 +425,7 @@ namespace qor
 			return AsyncGenerator<T>{ *this };
 		}
 	}
-#else // !qor_pp_compiler_supports_symetric_transfer
+/*#else // !qor_pp_compiler_supports_symetric_transfer
 
 	namespace detail
 	{
@@ -1040,7 +1040,7 @@ namespace qor
 		}
 	}
 #endif // !qor_pp_compiler_supports_symetric_transfer
-
+*/
 	template<typename FUNC, typename T>
 	AsyncGenerator<std::invoke_result_t<FUNC&, decltype(*std::declval<typename AsyncGenerator<T>::iterator&>())>> fmap(FUNC func, AsyncGenerator<T> source)
 	{

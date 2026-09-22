@@ -31,14 +31,14 @@ namespace qor
 			{
 				bool await_ready() const noexcept { return false; }
 
-#if qor_pp_compiler_supports_symetric_transfer
+//#if qor_pp_compiler_supports_symetric_transfer
 				template<typename PROMISE>
 				std::coroutine_handle<> await_suspend(
 					std::coroutine_handle<PROMISE> coro) noexcept
 				{
 					return coro.promise().m_continuation;
 				}
-#else
+/*#else
 				// HACK: Need to add qor_pp_noinline to await_suspend() method
 				// to avoid MSVC 2017.8 from spilling some local variables in
 				// await_suspend() onto the coroutine frame in some cases.
@@ -64,7 +64,7 @@ namespace qor
 						}					
 					}
 				}
-#endif
+#endif*/
 
 				void await_resume() noexcept {}
 			};
@@ -72,9 +72,9 @@ namespace qor
 		public:
 
 			task_promise_base() noexcept
-#if !qor_pp_compiler_supports_symetric_transfer
+/*#if !qor_pp_compiler_supports_symetric_transfer
 				: m_state(false)
-#endif
+#endif*/
 			{}
 
 			auto initial_suspend() noexcept
@@ -87,29 +87,29 @@ namespace qor
 				return final_awaitable{};
 			}
 
-#if qor_pp_compiler_supports_symetric_transfer
+//#if qor_pp_compiler_supports_symetric_transfer
 			void set_continuation(std::coroutine_handle<> continuation) noexcept
 			{
 				m_continuation = continuation;
 			}
-#else
+/*#else
 			bool try_set_continuation(std::coroutine_handle<> continuation)
 			{
 				m_continuation = continuation;
 				return !m_state.exchange(true, std::memory_order_acq_rel);
 			}
-#endif
+#endif*/
 
 		private:
 
 			std::coroutine_handle<> m_continuation;
 
-#if !qor_pp_compiler_supports_symetric_transfer
+/*#if !qor_pp_compiler_supports_symetric_transfer
 			// Initially false. Set to true when either a continuation is registered
 			// or when the coroutine has run to completion. Whichever operation
 			// successfully transitions from false->true got there first.
 			std::atomic<bool> m_state;
-#endif
+#endif*/
 
 		};
 
@@ -295,14 +295,14 @@ namespace qor
 				return !m_coroutine || m_coroutine.done();
 			}
 
-#if qor_pp_compiler_supports_symetric_transfer
+//#if qor_pp_compiler_supports_symetric_transfer
 			std::coroutine_handle<> await_suspend(
 				std::coroutine_handle<> awaitingCoroutine) noexcept
 			{
 				m_coroutine.promise().set_continuation(awaitingCoroutine);
 				return m_coroutine;
 			}
-#else
+/*#else
 			bool await_suspend(std::coroutine_handle<> awaitingCoroutine) noexcept
 			{
 				// NOTE: We are using the bool-returning version of await_suspend() here
@@ -324,7 +324,7 @@ namespace qor
 				m_coroutine.resume();
 				return m_coroutine.promise().try_set_continuation(awaitingCoroutine);
 			}
-#endif
+#endif*/
 		};
 
 	public:
