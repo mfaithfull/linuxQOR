@@ -26,6 +26,8 @@
 
 #include "src/qor/module/module.h"
 #include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/platform/os/windows/api_layer/kernel/errorhandler.h"
 
 #include "ws2.h"
 #include "../kernel/kernel32.h" //kernel32.h must be the first windows header as it's the primary inclusion point for windows.h
@@ -41,6 +43,7 @@ namespace qor { namespace win { namespace api {
 	SOCKET WS2::accept( SOCKET s, sockaddr* addr, int* addrlen )
 	{
 		qor_pp_fcontext;
+		Win32ErrorHandler _;
 		CheckReturn< SOCKET, TCheckWinsockFailureValue< SOCKET, INVALID_SOCKET> >::TType Result;
 		qor_pp_useswinapi(ws2_32, accept );
         Result = Library::Call< SOCKET, SOCKET, sockaddr*, int* >( pFunc, s, addr, addrlen );

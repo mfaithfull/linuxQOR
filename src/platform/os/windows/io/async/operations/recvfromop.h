@@ -37,7 +37,7 @@ namespace qor { namespace io { namespace async { namespace win {
 
 		// Storage suitable for either SOCKADDR_IN or SOCKADDR_IN6
 		alignas(sockaddrStorageAlignment) std::uint8_t m_sourceSockaddrStorage[28];
-		int m_sourceSockaddrLength;
+		int m_sourceSockaddrLength{ 0 };
 
 	};
 

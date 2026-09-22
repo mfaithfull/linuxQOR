@@ -45,8 +45,8 @@ namespace qor { namespace io { namespace async { namespace win {
         std::chrono::high_resolution_clock::time_point m_resumeTime;
         CancellationToken m_cancellationToken;
         std::optional<CancellationRegistration> m_cancellationRegistration;
-        TimedScheduleOperation* m_next;
-        std::atomic<std::uint32_t> m_refCount;
+        TimedScheduleOperation* m_next{ nullptr };
+        std::atomic<std::uint32_t> m_refCount{ 0 };
     };
 
 }}}}//qor::io::async::win

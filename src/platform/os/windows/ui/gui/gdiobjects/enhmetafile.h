@@ -41,9 +41,6 @@ namespace qor{ namespace platform { namespace win{
         
         PrimitiveHandle m_handle;
 
-    private:
-        bool m_owning;
-
     };
     
 }}}//qor::platform::win

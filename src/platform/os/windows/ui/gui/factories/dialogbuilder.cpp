@@ -39,13 +39,13 @@ namespace qor{ namespace platform { namespace win{
     {
     }
 
-    StaticDialogItemViewModel::StaticDialogItemViewModel(const std::wstring& message, short x, short y, short width, short height, unsigned long style, unsigned long exStyle, unsigned short id, unsigned short creationData) :
-        m_message(message), m_creationData(creationData), DialogItemViewModel(x, y, width, height, style, exStyle, id)
+    StaticDialogItemViewModel::StaticDialogItemViewModel(const std::wstring& message, short x, short y, short width, short height, unsigned long style, unsigned long exStyle, unsigned short id, unsigned short creationData) : DialogItemViewModel(x, y, width, height, style, exStyle, id),
+        m_message(message), m_creationData(creationData)
     {        
     }
 
-    ButtonDialogItemViewModel::ButtonDialogItemViewModel(const std::wstring& message, short x, short y, short width, short height, unsigned long style, unsigned long exStyle, unsigned short id, unsigned short creationData) :
-        m_message(message), m_creationData(creationData), DialogItemViewModel(x, y, width, height, style, exStyle, id)
+    ButtonDialogItemViewModel::ButtonDialogItemViewModel(const std::wstring& message, short x, short y, short width, short height, unsigned long style, unsigned long exStyle, unsigned short id, unsigned short creationData) : DialogItemViewModel(x, y, width, height, style, exStyle, id),
+        m_message(message), m_creationData(creationData)
     {
     }
 

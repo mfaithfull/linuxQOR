@@ -82,7 +82,7 @@ namespace qor{ namespace platform { namespace win{ namespace gui{ namespace view
                 unsigned short wYPos = 0;
                 unsigned short wXPos = LoWord(lParam);
                 unsigned short wData = HiWord(lParam);
-                bool bAcceleratorUsed = (wData == -1) ? true : false;
+                bool bAcceleratorUsed = ((wData == (unsigned short)(-1)) ? true : false);
                 bool bMnemonic = (wData == 0) ? true : false;
                 if (!bAcceleratorUsed && !bMnemonic)
                 {

@@ -214,7 +214,7 @@ namespace qor{ namespace platform { namespace win{
         {
             if(displayDevice.StateFlags & DISPLAY_DEVICE_ACTIVE)
             {
-                DisplayAdapter adapter{ displayDevice.DeviceName, displayDevice.DeviceString, displayDevice.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE ? true : false };
+                DisplayAdapter adapter{ displayDevice.DeviceName, displayDevice.DeviceString, (displayDevice.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) ? true : false };
                 vecAdapters.emplace_back(adapter);
             }
             ZeroMemory(&displayDevice, sizeof(DisplayDevice));

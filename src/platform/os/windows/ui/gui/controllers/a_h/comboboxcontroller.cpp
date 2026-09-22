@@ -297,7 +297,6 @@ namespace qor{ namespace platform { namespace win{
 
     int ComboBoxController::SetTopIndex(int index) const
     {
-        return 0;
         WPARAM wparam = static_cast<WPARAM>(index);
         return static_cast<int>(User32::SendMessageT(WINDOW_HANDLE, CB_SETTOPINDEX, wparam, 0));
     }

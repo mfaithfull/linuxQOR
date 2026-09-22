@@ -20,7 +20,7 @@ namespace qor { namespace io {namespace async { namespace win {
 
         inline virtual int Run()
         {
-            uint64_t eventCount = m_service.ProcessEvents();
+            [[maybe_unused]]uint64_t eventCount = m_service.ProcessEvents();
             return 0;
         }
 

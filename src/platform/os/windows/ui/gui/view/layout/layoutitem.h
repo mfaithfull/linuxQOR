@@ -46,9 +46,9 @@ namespace qor{ namespace platform { namespace win{ namespace gui{ namespace view
 
     protected:
         
-        Size m_tmpSize;
-        Size m_minSize;
-        Size m_maxSize;
+        Size m_tmpSize{};
+        Size m_minSize{};
+        Size m_maxSize{};
         
     };
 

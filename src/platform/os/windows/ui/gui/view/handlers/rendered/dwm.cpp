@@ -69,9 +69,9 @@ namespace qor{ namespace platform { namespace win{ namespace gui{ namespace view
                 {
                     lResult = OnSendIconicLivePreviewBitmap(window) ? 0 : window.DefWindowProcT(msg, wParam, lParam);
                     return true;
-                }
-                return false;
+                }               
             }
+            return false;
         }
         return true;
     }

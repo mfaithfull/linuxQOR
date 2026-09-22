@@ -48,7 +48,7 @@ namespace qor { namespace win { namespace api {
             return;
         }
         std::string errorDescription(static_cast<std::size_t>(size) - 1, 0);
-        const int result = WideCharToMultiByte(CP_UTF8, 0, s, -1, errorDescription.data(), size, nullptr, nullptr);
+        [[maybe_unused]] const int result = WideCharToMultiByte(CP_UTF8, 0, s, -1, errorDescription.data(), size, nullptr, nullptr);
         LocalFree(s);
         continuable(errorDescription);
     }

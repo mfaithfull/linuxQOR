@@ -210,8 +210,8 @@ namespace qor { namespace ui{ namespace win {
 		//stdoutHandle.SetProtectFromClose(false);
 		stdoutHandle.Drop();
 
-		bool free = m_helper.Free();
-		bool alloc = m_helper.Alloc(); 
+		m_helper.Free();
+		m_helper.Alloc(); 
 		m_allocated = true;
 
 		BindCrtHandlesToStdHandles(true, true, true);
@@ -389,7 +389,7 @@ namespace qor { namespace ui{ namespace win {
 	unsigned long Console::WriteBytes(char* data, size_t byteCount)
 	{
 		unsigned long bytesWritten = 0;
-		bool result = m_redirected ?
+		m_redirected ?
 			Kernel32::WriteFile(m_outFile, data, static_cast<DWORD>(byteCount), &bytesWritten, nullptr) :
 			Kernel32::WriteConsoleA(m_outFile, data, static_cast<DWORD>(byteCount), &bytesWritten, nullptr);
 		return bytesWritten;
@@ -432,8 +432,8 @@ namespace qor { namespace ui{ namespace win {
 		
 	bool Console::SetActiveScreenBuffer(ref_of<ConsoleScreenBuffer>::type screenBuffer)
 	{
-		return m_helper.SetActiveScreenBuffer(screenBuffer->Handle());
 		m_outFile = screenBuffer->Handle();
+		return m_helper.SetActiveScreenBuffer(screenBuffer->Handle());		
 	}
 
 	ref_of<ConsoleInput>::type Console::GetInput()

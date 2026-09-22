@@ -132,12 +132,13 @@ namespace qor { namespace ui{ namespace win {
 
 	void GraphConRenderer::DrawLine(int x1, int y1, int x2, int y2, short c, short col)
 	{
-		int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
+		int x, y, dx, dy, dx1, dy1, px, py, i;
 		dx = x2 - x1; dy = y2 - y1;
 		dx1 = abs(dx); dy1 = abs(dy);
 		px = 2 * dy1 - dx1;	py = 2 * dx1 - dy1;
 		if (dy1 <= dx1)
 		{
+			int xe;
 			if (dx >= 0)
 			{ 
                 x = x1; y = y1; xe = x2; 
@@ -173,6 +174,7 @@ namespace qor { namespace ui{ namespace win {
 		}
 		else
 		{
+			int ye;
 			if (dy >= 0)
 			{ 
                 x = x1; y = y1; ye = y2; 

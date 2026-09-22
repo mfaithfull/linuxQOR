@@ -37,7 +37,7 @@ namespace qor{ namespace platform { namespace win{
     {        
     }
 
-    Cursor::Cursor(const Cursor& src) : m_owning(false),m_handle(src.m_handle)
+    Cursor::Cursor(const Cursor& src) : m_handle(src.m_handle), m_owning(false)
     {
     }
 

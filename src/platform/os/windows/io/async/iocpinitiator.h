@@ -99,7 +99,7 @@ namespace qor { namespace io { namespace async { namespace win {
 
     protected:
 
-        IOCPEventProcessor* m_eventProcessor;
+        IOCPEventProcessor* m_eventProcessor{ nullptr };
     };
 
 }}}}//qor::io::async::win

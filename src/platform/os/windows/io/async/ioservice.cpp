@@ -238,7 +238,7 @@ namespace qor { namespace io { namespace async { namespace win {
                 unsigned long errorCode = ok ? Success : qor::win::api::Kernel32::GetLastError();
 
                 auto* state = static_cast<io_state*>(reinterpret_cast<struct overlapped*>(overlapped));
-                if(state && state->m_callback && state->m_callback != ((io_state::callback_type*)0xdddddddddddddddd) && state->m_callback != ((io_state::callback_type*)0xcdcdcdcdcdcdcdcd))
+                if(state->m_callback && state->m_callback != ((io_state::callback_type*)0xdddddddddddddddd) && state->m_callback != ((io_state::callback_type*)0xcdcdcdcdcdcdcdcd))
                 {
                     state->m_callback( state, errorCode, numberofBytesTransferred, completionKey);
                 }

@@ -61,8 +61,8 @@ namespace qor { namespace io { namespace async { namespace win {
 			operation->m_numberOfBytesTransferred = numberOfBytesTransferred;
 			if(operation->m_errorCode != 0)
 			{
-				//early error catch
-				operation->m_errorCode = operation->m_errorCode;
+				//TODO: early error catch
+				//operation->m_errorCode = operation->m_errorCode;
 			}
 			if((uint64_t)(operation->m_awaitingCoroutine.address()) != 0xdddddddddddddddd)
 			{

@@ -68,32 +68,27 @@ namespace qor { namespace win { namespace api {
             case Severity::Note:
                 ::OutputDebugStringA(error.what().Content().c_str());
                 return true;
-                break;
             case Severity::Warning:
                 ::OutputDebugStringA(error.what().Content().c_str());
-                return true;
-                break;
+                return true;                
             case Severity::Continuable_Error:
                 {                    
                     std::string message = GetLastErrorAsString();
-                    ::OutputDebugStringA(std::format("{0}. Windows error status - {1}",error.what().Content(), message).c_str());
-                    return false;
+                    ::OutputDebugStringA(std::format("{0}. Windows error status - {1}",error.what().Content(), message).c_str());                    
                 }
-                break;
+                return false;
             case Severity::Serious_Error:
                 {                    
                     std::string message = GetLastErrorAsString();
-                    ::OutputDebugStringA(std::format("{0}. Windows error status - {1}",error.what().Content(), message).c_str());
-                    return false;
+                    ::OutputDebugStringA(std::format("{0}. Windows error status - {1}",error.what().Content(), message).c_str());                    
                 }                
-                break;
+                return false;
             case Severity::Fatal_Error:
                 {                    
                     std::string message = GetLastErrorAsString();
-                    ::OutputDebugStringA(std::format("{0}. Windows error status - {1}",error.what().Content(), message).c_str());
-                    return false;
+                    ::OutputDebugStringA(std::format("{0}. Windows error status - {1}",error.what().Content(), message).c_str());                    
                 }
-                break;
+                return false;
         }   
         return false;     
     }

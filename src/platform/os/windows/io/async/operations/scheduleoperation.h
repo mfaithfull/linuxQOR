@@ -33,7 +33,7 @@ namespace qor { namespace io { namespace async { namespace win {
 
         IOService& m_service;
         std::coroutine_handle<> m_awaiter;
-        ScheduleOperation* m_next;
+        ScheduleOperation* m_next{ nullptr };
     };
 
 }}}}//qor::io::async::win
