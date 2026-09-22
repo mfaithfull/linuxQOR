@@ -11,14 +11,14 @@ namespace qor{
     {
     public:
 
-        Library( const char* name, const char* version, bool bRegister = true);
+        Library(const char* name, const char* version, bool doRegister = true);
         virtual ~Library() noexcept = default;
 
 		inline const char* Name() const { return m_Name; }
 
         inline const char* Version() const { return m_Version; }
 
-        void Append(const Library* last);                   //Append to the end of the chain
+        void Append(const Library* last) const;             //Append to the end of the chain
 
 		inline const Library* Next() const                  //Get the next library in the chain
         {
@@ -34,7 +34,7 @@ namespace qor{
 
 		const char* m_Name;							        //The internal library name, not necessarily related to any file name
         const char* m_Version;
-        const Library* m_Next;								//Pointer to next static library forming a chain
+        const Library* m_Next{nullptr};                     //Pointer to next static library forming a chain
 	
 	private:
 	

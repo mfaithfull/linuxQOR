@@ -20,34 +20,34 @@ namespace qor{ namespace memory{
 
         byte* Allocate();
         
-        inline bool IsEmpty()
+        inline bool IsEmpty() const noexcept
         {
             return m_allocCount == 0 ? true : false;
         }
 
         bool Free(byte* element);
 
-        inline size_t UnitSize() const
+        inline size_t UnitSize() const noexcept
         {
             return m_unitSize;
         }
 
-        inline byte GetCacheLimit() const
+        inline byte GetCacheLimit() const noexcept
         {
             return m_cacheLimit;
         }
 
-        inline void SetCacheLimit(byte pages)
+        inline void SetCacheLimit(byte pages) noexcept
         {
             m_cacheLimit = pages;
         }
 
-        inline byte GetCacheCount() const
+        inline byte GetCacheCount() const noexcept
         {
             return m_cacheCount;
         }
 
-        inline size_t AllocatedItems(void) const
+        inline size_t AllocatedItems(void) const noexcept
         {
             return m_allocCount;
         }

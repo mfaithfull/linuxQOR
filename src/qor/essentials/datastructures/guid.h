@@ -16,7 +16,7 @@ namespace qor
 		uint16_t Data3;
 		uint8_t Data4[8];
 
-        auto operator<=>(const GUID& cmp) const
+        auto operator<=>(const GUID& cmp) const noexcept
         {
             if (Data1 != cmp.Data1) return Data1 <=> cmp.Data1;
             if (Data2 != cmp.Data2) return Data2 <=> cmp.Data2;
@@ -29,7 +29,7 @@ namespace qor
             return std::strong_ordering::equal;
         }
 
-        bool operator ==(const GUID& cmp) const
+        bool operator ==(const GUID& cmp) const noexcept
         {
             return Data1 == cmp.Data1 && Data2 == cmp.Data2 && Data3 == cmp.Data3 && 
                 Data4[0] == cmp.Data4[0] &&

@@ -76,7 +76,6 @@ namespace qor{ namespace memory{
                 throw memoryexception("Small Object Heap bucket not fond for request of size {0} bytes.", size);
             }
         }
-
         return memory;
     }
 
@@ -105,7 +104,7 @@ namespace qor{ namespace memory{
         }
     }
 
-    size_t SmallObjectHeap::TotalAllocation(void) const
+    size_t SmallObjectHeap::TotalAllocation() const
     {
         return m_totalAlloc;
     }
@@ -137,9 +136,9 @@ namespace qor{ namespace memory{
     }
 
     void SmallObjectHeap::FreeBucket(size_t bucketIndex, SmallObjectBucket* bucket)
-    {
-        m_buckets[bucketIndex] = nullptr;
+    {        
         delete bucket;
+        m_buckets[bucketIndex] = nullptr;
     }
 
     size_t SmallObjectHeap::BucketIndex(size_t allocSize)
@@ -154,18 +153,12 @@ namespace qor{ namespace memory{
         {
             m_buckets[bucketIndex] = new SmallObjectBucket(4 << bucketIndex);
         }
-
         return bucketIndex;
     }
 
     SmallObjectBucket* SmallObjectHeap::Bucket(size_t bucketIndex)          //Get the bucket from the index
     {
-        SmallObjectBucket* bucket = nullptr;
-        if (bucketIndex < sc_rootBuckets)
-        {
-            bucket = m_buckets[bucketIndex];
-        }
-        return bucket;
+        return bucketIndex < sc_rootBuckets ? m_buckets[bucketIndex] : nullptr;
     }
 
 }}//qor::memory

@@ -17,28 +17,32 @@ namespace qor{
 
 		inline ModuleRegistry() noexcept = default;
 
-        inline ~ModuleRegistry()
+        inline constexpr ~ModuleRegistry() noexcept
         {
             m_Modules.erase(m_Modules.cbegin(), m_Modules.cend());
         }
 
-		inline void Register(Module& module)
+		inline constexpr void Register(Module& module)
 		{
             m_Modules.emplace_back(&module);
 		}
 		
-		inline void Unregister(Module& module)
+		inline constexpr void Unregister(Module& module) noexcept
 		{
-            auto it =  std::find(m_Modules.begin(), m_Modules.end(), &module);
+            //std::find is not explicitly noexcept because it can rely on
+            //user provided comparators for elements at iterators.
+            //In this case all comparators are built in pointer comparators
+            //ergo we can be noexcept.
+            auto it = std::find(m_Modules.begin(), m_Modules.end(), &module);
             if(it != m_Modules.end())
             {
                 m_Modules.erase(it);
             }
 		}
 
-        inline void VisitModules(void(f)(Module*))
+        inline constexpr void VisitModules(void(f)(Module*))
         {
-            std::for_each( m_Modules.begin(), m_Modules.end(), f );
+            std::for_each(m_Modules.begin(), m_Modules.end(), f);
         }
 
     private:

@@ -27,24 +27,24 @@ namespace qor{ namespace memory{
         FastBucket(size_t pageUnits = 1);
         ~FastBucket();
 
-        inline size_t PageSize(void) const
+        inline size_t PageSize(void) const noexcept
         {
             return (m_pageUnits * StackPage::c_pageSize);
         }
 
-        inline size_t AllocatedItems(void) const
+        inline size_t AllocatedItems(void) const noexcept
         {
             return m_items;
         }
 
-        inline size_t AllocatedPages(void) const
+        inline size_t AllocatedPages(void) const noexcept
         {
             return m_pages;
         }
 
         size_t AllocatedSpace(void) const;
 
-        void SetSize(size_t pageUnits)
+        void SetSize(size_t pageUnits) noexcept
         {
             m_pageUnits = pageUnits;
         }

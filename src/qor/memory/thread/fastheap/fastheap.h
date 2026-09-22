@@ -25,10 +25,10 @@ namespace qor { namespace memory {
         static constexpr size_t sc_powerScale = 2;
 
         FastHeap();
-        ~FastHeap() = default;
+        ~FastHeap() noexcept;
         void* Allocate(size_t byteCount);
         void Free(void* allocation, size_t byteCount);
-        size_t TotalBytesAllocated() const;
+        size_t TotalBytesAllocated() const noexcept;
 
     private:
 

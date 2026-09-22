@@ -4,6 +4,8 @@
 #ifndef QOR_PP_H_FUNCTIONCONTEXT
 #define QOR_PP_H_FUNCTIONCONTEXT
 
+#include <source_location>
+
 #include "src/qor/essentials/objectcontext/anyobject.h"
 #include "src/qor/tdd/profiling/profiling.h"
 #include "src/qor/tdd/profiling/iprofilereceiver.h"
@@ -14,10 +16,10 @@
 //Usage: Only ever create these on the stack at the beginning of a function
 
 //Use qor_pp_fcontext in free functions
-#define qor_pp_fcontext qor::FunctionContext _FContext_(qor_pp_funcsig, __FILE__, __LINE__, ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled)
+#define qor_pp_fcontext qor::FunctionContext _FContext_(std::source_location::current(), ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled)
 
 //Use qor_pp_ofcontext in member functions
-#define qor_pp_ofcontext qor::FunctionContext _FContext_(qor_pp_funcsig, __FILE__, __LINE__, ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled, qor::AnyObject(this))
+#define qor_pp_ofcontext qor::FunctionContext _FContext_(std::source_location::current(), ThisModule().Name(), qor_pp_profile_enabled, qor_pp_coverage_enabled, qor::AnyObject(this))
 
 namespace qor
 {
@@ -28,34 +30,33 @@ namespace qor
 		FunctionContext();
 		FunctionContext(const FunctionContext&) = delete;
 		FunctionContext& operator = (const FunctionContext&) = delete;
-		FunctionContext(const char* funcName, const char* file, unsigned int line, const char* module, bool profile, bool coverage, AnyObject objContext = AnyObject::EmptyObject());
+		FunctionContext(const std::source_location& location, const char* module, bool profile, bool coverage, AnyObject objContext = AnyObject::EmptyObject());
 		virtual ~FunctionContext();
-		bool Locked() const;
-		virtual unsigned int Lock();
-		virtual unsigned int Unlock();
-		bool Trace(bool newTrace);
-		virtual ICallContext* GetCallContext();
-		const char* File() const;
-		const char* Name() const;
-		unsigned int Line() const;
-		virtual IFunctionContext* GetParent() const;
-		virtual void SetParent(IFunctionContext* parent);
-		virtual unsigned int TraceDepth();
-		AnyObject TypedAny() const;
-		virtual const char* Module() const;
+		virtual unsigned int Lock() noexcept override;
+		virtual unsigned int Unlock() noexcept override;		
+		virtual bool Locked() const noexcept override;
+		virtual ICallContext* GetCallContext() noexcept override;
+		virtual IFunctionContext* GetParent() const override;
+		virtual void SetParent(IFunctionContext* parent) override;
+		virtual unsigned int TraceDepth() const noexcept override;
+		const char* File() const noexcept override;
+		const char* Name() const noexcept override;;
+		unsigned int Line() const noexcept override;
+		unsigned int Column() const noexcept override;
+		AnyObject TypedAny() const override;
+		virtual const char* Module() const override;
         virtual void Profile(const std::chrono::duration<int64_t, std::micro>, IFunctionContext* fContext);
+		bool Trace(bool newTrace);
 
 	protected:
 
 		bool m_traceCalls{false};
 		unsigned int m_locked{0};
 		unsigned int m_traceDepth{1};
-		const char* m_funcName{nullptr};
-		const char* m_file{nullptr};
+		std::source_location m_location{};
 		const char* m_module{nullptr};
 		IFunctionContext* m_Parent{nullptr};
 		AnyObject m_ObjContext;
-		unsigned int m_line{0};
 		CallContext m_CallContext;
 		qor_pp_profiling_object m_Profiler;
 
@@ -69,4 +70,3 @@ namespace qor
 }//qor
 
 #endif//QOR_PP_H_FUNCTIONCONTEXT
-//Review 2027/07/07

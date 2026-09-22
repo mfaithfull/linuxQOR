@@ -276,12 +276,12 @@ namespace qor{
 			return Ref<T> ();
 		}
 
-		bool IsNull(void) const
+		bool IsNull(void) const noexcept
 		{
 			return m_p == nullptr || (m_p->IsNull());
 		}
 
-		bool IsNotNull(void) const
+		bool IsNotNull(void) const noexcept
 		{
 			return m_p != nullptr && (!m_p->IsNull());
 		}
@@ -300,7 +300,7 @@ namespace qor{
 		template< class TDerived, typename... _p >
 		bool Configure(_p&&... p1)
 		{
-			return const_cast<detail::SharedRef<T>*>(m_p)->Configure(std::forward<_p>(p1)...);
+			return m_p->Configure(std::forward<_p>(p1)...);
 		}
 
 		void Lock() const

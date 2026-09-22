@@ -67,8 +67,7 @@ namespace qor{
 			{
 				//This is where the underlying raw object gets allocated iff its type is constructable
 				m_p = AllocateOnlyConcreteTypesFunctor<R, is_abstract::value>::template Allocate<_p...>(count, std::forward<_p>(p1)...);
-
-				m_p ? SetDeleter() : throw new std::logic_error("Cannot make an instance of an abstract type.");				
+				m_p ? SetDeleter() : throw std::logic_error("Cannot make an instance of an abstract type.");
 			}
 
 			SharedRef(R* pr) : m_p(pr), m_RefCount(0), m_Section()
@@ -76,7 +75,7 @@ namespace qor{
 				if(m_p != nullptr){ SetDeleter(); }
 			}
 
-            inline R* AllocateConcreteType(size_t count)
+            inline R* AllocateConcreteType(size_t count) const
             {
                 return allocator_of<R>::type::template Allocate<R>(count);
             }
@@ -95,7 +94,7 @@ namespace qor{
 				}
 				else
 				{
-					throw new std::logic_error("Cannot make an instance of an abstract type.");
+					throw std::logic_error("Cannot make an instance of an abstract type.");
 				}
 			}
 
@@ -115,11 +114,11 @@ namespace qor{
 			{
 				if (m_p)
 				{
-					throw new std::logic_error("An object still exists when its owning reference has been destroyed. It will leak.");
+					throw std::logic_error("An object still exists when its owning reference has been destroyed. It will leak.");
 				}
 			}
 
-			bool IsNull(void) const
+			bool IsNull(void) const noexcept
 			{
 				return m_p == nullptr;
 			}
@@ -129,23 +128,23 @@ namespace qor{
 				return ++m_RefCount;
 			}
 
-			unsigned long Release(void)
+			unsigned long Release(void) const
 			{
 				Lock();		
 				unsigned long result = --m_RefCount;//Move refcount that's about to be deleted to the stack
-				result == 0 ? m_deleter() : Unlock();
+				result == 0 ? m_deleter() : Unlock();//deleter will unlock if called
 				return result;
 			}
 
 			//Never call this unless you know the real object has gone for good.
-			inline void Reset(void)
+			inline void Reset(void) const
 			{
 				Lock();
 				m_p = nullptr; 
 				Unlock();
 			}
 
-			constexpr bool LockIsReal() const{ return LockIsRealInternal< typename sync_of<R>::type >::type::value; }
+			constexpr bool LockIsReal() const noexcept{ return LockIsRealInternal< typename sync_of<R>::type >::type::value; }
 
 			inline void Lock() const{ m_Section.Acquire(); }
 
@@ -154,9 +153,10 @@ namespace qor{
 			inline bool IsLocked() const{ return m_Section.IsLocked(); }//Not reliable, just a guide for warning about unlocked access
 
 			template< class TDerived >
-			bool Configure()
+			bool Configure() const
 			{
 				bool result = false;
+				Lock();
 				if (m_RefCount == 1)
 				{
 					instancer_of<R>::type::template Release<R>(m_p, 1);
@@ -168,13 +168,15 @@ namespace qor{
 						result = true;
 					}
 				}
+				Unlock();
 				return result;
 			}
 
 			template< class TDerived, typename... _p >
-			bool Configure( _p&& ... p1)
+			bool Configure( _p&& ... p1) const
 			{
 				bool result = false;
+				Lock();
 				if (m_RefCount == 1)
 				{
 					instancer_of<R>::type::template Release<R>(m_p, 1);
@@ -186,12 +188,13 @@ namespace qor{
 						result = true;
 					}
 				}
+				Unlock();
 				return result;
 			}
 
 		private:
 
-			void SetDeleter()
+			void SetDeleter() const
 			{
 				int** ppBack = ((int**)m_p) - 1;
 				*ppBack = (int*)(this);
@@ -219,7 +222,7 @@ namespace qor{
 				return (const SharedRef<D>*)(this);
 			}
 
-			void Attach(R* pt)
+			void Attach(R* pt) const
 			{
 				Lock();
 				if (m_p == nullptr)
@@ -234,7 +237,7 @@ namespace qor{
 			mutable R* m_p;
 			mutable std::atomic< unsigned long > m_RefCount;
 			mutable typename sync_of< R >::type m_Section;
-			std::function<void()> m_deleter;
+			mutable std::function<void()> m_deleter;
 		};
 
 	}//detail

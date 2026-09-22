@@ -17,25 +17,25 @@ namespace qor{
         Module(const char* name, const char* version, bool _register = true);
         virtual ~Module() noexcept;
 
-		bool RegisterLibrary(Library* library);         //Register a static library as part of this module
-		void UnregisterLibrary(Library* library);       //Unregister a static library from this module
+		bool RegisterLibrary(const Library* library);         //Register a static library as part of this module
+		void UnregisterLibrary(const Library* library);       //Unregister a static library from this module
 
-        inline void VisitLibraries(void(f)(Library*))
+        inline void VisitLibraries(void(f)(const Library*)) const
         {
-            for(Library* it = m_StaticLibraryList; it != nullptr; it = const_cast<Library*>(it->Next()))
+            for(const Library* it = m_StaticLibraryList; it != nullptr; it = it->Next())
             {
                 f(it);
             }
         }
 
-        virtual void RegisterModule(Module* /*module*/){ };
-        virtual void UnregisterModule(Module* /*module*/){ };
+        virtual void RegisterModule(Module*){ };
+        virtual void UnregisterModule(Module*) noexcept{ };
 
-        ModuleRegistry* Modules();
+        ModuleRegistry* Modules() noexcept;
 
     protected:
 
-        Library* m_StaticLibraryList{nullptr};
+        const Library* m_StaticLibraryList{nullptr};
         ModuleRegistry* m_ModuleReg{nullptr};
 
     private:

@@ -7,16 +7,14 @@
 
 namespace qor {
 
-	FunctionContext::FunctionContext(const char* funcName, const char* file, unsigned int line, const char* module, bool profile, bool /*coverage*/, AnyObject objContext) :
+	FunctionContext::FunctionContext(const std::source_location& location, const char* module, bool profile, bool /*coverage*/, AnyObject objContext) :
 		 m_traceCalls(false)
 		, m_locked(0)
 		, m_traceDepth(1)
-		, m_funcName(funcName)
-		, m_file(file)
+		, m_location(location)
 		, m_module(module)
 		, m_Parent(nullptr)
 		, m_ObjContext(objContext)
-		, m_line(line)
 		, m_CallContext()
 		, m_Profiler(this, profile)
 	{
@@ -27,28 +25,25 @@ namespace qor {
 		m_traceCalls(false)
 		, m_locked(0)
 		, m_traceDepth(1)
-		, m_funcName(nullptr)
-		, m_file(nullptr)
 		, m_module(nullptr)
 		, m_Parent(nullptr)
-		, m_line(0)
 		, m_CallContext()
 		, m_Profiler(this, false)
 	{
 		Init();
 	}
 
-	bool FunctionContext::Locked() const
+	bool FunctionContext::Locked() const noexcept
 	{
 		return m_locked > 0;
 	}
 
-	unsigned int FunctionContext::Lock()
+	unsigned int FunctionContext::Lock() noexcept
 	{
 		return ++m_locked;
 	}
 
-	unsigned int FunctionContext::Unlock()
+	unsigned int FunctionContext::Unlock() noexcept
 	{
 		return --m_locked;
 	}
@@ -60,7 +55,7 @@ namespace qor {
 		return bTrace;
 	}
 
-	ICallContext* FunctionContext::GetCallContext(void)
+	ICallContext* FunctionContext::GetCallContext(void) noexcept
 	{
 		return &m_CallContext;
 	}
@@ -85,9 +80,9 @@ namespace qor {
 		Unlock();
 	}
 
-	const char* FunctionContext::File() const
+	const char* FunctionContext::File() const noexcept
 	{
-		return m_file;
+		return m_location.file_name();
 	}
 
 	const char* FunctionContext::Module() const
@@ -95,9 +90,14 @@ namespace qor {
 		return m_module;
 	}
 
-	unsigned int FunctionContext::Line() const
+	unsigned int FunctionContext::Line() const noexcept
 	{
-		return m_line;
+		return m_location.line();
+	}
+
+	unsigned int FunctionContext::Column() const noexcept
+	{
+		return m_location.column();
 	}
 
 	IFunctionContext* FunctionContext::GetParent() const
@@ -110,14 +110,14 @@ namespace qor {
 		m_Parent = pParent;
 	}
 
-	unsigned int FunctionContext::TraceDepth()
+	unsigned int FunctionContext::TraceDepth() const noexcept
 	{
 		return m_traceDepth;
 	}
 
 	FunctionContext::~FunctionContext()
 	{
-		Lock();
+		FunctionContext::Lock();
 		if (m_Parent)
 		{
 			if (!m_Parent->Locked() && m_Parent->GetCallContext())
@@ -128,12 +128,12 @@ namespace qor {
 
         CurrentThread::GetCurrent().Context().UnregisterFunctionContext(this, m_Parent);
 
-        Unlock();
+        FunctionContext::Unlock();
 	}
 
-	const char* FunctionContext::Name() const
+	const char* FunctionContext::Name() const noexcept
 	{
-		return m_funcName;
+		return m_location.function_name();
 	}
 
 	AnyObject FunctionContext::TypedAny() const
@@ -153,4 +153,3 @@ namespace qor {
 	}
 
 }//qor
-//Review 2027/07/07

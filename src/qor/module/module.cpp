@@ -34,7 +34,7 @@ namespace qor
 		}
 	}
 
-	bool Module::RegisterLibrary(Library* library)
+	bool Module::RegisterLibrary(const Library* library)
 	{
 		if (library)
 		{
@@ -50,9 +50,9 @@ namespace qor
 		return library != nullptr;
 	}
 	
-	void Module::UnregisterLibrary(Library* library)
+	void Module::UnregisterLibrary(const Library* library)
 	{
-		Library* search = m_StaticLibraryList;
+		const Library* search = m_StaticLibraryList;
 		if (search == library)
 		{
 			m_StaticLibraryList = const_cast<Library*>(library->Next());
@@ -63,7 +63,9 @@ namespace qor
 			{
 				if (search->Next() == library)
 				{
-					search->SetNext(library->Next());
+					Library* modfiableSearchItem;
+					memcpy(&modfiableSearchItem, &search, sizeof(Library*));
+					modfiableSearchItem->SetNext(library->Next());
 				}
                 else
                 {
@@ -73,7 +75,7 @@ namespace qor
 		}
 	}
 
-    ModuleRegistry* Module::Modules()
+    ModuleRegistry* Module::Modules() noexcept
     {
         return m_ModuleReg;
     }

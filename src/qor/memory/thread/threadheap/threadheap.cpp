@@ -28,8 +28,8 @@ namespace qor { namespace detail {
 
 namespace qor{ namespace memory{
 
-    ThreadHeap::ThreadHeap() = default;
-    ThreadHeap::~ThreadHeap() = default;
+    ThreadHeap::ThreadHeap() noexcept = default;
+    constexpr ThreadHeap::~ThreadHeap() noexcept = default;
 
     //On GNU Linux the system heap has a per thread arena already so the ThreadHeap is just the heap. Thanks Dave Lee!
     

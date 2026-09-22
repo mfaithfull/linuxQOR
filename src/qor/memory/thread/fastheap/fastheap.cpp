@@ -42,6 +42,8 @@ namespace qor{ namespace memory{
         }
     }
 
+    FastHeap::~FastHeap() noexcept = default;
+
     void* FastHeap::Allocate(size_t byteCount)
     {
         FastBucket* bucket = Bucket(byteCount);
@@ -71,7 +73,7 @@ namespace qor{ namespace memory{
         }
     }
 
-    size_t FastHeap::TotalBytesAllocated() const
+    size_t FastHeap::TotalBytesAllocated() const noexcept
     {
         return m_totalAlloc;
     }

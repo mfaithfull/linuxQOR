@@ -26,7 +26,7 @@ namespace qor{ namespace memory{
 
     private:
     
-        inline byte* Memory() const
+        inline byte* Memory() const noexcept
         {
             return m_memory;
         }    

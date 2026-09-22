@@ -21,9 +21,9 @@ namespace qor{
 
         FlyerRef() : m_p(nullptr){ }
 
-        FlyerRef(const T* t) : m_p(const_cast<T*>(t)){ }
+        FlyerRef(T* t) : m_p(t){ }
 
-        FlyerRef(const FlyerRef< T >& src)
+        FlyerRef(const FlyerRef< T >& src) noexcept
 		{
             m_p = src.m_p;
 		}
@@ -33,7 +33,7 @@ namespace qor{
 			m_p = Src.m_p;
 		}
 
-        ~FlyerRef() = default;
+        ~FlyerRef() noexcept = default;
 
 		FlyerRef& operator = (const FlyerRef< T >& src)
 		{
@@ -61,7 +61,7 @@ namespace qor{
 
 		operator T* (void) const
 		{
-			return const_cast<T*>(m_p);
+			return m_p;
 		}
 
 		T& operator() (void) const
@@ -69,9 +69,9 @@ namespace qor{
 			if (m_p == nullptr)
 			{
 				//TODO: Raise through qor_reporting instead
-				throw new std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
+				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
-			return const_cast<T&>(*m_p);
+			return (*m_p);
 		}
 
 		T* operator -> () const
@@ -79,9 +79,9 @@ namespace qor{
 			if (m_p == nullptr)
 			{
 				//TODO: Raise through qor_reporting instead
-				throw new std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
+				throw std::logic_error("Null reference exception: A reference must refer to an object in order to be used.");
 			}
-			return const_cast<T*>(m_p);
+			return m_p;
 		}
 
 		void Dispose(void){ }
@@ -117,21 +117,9 @@ namespace qor{
 			return false;
 		}
 
-		template< class TDerived >
-		bool Configure()
-		{
-			return false;
-		}
-
-		template< class TDerived, typename... _p >
-		bool Configure(_p... /*p1*/)
-		{
-			return false;
-		}
-
 	protected:
 
-        const T* m_p;
+        T* m_p{nullptr};
 	};
 
 }//qor

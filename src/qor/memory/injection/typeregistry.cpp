@@ -10,7 +10,7 @@ namespace {
 
 namespace qor{
 
-    qor_pp_module_interface(QOR_INJECTION) TypeRegistry* TheTypeRegistry()
+    qor_pp_module_interface(QOR_INJECTION) TypeRegistry* TheTypeRegistry() noexcept
     {
         return &(_theTypeRegistry);
     }

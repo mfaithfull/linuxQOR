@@ -13,7 +13,7 @@
 
 namespace qor{ namespace memory{
 
-    class qor_pp_module_interface(QOR_THREADMEMORY) FastSource final
+    class FastSource final
     {
     public:
     

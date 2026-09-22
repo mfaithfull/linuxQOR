@@ -26,7 +26,7 @@ namespace qor{ namespace detail {
         public:
             constexpr ThreadInstanceHolder() : initialised(false) { }
 
-            ~ThreadInstanceHolder() noexcept
+            inline ~ThreadInstanceHolder() noexcept
             {
                 if(initialised)
                 {
@@ -35,7 +35,7 @@ namespace qor{ namespace detail {
                 }
             }
 
-            typename ref_of<T>::type Instance()
+            inline typename ref_of<T>::type Instance()
             {
                 if (!initialised)
                 {
@@ -56,7 +56,7 @@ namespace qor{ namespace detail {
                 return theRef;
             }
 
-            void Release()
+            inline void Release()
             {
                 if(initialised)
                 {

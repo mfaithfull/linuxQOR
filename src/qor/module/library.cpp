@@ -8,10 +8,9 @@
 
 namespace qor{
 	
-	Library::Library( const char* name, const char* version, bool doRegister) : 
+	Library::Library(const char* name, const char* version, bool doRegister) : 
 		m_Name(name), 
-		m_Version(version), 
-		m_Next(nullptr)
+		m_Version(version)
 	{
 		if(doRegister)
 		{
@@ -19,18 +18,20 @@ namespace qor{
 		}
 	}
 	
-	void Library::Append( const Library* last )
+	void Library::Append(const Library* last) const
 	{
-		Library* end = this;
+		const Library* end = this;
 
-		while( end->m_Next != nullptr && end != last )
+		while(end->m_Next != nullptr && end != last)
 		{
-			end = const_cast<Library*>(end->m_Next);
+			end = end->m_Next;
 		}
 
-		if( end != last )
+		if(end != last)
 		{
-			end->m_Next = last;
+			Library* modfiableEnd;
+			memcpy(&modfiableEnd, &end, sizeof(Library*));
+			modfiableEnd->m_Next = last;
 		}
 	}
 
@@ -38,7 +39,7 @@ namespace qor{
 
 static qor::Library _qor_library("Querysoft Open Runtime: Module Library", qor_pp_module_ver_string );
 
-qor::Library& qor_module()
+qor::Library& qor_module() noexcept
 {
 	return _qor_library;
 }

@@ -56,4 +56,3 @@ namespace qor {
 }//qor
 
 #endif//QOR_PP_H_FLYSTRAP
-//Review 2027/07/07

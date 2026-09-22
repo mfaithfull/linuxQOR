@@ -28,9 +28,9 @@ namespace qor{
         class PoolInstanceHolder final
         {
         public:
-            PoolInstanceHolder() : maxCount(poolSize), m_instanceCount(0) {}
+            inline PoolInstanceHolder() : maxCount(poolSize), m_instanceCount(0) {}
 
-            ~PoolInstanceHolder()
+            inline ~PoolInstanceHolder()
             {
                 Lock lock(m);
                 Drain();

@@ -66,7 +66,7 @@ namespace qor{
 			return op ? op->operator T *() : nullptr;
 		}
 		
-		static AnyObject& EmptyObject()
+		static AnyObject& EmptyObject() noexcept
 		{
 			static AnyObject _emptyObject;
 			return _emptyObject;

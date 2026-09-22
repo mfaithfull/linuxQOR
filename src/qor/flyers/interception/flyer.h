@@ -34,7 +34,7 @@ namespace qor {
             return true;
         }
 
-		bool Pop()
+		inline bool Pop()
 		{
         	CurrentThread::GetCurrent().Context().GetFlyerMap().Unconfigure(guid_of<T>::guid(), m_anyPrevious);
 			return true;
@@ -50,4 +50,3 @@ namespace qor {
 }//qor
 
 #endif//QOR_PP_H_FLYER
-//Review 2027/07/07

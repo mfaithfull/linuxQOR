@@ -11,7 +11,7 @@
 namespace qor{
 
 	class TypeRegistry;
-	qor_pp_module_interface(QOR_INJECTION) TypeRegistry* TheTypeRegistry();
+	qor_pp_module_interface(QOR_INJECTION) TypeRegistry* TheTypeRegistry() noexcept;
 
     class TypeRegistry final
 	{
@@ -20,7 +20,7 @@ namespace qor{
 		inline TypeRegistry() noexcept = default;
 		TypeRegistry(const TypeRegistry&) = delete;
 
-		inline ~TypeRegistry()
+		inline ~TypeRegistry() noexcept
 		{
 			m_regMap.erase(m_regMap.cbegin(), m_regMap.cend());
 		}
@@ -30,13 +30,13 @@ namespace qor{
 			m_regMap.insert(std::pair< GUID, AnyObject >(classID, factory));
 		}
 		
-		inline void Unregister(GUID classID)
+		inline void Unregister(GUID classID) noexcept
 		{
 			m_regMap.erase(m_regMap.find(classID));
 		}
 
 		//Get the factory for creating instances of a class by GUID
-		inline AnyObject GetFactory(GUID classID)
+		inline AnyObject GetFactory(GUID classID) noexcept
 		{
 			auto it = m_regMap.find(classID);
 			return (it != m_regMap.end()) ? it->second : AnyObject::EmptyObject();

@@ -32,42 +32,42 @@ namespace qor{ namespace memory{
             new_ref<ThreadHeap>()->Free(m_memoryBase);
         }
 
-        inline size_t TotalSizeBytes() const
+        inline size_t TotalSizeBytes() const noexcept
         {
             return m_memoryBase ? (m_pageUnits * c_pageSize) : 0;
         }
 
-        inline size_t AllocatedByteCount() const
+        inline size_t AllocatedByteCount() const noexcept
         {
             return m_ToS - m_memoryBase;
         }
 
-        inline size_t AllocatedItemsCount(void) const
+        inline size_t AllocatedItemsCount(void) const noexcept
         {
             return m_items;
         }
 
-        inline void SetSize(size_t pageUnits)
+        inline void SetSize(size_t pageUnits) noexcept
         {
             m_pageUnits = pageUnits;
         }
 
-        inline StackPage* Next() const
+        inline StackPage* Next() const noexcept
         {
             return m_next;
         }
 
-        inline StackPage* Previous() const
+        inline StackPage* Previous() const noexcept
         {
             return m_prev;
         }
 
-        inline void SetNext(StackPage* next)
+        inline void SetNext(StackPage* next) noexcept
         {
             m_next = next;
         }
 
-        inline void SetPrevious(StackPage* prev)
+        inline void SetPrevious(StackPage* prev) noexcept
         {
             m_prev = prev;
         }

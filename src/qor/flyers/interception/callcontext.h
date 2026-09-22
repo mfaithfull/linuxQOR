@@ -64,10 +64,10 @@ namespace qor {
             m_ReturnValue = ReturnValue;
         }
 
-        qor_pp_module_interface(QOR_INTERCEPTION) virtual void CallMade(IFunctionContext*);
-        qor_pp_module_interface(QOR_INTERCEPTION) virtual void CallCompleted();
-        qor_pp_module_interface(QOR_INTERCEPTION) virtual void OnReturnAssignment();
-        qor_pp_module_interface(QOR_INTERCEPTION) virtual void OnReturn();
+        qor_pp_module_interface(QOR_INTERCEPTION) virtual void CallMade(IFunctionContext*) override;
+        qor_pp_module_interface(QOR_INTERCEPTION) virtual void CallCompleted() override;
+        qor_pp_module_interface(QOR_INTERCEPTION) virtual void OnReturnAssignment() override;
+        qor_pp_module_interface(QOR_INTERCEPTION) virtual void OnReturn() override;
 
 		qor_pp_module_interface(QOR_INTERCEPTION) ParameterBase* Parameters();						//Access to the array of registered parameters
 		qor_pp_module_interface(QOR_INTERCEPTION) ParameterBase* ReturnValue();						//Access to the return value
@@ -81,4 +81,3 @@ namespace qor {
 }//qor
 
 #endif//QOR_PP_H_CALLCONTEXT
-//Review 2027/07/07

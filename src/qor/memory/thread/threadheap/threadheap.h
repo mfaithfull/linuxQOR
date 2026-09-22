@@ -23,8 +23,8 @@ namespace qor
     {
     public:
 
-        ThreadHeap();
-        virtual ~ThreadHeap();
+        ThreadHeap() noexcept;
+        virtual constexpr ~ThreadHeap() noexcept;
 
         byte* Allocate(size_t byteCount) const;
         void Free(byte* allocation) const;
