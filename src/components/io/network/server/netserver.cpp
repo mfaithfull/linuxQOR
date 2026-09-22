@@ -134,7 +134,7 @@ namespace qor{ namespace io{ namespace network{ namespace components{
         }
 
         //Run a client session workflow
-        int notionalClientResult = new_ref<NetworkSession>(ClientSocket, protocol)->Run();
+        [[maybe_unused]] int notionalClientResult = new_ref<NetworkSession>(ClientSocket, protocol)->Run();
     }
 
 }}}}//qor::io::network::components

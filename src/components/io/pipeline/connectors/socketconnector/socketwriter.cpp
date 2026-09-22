@@ -10,8 +10,8 @@ namespace qor{ namespace io{ namespace network{ namespace components{
     {
         m_sink.SetParent(this);
         m_sink.SetSource(this);
-        this->SetSink(&m_sink);
-        this->SetSource(&m_source);
+        Pipeline::SetSink(&m_sink);
+        Pipeline::SetSource(&m_source);
     }
 
     SocketWriter::SocketWriter( const std::string &host, int port, const std::string &ip, qor::io::network::sockets::eAddressFamily address_family, qor::io::network::addrinfo_flags socket_flags, bool tcp_nodelay, bool ipv6_v6only, time_t timeout_sec, size_t bufferByteCount) : SocketWriter()

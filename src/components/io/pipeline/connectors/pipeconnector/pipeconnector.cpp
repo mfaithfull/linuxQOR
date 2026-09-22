@@ -46,7 +46,7 @@ namespace qor{ namespace io { namespace components{
         return m_connected;
     }
 
-    bool PipeConnector::ConnectToName(const std::string /*name*/)
+    bool PipeConnector::ConnectToName(const std::string& /*name*/)
     {
         return false;
     }

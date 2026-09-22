@@ -41,7 +41,7 @@ namespace qor{ namespace io { namespace network{ namespace components{
     {
         if (m_connected)
         {
-            Disconnect();
+            SocketConnector::Disconnect();
         }
     }
 

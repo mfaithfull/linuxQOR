@@ -38,7 +38,7 @@ namespace qor{ namespace io{ namespace components{
 
 	protected:
 
-        filesystem::Index* m_pFileIndex;
+        filesystem::Index* m_pFileIndex{ nullptr };
         int m_Mode;
         OpenFor m_OpenFor;
         ref_of<pipeline::Sink>::type m_sink;

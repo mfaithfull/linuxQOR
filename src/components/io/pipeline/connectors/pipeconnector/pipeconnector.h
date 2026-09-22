@@ -28,7 +28,7 @@ namespace qor{ namespace io{ namespace components{
         qor_pp_module_interface(QOR_PIPECONNECTOR) void Configure(const std::string &name);
         qor_pp_module_interface(QOR_FILECONNECTOR) ref_of<io::Pipe>::type Pipe(void);
 
-        bool ConnectToName(const std::string name);
+        bool ConnectToName(const std::string& name);
 
 	protected:
 

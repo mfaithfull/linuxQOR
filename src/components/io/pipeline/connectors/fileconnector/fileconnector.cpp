@@ -49,7 +49,7 @@ namespace qor{ namespace io{ namespace components{
     {
         if (m_connected)
         {
-            Disconnect();
+            FileConnector::Disconnect();
         }
     }
 

@@ -77,14 +77,13 @@ namespace qor{ namespace io{ namespace components{
     bool stdofstreamWriter::Write(const std::string& strData)
     {
         size_t unitsWritten = 0;        
-        size_t unitsWrittenAtOnce = 0;
-
+        
         do
-        {
-            unitsWrittenAtOnce = 0;
+        {            
             size_t unitsToWrite = strData.length() - unitsWritten;
             if(unitsToWrite > 0)
             {
+                size_t unitsWrittenAtOnce = 0;
                 byte* space = m_buffer.WriteRequest(unitsToWrite);
                 memcpy( space, strData.c_str() + unitsWritten, unitsToWrite * m_buffer.GetUnitSize());
                 m_buffer.WriteAcknowledge(unitsToWrite);
