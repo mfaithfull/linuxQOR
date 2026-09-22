@@ -13,7 +13,7 @@ class ParallelAppRole : public qor::app::Role
 {
 public:
 
-    constexpr static const char* logTag = "parapp";
+    constexpr static const char* logTag = "parallel_app";
 
     virtual void Setup();
     virtual void Shutdown();

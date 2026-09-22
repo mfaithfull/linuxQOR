@@ -17,9 +17,9 @@ qor_pp_implement_module("Role based App")
 int main()
 {
     qor_pp_run_role(CustomRole)(
-    []()->int
-    {
-        GetFeature<CustomFeature>(qor_shared)->SayHello();
-        return EXIT_SUCCESS;
-    });
+        []()->int
+        {
+            GetFeature<CustomFeature>(qor_shared)->SayHello();
+            return EXIT_SUCCESS;
+        });
 }

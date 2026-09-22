@@ -13,9 +13,9 @@
 using namespace qor::components::protocols;
 
 ClientWorkflow::ClientWorkflow() : 
-    connect(new_ref<qor::workflow::State>(this)),
-    send(new_ref<qor::workflow::State>(this)),
-    receive(new_ref<qor::workflow::State>(this))
+    connect(new_ref<workflow::State>(this)),
+    send(new_ref<workflow::State>(this)),
+    receive(new_ref<workflow::State>(this))
 {    
     qor_pp_ofcontext;
         
@@ -61,6 +61,7 @@ ClientWorkflow::ClientWorkflow() :
         {
             std::string err(strerror(errno));
             log::imperative("Failed to send to server: {0}",err);
+            m_client.Disconnect();
             SetComplete(EXIT_FAILURE);         
         }
     };
@@ -71,8 +72,7 @@ ClientWorkflow::ClientWorkflow() :
 
         if(m_client.Receive())
         {
-            log::debug("Echo received.");
-            m_client.Disconnect();
+            log::debug("Echo received.");            
             SetComplete(EXIT_SUCCESS);
         }
         else
@@ -81,6 +81,7 @@ ClientWorkflow::ClientWorkflow() :
             log::imperative("Failed to receive from server: {0}", err);
             SetComplete(EXIT_FAILURE);            
         }
+        m_client.Disconnect();
     };
 
     SetInitialState(connect);

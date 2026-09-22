@@ -32,7 +32,7 @@ int main()
     DefaultErrorHandler errorHandler;
     DefaultLogHandler logHandler(Level::Debug);
     logHandler.WriteToStandardOutput();
-
+    
     return AppBuilder().Build<Server>(Server::Name)(qor_unlocked).SetRole<ServerRole>().
         RunWorkflow(new_ref<NetworkServer>(12345, new_ref<EchoProtocol>()));
 }

@@ -6,7 +6,7 @@
 
 #include "src/framework/app/workflow/fastflow.h"
 
-class CustomFastflow : public qor::Fastflow //Workflows are always overrides of the base Workflow class.
+class CustomFastflow : public qor::Fastflow //Workflows are always overrides of the base Workflow/Fastflow class.
 {
 public:
 

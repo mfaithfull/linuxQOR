@@ -10,10 +10,10 @@ qor_pp_implement_module("Hello World App")          //Every QOR Application must
 
 int main()                                          //Standard C++ entry point
 {
-    qor_pp_run(                                     //Run a base Application
-    []()->int                                       //This is what gets Run. A simple lambda here but it could be other things.
-    {
-        std::cout << "Hello from a simple QOR application." << std::endl;
-        return EXIT_SUCCESS;                        //Standard success return code (0) is returned from the program
-    });
+    qor_pp_run(                                     //Run a default Application
+        []()->int                                   //This is what gets Run. A simple lambda but it could be anything runnable.
+        {
+            std::cout << "Hello from a simple QOR application." << std::endl;
+            return EXIT_SUCCESS;                    //Standard success return code (0) is returned from the program
+        });
 }

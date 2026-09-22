@@ -25,11 +25,11 @@ int main()
 {    
     /*The QOR Application is a context for running anything that meets the requirements for a runable object*/
     qor_pp_run_role(Role)(
-    []()->int
-    {            
-        AccessModules();
-        return EXIT_SUCCESS;
-    });
+        []()->int
+        {            
+            AccessModules();
+            return EXIT_SUCCESS;
+        });
 }
 
 /*This (for science only) function can be used to access every loaded QOR module and it's constituent libraries.*/
@@ -42,7 +42,7 @@ void AccessModules()
             std::cout << "Module: " << module->Name() << " : " << module->Version() << std::endl;
             //Visit all the QOR static libraries linked into the module.
             module->VisitLibraries(
-                [](Library* library)
+                [](const Library* library)
                 {
                     std::cout << "-Library: " << library->Name() << " : " << library->Version() << std::endl;
                 }

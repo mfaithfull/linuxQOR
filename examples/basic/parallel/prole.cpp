@@ -16,8 +16,7 @@ qor_pp_module_requires(IFileSystem)
 void ParallelAppRole::SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
 {
     /*Connect the forward signal from logHandler to the ReceiveLog slot on the log aggregator's Receiver*/
-    connect(
-        logHandler, logHandler.GetForwardSignal(), 
+    connect(logHandler, logHandler.GetForwardSignal(), 
         logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
         ConnectionKind::QueuedConnection);
 

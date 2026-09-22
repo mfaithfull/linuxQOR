@@ -21,6 +21,7 @@ using namespace qor;
 using namespace qor::log;
 using namespace qor::io;
 using namespace qor::io::components;
+using namespace qor::components;
 
 const char* appName = "Example Client";
 const char* logTag = "client";
@@ -32,12 +33,12 @@ qor_pp_module_requires(LogAggregatorService)
 qor_pp_module_requires(IFileSystem)
 qor_pp_module_requires(ICurrentThread)
 
-void SetupLogging(DefaultLogHandler& logHandler, qor::components::LogAggregatorService::ref logAggregator)
+void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
 {
-    qor::connect(
+    connect(
         logHandler, logHandler.GetForwardSignal(), 
-        logAggregator(qor_shared).Receiver(), &qor::components::LogReceiver::ReceiveLog, 
-        qor::ConnectionKind::QueuedConnection);
+        logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
+        ConnectionKind::QueuedConnection);
 
     auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
     auto logPath = fileSystem->ApplicationLogPath() / logTag;
@@ -64,8 +65,8 @@ int main(const int argc, const char** argv, char**)
                         CurrentThread::Get().SetName("Main");
                     }
                 );
-                role->AddFeature<qor::components::LogAggregatorService>(
-                    [&logHandler](qor::components::LogAggregatorService::ref logAggregator)->void
+                role->AddFeature<LogAggregatorService>(
+                    [&logHandler](LogAggregatorService::ref logAggregator)->void
                     {
                         SetupLogging(logHandler, logAggregator);
                     }

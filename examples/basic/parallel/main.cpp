@@ -31,28 +31,28 @@ int main()
     DefaultLogHandler logHandler(Level::Debug);
 
     qor_pp_run_role(ParallelAppRole)(
-    []()->int
-    {
-        qor_pp_fcontext;
-        auto threadPool = GetFeature<thread::ThreadPool>();
-        size_t runningTaskCount = threadPool->GetCountOfTasksRunning();
+        []()->int
+        {
+            qor_pp_fcontext;
+            auto threadPool = GetFeature<thread::ThreadPool>();
+            size_t runningTaskCount = threadPool->GetCountOfTasksRunning();
 
-        debug("{0} thread is in use by the log aggregator. This log message will be written out by the aggregator while the Main thread that logged it continues in parallel.",runningTaskCount);
+            debug("{0} thread is in use by the log aggregator. This log message will be written out by the aggregator while the Main thread that logged it continues in parallel.",runningTaskCount);
 
-        /*Now we submit a task to the pool that will run on the remaining spare thread*/
-        std::future<int> taskResult = threadPool->SubmitTask( 
-            []()->int
-            {
-                return ParallelTask();
-            }
-        );
-        
-        debug("While the task is executing we can carry on doing other things, including logging to the shared log aggregator.");
-        debug("At this point there may be 3 things happening at once. The main thread, the ParellelTask running on a pool thread and the Log Aggregator running on another pool thread.");
+            /*Now we submit a task to the pool that will run on the remaining spare thread*/
+            std::future<int> taskResult = threadPool->SubmitTask( 
+                []()->int
+                {
+                    return ParallelTask();
+                }
+            );
+            
+            debug("While the task is executing we can carry on doing other things, including logging to the shared log aggregator.");
+            debug("At this point there may be 3 things happening at once. The main thread, the ParellelTask running on a pool thread and the Log Aggregator running on another pool thread.");
 
-        //wait for the secondary task to finish and return the result;        
-        return taskResult.get();
-    });
+            //wait for the secondary task to finish and return the result;        
+            return taskResult.get();
+        });
 }
 
 int ParallelTask()
@@ -66,8 +66,7 @@ int ParallelTask()
     {
         auto logAggregator = GetFeature<LogAggregatorService>();
         /*We connect the forward signal from our local instance of a DefaultLogHandler to the log aggregator's log receiver on the ReceiveLog slot*/
-        connect(
-            threadLocalLogHandler, threadLocalLogHandler.GetForwardSignal(), //source instance, source signal function
+        connect(threadLocalLogHandler, threadLocalLogHandler.GetForwardSignal(), //source instance, source signal function
             logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, //sink instance, sink slot function
             ConnectionKind::QueuedConnection); //we want a queued connection because we're crossing threads and don't want to wait for reception
     }
@@ -79,8 +78,7 @@ int ParallelTask()
     {
         auto logAggregator = GetFeature<LogAggregatorService>();
         //disconnecting is just like connecting but we don't have to specify the ConnectionKind
-        disconnect(
-            threadLocalLogHandler, threadLocalLogHandler.GetForwardSignal(), 
+        disconnect(threadLocalLogHandler, threadLocalLogHandler.GetForwardSignal(), 
             logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog);
     }
     return 0;
