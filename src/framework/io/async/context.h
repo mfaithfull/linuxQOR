@@ -37,12 +37,12 @@ namespace qor { namespace io{ namespace async{
                 m_processor = new_ref<EventProcessor>();
             }
             m_initiator->ConnectToProcessor(m_processor);
-            Inflate();
+            Context::Inflate();
         }
 
         inline ~Context() = default;
 
-        virtual void Inflate()
+        void Inflate()
         {
             if(m_processor.IsNotNull())
             {
@@ -55,7 +55,7 @@ namespace qor { namespace io{ namespace async{
             }
         }
 
-        virtual void Deflate()
+        void Deflate()
         {
             if(m_processor.IsNotNull())
             {

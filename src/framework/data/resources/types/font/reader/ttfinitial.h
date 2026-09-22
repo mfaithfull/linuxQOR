@@ -21,7 +21,7 @@ namespace qor{ namespace framework{ namespace res {
         }
 
     protected:
-        offset_subtable* m_initialOffsetTable;
+        offset_subtable* m_initialOffsetTable{ nullptr };
     };
 
     class TTFTableDirState : public qor::components::serial::StructureDeserializer<table_directory>::base
@@ -33,7 +33,7 @@ namespace qor{ namespace framework{ namespace res {
         }
 
     protected:
-        table_directory* m_tableDirectory;
+        table_directory* m_tableDirectory{ nullptr };
     };
 
     class TTFBlobState : public workflow::State
@@ -45,8 +45,8 @@ namespace qor{ namespace framework{ namespace res {
 
     protected:
 
-        byte* m_data;
-        std::vector<byte>* m_blob;
+        byte* m_data{ nullptr };
+        std::vector<byte>* m_blob{ nullptr };
 
         class qor::components::serial::Context* GetContext()
         {
@@ -77,9 +77,9 @@ namespace qor{ namespace framework{ namespace res {
 
     protected:
 
-        offset_subtable m_initialOffsetTable;
-        table_directory* m_tableDirectory;
-        unsigned int m_tableIndex;
+        offset_subtable m_initialOffsetTable{ 0 };
+        table_directory* m_tableDirectory{ nullptr };
+        unsigned int m_tableIndex{ 0 };
         std::vector<byte> m_blob;
 
         ref_of<TTFOffsetTableState>::type m_offsetTableState;

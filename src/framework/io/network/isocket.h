@@ -26,8 +26,6 @@ namespace qor{ namespace io { namespace network{
 
         static constexpr int Invalid_Socket = -1;
 
-        inline ISocket() = default;
-        inline virtual ~ISocket() = default;
         virtual int32_t Bind(const Address& Address) = 0;
         virtual int32_t Bind(const async::Interface& ioContext, const Address& Address) = 0;
         virtual int32_t Listen(int32_t iBacklog) = 0;
@@ -51,6 +49,9 @@ namespace qor{ namespace io { namespace network{
         virtual int32_t GetLastError(void) = 0;
         virtual bool SetNonBlocking(bool nonBlocking) = 0;
         virtual bool IsAlive() = 0;
+    protected:
+        inline ISocket() = default;
+        inline virtual ~ISocket() = default;
     };
 
 }}}//qor::io::network
