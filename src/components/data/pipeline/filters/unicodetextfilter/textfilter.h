@@ -5,8 +5,6 @@
 #define QOR_PP_H_PIPELINE_FILTER_UNICODE_TEXT
 
 #include "src/framework/data/pipeline/inlineprocessor.h"
-#include "src/qor/function/tef.h"
-#include "src/qor/function/make_function.h"
 
 namespace qor{ namespace text{ namespace components {
 
@@ -66,7 +64,7 @@ namespace qor{ namespace text{ namespace components {
         bool UTF16LEByte1Handler();
         bool UTF16LEByte2Handler();
 
-  	    tef::MemberFunction<bool (UnicodeTextFilter::* )()> m_nextHandler;
+        bool (UnicodeTextFilter::*m_nextHandler)();  	    
 
         byte* m_data;
         uint32_t* m_space;
@@ -80,7 +78,7 @@ namespace qor{ namespace text{ namespace components {
         uint32_t m_utf32;
         bool m_skipNextWhiteSpace{false};
         
-        const uint32_t m_replacementCodePoint{0xFFFD};
+        const uint32_t m_replacementCodePoint{0x0000FFFD};
     };
 
 }}}//qor::text::components

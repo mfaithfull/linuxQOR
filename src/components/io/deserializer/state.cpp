@@ -32,7 +32,7 @@
 
 namespace qor { namespace components { namespace serial {
 
-    DeserializerState::DeserializerState(Deserializer* deserializer, size_t size, arch::Endian endian) : workflow::State(deserializer), m_size(size), m_endian(endian)
+    DeserializerState::DeserializerState(Deserializer* deserializer, size_t size, arch::Endian endian) : workflow::State(deserializer), m_endian(endian), m_size(size)
     {
         m_result = UNINITIALIZED;                
         m_index = (m_endian == arch::endian) ? 0 : m_size - 1;//index to begining or end depending if data source endian(ness) is same as host.

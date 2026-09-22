@@ -70,13 +70,11 @@ namespace qor{ namespace pipeline {
     {
         //The buffer contains 'byteCount' out of the 'size' bytes we need from the last pump
         Buffer* buffer = GetBuffer();
-        int index = 0;
         byte* data = nullptr;
-        size_t realRead = 0;
         size_t readFromBuffer = 0;
         do
         {
-            realRead = byteCount - readFromBuffer;
+            size_t realRead = byteCount - readFromBuffer;
             data = buffer->ReadRequest(realRead);
             totalRead += realRead;
             readFromBuffer += realRead;
