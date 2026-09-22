@@ -66,7 +66,7 @@ public:
     {           
         m_filter.Reset(128,128);
         m_sink.Reset();
-        size_t unitsPumped = qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
+        [[maybe_unused]] size_t unitsPumped = qor::pipeline::Pipeline(sourceConnector, m_sink, qor::pipeline::Element::Push).Connect().PumpAll();
         m_sink.Parser().FinalParse();
         auto finalNode = m_sink.Parser().PopNode();
         return finalNode.AsRef<qor::data::parser::json::ObjectNode>()->GetObject();

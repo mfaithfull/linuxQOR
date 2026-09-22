@@ -101,7 +101,7 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             Path testsPath("F:/Develop/linuxQOR/test/data");
 
             JSONPartReader<qor::data::parser::json::array, qor::data::model::json::Array> arrayReader;
-/*
+
             auto jsonArray = arrayReader(Index(testsPath, "y_array_arraysWithSpaces.json"));
             auto array_empty = arrayReader(Index(testsPath, "y_array_empty.json"));
             auto array_empty_string = arrayReader(Index(testsPath, "y_array_empty-string.json"));
@@ -132,7 +132,7 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             auto number_real_pos_exponent = arrayReader(Index(testsPath, "y_number_real_pos_exponent.json"));
             auto number_simple_int = arrayReader(Index(testsPath, "y_number_simple_int.json"));
             auto number_simple_real = arrayReader(Index(testsPath, "y_number_simple_real.json"));
-*/
+
             JSONReader reader;
             /*
             auto jsonObject = reader(Index(testsPath, "y_object.json"));
@@ -217,7 +217,7 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             {
                 Test_ProfileReporter reporter;
                 FunctionProfiler profiler(dynamic_cast<ProfileReceiver*>(&reporter), qor_pp_profile_enabled);
-                auto big_object = reader(Index(testsPath, "data_25mb.json"));
+                auto big_object = reader(Index(testsPath, "data_5mb.json"));
             }
 #include qor_pp_profile_end
 

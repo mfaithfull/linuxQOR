@@ -52,7 +52,7 @@ qor_pp_test_suite_case(HostTestSuite, modulesCanBeiteratedWithLibraries)
     host.Modules()->VisitModules([](Module* pModule){
         std::cout << "Module: " << pModule->Name();
         std::cout << " Version: " << pModule->Version() << std::endl;
-        pModule->VisitLibraries([](Library* pLibrary){
+        pModule->VisitLibraries([](const Library* pLibrary){
             std::cout << "Library: " << pLibrary->Name();
             std::cout << " Version: " << pLibrary->Version() << std::endl;
         });
