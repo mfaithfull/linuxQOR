@@ -42,7 +42,7 @@ namespace qor { namespace data { namespace parser { namespace json {
         )
     { }
 
-    escapeSequence::~escapeSequence() = default;
+    escapeSequence::~escapeSequence() noexcept = default;
 
     void escapeSequence::Prepare()
     {

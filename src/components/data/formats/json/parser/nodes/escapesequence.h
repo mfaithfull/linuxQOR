@@ -10,7 +10,7 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class EscapeSequenceNode : public NodeAdapter< model::json::String >
+    class EscapeSequenceNode final : public NodeAdapter< model::json::String >
     {
     public:
 
@@ -24,8 +24,9 @@ namespace qor { namespace data{ namespace parser{ namespace json {
             GetObject()->SetValue(std::string(&c,1));
         }
         
-        virtual ~EscapeSequenceNode() = default;
-        virtual std::string ToString() const override 
+        virtual ~EscapeSequenceNode() noexcept = default;
+
+        virtual std::string ToString() const 
         { 
             return GetObject()->GetValue();
         };

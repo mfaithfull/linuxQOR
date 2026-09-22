@@ -47,7 +47,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             ),
         static_cast<uint64_t>(jsonToken::value)){ }
 
-    value::~value() = default;
+    value::~value() noexcept = default;
     
     void value::Prepare()
     {
@@ -118,43 +118,43 @@ namespace qor { namespace data { namespace parser { namespace json {
                     case model::json::ValueType::_false:
                     {
                         auto model = valueNode.AsRef< NodeAdapter< model::json::_False > >()->GetObject();
-                        thisNode->GetObject()->SetValue(model);
+                        thisNode->GetObject()->SetValue(polymorphic<model::json::ValueModel>(*model));
                     }
                     break;
                     case model::json::ValueType::_true:
                     {
                         auto model = valueNode.AsRef< NodeAdapter< model::json::_True > >()->GetObject();
-                        thisNode->GetObject()->SetValue(model);
+                        thisNode->GetObject()->SetValue(polymorphic<model::json::ValueModel>(*model));
                     }
                     break;
                     case model::json::ValueType::_null:
                     {
                         auto model = valueNode.AsRef< NodeAdapter< model::json::_Null > >()->GetObject();
-                        thisNode->GetObject()->SetValue(model);
+                        thisNode->GetObject()->SetValue(polymorphic<model::json::ValueModel>(*model));
                     }
                     break;
                     case model::json::ValueType::object:
                     {
                         auto model = valueNode.AsRef< NodeAdapter< model::json::Object > >()->GetObject();
-                        thisNode->GetObject()->SetValue(model);
+                        thisNode->GetObject()->SetValue(polymorphic<model::json::ValueModel>(*model));
                     }
                     break;
                     case model::json::ValueType::array:
                     {
                         auto model = valueNode.AsRef< NodeAdapter< model::json::Array > >()->GetObject();
-                        thisNode->GetObject()->SetValue(model);
+                        thisNode->GetObject()->SetValue(polymorphic<model::json::ValueModel>(*model));
                     }
                     break;
                     case model::json::ValueType::number:
                     {
                         auto model = valueNode.AsRef< NodeAdapter< model::json::Number > >()->GetObject();
-                        thisNode->GetObject()->SetValue(model);
+                        thisNode->GetObject()->SetValue(polymorphic<model::json::ValueModel>(*model));
                     }
                     break;
                     case model::json::ValueType::string:
                     {
                         auto model = valueNode.AsRef< NodeAdapter< model::json::String > >()->GetObject();
-                        thisNode->GetObject()->SetValue(model);
+                        thisNode->GetObject()->SetValue(polymorphic<model::json::ValueModel>(*model));
                     }
                     break;
                     default:

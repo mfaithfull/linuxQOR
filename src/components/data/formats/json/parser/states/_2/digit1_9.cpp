@@ -15,7 +15,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     digit1_9::digit1_9(Parser* parser) : OneOfARange_t<uint32_t>(parser, (byte)0x31, (byte)0x39, static_cast<uint64_t>(jsonToken::digit1_9)){ }
 
-    digit1_9::~digit1_9() = default;
+    digit1_9::~digit1_9() noexcept = default;
 
     void digit1_9::Emit()
     {        

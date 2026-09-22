@@ -9,14 +9,12 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //null  = %x6e.75.6c.6c      ; null    
-    class qor_pp_module_interface(QOR_JSON) _null : public Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Specific<uint32_t> > > >
+    class qor_pp_module_interface(QOR_JSON) _null final : public Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Specific<uint32_t> > > >
     {
     public: 
         _null(Parser* parser);
-        virtual ~_null();
-        virtual void Prepare();
+        virtual ~_null() noexcept;
         virtual void Emit();
-        virtual void Fail();
 
     private:
     

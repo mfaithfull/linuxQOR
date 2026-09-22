@@ -8,7 +8,7 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class qor_pp_module_interface(QOR_JSON) unicodeSequence : public 
+    class qor_pp_module_interface(QOR_JSON) unicodeSequence final : public 
         Sequence_t<Specific<uint32_t>, 
             Sequence_t<HEXDIGIT<uint32_t>, 
                 Sequence_t<HEXDIGIT<uint32_t>, 
@@ -17,7 +17,7 @@ namespace qor { namespace data { namespace parser { namespace json {
     {
     public: 
         unicodeSequence(Parser* parser);
-        virtual ~unicodeSequence();
+        virtual ~unicodeSequence() noexcept;
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();

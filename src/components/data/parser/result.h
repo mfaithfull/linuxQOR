@@ -10,10 +10,8 @@
 
 namespace qor { namespace data { namespace parser {
 
-    class Result
+    struct Result
     {
-    public:
-
         enum eResultCode
         {
             UNINITIALIZED,

@@ -10,12 +10,12 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class FractionNode : public NodeAdapter< model::json::Fraction >
+    class FractionNode final : public NodeAdapter< model::json::Fraction >
     {
     public:
 
         FractionNode() : NodeAdapter< model::json::Fraction >(static_cast<uint64_t>(jsonToken::fraction)){ }
-        virtual ~FractionNode() = default;
+        virtual ~FractionNode() noexcept = default;
     };
 
 }}}}//qor::data::parser::json

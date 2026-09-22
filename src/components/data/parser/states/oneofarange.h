@@ -14,7 +14,7 @@ namespace qor { namespace data { namespace parser {
     public:
 
         OneOfAByteRange(Parser* parser, byte firstOctet, byte lastOctet, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
-        virtual ~OneOfAByteRange();
+        virtual ~OneOfAByteRange() noexcept;
     private:
         ByteContext* m_context;
         byte m_first;
@@ -67,7 +67,7 @@ namespace qor { namespace data { namespace parser {
         }
 
 
-        virtual ~OneOfARange_t() = default;
+        virtual ~OneOfARange_t() noexcept = default;
 
     private:
         pipeline::BufferContext<range_t>* m_context;

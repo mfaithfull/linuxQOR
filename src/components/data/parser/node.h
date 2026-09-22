@@ -18,7 +18,7 @@ namespace qor { namespace data { namespace parser {
 
         Node(uint64_t token) : m_token(token){ }
 
-        virtual ~Node() = default;
+        virtual ~Node() noexcept = default;
 
         uint64_t GetToken() const
         {
@@ -26,7 +26,7 @@ namespace qor { namespace data { namespace parser {
         }
 
         virtual std::string ToString() const {return "<anonymous node>";}
-        virtual void Diagnostic(){}
+        virtual void Diagnostic() const {}
 
     private:
         
@@ -48,7 +48,7 @@ namespace qor { namespace data { namespace parser {
             m_t = response;
         }
 
-        virtual ~NodeAdapter() = default;
+        virtual ~NodeAdapter() noexcept = default;
 
         typename ref_of<T>::type GetObject() const
         {

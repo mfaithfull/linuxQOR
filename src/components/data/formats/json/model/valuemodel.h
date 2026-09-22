@@ -21,11 +21,13 @@ namespace qor { namespace data{ namespace model{ namespace json {
     class ValueModel
     {
     public:        
-
-        ValueModel(){ }
+        
         virtual ~ValueModel() = default;
-
-        virtual ValueType GetType() = 0;
+        
+        virtual ValueType GetType()
+        {
+            return ValueType::_null;
+        }
     };
 
 }}}}//qor::data::model::json

@@ -10,15 +10,11 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class ArrayNode : public NodeAdapter< model::json::Array >
+    class ArrayNode final : public NodeAdapter< model::json::Array >
     {
     public:
-
-        ArrayNode(): NodeAdapter< model::json::Array >(static_cast<uint64_t>(jsonToken::array)){};
-        virtual ~ArrayNode() = default;
-
-        //virtual std::string ToString() const override;
-
+        ArrayNode() : NodeAdapter< model::json::Array >(static_cast<uint64_t>(jsonToken::array)){};
+        virtual ~ArrayNode() noexcept = default;
     };
 
 }}}}//qor::data::parser::json

@@ -11,12 +11,12 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class _ENode : public NodeAdapter< model::json::_E >
+    class _ENode final : public NodeAdapter< model::json::_E >
     {
     public:
         _ENode() : NodeAdapter< model::json::_E >(static_cast<uint64_t>(jsonToken::_e)){};
-        virtual ~_ENode() = default;
-        virtual std::string ToString() const override { return "e"; };
+        virtual ~_ENode() noexcept = default;
+        virtual std::string ToString() const { return "e"; };
     };
 
 }}}}//qor::data::parser::json

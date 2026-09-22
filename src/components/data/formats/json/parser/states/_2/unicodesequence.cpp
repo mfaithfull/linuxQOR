@@ -26,7 +26,7 @@ namespace qor { namespace data { namespace parser { namespace json {
         s4(parser, &h3, &h4)        
     { }
 
-    unicodeSequence::~unicodeSequence() = default;
+    unicodeSequence::~unicodeSequence() noexcept = default;
 
     void unicodeSequence::Prepare()
     {

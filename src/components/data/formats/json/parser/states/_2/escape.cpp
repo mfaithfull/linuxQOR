@@ -12,21 +12,8 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     escape::escape(Parser* parser) : Specific<uint32_t>(parser, 0x5C, static_cast<uint64_t>(jsonToken::escape)){ }
-    escape::~escape() = default;
+    escape::~escape() noexcept = default;
 
-    void escape::Prepare()
-    {
-        //log::debug("Looking for an Escape Character...");
-    }
-
-    void escape::Emit()
-    {
-        //log::debug("Emitting an Escape character: ");
-    }
-
-    void escape::Fail()
-    {
-        //log::debug("...Didn't find an Escape Character.");
-    }
+    void escape::Emit(){ }
 
 }}}}//qor::data::parser::json

@@ -21,28 +21,28 @@ namespace qor { namespace data { namespace parser {
     { 
     public: 
         CR(Parser* parser) : Specific<item_t>(parser, 0x0D, static_cast<uint64_t>(eToken::CarriageReturn)){} 
-        virtual ~CR() = default;
+        virtual ~CR() noexcept = default;
         virtual void Emit(){}
     };
 
     template<typename item_t>
     class LF : public Specific<item_t>
     { public: LF(Parser* parser) : Specific<item_t>(parser, 0x0A, static_cast<uint64_t>(eToken::LineFeed)){} 
-        virtual ~LF() = default;
+        virtual ~LF() noexcept = default;
         virtual void Emit(){}
     };
 
     template<typename item_t>
     class HTAB : public Specific<item_t>
     { public: HTAB(Parser* parser) : Specific<item_t>(parser, 0x09, static_cast<uint64_t>(eToken::HorizontalTab)){} 
-        virtual ~HTAB() = default;
+        virtual ~HTAB() noexcept = default;
         virtual void Emit(){}
     };
 
     template<typename item_t>
     class DQUOTE : public Specific<item_t>
     { public: DQUOTE(Parser* parser) : Specific<item_t>(parser, 0x22, static_cast<uint64_t>(eToken::DoubleQuote)){} 
-        virtual ~DQUOTE() = default;
+        virtual ~DQUOTE() noexcept = default;
         virtual void Emit(){}
     };
 
@@ -51,7 +51,7 @@ namespace qor { namespace data { namespace parser {
     { 
     public: 
         SP(Parser* parser) : Specific<item_t>(parser, 0x20, static_cast<uint64_t>(eToken::Space)){} 
-        virtual ~SP() = default;
+        virtual ~SP() noexcept = default;
         virtual void Emit(){}
     };
 
@@ -61,7 +61,7 @@ namespace qor { namespace data { namespace parser {
     public: 
         DIGIT(Parser* parser) : OneOfARange_t<item_t>(parser, 0x30, 0x39, static_cast<uint64_t>(eToken::Digit)) { }
         
-        virtual ~DIGIT() = default;
+        virtual ~DIGIT() noexcept = default;
 
         virtual void Emit()
         {
@@ -75,7 +75,7 @@ namespace qor { namespace data { namespace parser {
     { 
     public: 
         VCHAR(Parser* parser) : OneOfARange_t<item_t>(parser, 0x21, 0x7e, static_cast<uint64_t>(eToken::VisibleChar)) { }
-        virtual ~VCHAR() = default;
+        virtual ~VCHAR() noexcept = default;
         virtual void Emit()
         {
             char charVal = (char)OneOfARange_t<item_t>::m_result.first;
@@ -91,7 +91,7 @@ namespace qor { namespace data { namespace parser {
         CTL(Parser* parser) : AnyOneOf_t<OneOfARange_t<item_t>, Specific<item_t>>(parser, &a, &b, static_cast<uint64_t>(eToken::Control)),
             a(parser, (item_t)0x00, (item_t)0x1f, static_cast<uint64_t>(eToken::Lexical)),
             b(parser, (item_t)0x7f, static_cast<uint64_t>(eToken::Lexical)){ }
-        virtual ~CTL() = default;
+        virtual ~CTL() noexcept = default;
         virtual void Emit()
         {
             char ctlVal = (char)OneOfARange_t<item_t>::m_result.first;
@@ -158,7 +158,7 @@ namespace qor { namespace data { namespace parser {
             }
         }
 
-        virtual ~HEXDIGIT() = default;
+        virtual ~HEXDIGIT() noexcept = default;
 
     private:
 
@@ -177,7 +177,7 @@ namespace qor { namespace data { namespace parser {
             m_a(parser), 
             m_b(parser)
         {}
-        virtual ~WSP() = default;
+        virtual ~WSP() noexcept = default;
         virtual void Emit(){}
     private:
 
@@ -191,7 +191,7 @@ namespace qor { namespace data { namespace parser {
     public: 
         CRLF(Parser* parser) : Sequence_t< CR<item_t>, LF<item_t> >(parser, &m_head, &m_tail, static_cast<uint64_t>(eToken::CarriageReturnLineFeed)),
             m_head(parser), m_tail(parser){}
-        virtual ~CRLF() = default;
+        virtual ~CRLF() noexcept = default;
         virtual void Emit(){}
 
     private:
@@ -209,7 +209,7 @@ namespace qor { namespace data { namespace parser {
             m_WSP(parser),
             m_CRLF(parser)
         {}
-        virtual ~LWSP() = default;
+        virtual ~LWSP() noexcept = default;
         virtual void Emit(){}
     
     private:
@@ -232,7 +232,7 @@ namespace qor { namespace data { namespace parser {
             m_one(parser, '1', static_cast<uint64_t>(eToken::Lexical) )
         { }
 
-        virtual ~BIT() = default;
+        virtual ~BIT() noexcept = default;
         virtual void Emit()
         {
             unsigned int bitVal = base::m_result.first == '0' ? 0 :
@@ -255,7 +255,7 @@ namespace qor { namespace data { namespace parser {
         CHAR(Parser* parser) : OneOfARange_t<item_t>(parser, 0x01, 0x7F, static_cast<uint64_t>(eToken::Char))
         { }
 
-        virtual ~CHAR() = default;
+        virtual ~CHAR() noexcept = default;
 
         virtual void Emit()
         {
@@ -277,7 +277,7 @@ namespace qor { namespace data { namespace parser {
             m_b(parser, (item_t)0x61, (item_t)0x7A, static_cast<uint64_t>(eToken::Lexical))
         { }
 
-        virtual ~ALPHA() = default;
+        virtual ~ALPHA() noexcept = default;
 
         virtual void Emit()
         {

@@ -24,7 +24,7 @@ namespace qor { namespace data { namespace parser { namespace json {
         f(parser, &pd, &continuation)
     { }
 
-    fraction::~fraction() = default;
+    fraction::~fraction() noexcept = default;
 
     void fraction::Prepare()
     {

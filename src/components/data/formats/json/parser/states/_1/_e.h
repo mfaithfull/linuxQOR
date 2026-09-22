@@ -8,14 +8,16 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class _e : public AnyOneOf_t< Specific<uint32_t>,Specific<uint32_t> >
+    class _e final : public AnyOneOf_t< Specific<uint32_t>,Specific<uint32_t> >
     {
     public: 
+    
         _e(Parser* parser) : AnyOneOf_t< Specific<uint32_t>,Specific<uint32_t> >(
             parser, &e1, &e2, static_cast<uint64_t>(jsonToken::_e)), 
             e1(parser, 0x65), e2(parser,0x45)
-            { }
-        virtual ~_e() = default;
+        { }
+
+        virtual ~_e() noexcept = default;
 
     private:
         Specific<uint32_t> e1;

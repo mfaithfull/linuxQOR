@@ -8,33 +8,29 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class unescaped : public AnyOneOf
+    class unescaped final : public AnyOneOf_t< OneOfARange_t<uint32_t>, AnyOneOf_t< OneOfARange_t<uint32_t>, OneOfARange_t<uint32_t> > >
     {        
-    public: unescaped(Parser* parser) :
-                AnyOneOf(parser,
-                    new_ref<OneOfARange_t<uint32_t>>(parser, 0x20, 0x21, static_cast<uint64_t>(eToken::Lexical)),
-                    new_ref<AnyOneOf>(parser,
-                        new_ref<OneOfARange_t<uint32_t>>(parser, 0x23, 0x5B, static_cast<uint64_t>(eToken::Lexical)),
-                        new_ref<OneOfARange_t<uint32_t>>(parser, 0x5D, 0x10FFFF, static_cast<uint64_t>(eToken::Lexical)),
-                        static_cast<uint64_t>(eToken::Lexical)
-                    ),
-                    static_cast<uint64_t>(jsonToken::unescaped)){ }
+    public: 
 
-        virtual ~unescaped() = default;
-        virtual void Prepare()
-        {
-            //log::debug("Looking for an unescaped character...");
-        }
+        unescaped(Parser* parser) :
+            AnyOneOf_t(parser, &m_a, &m_2, static_cast<uint64_t>(jsonToken::unescaped)),
+            m_a(parser, 0x20, 0x21),
+            m_b(parser, 0x23, 0x5B),
+            m_c(parser, 0x5D, 0x10FFFF),
+            m_2(parser, &m_b, &m_c)
+        { }
 
-        void Emit()
-        {
-            //log::debug("Emitting an unescaped character: ");
-        }
+        virtual ~unescaped() noexcept = default;
 
-        void Fail()
-        {
-            //log::debug("...Didn't find an unescaped character.");
-        }
+        void Emit(){ }
+
+    private:
+
+        OneOfARange_t<uint32_t> m_a;
+        OneOfARange_t<uint32_t> m_b;
+        OneOfARange_t<uint32_t> m_c;
+        AnyOneOf_t< OneOfARange_t<uint32_t>, OneOfARange_t<uint32_t> > m_2;
+
     };
 
 }}}}//qor::data::parser::json

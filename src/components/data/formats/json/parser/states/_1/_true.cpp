@@ -22,22 +22,12 @@ namespace qor { namespace data { namespace parser { namespace json {
             m_rue(parser, &m_r, &m_ue)
     { }
 
-    _true::~_true() = default;
-
-    void _true::Prepare()
-    {
-        //log::debug("Looking for a true...");
-    }
+    _true::~_true() noexcept = default;
 
     void _true::Emit()
     {
         //log::debug("Emitting a true.");
         GetParser()->PushNode(new_ref<_TrueNode>());
-    }
-
-    void _true::Fail()
-    {
-        //log::debug("...Didn't find a true.");
     }
 
 }}}}//qor::data::parser::json

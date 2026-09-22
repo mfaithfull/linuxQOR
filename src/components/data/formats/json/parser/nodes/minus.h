@@ -10,12 +10,12 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class MinusNode : public NodeAdapter< model::json::Minus >
+    class MinusNode final : public NodeAdapter< model::json::Minus >
     {
     public:
 
         MinusNode() : NodeAdapter< model::json::Minus >(static_cast<uint64_t>(jsonToken::minus)){ }
-        virtual ~Minus() = default;
+        virtual ~Minus() noexcept = default;
     };
 
 }}}}//qor::data::parser::json

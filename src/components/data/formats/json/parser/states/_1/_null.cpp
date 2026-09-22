@@ -22,22 +22,12 @@ namespace qor { namespace data { namespace parser { namespace json {
         m_ull(parser, &m_u, &m_sll)
     { }
 
-    _null::~_null() = default;
-
-    void _null::Prepare()
-    {
-        //log::debug("Looking for a null...");
-    }
+    _null::~_null() noexcept = default;
 
     void _null::Emit()
     {        
         log::debug("Emitting a null.");
         GetParser()->PushNode(new_ref<_NullNode>());
-    }
-
-    void _null::Fail()
-    {
-        //log::debug("...Didn't find a null.");
     }
 
 }}}}//qor::data::parser::json

@@ -24,7 +24,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             m_tail(parser, &m_ns, &m_v)
     { }
 
-    member::~member() = default;
+    member::~member() noexcept = default;
 
     void member::Prepare()
     {

@@ -100,10 +100,6 @@ namespace qor { namespace data { namespace parser {
             };
     }
 
-    void Sequence::Prepare()
-    {
-        //log::debug("Looking for a sequence...");
-    }
-    Sequence::~Sequence() = default;
+    Sequence::~Sequence() noexcept = default;
     
 }}}//qor::data::parser

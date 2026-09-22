@@ -9,7 +9,7 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //value-separator = ws %x2C ws  ; , comma
-    class value_separator : public Sequence
+    class value_separator final : public Sequence
     {
         public: value_separator(Parser* parser) :
             Sequence(parser,
@@ -19,7 +19,7 @@ namespace qor { namespace data { namespace parser { namespace json {
                     new_ref<ws>(parser)
                 ),
             static_cast<uint64_t>(jsonToken::value_separator)){ }
-        virtual ~value_separator() = default;
+        virtual ~value_separator() noexcept = default;
         virtual void Emit(){ };//Emit nothing
     };
 

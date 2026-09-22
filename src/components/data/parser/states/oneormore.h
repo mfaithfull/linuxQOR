@@ -13,7 +13,7 @@ namespace qor { namespace data { namespace parser {
     {
     public:
         OneOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
-        virtual ~OneOrMore();
+        virtual ~OneOrMore() noexcept;
 
     private:        
         ref_of<ParserState>::type m_head;

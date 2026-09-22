@@ -63,6 +63,6 @@ namespace qor { namespace data { namespace parser {
         };
     }
 
-    OneOrMore::~OneOrMore() = default;
+    OneOrMore::~OneOrMore() noexcept = default;
     
 }}}//qor::data::parser

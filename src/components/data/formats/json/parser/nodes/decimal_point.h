@@ -10,12 +10,12 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class DecimalPointNode : public NodeAdapter< model::json::DecimalPoint >
+    class DecimalPointNode final : public NodeAdapter< model::json::DecimalPoint >
     {
     public:
 
         DecimalPointNode() : NodeAdapter< model::json::DecimalPoint >(static_cast<uint64_t>(jsonToken::decimal_point)){ };
-        virtual ~DecimalPointNode() = default;
+        virtual ~DecimalPointNode() noexcept = default;
     };
 
 }}}}//qor::data::parser::json

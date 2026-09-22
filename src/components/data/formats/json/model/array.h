@@ -9,12 +9,17 @@
 
 namespace qor { namespace data{ namespace model{ namespace json {
 
-    class Array
+    class Array : public ValueModel
     {
     public:
 
         Array(){}
         virtual ~Array() = default;        
+
+        virtual ValueType GetType() override
+        {
+            return ValueType::array;
+        }
 
         std::vector<ref_of<Value>::type> m_values;
 

@@ -12,10 +12,10 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //member = string name-separator value
-    class qor_pp_module_interface(QOR_JSON) member : public Sequence_t< string, Sequence_t<name_separator, value> >
+    class qor_pp_module_interface(QOR_JSON) member final : public Sequence_t< string, Sequence_t<name_separator, value> >
     {
         public: member(Parser* parser);
-        virtual ~member();
+        virtual ~member() noexcept;
 
         virtual void Prepare();
         virtual void Emit();

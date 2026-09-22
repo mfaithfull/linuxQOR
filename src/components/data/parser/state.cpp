@@ -43,7 +43,7 @@ namespace qor { namespace data { namespace parser {
         };
     }
 
-    ParserState::~ParserState() = default;
+    ParserState::~ParserState() noexcept = default;
 
     void ParserState::Reset()
     {

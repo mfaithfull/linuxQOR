@@ -25,7 +25,7 @@ namespace qor { namespace data { namespace parser { namespace json {
         m_body(parser, &m_d, &m_tail)
     { }
     
-    integer::~integer() = default;
+    integer::~integer() noexcept = default;
 
     void integer::Prepare()
     {

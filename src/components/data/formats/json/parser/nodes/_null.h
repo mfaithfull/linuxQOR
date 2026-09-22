@@ -10,11 +10,11 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class _NullNode : public NodeAdapter< model::json::_Null >
+    class _NullNode final : public NodeAdapter< model::json::_Null >
     {
     public:
         _NullNode() : NodeAdapter< model::json::_Null >(static_cast<uint64_t>(jsonToken::_null)){ };
-        virtual ~_NullNode() = default;
+        virtual ~_NullNode() noexcept = default;
         virtual std::string ToString() const override { return "null"; };
     };
 

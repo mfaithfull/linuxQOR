@@ -49,6 +49,6 @@ namespace qor { namespace data { namespace parser {
             };
     }
 
-    OneOfAByteRange::~OneOfAByteRange() = default;
+    OneOfAByteRange::~OneOfAByteRange() noexcept = default;
 
 }}}//qor::data::parser

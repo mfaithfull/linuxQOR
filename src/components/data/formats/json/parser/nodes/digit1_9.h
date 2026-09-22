@@ -10,7 +10,7 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class Digit1_9Node : public NodeAdapter< model::json::Digit1_9 >
+    class Digit1_9Node final : public NodeAdapter< model::json::Digit1_9 >
     {
     public:
 
@@ -19,7 +19,7 @@ namespace qor { namespace data{ namespace parser{ namespace json {
             GetObject()->SetValue(c);
         }
         
-        virtual ~Digit1_9Node() = default;
+        virtual ~Digit1_9Node() noexcept = default;
         
         virtual std::string ToString() const override 
         { 

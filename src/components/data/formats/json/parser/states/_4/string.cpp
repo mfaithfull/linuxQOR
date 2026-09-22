@@ -23,7 +23,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             m_tail(parser, &m_body, &m_qclose)
     { }
 
-    string::~string() = default;
+    string::~string() noexcept = default;
 
     void string::Prepare()
     {

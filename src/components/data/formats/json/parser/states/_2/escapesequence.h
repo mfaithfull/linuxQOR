@@ -10,11 +10,11 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class qor_pp_module_interface(QOR_JSON) escapeSequence : public Sequence
+    class qor_pp_module_interface(QOR_JSON) escapeSequence final : public Sequence
     {
     public: 
         escapeSequence(Parser* parser);
-        virtual ~escapeSequence();
+        virtual ~escapeSequence() noexcept;
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();

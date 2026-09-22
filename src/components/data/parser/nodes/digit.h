@@ -15,9 +15,9 @@ namespace qor { namespace data{ namespace parser{
 
         DigitNode(int digitVal) : Node(static_cast<uint64_t>(eToken::Digit)) , m_value(digitVal){ }
         
-        virtual ~DigitNode() = default;
+        virtual ~DigitNode() noexcept = default;
 
-        unsigned int GetValue()
+        unsigned int GetValue() const
         {
             return m_value;
         }

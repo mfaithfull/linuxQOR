@@ -35,7 +35,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             m_parser(parser)
     { }
 
-    array::~array() = default;
+    array::~array() noexcept = default;
 
     void array::Prepare()
     {
@@ -77,7 +77,6 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void array::Fail()
     {
-        //log::debug("...Didn't find an Array.");
         uint64_t topToken = m_parser->TopNode()->GetToken();        
         if(topToken == m_token)
         {

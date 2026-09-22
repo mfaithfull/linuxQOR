@@ -12,7 +12,7 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class CharacterNode : public NodeAdapter< model::json::Character >
+    class CharacterNode final : public NodeAdapter< model::json::Character >
     {
     public:
 
@@ -21,7 +21,7 @@ namespace qor { namespace data{ namespace parser{ namespace json {
             GetObject()->SetValue(c);
         }
         
-        virtual ~CharacterNode() = default;
+        virtual ~CharacterNode() noexcept = default;
         virtual std::string ToString() const override 
         { 
             char32_t c = static_cast<char32_t>(GetObject()->GetValue());

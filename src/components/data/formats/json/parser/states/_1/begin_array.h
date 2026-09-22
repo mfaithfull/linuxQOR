@@ -10,7 +10,7 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     // begin-array     = ws %x5B ws  ; [ left square bracket
-    class begin_array : public Sequence_t< ws, Sequence_t< Specific<uint32_t>, ws > >
+    class begin_array final : public Sequence_t< ws, Sequence_t< Specific<uint32_t>, ws > >
     {
         public: begin_array(Parser* parser) :
             Sequence_t< ws, Sequence_t< Specific<uint32_t>, ws > >(parser, &m_leadingws, &m_tail, static_cast<uint64_t>(jsonToken::begin_array)),
@@ -19,7 +19,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             m_bracket(parser, 0x5B),
             m_tail(parser, &m_bracket, &m_trailingws)
         { }
-        virtual ~begin_array() = default;
+        virtual ~begin_array() noexcept = default;
         virtual void Emit(){ };//Emit nothing
 
     private:

@@ -37,7 +37,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             ),
         static_cast<uint64_t>(jsonToken::object)){ }
 
-    object::~object() = default;
+    object::~object() noexcept = default;
     
     void object::Prepare()
     {

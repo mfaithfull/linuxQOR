@@ -13,7 +13,7 @@ namespace qor { namespace data { namespace parser { namespace json {
               %x09 /              ; Horizontal tab
               %x0A /              ; Line feed or New line
               %x0D )              ; Carriage return*/
-    class ws : public ZeroOrMore_t< AnyOneOf_t< WSP<uint32_t>, AnyOneOf_t< CR<uint32_t>, LF<uint32_t> > > >
+    class ws final : public ZeroOrMore_t< AnyOneOf_t< WSP<uint32_t>, AnyOneOf_t< CR<uint32_t>, LF<uint32_t> > > >
     {
     public: 
         ws(Parser* parser) : ZeroOrMore_t< AnyOneOf_t< WSP<uint32_t>, AnyOneOf_t< CR<uint32_t>, LF<uint32_t> > > >(parser, &m_anyWSP, static_cast<uint64_t>(jsonToken::ws)),
@@ -23,7 +23,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             m_eol(parser, &m_cr, &m_lf),
             m_anyWSP(parser, &m_wsp, &m_eol)
         { }
-        virtual ~ws() = default;
+        virtual ~ws() noexcept = default;
         virtual void Emit(){ };//Emit nothing
 
     private:

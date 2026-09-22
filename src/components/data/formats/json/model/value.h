@@ -7,6 +7,7 @@
 #include "valuemodel.h"
 #include "src/qor/essentials/current/currentthread.h"
 #include "src/qor/memory/reference/newref.h"
+#include "src/qor/essentials/datastructures/polymorphic.h"
 
 namespace qor { namespace data{ namespace model{ namespace json {
 
@@ -17,22 +18,22 @@ namespace qor { namespace data{ namespace model{ namespace json {
         Value(){ }
         virtual ~Value() = default;
 
-        ref_of<ValueModel>::type GetValue()
+        polymorphic<ValueModel>& GetValue()
         {
-            return m_value;
+            return m_valueModel;
         }
 
-        void SetValue(ref_of<ValueModel>::type value)
+        void SetValue(const polymorphic<ValueModel>& value)
         {
-            m_value = value;
+            m_valueModel = value;
         }
         
-        ValueType GetType() { return m_value->GetType(); };
+        ValueType GetType() { return m_valueModel->GetType(); };
         
     private:
 
-        ref_of<ValueModel>::type m_value;
-        
+        //ref_of<ValueModel>::type m_value;
+        polymorphic<ValueModel> m_valueModel;
     };
 
 }}}}//qor::data::model::json

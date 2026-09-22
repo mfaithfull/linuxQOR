@@ -14,9 +14,7 @@ namespace qor { namespace data { namespace parser {
     public:
 
         Sequence(Parser * parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
-        virtual ~Sequence();
-
-        virtual void Prepare();
+        virtual ~Sequence() noexcept;
 
     private:
 
@@ -107,7 +105,7 @@ namespace qor { namespace data { namespace parser {
             };
         }
 
-        virtual ~Sequence_t() = default;
+        virtual ~Sequence_t() noexcept = default;
 
     private:
 

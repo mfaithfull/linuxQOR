@@ -10,7 +10,7 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //name-separator  = ws %x3A ws  ; : colon
-    class name_separator : public Sequence_t< ws, Sequence_t< Specific<uint32_t>, ws > >
+    class name_separator final : public Sequence_t< ws, Sequence_t< Specific<uint32_t>, ws > >
     {
         public: name_separator(Parser* parser) :
             Sequence_t< ws, Sequence_t< Specific<uint32_t>, ws > >(parser, &m_wsBefore, &m_s, static_cast<uint64_t>(jsonToken::name_separator)),
@@ -19,21 +19,10 @@ namespace qor { namespace data { namespace parser { namespace json {
             m_ns(parser, 0x3A),
             m_s(parser, &m_ns, &m_wsAfter)
         { }
-        virtual ~name_separator() = default;
-        virtual void Prepare()
-        {
-            //log::debug("Looking for a name separator...");
-        }
 
-        void Emit()
-        {
-            //log::debug("Consuming a name separator: ");
-        }
+        virtual ~name_separator() noexcept = default;
 
-        void Fail()
-        {
-            //log::debug("...Didn't find a name separator.");
-        }
+        void Emit(){ }
 
     private:
 

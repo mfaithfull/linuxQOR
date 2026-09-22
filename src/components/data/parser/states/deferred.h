@@ -28,43 +28,26 @@ namespace qor { namespace data { namespace parser {
                         stateCache.pop_back();
                     }   
                     m_p->Enter();                 
-                    //if (m_p.IsNotNull())
-                    {                        
-                        m_result = m_p->m_result;
-                    }
+                    m_result = m_p->m_result;
                 };
 
             Resume = [this]()
                 {
-                    //if (m_p.IsNotNull())
-                    {
-                        m_result = m_p->m_result;
-                        m_p->Resume();
-                        //if (m_p.IsNotNull())
-                        {
-                            m_result = m_p->m_result;
-                        }
-                    }
+                    m_result = m_p->m_result;
+                    m_p->Resume();
+                    m_result = m_p->m_result;
                 };
 
             Leave = [this]()
                 {
-                    //if (m_p.IsNotNull())
-                    {
-                        m_p->Leave();
-                        if (m_p.IsNotNull())
-                        {
-                            m_result = m_p->m_result;
-                            std::vector< ref_of<fastflow::Step>::type >& stateCache = GetParser()->GetStateCache(m_token);
-                            stateCache.emplace_back(m_p);
-                        }
-                    }
+                    m_p->Leave();
+                    m_result = m_p->m_result;
+                    std::vector< ref_of<fastflow::Step>::type >& stateCache = GetParser()->GetStateCache(m_token);
+                    stateCache.emplace_back(m_p);
                 };
         }
 
-        virtual ~deferred()
-        {
-        }
+        virtual ~deferred() noexcept = default;
 
     private:
 

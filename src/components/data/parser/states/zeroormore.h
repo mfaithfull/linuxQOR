@@ -14,7 +14,7 @@ namespace qor { namespace data { namespace parser {
     public:
 
         ZeroOrMore(Parser* parser, ref_of<ParserState>::type head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
-        virtual ~ZeroOrMore();
+        virtual ~ZeroOrMore() noexcept;
 
     private:
 
@@ -80,7 +80,7 @@ namespace qor { namespace data { namespace parser {
 
         }
 
-        virtual ~ZeroOrMore_t() = default;
+        virtual ~ZeroOrMore_t() noexcept = default;
 
     private:
 

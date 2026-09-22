@@ -23,7 +23,7 @@ namespace qor { namespace data{ namespace model{ namespace json {
     private:
 
         std::string m_name;
-        class Value m_value;
+        Value m_value;
     };
 
 }}}}//qor::data::model::json

@@ -10,14 +10,14 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class EscapeNode : public NodeAdapter< model::json::Escape >
+    class EscapeNode final : public NodeAdapter< model::json::Escape >
     {
     public:
 
         EscapeNode(): NodeAdapter< model::json::Escape >(static_cast<uint64_t>(jsonToken::escape)){ }
-        virtual ~EscapeNode() = default;
+        virtual ~EscapeNode() noexcept = default;
         
-        std::string Value(){ return "\\"; }
+        std::string Value() const { return "\\"; }
 
     private:
         

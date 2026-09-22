@@ -9,11 +9,11 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //array = begin-array [ value *( value-separator value ) ] end-array
-    class qor_pp_module_interface(QOR_JSON) array : public Sequence
+    class qor_pp_module_interface(QOR_JSON) array final : public Sequence
     {
     public: 
         array(Parser* parser);
-        virtual ~array();
+        virtual ~array() noexcept;
 
         virtual void Prepare();
         virtual void Emit();

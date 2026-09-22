@@ -9,10 +9,10 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //value = false / null / true / object / array / number / string
-    class qor_pp_module_interface(QOR_JSON) value : public AnyOneOf
+    class qor_pp_module_interface(QOR_JSON) value final : public AnyOneOf
     {
         public: value(Parser* parser);
-        virtual ~value();
+        virtual ~value() noexcept;
 
         virtual void Prepare();
         virtual void Emit();

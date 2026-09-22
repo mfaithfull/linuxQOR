@@ -9,11 +9,11 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class qor_pp_module_interface(QOR_JSON) fraction : public Sequence_t< decimal_point, Sequence_t< DIGIT<uint32_t>, ZeroOrMore_t< DIGIT<uint32_t> > > >
+    class qor_pp_module_interface(QOR_JSON) fraction final : public Sequence_t< decimal_point, Sequence_t< DIGIT<uint32_t>, ZeroOrMore_t< DIGIT<uint32_t> > > >
     {
     public: 
         fraction(Parser* parser);
-        virtual ~fraction();
+        virtual ~fraction() noexcept;
 
         virtual void Prepare();
         virtual void Emit();

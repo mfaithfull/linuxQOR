@@ -16,9 +16,9 @@ namespace qor { namespace data{ namespace parser{
 
         CharNode(char charVal, uint64_t token) : Node(token) , m_value(charVal){ }
 
-        virtual ~CharNode() = default;
+        virtual ~CharNode() noexcept = default;
 
-        char GetValue()
+        char GetValue() const
         {
             return m_value;
         }

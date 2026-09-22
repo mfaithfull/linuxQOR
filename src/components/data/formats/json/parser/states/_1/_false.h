@@ -9,14 +9,12 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //false = %x66.61.6c.73.65   ; false
-    class qor_pp_module_interface(QOR_JSON) _false : public Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Specific<uint32_t> > > > >
+    class qor_pp_module_interface(QOR_JSON) _false final : public Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Specific<uint32_t> > > > >
     {
     public: 
         _false(Parser* parser);
-        virtual ~_false();
-        virtual void Prepare();
-        virtual void Emit();
-        virtual void Fail();
+        virtual ~_false() noexcept;
+        virtual void Emit();        
 
     private:
 

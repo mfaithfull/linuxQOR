@@ -25,7 +25,7 @@ namespace qor { namespace data {
     public:
 
         ParserState(Parser* parser, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
-        virtual ~ParserState();
+        virtual ~ParserState() noexcept;
         virtual void Reset();
         uint64_t GetToken();
         Parser* GetParser();
@@ -72,9 +72,6 @@ namespace qor { namespace data {
         }
         virtual ~AcceptAll() = default;
     };
-
- 
-
 
 }}}//qor::data::parser
 

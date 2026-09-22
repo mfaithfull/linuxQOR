@@ -65,6 +65,6 @@ namespace qor { namespace data { namespace parser {
 
     }
 
-    ZeroOrMore::~ZeroOrMore() = default;
+    ZeroOrMore::~ZeroOrMore() noexcept = default;
     
 }}}//qor::data::parser

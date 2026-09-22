@@ -26,7 +26,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             static_cast<uint64_t>(jsonToken::number))
     { }
 
-    number::~number() = default;
+    number::~number() noexcept = default;
 
     void number::Prepare()
     {

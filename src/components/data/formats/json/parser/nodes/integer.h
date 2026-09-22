@@ -10,12 +10,12 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class IntegerNode : public NodeAdapter< model::json::Integer >
+    class IntegerNode final : public NodeAdapter< model::json::Integer >
     {
     public:
 
         IntegerNode() : NodeAdapter< model::json::Integer >(static_cast<uint64_t>(jsonToken::integer)){ }
-        virtual ~IntegerNode() = default;
+        virtual ~IntegerNode() noexcept = default;
         
     };
 

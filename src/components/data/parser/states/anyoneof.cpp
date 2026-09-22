@@ -87,6 +87,6 @@ namespace qor { namespace data { namespace parser {
             };
     }
 
-    AnyOneOf::~AnyOneOf() = default;
+    AnyOneOf::~AnyOneOf() noexcept = default;
 
 }}}//qor::data::parser

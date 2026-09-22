@@ -22,7 +22,7 @@ namespace qor { namespace data {
         Parser(const Parser&) = delete;
         Parser& operator = (const Parser&) = delete;
         Parser(data::AbstractDataContext* context);
-        ~Parser();
+        virtual ~Parser() noexcept;
         data::AbstractDataContext* GetContext() const;
         void SetContext(data::AbstractDataContext* context);
         void PushNode(ref_of<parser::Node>::type node);

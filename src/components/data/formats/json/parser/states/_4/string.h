@@ -10,11 +10,11 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class qor_pp_module_interface(QOR_JSON) string : public Sequence_t< quotation_mark, Sequence_t< ZeroOrMore_t< character >, quotation_mark > >
+    class qor_pp_module_interface(QOR_JSON) string final : public Sequence_t< quotation_mark, Sequence_t< ZeroOrMore_t< character >, quotation_mark > >
     {
     public: 
         string(Parser* parser);
-        virtual ~string();
+        virtual ~string() noexcept;
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();

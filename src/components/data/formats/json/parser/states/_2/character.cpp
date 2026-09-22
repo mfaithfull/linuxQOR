@@ -20,7 +20,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             m_escaped(parser, static_cast<uint64_t>(jsonToken::escape_sequence))
     { }
 
-    character::~character() = default;
+    character::~character() noexcept = default;
 
     void character::Emit()
     {

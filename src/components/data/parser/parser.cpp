@@ -19,7 +19,7 @@ namespace qor { namespace data {
 
     Parser::Parser(data::AbstractDataContext* context) : Fastflow(), m_context(context){ }
 
-    Parser::~Parser() = default;
+    Parser::~Parser() noexcept = default;
 
     data::AbstractDataContext* Parser::GetContext() const
     {

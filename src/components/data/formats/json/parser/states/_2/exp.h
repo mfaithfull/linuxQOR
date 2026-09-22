@@ -12,11 +12,11 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //exp = e [ minus / plus ] 1*DIGIT
-    class qor_pp_module_interface(QOR_JSON) exp : public Sequence
+    class qor_pp_module_interface(QOR_JSON) exp final : public Sequence
     {
     public: 
         exp(Parser* parser);
-        virtual ~exp();
+        virtual ~exp() noexcept;
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();

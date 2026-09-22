@@ -65,6 +65,6 @@ namespace qor { namespace data { namespace parser {
 
     }
 
-    Optional::~Optional() = default;
+    Optional::~Optional() noexcept = default;
     
 }}}//qor::data::parser

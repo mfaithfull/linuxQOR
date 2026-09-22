@@ -10,7 +10,7 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //end-object      = ws %x7D ws  ; } right curly bracket
-    class end_object : public Sequence_t< ws, Sequence_t< Specific<uint32_t>, ws > >
+    class end_object final : public Sequence_t< ws, Sequence_t< Specific<uint32_t>, ws > >
     {
         public: end_object(Parser* parser) :
             Sequence_t< ws, Sequence_t< Specific<uint32_t>, ws > >(parser, &m_leadingws, &m_tail, static_cast<uint64_t>(jsonToken::end_object)),
@@ -19,22 +19,10 @@ namespace qor { namespace data { namespace parser { namespace json {
             m_bracket(parser, 0x7D),
             m_tail(parser, &m_bracket, &m_trailingws)
         { }
-        virtual ~end_object() = default;
-        virtual void Prepare()
-        {
-            //log::debug("Looking for an end_object...");
-        }
+        virtual ~end_object() noexcept = default;
 
-        void Emit()
-        {
-            //log::debug("Consuming an end_object: ");
-        }
-
-        void Fail()
-        {
-            //log::debug("...Didn't find an end_object.");
-        }
-        
+        void Emit(){ }
+       
     private:
         ws m_leadingws;
         ws m_trailingws;

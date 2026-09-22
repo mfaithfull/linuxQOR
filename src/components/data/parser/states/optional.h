@@ -14,7 +14,7 @@ namespace qor { namespace data { namespace parser {
     public:
 
         Optional(Parser* parser, ref_of<ParserState>::type head, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
-        virtual ~Optional();
+        virtual ~Optional() noexcept;
 
     private:
 

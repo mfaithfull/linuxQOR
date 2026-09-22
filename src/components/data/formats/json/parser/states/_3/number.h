@@ -13,11 +13,11 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //number = [ minus ] int [ frac ] [ exp ]
-    class qor_pp_module_interface(QOR_JSON) number : public Sequence
+    class qor_pp_module_interface(QOR_JSON) number final : public Sequence
     {
     public: 
         number(Parser* parser);
-        virtual ~number();
+        virtual ~number() noexcept;
         virtual void Prepare();
         virtual void Emit();
         virtual void Fail();

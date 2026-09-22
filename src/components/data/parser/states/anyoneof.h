@@ -14,7 +14,7 @@ namespace qor { namespace data { namespace parser {
     public:
 
         AnyOneOf(Parser * parser, ref_of<ParserState>::type head, ref_of<ParserState>::type tail, uint64_t token = static_cast<uint64_t>(eToken::Lexical));
-        virtual ~AnyOneOf();
+        virtual ~AnyOneOf() noexcept;
 
     private:
 

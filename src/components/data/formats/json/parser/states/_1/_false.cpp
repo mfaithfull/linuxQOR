@@ -24,22 +24,12 @@ namespace qor { namespace data { namespace parser { namespace json {
         m_alse(parser, &m_a, &m_lse)
     { }
 
-    _false::~_false() = default;
-
-    void _false::Prepare()
-    {
-        //log::debug("Looking for a false...");
-    }
+    _false::~_false() noexcept = default;
 
     void _false::Emit()
     {        
         //log::debug("Emitting a false.");
         GetParser()->PushNode(new_ref<_FalseNode>());
-    }
-
-    void _false::Fail()
-    {
-        //log::debug("...Didn't find a false.");
     }
 
 }}}}//qor::data::parser::json

@@ -10,7 +10,7 @@
 
 namespace qor { namespace data{ namespace parser{ namespace json {
 
-    class UnicodeSequenceNode : public NodeAdapter< model::json::CodePoint >
+    class UnicodeSequenceNode final : public NodeAdapter< model::json::CodePoint >
     {
     public:
 
@@ -19,8 +19,9 @@ namespace qor { namespace data{ namespace parser{ namespace json {
             GetObject()->SetValue(c);
         }
         
-        virtual ~UnicodeSequenceNode() = default;
-        virtual std::string ToString() const override 
+        virtual ~UnicodeSequenceNode() noexcept = default;
+
+        virtual std::string ToString() const 
         { 
             return "todo:<unicode sequence>";//TODO:
         };

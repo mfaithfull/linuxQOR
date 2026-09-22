@@ -8,11 +8,11 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    class minus : public Specific<uint32_t>
+    class minus final : public Specific<uint32_t>
     {
     public: 
         minus(Parser* parser) : Specific<uint32_t>(parser, 0x2D, static_cast<uint64_t>(jsonToken::minus)){ }
-        virtual ~minus() = default;
+        virtual ~minus() noexcept = default;
     };
 
 }}}}//qor::data::parser::json
