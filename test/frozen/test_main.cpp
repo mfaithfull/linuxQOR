@@ -23,7 +23,7 @@ int main(int argc, const char** argv, char** env)
             });
 }
 
-qor::Module& ThisModule(void)
+qor_pp_export_non_msvc qor::Module& ThisModule(void)
 {
 	static qor::Module QORModule("Querysoft Open Runtime: Test Frozen Module", qor_pp_module_ver_string );
 	return QORModule;

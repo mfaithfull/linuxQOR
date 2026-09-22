@@ -131,7 +131,7 @@ namespace qor { namespace data { namespace parser {
             auto node = base::GetParser()->PopNode();
             if(node.IsNotNull() && node->GetToken() == static_cast<uint64_t>(eToken::Digit))
             {
-                hexVal = node.AsRef<DigitNode>()->GetValue();
+                hexVal = node.template AsRef<DigitNode>()->GetValue();
                 node = base::GetParser()->PopNode();
             }
             else
@@ -282,7 +282,7 @@ namespace qor { namespace data { namespace parser {
         virtual void Emit()
         {
             item_t charVal = (item_t)base::m_result.first;
-            base::GetParser()->PushNode(new_ref<CharNode>(charVal, static_cast<uint64_t>(base::m_token)).AsRef<Node>());
+            base::GetParser()->PushNode(new_ref<CharNode>(charVal, static_cast<uint64_t>(base::m_token)).template AsRef<Node>());
         }
 
     private:

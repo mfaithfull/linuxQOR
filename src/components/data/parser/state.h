@@ -56,7 +56,7 @@ namespace qor { namespace data {
                 Prepare();
                 item_t* data = nullptr;
                 m_result.code = Result::SUCCESS;
-                if(GetContext()->GetItem(data))
+                if(dynamic_cast<pipeline::BufferContext<item_t>*>(GetParser()->GetContext())->GetItem(data))
                 {
                     m_result.first = *data;
                     m_result.m_position = GetContext()->GetPosition();
