@@ -13,6 +13,8 @@ The **Visual Studio 2022 CL compiler** (You'll need Visual Studio 2022 Community
 
 **GCC 13.1.0, 13.3.0 (Default on Ubuntu 24.04 I believe)**
 
+**clang 18 on Ubuntu 24.04**
+
 On Windows open a Windows Terminal and from there open a VS 2022 Developer Command Prompt in Administrator Mode
 cd to where you put the top level QOR files (like this one):
 
