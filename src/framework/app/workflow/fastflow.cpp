@@ -41,7 +41,7 @@ namespace qor{
         m_StepStack = std::stack< fastflow::Step*, std::vector< fastflow::Step* > >(std::move(stepVector));
     }
 
-    Fastflow::~Fastflow() = default;
+    Fastflow::~Fastflow() noexcept = default;
 
     Fastflow::Fastflow(const Fastflow& src) : Fastflow()
     {

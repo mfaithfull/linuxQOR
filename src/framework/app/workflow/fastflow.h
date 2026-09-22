@@ -49,7 +49,7 @@ namespace qor{
     public:
 
         qor_pp_module_interface(QOR_WORKFLOW) Fastflow();
-        qor_pp_module_interface(QOR_WORKFLOW) virtual ~Fastflow();
+        qor_pp_module_interface(QOR_WORKFLOW) virtual ~Fastflow() noexcept;
         qor_pp_module_interface(QOR_WORKFLOW) Fastflow(const Fastflow& src);
         qor_pp_module_interface(QOR_WORKFLOW) Fastflow& operator = (const Fastflow& src);
         qor_pp_module_interface(QOR_WORKFLOW) virtual int Run();
