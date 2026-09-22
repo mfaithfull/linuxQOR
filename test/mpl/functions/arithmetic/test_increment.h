@@ -1,0 +1,6 @@
+#ifndef QOR_PP_H_TEST_MPL_FUNCTIONS_ARITHMETIC_INCREMENT
+#define QOR_PP_H_TEST_MPL_FUNCTIONS_ARITHMETIC_INCREMENT
+
+#include "src/qor/essentials/mpl/functions/arithmetic/increment.h"
+
+#endif//QOR_PP_H_TEST_MPL_FUNCTIONS_ARITHMETIC_INCREMENT

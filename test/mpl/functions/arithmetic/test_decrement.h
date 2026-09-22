@@ -1,0 +1,6 @@
+#ifndef QOR_PP_H_TEST_MPL_FUNCTIONS_ARITHMETIC_DECREMENT
+#define QOR_PP_H_TEST_MPL_FUNCTIONS_ARITHMETIC_DECREMENT
+
+#include "src/qor/essentials/mpl/functions/arithmetic/decrement.h"
+
+#endif//QOR_PP_H_TEST_MPL_FUNCTIONS_ARITHMETIC_DECREMENT

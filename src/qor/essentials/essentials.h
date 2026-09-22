@@ -7,6 +7,7 @@
 #include "../tdd/tdd.h"
 #include "src/qor/module/module.h"
 #include "datastructures/guid.h"
+#include "datastructures/polymorphic.h"
 #include "objectcontext/anyobject.h"
 #include "current/currentprocess.h"
 #include "current/currentthread.h"
