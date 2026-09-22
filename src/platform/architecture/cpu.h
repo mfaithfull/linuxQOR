@@ -22,8 +22,8 @@ namespace qor{ namespace arch{
     {
     public:
 
-        CPU();     
-        ~CPU() = default;
+        CPU() noexcept;     
+        ~CPU() noexcept;
 
         Endian ByteOrder();
     };

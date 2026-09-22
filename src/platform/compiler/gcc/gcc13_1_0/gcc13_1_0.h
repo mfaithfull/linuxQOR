@@ -19,8 +19,8 @@
 
 qor_pp_compiler_message("Compiling with GCC 13.1.0")
 
-#undef qor_pp_compiler_supports_symetric_transfer
-#define qor_pp_compiler_supports_symetric_transfer 1
+//#undef qor_pp_compiler_supports_symetric_transfer
+//#define qor_pp_compiler_supports_symetric_transfer 1
 
 namespace qor { namespace compiler {
 

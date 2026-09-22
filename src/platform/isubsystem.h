@@ -12,8 +12,8 @@ namespace qor{
     {
     public:
 
-        ISubsystem() = default;
-        virtual ~ISubsystem() = default;
+        ISubsystem() noexcept = default;
+        virtual ~ISubsystem() noexcept = default;
 
         virtual void Setup(){};
         virtual void Shutdown(){};

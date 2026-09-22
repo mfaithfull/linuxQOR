@@ -3,6 +3,8 @@
 
 #include "src/configuration/configuration.h"
 
+#include <ranges>
+
 #include "platform.h"
 
 namespace qor{ 
@@ -16,7 +18,7 @@ namespace qor{
 
     Platform::Platform() : setupCompleted(false) { }
 
-    Platform::~Platform() = default;
+    Platform::~Platform() noexcept = default;
     
     void Platform::Setup()
     {
@@ -31,8 +33,8 @@ namespace qor{
     }
 
     void Platform::Shutdown()
-    {   //TODO: consider shutting down the sub systems in reverse order as we do with features
-        for( auto it : m_mapSubsystems)
+    {
+        for(auto it : m_mapSubsystems | std::views::reverse)
         {
             it.second->Shutdown();            
         }

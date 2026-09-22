@@ -41,6 +41,7 @@ static constexpr int function_stride = 1;
 #define qor_pp_noinline			__declspec(noinline)
 #define qor_pp_funcsig          __FUNCSIG__
 #define qor_pp_allocator        __declspec(allocator)
+#define qor_pp_no_unique_address    [[msvc::no_unique_address]]
 
 #define qor_pp_assume(X)        __assume(X)
 

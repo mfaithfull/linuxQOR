@@ -14,8 +14,8 @@ namespace qor{
 
     namespace arch{
 
-    CPU::CPU()
-    { }    
+    CPU::CPU() noexcept = default;
+    CPU::~CPU() noexcept = default;
 
     Endian CPU::ByteOrder()
     {

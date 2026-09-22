@@ -18,8 +18,11 @@
 #define qor_pp_compiler_warning(x) qor_pp_compiler_do_pragma(warning ("Warning - " #x))
 qor_pp_compiler_message("Compiling with GCC 13.3.0")
 
-#undef qor_pp_compiler_supports_symetric_transfer
-#define qor_pp_compiler_supports_symetric_transfer 1
+#undef qor_pp_forceinline
+#define qor_pp_forceinline          [[gnu::always_inline]] inline 
+
+//#undef qor_pp_compiler_supports_symetric_transfer
+//#define qor_pp_compiler_supports_symetric_transfer 1
 
 namespace qor { namespace compiler {
 

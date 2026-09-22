@@ -32,11 +32,11 @@ namespace qor{ namespace ui{ namespace layout {
 
         std::vector<detail::boxhelper::Element> elements(m_children.size());
         for (size_t i = 0; i < m_children.size(); ++i) 
-        {
-            auto& element = elements[i];
+        {            
             auto arrangeable = m_children[i]->As<IArrangeable>();
             if(arrangeable)
             {
+                auto& element = elements[i];
                 const auto& requirement = arrangeable->GetRequirement();
                 element.min_size = requirement.min_y;
                 element.flex_grow = requirement.flex_grow_y;

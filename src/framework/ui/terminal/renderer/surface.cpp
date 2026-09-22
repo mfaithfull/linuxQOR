@@ -249,7 +249,7 @@ namespace qor{ namespace ui{ namespace tty {
 
         
         template <class A, class B>
-        std::map<B, A> InvertMap(const std::map<A, B> input) 
+        std::map<B, A> InvertMap(const std::map<A, B>& input) 
         {
             std::map<B, A> output;
             for (const auto& it : input) 

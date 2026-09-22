@@ -14,6 +14,7 @@
 #       define qor_pp_os_target qor_pp_os_windows
 #   elif (defined __APPLE__)
 #       define qor_pp_os_target qor_pp_os_mac
+#       error Target operating system OSX detected but not supported yet.
 #   elif (defined __ANDROID__)
 #       error Target operating system Android detected but not supported
 #   elif (defined __FreeBSD__)

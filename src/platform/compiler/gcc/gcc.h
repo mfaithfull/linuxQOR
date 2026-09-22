@@ -22,6 +22,7 @@ static constexpr int function_stride = 1;
 #define qor_pp_noinline			__attribute__ ((noinline))
 #define qor_pp_funcsig          __PRETTY_FUNCTION__
 #define qor_pp_allocator        
+#define qor_pp_no_unique_address    [[no_unique_address]]
 
 #define qor_pp_assume(X)        
 
