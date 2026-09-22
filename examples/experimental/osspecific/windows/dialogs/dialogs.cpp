@@ -57,7 +57,7 @@ int main()
     result = MessageBox(params).Result();
 
     alignas(4) std::byte buffer[1024];
-    memset(buffer, 0xffff, 1023);
+    memset(buffer, 0xff, 1023);
     DlgTemplate* dlgtmplt = new (buffer) DlgTemplate();    
 
     // Define a dialog box.
