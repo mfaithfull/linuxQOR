@@ -15,9 +15,9 @@ namespace qor{ namespace dio{
     {
         using x_type = std::remove_cvref_t<x>;
         return(
-            is_instance_of_v<x_type, ValueAdapter> || 
-            is_instance_of_v<x_type, ReadOnlyValueAdapter> ||
-            is_instance_of_v<x_type, ReadWriteValueAdapter>
+            mpl::is_instance_of_v<x_type, ValueAdapter> || 
+            mpl::is_instance_of_v<x_type, ReadOnlyValueAdapter> ||
+            mpl::is_instance_of_v<x_type, ReadWriteValueAdapter>
         );
     }
 
@@ -30,7 +30,7 @@ namespace qor{ namespace dio{
             using v_type = typename x_type::value_type;
             return std::is_base_of_v<StreamOut<v_type>, x_type>;
         }
-        else if constexpr(is_instance_of_v<x_type, CollectionAdapter>)
+        else if constexpr(mpl::is_instance_of_v<x_type, CollectionAdapter>)
         {
             using c_type = typename x_type::collection_type;
             return std::is_base_of_v<StreamOutCollection< c_type >, x_type>;
@@ -47,7 +47,7 @@ namespace qor{ namespace dio{
             using v_type = typename x_type::value_type;
             return std::is_base_of_v<ToString<v_type>, x_type>;
         }
-        else if constexpr(is_instance_of_v< x_type, CollectionAdapter >)
+        else if constexpr(mpl::is_instance_of_v< x_type, CollectionAdapter >)
         {
             using c_type = typename x_type::collection_type;
             return std::is_base_of_v< ToStringCollection< c_type >, x_type >;
@@ -64,7 +64,7 @@ namespace qor{ namespace dio{
             using v_type = typename x_type::value_type;
             return std::is_base_of_v<Read<v_type>, x_type>;
         }
-        else if constexpr(is_instance_of_v< x_type, CollectionAdapter >)
+        else if constexpr(mpl::is_instance_of_v< x_type, CollectionAdapter >)
         {
             using c_type = typename x_type::collection_type;
             return std::is_base_of_v< ReadCollection< c_type >, x_type >;
@@ -81,7 +81,7 @@ namespace qor{ namespace dio{
             using v_type = typename x_type::value_type;
             return std::is_base_of_v<Write<v_type>, x_type> || std::is_base_of_v<EnhancedNumericWrite<v_type>, x_type>;
         }
-        else if constexpr(is_instance_of_v< x_type, CollectionAdapter >)
+        else if constexpr(mpl::is_instance_of_v< x_type, CollectionAdapter >)
         {
             using c_type = typename x_type::collection_type;
             return std::is_base_of_v< WriteCollection< c_type >, x_type >;
@@ -98,7 +98,7 @@ namespace qor{ namespace dio{
             using v_type = typename x_type::value_type;
             return std::is_base_of_v<Name<v_type>, x_type>;
         }
-        else if constexpr(is_instance_of_v< x_type, CollectionAdapter >)
+        else if constexpr(mpl::is_instance_of_v< x_type, CollectionAdapter >)
         {
             using c_type = typename x_type::collection_type;
             return std::is_base_of_v< Name<c_type>, x_type >;
