@@ -136,7 +136,7 @@ namespace qor{
         return m_thread;
     }
 
-    void Where::SetThreadContext(const std::string threadId)
+    void Where::SetThreadContext(const std::string& threadId)
     {
         m_thread = threadId;
     }

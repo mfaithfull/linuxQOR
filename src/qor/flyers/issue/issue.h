@@ -46,21 +46,40 @@ namespace qor{
                 {
                     m_what = new_ref<WhatT>(src.m_what);
                 }
+                else
+                {
+                    m_what.Dispose();
+                }
                 if(src.m_when.IsNotNull())
                 {
                     m_when = new_ref<When>(src.m_when);
+                }
+                else
+                {
+                    m_when.Dispose();
                 }
                 if( src.m_where.IsNotNull() )
                 {
                     m_where = new_ref<Where>(src.m_where);
                 }
+                else
+                {
+                    m_where.Dispose();
+                }
             }
             return *this;
         }
 
-        virtual inline const When& when(void) const
+        virtual const When& when(void) const
         {
-            return *(m_when.template As<When>());
+            if(HasWhen())
+            {
+                return *(m_when.template As<When>());
+            }
+            else
+            {
+                throw std::logic_error("No When context available for this issue.");
+            }
         }
 
         inline bool HasWhen() const noexcept
@@ -68,9 +87,16 @@ namespace qor{
             return m_when.IsNotNull();
         }
 
-        virtual inline const Where& where(void) const
+        virtual const Where& where(void) const
         {
-            return *(m_where.template As<Where>());
+            if(HasWhere())
+            {
+                return *(m_where.template As<Where>());
+            }
+            else
+            {
+                throw std::logic_error("No Where context available for this issue.");
+            }            
         }
 
         inline bool HasWhere() const noexcept
@@ -78,9 +104,16 @@ namespace qor{
             return m_where.IsNotNull();
         }
 
-        virtual inline const WhatT& what(void) const
+        virtual const WhatT& what(void) const
         {
-            return *(m_what.template As<WhatT>());
+            if(HasWhat())
+            {
+                return *(m_what.template As<WhatT>());
+            }
+            else
+            {
+                throw std::logic_error("No What context available for this issue.");
+            }               
         }       
 
         inline bool HasWhat() const noexcept
@@ -90,7 +123,7 @@ namespace qor{
 
         virtual void Handle(void) = 0;
 
-        virtual inline void Resolve(bool bHandled) const
+        virtual void Resolve(bool bHandled) const
         {
             if(!bHandled)
             {

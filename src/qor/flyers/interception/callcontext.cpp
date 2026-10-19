@@ -58,7 +58,7 @@ namespace qor{
 
 	void CallContext::OutOfLineRegistration(ParameterBase& Param)
 	{
-		if (m_paramCount < 9)
+		if (m_paramCount < s_maxParams)
 		{
 			m_aParameters[m_paramCount++] = Param;
 		}

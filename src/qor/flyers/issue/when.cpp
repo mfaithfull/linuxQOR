@@ -3,7 +3,7 @@
 
 #include "src/configuration/configuration.h"
 
-#include <string.h>
+#include <cstring>
 #include "when.h"
 
 namespace qor {

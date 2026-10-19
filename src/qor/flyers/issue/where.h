@@ -32,7 +32,7 @@ namespace qor{
         const AnyObject& GetObjectContext(void) const;
         void SetObjectContext(const AnyObject& ObjContext);
         const std::string GetThreadContext(void) const;
-        void SetThreadContext(const std::string threadId);
+        void SetThreadContext(const std::string& threadId);
         const char* GetModuleContext(void) const;
         void SetModuleContext(const char* pModuleContext);
         bool GetInException(void) const;

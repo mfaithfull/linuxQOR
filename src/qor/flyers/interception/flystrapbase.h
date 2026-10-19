@@ -31,7 +31,7 @@ namespace qor {
 			TFSDerived* next = dummy;
 			if( m_Next )
 			{
-				next = dynamic_cast< TFSDerived* >(m_Next->Item());
+				next = static_cast< TFSDerived* >(m_Next->Item());
 			}
 			return next;
 		}
