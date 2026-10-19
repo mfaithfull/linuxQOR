@@ -8,7 +8,7 @@
 
 namespace qor { namespace components { namespace protocols { namespace http {
 
-    HTTPSink::HTTPSink() : m_context(new_ref<pipeline::BufferContext<uint32_t>()>())
+    HTTPSink::HTTPSink() : m_context(new_ref<pipeline::BufferContext<uint32_t>>())
     {
         m_parser.SetInitialStep(new_ref<response::Initial>(&m_parser));
     }

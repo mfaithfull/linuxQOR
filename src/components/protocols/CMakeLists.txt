@@ -1,3 +1,3 @@
 add_subdirectory(echo)
 add_subdirectory(uri)
-#add_subdirectory(http)
+add_subdirectory(http)
