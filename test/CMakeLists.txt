@@ -2,7 +2,7 @@ set(target QORTest)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
-add_executable(QORTest test_main.cpp test_test.cpp test_compiler.cpp 
+add_executable(QORTest test_main.cpp test_test.cpp test_compiler.cpp
 mock/test_mock.cpp mock/test_isvirtual.cpp mock/test_args.cpp
 mock/test_array.cpp mock/test_cfuncs.cpp mock/test_classargs.cpp
 mock/test_transaction.cpp mock/test_retval.cpp mock/test_regression_arg_count.cpp
@@ -17,10 +17,10 @@ assert/bool.cpp assert/complex.cpp assert/double.cpp assert/float.cpp
 assert/int.cpp assert/iterators.cpp assert/map.cpp assert/multimap.cpp
 assert/optional.cpp assert/pointers.cpp assert/priority_queue.cpp
 assert/set.cpp assert/shared_ptr.cpp assert/span.cpp
-assert/stack.cpp assert/string.cpp assert/string_view.cpp 
-assert/unique_ptr.cpp assert/unordered_map.cpp assert/unordered_multimap.cpp 
-assert/unordered_set.cpp assert/user_class.cpp assert/user_subject.cpp 
-assert/weak_ptr.cpp 
+assert/stack.cpp assert/string.cpp assert/string_view.cpp
+assert/unique_ptr.cpp assert/unordered_map.cpp assert/unordered_multimap.cpp
+assert/unordered_set.cpp assert/user_class.cpp assert/user_subject.cpp
+assert/weak_ptr.cpp
 datastructures/guid.cpp
 datastructures/polymorphic.cpp
 framework/host.cpp
@@ -61,8 +61,8 @@ components/threadmemory/test_smallobjectpage.cpp
 components/threadmemory/test_smallobjectbucket.cpp
 components/threadmemory/test_smallobjectheap.cpp
 components/pipeline/test_stdinsource.cpp
-components/pipeline/test_stdoutsink.cpp 
-##property/test_property.cpp 
+components/pipeline/test_stdoutsink.cpp
+##property/test_property.cpp
 components/pipeline/test_ifstreamsource.cpp
 components/pipeline/test_ofstreamsink.cpp
 ##components/protocols/http/test_httpfilter.cpp
@@ -79,31 +79,31 @@ text/test_utf16string.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 
-target_compile_definitions(QORTest PRIVATE CONSOLE 
+target_compile_definitions(QORTest PRIVATE CONSOLE
 qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(QORTest qor_compiler qor_host 
-qor_thread qor_interception qor_injection qor_sync qor_text qor_issue qor_error qor_reporting qor_signals 
-qor_pipeline qor_workflow qor_role qor_application qor_filesystem 
-qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink 
-##qor_property 
-qor_console linqor_filesystem linqor_thread linqor_process uring linqor_console qor_stdfstreamconnector 
+target_link_libraries(QORTest qor_compiler qor_host
+qor_thread qor_interception qor_injection qor_sync qor_text qor_issue qor_error qor_reporting qor_signals
+qor_pipeline qor_workflow qor_role qor_application qor_filesystem
+qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink
+##qor_property
+qor_console linqor_filesystem linqor_thread linqor_process uring linqor_console qor_stdfstreamconnector
 qor_stdifstreamsource qor_stdofstreamsink qor_sockets linqor_sockets qor_log qor_loghandler qor_logaggregator
 qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(QORTest qor_compiler qor_host 
-qor_thread qor_interception qor_injection qor_sync qor_reporting qor_text qor_issue qor_error qor_signals 
-qor_pipeline qor_workflow qor_role qor_application qor_filesystem 
-qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink 
-##qor_property 
-qor_console winqor_api_kernel winqor_api_winsock2 winqor_filesystem winqor_thread winqor_process winqor_console winqor_common qor_stdfstreamconnector 
-qor_stdifstreamsource qor_stdofstreamsink qor_sockets qor_log qor_loghandler qor_logaggregator 
-qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter winqor_sockets) 
+target_link_libraries(QORTest qor_compiler qor_host
+qor_thread qor_interception qor_injection qor_sync qor_reporting qor_text qor_issue qor_error qor_signals
+qor_pipeline qor_workflow qor_role qor_application qor_filesystem
+qor_task qor_threadmemory qor_platform qor_stdinsource qor_stdoutsink
+##qor_property
+qor_console winqor_api_kernel winqor_api_winsock2 winqor_filesystem winqor_thread winqor_process winqor_console winqor_common qor_stdfstreamconnector
+qor_stdifstreamsource qor_stdofstreamsink qor_sockets qor_log qor_loghandler qor_logaggregator
+qor_stringsource qor_base64encodefilter qor_stringsink qor_base64decodefilter winqor_sockets)
 endif()
 
 if (WIN32)
@@ -128,3 +128,4 @@ add_subdirectory(uri)
 add_subdirectory(mpl)
 add_subdirectory(framework/parallel/signaltree)
 add_subdirectory(framework/parallel/workitem)
+add_subdirectory(components/protocols/yaml)

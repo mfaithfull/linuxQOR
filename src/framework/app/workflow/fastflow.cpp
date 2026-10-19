@@ -25,15 +25,17 @@ namespace qor{
     Fastflow::Fastflow()
     {
         tef::SetCustomAllocator(
-            [](size_t size, size_t alignment, void* context) 
+            [](size_t size, size_t /*alignment*/, void* /*context*/) -> void*
             {
-                return reinterpret_cast<TEFAllocator*>(context)->Allocate(size, alignment);
-            }, &m_tefAllocator,
-
-            [](void* address, size_t size, size_t alignment, void* context) 
+                return new_ref<memory::FastHeap>()->Allocate(size);
+            },
+            nullptr,
+            [](void* address, size_t size, size_t /*alignment*/, void* /*context*/) -> bool
             {
-                return reinterpret_cast<TEFAllocator*>(context)->Deallocate(address, size, alignment);
-            }, &m_tefAllocator
+                new_ref<memory::FastHeap>()->Free(reinterpret_cast<byte*>(address), size);
+                return true;
+            },
+            nullptr
         );
 
         std::vector< fastflow::Step* > stepVector;

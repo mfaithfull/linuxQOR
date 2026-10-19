@@ -1,0 +1,34 @@
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
+#include "src/configuration/configuration.h"
+
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/log.h"
+#include "src/qor/flyers/log/debug.h"
+#include "_false.h"
+#include "../../nodes/_false.h"
+
+namespace qor { namespace protocols { namespace yaml {
+
+    _false::_false(Parser* parser) :
+        Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Sequence_t< Specific<uint32_t>, Specific<uint32_t> > > > >(
+            parser, &m_f, &m_alse, static_cast<uint64_t>(yamlToken::_false)),
+        m_f(parser, 0x66),
+        m_a(parser, 0x61),
+        m_l(parser, 0x6c),
+        m_s(parser, 0x73),
+        m_e(parser, 0x65),
+        m_se(parser, &m_s, &m_e),
+        m_lse(parser, &m_l, &m_se),
+        m_alse(parser, &m_a, &m_lse)
+    { }
+
+    _false::~_false() noexcept = default;
+
+    void _false::Emit()
+    {
+        GetParser()->PushNode(new_ref<_FalseNode>());
+    }
+
+}}}//qor::protocols::yaml

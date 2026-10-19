@@ -1,0 +1,35 @@
+// Copyright Querysoft Limited 2008 - Present
+// SPDX-License-Identifier: BSL-1.0
+
+#ifndef QOR_PP_H_PROTOCOLS_YAML_PARSER_WS
+#define QOR_PP_H_PROTOCOLS_YAML_PARSER_WS
+
+#include "../../tokens.h"
+
+namespace qor { namespace protocols { namespace yaml {
+
+    /*ws = *( SP / HTAB / LF / CR )  (flow whitespace)*/
+    class ws final : public ZeroOrMore_t< AnyOneOf_t< WSP<uint32_t>, AnyOneOf_t< CR<uint32_t>, LF<uint32_t> > > >
+    {
+    public:
+        ws(Parser* parser) : ZeroOrMore_t< AnyOneOf_t< WSP<uint32_t>, AnyOneOf_t< CR<uint32_t>, LF<uint32_t> > > >(parser, &m_anyWSP, static_cast<uint64_t>(yamlToken::ws)),
+            m_cr(parser),
+            m_lf(parser),
+            m_wsp(parser),
+            m_eol(parser, &m_cr, &m_lf),
+            m_anyWSP(parser, &m_wsp, &m_eol)
+        { }
+        virtual ~ws() noexcept = default;
+        virtual void Emit(){ };//Emit nothing
+
+    private:
+        CR<uint32_t> m_cr;
+        LF<uint32_t> m_lf;
+        WSP<uint32_t> m_wsp;
+        AnyOneOf_t< CR<uint32_t>, LF<uint32_t> > m_eol;
+        AnyOneOf_t< WSP<uint32_t>, AnyOneOf_t< CR<uint32_t>, LF<uint32_t> > > m_anyWSP;
+    };
+
+}}}//qor::protocols::yaml
+
+#endif//QOR_PP_H_PROTOCOLS_YAML_PARSER_WS

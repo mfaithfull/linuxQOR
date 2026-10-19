@@ -58,7 +58,7 @@ namespace qor{
 
 		private:
 
-			typedef typename std::is_abstract<R> is_abstract;			
+			typedef typename std::is_abstract<R> is_abstract;
 
 		public:
 
@@ -130,7 +130,7 @@ namespace qor{
 
 			unsigned long Release(void) const
 			{
-				Lock();		
+				Lock();
 				unsigned long result = --m_RefCount;//Move refcount that's about to be deleted to the stack
 				result == 0 ? m_deleter() : Unlock();//deleter will unlock if called
 				return result;
@@ -140,7 +140,7 @@ namespace qor{
 			inline void Reset(void) const
 			{
 				Lock();
-				m_p = nullptr; 
+				m_p = nullptr;
 				Unlock();
 			}
 
@@ -196,15 +196,24 @@ namespace qor{
 
 			void SetDeleter() const
 			{
-				int** ppBack = ((int**)m_p) - 1;
-				*ppBack = (int*)(this);
-				m_deleter = [this]() 
-				{					
+				// Note: the original code registered a "back pointer" here:
+                //   int** ppBack = ((int**)m_p) - 1; *ppBack = (int*)(this);
+                // That slot belongs to the allocator header (DebugAllocator::dbgInfo in debug
+                // builds, whose layout is {Count, Size, Line, File, BackRef}). A fixed offset of
+                // one pointer before the object lands on the File/Line fields, not on BackRef,
+                // and the write was a truncated 32-bit pointer anyway. The corrupted File slot
+                // (adjacent to Count/Size) made DebugAllocator::Free read a garbage Count and
+                // spin the "for(element < info->Count) t->~T();" destructor loop forever, which
+                // is what hung every parser test at teardown. Nothing in the codebase ever reads
+                // BackRef (it is only initialised to nullptr), so the registration is simply
+                // dropped here.
+				m_deleter = [this]()
+				{
 					internal_del_ref<R>(m_p);
 					m_p = nullptr;//drop our pointer
 					Unlock();
     				source_of< Ref< R > >::type::Free(reinterpret_cast<byte*>(const_cast<SharedRef< R >*>(this)), sizeof(SharedRef< R >));
-				};		
+				};
 			}
 
 			R* ptr(void) const
