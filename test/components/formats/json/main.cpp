@@ -54,10 +54,10 @@ public:
 };
 
 void SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
-{    
+{
     connect(
-        logHandler, logHandler.GetForwardSignal(), 
-        logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
+        logHandler, logHandler.GetForwardSignal(),
+        logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog,
         ConnectionKind::QueuedConnection);
 
     auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
@@ -84,7 +84,7 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
                     CurrentThread::GetCurrent().SetName("Main");
                 }
             );
-            
+
             role->AddFeature<LogAggregatorService>(
                 [&logHandler](LogAggregatorService::ref logAggregator)->void
                 {
@@ -94,11 +94,11 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
         }
     ).Run(
         [&logHandler]()->int
-        {            
+        {
             qor_pp_fcontext;
 
             auto filesystem = ThePlatform(qor_shared)->GetSubsystem<FileSystem>();
-            Path testsPath("F:/Develop/linuxQOR/test/data");
+            Path testsPath("../../../../../../test/data");
 
             JSONPartReader<qor::data::parser::json::array, qor::data::model::json::Array> arrayReader;
 
@@ -119,7 +119,7 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             auto number_after_space = arrayReader(Index(testsPath, "y_number_after_space.json"));
             auto number_double_close_to_zero = arrayReader(Index(testsPath, "y_number_double_close_to_zero.json"));
             auto number_int_with_exp = arrayReader(Index(testsPath, "y_number_int_with_exp.json"));
-            auto number_minus_zero = arrayReader(Index(testsPath, "y_number_minus_zero.json"));            
+            auto number_minus_zero = arrayReader(Index(testsPath, "y_number_minus_zero.json"));
             auto number_negative_int = arrayReader(Index(testsPath, "y_number_negative_int.json"));
             auto number_negative_one = arrayReader(Index(testsPath, "y_number_negative_one.json"));
             auto number_negative_zero = arrayReader(Index(testsPath, "y_number_negative_zero.json"));
@@ -147,7 +147,7 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             auto object_simple = reader(Index(testsPath, "y_object_simple.json"));
             auto object_string_unicode = reader(Index(testsPath, "y_object_string_unicode.json"));
             auto object_with_newlines = reader(Index(testsPath, "y_object_with_newlines.json"));
-                    
+
             auto string_1_2_3_bytes_UTF8_sequences = arrayReader(Index(testsPath, "y_string_1_2_3_bytes_UTF-8_sequences.json"));
             auto string_accepted_surrogate_pair = arrayReader(Index(testsPath, "y_string_accepted_surrogate_pair.json"));
             auto string_accepted_surrogate_pairs = arrayReader(Index(testsPath, "y_string_accepted_surrogate_pairs.json"));
@@ -193,9 +193,9 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             auto string_unicode_UFFFE_nonchar = arrayReader(Index(testsPath, "y_string_unicode_U+FFFE_nonchar.json"));
             auto string_unicodeEscapedBackslash = arrayReader(Index(testsPath, "y_string_unicodeEscapedBackslash.json"));
             auto string_utf8 = arrayReader(Index(testsPath, "y_string_utf8.json"));
-            auto string_with_del_character = arrayReader(Index(testsPath, "y_string_with_del_character.json"));            
-            
-            auto structure_lonely_false = valueReader(Index(testsPath, "y_structure_lonely_false.json"));            
+            auto string_with_del_character = arrayReader(Index(testsPath, "y_string_with_del_character.json"));
+
+            auto structure_lonely_false = valueReader(Index(testsPath, "y_structure_lonely_false.json"));
             auto structure_lonely_int = valueReader(Index(testsPath, "y_structure_lonely_int.json"));
             auto structure_lonely_negative_real = valueReader(Index(testsPath, "y_structure_lonely_negative_real.json"));
             auto structure_lonely_null = valueReader(Index(testsPath, "y_structure_lonely_null.json"));
