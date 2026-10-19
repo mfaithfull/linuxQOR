@@ -76,6 +76,12 @@ written — assembly is still required. Community feedback (r/cpp) says a GUI
 builder with a better-than-JSON human-readable serialization format is needed to
 compete with Qt.
 
+Two steps toward this were taken in Oct 2026: a **generated YAML parser
+prototype** (`src/components/protocols/yaml`, `qor_yaml`) began the
+better-than-JSON format work, and the **JSON generator is now the assigned next
+task** — scene templates cannot be loaded or saved until the data model can be
+*written* as text, not only read.
+
 ## Openness & collaboration
 The project is "way more than one crazy person can handle". Contributions are
 open: GitHub/vcpkg expertise, UI design, profiling, data structures,

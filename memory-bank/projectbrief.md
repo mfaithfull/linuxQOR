@@ -1,7 +1,9 @@
 # Project Brief — QOR (Querysoft Open Runtime)
 
-**Workspace:** `f:\Develop\linuxQOR` — the **linuxQOR** repository
-(https://github.com/mfaithfull/linuxQOR). Author: Matthew Faithfull
+**Workspace:** `c:\RAID0\Develop\linuxQOR` — the **linuxQOR** repository
+(migrated in Oct 2026 from `f:\Develop\linuxQOR`; any hard-coded
+`F:/Develop/...` path in sources/CMake is stale).
+https://github.com/mfaithfull/linuxQOR. Author: Matthew Faithfull
 (mfaithfull *at* btopenworld.com).
 
 ## What it is
@@ -16,9 +18,9 @@ CMake project declaration:
 License: **BSL-1.0** (Boost Software License) for QOR code; MIT/BSD where
 inherited from upstream forks (see `LICENSE`, `CREDITS.md`).
 
-Approximate scale (measured Oct 2026): ~2,758 source files (`.h/.hpp/.cpp`) in
-`src/`, 206 `CMakeLists.txt` under `src/`, **66** cross-platform libraries per
-`STATUS.md`.
+Approximate scale (re-measured 19 Oct 2026 at HEAD `93668d3d`): ~2,810 source
+files (`.h/.hpp/.cpp/.inl`) in `src/`, 207 `CMakeLists.txt` under `src/`, **66**
+cross-platform libraries per `STATUS.md`.
 
 ## Core requirements / goals
 1. **Separation of Concerns** — drive out unnecessary coupling at all levels;
@@ -74,10 +76,13 @@ Approximate scale (measured Oct 2026): ~2,758 source files (`.h/.hpp/.cpp`) in
   comprehensible to the contributor (`CONTRIBUTING.md`, `STATUS.md`).
 
 ## Source of truth for status
-`STATUS.md` (latest entry 29/07/2026), `CHANGES.md` (nothing shipped yet; 0.5 is
-the first potentially releasable milestone), `FEATURES.md` (per-module maturity
-table). Milestones: working toward **0.5** interim release; **1.0** is the
-eventual target.
+`STATUS.md` (latest entry 29/07/2026 — **trails the repo**, which moved on
+through Oct 2026), `CHANGES.md` (nothing shipped yet; 0.5 is the first
+potentially releasable milestone), `FEATURES.md` (per-module maturity table).
+Milestones: working toward **0.5** interim release; **1.0** is the eventual
+target. For the newest state trust `git log` (HEAD `93668d3d`, 19 Oct 2026) and
+the parallel agent-state files `docs/agent/TODO.md`, `docs/agent/STATE.MD`,
+`docs/agent/DECISIONS.md`.
 
 ## Key project documents
 `README.md` · `KEY_CONCEPTS.md` · `LAYOUT.md` · `BUILDING.md` · `FEATURES.md` ·

@@ -92,12 +92,19 @@
   target lists.
 - Separate test executables built from sub-directories: `operational`
   (`QOROpTests` — thread pool, profiling, excluded tests), `filesystem`, `ui`,
-  `pipeline`, `argparse`, `components/formats`, `tef`, `frozen`, `dio`, `uri`,
-  `mpl`, `framework/parallel/signaltree`, `framework/parallel/workitem`,
-  `components/protocols/http`.
+  `pipeline`, `argparse`, `components/formats` (`QORTestJSON`),
+  `components/protocols/yaml` (`QORTestYAML`, added Oct 2026),
+  `components/protocols/http` (`QORTestHTTPRequestGen`, added Oct 2026),
+  `tef`, `frozen`, `dio`, `uri`, `mpl`, `framework/parallel/signaltree`,
+  `framework/parallel/workitem`. The `test/CMakeLists.txt` `add_subdirectory`
+  list is the authoritative inventory.
 - `test/data/` fixtures: JSON conformance files (`y_*.json`), large JSON
   (2mb–250mb), encoding files (`utf8BOM.txt`, `utf16BEBOM.txt`,
   `utf16LEBOM.txt`, `noBOM.txt`), `hve.html`, `Alice.txt`.
+  Test executables reach them by **relative** path — `QORTestJSON` uses
+  `"../../../../../../test/data"` (depth depends on the executable's
+  location under the build tree); never re-introduce an absolute
+  `F:/Develop/...` path.
 - TDD frameworks: `qor_assert` (fluent assertions header library), `qor_test`
   (Yaffut fork), `qor_mock` (HippoMocks fork) — designed to work together.
 - **Recommended build/verify order**: build `examples/basic/helloworld` first
@@ -119,3 +126,13 @@
   globalobjects.md, levels_of_abstraction.md, power_of_context.md,
   smart_references.md, sfumato.md, typetraits.md, compilers.md, articles/,
   skills/QORconventions.md).
+- **Agent tooling in `docs/agent/`**: `repo_map*.md` (root, details, js, test,
+  examples, deps), `purposes.md`, `verification.md`, `deps.dot` (+
+  `deps_check.ps1`), per-library **ctags** in `docs/agent/ctags/`,
+  `STATE.MD`/`DECISIONS.md`/`TODO.md`, skill files `add_module.md` +
+  `parsers.md`, `skill.md` (the `TODO.md`-driven workflow), `STATUS.MD`,
+  `yaml_spec_raw.md`, `yaml_cfg_ebnf.md`. Root `yaml_exports.txt` and
+  `docs/agent/_tmp_*` are transient scratch.
+- CMake uses `##` comments; disabled targets/dependencies appear as
+  `##qor_...` / `##add_subdirectory(...)` — always check before assuming a
+  module is built.

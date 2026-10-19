@@ -128,11 +128,41 @@ qor_module
   (experimental).
 - **Text & Unicode** (`src/qor/essentials/text`, `src/components/data/formats`):
   Copy-On-Write strings, UTF-8/UTF-16/UCS4, code pages, string functions,
-  RFC 5234 parser framework, JSON parser, parser/serializer.
+  RFC 5234 parser framework, JSON parser, parser/serializer. A second parser
+  instance now lives outside `formats`: the generated **YAML parser prototype**
+  in `src/components/protocols/yaml` (`qor_yaml`) — same two-layer shape
+  (general `qor::data::parser` framework + per-format lib), flow-subset only.
 - **constexpr data structures** (`qor_datastructures`): compile-time map, set,
   string; rcu list (CopperSpice-derived).
 - **Type erased functions** (`tef`), singleton/`SingletonInstanceHolder`,
   object context (Boost.Any-inspired), contract, factories, observers.
+
+## Parser ↔ generator symmetry (the pattern the JSON generator task follows)
+Reading and writing are deliberately mirrored through the pipeline:
+
+| Reading | Writing |
+|---|---|
+| `qor_parsersink` (`ParserSink` = pipeline **Sink** wrapping `Parser : Fastflow`) | `qor_generatorsource` (`GeneratorSource` = pipeline **Source** wrapping `Generator : Workflow`) |
+| `ParserState : fastflow::Step`; `Prepare()` pushes a `NodeAdapter<T>`, `Emit()` fills the empty model | `GeneratorState : workflow::State`; `Prepare()` reads a populated model, `Emit()` writes octets via `Context::PutOctet()` |
+| grammar composites `Sequence_t`/`Optional_t`/`ZeroOrMore_t`/`OneOrMore_t`/`AnyOneOf_t`/`Deferred_t` in `parser/states/_1`–`_4/` | literal output composites built from `ASCIIChar` (`src/components/io/generator/state.h`) in a matching `generator/states/` |
+| `parser/tokens.h` token enum + `parser/nodes/` adapters + `model/` types | reuse the same token enum and `model/` types; `generator/nodes/` adapters carry already-populated model objects |
+| flow mode `Push` (source pushes bytes into the sink) | flow mode `Pull` (sink pulls bytes from the source) |
+
+Flows in use today: `FileConnector → UnicodeTextFilter → ParserSink` (JSON,
+YAML, HTTP request parsing) and `GeneratorSource → … → FileConnector` (HTTP
+request generation). `qor_generator` is currently **not** linked by `qor_jsondata`
+— the assigned JSON generator task adds it.
+
+JSON model shape (verified 19 Oct 2026 in `src/components/data/formats/json/model/`):
+`Object` holds `std::vector<ref_of<Member>::type> m_members`; `Array` holds
+`std::vector<ref_of<Value>::type> m_values`; `Member` stores `std::string m_name`
+and `Value m_value` **by value** (`GetName()`, `GetValue() -> Value&`); `Value`
+holds `polymorphic<ValueModel> m_valueModel` (`GetValue() -> polymorphic<ValueModel>&`,
+`GetType() -> ValueType`); `String` holds a **decoded** `private std::string m_value`
+(`GetValue()`, `SetValue()`, `Append(const char*, size_t)`); `Number` holds a
+`private double m_value` (`GetValue()`, `SetValue()`). Only `m_members` and
+`m_values` are public — everything else must be read through getters, and the
+decoded `String` means escapes are not recoverable from the model.
 
 ## Critical implementation paths
 1. `configuration.h` as first include — build breaks otherwise.
