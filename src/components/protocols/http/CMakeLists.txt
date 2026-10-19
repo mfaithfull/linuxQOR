@@ -6,7 +6,7 @@ protocol.cpp
 filter.cpp
 client/requestsource/source.cpp
 client/responsesink/sink.cpp
-#client/requestgenerator/requestgenerator.cpp
+client/requestgenerator/requestgenerator.cpp
 #client/requestgenerator/context.cpp
 #client/requestgenerator/state.cpp
 #server/requestparser/requestparser.cpp

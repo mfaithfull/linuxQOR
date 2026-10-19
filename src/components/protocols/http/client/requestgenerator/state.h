@@ -69,6 +69,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
             {
                 if(m_EnteredAtLeastOnce)
                 {
+                    m_EnteredAtLeastOnce = false;
                     Workflow()->PopState();
                 }
             };

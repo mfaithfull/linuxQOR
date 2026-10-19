@@ -24,7 +24,7 @@ namespace qor
     public:
 
         ThreadHeap() noexcept;
-        virtual constexpr ~ThreadHeap() noexcept;
+        virtual constexpr ~ThreadHeap() noexcept = default;
 
         byte* Allocate(size_t byteCount) const;
         void Free(byte* allocation) const;

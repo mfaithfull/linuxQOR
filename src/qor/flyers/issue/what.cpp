@@ -9,10 +9,7 @@ namespace qor{
 
     What::What(const std::string& what) : m_content(what){ }
 
-    What::What(const What& src)
-    {
-        m_content = src.m_content;
-    }
+    What::What(const What& src) : m_content(src.m_content){ }
 
     What::~What() noexcept { }
 

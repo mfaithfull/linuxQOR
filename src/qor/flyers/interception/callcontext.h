@@ -73,7 +73,8 @@ namespace qor {
 		qor_pp_module_interface(QOR_INTERCEPTION) ParameterBase* ReturnValue();						//Access to the return value
 
 		qor_pp_module_interface(QOR_INTERCEPTION) void qor_pp_noinline OutOfLineRegistration(ParameterBase& Param);
-		ParameterBase m_aParameters[10];
+		static constexpr int s_maxParams = 10;
+		ParameterBase m_aParameters[s_maxParams];
 		ParameterBase m_ReturnValue;							//Return value
 		unsigned char m_paramCount{0};
 
