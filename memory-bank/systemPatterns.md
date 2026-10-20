@@ -251,14 +251,30 @@ A pipeline element is its own SHARED lib. The filter contract (from
 ```
 class qor_pp_module_interface_gcc(QOR_MIME) MIMERecognizerFilter : public qor::pipeline::Filter
 {   ctor / dtor / operator=  — = default style (linereader) or explicit base-init (base64encodefilter)
-    virtual bool ReadFilter (size_t& unitsProcessed, size_t unitsToProcess);   //push mode
-    virtual bool WriteFilter(size_t& unitsProcessed, size_t unitsToProcess);   //pull mode
+    virtual bool ReadFilter (size_t& unitsProcessed, size_t unitsToProcess);   //pull path: Filter::Read
+    virtual bool WriteFilter(size_t& unitsProcessed, size_t unitsToProcess);   //push path: Filter::Write
 };
 ```
 `qor::pipeline::Filter : Sink, Source` — ctor initialises `Sink(source), Source(sink)` (order
 matters: the sink is built FROM the source argument). Returning false from a filter hook
 stops the pump. A filter that only inspects must NOT ack/consume source data (the sink would
 lose bytes).
+
+**Verified pump chain for a filter (20 Oct 2026, qor_mime step 1 — Push mode is the working path):**
+`Sink::Write/Pull/Push` and `Source::Read/Pull/Push` are **virtual** (`sink.h`/`source.h`), so on a
+filter they resolve to the `Filter` overrides. Pushing through a filter is:
+`Filter::Pump` → `ActualSource()->Read(u,n)` → `Source::Pull` fills the source buffer →
+`Source::Push` → `ActualSink()->Write(u,n)` = **`Filter::Write`** → `Pull` (no-op in Push) →
+`WriteFilter(unitsWritten, unitsWritten)` (the filter moves octets here, buffer→buffer like
+`CopyFilter::Copy`) → `ActualSink()->Write(...)` → the real sink appends.
+Pull mode is a **dead end in the base framework**: `Filter::Read` calls
+`ReadFilter(unitsRead, unitsRead)` with `unitsRead == 0` at entry (`filter.cpp` L163-165), and
+`Filter::Pump`'s Pull branch calls `ActualSink()->Write(0, n)` which then hits that zero-unit call
+and breaks. Tests pumping a filter must set `Element::FlowMode::Push`, and only a `Pipeline`
+carries the mode (`Element::SetFlowMode` forwards to a parent and stores nothing) — so every
+element in the chain gets `SetParent(&pipeline)` with `pipeline.SetFlowMode(Push)`.
+A filter also needs no buffer of its own; it borrows the source's and the sink's buffers via
+`ActualSource()->GetBuffer()` / `ActualSink()->GetBuffer()`.
 
 Module registration: parent `CMakeLists.txt` `add_subdirectory(mime)`; module
 `set(target qor_mime)` + `add_library(${target} SHARED qor_mime.cpp mime.cpp)` +

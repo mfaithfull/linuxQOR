@@ -92,7 +92,7 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | Step | Test case name | Asserts | Code added |
 |---|---|---|---|
 | 0 ✅ | `mime_module_loads` | filter constructs, type is `Unresolved` | scaffold — DONE, verified green |
-| 1 | `mime_filter_passes_octets_through` | `StringSource -> MIMERecognizerFilter -> StringSink` output string == input string | none expected (base Filter already passes through) — proves the filter is correctly wired as a pipeline element |
+| 1 ✅ | `mime_filter_passes_octets_through` | `StringSource -> MIMERecognizerFilter -> StringSink` output string == input string | DONE 20 Oct 2026 — the base `Filter` does NOT pass octets through by itself (placeholder `Inspect()` moved nothing, new case went `[FAIL] #1` exit 1), so the smallest fix is `TransferOctets()` (CopyFilter::Copy style buffer-to-buffer move) called from `ReadFilter`/`WriteFilter`. Verified `[OK](2/2)` exit 0. NOTE: Push mode is the working pump path for a filter; Pull mode hits a base-framework bug (`Filter::Read` calls `ReadFilter(unitsRead, unitsRead)` — 0 units at entry) |
 | 2 | `mime_captures_leading_octets` | `GetSignatureByteCount() == 16` for a 40 byte input; `== 4` for a 4 byte input | `Inspect()` copies available bytes into `m_signature` without acking/consuming source |
 | 3 | `mime_recognises_png_signature` | `GetDetectedType() == MIMEType::PNG`, `GetTypeName() == "image/png"` | png magic compare + name table |
 | 4 | `mime_recognises_jpeg_signature` | `== JPEG`, `"image/jpeg"` | jpeg magic compare |

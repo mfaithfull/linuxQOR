@@ -41,8 +41,10 @@ namespace qor{ namespace mime{
         qor_pp_module_interface(QOR_MIME) virtual ~MIMERecognizerFilter();
         qor_pp_module_interface(QOR_MIME) MIMERecognizerFilter& operator = (const MIMERecognizerFilter& src);
 
-        //Pipeline filter hooks. WriteFilter is used in pull mode, ReadFilter in push mode.
-        //Both must be present so the element works whichever way the pipeline is pumped.
+        //Pipeline filter hooks. Both are present so the element works whichever way the
+        //pipeline is pumped; in the current base framework octets only move through a filter
+        //in push mode, where Filter::Write calls WriteFilter (Filter::Read calls ReadFilter
+        //with the units read, which is 0 at entry - see filter.cpp).
         qor_pp_module_interface(QOR_MIME) virtual bool ReadFilter(size_t& unitsProcessed, size_t unitsToProcess) override;
         qor_pp_module_interface(QOR_MIME) virtual bool WriteFilter(size_t& unitsProcessed, size_t unitsToProcess) override;
 
@@ -62,6 +64,13 @@ namespace qor{ namespace mime{
         //Capture the octets that are currently available into the signature window and
         //update the candidate type. Does not consume or move the octets.
         qor_pp_module_interface(QOR_MIME) virtual bool Inspect(size_t& unitsInspected, size_t unitsToInspect);
+
+        //Move the octets that are currently available in the upstream element's buffer
+        //into the downstream element's buffer without changing their content. This is the
+        //pass-through half of the recognizer contract - the octets that arrive at the sink
+        //are exactly the octets that left the source. ReadFilter and WriteFilter use it so
+        //the element works whichever way the pipeline is pumped.
+        qor_pp_module_interface(QOR_MIME) virtual bool TransferOctets(size_t& unitsTransferred, size_t unitsToTransfer);
 
     protected:
 

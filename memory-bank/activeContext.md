@@ -1,9 +1,12 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — the whole JSON generator increment is **DONE**,
-including the **full `QORTest` regression run** which is now **green at
-`[TOTAL](678/678)` / `[OK](678/678)` (process exit code 0)** — the paragraph in this earlier
-update was truncated; the full JSON generator status is in the section below.
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 1 DONE and verified green**
+(`QORTestMIME` `[TOTAL](2/2) [OK](2/2)` exit 0; test written first and seen red). Details in
+the section below (and in `src/framework/data/mime/status.md`, `docs/agent/verification.md`).
+Earlier the same day: the whole JSON generator increment is **DONE**, including the **full
+`QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process
+exit code 0)** — the paragraph in this earlier update was truncated; the full JSON generator
+status is in the section below.
 
 ## Current Task: qor_mime — MIME recognition pipeline filter (20 Oct 2026)
 
@@ -28,16 +31,29 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   placeholder `mime_module_loads`), registered in `test/CMakeLists.txt`.
 - Verified the outline: `qor_mime.dll` built clean (import lib generated — `init_mime` export
   guard), `QORTestMIME.exe` ran `[OK](1/1)` exit 0.
+- **Plan step 1 (pass octets through) — DONE 20 Oct 2026.** Wrote `mime_filter_passes_octets_through`
+  in `test_mime.cpp` FIRST (StringSource → filter → StringSink under a Push-mode `Pipeline` parent,
+  128-byte `ByteBuffer`s, assert `sink.GetData() == testData`), ran it RED (`[FAIL] #1`, exit 1,
+  "value was : 0" — the base `Filter` does not move octets by itself), then added
+  `MIMERecognizerFilter::TransferOctets(size_t&, size_t)` in `mime.h`/`mime.cpp` (buffer→buffer move
+  modelled on `CopyFilter::Copy`: sink `WriteRequest`, source `ReadRequest`, `memcpy`, both acks) and
+  routed `ReadFilter`/`WriteFilter` through it. Rebuilt → `[TOTAL](2/2) [OK](2/2)` exit 0.
+  `Inspect()` and all detection still untouched.
+  **Plumbing learnings (record these):** a filter pumps in **Push** mode and needs a `Pipeline`
+  parent to carry the flow mode (`Element::SetFlowMode` only forwards to a parent, stores nothing);
+  the chain is `Source::Read` → `Source::Push` → `Filter::Write` → `WriteFilter` → sink `Write`.
+  Pull mode is a dead end for filters in the base framework: `Filter::Read` calls
+  `ReadFilter(unitsRead, unitsRead)` with `unitsRead == 0` at entry.
 
 ### Next up
-- [ ] Plan step 1 — write `mime_filter_passes_octets_through` FIRST
-      (`StringSource -> MIMERecognizerFilter -> StringSink`, assert output == input) to prove the
-      outline is correctly wired as a real pipeline filter before any detection is written.
-- [ ] Plan steps 2..13 — signature window capture, then the ten types one test at a time
-      (png, jpeg, gif, pdf, zip, xml, html, json, javascript, plain text) + octet-stream fallback.
+- [ ] Plan step 2 — write `mime_captures_leading_octets` FIRST (`GetSignatureByteCount() == 16`
+  for a 40-byte input, `== 4` for a 4-byte input), then implement `Inspect()` copying available
+  octets into `m_signature` without consuming the source.
+- [ ] Plan steps 3..13 — the ten types one test at a time (png, jpeg, gif, pdf, zip, xml, html,
+  json, javascript, plain text) + octet-stream fallback.
 - [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
-      `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline
-      test exe to prove no framework regression).
+  `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline
+  test exe to prove no framework regression).
 - Do NOT skip ahead to writing all ten detectors at once — one test, then the code that passes it.
 
 ### Key files

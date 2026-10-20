@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: BSL-1.0
 
 #include "src/configuration/configuration.h"
+#include <cstring>
 #include "mime.h"
 
 namespace qor{ namespace mime{
@@ -22,12 +23,32 @@ namespace qor{ namespace mime{
 
     bool MIMERecognizerFilter::ReadFilter(size_t& unitsProcessed, size_t unitsToProcess)
     {
-        return Inspect(unitsProcessed, unitsToProcess);
+        return TransferOctets(unitsProcessed, unitsToProcess);
     }
 
     bool MIMERecognizerFilter::WriteFilter(size_t& unitsProcessed, size_t unitsToProcess)
     {
-        return Inspect(unitsProcessed, unitsToProcess);
+        return TransferOctets(unitsProcessed, unitsToProcess);
+    }
+
+    bool MIMERecognizerFilter::TransferOctets(size_t& unitsTransferred, size_t unitsToTransfer)
+    {
+        if(unitsToTransfer)
+        {
+            auto sourceBuffer = ActualSource()->GetBuffer();
+            auto sinkBuffer = ActualSink()->GetBuffer();
+            if(sourceBuffer && sinkBuffer)
+            {
+                qor::byte* space = sinkBuffer->WriteRequest(unitsToTransfer);
+                qor::byte* data = sourceBuffer->ReadRequest(unitsToTransfer);
+                memcpy(space, data, unitsToTransfer * sourceBuffer->GetUnitSize());
+                sinkBuffer->WriteAcknowledge(unitsToTransfer);
+                sourceBuffer->ReadAcknowledge(unitsToTransfer);
+                unitsTransferred = unitsToTransfer;
+                return unitsTransferred > 0 ? true : false;
+            }
+        }
+        return false;
     }
 
     //Outline placeholder. The recognizer must not disturb the stream, so this hook

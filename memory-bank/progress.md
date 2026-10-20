@@ -1,12 +1,13 @@
 # Progress
 
-**Last updated:** 20 Oct 2026 — the JSON generator increment is **COMPLETE**: the
-full `QORTest` regression run (the base framework suite) is **green at
-`[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on top of the parse ->
-generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code 0)
-and the **pipeline integration** step (a JSON model written to a real file through a
-real pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20 Oct 2026, outline only)
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 1 (pass octets through) DONE and verified
+green** (`QORTestMIME` `[TOTAL](2/2) [OK](2/2)` exit 0, test written first and seen red). Earlier
+the same day: the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
+base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on
+top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
+0) and the **pipeline integration** step (a JSON model written to a real file through a real
+pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
+## MIME Recognition — qor_mime (20 Oct 2026, outline + pass-through)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -27,6 +28,13 @@ real pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
 - ✅ `qor_mime` compiles and links: `build\src\framework\data\mime\Debug\qor_mime.dll` + import lib,
   no warnings.
 - ✅ `QORTestMIME.exe` runs `[OK](1/1)` exit 0 — module loads, filter constructs.
+- ✅ **Plan step 1** `mime_filter_passes_octets_through`: RED first (`[FAIL] #1`, exit 1 — the base
+  `Filter` does not move octets by itself, so the plan's "no code expected" assumption was wrong),
+  then `MIMERecognizerFilter::TransferOctets()` (declared in `mime.h`, called from
+  `ReadFilter`/`WriteFilter`, modelled on `CopyFilter::Copy`) → `QORTestMIME` `[TOTAL](2/2) [OK](2/2)`
+  exit 0. Filter now provably sits between a source and a sink and leaves the octet stream untouched.
+  Push mode + `Pipeline` parent is the working filter-pump path; Pull mode hits
+  `Filter::Read` → `ReadFilter(unitsRead, unitsRead)` (0 units at entry) in the base framework.
 - ✅ Re-verified after the ctest removal: reconfigure SUCCESS; every affected exe rebuilt and
   re-run **from its own build folder** — `QORTestURI` `[OK](1/1)`, `QORTestYAML` `[OK](1/1)`,
   `QORTestJSONGenerator` `[OK](36/36)`, `QORTestMIME` `[OK](1/1)`, all exit code 0. Note: the
