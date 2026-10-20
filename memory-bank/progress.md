@@ -6,6 +6,38 @@ full `QORTest` regression run (the base framework suite) is **green at
 generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code 0)
 and the **pipeline integration** step (a JSON model written to a real file through a
 real pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
+## MIME Recognition — qor_mime (20 Oct 2026, outline only)
+
+### What was done
+- Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
+  `qor::pipeline::Filter` (Sink+Source), filter overrides `ReadFilter`/`WriteFilter`,
+  existing filters `base64encodefilter`/`linereader`/`jpegdecodefilter`/`unicodetextfilter`,
+  test exe pattern from `QORTestYAML`.
+- New module `src/framework/data/mime` → lib `qor_mime` (SHARED, `QOR_MIME`), namespace `qor::mime`,
+  class `MIMERecognizerFilter`, `enum class MIMEType` covering the ten popular types plus
+  `application/octet-stream` fallback and `Unresolved`.
+- New test target `test/framework/data/mime` → exe `QORTestMIME` (placeholder `mime_module_loads`).
+
+### Outcomes
+- ✅ `qor_mime` compiles and links: `build\src\framework\data\mime\Debug\qor_mime.dll` + import lib,
+  no warnings.
+- ✅ `QORTestMIME.exe` runs `[OK](1/1)` exit 0 — module loads, filter constructs.
+- ⚠️ `framework/data` and `framework/data/mime` were NOT in the namespace docs (`namespace.md`
+  0 hits for `qor::mime`) but they ARE live at build time — `src/framework/data/CMakeLists.txt`
+  already registered `pipeline` (lib `qor_pipeline`), so the layer is real and unbuilt-to-test
+  only because `test/CMakeLists.txt` never included `test/framework/data`. Now it does.
+- ⚠️ Naming/layer decision recorded: user specified the framework layer
+  (`src/framework/data/mime`); existing filters live at the components layer. Kept framework layer
+  because the class derives from the framework `qor::pipeline::Filter` (the default filter for any
+  pipeline). If a components-layer home is preferred later, the move is folder + one CMakeLists line.
+
+### What was NOT done
+- ❌ NO MIME detection logic yet — `Inspect()` is a documented placeholder (pass through).
+  Detection is added test-first, one type per increment (plan steps 2..13).
+- ❌ No consumer wired up yet (the HTTP Content-Type TODO, UI renderer loader,
+  `Resource::Type()` remain untouched).
+
+
 `[OK](36/36)`** in the dedicated `QORTestJSONGenerator` target. Repo-wide `STATUS.md`
 still trails the tree, so `git log`, `docs/agent/STATE.MD`, and this memory bank are
 the fresher records.

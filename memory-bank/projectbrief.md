@@ -87,6 +87,11 @@ verified at `[OK](36/36)` in
 `QORTestJSONGenerator`, with the parse -> generate -> parse **roundtrip** verified
 green in `QORTestJSON` (process exit code 0, `test/data/json_roundtrip_*.json`
 written and compared equal through `jsoncompare.h`)).
+Also 20 Oct 2026: new framework-layer data module `src/framework/data/mime` (lib `qor_mime`)
+started as a MIME-type-recognition **pipeline filter** (ten popular MIME types +
+application/octet-stream fallback, test-first plan `memory-bank/qor_mime_plan.md`);
+outline verified green (`QORTestMIME.exe` `[OK](1/1)` exit 0). No detection logic written yet.
+
 
 ## Key project documents
 `README.md` · `KEY_CONCEPTS.md` · `LAYOUT.md` · `BUILDING.md` · `FEATURES.md` ·

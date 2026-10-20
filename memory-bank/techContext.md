@@ -197,3 +197,17 @@ Set-Location cmakebuild/test/components/formats/json/generator/Debug   # run FRO
 - CMake uses `##` comments; disabled targets/dependencies appear as
   `##qor_...` / `##add_subdirectory(...)` — always check before assuming a
   module is built.
+
+## qor_mime lib + QORTestMIME exe (20 Oct 2026)
+
+New framework-layer data module and its dedicated test exe (verified this session):
+`cmake --build build --target qor_mime` → `build\src\framework\data\mime\Debug\qor_mime.dll` (+ `.lib`/`.exp`)
+`cmake --build build --target QORTestMIME` → `build\test\framework\data\mime\Debug\QORTestMIME.exe`
+  → run it: `[OK](1/1)` exit 0. (`add_test(TestMIME ...)` registered; the local ctest shim lists no
+  VS-generator tests, so the exe run is the judge.)
+`qor_mime` links `qor_module qor_host qor_current qor_sync qor_signals qor_pipeline`.
+`QORTestMIME` additionally pulls `qor_stringsource`/`qor_stringsink` (pipeline pumping in tests) —
+first time those two component libs were ever built for a test exe.
+Gotcha: `cmake --build build --target X -- -j4` fails on the VS 2026 generator (`MSB1001`);
+omit `-j4` or use CMake's own `-j N`.
+

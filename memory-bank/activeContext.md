@@ -3,6 +3,43 @@
 **Last updated:** 20 Oct 2026 — the whole JSON generator increment is **DONE**,
 including the **full `QORTest` regression run** which is now **green at
 `[TOTAL](678/678)` / `[OK](678/678)` (process exit code 0)**: after regenerating
+## Current Task: qor_mime — MIME recognition pipeline filter (20 Oct 2026)
+
+**Task**: new module in its own folder under `src/framework/data` (`src/framework/data/mime`,
+lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME types.
+**Approach**: test first, one increment at a time. Full plan: `memory-bank/qor_mime_plan.md`.
+
+### Done
+- Researched QOR pipeline filters first (step R in the plan): `qor::pipeline::Filter` base,
+  `base64encodefilter`/`linereader`/`jpegdecodefilter` as the filter pattern, `QORTestYAML`/
+  `QORTestJSONGenerator` as the per-module test exe pattern.
+- Created the outline: `src/framework/data/mime/{CMakeLists.txt,qor_mime.cpp,mime.h,mime.cpp,purpose.md,status.md}`
+  (singleton, `qor::mime::MIMERecognizerFilter : qor::pipeline::Filter`, `MIMEType` enum with the
+  ten targets + `OctetStream` fallback + `Unresolved`, placeholder `Inspect()`), registered
+  `add_subdirectory(mime)` in `src/framework/data/CMakeLists.txt`.
+- Created the mirror test target `test/framework/data/mime` (`QORTestMIME`, `test_main.cpp`,
+  placeholder `mime_module_loads`), registered in `test/CMakeLists.txt`.
+- Verified the outline: `qor_mime.dll` built clean (import lib generated — `init_mime` export
+  guard), `QORTestMIME.exe` ran `[OK](1/1)` exit 0.
+
+### Next up
+- [ ] Plan step 1 — write `mime_filter_passes_octets_through` FIRST
+      (`StringSource -> MIMERecognizerFilter -> StringSink`, assert output == input) to prove the
+      outline is correctly wired as a real pipeline filter before any detection is written.
+- [ ] Plan steps 2..13 — signature window capture, then the ten types one test at a time
+      (png, jpeg, gif, pdf, zip, xml, html, json, javascript, plain text) + octet-stream fallback.
+- [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
+      `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline
+      test exe to prove no framework regression).
+- Do NOT skip ahead to writing all ten detectors at once — one test, then the code that passes it.
+
+### Key files
+`memory-bank/qor_mime_plan.md` (the plan) | `src/framework/data/mime/{mime.h,mime.cpp,qor_mime.cpp,CMakeLists.txt}` |
+`src/framework/data/mime/{purpose.md,status.md}` | `test/framework/data/mime/{test_mime.cpp,test_main.cpp,CMakeLists.txt}` |
+pattern sources: `src/framework/data/pipeline/{filter.h,filter.cpp}`,
+`src/components/data/pipeline/filters/base64encodefilter/*`, `test/components/protocols/yaml/*`
+
+
 the CMake project and building `QORTest` (build exit 0), running the base suite
 from `cmakebuild/test/Debug` produced no `[FAIL` and no `[ALL FAILURES]` block, so
 the `qor_jsondata`/`qor_generatorsource` library fixes did not regress the base

@@ -242,3 +242,33 @@ Empirical shape of the JSON read/write pair, established while getting the
   correctly even when container/string content does not, so "well-formed scalars
   plus empty/malformed containers" points at these state-population defects
   rather than at an ownership problem.
+
+## Pipeline filter module shape (qor_mime, 20 Oct 2026)
+
+A pipeline element is its own SHARED lib. The filter contract (from
+`src/framework/data/pipeline/filter.h` + `filters/base64encodefilter` + `filters/linereader`):
+
+```
+class qor_pp_module_interface_gcc(QOR_MIME) MIMERecognizerFilter : public qor::pipeline::Filter
+{   ctor / dtor / operator=  — = default style (linereader) or explicit base-init (base64encodefilter)
+    virtual bool ReadFilter (size_t& unitsProcessed, size_t unitsToProcess);   //push mode
+    virtual bool WriteFilter(size_t& unitsProcessed, size_t unitsToProcess);   //pull mode
+};
+```
+`qor::pipeline::Filter : Sink, Source` — ctor initialises `Sink(source), Source(sink)` (order
+matters: the sink is built FROM the source argument). Returning false from a filter hook
+stops the pump. A filter that only inspects must NOT ack/consume source data (the sink would
+lose bytes).
+
+Module registration: parent `CMakeLists.txt` `add_subdirectory(mime)`; module
+`set(target qor_mime)` + `add_library(${target} SHARED qor_mime.cpp mime.cpp)` +
+`target_compile_definitions(${target} PRIVATE QOR_MIME ...)` + `qor::Module& ThisModule()` singleton.
+Windows needs at least one exported symbol for the import lib — `qor_pp_export void init_mime(void)`.
+
+Mirror test target: `test/framework/data/mime` → `QORTestMIME` exe; registered in `test/CMakeLists.txt`;
+links the module lib plus the pipeline libs it needs (`qor_pipeline`, and
+`qor_stringsource`/`qor_stringsink` for pipeline pumping tests); POST_BUILD copies
+`$<TARGET_RUNTIME_DLLS:${target}>` next to the exe; `enable_testing()` + `add_test(TestMIME ${target})`.
+Run from the build folder (the local ctest shim does not list VS-generator tests — see
+`memory-bank/qor_mime_plan.md` pitfalls).
+
