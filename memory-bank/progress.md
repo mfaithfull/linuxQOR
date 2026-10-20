@@ -1,18 +1,21 @@
 # Progress
 
-**Last updated:** 20 Oct 2026 — the JSON generator is **done through the
-roundtrip step**: parse -> generate -> parse in `QORTestJSON` is green (process
-exit code 0) on top of the `[OK](36/36)` write-to-file pipeline in
-`QORTestJSONGenerator`. Repo-wide `STATUS.md`
-still trails the tree, so `git log`, `docs/agent/STATE.MD`, and this memory bank
-are the fresher records.
+**Last updated:** 20 Oct 2026 — the JSON generator increment is **COMPLETE**: the
+full `QORTest` regression run (the base framework suite) is **green at
+`[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on top of the parse ->
+generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code 0)
+and the **pipeline integration** step (a JSON model written to a real file through a
+real pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
+`[OK](36/36)`** in the dedicated `QORTestJSONGenerator` target. Repo-wide `STATUS.md`
+still trails the tree, so `git log`, `docs/agent/STATE.MD`, and this memory bank are
+the fresher records.
 
-## ▶ JSON generator (ROUNDTRIP VERIFIED in `QORTestJSON` — next: full `QORTest` regression run)
+## ▶ JSON generator (COMPLETE — roundtrip GREEN in `QORTestJSON`; full `QORTest` regression run GREEN at `[OK](678/678)`)
 
 Add a qor_pipeline-based JSON **generator** to `qor_jsondata` — the writing half
 mirroring the JSON parser — plus a `JSONWriter` helper and roundtrip tests in
 `QORTestJSON` (`test/components/formats/json`). Detailed step-by-step plan:
-`memory-bank/jsonGeneratorPlan.md`. **Pipeline integration done and verified
+`docs/archive/jsonGeneratorPlan.md`. **Pipeline integration done and verified
 20 Oct 2026 at `[OK](36/36)`**: `qor_jsondata` contains `generator/states`
 model-driven states, `test/components/formats/json/jsonwriter.h` provides
 `JSONWriter` = `GeneratorSource<state>(buffer, model)` source +
@@ -22,9 +25,10 @@ tests write `test/data/json_generator_*.json`. Roundtrip now done and verified
 20 Oct 2026 (see item 13 below): three fixtures written by
 `JSONWriter`/`JSONPartWriter` and re-parsed with equal
 `CompareValue` / `CompareObject` / `CompareArray` asserts
-(`test/components/formats/json/jsoncompare.h`), so `QORTestJSON` exits 0. Still
-pending: a full `QORTest`
-regression run. The original
+(`test/components/formats/json/jsoncompare.h`), so `QORTestJSON` exits 0. A full
+`QORTest` regression run is now DONE and green as well (`[TOTAL](678/678)` /
+`[OK](678/678)`, process exit code 0 — see the "Full QORTest regression run" note
+below). The original
 prerequisite check on 19 Oct 2026 found no `generator/` folder.
 
 ## What works (verified in STATUS.md / FEATURES.md)
@@ -197,7 +201,7 @@ framework modules · memory-management customization components · Mac support
 
 ## JSON generator — detailed plan (roundtrip now done)
 
-See `memory-bank/jsonGeneratorPlan.md` for the full step-by-step plan to add a
+See `docs/archive/jsonGeneratorPlan.md` for the full step-by-step plan to add a
 qor_pipeline-based JSON generator to `qor_jsondata` and matching roundtrip test
 code to `test/components/formats/json`. Its status as of 20 Oct 2026 is
 **implemented through the pipeline step**: generator states, scientific-notation
@@ -289,13 +293,19 @@ reads real model data:
     were compared, not the ~11 named Step 6 cases — escapes / `\uXXXX`, Korean
     UTF-16 through generate, whitespace normalisation, empty `[]` (the `_object`
     empty fix has no array counterpart) and nested object-in-object are still
-    untested; see `memory-bank/jsonGeneratorPlan.md` ("Coverage vs the Step 6
+    untested; see `docs/archive/jsonGeneratorPlan.md` ("Coverage vs the Step 6
     case list").
 
-**Next increment:** the full `QORTest` regression run. The roundtrip comparison
-this used to refer to is **done** (verified 20 Oct 2026 in `QORTestJSON`, process
-exit code 0 — see item 13 above), as is the `JSONWriter` / `GeneratorSource`
-pipeline integration (`[OK](36/36)` in `QORTestJSONGenerator`).
+**Full `QORTest` regression run — DONE and VERIFIED 20 Oct 2026:** regenerated
+`cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug` (VS 17 2022 / Debug, no `-G`),
+built `cmake --build cmakebuild --target QORTest --config Debug` (build exit 0),
+then ran `.\QORTest.exe` **from `cmakebuild/test/Debug`** capturing both streams —
+**`[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, no `[FAIL` and no
+`[ALL FAILURES]` block. The base suite is unaffected by the `qor_jsondata` /
+`qor_generatorsource` changes, so the JSON generator increment is complete. The
+roundtrip comparison and the `JSONWriter` / `GeneratorSource` pipeline integration
+(`[OK](36/36)` in `QORTestJSONGenerator`) were already **done** (verified 20 Oct 2026
+in `QORTestJSON`, process exit code 0 — see item 13 above).
 
 **Pre-flight for that increment (and the increment itself, 20 Oct 2026):** `tmp/`
 scratch folder emptied (transient build/test logs + probe binaries; `/tmp` is
@@ -304,7 +314,7 @@ blockers (`GeneratorSource` could not pass model data, never created/set its
 `Context`, multi-pull generation had to resume across `Pull()`) were **fixed** in
 `src/components/data/pipeline/sources/generatorsource/generatorsource.h` by the
 variadic buffer ctor and the `ReadBytes` hook. They remain recorded in
-`memory-bank/jsonGeneratorPlan.md` ("Prepared next increment") as the original
+`docs/archive/jsonGeneratorPlan.md` ("Prepared next increment") as the original
 pre-flight findings.
 
 Build gotchas found on 20 Oct 2026 while adding generator states and wiring the

@@ -1,11 +1,17 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — the JSON generator is **done through the
-roundtrip step**: parse -> generate -> parse in `QORTestJSON` is green (process
-exit code 0), on top of the **pipeline integration** step (a JSON model written
-to a real file through a real pipeline: `GeneratorSource` -> `FileConnector`)
-that is **DONE and verified at `[OK](36/36)`** in the dedicated
-`QORTestJSONGenerator` target. The root cause of the first runtime failure
+**Last updated:** 20 Oct 2026 — the whole JSON generator increment is **DONE**,
+including the **full `QORTest` regression run** which is now **green at
+`[TOTAL](678/678)` / `[OK](678/678)` (process exit code 0)**: after regenerating
+the CMake project and building `QORTest` (build exit 0), running the base suite
+from `cmakebuild/test/Debug` produced no `[FAIL` and no `[ALL FAILURES]` block, so
+the `qor_jsondata`/`qor_generatorsource` library fixes did not regress the base
+framework. Before that, the JSON generator was **done through the roundtrip step**:
+parse -> generate -> parse in `QORTestJSON` is green (process exit code 0), on top
+of the **pipeline integration** step (a JSON model written to a real file through a
+real pipeline: `GeneratorSource` -> `FileConnector`) that is **DONE and verified at
+`[OK](36/36)`** in the dedicated `QORTestJSONGenerator` target. The root cause of
+the first runtime failure
 (unregistered `FileSystem` platform subsystem) and the `LNK2019` link failure
 (stale generated Visual Studio project files) are both recorded here, as are the
 two `qor_jsondata` defects found while getting the roundtrip green. Earlier
@@ -14,7 +20,7 @@ init was built from `STATUS.md`
 has **not** been updated since, so `git log` and `docs/agent/STATE.MD` are the
 newest repo-wide sources.
 
-## ▶ JSON generator (ROUNDTRIP VERIFIED in `QORTestJSON` — next: full `QORTest` regression run)
+## ▶ JSON generator (COMPLETE — ROUNDTRIP VERIFIED in `QORTestJSON`; full `QORTest` regression run GREEN at `[OK](678/678)` — plan file retired to `docs/archive/jsonGeneratorPlan.md` (no longer a memory-bank file)
 
 **Pipeline integration done and verified 20 Oct 2026 (`[OK](36/36)`)** — the
 writing half was built incrementally in
@@ -175,7 +181,27 @@ the existing `QORTestJSON` exe — no new target) plus the new header
   are **modified in the working tree**, and `jsoncompare.h` and the
   `test/data/json_{generator,roundtrip}_*.json` artefacts are untracked.
 
-Learnings that the next steps must respect (added 20 Oct 2026, incl. pipeline integration):
+### Full `QORTest` regression run — DONE and VERIFIED 20 Oct 2026 (base suite green)
+
+The last open item of the JSON generator increment. Executed in the gitignored
+`tmp/` scratch area; result captured from both streams:
+
+- Regenerated the CMake project first: `cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug`
+  (cached generator is Visual Studio 17 2022, build type Debug — **no `-G`**).
+- Built the base test target: `cmake --build cmakebuild --target QORTest --config Debug`
+  → build exit 0, no `error C` / `LNK…` / `fatal error` lines. `QORTest.exe`
+  (`cmakebuild/test/Debug`) links the base framework libs (no `qor_jsondata`/
+  `qor_generator`), so this run is the framework-wide sanity check.
+- Ran the exe **from its own build directory** (`cmakebuild/test/Debug`) capturing
+  both streams (`.\QORTest.exe *> <log>`), twice; both returned **process exit code
+  0** and identical summary: **`[TOTAL](678/678)` / `[OK](678/678)`**, with **no**
+  `[FAIL` line and **no** `[ALL FAILURES]` block in the 826-line log.
+- Conclusion: the `qor_jsondata` (`string.cpp` `SetValue` guard, `_object.cpp`
+  `m_count == 0` branch) and `qor_generatorsource` (`GeneratorSource` buffer ctor
+  + `ReadBytes` hook) changes made on 20 Oct 2026 did **not** regress the base
+  suite. Combined with the green `QORTestJSON` roundtrip and `QORTestJSONGenerator`
+  `[OK](36/36)`, the JSON generator increment is **complete**.
+
 - Test `.cpp` files must `#include "src/..."` (project-root relative); the
   `"components/..."` short form only resolves inside library trees.
 - `byte` is `qor::byte` (`typedef uint8_t byte` in `src/platform/compiler/compiler.h`)
@@ -209,7 +235,7 @@ Learnings that the next steps must respect (added 20 Oct 2026, incl. pipeline in
 - Prep done 20 Oct 2026 for that next increment: `tmp/` scratch folder emptied
   (logs/probe binaries were transient; `/tmp` is gitignored) and the
   `generator/` folder gained `status.md` recording volatile dev state.
-  Pre-flight blockers (since **resolved** — see Step 12) recorded in `memory-bank/jsonGeneratorPlan.md`
+  Pre-flight blockers (since **resolved** — see Step 12) recorded in `docs/archive/jsonGeneratorPlan.md`
   ("Prepared next increment"): `GeneratorSource<TObjectState>` cannot pass model
   data to the model-driven JSON state ctors, `GeneratorSource` never creates/sets
   its `Context` (unlike `ParserSink(buffer)`), and multi-pull output must resume
@@ -273,7 +299,7 @@ Learnings that the next steps must respect (added 20 Oct 2026, incl. pipeline in
   `F:/Develop/linuxQOR/test/data`).
 - Build/verify order for this task: `qor_jsondata` → `QORTestJSON` → `QORTest`.
 - Gotcha: `qor_generator`'s CMake declares `QOR_PARSER` (not `QOR_GENERATOR`) as
-  its compile definition — see `memory-bank/jsonGeneratorPlan.md` for details
+  its compile definition — see `docs/archive/jsonGeneratorPlan.md` for details
   before writing new generator `.cpp` files.
 
 ## Current focus (STATUS.md, 20/10/2026)
@@ -314,7 +340,7 @@ Learnings that the next steps must respect (added 20 Oct 2026, incl. pipeline in
    the parse -> generate -> parse roundtrip in `QORTestJSON` compares equal
    (`jsoncompare.h`, artefacts `test/data/json_roundtrip_*.json`). Remaining:
    the full `QORTest` regression run only. Full plan:
-   `memory-bank/jsonGeneratorPlan.md` ("Roundtrip increment" records what was
+   `docs/archive/jsonGeneratorPlan.md` ("Roundtrip increment" records what was
    verified on 20 Oct 2026).
 2. HTTP: systematic refactors + generator infrastructure; complete response
    generation (`QORTestHTTPRequestGen` exists as a scaffold only — add real

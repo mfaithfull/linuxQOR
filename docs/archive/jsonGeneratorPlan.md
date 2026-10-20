@@ -1,6 +1,16 @@
 # JSON Generator Plan
 
-**Status:** **ROUNDTRIP (parse ⇄ generate) DONE AND VERIFIED as of 20 Oct 2026 —
+> **RETIRED / ARCHIVE — 20 Oct 2026.** This JSON generator task is **COMPLETE**
+> (states `[OK](36/36)` in `QORTestJSONGenerator`, roundtrip green in `QORTestJSON`,
+> full `QORTest` regression run green at `[OK](678/678)`). This detailed step-by-step
+> plan has been **retired out of `memory-bank/`** (it is no longer read at the start
+> of each session) and preserved here as a historical record only. Its key facts are
+> already summarised in `memory-bank/activeContext.md`, `memory-bank/progress.md` and
+> `src/components/data/formats/json/generator/status.md`.
+
+**Status:** **JSON generator increment COMPLETE as of 20 Oct 2026 — the full
+`QORTest` regression run is green (`[TOTAL](678/678)` / `[OK](678/678)`, exit 0).**
+Previously **ROUNDTRIP (parse ⇄ generate) DONE AND VERIFIED as of 20 Oct 2026 —
 `QORTestJSON` exits 0 with every roundtrip compare assert passing.** Generator
 states (`src/components/data/formats/json/generator/states/`) cover literals,
 escaped strings, `std::to_chars` numbers, non-finite rejection and nested
@@ -11,7 +21,11 @@ containers (`[OK](31/31)`), the write-to-file pipeline works in
 parse -> generate -> parse now compares equal through the new
 `test/components/formats/json/jsoncompare.h` `CompareValue` / `CompareObject` /
 `CompareArray` helper (`test/data/json_roundtrip_{object,array,value}.json`).
-**Remaining scope:** the full `QORTest` regression run only. See
+**Remaining scope:** none — the full `QORTest` regression run is now **DONE and
+green (`[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0)**, closing the
+JSON generator increment. See
+**"Full QORTest regression run — DONE and VERIFIED"** below for the recipe.
+See
 **"Roundtrip increment — DONE and VERIFIED"** at the end of this file for the
 fixtures and the two `qor_jsondata` defects that had to be fixed (the
 unconditional `SetValue` in `parser/states/_4/string.cpp` and the missing closing
@@ -560,3 +574,29 @@ The initial "the writer reads dangling model data" theory was wrong:
 alive. The defects were the two above, both in `qor_jsondata`; the writer call
 shape `w(Index(testsPath, name), Model*) -> size_t` driven by `PumpAll()` was
 already correct.
+
+### Full `QORTest` regression run — DONE and VERIFIED 20 Oct 2026
+
+Last open item of this increment; it confirms the base framework suite still
+passes after the `qor_jsondata` / `qor_generatorsource` edits.
+
+Recipe (all logs in the gitignored `tmp/` folder):
+
+    cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug          # regen, VS 17 2022/Debug, NO -G
+    cmake --build cmakebuild --target QORTest --config Debug   # BUILD_EXIT=0, no error C/LNK/fatal
+    Set-Location cmakebuild/test/Debug
+    .\QORTest.exe *> <log>                                     # RUN_EXIT=0 (run from the exe's own build dir)
+    Select-String -Path <log> -Pattern '\[FAIL|ALL FAILURES|\[TOTAL|\[OK\('
+
+Measured result: **`[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, no
+`[FAIL` line and no `[ALL FAILURES]` block (826-line log). `QORTest.exe` links only
+the base framework libs (no `qor_jsondata`/`qor_generator`), so this is the framework
+wide sanity check for the increment. Combined with the green `QORTestJSON` roundtrip
+and `QORTestJSONGenerator` `[OK](36/36)`, the JSON generator increment is **complete**.
+
+Note: the open roundtrip **coverage** cases from the Step 6 list (escapes / `\uXXXX`,
+Korean UTF-16 through generate, whitespace normalisation, empty `[]`, nested object-in-object)
+remain untested cases in the roundtrip helper; the green `QORTest` run does not close
+them — it only proves the base suite did not regress. If those become relevant, add
+them to the `QORTestJSON` roundtrip block (before the Korean UTF-16 fixtures).
+

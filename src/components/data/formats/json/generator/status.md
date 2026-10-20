@@ -21,9 +21,18 @@ registers the `FileSystem` platform subsystem in `main.cpp`. Run the exe **from 
 own build directory** (`cmakebuild/test/components/formats/json/generator/Debug`) —
 its `../../../../../../../test/data` output path is calibrated to that location.
 
-## Not started
+## Full `QORTest` regression run — DONE and VERIFIED 20 Oct 2026
 
-Full `QORTest` regression run.
+Regenerated the CMake project (`cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug`),
+built the base test target (`cmake --build cmakebuild --target QORTest --config Debug`,
+build exit 0, no `error C`/`LNK`/`fatal`), then ran the base suite from its own build
+directory (`cmakebuild/test/Debug`). Result: **`[TOTAL](678/678)` / `[OK](678/678)`,
+process exit code 0**, no `[FAIL` and no `[ALL FAILURES]` block in the captured log
+(both streams). The JSON generator library fixes (`qor_jsondata`
+`parser/states/_4/string.cpp` guard, `generator/states/_object.cpp` `m_count == 0`
+branch, and the `GeneratorSource` buffer ctor / `ReadBytes` hook in
+`qor_generatorsource`) did not regress the base framework suite. This closes the
+last open item in the JSON generator increment.
 
 ## Roundtrip (parse ⇄ generate) — DONE and VERIFIED 20 Oct 2026 (`QORTestJSON` exit code 0)
 
@@ -55,7 +64,7 @@ evaluates `1 == 0` for an empty object). The dangling-ownership theory was a
 red herring — `NodeAdapter<T>` holds a ref-counted `ref_of<T>::type m_t` and
 `GetObject()` returns it by value.
 
-Details and the ordered plan: `memory-bank/jsonGeneratorPlan.md`
+Details and the ordered plan: `docs/archive/jsonGeneratorPlan.md`
 ("Roundtrip increment", "Prepared next increment").
 
 ## Reusable-part gaps found in the 20 Oct 2026 pre-flight — ALL FIXED the same day
@@ -82,5 +91,5 @@ Original findings (kept for the record):
 - Multi-pull generation needs the state stack to survive across `Pull()` calls
   (`GeneratorState::Reset()` sets `MORE_DATA`).
 
-Details and the ordered plan: `memory-bank/jsonGeneratorPlan.md`
+Details and the ordered plan: `docs/archive/jsonGeneratorPlan.md`
 ("Prepared next increment").
