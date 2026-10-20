@@ -93,7 +93,7 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 |---|---|---|---|
 | 0 ✅ | `mime_module_loads` | filter constructs, type is `Unresolved` | scaffold — DONE, verified green |
 | 1 ✅ | `mime_filter_passes_octets_through` | `StringSource -> MIMERecognizerFilter -> StringSink` output string == input string | DONE 20 Oct 2026 — the base `Filter` does NOT pass octets through by itself (placeholder `Inspect()` moved nothing, new case went `[FAIL] #1` exit 1), so the smallest fix is `TransferOctets()` (CopyFilter::Copy style buffer-to-buffer move) called from `ReadFilter`/`WriteFilter`. Verified `[OK](2/2)` exit 0. NOTE: Push mode is the working pump path for a filter; Pull mode hits a base-framework bug (`Filter::Read` calls `ReadFilter(unitsRead, unitsRead)` — 0 units at entry) |
-| 2 | `mime_captures_leading_octets` | `GetSignatureByteCount() == 16` for a 40 byte input; `== 4` for a 4 byte input | `Inspect()` copies available bytes into `m_signature` without acking/consuming source |
+| 2 ✅ | `mime_captures_leading_octets` | `GetSignatureByteCount() == 16` for a 40 byte input; `== 4` for a 4 byte input | DONE 20 Oct 2026 — RED first (`[FAIL] #2`, exit 1), then `Inspect()` captures via `ReadRequest` → `memcpy` into `m_signature` → **`ReadReject`** (give the reservation back — source not consumed), capped by the 16-byte window; `Inspect()` called before `TransferOctets()` in `ReadFilter`/`WriteFilter`. Verified `[OK](3/3)` exit 0 |
 | 3 | `mime_recognises_png_signature` | `GetDetectedType() == MIMEType::PNG`, `GetTypeName() == "image/png"` | png magic compare + name table |
 | 4 | `mime_recognises_jpeg_signature` | `== JPEG`, `"image/jpeg"` | jpeg magic compare |
 | 5 | `mime_recognises_gif_signature` | `== GIF`, `"image/gif"` for both `GIF89a` and `GIF87a` | gif magic compare (two variants) |
@@ -146,4 +146,20 @@ Pitfalls confirmed while creating the outline:
 - Step 0 scaffold: `cmake --build build --target qor_mime` → `qor_mime.dll` + import lib,
   no errors/warnings. `QORTestMIME` → `QORTestMIME.exe`. Run →
   `test_mime.cpp(15) : mime_module_loads` `[TOTAL](1/1)` `[OK](1/1)` exit 0. PASS.
+- Step 1 `mime_filter_passes_octets_through` (test first): red `[FAIL] #1` exit 1 (the base
+  `Filter` moves no octets by itself — the plan's "no code expected" assumption was wrong), then
+  `MIMERecognizerFilter::TransferOctets(size_t&, size_t)` (declared in `mime.h`, called from
+  `ReadFilter`/`WriteFilter`, modelled on `CopyFilter::Copy`) → `[TOTAL](2/2) [OK](2/2)` exit 0.
+  Push mode under a `Pipeline` parent is the working pump path; Pull mode hits a base-framework
+  bug (`Filter::Read` → `ReadFilter(unitsRead, unitsRead)` with 0 units at entry).
+- Step 2 `mime_captures_leading_octets` (test first): red `[FAIL] #2` exit 1 (`[OK](2/3)` —
+  placeholder `Inspect()` captured nothing), then `Inspect()` in `mime.cpp` captures the leading
+  octets via the buffer three-step read protocol `ReadRequest` → `memcpy` → **`ReadReject`**
+  (the reservation is given back so the source is never consumed; capture capped by
+  `SIGNATURE_WINDOW_BYTES` = 16 and `ReadCapacity`), called BEFORE `TransferOctets()` in both
+  `ReadFilter`/`WriteFilter`; `mime.h` unchanged → `[TOTAL](3/3) [OK](3/3)` exit 0 (logs
+  `tmp/qortestmime_step2_red.log`, `tmp/qortestmime_step2_green.log`). New gotcha: a test run
+  issued in the same command batch as the build ran the **stale previous exe** — build and run
+  must be separate sequential commands; and `log::debug` is invisible in `QORTestMIME` (log flyer
+  not wired there), so it is not a usable probe.
 

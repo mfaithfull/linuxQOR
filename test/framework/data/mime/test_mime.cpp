@@ -8,6 +8,9 @@
 //and a StringSink leaves the octet stream untouched (output == input). This proves
 //the outline is correctly wired as a real pipeline filter before any detection is
 //written. Detection is added one increment at a time after this.
+//step 2 - mime_captures_leading_octets: the filter captures the leading octets of the
+//stream into its 16 byte signature window without consuming them (40 byte input -> 16
+//captured, 4 byte input -> 4 captured). Still no type detection.
 
 #include "src/configuration/configuration.h"
 #include <string>
@@ -68,4 +71,68 @@ qor_pp_test_case(mime_filter_passes_octets_through)
     recognizer.Pump(unitsPumped, testData.length());
 
     qor_pp_assert_that(sink.GetData() == testData).isTrue();
+}
+
+//Step 2 - the recognizer must capture the leading octets of the stream that passes through
+//it into its signature window without consuming them (the octets still have to reach the
+//sink, which step 1 proved). The window is SIGNATURE_WINDOW_BYTES wide, which is sixteen,
+//so a 40 byte input yields exactly 16 captured octets and a 4 byte input yields exactly
+//4 - the capture is capped by the window and by the stream length. No type detection is
+//involved yet; that comes one type at a time from step 3.
+qor_pp_test_case(mime_captures_leading_octets)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    std::string longData(40,'A');
+    source.SetData(longData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, longData.length());
+
+    //Forty octets available, sixteen byte window - sixteen captured.
+    qor_pp_assert_that(recognizer.GetSignatureByteCount() == 16).isTrue();
+
+    //A short stream, fresh elements so that Reset() reuse is not being exercised here
+    //(that is plan step 15). Four octets available, window has room - four captured.
+    ByteBuffer inBuffer2(128);
+    ByteBuffer outBuffer2(128);
+
+    StringSource source2;
+    source2.SetParent(&testPipeline);
+    source2.SetBuffer(&inBuffer2);
+
+    StringSink sink2;
+    sink2.SetParent(&testPipeline);
+    sink2.SetBuffer(&outBuffer2);
+
+    qor::mime::MIMERecognizerFilter recognizer2;
+    recognizer2.SetParent(&testPipeline);
+    recognizer2.SetSource(&source2);
+    recognizer2.SetSink(&sink2);
+
+    std::string shortData(4,'B');
+    source2.SetData(shortData);
+
+    size_t unitsPumped2 = 0;
+    recognizer2.Pump(unitsPumped2, shortData.length());
+
+    qor_pp_assert_that(recognizer2.GetSignatureByteCount() == 4).isTrue();
 }

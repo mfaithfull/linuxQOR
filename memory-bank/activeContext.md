@@ -1,10 +1,10 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 1 DONE and verified green**
-(`QORTestMIME` `[TOTAL](2/2) [OK](2/2)` exit 0; test written first and seen red). Details in
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 2 DONE and verified green**
+(`QORTestMIME` `[TOTAL](3/3) [OK](3/3)` exit 0; test written first and seen red). Details in
 the section below (and in `src/framework/data/mime/status.md`, `docs/agent/verification.md`).
-Earlier the same day: the whole JSON generator increment is **DONE**, including the **full
-`QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process
+Earlier the same day: steps 0-1 of the same plan were done, and the whole JSON generator increment is **DONE**,
+including the **full `QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process
 exit code 0)** — the paragraph in this earlier update was truncated; the full JSON generator
 status is in the section below.
 
@@ -45,11 +45,28 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   Pull mode is a dead end for filters in the base framework: `Filter::Read` calls
   `ReadFilter(unitsRead, unitsRead)` with `unitsRead == 0` at entry.
 
+- **Plan step 2 (capture leading octets into the signature window) — DONE 20 Oct 2026.** Wrote
+  `mime_captures_leading_octets` FIRST (40-byte input asserts `GetSignatureByteCount() == 16`;
+  fresh elements + 4-byte input asserts `== 4`; no `Reset()` reuse — that is step 15), ran it RED
+  (`[FAIL] #2`, `[OK](2/3)`, exit 1 — placeholder `Inspect()` captured nothing and was not even
+  called), then implemented `Inspect()` in `mime.cpp` (no `mime.h` change — the hook was already
+  declared): the pipeline buffer read protocol is **reserve / use / commit-or-reject** (`buffer.h`,
+  `buffer.cpp`), so capture = `ReadRequest(least(unitsToInspect, ReadCapacity(), windowSpace))` →
+  `memcpy` into `m_signature` → **`ReadReject(unitsRequested)`** to give the reservation back — the
+  source is never consumed and the octets still move on through `TransferOctets`; capture is capped
+  by `SIGNATURE_WINDOW_BYTES` (16). `ReadFilter`/`WriteFilter` call `Inspect()` BEFORE
+  `TransferOctets()`. Rebuilt → `[TOTAL](3/3) [OK](3/3)` exit 0.
+  **New learnings (record):** `ReadReject` is the "peek without consuming" primitive a read-only
+  filter needs; a test run issued in the SAME command batch as the build ran the **stale previous
+  exe** (the recorded gotcha bit again — build and run must be separate sequential commands);
+  `log::debug` inside `qor_mime` produces no output in `QORTestMIME` (the log flyer is not wired
+  into that exe), so it is not a usable probe there.
+
 ### Next up
-- [ ] Plan step 2 — write `mime_captures_leading_octets` FIRST (`GetSignatureByteCount() == 16`
-  for a 40-byte input, `== 4` for a 4-byte input), then implement `Inspect()` copying available
-  octets into `m_signature` without consuming the source.
-- [ ] Plan steps 3..13 — the ten types one test at a time (png, jpeg, gif, pdf, zip, xml, html,
+- [ ] Plan step 3 — write `mime_recognises_png_signature` FIRST (`GetDetectedType() == MIMEType::PNG`
+  for the 8-byte magic `89 50 4E 47 0D 0A 1A 0A`, `GetTypeName() == "image/png"`), then the magic
+  compare + name table in `mime.cpp`.
+- [ ] Plan steps 4..13 — the remaining nine types one test at a time (jpeg, gif, pdf, zip, xml, html,
   json, javascript, plain text) + octet-stream fallback.
 - [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
   `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline

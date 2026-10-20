@@ -1,13 +1,14 @@
 # Progress
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 1 (pass octets through) DONE and verified
-green** (`QORTestMIME` `[TOTAL](2/2) [OK](2/2)` exit 0, test written first and seen red). Earlier
-the same day: the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 2 (capture leading octets into the signature
+window) DONE and verified green** (`QORTestMIME` `[TOTAL](3/3) [OK](3/3)` exit 0, test written first
+and seen red). Earlier the same day: plan step 1 (pass octets through) of the same plan was done, and
+the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
 base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20 Oct 2026, outline + pass-through)
+## MIME Recognition — qor_mime (20 Oct 2026, steps 0-2: outline + pass-through + signature window)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -35,6 +36,16 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   exit 0. Filter now provably sits between a source and a sink and leaves the octet stream untouched.
   Push mode + `Pipeline` parent is the working filter-pump path; Pull mode hits
   `Filter::Read` → `ReadFilter(unitsRead, unitsRead)` (0 units at entry) in the base framework.
+- ✅ **Plan step 2** `mime_captures_leading_octets`: RED first (`[FAIL] #2`, `[OK](2/3)`, exit 1 — the
+  placeholder `Inspect()` captured nothing and was not even called), then `Inspect()` in `mime.cpp`
+  captures the leading octets through the pipeline buffer three-step read protocol — `ReadRequest`
+  → `memcpy` into `m_signature` → **`ReadReject`** to give the reservation back, so the source is
+  NOT consumed and the same octets still move on through `TransferOctets` — capped by
+  `SIGNATURE_WINDOW_BYTES` (16); `ReadFilter`/`WriteFilter` call `Inspect()` before `TransferOctets`;
+  `mime.h` needed no change. `QORTestMIME` `[TOTAL](3/3) [OK](3/3)` exit 0. New gotchas recorded: a
+  run issued in the same command batch as the build ran the **stale previous exe** (build and run
+  must be separate sequential commands), and `log::debug` in `qor_mime` produces no output in
+  `QORTestMIME` (log flyer not wired there). `GetDetectedType()`/`GetTypeName()` still placeholder.
 - ✅ Re-verified after the ctest removal: reconfigure SUCCESS; every affected exe rebuilt and
   re-run **from its own build folder** — `QORTestURI` `[OK](1/1)`, `QORTestYAML` `[OK](1/1)`,
   `QORTestJSONGenerator` `[OK](36/36)`, `QORTestMIME` `[OK](1/1)`, all exit code 0. Note: the

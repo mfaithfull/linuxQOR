@@ -151,6 +151,12 @@ Set-Location cmakebuild/test/components/formats/json/generator/Debug   # run FRO
   otherwise) and capture **both** streams (`exe *> log`) — `[FAIL](n/n)` and the
   `[ALL FAILURES]` block go to stderr. `QORTestJSONGenerator` currently reports
   `[OK](36/36)` and writes `test/data/json_generator_*.json`.
+- A `qor_*` module's `log::debug` calls produce **no output** in a minimal test exe like
+  `QORTestMIME` — the log flyer/subsystem is not wired into that `main.cpp`. Do not use log
+  output as a test probe there; assert on the module's own observable state instead
+  (verified 20 Oct 2026 while working qor_mime plan step 2).
+
+
 
 ## Build / verify recipe for the `QORTestJSON` roundtrip increment (20 Oct 2026)
 

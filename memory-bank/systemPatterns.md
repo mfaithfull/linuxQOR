@@ -276,6 +276,18 @@ element in the chain gets `SetParent(&pipeline)` with `pipeline.SetFlowMode(Push
 A filter also needs no buffer of its own; it borrows the source's and the sink's buffers via
 `ActualSource()->GetBuffer()` / `ActualSink()->GetBuffer()`.
 
+**Pipeline buffer read protocol — reserve / use / commit-or-reject (qor_mime step 2, 20 Oct 2026):**
+`buffer.h` gives reads three steps — `ReadRequest(n)` reserves n units (bounded by
+`ReadCapacity() = m_writeBegin - m_readEnd`) and returns the read pointer; `ReadAcknowledge(n)`
+commits the read (advances `m_readEnd`); **`ReadReject(n)` gives the reservation back** (`buffer.cpp`
+restores `m_readEnd`). A filter that must *peek without consuming* therefore does
+`ReadRequest` → copy out → `ReadReject` — that is exactly how
+`MIMERecognizerFilter::Inspect()` captures the leading octets into `m_signature` (capped at
+`SIGNATURE_WINDOW_BYTES` 16) without stealing them from the sink, and `ReadFilter`/`WriteFilter`
+call `Inspect()` BEFORE moving octets on. The mirror write protocol is
+`WriteRequest`/`WriteAcknowledge`/`WriteReject`.
+
+
 Module registration: parent `CMakeLists.txt` `add_subdirectory(mime)`; module
 `set(target qor_mime)` + `add_library(${target} SHARED qor_mime.cpp mime.cpp)` +
 `target_compile_definitions(${target} PRIVATE QOR_MIME ...)` + `qor::Module& ThisModule()` singleton.

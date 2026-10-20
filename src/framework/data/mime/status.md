@@ -17,8 +17,18 @@
       Wiring note: the test pumps in `Element::FlowMode::Push` under a `Pipeline` parent —
       Push is the working pump path for a filter; Pull mode hits a base-framework bug
       (`Filter::Read` calls `ReadFilter(unitsRead, unitsRead)`, i.e. 0 units at entry).
+- [x] Step 2 `mime_captures_leading_octets`: test written FIRST and seen RED
+      (`[FAIL] #2`, `[OK](2/3)`, exit 1 — placeholder `Inspect()` captured nothing), then
+      `Inspect()` implemented in `mime.cpp` using the pipeline buffer three-step read protocol
+      (`buffer.h`/`buffer.cpp`): `ReadRequest` on the source buffer → `memcpy` into `m_signature`
+      → **`ReadReject`** to give the reservation back, so the source is never consumed; capture
+      capped by `SIGNATURE_WINDOW_BYTES` (16) and `ReadCapacity`. `ReadFilter`/`WriteFilter`
+      call `Inspect()` BEFORE `TransferOctets()`. `mime.h` unchanged. Verified 20 Oct 2026:
+      `QORTestMIME.exe` `[TOTAL](3/3) [OK](3/3)` exit 0 from
+      `build\test\framework\data\mime\Debug` (logs `tmp/qortestmime_step2_red.log`,
+      `tmp/qortestmime_step2_green.log`). `GetDetectedType()`/`GetTypeName()` still untouched.
 
 ## Next increment
-- [ ] Step 2 `mime_captures_leading_octets` — `GetSignatureByteCount() == 16` for a 40 byte
-      input, `== 4` for a 4 byte input; code added: `Inspect()` copies available octets into
-      `m_signature` without consuming the source
+- [ ] Step 3 `mime_recognises_png_signature` — `GetDetectedType() == MIMEType::PNG`,
+      `GetTypeName() == "image/png"` for the 8-byte PNG magic `89 50 4E 47 0D 0A 1A 0A`;
+      write the test FIRST, then the magic compare + name table in `mime.cpp`.
