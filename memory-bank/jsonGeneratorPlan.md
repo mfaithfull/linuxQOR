@@ -1,12 +1,21 @@
 # JSON Generator Plan
 
-**Status:** **ASSIGNED as the next task** (assigned 19 Oct 2026, not yet
-started). This is the task to implement in the next coding session.
-**Scope:** Add a qor_pipeline-based JSON generator to `qor_jsondata` and matching
-roundtrip test code to `test/components/formats/json`.
-**Assigned by:** the user; the assignment is also recorded in
-`memory-bank/activeContext.md` ("▶ Assigned next task: JSON generator") and
-`memory-bank/progress.md`.
+**Status:** **PIPELINE INTEGRATION DONE AND VERIFIED as of 20 Oct 2026 —
+`[OK](36/36)` in `QORTestJSONGenerator`.** Generator states
+(`src/components/data/formats/json/generator/states/`) cover literals, escaped
+strings, `std::to_chars` numbers, non-finite rejection and nested containers
+(`[OK](31/31)`), and the write-to-file pipeline now works: `test/components/formats/json/jsonwriter.h`
+(`JSONWriter` / `JSONPartWriter`) plus the new buffer/model ctor and `ReadBytes`
+hook in `src/components/data/pipeline/sources/generatorsource/generatorsource.h`
+write a model's JSON text into `test/data` files (5 new tests).
+**Remaining scope:** roundtrip (parse ⇄ generate) tests in `QORTestJSON` and a
+full `QORTest` regression run. See **"Pipeline integration increment — VERIFIED"**
+below for the verified shape and the two gotchas that had to be fixed (unregistered
+`FileSystem` platform subsystem, stale generated `.vcxproj` → `LNK2019`).
+**Assigned by:** the user; the original assignment was recorded in
+`memory-bank/activeContext.md` and `memory-bank/progress.md` (both now headed
+"▶ JSON generator (PIPELINE INTEGRATION VERIFIED `[OK](36/36)` — next: `QORTestJSON`
+roundtrip + full `QORTest`)", updated 20 Oct 2026).
 
 ## Verified prerequisites (checked against the tree, 19 Oct 2026)
 - `src/components/data/formats/json/` has `model/` and `parser/` only — no
@@ -37,8 +46,12 @@ The JSON parser (`qor_jsondata`) currently reads JSON text into a
 FileConnector(Source) → UnicodeTextFilter → ParserSink(Sink)   [Push mode]
 ```
 
-There is **no writing path** — no generator, no serializer. The plan below adds a
-pipeline-based JSON generator mirroring the parser architecture, then a roundtrip test.
+At the original 19 Oct 2026 pre-flight check there was **no writing path**.
+As of 20 Oct 2026 the plan below is **implemented through the pipeline step**:
+generator states exist, are verified in `QORTestJSONGenerator`, and the
+pipeline/`JSONWriter` integration writes model JSON to `test/data` files
+(`[OK](36/36)`); only the roundtrip tests in `QORTestJSON` and the full
+`QORTest` regression run are still pending.
 
 ## Architecture mirror (parser → generator)
 
@@ -287,3 +300,177 @@ Roundtrip test pattern (compare model equality):
 - For number roundtrip, format with a representation that is guaranteed to round
   (e.g. `%.17g` then strip trailing zeros, or use a string-preserving model type
   for exact roundtrip semantics).
+
+## Implemented increment — 20 Oct 2026
+
+- `_number.cpp` now uses `std::to_chars` for the model `Number` double path
+  instead of the previous manual integer/fraction rendering loop. This emits
+  shortest round-trip decimal text and exposes JSON-compatible exponent forms
+  such as `1e+10` and `1e-10`.
+- Non-finite doubles are rejected in `_value.cpp` before entering `_number`, and
+  `_number.cpp` also guards `m_numberValue` with `std::isfinite` so invalid model
+  numbers cannot enter the number state machine.
+- Nested containers are supported by attaching an inner model to a `Value` slot
+  with `polymorphic<qor::data::model::json::ValueModel>(inner)`. `_value`
+  dispatches on `Value::GetType()` and routes to `_array`, `_object`, `_string`,
+  or `_number`, so arrays and objects can be nested recursively.
+- Corrected object-member output assertions: `{"a":7}` is 7 bytes, not 6.
+- `QORTestJSONGenerator` is verified green at **31/31** tests.
+
+## Pipeline integration increment — DONE and VERIFIED 20 Oct 2026 (`[OK](36/36)`)
+
+The shape that actually works (verified on disk, `QORTestJSONGenerator` green
+36/36, artefacts written to `test/data`):
+
+- **Source**: `qor::pipeline::components::GeneratorSource<JSONPartStateT> source(m_buffer, model)`
+  — new **route (a)** ctor mirroring `ParserSink(const pipeline::Buffer&)`:
+  ```cpp
+  template<typename... TArgs>
+  GeneratorSource(const pipeline::Buffer& buffer, TArgs&&... args) :
+      BaseGeneratorSource(), m_objectState(new_ref<TObjectState>(&m_generator, std::forward<TArgs>(args)...))
+  { SetBuffer(buffer); m_context = new_ref<qor::components::generator::Context>();
+    m_generator.SetContext(m_context); m_generator.SetInitialState(m_objectState); }
+  ```
+  (`#include <utility>` added). Route (b) (`generator/nodes/` adapters +
+  `QueueNode`/`DequeueNode`) was **not needed**.
+- **Sink**: `qor::io::components::FileConnector sinkConnector(outFile, m_buffer, qor::io::OpenFor::WriteOnly, qor::io::WithFlags::None)`
+  — `WithFlags::None` leaves the platform to open with `CREATE_ALWAYS`, so a
+  missing file is created and an existing one truncated.
+- **Drive**: `qor::pipeline::Pipeline(source, sinkConnector, qor::pipeline::Element::FlowMode::Push).Connect().PumpAll()`
+  — the `JSONReader` style, **not** the Pull + `Delegate` style of
+  `test/pipeline/testwriter.cpp`.
+- **Multi-buffer resume**: `GeneratorSource` now implements
+  `virtual size_t ReadBytes(byte* space, size_t bytesToRead)` — returns
+  `Generate(space, bytesToRead)` while the generator is incomplete and `0` once
+  `m_context.IsNull() || m_generator.IsComplete()`, which ends the pipeline. A
+  state that runs out of space keeps its stack intact, so the next pull resumes
+  at the saved position (blocker 3 resolved).
+- **Test helper** `test/components/formats/json/jsonwriter.h`:
+  `JSONPartWriter<JSONPartStateT, JSONModelTypeT>` (owns
+  `qor::pipeline::PODBuffer<byte> m_buffer`), typedef'd to
+  `JSONObjectWriter` (`_object`/`Object`), `JSONArrayWriter` (`_array`/`Array`),
+  `JSONValueWriter` (`_value`/`Value`); top-level `JSONWriter` wraps
+  `JSONObjectWriter` with a 1024-byte buffer.
+- **New tests** (36 total, 5 new): `json_generator_object_model_written_to_file_by_pipeline`,
+  `json_generator_array_model_written_to_file_by_pipeline`,
+  `json_generator_top_level_value_written_to_file_by_pipeline`,
+  `json_generator_nested_object_written_to_file_in_parts`,
+  `json_generator_writer_writes_object_to_file`. Artefacts:
+  `test/data/json_generator_object.json` (7), `json_generator_writer.json` (7),
+  `json_generator_array.json` (5), `json_generator_value.json` (1),
+  `json_generator_nested.json` (16).
+- **CMake**: `test/components/formats/json/generator/CMakeLists.txt` link list
+  gained `qor_fileconnector qor_filesystem`; `qor_jsondata` gained the 11
+  `generator/states/*.cpp` sources and links `qor_generator`.
+- **Two fixes were needed to get there**:
+  1. **Runtime** — `FileConnector` resolves its `qor::io::filesystem::Index`
+     through the `qor::io::FileSystem` **platform subsystem**, and
+     `ThePlatform(qor_shared)` starts with none, so the `FileSystem`/`IFile`
+     module requirements fail as soon as a pipeline touches a file. The test
+     entry point `test/components/formats/json/generator/main.cpp` now includes
+     `src/framework/io/filesystem/filesystem.h` and `src/platform/platform.h`,
+     declares `qor_pp_module_requires(IFileSystem)`, and calls
+     `ThePlatform(qor_shared)->AddSubsystem<FileSystem>();` before
+     `AppBuilder().Build<Application>(...)`.
+  2. **Link** — `LNK2019` unresolved `qor_fileconnector` symbols were a
+     **stale generated `.vcxproj`**, not a code problem: `cmake --build` never
+     re-emitted the project files after the link-list edit, so no
+     `qor_fileconnector.lib` import library was linked. Explicit
+     `cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug` regeneration cleared it
+     (confirmed by dumping PE import libraries with `tmp/pefilter.py`).
+- **Run location**: the file tests use
+  `constexpr const char* outputFolder = "../../../../../../../test/data";`
+  (line 675 of `test_jsongenerator.cpp`) relative to the **exe's own build
+  directory**. Run from `cmakebuild/test/components/formats/json/generator/Debug`
+  the target reports `[OK](36/36)` (exit 0) and rewrites
+  `test/data/json_generator_*.json`; run from the repo root the same exe reports
+  `[FAIL](5/36)` (exit 5, `unknown exception`) on the 5 file tests only — a
+  path/cwd artefact, not a pipeline fault.
+
+## Prepared next increment (20 Oct 2026 — pre-flight verified against the tree)
+
+Scratch cleanup: `tmp/` emptied (35 transient build/test logs, a scratch probe
+`.obj` and two `_tmp_to_chars*.exe` probes removed; the folder itself is kept).
+Nothing there is git-referenced — `/tmp` is in `.gitignore`.
+
+### Verified prerequisites for the pipeline step
+
+- `qor_jsondata` already links `qor_generator` and already compiles every
+  generator `.cpp` (`_null/_true/_false/_string/_number/_array/_object/_value/_comma/_colon/_member`).
+- `QORTestJSONGenerator` CMake already links `qor_generator qor_generatorsource`
+  (so both targets are proven buildable/linkable here); `QORTestJSON` does **not**
+  — it still needs both added (Step 7).
+- `qor_generatorsource` is a registered built target (`qor_generatorsource.dll`)
+  linking `qor_module qor_signals qor_pipeline qor_generator`.
+- Model accessors confirmed: `Object::m_members` is
+  `std::vector<ref_of<Member>::type>`; `Member` stores `Value m_value` **by value**
+  and exposes `GetValue()` (`Value&`), `GetName()`, `SetName()`; `Array::m_values`
+  is `std::vector<ref_of<Value>::type>`.
+- State ctors available for the writer: `_value(Generator*, Value*)`,
+  `_object(Generator*, Object*)`, `_array(Generator*, Array*)`,
+  `_member(Generator*, Member*)`, `_string(Generator*, const char*, size_t)`,
+  `_number(Generator*, Number*)` / `_number(Generator*, long long)`,
+  `_comma(Generator*)`, `_colon(Generator*)`.
+- `qor_generator::NodeAdapter<T>` ctors: `NodeAdapter()` (owns a fresh `T`) and
+  `NodeAdapter(ref_of<T>, uint64_t token)`; `Generator` has `QueueNode()` /
+  `DequeueNode()` over `std::deque<ref_of<Node>::type>` — that is the intended
+  node handoff route. Parser mirror for the token-tag pattern:
+  `parser/nodes/object.h` (`ObjectNode : NodeAdapter<model::json::Object>`
+  tagged `jsonToken::object`).
+- Working Pull-mode write pipeline to study: `test/pipeline/testwriter.cpp`
+  (`FileConnector(outFile, buffer, OpenFor::WriteOnly, WithFlags::Truncate|Append)`,
+  `Pipeline(source, sink, Element::Pull)`, and the
+  `Delegate<bool(size_t&,size_t)>::Create<Pipeline,&Pipeline::Pump>` callback set on
+  the **sink** in Pull mode). JSONReader instead uses `Pipeline(...).Connect().PumpAll()`
+  — decide which drive style `JSONWriter` needs.
+
+### Blockers in the reusable parts (20 Oct 2026 pre-flight — all three RESOLVED, see "Pipeline integration increment — VERIFIED")
+
+1. `GeneratorSource<TObjectState>` ctor only does
+   `new_ref<TObjectState>(&m_generator)` + `SetInitialState`, so it can only build
+   states constructible from a bare `Generator*`. Every JSON state that reads model
+   data needs an extra argument. Two routes:
+   (a) add a `GeneratorSource(const pipeline::Buffer&, Model*)` ctor mirroring
+   `ParserSink(const pipeline::Buffer&)`; (b) keep the ctor and hand the model
+   through `Generator::QueueNode(new_ref<JSONObjectNode>(obj).AsRef<generator::Node>())`
+   (the plan's sketch) — then the initial state must `DequeueNode()` in `Prepare()`.
+2. `GeneratorSource` never creates `m_context` (`ref_of<Context>`) and never calls
+   `m_generator.SetContext(...)`, yet `Generate()` does `m_context->SetSpace(...)` and
+   `Generator::InnerGenerate()` derefs `m_context->HasSpace()`. `ParserSink(buffer)`
+   is the mirror that does set it
+   (`new_ref<data::parser::CodePointContext>(&buffer)` then `SetContext`). Expect a
+   null/empty-ref deref until a `Context` is created — verify this first.
+3. `BaseGeneratorSource::Pull` calls `OnEndOfData()` when `ReadBytes` returns 0, and
+   `InnerGenerate()` stops on `!m_context->HasSpace()`; so output larger than one
+   pipeline buffer must resume across pulls (`GeneratorState::Reset()` sets
+   `Result::MORE_DATA`). Test with a buffer smaller than the JSON text.
+
+### Ordered plan for the next increment (items 1–3 DONE and verified 20 Oct 2026; 4–7 remain)
+
+1. Extend `src/components/data/pipeline/sources/generatorsource/generatorsource.h`
+   (+`.cpp`): buffer ctor that creates the `Context`, `SetContext()` on the
+   generator, plus model handoff (route (a) or (b) above). Remember a new library
+   `.cpp` also needs the CMake source list and
+   `cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug` regeneration.
+2. **[SKIPPED]** Route (b) was not taken, so no `generator/nodes/` adapters were
+   created — the variadic `GeneratorSource(buffer, model)` ctor (route (a)) hands
+   the model straight to the initial state.
+3. **[DONE — verified]** The writer test header exists as
+   `test/components/formats/json/jsonwriter.h` (`JSONPartWriter` + `JSONWriter`),
+   but it is driven from the **generator** test `QORTestJSONGenerator`, not from
+   `QORTestJSON`. Deviations from the sketch: `FileConnector` uses
+   `OpenFor::WriteOnly` with `qor::io::WithFlags::None` (the platform opens with
+   `CREATE_ALWAYS` and truncates), output is raw ASCII/UTF-8 with **no**
+   `UnicodeTextFilter`, and the pipeline is driven
+   `FlowMode::Push` + `.Connect().PumpAll()` rather than the planned Pull mode.
+4. **[REMAINING]** Extend `test/components/formats/json/main.cpp` with roundtrip
+   cases plus a `CompareModel(a, b)` helper; compare **decoded** model values
+   (escapes are not retained by the model) and rely on `std::to_chars`
+   round-trip safety for numbers. Decide whether `QORTestJSON` shares the
+   `jsonwriter.h` header with `QORTestJSONGenerator` or duplicates the flow.
+5. Add `qor_generator qor_generatorsource` to the `QORTestJSON` link list in both
+   the Linux and Windows branches.
+6. Build/verify order: `qor_generatorsource` → `qor_jsondata` →
+   `QORTestJSONGenerator` (regression) → `QORTestJSON` → full `QORTest`.
+7. Always capture both streams (`exe *> log`) and chain assertions
+   (`qor_pp_assert_that(x).isTrue();`).

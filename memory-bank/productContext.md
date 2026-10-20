@@ -78,9 +78,13 @@ compete with Qt.
 
 Two steps toward this were taken in Oct 2026: a **generated YAML parser
 prototype** (`src/components/protocols/yaml`, `qor_yaml`) began the
-better-than-JSON format work, and the **JSON generator is now the assigned next
-task** — scene templates cannot be loaded or saved until the data model can be
-*written* as text, not only read.
+better-than-JSON format work, and the **JSON generator write path now works end to
+end** — `src/components/data/formats/json/generator/` has model-driven states that
+write `null`, booleans, strings, numbers in scientific notation, nested arrays and
+nested objects, and a real pipeline (`GeneratorSource` → `FileConnector`, helper
+`JSONWriter`) writes a model's JSON text into `test/data` files
+(`[OK](36/36)` in `QORTestJSONGenerator`). Remaining JSON-writer work: roundtrip
+(parse ⇄ generate) testing in `QORTestJSON` and the full `QORTest` regression run.
 
 ## Openness & collaboration
 The project is "way more than one crazy person can handle". Contributions are

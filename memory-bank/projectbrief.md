@@ -80,9 +80,10 @@ cross-platform libraries per `STATUS.md`.
 through Oct 2026), `CHANGES.md` (nothing shipped yet; 0.5 is the first
 potentially releasable milestone), `FEATURES.md` (per-module maturity table).
 Milestones: working toward **0.5** interim release; **1.0** is the eventual
-target. For the newest state trust `git log` (HEAD `93668d3d`, 19 Oct 2026) and
-the parallel agent-state files `docs/agent/TODO.md`, `docs/agent/STATE.MD`,
-`docs/agent/DECISIONS.md`.
+target. For the newest state trust `git log`, the parallel agent-state files
+`docs/agent/TODO.md`, `docs/agent/STATE.MD`, `docs/agent/DECISIONS.md`, and this
+`memory-bank/` (last updated 20 Oct 2026 — JSON generator **pipeline integration**
+verified at `[OK](36/36)` in `QORTestJSONGenerator`).
 
 ## Key project documents
 `README.md` · `KEY_CONCEPTS.md` · `LAYOUT.md` · `BUILDING.md` · `FEATURES.md` ·

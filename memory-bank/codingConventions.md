@@ -123,4 +123,7 @@ public:
 - New folder ⇒ add `purpose.md` (and `status.md` for volatile state).
 - Keep the "rule of 7" in mind when creating folders/namespaces.
 - Prefer `new_ref<T>()` smart references over raw `new`/`delete`/`unique_ptr`.
+- For numeric text generation, prefer standard-library facilities such as
+  `std::to_chars` when they meet the format requirements (JSON generator uses
+  it for shortest round-trip double text).
 - Match the conventions of the file being edited (legacy files use tabs).

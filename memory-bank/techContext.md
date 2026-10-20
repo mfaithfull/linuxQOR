@@ -93,6 +93,7 @@
 - Separate test executables built from sub-directories: `operational`
   (`QOROpTests` — thread pool, profiling, excluded tests), `filesystem`, `ui`,
   `pipeline`, `argparse`, `components/formats` (`QORTestJSON`),
+  `components/formats/json/generator` (`QORTestJSONGenerator`, added Oct 2026),
   `components/protocols/yaml` (`QORTestYAML`, added Oct 2026),
   `components/protocols/http` (`QORTestHTTPRequestGen`, added Oct 2026),
   `tef`, `frozen`, `dio`, `uri`, `mpl`, `framework/parallel/signaltree`,
@@ -110,8 +111,46 @@
 - **Recommended build/verify order**: build `examples/basic/helloworld` first
   (smallest dependency set), then `QORTest` (if it builds and runs you're good
   to go; one or two failures are tolerable).
+- Dedicated test exes are under their own subdirectories in the build tree. For
+  example, `QORTestJSONGenerator.exe` is at
+  `cmakebuild/test/components/formats/json/generator/Debug/QORTestJSONGenerator.exe`,
+  not directly under `cmakebuild/`.
 - Windows runs need DLLs copied next to the executable (post-build
   `$<TARGET_RUNTIME_DLLS>` copy via `cmake/postbuild.cmake`).
+
+## Build / verify recipe for a file-using test exe (Windows MSVC, 20 Oct 2026)
+
+```
+cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug          # re-emit VS project files
+cmake --build cmakebuild --target QORTestJSONGenerator
+Set-Location cmakebuild/test/components/formats/json/generator/Debug   # run FROM the exe dir
+.\QORTestJSONGenerator.exe *> ../../../../../tmp/run.log               # -> [OK](36/36)
+```
+
+- **Run a test exe from its own build directory**, not from the repo root: the
+  test sources address `test/data` by a relative path calibrated to the exe's
+  location (the generator test uses
+  `../../../../../../../test/data`). Run from the repo root and the 5 file tests
+  throw `unknown exception` (`[FAIL](5/36)`, exit 5) even though the pipeline is
+  fine; from the exe directory it is `[OK](36/36)`, exit 0.
+- **Regenerate before rebuilding after any CMakeLists edit.** The build tree holds
+  generated `.vcxproj` files and `cmake --build` does not re-emit them when only a
+  `target_link_libraries` list changed, so symbols of the newly linked library fail
+  with `LNK2019` unresolved externals (its `.lib` import library is never a
+  dependency). Use `cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug` — **no**
+  `-G`; the cached generator is the Visual Studio one and
+  `-G "Visual Studio 2026"` is not a valid generator name in this tree.
+- A test exe that hooks a pipeline to a file must link
+  `qor_fileconnector qor_filesystem` plus the OS implementation
+  (`winqor_filesystem`/`linqor_filesystem`, Windows also needs
+  `winqor_common`) **and** register the subsystem in its `main.cpp`
+  (`ThePlatform(qor_shared)->AddSubsystem<FileSystem>()`,
+  `qor_pp_module_requires(IFileSystem)`) — otherwise the failure is a **runtime**
+  module-requirement failure, not a link error.
+- Run the exe in a **separate command** from the build (a stale artifact may run
+  otherwise) and capture **both** streams (`exe *> log`) — `[FAIL](n/n)` and the
+  `[ALL FAILURES]` block go to stderr. `QORTestJSONGenerator` currently reports
+  `[OK](36/36)` and writes `test/data/json_generator_*.json`.
 
 ## Repo conventions
 - `.gitignore`: object/obj/so/dll/exe artifacts, `.vs`, `build/`, `.vscode`,

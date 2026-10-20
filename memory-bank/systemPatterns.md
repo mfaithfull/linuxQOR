@@ -150,8 +150,9 @@ Reading and writing are deliberately mirrored through the pipeline:
 
 Flows in use today: `FileConnector → UnicodeTextFilter → ParserSink` (JSON,
 YAML, HTTP request parsing) and `GeneratorSource → … → FileConnector` (HTTP
-request generation). `qor_generator` is currently **not** linked by `qor_jsondata`
-— the assigned JSON generator task adds it.
+request generation). `qor_generator` is now linked by `qor_jsondata` for the
+JSON generator states; `qor_generatorsource` pipeline integration is still the
+remaining next step.
 
 JSON model shape (verified 19 Oct 2026 in `src/components/data/formats/json/model/`):
 `Object` holds `std::vector<ref_of<Member>::type> m_members`; `Array` holds
@@ -163,6 +164,35 @@ holds `polymorphic<ValueModel> m_valueModel` (`GetValue() -> polymorphic<ValueMo
 `private double m_value` (`GetValue()`, `SetValue()`). Only `m_members` and
 `m_values` are public — everything else must be read through getters, and the
 decoded `String` means escapes are not recoverable from the model.
+
+JSON generator shape (updated 20 Oct 2026): model `Number` doubles are written
+by `_number` through `std::to_chars`, which emits shortest round-trip decimal
+text and therefore can include JSON-compatible exponent forms such as `1e+10`
+or `1e-10`. Non-finite doubles are rejected before entering the number state.
+Nested containers are supported by binding an inner `Object`, `Array`, `String`,
+or `Number` model into a `Value` slot with
+`polymorphic<qor::data::model::json::ValueModel>(inner)` and letting `_value`
+dispatch again on `Value::GetType()`.
+
+## Verified pipeline shapes (20 Oct 2026)
+
+- **Read** (proven by JSON/YAML/HTTP parsing):
+  `FileConnector(Source, buffer, …) → UnicodeTextFilter → ParserSink(buffer)`
+  driven `.Connect().PumpAll()` in `Push` mode.
+- **Write** (now proven by `QORTestJSONGenerator`, `[OK](36/36)`):
+  `GeneratorSource<JSONState>(buffer, model) → FileConnector(Sink, file, buffer, OpenFor::WriteOnly, WithFlags::None)`
+  also driven `.Connect().PumpAll()` in `Push` mode. `GeneratorSource` owns the
+  output `qor::components::generator::Context` (the mirror of
+  `ParserSink(buffer)` owning a `CodePointContext`), implements the pipeline
+  `Source::ReadBytes` hook, and receives the model through a variadic
+  `GeneratorSource(const pipeline::Buffer&, TArgs&&...)` ctor — the state stack
+  survives across pulls, so output larger than the buffer still completes.
+- **Platform subsystems are opt-in by the executable**: `ThePlatform(qor_shared)`
+  starts with **no** subsystems, so anything that hooks a pipeline to a file must
+  call `ThePlatform(qor_shared)->AddSubsystem<FileSystem>()` and declare
+  `qor_pp_module_requires(IFileSystem)`. `qor_fileconnector` compiles and links
+  without it and only fails its `FileSystem`/`IFile` module requirements **at
+  run time**. Reference: `test/components/formats/json/generator/main.cpp`.
 
 ## Critical implementation paths
 1. `configuration.h` as first include — build breaks otherwise.
