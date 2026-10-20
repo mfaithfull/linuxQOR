@@ -36,5 +36,3 @@ if (WIN32)
   )
 endif ()
 
-enable_testing()
-add_test(TestJSONGenerator ${target})

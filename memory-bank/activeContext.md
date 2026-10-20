@@ -2,12 +2,19 @@
 
 **Last updated:** 20 Oct 2026 — the whole JSON generator increment is **DONE**,
 including the **full `QORTest` regression run** which is now **green at
-`[TOTAL](678/678)` / `[OK](678/678)` (process exit code 0)**: after regenerating
+`[TOTAL](678/678)` / `[OK](678/678)` (process exit code 0)** — the paragraph in this earlier
+update was truncated; the full JSON generator status is in the section below.
+
 ## Current Task: qor_mime — MIME recognition pipeline filter (20 Oct 2026)
 
 **Task**: new module in its own folder under `src/framework/data` (`src/framework/data/mime`,
 lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME types.
 **Approach**: test first, one increment at a time. Full plan: `memory-bank/qor_mime_plan.md`.
+- **Rule in force (D8, user 20 Oct 2026): the QOR does not use ctest.** Verification = build the
+  lib (`qor_mime`), build the test exe (`QORTestMIME`), run the exe from its build folder, read
+  `[OK](n/n)` + shell exit code. `test/framework/data/mime/CMakeLists.txt` has no
+  `enable_testing()`/`add_test()` for that reason.
+
 
 ### Done
 - Researched QOR pipeline filters first (step R in the plan): `qor::pipeline::Filter` base,

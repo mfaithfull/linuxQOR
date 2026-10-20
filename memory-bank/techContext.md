@@ -203,8 +203,7 @@ Set-Location cmakebuild/test/components/formats/json/generator/Debug   # run FRO
 New framework-layer data module and its dedicated test exe (verified this session):
 `cmake --build build --target qor_mime` → `build\src\framework\data\mime\Debug\qor_mime.dll` (+ `.lib`/`.exp`)
 `cmake --build build --target QORTestMIME` → `build\test\framework\data\mime\Debug\QORTestMIME.exe`
-  → run it: `[OK](1/1)` exit 0. (`add_test(TestMIME ...)` registered; the local ctest shim lists no
-  VS-generator tests, so the exe run is the judge.)
+  → run it: `[OK](1/1)` exit 0. Test judge = exe output + exit code; the QOR does not use ctest (D8).
 `qor_mime` links `qor_module qor_host qor_current qor_sync qor_signals qor_pipeline`.
 `QORTestMIME` additionally pulls `qor_stringsource`/`qor_stringsink` (pipeline pumping in tests) —
 first time those two component libs were ever built for a test exe.

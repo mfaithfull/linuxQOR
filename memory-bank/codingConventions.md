@@ -112,6 +112,11 @@ public:
 - Register the new file in the owning `test/CMakeLists.txt` — the main `QORTest`
   source list, or the sub-directory's own CMakeLists when its own executable
   exists.
+- **No ctest (D8 in docs/agent/DECISIONS.md, user 20 Oct 2026).** The QOR does not use ctest:
+  never reference it in plans, commands or docs, and a QOR test CMakeLists carries no
+  `enable_testing()` and no `add_test()`. Test judge = run the exe from its build folder,
+  green = `[OK](n/n)` in its output AND shell exit code 0.
+
 - `qor_assert` (fluent assertions), `qor_test` (Yaffut-derived), `qor_mock`
   (HippoMocks-derived) are used together.
 - Verify order: build `examples/basic/helloworld`, then `QORTest`.

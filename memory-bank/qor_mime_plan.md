@@ -41,9 +41,9 @@ Findings that shape the module:
    `$<TARGET_RUNTIME_DLLS:...>` into its own output folder (POST_BUILD copy, Windows).
 4. Test exes run standalone from their build folder: output
    `<file>(<line>) : <case_name>` then `[TOTAL](n/n)` / `[OK](n/n)` and shell exit code
-   is the pass/fail indicator (0 = all passed). `add_test(<Name> <target>)` + `enable_testing()`
-   also register `add_test(<Name> <target>)` — but the local ctest shim does not list VS-generator
-   tests (see pitfalls below), so exes are run directly from the build folder.
+   is the pass/fail indicator (0 = all passed). The QOR does not use ctest (D8 in DECISIONS.md):
+   no `add_test()`/`enable_testing()` is added to a QOR test CMakeLists.
+   Test judge = the exe's [OK](n/n) output and its exit code.
 
 ## Design decisions taken with the outline
 
@@ -119,9 +119,8 @@ pipeline contract proven in 1/2/14/15/16.
     cmake --build build --target qor_mime                 # lib = compiler as judge (D3)
     cmake --build build --target QORTestMIME              # test exe
     & build\test\framework\data\mime\Debug\QORTestMIME.exe ; $LASTEXITCODE   # expect [OK](n/n), exit 0
-    # ctest on this box is a VS shim (ctest 4.2.0) that rejects --test-prefix/--list-tests
-    # AND reports "No tests were found" for the VS 2026 generator test list, so the reliable
-    # runner is the exe run above. (add_test(TestMIME ...) is still registered for CI.)
+    # The QOR does not use ctest (D8). Exe output + exit code is the test judge; do not add
+    # enable_testing()/add_test() to a QOR test CMakeLists.
 
 Pitfalls confirmed while creating the outline:
 - `cmake --build ... -- -j4` FAILS on this generator (`MSB1001: Unknown switch`). Use
@@ -129,6 +128,10 @@ Pitfalls confirmed while creating the outline:
 - A QOR module with no exported symbol makes a test exe fail with `LNK1104` (no import
   `.lib`). Guard: `qor_pp_export void init_mime(void)` in `mime.cpp`. Verified: the
   qor_mime link produced `qor_mime.lib` + `qor_mime.exp`.
+- File-based test cases in this repo write relative to the **exe** (e.g. the JSON generator uses
+  `constexpr const char* outputFolder = "../../../../../../../test/data";`). If a qor_mime step
+  ever writes files, use the same convention and always run the exe from its build folder —
+  running from the repo root gives false `[FAIL]`.
 - `src/framework/data` and `src/components/data` layers are elided from namespace names:
   use `qor::mime`, and inside the class body write `qor::pipeline::...` not `qor::mime::pipeline::...`.
 - `QOR_MIME` must be added as a `target_compile_definitions` PRIVATE define or every

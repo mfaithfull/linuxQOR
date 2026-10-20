@@ -17,11 +17,22 @@ real pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   class `MIMERecognizerFilter`, `enum class MIMEType` covering the ten popular types plus
   `application/octet-stream` fallback and `Unresolved`.
 - New test target `test/framework/data/mime` → exe `QORTestMIME` (placeholder `mime_module_loads`).
+- ctest removed project-wide (user rule "the QOR does not use ctest"): deleted the
+  `enable_testing()` + `add_test(...)` blocks from the four leaf test CMakeLists that had them
+  (`test/framework/data/mime`, `test/components/protocols/yaml`, `test/components/formats/json/generator`,
+  `test/uri`). Repo-wide grep of every `CMakeLists.txt` for `add_test|enable_testing` → **0 hits**.
+
 
 ### Outcomes
 - ✅ `qor_mime` compiles and links: `build\src\framework\data\mime\Debug\qor_mime.dll` + import lib,
   no warnings.
 - ✅ `QORTestMIME.exe` runs `[OK](1/1)` exit 0 — module loads, filter constructs.
+- ✅ Re-verified after the ctest removal: reconfigure SUCCESS; every affected exe rebuilt and
+  re-run **from its own build folder** — `QORTestURI` `[OK](1/1)`, `QORTestYAML` `[OK](1/1)`,
+  `QORTestJSONGenerator` `[OK](36/36)`, `QORTestMIME` `[OK](1/1)`, all exit code 0. Note: the
+  JSON generator tests write to `../../../../../../../test/data` **relative to the exe**, so
+  running that exe from the repo root reports false `[FAIL](5/36)`.
+
 - ⚠️ `framework/data` and `framework/data/mime` were NOT in the namespace docs (`namespace.md`
   0 hits for `qor::mime`) but they ARE live at build time — `src/framework/data/CMakeLists.txt`
   already registered `pipeline` (lib `qor_pipeline`), so the layer is real and unbuilt-to-test

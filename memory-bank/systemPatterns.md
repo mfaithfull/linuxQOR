@@ -269,6 +269,6 @@ Mirror test target: `test/framework/data/mime` → `QORTestMIME` exe; registered
 links the module lib plus the pipeline libs it needs (`qor_pipeline`, and
 `qor_stringsource`/`qor_stringsink` for pipeline pumping tests); POST_BUILD copies
 `$<TARGET_RUNTIME_DLLS:${target}>` next to the exe; `enable_testing()` + `add_test(TestMIME ${target})`.
-Run from the build folder (the local ctest shim does not list VS-generator tests — see
-`memory-bank/qor_mime_plan.md` pitfalls).
+Run from the build folder — the QOR does not use ctest (D8), so the exe's `[OK](n/n)` output and
+exit code are the judge, and a QOR test CMakeLists carries no `enable_testing()`/`add_test()`.
 

@@ -31,6 +31,3 @@ if (WIN32)
     COMMAND_EXPAND_LISTS
   )
 endif ()
-
-enable_testing()
-add_test(TestYAML ${target})
