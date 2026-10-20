@@ -63,6 +63,20 @@ namespace qor { namespace data { namespace generator { namespace json {
             {
                 Workflow()->PushState(new_ref<qor::components::generator::ASCIIChar>(GetGenerator(), static_cast<byte>('{')));
             }
+            else if(m_count == 0)
+            {
+                //An object reached through a value handle may hold no members, so
+                //the only thing left to write is the closing brace.
+                if(m_position == 1)
+                {
+                    Workflow()->PushState(new_ref<qor::components::generator::ASCIIChar>(GetGenerator(), static_cast<byte>('}')));
+                }
+                else
+                {
+                    m_result.code = qor::components::generator::Result::SUCCESS;
+                    Workflow()->PopState();
+                }
+            }
             else if(m_position < (m_count * 2))
             {
                 if((m_position & 1) != 0)

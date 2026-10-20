@@ -86,7 +86,15 @@ namespace qor { namespace data { namespace parser { namespace json {
         {
             auto stringNode = node.AsRef<StringNode>();
             //log::debug("String:{0}", stringValue);
-            stringNode->GetObject()->SetValue(stringValue);
+            //The decoded text was already appended directly into the string model
+            //by character::Emit while the string node sat on top of the stack, so
+            //stringValue stays empty for a normal string. Only overwrite the model
+            //when standalone character nodes were actually collected here, because
+            //otherwise SetValue would wipe the text that was already accumulated.
+            if(!stringValue.empty())
+            {
+                stringNode->GetObject()->SetValue(stringValue);
+            }
             GetParser()->PushNode(node);
         }
     }

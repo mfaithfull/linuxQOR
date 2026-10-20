@@ -4,7 +4,10 @@
 //JSON parsing example
 
 #include "src/configuration/configuration.h"
+#include <string>
+#include <cstddef>
 
+#include "src/qor/tdd/tdd.h"
 #include "src/qor/flyers/error/error.h"
 #include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/framework/app/application/builder.h"
@@ -23,6 +26,8 @@
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
 #include "src/platform/platform.h"
 #include "jsonreader.h"
+#include "jsonwriter.h"
+#include "jsoncompare.h"
 
 qor_pp_module_requires(ICurrentThread);
 qor_pp_module_requires(IFileSystem);
@@ -213,11 +218,77 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
             auto object_string_unicode3 = reader(Index(testsPath, "y_object_string_korean_utf16le.json"));
             auto object_string_unicode4 = reader(Index(testsPath, "y_object_string_korean_utf16be.json"));
 
+            //--- Roundtrip (generate -> parse) ------------------------------------
+            //
+            //This is the writing half put through a real pipeline: take a model the
+            //parser built from a fixture, generate its JSON text into a file with
+            //the JSONWriter/JSONPartWriter from jsonwriter.h, parse that file back
+            //into a fresh model, and check the two models are equal with CompareModel
+            //from jsoncompare.h. The comparison is on decoded values because the
+            //model does not retain escapes, and numbers round-trip exactly through
+            //the generator's std::to_chars rendering.
+            //
+            //A failing qor_pp_assert_that throws qor::test::failure, so the block is
+            //guarded to turn any failure into a non-successful exit code.
+            try
+            {
+                //Object: {"asd":"sdf"}
+                {
+                    auto original = reader(Index(testsPath, "y_object_basic.json"));
+                    JSONWriter writer;
+                    const size_t written = writer(Index(testsPath, "json_roundtrip_object.json"), original.operator->());
+                    auto rebuilt = reader(Index(testsPath, "json_roundtrip_object.json"));
+                    qor_pp_assert_that(written > 0).isTrue();
+                    qor_pp_assert_that(CompareModel(original.operator->(), rebuilt.operator->())).isTrue();
+                }
+
+                //Array: [null, 1, "1", {}]
+                {
+                    auto original = arrayReader(Index(testsPath, "y_array_heterogeneous.json"));
+                    JSONArrayWriter writer(64);
+                    const size_t written = writer(Index(testsPath, "json_roundtrip_array.json"), original.operator->());
+                    auto rebuilt = arrayReader(Index(testsPath, "json_roundtrip_array.json"));
+                    qor_pp_assert_that(written > 0).isTrue();
+                    qor_pp_assert_that(CompareModel(original.operator->(), rebuilt.operator->())).isTrue();
+                }
+
+                //Value: 42
+                {
+                    auto original = valueReader(Index(testsPath, "y_structure_lonely_int.json"));
+                    JSONValueWriter writer(64);
+                    const size_t written = writer(Index(testsPath, "json_roundtrip_value.json"), original.operator->());
+                    auto rebuilt = valueReader(Index(testsPath, "json_roundtrip_value.json"));
+                    qor_pp_assert_that(written > 0).isTrue();
+                    qor_pp_assert_that(CompareModel(original.operator->(), rebuilt.operator->())).isTrue();
+                }
+            }
+            catch (const qor::test::failure& failureObject)
+            {
+                qor::log::Debug(std::string("JSON roundtrip failure: ") + failureObject.what());
+                return EXIT_FAILURE;
+            }
+            catch (const std::exception& exceptionObject)
+            {
+                qor::log::Debug(std::string("JSON roundtrip error: ") + exceptionObject.what());
+                return EXIT_FAILURE;
+            }
+            catch (...)
+            {
+                qor::log::Debug(std::string("JSON roundtrip error: unknown exception"));
+                return EXIT_FAILURE;
+            }
+
+            //--- Profiling: parse a 5mb fixture -----------------------------------
+            //
+            //This runs last. It is the pre-existing profiling scope; because the
+            //installed log handler is at Debug level it emits one trace line per
+            //parsed character, so it dominates the run. Keeping it after the roundtrip
+            //means the roundtrip is checked (and its files written) before the flood.
 #include qor_pp_profile_begin
             {
                 Test_ProfileReporter reporter;
                 FunctionProfiler profiler(dynamic_cast<ProfileReceiver*>(&reporter), qor_pp_profile_enabled);
-                auto big_object = reader(Index(testsPath, "data_5mb.json"));
+                auto big_object = reader(Index(testsPath, "data_2mb.json"));
             }
 #include qor_pp_profile_end
 

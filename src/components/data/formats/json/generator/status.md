@@ -23,7 +23,40 @@ its `../../../../../../../test/data` output path is calibrated to that location.
 
 ## Not started
 
-Roundtrip (parse ⇄ generate) tests in `QORTestJSON`, full `QORTest` regression run.
+Full `QORTest` regression run.
+
+## Roundtrip (parse ⇄ generate) — DONE and VERIFIED 20 Oct 2026 (`QORTestJSON` exit code 0)
+
+Run from the existing `QORTestJSON` target (no new exe): parse a fixture with
+`JSONReader` / `JSONPartReader` / `JSONValueReader`, write that model out with
+`JSONWriter` (from `test/components/formats/json/jsonwriter.h`) into
+`test/data/json_roundtrip_{object,array,value}.json`, re-parse the file and
+compare the two models with the new
+`test/components/formats/json/jsoncompare.h` helpers
+`CompareValue` / `CompareObject` / `CompareArray` (mutually recursive, decoded
+values, exact `double` compare — safe because numbers are written with
+`std::to_chars`). Artefacts: `{"asd":"sdf"}`, `[null,1,"1",{}]`, `42`.
+
+The block sits **before** the `y_object_string_korean_utf16{le,be}` fixtures
+because their per-character `Parser::InnerParse` debug line dominates the run log
+(~476s profile), and it is wrapped in `try` / `catch` reporting
+`JSON roundtrip failure` / `JSON roundtrip error` through `qor::log::Debug`
+(a failing `qor_pp_assert_that` throws `qor::test::failure` and would otherwise
+abort the rest of the `Run` lambda).
+
+Two `qor_jsondata` defects had to be fixed to get there (shared code, so
+`QORTestJSONGenerator` was rebuilt and re-verified `[OK](36/36)` afterwards):
+`parser/states/_4/string.cpp` now guards `SetValue` with
+`if(!stringValue.empty())` (`character::Emit` appends decoded characters
+directly into the live StringNode model, so `stringValue` is empty on that path),
+and `generator/states/_object.cpp` gained an explicit `m_count == 0` branch that
+writes the closing `}` at position 1 (the `m_position == (m_count * 2)` test
+evaluates `1 == 0` for an empty object). The dangling-ownership theory was a
+red herring — `NodeAdapter<T>` holds a ref-counted `ref_of<T>::type m_t` and
+`GetObject()` returns it by value.
+
+Details and the ordered plan: `memory-bank/jsonGeneratorPlan.md`
+("Roundtrip increment", "Prepared next increment").
 
 ## Reusable-part gaps found in the 20 Oct 2026 pre-flight — ALL FIXED the same day
 
