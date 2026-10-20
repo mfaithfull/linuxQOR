@@ -27,8 +27,16 @@
       `QORTestMIME.exe` `[TOTAL](3/3) [OK](3/3)` exit 0 from
       `build\test\framework\data\mime\Debug` (logs `tmp/qortestmime_step2_red.log`,
       `tmp/qortestmime_step2_green.log`). `GetDetectedType()`/`GetTypeName()` still untouched.
+- [x] Step 3 `mime_recognises_png_signature`: test written FIRST and seen RED
+      (`[FAIL] #3`, `[OK](3/4)`, exit 1 — pass-through assert passed, `GetDetectedType()` still
+      `Unresolved`), then in `mime.cpp` a fixed-order signature table inside `Inspect()` (after each
+      capture, guard `m_detectedType == Unresolved && m_signatureCount >= 8`, `memcmp` first 8 of
+      `m_signature` vs the PNG header `89 50 4E 47 0D 0A 1A 0A` → `m_detectedType = MIMEType::PNG`)
+      plus the complete registered-name switch in `GetTypeName()` (`mime.h` unchanged). Detection lives
+      in `Inspect()` (the non-consuming capture hook) so it re-evaluates per chunk. Verified 20 Oct 2026:
+      `QORTestMIME.exe` `[TOTAL](4/4) [OK](4/4)` exit 0 from `build\test\framework\data\mime\Debug`.
 
 ## Next increment
-- [ ] Step 3 `mime_recognises_png_signature` — `GetDetectedType() == MIMEType::PNG`,
-      `GetTypeName() == "image/png"` for the 8-byte PNG magic `89 50 4E 47 0D 0A 1A 0A`;
-      write the test FIRST, then the magic compare + name table in `mime.cpp`.
+- [ ] Step 4 `mime_recognises_jpeg_signature` — `GetDetectedType() == MIMEType::JPEG`,
+      `GetTypeName() == "image/jpeg"` for the 3-byte JPEG magic `FF D8 FF`; write the test
+      FIRST, then the jpeg magic compare in `Inspect()` (name table already complete from step 3).

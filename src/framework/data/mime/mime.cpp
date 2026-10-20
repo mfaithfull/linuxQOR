@@ -110,6 +110,22 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
+                    //Plan step 3 - classify the captured leading octets. The evaluation
+                    //order is fixed so results are deterministic (most definite signature
+                    //first): png, jpeg, gif, pdf, zip, then the text markups, then the
+                    //fallback. Only the PNG signature is recognised at this increment; the
+                    //remaining nine types are added one test at a time after this. The
+                    //signature window is never consumed (the read was rejected), so this
+                    //check runs again on every chunk as more leading octets arrive.
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8)
+                    {
+                        static const qor::byte pngSignature[8] =
+                            { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+                        if(memcmp(m_signature, pngSignature, sizeof(pngSignature)) == 0)
+                        {
+                            m_detectedType = MIMEType::PNG;
+                        }
+                    }
                     return true;
                 }
                 return false;
@@ -123,10 +139,28 @@ namespace qor{ namespace mime{
         return m_detectedType;
     }
 
+    //The registered MIME name for each enum value (see the MIMEType enum in mime.h).
+    //Unresolved has no name. The table is complete so that GetTypeName() is correct for
+    //every type the recognizer can report; which types are actually reachable is decided
+    //one at a time by the signature checks in Inspect().
     const char* MIMERecognizerFilter::GetTypeName() const
     {
-        //name table for the recognised types arrives with the type detection increments
-        return "";
+        switch(m_detectedType)
+        {
+            case MIMEType::PNG:          return "image/png";
+            case MIMEType::JPEG:         return "image/jpeg";
+            case MIMEType::GIF:          return "image/gif";
+            case MIMEType::PDF:          return "application/pdf";
+            case MIMEType::ZIP:          return "application/zip";
+            case MIMEType::XML:          return "application/xml";
+            case MIMEType::HTML:         return "text/html";
+            case MIMEType::JSON:         return "application/json";
+            case MIMEType::JavaScript:   return "application/javascript";
+            case MIMEType::PlainText:    return "text/plain";
+            case MIMEType::OctetStream:  return "application/octet-stream";
+            case MIMEType::Unresolved:
+            default:                     return "";
+        }
     }
 
     size_t MIMERecognizerFilter::GetSignatureByteCount() const

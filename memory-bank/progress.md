@@ -1,14 +1,14 @@
 # Progress
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 2 (capture leading octets into the signature
-window) DONE and verified green** (`QORTestMIME` `[TOTAL](3/3) [OK](3/3)` exit 0, test written first
-and seen red). Earlier the same day: plan step 1 (pass octets through) of the same plan was done, and
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 3 (recognise the PNG signature) DONE and verified
+green** (`QORTestMIME` `[TOTAL](4/4) [OK](4/4)` exit 0, test written first and seen red). Earlier the
+same day: qor_mime plan steps 1-2 (pass octets through, capture the signature window) were done, and
 the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
 base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20 Oct 2026, steps 0-2: outline + pass-through + signature window)
+## MIME Recognition — qor_mime (20 Oct 2026, steps 0-3: outline + pass-through + signature window + PNG)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -45,7 +45,15 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   `mime.h` needed no change. `QORTestMIME` `[TOTAL](3/3) [OK](3/3)` exit 0. New gotchas recorded: a
   run issued in the same command batch as the build ran the **stale previous exe** (build and run
   must be separate sequential commands), and `log::debug` in `qor_mime` produces no output in
-  `QORTestMIME` (log flyer not wired there). `GetDetectedType()`/`GetTypeName()` still placeholder.
+  `QORTestMIME` (log flyer not wired there). `GetDetectedType()`/`GetTypeName()` still placeholder
+  until step 3.
+- ✅ **Plan step 3** `mime_recognises_png_signature`: RED first (`[FAIL] #3`, `[OK](3/4)`, exit 1 —
+  pass-through assert passed, `GetDetectedType()` still `Unresolved`), then in `mime.cpp` the fixed-order
+  signature table inside `Inspect()` (after each capture, `memcmp` first 8 of `m_signature` vs the PNG
+  header `89 50 4E 47 0D 0A 1A 0A` → `m_detectedType = PNG`) + the complete registered-name switch in
+  `GetTypeName()` (`mime.h` unchanged). Verified 20 Oct 2026: `QORTestMIME.exe` `[TOTAL](4/4) [OK](4/4)`
+  exit 0 from `build\test\framework\data\mime\Debug`. Name table is data (enum→name) so it is complete
+  now; only the detectors stay incremental.
 - ✅ Re-verified after the ctest removal: reconfigure SUCCESS; every affected exe rebuilt and
   re-run **from its own build folder** — `QORTestURI` `[OK](1/1)`, `QORTestYAML` `[OK](1/1)`,
   `QORTestJSONGenerator` `[OK](36/36)`, `QORTestMIME` `[OK](1/1)`, all exit code 0. Note: the

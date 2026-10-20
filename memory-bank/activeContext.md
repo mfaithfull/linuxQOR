@@ -1,7 +1,7 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 2 DONE and verified green**
-(`QORTestMIME` `[TOTAL](3/3) [OK](3/3)` exit 0; test written first and seen red). Details in
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 3 DONE and verified green**
+(`QORTestMIME` `[TOTAL](4/4) [OK](4/4)` exit 0; test written first and seen red). Details in
 the section below (and in `src/framework/data/mime/status.md`, `docs/agent/verification.md`).
 Earlier the same day: steps 0-1 of the same plan were done, and the whole JSON generator increment is **DONE**,
 including the **full `QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process
@@ -62,10 +62,26 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   `log::debug` inside `qor_mime` produces no output in `QORTestMIME` (the log flyer is not wired
   into that exe), so it is not a usable probe there.
 
+- **Plan step 3 (recognise the PNG signature) — DONE 20 Oct 2026.** Wrote
+  `mime_recognises_png_signature` FIRST (Push-mode StringSource → filter → StringSink, stream
+  begins with the 8-byte PNG magic `89 50 4E 47 0D 0A 1A 0A` + a short body; asserts
+  `sink.GetData() == pngData` — re-checks the pipeline contract, `GetDetectedType() ==
+  MIMEType::PNG`, `std::string(GetTypeName()) == "image/png"`), ran it RED (`[FAIL] #3`,
+  `[OK](3/4)`, exit 1 — the pass-through assert passed, `GetDetectedType()` still `Unresolved`).
+  Smallest fix in `mime.cpp` (no `mime.h` change): a fixed-order signature table inside `Inspect()`
+  — after each capture, if `m_detectedType == Unresolved && m_signatureCount >= 8`, `memcmp` the
+  first 8 of `m_signature` against the PNG header and set `m_detectedType = MIMEType::PNG`.
+  Detection lives in `Inspect()` (the non-consuming capture hook) so it re-evaluates chunk-by-chunk
+  as leading octets arrive. Also the complete registered-name table in `GetTypeName()` (switch over
+  `MIMEType`, `Unresolved` → `""`), so the accessor is right for every type the recognizer can
+  report. Rebuilt → `[TOTAL](4/4) [OK](4/4)` exit 0.
+  **Learning (record):** the name table is data (enum → registered name) and may be complete from the
+  first detection increment; only the *detectors* have to be added one test at a time.
+
 ### Next up
-- [ ] Plan step 3 — write `mime_recognises_png_signature` FIRST (`GetDetectedType() == MIMEType::PNG`
-  for the 8-byte magic `89 50 4E 47 0D 0A 1A 0A`, `GetTypeName() == "image/png"`), then the magic
-  compare + name table in `mime.cpp`.
+- [ ] Plan step 4 — write `mime_recognises_jpeg_signature` FIRST (`GetDetectedType() == MIMEType::JPEG`
+  for the 3-byte magic `FF D8 FF`, `GetTypeName() == "image/jpeg"`), then the jpeg magic compare
+  in `Inspect()` (`GetTypeName()` name table is already complete from step 3).
 - [ ] Plan steps 4..13 — the remaining nine types one test at a time (jpeg, gif, pdf, zip, xml, html,
   json, javascript, plain text) + octet-stream fallback.
 - [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
