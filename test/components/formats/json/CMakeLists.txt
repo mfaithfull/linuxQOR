@@ -1,5 +1,6 @@
 set(target QORTestJSON)
 
+
 add_executable(${target} main.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
@@ -33,3 +34,6 @@ if (WIN32)
     COMMAND_EXPAND_LISTS
   )
 endif ()
+
+add_subdirectory(generator)
+

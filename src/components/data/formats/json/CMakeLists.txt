@@ -17,7 +17,18 @@ parser/states/_2/escapesequence.cpp
 parser/states/_2/unicodesequence.cpp
 parser/states/_1/_false.cpp
 parser/states/_1/_null.cpp
-parser/states/_1/_true.cpp)
+parser/states/_1/_true.cpp
+generator/states/_null.cpp
+generator/states/_true.cpp
+generator/states/_false.cpp
+generator/states/_string.cpp
+generator/states/_number.cpp
+generator/states/_array.cpp
+generator/states/_object.cpp
+generator/states/_value.cpp
+generator/states/_comma.cpp
+generator/states/_colon.cpp
+generator/states/_member.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
@@ -28,4 +39,4 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 target_link_libraries(${target} qor_module qor_host qor_current qor_sync qor_injection 
-qor_workflow qor_pipeline qor_parser qor_issue qor_error qor_log)
+qor_workflow qor_pipeline qor_parser qor_issue qor_error qor_log qor_generator)
