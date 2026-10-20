@@ -1,17 +1,20 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — the JSON generator **pipeline integration** step
-(write a JSON model to a real file through a real pipeline: `GeneratorSource`
-→ `FileConnector`) is **DONE and verified at `[OK](36/36)`** in the dedicated
+**Last updated:** 20 Oct 2026 — the JSON generator is **done through the
+roundtrip step**: parse -> generate -> parse in `QORTestJSON` is green (process
+exit code 0), on top of the **pipeline integration** step (a JSON model written
+to a real file through a real pipeline: `GeneratorSource` -> `FileConnector`)
+that is **DONE and verified at `[OK](36/36)`** in the dedicated
 `QORTestJSONGenerator` target. The root cause of the first runtime failure
 (unregistered `FileSystem` platform subsystem) and the `LNK2019` link failure
-(stale generated Visual Studio project files) are both recorded here. Earlier
+(stale generated Visual Studio project files) are both recorded here, as are the
+two `qor_jsondata` defects found while getting the roundtrip green. Earlier
 init was built from `STATUS.md`
 29/07/2026, `CHANGES.md`, `FEATURES.md` and git log at `6b65785a`; `STATUS.md`
 has **not** been updated since, so `git log` and `docs/agent/STATE.MD` are the
 newest repo-wide sources.
 
-## ▶ JSON generator (PIPELINE INTEGRATION VERIFIED `[OK](36/36)` — next: `QORTestJSON` roundtrip + full `QORTest`)
+## ▶ JSON generator (ROUNDTRIP VERIFIED in `QORTestJSON` — next: full `QORTest` regression run)
 
 **Pipeline integration done and verified 20 Oct 2026 (`[OK](36/36)`)** — the
 writing half was built incrementally in
@@ -120,6 +123,58 @@ Done and VERIFIED working (20 Oct 2026, all in `qor_jsondata`, all green):
     to fix; the final code passes `qor::io::WithFlags::None`, letting the
     platform open with `CREATE_ALWAYS` and truncate an existing file.
 
+### Roundtrip (parse ⇄ generate) increment — DONE and VERIFIED 20 Oct 2026 (`QORTestJSON` exit code 0)
+
+Implemented in `test/components/formats/json/main.cpp` (inside the `Run` lambda of
+the existing `QORTestJSON` exe — no new target) plus the new header
+`test/components/formats/json/jsoncompare.h`:
+
+- **Shape:** parse a fixture with `JSONReader` / `JSONPartReader` /
+  `JSONValueReader` -> write that model out with `JSONWriter` / the part writers
+  from `jsonwriter.h` into `test/data` -> re-parse the file into a second model
+  -> compare with `CompareValue` / `CompareObject` / `CompareArray`
+  (`jsoncompare.h`, mutually recursive, `QOR_PP_H_TEST_JSON_JSONCOMPARE`). Numbers
+  compare as exact doubles (safe because the generator renders with `std::to_chars`),
+  strings compare **decoded** (the model keeps no escapes), containers compare in
+  stored order.
+- **Fixtures:** `json_roundtrip_object.json` -> `{"asd":"sdf"}` (model from
+  `y_object_basic.json`), `json_roundtrip_array.json` -> `[null,1,"1",{}]`,
+  `json_roundtrip_value.json` -> `42`.
+- **Ordering:** the block sits **before** the `y_object_string_korean_utf16le` /
+  `y_object_string_korean_utf16be` fixtures, whose per-character
+  `Parser::InnerParse` debug line dominates the run log; a failing
+  `qor_pp_assert_that` throws `qor::test::failure`, so the block is wrapped in
+  `try` / `catch` (`qor::test::failure`, `qor::test::exception`, `std::exception`,
+  `...`) logging `JSON roundtrip failure` / `JSON roundtrip error` through
+  `qor::log::Debug` (`log::Error` is not part of the `Log` interface), and `String`
+  had to be qualified because the file also pulls in `qor::text` string types.
+- **Verified:** `msbuild QOR.sln /t:QORTestJSON` -> build exit 0; running
+  `QORTestJSON.exe` from `cmakebuild/test/components/formats/json/Debug` ->
+  process exit code **0**, no `roundtrip failure` / `roundtrip error` line in the
+  captured log, and the three fixture files are written non-empty and faithful.
+- **Two `qor_jsondata` library fixes were required** (shared code, so
+  `QORTestJSONGenerator` was rebuilt and re-verified `[OK](36/36)` afterwards):
+  1. `parser/states/_4/string.cpp` — `SetValue` guarded by
+     `if(!stringValue.empty())`. `character::Emit` appends each decoded character
+     **directly into the StringNode's model** while that node is on the parser node
+     stack, so `stringValue` is empty on the live path and the unconditional
+     overwrite emptied every string (`{"": ""}`, `"1"` -> `""`).
+  2. `generator/states/_object.cpp` — explicit `m_count == 0` branch that writes
+     the closing `}` at position 1 and completes. Without it, a zero-member object
+     wrote only `{` because the closing-brace test `m_position == (m_count * 2)`
+     evaluates `1 == 0`. The dedicated empty-object (`nullptr`) ctor path is
+     unchanged.
+- **Ownership theory disproved:** `qor::components::generator::NodeAdapter<T>`
+  holds a **ref-counted** `ref_of<T>::type m_t` and `GetObject()` returns it
+  **by value**, so `push_back((*it)->GetObject())` copies an owning reference — no
+  dangling model data. The writer call shape
+  `JSONPartWriter<State, Model>(Index(testsPath, name), model) -> size_t` driven by
+  `PumpAll()` was always correct.
+- **Repo state at this update:** HEAD `78ce2d83` "memory bank update for Cline";
+  the two library fixes plus `test/components/formats/json/{main.cpp,CMakeLists.txt}`
+  are **modified in the working tree**, and `jsoncompare.h` and the
+  `test/data/json_{generator,roundtrip}_*.json` artefacts are untracked.
+
 Learnings that the next steps must respect (added 20 Oct 2026, incl. pipeline integration):
 - Test `.cpp` files must `#include "src/..."` (project-root relative); the
   `"components/..."` short form only resolves inside library trees.
@@ -141,14 +196,16 @@ Learnings that the next steps must respect (added 20 Oct 2026, incl. pipeline in
 - Capture BOTH stdout and stderr when running a QOR test exe (`exe *> log`);
   `[FAIL](n/n)` and the `[ALL FAILURES]` block appear on stderr.
 - Current verified green state: **36 tests** in `QORTestJSONGenerator` (the 31 model-driven state tests plus 5 file-pipeline tests) -> **`[OK](36/36)`**, 20 Oct 2026.
-  Next increment: roundtrip (parse ⇄ generate) comparison in `QORTestJSON` and a
-  full `QORTest` regression run.
+  Roundtrip increment: **VERIFIED 20 Oct 2026** in `QORTestJSON` (process exit
+  code 0; see the "Roundtrip (parse ⇄ generate) increment" section above).
+  Next increment: the full `QORTest` regression run.
   Completed increments: `std::to_chars` scientific-notation rendering for model
   `Number` doubles, non-finite rejection in `_value` before entering `_number`
   (and defensively in `_number`), and nested `Array`/`Object` model values routed
   through `_value` via `polymorphic<qor::data::model::json::ValueModel>(inner)`.
-  Next increment: `JSONWriter` / `GeneratorSource` pipeline integration,
-  roundtrip tests in `QORTestJSON`, and full `QORTest` regression verification.
+  Next increment at that point: `JSONWriter` / `GeneratorSource` pipeline
+  integration, roundtrip tests in `QORTestJSON`, and full `QORTest`
+  regression verification — the first two are now **done** (see above).
 - Prep done 20 Oct 2026 for that next increment: `tmp/` scratch folder emptied
   (logs/probe binaries were transient; `/tmp` is gitignored) and the
   `generator/` folder gained `status.md` recording volatile dev state.
@@ -247,16 +304,18 @@ Learnings that the next steps must respect (added 20 Oct 2026, incl. pipeline in
 `main` (HEAD, = `origin/main`), `Contract`, `DomainInterfaceObjects`,
 `FileSystemRefactor`, `PipeConnectorExperiment`, `day1`, `module_support`.
 
-## Next steps (queue — item 1 is the JSON generator task, pipeline integration now done)
-1. **JSON generator (PIPELINE INTEGRATION DONE — `[OK](36/36)`)**: model-driven
-   generator states cover literals, strings, scientific-notation numbers,
-   non-finite rejection, nested arrays and nested objects, and the write-to-file
-   pipeline (`GeneratorSource` → `FileConnector`, `JSONWriter` in
+## Next steps (queue — item 1 is the JSON generator task, roundtrip now done)
+1. **JSON generator (ROUNDTRIP DONE in `QORTestJSON` — process exit code 0)**:
+   model-driven generator states cover literals, strings, scientific-notation
+   numbers, non-finite rejection, nested arrays and nested objects, the write-to-file
+   pipeline (`GeneratorSource` -> `FileConnector`, `JSONWriter` in
    `test/components/formats/json/jsonwriter.h`) writes model JSON into
-   `test/data/json_generator_*.json` in `QORTestJSONGenerator`. Remaining:
-   roundtrip (parse ⇄ generate) tests in `QORTestJSON` and full `QORTest`
-   regression verification. Full plan: `memory-bank/jsonGeneratorPlan.md`
-   ("Pipeline integration increment" records what was verified on 20 Oct 2026).
+   `test/data/json_generator_*.json` in `QORTestJSONGenerator` (`[OK](36/36)`), and
+   the parse -> generate -> parse roundtrip in `QORTestJSON` compares equal
+   (`jsoncompare.h`, artefacts `test/data/json_roundtrip_*.json`). Remaining:
+   the full `QORTest` regression run only. Full plan:
+   `memory-bank/jsonGeneratorPlan.md` ("Roundtrip increment" records what was
+   verified on 20 Oct 2026).
 2. HTTP: systematic refactors + generator infrastructure; complete response
    generation (`QORTestHTTPRequestGen` exists as a scaffold only — add real
    request-generation assertions).
@@ -277,16 +336,24 @@ Learnings that the next steps must respect (added 20 Oct 2026, incl. pipeline in
 12. UI: assemble scene template loading once JSON/YAML sit over Unicode.
 
 ## Active decisions & considerations
-- **Generator (JSON — pipeline integration VERIFIED 20 Oct 2026)**: the writing path
+- **Roundtrip semantics (decided and verified 20 Oct 2026 in `QORTestJSON`)**:
+  model equality is defined on **decoded** values, never source text (the model
+  retains no escapes); numbers compare as exact doubles because the generator
+  renders with `std::to_chars` (round-trip exact); output stays compact (no
+  whitespace writer) raw ASCII/UTF-8 with **no** `UnicodeTextFilter` on the write
+  side. A string-preserving model type remains open only if exact source-text
+  roundtrip is ever wanted.
+- **Generator (JSON — pipeline integration AND roundtrip VERIFIED 20 Oct 2026)**: the writing path
   mirrors the reading path — `GeneratorSource` (pipeline **Source**) wrapping
   `Generator : Workflow` with `GeneratorState : workflow::State` states, rather
   than a plain recursive serializer. Note: the **verified** pipeline used `Push`
   flow mode + `.Connect().PumpAll()` (the `JSONReader` drive style), not the
   `Pull` mode that was first assumed. Decisions still open: whitespace policy
   (compact vs pretty), where the `UnicodeTextFilter` sits on output (currently
-  bypassed — raw ASCII/UTF-8), and number formatting (round-trip-safe `%.17g`-style
-  vs minimal representation; a string-preserving model type may be needed for
-  exact roundtrip semantics).
+  bypassed — raw ASCII/UTF-8). The number-formatting decision is **resolved**: the
+  generator uses `std::to_chars` (shortest round-trip representation), which is
+  what makes the exact-`double` compare in `jsoncompare.h` valid; a string-preserving
+  model type is only needed if exact source-text roundtrip is ever wanted.
 - **YAML**: the prototype parser was generated from the YAML spec/EBNF
   (`docs/agent/yaml_spec_raw.md`, `docs/agent/yaml_cfg_ebnf.md`) and deliberately
   covers only a flow subset (escapes/numbers deferred); it lives under
@@ -328,6 +395,17 @@ Learnings that the next steps must respect (added 20 Oct 2026, incl. pipeline in
   runtime (platform subsystems) must be set up there, not assumed by libraries.
 
 ## Learnings & project insights
+- `qor_pp_assert_that(expr)` alone is vacuous and `qor_pp_assert_that(expr).isTrue();`
+  must be chained; a failing chain **throws `qor::test::failure`**, so a test block
+  that is not wrapped in `try` / `catch` aborts the rest of the `Run` lambda and
+  hides later fixtures — wrap new assertion blocks and report with
+  `qor::log::Debug` (`log::Error` is not in the `Log` interface).
+- JSON model ownership is **ref-counted**: `NodeAdapter<T>` holds a
+  `ref_of<T>::type m_t` and `GetObject()` returns it **by value**, so
+  `push_back((*it)->GetObject())` keeps the model alive. Generator "dangling data"
+  theories are usually wrong; the real defects were state-population ones, recorded
+  in `memory-bank/systemPatterns.md` (`string::Emit` overwriting live-appended text,
+  `_object` skipping the closing brace when `m_count == 0`).
 - The parser pattern is now proven **twice**: JSON (`src/components/data/formats/json`)
   and the generated YAML prototype (`src/components/protocols/yaml`). ABNF/EBNF →
   combinator composites (`Sequence`/`Optional`/`ZeroOrMore`/`OneOrMore`/`Specific`/`AnyOneOf`)

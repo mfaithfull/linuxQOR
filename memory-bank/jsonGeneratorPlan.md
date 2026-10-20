@@ -1,21 +1,28 @@
 # JSON Generator Plan
 
-**Status:** **PIPELINE INTEGRATION DONE AND VERIFIED as of 20 Oct 2026 —
-`[OK](36/36)` in `QORTestJSONGenerator`.** Generator states
-(`src/components/data/formats/json/generator/states/`) cover literals, escaped
-strings, `std::to_chars` numbers, non-finite rejection and nested containers
-(`[OK](31/31)`), and the write-to-file pipeline now works: `test/components/formats/json/jsonwriter.h`
-(`JSONWriter` / `JSONPartWriter`) plus the new buffer/model ctor and `ReadBytes`
-hook in `src/components/data/pipeline/sources/generatorsource/generatorsource.h`
-write a model's JSON text into `test/data` files (5 new tests).
-**Remaining scope:** roundtrip (parse ⇄ generate) tests in `QORTestJSON` and a
-full `QORTest` regression run. See **"Pipeline integration increment — VERIFIED"**
-below for the verified shape and the two gotchas that had to be fixed (unregistered
-`FileSystem` platform subsystem, stale generated `.vcxproj` → `LNK2019`).
+**Status:** **ROUNDTRIP (parse ⇄ generate) DONE AND VERIFIED as of 20 Oct 2026 —
+`QORTestJSON` exits 0 with every roundtrip compare assert passing.** Generator
+states (`src/components/data/formats/json/generator/states/`) cover literals,
+escaped strings, `std::to_chars` numbers, non-finite rejection and nested
+containers (`[OK](31/31)`), the write-to-file pipeline works in
+`QORTestJSONGenerator` (`[OK](36/36)`: `test/components/formats/json/jsonwriter.h`
+`JSONWriter` / `JSONPartWriter` plus the buffer/model ctor and `ReadBytes` hook in
+`src/components/data/pipeline/sources/generatorsource/generatorsource.h`), and
+parse -> generate -> parse now compares equal through the new
+`test/components/formats/json/jsoncompare.h` `CompareValue` / `CompareObject` /
+`CompareArray` helper (`test/data/json_roundtrip_{object,array,value}.json`).
+**Remaining scope:** the full `QORTest` regression run only. See
+**"Roundtrip increment — DONE and VERIFIED"** at the end of this file for the
+fixtures and the two `qor_jsondata` defects that had to be fixed (the
+unconditional `SetValue` in `parser/states/_4/string.cpp` and the missing closing
+brace for `m_count == 0` in `generator/states/_object.cpp`), and
+**"Pipeline integration increment — VERIFIED"** below for the pipeline shape and
+its two gotchas (unregistered `FileSystem` platform subsystem, stale generated
+`.vcxproj` → `LNK2019`).
 **Assigned by:** the user; the original assignment was recorded in
 `memory-bank/activeContext.md` and `memory-bank/progress.md` (both now headed
-"▶ JSON generator (PIPELINE INTEGRATION VERIFIED `[OK](36/36)` — next: `QORTestJSON`
-roundtrip + full `QORTest`)", updated 20 Oct 2026).
+"▶ JSON generator (ROUNDTRIP VERIFIED in `QORTestJSON` — next: full `QORTest`
+regression run)", updated 20 Oct 2026).
 
 ## Verified prerequisites (checked against the tree, 19 Oct 2026)
 - `src/components/data/formats/json/` has `model/` and `parser/` only — no
@@ -47,11 +54,12 @@ FileConnector(Source) → UnicodeTextFilter → ParserSink(Sink)   [Push mode]
 ```
 
 At the original 19 Oct 2026 pre-flight check there was **no writing path**.
-As of 20 Oct 2026 the plan below is **implemented through the pipeline step**:
-generator states exist, are verified in `QORTestJSONGenerator`, and the
-pipeline/`JSONWriter` integration writes model JSON to `test/data` files
-(`[OK](36/36)`); only the roundtrip tests in `QORTestJSON` and the full
-`QORTest` regression run are still pending.
+As of 20 Oct 2026 the plan below is **implemented through the roundtrip step**:
+generator states exist and are verified in `QORTestJSONGenerator` (`[OK](36/36)`),
+the pipeline/`JSONWriter` integration writes model JSON to `test/data` files, and
+the parse -> generate -> parse roundtrip in `QORTestJSON` is green (process exit
+code 0, fixtures written and compared equal). Only the full `QORTest` regression
+run is still pending.
 
 ## Architecture mirror (parser → generator)
 
@@ -445,7 +453,7 @@ Nothing there is git-referenced — `/tmp` is in `.gitignore`.
    pipeline buffer must resume across pulls (`GeneratorState::Reset()` sets
    `Result::MORE_DATA`). Test with a buffer smaller than the JSON text.
 
-### Ordered plan for the next increment (items 1–3 DONE and verified 20 Oct 2026; 4–7 remain)
+### Ordered plan for the next increment (items 1–5 DONE and verified 20 Oct 2026; 6–7 done — only the full `QORTest` regression run remains)
 
 1. Extend `src/components/data/pipeline/sources/generatorsource/generatorsource.h`
    (+`.cpp`): buffer ctor that creates the `Context`, `SetContext()` on the
@@ -463,14 +471,92 @@ Nothing there is git-referenced — `/tmp` is in `.gitignore`.
    `CREATE_ALWAYS` and truncates), output is raw ASCII/UTF-8 with **no**
    `UnicodeTextFilter`, and the pipeline is driven
    `FlowMode::Push` + `.Connect().PumpAll()` rather than the planned Pull mode.
-4. **[REMAINING]** Extend `test/components/formats/json/main.cpp` with roundtrip
-   cases plus a `CompareModel(a, b)` helper; compare **decoded** model values
-   (escapes are not retained by the model) and rely on `std::to_chars`
-   round-trip safety for numbers. Decide whether `QORTestJSON` shares the
-   `jsonwriter.h` header with `QORTestJSONGenerator` or duplicates the flow.
-5. Add `qor_generator qor_generatorsource` to the `QORTestJSON` link list in both
-   the Linux and Windows branches.
-6. Build/verify order: `qor_generatorsource` → `qor_jsondata` →
-   `QORTestJSONGenerator` (regression) → `QORTestJSON` → full `QORTest`.
-7. Always capture both streams (`exe *> log`) and chain assertions
+4. **[DONE — verified 20 Oct 2026]** Roundtrip cases live in
+   `test/components/formats/json/main.cpp` as a guarded block inside the `Run`
+   lambda (placed **before** the Korean UTF-16 fixtures so their debug flood
+   cannot bury a failure); the comparison helper is the new
+   `test/components/formats/json/jsoncompare.h`
+   (`CompareValue` / `CompareObject` / `CompareArray`, mutually recursive,
+   decoded-value semantics — the sketch name `CompareModel(a, b)` was specialised
+   into these three). `QORTestJSON` **shares** `jsonwriter.h` /
+   `jsonreader.h` with `QORTestJSONGenerator` — no duplicated flow.
+5. **[DONE]** `qor_generator qor_generatorsource` are in the `QORTestJSON` link
+   list in `test/components/formats/json/CMakeLists.txt` (both branches).
+6. **[DONE except the last step]** Build/verify order:
+   `qor_generatorsource` -> `qor_jsondata` -> `QORTestJSONGenerator` (regression,
+   re-verified `[OK](36/36)`) -> `QORTestJSON` (roundtrip, verified process exit
+   code 0 via `msbuild QOR.sln /t:QORTestJSON`) -> full `QORTest` regression run
+   (**still pending**).
+7. **[RESPECTED]** Both streams captured (`exe *> log`) and assertions chained
    (`qor_pp_assert_that(x).isTrue();`).
+
+## Roundtrip increment — DONE and VERIFIED 20 Oct 2026 (`QORTestJSON` exit code 0)
+
+The writing half is now exercised from `QORTestJSON` itself: parse a fixture,
+write the model back out through `JSONWriter` / `JSONPartWriter`, re-parse the
+file into a second model and compare the two models.
+
+### Implemented shape
+
+- **Helper** `test/components/formats/json/jsoncompare.h`
+  (`QOR_PP_H_TEST_JSON_JSONCOMPARE`): mutually recursive
+  `CompareValue` / `CompareObject` / `CompareArray` over
+  `model::json::Value` / `Object` / `Array`. Compares **decoded** values (the
+  model retains no escapes), exact `double` equality for numbers (correct because
+  the generator writes with `std::to_chars`), and containers in stored order.
+- **Roundtrip block** in `test/components/formats/json/main.cpp` inside the
+  `Run` lambda, before the `y_object_string_korean_utf16le` /
+  `y_object_string_korean_utf16be` fixtures whose per-character
+  `Parser::InnerParse` debug flood dominates the run log. A failing
+  `qor_pp_assert_that` throws `qor::test::failure`, so the block is wrapped in
+  `try` / `catch` (`qor::test::failure`, `qor::test::exception`, `std::exception`,
+  `...`) that reports through `qor::log::Debug` — `log::Error` is **not** part of
+  the `Log` interface, and `String` had to be qualified because the file also
+  pulls in `qor::text` string types.
+- **Fixtures written and re-read:** `test/data/json_roundtrip_object.json`
+  (`{"asd":"sdf"}`, generated from `y_object_basic.json`),
+  `test/data/json_roundtrip_array.json` (`[null,1,"1",{}]`),
+  `test/data/json_roundtrip_value.json` (`42`).
+- **Measured result:** `msbuild QOR.sln /t:QORTestJSON` -> build exit 0; running
+  `QORTestJSON.exe` from `cmakebuild/test/components/formats/json/Debug` ->
+  process exit code **0**, no `roundtrip failure` / `roundtrip error` line in the
+  captured log, and all three compare asserts pass.
+
+### Two `qor_jsondata` defects found and fixed on the way
+
+1. **String content lost on parse** (`{"": ""}`, `"1"` -> `""`):
+   `character::Emit` appends each decoded character **directly into the
+   StringNode's model** while that node is on the parser node stack, so by the
+   time `string::Emit` runs its own collection loop `stringValue` is empty and the
+   unconditional `SetValue(stringValue)` wiped the text. Fix:
+   `if(!stringValue.empty())` in `parser/states/_4/string.cpp`.
+2. **Empty nested object written as `{`** (no closing brace): the model-driven
+   `_object(generator, object)` ctor with `m_count == 0` writes the opening brace
+   at position 0, but the closing-brace branch
+   `m_position == (m_count * 2)` is `1 == 0` and never fires, so the state fell
+   through to SUCCESS without `}`. Fix: an explicit `m_count == 0` branch in
+   `generator/states/_object.cpp` that writes `}` at position 1 and completes.
+   The dedicated empty-object (`nullptr`) ctor path is unchanged.
+
+### Coverage vs the Step 6 case list (honest gap — 20 Oct 2026)
+
+Step 6 of this plan named eleven roundtrip cases. The verified increment covers
+the **shapes**, not all the named cases: object members (`{"asd":"sdf"}`), array
+values incl. `null` / number / string and a **nested empty object**
+(`[null,1,"1",{}]`), and a bare `Number` value (`42`). Not exercised as
+roundtrips: escapes / `\uXXXX` string preservation, Korean UTF-16 text through
+generate -> parse, whitespace/separator normalisation, empty **array**
+(`[]` — note the `_object` empty fix has no array counterpart yet, so verify
+`[]` before relying on it), and nested object-inside-object. If the full
+`QORTest` run is green, these remain the open roundtrip cases before the
+generator can be called complete.
+
+### Ownership theory — disproved (20 Oct 2026)
+
+The initial "the writer reads dangling model data" theory was wrong:
+`qor::components::generator::NodeAdapter<T>` holds a **ref-counted**
+`ref_of<T>::type m_t` and `GetObject()` returns it **by value**, so
+`push_back((*it)->GetObject())` copies an owning reference and the model stays
+alive. The defects were the two above, both in `qor_jsondata`; the writer call
+shape `w(Index(testsPath, name), Model*) -> size_t` driven by `PumpAll()` was
+already correct.

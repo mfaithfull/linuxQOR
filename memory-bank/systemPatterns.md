@@ -214,3 +214,31 @@ dispatch again on `Value::GetType()`.
 ## Naming & formatting conventions
 Summarized in `memory-bank/codingConventions.md`; the authoritative version is
 `docs/skills/QORconventions.md`. Consult both before writing code.
+
+## JSON roundtrip defects and model ownership (verified 20 Oct 2026)
+
+Empirical shape of the JSON read/write pair, established while getting the
+`QORTestJSON` roundtrip green:
+
+- **Model ownership is ref-counted, not borrowed.** `qor::components::generator::NodeAdapter<T>`
+  holds a `ref_of<T>::type m_t` and `GetObject()` returns it **by value**, so
+  `push_back((*it)->GetObject())` copies an owning reference and the model stays
+  alive. Suspecting dangling model data in the generator wastes time; check state
+  assembly/population first.
+- **String text accumulates live during parsing.** `character::Emit` appends each
+  decoded character **directly into the StringNode's model** while that node sits
+  on the parser node stack, so the collection loop in `string::Emit` normally
+  leaves its own `stringValue` empty. Any unconditional `SetValue(stringValue)`
+  there wipes the accumulated text; it must be guarded with
+  `if(!stringValue.empty())` (`parser/states/_4/string.cpp`).
+- **Empty containers need their own branch in the generator.** The model-driven
+  `_object(generator, object)` state advances one position per member
+  (value + separator) and emits the closing brace at
+  `m_position == (m_count * 2)`; with `m_count == 0` that test is
+  `1 == 0` and never fires, so `{}` was emitted as `{`. Fixed with an explicit
+  `m_count == 0` branch in `generator/states/_object.cpp`. The dedicated
+  empty-object (`nullptr`) ctor path is separate and unchanged.
+- Leaf scalars held directly in a `Value` (null, booleans, numbers) render
+  correctly even when container/string content does not, so "well-formed scalars
+  plus empty/malformed containers" points at these state-population defects
+  rather than at an ownership problem.

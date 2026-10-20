@@ -83,8 +83,11 @@ end** — `src/components/data/formats/json/generator/` has model-driven states 
 write `null`, booleans, strings, numbers in scientific notation, nested arrays and
 nested objects, and a real pipeline (`GeneratorSource` → `FileConnector`, helper
 `JSONWriter`) writes a model's JSON text into `test/data` files
-(`[OK](36/36)` in `QORTestJSONGenerator`). Remaining JSON-writer work: roundtrip
-(parse ⇄ generate) testing in `QORTestJSON` and the full `QORTest` regression run.
+(`[OK](36/36)` in `QORTestJSONGenerator`). The roundtrip (parse ⇄ generate)
+testing in `QORTestJSON` is now **done and green** — a parsed fixture model is
+written out, re-parsed and compared equal (process exit code 0, artefacts
+`test/data/json_roundtrip_*.json`) — so the only remaining JSON-writer work is
+the full `QORTest` regression run.
 
 ## Openness & collaboration
 The project is "way more than one crazy person can handle". Contributions are

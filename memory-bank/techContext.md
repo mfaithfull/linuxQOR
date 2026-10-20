@@ -152,6 +152,28 @@ Set-Location cmakebuild/test/components/formats/json/generator/Debug   # run FRO
   `[ALL FAILURES]` block go to stderr. `QORTestJSONGenerator` currently reports
   `[OK](36/36)` and writes `test/data/json_generator_*.json`.
 
+## Build / verify recipe for the `QORTestJSON` roundtrip increment (20 Oct 2026)
+
+    msbuild QOR.sln /t:QORTestJSON              # BUILD_EXIT=0
+    Set-Location cmakebuild/test/components/formats/json/Debug
+    .\QORTestJSON.exe *> <log>                  # process exit code 0
+    Select-String -Path <log> -Pattern 'roundtrip'   # expect no matches
+
+- `QORTestJSON` `main.cpp` addresses fixtures with
+  `"../../../../../../test/data"` (six levels up from
+  `cmakebuild/test/components/formats/json/Debug`), so like every QOR test exe it
+  must run from its own build directory.
+- Its link list in `test/components/formats/json/CMakeLists.txt` now also carries
+  `qor_generator qor_generatorsource` (plus the file-pipeline libraries), and the
+  test exe registers the `FileSystem` subsystem as `QORTestJSONGenerator` does.
+- The run log is **huge**: the `y_object_string_korean_utf16le` /
+  `y_object_string_korean_utf16be` fixtures emit a per-character
+  `Parser::InnerParse` debug line, so grep for markers (`roundtrip`, `FAIL`,
+  `OK(`) rather than dumping the log, and keep new assertion blocks **before**
+  those fixtures so a failure is still findable.
+- Transient build/run logs belong in the gitignored `tmp/` folder — do not leave
+  them at the repo root.
+
 ## Repo conventions
 - `.gitignore`: object/obj/so/dll/exe artifacts, `.vs`, `build/`, `.vscode`,
   `.VSCodeCounter`, `/cmakebuild`, `/out/build/x64-Debug`, generated CMake

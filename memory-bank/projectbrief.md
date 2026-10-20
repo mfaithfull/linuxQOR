@@ -83,7 +83,10 @@ Milestones: working toward **0.5** interim release; **1.0** is the eventual
 target. For the newest state trust `git log`, the parallel agent-state files
 `docs/agent/TODO.md`, `docs/agent/STATE.MD`, `docs/agent/DECISIONS.md`, and this
 `memory-bank/` (last updated 20 Oct 2026 — JSON generator **pipeline integration**
-verified at `[OK](36/36)` in `QORTestJSONGenerator`).
+verified at `[OK](36/36)` in
+`QORTestJSONGenerator`, with the parse -> generate -> parse **roundtrip** verified
+green in `QORTestJSON` (process exit code 0, `test/data/json_roundtrip_*.json`
+written and compared equal through `jsoncompare.h`)).
 
 ## Key project documents
 `README.md` · `KEY_CONCEPTS.md` · `LAYOUT.md` · `BUILDING.md` · `FEATURES.md` ·
