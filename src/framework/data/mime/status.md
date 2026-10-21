@@ -80,8 +80,26 @@
       `QORTestMIME` (separate commands) → `[TOTAL](9/9) [OK](9/9)`, no `[FAIL`, exit 0 (log
       `tmp/qortestmime_step8_green.log`). 6 of 10 target types recognised.
 
+- [x] Step 9 `mime_recognises_html_signature`: test written FIRST (TWO Push-mode streams in the one
+      case, fresh elements for the second — mirroring step 5's two GIF variants: the lower case
+      HTML5 doctype `<!DOCTYPE html>\n<html><head>...` and the no-doctype upper case document-level
+      tag `<HTML>\n<head>...`; per stream asserts pass-through, `== MIMEType::HTML`,
+      `"text/html"`) and seen RED — `[FAIL] #9`, `[TOTAL](10/10) [OK](9/10) [FAIL](1/10)`, exit 1
+      (log `tmp/qortestmime_step9_red.log`, reason `expected boolean to have the value of true /
+      value was : 0`), then `Inspect()` gained a seventh fixed-order guard after the XML marker:
+      a case-folded 14-octet `<!DOCTYPE HTML` compare and, while still unresolved, a document-level
+      first-tag compare (`m_signature[0] == '<'` then case-folded `html`/`head`/`body`/`title`).
+      HTML has no binary magic, so both are text heuristics; unlike the fixed magics above they
+      cannot use `memcmp` because HTML markup spelling is case-insensitive, so `mime.cpp` gained a
+      file-local `markupMatch()` ASCII case-fold compare helper (internal — no
+      `qor_pp_module_interface`, no locale, no new dependency). `mime.h` unchanged. Rebuilt
+      `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](10/10) [OK](10/10)`, no
+      `[FAIL`, exit 0 (logs `tmp/qortestmime_step9_build_lib.log`,
+      `tmp/qortestmime_step9_build_exe.log`, `tmp/qortestmime_step9_green.log`). **7 of 10
+      target types recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML).
+
 ## Next increment
-- [ ] Step 9 `mime_recognises_html_signature` — `<!DOCTYPE HTML` case-insensitive, or the first `<`
-      starts a tag in {html,head,body,title} → `text/html`; write the test FIRST, then the html guard
-      in `Inspect()` (name table already complete from step 3).
+- [ ] Step 10 `mime_recognises_json_signature` — first non-space octet is `{` or `[` →
+      `application/json`; write the test FIRST, then the json guard in `Inspect()` after the
+      html guard (name table already complete from step 3).
 

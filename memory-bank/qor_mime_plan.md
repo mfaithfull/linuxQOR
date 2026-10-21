@@ -100,7 +100,7 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | 6 ✅ | `mime_recognises_pdf_signature` | `== PDF`, `"application/pdf"` | DONE 20 Oct 2026 — test written FIRST and seen RED (`[FAIL] #6`, `[OK](6/7)`, exit 1), then a fourth fixed-order guard in `Inspect()` (`m_signatureCount >= 4`, `memcmp` vs `25 50 44 46` = `%PDF`) → `[TOTAL](7/7) [OK](7/7)` exit 0; `mime.h` unchanged |
 | 7 ✅ | `mime_recognises_zip_signature` | `== ZIP`, `"application/zip"` | DONE 20 Oct 2026 — RED first, then fifth fixed-order guard in `Inspect()` (`m_signatureCount >= 4`, `memcmp` vs `50 4B 03 04` = `PK 03 04`) → `[TOTAL](8/8) [OK](8/8)` exit 0; `mime.h` unchanged |
 | 8 ✅ | `mime_recognises_xml_signature` | `== XML`, `"application/xml"` | DONE 20 Oct 2026 — test written FIRST and seen RED (`[FAIL] #8`, `[OK](8/9)`, exit 1), then a sixth fixed-order guard in `Inspect()` (`m_detectedType == Unresolved && m_signatureCount >= 5`, `memcmp` vs `3C 3F 78 6D 6C` = `<?xml`, a strong text heuristic — no binary magic) → `[TOTAL](9/9) [OK](9/9)` exit 0; `mime.h` unchanged |
-| 9 | `mime_recognises_html_from_markup` | `== HTML`, `"text/html"` for `<!DOCTYPE html>...` and `<html>` | doctype/tag scan + case-insensitive compare helper |
+| 9 ✅ | `mime_recognises_html_signature` (named to match the `_signature` convention of steps 3-8, not the outline's `_from_markup`) | `== HTML`, `"text/html"` for `<!DOCTYPE html>...` AND for no-doctype `<HTML>...` | DONE 22 Oct 2026 — RED first (`[FAIL] #9`, `[OK](9/10)`, exit 1), then seventh fixed-order guard in `Inspect()`: case-folded `<!DOCTYPE HTML` (14 octets) + case-folded first tag {html,head,body,title}, via new file-local `markupMatch()` ASCII case-fold helper in `mime.cpp`; `mime.h` unchanged. Verified `[TOTAL](10/10) [OK](10/10)` exit 0 |
 | 10 | `mime_recognises_json_from_markup` | `== JSON`, `"application/json"` | first non-space `{`/`[` check |
 | 11 | `mime_recognises_javascript_from_markup` | `== JavaScript`, `"application/javascript"` | shebang/comment + keyword heuristic |
 | 12 | `mime_recognises_plain_text` | `== PlainText`, `"text/plain"` | printable-byte scan default |
@@ -216,5 +216,19 @@ Pitfalls confirmed while creating the outline:
   `tmp/qortestmime_step8_build_exe.log`) show no `error C`/`warning C`/`LNK`. No new gotchas. → `[TOTAL](9/9)
   [OK](9/9)` exit 0 (`tmp/qortestmime_step8_green.log`). 6 of 10 target types recognised (PNG, JPEG, GIF,
   PDF, ZIP, XML).
-- Next: step 9 `mime_recognises_html_signature` (heuristic: `<!DOCTYPE HTML` case-insensitive, or the first
-  `<` starts a tag in {html,head,body,title}) — test FIRST.
+- Step 9 `mime_recognises_html_signature` (test first): RED first — `mime_recognises_html_signature [FAIL],
+  #9`, `[TOTAL](10/10) [OK](9/10) [FAIL](1/10)`, exit 1 (`tmp/qortestmime_step9_red.log`), TWO streams in
+  the one case with fresh elements for the second (mirroring step 5's two GIF variants): stream 1 the lower
+  case HTML5 doctype `<!DOCTYPE html>\n<html><head>...`, stream 2 no doctype opening with the upper case
+  document-level tag `<HTML>\n<head>...`; per stream asserts pass-through, `== MIMEType::HTML`,
+  `"text/html"`. Then `Inspect()` gained a seventh fixed-order guard after the XML marker: a case-folded
+  14-octet `<!DOCTYPE HTML` compare and, while still unresolved, a document-level first-tag compare
+  (`m_signature[0] == '<'` then case-folded `html`/`head`/`body`/`title`). HTML has no binary magic, so
+  both are text heuristics; unlike the magics above they cannot use `memcmp` (HTML markup spelling is
+  case-insensitive), so `mime.cpp` gained a file-local `markupMatch()` ASCII case-fold compare helper
+  (internal, no locale, no new dependency). `mime.h` unchanged. Rebuilt `qor_mime` then `QORTestMIME`
+  (separate commands) → `[TOTAL](10/10) [OK](10/10)`, no `[FAIL`, exit 0 (`tmp/qortestmime_step9_green.log`;
+  build logs `tmp/qortestmime_step9_build_lib.log`, `tmp/qortestmime_step9_build_exe.log` show no
+  `error C`/`warning C`/`LNK`). **7 of 10 target types recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML).
+  No new gotchas — one-cmake-build-per-command and build-then-run-separately both held.
+- Next: step 10 `mime_recognises_json_signature` (heuristic: first non-space octet is `{` or `[`) — test FIRST.

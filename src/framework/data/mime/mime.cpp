@@ -71,6 +71,39 @@ namespace qor{ namespace mime{
     //src/framework/data/pipeline/buffer.h). Inspect requests a read of the octets it needs,
     //copies them into the window, then rejects the read so the octets are still available
     //for TransferOctets to move on to the sink untouched.
+    //
+    //Plan step 9 support - the text markup heuristics compare text rather than fixed
+    //binary magics, and HTML markup spellings are case-insensitive, so the signature
+    //compares need ASCII case folding. Both octets are folded to upper case ASCII letters
+    //before the compare; no other octet is folded, so the compare needs no locale and
+    //pulls in nothing outside this module. It is file-local because it is an internal
+    //compare helper, not part of the module interface.
+    static bool markupMatch(const qor::byte* window, size_t windowCount, const qor::byte* signature, size_t signatureCount)
+    {
+        if(windowCount < signatureCount)
+        {
+            return false;
+        }
+        for(size_t index = 0; index < signatureCount; ++index)
+        {
+            qor::byte captured = window[index];
+            qor::byte expected = signature[index];
+            if(captured >= 0x61 && captured <= 0x7A)//lower case ASCII letter
+            {
+                captured = static_cast<qor::byte>(captured - 0x20);
+            }
+            if(expected >= 0x61 && expected <= 0x7A)//lower case ASCII letter
+            {
+                expected = static_cast<qor::byte>(expected - 0x20);
+            }
+            if(captured != expected)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     bool MIMERecognizerFilter::Inspect(size_t& unitsInspected, size_t unitsToInspect)
     {
         unitsInspected = unitsToInspect;
@@ -110,14 +143,14 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
-                    //Plan steps 3,4,5,6,7,8 - classify the captured leading octets. The evaluation
+                    //Plan steps 3,4,5,6,7,8,9 - classify the captured leading octets. The evaluation
                     //order is fixed so results are deterministic (most definite signature
                     //first): png, jpeg, gif, pdf, zip, then the text markups, then the
                     //fallback. Each guard asks only for the octets its own signature needs,
                     //so a shorter signature can decide before the window is full. The
                     //signature window is never consumed (the read was rejected), so these
                     //checks run again on every chunk as more leading octets arrive. The
-                    //remaining four types (html, json, javascript, plain text) are added one
+                    //remaining three types (json, javascript, plain text) are added one
                     //test at a time after this.
                     if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8)
                     {
@@ -192,6 +225,46 @@ namespace qor{ namespace mime{
                         if(memcmp(m_signature, xmlSignature, sizeof(xmlSignature)) == 0)
                         {
                             m_detectedType = MIMEType::XML;
+                        }
+                    }
+                    //Plan step 9 - an HTML document normally begins with the doctype
+                    //declaration "<!DOCTYPE html ..." (the HTML5 form, fourteen octets up to
+                    //and including the word HTML) or, when no doctype is present, with a
+                    //document level tag: the first '<' starts a tag named html, head, body or
+                    //title. Like XML, HTML has no binary magic number, so both checks are text
+                    //heuristics evaluated after the XML declaration marker in the fixed order.
+                    //Unlike the magics above, the compares are case-insensitive because HTML
+                    //markup spellings are case-insensitive, so they use the ASCII case-fold
+                    //helper markupMatch rather than memcmp. markupMatch also checks the window
+                    //holds enough octets, so each check can decide before the window is full.
+                    if(m_detectedType == MIMEType::Unresolved)
+                    {
+                        static const qor::byte doctypeHtmlSignature[14] =
+                            { 0x3C, 0x21, 0x44, 0x4F, 0x43, 0x54, 0x59, 0x50, 0x45, 0x20, 0x48, 0x54, 0x4D, 0x4C };
+                            //'<' '!' 'D' 'O' 'C' 'T' 'Y' 'P' 'E' ' ' 'H' 'T' 'M' 'L'
+                        if(markupMatch(m_signature, m_signatureCount, doctypeHtmlSignature, 14))
+                        {
+                            m_detectedType = MIMEType::HTML;
+                        }
+                        //The document level tag check: the very first octet is '<' and the tag
+                        //name that follows it, case-folded, is one of the four document level
+                        //tags. The shortest name is four octets, so five window octets are
+                        //enough to decide; markupMatch rejects the five octet title name when
+                        //the window is too short.
+                        if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 5 &&
+                            m_signature[0] == 0x3C)//'<'
+                        {
+                            static const qor::byte htmlTag[4] = { 0x68, 0x74, 0x6D, 0x6C };//'h' 't' 'm' 'l'
+                            static const qor::byte headTag[4] = { 0x68, 0x65, 0x61, 0x64 };//'h' 'e' 'a' 'd'
+                            static const qor::byte bodyTag[4] = { 0x62, 0x6F, 0x64, 0x79 };//'b' 'o' 'd' 'y'
+                            static const qor::byte titleTag[5] = { 0x74, 0x69, 0x74, 0x6C, 0x65 };//'t' 'i' 't' 'l' 'e'
+                            if(markupMatch(m_signature + 1, m_signatureCount - 1, htmlTag, 4)
+                                || markupMatch(m_signature + 1, m_signatureCount - 1, headTag, 4)
+                                || markupMatch(m_signature + 1, m_signatureCount - 1, bodyTag, 4)
+                                || markupMatch(m_signature + 1, m_signatureCount - 1, titleTag, 5))
+                            {
+                                m_detectedType = MIMEType::HTML;
+                            }
                         }
                     }
                     return true;

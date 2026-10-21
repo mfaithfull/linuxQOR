@@ -16,6 +16,39 @@ clang-tidy -p build docs/.../file.cpp
 
 ## Results
 
+### 2026-10-22 — qor_mime plan step 9 / QORTestMIME (HTML doctype + document-level first-tag recognition) — PASS
+- **Test first**: added `mime_recognises_html_signature` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE touching `mime.cpp`/`mime.h` (TWO Push-mode streams in the one case, fresh elements for the
+  second — mirroring step 5's two GIF variants: stream 1 the lower case HTML5 doctype
+  `<!DOCTYPE html>\n<html><head><title>...` and stream 2 no doctype at all, opening with the upper case
+  document-level tag `<HTML>\n<head>...`; per stream asserts `sink.GetData() == data` pass-through,
+  `GetDetectedType() == MIMEType::HTML`, `std::string(GetTypeName()) == "text/html"`).
+- **Run (red)**: `cmake --build build --target QORTestMIME` (lib unchanged) then the exe run in its OWN
+  command from `build\test\framework\data\mime\Debug` → `test_mime.cpp(514) : mime_recognises_html_signature
+  [FAIL], #9`, `[TOTAL](10/10) [OK](9/10) [FAIL](1/10)`, exit 1, reason `expected boolean to have the value of true / value was : 0`
+  → the test is meaningful (no HTML detector exists). Log `tmp/qortestmime_step9_red.log`,
+  build log `tmp/qortestmime_step9_build_red.log`.
+- **Code**: `mime.cpp` only — a seventh fixed-order guard in `Inspect()` after the XML marker: a 14-octet
+  `<!DOCTYPE HTML` doctype compare (the HTML5 form) and, while `m_detectedType` is still `Unresolved`, a
+  document-level first-tag compare (`m_signature[0] == 0x3C` `'<'` then case-folded `html`/`head`/`body`/`title`).
+  HTML has no binary magic number, so both are text heuristics evaluated after the XML declaration marker
+  in the fixed order. Unlike the magics above these compares CANNOT use `memcmp` — HTML markup spelling is
+  case-insensitive — so `mime.cpp` gained a file-local `static bool markupMatch(const qor::byte*, size_t,
+  const qor::byte*, size_t)` ASCII case-fold compare (folds ASCII a-z/A-Z to upper only, no locale, no new
+  dependency; internal helper, no `qor_pp_module_interface`, not part of the module interface). `markupMatch`
+  also checks the window length, so each compare decides as soon as its own octets are captured. `mime.h`
+  unchanged (name table complete since step 3).
+- **Build**: `cmake --build build --target qor_mime` → exit 0 (`qor_mime.dll`), then
+  `cmake --build build --target QORTestMIME` → exit 0, no `error C`/`warning C`/`LNK` in either log
+  (`tmp/qortestmime_step9_build_lib.log`, `tmp/qortestmime_step9_build_exe.log`).
+- **Run (green)**: from `build\test\framework\data\mime\Debug` → `[TOTAL](10/10) [OK](10/10)`, no
+  `[FAIL`, `$LASTEXITCODE = 0` → PASS. Log `tmp/qortestmime_step9_green.log`. **7 of 10 target types
+  now recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML).
+- No new gotchas: the one-cmake-build-per-command and build-then-run-separately rules both held.
+  **Learning:** a format with two recognition paths (doctype OR first tag) is still ONE increment —
+  the test asserts every path, the code gets one guard with one compare per path (same shape as step 5's
+  GIF87a/GIF89a pair, but with case-folded text compares instead of `memcmp`).
+
 ### 2026-10-20 — qor_mime plan step 8 / QORTestMIME (XML `<?xml` declaration recognition) — PASS
 - **Test first**: added `mime_recognises_xml_signature` to `test/framework/data/mime/test_mime.cpp`
   BEFORE touching `mime.cpp`/`mime.h` (one Push-mode stream: the five character XML declaration

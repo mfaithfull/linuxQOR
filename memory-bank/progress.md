@@ -1,18 +1,19 @@
 # Progress
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 8 (recognise the XML `<?xml` declaration marker) DONE and
-verified green, driven test-first** (RED `[FAIL] #8`, `[TOTAL](9/9) [OK](8/9) [FAIL](1/9)` exit 1 →
-GREEN `[TOTAL](9/9) [OK](9/9)` exit 0; logs `tmp/qortestmime_step8_red.log`,
-`tmp/qortestmime_step8_green.log`). **6 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML). Earlier the same day: qor_mime plan step 7 (recognise the ZIP `PK 03 04` magic) was DONE and
-verified green test-first, and qor_mime plan steps 0-6 were done (step 4 verified after the fact — its
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 9 (recognise HTML — the `<!DOCTYPE html` doctype and the
+document-level first tag) DONE and verified green, driven test-first** (RED `[FAIL] #9`, `[TOTAL](10/10)
+[OK](9/10) [FAIL](1/10)` exit 1 → GREEN `[TOTAL](10/10) [OK](10/10)` exit 0; logs `tmp/qortestmime_step9_red.log`,
+`tmp/qortestmime_step9_green.log`). **7 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML, HTML). Earlier the same day: qor_mime plan step 8 (recognise the XML `<?xml` declaration marker)
+was DONE and verified green test-first, qor_mime plan step 7 (recognise the ZIP `PK 03 04` magic) was likewise
+DONE, and qor_mime plan steps 0-6 were done (step 4 verified after the fact — its
 RED phase never observed), and
 the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
 base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20 Oct 2026, steps 0-8: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML)
+## MIME Recognition — qor_mime (20-22 Oct 2026, steps 0-9: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML + HTML)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -103,6 +104,22 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   No new build gotchas this increment. **6 of 10 target types recognised.** Note: XML has no binary magic
   number, so this is the first strong text heuristic (the `<?xml` declaration marker), evaluated after the
   definite binary signatures in the fixed order.
+- ✅ **Plan step 9** `mime_recognises_html_signature`: test written FIRST (TWO streams in the one case,
+  fresh elements for the second — mirroring step 5's two GIF variants: the lower case HTML5 doctype
+  `<!DOCTYPE html>\n<html><head>...` and the no-doctype upper case document-level tag `<HTML>\n<head>...`;
+  per stream asserts `sink.GetData() == data` pass-through, `GetDetectedType() == MIMEType::HTML`,
+  `std::string(GetTypeName()) == "text/html"`) and seen RED (`mime_recognises_html_signature [FAIL],
+  #9`, `[TOTAL](10/10) [OK](9/10) [FAIL](1/10)`, exit 1, `tmp/qortestmime_step9_red.log`, reason
+  `expected boolean to have the value of true / value was : 0`), then `Inspect()` gained a seventh
+  fixed-order guard after the XML marker: a case-folded 14-octet `<!DOCTYPE HTML` compare and, while
+  still unresolved, a document-level first-tag compare (`m_signature[0] == '<'` then case-folded
+  `html`/`head`/`body`/`title`). HTML has no binary magic, so both are text heuristics; unlike the fixed
+  magics above they cannot use `memcmp` (HTML markup spelling is case-insensitive), so `mime.cpp` gained a
+  file-local `markupMatch()` ASCII case-fold compare helper — internal, no `qor_pp_module_interface`,
+  no locale, no new dependency. `mime.h` unchanged. Rebuilt `qor_mime` then `QORTestMIME` (separate
+  commands) → `[TOTAL](10/10) [OK](10/10)`, exit 0 (`tmp/qortestmime_step9_green.log`; build logs
+  `tmp/qortestmime_step9_build_lib.log`/`tmp/qortestmime_step9_build_exe.log` show no
+  `error C`/`warning C`/`LNK`). No new build gotchas. **7 of 10 target types recognised.**
 - ⚠️ **NEW build gotcha (20 Oct 2026): `cmake --build` calls must be sequential, one per command.**
   Two `cmake --build` invocations issued in the same command batch run concurrently over one build
   tree and race on the shared `.pdb` — `error C1090: PDB API call failed` on an unrelated dependency

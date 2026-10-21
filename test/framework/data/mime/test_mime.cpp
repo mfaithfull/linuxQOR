@@ -29,6 +29,15 @@
 //application/xml. It is a strong text heuristic rather than a fixed binary magic, so it is
 //evaluated after the definite binary signatures in the fixed order (png, jpeg, gif, pdf, zip,
 //xml, ...).
+//step 9 - mime_recognises_html_signature: the seventh detection increment. A stream that is
+//an HTML document must be classified as text/html: GetDetectedType() == MIMEType::HTML and
+//GetTypeName() == "text/html". HTML has no binary magic, so there are two text heuristics and
+//the test asserts both, one stream each with fresh elements for the second: the first stream
+//opens with the HTML5 doctype <!DOCTYPE html> (its spelling is case-insensitive) and the
+//second stream has no doctype at all, opening instead with the document-level tag <HTML>,
+//which the first-tag check (the first '<' starts a tag named html, head, body or title) must
+//also accept. Evaluated after the XML marker in the fixed order (png, jpeg, gif, pdf, zip,
+//xml, html, ...).
 
 
 #include "src/configuration/configuration.h"
@@ -486,5 +495,93 @@ qor_pp_test_case(mime_recognises_xml_signature)
     //The captured signature is the XML declaration marker, so the stream is XML.
     qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::XML).isTrue();
     qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/xml").isTrue();
+}
+
+
+//Step 9 - the seventh detection increment. A stream that is an HTML document must be
+//classified as text/html: GetDetectedType() == MIMEType::HTML and GetTypeName() ==
+//"text/html". HTML has no binary magic, so recognition is a pair of text heuristics: the
+//document opens with the doctype declaration <!DOCTYPE html ...> whose spelling is case-
+//insensitive, or, when no doctype is present, the first tag is a document-level tag named
+//html, head, body or title. The test asserts both paths, one stream each, using fresh
+//elements for the second (as in step 5's two GIF variants; Reset() reuse is plan step 15
+//and is not exercised here). The first stream carries the lower case doctype so the case-
+//insensitive comparison is exercised, the second stream carries no doctype and opens with
+//the upper case tag <HTML> so the first-tag path is exercised with a case-folded name. As
+//in steps 3-8 the pass-through contract is re-checked so that adding a detector cannot
+//break the octet stream proven earlier. This case is written FIRST and seen RED -
+//Inspect() has no HTML detector yet.
+qor_pp_test_case(mime_recognises_html_signature)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //The lower case HTML5 doctype followed by the start of a document and a short body
+    //so that the stream is longer than the doctype alone.
+    std::string htmlDoctypeData;
+    htmlDoctypeData += "<!DOCTYPE html>\n";
+    htmlDoctypeData += "<html><head><title>qor mime test</title></head><body>payload bytes.</body></html>";
+
+    source.SetData(htmlDoctypeData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, htmlDoctypeData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == htmlDoctypeData).isTrue();
+
+    //The captured signature is the HTML5 doctype, so the stream is HTML.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::HTML).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "text/html").isTrue();
+
+    //The second stream: no doctype at all, the document opens with the upper case
+    //document-level tag <HTML>. Fresh elements for the second stream.
+    ByteBuffer inBuffer2(128);
+    ByteBuffer outBuffer2(128);
+
+    StringSource source2;
+    source2.SetParent(&testPipeline);
+    source2.SetBuffer(&inBuffer2);
+
+    StringSink sink2;
+    sink2.SetParent(&testPipeline);
+    sink2.SetBuffer(&outBuffer2);
+
+    qor::mime::MIMERecognizerFilter recognizer2;
+    recognizer2.SetParent(&testPipeline);
+    recognizer2.SetSource(&source2);
+    recognizer2.SetSink(&sink2);
+
+    std::string htmlTagData;
+    htmlTagData += "<HTML>\n<head><title>qor mime test</title></head><body>payload bytes.</body></html>";
+
+    source2.SetData(htmlTagData);
+
+    size_t unitsPumped2 = 0;
+    recognizer2.Pump(unitsPumped2, htmlTagData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink2.GetData() == htmlTagData).isTrue();
+
+    //The captured signature is a document-level tag, so the stream is HTML.
+    qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::HTML).isTrue();
+    qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "text/html").isTrue();
 }
 

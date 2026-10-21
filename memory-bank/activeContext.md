@@ -1,11 +1,12 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 8 (`mime_recognises_xml_signature`) DONE and
-verified green, driven test-first** (RED `[FAIL] #8`, `[TOTAL](9/9) [OK](8/9) [FAIL](1/9)` exit 1 →
-GREEN `[TOTAL](9/9) [OK](9/9)` exit 0; logs `tmp/qortestmime_step8_red.log`,
-`tmp/qortestmime_step8_green.log`). **6 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML). Step 7 (`mime_recognises_zip_signature`) was likewise DONE and verified green test-first
-(RED `[FAIL] #7` → GREEN `[TOTAL](8/8) [OK](8/8)`). Details in the section below (and in `src/framework/data/mime/status.md`,
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 9 (`mime_recognises_html_signature`) DONE and
+verified green, driven test-first** (RED `[FAIL] #9`, `[TOTAL](10/10) [OK](9/10) [FAIL](1/10)` exit 1 →
+GREEN `[TOTAL](10/10) [OK](10/10)` exit 0; logs `tmp/qortestmime_step9_red.log`,
+`tmp/qortestmime_step9_green.log`). **7 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML, HTML). Step 8 (`mime_recognises_xml_signature`) and step 7 (`mime_recognises_zip_signature`)
+were likewise DONE and verified green test-first (RED `[FAIL] #8` → GREEN `[TOTAL](9/9) [OK](9/9)`;
+RED `[FAIL] #7` → GREEN `[TOTAL](8/8) [OK](8/8)`). Details in the section below (and in `src/framework/data/mime/status.md`,
 `docs/agent/verification.md`). Earlier the same day: qor_mime plan steps 0-6 were done (step 4
 verified after the fact — its RED phase never observed), and the whole JSON generator increment is **DONE**,
 including the **full `QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process
@@ -143,12 +144,38 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   escapes (two escapes back-to-back, so no hex-digit swallowing ambiguity), and the guard
   compares raw `qor::byte` values.
 
+- **Plan step 8 (recognise the XML `<?xml` declaration marker) — DONE 20 Oct 2026, test-first.**
+  This active-context body had only reached step 7 when that session ended; the increment is recorded
+  in full in `memory-bank/progress.md`, `src/framework/data/mime/status.md` and
+  `docs/agent/verification.md`: RED `[FAIL] #8`, `[TOTAL](9/9) [OK](8/9) [FAIL](1/9)`, exit 1 →
+  GREEN `[TOTAL](9/9) [OK](9/9)` exit 0; sixth fixed-order guard in `Inspect()`, `memcmp` vs
+  `{0x3C,0x3F,0x78,0x6D,0x6C}`, `mime.h` unchanged.
+
+- **Plan step 9 (recognise HTML) — DONE 22 Oct 2026, test-first.** Wrote
+  `mime_recognises_html_signature` FIRST (TWO streams in the one case with fresh elements for the
+  second — mirroring step 5's two GIF variants: lower case `<!DOCTYPE html>\n<html><head>...` and
+  no-doctype upper case `<HTML>\n<head>...`; per stream asserts `sink.GetData() == data` pass-through,
+  `GetDetectedType() == MIMEType::HTML`, `std::string(GetTypeName()) == "text/html"`), ran it RED
+  (`mime_recognises_html_signature [FAIL], #9`, `[TOTAL](10/10) [OK](9/10) [FAIL](1/10)`, exit 1,
+  `tmp/qortestmime_step9_red.log`), then `Inspect()` gained a seventh fixed-order guard after the
+  XML marker: a case-folded 14-octet `<!DOCTYPE HTML` compare, and while still unresolved a
+  document-level first-tag compare (`m_signature[0] == 0x3C` `'<'` then case-folded `html`/`head`/`body`/`title`).
+  **Learning (record):** text heuristics cannot use `memcmp` — HTML markup spelling is case-insensitive,
+  so `mime.cpp` gained a file-local `markupMatch()` ASCII case-fold compare helper (internal: no
+  `qor_pp_module_interface`, folds ASCII a-z/A-Z only, no locale, no new dependency; it also checks
+  the window length so each compare decides as soon as its own octets are captured). A format with
+  two recognition paths (doctype OR first tag) is still ONE increment — the test asserts every path,
+  the code gets one guard with one compare per path (same shape as step 5's GIF87a/GIF89a pair).
+  `mime.h` unchanged (name table complete since step 3). Rebuilt `qor_mime` then `QORTestMIME`
+  (separate commands, one cmake build each) → `[TOTAL](10/10) [OK](10/10)`, no `[FAIL`, exit 0
+  (`tmp/qortestmime_step9_green.log`). **7 of 10 target types recognised.** No new build gotchas.
+
 ### Next up
-- [ ] Plan step 8 — write `mime_recognises_xml_signature` FIRST (leading text `<?xml`, 5 chars →
-  `GetDetectedType() == MIMEType::XML`, `GetTypeName() == "application/xml"`), then the xml guard
-  in `Inspect()` (`GetTypeName()` name table is already complete from step 3).
-- [ ] Plan steps 8..13 — the remaining five types one test at a time (xml, html,
-  json, javascript, plain text) + octet-stream fallback.
+- [ ] Plan step 10 — write `mime_recognises_json_signature` FIRST (first non-space octet is `{` or `[` →
+  `GetDetectedType() == MIMEType::JSON`, `GetTypeName() == "application/json"`), then the json guard
+  in `Inspect()` after the html guard (`GetTypeName()` name table is already complete from step 3).
+- [ ] Plan steps 10..13 — the remaining three types one test at a time (json,
+  javascript, plain text) + octet-stream fallback.
 - [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
   `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline
   test exe to prove no framework regression).
