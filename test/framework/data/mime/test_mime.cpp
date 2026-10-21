@@ -24,6 +24,11 @@
 //step 7 - mime_recognises_zip_signature: the fifth detection increment. A stream whose
 //leading octets are the four byte ZIP local file header magic PK 03 04 must be classified
 //as application/zip.
+//step 8 - mime_recognises_xml_signature: the sixth detection increment. A stream whose
+//leading octets are the five character XML declaration marker <?xml must be classified as
+//application/xml. It is a strong text heuristic rather than a fixed binary magic, so it is
+//evaluated after the definite binary signatures in the fixed order (png, jpeg, gif, pdf, zip,
+//xml, ...).
 
 
 #include "src/configuration/configuration.h"
@@ -430,5 +435,56 @@ qor_pp_test_case(mime_recognises_zip_signature)
     //The captured signature is the ZIP magic, so the stream is a ZIP archive.
     qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::ZIP).isTrue();
     qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/zip").isTrue();
+}
+
+
+//Step 8 - the sixth detection increment. A stream whose leading octets are the five character
+//XML declaration marker <?xml must be classified as application/xml: GetDetectedType() ==
+//MIMEType::XML and GetTypeName() == "application/xml". Unlike the fixed binary magics above,
+//XML has no binary magic number and is recognised from the text of its optional declaration,
+//so this is a strong text heuristic. The marker is the characters '<' '?' 'x' 'm' 'l' (0x3C
+//0x3F 0x78 0x6D 0x6C); the stream carries that marker followed by the rest of a declaration
+//and a short body so that it is longer than the marker alone. As in steps 3-7 the pass-through
+//contract is re-checked so that adding a detector cannot break the octet stream proven earlier.
+//This case is written FIRST and seen RED - Inspect() has no XML detector yet.
+qor_pp_test_case(mime_recognises_xml_signature)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //The five character XML declaration marker and a short body so that the stream is longer
+    //than the signature alone.
+    std::string xmlData;
+    xmlData += "<?xml version=\"1.0\"?>\n";
+    xmlData += "<root>payload bytes for the recognizer test stream.</root>";
+
+    source.SetData(xmlData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, xmlData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == xmlData).isTrue();
+
+    //The captured signature is the XML declaration marker, so the stream is XML.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::XML).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/xml").isTrue();
 }
 

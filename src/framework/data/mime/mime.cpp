@@ -110,14 +110,15 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
-                    //Plan steps 3,4,5,6,7 - classify the captured leading octets. The evaluation
+                    //Plan steps 3,4,5,6,7,8 - classify the captured leading octets. The evaluation
                     //order is fixed so results are deterministic (most definite signature
                     //first): png, jpeg, gif, pdf, zip, then the text markups, then the
                     //fallback. Each guard asks only for the octets its own signature needs,
                     //so a shorter signature can decide before the window is full. The
                     //signature window is never consumed (the read was rejected), so these
                     //checks run again on every chunk as more leading octets arrive. The
-                    //remaining five types are added one test at a time after this.
+                    //remaining four types (html, json, javascript, plain text) are added one
+                    //test at a time after this.
                     if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8)
                     {
                         static const qor::byte pngSignature[8] =
@@ -176,6 +177,21 @@ namespace qor{ namespace mime{
                         if(memcmp(m_signature, zipSignature, sizeof(zipSignature)) == 0)
                         {
                             m_detectedType = MIMEType::ZIP;
+                        }
+                    }
+                    //Plan step 8 - an XML document normally begins with the optional XML
+                    //declaration whose fixed opening marker is the five characters <?xml
+                    //('<' '?' 'x' 'm' 'l'). Unlike the binary formats above, XML has no
+                    //magic number, so this is a strong text heuristic evaluated after the
+                    //definite binary signatures in the fixed order. The guard asks for five
+                    //octets only, so it can decide before the window is full.
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 5)
+                    {
+                        static const qor::byte xmlSignature[5] =
+                            { 0x3C, 0x3F, 0x78, 0x6D, 0x6C };//'<' '?' 'x' 'm' 'l'
+                        if(memcmp(m_signature, xmlSignature, sizeof(xmlSignature)) == 0)
+                        {
+                            m_detectedType = MIMEType::XML;
                         }
                     }
                     return true;

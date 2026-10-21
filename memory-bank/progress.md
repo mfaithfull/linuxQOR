@@ -1,17 +1,18 @@
 # Progress
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 7 (recognise the ZIP `PK 03 04` magic) DONE and
-verified green, driven test-first** (RED `[FAIL] #7`, `[TOTAL](8/8) [OK](7/8) [FAIL](1/8)` exit 1 →
-GREEN `[TOTAL](8/8) [OK](8/8)` exit 0; logs `tmp/qortestmime_step7_red.log`,
-`tmp/qortestmime_step7_green.log`). **5 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP). Earlier the same day: qor_mime plan steps 0-6 were done (step 4 verified after the fact — its
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 8 (recognise the XML `<?xml` declaration marker) DONE and
+verified green, driven test-first** (RED `[FAIL] #8`, `[TOTAL](9/9) [OK](8/9) [FAIL](1/9)` exit 1 →
+GREEN `[TOTAL](9/9) [OK](9/9)` exit 0; logs `tmp/qortestmime_step8_red.log`,
+`tmp/qortestmime_step8_green.log`). **6 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML). Earlier the same day: qor_mime plan step 7 (recognise the ZIP `PK 03 04` magic) was DONE and
+verified green test-first, and qor_mime plan steps 0-6 were done (step 4 verified after the fact — its
 RED phase never observed), and
 the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
 base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20 Oct 2026, steps 0-7: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP)
+## MIME Recognition — qor_mime (20 Oct 2026, steps 0-8: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -91,6 +92,17 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](8/8) [OK](8/8)`, exit 0
   (`tmp/qortestmime_step7_green.log`). No new build gotchas this increment. 5 of 10 target types
   recognised.
+- ✅ **Plan step 8** `mime_recognises_xml_signature`: test written FIRST (one Push-mode stream, the five
+  character XML declaration marker `<?xml version="1.0"?>\n` — the `<?xml` marker plus the rest of a
+  declaration — plus a short body; asserts `sink.GetData() == xmlData` pass-through, `GetDetectedType() ==
+  MIMEType::XML`, `std::string(GetTypeName()) == "application/xml"`) and seen RED (`mime_recognises_xml_signature
+  [FAIL], #8`, `[TOTAL](9/9) [OK](8/9) [FAIL](1/9)`, exit 1, `tmp/qortestmime_step8_red.log`), then `Inspect()`
+  gained a sixth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 5`, `memcmp` vs
+  `{0x3C,0x3F,0x78,0x6D,0x6C}` = `<?xml` → `MIMEType::XML`); `mime.h` unchanged. Rebuilt `qor_mime` then
+  `QORTestMIME` (separate commands) → `[TOTAL](9/9) [OK](9/9)`, exit 0 (`tmp/qortestmime_step8_green.log`).
+  No new build gotchas this increment. **6 of 10 target types recognised.** Note: XML has no binary magic
+  number, so this is the first strong text heuristic (the `<?xml` declaration marker), evaluated after the
+  definite binary signatures in the fixed order.
 - ⚠️ **NEW build gotcha (20 Oct 2026): `cmake --build` calls must be sequential, one per command.**
   Two `cmake --build` invocations issued in the same command batch run concurrently over one build
   tree and race on the shared `.pdb` — `error C1090: PDB API call failed` on an unrelated dependency

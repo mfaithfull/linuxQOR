@@ -70,7 +70,18 @@
       `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](8/8) [OK](8/8)`, no `[FAIL`,
       exit 0 (log `tmp/qortestmime_step7_green.log`). 5 of 10 target types recognised.
 
+- [x] Step 8 `mime_recognises_xml_signature`: test written FIRST (one Push-mode stream, the five
+      character XML declaration marker `<?xml version="1.0"?>\n` + short body, asserts pass-through,
+      `== MIMEType::XML`, `"application/xml"`) and seen RED — `[FAIL] #8`, `[TOTAL](9/9) [OK](8/9)
+      [FAIL](1/9)`, exit 1 (log `tmp/qortestmime_step8_red.log`), then `Inspect()` gained a sixth
+      fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 5`, `memcmp` vs
+      `{0x3C,0x3F,0x78,0x6D,0x6C}` = `<?xml` → `MIMEType::XML`). No binary magic exists for XML, so
+      this is the first strong text heuristic. `mime.h` unchanged. Rebuilt `qor_mime` then
+      `QORTestMIME` (separate commands) → `[TOTAL](9/9) [OK](9/9)`, no `[FAIL`, exit 0 (log
+      `tmp/qortestmime_step8_green.log`). 6 of 10 target types recognised.
+
 ## Next increment
-- [ ] Step 8 `mime_recognises_xml_signature` — leading text `<?xml` (5 chars) → `application/xml`;
-      write the test FIRST, then the xml guard in `Inspect()` (name table already complete from step 3).
+- [ ] Step 9 `mime_recognises_html_signature` — `<!DOCTYPE HTML` case-insensitive, or the first `<`
+      starts a tag in {html,head,body,title} → `text/html`; write the test FIRST, then the html guard
+      in `Inspect()` (name table already complete from step 3).
 

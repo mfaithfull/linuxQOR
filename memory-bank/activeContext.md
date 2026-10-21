@@ -1,10 +1,11 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 7 (`mime_recognises_zip_signature`) DONE and
-verified green, driven test-first** (RED `[FAIL] #7`, `[TOTAL](8/8) [OK](7/8) [FAIL](1/8)` exit 1 →
-GREEN `[TOTAL](8/8) [OK](8/8)` exit 0; logs `tmp/qortestmime_step7_red.log`,
-`tmp/qortestmime_step7_green.log`). **5 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP). Details in the section below (and in `src/framework/data/mime/status.md`,
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 8 (`mime_recognises_xml_signature`) DONE and
+verified green, driven test-first** (RED `[FAIL] #8`, `[TOTAL](9/9) [OK](8/9) [FAIL](1/9)` exit 1 →
+GREEN `[TOTAL](9/9) [OK](9/9)` exit 0; logs `tmp/qortestmime_step8_red.log`,
+`tmp/qortestmime_step8_green.log`). **6 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML). Step 7 (`mime_recognises_zip_signature`) was likewise DONE and verified green test-first
+(RED `[FAIL] #7` → GREEN `[TOTAL](8/8) [OK](8/8)`). Details in the section below (and in `src/framework/data/mime/status.md`,
 `docs/agent/verification.md`). Earlier the same day: qor_mime plan steps 0-6 were done (step 4
 verified after the fact — its RED phase never observed), and the whole JSON generator increment is **DONE**,
 including the **full `QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process

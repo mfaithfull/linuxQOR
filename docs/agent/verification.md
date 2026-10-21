@@ -1,0 +1,214 @@
+﻿"# Verification log (compiler-as-judge, per D3)
+
+Unit of verification = one QOR lib (one `set(target qor_X)`). Incremental rebuild only the touched lib.
+Record one entry per verification run. Newest at top."
+
+## Build commands (incremental)
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --target qor_<NAME> -- -j4
+
+## Lint
+clang-tidy -p build docs/.../file.cpp
+
+## Test
+& build\test\<path>\<exe>   # e.g. build\test\framework\data\mime\Debug\QORTestMIME.exe
+# green = "[OK](n/n)" in the output AND shell exit code 0. The QOR does not use ctest.
+
+## Results
+
+### 2026-10-20 — qor_mime plan step 8 / QORTestMIME (XML `<?xml` declaration recognition) — PASS
+- **Test first**: added `mime_recognises_xml_signature` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE touching `mime.cpp`/`mime.h` (one Push-mode stream: the five character XML declaration
+  marker `<?xml version="1.0"?>\n` + short body; asserts `sink.GetData() == xmlData`
+  pass-through, `GetDetectedType() == MIMEType::XML`, `std::string(GetTypeName()) == "application/xml"`).
+- **Run (red)**: `cmake --build build --target QORTestMIME` (lib unchanged) then the exe run in its OWN
+  command from `build\test\framework\data\mime\Debug` → `test_mime.cpp(450) : mime_recognises_xml_signature
+  [FAIL], #8`, `[TOTAL](9/9) [OK](8/9) [FAIL](1/9)`, exit 1 → the test is meaningful (no XML detector
+  exists). Log `tmp/qortestmime_step8_red.log`, build log `tmp/qortestmime_step8_red_build.log`.
+- **Code**: `mime.cpp` only — a sixth fixed-order guard in `Inspect()` after png/jpeg/gif/pdf/zip:
+  `m_detectedType == Unresolved && m_signatureCount >= 5`, then `memcmp` the window against
+  `xmlSignature` {0x3C,0x3F,0x78,0x6D,0x6C} (`<` `?` `x` `m` `l`) → `m_detectedType = MIMEType::XML`.
+  `mime.h` unchanged (name table complete since step 3). No binary magic number exists for XML, so this
+  is the first strong text heuristic, evaluated after the definite binary signatures in the fixed order.
+- **Build**: `cmake --build build --target qor_mime` → exit 0 (`qor_mime.dll`), then
+  `cmake --build build --target QORTestMIME` → exit 0, no `error C`/`warning C`/`LNK` in either log
+  (`tmp/qortestmime_step8_build_lib.log`, `tmp/qortestmime_step8_build_exe.log`).
+- **Run (green)**: from `build\test\framework\data\mime\Debug` → `[TOTAL](9/9) [OK](9/9)`, no
+  `[FAIL`, `$LASTEXITCODE = 0` → PASS. Log `tmp/qortestmime_step8_green.log`. **6 of 10 target types
+  now recognised** (PNG, JPEG, GIF, PDF, ZIP, XML).
+- No new gotchas: the one-cmake-build-per-command and build-then-run-separately rules both held.
+
+### 2026-10-20 — qor_mime plan step 7 / QORTestMIME (ZIP `PK 03 04` recognition) — PASS
+- **Test first**: added `mime_recognises_zip_signature` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE touching `mime.cpp`/`mime.h` (one Push-mode stream: the 4-byte `PK 03 04` local file header
+  magic written as raw octets `"PK\x03\x04"` + short body; asserts `sink.GetData() == zipData`
+  pass-through, `GetDetectedType() == MIMEType::ZIP`, `std::string(GetTypeName()) == "application/zip"`).
+- **Run (red)**: `cmake --build build --target QORTestMIME` (lib unchanged) then the exe run in its OWN
+  command from `build\test\framework\data\mime\Debug` → `test_mime.cpp(394) : mime_recognises_zip_signature
+  [FAIL], #7`, `[TOTAL](8/8) [OK](7/8) [FAIL](1/8)`, exit 1 → the test is meaningful (no ZIP detector
+  exists). Log `tmp/qortestmime_step7_red.log`, build log `tmp/qortestmime_step7_red_build.log`.
+- **Code**: `mime.cpp` only — a fifth fixed-order guard in `Inspect()` after png/jpeg/gif/pdf:
+  `m_detectedType == Unresolved && m_signatureCount >= 4`, then `memcmp` the window against
+  `zipSignature` {0x50,0x4B,0x03,0x04} (`P` `K` `03` `04`) → `m_detectedType = MIMEType::ZIP`.
+  `mime.h` unchanged (name table complete since step 3).
+- **Build**: `cmake --build build --target qor_mime` → exit 0 (`qor_mime.dll`), then
+  `cmake --build build --target QORTestMIME` → exit 0, no `error C`/`warning C`/`LNK` in either log
+  (`tmp/qortestmime_step7_build_lib.log`, `tmp/qortestmime_step7_build_exe.log`).
+- **Run (green)**: from `build\test\framework\data\mime\Debug` → `[TOTAL](8/8) [OK](8/8)`, no
+  `[FAIL`, `$LASTEXITCODE = 0` → PASS. Log `tmp/qortestmime_step7_green.log`. 5 of 10 target types
+  now recognised (PNG, JPEG, GIF, PDF, ZIP).
+- No new gotchas: the one-cmake-build-per-command and build-then-run-separately rules both held.
+
+### 2026-10-20 — qor_mime plan step 6 / QORTestMIME (PDF header recognition) — PASS
+- **Test first**: added `mime_recognises_pdf_signature` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE touching `mime.cpp`/`mime.h` (one stream: `%PDF-1.4\n` + short body — the `%PDF` magic
+  followed by the version marker as real files have it; asserts `sink.GetData() == pdfData`
+  pass-through, `GetDetectedType() == MIMEType::PDF`, `std::string(GetTypeName()) == "application/pdf"`).
+- **Run (red)**: `cmake --build build --target QORTestMIME` then the exe run in its OWN command from
+  `build\test\framework\data\mime\Debug` → `test_mime.cpp(342) : mime_recognises_pdf_signature [FAIL],
+  #6`, `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)`, exit 1 → the test is meaningful (no PDF detector exists).
+  Log `tmp/qortestmime_step6_red.log`.
+- **Code**: `mime.cpp` only — a fourth fixed-order guard in `Inspect()` after png/jpeg/gif:
+  `m_detectedType == Unresolved && m_signatureCount >= 4`, then `memcmp` the window against
+  `pdfSignature` {0x25,0x50,0x44,0x46} (`%` `P` `D` `F`) → `m_detectedType = MIMEType::PDF`.
+  `mime.h` unchanged (name table complete since step 3).
+- **Build**: `cmake --build build --target qor_mime` → exit 0 (`qor_mime.dll`), then
+  `cmake --build build --target QORTestMIME` → exit 0, no `error C`/`warning C`/`LNK` in either log.
+- **Run (green)**: from `build\test\framework\data\mime\Debug` → `[TOTAL](7/7) [OK](7/7)`, no
+  `[FAIL`, `$LASTEXITCODE = 0` → PASS. Log `tmp/qortestmime_step6_green.log`. 4 of 10 target types
+  now recognised (PNG, JPEG, GIF, PDF).
+- No new gotchas: the one-cmake-build-per-command and build-then-run-separately rules both held.
+
+### 2026-10-20 — qor_mime plan step 5 / QORTestMIME (GIF header recognition) — PASS
+- **Test first**: added `mime_recognises_gif_signature` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE touching `mime.cpp`/`mime.h` (two streams in the one case, fresh elements each: `GIF89a`
+  and `GIF87a` six-byte headers + short bodies; asserts `sink.GetData() == data` pass-through,
+  `GetDetectedType() == MIMEType::GIF`, `std::string(GetTypeName()) == "image/gif"`).
+- **Run (red)**: `cmake --build build --target QORTestMIME --config Debug` then the exe run in its
+  OWN command from `build\test\framework\data\mime\Debug` → `mime_recognises_gif_signature [FAIL],
+  #5`, `[TOTAL](6/6) [OK](5/6) [FAIL](1/6)`, `expected boolean to have the value of true / value was
+  : 0`, exit 1 → the test is meaningful (no GIF detector exists). Log `tmp/qortestmime_step5_red.log`.
+- **Code**: `mime.cpp` only — a third fixed-order guard in `Inspect()` after png/jpeg:
+  `m_detectedType == Unresolved && m_signatureCount >= 6`, then `memcmp` the window against
+  `gif89Signature` {0x47,0x49,0x46,0x38,0x39,0x61} OR `gif87Signature` {…,0x37,…} →
+  `m_detectedType = MIMEType::GIF`. `mime.h` unchanged (name table complete since step 3).
+- **Build**: `cmake --build build --target qor_mime --config Debug` → SUCCESS (`qor_mime.dll`), then
+  `cmake --build build --target QORTestMIME --config Debug` → SUCCESS, no `error C`/`warning C`/`LNK`.
+- **Run (green)**: from `build\test\framework\data\mime\Debug` → `[TOTAL](6/6) [OK](6/6)`, no
+  `[FAIL`, `$LASTEXITCODE = 0` → PASS. Log `tmp/qortestmime_step5_green.log`.
+- **NEW GOTCHA**: issuing two `cmake --build` invocations in the SAME tool/command batch runs them
+  concurrently against one build tree and they race on the shared `.pdb` files — symptoms
+  `error C1090: PDB API call failed` (on an unrelated dependency) and
+  `error C1041: cannot open program database … if multiple CL.EXE write to the same .PDB file,
+  please use /FS`. The builds are NOT independent: one cmake build per call, strictly sequential.
+
+### 2026-10-20 — qor_mime plan step 4 / QORTestMIME (JPEG magic recognition) — PASS (verified, not test-driven)
+- **State found**: the step 4 test `mime_recognises_jpeg_signature` AND the JPEG detector were already
+  in the working tree (uncommitted `git status`: `mime.cpp` + `test_mime.cpp` modified) but had never
+  been built or run — no verification record, no status.md tick. So this increment was **verified
+  after the fact**; its RED phase was NOT observed and cannot be honestly claimed.
+- **Build**: `cmake --build build --target qor_mime --config Debug` (first attempt hit the transient
+  `C1090` PDB race — see the gotcha above; retry succeeded) then
+  `cmake --build build --target QORTestMIME --config Debug` → SUCCESS.
+- **Run (green)**: exe run in its OWN command from `build\test\framework\data\mime\Debug` →
+  5 cases listed (`mime_module_loads`, `mime_filter_passes_octets_through`,
+  `mime_captures_leading_octets`, `mime_recognises_png_signature`, `mime_recognises_jpeg_signature`),
+  `[TOTAL](5/5) [OK](5/5)`, no `[FAIL`, `$LASTEXITCODE = 0` → PASS. Log `tmp/qortestmime_step4_green.log`.
+- **Code as found**: `Inspect()` gained `m_detectedType == Unresolved && m_signatureCount >= 3`
+  → `memcmp` vs `{0xFF,0xD8,0xFF}` → `m_detectedType = MIMEType::JPEG`; guards are ordered per
+  signature length so a shorter signature can decide before the 16-byte window is full.
+
+### 2026-10-20 — qor_mime plan step 3 / QORTestMIME (PNG signature recognition) — PASS
+- **Test first**: added `mime_recognises_png_signature` to `test/framework/data/mime/test_mime.cpp` BEFORE
+  touching `mime.cpp`/`mime.h` (single stream: StringSource → `qor::mime::MIMERecognizerFilter` → StringSink,
+  Push-mode pumping as step 1; asserts `sink.GetData() == data` pass-through, `GetDetectedType() ==
+  MIMEType::PNG`, `std::string(GetTypeName()) == "image/png"`). Built `QORTestMIME` BEFORE writing any
+  implementation code.
+- **Run (red)**: `mime_recognises_png_signature [FAIL], #3`, `[TOTAL](4/4) [OK](3/4) [FAIL](1/4)`, exit 1
+  (`tmp/qortestmime_step3_red.log`) — the pass-through assert passed, the two detection asserts failed
+  (`GetDetectedType()` still `Unresolved`) → the test is meaningful.
+- **Code**: `mime.cpp` only — fixed-order guard inside `Inspect()` after each capture
+  (`m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8`), `static const qor::byte
+  pngSignature[8] = {0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A}`, `memcmp` → `m_detectedType =
+  MIMEType::PNG`; `GetTypeName()` gained the complete registered-name switch (all ten types +
+  `application/octet-stream`; `Unresolved` → `nullptr`), so the name table is data and complete now
+  while only the detectors stay incremental. `mime.h` unchanged.
+- **Build**: `cmake --build build --target qor_mime --config Debug` then
+  `cmake --build build --target QORTestMIME --config Debug` → SUCCESS.
+- **Run (green)**: exe run in its OWN command from `build\test\framework\data\mime\Debug` →
+  `[TOTAL](4/4) [OK](4/4)`, exit 0 (log `tmp/qortestmime_step3_green.log`).
+- **Note**: no `error C`/`warning C`/`LNK` in either build.
+
+### 2026-10-20 — qor_mime plan step 2 / QORTestMIME (signature window capture) — PASS
+- **Test first**: added `mime_captures_leading_octets` to `test/framework/data/mime/test_mime.cpp`
+  (Push-mode `Pipeline` wiring as step 1; 40-byte input → `GetSignatureByteCount() == 16`,
+  fresh elements + 4-byte input → `== 4`; no `Reset()` reuse — that is plan step 15).
+  Built `QORTestMIME` BEFORE writing any implementation code.
+- **Run (red)**: from `build\test\framework\data\mime\Debug` →
+  `mime_captures_leading_octets [FAIL], #2`, `[TOTAL](3/3) [OK](2/3) [FAIL](1/3)`, exit 1
+  → the test is meaningful (placeholder `Inspect()` captured nothing and was not even called).
+- **Code**: `mime.cpp` only — `Inspect()` captures via the buffer three-step read protocol
+  (`buffer.h`/`buffer.cpp`): `ReadRequest(least(unitsToInspect, ReadCapacity, windowSpace))` →
+  `memcpy` into `m_signature` → **`ReadReject(unitsRequested)`** to give the reservation back
+  (the source is never consumed; `ReadReject` restores `m_readEnd`). `ReadFilter`/`WriteFilter`
+  call `Inspect()` BEFORE `TransferOctets()`. `mime.h` unchanged (the hook was already declared).
+- **Regenerate + build**: `cmake --build build --target qor_mime --target QORTestMIME` → SUCCESS,
+  `qor_mime.dll` + `QORTestMIME.exe`, no `error C`/`warning C`/`LNK` lines.
+- **Run (green)**: exe run in its OWN command after the build command (stale-exe gotcha avoided)
+  → `[TOTAL](3/3) [OK](3/3)`, no `[FAIL`, `$LASTEXITCODE = 0` → PASS. Logs:
+  `tmp/qortestmime_step2_red.log`, `tmp/qortestmime_step2_green.log`,
+  `tmp/qortestmime_step2_final.log` (run against the final, un-instrumented build — the
+  authoritative one).
+- **Findings**: (1) pipeline buffer reads are reserve/use/commit-or-**reject**; `ReadReject` is
+  the "peek without consuming" primitive a read-only filter needs. (2) the run right after a
+  build in the same command batch used the PREVIOUS exe (the recorded gotcha bit again) — build
+  and run must be separate sequential commands. (3) `log::debug` calls in `qor_mime` produced
+  no output in `QORTestMIME` — the log flyer is not wired in this test exe; do not use log
+  output as a test probe there.
+
+### 2026-10-20 — qor_mime plan step 1 / QORTestMIME (pass-through increment) — PASS
+- **Test first**: added `mime_filter_passes_octets_through` to `test/framework/data/mime/test_mime.cpp`
+  (StringSource → `MIMERecognizerFilter` → StringSink under a Push-mode `Pipeline`; assert sink output == input).
+  Built `QORTestMIME` BEFORE writing any implementation code.
+- **Run (red)**: `Set-Location build\\test\\framework\\data\\mime\\Debug; .\\QORTestMIME.exe` →
+  `mime_filter_passes_octets_through [FAIL], #1`, `[TOTAL](2/2) [OK](1/2) [FAIL](1/2)`,
+  `expected boolean to have the value of true / value was : 0`, exit 1 → the test is meaningful.
+- **Code**: `mime.h` gained `virtual bool TransferOctets(size_t& unitsTransferred, size_t unitsToTransfer)`;
+  `mime.cpp` implements it like `CopyFilter::Copy` (sink `WriteRequest` / source `ReadRequest` / memcpy /
+  both acks) and `ReadFilter`/`WriteFilter` call it. `Inspect()` and detection untouched.
+- **Regenerate + build**: `cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug` then
+  `cmake --build build --target qor_mime --target QORTestMIME` → SUCCESS, `qor_mime.dll` + `QORTestMIME.exe`,
+  no errors/warnings.
+- **Run (green)**: from `build\\test\\framework\\data\\mime\\Debug` → `[TOTAL](2/2) [OK](2/2)`, no `[FAIL]`,
+  `$LASTEXITCODE = 0` → PASS. Logs: `tmp/qortestmime_step1.log` (red), `tmp/qortestmime_step1_green.log`.
+- **Finding**: a filter only pumps when in `Element::FlowMode::Push` (it needs a `Pipeline` parent to carry the
+  mode — `Element::SetFlowMode` forwards to the parent and stores nothing). In Pull mode
+  `Filter::Read` calls `ReadFilter(unitsRead, unitsRead)` with `unitsRead == 0` at entry, so base-class pull
+  pumping through a filter is a dead end in the current framework.
+
+### 2026-10-20 — qor_mime (configure + build + test) — PASS
+- **Configure**: `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug` → SUCCESS (0.3s configure, 5.6s generate;
+  new dirs `src/framework/data/mime` + `test/framework/data/mime` picked up)
+- **Build lib**: `cmake --build build --target qor_mime` → SUCCESS — compiled `qor_mime.cpp`, `mime.cpp`;
+  produced `build\src\framework\data\mime\Debug\qor_mime.dll` + import lib `qor_mime.lib` + `qor_mime.exp`
+  (deps rebuilt as needed: qor_module, qor_host, qor_current, qor_sync, qor_signals, qor_pipeline). No errors/warnings.
+- **Build test exe**: `cmake --build build --target QORTestMIME` → SUCCESS — `test_main.cpp` + `test_mime.cpp`,
+  links `qor_mime.lib`; first-time builds of `qor_stringsource`/`qor_stringsink` for a test exe.
+  Output `build\test\framework\data\mime\Debug\QORTestMIME.exe`.
+- **Run test**: `& QORTestMIME.exe` → `test_mime.cpp(15) : mime_module_loads`, `[TOTAL](1/1)`, `[OK](1/1)`,
+  `[DURATION] 0 seconds`, `$LASTEXITCODE = 0` → PASS.
+- **Note**: `cmake --build build --target X -- -j4` FAILS on this VS2026/MSBuild generator
+  (`MSB1001: Unknown switch`); omit `-j4`. Module needed `qor_pp_export void init_mime(void)` so an
+  import lib exists (else test exes fail LNK1104 — learned from qor_renderer/qor_workflow).
+
+### 2026-01-XX — qor_module (configure + build) — PASS
+- **Configure**: `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug` → SUCCESS (5.4s configure, 2.9s generate)
+  - Platform: Windows, MSVC 19.50.35721.0, VS 2026 (Visual Studio 18 2026 generator)
+  - Threads: TRUE (pthread not found on Windows; CMake Threads detected)
+  - Build dir: C:/RAID0/Develop/linuxQOR/build
+- **Build**: `cmake --build build --target qor_module` → SUCCESS
+  - Compiled: library.cpp, module.cpp
+  - Output: `build\src\qor\module\Debug\qor_module.lib`
+  - No errors, no warnings
+- **Verdict**: PASS — qor_module builds clean on MSVC/Windows.
+- **Note**: Windows/MSVC toolchain confirmed. pthread absent (expected on Windows).

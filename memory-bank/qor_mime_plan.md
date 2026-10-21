@@ -98,8 +98,8 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | 4 ✅ | `mime_recognises_jpeg_signature` | `== JPEG`, `"image/jpeg"` | DONE 20 Oct 2026 — **verified, not test-driven**: the test and the jpeg detector were already in the working tree (uncommitted) but had never been built or run, so the RED phase was never observed. Build `qor_mime` + `QORTestMIME` → `[TOTAL](5/5) [OK](5/5)` exit 0 |
 | 5 ✅ | `mime_recognises_gif_signature` | `== GIF`, `"image/gif"` for both `GIF89a` and `GIF87a` | DONE 20 Oct 2026 — test written FIRST and seen RED (`[FAIL] #5`, `[OK](5/6)`, `[FAIL](1/6)`, exit 1), then a third fixed-order guard in `Inspect()` (`m_signatureCount >= 6`, `memcmp` vs GIF89a OR GIF87a six-byte headers) → `[TOTAL](6/6) [OK](6/6)` exit 0; `mime.h` unchanged |
 | 6 ✅ | `mime_recognises_pdf_signature` | `== PDF`, `"application/pdf"` | DONE 20 Oct 2026 — test written FIRST and seen RED (`[FAIL] #6`, `[OK](6/7)`, exit 1), then a fourth fixed-order guard in `Inspect()` (`m_signatureCount >= 4`, `memcmp` vs `25 50 44 46` = `%PDF`) → `[TOTAL](7/7) [OK](7/7)` exit 0; `mime.h` unchanged |
-| 7 | `mime_recognises_zip_signature` | `== ZIP`, `"application/zip"` | zip magic compare |
-| 8 | `mime_recognises_xml_from_markup` | `== XML`, `"application/xml"` | `<?xml` text check |
+| 7 ✅ | `mime_recognises_zip_signature` | `== ZIP`, `"application/zip"` | DONE 20 Oct 2026 — RED first, then fifth fixed-order guard in `Inspect()` (`m_signatureCount >= 4`, `memcmp` vs `50 4B 03 04` = `PK 03 04`) → `[TOTAL](8/8) [OK](8/8)` exit 0; `mime.h` unchanged |
+| 8 ✅ | `mime_recognises_xml_signature` | `== XML`, `"application/xml"` | DONE 20 Oct 2026 — test written FIRST and seen RED (`[FAIL] #8`, `[OK](8/9)`, exit 1), then a sixth fixed-order guard in `Inspect()` (`m_detectedType == Unresolved && m_signatureCount >= 5`, `memcmp` vs `3C 3F 78 6D 6C` = `<?xml`, a strong text heuristic — no binary magic) → `[TOTAL](9/9) [OK](9/9)` exit 0; `mime.h` unchanged |
 | 9 | `mime_recognises_html_from_markup` | `== HTML`, `"text/html"` for `<!DOCTYPE html>...` and `<html>` | doctype/tag scan + case-insensitive compare helper |
 | 10 | `mime_recognises_json_from_markup` | `== JSON`, `"application/json"` | first non-space `{`/`[` check |
 | 11 | `mime_recognises_javascript_from_markup` | `== JavaScript`, `"application/javascript"` | shebang/comment + keyword heuristic |
@@ -206,5 +206,15 @@ Pitfalls confirmed while creating the outline:
   `{0x50,0x4B,0x03,0x04}` → `MIMEType::ZIP`) → `[TOTAL](8/8) [OK](8/8)`, exit 0
   (`tmp/qortestmime_step7_green.log`). `mime.h` unchanged; build logs (`tmp/qortestmime_step7_build_lib.log`,
   `tmp/qortestmime_step7_build_exe.log`) show no `error C`/`warning C`/`LNK`. No new gotchas.
-- Next: step 8 `mime_recognises_xml_signature` (leading text `<?xml`, 5 chars) — test FIRST.
-
+- Step 8 `mime_recognises_xml_signature` (test first): RED first — `mime_recognises_xml_signature [FAIL],
+  #8`, `[TOTAL](9/9) [OK](8/9) [FAIL](1/9)`, exit 1 (`tmp/qortestmime_step8_red.log`), one stream with the
+  five-character XML declaration marker `<?xml version="1.0"?>` + short body, then `Inspect()` gained a
+  sixth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 5`, `memcmp` the window vs
+  `{0x3C,0x3F,0x78,0x6D,0x6C}` = `<?xml` → `MIMEType::XML`). No binary magic number exists for XML, so this
+  is the first strong text heuristic; it is evaluated after the definite binary signatures in the fixed
+  order. `mime.h` unchanged; build logs (`tmp/qortestmime_step8_build_lib.log`,
+  `tmp/qortestmime_step8_build_exe.log`) show no `error C`/`warning C`/`LNK`. No new gotchas. → `[TOTAL](9/9)
+  [OK](9/9)` exit 0 (`tmp/qortestmime_step8_green.log`). 6 of 10 target types recognised (PNG, JPEG, GIF,
+  PDF, ZIP, XML).
+- Next: step 9 `mime_recognises_html_signature` (heuristic: `<!DOCTYPE HTML` case-insensitive, or the first
+  `<` starts a tag in {html,head,body,title}) — test FIRST.
