@@ -95,8 +95,8 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | 1 ✅ | `mime_filter_passes_octets_through` | `StringSource -> MIMERecognizerFilter -> StringSink` output string == input string | DONE 20 Oct 2026 — the base `Filter` does NOT pass octets through by itself (placeholder `Inspect()` moved nothing, new case went `[FAIL] #1` exit 1), so the smallest fix is `TransferOctets()` (CopyFilter::Copy style buffer-to-buffer move) called from `ReadFilter`/`WriteFilter`. Verified `[OK](2/2)` exit 0. NOTE: Push mode is the working pump path for a filter; Pull mode hits a base-framework bug (`Filter::Read` calls `ReadFilter(unitsRead, unitsRead)` — 0 units at entry) |
 | 2 ✅ | `mime_captures_leading_octets` | `GetSignatureByteCount() == 16` for a 40 byte input; `== 4` for a 4 byte input | DONE 20 Oct 2026 — RED first (`[FAIL] #2`, exit 1), then `Inspect()` captures via `ReadRequest` → `memcpy` into `m_signature` → **`ReadReject`** (give the reservation back — source not consumed), capped by the 16-byte window; `Inspect()` called before `TransferOctets()` in `ReadFilter`/`WriteFilter`. Verified `[OK](3/3)` exit 0 |
 | 3 ✅ | `mime_recognises_png_signature` | `GetDetectedType() == MIMEType::PNG`, `GetTypeName() == "image/png"` | DONE 20 Oct 2026 — RED first (`[FAIL] #3`, `[OK](3/4)`, exit 1), then PNG magic compare in `Inspect()` (window vs `89 50 4E 47 0D 0A 1A 0A`) + complete name table in `GetTypeName()`; `mime.h` unchanged. Verified `[OK](4/4)` exit 0 |
-| 4 | `mime_recognises_jpeg_signature` | `== JPEG`, `"image/jpeg"` | jpeg magic compare |
-| 5 | `mime_recognises_gif_signature` | `== GIF`, `"image/gif"` for both `GIF89a` and `GIF87a` | gif magic compare (two variants) |
+| 4 ✅ | `mime_recognises_jpeg_signature` | `== JPEG`, `"image/jpeg"` | DONE 20 Oct 2026 — **verified, not test-driven**: the test and the jpeg detector were already in the working tree (uncommitted) but had never been built or run, so the RED phase was never observed. Build `qor_mime` + `QORTestMIME` → `[TOTAL](5/5) [OK](5/5)` exit 0 |
+| 5 ✅ | `mime_recognises_gif_signature` | `== GIF`, `"image/gif"` for both `GIF89a` and `GIF87a` | DONE 20 Oct 2026 — test written FIRST and seen RED (`[FAIL] #5`, `[OK](5/6)`, `[FAIL](1/6)`, exit 1), then a third fixed-order guard in `Inspect()` (`m_signatureCount >= 6`, `memcmp` vs GIF89a OR GIF87a six-byte headers) → `[TOTAL](6/6) [OK](6/6)` exit 0; `mime.h` unchanged |
 | 6 | `mime_recognises_pdf_signature` | `== PDF`, `"application/pdf"` | pdf magic compare |
 | 7 | `mime_recognises_zip_signature` | `== ZIP`, `"application/zip"` | zip magic compare |
 | 8 | `mime_recognises_xml_from_markup` | `== XML`, `"application/xml"` | `<?xml` text check |
@@ -169,4 +169,24 @@ Pitfalls confirmed while creating the outline:
   → `m_detectedType = PNG`) plus the complete registered-name switch in `GetTypeName()` (`mime.h`
   unchanged) → `[TOTAL](4/4) [OK](4/4)` exit 0. Detection sits in `Inspect()` so it re-evaluates per
   chunk. Note: the name table is data, so it is complete now; only the detectors stay incremental.
+- Step 4 `mime_recognises_jpeg_signature` (**verified, NOT test-driven**): the test and the jpeg
+  detector were already sitting in the working tree (uncommitted changes to `mime.cpp` +
+  `test_mime.cpp`, the previous session having written them without building or running) and no
+  record showed them verified. Built `qor_mime` + `QORTestMIME` and ran the exe from
+  `build\test\framework\data\mime\Debug` → `[TOTAL](5/5) [OK](5/5)`, no `[FAIL`, exit 0
+  (`tmp/qortestmime_step4_green.log`). Recorded honestly: the RED phase for this increment was
+  never observed, so it is the one increment not driven test-first.
+- Step 5 `mime_recognises_gif_signature` (test first): RED first — `[FAIL] #5`, `[TOTAL](6/6)
+  [OK](5/6) [FAIL](1/6)`, exit 1 (`tmp/qortestmime_step5_red.log`), one GIF stream per case using
+  fresh elements for the second (`GIF89a` and `GIF87a` six-byte headers), then `Inspect()` gained a
+  third fixed-order guard (`m_signatureCount >= 6`, `memcmp` the window vs `{47 49 46 38 39 61}`
+  OR `{47 49 46 38 37 61}`) → `[TOTAL](6/6) [OK](6/6)`, exit 0
+  (`tmp/qortestmime_step5_green.log`). `mime.h` unchanged.
+- **NEW build gotcha found in step 5**: two `cmake --build` invocations issued in the SAME command
+  batch run concurrently over one build tree and race on shared `.pdb` files — symptoms were
+  `error C1090: PDB API call failed` on an unrelated dependency (build then "succeeded" on retry)
+  and `error C1041: cannot open program database '…vc145.pdb'; if multiple CL.EXE write to the
+  same .PDB file, please use /FS`. Cmake builds are NOT independent: exactly one `cmake --build`
+  per command, strictly sequential (this is the same rule that already forces build-and-run
+  to be separate commands).
 

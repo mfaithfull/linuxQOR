@@ -15,6 +15,11 @@
 //leading octets are the eight byte PNG magic 89 50 4E 47 0D 0A 1A 0A must be classified
 //as image/png: GetDetectedType() == MIMEType::PNG and GetTypeName() == "image/png".
 //Detection is added one type at a time (see memory-bank/qor_mime_plan.md).
+//step 4 - mime_recognises_jpeg_signature: the second detection increment. A stream whose
+//leading octets are the three byte JPEG magic FF D8 FF must be classified as image/jpeg.
+//step 5 - mime_recognises_gif_signature: the third detection increment. A stream whose
+//leading octets are the six byte GIF magic GIF89a or GIF87a must be classified as image/gif.
+
 
 #include "src/configuration/configuration.h"
 #include <string>
@@ -192,5 +197,135 @@ qor_pp_test_case(mime_recognises_png_signature)
     //The captured signature is the PNG magic, so the stream is a PNG.
     qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PNG).isTrue();
     qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "image/png").isTrue();
+}
+
+
+//Step 4 - the second detection increment. A stream whose leading octets are the three byte
+//JPEG file magic FF D8 FF must be classified as image/jpeg: GetDetectedType() == MIMEType::JPEG
+//and GetTypeName() == "image/jpeg". The JPEG signature is shorter than PNG's, so this increment
+//also proves the classification guards are per signature length (three octets are enough here).
+//As in step 3 the pass-through contract is re-checked, so adding a detector cannot break the
+//octet stream proven in steps 1 and 2.
+qor_pp_test_case(mime_recognises_jpeg_signature)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //The three byte JPEG file signature FF D8 FF, then a JFIF style marker (E0) and text body
+    //so the stream is longer than the signature alone.
+    std::string jpegData;
+    jpegData.push_back(static_cast<char>(0xFF));
+    jpegData.push_back(static_cast<char>(0xD8));
+    jpegData.push_back(static_cast<char>(0xFF));
+    jpegData.push_back(static_cast<char>(0xE0));
+    jpegData += "JFIF payload bytes for the recognizer test stream.";
+
+    source.SetData(jpegData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, jpegData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == jpegData).isTrue();
+
+    //The captured signature is the JPEG magic, so the stream is a JPEG.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::JPEG).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "image/jpeg").isTrue();
+}
+
+
+//Step 5 - the third detection increment. A stream whose leading octets are the six byte
+//GIF file magic GIF89a or GIF87a must be classified as image/gif: GetDetectedType() ==
+//MIMEType::GIF and GetTypeName() == "image/gif". The GIF spec defines both header variants
+//so both are asserted, one stream each, using fresh elements for the second (Reset() reuse
+//is plan step 15 and is not exercised here). As in steps 3 and 4 the pass-through contract
+//is re-checked so that adding a detector cannot break the octet stream proven earlier.
+//This case is written FIRST and seen RED - Inspect() has no GIF detector yet.
+qor_pp_test_case(mime_recognises_gif_signature)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //The six byte GIF89a file signature followed by a short body so that the stream is
+    //longer than the header alone.
+    std::string gif89Data;
+    gif89Data += "GIF89a";
+    gif89Data += " payload bytes for the recognizer test stream.";
+
+    source.SetData(gif89Data);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, gif89Data.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == gif89Data).isTrue();
+
+    //The captured signature is the GIF89a magic, so the stream is a GIF.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::GIF).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "image/gif").isTrue();
+
+    //The GIF87a variant, second stream with fresh elements.
+    ByteBuffer inBuffer2(128);
+    ByteBuffer outBuffer2(128);
+
+    StringSource source2;
+    source2.SetParent(&testPipeline);
+    source2.SetBuffer(&inBuffer2);
+
+    StringSink sink2;
+    sink2.SetParent(&testPipeline);
+    sink2.SetBuffer(&outBuffer2);
+
+    qor::mime::MIMERecognizerFilter recognizer2;
+    recognizer2.SetParent(&testPipeline);
+    recognizer2.SetSource(&source2);
+    recognizer2.SetSink(&sink2);
+
+    std::string gif87Data;
+    gif87Data += "GIF87a";
+    gif87Data += " payload bytes for the recognizer test stream.";
+
+    source2.SetData(gif87Data);
+
+    size_t unitsPumped2 = 0;
+    recognizer2.Pump(unitsPumped2, gif87Data.length());
+
+    qor_pp_assert_that(sink2.GetData() == gif87Data).isTrue();
+    qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::GIF).isTrue();
+    qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "image/gif").isTrue();
 }
 

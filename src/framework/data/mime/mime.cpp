@@ -110,13 +110,14 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
-                    //Plan step 3 - classify the captured leading octets. The evaluation
+                    //Plan steps 3+4+5 - classify the captured leading octets. The evaluation
                     //order is fixed so results are deterministic (most definite signature
                     //first): png, jpeg, gif, pdf, zip, then the text markups, then the
-                    //fallback. Only the PNG signature is recognised at this increment; the
-                    //remaining nine types are added one test at a time after this. The
-                    //signature window is never consumed (the read was rejected), so this
-                    //check runs again on every chunk as more leading octets arrive.
+                    //fallback. Each guard asks only for the octets its own signature needs,
+                    //so a shorter signature can decide before the window is full. The
+                    //signature window is never consumed (the read was rejected), so these
+                    //checks run again on every chunk as more leading octets arrive. The
+                    //remaining six types are added one test at a time after this.
                     if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8)
                     {
                         static const qor::byte pngSignature[8] =
@@ -124,6 +125,31 @@ namespace qor{ namespace mime{
                         if(memcmp(m_signature, pngSignature, sizeof(pngSignature)) == 0)
                         {
                             m_detectedType = MIMEType::PNG;
+                        }
+                    }
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 3)
+                    {
+                        static const qor::byte jpegSignature[3] =
+                            { 0xFF, 0xD8, 0xFF };
+                        if(memcmp(m_signature, jpegSignature, sizeof(jpegSignature)) == 0)
+                        {
+                            m_detectedType = MIMEType::JPEG;
+                        }
+                    }
+                    //Plan step 5 - the GIF spec defines two header variants, GIF89a and GIF87a,
+                    //both six bytes, so both are compared. The guard asks for six octets only.
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 6)
+                    {
+                        static const qor::byte gif89Signature[6] =
+                            { 0x47, 0x49, 0x46, 0x38, 0x39, 0x61 };//'G' 'I' 'F' '8' '9' 'a'
+                        static const qor::byte gif87Signature[6] =
+                            { 0x47, 0x49, 0x46, 0x38, 0x37, 0x61 };//'G' 'I' 'F' '8' '7' 'a'
+                        if(
+                            memcmp(m_signature, gif89Signature, sizeof(gif89Signature)) == 0
+                            || memcmp(m_signature, gif87Signature, sizeof(gif87Signature)) == 0
+                        )
+                        {
+                            m_detectedType = MIMEType::GIF;
                         }
                     }
                     return true;

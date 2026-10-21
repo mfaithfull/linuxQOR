@@ -1,7 +1,10 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 3 DONE and verified green**
-(`QORTestMIME` `[TOTAL](4/4) [OK](4/4)` exit 0; test written first and seen red). Details in
+**Last updated:** 20 Oct 2026 — **qor_mime plan steps 4 (JPEG magic) and 5 (GIF header) DONE and
+verified green** (`QORTestMIME` step 4 `[TOTAL](5/5) [OK](5/5)` exit 0 — its test and detector were
+already in the working tree but had never been built or run, so it was verified after the fact and
+its RED phase was never observed; step 5 driven test-first: RED `[OK](5/6) [FAIL](1/6)` exit 1, then
+GREEN `[TOTAL](6/6) [OK](6/6)` exit 0). Details in
 the section below (and in `src/framework/data/mime/status.md`, `docs/agent/verification.md`).
 Earlier the same day: steps 0-1 of the same plan were done, and the whole JSON generator increment is **DONE**,
 including the **full `QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process
@@ -78,11 +81,43 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   **Learning (record):** the name table is data (enum → registered name) and may be complete from the
   first detection increment; only the *detectors* have to be added one test at a time.
 
+- **Plan step 4 (recognise the JPEG magic) — VERIFIED DONE 20 Oct 2026, but NOT test-driven.** The
+  test `mime_recognises_jpeg_signature` AND the JPEG detector were already sitting in the working
+  tree (uncommitted edits to `mime.cpp` + `test_mime.cpp` — the previous session wrote them and
+  stopped) and nothing in `status.md`, `verification.md` or the memory bank showed them built or
+  run, and `git log` had no step-4 commit. So this increment was verified after the fact: built
+  `qor_mime` + `QORTestMIME`, ran the exe from `build\test\framework\data\mime\Debug` →
+  `[TOTAL](5/5) [OK](5/5)`, no `[FAIL`, exit 0 (`tmp/qortestmime_step4_green.log`). The code found
+  in place is exactly the planned smallest fix (guard `m_signatureCount >= 3`, `memcmp` vs
+  `FF D8 FF` in `Inspect()`, `mime.h` untouched, name table already complete). **Lesson: verify
+  before writing — unverified working-tree code is not "done", and a session that ends without a
+  build+run leaves its own RED phase unrecoverable.**
+  **Also hit here: `cmake --build` invocations must not be batched.** Two `cmake --build` calls in
+  one command batch run concurrently over the same build tree and race on the shared `.pdb`:
+  `error C1090: PDB API call failed` on an unrelated dependency, and `error C1041: cannot open
+  program database '…vc145.pdb'; if multiple CL.EXE write to the same .PDB file, please use /FS`.
+  Both were transient (retry alone fixed them), but they are real — exactly one `cmake --build` per
+  command, strictly sequential.
+
+- **Plan step 5 (recognise the GIF header) — DONE 20 Oct 2026, test-first.** Wrote
+  `mime_recognises_gif_signature` FIRST (two streams in the one case with fresh elements for the
+  second — `GIF89a` and `GIF87a` six-byte headers each followed by a short body; per stream asserts
+  `sink.GetData() == data` pass-through, `GetDetectedType() == MIMEType::GIF`,
+  `std::string(GetTypeName()) == "image/gif"`), ran it RED (`mime_recognises_gif_signature [FAIL],
+  #5`, `[TOTAL](6/6) [OK](5/6) [FAIL](1/6)`, exit 1 — `expected boolean to have the value of true
+  / value was : 0`, `tmp/qortestmime_step5_red.log`), then `Inspect()` gained a third fixed-order
+  guard (`m_detectedType == Unresolved && m_signatureCount >= 6`, `memcmp` the window vs
+  `gif89Signature` `{47 49 46 38 39 61}` OR `gif87Signature` `{… 37 …}` → `MIMEType::GIF`).
+  `mime.h` unchanged. Rebuilt `qor_mime` then `QORTestMIME` (separate commands) →
+  `[TOTAL](6/6) [OK](6/6)`, exit 0 (`tmp/qortestmime_step5_green.log`).
+  **Learning (record):** a format with more than one magic (GIF87a/GIF89a) is still ONE increment —
+  the test asserts every variant, the code gets one guard with one compare per variant.
+
 ### Next up
-- [ ] Plan step 4 — write `mime_recognises_jpeg_signature` FIRST (`GetDetectedType() == MIMEType::JPEG`
-  for the 3-byte magic `FF D8 FF`, `GetTypeName() == "image/jpeg"`), then the jpeg magic compare
+- [ ] Plan step 6 — write `mime_recognises_pdf_signature` FIRST (`GetDetectedType() == MIMEType::PDF`
+  for the 4-byte `%PDF` magic, `GetTypeName() == "application/pdf"`), then the pdf magic compare
   in `Inspect()` (`GetTypeName()` name table is already complete from step 3).
-- [ ] Plan steps 4..13 — the remaining nine types one test at a time (jpeg, gif, pdf, zip, xml, html,
+- [ ] Plan steps 6..13 — the remaining seven types one test at a time (pdf, zip, xml, html,
   json, javascript, plain text) + octet-stream fallback.
 - [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
   `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline

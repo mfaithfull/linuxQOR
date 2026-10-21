@@ -36,7 +36,24 @@
       in `Inspect()` (the non-consuming capture hook) so it re-evaluates per chunk. Verified 20 Oct 2026:
       `QORTestMIME.exe` `[TOTAL](4/4) [OK](4/4)` exit 0 from `build\test\framework\data\mime\Debug`.
 
+- [x] Step 4 `mime_recognises_jpeg_signature`: **verified 20 Oct 2026** — the test AND the jpeg
+      detector were already in the working tree (uncommitted) but had never been built or run, so
+      this increment was verified after the fact rather than driven red-then-green; its RED phase
+      was NOT observed. `cmake --build build --target qor_mime` + `--target QORTestMIME` → SUCCESS,
+      `QORTestMIME.exe` from `build\test\framework\data\mime\Debug` → `[TOTAL](5/5) [OK](5/5)` exit 0
+      (log `tmp/qortestmime_step4_green.log`). Detector = guard `m_signatureCount >= 3` + `memcmp`
+      vs `FF D8 FF` in `Inspect()`; `mime.h` unchanged.
+- [x] Step 5 `mime_recognises_gif_signature`: test written FIRST (two streams, fresh elements each,
+      `GIF89a` and `GIF87a`) and seen RED — `[FAIL] #5`, `[TOTAL](6/6) [OK](5/6) [FAIL](1/6)`, exit 1
+      (log `tmp/qortestmime_step5_red.log`), then `Inspect()` gained a third fixed-order guard
+      (`m_signatureCount >= 6`, `memcmp` vs the six-byte GIF89a header OR the GIF87a header →
+      `MIMEType::GIF`). Rebuilt `qor_mime` + `QORTestMIME` → `[TOTAL](6/6) [OK](6/6)`, no `[FAIL`,
+      exit 0 (log `tmp/qortestmime_step5_green.log`). `mime.h` unchanged.
+      Build gotcha hit while doing this: two `cmake --build` calls issued in the same batch run
+      concurrently and race on the shared `.pdb` (`C1090` / `C1041 … use /FS`) — one cmake build
+      per command, strictly sequential.
+
 ## Next increment
-- [ ] Step 4 `mime_recognises_jpeg_signature` — `GetDetectedType() == MIMEType::JPEG`,
-      `GetTypeName() == "image/jpeg"` for the 3-byte JPEG magic `FF D8 FF`; write the test
-      FIRST, then the jpeg magic compare in `Inspect()` (name table already complete from step 3).
+- [ ] Step 6 `mime_recognises_pdf_signature` — `GetDetectedType() == MIMEType::PDF`,
+      `GetTypeName() == "application/pdf"` for the 4-byte `%PDF` magic; write the test FIRST,
+      then the pdf magic compare in `Inspect()` (name table already complete from step 3).

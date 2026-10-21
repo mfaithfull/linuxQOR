@@ -1,14 +1,17 @@
 # Progress
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 3 (recognise the PNG signature) DONE and verified
-green** (`QORTestMIME` `[TOTAL](4/4) [OK](4/4)` exit 0, test written first and seen red). Earlier the
-same day: qor_mime plan steps 1-2 (pass octets through, capture the signature window) were done, and
+**Last updated:** 20 Oct 2026 — **qor_mime plan steps 4 (recognise the JPEG magic) and 5 (recognise the
+GIF header) DONE and verified green** (`QORTestMIME` step 4 `[TOTAL](5/5) [OK](5/5)` exit 0 — its test
+and detector were already in the working tree, never built or run, so the increment was verified after
+the fact and its RED phase was never observed; step 5 driven test-first: RED `[OK](5/6) [FAIL](1/6)`
+exit 1, then GREEN `[TOTAL](6/6) [OK](6/6)` exit 0). Earlier the same day: qor_mime plan steps 1-3 were
+done, and
 the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
 base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20 Oct 2026, steps 0-3: outline + pass-through + signature window + PNG)
+## MIME Recognition — qor_mime (20 Oct 2026, steps 0-5: outline + pass-through + signature window + PNG + JPEG + GIF)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -54,6 +57,27 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   `GetTypeName()` (`mime.h` unchanged). Verified 20 Oct 2026: `QORTestMIME.exe` `[TOTAL](4/4) [OK](4/4)`
   exit 0 from `build\test\framework\data\mime\Debug`. Name table is data (enum→name) so it is complete
   now; only the detectors stay incremental.
+- ✅ **Plan step 4** `mime_recognises_jpeg_signature`: **VERIFIED 20 Oct 2026 but NOT test-driven** — the
+  test and the jpeg detector (`m_signatureCount >= 3` + `memcmp` vs `FF D8 FF` in `Inspect()`) were
+  already in the working tree as uncommitted edits to `mime.cpp`/`test_mime.cpp` with no build, no run
+  and no record anywhere (no step-4 commit in `git log`). Built `qor_mime` + `QORTestMIME` and ran the
+  exe from `build\test\framework\data\mime\Debug` → `[TOTAL](5/5) [OK](5/5)`, no `[FAIL`, exit 0
+  (`tmp/qortestmime_step4_green.log`). The RED phase was never observed — recorded as such rather than
+  assumed. **Lesson: working-tree code that has never been built/run is not "done"; verify first.**
+- ✅ **Plan step 5** `mime_recognises_gif_signature`: test written FIRST (two streams in the case with
+  fresh elements for the second — `GIF89a` and `GIF87a` six-byte headers, pass-through +
+  `GetDetectedType() == MIMEType::GIF` + `GetTypeName() == "image/gif"` per stream) and seen RED
+  (`mime_recognises_gif_signature [FAIL], #5`, `[TOTAL](6/6) [OK](5/6) [FAIL](1/6)`, exit 1,
+  `tmp/qortestmime_step5_red.log`), then `Inspect()` gained a third fixed-order guard
+  (`m_signatureCount >= 6`, `memcmp` vs `{47 49 46 38 39 61}` OR `{47 49 46 38 37 61}` → `GIF`);
+  `mime.h` unchanged. Rebuilt → `[TOTAL](6/6) [OK](6/6)`, exit 0
+  (`tmp/qortestmime_step5_green.log`).
+- ⚠️ **NEW build gotcha (20 Oct 2026): `cmake --build` calls must be sequential, one per command.**
+  Two `cmake --build` invocations issued in the same command batch run concurrently over one build
+  tree and race on the shared `.pdb` — `error C1090: PDB API call failed` on an unrelated dependency
+  and `error C1041: cannot open program database '…vc145.pdb'; if multiple CL.EXE write to the same
+  .PDB file, please use /FS`. Both were transient (a retry alone rebuilt clean), but they are real
+  and were hit twice in this increment.
 - ✅ Re-verified after the ctest removal: reconfigure SUCCESS; every affected exe rebuilt and
   re-run **from its own build folder** — `QORTestURI` `[OK](1/1)`, `QORTestYAML` `[OK](1/1)`,
   `QORTestJSONGenerator` `[OK](36/36)`, `QORTestMIME` `[OK](1/1)`, all exit code 0. Note: the
