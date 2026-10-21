@@ -1,11 +1,11 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 6 (`mime_recognises_pdf_signature`) DONE and
-verified green, driven test-first** (RED `[FAIL] #6`, `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)` exit 1 →
-GREEN `[TOTAL](7/7) [OK](7/7)` exit 0; logs `tmp/qortestmime_step6_red.log`,
-`tmp/qortestmime_step6_green.log`). **4 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF). Details in the section below (and in `src/framework/data/mime/status.md`,
-`docs/agent/verification.md`). Earlier the same day: qor_mime plan steps 0-5 were done (step 4
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 7 (`mime_recognises_zip_signature`) DONE and
+verified green, driven test-first** (RED `[FAIL] #7`, `[TOTAL](8/8) [OK](7/8) [FAIL](1/8)` exit 1 →
+GREEN `[TOTAL](8/8) [OK](8/8)` exit 0; logs `tmp/qortestmime_step7_red.log`,
+`tmp/qortestmime_step7_green.log`). **5 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP). Details in the section below (and in `src/framework/data/mime/status.md`,
+`docs/agent/verification.md`). Earlier the same day: qor_mime plan steps 0-6 were done (step 4
 verified after the fact — its RED phase never observed), and the whole JSON generator increment is **DONE**,
 including the **full `QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process
 exit code 0)** — the paragraph in this earlier update was truncated; the full JSON generator
@@ -126,11 +126,27 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   (`tmp/qortestmime_step6_green.log`). No new gotchas — the one-build-per-command and
   build-then-run-separately rules both held this time.
 
+- **Plan step 7 (recognise the ZIP magic) — DONE 20 Oct 2026, test-first.** Wrote
+  `mime_recognises_zip_signature` FIRST (one Push-mode stream beginning `PK\x03\x04` — the four byte
+  `PK 03 04` local file header magic as raw octets, then a short body; asserts
+  `sink.GetData() == zipData` pass-through, `GetDetectedType() == MIMEType::ZIP`,
+  `std::string(GetTypeName()) == "application/zip"`), ran it RED (`mime_recognises_zip_signature [FAIL],
+  #7`, `[TOTAL](8/8) [OK](7/8) [FAIL](1/8)`, exit 1, `tmp/qortestmime_step7_red.log`), then `Inspect()`
+  gained a fifth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 4`,
+  `memcmp` the window vs `zipSignature` `{0x50,0x4B,0x03,0x04}` = `'P' 'K' 03 04` →
+  `MIMEType::ZIP`). `mime.h` unchanged (name table complete since step 3). Rebuilt `qor_mime` then
+  `QORTestMIME` (separate commands, one cmake build each) → `[TOTAL](8/8) [OK](8/8)`, exit 0
+  (`tmp/qortestmime_step7_green.log`). No new gotchas — the one-build-per-command and
+  build-then-run-separately rules both held this time. **Learning:** the ZIP magic's version
+  octets `03 04` are raw bytes, not text — the test writes the magic with `"PK\x03\x04"` hex
+  escapes (two escapes back-to-back, so no hex-digit swallowing ambiguity), and the guard
+  compares raw `qor::byte` values.
+
 ### Next up
-- [ ] Plan step 7 — write `mime_recognises_zip_signature` FIRST (`GetDetectedType() == MIMEType::ZIP`
-  for the 4-byte `PK 03 04` magic, `GetTypeName() == "application/zip"`), then the zip magic compare
+- [ ] Plan step 8 — write `mime_recognises_xml_signature` FIRST (leading text `<?xml`, 5 chars →
+  `GetDetectedType() == MIMEType::XML`, `GetTypeName() == "application/xml"`), then the xml guard
   in `Inspect()` (`GetTypeName()` name table is already complete from step 3).
-- [ ] Plan steps 7..13 — the remaining six types one test at a time (zip, xml, html,
+- [ ] Plan steps 8..13 — the remaining five types one test at a time (xml, html,
   json, javascript, plain text) + octet-stream fallback.
 - [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
   `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline

@@ -61,8 +61,16 @@
       `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](7/7) [OK](7/7)`, no `[FAIL`,
       exit 0 (log `tmp/qortestmime_step6_green.log`). 4 of 10 target types recognised.
 
+- [x] Step 7 `mime_recognises_zip_signature`: test written FIRST (one stream, 4-byte `PK 03 04`
+      local file header magic as raw octets (`"PK\x03\x04"`) + body, asserts pass-through,
+      `== MIMEType::ZIP`, `"application/zip"`) and seen RED — `[FAIL] #7`, `[TOTAL](8/8) [OK](7/8)
+      [FAIL](1/8)`, exit 1 (log `tmp/qortestmime_step7_red.log`), then `Inspect()` gained a fifth
+      fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 4`, `memcmp` vs
+      `{0x50,0x4B,0x03,0x04}` = `PK 03 04` → `MIMEType::ZIP`). `mime.h` unchanged. Rebuilt
+      `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](8/8) [OK](8/8)`, no `[FAIL`,
+      exit 0 (log `tmp/qortestmime_step7_green.log`). 5 of 10 target types recognised.
+
 ## Next increment
-- [ ] Step 7 `mime_recognises_zip_signature` — `GetDetectedType() == MIMEType::ZIP`,
-      `GetTypeName() == "application/zip"` for the 4-byte `PK 03 04` magic; write the test FIRST,
-      then the zip magic compare in `Inspect()` (name table already complete from step 3).
+- [ ] Step 8 `mime_recognises_xml_signature` — leading text `<?xml` (5 chars) → `application/xml`;
+      write the test FIRST, then the xml guard in `Inspect()` (name table already complete from step 3).
 

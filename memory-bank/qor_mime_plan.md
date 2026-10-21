@@ -198,5 +198,13 @@ Pitfalls confirmed while creating the outline:
   (`tmp/qortestmime_step6_build_lib.log`, `tmp/qortestmime_step6_build_exe.log`) show no
   `error C`/`warning C`/`LNK`. No new gotchas — the one-build-per-command and build-then-run-
   separately rules were both honoured this increment.
-- Next: step 7 `mime_recognises_zip_signature` (`PK 03 04` magic) — test FIRST.
+- Step 7 `mime_recognises_zip_signature` (test first): RED first — `mime_recognises_zip_signature [FAIL],
+  #7`, `[TOTAL](8/8) [OK](7/8) [FAIL](1/8)`, exit 1 (`tmp/qortestmime_step7_red.log`), one stream with
+  the 4-byte `PK 03 04` local file header magic written as raw octets (`"PK\x03\x04"` hex escapes, two
+  back-to-back escapes so no hex-digit swallowing) + short body, then `Inspect()` gained a fifth fixed-order
+  guard (`m_detectedType == Unresolved && m_signatureCount >= 4`, `memcmp` the window vs
+  `{0x50,0x4B,0x03,0x04}` → `MIMEType::ZIP`) → `[TOTAL](8/8) [OK](8/8)`, exit 0
+  (`tmp/qortestmime_step7_green.log`). `mime.h` unchanged; build logs (`tmp/qortestmime_step7_build_lib.log`,
+  `tmp/qortestmime_step7_build_exe.log`) show no `error C`/`warning C`/`LNK`. No new gotchas.
+- Next: step 8 `mime_recognises_xml_signature` (leading text `<?xml`, 5 chars) — test FIRST.
 

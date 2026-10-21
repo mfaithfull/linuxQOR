@@ -1,17 +1,17 @@
 # Progress
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan step 6 (recognise the PDF `%PDF` magic) DONE and
-verified green, driven test-first** (RED `[FAIL] #6`, `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)` exit 1 →
-GREEN `[TOTAL](7/7) [OK](7/7)` exit 0; logs `tmp/qortestmime_step6_red.log`,
-`tmp/qortestmime_step6_green.log`). **4 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF). Earlier the same day: qor_mime plan steps 0-5 were done (step 4 verified after the fact — its
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 7 (recognise the ZIP `PK 03 04` magic) DONE and
+verified green, driven test-first** (RED `[FAIL] #7`, `[TOTAL](8/8) [OK](7/8) [FAIL](1/8)` exit 1 →
+GREEN `[TOTAL](8/8) [OK](8/8)` exit 0; logs `tmp/qortestmime_step7_red.log`,
+`tmp/qortestmime_step7_green.log`). **5 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP). Earlier the same day: qor_mime plan steps 0-6 were done (step 4 verified after the fact — its
 RED phase never observed), and
 the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
 base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20 Oct 2026, steps 0-6: outline + pass-through + signature window + PNG + JPEG + GIF + PDF)
+## MIME Recognition — qor_mime (20 Oct 2026, steps 0-7: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -81,6 +81,16 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   `memcmp` vs `{0x25,0x50,0x44,0x46}` = `%PDF` → `MIMEType::PDF`); `mime.h` unchanged. Rebuilt
   `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](7/7) [OK](7/7)`, exit 0
   (`tmp/qortestmime_step6_green.log`). No new build gotchas this increment.
+- ✅ **Plan step 7** `mime_recognises_zip_signature`: test written FIRST (one Push-mode stream,
+  4-byte `PK 03 04` local file header magic as raw octets (`"PK\x03\x04"` hex escapes) plus a short
+  body; asserts `sink.GetData() == zipData` pass-through, `GetDetectedType() == MIMEType::ZIP`,
+  `std::string(GetTypeName()) == "application/zip"`) and seen RED (`mime_recognises_zip_signature [FAIL],
+  #7`, `[TOTAL](8/8) [OK](7/8) [FAIL](1/8)`, exit 1, `tmp/qortestmime_step7_red.log`), then `Inspect()`
+  gained a fifth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 4`,
+  `memcmp` vs `{0x50,0x4B,0x03,0x04}` = `PK 03 04` → `MIMEType::ZIP`); `mime.h` unchanged. Rebuilt
+  `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](8/8) [OK](8/8)`, exit 0
+  (`tmp/qortestmime_step7_green.log`). No new build gotchas this increment. 5 of 10 target types
+  recognised.
 - ⚠️ **NEW build gotcha (20 Oct 2026): `cmake --build` calls must be sequential, one per command.**
   Two `cmake --build` invocations issued in the same command batch run concurrently over one build
   tree and race on the shared `.pdb` — `error C1090: PDB API call failed` on an unrelated dependency

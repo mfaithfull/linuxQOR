@@ -110,7 +110,7 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
-                    //Plan steps 3,4,5,6 - classify the captured leading octets. The evaluation
+                    //Plan steps 3,4,5,6,7 - classify the captured leading octets. The evaluation
                     //order is fixed so results are deterministic (most definite signature
                     //first): png, jpeg, gif, pdf, zip, then the text markups, then the
                     //fallback. Each guard asks only for the octets its own signature needs,
@@ -163,6 +163,19 @@ namespace qor{ namespace mime{
                         if(memcmp(m_signature, pdfSignature, sizeof(pdfSignature)) == 0)
                         {
                             m_detectedType = MIMEType::PDF;
+                        }
+                    }
+                    //Plan step 7 - ZIP based archives begin with the four byte signature PK 03 04,
+                    //the ASCII characters 'P' 'K' followed by the version numbers 03 04 that marks
+                    //a local file header. The guard asks for four octets only, so it can decide
+                    //before the window is full.
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 4)
+                    {
+                        static const qor::byte zipSignature[4] =
+                            { 0x50, 0x4B, 0x03, 0x04 };//'P' 'K' 03 04
+                        if(memcmp(m_signature, zipSignature, sizeof(zipSignature)) == 0)
+                        {
+                            m_detectedType = MIMEType::ZIP;
                         }
                     }
                     return true;

@@ -21,6 +21,9 @@
 //leading octets are the six byte GIF magic GIF89a or GIF87a must be classified as image/gif.
 //step 6 - mime_recognises_pdf_signature: the fourth detection increment. A stream whose
 //leading octets are the four byte PDF file magic %PDF must be classified as application/pdf.
+//step 7 - mime_recognises_zip_signature: the fifth detection increment. A stream whose
+//leading octets are the four byte ZIP local file header magic PK 03 04 must be classified
+//as application/zip.
 
 
 #include "src/configuration/configuration.h"
@@ -378,5 +381,54 @@ qor_pp_test_case(mime_recognises_pdf_signature)
     //The captured signature is the PDF magic, so the stream is a PDF.
     qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PDF).isTrue();
     qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/pdf").isTrue();
+}
+
+
+//Step 7 - the fifth detection increment. A stream whose leading octets are the four byte
+//ZIP local file header magic PK 03 04 must be classified as application/zip: GetDetectedType()
+//== MIMEType::ZIP and GetTypeName() == "application/zip". The magic is the ASCII characters
+//'P' 'K' followed by the format version numbers 03 04, so the stream carries those raw octets
+//plus a short body so that it is longer than the signature alone. As in steps 3-6 the pass-through
+//contract is re-checked so that adding a detector cannot break the octet stream proven earlier.
+//This case is written FIRST and seen RED - Inspect() has no ZIP detector yet.
+qor_pp_test_case(mime_recognises_zip_signature)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //The four byte ZIP signature ('P' 'K' 03 04) and a short body so that the stream is
+    //longer than the signature alone.
+    std::string zipData;
+    zipData += "PK\x03\x04";
+    zipData += " payload bytes for the recognizer test stream.";
+
+    source.SetData(zipData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, zipData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == zipData).isTrue();
+
+    //The captured signature is the ZIP magic, so the stream is a ZIP archive.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::ZIP).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/zip").isTrue();
 }
 
