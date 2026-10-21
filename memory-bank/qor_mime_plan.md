@@ -101,7 +101,7 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | 7 ✅ | `mime_recognises_zip_signature` | `== ZIP`, `"application/zip"` | DONE 20 Oct 2026 — RED first, then fifth fixed-order guard in `Inspect()` (`m_signatureCount >= 4`, `memcmp` vs `50 4B 03 04` = `PK 03 04`) → `[TOTAL](8/8) [OK](8/8)` exit 0; `mime.h` unchanged |
 | 8 ✅ | `mime_recognises_xml_signature` | `== XML`, `"application/xml"` | DONE 20 Oct 2026 — test written FIRST and seen RED (`[FAIL] #8`, `[OK](8/9)`, exit 1), then a sixth fixed-order guard in `Inspect()` (`m_detectedType == Unresolved && m_signatureCount >= 5`, `memcmp` vs `3C 3F 78 6D 6C` = `<?xml`, a strong text heuristic — no binary magic) → `[TOTAL](9/9) [OK](9/9)` exit 0; `mime.h` unchanged |
 | 9 ✅ | `mime_recognises_html_signature` (named to match the `_signature` convention of steps 3-8, not the outline's `_from_markup`) | `== HTML`, `"text/html"` for `<!DOCTYPE html>...` AND for no-doctype `<HTML>...` | DONE 22 Oct 2026 — RED first (`[FAIL] #9`, `[OK](9/10)`, exit 1), then seventh fixed-order guard in `Inspect()`: case-folded `<!DOCTYPE HTML` (14 octets) + case-folded first tag {html,head,body,title}, via new file-local `markupMatch()` ASCII case-fold helper in `mime.cpp`; `mime.h` unchanged. Verified `[TOTAL](10/10) [OK](10/10)` exit 0 |
-| 10 | `mime_recognises_json_from_markup` | `== JSON`, `"application/json"` | first non-space `{`/`[` check |
+| 10 ✅ | `mime_recognises_json_signature` (named to match the `_signature` convention of steps 3-9, not the outline's `_from_markup`) | `== JSON`, `"application/json"` for a `{` object AND for a whitespace-padded `[` array | DONE 22 Oct 2026 — RED first (`[FAIL] #10`, `[OK](10/11)`, exit 1), then eighth fixed-order guard in `Inspect()`: scan the window for the first octet that is not JSON whitespace (0x20/0x09/0x0A/0x0D) and set `MIMEType::JSON` on `{`/`[`, then stop; `mime.h` unchanged. Verified `[TOTAL](11/11) [OK](11/11)` exit 0 |
 | 11 | `mime_recognises_javascript_from_markup` | `== JavaScript`, `"application/javascript"` | shebang/comment + keyword heuristic |
 | 12 | `mime_recognises_plain_text` | `== PlainText`, `"text/plain"` | printable-byte scan default |
 | 13 | `mime_falls_back_to_octet_stream` | `== OctetStream`, `"application/octet-stream"` | fallback branch |
@@ -231,4 +231,25 @@ Pitfalls confirmed while creating the outline:
   build logs `tmp/qortestmime_step9_build_lib.log`, `tmp/qortestmime_step9_build_exe.log` show no
   `error C`/`warning C`/`LNK`). **7 of 10 target types recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML).
   No new gotchas — one-cmake-build-per-command and build-then-run-separately both held.
-- Next: step 10 `mime_recognises_json_signature` (heuristic: first non-space octet is `{` or `[`) — test FIRST.
+- Step 10 ✅ `mime_recognises_json_signature` — wrote `mime_recognises_json_signature` FIRST in
+  `test_mime.cpp` (TWO Push-mode streams in the one case, fresh elements for the second — the shape of
+  steps 5 and 9: stream 1 a JSON object with no leading whitespace and a longer body, stream 2 a JSON
+  array preceded by three spaces, a line feed and a tab so the skip-past-whitespace half of the
+  heuristic is exercised; per stream asserts pass-through, `== MIMEType::JSON`, `"application/json"`),
+  ran it RED (`[FAIL] #10`, `[TOTAL](11/11) [OK](10/11) [FAIL](1/11)`, exit 1, `tmp/qortestmime_step10_red.log`,
+  reason `expected boolean to have the value of true / value was : 0`), then `Inspect()` gained an eighth
+  fixed-order guard after the HTML markup guards: scan the captured window for the FIRST octet that is
+  NOT JSON whitespace (0x20 space, 0x09 tab, 0x0A line feed, 0x0D carriage return — the only four
+  characters JSON allows as whitespace) and set `MIMEType::JSON` when that octet is `{` (0x7B) or `[`
+  (0x5B), then stop the scan. JSON has no magic number, so this is a text heuristic; unlike the markup
+  compares above it is not case-relevant, so a plain octet compare is enough and `markupMatch()` is NOT
+  used; the scan stops at the first non-skipped octet so a later `[` in a non-JSON stream cannot produce
+  a false positive. `mime.h` unchanged; the running comment in `Inspect()` corrected to "remaining two
+  types". Rebuilt `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](11/11) [OK](11/11)`, no
+  `[FAIL`, exit 0 (`tmp/qortestmime_step10_green.log`; build logs `tmp/qortestmime_step10_build_lib.log`,
+  `tmp/qortestmime_step10_build_exe.log` show no `error C`/`warning C`/`LNK`). **8 of 10 target types
+  recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON). No new gotchas — one-cmake-build-per-command
+  and build-then-run-separately both held.
+- Next: step 11 `mime_recognises_javascript_signature` (weak heuristic: shebang `#!`, or a `//`/`/*`
+  comment plus ECMA keywords, or `function `/`=>`) — test FIRST, then the guard in `Inspect()` AFTER the
+  json guard.

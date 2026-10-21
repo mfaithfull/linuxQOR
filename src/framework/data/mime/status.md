@@ -98,8 +98,31 @@
       `tmp/qortestmime_step9_build_exe.log`, `tmp/qortestmime_step9_green.log`). **7 of 10
       target types recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML).
 
+- [x] Step 10 `mime_recognises_json_signature`: test written FIRST (TWO Push-mode streams in the
+      one case, fresh elements for the second — the shape of steps 5 and 9: stream 1 a JSON object
+      `{ "qor" : "mime test", "step" : 10 }` with no leading whitespace, stream 2 a JSON array
+      preceded by JSON whitespace (three spaces, a line feed, a tab) so the skip-past-whitespace
+      half of the heuristic is exercised; per stream asserts pass-through,
+      `== MIMEType::JSON`, `"application/json"`) and seen RED — `mime_recognises_json_signature
+      [FAIL], #10`, `[TOTAL](11/11) [OK](10/11) [FAIL](1/11)`, exit 1 (log
+      `tmp/qortestmime_step10_red.log`, build log `tmp/qortestmime_step10_build_red.log`), then
+      `Inspect()` gained an eighth fixed-order guard after the HTML markup guards: scan the captured
+      window for the FIRST octet that is not JSON white space (0x20 space, 0x09 tab, 0x0A line feed,
+      0x0D carriage return — the only four characters JSON allows as whitespace) and set
+      `MIMEType::JSON` when that octet is `{` (0x7B) or `[` (0x5B), then stop the scan. JSON has no
+      magic number, so this is a text heuristic evaluated after the HTML checks in the fixed order;
+      unlike the markup compares above it is not case-relevant, so a plain octet compare is enough
+      and `markupMatch()` is not used. It decides as soon as one non-whitespace octet is captured, so
+      it does not need the window to be full. `mime.h` unchanged (name table complete since step 3).
+      Rebuilt `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](11/11) [OK](11/11)`, no
+      `[FAIL`, exit 0 (logs `tmp/qortestmime_step10_build_lib.log`,
+      `tmp/qortestmime_step10_build_exe.log`, `tmp/qortestmime_step10_green.log`). **8 of 10
+      target types recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON).
+
 ## Next increment
-- [ ] Step 10 `mime_recognises_json_signature` — first non-space octet is `{` or `[` →
-      `application/json`; write the test FIRST, then the json guard in `Inspect()` after the
-      html guard (name table already complete from step 3).
+- [ ] Step 11 `mime_recognises_javascript_signature` (the plan table's `mime_recognises_javascript_from_markup`
+      renamed to the `_signature` convention used from step 3 on, as decided for step 9) — weak
+      heuristic: shebang `#!`, or a `//` / `/*` comment plus ECMA keywords, or `function ` / `=>`;
+      write the test FIRST, then the guard in `Inspect()` AFTER the json guard. Remaining after that:
+      step 12 plain text (printable-byte scan default), step 13 the octet-stream fallback.
 

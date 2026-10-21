@@ -1,12 +1,13 @@
 # Active Context
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 9 (`mime_recognises_html_signature`) DONE and
-verified green, driven test-first** (RED `[FAIL] #9`, `[TOTAL](10/10) [OK](9/10) [FAIL](1/10)` exit 1 →
-GREEN `[TOTAL](10/10) [OK](10/10)` exit 0; logs `tmp/qortestmime_step9_red.log`,
-`tmp/qortestmime_step9_green.log`). **7 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML, HTML). Step 8 (`mime_recognises_xml_signature`) and step 7 (`mime_recognises_zip_signature`)
-were likewise DONE and verified green test-first (RED `[FAIL] #8` → GREEN `[TOTAL](9/9) [OK](9/9)`;
-RED `[FAIL] #7` → GREEN `[TOTAL](8/8) [OK](8/8)`). Details in the section below (and in `src/framework/data/mime/status.md`,
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 10 (`mime_recognises_json_signature`) DONE and
+verified green, driven test-first** (RED `[FAIL] #10`, `[TOTAL](11/11) [OK](10/11) [FAIL](1/11)` exit 1 →
+GREEN `[TOTAL](11/11) [OK](11/11)` exit 0; logs `tmp/qortestmime_step10_red.log`,
+`tmp/qortestmime_step10_green.log`). **8 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML, HTML, JSON). Step 9 (`mime_recognises_html_signature`), step 8 (`mime_recognises_xml_signature`)
+and step 7 (`mime_recognises_zip_signature`) were likewise DONE and verified green test-first (step 9
+RED `[FAIL] #9` → GREEN `[TOTAL](10/10) [OK](10/10)`; step 8 RED `[FAIL] #8` → GREEN `[TOTAL](9/9) [OK](9/9)`;
+step 7 RED `[FAIL] #7` → GREEN `[TOTAL](8/8) [OK](8/8)`). Details in the section below (and in `src/framework/data/mime/status.md`,
 `docs/agent/verification.md`). Earlier the same day: qor_mime plan steps 0-6 were done (step 4
 verified after the fact — its RED phase never observed), and the whole JSON generator increment is **DONE**,
 including the **full `QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process
@@ -169,13 +170,33 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   `mime.h` unchanged (name table complete since step 3). Rebuilt `qor_mime` then `QORTestMIME`
   (separate commands, one cmake build each) → `[TOTAL](10/10) [OK](10/10)`, no `[FAIL`, exit 0
   (`tmp/qortestmime_step9_green.log`). **7 of 10 target types recognised.** No new build gotchas.
+- **Plan step 10 (recognise JSON) — DONE 22 Oct 2026, test-first.** Wrote
+  `mime_recognises_json_signature` FIRST (TWO streams in the one case with fresh elements for the
+  second — the shape of steps 5 and 9: a JSON object `{ "qor" : "mime test", "step" : 10 }` with no
+  leading whitespace, and a JSON array preceded by JSON whitespace (three spaces, a line feed, a tab)
+  which exercises the skip-past-whitespace half; per stream asserts `sink.GetData() == data` pass-through,
+  `GetDetectedType() == MIMEType::JSON`, `std::string(GetTypeName()) == "application/json"`), ran it RED
+  (`mime_recognises_json_signature [FAIL], #10`, `[TOTAL](11/11) [OK](10/11) [FAIL](1/11)`, exit 1,
+  `tmp/qortestmime_step10_red.log`), then `Inspect()` gained an eighth fixed-order guard after the
+  HTML guards: scan the captured window for the FIRST octet that is not JSON whitespace (0x20 space,
+  0x09 tab, 0x0A line feed, 0x0D carriage return — the only four characters JSON allows as whitespace)
+  and set `MIMEType::JSON` when that octet is `{` (0x7B) or `[` (0x5B), then `break`. **Learning (record):**
+  a heuristic with a variable-length prefix (JSON whitespace) is a window SCAN, not a fixed-offset
+  compare, and it must stop at the first non-skipped octet so a later `[` in, say, a plain-text stream
+  cannot produce a false positive; unlike the HTML compares it is not case-relevant, so no helper was
+  needed — `markupMatch()` is not used. It decides as soon as one non-whitespace octet is captured, so
+  it does not need the window to be full. `mime.h` unchanged (name table complete since step 3); the
+  running comment in `Inspect()` corrected to "remaining two types". Rebuilt `qor_mime` then `QORTestMIME`
+  (separate commands, one cmake build each) → `[TOTAL](11/11) [OK](11/11)`, no `[FAIL`, exit 0
+  (`tmp/qortestmime_step10_green.log`). **8 of 10 target types recognised.** No new build gotchas.
+
 
 ### Next up
-- [ ] Plan step 10 — write `mime_recognises_json_signature` FIRST (first non-space octet is `{` or `[` →
-  `GetDetectedType() == MIMEType::JSON`, `GetTypeName() == "application/json"`), then the json guard
-  in `Inspect()` after the html guard (`GetTypeName()` name table is already complete from step 3).
-- [ ] Plan steps 10..13 — the remaining three types one test at a time (json,
-  javascript, plain text) + octet-stream fallback.
+- [ ] Plan step 11 — write `mime_recognises_javascript_signature` FIRST (weak heuristic: shebang `#!`,
+  or a `//` / `/*` comment plus ECMA keywords, or `function ` / `=>`), then the guard in `Inspect()`
+  AFTER the json guard. (Plan table calls it `mime_recognises_javascript_from_markup`; renamed to the
+  `_signature` convention, as decided for step 9.)
+- [ ] Plan steps 12..13 — plain text (printable-byte scan default) + octet-stream fallback.
 - [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
   `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline
   test exe to prove no framework regression).

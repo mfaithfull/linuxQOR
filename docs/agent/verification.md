@@ -16,6 +16,41 @@ clang-tidy -p build docs/.../file.cpp
 
 ## Results
 
+### 2026-10-22 — qor_mime plan step 10 / QORTestMIME (JSON container recognition) — PASS
+- **Test first**: added `mime_recognises_json_signature` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE touching `mime.cpp`/`mime.h` (TWO Push-mode streams in the one case, fresh elements for the
+  second — the shape of steps 5 and 9: stream 1 the JSON object `{ "qor" : "mime test", "step" : 10 }`
+  with no leading whitespace and a longer body, stream 2 a JSON array preceded by JSON whitespace
+  (three spaces, a line feed, a tab) so the skip-past-whitespace half of the heuristic is exercised;
+  per stream asserts `sink.GetData() == data` pass-through, `GetDetectedType() == MIMEType::JSON`,
+  `std::string(GetTypeName()) == "application/json"`).
+- **Run (red)**: `cmake --build build --target QORTestMIME` (lib unchanged) then the exe run in its OWN
+  command from `build\test\framework\data\mime\Debug` → `test_mime.cpp(610) : mime_recognises_json_signature
+  [FAIL], #10`, `[TOTAL](11/11) [OK](10/11) [FAIL](1/11)`, exit 1, reason `expected boolean to have the value of true / value was : 0`
+  → the test is meaningful (no JSON detector exists). Log `tmp/qortestmime_step10_red.log`,
+  build log `tmp/qortestmime_step10_build_red.log`.
+- **Code**: `mime.cpp` only — an eighth fixed-order guard in `Inspect()` after the HTML markup guards:
+  scan the captured window for the FIRST octet that is not JSON white space (0x20 space, 0x09 tab,
+  0x0A line feed, 0x0D carriage return — the only four characters JSON allows as whitespace), then
+  set `m_detectedType = MIMEType::JSON` when that octet is `{` (0x7B) or `[` (0x5B) and stop the scan.
+  JSON has no magic number, so this is a text heuristic evaluated after the HTML checks in the fixed
+  order (png, jpeg, gif, pdf, zip, xml, html, json, ...). Unlike the markup compares above it is NOT
+  case-relevant, so a plain octet compare is enough — `markupMatch()` is not used and no new helper
+  was needed. The guard decides as soon as a single non-whitespace octet is captured, so it does not
+  need the window to be full. `mime.h` unchanged (name table complete since step 3); the running
+  comment in `Inspect()` was corrected from "remaining three types" to "remaining two types".
+- **Build**: `cmake --build build --target qor_mime` → exit 0 (`qor_mime.dll`), then
+  `cmake --build build --target QORTestMIME` → exit 0, no `error C`/`warning C`/`LNK` in either log
+  (`tmp/qortestmime_step10_build_lib.log`, `tmp/qortestmime_step10_build_exe.log`).
+- **Run (green)**: from `build\test\framework\data\mime\Debug` → `[TOTAL](11/11) [OK](11/11)`, no
+  `[FAIL` in the log, `$LASTEXITCODE = 0` → PASS. Log `tmp/qortestmime_step10_green.log`. **8 of 10
+  target types now recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON).
+- No new gotchas: the one-cmake-build-per-command and build-then-run-separately rules both held.
+  **Learning:** a heuristic that must skip a variable-length prefix (JSON whitespace before the
+  container) is a scan of the window, not a fixed-offset compare — and it must stop at the first
+  non-skipped octet so that a later octet of the same kind cannot produce a false positive.
+
+
 ### 2026-10-22 — qor_mime plan step 9 / QORTestMIME (HTML doctype + document-level first-tag recognition) — PASS
 - **Test first**: added `mime_recognises_html_signature` to `test/framework/data/mime/test_mime.cpp`
   BEFORE touching `mime.cpp`/`mime.h` (TWO Push-mode streams in the one case, fresh elements for the

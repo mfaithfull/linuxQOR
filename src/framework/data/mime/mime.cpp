@@ -143,14 +143,14 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
-                    //Plan steps 3,4,5,6,7,8,9 - classify the captured leading octets. The evaluation
+                    //Plan steps 3,4,5,6,7,8,9,10 - classify the captured leading octets. The evaluation
                     //order is fixed so results are deterministic (most definite signature
                     //first): png, jpeg, gif, pdf, zip, then the text markups, then the
                     //fallback. Each guard asks only for the octets its own signature needs,
                     //so a shorter signature can decide before the window is full. The
                     //signature window is never consumed (the read was rejected), so these
                     //checks run again on every chunk as more leading octets arrive. The
-                    //remaining three types (json, javascript, plain text) are added one
+                    //remaining two types (javascript, plain text) are added one
                     //test at a time after this.
                     if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8)
                     {
@@ -267,6 +267,33 @@ namespace qor{ namespace mime{
                             }
                         }
                     }
+                    //Plan step 10 - a JSON document begins with a value, and the only two values
+                    //that can be recognised from a signature window are the two containers: the
+                    //object brace and the array bracket. JSON has no magic number, so this is a
+                    //text heuristic evaluated after the HTML markup checks in the fixed order. It
+                    //is the first octet that is not JSON white space that decides, and the only
+                    //four characters JSON allows as whitespace are space, tab, line feed and
+                    //carriage return. Unlike the markup compares above, this compare is not case
+                    //relevant, so a plain octet compare is enough and markupMatch is not needed.
+                    //It can decide as soon as a single non-whitespace octet has been captured, so
+                    //it does not need the window to be full.
+                    if(m_detectedType == MIMEType::Unresolved)
+                    {
+                        for(size_t index = 0; index < m_signatureCount; ++index)
+                        {
+                            const qor::byte octet = m_signature[index];
+                            if(octet == 0x20 || octet == 0x09 || octet == 0x0A || octet == 0x0D)//JSON whitespace: ' ' tab line feed carriage return
+                            {
+                                continue;
+                            }
+                            if(octet == 0x7B || octet == 0x5B)//'{' or '['
+                            {
+                                m_detectedType = MIMEType::JSON;
+                            }
+                            break;
+                        }
+                    }
+
                     return true;
                 }
                 return false;

@@ -1,10 +1,12 @@
 # Progress
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 9 (recognise HTML — the `<!DOCTYPE html` doctype and the
-document-level first tag) DONE and verified green, driven test-first** (RED `[FAIL] #9`, `[TOTAL](10/10)
-[OK](9/10) [FAIL](1/10)` exit 1 → GREEN `[TOTAL](10/10) [OK](10/10)` exit 0; logs `tmp/qortestmime_step9_red.log`,
-`tmp/qortestmime_step9_green.log`). **7 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML, HTML). Earlier the same day: qor_mime plan step 8 (recognise the XML `<?xml` declaration marker)
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 10 (recognise JSON — first non-JSON-whitespace
+octet is `{` or `[`) DONE and verified green, driven test-first** (RED `[FAIL] #10`, `[TOTAL](11/11)
+[OK](10/11) [FAIL](1/11)` exit 1 → GREEN `[TOTAL](11/11) [OK](11/11)` exit 0; logs `tmp/qortestmime_step10_red.log`,
+`tmp/qortestmime_step10_green.log`). **8 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML, HTML, JSON). Earlier the same day: qor_mime plan step 9 (recognise HTML — the `<!DOCTYPE html`
+doctype and the document-level first tag) was DONE and verified green test-first (RED `[FAIL] #9` → GREEN
+`[TOTAL](10/10) [OK](10/10)`), qor_mime plan step 8 (recognise the XML `<?xml` declaration marker)
 was DONE and verified green test-first, qor_mime plan step 7 (recognise the ZIP `PK 03 04` magic) was likewise
 DONE, and qor_mime plan steps 0-6 were done (step 4 verified after the fact — its
 RED phase never observed), and
@@ -13,7 +15,7 @@ base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, proces
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20-22 Oct 2026, steps 0-9: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML + HTML)
+## MIME Recognition — qor_mime (20-22 Oct 2026, steps 0-10: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML + HTML + JSON)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -120,6 +122,24 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   commands) → `[TOTAL](10/10) [OK](10/10)`, exit 0 (`tmp/qortestmime_step9_green.log`; build logs
   `tmp/qortestmime_step9_build_lib.log`/`tmp/qortestmime_step9_build_exe.log` show no
   `error C`/`warning C`/`LNK`). No new build gotchas. **7 of 10 target types recognised.**
+- ✅ **Plan step 10** `mime_recognises_json_signature`: test written FIRST (TWO streams in the one case,
+  fresh elements for the second — the shape of steps 5 and 9: a JSON object `{ "qor" : "mime test", "step" : 10 }`
+  with no leading whitespace, and a JSON array preceded by JSON whitespace (three spaces, a line feed, a tab)
+  so the skip-past-whitespace half of the heuristic is exercised; per stream asserts `sink.GetData() == data`
+  pass-through, `GetDetectedType() == MIMEType::JSON`, `std::string(GetTypeName()) == "application/json"`) and
+  seen RED (`mime_recognises_json_signature [FAIL], #10`, `[TOTAL](11/11) [OK](10/11) [FAIL](1/11)`, exit 1,
+  `tmp/qortestmime_step10_red.log`, reason `expected boolean to have the value of true / value was : 0`), then
+  `Inspect()` gained an eighth fixed-order guard after the HTML guards: scan the captured window for the FIRST
+  octet that is not JSON whitespace (0x20 space, 0x09 tab, 0x0A line feed, 0x0D carriage return — the only four
+  characters JSON allows as whitespace) and set `MIMEType::JSON` when that octet is `{` or `[`, then stop the
+  scan. JSON has no magic number, so this is a text heuristic; unlike the markup compares above it is NOT case-relevant,
+  so a plain octet compare is enough and `markupMatch()` is not used. It decides as soon as one non-whitespace
+  octet is captured, so it does not need the window to be full. `mime.h` unchanged. Rebuilt `qor_mime`
+  then `QORTestMIME` (separate commands) → `[TOTAL](11/11) [OK](11/11)`, exit 0 (`tmp/qortestmime_step10_green.log`;
+  build logs `tmp/qortestmime_step10_build_lib.log`/`tmp/qortestmime_step10_build_exe.log` show no
+  `error C`/`warning C`/`LNK`). No new build gotchas. **8 of 10 target types recognised.**
+
+
 - ⚠️ **NEW build gotcha (20 Oct 2026): `cmake --build` calls must be sequential, one per command.**
   Two `cmake --build` invocations issued in the same command batch run concurrently over one build
   tree and race on the shared `.pdb` — `error C1090: PDB API call failed` on an unrelated dependency
@@ -142,8 +162,9 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   pipeline). If a components-layer home is preferred later, the move is folder + one CMakeLists line.
 
 ### What was NOT done
-- ❌ NO MIME detection logic yet — `Inspect()` is a documented placeholder (pass through).
-  Detection is added test-first, one type per increment (plan steps 2..13).
+- ⏳ Detection still to add: plan step 11 (javascript), step 12 (plain text) and the step 13
+  octet-stream fallback — `Inspect()` recognises 8 of the 10 target types today (PNG, JPEG, GIF,
+  PDF, ZIP, XML, HTML, JSON). Detection is added test-first, one type per increment.
 - ❌ No consumer wired up yet (the HTTP Content-Type TODO, UI renderer loader,
   `Resource::Type()` remain untouched).
 

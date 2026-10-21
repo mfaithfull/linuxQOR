@@ -38,6 +38,16 @@
 //which the first-tag check (the first '<' starts a tag named html, head, body or title) must
 //also accept. Evaluated after the XML marker in the fixed order (png, jpeg, gif, pdf, zip,
 //xml, html, ...).
+//step 10 - mime_recognises_json_signature: the eighth detection increment. A stream that is
+//a JSON document must be classified as application/json: GetDetectedType() == MIMEType::JSON and
+//GetTypeName() == "application/json". JSON has no magic number, so this is a text heuristic - the
+//first octet that is not JSON white space (space, tab, line feed and carriage return, the only four
+//characters JSON allows as whitespace) must open a container: the object brace or the array bracket.
+//The test asserts both container forms, one stream each with fresh elements for the second, and the
+//second stream carries leading whitespace so the skip-past-whitespace half of the heuristic is
+//exercised. Evaluated after the HTML markup checks in the fixed order (png, jpeg, gif, pdf, zip,
+//xml, html, json, ...).
+
 
 
 #include "src/configuration/configuration.h"
@@ -584,4 +594,93 @@ qor_pp_test_case(mime_recognises_html_signature)
     qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::HTML).isTrue();
     qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "text/html").isTrue();
 }
+
+//Step 10 - the eighth detection increment. A stream that is a JSON document must be classified as
+//application/json: GetDetectedType() == MIMEType::JSON and GetTypeName() == "application/json".
+//JSON has no magic number, so this is a text heuristic - the first octet that is not JSON white
+//space (space, tab, line feed and carriage return, the only four characters JSON allows as
+//whitespace) must open a container: the object brace or the array bracket. The test asserts both
+//container forms, one stream each, using fresh elements for the second (as in step 5's two GIF
+//variants and step 9's two HTML variants; Reset() reuse is plan step 15 and is not exercised here).
+//The first stream is an object with no leading whitespace so the brace decides immediately, and the
+//second stream is an array preceded by spaces, a line feed and a tab, so the skip-past-whitespace
+//half of the heuristic is exercised. As in steps 3-9 the pass-through contract is re-checked so that
+//adding a detector cannot break the octet stream proven earlier. This case is written FIRST and
+//seen RED - Inspect() has no JSON detector yet.
+qor_pp_test_case(mime_recognises_json_signature)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //A JSON object: the opening brace is the first octet, so the heuristic has nothing to skip.
+    //The body is short but long enough that the stream exceeds the signature window.
+    std::string jsonObjectData;
+    jsonObjectData += "{ \"qor\" : \"mime test\", \"step\" : 10 }\n";
+    jsonObjectData += "{\"padding\":\"payload octets so the stream exceeds the signature window\"}";
+
+    source.SetData(jsonObjectData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, jsonObjectData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == jsonObjectData).isTrue();
+
+    //The first non-space octet is the object brace, so the stream is JSON.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::JSON).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/json").isTrue();
+
+    //The second stream: a JSON array whose bracket is preceded by JSON whitespace - three spaces,
+    //a line feed and a tab - so the heuristic has to skip whitespace before it can decide. Fresh
+    //elements, as for the second stream in steps 2, 5 and 9.
+    ByteBuffer inBuffer2(128);
+    ByteBuffer outBuffer2(128);
+
+    StringSource source2;
+    source2.SetParent(&testPipeline);
+    source2.SetBuffer(&inBuffer2);
+
+    StringSink sink2;
+    sink2.SetParent(&testPipeline);
+    sink2.SetBuffer(&outBuffer2);
+
+    qor::mime::MIMERecognizerFilter recognizer2;
+    recognizer2.SetParent(&testPipeline);
+    recognizer2.SetSource(&source2);
+    recognizer2.SetSink(&sink2);
+
+    std::string jsonArrayData;
+    jsonArrayData += "   \n\t[ 1, 2, 3 ]\n";
+    jsonArrayData += "[\"padding\",\"payload octets so the stream exceeds the signature window\"]";
+
+    source2.SetData(jsonArrayData);
+
+    size_t unitsPumped2 = 0;
+    recognizer2.Pump(unitsPumped2, jsonArrayData.length());
+
+    //The recognizer must not alter the octet stream, leading whitespace included.
+    qor_pp_assert_that(sink2.GetData() == jsonArrayData).isTrue();
+
+    //The first non-space octet is the array bracket, so the stream is JSON.
+    qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::JSON).isTrue();
+    qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "application/json").isTrue();
+}
+
 
