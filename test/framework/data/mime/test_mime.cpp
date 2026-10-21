@@ -19,6 +19,8 @@
 //leading octets are the three byte JPEG magic FF D8 FF must be classified as image/jpeg.
 //step 5 - mime_recognises_gif_signature: the third detection increment. A stream whose
 //leading octets are the six byte GIF magic GIF89a or GIF87a must be classified as image/gif.
+//step 6 - mime_recognises_pdf_signature: the fourth detection increment. A stream whose
+//leading octets are the four byte PDF file magic %PDF must be classified as application/pdf.
 
 
 #include "src/configuration/configuration.h"
@@ -327,5 +329,54 @@ qor_pp_test_case(mime_recognises_gif_signature)
     qor_pp_assert_that(sink2.GetData() == gif87Data).isTrue();
     qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::GIF).isTrue();
     qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "image/gif").isTrue();
+}
+
+
+//Step 6 - the fourth detection increment. A stream whose leading octets are the four byte
+//PDF file magic %PDF must be classified as application/pdf: GetDetectedType() ==
+//MIMEType::PDF and GetTypeName() == "application/pdf". The PDF header is followed by the
+//version marker in real files, so the stream carries "%PDF-1.4" plus a short body. As in
+//steps 3-5 the pass-through contract is re-checked so that adding a detector cannot break
+//the octet stream proven earlier. This case is written FIRST and seen RED - Inspect() has
+//no PDF detector yet.
+qor_pp_test_case(mime_recognises_pdf_signature)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //The four byte PDF file signature, the version marker, and a short body so that the
+    //stream is longer than the signature alone.
+    std::string pdfData;
+    pdfData += "%PDF-1.4\n";
+    pdfData += " payload bytes for the recognizer test stream.";
+
+    source.SetData(pdfData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, pdfData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == pdfData).isTrue();
+
+    //The captured signature is the PDF magic, so the stream is a PDF.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PDF).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/pdf").isTrue();
 }
 

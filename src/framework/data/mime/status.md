@@ -53,7 +53,16 @@
       concurrently and race on the shared `.pdb` (`C1090` / `C1041 … use /FS`) — one cmake build
       per command, strictly sequential.
 
+- [x] Step 6 `mime_recognises_pdf_signature`: test written FIRST (one stream, `%PDF-1.4\n` + body,
+      asserts pass-through, `== MIMEType::PDF`, `"application/pdf"`) and seen RED — `[FAIL] #6`,
+      `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)`, exit 1 (log `tmp/qortestmime_step6_red.log`), then `Inspect()`
+      gained a fourth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 4`,
+      `memcmp` vs `{0x25,0x50,0x44,0x46}` = `%PDF` → `MIMEType::PDF`). `mime.h` unchanged. Rebuilt
+      `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](7/7) [OK](7/7)`, no `[FAIL`,
+      exit 0 (log `tmp/qortestmime_step6_green.log`). 4 of 10 target types recognised.
+
 ## Next increment
-- [ ] Step 6 `mime_recognises_pdf_signature` — `GetDetectedType() == MIMEType::PDF`,
-      `GetTypeName() == "application/pdf"` for the 4-byte `%PDF` magic; write the test FIRST,
-      then the pdf magic compare in `Inspect()` (name table already complete from step 3).
+- [ ] Step 7 `mime_recognises_zip_signature` — `GetDetectedType() == MIMEType::ZIP`,
+      `GetTypeName() == "application/zip"` for the 4-byte `PK 03 04` magic; write the test FIRST,
+      then the zip magic compare in `Inspect()` (name table already complete from step 3).
+

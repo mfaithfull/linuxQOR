@@ -1,17 +1,17 @@
 # Progress
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan steps 4 (recognise the JPEG magic) and 5 (recognise the
-GIF header) DONE and verified green** (`QORTestMIME` step 4 `[TOTAL](5/5) [OK](5/5)` exit 0 — its test
-and detector were already in the working tree, never built or run, so the increment was verified after
-the fact and its RED phase was never observed; step 5 driven test-first: RED `[OK](5/6) [FAIL](1/6)`
-exit 1, then GREEN `[TOTAL](6/6) [OK](6/6)` exit 0). Earlier the same day: qor_mime plan steps 1-3 were
-done, and
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 6 (recognise the PDF `%PDF` magic) DONE and
+verified green, driven test-first** (RED `[FAIL] #6`, `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)` exit 1 →
+GREEN `[TOTAL](7/7) [OK](7/7)` exit 0; logs `tmp/qortestmime_step6_red.log`,
+`tmp/qortestmime_step6_green.log`). **4 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF). Earlier the same day: qor_mime plan steps 0-5 were done (step 4 verified after the fact — its
+RED phase never observed), and
 the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
 base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20 Oct 2026, steps 0-5: outline + pass-through + signature window + PNG + JPEG + GIF)
+## MIME Recognition — qor_mime (20 Oct 2026, steps 0-6: outline + pass-through + signature window + PNG + JPEG + GIF + PDF)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -72,6 +72,15 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   (`m_signatureCount >= 6`, `memcmp` vs `{47 49 46 38 39 61}` OR `{47 49 46 38 37 61}` → `GIF`);
   `mime.h` unchanged. Rebuilt → `[TOTAL](6/6) [OK](6/6)`, exit 0
   (`tmp/qortestmime_step5_green.log`).
+- ✅ **Plan step 6** `mime_recognises_pdf_signature`: test written FIRST (one Push-mode stream,
+  `%PDF-1.4\n` — the 4-byte `%PDF` magic plus version marker — plus a short body; asserts
+  `sink.GetData() == pdfData` pass-through, `GetDetectedType() == MIMEType::PDF`,
+  `std::string(GetTypeName()) == "application/pdf"`) and seen RED (`mime_recognises_pdf_signature [FAIL],
+  #6`, `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)`, exit 1, `tmp/qortestmime_step6_red.log`), then `Inspect()`
+  gained a fourth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 4`,
+  `memcmp` vs `{0x25,0x50,0x44,0x46}` = `%PDF` → `MIMEType::PDF`); `mime.h` unchanged. Rebuilt
+  `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](7/7) [OK](7/7)`, exit 0
+  (`tmp/qortestmime_step6_green.log`). No new build gotchas this increment.
 - ⚠️ **NEW build gotcha (20 Oct 2026): `cmake --build` calls must be sequential, one per command.**
   Two `cmake --build` invocations issued in the same command batch run concurrently over one build
   tree and race on the shared `.pdb` — `error C1090: PDB API call failed` on an unrelated dependency

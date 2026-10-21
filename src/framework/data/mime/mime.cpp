@@ -110,14 +110,14 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
-                    //Plan steps 3+4+5 - classify the captured leading octets. The evaluation
+                    //Plan steps 3,4,5,6 - classify the captured leading octets. The evaluation
                     //order is fixed so results are deterministic (most definite signature
                     //first): png, jpeg, gif, pdf, zip, then the text markups, then the
                     //fallback. Each guard asks only for the octets its own signature needs,
                     //so a shorter signature can decide before the window is full. The
                     //signature window is never consumed (the read was rejected), so these
                     //checks run again on every chunk as more leading octets arrive. The
-                    //remaining six types are added one test at a time after this.
+                    //remaining five types are added one test at a time after this.
                     if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8)
                     {
                         static const qor::byte pngSignature[8] =
@@ -150,6 +150,19 @@ namespace qor{ namespace mime{
                         )
                         {
                             m_detectedType = MIMEType::GIF;
+                        }
+                    }
+                    //Plan step 6 - the PDF file format begins with the four byte ASCII
+                    //signature %PDF (percent P D F), normally followed by the version
+                    //marker. The guard asks for four octets only, so it can decide before
+                    //the window is full.
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 4)
+                    {
+                        static const qor::byte pdfSignature[4] =
+                            { 0x25, 0x50, 0x44, 0x46 };//'%' 'P' 'D' 'F'
+                        if(memcmp(m_signature, pdfSignature, sizeof(pdfSignature)) == 0)
+                        {
+                            m_detectedType = MIMEType::PDF;
                         }
                     }
                     return true;

@@ -97,7 +97,7 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | 3 ✅ | `mime_recognises_png_signature` | `GetDetectedType() == MIMEType::PNG`, `GetTypeName() == "image/png"` | DONE 20 Oct 2026 — RED first (`[FAIL] #3`, `[OK](3/4)`, exit 1), then PNG magic compare in `Inspect()` (window vs `89 50 4E 47 0D 0A 1A 0A`) + complete name table in `GetTypeName()`; `mime.h` unchanged. Verified `[OK](4/4)` exit 0 |
 | 4 ✅ | `mime_recognises_jpeg_signature` | `== JPEG`, `"image/jpeg"` | DONE 20 Oct 2026 — **verified, not test-driven**: the test and the jpeg detector were already in the working tree (uncommitted) but had never been built or run, so the RED phase was never observed. Build `qor_mime` + `QORTestMIME` → `[TOTAL](5/5) [OK](5/5)` exit 0 |
 | 5 ✅ | `mime_recognises_gif_signature` | `== GIF`, `"image/gif"` for both `GIF89a` and `GIF87a` | DONE 20 Oct 2026 — test written FIRST and seen RED (`[FAIL] #5`, `[OK](5/6)`, `[FAIL](1/6)`, exit 1), then a third fixed-order guard in `Inspect()` (`m_signatureCount >= 6`, `memcmp` vs GIF89a OR GIF87a six-byte headers) → `[TOTAL](6/6) [OK](6/6)` exit 0; `mime.h` unchanged |
-| 6 | `mime_recognises_pdf_signature` | `== PDF`, `"application/pdf"` | pdf magic compare |
+| 6 ✅ | `mime_recognises_pdf_signature` | `== PDF`, `"application/pdf"` | DONE 20 Oct 2026 — test written FIRST and seen RED (`[FAIL] #6`, `[OK](6/7)`, exit 1), then a fourth fixed-order guard in `Inspect()` (`m_signatureCount >= 4`, `memcmp` vs `25 50 44 46` = `%PDF`) → `[TOTAL](7/7) [OK](7/7)` exit 0; `mime.h` unchanged |
 | 7 | `mime_recognises_zip_signature` | `== ZIP`, `"application/zip"` | zip magic compare |
 | 8 | `mime_recognises_xml_from_markup` | `== XML`, `"application/xml"` | `<?xml` text check |
 | 9 | `mime_recognises_html_from_markup` | `== HTML`, `"text/html"` for `<!DOCTYPE html>...` and `<html>` | doctype/tag scan + case-insensitive compare helper |
@@ -189,4 +189,14 @@ Pitfalls confirmed while creating the outline:
   same .PDB file, please use /FS`. Cmake builds are NOT independent: exactly one `cmake --build`
   per command, strictly sequential (this is the same rule that already forces build-and-run
   to be separate commands).
+- Step 6 `mime_recognises_pdf_signature` (test first): RED first — `mime_recognises_pdf_signature [FAIL],
+  #6`, `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)`, exit 1 (`tmp/qortestmime_step6_red.log`), one stream with
+  the 4-byte `%PDF` magic + version marker (`%PDF-1.4\n`) + short body, then `Inspect()` gained a
+  fourth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 4`, `memcmp` the
+  window vs `{0x25,0x50,0x44,0x46}` → `MIMEType::PDF`) → `[TOTAL](7/7) [OK](7/7)`, exit 0
+  (`tmp/qortestmime_step6_green.log`). `mime.h` unchanged; the build logs
+  (`tmp/qortestmime_step6_build_lib.log`, `tmp/qortestmime_step6_build_exe.log`) show no
+  `error C`/`warning C`/`LNK`. No new gotchas — the one-build-per-command and build-then-run-
+  separately rules were both honoured this increment.
+- Next: step 7 `mime_recognises_zip_signature` (`PK 03 04` magic) — test FIRST.
 

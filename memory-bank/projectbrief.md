@@ -90,9 +90,11 @@ written and compared equal through `jsoncompare.h`)).
 Also 20 Oct 2026: new framework-layer data module `src/framework/data/mime` (lib `qor_mime`)
 started as a MIME-type-recognition **pipeline filter** (ten popular MIME types +
 application/octet-stream fallback, test-first plan `memory-bank/qor_mime_plan.md`);
-plan **steps 0-2 verified green** (`QORTestMIME.exe` `[TOTAL](3/3) [OK](3/3)` exit 0 — scaffold
-constructs, octets pass through untouched, and the leading octets are captured into the 16-byte
-signature window). **No detection logic written yet** — `GetTypeName()` still returns `""`.
+plan **steps 0-6 verified green** (`QORTestMIME.exe` `[TOTAL](7/7) [OK](7/7)` exit 0 — scaffold
+constructs, octets pass through untouched, the leading octets are captured into the 16-byte
+signature window, and **4 of the 10 target types are recognised**: PNG, JPEG, GIF and PDF via
+fixed-order magic guards in `Inspect()`). Next plan step: 7 `mime_recognises_zip_signature`
+(`PK 03 04`).
 
 
 ## Key project documents

@@ -1,12 +1,12 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — **qor_mime plan steps 4 (JPEG magic) and 5 (GIF header) DONE and
-verified green** (`QORTestMIME` step 4 `[TOTAL](5/5) [OK](5/5)` exit 0 — its test and detector were
-already in the working tree but had never been built or run, so it was verified after the fact and
-its RED phase was never observed; step 5 driven test-first: RED `[OK](5/6) [FAIL](1/6)` exit 1, then
-GREEN `[TOTAL](6/6) [OK](6/6)` exit 0). Details in
-the section below (and in `src/framework/data/mime/status.md`, `docs/agent/verification.md`).
-Earlier the same day: steps 0-1 of the same plan were done, and the whole JSON generator increment is **DONE**,
+**Last updated:** 20 Oct 2026 — **qor_mime plan step 6 (`mime_recognises_pdf_signature`) DONE and
+verified green, driven test-first** (RED `[FAIL] #6`, `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)` exit 1 →
+GREEN `[TOTAL](7/7) [OK](7/7)` exit 0; logs `tmp/qortestmime_step6_red.log`,
+`tmp/qortestmime_step6_green.log`). **4 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF). Details in the section below (and in `src/framework/data/mime/status.md`,
+`docs/agent/verification.md`). Earlier the same day: qor_mime plan steps 0-5 were done (step 4
+verified after the fact — its RED phase never observed), and the whole JSON generator increment is **DONE**,
 including the **full `QORTest` regression run** which is now **green at `[TOTAL](678/678)` / `[OK](678/678)` (process
 exit code 0)** — the paragraph in this earlier update was truncated; the full JSON generator
 status is in the section below.
@@ -113,11 +113,24 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   **Learning (record):** a format with more than one magic (GIF87a/GIF89a) is still ONE increment —
   the test asserts every variant, the code gets one guard with one compare per variant.
 
+- **Plan step 6 (recognise the PDF magic) — DONE 20 Oct 2026, test-first.** Wrote
+  `mime_recognises_pdf_signature` FIRST (one Push-mode stream beginning `%PDF-1.4\n` — the four byte
+  `%PDF` magic plus the version marker as real files have it, then a short body; asserts
+  `sink.GetData() == pdfData` pass-through, `GetDetectedType() == MIMEType::PDF`,
+  `std::string(GetTypeName()) == "application/pdf"`), ran it RED (`mime_recognises_pdf_signature [FAIL],
+  #6`, `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)`, exit 1, `tmp/qortestmime_step6_red.log`), then `Inspect()`
+  gained a fourth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 4`,
+  `memcmp` the window vs `pdfSignature` `{0x25,0x50,0x44,0x46}` = `'%' 'P' 'D' 'F'` →
+  `MIMEType::PDF`). `mime.h` unchanged (name table complete since step 3). Rebuilt `qor_mime` then
+  `QORTestMIME` (separate commands, one cmake build each) → `[TOTAL](7/7) [OK](7/7)`, exit 0
+  (`tmp/qortestmime_step6_green.log`). No new gotchas — the one-build-per-command and
+  build-then-run-separately rules both held this time.
+
 ### Next up
-- [ ] Plan step 6 — write `mime_recognises_pdf_signature` FIRST (`GetDetectedType() == MIMEType::PDF`
-  for the 4-byte `%PDF` magic, `GetTypeName() == "application/pdf"`), then the pdf magic compare
+- [ ] Plan step 7 — write `mime_recognises_zip_signature` FIRST (`GetDetectedType() == MIMEType::ZIP`
+  for the 4-byte `PK 03 04` magic, `GetTypeName() == "application/zip"`), then the zip magic compare
   in `Inspect()` (`GetTypeName()` name table is already complete from step 3).
-- [ ] Plan steps 6..13 — the remaining seven types one test at a time (pdf, zip, xml, html,
+- [ ] Plan steps 7..13 — the remaining six types one test at a time (zip, xml, html,
   json, javascript, plain text) + octet-stream fallback.
 - [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
   `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline
