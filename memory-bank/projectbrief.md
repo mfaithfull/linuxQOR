@@ -89,16 +89,18 @@ green in `QORTestJSON` (process exit code 0, `test/data/json_roundtrip_*.json`
 written and compared equal through `jsoncompare.h`)).
 Also 22 Oct 2026: the framework-layer data module `src/framework/data/mime` (lib `qor_mime`) — a MIME-type-recognition
 **pipeline filter** (ten popular MIME types + application/octet-stream fallback, test-first plan
-`memory-bank/qor_mime_plan.md`) — has **plan steps 0-14 DONE and verified green** (`QORTestMIME.exe`
-`[TOTAL](15/15) [OK](15/15)` exit 0, every step RED-then-GREEN except step 4 verified after the fact and
-step 14 GREEN on its FIRST run): scaffold constructs, octets pass through untouched, the leading octets
+`memory-bank/qor_mime_plan.md`) — has **plan steps 0-15 DONE and verified green** (`QORTestMIME.exe`
+`[TOTAL](16/16) [OK](16/16)` exit 0, every step RED-then-GREEN except step 4 verified after the fact and
+steps 14-15 GREEN on their FIRST runs): scaffold constructs, octets pass through untouched, the leading octets
 captured into the 16-byte signature window, **ALL 10 of the 10 target types recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON,
 JavaScript, plain text) via fixed-order guards in `Inspect()`, **plus the application/octet-stream
 fallback proven** — a stream pumped in full always ends with a type and a non-empty name — **and recognition
 proven across pumped chunk boundaries** (the 8-byte PNG magic split across three 3-byte pumped chunks still
-classifies `MIMEType::PNG`, with NO implementation change: the window accumulates per chunk). Next plan step:
-15 `mime_recognizer_resets_between_streams` (`Reset()` reuse — already implemented, the case verifies it),
-then 16-17 (chaining with `qor_base64encodefilter`, `mime_type_name_drives_a_sink` optional scope).
+classifies `MIMEType::PNG`, with NO implementation change: the window accumulates per chunk) **— and one
+recognizer proven reusable across streams** (after `Reset()` the type is `Unresolved`, the name empty and the
+signature count 0, and the SAME filter instance re-wired to fresh elements recognises the next stream; also
+no implementation change). Next plan step: 16 `mime_recogniser_chained_with_qor_base64encodefilter`, then 17
+(full `QORTest` regression run; `mime_type_name_drives_a_sink` optional scope).
 
 
 ## Key project documents

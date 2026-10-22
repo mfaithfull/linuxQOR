@@ -96,6 +96,16 @@
 //MIMEType::PNG and GetTypeName() == "image/png", with the pass-through contract re-checked. This case is
 //written FIRST and no implementation change is expected - the window already accumulates across chunks, so
 //the case proves that claim rather than driving new code.
+//step 15 - mime_recognizer_resets_between_streams: the reuse increment. One recognizer instance must be
+//able to serve more than one stream. After Reset() the detected type and the captured signature must both
+//be discarded: GetDetectedType() == MIMEType::Unresolved, GetTypeName() == "" and GetSignatureByteCount()
+//== 0. The stream that follows must then be recognised from scratch rather than carried over, so the first
+//stream here is the PNG stream of step 3 (the state being cleared is a KNOWN type, not the initial state)
+//and the second is the PDF stream of step 6. Both streams use fresh pipeline elements (the established
+//shape of the multi-stream cases in steps 5, 9, 10, 11, 12 and 13) with the ONE recognizer re-wired to
+//them - the reuse under test is the recognizer, not the plumbing. Pass-through is re-checked per stream as
+//in steps 3-14. This case is written FIRST; no implementation change is expected - Reset() is already
+//implemented in mime.cpp, so the case verifies existing behaviour.
 
 
 
@@ -1131,6 +1141,116 @@ qor_pp_test_case(mime_recognises_type_split_across_chunks)
     //The magic was split across chunks yet the window accumulated it, so the stream is still a PNG.
     qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PNG).isTrue();
     qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "image/png").isTrue();
+}
+
+
+
+
+
+//Step 15 - the reuse increment. One recognizer instance must be able to serve more than one stream.
+//After Reset() the detected type and the captured signature must both be discarded: GetDetectedType()
+//== MIMEType::Unresolved, GetTypeName() == "" and GetSignatureByteCount() == 0. The stream that
+//follows must then be recognised from scratch, not carried over from the stream before it - which is
+//why the first stream here is the PNG stream of step 3, so the state being cleared is a KNOWN type
+//rather than the initial state, and the second stream is the PDF stream of step 6. Both streams use
+//fresh pipeline elements (the established shape of the multi-stream cases in steps 5, 9, 10, 11, 12
+//and 13) with the ONE recognizer re-wired to them - the reuse under test is the recognizer, not the
+//plumbing. Filter::SetSource links a source's sink to the filter and Filter::SetSink links a sink's
+//source to it, so the chain for stream 2 is source2 -> recognizer -> sink2. Pass-through is re-checked
+//per stream as in steps 3-14. This case is written FIRST; NO implementation change is expected -
+//Reset() is already implemented in mime.cpp (it zeroes m_signatureCount and restores m_detectedType),
+//so the case verifies existing behaviour.
+qor_pp_test_case(mime_recognizer_resets_between_streams)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    //The one recognizer that serves both streams.
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //Stream 1 - the PNG stream of step 3: the eight byte PNG magic 89 50 4E 47 0D 0A 1A 0A as
+    //explicit octets, then a payload that takes the stream past the sixteen byte signature window.
+    std::string pngData;
+    pngData.push_back(static_cast<char>(0x89));
+    pngData.push_back(static_cast<char>(0x50));
+    pngData.push_back(static_cast<char>(0x4E));
+    pngData.push_back(static_cast<char>(0x47));
+    pngData.push_back(static_cast<char>(0x0D));
+    pngData.push_back(static_cast<char>(0x0A));
+    pngData.push_back(static_cast<char>(0x1A));
+    pngData.push_back(static_cast<char>(0x0A));
+    pngData += "IHDR payload bytes for the recognizer test stream.";
+
+    source.SetData(pngData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, pngData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == pngData).isTrue();
+
+    //The stream is longer than the window, so the whole window is captured and the PNG magic
+    //inside it decides the type. This is the state Reset() has to discard.
+    qor_pp_assert_that(recognizer.GetSignatureByteCount() == 16).isTrue();
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PNG).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "image/png").isTrue();
+
+    //Reset must discard the recognised type, its name and every captured octet.
+    recognizer.Reset();
+
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::Unresolved).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "").isTrue();
+    qor_pp_assert_that(recognizer.GetSignatureByteCount() == 0).isTrue();
+
+    //Stream 2 - fresh pipeline elements, and the SAME recognizer re-wired to them.
+    ByteBuffer inBuffer2(128);
+    ByteBuffer outBuffer2(128);
+
+    StringSource source2;
+    source2.SetParent(&testPipeline);
+    source2.SetBuffer(&inBuffer2);
+
+    StringSink sink2;
+    sink2.SetParent(&testPipeline);
+    sink2.SetBuffer(&outBuffer2);
+
+    recognizer.SetSource(&source2);
+    recognizer.SetSink(&sink2);
+
+    //The four byte PDF file signature, the version marker, and a body that takes the stream
+    //past the sixteen byte window - the same stream as step 6.
+    std::string pdfData;
+    pdfData += "%PDF-1.4\n";
+    pdfData += " payload bytes so that the stream is longer than the signature window.";
+
+    source2.SetData(pdfData);
+
+    size_t unitsPumped2 = 0;
+    recognizer.Pump(unitsPumped2, pdfData.length());
+
+    //The recognizer must not alter the octet stream, not even the one it recognises second.
+    qor_pp_assert_that(sink2.GetData() == pdfData).isTrue();
+
+    //The window was refilled from scratch after the Reset, and the PDF magic inside it decides
+    //the type - the PNG of stream 1 did not carry over.
+    qor_pp_assert_that(recognizer.GetSignatureByteCount() == 16).isTrue();
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PDF).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/pdf").isTrue();
 }
 
 

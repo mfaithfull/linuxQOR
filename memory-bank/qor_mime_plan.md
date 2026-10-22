@@ -106,8 +106,8 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | 12 ✅ | `mime_recognises_plain_text_signature` (named to match the `_signature` convention of steps 3-11, not the outline's `mime_recognises_plain_text`) | `== PlainText`, `"text/plain"` for an ASCII prose stream AND for a stream carrying explicit UTF-8 octets | DONE 22 Oct 2026 — RED first (`[FAIL] #12`, `[OK](12/13)`, exit 1), then tenth fixed-order guard in `Inspect()` after the JavaScript guards: requires the WHOLE 16-byte window captured (`m_signatureCount >= SIGNATURE_WINDOW_BYTES`) and every captured octet printable — 0x80-0xFF (UTF-8 encoded text), 0x20-0x7E (printable ASCII) or 0x09/0x0A/0x0D (tab, line feed, carriage return); any other control octet leaves the stream unresolved for the fallback. Well formed UTF-8 is NOT validated (that belongs to the Unicode layer, which this framework layer module must not depend on). `mime.h` unchanged. Verified `[TOTAL](13/13) [OK](13/13)` exit 0 — **10 of 10 target types recognised** |
 | 13 ✅ | `mime_falls_back_to_octet_stream` | `== OctetStream`, `"application/octet-stream"` for a raw binary blob AND for a Windows executable image prefix | DONE 22 Oct 2026 — test written FIRST, RED (`[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)`, exit 1), then an eleventh and last fixed-order guard in `Inspect()` AFTER the plain text guard: `m_detectedType == Unresolved && m_signatureCount >= SIGNATURE_WINDOW_BYTES` → `MIMEType::OctetStream`. The only guard with no signature of its own; insists on a full window like the plain text guard, so a stream shorter than the window stays `Unresolved`. `mime.h` unchanged. GREEN `[TOTAL](14/14) [OK](14/14)` exit 0 — **all 10 targets + the fallback; the recognizer is total** |
 | 14 ✅ | `mime_recognises_type_split_across_chunks` | 3-byte pumped chunks, png header still `== PNG` | signature window already handles it — proves chunk boundary handling (DONE 22 Oct 2026, GREEN first run, NO implementation change) |
-| 15 | `mime_recognizer_resets_between_streams` | after `Reset()` back to `Unresolved` and count 0, then re-recognise `== PDF` | `Reset()` (already drafted — verify) |
-| 16 | `mime_recognizer_chained_with_base64_filter` | `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink` output decodes to input and type still `image/png` | nothing in qor_mime — proves it composes as a real pipeline filter |
+| 15 ✅ | `mime_recognizer_resets_between_streams` | after `Reset()` back to `Unresolved`, empty name and count 0, then re-recognise `== PDF` | DONE 22 Oct 2026 — test written FIRST and GREEN on the FIRST run, NO implementation change: ONE recognizer serves the step 3 PNG stream, `Reset()` clears `m_signatureCount`/`m_detectedType` (already implemented), and the step 6 PDF stream through FRESH elements re-linked with `Filter::SetSource`/`Filter::SetSink` classifies `== MIMEType::PDF` / `"application/pdf"`; `mime.h`/`mime.cpp` untouched, only `test_mime.cpp` recompiled. Verified `[TOTAL](16/16) [OK](16/16)` exit 0 |
+| 16 | `mime_recogniser_chained_with_qor_base64encodefilter` | `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink` output decodes to input and type still `image/png` | nothing in qor_mime — proves it composes as a real pipeline filter (NEXT) |
 | 17 | `mime_type_name_drives_a_sink` | the recognized name selects downstream behaviour | application-level glue (optional scope) |
 
 Stop conditions: 10 of 10 target types recognised in steps 3–12, fallback proven in 13,
@@ -310,9 +310,30 @@ Pitfalls confirmed while creating the outline:
   pumped chunk, so a chunk boundary cannot split a signature. The case is a behaviour proof, not a driver
   of new code; it is meaningful because a window that did not accumulate would end at 3 octets and fail
   the 16-octet count assert.
-- Next: plan step 15 `mime_recognizer_resets_between_streams` — write the test FIRST (recognise a stream,
-  call `Reset()`, assert `GetDetectedType() == MIMEType::Unresolved` and `GetSignatureByteCount() == 0`,
-  then recognise a second stream `%PDF` → `MIMEType::PDF`) and expect NO implementation change: `Reset()` is
-  already implemented in `mime.cpp` (zeroes `m_signatureCount`, restores `m_detectedType`), so the case
-  verifies existing behaviour. Remaining after that: plan steps 16-17 (chaining with
-  `qor_base64encodefilter`, `mime_type_name_drives_a_sink` optional scope).
+- Step 15 ✅ `mime_recognizer_resets_between_streams` (the reuse increment — one recognizer serving two
+  streams): (22 Oct 2026, test-first) test written FIRST in `test_mime.cpp` (ONE `qor::mime::MIMERecognizerFilter`
+  instance serves TWO streams, fresh elements for the second — the shape of steps 5/9/10/11/12/13: stream 1 the
+  step 3 PNG stream, so the state being discarded is a KNOWN type rather than the initial state; then `Reset()`
+  and asserts that the state IS cleared — `GetDetectedType() == MIMEType::Unresolved`,
+  `std::string(GetTypeName()) == ""`, `GetSignatureByteCount() == 0`; stream 2 the step 6 PDF stream pushed
+  through the SAME recognizer re-wired to the fresh elements with `Filter::SetSource`/`Filter::SetSink`, asserting
+  pass-through `sink2.GetData() == pdfData`, `GetSignatureByteCount() == 16`, `GetDetectedType() == MIMEType::PDF`,
+  `std::string(GetTypeName()) == "application/pdf"`). NO implementation change was expected or made and NONE was
+  needed: the case went **GREEN on the FIRST run** `[TOTAL](16/16) [OK](16/16)`, no `[FAIL`, exit 0 (logs
+  `tmp/qortestmime_step15_build_exe.log`, `tmp/qortestmime_step15_green.log`) — only `test_mime.cpp` recompiled,
+  `mime.h`/`mime.cpp` untouched. **Finding: the recognizer is reusable across streams** — `Reset()` zeroes
+  `m_signatureCount` and restores `m_detectedType` to `MIMEType::Unresolved`, so the PNG magic of stream 1 cannot
+  carry into the PDF window of stream 2. The case is meaningful in both directions: a type `Reset()` failed to
+  clear would leave stream 2 reporting `image/png`, and a count it failed to zero would leave stream 2's window at
+  32 octets and fail the `== 16` count assert. **Build gotcha (mild):** the run log must be written with an ABSOLUTE
+  `tmp/` path — the mandatory `cd` into the build dir moves a relative log path with it and
+  `build\test\framework\data\mime\Debug\tmp` does not exist, so `Tee tmp/...` fails with "Could not find a part of
+  the path" before the suite reports anything. **Learning:** a filter is reused by re-wiring the FILTER
+  (`Filter::SetSource`/`Filter::SetSink`), never by re-linking its plumbing — `Element::SetSink`/`SetSource`
+  return false on an element that already has a connection, so re-pointing a still-linked source or sink fails
+  silently.
+- Next: plan step 16 `mime_recogniser_chained_with_qor_base64encodefilter` — write the test FIRST (two pipeline
+  filters in series: `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink`; the recognizer
+  classifies the stream and the base64 filter encodes it, so the sink output decodes back to the input and the
+  recognizer still reports `== MIMEType::PNG` / `"image/png"`; see `src/components/data/pipeline/filters/base64encodefilter`).
+  Remaining after that: `mime_type_name_drives_a_sink` (optional application-level glue).

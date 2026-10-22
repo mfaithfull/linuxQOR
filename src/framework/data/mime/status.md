@@ -185,11 +185,25 @@
       chunks, the 16-octet count assert would fail. `mime.h` and `mime.cpp` unchanged; only
       `test_mime.cpp` recompiled.
 
+- [x] Step 15 `mime_recognizer_resets_between_streams`: test written FIRST (ONE recognizer serving
+      TWO streams, fresh elements for the second — the shape of steps 5/9/10/11/12/13: stream 1 the
+      PNG stream of step 3, so the state being cleared by the `Reset()` is a KNOWN type rather than the
+      initial state; after it the cleared state is asserted — `GetDetectedType() == MIMEType::Unresolved`,
+      `GetTypeName() == ""` and `GetSignatureByteCount() == 0`; stream 2 the PDF stream of step 6 pushed
+      through the SAME recognizer re-wired to the fresh elements with `Filter::SetSource`/`Filter::SetSink`,
+      asserting pass-through, `GetSignatureByteCount() == 16`, `== MIMEType::PDF`, `"application/pdf"`) and
+      GREEN on the FIRST run — `[TOTAL](16/16) [OK](16/16)`, no `[FAIL`, exit 0 (logs
+      `tmp/qortestmime_step15_build_exe.log`, `tmp/qortestmime_step15_green.log`). NO implementation change
+      was needed or made: `Reset()` already zeroes `m_signatureCount` and restores `m_detectedType` to
+      `MIMEType::Unresolved`, so the case verifies existing behaviour — and it is meaningful, because had
+      `Reset()` not cleared the type, stream 2 would still report `image/png`, and had it not cleared the
+      count, the 16-octet count assert after stream 2 would fail. `mime.h` and `mime.cpp` unchanged; only
+      `test_mime.cpp` recompiled. **Learning:** re-wiring a filter to fresh elements must go through the
+      filter's own `SetSource`/`SetSink` — the `Element` accessors refuse to re-link an element that already
+      has a source or sink, so a filter is reusable by re-linking IT, not by re-linking its plumbing.
+
 ## Next increment
-- [ ] Step 15 `mime_recognizer_resets_between_streams` (after `Reset()` the state returns to
-      `MIMEType::Unresolved` with `GetSignatureByteCount() == 0`, then a second stream re-recognises
-      `== MIMEType::PDF`) — `Reset()` is already implemented in `mime.cpp` (it zeroes
-      `m_signatureCount` and restores `m_detectedType`), so the case verifies existing behaviour.
-      Remaining after that: plan steps 16-17 (chaining with `qor_base64encodefilter`,
-      `mime_type_name_drives_a_sink` optional scope).
+- [ ] Step 16 `mime_recogniser_chained_with_qor_base64encodefilter` (two filters in series — the recognizer
+      classifies the stream and `qor_base64encodefilter` encodes it; see
+      `src/components/data/pipeline/filters/base64encodefilter`). Optional scope: `mime_type_name_drives_a_sink`.
 

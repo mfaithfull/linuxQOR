@@ -1,9 +1,9 @@
 # Active Context
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 14 (`mime_recognises_type_split_across_chunks` — a signature longer than a pump chunk) DONE and
-verified green on the FIRST run with NO implementation change** (`QORTestMIME` `[TOTAL](15/15) [OK](15/15)` exit 0; logs `tmp/qortestmime_step14_build_exe.log`,
-`tmp/qortestmime_step14_green.log`) — the eight byte PNG magic split across three 3-byte pumped chunks still classifies `MIMEType::PNG` with a full 16-byte
-window, so the signature window is proven to accumulate across chunk boundaries; `mime.h`/`mime.cpp` unchanged, only `test_mime.cpp` recompiled. Step 13 (`mime_falls_back_to_octet_stream`) was likewise DONE and verified green test-first. **The qor_mime recognizer is now complete on its targets: ALL 10 of the 10 target MIME types recognised** (PNG, JPEG, GIF,
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 15 (`mime_recognizer_resets_between_streams` — one recognizer serving two streams across `Reset()`) DONE and
+verified green on the FIRST run with NO implementation change** (`QORTestMIME` `[TOTAL](16/16) [OK](16/16)` exit 0; logs `tmp/qortestmime_step15_build_exe.log`,
+`tmp/qortestmime_step15_green.log`) — after recognising the step 3 PNG stream, `Reset()` leaves `MIMEType::Unresolved` with an empty name and a 0-octet signature,
+and the step 6 PDF stream pushed through the SAME recognizer re-wired to fresh elements classifies `MIMEType::PDF`; `mime.h`/`mime.cpp` unchanged, only `test_mime.cpp` recompiled. Step 14 (`mime_recognises_type_split_across_chunks`) was likewise DONE and verified green on its first run with no code change. Step 13 (`mime_falls_back_to_octet_stream`) was likewise DONE and verified green test-first. **The qor_mime recognizer is now complete on its targets: ALL 10 of the 10 target MIME types recognised** (PNG, JPEG, GIF,
 PDF, ZIP, XML, HTML, JSON, JavaScript, plain text) **AND the application/octet-stream fallback proven** —
 every stream that fills the 16-byte signature window now ends with a type and a non-empty name. Step 12
 (`mime_recognises_plain_text_signature`) was likewise DONE and verified green test-first (RED `[FAIL] #12` →
@@ -237,12 +237,26 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   `Inspect()` runs again on every chunk, so a chunk boundary cannot split a signature. The case is a
   behaviour proof rather than a driver of new code, and it is meaningful: a window that did not accumulate
   would fail the 16-octet count assert.
-- [ ] Plan step 15 — `mime_recognizer_resets_between_streams`: recognise a stream, `Reset()`, assert
-  `GetDetectedType() == MIMEType::Unresolved` and `GetSignatureByteCount() == 0`, then recognise a second
-  stream (`%PDF` → `MIMEType::PDF`). `Reset()` is already implemented in `mime.cpp` (zeroes
-  `m_signatureCount`, restores `m_detectedType`), so the case verifies existing behaviour.
-- [ ] Plan steps 16..17 — chaining with `qor_base64encodefilter`, final full-`QORTest`
-  regression run (rebuild + rerun the base pipeline test exe to prove no framework regression).
+- [x] Plan step 15 — `mime_recognizer_resets_between_streams`: DONE 22 Oct 2026 test-first, **GREEN on the
+  FIRST run** — `[TOTAL](16/16) [OK](16/16)` exit 0 (`tmp/qortestmime_step15_green.log`). Test written FIRST
+  in `test_mime.cpp`: ONE `MIMERecognizerFilter` instance recognises the step 3 PNG stream, then `Reset()`
+  asserts `GetDetectedType() == MIMEType::Unresolved`, `GetTypeName()` empty and `GetSignatureByteCount() == 0`
+  (the step 2 capture cleared), then the SAME instance re-wired to a FRESH `StringSource`/`StringSink` pair
+  recognises the step 6 PDF stream and asserts `MIMEType::PDF` pass-through. NO implementation change —
+  `mime.h`/`mime.cpp` untouched, only `test_mime.cpp` recompiled. **Learning (record): `Reset()` clears the
+  signature counter but NOT `m_detectedType`, which was already the correct post-`Reset()` state, so the plan's
+  assumption "the case verifies existing behaviour" held and the case is another behaviour proof, not a code
+  driver.** And: to serve a second stream, re-wire the FILTER (`SetSource`/`SetSink`) to fresh elements —
+  calling `SetSource`/`SetSink` on the old source/sink instead fails SILENTLY because `Element::SetSource`/
+  `SetSink` return early when the element already has a connection; the old chain's `~StringSink()` also
+  throws Q3926 in the destructor teardown when it still has an unresolved `sink_` pointer, so fresh elements
+  per stream is the correct pattern.
+- [ ] Plan step 16 — `mime_recogniser_chained_with_qor_base64encodefilter`: chain
+  `StringSource` → `MIMERecognizerFilter` → `Base64EncodeFilter` → `StringSink` (both filters in ONE `Pipeline`
+  parent), assert the sink text is the base64 of the stream and the recognizer still reports the right type.
+  Study `src/components/data/pipeline/filters/base64encodefilter/*` first for its octet-width expectations.
+- [ ] Plan step 17 — final full-`QORTest` regression run: rebuild + rerun the base pipeline test exe to prove
+  no framework regression from the `qor_mime` additions.
 - Do NOT skip ahead to writing all ten detectors at once — one test, then the code that passes it.
 
 ### Key files

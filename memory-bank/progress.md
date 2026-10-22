@@ -1,6 +1,7 @@
 # Progress
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 14 (`mime_recognises_type_split_across_chunks` — a signature longer than a pump chunk) DONE and verified green on the FIRST run with NO implementation change** (`QORTestMIME` `[TOTAL](15/15) [OK](15/15)` exit 0; logs `tmp/qortestmime_step14_build_exe.log`,
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 15 (`mime_recognizer_resets_between_streams` — one recognizer serving two streams across `Reset()`) DONE and verified green on the FIRST run with NO implementation change** (`QORTestMIME` `[TOTAL](16/16) [OK](16/16)` exit 0; logs `tmp/qortestmime_step15_build_exe.log`,
+`tmp/qortestmime_step15_green.log`). Step 14 (a signature longer than a pump chunk — the eight byte PNG magic split across three 3-byte pumped chunks) was likewise DONE and verified green on its first run with no code change (`[TOTAL](15/15) [OK](15/15)`; logs `tmp/qortestmime_step14_build_exe.log`,
 `tmp/qortestmime_step14_green.log`). Step 13 (the octet-stream fallback — a full window that is neither printable text nor a known signature) was likewise DONE and verified green, driven test-first (RED
 `[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)` exit 1 → GREEN `[TOTAL](14/14) [OK](14/14)` exit 0; logs `tmp/qortestmime_step13_red.log`,
 `tmp/qortestmime_step13_green.log`). **The qor_mime recognizer is now complete on its targets: ALL 10 of the 10 target MIME types recognised** (PNG, JPEG, GIF,
@@ -193,8 +194,21 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   implementation change to `mime.h`/`mime.cpp` — only `test_mime.cpp` recompiled. The signature window
   accumulates across pumped chunks by construction (`m_signatureCount` is a member, `Inspect()` runs again
   per chunk), so the case is a behaviour proof, not a driver of new code.
-- ⏳ Pipeline behaviour still unproven (plan steps 15-17): `Reset()` reuse, chaining with
-  `qor_base64encodefilter`, and the full `QORTest` regression run.
+- ✅ **Plan step 15** `mime_recognizer_resets_between_streams` (one recognizer serving two streams across
+  `Reset()`): test written FIRST (ONE `MIMERecognizerFilter` instance recognises the step 3 PNG stream, then
+  `Reset()` asserts `GetDetectedType() == MIMEType::Unresolved`, `GetTypeName()` empty and
+  `GetSignatureByteCount() == 0` — the step 2 capture cleared — then the SAME instance re-wired to a FRESH
+  `StringSource`/`StringSink` pair recognises the step 6 PDF stream and asserts `MIMEType::PDF` pass-through)
+  and GREEN on the FIRST run `[TOTAL](16/16) [OK](16/16)` exit 0 (`tmp/qortestmime_step15_green.log`) with NO
+  implementation change to `mime.h`/`mime.cpp` — only `test_mime.cpp` recompiled. `Reset()` zeroes
+  `m_signatureCount` and `m_detectedType` was already `Unresolved`, so the existing implementation was
+  correct; **the case is a behaviour proof, not a driver of new code.** Two plumbing facts recorded: to serve
+  a second stream you re-wire the FILTER (`SetSource`/`SetSink`) to fresh elements, because `Element::SetSource`/
+  `SetSink` return early when the element already has a connection (silent no-op), and a reused `~StringSink()`
+  throws Q3926 in its destructor teardown when it still points at a sink — so fresh elements per stream is the
+  correct pattern.
+- ⏳ Pipeline behaviour still unproven (plan steps 16-17): chaining with `qor_base64encodefilter`, and the
+  full `QORTest` regression run.
 - ❌ No consumer wired up yet (the HTTP Content-Type TODO, UI renderer loader,
   `Resource::Type()` remain untouched).
 
