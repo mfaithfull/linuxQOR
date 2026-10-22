@@ -1,10 +1,10 @@
 # Progress
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 10 (recognise JSON — first non-JSON-whitespace
-octet is `{` or `[`) DONE and verified green, driven test-first** (RED `[FAIL] #10`, `[TOTAL](11/11)
-[OK](10/11) [FAIL](1/11)` exit 1 → GREEN `[TOTAL](11/11) [OK](11/11)` exit 0; logs `tmp/qortestmime_step10_red.log`,
-`tmp/qortestmime_step10_green.log`). **8 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML, HTML, JSON). Earlier the same day: qor_mime plan step 9 (recognise HTML — the `<!DOCTYPE html`
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 11 (recognise JavaScript — shebang `#!`, leading `function `, leading `//`/`/*` comment) DONE and verified green, driven test-first** (RED `[FAIL] #11`, `[TOTAL](12/12)
+[OK](11/12) [FAIL](1/12)` exit 1 → GREEN `[TOTAL](12/12) [OK](12/12)` exit 0; logs `tmp/qortestmime_step11_red.log`,
+`tmp/qortestmime_step11_green.log`). **9 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML, HTML, JSON, JavaScript). Earlier the same day: qor_mime plan step 10 (recognise JSON — first non-JSON-whitespace
+octet is `{` or `[`) was DONE, qor_mime plan step 9 (recognise HTML — the `<!DOCTYPE html`
 doctype and the document-level first tag) was DONE and verified green test-first (RED `[FAIL] #9` → GREEN
 `[TOTAL](10/10) [OK](10/10)`), qor_mime plan step 8 (recognise the XML `<?xml` declaration marker)
 was DONE and verified green test-first, qor_mime plan step 7 (recognise the ZIP `PK 03 04` magic) was likewise

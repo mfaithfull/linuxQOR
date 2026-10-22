@@ -47,6 +47,17 @@
 //second stream carries leading whitespace so the skip-past-whitespace half of the heuristic is
 //exercised. Evaluated after the HTML markup checks in the fixed order (png, jpeg, gif, pdf, zip,
 //xml, html, json, ...).
+//step 11 - mime_recognises_javascript_signature: the ninth detection increment. A stream that is a
+//JavaScript source file must be classified as application/javascript: GetDetectedType() ==
+//MIMEType::JavaScript and GetTypeName() == "application/javascript". JavaScript has no magic number,
+//so this is a weak text heuristic with three leading signatures recognised in this increment: a
+//shebang "#!" (the interpreter line leading a standalone script), a top-level "function " declaration,
+//and a leading source comment "//" or "/*". The test asserts three streams, one per signature, each
+//with fresh pipeline elements (the established shape of the multi-stream cases in steps 5, 9 and 10).
+//JavaScript is case-sensitive, so the "function" compare in the recognizer is a plain byte compare,
+//not the case-folded markupMatch used for the HTML markup above. Evaluated after the JSON container
+//check in the fixed order (png, jpeg, gif, pdf, zip, xml, html, json, javascript, ...).
+
 
 
 
@@ -682,5 +693,122 @@ qor_pp_test_case(mime_recognises_json_signature)
     qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::JSON).isTrue();
     qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "application/json").isTrue();
 }
+
+//Step 11 - the ninth detection increment. A JavaScript source file must be classified as
+//application/javascript. JavaScript has no magic number, so this is a weak text heuristic. Three
+//leading signatures are recognised in this increment, each a strong enough indicator of a JavaScript
+//source to classify the stream: (1) a shebang "#!" - the interpreter line that leads a standalone
+//script file; (2) a top-level "function " declaration; (3) a leading source comment "//" or "/*" - a
+//stream that begins with a source comment is a source file, and within the set of types the recognizer
+//handles that means JavaScript. The test asserts three streams, one per signature, each with fresh
+//pipeline elements (the established shape of the multi-stream cases in steps 5, 9 and 10). JavaScript
+//is case-sensitive, so the "function" compare in the recognizer is a plain byte compare rather than
+//the case-folded markupMatch used for the HTML markup above. Evaluated after the JSON container check
+//in the fixed order. This case is written FIRST and seen RED - Inspect() has no JavaScript detector yet.
+qor_pp_test_case(mime_recognises_javascript_signature)
+{
+    //Stream 1 - a standalone script leading with the shebang "#!" (0x23 0x21).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    std::string shebangData;
+    shebangData += "#!/usr/bin/env node\n";
+    shebangData += "console.log(\"qor mime recognises a shebang-led JavaScript file\");";
+
+    source.SetData(shebangData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, shebangData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == shebangData).isTrue();
+
+    //The leading hash-bang makes the stream JavaScript.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::JavaScript).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/javascript").isTrue();
+
+    //Stream 2 - a source file opening with a top-level "function " declaration. Fresh elements.
+    ByteBuffer inBuffer2(128);
+    ByteBuffer outBuffer2(128);
+
+    StringSource source2;
+    source2.SetParent(&testPipeline);
+    source2.SetBuffer(&inBuffer2);
+
+    StringSink sink2;
+    sink2.SetParent(&testPipeline);
+    sink2.SetBuffer(&outBuffer2);
+
+    qor::mime::MIMERecognizerFilter recognizer2;
+    recognizer2.SetParent(&testPipeline);
+    recognizer2.SetSource(&source2);
+    recognizer2.SetSink(&sink2);
+
+    std::string functionData;
+    functionData += "function greet(name) { return \"hello, \" + name; }\n";
+    functionData += "greet(\"qor\");";
+
+    source2.SetData(functionData);
+
+    size_t unitsPumped2 = 0;
+    recognizer2.Pump(unitsPumped2, functionData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink2.GetData() == functionData).isTrue();
+
+    //The leading ECMA keyword makes the stream JavaScript.
+    qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::JavaScript).isTrue();
+    qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "application/javascript").isTrue();
+
+    //Stream 3 - a source file opening with a block comment "/*". Fresh elements.
+    ByteBuffer inBuffer3(128);
+    ByteBuffer outBuffer3(128);
+
+    StringSource source3;
+    source3.SetParent(&testPipeline);
+    source3.SetBuffer(&inBuffer3);
+
+    StringSink sink3;
+    sink3.SetParent(&testPipeline);
+    sink3.SetBuffer(&outBuffer3);
+
+    qor::mime::MIMERecognizerFilter recognizer3;
+    recognizer3.SetParent(&testPipeline);
+    recognizer3.SetSource(&source3);
+    recognizer3.SetSink(&sink3);
+
+    std::string commentData;
+    commentData += "/* qor mime JavaScript test */\n";
+    commentData += "var greeting = \"hello\";";
+
+    source3.SetData(commentData);
+
+    size_t unitsPumped3 = 0;
+    recognizer3.Pump(unitsPumped3, commentData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink3.GetData() == commentData).isTrue();
+
+    //The leading source comment makes the stream JavaScript.
+    qor_pp_assert_that(recognizer3.GetDetectedType() == qor::mime::MIMEType::JavaScript).isTrue();
+    qor_pp_assert_that(std::string(recognizer3.GetTypeName()) == "application/javascript").isTrue();
+}
+
 
 

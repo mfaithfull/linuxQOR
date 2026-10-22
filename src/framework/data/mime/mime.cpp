@@ -143,14 +143,14 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
-                    //Plan steps 3,4,5,6,7,8,9,10 - classify the captured leading octets. The evaluation
+                    //Plan steps 3,4,5,6,7,8,9,10,11 - classify the captured leading octets. The evaluation
                     //order is fixed so results are deterministic (most definite signature
                     //first): png, jpeg, gif, pdf, zip, then the text markups, then the
                     //fallback. Each guard asks only for the octets its own signature needs,
                     //so a shorter signature can decide before the window is full. The
                     //signature window is never consumed (the read was rejected), so these
                     //checks run again on every chunk as more leading octets arrive. The
-                    //remaining two types (javascript, plain text) are added one
+                    //remaining type (plain text) and the octet-stream fallback are added one
                     //test at a time after this.
                     if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8)
                     {
@@ -292,6 +292,42 @@ namespace qor{ namespace mime{
                             }
                             break;
                         }
+                    }
+                    //Plan step 11 - JavaScript has no magic number, so this is a weak text
+                    //heuristic evaluated after the JSON container check in the fixed order
+                    //(png, jpeg, gif, pdf, zip, xml, html, json, javascript, ...). Three leading
+                    //signatures are recognised in this increment, any of which is a strong enough
+                    //indicator of a JavaScript source to classify the stream:
+                    //  (1) a shebang - the first two octets are the hash-bang "#!" (0x23 0x21), the
+                    //      interpreter line that leads a standalone script file;
+                    //  (2) a top-level function declaration - the window opens with the ECMA keyword
+                    //      "function" followed by a space. JavaScript is case-sensitive, so unlike
+                    //      the HTML markup compares above this uses a plain byte compare (memcmp),
+                    //      not the case-folded markupMatch;
+                    //  (3) a leading source comment - the window opens with a line comment "//" (0x2F
+                    //      0x2F) or a block comment "/*" (0x2F 0x2A). A stream that begins with a
+                    //      source comment is a source file, and within this set of recognised types
+                    //      that means JavaScript.
+                    //The heuristic is deliberately narrow so it cannot fire on the markup or container
+                    //streams recognised above. The arrow form "=>" is contemplated as a further weak
+                    //signature but is not yet exercised by a test, so it is not implemented here.
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 2 &&
+                        m_signature[0] == 0x23 && m_signature[1] == 0x21)//shebang "#!"
+                    {
+                        m_detectedType = MIMEType::JavaScript;
+                    }
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 9)
+                    {
+                        static const qor::byte functionKeyword[9] = { 0x66, 0x75, 0x6E, 0x63, 0x74, 0x69, 0x6F, 0x6E, 0x20 };//'f' 'u' 'n' 'c' 't' 'i' 'o' 'n' ' '
+                        if(memcmp(m_signature, functionKeyword, 9) == 0)
+                        {
+                            m_detectedType = MIMEType::JavaScript;
+                        }
+                    }
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 2 &&
+                        m_signature[0] == 0x2F && (m_signature[1] == 0x2F || m_signature[1] == 0x2A))//comment "//" or "/*"
+                    {
+                        m_detectedType = MIMEType::JavaScript;
                     }
 
                     return true;

@@ -1,10 +1,10 @@
 # Active Context
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 10 (`mime_recognises_json_signature`) DONE and
-verified green, driven test-first** (RED `[FAIL] #10`, `[TOTAL](11/11) [OK](10/11) [FAIL](1/11)` exit 1 →
-GREEN `[TOTAL](11/11) [OK](11/11)` exit 0; logs `tmp/qortestmime_step10_red.log`,
-`tmp/qortestmime_step10_green.log`). **8 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML, HTML, JSON). Step 9 (`mime_recognises_html_signature`), step 8 (`mime_recognises_xml_signature`)
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 11 (`mime_recognises_javascript_signature`) DONE and
+verified green, driven test-first** (RED `[FAIL] #11`, `[TOTAL](12/12) [OK](11/12) [FAIL](1/12)` exit 1 →
+GREEN `[TOTAL](12/12) [OK](12/12)` exit 0; logs `tmp/qortestmime_step11_red.log`,
+`tmp/qortestmime_step11_green.log`). **9 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML, HTML, JSON, JavaScript). Step 10 (`mime_recognises_json_signature`), step 9 (`mime_recognises_html_signature`),
 and step 7 (`mime_recognises_zip_signature`) were likewise DONE and verified green test-first (step 9
 RED `[FAIL] #9` → GREEN `[TOTAL](10/10) [OK](10/10)`; step 8 RED `[FAIL] #8` → GREEN `[TOTAL](9/9) [OK](9/9)`;
 step 7 RED `[FAIL] #7` → GREEN `[TOTAL](8/8) [OK](8/8)`). Details in the section below (and in `src/framework/data/mime/status.md`,

@@ -250,6 +250,22 @@ Pitfalls confirmed while creating the outline:
   `tmp/qortestmime_step10_build_exe.log` show no `error C`/`warning C`/`LNK`). **8 of 10 target types
   recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON). No new gotchas — one-cmake-build-per-command
   and build-then-run-separately both held.
-- Next: step 11 `mime_recognises_javascript_signature` (weak heuristic: shebang `#!`, or a `//`/`/*`
-  comment plus ECMA keywords, or `function `/`=>`) — test FIRST, then the guard in `Inspect()` AFTER the
-  json guard.
+- Step 11 ✅ `mime_recognises_javascript_signature` — wrote the test FIRST in `test_mime.cpp` (THREE Push-mode
+  streams in the one case, fresh elements per stream — the multi-stream shape of steps 5/9/10: stream 1 a standalone
+  script leading with the shebang `#!` (0x23 0x21), stream 2 a source opening with a top-level `function ` declaration,
+  stream 3 a source opening with a block comment `/*`; per stream asserts pass-through, `== MIMEType::JavaScript`,
+  `"application/javascript"`), ran it RED (`[FAIL] #11`, `[TOTAL](12/12) [OK](11/12) [FAIL](1/12)`, exit 1,
+  `tmp/qortestmime_step11_red.log`, `tmp/qortestmime_step11_red_build.log`), then `Inspect()` gained a ninth fixed-order
+  guard AFTER the JSON guard: (1) shebang (`m_signature[0]==0x23 && m_signature[1]==0x21`), (2) a top-level `function `
+  declaration via a plain `memcmp` vs `{66 75 6E 63 74 69 6F 6E 20}` — JavaScript is case-sensitive so `markupMatch()`
+  is NOT used (a case-folded compare would wrongly accept `FUNCTION`), (3) a leading source comment `//` (0x2F 0x2F)
+  or `/*` (0x2F 0x2A). JavaScript has no magic number, so this is a weak text heuristic evaluated after JSON in the
+  fixed order; the arrow form `=>` is contemplated as a further weak signature but is not yet exercised by a test, so
+  it is not implemented. `mime.h` unchanged. Rebuilt `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](12/12)
+  [OK](12/12)`, no `[FAIL`, exit 0 (`tmp/qortestmime_step11_green.log`; build logs `tmp/qortestmime_step11_build_lib.log`,
+  `tmp/qortestmime_step11_build_exe.log` show no `error C`/`warning C`/`LNK`). **9 of 10 target types recognised**
+  (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON, JavaScript). No new gotchas — one-cmake-build-per-command and
+  build-then-run-separately both held.
+- Next: step 12 `mime_recognises_plain_text_signature` (the default for text — all inspected bytes printable
+  ASCII/UTF-8, no markup marker matched) — test FIRST, then the guard in `Inspect()` AFTER the javascript guard.
+  Remaining after that: step 13 the octet-stream fallback.

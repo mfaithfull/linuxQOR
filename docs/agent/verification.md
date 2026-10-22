@@ -15,6 +15,38 @@ clang-tidy -p build docs/.../file.cpp
 # green = "[OK](n/n)" in the output AND shell exit code 0. The QOR does not use ctest.
 
 ## Results
+### 2026-10-22 — qor_mime plan step 11 / QORTestMIME (JavaScript shebang + function + comment recognition) — PASS
+- **Test first**: added `mime_recognises_javascript_signature` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE touching `mime.cpp`/`mime.h` (THREE Push-mode streams in the one case, fresh elements per stream —
+  the multi-stream shape of steps 5/9/10: stream 1 a standalone script leading with the shebang `#!` (0x23 0x21),
+  stream 2 a source opening with a top-level `function ` declaration, stream 3 a source opening with a block
+  comment `/*`; per stream asserts `sink.GetData() == data` pass-through, `GetDetectedType() == MIMEType::JavaScript`,
+  `std::string(GetTypeName()) == "application/javascript"`).
+- **Run (red)**: `cmake --build build --target QORTestMIME` (lib unchanged) then the exe run in its OWN
+  command from `build\test\framework\data\mime\Debug` → `test_mime.cpp(708) : mime_recognises_javascript_signature
+  [FAIL], #11`, `[TOTAL](12/12) [OK](11/12) [FAIL](1/12)`, exit 1 → the test is meaningful (no JavaScript detector
+  exists). Log `tmp/qortestmime_step11_red.log`, build log `tmp/qortestmime_step11_red_build.log`.
+- **Code**: `mime.cpp` only — a ninth fixed-order guard in `Inspect()` AFTER the JSON container guard: (1) shebang
+  (`m_signature[0]==0x23 && m_signature[1]==0x21`), (2) a top-level `function ` declaration via a plain `memcmp`
+  vs `{66 75 6E 63 74 69 6F 6E 20}` (JavaScript is case-sensitive, so `markupMatch()` is NOT used — a case-folded
+  compare would wrongly accept `FUNCTION`), (3) a leading source comment `//` (0x2F 0x2F) or `/*` (0x2F 0x2A).
+  JavaScript has no magic number, so this is a weak text heuristic evaluated after JSON in the fixed order (png,
+  jpeg, gif, pdf, zip, xml, html, json, javascript, ...). The arrow form `=>` is contemplated as a further weak
+  signature but is not yet exercised by a test, so it is not implemented. `mime.h` unchanged (name table complete
+  since step 3); the running comment in `Inspect()` corrected from "remaining two types" to "remaining type ... and
+  the octet-stream fallback".
+- **Build**: `cmake --build build --target qor_mime` → exit 0 (`qor_mime.dll`), then
+  `cmake --build build --target QORTestMIME` → exit 0, no `error C`/`warning C`/`LNK` in either log
+  (`tmp/qortestmime_step11_build_lib.log`, `tmp/qortestmime_step11_build_exe.log`).
+- **Run (green)**: from `build\test\framework\data\mime\Debug` → `[TOTAL](12/12) [OK](12/12)`, no `[FAIL` in the
+  log, `$LASTEXITCODE = 0` → PASS. Log `tmp/qortestmime_step11_green.log`. **9 of 10 target types now recognised**
+  (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON, JavaScript).
+- No new gotchas: the one-cmake-build-per-command and build-then-run-separately rules both held. **Learning:** a
+  case-sensitive language keyword (JS `function`) needs a plain byte compare, not the case-folded `markupMatch` used
+  for the case-insensitive HTML markup — reusing a case-folded helper across differently-cased languages is a false-positive
+  hazard.
+
+
 
 ### 2026-10-22 — qor_mime plan step 10 / QORTestMIME (JSON container recognition) — PASS
 - **Test first**: added `mime_recognises_json_signature` to `test/framework/data/mime/test_mime.cpp`
