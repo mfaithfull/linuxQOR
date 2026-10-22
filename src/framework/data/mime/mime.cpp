@@ -7,14 +7,6 @@
 
 namespace qor{ namespace mime{
 
-    //On MSVC a shared QOR module has to export at least one symbol or no import lib
-    //(.lib) is generated and a test exe that links qor_mime fails with LNK1104.
-    //This is the future public API entry point of the module.
-    qor_pp_export void init_mime(void)
-    {
-        //placeholder for future qor_mime initialisation
-    }
-
     MIMERecognizerFilter::MIMERecognizerFilter() = default;
 
     MIMERecognizerFilter::~MIMERecognizerFilter() = default;

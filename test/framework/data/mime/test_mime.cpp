@@ -1166,8 +1166,6 @@ qor_pp_test_case(mime_recognises_type_split_across_chunks)
 
 
 
-
-
 //Step 15 - the reuse increment. One recognizer instance must be able to serve more than one stream.
 //After Reset() the detected type and the captured signature must both be discarded: GetDetectedType()
 //== MIMEType::Unresolved, GetTypeName() == "" and GetSignatureByteCount() == 0. The stream that
@@ -1480,6 +1478,3 @@ qor_pp_test_case(mime_type_name_drives_a_sink)
     qor_pp_assert_that(routeTextSink.GetData() == textData).isTrue();
     qor_pp_assert_that(routeImageSink.GetData() == pngData).isTrue();
 }
-
-
-
