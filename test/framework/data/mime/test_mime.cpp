@@ -87,6 +87,15 @@
 //As in steps 3-12 the pass-through contract is re-checked so that adding the fallback cannot break the
 //octet stream proven earlier. This case is written FIRST and seen RED - Inspect() has no fallback yet,
 //so an unmatched stream is still reported as Unresolved.
+//step 14 - mime_recognises_type_split_across_chunks: the chunking increment. Recognition must not depend
+//on how the stream was chunked. A signature longer than a pump chunk is split across pumped chunks - the
+//eight byte PNG magic does not fit in a three byte chunk, so it arrives across three chunks (three octets,
+//then three more, then the last two with the payload octets that follow them). The signature window
+//accumulates across chunks (m_signatureCount is a member and Inspect() runs again on every chunk), so the
+//window must end full at sixteen octets and the stream must be classified image/png: GetDetectedType() ==
+//MIMEType::PNG and GetTypeName() == "image/png", with the pass-through contract re-checked. This case is
+//written FIRST and no implementation change is expected - the window already accumulates across chunks, so
+//the case proves that claim rather than driving new code.
 
 
 
@@ -1049,6 +1058,79 @@ qor_pp_test_case(mime_falls_back_to_octet_stream)
     //octet stream.
     qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::OctetStream).isTrue();
     qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "application/octet-stream").isTrue();
+}
+
+//Step 14 - the chunking increment. Recognition must not depend on how the stream was chunked. The eight
+//byte PNG magic is longer than a three byte pump chunk, so it is split across three chunks: three octets,
+//three more, then the last two arriving with the payload octets that follow them. The signature window
+//accumulates across chunks (m_signatureCount is a member of the filter and Inspect() runs again on every
+//chunk), so the window must end full at sixteen octets and the classification must match the single-pump
+//PNG case of step 3: GetDetectedType() == MIMEType::PNG and GetTypeName() == "image/png". As in steps 3-13
+//the pass-through contract is re-checked so that chunking cannot corrupt the octet stream. This case is
+//written FIRST; no implementation change is expected because the window already accumulates across chunks.
+qor_pp_test_case(mime_recognises_type_split_across_chunks)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //Stream - the same PNG stream as step 3: the eight byte PNG magic 89 50 4E 47 0D 0A 1A 0A written as
+    //explicit octets, then a payload that takes the stream past the sixteen byte signature window.
+    std::string pngData;
+    pngData.push_back(static_cast<char>(0x89));
+    pngData.push_back(static_cast<char>(0x50));
+    pngData.push_back(static_cast<char>(0x4E));
+    pngData.push_back(static_cast<char>(0x47));
+    pngData.push_back(static_cast<char>(0x0D));
+    pngData.push_back(static_cast<char>(0x0A));
+    pngData.push_back(static_cast<char>(0x1A));
+    pngData.push_back(static_cast<char>(0x0A));
+    pngData += "IHDR payload bytes for the recognizer test stream.";
+
+    source.SetData(pngData);
+
+    //Pump the stream three octets at a time. No chunk carries a complete signature: the magic spans three
+    //chunks (octets 1-3, 4-6 and 7-8 of it).
+    constexpr size_t chunkSize = 3;
+    for(size_t streamOffset = 0; streamOffset < pngData.length(); streamOffset += chunkSize)
+    {
+        size_t chunkUnits = 0;
+        size_t bytesLeft = pngData.length() - streamOffset;
+        size_t unitsThisChunk = bytesLeft < chunkSize ? bytesLeft : chunkSize;
+        recognizer.Pump(chunkUnits, unitsThisChunk);
+        //A stalled pump makes no progress; stop rather than spin forever. The asserts below decide.
+        if(chunkUnits == 0)
+        {
+            break;
+        }
+    }
+
+    //The recognizer must not alter the octet stream, however it was chunked.
+    qor_pp_assert_that(sink.GetData() == pngData).isTrue();
+
+    //The stream is longer than the window and every chunk was pumped, so the whole window was captured
+    //across the chunks.
+    qor_pp_assert_that(recognizer.GetSignatureByteCount() == 16).isTrue();
+
+    //The magic was split across chunks yet the window accumulated it, so the stream is still a PNG.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PNG).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "image/png").isTrue();
 }
 
 

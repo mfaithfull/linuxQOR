@@ -1,9 +1,9 @@
 # Active Context
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 13 (`mime_falls_back_to_octet_stream`) DONE and
-verified green, driven test-first** (RED `[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)` exit 1 →
-GREEN `[TOTAL](14/14) [OK](14/14)` exit 0; logs `tmp/qortestmime_step13_red.log`,
-`tmp/qortestmime_step13_green.log`). **The qor_mime recognizer is now complete on its targets: ALL 10 of the 10 target MIME types recognised** (PNG, JPEG, GIF,
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 14 (`mime_recognises_type_split_across_chunks` — a signature longer than a pump chunk) DONE and
+verified green on the FIRST run with NO implementation change** (`QORTestMIME` `[TOTAL](15/15) [OK](15/15)` exit 0; logs `tmp/qortestmime_step14_build_exe.log`,
+`tmp/qortestmime_step14_green.log`) — the eight byte PNG magic split across three 3-byte pumped chunks still classifies `MIMEType::PNG` with a full 16-byte
+window, so the signature window is proven to accumulate across chunk boundaries; `mime.h`/`mime.cpp` unchanged, only `test_mime.cpp` recompiled. Step 13 (`mime_falls_back_to_octet_stream`) was likewise DONE and verified green test-first. **The qor_mime recognizer is now complete on its targets: ALL 10 of the 10 target MIME types recognised** (PNG, JPEG, GIF,
 PDF, ZIP, XML, HTML, JSON, JavaScript, plain text) **AND the application/octet-stream fallback proven** —
 every stream that fills the 16-byte signature window now ends with a type and a non-empty name. Step 12
 (`mime_recognises_plain_text_signature`) was likewise DONE and verified green test-first (RED `[FAIL] #12` →
@@ -226,10 +226,22 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   `Inspect()` AFTER the plain text guard (`m_detectedType == MIMEType::Unresolved &&
   m_signatureCount >= SIGNATURE_WINDOW_BYTES` → `MIMEType::OctetStream`) GREEN `[TOTAL](14/14) [OK](14/14)`
   exit 0. **All 10 target types recognised AND the fallback proven — the recognizer is total.**
-- [ ] Plan step 14 — `mime_recognises_type_split_across_chunks`: pump a PNG stream in 3-byte chunks and
-  assert the window still reports `MIMEType::PNG`; write the test FIRST and expect NO implementation
-  change (the window already accumulates across chunks).
-- [ ] Plan steps 15..17 — `Reset()` reuse, chaining with `qor_base64encodefilter`, final full-`QORTest`
+- [x] Plan step 14 — `mime_recognises_type_split_across_chunks`: DONE 22 Oct 2026 test-first, **GREEN on the
+  FIRST run** — `[TOTAL](15/15) [OK](15/15)` exit 0 (`tmp/qortestmime_step14_green.log`). Test written FIRST
+  in `test_mime.cpp`: the step 3 PNG stream pumped THREE octets at a time, so the 8-byte PNG magic is split
+  across three pumped chunks and no chunk carries a complete signature; asserts pass-through
+  `sink.GetData() == pngData`, `GetSignatureByteCount() == 16`,
+  `GetDetectedType() == MIMEType::PNG`, `std::string(GetTypeName()) == "image/png"`. NO implementation change
+  — `mime.h`/`mime.cpp` untouched, only `test_mime.cpp` recompiled. **Learning (record): the signature window
+  accumulates across pumped chunks by construction** — `m_signatureCount` is a member of the filter and
+  `Inspect()` runs again on every chunk, so a chunk boundary cannot split a signature. The case is a
+  behaviour proof rather than a driver of new code, and it is meaningful: a window that did not accumulate
+  would fail the 16-octet count assert.
+- [ ] Plan step 15 — `mime_recognizer_resets_between_streams`: recognise a stream, `Reset()`, assert
+  `GetDetectedType() == MIMEType::Unresolved` and `GetSignatureByteCount() == 0`, then recognise a second
+  stream (`%PDF` → `MIMEType::PDF`). `Reset()` is already implemented in `mime.cpp` (zeroes
+  `m_signatureCount`, restores `m_detectedType`), so the case verifies existing behaviour.
+- [ ] Plan steps 16..17 — chaining with `qor_base64encodefilter`, final full-`QORTest`
   regression run (rebuild + rerun the base pipeline test exe to prove no framework regression).
 - Do NOT skip ahead to writing all ten detectors at once — one test, then the code that passes it.
 

@@ -1,9 +1,10 @@
 # Progress
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 13 (the octet-stream fallback — a full window that is neither printable text nor a known signature) DONE and verified green, driven test-first** (RED
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 14 (`mime_recognises_type_split_across_chunks` — a signature longer than a pump chunk) DONE and verified green on the FIRST run with NO implementation change** (`QORTestMIME` `[TOTAL](15/15) [OK](15/15)` exit 0; logs `tmp/qortestmime_step14_build_exe.log`,
+`tmp/qortestmime_step14_green.log`). Step 13 (the octet-stream fallback — a full window that is neither printable text nor a known signature) was likewise DONE and verified green, driven test-first (RED
 `[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)` exit 1 → GREEN `[TOTAL](14/14) [OK](14/14)` exit 0; logs `tmp/qortestmime_step13_red.log`,
 `tmp/qortestmime_step13_green.log`). **The qor_mime recognizer is now complete on its targets: ALL 10 of the 10 target MIME types recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML, HTML, JSON, JavaScript, plain text) **AND the application/octet-stream fallback proven** — every stream that fills the 16-byte signature window
+PDF, ZIP, XML, HTML, JSON, JavaScript, plain text) **AND the application/octet-stream fallback proven AND recognition proven across pumped chunk boundaries** — every stream that fills the 16-byte signature window
 now ends with a type and a non-empty name. Step 12 (recognise plain text — the whole signature window printable) was likewise DONE and verified green test-first
 (RED `[FAIL] #12` → GREEN `[TOTAL](13/13) [OK](13/13)`). Earlier the same day: qor_mime plan step 11 (recognise JavaScript — shebang `#!`, leading `function `, leading `//`/`/*` comment) DONE, qor_mime plan step 10 (recognise JSON — first non-JSON-whitespace
 octet is `{` or `[`) was DONE, qor_mime plan step 9 (recognise HTML — the `<!DOCTYPE html`
@@ -17,7 +18,7 @@ base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, proces
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20-22 Oct 2026, steps 0-12: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML + HTML + JSON + JavaScript + plain text)
+## MIME Recognition — qor_mime (20-22 Oct 2026, steps 0-14: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML + HTML + JSON + JavaScript + plain text + octet-stream fallback + signature split across pumped chunks)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -185,8 +186,15 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
 - ✅ Detection is now COMPLETE: all 10 target types recognised (PNG, JPEG, GIF, PDF, ZIP, XML, HTML,
   JSON, JavaScript, plain text) AND the `application/octet-stream` fallback proven (plan step 13, 22 Oct
   2026) — every stream that fills the 16-byte signature window ends with a type and a non-empty name.
-- ⏳ Pipeline behaviour still unproven (plan steps 14-17): a signature split across pumped chunks,
-  `Reset()` reuse, chaining with `qor_base64encodefilter`, and the full `QORTest` regression run.
+- ✅ **Plan step 14** `mime_recognises_type_split_across_chunks` (a signature longer than a pump chunk): test
+  written FIRST (the PNG stream pumped THREE octets at a time, so the 8-byte PNG magic is split across three
+  pumped chunks; asserts pass-through, `GetSignatureByteCount() == 16`, `== MIMEType::PNG`, `"image/png"`) and
+  GREEN on the FIRST run `[TOTAL](15/15) [OK](15/15)` exit 0 (`tmp/qortestmime_step14_green.log`) with NO
+  implementation change to `mime.h`/`mime.cpp` — only `test_mime.cpp` recompiled. The signature window
+  accumulates across pumped chunks by construction (`m_signatureCount` is a member, `Inspect()` runs again
+  per chunk), so the case is a behaviour proof, not a driver of new code.
+- ⏳ Pipeline behaviour still unproven (plan steps 15-17): `Reset()` reuse, chaining with
+  `qor_base64encodefilter`, and the full `QORTest` regression run.
 - ❌ No consumer wired up yet (the HTTP Content-Type TODO, UI renderer loader,
   `Resource::Type()` remain untouched).
 

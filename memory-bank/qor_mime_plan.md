@@ -105,7 +105,7 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | 11 | `mime_recognises_javascript_from_markup` | `== JavaScript`, `"application/javascript"` | shebang/comment + keyword heuristic |
 | 12 ✅ | `mime_recognises_plain_text_signature` (named to match the `_signature` convention of steps 3-11, not the outline's `mime_recognises_plain_text`) | `== PlainText`, `"text/plain"` for an ASCII prose stream AND for a stream carrying explicit UTF-8 octets | DONE 22 Oct 2026 — RED first (`[FAIL] #12`, `[OK](12/13)`, exit 1), then tenth fixed-order guard in `Inspect()` after the JavaScript guards: requires the WHOLE 16-byte window captured (`m_signatureCount >= SIGNATURE_WINDOW_BYTES`) and every captured octet printable — 0x80-0xFF (UTF-8 encoded text), 0x20-0x7E (printable ASCII) or 0x09/0x0A/0x0D (tab, line feed, carriage return); any other control octet leaves the stream unresolved for the fallback. Well formed UTF-8 is NOT validated (that belongs to the Unicode layer, which this framework layer module must not depend on). `mime.h` unchanged. Verified `[TOTAL](13/13) [OK](13/13)` exit 0 — **10 of 10 target types recognised** |
 | 13 ✅ | `mime_falls_back_to_octet_stream` | `== OctetStream`, `"application/octet-stream"` for a raw binary blob AND for a Windows executable image prefix | DONE 22 Oct 2026 — test written FIRST, RED (`[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)`, exit 1), then an eleventh and last fixed-order guard in `Inspect()` AFTER the plain text guard: `m_detectedType == Unresolved && m_signatureCount >= SIGNATURE_WINDOW_BYTES` → `MIMEType::OctetStream`. The only guard with no signature of its own; insists on a full window like the plain text guard, so a stream shorter than the window stays `Unresolved`. `mime.h` unchanged. GREEN `[TOTAL](14/14) [OK](14/14)` exit 0 — **all 10 targets + the fallback; the recognizer is total** |
-| 14 | `mime_recognises_type_split_across_chunks` | 3-byte pumped chunks, png header still `== PNG` | signature window already handles it — proves chunk boundary handling |
+| 14 ✅ | `mime_recognises_type_split_across_chunks` | 3-byte pumped chunks, png header still `== PNG` | signature window already handles it — proves chunk boundary handling (DONE 22 Oct 2026, GREEN first run, NO implementation change) |
 | 15 | `mime_recognizer_resets_between_streams` | after `Reset()` back to `Unresolved` and count 0, then re-recognise `== PDF` | `Reset()` (already drafted — verify) |
 | 16 | `mime_recognizer_chained_with_base64_filter` | `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink` output decodes to input and type still `image/png` | nothing in qor_mime — proves it composes as a real pipeline filter |
 | 17 | `mime_type_name_drives_a_sink` | the recognized name selects downstream behaviour | application-level glue (optional scope) |
@@ -297,7 +297,22 @@ Pitfalls confirmed while creating the outline:
   `tmp/qortestmime_step13_build_exe.log`, `tmp/qortestmime_step13_green.log`). **All 10 of the 10 target
   types recognised AND the application/octet-stream fallback proven — the recognizer is total once the
   signature window is full.**
-- Next: plan step 14 `mime_recognises_type_split_across_chunks` — write the test FIRST (pump a PNG stream
-  in 3-byte chunks; the window must still report `MIMEType::PNG`) and expect NO implementation change, the
-  window already accumulates across chunks. Remaining after that: plan steps 15-17 (signature split across
-  pumped chunks, `Reset()` reuse, chaining with `qor_base64encodefilter`, full `QORTest` regression run).
+- Step 14 ✅ `mime_recognises_type_split_across_chunks` (the chunk-boundary increment — a signature longer
+  than a pump chunk): (22 Oct 2026, test-first) test written FIRST in `test_mime.cpp` (the step 3 PNG stream
+  pumped THREE octets at a time — the 8-byte magic arrives split across three chunks: 3, 3, then the last
+  two with the payload octets that follow them; asserts pass-through `sink.GetData() == pngData`,
+  `GetSignatureByteCount() == 16`, `GetDetectedType() == MIMEType::PNG`,
+  `std::string(GetTypeName()) == "image/png"`). NO implementation change was expected or made and NONE was
+  needed: the case went **GREEN on the FIRST run** `[TOTAL](15/15) [OK](15/15)`, no `[FAIL`, exit 0 (logs
+  `tmp/qortestmime_step14_build_exe.log`, `tmp/qortestmime_step14_green.log`) — only `test_mime.cpp`
+  recompiled, `mime.h`/`mime.cpp` untouched. **Finding: the signature window accumulates across pumped
+  chunks by construction** — `m_signatureCount` is a filter member and `Inspect()` runs again on every
+  pumped chunk, so a chunk boundary cannot split a signature. The case is a behaviour proof, not a driver
+  of new code; it is meaningful because a window that did not accumulate would end at 3 octets and fail
+  the 16-octet count assert.
+- Next: plan step 15 `mime_recognizer_resets_between_streams` — write the test FIRST (recognise a stream,
+  call `Reset()`, assert `GetDetectedType() == MIMEType::Unresolved` and `GetSignatureByteCount() == 0`,
+  then recognise a second stream `%PDF` → `MIMEType::PDF`) and expect NO implementation change: `Reset()` is
+  already implemented in `mime.cpp` (zeroes `m_signatureCount`, restores `m_detectedType`), so the case
+  verifies existing behaviour. Remaining after that: plan steps 16-17 (chaining with
+  `qor_base64encodefilter`, `mime_type_name_drives_a_sink` optional scope).

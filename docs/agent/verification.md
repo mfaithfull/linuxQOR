@@ -15,6 +15,14 @@ clang-tidy -p build docs/.../file.cpp
 # green = "[OK](n/n)" in the output AND shell exit code 0. The QOR does not use ctest.
 
 ## Results
+### 2026-10-22 — qor_mime plan step 14 / QORTestMIME (signature split across chunks) — PASS
+
+- Command (build the test exe only — `qor_mime` lib sources unchanged, only `test_mime.cpp` recompiled): `cmake --build C:\RAID0\Develop\linuxQOR\build --target QORTestMIME --config Debug` → exit `0`, log `tmp/qortestmime_step14_build_exe.log` (compiles `test_mime.cpp` only, links `qor_mime.dll` / `qor_pipeline.dll` / `qor_qor.dll` / `qor_error.dll`; no `error C`/`warning C`/`LNK`).
+- Command (run the exe from its own build dir, as required by the `qor.dll` relative data path): `cd C:\RAID0\Develop\linuxQOR\build\test\framework\data\mime\Debug ; ./QORTestMIME.exe` → exit `0`, log `tmp/qortestmime_step14_green.log`.
+- Result: `test_mime.cpp(1071) : mime_recognises_type_split_across_chunks` then `[TOTAL](15/15)`, `[OK](15/15)`, NO `[FAIL](` line, exit `0`.
+- Note: the case went **GREEN on the first run** — the plan expected NO implementation change and the step is a behaviour proof, not new code. The 8-byte PNG magic split across three 3-byte pumped chunks still classifies `== MIMEType::PNG` / `"image/png"`, `GetSignatureByteCount()` still caps at 16, and pass-through is intact. The case is meaningful: had the window NOT accumulated across pumped chunks, the 16-byte count assert would fail.
+- No build gotchas: one `cmake --build` per command and build-then-run-separately both held; the exe run needed no `qor.dll` payload fix (15th run clean).
+
 ### 2026-10-22 — qor_mime plan step 13 / QORTestMIME (application/octet-stream fallback) — PASS
 - **Test first**: added `mime_falls_back_to_octet_stream` to `test/framework/data/mime/test_mime.cpp`
   BEFORE touching `mime.cpp`/`mime.h` (TWO Push-mode streams in the one case, fresh elements for the

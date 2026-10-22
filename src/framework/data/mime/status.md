@@ -174,9 +174,22 @@
       `tmp/qortestmime_step13_build_exe.log`, `tmp/qortestmime_step13_green.log`). **All 10 target types
       plus the fallback recognised.**
 
+- [x] Step 14 `mime_recognises_type_split_across_chunks`: test written FIRST (the PNG stream of step 3
+      pumped three octets at a time — the eight byte PNG magic is split across three pumped chunks and
+      no chunk carries a complete signature; asserts pass-through, `GetSignatureByteCount() == 16`,
+      `== MIMEType::PNG`, `"image/png"`) and GREEN on the FIRST run — `[TOTAL](15/15) [OK](15/15)`,
+      exit 0 (logs `tmp/qortestmime_step14_build_exe.log`, `tmp/qortestmime_step14_green.log`). NO
+      implementation change was needed or made: `m_signatureCount` is a member of the filter and
+      `Inspect()` runs again on every pumped chunk, so the window accumulates across chunk
+      boundaries by construction. The case proves that claim — had the window not accumulated across
+      chunks, the 16-octet count assert would fail. `mime.h` and `mime.cpp` unchanged; only
+      `test_mime.cpp` recompiled.
+
 ## Next increment
-- [ ] Step 14 `mime_recognises_type_split_across_chunks` (pump a PNG stream in 3-byte chunks; the
-      signature window must still report `MIMEType::PNG`) — write the test FIRST and expect no
-      implementation change, the window already accumulates across chunks. Remaining after that: plan
-      steps 15-17 (`Reset()` reuse, chaining with `qor_base64encodefilter`, full `QORTest` regression run).
+- [ ] Step 15 `mime_recognizer_resets_between_streams` (after `Reset()` the state returns to
+      `MIMEType::Unresolved` with `GetSignatureByteCount() == 0`, then a second stream re-recognises
+      `== MIMEType::PDF`) — `Reset()` is already implemented in `mime.cpp` (it zeroes
+      `m_signatureCount` and restores `m_detectedType`), so the case verifies existing behaviour.
+      Remaining after that: plan steps 16-17 (chaining with `qor_base64encodefilter`,
+      `mime_type_name_drives_a_sink` optional scope).
 
