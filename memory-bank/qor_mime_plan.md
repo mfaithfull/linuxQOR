@@ -107,11 +107,11 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | 13 ✅ | `mime_falls_back_to_octet_stream` | `== OctetStream`, `"application/octet-stream"` for a raw binary blob AND for a Windows executable image prefix | DONE 22 Oct 2026 — test written FIRST, RED (`[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)`, exit 1), then an eleventh and last fixed-order guard in `Inspect()` AFTER the plain text guard: `m_detectedType == Unresolved && m_signatureCount >= SIGNATURE_WINDOW_BYTES` → `MIMEType::OctetStream`. The only guard with no signature of its own; insists on a full window like the plain text guard, so a stream shorter than the window stays `Unresolved`. `mime.h` unchanged. GREEN `[TOTAL](14/14) [OK](14/14)` exit 0 — **all 10 targets + the fallback; the recognizer is total** |
 | 14 ✅ | `mime_recognises_type_split_across_chunks` | 3-byte pumped chunks, png header still `== PNG` | signature window already handles it — proves chunk boundary handling (DONE 22 Oct 2026, GREEN first run, NO implementation change) |
 | 15 ✅ | `mime_recognizer_resets_between_streams` | after `Reset()` back to `Unresolved`, empty name and count 0, then re-recognise `== PDF` | DONE 22 Oct 2026 — test written FIRST and GREEN on the FIRST run, NO implementation change: ONE recognizer serves the step 3 PNG stream, `Reset()` clears `m_signatureCount`/`m_detectedType` (already implemented), and the step 6 PDF stream through FRESH elements re-linked with `Filter::SetSource`/`Filter::SetSink` classifies `== MIMEType::PDF` / `"application/pdf"`; `mime.h`/`mime.cpp` untouched, only `test_mime.cpp` recompiled. Verified `[TOTAL](16/16) [OK](16/16)` exit 0 |
-| 16 | `mime_recogniser_chained_with_qor_base64encodefilter` | `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink` output decodes to input and type still `image/png` | nothing in qor_mime — proves it composes as a real pipeline filter (NEXT) |
-| 17 | `mime_type_name_drives_a_sink` | the recognized name selects downstream behaviour | application-level glue (optional scope) |
+| 16 ✅ | `mime_recogniser_chained_with_qor_base64encodefilter` | `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink` output decodes to input and type still `image/png` | DONE 22 Oct 2026 — test written FIRST and seen RED, then fixed in `mime.cpp::TransferOctets` by separating consumed from produced unit counts; verified `[TOTAL](17/17) [OK](17/17)` exit 0 |
+| 17 ✅ | `mime_type_name_drives_a_sink` | `GetTypeName()` selects the downstream sink: PNG routes to an image sink and text/plain routes to a text sink; only the selected sink receives each stream | DONE 22 Oct 2026 — application-level glue in `test_mime.cpp` only: added `mime_type_name_drives_a_sink` and local helper `SelectSinkByMIMETypeName()`, then verified `[TOTAL](18/18) [OK](18/18)` exit 0 from `cmakebuild\\test\\framework\\data\\mime\\Debug` (`tmp/qortestmime_step17_build.log`, `tmp/qortestmime_step17_green_run.log`). `mime.h`/`mime.cpp` unchanged; the optional scope is closed. |
 
 Stop conditions: 10 of 10 target types recognised in steps 3–12, fallback proven in 13,
-pipeline contract proven in 1/2/14/15/16.
+pipeline contract proven in 1/2/14/15/16, and application-level sink routing proven in 17.
 
 ## Build + verify commands (Windows / MSVC / VS 2026 generator)
 
@@ -360,5 +360,13 @@ Pitfalls confirmed while creating the outline:
   filter inspects the stream BEFORE any downstream transform runs, so it classifies the PRE-encoded octets and
   stays correct in front of an encoding filter; and a pass-through filter must propagate the count its sink
   buffer PRODUCED, not the count it CONSUMED, because that is what the caller has to ask the sink for next.
-- Next: optional scope only — `mime_type_name_drives_a_sink` (application-level glue: the recognised
-  type name driving a sink). Steps 0-16 of the plan are done and verified.
+- Step 17 `mime_type_name_drives_a_sink` (optional application-level scope): test written FIRST. Added a local
+  `SelectSinkByMIMETypeName()` helper and a case that recognises a PNG stream, captures the registered name
+  `"image/png"`, routes a second PNG stream only to `routeImageSink`, then recognises a plain text stream, captures
+  `"text/plain"`, and routes a second text stream only to `routeTextSink`. The case asserts the registered names,
+  that the selected sink pointer matches the expected sink, and that only the selected sink receives each stream.
+  NO `qor_mime` implementation change was expected or made. Built `QORTestMIME` only from the active `cmakebuild`
+  dir → `[TOTAL](18/18) [OK](18/18)`, no `[FAIL](` line, exit 0 (`tmp/qortestmime_step17_build.log`,
+  `tmp/qortestmime_step17_green_run.log`). **Learning:** the MIME module's contract is the registered name; downstream
+  sink selection is application glue, not `qor_mime` behaviour. Optional scope closed.
+- Next: none — `qor_mime` plan steps 0-17 are done and verified.

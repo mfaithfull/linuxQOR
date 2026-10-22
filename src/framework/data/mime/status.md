@@ -239,9 +239,14 @@
       PRODUCED, not the count it CONSUMED, because an InlineFilter sink buffer rewrites the count in
       `WriteAcknowledge` to its produced width.
 
+- [x] Step 17 `mime_type_name_drives_a_sink`: application-level glue only — `qor_mime` supplies the recognised
+      registered name, and `test_mime.cpp` uses a local helper `SelectSinkByMIMETypeName()` to choose the sink
+      that receives the stream. The case recognises `image/png` and `text/plain`, asserts the selected sink
+      pointer, and verifies that each stream reaches only its selected sink. Verified 22 Oct 2026:
+      `QORTestMIME.exe` from `cmakebuild\test\framework\data\mime\Debug` → `[TOTAL](18/18) [OK](18/18)`
+      exit 0 (logs `tmp/qortestmime_step17_build.log`, `tmp/qortestmime_step17_green_run.log`).
+      `mime.h` and `mime.cpp` unchanged; optional scope closed.
+
 ## Next increment
-- [ ] Optional scope: `mime_type_name_drives_a_sink` (application-level glue — the recognised type name
-      driving a sink).
-      classifies the stream and `qor_base64encodefilter` encodes it; see
-      `src/components/data/pipeline/filters/base64encodefilter`). Optional scope: `mime_type_name_drives_a_sink`.
+- [x] No remaining `qor_mime` plan increments — steps 0-17 are done and verified.
 

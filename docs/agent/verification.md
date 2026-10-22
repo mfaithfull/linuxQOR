@@ -15,6 +15,12 @@ clang-tidy -p build docs/.../file.cpp
 # green = "[OK](n/n)" in the output AND shell exit code 0. The QOR does not use ctest.
 
 ## Results
+### 2026-10-22 — qor_mime plan step 17 / QORTestMIME (recognized MIME type name drives a sink) — PASS
+- **Test first**: added `mime_type_name_drives_a_sink` to `test/framework/data/mime/test_mime.cpp` and a tiny local application-level helper `SelectSinkByMIMETypeName()` in the test file. The case recognises a PNG stream, captures `GetTypeName() == "image/png"`, routes a second PNG stream only to `routeImageSink`, then recognises a plain text stream, captures `GetTypeName() == "text/plain"`, and routes a second text stream only to `routeTextSink`. NO `qor_mime` implementation change was expected or made — `qor_mime` supplies the recognised registered name only; the routing is local glue in the test.
+- Command (build the test exe only — active build dir is `cmakebuild`, because `build` was stale/missing the base64 filter import lib): `cmake --build C:\RAID0\Develop\linuxQOR\cmakebuild --target QORTestMIME --config Debug` → exit `0`, log `C:\RAID0\Develop\linuxQOR\tmp\qortestmime_step17_build.log` (no `error C`/`warning C`/`LNK`).
+- Command (run the exe from its own build dir, log path ABSOLUTE): `cd C:\RAID0\Develop\linuxQOR\cmakebuild\test\framework\data\mime\Debug ; ./QORTestMIME.exe` → exit `0`, log `C:\RAID0\Develop\linuxQOR\tmp\qortestmime_step17_green_run.log`.
+- Result: `test_mime.cpp(1360) : mime_type_name_drives_a_sink` then `[TOTAL](18/18)`, `[OK](18/18)`, NO `[FAIL](` line, exit `0` read in the SAME command.
+- Note: this optional-scope case went GREEN on the first run. An earlier build attempt against the stale `build` directory failed with `LNK2019` for `Base64EncodeFilter` because that directory did not have the `qor_base64encodefilter` library built for the MIME test target.
 ### 2026-10-22 — qor_mime plan step 16 / QORTestMIME (recognizer chained with qor_base64encodefilter) — PASS
 - **Test first**: added `mime_recogniser_chained_with_qor_base64encodefilter` to `test/framework/data/mime/test_mime.cpp`
   BEFORE any source change (TWO pipeline filters in series: `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink`

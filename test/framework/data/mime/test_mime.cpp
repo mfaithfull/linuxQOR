@@ -125,6 +125,7 @@
 //classifies the raw stream it inspects: MIMEType::PNG / "image/png". No implementation change is
 //expected - the recognizer passes octets through untouched - the case proves the existing module
 //composes with another filter.
+//step 17 - mime_type_name_drives_a_sink: the optional application-level glue increment. The recognizer's registered name is used by the test application to choose which StringSink receives the stream: "image/png" routes to an image sink and "text/plain" routes to a text sink. qor_mime supplies the name only; the routing is local glue in the test, so no qor_mime implementation change is expected. The case asserts the registered names and that only the sink selected by the recognised name receives the stream.
 
 
 
@@ -1344,6 +1345,140 @@ qor_pp_test_case(mime_recogniser_chained_with_qor_base64encodefilter)
     qor_pp_assert_that(recognizer.GetSignatureByteCount() == 16).isTrue();
     qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PNG).isTrue();
     qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "image/png").isTrue();
+}
+
+//application-level glue: the recognised MIME type name selects one of the candidate sinks supplied by the caller.
+static StringSink* SelectSinkByMIMETypeName(const std::string& typeName, StringSink& imageSink, StringSink& textSink)
+{
+    if(typeName == "image/png")
+        return &imageSink;
+    if(typeName == "text/plain")
+        return &textSink;
+    return nullptr;
+}
+
+qor_pp_test_case(mime_type_name_drives_a_sink)
+{
+    //First recognise the PNG stream and capture the registered name.
+    Pipeline pngPipeline;
+    pngPipeline.SetFlowMode(Element::FlowMode::Push);
+    ByteBuffer pngBuffer(128);
+    StringSource pngSource;
+    pngSource.SetParent(&pngPipeline);
+    pngSource.SetBuffer(&pngBuffer);
+    StringSink pngSink;
+    pngSink.SetParent(&pngPipeline);
+    pngSink.SetBuffer(&pngBuffer);
+
+    qor::mime::MIMERecognizerFilter pngRecognizer;
+    pngRecognizer.SetParent(&pngPipeline);
+    pngRecognizer.SetSource(&pngSource);
+    pngRecognizer.SetSink(&pngSink);
+
+    std::string pngData;
+    pngData.push_back(static_cast<char>(0x89));
+    pngData.push_back(static_cast<char>(0x50));
+    pngData.push_back(static_cast<char>(0x4E));
+    pngData.push_back(static_cast<char>(0x47));
+    pngData.push_back(static_cast<char>(0x0D));
+    pngData.push_back(static_cast<char>(0x0A));
+    pngData.push_back(static_cast<char>(0x1A));
+    pngData.push_back(static_cast<char>(0x0A));
+    pngData += "IHDR qor01";
+
+    pngSource.SetData(pngData);
+    size_t pngUnitsPumped = 0;
+    pngRecognizer.Pump(pngUnitsPumped, pngData.length());
+
+    qor_pp_assert_that(pngSink.GetData() == pngData).isTrue();
+    qor_pp_assert_that(pngRecognizer.GetSignatureByteCount() == 16).isTrue();
+    qor_pp_assert_that(pngRecognizer.GetDetectedType() == qor::mime::MIMEType::PNG).isTrue();
+
+    const std::string pngTypeName = pngRecognizer.GetTypeName();
+    qor_pp_assert_that(pngTypeName == "image/png").isTrue();
+
+    //The routing area has two candidate sinks, but the stream is routed only to the one selected by the name.
+    Pipeline routePipeline;
+    routePipeline.SetFlowMode(Element::FlowMode::Push);
+    ByteBuffer routeBuffer(128);
+    ByteBuffer imageBuffer(128);
+    ByteBuffer textBuffer(128);
+
+    StringSink routeImageSink;
+    routeImageSink.SetParent(&routePipeline);
+    routeImageSink.SetBuffer(&imageBuffer);
+
+    StringSink routeTextSink;
+    routeTextSink.SetParent(&routePipeline);
+    routeTextSink.SetBuffer(&textBuffer);
+
+    StringSink* selectedSink = SelectSinkByMIMETypeName(pngTypeName, routeImageSink, routeTextSink);
+    qor_pp_assert_that(selectedSink != nullptr).isTrue();
+    qor_pp_assert_that(selectedSink == &routeImageSink).isTrue();
+
+    StringSource pngRouteSource;
+    pngRouteSource.SetParent(&routePipeline);
+    pngRouteSource.SetBuffer(&routeBuffer);
+    pngRouteSource.SetData(pngData);
+
+    qor::mime::MIMERecognizerFilter pngRouteRecognizer;
+    pngRouteRecognizer.SetParent(&routePipeline);
+    pngRouteRecognizer.SetSource(&pngRouteSource);
+    pngRouteRecognizer.SetSink(selectedSink);
+
+    size_t pngRouteUnitsPumped = 0;
+    pngRouteRecognizer.Pump(pngRouteUnitsPumped, pngData.length());
+
+    qor_pp_assert_that(routeImageSink.GetData() == pngData).isTrue();
+    qor_pp_assert_that(routeTextSink.GetData() == std::string()).isTrue();
+
+    //A plain text stream must select the text sink instead.
+    std::string textData = "The quick brown fox jumps over the lazy dog";
+
+    Pipeline textPipeline;
+    textPipeline.SetFlowMode(Element::FlowMode::Push);
+    ByteBuffer textBuffer2(128);
+    StringSource textSource;
+    textSource.SetParent(&textPipeline);
+    textSource.SetBuffer(&textBuffer2);
+    StringSink textSink;
+    textSink.SetParent(&textPipeline);
+    textSink.SetBuffer(&textBuffer2);
+
+    qor::mime::MIMERecognizerFilter textRecognizer;
+    textRecognizer.SetParent(&textPipeline);
+    textRecognizer.SetSource(&textSource);
+    textRecognizer.SetSink(&textSink);
+
+    textSource.SetData(textData);
+    size_t textUnitsPumped = 0;
+    textRecognizer.Pump(textUnitsPumped, textData.length());
+
+    qor_pp_assert_that(textSink.GetData() == textData).isTrue();
+    qor_pp_assert_that(textRecognizer.GetSignatureByteCount() == 16).isTrue();
+    qor_pp_assert_that(textRecognizer.GetDetectedType() == qor::mime::MIMEType::PlainText).isTrue();
+
+    const std::string textTypeName = textRecognizer.GetTypeName();
+    qor_pp_assert_that(textTypeName == "text/plain").isTrue();
+
+    selectedSink = SelectSinkByMIMETypeName(textTypeName, routeImageSink, routeTextSink);
+    qor_pp_assert_that(selectedSink == &routeTextSink).isTrue();
+
+    StringSource textRouteSource;
+    textRouteSource.SetParent(&routePipeline);
+    textRouteSource.SetBuffer(&routeBuffer);
+    textRouteSource.SetData(textData);
+
+    qor::mime::MIMERecognizerFilter textRouteRecognizer;
+    textRouteRecognizer.SetParent(&routePipeline);
+    textRouteRecognizer.SetSource(&textRouteSource);
+    textRouteRecognizer.SetSink(selectedSink);
+
+    size_t textRouteUnitsPumped = 0;
+    textRouteRecognizer.Pump(textRouteUnitsPumped, textData.length());
+
+    qor_pp_assert_that(routeTextSink.GetData() == textData).isTrue();
+    qor_pp_assert_that(routeImageSink.GetData() == pngData).isTrue();
 }
 
 
