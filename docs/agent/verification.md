@@ -15,6 +15,46 @@ clang-tidy -p build docs/.../file.cpp
 # green = "[OK](n/n)" in the output AND shell exit code 0. The QOR does not use ctest.
 
 ## Results
+### 2026-10-22 — qor_mime plan step 16 / QORTestMIME (recognizer chained with qor_base64encodefilter) — PASS
+- **Test first**: added `mime_recogniser_chained_with_qor_base64encodefilter` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE any source change (TWO pipeline filters in series: `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink`
+  under a Push-mode `Pipeline` parent). Anatomy read first: `Base64EncodeFilter` is an `InlineFilter<byte>` — a Buffer
+  pair, not an `Element` — so it is inserted as the buffer shared by the elements either side of it (`Pipeline::InsertInlineFilter`
+  BeforeSink position: `sink.SetBuffer(&encodeFilter)`; done by hand because the filter is built with an explicit
+  capacity `Base64EncodeFilter encodeFilter(128)` — its default ctor holds zero items and encodes nothing). Stream =
+  the 8-byte PNG magic as explicit octets + a 10-byte payload = 18 octets (multiple of 3, so base64 adds no padding;
+  longer than the 16-byte signature window; one pumped chunk), pumped for the 24 ENCODED units. Asserts
+  `sink.GetData() == "iVBORw0KGgpJSERSIHFvcjAx"` (the standard base64 of the stream, computed independently),
+  `GetSignatureByteCount() == 16`, `GetDetectedType() == MIMEType::PNG`, `std::string(GetTypeName()) == "image/png"`.
+  `test/framework/data/mime/CMakeLists.txt` gained `qor_base64encodefilter` in `qor_libraries`.
+- Command (build the lib, then the test exe — SEPARATE commands, one `cmake --build` per command): `cmake --build cmakebuild --target qor_mime --config Debug` → log `tmp/qor_mime_step16_dll.log`; `cmake --build cmakebuild --target QORTestMIME --config Debug` → log `tmp/qortestmime_step16_exe.log`; both exit `0`, no `error C`/`warning C`/`LNK`.
+- Command (run the exe from its own build dir, log path ABSOLUTE): `cd C:\RAID0\Develop\linuxQOR\cmakebuild\test\framework\data\mime\Debug ; ./QORTestMIME.exe` → exit `0`, log `C:\RAID0\Develop\linuxQOR\tmp\qortestmime_step16_green_run.log`.
+- Result: `test_mime.cpp(1293) : mime_recogniser_chained_with_qor_base64encodefilter` then `[TOTAL](17/17)`, `[OK](17/17)`, NO `[FAIL](` line (`Select-String -Pattern 'FAIL'` over the log → 0 matches), exit `0` read in the SAME command.
+- RED phase observed BEFORE the fix: `test_mime.cpp(1340) : mime_recogniser_chained_with_qor_base64encodefilter [FAIL], #16`, `[TOTAL](17/17) [OK](16/17) [FAIL](1/17)`, exit `1` (logs `tmp/qortestmime_step16_run.log`, `tmp/qortestmime_step16_diag_run.log`, `tmp/qortestmime_step16_diag2_run.log`) — the sink received only the FIRST 18 of the 24 encoded characters, i.e. the stream was truncated at the raw input length.
+- Cause (new framework fact): `mime.cpp::TransferOctets` passed the SAME variable to both buffer acknowledgements. `InlineFilter::WriteAcknowledge` MUTATES the item count it is handed to the number of units it PRODUCED (base64 expands 4 per 3), and `Buffer::ReadAcknowledge` then CLAMPS the count it is handed back to what the source holds — so sharing one variable clamped the produced count back to the raw 18 before it was assigned to `unitsTransferred`, and the pump then asked the sink for only 18 encoded units. Fix: `size_t unitsConsumed = unitsToTransfer;` drives the `memcpy` and the source `ReadAcknowledge`, while `unitsToTransfer` (already rewritten by the sink's `WriteAcknowledge`) is what is returned in `unitsTransferred`. For a plain buffer the two counts are equal, so steps 1-15 keep their behaviour.
+- Note: `mime.h` contract note for `TransferOctets` extended — `unitsTransferred` is the count the sink buffer ends up holding, which differs from the raw count when that buffer is an InlineFilter that changes the width of the stream.
+- Learning: a recognising filter inspects the stream BEFORE any downstream transform runs, so it classifies the PRE-encoded octets and remains correct in front of an encoding filter; and a pass-through filter must propagate the count its sink buffer PRODUCED, not the count it CONSUMED, because that is the count the caller has to ask the sink for.
+
+
+### 2026-10-22 — qor_mime plan step 15 / QORTestMIME (recognizer reuse across Reset) — PASS
+- **Test first**: added `mime_recognizer_resets_between_streams` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE any source change (ONE `qor::mime::MIMERecognizerFilter` instance serving TWO streams, fresh elements
+  for the second — the multi-stream shape of steps 5/9/10/11/12/13: stream 1 the PNG stream of step 3, so the
+  state being discarded is a KNOWN type and not the initial state; then `Reset()` and asserts that the state IS
+  cleared — `GetDetectedType() == MIMEType::Unresolved`, `std::string(GetTypeName()) == ""`,
+  `GetSignatureByteCount() == 0`; stream 2 the PDF stream of step 6 pushed through the SAME recognizer re-wired
+  to the fresh elements with `Filter::SetSource`/`Filter::SetSink`, per stream asserts
+  `sink.GetData() == data` pass-through, `GetSignatureByteCount() == 16`, `GetDetectedType() == MIMEType::PDF`,
+  `std::string(GetTypeName()) == "application/pdf"`). The running header comment at `test_mime.cpp(99)` was
+  extended with the step 15 description. NO implementation change was expected — `Reset()` is already in `mime.cpp`.
+- Command (build the test exe only — `qor_mime` lib sources unchanged, only `test_mime.cpp` recompiled): `cmake --build C:\RAID0\Develop\linuxQOR\build --target QORTestMIME --config Debug` → exit `0`, log `tmp/qortestmime_step15_build_exe.log` (recompiles `test_mime.cpp`, links `qor_mime.dll`/`qor_pipeline.dll`/`qor_qor.dll`/`qor_error.dll`; no `error C`/`warning C`/`LNK`).
+- Command (run the exe from its own build dir, as required by the `qor.dll` relative data path): `cd C:\RAID0\Develop\linuxQOR\build\test\framework\data\mime\Debug ; ./QORTestMIME.exe` → exit `0`, log `tmp/qortestmime_step15_green.log`.
+- Result: `test_mime.cpp(1163) : mime_recognizer_resets_between_streams` then `[TOTAL](16/16)`, `[OK](16/16)`, NO `[FAIL](` line (`Select-String -Pattern 'FAIL'` over the log → 0 matches), exit `0` read in the SAME command.
+- Note: the case went **GREEN on the first run** — the plan expected NO implementation change and the step is a behaviour proof, not new code. `Reset()` zeroes `m_signatureCount` and restores `m_detectedType` to `MIMEType::Unresolved`, so the recognizer serves a second stream from scratch: the 8-byte PNG magic of stream 1 does not carry into the PDF window of stream 2. The case is meaningful in both directions — a type that `Reset()` failed to clear would leave stream 2 reporting `image/png`, and a signature count it failed to zero would leave stream 2's window at 32 octets and fail the `== 16` count assert.
+- Gotcha (new, mild): the run log had to be written with an ABSOLUTE path (`C:\RAID0\Develop\linuxQOR\tmp\qortestmime_step15_green.log`) — the mandatory `cd` into the build dir moves a relative `tmp/` log path with it, and `build\test\framework\data\mime\Debug\tmp` does not exist, so a relative `Tee tmp/...` fails with `Could not find a part of the path` BEFORE the suite reports anything. The build log (no `cd`) keeps its relative path.
+- No other build gotchas: one `cmake --build` per command and build-then-run-separately both held. **Learning:** a filter is reused across streams by re-wiring the FILTER (`Filter::SetSource`/`Filter::SetSink`), never by re-linking its plumbing — `Element::SetSink`/`SetSource` return false when the element already has a connection, so re-pointing a still-linked source or sink fails silently.
+
+
 ### 2026-10-22 — qor_mime plan step 14 / QORTestMIME (signature split across chunks) — PASS
 
 - Command (build the test exe only — `qor_mime` lib sources unchanged, only `test_mime.cpp` recompiled): `cmake --build C:\RAID0\Develop\linuxQOR\build --target QORTestMIME --config Debug` → exit `0`, log `tmp/qortestmime_step14_build_exe.log` (compiles `test_mime.cpp` only, links `qor_mime.dll` / `qor_pipeline.dll` / `qor_qor.dll` / `qor_error.dll`; no `error C`/`warning C`/`LNK`).
