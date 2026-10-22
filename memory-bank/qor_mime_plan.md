@@ -103,7 +103,7 @@ Each increment = (a) new test case in `test/framework/data/mime/test_mime.cpp`, 
 | 9 ✅ | `mime_recognises_html_signature` (named to match the `_signature` convention of steps 3-8, not the outline's `_from_markup`) | `== HTML`, `"text/html"` for `<!DOCTYPE html>...` AND for no-doctype `<HTML>...` | DONE 22 Oct 2026 — RED first (`[FAIL] #9`, `[OK](9/10)`, exit 1), then seventh fixed-order guard in `Inspect()`: case-folded `<!DOCTYPE HTML` (14 octets) + case-folded first tag {html,head,body,title}, via new file-local `markupMatch()` ASCII case-fold helper in `mime.cpp`; `mime.h` unchanged. Verified `[TOTAL](10/10) [OK](10/10)` exit 0 |
 | 10 ✅ | `mime_recognises_json_signature` (named to match the `_signature` convention of steps 3-9, not the outline's `_from_markup`) | `== JSON`, `"application/json"` for a `{` object AND for a whitespace-padded `[` array | DONE 22 Oct 2026 — RED first (`[FAIL] #10`, `[OK](10/11)`, exit 1), then eighth fixed-order guard in `Inspect()`: scan the window for the first octet that is not JSON whitespace (0x20/0x09/0x0A/0x0D) and set `MIMEType::JSON` on `{`/`[`, then stop; `mime.h` unchanged. Verified `[TOTAL](11/11) [OK](11/11)` exit 0 |
 | 11 | `mime_recognises_javascript_from_markup` | `== JavaScript`, `"application/javascript"` | shebang/comment + keyword heuristic |
-| 12 | `mime_recognises_plain_text` | `== PlainText`, `"text/plain"` | printable-byte scan default |
+| 12 ✅ | `mime_recognises_plain_text_signature` (named to match the `_signature` convention of steps 3-11, not the outline's `mime_recognises_plain_text`) | `== PlainText`, `"text/plain"` for an ASCII prose stream AND for a stream carrying explicit UTF-8 octets | DONE 22 Oct 2026 — RED first (`[FAIL] #12`, `[OK](12/13)`, exit 1), then tenth fixed-order guard in `Inspect()` after the JavaScript guards: requires the WHOLE 16-byte window captured (`m_signatureCount >= SIGNATURE_WINDOW_BYTES`) and every captured octet printable — 0x80-0xFF (UTF-8 encoded text), 0x20-0x7E (printable ASCII) or 0x09/0x0A/0x0D (tab, line feed, carriage return); any other control octet leaves the stream unresolved for the fallback. Well formed UTF-8 is NOT validated (that belongs to the Unicode layer, which this framework layer module must not depend on). `mime.h` unchanged. Verified `[TOTAL](13/13) [OK](13/13)` exit 0 — **10 of 10 target types recognised** |
 | 13 | `mime_falls_back_to_octet_stream` | `== OctetStream`, `"application/octet-stream"` | fallback branch |
 | 14 | `mime_recognises_type_split_across_chunks` | 3-byte pumped chunks, png header still `== PNG` | signature window already handles it — proves chunk boundary handling |
 | 15 | `mime_recognizer_resets_between_streams` | after `Reset()` back to `Unresolved` and count 0, then re-recognise `== PDF` | `Reset()` (already drafted — verify) |
@@ -266,6 +266,19 @@ Pitfalls confirmed while creating the outline:
   `tmp/qortestmime_step11_build_exe.log` show no `error C`/`warning C`/`LNK`). **9 of 10 target types recognised**
   (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON, JavaScript). No new gotchas — one-cmake-build-per-command and
   build-then-run-separately both held.
-- Next: step 12 `mime_recognises_plain_text_signature` (the default for text — all inspected bytes printable
-  ASCII/UTF-8, no markup marker matched) — test FIRST, then the guard in `Inspect()` AFTER the javascript guard.
-  Remaining after that: step 13 the octet-stream fallback.
+- Step 12 `mime_recognises_plain_text_signature` (the default for text — printable octet scan): (22 Oct
+  2026, test-first) RED first `[FAIL], #12`, `[TOTAL](13/13) [OK](12/13) [FAIL](1/13)`, exit 1. Test = TWO
+  Push-mode streams in the one case, fresh elements for the second (shape of steps 5/9/10/11): an ASCII-only
+  prose document longer than the 16-byte window, and a document carrying explicit UTF-8 octets (`0xC3,0xA9`
+  two byte sequence, `0xE2,0x82,0xAC` three byte sequence) so the stream is source-encoding independent;
+  per stream asserts pass-through, `== MIMEType::PlainText`, `"text/plain"`. Code = tenth fixed-order guard in
+  `Inspect()` AFTER the JavaScript guards: requires `m_signatureCount >= SIGNATURE_WINDOW_BYTES` (the WHOLE
+  window — the only guard that demands a full window, because a partial window is not evidence of text) and
+  every captured octet in 0x80-0xFF (UTF-8 text) | 0x20-0x7E (printable ASCII) | 0x09,0x0A,0x0D (tab/line
+  feed/carriage return); any other control octet leaves the stream unresolved for the fallback. UTF-8
+  well-formedness deliberately NOT validated — the Unicode layer owns that and this framework layer module
+  must not depend on it. `mime.h` unchanged. Rebuilt `qor_mime` then `QORTestMIME` (separate commands) →
+  `[TOTAL](13/13) [OK](13/13)`, no `[FAIL`, exit 0. **10 of 10 target types recognised.**
+- Next: plan step 13 `mime_falls_back_to_octet_stream` — test FIRST, then the fallback branch in `Inspect()`
+  AFTER the plain text guard. Remaining after that: plan steps 14-17 (signature split across pumped chunks,
+  `Reset()` reuse, chaining with `qor_base64encodefilter`, full `QORTest` regression run).

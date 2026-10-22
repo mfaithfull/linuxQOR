@@ -57,6 +57,20 @@
 //JavaScript is case-sensitive, so the "function" compare in the recognizer is a plain byte compare,
 //not the case-folded markupMatch used for the HTML markup above. Evaluated after the JSON container
 //check in the fixed order (png, jpeg, gif, pdf, zip, xml, html, json, javascript, ...).
+//step 12 - mime_recognises_plain_text_signature: the tenth detection increment. A stream that is a
+//plain text document must be classified as text/plain: GetDetectedType() == MIMEType::PlainText and
+//GetTypeName() == "text/plain". Plain text has no magic number, no markup marker and no container
+//opener, so it is the default for text - the whole signature window is captured and every octet in
+//it is printable: printable ASCII (0x20-0x7E including the space), the three controls the text and
+//JSON conventions allow (tab, line feed and carriage return) and the high octets (0x80-0xFF) that
+//carry UTF-8 encoded text. Any other control octet means the stream is not plain text and leaves the
+//decision to the octet-stream fallback (plan step 13). The guard is evaluated after every definite
+//signature in the fixed order (png, jpeg, gif, pdf, zip, xml, html, json, javascript, plain text) so
+//the binary, markup, container and source streams recognised in the earlier increments are never
+//reclassified. The test asserts two streams, one per half of the printable range, each with fresh
+//pipeline elements (the established shape of the multi-stream cases in steps 5, 9, 10 and 11): stream
+//1 an ASCII-only prose document, stream 2 a document carrying UTF-8 multi-byte octets. This case is
+//written FIRST and seen RED - Inspect() has no plain text detector yet.
 
 
 
@@ -808,6 +822,103 @@ qor_pp_test_case(mime_recognises_javascript_signature)
     //The leading source comment makes the stream JavaScript.
     qor_pp_assert_that(recognizer3.GetDetectedType() == qor::mime::MIMEType::JavaScript).isTrue();
     qor_pp_assert_that(std::string(recognizer3.GetTypeName()) == "application/javascript").isTrue();
+}
+
+//Step 12 - the tenth detection increment. A stream that is a plain text document must be classified
+//as text/plain: GetDetectedType() == MIMEType::PlainText and GetTypeName() == "text/plain". Plain
+//text has no magic number, no markup marker and no container opener, so it is the default for text -
+//the whole signature window must be captured and every octet in it must be printable: printable ASCII
+//(0x20-0x7E including the space), the three controls the text and JSON conventions allow (tab, line
+//feed and carriage return) and the high octets (0x80-0xFF) that carry UTF-8 encoded text. The guard
+//is evaluated after every definite signature in the fixed order, so the binary, markup, container and
+//source streams recognised in the earlier increments are never reclassified here. The test asserts
+//two streams, one per half of the printable range, each with fresh pipeline elements (the established
+//shape of the multi-stream cases in steps 5, 9, 10 and 11): stream 1 an ASCII-only prose document and
+//stream 2 a document carrying UTF-8 multi-byte octets, written out as explicit octets so the test does
+//not depend on the encoding of this source file. As in steps 3-11 the pass-through contract is re-checked
+//so that adding a detector cannot break the octet stream proven earlier. This case is written FIRST and
+//seen RED - Inspect() has no plain text detector yet.
+qor_pp_test_case(mime_recognises_plain_text_signature)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //Stream 1 - an ASCII-only prose document, longer than the sixteen byte signature window. It
+    //carries letters, digits, punctuation, spaces, a tab and line feeds - nothing else - so it has
+    //no magic number, no markup marker, no container opener and no source file leading signature.
+    std::string asciiData;
+    asciiData += "Plain prose with letters, digits 1234 and punctuation.\n";
+    asciiData += "\tIt has no magic number, no markup marker, no container brace.\n";
+
+    source.SetData(asciiData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, asciiData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink.GetData() == asciiData).isTrue();
+
+    //Every captured octet is printable ASCII, so the stream is plain text.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PlainText).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "text/plain").isTrue();
+
+    //Stream 2 - a document carrying UTF-8 encoded text, so the window holds high octets (0x80-0xFF).
+    //Fresh elements. The multi-byte sequences are written as explicit octets so the stream does not
+    //depend on the encoding of this source file: a two byte sequence (a lead byte followed by one
+    //continuation byte) and a three byte sequence (a lead byte followed by two continuation bytes).
+    ByteBuffer inBuffer2(128);
+    ByteBuffer outBuffer2(128);
+
+    StringSource source2;
+    source2.SetParent(&testPipeline);
+    source2.SetBuffer(&inBuffer2);
+
+    StringSink sink2;
+    sink2.SetParent(&testPipeline);
+    sink2.SetBuffer(&outBuffer2);
+
+    qor::mime::MIMERecognizerFilter recognizer2;
+    recognizer2.SetParent(&testPipeline);
+    recognizer2.SetSource(&source2);
+    recognizer2.SetSink(&sink2);
+
+    std::string utf8Data;
+    utf8Data += "Text carrying UTF-8: ";
+    utf8Data.push_back(static_cast<char>(0xC3));//two byte lead
+    utf8Data.push_back(static_cast<char>(0xA9));//continuation
+    utf8Data.push_back(static_cast<char>(0xE2));//three byte lead
+    utf8Data.push_back(static_cast<char>(0x82));//continuation
+    utf8Data.push_back(static_cast<char>(0xAC));//continuation
+    utf8Data += " - and plain ASCII around it.\n";
+
+    source2.SetData(utf8Data);
+
+    size_t unitsPumped2 = 0;
+    recognizer2.Pump(unitsPumped2, utf8Data.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink2.GetData() == utf8Data).isTrue();
+
+    //Every captured octet is printable ASCII or a UTF-8 octet, so the stream is plain text.
+    qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::PlainText).isTrue();
+    qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "text/plain").isTrue();
 }
 
 

@@ -1,10 +1,11 @@
 # Active Context
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 11 (`mime_recognises_javascript_signature`) DONE and
-verified green, driven test-first** (RED `[FAIL] #11`, `[TOTAL](12/12) [OK](11/12) [FAIL](1/12)` exit 1 →
-GREEN `[TOTAL](12/12) [OK](12/12)` exit 0; logs `tmp/qortestmime_step11_red.log`,
-`tmp/qortestmime_step11_green.log`). **9 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML, HTML, JSON, JavaScript). Step 10 (`mime_recognises_json_signature`), step 9 (`mime_recognises_html_signature`),
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 12 (`mime_recognises_plain_text_signature`) DONE and
+verified green, driven test-first** (RED `[FAIL] #12`, `[TOTAL](13/13) [OK](12/13) [FAIL](1/13)` exit 1 →
+GREEN `[TOTAL](13/13) [OK](13/13)` exit 0; logs `tmp/qortestmime_step12_red.log`,
+`tmp/qortestmime_step12_green.log`). **ALL 10 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML, HTML, JSON, JavaScript, plain text). Step 11 (`mime_recognises_javascript_signature`), step 10
+(`mime_recognises_json_signature`), step 9 (`mime_recognises_html_signature`),
 and step 7 (`mime_recognises_zip_signature`) were likewise DONE and verified green test-first (step 9
 RED `[FAIL] #9` → GREEN `[TOTAL](10/10) [OK](10/10)`; step 8 RED `[FAIL] #8` → GREEN `[TOTAL](9/9) [OK](9/9)`;
 step 7 RED `[FAIL] #7` → GREEN `[TOTAL](8/8) [OK](8/8)`). Details in the section below (and in `src/framework/data/mime/status.md`,
@@ -189,14 +190,36 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
   running comment in `Inspect()` corrected to "remaining two types". Rebuilt `qor_mime` then `QORTestMIME`
   (separate commands, one cmake build each) → `[TOTAL](11/11) [OK](11/11)`, no `[FAIL`, exit 0
   (`tmp/qortestmime_step10_green.log`). **8 of 10 target types recognised.** No new build gotchas.
+- **Plan step 11 (recognise JavaScript) — DONE 22 Oct 2026, test-first.** Full record in
+  `docs/agent/verification.md` and `src/framework/data/mime/status.md`: RED `[FAIL] #11`, `[TOTAL](12/12) [OK](11/12) [FAIL](1/12)`
+  → GREEN `[TOTAL](12/12) [OK](12/12)` exit 0; **9 of 10 target types recognised.**
+- **Plan step 12 (recognise plain text) — DONE 22 Oct 2026, test-first.** Wrote
+  `mime_recognises_plain_text_signature` FIRST (TWO Push-mode streams in the one case, fresh elements for the
+  second — the shape of steps 5/9/10/11: an ASCII-only prose document longer than the sixteen byte window
+  (letters, digits, punctuation, spaces, a tab, line feeds), and a document carrying explicit UTF-8 octets
+  (`0xC3,0xA9` two byte sequence, `0xE2,0x82,0xAC` three byte sequence) so the stream does not depend on this
+  file's encoding; per stream asserts `sink.GetData() == data` pass-through, `GetDetectedType() == MIMEType::PlainText`,
+  `std::string(GetTypeName()) == "text/plain"`) and saw it RED (`mime_recognises_plain_text_signature [FAIL], #12`,
+  `[TOTAL](13/13) [OK](12/13) [FAIL](1/13)`, exit 1, `tmp/qortestmime_step12_red.log`), then `Inspect()` gained a
+  tenth fixed-order guard after the JavaScript guards: it requires `m_signatureCount >= SIGNATURE_WINDOW_BYTES`
+  — the WHOLE window captured, the only guard that demands a full window, because a partially captured window is
+  not evidence of text — and then every captured octet must be printable: 0x80-0xFF (treated as UTF-8 encoded
+  text), 0x20-0x7E (printable ASCII) or 0x09/0x0A/0x0D (tab, line feed, carriage return). Any other control octet
+  (NUL, the other C0 controls, DEL) rejects the stream and leaves it `Unresolved` for the step 13 fallback.
+  **Learning (record):** the weakest heuristic must demand the full signature window — that requirement is what
+  stops this guard from stealing the binary/markup/container streams whose definite signatures are matched
+  earlier in the fixed order. UTF-8 well-formedness is deliberately NOT validated here: that belongs to the
+  Unicode layer, which a framework layer module must not depend on. `mime.h` unchanged (name table complete
+  since step 3); the running comment in `Inspect()` corrected to "the octet-stream fallback". Rebuilt `qor_mime`
+  then `QORTestMIME` (separate commands, one cmake build each) → `[TOTAL](13/13) [OK](13/13)`, no `[FAIL`,
+  exit 0 (`tmp/qortestmime_step12_green.log`). **10 of 10 target types recognised.** No new build gotchas.
 
 
 ### Next up
-- [ ] Plan step 11 — write `mime_recognises_javascript_signature` FIRST (weak heuristic: shebang `#!`,
-  or a `//` / `/*` comment plus ECMA keywords, or `function ` / `=>`), then the guard in `Inspect()`
-  AFTER the json guard. (Plan table calls it `mime_recognises_javascript_from_markup`; renamed to the
-  `_signature` convention, as decided for step 9.)
-- [ ] Plan steps 12..13 — plain text (printable-byte scan default) + octet-stream fallback.
+- [ ] Plan step 13 — write `mime_falls_back_to_octet_stream` FIRST (a full window that is not printable text
+  and matches no signature → `MIMEType::OctetStream`, `"application/octet-stream"`), then the fallback branch
+  in `Inspect()` AFTER the plain text guard. (Plan step 12 `mime_recognises_plain_text_signature` is DONE —
+  all 10 target types recognised.)
 - [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
   `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline
   test exe to prove no framework regression).

@@ -143,15 +143,14 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
-                    //Plan steps 3,4,5,6,7,8,9,10,11 - classify the captured leading octets. The evaluation
+                    //Plan steps 3,4,5,6,7,8,9,10,11,12 - classify the captured leading octets. The evaluation
                     //order is fixed so results are deterministic (most definite signature
                     //first): png, jpeg, gif, pdf, zip, then the text markups, then the
                     //fallback. Each guard asks only for the octets its own signature needs,
                     //so a shorter signature can decide before the window is full. The
                     //signature window is never consumed (the read was rejected), so these
                     //checks run again on every chunk as more leading octets arrive. The
-                    //remaining type (plain text) and the octet-stream fallback are added one
-                    //test at a time after this.
+                    //octet-stream fallback is added one test at a time after this.
                     if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8)
                     {
                         static const qor::byte pngSignature[8] =
@@ -328,6 +327,49 @@ namespace qor{ namespace mime{
                         m_signature[0] == 0x2F && (m_signature[1] == 0x2F || m_signature[1] == 0x2A))//comment "//" or "/*"
                     {
                         m_detectedType = MIMEType::JavaScript;
+                    }
+
+                    //Plan step 12 - plain text is the default for text: it has no magic number, no
+                    //markup marker, no container opener and no source file leading signature, so it is
+                    //recognised only after every definite signature above has failed to match. Two
+                    //things make this the weakest of the guards:
+                    //  (1) the whole signature window must have been captured, so a binary stream
+                    //      cannot look like text before the control octets that betray it have arrived
+                    //      - a partially captured window is never enough to call a stream text;
+                    //  (2) every octet in the window must be printable: printable ASCII (0x20-0x7E,
+                    //      the space included), the three controls the text and JSON conventions allow
+                    //      (tab, line feed and carriage return) and the high octets (0x80-0xFF) that
+                    //      carry UTF-8 encoded text. Well formed UTF-8 is deliberately not checked
+                    //      here - a window of printable octets is text for the purposes of this
+                    //      recognizer, and full UTF-8 validation belongs to the Unicode layer, which
+                    //      this framework layer module must not depend on.
+                    //Any other control octet (a NUL, the other C0 controls or DEL) leaves the stream
+                    //unresolved so that the octet-stream fallback (plan step 13) can classify it.
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= SIGNATURE_WINDOW_BYTES)
+                    {
+                        bool allPrintable = true;
+                        for(size_t index = 0; index < m_signatureCount; ++index)
+                        {
+                            const qor::byte octet = m_signature[index];
+                            if(octet >= 0x80)//UTF-8 encoded text
+                            {
+                                continue;
+                            }
+                            if(octet >= 0x20 && octet <= 0x7E)//printable ASCII
+                            {
+                                continue;
+                            }
+                            if(octet == 0x09 || octet == 0x0A || octet == 0x0D)//tab, line feed, carriage return
+                            {
+                                continue;
+                            }
+                            allPrintable = false;
+                            break;
+                        }
+                        if(allPrintable)
+                        {
+                            m_detectedType = MIMEType::PlainText;
+                        }
                     }
 
                     return true;

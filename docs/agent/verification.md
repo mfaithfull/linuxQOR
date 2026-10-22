@@ -15,6 +15,43 @@ clang-tidy -p build docs/.../file.cpp
 # green = "[OK](n/n)" in the output AND shell exit code 0. The QOR does not use ctest.
 
 ## Results
+### 2026-10-22 — qor_mime plan step 12 / QORTestMIME (plain text recognition) — PASS
+- **Test first**: added `mime_recognises_plain_text_signature` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE touching `mime.cpp`/`mime.h` (TWO Push-mode streams in the one case, fresh elements for the
+  second — the shape of steps 5, 9, 10 and 11: stream 1 an ASCII-only prose document longer than the
+  sixteen byte signature window (letters, digits, punctuation, spaces, a tab, line feeds), stream 2 a
+  document carrying UTF-8 multi-byte octets written as explicit octets (a two byte sequence and a three
+  byte sequence) so the stream does not depend on the encoding of the source file; per stream asserts
+  `sink.GetData() == data` pass-through, `GetDetectedType() == MIMEType::PlainText`,
+  `std::string(GetTypeName()) == "text/plain"`).
+- **Run (red)**: `cmake --build build --target QORTestMIME` (lib unchanged) then the exe run in its OWN
+  command from `build\test\framework\data\mime\Debug` → `test_mime.cpp(841) : mime_recognises_plain_text_signature
+  [FAIL], #12`, `[TOTAL](13/13) [OK](12/13) [FAIL](1/13)`, exit 1, reason `expected boolean to have the value of true / value was : 0`
+  → the test is meaningful (no plain text detector exists). Log `tmp/qortestmime_step12_red.log`,
+  build log `tmp/qortestmime_step12_red_build.log`.
+- **Code**: `mime.cpp` only — a tenth fixed-order guard in `Inspect()` AFTER the JavaScript guards: it
+  requires `m_detectedType == Unresolved && m_signatureCount >= SIGNATURE_WINDOW_BYTES`, i.e. the WHOLE
+  window captured (unlike the shorter signatures above), so a binary stream cannot look like text before
+  the control octets that betray it have arrived; it then scans every captured octet and accepts only
+  0x80-0xFF (UTF-8 encoded text), 0x20-0x7E (printable ASCII) and 0x09/0x0A/0x0D (tab, line feed, carriage
+  return) — any other control octet (NUL, the other C0 controls, DEL) rejects the stream and leaves it
+  unresolved for the octet-stream fallback (step 13). Well formed UTF-8 is deliberately NOT validated here:
+  that belongs to the Unicode layer, which a framework layer module must not depend on. `mime.h` unchanged
+  (name table complete since step 3); the running comment in `Inspect()` corrected from "remaining type
+  (plain text) and the octet-stream fallback" to "the octet-stream fallback".
+- **Build**: `cmake --build build --target qor_mime` → exit 0 (`qor_mime.dll`), then
+  `cmake --build build --target QORTestMIME` → exit 0, no `error C`/`warning C`/`LNK` in either log
+  (`tmp/qortestmime_step12_build_lib.log`, `tmp/qortestmime_step12_build_exe.log`).
+- **Run (green)**: from `build\test\framework\data\mime\Debug` → `[TOTAL](13/13) [OK](13/13)`, no
+  `[FAIL` in the log, `$LASTEXITCODE = 0` → PASS. Log `tmp/qortestmime_step12_green.log`. **10 of 10
+  target types now recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON, JavaScript, plain text).
+- No new gotchas: the one-cmake-build-per-command and build-then-run-separately rules both held. **Learning:**
+  the weakest heuristic must demand a FULL signature window — a partially captured window is not evidence
+  of text, and requiring the full window is what keeps this guard from stealing the binary, markup and
+  container streams whose definite signatures are matched earlier in the fixed order.
+
+
+```
 ### 2026-10-22 — qor_mime plan step 11 / QORTestMIME (JavaScript shebang + function + comment recognition) — PASS
 - **Test first**: added `mime_recognises_javascript_signature` to `test/framework/data/mime/test_mime.cpp`
   BEFORE touching `mime.cpp`/`mime.h` (THREE Push-mode streams in the one case, fresh elements per stream —
