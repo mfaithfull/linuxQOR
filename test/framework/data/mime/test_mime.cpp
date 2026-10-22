@@ -71,6 +71,22 @@
 //pipeline elements (the established shape of the multi-stream cases in steps 5, 9, 10 and 11): stream
 //1 an ASCII-only prose document, stream 2 a document carrying UTF-8 multi-byte octets. This case is
 //written FIRST and seen RED - Inspect() has no plain text detector yet.
+//step 13 - mime_falls_back_to_octet_stream: the fallback increment. A stream that carries a full
+//signature window and matches none of the ten recognised signatures must be classified as
+//application/octet-stream: GetDetectedType() == MIMEType::OctetStream and GetTypeName() ==
+//"application/octet-stream". The fallback has no signature of its own - it is the eleventh and last
+//guard in the fixed order (png, jpeg, gif, pdf, zip, xml, html, json, javascript, plain text, octet
+//stream) and it fires only when every guard above has declined, which makes the recognizer total:
+//once the window is full every stream ends with a name. Both streams are longer than the sixteen byte
+//window so the whole window is captured - a partially captured window is no evidence at all and stays
+//Unresolved until the octets that decide it arrive. Two streams are asserted, each with fresh pipeline
+//elements (the established shape of the multi-stream cases in steps 5, 9, 10, 11 and 12): stream 1 is
+//a raw binary blob opening with a NUL, so it carries no signature and the plain text guard rejects it;
+//stream 2 opens with the printable 'M' 'Z' prefix of a Windows executable image but carries NUL octets
+//inside the window, so a stream that looks like text at its very start is still not left unresolved.
+//As in steps 3-12 the pass-through contract is re-checked so that adding the fallback cannot break the
+//octet stream proven earlier. This case is written FIRST and seen RED - Inspect() has no fallback yet,
+//so an unmatched stream is still reported as Unresolved.
 
 
 
@@ -919,6 +935,120 @@ qor_pp_test_case(mime_recognises_plain_text_signature)
     //Every captured octet is printable ASCII or a UTF-8 octet, so the stream is plain text.
     qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::PlainText).isTrue();
     qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "text/plain").isTrue();
+}
+
+//Step 13 - the fallback. A stream that carries a full signature window and matches none of the ten
+//recognised signatures must be classified as application/octet-stream: GetDetectedType() ==
+//MIMEType::OctetStream and GetTypeName() == "application/octet-stream". The fallback has no signature
+//of its own, so it fires only when every guard above it has declined. Both streams must be longer than
+//the sixteen byte signature window so the whole window is captured - a partially captured window is
+//not evidence that a stream has no signature, because the octets that carry one may not have arrived
+//yet, and such a stream stays Unresolved. Two streams are asserted, each with fresh pipeline elements
+//(the established shape of the multi-stream cases in steps 5, 9, 10, 11 and 12). Stream 1 is a raw
+//binary blob opening with a NUL: it carries none of the ten signatures and its window holds control
+//octets, so the plain text guard rejects it. Stream 2 is the leading octets of a Windows executable
+//image - it opens with the printable 'M' 'Z' DOS prefix, so it looks like text at its very start, but
+//the padding and offset fields that follow the prefix are NUL octets, so the full window is not
+//printable text. As in steps 3-12 the pass-through contract is re-checked so that adding the fallback
+//cannot break the octet stream proven earlier. This case is written FIRST and seen RED - Inspect() has
+//no fallback yet, so an unmatched stream is still reported as Unresolved.
+qor_pp_test_case(mime_falls_back_to_octet_stream)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+    ByteBuffer outBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+    sink.SetBuffer(&outBuffer);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //Stream 1 - a raw binary blob. The octets are written explicitly so the stream does not depend on
+    //the encoding of this source file. It opens with a NUL, so it carries none of the ten signatures,
+    //and it is longer than the sixteen byte window so the whole window is captured and holds the
+    //control octets that rule the stream out as plain text.
+    std::string binaryData;
+    binaryData.push_back(static_cast<char>(0x00));//NUL
+    binaryData.push_back(static_cast<char>(0x01));//a C0 control
+    binaryData.push_back(static_cast<char>(0x02));//another C0 control
+    binaryData.push_back(static_cast<char>(0x03));//and another
+    binaryData.push_back(static_cast<char>(0x1B));//the escape control
+    binaryData.push_back(static_cast<char>(0x7F));//DEL
+    binaryData.push_back(static_cast<char>(0x80));//a high octet
+    binaryData.push_back(static_cast<char>(0xFF));//the highest octet
+    binaryData += " printable payload octets so that the stream is longer than the signature window.";
+
+    source.SetData(binaryData);
+
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, binaryData.length());
+
+    //The recognizer must not alter the octet stream, control octets included.
+    qor_pp_assert_that(sink.GetData() == binaryData).isTrue();
+
+    //The stream is longer than the window, so the whole window was captured and the fallback has
+    //enough evidence to classify the stream.
+    qor_pp_assert_that(recognizer.GetSignatureByteCount() == 16).isTrue();
+
+    //No signature matched and the window is not printable text, so the stream is an octet stream.
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::OctetStream).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/octet-stream").isTrue();
+
+    //Stream 2 - the leading octets of a Windows executable image. Fresh elements. It opens with the
+    //printable 'M' 'Z' DOS prefix, so the window starts like text, but the padding byte and the offset
+    //fields that follow the prefix are octets a text document cannot carry, so the full window is not
+    //printable text and the stream must fall back rather than stay unresolved.
+    ByteBuffer inBuffer2(128);
+    ByteBuffer outBuffer2(128);
+
+    StringSource source2;
+    source2.SetParent(&testPipeline);
+    source2.SetBuffer(&inBuffer2);
+
+    StringSink sink2;
+    sink2.SetParent(&testPipeline);
+    sink2.SetBuffer(&outBuffer2);
+
+    qor::mime::MIMERecognizerFilter recognizer2;
+    recognizer2.SetParent(&testPipeline);
+    recognizer2.SetSource(&source2);
+    recognizer2.SetSink(&sink2);
+
+    std::string exeData;
+    exeData += "MZ";//the printable DOS prefix of an executable image
+    exeData.push_back(static_cast<char>(0x90));//the padding byte that follows the prefix
+    exeData.push_back(static_cast<char>(0x00));//NUL - the fields after the prefix
+    exeData.push_back(static_cast<char>(0x00));
+    exeData.push_back(static_cast<char>(0x00));
+    exeData.push_back(static_cast<char>(0x00));
+    exeData += " payload bytes following the executable header.";
+
+    source2.SetData(exeData);
+
+    size_t unitsPumped2 = 0;
+    recognizer2.Pump(unitsPumped2, exeData.length());
+
+    //The recognizer must not alter the octet stream.
+    qor_pp_assert_that(sink2.GetData() == exeData).isTrue();
+
+    //The stream is longer than the window, so the whole window was captured.
+    qor_pp_assert_that(recognizer2.GetSignatureByteCount() == 16).isTrue();
+
+    //A printable prefix is not evidence of text once the window holds NUL octets, so the stream is an
+    //octet stream.
+    qor_pp_assert_that(recognizer2.GetDetectedType() == qor::mime::MIMEType::OctetStream).isTrue();
+    qor_pp_assert_that(std::string(recognizer2.GetTypeName()) == "application/octet-stream").isTrue();
 }
 
 

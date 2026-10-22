@@ -1,10 +1,13 @@
 # Active Context
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 12 (`mime_recognises_plain_text_signature`) DONE and
-verified green, driven test-first** (RED `[FAIL] #12`, `[TOTAL](13/13) [OK](12/13) [FAIL](1/13)` exit 1 →
-GREEN `[TOTAL](13/13) [OK](13/13)` exit 0; logs `tmp/qortestmime_step12_red.log`,
-`tmp/qortestmime_step12_green.log`). **ALL 10 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML, HTML, JSON, JavaScript, plain text). Step 11 (`mime_recognises_javascript_signature`), step 10
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 13 (`mime_falls_back_to_octet_stream`) DONE and
+verified green, driven test-first** (RED `[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)` exit 1 →
+GREEN `[TOTAL](14/14) [OK](14/14)` exit 0; logs `tmp/qortestmime_step13_red.log`,
+`tmp/qortestmime_step13_green.log`). **The qor_mime recognizer is now complete on its targets: ALL 10 of the 10 target MIME types recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML, HTML, JSON, JavaScript, plain text) **AND the application/octet-stream fallback proven** —
+every stream that fills the 16-byte signature window now ends with a type and a non-empty name. Step 12
+(`mime_recognises_plain_text_signature`) was likewise DONE and verified green test-first (RED `[FAIL] #12` →
+GREEN `[TOTAL](13/13) [OK](13/13)`). Step 11 (`mime_recognises_javascript_signature`), step 10
 (`mime_recognises_json_signature`), step 9 (`mime_recognises_html_signature`),
 and step 7 (`mime_recognises_zip_signature`) were likewise DONE and verified green test-first (step 9
 RED `[FAIL] #9` → GREEN `[TOTAL](10/10) [OK](10/10)`; step 8 RED `[FAIL] #8` → GREEN `[TOTAL](9/9) [OK](9/9)`;
@@ -216,13 +219,18 @@ lib `qor_mime`) providing a pipeline filter that recognises ten popular MIME typ
 
 
 ### Next up
-- [ ] Plan step 13 — write `mime_falls_back_to_octet_stream` FIRST (a full window that is not printable text
-  and matches no signature → `MIMEType::OctetStream`, `"application/octet-stream"`), then the fallback branch
-  in `Inspect()` AFTER the plain text guard. (Plan step 12 `mime_recognises_plain_text_signature` is DONE —
-  all 10 target types recognised.)
-- [ ] Plan steps 14..17 — chunk boundary split, `Reset()` reuse, chaining with
-  `qor_base64encodefilter`, final full-QORTest regression run (rebuild + rerun the base pipeline
-  test exe to prove no framework regression).
+- [x] Plan step 13 `mime_falls_back_to_octet_stream` — DONE 22 Oct 2026 test-first: test written FIRST
+  (TWO Push-mode streams: a NUL-led binary blob with explicit C0/DEL octets, and a Windows executable
+  image prefix whose printable 'MZ' is betrayed by the NUL/0x90 octets inside the window) seen RED
+  `[FAIL] #13`, `[TOTAL](14/14) [OK](13/14)` exit 1, then the eleventh and LAST fixed-order guard in
+  `Inspect()` AFTER the plain text guard (`m_detectedType == MIMEType::Unresolved &&
+  m_signatureCount >= SIGNATURE_WINDOW_BYTES` → `MIMEType::OctetStream`) GREEN `[TOTAL](14/14) [OK](14/14)`
+  exit 0. **All 10 target types recognised AND the fallback proven — the recognizer is total.**
+- [ ] Plan step 14 — `mime_recognises_type_split_across_chunks`: pump a PNG stream in 3-byte chunks and
+  assert the window still reports `MIMEType::PNG`; write the test FIRST and expect NO implementation
+  change (the window already accumulates across chunks).
+- [ ] Plan steps 15..17 — `Reset()` reuse, chaining with `qor_base64encodefilter`, final full-`QORTest`
+  regression run (rebuild + rerun the base pipeline test exe to prove no framework regression).
 - Do NOT skip ahead to writing all ten detectors at once — one test, then the code that passes it.
 
 ### Key files

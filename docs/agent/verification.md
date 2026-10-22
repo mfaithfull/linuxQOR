@@ -15,6 +15,34 @@ clang-tidy -p build docs/.../file.cpp
 # green = "[OK](n/n)" in the output AND shell exit code 0. The QOR does not use ctest.
 
 ## Results
+### 2026-10-22 — qor_mime plan step 13 / QORTestMIME (application/octet-stream fallback) — PASS
+- **Test first**: added `mime_falls_back_to_octet_stream` to `test/framework/data/mime/test_mime.cpp`
+  BEFORE touching `mime.cpp`/`mime.h` (TWO Push-mode streams in the one case, fresh elements for the
+  second — the shape of steps 5/9/10/11/12: stream 1 a raw binary blob opening with a NUL and carrying
+  the C0 controls and DEL written as explicit octets, then a printable payload tail; stream 2 the leading
+  octets of a Windows executable image — the printable 'M' 'Z' DOS prefix followed by the 0x90 padding
+  byte and NUL offset fields, then a payload tail; per stream asserts `sink.GetData() == data` pass-through,
+  `GetSignatureByteCount() == 16`, `GetDetectedType() == MIMEType::OctetStream`,
+  `std::string(GetTypeName()) == "application/octet-stream"`).
+- **Run (red)**: `cmake --build build --target QORTestMIME` (lib unchanged) then the exe run in its OWN
+  command from `build\test\framework\data\mime\Debug` → `test_mime.cpp(955) : mime_falls_back_to_octet_stream
+  [FAIL], #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)`, exit 1, reason `expected boolean to have the value
+  of true / value was : 0` → the test is meaningful (no fallback exists, so an unmatched stream stays
+  `Unresolved` with an empty name). Log `tmp/qortestmime_step13_red.log`.
+- **Code**: `mime.cpp` only — an eleventh and LAST fixed-order guard in `Inspect()` AFTER the plain text
+  guard: `m_detectedType == MIMEType::Unresolved && m_signatureCount >= SIGNATURE_WINDOW_BYTES` →
+  `MIMEType::OctetStream`. It is the only guard with no signature of its own — it fires when every guard
+  above has declined — and like the plain text guard it insists on a FULL window, because a partially
+  captured window is not evidence that a stream carries no signature; a stream shorter than the window
+  stays `Unresolved` until the octets that decide it arrive (the existing 12-byte truncation test still
+  passes with `GetSignatureByteCount() == 12`). `mime.h` unchanged (the name table has carried
+  `application/octet-stream` since step 3). The guard makes the recognizer total: any stream pumped in
+  full ends with a type and a non-empty name.
+- **GREEN**: rebuilt `qor_mime` (log `tmp/qortestmime_step13_build_lib.log`, no errors/warnings) then
+  `QORTestMIME` (log `tmp/qortestmime_step13_build_exe.log`) in SEPARATE commands, then the exe run from
+  its build dir → `[TOTAL](14/14) [OK](14/14)`, zero `FAIL` lines, exit 0 (`tmp/qortestmime_step13_green.log`).
+  **All 10 target types plus the fallback recognised.** No new build gotchas.
+
 ### 2026-10-22 — qor_mime plan step 12 / QORTestMIME (plain text recognition) — PASS
 - **Test first**: added `mime_recognises_plain_text_signature` to `test/framework/data/mime/test_mime.cpp`
   BEFORE touching `mime.cpp`/`mime.h` (TWO Push-mode streams in the one case, fresh elements for the

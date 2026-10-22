@@ -87,14 +87,16 @@ verified at `[OK](36/36)` in
 `QORTestJSONGenerator`, with the parse -> generate -> parse **roundtrip** verified
 green in `QORTestJSON` (process exit code 0, `test/data/json_roundtrip_*.json`
 written and compared equal through `jsoncompare.h`)).
-Also 20 Oct 2026: new framework-layer data module `src/framework/data/mime` (lib `qor_mime`)
-started as a MIME-type-recognition **pipeline filter** (ten popular MIME types +
-application/octet-stream fallback, test-first plan `memory-bank/qor_mime_plan.md`);
-plan **steps 0-7 verified green** (`QORTestMIME.exe` `[TOTAL](8/8) [OK](8/8)` exit 0 — scaffold
-constructs, octets pass through untouched, the leading octets are captured into the 16-byte
-signature window, and **5 of the 10 target types are recognised**: PNG, JPEG, GIF, PDF and ZIP via
-fixed-order magic guards in `Inspect()`). Next plan step: 8 `mime_recognises_xml_signature`
-(leading text `<?xml`).
+Also 22 Oct 2026: the framework-layer data module `src/framework/data/mime` (lib `qor_mime`) — a MIME-type-recognition
+**pipeline filter** (ten popular MIME types + application/octet-stream fallback, test-first plan
+`memory-bank/qor_mime_plan.md`) — has **plan steps 0-13 DONE and verified green** (`QORTestMIME.exe`
+`[TOTAL](14/14) [OK](14/14)` exit 0, every step RED-then-GREEN except step 4 verified after the fact):
+scaffold constructs, octets pass through untouched, the leading octets captured into the 16-byte
+signature window, **ALL 10 of the 10 target types recognised** (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON,
+JavaScript, plain text) via fixed-order guards in `Inspect()`, **plus the application/octet-stream
+fallback proven** — a stream pumped in full always ends with a type and a non-empty name. Next plan step:
+14 `mime_recognises_type_split_across_chunks` (a signature split across pumped chunks), then 15-17
+(`Reset()` reuse, chaining with `qor_base64encodefilter`, full `QORTest` regression run).
 
 
 ## Key project documents

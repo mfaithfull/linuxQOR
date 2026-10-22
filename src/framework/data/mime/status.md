@@ -154,9 +154,29 @@
       `tmp/qortestmime_step12_green.log`). **10 of 10 target types recognised** (PNG, JPEG, GIF, PDF, ZIP,
       XML, HTML, JSON, JavaScript, plain text).
 
+- [x] Step 13 `mime_falls_back_to_octet_stream`: test written FIRST (TWO Push-mode streams in the one
+      case, fresh elements for the second — the shape of steps 5/9/10/11/12: stream 1 a raw binary blob
+      opening with a NUL and carrying the C0 controls and DEL written as explicit octets, followed by a
+      printable payload tail; stream 2 the leading octets of a Windows executable image — the printable
+      'M' 'Z' DOS prefix, the padding byte 0x90 and NUL offset fields, then a payload tail; per stream
+      asserts pass-through, `GetSignatureByteCount() == 16`, `== MIMEType::OctetStream`,
+      `"application/octet-stream"`) and seen RED — `mime_falls_back_to_octet_stream [FAIL], #13`,
+      `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)`, exit 1 (log `tmp/qortestmime_step13_red.log`, reason
+      `expected boolean to have the value of true / value was : 0`), then an eleventh and last fixed-order
+      guard in `Inspect()` AFTER the plain text guard: `m_detectedType == MIMEType::Unresolved &&
+      m_signatureCount >= SIGNATURE_WINDOW_BYTES` → `MIMEType::OctetStream`. It is the only guard with no
+      signature of its own — it fires when every guard above has declined, and like the plain text guard
+      it insists on a full window, so a stream shorter than the window stays `Unresolved` until the octets
+      that decide it arrive. This makes the recognizer total: a stream pumped in full always ends with a
+      type and a non-empty name. `mime.h` unchanged (the name table already carried
+      `application/octet-stream`). Rebuilt `qor_mime` then `QORTestMIME` (separate commands) →
+      `[TOTAL](14/14) [OK](14/14)`, no `[FAIL`, exit 0 (logs `tmp/qortestmime_step13_build_lib.log`,
+      `tmp/qortestmime_step13_build_exe.log`, `tmp/qortestmime_step13_green.log`). **All 10 target types
+      plus the fallback recognised.**
+
 ## Next increment
-- [ ] Step 13 `mime_falls_back_to_octet_stream` (a full window that is not printable text and matches no
-      signature → `MIMEType::OctetStream`, `"application/octet-stream"`) — write the test FIRST, then the
-      fallback in `Inspect()` AFTER the plain text guard. Remaining after that: plan steps 14-17 (chunk
-      boundary split, `Reset()` reuse, chaining with `qor_base64encodefilter`, full `QORTest` regression run).
+- [ ] Step 14 `mime_recognises_type_split_across_chunks` (pump a PNG stream in 3-byte chunks; the
+      signature window must still report `MIMEType::PNG`) — write the test FIRST and expect no
+      implementation change, the window already accumulates across chunks. Remaining after that: plan
+      steps 15-17 (`Reset()` reuse, chaining with `qor_base64encodefilter`, full `QORTest` regression run).
 

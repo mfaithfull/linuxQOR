@@ -1,9 +1,11 @@
 # Progress
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 12 (recognise plain text — the whole signature window printable) DONE and verified green, driven test-first** (RED `[FAIL] #12`, `[TOTAL](13/13)
-[OK](12/13) [FAIL](1/13)` exit 1 → GREEN `[TOTAL](13/13) [OK](13/13)` exit 0; logs `tmp/qortestmime_step12_red.log`,
-`tmp/qortestmime_step12_green.log`). **ALL 10 of the 10 target MIME types now recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML, HTML, JSON, JavaScript, plain text). Earlier the same day: qor_mime plan step 11 (recognise JavaScript — shebang `#!`, leading `function `, leading `//`/`/*` comment) DONE, qor_mime plan step 10 (recognise JSON — first non-JSON-whitespace
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 13 (the octet-stream fallback — a full window that is neither printable text nor a known signature) DONE and verified green, driven test-first** (RED
+`[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)` exit 1 → GREEN `[TOTAL](14/14) [OK](14/14)` exit 0; logs `tmp/qortestmime_step13_red.log`,
+`tmp/qortestmime_step13_green.log`). **The qor_mime recognizer is now complete on its targets: ALL 10 of the 10 target MIME types recognised** (PNG, JPEG, GIF,
+PDF, ZIP, XML, HTML, JSON, JavaScript, plain text) **AND the application/octet-stream fallback proven** — every stream that fills the 16-byte signature window
+now ends with a type and a non-empty name. Step 12 (recognise plain text — the whole signature window printable) was likewise DONE and verified green test-first
+(RED `[FAIL] #12` → GREEN `[TOTAL](13/13) [OK](13/13)`). Earlier the same day: qor_mime plan step 11 (recognise JavaScript — shebang `#!`, leading `function `, leading `//`/`/*` comment) DONE, qor_mime plan step 10 (recognise JSON — first non-JSON-whitespace
 octet is `{` or `[`) was DONE, qor_mime plan step 9 (recognise HTML — the `<!DOCTYPE html`
 doctype and the document-level first tag) was DONE and verified green test-first (RED `[FAIL] #9` → GREEN
 `[TOTAL](10/10) [OK](10/10)`), qor_mime plan step 8 (recognise the XML `<?xml` declaration marker)
@@ -180,10 +182,11 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   pipeline). If a components-layer home is preferred later, the move is folder + one CMakeLists line.
 
 ### What was NOT done
-- ⏳ Detection left: the plan step 13 `mime_falls_back_to_octet_stream` fallback branch — `Inspect()`
-  recognises **ALL 10 of the 10 target types** today (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON,
-  JavaScript, plain text); an unresolved stream still reports `Unresolved` (no `application/octet-stream`
-  fallback yet). Detection is added test-first, one increment per step.
+- ✅ Detection is now COMPLETE: all 10 target types recognised (PNG, JPEG, GIF, PDF, ZIP, XML, HTML,
+  JSON, JavaScript, plain text) AND the `application/octet-stream` fallback proven (plan step 13, 22 Oct
+  2026) — every stream that fills the 16-byte signature window ends with a type and a non-empty name.
+- ⏳ Pipeline behaviour still unproven (plan steps 14-17): a signature split across pumped chunks,
+  `Reset()` reuse, chaining with `qor_base64encodefilter`, and the full `QORTest` regression run.
 - ❌ No consumer wired up yet (the HTTP Content-Type TODO, UI renderer loader,
   `Resource::Type()` remain untouched).
 

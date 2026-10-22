@@ -143,14 +143,15 @@ namespace qor{ namespace mime{
                     memcpy(m_signature + m_signatureCount, data, unitsRequested * sourceBuffer->GetUnitSize());
                     m_signatureCount += unitsRequested;
                     sourceBuffer->ReadReject(unitsRequested);
-                    //Plan steps 3,4,5,6,7,8,9,10,11,12 - classify the captured leading octets. The evaluation
+                    //Plan steps 3,4,5,6,7,8,9,10,11,12,13 - classify the captured leading octets. The evaluation
                     //order is fixed so results are deterministic (most definite signature
                     //first): png, jpeg, gif, pdf, zip, then the text markups, then the
                     //fallback. Each guard asks only for the octets its own signature needs,
                     //so a shorter signature can decide before the window is full. The
                     //signature window is never consumed (the read was rejected), so these
                     //checks run again on every chunk as more leading octets arrive. The
-                    //octet-stream fallback is added one test at a time after this.
+                    //octet-stream fallback (plan step 13) is the eleventh and last guard, added after
+                    //the plain text guard.
                     if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= 8)
                     {
                         static const qor::byte pngSignature[8] =
@@ -370,6 +371,27 @@ namespace qor{ namespace mime{
                         {
                             m_detectedType = MIMEType::PlainText;
                         }
+                    }
+
+                    //Plan step 13 - the application/octet-stream fallback. It is the eleventh and last
+                    //guard in the fixed order (png, jpeg, gif, pdf, zip, xml, html, json, javascript,
+                    //plain text, octet stream) and it is the only guard with no signature of its own:
+                    //it fires when every guard above it has declined, which makes the recognizer total -
+                    //once the signature window is full, a stream that is none of the ten recognised
+                    //types still gets a name, so an application reading GetTypeName() never sees an
+                    //empty name for a stream it has pumped in full. Two conditions gate it:
+                    //  (1) the whole window has been captured, exactly as the plain text guard above
+                    //      insists. A partially captured window is not evidence that a stream carries
+                    //      no signature, because the octets that carry one may not have arrived yet,
+                    //      so a stream shorter than the window stays Unresolved until they do;
+                    //  (2) every guard above has declined. After the plain text guard that means the
+                    //      window holds an octet that is neither printable ASCII, nor one of the three
+                    //      controls the text and JSON conventions allow, nor a high (UTF-8) octet - a
+                    //      NUL, another C0 control or DEL. Such a stream is binary, and within the set
+                    //      of types this recognizer handles the only honest answer is the fallback.
+                    if(m_detectedType == MIMEType::Unresolved && m_signatureCount >= SIGNATURE_WINDOW_BYTES)
+                    {
+                        m_detectedType = MIMEType::OctetStream;
                     }
 
                     return true;
