@@ -287,6 +287,21 @@ restores `m_readEnd`). A filter that must *peek without consuming* therefore doe
 call `Inspect()` BEFORE moving octets on. The mirror write protocol is
 `WriteRequest`/`WriteAcknowledge`/`WriteReject`.
 
+**InlineFilter count semantics — consumed vs produced (qor_mime step 16, 22 Oct 2026):**
+`pipeline::InlineFilter<T>` is a **Buffer pair, not an `Element`** — it cannot be linked into an
+element chain; `Pipeline::InsertInlineFilter` installs it as the buffer shared by the elements on
+either side of it (a `Base64EncodeFilter` sitting before a sink IS that sink's buffer, so the test
+wires `sink.SetBuffer(&encodeFilter)`; give it an explicit capacity — the default ctor holds zero
+items and encodes nothing). A pass-through filter must therefore keep two counts apart: the number
+of units it **consumed** from the source (drives the memcpy and `Buffer::ReadAcknowledge`) and the
+number of units its sink buffer **produced** (`InlineFilter::WriteAcknowledge` takes the count by
+reference and REWRITES it to the produced width — 4:3 for base64 — while `Buffer::ReadAcknowledge`
+CLAMPS its count to what the source holds). Returning the consumed count silently truncates the
+output (`TransferOctets` passed one variable to both acks → the sink got the first 18 of 24 encoded
+chars, RED). For a plain buffer the two counts are equal, so only encoding filters expose it.
+Corollary: a recognising filter inspects the stream **before** any downstream transform, so it
+classifies the pre-encoded octets (`image/png`) even when chained in front of an encoding filter.
+
 
 Module registration: parent `CMakeLists.txt` `add_subdirectory(mime)`; module
 `set(target qor_mime)` + `add_library(${target} SHARED qor_mime.cpp mime.cpp)` +

@@ -1,6 +1,8 @@
 # Progress
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 15 (`mime_recognizer_resets_between_streams` — one recognizer serving two streams across `Reset()`) DONE and verified green on the FIRST run with NO implementation change** (`QORTestMIME` `[TOTAL](16/16) [OK](16/16)` exit 0; logs `tmp/qortestmime_step15_build_exe.log`,
+**Last updated:** 22 Oct 2026 — **qor_mime plan step 16 (`mime_recogniser_chained_with_qor_base64encodefilter` — the recognizer chained in front of `qor_base64encodefilter`) DONE and verified green test-first** (`QORTestMIME` `[TOTAL](17/17) [OK](17/17)` exit 0; logs `tmp/qor_mime_step16_dll.log`, `tmp/qortestmime_step16_exe.log`, `tmp/qortestmime_step16_green_run.log`) — the chain `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink` works: the encode filter is an `InlineFilter<byte>` (a Buffer pair, not an Element) so it is wired as the buffer shared by the elements either side of it (the sink's buffer), the recognizer classifies the PRE-encoded stream (`MIMEType::PNG` / `"image/png"`, 16-byte window) and the sink text is exactly the base64 of the stream (`"iVBORw0KGgpJSERSIHFvcjAx"` from 18 raw octets — a multiple of 3, so no padding — expanded to 24 encoded units). The case went RED first (the sink received only the first 18 of the 24 encoded characters) and was made GREEN by separating the consumed from the produced unit count in `mime.cpp::TransferOctets`, because `InlineFilter::WriteAcknowledge` rewrites the count it is handed to the produced width while `Buffer::ReadAcknowledge` clamps its count back to what the source holds. `test/framework/data/mime/CMakeLists.txt` gained `qor_base64encodefilter`. Earlier the same day:
+
+**Earlier (step 15):** **qor_mime plan step 15 (`mime_recognizer_resets_between_streams` — one recognizer serving two streams across `Reset()`) DONE and verified green on the FIRST run with NO implementation change** (`QORTestMIME` `[TOTAL](16/16) [OK](16/16)` exit 0; logs `tmp/qortestmime_step15_build_exe.log`,
 `tmp/qortestmime_step15_green.log`). Step 14 (a signature longer than a pump chunk — the eight byte PNG magic split across three 3-byte pumped chunks) was likewise DONE and verified green on its first run with no code change (`[TOTAL](15/15) [OK](15/15)`; logs `tmp/qortestmime_step14_build_exe.log`,
 `tmp/qortestmime_step14_green.log`). Step 13 (the octet-stream fallback — a full window that is neither printable text nor a known signature) was likewise DONE and verified green, driven test-first (RED
 `[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)` exit 1 → GREEN `[TOTAL](14/14) [OK](14/14)` exit 0; logs `tmp/qortestmime_step13_red.log`,
@@ -19,7 +21,7 @@ base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, proces
 top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
 0) and the **pipeline integration** step (a JSON model written to a real file through a real
 pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20-22 Oct 2026, steps 0-14: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML + HTML + JSON + JavaScript + plain text + octet-stream fallback + signature split across pumped chunks)
+## MIME Recognition — qor_mime (20-22 Oct 2026, steps 0-16: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML + HTML + JSON + JavaScript + plain text + octet-stream fallback + signature split across pumped chunks + recognizer reuse across Reset + chaining with qor_base64encodefilter)
 
 ### What was done
 - Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
@@ -207,8 +209,33 @@ pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
   `SetSink` return early when the element already has a connection (silent no-op), and a reused `~StringSink()`
   throws Q3926 in its destructor teardown when it still points at a sink — so fresh elements per stream is the
   correct pattern.
-- ⏳ Pipeline behaviour still unproven (plan steps 16-17): chaining with `qor_base64encodefilter`, and the
-  full `QORTest` regression run.
+- ✅ **Plan step 16** `mime_recogniser_chained_with_qor_base64encodefilter` (two filters in series — the first
+  classifies, the second transforms): test written FIRST (`StringSource -> MIMERecognizerFilter -> Base64EncodeFilter ->
+  StringSink` under a Push-mode `Pipeline` parent). Key anatomy: `Base64EncodeFilter` is an `InlineFilter<byte>` — a
+  Buffer pair, NOT an `Element` — so it cannot be linked into the element chain; the framework inserts it as the buffer
+  shared by the elements either side of it (`Pipeline::InsertInlineFilter`, BeforeSink position), and here that is the
+  SINK's buffer (`sink.SetBuffer(&encodeFilter)` with `Base64EncodeFilter encodeFilter(128)` — an explicit capacity,
+  because its default ctor holds zero items and encodes nothing). Stream: the 8-byte PNG magic as explicit octets plus a
+  10-byte payload = 18 octets (a multiple of 3, so base64 adds no padding; longer than the 16-byte window; one pumped
+  chunk), pumped for the 24 ENCODED units. Asserts the sink text is exactly the base64 of the stream
+  (`"iVBORw0KGgpJSERSIHFvcjAx"`, computed independently) AND that the recognizer still classifies the PRE-encoded
+  stream (`GetSignatureByteCount() == 16`, `MIMEType::PNG`, `"image/png"`). Seen RED FIRST — the sink received only the
+  FIRST 18 of the 24 encoded characters (`[FAIL] #16`, `[TOTAL](17/17) [OK](16/17) [FAIL](1/17)`, exit 1; logs
+  `tmp/qortestmime_step16_run.log`, `tmp/qortestmime_step16_diag_run.log`, `tmp/qortestmime_step16_diag2_run.log`):
+  `mime.cpp::TransferOctets` passed ONE variable to both buffer acknowledgements, and `InlineFilter::WriteAcknowledge`
+  MUTATES the count it is handed to the number of units it PRODUCED while `Buffer::ReadAcknowledge` CLAMPS its count
+  back to what the source holds, so the 4:3 expansion was undone before it could be returned. Fix: `size_t unitsConsumed`
+  (raw — memcpy size and the source acknowledgement) kept apart from `unitsToTransfer` (produced — returned in
+  `unitsTransferred`); for a plain buffer the two counts are equal, so steps 1-15 are unaffected. `mime.h` contract note
+  extended to document that `unitsTransferred` is the count the sink buffer ends up holding. `test/framework/data/mime/CMakeLists.txt`
+  gained `qor_base64encodefilter`. Rebuilt `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](17/17) [OK](17/17)`,
+  no `[FAIL`, exit 0 (`tmp/qortestmime_step16_green_run.log`; build logs `tmp/qor_mime_step16_dll.log`,
+  `tmp/qortestmime_step16_exe.log` clean). **Findings:** a recognising filter inspects the stream BEFORE any downstream
+  transform runs, so it classifies the pre-encoded octets and is valid in front of an encoding filter; a pass-through
+  filter must propagate the count its sink buffer PRODUCED, not the count it CONSUMED.
+- ⏳ Optional scope still open (plan step 17): `mime_type_name_drives_a_sink` (application-level glue), and a full
+  `QORTest` regression run for the record (no other test target links `qor_mime`, so `QORTestMIME` 17/17 is the
+  regression surface for the `mime.cpp` change).
 - ❌ No consumer wired up yet (the HTTP Content-Type TODO, UI renderer loader,
   `Resource::Type()` remain untouched).
 

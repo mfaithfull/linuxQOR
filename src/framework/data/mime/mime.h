@@ -69,7 +69,10 @@ namespace qor{ namespace mime{
         //into the downstream element's buffer without changing their content. This is the
         //pass-through half of the recognizer contract - the octets that arrive at the sink
         //are exactly the octets that left the source. ReadFilter and WriteFilter use it so
-        //the element works whichever way the pipeline is pumped.
+        //the element works whichever way the pipeline is pumped. unitsTransferred reports the
+        //number of units the sink buffer ended up holding, which is what the caller has to ask
+        //the sink for - it differs from the raw count when that buffer is an InlineFilter that
+        //changes the width of the stream, such as a base64 encode filter.
         qor_pp_module_interface(QOR_MIME) virtual bool TransferOctets(size_t& unitsTransferred, size_t unitsToTransfer);
 
     protected:

@@ -202,8 +202,46 @@
       filter's own `SetSource`/`SetSink` — the `Element` accessors refuse to re-link an element that already
       has a source or sink, so a filter is reusable by re-linking IT, not by re-linking its plumbing.
 
+- [x] Step 16 `mime_recogniser_chained_with_qor_base64encodefilter`: test written FIRST (TWO pipeline
+      filters in series — `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink`;
+      the recognizer classifies the raw stream and the base64 encode filter encodes it, so the sink text
+      is exactly the base64 of the stream while the recognizer still reports the type of the PRE-encoded
+      stream). The encode filter is an `InlineFilter<byte>` — a Buffer pair, not an Element — so the
+      framework inserts it as the buffer shared by the elements either side of it (`Pipeline::InsertInlineFilter`
+      BeforeSink position: `sink->SetBuffer(filter)` plus the sink's source element's `SetBuffer(filter)`);
+      here that is the sink's buffer, so the recognizer writes raw octets into the filter's upstream side
+      and the sink reads encoded octets out of its downstream side. Input: the 8-byte PNG magic as explicit
+      octets + a 10-byte payload = 18 octets (a multiple of 3, one pumped chunk, longer than the 16-byte
+      window; 18 raw units produce 24 encoded units, no padding). Pumped for the encoded length 24. Asserts
+      `sink.GetData() == "iVBORw0KGgpJSERSIHFvcjAx"` (the standard base64 of the stream, computed
+      independently), `GetSignatureByteCount() == 16`, `== MIMEType::PNG`, `"image/png"`.
+      `test/framework/data/mime/CMakeLists.txt` gained `qor_base64encodefilter` in `qor_libraries`.
+      Seen RED — the sink text assert failed: only the FIRST 18 of the 24 encoded characters arrived
+      (`mime_recogniser_chained_with_qor_base64encodefilter [FAIL], #16`, `[TOTAL](17/17) [OK](16/17)
+      [FAIL](1/17)`, exit 1; logs `tmp/qortestmime_step16_run.log`, `tmp/qortestmime_step16_diag_run.log`,
+      `tmp/qortestmime_step16_diag2_run.log`). Diagnosis: `TransferOctets` passed ONE variable to both
+      acknowledgements. `InlineFilter::WriteAcknowledge` MUTATES the count it is handed to the number of
+      units it PRODUCED (base64 expands 4 per 3), and `Buffer::ReadAcknowledge` then CLAMPS that mutated
+      count back down to what the source holds — so by the time the produced count was assigned to
+      `unitsTransferred` it had been clamped back to the raw 18, and the sink was only asked for 18 encoded
+      units. Fix: keep the consumed and the produced counts apart — `size_t unitsConsumed = unitsToTransfer;`
+      is used for the memcpy and the source `ReadAcknowledge`, while `unitsToTransfer` (rewritten by the
+      sink's `WriteAcknowledge`) is what is handed back in `unitsTransferred`. For a plain buffer both
+      counts are equal, so steps 1-15 are unaffected (`mime.h` and every earlier case unchanged in
+      behaviour). `mime.h` gained the contract note that `unitsTransferred` is the count the sink buffer
+      ends up holding and may differ from the raw count when that buffer is an InlineFilter that changes
+      the width of the stream. Rebuilt `qor_mime` then `QORTestMIME` (separate commands) →
+      `[TOTAL](17/17) [OK](17/17)`, no `[FAIL`, exit 0 (log `tmp/qortestmime_step16_green_run.log`;
+      build logs `tmp/qor_mime_step16_dll.log`, `tmp/qortestmime_step16_exe.log` show no
+      `error C`/`warning C`/`LNK`). **Learning:** a recognising filter inspects the stream BEFORE any
+      downstream transform, so it classifies the pre-encoded octets and stays valid in front of an
+      encoding filter; and a filter that copies through its sink must propagate the count the sink
+      PRODUCED, not the count it CONSUMED, because an InlineFilter sink buffer rewrites the count in
+      `WriteAcknowledge` to its produced width.
+
 ## Next increment
-- [ ] Step 16 `mime_recogniser_chained_with_qor_base64encodefilter` (two filters in series — the recognizer
+- [ ] Optional scope: `mime_type_name_drives_a_sink` (application-level glue — the recognised type name
+      driving a sink).
       classifies the stream and `qor_base64encodefilter` encodes it; see
       `src/components/data/pipeline/filters/base64encodefilter`). Optional scope: `mime_type_name_drives_a_sink`.
 

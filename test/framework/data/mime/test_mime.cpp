@@ -107,6 +107,25 @@
 //in steps 3-14. This case is written FIRST; no implementation change is expected - Reset() is already
 //implemented in mime.cpp, so the case verifies existing behaviour.
 
+//step 16 - mime_recogniser_chained_with_qor_base64encodefilter: the recognizer must co-operate with
+//another filter in the same pipeline. Two filters in series: StringSource -> MIMERecognizerFilter
+//-> Base64EncodeFilter -> StringSink. The Base64EncodeFilter is an InlineFilter<byte> - a Buffer
+//pair, not an Element - so it cannot sit in the element chain; the framework inserts it as the
+//buffer shared by the two elements either side of it (see Pipeline::InsertInlineFilter, BeforeSink),
+//i.e. the buffer of the sink. Raw octets written into its upstream side are encoded into its
+//downstream side, and InlineFilter::WriteAcknowledge rewrites the item count it is handed to the
+//number of units actually produced - the encoded count - which is exactly what lets an expanding
+//filter hand more units to the sink than the source pushed (TransferOctets propagates it). Octet
+//width expectations: byte unit size, and the encode filter pads per call, so the stream must be
+//pushed in whole chunks whose length is a multiple of three; the filter must also be built with an
+//explicit capacity because its default ctor has zero items. The stream here is the PNG magic plus a
+//ten byte payload - 18 octets, a multiple of three, one pumped chunk, longer than the 16 byte
+//window - pumped for the encoded length 24. Asserts: the sink text is exactly the base64 of the
+//stream, the signature window is full (GetSignatureByteCount() == 16), and the recognizer still
+//classifies the raw stream it inspects: MIMEType::PNG / "image/png". No implementation change is
+//expected - the recognizer passes octets through untouched - the case proves the existing module
+//composes with another filter.
+
 
 
 
@@ -118,6 +137,7 @@
 #include "src/components/data/pipeline/sources/stringsource/stringsource.h"
 #include "src/components/data/pipeline/sinks/stringsink/stringsink.h"
 #include "src/framework/data/mime/mime.h"
+#include "src/components/data/pipeline/filters/base64encodefilter/base64encodefilter.h"
 
 using namespace qor;
 using namespace qor::pipeline;
@@ -1251,6 +1271,79 @@ qor_pp_test_case(mime_recognizer_resets_between_streams)
     qor_pp_assert_that(recognizer.GetSignatureByteCount() == 16).isTrue();
     qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PDF).isTrue();
     qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "application/pdf").isTrue();
+}
+
+//Step 16 - two filters in series: the recognizer classifies the stream and a Base64EncodeFilter
+//behind it encodes it, so the sink text is the base64 of the stream while the recognizer still
+//reports the type of the pre-encoded stream. The encode filter is an InlineFilter<byte> - a pair
+//of buffers, not an Element - so the framework inserts it as the buffer shared by the two elements
+//either side of it (Pipeline::InsertInlineFilter, BeforeSink position: sink->SetBuffer(filter) and
+//the sink's source element's SetBuffer(filter)). Here that is the sink's buffer: the recognizer
+//writes raw octets into the filter's upstream side (WriteRequest/WriteAcknowledge run the encode),
+//and the sink reads encoded octets out of its downstream side (ReadRequest hands the encoded side).
+//InlineFilter::WriteAcknowledge rewrites the item count it is handed to the number of units it
+//actually produced - the encoded count - and TransferOctets propagates that count, so the sink is
+//asked for the 24 encoded units the 18 raw units produced, not just the 18 pushed units. Octet
+//width expectations of the filter: unit size one byte; it pads its output per call, so the stream
+//must arrive in whole chunks whose length is a multiple of three; and its default ctor has zero
+//items, so it is built here with an explicit capacity. The stream is the PNG magic as explicit
+//octets plus a ten byte payload - eighteen octets, one 3-aligned chunk, longer than the 16 byte
+//signature window - pumped for the 24 encoded units. The expected base64 text is the standard
+//base64 of the stream (computed independently, no padding since 18 is a multiple of 3).
+qor_pp_test_case(mime_recogniser_chained_with_qor_base64encodefilter)
+{
+    //Push-mode wiring is the working pump path for a filter (see step 1 notes).
+    Pipeline testPipeline;
+    testPipeline.SetFlowMode(Element::FlowMode::Push);
+
+    ByteBuffer inBuffer(128);
+
+    StringSource source;
+    source.SetParent(&testPipeline);
+    source.SetBuffer(&inBuffer);
+
+    StringSink sink;
+    sink.SetParent(&testPipeline);
+
+    //The encode filter is the buffer of the sink - the InsertInlineFilter BeforeSink position
+    //between the recognizer and the sink. Built with an explicit capacity; its default ctor
+    //would have zero items and encode nothing.
+    Base64EncodeFilter encodeFilter(128);
+    sink.SetBuffer(&encodeFilter);
+
+    qor::mime::MIMERecognizerFilter recognizer;
+    recognizer.SetParent(&testPipeline);
+    recognizer.SetSource(&source);
+    recognizer.SetSink(&sink);
+
+    //The eight byte PNG magic as explicit octets, then a ten byte payload, so the whole stream is
+    //18 octets - a multiple of three, one pumped chunk, and longer than the signature window.
+    std::string pngData;
+    pngData.push_back(static_cast<char>(0x89));
+    pngData.push_back(static_cast<char>(0x50));
+    pngData.push_back(static_cast<char>(0x4E));
+    pngData.push_back(static_cast<char>(0x47));
+    pngData.push_back(static_cast<char>(0x0D));
+    pngData.push_back(static_cast<char>(0x0A));
+    pngData.push_back(static_cast<char>(0x1A));
+    pngData.push_back(static_cast<char>(0x0A));
+    pngData += "IHDR qor01";
+
+    source.SetData(pngData);
+
+    //Pump for the encoded length: the pump counts units as the sink sees them, and the encode
+    //filter reports 4 encoded units per 3 raw units through InlineFilter::WriteAcknowledge.
+    size_t unitsPumped = 0;
+    recognizer.Pump(unitsPumped, 24);
+
+    //The sink text must be exactly the base64 of the stream.
+    qor_pp_assert_that(sink.GetData() == "iVBORw0KGgpJSERSIHFvcjAx").isTrue();
+
+    //The recognizer inspected the raw octets before they were encoded downstream, so it still
+    //classifies the stream by its magic.
+    qor_pp_assert_that(recognizer.GetSignatureByteCount() == 16).isTrue();
+    qor_pp_assert_that(recognizer.GetDetectedType() == qor::mime::MIMEType::PNG).isTrue();
+    qor_pp_assert_that(std::string(recognizer.GetTypeName()) == "image/png").isTrue();
 }
 
 

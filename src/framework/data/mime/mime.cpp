@@ -55,9 +55,20 @@ namespace qor{ namespace mime{
             {
                 qor::byte* space = sinkBuffer->WriteRequest(unitsToTransfer);
                 qor::byte* data = sourceBuffer->ReadRequest(unitsToTransfer);
-                memcpy(space, data, unitsToTransfer * sourceBuffer->GetUnitSize());
+                //Both requests may have been clamped to what the two buffers can hold, so the
+                //count that is staged for the move is what they both settled on. It is kept under
+                //its own name because the two acknowledgements report different counts: an InlineFilter
+                //used as the sink buffer consumes the raw octets at its upstream side and produces a
+                //different number of units at its downstream side - a base64 encode filter produces
+                //four units per three raw ones - and it rewrites the count WriteAcknowledge is given
+                //to the number of units it produced. The source side has to be acknowledged with the
+                //raw count (Buffer::ReadAcknowledge clamps the count it is handed to what the source
+                //holds, so sharing one variable would undo the encode filter's count), and the count
+                //handed on to the sink is the produced one - for a plain buffer the two are the same.
+                size_t unitsConsumed = unitsToTransfer;
+                memcpy(space, data, unitsConsumed * sourceBuffer->GetUnitSize());
                 sinkBuffer->WriteAcknowledge(unitsToTransfer);
-                sourceBuffer->ReadAcknowledge(unitsToTransfer);
+                sourceBuffer->ReadAcknowledge(unitsConsumed);
                 unitsTransferred = unitsToTransfer;
                 return unitsTransferred > 0 ? true : false;
             }

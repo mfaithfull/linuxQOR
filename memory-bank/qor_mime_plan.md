@@ -332,8 +332,33 @@ Pitfalls confirmed while creating the outline:
   (`Filter::SetSource`/`Filter::SetSink`), never by re-linking its plumbing — `Element::SetSink`/`SetSource`
   return false on an element that already has a connection, so re-pointing a still-linked source or sink fails
   silently.
-- Next: plan step 16 `mime_recogniser_chained_with_qor_base64encodefilter` — write the test FIRST (two pipeline
-  filters in series: `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink`; the recognizer
-  classifies the stream and the base64 filter encodes it, so the sink output decodes back to the input and the
-  recognizer still reports `== MIMEType::PNG` / `"image/png"`; see `src/components/data/pipeline/filters/base64encodefilter`).
-  Remaining after that: `mime_type_name_drives_a_sink` (optional application-level glue).
+- Step 16 ✅ `mime_recogniser_chained_with_qor_base64encodefilter` (the chaining increment — two pipeline
+  filters in series): test written FIRST in `test_mime.cpp` (`StringSource -> MIMERecognizerFilter ->
+  Base64EncodeFilter -> StringSink` under a Push-mode `Pipeline` parent). Key anatomy finding: `Base64EncodeFilter`
+  is an `InlineFilter<byte>` — a Buffer pair, NOT an `Element` — so it cannot be linked into the element chain;
+  the framework inserts it as the buffer shared by the elements either side of it (`Pipeline::InsertInlineFilter`,
+  BeforeSink position: `sink->SetBuffer(&encodeFilter)` and the sink's source element's `SetBuffer(&encodeFilter)`;
+  done by hand here because the filter must be built with an explicit capacity — its default ctor has zero items).
+  The recognizer writes raw octets into the filter's upstream side and the sink reads encoded octets from its
+  downstream side. Stream: the 8-byte PNG magic as explicit octets + a 10-byte payload = 18 octets (multiple of
+  3 so base64 pads nothing, longer than the 16-byte window, one pumped chunk); 18 raw units produce 24 encoded
+  units, so the pump asks for 24. Asserts `sink.GetData() == "iVBORw0KGgpJSERSIHFvcjAx"` (standard base64,
+  computed independently), `GetSignatureByteCount() == 16`, `== MIMEType::PNG`, `"image/png"`. `test/framework/data/mime/CMakeLists.txt`
+  gained `qor_base64encodefilter` in `qor_libraries`. Seen RED — the sink text assert only received the FIRST
+  18 of the 24 encoded characters (`[FAIL] #16`, `[TOTAL](17/17) [OK](16/17) [FAIL](1/17)`, exit 1; logs
+  `tmp/qortestmime_step16_run.log`, `tmp/qortestmime_step16_diag_run.log`, `tmp/qortestmime_step16_diag2_run.log`).
+  Cause: `TransferOctets` handed ONE variable to both acknowledgements, and `InlineFilter::WriteAcknowledge`
+  MUTATES the count it is given to the number of units it PRODUCED while `Buffer::ReadAcknowledge` CLAMPS its
+  count back to what the source holds — sharing the variable therefore clamped the produced count back to the
+  raw count before it reached the caller. Fix in `mime.cpp`: keep the counts apart — `unitsConsumed` for the
+  memcpy and the source `ReadAcknowledge`, `unitsToTransfer` (already rewritten by the sink's
+  `WriteAcknowledge`) for `unitsTransferred`; for a plain buffer the two are equal, so steps 1-15 are unaffected.
+  `mime.h` contract note extended to say `unitsTransferred` is the count the sink buffer ends up holding and
+  may differ from the raw count for a width-changing InlineFilter. Rebuilt `qor_mime` then `QORTestMIME`
+  (separate commands) → `[TOTAL](17/17) [OK](17/17)`, no `[FAIL`, exit 0 (`tmp/qortestmime_step16_green_run.log`;
+  build logs `tmp/qor_mime_step16_dll.log`, `tmp/qortestmime_step16_exe.log` clean). **Findings:** a recognising
+  filter inspects the stream BEFORE any downstream transform runs, so it classifies the PRE-encoded octets and
+  stays correct in front of an encoding filter; and a pass-through filter must propagate the count its sink
+  buffer PRODUCED, not the count it CONSUMED, because that is what the caller has to ask the sink for next.
+- Next: optional scope only — `mime_type_name_drives_a_sink` (application-level glue: the recognised
+  type name driving a sink). Steps 0-16 of the plan are done and verified.
