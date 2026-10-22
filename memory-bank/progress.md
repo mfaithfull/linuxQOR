@@ -6,7 +6,14 @@
 **complete**: pipeline integration `[OK](36/36)` in `QORTestJSONGenerator`, the parse -> generate
 -> parse roundtrip green in `QORTestJSON`, and the full `QORTest` regression run green at
 `[TOTAL](678/678)` / `[OK](678/678)` with process exit code 0 (its plan file already retired to
-`docs/archive/jsonGeneratorPlan.md`).
+`docs/archive/jsonGeneratorPlan.md`). **Also 22 Oct 2026:** the `qor_jsondata` JSON **parse-performance**
+verification phase is **FINALIZED (round 18)** — a reproducible per-parse record in `QORTestJSON`
+(`[perf] 2MB JSON parse (cold|warm)` lines over fixture `test/data/data_2mb.json`, **2,219,028 bytes**, 21 RelWithDebInfo
+runs across 7 builds in `cmakebuild_rel` + 1 Debug run, all exit 0) shows the three micro-edits are
+**performance-neutral within the noise floor** (the 13.5% spread across builds of identical sources exceeds the
+apparent -11% delta); the "56 s -> 18 s" figure is void and the round-16 record (fixture `test/data/big_json.txt`, `tmp/pristine_qorjson`
+tree, `PARSE_TIME_MS` env mode) is unreproducible because those artifacts do not exist. TODO 14 is done;
+**Next:** the structural refactoring queue (TODO 15) under the D9 measurement rule.
 
 ## ▶ qor_mime (COMPLETE - plan steps 0-17 done and verified 22 Oct 2026; plan file retired to `docs/archive/qor_mime_plan.md`)
 
@@ -394,3 +401,59 @@ later JSON generator tests):
   summary looks falsely clean. With a real false assert the harness prints
   `[FAIL](1/4)` and an `[ALL FAILURES]` block, so `[OK](n/n)` is trustworthy
   only when both streams are captured.
+
+## ▶ qor_jsondata JSON parse performance (FINALIZED round 18, 22 Oct 2026 — TODO 14 DONE; structural refactoring TODO 15 queued)
+
+### What works (reproducible on this tree)
+- Per-parse timing harness in `test/components/formats/json/main.cpp` lines 284-305: the 2 MB
+  `test/data/data_2mb.json` (**2,219,028 bytes**) parse (`pipeline.Connect().PumpAll()`) is timed with
+  `std::chrono::steady_clock` and printed as `[perf] 2MB JSON parse (cold): N ms` then `(warm): N ms`.
+  There is **no `PARSE_TIME_MS` env mode and no `[JSON parse time]` line** in the committed harness, and the
+  handler is `DefaultLogHandler logHandler(log::Level::Informative)` (main.cpp line 82), so every run log is
+  7 non-blank lines / 1332-1336 bytes in Debug AND RelWithDebInfo — no log flood is involved. This exe prints no `[OK](n/n)`
+  summary; judge it on exit `0` plus absence of `Test failed` / `Failure:` in the run log.
+- Build/run: `cmake --build C:\RAID0\Develop\linuxQOR\cmakebuild_rel --target QORTestJSON --config RelWithDebInfo
+  --parallel 4` then run `.\QORTestJSON.exe` from its own `RelWithDebInfo` dir; 21 runs over 7 builds, all exit
+  `0`, logs `tmp/json_final_rel_{A,A2,E,F,D,D2,E2}_run{1,2,3}.log`.
+- FINAL baseline, RelWithDebInfo unless stated:
+  | sources | parse time |
+  |---|---|
+  | git HEAD (all three micro-edits reverted, via `git stash push`) | **2110 ms** mean (18 samples; per-build 1959.6 / 2182.5 / 2188.6) |
+  | podbuffer `& m_wrapMask` only | 2259 ms (2264/2254/2278 cold) |
+  | the two json edits only (podbuffer reverted) | 2255 ms (2242/2261/2260 cold) |
+  | current working tree (all three edits) | **1879 ms** mean (12 samples; builds 1875.4 / 1881.9) |
+  | same sources, earlier build (`tmp/json_perf_rel_now.log`) | 2128.5 ms (2138.12 / 2118.92) |
+  | current tree, Debug | 54.6-54.8 s (`tmp/json_perf_debug_now.log`: cold 54779.4 / warm 54614.1 ms) |
+- Noise floor: <=0.6% between runs of one binary (cold vs warm), **13.5% across independent builds of IDENTICAL
+  sources** (the current tree measured 1875.4 / 1881.9 / 2128.5 ms means in three builds; git-HEAD spread 11.8%;
+  MSVC layout moves the hot loop across cache lines and MSBuild recompiles different object sets - build logs
+  132 vs 154 non-blank lines). Only deltas over ~14% measured across builds are evidence — and none clears that bar.
+
+### What was disproved
+- The recorded "2MB parse ~56 s -> ~18 s" improvement does not reproduce in either config: Debug with the
+  current tree is 54.6-54.8 s (`tmp/json_perf_debug_now.log`) and RelWithDebInfo is 1.88-2.26 s — no config
+  ever measured ~18 s, and no 3x win exists.
+- The apparent A -> D gain (-11.0%) is NOT evidence: independent builds of IDENTICAL sources spread 13.5% for D
+  (1875.4 / 1881.9 / 2128.5 ms means) and 11.8% for A (1959.6 / 2182.5 / 2188.6), and single-edit attribution is
+  self-contradictory (mask-only 2259 ms and mask-less 2255 ms are both ~+7% vs HEAD while the combination
+  measures 1879 ms). Verdict: the three micro-edits are **performance-neutral within the noise floor**.
+- The round-16 record is unreproducible and must not be cited: its fixture `test/data/big_json.txt`
+  (2,102,067 bytes), its `tmp/pristine_qorjson` / `tmp/pristine_json` build tree, its `PARSE_TIME_MS` env mode
+  and its `[OK](42/42)` summary line do not exist in this tree (verified by file listing and grep). The
+  "log flood of ~6.7M `log::debug` lines" attribution is void — the handler is `log::Level::Informative`
+  and run logs are 7 non-blank lines in both configs.
+
+### Known issues / open items
+- RESOLVED (no performance credit either way): `% m_size` -> `& m_wrapMask` in `PODBuffer::AddressOf`
+  (`src/framework/data/pipeline/podbuffer.h`) is neither a win nor a measured regression here; keep it because
+  it bounds every index read (the `assert` removal stays), or revert purely on review grounds.
+- `Parser::FinalParse()` -> `AnyObject::Cast<Fastflow>` still does a live `dynamic_cast`
+  (`typedany.h:158` `CastToBase_`) per model node while RTTI is live; the RTTI-removal edit only pays off
+  once node adapters stop routing results through `AnyObject`.
+- Harness note: the timed scope parses the 2 MB fixture twice (cold then warm sample) and the surrounding
+  cases parse their own JSON fixtures; treat the `[perf]` lines as the only parse metric.
+- Next (TODO 15, structural): bulk scan in `parser/states/_2/character.cpp` (+`_4/string.cpp`, `_3/integer.cpp`,
+  `_3/fraction.cpp`); devirtualize the `ParserState` hierarchy (`src/components/data/parser/{state.cpp,states/*}`,
+  48 JSON state files / 17 .cpp under `src/components/data/formats/json/parser/states/_1.._4`); model-node pooling
+  after removing the `AnyObject::Cast<Fastflow>` hop. Measure each with the `[perf]` timer; believe only >~14% deltas.
+

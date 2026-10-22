@@ -18,7 +18,7 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     number::number(Parser* parser) : Sequence(parser, new_ref<Optional>(parser,new_ref<minus>(parser)),
-            new_ref<Sequence>(parser, new_ref<integer>(parser), 
+            new_ref<Sequence>(parser, new_ref<integer>(parser),
                 new_ref<Sequence>(parser, new_ref<Optional>(parser, new_ref<deferred<fraction>>(parser, static_cast<uint64_t>(jsonToken::fraction))),
                     new_ref<Optional>(parser, new_ref<deferred<exp>>(parser, static_cast<uint64_t>(jsonToken::exp)))
                 )
@@ -30,7 +30,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void number::Prepare()
     {
-        log::debug("Looking for a Number...");
+        //log::debug("Looking for a Number...");
         GetParser()->PushNode(new_ref<NumberNode>());
     }
 
@@ -38,7 +38,7 @@ namespace qor { namespace data { namespace parser { namespace json {
     void number::Emit()
     {
         log::debug("Emitting a Number");
-        double value = 0.0;        
+        double value = 0.0;
         int sign = 1;
         double frac = 0.0;
         int exp = 0;
@@ -58,7 +58,7 @@ namespace qor { namespace data { namespace parser { namespace json {
                     {
                         break;
                     }
-                }                
+                }
                 else if(token == static_cast<uint64_t>(jsonToken::integer))
                 {
                     auto integerNode = node.AsRef<IntegerNode>();
@@ -86,7 +86,7 @@ namespace qor { namespace data { namespace parser { namespace json {
                     if(expNode.IsNotNull())
                     {
                         exp = expNode->GetObject()->GetValue();
-                    }                    
+                    }
                     node = GetParser()->PopNode();
                     token = node->GetToken();
                 }

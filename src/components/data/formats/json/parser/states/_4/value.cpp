@@ -26,7 +26,7 @@
 namespace qor { namespace data { namespace parser { namespace json {
 
     //value = false / null / true / object / array / number / string
-    value::value(Parser* parser) : 
+    value::value(Parser* parser) :
         AnyOneOf(parser,
             new_ref<_false>(parser),
             new_ref<AnyOneOf>(parser,
@@ -48,10 +48,10 @@ namespace qor { namespace data { namespace parser { namespace json {
         static_cast<uint64_t>(jsonToken::value)){ }
 
     value::~value() noexcept = default;
-    
+
     void value::Prepare()
     {
-        log::debug("Looking for a Value...");
+        //log::debug("Looking for a Value...");
         GetParser()->PushNode(new_ref<ValueNode>().AsRef<Node>());
     }
 
@@ -112,8 +112,8 @@ namespace qor { namespace data { namespace parser { namespace json {
         {
             if( valueNode.IsNotNull())
             {
-                auto thisNode = node.AsRef<ValueNode>();     
-                switch(vt)           
+                auto thisNode = node.AsRef<ValueNode>();
+                switch(vt)
                 {
                     case model::json::ValueType::_false:
                     {
@@ -171,7 +171,7 @@ namespace qor { namespace data { namespace parser { namespace json {
     void value::Fail()
     {
         //log::debug("...Didn't find a Value.");
-        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        uint64_t topToken = m_parser->TopNode()->GetToken();
         if(topToken == m_token)
         {
             m_parser->PopNode();

@@ -38,10 +38,10 @@ namespace qor { namespace data { namespace parser { namespace json {
         static_cast<uint64_t>(jsonToken::object)){ }
 
     object::~object() noexcept = default;
-    
+
     void object::Prepare()
     {
-        log::debug("Looking for an Object...");
+        //log::debug("Looking for an Object...");
         GetParser()->PushNode(new_ref<ObjectNode>());
     }
 
@@ -60,14 +60,14 @@ namespace qor { namespace data { namespace parser { namespace json {
                 members.push_back(memberNode);
             }
             else
-            {                
+            {
                 auto f = jsonTokenNames.find((jsonToken)token);
                 std::string tokenName;
                 if(f != jsonTokenNames.end())
                 {
                     tokenName = f->second;
                 }
-                continuable("Unexpected {0}", tokenName);                
+                continuable("Unexpected {0}", tokenName);
             }
             node = GetParser()->PopNode();
         }
@@ -85,7 +85,7 @@ namespace qor { namespace data { namespace parser { namespace json {
     void object::Fail()
     {
         //log::debug("...Didn't find an Object.");
-        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        uint64_t topToken = m_parser->TopNode()->GetToken();
         if(topToken == m_token)
         {
             m_parser->PopNode();

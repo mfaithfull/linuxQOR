@@ -73,7 +73,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
         virtual ~tchar() = default;
 
         virtual void Prepare(){
-            qor::log::debug("Looking for a tchar.");
+            //qor::log::debug("Looking for a tchar.");
             GetParser()->PushNode(new_ref<TCharNode>());
         }
 

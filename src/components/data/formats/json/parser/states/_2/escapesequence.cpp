@@ -12,9 +12,9 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    escapeSequence::escapeSequence(Parser* parser) : Sequence(parser, 
+    escapeSequence::escapeSequence(Parser* parser) : Sequence(parser,
             new_ref<escape>(parser),
-            new_ref<AnyOneOf>(parser, 
+            new_ref<AnyOneOf>(parser,
                 new_ref<Specific<uint32_t>>(parser, 0x22, static_cast<uint64_t>(jsonToken::quotation_mark)),
                 new_ref<AnyOneOf>(parser,
                     new_ref<Specific<uint32_t>>(parser, 0x5C),// '\\'
@@ -46,7 +46,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void escapeSequence::Prepare()
     {
-        log::debug("Looking for an Escape Sequence...");
+        //log::debug("Looking for an Escape Sequence...");
         GetParser()->PushNode(new_ref<EscapeSequenceNode>());
     }
 
@@ -76,11 +76,11 @@ namespace qor { namespace data { namespace parser { namespace json {
                     continuable("Unrecognized token {0}", token);
                 }
             }
-            node = GetParser()->PopNode();                
+            node = GetParser()->PopNode();
         };
 
         if(node.IsNotNull())
-        {            
+        {
             log::debug("Escaped Sequence to: {0}", cValue);
             GetParser()->PushNode(new_ref<CharacterNode>(cValue));
         }
@@ -88,7 +88,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void escapeSequence::Fail()
     {
-        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        uint64_t topToken = m_parser->TopNode()->GetToken();
         if(topToken == m_token)
         {
             GetParser()->PopNode();

@@ -43,7 +43,7 @@ namespace qor { namespace protocols { namespace yaml {
 
     void mapping::Prepare()
     {
-        log::debug("Looking for a Mapping...");
+        //log::debug("Looking for a Mapping...");
         GetParser()->PushNode(new_ref<MappingNode>());
     }
 

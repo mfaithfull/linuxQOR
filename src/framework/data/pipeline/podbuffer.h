@@ -14,7 +14,7 @@ namespace qor{ namespace pipeline{
     {
     public:
 
-        PODBuffer(size_t itemCount = 0) : Buffer(sizeof(pod_t), itemCount), m_pAllocation(nullptr)
+        PODBuffer(size_t itemCount = 0) : Buffer(sizeof(pod_t), itemCount), m_pAllocation(nullptr), m_wrapMask(0)
         {
             SetCapacity(itemCount);
         }
@@ -127,6 +127,8 @@ namespace qor{ namespace pipeline{
             m_pAllocation = (itemCount > 0) ? new pod_t[itemCount] : nullptr;
             memset(reinterpret_cast<void*>(m_pAllocation), 0, sizeof(pod_t) * itemCount);
             Buffer::SetCapacity(itemCount);
+            //Let AddressOf mask instead of divide whenever the count is a power of two (0 means "no mask").
+            m_wrapMask = (itemCount > 1 && (itemCount & (itemCount - 1)) == 0) ? (itemCount - 1) : 0;
         }
 
     protected:
@@ -138,10 +140,18 @@ namespace qor{ namespace pipeline{
 
         inline pod_t* AddressOf(size_t index) const
         {
-            return (m_allocationCount > 0) ? m_pAllocation + (index % m_allocationCount) : nullptr;
+            if (m_allocationCount == 0)
+            {
+                return nullptr;
+            }
+            //The wrap is a modulo when the allocation count is arbitrary, but every pipeline buffer
+            //is sized as a power of two, and a modulo on a non-constant divisor is a real 64-bit
+            //division on every call. This is called several times per code point, so mask instead.
+            return m_pAllocation + ((m_wrapMask != 0) ? (index & m_wrapMask) : (index % m_allocationCount));
         }
 
         pod_t* m_pAllocation;
+        size_t m_wrapMask;
     };
 
     typedef PODBuffer< byte > ByteBuffer;

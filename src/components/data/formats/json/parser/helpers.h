@@ -36,15 +36,19 @@ namespace qor { namespace data { namespace parser { namespace json {
     template<class NodeT>
     void StandardPrepare(ParserState& state)
     {
+        #ifndef NDEBUG
         std::string tokenName = GetTokenName(state.GetToken());
         log::debug("Looking for a {0}...", tokenName);
+        #endif
         state.GetParser()->PushNode(new_ref<NodeT>().template AsRef<Node>());
     }
 
     void StandardFail(ParserState& state)
     {   
+        #ifndef NDEBUG
         std::string tokenName = GetTokenName(state.GetToken());
         log::debug("...Didn't find a {0}.", tokenName);
+        #endif
         ref_of<Node>::type node = state.GetParser()->PopNode();
         if(node.IsNotNull() && node->GetToken() != state.GetToken())
         {
@@ -55,30 +59,38 @@ namespace qor { namespace data { namespace parser { namespace json {
     template<class NodeT>
     void TrivialEmit(ParserState& state)
     {
+        #ifndef NDEBUG
         std::string tokenName = GetTokenName(state.GetToken());
         log::debug("Emitting a {0}.", tokenName);
+        #endif
         state.GetParser()->PushNode(new_ref<NodeT>());
     }
 
     template<class NodeT>
     void SimpleEmit(ParserState& state)
     {
+        #ifndef NDEBUG
         std::string thisTokenName = GetTokenName(state.GetToken());
         log::debug("Building {0}", thisTokenName);
+        #endif
         
         auto node = state.GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != state.GetToken())
         {
             uint64_t token = node->GetToken();
+            #ifndef NDEBUG
             std::string tokenName = GetTokenName(token);
             log::debug("Consuming {0}", tokenName);
+            #endif
             node = state.GetParser()->PopNode();                
         };
 
         if(node.IsNotNull())
         {                        
             state.GetParser()->PushNode(new_ref<NodeT>());
-            log::debug("Emitted {0}", thisTokenName);
+            #ifndef NDEBUG
+            log::debug("Emitted {0}", GetTokenName(state.GetToken()));
+            #endif
         }
     }
 

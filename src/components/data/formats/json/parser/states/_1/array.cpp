@@ -39,12 +39,12 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void array::Prepare()
     {
-        log::debug("Looking for an Array...");
+        //log::debug("Looking for an Array...");
         m_parser->PushNode(new_ref<ArrayNode>().AsRef<Node>());
     }
 
     void array::Emit()
-    {        
+    {
         log::debug("Emitting an Array:");
         std::vector<ref_of<ValueNode>::type> values;
         auto node = m_parser->PopNode();
@@ -77,7 +77,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void array::Fail()
     {
-        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        uint64_t topToken = m_parser->TopNode()->GetToken();
         if(topToken == m_token)
         {
             m_parser->PopNode();

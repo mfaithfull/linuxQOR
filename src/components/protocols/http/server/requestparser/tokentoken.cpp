@@ -11,7 +11,7 @@ namespace qor { namespace components { namespace protocols { namespace http {
 
     void token::Prepare()
     {
-        log::debug("Looking for a basic token.");
+        //log::debug("Looking for a basic token.");
         GetParser()->PushNode(new_ref<TokenNode>());
     }
 

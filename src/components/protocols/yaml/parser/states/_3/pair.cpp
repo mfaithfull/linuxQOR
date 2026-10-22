@@ -29,7 +29,7 @@ namespace qor { namespace protocols { namespace yaml {
 
     void pair::Prepare()
     {
-        log::debug("Looking for a Pair...");
+        //log::debug("Looking for a Pair...");
         GetParser()->PushNode(new_ref<PairNode>());
     }
 
