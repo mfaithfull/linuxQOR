@@ -15,6 +15,81 @@ clang-tidy -p build docs/.../file.cpp
 # green = "[OK](n/n)" in the output AND shell exit code 0. The QOR does not use ctest.
 
 ## Results
+### 2026-10-22 — qor_jsondata parse-perf FINALIZATION (round 18) — VERIFIED (NEUTRAL; supersedes and corrects the entry below)
+
+Reproducible-on-this-tree record. The fixture, harness and sources cited here exist in the repo now; the raw run/build
+**logs were deleted from `tmp/` on 22 Oct 2026** after this entry was verified (see the Cleanup bullet), so every
+`tmp/...` file name in this entry is provenance only - the durable record is the numbers quoted here.
+
+- Fixture (exists): `test/data/data_2mb.json` = **2,219,028 bytes**. There is **no `test/data/big_json.txt`** anywhere in the repo, and no `tmp/pristine_qorjson` tree — the entry below cites a 2,102,067-byte `big_json.txt` and a pristine build tree that are BOTH absent, so its numbers cannot be re-derived (kept as history only).
+- Harness (exists): `test/components/formats/json/main.cpp` (122 insertions / 109 deletions vs HEAD **at the time of
+  measurement**; the review was later committed as `dea24af2`, after which the harness diff vs HEAD is 0). Profiling scope at lines 284-305
+  parses `data_2mb.json` twice and prints to std::cout `[perf] 2MB JSON parse (cold): N ms` and `[perf] 2MB JSON parse (warm): N ms`.
+  There is **no `PARSE_TIME_MS` env mode and no `[JSON parse time]` line in the current harness** (`Select-String -Pattern 'PARSE_TIME_MS|getenv' test\components\formats\json\main.cpp` -> no match).
+  Log handler is `DefaultLogHandler logHandler(log::Level::Informative);` (main.cpp line 82) -> every run log is 7 non-blank lines / 1332-1336 bytes in BOTH configs, so there is no log flood in Debug or RelWithDebInfo and the "6.7M `log::debug` lines" attribution is void.
+- Build (exact): `cmake --build C:\RAID0\Develop\linuxQOR\cmakebuild_rel --target QORTestJSON --config RelWithDebInfo --parallel 4 *> C:\RAID0\Develop\linuxQOR\tmp\<variant>_build.log` -> exit `0`; exe `C:\RAID0\Develop\linuxQOR\cmakebuild_rel\test\components\formats\json\RelWithDebInfo\QORTestJSON.exe` (the build logs were written there and later deleted; their non-blank line counts are recorded in the table below).
+- Run (exact): `Set-Location C:\RAID0\Develop\linuxQOR\cmakebuild_rel\test\components\formats\json\RelWithDebInfo ; .\QORTestJSON.exe *> C:\RAID0\Develop\linuxQOR\tmp\<variant>_run<N>.log ; $LASTEXITCODE` -> `0` for all 21 runs (the 21 run logs were deleted 22 Oct 2026; their `[perf]` values are the table's samples).
+- Judge: exit code `0` AND no `Test failed` / `Failure:` text in the run log. This exe prints no `[OK](n/n)` summary and no `[FAILED]` lines, so the round-16 entry's "`[OK](42/42)`" claim is not produced by it.
+- Variant switching (reproducible): `git stash push -m ablation -- <the 24 modified src/ paths>` (tree -> git HEAD), rebuild, run 3x, then restore variant-by-variant with `git checkout "stash@{0}" -- <paths>` / `git checkout HEAD -- src/framework/data/pipeline/podbuffer.h`, rebuild, run 3x, finish with `git stash pop` + `git reset HEAD -- src`. One `git checkout "stash@{0}"` invocation failed ("invalid reference"), so the build logged `json_final_rel_E2_build.log` measured variant **A**, not E.
+
+| variant (RelWithDebInfo) | build log (non-blank lines) | run-log samples, cold/warm ms | build mean |
+|---|---|---|---|
+| A = git HEAD (all 24 edits reverted) | json_final_rel_A_build.log (154) | 2201.59/2182.79 2197.68/2176.90 2186.81/2185.70 | 2188.6 |
+| A | json_final_rel_A2_build.log (154) | 2188.49/2176.32 2189.87/2179.05 2187.49/2173.75 | 2182.5 |
+| A (mask restore failed -> tree stayed A) | json_final_rel_E2_build.log (154) | 1939.91/1944.03 1949.96/1971.36 1978.23/1973.91 | 1959.6 |
+| E = podbuffer `& m_wrapMask` only | json_final_rel_E_build.log (132) | 2264.73/2250.88 2254.54/2286.04 2278.53/2220.35 | 2259.2 |
+| F = 23 edits, podbuffer reverted | json_final_rel_F_build.log (154) | 2242.21/2247.13 2261.63/2280.39 2260.29/2239.21 | 2255.1 |
+| D = current tree (all 24 edits) | json_final_rel_D_build.log (132) | 1887.72/1876.92 1873.21/1870.18 1874.25/1869.86 | 1875.4 |
+| D | json_final_rel_D2_build.log (154) | 1896.08/1879.48 1876.28/1864.76 1886.58/1887.98 | 1881.9 |
+| D (same sources, earlier build; log deleted) | json_perf_rel_now.log | 2138.12/2118.92 | 2128.5 |
+
+(Provenance: the `build log` and `run-log samples` columns name files that were deleted from `tmp/` on 22 Oct 2026; the
+values are the recorded readings, and the log names remain only to say which artifact each number came from.)
+
+- Totals (mean of cold+warm samples): A 18 samples **2110 ms** (per-build means 1959.6 / 2182.5 / 2188.6 -> **11.8% spread for identical sources**); D 12 samples **1879 ms** (builds 1875.4 / 1881.9), and the third build of the SAME sources logged earlier (`json_perf_rel_now.log`, since deleted; mean 2128.5) puts D at **1875-2129 ms = 13.5% spread for identical sources**; E 2259 ms; F 2255 ms.
+- Debug, current tree (log `json_perf_debug_now.log`, since deleted): `[perf] 2MB JSON parse (cold): 54779.4 ms`, `(warm): 54614.1 ms` (7 non-blank lines, 1336 bytes). Same magnitude as the 53.2 s figure below: **the "2MB ~56 s -> ~18 s" claim does not exist in either config.**
+- Verdict: the apparent A -> D delta (2110 -> 1879 ms, -11.0%) is SMALLER than the spread of builds of identical sources (13.5% for D, 11.8% for A) — build logs differ in size (132 vs 154 non-blank lines, MSBuild recompiling different object sets) and MSVC code layout moves the hot loop across cache lines. Single-edit attribution is also self-contradictory: E (mask only) 2259 ms and F (mask reverted) 2255 ms are both ~+7% vs A while their union D measures 1879 ms. Therefore **the three micro-edits (RTTI removal, `#ifndef NDEBUG` logging guards, podbuffer power-of-2 masking) are performance-neutral within the noise floor**; no edit earns credit, and D9 rule 4's "mask alone is an 11% regression" does not reproduce on this tree.
+- TODO 14: **DONE** on this evidence (verification only; no parser change). Fix applied: the harness/fixture identity above; no further micro-performance work is worth chasing.
+- Task status: **COMPLETED 22 Oct 2026**. The user decision is recorded: **all three micro-edits are KEPT** in the working tree (variant D stays applied) - kept on review grounds, with **no performance credit claimed**. The structural phase (TODO 15) is **DEFERRED until greater resources are available**; no structural parser work has been started.
+- Cleanup (22 Oct 2026, two passes after this entry was written): **pass 1** deleted the superseded round-16/17 artifacts and scratch scripts (45 files / 300,687 B: `tmp/dbg_*`, `tmp/qortestjson_*`, `tmp/rel_{B,C,pre,post,pre2,config,fixed,instr,json,pristine,full}_*`, `tmp/rel_D_run_{1,2,3}.txt`, `tmp/json_perf.patch`, `tmp/_*.js` / `tmp/_*.txt`), leaving 34 entries / 146.5 KB of round-18 evidence. **Pass 2 then deleted all 31 round-18 logs** - the 28 `tmp/json_final_rel_{A,A2,E,E2,F,D,D2}_{build,run1,run2,run3}.log`, `tmp/json_perf_rel_now.log`, `tmp/json_perf_debug_now.log`, `tmp/rel_D_build.log` (146.5 KB). **`tmp/` now holds only the 3 dirs `dcast`, `edited`, `jsonread`** (3 entries); no JSON-perf log survives anywhere, so **this entry's table is the sole durable record** and every `tmp/...` name in it (and in the SUPERSEDED entries below) is provenance, not a readable artifact.
+- Post-task git state (22 Oct 2026): the user committed the conclusion as `dea24af2 "JSON parser performance review concluded"`
+  (27 files - the 24 `src/` paths at +105/-79 plus `test/components/formats/json/main.cpp` at +233/-192). `git status
+  --porcelain src` is now CLEAN and **HEAD == variant D** (all three micro-edits committed). Consequence for re-ablation:
+  the `git stash push` recipe above no longer reaches variant A from here - to rebuild A use
+  `git checkout 4c9604c1 -- <the 24 src paths>` (pre-review commit `4c9604c1 "qor_mime review tweeks"`). Guards verified
+  still in place in the committed tree: `src/components/data/formats/json/parser/helpers.h` 6 x `#ifndef NDEBUG`,
+  `src/components/data/parser/state.cpp` 1 x, `src/framework/data/pipeline/podbuffer.h` 4 x `m_wrapMask`.
+
+### 2026-10-22 — qor_jsondata: perf baseline + ablation of the JSON micro-optimizations — VERIFIED (no gain measured; earlier 3x claim does not reproduce) — SUPERSEDED: fixture `test/data/big_json.txt`, `tmp/pristine_qorjson` tree and the `PARSE_TIME_MS` env mode cited below no longer exist in this tree; see the entry above
+Fixture: `test/data/big_json.txt` = **2,102,067 bytes** (one 2000-key object, parsed twice per test case: `test_jsongenerator.cpp(805)` `reader.Parse()` + the roundtrip re-parse). Same fixture, same test exe, both build configs.
+
+- **Harness** (test-only instrumentation, committed to `test/components/formats/json/main.cpp`): the 2MB
+  parse `pipeline.Connect().PumpAll()` is now timed with `std::chrono::steady_clock` and printed as
+  `[JSON parse time] N ms`; if the env var `PARSE_TIME_MS` is set the exe prints that line and returns 0
+  **without running any asserts** (timing-only mode, no log flood, no JSONWriter file output); without the
+  var the original suite body and exit code are unchanged. The `[DURATION]` the qor test framework prints
+  is still whole-run, so it is NOT the parse metric.
+- **Build (edited sources, RelWithDebInfo)**: `cmake --build C:\RAID0\Develop\linuxQOR\cmakebuild --target QORTestJSON --config RelWithDebInfo`
+  → exit 0, log `tmp/qorjson_rel_D_build.log` (relinks `qor_jsondata`/`qor_qor`/`qor_error` DLLs; no `error C`/`warning C`/`LNK`).
+- **Run (timing-only)**: `$env:PARSE_TIME_MS="1" ; Set-Location C:\RAID0\Develop\linuxQOR\cmakebuild\test\components\formats\json\RelWithDebInfo ; .\QORTestJSON.exe *> C:\RAID0\Develop\linuxQOR\tmp\json_parse_time_rel_D.log ; $LASTEXITCODE`
+  → exit `0`, log line `[JSON parse time] 2134 ms` (1 of 42 lines — the suite body is skipped by the timing mode).
+- **Measured 2.1MB RelWithDebInfo parse (ms), 3 samples each, mean in brackets** — configs differ in SOURCE, not in build type:
+  | variant | sources | cold runs | warm runs (2nd/3rd of the same command batch) |
+  |---|---|---|---|
+  | A pristine | `tmp/pristine_json` (git archive of HEAD tree + its own CMake copy), exe `tmp/pristine_qorjson\build\test\components\formats\json\RelWithDebInfo\QORTestJSON.exe` | 1924 1930 1927 [1927] | 1914 1958 1916 [1929] |
+  | B main tree, `#ifndef NDEBUG` + RTTI edits, podbuffer mask REVERTED to `% m_size` + `assert` | 1994 2027 2011 [2011] | — |
+  | C main tree, pristine `helpers.h`/`state.cpp`, podbuffer power-of-2 mask ONLY | 1990 2014 2003 [2003] | 2002 2016 1981 [1993] |
+  | D main tree, all three edits (current working tree) | 2157 2127 2144 [2143] | 2128 2140 2139 [2136] |
+  | D Debug config (`cmakebuild\...\Debug`) | cold 55141 | warm 54846 |
+  | A pristine, Debug config | cold 53229 | — |
+- **Noise floor (same exe, 3 identical runs)**: RelWithDebInfo 1902 1902 1905 ms (spread 0.16%); Debug 54788 54788 54785 ms (spread 0.005%). Within one config the spread is ≤1.5%; across CONFIGURATIONS (different rebuild/layout) the spread is ~10%.
+- **Verdict**: the three micro-edits do NOT speed up the 2.1MB parse — they move it 1927 ms → 2143 ms in RelWithDebInfo (~+11%, i.e. a small regression) and 53229 ms → 55141 ms in Debug (~+3.5%). The recorded "2MB ~56s → ~18s" improvement does **not** reproduce: the Debug 2MB parse is 53–55 s with and without the edits. Exit code 0 for every run; builds exit 0.
+- **Corollary for the next phase**: the parse is CPU-bound at ~25 ns/character with the log handler left at its default Debug level, and neither the modulo→mask change nor the `#ifndef NDEBUG` token-name guards change that — so any structural refactoring (bulk scanning, devirtualized state machine, node pooling) must be measured with this same per-parse timer before being believed.
+- **Side finding while measuring (for the structural phase)**: every model node is constructed through
+  `Parser::FinalParse()` → `AnyObject::Cast<Fastflow>(state.GetResult())`, whose `CastToBase_` branch does a
+  live `dynamic_cast` (`typedany.h:158`) plus a vtable call per node — so the RTTI removal is only complete
+  once the node-adapters stop routing results through `AnyObject`.
+
 ### 2026-10-22 — qor_mime plan step 17 / QORTestMIME (recognized MIME type name drives a sink) — PASS
 - **Test first**: added `mime_type_name_drives_a_sink` to `test/framework/data/mime/test_mime.cpp` and a tiny local application-level helper `SelectSinkByMIMETypeName()` in the test file. The case recognises a PNG stream, captures `GetTypeName() == "image/png"`, routes a second PNG stream only to `routeImageSink`, then recognises a plain text stream, captures `GetTypeName() == "text/plain"`, and routes a second text stream only to `routeTextSink`. NO `qor_mime` implementation change was expected or made — `qor_mime` supplies the recognised registered name only; the routing is local glue in the test.
 - Command (build the test exe only — active build dir is `cmakebuild`, because `build` was stale/missing the base64 filter import lib): `cmake --build C:\RAID0\Develop\linuxQOR\cmakebuild --target QORTestMIME --config Debug` → exit `0`, log `C:\RAID0\Develop\linuxQOR\tmp\qortestmime_step17_build.log` (no `error C`/`warning C`/`LNK`).

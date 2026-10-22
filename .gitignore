@@ -41,6 +41,7 @@
 
 # CMake
 /cmakebuild
+/cmakebuild_rel
 /out/build/x64-Debug
 /build/src
 /build/test

@@ -7,31 +7,41 @@
 -> parse roundtrip green in `QORTestJSON`, and the full `QORTest` regression run green at
 `[TOTAL](678/678)` / `[OK](678/678)` with process exit code 0 (its plan file already retired to
 `docs/archive/jsonGeneratorPlan.md`). **Also 22 Oct 2026:** the `qor_jsondata` JSON **parse-performance**
-verification phase is **FINALIZED (round 18)** - a reproducible per-parse record in `QORTestJSON`
+verification phase is **COMPLETED (round 18)** - a reproducible per-parse record in `QORTestJSON`
 (`[perf] 2MB JSON parse (cold|warm)` lines over fixture `test/data/data_2mb.json`, 2,219,028 bytes, 21 RelWithDebInfo
 runs across 7 builds + a Debug run, all exit 0) shows the three micro-edits are **performance-neutral within the noise
 floor**; the "56 s -> 18 s" figure is void and the round-16 record (fixture `big_json.txt`, `tmp/pristine_qorjson` tree,
 `PARSE_TIME_MS` env mode) is unreproducible because those artifacts are gone. TODO 14 is marked done.
-**Next:** the structural refactoring queue below (TODO 15) - and nothing else queued from the two increments.
+**Next:** nothing is queued - the structural refactoring queue (TODO 15) is **DEFERRED 22 Oct 2026 until greater
+resources are available**, and nothing else is pending from the two completed increments.
 
-## ▶ JSON parse performance (FINALIZED round 18, 22 Oct 2026 — TODO 14 DONE; structural refactoring TODO 15 queued)
+## ▶ JSON parse performance (COMPLETED round 18, 22 Oct 2026 — TODO 14 DONE, all three micro-edits KEPT; structural refactoring TODO 15 DEFERRED)
 
 **Was**: verify the micro-optimization claim that the 2 MB JSON parse went ~56 s -> ~18 s and ablate it.
 **Now**: measured on a reproducible tree and **performance-neutral within the noise floor**. Harness is
 `test/components/formats/json/main.cpp` lines 284-305 printing `[perf] 2MB JSON parse (cold|warm): N ms` over
 fixture `test/data/data_2mb.json` (**2,219,028 bytes**); handler `log::Level::Informative` (main.cpp line 82) ->
 run logs are 7 non-blank lines / 1332-1336 bytes in Debug and RelWithDebInfo, so no log flood is involved. 21 RelWithDebInfo runs across 7
-builds in `cmakebuild_rel` (logs `tmp/json_final_rel_{A,A2,E,F,D,D2,E2}_run{1,2,3}.log`, all exit `0`): git-HEAD
+builds in `cmakebuild_rel` (logs `tmp/json_final_rel_{A,A2,E,F,D,D2,E2}_run{1,2,3}.log`, deleted from `tmp/` 22 Oct 2026 — the values below are the recorded readings, all exit `0`): git-HEAD
 sources **2110 ms mean** (per-build 1959.6 / 2182.5 / 2188.6 -> **11.8% spread for identical sources**),
 current tree with all three edits **1879 ms mean** (builds 1875.4/1881.9; a third build of the same sources,
-`tmp/json_perf_rel_now.log`, measured 2128.5 ms mean -> **13.5% spread**), mask-only 2259 ms, mask-less 2255 ms;
+`json_perf_rel_now.log`, since deleted), measured 2128.5 ms mean -> **13.5% spread**), mask-only 2259 ms, mask-less 2255 ms;
 Debug current tree 54.6-54.8 s. Because the same-source build spread (13.5%) EXCEEDS the apparent -11.0%
 delta and single-edit attribution is self-contradictory (both ablations ~2.26 s = +7% vs HEAD), **no edit earns
 performance credit**. The earlier "2MB ~56 s -> ~18 s" figure never reproduces and the round-16 record is void
 (its fixture `test/data/big_json.txt`, its `tmp/pristine_qorjson` tree and its `PARSE_TIME_MS` env mode do not exist).
 **Decision resolved**: keep `% m_size` -> `& m_wrapMask` in `PODBuffer::AddressOf` (it bounds every index read and the
 `assert` removal stays) — kept for review, not for performance; revert only if the user objects on review grounds.
-**Next** (structural; measure each with the same `[perf]` timer, believe only deltas over ~14%):
+**User decision 22 Oct 2026 recorded: all three micro-edits are KEPT** (RTTI removal, `#ifndef NDEBUG` logging guards,
+podbuffer power-of-2 masking) — committed at HEAD as `dea24af2 "JSON parser performance review concluded"`, so HEAD now
+equals variant D; the task is closed with the edits applied and zero performance credit claimed.
+**Cleanup 22 Oct 2026 (two passes)**: pass 1 deleted 45 files / 300,687 B of superseded round-16/17 artifacts and
+scratch scripts; pass 2 deleted the 31 round-18 logs (146.5 KB — `tmp/json_final_rel_*_{build,run1,run2,run3}.log`,
+`tmp/json_perf_rel_now.log`, `tmp/json_perf_debug_now.log`, `tmp/rel_D_build.log`). **`tmp/` now holds only the 3 dirs
+`tmp/dcast` / `tmp/edited` / `tmp/jsonread`** — no JSON-perf log survives, so the `docs/agent/verification.md` FINAL
+entry's table is the sole durable record and every `tmp/...` citation is provenance only.
+**Deferred inventory** (TODO 15, parked 22 Oct 2026 until greater resources are available; nothing started — when
+resumed, measure each with the same `[perf]` timer and believe only deltas over ~14%):
 (a) bulk scan string/number runs in `character` instead of per-character transitions
     (`src/components/data/formats/json/parser/states/_2/character.cpp`, `_4/string.cpp`, `_3/integer.cpp`, `_3/fraction.cpp`);
 (b) devirtualize / table-drive the polymorphic `ParserState` hierarchy
