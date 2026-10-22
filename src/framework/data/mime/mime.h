@@ -10,7 +10,7 @@
 //A MIME type recognizer expressed as a data pipeline filter. The filter sits between a
 //source and a sink in a pipeline. It never alters the octet stream; it inspects the
 //leading octets of whatever passes through it and classifies the stream as one of the
-//ten popular MIME types (see purpose.md and memory-bank/qor_mime_plan.md). The
+//ten popular MIME types (see purpose.md and docs/archive/qor_mime_plan.md). The
 //recognised type is read back by the application or by the elements downstream.
 
 namespace qor{ namespace mime{

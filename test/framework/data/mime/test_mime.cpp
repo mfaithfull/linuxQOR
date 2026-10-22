@@ -1,7 +1,7 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-//qor_mime test. The test first plan is in memory-bank/qor_mime_plan.md:
+//qor_mime test. The test first plan is in docs/archive/qor_mime_plan.md:
 //step 0 - the module is present in the executable image, its module singleton is
 //registered on load, and the filter can be constructed.
 //step 1 - mime_filter_passes_octets_through: the filter wired between a StringSource
@@ -14,7 +14,7 @@
 //step 3 - mime_recognises_png_signature: the first detection increment. A stream whose
 //leading octets are the eight byte PNG magic 89 50 4E 47 0D 0A 1A 0A must be classified
 //as image/png: GetDetectedType() == MIMEType::PNG and GetTypeName() == "image/png".
-//Detection is added one type at a time (see memory-bank/qor_mime_plan.md).
+//Detection is added one type at a time (see docs/archive/qor_mime_plan.md).
 //step 4 - mime_recognises_jpeg_signature: the second detection increment. A stream whose
 //leading octets are the three byte JPEG magic FF D8 FF must be classified as image/jpeg.
 //step 5 - mime_recognises_gif_signature: the third detection increment. A stream whose

@@ -1,4 +1,16 @@
 # qor_mime plan — test-first MIME recognition pipeline filter
+<!--============================ RETIRED / ARCHIVED ============================-->
+RETIRED 22 Oct 2026 - this plan is COMPLETE and has been archived out of the memory bank.
+All 18 planned increments (steps 0-17) are DONE and verified green: `QORTestMIME.exe`
+`[TOTAL](18/18) [OK](18/18)` exit 0 on 22 Oct 2026 (logs `tmp/qortestmime_step17_build.log`,
+`tmp/qortestmime_step17_green_run.log`; `docs/agent/verification.md`).
+Do NOT resume from this file. The transferable learnings live in
+`memory-bank/activeContext.md`, `memory-bank/progress.md`, `memory-bank/systemPatterns.md`,
+`memory-bank/techContext.md` and `memory-bank/codingConventions.md`; the per-step record is
+also in `src/framework/data/mime/status.md`.
+<!--=========================================================================>-->
+
+
 
 Task: add a `qor_mime` module under `src/framework/data` (own folder) providing a
 pipeline filter that recognises ten popular MIME types. Approach: **test first** —

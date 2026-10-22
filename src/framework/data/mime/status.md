@@ -7,7 +7,7 @@
 - `mime.cpp` — `qor_pp_export void init_mime(void)` (Windows import lib guard) + placeholder `Inspect()` (pass through, no signature capture yet)
 - test target `QORTestMIME` in `test/framework/data/mime` — placeholder case `mime_module_loads`
 
-## Increments done (see memory-bank/qor_mime_plan.md for the full plan)
+## Increments done (see docs/archive/qor_mime_plan.md for the full plan)
 - [x] Step 0 scaffold: `qor_mime` builds, `QORTestMIME` builds and runs green `[OK](1/1)` exit 0
 - [x] Step 1 `mime_filter_passes_octets_through`: test written FIRST and seen RED
       (`[FAIL] #1`, exit 1 — the base `Filter` does not pass octets through by itself), then

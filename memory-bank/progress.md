@@ -1,250 +1,56 @@
 # Progress
 
-**Last updated:** 22 Oct 2026 — **qor_mime plan step 17 (`mime_type_name_drives_a_sink` — application-level glue: the recognised MIME type name drives a sink) DONE and verified green** (`QORTestMIME` `[TOTAL](18/18) [OK](18/18)` exit 0; logs `tmp/qortestmime_step17_build.log`, `tmp/qortestmime_step17_green_run.log`) — no `qor_mime` implementation change was needed or made: `test_mime.cpp` gained a local `SelectSinkByMIMETypeName()` helper and a case that routes recognised `image/png` data to an image sink and recognised `text/plain` data to a text sink. Next: none — qor_mime plan steps 0-17 are done and verified.
+**Last updated:** 22 Oct 2026 - **qor_mime COMPLETE**: plan steps 0-17 done and verified green
+(`QORTestMIME.exe` `[TOTAL](18/18) [OK](18/18)`, exit 0), and its plan file retired out of
+`memory-bank/` to `docs/archive/qor_mime_plan.md`. The JSON generator increment is likewise
+**complete**: pipeline integration `[OK](36/36)` in `QORTestJSONGenerator`, the parse -> generate
+-> parse roundtrip green in `QORTestJSON`, and the full `QORTest` regression run green at
+`[TOTAL](678/678)` / `[OK](678/678)` with process exit code 0 (its plan file already retired to
+`docs/archive/jsonGeneratorPlan.md`).
 
-**Earlier (step 16):** 22 Oct 2026 — **qor_mime plan step 16 (`mime_recogniser_chained_with_qor_base64encodefilter` — the recognizer chained in front of `qor_base64encodefilter`) DONE and verified green test-first** (`QORTestMIME` `[TOTAL](17/17) [OK](17/17)` exit 0; logs `tmp/qor_mime_step16_dll.log`, `tmp/qortestmime_step16_exe.log`, `tmp/qortestmime_step16_green_run.log`) — the chain `StringSource -> MIMERecognizerFilter -> Base64EncodeFilter -> StringSink` works: the encode filter is an `InlineFilter<byte>` (a Buffer pair, not an Element) so it is wired as the buffer shared by the elements either side of it (the sink's buffer), the recognizer classifies the PRE-encoded stream (`MIMEType::PNG` / `"image/png"`, 16-byte window) and the sink text is exactly the base64 of the stream (`"iVBORw0KGgpJSERSIHFvcjAx"` from 18 raw octets — a multiple of 3, so no padding — expanded to 24 encoded units). The case went RED first (the sink received only the first 18 of the 24 encoded characters) and was made GREEN by separating the consumed from the produced unit count in `mime.cpp::TransferOctets`, because `InlineFilter::WriteAcknowledge` rewrites the count it is handed to the produced width while `Buffer::ReadAcknowledge` clamps its count back to what the source holds. `test/framework/data/mime/CMakeLists.txt` gained `qor_base64encodefilter`. Earlier the same day:
+## ▶ qor_mime (COMPLETE - plan steps 0-17 done and verified 22 Oct 2026; plan file retired to `docs/archive/qor_mime_plan.md`)
 
-**Earlier (step 15):** **qor_mime plan step 15 (`mime_recognizer_resets_between_streams` — one recognizer serving two streams across `Reset()`) DONE and verified green on the FIRST run with NO implementation change** (`QORTestMIME` `[TOTAL](16/16) [OK](16/16)` exit 0; logs `tmp/qortestmime_step15_build_exe.log`,
-`tmp/qortestmime_step15_green.log`). Step 14 (a signature longer than a pump chunk — the eight byte PNG magic split across three 3-byte pumped chunks) was likewise DONE and verified green on its first run with no code change (`[TOTAL](15/15) [OK](15/15)`; logs `tmp/qortestmime_step14_build_exe.log`,
-`tmp/qortestmime_step14_green.log`). Step 13 (the octet-stream fallback — a full window that is neither printable text nor a known signature) was likewise DONE and verified green, driven test-first (RED
-`[FAIL] #13`, `[TOTAL](14/14) [OK](13/14) [FAIL](1/14)` exit 1 → GREEN `[TOTAL](14/14) [OK](14/14)` exit 0; logs `tmp/qortestmime_step13_red.log`,
-`tmp/qortestmime_step13_green.log`). **The qor_mime recognizer is now complete on its targets: ALL 10 of the 10 target MIME types recognised** (PNG, JPEG, GIF,
-PDF, ZIP, XML, HTML, JSON, JavaScript, plain text) **AND the application/octet-stream fallback proven AND recognition proven across pumped chunk boundaries** — every stream that fills the 16-byte signature window
-now ends with a type and a non-empty name. Step 12 (recognise plain text — the whole signature window printable) was likewise DONE and verified green test-first
-(RED `[FAIL] #12` → GREEN `[TOTAL](13/13) [OK](13/13)`). Earlier the same day: qor_mime plan step 11 (recognise JavaScript — shebang `#!`, leading `function `, leading `//`/`/*` comment) DONE, qor_mime plan step 10 (recognise JSON — first non-JSON-whitespace
-octet is `{` or `[`) was DONE, qor_mime plan step 9 (recognise HTML — the `<!DOCTYPE html`
-doctype and the document-level first tag) was DONE and verified green test-first (RED `[FAIL] #9` → GREEN
-`[TOTAL](10/10) [OK](10/10)`), qor_mime plan step 8 (recognise the XML `<?xml` declaration marker)
-was DONE and verified green test-first, qor_mime plan step 7 (recognise the ZIP `PK 03 04` magic) was likewise
-DONE, and qor_mime plan steps 0-6 were done (step 4 verified after the fact — its
-RED phase never observed), and
-the JSON generator increment is **COMPLETE**: the full `QORTest` regression run (the
-base framework suite) is **green at `[TOTAL](678/678)` / `[OK](678/678)`, process exit code 0**, on
-top of the parse -> generate -> parse **roundtrip** being green in `QORTestJSON` (process exit code
-0) and the **pipeline integration** step (a JSON model written to a real file through a real
-pipeline: `GeneratorSource` -> `FileConnector`) **DONE and verified at
-## MIME Recognition — qor_mime (20-22 Oct 2026, steps 0-16: outline + pass-through + signature window + PNG + JPEG + GIF + PDF + ZIP + XML + HTML + JSON + JavaScript + plain text + octet-stream fallback + signature split across pumped chunks + recognizer reuse across Reset + chaining with qor_base64encodefilter)
+### What works (qor_mime)
+- `src/framework/data/mime` (lib `qor_mime`, framework layer) provides `qor::mime::MIMERecognizerFilter`
+  - a pipeline filter that recognises ten popular MIME types plus an `application/octet-stream`
+  fallback. `QORTestMIME.exe` runs `[TOTAL](18/18) [OK](18/18)` exit 0 (22 Oct 2026).
+- Recognition is total on its targets: all 10 types (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON,
+  JavaScript, plain text) plus the fallback; proven across pumped chunk boundaries (an 8-byte magic
+  split over 3-byte chunks), across `Reset()` (one instance reused for a second stream), and when
+  chained in front of an encoding filter (`qor_base64encodefilter`) - it classifies the PRE-encoded
+  octets, so a recognising filter stays valid in front of any downstream transform.
+- The application-level payoff works too: the recognised registered name drives sink selection
+  (glue in the test, not in the module).
 
-### What was done
-- Researched QOR pipeline filter anatomy first (see `memory-bank/qor_mime_plan.md` step R):
-  `qor::pipeline::Filter` (Sink+Source), filter overrides `ReadFilter`/`WriteFilter`,
-  existing filters `base64encodefilter`/`linereader`/`jpegdecodefilter`/`unicodetextfilter`,
-  test exe pattern from `QORTestYAML`.
-- New module `src/framework/data/mime` → lib `qor_mime` (SHARED, `QOR_MIME`), namespace `qor::mime`,
-  class `MIMERecognizerFilter`, `enum class MIMEType` covering the ten popular types plus
-  `application/octet-stream` fallback and `Unresolved`.
-- New test target `test/framework/data/mime` → exe `QORTestMIME` (placeholder `mime_module_loads`).
-- ctest removed project-wide (user rule "the QOR does not use ctest"): deleted the
-  `enable_testing()` + `add_test(...)` blocks from the four leaf test CMakeLists that had them
-  (`test/framework/data/mime`, `test/components/protocols/yaml`, `test/components/formats/json/generator`,
-  `test/uri`). Repo-wide grep of every `CMakeLists.txt` for `add_test|enable_testing` → **0 hits**.
+### What was done (compressed - the step-by-step record is in `docs/archive/qor_mime_plan.md` and `src/framework/data/mime/status.md`)
+- Researched QOR pipeline filter anatomy FIRST (`docs/agent/add_module.md`, `src/framework/data/pipeline/*`,
+  the existing filters and their tests), then scaffolded the module (SHARED lib, module singleton,
+  `purpose.md` + `status.md`) and its mirror test target (`test/framework/data/mime` -> `QORTestMIME`).
+- Grew the recogniser test-first, one increment at a time: pass octets through -> capture leading
+  octets into the signature window -> recognise PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON,
+  JavaScript and plain text one type at a time -> the octet-stream fallback -> the chunk-boundary
+  proof -> the `Reset()` reuse proof -> chaining with `qor_base64encodefilter` -> the recognised
+  name driving a sink.
 
+### Constraints found on the way (now recorded as patterns, not step logs)
+- Base `qor::pipeline::Filter` moves no octets and its Pull path is broken at the framework level
+  (`Filter::Read` hands `ReadFilter` a zero unit count at entry); tests pump in
+  `Element::FlowMode::Push` under a `Pipeline` parent. -> `memory-bank/systemPatterns.md`
+- Peeking without consuming requires the three-step buffer read protocol (`ReadRequest` -> copy ->
+  `ReadReject`); a filter must never acknowledge source data it has not passed on. -> `systemPatterns.md`
+- A pass-through filter must keep the units it CONSUMED apart from the units its sink buffer PRODUCED,
+  because an `InlineFilter` sink rewrites the count handed to `WriteAcknowledge`. -> `systemPatterns.md`
+- `log::debug` is not wired to output in these test exes, so it is not a usable probe - assert on
+  observable API state instead. Build/run gotchas (one target per `cmake --build`, separate build
+  then run commands, run from the exe's own build dir, logs in gitignored `tmp/`) ->
+  `memory-bank/techContext.md`
 
-### Outcomes
-- ✅ `qor_mime` compiles and links: `build\src\framework\data\mime\Debug\qor_mime.dll` + import lib,
-  no warnings.
-- ✅ `QORTestMIME.exe` runs `[OK](1/1)` exit 0 — module loads, filter constructs.
-- ✅ **Plan step 1** `mime_filter_passes_octets_through`: RED first (`[FAIL] #1`, exit 1 — the base
-  `Filter` does not move octets by itself, so the plan's "no code expected" assumption was wrong),
-  then `MIMERecognizerFilter::TransferOctets()` (declared in `mime.h`, called from
-  `ReadFilter`/`WriteFilter`, modelled on `CopyFilter::Copy`) → `QORTestMIME` `[TOTAL](2/2) [OK](2/2)`
-  exit 0. Filter now provably sits between a source and a sink and leaves the octet stream untouched.
-  Push mode + `Pipeline` parent is the working filter-pump path; Pull mode hits
-  `Filter::Read` → `ReadFilter(unitsRead, unitsRead)` (0 units at entry) in the base framework.
-- ✅ **Plan step 2** `mime_captures_leading_octets`: RED first (`[FAIL] #2`, `[OK](2/3)`, exit 1 — the
-  placeholder `Inspect()` captured nothing and was not even called), then `Inspect()` in `mime.cpp`
-  captures the leading octets through the pipeline buffer three-step read protocol — `ReadRequest`
-  → `memcpy` into `m_signature` → **`ReadReject`** to give the reservation back, so the source is
-  NOT consumed and the same octets still move on through `TransferOctets` — capped by
-  `SIGNATURE_WINDOW_BYTES` (16); `ReadFilter`/`WriteFilter` call `Inspect()` before `TransferOctets`;
-  `mime.h` needed no change. `QORTestMIME` `[TOTAL](3/3) [OK](3/3)` exit 0. New gotchas recorded: a
-  run issued in the same command batch as the build ran the **stale previous exe** (build and run
-  must be separate sequential commands), and `log::debug` in `qor_mime` produces no output in
-  `QORTestMIME` (log flyer not wired there). `GetDetectedType()`/`GetTypeName()` still placeholder
-  until step 3.
-- ✅ **Plan step 3** `mime_recognises_png_signature`: RED first (`[FAIL] #3`, `[OK](3/4)`, exit 1 —
-  pass-through assert passed, `GetDetectedType()` still `Unresolved`), then in `mime.cpp` the fixed-order
-  signature table inside `Inspect()` (after each capture, `memcmp` first 8 of `m_signature` vs the PNG
-  header `89 50 4E 47 0D 0A 1A 0A` → `m_detectedType = PNG`) + the complete registered-name switch in
-  `GetTypeName()` (`mime.h` unchanged). Verified 20 Oct 2026: `QORTestMIME.exe` `[TOTAL](4/4) [OK](4/4)`
-  exit 0 from `build\test\framework\data\mime\Debug`. Name table is data (enum→name) so it is complete
-  now; only the detectors stay incremental.
-- ✅ **Plan step 4** `mime_recognises_jpeg_signature`: **VERIFIED 20 Oct 2026 but NOT test-driven** — the
-  test and the jpeg detector (`m_signatureCount >= 3` + `memcmp` vs `FF D8 FF` in `Inspect()`) were
-  already in the working tree as uncommitted edits to `mime.cpp`/`test_mime.cpp` with no build, no run
-  and no record anywhere (no step-4 commit in `git log`). Built `qor_mime` + `QORTestMIME` and ran the
-  exe from `build\test\framework\data\mime\Debug` → `[TOTAL](5/5) [OK](5/5)`, no `[FAIL`, exit 0
-  (`tmp/qortestmime_step4_green.log`). The RED phase was never observed — recorded as such rather than
-  assumed. **Lesson: working-tree code that has never been built/run is not "done"; verify first.**
-- ✅ **Plan step 5** `mime_recognises_gif_signature`: test written FIRST (two streams in the case with
-  fresh elements for the second — `GIF89a` and `GIF87a` six-byte headers, pass-through +
-  `GetDetectedType() == MIMEType::GIF` + `GetTypeName() == "image/gif"` per stream) and seen RED
-  (`mime_recognises_gif_signature [FAIL], #5`, `[TOTAL](6/6) [OK](5/6) [FAIL](1/6)`, exit 1,
-  `tmp/qortestmime_step5_red.log`), then `Inspect()` gained a third fixed-order guard
-  (`m_signatureCount >= 6`, `memcmp` vs `{47 49 46 38 39 61}` OR `{47 49 46 38 37 61}` → `GIF`);
-  `mime.h` unchanged. Rebuilt → `[TOTAL](6/6) [OK](6/6)`, exit 0
-  (`tmp/qortestmime_step5_green.log`).
-- ✅ **Plan step 6** `mime_recognises_pdf_signature`: test written FIRST (one Push-mode stream,
-  `%PDF-1.4\n` — the 4-byte `%PDF` magic plus version marker — plus a short body; asserts
-  `sink.GetData() == pdfData` pass-through, `GetDetectedType() == MIMEType::PDF`,
-  `std::string(GetTypeName()) == "application/pdf"`) and seen RED (`mime_recognises_pdf_signature [FAIL],
-  #6`, `[TOTAL](7/7) [OK](6/7) [FAIL](1/7)`, exit 1, `tmp/qortestmime_step6_red.log`), then `Inspect()`
-  gained a fourth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 4`,
-  `memcmp` vs `{0x25,0x50,0x44,0x46}` = `%PDF` → `MIMEType::PDF`); `mime.h` unchanged. Rebuilt
-  `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](7/7) [OK](7/7)`, exit 0
-  (`tmp/qortestmime_step6_green.log`). No new build gotchas this increment.
-- ✅ **Plan step 7** `mime_recognises_zip_signature`: test written FIRST (one Push-mode stream,
-  4-byte `PK 03 04` local file header magic as raw octets (`"PK\x03\x04"` hex escapes) plus a short
-  body; asserts `sink.GetData() == zipData` pass-through, `GetDetectedType() == MIMEType::ZIP`,
-  `std::string(GetTypeName()) == "application/zip"`) and seen RED (`mime_recognises_zip_signature [FAIL],
-  #7`, `[TOTAL](8/8) [OK](7/8) [FAIL](1/8)`, exit 1, `tmp/qortestmime_step7_red.log`), then `Inspect()`
-  gained a fifth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 4`,
-  `memcmp` vs `{0x50,0x4B,0x03,0x04}` = `PK 03 04` → `MIMEType::ZIP`); `mime.h` unchanged. Rebuilt
-  `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](8/8) [OK](8/8)`, exit 0
-  (`tmp/qortestmime_step7_green.log`). No new build gotchas this increment. 5 of 10 target types
-  recognised.
-- ✅ **Plan step 8** `mime_recognises_xml_signature`: test written FIRST (one Push-mode stream, the five
-  character XML declaration marker `<?xml version="1.0"?>\n` — the `<?xml` marker plus the rest of a
-  declaration — plus a short body; asserts `sink.GetData() == xmlData` pass-through, `GetDetectedType() ==
-  MIMEType::XML`, `std::string(GetTypeName()) == "application/xml"`) and seen RED (`mime_recognises_xml_signature
-  [FAIL], #8`, `[TOTAL](9/9) [OK](8/9) [FAIL](1/9)`, exit 1, `tmp/qortestmime_step8_red.log`), then `Inspect()`
-  gained a sixth fixed-order guard (`m_detectedType == Unresolved && m_signatureCount >= 5`, `memcmp` vs
-  `{0x3C,0x3F,0x78,0x6D,0x6C}` = `<?xml` → `MIMEType::XML`); `mime.h` unchanged. Rebuilt `qor_mime` then
-  `QORTestMIME` (separate commands) → `[TOTAL](9/9) [OK](9/9)`, exit 0 (`tmp/qortestmime_step8_green.log`).
-  No new build gotchas this increment. **6 of 10 target types recognised.** Note: XML has no binary magic
-  number, so this is the first strong text heuristic (the `<?xml` declaration marker), evaluated after the
-  definite binary signatures in the fixed order.
-- ✅ **Plan step 9** `mime_recognises_html_signature`: test written FIRST (TWO streams in the one case,
-  fresh elements for the second — mirroring step 5's two GIF variants: the lower case HTML5 doctype
-  `<!DOCTYPE html>\n<html><head>...` and the no-doctype upper case document-level tag `<HTML>\n<head>...`;
-  per stream asserts `sink.GetData() == data` pass-through, `GetDetectedType() == MIMEType::HTML`,
-  `std::string(GetTypeName()) == "text/html"`) and seen RED (`mime_recognises_html_signature [FAIL],
-  #9`, `[TOTAL](10/10) [OK](9/10) [FAIL](1/10)`, exit 1, `tmp/qortestmime_step9_red.log`, reason
-  `expected boolean to have the value of true / value was : 0`), then `Inspect()` gained a seventh
-  fixed-order guard after the XML marker: a case-folded 14-octet `<!DOCTYPE HTML` compare and, while
-  still unresolved, a document-level first-tag compare (`m_signature[0] == '<'` then case-folded
-  `html`/`head`/`body`/`title`). HTML has no binary magic, so both are text heuristics; unlike the fixed
-  magics above they cannot use `memcmp` (HTML markup spelling is case-insensitive), so `mime.cpp` gained a
-  file-local `markupMatch()` ASCII case-fold compare helper — internal, no `qor_pp_module_interface`,
-  no locale, no new dependency. `mime.h` unchanged. Rebuilt `qor_mime` then `QORTestMIME` (separate
-  commands) → `[TOTAL](10/10) [OK](10/10)`, exit 0 (`tmp/qortestmime_step9_green.log`; build logs
-  `tmp/qortestmime_step9_build_lib.log`/`tmp/qortestmime_step9_build_exe.log` show no
-  `error C`/`warning C`/`LNK`). No new build gotchas. **7 of 10 target types recognised.**
-- ✅ **Plan step 10** `mime_recognises_json_signature`: test written FIRST (TWO streams in the one case,
-  fresh elements for the second — the shape of steps 5 and 9: a JSON object `{ "qor" : "mime test", "step" : 10 }`
-  with no leading whitespace, and a JSON array preceded by JSON whitespace (three spaces, a line feed, a tab)
-  so the skip-past-whitespace half of the heuristic is exercised; per stream asserts `sink.GetData() == data`
-  pass-through, `GetDetectedType() == MIMEType::JSON`, `std::string(GetTypeName()) == "application/json"`) and
-  seen RED (`mime_recognises_json_signature [FAIL], #10`, `[TOTAL](11/11) [OK](10/11) [FAIL](1/11)`, exit 1,
-  `tmp/qortestmime_step10_red.log`, reason `expected boolean to have the value of true / value was : 0`), then
-  `Inspect()` gained an eighth fixed-order guard after the HTML guards: scan the captured window for the FIRST
-  octet that is not JSON whitespace (0x20 space, 0x09 tab, 0x0A line feed, 0x0D carriage return — the only four
-  characters JSON allows as whitespace) and set `MIMEType::JSON` when that octet is `{` or `[`, then stop the
-  scan. JSON has no magic number, so this is a text heuristic; unlike the markup compares above it is NOT case-relevant,
-  so a plain octet compare is enough and `markupMatch()` is not used. It decides as soon as one non-whitespace
-  octet is captured, so it does not need the window to be full. `mime.h` unchanged. Rebuilt `qor_mime`
-  then `QORTestMIME` (separate commands) → `[TOTAL](11/11) [OK](11/11)`, exit 0 (`tmp/qortestmime_step10_green.log`;
-  build logs `tmp/qortestmime_step10_build_lib.log`/`tmp/qortestmime_step10_build_exe.log` show no
-  `error C`/`warning C`/`LNK`). No new build gotchas. **8 of 10 target types recognised.**
-- (Plan step 11 JavaScript — recorded in the header above, in `docs/agent/verification.md` and in
-  `src/framework/data/mime/status.md`: RED `[FAIL] #11` → GREEN `[TOTAL](12/12) [OK](12/12)`, 9 of 10.)
-- ✅ **Plan step 12** `mime_recognises_plain_text_signature` (the plan's `mime_recognises_plain_text`, renamed
-  to the `_signature` convention): test written FIRST (TWO Push-mode streams in the one case, fresh elements
-  for the second — the shape of steps 5/9/10/11: an ASCII-only prose document longer than the 16-byte window,
-  and a document carrying explicit UTF-8 octets `0xC3,0xA9` (two byte sequence) and `0xE2,0x82,0xAC` (three
-  byte sequence) so the stream does not depend on the test file's encoding; per stream asserts pass-through,
-  `== MIMEType::PlainText`, `"text/plain"`) and seen RED (`mime_recognises_plain_text_signature [FAIL], #12`,
-  `[TOTAL](13/13) [OK](12/13) [FAIL](1/13)`, exit 1, `tmp/qortestmime_step12_red.log`), then `Inspect()` gained
-  a tenth fixed-order guard after the JavaScript guards: requires `m_signatureCount >= SIGNATURE_WINDOW_BYTES`
-  (the WHOLE window — the only guard that demands a full window, because a partially captured window is not
-  evidence of text) and every captured octet printable — 0x80-0xFF (UTF-8 encoded text), 0x20-0x7E (printable
-  ASCII) or 0x09/0x0A/0x0D (tab, line feed, carriage return); any other control octet (NUL, the other C0
-  controls, DEL) leaves the stream unresolved for the step 13 fallback. UTF-8 well-formedness deliberately
-  NOT validated — that is the Unicode layer's job and this framework layer module must not depend on it.
-  `mime.h` unchanged. Rebuilt `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](13/13) [OK](13/13)`,
-  no `[FAIL`, exit 0 (`tmp/qortestmime_step12_green.log`). **10 of 10 target types recognised** — the plan's
-  "10 of 10 target types recognised in steps 3-12" stop condition is met.
-
-
-- ⚠️ **NEW build gotcha (20 Oct 2026): `cmake --build` calls must be sequential, one per command.**
-  Two `cmake --build` invocations issued in the same command batch run concurrently over one build
-  tree and race on the shared `.pdb` — `error C1090: PDB API call failed` on an unrelated dependency
-  and `error C1041: cannot open program database '…vc145.pdb'; if multiple CL.EXE write to the same
-  .PDB file, please use /FS`. Both were transient (a retry alone rebuilt clean), but they are real
-  and were hit twice in this increment.
-- ✅ Re-verified after the ctest removal: reconfigure SUCCESS; every affected exe rebuilt and
-  re-run **from its own build folder** — `QORTestURI` `[OK](1/1)`, `QORTestYAML` `[OK](1/1)`,
-  `QORTestJSONGenerator` `[OK](36/36)`, `QORTestMIME` `[OK](1/1)`, all exit code 0. Note: the
-  JSON generator tests write to `../../../../../../../test/data` **relative to the exe**, so
-  running that exe from the repo root reports false `[FAIL](5/36)`.
-
-- ⚠️ `framework/data` and `framework/data/mime` were NOT in the namespace docs (`namespace.md`
-  0 hits for `qor::mime`) but they ARE live at build time — `src/framework/data/CMakeLists.txt`
-  already registered `pipeline` (lib `qor_pipeline`), so the layer is real and unbuilt-to-test
-  only because `test/CMakeLists.txt` never included `test/framework/data`. Now it does.
-- ⚠️ Naming/layer decision recorded: user specified the framework layer
-  (`src/framework/data/mime`); existing filters live at the components layer. Kept framework layer
-  because the class derives from the framework `qor::pipeline::Filter` (the default filter for any
-  pipeline). If a components-layer home is preferred later, the move is folder + one CMakeLists line.
-
-### What was NOT done
-- ✅ Detection is now COMPLETE: all 10 target types recognised (PNG, JPEG, GIF, PDF, ZIP, XML, HTML,
-  JSON, JavaScript, plain text) AND the `application/octet-stream` fallback proven (plan step 13, 22 Oct
-  2026) — every stream that fills the 16-byte signature window ends with a type and a non-empty name.
-- ✅ **Plan step 14** `mime_recognises_type_split_across_chunks` (a signature longer than a pump chunk): test
-  written FIRST (the PNG stream pumped THREE octets at a time, so the 8-byte PNG magic is split across three
-  pumped chunks; asserts pass-through, `GetSignatureByteCount() == 16`, `== MIMEType::PNG`, `"image/png"`) and
-  GREEN on the FIRST run `[TOTAL](15/15) [OK](15/15)` exit 0 (`tmp/qortestmime_step14_green.log`) with NO
-  implementation change to `mime.h`/`mime.cpp` — only `test_mime.cpp` recompiled. The signature window
-  accumulates across pumped chunks by construction (`m_signatureCount` is a member, `Inspect()` runs again
-  per chunk), so the case is a behaviour proof, not a driver of new code.
-- ✅ **Plan step 15** `mime_recognizer_resets_between_streams` (one recognizer serving two streams across
-  `Reset()`): test written FIRST (ONE `MIMERecognizerFilter` instance recognises the step 3 PNG stream, then
-  `Reset()` asserts `GetDetectedType() == MIMEType::Unresolved`, `GetTypeName()` empty and
-  `GetSignatureByteCount() == 0` — the step 2 capture cleared — then the SAME instance re-wired to a FRESH
-  `StringSource`/`StringSink` pair recognises the step 6 PDF stream and asserts `MIMEType::PDF` pass-through)
-  and GREEN on the FIRST run `[TOTAL](16/16) [OK](16/16)` exit 0 (`tmp/qortestmime_step15_green.log`) with NO
-  implementation change to `mime.h`/`mime.cpp` — only `test_mime.cpp` recompiled. `Reset()` zeroes
-  `m_signatureCount` and `m_detectedType` was already `Unresolved`, so the existing implementation was
-  correct; **the case is a behaviour proof, not a driver of new code.** Two plumbing facts recorded: to serve
-  a second stream you re-wire the FILTER (`SetSource`/`SetSink`) to fresh elements, because `Element::SetSource`/
-  `SetSink` return early when the element already has a connection (silent no-op), and a reused `~StringSink()`
-  throws Q3926 in its destructor teardown when it still points at a sink — so fresh elements per stream is the
-  correct pattern.
-- ✅ **Plan step 16** `mime_recogniser_chained_with_qor_base64encodefilter` (two filters in series — the first
-  classifies, the second transforms): test written FIRST (`StringSource -> MIMERecognizerFilter -> Base64EncodeFilter ->
-  StringSink` under a Push-mode `Pipeline` parent). Key anatomy: `Base64EncodeFilter` is an `InlineFilter<byte>` — a
-  Buffer pair, NOT an `Element` — so it cannot be linked into the element chain; the framework inserts it as the buffer
-  shared by the elements either side of it (`Pipeline::InsertInlineFilter`, BeforeSink position), and here that is the
-  SINK's buffer (`sink.SetBuffer(&encodeFilter)` with `Base64EncodeFilter encodeFilter(128)` — an explicit capacity,
-  because its default ctor holds zero items and encodes nothing). Stream: the 8-byte PNG magic as explicit octets plus a
-  10-byte payload = 18 octets (a multiple of 3, so base64 adds no padding; longer than the 16-byte window; one pumped
-  chunk), pumped for the 24 ENCODED units. Asserts the sink text is exactly the base64 of the stream
-  (`"iVBORw0KGgpJSERSIHFvcjAx"`, computed independently) AND that the recognizer still classifies the PRE-encoded
-  stream (`GetSignatureByteCount() == 16`, `MIMEType::PNG`, `"image/png"`). Seen RED FIRST — the sink received only the
-  FIRST 18 of the 24 encoded characters (`[FAIL] #16`, `[TOTAL](17/17) [OK](16/17) [FAIL](1/17)`, exit 1; logs
-  `tmp/qortestmime_step16_run.log`, `tmp/qortestmime_step16_diag_run.log`, `tmp/qortestmime_step16_diag2_run.log`):
-  `mime.cpp::TransferOctets` passed ONE variable to both buffer acknowledgements, and `InlineFilter::WriteAcknowledge`
-  MUTATES the count it is handed to the number of units it PRODUCED while `Buffer::ReadAcknowledge` CLAMPS its count
-  back to what the source holds, so the 4:3 expansion was undone before it could be returned. Fix: `size_t unitsConsumed`
-  (raw — memcpy size and the source acknowledgement) kept apart from `unitsToTransfer` (produced — returned in
-  `unitsTransferred`); for a plain buffer the two counts are equal, so steps 1-15 are unaffected. `mime.h` contract note
-  extended to document that `unitsTransferred` is the count the sink buffer ends up holding. `test/framework/data/mime/CMakeLists.txt`
-  gained `qor_base64encodefilter`. Rebuilt `qor_mime` then `QORTestMIME` (separate commands) → `[TOTAL](17/17) [OK](17/17)`,
-  no `[FAIL`, exit 0 (`tmp/qortestmime_step16_green_run.log`; build logs `tmp/qor_mime_step16_dll.log`,
-  `tmp/qortestmime_step16_exe.log` clean). **Findings:** a recognising filter inspects the stream BEFORE any downstream
-  transform runs, so it classifies the pre-encoded octets and is valid in front of an encoding filter; a pass-through
-  filter must propagate the count its sink buffer PRODUCED, not the count it CONSUMED.
-- ⏳ Optional scope still open (plan step 17): `mime_type_name_drives_a_sink` (application-level glue), and a full
-  `QORTest` regression run for the record (no other test target links `qor_mime`, so `QORTestMIME` 17/17 is the
-  regression surface for the `mime.cpp` change).
-- ❌ No consumer wired up yet (the HTTP Content-Type TODO, UI renderer loader,
-  `Resource::Type()` remain untouched).
-
-
-`[OK](36/36)`** in the dedicated `QORTestJSONGenerator` target. Repo-wide `STATUS.md`
-still trails the tree, so `git log`, `docs/agent/STATE.MD`, and this memory bank are
-the fresher records.
+### What was NOT done (qor_mime) - nothing outstanding
+- No open scope: plan steps 0-17 are done and verified, including the optional application-level
+  step 17.
+- Deliberate non-scope kept (still the right call for future work): no file sniffing, no extension
+  mapping, no full RFC 2046 type registry, no streaming special case for huge files (the 16-byte
+  signature window is by design), no new stream/detector types beyond the ten targets.
 
 ## ▶ JSON generator (COMPLETE — roundtrip GREEN in `QORTestJSON`; full `QORTest` regression run GREEN at `[OK](678/678)`)
 

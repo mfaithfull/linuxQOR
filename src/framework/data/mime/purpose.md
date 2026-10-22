@@ -29,4 +29,4 @@ Ten popular MIME types targeted, plus application/octet-stream as the fallback:
 Library: qor_mime (SHARED, QOR_MIME define)
 Namespace: qor::mime (framework/data levels are elided, as for qor::pipeline and qor::dio)
 Development: test first, one increment at a time. See status.md and
-memory-bank/qor_mime_plan.md in the memory bank.
+docs/archive/qor_mime_plan.md (the plan, archived out of the memory bank).

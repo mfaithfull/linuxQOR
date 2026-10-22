@@ -315,3 +315,38 @@ links the module lib plus the pipeline libs it needs (`qor_pipeline`, and
 Run from the build folder — the QOR does not use ctest (D8), so the exe's `[OK](n/n)` output and
 exit code are the judge, and a QOR test CMakeLists carries no `enable_testing()`/`add_test()`.
 
+
+**Stateful recogniser design - the transferable half of the qor_mime lesson (steps 2-17, 20-22 Oct 2026):**
+- A filter that *decides something about the stream* keeps that decision in its own state and
+  recomputes it incrementally: `Inspect()` runs **before** the octets are moved and is re-run on
+  every pumped chunk. The decision is a **fixed-order guard table** inside `Inspect()`, so guard
+  order IS the decision and must be deliberate: exact binary magics first, then the textish
+  signatures that could collide with a magic (XML/HTML before JavaScript and plain text), the
+  plain-text conclusion only when the whole signature window is printable, and the
+  `application/octet-stream` conclusion only once the window is full and nothing matched.
+- **Never require a full window in one chunk.** Accumulate the state per chunk and only conclude
+  "insufficient data" while the window is short. Then a signature longer than a pump chunk (the
+  8-byte PNG magic through 3-byte chunks) needs NO implementation change - chunk-boundary
+  robustness is a design consequence, not a special case to patch later.
+- **Tables are data, detectors are incremental.** The type-name table can be complete from the
+  first increment because the accessor returns `""` until a type is recognised - that empty
+  accessor is the RED that drives everything after it. Splitting "table complete early" from
+  "detectors incremental" is what keeps the earliest increments from being throwaway work.
+- **`Reset()` must clear the recognition state and re-arm the filter**; that is what makes one
+  filter instance reusable across streams, and the test that pumps a second stream through the
+  same instance is what forces the semantics to be explicit rather than accidental.
+- Internal helpers (e.g. a pass-through `TransferOctets`) stay **file-local in the module `.cpp`
+  with no module-interface qualifier** unless they must cross a module boundary. Do not use a
+  header-only trick to smuggle them into the interface.
+- **A recognising filter inspects the stream before any downstream transform runs**, so it
+  classifies the pre-encoded octets and stays correct in front of an encoding filter.
+- **The module's contract is the registered type name**; choosing a sink from that name is
+  application glue and belongs in the test, not in the module.
+
+**Layer placement deviation, and how to record it (qor_mime, 20 Oct 2026):** the framework layer
+(`src/framework/data/mime`) was chosen over the components layer even though every existing filter
+lives in `src/components/data/pipeline/filters`. Deriving from the framework `qor::pipeline::Filter`
+makes framework placement defensible ("general and usually singular" - an application that can
+recognise types at all needs this). The deviation from the sibling pattern was written into the
+folder's `purpose.md` rather than silently accepted, so the next reader sees the reason.
+

@@ -216,3 +216,37 @@ first time those two component libs were ever built for a test exe.
 Gotcha: `cmake --build build --target X -- -j4` fails on the VS 2026 generator (`MSB1001`);
 omit `-j4` or use CMake's own `-j N`.
 
+
+## Build / verify a new QOR module and its dedicated test exe (verified recipe + gotchas, qor_mime 20-22 Oct 2026)
+
+The sequence that took `src/framework/data/mime` (lib `qor_mime`) and `test/framework/data/mime`
+(exe `QORTestMIME`) from nothing to green, and the pitfalls it exposed:
+
+    cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug            # only when adding a new .cpp/target
+    cmake --build cmakebuild --target qor_<NAME> --config Debug   # ONE target per command
+    cmake --build cmakebuild --target QORTest<NAME> --config Debug
+    Set-Location cmakebuild\test\<area>\<name>\Debug
+    .\QORTest<NAME>.exe *> <abs path>\tmp\<name>.log              # capture stdout AND stderr
+    # green = `[OK](n/n)` in the log AND shell exit code 0 read in the SAME command
+
+- **One `cmake --build` per command.** Two builds launched in one command race on the same `.pdb`
+  and fail with `C1001` / `LNK1120` "cannot open file"; sequential commands build fine.
+- **Build and run in separate sequential commands.** In one combined command the run can start
+  before the link finishes, so the exe is stale and a freshly added case reports *missing* - a
+  false "missing", not a test failure. Re-run alone after the build and the case shows up.
+- The VS 2026 generator rejects `-j4` passed after `--` (`MSB1001`); use CMake's own `-j N` or omit.
+- `LNK2019` unresolved externals for a lib a test exe links means the **build tree is stale or
+  missing that lib**, or the generated VS project files are stale after adding a `.cpp`. Build in
+  the ACTIVE configured tree (`cmakebuild`, not the older `build`), and regenerate with
+  `cmake -B cmakebuild -S . -DCMAKE_BUILD_TYPE=Debug` - no `-G`; the cached generator is the VS
+  one and `-G "Visual Studio 2026"` is not a valid name in this workspace.
+- A QOR test exe addresses its data by paths relative to **its own build directory** (e.g.
+  `"../../../../../../test/data"`) - always run it from there.
+- A QOR test run log can be huge (unrelated cases emit per-character debug lines). Capture both
+  streams (`exe *> log`: `[FAIL](n/n)` and the `[ALL FAILURES]` block are on stderr), then grep for
+  markers (`FAIL`, `OK(`, the case name) instead of dumping, and keep new assertion blocks **early**
+  in the test file so a failure stays findable.
+- Transient build/run logs belong in the gitignored `tmp/` folder, never at the repo root.
+- `log::debug` is **not** wired to output in these test exes - it is not a usable probe. Assert on
+  observable API state (counters, accessors, sink contents) instead.
+
