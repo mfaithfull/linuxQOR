@@ -25,7 +25,7 @@ qor_pp_implement_module("Parallel")
 int ParallelTask();
 
 int main()
-{    
+{
     qor_pp_fcontext;
 
     DefaultLogHandler logHandler(Level::Debug);
@@ -40,17 +40,17 @@ int main()
             debug("{0} thread is in use by the log aggregator. This log message will be written out by the aggregator while the Main thread that logged it continues in parallel.",runningTaskCount);
 
             /*Now we submit a task to the pool that will run on the remaining spare thread*/
-            std::future<int> taskResult = threadPool->SubmitTask( 
+            std::future<int> taskResult = threadPool->SubmitTask(
                 []()->int
                 {
                     return ParallelTask();
                 }
             );
-            
-            debug("While the task is executing we can carry on doing other things, including logging to the shared log aggregator.");
-            debug("At this point there may be 3 things happening at once. The main thread, the ParellelTask running on a pool thread and the Log Aggregator running on another pool thread.");
 
-            //wait for the secondary task to finish and return the result;        
+            debug("While the task is executing we can carry on doing other things, including logging to the shared log aggregator.");
+            debug("At this point there may be 3 things happening at once. The main thread, the ParallelTask running on a pool thread and the Log Aggregator running on another pool thread.");
+
+            //wait for the secondary task to finish and return the result;
             return taskResult.get();
         });
 }
@@ -78,7 +78,7 @@ int ParallelTask()
     {
         auto logAggregator = GetFeature<LogAggregatorService>();
         //disconnecting is just like connecting but we don't have to specify the ConnectionKind
-        disconnect(threadLocalLogHandler, threadLocalLogHandler.GetForwardSignal(), 
+        disconnect(threadLocalLogHandler, threadLocalLogHandler.GetForwardSignal(),
             logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog);
     }
     return 0;

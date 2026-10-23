@@ -8,6 +8,7 @@
 #include "sdk/app.h"
 #include "src/platform/platform.h"
 #include "src/qor/essentials/current/currentthread.h"
+#include "src/framework/io/filesystem/path.h"
 #include "src/framework/io/filesystem/file/filereader.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
 #include "src/components/data/pipeline/filters/base64encodefilter/base64encodefilter.h"
@@ -47,7 +48,7 @@ int main()
             once we have it, it's safe to use without synchronisation*/
 
             /*A filesystem::Index is how we refer to a specific file without opening it.*/
-            filesystem::Index index(fileSystem->CurrentPath(), "alice.txt");
+            filesystem::Index index(fileSystem->CurrentPath() / "../../../../../../test/data", "alice.txt");
 
             if(!index.Exists())
             {

@@ -150,6 +150,6 @@ namespace qor{ namespace framework{
         byte* m_bytes{nullptr};
     };
 
-}}//qor::framwork
+}}//qor::framework
 
 #endif//QOR_PP_H_FRAMEWORK_RESOURCES_IMAGE

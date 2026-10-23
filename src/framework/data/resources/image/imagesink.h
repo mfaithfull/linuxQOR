@@ -13,7 +13,7 @@
 #include "src/framework/data/pipeline/iosource.h"
 #include "image.h"
 
-namespace qor{ namespace framework{ 
+namespace qor{ namespace framework{
 
     class qor_pp_module_interface(QOR_IMAGE) ImageSink : public pipeline::Sink
     {
@@ -23,14 +23,14 @@ namespace qor{ namespace framework{
         virtual ~ImageSink() = default;
 
         bool Write(size_t& unitsWritten, size_t unitsToWrite) override
-        {        
+        {
             return (unitsToWrite == 0 || Pull(unitsWritten, unitsToWrite)) ? Push(unitsWritten, unitsWritten) : false;
         }
 
         //pull the requested amount of data from the source to the buffer
         bool Pull(size_t& unitsWritten, size_t unitsToWrite) override
         {
-            return GetFlowMode() == FlowMode::Pull ? 
+            return GetFlowMode() == FlowMode::Pull ?
             (ActualSource()->Read(unitsWritten, unitsToWrite) && (unitsWritten > 0 || unitsToWrite == 0) ? true : false) : true;
         }
 
@@ -54,7 +54,7 @@ namespace qor{ namespace framework{
                     else
                     {
                         return false;//Nothing was written, the sink should have raised an error if that's a problem
-                    }                
+                    }
                 }
                 else
                 {
@@ -82,6 +82,6 @@ namespace qor{ namespace framework{
         size_t m_index{0};
     };
 
-}}//qor::framwork
+}}//qor::framework
 
 #endif//QOR_PP_H_FRAMEWORK_RESOURCES_IMAGE_CONNECTOR

@@ -1,6 +1,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_EXAMPLES_ROLLER_CUSTOMROLE
+#define QOR_PP_H_EXAMPLES_ROLLER_CUSTOMROLE
+
 #include "src/framework/app/role/role.h"
 
 /*Include a custom Feature class. You can implement the features
@@ -10,7 +13,7 @@ and add your own way to manage custom functionality*/
 
 /*Create a custom Role class by deriving from Role
 Only derive directly from IRole if you plan to implement
-your own feature storage and retreival mechanism to 
+your own feature storage and retrieval mechanism to
 replace the built in QOR Role completely.*/
 
 class CustomRole : public qor::app::Role
@@ -21,3 +24,5 @@ public:
     virtual void Shutdown();
 
 };
+
+#endif//QOR_PP_H_EXAMPLES_ROLLER_CUSTOMROLE

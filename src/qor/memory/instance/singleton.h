@@ -28,7 +28,7 @@ template<> struct sync_of< _CLASS >\
 
 namespace qor{ namespace detail {
 
-    template <class T>    
+    template <class T>
     class SingletonInstanceHolder
     {
     public:
@@ -40,14 +40,22 @@ namespace qor{ namespace detail {
             if(redirected)
             {
                 redirect->~SingletonInstanceHolder();
+                initialised = false;
             }
             else
             {
-                Lock lock(m);
                 if(initialised)
                 {
-                    theRef.Dispose();
-                    initialised = false;
+                    Lock lock(m);
+                    if(initialised)
+                    {
+                        {
+                            auto ref = theRef();
+                            factory_of<T>::type::Destruct(ref.operator->());
+                        }
+                        //theRef.Dispose();
+                        initialised = false;
+                    }
                 }
             }
         }
@@ -62,8 +70,8 @@ namespace qor{ namespace detail {
             {
                 Lock lock(m);
                 if(!initialised)
-                {                
-                    theRef = factory_of<T>::type::Construct(count);                    
+                {
+                    theRef = factory_of<T>::type::Construct(count);
                     initialised = true;
                 }
                 else if(theRef.IsNull())
@@ -73,7 +81,7 @@ namespace qor{ namespace detail {
                 return theRef;
             }
         }
-        
+
         template<typename... _p >
         typename ref_of<T>::type Instance(size_t, _p&&... p1)
         {
@@ -85,7 +93,7 @@ namespace qor{ namespace detail {
             {
                 Lock lock(m);
                 if( !initialised )
-                {                                    
+                {
                     theRef = factory_of<T>::type::Construct(count, std::forward<_p>(p1)...);
                     initialised = true;
                 }
@@ -104,12 +112,13 @@ namespace qor{ namespace detail {
                 redirect->Release();
             }
             else
-            {                
+            {
                 if(initialised)
                 {
                     Lock lock(m);
                     factory_of<T>::type::Destruct(theRef);
-                    theRef.Reset();
+                    //theRef.Reset();
+                    initialised = false;
                 }
             }
         }
@@ -125,9 +134,9 @@ namespace qor{ namespace detail {
         void AutoRedirect(ref_of<T>::type ref)
         {
             Lock lock(m);
-            if(!initialised)
+            //if(!initialised)
             {
-                initialised = true;
+                //initialised = true;
                 theRef = ref;
             }
         }
@@ -143,7 +152,7 @@ namespace qor{ namespace detail {
     };
 
     }//detail
-        
+
 	class SingletonInstancer final
 	{
 	public:
@@ -165,7 +174,7 @@ namespace qor{ namespace detail {
 		{
 			return Holder<T>().Instance(count, std::forward<_p>(p1)...);
 		}
-		
+
         static constexpr size_t ignored_count = 1;
 
         template<class T, class D>

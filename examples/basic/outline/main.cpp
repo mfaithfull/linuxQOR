@@ -4,8 +4,8 @@
 //Outline application using the QOR SDK
 
 #include "sdk/app.h"
-#include "src/qor/module/moduleregistry.h"  //exceptional include not provided by the SDK, inernal header for module introspection only.
-#include "src/framework/app/host/host.h"    //exceptional include not provided by the SDK, inernal header for module introspection only.
+#include "src/qor/module/moduleregistry.h"  //exceptional include not provided by the SDK, internal header for module introspection only.
+#include "src/framework/app/host/host.h"    //exceptional include not provided by the SDK, internal header for module introspection only.
 
 using namespace qor;
 using namespace qor::app;
@@ -22,11 +22,11 @@ qor_pp_implement_module("Outline")
 void AccessModules();
 
 int main()
-{    
+{
     /*The QOR Application is a context for running anything that meets the requirements for a runable object*/
     qor_pp_run_role(Role)(
         []()->int
-        {            
+        {
             AccessModules();
             return EXIT_SUCCESS;
         });

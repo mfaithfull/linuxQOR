@@ -15,7 +15,6 @@
 #include "src/platform/platform.h"
 #include "irunable.h"
 #include "../argparse/iargumented.h"
-//#include "../optionparser/ioptionable.h"
 
 #define qor_pp_declare_app_class(_MYAPP)\
 private: static qor::SingletonRedirector<qor::Application, _MYAPP> m_sRedirect;

@@ -27,11 +27,11 @@ namespace qor{
         }
         */
     };
-    
+
     const std::vector<app::PositionalArgSpec> Application::defaultPositionalArgs = {
         /*
         {
-            
+
             "first",
             1,
             app::ArgType::String,
@@ -115,7 +115,7 @@ namespace qor{
 
     const std::string Application::UsageEpilogue()
     {
-        return std::string("Built with the QOR framwork.");
+        return std::string("Built with the QOR framework.");
     }
 
     const std::string Application::OverrideUsage()
@@ -143,7 +143,7 @@ namespace qor{
         auto parser = app::ArgumentParser(*this);
         auto args = parser.ParseArgs(argc,argv);
         if(!args.IsArgValid())
-        {            
+        {
             std::cout << parser.GetUsage() << std::endl;
             std::cout << args.GetErrorString() << std::endl;
         }
