@@ -6,17 +6,17 @@
 
 #include "src/platform/compiler/compiler.h"
 
-namespace qor{ namespace framework{ 
+namespace qor{ namespace framework{
 
 #pragma pack(push, 1)
-    struct rgb8
+    struct RGB888
     {
         unsigned char r;
         unsigned char g;
         unsigned char b;
     };
 
-    struct rbga
+    struct RGBA8888
     {
         unsigned char r;
         unsigned char b;
@@ -69,7 +69,7 @@ namespace qor{ namespace framework{
 
         void SetBlue(unsigned int blue)
         {
-            base::b = static_cast<decltype(base::b)>(blue);            
+            base::b = static_cast<decltype(base::b)>(blue);
         }
 
         void SetAlpha(unsigned int alpha)
@@ -79,7 +79,7 @@ namespace qor{ namespace framework{
                 base::a = static_cast<decltype(base::a)>(alpha);
             }
             else
-            {   //empty case, no alpha             
+            {   //empty case, no alpha
             }
         }
     };
@@ -91,7 +91,7 @@ namespace qor{ namespace framework{
         template< class TPixel = RGBPixel<>>
 		Image()
         {
-            m_pixelSize = sizeof(TPixel);            
+            m_pixelSize = sizeof(TPixel);
         }
 
         template< class TPixel = RGBPixel<>>
