@@ -43,11 +43,14 @@ namespace qor{ namespace detail {
             }
             else
             {
-                Lock lock(m);
                 if(initialised)
                 {
-                    theRef.Dispose();
-                    initialised = false;
+                    Lock lock(m);
+                    if(initialised)
+                    {
+                        theRef.Dispose();
+                        initialised = false;
+                    }
                 }
             }
         }
