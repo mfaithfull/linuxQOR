@@ -20,7 +20,7 @@ namespace qor { namespace data { namespace parser {
             {
                 Prepare();
                 item_t* data = nullptr;
-                pipeline::BufferContext<item_t>* context = dynamic_cast<pipeline::BufferContext<item_t>*>(GetContext());
+                pipeline::BufferContext<item_t>* context = static_cast<pipeline::BufferContext<item_t>*>(GetContext());
                 if (context->GetItem(data))
                 {
                     if (*data == m_matchingItem)

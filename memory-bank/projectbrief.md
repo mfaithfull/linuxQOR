@@ -82,11 +82,20 @@ potentially releasable milestone), `FEATURES.md` (per-module maturity table).
 Milestones: working toward **0.5** interim release; **1.0** is the eventual
 target. For the newest state trust `git log`, the parallel agent-state files
 `docs/agent/TODO.md`, `docs/agent/STATE.MD`, `docs/agent/DECISIONS.md`, and this
-`memory-bank/` (last updated 20 Oct 2026 — JSON generator **pipeline integration**
+`memory-bank/` (last updated 22 Oct 2026 — qor_mime COMPLETE and its plan archived out; the JSON generator **pipeline integration**
 verified at `[OK](36/36)` in
 `QORTestJSONGenerator`, with the parse -> generate -> parse **roundtrip** verified
 green in `QORTestJSON` (process exit code 0, `test/data/json_roundtrip_*.json`
 written and compared equal through `jsoncompare.h`)).
+Also 20-22 Oct 2026: the framework-layer data module `src/framework/data/mime` (lib `qor_mime`) - a
+MIME-type-recognition **pipeline filter** (ten popular MIME types plus an application/octet-stream
+fallback, built test-first; that plan is now archived at `docs/archive/qor_mime_plan.md`) - is
+**DONE and verified green**: `QORTestMIME.exe` `[TOTAL](18/18) [OK](18/18)` exit 0 on 22 Oct 2026,
+with all 10 target types recognised, the octet-stream fallback proven, and recognition proven
+across pumped chunk boundaries and across `Reset()`. Its transferable pipeline-filter lessons live
+in `memory-bank/systemPatterns.md`, `memory-bank/techContext.md` and
+`memory-bank/codingConventions.md`.
+
 
 ## Key project documents
 `README.md` · `KEY_CONCEPTS.md` · `LAYOUT.md` · `BUILDING.md` · `FEATURES.md` ·

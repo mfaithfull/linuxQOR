@@ -30,7 +30,7 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void exp::Prepare()
     {
-        log::debug("Looking for an Exp...");
+        //log::debug("Looking for an Exp...");
         GetParser()->PushNode(new_ref<ExpNode>());
     }
 
@@ -53,11 +53,11 @@ namespace qor { namespace data { namespace parser { namespace json {
             }
             else if( node->GetToken() == static_cast<uint64_t>(jsonToken::plus))
             {
-                sign = 1;                
+                sign = 1;
             }
             else if(node->GetToken() == static_cast<uint64_t>(jsonToken::minus))
             {
-                sign = -1;                
+                sign = -1;
             }
             else if(token == static_cast<uint64_t>(jsonToken::_e))
             {
@@ -99,7 +99,7 @@ namespace qor { namespace data { namespace parser { namespace json {
     void exp::Fail()
     {
         //log::debug("...Didn't find an Exp.");
-        uint64_t topToken = m_parser->TopNode()->GetToken();                
+        uint64_t topToken = m_parser->TopNode()->GetToken();
         if(topToken == m_token)
         {
             m_parser->PopNode();

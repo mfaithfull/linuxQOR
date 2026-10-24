@@ -49,7 +49,7 @@ namespace qor { namespace protocols { namespace yaml {
 
     void value::Prepare()
     {
-        log::debug("Looking for a Value...");
+        //log::debug("Looking for a Value...");
         GetParser()->PushNode(new_ref<ValueNode>().AsRef<Node>());
     }
 

@@ -34,7 +34,9 @@ namespace qor { namespace data { namespace parser {
             }
             else if(m_result.code == Result::MORE_DATA)
             {
+                #ifndef NDEBUG
                 std::cout << "Ran out of data before we could decide. Reenter with more data to try again." << std::endl;
+                #endif
             }
             else if(GetParser()->IsFinal() && m_result.token > static_cast<uint64_t>(eToken::Lexical))
             {
@@ -65,7 +67,9 @@ namespace qor { namespace data { namespace parser {
 
     Fastflow* ParserState::Workflow()
     {
-        return dynamic_cast<class Fastflow*>(m_Fastflow);
+        //m_Fastflow is already a Fastflow*, so the cast can never change the pointer. A dynamic_cast
+        //here costs a full RTTI walk per state transition (see verification log 2026-10-22).
+        return m_Fastflow;
     }
 
     Parser* ParserState::GetParser()

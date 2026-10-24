@@ -112,9 +112,30 @@ public:
 - Register the new file in the owning `test/CMakeLists.txt` — the main `QORTest`
   source list, or the sub-directory's own CMakeLists when its own executable
   exists.
+- **No ctest (D8 in docs/agent/DECISIONS.md, user 20 Oct 2026).** The QOR does not use ctest:
+  never reference it in plans, commands or docs, and a QOR test CMakeLists carries no
+  `enable_testing()` and no `add_test()`. Test judge = run the exe from its build folder,
+  green = `[OK](n/n)` in its output AND shell exit code 0.
+
 - `qor_assert` (fluent assertions), `qor_test` (Yaffut-derived), `qor_mock`
   (HippoMocks-derived) are used together.
 - Verify order: build `examples/basic/helloworld`, then `QORTest`.
+
+### Test-first increments (the TDD discipline used end to end on `qor_mime`, 20-22 Oct 2026)
+- Research the anatomy FIRST: `docs/agent/add_module.md` plus the closest existing implementation
+  and the tests that exercise it. No code before that.
+- One increment at a time = a test written FIRST, seen RED, then the smallest piece of code that
+  makes it GREEN. Never the whole feature at once.
+- Report honestly when RED was not observed (verified after the fact, or GREEN on the first run
+  because the test drove the design) - never claim a RED that was not seen.
+- Test shape: one stream per case unless the case is specifically about chunk splitting, `Reset()`
+  reuse, or variants; build fresh pipeline elements per stream so a case never inherits state from
+  the previous one.
+- Assert on observable API state (counters, accessors, sink contents), never on internals or log
+  output.
+- Every assertion must chain a proposition: `qor_pp_assert_that(expr).isTrue();` - an unchained
+  assertion is a vacuous temporary that checks nothing.
+
 
 ## Working preferences
 - Follow `docs/skills/QORconventions.md` exactly (license header,

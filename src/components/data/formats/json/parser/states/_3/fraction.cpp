@@ -14,7 +14,7 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    fraction::fraction(Parser* parser) : 
+    fraction::fraction(Parser* parser) :
         Sequence_t< decimal_point, Sequence_t< DIGIT<uint32_t>, ZeroOrMore_t< DIGIT<uint32_t> > > >(
                 parser, &dp, &f, static_cast<uint64_t>(jsonToken::fraction)),
         dp(parser),
@@ -28,14 +28,14 @@ namespace qor { namespace data { namespace parser { namespace json {
 
     void fraction::Prepare()
     {
-        log::debug("Looking for a Fraction...");
+        //log::debug("Looking for a Fraction...");
         GetParser()->PushNode(new_ref<FractionNode>());
     }
 
     void fraction::Emit()
     {
         log::debug("Emitting a Fraction.");
-        double value = 0.0;        
+        double value = 0.0;
         auto node = GetParser()->PopNode();
         while(node.IsNotNull() && node->GetToken() != m_token)
         {
@@ -80,7 +80,7 @@ namespace qor { namespace data { namespace parser { namespace json {
             {
                 continuable("Unexpected: {0}", tokenName);
             }
-            
+
             node = GetParser()->PopNode();
         }
 
@@ -95,7 +95,7 @@ namespace qor { namespace data { namespace parser { namespace json {
     void fraction::Fail()
     {
         //log::debug("...Didn't find a Fraction.");
-        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        uint64_t topToken = m_parser->TopNode()->GetToken();
         if(topToken == m_token)
         {
             m_parser->PopNode();

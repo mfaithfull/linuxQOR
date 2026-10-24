@@ -38,7 +38,7 @@ namespace qor { namespace protocols { namespace yaml {
 
     void sequence::Prepare()
     {
-        log::debug("Looking for a Sequence...");
+        //log::debug("Looking for a Sequence...");
         m_parser->PushNode(new_ref<SequenceNode>().AsRef<Node>());
     }
 

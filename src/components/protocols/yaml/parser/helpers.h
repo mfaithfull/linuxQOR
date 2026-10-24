@@ -40,7 +40,7 @@ namespace qor { namespace protocols { namespace yaml {
     void StandardPrepare(qor::data::parser::ParserState& state)
     {
         std::string tokenName = GetTokenName(state.GetToken());
-        log::debug("Looking for a {0}...", tokenName);
+        //log::debug("Looking for a {0}...", tokenName);
         state.GetParser()->PushNode(new_ref<NodeT>().template AsRef<qor::data::parser::Node>());
     }
 

@@ -242,3 +242,111 @@ Empirical shape of the JSON read/write pair, established while getting the
   correctly even when container/string content does not, so "well-formed scalars
   plus empty/malformed containers" points at these state-population defects
   rather than at an ownership problem.
+
+## Pipeline filter module shape (qor_mime, 20 Oct 2026)
+
+A pipeline element is its own SHARED lib. The filter contract (from
+`src/framework/data/pipeline/filter.h` + `filters/base64encodefilter` + `filters/linereader`):
+
+```
+class qor_pp_module_interface_gcc(QOR_MIME) MIMERecognizerFilter : public qor::pipeline::Filter
+{   ctor / dtor / operator=  — = default style (linereader) or explicit base-init (base64encodefilter)
+    virtual bool ReadFilter (size_t& unitsProcessed, size_t unitsToProcess);   //pull path: Filter::Read
+    virtual bool WriteFilter(size_t& unitsProcessed, size_t unitsToProcess);   //push path: Filter::Write
+};
+```
+`qor::pipeline::Filter : Sink, Source` — ctor initialises `Sink(source), Source(sink)` (order
+matters: the sink is built FROM the source argument). Returning false from a filter hook
+stops the pump. A filter that only inspects must NOT ack/consume source data (the sink would
+lose bytes).
+
+**Verified pump chain for a filter (20 Oct 2026, qor_mime step 1 — Push mode is the working path):**
+`Sink::Write/Pull/Push` and `Source::Read/Pull/Push` are **virtual** (`sink.h`/`source.h`), so on a
+filter they resolve to the `Filter` overrides. Pushing through a filter is:
+`Filter::Pump` → `ActualSource()->Read(u,n)` → `Source::Pull` fills the source buffer →
+`Source::Push` → `ActualSink()->Write(u,n)` = **`Filter::Write`** → `Pull` (no-op in Push) →
+`WriteFilter(unitsWritten, unitsWritten)` (the filter moves octets here, buffer→buffer like
+`CopyFilter::Copy`) → `ActualSink()->Write(...)` → the real sink appends.
+Pull mode is a **dead end in the base framework**: `Filter::Read` calls
+`ReadFilter(unitsRead, unitsRead)` with `unitsRead == 0` at entry (`filter.cpp` L163-165), and
+`Filter::Pump`'s Pull branch calls `ActualSink()->Write(0, n)` which then hits that zero-unit call
+and breaks. Tests pumping a filter must set `Element::FlowMode::Push`, and only a `Pipeline`
+carries the mode (`Element::SetFlowMode` forwards to a parent and stores nothing) — so every
+element in the chain gets `SetParent(&pipeline)` with `pipeline.SetFlowMode(Push)`.
+A filter also needs no buffer of its own; it borrows the source's and the sink's buffers via
+`ActualSource()->GetBuffer()` / `ActualSink()->GetBuffer()`.
+
+**Pipeline buffer read protocol — reserve / use / commit-or-reject (qor_mime step 2, 20 Oct 2026):**
+`buffer.h` gives reads three steps — `ReadRequest(n)` reserves n units (bounded by
+`ReadCapacity() = m_writeBegin - m_readEnd`) and returns the read pointer; `ReadAcknowledge(n)`
+commits the read (advances `m_readEnd`); **`ReadReject(n)` gives the reservation back** (`buffer.cpp`
+restores `m_readEnd`). A filter that must *peek without consuming* therefore does
+`ReadRequest` → copy out → `ReadReject` — that is exactly how
+`MIMERecognizerFilter::Inspect()` captures the leading octets into `m_signature` (capped at
+`SIGNATURE_WINDOW_BYTES` 16) without stealing them from the sink, and `ReadFilter`/`WriteFilter`
+call `Inspect()` BEFORE moving octets on. The mirror write protocol is
+`WriteRequest`/`WriteAcknowledge`/`WriteReject`.
+
+**InlineFilter count semantics — consumed vs produced (qor_mime step 16, 22 Oct 2026):**
+`pipeline::InlineFilter<T>` is a **Buffer pair, not an `Element`** — it cannot be linked into an
+element chain; `Pipeline::InsertInlineFilter` installs it as the buffer shared by the elements on
+either side of it (a `Base64EncodeFilter` sitting before a sink IS that sink's buffer, so the test
+wires `sink.SetBuffer(&encodeFilter)`; give it an explicit capacity — the default ctor holds zero
+items and encodes nothing). A pass-through filter must therefore keep two counts apart: the number
+of units it **consumed** from the source (drives the memcpy and `Buffer::ReadAcknowledge`) and the
+number of units its sink buffer **produced** (`InlineFilter::WriteAcknowledge` takes the count by
+reference and REWRITES it to the produced width — 4:3 for base64 — while `Buffer::ReadAcknowledge`
+CLAMPS its count to what the source holds). Returning the consumed count silently truncates the
+output (`TransferOctets` passed one variable to both acks → the sink got the first 18 of 24 encoded
+chars, RED). For a plain buffer the two counts are equal, so only encoding filters expose it.
+Corollary: a recognising filter inspects the stream **before** any downstream transform, so it
+classifies the pre-encoded octets (`image/png`) even when chained in front of an encoding filter.
+
+
+Module registration: parent `CMakeLists.txt` `add_subdirectory(mime)`; module
+`set(target qor_mime)` + `add_library(${target} SHARED qor_mime.cpp mime.cpp)` +
+`target_compile_definitions(${target} PRIVATE QOR_MIME ...)` + `qor::Module& ThisModule()` singleton.
+Windows needs at least one exported symbol for the import lib — `qor_pp_export void init_mime(void)`.
+
+Mirror test target: `test/framework/data/mime` → `QORTestMIME` exe; registered in `test/CMakeLists.txt`;
+links the module lib plus the pipeline libs it needs (`qor_pipeline`, and
+`qor_stringsource`/`qor_stringsink` for pipeline pumping tests); POST_BUILD copies
+`$<TARGET_RUNTIME_DLLS:${target}>` next to the exe; `enable_testing()` + `add_test(TestMIME ${target})`.
+Run from the build folder — the QOR does not use ctest (D8), so the exe's `[OK](n/n)` output and
+exit code are the judge, and a QOR test CMakeLists carries no `enable_testing()`/`add_test()`.
+
+
+**Stateful recogniser design - the transferable half of the qor_mime lesson (steps 2-17, 20-22 Oct 2026):**
+- A filter that *decides something about the stream* keeps that decision in its own state and
+  recomputes it incrementally: `Inspect()` runs **before** the octets are moved and is re-run on
+  every pumped chunk. The decision is a **fixed-order guard table** inside `Inspect()`, so guard
+  order IS the decision and must be deliberate: exact binary magics first, then the textish
+  signatures that could collide with a magic (XML/HTML before JavaScript and plain text), the
+  plain-text conclusion only when the whole signature window is printable, and the
+  `application/octet-stream` conclusion only once the window is full and nothing matched.
+- **Never require a full window in one chunk.** Accumulate the state per chunk and only conclude
+  "insufficient data" while the window is short. Then a signature longer than a pump chunk (the
+  8-byte PNG magic through 3-byte chunks) needs NO implementation change - chunk-boundary
+  robustness is a design consequence, not a special case to patch later.
+- **Tables are data, detectors are incremental.** The type-name table can be complete from the
+  first increment because the accessor returns `""` until a type is recognised - that empty
+  accessor is the RED that drives everything after it. Splitting "table complete early" from
+  "detectors incremental" is what keeps the earliest increments from being throwaway work.
+- **`Reset()` must clear the recognition state and re-arm the filter**; that is what makes one
+  filter instance reusable across streams, and the test that pumps a second stream through the
+  same instance is what forces the semantics to be explicit rather than accidental.
+- Internal helpers (e.g. a pass-through `TransferOctets`) stay **file-local in the module `.cpp`
+  with no module-interface qualifier** unless they must cross a module boundary. Do not use a
+  header-only trick to smuggle them into the interface.
+- **A recognising filter inspects the stream before any downstream transform runs**, so it
+  classifies the pre-encoded octets and stays correct in front of an encoding filter.
+- **The module's contract is the registered type name**; choosing a sink from that name is
+  application glue and belongs in the test, not in the module.
+
+**Layer placement deviation, and how to record it (qor_mime, 20 Oct 2026):** the framework layer
+(`src/framework/data/mime`) was chosen over the components layer even though every existing filter
+lives in `src/components/data/pipeline/filters`. Deriving from the framework `qor::pipeline::Filter`
+makes framework placement defensible ("general and usually singular" - an application that can
+recognise types at all needs this). The deviation from the sibling pattern was written into the
+folder's `purpose.md` rather than silently accepted, so the next reader sees the reason.
+

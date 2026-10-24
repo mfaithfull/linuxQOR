@@ -13,24 +13,24 @@
 
 namespace qor { namespace data { namespace parser { namespace json {
 
-    unicodeSequence::unicodeSequence(Parser* parser) : 
+    unicodeSequence::unicodeSequence(Parser* parser) :
         Sequence_t<Specific<uint32_t>, Sequence_t<HEXDIGIT<uint32_t>, Sequence_t<HEXDIGIT<uint32_t>, Sequence_t<HEXDIGIT<uint32_t>, HEXDIGIT<uint32_t>>>>>(
         parser,  &s1, &s2, static_cast<uint64_t>(jsonToken::unicode_sequence)),
-        h1(parser), 
+        h1(parser),
         h2(parser),
         h3(parser),
-        h4(parser), 
+        h4(parser),
         s1(parser, 0x75),
-        s2(parser, &h1, &s3), 
-        s3(parser, &h2, &s4), 
-        s4(parser, &h3, &h4)        
+        s2(parser, &h1, &s3),
+        s3(parser, &h2, &s4),
+        s4(parser, &h3, &h4)
     { }
 
     unicodeSequence::~unicodeSequence() noexcept = default;
 
     void unicodeSequence::Prepare()
     {
-        log::debug("Looking for a Unicode Sequence...");
+        //log::debug("Looking for a Unicode Sequence...");
         GetParser()->PushNode(new_ref<UnicodeSequenceNode>());
     }
 
@@ -74,7 +74,7 @@ namespace qor { namespace data { namespace parser { namespace json {
                 continuable("Unexpected: {0}", tokenName);
             }
 
-            node = GetParser()->PopNode();                
+            node = GetParser()->PopNode();
         };
 
         if(node.IsNotNull())
@@ -87,7 +87,7 @@ namespace qor { namespace data { namespace parser { namespace json {
     void unicodeSequence::Fail()
     {
         //log::debug("...Didn't find a Unicode Sequence.");
-        uint64_t topToken = m_parser->TopNode()->GetToken();        
+        uint64_t topToken = m_parser->TopNode()->GetToken();
         if(topToken == m_token)
         {
             m_parser->PopNode();

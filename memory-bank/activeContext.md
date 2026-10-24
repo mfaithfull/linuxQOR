@@ -1,24 +1,88 @@
 # Active Context
 
-**Last updated:** 20 Oct 2026 — the whole JSON generator increment is **DONE**,
-including the **full `QORTest` regression run** which is now **green at
-`[TOTAL](678/678)` / `[OK](678/678)` (process exit code 0)**: after regenerating
-the CMake project and building `QORTest` (build exit 0), running the base suite
-from `cmakebuild/test/Debug` produced no `[FAIL` and no `[ALL FAILURES]` block, so
-the `qor_jsondata`/`qor_generatorsource` library fixes did not regress the base
-framework. Before that, the JSON generator was **done through the roundtrip step**:
-parse -> generate -> parse in `QORTestJSON` is green (process exit code 0), on top
-of the **pipeline integration** step (a JSON model written to a real file through a
-real pipeline: `GeneratorSource` -> `FileConnector`) that is **DONE and verified at
-`[OK](36/36)`** in the dedicated `QORTestJSONGenerator` target. The root cause of
-the first runtime failure
-(unregistered `FileSystem` platform subsystem) and the `LNK2019` link failure
-(stale generated Visual Studio project files) are both recorded here, as are the
-two `qor_jsondata` defects found while getting the roundtrip green. Earlier
-init was built from `STATUS.md`
-29/07/2026, `CHANGES.md`, `FEATURES.md` and git log at `6b65785a`; `STATUS.md`
-has **not** been updated since, so `git log` and `docs/agent/STATE.MD` are the
-newest repo-wide sources.
+**Last updated:** 22 Oct 2026 - **qor_mime COMPLETE**: plan steps 0-17 done and verified green
+(`QORTestMIME.exe` `[TOTAL](18/18) [OK](18/18)`, exit 0), and its plan file retired out of
+`memory-bank/` to `docs/archive/qor_mime_plan.md`. The JSON generator increment is likewise
+**complete**: pipeline integration `[OK](36/36)` in `QORTestJSONGenerator`, the parse -> generate
+-> parse roundtrip green in `QORTestJSON`, and the full `QORTest` regression run green at
+`[TOTAL](678/678)` / `[OK](678/678)` with process exit code 0 (its plan file already retired to
+`docs/archive/jsonGeneratorPlan.md`). **Also 22 Oct 2026:** the `qor_jsondata` JSON **parse-performance**
+verification phase is **COMPLETED (round 18)** - a reproducible per-parse record in `QORTestJSON`
+(`[perf] 2MB JSON parse (cold|warm)` lines over fixture `test/data/data_2mb.json`, 2,219,028 bytes, 21 RelWithDebInfo
+runs across 7 builds + a Debug run, all exit 0) shows the three micro-edits are **performance-neutral within the noise
+floor**; the "56 s -> 18 s" figure is void and the round-16 record (fixture `big_json.txt`, `tmp/pristine_qorjson` tree,
+`PARSE_TIME_MS` env mode) is unreproducible because those artifacts are gone. TODO 14 is marked done.
+**Next:** nothing is queued - the structural refactoring queue (TODO 15) is **DEFERRED 22 Oct 2026 until greater
+resources are available**, and nothing else is pending from the two completed increments.
+
+## ▶ JSON parse performance (COMPLETED round 18, 22 Oct 2026 — TODO 14 DONE, all three micro-edits KEPT; structural refactoring TODO 15 DEFERRED)
+
+**Was**: verify the micro-optimization claim that the 2 MB JSON parse went ~56 s -> ~18 s and ablate it.
+**Now**: measured on a reproducible tree and **performance-neutral within the noise floor**. Harness is
+`test/components/formats/json/main.cpp` lines 284-305 printing `[perf] 2MB JSON parse (cold|warm): N ms` over
+fixture `test/data/data_2mb.json` (**2,219,028 bytes**); handler `log::Level::Informative` (main.cpp line 82) ->
+run logs are 7 non-blank lines / 1332-1336 bytes in Debug and RelWithDebInfo, so no log flood is involved. 21 RelWithDebInfo runs across 7
+builds in `cmakebuild_rel` (logs `tmp/json_final_rel_{A,A2,E,F,D,D2,E2}_run{1,2,3}.log`, deleted from `tmp/` 22 Oct 2026 — the values below are the recorded readings, all exit `0`): git-HEAD
+sources **2110 ms mean** (per-build 1959.6 / 2182.5 / 2188.6 -> **11.8% spread for identical sources**),
+current tree with all three edits **1879 ms mean** (builds 1875.4/1881.9; a third build of the same sources,
+`json_perf_rel_now.log`, since deleted), measured 2128.5 ms mean -> **13.5% spread**), mask-only 2259 ms, mask-less 2255 ms;
+Debug current tree 54.6-54.8 s. Because the same-source build spread (13.5%) EXCEEDS the apparent -11.0%
+delta and single-edit attribution is self-contradictory (both ablations ~2.26 s = +7% vs HEAD), **no edit earns
+performance credit**. The earlier "2MB ~56 s -> ~18 s" figure never reproduces and the round-16 record is void
+(its fixture `test/data/big_json.txt`, its `tmp/pristine_qorjson` tree and its `PARSE_TIME_MS` env mode do not exist).
+**Decision resolved**: keep `% m_size` -> `& m_wrapMask` in `PODBuffer::AddressOf` (it bounds every index read and the
+`assert` removal stays) — kept for review, not for performance; revert only if the user objects on review grounds.
+**User decision 22 Oct 2026 recorded: all three micro-edits are KEPT** (RTTI removal, `#ifndef NDEBUG` logging guards,
+podbuffer power-of-2 masking) — committed at HEAD as `dea24af2 "JSON parser performance review concluded"`, so HEAD now
+equals variant D; the task is closed with the edits applied and zero performance credit claimed.
+**Cleanup 22 Oct 2026 (two passes)**: pass 1 deleted 45 files / 300,687 B of superseded round-16/17 artifacts and
+scratch scripts; pass 2 deleted the 31 round-18 logs (146.5 KB — `tmp/json_final_rel_*_{build,run1,run2,run3}.log`,
+`tmp/json_perf_rel_now.log`, `tmp/json_perf_debug_now.log`, `tmp/rel_D_build.log`). **`tmp/` now holds only the 3 dirs
+`tmp/dcast` / `tmp/edited` / `tmp/jsonread`** — no JSON-perf log survives, so the `docs/agent/verification.md` FINAL
+entry's table is the sole durable record and every `tmp/...` citation is provenance only.
+**Deferred inventory** (TODO 15, parked 22 Oct 2026 until greater resources are available; nothing started — when
+resumed, measure each with the same `[perf]` timer and believe only deltas over ~14%):
+(a) bulk scan string/number runs in `character` instead of per-character transitions
+    (`src/components/data/formats/json/parser/states/_2/character.cpp`, `_4/string.cpp`, `_3/integer.cpp`, `_3/fraction.cpp`);
+(b) devirtualize / table-drive the polymorphic `ParserState` hierarchy
+    (`src/components/data/parser/state.cpp` + `src/components/data/parser/states/*.{h,cpp}`, 48 JSON state files (17 .cpp) under `parser/states/_1.._4`);
+(c) pool the model nodes — prerequisite: drop the `Parser::FinalParse()` -> `AnyObject::Cast<Fastflow>` hop
+    whose `CastToBase_` (`typedany.h:158`) does a live `dynamic_cast` per node.
+Key files: `test/components/formats/json/main.cpp` (harness), `src/framework/data/pipeline/podbuffer.h`,
+`src/components/data/formats/json/parser/{helpers.h,state.cpp}`, `src/qor/essentials/objectcontext/{typedany.h,anyobject.h}`.
+
+## ▶ qor_mime (COMPLETE - plan steps 0-17 done and verified 22 Oct 2026; plan file retired to `docs/archive/qor_mime_plan.md`)
+
+**Was**: a new module in its own folder under `src/framework/data` (`src/framework/data/mime`, lib
+`qor_mime`) providing a pipeline filter that recognises ten popular MIME types, built test-first
+one increment at a time. **Now**: done and green - `QORTestMIME.exe` `[TOTAL](18/18) [OK](18/18)`
+exit 0 on 22 Oct 2026 (the 17 plan steps plus the scaffold case `mime_module_loads`). **Next**:
+none - no open `qor_mime` scope.
+
+- **Rule in force (D8, user 20 Oct 2026): the QOR does not use ctest.** Verification = build the
+  lib, build the test exe, run the exe from its own build folder, read `[OK](n/n)` plus the shell
+  exit code.
+- What the module ended up providing: the recognised **registered MIME type name** (`image/png`,
+  `text/plain`, ...) plus the `MIMEType` enum, a 16-byte signature window and `Reset()`. Choosing
+  a sink from that name is application glue, not `qor_mime` behaviour.
+- Total on its targets: all 10 types recognised (PNG, JPEG, GIF, PDF, ZIP, XML, HTML, JSON,
+  JavaScript, plain text) **plus** the `application/octet-stream` fallback; recognition proven
+  across pumped chunk boundaries and across `Reset()` (one instance serving two streams).
+- No API was added beyond ctor/dtor/`operator=`/`Reset()`/`GetSignatureByteCount()`/
+  `GetDetectedType()`/`GetTypeName()` and the `MIMEType` enum; the pass-through helper
+  (`TransferOctets`) stayed file-local in `mime.cpp`.
+- Honest TDD record: step 4 was verified **after the fact** rather than RED-then-GREEN, steps
+  14/15/17 went GREEN on their FIRST run with no implementation change (the tests drove the design
+  there), everything else was RED-then-GREEN.
+- The transferable lessons from this module are filed as patterns, not step logs, in
+  `memory-bank/systemPatterns.md` ("Pipeline filter module shape", "Stateful recogniser design")
+  and `memory-bank/techContext.md` ("Build/verify a new QOR module and its dedicated test exe"),
+  plus the TDD discipline in `memory-bank/codingConventions.md`. The step-by-step record lives on
+  in `docs/archive/qor_mime_plan.md` and `src/framework/data/mime/status.md`.
+- Key files: `src/framework/data/mime/{mime.h,mime.cpp,qor_mime.cpp,CMakeLists.txt,purpose.md,status.md}`
+  | `test/framework/data/mime/{test_mime.cpp,test_main.cpp,CMakeLists.txt}` | pattern sources
+  `src/framework/data/pipeline/{filter.h,filter.cpp,buffer.h,inlinefilter.h}` and
+  `src/components/data/pipeline/filters/*`.
 
 ## ▶ JSON generator (COMPLETE — ROUNDTRIP VERIFIED in `QORTestJSON`; full `QORTest` regression run GREEN at `[OK](678/678)` — plan file retired to `docs/archive/jsonGeneratorPlan.md` (no longer a memory-bank file)
 
