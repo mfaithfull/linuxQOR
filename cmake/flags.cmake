@@ -16,6 +16,10 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS OFF)
     set(CMAKE_CXX_VISIBILITY_PRESET hidden)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /GR /utf-8")
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        # mirror the -Wall -Wextra -Wpedantic we ask of gcc/clang in Debug builds
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    endif()
 endif()
 
 #used only in Windows platform libraries
