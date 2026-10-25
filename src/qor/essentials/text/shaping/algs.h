@@ -1,4 +1,7 @@
 
+#ifndef QOR_PP_H_SRC_QOR_ESSENTIALS_TEXT_SHAPING_ALGS
+#define QOR_PP_H_SRC_QOR_ESSENTIALS_TEXT_SHAPING_ALGS
+
 #include <string.h>
 #include <type_traits>
 
@@ -86,3 +89,5 @@ namespace qor{ namespace qb{
 
 
 }}//qor::qb
+
+#endif//QOR_PP_H_SRC_QOR_ESSENTIALS_TEXT_SHAPING_ALGS

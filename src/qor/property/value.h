@@ -1,6 +1,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_SRC_QOR_PROPERTY_VALUE
+#define QOR_PP_H_SRC_QOR_PROPERTY_VALUE
+
 namespace qor {
 
 	class ValueTagType 
@@ -65,3 +68,5 @@ namespace qor {
 		T m_;
 	};
 }//qor
+
+#endif//QOR_PP_H_SRC_QOR_PROPERTY_VALUE

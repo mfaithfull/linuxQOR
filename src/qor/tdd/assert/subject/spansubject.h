@@ -4,7 +4,9 @@
 //Derived from assertcc
 //Copyright 2021 Sean Nash
 //under BSD 3 clause license
-#pragma once
+
+#ifndef QOR_PP_H_SRC_QOR_TDD_ASSERT_SUBJECT_SPANSUBJECT
+#define QOR_PP_H_SRC_QOR_TDD_ASSERT_SUBJECT_SPANSUBJECT
 
 #if __cpp_lib_span >= 202002L
 
@@ -36,3 +38,5 @@ namespace qor{ namespace assert{ namespace subject{
 }}}//qor::assert::subject
 
 #endif
+
+#endif//QOR_PP_H_SRC_QOR_TDD_ASSERT_SUBJECT_SPANSUBJECT

@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_HTTP_OLD_REDIRECT
+#define QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_HTTP_OLD_REDIRECT
+
 #include <string>
 #include "request.h"
 #include "response.h"
@@ -58,3 +61,5 @@ inline bool redirect(T &cli, Request &req, Response &res, const std::string &pat
 
 }}}}//qor::components::protocols::http
 
+
+#endif//QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_HTTP_OLD_REDIRECT

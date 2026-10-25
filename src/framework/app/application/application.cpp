@@ -83,6 +83,10 @@ namespace qor{
 
     int Application::RunWorkflow(ref_of<workflow::IWorkflow>::type workflow)
     {
+        if(m_helpRequested)
+        {
+            return EXIT_SUCCESS;
+        }
         if(m_argsValidated)
         {
             SetWorkflow(workflow);
@@ -152,6 +156,7 @@ namespace qor{
     {
         auto parser = app::ArgumentParser(*this);
         auto args = parser.ParseArgs(argc,argv);
+        m_helpRequested = false;
         if(!args.IsArgValid())
         {
             std::cout << parser.GetUsage() << std::endl;
@@ -161,7 +166,14 @@ namespace qor{
         else
         {
             m_argsValidated = true;
-            if(args.ParsedArgsCount() == 0)
+            // -h/--help is a registered argument, so it is reported as a parsed argument.
+            // When it is present we only want the usage text and a successful exit, not a workflow run.
+            if(args.GetArg("help").GetArgumentExists() || args.GetArg("h").GetArgumentExists())
+            {
+                std::cout << parser.GetUsage() << std::endl;
+                m_helpRequested = true;
+            }
+            else if(args.ParsedArgsCount() == 0)
             {
                 std::cout << parser.GetUsage() << std::endl;
             }
@@ -171,6 +183,10 @@ namespace qor{
     int Application::Run(ref_of<app::IRunable>::type runable)
     {
         int result = EXIT_FAILURE;
+        if(m_helpRequested)
+        {
+            return EXIT_SUCCESS;
+        }
         if(m_argsValidated)
         {
             if(m_Role.IsNotNull())

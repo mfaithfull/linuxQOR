@@ -25,6 +25,9 @@
 namespace qor{ namespace ui { namespace lin{ namespace x{
 
     /*// Configure window value mask bits 
+#ifndef QOR_PP_H_SRC_PLATFORM_OS_LINUX_UI_X_XLIB_WINDOWCHANGEQUERY
+#define QOR_PP_H_SRC_PLATFORM_OS_LINUX_UI_X_XLIB_WINDOWCHANGEQUERY
+
 #define CWX (1<<0)
 #define CWY (1<<1)
 #define CWWidth (1<<2)
@@ -382,3 +385,5 @@ namespace qor{ namespace ui { namespace lin{ namespace x{
     };
      
 }}}}//qor::ui::lin::x
+
+#endif//QOR_PP_H_SRC_PLATFORM_OS_LINUX_UI_X_XLIB_WINDOWCHANGEQUERY

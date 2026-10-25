@@ -5,6 +5,7 @@
 #define QOR_PP_H_INSTANCE_SINGLETON
 
 #include <stddef.h>
+#include <atomic>
 
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/memory/reference/reference.h"
@@ -64,13 +65,22 @@ namespace qor{ namespace detail {
         {
             if(redirected)
             {
-                if(theRef.IsNotNull())
+                // Take a snapshot of the redirect state under the mutex, then act on it outside
+                // the lock so we never hold the base and the redirected holder's mutexes at once.
+                typename ref_of<T>::type existing;
+                SingletonInstanceHolder<T>* target = nullptr;
                 {
-                    return theRef;
+                    Lock lock(m);
+                    existing = theRef;
+                    target = redirect;
                 }
-                else if(redirect != nullptr)
+                if(existing.IsNotNull())
                 {
-                    return redirect->Instance();
+                    return existing;
+                }
+                if(target != nullptr)
+                {
+                    return target->Instance();
                 }
                 return ref_of<T>::type();//Null object returned if redirected and no instance is available
             }
@@ -95,7 +105,16 @@ namespace qor{ namespace detail {
         {
             if(redirected)
             {
-                return redirect->Instance(1,std::forward<_p>(p1)...);
+                SingletonInstanceHolder<T>* target = nullptr;
+                {
+                    Lock lock(m);
+                    target = redirect;
+                }
+                if(target != nullptr)
+                {
+                    return target->Instance(1,std::forward<_p>(p1)...);
+                }
+                return ref_of<T>::type();
             }
             else
             {
@@ -150,7 +169,7 @@ namespace qor{ namespace detail {
         static constexpr size_t count = 1;
         ref_of<T>::type theRef;
         bool initialised;
-        bool redirected;
+        std::atomic<bool> redirected;
         RecursiveMutex m;
         SingletonInstanceHolder<T>* redirect{ nullptr };
     };

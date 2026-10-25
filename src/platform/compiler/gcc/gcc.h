@@ -1,6 +1,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_SRC_PLATFORM_COMPILER_GCC_GCC
+#define QOR_PP_H_SRC_PLATFORM_COMPILER_GCC_GCC
+
 #define qor_pp_compiler_at __FILE__ ":" qor_pp_stringize(__LINE__)": "
 #define qor_pp_compiler_debugbreak(e)
 
@@ -27,3 +30,5 @@ static constexpr int function_stride = 1;
 #define qor_pp_assume(X)        
 
 #define qor_pp_cpu_cache_line   64
+
+#endif//QOR_PP_H_SRC_PLATFORM_COMPILER_GCC_GCC

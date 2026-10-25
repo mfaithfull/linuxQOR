@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_SOCKET_DURATIONDETAILS
+#define QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_SOCKET_DURATIONDETAILS
+
 #include <chrono>
 
 namespace qor{ namespace io{ namespace network{ components{
@@ -35,3 +38,5 @@ inline void duration_to_sec_and_usec(const T &duration, U callback)
 }
 
 }}}}//qor::io::network::components
+
+#endif//QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_SOCKET_DURATIONDETAILS

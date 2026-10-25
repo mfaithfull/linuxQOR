@@ -6,6 +6,9 @@ MSVC compilers. Anything specific to a subset of MSVC versions or common to all
 compilers should be elsewhere.
 */
 
+#ifndef QOR_PP_H_SRC_PLATFORM_COMPILER_MSVC_MSVC
+#define QOR_PP_H_SRC_PLATFORM_COMPILER_MSVC_MSVC
+
 #define qor_pp_compiler_at __FILE__ "(" qor_pp_stringize(__LINE__)") : "
 
 #ifdef _WIN64
@@ -50,3 +53,5 @@ static constexpr int function_stride = 1;
 //Disable this annoyance for now as this is a development library intended to be built by the 'end' user against whaetver STL they have
 #pragma warning( disable : 4251 ) // class ... needs to have dll-interface to be used by clients of class ..
 #pragma warning( disable : 4275 ) //non dll-interface class ... used as base for dll-interface class
+
+#endif//QOR_PP_H_SRC_PLATFORM_COMPILER_MSVC_MSVC

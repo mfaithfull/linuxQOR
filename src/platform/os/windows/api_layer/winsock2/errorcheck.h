@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_PLATFORM_OS_WINDOWS_API_LAYER_WINSOCK2_ERRORCHECK
+#define QOR_PP_H_SRC_PLATFORM_OS_WINDOWS_API_LAYER_WINSOCK2_ERRORCHECK
+
 #include "src/qor/flyers/error/error.h"
 #include "../returncheck.h"
 
@@ -119,3 +122,5 @@ namespace qor { namespace win { namespace api {
 	};
 
 }}}//qor:win::api
+
+#endif//QOR_PP_H_SRC_PLATFORM_OS_WINDOWS_API_LAYER_WINSOCK2_ERRORCHECK

@@ -6,6 +6,9 @@ clang compilers. Anything specific to a subset of clang versions or common to al
 compilers should be elsewhere.
 */
 
+#ifndef QOR_PP_H_SRC_PLATFORM_COMPILER_CLANG_CLANG
+#define QOR_PP_H_SRC_PLATFORM_COMPILER_CLANG_CLANG
+
 #define qor_pp_compiler_at __FILE__ "(" qor_pp_stringize(__LINE__)") : "
 
 #ifdef _WIN64
@@ -38,3 +41,5 @@ static constexpr int function_stride = 1;
 //c++ 23 #define qor_pp_assume(_X)       [[assume(_X)]]
 
 #define qor_pp_cpu_cache_line   64
+
+#endif//QOR_PP_H_SRC_PLATFORM_COMPILER_CLANG_CLANG

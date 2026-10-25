@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_SOCKET_SOCKETCLIENT
+#define QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_SOCKET_SOCKETCLIENT
+
 #include <string>
 #include <chrono>
 #include <mutex>
@@ -233,3 +236,5 @@ namespace qor{ namespace io{ namespace network{ namespace components{
     };
 
 }}}}//qor::io::network::components
+
+#endif//QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_SOCKET_SOCKETCLIENT

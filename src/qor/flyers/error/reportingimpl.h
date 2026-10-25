@@ -1,6 +1,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_SRC_QOR_FLYERS_ERROR_REPORTINGIMPL
+#define QOR_PP_H_SRC_QOR_FLYERS_ERROR_REPORTINGIMPL
+
 #include "src/qor/essentials/reporting/ierrorreporting.h"
 #include "src/qor/essentials/reporting/iassertionfailurereporting.h"
 #include "src/qor/essentials/reporting/itestfailurereporting.h"
@@ -20,3 +23,5 @@ namespace qor{
     };
 
 }//qor
+
+#endif//QOR_PP_H_SRC_QOR_FLYERS_ERROR_REPORTINGIMPL

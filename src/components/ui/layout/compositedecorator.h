@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_UI_LAYOUT_COMPOSITEDECORATOR
+#define QOR_PP_H_SRC_COMPONENTS_UI_LAYOUT_COMPOSITEDECORATOR
+
 #include "src/configuration/configuration.h"
 
 #include <utility>  // for move
@@ -55,3 +58,5 @@ namespace qor{ namespace components{ namespace ui {
 	}
 
 }}}//qor::components::ui
+
+#endif//QOR_PP_H_SRC_COMPONENTS_UI_LAYOUT_COMPOSITEDECORATOR

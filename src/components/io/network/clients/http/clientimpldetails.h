@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_HTTP_CLIENTIMPLDETAILS
+#define QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_HTTP_CLIENTIMPLDETAILS
+
 #include <string>
 
 namespace qor{ namespace components{ namespace network{
@@ -36,3 +39,5 @@ inline std::string escape_abstract_namespace_unix_domain(const std::string &s) {
 }
 
 }}}//qor::components::network
+
+#endif//QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_HTTP_CLIENTIMPLDETAILS

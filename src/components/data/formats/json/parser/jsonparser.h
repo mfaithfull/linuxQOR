@@ -1,6 +1,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_DATA_FORMATS_JSON_PARSER_JSONPARSER
+#define QOR_PP_H_SRC_COMPONENTS_DATA_FORMATS_JSON_PARSER_JSONPARSER
+
 #include "states/_4/unescaped.h"
 #include "states/_4/quotation_mark.h"
 #include "states/_2/escape.h"
@@ -35,3 +38,5 @@
 
 
 
+
+#endif//QOR_PP_H_SRC_COMPONENTS_DATA_FORMATS_JSON_PARSER_JSONPARSER

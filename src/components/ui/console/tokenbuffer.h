@@ -2,6 +2,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_UI_CONSOLE_TOKENBUFFER
+#define QOR_PP_H_SRC_COMPONENTS_UI_CONSOLE_TOKENBUFFER
+
 #include "position.h"
 #include "size.h"
 
@@ -262,3 +265,5 @@ namespace qor { namespace components {
     };
 
 }}//qor::components
+
+#endif//QOR_PP_H_SRC_COMPONENTS_UI_CONSOLE_TOKENBUFFER

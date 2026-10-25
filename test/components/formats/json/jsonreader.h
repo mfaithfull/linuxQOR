@@ -1,6 +1,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_TEST_COMPONENTS_FORMATS_JSON_JSONREADER
+#define QOR_PP_H_TEST_COMPONENTS_FORMATS_JSON_JSONREADER
+
 #include "src/framework/data/pipeline/podbuffer.h"
 #include "src/framework/data/pipeline/pipeline.h"
 #include "src/components/data/formats/json/parser/nodes/object.h"
@@ -82,3 +85,5 @@ private:
     qor::text::components::UnicodeTextFilter m_filter;
     qor::pipeline::components::ParserSink<qor::data::parser::json::object> m_sink;
 };
+
+#endif//QOR_PP_H_TEST_COMPONENTS_FORMATS_JSON_JSONREADER
