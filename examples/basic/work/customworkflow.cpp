@@ -3,15 +3,16 @@
 
 #include "src/configuration/configuration.h"
 #include <iostream>
+#include <cstdlib>
 #include "customworkflow.h"
 
 using namespace qor;
 using namespace qor::workflow;
 
-//Custom workflows need to override the default constructor 
+//Custom workflows need to override the default constructor
 //All the States must be initialised and linked to the workflow.
 
-CustomWorkflow::CustomWorkflow() : 
+CustomWorkflow::CustomWorkflow() :
     beggining(new_ref<State>(this)),
     middle(new_ref<State>(this)),
     end(new_ref<State>(this))
@@ -19,23 +20,24 @@ CustomWorkflow::CustomWorkflow() :
     /*Each state has four events that can be optionally overriden
     by assigning new functions to what happens on that event.*/
 
-    /*Always set the Enter function on each State. 
+    /*Always set the Enter function on each State.
     This is where the work gets done.
     Consider this the contents of the main loop*/
     beggining->Enter = [this]()->void
     {
-        std::cout << "This function is called when the begginging state is entered." << std::endl;
-        
+        std::cout << "This function is called when the beggining state is entered." << std::endl;
+
         /*We have access to the other states and the content of the workflow due to
         capturing [this] on the lambda*/
 
-        /*Set state takes the flow directly into another state when this function ends*/
+        //The non determinism here is intentional to demonstrate that the workflow's behavior is unchanged by it
         if(std::rand() > RAND_MAX/2)
         {
+            //Set state takes the flow directly into another state when this function ends
             SetState(middle);
         }
 
-        /*Otherwise this Enter function will be called in a loop as long as begginging is the current state*/
+        /*Otherwise this Enter function will be called in a loop as long as beggining is the current state*/
     };
 
     //Set this only if you need special handling for Suspension

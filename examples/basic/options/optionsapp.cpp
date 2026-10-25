@@ -29,7 +29,7 @@ const std::vector<NamedArgSpec> OptionsApp::NamedArguments()
             "file",                         //long name
             1,                              //number of argument values (exact number or ArgCountZeroOrMore or ArgCountOneOrMore)
             ArgType::String,                //argument type (must match binding type exactly, String, Int, LongLong, double, Bool)
-            true,                           //parameter required or not
+            false,                          //parameter required or not
             "Please provide a file name.",  //description
             &m_filename                     //binding
         },

@@ -21,7 +21,7 @@ qor_pp_implement_module("Outline")
 
 void AccessModules();
 
-int main()
+int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
 {
     /*The QOR Application is a context for running anything that meets the requirements for a runable object*/
     qor_pp_run_role(Role)(
@@ -36,8 +36,9 @@ int main()
 void AccessModules()
 {
     //Visit all the QOR modules loaded into this process
+    //Note: We don't have to worry about synchronisation here because this is all read only, the host module is a singleton and the module registry is only modified during static initialisation and shutdown.
     TheHost()->Modules()->VisitModules(
-        [](Module* module)
+        [](const Module* module)
         {
             std::cout << "Module: " << module->Name() << " : " << module->Version() << std::endl;
             //Visit all the QOR static libraries linked into the module.

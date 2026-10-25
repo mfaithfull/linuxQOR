@@ -37,5 +37,5 @@ void CustomRole::Shutdown()
     Role::Shutdown();
 
     //Warning: Any code here runs after all features are shutdown.
-    //There is very little that is safe to do here unless it only uses the Standard Library and statically linkedQOR libraries
+    //There is very little that is safe to do here unless it only uses the Standard Library and statically linked QOR libraries
 }

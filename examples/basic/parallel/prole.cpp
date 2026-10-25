@@ -16,8 +16,8 @@ qor_pp_module_requires(IFileSystem)
 void ParallelAppRole::SetupLogging(DefaultLogHandler& logHandler, LogAggregatorService::ref logAggregator)
 {
     /*Connect the forward signal from logHandler to the ReceiveLog slot on the log aggregator's Receiver*/
-    connect(logHandler, logHandler.GetForwardSignal(), 
-        logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog, 
+    connect(logHandler, logHandler.GetForwardSignal(),
+        logAggregator(qor_shared).Receiver(), &LogReceiver::ReceiveLog,
         ConnectionKind::QueuedConnection);
 
     auto fileSystem = ThePlatform(qor_shared)->GetSubsystem<io::FileSystem>();
@@ -49,6 +49,7 @@ void ParallelAppRole::Setup()
     IRole::template AddFeature<LogAggregatorService>(
         [this](LogAggregatorService::ref logAggregator)->void
         {
+            //Note: This does not create a new log handler, it retrieves the one created in main() and connects it to the log aggregator
             auto logHandler = new_ref< IssueHandler<log::Log> >();
             DefaultLogHandler* defaultLogHandler = dynamic_cast<DefaultLogHandler*>(logHandler.operator qor::IssueHandler<log::Log> *());
             if(defaultLogHandler)
@@ -63,11 +64,12 @@ void ParallelAppRole::Setup()
 
 void ParallelAppRole::Shutdown()
 {
+    //Note: This does not create a new log handler, it retrieves the one created in main() and disconnects it from the log aggregator
     auto logHandler = new_ref< IssueHandler<log::Log> >();
     DefaultLogHandler* defaultLogHandler = dynamic_cast<DefaultLogHandler*>(logHandler.operator qor::IssueHandler<log::Log> *());
     if(defaultLogHandler)
     {
-        disconnect(*defaultLogHandler, defaultLogHandler->GetForwardSignal(), 
+        disconnect(*defaultLogHandler, defaultLogHandler->GetForwardSignal(),
             AppBuilder().TheApplication(qor_shared)->GetRole(qor_shared)->GetFeature<LogAggregatorService>(qor_shared)->Receiver(),
             &LogReceiver::ReceiveLog);
     }

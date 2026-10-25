@@ -8,7 +8,7 @@
 using namespace qor;
 qor_pp_implement_module("Work")
 
-int main()
-{    
-    qor_pp_run_workflow(CustomWorkflow);  //The CustomWorkflow becomes the runnable component for our Application
+int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
+{
+    qor_pp_run_workflow(CustomWorkflow)  //The CustomWorkflow becomes the runnable component for our Application
 }

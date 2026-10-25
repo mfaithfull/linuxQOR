@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_EXAMPLES_ROLLER_CUSTOMROLE
-#define QOR_PP_H_EXAMPLES_ROLLER_CUSTOMROLE
+#ifndef QOR_PP_H_EXAMPLES_BASIC_ROLLER_CUSTOMROLE
+#define QOR_PP_H_EXAMPLES_BASIC_ROLLER_CUSTOMROLE
 
 #include "src/framework/app/role/role.h"
 
@@ -25,4 +25,4 @@ public:
 
 };
 
-#endif//QOR_PP_H_EXAMPLES_ROLLER_CUSTOMROLE
+#endif//QOR_PP_H_EXAMPLES_BASIC_ROLLER_CUSTOMROLE

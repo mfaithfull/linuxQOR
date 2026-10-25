@@ -108,7 +108,7 @@ namespace qor{
         std::string m_Name;
         ref_of<app::IRole>::type m_Role;
         ref_of<workflow::IWorkflow>::type m_Workflow;
-
+        bool m_argsValidated{true};
     };
 
     qor_pp_declare_instancer_of(Application, SingletonInstancer);

@@ -29,3 +29,9 @@ if(WIN32)
     COMMAND_EXPAND_LISTS
   )
 endif()
+
+add_custom_command(
+  TARGET ${target} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          ${CMAKE_SOURCE_DIR}/test/data/alice.txt $<TARGET_FILE_DIR:${target}>
+)

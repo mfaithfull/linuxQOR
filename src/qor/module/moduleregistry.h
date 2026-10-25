@@ -26,7 +26,7 @@ namespace qor{
 		{
             m_Modules.emplace_back(&module);
 		}
-		
+
 		inline constexpr void Unregister(Module& module) noexcept
 		{
             //std::find is not explicitly noexcept because it can rely on
@@ -40,7 +40,7 @@ namespace qor{
             }
 		}
 
-        inline constexpr void VisitModules(void(f)(Module*))
+        inline constexpr void VisitModules(void(f)(const Module*))
         {
             std::for_each(m_Modules.begin(), m_Modules.end(), f);
         }

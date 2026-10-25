@@ -39,7 +39,7 @@ namespace qor{ namespace detail {
         {
             if(redirected)
             {
-                redirect->~SingletonInstanceHolder();
+                //redirect->~SingletonInstanceHolder();
                 initialised = false;
             }
             else
@@ -53,7 +53,6 @@ namespace qor{ namespace detail {
                             auto ref = theRef();
                             factory_of<T>::type::Destruct(ref.operator->());
                         }
-                        //theRef.Dispose();
                         initialised = false;
                     }
                 }
@@ -64,7 +63,15 @@ namespace qor{ namespace detail {
         {
             if(redirected)
             {
-                return redirect->Instance();
+                if(theRef.IsNotNull())
+                {
+                    return theRef;
+                }
+                else if(redirect != nullptr)
+                {
+                    return redirect->Instance();
+                }
+                return ref_of<T>::type();//Null object returned if redirected and no instance is available
             }
             else
             {
@@ -117,7 +124,6 @@ namespace qor{ namespace detail {
                 {
                     Lock lock(m);
                     factory_of<T>::type::Destruct(theRef);
-                    //theRef.Reset();
                     initialised = false;
                 }
             }
@@ -134,11 +140,8 @@ namespace qor{ namespace detail {
         void AutoRedirect(ref_of<T>::type ref)
         {
             Lock lock(m);
-            //if(!initialised)
-            {
-                //initialised = true;
-                theRef = ref;
-            }
+            theRef = ref;
+            redirected = true;
         }
 
     private:

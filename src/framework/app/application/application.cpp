@@ -83,13 +83,22 @@ namespace qor{
 
     int Application::RunWorkflow(ref_of<workflow::IWorkflow>::type workflow)
     {
-        SetWorkflow(workflow);
-        return RunWorkflowInternal();
+        if(m_argsValidated)
+        {
+            SetWorkflow(workflow);
+            return RunWorkflowInternal();
+        }
+        else
+        {
+            std::cout << "Application arguments invalid. Workflow not executed." << std::endl;
+            return -1;
+        }
     }
 
     int Application::RunWorkflowInternal()
     {
-        int result = -1;
+        int result = EXIT_FAILURE;
+
         if(m_Role.IsNotNull())
         {
             m_Role->Setup();
@@ -105,6 +114,7 @@ namespace qor{
         {
             m_Role->Shutdown();
         }
+
         return result;
     }
 
@@ -146,25 +156,29 @@ namespace qor{
         {
             std::cout << parser.GetUsage() << std::endl;
             std::cout << args.GetErrorString() << std::endl;
+            m_argsValidated = false;
         }
     }
 
     int Application::Run(ref_of<app::IRunable>::type runable)
     {
-        int result = -1;
-        if(m_Role.IsNotNull())
+        int result = EXIT_FAILURE;
+        if(m_argsValidated)
         {
-            m_Role->Setup();
-        }
+            if(m_Role.IsNotNull())
+            {
+                m_Role->Setup();
+            }
 
-        if(runable.IsNotNull())
-        {
-            result = runable->Run();
-        }
+            if(runable.IsNotNull())
+            {
+                result = runable->Run();
+            }
 
-        if(m_Role.IsNotNull())
-        {
-            m_Role->Shutdown();
+            if(m_Role.IsNotNull())
+            {
+                m_Role->Shutdown();
+            }
         }
         return result;
     }

@@ -24,7 +24,7 @@ qor_pp_implement_module("Parallel")
 
 int ParallelTask();
 
-int main()
+int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
 {
     qor_pp_fcontext;
 

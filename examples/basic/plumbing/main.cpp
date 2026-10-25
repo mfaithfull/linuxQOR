@@ -8,6 +8,10 @@
 #include "sdk/app.h"
 #include "src/platform/platform.h"
 #include "src/qor/essentials/current/currentthread.h"
+#include "src/qor/flyers/interception/functioncontext.h"
+#include "src/qor/flyers/error/error.h"
+#include "src/qor/flyers/log/log.h"
+#include "src/qor/flyers/log/defaultloghandler.h"
 #include "src/framework/io/filesystem/path.h"
 #include "src/framework/io/filesystem/file/filereader.h"
 #include "src/components/io/pipeline/connectors/fileconnector/fileconnector.h"
@@ -17,21 +21,26 @@
 using namespace qor;
 using namespace qor::platform;
 using namespace qor::app;
+using namespace qor::log;
 using namespace qor::io;
 using namespace qor::io::components;
 using namespace qor::pipeline;
 using namespace qor::pipeline::components;
 
-qor_pp_module_requires(ICurrentThread);
-qor_pp_module_requires(IFileSystem);
+qor_pp_module_requires(ICurrentThread)
+qor_pp_module_requires(IFileSystem)
 
 qor_pp_implement_module("Plumbing")
 
 void TraditionalFileRead(FileSystem::ref filesystem, filesystem::Index& index);
 void PipelineFileProcessor(FileSystem::ref filesystem, filesystem::Index& index);
 
-int main()
+int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
 {
+    qor_pp_fcontext;
+
+    DefaultLogHandler logHandler(Level::Debug);
+
     /*To use facilities from the operating system, first we add them
     to the Platform object. This works just like adding features
     to the Application Role*/
@@ -48,7 +57,7 @@ int main()
             once we have it, it's safe to use without synchronisation*/
 
             /*A filesystem::Index is how we refer to a specific file without opening it.*/
-            filesystem::Index index(fileSystem->CurrentPath() / "../../../../../../test/data", "alice.txt");
+            filesystem::Index index(fileSystem->CurrentPath(), "alice.txt");
 
             if(!index.Exists())
             {

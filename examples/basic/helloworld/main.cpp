@@ -8,7 +8,7 @@ using namespace qor;                                //Use the qor namespace
 
 qor_pp_implement_module("Hello World App")          //Every QOR Application must also be a QOR Module
 
-int main()                                          //Standard C++ entry point
+int main(const int /*argc*/, const char** /*argv*/, char** /*env*/) //Standard C++ entry point
 {
     qor_pp_run(                                     //Run a default Application
         []()->int                                   //This is what gets Run. A simple lambda but it could be anything runnable.
