@@ -1,6 +1,7 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#include "src/configuration/configuration.h"
 #include "optionsapp.h"
 #include "src/framework/event/delegate/bindmember.h"
 

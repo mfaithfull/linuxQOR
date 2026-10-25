@@ -5,22 +5,22 @@ add_executable(${target} main.cpp rdapp.cpp)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 
-target_compile_definitions(${target} PRIVATE 
+target_compile_definitions(${target} PRIVATE
 qor_pp_ver_major=${PROJECT_VERSION_MAJOR}
 qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 
 if(CMAKE_SYSTEM_NAME MATCHES Linux)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_thread qor_signals qor_task 
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_thread qor_signals qor_task
 qor_log qor_loghandler qor_logaggregator qor_filesystem qor_resources
 linqor_thread linqor_filesystem)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Windows)
-target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_thread qor_signals qor_task 
-qor_log qor_loghandler qor_logaggregator qor_filesystem qor_sockets qor_asyncioservice qor_pipeline qor_base64encodefilter 
-qor_base64decodefilter qor_socketconnector qor_property qor_fileconnector qor_stdoutsink qor_resources
+target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application qor_role qor_thread qor_signals qor_task
+qor_log qor_loghandler qor_logaggregator qor_filesystem qor_sockets qor_asyncioservice qor_pipeline qor_base64encodefilter
+qor_base64decodefilter qor_socketconnector qor_fileconnector qor_stdoutsink qor_resources
 winqor_thread winqor_filesystem)
 endif()
 

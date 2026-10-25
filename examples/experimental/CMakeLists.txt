@@ -9,3 +9,4 @@
 #add_subdirectory(images)
 add_subdirectory(flow)
 add_subdirectory(osspecific)
+add_subdirectory(resourced)
