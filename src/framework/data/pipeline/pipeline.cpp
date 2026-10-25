@@ -225,7 +225,7 @@ namespace qor{ namespace pipeline{
         do
         {
             unitsToPump = m_flowmode == FlowMode::Push ? m_source->GetBuffer()->WriteCapacity() : m_sink->GetBuffer()->WriteCapacity();
-            log::debug("Capacity for {0} units.", unitsToPump);
+            //log::debug("Capacity for {0} units.", unitsToPump);
             if(unitsToPump == 0)
             {
                 log::debug("Buffer full. Pipeline stalled.");
