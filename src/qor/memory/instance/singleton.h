@@ -39,8 +39,9 @@ namespace qor{ namespace detail {
         {
             if(redirected)
             {
-                //redirect->~SingletonInstanceHolder();
+                Lock lock(m);
                 initialised = false;
+                //Note: The derived class will be destroyed by its own SingletonInstanceHolder destructor, so we don't need to do anything here
             }
             else
             {

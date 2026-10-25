@@ -22,8 +22,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef QOR_PP_H_EXAMPLES_SERVER_WORKFLOW
-#define QOR_PP_H_EXAMPLES_SERVER_WORKFLOW
+#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_SERVER_WORKFLOW
+#define QOR_PP_H_EXAMPLES_ECHOSERVER_SERVER_WORKFLOW
 
 #include "src/framework/app/workflow/workflow.h"
 #include "src/framework/io/network/sockets.h"
@@ -52,4 +52,4 @@ private:
     qor::ref_of<qor::io::network::Socket>::type m_serverSocket;
 };
 
-#endif//QOR_PP_H_EXAMPLES_SERVER_WORKFLOW
+#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_SERVER_WORKFLOW

@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_EXAMPLES_WORK_CUSTOMFASTFLOW
-#define QOR_PP_H_EXAMPLES_WORK_CUSTOMFASTFLOW
+#ifndef QOR_PP_H_EXAMPLES_FLOW_CUSTOMFASTFLOW
+#define QOR_PP_H_EXAMPLES_FLOW_CUSTOMFASTFLOW
 
 #include "src/framework/app/workflow/fastflow.h"
 
@@ -11,7 +11,7 @@ class CustomFastflow : public qor::Fastflow //Workflows are always overrides of 
 public:
 
     CustomFastflow();
-    virtual ~CustomFastflow() = default;    
+    virtual ~CustomFastflow() = default;
 
 private:
 
@@ -20,4 +20,4 @@ private:
     qor::fastflow::Step::ref end;
 };
 
-#endif//QOR_PP_H_EXAMPLES_WORK_CUSTOMFASTFLOW
+#endif//QOR_PP_H_EXAMPLES_FLOW_CUSTOMFASTFLOW

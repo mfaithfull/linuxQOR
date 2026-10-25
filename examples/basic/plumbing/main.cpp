@@ -40,7 +40,7 @@ int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
     qor_pp_fcontext;
 
     DefaultLogHandler logHandler(Level::Debug);
-
+    logHandler.WriteToStandardOutput(true);
     /*To use facilities from the operating system, first we add them
     to the Platform object. This works just like adding features
     to the Application Role*/

@@ -1,8 +1,7 @@
-project(HelloWorld VERSION 1.0.0 DESCRIPTION "Hello World QOR Example" LANGUAGES CXX)
 set(target helloworld)
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 add_executable(${target} main.cpp )
-target_compile_definitions(${target} PRIVATE qor_pp_ver_project=${PROJECT_VERSION})
+include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 target_link_libraries(${target} qor_module qor_host qor_compiler qor_platform qor_application)
 
 if (WIN32)

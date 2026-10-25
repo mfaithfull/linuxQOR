@@ -90,8 +90,8 @@ namespace qor{
         }
         else
         {
-            std::cout << "Application arguments invalid. Workflow not executed." << std::endl;
-            return -1;
+            std::cerr << "Application arguments invalid. Workflow not executed." << std::endl;
+            return EXIT_FAILURE;
         }
     }
 
@@ -157,6 +157,14 @@ namespace qor{
             std::cout << parser.GetUsage() << std::endl;
             std::cout << args.GetErrorString() << std::endl;
             m_argsValidated = false;
+        }
+        else
+        {
+            m_argsValidated = true;
+            if(args.ParsedArgsCount() == 0)
+            {
+                std::cout << parser.GetUsage() << std::endl;
+            }
         }
     }
 

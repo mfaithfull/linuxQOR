@@ -15,7 +15,7 @@ if (WIN32)
   add_custom_command(
     TARGET outline POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_RUNTIME_DLLS:outline> $<TARGET_FILE_DIR:outline>
+            $<TARGET_RUNTIME_DLLS:outline> $<TARGET_FILE_DIR:${target}>
     COMMAND_EXPAND_LISTS
   )
 endif ()

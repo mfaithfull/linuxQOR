@@ -30,6 +30,8 @@ if(WIN32)
   )
 endif()
 
+#test data files to copy to the build directory for the plumbing example
+#needed on Windows and Linux to ensure the example can find the test data files
 add_custom_command(
   TARGET ${target} POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
