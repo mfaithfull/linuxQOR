@@ -24,7 +24,7 @@ namespace qor { namespace win { namespace api {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(shell32, SHFileOperationA );
-        CheckReturn< int, TSuccessCheck< int > >::TType iResult = Library::Call< int, ::LPSHFILEOPSTRUCTA* >(pFunc, lpFileOp);
+        CheckReturn< int, TSuccessCheck< int > >::TType iResult = Library::Call< int, ::LPSHFILEOPSTRUCTA >(pFunc, lpFileOp);
         return iResult;
     }
 
@@ -33,7 +33,7 @@ namespace qor { namespace win { namespace api {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(shell32, SHFileOperationW );
-        CheckReturn< int, TSuccessCheck< int > >::TType iResult = Library::Call< int, ::LPSHFILEOPSTRUCTW* >(pFunc, lpFileOp);
+        CheckReturn< int, TSuccessCheck< int > >::TType iResult = Library::Call< int, ::LPSHFILEOPSTRUCTW >(pFunc, lpFileOp);
         return iResult;
     }
 
@@ -124,4 +124,3 @@ namespace qor { namespace win { namespace api {
     }
 
 }}} //qor::win::api
-

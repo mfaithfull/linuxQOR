@@ -44,8 +44,8 @@ namespace qor { namespace win { namespace api {
 
 		//Shell file operations
 
-		 static int SHFileOperationA( ::LPSHFILEOPSTRUCTA* lpFileOp );
-		 static int SHFileOperationW( ::LPSHFILEOPSTRUCTW* lpFileOp );
+		 static int SHFileOperationA( ::LPSHFILEOPSTRUCTA lpFileOp );
+		 static int SHFileOperationW( ::LPSHFILEOPSTRUCTW lpFileOp );
 		 static void SHFreeNameMappings( ::HANDLE hNameMappings );
 		 static BOOL SHGetDiskFreeSpaceExA( LPCSTR pszDirectoryName, ::ULARGE_INTEGER* pulFreeBytesAvailableToCaller, ::ULARGE_INTEGER* pulTotalNumberOfBytes, ::ULARGE_INTEGER* pulTotalNumberOfFreeBytes );
 		 static BOOL SHGetDiskFreeSpaceExW( LPCWSTR pszDirectoryName, ::ULARGE_INTEGER* pulFreeBytesAvailableToCaller, ::ULARGE_INTEGER* pulTotalNumberOfBytes, ::ULARGE_INTEGER* pulTotalNumberOfFreeBytes );
@@ -73,12 +73,12 @@ namespace qor { namespace win { namespace api {
 
 		//Shell notification and status functions
 
-		 static BOOL Shell_NotifyIconA( DWORD dwMessage, ::PNOTIFYICONDATAA* lpData );
-		 static BOOL Shell_NotifyIconW( DWORD dwMessage, ::PNOTIFYICONDATAW* lpData );
+		 static BOOL Shell_NotifyIconA( DWORD dwMessage, ::PNOTIFYICONDATAA lpData );
+		 static BOOL Shell_NotifyIconW( DWORD dwMessage, ::PNOTIFYICONDATAW lpData );
 		 static HRESULT Shell_NotifyIconGetRect( const ::NOTIFYICONIDENTIFIER* identifier, ::RECT* iconLocation );
 		 static HRESULT SHQueryUserNotificationState( ::QUERY_USER_NOTIFICATION_STATE* pquns );
 		 static HRESULT SHIsFileAvailableOffline( PCWSTR pwszPath, DWORD* pdwStatus );
-		 static DWORD_PTR SHAppBarMessage( DWORD dwMessage, ::PAPPBARDATA* pData );
+		 static DWORD_PTR SHAppBarMessage( DWORD dwMessage, ::PAPPBARDATA pData );
 		 static BOOL InitNetworkAddressControl( void );
 
 		//Recycle bin and printer command functions

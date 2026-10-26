@@ -25,7 +25,7 @@ namespace qor { namespace win { namespace api {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(shell32, Shell_NotifyIconA );
-        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, DWORD, ::PNOTIFYICONDATAA* >(pFunc, dwMessage, lpData);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, DWORD, ::PNOTIFYICONDATAA >(pFunc, dwMessage, lpData);
         return bResult;
     }
 
@@ -34,7 +34,7 @@ namespace qor { namespace win { namespace api {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(shell32, Shell_NotifyIconW );
-        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, DWORD, ::PNOTIFYICONDATAW* >(pFunc, dwMessage, lpData);
+        CheckReturn< BOOL, BoolCheck >::TType bResult = Library::Call< BOOL, DWORD, ::PNOTIFYICONDATAW >(pFunc, dwMessage, lpData);
         return bResult;
     }
 
@@ -75,7 +75,7 @@ namespace qor { namespace win { namespace api {
         qor_pp_fcontext;
         Win32ErrorHandler _;
         qor_pp_useswinapi(shell32, SHAppBarMessage );
-        return Library::Call< DWORD_PTR, DWORD, ::PAPPBARDATA* >(pFunc, dwMessage, pData);
+        return Library::Call< DWORD_PTR, DWORD, ::PAPPBARDATA >(pFunc, dwMessage, pData);
     }
 
     //InitNetworkAddressControl opens the network address control dialog and reports failure through the BOOL return
