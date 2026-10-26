@@ -1,150 +1,62 @@
-# QOR Coding Conventions (condensed)
+# QOR Coding Conventions
 
-**Authoritative source:** `docs/skills/QORconventions.md` — read it before
-writing or reviewing QOR code. This file is the quick-reference summary
-extracted from it plus the codebase. Where the codebase is inconsistent, the
-dominant pattern in the authoritative doc wins.
+Authoritative source: `docs/skills/QORconventions.md`. This file is a quick reference. Where the codebase is inconsistent, the authoritative document wins.
 
-## Placement (rule of 7, purpose.md, status.md)
-Code placement decisions matter more than style details.
-- `src/configuration` — root header, first include in every TU.
-- `src/macros` — preprocessor library; macros `qor_pp_*`.
-- `src/platform` — OS/compiler/architecture specifics only (`win*`/`lin*`).
-- `src/qor` — universal, no OS/arch/compiler specifics; depends only on qor
-  modules + std lib. "If you might use it in thousands of functions, it belongs
-  here."
-- `src/framework` — general, usually singular structural elements (Roles,
-  Workflows, Pipelines, Signals, Threads).
-- `src/components` — optional modules; never depended on by main QOR classes;
-  hierarchy mirrors where they'd sit as main modules; experimental code in
-  `qor::exp::`.
-- **Every new folder needs a `purpose.md`; volatile development state goes in
-  `status.md`.**
+## Placement
 
-## Files & headers
-- **License header first in every file** (mandatory):
+See `memory-bank/systemPatterns.md` for the layering rules. In short: `src/configuration` first include, `src/macros` preprocessor library, `src/platform` OS/compiler/arch specifics, `src/qor` universal facilities, `src/framework` structural application elements, `src/components` optional modules. Every new folder gets `purpose.md`; volatile state gets `status.md`.
+
+## Files and headers
+
+- License header first in every file:
   ```cpp
   // Copyright Querysoft Limited 2008 - Present
   // SPDX-License-Identifier: BSL-1.0
   ```
-  Older files (and the `src/macros` port) carry full BSL-1.0 text.
-  Third-party-derived code keeps its original attribution comment **after** the
-  QOR header (CsSignal, assertcc, SAKryukov delegates).
-- **Include guard**: `QOR_PP_H_` + file path under `src/` upper-cased with `_`
-  separators. Closing `#endif` has a trailing comment with no space:
-  `#endif//QOR_PP_H_MEMORY`.
-  Examples: `QOR_PP_H_PROPERTY_PROPERTYVALUE`,
-  `QOR_PP_H_COMPONENTS_DATA_MDM_TABLE`, `QOR_PP_H_SIGNALS_SIGNAL`.
-- **Include order**: (1) `"src/configuration/configuration.h"` — first in every
-  `.cpp`, and required before any other QOR header in `.h` files using
-  `qor_pp_*` (otherwise `compiler.h` `#error`s); (2) standard library headers;
-  (3) other QOR headers by **source-root-relative path**
-  (`"src/qor/memory/reference/reference.h"`); (4) local (same-folder) headers
-  last.
-- **Formatting**: 4-space indent (some legacy files use tabs — match the file
-  being edited); control-flow braces on the same line (`if(x)` then `{`);
-  function definitions put return type + name on one line and `{` on the next;
-  small accessors inline on one line in headers; namespace closing comment
-  names the full namespace (`}}//qor::workflow`,
-  `}}}//qor::assert::subject`).
+  Older files may carry full BSL-1.0 text; third-party-derived code keeps original attribution after the QOR header.
+- Include guards: `QOR_PP_H_` plus the source-root-relative path under `src/`, upper-cased with `_` separators. Closing `#endif` comment has no space, e.g. `#endif//QOR_PP_H_MEMORY`.
+- Include order: `"src/configuration/configuration.h"` first in every `.cpp`, and before other QOR headers in `.h` files using `qor_pp_*`; then standard library headers; then other QOR headers by source-root-relative path; then local headers.
+- Formatting: 4-space indent unless the file being edited uses tabs; control-flow braces on same line; function definitions put signature on one line and `{` on next; small accessors can be inline in headers; namespace closing comment names the full namespace.
 
 ## Naming
+
 | Item | Convention | Examples |
 |---|---|---|
-| Namespaces | lower case, mirror folder path under `src/` | `qor`, `qor::platform`, `qor::app`, `qor::io::filesystem`, `qor::components::protocols::http` |
-| Classes / structs | PascalCase | `UTF8String`, `MockRepository`, `SingletonInstanceHolder` |
-| Interfaces | `I` prefix; implementations drop it | `IRole`/`Role`, `IWorkflow`/`Workflow`, `IFileSystem`/`FileSystem`, `IFeature`, `ISubsystem` |
-| Methods | PascalCase, verb-first | `GetName()`, `SetRole()`, `AddSubsystem()`, `GetFeature<T>()`, `PumpAll()` |
-| Boolean queries | `Is*` / `Has*` | `IsEmpty()`, `IsNull()`, `HasWhen()`, `IsComplete()` |
-| Members | `m_` + PascalCase (camelCase in newer code) | `m_Name`, `m_RefCount`, `m_buffer`, `m_cachedLength` |
-| File-static globals | `_` prefix, often anonymous namespace | `static qor::Library _qor_library(...)`, `static qor::TypeRegistry _theTypeRegistry;` |
-| Global accessors | `The*` / `This*` | `ThePlatform()`, `TheTypeRegistry()`, `ThisModule()` |
-| Macros | all lower case `qor_pp_`, params `_CAPS` | `qor_pp_test_case(_CASE)`, `qor_pp_declare_ref_of(_CLASS,_REF)` |
-| Type traits | `<noun>_of<T>` with nested `typedef ... type` | `ref_of`, `guid_of`, `factory_of`, `instancer_of`, `allocator_of`, `source_of`, `sync_of` |
-| Test files | `test_<thing>.cpp` in `/test/<area>/` mirroring src | `test_utf8string.cpp`, `test_singleton.cpp` |
-| Test cases | camelCase sentence | `canInstanceUTF8String`, `outOfRangeMutableBufferAccessThrows` |
-| CMake targets | `qor_<module>`; platform impls `winqor_*`/`linqor_*` | `qor_error`, `qor_property`, `winqor_sockets`, `linqor_filesystem`, `qor_jsondata` |
-| Module interface defines | `QOR_<MODULE>` upper snake, PRIVATE compile definition | `QOR_PROPERTY`, `QOR_ERROR`, `QOR_FILESYSTEM` |
-| GUID constants | `<Type>GUID`, `constexpr GUID` | `FileSystemGUID`, `BMPHeaderModelGUID` |
+| Namespaces | lower case, mirror folder path | `qor`, `qor::io::filesystem`, `qor::components::protocols::http` |
+| Classes/structs | PascalCase | `UTF8String`, `MockRepository`, `SingletonInstanceHolder` |
+| Interfaces | `I` prefix; implementations drop it | `IRole`/`Role`, `IFileSystem`/`FileSystem` |
+| Methods | PascalCase, verb-first | `GetName()`, `SetRole()`, `AddSubsystem()` |
+| Boolean queries | `Is*` / `Has*` | `IsEmpty()`, `HasWhen()` |
+| Members | `m_` + PascalCase/camelCase | `m_Name`, `m_buffer` |
+| File-static globals | `_` prefix, often anonymous namespace | `static qor::Library _qor_library(...)` |
+| Global accessors | `The*` / `This*` | `ThePlatform()`, `ThisModule()` |
 
-## Module-interface pattern
-Exported classes use `qor_pp_module_interface(QOR_<MODULE>)`:
-```cpp
-class qor_pp_module_interface(QOR_PLATFORM) Platform final
-{
-public:
-    qor_pp_module_interface(QOR_PLATFORM) Platform();
-    qor_pp_module_interface(QOR_PLATFORM) ~Platform();
-    qor_pp_module_interface(QOR_PLATFORM) void Setup();
-};
-```
-- Apply to ctors, dtors and every method defined in a `.cpp` belonging to
-  **another** module; pure inline/template methods in headers usually don't
-  need it.
-- `qor_pp_module_interface_gcc(QOR_X)` when the interface must be exported
-  **only** under GCC/Clang (MSVC handles `/EXPORT` differently) — e.g.
-  `Application`, `AppBuilder`.
-- Interface-only headers implemented by a component:
-  ```cpp
-  #ifdef QOR_FILESYSTEM
-      bool qor_pp_import ImplementsIFileSystem();
-  #else
-      bool qor_pp_export ImplementsIFileSystem();   // implementation exports
-  #endif
-  ```
-- Consumers force a specific implementation into the linker with
-  `qor_pp_module_requires(IFileSystem);`.
+## Module interface
+
+- Export APIs with `qor_pp_module_interface` or `qor_pp_module_interface_gcc(QOR_X)` where GCC/Clang-specific export handling is needed.
+- Interface-only headers are implemented by components using import/export pairing.
+- Consumers force a specific implementation with `qor_pp_module_requires(IName)`.
+- A QOR lib target normally uses a `QOR_<MODULE>` PRIVATE compile definition and a file-static `Library` singleton.
 
 ## Memory management
-- **No raw `new`/`delete`, no `unique_ptr`/`shared_ptr`** in QOR-style code.
-  Create objects with `new_ref<T>(args...)`
-  (`src/qor/memory/reference/newref.h`); the result is `ref_of<T>::type` on the
-  stack, no matching delete. Arrays: `new_array_ref(count, args...)`.
-- Construction stages, each overridable per type by trait specialization:
-  `instancer_of<T>::type::Instance` → `factory_of<T>::type::Construct` →
-  `source_of<T>::type` → `allocator_of<T>::type`.
-- Store references as members using declared ref traits
-  (`qor_pp_declare_ref_of`).
+
+- QOR-style code does not use raw `new`/`delete`, `unique_ptr`, or `shared_ptr`.
+- Create objects with `new_ref<T>(args...)`; arrays use `new_array_ref(count, args...)`.
+- Construction stages: `instancer_of<T>::type::Instance` -> `factory_of<T>::type::Construct` -> `source_of<T>::type` -> `allocator_of<T>::type`.
+- Store references as members using declared ref traits such as `qor_pp_declare_ref_of`.
 
 ## Tests
-- Add tests in the area mirroring `src/`; file name `test_<thing>.cpp`;
-  camelCase test case names.
-- Register the new file in the owning `test/CMakeLists.txt` — the main `QORTest`
-  source list, or the sub-directory's own CMakeLists when its own executable
-  exists.
-- **No ctest (D8 in docs/agent/DECISIONS.md, user 20 Oct 2026).** The QOR does not use ctest:
-  never reference it in plans, commands or docs, and a QOR test CMakeLists carries no
-  `enable_testing()` and no `add_test()`. Test judge = run the exe from its build folder,
-  green = `[OK](n/n)` in its output AND shell exit code 0.
 
-- `qor_assert` (fluent assertions), `qor_test` (Yaffut-derived), `qor_mock`
-  (HippoMocks-derived) are used together.
-- Verify order: build `examples/basic/helloworld`, then `QORTest`.
-
-### Test-first increments (the TDD discipline used end to end on `qor_mime`, 20-22 Oct 2026)
-- Research the anatomy FIRST: `docs/agent/add_module.md` plus the closest existing implementation
-  and the tests that exercise it. No code before that.
-- One increment at a time = a test written FIRST, seen RED, then the smallest piece of code that
-  makes it GREEN. Never the whole feature at once.
-- Report honestly when RED was not observed (verified after the fact, or GREEN on the first run
-  because the test drove the design) - never claim a RED that was not seen.
-- Test shape: one stream per case unless the case is specifically about chunk splitting, `Reset()`
-  reuse, or variants; build fresh pipeline elements per stream so a case never inherits state from
-  the previous one.
-- Assert on observable API state (counters, accessors, sink contents), never on internals or log
-  output.
-- Every assertion must chain a proposition: `qor_pp_assert_that(expr).isTrue();` - an unchained
-  assertion is a vacuous temporary that checks nothing.
-
+- Add tests in the area mirroring `src/`; file names `test_<thing>.cpp`; camelCase test case names.
+- Register new test files in the owning test CMakeLists. Do not use ctest: no `enable_testing()` or `add_test()`.
+- Green test run = executable output `[OK](n/n)` plus exit 0, run from its own build directory.
+- Every assertion must chain a proposition: `qor_pp_assert_that(expr).isTrue();`.
+- Assert on observable API state, not internals or log output.
+- Test-first discipline: research first, write one test first, see RED, then implement the smallest piece that makes it GREEN. Report honestly when RED was not observed.
 
 ## Working preferences
-- Follow `docs/skills/QORconventions.md` exactly (license header,
-  `configuration.h` first include, `QOR_PP_H_*` guards,
-  `qor_pp_module_interface` qualifiers).
-- New folder ⇒ add `purpose.md` (and `status.md` for volatile state).
-- Keep the "rule of 7" in mind when creating folders/namespaces.
-- Prefer `new_ref<T>()` smart references over raw `new`/`delete`/`unique_ptr`.
-- For numeric text generation, prefer standard-library facilities such as
-  `std::to_chars` when they meet the format requirements (JSON generator uses
-  it for shortest round-trip double text).
-- Match the conventions of the file being edited (legacy files use tabs).
+
+- Follow `docs/skills/QORconventions.md` exactly.
+- Prefer `new_ref<T>()` over raw ownership primitives.
+- Prefer standard-library facilities such as `std::to_chars` when they meet format requirements.
+- Match local file style when editing legacy code.
