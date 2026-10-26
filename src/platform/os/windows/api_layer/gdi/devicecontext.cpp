@@ -184,7 +184,9 @@ namespace qor { namespace win { namespace api {
     BOOL GDI32::AlphaBlend(HDC hdcDest, int xoriginDest, int yoriginDest, int wDest, int hDest, HDC hdcSrc, int xoriginSrc, int yoriginSrc, int wSrc, int hSrc, BLENDFUNCTION ftn)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, AlphaBlend);
+        //gdi32.dll exports the GdiAlphaBlend spelling; the bare AlphaBlend prototype in wingdi.h has no
+        //export on the target system, so binding it resolves to null and throws at call time.
+        qor_pp_useswinapi(gdi32, GdiAlphaBlend);
         return Library::Call< BOOL, HDC, int, int, int, int, HDC, int, int, int, int, BLENDFUNCTION >(
             pFunc, hdcDest, xoriginDest, yoriginDest, wDest, hDest, hdcSrc, xoriginSrc, yoriginSrc, wSrc, hSrc, ftn);
     }

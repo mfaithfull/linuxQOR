@@ -65,16 +65,20 @@ namespace qor { namespace win { namespace api {
         static int SetStretchBltMode(HDC hdc, int iStretchMode);
         static BOOL StretchBlt(HDC hdcDest, int nXOriginDest, int nYOriginDest, int nWidthDest, int nHeightDest, HDC hdcSrc, int nXOriginSrc, int nYOriginSrc, int nWidthSrc, int nHeightSrc, DWORD dwRop);
         static int StretchDIBits(HDC hdc, int XDest, int YDest, int nDestWidth, int nDestHeight, int XSrc, int YSrc, int nSrcWidth, int nSrcHeight, CONST VOID* lpBits, CONST::BITMAPINFO* lpBitsInfo, UINT iUsage, DWORD dwRop);
+        static BOOL TransparentBlt(HDC hdcDest, int xoriginDest, int yoriginDest, int wDest, int hDest, HDC hdcSrc, int xoriginSrc, int yoriginSrc, int wSrc, int hSrc, UINT crTransparent);
 
         //Brush functions
         static HBRUSH CreateBrushIndirect(CONST::LOGBRUSH* lplb);
         static HBRUSH CreateDIBPatternBrush(HGLOBAL hglbDIBPacked, UINT fuColorSpec);
+        static HBRUSH CreateDIBPatternBrushPt(CONST VOID* lpPackedDIB, UINT iUsage);
+
         static HBRUSH CreateHatchBrush(int fnStyle, COLORREF clrref);
         static HBRUSH CreatePatternBrush(HBITMAP hbmp);
         static HBRUSH CreateSolidBrush(COLORREF crColor);
         static BOOL GetBrushOrgEx(HDC hdc, ::LPPOINT lppt);
         static BOOL PatBlt(HDC hdc, int nXLeft, int nYLeft, int nWidth, int nHeight, DWORD dwRop);
         static BOOL SetBrushOrgEx(HDC hdc, int nXOrg, int nYOrg, ::LPPOINT lppt);
+        static BOOL FixBrushOrgEx(HDC hdc, int x, int y, LPPOINT ptl);
 
         //Clipping functions
         static int ExcludeClipRect(HDC hdc, int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
@@ -115,6 +119,8 @@ namespace qor { namespace win { namespace api {
         static BOOL GetICMProfileT(HDC hDC, LPDWORD lpcbName, LPTSTR lpszFilename);
         static int SetICMMode(HDC hDC, int iEnableICM);
         static BOOL SetICMProfileT(HDC hDC, LPTSTR lpFileName);
+        static BOOL UpdateICMRegKey(DWORD reserved, LPTSTR lpszCMID, LPTSTR lpszFileName, UINT command);
+
         static BOOL CheckColorsInGamut(HDC hDC, LPVOID lpRGBTriples, LPVOID lpBuffer, UINT nCount);
         static BOOL ColorCorrectPalette(HDC hDC, HPALETTE hPalette, DWORD dwFirstEntry, DWORD dwNumOfEntries);
         static BOOL ColorMatchToTarget(HDC hDC, HDC hdcTarget, DWORD uiAction);
@@ -257,31 +263,32 @@ namespace qor { namespace win { namespace api {
         static BOOL TranslateCharsetInfo(DWORD* pSrc, LPCHARSETINFO lpCs, DWORD dwFlags);
 
         //MetaFile and EnhMetaFile functions
-        HENHMETAFILE CloseEnhMetaFile(HDC hdc);
-        HMETAFILE CloseMetaFile(HDC hdc);
-        HENHMETAFILE CopyEnhMetaFile(HENHMETAFILE hemfSrc, LPCTSTR lpszFile);
-        HMETAFILE CopyMetaFile(HMETAFILE hmfSrc, LPCTSTR lpszFile);
-        HDC CreateEnhMetaFile(HDC hdcRef, LPCTSTR lpFilename, CONST::RECT* lpRect, LPCTSTR lpDescription);
-        HDC CreateMetaFile(LPCTSTR lpszFile);
-        BOOL DeleteEnhMetaFile(HENHMETAFILE hemf);
-        BOOL DeleteMetaFile(HMETAFILE hmf);
-        BOOL EnumEnhMetaFile(HDC hdc, HENHMETAFILE hemf, ::ENHMFENUMPROC lpEnhMetaFunc, LPVOID lpData, CONST::RECT* lpRect);
-        BOOL EnumMetaFile(HDC hdc, HMETAFILE hmf, ::MFENUMPROC lpMetaFunc, LPARAM lParam);
-        BOOL GdiComment(HDC hdc, UINT cbSize, CONST BYTE* lpData);
-        HENHMETAFILE GetEnhMetaFile(LPCTSTR lpszMetaFile);
-        UINT GetEnhMetaFileBits(HENHMETAFILE hemf, UINT cbBuffer, LPBYTE lpbBuffer);
-        UINT GetEnhMetaFileDescription(HENHMETAFILE hemf, UINT cchBuffer, LPTSTR lpszDescription);
-        UINT GetEnhMetaFileHeader(HENHMETAFILE hemf, UINT cbBuffer, ::LPENHMETAHEADER lpemh);
-        UINT GetEnhMetaFilePaletteEntries(HENHMETAFILE hemf, UINT cEntries, ::LPPALETTEENTRY lppe);
-        UINT GetMetaFileBitsEx(HMETAFILE hmf, UINT nSize, LPVOID lpvData);
-        UINT GetWinMetaFileBits(HENHMETAFILE hemf, UINT cbBuffer, LPBYTE lpbBuffer, INT fnMapMode, HDC hdcRef);
-        BOOL PlayEnhMetaFile(HDC hdc, HENHMETAFILE hemf, CONST::RECT* lpRect);
-        BOOL PlayEnhMetaFileRecord(HDC hdc, LPHANDLETABLE lpHandletable, CONST ENHMETARECORD* lpEnhMetaRecord, UINT nHandles);
-        BOOL PlayMetaFile(HDC hdc, HMETAFILE hmf);
-        BOOL PlayMetaFileRecord(HDC hdc, LPHANDLETABLE lpHandletable, LPMETARECORD lpMetaRecord, UINT nHandles);
-        HENHMETAFILE SetEnhMetaFileBits(UINT cbBuffer, CONST BYTE* lpData);
-        HMETAFILE SetMetaFileBitsEx(UINT nSize, CONST BYTE* lpData);
-        HENHMETAFILE SetWinMetaFileBits(UINT cbBuffer, CONST BYTE* lpbBuffer, HDC hdcRef, CONST::METAFILEPICT* lpmfp);
+        static HENHMETAFILE CloseEnhMetaFile(HDC hdc);
+        static HMETAFILE CloseMetaFile(HDC hdc);
+        static HENHMETAFILE CopyEnhMetaFile(HENHMETAFILE hemfSrc, LPCTSTR lpszFile);
+        static HMETAFILE CopyMetaFile(HMETAFILE hmfSrc, LPCTSTR lpszFile);
+        static HDC CreateEnhMetaFile(HDC hdcRef, LPCTSTR lpFilename, CONST::RECT* lpRect, LPCTSTR lpDescription);
+        static HDC CreateMetaFile(LPCTSTR lpszFile);
+        static BOOL DeleteEnhMetaFile(HENHMETAFILE hemf);
+        static BOOL DeleteMetaFile(HMETAFILE hmf);
+        static BOOL EnumEnhMetaFile(HDC hdc, HENHMETAFILE hemf, ::ENHMFENUMPROC lpEnhMetaFunc, LPVOID lpData, CONST::RECT* lpRect);
+        static BOOL EnumMetaFile(HDC hdc, HMETAFILE hmf, ::MFENUMPROC lpMetaFunc, LPARAM lParam);
+        static BOOL GdiComment(HDC hdc, UINT cbSize, CONST BYTE* lpData);
+        static HENHMETAFILE GetEnhMetaFile(LPCTSTR lpszMetaFile);
+        static UINT GetEnhMetaFileBits(HENHMETAFILE hemf, UINT cbBuffer, LPBYTE lpbBuffer);
+        static UINT GetEnhMetaFileDescription(HENHMETAFILE hemf, UINT cchBuffer, LPTSTR lpszDescription);
+        static UINT GetEnhMetaFileHeader(HENHMETAFILE hemf, UINT cbBuffer, ::LPENHMETAHEADER lpemh);
+        static UINT GetEnhMetaFilePaletteEntries(HENHMETAFILE hemf, UINT cEntries, ::LPPALETTEENTRY lppe);
+        static UINT GetMetaFileBitsEx(HMETAFILE hmf, UINT nSize, LPVOID lpvData);
+        static UINT GetWinMetaFileBits(HENHMETAFILE hemf, UINT cbBuffer, LPBYTE lpbBuffer, INT fnMapMode, HDC hdcRef);
+        static BOOL PlayEnhMetaFile(HDC hdc, HENHMETAFILE hemf, CONST::RECT* lpRect);
+        static BOOL PlayEnhMetaFileRecord(HDC hdc, LPHANDLETABLE lpHandletable, CONST ENHMETARECORD* lpEnhMetaRecord, UINT nHandles);
+        static BOOL PlayMetaFile(HDC hdc, HMETAFILE hmf);
+        static BOOL PlayMetaFileRecord(HDC hdc, LPHANDLETABLE lpHandletable, LPMETARECORD lpMetaRecord, UINT nHandles);
+        static HENHMETAFILE SetEnhMetaFileBits(UINT cbBuffer, CONST BYTE* lpData);
+        static HMETAFILE SetMetaFileBitsEx(UINT nSize, CONST BYTE* lpData);
+        static HENHMETAFILE SetWinMetaFileBits(UINT cbBuffer, CONST BYTE* lpbBuffer, HDC hdcRef, CONST::METAFILEPICT* lpmfp);
+        static HMETAFILE GetMetaFile(LPCTSTR lpName);
 
         //OpenGl extension functions
         static int ChoosePixelFormat(HDC hdc, CONST::PIXELFORMATDESCRIPTOR* ppfd);
@@ -290,6 +297,22 @@ namespace qor { namespace win { namespace api {
         static int GetPixelFormat(HDC hdc);
         static BOOL SetPixelFormat(HDC hdc, int iPixelFormat, CONST::PIXELFORMATDESCRIPTOR* ppfd);
         static BOOL SwapBuffers(HDC hdc);
+        //GDI marshal & ddraw registration functions
+        //Declared for completeness only: wingdi.h declares these four inside "#ifdef COMBOX_SANDBOX" (tablet/com
+        //sandbox family, SDK line 4720) and gdi32.dll on the target system exports none of them
+        //(verified against tmp/_tmp_gdi_exports.txt), so there is nothing for qor_pp_useswinapi to resolve and no
+        //wrapper is provided - the kernel D11 "not export-bound" precedent. The guard mirrors the SDK so the
+        //declarations are only visible in the configuration where their parameter types exist.
+        //See gdi/purpose.md.
+        #ifdef COMBOX_SANDBOX
+        #if (_WIN32_WINNT >= 0x0600)
+        static BOOL GdiRegisterDdraw(::PGDIREGISTERDDRAWPACKET pPacket, ::GDIMARSHALLOC* ppfnGdiAlloc);
+        static ULONG GdiMarshalSize(VOID);
+        static VOID GdiMarshal(DWORD dwProcessIdTo, HGDIOBJ hGdiObj, PVOID pData, ULONG ulFlags);
+        static HGDIOBJ GdiUnmarshal(PVOID pData, ULONG ulFlags);
+        #endif // (_WIN32_WINNT >= 0x0600)
+        #endif // COMBOX_SANDBOX
+
 
         //Painting functions
         static BOOL GdiFlush(VOID);
@@ -303,6 +326,7 @@ namespace qor { namespace win { namespace api {
         static int SetBkMode(HDC hdc, int iBkMode);
         static UINT SetBoundsRect(HDC hdc, CONST RECT* lprcBounds, UINT flags);
         static int SetROP2(HDC hdc, int fnDrawMode);
+        static BOOL GradientFill(HDC hdc, PTRIVERTEX pVertex, ULONG nVertex, PVOID pMesh, ULONG nMesh, ULONG ulMode);
 
         //Path functions
         static BOOL AbortPath(HDC hdc);

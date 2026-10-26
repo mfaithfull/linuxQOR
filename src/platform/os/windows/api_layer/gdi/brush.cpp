@@ -69,4 +69,19 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, HDC, int, int, ::LPPOINT >(pFunc, hdc, nXOrg, nYOrg, lppt);
     }
 
+    HBRUSH GDI32::CreateDIBPatternBrushPt(CONST VOID* lpPackedDIB, UINT iUsage)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(gdi32, CreateDIBPatternBrushPt);
+        return Library::Call< HBRUSH, CONST VOID*, UINT >(pFunc, lpPackedDIB, iUsage);
+    }
+
+    BOOL GDI32::FixBrushOrgEx(HDC hdc, int x, int y, LPPOINT ptl)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(gdi32, FixBrushOrgEx);
+        return Library::Call< BOOL, HDC, int, int, LPPOINT >(pFunc, hdc, x, y, ptl);
+    }
+
 }}}//qor::win::api
+

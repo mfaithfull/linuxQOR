@@ -237,4 +237,15 @@ namespace qor { namespace win { namespace api {
         return Library::Call< BOOL, HDC, ULONG, ULONG >(pFunc, hdc, u1, u2);
     }
 
+    //wingdi.h #defines UpdateICMRegKey to UpdateICMRegKeyW; the ## paste in qor_pp_useswinapiAW keeps the
+    //unsuffixed name and appends the W suffix, which is the export gdi32.dll provides.
+    //Note: Microsoft marks the API deprecated (it returns FALSE with ERROR_NOT_SUPPORTED on current systems).
+    BOOL GDI32::UpdateICMRegKey(DWORD reserved, LPTSTR lpszCMID, LPTSTR lpszFileName, UINT command)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapiAW(gdi32, UpdateICMRegKey);
+        return Library::Call< BOOL, DWORD, LPTSTR, LPTSTR, UINT >(pFunc, reserved, lpszCMID, lpszFileName, command);
+    }
+
 }}}//qor::win::api
+

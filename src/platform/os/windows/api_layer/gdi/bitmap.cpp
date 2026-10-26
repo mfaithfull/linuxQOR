@@ -210,4 +210,16 @@ namespace qor { namespace win { namespace api {
             pFunc, hdc, XDest, YDest, nDestWidth, nDestHeight, XSrc, YSrc, nSrcWidth, nSrcHeight, lpBits, lpBitsInfo, iUsage, dwRop);
     }
 
+    //GdiTransparentBlt is the spelling gdi32.dll actually exports; the bare TransparentBlt prototype in
+    //wingdi.h has no export on the target system (tmp/_tmp_gdi_exports.txt), so binding it would throw
+    //"Missing library function." at call time.
+    BOOL GDI32::TransparentBlt(HDC hdcDest, int xoriginDest, int yoriginDest, int wDest, int hDest, HDC hdcSrc, int xoriginSrc, int yoriginSrc, int wSrc, int hSrc, UINT crTransparent)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(gdi32, GdiTransparentBlt);
+        return Library::Call< BOOL, HDC, int, int, int, int, HDC, int, int, int, int, UINT >(
+            pFunc, hdcDest, xoriginDest, yoriginDest, wDest, hDest, hdcSrc, xoriginSrc, yoriginSrc, wSrc, hSrc, crTransparent);
+    }
+
 }}}//qor::win::api
+

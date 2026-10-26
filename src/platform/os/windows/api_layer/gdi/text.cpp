@@ -200,7 +200,9 @@ namespace qor { namespace win { namespace api {
     DWORD GDI32::GetFontResourceInfo(LPCTSTR szFontName, DWORD dwBufSize, LPTSTR szBuffer, DWORD dwInfo)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(gdi32, GetFontResourceInfo);
+        //GetFontResourceInfoW is the export name; wingdi.h declares only the W spelling, so the AW variant
+        //of the binding macro is required (bare name resolves to null and throws at call time).
+        qor_pp_useswinapiAW(gdi32, GetFontResourceInfo);
         return Library::Call< DWORD, LPCTSTR, DWORD, LPTSTR, DWORD >(pFunc, szFontName, dwBufSize, szBuffer, dwInfo);
     }
 

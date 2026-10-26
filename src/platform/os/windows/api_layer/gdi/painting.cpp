@@ -90,4 +90,14 @@ namespace qor { namespace win { namespace api {
         return Library::Call< int, HDC, int >(pFunc, hdc, fnDrawMode);
     }
 
+    //GdiGradientFill is the spelling gdi32.dll exports; the bare GradientFill prototype in wingdi.h has
+    //no export on the target system (tmp/_tmp_gdi_exports.txt).
+    BOOL GDI32::GradientFill(HDC hdc, PTRIVERTEX pVertex, ULONG nVertex, PVOID pMesh, ULONG nMesh, ULONG ulMode)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(gdi32, GdiGradientFill);
+        return Library::Call< BOOL, HDC, PTRIVERTEX, ULONG, PVOID, ULONG, ULONG >(pFunc, hdc, pVertex, nVertex, pMesh, nMesh, ulMode);
+    }
+
 }}}//qor::win::api
+

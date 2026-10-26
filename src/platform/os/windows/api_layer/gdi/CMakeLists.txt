@@ -14,6 +14,8 @@ pen.cpp
 painting.cpp
 path.cpp
 printing.cpp
+metafile.cpp
+pixelformat.cpp
 region.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
