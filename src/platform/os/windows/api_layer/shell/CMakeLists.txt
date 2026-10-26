@@ -2,7 +2,13 @@ project(QOR VERSION 0.5.0 DESCRIPTION "QOR Win32 Shell Module" LANGUAGES CXX)
 set(target winqor_api_shell)
 
 add_library(${target} SHARED winqor_api_shell.cpp 
-shell.cpp)
+shell.cpp
+drag.cpp
+fileops.cpp
+icon.cpp
+notify.cpp
+recycle.cpp
+shellprops.cpp)
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")

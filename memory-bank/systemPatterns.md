@@ -350,3 +350,27 @@ makes framework placement defensible ("general and usually singular" - an applic
 recognise types at all needs this). The deviation from the sibling pattern was written into the
 folder's `purpose.md` rather than silently accepted, so the next reader sees the reason.
 
+## Windows api_layer: Win32 entry-point binding (kernel, ole, user, shell)
+
+Every `src/platform/os/windows/api_layer/<lib>` module wraps one system DLL's exported entry points with the
+same three-part idiom, and the idiom is what makes the layer stateless and link-independent:
+
+1. `qor_pp_useswinapi(<dllbase>, Name)` declares/returns a function-pointer typedef and binds
+   `Name` from the image of `<dllbase>` already loaded in the process image (`GetModuleHandle` +
+   `GetProcAddress`) at call time — so no CMake links the system DLL and `dumpbin /imports` of the built
+   library shows no import for it.
+2. `Library::Call<RET, ArgTypes...>(pFunc, args...)` (in `library.h`) applies `__try`/`__except` around the
+   call, using `ExceptionFilterFunction(GetExceptionInformation())` as the filter, and passes arguments
+   through verbatim (`(*ArgType)pVar` casts) — SDK parameter types stay verbatim in the wrapper signature.
+   `Library::voidCall` is the void-return form; `Library::inlineCall`/`voidInlineCall` is the inline-API
+   form added with DECISIONS.md D11.
+3. `Win32ErrorHandler _;` (from `winqor_api_kernel`, exception filter + `qor_exception_win32_t`) runs the
+   filter at call sites, and `CheckReturn<HRESULT>::TType` / `CheckReturn<BOOL>::TType` (in `returncheck.h`)
+   raise a `Win32Error` immediately when the SDK failure-status return says it failed. Checked returns are
+   used ONLY where zero/false means failure; handle/count/pointer-returning families return raw.
+
+Consequence for audits: a built api_layer library that DOES import its system DLL means an import library
+slipped in and the binding idiom is broken; a wrapper list that disagrees with `dumpbin /exports` of the live
+DLL means the audit or the wrapper set is wrong — check both directions (implemented-not-exported,
+declared-not-implemented).
+

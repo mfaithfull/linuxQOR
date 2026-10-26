@@ -181,3 +181,47 @@ Audit run contract, a trap worth keeping: audit8 <kernel.h> <k32dump> <ntdump> [
 be relative with forward slashes - absolute backslash paths from Get-ChildItem load as zero impl tokens and silently turn
 the whole run into MISSING for every name.
 
+## D12: the shell32.dll wrapper layer (winqor_api_shell) - 60 stateless wrappers (26 Oct 2026)
+
+Implemented, not designed. `src/platform/os/windows/api_layer/shell` now carries the whole modern Shell API of
+shell32.dll: `shell.h` declares `class qor_pp_module_interface(QOR_WINAPISHELL) Shell` inside `qor::win::api`
+with 60 static prototypes grouped by category, and seven implementation files (`shell.cpp` 14, `drag.cpp` 5,
+`fileops.cpp` 11, `icon.cpp` 12, `notify.cpp` 7, `recycle.cpp` 6, `shellprops.cpp` 5) define exactly those 60
+bodies in the kernel pattern - `qor_pp_fcontext; Win32ErrorHandler _; qor_pp_useswinapi(shell32, Name);
+return Library::Call<RET, Args...>(pFunc, args...)`, with `CheckReturn<HRESULT>::TType` for every SDK HRESULT,
+`CheckReturn<BOOL>::TType` for every SDK BOOL, `Library::voidCall` for the two void entry points
+(`DragFinish`, `SHFreeNameMappings`) and raw `Library::Call` for the value-only families
+(`CommandLineToArgvW`, `DragQueryFile*`, `SHAppBarMessage`, `SHGetFileInfo*`, `ExtractIconEx*`, icon handles,
+`ShellExecute*`, `FindExecutable*`, `ShellAbout*`, `DuplicateIcon`, `ExtractAssociatedIcon*`).
+
+Why the split is the way it is, in one line each: HRESULT and BOOL are failure-status returns where a failed
+result means "the shell did not do it", so the kernel layer's checked-return idiom raises Win32Error
+immediately at the call site and the caller never has to re-test; the pointer/handle/UINT families use zero or
+a handle value as a legitimate answer (icon counts, path lengths, `SHGetFileInfo` returning the input
+`pszPath`), so raising on them would be a lie. A/W variants are wrapped as separate functions because shell32.dll
+exports both spellings as distinct symbols - aliasing them would drop half the surface.
+
+Three findings that only a live DLL teaches: (1) `SHTestTokenMembership` is declared `STDAPI_(BOOL)` in shellapi.h,
+not `SHSTDAPI_`, and is nevertheless a shell32.dll export - it is in scope and wrapped; (2) the SDK declares seven
+more entry points than the locked 60 (`SHEnumerateUnreadMailAccountsA/W`, `SHGetUnreadMailCountA/W`,
+`SHSetUnreadMailCountA/W`, `SHGetDriveMedia`) and only the four wide variants exist in the live export table, so
+the ANSI trio is dead in this build of shell32.dll - the four live ones are the one open surface decision, four
+wrappers of work, deliberately left out to keep the agreed 60-name scope; (3) `REFIID` resolves to the QOR
+`UUIDGMP` type when unqualified (QOR re-include ordering) while `::REFIID` is the SDK GUID typedef - the
+unqualified spelling is what compiles in this module and is what the three REFIID wrappers take, so a caller
+passes a QOR UUID, not a `GUID`. `::HWND`/`::HICON`/`::HINSTANCE`/`::HDROP` stay SDK-qualified because QOR
+redefines some of those names inside its own namespace.
+
+Evidence, all 26 Oct 2026: `cmake --build cmakebuild --target winqor_api_shell --parallel 8` exit 0 with zero
+`error C`/`fatal error` lines in `tmp/build_shell2.log` (16/16 objects, DLL relinked 26 Oct 2026 09:21).
+`dumpbin /imports` on the fresh DLL (`tmp/_tmp_shell_dll_imports.txt`) lists
+`winqor_api_kernel.dll qor_error.dll qor_interception.dll qor_issue.dll qor_current.dll qor_host.dll
+MSVCP140D.dll VCRUNTIME140_1D.dll VCRUNTIME140D.dll ucrtbased.dll KERNEL32.dll` and no SHELL32.DLL -
+GetProcAddress binding, no import library, as designed. Audit `tmp/_tmp_shell_full_audit.py` parses the SDK
+header with prototypes joined before matching (line-based matching drops return types - the hazard that bit
+the earlier extraction passes) and reports sdk 60 / header 60 / impl 60 with `header ^ impl` empty, no
+duplicate definitions, and `impl not exported` empty against `dumpbin /exports` of the live
+`C:\Windows\System32\shell32.dll`. `tmp/_tmp_shell_protos3_out.txt` (the earlier 59-name extraction) plus
+`SHTestTokenMembership` is exactly the implemented set.
+
+

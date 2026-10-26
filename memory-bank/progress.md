@@ -476,3 +476,28 @@ later JSON generator tests):
   FINAL entry's table is the sole durable record and every `tmp/...` citation (here and in the SUPERSEDED verification
   entries) is provenance, not a readable artifact.
 
+## 26 Oct 2026 — winqor_api_shell: the shell32.dll API layer completed
+
+- WORKS: `src/platform/os/windows/api_layer/shell` builds green as the shared library `winqor_api_shell`
+  (target `winqor_api_shell`, class `qor::win::api::Shell`, QOR_WINAPISHELL). `shell.h` declares 60 static
+  prototypes; `shell.cpp` 14 / `drag.cpp` 5 / `fileops.cpp` 11 / `icon.cpp` 12 / `notify.cpp` 7 /
+  `recycle.cpp` 6 / `shellprops.cpp` 5 define exactly those 60 in the kernel pattern
+  (`qor_pp_fcontext` + `Win32ErrorHandler _` + `qor_pp_useswinapi(shell32, Name)` + `Library::Call`).
+- VERIFIED: `cmake --build cmakebuild --target winqor_api_shell --parallel 8` exit 0, 0 error lines
+  (`tmp/build_shell2.log`), 16/16 objects, DLL relinked 26 Oct 2026 09:21; `dumpbin /imports` on the fresh DLL
+  shows `winqor_api_kernel.dll` + `KERNEL32.dll` and NO `SHELL32.DLL` (GetProcAddress binding, as designed);
+  audit `tmp/_tmp_shell_full_audit.py` reports sdk 60 / header 60 / impl 60, `header ^ impl` empty,
+  duplicates empty, `impl not exported` empty against the live `shell32.dll` export table.
+- LEFT TO BUILD / OPEN: the four live-but-unwrapped shellapi.h entry points
+  (`SHEnumerateUnreadMailAccountsW`, `SHGetUnreadMailCountW`, `SHSetUnreadMailCountW`, `SHGetDriveMedia`) —
+  the locked scope was 60 endpoints, so these stay out until review says otherwise; their ANSI variants do not
+  exist in the live export table at all. Legacy Shell Object Library (`<shobjidl.h>`, ~127 names) and the
+  ~290 undocumented shell32.dll internal exports remain out of scope by decision.
+- KNOWN ISSUES / traps recorded: SDK prototypes span lines, so any header audit must join lines before matching
+  or return types silently drop; `REFIID` bare resolves to the QOR `UUIDGMP` type in this module while `::REFIID`
+  is the SDK GUID typedef; `SHTestTokenMembership` is declared `STDAPI_(BOOL)` in shellapi.h (not `SHSTDAPI_`)
+  yet is a shell32.dll export; DESKTOP-partition-only entry points (`Shell_NotifyIconA`,
+  `Shell_NotifyIconGetRect`, `SHAppBarMessage`) are wrapped unconditionally.
+- Docs kept in sync: `src/platform/os/windows/api_layer/shell/purpose.md` (new), `docs/agent/DECISIONS.md`
+  D12, `docs/agent/verification.md` top entry, `docs/agent/TODO.md` item 16 [x], `docs/agent/STATE.MD` current focus.
+

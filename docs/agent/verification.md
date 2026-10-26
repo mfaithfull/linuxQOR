@@ -15,6 +15,27 @@ clang-tidy -p build docs/.../file.cpp
 # green = "[OK](n/n)" in the output AND shell exit code 0. The QOR does not use ctest.
 
 ## Results
+### 2026-10-26 — winqor_api_shell: 60 stateless shell32.dll wrappers (api_layer/shell) — VERIFIED (green)
+Target build: `cmake --build cmakebuild --target winqor_api_shell --parallel 8` > `tmp/build_shell2.log` exit 0,
+0 `error C` / `fatal error` lines, 16/16 objects, `winqor_api_shell.dll` relinked 2026-10-26 09:21
+(`cmakebuild/src/platform/os/windows/api_layer/shell/Debug/`).
+Link shape (`dumpbin /imports`, `tmp/_tmp_shell_dll_imports.txt`): imports
+`winqor_api_kernel.dll, qor_error.dll, qor_interception.dll, qor_issue.dll, qor_current.dll, qor_host.dll,
+MSVCP140D.dll, VCRUNTIME140_1D.dll, VCRUNTIME140D.dll, ucrtbased.dll, KERNEL32.dll`; **no SHELL32.DLL import** —
+entry points resolve at call time through `qor_pp_useswinapi(shell32, Name)` (GetModuleHandle + GetProcAddress),
+which is the designed shape, not a missing dependency.
+Audit (`tmp/_tmp_shell_full_audit.py`, SDK header parsed with prototypes joined before matching):
+`sdk names 60 / header decls 60 / impl defs 60 (60 listings)`, `header ^ impl = []`, `duplicate defs = []`,
+`impl not exported = []` against `dumpbin /exports` of the live `C:\Windows\System32\shell32.dll`;
+`impl - sdk = [SHTestTokenMembership]` only, because the SDK spells that one `STDAPI_(BOOL)` not `SHSTDAPI_`.
+Per-file counts shell.cpp 14 / drag.cpp 5 / fileops.cpp 11 / icon.cpp 12 / notify.cpp 7 / recycle.cpp 6 /
+shellprops.cpp 5 = 60, matching the `shell.h` comment groups one-to-one.
+Known gap recorded, not a failure: shellapi.h declares 7 more entry points than the locked scope
+(`SHEnumerateUnreadMailAccountsA/W`, `SHGetUnreadMailCountA/W`, `SHSetUnreadMailCountA/W`, `SHGetDriveMedia`);
+the 4 wide variants are live exports and remain an open decision, the 3 ANSI variants are absent from the export
+table entirely.
+
+
 ### 2026-10-22 — qor_jsondata parse-perf FINALIZATION (round 18) — VERIFIED (NEUTRAL; supersedes and corrects the entry below)
 
 Reproducible-on-this-tree record. The fixture, harness and sources cited here exist in the repo now; the raw run/build

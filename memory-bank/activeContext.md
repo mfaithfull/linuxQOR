@@ -573,3 +573,20 @@ The last open item of the JSON generator increment. Executed in the gitignored
 - Grammar-driven work is done by **generating** the states/nodes/model code from
   the ABNF/EBNF (`docs/agent/yaml_cfg_ebnf.md`), not hand-writing it; the JSON
   generator should follow the same route.
+## Current work focus — 26 Oct 2026: winqor_api_shell (the shell32.dll API layer)
+
+- COMPLETED and verified: 60 stateless wrappers over the modern `shellapi.h` Shell API in
+  `src/platform/os/windows/api_layer/shell` (see that folder's `purpose.md`, DECISIONS.md D12,
+  verification.md top entry, TODO.md item 16 [x]).
+- Pattern in force for this layer: no library base, no Init/Term, no QOR state — every body is
+  `qor_pp_fcontext; Win32ErrorHandler _; qor_pp_useswinapi(shell32, Name); return Library::Call<...>(pFunc, ...)`,
+  with `CheckReturn<HRESULT>::TType` / `CheckReturn<BOOL>::TType` only where the SDK return is a failure status.
+  `winqor_api_shell` links `winqor_api_kernel` for `Win32ErrorHandler`; shell32.dll itself is never imported.
+- Decisions to revisit if review asks: (1) wrap the four live-but-unwrapped
+  `SHEnumerateUnreadMailAccountsW` / `SHGetUnreadMailCountW` / `SHSetUnreadMailCountW` / `SHGetDriveMedia`
+  entry points (four one-line wrappers); (2) whether the three REFIID wrappers should take the SDK `::REFIID`
+  GUID instead of the bare QOR `UUIDGMP` spelling that compiles today; (3) whether DESKTOP-partition-only
+  entry points should be guarded out for non-DESKTOP WINAPI_FAMILY builds.
+- Learned, keep: `shellapi.h` prototypes are multi-line — audits must join lines before matching; the SDK spells
+  `SHTestTokenMembership` with `STDAPI_(BOOL)`; A/W suffix variants are distinct exports and must both be wrapped.
+
