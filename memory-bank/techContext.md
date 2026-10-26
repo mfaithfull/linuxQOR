@@ -19,6 +19,23 @@
 - New compiler versions: add support under `src/platform/compiler/` (usually
   trivial for another GCC/MSVC version).
 
+## Windows SDK headers & include resolution (verified 26 Oct 2026)
+- The MSVC 14.50 include tree (`...VC\Tools\MSVC\14.50.35717\include`) holds 112 CRT/C++ headers and NO
+  Windows API headers at all - no `Windows.h`, no `winbase.h`.
+- `<Windows.h>` resolves from `C:\Program Files (x86)\Windows Kits\10\include\10.0.26100.0\um` (plus `\ucrt`),
+  supplied through the `INCLUDE` environment variable that CMake/MSVC set - no CMakeLists adds a `/I` for it.
+  Consequence: the Windows SDK headers, including their `FORCEINLINE` API definitions, are visible in every
+  api_layer TU, which is what makes header-inline (variant I) wrappers possible - see DECISIONS.md D11.
+- `WINAPI_FAMILY_PARTITION` and `_WIN32_WINNT` decide which SDK definitions exist. The threadpool callback-environ
+  family is in the APP partition at `_WIN32_WINNT >= 0x0600`; `SetThreadpoolCallbackPriority` needs
+  `>= _WIN32_WINNT_WIN7`; `SetThreadpoolCallbackPersistent` is DESKTOP-partition only.
+- Header-only entry points are NOT dll exports and must never be bound with `qor_pp_useswinapi` /
+  `GetProcAddress` - that path returns null and throws at run time (DECISIONS.md D10-CORRECTION, D11).
+- Executor (`run_commands`) quirks are kept as a project rule set in `.clinerules/tool-execution.md`:
+  `$_` is mangled to `$'` (use `$PSItem`), array elements run concurrently so dependent steps must be
+  sequenced with `;` inside ONE string, and long builds report "completion could not be observed" - always
+  verify out of band with a redirected log plus `$LASTEXITCODE`.
+
 ## Build system
 - **CMake** minimum `3.10.0`, CMake 4+ recommended. Top-level
   `CMakeLists.txt`: `project(QOR VERSION 0.5.0 … LANGUAGES C CXX)`,
@@ -249,4 +266,13 @@ The sequence that took `src/framework/data/mime` (lib `qor_mime`) and `test/fram
 - Transient build/run logs belong in the gitignored `tmp/` folder, never at the repo root.
 - `log::debug` is **not** wired to output in these test exes - it is not a usable probe. Assert on
   observable API state (counters, accessors, sink contents) instead.
+
+- Header-inline (variant I) Windows API wrappers, implemented 26 Oct 2026 in `api_layer/library.h`: `Library::inlineCall`
+  and `Library::voidInlineCall` take the **address of the SDK header definition** (`::Name` at global scope) instead of a
+  `DefProc`, so they keep the `__try` / `__except(ExceptionFilterFunction(GetExceptionInformation()))` guard while emitting
+  no import and no null test. Call them with **explicit** template arguments, as the export-bound wrappers already do:
+  `Library::voidInlineCall< ::PTP_CALLBACK_ENVIRON >( ::InitializeThreadpoolEnvironment, pcbe )`. Pair them with the
+  `qor_pp_usesinlineapi( Name )` marker in `kernel32.h`, which expands to nothing and exists only so audit and grep tooling
+  see one binding marker per wrapper. Decide (E) export-bound vs (I) header-inline from the SDK header text - grep the Windows
+  Kits include tree for a `FORCEINLINE` definition - never from `dumpbin` absence. See DECISIONS.md D11 and D11-IMPLEMENTED.
 

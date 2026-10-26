@@ -1,6 +1,14 @@
 # Progress
 
-**Last updated:** 22 Oct 2026 - **qor_mime COMPLETE**: plan steps 0-17 done and verified green
+**Last updated:** 26 Oct 2026 - **winqor_api_kernel threadpool callback-environ six WRAPPED (D11 implemented)**:
+`api_layer/library.h` gained `inlineCall` / `voidInlineCall`, `kernel32.h` gained the `qor_pp_usesinlineapi` marker plus
+the two previously missing callback-environ declarations, and `kthreadpool.cpp` gained the six compile-time wrappers.
+Audit `tmp/_tmp_audit_v8.txt` reads `implemented=368 header_inline_nonexport=2 missing=0 total=370`; `winqor_api_kernel`
+rebuilt exit 0 with 0 error lines; `dumpbin` on the fresh `kthreadpool.obj` shows zero undefined `Threadpool` externals
+and the six SDK definitions as local symbols, i.e. compile-time binding with no import.
+**Next:** decide whether `SetThreadpoolCallbackPriority` / `SetThreadpoolCallbackPersistent` get the same one-line wiring.
+
+**Earlier increment, 22 Oct 2026 - qor_mime COMPLETE**: plan steps 0-17 done and verified green
 (`QORTestMIME.exe` `[TOTAL](18/18) [OK](18/18)`, exit 0), and its plan file retired out of
 `memory-bank/` to `docs/archive/qor_mime_plan.md`. The JSON generator increment is likewise
 **complete**: pipeline integration `[OK](36/36)` in `QORTestJSONGenerator`, the parse -> generate

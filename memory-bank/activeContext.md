@@ -1,6 +1,38 @@
 # Active Context
 
-**Last updated:** 22 Oct 2026 - **qor_mime COMPLETE**: plan steps 0-17 done and verified green
+## ▶ winqor_api_kernel D11 IMPLEMENTED: threadpool callback-environ six wrapped with the header-inline variant (26 Oct 2026)
+**Was**: the audit reported 6 declared-but-unwrapped functions (`tmp/_tmp_audit_v5.txt`, `implemented=362 missing=6`)
+and an in-tree note claimed they were ntdll.dll exports.
+**Now**: reclassified as **header-inline (variant I)** API, not "unbindable". `WinBase.h` (Windows Kits
+`10\Include\10.0.26100.0\um`, lines 7913-7983) *defines* `InitializeThreadpoolEnvironment`, `DestroyThreadpoolEnvironment`
+and the four `SetThreadpoolCallback*` as `FORCEINLINE VOID` shims over the `FORCEINLINE Tp*` helpers in `winnt.h`
+(from 25607), which are plain writes to the `TP_CALLBACK_ENVIRON` fields (winnt.h 25583-25601). No DLL ever contains
+them, so the `dumpbin` absence is expected behaviour - the earlier "nothing to bind / cannot link" reasoning in D10 was
+WRONG and is superseded by D10-CORRECTION. A wrapper **is** possible; it just cannot use the runtime path, and that
+path fails *silently at run time* rather than at link time: `qor_pp_useswinapi` -> `Kernel32::GetProcAddress` returns
+null, then `Library::Call`/`voidCall` throw "Missing library function." (library.h:58, :80).
+**Now implemented**: `library.h` gained `Library::inlineCall` / `voidInlineCall` (same `__try/__except` with
+`ExceptionFilterFunction(GetExceptionInformation())`, no `DefProc`, no null test) and `kernel32.h` gained
+`#define qor_pp_usesinlineapi( _NAME )` beside `qor_pp_useswinapi`, expanding to nothing. `kthreadpool.cpp` gained the
+six wrappers, each `qor_pp_fcontext` + `Win32ErrorHandler` + marker + `Library::voidInlineCall` with **explicit** template
+arguments, e.g. `Library::voidInlineCall< ::PTP_CALLBACK_ENVIRON >( ::InitializeThreadpoolEnvironment, pcbe )` - the `::`
+prefix selects the global SDK definition rather than the QOR member being defined, which is what keeps it from recursing.
+**Declared gap closed**: `SetThreadpoolCallbackPriority` and `SetThreadpoolCallbackPersistent` are now declared in
+`kernel32.h`, alphabetically and marked header-inline, but deliberately left unwrapped - the SDK defines Persistent only
+inside `WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)` and Priority needs `_WIN32_WINNT >= _WIN32_WINNT_WIN7`, so
+wiring them into a library that also builds for other WINAPI_FAMILY configurations is the open decision for review.
+**Verified (26 Oct 2026)**: probe `tmp/_tmp_inline_probe_v2.cpp` -> `tmp/_tmp_probe_v2.log` exit 0, 0 errors, 0 warnings,
+no undefined `Threadpool`/`Tp*` externals. Audit rebuilt as `tmp/_tmp_audit8.exe` (the two names added to its
+`doc_nonexport` set) -> `tmp/_tmp_audit_v8.txt` `implemented=368 header_inline_nonexport=2 missing=0 total=370`.
+`winqor_api_kernel` rebuilt exit 0 with 0 error lines in `tmp/_tmp_kernel_build_d11b.log`; `dumpbin /linksymbols` on the
+fresh `kthreadpool.obj` lists **zero** undefined `Threadpool` externals while `dumpbin /symbols` shows the six SDK names as
+defined local symbols and the six `qor::win::api::Kernel32` wrappers as defined public symbols - no import, no DLL
+dependency. Executor quirks stay recorded in `.clinerules/tool-execution.md`; add to that: the audit needs **relative
+forward-slash impl paths**, absolute backslash paths load as zero impl tokens and make every name read MISSING.
+**Next**: the user decision on the two unwrapped names, then extend the (E)/(I) audit classification to the other api_layer
+DLL libraries.
+
+**Last updated:** 26 Oct 2026 (kernel audit above) - prior 22 Oct 2026: **qor_mime COMPLETE**: plan steps 0-17 done and verified green
 (`QORTestMIME.exe` `[TOTAL](18/18) [OK](18/18)`, exit 0), and its plan file retired out of
 `memory-bank/` to `docs/archive/qor_mime_plan.md`. The JSON generator increment is likewise
 **complete**: pipeline integration `[OK](36/36)` in `QORTestJSONGenerator`, the parse -> generate

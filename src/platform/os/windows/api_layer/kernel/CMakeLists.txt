@@ -3,7 +3,8 @@ set(target winqor_api_kernel)
 
 add_library(${target} SHARED winqor_api_kernel.cpp kconsole.cpp  kerrorhandling.cpp kdll.cpp khandle.cpp kio.cpp sync.cpp kfile.cpp
 kpipe.cpp errorhandler.cpp process.cpp strings.cpp
-kheap.cpp)
+kheap.cpp kenviron.cpp kfileapi.cpp kfind.cpp kfiber.cpp kjob.cpp knuma.cpp kprocess.cpp kthread.cpp kthreadpool.cpp ktls.cpp)
+
 
 include ("${CMAKE_SOURCE_DIR}/cmake/updatebuildnumber.cmake")
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
