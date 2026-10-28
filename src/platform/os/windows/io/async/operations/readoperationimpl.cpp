@@ -16,7 +16,7 @@ namespace qor { namespace io { namespace async { namespace win {
 		DWORD numberOfBytesRead = 0;
         BOOL ok = qor::win::api::Kernel32::ReadFile(
             m_file->m_handle,
-            m_buffer.buf,
+            const_cast<char*>(m_buffer.buf),
             numberOfBytesToRead,
             &numberOfBytesRead,
             operation.get_overlapped());

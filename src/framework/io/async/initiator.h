@@ -31,8 +31,8 @@ namespace qor { namespace io{ namespace async{
         virtual IOTask Listen(io::Descriptor* ioDescriptor, int backlog);
         virtual IOTask Accept(io::Descriptor* ioDescriptor, const io::network::Address& Address, io::network::Socket* Socket);
         virtual IOTask Read(io::Descriptor* ioDescriptor, byte* buffer, size_t len, long offset);
-        virtual IOTask Write(io::Descriptor* ioDescriptor, byte* buffer, size_t len, long offset);
-        virtual IOTask Send(io::Descriptor* ioDescriptor, const byte* buffer, size_t len, int flags);
+        virtual IOTask Write(io::Descriptor* ioDescriptor, const byte* buffer, const size_t len, const long offset);
+        virtual IOTask Send(io::Descriptor* ioDescriptor, const byte* buffer, const size_t len, const int flags);
         virtual IOTask Recv(io::Descriptor* ioDescriptor, byte* buffer, size_t len);
         virtual IOTask Shutdown(io::Descriptor* ioDescriptor, int how);
     };

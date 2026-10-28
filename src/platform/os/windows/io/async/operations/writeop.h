@@ -17,7 +17,7 @@ namespace qor { namespace io { namespace async { namespace win {
 	{
 	public:
 
-		WriteOperationImpl(io::Descriptor* s, void* buffer, size_t byteCount, long offset) noexcept
+		WriteOperationImpl(io::Descriptor* s, const byte* buffer, const size_t byteCount, const long offset) noexcept
 			: m_file(s)
 			, m_buffer(buffer, byteCount){ }
 
@@ -37,7 +37,7 @@ namespace qor { namespace io { namespace async { namespace win {
 
 	public:
 
-		WriteOperation(io::Descriptor* s, void* buffer, size_t byteCount, long offset) noexcept
+		WriteOperation(io::Descriptor* s, const byte* buffer, const size_t byteCount, const long offset) noexcept
 			: m_impl(s, buffer, byteCount, offset){ }
 
 	private:
@@ -54,7 +54,7 @@ namespace qor { namespace io { namespace async { namespace win {
 
 	public:
 
-		WriteOperationCancellable(io::Descriptor* s, void* buffer, std::size_t byteCount, long offset,
+		WriteOperationCancellable(io::Descriptor* s, const byte* buffer, const std::size_t byteCount, const long offset,
 			CancellationToken&& ct) noexcept
 			: win32_overlapped_operation_cancellable<WriteOperationCancellable>(std::move(ct))
 			, m_impl(s, buffer, byteCount, offset) { }

@@ -14,12 +14,12 @@ namespace qor { namespace io { namespace async { namespace win {
 	{
 		constexpr wsabuf() noexcept : len(0) , buf(nullptr) { }
 
-		constexpr wsabuf(void* ptr, std::size_t size)
+		constexpr wsabuf(const void* ptr, const std::size_t size)
 			: len(size <= ulong_t(-1) ? ulong_t(size) : ulong_t(-1))
-			, buf(static_cast<char*>(ptr)){ }
+			, buf(static_cast<const char*>(ptr)){ }
 
 		ulong_t len;
-		char* buf;
+		const char* buf;
 	};
 
 }}}}//qor::io::async::win

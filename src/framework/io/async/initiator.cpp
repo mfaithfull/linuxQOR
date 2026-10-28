@@ -43,14 +43,14 @@ namespace qor { namespace io{ namespace async{
         co_return Result{ .status_code = -1, .ioObject = nullptr};
     }
 
-    IOTask Initiator::Write(io::Descriptor* /*ioDescriptor*/, byte* /*buffer*/, size_t /*len*/, long /*offset*/)
+    IOTask Initiator::Write(io::Descriptor* /*ioDescriptor*/, const byte* /*buffer*/, const size_t /*len*/, const long /*offset*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);
         co_return Result{ .status_code = -1, .ioObject = nullptr};
     }
 
-    IOTask Initiator::Send(io::Descriptor* /*ioDescriptor*/, const byte* /*buffer*/, size_t /*len*/, int /*flags*/)
+    IOTask Initiator::Send(io::Descriptor* /*ioDescriptor*/, const byte* /*buffer*/, const size_t /*len*/, const int /*flags*/)
     {
         qor_pp_ofcontext;
         fatal(Error_empty_base_called);
