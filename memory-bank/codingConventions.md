@@ -38,11 +38,27 @@ See `memory-bank/systemPatterns.md` for the layering rules. In short: `src/confi
 - Consumers force a specific implementation with `qor_pp_module_requires(IName)`.
 - A QOR lib target normally uses a `QOR_<MODULE>` PRIVATE compile definition and a file-static `Library` singleton.
 
+### How `qor_pp_module_interface( _X )` resolves
+
+`_X` is the module token `QOR_<NAME>` (uppercase, matching the owning target's compile definition). It is not a decorator - it selects the linkage marker:
+
+```cpp
+// src/configuration/configuration.h:33-34
+#define qor_pp_module_interface( _X ) qor_pp_if(qor_pp_is_empty(_X), qor_pp_import, qor_pp_export)
+#define qor_pp_module_external( _X )  qor_pp_if(qor_pp_is_empty(_X), qor_pp_export, qor_pp_import) // inverted/client view
+```
+
+- `_X` empty/undefined -> `qor_pp_import`. `_X` defined (non-empty) -> `qor_pp_export`. So one header reads as an **export** in the library that owns the module and as an **import** everywhere else.
+- `_X` is defined in the **exporting library's** `CMakeLists.txt`: `target_compile_definitions(${target} PRIVATE QOR_<NAME> qor_pp_ver_major=... ...)` (155 module targets do this; e.g. `src/components/data/pipeline/filters/linereader/CMakeLists.txt:8`). Consumers (tests, examples, other modules) never define it and never inherit it - no module publishes `QOR_<NAME>` as `INTERFACE`/`PUBLIC`.
+- The marker spelling is toolchain-specific: MSVC `__declspec(dllexport)` / `__declspec(dllimport)` (`src/platform/compiler/msvc/msvc.h:40-41`); GCC/Clang `__attribute__((__visibility__("default")))` / nothing (`gcc/gcc.h:21-22`, `clang/clang.h:31-32`). `cmake/flags.cmake` compiles GCC/Clang with `-fvisibility=hidden`, so there the export marker is what makes a symbol visible across the `.so` boundary at all.
+- `qor_pp_module_interface_gcc( _X )` (`configuration.h:39-45`) is the class-level variant: forwards to `qor_pp_module_interface(_X)` on GCC/Clang, expands to **nothing** on MSVC - on MSVC the per-member markers carry the export.
+
 ## Memory management
 
 - QOR-style code does not use raw `new`/`delete`, `unique_ptr`, or `shared_ptr`.
 - Create objects with `new_ref<T>(args...)`; arrays use `new_array_ref(count, args...)`.
 - Construction stages: `instancer_of<T>::type::Instance` -> `factory_of<T>::type::Construct` -> `source_of<T>::type` -> `allocator_of<T>::type`.
+- ref_of<T>::type resolves to the type that will be returned by new_ref<T>
 - Store references as members using declared ref traits such as `qor_pp_declare_ref_of`.
 
 ## Tests

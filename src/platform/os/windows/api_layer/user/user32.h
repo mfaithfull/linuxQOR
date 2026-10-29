@@ -63,7 +63,7 @@ typedef struct _CONSOLE_CARET_INFO
 
 namespace qor { namespace win { namespace api {
 
-	class qor_pp_module_interface(QOR_WINAPI) User32
+	class qor_pp_module_interface(QOR_WINAPIUSER) User32
 	{
 	public:
 
@@ -251,14 +251,14 @@ namespace qor { namespace win { namespace api {
         static BOOL SetMenuItemInfoT(HMENU hMenu, UINT uItem, BOOL fByPosition, LPMENUITEMINFO lpmii);
         static BOOL TrackPopupMenu(HMENU hMenu, UINT uFlags, int x, int y, int nReserved, HWND hWnd, HWND prcRect);
         static BOOL TrackPopupMenuEx(HMENU hmenu, UINT fuFlags, int x, int y, HWND hwnd, ::LPTPMPARAMS lptpm);
-        
+
         //Process and Thread functions
         static BOOL AttachThreadInput(DWORD idAttach, DWORD idAttachTo, BOOL fAttach);
         static DWORD GetGuiResources(HANDLE hProcess, DWORD uiFlags);
         static BOOL IsWow64Message(void);
         static BOOL UserHandleGrantAccess(HANDLE hUserHandle, HANDLE hJob, BOOL bGrant);
         static DWORD WaitForInputIdle(HANDLE hProcess, DWORD dwMilliseconds);
-        
+
         //Painting functions
         static HDC BeginPaint(HWND hwnd, ::LPPAINTSTRUCT lpPaint);
         static BOOL DrawAnimatedRects(HWND hwnd, int idAni, CONST::RECT* lprcFrom, CONST::RECT* lprcTo);
@@ -317,11 +317,11 @@ namespace qor { namespace win { namespace api {
         static LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, LPARAM lParam);
         static HHOOK SetWindowsHookExT(int idHook, HOOKPROC lpfn, HINSTANCE hMod, DWORD dwThreadId);
         static BOOL UnhookWindowsHookEx(HHOOK hhk);
-        
+
         //Window Procedure functions
         static LRESULT CallWindowProcT(WNDPROC lpPrevWndFunc, HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
         static LRESULT DefWindowProcT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
-        
+
         //DC functions
         static LONG ChangeDisplaySettingsT(::LPDEVMODE lpDevMode, DWORD dwflags);
         static LONG ChangeDisplaySettingsExT(LPCTSTR lpszDeviceName, ::LPDEVMODE lpDevMode, HWND hwnd, DWORD dwflags, LPVOID lParam);
@@ -331,7 +331,7 @@ namespace qor { namespace win { namespace api {
         static HDC GetDC(HWND hWnd);
         static HDC GetDCEx(HWND hWnd, HRGN hrgnClip, DWORD flags);
         static int ReleaseDC(HWND hWnd, HDC hDC);
-        
+
         //String functions
         LPSTR CharLowerA(LPSTR lpsz);
         LPWSTR CharLowerW(LPWSTR lpwsz);
@@ -367,17 +367,17 @@ namespace qor { namespace win { namespace api {
         BOOL OemToCharBuffW(LPCWSTR lpwszSrc, LPWSTR lpwszDst, DWORD cchDstLength);
         int wvsprintfA(LPSTR lpOutput, LPCSTR lpFmt, va_list arglist);
         int wvsprintfW(LPWSTR lpOutput, LPCWSTR lpFmt, va_list arglist);
-        
+
         //Button Control functions
         BOOL CheckDlgButton(HWND hDlg, int nIDButton, UINT uCheck);
         BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton, int nIDLastButton, int nIDCheckButton);
         UINT IsDlgButtonChecked(HWND hDlg, int nIDButton);
-        
+
         //Coordinate Transform functions
         static BOOL ClientToScreen(HWND hWnd, ::LPPOINT lpPoint);
         static BOOL ScreenToClient(HWND hWnd, ::LPPOINT lpPoint);
         static int MapWindowPoints(HWND hWndFrom, HWND hWndTo, ::LPPOINT lpPoints, UINT cPoints);
-        
+
         //Cursor functions
         static BOOL ClipCursor(const RECT* lpRect);
         static HCURSOR CopyCursorT(HCURSOR pcur);
@@ -415,14 +415,14 @@ namespace qor { namespace win { namespace api {
         static BOOL SetUserObjectInformationT(HANDLE hObj, int nIndex, PVOID pvInfo, DWORD nLength);
         static BOOL SwitchDesktop(HDESK hDesktop);
         static BOOL EnumDesktopWindows(HDESK hDesktop, ::WNDENUMPROC lpfn, LPARAM lParam);
-        
+
         //Keyboard Accelerator functions
         static int CopyAcceleratorTableT(HACCEL hAccelSrc, LPACCEL lpAccelDst, int cAccelEntries);
         static HACCEL CreateAcceleratorTableT(LPACCEL lpaccl, int cEntries);
         static BOOL DestroyAcceleratorTable(HACCEL hAccel);
         static HACCEL LoadAcceleratorsT(HINSTANCE hInstance, LPCTSTR lpTableName);
         static int TranslateAcceleratorT(HWND hWnd, HACCEL hAccTable, LPMSG lpMsg);
-        
+
         //Icon functions
         static HICON CopyIcon(HICON hIcon);
         static HICON CreateIcon(HINSTANCE hInstance, int nWidth, int nHeight, BYTE cPlanes, BYTE cBitsPixel, const BYTE* lpbANDbits, const BYTE* lpbXORbits);
@@ -438,7 +438,7 @@ namespace qor { namespace win { namespace api {
         static int LookupIconIdFromDirectory(PBYTE presbits, BOOL fIcon);
         static int LookupIconIdFromDirectoryEx(PBYTE presbits, BOOL fIcon, int cxDesired, int cyDesired, UINT Flags);
         static UINT PrivateExtractIconsT(LPCTSTR lpszFile, int nIconIndex, int cxIcon, int cyIcon, HICON* phicon, UINT* piconid, UINT nIcons, UINT flags);
-        
+
         //Resource functions
         static HANDLE CopyImage(HANDLE hImage, UINT uType, int cxDesired, int cyDesired, UINT fuFlags);
         static HANDLE LoadImageT(HINSTANCE hinst, LPCTSTR lpszName, UINT uType, int cxDesired, int cyDesired, UINT fuLoad);
@@ -455,7 +455,7 @@ namespace qor { namespace win { namespace api {
         static BOOL SetRectEmpty(::LPRECT lprc);
         static BOOL SubtractRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
         static BOOL UnionRect(::LPRECT lprcDst, CONST::RECT* lprcSrc1, CONST::RECT* lprcSrc2);
-        
+
         //Caret functions
         static BOOL CreateCaret(HWND hWnd, HBITMAP hBitmap, int nWidth, int nHeight);
         static BOOL DestroyCaret(void);
@@ -490,7 +490,7 @@ namespace qor { namespace win { namespace api {
         static LRESULT SendDlgItemMessageT(HWND hDlg, int nIDDlgItem, UINT Msg, WPARAM wParam, LPARAM lParam);
         static BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem, UINT uValue, BOOL bSigned);
         static BOOL SetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPCTSTR lpString);
-        
+
         //Multi Document Interface functions
         static HWND CreateMDIWindowT(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle, int X, int Y, int nWidth, int nHeight, HWND hWndParent, HINSTANCE hInstance, LPARAM lParam);
         static LRESULT DefFrameProcT(HWND hWnd, HWND hWndMDIClient, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -532,7 +532,7 @@ namespace qor { namespace win { namespace api {
         BOOL ImpersonateDdeClientWindow(HWND hWndClient, HWND hWndServer) const;
         LPARAM ReuseDDElParam(LPARAM lParam, UINT msgIn, UINT msgOut, UINT_PTR uiLo, UINT_PTR uiHi) const;
         BOOL UnpackDDElParam(UINT msg, LPARAM lParam, PUINT_PTR puiLo, PUINT_PTR puiHi) const;
-        
+
         //Raw Input functions
         LRESULT DefRawInputProc(PRAWINPUT* paRawInput, INT nInput, UINT cbSizeHeader);
         UINT GetRawInputBuffer(PRAWINPUT pData, PUINT pcbSize, UINT cbSizeHeader);
@@ -541,7 +541,7 @@ namespace qor { namespace win { namespace api {
         UINT GetRawInputDeviceList(PRAWINPUTDEVICELIST pRawInputDeviceList, PUINT puiNumDevices, UINT cbSize);
         UINT GetRegisteredRawInputDevices(PRAWINPUTDEVICE pRawInputDevices, PUINT puiNumDevices, UINT cbSize);
         BOOL RegisterRawInputDevices(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize);
-        
+
         //List Box functions
         int DlgDirList(HWND hDlg, LPTSTR lpPathSpec, int nIDListBox, int nIDStaticPath, UINT uFileType);
         BOOL DlgDirSelectEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDListBox);
@@ -551,7 +551,7 @@ namespace qor { namespace win { namespace api {
         static int DlgDirListComboBox(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype);
         static BOOL DlgDirSelectComboBoxEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox);
         static BOOL GetComboBoxInfo(HWND hwndCombo, PCOMBOBOXINFO pcbi);
-        
+
         //Mouse functions
         static BOOL DragDetect(HWND hwnd, ::POINT pt);
         static HWND GetCapture(void);
@@ -563,13 +563,13 @@ namespace qor { namespace win { namespace api {
         static BOOL SetDoubleClickTime(UINT uInterval);
         static BOOL SwapMouseButton(BOOL fSwap);
         static BOOL TrackMouseEvent(LPTRACKMOUSEEVENT lpEventTrack);
-                
+
         //Font and Text functions
         static int DrawTextT(HDC hDC, LPCTSTR lpString, int nCount, ::LPRECT lpRect, UINT uFormat);
         static int DrawTextExT(HDC hdc, LPTSTR lpchText, int cchText, ::LPRECT lprc, UINT dwDTFormat, ::LPDRAWTEXTPARAMS lpDTParams);
         static DWORD GetTabbedTextExtentT(HDC hDC, LPCTSTR lpString, int nCount, int nTabPositions, CONST LPINT lpnTabStopPositions);
         static LONG TabbedTextOutT(HDC hDC, int X, int Y, LPCTSTR lpString, int nCount, int nTabPositions, CONST::LPINT lpnTabStopPositions, int nTabOrigin);
-        
+
         //ScrollBar functions
         static BOOL EnableScrollBar(HWND hWnd, UINT wSBFlags, UINT wArrows);
         static BOOL GetScrollBarInfo(HWND hwnd, LONG idObject, ::PSCROLLBARINFO psbi);
@@ -583,28 +583,28 @@ namespace qor { namespace win { namespace api {
         static int SetScrollPos(HWND hWnd, int nBar, int nPos, BOOL bRedraw);
         static BOOL SetScrollRange(HWND hWnd, int nBar, int nMinPos, int nMaxPos, BOOL bRedraw);
         static BOOL ShowScrollBar(HWND hWnd, int wBar, BOOL bShow);
-        
+
         //Monitor functions
         static BOOL EnumDisplayMonitors(HDC hdc, LPCRECT lprcClip, ::MONITORENUMPROC lpfnEnum, LPARAM dwData);
         static BOOL GetMonitorInfoT(HMONITOR hMonitor, ::LPMONITORINFO lpmi);
         static HMONITOR MonitorFromPoint(::POINT pt, DWORD dwFlags);
         static HMONITOR MonitorFromRect(LPCRECT lprc, DWORD dwFlags);
         static HMONITOR MonitorFromWindow(HWND hwnd, DWORD dwFlags);
-                
+
         //Window Properties functions
         static int EnumPropsT(HWND hWnd, PROPENUMPROC lpEnumFunc);
         static int EnumPropsExT(HWND hWnd, PROPENUMPROCEX lpEnumFunc, LPARAM lParam);
         static HANDLE GetPropT(HWND hWnd, LPCTSTR lpString);
         static HANDLE RemovePropT(HWND hWnd, LPCTSTR lpString);
         static BOOL SetPropT(HWND hWnd, LPCTSTR lpString, HANDLE hData);
-        
+
         //System Shutdwown functions
         static BOOL ExitWindowsEx(UINT uFlags, DWORD dwReason);
         static BOOL LockWorkStation(void);
         static BOOL ShutdownBlockReasonCreate(HWND hWnd, LPCWSTR pwszReason);
         static BOOL ShutdownBlockReasonDestroy(HWND hWnd);
         static BOOL ShutdownBlockReasonQuery(HWND hWnd, LPWSTR pwszBuff, DWORD* pcchBuff);
-                
+
         //Filled Shapes functions
         static int FillRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr);
         static int FrameRect(HDC hDC, CONST::RECT* lprc, HBRUSH hbr);
@@ -650,10 +650,10 @@ namespace qor { namespace win { namespace api {
         int GetSystemMetrics(int nIndex);
         BOOL SetSysColors(int cElements, const INT* lpaElements, const COLORREF* lpaRgbValues);
         BOOL SystemParametersInfo(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni);
-        
+
         //Brush functions
         static HBRUSH GetSysColorBrush(int nIndex);
-        
+
         //Authorization functions
         BOOL GetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSD, DWORD nLength, LPDWORD lpnLengthNeeded);
         BOOL SetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSID);

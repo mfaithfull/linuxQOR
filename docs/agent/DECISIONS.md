@@ -225,3 +225,40 @@ duplicate definitions, and `impl not exported` empty against `dumpbin /exports` 
 `SHTestTokenMembership` is exactly the implemented set.
 
 
+## D13: A/W binding spelling for export-bound api_layer wrappers - RULE (29 Oct 2026)
+Rule (user decision, applies to every `user/` translation unit as it is reviewed; `accelerator.cpp` already
+converted): a wrapper binds with `qor_pp_useswinapiAW(<mod>, Stem)` whenever the SDK has an A/W family for
+`Stem`, and with the bare `qor_pp_useswinapi(<mod>, Stem)` ONLY where the entry point is a single export with no
+A/W variants (`DestroyAcceleratorTable`, `ShowWindow`, `GetComboBoxInfo`, `CallNextHookEx`, ...).
+`qor_pp_useswinapiAW` (`kernel32.h:51-53`) already exists and maps to `Stem##W` under `qor_pp_unicode`; it is
+the spelling that names what `GetProcAddress` is really given, so the source states the binding instead of
+depending on an SDK macro surviving into the binding expression.
+
+Why the bare spelling is unsafe even where it works today - measured on `winqor_api_user`, 29 Oct 2026:
+`_ATXT(_NAME)` inside `qor_pp_useswinapi` (`kernel32.h:50`) is a nested macro call, so `_NAME` is macro-expanded
+before it is stringized. `cl /EP` on the real TU proves it - `qor_pp_useswinapi(user32, CreateAcceleratorTable)`
+preprocesses to `Kernel32::GetProcAddress(..., "CreateAcceleratorTableW")`. The SDK's `Stem -> StemW` macro is
+what selects the entry point, not the source text. `UNICODE`/`_UNICODE` is set from `qor_pp_unicode` at
+`kernel32.h:7-10`, so the QOR switch and the SDK switch are coupled only through include order (`user32.h:7`
+pulls `kernel32.h` in before `<windows.h>`).
+
+Two failure classes the bare spelling hides, both confirmed against the live `C:\Windows\System32\user32.dll`
+export table (`tmp/_tmp_user32_exports.txt`, 1018 names) plus a `GetModuleHandleW`/`GetProcAddress` probe
+(`tmp/_tmp_name_resolve_probe.cpp` run by `tmp/_tmp_run_probe.bat`):
+  (a) `user32.h:9-17` `#undef`s nine stems (`RegisterDeviceNotification`, `WinHelp`, `SystemParametersInfo`,
+      `GetRawInputDeviceInfo`, `DlgDirList`, `DlgDirSelectEx`, `DlgDirListComboBox`, `DlgDirSelectComboBoxEx`,
+      `LoadBitmap`). After the `#undef` the literal is what resolves, and the literal is NOT exported while the
+      `W` is (probe: `WinHelp` MISSING / `WinHelpW` RESOLVED, and the same shape for all nine). A bare binding of
+      any of them throws `"Missing library function."` at run time - `combobox.cpp:20,27` is exactly this today.
+  (b) a binding that carries the QOR wrapper's own `T` suffix stringizes literally: `GetDlgItemTextT`,
+      `VkKeyScanT`, `VkKeyScanExT`, `GetKeyboardLayoutNameT` - none exported, so those throw too
+      (`dialog.cpp:89`, `keyboard.cpp:82,243,250`).
+Audit corollary: grepping the source spelling is not evidence about run-time binding. A list of "bindings to
+names absent from the export table" has to come from `cl /EP` output of the TU, not from the text. The earlier
+`tmp/_tmp_audit_report.txt` section A is wrong for every name whose SDK A/W macro is still in scope
+(`CreateAcceleratorTable`, `LoadAccelerators`, `MessageBox`, `TranslateAccelerator`, `SendMessage`, ... all bind).
+
+Module-token case is cosmetic, not a defect: `_TXT(User32)` -> `L"User32"` and the module lookup is
+case-insensitive - `GetComboBoxInfo` resolved against `User32`, `USER32` and `user32` alike. `combobox.cpp` /
+`scrollbar.cpp` spelling the token `User32` is a style break to fix in those TUs' own sessions.
+

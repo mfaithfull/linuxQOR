@@ -34,7 +34,7 @@ See `src/qor/dependency.md` for the explicit primary qor dependency chain.
 3. Library -> Module -> Host static-init ordering matters; `qor_host` provides the DI type registry.
 4. `cmake/flags.cmake` is included by every `CMakeLists.txt`; it is the single compiler-flag place.
 5. Windows post-build copies runtime DLL dependencies next to executables; required for tests/examples.
-6. Adding a module: copy an existing module CMakeLists, add its `QOR_<MODULE>` compile definition, export API with `qor_pp_module_interface`, add `Library` singleton, add `purpose.md`.
+6. Adding a module: copy an existing module CMakeLists, add its `QOR_<MODULE>` compile definition, export API with `qor_pp_module_interface`, add `Library` singleton, add `purpose.md`. The compile definition is what flips `qor_pp_module_interface( _X )` from import to export - empty/undefined token -> `qor_pp_import`, defined token -> `qor_pp_export` (`src/configuration/configuration.h:33`); see `memory-bank/codingConventions.md` "How `qor_pp_module_interface( _X )` resolves" for the full rule and its verified caveats.
 7. OS-specific modules split interface and implementation (`qor_filesystem` interface plus `winqor_filesystem` / `linqor_filesystem` implementation, forced by `qor_pp_module_requires`).
 
 ## Pipeline filter pattern
@@ -67,5 +67,6 @@ Each `src/platform/os/windows/api_layer/<lib>` module wraps one system DLL with 
 3. `Win32ErrorHandler _;` runs the exception filter at call sites. `CheckReturn<HRESULT>::TType` / `CheckReturn<BOOL>::TType` raise a `Win32Error` only where zero/false means failure; handle/count/pointer families return raw.
 
 Header-inline variant (D11): if the SDK header defines a `FORCEINLINE` API shim rather than a DLL export, use `qor_pp_usesinlineapi(Name)` plus `Library::inlineCall` / `Library::voidInlineCall`. Call with explicit template arguments and `::` global SDK names, e.g. `Library::voidInlineCall< ::PTP_CALLBACK_ENVIRON >( ::InitializeThreadpoolEnvironment, pcbe )`. Do not bind header-inline entry points through `qor_pp_useswinapi` / `GetProcAddress`.
+A/W spelling (D13): export-bound wrappers name the variant explicitly - `qor_pp_useswinapiAW(<dllbase>, Stem)` wherever the SDK has an A/W family, bare `qor_pp_useswinapi` only for entry points that are a single export with no A/W variants. The bare stem is not reliable: `_ATXT(_NAME)` is a nested macro call, so an in-scope SDK `Stem -> StemW` macro is expanded before stringizing and silently picks the entry point; the spelling breaks at run time (`"Missing library function."`) for any stem the module `#undef`s (`user32.h:9-17` removes nine) or where a wrapper's `T` suffix stringizes into the name. Audit bindings from `cl /EP` output of the TU, never from the source text. See `docs/agent/DECISIONS.md` D13 and `src/platform/os/windows/api_layer/user/status.md`.
 
 Audit consequence: an api_layer library that imports its intended system DLL means binding is wrong. A wrapper/header/implementation/export mismatch means either the wrapper set or the audit is wrong; compare both directions.

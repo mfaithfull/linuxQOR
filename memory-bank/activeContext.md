@@ -1,6 +1,35 @@
 # Active Context
 
-Last updated: 27 Oct 2026.
+Last updated: 29 Oct 2026.
+
+## Current focus: winqor_api_user source review (one TU per session)
+
+- Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
+  correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
+  per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
+- The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
+  carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
+  (G1-G6), eleven open items (U1-U11) and the tooling under `tmp/`.
+- Session 1 (29 Oct 2026) reviewed `accelerator.cpp`: 5 wrappers, all signatures and exports correct; fixed
+  the three bare-stem A/W bindings to the explicit `qor_pp_useswinapiAW` form (verified by `cl /EP` name
+  resolution and a `/W4` compile at exit 0, and the whole library still compiles 38/38 at `/W4` exit 0).
+  Nothing else in that TU was changed.
+- **D13 adopted (user, 29 Oct 2026, `docs/agent/DECISIONS.md`):** explicit `qor_pp_useswinapiAW` wherever the
+  SDK has an A/W family, bare `qor_pp_useswinapi` only for single exports. Apply it in each TU as it is
+  reviewed. Folder-wide pre-scan in status.md lists P1 (six bindings that cannot resolve at run time:
+  `keyboard.cpp:82,243,250`, `dialog.cpp:89`, `combobox.cpp:20,27`) and P2 (seven macro-dependent bindings to
+  convert). Next TU in the queue: `accessibility.cpp`.
+
+- Corrections to earlier audit assumptions, all measured (see status.md G1-G6): the SDK A/W macro expands
+  before `_ATXT()` stringizes, so most bare stems already bind the W export and the `tmp/_tmp_audit_report.txt`
+  section-A "runtime failures" list is largely false positives; the nine stems `user32.h:9-17` `#undef`s are
+  the ones whose bare spelling really is missing; module-token case (`User32`) is cosmetic; `user32.dll` is
+  not mapped in a bare console process; `qor_pp_parameter_checking`/`qor_pp_yes` are defined nowhere, so
+  `CheckReturn<...>::TType` is always the checked type.
+- Open decisions the user has not yet made: whether to adopt the `Win32ErrorHandler _;` + `CheckReturn`
+  pattern across `user/` (U1/U2), what to do with `hook.cpp` which is absent from `add_library` (U3), and
+  what to do with the ~101 non-static `user32.h` declarations that no `.cpp` defines (U4).
+
 
 ## Current focus: Windows api_layer
 

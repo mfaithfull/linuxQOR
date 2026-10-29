@@ -1,4 +1,3 @@
-project(QOR VERSION 0.5.0 DESCRIPTION "QOR Win32 User Module" LANGUAGES CXX)
 set(target winqor_api_user)
 
 add_library(${target} SHARED winqor_api_user.cpp
@@ -10,6 +9,7 @@ brush.cpp
 console.cpp
 cursor.cpp
 help.cpp
+hook.cpp
 icon.cpp
 ime.cpp
 message.cpp
