@@ -45,17 +45,19 @@ TUs still to be reviewed:
 | # | TU | Wrappers | Verdict | Action taken |
 |---|---|---|---|---|
 | 1 | `accelerator.cpp` | 5 | 0 correctness bugs, 3 fragility/consistency defects | Fixed: bare-stem bindings on the three A/W families made explicit `qor_pp_useswinapiAW` (29 Oct 2026); conforms to D13 |
-| 2..37 | not started | | | |
+| 2 | `accessibility.cpp` + `timer.cpp` | 1 + 2 | 0 correctness/UB defects; 1 file-organisation defect (the two files held each other's bodies), 2 style nits | Fixed: swapped the bodies so each file matches its `user32.h` section (was U12), `( pFunc … )` -> `(pFunc …)` at both call sites, added single-export comments. All three bindings confirmed correct-as-written by `cl /EP` + export table; no A/W conversion needed |
+| 3..36 | not started | | | |
 
-**Next session: `accessibility.cpp`** (alphabetical from here). Take the pre-scan P1/P2 entries into account
-only when their owning TU comes up; do not fix other TUs outside their own session.
+**Next session: `brush.cpp`** (alphabetical from here; `accelerator.cpp`, `accessibility.cpp`, `timer.cpp` done
+29 Oct 2026). Take the pre-scan P1/P2 entries into account only when their owning TU comes up; do not fix other
+TUs outside their own session.
 
 
-Remaining queue (alphabetical, as built by `CMakeLists.txt`): accessibility, brush, caret, clipboard,
-combobox, console, coordtransform, cursor, desktop, devicecontext, devicemanagement, dialog, errorhandling,
-filledshapes, help, icon, ime, keyboard, mdi, menu, message, monitor, mouse, painting, processthread,
-rectangle, resource, scrollbar, systemshutdown, text, timer, window, windowclass, windowprocedure,
-windowproperties, winqor_api_user (module glue), plus `hook.cpp` which is not in the build (see item U3).
+Remaining queue (35 TUs, alphabetical; `accelerator.cpp`, `accessibility.cpp`, `timer.cpp` done): brush, caret,
+clipboard, combobox, console, coordtransform, cursor, desktop, devicecontext, devicemanagement, dialog,
+errorhandling, filledshapes, help, hook, icon, ime, keyboard, mdi, menu, message, monitor, mouse, painting,
+processthread, rectangle, resource, scrollbar, systemshutdown, window, windowclass, windowprocedure,
+windowproperties, winqor_api_user (module glue). `hook.cpp` is now in the build (see U3).
 
 ## Review method (validated on accelerator.cpp)
 
@@ -123,11 +125,12 @@ Full-library compile after the session-1 edit: 38/38 TUs, `/W4`, exit 0, no diag
   (`errorhandling.cpp`, `processthread.cpp`); `shell`/`kernel` apply `CheckReturn<BOOL, BoolCheck>` to every
   `BOOL` and `CheckReturn<HRESULT, LongSuccessCheck>` to every `HRESULT`. With G6 in the way, this is a
   behaviour decision, not a typo.
-- **U3 - `hook.cpp` is not in the build.** `add_library` lists 37 sources, the folder holds 38; `hook.cpp`
-  (`CallMsgFilterT`, `CallNextHookEx`, `SetWindowsHookExT`, `UnhookWindowsHookEx` - all four declared at
-  `user32.h:316-319`) is never compiled. No caller exists today, so it is dormant, but it is a
-  declaration-without-definition surface. Decide: add to `add_library` or delete the TU and the four
-  declarations.
+- **U3 - `hook.cpp` build-list status: RESOLVED (user commit `05d3ca2f`, 29 Oct 2026), review still open.**
+  `add_library` now lists all 38 sources - the earlier "37 of 38" finding was against the pre-commit state.
+  `hook.cpp` compiles standalone at `/W4` exit 0 (measured 29 Oct 2026), so its four wrappers (`CallMsgFilterT`,
+  `CallNextHookEx`, `SetWindowsHookExT`, `UnhookWindowsHookEx` - declared at `user32.h:316-319`) are now linked
+  into the DLL. What remains: the TU is unreviewed (it is back in the queue) and still has no call site in
+  `src`/`examples`/`test`, so it is a live-but-unused surface rather than a declaration-without-definition.
 - **U4 - `user32.h` declares about 101 non-static members that no `.cpp` defines.** The class is documented
   as a stateless all-static API surface (`docs/agent/windows_code_conventions.md`), yet whole sections are
   plain instance members: String functions (`:336-369`), Button control (`:372-374`), DDE (`:505-530`, some
@@ -139,11 +142,17 @@ Full-library compile after the session-1 edit: 38/38 TUs, `/W4`, exit 0, no diag
 - **U5 - the binding is cached for the process lifetime including failure.** `qor_pp_useswinapi` expands to
   a function-local `static const Library::DefProc pFunc = ...`; the first call wins forever. A process that
   has not mapped `user32.dll` yet (G5), or a transiently missing name, is poisoned permanently.
-- **U6 - `Library::DefProc` is `int(*)(void)` `__cdecl` (`library.h:37`) and every entry point is
-  reinterpreted to a `__cdecl` signature before being called.** The real APIs are `WINAPI` (`__stdcall`).
-  Harmless on the only configured platform (x64 - `CMakeSettings.json` has one `msvc_x64_x64` configuration),
-  UB with stack corruption on any Win32/x86 build. Fix is a calling-convention-aware `DefProc` plus a
-  `WINAPI`-qualified `fPtr` in `Call`/`voidCall`.
+- **U6 - calling-convention mismatch in the call path (half fixed in the working tree, uncommitted).** Measured
+  29 Oct 2026: `library.h:16` now reads `typedef int(__stdcall *DefProc)(void);` - an uncommitted working-tree
+  edit (`git status`: `M src/platform/os/windows/api_layer/library.h`, SPDX header swap plus this typedef;
+  `returncheck.h` is modified the same way). The committed text was `int(*)(void)` (`__cdecl`). The other half
+  of the defect is untouched: `Call` builds `typedef ret(*fPtr)(MethodArgs...)` (`library.h:33`) and `voidCall`
+  builds `void(*fPtr)(MethodArgs...)` (`:55`) - both default `__cdecl` - then reinterprets the `__stdcall`
+  `DefProc` through them and calls, so the caller side still uses the wrong convention for a `WINAPI`
+  (`__stdcall`) entry point. Inert on x64, the only configured platform (`CMakeSettings.json`: one
+  `msvc_x64_x64` profile); UB with stack corruption on any Win32/x86 build. Remaining fix: `WINAPI`-qualify
+  `fPtr` in `Call`/`voidCall`. Line numbers re-measured against the working tree: throw at `:39` and `:71`,
+  swallow-and-default-return at `:41-49` (`Call`) / `:61-67` (`voidCall`).
 - **U7 - SEH faults are swallowed into a default return.** `Call` catches everything and returns `ret _{}`
   (`library.h:62-70`), i.e. `0`/`nullptr`, which for most of this library is indistinguishable from a
   legitimate zero (see U2). The `serious(...)` report is the only trace.
@@ -163,6 +172,63 @@ Full-library compile after the session-1 edit: 38/38 TUs, `/W4`, exit 0, no diag
   anywhere in `src`). `resource.cpp:23` `User32::LoadImageT` is qualified correctly. One-token fix
   (`User32::CopyImage`), to be applied in that TU's session. Bindings there are otherwise sound:
   `CopyImage` is a single export with no A/W family (bare is right), `LoadImage` uses AW -> `LoadImageW` (yes).
+
+- **U12 - `accessibility.cpp` and `timer.cpp` held each other's wrappers - FIXED 29 Oct 2026 (session 2).**
+  Before the fix, `accessibility.cpp` defined only `KillTimer`/`SetTimer` (`user32.h:667-669` "//Timer
+  functions") while `timer.cpp` defined only `NotifyWinEvent` (`user32.h:661-665` "//Active Accessibility
+  functions") - a transposition against the folder convention of one file per `user32.h` section (`brush.cpp` =
+  "Brush functions", `caret.cpp` = "Caret functions", `monitor.cpp` = "Monitor functions"). The bodies were
+  swapped so each file now matches its name and its header section. Zero behaviour change: both TUs were already
+  in `add_library`, all three wrappers are live from `ui/gui/controllers/windowcontroller.cpp:800/:805/:810`, and
+  no header, export name or `CMakeLists.txt` entry is involved. Verified afterwards: `/EP` shows
+  `accessibility.cpp` -> `"NotifyWinEvent"` and `timer.cpp` -> `"KillTimer"`, `"SetTimer"`; both TUs compile
+  standalone `/W4` exit 0; full library 38/38 exit 0, no diagnostics. Related but still open: the accessibility
+  section's three unimplemented members (`SetWinEventHook`, `UnhookWinEvent`, `IsWinEventHookInstalled`) remain
+  declared-and-undefined (U4).
+
+## accessibility.cpp + timer.cpp - session 2 (29 Oct 2026)
+
+Reviewed together because the two files were transposed - `accessibility.cpp` held the Timer wrappers and
+`timer.cpp` held the accessibility wrapper. The bodies were moved so each file matches the `user32.h` section it
+is named after (U12, now fixed). Three wrappers, three bindings; each pairs exactly with the SDK prototype and
+with a real export, and all three are live.
+
+| Wrapper | Now defined in | SDK prototype (`winuser.h` 10.0.26100) | Resolved binding (`cl /EP`) | Export |
+|---|---|---|---|---|
+| `NotifyWinEvent(DWORD, HWND, LONG, LONG) -> void` | `accessibility.cpp` | `:13728 VOID WINAPI NotifyWinEvent(DWORD, HWND, LONG, LONG)` | `"NotifyWinEvent"` | yes (ordinal 295) |
+| `KillTimer(HWND, UINT_PTR) -> BOOL` | `timer.cpp` | `:7124 BOOL WINAPI KillTimer(HWND, UINT_PTR)` | `"KillTimer"` | yes (ordinal 251) |
+| `SetTimer(HWND, UINT_PTR, UINT, TIMERPROC) -> UINT_PTR` | `timer.cpp` | `:7079 UINT_PTR WINAPI SetTimer(HWND, UINT_PTR, UINT, TIMERPROC)` | `"SetTimer"` | yes (ordinal 372) |
+
+- **All three correct as written - no P1/P2 conversion needed.** `winuser.h` declares each entry point directly;
+  there is no A/W family and no `stem -> stemW` macro for any of them, and `user32.dll` exports only the bare
+  stems (the export table has `KillTimer`/`SetTimer`/`NotifyWinEvent` with no `*A`/`*W` - the only other
+  `*Timer` names are `SetCoalescableTimer` and `RIMOnTimerNotification`). Under D13 the bare
+  `qor_pp_useswinapi` is therefore the right spelling, and the `/EP` expansion confirms the literal name reaches
+  `GetProcAddress`. Same case as session 1's `DestroyAcceleratorTable`; source comments now record it.
+- No `T` suffix on any of the three wrappers - correct, since none has an A/W family.
+- Signature match is exact against the SDK for declaration and definition alike (`user32.h:665` `NotifyWinEvent`,
+  `:668-669` the Timer pair - all three `static`); `Library::Call`/`voidCall` template arguments match the
+  parameter types one-for-one, so the `reinterpret_cast` in the call helper is at least type-correct (the
+  calling-convention caveat is U6).
+- Live callers: `ui/gui/controllers/windowcontroller.cpp:800` (`NotifyWinEvent`), `:805` (`KillTimer`), `:810`
+  (`SetTimer`). The caller's `reinterpret_cast<TIMERPROC>(timerFunc)` is sound on x64 -
+  `ui/../common/structures.h:415` defines `TimerProc` as `void (stdcall*)(void*, unsigned int, unsigned long
+  long, unsigned long)`, same convention and same argument widths as `TIMERPROC` (`winuser.h:109`).
+- Fixed (style only): `( pFunc … )` -> `(pFunc …)` at both deviating call sites. The folder norm is now 415 of
+  416 sites; the single remaining outlier is `resource.cpp:27`, for that TU's session.
+- `return Library::voidCall<…>(…);` inside a `void` wrapper is legal C++ (returning a void expression) and kept
+  as found. Note the sibling inconsistency for whoever settles U1/U2: `api_layer/comctl32` uses the same
+  `return voidCall` form, every `api_layer/kernel` TU calls `voidCall` as a bare statement.
+- Not touched (already logged): no `Win32ErrorHandler _;` (U1), no `CheckReturn<BOOL, BoolCheck>` on `KillTimer`
+  or `CheckNonZero<UINT_PTR>` on `SetTimer` (U2 - both signal failure as plain 0, so a failure today is silent);
+  `NotifyWinEvent` returns `void`, so a swallowed SEH fault (U7) is completely unobservable; binding cached for
+  process lifetime (U5).
+- Coverage note: the "//Active Accessibility functions" section (`user32.h:661-665`) has four members and one is
+  implemented (`NotifyWinEvent`); `SetWinEventHook`/`UnhookWinEvent`/`IsWinEventHookInstalled` are still
+  declared-and-undefined (U4) and are the obvious content for this TU if that surface is ever wanted.
+- Verified: `/EP` after the move shows `accessibility.cpp` -> `"NotifyWinEvent"`, `timer.cpp` -> `"KillTimer"`
+  and `"SetTimer"`; both TUs compile standalone at `/W4` exit 0; the whole library compiles 38/38 at `/W4`,
+  exit 0, no diagnostics.
 
 ## accelerator.cpp - the 29 Oct 2026 finding in full
 

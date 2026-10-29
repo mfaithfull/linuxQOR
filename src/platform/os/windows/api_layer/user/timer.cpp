@@ -13,11 +13,21 @@
 
 namespace qor { namespace win { namespace api {
 
-    void User32::NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild)
+    //KillTimer and SetTimer are single user32.dll exports - winuser.h declares them directly with no A/W
+    //family and no stem -> stemW macro, so the bare stem is the name GetProcAddress is given.
+
+    BOOL User32::KillTimer(HWND hWnd, UINT_PTR uIDEvent)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, NotifyWinEvent);
-        return Library::voidCall<DWORD, HWND, LONG, LONG>( pFunc, dwEvent, hwnd, idObject, idChild );
+        qor_pp_useswinapi(user32, KillTimer);
+        return Library::Call<BOOL, HWND, UINT_PTR>(pFunc, hWnd, uIDEvent);
+    }
+
+    UINT_PTR User32::SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, SetTimer);
+        return Library::Call<UINT_PTR, HWND, UINT_PTR, UINT, TIMERPROC>(pFunc, hWnd, nIDEvent, uElapse, lpTimerFunc);
     }
 
 }}}//qor::win::api

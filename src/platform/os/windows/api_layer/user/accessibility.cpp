@@ -13,18 +13,35 @@
 
 namespace qor { namespace win { namespace api {
 
-    BOOL User32::KillTimer(HWND hWnd, UINT_PTR uIDEvent)
+    HWINEVENTHOOK User32::SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC lpfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwflags)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, KillTimer);
-        return Library::Call<BOOL, HWND, UINT_PTR>( pFunc, hWnd, uIDEvent);
+        qor_pp_useswinapi(user32, SetWinEventHook);
+        return Library::Call<HWINEVENTHOOK, UINT, UINT, HMODULE, WINEVENTPROC, DWORD, DWORD, UINT>(pFunc, eventMin, eventMax, hmodWinEventProc, lpfnWinEventProc, idProcess, idThread, dwflags);
     }
 
-    UINT_PTR User32::SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc)
+    BOOL User32::UnhookWinEvent(HWINEVENTHOOK hWinEventHook)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, SetTimer);
-        return Library::Call<UINT_PTR, HWND, UINT_PTR, UINT, TIMERPROC>(pFunc, hWnd, nIDEvent, uElapse, lpTimerFunc);
+        qor_pp_useswinapi(user32, UnhookWinEvent);
+        return Library::Call<BOOL, HWINEVENTHOOK>(pFunc, hWinEventHook);
+    }
+
+    BOOL User32::IsWinEventHookInstalled(DWORD dwEvent)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, IsWinEventHookInstalled);
+        return Library::Call<BOOL, DWORD>(pFunc, dwEvent);
+    }
+
+    //NotifyWinEvent is a single user32.dll export - winuser.h declares it directly with no A/W family and no
+    //stem -> stemW macro, so the bare stem is the name GetProcAddress is given.
+
+    void User32::NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild)
+    {
+        qor_pp_fcontext;
+        qor_pp_useswinapi(user32, NotifyWinEvent);
+        return Library::voidCall<DWORD, HWND, LONG, LONG>(pFunc, dwEvent, hwnd, idObject, idChild);
     }
 
 }}}//qor::win::api

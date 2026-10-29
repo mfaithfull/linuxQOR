@@ -9,16 +9,25 @@ Last updated: 29 Oct 2026.
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
   carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
-  (G1-G6), eleven open items (U1-U11) and the tooling under `tmp/`.
+  (G1-G6), twelve open items (U1-U12) and the tooling under `tmp/`.
 - Session 1 (29 Oct 2026) reviewed `accelerator.cpp`: 5 wrappers, all signatures and exports correct; fixed
   the three bare-stem A/W bindings to the explicit `qor_pp_useswinapiAW` form (verified by `cl /EP` name
   resolution and a `/W4` compile at exit 0, and the whole library still compiles 38/38 at `/W4` exit 0).
   Nothing else in that TU was changed.
+- Session 2 (29 Oct 2026) reviewed `accessibility.cpp` and, because they were transposed, `timer.cpp` too
+  (open item U12): `accessibility.cpp` defined the Timer wrappers and `timer.cpp` defined the accessibility
+  wrapper. The bodies were swapped back so each file matches its `user32.h` section. All three wrappers
+  (`KillTimer`, `SetTimer`, `NotifyWinEvent`) are correct as written - none has an A/W family in `winuser.h` and
+  `user32.dll` exports only the bare stems, so bare `qor_pp_useswinapi` is the D13 spelling. Only style fixed
+  (`( pFunc` -> `(pFunc` at both sites) plus single-export source comments. U3 and U6 re-measured and corrected
+  in status.md: `hook.cpp` is in `add_library` since user commit `05d3ca2f` and compiles at `/W4`, and
+  `Library::DefProc` is now `__stdcall` in the uncommitted working tree - the remaining convention gap is the
+  default-`__cdecl` `fPtr` inside `Library::Call`/`voidCall`.
 - **D13 adopted (user, 29 Oct 2026, `docs/agent/DECISIONS.md`):** explicit `qor_pp_useswinapiAW` wherever the
   SDK has an A/W family, bare `qor_pp_useswinapi` only for single exports. Apply it in each TU as it is
   reviewed. Folder-wide pre-scan in status.md lists P1 (six bindings that cannot resolve at run time:
   `keyboard.cpp:82,243,250`, `dialog.cpp:89`, `combobox.cpp:20,27`) and P2 (seven macro-dependent bindings to
-  convert). Next TU in the queue: `accessibility.cpp`.
+  convert). Next TU in the queue: `brush.cpp`.
 
 - Corrections to earlier audit assumptions, all measured (see status.md G1-G6): the SDK A/W macro expands
   before `_ATXT()` stringizes, so most bare stems already bind the W export and the `tmp/_tmp_audit_report.txt`
