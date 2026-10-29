@@ -9,7 +9,6 @@
 namespace qor { namespace platform { namespace win {
 
 #if ( qor_pp_unicode )
-
 	qor_pp_module_interface(QOR_WINCOMMON) std::wstring to_tstring(const char* data);
 #else
     qor_pp_module_interface(QOR_WINCOMMON) std::string to_tstring(const char* source);

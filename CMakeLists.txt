@@ -7,6 +7,19 @@ set(CMAKE_CXX_RTTI ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# One build number for the whole build tree, stamped into generated/buildnumber.h
+# and stringized into qor_pp_module_ver_string. The cache entry holds the NEXT
+# number to use, so the value advances once per configure rather than once per
+# build per target; pin it from CI with -DBUILD_NUMBER=<n>.
+if(BUILD_NUMBER MATCHES "^[0-9]+$")
+    set(_qor_build_number "${BUILD_NUMBER}")
+else()
+    set(_qor_build_number 1)
+endif()
+math(EXPR _qor_next_build_number "${_qor_build_number} + 1")
+set(BUILD_NUMBER "${_qor_next_build_number}" CACHE STRING "Next build number stamped into buildnumber.h" FORCE)
+set(BUILD_NUMBER "${_qor_build_number}")
+
 include ("${CMAKE_SOURCE_DIR}/cmake/flags.cmake")
 
 if(WIN32)
