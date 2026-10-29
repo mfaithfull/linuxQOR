@@ -106,8 +106,8 @@ namespace qor { namespace win { namespace api {
         //Clipboard functions
         static BOOL AddClipboardFormatListener(HWND hwnd);
         static BOOL ChangeClipboardChain(HWND hWndRemove, HWND hWndNewNext);
-        static BOOL CloseClipboard();
-        static int CountClipboardFormats();
+        static BOOL CloseClipboard(void);
+        static int CountClipboardFormats(void);
         static BOOL EmptyClipboard(void);
         static UINT EnumClipboardFormats(UINT format);
         static HANDLE GetClipboardData(UINT uFormat);
@@ -115,7 +115,7 @@ namespace qor { namespace win { namespace api {
         static HWND GetClipboardOwner(void);
         static DWORD GetClipboardSequenceNumber(void);
         static HWND GetClipboardViewer(void);
-        static HWND GetOpenClipboardWindow();
+        static HWND GetOpenClipboardWindow(void);
         static int GetPriorityClipboardFormat(UINT* paFormatPriorityList, int cFormats);
         static BOOL GetUpdatedClipboardFormats(PUINT lpuiFormats, UINT cFormats, PUINT pcFormatsOut);
         static BOOL IsClipboardFormatAvailable(UINT format);

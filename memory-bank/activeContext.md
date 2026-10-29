@@ -9,7 +9,9 @@ Last updated: 29 Oct 2026.
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
   carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
-  (G1-G6), fifteen open items (U1-U15) and the tooling under `tmp/`.
+  (G1-G6), sixteen open items (U1-U16) and the tooling under `tmp/`. Five TUs done
+  (`accelerator`, `accessibility`, `brush`, `caret`, `clipboard` + `timer`); **next is `combobox.cpp`**, which carries
+  two of the six pre-scan P1 bindings.
 - Session 1 (29 Oct 2026) reviewed `accelerator.cpp`: 5 wrappers, all signatures and exports correct; fixed
   the three bare-stem A/W bindings to the explicit `qor_pp_useswinapiAW` form (verified by `cl /EP` name
   resolution and a `/W4` compile at exit 0, and the whole library still compiles 38/38 at `/W4` exit 0).
@@ -53,6 +55,20 @@ Last updated: 29 Oct 2026.
   one folder-wide item that each session adds instances to, instead of a per-TU note. Seeded with `caret.cpp` 8/8 and
   `hook.cpp` 4/4; `accelerator.cpp` (5/5), `timer.cpp`+`accessibility.cpp` (3/3) and `brush.cpp` (1/1) confirmed live.
   The review method gained step 6 (caller check) to feed it.
+- Session 5 (29 Oct 2026) reviewed `clipboard.cpp` (20 wrappers - the "Clipboard functions" section
+  `user32.h:106-126`): **nothing wrong in the wrappers**, and the first TU already D13-conformant before it was opened
+  (`GetClipboardFormatNameT`/`RegisterClipboardFormatT` bound `qor_pp_useswinapiAW`, the other 18 are single exports,
+  `/EP` resolves all 20 to real exports). Fixed: `()` -> `(void)` on `CloseClipboard`/`CountClipboardFormats`/
+  `GetOpenClipboardWindow` at both the definitions and the `user32.h` declarations (new sub-item U14(c) - the folder norm
+  is `(void)` 33/38, the SDK spells it `VOID`), plus a TU comment with the binding rationale and the clipboard
+  affinity/ownership contracts. Findings worth keeping: one `qor_pp_unicode` switch drives both the AW binding and the
+  wide `TCHAR` types; `GetPriorityClipboardFormat` reports failure as 0 and "none" as -1, i.e. the opposite polarity to
+  the `shell`/`kernel` non-zero idiom; all 20 are U15 instances, while the tree's real clipboard work happens in
+  `ui/gl` through a **parallel direct-SDK path** (`platform.cpp:143-158`, `windowimpl.cpp:2395-2410`) that bypasses this
+  library, and gui's `ClipboardHandler` is never installed (`m_clipboardOwner` unwritten). **U16 opened**: four of the
+  20 SDK declarations sit behind `WINVER` guards that nothing in the build pins - **user decision: defer the pin**, each
+  session now lists its version-guarded SDK names against U16 (review-method step 7) and the build-wide
+  `WINVER`/`_WIN32_WINNT` choice is taken once the review is done. Library still 38/38 at `/W4` exit 0.
 - **D13 adopted (user, 29 Oct 2026, `docs/agent/DECISIONS.md`):** explicit `qor_pp_useswinapiAW` wherever the
   SDK has an A/W family, bare `qor_pp_useswinapi` only for single exports. Apply it in each TU as it is
   reviewed. Folder-wide pre-scan in status.md lists P1 (six bindings that cannot resolve at run time:
