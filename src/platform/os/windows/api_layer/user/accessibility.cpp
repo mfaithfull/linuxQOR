@@ -13,6 +13,12 @@
 
 namespace qor { namespace win { namespace api {
 
+    //The four WinEvent entry points are single user32.dll exports - winuser.h declares them directly with no
+    //A/W family and no stem -> stemW macro, and user32.h does not #undef these stems, so the bare stem is the
+    //name GetProcAddress is given.
+
+    //The callback is invoked by the system with the CALLBACK (__stdcall) convention, so the caller must supply a
+    //function pointer of that convention; WINEVENTPROC is the SDK type (winuser.h:13734).
     HWINEVENTHOOK User32::SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC lpfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwflags)
     {
         qor_pp_fcontext;
@@ -33,9 +39,6 @@ namespace qor { namespace win { namespace api {
         qor_pp_useswinapi(user32, IsWinEventHookInstalled);
         return Library::Call<BOOL, DWORD>(pFunc, dwEvent);
     }
-
-    //NotifyWinEvent is a single user32.dll export - winuser.h declares it directly with no A/W family and no
-    //stem -> stemW macro, so the bare stem is the name GetProcAddress is given.
 
     void User32::NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild)
     {

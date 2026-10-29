@@ -52,6 +52,8 @@ TUs still to be reviewed:
 29 Oct 2026). Take the pre-scan P1/P2 entries into account only when their owning TU comes up; do not fix other
 TUs outside their own session.
 
+| 2b | `accessibility.cpp` (same day, after user commit `89da3452` added the three missing WinEvent wrappers) | +3 | 0 binding defects; **1 call-site defect found: the three declarations lacked `static`, so every call site was `error C2352`** | Fixed: `user32.h:662-664` made `static` (verified by a compile-only caller probe, before = 3 errors, after = exit 0); TU comments generalised to the four WinEvent entry points. Census re-run: `user32.h` now 524 declarations, 427 static, 97 non-static (was 100) - see U4, and new U13 for the one remaining defined-but-non-static member |
+
 
 Remaining queue (35 TUs, alphabetical; `accelerator.cpp`, `accessibility.cpp`, `timer.cpp` done): brush, caret,
 clipboard, combobox, console, coordtransform, cursor, desktop, devicecontext, devicemanagement, dialog,

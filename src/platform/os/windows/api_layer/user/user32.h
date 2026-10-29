@@ -659,9 +659,9 @@ namespace qor { namespace win { namespace api {
         BOOL SetUserObjectSecurity(HANDLE hObj, PSECURITY_INFORMATION pSIRequested, PSECURITY_DESCRIPTOR pSID);
 
         //Active Accessibility functions
-        HWINEVENTHOOK SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC lpfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwflags);
-        BOOL UnhookWinEvent(HWINEVENTHOOK hWinEventHook);
-        BOOL IsWinEventHookInstalled(DWORD dwEvent);
+        static HWINEVENTHOOK SetWinEventHook(UINT eventMin, UINT eventMax, HMODULE hmodWinEventProc, WINEVENTPROC lpfnWinEventProc, DWORD idProcess, DWORD idThread, UINT dwflags);
+        static BOOL UnhookWinEvent(HWINEVENTHOOK hWinEventHook);
+        static BOOL IsWinEventHookInstalled(DWORD dwEvent);
         static void NotifyWinEvent(DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild);
 
         //Timer functions
