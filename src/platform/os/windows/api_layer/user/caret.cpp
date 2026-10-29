@@ -12,6 +12,12 @@
 #include "../library.h"
 
 namespace qor { namespace win { namespace api {
+    //All eight caret entry points are single user32.dll exports: winuser.h:9456-9506 declares each one directly
+    //with no A/W family and no stem -> stemW macro for any of them, so the bare stem is the name GetProcAddress
+    //is given. cl /EP on this TU resolves the eight bindings to exactly those eight strings, and they are the
+    //eight - and only eight - *Caret* names in the user32.dll export table, so the section is fully covered.
+    //CreateCaret's hBitmap is _In_opt_ (NULL means a solid system caret); the bitmap itself stays owned by the
+    //caller and must outlive the caret, which ends at DestroyCaret.
 
     BOOL User32::CreateCaret(HWND hWnd, HBITMAP hBitmap, int nWidth, int nHeight)
     {

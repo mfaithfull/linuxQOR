@@ -9,7 +9,7 @@ Last updated: 29 Oct 2026.
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
   carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
-  (G1-G6), twelve open items (U1-U12) and the tooling under `tmp/`.
+  (G1-G6), fifteen open items (U1-U15) and the tooling under `tmp/`.
 - Session 1 (29 Oct 2026) reviewed `accelerator.cpp`: 5 wrappers, all signatures and exports correct; fixed
   the three bare-stem A/W bindings to the explicit `qor_pp_useswinapiAW` form (verified by `cl /EP` name
   resolution and a `/W4` compile at exit 0, and the whole library still compiles 38/38 at `/W4` exit 0).
@@ -23,11 +23,41 @@ Last updated: 29 Oct 2026.
   in status.md: `hook.cpp` is in `add_library` since user commit `05d3ca2f` and compiles at `/W4`, and
   `Library::DefProc` is now `__stdcall` in the uncommitted working tree - the remaining convention gap is the
   default-`__cdecl` `fPtr` inside `Library::Call`/`voidCall`.
+- Session 3 (29 Oct 2026) reviewed `brush.cpp` (1 wrapper - the smallest TU): `User32::GetSysColorBrush(int)` is
+  correct in every direction - `user32.h:655` static declaration, SDK `winuser.h:9694-9698`, real export
+  (ordinal 1C6), no A/W family so bare `qor_pp_useswinapi` is the D13 spelling and `/EP` resolves
+  `"GetSysColorBrush"`. Fixed only: `Call< HBRUSH >` -> `Call<HBRUSH, int>` (explicit SDK arg types, norm 382/428)
+  and a new TU comment recording the single-export rationale plus the ownership contract (the returned brush is
+  system-owned and must never be deleted - which is what the sole live caller `ui/gui/gdiobjects/brush.cpp:111-116`
+  relies on via `DontClose()`). The "Brush functions" section is complete - `user32.dll` exports one `*Brush*` name.
+- Session 3 also re-measured the header census with `tmp/_tmp_static_census.ps1` / `_tmp_undefined_static.ps1` and
+  corrected the record: `user32.h` has 427 `static` and 98 non-static member declarations, 426 names defined through
+  `User32::`, so U4 is exactly 97 declared-and-undefined plus **2 `static` ones** (`user32.h:443 CopyImage`,
+  `:444 LoadImageT`) - U11 was wrong that `resource.cpp:23` is qualified; both Resource definitions are unqualified
+  free functions. U13 (`ConsoleControl` defined at `console.cpp:18` but declared non-static at `user32.h:690`) and
+  U14 (the 250/178 `Call<...>` spacing split and the 46 sites that pass no argument types) are now written up.
+  Also corrected: the `__stdcall` `Library::DefProc` typedef is **committed** (`89da3452`, HEAD `586f4ad1`), not an
+  uncommitted working-tree edit as the session-2 note said - U6's remaining half is still the `__cdecl` `fPtr`.
+- Session 4 (29 Oct 2026) reviewed `caret.cpp` (8 wrappers - the "Caret functions" section `user32.h:459-467`) and
+  found **nothing wrong**: all eight bindings are bare `qor_pp_useswinapi` on genuine single exports (no A/W family
+  in `winuser.h:9456-9506`, no `*A`/`*W` entry in the export table, `cl /EP` resolves all eight literal stems), all
+  eight signatures match the SDK types and parameter names, all eight declarations are `static`, and section coverage
+  is complete both ways (the DLL exports exactly eight `*Caret*` names). Only a TU comment was added (binding rationale
+  + the `CreateCaret` bitmap contract); no code line changed. U14(b) was **re-measured and corrected**: the "46 bare
+  sites" figure counted zero-argument `Call< BOOL >(pFunc)` sites and every `voidCall` as deducing - the true count is
+  **8 deducing sites** (`desktop.cpp:83,104`, `keyboard.cpp:69,76`, `mouse.cpp:83`, `window.cpp:118,254,317`) over 428
+  sites, and `shell`/`kernel` have none at all; the new tool is `tmp/_tmp_u14_census.ps1`. Also recorded: the entire
+  caret surface is exported but unreachable in-tree - its only consumers, `platform::win::Caret`
+  (`ui/gui/controllers/a_h/caret.cpp`) and `WindowController::HideCaret/ShowCaret`, have no call site anywhere.
+- **U15 opened (user decision, session 4):** "exported through `QOR_WINAPIUSER`, no reachable in-tree caller" is now
+  one folder-wide item that each session adds instances to, instead of a per-TU note. Seeded with `caret.cpp` 8/8 and
+  `hook.cpp` 4/4; `accelerator.cpp` (5/5), `timer.cpp`+`accessibility.cpp` (3/3) and `brush.cpp` (1/1) confirmed live.
+  The review method gained step 6 (caller check) to feed it.
 - **D13 adopted (user, 29 Oct 2026, `docs/agent/DECISIONS.md`):** explicit `qor_pp_useswinapiAW` wherever the
   SDK has an A/W family, bare `qor_pp_useswinapi` only for single exports. Apply it in each TU as it is
   reviewed. Folder-wide pre-scan in status.md lists P1 (six bindings that cannot resolve at run time:
   `keyboard.cpp:82,243,250`, `dialog.cpp:89`, `combobox.cpp:20,27`) and P2 (seven macro-dependent bindings to
-  convert). Next TU in the queue: `brush.cpp`.
+  convert). Next TU in the queue: `clipboard.cpp`.
 
 - Corrections to earlier audit assumptions, all measured (see status.md G1-G6): the SDK A/W macro expands
   before `_ATXT()` stringizes, so most bare stems already bind the W export and the `tmp/_tmp_audit_report.txt`
@@ -35,9 +65,11 @@ Last updated: 29 Oct 2026.
   the ones whose bare spelling really is missing; module-token case (`User32`) is cosmetic; `user32.dll` is
   not mapped in a bare console process; `qor_pp_parameter_checking`/`qor_pp_yes` are defined nowhere, so
   `CheckReturn<...>::TType` is always the checked type.
-- Open decisions the user has not yet made: whether to adopt the `Win32ErrorHandler _;` + `CheckReturn`
-  pattern across `user/` (U1/U2), what to do with `hook.cpp` which is absent from `add_library` (U3), and
-  what to do with the ~101 non-static `user32.h` declarations that no `.cpp` defines (U4).
+- **U1/U2 are decided** (user, 29 Oct 2026, session 3): leave `winqor_api_user` as-is - no `Win32ErrorHandler _;`
+  and no `CheckReturn`/`CheckNonZeroHandle` are to be added by a review session; each TU session records its
+  instances only, with no behaviour change. Still open: what to do about the 97 non-static `user32.h` declarations
+  that no `.cpp` defines (U4) and the two `static` ones broken by `resource.cpp` (U11). `hook.cpp` (U3) is in
+  `add_library` since user commit `05d3ca2f`; only its review is outstanding.
 
 
 ## Current focus: Windows api_layer
