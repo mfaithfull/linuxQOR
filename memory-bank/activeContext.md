@@ -9,11 +9,16 @@ Last updated: 30 Oct 2026.
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
   carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
-  (G1-G6), **nineteen open items (U1-U19)**, the pre-scan items **P1-P5** and the tooling under `tmp/`. **Nine TUs done**
-  in sessions 1-8 (`accelerator`, `accessibility`, `brush`, `caret`, `clipboard`, `combobox`, `console` + `timer`,
-  `coordtransform`); **next is `cursor.cpp`** (pre-flagged: P3 `CopyCursorT`/`CopyIcon`). U13 closed in session 7; U10's
-  SDK-side half is closed too (the console-internal types collide with nothing in SDK 10.0.26100 or 10.0.10240), leaving
-  only the decision about keeping/namespacing them.
+  (G1-G6), **twenty-two open items (U1-U22)**, the pre-scan items **P1-P5**, the two deferred tasks **T1/T2** and the tooling
+  under `tmp/`. **Twelve TUs done** in sessions 1-11 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
+  `clipboard`, `combobox`, `console`, `coordtransform`, `cursor`, `desktop`, `devicecontext`); **next is
+  `devicemanagement.cpp`** (2 wrappers; pre-flagged: `RegisterDeviceNotification` is one of the 11 U17 A/W members without
+  the `T` suffix **and** one of the `user32.h:9-17` `#undef` stems, so the rename needs a user decision). U13 closed in
+  session 7; U10's SDK-side half is closed too (the console-internal types collide with nothing in
+  SDK 10.0.26100 or 10.0.10240), leaving only the decision about keeping/namespacing them. **T1** = `GetUserObjectSecurity`
+  / `SetUserObjectSecurity` are declared (`user32.h:658-659`) with no definition in any TU (link error for any caller) -
+  add the definitions or delete the declarations. **T2** = the whole Window Station / Desktop section is 18/18 dead exported
+  API (0 callers, 0 bypass sites), so its U17/P3 naming questions have no caller to inform them.
 - Session 1 (29 Oct 2026) reviewed `accelerator.cpp`: 5 wrappers, all signatures and exports correct; fixed
   the three bare-stem A/W bindings to the explicit `qor_pp_useswinapiAW` form (verified by `cl /EP` name
   resolution and a `/W4` compile at exit 0, and the whole library still compiles 38/38 at `/W4` exit 0).
@@ -134,6 +139,56 @@ Last updated: 30 Oct 2026.
   `:2221` runs to `:2498`. Eight "bypass" hits there (including the `windowimpl.cpp:2395-2410` clipboard sites cited in
   the session-5 clipboard record and in the U15 clipboard entry) are dead code; **both records corrected**, and
   `tmp/_tmp_comment_state.ps1` (character-level comment/string state machine) is now part of the method, as step 5b.
+- Session 9 (30 Oct 2026) reviewed `cursor.cpp` (16 wrappers, the "Cursor functions" section): **0 binding / correctness /
+  UB / convention defects** - the largest clean TU of the review, and only a TU comment was added. It opened **U20** from
+  that TU's call sites: the caller-side `Cursor`/`Icon` ownership model is wrong (`ui/gui/gdiobjects/cursor.h:30` defaults
+  `own = true`; `ButtonController` omits the flag for the four `BM_GETIMAGE`/`BM_SETIMAGE` cursor/icon refs at
+  `buttoncontroller.cpp:77,82,87,92` while `StaticController` passes `false` for the same situation; `~Cursor()` destroys
+  the handle but never clears `m_handle`, so `~PrimitiveHandle` raises a spurious leak warning on every destruction).
+  Recorded, not fixed - it is `winqor_gui` surface.
+- Session 10 (30 Oct 2026) reviewed `desktop.cpp` (18 wrappers, the "Window Station and Desktop functions" section
+  `user32.h:399-417`): **0 binding / correctness / UB defects** - 9 A/W families bound `qor_pp_useswinapiAW`, 9 single
+  exports bound bare, all 18 verified by `cl /EP`, the export table and a live `GetProcAddress` probe that also gets
+  non-null handles back from `GetProcessWindowStation`/`GetThreadDesktop`. Four consistency defects fixed: `OpenWindowStationT`'s
+  parameter `LPTSTR` -> `LPCTSTR` in the declaration (`user32.h:412`) and definition together, `CreateDesktopT`'s definition
+  parameter name, and both of the TU's U14(b) deducing sites (`GetThreadDesktop`, `OpenWindowStationT`) - plus a 28-line TU
+  comment with the `HDESK`/`HWINSTA` release contract. Consequences: U14(b) is now **6 deducing sites** (was 8) and U15
+  gained its largest block, **18/18 desktop wrappers with no in-tree caller and no bypass site**. Two larger items were
+  deferred as tasks instead of being fixed: **T1** (`GetUserObjectSecurity`/`SetUserObjectSecurity` declared at
+  `user32.h:658-659` and defined nowhere) and **T2** (the dead Window Station / Desktop surface and the naming questions it
+  makes untestable). Verified at exit: `desktop.cpp` and the whole library 38/38 at `/W4` exit 0.
+- Session 11 (30 Oct 2026) reviewed `devicecontext.cpp` (8 wrappers, the `user32.h:325 //DC functions` section):
+  **0 binding / correctness / UB / convention defects.** All 8 pair field-for-field with `winuser.h` and all 8 resolve -
+  5 A/W families (`ChangeDisplaySettings`, `ChangeDisplaySettingsEx`, `EnumDisplayDevices`, `EnumDisplaySettings`,
+  `EnumDisplaySettingsEx`) bound `qor_pp_useswinapiAW`, 3 single exports bare (`GetDC` 143, `GetDCEx` 144,
+  `ReleaseDC` 2FF); `cl /EP` (`tmp/_tmp_pp_dc.bat` -> `tmp/_tmp_dc_pp.txt:453278-453327`) resolves all 8 to the `*W`/bare
+  names. The section's distinctive trap is that it mixes **two opposite zero-return conventions** -
+  `DISP_CHANGE_SUCCESSFUL == 0` for the two `ChangeDisplaySettings*` wrappers vs `BOOL`/`int` where 0 is failure for the
+  other six - so no blanket return check could be applied (U1/U2 instances recorded, not fixed). Fixed in place:
+  `(pFunc, hWnd )` -> `(pFunc, hWnd)` and a 36-line TU comment. Two **new open items**: **U21** (the section is not the
+  SDK's DC family - 5 of 8 members are display-configuration calls with no `HDC`, while the SDK's DC neighbourhood
+  `winuser.h:8560-8614` is split across this TU and `painting.cpp`, and the folder wraps no `CreateDC`/`DeleteDC`/`SaveDC`/
+  `RestoreDC`/`GetDeviceCaps` at all) and **U22** (the live `WindowController::GetADC` -> `PerThread::DeviceContextFromHandle`
+  -> `MustRelease` -> `~DeviceContext` path calls `User32::ReleaseDC(NULL, hdc)` because `m_hWnd` is never set on that route -
+  a DC leak, reachable from the built `examples/.../mainwindow`, recorded not fixed). New U16 sub-case: the display block is
+  inside `#ifdef _WINGDI_`/`#ifndef NOGDI`, and the wrappers' own signatures need `wingdi.h` types, so `NOGDI` would make
+  `user32.h:326-330` ill-formed rather than merely lose a prototype. **Two review-instrument bugs fixed** in
+  `tmp/_tmp_bypass_scan.ps1`: it matched bare stems only (missing every `*T` layer call and every `*W` bypass) and matched
+  `::stem(` only at line start - earlier sessions' per-family BYPASS counts are lower bounds and must be re-run; this TU's
+  true split is **16 LAYER / 12 BYPASS**, with only 4 LAYER sites reachable at run time and all 12 bypasses in the
+  `ui/gl` tree (2 of its files are in no source list at all). Full library still 38/38 at `/W4` exit 0
+  (`tmp/_tmp_cl_all_s11b.log`). `tmp/_tmp_sigcmp.ps1` was generalised into the reusable decl<->def + `Call<>` checker
+  (`-Tu`/`-First`/`-Last`) and reports this section **8/8 `decl==def ok`, 8/8 `Call ok`** - its first run's "NO DEFINITION"
+  for all 8 was an instrument artefact of a `$Src` parameter aliasing the `$src` file array (PowerShell names are
+  case-insensitive), not a finding. U15 also gained **`ChangeDisplaySettingsT` with 0 call sites anywhere**. Exit pass
+  re-measured every `winuser.h` range cited in the new comment (`tmp/_tmp_aw_spans.ps1` gives the exact A/W family spans)
+  and corrected three off-by-one/rounded citations in the TU comment, `status.md` and here; also recorded that
+  `_tmp_compile_all.ps1` writes its `cl` log to the fixed path `tmp/_tmp_cl_all.log`, so a redirected stdout only holds the
+  `exit=`/`loglines=` summary - the 38/38 proof is 38 TU echo lines + 38 fresh `.obj` files in `tmp/obj`.
+- **Next session: `devicemanagement.cpp`** (2 wrappers). `RegisterDeviceNotification` (`user32.h:682`) keeps its bare name -
+  **user decision 30 Oct 2026: defer, it joins the 11-member U17 folder-wide batch** (session 9 policy); its `user32.h:9`
+  `#undef` is inert because the binding is already `qor_pp_useswinapiAW`. Still open for that TU: the two decl/def parameter
+  name divergences (`NotificationFilter`/`notificationFilter`, `Handle`/`handle`) and the usual signature/binding/caller pass.
 - **D13 adopted (user, 29 Oct 2026, `docs/agent/DECISIONS.md`):** explicit `qor_pp_useswinapiAW` wherever the
   SDK has an A/W family, bare `qor_pp_useswinapi` only for single exports. Apply it in each TU as it is
   reviewed. Folder-wide pre-scan in status.md lists P1 (six bindings that cannot resolve at run time:

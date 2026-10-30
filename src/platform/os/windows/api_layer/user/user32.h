@@ -409,7 +409,7 @@ namespace qor { namespace win { namespace api {
         static HDESK GetThreadDesktop(DWORD dwThreadId);
         static BOOL GetUserObjectInformationT(HANDLE hObj, int nIndex, PVOID pvInfo, DWORD nLength, LPDWORD lpnLengthNeeded);
         static HDESK OpenInputDesktop(DWORD dwFlags, BOOL fInherit, ACCESS_MASK dwDesiredAccess);
-        static HWINSTA OpenWindowStationT(LPTSTR lpszWinSta, BOOL fInherit, ACCESS_MASK dwDesiredAccess);
+        static HWINSTA OpenWindowStationT(LPCTSTR lpszWinSta, BOOL fInherit, ACCESS_MASK dwDesiredAccess);
         static BOOL SetProcessWindowStation(HWINSTA hWinSta);
         static BOOL SetThreadDesktop(HDESK hDesktop);
         static BOOL SetUserObjectInformationT(HANDLE hObj, int nIndex, PVOID pvInfo, DWORD nLength);
