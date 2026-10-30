@@ -31,18 +31,57 @@ folder against `tmp/_tmp_user32_exports.txt`. It is a *hint list* - the per-TU `
 stays the authority, since the script cannot see which SDK macros are in scope. Results that matter, all in
 TUs still to be reviewed:
 
-- **P1 - six bindings that cannot resolve at run time (confirmed by export table + source line).** Fix these
-  in the owning TU's session, converting to `qor_pp_useswinapiAW`:
+- **P1 - bindings that cannot resolve at run time (export table + live probe + source line).** Six at the first scan;
+  the two in `combobox.cpp` are now fixed and two more have since been found (`window.cpp:124` in session 6,
+  `mouse.cpp:82` in session 8), so **six remain in four TUs**. Fix each in the owning TU's session:
   - `keyboard.cpp:82` `qor_pp_useswinapi(user32, GetKeyboardLayoutNameT)`, `:243` `VkKeyScanT`,
     `:250` `VkKeyScanExT` - the wrapper's `T` suffix stringizes into the name, and `*T` is not an export.
   - `dialog.cpp:89` `qor_pp_useswinapi(user32, GetDlgItemTextT)` - same class.
-  - `combobox.cpp:20` `qor_pp_useswinapi(User32, DlgDirListComboBox)`, `:27` `DlgDirSelectComboBoxEx` - these
-    two stems are `#undef`'d at `user32.h:15,16`, so the macro cannot rescue them (G2); the literals are not
-    exported while the `W` entries are (live probe). `combobox.cpp` also spells the module token `User32`
-    (G4, cosmetic).
+  - **found in session 6:** `window.cpp:124` `qor_pp_useswinapiAW(user32, CreateWindow)` (inside
+    `User32::CreateWindowT`, `window.cpp:121`) asks for `CreateWindowW`, which does not exist. `CreateWindow` is the
+    SDK's macro for `CreateWindowEx`; the table has `CreateWindowExA/W` (`:1626,1627`) and no plain `CreateWindow*`
+    entry, and the live probe says `CreateWindowW` MISSING / `CreateWindowExW` RESOLVED. Before "fixing" the binding,
+    decide whether `CreateWindowT` should exist at all: `CreateWindowExT` (`window.cpp:129`) already wraps the same
+    export, so the honest fix is either bind `CreateWindowEx` with a `0` extended-style argument or drop the member.
+  - ~~`combobox.cpp:20` `qor_pp_useswinapi(User32, DlgDirListComboBox)`, `:27` `DlgDirSelectComboBoxEx`~~ - **FIXED
+    29 Oct 2026 (session 6)**: both stems are `#undef`'d at `user32.h:15,16`, so the macro cannot rescue them (G2); the
+    literals are not exported while the `W` entries are (live probe). Now `qor_pp_useswinapiAW(user32, ...)`. The G4
+    `User32` module token went in the same pass: 416 of the folder's 428 bindings now spell `user32`, the remaining 12
+    are `scrollbar.cpp`'s, for its own session.
+  - **found in session 8 (by the new P5 scan, not by the export-table script):** `mouse.cpp:82`
+    `qor_pp_useswinapiAW(user32, LPTRACKMOUSEEVENT)` - the parameter **type** name went into the binding slot, so the AW
+    macro asks `GetProcAddress` for `LPTRACKMOUSEEVENTW`. Live probe: that name MISSING, and so is `TrackMouseEventW`,
+    while bare `TrackMouseEvent` is RESOLVED (`winuser.h:2773`, inside `_WIN32_WINNT >= 0x0400` - a U16 instance for
+    that session too). So `mouse.cpp:79-84` needs *both* halves fixed: the stem and the AW-ness (it is a single export,
+    so bare `qor_pp_useswinapi(user32, TrackMouseEvent)` is the D13 spelling). Its `Call< BOOL >` is already listed in
+    U14(b). Owned by `mouse.cpp`'s session.
 - **P2 - seven bindings that work today only because the SDK macro rewrites them; convert to explicit AW
   under D13.** `dialog.cpp` `MessageBox`; `menu.cpp` `GetMenuString`, `InsertMenuItem`; `message.cpp`
   `RegisterWindowMessage`, `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`.
+- **P3 - naming flags from the new T-suffix census (`tmp/_tmp_tsuffix_census.ps1`, session 6).** Two members carry the
+  folder's `T` suffix where no A/W export pair exists: `user32.h:144 CreateWindowT` (see the P1 entry) and
+  `user32.h:383 CopyCursorT`, defined `cursor.cpp:23`, whose binding is `qor_pp_useswinapi(user32, CopyIcon)`
+  (`cursor.cpp:26`) - a correct binding of a genuinely single export, but a wrapper name that hides which export it is
+  (the SDK's `CopyCursor` is a `CopyIcon` cast macro, not an entry point). Both are decisions for the `window.cpp` and
+  `cursor.cpp` sessions, together with the U17 list.
+- **P4 - four exports in the table are forwarders, which the binding question cannot see (found in session 7).** While
+  checking whether `ConsoleControl` is one, note that `dumpbin /exports` marks exactly four of the 1018 names as
+  `(forwarded to NTDLL.xxx)` - `DefDlgProcA/W` (ordinals 1668/1669 -> `NTDLL.NtdllDialogWndProc_A`/`_W`) and
+  `DefWindowProcA/W` (1675/1676 -> `NTDLL.NtdllDefWindowProc_A`/`_W`). They still print a real RVA, and the marker text
+  is "forwarded to", **not** the `->` form an earlier grep assumed - that false negative is why the forwarder question
+  was re-asked with a fresh `dumpbin`. Forwarding is transparent to `GetProcAddress`, so no binding breaks, but the code
+  that finally runs lives in `ntdll.dll`: take it into account in `windowprocedure.cpp`'s session, where U6's
+  default-`__cdecl` `fPtr` reinterprets an NTDLL `__stdcall` entry point rather than a `user32.dll` one.
+- **P5 - the "wrong stem bound" defect class, and the instrument that finds it (`tmp/_tmp_wrong_stem_scan.ps1`, session
+  8, 30 Oct 2026).** `coordtransform.cpp` bound `GetDCEx` in all three of its wrappers. Nothing in the pre-scan or in the
+  per-TU method could see it: `GetDCEx` is a real export (ordinal 144), the module token was right, `cl /EP` produced a
+  valid string literal, the TU compiles, and the call site type-checks because `Library::Call` never sees a prototype. The
+  only check that catches it is comparing the stem inside `qor_pp_useswinapi*` against the member that encloses it. New
+  script, folder-wide and cheap: 428 bindings over 38 TUs, **7 flags at the first run, 4 after the session-8 fix**, and of
+  those 4 only one is a live defect (`mouse.cpp:82`, added to P1); `cursor.cpp:26` is the P3 correct-binding/odd-name
+  case and the two `resource.cpp` flags are the script failing to see an enclosing member because both `Resource`
+  definitions are unqualified free functions - i.e. the script also reproduces U11 mechanically. Re-run it in every session
+  and treat a new flag as a P1-class finding until disproved.
 - Everything else in the folder already either uses `qor_pp_useswinapiAW` (e.g. `ime.cpp`, `mouse.cpp`,
   `text.cpp`, `windowprocedure.cpp`, `windowproperties.cpp`, `windowclass.cpp`) or binds a genuine single
   export. `window.cpp` is the largest surface (85 bindings, 75 bare) and will need the most care.
@@ -56,20 +95,26 @@ TUs still to be reviewed:
 | 3 | `brush.cpp` | 1 | 0 correctness/UB/binding defects; 1 convention defect (implicit template args), 1 documentation gap | Fixed: `Call< HBRUSH >` -> `Call<HBRUSH, int>` (explicit SDK arg types - folder norm 382/428, reference `shell`+`kernel` 344/387) + a single-export and handle-ownership comment added. Binding correct as written: no A/W family, `cl /EP` resolves to `"GetSysColorBrush"`, which is the export (table index 1958, ordinal 1C6) |
 | 4 | `caret.cpp` | 8 | 0 correctness/UB/binding/convention defects - the cleanest TU so far | Fixed: TU comment only (single-export binding rationale under D13 + the `CreateCaret` bitmap contract). All 8 bindings correct as written; `cl /EP` resolves all 8 to the literal stems, all 8 are exports, and they are the only 8 `*Caret*` entries in `user32.dll`, so the section is complete. U14(b)'s "caret 2" was a miscount - caret.cpp has 0 deducing call sites (re-measured, see U14) |
 | 5 | `clipboard.cpp` | 20 | 0 correctness/UB/binding/convention defects in the wrappers - second clean TU after `caret.cpp`, and the first already D13-conformant before the session started | Fixed: `()` -> `(void)` at the three zero-argument definitions (`CloseClipboard`, `CountClipboardFormats`, `GetOpenClipboardWindow`) plus their three `user32.h` declarations (the SDK spells `VOID`; folder norm now 36 defs against 2, 37 decls against 2 - see U14(c)) + a TU comment (bare-stem rationale for the 18 single exports, the one-switch A/W argument, the clipboard affinity/ownership contracts, section coverage and deprecation). All 20 bindings verified correct as written by `cl /EP` + export table |
-| 6..35 | not started | | | |
+| 6 | `combobox.cpp` | 3 | **2 real run-time failures** - pre-scan P1: both `DlgDir*` bindings asked `GetProcAddress` for stems `user32.dll` does not export, so those wrappers could only ever throw; plus 2 consistency defects (no `T` suffix on an A/W wrapper, `User32` module token) and 1 documentation gap | Fixed: both bindings now `qor_pp_useswinapiAW(user32, ...)` (`cl /EP` resolves `"DlgDirListComboBoxW"`/`"DlgDirSelectComboBoxExW"`, both RESOLVED by live probe); members renamed `DlgDirListComboBoxT`/`DlgDirSelectComboBoxExT` at `user32.h:551-552` + definitions (user decision; new **U17** tracks the 11 remaining A/W wrappers without the suffix); module token `User32` -> `user32`; TU comment added. `GetComboBoxInfo` correct as written (single export, ordinal 13D, no A/W family). Also produced a **new pre-scan P1 finding** in `window.cpp:124` (`CreateWindowW` MISSING) |
+| 7 | `console.cpp` | 1 | 0 correctness/binding/UB defects - and the first wrapper in the review with **no SDK prototype to pair against at all**: neither `ConsoleControl` nor `CONSOLECONTROL` nor the five console-internal structures are declared anywhere in SDK 10.0.26100.0 or 10.0.10240.0. 1 declaration defect (**U13** - the only defined member declared non-static) + 3 nits (dead `#undef WinHelp`, `//Console` section comment, missing comma space) | Fixed: `static` added at `user32.h:690` (U13 closed; caller probe `tmp/_tmp_console_static_probe.cpp` - before = 1 x C2352 exit 2, after = exit 0), `,DWORD` -> `, DWORD`, `//Console` -> `//Console functions`, dead `#undef WinHelp` removed, TU comment added. Binding correct as written: `cl /EP` -> `"ConsoleControl"`, which is the only `*Console*` name in the export table (ordinal 1594, hint 55, RVA 00028FD0, not a forwarder); live probe RESOLVED with `ConsoleControlA`/`ConsoleControlW` MISSING, so the bare stem is the D13 spelling and the missing `T` suffix is correct |
+| 8 | `coordtransform.cpp` | 3 | **3 real run-time defects** - all three wrappers bound `GetDCEx`, a real export, so every existing check (export table, `cl /EP`, compile) passed while no wrapper called its own entry point; 0 convention defects (`static` already correct at `user32.h:377-379`) | Fixed: bindings `GetDCEx` -> `ClientToScreen`/`ScreenToClient`/`MapWindowPoints` (`cl /EP` resolves the three literals; live probe RESOLVED with `*A`/`*W` all MISSING, so the bare stem is the D13 spelling) + TU comment (binding rationale, `_Inout_` POINT ownership, the "non-zero `MapWindowPoints` return is a delta, not a failure" contract, section coverage). No header change, no rename. New pre-scan **P5** covers the defect class; new **U18** records `window.cpp`'s `void`-returning point converters |
+| 9..37 | not started | | | |
 
-**Next session: `combobox.cpp`** (alphabetical from here; `accelerator.cpp`, `accessibility.cpp`, `brush.cpp`,
-`caret.cpp`, `clipboard.cpp`, `timer.cpp` done 29 Oct 2026). `combobox.cpp` carries two of the six pre-scan **P1**
-bindings (`:20 DlgDirListComboBox`, `:27 DlgDirSelectComboBoxEx` - both stems `#undef`'d at `user32.h:15,16`, so G2
-bites) and the G4 module-token spelling `User32`. Take the pre-scan P1/P2 entries into account only when their owning
-TU comes up; do not fix other TUs outside their own session.
+**Next session: `cursor.cpp`** (alphabetical from here; 9 TUs done across sessions 1-8: `accelerator`,
+`accessibility`, `brush`, `caret`, `clipboard`, `combobox`, `console`, `timer`, `coordtransform`). Pre-flagged against
+`cursor.cpp`: pre-scan **P3** - `user32.h:383 CopyCursorT` binds the single `CopyIcon` export at `cursor.cpp:26`, which
+is a *correct* binding of a genuinely single export but a wrapper name that hides it, and it is the T-suffix census'
+mirror case inside U17. Expect the cursor/DPI point-mapping family to interact with what session 8 found:
+`user32.h:390 GetPhysicalCursorPos` and the `LogicalToPhysicalPoint`/`PhysicalToLogicalPoint` pair at `:188,:191`
+(now open item **U18**, defined in `window.cpp`). Take the pre-scan P1/P2/P3/P5 entries into account only when their
+owning TU comes up; do not fix other TUs outside their own session.
 
 | 2b | `accessibility.cpp` (same day, after user commit `89da3452` added the three missing WinEvent wrappers) | +3 | 0 binding defects; **1 call-site defect found: the three declarations lacked `static`, so every call site was `error C2352`** | Fixed: `user32.h:662-664` made `static` (verified by a compile-only caller probe, before = 3 errors, after = exit 0); TU comments generalised to the four WinEvent entry points. Census re-run: `user32.h` now 524 declarations, 427 static, 97 non-static (was 100) - see U4, and new U13 for the one remaining defined-but-non-static member |
 
 
-Remaining queue (32 TUs, alphabetical; `accelerator.cpp`, `accessibility.cpp`, `brush.cpp`, `caret.cpp`,
-`clipboard.cpp`, `timer.cpp` done):
-combobox, console, coordtransform, cursor, desktop, devicecontext, devicemanagement, dialog,
+Remaining queue (29 TUs, alphabetical; `accelerator.cpp`, `accessibility.cpp`, `brush.cpp`, `caret.cpp`,
+`clipboard.cpp`, `combobox.cpp`, `console.cpp`, `timer.cpp`, `coordtransform.cpp` done):
+cursor, desktop, devicecontext, devicemanagement, dialog,
 errorhandling, filledshapes, help, hook, icon, ime, keyboard, mdi, menu, message, monitor, mouse, painting,
 processthread, rectangle, resource, scrollbar, systemshutdown, window, windowclass, windowprocedure,
 windowproperties, winqor_api_user (module glue). `hook.cpp` is now in the build (see U3).
@@ -81,12 +126,22 @@ windowproperties, winqor_api_user (module glue). `hook.cpp` is now in the build 
    `tmp/_tmp_user32_exports.txt` (`dumpbin /exports` of `C:\Windows\System32\user32.dll`, 1018 names).
 3. Resolve the binding name the wrapper *actually* asks for - preprocess the TU with `cl /EP` and grep the
    `qor_pp_useswinapi` expansion. Never trust the source spelling; see ground rule G1.
+ 3b. Check **binding-vs-member agreement** with `tmp/_tmp_wrong_stem_scan.ps1` (added after session 8, which found
+    three wrappers calling `GetDCEx`). Step 3 proves the bound name resolves; it does not prove the wrapper calls
+    the entry point it wraps. Run the scan and expect this TU's sites to be clean. A flag is a defect until disproved -
+    the only benign patterns so far are a deliberate alias to a different export (`cursor.cpp` `CopyCursorT` ->
+    `CopyIcon`, pre-scan P3) and a definition not qualified with `User32::` (`resource.cpp`, open item U11).
 4. Check the call-site idiom against `api_layer/kernel` + `api_layer/shell`: `qor_pp_fcontext;`,
    `Win32ErrorHandler _;`, `qor_pp_useswinapi*`, `Library::Call<RET, Args...>` with explicit template
    arguments, `CheckReturn<...>::TType` where zero/false means failure.
 5. Look for an in-tree caller of every wrapper (`src`/`examples`/`test`). Name the consumer chain one level deep -
    which `ui/gui` controller or handler calls it - then stop: whether that controller should itself be called is a
    `winqor_gui` question. Wrappers with no reachable caller are recorded as instances of open item U15.
+5b. For every stem whose callers are established, classify the call sites with `tmp/_tmp_bypass_scan.ps1`
+   (**LAYER** through `User32::` vs **BYPASS** through the SDK import) and record the split against open item U19.
+   **Never trust a raw grep for liveness**: comments must be stripped first (`tmp/_tmp_comment_state.ps1` for one file,
+   the bypass scan's own stripper for a sweep) - `ui/gl/windowimpl.cpp` is 57% commented-out code and produced eight false
+   bypass hits (see U19's method-hazard note).
 6. Compile the TU standalone (`tmp/_tmp_compile_one.ps1 <name>.cpp`, `/W4`, must be exit 0).
 7. Note which SDK prototypes the wrappers pair with are emitted only behind a version guard (`#if WINVER >= ...`,
    `#if NTDDI_VERSION >= ...`, `_WIN32_WINDOWS`, `_WIN32_IE`) and which SDK-visible entry points relevant to the
@@ -104,10 +159,11 @@ the real `user32.dll`), `_tmp_cmake_file_diff.ps1` (disk vs `add_library` file l
 - added in session 3), `_tmp_undefined_static.ps1` (the reverse direction: `static` declarations with no definition
 in the folder), `_tmp_u14_census.ps1 [-Dir <api_layer folder>]` (bracket-matching census of every `Call`/`voidCall`
 site - explicit vs argument-deducing template arguments, plus the spaced/tight `Call<` split; added in session 4, it
-replaced the faulty grep-based U14 count).
+replaced the faulty grep-based U14 count), `_tmp_tsuffix_census.ps1 [-Header <header>] [-Exports <exports.txt>] [-ShowAll]` (added session 6, the U17 instrument: parses the 8-space-indented member declarations of a `user32.h`-style header, strips the folder's trailing `T`, looks `<stem>A`/`<stem>W` up in an export table and reports A/W-family-without-suffix vs suffix-without-A/W; current `user32.h` census 525 parsed = 108 norm + 404 single-export + 11 deviations, plus 2 mirror-case flags), `_tmp_sdk_guard_scan.ps1 [-File <sdk header>] [-Names <name>...]` (added session 6, the U16 instrument: replays the `#if`/`#else`/`#endif` nesting of an SDK header and prints the guard stack open at each named declaration; defaults to `winuser.h` 10.0.26100), `_tmp_wrong_stem_scan.ps1 [-Dir <folder>]` (added session 8, the P5 instrument: pairs every `qor_pp_useswinapi`/`qor_pp_useswinapiAW` binding with the `User32::` member that encloses it and flags any stem that is neither that member nor its `T`-stripped base nor that base plus `A`/`W`; also mechanically reproduces U11 by reporting bindings outside any `User32::` definition), `_tmp_bypass_scan.ps1 -Stems <stems...> [-Roots <dirs...>]` (added session 8, the U19 instrument: comment-stripping scan that classifies every occurrence of a stem in `src`/`examples`/`test` as LAYER (`User32::`), INDIRECT (qualified on an intermediate class) or BYPASS (unqualified / `::`), i.e. going straight to the SDK import), `_tmp_comment_state.ps1 -Path <file> [-Lines <n...>]` (added session 8: character-level block/line-comment and string-literal state machine; says whether given lines are CODE or COMMENT for the compiler and prints the commented-line fraction of the file - the guard against treating grep hits in commented-out regions as live).
 
 Full-library compile after the session-1 edit: 38/38 TUs, `/W4`, exit 0, no diagnostics. Re-run after the session-3
-edit: same, 38/38, exit 0, no diagnostics (`tmp/_tmp_cl_all.log`).
+edit: same, 38/38, exit 0, no diagnostics (`tmp/_tmp_cl_all.log`). Re-run after the session-8 binding fix: same, 38/38,
+exit 0, no diagnostics - the log's one `warning|error` grep hit is the filename `errorhandling.cpp`, not a diagnostic.
 
 ## Ground rules established (measured, not assumed)
 
@@ -123,7 +179,13 @@ edit: same, 38/38, exit 0, no diagnostics (`tmp/_tmp_cl_all.log`).
   `WinHelp` MISSING / `WinHelpW` RESOLVED; same for `SystemParametersInfo`, `GetRawInputDeviceInfo`,
   `DlgDirList`, `DlgDirSelectEx`, `DlgDirListComboBox`, `DlgDirSelectComboBoxEx`, `LoadBitmap`,
   `RegisterDeviceNotification`). Any wrapper that binds one of those bare stems throws
-  `Missing library function.` at run time.
+  `Missing library function.` at run time. Measured status of all nine after session 6: **2 fixed in this review**
+  (`DlgDirListComboBox`/`DlgDirSelectComboBoxEx` in `combobox.cpp`, now `qor_pp_useswinapiAW` and renamed `...T`);
+  **2 defined and already safe** (`RegisterDeviceNotification` `devicemanagement.cpp:19`, `WinHelp` `help.cpp:35`, both
+  `qor_pp_useswinapiAW`, which token-pastes `W` before the SDK macro could be consulted); **5 not defined anywhere in the
+  folder** (`SystemParametersInfo` `user32.h:652`, `GetRawInputDeviceInfo` `:540`, `DlgDirList` `:546`, `DlgDirSelectEx`
+  `:547`, `LoadBitmap` `:672` - U4 members, so nothing binds them today). Check this list before re-flagging G2 in a
+  later session.
 - **G3 - the previous audit report is partly wrong.** `tmp/_tmp_audit_report.txt` section A ("run-time
   failures") was produced by grepping the source spelling, so it reported a false failure for every name
   whose SDK A/W macro is still in scope - `CreateAcceleratorTable`, `LoadAccelerators`, `MessageBox`,
@@ -210,6 +272,20 @@ edit: same, 38/38, exit 0, no diagnostics (`tmp/_tmp_cl_all.log`).
   `CONSOLESETFOREGROUND`, `CONSOLE_PROCESS_INFO`, `CONSOLE_CARET_INFO` at global scope** - undocumented
   console-internal types. Check them against the SDK's own console declarations for redefinition or
   collision in any TU that also reaches the console SDK headers (`console.cpp`, `desktop.cpp`).
+  **SDK-side check closed 30 Oct 2026 (session 7): no collision anywhere.** The tokens `CONSOLECONTROL`,
+  `_CONSOLEENDTASK`, `CONSOLEWINDOWOWNER`, `CONSOLESETFOREGROUND`, `CONSOLE_PROCESS_INFO`,
+  `CONSOLE_CARET_INFO` and `ConsoleControl` occur in **no** header of SDK 10.0.26100.0 (whole `Include\` tree grepped -
+  `um\wincon.h:46-48` merely pulls in `consoleapi.h`/`consoleapi2.h`/`consoleapi3.h`, and across those three the only
+  hit for the pattern set is `SetConsoleMode` at `consoleapi.h:138`), and none in 10.0.10240.0 either. Being a whole-tree
+  result, it settles the collision question for `desktop.cpp` as well; what remains is the consequence of the types
+  being the **only** definition in the build: (i) they carry no Microsoft authority, so their layout and the enum
+  numbering cannot be verified locally (see the `console.cpp` section); (ii) `Reserved1`, `Reserved2`, `Reserved3` are
+  unqualified global enumerators in a published header, so any consumer that declares its own global `Reserved1` stops
+  compiling; (iii) the structures at `:52-62` declare members through the SDK's empty `IN` macro, so the header only
+  parses after the SDK headers have been seen (`/EP` of `console.cpp` shows `IN DWORD dwProcessID;` ->
+  ` DWORD dwProcessID;`) - harmless today because `user32.h:7` includes `kernel32.h` first, but it makes the type block
+  include-order dependent. The decision on the types themselves (namespace them under `qor::win::api`, spell out the
+  `IN` markers, or drop the console-internal surface altogether) is still the user's.
 - **U11 - `resource.cpp` defines both Resource members without the `User32::` qualifier.** `resource.cpp:16`
   `CopyImage` and (re-measured 29 Oct 2026 in the `brush.cpp` session) `resource.cpp:23` `LoadImageT` are both free
   functions in `qor::win::api`, while `user32.h:443`/`:444` declare `User32::CopyImage` / `User32::LoadImageT` as
@@ -233,14 +309,20 @@ edit: same, 38/38, exit 0, no diagnostics (`tmp/_tmp_cl_all.log`).
   section's three unimplemented members (`SetWinEventHook`, `UnhookWinEvent`, `IsWinEventHookInstalled`) remain
   declared-and-undefined (U4).
 
-- **U13 - one member is defined through `User32::` but declared non-static: `ConsoleControl`.** Written up 29 Oct
-  2026 (the session-2b row promised this item but never wrote it). Definition `console.cpp:18`, declaration
-  `user32.h:690` `NTSTATUS ConsoleControl(CONSOLECONTROL Command, PVOID ConsoleInformation, DWORD
-  ConsoleInformationLength);` - no `static`, unlike its 426 qualified siblings, so a caller would have to construct
-  an instance of a class documented as all-static (`docs/agent/windows_code_conventions.md`). It is the only such
-  member in the folder (`tmp/_tmp_static_census.ps1`). One-token fix (`static` at the declaration) in `console.cpp`'s
-  own session; not touched here. Related: the `CONSOLECONTROL` enum in its signature is QOR-defined at
-  `user32.h:19-29` (U10).
+- **U13 - one member was defined through `User32::` but declared non-static: `ConsoleControl` - FIXED 30 Oct 2026
+  (session 7).** Written up 29 Oct 2026 (the session-2b row promised this item but never wrote it). Definition
+  `console.cpp:18`, declaration `user32.h:690` read `NTSTATUS ConsoleControl(CONSOLECONTROL Command, PVOID
+  ConsoleInformation,DWORD ConsoleInformationLength);` - no `static`, unlike its 426 qualified siblings, so a caller had
+  to construct an instance of a class documented as all-static (`docs/agent/windows_code_conventions.md`), and the
+  natural qualified call was a compile error: measured with `tmp/_tmp_console_static_probe.cpp`, before the fix
+  `User32::ConsoleControl(ConsoleSetWindowOwner, &owner, sizeof(owner))` gave **1 x C2352** ("a call of a non-static
+  member function requires an object"), exit 2; after adding `static` the same probe compiles `/W4` exit 0. Fixed in the
+  owning TU's session as planned: `static` added, plus the missing space after the second comma and the section comment
+  `//Console` -> `//Console functions` (every other section comment in the header ends in "functions"). Census re-run
+  after the fix: 525 member-declaration-shaped lines, **428** `static` (was 427), 426 distinct defined names, **zero**
+  defined-but-non-static members. U4's gap is unchanged in substance - the non-static declaration count moves 98 -> 97
+  and all 97 of them are still declared-and-undefined, which is exactly the figure U4 already carried.
+  Related and still open: the `CONSOLECONTROL` enum in its signature is QOR-defined at `user32.h:19-29` (U10).
 
 - **U14 - `Library::Call`/`voidCall` template-argument style is split two ways.** Measured 29 Oct 2026 over all 428
   call sites in this folder.
@@ -274,7 +356,12 @@ edit: same, 38/38, exit 0, no diagnostics (`tmp/_tmp_cl_all.log`).
   controller is already documented at `docs/ui/windows/30-controllers.md:503-512`). These are **not dead code**: the
   TU is in `add_library`, the class carries `qor_pp_module_interface(QOR_WINAPIUSER)`, so the wrapper is part of the
   published DLL surface. The distinction that matters for the audit is U4's: a U4 member has no definition at all, so
-  a caller gets `LNK2019`; a U15 wrapper is fully defined, linked and callable - the tree just never calls it.
+  a caller gets `LNK2019`; a U15 wrapper is fully defined, linked and callable - the tree just never calls it. **Session 8
+  found the first exception in the reviewed set:** all three `coordtransform.cpp` wrappers are called in-tree
+  (`windowcontroller.cpp:643` `ClientToScreen`, `:648` `ScreenToClient`, `:653` `MapPoints` -> `MapWindowPoints`) and
+  reachable one level up (`windowimpl.cpp:1657` in `WindowImpl::GetPos`, `:2218` in `WindowImpl::SetCursorPosWin32`), so
+  the `GetDCEx` mis-binding was a live defect in shipped paths, not a dead-code curiosity. That makes liveness worth
+  checking before assuming a wrapper's behaviour cannot be observed.
   Instances so far:
   - `caret.cpp` - **all 8** (`CreateCaret`, `DestroyCaret`, `GetCaretBlinkTime`, `GetCaretPos`, `HideCaret`,
     `SetCaretBlinkTime`, `SetCaretPos`, `ShowCaret`). Consumers: `platform::win::Caret`
@@ -292,15 +379,40 @@ edit: same, 38/38, exit 0, no diagnostics (`tmp/_tmp_cl_all.log`).
     (`wmDestroyClipboard`, `wmPaintClipboard`, ...) and calls no clipboard wrapper at all - and its slot
     `m_clipboardOwner` (`interactive.h:60`) has **no writer** in the tree, only the read at `interactive.cpp:45`, so the
     handler is never installed (matches the gui track's 50b finding). And `ui/gl` has a **parallel direct-SDK clipboard
-    implementation** - `platform.cpp:143-158`/`:170-202` and `windowimpl.cpp:2395-2410` call `OpenClipboard`,
-    `EmptyClipboard`, `SetClipboardData`, `GetClipboardData`, `CloseClipboard` as ordinary imports, so five of the twenty
-    wrappers have working in-tree duplicates that never go through this library (a `winqor_platform` observation).
+    implementation** - `ui/gl/platform.cpp:143-158`/`:170-202` call `OpenClipboard`, `EmptyClipboard`, `SetClipboardData`,
+    `GetClipboardData`, `CloseClipboard` as ordinary imports (**9 live sites**, measured 30 Oct 2026 with
+    `tmp/_tmp_bypass_scan.ps1` + `tmp/_tmp_comment_state.ps1`), so five of the twenty wrappers have working in-tree
+    duplicates that never go through this library (a `winqor_platform` observation, and the first counted instance of open
+    item U19). The earlier version of this entry also cited `windowimpl.cpp:2395-2410` - **corrected 30 Oct 2026
+    (session 8)**: that block is inside a `/* ... */` region (the comment opened at `:2221` and does not close until
+    `:2498`), so it is not compiled. `windowimpl.cpp` is **57% comment lines** (1503 of 2637), which makes grep-based
+    liveness claims in that file unreliable in both directions.
+  - `combobox.cpp` - **2 of 3** (`DlgDirListComboBoxT` `user32.h:551`, `DlgDirSelectComboBoxExT` `:552`), re-measured
+    29 Oct 2026 (session 6): the only occurrences of either name in the whole tree are the declaration and the
+    definition. gui implements the same operation a different way - `ComboBoxController::Dir()`
+    (`ui/gui/controllers/a_h/comboboxcontroller.cpp:89-94`) posts `CB_DIR` through `User32::SendMessageT`, which is what
+    the SDK's `DlgDirListComboBox` does internally - so the pair is dead wrapper surface with a live duplicate above it.
+  - `console.cpp` - **1 of 1** (`ConsoleControl`, `user32.h:690`). Re-measured 30 Oct 2026 (session 7): the only
+    occurrences of the name anywhere in the tree are the declaration and the definition, and the console-internal types
+    at `user32.h:19-62` are referenced by nothing else either. Nothing in `ui/gui` wraps it - there is no console
+    controller at all - so it is exported, linked and unused. Worth noting for the audit: until the U13 fix landed it
+    could not even be *called* in the natural qualified form (C2352), so this wrapper has never been callable as
+    documented.
   Not instances (call sites confirmed by the same grep):
   - `accelerator.cpp` **5/5 live** - `ui/gui/view/handlers/acceleratortable.cpp:57` (`CreateAcceleratorTableT`), `:63`
     (`LoadAcceleratorsT`), `:71` (`DestroyAcceleratorTable`), `:78` (`CopyAcceleratorTableT`), `:83`
     (`TranslateAcceleratorT`).
   - `timer.cpp` + `accessibility.cpp` **3/3 live** - `ui/gui/controllers/windowcontroller.cpp:800,805,810`.
   - `brush.cpp` **1/1 live** - `ui/gui/gdiobjects/brush.cpp:111-116`.
+  - `combobox.cpp` `GetComboBoxInfo` **live** - `ui/gui/controllers/a_h/comboboxcontroller.cpp:114,149,184`
+    (`ComboBoxController::GetComboBoxInfo`, `GetEditCtrl`, `GetLBCtrl`), reached through
+    `WindowFactory::CreateComboBox` (`ui/gui/factories/windowfactory.cpp:236-239`), which
+    `examples/experimental/osspecific/windows/editbox/editbox.cpp:86` calls. Cross-reference for the gui track, checked
+    here because the wrapper takes the SDK type: the controller passes its own `ComboBoxInfo`
+    (`comboboxcontroller.h:34-43`) through `reinterpret_cast<PCOMBOBOXINFO>` at `:114`, and that struct is field-for-field
+    `COMBOBOXINFO` (`unsigned long`/`Rect`x2/`unsigned long`/`void*`x3 against `DWORD`/`RECT`x2/`DWORD`/`HWND`x3, with
+    QOR's `Rect` four `long` at `ui/gui/view/drawing/rect.h:33-38`); `cbSize` is set before every call
+    (`:113,148,183`), which is the entry condition the SDK requires.
 
 - **U16 - the wrappers pair with SDK declarations that the SDK only emits when a version guard passes, and nothing in
   the build pins those version macros.** Opened 29 Oct 2026 (session 5) from `clipboard.cpp`: `winuser.h:5431`/`:5439`
@@ -321,6 +433,76 @@ edit: same, 38/38, exit 0, no diagnostics (`tmp/_tmp_cl_all.log`).
     `RemoveClipboardFormatListener`, `GetUpdatedClipboardFormats` (`WINVER >= 0x0600`). Plus 1 reverse case:
     `GetClipboardMetadata` is unguarded in SDK 10.0.26100 but would be absent from an older SDK, and it is the one
     clipboard entry point this folder does not wrap.
+  - `combobox.cpp` - **1 guarded**: `GetComboBoxInfo` (`winuser.h:14785`) and the `COMBOBOXINFO` type it takes
+    (`:14771`) both sit inside `winuser.h:13594 #if(WINVER >= 0x0500)`; the `DlgDirListComboBox`/
+    `DlgDirSelectComboBoxEx` block at `:11643-11687` has no version guard at all, only the `NOUSER`/`NOCTLMGR`
+    opt-outs plus the Desktop-family partition. Measured with `tmp/_tmp_sdk_guard_scan.ps1`.
+  - `console.cpp` - **0 guarded, and the first TU whose wrapper has no SDK declaration at all to guard**: `ConsoleControl`
+    is declared by no header in either installed SDK (U10), so `_tmp_sdk_guard_scan.ps1` has nothing to replay and this
+    TU's U16 exposure is total rather than version-dependent - the signature rests on the export table alone. The one
+    SDK type in the signature, `NTSTATUS` (`typedef LONG NTSTATUS`, seen at `/EP` line 320947, from `um\winnt.h`), is
+    unguarded; the parameter types come from `user32.h:19-62` rather than from any SDK header.
+  - `coordtransform.cpp` - **0 guarded**, and the cleanest U16 picture so far: all three SDK declarations (`ClientToScreen`
+    `winuser.h:9508-9513`, `ScreenToClient` `:9515-9520`, `MapWindowPoints` `:9556-9563`) sit in the Desktop-family
+    partition under nothing but `#ifndef NOUSER` - no `WINVER`/`_WIN32_WINNT` guard at any level, measured with
+    `tmp/_tmp_sdk_guard_scan.ps1`. The same is true of the `GetDCEx` declaration (`:8575`) the TU wrongly used before the
+    fix, so version guards never had anything to do with that defect. The reverse half of U16 is what this TU does add to:
+    the rest of the SDK's coordinate family is `WINVER >= 0x0600`/`>= 0x0603` guarded (`:9522-9537`, `:9539-9554`,
+    `:9571-9576`), and this library declares two of those names unconditionally at `user32.h:188,:191` (see U18) - a
+    consumer pinning `WINVER` below `0x0600` gets declarations here that the SDK would not have emitted.
+
+- **U17 - A/W wrappers declared without the folder's `T` suffix.** Opened 29 Oct 2026 (session 6) when the two combo
+  members were renamed (user decision: rename inside the TU being reviewed, keep the rest together for one
+  folder-wide call). Measured with `tmp/_tmp_tsuffix_census.ps1`: of the 525 `user32.h` member declarations, **108**
+  face an A/W export pair and carry the suffix (the norm), **404** are single exports with no suffix (correct bare per
+  D13), and **11** have an A/W family with no suffix: `MessageBoxTimeout` (`:489`, defined `dialog.cpp:143`),
+  `DdeInitialize` (`:519`), `DdeQueryString` (`:525`), `GetRawInputDeviceInfo` (`:540`), `DlgDirList` (`:546`),
+  `DlgDirSelectEx` (`:547`), `SendIMEMessageEx` (`:636`, defined `ime.cpp:16`), `WinHelp` (`:646`, defined
+  `help.cpp:32`), `SystemParametersInfo` (`:652`), `LoadBitmap` (`:672`), `RegisterDeviceNotification` (`:682`, defined
+  `devicemanagement.cpp:16`). **Only 4 of the 11 are implemented** (the ones marked `defined` above); the other 7 are
+  U4 declared-and-undefined members, so their spelling is currently academic. The census' mirror case - `T` suffix with
+  no A/W family - is 2 members, `CreateWindowT` (`:144`) and `CopyCursorT` (`:383`), see pre-scan P3. Deliberately not
+  touched per-TU: renaming is a published-surface change (all four implemented ones are exported through
+  `QOR_WINAPIUSER`), and 3 of the 4 already bind correctly through `qor_pp_useswinapiAW`, so today the only cost is that
+  the name hides the A/W nature from the reader. Note also that where a member keeps the bare stem **and** the stem is
+  `#undef`'d at `user32.h:9-17`, the bare-stem binding is a live failure (G2) - that is exactly the P1 set, which is why
+  the U17 decision and the D13 binding fix have to be settled in the same pass per TU.
+- **U18 - a wrapper pair whose return type contradicts the SDK: `void` where `user32.dll` returns `BOOL`.** Opened
+  30 Oct 2026 (session 8) while mapping the coordinate-transform family for `coordtransform.cpp`. `user32.h:188`
+  `static void LogicalToPhysicalPoint(HWND, ::LPPOINT*)` and `:191` `static void PhysicalToLogicalPoint(HWND, ::LPPOINT*)`
+  are defined `window.cpp:432-437` and `:453-458` with `Library::voidCall<HWND, ::LPPOINT>`, but the SDK declares both
+  returning `BOOL` (`winuser.h:9522-9528` and `:9530-9535`, guarded `WINVER >= 0x0600`) and the export table has both as
+  single exports (ordinals 26D, 2AB). `LogicalToPhysicalPoint` returns FALSE when the point is not inside a physical
+  display area, which is a case the DPI-aware caller has to handle - the wrapper discards it, and the only two callers,
+  `WindowController::LogicalToPhysicalPoint`/`PhysicalToLogicalPoint` (`windowcontroller.cpp:313-315`, `:328-330`), are
+  `void` too, so the failure is unrecoverable all the way up. Not a run-time fault (the `voidCall` still calls through a
+  correct `__stdcall` signature and the discarded `BOOL` is harmless in the ABI), so it is a surface decision rather than
+  a fix: changing `void` -> `BOOL` alters an exported, called member. Also still open in the same family: the SDK's
+  `LogicalToPhysicalPointForPerMonitorDPI`/`PhysicalToLogicalPointForPerMonitorDPI` (`winuser.h:9539-9552`, `WINVER >=
+  0x0603`) and `WindowFromPhysicalPoint` are exported and declared at `user32.h:211` but the first two are declared
+  nowhere in this library. For `window.cpp`'s session.
+- **U19 - call sites that reach a `user32.dll` entry point through the SDK import thunk instead of through this layer.**
+  Opened 30 Oct 2026 (session 8, user decision: track it as an item and count it per session as callers are traced). A
+  wrapper's whole purpose is to route a call through `GetProcAddress` + the flyer/error machinery; when a Windows-specific
+  TU calls the bare stem instead, it links against `user32.lib`, bypasses the interception point, and the wrapper's
+  liveness (U15) is being satisfied by a code path that does not use it. Instrument:
+  `tmp/_tmp_bypass_scan.ps1 -Stems <stems...> [-Roots ...]`, which classifies each occurrence as **LAYER** (`User32::stem`),
+  **INDIRECT** (qualified on an intermediate class such as a `ui/gui` controller, which usually lands on LAYER one hop
+  down), or **BYPASS** (unqualified or `::stem`), after stripping comments. **Baseline measured at opening:**
+  `ClientToScreen`/`ScreenToClient`/`MapWindowPoints` = 3 LAYER + 4 INDIRECT + **0 BYPASS** (clean family);
+  `OpenClipboard`/`CloseClipboard`/`GetClipboardData`/`SetClipboardData`/`EmptyClipboard` = **9 BYPASS**, all in
+  `ui/gl/platform.cpp:143-202`, vs 1 LAYER (`ui/gui/gdiobjects/brush.cpp:113` for `GetSysColorBrush`). Counting rule for
+  later sessions: for each wrapper whose liveness is established in step 5, report the LAYER/BYPASS split for that stem;
+  a BYPASS site is recorded here, never "fixed" here, since converting a `ui/gl` call into a layer call is a
+  `winqor_platform`/`winqor_gui` change with link-order consequences (the api layer must then be a link dependency of that
+  target).
+- **Method hazard found with U19 (applies to every liveness claim in this review):** a grep hit is not evidence, because
+  large parts of the Windows `ui` tree are commented out. `ui/gl/windowimpl.cpp` is **1503 comment-only lines of 2637
+  (57%)**, and the block comments do not nest - a block opened at `:2221` runs to `:2498`, which is why eight
+  `ClientToScreen`/`ScreenToClient`/clipboard hits in that file are all dead. `tmp/_tmp_comment_state.ps1 -Path <file>
+  -Lines <n...>` settles it with a character-level state machine (block comments, line comments, string and char
+  literals) and prints the commented fraction. Two earlier records in this file relied on unfiltered greps and had to be
+  corrected (the clipboard U15 entry and its session-5 note).
 
 
 ## accessibility.cpp + timer.cpp - session 2 (29 Oct 2026)
@@ -596,10 +778,13 @@ the `T` suffix, the other eighteen genuine single exports.
 - **U14 contributes nothing to change:** 20/20 sites state the full SDK argument list (0 deducing) and 20/20 use the
   spaced `Call< BOOL, HWND >` form, so neither half of U14(a)/(b) applies; nothing was retouched on those grounds.
 - **U15: all 20 wrappers are instances** (analysis in the U15 list). The notable part is that the tree does do clipboard
-  work - through a **parallel direct-SDK path** in `ui/gl` (`platform.cpp:143-158`, `:170-202`;
-  `windowimpl.cpp:2395-2410`), complete with its own `while (!OpenClipboard(...))` retry-on-busy loop, which never
-  reaches `GetProcAddress`. gui's `ClipboardHandler` handles the clipboard messages but calls no wrapper, and its slot
-  `m_clipboardOwner` has no writer, so it is never installed.
+  work - through a **parallel direct-SDK path** in `ui/gl` (`platform.cpp:143-158`, `:170-202` - 9 live sites), complete
+  with its own `while (!OpenClipboard(...))` retry-on-busy loop, which never reaches `GetProcAddress`. gui's
+  `ClipboardHandler` handles the clipboard messages but calls no wrapper, and its slot `m_clipboardOwner` has no writer,
+  so it is never installed. *(Corrected 30 Oct 2026, session 8: this entry also cited `windowimpl.cpp:2395-2410` as part
+  of that path. It is not - the whole region sits inside a block comment that opens at `windowimpl.cpp:2221` and closes at
+  `:2498`, verified with `tmp/_tmp_comment_state.ps1`. The 9 `platform.cpp` sites were re-checked the same way and are all
+  CODE. Counted as open item U19's first instance.)*
 - U5 (binding cached for the process lifetime), U6 (20 more default-`__cdecl` `fPtr` call sites), U7 (a swallowed SEH
   fault returns `FALSE`/`NULL`/`0`, indistinguishable from a real clipboard failure - and clipboard code is exactly
   where a use-after-`CloseClipboard` fault is plausible) and U8 all apply unchanged. No cross-boundary type work in
@@ -607,4 +792,210 @@ the `T` suffix, the other eighteen genuine single exports.
   caller-owned, so no layout-compatibility check of the session-2/session-4 kind was needed.
 - Verified: `/EP` after the edits resolves exactly the twenty names in the table; `clipboard.cpp` compiles standalone
   at `/W4` exit 0; whole library **38/38 at `/W4`, exit 0**, no diagnostics (`tmp/_tmp_cl_all.log`).
+
+## combobox.cpp - session 6 (29 Oct 2026)
+
+The "//Combo Box functions" section (`user32.h:550-553`): three wrappers, three bindings, in header order, and the
+first TU in this review that contains **bindings that could never work** - two of the three asked `GetProcAddress` for
+a name `user32.dll` does not export, so those two wrappers could only ever throw.
+
+| Wrapper (spelling after this session) | SDK entry (`winuser.h` 10.0.26100) | Binding before -> after (`cl /EP`) | Export |
+|---|---|---|---|
+| `DlgDirListComboBoxT(HWND, LPTSTR, int, int, UINT) -> int` | `:11643-11665` `DlgDirListComboBoxA/W`, `#define DlgDirListComboBox DlgDirListComboBoxW` at `:11662` (`#undef`'d at `user32.h:15`) | `"DlgDirListComboBox"` MISSING -> `"DlgDirListComboBoxW"` | yes (C3/C2, probe) |
+| `DlgDirSelectComboBoxExT(HWND, LPTSTR, int, int) -> BOOL` | `:11667-11687` `DlgDirSelectComboBoxExA/W`, macro at `:11684` (`#undef`'d at `user32.h:16`) | `"DlgDirSelectComboBoxEx"` MISSING -> `"DlgDirSelectComboBoxExW"` | yes (C6/C5, probe) |
+| `GetComboBoxInfo(HWND, PCOMBOBOXINFO) -> BOOL` | `:14771-14787` `COMBOBOXINFO` + `WINUSERAPI BOOL WINAPI GetComboBoxInfo(_In_ HWND, _Inout_ PCOMBOBOXINFO)` | `"GetComboBoxInfo"` (unchanged) | yes (13D) |
+
+- **Fixed (correctness).** Both `DlgDir*` bindings are now `qor_pp_useswinapiAW(user32, <stem>)`. The reason the bare
+  spelling is fatal *for these two specifically* is that `user32.h:15,16` `#undef` the stems, so G2's macro rescue
+  cannot fire and `_ATXT(stem)` stringizes the literal, un-exported name. `qor_pp_useswinapiAW` token-pastes `W`
+  before expansion, so the `#undef` is irrelevant to it. Live probe after the fix: all three names RESOLVED.
+- **Fixed (naming, user decision).** `user32.h:551-552` and the two definitions now read `DlgDirListComboBoxT` /
+  `DlgDirSelectComboBoxExT`, restoring the folder's `T`-suffix norm for A/W wrappers. Zero call sites existed for
+  either name anywhere in `src`/`examples`/`test`, so no call-site edits were needed and the rename cannot change
+  behaviour in this tree. `GetComboBoxInfo` keeps the bare SDK name (no A/W family; D13 names it as the example).
+  The remaining 11 such members are U17, and the mirror case (`T` with no A/W family) is pre-scan P3.
+- **Fixed (consistency).** All three bindings' module token `User32` -> `user32` (the `_TXT()` argument of
+  `GetModuleHandle`; the run-time lookup is case-insensitive, so this is spelling only - G4). Folder-wide census over
+  all 428 bindings: 416 now `user32`, 12 `User32`, all in `scrollbar.cpp`, which keeps them for its own session.
+- **Fixed (documentation).** New TU comment: why the third binding is bare, why the pair must be AW, the `_Inout_`
+  `lpPathSpec` / `_Out_writes_(cchOut)` `lpString` buffer contracts, the `DDL_*` filter set, the
+  `cbSize`-pre-set-and-child-handles-are-control-owned contract of `GetComboBoxInfo`, the `T`-suffix rationale and the
+  section-coverage claim.
+- **Verified correct as written:** all three return types, parameter types, parameter count and order against the SDK;
+  `PCOMBOBOXINFO` is used as the SDK type rather than a QOR stand-in; `qor_pp_fcontext` in all three; 4-space indent,
+  file-local includes last, `}}}//qor::win::api`; the whole `//Combo Box functions` section is `static` (unlike the
+  adjacent List Box and DDE blocks - U4) and all three members are defined, so this TU is not part of U4's gap.
+- **Left alone deliberately:** the tight `Call<...>` spacing, 3/3 explicit template arguments (U14 - no churn); no
+  `Win32ErrorHandler _;` and no `CheckReturn` at any of the 3 sites (settled policy, U1/U2 - this TU's tally is 3 call
+  sites, 0 handlers, 0 checks), so all three failures are silent today; `returncheck.h` included and unused; the
+  binding still caches in a function-local `static const` for process lifetime (U5); `Call`'s `fPtr` is still the
+  default-`__cdecl` typedef against `WINAPI` exports - 3 more U6 sites; a swallowed SEH fault returns a default
+  `int`/`BOOL` (U7); U8 (no test, no caller) applies, and 2 of the 3 wrappers became U15 instances.
+- **Return-contract note for a future return-check decision:** `DlgDirListComboBoxT`'s documented result is a list-box
+  index with `-1` on failure, so neither a `CheckReturn` non-zero test nor `!= 0` is valid for it (index 0 is
+  legitimate); `DlgDirSelectComboBoxExT` and `GetComboBoxInfo` are plain `BOOL`s where `CheckNonZeroHandle`-style
+  checking would be the `shell`-library spelling.
+- **Section coverage: complete.** `user32.dll` exports exactly three `*Combo*` entry points (`GetComboBoxInfo` plus the
+  two `DlgDir*ComboBox*` families), all wrapped; the combo-box *messages* (`CB_ADDSTRING`, `CB_DIR`, ...) are not
+  entry points and are reached through `SendMessageT` from `ui/gui`.
+- **Found while cross-checking, not fixed (not this TU): `window.cpp:124`** binds
+  `qor_pp_useswinapiAW(user32, CreateWindow)` inside `User32::CreateWindowT` - `CreateWindowW` is MISSING, `CreateWindow`
+  being the SDK's macro for `CreateWindowEx`. Now the largest remaining P1 item; see the pre-scan entry.
+- Verified: `cl /EP` post-edit resolves `"DlgDirListComboBoxW"`, `"DlgDirSelectComboBoxExW"`, `"GetComboBoxInfo"`
+  against `L"user32"`; live probe RESOLVED for all three; `combobox.cpp` compiles standalone at `/W4` exit 0; whole
+  library **38/38 at `/W4`, exit 0, 0 diagnostics** (`tmp/_tmp_cl_all.log`) - the header rename broke no other TU.
+
+
+## console.cpp - session 7 (30 Oct 2026)
+
+The "Console functions" section (`user32.h:689-690`): one wrapper, one binding - and the only TU in the review whose
+wrapper has **no SDK declaration at all** to pair against, so method step 2 (SDK prototype comparison) had no target and
+the export table became the sole authority for the name.
+
+| Wrapper | Declaration / definition | Resolved binding (`cl /EP`) | Export |
+|---|---|---|---|
+| `ConsoleControl(CONSOLECONTROL, PVOID, DWORD) -> NTSTATUS` | `user32.h:690` (was non-static - **U13**, now `static`) / `console.cpp:18+` | `"ConsoleControl"` against `L"user32"` | yes - ordinal 1594, hint 55, RVA 00028FD0, real code (not one of the four table forwarders) |
+
+- **Binding correct as written; no P1/P2 conversion needed.** `user32.dll` exports exactly one `*Console*` name (fresh
+  `dumpbin /exports`: the `Console` grep returns that single line), so there is no A/W family and no `stem -> stemW`
+  macro - live probe: `ConsoleControl` RESOLVED, `ConsoleControlA` MISSING, `ConsoleControlW` MISSING. Under D13 the bare
+  `qor_pp_useswinapi` is therefore the right spelling and `/EP` proves the literal name reaches `GetProcAddress`. No `T`
+  suffix on the wrapper - correct. The stem is not one of the nine `#undef`s at `user32.h:9-17`, so G2 does not apply,
+  and the U17 census classifies it with the 404 correct single-export members.
+- **The signature cannot be verified against Microsoft - the headline risk of this TU, not a defect in it.**
+  `ConsoleControl`, `CONSOLECONTROL` and the five structures at `user32.h:19-62` appear in **no** header of
+  SDK 10.0.26100.0 or 10.0.10240.0 (whole `Include\` tree grepped; `wincon.h` only pulls in
+  `consoleapi.h`/`consoleapi2.h`/`consoleapi3.h`, whose sole hit for the pattern set is `SetConsoleMode` at
+  `consoleapi.h:138`). Consequences recorded: no collision risk (U10's SDK-side check is now closed), the enum numbering
+  (0-7 with `Reserved1/2/3` holes) and the structure layouts rest on the de-facto internal definition rather than on
+  anything installed here, and the parameter names (`Command`, `ConsoleInformation`, `ConsoleInformationLength`) are the
+  project's own with no authority to check them against. `NTSTATUS` is the one SDK-supplied type in the signature
+  (`typedef LONG NTSTATUS`, `/EP` line 320947), so the return really is a 32-bit signed status. A newer console may
+  expose control codes past `ConsoleEndTask` (7); nothing installed here can tell us, so the enum is recorded as
+  *possibly incomplete* - a documentation gap, not a defect.
+- **Fixed (U13, the promised one-token fix).** `static` added at `user32.h:690`. Measured both ways with
+  `tmp/_tmp_console_static_probe.cpp` (compile-only caller probe, `ConsoleSetWindowOwner` + `CONSOLEWINDOWOWNER`): before
+  = **1 x C2352** "a call of a non-static member function requires an object", exit 2; after = `/W4` exit 0. Census
+  re-run after the fix: 525 member-declaration-shaped lines, 428 `static` (was 427), 426 distinct defined names, zero
+  defined-but-non-static. `desktop.cpp` no longer needs the U10 collision check - the grep was whole-tree.
+- **Fixed (nits).** Missing space `,DWORD` -> `, DWORD` at the declaration; section comment `//Console` ->
+  `//Console functions` (every other section comment ends in "functions"); dead `#undef WinHelp` at `console.cpp:14`
+  removed - the TU references `WinHelp` nowhere and `user32.h:10` already undefs the stem, so the line was inert in
+  every state of this file (`help.cpp:14` carries the same line and keeps it for that TU's session).
+- **Fixed (documentation).** New TU comment inside the namespace (the `brush.cpp`/`combobox.cpp` pattern): the
+  no-SDK-authority finding, the section-completeness claim, the bare-stem/D13 rationale with the live-probe numbers, the
+  caller-owned in/out buffer contract (`ConsoleInformation` must be the structure belonging to the chosen control code,
+  `ConsoleInformationLength` its size, nothing allocated or freed by the call), the NTSTATUS success semantics, and the
+  console-ownership / access-denied behaviour of the sensitive control codes.
+- **Verified correct as written:** return and parameter types against the export's real contract; `Library::Call<NTSTATUS,
+  CONSOLECONTROL, PVOID, DWORD>` explicit 1/1 with tight spacing (no U14 churn); `qor_pp_fcontext` present; the include
+  block identical to the folder norm (4 QOR includes, then `user32.h`, `../returncheck.h`, `../library.h` last);
+  4-space indent; `}}}//qor::win::api`.
+- **Left alone deliberately:** no `Win32ErrorHandler _;` and no `CheckReturn` at the single call site (settled policy,
+  U1/U2 - this TU's tally is 1 call site, 0 handlers, 0 checks); `../returncheck.h` included and unused; the binding is
+  cached in a function-local `static const` for process lifetime (U5); `Call`'s default-`__cdecl` `fPtr` against a
+  `WINAPI` export (U6, 1 more site) - and here the callee really is user32's own stub, since `win32u.dll` exports
+  `NtUserConsoleControl` and not `ConsoleControl` (probe: MISSING for the latter), so no forwarding is involved.
+- **Return-contract note for any future return-check decision (the worst U7 instance so far).** NTSTATUS success is
+  `>= 0` (0 = `STATUS_SUCCESS`, positive = informational), so `== 0` is not a valid failure test and `returncheck.h` has
+  no NTSTATUS-aware check - only `SuccessCheck`/`TSuccessCheck`, which test `== 0`. Worse, `Library::Call` turns a
+  swallowed SEH fault into `NTSTATUS _{}` = **0 = STATUS_SUCCESS**: a fault in this wrapper is not merely silent, it is
+  reported as success. If U2 is ever reopened, this is the wrapper that needs a real check class (test `< 0`) and a
+  non-zero default.
+- **Surface-scope note (feeds U9's missing scope note).** The console surface a caller would actually want is in
+  `kernel32.dll` - 135 `*Console*` exports (`AllocConsole`, `GetConsoleWindow`, `ReadConsoleW`, `WriteConsoleW`, ...) -
+  and `api_layer/kernel/kconsole.cpp` already wraps it, with the kernel error-handler idiom intact; `user32.dll` has
+  exactly one, which is why this section is one wrapper long. Nothing in `src`/`examples`/`test` calls this wrapper
+  (U15 instance), and there is no console controller in `ui/gui` that could.
+- Verified: `/EP` after the edits still shows `qor_pp_useswinapi` -> `GetModuleHandleW(L"user32")` + `"ConsoleControl"`;
+  `console.cpp` compiles standalone at `/W4` exit 0; the caller probe compiles `/W4` exit 0; the whole library compiles
+  **38/38 at `/W4`, exit 0, no diagnostics** (`tmp/_tmp_cl_all.log`) - the `static` addition broke no other TU.
+
+---
+
+## coordtransform.cpp - session 8 (30 Oct 2026)
+
+Smallest-but-one TU (3 wrappers, 3 bindings) and the most consequential find of the review so far: **every wrapper in
+the file called the wrong entry point.**
+
+| Wrapper (`user32.h`) | Binding as found | Binding after fix | Verdict |
+|---|---|---|---|
+| `:377 static BOOL ClientToScreen(HWND, ::LPPOINT)` | `qor_pp_useswinapi(user32, GetDCEx)` | `qor_pp_useswinapi(user32, ClientToScreen)` | Fixed - wrong export |
+| `:378 static BOOL ScreenToClient(HWND, ::LPPOINT)` | `qor_pp_useswinapi(user32, GetDCEx)` | `qor_pp_useswinapi(user32, ScreenToClient)` | Fixed - wrong export |
+| `:379 static int MapWindowPoints(HWND, HWND, ::LPPOINT, UINT)` | `qor_pp_useswinapi(user32, GetDCEx)` | `qor_pp_useswinapi(user32, MapWindowPoints)` | Fixed - wrong export |
+
+- **What the defect actually did.** One binding line, copied into three bodies. `GetDCEx` is
+  `HWND GetDCEx(HWND hWnd, HRGN hrgnClip, DWORD flags)` (`winuser.h:8575`), so each call passed the wrapper's `lpPoint`
+  as `hrgnClip`, left `flags` as whatever the third argument register held, and returned an `HDC` that `Library::Call`
+  truncated to `BOOL`/`int`. Consequences, in order of severity: (a) no coordinate was ever transformed - the caller's
+  POINT is untouched; (b) the return value is not the API's, so the `? true : false` collapse in
+  `windowcontroller.cpp:643,:648` reported success whenever the HDC's low 32 bits were non-zero; (c) passing a `POINT*`
+  where USER expects a region handle makes USER dereference caller memory it does not own, and a successful call acquires
+  a device context that nobody ever releases; (d) `ClientToScreen`'s FALSE-on-bad-hWnd channel is gone entirely.
+- **Why nothing caught it, and the new instrument.** `GetDCEx` is a genuine export (table index 1830, ordinal 144), the
+  module token was already `user32`, `cl /EP` emitted a valid literal, the TU compiles clean at `/W4`, and the call site
+  type-checks because `Library::Call` receives a cast function pointer and never sees a prototype. Every check in the
+  method up to step 3 therefore passed. The missing check is *binding-vs-member agreement*, now
+  `tmp/_tmp_wrong_stem_scan.ps1` (pre-scan P5): 428 bindings over 38 TUs, 7 flags at the first run, 4 after this fix, of
+  which one is a live defect (`mouse.cpp:82`, added to P1), one is the known P3 case (`cursor.cpp:26` binds the single
+  `CopyIcon` export) and two are the script correctly failing to find an enclosing `User32::` member in `resource.cpp`
+  (i.e. it reproduces U11 mechanically).
+- **It was not dead code.** Unlike the previous seven TUs, all three wrappers are called in-tree -
+  `windowcontroller.cpp:643` (`WindowController::ClientToScreen`), `:648` (`ScreenToClient`), `:653`
+  (`WindowController::MapPoints` -> `MapWindowPoints`) - and reachable one level up from `WindowImpl::GetPos`
+  (`windowimpl.cpp:1657`) and `WindowImpl::SetCursorPosWin32` (`:2218`). So `GetPos` was returning the untranslated
+  client origin and `SetCursorPosWin32` was placing the cursor from unconverted coordinates while leaking a DC per call.
+  First non-U15 TU of the review; recorded in the U15 list. (A naive grep suggested `windowimpl.cpp` called the SDK forms
+  directly at eight sites - **all eight are inside `/* ... */` blocks** (`:257-268`, `:325-408`, `:530-1301`, `:2042-2210`)
+  and are not compiled; C comments do not nest, so the block opened at `:2042` runs to the first `*/` at `:2210`. The two
+  live calls at `:1657`/`:2218` go to the private base `WindowController` (`windowimpl.h:38`) and from there through the
+  layer, so this family has **0** bypass sites. Measured with `tmp/_tmp_bypass_scan.ps1`; the phenomenon is open item
+  **U19** and per-session counting of it is now review-method step 5b.)
+
+- **Binding verification after the fix.** `cl /EP` on the edited TU resolves all three to the literal names with module
+  token `L"user32"`: `"ClientToScreen"`, `"ScreenToClient"`, `"MapWindowPoints"`. Live probe against the loaded
+  `user32.dll`: all three RESOLVED; `ClientToScreenA/W`, `ScreenToClientA/W`, `MapWindowPointsA/W` all MISSING, so these
+  are single exports and the bare `qor_pp_useswinapi` is the D13 spelling (no `AW`, no `T` suffix - the header spellings
+  at `:377-379` are correct as written and were not touched). Export table: `ClientToScreen` 1586/4D, `ScreenToClient`
+  2282/30C, `MapWindowPoints` 2146/27F; `MapVisualRelativePoints` (2145/27E) sits beside it in the table but is
+  undocumented and declared nowhere in this library.
+- **SDK pairing.** `winuser.h:9508-9513`, `:9515-9520`, `:9556-9563`; the wrappers' parameter lists match the SDK's
+  `_In_ HWND` / `_Inout_ LPPOINT` / `_In_opt_ HWND` x2 / `_Inout_updates_(cPoints) LPPOINT` + `_In_ UINT` exactly, and the
+  return types match (`BOOL`, `BOOL`, `int`). **U16: 0 version-guarded declarations** - the cleanest tally so far, only
+  `#ifndef NOUSER` plus the Desktop-family partition (measured with `tmp/_tmp_sdk_guard_scan.ps1`). The reverse half of
+  U16 (library declarations of SDK names the SDK would withhold) is contributed by the neighbouring `user32.h:188,:191`
+  pair, not by this TU.
+- **Section coverage.** The header's "Coordinate Transform functions" section is these three. The SDK's wider
+  coordinate-conversion neighbourhood (`winuser.h:9522-9554`, `:9565-9576`) lives in other header sections
+  (`Window functions`: `WindowFromPoint` `:212`, `WindowFromPhysicalPoint` `:211`, the `Logical/PhysicalTo*` pair
+  `:188,:191`; `Cursor functions`: `GetPhysicalCursorPos` `:390`). The two `*Point` converters that *are* defined return
+  `void` where the SDK returns `BOOL` - **new open item U18**, for `window.cpp`'s session. The two
+  `*ForPerMonitorDPI` variants are not declared anywhere in this library (noted under U18 rather than opened separately).
+- **Open items this session contributes to (recorded, not acted on):**
+  - U1/U2 - 3 more call sites, `0` with `Win32ErrorHandler _;`, `0` wrapping the result in
+    `CheckReturn`/`CheckNonZero`. This TU is the strongest argument yet for reopening them: all three functions have a
+    real failure channel and the only two callers already collapse the result with `? true : false`
+    (`windowcontroller.cpp:643,:648`), so even with the bindings fixed a failure stays silent - but the value now at least
+    means what the SDK says. `MapWindowPoints` is the deliberate counter-example: non-zero is a coordinate delta, so a
+    `CheckNonZero` there would be wrong by construction.
+  - U3 - none. U4 - none (all three declared, all three defined). U6 - 3 more sites hand a `Library::DefProc`
+    (`__stdcall`) to `Library::Call`, whose `fPtr` is default-`__cdecl` (13 known sites now).
+  - U7 - applies to all three: a fault inside the callee surfaces as `FALSE`/`0`, indistinguishable from a legitimate
+    zero (for `MapWindowPoints` that is exactly the common success case).
+  - U8 - untested, but unlike the previous TUs it *is* called in-tree, so a test could observe real behaviour through
+    `WindowController::ClientToScreen` rather than only checking that a symbol links.
+  - U10, U11 - none. U13 - **none, and this is the first reviewed section whose defined members were all already
+    `static`** (`user32.h:377-379`), so no `C2352` caller risk existed here at all.
+  - U14 - contributes nothing to change: 3/3 sites state the full SDK argument list explicitly and 3/3 use the spaced
+    `Call< BOOL, HWND, ::LPPOINT >` form, which is file-consistent (3/3), so no churn per the no-clobber rule.
+  - U17 - nothing to rename: no A/W family, so no `T` suffix is due and none is present.
+- **Conventions checked and clean:** licence header, include order, Windows headers last, `qor_pp_fcontext` at all 3
+  sites, lowercase `user32` module token, section comment `//Coordinate Transform functions` already in the "ends in
+  functions" house style (U14(d) - unchanged), no local `#undef`, 4-space indent, no tabs, definitions in header order.
+  Added: the TU comment block (D13 binding rationale, the `_Inout_` caller-owned POINT contract, the "non-zero
+  `MapWindowPoints` return is a delta" warning, section coverage, and the U18 pointer).
+- **Verified at exit:** `cl /EP` -> the three literals above; `coordtransform.cpp` compiles standalone at `/W4` exit 0;
+  the whole library compiles **38/38 at `/W4`, exit 0, no diagnostics** (`tmp/_tmp_cl_all.log`; the single
+  `warning|error` grep hit is the filename `errorhandling.cpp`). No header change and no rename, so no published surface
+  moved and no caller needed recompiling - the fix changes run-time behaviour only.
 

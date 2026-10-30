@@ -548,8 +548,8 @@ namespace qor { namespace win { namespace api {
         DWORD GetListBoxInfo(HWND hwnd);
 
         //Combo Box functions
-        static int DlgDirListComboBox(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype);
-        static BOOL DlgDirSelectComboBoxEx(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox);
+        static int DlgDirListComboBoxT(HWND hDlg, LPTSTR lpPathSpec, int nIDComboBox, int nIDStaticPath, UINT uFiletype);
+        static BOOL DlgDirSelectComboBoxExT(HWND hDlg, LPTSTR lpString, int nCount, int nIDComboBox);
         static BOOL GetComboBoxInfo(HWND hwndCombo, PCOMBOBOXINFO pcbi);
 
         //Mouse functions
@@ -686,8 +686,8 @@ namespace qor { namespace win { namespace api {
         HPOWERNOTIFY RegisterPowerSettingNotification(HANDLE hRecipient, LPCGUID PowerSettingGuid, DWORD Flags);
         BOOL UnregisterPowerSettingNotification(HPOWERNOTIFY Handle);
 
-        //Console
-        NTSTATUS ConsoleControl(CONSOLECONTROL Command, PVOID ConsoleInformation,DWORD ConsoleInformationLength);
+        //Console functions
+        static NTSTATUS ConsoleControl(CONSOLECONTROL Command, PVOID ConsoleInformation, DWORD ConsoleInformationLength);
     };
 
 }}}//qor::win::api

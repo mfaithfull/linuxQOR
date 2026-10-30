@@ -249,7 +249,8 @@ export table (`tmp/_tmp_user32_exports.txt`, 1018 names) plus a `GetModuleHandle
       `GetRawInputDeviceInfo`, `DlgDirList`, `DlgDirSelectEx`, `DlgDirListComboBox`, `DlgDirSelectComboBoxEx`,
       `LoadBitmap`). After the `#undef` the literal is what resolves, and the literal is NOT exported while the
       `W` is (probe: `WinHelp` MISSING / `WinHelpW` RESOLVED, and the same shape for all nine). A bare binding of
-      any of them throws `"Missing library function."` at run time - `combobox.cpp:20,27` is exactly this today.
+      any of them throws `"Missing library function."` at run time - `combobox.cpp:20,27` was exactly this until its
+      own session (session 6, 29 Oct 2026) converted both to `qor_pp_useswinapiAW`.
   (b) a binding that carries the QOR wrapper's own `T` suffix stringizes literally: `GetDlgItemTextT`,
       `VkKeyScanT`, `VkKeyScanExT`, `GetKeyboardLayoutNameT` - none exported, so those throw too
       (`dialog.cpp:89`, `keyboard.cpp:82,243,250`).
@@ -260,5 +261,16 @@ names absent from the export table" has to come from `cl /EP` output of the TU, 
 
 Module-token case is cosmetic, not a defect: `_TXT(User32)` -> `L"User32"` and the module lookup is
 case-insensitive - `GetComboBoxInfo` resolved against `User32`, `USER32` and `user32` alike. `combobox.cpp` /
-`scrollbar.cpp` spelling the token `User32` is a style break to fix in those TUs' own sessions.
+`scrollbar.cpp` spelling the token `User32` is a style break to fix in those TUs' own sessions. `combobox.cpp`'s three
+sites were fixed in session 6; `scrollbar.cpp`'s twelve remain.
+
+Addendum - wrapper naming alongside the binding spelling (29 Oct 2026, session 6, user decision): a wrapper that binds
+an A/W family also carries the folder's `T` suffix (SDK stem + `T`), so the name and the binding agree about what is
+switchable. The first two offenders were renamed inside their own TU's session - `User32::DlgDirListComboBox` ->
+`DlgDirListComboBoxT` and `DlgDirSelectComboBoxEx` -> `DlgDirSelectComboBoxExT` (`user32.h:551-552` plus the
+definitions); neither had a call site anywhere in `src`/`examples`/`test`, so the rename was behaviour-neutral.
+Measured with `tmp/_tmp_tsuffix_census.ps1`, 11 further A/W members are still declared without the suffix (only 4 of
+them implemented) and 2 carry the suffix with no A/W family (`CreateWindowT` `user32.h:144`, `CopyCursorT` `:383`).
+Those wait for one folder-wide call rather than per-TU churn; tracked as open item U17 in
+`src/platform/os/windows/api_layer/user/status.md`.
 
