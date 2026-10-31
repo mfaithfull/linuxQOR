@@ -9,14 +9,14 @@ Last updated: 31 Oct 2026.
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
   carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
-  (G1-G6), **twenty-four open items (U1-U24)**, the pre-scan items **P1-P5**, the three deferred tasks **T1/T2/T3** and the tooling
-  under `tmp/`. **Fifteen TUs done** in sessions 1-14 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
+  (G1-G6), **twenty-five open items (U1-U25)**, the pre-scan items **P1-P5**, the three deferred tasks **T1/T2/T3** and the tooling
+  under `tmp/`. **Sixteen TUs done** in sessions 1-15 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
   `clipboard`, `combobox`, `console`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`,
-  `dialog`, `errorhandling`); **next is
-  `filledshapes.cpp`** (3 wrappers over the "Filled Shapes functions" section, `user32.h:608-611` - also fully covered, so
-  not a U4 block; all three bindings bare and all three genuine single exports, so expect **0 P1 and 0 D13 conversions
-  but prove it**; one of the few TUs with **live callers** at `ui/gui/gdiobjects/devicecontext.cpp:75,80,85`; and its
-  declarations spell `CONST::RECT*`, the SDK's `const` macro, which is a folder-wide note rather than a one-TU rename).
+  `dialog`, `errorhandling`, `filledshapes`); **next is
+  `help.cpp`** (3 wrappers over the 5-declaration `//Shell functions` section, `user32.h:641-646` - the file name does not
+  match the section name; `SetMenuContextHelpId`/`GetMenuContextHelpId` at `:642-643` are non-static and defined nowhere, so
+  that section **is** a partial U4 block; `WinHelp` at `:35` is the folder's second confirmed **AW** binding, and the export
+  table has `WinHelpA`/`WinHelpW` but no bare `WinHelp`, so `AW` is mandatory).
   Session 13 (`dialog.cpp`, 22 wrappers - the largest section so far) fixed the third **P1** instance: `:89` bound
   `"GetDlgItemTextT"`, which the probe says is MISSING, now `qor_pp_useswinapiAW(user32, GetDlgItemText)`; converted
   `MessageBox` to explicit AW (no behaviour change - the SDK macro already rewrote it); made 3 `Call<...>` rows spell
@@ -256,24 +256,49 @@ Last updated: 31 Oct 2026.
   **Instrument trap found this session:** `pwsh -NoProfile -File script.ps1 -Stems A,B -Roots x,y` does **not** pass arrays -
   `_tmp_bypass_scan.ps1` then dies at `:12` on the bogus `-Roots` while still printing an all-zero totals line. Use
   `pwsh -NoProfile -Command "& script.ps1 -Stems @('A','B')"` and trust the script's default roots.
-- **Next session (15): `filledshapes.cpp`** - 3 wrappers over the "Filled Shapes functions" section (`user32.h:608`,
-  declarations `:609-611`), a 38-line TU with no comment block (`:16 FillRect`, `:23 FrameRect`, `:30 InvertRect`), in
-  `add_library` at `user/CMakeLists.txt:31`. Pre-measured facts: all three bindings bare (`:19`, `:26`, `:33`) and all three
-  single exports (110, 117, 226 in `tmp/_tmp_user32_exports.txt`, no A/W spelling of any of them); U14 census 3/3 explicit
-  and 3/3 spaced, so no spacing work; **this TU has live callers** - `ui/gui/gdiobjects/devicecontext.cpp:75`, `:80`, `:85`
-  are `User32::`-qualified LAYER sites inside `DeviceContext::FillRect`/`FrameRect`/`InvertRect` in a built file
-  (`gui/CMakeLists.txt:44`), so trace them one level up for the liveness note. The declarations spell `CONST::RECT*`
-  (`CONST` is the SDK's object-like macro for `const`, so it preprocesses to `const ::RECT*`) - same spelling at
-  `user32.h:267` and `:447-457`, so record it folder-wide, do not rename it inside one TU. Return conventions: `FillRect`
-  and `FrameRect` are `int` here and `int` in the SDK (`winuser.h:9729`, `:9737`, 0 on failure), `InvertRect` `BOOL`
-  (`:9745`, FALSE on failure), and `devicecontext.cpp:85` folds that `BOOL` into `bool`. The name-divergence scan should
-  report 0.
+- Session 15 (31 Oct 2026) reviewed `filledshapes.cpp` (3 wrappers, `user32.h:608-611` "Filled Shapes functions" - fully
+  covered, so not a U4 block): **0 binding / correctness / UB / convention defects**. All three bindings are bare
+  `qor_pp_useswinapi` and all three are provably correct as written: `cl /EP` yields `"FillRect"`, `"FrameRect"`,
+  `"InvertRect"` (`tmp/_tmp_fs_pp.txt:453304`, `:453311`, `:453318`), the export table gives 110/117/226, and the live probe
+  resolves all three with **`*A`/`*W` MISSING** - so `AW` would break them, and this is D13's single-export case even though
+  the signatures look A/W-shaped. Return types match the SDK (`int`/`int`/`BOOL` at `winuser.h:9726-9747`) so **U18 gains
+  nothing**; **U16 gains nothing either** - the first TU whose guard stack has no version macro at all (Desktop partition
+  `winuser.h:9717` inside `#ifndef NOUSER` `:64`), and `RECT` is declared in a *broader* partition (`shared/windef.h:154-160`
+  under Application/Games/System), the reverse of the `HDEVNOTIFY`/`FLASHWINFO` sub-case. **New open item U25**: the header's
+  `CONST::X*` spelling is the SDK's `CONST` macro glued to a scope qualifier (`minwindef.h:153`), 17 lines `CONST::` vs 7
+  `const ::` vs 0 `CONST ::`, which makes `_tmp_sigcmp.ps1` print a **false** `CALL TYPE MISMATCH` on 3/3 sites here (and will
+  on `rectangle.cpp`/`painting.cpp`/`text.cpp`); the one real smell inside the family is `user32.h:571`'s `CONST::LPINT`
+  (const pointer to mutable ints vs the SDK's `CONST INT *`) and belongs with U23. U15 **3 of 3**: the three wrappers' only
+  callers are `DeviceContext::FillRect`/`FrameRect`/`InvertRect` (`ui/gui/gdiobjects/devicecontext.cpp:75`, `:80`, `:85`),
+  and those three `DeviceContext` methods have no call site anywhere - while the DC they would use *is* live in the built
+  `mainwindow` example, so the chain is compiled, exported and simply never invoked; U19 3 LAYER / 3 INDIRECT / 0 BYPASS.
+  Caller-side alias checked: those sites pass `reinterpret_cast<const RECT*>(&rc)` from QOR's hand-mirror `Rect`
+  (`ui/gui/view/drawing/rect.h:33-38`) - field-for-field identical to `RECT` on this toolchain, so sound in practice, and the
+  third instance of the U23/U15 mirror-struct pattern (gui-side, recorded not fixed). Only edit: a 61-line TU comment
+  (`:16-76`) plus one stray blank line removed; `filledshapes.cpp` 38 -> 99 lines, `user32.h` untouched. Exit: TU standalone
+  `/W4` exit 0, library 38/38 exit 0, 0 `error C`/`warning C` in `tmp/_tmp_cl_all.log`.
+- **Next session (16): `help.cpp`** - 3 wrappers (`:18 SetWindowContextHelpId`, `:25 GetWindowContextHelpId`,
+  `:32 WinHelp`) over the 5-declaration **`//Shell functions`** section (`user32.h:641-646` - the file name does not match
+  the section), in `add_library` at `user/CMakeLists.txt:11`. Pre-measured: `:642-643`
+  `SetMenuContextHelpId`/`GetMenuContextHelpId` are **non-static and defined nowhere in the folder** (U4 + U13 pair, and both
+  are real exports `34A`/`17C`); the export table has **`WinHelpA` `3EC` / `WinHelpW` `3ED` and no bare `WinHelp`**, so
+  `help.cpp:35`'s `qor_pp_useswinapiAW` is not just correct but mandatory; the four context-help-id prototypes are at
+  `winuser.h:9125`, `:9132`, `:9138`, `:9145` under `#if(WINVER >= 0x0400)` (`:9105`) + Desktop (`:9110`) - **4 of 5 are U16
+  instances** - while `WinHelpA/W` (`:12372`, `:12380`) sit under `#ifndef NOHELP` (`:12270`) + Desktop with no version
+  guard, and `#define WinHelp WinHelpW` at `:12386` is the macro `user32.h:10` undefs. The `#undef WinHelp` at `help.cpp:14`
+  is therefore redundant (same nit session 7 removed from `console.cpp:14`): `kernel32.h:12 #include <Windows.h>` runs
+  before `user32.h:9-17` and include guards stop it being re-defined afterwards. **U15 expected 3 of 3**: the three
+  **LAYER** call sites are `windowcontroller.cpp:785`, `:790`, `:795` inside `WindowController::SetContextHelpId` /
+  `GetContextHelpId` / **`Help`** (`:783-796`, declared `windowcontroller.h:284-286`), and those three methods have **no
+  call site anywhere** in `src`/`examples`/`test`. All help-family names are already in
+  `tmp/_tmp_name_resolve_probe.cpp` (added by session 15) and all five **RESOLVED**; full pre-flags for the session are in
+  status.md `:138-178`.
 - **D13 adopted (user, 29 Oct 2026, `docs/agent/DECISIONS.md`):** explicit `qor_pp_useswinapiAW` wherever the
   SDK has an A/W family, bare `qor_pp_useswinapi` only for single exports. Apply it in each TU as it is
   reviewed. Folder-wide pre-scan in status.md lists P1 (bindings that cannot resolve at run time - **5 still open**:
   `keyboard.cpp:82,243,250`, `window.cpp:124`, `mouse.cpp:82`; `combobox.cpp:20,27` fixed in session 6 and
   `dialog.cpp:89` in session 13) and P2 (macro-dependent bindings to convert - **6 still open**: `menu.cpp` x2,
-  `message.cpp` x4; `dialog.cpp` `MessageBox` converted in session 13). Next TU in the queue: `filledshapes.cpp`.
+  `message.cpp` x4; `dialog.cpp` `MessageBox` converted in session 13). Next TU in the queue: `help.cpp`.
 
 - Corrections to earlier audit assumptions, all measured (see status.md G1-G6): the SDK A/W macro expands
   before `_ATXT()` stringizes, so most bare stems already bind the W export and the `tmp/_tmp_audit_report.txt`

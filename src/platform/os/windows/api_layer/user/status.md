@@ -111,35 +111,71 @@ TUs still to be reviewed:
 | 12 | `devicemanagement.cpp` | 2 | DONE 30 Oct (session 12) - 0 binding / correctness / UB / convention defects; **2 naming defects, and they are the only 2 in the whole folder** | "Device Management functions" (`user32.h:681-683`): 2 declarations, 2 definitions, header order, both `static`, both `User32::`-qualified (U13 clean), both `Call<>` sites fully explicit (U14: 2/2 explicit, spaced style, no spacing nit). **Both bindings were already D13-correct**: `qor_pp_useswinapiAW(user32, RegisterDeviceNotification)` -> `/EP` resolves `"RegisterDeviceNotificationW"` (2E5, RESOLVED), and the bare `qor_pp_useswinapi(user32, UnregisterDeviceNotification)` is the right spelling because the probe shows `UnregisterDeviceNotificationA`/`W` both **MISSING** - a genuine single export (3C6). This stem is one of the nine `user32.h:9-17` `#undef`'s **and** bare `"RegisterDeviceNotification"` is MISSING (G2 confirmed live for this stem), but the AW token-paste means the `#undef` never reaches the binding, so the pre-flagged question was naming-only. **Fixed (2 sites, both naming):** definition parameters renamed to their declaration/SDK names - `notificationFilter` -> `NotificationFilter` (`:73` signature + `:77` call arg), `handle` -> `Handle` (`:80` + `:84`; line numbers of the file as it now stands, with the TU comment block in place). Measured outlier: the new instrument `tmp/_tmp_name_divergence_scan.ps1` reports **2 divergent parameter names across 426 definitions folder-wide - both in this TU**. TU comment block added. **U17 1/2** (no rename, per the session-11 policy) with a sharpened argument: the A/W choice here is invisible in the signature, since the filter is a bare `LPVOID` whose trailing `TCHAR` name field is read per the bound half. **U15 2/2** - the first section where every wrapper is dead *and* the family is still used in the tree, through a bypass. **U16 2/2** - both prototypes sit under `#if(WINVER >= 0x0500)` (`winuser.h:3942`) + `WINAPI_PARTITION_DESKTOP` (`:3940`), and `HDEVNOTIFY` is itself typedef'd at `:3943` under the same guards, so a lower `WINVER` makes `user32.h:682-683` **ill-formed** rather than merely absent (the hardest U16 dependency so far after `NOGDI`). **U19: 0 LAYER / 1 BYPASS** - `ui/gl/helperwindow.cpp:85` `::RegisterDeviceNotificationW` is live code (file 0% commented) that fills `dbcc_size`/`dbcc_devicetype`/`dbcc_classguid` first (`:79-83`), but the file is in no source list (`winqor_gl` = `winqor_gl.cpp cursorimpl.cpp windowimpl.cpp wgl.cpp`) and `ui/CMakeLists.txt:4` comments `add_subdirectory(gl)` out -> source debt, not run-time behaviour. **New deferred task T3**: the adjacent "Power Management functions" pair (`user32.h:686-687`; exports 2F1/3CB, both RESOLVED in the probe) is defined in no TU and has **no owning file in the folder at all**. 22 open items unchanged (U1-U22) |
 | 13 | `dialog.cpp` | 22 | **1 real run-time failure + 1 convention defect**; 1 published-signature defect and 1 cosmetic inconsistency recorded, not fixed | Fixed: `:89` `qor_pp_useswinapi(user32, GetDlgItemTextT)` -> `qor_pp_useswinapiAW(user32, GetDlgItemText)` (`/EP` post-fix `"GetDlgItemTextW"`, probe RESOLVED - pre-fix asked for a name the DLL does not export) and `:124` `MessageBox` -> explicit AW (no behaviour change, G1). All 22 bindings then confirmed by `/EP` + export table + live probe; the 9 bare spellings are correct because the SDK declares those nine entry points with a single non-A/W spelling. decl==def 22/22; 0 parameter-name divergences (folder now 0 of 426). New **U23** from `MessageBoxIndirectT`'s `const ::LPMSGBOXPARAMS` |
 | 14 | `errorhandling.cpp` | 4 | **0 binding / correctness / UB / convention defects** - the "Error Handling functions" section is fully covered by this TU (4 declarations, 4 definitions: 0 U4, 0 U11, 0 U13); all four bindings bare and all four correct as written (`cl /EP` -> `"FlashWindow"`, `"FlashWindowEx"`, `"MessageBeep"`, `"SetLastErrorEx"`, all four **RESOLVED** by live probe with every `*A`/`*W` spelling **MISSING**, so the bare stem is the D13 spelling and `AW` would break all four); `SetLastErrorEx`'s `void` wrapper matches the SDK's `VOID` (`winuser.h:13558-13563`), so **no new U18 instance**; 2 trailing-space nits at the call sites | Fixed: TU comment block (46 lines, `:16-61`) + `(pFunc, uType )` -> `(pFunc, uType)` at the `CheckReturn` site and `(pFunc, dwErrCode, dwType )` -> `(pFunc, dwErrCode, dwType)` at the `voidCall` site. New **U24** from the one in-tree caller, which reads `FlashWindow`'s previous-active-state `BOOL` as a success flag |
-| 15..38 | not started (TU index; 23 left, see "Remaining queue") | | | |
+| 15 | `filledshapes.cpp` | 3 | **0 binding / correctness / UB / convention defects** - the "Filled Shapes functions" section is fully covered by this TU (3 declarations, 3 definitions: 0 U4, 0 U11, 0 U13); all three bindings bare and all three correct as written (`cl /EP` -> `"FillRect"`, `"FrameRect"`, `"InvertRect"`, all three **RESOLVED** by live probe with every `*A`/`*W` spelling **MISSING**, so the bare stem is the D13 spelling and `AW` would break all three); return types match the SDK exactly (`int`/`int`/`BOOL` at `winuser.h:9726-9747`), so **no new U18 instance**; U16 gets **0 of 3** - the three prototypes sit under nothing but the Desktop partition + `NOUSER`, no version guard | Fixed: TU comment block (61 lines, `:16-76`) + one blank line removed between the comment and the first definition. New **U25** from this TU's `CONST::RECT*` spelling (17 header lines use `CONST::`, 7 use `const ::`); `sigcmp` prints a **false** `CALL TYPE MISMATCH` on all three sites here - instrument note below |
+| 16..38 | not started (TU index; 22 left, see "Remaining queue") | | | |
 
-**Next session: `filledshapes.cpp`** (alphabetical from here; 15 TUs done across sessions 1-14: `accelerator`,
+**Next session: `help.cpp`** (alphabetical from here; 16 TUs done across sessions 1-15: `accelerator`,
 `accessibility`, `brush`, `caret`, `clipboard`, `combobox`, `console`, `timer`, `coordtransform`, `cursor`, `desktop`,
-`devicecontext`, `devicemanagement`, `dialog`, `errorhandling`). **3 wrappers over 3 declarations**, a 38-line TU with no
-comment block (`:16 FillRect`, `:23 FrameRect`, `:30 InvertRect`). The "Filled Shapes functions" section (`user32.h:608`,
-declarations at `:609-611`) is fully covered by it, so unlike most of the folder it is not a U4 block. In `add_library`
-(`user/CMakeLists.txt:31`). **What is deliberately not in the queue: there is no `dde.cpp`** - the 34-declaration DDE
+`devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`). **3 wrappers over 5 declarations**, a
+39-line TU with no comment block (`:18 SetWindowContextHelpId`, `:25 GetWindowContextHelpId`, `:32 WinHelp`) plus a
+redundant `#undef WinHelp` at `:14`. The section is `//Shell functions` (`user32.h:641`), **not** "Help functions" - the
+file name does not match the section it implements, worth a U12/U21-style note. `:642-643`
+`SetMenuContextHelpId`/`GetMenuContextHelpId` are **non-static and defined nowhere in the folder** (a U4 + U13 pair; both
+are real exports, `17C`/`34A`, and both are already in `tmp/_tmp_name_resolve_probe.cpp` from session 15). `WinHelp` is the folder's
+second-confirmed **AW** binding (`qor_pp_useswinapiAW(user32, WinHelp)`; `WinHelp` MISSING / `WinHelpW` RESOLVED per the
+session-1 probe note at line 306) and the only stem here that is in the `user32.h:9-17` `#undef` list, so the `#undef` at
+`help.cpp:14` is dead by construction: `user32.h` includes only `kernel32.h` at `:8` and does the nine `#undef`s at
+`:9-17`, and no later include can re-process `winuser.h` past its own guard. Callers to trace:
+`windowcontroller.cpp:785`, `:790`, `:795`. In `add_library` (`user/CMakeLists.txt:11`).
+Pre-measured so the session can start at the analysis: all five names are real exports (`17C`, `34A`, `3EC`, `3ED` - and
+note the export table has **`WinHelpA`/`WinHelpW` only**, no bare `WinHelp`, which is why the `AW` form is mandatory here);
+the four context-help-id prototypes are at `winuser.h:9125`, `:9132`, `:9138`, `:9145` under
+`#if(WINVER >= 0x0400)` (`:9105`) + Desktop (`:9110`) - so **4 of 5 are U16 instances** - while `WinHelpA`/`WinHelpW` are
+at `:12372`/`:12380` under `#ifndef NOHELP` (`:12270`) + Desktop (`:12268`) with **no version guard**, and the
+`#define WinHelp WinHelpW` at `:12386` is the macro `user32.h:10` exists to kill.
+**What is deliberately not in the queue: there is no `dde.cpp`** - the 34-declaration DDE
 section (`user32.h:501-534`) has no TU anywhere, which is a U4 surface decision, not a TU session (see the U4 entry).
-Measured pre-flags for the next session (from this session's scans, so they are facts, not guesses):
-- **Expect 0 P1 and 0 D13 conversions - but prove it.** All three bindings are bare (`:19 FillRect`, `:26 FrameRect`,
-  `:33 InvertRect`) and all three are genuine **single exports**: 110, 117, 226 in `tmp/_tmp_user32_exports.txt`, with no
-  `A`/`W` spelling of any of them anywhere in the table. Run `cl /EP`, `tmp/_tmp_name_resolve_probe.cpp` (add the nine
-  spellings) and `_tmp_wrong_stem_scan.ps1` as usual. U14: the U14 census gives 3/3 explicit, 3/3 spaced, 0 bare - so no
-  U14(b) or spacing work expected either.
-- **Not a U15 block - this is one of the few TUs with live callers.** `ui/gui/gdiobjects/devicecontext.cpp:75`, `:80`,
-  `:85` are `User32::`-qualified **LAYER** sites inside `DeviceContext::FillRect`/`FrameRect`/`InvertRect`, in a file that
-  is built (`gui/CMakeLists.txt:44`). Trace those three one level up before writing the liveness note.
-- **A spelling shared with the header: `CONST::RECT*`.** `CONST` is the SDK's object-like macro for `const`, so
-  `CONST::RECT*` (`user32.h:609-611` and the three definitions) preprocesses to `const ::RECT*` - it compiles and it is
-  what the `Library::Call` template arguments spell too (`CONST ::RECT*`), but it reads as if `CONST` were a namespace and
-  it makes sigcmp's string comparison spelling-sensitive. The same spelling is at `user32.h:267` (`DrawFocusRect`,
-  `painting.cpp`) and `:447-457` (the 11 rect helpers, defined at `rectangle.cpp:16-86`), so record it as a folder-wide
-  note; do not rename it inside one TU.
-- **Return conventions**: `FillRect`/`FrameRect` are `int` in this header and `int` in the SDK (`winuser.h:9729`, `:9737` -
-  `FillRect` returns 0 on failure), `InvertRect` `BOOL` (`:9745`, FALSE on failure). The only in-tree reader of a failure
-  code from this TU is `devicecontext.cpp:85`, which folds `InvertRect`'s `BOOL` into `bool`.
-- The name-divergence scan should report **0** for every TU from here on: session 12 took the folder to zero (2 of 426
-  definitions, both in `devicemanagement.cpp`) and sessions 13 and 14 re-confirmed 0 of 426.
+Measured pre-flags for `help.cpp` (session 16) - from this session's scans, so they are facts, not guesses:
+- **Expect 0 P1 and 0 D13 conversions, and one binding that is already AW and must stay AW.** The export table has
+  **`WinHelpA` 3EC / `WinHelpW` 3ED only - there is no bare `WinHelp`** (live probe re-run 31 Oct: `WinHelp` **MISSING**,
+  `WinHelpA`/`WinHelpW` **RESOLVED**), so `help.cpp:35`'s `qor_pp_useswinapiAW(user32, WinHelp)` is mandatory, and
+  `#define WinHelp WinHelpW` at `winuser.h:12386` is exactly the macro `user32.h:10` exists to kill. The two
+  context-help-id wrappers at `:19`/`:28` are bare, and the four help-id names are genuine single exports
+  (`SetWindowContextHelpId` 37A, `GetWindowContextHelpId` 1E1, `SetMenuContextHelpId` 34A, `GetMenuContextHelpId` 17C -
+  no `A`/`W` spelling of any of them appears in `tmp/_tmp_user32_exports.txt`), all four **RESOLVED** by the probe run
+  this session. All five names are already in `tmp/_tmp_name_resolve_probe.cpp` (`WinHelp` and `WinHelpW` from an earlier
+  session at `:51-52`, the rest added by session 15), so no probe edit is needed to start. Run `cl /EP`, the probe and
+  `_tmp_wrong_stem_scan.ps1` as usual.
+- **The section is `//Shell functions` (`user32.h:641`), not "Help functions"** - the file name does not match the section
+  it implements, and the section holds menu-help entries too: a U12/U21-shaped placement note.
+- **2 U4 + likely 1 U13**: `user32.h:642-643` `SetMenuContextHelpId`/`GetMenuContextHelpId` are **non-static and defined
+  nowhere in the folder**, while `:644-646` are `static` and defined. Both undeclared-off members are real exports, so the
+  pair is a published-surface decision (add or delete), not a TU fix - collect it under U4/U13 like the rest.
+- **U16 gains up to 4 of 5**: the context-help-id prototypes are `winuser.h:9125`, `:9132`, `:9138`, `:9145` under
+  `#if(WINVER >= 0x0400)` (`:9105`) + Desktop (`:9110`) inside `#ifndef NOUSER` (`:64`); `WinHelpA`/`WinHelpW` are
+  `:12372`/`:12380` under `#ifndef NOHELP` (`:12270`) + Desktop (`:12268`) with **no version guard**, so `WinHelp` adds 0
+  and the other four add 1 each. Measured with `tmp/_tmp_sdk_guard_scan.ps1` this session (run over
+  `WinHelpA,SetWindowContextHelpId,GetWindowContextHelpId,SetMenuContextHelpId`).
+- **A dead `#undef WinHelp` at `help.cpp:14`** - `user32.h:10` already undefs the stem before this TU's own
+  `#include "user32.h"`, and nothing after it can re-process `winuser.h` past its `_WINUSER_` guard, so the line is inert.
+  Session 7 removed the identical line from `console.cpp:14` for the same reason (status.md `:1363-1364`) - same fix here.
+- **Expect 3 of 3 U15, but re-measure with the instrument before writing it.** The three **LAYER** call sites are
+  `ui/gui/controllers/windowcontroller.cpp:785`, `:790`, `:795` inside `WindowController::SetContextHelpId`
+  (`:783-786`, declared `windowcontroller.h:284`), `GetContextHelpId` (`:788-791`, `:285`) and `Help` (`:793-796`, `:286`)
+  - note the third method is **`Help`, not `WinHelp`**, and it folds the `BOOL` into `bool` with `? true : false`. All
+  three methods are built (`gui/CMakeLists.txt:27`) and have **no call site anywhere** in `src`/`examples`/`test`
+  (measured 31 Oct by scanning those roots for the three method names - only the declarations and definitions match), so
+  the chain is compiled, exported and never executed one level up, exactly like most U15 instances. Run
+  `_tmp_bypass_scan.ps1` over the three stems + `*A`/`*W` variants in the session to get the U19 split. The two menu-help
+  exports have no wrapper, so no call site can exist for them.
+- **U14 clean on inspection**: `user32.h:642-646` all five declarations spell explicit parameter types with `, ` spacing;
+  `help.cpp:22`, `:29`, `:36` pass `HWND`/`DWORD`/`LPCTSTR`/`UINT`/`ULONG_PTR` explicitly. Note `WinHelp`'s `LPCTSTR`
+  parameter is `_In_opt_` in the SDK (`winuser.h:12374`, `:12382`), and `hWndMain` is `_In_opt_` too - worth a contracts
+  sentence, and `windowcontroller.cpp:795` passes `help.c_str()` so it never exercises the optional case. Two caller-side
+  `BOOL` conversions to check there: `:785` returns the wrapper's `BOOL` from a `bool` method **implicitly**, while `:795`
+  does it explicitly with `? true : false` - a consistency nit on the gui side, not in this layer.
+- The name-divergence scan should report **0** again: session 12 took the folder to zero (2 of 426 definitions, both in
+  `devicemanagement.cpp`) and sessions 13, 14 and 15 re-confirmed 0.
 Take the pre-scan P1/P2/P3/P5 entries into account only when their owning TU comes up; do not fix other TUs outside
 their own session.
 
@@ -190,10 +226,10 @@ their own session.
   does not exist in SDK 10.0.26100 at all: zero hits for `PowerManagement` in `winuser.h`, and it is not in the export table.)
 
 
-Remaining queue (23 TUs, alphabetical; `accelerator.cpp`, `accessibility.cpp`, `brush.cpp`, `caret.cpp`,
+Remaining queue (22 TUs, alphabetical; `accelerator.cpp`, `accessibility.cpp`, `brush.cpp`, `caret.cpp`,
 `clipboard.cpp`, `combobox.cpp`, `console.cpp`, `timer.cpp`, `coordtransform.cpp`, `cursor.cpp`, `desktop.cpp`,
-`devicecontext.cpp`, `devicemanagement.cpp`, `dialog.cpp`, `errorhandling.cpp` done):
-filledshapes, help, hook, icon, ime, keyboard, mdi, menu, message, monitor, mouse, painting,
+`devicecontext.cpp`, `devicemanagement.cpp`, `dialog.cpp`, `errorhandling.cpp`, `filledshapes.cpp` done):
+help, hook, icon, ime, keyboard, mdi, menu, message, monitor, mouse, painting,
 processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
 windowproperties, winqor_api_user (module glue). `hook.cpp` is now in the build (see U3).
 
@@ -620,6 +656,16 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
     `FlashWindowEx`, `MessageBeep` and `SetLastErrorEx` have **no reference of any kind** outside `user32.h:615-617` and
     their own definitions. Scan totals: 1 LAYER, 0 INDIRECT, 0 BYPASS, 0 MEMBER - so unlike the dialog and DC families,
     nothing in the tree reaches these four entry points through the SDK import either.
+- `filledshapes.cpp` - **all 3** (`FillRect`, `FrameRect`, `InvertRect`, `user32.h:609-611`). Each has exactly one call
+  site, all three inside `DeviceContext` (`ui/gui/gdiobjects/devicecontext.cpp:75`, `:80`, `:85`), and those three
+  `DeviceContext` methods (`devicecontext.h:232-234`, non-virtual) have **no call site anywhere** in
+  `src`/`examples`/`test` - unlike the neighbouring `DeviceContext` methods, which the built `examples/mainwindow` does
+  reach (`GetTextExtentPoint32T`/`TextOutT` at `mainwindow.cpp:179`, `:180`, and `BitBlt` at `:247` through the `Blit`
+  helper the `OnPaint` handler calls at `:176`). This is
+  therefore the rare shape where the wrapper's caller exists, the DC it would run on is live, and still nothing invokes
+  it. Scan totals 3 LAYER / 3 INDIRECT / 0 BYPASS / 0 MEMBER (`tmp/_tmp_fs_bypass.txt`), so the family has no SDK-import
+  path either.
+
 
 - **U16 - the wrappers pair with SDK declarations that the SDK only emits when a version guard passes, and nothing in
   the build pins those version macros.** Opened 29 Oct 2026 (session 5) from `clipboard.cpp`: `winuser.h:5431`/`:5439`
@@ -985,6 +1031,34 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
   on the `FlashWindow` wrapper (`errorhandling.cpp:63-68`) is correct and must not be "tidied up" to match
   `MessageBeep` - under G6 a `BoolCheck` is always live, so it would raise a continuable issue on every successful flash of
   an inactive window.
+- **U25 - `const` is spelled three ways in `user32.h`, and the `CONST::` spelling is an SDK macro glued to a scope
+  qualifier.** Opened 31 Oct 2026 (session 15, `filledshapes.cpp`); **recorded, not fixed** - it reaches 24 published
+  declarations across five sections, so it belongs with the folder-wide U14(a) style pass rather than inside one TU.
+  **It is not a defect today:** `CONST` is an SDK object-like macro defined as `const` (`shared/minwindef.h:153`, also
+  `ntdef.h:227`, `wincrypt.h:101`, `bcrypt.h:48`, `fontsub.h:22`, `tbs.h:35`), so `CONST::RECT*` at `user32.h:609`
+  preprocesses to `const ::RECT*` - proved on this TU, where `/EP` writes the definition as
+  `int User32::FillRect(HDC hDC, const::RECT* lprc, HBRUSH hbr)` (`tmp/_tmp_fs_pp.txt:453301`). Same type, same generated
+  symbols, no UB and no ODR exposure: the two spellings denote one type, so a caller's mangled reference is unaffected by
+  which one the header uses. Measured in `user32.h`: **17** lines `CONST::X*` (`:264`, `:267`, `:270`, `:278`, `:282`,
+  `:285`, `:447`, `:448`, `:450`, `:451`, `:453`, `:456`, `:457`, `:571`, `:609`, `:610`, `:611`), **7** lines lowercase
+  `const ::X*` (`:139`, `:210`, `:431`, `:487`, `:579`, `:580`, `:581`), **0** lines `CONST ::X*` - so the split follows
+  the section, not chance, and the `.cpp` side adds a third variant by spelling the template arguments `CONST ::RECT*`
+  (`filledshapes.cpp:83`, `:90`, `:97`). Why it is worth changing anyway: it reads as a namespace-qualified name (`CONST`
+  looks like a namespace), it is the only place in the library where an SDK macro leaks into a published signature, and it
+  is spelling-sensitive for the review's own tooling - `tmp/_tmp_sigcmp.ps1` compares the declaration's type string with
+  the `Library::Call<>` argument string, so it prints a **false** `CALL TYPE MISMATCH` on 3/3 sites of this TU
+  (`CONST::RECT*` vs `CONST ::RECT*`). The same false positives will appear in `rectangle.cpp` (11 members),
+  `painting.cpp` (`DrawFocusRect`, `EndPaint`, `InvalidateRect`, `RedrawWindow`, `ValidateRect`, `DrawAnimatedRects`) and
+  `text.cpp` (`TabbedTextOutT`); the instrument should normalize whitespace instead of the source being bent to satisfy it.
+  **One real smell sits inside the family:** `user32.h:571` `CONST::LPINT lpnTabStopPositions` is `const (int*)` - i.e.
+  `int *const`, a const pointer to **mutable** ints, since `LPINT` is `typedef int far *LPINT` (`minwindef.h:167`) -
+  while the SDK has `CONST INT *lpnTabStopPositions` (`winuser.h:8467`, in the `TabbedTextOutW` block at `:8460`), a
+  pointer to **const** ints. That is U23's exact shape (top-level `const` on a pointer typedef), so `text.cpp`'s session
+  should pair it with U23 rather than opening a third item; the top-level `const` is discarded by the function type, so
+  nothing is broken today. Fix when the folder pass runs: normalize the 17 `CONST::` lines to the lowercase
+  `const ::X*` the SDK itself uses in its own modern declarations, and the matching template arguments in the four
+  affected `.cpp` files - an ABI-neutral, caller-neutral spelling change, because the denoted type is unchanged.
+
 
 ## accessibility.cpp + timer.cpp - session 2 (29 Oct 2026)
 
@@ -1966,4 +2040,112 @@ was opened from the caller side, and the pre-flagged P3 case was settled as corr
   `tmp/_tmp_errh_pp_err.txt`), `tmp/_tmp_errh_bypass.txt`, and `tmp/_tmp_name_resolve_probe.cpp` extended with 16
   error-family spellings (4 stems x 3 spellings plus `RegisterErrorReportingDialog`, `SetDebugErrorLevel`, `GetLastError`,
   `SetLastError`).
+
+## filledshapes.cpp - session 15 (31 Oct 2026)
+
+- **Scope:** the "Filled Shapes functions" section, `user32.h:608-611` - **3 declarations** (`:609-611`), 3 definitions in
+  the header's order, all `static`, all defined `User32::`-qualified. No U4 member (the section is fully covered here), no
+  U11, no U13. The TU was 38 lines before this session and 99 after (the 61-line section comment now at `:16-76`);
+  `user32.h` untouched; the only code-side edit is removing one stray blank line between the comment and the first
+  definition. In `add_library` at `user/CMakeLists.txt:31`.
+- **0 binding / correctness / UB defects, and the bare spelling is provably right for all three.** `cl /EP`
+  (`tmp/_tmp_pp_fs.bat` -> `tmp/_tmp_fs_pp.txt`) yields the literals `"FillRect"`, `"FrameRect"`, `"InvertRect"`
+  (`:453304`, `:453311`, `:453318` of the post-edit run, in definition order); the export table gives 110, 117, 226
+  (`tmp/_tmp_user32_exports.txt:1779`, `:1786`, `:2057`); and the extended live probe reports all three **RESOLVED** with
+  `FillRectA/W`, `FrameRectA/W`, `InvertRectA/W` **MISSING**. So `qor_pp_useswinapiAW` would have broken all three
+  bindings - this is the D13 case again, and it is worth stating because the three signatures look exactly like the A/W
+  families elsewhere in the folder (`Rect`+`HBRUSH` arguments, no `T` suffix, and the SDK does spell the pointer
+  `CONST RECT *`). None of the three stems is among the nine `user32.h:9-17` `#undef`s and none has a `stem -> stemW`
+  macro in `winuser.h` (`tmp/_tmp_winuser_aw_macros.txt` has no match for any of them), so neither half of G1 can fire and
+  the source spelling is literally the `GetProcAddress` argument. `tmp/_tmp_wrong_stem_scan.ps1` flagged **nothing** in
+  this file.
+- **New U25 from this TU - the `CONST::RECT*` spelling.** `CONST` is the SDK's object-like macro for `const`
+  (`shared/minwindef.h:153`), so the header's `CONST::RECT*` and the call sites' `CONST ::RECT*` are one type written two
+  ways; the `/EP` dump proves it (`tmp/_tmp_fs_pp.txt:453301`: `int User32::FillRect(HDC hDC, const::RECT* lprc, HBRUSH
+  hbr)`). Recorded, not fixed: 17 header lines use `CONST::`, 7 use `const ::`, and the same family reaches
+  `rectangle.cpp`, `painting.cpp` and `text.cpp`, so it joins the folder-wide style pass with U14(a). The only real smell
+  found inside that family (`user32.h:571`'s `CONST::LPINT`) is U23-shaped and is recorded in the U25 entry for
+  `text.cpp`'s session.
+- **U18 - no new instance.** The SDK is `int FillRect(...)`, `int FrameRect(...)`, `BOOL InvertRect(...)`
+  (`winuser.h:9726-9747`), which is exactly what `user32.h:609-611` publishes, so the `int`/`int`/`BOOL` returns need no
+  change and the failure values (0 / 0 / FALSE) are at least representable. U1/U2 instance: 3 call sites, 0
+  `Win32ErrorHandler`, 0 `CheckReturn` - per the settled policy, so a failed paint is silent (and per U7 an SEH fault
+  inside the callee would look identical to a legitimate 0). The only in-tree code that reads any of the three results is
+  `ui/gui/gdiobjects/devicecontext.cpp:85`, which folds `InvertRect`'s `BOOL` into `bool`; the two `int` results are never
+  inspected.
+- **U16 - this TU adds 0 of 3, and it is the first TU whose guard stack has no version macro at all.** Measured with
+  `tmp/_tmp_sdk_guard_scan.ps1` on `winuser.h` 10.0.26100: the prototypes at `:9729`, `:9737`, `:9745` are open only under
+  `#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)` (`:9717`) inside `#ifndef NOUSER` (`:64`). There is also no
+  type-level sub-case, and the direction is the **opposite** of the `HDEVNOTIFY`/`FLASHWINFO` shape U16 usually records:
+  `RECT` is declared at `shared/windef.h:154-160` under the *Application/Games/System* partition (`:152`), i.e. in a
+  broader partition than the prototypes that use it, so a non-Desktop partition would delete the SDK prototypes while
+  `user32.h:609-611` keeps compiling - which is harmless here because the wrapper binds by name, never through the
+  prototype.
+
+
+- **Section coverage (U21's shape again - the header's section is a slice of the SDK's block, and the SDK's block is
+  spread over three of this library's TUs).** The SDK's own region is the contiguous Desktop-Family block
+  `winuser.h:9716-9852`: `DrawFocusRect`, `FillRect`, `FrameRect`, `InvertRect`, `SetRect`, `SetRectEmpty`, `CopyRect`,
+  `InflateRect`, `IntersectRect`, `UnionRect`, `SubtractRect`, `OffsetRect`, `IsRectEmpty`, `EqualRect`, `PtInRect` - 15
+  entry points - plus `GetWindowWord`/`SetWindowWord` inside `#ifndef NOWINOFFSETS` (`:9832-9847`). This library declares
+  **15 of the 15** but files them in three places: the 3 here, the 11 rect helpers at `user32.h:447-457`
+  (`rectangle.cpp` - `CopyRect`, `EqualRect`, `InflateRect`, `IntersectRect`, `IsRectEmpty`, `OffsetRect`, `PtInRect`,
+  `SetRect`, `SetRectEmpty`, `SubtractRect`, `UnionRect`, 11 definitions), and `DrawFocusRect` at `user32.h:267`
+  (`painting.cpp:44`). So this session's section is complete on its own terms and the folder's coverage of the SDK block
+  is complete too - what is missing is two exported names the header never declares at all: **`AlignRects`** (ordinal 6)
+  and **`EvaluateProximityToRect`** (ordinal 10D), both **RESOLVED** in the probe, both Windows 8-era additions that
+  Microsoft documents as internal ("do not use") - which is probably why they were skipped, and both are candidates for
+  the same "declared nowhere" list U21 keeps.
+- **Convention counts:** U13 0 of 3; U14(b) 0 deducing (3/3 explicit - all three spell the full SDK argument list);
+  U17 0 (no A/W family, so no `T` suffix is due); U4 0; U11 0; U15 **3 of 3**; U19 **3 LAYER / 3 INDIRECT / 0 BYPASS /
+  0 MEMBER** (`tmp/_tmp_fs_bypass.txt`); U16 **0 of 3**; U25 **3 declaration lines + 3 call-site template-argument
+  spellings** (the largest single-TU contribution to the folder-wide `CONST::` family so far).
+- **Liveness (U15):** each wrapper has exactly **one** call site, all three in `DeviceContext::FillRect`/`FrameRect`/
+  `InvertRect` (`ui/gui/gdiobjects/devicecontext.cpp:75`, `:80`, `:85`, built at `gui/CMakeLists.txt:44`). Those three
+  methods are non-virtual (`devicecontext.h:232-234`) and have **no call site anywhere** in `src`/`examples`/`test`, so
+  all three wrappers are compiled, exported and never executed. The distinguishing feature against the other dead chains:
+  the device context they would run on *is* live and *is* used by built code - `examples/.../mainwindow/mainwindow.cpp:84`
+  (`WindowController::GetDC`) and `:173` (`PaintSession::GetDC`) both produce a `DeviceContext`, and `OnPaint` calls
+  `GetTextExtentPoint32T`/`TextOutT` on it at `:179`, `:180`, with a `Rect` in hand at `:174` - a real painted window with
+  a real DC and a real rect that simply never goes through `FillRect`. That makes this the most "reachable" dead chain in
+  the folder so far, and the reason the caller-side cast below had to be checked rather than waved away.
+- **Caller-side cast checked rather than assumed:** the three sites pass `reinterpret_cast<const RECT*>(&rc)` where `rc`
+  is `qor::platform::win::Rect` (`ui/gui/view/drawing/rect.h:33-38`: `long m_left, m_top, m_right, m_bottom`) against
+  `RECT` (`LONG left, top, right, bottom` at `shared/windef.h:154-160`). Field-for-field the same order and widths on this
+  toolchain, so the alias is sound in practice - the same hand-mirror pattern as `COMBOBOXINFO` (U15) and
+  `MSGBOXPARAMS` (U23), and now confirmed on a **by-value-painted** path rather than a struct-with-`cbSize` path. No UB
+  observed, but it is still a `reinterpret_cast` between unrelated class types, i.e. technically an invalid alias: the
+  gui side should convert (or derive), which is a `winqor_gui` change and the third instance of the same underlying
+  decision. Recorded under the U23/U15 mirror-struct notes rather than as a new item.
+- **Instrument note for later sessions (second `sigcmp` false-positive class):** `_tmp_sigcmp.ps1` compares the
+  declaration's parameter spelling with the `Library::Call<>` template argument spelling as **strings**, so any site where
+  the header writes `CONST::X*` and the call site writes `CONST ::X*` prints `CALL TYPE MISMATCH` - here 3 of 3 sites,
+  all false (U25). Read the pair before believing the row: after preprocessing both are `const ::RECT*`. Added to the
+  known-bad rows from session 14 (the `voidCall` row prints `(no Library::Call - voidCall or inlineCall?)` by design).
+  `_tmp_name_divergence_scan.ps1` on this TU: 0 of 3 definitions, 0 parameter-name divergences - the folder's zero
+  (established by session 12, re-confirmed by 13 and 14) holds for a fourth consecutive TU.
+- **Verified at exit:** `filledshapes.cpp` compiles standalone at `/W4` **exit 0** after every edit
+  (`tmp/_tmp_compile_one.ps1`); the whole library compiles **38/38 exit 0** with the edits in place
+  (`cmd /c tmp/_tmp_cl_all.bat` -> `cl_exit=0`, `tmp/_tmp_cl_all.log` 42 lines, `filledshapes.cpp` echoed, and the only
+  line matching `error` is the file name `errorhandling.cpp`); the post-edit `/EP` re-run (`pp_exit=0`) still yields the
+  three bare literals in definition order; `user32.h` untouched (`git diff --stat` for the folder: 1 file changed,
+  `filledshapes.cpp` +62/-1).
+- **Instruments this session leaves behind:** `tmp/_tmp_pp_fs.bat` (+ `tmp/_tmp_fs_pp.txt`, `tmp/_tmp_fs_pp_err.txt`),
+  `tmp/_tmp_fs_bypass.txt`, and `tmp/_tmp_name_resolve_probe.cpp` extended with 12 filled-shape spellings - the 3 stems x
+  3 spellings plus `DrawFocusRect`, `AlignRects`, `EvaluateProximityToRect`, the last two being the coverage probes for
+  the names this header omits - plus 5 help-family names pre-staged for session 16 (`WinHelpA`,
+  `Set`/`GetWindowContextHelpId`, `Set`/`GetMenuContextHelpId`; all five **RESOLVED** in the post-edit run, and `WinHelp`
+  itself **MISSING** with `WinHelpA`/`WinHelpW` **RESOLVED**, re-confirmed from the `:51-52` entries an earlier session
+  added). `tmp/_tmp_cl_all.ps1`'s `pwsh -File` wrapper returned exit 1 this session while the generated
+  `tmp/_tmp_cl_all.bat` it writes returned `cl_exit=0` with a clean 42-line log - run the `.bat` and read the log directly
+  rather than trusting that wrapper's exit code.
+  **Encoding trap checked rather than "fixed" (session 15):** `status.md` and the memory-bank files contain en dashes,
+  em dashes and ellipses, and they are committed convention - counting them by piping `git show HEAD:<path>` through
+  PowerShell reports **0** of each because PowerShell re-decodes the blob (each 3-byte dash arrives as three cp1252
+  characters of mojibake), which invites a pointless "normalize the encoding" edit. Measure with
+  `[System.IO.File]::ReadAllText` on the working file and compare code-point groups instead:
+  `memory-bank/progress.md` U+2013 x56 / U+2014 x39 / U+2192 x20, and the working tree matches HEAD for those files.
+  Source `.cpp` files in this folder stay pure ASCII - `filledshapes.cpp` has **0** non-ASCII bytes after this session's
+  comment block.
+
 
