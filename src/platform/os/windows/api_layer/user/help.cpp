@@ -11,9 +11,78 @@
 #include "../returncheck.h"
 #include "../library.h"
 
-#undef WinHelp
-
 namespace qor { namespace win { namespace api {
+
+    //The "//Shell functions" section (user32.h:641-646): five declarations, three definitions - here, in the header's
+    //order, all static, all qualified User32::, all three call sites explicit about the SDK argument types (U14:
+    //3/3 explicit, 3/3 spaced style). :642-643 SetMenuContextHelpId / GetMenuContextHelpId are declared WITHOUT
+    //static and are defined in no TU of this folder: they are U4 members of the T1/T3 shape, and dumpbin on the built
+    //import library shows it directly - the only help-family linker members are ?SetWindowContextHelpId@...,
+    //?GetWindowContextHelpId@... and ?WinHelp@... (tmp/_tmp_help_linkermember.txt), the menu pair is absent. The entry
+    //points themselves are real exports (SetMenuContextHelpId 34A, GetMenuContextHelpId 17C in
+    //tmp/_tmp_user32_exports.txt, both RESOLVED in tmp/_tmp_name_resolve_probe.cpp), so this is a published-surface
+    //decision for the U4/U13 sweep (add the two wrappers, or delete :642-643) and not a TU fix: a caller today is
+    //ill-formed because a non-static member cannot be qualified through the class name. 2 U4 members, 0 U13 (no
+    //member here is defined through User32:: under a non-static declaration), 0 U11.
+    //Section label: "Shell functions" is the classic SDK's "Shell Support Functions" group, whose other members are
+    //scattered over this header - CreateWindowExT :145 (window.cpp), DrawStateT :269 / LockWindowUpdate :280
+    //(painting.cpp), DrawIconEx :434 and CopyImage/LoadImageT :443-444 (resource.cpp), DlgDirList :546 /
+    //DlgDirListComboBoxT :551 (dialog.cpp), LoadBitmap :672. Only these five sit under the label, so the TU name
+    //matches the SDK's own "Help support" block (winuser.h:12265) rather than the folder's section name - a
+    //U12/U21-shaped placement note, nothing moved here.
+    //Bindings, all three verified: SetWindowContextHelpId (37A) and GetWindowContextHelpId (1E1) are single exports
+    //with no A/W family at all, so the bare qor_pp_useswinapi is their D13 spelling; WinHelp has to use
+    //qor_pp_useswinapiAW because the table has WinHelpA 3EC and WinHelpW 3ED and NO bare WinHelp (probe: WinHelp
+    //MISSING, WinHelpW RESOLVED), and because user32.h:10 #undef's the stem before both the class declaration at :646
+    //and this binding, which closes G1's nested-expansion route - a bare binding here would stringize "WinHelp" and
+    //throw "Missing library function." at run time. That same #undef is load-bearing for the member NAME: the SDK's
+    //WinHelp -> WinHelpW macro (winuser.h:12386) would otherwise rewrite the declaration and the definition out of
+    //step with each other, and cl /EP shows the pair agreeing unwritten as
+    //"BOOL User32::WinHelp(HWND hWndMain, LPCTSTR lpszHelp, UINT uCommand, ULONG_PTR dwData)" (tmp/_tmp_help_pp.txt).
+    //This TU used to carry its own "#undef WinHelp" after including user32.h; it was inert (user32.h:10 has already
+    //undef'd the stem and nothing included later can re-emit it past winuser.h's _WINUSER_ guard) and is removed
+    //here, with /EP and the /W4 compile unchanged afterwards - console.cpp lost the same line in session 7, so no
+    //.cpp in this folder #undefs anything now.
+    //The three literals cl /EP resolves here are "SetWindowContextHelpId", "GetWindowContextHelpId" and "WinHelpW"
+    //(:453243, :453250, :453257 of the pre-edit run - those numbers shift with the weight of this comment block, the
+    //literals do not). tmp/_tmp_sigcmp.ps1 gives 3/3 decl==def ok and 3/3 Call ok, the wrong-stem scan
+    //(tmp/_tmp_wrong_stem_scan.ps1) flags nothing in this file, and the parameter-name scan reports 0 divergences -
+    //which is all this section can support, since the SDK's four help-id prototypes (winuser.h:9122-9146) have
+    //UNNAMED parameters, so those names cannot be compared with the SDK at all.
+    //Signatures match the SDK field for field: SetWindowContextHelpId(HWND, DWORD) winuser.h:9122-9127,
+    //GetWindowContextHelpId(HWND) :9129-9133, WinHelpW(HWND, LPCWSTR, UINT, ULONG_PTR) :12377-12384. The returns match
+    //too, so no U18 instance: the two BOOLs are genuine success flags (WinHelp reports failure as FALSE +
+    //GetLastError), while GetWindowContextHelpId returns DWORD 0 both when the window carries no context id and when
+    //the handle is rejected, so failure and a legitimate 0 are indistinguishable - and per the settled policy this TU
+    //adds no Win32ErrorHandler and no CheckReturn (U1/U2: 3 call sites, 0 handlers, 0 checks).
+    //The wide/narrow half is driven by one switch and is consistent here: qor_pp_unicode (configuration.h:13) makes
+    //kernel32.h:7-10 define UNICODE/_UNICODE before Windows.h, so LPCTSTR is LPCWSTR (measured both ways in
+    //tmp/_tmp_tchar_probe.cpp: with that include chain _UNICODE=1, sizeof(TCHAR)=2, LPCTSTR==LPCWSTR; without it the
+    //SDK defaults hold, _UNICODE=0 and LPCTSTR==LPCSTR), and the linker name this library exports is
+    //?WinHelp@User32@api@win@qor@@SAHPEAUHWND__@@PEB_WI_K@Z, i.e. a const wchar_t* (tmp/_tmp_help_linkermember.txt).
+    //A consumer TU that reaches <Windows.h> before kernel32.h sees the narrow spelling and references a PEB_ form this
+    //library does not export, so the mismatch surfaces as a link error rather than as a wide entry point handed a
+    //narrow string. In the SDK WinHelp's hWndMain and lpszHelp are _In_opt_ (:12373-12374, :12381-12382) - a NULL
+    //window or NULL path is legal - while uCommand and dwData are _In_; the wrapper's HWND/LPCTSTR admit NULL, so
+    //nothing here rejects the optional case. No QOR-side value names the HELP_* command constants
+    //(winuser.h:12333-12355) or HELPWININFO, which is why the only caller passes a bare unsigned int, and Microsoft
+    //documents WinHelp as superseded by HtmlHelp, which no api_layer library wraps at all. WinHelp owns its help-file
+    //instance internally and none of the three wrappers acquires a handle, so the folder's "an acquired handle is
+    //returned for the caller to release" contract does not apply to this section - the HWND it takes is caller-owned.
+    //U16: the two context-help-id prototypes sit under #if(WINVER >= 0x0400) (:9105) + the Desktop family (:9110)
+    //inside #ifndef NOUSER (:64); WinHelpA/W sit under #ifndef NOHELP (:12270) + Desktop (:12268) with NO version
+    //guard. The direction is the benign one, unlike FLASHWINFO/HDEVNOTIFY: every type the three wrappers name is
+    //version-independent, so NOUSER/NOHELP or a small WINVER leaves user32.h:644-646 well-formed and the bindings
+    //still resolve against the shipped DLL.
+    //Liveness (U15 3/3): the only sites in the tree are WindowController::SetContextHelpId, GetContextHelpId and Help
+    //(ui/gui/controllers/windowcontroller.cpp:785, :790, :795 - built through ui/CMakeLists.txt:5 +
+    //gui/CMakeLists.txt:27), and those three methods have no call site anywhere in src/examples/test, so the chain is
+    //compiled, exported and never entered. U19 is as clean as it gets (tmp/_tmp_help_bypass.txt: 3 LAYER, 0 INDIRECT,
+    //0 BYPASS, 0 MEMBER). Both BOOLs are real success flags, so the caller's fold to bool is semantically right (no
+    //U24 instance, unlike FlashWindow's previous-state BOOL); :785 converts implicitly while :795 writes
+    //"? true : false" - a gui-side consistency nit, not a layer one. The gui's WM_HELP path
+    //(ui/gui/view/handlers/interactive/help.cpp:46) takes the context id from the HELPINFO payload, so it never goes
+    //through GetWindowContextHelpId either.
 
     BOOL User32::SetWindowContextHelpId(HWND hwnd, DWORD dwContextHelpId)
     {

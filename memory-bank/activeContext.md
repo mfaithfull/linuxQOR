@@ -9,14 +9,24 @@ Last updated: 31 Oct 2026.
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
   carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
-  (G1-G6), **twenty-five open items (U1-U25)**, the pre-scan items **P1-P5**, the three deferred tasks **T1/T2/T3** and the tooling
-  under `tmp/`. **Sixteen TUs done** in sessions 1-15 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
+  (G1-G6), **twenty-six open items (U1-U26)**, the pre-scan items **P1-P5**, the four deferred tasks **T1/T2/T3/T4** and the tooling
+  under `tmp/`. It was **consolidated on 31 Oct 2026** (2,151 lines / 237 KB -> 1,201 lines / 141 KB): the registers were
+  kept verbatim and the per-TU narrative write-ups of sessions 2-15 moved verbatim to
+  `src/platform/os/windows/api_layer/user/session-log-archive.md` (1,214 lines) beside it, together with the consumed
+  `help.cpp` pre-flags - nothing was deleted (verified mechanically: 0 lines of the session-15 commit missing from the two
+  files). **Seventeen TUs done** in sessions 1-16 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
   `clipboard`, `combobox`, `console`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`,
-  `dialog`, `errorhandling`, `filledshapes`); **next is
-  `help.cpp`** (3 wrappers over the 5-declaration `//Shell functions` section, `user32.h:641-646` - the file name does not
-  match the section name; `SetMenuContextHelpId`/`GetMenuContextHelpId` at `:642-643` are non-static and defined nowhere, so
-  that section **is** a partial U4 block; `WinHelp` at `:35` is the folder's second confirmed **AW** binding, and the export
-  table has `WinHelpA`/`WinHelpW` but no bare `WinHelp`, so `AW` is mandatory).
+  `dialog`, `errorhandling`, `filledshapes`, `help`); **next is
+  `hook.cpp`** (4 wrappers over "Hook functions", `user32.h:315-319`, all `static` and all defined; `CallMsgFilterT`/
+  `SetWindowsHookExT` are a **load-bearing** AW pair - unlike `WinHelp`, neither stem is in the `user32.h:9-17` `#undef`
+  list, so G1 can silently rewrite a bare binding, and `SetWindowsHookExAW` (38B) is an export the header never mentions;
+  `CallNextHookEx`/`UnhookWindowsHookEx` have no A/W family, so bare is correct; U15 4/4 with 0 bypass sites; the
+  `SetWindowsHookEx` -> `UnhookWindowsHookEx` handle contract is the section's main item). Session 16 (`help.cpp`) fixed
+  the folder's last dead `#undef` (`:14`), added a 70-line TU comment, opened **U26** (`TCHAR` width is an include-order
+  property - nothing in the build defines `UNICODE`/`_UNICODE`; the failure mode is a link error on the narrow spelling) and
+  task **T4** (`user32.h:642-643` menu context-help pair: declared non-static, defined in no TU, and absent from the built
+  import library per `dumpbin /linkermember:1`), and corrected **U2** (`../returncheck.h` included by 37 of 38 TUs, used by
+  2). `help.cpp` and `status.md` were uncommitted at HEAD `9ecbf581`.
   Session 13 (`dialog.cpp`, 22 wrappers - the largest section so far) fixed the third **P1** instance: `:89` bound
   `"GetDlgItemTextT"`, which the probe says is MISSING, now `qor_pp_useswinapiAW(user32, GetDlgItemText)`; converted
   `MessageBox` to explicit AW (no behaviour change - the SDK macro already rewrote it); made 3 `Call<...>` rows spell
