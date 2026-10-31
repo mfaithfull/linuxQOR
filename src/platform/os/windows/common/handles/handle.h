@@ -59,8 +59,6 @@ namespace qor { namespace platform { namespace win {
 		Handle& operator = (Handle && src);
 		Handle& operator = (const Handle&);
 		Handle Clone(void* sourceProcessHandle, void* targetProcessHandle, unsigned long desiredAccess, bool inheritHandle, unsigned long options);
-		virtual void Attach(void* pObj);
-		virtual void* Detach(void);
 		bool Duplicate(void* sourceProcessHandle, void* targetProcessHandle, void** targetHandle, unsigned long desiredAccess, bool inheritHandle, unsigned long options);
 		bool GetHeritable();
 		bool GetProtectFromClose();

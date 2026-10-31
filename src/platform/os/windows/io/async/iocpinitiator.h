@@ -54,7 +54,7 @@ namespace qor { namespace io { namespace async { namespace win {
             };
         }
 
-        inline virtual qor::io::async::IOTask Write(io::Descriptor* ioDescriptor, byte* buffer, size_t len, long offset) override
+        inline virtual qor::io::async::IOTask Write(io::Descriptor* ioDescriptor, const byte* buffer, const size_t len, const long offset) override
         {
             co_return qor::io::async::Result{
                 .result = co_await WriteOperation(ioDescriptor, buffer, len, offset),

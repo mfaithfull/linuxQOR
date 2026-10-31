@@ -1,5 +1,8 @@
 
 
+#ifndef QOR_PP_H_SRC_QOR_ESSENTIALS_TEXT_SHAPING_LAYOUT_DIRECTION
+#define QOR_PP_H_SRC_QOR_ESSENTIALS_TEXT_SHAPING_LAYOUT_DIRECTION
+
 enum class Direction : unsigned int
 {
     invalid = 0,
@@ -15,3 +18,5 @@ enum class Direction : unsigned int
 
 
 
+
+#endif//QOR_PP_H_SRC_QOR_ESSENTIALS_TEXT_SHAPING_LAYOUT_DIRECTION

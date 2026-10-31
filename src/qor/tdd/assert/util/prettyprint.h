@@ -5,6 +5,9 @@
 //Copyright 2021 Sean Nash
 //under BSD 3 clause license
 
+#ifndef QOR_PP_H_SRC_QOR_TDD_ASSERT_UTIL_PRETTYPRINT
+#define QOR_PP_H_SRC_QOR_TDD_ASSERT_UTIL_PRETTYPRINT
+
 #include <iostream>
 #include <map>
 #include <memory>
@@ -156,3 +159,5 @@ namespace qor{ namespace assert{ namespace util {
 	}
 
 }}}//qor::assert::util
+
+#endif//QOR_PP_H_SRC_QOR_TDD_ASSERT_UTIL_PRETTYPRINT

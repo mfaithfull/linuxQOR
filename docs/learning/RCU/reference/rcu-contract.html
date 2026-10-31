@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>RCU contract &amp; code map - QOR reference</title>
+<style>
+  :root { --ink:#1b1b1f; --soft:#5b616b; --rule:#d6d9de; --accent:#8a3d2b; --code:#f3f4f6; }
+  * { box-sizing: border-box; }
+  body { margin: 22mm 18mm; font: 15px/1.6 "Georgia","Times New Roman",serif; color: var(--ink); }
+  h1 { font: 700 26px/1.2 Georgia, serif; margin: 0 0 4px; letter-spacing: -0.4px; }
+  .sub { color: var(--soft); font-size: 13px; margin: 0 0 18px; }
+  h2 { font: 700 17px/1.3 Georgia, serif; margin: 26px 0 8px; border-bottom: 1.5px solid var(--rule); padding-bottom: 5px; }
+  h3 { font: 700 14px/1.3 Georgia, serif; margin: 16px 0 6px; }
+  table { width: 100%; border-collapse: collapse; font: 13px/1.45 "Helvetica Neue", Arial, sans-serif; }
+  th, td { border: 1px solid var(--rule); padding: 5px 7px; text-align: left; vertical-align: top; }
+  th { background: #eef0f3; font-weight: 700; }
+  code, .c { font: 12.5px/1.5 "SFMono-Regular", Consolas, "Courier New", monospace; }
+  .c { background: var(--code); border-radius: 3px; padding: 1px 4px; }
+  .box { border: 1.5px solid var(--ink); border-radius: 5px; padding: 10px 13px; margin: 12px 0; }
+  .note { font-size: 12.5px; color: var(--soft); }
+  ul { margin: 0 0 0 20px; } li { margin: 0 0 3px; }
+  .foot { font-size: 12px; color: var(--soft); border-top: 1px solid var(--rule); margin-top: 24px; padding-top: 8px; }
+  a { color: var(--accent); text-decoration: none; }
+  @media print { body { margin: 12mm; } }
+</style>
+</head>
+<body>
+
+<h1>Read-Copy-Update: the contract and the code map</h1>
+<p class="sub">Reference sheet for the QOR workspace. Anchored to
+<span class="c">src/qor/essentials/datastructures/rcuguarded.h</span> (168 lines) and
+<span class="c">rculist.h</span> (639 lines). Read it with
+<span class="c">GLOSSARY.md</span>; the words here are the words everywhere.</p>
+
+<h2>1. The contract, step by step</h2>
+<table>
+<tr><th>#</th><th>Step</th><th>What actually happens</th><th>Where in this repo</th></tr>
+<tr><td>1</td><td><b>Register</b> the reader</td>
+  <td>Allocate a <span class="c">zombie_list_node</span> that points at this guard, then
+  CAS-push it onto <span class="c">m_zombie_head</span>. No lock is taken.</td>
+  <td>rculist.h:184-195 &middot; triggered lazily from rcuguarded.h:74-81 and 122-129</td></tr>
+<tr><td>2</td><td><b>Read</b> the live chain</td>
+  <td>Plain atomic loads only: <span class="c">m_head.load()</span>, then
+  <span class="c">next.load()</span> per hop.</td>
+  <td>rculist.h:479, 491 &middot; 295, 369 (iterator++)</td></tr>
+<tr><td>3</td><td><b>Copy</b> the update into new memory</td>
+  <td>The writer allocates the replacement node <i>before</i> it touches any link, so
+  readers never see a half-built node.</td>
+  <td>rculist.h:504, 525, 546, 568 (<span class="c">allocate_unique&lt;node&gt;</span>)</td></tr>
+<tr><td>4</td><td><b>Link</b> the new node in</td>
+  <td>Atomic stores on <span class="c">next</span> / <span class="c">back</span> and
+  <span class="c">m_head</span> / <span class="c">m_tail</span>, inside the write mutex.</td>
+  <td>rculist.h:503-518 (push_front) &middot; 545-561 (push_back)</td></tr>
+<tr><td>5</td><td><b>Unlink</b> the old one</td>
+  <td>Set <span class="c">deleted</span>, then re-point the neighbours past it.</td>
+  <td>rculist.h:589-617 (erase)</td></tr>
+<tr><td>6</td><td><b>Retire</b> it - do not free it</td>
+  <td>Push a zombie node holding the dead <span class="c">node*</span> onto the same
+  lock-free zombie list.</td>
+  <td>rculist.h:618-626</td></tr>
+<tr><td>7</td><td><b>Reclaim</b>, only when no reader can see it</td>
+  <td>The guard's unregister runs the scan; the handle's destructor calls it.</td>
+  <td>rculist.h:206-245 (unlock) &middot; rcuguarded.h:100-106, 52-58 (~handle)</td></tr>
+</table>
+<p class="note">Steps 3-6 are writer-only. Steps 1-2 and 7 are the reader's whole job:
+announce yourself, walk, withdraw. That is what makes the reads free of any lock.</p>
+<h2>2. The four invariants</h2>
+<div class="box">
+<p><b>I1 - Readers never block, never retry.</b> A reader takes no mutex, runs no CAS loop,
+sleeps nowhere. The upstream rule states it plainly: RCU updaters cannot block readers or
+force them to retry their accesses
+(<a href="https://en.wikipedia.org/wiki/Read-copy-update">Wikipedia</a>). In this code: the
+reader path is <span class="c">lock_read()</span> &rarr; first dereference &rarr;
+<span class="c">rcu_read_lock()</span> &rarr; one CAS on the zombie list. The write mutex
+at rculist.h:156 is never on that path.</p>
+<p><b>I2 - Each hop is atomic, so a walk is never torn.</b> Every link is a single
+<span class="c">std::atomic</span> store on <span class="c">node::next</span> /
+<span class="c">node::back</span> (rculist.h:122-123). A reader may therefore see the old
+chain or the new chain, and may span an update across hops - but it never sees a node
+half-linked, and never dereferences a freed pointer.</p>
+<p><b>I3 - Retired memory outlives every reader that could have seen it.</b> This is the
+whole reason the header promises that "iterators are never invalidated by any list
+operation" (rculist.h:35-37). An iterator is a bare <span class="c">node*</span>
+(rculist.h:328); its validity is guaranteed by the zombie list, not by ownership.</p>
+<p><b>I4 - Exactly one writer at a time.</b> RCU does not make writes concurrent. Every
+mutator opens <span class="c">std::lock_guard&lt;M&gt; guard(m_write_mutex)</span> -
+rculist.h:503, 524, 545, 567, 588. Writers pay a mutex; readers pay nothing.</p>
+</div>
+
+<h2>3. The zombie list, drawn</h2>
+<p>A single lock-free stack, <b>newest registration at the head</b>, holding two
+interleaved kinds of entry:</p>
+<div class="box" style="border:1px solid #999; padding:8px 10px;">
+<code style="white-space: pre; display:block;">m_zombie_head &rarr; [guard D] &rarr; [dead node] &rarr; [guard C] &rarr; [guard A] &rarr; nullptr
+   newest          owner!=0      owner==0      owner!=0     owner!=0
+   (pushed by     zombie_node==0 zombie_node!=0 zombie_node==0
+    CAS at 191-194 / 623-626)</code>
+</div>
+<table>
+<tr><th>Entry kind</th><th>Created by</th><th>Meaning of its fields</th></tr>
+<tr><td><b>Guard entry</b><br><span class="note">rculist.h:132 ctor</span></td>
+  <td><span class="c">rcu_read_lock()</span> (184-195)</td>
+  <td><span class="c">owner</span> = the live guard, until unregister sets it to
+  nullptr (rculist.h:244). <span class="c">zombie_node</span> is null.</td></tr>
+<tr><td><b>Dead-node entry</b><br><span class="note">rculist.h:130 ctor</span></td>
+  <td><span class="c">erase()</span> (618-626)</td>
+  <td><span class="c">zombie_node</span> = the unlinked node awaiting free.
+  <span class="c">owner</span> is null - it is not a reader.</td></tr>
+</table>
+
+<h3>The unregister scan - the one subtle algorithm here</h3>
+<p><span class="c">rcu_guard::unlock()</span> (rculist.h:206-245) does two passes:</p>
+<ul>
+<li><b>Probe pass</b> (208-220): walk from <span class="c">m_zombie-&gt;next</span> - that is,
+toward <i>older</i> registrations - until you find an entry whose
+<span class="c">owner != nullptr</span>. Finding one means a reader is still out there, so
+stop: nothing older than it may be freed.</li>
+<li><b>Free pass</b> (224-243): only if the probe found none, destroy and deallocate every
+entry walked - both the dead <span class="c">node</span> and the
+<span class="c">zombie_list_node</span> wrapper - then splice this guard's entry past the
+survivors (<span class="c">m_zombie-&gt;next.store(n)</span>, line 242).</li>
+<li>Finally <span class="c">m_zombie-&gt;owner.store(nullptr)</span> (244): this guard is now
+itself reclaimable, by some older guard's scan.</li>
+</ul>
+<p class="note">Why scan toward older entries only? Because a newer registration started
+after this one, so it cannot be holding a pointer obtained before this one finished. The
+newest registration is the only one whose reach is unknown, and it is the one currently
+executing this scan. Reclamation is therefore amortised onto whichever reader finishes
+first - no global sync point, which is why this userspace variant needs nothing like
+Linux's <span class="c">synchronize_rcu()</span>.</p>
+<h2>4. Worked timeline - one writer, two readers</h2>
+<table>
+<tr><th>t</th><th>Thread</th><th>Action</th><th>Live chain</th><th>Zombie list (newest first)</th></tr>
+<tr><td>0</td><td>-</td><td>-</td><td>head &rarr; A &rarr; B &rarr; C</td><td>empty</td></tr>
+<tr><td>1</td><td>R1</td><td><span class="c">auto h1 = L.lock_read(); (*h1);</span></td><td>A &rarr; B &rarr; C</td><td>[R1]</td></tr>
+<tr><td>2</td><td>R2</td><td>same, then walks to <b>B</b></td><td>A &rarr; B &rarr; C</td><td>[R2] &rarr; [R1]</td></tr>
+<tr><td>3</td><td>W</td><td><span class="c">lock_write()</span> then <span class="c">h-&gt;erase(it_B)</span></td><td>A &rarr; C</td><td>[dead B] &rarr; [W] &rarr; [R2] &rarr; [R1]</td></tr>
+<tr><td>4</td><td>R1</td><td>finishes; handle destructor unregisters</td><td>A &rarr; C</td><td>scan from [W] finds live [R2] - <b>nothing freed</b>; B still valid</td></tr>
+<tr><td>5</td><td>R2</td><td>finishes; unregisters</td><td>A &rarr; C</td><td>scan finds no live guard behind it &rarr; frees <b>[dead B]</b> and <b>[W]</b>, then B's memory is gone</td></tr>
+</table>
+<p class="note">The point of step 4: R1 finishing early must <i>not</i> free B, because R2 is
+standing on it. The scan is what encodes "some reader may still be there", and it costs one
+walk of a short list.</p>
+
+<h2>5. The idiom as used in this repo</h2>
+<table>
+<tr><th>Role</th><th>Code as it appears in QOR</th><th>What it compiles to</th></tr>
+<tr><td>Reader</td>
+  <td><span class="c">auto senderListHandle = m_connectList.lock_read();</span><br>
+  <span class="c">for (auto&amp; item : *senderListHandle) { ... }</span><br>
+  <span class="note">signalbase.cpp:128-131</span></td>
+  <td>no mutex; one CAS to register, one walk, one unregister at scope exit.</td></tr>
+<tr><td>Writer</td>
+  <td><span class="c">auto receiverListHandle = receiver-&gt;m_possibleSenders.lock_write();</span><br>
+  <span class="c">receiverListHandle-&gt;push_back(this);</span><br>
+  <span class="note">signalbase.cpp:115-116</span></td>
+  <td>write mutex + register + allocate + link + unregister.</td></tr>
+</table>
+<p>Both handles are <span class="c">[[nodiscard]]</span> (rcuguarded.h:40-41): you cannot get
+the data without holding a handle, and the compiler stops you from throwing the handle away.
+Dereferencing an <i>unused</i> handle is what registers it (rcuguarded.h:76-81); a handle
+created and never used registers nothing, and its destructor unlocks nothing
+(rcuguarded.h:54, 102).</p>
+
+<h2>6. Honest gaps in this header</h2>
+<ul>
+<li><b>Declared, never defined:</b> <span class="c">clear()</span> (rculist.h:86), all four
+<span class="c">insert()</span> overloads (88-93) and <span class="c">emplace()</span> (96).
+Only <span class="c">emplace_front</span>/<span class="c">emplace_back</span> have bodies (522, 565).
+Any use of the others fails to link.</li>
+<li><b><span class="c">operator--</span> cannot compile</b> as written: it reads
+<span class="c">m_current-&gt;prev.load()</span> (rculist.h:301, 375) but
+<span class="c">node</span> names that link <span class="c">back</span> (123). A failure only
+when instantiated.</li>
+<li><b>No reverse iterators are defined</b>, though declared at rculist.h:60, 61 and 63.</li>
+<li><span class="c">status.md:24</span> says "the base libraries are now clean and some clean
+examples can be built", which the item above contradicts for this header.</li>
+</ul>
+
+<div class="foot">
+Sources: <a href="https://en.wikipedia.org/wiki/Read-copy-update">Wikipedia - Read-copy-update</a>
+(contract, "updaters cannot block readers");
+<a href="https://github.com/copperspice/cs_libguarded">copperspice/cs_libguarded</a> (upstream
+of both headers - their file banners say "This file is part of libguarded");
+<a href="https://www.copperspice.com/docs/cs_libguarded/index.html">CsLibGuarded docs v2.0.1</a>.
+Local: rculist.h, rcuguarded.h, signalbase.cpp, slotbase.h.
+Companion: <a href="GLOSSARY.md">GLOSSARY.md</a>, <a href="../lessons/0001-rcu-the-contract.html">lesson 0001</a>.
+</div>
+
+</body>
+</html>
+
+

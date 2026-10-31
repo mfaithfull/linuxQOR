@@ -4,7 +4,9 @@
 //Derived from assertcc
 //Copyright 2021 Sean Nash
 //under BSD 3 clause license
-#pragma once
+
+#ifndef QOR_PP_H_SRC_QOR_TDD_ASSERT_UTIL_CHECKUTIL
+#define QOR_PP_H_SRC_QOR_TDD_ASSERT_UTIL_CHECKUTIL
 
 #include <initializer_list>
 
@@ -34,3 +36,5 @@ struct CheckUtil
 };
 
 }}}//qor::assert::util
+
+#endif//QOR_PP_H_SRC_QOR_TDD_ASSERT_UTIL_CHECKUTIL

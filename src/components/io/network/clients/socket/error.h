@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_SOCKET_ERROR
+#define QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_SOCKET_ERROR
+
 #include <string>
 
 namespace qor{ namespace io{ namespace network{ namespace components{
@@ -68,3 +71,5 @@ namespace qor{ namespace io{ namespace network{ namespace components{
     std::ostream &operator<<(std::ostream &os, const SocketError &obj);
 
 }}}}//qor::io::network::compnents
+
+#endif//QOR_PP_H_SRC_COMPONENTS_IO_NETWORK_CLIENTS_SOCKET_ERROR

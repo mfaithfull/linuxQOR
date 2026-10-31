@@ -4,7 +4,9 @@
 //Derived from assertcc
 //Copyright 2021 Sean Nash
 //under BSD 3 clause license
-#pragma once
+
+#ifndef QOR_PP_H_SRC_QOR_TDD_ASSERT_SUBJECT_MAPSUBJECT
+#define QOR_PP_H_SRC_QOR_TDD_ASSERT_SUBJECT_MAPSUBJECT
 
 #include <map>
 #include <optional>
@@ -71,3 +73,5 @@ namespace qor{ namespace assert{ namespace subject{
     };
 
 }}}//qor::assert::subject
+
+#endif//QOR_PP_H_SRC_QOR_TDD_ASSERT_SUBJECT_MAPSUBJECT

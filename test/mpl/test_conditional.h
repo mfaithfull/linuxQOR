@@ -1,6 +1,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_TEST_MPL_TEST_CONDITIONAL
+#define QOR_PP_H_TEST_MPL_TEST_CONDITIONAL
+
 #include "src/qor/essentials/mpl/functional/call.h"
 #include "src/qor/essentials/mpl/bool.h"
 #include "src/qor/essentials/mpl/conditional.h"
@@ -18,3 +21,5 @@ namespace {
 		}
 	};
 }
+
+#endif//QOR_PP_H_TEST_MPL_TEST_CONDITIONAL

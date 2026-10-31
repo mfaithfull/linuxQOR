@@ -49,7 +49,7 @@ namespace qor { namespace io{ namespace async{
                 m_processor->Reset();
                 m_processorResult = m_threadPool->SubmitTask( [this]()
                 {
-                    CurrentThread::GetCurrent().SetName("IO Thread");                    
+                    CurrentThread::GetCurrent().SetName("IO Thread");
                     return m_processor->Run();
                 });
             }
@@ -88,13 +88,13 @@ namespace qor { namespace io{ namespace async{
             co_return ioResult.status_code;
         }
 
-        virtual inline task<int> Write(io::Descriptor* ioDescriptor, byte* buffer, size_t len, long offset) const
+        virtual inline task<int> Write(io::Descriptor* ioDescriptor, const byte* buffer, const size_t len, const long offset) const
         {
             auto ioResult = co_await m_initiator->Write(ioDescriptor, buffer, len, offset);
             co_return ioResult.status_code;
         }
 
-        virtual inline task<int> Send(io::Descriptor* ioDescriptor, byte* buffer, size_t len, int flags) const
+        virtual inline task<int> Send(io::Descriptor* ioDescriptor, const byte* buffer, const size_t len, const int flags) const
         {
             auto ioResult = co_await m_initiator->Send(ioDescriptor, buffer, len, flags);
             co_return ioResult.status_code;
@@ -114,7 +114,11 @@ namespace qor { namespace io{ namespace async{
 
         inline bool Enroll(io::Descriptor& ioDescriptor) const
         {
-            return m_processor->Enroll(ioDescriptor);
+            if(m_processor.IsNotNull())
+            {
+                return m_processor->Enroll(ioDescriptor);
+            }
+            return false;
         }
 
         //Provides synchronisaed access to a shared IO Context

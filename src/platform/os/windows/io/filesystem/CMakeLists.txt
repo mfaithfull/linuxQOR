@@ -12,4 +12,4 @@ qor_pp_ver_minor=${PROJECT_VERSION_MINOR}
 qor_pp_ver_patch=${PROJECT_VERSION_PATCH})
 
 target_link_libraries(${target} qor_module qor_host qor_injection qor_filesystem
-winqor_api_kernel)
+winqor_api_kernel winqor_sharedbootstrap)

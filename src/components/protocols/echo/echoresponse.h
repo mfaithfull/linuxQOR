@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_ECHORESPONSE
-#define QOR_PP_H_EXAMPLES_ECHOSERVER_ECHORESPONSE
+#ifndef QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_ECHO_ECHORESPONSE
+#define QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_ECHO_ECHORESPONSE
 
 #include <string>
 
@@ -33,4 +33,4 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
 }}}}//qor::components::protocols::echo
 
-#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_ECHORESPONSE
+#endif//QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_ECHO_ECHORESPONSE

@@ -27,11 +27,11 @@ namespace qor{
         }
         */
     };
-    
+
     const std::vector<app::PositionalArgSpec> Application::defaultPositionalArgs = {
         /*
         {
-            
+
             "first",
             1,
             app::ArgType::String,
@@ -83,13 +83,26 @@ namespace qor{
 
     int Application::RunWorkflow(ref_of<workflow::IWorkflow>::type workflow)
     {
-        SetWorkflow(workflow);
-        return RunWorkflowInternal();
+        if(m_helpRequested)
+        {
+            return EXIT_SUCCESS;
+        }
+        if(m_argsValidated)
+        {
+            SetWorkflow(workflow);
+            return RunWorkflowInternal();
+        }
+        else
+        {
+            std::cerr << "Application arguments invalid. Workflow not executed." << std::endl;
+            return EXIT_FAILURE;
+        }
     }
 
     int Application::RunWorkflowInternal()
     {
-        int result = -1;
+        int result = EXIT_FAILURE;
+
         if(m_Role.IsNotNull())
         {
             m_Role->Setup();
@@ -105,6 +118,7 @@ namespace qor{
         {
             m_Role->Shutdown();
         }
+
         return result;
     }
 
@@ -115,7 +129,7 @@ namespace qor{
 
     const std::string Application::UsageEpilogue()
     {
-        return std::string("Built with the QOR framwork.");
+        return std::string("Built with the QOR framework.");
     }
 
     const std::string Application::OverrideUsage()
@@ -142,29 +156,53 @@ namespace qor{
     {
         auto parser = app::ArgumentParser(*this);
         auto args = parser.ParseArgs(argc,argv);
+        m_helpRequested = false;
         if(!args.IsArgValid())
-        {            
+        {
             std::cout << parser.GetUsage() << std::endl;
             std::cout << args.GetErrorString() << std::endl;
+            m_argsValidated = false;
+        }
+        else
+        {
+            m_argsValidated = true;
+            // -h/--help is a registered argument, so it is reported as a parsed argument.
+            // When it is present we only want the usage text and a successful exit, not a workflow run.
+            if(args.GetArg("help").GetArgumentExists() || args.GetArg("h").GetArgumentExists())
+            {
+                std::cout << parser.GetUsage() << std::endl;
+                m_helpRequested = true;
+            }
+            else if(args.ParsedArgsCount() == 0)
+            {
+                std::cout << parser.GetUsage() << std::endl;
+            }
         }
     }
 
     int Application::Run(ref_of<app::IRunable>::type runable)
     {
-        int result = -1;
-        if(m_Role.IsNotNull())
+        int result = EXIT_FAILURE;
+        if(m_helpRequested)
         {
-            m_Role->Setup();
+            return EXIT_SUCCESS;
         }
-
-        if(runable.IsNotNull())
+        if(m_argsValidated)
         {
-            result = runable->Run();
-        }
+            if(m_Role.IsNotNull())
+            {
+                m_Role->Setup();
+            }
 
-        if(m_Role.IsNotNull())
-        {
-            m_Role->Shutdown();
+            if(runable.IsNotNull())
+            {
+                result = runable->Run();
+            }
+
+            if(m_Role.IsNotNull())
+            {
+                m_Role->Shutdown();
+            }
         }
         return result;
     }

@@ -1,13 +1,13 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUEST
-#define QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUEST
+#ifndef QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_ECHOREQUEST
+#define QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_ECHOREQUEST
 
 #include <string>
 
 namespace qor { namespace components { namespace protocols { namespace echo {
-    
+
     //Server side request object
     class EchoRequest
     {
@@ -25,7 +25,7 @@ namespace qor { namespace components { namespace protocols { namespace echo {
         {
             return m_request;
         }
-        
+
     private:
 
         std::string m_request;
@@ -33,4 +33,4 @@ namespace qor { namespace components { namespace protocols { namespace echo {
 
 }}}}//qor::components::protocols::echo
 
-#endif//QOR_PP_H_EXAMPLES_ECHOSERVER_ECHOREQUEST
+#endif//QOR_PP_H_COMPONENTS_PROTOCOLS_ECHO_ECHOREQUEST

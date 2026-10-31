@@ -14,7 +14,7 @@ using namespace qor::app;
 
 qor_pp_implement_module("Role based App")
 
-int main()
+int main(const int /*argc*/, const char** /*argv*/, char** /*env*/)
 {
     qor_pp_run_role(CustomRole)(
         []()->int

@@ -6,7 +6,7 @@
 
 #include "sdk/app.h"
 #include "optionsapp.h"                                         //Include the declaration of our custom application type
-#include "src/framework/app/role/getfeature.h"
+#include "src/framework/app/role/getfeature.h"                  //Needed for GetApplication to retrieve the OptionsApp singleton
 
 using namespace qor;
 using namespace qor::app;

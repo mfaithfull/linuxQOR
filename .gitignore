@@ -33,6 +33,7 @@
 
 #local dev stuff
 /.vs
+/.ua
 /build/.vs
 /build
 .vscode

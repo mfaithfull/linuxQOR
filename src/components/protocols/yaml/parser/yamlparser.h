@@ -1,6 +1,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_YAML_PARSER_YAMLPARSER
+#define QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_YAML_PARSER_YAMLPARSER
+
 #include "../model/value.h"
 #include "states/_3/mapping.h"
 #include "states/_1/sequence.h"
@@ -20,3 +23,5 @@
 #include "states/_4/ws.h"
 #include "states/_4/value_separator.h"
 #include "states/_3/name_separator.h"
+
+#endif//QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_YAML_PARSER_YAMLPARSER

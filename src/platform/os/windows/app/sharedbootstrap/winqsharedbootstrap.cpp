@@ -29,7 +29,7 @@
 
 #include "src/qor/module/module.h"
 
-extern "C" __declspec(dllexport) int __stdcall DllMain(void* /*hModule*/, unsigned long ul_reason_for_call, void* /*lpReserved*/)
+extern "C" int __stdcall DllMain(void* /*hModule*/, unsigned long ul_reason_for_call, void* /*lpReserved*/)
 {
     [[maybe_unused]]qor::Module& module = ThisModule();
 	switch (ul_reason_for_call)

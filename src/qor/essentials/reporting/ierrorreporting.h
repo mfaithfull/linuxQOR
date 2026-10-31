@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_QOR_ESSENTIALS_REPORTING_IERRORREPORTING
+#define QOR_PP_H_SRC_QOR_ESSENTIALS_REPORTING_IERRORREPORTING
+
 namespace qor{ 
 
     class qor_pp_module_interface(QOR_REPORTING) IErrorReporting
@@ -42,3 +45,5 @@ namespace qor{
 
     qor_pp_module_interface(QOR_REPORTING) IErrorReporting*& ErrorImpl();
 }//qor
+
+#endif//QOR_PP_H_SRC_QOR_ESSENTIALS_REPORTING_IERRORREPORTING

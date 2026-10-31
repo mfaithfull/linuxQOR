@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_PP_H_EXAMPLES_WORK_CUSTOMWORKFLOW
-#define QOR_PP_H_EXAMPLES_WORK_CUSTOMWORKFLOW
+#ifndef QOR_PP_H_EXAMPLES_BASIC_WORK_CUSTOMWORKFLOW
+#define QOR_PP_H_EXAMPLES_BASIC_WORK_CUSTOMWORKFLOW
 
 #include "src/framework/app/workflow/workflow.h"
 
@@ -19,7 +19,7 @@ class CustomWorkflow : public qor::Workflow //Workflows are always overrides of 
 public:
 
     CustomWorkflow();
-    virtual ~CustomWorkflow() = default;    
+    virtual ~CustomWorkflow() = default;
 
 private:
 
@@ -28,4 +28,4 @@ private:
     qor::workflow::State::ref end;
 };
 
-#endif//QOR_PP_H_EXAMPLES_WORK_CUSTOMWORKFLOW
+#endif//QOR_PP_H_EXAMPLES_BASIC_WORK_CUSTOMWORKFLOW

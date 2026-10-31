@@ -1,6 +1,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_SRC_QOR_ESSENTIALS_DATASTRUCTURES_DETAIL_UPTRTRAIT
+#define QOR_PP_H_SRC_QOR_ESSENTIALS_DATASTRUCTURES_DETAIL_UPTRTRAIT
+
 /***********************************************************************
 *
 * Copyright (c) 2015-2018 Barbara Geller
@@ -60,3 +63,5 @@ namespace detail
     }
 
 }//detail
+
+#endif//QOR_PP_H_SRC_QOR_ESSENTIALS_DATASTRUCTURES_DETAIL_UPTRTRAIT

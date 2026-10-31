@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_PLATFORM_OS_LINUX_UI_X_XLIB_VISUALINFOQUERY
+#define QOR_PP_H_SRC_PLATFORM_OS_LINUX_UI_X_XLIB_VISUALINFOQUERY
+
 namespace qor{ namespace ui { namespace lin{ namespace x{
 
     struct VisualInfo
@@ -132,3 +135,5 @@ namespace qor{ namespace ui { namespace lin{ namespace x{
     };
 
 }}}}//qor::ui::lin::x
+
+#endif//QOR_PP_H_SRC_PLATFORM_OS_LINUX_UI_X_XLIB_VISUALINFOQUERY

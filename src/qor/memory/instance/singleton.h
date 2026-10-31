@@ -5,6 +5,7 @@
 #define QOR_PP_H_INSTANCE_SINGLETON
 
 #include <stddef.h>
+#include <atomic>
 
 #include "src/platform/compiler/compiler.h"
 #include "src/qor/memory/reference/reference.h"
@@ -28,7 +29,7 @@ template<> struct sync_of< _CLASS >\
 
 namespace qor{ namespace detail {
 
-    template <class T>    
+    template <class T>
     class SingletonInstanceHolder
     {
     public:
@@ -39,7 +40,9 @@ namespace qor{ namespace detail {
         {
             if(redirected)
             {
-                redirect->~SingletonInstanceHolder();
+                Lock lock(m);
+                initialised = false;
+                //Note: The derived class will be destroyed by its own SingletonInstanceHolder destructor, so we don't need to do anything here
             }
             else
             {
@@ -48,7 +51,10 @@ namespace qor{ namespace detail {
                     Lock lock(m);
                     if(initialised)
                     {
-                        theRef.Dispose();
+                        {
+                            auto ref = theRef();
+                            factory_of<T>::type::Destruct(ref.operator->());
+                        }
                         initialised = false;
                     }
                 }
@@ -59,14 +65,31 @@ namespace qor{ namespace detail {
         {
             if(redirected)
             {
-                return redirect->Instance();
+                // Take a snapshot of the redirect state under the mutex, then act on it outside
+                // the lock so we never hold the base and the redirected holder's mutexes at once.
+                typename ref_of<T>::type existing;
+                SingletonInstanceHolder<T>* target = nullptr;
+                {
+                    Lock lock(m);
+                    existing = theRef;
+                    target = redirect;
+                }
+                if(existing.IsNotNull())
+                {
+                    return existing;
+                }
+                if(target != nullptr)
+                {
+                    return target->Instance();
+                }
+                return ref_of<T>::type();//Null object returned if redirected and no instance is available
             }
             else
             {
                 Lock lock(m);
                 if(!initialised)
-                {                
-                    theRef = factory_of<T>::type::Construct(count);                    
+                {
+                    theRef = factory_of<T>::type::Construct(count);
                     initialised = true;
                 }
                 else if(theRef.IsNull())
@@ -76,19 +99,28 @@ namespace qor{ namespace detail {
                 return theRef;
             }
         }
-        
+
         template<typename... _p >
         typename ref_of<T>::type Instance(size_t, _p&&... p1)
         {
             if(redirected)
             {
-                return redirect->Instance(1,std::forward<_p>(p1)...);
+                SingletonInstanceHolder<T>* target = nullptr;
+                {
+                    Lock lock(m);
+                    target = redirect;
+                }
+                if(target != nullptr)
+                {
+                    return target->Instance(1,std::forward<_p>(p1)...);
+                }
+                return ref_of<T>::type();
             }
             else
             {
                 Lock lock(m);
                 if( !initialised )
-                {                                    
+                {
                     theRef = factory_of<T>::type::Construct(count, std::forward<_p>(p1)...);
                     initialised = true;
                 }
@@ -107,12 +139,12 @@ namespace qor{ namespace detail {
                 redirect->Release();
             }
             else
-            {                
+            {
                 if(initialised)
                 {
                     Lock lock(m);
                     factory_of<T>::type::Destruct(theRef);
-                    theRef.Reset();
+                    initialised = false;
                 }
             }
         }
@@ -128,11 +160,8 @@ namespace qor{ namespace detail {
         void AutoRedirect(ref_of<T>::type ref)
         {
             Lock lock(m);
-            if(!initialised)
-            {
-                initialised = true;
-                theRef = ref;
-            }
+            theRef = ref;
+            redirected = true;
         }
 
     private:
@@ -140,13 +169,13 @@ namespace qor{ namespace detail {
         static constexpr size_t count = 1;
         ref_of<T>::type theRef;
         bool initialised;
-        bool redirected;
+        std::atomic<bool> redirected;
         RecursiveMutex m;
         SingletonInstanceHolder<T>* redirect{ nullptr };
     };
 
     }//detail
-        
+
 	class SingletonInstancer final
 	{
 	public:
@@ -168,7 +197,7 @@ namespace qor{ namespace detail {
 		{
 			return Holder<T>().Instance(count, std::forward<_p>(p1)...);
 		}
-		
+
         static constexpr size_t ignored_count = 1;
 
         template<class T, class D>

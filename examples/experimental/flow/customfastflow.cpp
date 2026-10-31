@@ -8,10 +8,10 @@
 using namespace qor;
 using namespace qor::fastflow;
 
-//Custom fastflows need to override the default constructor 
+//Custom fastflows need to override the default constructor
 //All the States must be initialised and linked to the fastflow.
 
-CustomFastflow::CustomFastflow() : 
+CustomFastflow::CustomFastflow() :
     beggining(new_ref<Step>(this)),
     middle(new_ref<Step>(this)),
     end(new_ref<Step>(this))
@@ -19,13 +19,13 @@ CustomFastflow::CustomFastflow() :
     /*Each step has four events that can be optionally overriden
     by assigning new functions to what happens on that event.*/
 
-    /*Always set the Enter function on each Step. 
+    /*Always set the Enter function on each Step.
     This is where the work gets done.
     Consider this the contents of the main loop*/
     beggining->Enter = [this]()->void
     {
-        std::cout << "This function is called when the begginging step is entered." << std::endl;
-        
+        std::cout << "This function is called when the beggining step is entered." << std::endl;
+
         /*We have access to the other states and the content of the workflow due to
         capturing [this] on the lambda*/
 

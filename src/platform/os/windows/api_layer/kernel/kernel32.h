@@ -54,7 +54,27 @@ typedef enum _WER_REGISTER_FILE_TYPE
 #	define qor_pp_useswinapiAW( _MODULE, _NAME ) qor_pp_useswinapi( _MODULE, _NAME##A )
 #endif
 
+// Variant (I) binding marker for header-inline API entry points - see DECISIONS.md D11. The SDK header supplies the
+// definition at compile time, so unlike qor_pp_useswinapi there is no GetProcAddress call and no Library::DefProc to
+// hold. The marker expands to nothing; it exists so the audit tool and grep based tooling see one recognisable binding
+// marker per wrapper. Pass the bare SDK name, for example qor_pp_usesinlineapi( InitializeThreadpoolEnvironment ).
+#define qor_pp_usesinlineapi( _NAME )
+
 namespace qor { namespace win { namespace api {
+
+	// Note: the threadpool callback-environment API - InitializeThreadpoolEnvironment, DestroyThreadpoolEnvironment
+	// and the SetThreadpoolCallback family - is exported by NEITHER kernel32.dll NOR ntdll.dll, and that is not an
+	// omission waiting to be fixed. The Windows SDK defines the whole family in headers: WinBase.h, under Windows
+	// Kits 10 Include 10.0.26100.0 um at lines 7913 to 7983, defines each one as FORCEINLINE VOID over the Tp helpers
+	// that winnt.h defines FORCEINLINE from line 25607, and those helpers only assign the TP_CALLBACK_ENVIRON fields
+	// declared at winnt.h 25583 to 25601. No DLL contains any of them, so the run-time GetProcAddress binding used
+	// by every other kernel32 wrapper can never resolve these names - it returns null and Library::Call throws at
+	// run time rather than failing to link. These need the compile-time inline wrapper variant instead: see DECISIONS
+	// D10-CORRECTION and D11, plus the matching note in kthreadpool.cpp. The six with a wrapper here use Library::voidInlineCall
+	// and the qor_pp_usesinlineapi marker. SetThreadpoolCallbackPriority, gated on _WIN32_WINNT >= _WIN32_WINNT_WIN7, and
+	// SetThreadpoolCallbackPersistent, which the SDK defines only inside the DESKTOP WINAPI_FAMILY partition, are declared
+	// below but deliberately left unwrapped - wiring a DESKTOP-only entry point into a library that also builds for store
+	// configurations is a portability call, and DECISIONS.md D11 records that decision.
 
 	class qor_pp_module_interface(QOR_WINAPI) Kernel32
 	{
@@ -382,7 +402,9 @@ namespace qor { namespace win { namespace api {
 		static BOOL GetThreadPriorityBoost( HANDLE hThread, PBOOL pDisablePriorityBoost );
 		static BOOL GetThreadTimes( HANDLE hThread, ::LPFILETIME lpCreationTime, ::LPFILETIME lpExitTime, ::LPFILETIME lpKernelTime, ::LPFILETIME lpUserTime );
 		static BOOL InitializeProcThreadAttributeList( ::LPPROC_THREAD_ATTRIBUTE_LIST lpAttributeList, DWORD dwAttributeCount, DWORD dwFlags, PSIZE_T lpSize );
+		// header-inline API - defined FORCEINLINE in WinBase.h with no DLL export - wrapper must use the compile-time inline variant, see DECISIONS.md D11
 		static VOID InitializeThreadpoolEnvironment( ::PTP_CALLBACK_ENVIRON pcbe );
+		// header-inline API - defined FORCEINLINE in WinBase.h with no DLL export - wrapper must use the compile-time inline variant, see DECISIONS.md D11
 		static VOID DestroyThreadpoolEnvironment( ::PTP_CALLBACK_ENVIRON pcbe );
 		static BOOL IsProcessInJob( HANDLE ProcessHandle, HANDLE JobHandle, PBOOL Result );
 		static BOOL IsThreadAFiber(void);
@@ -415,9 +437,19 @@ namespace qor { namespace win { namespace api {
 		static BOOL SetProcessWorkingSetSizeEx( HANDLE hProcess, SIZE_T dwMinimumWorkingSetSize, SIZE_T dwMaximumWorkingSetSize, DWORD Flags );
 		static DWORD_PTR SetThreadAffinityMask( HANDLE hThread, DWORD_PTR dwThreadAffinityMask );
 		static DWORD SetThreadIdealProcessor( HANDLE hThread, DWORD dwIdealProcessor );
+		// header-inline API - defined FORCEINLINE in WinBase.h with no DLL export - wrapper must use the compile-time inline variant, see DECISIONS.md D11
 		static VOID SetThreadpoolCallbackCleanupGroup( ::PTP_CALLBACK_ENVIRON pcbe, ::PTP_CLEANUP_GROUP ptpcg, ::PTP_CLEANUP_GROUP_CANCEL_CALLBACK pfng );
+		// header-inline API - defined FORCEINLINE in WinBase.h with no DLL export - wrapper must use the compile-time inline variant, see DECISIONS.md D11
 		static VOID SetThreadpoolCallbackLibrary( ::PTP_CALLBACK_ENVIRON pcbe, void* mod );
+		// header-inline API - defined FORCEINLINE in WinBase.h inside the DESKTOP WINAPI_FAMILY partition only, with no DLL export - declared here but not wrapped, see DECISIONS.md D11
+		static VOID SetThreadpoolCallbackPersistent( ::PTP_CALLBACK_ENVIRON pcbe );
+
+		// header-inline API - defined FORCEINLINE in WinBase.h with no DLL export - wrapper must use the compile-time inline variant, see DECISIONS.md D11
 		static VOID SetThreadpoolCallbackPool( ::PTP_CALLBACK_ENVIRON pcbe, ::PTP_POOL ptpp );
+		// header-inline API - defined FORCEINLINE in WinBase.h gated on _WIN32_WINNT >= _WIN32_WINNT_WIN7, with no DLL export - declared here but not wrapped, see DECISIONS.md D11
+		static VOID SetThreadpoolCallbackPriority( ::PTP_CALLBACK_ENVIRON pcbe, ::TP_CALLBACK_PRIORITY Priority );
+
+		// header-inline API - defined FORCEINLINE in WinBase.h with no DLL export - wrapper must use the compile-time inline variant, see DECISIONS.md D11
 		static VOID SetThreadpoolCallbackRunsLong( ::PTP_CALLBACK_ENVIRON pcbe );
 		static VOID SetThreadpoolThreadMaximum( ::PTP_POOL ptpp, DWORD cthrdMost );
 		static BOOL SetThreadpoolThreadMinimum( ::PTP_POOL ptpp, DWORD cthrdMic );

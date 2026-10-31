@@ -15,7 +15,6 @@
 #include "src/platform/platform.h"
 #include "irunable.h"
 #include "../argparse/iargumented.h"
-//#include "../optionparser/ioptionable.h"
 
 #define qor_pp_declare_app_class(_MYAPP)\
 private: static qor::SingletonRedirector<qor::Application, _MYAPP> m_sRedirect;
@@ -109,7 +108,8 @@ namespace qor{
         std::string m_Name;
         ref_of<app::IRole>::type m_Role;
         ref_of<workflow::IWorkflow>::type m_Workflow;
-
+        bool m_argsValidated{true};
+        bool m_helpRequested{false};
     };
 
     qor_pp_declare_instancer_of(Application, SingletonInstancer);

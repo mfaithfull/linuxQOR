@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 0001 - The RCU contract and the zombie list</title>
+<style>
+  :root { --ink:#1b1b1f; --soft:#5b616b; --rule:#d8dbe0; --ok:#2f6b3a; --bad:#a02f2a; --accent:#8a3d2b; --code:#f3f4f6; --dim:#eef1f5; }
+  * { box-sizing: border-box; }
+  body { margin: 20mm 16mm; font: 15px/1.62 Georgia, serif; color: var(--ink); max-width: 78%; }
+  h1 { font: 700 27px/1.2 Georgia, serif; margin: 0 0 6px; letter-spacing: -0.5px; }
+  .sub { color: var(--soft); font-size: 13px; margin: 0 0 20px; }
+  h2 { font: 700 18px/1.3 Georgia, serif; margin: 30px 0 10px; border-bottom: 2px solid var(--rule); padding-bottom: 6px; }
+  h3 { font: 700 15px/1.3 Georgia, serif; margin: 18px 0 8px; }
+  .c { font: 12.5px/1.5 Consolas, "Courier New", monospace; background: var(--code); border-radius: 3px; padding: 1px 4px; }
+  code { font: 12.5px/1.5 Consolas, monospace; background: var(--code); border-radius: 4px; padding: 6px 8px; display: block; }
+  table { width: 100%; border-collapse: collapse; font: 13px/1.45 Helvetica, Arial, sans-serif; }
+  th, td { border: 1px solid var(--rule); padding: 5px 7px; vertical-align: top; }
+  th { background: #edf0f4; font-weight: 700; }
+  .box { border: 1.5px solid var(--ink); border-radius: 6px; padding: 12px 14px; margin: 14px 0; }
+  .step { border-left: 5px solid var(--accent); padding: 7px 12px; margin: 12px 0; background: var(--dim); }
+  .note { font-size: 12.5px; color: var(--soft); }
+  ul { margin: 0 0 0 20px; } li { margin: 0 0 4px; }
+  a { color: var(--accent); text-decoration: none; }
+  .card { border: 1.5px solid var(--rule); border-radius: 7px; padding: 12px 14px; margin: 12px 0; }
+  .opt { cursor: pointer; padding: 3px 8px; border: 1px solid var(--rule); border-radius: 4px; }
+  .opt:hover { background: #f6f7f9; }
+  .right { background: #e6f2e9; color: var(--ok); }
+  .wrong { background: #f8ecec; color: var(--bad); }
+  .mute { background: var(--dim); color: var(--soft); }
+  .why { font-size: 13px; color: var(--ink); }
+  .bar { font: 13px Consolas, monospace; }
+  @media print { body { max-width: 100%; margin: 12mm; } .opt { border: 1px solid #bbb; } }
+</style>
+</head>
+<body>
+
+<h1>0001 &middot; The RCU contract and the zombie list</h1>
+<p class="sub">One lesson, two things: the sequence of steps that makes read-copy-update
+correct, and the one data structure that makes its memory reclamation terminate.
+Everything here is anchored to <span class="c">src/qor/essentials/datastructures/</span>.
+Print it, or read it on screen; the quiz below needs a browser.</p>
+
+<div class="box">
+<p><b>What this lesson gets you.</b> By the end you should be able to say, without looking:
+the seven steps of the contract; which of them a reader performs; why a reader never touches
+a mutex; what a zombie list entry is and why one list holds two kinds of entry; and why the
+reclaim scan walks only toward older registrations.</p>
+<p class="note">Companions: <a href="../reference/rcu-contract.html">the reference sheet</a>
+&middot; <a href="../GLOSSARY.md">the glossary</a>. Use the glossary&rsquo;s words in your answers -
+that vocabulary is the point.</p>
+</div>
+
+<h2>Part A &middot; The knowledge (read this once, then hide it)</h2>
+
+<h3>A.1 The problem RCU is solving</h3>
+<p>Some threads <i>iterate</i> a pointer-linked collection very often; a few <i>mutate</i> it
+rarely. A normal mutex makes the common case pay for the rare one. RCU makes the readers pay
+almost nothing and moves the cost onto the writer - and onto whichever reader finishes first.</p>
+<p>The contract that buys this: <b>an updater may never block a reader and may never force
+one to retry</b>
+(<a href="https://en.wikipedia.org/wiki/Read-copy-update">Wikipedia</a>). A reader therefore
+cannot wait, and cannot copy the whole structure. The only lever left is <i>memory lifetime</i>:
+a reader must never be handed a freed pointer.</p>
+<div class="step">
+<p><b>In this repo, a reader is literally two lines.</b> From
+<span class="c">signalbase.cpp:128-131</span>:</p>
+<p><span class="c">auto senderListHandle = m_connectList.lock_read();</span> &nbsp;
+<span class="c">for (auto&amp; item : *senderListHandle) { ... }</span> &nbsp; <span class="note">// m_connectList is
+SharedList&lt;ConnectStruct&gt; - signalbase.h:105</span></p>
+<p class="note">Everything RCU does is invisible underneath those two lines. That is the
+lesson: the machinery is in the destructor of <span class="c">senderListHandle</span>, not in
+the loop.</p>
+</div>
+
+<h3>A.2 The contract, in the order it runs</h3>
+<table>
+<tr><th>Step</th><th>Who does it</th><th>In this code</th></tr>
+<tr><td><b>1. Register</b> - announce that you may be reading</td><td>reader, writer</td>
+  <td>rculist.h:184-195, reached via rcuguarded.h:74-81 / 122-129</td></tr>
+<tr><td><b>2. Read</b> - walk the chain with plain loads</td><td>reader</td>
+  <td>rculist.h:479 <span class="c">m_head.load()</span>, then
+  <span class="c">next.load()</span> at 295</td></tr>
+<tr><td><b>3. Copy</b> - build the replacement in fresh memory</td><td>writer</td>
+  <td>rculist.h:504, 525, 546, 568</td></tr>
+<tr><td><b>4. Link</b> - splice the new node in, atomically</td><td>writer</td>
+  <td>rculist.h:503-518, 545-561</td></tr>
+<tr><td><b>5. Unlink</b> - splice the old node out, atomically</td><td>writer</td>
+  <td>rculist.h:589-617</td></tr>
+<tr><td><b>6. Retire</b> - hand the old node to the zombie list, do not free it</td><td>writer</td>
+  <td>rculist.h:618-626</td></tr>
+<tr><td><b>7. Reclaim</b> - free it, but only when no reader can see it</td><td>reader, writer</td>
+  <td>rculist.h:206-245, triggered by rcuguarded.h:100-106</td></tr>
+</table>
+<p class="note">Steps 3-6 are writer-only. A reader does only 1, 2 and 7. That is why reads are
+cheap: three actions, one of them a compare-and-swap, none of them a mutex.</p>
+<h3>A.3 The four things that must stay true</h3>
+<div class="box">
+<p><b>I1 &middot; Readers never block and never retry.</b> No mutex, no CAS loop, no sleep on the
+read path. The write mutex lives inside the list (rculist.h:156) and readers never open it.</p>
+<p><b>I2 &middot; A walk is never torn.</b> Both links are
+<span class="c">std::atomic&lt;node*&gt;</span> (rculist.h:122-123), so every hop is one
+atomic store. A reader may see the old chain, or the new one, and may straddle an update from
+hop to hop - never a half-updated node.</p>
+<p><b>I3 &middot; Retired memory outlives every reader that could have seen it.</b> This is
+what the header means by &ldquo;iterators are never invalidated by any list operation&rdquo;
+(rculist.h:35-37). An iterator is a bare <span class="c">node*</span> (rculist.h:328): its
+safety comes from the zombie list, not from ownership.</p>
+<p><b>I4 &middot; One writer at a time.</b> RCU is not a concurrent-write structure. Every
+mutator takes <span class="c">std::lock_guard&lt;M&gt;</span> - rculist.h:503, 524, 545, 567,
+588. Writers pay a mutex; readers pay nothing.</p>
+</div>
+
+<h3>A.4 The zombie list - the one structure worth drawing</h3>
+<p>One lock-free stack, <b>newest entry at the head</b>, holding two interleaved kinds of
+entry. Both are pushed by the same CAS shape (rculist.h:191-194 in
+<span class="c">rcu_read_lock</span>, 623-626 in <span class="c">erase</span>).</p>
+<div class="step">
+<code style="white-space: pre;">m_zombie_head -> [guard C] -> [dead B] -> [guard A] -> nullptr
+   newest          owner!=0      owner==0     owner!=0
+                   zombie=0      zombie=B     zombie=0</code>
+<p class="note"><b>Guard entry</b> (ctor rculist.h:132): <span class="c">owner</span> points at
+the live guard; <span class="c">zombie_node</span> is null. <b>Dead-node entry</b>
+(ctor 130): <span class="c">zombie_node</span> is the unlinked node; <span class="c">owner</span>
+is null, because it is not a reader.</p>
+</div>
+<p><b>The unregister scan</b> - <span class="c">rcu_guard::unlock()</span>, rculist.h:206-245 -
+is two passes over entries <i>older</i> than this guard:</p>
+<ul>
+<li><b>Probe</b> (208-220): walk from <span class="c">m_zombie-&gt;next</span> looking for any
+entry with <span class="c">owner != nullptr</span>. One found means a reader is still out
+there, so nothing older than it may be freed.</li>
+<li><b>Free</b> (224-243): only if the probe found none, destroy and deallocate every entry
+walked - the dead <span class="c">node</span> and its <span class="c">zombie_list_node</span>
+wrapper - then splice this guard past the survivors (line 242).</li>
+<li><b>Release</b> (244): <span class="c">m_zombie-&gt;owner.store(nullptr)</span>. This guard is
+now itself reclaimable, by some older guard&rsquo;s scan.</li>
+</ul>
+<p><b>Why only older entries?</b> A newer registration began after this one finished, so it
+cannot be holding a pointer this one obtained. The only registration whose reach is unknown
+is the one running the scan. Reclamation is thus amortised onto whichever reader finishes
+first - which is why this userspace code needs no global sync point of any kind.</p>
+
+<h3>A.5 Why a writer registers too</h3>
+<p>Read <span class="c">rculist.h:250</span>: <span class="c">rcu_write_lock</span> is one line,
+<span class="c">rcu_read_lock(list)</span>. It is not an oversight. <span class="c">erase()</span>
+takes a <span class="c">const_iterator</span> - the writer walks the chain with the same
+machinery a reader uses, so it too can be standing on a node another writer just retired.
+Registering is what pins that. A writer is a reader that also holds the write mutex.</p>
+
+<h2>Part B &middot; The skills (this is the part that has to stick)</h2>
+<div class="box">
+<p><b>How to use it.</b> Answer from memory, not by scrolling back up - scroll the Part A
+text off screen first, or print Part A on one page and this on the next. Click one option
+per question; feedback is immediate and permanent for that question, so a wrong guess cannot
+be retried. That is deliberate: effortful recall is what builds long-term retention.</p>
+<p class="bar" id="meter">answered 0 / 7 &middot; scored 0</p>
+</div>
+<div id="quiz"></div>
+
+<h3>B.2 Now say it in your own words</h3>
+<p>Type the seven contract steps in order, comma separated, in your own words
+(&ldquo;register&rdquo;, &ldquo;walk&rdquo;, &ldquo;copy&rdquo;, &hellip; are all accepted). Then
+submit.</p>
+<p><input id="order" type="text" style="width:100%; min-height:34px; font:14px Consolas, monospace;" placeholder="seven steps, comma separated"></p>
+<p><button id="go" type="submit" style="font:13px Helvetica, sans-serif;">Check the order</button></p>
+<div id="orderout"></div>
+<h2>Part C &middot; Making it stick, and what comes next</h2>
+<div class="box">
+<p><b>Spacing.</b> This quiz is one page of practice. Do not re-read Part A to beat a score -
+close the tab today, and in two or three days open only <a href="../reference/rcu-contract.html">the
+reference sheet</a> and re-answer these seven questions from memory. A second session that
+finds you still at 7/7 means the model is durable; a session where you have to look it up
+means it was fluency, not storage.</p>
+<p><b>Interleaving.</b> Next session, mix this with a different but related unit - the
+atomic-linking rules of a doubly-linked list under a single writer, or the write-mutex
+discipline elsewhere in QOR. Retrieval practice works better when related topics compete
+for the same memory.</p>
+<p><b>Wisdom.</b> This model is worth testing against practitioners once you can recite it:
+the <a href="https://forum.copperspice.com">CopperSpice forum</a> maintains the upstream of
+this exact code, and <a href="https://www.reddit.com/r/cpp/">r/cpp</a> will challenge the
+design. Ask there whether a per-list guard chain is still the right shape for a list that is
+iterated but almost never mutated.</p>
+<p><button id="reset" style="font:13px Helvetica, sans-serif;">Reset the quiz for a later session</button></p>
+</div>
+<p class="note"><b>Next lesson, 0002:</b> &ldquo;What can actually go wrong here&rdquo; - the
+three concrete defects in this header, and the reason the reclaim scan cannot simply be
+replaced by a smart pointer. Held back until you can recite the contract, so that the repair
+work is done from the model rather than from symptoms.</p>
+
+<h2>Sources</h2>
+<table>
+<tr><th>Claim</th><th>Source</th></tr>
+<tr><td>The contract, and that updaters cannot block or retry readers</td>
+  <td><a href="https://en.wikipedia.org/wiki/Read-copy-update">Wikipedia - Read-copy-update</a></td></tr>
+<tr><td>The upstream library this copy comes from</td>
+  <td><a href="https://github.com/copperspice/cs_libguarded">copperspice/cs_libguarded</a> -
+  both headers carry the banner &ldquo;This file is part of libguarded&rdquo;</td></tr>
+<tr><td>The intended contract for the wrapped type</td>
+  <td><a href="https://www.copperspice.com/docs/cs_libguarded/index.html">CsLibGuarded docs v2.0.1</a></td></tr>
+<tr><td>Every line number cited above</td>
+  <td>Local: <span class="c">src/qor/essentials/datastructures/rcuguarded.h</span> (168 lines),
+  <span class="c">rculist.h</span> (639 lines), read 2026-10-24</td></tr>
+<tr><td>Real use of the idiom</td>
+  <td>Local: <span class="c">src/framework/event/signals/signalbase.cpp:100-131</span>,
+  <span class="c">signalbase.h:105</span>, <span class="c">slotbase.h:61</span></td></tr>
+</table>
+
+<script>
+var QS = [];
+QS.push({q:"When does a reader register itself with the list?",
+  o:["only when the destructor runs","on the first handle dereference","immediately when lock_read is called","never; readers are never registered"],
+  a:1, why:"lock_read() only hands back a handle (rcuguarded.h:155-158). The CAS that makes you visible runs inside rcu_read_lock (rculist.h:184-195), reached from access() on the first operator* or operator-> (rcuguarded.h:74-81, 122-129). A handle you never dereference registers nothing - and its destructor unlocks nothing (rcuguarded.h:102)."});
+QS.push({q:"The write mutex in this list serializes which of the following?",
+  o:["readers traversing the shared list","readers unregistering from the list","readers copying the node payload","writers mutating the shared list"],
+  a:3, why:"Every mutator opens std::lock_guard on m_write_mutex - push_front 503, emplace_front 524, push_back 545, emplace_back 567, erase 588; the mutex is declared at rculist.h:156. The read path never touches it: lock_read, then access(), then rcu_read_lock is one CAS and no mutex."});
+QS.push({q:"The zombie list chains together two different kinds of thing.",
+  o:["retired nodes and active guards","live nodes and free blocks","iterator positions and their offsets","mutex locks and their owners"],
+  a:0, why:"rcu_read_lock pushes an entry whose owner is the guard (rculist.h:187-188, ctor at 132). erase pushes an entry whose zombie_node is the dead node (618-619, ctor at 130). Both land on the same m_zombie_head, by the same CAS shape (191-194 and 623-626)."});
+QS.push({q:"A guard's unregister scan concludes that a retired node may be freed when",
+  o:["the head or tail was updated","the write mutex is free now","no live guard remains after it","the node carries the deleted flag"],
+  a:2, why:"unlock() probes older entries for one whose owner is non-null (rculist.h:208-221); finding one stops the free. The deleted flag (set at 593) only prevents a double erase; head, tail and the mutex say nothing about readers."});
+</script>
+<script>
+QS.push({q:"A reader may still be walking a node that erase() has already unlinked. Why is that safe?",
+  o:["its memory is still valid there","the unlink happened after it read","readers copy nodes before reading them","the list keeps it twice always"],
+  a:0, why:"erase unlinks and hands the node to the zombie list (rculist.h:589-631); it never frees it. Freeing happens only in the reclaim scan, and only once no live guard remains behind the scanner. That is invariant I3, and it is the header's promise that iterators are never invalidated (rculist.h:35-37)."});
+QS.push({q:"An iterator into this list survives an erase(). Which of these is the reason?",
+  o:["the erase call re-points every iterator","iterators are copied before the erasing","it stores an offset into storage","the node it holds stays valid"],
+  a:3, why:"An iterator is a bare node* (rculist.h:328, 399); nothing re-points iterators and nothing copies them. It survives because the node it holds is retired rather than freed - the zombie list keeps it alive until the scan says so."});
+QS.push({q:"rcu_write_lock is one line: it calls rcu_read_lock. A writer must register because",
+  o:["it keeps the zombie list ordered","its own reads pin retired nodes","it shares the write mutex fairly","it lets readers see new nodes"],
+  a:1, why:"erase() takes a const_iterator, so a writer walks the chain with the same machinery a reader uses, and can be standing on a node another writer just retired. Registering pins that. rcu_write_lock is literally rcu_read_lock(list) at rculist.h:250, and rcu_write_unlock delegates the same way at 256."});
+
+var solved = [0,0,0,0,0,0,0], pick = [-1,-1,-1,-1,-1,-1,-1];
+
+function paint(){
+  var out = "", i, j;
+  for (i = 0; i < QS.length; i++){
+    var q = QS[i], body = "", state = "";
+    for (j = 0; j < q.o.length; j++){
+      var cls = "opt";
+      if (solved[i] !== 0){
+        if (j === q.a) cls = "opt right";
+        else if (j === pick[i]) cls = "opt wrong";
+        else cls = "opt mute";
+      }
+      body += '<span class="' + cls + '" data-q="' + i + '" data-o="' + j + '">' + q.o[j] + '</span>';
+    }
+    if (solved[i] !== 0)
+      state = '<p class="why">' + (solved[i] > 0 ? '<b>Correct.</b> ' : '<b>Not quite.</b> ') + q.why + '</p>';
+    out += '<div class="card"><h4>' + (i+1) + '. ' + q.q + '</h4><p>' + body + '</p>' + state + '</div>';
+  }
+  document.getElementById('quiz').innerHTML = out;
+  var n = 0, s = 0;
+  for (i = 0; i < QS.length; i++){ if (solved[i] !== 0){ n++; if (solved[i] > 0) s++; } }
+  document.getElementById('meter').textContent = 'answered ' + n + ' / ' + QS.length + ' \u00b7 scored ' + s;
+}
+
+document.getElementById('quiz').addEventListener('click', function(e){
+  var t = e.target;
+  if (!t.getAttribute('data-q')) return;
+  var i = parseInt(t.getAttribute('data-q'), 10), j = parseInt(t.getAttribute('data-o'), 10);
+  if (solved[i] !== 0) return;
+  pick[i] = j;
+  solved[i] = (j === QS[i].a) ? 1 : -1;
+  paint();
+});
+
+var STEPS = [["regist","announc"],["read","walk","trav","iter"],["copy","alloc","build"],
+             ["link","attach","splice"],["unli","detach","remove","erase"],
+             ["retir","park","hand off","defer"],["recla","free","dealloc","unlock"]];
+var CANON = "register, read, copy, link, unlink, retire, reclaim";
+
+document.getElementById('go').addEventListener('click', function(){
+  var raw = document.getElementById('order').value.toLowerCase();
+  var toks = raw.split(',');
+  var html = '<table class="plain"><tr><th>your word</th><th>verdict</th></tr>', ok = 0;
+  for (var i = 0; i < 7; i++){
+    var t = (toks[i] || '').trim(), good = false, k;
+    for (k = 0; k < STEPS[i].length; k++){ if (t.indexOf(STEPS[i][k]) >= 0) good = true; }
+    if ((i === 2 || i === 3) && t.indexOf('unli') >= 0) good = false;
+    if (t.indexOf('unli') >= 0 && i !== 4) good = false;
+    if (good) ok++;
+    html += '<tr><td>' + (t ? t : '(missing)') + '</td><td class="' + (good ? 'right' : 'wrong') + '">' +
+            (good ? 'fits step ' + (i+1) : 'no fit at step ' + (i+1)) + '</td></tr>';
+  }
+  html += '</table><p class="why">Ordered as: ' + CANON + '. ' +
+    (ok === 7 ? 'All seven in the right places - the contract is stored.' :
+     'Only ' + ok + ' of 7 landed. Say the sequence aloud twice, then write it from memory tomorrow.') + '</p>';
+  document.getElementById('orderout').innerHTML = html;
+});
+
+document.getElementById('reset').addEventListener('click', function(){
+  for (var i = 0; i < QS.length; i++){ solved[i] = 0; pick[i] = -1; }
+  document.getElementById('order').value = '';
+  document.getElementById('orderout').innerHTML = '';
+  paint();
+});
+
+paint();
+</script>
+
+</body>
+</html>
+
+
+

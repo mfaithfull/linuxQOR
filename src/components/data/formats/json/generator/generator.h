@@ -1,8 +1,8 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
-#ifndef QOR_COMPONENTS_DATA_FORMATS_JSON_GENERATOR_GENERATOR_H
-#define QOR_COMPONENTS_DATA_FORMATS_JSON_GENERATOR_GENERATOR_H
+#ifndef QOR_PP_H_SRC_COMPONENTS_DATA_FORMATS_JSON_GENERATOR_GENERATOR
+#define QOR_PP_H_SRC_COMPONENTS_DATA_FORMATS_JSON_GENERATOR_GENERATOR
 
 namespace qor{ namespace data{ namespace generator{ namespace json{
 
@@ -19,4 +19,4 @@ namespace qor{ namespace data{ namespace generator{ namespace json{
 
 }}}}// namespace qor::data::generator::json
 
-#endif//QOR_COMPONENTS_DATA_FORMATS_JSON_GENERATOR_GENERATOR_H
+#endif//QOR_PP_H_SRC_COMPONENTS_DATA_FORMATS_JSON_GENERATOR_GENERATOR

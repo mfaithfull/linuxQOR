@@ -1,0 +1,34 @@
+/*
+The Window Factory singleton should be owned by the DesktopGUI feature
+It should auto register the known types on construction
+We should really be using the QOR class factory and overall traits system to do the whole window registration and handler factory thing
+
+a new_ref on a WindowClass derivative should go and find the factory, Add and Register the class once it's constructed.
+
+https://github.com/wingtk/gvsbuild/blob/main/README.md
+
+Ultimately I want to be able to do something like
+    auto mainWindow = new_ref<MainWindow>("Title");
+    //mainWindow->SetLayout<VBox>()
+    mainWindow->Add<CustomMenuBar>(SomesortOfSpecificationOrConfigFunciton);
+    mainWindow->Add<DockingSideFrame>(Layout::Start);
+    mainWindow->Show();
+    gui->RunPolling();
+
+    Add will need a specialization for actual Menus and 'non client' controls. The general case will just be to add child windows to the layout
+    with an override for Adding a layout to the layout.
+    Add will need to return the Window when we add child windows and the added layout when we add a layout so calls can be chained. Tricky.
+
+
+
+Package up a WGLMainWindow as a known registered type.
+Preregister all the builtin types so that the factory itself can report them as available
+Package up an EGLMainWindow in a similar way, with options for framing and transparency.
+Try a custom EGLChildWindow that can be integrated with other controls
+We could even paint with OpenGL in the background of an MDIClient. That would be fun. Have the MDI Frames floating in a fish tank.
+Then we need a frame optional, transparent optional OpenGLES 2/3 Main window we can use as a "CanvasWindow"
+It should also be possible in that case to do a child version "CanvasCtrl"
+Next a VulkanMainWindow and some Vulkan examples
+
+
+*/

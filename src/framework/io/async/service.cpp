@@ -37,6 +37,7 @@ namespace qor { namespace io{ namespace async{
     {
         for(unsigned context = 0; context < m_contextCount; context++)
         {
+            m_contextArray[context]->Deflate();
             m_contextArray[context].Dispose();
         }
         delete [] m_contextArray;

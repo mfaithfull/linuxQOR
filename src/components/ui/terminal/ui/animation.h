@@ -22,11 +22,11 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_UI_TERMINAL_UI_ANIMATION
+#define QOR_PP_H_SRC_COMPONENTS_UI_TERMINAL_UI_ANIMATION
+
 #include <chrono>
 #include <functional>
-
-#ifndef QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_ANIMATION
-#define QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_ANIMATION
 
 namespace qor{ namespace components{ namespace tui {
 
@@ -148,5 +148,5 @@ namespace qor{ namespace components{ namespace tui {
     }//animation
 }}}//qor::components::tui
 
-#endif//QOR_PP_H_COMPONENTS_FRAMEWORK_TUI_UI_ANIMATION
+#endif//QOR_PP_H_SRC_COMPONENTS_UI_TERMINAL_UI_ANIMATION
 

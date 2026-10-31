@@ -1,4 +1,7 @@
 
+#ifndef QOR_PP_H_TEST_FRAMEWORK_PARALLEL_SIGNALTREE_TESTSUPPORT
+#define QOR_PP_H_TEST_FRAMEWORK_PARALLEL_SIGNALTREE_TESTSUPPORT
+
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
@@ -72,3 +75,5 @@ namespace test_support
     }
 
 }//test_support
+
+#endif//QOR_PP_H_TEST_FRAMEWORK_PARALLEL_SIGNALTREE_TESTSUPPORT

@@ -22,6 +22,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+#ifndef QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_HTTP_OLD_MULTIPART
+#define QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_HTTP_OLD_MULTIPART
+
 #include <string>
 
 namespace qor { namespace components { namespace protocols { namespace http {
@@ -52,3 +55,5 @@ namespace qor { namespace components { namespace protocols { namespace http {
     }
 
 }}}}//qor::components::protocols::http
+
+#endif//QOR_PP_H_SRC_COMPONENTS_PROTOCOLS_HTTP_OLD_MULTIPART

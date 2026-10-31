@@ -5,7 +5,9 @@
 //Copyright 2021 Sean Nash
 //under BSD 3 clause license
 
-#pragma once
+
+#ifndef QOR_PP_H_SRC_QOR_TDD_ASSERT_PROPOSITION_VALUECONTAINERPROPOSITIONS
+#define QOR_PP_H_SRC_QOR_TDD_ASSERT_PROPOSITION_VALUECONTAINERPROPOSITIONS
 
 #include <memory.h>
 #include "../subject/base.h"
@@ -50,3 +52,5 @@ namespace qor{ namespace assert{ namespace proposition{
 
 }}}//qor::assert::proposition
 
+
+#endif//QOR_PP_H_SRC_QOR_TDD_ASSERT_PROPOSITION_VALUECONTAINERPROPOSITIONS

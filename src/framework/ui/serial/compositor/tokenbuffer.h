@@ -2,6 +2,9 @@
 // Copyright Querysoft Limited 2008 - Present
 // SPDX-License-Identifier: BSL-1.0
 
+#ifndef QOR_PP_H_SRC_FRAMEWORK_UI_SERIAL_COMPOSITOR_TOKENBUFFER
+#define QOR_PP_H_SRC_FRAMEWORK_UI_SERIAL_COMPOSITOR_TOKENBUFFER
+
 #include "../common/position.h"
 #include "../common/size.h"
 
@@ -262,3 +265,5 @@ namespace qor { namespace ui { namespace sercon {
     };
 
 }}}//qor::ui::sercon
+
+#endif//QOR_PP_H_SRC_FRAMEWORK_UI_SERIAL_COMPOSITOR_TOKENBUFFER
