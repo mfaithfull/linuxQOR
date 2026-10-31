@@ -1,6 +1,6 @@
 # Active Context
 
-Last updated: 30 Oct 2026.
+Last updated: 31 Oct 2026.
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
@@ -9,15 +9,14 @@ Last updated: 30 Oct 2026.
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
   carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
-  (G1-G6), **twenty-three open items (U1-U23)**, the pre-scan items **P1-P5**, the three deferred tasks **T1/T2/T3** and the tooling
-  under `tmp/`. **Fourteen TUs done** in sessions 1-13 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
+  (G1-G6), **twenty-four open items (U1-U24)**, the pre-scan items **P1-P5**, the three deferred tasks **T1/T2/T3** and the tooling
+  under `tmp/`. **Fifteen TUs done** in sessions 1-14 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
   `clipboard`, `combobox`, `console`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`,
-  `dialog`); **next is
-  `errorhandling.cpp`** (4 wrappers over `user32.h:613-617` - the only fully-covered section that is *not* a U4 block;
-  pre-measured: all four bindings are bare and all four are genuine single exports, so expect **0 P1 and 0 D13
-  conversions but prove it**; `SetLastErrorEx` is this TU's only `void` wrapper, so check the SDK return type against
-  U18; `FlashWindowEx` sits under `#if(WINVER >= 0x0500)` and `MessageBeep` under `#ifndef NOMB`; two U14 spacing nits at
-  `:35` and `:43`).
+  `dialog`, `errorhandling`); **next is
+  `filledshapes.cpp`** (3 wrappers over the "Filled Shapes functions" section, `user32.h:608-611` - also fully covered, so
+  not a U4 block; all three bindings bare and all three genuine single exports, so expect **0 P1 and 0 D13 conversions
+  but prove it**; one of the few TUs with **live callers** at `ui/gui/gdiobjects/devicecontext.cpp:75,80,85`; and its
+  declarations spell `CONST::RECT*`, the SDK's `const` macro, which is a folder-wide note rather than a one-TU rename).
   Session 13 (`dialog.cpp`, 22 wrappers - the largest section so far) fixed the third **P1** instance: `:89` bound
   `"GetDlgItemTextT"`, which the probe says is MISSING, now `qor_pp_useswinapiAW(user32, GetDlgItemText)`; converted
   `MessageBox` to explicit AW (no behaviour change - the SDK macro already rewrote it); made 3 `Call<...>` rows spell
@@ -238,23 +237,43 @@ Last updated: 30 Oct 2026.
   pass clean. **New open item U23**: `MessageBoxIndirectT`'s parameter puts `const` on the pointer instead of the pointee
   (published-signature change - recorded, not fixed). Exit: TU standalone `/W4` exit 0, library 38/38 exit 0
   (`tmp/_tmp_cl_all_s13.log`); `dialog.cpp` +26/-5, `user32.h` untouched.
-- **Next session (14): `errorhandling.cpp`** - 4 wrappers over `user32.h:613-617` ("Error Handling functions", fully covered, so
-  not a U4 block; 46-line TU, no comment block). Measured pre-flags: **expect 0 P1 and 0 D13 conversions but prove it** - all
-  four bindings are bare (`:19 FlashWindow`, `:26 FlashWindowEx`, `:33 MessageBeep`, `:42 SetLastErrorEx`) and all four are
-  genuine single exports (115, 116, 283, 342; no A/W spelling of any of them in the table). `SetLastErrorEx` is this TU's only
-  `void` wrapper and uses `Library::voidCall` at `:43` - settle it against the SDK prototype at `winuser.h:13561` (U18 exists
-  precisely because a `void` contradicted an unsigned-returning pair elsewhere). U16 guard stack: `FlashWindowEx` additionally
-  under `#if(WINVER >= 0x0500)` (`winuser.h:4699`), `MessageBeep` additionally under `#ifndef NOMB` (`:9365`). Return-check
-  asymmetry to record (U1): only `MessageBeep` has `CheckReturn<BOOL, BoolCheck>`, and `FlashWindow` returns the *previous*
-  flash state, so a `BoolCheck` there would be wrong. Two U14 spacing nits: `:35`, `:43`. Section coverage: `RegisterErrorReportingDialog`
-  (2E6), `SetDebugErrorLevel` (32F) and `DdeGetLastError` (8E) are exported and declared nowhere here; `GetLastError`/`SetLastError`
-  are correctly absent (kernel32 exports). The name-divergence scan should report 0.
+- Session 14 (31 Oct 2026) reviewed `errorhandling.cpp` (4 wrappers, `user32.h:613-617` "Error Handling functions" - fully
+  covered by the TU, so not a U4 block): **0 binding / correctness / UB / convention defects**. All four bindings are bare
+  `qor_pp_useswinapi` and all four are provably correct as written: `cl /EP` yields `"FlashWindow"`, `"FlashWindowEx"`,
+  `"MessageBeep"`, `"SetLastErrorEx"`, the live probe resolves all four and reports **every `*A`/`*W` spelling MISSING**, and
+  none of the four stems is one of the nine `user32.h:9-17` `#undef`s - so this is D13's single-export case and `AW` would
+  break all four. `SetLastErrorEx`'s `void` matches the SDK's `VOID` (`winuser.h:13558-13563`), so **U18 gains nothing**.
+  Fixed only 2 trailing-space nits at the `CheckReturn` and `voidCall` sites; U14 inner spacing left for the folder-wide
+  pass (this TU 2 tight / 2 spaced against 250 / 179 folder-wide - no norm either way). U16: `FlashWindowEx` is
+  version-guarded (`winuser.h:4687` `WINVER >= 0x0500`) and `PFLASHWINFO` is typedef'd **inside that same guard**, so
+  `WINVER < 0x0500` makes `user32.h:615` ill-formed rather than merely prototype-less; `MessageBeep` needs `NOMB` absent.
+  Return-check instance: the `MessageBeep` site is 1 of only 4 `CheckReturn` uses in the library (G6 makes it always live),
+  and `FlashWindow` must **not** get one - which is what **new open item U24** records: `WindowController::Flash`
+  (`ui/gui/controllers/windowcontroller.cpp:715-718`) publishes `FlashWindow`'s previous-active-state `BOOL` as a `bool`
+  "did it work" result (gui-side, recorded not fixed; its only in-tree caller is in the unbuilt `winqor_gl`). U15 3 of 4,
+  U19 1 LAYER / 0 BYPASS, 0 parameter-name divergences (a third TU at 0 of 426), 0 U13/U4/U11. Exit: TU standalone `/W4`
+  exit 0, library 38/38 exit 0 (`tmp/_tmp_compile_all.ps1`); `errorhandling.cpp` 46 -> 92 lines, `user32.h` untouched.
+  **Instrument trap found this session:** `pwsh -NoProfile -File script.ps1 -Stems A,B -Roots x,y` does **not** pass arrays -
+  `_tmp_bypass_scan.ps1` then dies at `:12` on the bogus `-Roots` while still printing an all-zero totals line. Use
+  `pwsh -NoProfile -Command "& script.ps1 -Stems @('A','B')"` and trust the script's default roots.
+- **Next session (15): `filledshapes.cpp`** - 3 wrappers over the "Filled Shapes functions" section (`user32.h:608`,
+  declarations `:609-611`), a 38-line TU with no comment block (`:16 FillRect`, `:23 FrameRect`, `:30 InvertRect`), in
+  `add_library` at `user/CMakeLists.txt:31`. Pre-measured facts: all three bindings bare (`:19`, `:26`, `:33`) and all three
+  single exports (110, 117, 226 in `tmp/_tmp_user32_exports.txt`, no A/W spelling of any of them); U14 census 3/3 explicit
+  and 3/3 spaced, so no spacing work; **this TU has live callers** - `ui/gui/gdiobjects/devicecontext.cpp:75`, `:80`, `:85`
+  are `User32::`-qualified LAYER sites inside `DeviceContext::FillRect`/`FrameRect`/`InvertRect` in a built file
+  (`gui/CMakeLists.txt:44`), so trace them one level up for the liveness note. The declarations spell `CONST::RECT*`
+  (`CONST` is the SDK's object-like macro for `const`, so it preprocesses to `const ::RECT*`) - same spelling at
+  `user32.h:267` and `:447-457`, so record it folder-wide, do not rename it inside one TU. Return conventions: `FillRect`
+  and `FrameRect` are `int` here and `int` in the SDK (`winuser.h:9729`, `:9737`, 0 on failure), `InvertRect` `BOOL`
+  (`:9745`, FALSE on failure), and `devicecontext.cpp:85` folds that `BOOL` into `bool`. The name-divergence scan should
+  report 0.
 - **D13 adopted (user, 29 Oct 2026, `docs/agent/DECISIONS.md`):** explicit `qor_pp_useswinapiAW` wherever the
   SDK has an A/W family, bare `qor_pp_useswinapi` only for single exports. Apply it in each TU as it is
   reviewed. Folder-wide pre-scan in status.md lists P1 (bindings that cannot resolve at run time - **5 still open**:
   `keyboard.cpp:82,243,250`, `window.cpp:124`, `mouse.cpp:82`; `combobox.cpp:20,27` fixed in session 6 and
   `dialog.cpp:89` in session 13) and P2 (macro-dependent bindings to convert - **6 still open**: `menu.cpp` x2,
-  `message.cpp` x4; `dialog.cpp` `MessageBox` converted in session 13). Next TU in the queue: `errorhandling.cpp`.
+  `message.cpp` x4; `dialog.cpp` `MessageBox` converted in session 13). Next TU in the queue: `filledshapes.cpp`.
 
 - Corrections to earlier audit assumptions, all measured (see status.md G1-G6): the SDK A/W macro expands
   before `_ATXT()` stringizes, so most bare stems already bind the W export and the `tmp/_tmp_audit_report.txt`

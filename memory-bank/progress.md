@@ -1,12 +1,13 @@
 # Progress
 
-Last updated: 30 Oct 2026.
+Last updated: 31 Oct 2026.
 
 Current:
-- **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **14 of 38 TUs done**
-  in sessions 1-13 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
-  `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`). Next: **`errorhandling.cpp`** (4 wrappers,
-  `user32.h:613-617`). Everything behavioural is recorded as an open item (**U1-U23**), with pre-scan items **P1-P5** (P1 down to
+- **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **15 of 38 TUs done**
+  in sessions 1-14 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
+  `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`, `errorhandling`). Next:
+  **`filledshapes.cpp`** (3 wrappers, `user32.h:608-611` - `FillRect`/`FrameRect`/`InvertRect`, one of the few TUs with
+  live callers). Everything behavioural is recorded as an open item (**U1-U24**), with pre-scan items **P1-P5** (P1 down to
   5 unresolved bindings, P2 down to 6 conversions) and
   three deferred tasks needing user decisions (**T1** `GetUserObjectSecurity`/`SetUserObjectSecurity` declared but never
   defined; **T2** the whole Window Station / Desktop section is dead exported API; **T3** the "Power Management functions"
