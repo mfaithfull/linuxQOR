@@ -33,10 +33,13 @@ TUs still to be reviewed:
 
 - **P1 - bindings that cannot resolve at run time (export table + live probe + source line).** Six at the first scan;
   the two in `combobox.cpp` are now fixed and two more have since been found (`window.cpp:124` in session 6,
-  `mouse.cpp:82` in session 8), so **six remain in four TUs**. Fix each in the owning TU's session:
+  `mouse.cpp:82` in session 8), so **five remain in three TUs** (`keyboard.cpp` x3, `window.cpp` x1, `mouse.cpp` x1)
+  after session 13 fixed `dialog.cpp:89`. Fix each in the owning TU's session:
   - `keyboard.cpp:82` `qor_pp_useswinapi(user32, GetKeyboardLayoutNameT)`, `:243` `VkKeyScanT`,
     `:250` `VkKeyScanExT` - the wrapper's `T` suffix stringizes into the name, and `*T` is not an export.
-  - `dialog.cpp:89` `qor_pp_useswinapi(user32, GetDlgItemTextT)` - same class.
+  - ~~`dialog.cpp:89` `qor_pp_useswinapi(user32, GetDlgItemTextT)`~~ - **FIXED 30 Oct 2026 (session 13)**: same class.
+    `/EP` pre-fix resolves the literal `"GetDlgItemTextT"` (live probe: MISSING), post-fix `"GetDlgItemTextW"` (RESOLVED).
+    Latent rather than live - that wrapper has no call site in built code (see the U15 `dialog.cpp` entry).
   - **found in session 6:** `window.cpp:124` `qor_pp_useswinapiAW(user32, CreateWindow)` (inside
     `User32::CreateWindowT`, `window.cpp:121`) asks for `CreateWindowW`, which does not exist. `CreateWindow` is the
     SDK's macro for `CreateWindowEx`; the table has `CreateWindowExA/W` (`:1626,1627`) and no plain `CreateWindow*`
@@ -55,9 +58,12 @@ TUs still to be reviewed:
     that session too). So `mouse.cpp:79-84` needs *both* halves fixed: the stem and the AW-ness (it is a single export,
     so bare `qor_pp_useswinapi(user32, TrackMouseEvent)` is the D13 spelling). Its `Call< BOOL >` is already listed in
     U14(b). Owned by `mouse.cpp`'s session.
-- **P2 - seven bindings that work today only because the SDK macro rewrites them; convert to explicit AW
-  under D13.** `dialog.cpp` `MessageBox`; `menu.cpp` `GetMenuString`, `InsertMenuItem`; `message.cpp`
-  `RegisterWindowMessage`, `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`.
+- **P2 - bindings that work today only because the SDK macro rewrites them; convert to explicit AW
+  under D13.** **Six remain:** `menu.cpp` `GetMenuString`, `InsertMenuItem`; `message.cpp` `RegisterWindowMessage`,
+  `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`. ~~`dialog.cpp` `MessageBox`~~ - **converted 30 Oct 2026
+  (session 13)** at `:124`; **no behaviour change** - the pre-fix `/EP` literal was already `"MessageBoxW"` because the
+  SDK's `UNICODE` mapping rewrites the stem before stringizing (G1); the AW form reaches the same literal by `##W`
+  pasting (`kernel32.h:52`), which is why the conversion is behaviour-neutral.
 - **P3 - naming flags from the new T-suffix census (`tmp/_tmp_tsuffix_census.ps1`, session 6).** Two members carry the
   folder's `T` suffix where no A/W export pair exists: `user32.h:144 CreateWindowT` (see the P1 entry) and
   `user32.h:383 CopyCursorT`, defined `cursor.cpp:23`, whose binding is `qor_pp_useswinapi(user32, CopyIcon)`
@@ -92,6 +98,7 @@ TUs still to be reviewed:
 |---|---|---|---|---|
 | 1 | `accelerator.cpp` | 5 | 0 correctness bugs, 3 fragility/consistency defects | Fixed: bare-stem bindings on the three A/W families made explicit `qor_pp_useswinapiAW` (29 Oct 2026); conforms to D13 |
 | 2 | `accessibility.cpp` + `timer.cpp` | 1 + 2 | 0 correctness/UB defects; 1 file-organisation defect (the two files held each other's bodies), 2 style nits | Fixed: swapped the bodies so each file matches its `user32.h` section (was U12), `( pFunc … )` -> `(pFunc …)` at both call sites, added single-export comments. All three bindings confirmed correct-as-written by `cl /EP` + export table; no A/W conversion needed |
+| 2b | `accessibility.cpp` (same day, after user commit `89da3452` added the three missing WinEvent wrappers) | +3 | 0 binding defects; **1 call-site defect found: the three declarations lacked `static`, so every call site was `error C2352`** | Fixed: `user32.h:662-664` made `static` (verified by a compile-only caller probe, before = 3 errors, after = exit 0); TU comments generalised to the four WinEvent entry points. Census re-run: `user32.h` now 524 declarations, 427 static, 97 non-static (was 100) - see U4, and new U13 for the one remaining defined-but-non-static member |
 | 3 | `brush.cpp` | 1 | 0 correctness/UB/binding defects; 1 convention defect (implicit template args), 1 documentation gap | Fixed: `Call< HBRUSH >` -> `Call<HBRUSH, int>` (explicit SDK arg types - folder norm 382/428, reference `shell`+`kernel` 344/387) + a single-export and handle-ownership comment added. Binding correct as written: no A/W family, `cl /EP` resolves to `"GetSysColorBrush"`, which is the export (table index 1958, ordinal 1C6) |
 | 4 | `caret.cpp` | 8 | 0 correctness/UB/binding/convention defects - the cleanest TU so far | Fixed: TU comment only (single-export binding rationale under D13 + the `CreateCaret` bitmap contract). All 8 bindings correct as written; `cl /EP` resolves all 8 to the literal stems, all 8 are exports, and they are the only 8 `*Caret*` entries in `user32.dll`, so the section is complete. U14(b)'s "caret 2" was a miscount - caret.cpp has 0 deducing call sites (re-measured, see U14) |
 | 5 | `clipboard.cpp` | 20 | 0 correctness/UB/binding/convention defects in the wrappers - second clean TU after `caret.cpp`, and the first already D13-conformant before the session started | Fixed: `()` -> `(void)` at the three zero-argument definitions (`CloseClipboard`, `CountClipboardFormats`, `GetOpenClipboardWindow`) plus their three `user32.h` declarations (the SDK spells `VOID`; folder norm now 36 defs against 2, 37 decls against 2 - see U14(c)) + a TU comment (bare-stem rationale for the 18 single exports, the one-switch A/W argument, the clipboard affinity/ownership contracts, section coverage and deprecation). All 20 bindings verified correct as written by `cl /EP` + export table |
@@ -101,26 +108,43 @@ TUs still to be reviewed:
 | 9 | `cursor.cpp` | 16 | **0 binding / correctness / UB / convention defects** - largest clean TU of the review; all 16 signatures pair field-for-field with the `winuser.h` prototypes and all 16 bindings resolve (14 bare single exports + 2 A/W switches). The two claims a reader would take on trust were measured instead: `CopyCursorT` -> `CopyIcon` is the only correct binding of a name the SDK spells as a macro, and `HCURSOR` *is* `HICON` in this build (`/EP` gives exactly one `typedef HICON HCURSOR;`) | Fixed: TU comment block only (binding rationale + ordinals/RVAs, the `CopyCursor`-is-a-macro note, per-wrapper handle ownership, the `ShowCursor` count-not-failure contract, the unwrapped cursor exports). No header change, no rename (P3/U17 decision: deferred to the folder-wide pass). New **U20** opened from the caller side |
 | 10 | `desktop.cpp` | 18 | 0 binding / correctness / UB defects - all 18 bindings resolve (9 A/W families bound `qor_pp_useswinapiAW`, 9 single exports bound bare; `cl /EP` + export table + live probe), 0 P1/P5 flags; 4 consistency defects (2 U14(b) deducing sites, 2 parameter decl/def divergences), 1 documentation gap | Fixed: `OpenWindowStationT`'s parameter `LPTSTR` -> `LPCTSTR` in **both** the declaration `user32.h:412` and the definition (the only decl/def parameter-type divergence in the section), `CreateDesktopT`'s definition parameter `pDevMode` -> `pDevmode` to match its declaration, both U14(b) sites made explicit (`GetThreadDesktop`, `OpenWindowStationT`) + a 28-line TU comment (binding rationale, `HDESK`/`HWINSTA` ownership, thread/desktop contracts, callback widening, section coverage). **18/18 wrappers have no in-tree caller** - the largest U15 block of the review. Two items deferred as tasks **T1** and **T2** (see below) |
 | 11 | `devicecontext.cpp` | 8 | **0 binding / correctness / UB / convention defects** - all 8 signatures pair field-for-field with the `winuser.h` prototypes and all 8 bindings resolve (5 A/W families bound `qor_pp_useswinapiAW` -> the `*W` export, 3 single exports bound bare: `GetDC` 143, `GetDCEx` 144, `ReleaseDC` 2FF); 0 P1/P5 flags, 0 U13/U14(b)/U17/U18/U20 instances; 1 style nit | Fixed: `(pFunc, hWnd )` -> `(pFunc, hWnd)` + a 36-line TU comment (binding rationale and ordinals, the **two opposite zero-return conventions** in this one section, the `_Reserved_`/`_In_opt_`/`_Inout_` parameter contracts, `GetDC`/`GetDCEx`/`ReleaseDC` pairing, section coverage, U16 guards including the hard `NOGDI`/`wingdi.h` type dependency). New **U21**: the SDK's DC neighbourhood (`winuser.h:8560-8614`) is split across this TU and `painting.cpp` (`GetWindowDC`, `WindowFromDC`), while 5 of this TU's 8 members are display-configuration entry points with no `HDC` at all. **Largest U19 split of the review - 16 LAYER / 12 BYPASS** - only 4 of the 16 LAYER sites are reachable at run time, and all 12 BYPASS sites are in the disabled `ui/gl` tree. Also found two **scan-instrument blind spots** that had been under-counting families in earlier sessions (bare-stem matching and line-start-only `::` matching) - see step 5b and the U19 entry |
-| 12..38 | not started | | | |
+| 12 | `devicemanagement.cpp` | 2 | DONE 30 Oct (session 12) - 0 binding / correctness / UB / convention defects; **2 naming defects, and they are the only 2 in the whole folder** | "Device Management functions" (`user32.h:681-683`): 2 declarations, 2 definitions, header order, both `static`, both `User32::`-qualified (U13 clean), both `Call<>` sites fully explicit (U14: 2/2 explicit, spaced style, no spacing nit). **Both bindings were already D13-correct**: `qor_pp_useswinapiAW(user32, RegisterDeviceNotification)` -> `/EP` resolves `"RegisterDeviceNotificationW"` (2E5, RESOLVED), and the bare `qor_pp_useswinapi(user32, UnregisterDeviceNotification)` is the right spelling because the probe shows `UnregisterDeviceNotificationA`/`W` both **MISSING** - a genuine single export (3C6). This stem is one of the nine `user32.h:9-17` `#undef`'s **and** bare `"RegisterDeviceNotification"` is MISSING (G2 confirmed live for this stem), but the AW token-paste means the `#undef` never reaches the binding, so the pre-flagged question was naming-only. **Fixed (2 sites, both naming):** definition parameters renamed to their declaration/SDK names - `notificationFilter` -> `NotificationFilter` (`:73` signature + `:77` call arg), `handle` -> `Handle` (`:80` + `:84`; line numbers of the file as it now stands, with the TU comment block in place). Measured outlier: the new instrument `tmp/_tmp_name_divergence_scan.ps1` reports **2 divergent parameter names across 426 definitions folder-wide - both in this TU**. TU comment block added. **U17 1/2** (no rename, per the session-11 policy) with a sharpened argument: the A/W choice here is invisible in the signature, since the filter is a bare `LPVOID` whose trailing `TCHAR` name field is read per the bound half. **U15 2/2** - the first section where every wrapper is dead *and* the family is still used in the tree, through a bypass. **U16 2/2** - both prototypes sit under `#if(WINVER >= 0x0500)` (`winuser.h:3942`) + `WINAPI_PARTITION_DESKTOP` (`:3940`), and `HDEVNOTIFY` is itself typedef'd at `:3943` under the same guards, so a lower `WINVER` makes `user32.h:682-683` **ill-formed** rather than merely absent (the hardest U16 dependency so far after `NOGDI`). **U19: 0 LAYER / 1 BYPASS** - `ui/gl/helperwindow.cpp:85` `::RegisterDeviceNotificationW` is live code (file 0% commented) that fills `dbcc_size`/`dbcc_devicetype`/`dbcc_classguid` first (`:79-83`), but the file is in no source list (`winqor_gl` = `winqor_gl.cpp cursorimpl.cpp windowimpl.cpp wgl.cpp`) and `ui/CMakeLists.txt:4` comments `add_subdirectory(gl)` out -> source debt, not run-time behaviour. **New deferred task T3**: the adjacent "Power Management functions" pair (`user32.h:686-687`; exports 2F1/3CB, both RESOLVED in the probe) is defined in no TU and has **no owning file in the folder at all**. 22 open items unchanged (U1-U22) |
+| 13 | `dialog.cpp` | 22 | **1 real run-time failure + 1 convention defect**; 1 published-signature defect and 1 cosmetic inconsistency recorded, not fixed | Fixed: `:89` `qor_pp_useswinapi(user32, GetDlgItemTextT)` -> `qor_pp_useswinapiAW(user32, GetDlgItemText)` (`/EP` post-fix `"GetDlgItemTextW"`, probe RESOLVED - pre-fix asked for a name the DLL does not export) and `:124` `MessageBox` -> explicit AW (no behaviour change, G1). All 22 bindings then confirmed by `/EP` + export table + live probe; the 9 bare spellings are correct because the SDK declares those nine entry points with a single non-A/W spelling. decl==def 22/22; 0 parameter-name divergences (folder now 0 of 426). New **U23** from `MessageBoxIndirectT`'s `const ::LPMSGBOXPARAMS` |
+| 14..38 | not started (TU index; 24 left, see "Remaining queue") | | | |
 
-**Next session: `devicemanagement.cpp`** (alphabetical from here; 12 TUs done across sessions 1-11: `accelerator`,
+**Next session: `errorhandling.cpp`** (alphabetical from here; 14 TUs done across sessions 1-13: `accelerator`,
 `accessibility`, `brush`, `caret`, `clipboard`, `combobox`, `console`, `timer`, `coordtransform`, `cursor`, `desktop`,
-`devicecontext`). Two wrappers over 30 lines - the second-smallest TU of the review after `brush.cpp`:
-`RegisterDeviceNotification` (`user32.h:682`, already bound `qor_pp_useswinapiAW`) and `UnregisterDeviceNotification`
-(`:683`, bound bare - correct, it has no A/W family). **Settled 30 Oct 2026 (user): no rename** -
-`RegisterDeviceNotification` keeps its bare name and joins the 11-member U17 folder-wide batch (session 9's defer policy);
-see the U17 entry for why its `user32.h:9` `#undef` makes no difference here.
-Both declarations are `static` (U13 clean) and both call sites are fully explicit (U14(b) 0 sites). Two fresh decl/def
-parameter-name divergences are already visible and are session-10-class nits: `:682` `NotificationFilter` vs the
-definition's `notificationFilter`, `:683` `Handle` vs the definition's `handle`. (The note that pointed here called this
-section "Device Context functions" and predicted `GetDeviceCaps`-style queries: the header actually spells it
-`//DC functions` at `user32.h:325` and its eight members are five display-configuration entry points plus three `HDC`
-ones, with no `GetDeviceCaps` wrapper anywhere in the folder - hence U21. Its pre-flag of 0 U14(b) sites and no `#undef`
-stem was right, and the predicted "largest U19 bypass split" held: 16 LAYER / 12 BYPASS after both scan fixes.) Take the
-pre-scan P1/P2/P3/P5
-entries into account only when their owning TU comes up; do not fix other TUs outside their own session.
+`devicecontext`, `devicemanagement`, `dialog`). **4 wrappers over 4 declarations**, a 46-line TU with no comment block.
+The "Error Handling functions" section (`user32.h:613-617`, declarations at `:614-617`) is fully covered by it, so unlike
+most of the folder it is not a U4 block. In `add_library`. **What is deliberately not in the queue: there is no
+`dde.cpp`** - the 34-declaration DDE section (`user32.h:501-534`) has no TU anywhere, which is a U4 surface decision, not
+a TU session (see the U4 entry). Measured pre-flags for the next session (from this session's scans, so they are facts,
+not guesses):
+- **Expect 0 P1 and 0 D13 conversions - but prove it.** All four bindings are bare (`:19 FlashWindow`, `:26 FlashWindowEx`,
+  `:33 MessageBeep`, `:42 SetLastErrorEx`) and all four are genuine **single exports**: 115, 116, 283, 342 in
+  `tmp/_tmp_user32_exports.txt`, with no `A`/`W` spelling of any of them anywhere in the table. Run `cl /EP`,
+  `tmp/_tmp_name_resolve_probe.cpp` (add the four spellings) and `_tmp_wrong_stem_scan.ps1` as usual.
+- **U18 candidate to settle, not assume.** `SetLastErrorEx` is this TU's only `void` wrapper and uses `Library::voidCall`
+  (`:43`); the SDK prototype is `winuser.h:13561`, and U18 exists precisely because a `void` here contradicted an
+  unsigned-returning pair elsewhere - read the SDK return type before accepting it.
+- **U16 guard stack (measured with `tmp/_tmp_guard_stack_scan.ps1`)**: `FlashWindow` `winuser.h:4683` under
+  `WINAPI_PARTITION_DESKTOP`; `FlashWindowEx` `:4699` additionally under `#if(WINVER >= 0x0500)`; `MessageBeep` `:9365`
+  additionally under `#ifndef NOMB`; `SetLastErrorEx` `:13561` under DESKTOP only. So `user32.h:614-617` always compiles,
+  but at `WINVER < 0x0500` the `FlashWindowEx` prototype vanishes (the wrapper's `Call<>` then has no prototype to pair
+  with) and `NOMB` removes `MessageBeep`'s.
+- **Section coverage**: `user32.dll` exports three more error-adjacent entry points that `user32.h` declares nowhere -
+  `RegisterErrorReportingDialog` (2E6), `SetDebugErrorLevel` (32F) and `DdeGetLastError` (8E, in the DDE block).
+  `GetLastError`/`SetLastError` are correctly absent: they are `kernel32` exports (0 hits in the `user32` table).
+- **Return-check asymmetry to record**: `MessageBeep` alone carries `CheckReturn<BOOL, BoolCheck>` (`:34`); `FlashWindow`
+  returns the *previous* flash state rather than a success flag, so a `BoolCheck` there would be wrong, and
+  `FlashWindowEx`/`SetLastErrorEx` have no check at all (U1). Two U14 spacing nits: `:35` `(pFunc, uType )` and
+  `:43` `(pFunc, dwErrCode, dwType )`.
+- The name-divergence scan should report **0** for every TU from here on: session 12 took the folder to zero (2 of 426
+  definitions, both in `devicemanagement.cpp`) and session 13 re-confirmed 0 of 426.
+Take the pre-scan P1/P2/P3/P5 entries into account only when their owning TU comes up; do not fix other TUs outside
+their own session.
 
-### Deferred tasks opened by session 10 (both need a decision, so neither was touched)
+### Deferred tasks (opened by session 10; T3 added by session 12) - each needs a decision, so none was touched
 
 - **T1 - two declared-but-undefined members in the "Authorization functions" section.** `user32.h:658-659` declare
   `GetUserObjectSecurity` and `SetUserObjectSecurity` **without `static`** and **no `.cpp` in the folder defines either**
@@ -144,16 +168,34 @@ entries into account only when their owning TU comes up; do not fix other TUs ou
   callback should be typed as the SDK's `DESKTOPENUMPROC` or as a `LPCWSTR`-taking callback now that the binding is
   always the `W` form) pure taste calls with no call site to inform them. Recorded for the folder-wide pass; nothing in
   this section is exercised by `examples/mainwindow`, so no session can observe a behaviour change here.
+- **T3 - the "Power Management functions" pair is declared but has no owning TU at all.** Opened 30 Oct 2026 (session 12)
+  while mapping the section that follows "Device Management functions": `user32.h:685` `//Power Management functions`
+  declares `RegisterPowerSettingNotification` (`:686`) and `UnregisterPowerSettingNotification` (`:687`) - **neither is
+  `static`**, unlike the device pair just above and unlike 427 of the header's 525 members - and **no `.cpp` in the folder
+  defines either**; there is no `powermanagement.cpp` (nor any other file) that could hold them: the folder's 38 sources
+  contain no match for either name outside the header. So they are U4 members of the plainest kind (a caller gets
+  `LNK2019`, not `C2352`), and this is the sharpest U4 shape in the folder because both entry points are real and exported -
+  `RegisterPowerSettingNotification` ordinal 2F1 and `UnregisterPowerSettingNotification` ordinal 3CB, both **RESOLVED** by
+  the live probe (`tmp/_tmp_name_resolve_probe.cpp`) - and the SDK declares both at `winuser.h:3993`/`:4002`, inside
+  `#if (_WIN32_WINNT >= 0x0502)` (`:3979`, closed at `:4022`) within the same `WINVER >= 0x0500` + Desktop-partition block
+  (`:3942`, `:3940`) as this session's pair; `HPOWERNOTIFY`, which both signatures name, is typedef'd at `:3985` inside that
+  same 0x0502 guard. So the section is 2 declarations, 0 definitions, 0 owning TUs: the folder is missing a file, not just a
+  body. Resolving T3 means either writing the two definitions (a new `powermanagement.cpp`, which also needs an
+  `add_library` line, and the `static` question should be settled with them, not after) or deleting `user32.h:685-687`; both
+  move the published surface, so it belongs with the U4/U13 sweep rather than with a TU review. Handle contract for whoever
+  takes it: same shape as this session's pair - the returned `HPOWERNOTIFY` is released only by
+  `UnregisterPowerSettingNotification`, and the GUID argument must be a registered power-setting GUID; this library exports
+  neither those GUID constants nor the `POWER_BROADCAST` payload types. **Section-coverage note:** the SDK's power-notification
+  family in this SDK is four entry points - the two above plus `RegisterSuspendResumeNotification` (`:4009`, ordinal 2F6) and
+  `UnregisterSuspendResumeNotification` (`:4017`, ordinal 3CD) - and this header declares **2 of 4**. (`SetWindowPowerManagementNotification`
+  does not exist in SDK 10.0.26100 at all: zero hits for `PowerManagement` in `winuser.h`, and it is not in the export table.)
 
-| 2b | `accessibility.cpp` (same day, after user commit `89da3452` added the three missing WinEvent wrappers) | +3 | 0 binding defects; **1 call-site defect found: the three declarations lacked `static`, so every call site was `error C2352`** | Fixed: `user32.h:662-664` made `static` (verified by a compile-only caller probe, before = 3 errors, after = exit 0); TU comments generalised to the four WinEvent entry points. Census re-run: `user32.h` now 524 declarations, 427 static, 97 non-static (was 100) - see U4, and new U13 for the one remaining defined-but-non-static member |
 
-
-Remaining queue (26 TUs, alphabetical; `accelerator.cpp`, `accessibility.cpp`, `brush.cpp`, `caret.cpp`,
+Remaining queue (24 TUs, alphabetical; `accelerator.cpp`, `accessibility.cpp`, `brush.cpp`, `caret.cpp`,
 `clipboard.cpp`, `combobox.cpp`, `console.cpp`, `timer.cpp`, `coordtransform.cpp`, `cursor.cpp`, `desktop.cpp`,
-`devicecontext.cpp` done):
-devicemanagement, dialog,
+`devicecontext.cpp`, `devicemanagement.cpp`, `dialog.cpp` done):
 errorhandling, filledshapes, help, hook, icon, ime, keyboard, mdi, menu, message, monitor, mouse, painting,
-processthread, rectangle, resource, scrollbar, systemshutdown, window, windowclass, windowprocedure,
+processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
 windowproperties, winqor_api_user (module glue). `hook.cpp` is now in the build (see U3).
 
 ## Review method (validated on accelerator.cpp)
@@ -221,6 +263,20 @@ kept as the worked example of the suffix blind spot in step 5b; the third is the
 `_tmp_aw_spans.ps1` (prints the exact `winuser.h` line span - `WINUSERAPI` through `#endif // !UNICODE` - of each A/W
 family for a stem list; used to re-check the `devicecontext.cpp` comment's family ranges) and
 `_tmp_cl_all_s11.log` / `_tmp_cl_all_s11b.log`.
+**Session 12 added** `_tmp_name_divergence_scan.ps1 [-Tu <file>]` (the parameter-name consistency instrument: pairs every
+`User32::` definition in the folder with its `user32.h` declaration and compares the parameter names **case-sensitively**;
+baseline at writing = 2 divergent names in 426 definitions, both in `devicemanagement.cpp`, and 0 after that TU's fix - it
+now expects 0 for every remaining TU), `_tmp_pp_devman.bat` (the per-TU `/EP` run for this TU, outputs
+`_tmp_devman_pp.txt`/`_tmp_devman_pp_err.txt`) and six new probe rows in `_tmp_name_resolve_probe.cpp` for the
+device-notification and power-setting spellings. **Instrument fix it also made:** `_tmp_sigcmp.ps1` compared parameter
+names with PowerShell `-ne`, which is **case-insensitive**, so case-only divergence (`NotificationFilter` vs
+`notificationFilter`, `Handle` vs `handle`) compared equal and the script printed `decl==def ok` - the comparison is now
+`-cne`. Re-running the corrected script over the previously reviewed TUs changed no earlier verdict (`devicecontext.cpp`
+8/8 still clean, `desktop.cpp`'s fixed pair still clean). Two PowerShell gotchas the new scan hit first, both recorded here
+so future instruments avoid them: testing for the closing `)` on the captured *inside-parens* text can never succeed
+(the capture excludes it), so the signature-continuation loop swallowed whole function bodies; and
+`$x = if($c){ @(..) } else { @(..) }` **unrolls a one-element array to a scalar**, so `$x[0]` then indexed a character of
+the name - assign inside the branch instead.
 **Compile-log gotcha (measured 30 Oct 2026):** `_tmp_compile_all.ps1` writes the `cl` output to the fixed path
 `tmp/_tmp_cl_all.log` regardless of the caller, so redirecting the script's own stdout to a per-session file captures only
 its summary line (`exit=N loglines=M`) plus its internal diagnostic grep - it is not the `cl` log. The summary's `exit=0` is
@@ -253,7 +309,7 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
   `RegisterDeviceNotification`). Any wrapper that binds one of those bare stems throws
   `Missing library function.` at run time. Measured status of all nine after session 6: **2 fixed in this review**
   (`DlgDirListComboBox`/`DlgDirSelectComboBoxEx` in `combobox.cpp`, now `qor_pp_useswinapiAW` and renamed `...T`);
-  **2 defined and already safe** (`RegisterDeviceNotification` `devicemanagement.cpp:19`, `WinHelp` `help.cpp:35`, both
+  **2 defined and already safe** (`RegisterDeviceNotification` `devicemanagement.cpp:76`, `WinHelp` `help.cpp:35`, both
   `qor_pp_useswinapiAW`, which token-pastes `W` before the SDK macro could be consulted); **5 not defined anywhere in the
   folder** (`SystemParametersInfo` `user32.h:652`, `GetRawInputDeviceInfo` `:540`, `DlgDirList` `:546`, `DlgDirSelectEx`
   `:547`, `LoadBitmap` `:672` - U4 members, so nothing binds them today). Check this list before re-flagging G2 in a
@@ -301,12 +357,23 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
   (re-measured 29 Oct 2026 - those four wrappers are U15 instances).
 - **U4 - `user32.h` declares about 101 non-static members that no `.cpp` defines.** The class is documented
   as a stateless all-static API surface (`docs/agent/windows_code_conventions.md`), yet whole sections are
-  plain instance members: String functions (`:336-369`), Button control (`:372-374`), DDE (`:505-530`, some
-  carrying a `const` qualifier on a stateless class), Shell/System information (`:642-652`), Authorization
+  plain instance members: String functions (`:336-369`), Button control (`:372-374`), Shell/System information (`:642-652`), Authorization
   (`:658-659`), WinEvent hooks (`:662-664`), `LoadBitmap` (`:672`), synchronization (`:675-676`),
   `PrintWindow` (`:679`). Against `:424` static declarations, these have no definition anywhere and no call
   site anywhere in `src`/`examples`/`test` - so calling one is an `LNK2019` at the caller, not a compile
   error. `mxDdeCreateStringHandle` (`:510`) is additionally a mistyped name.
+  - **DDE re-measured 30 Oct 2026 (session 13) - the largest single U4 block, and the reason the queue has no
+    `dde.cpp`.** The section is `user32.h:501-534`: **34 declarations, all non-static, all 34 `const`-qualified**
+    (`(Select-String -Pattern '\)\s*const\s*;').Count` = 34, and every one of them is in this section), and the folder's
+    38 sources contain **no file for any of them** - no `dde.cpp` exists, and a repo-wide grep for
+    `DdeAbandonTransaction`/`DdeInitialize`/`mxDdeCreateStringHandle` returns the three header lines and nothing else. So
+    this is not a TU with defects to review: it is 34 declarations of a class that cannot be called (`const` non-static
+    members of a documented "all-static" surface) with no definition and no caller. Their entry points are real - 29 of
+    the exports sit in the ordinal range 7E-9E of `tmp/_tmp_user32_exports.txt`, including
+    `DdeCreateStringHandleA/W` (86/87) for the mistyped `mxDdeCreateStringHandle`, and `DdeInitializeA/W` (91/92) and
+    `DdeQueryStringA/W` (98/99) - and one exported member of the family, `DdeGetQualityOfService` (8F), has **no
+    declaration at all**. Fixing this is a surface decision (make the section `static` + write the TU, or delete it), not
+    a per-TU review, which is why the review passes over it and why it must not be counted as a reviewed TU.
   **Full census re-measured 29 Oct 2026** with `tmp/_tmp_static_census.ps1` + `tmp/_tmp_undefined_static.ps1`:
   `user32.h` has 525 member-declaration lines (8-space indent, non-comment), 427 `static` and 98 not (the session-2b
   row said 524/427/97 - one line adrift, immaterial, the regex is quoted in the script); 426 distinct names are
@@ -318,6 +385,13 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
   nothing in `src`/`examples`/`test`, so `brush.cpp`'s one implemented brush wrapper is not half of a
   half-wrapped pair - `user32.dll` exports exactly one `*Brush*` entry point (`GetSysColorBrush`), so the
   "Brush functions" section (`:654-655`) is complete.
+  **Name-level cross-check 30 Oct 2026 (session 13)** with the new `tmp/_tmp_decl_no_def_repo_scan.ps1` (searches
+  `src`/`examples`/`test`, not just the folder): of the **490** member-declaration lines its regex parses in `user32.h`,
+  **426** names appear somewhere as `User32::` and **64** appear nowhere - the full list in `tmp/_tmp_decl_no_def_s13.txt`.
+  That 64 is a **different measure from the 97 above and lower, not a correction of it**: this scanner counts *names* and
+  its regex stops at declarations whose parameter list wraps or that end `) const;` (34 such lines in the header, e.g.
+  `:519 DdeInitialize`, which is why no `Dde*` name appears in the list), so it under-counts by design. Use the
+  `tmp/_tmp_static_census.ps1` figures for the published count and this list only to see *which* names they are.
 - **U5 - the binding is cached for the process lifetime including failure.** `qor_pp_useswinapi` expands to
   a function-local `static const Library::DefProc pFunc = ...`; the first call wins forever. A process that
   has not mapped `user32.dll` yet (G5), or a transiently missing name, is poisoned permanently.
@@ -487,6 +561,38 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
     (`ui/gui/gdiobjects/cursor.cpp:49-53`, `m_owning = false` - correct for a shared system cursor) -> `User32::LoadCursorT`
     -> `LoadCursorW`. That single live path is also what makes the **U20** caller-side findings observable rather than
     theoretical.
+  - `devicemanagement.cpp` - **all 2** (`RegisterDeviceNotification`, `UnregisterDeviceNotification`; `user32.h:682-683`).
+    The first section where the wrappers are 100% dead **and** the underlying family is nevertheless used by the tree, but
+    only through the SDK thunk: the single device-notification caller is `ui/gl/helperwindow.cpp:85`
+    `::RegisterDeviceNotificationW` (see U19), which is in no build target. So no call site anywhere can observe these two
+    wrappers, and the one place that wants device notifications does not link this layer.
+  - `dialog.cpp` - **16 of 22** (measured 30 Oct 2026, session 13, `tmp/_tmp_bypass_scan.ps1` with 39 stems - every
+    `*A`/`*W`/`*T` variant of the 22 members; saved run `tmp/_tmp_dialog_bypass2.txt`). **14 LAYER** sites cover only
+    **6** of the 22 wrappers: `GetDlgCtrlID` x8 (`ui/gui/controllers/{a_h/animation,a_h/button,a_h/combobox,a_h/edit,`
+    `i_m/listbox,i_m/mdiclient,s_s/scrollbar,s_s/static}controller.cpp`, one `GetId()` each), `EndDialog` x2 and
+    `DialogBoxIndirectParamT` x1 (`ui/gui/windows/a_h/dialog.cpp:58,65,75`), `MessageBoxT`/`MessageBoxTimeout`/
+    `MessageBoxIndirectT` (`ui/gui/windows/i_m/messagebox.cpp:41,46,52`). The other 16 wrappers have **no reference of any
+    kind** in `src`/`examples`/`test`. This is the first TU where LAYER sites exist and **none of them can run in a built
+    target** - each chain ends one hop up at a commented-out example: the eight controller `GetId()` sites are reached only
+    through `TopLevelWindowHandler::SetCommandCallback` (`ui/gui/view/handlers/toplevel.cpp:48`, built at
+    `gui/CMakeLists.txt:61`), whose only callers are `examples/.../button/button.cpp:49` and
+    `examples/.../editbox/editbox.cpp:61,88` - `#add_subdirectory(button)`/`#add_subdirectory(editbox)` at
+    `osspecific/windows/CMakeLists.txt:1,3`; and the gui `Dialog`/`MessageBox` classes are constructed only at
+    `examples/.../dialogs/dialogs.cpp:44,57,255,256` - `#add_subdirectory(dialogs)` at the same file `:2`.
+    `controllers/i_m/mdiclientcontroller.cpp`, one of the eight, is not even compiled: it is absent from
+    `gui/CMakeLists.txt` (which lists `windows/i_m/mdiclient.cpp` at `:21` and the other seven controllers at `:22,28-33`).
+    Consumer casts recorded while the trail is open (the U20 cross-reference shape): `ui/gui/windows/a_h/dialog.cpp:75-79`
+    passes `reinterpret_cast<LPCDLGTEMPLATE>(t)` from a `DlgTemplateEx*` whose declaration
+    (`gui/windows/a_h/dialog.h:39-61`) keeps only `DLGTEMPLATE`'s fixed header and comments out the trailing variable
+    fields - sound only because the example hands over a real resource template image (`dialogs.cpp:255`
+    `&g_DebugDlgTemplate`); and `messagebox.cpp:52` passes `reinterpret_cast<const LPMSGBOXPARAMS>(&params)` where
+    `gui/windows/i_m/messagebox.h:73-85` is field-for-field `MSGBOXPARAMSW` (`unsigned int`/`void*`x2/`const TCHAR*`x3/
+    `unsigned long`/`unsigned long long`/fn-ptr/`unsigned long` against `UINT`/`HWND`/`HINSTANCE`/`LPCWSTR`x3/`DWORD`/
+    `DWORD_PTR`/`MSGBOXCALLBACK`/`DWORD`) with `cbSize` default-initialised at `:75`, which is the entry condition the SDK
+    requires. `ui/gui/windows/a_h/dialog.cpp:33-34` and `messagebox.cpp:33` also `#undef MessageBox` /
+    `#undef DialogBoxIndirectParam` before calling the layer - the only in-tree consumers that need the SDK macros out of
+    the way.
+
   Not instances (call sites confirmed by the same grep):
   - `accelerator.cpp` **5/5 live** - `ui/gui/view/handlers/acceleratortable.cpp:57` (`CreateAcceleratorTableT`), `:63`
     (`LoadAcceleratorsT`), `:71` (`DestroyAcceleratorTable`), `:78` (`CopyAcceleratorTableT`), `:83`
@@ -565,6 +671,39 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
     U16's reverse half: `GetWindowDC` (`:8606`) and `WindowFromDC` (`:8563`) are declared here at `user32.h:274`, `:287` at
     the same guard level as the SDK, so nothing outranks the SDK; the `WINVER >= 0x0601` display-config pair
     (`:13198`) is not declared by this library at all.
+  - `devicemanagement.cpp` - **2 guarded of 2** - the whole section, and the hardest dependency of the review so far after
+    `NOGDI`: the SDK's device-notification block sits inside `#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)`
+    (`winuser.h:3940`) and `#if(WINVER >= 0x0500)` (`:3942`), and the wrapper signatures name `HDEVNOTIFY`, which is
+    typedef'd at `:3943-3944` **inside the same guards**. A consumer pinning `WINVER` below `0x0500` (or a non-Desktop
+    `WINAPI_FAMILY`) therefore does not just lose the two SDK prototypes - `user32.h:682-683` becomes ill-formed on an
+    unknown return type, so this library's own header stops compiling. Measured with `tmp/_tmp_sdk_guard_scan.ps1`
+    (SDK-side scan) plus a repo-wide grep confirming still no `WINVER`/`_WIN32_WINNT`/`NTDDI_VERSION` in `cmake/` or any
+    `CMakeLists.txt`. U16's reverse half here: the Power Management pair this header declares at `:686-687` pairs with
+    `winuser.h:3993`/`:4002` under `#if (_WIN32_WINNT >= 0x0502)` (`:3979`, closed `:4022`), and the `DEVICE_NOTIFY_ALL_INTERFACE_CLASSES` flag
+    (`:3948-3950`, `_WIN32_WINNT >= 0x0501`) is not declared by this library at all - see T3.
+  - `dialog.cpp` - **1 of 22 pairs with a version-guarded SDK declaration, and in that one case the guard swallows the
+    *type* as well as the prototype.** Measured 30 Oct 2026 with `tmp/_tmp_guard_stack_scan.ps1` (SDK-side guard stack):
+    the 12 dialog prototypes sit at `winuser.h:5008-5321` under `#ifndef NOUSER` (`:64`) + `#ifndef NOCTLMGR` (`:4912`) +
+    `#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)` (`:5006`) with **no `WINVER` test at all**; `MessageBoxA/W`
+    (`:9230`, `:9238`) and `MessageBoxExA/W` (`:9276`, `:9285`) under `#ifndef NOMB` (`:9154`) + Desktop (`:9225`);
+    `MessageBoxIndirectA/W` (`:9340`, `:9345`) additionally under `#if(WINVER >= 0x0400)` (`:9297`), and
+    `IsDialogMessageA/W` (`:11553`, `:11559`) under `#ifndef NOMSG` (`:11548`) + `NOCTLMGR` (`:11233`) + Desktop (`:11542`).
+    `MSGBOXPARAMSW` and `LPMSGBOXPARAMS` are typedef'd at `:9314`/`:9330` **inside** that 0x0400 guard, so a consumer that
+    pins `WINVER` below 0x0400 does not merely lose the prototype - `user32.h:487` becomes ill-formed on an unknown type,
+    the same sub-case `devicemanagement.cpp` (`HDEVNOTIFY`) and `devicecontext.cpp` (`DEVMODE`) opened. Two more of the 22
+    signatures depend on SDK **shrink** macros rather than version ones: `NOCTLMGR` removes `LPCDLGTEMPLATEW` (`:4958`,
+    inside `:4912`) which `user32.h:470`/`:473` name, and `NOMSG` removes the `MSG` typedef itself (`:1877-1887`, inside
+    `:1869`) which `user32.h:483` names - so `NOCTLMGR`/`NOMB`/`NOMSG` in a consumer build would break this section of
+    `user32.h` outright. Still latent: none of the three appears in any `CMakeLists.txt` or in `cmake/` (re-confirmed this
+    session, third time for the same class). **U16's reverse half, and the hardest instance of the review:**
+    **`MessageBoxTimeout` has no declaration in any SDK header on this machine** - zero hits for the name across every
+    header of SDK 10.0.26100 (`um`, `shared`, `winrt`, ...), and the 10.0.10240 install under
+    `Program Files (x86)\Windows Kits\10\Include` contains only `ucrt`, no `um`, so 26100 is the only Windows-header set
+    available. `user32.h:489`'s signature therefore has **no header authority at all**: it is validated only against the
+    export table (`MessageBoxTimeoutA`/`W` present, bare `MessageBoxTimeout` absent) and the live probe (both `A`/`W`
+    RESOLVED, bare MISSING). The AW paste (`kernel32.h:52`) is what makes the binding work without any SDK macro - no SDK
+    `MessageBoxTimeout -> MessageBoxTimeoutW` mapping exists to rescue a bare binding here.
+
 - **U17 - A/W wrappers declared without the folder's `T` suffix.** Opened 29 Oct 2026 (session 6) when the two combo
   members were renamed (user decision: rename inside the TU being reviewed, keep the rest together for one
   folder-wide call). Measured with `tmp/_tmp_tsuffix_census.ps1`: of the 525 `user32.h` member declarations, **108**
@@ -573,7 +712,7 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
   `DdeInitialize` (`:519`), `DdeQueryString` (`:525`), `GetRawInputDeviceInfo` (`:540`), `DlgDirList` (`:546`),
   `DlgDirSelectEx` (`:547`), `SendIMEMessageEx` (`:636`, defined `ime.cpp:16`), `WinHelp` (`:646`, defined
   `help.cpp:32`), `SystemParametersInfo` (`:652`), `LoadBitmap` (`:672`), `RegisterDeviceNotification` (`:682`, defined
-  `devicemanagement.cpp:16`). **Only 4 of the 11 are implemented** (the ones marked `defined` above); the other 7 are
+  `devicemanagement.cpp:73`). **Only 4 of the 11 are implemented** (the ones marked `defined` above); the other 7 are
   U4 declared-and-undefined members, so their spelling is currently academic. The census' mirror case - `T` suffix with
   no A/W family - is 2 members, `CreateWindowT` (`:144`) and `CopyCursorT` (`:383`), see pre-scan P3. Deliberately not
   touched per-TU: renaming is a published-surface change (all four implemented ones are exported through
@@ -585,10 +724,23 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
   are until one folder-wide pass - session 9's defer policy governs, and session 6's two combo renames stay the only
   exception.** The case that prompted the question was the sharpest of the 11: `RegisterDeviceNotification` (`:682`) is the
   only U17 member whose stem is also `#undef`'d (`user32.h:9`), so it looked like the situation the paragraph above warns
-  about. It is not one: `devicemanagement.cpp:19` already binds it `qor_pp_useswinapiAW(user32, RegisterDeviceNotification)`,
-  which the SDK's `UNICODE` mapping rewrites to the `W` form before stringizing (G1), so the `#undef` never reaches the
-  binding - the cost of deferring is purely that the name hides the A/W nature. Session 12 therefore takes no name action;
-  it records the instance count only.
+  about. It is not one: `devicemanagement.cpp:76` already binds it `qor_pp_useswinapiAW(user32, RegisterDeviceNotification)`,
+  so the `#undef` never reaches the binding - the cost of deferring is purely that the name hides the A/W nature.
+  Session 12 therefore takes no name action; it records the instance count only.
+  **Mechanism corrected 30 Oct 2026 (session 13):** the sentence this bullet had ("the SDK's `UNICODE` mapping rewrites the
+  stem before stringizing") explains the AW path wrongly. `kernel32.h:50-55` shows `qor_pp_useswinapiAW( m, n )` expands to
+  `qor_pp_useswinapi( m, n##W )` (or `n##A`) - **token pasting**, which suppresses macro expansion of the pasted argument.
+  The SDK-macro-rewrites-the-name effect (G1) therefore applies **only to the bare `qor_pp_useswinapi` path**, and the paste
+  is also why the AW form works for stems that have no SDK macro at all - proved this session by `dialog.cpp:146`
+  `MessageBoxTimeout`, a name declared nowhere in any SDK header yet bound correctly. G2's own wording in the Ground-rules
+  section already had the paste right, so no session verdict changes: every AW verdict in this file rests on the `/EP`
+  literal, not on the mechanism guess.
+  **Census re-measured 30 Oct 2026 (session 13)** with `tmp/_tmp_tsuffix_census.ps1`: **unchanged** - 525 member
+  declarations, 108 A/W + `T` (the norm), 404 single-export bare (correct per D13), **11** A/W without the suffix, mirror
+  case **2**. `dialog.cpp` contributes 1 of the 11 (`MessageBoxTimeout` `:489`) and adds the strongest argument for
+  eventually renaming it: the bare member name hides an A/W family whose **bare stem is not even exported** (live probe:
+  `MessageBoxTimeout` MISSING, `MessageBoxTimeoutA`/`W` RESOLVED), so nothing in the signature tells a caller that the
+  bare spelling would fail at run time.
 - **U18 - a wrapper pair whose return type contradicts the SDK: `void` where `user32.dll` returns `BOOL`.** Opened
   30 Oct 2026 (session 8) while mapping the coordinate-transform family for `coordtransform.cpp`. `user32.h:188`
   `static void LogicalToPhysicalPoint(HWND, ::LPPOINT*)` and `:191` `static void PhysicalToLogicalPoint(HWND, ::LPPOINT*)`
@@ -657,6 +809,41 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
     today - all 12 are source debt. `windowimpl.cpp:151`/`:158` are CODE not comment (`tmp/_tmp_comment_state.ps1`).
     Excluded from the count: 3 **INDIRECT** `WindowController::`/`PaintSession::` hop sites and 2 **MEMBER** `GetDC()`
     calls in the example.
+  - **Device-notification family (session 12, 30 Oct 2026) - 0 LAYER / 1 BYPASS.** The only site in `src`/`examples`/`test`
+    that touches the family at all is `ui/gl/helperwindow.cpp:85` `::RegisterDeviceNotificationW(...)`, classified BYPASS
+    (leading `::`), and it is live code - `tmp/_tmp_comment_state.ps1` reports the whole file 0% commented, unlike most of
+    `ui/gl`. The call is written correctly for the SDK (it zeroes the struct and fills `dbcc_size`, `dbcc_devicetype` and
+    `dbcc_classguid` at `:79-83` before passing it), but `helperwindow.cpp` is in no source list (`winqor_gl`'s list is
+    `winqor_gl.cpp cursorimpl.cpp windowimpl.cpp wgl.cpp`) and `ui/CMakeLists.txt:4` comments `add_subdirectory(gl)` out, so
+    this is again source debt rather than run-time behaviour. Note the pairing gap it leaves: the same file never calls
+    `UnregisterDeviceNotification`, so if `gl` were enabled the helper-window registration would leak - the one
+    behavioural signal this family emits in the tree is a leak on the bypass path, not a layer call.
+  - **Dialog family (session 13, 30 Oct 2026) - 14 LAYER / 24 BYPASS, the largest LAYER count of the review, and 13 of the
+    14 LAYER sites are in compiled code.** Measured with 39 stems (bare + `*T`/`*A`/`*W`) into `tmp/_tmp_dialog_bypass2.txt`.
+    The 14 LAYER sites: `GetDlgCtrlID` x8, one per controller (`ui/gui/controllers/{a_h/animationcontroller.cpp:46,
+    a_h/buttoncontroller.cpp:107, a_h/comboboxcontroller.cpp:47, a_h/editcontroller.cpp:47, i_m/listboxcontroller.cpp:47,
+    i_m/mdiclientcontroller.cpp:47, s_s/scrollbarcontroller.cpp:47, s_s/staticcontroller.cpp:48}`), each returning it as
+    `unsigned short` from `GetId()` - a **caller-side** narrowing of this wrapper's `int` return (`user32.h:477` matches the
+    SDK's `int GetDlgCtrlID(HWND)` exactly, `_In_ HWND`, no guard, so the layer is faithful and the truncation lives in
+    `winqor_gui`, where a control id above `0xFFFF` would be cut);
+    `DialogBoxIndirectParamT` (`ui/gui/windows/a_h/dialog.cpp:75`) and `EndDialog` x2 (`:58`, `:65`); and
+    `MessageBoxT`/`MessageBoxTimeout`/`MessageBoxIndirectT` (`ui/gui/windows/i_m/messagebox.cpp:41`, `:46`, `:52`). **Ten of
+    the eleven** files are compiled (`gui/CMakeLists.txt`: `:14`, `:18` and the controllers at `:22`, `:28`-`:33`);
+    `controllers/i_m/mdiclientcontroller.cpp` is absent from that list, so **7 of the 8** `GetDlgCtrlID` sites are compiled
+    (the eighth, `mdiclientcontroller.cpp:47`, is not - the list has `windows/i_m/mdiclient.cpp` at `:21` but never the
+    controller). So unlike every family before it, the LAYER sites are in **compiled** code: `ui/gui/view/handlers/
+    toplevel.cpp:48` calls `ctrl->GetId()` from `TopLevelWindowHandler::SetCommandCallback`, built at
+    `gui/CMakeLists.txt:61`. That setter's only call sites in the tree are however `examples/.../button/button.cpp:49` and
+    `.../editbox/editbox.cpp:61,88`, both commented out of the build, so these sites are **compiled but never invoked** -
+    compiled-and-reachable, not live; the U15 `dialog.cpp` entry is the authority on that question. The 24
+    BYPASS sites are all four `retropad` files (`controller.cpp`, `gotodlg.h`, `mainwindowinstancecontroller.cpp`,
+    `retropad.cpp`) calling `EndDialog`/`GetDlgItem`/`GetDlgItemInt`/`SetDlgItemInt` bare, and `retropad` is commented out
+    of the build (`osspecific/windows/CMakeLists.txt:9`), so **0 bypass in built code** - the family's only debt is the
+    24 example sites. The compensating detail: the three `MessageBox*` wrappers' only callers construct
+    `qor::platform::win::MessageBox`, and the only such call sites are `examples/.../button/button.cpp:51` and
+    `.../dialogs/dialogs.cpp:44,57`, both commented out of the build (`CMakeLists.txt:1`, `:2`) - so the wrappers are
+    compiled and reachable through a class that nothing built instantiates (see the U15 `dialog.cpp` entry).
+
 - **Method hazard found with U19 (applies to every liveness claim in this review):** a grep hit is not evidence, because
   large parts of the Windows `ui` tree are commented out. `ui/gl/windowimpl.cpp` is **1503 comment-only lines of 2637
   (57%)**, and the block comments do not nest - a block opened at `:2221` runs to `:2498`, which is why eight
@@ -735,6 +922,21 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
   `mainwindow` is a project in `cmakebuild/QOR.sln`). `PaintSession` is the one correct
   consumer: its ctor (`paintsession.cpp:38-43`) pairs `BeginPaint` (`:41`) with the `~PaintSession` `EndPaint` (`:47`) on
   the same `PAINTSTRUCT` and never sets `MustRelease`, so the handle map entry is left alone and no `ReleaseDC` runs.
+- **U23 - `MessageBoxIndirectT`'s parameter puts `const` on the pointer instead of the pointee.** Opened 30 Oct 2026
+  (session 13, `dialog.cpp`); **recorded, not fixed** - it is a published-signature change (`user32.h:487` + the matching
+  definition `dialog.cpp:135` + the `Library::Call<>` template argument), i.e. header surface, so it goes in the
+  folder-wide pass with U17/U13 rather than being changed under a single TU. `LPMSGBOXPARAMS` is itself a pointer typedef
+  (`/EP` under `UNICODE` gives `typedef LPMSGBOXPARAMSW LPMSGBOXPARAMS;` -> `MSGBOXPARAMSW*`), so `const ::LPMSGBOXPARAMS`
+  is `MSGBOXPARAMSW* const` - a **const pointer to a mutable struct**, while the SDK is
+  `_In_ CONST MSGBOXPARAMSW * lpmbp` (`winuser.h:9343-9346`) - a **pointer to a const struct**. Two consequences: the
+  wrapper's contract promises nothing about not writing through the caller's `MSGBOXPARAMS`, and the top-level `const` is
+  discarded by the function type anyway, so the declaration states something the compiler ignores. Nothing in the tree is
+  harmed today - the only call site, `ui/gui/windows/i_m/messagebox.cpp:52`, passes
+  `reinterpret_cast<const LPMSGBOXPARAMS>(&params)` from the mirror struct `qor::platform::win::MsgBoxParams`
+  (`messagebox.h:73-85`, field-for-field identical to `MSGBOXPARAMSW`, `cbSize` defaulted at `:75`), and a `const`-qualified
+  cast binds to a non-const pointee parameter. One-line fix when the pass runs: `const ::MSGBOXPARAMS*` in the declaration
+  and definition, with `Library::Call<int, const ::MSGBOXPARAMS*>`; the SDK defines no `LPCMSGBOXPARAMS` spelling, so the
+  folder's LP-typedef convention cannot be kept here.
 
 ## accessibility.cpp + timer.cpp - session 2 (29 Oct 2026)
 
@@ -1509,4 +1711,133 @@ was opened from the caller side, and the pre-flagged P3 case was settled as corr
   `tmp/_tmp_dc_bypass.txt` (the under-counted bare-stem run, kept as the worked example) and
   `tmp/_tmp_dc_bypass2.txt` (the corrected suffix-variant run).
 
+
+## devicemanagement.cpp - session 12 (30 Oct 2026)
+
+- **Scope:** the "Device Management functions" section, `user32.h:681-683` - 2 declarations (`RegisterDeviceNotification`
+  `:682`, `UnregisterDeviceNotification` `:683`), 2 definitions, both in the header's order. Second-smallest TU of the
+  review (30 lines before this session), and the first one whose whole SDK block (`winuser.h:3939-3977`) is covered 2 of 2
+  while the block **after** it is not covered at all (T3).
+- **0 binding defects - and the first TU where both binding spellings were already right for measurable reasons.**
+  `qor_pp_useswinapiAW(user32, RegisterDeviceNotification)` -> `/EP` gives `"RegisterDeviceNotificationW"`; the bare
+  `qor_pp_useswinapi(user32, UnregisterDeviceNotification)` is correct because `UnregisterDeviceNotificationA`/`W` are both
+  **MISSING** in the live probe. The export table alone cannot show that - it lists only what exists, and the absence of the
+  `A`/`W` spellings is what makes bare right, which is why the probe (not the table) is the authority here.
+- **G2 live for this stem, harmless in practice.** `RegisterDeviceNotification` is `#undef`'d at `user32.h:9` and bare
+  `"RegisterDeviceNotification"` is MISSING (probe), so had the binding been bare it would have thrown
+  `"Missing library function."` on every call; it is not bare, and the AW macro token-pastes `W` before the SDK macro could
+  ever be consulted, so the `#undef` is inert for this TU. Recorded as the first G2 case where the hazard is confirmed to be
+  genuinely live rather than theoretical.
+- **2 defects fixed, both parameter naming.** `notificationFilter` -> `NotificationFilter` and `handle` -> `Handle` in the
+  definitions (`:73`/`:77`, `:80`/`:84` of the file as it now stands, comment block included), matching both the declarations and the SDK's names.
+  **Convention for line references in this file:** `user32.h` line numbers are stable (the header was not touched this session), but
+  in-TU line numbers move whenever a session's comment block grows - so cross-references from the U-items to a TU cite the
+  number as of that session, and `user32.h` numbers in preference to TU numbers wherever both identify the same thing.
+  These were the **only two such
+  divergences in the entire folder**: `tmp/_tmp_name_divergence_scan.ps1` compares parameter names case-sensitively across
+  every `User32::` definition and measured 2 in 426 definitions before the fix, 0 after.
+- **Instrument blind spot corrected.** `_tmp_sigcmp.ps1` had used PowerShell `-ne` for names, which is case-insensitive, so
+  it reported `decl==def ok` for exactly these two sites. Switched to `-cne` and re-ran the previously reviewed TUs: no
+  earlier verdict changes (`devicecontext.cpp` 8/8, `desktop.cpp` 18/18 including its session-10 `pDevmode` fix,
+  `combobox.cpp` 3/3).
+- **Convention counts:** U13 0 (both `static`); U14(b) 0 (2/2 explicit `Call<>`); U17 1 instance of 2 (`:682` on the
+  11-member list, **no rename** per the settled policy) - sharpened here because the A/W choice is invisible in the
+  signature: the filter is a bare `LPVOID` and the bound half decides how the payload's trailing `TCHAR` name field is read;
+  U15 2/2 (no caller anywhere); U19 0 LAYER / 1 BYPASS (`ui/gl/helperwindow.cpp:85`, live code, correct struct setup, but
+  the file is in no target and `gl` is commented out of `ui/CMakeLists.txt:4`); U16 2/2 with the hardest dependency yet -
+  `HDEVNOTIFY` is typedef'd inside the same `WINVER >= 0x0500` + Desktop-partition guards as the prototypes, so a consumer
+  pinning a lower `WINVER` gets `user32.h:682-683` **ill-formed**, not merely unprototyped; U1/U2 unchanged (no handler, no
+  `CheckReturn`).
+- **New deferred task T3** (see the Deferred tasks section): the Power Management pair at `user32.h:686-687` is **not**
+  `static`, is declared, and is exported for real (2F1/3CB, both RESOLVED in the probe) - yet it is defined in no TU, in a
+  folder that has no file for it. U4's cleanest case.
+- **Verified at exit:** `devicemanagement.cpp` compiles standalone at `/W4` exit 0; whole library **38/38** exit 0
+  (`tmp/_tmp_cl_all_s12.log`, 38 `.cpp` echoed, 38 `.obj` refreshed); `/EP` re-run post-edit confirms both binding literals
+  (`tmp/_tmp_devman_pp.txt:453294`, `:453301`); the name-divergence scan reports 0 for this TU and 0 folder-wide.
+- **Instruments this session leaves behind:** `tmp/_tmp_name_divergence_scan.ps1` (folder-wide case-sensitive parameter-name
+  comparison - run it with no `-Tu` for the folder sweep, expect 0), the corrected `_tmp_sigcmp.ps1` (`-cne`), the extended
+  `tmp/_tmp_name_resolve_probe.cpp` (device-notification + power-setting spellings) and `tmp/_tmp_pp_devman.bat`.
+- **Bookkeeping corrected in this file:** the "Remaining queue" line listed 25 names under a "26 TUs" count because
+  **`text.cpp` had been omitted** from the queue; it is now listed, and the counts reconcile (13 done + 25 remaining = the
+  38 sources in `add_library`). The stray `| 2b |` row that had been stranded below the Deferred-tasks block is back inside
+  the session log.
+
+## dialog.cpp - session 13 (30 Oct 2026)
+
+- **Scope:** the "Dialog functions" section, `user32.h:469-493` - **22 declarations** (`:470-492`, with the `//NOTE:` at
+  `:488`), 22 definitions in the header's order, all `static` (U13: 0 instances). The largest section reviewed so far. The
+  TU was 171 lines before this session and 192 after (the 20-line section comment now at `:16-35` records the binding
+  evidence and the contracts the wrappers pass through).
+- **1 real run-time failure fixed - P1's third instance.** The binding that was `qor_pp_useswinapi(user32, GetDlgItemTextT)`
+  (`:89` pre-fix; now `:110`) stringized the **member** name, which is not an export. `/EP` pre-fix literal
+  `"GetDlgItemTextT"` -> live probe **MISSING**; post-fix `qor_pp_useswinapiAW(user32, GetDlgItemText)` literal
+  `"GetDlgItemTextW"` -> **RESOLVED** (ordinal 151; the `A` half 150 is exported too but is not what a `LPTSTR` signature
+  wants here). Same class as the two `combobox.cpp` sites. **Latent rather than live:** `GetDlgItemTextT` has no call site
+  anywhere in `src`/`examples`/`test` (U15), so unlike `coordtransform.cpp` (session 8) no shipped path was broken.
+- **1 convention conversion (P2 7 -> 6).** `MessageBox` -> `qor_pp_useswinapiAW(user32, MessageBox)` (`:145`).
+  **No behaviour change**: the pre-fix `/EP` literal was already `"MessageBoxW"`, because the SDK's
+  `#define MessageBox MessageBoxW` (`winuser.h:9244`) rewrites the stem before `_ATXT` stringizes it (G1). Converted
+  because P2 tracks bindings that work *only* through that macro; G3's false-positive list named `MessageBox` for exactly
+  this reason.
+- **13 `AW` + 9 bare, and the 9 bare ones are right for a reason the export table alone cannot show.** AW bindings:
+  `:40`, `:47`, `:54`, `:61`, `:68`, `:110`, `:131`, `:145`, `:152`, `:159`, `:167`, `:174`, `:188`. Bare bindings:
+  `EndDialog` `:75`, `GetDialogBaseUnits` `:82`, `GetDlgCtrlID` `:89`, `GetDlgItem` `:96`, `GetDlgItemInt` `:103`,
+  `GetNextDlgGroupItem` `:117`, `GetNextDlgTabItem` `:124`, `MapDialogRect` `:138`, `SetDlgItemInt` `:181` - all nine have a
+  **single** SDK spelling (`winuser.h:5147`, `:5293`, `:5287`, `:5154`, `:5170`, `:5271`, `:5279`, `:11573`, `:5161`), no
+  `A`/`W` variant in the export table, and all nine probe **RESOLVED** exactly as written. `DefDlgProcW` (A0) and
+  `DefDlgProcA` (9F) are exported as **forwarders to `NTDLL.NtdllDialogWndProc_W`/`_A`**, so the binding resolves through
+  `user32.dll` while the code lives in `ntdll` - the first forwarders seen in this review apart from the `win32u` route in
+  session 7. The trap in this section is `IsDialogMessage`: its bare stem **is** exported (231) but at the same RVA as
+  `IsDialogMessageA`, so binding the stem would hand the ANSI half a `LPTSTR`; the `AW` macro at `:131` is what makes the
+  binding match the signature.
+- **`MessageBoxTimeout` is the review's second SDK-invisible entry point** (after `ConsoleControl`, session 7): zero hits for
+  the name across the installed `Windows Kits\10\Include\10.0.26100.0` tree, yet `MessageBoxTimeoutW` (28A) and
+  `MessageBoxTimeoutA` (289) are exported and probe **RESOLVED** while the bare stem is **MISSING**. So the `AW` binding at
+  `:167` is the only spelling that can bind, and `user32.h:489`'s six-parameter list has **no SDK prototype to check it
+  against** - the export table plus the live probe are the entire authority (U16's mirror case: no version guard to worry
+  about because there is no declaration at all).
+- **Section coverage (U21's shape again - the header mirrors only part of the SDK's dialog block).** The SDK block is
+  `winuser.h:4912-5385` (`#ifndef NOCTLMGR`) plus the message-loop half at `:11233-12072`. This section mirrors 22 of it and
+  leaves out: `CheckDlgButton` (`:5223`), `CheckRadioButton` (`:5231`), `IsDlgButtonChecked` (`:5240`) - which `user32.h:372-374`
+  declares as **non-static members that no TU defines**, three of U4's 97 - and the DPI-behaviour quartet
+  `SetDialogControlDpiChangeBehavior` (`:5340`), `GetDialogControlDpiChangeBehavior` (`:5347`), `SetDialogDpiChangeBehavior`
+  (`:5363`), `GetDialogDpiChangeBehavior` (`:5370`), all four exported and probe **RESOLVED** but declared nowhere in this
+  library. `DlgDirList`/`DlgDirSelectEx` (`:11580` and following) belong to the same SDK family but are declared in the
+  header's list-box section (`:546-547`, non-static, defined by no TU - U4 again); their combo-box counterparts are the
+  session-6 pair.
+- **Correctness / UB pass: nothing found.** 22/22 declarations match their definitions and 22/22 `Library::Call<>`
+  template-argument lists match the definition's parameter types (`_tmp_sigcmp.ps1`), 0 parameter-name divergences for this TU
+  and 0 folder-wide (`_tmp_name_divergence_scan.ps1`). The three wrappers that write through caller pointers match the SDK's
+  SAL exactly - `GetDlgItemTextT` forwards `LPTSTR`/`int` under `_Out_writes_(cchMax)` + `_Ret_range_(0, cchMax)` with no
+  buffer logic of its own, `GetDlgItemInt` the `_Out_opt_ BOOL*`, `MapDialogRect` the `_Inout_ LPRECT` - and the four
+  callback-taking wrappers (`CreateDialog*`, `DialogBox*`) hand the caller's `::DLGPROC` straight to `user32` and never
+  synthesize one, so the CALLBACK-convention hazard of the enum-callback wrappers does not arise in this TU.
+- **3 sites fixed for spelling consistency.** `Call<..., DLGPROC, ...>` -> `Call<..., ::DLGPROC, ...>` at `:41`, `:48`, `:69`;
+  the declarations (`user32.h:470`, `:471`, `:474`) and the definitions already spelled it `::DLGPROC`, and `:62`
+  (`DialogBoxIndirectParamT`) already did too, so this TU is now internally uniform - no type change, no surface change.
+  **Instrument note for every later session:** before this fix those three were exactly the rows `_tmp_sigcmp.ps1` printed as
+  `CALL TYPE MISMATCH ... sdk '::DLGPROC' vs call 'DLGPROC'`. That is a string comparison on a spelling, not a type error -
+  the review's only sigcmp false-positive class, so a MISMATCH row must be read before it is acted on. Re-run after the fix:
+  22/22 clean.
+- **Convention counts:** U13 0 of 22 (all `static`, all defined `User32::`-qualified); U14(b) 0 deducing (22/22 explicit,
+  spaced style, 0 spacing nits); U17 **1 of this section's 13 A/W families** (`MessageBoxTimeout` `user32.h:489`, no rename per
+  the settled policy); U15 **16 of 22** instances; U19 14 LAYER / 24 BYPASS (see the U19 entry); U16 1 version-guarded pair +
+  3 type-level opt-out dependencies (see the U16 entry); U1/U2 22 sites, 0 `Win32ErrorHandler`, 0 return checks (settled
+  policy) - and worth recording that **17 of the 22 could not use the `CheckReturn` pattern anyway**: only `EndDialog`,
+  `IsDialogMessageT`, `MapDialogRect`, `SetDlgItemInt`, `SetDlgItemTextT` return `BOOL`; the rest return handles, `INT_PTR`
+  dialog results, `LRESULT`, `UINT` text lengths, a packed `LONG` or a button id where 0 is both a result and a failure.
+- **Verified at exit:** `dialog.cpp` compiles standalone at `/W4` **exit 0** (re-run after every edit, last run 30/10/2026
+  23:59+), and the whole library compiled **38/38 exit 0** earlier in the session (`tmp/_tmp_cl_all_s13.log`:
+  `exit=0 loglines=43`, 38 `.cpp` echoed, 44 objects in `tmp/obj`); post-edit `/EP` re-run yields the 22 binding literals in
+  definition order (13 `*W` + 9 bare) and all 22 are **RESOLVED** in the extended probe; `git diff --numstat` for this session is
+  `dialog.cpp` **+26/-5** (20 comment lines + 1 blank added; 5 lines changed - 3 `::DLGPROC` spellings + 2 binding macros) with
+  **`user32.h` untouched**. (`devicemanagement.cpp` is still in
+  `git status` from session 12 - uncommitted at the time of writing, so a working-tree diff of this folder shows both files.)
+- **Instruments this session leaves behind:** `tmp/_tmp_pp_dialog.bat`; `tmp/_tmp_binding_names.ps1` (reads the binding
+  literals out of a `/EP` dump in definition order - the only practical way to audit a 453k-line preprocessed file);
+  `tmp/_tmp_decl_no_def_scan.ps1` / `tmp/_tmp_decl_no_def_repo_scan.ps1` (the declared-but-never-defined census, 64 names into
+  `tmp/_tmp_decl_no_def_s13.txt`, reconciled with U4's 97 figure in the U4 entry); `tmp/_tmp_guard_stack_scan.ps1` (the
+  generalised U16 guard-stack scan, `-Pattern <regex>` over `winuser.h`, replacing the hard-coded
+  `_tmp_sdk_guard_scan.ps1`); and `tmp/_tmp_name_resolve_probe.cpp` extended with 24 dialog spellings plus the 7 exported
+  dialog entry points this header does not declare.
 

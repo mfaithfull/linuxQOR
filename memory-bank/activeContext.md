@@ -9,16 +9,34 @@ Last updated: 30 Oct 2026.
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
   carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
-  (G1-G6), **twenty-two open items (U1-U22)**, the pre-scan items **P1-P5**, the two deferred tasks **T1/T2** and the tooling
-  under `tmp/`. **Twelve TUs done** in sessions 1-11 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
-  `clipboard`, `combobox`, `console`, `coordtransform`, `cursor`, `desktop`, `devicecontext`); **next is
-  `devicemanagement.cpp`** (2 wrappers; pre-flagged: `RegisterDeviceNotification` is one of the 11 U17 A/W members without
-  the `T` suffix **and** one of the `user32.h:9-17` `#undef` stems, so the rename needs a user decision). U13 closed in
+  (G1-G6), **twenty-three open items (U1-U23)**, the pre-scan items **P1-P5**, the three deferred tasks **T1/T2/T3** and the tooling
+  under `tmp/`. **Fourteen TUs done** in sessions 1-13 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
+  `clipboard`, `combobox`, `console`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`,
+  `dialog`); **next is
+  `errorhandling.cpp`** (4 wrappers over `user32.h:613-617` - the only fully-covered section that is *not* a U4 block;
+  pre-measured: all four bindings are bare and all four are genuine single exports, so expect **0 P1 and 0 D13
+  conversions but prove it**; `SetLastErrorEx` is this TU's only `void` wrapper, so check the SDK return type against
+  U18; `FlashWindowEx` sits under `#if(WINVER >= 0x0500)` and `MessageBeep` under `#ifndef NOMB`; two U14 spacing nits at
+  `:35` and `:43`).
+  Session 13 (`dialog.cpp`, 22 wrappers - the largest section so far) fixed the third **P1** instance: `:89` bound
+  `"GetDlgItemTextT"`, which the probe says is MISSING, now `qor_pp_useswinapiAW(user32, GetDlgItemText)`; converted
+  `MessageBox` to explicit AW (no behaviour change - the SDK macro already rewrote it); made 3 `Call<...>` rows spell
+  `::DLGPROC` like their declarations; and found **`MessageBoxTimeout` has no declaration anywhere in the installed SDK**,
+  so its name/parameters rest on the export table + live probe alone (U16's mirror case). New open item **U23**
+  (`MessageBoxIndirectT` puts `const` on the pointer, not the pointee - published-signature change, recorded not fixed).
+  Session 12
+  also took the folder to **0 parameter-name divergences** (new instrument `tmp/_tmp_name_divergence_scan.ps1`); session 13
+  re-confirmed 0 of 426. **Instrument caveat added in session 13:** `_tmp_sigcmp.ps1`'s `CALL TYPE MISMATCH ... sdk '::DLGPROC'
+  vs call 'DLGPROC'` rows are a string comparison on a *spelling*, not a type error - read a MISMATCH row before acting on it.
+  U13 closed in
   session 7; U10's SDK-side half is closed too (the console-internal types collide with nothing in
   SDK 10.0.26100 or 10.0.10240), leaving only the decision about keeping/namespacing them. **T1** = `GetUserObjectSecurity`
   / `SetUserObjectSecurity` are declared (`user32.h:658-659`) with no definition in any TU (link error for any caller) -
   add the definitions or delete the declarations. **T2** = the whole Window Station / Desktop section is 18/18 dead exported
-  API (0 callers, 0 bypass sites), so its U17/P3 naming questions have no caller to inform them.
+  API (0 callers, 0 bypass sites), so its U17/P3 naming questions have no caller to inform them. **T3** = the "Power
+  Management functions" pair (`user32.h:686-687`) is **not** `static` and its entry points are real exports (2F1/3CB, RESOLVED
+  by the probe) but **no `.cpp` in the folder defines either, and no file exists that could** - write `powermanagement.cpp`
+  (+ an `add_library` line, and settle `static` with them) or delete the declarations.
 - Session 1 (29 Oct 2026) reviewed `accelerator.cpp`: 5 wrappers, all signatures and exports correct; fixed
   the three bare-stem A/W bindings to the explicit `qor_pp_useswinapiAW` form (verified by `cl /EP` name
   resolution and a `/W4` compile at exit 0, and the whole library still compiles 38/38 at `/W4` exit 0).
@@ -185,15 +203,58 @@ Last updated: 30 Oct 2026.
   and corrected three off-by-one/rounded citations in the TU comment, `status.md` and here; also recorded that
   `_tmp_compile_all.ps1` writes its `cl` log to the fixed path `tmp/_tmp_cl_all.log`, so a redirected stdout only holds the
   `exit=`/`loglines=` summary - the 38/38 proof is 38 TU echo lines + 38 fresh `.obj` files in `tmp/obj`.
-- **Next session: `devicemanagement.cpp`** (2 wrappers). `RegisterDeviceNotification` (`user32.h:682`) keeps its bare name -
-  **user decision 30 Oct 2026: defer, it joins the 11-member U17 folder-wide batch** (session 9 policy); its `user32.h:9`
-  `#undef` is inert because the binding is already `qor_pp_useswinapiAW`. Still open for that TU: the two decl/def parameter
-  name divergences (`NotificationFilter`/`notificationFilter`, `Handle`/`handle`) and the usual signature/binding/caller pass.
+- Session 12 (30 Oct 2026) reviewed `devicemanagement.cpp` (2 wrappers, `user32.h:681-683` "Device Management functions"):
+  **0 binding / correctness / UB / convention defects, and both binding spellings were already right** - `qor_pp_useswinapiAW`
+  `/EP`-resolves to `"RegisterDeviceNotificationW"` (2E5), and the bare binding for `UnregisterDeviceNotification` is correct
+  because the live probe shows its `A`/`W` spellings **MISSING** (single export 3C6) - the first case where the export table
+  alone could not decide it. G2 is genuinely live for this stem (bare `"RegisterDeviceNotification"` MISSING, `user32.h:9`
+  `#undef`) but inert, since the AW macro token-pastes `W` before the SDK macro is consulted. **Fixed: 2 parameter-name
+  divergences** (`notificationFilter` -> `NotificationFilter`, `handle` -> `Handle`) - the new
+  `tmp/_tmp_name_divergence_scan.ps1` measured those as the **only 2 in 426 definitions folder-wide**, 0 after - plus a
+  52-line TU comment. **Instrument bug fixed:** `_tmp_sigcmp.ps1` compared names with case-insensitive PowerShell `-ne` and
+  had printed `decl==def ok` for exactly these sites; now `-cne`, and re-running it changed no earlier verdict
+  (`devicecontext` 8/8, `desktop` 18/18, `combobox` 3/3). Counts: U13 0, U14(b) 0, U17 1 of 2 (no rename, settled policy -
+  sharpened: the A/W choice is invisible here, the filter is a bare `LPVOID` whose trailing `TCHAR` name field is read per
+  the bound half), U15 2/2 dead, U19 0 LAYER / 1 BYPASS (`ui/gl/helperwindow.cpp:85` - live code, struct filled correctly,
+  but in no build target, and it never unregisters, so enabling `gl` would leak the registration), U16 2/2 with the hardest
+  dependency after `NOGDI` (`HDEVNOTIFY` is typedef'd inside the same `WINVER >= 0x0500` + Desktop-partition guards, so a
+  lower `WINVER` makes `user32.h:682-683` ill-formed). **New task T3**: the "Power Management functions" pair
+  (`user32.h:686-687`) is **not** `static`, its entry points are real exports (2F1/3CB, RESOLVED by the probe) and **no `.cpp`
+  in the folder defines either** - the folder has no file for it. Exit: TU standalone `/W4` exit 0, library **38/38** exit 0 (`tmp/_tmp_cl_all_s12.log`). `status.md`
+  bookkeeping corrected too: the queue had **omitted `text.cpp`** (25 names under a 26 count; now 13 done + 25 remaining =
+  the 38 sources), and a stray `| 2b |` row was moved back into the session log.
+- Session 13 (30 Oct 2026) reviewed `dialog.cpp` (22 wrappers, `user32.h:469-493` "Dialog functions" - the largest
+  fully-covered section so far): **1 real run-time failure + 1 convention defect**. The P1 instance `qor_pp_useswinapi(user32,
+  GetDlgItemTextT)` at `:89` stringized the *member* name (`/EP` literal `"GetDlgItemTextT"`, probe **MISSING**) - now
+  `qor_pp_useswinapiAW(user32, GetDlgItemText)` (`"GetDlgItemTextW"`, **RESOLVED**); latent, not live, because that wrapper has
+  no call site anywhere. `MessageBox` -> explicit AW (P2 7->6, **no behaviour change**: the pre-fix literal was already
+  `"MessageBoxW"` via `winuser.h:9244`, G1). 3 `Call<...>` rows now spell `::DLGPROC` like their declarations. All 22 bindings
+  then confirmed by `/EP` + export table + probe: 13 AW (all `W`) + 9 bare, and the 9 bare are right because the SDK declares
+  those nine with a single non-A/W spelling. Two findings that the export table alone cannot show: `IsDialogMessage` **is**
+  exported bare (231) but at the same RVA as `IsDialogMessageA`, and `DefDlgProcW/A` (A0/9F) are **forwarders to
+  `NTDLL.NtdllDialogWndProc_W/_A`**. **`MessageBoxTimeout` is the review's second SDK-invisible entry point** - zero hits across
+  the installed include tree, yet `MessageBoxTimeoutW` (28A) / `A` (289) are exported and RESOLVED while the stem is MISSING, so
+  `user32.h:489`'s six parameters have no SDK prototype to check against. decl==def 22/22, 0 name divergences, correctness/UB
+  pass clean. **New open item U23**: `MessageBoxIndirectT`'s parameter puts `const` on the pointer instead of the pointee
+  (published-signature change - recorded, not fixed). Exit: TU standalone `/W4` exit 0, library 38/38 exit 0
+  (`tmp/_tmp_cl_all_s13.log`); `dialog.cpp` +26/-5, `user32.h` untouched.
+- **Next session (14): `errorhandling.cpp`** - 4 wrappers over `user32.h:613-617` ("Error Handling functions", fully covered, so
+  not a U4 block; 46-line TU, no comment block). Measured pre-flags: **expect 0 P1 and 0 D13 conversions but prove it** - all
+  four bindings are bare (`:19 FlashWindow`, `:26 FlashWindowEx`, `:33 MessageBeep`, `:42 SetLastErrorEx`) and all four are
+  genuine single exports (115, 116, 283, 342; no A/W spelling of any of them in the table). `SetLastErrorEx` is this TU's only
+  `void` wrapper and uses `Library::voidCall` at `:43` - settle it against the SDK prototype at `winuser.h:13561` (U18 exists
+  precisely because a `void` contradicted an unsigned-returning pair elsewhere). U16 guard stack: `FlashWindowEx` additionally
+  under `#if(WINVER >= 0x0500)` (`winuser.h:4699`), `MessageBeep` additionally under `#ifndef NOMB` (`:9365`). Return-check
+  asymmetry to record (U1): only `MessageBeep` has `CheckReturn<BOOL, BoolCheck>`, and `FlashWindow` returns the *previous*
+  flash state, so a `BoolCheck` there would be wrong. Two U14 spacing nits: `:35`, `:43`. Section coverage: `RegisterErrorReportingDialog`
+  (2E6), `SetDebugErrorLevel` (32F) and `DdeGetLastError` (8E) are exported and declared nowhere here; `GetLastError`/`SetLastError`
+  are correctly absent (kernel32 exports). The name-divergence scan should report 0.
 - **D13 adopted (user, 29 Oct 2026, `docs/agent/DECISIONS.md`):** explicit `qor_pp_useswinapiAW` wherever the
   SDK has an A/W family, bare `qor_pp_useswinapi` only for single exports. Apply it in each TU as it is
-  reviewed. Folder-wide pre-scan in status.md lists P1 (six bindings that cannot resolve at run time:
-  `keyboard.cpp:82,243,250`, `dialog.cpp:89`, `combobox.cpp:20,27`) and P2 (seven macro-dependent bindings to
-  convert). Next TU in the queue: `clipboard.cpp`.
+  reviewed. Folder-wide pre-scan in status.md lists P1 (bindings that cannot resolve at run time - **5 still open**:
+  `keyboard.cpp:82,243,250`, `window.cpp:124`, `mouse.cpp:82`; `combobox.cpp:20,27` fixed in session 6 and
+  `dialog.cpp:89` in session 13) and P2 (macro-dependent bindings to convert - **6 still open**: `menu.cpp` x2,
+  `message.cpp` x4; `dialog.cpp` `MessageBox` converted in session 13). Next TU in the queue: `errorhandling.cpp`.
 
 - Corrections to earlier audit assumptions, all measured (see status.md G1-G6): the SDK A/W macro expands
   before `_ATXT()` stringizes, so most bare stems already bind the W export and the `tmp/_tmp_audit_report.txt`

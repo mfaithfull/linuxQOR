@@ -13,18 +13,39 @@
 
 namespace qor { namespace win { namespace api {
 
+    //The "Dialog functions" section (user32.h:469-493): 22 declarations, 22 definitions here, in the header's order,
+    //all static. 13 of the names are A/W families in user32.dll and every one of them is bound as the W half with
+    //qor_pp_useswinapiAW: CreateDialogIndirectParam W 68 / A 66 (plus the internal CreateDialogIndirectParamAorW 67),
+    //CreateDialogParam W 6A / A 69, DefDlgProc A0 - exported as a forwarder to NTDLL.NtdllDialogWndProc_W, so the
+    //binding resolves through user32 while the code lives in ntdll, DialogBoxIndirectParam W B8 / A B6 (AorW B7),
+    //DialogBoxParam W BA / A B9, GetDlgItemText W 151 / A 150, IsDialogMessage W 233 / A 232, MessageBox W 28B / A 284,
+    //MessageBoxEx W 286 / A 285, MessageBoxIndirect W 288 / A 287, MessageBoxTimeout W 28A / A 289,
+    //SendDlgItemMessage W 312 / A 311, SetDlgItemText W 338 / A 337. The other 9 are single exports with no A/W
+    //spelling at all and are bound with the bare stem: EndDialog F2, GetDialogBaseUnits 148, GetDlgCtrlID 14D,
+    //GetDlgItem 14E, GetDlgItemInt 14F, GetNextDlgGroupItem 18F, GetNextDlgTabItem 190, MapDialogRect 278,
+    //SetDlgItemInt 336. Ordinals are from tmp/_tmp_user32_exports.txt; every literal was read out of cl /EP output and
+    //each name was then resolved by GetProcAddress in a live probe (tmp/_tmp_name_resolve_probe.cpp), not inferred
+    //from the SDK. Two entries that must not be guessed at: IsDialogMessage is also exported bare (231) but at the
+    //same RVA as IsDialogMessageA, so the stem is the ANSI half and binding W is what matches the LPTSTR-visible
+    //signature this wrapper publishes; and MessageBoxTimeout has no declaration anywhere in the installed SDK, so the
+    //export table and the probe are the only authority for its name and parameter list (status.md U16).
+    //Contracts passed through unchanged: DLGPROC is called by user32, not by us, so callbacks handed in must keep the
+    //SDK calling convention; EndDialog's INT_PTR becomes the DialogBox* return value; GetDlgCtrlID returns int and
+    //callers narrowing it to unsigned short truncate deliberately; GetDialogBaseUnits returns packed font metrics,
+    //never a failure code; the MessageBox* family returns a button ID or 0, and 0 also means failure (status.md U2).
+
     HWND User32::CreateDialogIndirectParamT(HINSTANCE hInstance, LPCDLGTEMPLATE lpTemplate, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM lParamInit)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, CreateDialogIndirectParam);
-        return Library::Call<HWND, HINSTANCE, LPCDLGTEMPLATE, HWND, DLGPROC, LPARAM>(pFunc, hInstance, lpTemplate, hWndParent, lpDialogFunc, lParamInit);
+        return Library::Call<HWND, HINSTANCE, LPCDLGTEMPLATE, HWND, ::DLGPROC, LPARAM>(pFunc, hInstance, lpTemplate, hWndParent, lpDialogFunc, lParamInit);
     }
 
     HWND User32::CreateDialogParamT(HINSTANCE hInstance, LPCTSTR lpTemplateName, HWND hWndParent, ::DLGPROC lpDialogFunc, LPARAM dwInitParam)
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, CreateDialogParam);
-        return Library::Call<HWND, HINSTANCE, LPCTSTR, HWND, DLGPROC, LPARAM>(pFunc, hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
+        return Library::Call<HWND, HINSTANCE, LPCTSTR, HWND, ::DLGPROC, LPARAM>(pFunc, hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
     }
 
     LRESULT User32::DefDlgProcT(HWND hDlg, UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -45,7 +66,7 @@ namespace qor { namespace win { namespace api {
     {
         qor_pp_fcontext;
         qor_pp_useswinapiAW(user32, DialogBoxParam);
-        return Library::Call<INT_PTR, HINSTANCE, LPCTSTR, HWND, DLGPROC, LPARAM>(pFunc, hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
+        return Library::Call<INT_PTR, HINSTANCE, LPCTSTR, HWND, ::DLGPROC, LPARAM>(pFunc, hInstance, lpTemplateName, hWndParent, lpDialogFunc, dwInitParam);
     }
 
     BOOL User32::EndDialog(HWND hDlg, INT_PTR nResult)
@@ -86,7 +107,7 @@ namespace qor { namespace win { namespace api {
     UINT User32::GetDlgItemTextT(HWND hDlg, int nIDDlgItem, LPTSTR lpString, int nMaxCount)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, GetDlgItemTextT);
+        qor_pp_useswinapiAW(user32, GetDlgItemText);
         return Library::Call<UINT, HWND, int, LPTSTR, int>(pFunc, hDlg, nIDDlgItem, lpString, nMaxCount);
     }
 
@@ -121,7 +142,7 @@ namespace qor { namespace win { namespace api {
     int User32::MessageBoxT(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, MessageBox);
+        qor_pp_useswinapiAW(user32, MessageBox);
         return Library::Call<int, HWND, LPCTSTR, LPCTSTR, UINT>(pFunc, hWnd, lpText, lpCaption, uType);
     }
 
