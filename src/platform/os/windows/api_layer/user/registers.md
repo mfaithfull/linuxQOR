@@ -421,6 +421,26 @@ authoritative. **P6** is a live binding trap for hook-family / `*MsgFilter*` wor
   therefore the rare shape where the wrapper's caller exists, the DC it would run on is live, and still nothing invokes
   it. Scan totals 3 LAYER / 3 INDIRECT / 0 BYPASS / 0 MEMBER (`tmp/_tmp_fs_bypass.txt`), so the family has no SDK-import
   path either.
+  - `icon.cpp` - **12 of 14** (measured 1 Nov 2026, session 18; `tmp/_tmp_icon_liveness_scan.ps1` -> `tmp/_tmp_icon_liveness.txt`
+    plus a `findstr` sweep of every `Icon` construction site in `src`/`examples`/`test`). Unusual shape: all 14 wrappers
+    have exactly one caller, the `qor::platform::win::Icon` class (`ui/gui/gdiobjects/icon.cpp:18`-`:109`, built at
+    `gui/CMakeLists.txt:49`) - the first family of the review whose whole liveness hangs on one caller-side class. Two
+    wrappers are reached in built code: `LoadIconT` twice (`windowfactory.cpp:89` `Icon(IDI_APPLICATION)` and `:92`
+    `Icon(nullptr)`, both through `Icon(const wchar_t*)` at `gdiobjects/icon.cpp:52-56`) and `DestroyIcon` (from `~Icon`
+    at `:62` when those two temporaries die). `WindowFactory`'s own ctor calls `AddWindowClass` (`windowfactory.cpp:45`),
+    and `AddWindowClass` is called from built example code (`examples/experimental/osspecific/windows/mainwindow/mainwindow.cpp:339`),
+    so that pair runs in any built app that creates a window. The other 12 are linked, exported and unreachable:
+    `CreateIcon`, `CreateIconFromResource`, `CreateIconFromResourceEx`, `CreateIconIndirect` (their `Icon` ctors have no
+    call site), `CopyIcon` (`Icon::Clone()` has no call site, and C++17 guaranteed elision means `SetIcon(Icon(...))`
+    never invokes the copy ctor), `DrawIcon`, `DrawIconEx`, `GetIconInfo`, `GetIconInfoExT`, `LookupIconIdFromDirectory`,
+    `LookupIconIdFromDirectoryEx`, `PrivateExtractIconsT`. The one consumer that would use the draw/query half is
+    `RenderingHandler` (`ui/gui/view/handlers/rendered/rendering.cpp:122-137`, the `wmGetIcon`/`wmSetIcon` slots, built at
+    `gui/CMakeLists.txt:88`), but its installation slot `m_rendering` (`view/handlers/rendered.h:51`) has **no writer**
+    anywhere in the tree - only the read at `rendered.cpp:38` - so the handler is never installed (the same shape as
+    clipboard's `m_clipboardOwner` above; `m_nonClient` `:49` and `m_ncRendering` `:50` are writer-less too). Note the
+    `Icon` objects the four controller sites build (`buttoncontroller.cpp:87`, `:92`, `staticcontroller.cpp:70`, `:94`)
+    use the `(PrimitiveHandle, own)` ctor and so call no wrapper at all - and those four controller methods have no call
+    site (U20).
 
 
 - **U16 - the wrappers pair with SDK declarations that the SDK only emits when a version guard passes, and nothing in
@@ -532,6 +552,23 @@ authoritative. **P6** is a live binding trap for hook-family / `*MsgFilter*` wor
     and `NOUSER`/`NOMB` appear nowhere either. No `_WINGDI_`/shrink dependency in this section, and no reverse-half
     instance - all four SDK prototypes exist; the two exported error-adjacent entry points `user32.h` omits
     (`RegisterErrorReportingDialog` 2E6, `SetDebugErrorLevel` 32F) are a section-coverage gap, not a guard one.
+  - `icon.cpp` - **4 of the 14** wrapped prototypes sit behind a version guard, and the section reproduces the
+    ill-formed-*type* sub-case at the highest threshold measured so far. Measured 1 Nov 2026 with
+    `tmp/_tmp_icon_guards.ps1` -> `tmp/_tmp_icon_guards.txt` (17 hits over 16,475 lines; it scans the `*A`/`*W` spellings
+    too, which is why 17 rows cover 14 members): `LookupIconIdFromDirectoryEx` (`winuser.h:10819`) under
+    `#if(WINVER >= 0x0400)` (`:10815`), `CreateIconFromResourceEx` (`:10840`) under `:10836` and `DrawIconEx` (`:10948`)
+    under `:10883` - all `0x0400` - and `GetIconInfoExW` (`:11026`, `GetIconInfoExA` `:11020`) under
+    `#if(_WIN32_WINNT >= 0x0600)` (`:10986`, closed `:11034`). The other nine members carry no version test at all, only
+    `#ifndef NOUSER` (`:64`) plus a `WINAPI_PARTITION_DESKTOP` block (`:10723`, `:10901`, `:10965`); `DrawIcon` is the
+    odd one out, declared at `:8170` inside the messaging block under `:8165`. Type guard, measured with
+    `tmp/_tmp_icon_type_guards.ps1` -> `tmp/_tmp_icon_type_guards.txt` (5 hits): `ICONINFOEXA`/`ICONINFOEXW`,
+    `PICONINFOEXA`/`PICONINFOEXW` and the `ICONINFOEX`/`PICONINFOEX` typedefs all live inside that same `0x0600` block
+    (`:10987`-`:11014`), so below `_WIN32_WINNT 0x0600` `user32.h:436`'s `GetIconInfoExT(HICON, ::PICONINFOEX)` does not
+    merely lose its prototype, it names an unknown type (the `HDEVNOTIFY`/`DEVMODE`/`MSGBOXPARAMSW`/`PFLASHWINFO` class,
+    and the highest threshold of them). `ICONINFO`/`PICONINFO` (`:10739`) sit ungated apart from Desktop + `NOUSER`, so
+    the other 13 signatures survive every version pin. The `#ifdef UNICODE` arm of that typedef pair is a sharper
+    hazard than the version guard and is recorded under U26. Still latent: no `WINVER`/`_WIN32_WINNT`/`NTDDI_VERSION` in
+    `cmake/` or any `CMakeLists.txt` (5th confirmation of this class), and `NOUSER` appears nowhere either.
 
 - **U17 - A/W wrappers declared without the folder's `T` suffix.** Opened 29 Oct 2026 (session 6) when the two combo
   members were renamed (user decision: rename inside the TU being reviewed, keep the rest together for one
@@ -570,6 +607,11 @@ authoritative. **P6** is a live binding trap for hook-family / `*MsgFilter*` wor
   eventually renaming it: the bare member name hides an A/W family whose **bare stem is not even exported** (live probe:
   `MessageBoxTimeout` MISSING, `MessageBoxTimeoutA`/`W` RESOLVED), so nothing in the signature tells a caller that the
   bare spelling would fail at run time.
+  **Session 18 (`icon.cpp`, 1 Nov 2026): 0 instances, census unchanged.** The icon section's three A/W wrappers already
+  carry the suffix (`GetIconInfoExT` `:436`, `LoadIconT` `:437`, `PrivateExtractIconsT` `:440`), and
+  `tmp/_tmp_tsuffix_census.ps1` re-run 1 Nov (`tmp/_tmp_tsuffix_s18.txt`) gives the same five buckets as sessions
+  11-13/17: 525 member declarations, 108 A/W + `T` (the norm), 404 bare single exports, **11** A/W without the suffix,
+  2 mirror cases. No name action taken, per the session-11 defer policy.
 - **U18 - a wrapper pair whose return type contradicts the SDK: `void` where `user32.dll` returns `BOOL`.** Opened
   30 Oct 2026 (session 8) while mapping the coordinate-transform family for `coordtransform.cpp`. `user32.h:188`
   `static void LogicalToPhysicalPoint(HWND, ::LPPOINT*)` and `:191` `static void PhysicalToLogicalPoint(HWND, ::LPPOINT*)`
@@ -680,6 +722,20 @@ authoritative. **P6** is a live binding trap for hook-family / `*MsgFilter*` wor
   -Lines <n...>` settles it with a character-level state machine (block comments, line comments, string and char
   literals) and prints the commented fraction. Two earlier records in this file relied on unfiltered greps and had to be
   corrected (the clipboard U15 entry and its session-5 note).
+  - **Icon family (session 18, 1 Nov 2026) - 16 LAYER / 0 INDIRECT / 7 BYPASS / 0 MEMBER, i.e. 0 bypass in built code.**
+    17 stems (bare + `*T`/`*A`/`*W`) through `tmp/_tmp_bypass_scan.ps1`, driven from `tmp/_tmp_icon_pre.bat` into
+    `tmp/_tmp_icon_pre_s18.txt`, with the coordinate baseline re-run in the same pass and unchanged (3 LAYER / 0 BYPASS).
+    All 16 LAYER sites are the `User32::` calls inside one built file, `ui/gui/gdiobjects/icon.cpp:18`, `:24`, `:30`,
+    `:36`, `:42`, `:48`, `:54`, `:62`, `:73`, `:79`, `:84`, `:89`, `:94`, `:99`, `:104`, `:109` (`gui/CMakeLists.txt:49`)
+    - 14 wrappers plus the two repeats `LoadIconT` (`:48`, `:54`) and `CopyIcon` (`:18`, `:73`). The 7 BYPASS are all in
+    targets that are not built: 5 in `ui/gl/windowimpl.cpp:191`, `:1603`, `:1608`, `:1642`, `:1645`
+    (`ui/CMakeLists.txt:4` `#add_subdirectory(gl)`) and 2 in
+    `examples/experimental/osspecific/windows/retropad/controller.cpp:43`, `retropad.cpp:940`
+    (`osspecific/windows/CMakeLists.txt:9`). This is the first family where every wrapper has a *compiled* call site, so
+    the liveness question moves one level up (see the icon U15 entry) - a compiled site is not a reached site.
+    Adjacent-name note: `OpenIcon` (`user32.h:190`, Window section) does have a live LAYER caller,
+    `WindowController::OpenIcon` at `ui/gui/controllers/windowcontroller.cpp:325`, even though the SDK groups it with the
+    icon family - a U21-shaped placement note, not an icon.cpp instance.
 
 - **U20 - the caller-side `Cursor`/`Icon` ownership model is wrong at the sites this layer feeds.** Opened 30 Oct 2026
   (session 9, `cursor.cpp`) after tracing that TU's call sites; **recorded, not fixed** - it is `winqor_gui` /
@@ -715,6 +771,43 @@ authoritative. **P6** is a live binding trap for hook-family / `*MsgFilter*` wor
   live path. For the audit: the folder's own wrappers make the distinction the callers miss - `LoadCursorT`/`GetCursor`
   return shared system handles and `CreateCursor`/`LoadCursorFromFileT`/`CopyCursorT` return private ones (now stated in
   the `cursor.cpp` TU comment), and `Cursor::Cursor(const wchar_t* id)` correctly sets `m_owning = false`.
+  **The `Icon` half was measured rather than inferred on 1 Nov 2026 (session 18)**, because `icon.cpp` is the TU that
+  feeds it. Drivers `tmp/_tmp_run_icon_own_probe.bat` and `tmp/_tmp_run_icon_null_probe.bat`, outputs
+  `tmp/_tmp_icon_own_probe.txt` and `tmp/_tmp_icon_null_probe.txt` (pure SDK calls, so they measure the contract the
+  wrappers rely on, not the QOR layer):
+  - **`LoadIcon` hands out a shared handle, and `DestroyIcon` on it is silently tolerated.** `LoadIconW(NULL,
+    IDI_APPLICATION)` -> `0x1002B`, and loading it twice returns **the same value**; `DestroyIcon` on it returns **1**
+    (success) leaving `GetLastError` 1402 (`ERROR_INVALID_HANDLE`), a second `DestroyIcon` on the same value also returns
+    1, and `GetIconInfo` on it still succeeds afterwards. The predefined ids are therefore not handle-table entries at
+    all (the value sits in the low word), which is exactly why `windowfactory.cpp:89`'s `~Icon` destroying a shared
+    handle has never shown up as a failure: the contract is violated, and the OS absorbs it.
+  - **`Icon(nullptr)` at `windowfactory.cpp:92` selects `Icon(const wchar_t* id)`, not the handle ctor** - the
+    `PrimitiveHandle(void*)` converting ctor (`common/handles/handle.h:14`) is not `explicit`, but the standard
+    conversion `nullptr` -> `const wchar_t*` outranks the user-defined one. Proved with `tmp/_tmp_icon_overload_probe.cpp`
+    (declared-only overloads returning distinct tag types + `decltype`; compile-only, both `narrow_compile_exit=0` and
+    `wide_compile_exit=0` from `tmp/_tmp_run_icon_overload_probe.bat` into `tmp/_tmp_icon_overload_probe.txt`; the
+    constexpr-object form of the same test fails as C2131 "unevaluable pointer value", so do not retry it). The same
+    probe run in both worlds shows `IDI_APPLICATION` is a macro whose type follows `UNICODE` at the use site, and
+    `tmp/_tmp_icon_include_probe.cpp` + `tmp/_tmp_run_icon_include_probe.bat` (`include_probe_compile_exit=0`) settle
+    the real TU: after `windowfactory.h` then `api_layer/user/user32.h`, `UNICODE` **is** defined and
+    `decltype(IDI_APPLICATION)` is `LPWSTR`, so line `:89` really does reach `Icon(const wchar_t*)` -> `LoadIconT` (in a
+    narrow TU it would silently take the handle ctor and call **no** wrapper at all - another U26-shaped fork).
+    So line `:92` asks the OS for an icon with a **null name**: measured `LoadIconW(NULL, nullptr)` -> **NULL** with
+    `GetLastError` 1813 (`ERROR_RESOURCE_NAME_NOT_FOUND`), and the owning `~Icon` then calls `DestroyIcon(NULL)` ->
+    **0**, `GetLastError` 1402. The "no small icon" intent is served only by a failure path, and the layer deliberately
+    reports no error on `HICON` returns (U2), so a caller cannot tell "no icon wanted" from "icon load failed" -
+    `m_handle` is null either way.
+  - **The stored handle outlives the owner that destroys it.** `WindowClass::SetIcon(const Icon&)`
+    (`ui/gui/factories/windowclass.cpp:123-126`) keeps `m_hIcon = icon.GetHandle()` - a raw handle copy, with no
+    refcount and no reset (`PrimitiveHandle` has no release API, `handle.h:9-47`) - while the `Icon` argument at
+    `windowfactory.cpp:89`/`:92` is a temporary that runs `DestroyIcon` at the end of the full-expression; `WindowClass`
+    feeds the stored value to `RegisterClassExW` at `windowclassregistration.cpp:44`/`:49`. The OS tolerance measured
+    above is the only reason this is not visible today. The spurious `PrimitiveHandle` leak warning described in the
+    fourth bullet above applies identically to both `Icon` temporaries.
+  - **Checked and *not* a defect:** the six `Icon` ctors that assign `m_owning` inside the body
+    (`ui/gui/gdiobjects/icon.cpp:22-56`) cannot leave a half-built object with an indeterminate `m_owning`, because if
+    the wrapper call throws (`Library::Call` throws when the module or name is missing, U7) the ctor never completes, so
+    `~Icon` is not run. Recorded so the next session does not re-open it.
 
 
 - **U21 - the "DC functions" section is not the SDK's DC family, and the SDK's DC family is split across two TUs.**
@@ -832,6 +925,25 @@ authoritative. **P6** is a live binding trap for hook-family / `*MsgFilter*` wor
   `../returncheck.h` is included by 37 of the 38 TUs and actually used by 2 (`devicecontext.cpp` mentions it in a comment
   only; the 2 real users are `errorhandling.cpp:77-83` and `processthread.cpp:20,:29,:45`) - instrument
   `tmp/_tmp_returncheck_usage.ps1`, whose raw count over-reads comment mentions.
+  **Escalated by `icon.cpp` (session 18, 1 Nov 2026): in the `GetIconInfoExT` path the include-order width is a silent
+  buffer overrun, not a link error.** `winuser.h:11009`-`:11014` defines `ICONINFOEX`/`PICONINFOEX` **twice**, once under
+  `#ifdef UNICODE` (`:11009`) and once in its `#else` arm (`:11012`) - measured with `tmp/_tmp_icon_type_guards.ps1`.
+  `user32.h:436` takes `::PICONINFOEX`, but `qor_pp_useswinapiAW` token-pastes `GetIconInfoExW` unconditionally, so a TU
+  that sees `<windows.h>` before `kernel32.h` (the only place `UNICODE`/`_UNICODE` are defined, `kernel32.h:7-10`)
+  compiles the **560-byte A shape** of the parameter type against the **W** entry point, which writes **1,080** bytes: no
+  compile error, no link error, just 520 bytes written past the end of the caller's struct. Measured with
+  `tmp/_tmp_iconinfoex_mirror.cpp` (SDK types plus a hand copy of the caller-side mirrors) and confirmed against the real
+  headers compile-only with `tmp/_tmp_iconinfoex_assert.cpp` + `tmp/_tmp_run_iconinfoex_assert.bat`
+  (`assert_compile_exit=0`): in the library's own include order (`user32.h:7` pulls in `kernel32.h` first)
+  `sizeof(ICONINFOEX)` = 1080 = `sizeof(ICONINFOEXW)` while `sizeof(ICONINFOEXA)` = 560, and the caller-side mirror
+  `ui/gui/gdiobjects/icon.h:27-38` is field-for-field `ICONINFOEXW` (`cbSize` 0, `fIcon` 4, `xHotspot` 8, `yHotspot` 12,
+  `hbmMask` 16, `hbmColor` 24, `wResID` 32, `szModName` 34, `szResName` 554) because QOR spells its own `TCHAR` from
+  `qor_pp_unicode` (`common/structures.h:57-65`, `src/configuration/configuration.h:13` = 1) rather than from `_UNICODE`.
+  `sizeof(ICONINFO)` = 32 = the `IconInfo` mirror at `icon.h:18-25` with the same offsets, so the two `reinterpret_cast`s
+  at `ui/gui/gdiobjects/icon.cpp:89`/`:94` are layout-safe **as the tree is configured today**, and the path is
+  U15-unreachable as well. This is the first U26 instance whose failure mode is corruption rather than a missing-symbol
+  link error, and it is a *type* dependency, not just a name dependency: closing U26 for the `*T` surface does not close
+  it unless the published headers stay self-sufficient about which `ICONINFOEX` they mean.
 
 
 > NOTE: the "Remaining queue" paragraph at the end of the section below is the pre-session-17 snapshot (21 TUs,
@@ -913,27 +1025,33 @@ windowproperties, winqor_api_user (module glue). `hook.cpp` is in the build (see
 
 ## Defect census (sessions 1-16 snapshot; moved verbatim out of status.md on 1 Nov 2026)
 
-### Defect census, sessions 1-16 (17 TU entries, 123 wrappers)
+### Defect census, sessions 1-18 (19 TU entries, 141 wrappers)
 - **Run-time-breaking defects: 9, all fixed.** 6 bad bindings - `combobox.cpp` x2 (session 6, P1), `coordtransform.cpp`
   x3 (session 8, P5's "wrong stem" class), `dialog.cpp` x1 (session 13, P1); plus 3 declaration defects that made every
   call site ill-formed - the three WinEvent members missing `static` (session 2b, C2352 x3) and `ConsoleControl` missing
-  `static` (session 7, U13, now closed).
+  `static` (session 7, U13, now closed). Sessions 17 (`hook`) and 18 (`icon`) found none: both TUs' bindings were already
+  D13-correct and verified three ways.
 - **Still open in unreviewed TUs:** P1 x5 (`keyboard.cpp` x3, `window.cpp:124`, `mouse.cpp:82`), P2 x6 (`menu.cpp` x2,
   `message.cpp` x4), P3 x2 (`CreateWindowT`, `CopyCursorT` naming), U4's ~97 declared-but-undefined members including
   tasks T1/T3/T4, and U18's `window.cpp` `void`-returning point converters.
-- **Convention/consistency fixes:** 2 parameter names (`devicemanagement`), 2 decl/def parameter divergences and 1
+- **Convention/consistency fixes:** 10 parameter names made to match the SDK (`devicemanagement` 2, `hook` 1, `icon` 7 -
+  the folder-wide divergence scan now reads **0 over 426 definitions**), 2 decl/def parameter divergences and 1
   parameter type `LPTSTR` -> `LPCTSTR` (`desktop`), 2 member renames for the `T` suffix (`combobox`, the only published
   renames of the review), 1 module-token fix over 3 sites (`combobox` `User32` -> `user32`, 416/428 folder-wide now),
   3 `::DLGPROC` spellings (`dialog`), 1 implicit template-argument site (`brush`), 2 deducing `Call<>` sites (`desktop`),
   4 `()` -> `(void)` pairs (`clipboard`), 1 stray inner space (`devicecontext`), 4 trailing-space / `)` nits
   (`accessibility` x2, `errorhandling` x2), 2 nits (`console` comma space, section comment), 1 dead `#undef` in each of 2
-  TUs (`console`, `help` - the folder is now clean of `#undef` in sources), plus several stray blank lines.
+  TUs (`console`, `help` - the folder is now clean of `#undef` in sources), 1 `::`-spelling split in a `Call<>` argument
+  (`icon.cpp:48`) and 1 missing final newline (`icon.cpp`), plus several stray blank lines.
 - **Documentation:** every reviewed TU now carries a TU comment block recording the D13 binding rationale, the SDK/SAL
-  and ownership contracts, the section-coverage claim and the U-item tallies - the largest being `help.cpp`'s 70 lines.
+  and ownership contracts, the section-coverage claim and the U-item tallies - the largest being `help.cpp`'s 70 lines,
+  then `hook.cpp`'s 64 and `icon.cpp`'s 55.
 - **TUs with 0 defects of any class** (comment-only sessions): `caret`, `clipboard`, `cursor`, `devicecontext`,
-  `filledshapes`, `errorhandling`, `help`, plus `coordtransform`/`devicemanagement`/`console` for the binding half.
+  `filledshapes`, `errorhandling`, `help`, plus `coordtransform`/`devicemanagement`/`console`/`hook`/`icon` for the
+  binding half - `icon` and `hook` were clean on correctness and only needed SDK parameter names.
 - **Folder-wide measures re-run by these sessions** (current values in the registers): 428 bindings over 38 TUs, P5 flags
-  4 (1 live); 0 parameter-name divergences over 426 definitions since session 12; U14 423 explicit / 6 deducing, spacing
-  250 tight / 179 spaced; U15 and U19 per-family tallies accumulate in their own entries; `user32.h` 525 declarations,
-  428 `static` since session 7.
+  4 (1 live); 0 parameter-name divergences over 426 definitions (re-run 1 Nov); U14 422 explicit / 6 deducing, spacing
+  250 tight / 178 spaced (re-run 1 Nov, `tmp/_tmp_u14_census_s18.txt` - the pair of numbers moved by one since session
+  16's 423/179 as `icon.cpp:48`'s mis-spelled `Call<>` argument became countable in the normal shape); U15 and U19
+  per-family tallies accumulate in their own entries; `user32.h` 525 declarations, 428 `static` since session 7.
 
