@@ -9,11 +9,17 @@ Last updated: 1 Nov 2026 (session 18 `icon.cpp` CLOSED - code `83d9f019`, record
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record was **split on 1 Nov 2026**: `status.md` had reached 1,222 lines / 145 KB (open items 709 lines =
   52%) and no session could hold it, which is what caused the repeated context failures and compaction cycles. Boot on
-  `src/platform/os/windows/api_layer/user/status.md` - a **145-line brief** (live state, queue, the two convention
-  decisions, a locator giving the `registers.md` line of every register id, the census pointer, the verification gate) -
-  then open `registers.md` (verbatim G1-G6 / P1-P6 / U1-U27 / T1-T4, 1,057 lines), `method.md` (review method, tooling,
-  instrument caveats) or `session-log-archive.md` (per-TU narratives + the full session-log table) only as the step needs.
-  Findings go in `registers.md`, narratives in the archive, never in the brief, which must stay under 150 lines. The split
+  `src/platform/os/windows/api_layer/user/status.md` - a **~175-line brief** (live state, queue, the two convention
+  decisions, a generated locator giving the `registers/<file>:<line>` of every register id, the census pointer, the
+  verification gate) - then open **only the slice the locator names**. `registers/` holds the verbatim G1-G6
+  (`ground-rules.md`), P1-P5 (`prescan.md`), P6+U27 (`p6-u27.md`), U1-U26 (`u<n>.md`), T1-T4 (`tasks.md`) and the census -
+  **one register entry per file**, indexed by `registers/README.md`; `method.md` has the review method, tooling and
+  instrument caveats; `archive/` has **one narrative file per TU** plus the full session-log table, indexed by
+  `archive/README.md`.
+  Findings go in the register slice the locator names, narratives in `archive/tu/<tu>.md`, never in the brief, which must
+  stay under 180 lines. The same pass sliced `registers.md` (1,063 lines -> 33 files) and `session-log-archive.md`
+  (1,394 lines -> 19 files) by exact line range, verified by re-joining every slice and hashing it against the original
+  bytes (both `MATCH`). The first split
   was mechanical and verified (1,209 of 1,222 lines moved verbatim, every id re-located by line number, encoding and line
   endings unchanged), and it caught a live defect in the record itself: **P6 and U27 had no standalone entry at all** -
   only the session-log row-17 cell - so they are now promoted verbatim into a "P6 and U27" section of `registers.md`.

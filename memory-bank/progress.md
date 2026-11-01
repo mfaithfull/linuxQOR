@@ -27,10 +27,11 @@ Current:
   pair at `user32.h:686-687` is declared and really exported but has no defining TU and no owning file; **T4** the menu
   context-help pair at `user32.h:642-643` is declared non-static, defined in no TU and absent from the built import
   library). The running
-  record, review method, ground rules G1-G6 and the `tmp/` instrument list are split across four files in
-  `src/platform/os/windows/api_layer/user` — `status.md` (a **145-line per-session brief**, read that first),
-  `registers.md` (verbatim G/P/U/T, 1,057 lines), `method.md` (review method, tooling, instrument caveats) and
-  `session-log-archive.md` (per-TU narratives + the full session-log table). `status.md` had reached 1,222 lines / 145 KB
+  record, review method, ground rules G1-G6 and the `tmp/` instrument list are split across the files in
+  `src/platform/os/windows/api_layer/user` — `status.md` (a **~175-line per-session brief**, read that first),
+  `registers/` (verbatim G/P/U/T, **one register entry per file**, 33 slices, index `registers/README.md`),
+  `method.md` (review method, tooling, instrument caveats) and `archive/` (per-TU narratives — **one file per TU** — plus
+  the full session-log table; 19 slices, index `archive/README.md`). `status.md` had reached 1,222 lines / 145 KB
   and could no longer be held by one session, which is what caused the context cycling; it was split mechanically on
   1 Nov 2026 (verified: 1,209 of 1,222 lines moved verbatim, every register id re-located by line number, P6/U27 promoted
   out of the session-log cell into `registers.md`). Session 18 (`icon.cpp`) is **closed** as of 1 Nov 2026: code in
