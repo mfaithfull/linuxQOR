@@ -7,8 +7,8 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/history.md` | 63 | 1334-1394 |
 | `archive/preamble.md` | 7 | 1-5 |
 | `archive/prescan-help.md` | 121 | 1098-1216 |
-| `archive/README.md` | 26 | - |
-| `archive/session-log.md` | 145 | 1217-1333 |
+| `archive/README.md` | 27 | - |
+| `archive/session-log.md` | 164 | 1217-1333 |
 | `archive/tu/accelerator.md` | 31 | 50-78 |
 | `archive/tu/accessibility-timer.md` | 46 | 6-49 |
 | `archive/tu/brush.md` | 53 | 79-129 |
@@ -24,3 +24,4 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/tu/dialog.md` | 81 | 830-908 |
 | `archive/tu/errorhandling.md` | 80 | 909-986 |
 | `archive/tu/filledshapes.md` | 113 | 987-1097 |
+| `archive/tu/mdi.md` | 84 | - |

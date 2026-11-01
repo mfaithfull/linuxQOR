@@ -71,7 +71,7 @@ Remaining queue (17 TUs, alphabetical; sessions 1-20 = `accelerator`, `accessibi
 `combobox`, `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
 `errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`, `keyboard` done): mdi, menu, message, monitor, mouse,
 painting, processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
-windowproperties, winqor_api_user (module glue). `mdi.cpp` is next (session 21; 1,896 bytes, the smallest real TU - the
+windowproperties, winqor_api_user (module glue). `menu.cpp` is next (session 22; 289 lines, 39 wrappers, the 2 remaining P2 bindings at `:159`/`:194`; `mdi.cpp` (session 21) is done - the
 folder's last 2 P1 bindings are in `window.cpp:124` and `mouse.cpp:82`, each for its own session; the user decided at the
 session-20 close that `mouse.cpp`'s 10 broken bindings get **no out-of-turn hotfix** - see the P1 entry).
 

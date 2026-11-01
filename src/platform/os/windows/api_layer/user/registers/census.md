@@ -1,8 +1,8 @@
-# Defect census, sessions 1-20 (verbatim)
+# Defect census, sessions 1-21 (verbatim)
 
 ## Defect census (sessions 1-16 snapshot; moved verbatim out of status.md on 1 Nov 2026)
 
-### Defect census, sessions 1-20 (21 TU entries, 176 wrappers)
+### Defect census, sessions 1-21 (22 TU entries, 180 wrappers)
 - **Run-time-breaking defects: 12, all fixed.** 9 bad bindings - `combobox.cpp` x2 (session 6, P1), `coordtransform.cpp`
   x3 (session 8, P5's "wrong stem" class), `dialog.cpp` x1 (session 13, P1), `keyboard.cpp` x3 (session 20, P1:
   `GetKeyboardLayoutNameT`, `VkKeyScanT`, `VkKeyScanExT` asked `GetProcAddress` for the member's own `*T` spelling);
@@ -55,4 +55,15 @@
   U15 and U19 per-family tallies accumulate in their own entries; `user32.h` 525 declarations, 428 `static` since
   session 7, 695 lines; declared-but-undefined per `_tmp_decl_no_def_scan.ps1` **491 parsed / 426 defined / 65
   undefined** as of session 19 (was 490/426/64 while `:637` hid behind a trailing comment - see the header note above).
+- **Folder-wide measures after session 21 (`mdi.cpp`, 1 Nov 2026).** 22 of 38 TUs reviewed. `mdi.cpp`: 4 wrappers, 4
+  bindings, **0 binding defects** - all four already D13-correct, verified by `/EP` literal (`tmp/_tmp_mdi_pp.txt`),
+  export table and live probe (`tmp/_tmp_mdi_probe_s21.txt`); **0 published-signature or parameter-name divergences**;
+  **1 internal defect fixed** - the `INT` in `DefFrameProcT`'s `Call<>` list (U14), which takes the folder's count of
+  uppercase-`INT` template arguments from 1 to **0** (`tmp/_tmp_int_sites_s21.ps1`). Unchanged folder totals: 428
+  bindings, **17 unresolvable** (`tmp/_tmp_p1census_s21.txt` - `menu.cpp` 2, `message.cpp` 4, `mouse.cpp` 10,
+  `window.cpp` 1); U14(b) 424 explicit / 4 deducing; U14(c) 37 defs `(void)` / 1 `()`; T-suffix census
+  525 / 108 / 404 / 11 / 2 (`tmp/_tmp_tsuffix_s21_full.txt`); U4 491 parsed / 426 defined / 65 undefined; `user32.h`
+  untouched at 695 lines. New this session: **U26's third mirror-struct instance** with the first x86-vs-x64 layout
+  measurement of the review (`tmp/_tmp_msg_mirror_s21.cpp`/`.bat`), and the first family with **0 U19 bypass** (the MDI
+  family has no host code anywhere in the tree). Gate: `tmp/_tmp_cl_all_s21c.log`, 38/38 at `/W4`, exit 0, 0 diagnostics.
 

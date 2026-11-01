@@ -1,13 +1,23 @@
 # Progress
 
-Last updated: 1 Nov 2026 (session 20 `keyboard.cpp` CLOSED - code `4948838d`, record in this pass; next session 21 is `mdi.cpp`).
+Last updated: 1 Nov 2026 (session 21 `mdi.cpp` CLOSED - **code uncommitted**, record in this pass; next session 22 is
+`menu.cpp`, and `archive/session-log.md` is over its size ceiling and must be sliced first).
 
 Current:
-- **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **21 of 38 TUs
+- **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **22 of 38 TUs
   reviewed**
-  in sessions 1-20 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
+  in sessions 1-21 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
   `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`,
-  `help`, `hook`, `icon`, `ime`, `keyboard` - **session 20 `keyboard.cpp` closed 1 Nov 2026**: 34 wrappers, **the 3 P1
+  `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi` - **session 21 `mdi.cpp` closed 1 Nov 2026**: 4 wrappers, **0 binding /
+  correctness / UB / convention-surface defects** - all four bindings were already D13-correct (`/EP` literals, export
+  table, live probe), signatures and parameter names match `winuser.h` field-for-field; the one fix is internal,
+  `DefFrameProcT`'s `Call<>` named `INT` where its own signature and both SDK prototypes say `UINT` (the folder's only
+  uppercase-`INT` template argument, now 0 of 435 such lists). New findings: **U21 third instance** (the SDK's `#ifndef NOMDI`
+  block, `winuser.h:12074`-`:12261`, is split 4 here + 3 in `//Window functions` -> `window.cpp:58`, `:86`, `:572`), the
+  **first family with 0 U19 SDK bypass** (no MDI host anywhere in the tree), and **U26's third mirror-struct instance** -
+  the `Message` (`ui/gui/view/handlers/message.h:33-44`) against `::MSG` mirror, byte-identical on x64 and divergent from
+  `lParam` onward on x86 (`tmp/_tmp_msg_mirror_s21.cpp` + `.bat`, the review's first two-architecture layout
+  measurement), feeding 7 call sites across 6 wrappers and handed to `message.cpp`; **session 20 `keyboard.cpp` closed 1 Nov 2026**: 34 wrappers, **the 3 P1
   binding defects it held are fixed** (`GetKeyboardLayoutNameT` `:82`, `VkKeyScanT` `:243`, `VkKeyScanExT` `:250` asked
   `GetProcAddress` for `*T` names that do not exist - the member's own `T` suffix stringizes into the name - now
   `qor_pp_useswinapiAW(user32, <stem>)`; `/EP` emits 27 bare + 7 `*W` literals and the live probe resolves all 34), plus
@@ -17,8 +27,8 @@ Current:
   divergences recorded not fixed (U18: `GetKeyboardLayoutList` `UINT` vs SDK `int`; `keybd_event` `void*` vs SDK
   `ULONG_PTR`); the section is U21-shaped (7 of the 34 are SDK Window entry points) and has the folder's largest U19
   bypass count, 11 - none of them in a target that builds today. Gate green: TU `/W4` clean, 38/38 `/W4` clean).
-  Next: **session 21 `mdi.cpp`** (1,896 bytes - the smallest real TU in the folder; MDI section `user32.h:215-235`
-  region, to be measured in the session). The folder's last 2 P1 bindings belong to `window.cpp` and `mouse.cpp`. Measured
+  Next: **session 22 `menu.cpp`** (289 lines, 39 wrappers; it holds 2 of the 17 remaining unresolvable bindings, `menu.cpp:159,194`, both P2; `window.cpp` (615 lines) may not fit one session, and how to split that one must be decided before starting it, not mid-session). **Before session 22 writes anything** `archive/session-log.md` is at 45.4 KB, over the ~40 KB ceiling `status.md` sets: slice the oldest rows (1-8) into `archive/session-log-1-8.md` per the slice-and-rejoin-then-hash procedure of the 1 Nov splits (`archive/history.md`), then re-point the two README indexes.
+  Session 21 hand-offs for later sessions: the `Message`/`::MSG` mirror in `u26.md` (7 call sites across 6 wrappers, live for `message.cpp`) and the three MDI entry points defined in `window.cpp` (`u21.md`). Measured
   pre-flags go in the brief's
   pre-flags section first. The `hook.cpp` text below is session 17's consumed pre-flag, kept as recorded; it
   covered 4 wrappers over the "Hook functions" section `user32.h:315-319`, all `static`, all 4 defined —

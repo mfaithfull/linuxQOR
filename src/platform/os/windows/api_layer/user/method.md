@@ -160,3 +160,75 @@ hard-coded `_tmp_sdk_guard_scan.ps1`); `_tmp_fs_bypass.txt`, `_tmp_errh_bypass.t
   `keybd_event`'s `void*` vs `ULONG_PTR`) still need a manual pass over the prototype block.
 - `tmp/_tmp_comment_state.ps1 -Path <file> -Lines a,b,c` answers "is this bypass live code or a comment?" - the U19 tally
   is meaningless without it (`ui/gl/windowimpl.cpp` is 57% comment lines).
+
+### Off-protocol item fix (U6, 1 Nov 2026) - the two instruments it needed, and the gate rule it established
+
+The U6 closure was not a TU session, so it is logged here rather than as a session row. It produced one gate rule and two
+instruments that no `/W4` compile can replace:
+
+- **Rule: a change to a header shared across api_layer libraries must be gated across all of them, not just the reviewed
+  folder.** `library.h` is included by all 12 libraries, so the standing 38/38 user-folder gate proves nothing about the
+  other 68 sources. New gate: `tmp/_tmp_cl_all_apiall_u6.bat`, which compiles all **106** api_layer `.cpp` files
+  standalone at `/W4` from the response file `tmp/_tmp_u6_apiall_sources.rsp` (a `cl @file.rsp` source list is the only
+  way to pass that many paths under cmd's 8 KB command-line limit). Its pre-fix and post-fix logs
+  (`tmp/_tmp_cl_all_apiall_u6_pre.log`, `..._post.log`) are byte-identical, which is the form of evidence to quote for
+  "no regression outside the reviewed folder". **Baseline it carries:** 165 `/W4` warnings (`gdi` C4995 on the deprecated
+  `UpdateICMRegKeyW`, `uxtheme` C4100) plus one pre-existing `fatal error C1083` at `opengl/wgl.cpp:31` (cannot open
+  `gdi32.h` with this cl line) - so the extended gate exits non-zero on HEAD too, and its exit code alone is meaningless;
+  always diff it against a pre-fix run.
+- **Calling-convention evidence needs an x86 build plus the disassembly, never a compile.** On x64 there is one calling
+  convention, so every existing check is structurally blind to this defect class. `tmp/_tmp_u6_cc_probe.cpp` calls a
+  `WINAPI` callee through `Library::Call`/`voidCall`; `tmp/_tmp_u6_cc_x86.bat` compiles it with
+  `vcvarsamd64_x86.bat` (host x64, target x86) and dumps the object with `dumpbin /disasm` into
+  `tmp/_tmp_u6_cc_x86_<pre|post>.asm`. The fact to read is the instruction after the indirect `call`: caller-side cleanup
+  (`add esp,0Ch`) is `__cdecl`, no adjustment is `__stdcall`. The object dump must be written from inside the batch file -
+  `cmd /c 'foo.bat > log 2>&1'` intermittently produced no file through this shell.
+- **Census worth reusing:** `Select-String -Pattern 'qor_pp_useswinapi(AW)?\(\s*([A-Za-z0-9_]+)'` over
+  `api_layer\*\*.cpp` grouped by module gives the blast radius of anything in the binding/call path - 1,638 bindings
+  across 12 modules (user32 429, kernel32 330, gdi32 324, ole32 201, ws2_32 135, shell32 60, comctl32 53, uxtheme 48,
+  opengl32 27, dwmapi 23, Xinput1_4 7, shcore 1).
+
+### Tooling added in session 21 (`mdi.cpp`), and the caveats they carry
+
+- `tmp/_tmp_int_sites_s21.ps1` - the **`Call<>`/`voidCall<>` template-argument correctness** scan. It extracts every
+  `(Call|voidCall)\s*<[^>]*>` on a line and tests it case-**sensitively** for a standalone `INT` token, which is how a
+  template list can contradict the signature of the function it sits in. Caveats: case-sensitivity is the whole point
+  (`int` is the correct spelling for many SDK parameters, and a case-insensitive scan flags well over a hundred
+  legitimate sites across the folder); the regex stops at the first `>`, so it only reads single-level type lists; and it
+  can only see sites where the arguments were spelled out - the 4 deducing sites of U14(b) are invisible to it. Its
+  denominator is raw source text, so comments inflate it: `tmp/_tmp_callcount_s21.ps1` counts 435 `Call<>`/
+  `voidCall<>` template lists against 429 `qor_pp_useswinapi`/`...AW` occurrences and the P1 census' 428 code-line
+  bindings (`mdi.cpp` alone reads 7 because its TU comment names `Call<>` and the macros). Quote 435 for this scan,
+  428 for the census; the one site it found (`DefFrameProcT`) is now **0**. Pair it with `tmp/_tmp_sigcmp.ps1`, the
+  only instrument that compares a call site against the declaration at all.
+- `tmp/_tmp_msg_mirror_s21.cpp` + `tmp/_tmp_msg_mirror_s21.bat` - the **mirror-struct layout probe** (U26's method). The
+  caller-side field lists are copied verbatim into a probe TU next to the SDK type and `sizeof`/`offsetof` printed for
+  every field. The rule it establishes: **build it twice**, x64 (`vcvars64.bat`) and x86 (`vcvarsamd64_x86.bat`) - on
+  x64 alone this probe reported "identical" and U26's third instance would have been missed. Two caveats measured:
+  `offsetof` on a member that the SDK guards with `#ifdef _MAC` (`MSG::lPrivate`) is a hard C2039/C2618 error, so print
+  only fields both sides have; and launching a freshly-built exe from inside the batch failed
+  (`'..._x64.exe' is not recognized` while cmd had already created the `.txt` redirect file), so **run the two exes from
+  a separate invocation** and keep the batch for the builds. Same lesson as the U6 disassembly probe above: x64-only
+  evidence is structurally blind to this defect class.
+- Per-TU instrument naming settled this session: `<family>_{prescan,bypass,guards,pp,probe}_s<N>` plus the shared
+  censuses re-run with an `_s<N>` output suffix (`_tmp_p1census_s21.txt`, `_tmp_tsuffix_s21_full.txt`,
+  `_tmp_cl_all_s21.log`). The `_tmp_mdi_guards_s21.ps1` wrapper exists only because `tmp/_tmp_sdk_guard_scan.ps1` takes a
+  `-Names` **array** and `pwsh -File script.ps1 -Names A,B` delivers one string - the same trap as the U19 stem wrapper
+  recorded above. A probe that resolves names must also record that it had to `LoadLibraryW` first:
+  `GetModuleHandleW(L"user32")` fails with gle=126 in a bare console process (G5), and a probe that reports every name
+  MISSING is measuring the loader, not the export table.
+
+### Record-editing caveats (measured in session 21 while trimming the brief)
+
+- **PowerShell `-like` treats the backtick as its escape character**, so a pattern containing a markdown code span never
+  matches: the line-35 anchor of the brief returned False under -like while the same text matched under .Contains. For any
+  anchor over this record's markdown use .Contains(...) or -match [regex]::Escape(...), and verify the anchor before
+  splicing - a silent False there is how a slice loses lines.
+- **The `editor` tool matches whole lines**, so on a markdown table whose rows are one very long line it either reports
+  "text not found" or refuses an over-large payload. For those rows use a PowerShell script that replaces exact substrings
+  with [IO.File]::WriteAllText and re-measures afterwards (tmp/_tmp_slog_fix_s21.ps1, tmp/_tmp_progress_fix_s21.ps1,
+  tmp/_tmp_s21_close_a.ps1, _tmp_s21_close_b.ps1, _tmp_s21_close_c.ps1).
+- **Splices must run bottom-up** (highest line range first) and print the before/after line and CRLF counts: status.md
+  went 200 -> 179 lines / 17.4 KB in tmp/_tmp_s21_close_b.ps1, whose anchors are what caught the -like trap above.
+- **Commands sent in one batch may run concurrently**, so never verify in the same batch a file another command writes:
+  twice the reader ran first and reported the just-written compile log "does not exist" although the compile had exit 0.

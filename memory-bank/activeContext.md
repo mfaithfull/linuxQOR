@@ -1,6 +1,7 @@
 # Active Context
 
-Last updated: 1 Nov 2026 (session 20 `keyboard.cpp` CLOSED - code `4948838d`, record in this pass; session 21 is next).
+Last updated: 1 Nov 2026 (session 21 `mdi.cpp` CLOSED - **code uncommitted**, record in this pass; session 22 `menu.cpp`
+is next, and `archive/session-log.md` must be sliced before it grows further).
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
