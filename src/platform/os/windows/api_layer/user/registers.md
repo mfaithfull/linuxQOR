@@ -431,8 +431,10 @@ authoritative. **P6** is a live binding trap for hook-family / `*MsgFilter*` wor
     and `AddWindowClass` is called from built example code (`examples/experimental/osspecific/windows/mainwindow/mainwindow.cpp:339`),
     so that pair runs in any built app that creates a window. The other 12 are linked, exported and unreachable:
     `CreateIcon`, `CreateIconFromResource`, `CreateIconFromResourceEx`, `CreateIconIndirect` (their `Icon` ctors have no
-    call site), `CopyIcon` (`Icon::Clone()` has no call site, and C++17 guaranteed elision means `SetIcon(Icon(...))`
-    never invokes the copy ctor), `DrawIcon`, `DrawIconEx`, `GetIconInfo`, `GetIconInfoExT`, `LookupIconIdFromDirectory`,
+    call site), `CopyIcon` (`Icon::Clone()` has no call site, and `SetIcon(Icon(...))` never invokes the copy ctor -
+    C++17 guaranteed elision, confirmed in `tmp/obj/wf.obj`: `tmp/_tmp_wf_disasm.txt` references no
+    `??0Icon@...AEBVIcon@...` at all, only the `PEB_W` ctor), `DrawIcon`, `DrawIconEx`, `GetIconInfo`, `GetIconInfoExT`,
+    `LookupIconIdFromDirectory`,
     `LookupIconIdFromDirectoryEx`, `PrivateExtractIconsT`. The one consumer that would use the draw/query half is
     `RenderingHandler` (`ui/gui/view/handlers/rendered/rendering.cpp:122-137`, the `wmGetIcon`/`wmSetIcon` slots, built at
     `gui/CMakeLists.txt:88`), but its installation slot `m_rendering` (`view/handlers/rendered.h:51`) has **no writer**
@@ -786,7 +788,11 @@ authoritative. **P6** is a live binding trap for hook-family / `*MsgFilter*` wor
     conversion `nullptr` -> `const wchar_t*` outranks the user-defined one. Proved with `tmp/_tmp_icon_overload_probe.cpp`
     (declared-only overloads returning distinct tag types + `decltype`; compile-only, both `narrow_compile_exit=0` and
     `wide_compile_exit=0` from `tmp/_tmp_run_icon_overload_probe.bat` into `tmp/_tmp_icon_overload_probe.txt`; the
-    constexpr-object form of the same test fails as C2131 "unevaluable pointer value", so do not retry it). The same
+    constexpr-object form of the same test fails as C2131 "unevaluable pointer value", so do not retry it). Confirmed
+    **independently at the binary level**: compiling the consumer (`tmp/_tmp_compile_wf.bat` -> `tmp/obj/wf.obj`, then
+    `dumpbin /nologo /disasm` -> `tmp/_tmp_wf_disasm.txt`) shows the two temporaries at `windowfactory.cpp:89` and `:92`
+    both calling `??0Icon@win@platform@qor@@QEAA@PEB_W@Z` - `Icon(const wchar_t*)` - at `tmp/_tmp_wf_disasm.txt:614` and
+    `:701`, each followed by one `??1Icon@...UEAA@XZ` and a `SetIcon`/`SetSmallIcon` taking `AEBVIcon@...`. The same
     probe run in both worlds shows `IDI_APPLICATION` is a macro whose type follows `UNICODE` at the use site, and
     `tmp/_tmp_icon_include_probe.cpp` + `tmp/_tmp_run_icon_include_probe.bat` (`include_probe_compile_exit=0`) settle
     the real TU: after `windowfactory.h` then `api_layer/user/user32.h`, `UNICODE` **is** defined and
@@ -1045,7 +1051,7 @@ windowproperties, winqor_api_user (module glue). `hook.cpp` is in the build (see
   (`icon.cpp:48`) and 1 missing final newline (`icon.cpp`), plus several stray blank lines.
 - **Documentation:** every reviewed TU now carries a TU comment block recording the D13 binding rationale, the SDK/SAL
   and ownership contracts, the section-coverage claim and the U-item tallies - the largest being `help.cpp`'s 70 lines,
-  then `hook.cpp`'s 64 and `icon.cpp`'s 55.
+  then `hook.cpp`'s 64 and `icon.cpp`'s 54.
 - **TUs with 0 defects of any class** (comment-only sessions): `caret`, `clipboard`, `cursor`, `devicecontext`,
   `filledshapes`, `errorhandling`, `help`, plus `coordtransform`/`devicemanagement`/`console`/`hook`/`icon` for the
   binding half - `icon` and `hook` were clean on correctness and only needed SDK parameter names.

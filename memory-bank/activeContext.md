@@ -1,6 +1,6 @@
 # Active Context
 
-Last updated: 1 Nov 2026 (review record split into brief + registers + method + archive; session 18 `icon.cpp` still open).
+Last updated: 1 Nov 2026 (session 18 `icon.cpp` CLOSED - code `83d9f019`, record `ecc9b961` + the closure pass; session 19 `ime.cpp` is next).
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
@@ -9,9 +9,9 @@ Last updated: 1 Nov 2026 (review record split into brief + registers + method + 
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
 - The running record was **split on 1 Nov 2026**: `status.md` had reached 1,222 lines / 145 KB (open items 709 lines =
   52%) and no session could hold it, which is what caused the repeated context failures and compaction cycles. Boot on
-  `src/platform/os/windows/api_layer/user/status.md` - a **147-line brief** (live state, queue, the two convention
+  `src/platform/os/windows/api_layer/user/status.md` - a **145-line brief** (live state, queue, the two convention
   decisions, a locator giving the `registers.md` line of every register id, the census pointer, the verification gate) -
-  then open `registers.md` (verbatim G1-G6 / P1-P6 / U1-U27 / T1-T4, 939 lines), `method.md` (review method, tooling,
+  then open `registers.md` (verbatim G1-G6 / P1-P6 / U1-U27 / T1-T4, 1,057 lines), `method.md` (review method, tooling,
   instrument caveats) or `session-log-archive.md` (per-TU narratives + the full session-log table) only as the step needs.
   Findings go in `registers.md`, narratives in the archive, never in the brief, which must stay under 150 lines. The split
   was mechanical and verified (1,209 of 1,222 lines moved verbatim, every id re-located by line number, encoding and line

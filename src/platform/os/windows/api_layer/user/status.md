@@ -24,21 +24,11 @@ outgrew a session's context once and the review started cycling, so keep it unde
 - **19 TUs reviewed** (sessions 1-18): `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`, `combobox`,
   `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
   `errorhandling`, `filledshapes`, `help`, `hook`, `icon`.
-- **Session 18 (`icon.cpp`) CLOSED 1 Nov 2026.** Its code landed earlier and was committed; this pass finished the bookkeeping that commit left out - session-log **row 18**, the `icon` tallies in
-  **U15/U16/U17/U19/U20/U26**, a refreshed census, and this file's locator/queue/live state. Verdict: **0 binding,
-  correctness, UB or convention defects** in the 14 wrappers - all 14 were already D13-correct (11 bare + 3 `AW`, and the
-  3 `AW` are exactly the SDK's three Icon A/W families). Fixed: **7 parameter names** in `user32.h:430`/`:436`/`:440` to
-  match `winuser.h` (the largest naming batch of the review; the folder-wide scan now reads 0 divergent names over 426
-  definitions), the `::`-spelling split at `icon.cpp:48`, a missing final newline, and a 55-line TU comment. Gate re-run
-  green: **38/38 at `/W4`**.
-- **Findings that grew out of it** (registers, not new TUs): **U26 escalated** - `ICONINFOEX` has two definitions
-  (`#ifdef UNICODE`, `winuser.h:11009`/`:11012`), so a consumer that sees `<windows.h>` before `kernel32.h` compiles the
-  560-byte A struct against the W entry point that writes 1,080 bytes: a silent overrun, the first U26 instance that is
-  corruption rather than a link error. **U20's `Icon` half measured** (shared `LoadIcon` pseudo-handle tolerated by
-  `DestroyIcon`; `Icon(nullptr)` at `windowfactory.cpp:92` really binds `LoadIconW(NULL, nullptr)` -> NULL; the handle
-  `WindowClass::SetIcon` stores outlives the `Icon` that destroys it). **U15**: 12 of the 14 wrappers are unreachable -
-  every one of them is called only by the caller-side `Icon` class, whose methods have no call sites.
-- **First job of the next session: open session 19 on `ime.cpp`** (23 lines, "IME functions" section) - first measure its pre-flags into the section below.
+- **Session 18 (`icon.cpp`) CLOSED 1 Nov 2026** - verdict, the 7 parameter-name fixes and the per-family tallies are row 18
+  of `session-log-archive.md` and the `icon` entries under **U15/U16/U17/U19/U20/U26** in `registers.md` (U26 escalated to a
+  silent `ICONINFOEX` overrun; U15 shows 12 of 14 wrappers unreachable). Code committed; gate green **38/38** at `/W4`.
+- **Session 19 (`ime.cpp`) OPEN 1 Nov 2026** - 23 lines, 1 wrapper (`SendIMEMessageEx`, `user32.h:636`, in an unlabelled
+  block). Pre-flags measured below; verdict and fixes still to be agreed with the user.
 
 ## Queue - 19 TUs left, alphabetical (lines = on-disk physical lines, measured 1 Nov 2026)
 
@@ -55,26 +45,22 @@ outgrew a session's context once and the review started cycling, so keep it unde
 | 27 | `processthread.cpp` | 57 | 37 | `winqor_api_user.cpp` (glue) | 14 |
 | 28 | `rectangle.cpp` | 93 | | | |
 
-2,323 lines in total, and **1,533 of them (66%) are in five TUs**: `window`, `menu`, `keyboard`, `painting`, `message`.
-Those same five hold every remaining flagged defect: **P1 x5** (`keyboard.cpp` x3, `window.cpp:124`, `mouse.cpp:82`) and
-**P2 x6** (`menu.cpp` x2, `message.cpp` x4). `window.cpp` (615 lines, 85 bindings of which 75 bare, plus P3 `CreateWindowT`
-and U18's `void`-returning point converters) is the one TU that may not fit a single session - decide how to split it
-before starting it, do not discover it mid-session.
+2,323 lines in total, and **1,533 of them (66%) are in five TUs**: `window`, `menu`, `keyboard`, `painting`, `message` -
+which also hold every remaining flagged defect: **P1 x5** (`keyboard.cpp` x3, `window.cpp:124`, `mouse.cpp:82`) and
+**P2 x6** (`menu.cpp` x2, `message.cpp` x4). `window.cpp` (615 lines, 85 bindings, P3 `CreateWindowT`, U18's `void`
+converters) may not fit one session - decide how to split it before starting it, not mid-session.
 
 ## Convention decision
 
-- **D13 (adopted 29 Oct 2026, user decision; recorded in `docs/agent/DECISIONS.md`).** Explicit
-  `qor_pp_useswinapiAW(<mod>, Stem)` wherever the SDK has an A/W family; the bare `qor_pp_useswinapi` is
-  reserved for entry points that are a single export with no A/W variants (`DestroyAcceleratorTable`,
-  `ShowWindow`, `GetComboBoxInfo`, ...). Never rely on the SDK's `Stem -> StemW` macro surviving into the
-  binding expression (G1). Apply this in every TU as it is reviewed; `accelerator.cpp` already conforms.
-- **Return-check / error-handler policy in this library (settled 29 Oct 2026, user decision, session 3).** **Leave
-  it as-is: no `Win32ErrorHandler _;` and no `CheckReturn`/`CheckNonZeroHandle` is to be added to these wrappers**,
-  even though `api_layer/shell` and `api_layer/kernel` use both and G6 makes `CheckReturn` always active. Each TU
-  session still *records* which call sites would take them (U1/U2 instances) so the decision can be revisited with
-  complete data, but no session changes behaviour. Consequence to keep in mind while reviewing: a failure that
-  Win32 reports as `FALSE`/NULL/0 is silent in this library, and a swallowed SEH fault is indistinguishable from a
-  legitimate zero (U7).
+- **D13 (adopted 29 Oct 2026, user decision; `docs/agent/DECISIONS.md`).** Explicit `qor_pp_useswinapiAW(<mod>, Stem)`
+  wherever the SDK has an A/W family; bare `qor_pp_useswinapi` only for entry points that are a single export with no A/W
+  variants (`ShowWindow`, `GetComboBoxInfo`, ...). Never rely on the SDK's `Stem -> StemW` macro surviving into the binding
+  expression (G1). Apply in every TU as it is reviewed.
+- **Return-check / error-handler policy (settled 29 Oct 2026, user decision, session 3).** **Leave as-is: no
+  `Win32ErrorHandler _;` and no `CheckReturn`/`CheckNonZeroHandle` in these wrappers**, even though `api_layer/shell` and
+  `api_layer/kernel` use both and G6 makes `CheckReturn` always active. Sessions still *record* the sites that would take
+  them (U1/U2) but change no behaviour. So a Win32 `FALSE`/NULL/0 failure is silent here, and a swallowed SEH fault is
+  indistinguishable from a legitimate zero (U7).
 
 
 ## Register locator - id -> where its text lives in `registers.md`
@@ -133,13 +119,42 @@ the first line of that entry as written at session 18.
 ### Verification gate (identical every session)
 Edited TU compiles standalone at `/W4` exit 0; the whole library compiles **38/38 at `/W4`, exit 0, no diagnostics**;
 `cl /EP` re-run after the edit still yields the expected binding literals; `user32.h` untouched unless the row says
-otherwise. Session logs in `tmp/`: `_tmp_cl_all_s9/s11*/s12/s13.log` (44 objects), sessions 14-18 via `cmd /c
-tmp/_tmp_cl_all.bat` - latest closure run `tmp/_tmp_cl_all_s18c.log` (43 lines, no `error|warning` hits other than the
-**filename** `errorhandling.cpp`).
+otherwise. Latest closure run `tmp/_tmp_cl_all_s19.log` (43 lines, exit 0, 0 hits for `error C|warning C|fatal`); earlier
+runs `_tmp_cl_all_s9/s11*/s12/s13/s17/s18*.log`.
 
 ## Pre-flags for the current TU (rolling - keep this under ~40 lines)
 
-None pending - session 18's `icon.cpp` pre-flags were consumed and moved to `session-log-archive.md` ("Moved out of `status.md` on 1 Nov 2026"), raw instrument output still in `tmp/_tmp_icon_*`. When you open session 19, measure and write its `ime.cpp` pre-flags HERE, then move them to the archive when that session closes.
+**`ime.cpp` (session 19) - measured 1 Nov 2026.** Raw output: `tmp/_tmp_ime_pre.txt` (via `tmp/_tmp_ime_pre.bat`, one
+owner per file) + `_tmp_ime_pp.txt`, `_tmp_name_resolve_s19.txt`, `_tmp_decl_no_def_s19.txt`, `_tmp_ime_linkermember.txt`,
+`_tmp_fmt_check.ps1`.
+- **No "IME functions" section exists in `user32.h`:** `:635-639` is an **unlabelled 4-declaration block** between
+  `//Window-Class functions` (`:619`) and `//Shell functions` (`:641`) - `DisableProcessWindowsGhosting` `:635`
+  (non-static, defined nowhere), `SendIMEMessageEx` `:636` (static, this TU), `WINNLSEnableIME` `:637` (non-static,
+  defined nowhere, trailing `//Obselete do not use`), `GetDpiForWindow` `:639` (static, defined at `window.cpp:608` -
+  session 33). This TU owns **1 of 4**; U21-shaped placement, no section comment to match.
+- **Binding already D13-correct and load-bearing:** `cl /EP` -> `"SendIMEMessageExW"`; probe bare **MISSING**, `A` 313 /
+  `W` 314 **RESOLVED** -> 0 P1, 0 P2. Bare `WINNLSEnableIME` **RESOLVED** (3E6) with `A`/`W` **MISSING** - a genuine
+  single export, so bare is the right spelling if it is ever wrapped.
+- **The SDK prototypes are not in the layer's include chain at all:** they live in the SDK's **`Ime.h`** (`:35`/`:36`,
+  under `#ifndef _IME_` `:16` + Desktop partition `:22`, macro arms `:38`/`:40`), which nothing here includes, and
+  `IMESTRUCT` (`Ime.h:46-55`) has **0 occurrences** in the TU's preprocessed output and 0 in `src` - so the wrapper's
+  `LPARAM` (documented as a `PIMESTRUCT`) names no type. `WINNLSEnableIME`/`WINNLSGetEnableStatus`/`WINNLSGetIMEHotkey`
+  are declared in **no** SDK `um` header (0 hits in `10.0.26100.0\um\*.h`) though all three export (3E6/3E7/3E8, RESOLVED).
+- **U16 0 of 1** (`_IME_` + Desktop only, no version guard - and the ill-formed-type sub-case cannot apply, the SDK
+  declaration is never visible). **U13/U14/U18 clean:** sigcmp 1/1 `decl==def ok` + 1/1 `Call ok`,
+  `Call< LRESULT, HWND, LPARAM >` explicit (spaced), return matches SDK `LRESULT`; 0 name divergence, and the SDK
+  parameters are **unnamed** (`IN HWND, IN LPARAM`), so SDK name comparison is impossible (the `help.cpp` case).
+- **U4: 2 declared-but-undefined members here** - `:635` and `:637`. `_tmp_decl_no_def_scan.ps1` sees only `:635`
+  (490 decls / 426 defined / 64 undefined) because its regex needs `;` at line end and `:637` has a trailing comment -
+  measured blind spot, true count >= 65. Both non-static, both single exports -> T4-shaped, candidate **T5**.
+  `dumpbin /linkermember:1` publishes `SendIMEMessageEx` (`@@SA_J`, static) and `GetDpiForWindow`; neither undefined member.
+- **U15: 1 of 1 unreachable** - sole caller `WindowController::SendIMEMessageEx` (`windowcontroller.cpp:773-775`,
+  published `windowcontroller.h:282`) has no call site in `src`/`examples`/`test`. **U19: 1 LAYER / 1 INDIRECT / 0 BYPASS /
+  0 MEMBER.** The gui IME path is dead too: `IMEHandler` (`view/handlers/interactive/ime.cpp`, built) sits in `m_IME`
+  (`interactive.h:57`), read at `interactive.cpp:41`, **never written** -> never installed, and calls no wrapper. The
+  `Imm*` family (imm32) is wrapped nowhere in the tree.
+- **U17: 1 of the 11** (`:636` is in the census list; re-run 1 Nov unchanged 525/108/404/11/2). Shape: 23 lines, **no TU
+  comment block** (3 comment lines = licence + include-order note), pure ASCII, 0 tabs, 0 trailing whitespace, CRLF, final LF.
 
 ## How this record is split
 
