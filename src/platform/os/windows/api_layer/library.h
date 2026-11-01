@@ -27,10 +27,23 @@ namespace qor { namespace win { namespace api {
 			return EXCEPTION_EXECUTE_HANDLER;
 		}
 
+		//Every entry point reached through DefProc is a WINAPI (__stdcall) export of a Win32 system DLL -
+		//the 1638 qor_pp_useswinapi/AW bindings in this tree name user32, kernel32, gdi32, ole32, ws2_32,
+		//shell32, comctl32, uxtheme, opengl32, dwmapi, Xinput1_4 and shcore only. The pointer the call is
+		//made through must therefore carry the same convention as DefProc itself; a default (__cdecl) fPtr
+		//makes the call site clean up the stack after a callee that already cleaned it up with "ret N",
+		//which on Win32/x86 pops the return address. The mismatch is invisible on x64, where there is a
+		//single calling convention, and no existing check could see it because Library::Call has no
+		//prototype to compare against. Measured with tmp/_tmp_u6_cc_probe.cpp built for x86 by
+		//tmp/_tmp_u6_cc_x86.bat: before the fix the disassembly of Call emitted "call dword ptr [...]"
+		//followed by "add esp,0Ch"; after it, no stack adjustment. See open item U6.
+		//inlineCall/voidInlineCall below stay unqualified deliberately - their argument is the address of an
+		//SDK FORCEINLINE definition (winbase.h:7915 InitializeThreadpoolEnvironment and its five siblings), which the
+		//SDK declares with the default convention.
 		template< typename ret, class ...MethodArgs >
 		static ret Call(const DefProc pProc, MethodArgs... args)
 		{
-			typedef ret(*fPtr)(MethodArgs...);
+			typedef ret(__stdcall *fPtr)(MethodArgs...);//__stdcall like DefProc, not the default __cdecl
 
 			fPtr FP = reinterpret_cast<fPtr>(pProc);
 
@@ -52,7 +65,7 @@ namespace qor { namespace win { namespace api {
 		template< class ...MethodArgs  >
 		static void voidCall(const DefProc pProc, MethodArgs... args)
 		{
-			typedef void(*fPtr)(MethodArgs...);
+			typedef void(__stdcall *fPtr)(MethodArgs...);//__stdcall like DefProc, not the default __cdecl
 
 			fPtr FP = reinterpret_cast<fPtr>(pProc);
 

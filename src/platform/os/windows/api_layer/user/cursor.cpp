@@ -31,7 +31,8 @@ namespace qor { namespace win { namespace api {
     //DECLARE_HANDLE(HCURSOR) at :133 is the "_MAC"-only arm of that same #ifndef and is not what this TU gets - /EP of
     //cursor.cpp has exactly one HCURSOR typedef, "typedef HICON HCURSOR;" (tmp/_tmp_cursor_pp.txt:174186). So HCURSOR and
     //HICON are one type here and Call< HCURSOR, HCURSOR > against the HICON WINAPI(HICON) export is type-identical; the
-    //only calling risk in that path is the U6 __stdcall-vs-__cdecl fPtr mismatch, which every wrapper in the folder shares.
+    //only calling risk in that path was the U6 __stdcall-vs-__cdecl fPtr mismatch, which every wrapper in the folder
+    //shared until it was closed on 1 Nov 2026 (library.h:46/:68 now spell fPtr __stdcall, like DefProc at :16).
     //Ownership: CreateCursor, LoadCursorFromFileT and CopyCursorT each return a handle the caller must DestroyCursor,
     //while LoadCursorT and GetCursor return shared system handles that must not be destroyed. SetSystemCursor takes no
     //ownership of hcur (winuser.h:10728-10730 carries no ownership SAL and documents no transfer), and it and
