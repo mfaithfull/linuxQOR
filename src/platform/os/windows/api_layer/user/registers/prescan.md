@@ -46,7 +46,17 @@ TUs still to be reviewed:
     ask for `DragDetectW`, `GetCaptureW`, ... `LPTRACKMOUSEEVENTW` and cache a NULL `pFunc` - **10 of 10 wrappers in
     that TU throw on first call**. `mouse.cpp`'s session is therefore a whole-TU binding fix, not a one-line one; the
     `AW`-on-a-single-export shape is invisible to P5 (stem == member) and was only caught by re-running the folder-wide
-    AW checklist after the keyboard fix. `tmp/_tmp_kb_awpair_s20.ps1` is the per-stem bare/A/W check.
+    AW checklist after the keyboard fix. `tmp/_tmp_kb_awpair_s20.ps1` is the per-stem bare/A/W check. Re-checked by hand
+    at the session-20 close: all ten stems are present in the table **bare only**, so the whole-TU fix is dropping `AW`
+    for plain `qor_pp_useswinapi` on all ten, plus the stem half of `:82` (`LPTRACKMOUSEEVENT` -> `TrackMouseEvent`).
+    **Decision 1 Nov 2026 (user, at the session-20 close): no out-of-turn hotfix** - these ten stay recorded and are
+    fixed in `mouse.cpp`'s own session (25th alphabetically), so `mouse.cpp` stays broken for the sessions in between.
+    What makes that tolerable is measured, not assumed (`tmp/_tmp_mouse_bypass_s20.ps1`): all ten **do** have
+    through-layer call sites - 9 LAYER (`ui/gui/controllers/i_m/mouse.cpp:39,44,49,54,59,64,69,74` plus
+    `windowcontroller.cpp:673`) and 7 INDIRECT, 0 BYPASS - so they are compiled into `winqor_gui`; but the enclosing
+    `qor::platform::win::Mouse` controller (`i_m/mouse.h:34`) has **no** call site in src/examples/test - 0 member-call
+    sites repo-wide, and its header has exactly one includer, its own `.cpp` - so no built code reaches them at run
+    time. `windowcontroller.cpp:673` is `WindowController::DragDetect`, which is itself U15-unreachable.
 - **P2 - bindings that work today only because the SDK macro rewrites them; convert to explicit AW
   under D13.** **Six remain:** `menu.cpp` `GetMenuString`, `InsertMenuItem`; `message.cpp` `RegisterWindowMessage`,
   `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`. ~~`dialog.cpp` `MessageBox`~~ - **converted 30 Oct 2026

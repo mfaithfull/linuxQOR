@@ -319,6 +319,11 @@ Last updated: 1 Nov 2026 (session 20 `keyboard.cpp` CLOSED - code `4948838d`, re
   `window.cpp:124`, `mouse.cpp:82`; `combobox.cpp:20,27` fixed in session 6, `dialog.cpp:89` in session 13 and
   `keyboard.cpp:82,243,250` in session 20) and P2 (macro-dependent bindings to convert - **6 still open**: `menu.cpp` x2,
   `message.cpp` x4; `dialog.cpp` `MessageBox` converted in session 13). Next TU in the queue: `mdi.cpp` (session 21).
+- **Session-20 follow-up decision (user, 1 Nov 2026):** the 10 broken bindings the session-20 closing scan found in
+  `mouse.cpp` (all its wrappers use `qor_pp_useswinapiAW` on stems with no A/W pair) get **no out-of-turn hotfix** -
+  they are fixed in `mouse.cpp`'s own session, keeping the one-TU-per-session rule. Deferral is safe because the
+  enclosing `qor::platform::win::Mouse` controller has no call site in src/examples/test even though its 9 LAYER call
+  sites compile into `winqor_gui` (`tmp/_tmp_mouse_bypass_s20.ps1`).
 
 - Corrections to earlier audit assumptions, all measured (see status.md G1-G6): the SDK A/W macro expands
   before `_ATXT()` stringizes, so most bare stems already bind the W export and the `tmp/_tmp_audit_report.txt`

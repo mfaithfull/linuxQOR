@@ -21,7 +21,8 @@
   `window.cpp:124` (`CreateWindowW`). The other 6 are the **P2** class - `menu.cpp:159,194` and
   `message.cpp:124,145,152,159` bind A/W-only families bare and work today only because the SDK macro rewrites the stem.
   So `mouse.cpp`'s session is a **whole-TU binding fix** - the largest single-TU run-time defect of
-  the review - and the `AW`-on-a-single-export shape is invisible to P5 (stem == member). Also open: P2 x6 in total
+  the review, deferred to that session by user decision on 1 Nov 2026 (no out-of-turn hotfix; reachability measured in
+  `registers/prescan.md` P1) - and the `AW`-on-a-single-export shape is invisible to P5 (stem == member). Also open: P2 x6 in total
   (`menu.cpp` x2, `message.cpp` x4), P3 x2 (`CreateWindowT`, `CopyCursorT` naming), U4's ~97 declared-but-undefined
   members including tasks T1/T3/T4/T5, and U18's `window.cpp` `void`-returning point converters.
 - **Convention/consistency fixes:** 10 parameter names made to match the SDK (`devicemanagement` 2, `hook` 1, `icon` 7 -
