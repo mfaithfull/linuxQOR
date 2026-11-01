@@ -1,20 +1,24 @@
 # Active Context
 
-Last updated: 31 Oct 2026.
+Last updated: 1 Nov 2026 (review record split into brief + registers + method + archive; session 18 `icon.cpp` still open).
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
-- The running record is `src/platform/os/windows/api_layer/user/status.md` - read it first next session. It
-  carries the per-TU progress table, the remaining queue, the review method, six measured ground rules
-  (G1-G6), **twenty-six open items (U1-U26)**, the pre-scan items **P1-P5**, the four deferred tasks **T1/T2/T3/T4** and the tooling
-  under `tmp/`. It was **consolidated on 31 Oct 2026** (2,151 lines / 237 KB -> 1,201 lines / 141 KB): the registers were
-  kept verbatim and the per-TU narrative write-ups of sessions 2-15 moved verbatim to
-  `src/platform/os/windows/api_layer/user/session-log-archive.md` (1,214 lines) beside it, together with the consumed
-  `help.cpp` pre-flags - nothing was deleted (verified mechanically: 0 lines of the session-15 commit missing from the two
-  files). **Seventeen TUs done** in sessions 1-16 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
+- The running record was **split on 1 Nov 2026**: `status.md` had reached 1,222 lines / 145 KB (open items 709 lines =
+  52%) and no session could hold it, which is what caused the repeated context failures and compaction cycles. Boot on
+  `src/platform/os/windows/api_layer/user/status.md` - a **147-line brief** (live state, queue, the two convention
+  decisions, a locator giving the `registers.md` line of every register id, the census pointer, the verification gate) -
+  then open `registers.md` (verbatim G1-G6 / P1-P6 / U1-U27 / T1-T4, 939 lines), `method.md` (review method, tooling,
+  instrument caveats) or `session-log-archive.md` (per-TU narratives + the full session-log table) only as the step needs.
+  Findings go in `registers.md`, narratives in the archive, never in the brief, which must stay under 150 lines. The split
+  was mechanical and verified (1,209 of 1,222 lines moved verbatim, every id re-located by line number, encoding and line
+  endings unchanged), and it caught a live defect in the record itself: **P6 and U27 had no standalone entry at all** -
+  only the session-log row-17 cell - so they are now promoted verbatim into a "P6 and U27" section of `registers.md`.
+  The paragraph below is the **session-17 snapshot** (it says 17 TUs / next `hook.cpp`); the live state is the brief.
+  **Seventeen TUs done** in sessions 1-16 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`,
   `clipboard`, `combobox`, `console`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`,
   `dialog`, `errorhandling`, `filledshapes`, `help`); **next is
   `hook.cpp`** (4 wrappers over "Hook functions", `user32.h:315-319`, all `static` and all defined; `CallMsgFilterT`/
