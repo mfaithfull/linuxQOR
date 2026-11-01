@@ -634,8 +634,8 @@ namespace qor { namespace win { namespace api {
 
         void DisableProcessWindowsGhosting(void);
         static LRESULT SendIMEMessageEx(HWND hwnd, LPARAM lParam);
-        BOOL WINNLSEnableIME(HWND hwnd, BOOL bFlag);//Obselete do not use
-
+        BOOL WINNLSEnableIME(HWND hwnd, BOOL bFlag);
+        //WINNLSEnableIME is obsolete - do not use
         static UINT GetDpiForWindow(HWND hwnd);
 
         //Shell functions
