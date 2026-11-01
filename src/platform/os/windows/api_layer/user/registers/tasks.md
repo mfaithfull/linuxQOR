@@ -67,10 +67,27 @@
   `GetMenuContextHelpId`'s `DWORD` return makes failure indistinguishable from a legitimate 0 - the same reason the
   window pair gets no `CheckReturn`.
 
-Remaining queue (21 TUs, alphabetical; `accelerator.cpp`, `accessibility.cpp`, `brush.cpp`, `caret.cpp`,
-`clipboard.cpp`, `combobox.cpp`, `console.cpp`, `timer.cpp`, `coordtransform.cpp`, `cursor.cpp`, `desktop.cpp`,
-`devicecontext.cpp`, `devicemanagement.cpp`, `dialog.cpp`, `errorhandling.cpp`, `filledshapes.cpp`, `help.cpp` done):
-hook, icon, ime, keyboard, mdi, menu, message, monitor, mouse, painting,
-processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
-windowproperties, winqor_api_user (module glue). `hook.cpp` is in the build (see U3) and is next.
+Remaining queue (18 TUs, alphabetical; sessions 1-19 = `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`,
+`combobox`, `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
+`errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime` done): keyboard, mdi, menu, message, monitor, mouse,
+painting, processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
+windowproperties, winqor_api_user (module glue). `keyboard.cpp` is next (session 20; 3 of the folder's 5 remaining P1
+bindings live in it - see P1).
+
+
+
+- **T5 - the IME/WINNLS pair in the unlabelled `user32.h:635-639` block is declared and defined nowhere.** Opened
+  1 Nov 2026 (session 19, `ime.cpp`). `user32.h:635` `void DisableProcessWindowsGhosting(void)` and `user32.h:637`
+  `BOOL WINNLSEnableIME(HWND hwnd, BOOL bFlag)` are the block's two non-static members; no `.cpp` in the folder defines
+  either, and `dumpbin /linkermember:1` on the built `winqor_api_user.lib` publishes neither. Both entry points are real
+  single exports - `WINNLSEnableIME` **RESOLVED** (ordinal 3E6, `A`/`W` MISSING), `DisableProcessWindowsGhosting`
+  **RESOLVED** (`tmp/_tmp_name_resolve_s19b.txt`) - and the SDK declares `WINNLSEnableIME` at `um\WinNls32.h:88` in the
+  same Desktop block as `WINNLSGetEnableStatus` (`:89`) and `WINNLSGetIMEHotkey` (`:87`), none of which `user32.h` declares.
+  Same shape as T1/T3/T4: the fix is symmetric (make the pair `static` + write the TU, or delete `:635`/`:637`), no ABI is
+  touched, and both moves change the published surface, so it belongs with the U4/U13 sweep. Contract for whoever wraps
+  them: `DisableProcessWindowsGhosting` takes nothing and returns nothing (fire-and-forget, no failure signal);
+  `WINNLSEnableIME` returns `BOOL` and the SDK header itself says it is obsolete - `user32.h:638` carries the same
+  warning as of session 19 - so the honest options are "wrap it and mark it obsolete" or "do not wrap it at all", not
+  silently exposing it through this layer. Note also that `WINNLSEnableIME` is a **bare single export** (no `A`/`W`
+  spelling exists), so per D13 it would need the bare `qor_pp_useswinapi`, unlike `SendIMEMessageEx` next door.
 

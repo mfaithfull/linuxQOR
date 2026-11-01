@@ -1,16 +1,18 @@
-# Defect census, sessions 1-18 (verbatim)
+# Defect census, sessions 1-19 (verbatim)
 
 ## Defect census (sessions 1-16 snapshot; moved verbatim out of status.md on 1 Nov 2026)
 
-### Defect census, sessions 1-18 (19 TU entries, 141 wrappers)
+### Defect census, sessions 1-19 (20 TU entries, 142 wrappers)
 - **Run-time-breaking defects: 9, all fixed.** 6 bad bindings - `combobox.cpp` x2 (session 6, P1), `coordtransform.cpp`
   x3 (session 8, P5's "wrong stem" class), `dialog.cpp` x1 (session 13, P1); plus 3 declaration defects that made every
   call site ill-formed - the three WinEvent members missing `static` (session 2b, C2352 x3) and `ConsoleControl` missing
-  `static` (session 7, U13, now closed). Sessions 17 (`hook`) and 18 (`icon`) found none: both TUs' bindings were already
-  D13-correct and verified three ways.
+  `static` (session 7, U13, now closed). Sessions 17 (`hook`), 18 (`icon`) and 19 (`ime`) found none: all three TUs'
+  bindings were already D13-correct and verified three ways - and `ime.cpp`'s `qor_pp_useswinapiAW` is the case where the
+  explicit spelling is the only thing that resolves at all (bare `SendIMEMessageEx` is MISSING, the SDK macro that would
+  rewrite it is not in scope).
 - **Still open in unreviewed TUs:** P1 x5 (`keyboard.cpp` x3, `window.cpp:124`, `mouse.cpp:82`), P2 x6 (`menu.cpp` x2,
   `message.cpp` x4), P3 x2 (`CreateWindowT`, `CopyCursorT` naming), U4's ~97 declared-but-undefined members including
-  tasks T1/T3/T4, and U18's `window.cpp` `void`-returning point converters.
+  tasks T1/T3/T4/T5, and U18's `window.cpp` `void`-returning point converters.
 - **Convention/consistency fixes:** 10 parameter names made to match the SDK (`devicemanagement` 2, `hook` 1, `icon` 7 -
   the folder-wide divergence scan now reads **0 over 426 definitions**), 2 decl/def parameter divergences and 1
   parameter type `LPTSTR` -> `LPCTSTR` (`desktop`), 2 member renames for the `T` suffix (`combobox`, the only published
@@ -22,13 +24,22 @@
   (`icon.cpp:48`) and 1 missing final newline (`icon.cpp`), plus several stray blank lines.
 - **Documentation:** every reviewed TU now carries a TU comment block recording the D13 binding rationale, the SDK/SAL
   and ownership contracts, the section-coverage claim and the U-item tallies - the largest being `help.cpp`'s 70 lines,
-  then `hook.cpp`'s 64 and `icon.cpp`'s 54.
+  then `hook.cpp`'s 64 and `icon.cpp`'s 54. `ime.cpp`'s is 31 lines, which is the proportionate size for a one-wrapper TU:
+  its whole value is that it records *why the AW cannot be bare* and *that no SDK prototype is visible at all*.
+- **One header line moved (session 19, the only `user32.h` edit since session 7's `static` fixes):** `:637`'s trailing
+  `//Obselete do not use` became a line of its own at `:638` with the spelling corrected. The file stays **695 lines**, so
+  no `user32.h:NNN` citation anywhere in the record moved - the comment was moved *into* the blank line below the
+  declaration, not inserted above it - and the move additionally cures the `_tmp_decl_no_def_scan.ps1` blind spot, which is
+  why the declared-but-undefined census below reads 65 rather than 64.
 - **TUs with 0 defects of any class** (comment-only sessions): `caret`, `clipboard`, `cursor`, `devicecontext`,
-  `filledshapes`, `errorhandling`, `help`, plus `coordtransform`/`devicemanagement`/`console`/`hook`/`icon` for the
+  `filledshapes`, `errorhandling`, `help`, `ime`, plus `coordtransform`/`devicemanagement`/`console`/`hook`/`icon` for the
   binding half - `icon` and `hook` were clean on correctness and only needed SDK parameter names.
 - **Folder-wide measures re-run by these sessions** (current values in the registers): 428 bindings over 38 TUs, P5 flags
-  4 (1 live); 0 parameter-name divergences over 426 definitions (re-run 1 Nov); U14 422 explicit / 6 deducing, spacing
-  250 tight / 178 spaced (re-run 1 Nov, `tmp/_tmp_u14_census_s18.txt` - the pair of numbers moved by one since session
-  16's 423/179 as `icon.cpp:48`'s mis-spelled `Call<>` argument became countable in the normal shape); U15 and U19
-  per-family tallies accumulate in their own entries; `user32.h` 525 declarations, 428 `static` since session 7.
+  4 (1 live); 0 parameter-name divergences over 426 definitions (re-run 1 Nov, sessions 18 and 19); U14 422 explicit /
+  6 deducing, spacing 250 tight / 178 spaced (re-run 1 Nov, `tmp/_tmp_u14_census_s18.txt` and again in session 19 - the
+  pair of numbers moved by one since session 16's 423/179 as `icon.cpp:48`'s mis-spelled `Call<>` argument became
+  countable in the normal shape); T-suffix census 525 / 108 / 404 / **11** / 2, unchanged across sessions 11-13 and 17-19;
+  U15 and U19 per-family tallies accumulate in their own entries; `user32.h` 525 declarations, 428 `static` since
+  session 7, 695 lines; declared-but-undefined per `_tmp_decl_no_def_scan.ps1` **491 parsed / 426 defined / 65
+  undefined** as of session 19 (was 490/426/64 while `:637` hid behind a trailing comment - see the header note above).
 

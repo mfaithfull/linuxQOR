@@ -1,7 +1,6 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 1 Nov 2026 (session 18 `icon.cpp` closed - code in `83d9f019`, record work in this pass; in the same pass
-`registers.md` and `session-log-archive.md` were split into `registers/` and `archive/`). Review of
+Last updated 1 Nov 2026 (session 19 `ime.cpp` closed - code in `f2f87453`, record work in this pass). Review of
 `src/platform/os/windows/api_layer/user` (the `User32` wrapper class over `user32.dll`) for correctness, consistency,
 safety, undefined behaviour and conformance to the api_layer conventions. Protocol: **one translation unit per session** -
 the whole point is not to lose findings between sessions. Small, unambiguous defects get fixed as they are found; anything
@@ -11,11 +10,11 @@ that changes library-wide behaviour or needs a decision goes in the register and
 
 | File | Contents | Open it when |
 |---|---|---|
-| `status.md` (this file; **stay under 180 lines / 18 KB** - 177 after the 1 Nov slice) | live state, queue, the two convention decisions, register locator, defect census pointer, verification gate, current TU pre-flags | every session, first |
+| `status.md` (this file; **stay under 180 lines / 18 KB** - 176 after the session-19 update) | live state, queue, the two convention decisions, register locator, defect census pointer, verification gate, current TU pre-flags | every session, first |
 | `registers/<file>.md` - **one register entry per file**, index in `registers/README.md` | verbatim register text: P1-P5 `prescan.md`, P6+U27 `p6-u27.md`, G1-G6 `ground-rules.md`, U1-U26 `u<n>.md`, T1-T4 `tasks.md`, census `census.md` | only the ids named by the locator below or by the current TU's pre-flags |
 | `method.md` | the per-TU review method, tooling index, **instrument caveats** | before running an instrument or the gate |
 | `archive/tu/<tu>.md` - **one narrative per TU**, index in `archive/README.md` | that TU's narrative + verdict detail | only the TU you just reviewed |
-| `archive/session-log.md` | the session-log table (rows 1-18) + closure notes | only while writing the row for the TU you just reviewed |
+| `archive/session-log.md` | the session-log table (rows 1-19) + closure notes | only while writing the row for the TU you just reviewed |
 | `archive/history.md`, `archive/prescan-help.md` | consolidation/split history, consumed `help.cpp` pre-flags | never, unless auditing the record itself |
 
 The rule this split exists to enforce: **findings, narratives and register text never go in this file.** New finding ->
@@ -28,31 +27,34 @@ for their **head only** (the rule) and appended to at the **end** - never read t
 
 ## Live state (1 Nov 2026)
 
-- **19 TUs reviewed** (sessions 1-18): `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`, `combobox`,
+- **20 TUs reviewed** (sessions 1-19): `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`, `combobox`,
   `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
-  `errorhandling`, `filledshapes`, `help`, `hook`, `icon`.
-- **Session 18 (`icon.cpp`) CLOSED 1 Nov 2026** - verdict, the 7 parameter-name fixes and the per-family tallies are row 18
-  of `archive/session-log.md` and the `icon` entries under **U15/U16/U17/U19/U20/U26** (see the locator; U26 escalated to a
-  silent `ICONINFOEX` overrun; U15 shows 12 of 14 wrappers unreachable). Code committed; gate green **38/38** at `/W4`.
-- **Session 19 (`ime.cpp`) OPEN 1 Nov 2026** - 23 lines, 1 wrapper (`SendIMEMessageEx`, `user32.h:636`, in an unlabelled
-  block). Pre-flags measured below; verdict and fixes still to be agreed with the user.
+  `errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`.
+- **Session 19 (`ime.cpp`) CLOSED 1 Nov 2026** - 1 wrapper, **0 binding / correctness / UB / convention defects**; its
+  `qor_pp_useswinapiAW` was already D13-correct and is load-bearing (bare `SendIMEMessageEx` is MISSING in the export
+  table, and no SDK macro is in scope to rewrite it). Row 19 of `archive/session-log.md`; register writes to **U4**
+  (2 members + an instrument blind spot that had under-counted U4 by one), **U15** 1/1, **U16** 0/1 + the opt-in-header
+  sub-class, **U17** 1, **U19** 1/1/0/0, **U26** (second mirror-struct instance) and new **T5**. Code in `f2f87453`
+  (includes the first `user32.h` edit since session 7 - kept at 695 lines deliberately); gate green **38/38** at `/W4`,
+  zero diagnostics (`tmp/_tmp_cl_all_s19c.log`).
+- **Session 20 (`keyboard.cpp`) OPEN** - 34 wrappers, the TU holding the folder's largest known defect count: 3 of the
+  5 remaining **P1** bindings. Measured pre-flags below; verdict and fixes to be agreed with the user.
 
-## Queue - 19 TUs left, alphabetical (lines = on-disk physical lines, measured 1 Nov 2026)
+## Queue - 18 TUs left, alphabetical (lines = on-disk physical lines, measured 1 Nov 2026)
 
 | # | TU | lines | # | TU | lines |
 |--:|---|--:|--:|---|--:|
-| 19 | `ime.cpp` | 23 | 29 | `resource.cpp` | 30 |
-| 20 | `keyboard.cpp` | 254 | 30 | `scrollbar.cpp` | 102 |
-| 21 | `mdi.cpp` | 44 | 31 | `systemshutdown.cpp` | 51 |
-| 22 | `menu.cpp` | 289 | 32 | `text.cpp` | 44 |
-| 23 | `message.cpp` | 184 | 33 | `window.cpp` | **615** |
-| 24 | `monitor.cpp` | 51 | 34 | `windowclass.cpp` | 114 |
-| 25 | `mouse.cpp` | 86 | 35 | `windowprocedure.cpp` | 30 |
-| 26 | `painting.cpp` | 191 | 36 | `windowproperties.cpp` | 51 |
-| 27 | `processthread.cpp` | 57 | 37 | `winqor_api_user.cpp` (glue) | 14 |
-| 28 | `rectangle.cpp` | 93 | | | |
+| 20 | `keyboard.cpp` | 254 | 29 | `rectangle.cpp` | 93 |
+| 21 | `mdi.cpp` | 44 | 30 | `resource.cpp` | 30 |
+| 22 | `menu.cpp` | 289 | 31 | `scrollbar.cpp` | 102 |
+| 23 | `message.cpp` | 184 | 32 | `systemshutdown.cpp` | 51 |
+| 24 | `monitor.cpp` | 51 | 33 | `text.cpp` | 44 |
+| 25 | `mouse.cpp` | 86 | 34 | `window.cpp` | **615** |
+| 26 | `painting.cpp` | 191 | 35 | `windowclass.cpp` | 114 |
+| 27 | `processthread.cpp` | 57 | 36 | `windowprocedure.cpp` | 30 |
+| 28 | `winqor_api_user.cpp` (glue) | 14 | 37 | `windowproperties.cpp` | 51 |
 
-2,323 lines in total, and **1,533 of them (66%) are in five TUs**: `window`, `menu`, `keyboard`, `painting`, `message` -
+2,300 lines in total, and **1,533 of them (67%) are in five TUs**: `window`, `menu`, `keyboard`, `painting`, `message` -
 which also hold every remaining flagged defect: **P1 x5** (`keyboard.cpp` x3, `window.cpp:124`, `mouse.cpp:82`) and
 **P2 x6** (`menu.cpp` x2, `message.cpp` x4). `window.cpp` (615 lines, 85 bindings, P3 `CreateWindowT`, U18's `void`
 converters) may not fit one session - decide how to split it before starting it, not mid-session.
@@ -119,59 +121,59 @@ generated by `tmp/_tmp_status_index_gen_s19.ps1`; do not hand-edit it.
 - **T2** `registers/tasks.md:18` the whole Window Station / Desktop surface is dead exported API, and its conventions are therefore u...
 - **T3** `registers/tasks.md:27` the "Power Management functions" pair is declared but has no owning TU at all. Opened 30 Oct 2026 (s...
 - **T4** `registers/tasks.md:50` the menu half of the context-help-id family is declared and defined nowhere. Opened 31 Oct 2026 (ses...
+- **T5** `registers/tasks.md:79` the IME/WINNLS pair in the unlabelled `user32.h:635-639` block is declared and defined nowhere. Open...
 
 ## Defect census
 
-- The sessions-1-18 census (run-time defects fixed, what is still open, convention fixes, folder-wide measures) is kept verbatim at `registers/census.md:3` - refresh it there when a session closes.
+- The sessions-1-19 census (run-time defects fixed, what is still open, convention fixes, folder-wide measures) is kept verbatim at `registers/census.md:3` - refresh it there when a session closes.
 
 ### Verification gate (identical every session)
 Edited TU compiles standalone at `/W4` exit 0; the whole library compiles **38/38 at `/W4`, exit 0, no diagnostics**;
 `cl /EP` re-run after the edit still yields the expected binding literals; `user32.h` untouched unless the row says
-otherwise. Latest closure run `tmp/_tmp_cl_all_s19.log` (43 lines, exit 0, 0 hits for `error C|warning C|fatal`); earlier
-runs `_tmp_cl_all_s9/s11*/s12/s13/s17/s18*.log`.
+otherwise. Latest closure run `tmp/_tmp_cl_all_s19c.log` (exit 0, 38 TU echo lines, 0 hits for `error C|warning C|fatal`); earlier
+runs `_tmp_cl_all_s9/s11*/s12/s13/s17/s18/s19b.log`.
 
 ## Pre-flags for the current TU (rolling - keep this under ~40 lines)
 
-**`ime.cpp` (session 19) - measured 1 Nov 2026.** Raw output: `tmp/_tmp_ime_pre.txt` (via `tmp/_tmp_ime_pre.bat`, one
-owner per file) + `_tmp_ime_pp.txt`, `_tmp_name_resolve_s19.txt`, `_tmp_decl_no_def_s19.txt`, `_tmp_ime_linkermember.txt`,
-`_tmp_fmt_check.ps1`.
-- **No "IME functions" section exists in `user32.h`:** `:635-639` is an **unlabelled 4-declaration block** between
-  `//Window-Class functions` (`:619`) and `//Shell functions` (`:641`) - `DisableProcessWindowsGhosting` `:635`
-  (non-static, defined nowhere), `SendIMEMessageEx` `:636` (static, this TU), `WINNLSEnableIME` `:637` (non-static,
-  defined nowhere, trailing `//Obselete do not use`), `GetDpiForWindow` `:639` (static, defined at `window.cpp:608` -
-  session 33). This TU owns **1 of 4**; U21-shaped placement, no section comment to match.
-- **Binding already D13-correct and load-bearing:** `cl /EP` -> `"SendIMEMessageExW"`; probe bare **MISSING**, `A` 313 /
-  `W` 314 **RESOLVED** -> 0 P1, 0 P2. Bare `WINNLSEnableIME` **RESOLVED** (3E6) with `A`/`W` **MISSING** - a genuine
-  single export, so bare is the right spelling if it is ever wrapped.
-- **The SDK prototypes are not in the layer's include chain at all:** they live in the SDK's **`Ime.h`** (`:35`/`:36`,
-  under `#ifndef _IME_` `:16` + Desktop partition `:22`, macro arms `:38`/`:40`), which nothing here includes, and
-  `IMESTRUCT` (`Ime.h:46-55`) has **0 occurrences** in the TU's preprocessed output and 0 in `src` - so the wrapper's
-  `LPARAM` (documented as a `PIMESTRUCT`) names no type. `WINNLSEnableIME`/`WINNLSGetEnableStatus`/`WINNLSGetIMEHotkey`
-  are declared in **no** SDK `um` header (0 hits in `10.0.26100.0\um\*.h`) though all three export (3E6/3E7/3E8, RESOLVED).
-- **U16 0 of 1** (`_IME_` + Desktop only, no version guard - and the ill-formed-type sub-case cannot apply, the SDK
-  declaration is never visible). **U13/U14/U18 clean:** sigcmp 1/1 `decl==def ok` + 1/1 `Call ok`,
-  `Call< LRESULT, HWND, LPARAM >` explicit (spaced), return matches SDK `LRESULT`; 0 name divergence, and the SDK
-  parameters are **unnamed** (`IN HWND, IN LPARAM`), so SDK name comparison is impossible (the `help.cpp` case).
-- **U4: 2 declared-but-undefined members here** - `:635` and `:637`. `_tmp_decl_no_def_scan.ps1` sees only `:635`
-  (490 decls / 426 defined / 64 undefined) because its regex needs `;` at line end and `:637` has a trailing comment -
-  measured blind spot, true count >= 65. Both non-static, both single exports -> T4-shaped, candidate **T5**.
-  `dumpbin /linkermember:1` publishes `SendIMEMessageEx` (`@@SA_J`, static) and `GetDpiForWindow`; neither undefined member.
-- **U15: 1 of 1 unreachable** - sole caller `WindowController::SendIMEMessageEx` (`windowcontroller.cpp:773-775`,
-  published `windowcontroller.h:282`) has no call site in `src`/`examples`/`test`. **U19: 1 LAYER / 1 INDIRECT / 0 BYPASS /
-  0 MEMBER.** The gui IME path is dead too: `IMEHandler` (`view/handlers/interactive/ime.cpp`, built) sits in `m_IME`
-  (`interactive.h:57`), read at `interactive.cpp:41`, **never written** -> never installed, and calls no wrapper. The
-  `Imm*` family (imm32) is wrapped nowhere in the tree.
-- **U17: 1 of the 11** (`:636` is in the census list; re-run 1 Nov unchanged 525/108/404/11/2). Shape: 23 lines, **no TU
-  comment block** (3 comment lines = licence + include-order note), pure ASCII, 0 tabs, 0 trailing whitespace, CRLF, final LF.
+**`keyboard.cpp` (session 20) - measured 1 Nov 2026.** Raw output: `tmp/_tmp_kb_pre.txt`, `_tmp_kb_pre2.txt`,
+`_tmp_kb_pp.txt` (`_tmp_pp_kb.bat` read by `_tmp_kb_lits_s20.ps1`), `_tmp_kb_guards_s19.txt`, `_tmp_kb_u18_s20.txt`.
+- **Section `user32.h:70-104` `//Keyboard Input functions`: 34 declarations, all `static`, all 34 defined here**
+  (`keyboard.cpp:16`..`:247`, header order); 0 non-static, so 0 U4/U13. File shape: 254 lines, **no TU comment block** (3
+  comment lines), pure ASCII, 0 tabs, 0 trailing whitespace, CRLF, final LF.
+- **The folder's 3 remaining P1 bindings are here.** The `/EP` literals ending in an uppercase `T` are exactly three -
+  `GetKeyboardLayoutNameT` (`:82`), `VkKeyScanT` (`:243`), `VkKeyScanExT` (`:250`) - and the export table has **0** names
+  ending in uppercase `T` (case-sensitive), so each caches a NULL `pFunc` and throws on first call (G5). All three are
+  real A/W families (`GetKeyboardLayoutName` 16D/16E, `VkKeyScan` 3E1/3E4, `VkKeyScanEx` 3E2/3E3), so the D13 fix is
+  `qor_pp_useswinapiAW(user32, <stem without the T>)`. P5 **cannot see this class** (stem == member name, `T` included);
+  the instrument was extended for `*T` stems on 1 Nov and flags 0 here.
+- **7 A/W families in the section, 4 already `AW`** (`GetKeyNameText` `:103`, `LoadKeyboardLayout` `:138`,
+  `MapVirtualKey` `:145`, `MapVirtualKeyEx` `:152` -> `*W` literals); the other 27 are bare and all single exports.
+  Post-fix shape: 7 `AW` + 27 bare, and the folder's P1 count drops to 2 (`window.cpp`, `mouse.cpp`).
+- **sigcmp 34/34 `decl==def ok`, 0 parameter-name divergence** (folder zero holds; scan re-run 1 Nov, 491 decls). The
+  two `CALL ARITY MISMATCH` rows (`GetKeyboardLayout` def `:65`, `GetKeyboardLayoutList` def `:72`) are U14(b)'s
+  deducing sites `Call< HKL >` `:69` / `Call< UINT >` `:76` - 2 of the folder's 6, made explicit this session. The
+  `CALL TYPE MISMATCH` at `keybd_event` (def `:128`) is a **sigcmp false positive**: the site is
+  `Library::voidCall< BYTE, BYTE, DWORD, void* >` (`:132`), correct; the script compared the *next* function's list.
+- **U18: 1 return-type divergence** (`tmp/_tmp_kb_u18_s20.ps1`): `GetKeyboardLayoutList` is `UINT` here (`:79`) against
+  the SDK's `int` (`winuser.h:1310-1315`) - same width, no ABI change, and a published return type is a surface
+  decision, so record it. Same for the `void* dwExtraInfo` parameter of `keybd_event` against SDK `ULONG_PTR`
+  (`winuser.h:6068-6075`), same width on both ABIs. `GetKBCodePage()` (`:77`, def `:58`) is a surviving U14(c) `()` list.
+- **U16: 16 of the 34 SDK prototypes sit behind a `WINVER`/`_WIN32_WINNT` guard, the other 18 Desktop-only** - use the
+  per-name list in `tmp/_tmp_kb_guards_s19.txt`, not its `guarded names: 34` header (which counts a name with an empty
+  guard list as guarded). Extremes: `GetAsyncKeyState` (`_WIN32_WINNT >= 0x0604`), `SendInput` (0x0603).
+- **U15: 29 of 34 unreachable** - only 5 LAYER sites: `EnableWindow` `windowcontroller.cpp:72`, `IsWindowEnabled` `:77`,
+  `RegisterHotKey` `:82`, `SetFocus` `:839`, `UnregisterHotKey` `:87`. **U19: 5 LAYER / 7 INDIRECT / 10 BYPASS /
+  2 MEMBER - the folder's largest bypass count by far**: `ToUnicode` x2 (`ui/gl/session.cpp:154,162`), `GetKeyState` x6
+  (`ui/gl/windowimpl.cpp:414-424`), `SetFocus` (`retropad.cpp:842`). Caveat: `windowcontroller.h:310` is a member
+  *declaration* not a call, and 2 of the 7 INDIRECT are Linux (`os/linux/ui/x/xinput/device.cpp:104,109`).
+- **U21-class placement:** 7 of the 34 are SDK *Window* entry points parked in the keyboard section - `BlockInput`
+  `:72`, `EnableWindow` `:73`, `GetActiveWindow` `:74`, `GetFocus` `:76`, `IsWindowEnabled` `:86`, `SetActiveWindow`
+  `:94`, `SetFocus` `:95` - once each, none in `//Window functions` (`:128-213`); `GetKBCodePage` is real (`:5918`, 167).
+- **U17: 0 instances** - all 7 A/W members carry the suffix (`:80`, `:83`, `:88`, `:89`, `:90`, `:103`, `:104`).
 
 ## How this record is split
 
-The 1 Nov 2026 split of the 1,222-line `status.md` into four files is recorded in `archive/history.md` ("How the record
-was split"). The **second** split in the same pass sliced the two files that then outgrew a session - `registers.md`
-(1,063 lines) into `registers/` (33 slices, one per register entry) and `session-log-archive.md` (1,394 lines) into
-`archive/` (19 slices, one per TU narrative) - by exact line range, verified by re-joining every slice and hashing the
-result against the original bytes (both `MATCH`). Pre-split copies: `tmp/_tmp_registers_presplit_s18.md`,
-`tmp/_tmp_archive_presplit_s18.md`; slicer `tmp/_tmp_record_split_s19.ps1`; slice manifest
-`tmp/_tmp_split_manifest_s19.csv`. **Regenerate the locator above with `tmp/_tmp_status_index_gen_s19.ps1` whenever a
-register file gains or moves an entry** - the hand-maintained pointers had drifted 2 lines from U16 onwards before the
-split, which is why the locator is now generated, never typed.
+Both 1 Nov 2026 splits are described in `archive/history.md` ("How the record was split"): `status.md` (1,222 lines)
+into four files, then `registers.md` (1,063) into `registers/` and `session-log-archive.md` (1,394) into `archive/`, by
+exact line range, verified by re-joining every slice and hashing the result against the original bytes (both `MATCH`).
+**Regenerate the locator above with `tmp/_tmp_status_index_gen_s19.ps1` whenever a register entry moves.**

@@ -1,17 +1,22 @@
 # Progress
 
-Last updated: 1 Nov 2026 (session 18 `icon.cpp` CLOSED - code `83d9f019`, record `ecc9b961` + this pass; next session 19 is `ime.cpp`).
+Last updated: 1 Nov 2026 (session 19 `ime.cpp` CLOSED - code `f2f87453`, record in this pass; next session 20 is `keyboard.cpp`).
 
 Current:
-- **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **19 of 38 TUs
+- **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **20 of 38 TUs
   reviewed**
-  in sessions 1-18 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
+  in sessions 1-19 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
   `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`,
-  `help`, `hook`, `icon` - **session 18 `icon.cpp` closed 1 Nov 2026**: 0 binding/correctness/UB/convention defects in
-  its 14 wrappers, 7 SDK parameter names fixed in `user32.h`, one `::`-spelling fix, a 54-line TU comment, gate green at
-  38/38 `/W4`).
-  Next: **session 19 `ime.cpp`** (23 lines, one wrapper - `SendIMEMessageEx` at `user32.h:636`; the header has no
-  "IME functions" section comment) - measure its pre-flags into the brief's
+  `help`, `hook`, `icon`, `ime` - **session 19 `ime.cpp` closed 1 Nov 2026**: 1 wrapper, 0 binding/correctness/UB/
+  convention defects, its `qor_pp_useswinapiAW` already D13-correct and load-bearing (bare `SendIMEMessageEx` is not an
+  export and no SDK macro is in scope); a 31-line TU comment plus the first `user32.h` edit since session 7 (the
+  `:637` trailing-comment move, file kept at 695 lines so no citation went stale, which also cured an instrument blind
+  spot: declared-but-undefined 64 -> 65); new deferred task **T5**; gate green 38/38 `/W4`).
+  Next: **session 20 `keyboard.cpp`** (254 lines, 34 wrappers, section `user32.h:70-104`) - it holds **3 of the
+  folder's 5 remaining P1 bindings** (`GetKeyboardLayoutNameT` `:82`, `VkKeyScanT` `:243`, `VkKeyScanExT` `:250` ask
+  `GetProcAddress` for `*T` names that do not exist), 2 of the 6 U14(b) deducing sites, one U18-class return-type
+  divergence (`GetKeyboardLayoutList` `UINT` vs SDK `int`) and `GetKBCodePage()`'s U14(c) `()` survivor. Measured
+  pre-flags are in the brief's
   pre-flags section first. The `hook.cpp` text below is session 17's consumed pre-flag, kept as recorded; it
   covered 4 wrappers over the "Hook functions" section `user32.h:315-319`, all `static`, all 4 defined —
   `CallMsgFilterT`/`SetWindowsHookExT` are the load-bearing AW pair (`SetWindowsHookExAW` 38B is an export the header never
