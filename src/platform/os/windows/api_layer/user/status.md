@@ -115,44 +115,65 @@ TUs still to be reviewed:
 | 14 | `errorhandling.cpp` | 4 | **0 binding / correctness / UB / convention defects** - the "Error Handling functions" section is fully covered by this TU (4 declarations, 4 definitions: 0 U4, 0 U11, 0 U13); all four bindings bare and all four correct as written (`cl /EP` -> `"FlashWindow"`, `"FlashWindowEx"`, `"MessageBeep"`, `"SetLastErrorEx"`, all four **RESOLVED** by live probe with every `*A`/`*W` spelling **MISSING**, so the bare stem is the D13 spelling and `AW` would break all four); `SetLastErrorEx`'s `void` wrapper matches the SDK's `VOID` (`winuser.h:13558-13563`), so **no new U18 instance**; 2 trailing-space nits at the call sites | Fixed: TU comment block (46 lines, `:16-61`) + `(pFunc, uType )` -> `(pFunc, uType)` at the `CheckReturn` site and `(pFunc, dwErrCode, dwType )` -> `(pFunc, dwErrCode, dwType)` at the `voidCall` site. New **U24** from the one in-tree caller, which reads `FlashWindow`'s previous-active-state `BOOL` as a success flag |
 | 15 | `filledshapes.cpp` | 3 | **0 binding / correctness / UB / convention defects** - the "Filled Shapes functions" section is fully covered by this TU (3 declarations, 3 definitions: 0 U4, 0 U11, 0 U13); all three bindings bare and all three correct as written (`cl /EP` -> `"FillRect"`, `"FrameRect"`, `"InvertRect"`, all three **RESOLVED** by live probe with every `*A`/`*W` spelling **MISSING**, so the bare stem is the D13 spelling and `AW` would break all three); return types match the SDK exactly (`int`/`int`/`BOOL` at `winuser.h:9726-9747`), so **no new U18 instance**; U16 gets **0 of 3** - the three prototypes sit under nothing but the Desktop partition + `NOUSER`, no version guard | Fixed: TU comment block (61 lines, `:16-76`) + one blank line removed between the comment and the first definition. New **U25** from this TU's `CONST::RECT*` spelling (17 header lines use `CONST::`, 7 use `const ::`); `sigcmp` prints a **false** `CALL TYPE MISMATCH` on all three sites here - instrument note below |
 | 16 | `help.cpp` | 3 (over 5 declarations) | **0 binding / correctness / UB / convention defects** - the `//Shell functions` block (`user32.h:641-646`) is **5 declarations, 3 definitions**: the 3 here are in header order, `static`, `User32`-qualified, `Call<>` explicit 3/3, and all 3 bindings were already D13-correct (2 bare single exports - `SetWindowContextHelpId` 37A, `GetWindowContextHelpId` 1E1, no `A`/`W` spelling of either exists - plus the folder's second confirmed **AW**: the table has **no bare `WinHelp`**, only `WinHelpA` 3EC / `WinHelpW` 3ED, probe `WinHelp` **MISSING** / `WinHelpW` **RESOLVED**); 0 U11, 0 U13, 0 U14(b), 0 U17, 0 U18, 0 U25; **U16 0 of 3** (the types are version-independent, unlike `FLASHWINFO`/`HDEVNOTIFY`); 0 parameter-name divergences (folder zero holds for a fifth TU); the four SDK help-id prototypes have **unnamed parameters**, so parameter names cannot be SDK-compared here at all | Fixed: the inert `#undef WinHelp` at `:14` removed - measured as the **only** `#undef` directive in any of the 38 `.cpp` files, so the folder is now clean of them - + a 70-line TU comment (`:16-85`) + 2 stray blank lines; file 39 -> 108 lines, pure ASCII; `user32.h` untouched. **2 U4 members** (`:642-643` `SetMenuContextHelpId`/`GetMenuContextHelpId` - declared non-static, defined in no TU, and **absent from the built import library** per `dumpbin /linkermember:1`, which lists exactly the 3 help-family members) -> task **T4**. New **U26** (TCHAR width is an include-order property, not a build setting) + a measured correction to **U2** (`../returncheck.h` is included by 37 of 38 TUs and used by 2). **U15 3/3**, **U19 3 LAYER / 0 INDIRECT / 0 BYPASS / 0 MEMBER** - cleanest split of the review |
-| 17..38 | not started (TU index; 21 left, see "Remaining queue") | | | |
+| 17 | `hook.cpp` | 4 | **0 binding / correctness / UB / convention defects** - the `//Hook functions` block (`user32.h:315-319`) is 4 declarations, 4 definitions, in header order, all `static`, all `User32::`-qualified, `Call<>` explicit 4/4 (spaced style); all 4 bindings were already D13-correct and are now verified three ways (`cl /EP` literal + export table + live probe): `CallMsgFilterT` -> `"CallMsgFilterW"`, `CallNextHookEx` -> `"CallNextHookEx"`, `SetWindowsHookExT` -> `"SetWindowsHookExW"`, `UnhookWindowsHookEx` -> `"UnhookWindowsHookEx"` (`tmp/_tmp_hook_pp.txt`); the two `AW` bindings are **load-bearing** (live probe: bare `SetWindowsHookEx` **MISSING**, `SetWindowsHookExW`/`A`/**`AW`** all RESOLVED) and the two bare ones are the D13 spelling (no `CallNextHookExA/W` or `UnhookWindowsHookExA/W` in the table); signatures and returns match the SDK exactly (`winuser.h:5401-5403`, `:10384-10388`, `:10399-10400`, `:10405-10409`), so **0 U18**; 0 U11, 0 U13, **0 U17** - the pre-flag "2 more U17 instances" was **wrong**: `CallMsgFilterT`/`SetWindowsHookExT` do carry the `T` suffix and sit in the census' 108-member norm bucket (census re-run unchanged: 525 declarations, 108 A/W+`T`, 404 bare single exports, 11 deviations, 2 mirror cases); **U16 0 of 4** - no version guard anywhere, only `#ifndef NOWH` (`:10322`) / `#ifndef NOMSG` (`:5390`) + the Desktop partition + `NOUSER`, measured with `tmp/_tmp_hook_guards.ps1` (8 hits over 16475 lines; the two extra `CallNextHookEx` rows are the `DefHookProc` macro at `:10416`/`:10419`, not declarations) | Fixed: **1 parameter-name divergence** - `user32.h:318` `hMod` -> `hmod` to match `winuser.h:10379`, with the definition (`hook.cpp:94`) and the `Call<>` argument following; the folder's 3rd such fix after `devicemanagement`'s 2, and the first where the name-divergence scan flagged it in a TU whose parameter names otherwise match the SDK. + a 64-line TU comment (`:16-79`); file 44 -> 108 lines, pure ASCII, 0 tabs, 0 trailing whitespace, CRLF throughout. New pre-scan item **P6** (bare `CallMsgFilter` is exported at 1C at RVA `00088CF0` - **the same RVA as `CallMsgFilterA`** - so a wrong binding there resolves and runs the ANSI entry point on wide arguments instead of throwing) and new open item **U27** (`STRICT` changes the identity of `HOOKPROC` and of every `DECLARE_HANDLE` type, hence the published mangled names: 3 of these 4 wrappers change name between the `STRICT` and `NO_STRICT` arms, measured with `tmp/_tmp_hookproc_probe.cpp`). **U15 4/4 dead**, **U19: 4 stems with 0 sites of any class** - the first section of the review with no caller *and* no SDK-import call anywhere, `HHOOK`/`HOOKPROC` appearing in no file of `src`/`examples`/`test` at all |
+| 18..38 | not started (TU index; 20 left, see "Remaining queue") | | | |
 
-**Next session: `hook.cpp`** (alphabetical from here; 17 TUs done across sessions 1-16: `accelerator`,
+**Session 17 (`hook.cpp`, 31 Oct 2026) - closed.** Row 17 above plus new items **P6** and **U27** carry the record, and the TU
+narrative is the 64-line comment block now at `hook.cpp:16-79`, so this session has no separate write-up (the session-16
+pattern). The consumed `hook.cpp` pre-flags are archived verbatim in `session-log-archive.md` under "Consumed pre-scan
+notes"; one of them was wrong and is corrected in row 17 (the "2 more U17 instances" flag - both wrappers do carry the `T`
+suffix).
+
+**Next session: `icon.cpp`** (alphabetical from here; **18 TUs done** across sessions 1-17: `accelerator`,
 `accessibility`, `brush`, `caret`, `clipboard`, `combobox`, `console`, `timer`, `coordtransform`, `cursor`, `desktop`,
-`devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`, `help`). The "Hook functions" section is
-`user32.h:315-319`: **4 declarations, all `static`, all 4 defined here** (`hook.cpp:16`, `:23`, `:30`, `:37`) - a 44-line
-TU with no comment block. `_tmp_sigcmp.ps1 -Tu hook.cpp -First 316 -Last 319` already gives **4/4 decl==def ok and 4/4
-Call ok** (run 31 Oct). `hook.cpp` is in `add_library` and compiles standalone at `/W4` (U3, resolved by user commit
-`05d3ca2f`), but its review is still open.
+`devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`, `help`, `hook`). The "Icon functions"
+section is `user32.h:426-440`: **14 declarations, all `static`, all 14 defined here** (`icon.cpp:16`..`:107`, in header
+order) - a 114-line TU with **no comment block**. `_tmp_sigcmp.ps1 -Tu icon.cpp -First 427 -Last 440` gives **14/14
+decl==def ok** and 13/14 `Call ok` (run 31 Oct) - the single `CALL TYPE MISMATCH` at `icon.cpp:48` (`sdk 'const
+::ICONINFO*' vs call 'const ICONINFO*'`) is the known `::`-spelling false positive class, see "Instrument caveats".
 
-Measured pre-flags for `hook.cpp` (session 17) - from session 16's scans, so they are facts, not guesses:
-- **2 `AW` bindings and 2 bare ones, and here the `AW` pair is load-bearing rather than cosmetic.** The export table
-  (`tmp/_tmp_user32_exports.txt:1532-1535`, `:2405-2407`, `:2452`) has `CallMsgFilter` **1C**, `CallMsgFilterA` 1D
-  (RVA `00088CF0`), `CallMsgFilterW` 1E (`00019740`), `CallNextHookEx` 1F, `SetWindowsHookExA` 38A,
-  **`SetWindowsHookExAW` 38B** - an exported name this header never mentions - `SetWindowsHookExW` 38C and
-  `UnhookWindowsHookEx` 3BF. Unlike `WinHelp`, **neither `CallMsgFilter` nor `SetWindowsHookEx` is in the nine
-  `user32.h:9-17` `#undef`s** (that list is `RegisterDeviceNotification`, `WinHelp`, `SystemParametersInfo`,
-  `GetRawInputDeviceInfo`, `DlgDirList`, `DlgDirSelectEx`, `DlgDirListComboBox`, `DlgDirSelectComboBoxEx`, `LoadBitmap` -
-  re-read from the header 31 Oct), and `tmp/_tmp_winuser_aw_macros.txt` has all four SDK macros
-  (`CallMsgFilter -> CallMsgFilterW` / `-> CallMsgFilterA`, `SetWindowsHookEx -> SetWindowsHookExW` / `-> A`), so G1's
-  nested-expansion route is **live** here: a bare `qor_pp_useswinapi(user32, CallMsgFilter)` would still produce
-  `"CallMsgFilterW"`. Run `cl /EP` to confirm which literal each of the four bindings yields, and note the trap: bare
-  `CallMsgFilter` is a real export at 1C aliasing the **A** entry point, so a wrong choice would resolve at run time
-  instead of throwing.
-- **2 more U17 instances** (`CallMsgFilterT`, `SetWindowsHookExT`: A/W family, `T` suffix, no `A`/`W` in the name) for
-  the folder-wide pass; `CallNextHookEx`/`UnhookWindowsHookEx` have no A/W family at all, so their bare spelling is the
-  D13 form.
-- **U15 4/4 - every wrapper dead, and no bypass either.** `_tmp_bypass_scan.ps1` over the four stems (31 Oct,
-  `tmp/_tmp_hook_pre.bat`): `stems: 4  through-layer (User32::): 0  intermediate-qualified: 0  SDK bypass: 0
-  member-call (not SDK): 0` - the first section of the review with no caller and no direct SDK use anywhere.
-- **U16 guard scan still to run**: `tmp/_tmp_hook_guards.ps1` + `tmp/_tmp_hook_guards.bat` are staged for it. The direct
-  `-File` form printed `hits: 0` on 31 Oct because a comma list arrives as one literal string (the array pitfall in the
-  Tooling section) - use the wrapper, which passes a real array.
-- Contracts to work out in the session: `SetWindowsHookEx` **acquires** an `HHOOK` that only `UnhookWindowsHookEx`
-  releases, so this is the first section where the folder's "an acquired handle is returned for the caller to release"
-  rule clearly applies; `HOOKPROC` is a callback the caller supplies (compare the session-10 callback-widening note);
-  `dwThreadId`/`hMod` thread-affinity rules decide whether a `WH_GETMESSAGE`-style hook is per-thread or global, which
-  changes what `CallNextHookEx` must be passed.
+Measured pre-flags for `icon.cpp` (session 18) - every number below measured 31 Oct 2026, so they are facts, not guesses:
+- **11 bare bindings + 3 `AW`, and the `AW` set is exactly the SDK's three Icon A/W families.** The export table
+  (`tmp/_tmp_user32_exports.txt`) has `CopyIcon` 59, `CreateIcon` 6B, `CreateIconFromResource` 6C,
+  `CreateIconFromResourceEx` 6D, `CreateIconIndirect` 6E, `DestroyIcon` B1, `DrawIcon` D5, `DrawIconEx` D6,
+  `GetIconInfo` 160, `GetIconInfoExA` 161/`W` 162, `LoadIconA` 25A/`W` 25B, `LookupIconIdFromDirectory` 26F,
+  `LookupIconIdFromDirectoryEx` 270, `PrivateExtractIconsA` 2B5/`W` 2B6. `tmp/_tmp_winuser_aw_macros.txt` has exactly
+  three `*Icon*` macros (`LoadIcon`, `GetIconInfoEx`, `PrivateExtractIcons`) - precisely the three `AW` sites at
+  `icon.cpp:82`, `:89`, `:110`, so 0 P5 wrong-stem flags and 0 D13 conversions needed. The live probe (rows staged
+  31 Oct, run 31 Oct): all **11 bare stems RESOLVED**, and bare `GetIconInfoEx`/`LoadIcon`/`PrivateExtractIcons`
+  **MISSING** with their `W` halves RESOLVED - the three `AW` bindings are load-bearing (a bare binding there asks for a
+  name `user32.dll` does not export) and the eleven bare ones are the D13 spelling. Still re-run `cl /EP` into its own
+  file to confirm the literals, as every session does.
+- **U17: 0 instances** - the three A/W wrappers already carry the folder's `T` suffix (`GetIconInfoExT`, `LoadIconT`,
+  `PrivateExtractIconsT`), and the census (525/108/404/11/2, re-run 31 Oct) is unchanged.
+- **U16: at least 3 of the 14 prototypes are version-gated, and one is the ill-formed-type sub-case.** Guard stacks
+  measured 31 Oct with `tmp/_tmp_guard_stack_scan.ps1`: `LookupIconIdFromDirectoryEx` (`winuser.h:10819`) sits under
+  `#if(WINVER >= 0x0400)` (`:10815`) and `DrawIconEx` (`:10948`) under `:10883` (also `0x0400`); `GetIconInfoExW`
+  (`:11026`) sits under `#if(_WIN32_WINNT >= 0x0600)` (**`:10986`, closed `:11034`**) - and `ICONINFOEXA`/`ICONINFOEXW`
+  plus the `PICONINFOEX` typedef are at **`:10987`-`:11014`, inside that same guard**, so `user32.h:436`'s
+  `GetIconInfoExT(HICON, ::PICONINFOEX)` does not merely lose its prototype below `_WIN32_WINNT 0x0600`, it becomes
+  ill-formed on an unknown type - the `HDEVNOTIFY`/`DEVMODE`/`MSGBOXPARAMSW`/`PFLASHWINFO` sub-case again, and the
+  highest version threshold of them. The rest (`LoadIconW` `:10750`, `PrivateExtractIconsW` `:10775`, `CreateIcon`
+  `:10793`, `CreateIconIndirect`/`CopyIcon`/`GetIconInfo` `:10965`-`:10982`) sit under nothing but the Desktop partition
+  + `NOUSER` (`:64`) - no version test at all. Four names still need their stacks read
+  (`CreateIconFromResource`/`Ex`, `DestroyIcon`, `LookupIconIdFromDirectory`, `GetIconInfoExA`).
+- **U19: 17 stems -> 16 LAYER / 0 INDIRECT / 7 BYPASS / 0 MEMBER** (31 Oct, corrected instrument). All 16 **LAYER** sites
+  are in one **built** file: `ui/gui/gdiobjects/icon.cpp:18`, `:24`, `:30`, `:36`, `:42`, `:48`, `:54`, `:62`, `:73`,
+  `:79`, `:84`, `:89`, `:94`, `:99`, `:104`, `:109` (`gui/CMakeLists.txt:49`) - the first family of the review where
+  every wrapper has a compiled call site, so the session's liveness work is the one-level-up question, and **U20** is
+  already open on the `Icon` ownership model in exactly that file. The 7 **BYPASS** are all in **unbuilt** targets: 5 in
+  `ui/gl/windowimpl.cpp:191`, `:1603`, `:1608`, `:1642`, `:1645` (`ui/CMakeLists.txt:4 #add_subdirectory(gl)`) and 2 in
+  `examples/.../retropad/controller.cpp:43`, `retropad.cpp:940` (`osspecific/windows/CMakeLists.txt:9`) -> **0 bypass in
+  built code**.
+- **Section coverage:** `PrivateExtractIconExA` 2B3 / `PrivateExtractIconExW` 2B4 are exported (both RESOLVED in the
+  probe) and declared **nowhere** in `user32.h`, one name away from the wrapped `PrivateExtractIcons` - decide whether
+  the section should include them. `ArrangeIconicWindows` E (`user32.h:135`), `IsIconic` 237 (`:181`) and `OpenIcon` 29F
+  (`:190`) are Icon-adjacent exports declared in the **Window** section instead (a U21-shaped placement note), and
+  `InternalGetWindowIcon` 221 is internal. `winuser.h:10681` defines `CopyCursor(pcur)` as a macro over `CopyIcon`, so
+  the cursor family silently depends on this TU's `CopyIcon`.
+- Style to check against U14/U25 in the session: the file spells all 14 sites **tight** (`Call<HICON, HICON>`), it has no
+  TU comment block at all, and `icon.cpp:44`/`:48` use `const ::ICONINFO*` / `const ICONINFO*` - the `::`-spelling split
+  in a `Call<>` template argument (the `dialog.cpp` class, cured by spelling the site like the declaration).
 
 Take the pre-scan P1/P2/P3/P5 entries into account only when their owning TU comes up; do not fix other TUs outside
 their own session.

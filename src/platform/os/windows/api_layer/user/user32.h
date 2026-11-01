@@ -315,7 +315,7 @@ namespace qor { namespace win { namespace api {
         //Hook functions
         static BOOL CallMsgFilterT(LPMSG lpMsg, int nCode);
         static LRESULT CallNextHookEx(HHOOK hhk, int nCode, WPARAM wParam, LPARAM lParam);
-        static HHOOK SetWindowsHookExT(int idHook, HOOKPROC lpfn, HINSTANCE hMod, DWORD dwThreadId);
+        static HHOOK SetWindowsHookExT(int idHook, HOOKPROC lpfn, HINSTANCE hmod, DWORD dwThreadId);
         static BOOL UnhookWindowsHookEx(HHOOK hhk);
 
         //Window Procedure functions
@@ -427,17 +427,17 @@ namespace qor { namespace win { namespace api {
         static HICON CopyIcon(HICON hIcon);
         static HICON CreateIcon(HINSTANCE hInstance, int nWidth, int nHeight, BYTE cPlanes, BYTE cBitsPixel, const BYTE* lpbANDbits, const BYTE* lpbXORbits);
         static HICON CreateIconFromResource(PBYTE presbits, DWORD dwResSize, BOOL fIcon, DWORD dwVer);
-        static HICON CreateIconFromResourceEx(PBYTE pbIconBits, DWORD cbIconBits, BOOL fIcon, DWORD dwVersion, int cxDesired, int cyDesired, UINT uFlags);
+        static HICON CreateIconFromResourceEx(PBYTE presbits, DWORD dwResSize, BOOL fIcon, DWORD dwVer, int cxDesired, int cyDesired, UINT Flags);
         static HICON CreateIconIndirect(const ::ICONINFO* piconinfo);
         static BOOL DestroyIcon(HICON hIcon);
         static BOOL DrawIcon(HDC hDC, int X, int Y, HICON hIcon);
         static BOOL DrawIconEx(HDC hdc, int xLeft, int yTop, HICON hIcon, int cxWidth, int cyWidth, UINT istepIfAniCur, HBRUSH hbrFlickerFreeDraw, UINT diFlags);
         static BOOL GetIconInfo(HICON hIcon, ::PICONINFO piconinfo);
-        static BOOL GetIconInfoExT(HICON hIcon, ::PICONINFOEX piconinfoex);
+        static BOOL GetIconInfoExT(HICON hicon, ::PICONINFOEX piconinfo);
         static HICON LoadIconT(HINSTANCE hInstance, LPCTSTR lpIconName);
         static int LookupIconIdFromDirectory(PBYTE presbits, BOOL fIcon);
         static int LookupIconIdFromDirectoryEx(PBYTE presbits, BOOL fIcon, int cxDesired, int cyDesired, UINT Flags);
-        static UINT PrivateExtractIconsT(LPCTSTR lpszFile, int nIconIndex, int cxIcon, int cyIcon, HICON* phicon, UINT* piconid, UINT nIcons, UINT flags);
+        static UINT PrivateExtractIconsT(LPCTSTR szFileName, int nIconIndex, int cxIcon, int cyIcon, HICON* phicon, UINT* piconid, UINT nIcons, UINT flags);
 
         //Resource functions
         static HANDLE CopyImage(HANDLE hImage, UINT uType, int cxDesired, int cyDesired, UINT fuFlags);
