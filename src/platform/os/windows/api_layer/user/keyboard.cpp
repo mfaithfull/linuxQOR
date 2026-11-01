@@ -13,6 +13,68 @@
 
 namespace qor { namespace win { namespace api {
 
+    //34 wrappers - one per user32.h:70-104 "//Keyboard Input functions" declaration. All 34 declarations are static and
+    //all 34 are defined here in header order (:16-247), so this TU has no U4 (declared, never defined) and no U13
+    //(defined, never declared static) instance. The section is U21-shaped: 7 of the 34 are SDK *Window* entry points
+    //rather than keyboard ones - BlockInput (winuser.h:14437), EnableWindow (:7143), GetActiveWindow (:5906),
+    //GetFocus (:5912), IsWindowEnabled (:7150), SetActiveWindow (:8508), SetFocus (:5900) - and not one of the seven is
+    //declared in the header's own "//Window functions" block (user32.h:128-213). Recorded against U21, not moved.
+    //
+    //Binding (D13): 7 of the 34 stems are A/W families and use qor_pp_useswinapiAW; the other 27 bind a genuine single
+    //export with bare qor_pp_useswinapi. Measured against the export table (tmp/_tmp_kb_awpair_s20.ps1): all 27 are
+    //bare-only with no <stem>A/<stem>W entry anywhere in its 1,014 parsed names, and all 7 families are A/W-only with
+    //no bare export - 1,014 of the table's 1,018 names parse, the four `(forwarded to NTDLL...)` rows having no RVA
+    //for the script's ordinal+RVA regex to match (P4). Three of the seven were broken until this session:
+    //GetKeyboardLayoutNameT (:82), VkKeyScanT (:243) and VkKeyScanExT (:250) used the bare macro, so the member's own
+    //T suffix stringized into the requested name (kernel32.h:50, _ATXT(_NAME)) and GetProcAddress asked for
+    //"GetKeyboardLayoutNameT"/"VkKeyScanT"/"VkKeyScanExT" - no user32.dll export ends in an uppercase T. Each cached a
+    //NULL pFunc and threw "Missing library function." on first call (P1, G5); the fix is qor_pp_useswinapiAW over the
+    //bare stem. cl /EP now emits 34 name literals, 27 bare plus 7 *W (tmp/_tmp_kb_bindings_s20_post.txt from
+    //tmp/_tmp_kb_bindlits_s20.ps1), and the live probe (tmp/_tmp_kb_probe_s20.txt) resolves all 34 while reporting
+    //MISSING for the three superseded *T spellings and for the three bare stems of those families
+    //(GetKeyboardLayoutName 16D/16E, VkKeyScan 3E1/3E4, VkKeyScanEx 3E2/3E3). GetKBCodePage is a real function and a
+    //real export (winuser.h:5918, ordinal 167), not the TEB macro older documentation describes.
+    //
+    //Signatures: every parameter and return type matches the SDK prototype except two divergences that are recorded
+    //rather than changed - GetKeyboardLayoutList returns UINT here against the SDK's int (winuser.h:1313), and
+    //keybd_event takes void* dwExtraInfo against the SDK's ULONG_PTR (winuser.h:6071). Both are same-width on x86 and
+    //x64 so the ABI is unaffected, and both are published surface, hence U18 and not a fix. Zero-argument lists are
+    //(void) (U14c), and all 34 Call/voidCall sites now name their template arguments - this TU held 2 of the folder's
+    //6 deducing sites (U14b).
+    //
+    //Availability (U16): 16 of the 34 SDK prototypes are emitted only when a WINVER/_WIN32_WINNT guard passes and the
+    //other 18 only under the Desktop partition (per-name list in tmp/_tmp_kb_guards_s19.txt). The extremes are
+    //GetAsyncKeyState, whose second declaration needs _WIN32_WINNT >= 0x0604 (winuser.h:630), and SendInput's at
+    //0x0603 (:15968). No build-wide version pin is set; the pin is deferred to the end of the review (session 5).
+    //
+    //TCHAR width (U26): 5 of the 7 A/W wrappers take a TCHAR-derived parameter (LPTSTR/LPCTSTR/TCHAR) while the AW
+    //macro token-pastes the W export unconditionally, so the pair only holds while _UNICODE is in scope. It is: the
+    //chain here is configuration.h -> user32.h -> kernel32.h:7-10, which defines UNICODE/_UNICODE before <Windows.h>
+    //at :12, so in this TU LPCTSTR is LPCWSTR and matches the binding. A consumer that reaches <Windows.h> first gets
+    //the narrow spelling of these five published signatures and fails at the link (U26), not silently.
+    //
+    //Contracts the wrappers do not enforce: GetKeyboardLayoutNameT writes KL_NAMELENGTH TCHARs, 9 of them
+    //(winuser.h:1233), and the caller owns that size; GetLastInputInfo needs plii->cbSize filled in first; SendInput
+    //needs cbSize == sizeof(INPUT); ToUnicode/ToUnicodeEx are stateful - a -1 return means a dead key is now in the
+    //per-thread key state and the buffer contents are undefined; ToAscii/ToAsciiEx expect a 256-byte key-state image
+    //and are the ANSI-era answer ToUnicode replaced; keybd_event is documented as superseded by SendInput.
+    //GetActiveWindow, GetFocus, SetActiveWindow, SetFocus, GetKeyState, GetKeyboardState, SetKeyboardState,
+    //GetAsyncKeyState and GetKeyboardLayout(0) all answer about the *calling thread's* input queue and its
+    //AttachThreadInput state, not about the process, so NULL/0 from a thread that does not own the window is a
+    //legitimate result - and with no Win32ErrorHandler and no CheckReturn (the U1/U2 policy) a legitimate zero and a
+    //swallowed SEH fault are indistinguishable (U7).
+    //
+    //Liveness (U15): 29 of the 34 have no reachable caller in src/examples/test. The five that do are EnableWindow,
+    //IsWindowEnabled, RegisterHotKey, UnregisterHotKey and SetFocus, all from ui/gui/controllers/windowcontroller.cpp
+    //(:72, :77, :82, :87, :839) in the built winqor_gui target. U19: 5 LAYER / 7 INDIRECT / 11 BYPASS / 2 MEMBER - the
+    //folder's largest bypass count. The bypasses are live source (comment-state checked) but none of them is compiled
+    //today: ui/gl/session.cpp:152,154,162 (MapVirtualKeyW, ToUnicode x2) is in no target's source list at all,
+    //ui/gl/windowimpl.cpp:414-424 (GetKeyState x6) is in winqor_gl, whose add_subdirectory(gl) is commented out at
+    //ui/CMakeLists.txt:4, and retropad.cpp:842 (SetFocus) is in a target whose add_subdirectory(retropad) is commented
+    //out at examples/experimental/osspecific/windows/CMakeLists.txt:8. One of the 11 BYPASS rows is not a call but the
+    //member declaration Window* SetFocus() at ui/gui/controllers/windowcontroller.h:310, so 10 are real SDK bypasses;
+    //2 of the 7 INDIRECT are Linux (os/linux/ui/x/xinput/device.cpp:104,109) and cannot reach this layer at all.
+
     HKL User32::ActivateKeyboardLayout(HKL hkl, UINT Flags)
     {
         qor_pp_fcontext;
@@ -45,41 +107,41 @@ namespace qor { namespace win { namespace api {
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetAsyncKeyState);
-        return Library::Call< SHORT, int >(pFunc, vKey );
+        return Library::Call< SHORT, int >(pFunc, vKey);
     }
 
     HWND User32::GetFocus(void)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetFocus);
-        return Library::Call< HWND >(pFunc );
+        return Library::Call< HWND >(pFunc);
     }
 
-    UINT User32::GetKBCodePage()
+    UINT User32::GetKBCodePage(void)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetKBCodePage);
-        return Library::Call< UINT >(pFunc );
+        return Library::Call< UINT >(pFunc);
     }
 
     HKL User32::GetKeyboardLayout(DWORD idThread)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetKeyboardLayout);
-        return Library::Call< HKL >(pFunc, idThread );
+        return Library::Call< HKL, DWORD >(pFunc, idThread);
     }
 
     UINT User32::GetKeyboardLayoutList(int nBuff, HKL* lpList)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetKeyboardLayoutList);
-        return Library::Call< UINT >(pFunc, nBuff, lpList);
+        return Library::Call< UINT, int, HKL* >(pFunc, nBuff, lpList);
     }
 
     BOOL User32::GetKeyboardLayoutNameT(LPTSTR pwszKLID)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, GetKeyboardLayoutNameT);
+        qor_pp_useswinapiAW(user32, GetKeyboardLayoutName);
         return Library::Call< BOOL, LPTSTR >(pFunc, pwszKLID);
     }
 
@@ -94,7 +156,7 @@ namespace qor { namespace win { namespace api {
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, GetKeyboardType);
-        return Library::Call< int, int >(pFunc, nTypeFlag );
+        return Library::Call< int, int >(pFunc, nTypeFlag);
     }
 
     int User32::GetKeyNameTextT(LONG lParam, LPTSTR lpString, int nSize)
@@ -157,14 +219,14 @@ namespace qor { namespace win { namespace api {
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, OemKeyScan);
-        return Library::Call< DWORD, WORD >(pFunc, wOemChar );
+        return Library::Call< DWORD, WORD >(pFunc, wOemChar);
     }
 
     BOOL User32::RegisterHotKey(HWND hWnd, int id, UINT fsModifiers, UINT vk)
     {
         qor_pp_fcontext;
         qor_pp_useswinapi(user32, RegisterHotKey);
-        return Library::Call< BOOL, HWND, int, UINT, UINT >(pFunc, hWnd, id, fsModifiers, vk );
+        return Library::Call< BOOL, HWND, int, UINT, UINT >(pFunc, hWnd, id, fsModifiers, vk);
     }
 
     UINT User32::SendInput(UINT nInputs, LPINPUT pInputs, int cbSize)
@@ -240,14 +302,14 @@ namespace qor { namespace win { namespace api {
     SHORT User32::VkKeyScanT(TCHAR ch)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, VkKeyScanT);
+        qor_pp_useswinapiAW(user32, VkKeyScan);
         return Library::Call< SHORT, TCHAR >(pFunc, ch);
     }
 
     SHORT User32::VkKeyScanExT(TCHAR ch, HKL dwhkl)
     {
         qor_pp_fcontext;
-        qor_pp_useswinapi(user32, VkKeyScanExT);
+        qor_pp_useswinapiAW(user32, VkKeyScanEx);
         return Library::Call< SHORT, TCHAR, HKL >(pFunc, ch, dwhkl);
     }
 

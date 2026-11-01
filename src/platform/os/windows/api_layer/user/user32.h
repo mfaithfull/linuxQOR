@@ -74,7 +74,7 @@ namespace qor { namespace win { namespace api {
         static HWND GetActiveWindow(void);
         static SHORT GetAsyncKeyState(int vKey);
         static HWND GetFocus(void);
-        static UINT GetKBCodePage();
+        static UINT GetKBCodePage(void);
         static HKL GetKeyboardLayout(DWORD idThread);
         static UINT GetKeyboardLayoutList(int nBuff, HKL* lpList);
         static BOOL GetKeyboardLayoutNameT(LPTSTR pwszKLID);
