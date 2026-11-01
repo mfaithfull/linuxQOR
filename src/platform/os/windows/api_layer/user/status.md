@@ -1,6 +1,6 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 1 Nov 2026 (session 19 `ime.cpp` closed - code in `f2f87453`, record work in this pass). Review of
+Last updated 1 Nov 2026 (session 20 `keyboard.cpp` closed - code in `4948838d`, record work in this pass). Review of
 `src/platform/os/windows/api_layer/user` (the `User32` wrapper class over `user32.dll`) for correctness, consistency,
 safety, undefined behaviour and conformance to the api_layer conventions. Protocol: **one translation unit per session** -
 the whole point is not to lose findings between sessions. Small, unambiguous defects get fixed as they are found; anything
@@ -27,9 +27,9 @@ for their **head only** (the rule) and appended to at the **end** - never read t
 
 ## Live state (1 Nov 2026)
 
-- **20 TUs reviewed** (sessions 1-19): `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`, `combobox`,
+- **21 TUs reviewed** (sessions 1-20): `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`, `combobox`,
   `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
-  `errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`.
+  `errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`, `keyboard`.
 - **Session 19 (`ime.cpp`) CLOSED 1 Nov 2026** - 1 wrapper, **0 binding / correctness / UB / convention defects**; its
   `qor_pp_useswinapiAW` was already D13-correct and is load-bearing (bare `SendIMEMessageEx` is MISSING in the export
   table, and no SDK macro is in scope to rewrite it). Row 19 of `archive/session-log.md`; register writes to **U4**
@@ -37,14 +37,21 @@ for their **head only** (the rule) and appended to at the **end** - never read t
   sub-class, **U17** 1, **U19** 1/1/0/0, **U26** (second mirror-struct instance) and new **T5**. Code in `f2f87453`
   (includes the first `user32.h` edit since session 7 - kept at 695 lines deliberately); gate green **38/38** at `/W4`,
   zero diagnostics (`tmp/_tmp_cl_all_s19c.log`).
-- **Session 20 (`keyboard.cpp`) OPEN** - 34 wrappers, the TU holding the folder's largest known defect count: 3 of the
-  5 remaining **P1** bindings. Measured pre-flags below; verdict and fixes to be agreed with the user.
+- **Session 20 (`keyboard.cpp`) CLOSED 1 Nov 2026** - 34 wrappers, **3 P1 binding defects fixed**
+  (`GetKeyboardLayoutNameT`, `VkKeyScanT`, `VkKeyScanExT` asked `GetProcAddress` for the member's own `*T` spelling; now
+  `qor_pp_useswinapiAW` over the bare stem), plus 2 deducing `Call<>` sites made explicit, 1 `()` -> `(void)` pair, 7
+  stray inner spaces and the TU comment block (61 lines). Recorded not changed: 2 U18-type published-type divergences,
+  7 U21-class misplaced Window entry points in the keyboard section, U16 guard split 16/18, U15 29/34 unreachable,
+  U19 5/7/11/2. Code in `4948838d` (includes `user32.h:77`, kept at 695 lines); gate green **38/38** at `/W4`, zero
+  diagnostics. **The session's real yield is a new defect class:** `qor_pp_useswinapiAW` on a stem with no A/W pair -
+  found by re-running the folder-wide AW checklist, and it means **all 10 wrappers in `mouse.cpp` are broken**
+  (`registers/census.md`, `registers/prescan.md` P1 entry).
 
-## Queue - 18 TUs left, alphabetical (lines = on-disk physical lines, measured 1 Nov 2026)
+## Queue - 17 TUs left, alphabetical (lines = on-disk physical lines, measured 1 Nov 2026)
 
 | # | TU | lines | # | TU | lines |
 |--:|---|--:|--:|---|--:|
-| 20 | `keyboard.cpp` | 254 | 29 | `rectangle.cpp` | 93 |
+| ~~20~~ | ~~`keyboard.cpp`~~ done | - | 29 | `rectangle.cpp` | 93 |
 | 21 | `mdi.cpp` | 44 | 30 | `resource.cpp` | 30 |
 | 22 | `menu.cpp` | 289 | 31 | `scrollbar.cpp` | 102 |
 | 23 | `message.cpp` | 184 | 32 | `systemshutdown.cpp` | 51 |
@@ -54,10 +61,11 @@ for their **head only** (the rule) and appended to at the **end** - never read t
 | 27 | `processthread.cpp` | 57 | 36 | `windowprocedure.cpp` | 30 |
 | 28 | `winqor_api_user.cpp` (glue) | 14 | 37 | `windowproperties.cpp` | 51 |
 
-2,300 lines in total, and **1,533 of them (67%) are in five TUs**: `window`, `menu`, `keyboard`, `painting`, `message` -
-which also hold every remaining flagged defect: **P1 x5** (`keyboard.cpp` x3, `window.cpp:124`, `mouse.cpp:82`) and
-**P2 x6** (`menu.cpp` x2, `message.cpp` x4). `window.cpp` (615 lines, 85 bindings, P3 `CreateWindowT`, U18's `void`
-converters) may not fit one session - decide how to split it before starting it, not mid-session.
+2,046 lines in total, and **1,279 of them are in four TUs**: `window`, `menu`, `painting`, `message` - which hold every
+remaining P2 (**`menu.cpp:159,194`, `message.cpp:124,145,152,159`**) plus `window.cpp:124`. The biggest *unflagged*
+finding is in `mouse.cpp` (86 lines): **all 10 of its wrappers bind a name that does not exist** - see the P1 entry in
+`registers/prescan.md`. `window.cpp` (615 lines, 85 bindings, P3 `CreateWindowT`, U18's `void` converters) may not fit one
+session - decide how to split it before starting it, not mid-session.
 
 ## Convention decision
 
@@ -130,46 +138,23 @@ generated by `tmp/_tmp_status_index_gen_s19.ps1`; do not hand-edit it.
 ### Verification gate (identical every session)
 Edited TU compiles standalone at `/W4` exit 0; the whole library compiles **38/38 at `/W4`, exit 0, no diagnostics**;
 `cl /EP` re-run after the edit still yields the expected binding literals; `user32.h` untouched unless the row says
-otherwise. Latest closure run `tmp/_tmp_cl_all_s19c.log` (exit 0, 38 TU echo lines, 0 hits for `error C|warning C|fatal`); earlier
-runs `_tmp_cl_all_s9/s11*/s12/s13/s17/s18/s19b.log`.
+otherwise. Latest closure run `tmp/_tmp_cl_all_s20.log` (exit 0, 38 TU echo lines, 0 hits for `error C|warning C|fatal`);
+earlier runs `_tmp_cl_all_s9/s11*/s12/s13/s17/s18/s19b/s19c.log`. Session 20 also adds the **binding census**
+(`tmp/_tmp_kb_p1census_s20.ps1`) to the gate - run it folder-wide, not just on the edited TU; it is the only instrument
+that sees a wrongly-suffixed stem.
 
 ## Pre-flags for the current TU (rolling - keep this under ~40 lines)
 
-**`keyboard.cpp` (session 20) - measured 1 Nov 2026.** Raw output: `tmp/_tmp_kb_pre.txt`, `_tmp_kb_pre2.txt`,
-`_tmp_kb_pp.txt` (`_tmp_pp_kb.bat` read by `_tmp_kb_lits_s20.ps1`), `_tmp_kb_guards_s19.txt`, `_tmp_kb_u18_s20.txt`.
-- **Section `user32.h:70-104` `//Keyboard Input functions`: 34 declarations, all `static`, all 34 defined here**
-  (`keyboard.cpp:16`..`:247`, header order); 0 non-static, so 0 U4/U13. File shape: 254 lines, **no TU comment block** (3
-  comment lines), pure ASCII, 0 tabs, 0 trailing whitespace, CRLF, final LF.
-- **The folder's 3 remaining P1 bindings are here.** The `/EP` literals ending in an uppercase `T` are exactly three -
-  `GetKeyboardLayoutNameT` (`:82`), `VkKeyScanT` (`:243`), `VkKeyScanExT` (`:250`) - and the export table has **0** names
-  ending in uppercase `T` (case-sensitive), so each caches a NULL `pFunc` and throws on first call (G5). All three are
-  real A/W families (`GetKeyboardLayoutName` 16D/16E, `VkKeyScan` 3E1/3E4, `VkKeyScanEx` 3E2/3E3), so the D13 fix is
-  `qor_pp_useswinapiAW(user32, <stem without the T>)`. P5 **cannot see this class** (stem == member name, `T` included);
-  the instrument was extended for `*T` stems on 1 Nov and flags 0 here.
-- **7 A/W families in the section, 4 already `AW`** (`GetKeyNameText` `:103`, `LoadKeyboardLayout` `:138`,
-  `MapVirtualKey` `:145`, `MapVirtualKeyEx` `:152` -> `*W` literals); the other 27 are bare and all single exports.
-  Post-fix shape: 7 `AW` + 27 bare, and the folder's P1 count drops to 2 (`window.cpp`, `mouse.cpp`).
-- **sigcmp 34/34 `decl==def ok`, 0 parameter-name divergence** (folder zero holds; scan re-run 1 Nov, 491 decls). The
-  two `CALL ARITY MISMATCH` rows (`GetKeyboardLayout` def `:65`, `GetKeyboardLayoutList` def `:72`) are U14(b)'s
-  deducing sites `Call< HKL >` `:69` / `Call< UINT >` `:76` - 2 of the folder's 6, made explicit this session. The
-  `CALL TYPE MISMATCH` at `keybd_event` (def `:128`) is a **sigcmp false positive**: the site is
-  `Library::voidCall< BYTE, BYTE, DWORD, void* >` (`:132`), correct; the script compared the *next* function's list.
-- **U18: 1 return-type divergence** (`tmp/_tmp_kb_u18_s20.ps1`): `GetKeyboardLayoutList` is `UINT` here (`:79`) against
-  the SDK's `int` (`winuser.h:1310-1315`) - same width, no ABI change, and a published return type is a surface
-  decision, so record it. Same for the `void* dwExtraInfo` parameter of `keybd_event` against SDK `ULONG_PTR`
-  (`winuser.h:6068-6075`), same width on both ABIs. `GetKBCodePage()` (`:77`, def `:58`) is a surviving U14(c) `()` list.
-- **U16: 16 of the 34 SDK prototypes sit behind a `WINVER`/`_WIN32_WINNT` guard, the other 18 Desktop-only** - use the
-  per-name list in `tmp/_tmp_kb_guards_s19.txt`, not its `guarded names: 34` header (which counts a name with an empty
-  guard list as guarded). Extremes: `GetAsyncKeyState` (`_WIN32_WINNT >= 0x0604`), `SendInput` (0x0603).
-- **U15: 29 of 34 unreachable** - only 5 LAYER sites: `EnableWindow` `windowcontroller.cpp:72`, `IsWindowEnabled` `:77`,
-  `RegisterHotKey` `:82`, `SetFocus` `:839`, `UnregisterHotKey` `:87`. **U19: 5 LAYER / 7 INDIRECT / 10 BYPASS /
-  2 MEMBER - the folder's largest bypass count by far**: `ToUnicode` x2 (`ui/gl/session.cpp:154,162`), `GetKeyState` x6
-  (`ui/gl/windowimpl.cpp:414-424`), `SetFocus` (`retropad.cpp:842`). Caveat: `windowcontroller.h:310` is a member
-  *declaration* not a call, and 2 of the 7 INDIRECT are Linux (`os/linux/ui/x/xinput/device.cpp:104,109`).
-- **U21-class placement:** 7 of the 34 are SDK *Window* entry points parked in the keyboard section - `BlockInput`
-  `:72`, `EnableWindow` `:73`, `GetActiveWindow` `:74`, `GetFocus` `:76`, `IsWindowEnabled` `:86`, `SetActiveWindow`
-  `:94`, `SetFocus` `:95` - once each, none in `//Window functions` (`:128-213`); `GetKBCodePage` is real (`:5918`, 167).
-- **U17: 0 instances** - all 7 A/W members carry the suffix (`:80`, `:83`, `:88`, `:89`, `:90`, `:103`, `:104`).
+**None measured yet - session 21 has not started.** `keyboard.cpp`'s pre-flags (sessions 19 staging + 20 measurement) are
+consumed by row 20 of `archive/session-log.md`; the raw instrument output stays in `tmp/_tmp_kb_*` (`_tmp_kb_pre.txt`,
+`_tmp_kb_pre2.txt`, `_tmp_kb_preflags4.txt`, `_tmp_kb_guards_s19.txt`, `_tmp_kb_u18_s20.txt`, `_tmp_kb_pp.txt`).
+
+Before measuring the next TU, note the two things this session taught the method:
+- run the **folder-wide binding census** (`tmp/_tmp_kb_p1census_s20.ps1`) first - it already names the next two sessions'
+  defects: `mouse.cpp` (all 10 wrappers) and `window.cpp:124`;
+- for any TU whose bindings are mostly `AW`, check each stem has a real A/W pair
+  (`tmp/_tmp_kb_awpair_s20.ps1`) - an `AW` over a single export is as broken as a bare binding over an A/W family, and
+  no existing instrument sees it.
 
 ## How this record is split
 

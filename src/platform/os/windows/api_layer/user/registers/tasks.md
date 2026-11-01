@@ -67,12 +67,12 @@
   `GetMenuContextHelpId`'s `DWORD` return makes failure indistinguishable from a legitimate 0 - the same reason the
   window pair gets no `CheckReturn`.
 
-Remaining queue (18 TUs, alphabetical; sessions 1-19 = `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`,
+Remaining queue (17 TUs, alphabetical; sessions 1-20 = `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`,
 `combobox`, `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
-`errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime` done): keyboard, mdi, menu, message, monitor, mouse,
+`errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`, `keyboard` done): mdi, menu, message, monitor, mouse,
 painting, processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
-windowproperties, winqor_api_user (module glue). `keyboard.cpp` is next (session 20; 3 of the folder's 5 remaining P1
-bindings live in it - see P1).
+windowproperties, winqor_api_user (module glue). `mdi.cpp` is next (session 21; 1,896 bytes, the smallest real TU - the
+folder's last 2 P1 bindings are in `window.cpp:124` and `mouse.cpp:82`, each for its own session).
 
 
 

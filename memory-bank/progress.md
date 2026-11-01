@@ -1,22 +1,25 @@
 # Progress
 
-Last updated: 1 Nov 2026 (session 19 `ime.cpp` CLOSED - code `f2f87453`, record in this pass; next session 20 is `keyboard.cpp`).
+Last updated: 1 Nov 2026 (session 20 `keyboard.cpp` CLOSED - code `4948838d`, record in this pass; next session 21 is `mdi.cpp`).
 
 Current:
-- **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **20 of 38 TUs
+- **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **21 of 38 TUs
   reviewed**
-  in sessions 1-19 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
+  in sessions 1-20 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
   `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`,
-  `help`, `hook`, `icon`, `ime` - **session 19 `ime.cpp` closed 1 Nov 2026**: 1 wrapper, 0 binding/correctness/UB/
-  convention defects, its `qor_pp_useswinapiAW` already D13-correct and load-bearing (bare `SendIMEMessageEx` is not an
-  export and no SDK macro is in scope); a 31-line TU comment plus the first `user32.h` edit since session 7 (the
-  `:637` trailing-comment move, file kept at 695 lines so no citation went stale, which also cured an instrument blind
-  spot: declared-but-undefined 64 -> 65); new deferred task **T5**; gate green 38/38 `/W4`).
-  Next: **session 20 `keyboard.cpp`** (254 lines, 34 wrappers, section `user32.h:70-104`) - it holds **3 of the
-  folder's 5 remaining P1 bindings** (`GetKeyboardLayoutNameT` `:82`, `VkKeyScanT` `:243`, `VkKeyScanExT` `:250` ask
-  `GetProcAddress` for `*T` names that do not exist), 2 of the 6 U14(b) deducing sites, one U18-class return-type
-  divergence (`GetKeyboardLayoutList` `UINT` vs SDK `int`) and `GetKBCodePage()`'s U14(c) `()` survivor. Measured
-  pre-flags are in the brief's
+  `help`, `hook`, `icon`, `ime`, `keyboard` - **session 20 `keyboard.cpp` closed 1 Nov 2026**: 34 wrappers, **the 3 P1
+  binding defects it held are fixed** (`GetKeyboardLayoutNameT` `:82`, `VkKeyScanT` `:243`, `VkKeyScanExT` `:250` asked
+  `GetProcAddress` for `*T` names that do not exist - the member's own `T` suffix stringizes into the name - now
+  `qor_pp_useswinapiAW(user32, <stem>)`; `/EP` emits 27 bare + 7 `*W` literals and the live probe resolves all 34), plus
+  the TU's 2 U14(b) deducing sites made explicit, `GetKBCodePage`'s U14(c) `()` -> `(void)` in both def and `user32.h:77`
+  (still 695 lines), 7 stray-inner-space nits and a 59-line TU comment block. Folder state after the session: **P1 down
+  to 2** (`window.cpp:124`, `mouse.cpp:82`), U14(b) **424 explicit / 4 deducing**, sigcmp 34/34 `decl==def ok`. Two
+  divergences recorded not fixed (U18: `GetKeyboardLayoutList` `UINT` vs SDK `int`; `keybd_event` `void*` vs SDK
+  `ULONG_PTR`); the section is U21-shaped (7 of the 34 are SDK Window entry points) and has the folder's largest U19
+  bypass count, 11 - none of them in a target that builds today. Gate green: TU `/W4` clean, 38/38 `/W4` clean).
+  Next: **session 21 `mdi.cpp`** (1,896 bytes - the smallest real TU in the folder; MDI section `user32.h:215-235`
+  region, to be measured in the session). The folder's last 2 P1 bindings belong to `window.cpp` and `mouse.cpp`. Measured
+  pre-flags go in the brief's
   pre-flags section first. The `hook.cpp` text below is session 17's consumed pre-flag, kept as recorded; it
   covered 4 wrappers over the "Hook functions" section `user32.h:315-319`, all `static`, all 4 defined —
   `CallMsgFilterT`/`SetWindowsHookExT` are the load-bearing AW pair (`SetWindowsHookExAW` 38B is an export the header never

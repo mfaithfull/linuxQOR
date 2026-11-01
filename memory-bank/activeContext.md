@@ -1,6 +1,6 @@
 # Active Context
 
-Last updated: 1 Nov 2026 (session 19 `ime.cpp` CLOSED - code `f2f87453`, record in this pass; session 20 `keyboard.cpp` is next).
+Last updated: 1 Nov 2026 (session 20 `keyboard.cpp` CLOSED - code `4948838d`, record in this pass; session 21 is next).
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
@@ -315,10 +315,10 @@ Last updated: 1 Nov 2026 (session 19 `ime.cpp` CLOSED - code `f2f87453`, record 
   status.md `:138-178`.
 - **D13 adopted (user, 29 Oct 2026, `docs/agent/DECISIONS.md`):** explicit `qor_pp_useswinapiAW` wherever the
   SDK has an A/W family, bare `qor_pp_useswinapi` only for single exports. Apply it in each TU as it is
-  reviewed. Folder-wide pre-scan in status.md lists P1 (bindings that cannot resolve at run time - **5 still open**:
-  `keyboard.cpp:82,243,250`, `window.cpp:124`, `mouse.cpp:82`; `combobox.cpp:20,27` fixed in session 6 and
-  `dialog.cpp:89` in session 13) and P2 (macro-dependent bindings to convert - **6 still open**: `menu.cpp` x2,
-  `message.cpp` x4; `dialog.cpp` `MessageBox` converted in session 13). Next TU in the queue: `help.cpp`.
+  reviewed. Folder-wide pre-scan in status.md lists P1 (bindings that cannot resolve at run time - **2 still open**:
+  `window.cpp:124`, `mouse.cpp:82`; `combobox.cpp:20,27` fixed in session 6, `dialog.cpp:89` in session 13 and
+  `keyboard.cpp:82,243,250` in session 20) and P2 (macro-dependent bindings to convert - **6 still open**: `menu.cpp` x2,
+  `message.cpp` x4; `dialog.cpp` `MessageBox` converted in session 13). Next TU in the queue: `mdi.cpp` (session 21).
 
 - Corrections to earlier audit assumptions, all measured (see status.md G1-G6): the SDK A/W macro expands
   before `_ATXT()` stringizes, so most bare stems already bind the W export and the `tmp/_tmp_audit_report.txt`

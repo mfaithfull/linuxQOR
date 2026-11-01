@@ -8,11 +8,15 @@ stays the authority, since the script cannot see which SDK macros are in scope. 
 TUs still to be reviewed:
 
 - **P1 - bindings that cannot resolve at run time (export table + live probe + source line).** Six at the first scan;
-  the two in `combobox.cpp` are now fixed and two more have since been found (`window.cpp:124` in session 6,
-  `mouse.cpp:82` in session 8), so **five remain in three TUs** (`keyboard.cpp` x3, `window.cpp` x1, `mouse.cpp` x1)
-  after session 13 fixed `dialog.cpp:89`. Fix each in the owning TU's session:
-  - `keyboard.cpp:82` `qor_pp_useswinapi(user32, GetKeyboardLayoutNameT)`, `:243` `VkKeyScanT`,
-    `:250` `VkKeyScanExT` - the wrapper's `T` suffix stringizes into the name, and `*T` is not an export.
+  the two in `combobox.cpp` are now fixed, two more were found (`window.cpp:124` in session 6, `mouse.cpp:82` in
+  session 8) and the three in `keyboard.cpp` were fixed in session 20, so **eleven bindings in two TUs remain**
+  (`window.cpp` x1, `mouse.cpp` x10 - the mouse.cpp ten were found by the session-20 closing scan, see the NEW entry
+  below). Fix each in the owning TU's session:
+  - ~~`keyboard.cpp:82` `qor_pp_useswinapi(user32, GetKeyboardLayoutNameT)`, `:243` `VkKeyScanT`,
+    `:250` `VkKeyScanExT`~~ - **FIXED 1 Nov 2026 (session 20)**: the wrapper's `T` suffix stringizes into the name,
+    and `*T` is not an export. Now `qor_pp_useswinapiAW(user32, <stem without the T>)`; `/EP` emits the 7 `*W`
+    literals and the live probe resolves all 34 names this TU asks for (`tmp/_tmp_kb_bindings_s20.txt`,
+    `tmp/_tmp_kb_probe_s20.txt`). Live, not latent - unlike `dialog.cpp`, these three have callers.
   - ~~`dialog.cpp:89` `qor_pp_useswinapi(user32, GetDlgItemTextT)`~~ - **FIXED 30 Oct 2026 (session 13)**: same class.
     `/EP` pre-fix resolves the literal `"GetDlgItemTextT"` (live probe: MISSING), post-fix `"GetDlgItemTextW"` (RESOLVED).
     Latent rather than live - that wrapper has no call site in built code (see the U15 `dialog.cpp` entry).
@@ -34,6 +38,15 @@ TUs still to be reviewed:
     that session too). So `mouse.cpp:79-84` needs *both* halves fixed: the stem and the AW-ness (it is a single export,
     so bare `qor_pp_useswinapi(user32, TrackMouseEvent)` is the D13 spelling). Its `Call< BOOL >` is already listed in
     U14(b). Owned by `mouse.cpp`'s session.
+  - **NEW (session 20 closing scan, 1 Nov 2026) - the mirror-image class, and it is all of `mouse.cpp`:** the other 9 of
+    its 10 wrappers use `qor_pp_useswinapiAW` on stems that have **no** A/W pair, so the AW macro pastes a `W` suffix
+    that no export carries. Checked against the export table: `DragDetect`, `GetCapture`, `GetDoubleClickTime`,
+    `GetMouseMovePointsEx`, `mouse_event`, `ReleaseCapture`, `SetCapture`, `SetDoubleClickTime`, `SwapMouseButton` and
+    `TrackMouseEvent` each appear **only bare** (no `<stem>A`, no `<stem>W`), so `mouse.cpp:19,26,33,40,47,54,61,68,75,82`
+    ask for `DragDetectW`, `GetCaptureW`, ... `LPTRACKMOUSEEVENTW` and cache a NULL `pFunc` - **10 of 10 wrappers in
+    that TU throw on first call**. `mouse.cpp`'s session is therefore a whole-TU binding fix, not a one-line one; the
+    `AW`-on-a-single-export shape is invisible to P5 (stem == member) and was only caught by re-running the folder-wide
+    AW checklist after the keyboard fix. `tmp/_tmp_kb_awpair_s20.ps1` is the per-stem bare/A/W check.
 - **P2 - bindings that work today only because the SDK macro rewrites them; convert to explicit AW
   under D13.** **Six remain:** `menu.cpp` `GetMenuString`, `InsertMenuItem`; `message.cpp` `RegisterWindowMessage`,
   `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`. ~~`dialog.cpp` `MessageBox`~~ - **converted 30 Oct 2026
@@ -67,5 +80,9 @@ TUs still to be reviewed:
 - Everything else in the folder already either uses `qor_pp_useswinapiAW` (e.g. `ime.cpp`, `mouse.cpp`,
   `text.cpp`, `windowprocedure.cpp`, `windowproperties.cpp`, `windowclass.cpp`) or binds a genuine single
   export. `window.cpp` is the largest surface (85 bindings, 75 bare) and will need the most care.
+  **Corrected by session 20:** listing `mouse.cpp` here as an AW exemplar was wrong in the harmful direction - all 10 of
+  its AW bindings are over stems with no A/W pair, so the AW spelling is what breaks them (see the NEW session-20 P1
+  entry). This pre-scan could not see it because it only checked "is the AW spelling ever needed", never "does the pasted
+  `W` name exist".
 
 
