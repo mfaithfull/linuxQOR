@@ -1,4 +1,4 @@
-# session log table rows 20-23 + closure notes
+# session log table rows 20-24 + closure notes
 
 ## Moved out of `status.md` on 1 Nov 2026 (session log, session-17 block, icon pre-flags, notes, residue, consolidation history)
 
@@ -31,7 +31,9 @@ Rows 17-19 (`hook`, `icon`, `ime`) are kept verbatim in
 
 
 
-| 24..38 | not started (TU index; 14 left, see "Queue" in `status.md`) | | | |
+| 24 | `monitor.cpp` | 5 | **0 defects of any class - the cleanest TU of the review; 0 fixes.** The whole `user32.h:587 //Monitor functions` section (decls `:588`-`:592`, defs `:127`-`:155`, header order): 5 decl/def pairs parse, `decl == def` 5/5, 0 U4, 0 U11, 0 U13, 0 U17 (`GetMonitorInfoT` is the only A/W member and carries `T`), all 5 `Call<>` lists explicit and self-consistent (U14b), **0 return-type and 0 parameter-type divergences** against `winuser.h:13607,:13614,:13621,:13684,:13690,:13704`, and the parameter names match the SDK's. Binding: 4 bare (`EnumDisplayMonitors` `FE`, `MonitorFromPoint` `28E`, `MonitorFromRect` `28F`, `MonitorFromWindow` `290` - each a genuine single export, no A/W spelling, no `winuser.h` macro) + 1 `AW` (`:137 GetMonitorInfo`, family `18C`/`18D`, **no bare export**), so the `AW` is load-bearing: bare would `GetProcAddress("GetMonitorInfo")` -> NULL cached for the process lifetime (G5+U5). `tmp/_tmp_mon_class_s24.ps1` per stem; live probe `tmp/_tmp_mon_probe_s24.cpp` -> `_tmp_mon_probe_s24.txt`: 5/5 `RESOLVED`, bare `GetMonitorInfo` + every `*T` + `GetMonitorInfoExW/A` `MISSING`, and `GetModuleHandleW` gle=126 before `LoadLibraryW` (G5). **0 P1, 0 P2, 0 P5, 0 P6**; folder census unchanged 11 of 428 with no `monitor.cpp` row. | Only change: a **111-line TU comment** (`:15`-`:125`) - file 51 -> **162 lines**, `user32.h` untouched at **695**. `/EP` pre-vs-post differ by **111 lines, all blank, 0 removed, 0 non-blank added** (`tmp/_tmp_mon_pp_pre_s24.txt` 453,286 -> `tmp/_tmp_mon_pp_post_s24b.txt` 453,397; the `_post_s24.txt` capture predates the last edit and is not the post state), the cheapest proof that a comment block is behaviour-neutral. Registers: **U16 6 of 6** - the first TU whose *entire* section shares one guard (`#if(WINVER >= 0x0500)` at `winuser.h:13594` over the Desktop partition `:13605`/`:13638`), so a `WINVER` pin drops the whole section at once; no `WINVER`/`_WIN32_WINNT`/`NTDDI_VERSION` anywhere in the tree (0 hits), no pin written. **U21 sixth instance:** no `NOMONITOR` macro exists at all, and the guard owns `:13594`-`:14905` = **45 declaration heads**, 6 monitor - the other 39 (DPI contexts, the `*Info` family, the WinEvent-hook family, `GetAltTabInfo`, the `Real*` pair, `GetAncestor`, `BlockInput`, `InheritWindowMonitor`) sit in other sections - **measured, not guessed: 17 wrapped across seven other TUs (`window.cpp` 8, `accessibility.cpp` 4, one each in `combobox`/`cursor`/`keyboard`/`menu`/`scrollbar`) and 22 with no wrapper anywhere** (`tmp/_tmp_mon_region_s24.ps1` -> `_tmp_mon_region_s24.txt`; head list: section (b) of `tmp/_tmp_mon_pre2_s24.txt`), and one of the 22, `GetListBoxInfo`, is declared in this library at `user32.h:548` and defined in no TU at all - a **U4 hand-off**; section label and contents agree, so the instance is one-directional. **U19 8 LAYER / 0 INDIRECT / 4 BYPASS / 0 MEMBER** and **the first bypass in built code**: `i_m/monitor.cpp:163` calls the `GetMonitorInfoW` thunk in the *same* file that calls `User32::GetMonitorInfoT` at `:56`/`:62` (built at `ui/gui/CMakeLists.txt:25`); the other 3 bypass rows are unbuilt `winqor_gl` (`ui/gl/monitorimpl.cpp:79`, `windowimpl.cpp:435,:1902`). All 5 wrappers live through the layer. **U26 fourth instance - the safe half:** the published signatures name no `TCHAR` type, so the width cannot propagate; `MonitorInfo` mirror == `MONITORINFO` (40 B, same offsets) on **x64 and x86**, `MonitorInfoEx` == `MONITORINFOEXW` (104 B, `szDevice@40`) in the built tree, and the narrow-world mirror would be 72 B against a 104-B write; `Point`/`Rect` == `POINT`/`RECT` on both arches, so the by-value `POINT` (`:141`) is sound; the one x86 divergence is the caller's `MonitorEnumProc` taking `long long` where `MONITORENUMPROC` takes `LPARAM` (8 vs 4) - `winqor_gui` surface, recorded not fixed. **U25**: 0 `CONST`, fifth spelling (same declaration qualifies `::MONITORENUMPROC`/`::LPMONITORINFO`/`::POINT` and leaves `LPCRECT` bare). 0 U15 instances (D14). Gate: TU `/W4` exit 0, folder **38/38 exit 0, 0 diagnostics** (`tmp/_tmp_cl_all_s24b.log`, logged 19:08:42 after the 18:55:06 final edit; the 18:22 `_tmp_cl_all_s24.log` predates that edit and is not the gate of record), `cl /EP` exit 0 (`_tmp_mon_pp_post_s24b_err.txt` = the TU name only) |
+
+| 25..38 | not started (TU index; 13 left, see "Queue" in `status.md`) | | | |
 
 **Session 17 (`hook.cpp`, 31 Oct 2026) - closed.** Row 17 above plus new items **P6** and **U27** carry the record, and the TU
 narrative is the 64-line comment block now at `hook.cpp:16-79`, so this session has no separate write-up (the session-16
@@ -190,4 +192,29 @@ is the row. Audit instrument: `tmp/_tmp_s23_closeout.ps1` (six checks: gate log,
 locator pointer resolution, index coverage, TU hygiene/binding counts) + `tmp/_tmp_s23_locsplice.ps1`. One pre-existing nit
 recorded, not touched: `user32.h:66-68` (the class head) is tab-indented - 3 tabs in the header, unchanged since before the
 review, outside this TU's scope.
+
+
+## Session 24 close-out note (`monitor.cpp`, 2 Nov 2026)
+
+Zero-fix session, so the close-out work was all record hygiene and hand-off. Measured again after the edits: folder
+binding census **11 of 428** unchanged (`tmp/_tmp_p1census_pre_s24.txt` == `_post_s24.txt` - a comment-only edit must move
+nothing, and re-running the census is how that is shown rather than asserted); wrong-stem scan still 4 rows; T-suffix
+census still 525/108/404/11/2; `user32.h` **695 lines**, untouched. TU hygiene after the 98-line insert: 0 tabs, 0
+trailing-space lines, 0 non-ASCII bytes, longest line 124, and the three in-file self-citations (`:114`/`:142` definition
+range, `:124` the `AW`, `:132` the by-value `POINT`) re-pointed to post-insert line numbers - the insert moved the
+definitions, which is the one class of stale citation a comment-only edit can create. `archive/tu/monitor.md` added (50
+lines) and indexed; `archive/session-log.md` 193 -> 195 lines / 34,847 B with row 24 and the placeholder corrected
+`24..38` -> `25..38` (13 left); registers appended at **EOF only** so no locator line number moved (`u16.md` 186 -> 202,
+`u19.md` 177 -> 197, `u21.md` 83 -> 106, `u25.md` 40 -> 54, `u26.md` 98 -> 128, `census.md` 105 -> 125 - all under the
+40 KB ceiling, none re-sliced); `status.md` rewritten at **180 lines / under its 18 KB ceiling** with session 25's
+`mouse.cpp` pre-flags measured fresh (all 10 stems are single exports - `CB`, `125`, `152`, `18E`, `3F5`, `2FE`, `320`,
+`339`, `3A4`, `3B3` - and `qor_pp_useswinapiAW` pastes `##W` (`kernel32.h:52`), so all 10 ask for a `*W` name that does
+not exist: session 25 is a whole-TU binding fix, not a review). New instruments: `_tmp_mon_pp_s24.bat`,
+`_tmp_mon_class_s24.ps1`, `_tmp_mon_mirror_s24.{cpp,bat}`, `_tmp_mon_probe_s24.cpp`, `_tmp_run_mon_probe_s24.bat`
+(`_tmp_mon_pre_s24.ps1`, `_tmp_mon_pre2_s24.ps1`, `_tmp_mon_guards_s24.ps1`, `_tmp_mon_bypass_s24.ps1` dated from the
+pre-flag stage). Two caveats learned the hard way and written into `method.md`: (1) an inserted block must not re-open
+the namespace line - the first attempt duplicated `namespace qor { namespace win { namespace api {`, which the standalone
+compile caught as `C2888` + `C1075` before anything else ran; (2) `run_commands` executes its array **concurrently**, so
+chaining a producer and its consumer (`cl /EP` then the classifier that reads its output) in one call races and fails -
+chain dependent steps across calls or in one shell command.
 

@@ -103,3 +103,29 @@
   last source edit (11:36); `cl /EP` of the TU exits 0. The `_tmp_cl_all_s23final.log` / `_s23pre.log` names written by the
   interrupted pass are byte-identical to `_tmp_cl_all_s22final.log` (SHA256 `7EB28546A9...`, 10:03) and must not be cited as
   session-23 evidence: `Copy-Item` keeps the source's timestamp, so a copied gate log cannot date its own run.
+
+- **Folder-wide measures after session 24 (`monitor.cpp`, 2 Nov 2026).** 25 of 38 TUs reviewed. `monitor.cpp`: 5 wrappers,
+  5 bindings, **0 fixes** - the first TU of the review with nothing to change (every D13/U14/U18/U25/U27 check passed as
+  found). 111 comment lines added, TU 51 -> **162 lines**; `user32.h` **untouched at 695 lines**. Unchanged folder
+  measures, all re-run: unresolvable bindings **11 of 428** (`tmp/_tmp_p1census_pre_s24.txt` ==
+  `tmp/_tmp_p1census_post_s24.txt`; the 11 are `mouse.cpp:19,:26,:33,:40,:47,:54,:61,:68,:75,:82` and
+  `window.cpp:124 CreateWindow`), wrong-stem scan **4** rows (`cursor.cpp:64`, `mouse.cpp:82`, `resource.cpp:19`,
+  `:26`), T-suffix census unchanged **525 / 108 / 404 / 11 / 2** with 0 deviations from this TU, U14(b) unchanged
+  424 explicit / 4 deducing (all 5 sites here explicit), binding-macro spacing unchanged 414 spaced / 12 not-spaced,
+  U14(c) still closed (this TU's 3 zero-parameter-free signatures raise no `()`), 0 `CONST` added. New register content:
+  **U16 6/6** (first TU whose whole section shares one guard), **U19 first BYPASS in built code**
+  (`i_m/monitor.cpp:163`, same file as its own layer sites at `:56`/`:62`) with 8/0/4/0 and all five wrappers live,
+  **U21 sixth instance** (the 45-head `WINVER >= 0x0500` region: measured split **6 heads here, 17 in seven other TUs,
+  22 with no wrapper anywhere** - `tmp/_tmp_mon_region_s24.ps1`; plus a **U4 hand-off**: `GetListBoxInfo` is declared at
+  `user32.h:548`, defined in no TU and called nowhere, yet exported `174`), **U25 fifth spelling** (mixed `::`
+  qualification inside three lines), **U26 fourth instance** (mirror safe on both arches; `long long`-versus-`LPARAM`
+  callback the only x86 divergence). 0 new P1/P2/P5/P6 instances; 0 U15 instances (D14). Hygiene of the TU after the
+  edit: 0 tabs, 0 trailing-space lines, 0 non-ASCII bytes, longest line 124 (`mdi.cpp`'s own longest is 204, so the
+  folder's ceiling is not a 100-column one). Gate: **`tmp/_tmp_cl_all_s24b.log`** - 38/38 at `/W4`, exit 0, 0 `Cnnnn:`
+  diagnostics (the only `error` substring in the log is the file name `errorhandling.cpp`), 38 TU echoes and 38 objects
+  rebuilt inside the run, logged 2 Nov **19:08:42**, i.e. after the final `monitor.cpp` edit at **18:55**. The earlier
+  `_tmp_cl_all_s24.log` (15:14:47) predates that edit and must not be cited as this session's final gate. `cl /EP` of the
+  TU exits 0: post state `tmp/_tmp_mon_pp_post_s24b.txt` (18:57), pre `..._pre_s24.txt` (14:56) - **453,286 -> 453,397
+  lines, 111 added, all of them blank, 0 removed, 0 non-blank added**, so the emitted code is provably unchanged.
+  `_tmp_mon_pp_final_s24.txt` (18:22) predates the 18:55 edit and is not the post state.
+

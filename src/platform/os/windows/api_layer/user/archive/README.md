@@ -7,11 +7,11 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/history.md` | 63 | 1334-1394 |
 | `archive/preamble.md` | 7 | 1-5 |
 | `archive/prescan-help.md` | 121 | 1098-1216 |
-| `archive/README.md` | 32 | - |
+| `archive/README.md` | 33 | - |
 | `archive/session-log-1-8.md` | 19 | - |
 | `archive/session-log-17-19.md` | 11 | - |
 | `archive/session-log-9-16.md` | 17 | - |
-| `archive/session-log.md` | 175 | 1217-1333 |
+| `archive/session-log.md` | 220 | 1217-1333 |
 | `archive/tu/accelerator.md` | 31 | 50-78 |
 | `archive/tu/accessibility-timer.md` | 46 | 6-49 |
 | `archive/tu/brush.md` | 53 | 79-129 |
@@ -29,4 +29,5 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/tu/filledshapes.md` | 113 | 987-1097 |
 | `archive/tu/mdi.md` | 84 | - |
 | `archive/tu/menu.md` | 98 | - |
-| `archive/tu/message.md` | 55 | - |
+| `archive/tu/message.md` | 58 | - |
+| `archive/tu/monitor.md` | 107 | - |

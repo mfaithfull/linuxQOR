@@ -99,3 +99,21 @@ and `window.cpp:124 CreateWindow`; the user decided at the session-20 close that
   silently exposing it through this layer. Note also that `WINNLSEnableIME` is a **bare single export** (no `A`/`W`
   spelling exists), so per D13 it would need the bare `qor_pp_useswinapi`, unlike `SendIMEMessageEx` next door.
 
+- **T6 - the whole "//List Box functions" section is declared and defined nowhere - there is no owning TU.** Opened
+  2 Nov 2026 by the session-24 (`monitor.cpp`) U21 region scan. `user32.h:545` opens the section with **three**
+  declarations (`:546 DlgDirList`, `:547 DlgDirSelectEx`, `:548 GetListBoxInfo`), **all three non-static**, and **no
+  `.cpp` in the folder defines any of them** (measured: 0 `User32::` definitions over all 38 TUs, and there is no
+  `listbox.cpp` in the folder at all), so the published class carries three members that fail at link time with
+  `LNK2019` - the U4 shape and the T3 shape (a whole section with no owner) at once. `GetListBoxInfo` is one of the 22
+  heads in the `#if(WINVER >= 0x0500)` region that `monitor.cpp`'s scan found unwrapped
+  (`tmp/_tmp_mon_region_s24.ps1` -> `tmp/_tmp_mon_region_s24.txt`), and it is recorded here rather than only under U21 so
+  that the session which eventually acts on it is not chosen by which SDK region happened to be under the microscope.
+  All three entry points are real exports: `DlgDirListA`/`W` (ordinals `C1`/`C4`), `DlgDirSelectExA`/`W` (`C7`/`C8`),
+  `GetListBoxInfo` (`174`, RVA `0002EFF0`) in `tmp/_tmp_user32_exports.txt`. Two conventions bind whoever wraps them: the
+  first two are A/W families **and** two of the nine stems `user32.h:13-14` `#undef`s (G2), so a bare binding is not even
+  possible there and D13 requires explicit `qor_pp_useswinapiAW`, while `GetListBoxInfo` is a bare single export, so D13
+  requires the bare macro there. Its contract also has no failure signal - it returns the count of client items as
+  `DWORD` and 0 on error (U7-shaped: a legitimate 0 and a swallowed SEH fault are indistinguishable). Deciding T6 means
+  either writing the TU (a three-wrapper file) or deleting the three declarations; both move the published surface, so
+  it belongs with the `U4`/`U13` sweep and the T1/T3/T4/T5 decision set, not with a TU review.
+

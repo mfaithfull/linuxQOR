@@ -335,3 +335,56 @@ Caveats this close-out pass measured (the interrupted pass left these to be foun
   a TU's contract block names the binding macros in prose (`message.cpp:20`), so binding counts must exclude comment lines -
   the real `message.cpp` split is **12 `AW` / 12 bare over 24 definitions**, which is what its contract block claims.
 
+
+### Tooling added in session 24 (`monitor.cpp`), and the caveats it carried
+
+Instruments (all session-scoped names, `tmp/`): **`_tmp_mon_pp_s24.bat`** (own `/EP` output pair, per the
+shared-`_tmp_pp_out.txt` caveat); **`_tmp_mon_class_s24.ps1`** - the per-stem bare/AW/P6 classifier, a clone of
+`_tmp_msg_class_s23.ps1` with the stems swapped, parameterised by `-PpFile` so the pre and post `/EP` outputs run through
+the same code path; **`_tmp_mon_mirror_s24.cpp` + `_tmp_mon_mirror_s24.bat`** - the third struct-mirror probe
+(`MONITORINFO`/`MonitorInfo`, `MONITORINFOEXW/A`/`MonitorInfoExW/A`, `POINT`/`Point`, `RECT`/`Rect`,
+`MONITORENUMPROC` argument widths), built for **x64 and x86 in one batch run**; **`_tmp_mon_probe_s24.cpp` +
+`_tmp_run_mon_probe_s24.bat`** - the live `GetProcAddress` name probe (the `*T` and `Ex` spellings are included so the
+probe also disproves the spellings the TU does *not* ask for); `_tmp_mon_pre_s24.ps1`, **`_tmp_mon_region_s24.ps1`** - the
+SDK region walker (walks the `#if(WINVER >= 0x0500)` block opened at `winuser.h:13594` with a `#if/#endif` depth counter
+and prints every declaration head **plus which TU defines it**, which is how U21's 45-head region got its 6/17/22
+attribution; the earlier `_tmp_mon_pre2_s24.txt` hand-count of the same region guessed "34 in `window.cpp`" and was
+wrong - measure, do not bucket), `_tmp_mon_guards_s24.ps1`, `_tmp_mon_bypass_s24.ps1`, and
+**`_tmp_s24_closeout.ps1`** - the record close-out audit, seven checks (gate log dated by its own redirect and compared
+against the last source edit; record ceilings; every locator pointer resolving to the named line; the generated locator
+matching the spliced block; `archive/` + `registers/` index coverage; TU hygiene; `/EP` multiset neutrality).
+
+Caveats measured this session:
+
+- **`run_commands` runs its command array concurrently, so never chain a producer and its consumer in one call.** The
+  `/EP` batch and `_tmp_mon_class_s24.ps1 -PpFile <that output>` were issued together and the classifier died with
+  `Could not find file ..._pp_post_s24.txt` although the batch echoed `pp_exit=0` - the file existed a second later. Any
+  step that reads another step's artefact must go in a **later** call, or both steps must live inside one shell command.
+  The same mechanism bit the session-23 U15 splice pass (`method.md:286`).
+- **A TU comment block must be inserted *inside* the namespace, never by re-emitting the namespace line.** The first
+  insert reproduced `namespace qor { namespace win { namespace api {` as the first line of the block, which left the
+  whole file inside a second `api` namespace and produced 11 errors - `C2888 '...' symbol cannot be defined within
+  namespace 'api'` on every wrapper plus `C1075` on the closing `}}}`. Cheap to avoid: anchor the insert on existing
+  text, and compile the single TU (`tmp/_tmp_compile_one.ps1 monitor.cpp`) immediately after the insert, before writing
+  any record.
+- **Insert-at-line-number is positional, not semantic.** Three chunks inserted at successive line numbers landed one
+  *inside* another paragraph (the U26 block split the U21 paragraph mid-sentence and left two orphan lines). For
+  mid-file record text, use the `old_text` replacement form with a unique anchor; use `insert_line` only at EOF or into
+  a known-empty gap.
+- **Any insert that adds lines invalidates the TU's own line citations.** The comment block pushed the five definitions
+  from `:16`-`:49` to `:127`-`:159`, so the block's self-citations (`:127`-`:155` range, `:137` the `AW`, `:145` the
+  by-value `POINT` in the `Call<>` list) had to be re-pointed after the insert - re-measure with
+  `Select-String -Pattern '^    (BOOL|HMONITOR) User32::','qor_pp_useswinapi','Library::Call'` and fix before the gate.
+- **Comment-only edits have a free neutrality proof - use it instead of arguing.** `cl /EP` before and after a 111-line
+  comment block differ by **111 lines, all of them blank, 0 removed, 0 non-blank added** (`/EP` drops the comment text but
+  keeps one output line per comment line), i.e. the emitted code is identical. Three counts from `Compare-Object` prove
+  it: total, `<=`-side count, non-blank `=>` count.
+- **`GetModuleHandleW(L"user32")` fails with `gle=126` in a bare console process**, so every live name probe must
+  `LoadLibraryW` first and print that it did (G5); `monitor`, `mdi` and `keyboard` probes all take that path.
+
+- **An empty `Compare-Object` result assigns `$null`, not an empty array**, so a check written as
+  `if ($null -eq $dd) { 'BLOCK NOT FOUND' } elseif (@($dd).Count -eq 0) { 'IDENTICAL' }` reports the **identical** case as
+  a missing block. `_tmp_s24_closeout.ps1` printed exactly that false negative until the "block found" condition was
+  tracked in its own variable and the diff wrapped in `@()`. Rule: decide "not found" from your own sentinel, never from
+  the diff being empty - the same trap makes `@($x).Count -eq 0` ambiguous in the other direction.
+
