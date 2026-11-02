@@ -1,4 +1,4 @@
-# Defect census, sessions 1-21 (verbatim)
+# Defect census, sessions 1-23 (append-only; the sessions 1-16/1-21 text below stays verbatim)
 
 ## Defect census (sessions 1-16 snapshot; moved verbatim out of status.md on 1 Nov 2026)
 
@@ -83,3 +83,23 @@
   re-measured as real exports. Hygiene: `archive/session-log.md` split twice by hash-verified slices (45,673 -> 30,334
   bytes, 34,136 with its row). Gate: `tmp/_tmp_cl_all_s22final.log`, **38/38** at `/W4`, exit 0, 0 diagnostics, 38 fresh objects.
 
+- **Folder-wide measures after session 23 (`message.cpp`, 2 Nov 2026).** 24 of 38 TUs reviewed. `message.cpp`: 24 wrappers,
+  24 bindings, **4 fixed** - the whole remaining **P2** list converted to `qor_pp_useswinapiAW`
+  (`:214 RegisterWindowMessage`, `:235 SendMessageTimeout`, `:242 SendMessage`, `:249 SendNotifyMessage`), proven
+  behaviour-neutral by `/EP` before and after; plus 1 U14(c) `()` -> `(void)` pair (`InSendMessageEx`, def `:176` +
+  `user32.h:300`, which **closes U14(c)** - re-measured 38 defs `(void)` / 0 `()` and 39 decls `(void)` / 0 `()`
+  (`tmp/_tmp_u14c_s24.ps1`, run in session 23 despite the `_s24` name; the 39th declaration `user32.h:635
+  DisableProcessWindowsGhosting` is defined in no TU, U4) and 3
+  binding-macro comma-space nits (`:19`, `:26`, `:68`). **0 return-type and 0 parameter-type divergences** over all 24
+  (`tmp/_tmp_msg_ret_s23.ps1` - the SDK's return type sits on its own line above the stem, so this needed a new
+  instrument). Folder totals moved: unresolvable bindings **15 -> 11** of 428 and **P2 is closed** - what is left is the
+  `mouse.cpp` cluster (10 sites, `:19-:82`) and `window.cpp:124 CreateWindow` (`tmp/_tmp_p1census_post_s23.txt`);
+  binding-macro spacing 414 spaced / **12** not-spaced (all 12 in `scrollbar.cpp`, was 15); U14(b) unchanged 424 explicit /
+  4 deducing; T-suffix census unchanged 525 / 108 / 404 / 11 / 2 with **0** deviations from this TU; `user32.h` back to
+  **695 lines** (the `InSendMessageEx(void)` edit was in place). New items: **P6's second instance**
+  (`BroadcastSystemMessage` bare == the `A` RVA), **U21's fifth instance**, 4 U16-guarded names, U19's first
+  all-24-live/0-bypass-in-built-code family, U25's fourth spelling (`const MSG*` unqualified), U26 re-confirmed on both
+  arches. Gate: **`tmp/_tmp_cl_all_s23recover.log`** - 38/38 at `/W4`, exit 0, 0 diagnostics, re-run 2 Nov 13:11 **after** the
+  last source edit (11:36); `cl /EP` of the TU exits 0. The `_tmp_cl_all_s23final.log` / `_s23pre.log` names written by the
+  interrupted pass are byte-identical to `_tmp_cl_all_s22final.log` (SHA256 `7EB28546A9...`, 10:03) and must not be cited as
+  session-23 evidence: `Copy-Item` keeps the source's timestamp, so a copied gate log cannot date its own run.

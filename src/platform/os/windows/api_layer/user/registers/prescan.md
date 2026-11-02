@@ -58,8 +58,12 @@ TUs still to be reviewed:
     sites repo-wide, and its header has exactly one includer, its own `.cpp` - so no built code reaches them at run
     time. `windowcontroller.cpp:673` is `WindowController::DragDetect`, which is itself U15-unreachable.
 - **P2 - bindings that work today only because the SDK macro rewrites them; convert to explicit AW
-  under D13.** **Four remain**, all in `message.cpp`: `RegisterWindowMessage`, `SendMessage`, `SendMessageTimeout`,
-  `SendNotifyMessage`. ~~`menu.cpp` `GetMenuString`, `InsertMenuItem`~~ - **both converted 2 Nov 2026 (session 22)** at
+  under D13.** **P2 is CLOSED - 0 remain (2 Nov 2026, session 23).** ~~`message.cpp` `RegisterWindowMessage`,
+  `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`~~ - **all four converted in session 23** at
+  `message.cpp:214`, `:235`, `:242`, `:249`; same **no behaviour change** proof - pre-fix `/EP` already emitted the four
+  `"*W"` literals and post-fix `/EP` emits the same four by `##W` pasting
+  (`tmp/_tmp_msg_class_{pre,post}_s23.txt`), and the folder census drops **15 -> 11** unresolvable with no `message.cpp`
+  line left in it (`tmp/_tmp_p1census_post_s23.txt`). ~~`menu.cpp` `GetMenuString`, `InsertMenuItem`~~ - **both converted 2 Nov 2026 (session 22)** at
   `menu.cpp:225` and `:260`; same **no behaviour change** finding as below - pre-fix `/EP` already emitted
   `"GetMenuStringW"`/`"InsertMenuItemW"`, post-fix emits the same two literals by `##W` pasting
   (`tmp/_tmp_menu_class_post_s22.txt`), and the folder census drops 17 -> 15 unresolvable

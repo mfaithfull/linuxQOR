@@ -289,3 +289,49 @@ instruments that no `/W4` compile can replace:
   exception - U27 points at the shared `registers/p6-u27.md` P6 extract bullet. Run it after any register-entry insert or
   deletion, not just after a split.
 
+
+### Tooling added in session 23 (`message.cpp`), and the caveats the close-out pass added
+
+- **`tmp/_tmp_msg_class_s23.ps1`** - per-stem bare-vs-AW classifier (for each stem: is `<stem>` exported, do `<stem>A`/`<stem>W`
+  exist, does `winuser.h` define a `Stem` macro?). This is the instrument that answers the D13 question per TU and it is the
+  one to clone for the remaining bare-binding TUs (`mouse.cpp`, `window.cpp`); session 22's `_tmp_menu_class_s22.ps1` was its
+  first form. Output `tmp/_tmp_msg_class_pre_s23.txt` / `_post_s23.txt` - **compare them**, they are byte-identical when a
+  bare -> `AW` conversion is behaviour-neutral.
+- **`tmp/_tmp_msg_ret_s23.ps1`** - session 22's return-type instrument pointed at `winuser.h`; monitor/message stems live in
+  `winuser.h` too, where the return type is on the line above the stem and the qualifier lines (`WINUSERAPI`, `_Check_return_`)
+  above that. It reported **0 of 24** divergences; the two `CALL TYPE MISMATCH` rows it emits for `InSendMessageEx` and
+  `PostQuitMessage` are artifacts - the "sdk ''" side is this library's own prototype, and the reported "types" are the *next*
+  function's `Call<>` list. Always read a `CALL TYPE MISMATCH` against the source lines before acting.
+- **`tmp/_tmp_msg_regions_s23.ps1`** (U21 region census: every `#ifdef`/`#ifndef` name that opens a region containing a
+  section), **`_tmp_msg_guards_s23.ps1`** (U16 `WINVER` guards per SDK declaration), **`_tmp_msg_bypass_s23.ps1`** +
+  **`_tmp_msg_u19_s23.ps1`** (U19 LAYER/INDIRECT/BYPASS/MEMBER), **`_tmp_msg_pos_s23.ps1`** (def positions vs header order),
+  **`_tmp_msg_pp_s23.bat`** (own `/EP` output files, per the shared-`_tmp_pp_out.txt` caveat).
+- **`tmp/_tmp_u14c_s24.ps1`** closes the U14(c) count and is named `_s24` although session 23 ran it - a naming slip; keep
+  instrument names tied to the session that ran them, later searches for `_s23` miss it.
+
+Caveats this close-out pass measured (the interrupted pass left these to be found):
+
+- **A copied gate log cannot date its own run.** `Copy-Item` preserves the source's `LastWriteTime`, and every session writes
+  the same 744-byte pass output, so a copy of an older log is indistinguishable from a new run by timestamp alone. The
+  interrupted pass produced `tmp/_tmp_cl_all_s23final.log` and `_s23pre.log` that are **byte-identical to
+  `_tmp_cl_all_s22final.log`** (SHA256 `7EB28546A9062CBCC...`) and therefore predate both session-23 source edits. Either run
+  `tmp/_tmp_cl_all.bat` with its redirect **outside** the batch and snapshot the file afterwards, or verify: `tmp/obj/<tu>.obj`
+  `LastWriteTime` must be later than the edited source's, and the new log's hash must differ from the previous session's.
+- **Re-run `/EP` after the last edit.** `tmp/_tmp_msg_pp_post_s23.txt` (11:17) predates the `user32.h` `(void)` edit (11:36),
+  so the neutral-conversion proof had to be redone as `_tmp_msg_pp_final_s23.txt`; diff the captures whose timestamps bracket
+  the final edit, never the first "post" file you find.
+- **`-like` and the backtick.** In PowerShell `-like`, a backtick escapes the next character, so a pattern containing a literal
+  backtick (e.g. `'- **P1** `registers/*'`) silently never matches text that contains one. The locator splice found
+  `start=-1 end=-1` for exactly this reason; `tmp/_tmp_s23_locsplice.ps1` now uses `-match '^- \*\*P1\*\* .registers/'`.
+- **Locator pointer verification:** use `tmp/_tmp_u15_locator_verify.ps1`, not an ad-hoc matcher - it knows the one deliberate
+  exception (U27's pointer targets the shared `p6-u27.md` extract bullet, which does not start with `- **U27**`). After a
+  register edit it reports **46 bullets, 45 right, 1 known exception**.
+
+- **`tmp/_tmp_s23_closeout.ps1`** - the **record close-out audit**, six checks: gate log (dated by its own redirect, not by
+  a copy), `session-log` slice rejoin hashes + row-id uniqueness across the four slices, record ceilings, `status.md`
+  locator pointer resolution, `archive/` + `registers/` README coverage, and edited-TU hygiene/binding counts. Run it
+  before writing a session's row and again before committing; output `tmp/_tmp_s23_closeout.txt`. Two counting rules it
+  encodes, both of which bit this session: a range placeholder row (`| 24..38 | not started |`) is **not** a session id, and
+  a TU's contract block names the binding macros in prose (`message.cpp:20`), so binding counts must exclude comment lines -
+  the real `message.cpp` split is **12 `AW` / 12 bare over 24 definitions**, which is what its contract block claims.
+

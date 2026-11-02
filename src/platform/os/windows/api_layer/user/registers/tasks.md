@@ -71,14 +71,16 @@
   `GetMenuContextHelpId`'s `DWORD` return makes failure indistinguishable from a legitimate 0 - the same reason the
   window pair gets no `CheckReturn`.
 
-Remaining queue (15 TUs, alphabetical; sessions 1-22 = `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`,
+Remaining queue (14 TUs, alphabetical; sessions 1-23 = `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`,
 `combobox`, `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
-`errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi`, `menu` done): message, monitor, mouse,
+`errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi`, `menu`, `message` done): monitor, mouse,
 painting, processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
-windowproperties, winqor_api_user (module glue). `message.cpp` is next (session 23; 184 lines, 24 wrappers, the last 4 P2
-bindings at `:124`, `:145`, `:152`, `:159` - the whole remaining P2 list); the folder's last 2 P1 bindings are in
-`window.cpp:124` and `mouse.cpp:82`, each for its own session; the user decided at the session-20 close that
-`mouse.cpp`'s 10 broken bindings get **no out-of-turn hotfix** - see the P1 entry).
+windowproperties, winqor_api_user (module glue). `monitor.cpp` is next (session 24; 51 lines, 5 wrappers, the whole
+`user32.h:587`-`:592` "//Monitor functions" section; pre-flags in `status.md` - expect 0 P2, `GetMonitorInfo`'s `AW` is
+**load-bearing** (no bare export), and this is the first TU with a U19 bypass in **built** code,
+`ui/gui/controllers/i_m/monitor.cpp:163`). What is left of the binding census is `mouse.cpp` (10 sites `:19`-`:82`, P1)
+and `window.cpp:124 CreateWindow`; the user decided at the session-20 close that `mouse.cpp`'s 10 broken bindings get
+**no out-of-turn hotfix** - see the P1 entry.
 
 
 

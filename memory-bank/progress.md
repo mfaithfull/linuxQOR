@@ -1,7 +1,8 @@
 # Progress
 
-Last updated: 1 Nov 2026 (session 21 `mdi.cpp` CLOSED - **code uncommitted**, record in this pass; next session 22 is
-`menu.cpp`, and `archive/session-log.md` is over its size ceiling and must be sliced first).
+Last updated: 2 Nov 2026 (session 23 `message.cpp` CLOSED and **committed as one commit on top of `4dc44d81`**; the session
+was interrupted by a tool failure mid-close-out and finished by a recovery pass; next session 24 is `monitor.cpp`,
+pre-flags already measured into `status.md`, and `status.md` is exactly at its 180-line / 18 KB ceiling - trim before adding).
 
 Current:
 - **2 Nov 2026 - U15 CLOSED by user decision (policy **D14**, `docs/agent/DECISIONS.md`), record-only.** A wrapper exported
@@ -10,9 +11,21 @@ Current:
   `registers/u15.md` (its sessions-1-22 instances are frozen history). Reachability is still measured where another item
   needs it (P1/P5 latent-vs-live, U18, U19). `status.md`, `method.md` step 5, `registers/README.md` and
   `registers/census.md` carry the new rule; no code, header or CMake file was touched, so the 38/38 `/W4` gate is unchanged.
+- **Sessions 22-23 closed 2 Nov 2026** (`menu.cpp`, `message.cpp`): **24 of 38 TUs reviewed**. `menu.cpp` 39 wrappers, 2 D13
+  binding fixes (`GetMenuStringT`, `InsertMenuItemT`), both behaviour-neutral by `cl /EP`, plus the method gap that made
+  step 2's **return-type** half measurable for the first time (`tmp/_tmp_menu_ret_s22.ps1` - the SDK return type sits on its
+  own line). `message.cpp` 24 wrappers, 4 fixes = **the whole remaining P2 list** -> `qor_pp_useswinapiAW` (**P2 CLOSED, 0
+  open**) plus U14(c)'s last `()` -> `(void)` (**U14(c) CLOSED**, 38 defs / 38 decls all `(void)`), 0 signature divergences,
+  all 24 wrappers live through the layer, **P6's second instance** (bare `BroadcastSystemMessage` == the `A` entry point).
+  Session 23 was interrupted by a tool failure mid-close-out; the recovery pass re-ran the gate (38/38 at `/W4`, exit 0,
+  `tmp/_tmp_cl_all_s23recover.log` - the pass's own `_s23final`/`_s23pre` logs were byte-identical to session 22's, a
+  `Copy-Item` timestamp artifact), regenerated the register locator and both README indexes, hash-verified the session-log
+  slice, wrote four instrument caveats into `method.md`, and trimmed `status.md` from 202 lines / 21.0 KB to **180 lines /
+  18,432 B, exactly its ceiling**. Details in `src/platform/os/windows/api_layer/user/`: rows 22-23 of
+  `archive/session-log.md` (+ the session-23 closure note), narratives `archive/tu/menu.md` and `archive/tu/message.md`,
+  folder totals in `registers/census.md`.
 - **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **22 of 38 TUs
-  reviewed**
-  in sessions 1-21 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
+  reviewed** through session 21 (24 now - bullet above) (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
   `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`,
   `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi` - **session 21 `mdi.cpp` closed 1 Nov 2026**: 4 wrappers, **0 binding /
   correctness / UB / convention-surface defects** - all four bindings were already D13-correct (`/EP` literals, export

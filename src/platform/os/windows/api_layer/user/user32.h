@@ -297,7 +297,7 @@ namespace qor { namespace win { namespace api {
         static LONG GetMessageTime(void);
         static DWORD GetQueueStatus(UINT flags);
         static BOOL InSendMessage(void);
-        static DWORD InSendMessageEx();
+        static DWORD InSendMessageEx(void);
         static BOOL PeekMessageT(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg);
         static BOOL PostMessageT(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
         static void PostQuitMessage(int nExitCode);

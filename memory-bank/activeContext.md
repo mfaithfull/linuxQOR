@@ -1,14 +1,41 @@
 # Active Context
 
-Last updated: 2 Nov 2026 (session 22 `menu.cpp` CLOSED and committed at `a502f6ad`; **U15 CLOSED the same day by user
-decision - policy D14, record-only, no code change**; session 23 `message.cpp` is next, with its pre-flags already in
-`status.md`).
+Last updated: 2 Nov 2026 (session 23 `message.cpp` CLOSED and **committed as one commit on top of `4dc44d81`**; the session
+was interrupted by a tool failure mid-close-out and finished by a recovery pass, see the session-23 bullet below; **next:
+session 24 `monitor.cpp`**, 51 lines, pre-flags measured and in `status.md`, with `archive/session-log.md` at 31.2 KB and
+`status.md` exactly at its 180-line / 18 KB ceiling - trim there before adding anything).
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
+- **Session 23 (`message.cpp`) closed 2 Nov 2026** - 24 wrappers (the whole `user32.h:289 //Message and Message Queue
+  functions` section), **4 fixes**: the **entire remaining P2 list** (`RegisterWindowMessage` `:214`, `SendMessageTimeout`
+  `:235`, `SendMessage` `:242`, `SendNotifyMessage` `:249`) -> `qor_pp_useswinapiAW`, behaviour-neutral by `cl /EP`, so **P2
+  is CLOSED (0 unresolvable-from-this-class left)**; plus U14(c)'s last zero-argument `()` -> `(void)` (`InSendMessageEx`
+  def `:176` + `user32.h:300`), which **closes U14(c)** - every binding macro in the folder now spells zero arguments
+  `(void)` (38 defs / 38 decls); and 3 comma-space nits in binding macros (`scrollbar.cpp` keeps the folder's last 12).
+  **0 return-type and 0 parameter-type divergences** over all 24; U16 4/24 SDK prototypes guarded; U19 172 LAYER / 12
+  INDIRECT / 68 BYPASS / 2 MEMBER with **all 24 wrappers live through the layer** (first TU with no zero-site family) and
+  **0 bypass in built code**; **P6 second instance** (bare `BroadcastSystemMessage` is exported and is the same entry point
+  as `BroadcastSystemMessageA`); U21 fifth instance; U25 fourth spelling; U26 re-measured on x64 (identical) and x86
+  (divergent from `lParam` on) - the mirror repair stays a `winqor_gui` decision, recorded not fixed. 90-line TU contract
+  block, 184 -> 274 lines; `user32.h` still 695 lines. Gate 38/38 at `/W4`, exit 0.
+- **Session 23 was interrupted by a tool failure and recovered the same day** - the code and the register edits were already
+  on disk; the recovery pass (`tmp/_tmp_s23_closeout.ps1`, `tmp/_tmp_s23_locsplice.ps1`) re-ran the gate, regenerated and
+  re-spliced the register locator, rebuilt both README indexes, verified the rows 17-19 `session-log` slice rejoin (3/3
+  hashes MATCH) and trimmed `status.md` from 202 lines / 21.0 KB to **180 lines / 18,432 B - exactly its ceiling**. Four
+  durable caveats are now in
+  `method.md`: (1) **a copied gate log cannot date its own run** - `Copy-Item` preserves `LastWriteTime`, and that pass left
+  `tmp/_tmp_cl_all_s23final.log`/`_s23pre.log` that are byte-identical to session 22's log, so the gate citation in the row,
+  the TU narrative and the census had to be re-pointed at `tmp/_tmp_cl_all_s23recover.log`; (2) **re-run `cl /EP` after the
+  last edit** - the `_post_s23` capture predated the `user32.h` edit, so the neutral-conversion proof was redone as
+  `_final_s23`; (3) PowerShell **`-like` treats a backtick as an escape**, so a pattern containing a literal backtick never
+  matches - use `-match`; (4) verify locator pointers with `tmp/_tmp_u15_locator_verify.ps1`, which knows the deliberate
+  `p6-u27.md` U27 exception. Two record citations were also corrected: **`archive/tu/ime.md` and `archive/tu/keyboard.md`
+  do not exist** - sessions 16-20 have no TU narrative file, their narrative is the session-log row; `archive/tu/` covers
+  sessions 1-15 and 21-23.
 - **Session 22 (`menu.cpp`) closed 2 Nov 2026**: 39 wrappers (the whole `//Menu functions` section), **2 fixes** - the
   `GetMenuString`/`InsertMenuItem` P2 pair converted to explicit `qor_pp_useswinapiAW`, behaviour-neutral by `cl /EP`;
   the other 30 bare bindings proven correct per stem by a new four-way classifier. **0 return-type divergences** (first
@@ -26,9 +53,13 @@ decision - policy D14, record-only, no code change**; session 23 `message.cpp` i
   caller when another item's severity depends on reachability (P1/P5 latent-vs-live, U18's `TrackPopupMenu`, U19's
   LAYER-vs-BYPASS split) and records the fact there. U4 and tasks T1/T3/T4/T5 (declared but never defined - `LNK2019`)
   and T2 (a whole dead section's conventions) are unaffected and stay open.
-- **Next: `message.cpp`** (session 23, 184 lines, 24 wrappers) - it holds the whole remaining P2 list
-  (`RegisterWindowMessage`, `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`), the U14(c) `InSendMessageEx`
-  `()` survivor, the U26 `Message`/`::MSG` mirror repair handed over by session 21, and P6/U27.
+- **Next: `monitor.cpp`** (session 24, 51 lines, 5 wrappers = the whole `user32.h:587`-`:592` `//Monitor functions` section).
+  Pre-flags measured 2 Nov are in `status.md`: all 5 `decl == def`, 1 `AW` + 4 bare bindings already the right shape
+  (`GetMonitorInfo` has no bare export), expect 0 P2/P6/U17/U18, U16 6/6 guarded by a single `WINVER >= 0x0500`, U21's sixth
+  instance (no `NOMONITOR` macro at all), and U19 **8 LAYER / 4 BYPASS with the first bypass in built code since U19 opened**
+  (`ui/gui/controllers/i_m/monitor.cpp:163` calls the `GetMonitorInfoW` thunk next to `User32::GetMonitorInfoT` calls) -
+  record it, do not fix it there. After `monitor.cpp` the biggest open items are `window.cpp` (615 lines - decide how to
+  split it **before** starting) and `mouse.cpp` (all 10 wrappers bind names that do not exist, P1).
 - The running record was **split on 1 Nov 2026**: `status.md` had reached 1,222 lines / 145 KB (open items 709 lines =
   52%) and no session could hold it, which is what caused the repeated context failures and compaction cycles. Boot on
   `src/platform/os/windows/api_layer/user/status.md` - a **~175-line brief** (live state, queue, the two convention
