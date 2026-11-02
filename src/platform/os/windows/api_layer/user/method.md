@@ -388,3 +388,18 @@ Caveats measured this session:
   tracked in its own variable and the diff wrapped in `@()`. Rule: decide "not found" from your own sentinel, never from
   the diff being empty - the same trap makes `@($x).Count -eq 0` ambiguous in the other direction.
 
+Caveats measured 2 Nov 2026 (session 25, `mouse.cpp`):
+
+- **A one-letter PowerShell function name is a trap: `H` is the built-in alias for `Get-History`.** The session-25 log
+  slice defined `function H([string]$s)`; the call `H($old[$i])` bound the row text to `Get-History -Id` and died with
+  `Cannot convert value "| 20 | ... "` - a 2 KB markdown row in a type error. It aborted *before* rewriting the source,
+  which is the only reason the slice was safe: verify, then rewrite. Use verb-form names (`Get-ShaHex`).
+- **Hand-built name matrices lie; grep the artefact.** `_tmp_paint_prep_s26.ps1`'s bare/A/W matrix for the `painting`
+  stems emitted spurious bare `A`/`W` rows and dropped `DrawStateA`/`DrawStateW` (which the export table has, `D9`/`DA`);
+  `Select-String` over `tmp/_tmp_user32_exports.txt` gave the truth. Cross-check any generated name list against a direct
+  grep before it feeds a conclusion.
+- **Verify a cited artefact before you cite it.** Session 25's records cited a verifier report while its script was still
+  being edited: the file was a 22:22 mid-session snapshot (`archive/tu/mouse.md: ABSENT`, 0 citations counted), and
+  re-running `tmp/_tmp_s25_verify.ps1` - the point of that script - changed several of its lines. Close-out verifiers run
+  last, after every record edit, and their output is quoted only from that final run.
+

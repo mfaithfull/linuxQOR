@@ -129,3 +129,23 @@
   lines, 111 added, all of them blank, 0 removed, 0 non-blank added**, so the emitted code is provably unchanged.
   `_tmp_mon_pp_final_s24.txt` (18:22) predates the 18:55 edit and is not the post state.
 
+- **Session 25 (`mouse.cpp`) folder-wide measures, 2 Nov 2026.** Binding census (`tmp/_tmp_p1census_s20.ps1`): **428
+  bindings, 11 unresolvable -> 1** (`tmp/_tmp_p1census_pre_s25.txt` -> `tmp/_tmp_p1census_post_s25b.txt`); all 10 rows
+  that left were this TU's `*W` names and the sole survivor is `window.cpp:124 CreateWindow`. Wrong-stem scan
+  (`tmp/_tmp_wrong_stem_scan.ps1`): **4 -> 3 rows, 0 live** (survivors `cursor.cpp:64` = P3, `resource.cpp:19`/`:26` =
+  U11). U14(b) **424/4 -> 425/3** with folder spacing unchanged at 178 spaced / 250 tight. U17's T-suffix census
+  **unchanged** at 525 declarations parsed / 108 A+W+T norm / 404 single-export bare / 11 + 2 deviations
+  (`tmp/_tmp_tsuffix_pre_s25.txt`) - all 10 mouse members are in the 404 class, which is what makes their `AW` spelling a
+  defect rather than a style choice. U16 gains 3 guarded prototypes (3 of 10 here, and the first
+  `DESKTOP | PC_APP` partition instance this item has measured). U19 9 LAYER / 7 INDIRECT / 0 BYPASS / 0 MEMBER,
+  unchanged. Name-divergence scan over this TU (`tmp/_tmp_name_divergence_scan.ps1 -Tu mouse.cpp` ->
+  `tmp/_tmp_namediv_pre_s25.txt`): 491 header declarations parsed, 10 definitions, **0 site divergences, 0 parameter-name
+  divergences** - the folder's zero-divergence record holds. Gate (`tmp/_tmp_cl_all_s25c.log`): **38/38 echoes at `/W4`,
+  exit 0, 0 `Cnnnn:` diagnostics**, logged 2 Nov **22:18:27**, after this TU's final edit at **22:14:54** - the earlier
+  `_tmp_cl_all_s25b.log` (22:06:32) predates that last citation fix and is not the final gate. `cl /EP` re-run after the
+  last edit: post3 `tmp/_tmp_mouse_pp_post3_s25.txt` **453,402** lines vs pre-fix `..._pre_s25.txt` **453,321** -
+  **0 removed, 81 added, every added line blank**, so the comment pass changed no emitted code; post2 (22:06) vs post3 is
+  **0 removed / 0 added**. Post-fix classifier: 10 literals, **0 not in the export table**, 0 P6-shaped. TU after the
+  edit: **167 lines** (86 before), 0 tabs, 0 trailing-space lines, 0 non-ASCII bytes, longest line 144. `user32.h`
+  untouched at 695 lines. Close-out verifier: `tmp/_tmp_s25_verify.ps1` -> `tmp/_tmp_s25_verify.txt`.
+

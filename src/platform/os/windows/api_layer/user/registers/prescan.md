@@ -104,3 +104,20 @@ TUs still to be reviewed:
   `W` name exist".
 
 
+- **P1 re-measured after session 25 (`mouse.cpp`, 2 Nov 2026): 1 unresolvable binding left, and it is not in a reviewed
+  TU.** `mouse.cpp`'s ten `qor_pp_useswinapiAW` bindings (`:19`,`:26`,`:33`,`:40`,`:47`,`:54`,`:61`,`:68`,`:75`,`:82` - the
+  whole TU) are now bare `qor_pp_useswinapi` at the fixed file's `:100`,`:107`,`:114`,`:121`,`:128`,`:135`,`:142`,`:149`,
+  `:156`,`:163`, which takes the folder census from **11 unresolvable to 1** (`tmp/_tmp_p1census_pre_s25.txt` ->
+  `tmp/_tmp_p1census_post_s25b.txt`, both 428 bindings over 38 TUs). The sole survivor is `window.cpp:124 CreateWindow`,
+  queue item 34's, and it is P3-shaped (`CreateWindowT` over the `CreateWindowEx` family) rather than mouse-shaped.
+  Verified live, not by table: `tmp/_tmp_mouse_probe_s25.cpp` -> `tmp/_tmp_mouse_probe_s25.txt` reports **MISSING for all
+  ten old `*W` names** and **RESOLVED for all ten bare stems** at the export-table RVAs, plus MISSING for
+  `TrackMouseEventW`/`A`/`T` and `DragDetectA`, which disproves every alternative spelling. The probe needed
+  `LoadLibraryW(L"user32")` - `GetModuleHandleW` fails with `gle=126` in a bare console process (G5).
+- **P5 now has 0 live instances.** The scan's `mouse.cpp:82` row (`TrackMouseEvent` bound the parameter **type**
+  `LPTRACKMOUSEEVENT`) went in the same edit as the ten bindings, so the folder scan (`tmp/_tmp_wrong_stem_scan.ps1`)
+  drops **4 -> 3 rows** and all three survivors are known-benign: `cursor.cpp:64` is P3's correct-binding/odd-name case
+  (`CopyCursorT` -> `CopyIcon`) and `resource.cpp:19`/`:26` are the script not seeing an enclosing member because both
+  `Resource` definitions are unqualified free functions (U11). Re-run in every session; a new row is still a
+  P1-class finding until disproved.
+

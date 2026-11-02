@@ -71,16 +71,16 @@
   `GetMenuContextHelpId`'s `DWORD` return makes failure indistinguishable from a legitimate 0 - the same reason the
   window pair gets no `CheckReturn`.
 
-Remaining queue (14 TUs, alphabetical; sessions 1-23 = `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`,
-`combobox`, `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
-`errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi`, `menu`, `message` done): monitor, mouse,
-painting, processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
-windowproperties, winqor_api_user (module glue). `monitor.cpp` is next (session 24; 51 lines, 5 wrappers, the whole
-`user32.h:587`-`:592` "//Monitor functions" section; pre-flags in `status.md` - expect 0 P2, `GetMonitorInfo`'s `AW` is
-**load-bearing** (no bare export), and this is the first TU with a U19 bypass in **built** code,
-`ui/gui/controllers/i_m/monitor.cpp:163`). What is left of the binding census is `mouse.cpp` (10 sites `:19`-`:82`, P1)
-and `window.cpp:124 CreateWindow`; the user decided at the session-20 close that `mouse.cpp`'s 10 broken bindings get
-**no out-of-turn hotfix** - see the P1 entry.
+Remaining queue (12 TUs, alphabetical; sessions 1-25 = the 24 listed above plus `monitor` and `mouse` done): painting,
+processthread, `winqor_api_user` (module glue), rectangle, resource, scrollbar, systemshutdown, text, window,
+windowclass, windowprocedure, windowproperties. `painting.cpp` is next (session 26; 191 lines) and 806 of the folder's
+remaining **1,392** lines sit in two TUs (`window` 615, `painting` 191), so measure its pre-flags before deciding
+whether it fits one session - decide before starting it, never mid-session. What is left of the binding census is
+**one site, `window.cpp:124 CreateWindow`**: `mouse.cpp`'s ten went in session 25 (2 Nov 2026), and the user's
+session-20 ruling that they get **no out-of-turn hotfix** was honoured - they were fixed in `mouse.cpp`'s own session,
+where the pre-scan predicted them. Hand-offs the queue must not lose: `window.cpp` (34) takes the version-guarded MDI
+members `CascadeWindows`/`TileWindows` (**U16**), the 17 DPI / `*Info` / WinEvent-hook heads that share the monitor SDK
+region (`tmp/_tmp_mon_region_s24.txt`) and U14's last 3 deducing sites; **T6** carries the ownerless list-box section.
 
 
 

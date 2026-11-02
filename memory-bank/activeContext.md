@@ -1,37 +1,28 @@
 # Active Context
 
-Last updated: 2 Nov 2026 (session 24 `monitor.cpp` CLOSED - **0 fixes, the first clean TU of the review**; its code + record
-are **uncommitted working-tree state** on top of `51bf18c7` (13 modified + 1 new per `git status`); **next: session 25
-`mouse.cpp`**, 86 lines, pre-flags measured and in `status.md`, where the whole-TU binding defect is the first **live**
-binding failure of the review (10 through-layer call sites in built code). `status.md` is at **180 lines / 17,011 B - the
-line ceiling with 1.4 KB of byte headroom**, so session 25 must rewrite rather than add). Completed-session records were
-moved out of this file the same day - they are in `memory-bank/archive/`, never here.
+Last updated: 2 Nov 2026 (session 25 `mouse.cpp` CLOSED - **10 P1 binding fixes**, the review's largest single-TU binding
+defect: all ten wrappers asked `GetProcAddress` for a `*W` that `user32.dll` has never exported). Session 24 is **committed**
+as `3a66dc25` (2 Nov 21:40, which also reorganised this memory bank); session 25's working tree is **13 modified + 2 new**
+per `git status`. **Next:
+session 26 `painting.cpp`** (25 wrappers, `user32.h:262`-`:287`), pre-flags measured and in `status.md`. Record sizes:
+`status.md` 174 lines / ~16.6 KB of its 180-line ceiling; **`method.md` 405 lines / 41,466 B is OVER its 40 KB ceiling -
+slice it before adding to it.** Completed-session records stay in `memory-bank/archive/`, never here.
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
-- **Session 24 (`monitor.cpp`) closed 2 Nov 2026 - 0 fixes, the first TU with nothing to change.** 5 wrappers (the whole
-  `user32.h:587 //Monitor functions` section): every D13/U14/U18/U25/U27 check passed as found, so the session's value is
-  measurement. Binding: **4 bare + 1 `AW`, both correct** - `GetMonitorInfo` is the one stem with **no bare export**
-  (ordinals `18C`/`18D`), so its `qor_pp_useswinapiAW` is load-bearing; a live `GetProcAddress` probe resolves all five
-  emitted literals and reports `MISSING` for bare `GetMonitorInfo`, every `*T` spelling and the non-existent
-  `GetMonitorInfoExW/A`. **0 P2, 0 P6, 0 wrong-stem rows**, folder census steady at **11 unresolvable of 428** (all in
-  `mouse.cpp` + `window.cpp`). New findings: **U16 6/6** - the first TU whose whole section shares one
-  `#if(WINVER >= 0x0500)` guard (`winuser.h:13594`); **U19's first bypass in built code** (`i_m/monitor.cpp:163` calls the
-  `GetMonitorInfoW` import from the same file that calls `User32::GetMonitorInfoT`); **U21 sixth instance** - a 45-head SDK
-  region feeding several sections, attribution measured not guessed (6 here / 17 in seven other TUs / 22 unwrapped), which
-  also surfaced a **U4 hand-off**: `GetListBoxInfo` is declared at `user32.h:548` and defined in no TU (now `tasks.md`
-  **T6**); **U25 fifth spelling** (mixed `::` qualification inside three declarations); **U26 fourth instance** - the
-  `MONITORINFO`/`MONITORINFOEX` mirrors measured **sound on x64 and x86** (40 and 104 bytes, field-for-field) because they
-  spell SDK-width types, unlike the `MSG` mirror, with the narrow-world 72-byte `MONITORINFOEXA` shape one switch away and
-  one genuine x86 divergence: the caller's `MonitorEnumProc` passes `long long` where `MONITORENUMPROC` passes `LPARAM`.
-  111-line TU contract block, 51 -> 162 lines; `user32.h` untouched at 695. Gate `tmp/_tmp_cl_all_s24b.log` 38/38 at `/W4`,
-  exit 0, dated after the last edit; `/EP` multiset diff 0 (comment-only neutrality proved by counting). Two instrument
-  caveats added to `method.md` (a comment block must be inserted *inside* the namespace - re-emitting it produced `C2888` +
-  `C1075`; an empty `Compare-Object` assigns `$null`, which made the close-out audit report an *identical* locator block
-  as `BLOCK NOT FOUND`).
+- **Session 25 (`mouse.cpp`) closed 2 Nov 2026 - 10 P1 + 1 P5 + 1 U14(b) fixed; 26 of 38 TUs reviewed.** All ten bindings
+  were `qor_pp_useswinapiAW` over stems with **no A/W family at all** (the inverse of the P2 class): `winuser.h` defines no
+  `#define <stem>` for any of them and `user32.dll` exports only the bare name, so `##W` asked for `DragDetectW` ...
+  `LPTRACKMOUSEEVENTW` and every call threw from `library.h:50`. Proven by the `/EP` literals plus a live `GetProcAddress`
+  probe (all 10 `MISSING`, all 10 bare stems `RESOLVED` at the export-table RVAs), so bare `qor_pp_useswinapi` is **D13's
+  other half**, not a style call. The old `:82` also bound the parameter *type* - **P5's second instance** - so folder
+  unresolvable bindings went **11 -> 1** of 428 and live wrong-stem sites **1 -> 0**; U14(b) **425 explicit / 3 deducing**.
+  Narrative `archive/tu/mouse.md`, row 25; gate `tmp/_tmp_cl_all_s25c.log` (38/38 `/W4`, exit 0, dated after the last edit).
+- Session 24 (`monitor.cpp`, 0 fixes - the first clean TU) is committed in `3a66dc25`; its detail is `archive/tu/monitor.md`
+  + row 24 of `archive/session-log.md`, not here.
 
 ## Decisions in force (pointer only - not restated here)
 

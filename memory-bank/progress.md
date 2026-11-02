@@ -1,23 +1,23 @@
 # Progress
 
-Last updated: 2 Nov 2026 (session 24 `monitor.cpp` CLOSED with **0 fixes - the first clean TU of the review**; its code +
-record are **uncommitted** on top of `51bf18c7`; next session 25 is `mouse.cpp`, 86 lines, pre-flags already measured into
-`status.md`, whose line ceiling (180) is reached - rewrite there rather than adding). Same day: `memory-bank/activeContext.md`
-was stripped of completed-session records (455 lines / 81 KB -> ~78 / 8 KB); they are now in `memory-bank/archive/` and that
-file carries a rule against re-accumulating them.
+Last updated: 2 Nov 2026 (session 25 `mouse.cpp` CLOSED with **10 P1 binding fixes** - the review's largest single-TU binding
+defect; **26 of 38 TUs reviewed**. Session 24 is committed as `3a66dc25` (2 Nov 21:40, which also reorganised this memory
+bank); session 25's working tree is **13 modified + 2 new** per `git status`. Next session 26 is `painting.cpp`, 25 wrappers, pre-flags already measured
+into `status.md`, which is near its line ceiling (174/180) - rewrite there rather than adding. `method.md` is now **over its
+40 KB ceiling at 405 lines / 41,466 B**, so slice it before adding caveats to it.)
 
 Current:
-- **Session 24 (`monitor.cpp`) closed 2 Nov 2026 - 0 fixes, the first TU of the review with nothing to change** (25 of 38 TUs
-  reviewed). The whole `user32.h:587 //Monitor functions` section: 5 wrappers, **4 bare + 1 `AW` bindings both correct** -
-  `GetMonitorInfo` has **no bare export** (`18C`/`18D`), so its `qor_pp_useswinapiAW` is load-bearing, and a live
-  `GetProcAddress` probe resolves the five emitted literals while bare `GetMonitorInfo`, every `*T` spelling and
-  `GetMonitorInfoExW/A` come back `MISSING`. 0 signature divergences, 0 P2/P6/wrong-stem, folder census steady at **11
-  unresolvable of 428**. New: **U16 6/6** (first TU whose entire section shares one `WINVER >= 0x0500` guard), **U19's first
-  bypass in built code** (`i_m/monitor.cpp:163` calls the import next door to its own layer call), **U21 sixth instance**
-  (a 45-head SDK region, attribution measured: 6/17/22) plus the **`GetListBoxInfo` U4 hand-off now `tasks.md` T6**, **U25
-  fifth spelling**, **U26 fourth instance** (`MONITORINFO`/`MONITORINFOEX` mirrors sound on x64 **and** x86, the
-  `MonitorEnumProc` `long long`-vs-`LPARAM` x86 divergence recorded). Narrative `archive/tu/monitor.md`, row 24; gate
-  `tmp/_tmp_cl_all_s24b.log` 38/38 at `/W4` exit 0, `/EP` multiset diff 0.
+- **Session 25 (`mouse.cpp`) closed 2 Nov 2026 - 10 P1 binding fixes + P5's second instance + 1 U14(b) site** (26 of 38 TUs
+  reviewed). The whole `user32.h:555 //Mouse functions` section, 10 wrappers: **all ten `qor_pp_useswinapiAW` over stems with
+  no A/W family** - the inverse of the P2 class. `winuser.h` declares each once with **no `#define <stem>` macro** and
+  `user32.dll` exports only the bare name, so `##W` (`kernel32.h:52`) asked for `DragDetectW` ... `LPTRACKMOUSEEVENTW`; each
+  call cached a NULL `pFunc` (U5) and threw from `library.h:50`-`:53`. The `/EP` literals plus a live `GetProcAddress` probe
+  prove all 10 `MISSING` and all 10 bare stems `RESOLVED` at the export RVAs, so bare `qor_pp_useswinapi` is D13's other half.
+  The old `:82` bound the parameter *type* (`LPTRACKMOUSEEVENT`) = **P5's second instance**, so live wrong-stem sites went
+  **1 -> 0**; folder unresolvable bindings **11 -> 1** of 428; U14(b) **424/4 -> 425/3**; 0 signature and 0 parameter-name
+  divergences; **U16 3/10** (the SDK's crossed `#endif` comments read off the guard stack, not the comments); U19's 9 LAYER
+  sites are all in built `winqor_gui` code, so the fix is behavioural, not cosmetic. Narrative `archive/tu/mouse.md`, row 25;
+  gate `tmp/_tmp_cl_all_s25c.log` 38/38 at `/W4` exit 0, dated after the last edit, `/EP` 0 removed / 81 added all blank.
 
 - **2 Nov 2026 - U15 CLOSED by user decision (policy **D14**, `docs/agent/DECISIONS.md`), record-only.** A wrapper exported
   through `QOR_WINAPIUSER` with no reachable caller in `src`/`examples`/`test` is not a finding for the `winqor_api_user`
@@ -39,7 +39,7 @@ Current:
   `archive/session-log.md` (+ the session-23 closure note), narratives `archive/tu/menu.md` and `archive/tu/message.md`,
   folder totals in `registers/census.md`.
 - **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **22 of 38 TUs
-  reviewed** through session 21 (25 now - bullets above) (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
+  reviewed** through session 21 (26 now - bullets above) (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
   `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`,
   `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi` - **session 21 `mdi.cpp` closed 1 Nov 2026**: 4 wrappers, **0 binding /
   correctness / UB / convention-surface defects** - all four bindings were already D13-correct (`/EP` literals, export
