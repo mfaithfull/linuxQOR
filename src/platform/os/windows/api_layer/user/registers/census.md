@@ -52,7 +52,8 @@
   4 deducing**, spacing 250 tight / 178 spaced (re-run 1 Nov session 20 - the 2 `keyboard.cpp` sites are now explicit,
   leaving `mouse.cpp:83` and `window.cpp:118,254,317`); U14c zero-argument lists **37 defs `(void)` / 1 `()`** and **37
   decls `(void)` / 1 `()`**, the survivor `message.cpp InSendMessageEx`; T-suffix census 525 / 108 / 404 / **11** / 2, unchanged across sessions 11-13 and 17-19;
-  U15 and U19 per-family tallies accumulate in their own entries; `user32.h` 525 declarations, 428 `static` since
+  U19's per-family tally accumulates in its own entry; U15's stopped at the 2 Nov 2026 closure (user decision - policy
+  D14, `docs/agent/DECISIONS.md`), so nothing is appended to `registers/u15.md`; `user32.h` 525 declarations, 428 `static` since
   session 7, 695 lines; declared-but-undefined per `_tmp_decl_no_def_scan.ps1` **491 parsed / 426 defined / 65
   undefined** as of session 19 (was 490/426/64 while `:637` hid behind a trailing comment - see the header note above).
 - **Folder-wide measures after session 21 (`mdi.cpp`, 1 Nov 2026).** 22 of 38 TUs reviewed. `mdi.cpp`: 4 wrappers, 4

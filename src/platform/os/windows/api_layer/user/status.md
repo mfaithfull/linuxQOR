@@ -1,8 +1,9 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 2 Nov 2026 (session 22 `menu.cpp` closed). **Only session 22 is uncommitted** - `menu.cpp`, this session's
-record writes and the two new `archive/session-log-*.md` slices; HEAD `bbb5e0ef` already carries session 21 (code
-`42c07a8b`, record `bbb5e0ef`) and the off-protocol **U6** fix (`2bc8e513`). Review of
+Last updated 2 Nov 2026 - **U15 CLOSED by user decision: a policy change, record-only, no code touched** (D14 in
+`docs/agent/DECISIONS.md`), see "Convention decision" below. Session 22 (`menu.cpp`) is closed and **committed**: HEAD
+`a502f6ad` carries its code and record, on top of session 21 (`42c07a8b` code, `bbb5e0ef` record) and the off-protocol
+**U6** fix (`2bc8e513`). Review of
 `src/platform/os/windows/api_layer/user` (the `User32` wrapper class over `user32.dll`) for correctness, consistency,
 safety, undefined behaviour and conformance to the api_layer conventions. Protocol: **one translation unit per session** -
 the whole point is not to lose findings between sessions. Small, unambiguous defects get fixed as they are found; anything
@@ -12,7 +13,7 @@ that changes library-wide behaviour or needs a decision goes in the register and
 
 | File | Contents | Open it when |
 |---|---|---|
-| `status.md` (this file; **stay under 180 lines / 18 KB** - **179 lines / 17.5 KB after session 22, i.e. one line of headroom**: trim something before adding session 23's closure bullet) | live state, queue, the two convention decisions, register locator, defect census pointer, verification gate, current TU pre-flags | every session, first |
+| `status.md` (this file; **stay under 180 lines / 18 KB** - **179 lines / 17.7 KB after the U15 closure, i.e. one line of headroom: trim before adding anything**) | live state, queue, the three convention decisions, register locator, defect census pointer, verification gate, current TU pre-flags | every session, first |
 | `registers/<file>.md` - **one register entry per file**, index in `registers/README.md` | verbatim register text: P1-P5 `prescan.md`, P6+U27 `p6-u27.md`, G1-G6 `ground-rules.md`, U1-U26 `u<n>.md`, T1-T4 `tasks.md`, census `census.md` | only the ids named by the locator below or by the current TU's pre-flags |
 | `method.md` | the per-TU review method, tooling index, **instrument caveats** | before running an instrument or the gate |
 | `archive/tu/<tu>.md` - **one narrative per TU**, index in `archive/README.md` | that TU's narrative + verdict detail | only the TU you just reviewed |
@@ -21,22 +22,18 @@ that changes library-wide behaviour or needs a decision goes in the register and
 
 The rule: **findings, narratives and register text never go in this file.** New finding -> the register file the locator
 names; new TU narrative -> `archive/tu/<tu>.md`; new row -> `archive/session-log.md`; new instrument or caveat ->
-`method.md`. This file, `registers.md` (1,063 lines) and `session-log-archive.md` (1,394) each outgrew a session's context
-and were split on 1 Nov 2026. Hard rule: **no record file over ~40 KB**; read tally entries for their **head only**, append at the **end**.
+`method.md`. This file, `registers.md` (1,063 lines) and `session-log-archive.md` (1,394) were split on 1 Nov 2026
+because each outgrew a session's context. Hard rule: **no record file over ~40 KB**; read tally entries for their **head only**, append at the **end**.
 
 ## Live state (2 Nov 2026)
 
-- **23 TUs reviewed** (sessions 1-22): `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`, `combobox`,
-  `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
-  `errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi`, `menu`.
-- **Sessions 19-20 (`ime.cpp`, `keyboard.cpp`) CLOSED 1 Nov 2026** - narrative `archive/tu/ime.md`, `archive/tu/keyboard.md`,
-  rows 19-20; code `f2f87453`, `4948838d`. `keyboard.cpp`'s folder-wide AW checklist flagged **all 10 `mouse.cpp`
-  wrappers broken** (`prescan.md` P1).
+- **23 TUs reviewed** (sessions 1-22) - the names are in `registers/tasks.md` ("Remaining queue"); the 15 left are the Queue table below.
+- **Sessions 19-20 (`ime.cpp`, `keyboard.cpp`) CLOSED 1 Nov 2026** - narratives `archive/tu/ime.md`,
+  `archive/tu/keyboard.md`, rows 19-20; code `f2f87453`, `4948838d`.
 - **Session 21 (`mdi.cpp`) CLOSED 1 Nov 2026** - 4 wrappers, **0 binding / correctness / UB / convention defects**; one
-  internal fix (`DefFrameProcT`'s `Call<>` said `INT` where the SDK says `UINT` - the folder's only such site), a 67-line TU
-  block, 44 -> 112 lines. Registers: U14 new sub-class, U15 4/4, U16 0/4, U19 **1/1/0/0** (first family with 0 SDK bypass),
-  U21 third instance, **U26** third mirror (`Message` vs `::MSG`: identical on x64, divergent from `lParam` on x86, 7 call
-  sites). Narrative `archive/tu/mdi.md`, row 21.
+  internal fix (`DefFrameProcT`'s `Call<>` said `INT` where the SDK says `UINT` - the folder's only such site), a 67-line
+  TU block, 44 -> 112 lines. Registers: U14 new sub-class, U15 4/4, U16 0/4, U19 **1/1/0/0**, U21 third instance,
+  **U26** third mirror (the `Message` vs `::MSG` case the queue hands to `message.cpp`). Narrative `archive/tu/mdi.md`, row 21.
 - **Session 22 (`menu.cpp`) CLOSED 2 Nov 2026** - 39 wrappers, the whole `//Menu functions` section: **2 fixes**, the
   pre-scan **P2** pair `GetMenuString`/`InsertMenuItem` -> `qor_pp_useswinapiAW`, **behaviour-neutral** (pre- and post-fix
   `/EP` emit the same two `*W` literals). **0 return-type divergences** - and that half of method step 2 had never been
@@ -80,6 +77,10 @@ sites) and **P6/U27**; `window.cpp` (34) takes the two version-guarded MDI membe
   `api_layer/kernel` use both and G6 makes `CheckReturn` always active. Sessions still *record* the sites that would take
   them (U1/U2) but change no behaviour. So a Win32 `FALSE`/NULL/0 failure is silent here, and a swallowed SEH fault is
   indistinguishable from a legitimate zero (U7).
+- **D14 (adopted 2 Nov 2026, user decision; `docs/agent/DECISIONS.md`) - U15 CLOSED.** An exported wrapper with no
+  reachable in-tree caller is published surface, **not a finding**: record no U15 instances and append nothing to
+  `registers/u15.md` (its recorded instances are frozen history). Measure reachability only where another item needs it
+  (a P1/P5 mis-binding being latent or live, U18's `TrackPopupMenu`, U19's LAYER-vs-BYPASS split), and record it there.
 
 ## Register locator - id -> which `registers/` file and line holds its text
 
@@ -113,7 +114,7 @@ whole `registers/` tree. Generated by `tmp/_tmp_status_index_gen_s22.ps1`; do no
 - **U13** `registers/u13.md:3` one member was defined through `User32::` but declared non-static: `ConsoleControl` - FIXED 30 Oct 2...
 - **U14** `registers/u14.md:31` re-measure 1 Nov 2026 (session 20, `keyboard.cpp`). (b) `tmp/_tmp_u14_census.ps1` now reports
 - **U14** `registers/u14.md:3` `Library::Call`/`voidCall` template-argument style is split two ways. Measured 29 Oct 2026 over all...
-- **U15** `registers/u15.md:3` wrappers that are exported through `QOR_WINAPIUSER` but have no reachable caller in the tree. Opened
+- **U15** `registers/u15.md:3` wrappers that are exported through `QOR_WINAPIUSER` but have no reachable caller in the tree: CLOSED...
 - **U16** `registers/u16.md:3` the wrappers pair with SDK declarations that the SDK only emits when a version guard passes, and not...
 - **U17** `registers/u17.md:3` A/W wrappers declared without the folder's `T` suffix. Opened 29 Oct 2026 (session 6) when the two c...
 - **U18** `registers/u18.md:3` a wrapper pair whose return type contradicts the SDK: `void` where `user32.dll` returns `BOOL`. Open...
@@ -128,9 +129,9 @@ whole `registers/` tree. Generated by `tmp/_tmp_status_index_gen_s22.ps1`; do no
 - **U27** `registers/p6-u27.md:9` (same extract) STRICT changes the identity of HOOKPROC and every DECLARE_HANDLE type
 - **T1** `registers/tasks.md:5` two declared-but-undefined members in the "Authorization functions" section. `user32.h:658-659` decl...
 - **T2** `registers/tasks.md:18` the whole Window Station / Desktop surface is dead exported API, and its conventions are therefore u...
-- **T3** `registers/tasks.md:27` the "Power Management functions" pair is declared but has no owning TU at all. Opened 30 Oct 2026 (s...
-- **T4** `registers/tasks.md:50` the menu half of the context-help-id family is declared and defined nowhere. Opened 31 Oct 2026 (ses...
-- **T5** `registers/tasks.md:83` the IME/WINNLS pair in the unlabelled `user32.h:635-639` block is declared and defined nowhere. Open...
+- **T3** `registers/tasks.md:29` the "Power Management functions" pair is declared but has no owning TU at all. Opened 30 Oct 2026 (s...
+- **T4** `registers/tasks.md:52` the menu half of the context-help-id family is declared and defined nowhere. Opened 31 Oct 2026 (ses...
+- **T5** `registers/tasks.md:85` the IME/WINNLS pair in the unlabelled `user32.h:635-639` block is declared and defined nowhere. Open...
 
 ## Defect census
 - The sessions-1-22 census (run-time defects fixed, what is still open, convention fixes, folder-wide measures) is kept verbatim at `registers/census.md:3` - refresh it there when a session closes.
@@ -171,9 +172,8 @@ one line past the section.
 
 ## How this record is split
 
-This file was previously split into four files, `registers.md` (1,063) into `registers/`, `session-log-archive.md` (1,394) into `archive/`
-
-`archive/session-log.md` passed its ~40 KB ceiling and rows 1-8 and 9-16 were sliced out the same way
+`registers.md` (1,063 lines) went into `registers/` and `session-log-archive.md` (1,394) into `archive/` on 1 Nov 2026;
+`archive/session-log.md` then passed its ~40 KB ceiling and rows 1-8 and 9-16 were sliced out the same way
 (`archive/session-log-1-8.md`, `archive/session-log-9-16.md`; `tmp/_tmp_s22_logsplit.ps1`, `_tmp_s22_logsplit2.ps1`) -
 slice **before** appending, then re-point the indexes. **Regenerate the locator with
 `tmp/_tmp_status_index_gen_s22.ps1` whenever a register entry moves** (it also rewrites both README indexes).

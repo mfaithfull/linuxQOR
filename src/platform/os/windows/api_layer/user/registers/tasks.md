@@ -19,7 +19,9 @@
   against a caller.** All 18 `desktop.cpp` wrappers have **zero** in-tree callers (searched `src`, `examples`, `test`
   for `User32::<name>` across all 18 - only the definitions match), and a comment-stripped search for direct SDK calls
   (`OpenWindowStation|OpenDesktop|SwitchDesktop|GetUserObjectInformation(W|A)?\(` excluding `User32::`) finds **zero
-  bypass sites** - the single hit is the declaration at `user32.h:416`. So this section is 18/18 U15 instances and
+  bypass sites** - the single hit is the declaration at `user32.h:416`. So this section is 18/18 U15 instances (U15 is
+  CLOSED by user decision 2 Nov 2026 - policy D14 - which does **not** close this task: what makes it a user decision is
+  that the conventions below are untestable, not that the surface is unused) and
   0/18 U19 sites, which makes several folder decisions (U17 `T`-suffix consistency, P3, and whether `EnumDesktopsT`'s
   callback should be typed as the SDK's `DESKTOPENUMPROC` or as a `LPCWSTR`-taking callback now that the binding is
   always the `W` form) pure taste calls with no call site to inform them. Recorded for the folder-wide pass; nothing in

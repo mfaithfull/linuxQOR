@@ -27,4 +27,4 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/tu/errorhandling.md` | 80 | 909-986 |
 | `archive/tu/filledshapes.md` | 113 | 987-1097 |
 | `archive/tu/mdi.md` | 84 | - |
-| `archive/tu/menu.md` | 95 | - |
+| `archive/tu/menu.md` | 98 | - |

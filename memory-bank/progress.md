@@ -4,6 +4,12 @@ Last updated: 1 Nov 2026 (session 21 `mdi.cpp` CLOSED - **code uncommitted**, re
 `menu.cpp`, and `archive/session-log.md` is over its size ceiling and must be sliced first).
 
 Current:
+- **2 Nov 2026 - U15 CLOSED by user decision (policy **D14**, `docs/agent/DECISIONS.md`), record-only.** A wrapper exported
+  through `QOR_WINAPIUSER` with no reachable caller in `src`/`examples`/`test` is not a finding for the `winqor_api_user`
+  review, and sessions stop recording U15 instances: no per-TU tally, no session-log column, nothing appended to
+  `registers/u15.md` (its sessions-1-22 instances are frozen history). Reachability is still measured where another item
+  needs it (P1/P5 latent-vs-live, U18, U19). `status.md`, `method.md` step 5, `registers/README.md` and
+  `registers/census.md` carry the new rule; no code, header or CMake file was touched, so the 38/38 `/W4` gate is unchanged.
 - **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **22 of 38 TUs
   reviewed**
   in sessions 1-21 (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,

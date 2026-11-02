@@ -19,7 +19,11 @@ Verbatim from `status.md` (1 Nov 2026 split). Read the caveats section before ac
    arguments, `CheckReturn<...>::TType` where zero/false means failure.
 5. Look for an in-tree caller of every wrapper (`src`/`examples`/`test`). Name the consumer chain one level deep -
    which `ui/gui` controller or handler calls it - then stop: whether that controller should itself be called is a
-   `winqor_gui` question. Wrappers with no reachable caller are recorded as instances of open item U15.
+   `winqor_gui` question. **Since 2 Nov 2026 an unreachable wrapper is not recorded at all** - open item U15, which used
+   to collect these, is CLOSED by user decision (policy **D14**, `docs/agent/DECISIONS.md`); there is no U15 tally to
+   append to. Do the check anyway when another item's severity depends on reachability - whether a P1/P5 mis-binding is
+   latent or live, U18's divergent parameter at `TrackPopupMenu`, U19's LAYER-vs-BYPASS split - and record the fact in
+   that item's entry. `registers/u15.md` keeps the instances measured before the closure as frozen history.
 5b. For every stem whose callers are established, classify the call sites with `tmp/_tmp_bypass_scan.ps1`
    (**LAYER** through `User32::` vs **BYPASS** through the SDK import) and record the split against open item U19.
    **Never trust a raw grep for liveness**: comments must be stripped first (`tmp/_tmp_comment_state.ps1` for one file,
@@ -269,4 +273,19 @@ instruments that no `/W4` compile can replace:
   **declaration** in another library (`ui/gui/controllers/.../menu.h:95 Menu* GetSubMenu(int)`) as a BYPASS call site:
   3 of the 18 menu rows are that. Quote row counts and real-call counts separately, and check the file/line kind before
   calling a site a bypass.
+
+### Record-editing tooling and caveats from the U15 closure pass (2 Nov 2026, no TU reviewed)
+
+- **A closed register entry must be removed from the generator's own instructions**, not just from the register file:
+  `tmp/_tmp_status_index_gen_s22.ps1` writes the `registers/README.md` preamble that lists the accumulating entries, so
+  leaving `u15` in that list would re-tell the next session to append to a frozen entry. It now names
+  `(u16, u17, u19, u20)` and states that u15 is closed (policy D14).
+- **Regenerate the locator, then splice it, in two separate commands.** One batch ran generator +
+  `tmp/_tmp_s22_locsplice.ps1` concurrently, so the splice compared against the previous generated index, printed
+  "differing entries: 0" and wrote stale `tasks.md:27/50/83` pointers after the T2 edit had shifted those entries to
+  `29/52/85`. Re-running the splice alone fixed it; the batch-race caveat above is the mechanism.
+- **New check `tmp/_tmp_u15_locator_verify.ps1`** (read-only): parses every `status.md` locator bullet and asserts the
+  `registers/<file>:<line>` it names really starts that id's entry. It reports 44 correct of 45 plus the one deliberate
+  exception - U27 points at the shared `registers/p6-u27.md` P6 extract bullet. Run it after any register-entry insert or
+  deletion, not just after a split.
 

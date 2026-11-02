@@ -1,7 +1,8 @@
 # Active Context
 
-Last updated: 2 Nov 2026 (session 22 `menu.cpp` CLOSED - **code uncommitted**, record complete; session 23
-`message.cpp` is next, with its pre-flags already in `status.md`).
+Last updated: 2 Nov 2026 (session 22 `menu.cpp` CLOSED and committed at `a502f6ad`; **U15 CLOSED the same day by user
+decision - policy D14, record-only, no code change**; session 23 `message.cpp` is next, with its pre-flags already in
+`status.md`).
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
@@ -17,6 +18,14 @@ Last updated: 2 Nov 2026 (session 22 `menu.cpp` CLOSED - **code uncommitted**, r
   `CalculatePopupWindowPosition`, SDK menu entries declared nowhere in this library), 4 of 39 wrappers unreachable,
   0 bypass sites in built code. `archive/session-log.md` was sliced twice (rows 1-8, rows 9-16, both rejoin-hash
   verified) **before** its row was written, so it is back under its ~40 KB ceiling.
+- **U15 CLOSED 2 Nov 2026 by user decision (policy **D14** in `docs/agent/DECISIONS.md`) - record-only, no code touched.**
+  "Exported through `QOR_WINAPIUSER`, no reachable caller in the tree" is **not a finding for this review**: the wrapper is
+  defined, linked and callable, so it is published surface, and whether the tree exercises it is a consumer-side
+  (`winqor_gui`) question. From session 23 on there is **no U15 tally**: no per-TU count, no session-log column, nothing
+  appended to `registers/u15.md`, whose sessions-1-22 instances stay as frozen history. Method step 5 still looks for the
+  caller when another item's severity depends on reachability (P1/P5 latent-vs-live, U18's `TrackPopupMenu`, U19's
+  LAYER-vs-BYPASS split) and records the fact there. U4 and tasks T1/T3/T4/T5 (declared but never defined - `LNK2019`)
+  and T2 (a whole dead section's conventions) are unaffected and stay open.
 - **Next: `message.cpp`** (session 23, 184 lines, 24 wrappers) - it holds the whole remaining P2 list
   (`RegisterWindowMessage`, `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`), the U14(c) `InSendMessageEx`
   `()` survivor, the U26 `Message`/`::MSG` mirror repair handed over by session 21, and P6/U27.
@@ -111,7 +120,9 @@ Last updated: 2 Nov 2026 (session 22 `menu.cpp` CLOSED - **code uncommitted**, r
 - **U15 opened (user decision, session 4):** "exported through `QOR_WINAPIUSER`, no reachable in-tree caller" is now
   one folder-wide item that each session adds instances to, instead of a per-TU note. Seeded with `caret.cpp` 8/8 and
   `hook.cpp` 4/4; `accelerator.cpp` (5/5), `timer.cpp`+`accessibility.cpp` (3/3) and `brush.cpp` (1/1) confirmed live.
-  The review method gained step 6 (caller check) to feed it.
+  The review method gained step 6 (caller check) to feed it. **Closed 2 Nov 2026 by user decision (policy D14):** the
+  observation is no longer recorded at all - see the U15 bullet at the top of this file and
+  `src/platform/os/windows/api_layer/user/registers/u15.md`, whose instances are frozen.
 - Session 5 (29 Oct 2026) reviewed `clipboard.cpp` (20 wrappers - the "Clipboard functions" section
   `user32.h:106-126`): **nothing wrong in the wrappers**, and the first TU already D13-conformant before it was opened
   (`GetClipboardFormatNameT`/`RegisterClipboardFormatT` bound `qor_pp_useswinapiAW`, the other 18 are single exports,
