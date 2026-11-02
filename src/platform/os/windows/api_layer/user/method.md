@@ -232,3 +232,41 @@ instruments that no `/W4` compile can replace:
   went 200 -> 179 lines / 17.4 KB in tmp/_tmp_s21_close_b.ps1, whose anchors are what caught the -like trap above.
 - **Commands sent in one batch may run concurrently**, so never verify in the same batch a file another command writes:
   twice the reader ran first and reported the just-written compile log "does not exist" although the compile had exit 0.
+### Tooling added in session 22 (`menu.cpp`), and the caveats they carry
+
+- **The SDK return type is on its own line, so a declaration-line instrument cannot see it.** In `winuser.h` a
+  prototype is `WINUSERAPI` / `BOOL` / `WINAPI` / `Stem(` on four separate lines, so `tmp/_tmp_menu_proto_s22.ps1`
+  printed the stem line plus the parameters and reported nothing about the return type - method step 2 looks satisfied
+  and is not. `tmp/_tmp_menu_ret_s22.ps1` walks back from the stem up to 4 lines, skips `WINAPI`/`WINUSERAPI`/`CALLBACK`
+  and blank lines, and takes the first remaining token as the return type; that is what produced the 39/39 agreement
+  here. Reuse the pattern for every future TU, and treat "return types match" as unmeasured unless such an instrument
+  ran.
+- **Inserting a TU comment block invalidates the block's own line references.** `menu.cpp` went 289 -> 355 lines, so
+  every `:NNN` the new block cites for a definition in the same file shifts by the block length (+66). Write those
+  references from the **post-insert** numbering, or re-point them immediately with an exact-anchor script
+  (`tmp/_tmp_s22_lineref_fix3.ps1`), and grep for the old numbers afterwards - `':159|:194|:275|:184|:230|:280'` found
+  the leftovers here. The register rows written before the fix carry the same risk.
+- **PowerShell flattens nested arrays, which turns a pair table into a character index.** `@( @('a','b') )` is **two
+  strings**, so `foreach($p in $pairs){ $p[0] }` yields the character `a` - the session-22 line-reference script reported
+  "MISSING/AMBIG x120" for a one-pair file while multi-pair files in the same script worked, because only the single-pair
+  case flattened. Use a flat alternating array stepped by 2, or hashtables, and always print the match count per anchor.
+- **`[IO.File]::*Text` resolves relative paths against the .NET current directory, not PowerShell's.** In the same
+  command, `cd <dir>` then `[IO.File]::ReadAllText('session-log.md')` threw "Could not find file
+  `C:\RAID0\Develop\linuxQOR\session-log.md`" while `Get-Item 'session-log.md')` in the **same** statement list resolved
+  correctly. Every record-editing script must use absolute paths.
+- **A Win32 family is defined by a macro region, not by a line range, and a header can open the region twice.**
+  `tmp/_tmp_menu_nomenus_s22.ps1` walks `#ifndef NOMENUS` ... `#endif` spans with a depth counter and counts the
+  declaration heads inside each; it found **two** such regions (`winuser.h:7432`-`:8101` and `:10426`-`:10535`) and the
+  second holds exactly one stem (`CheckMenuRadioItem`), which is why that one wrapper pairs with a `WINVER` guard
+  instead of the region's own condition. Same shape for `NOMDI`/`NOSYSTEM` etc - always enumerate the markers, never
+  assume one span.
+- **Record hygiene arithmetic:** the ceiling must be measured **after** the row you are about to add. `session-log.md`
+  was 45,673 bytes; slicing rows 1-8 (verified `MATCH`) left 40,464 - still over - so the session-22 row would have
+  breached it again and rows 9-16 had to go too (`tmp/_tmp_s22_logsplit.ps1`, `_tmp_s22_logsplit2.ps1`, both
+  rejoin-and-hash first). Keep the two slice files verbatim, repeat the table header in each, and re-point
+  `archive/README.md`.
+- **Bypass classification false positives are now known, not guessed.** The U19 classifier reads an unqualified member
+  **declaration** in another library (`ui/gui/controllers/.../menu.h:95 Menu* GetSubMenu(int)`) as a BYPASS call site:
+  3 of the 18 menu rows are that. Quote row counts and real-call counts separately, and check the file/line kind before
+  calling a site a bypass.
+

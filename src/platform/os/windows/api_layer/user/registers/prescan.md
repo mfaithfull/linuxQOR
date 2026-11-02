@@ -58,8 +58,12 @@ TUs still to be reviewed:
     sites repo-wide, and its header has exactly one includer, its own `.cpp` - so no built code reaches them at run
     time. `windowcontroller.cpp:673` is `WindowController::DragDetect`, which is itself U15-unreachable.
 - **P2 - bindings that work today only because the SDK macro rewrites them; convert to explicit AW
-  under D13.** **Six remain:** `menu.cpp` `GetMenuString`, `InsertMenuItem`; `message.cpp` `RegisterWindowMessage`,
-  `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`. ~~`dialog.cpp` `MessageBox`~~ - **converted 30 Oct 2026
+  under D13.** **Four remain**, all in `message.cpp`: `RegisterWindowMessage`, `SendMessage`, `SendMessageTimeout`,
+  `SendNotifyMessage`. ~~`menu.cpp` `GetMenuString`, `InsertMenuItem`~~ - **both converted 2 Nov 2026 (session 22)** at
+  `menu.cpp:225` and `:260`; same **no behaviour change** finding as below - pre-fix `/EP` already emitted
+  `"GetMenuStringW"`/`"InsertMenuItemW"`, post-fix emits the same two literals by `##W` pasting
+  (`tmp/_tmp_menu_class_post_s22.txt`), and the folder census drops 17 -> 15 unresolvable
+  (`tmp/_tmp_p1census_post_s22.txt`). ~~`dialog.cpp` `MessageBox`~~ - **converted 30 Oct 2026
   (session 13)** at `:124`; **no behaviour change** - the pre-fix `/EP` literal was already `"MessageBoxW"` because the
   SDK's `UNICODE` mapping rewrites the stem before stringizing (G1); the AW form reaches the same literal by `##W`
   pasting (`kernel32.h:52`), which is why the conversion is behaviour-neutral.

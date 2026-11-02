@@ -58,7 +58,9 @@
   `?WinHelp@User32@api@win@qor@@SAHPEAUHWND__@@PEB_WI_K@Z`) and **no menu pair**
   (`tmp/_tmp_help_linkermember.txt`). Both entry points are real single exports - `SetMenuContextHelpId` 34A,
   `GetMenuContextHelpId` 17C, both **RESOLVED** by the live probe - and the SDK declares both at
-  `winuser.h:9135-9140` / `:9142-9146`, in the same `WINVER >= 0x0400` + Desktop block as the window pair that **is**
+  `winuser.h:9138-9140` and `:9145-9146` (re-measured 2 Nov 2026 with `tmp/_tmp_s22_chelpid.ps1`; session 16 recorded
+  `:9135`/`:9142`, which are the lines above each declaration - the window pair they share a block with is `:9125-9127` and
+  `:9132-9133`), all four in the same `WINVER >= 0x0400` + Desktop block as the window pair that **is**
   wrapped, so nothing external argues against the wrappers. A caller today is ill-formed (`C2352`: a non-static member
   cannot be qualified through the class name) rather than facing `LNK2019`, which is the only way this pair differs from
   T1/T3. Fix is symmetric: add the two definitions to `help.cpp` (with `static`, matching `:644-645`) or delete
@@ -67,13 +69,14 @@
   `GetMenuContextHelpId`'s `DWORD` return makes failure indistinguishable from a legitimate 0 - the same reason the
   window pair gets no `CheckReturn`.
 
-Remaining queue (17 TUs, alphabetical; sessions 1-20 = `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`,
+Remaining queue (15 TUs, alphabetical; sessions 1-22 = `accelerator`, `accessibility`, `brush`, `caret`, `clipboard`,
 `combobox`, `console`, `timer`, `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`,
-`errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`, `keyboard` done): mdi, menu, message, monitor, mouse,
+`errorhandling`, `filledshapes`, `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi`, `menu` done): message, monitor, mouse,
 painting, processthread, rectangle, resource, scrollbar, systemshutdown, text, window, windowclass, windowprocedure,
-windowproperties, winqor_api_user (module glue). `menu.cpp` is next (session 22; 289 lines, 39 wrappers, the 2 remaining P2 bindings at `:159`/`:194`; `mdi.cpp` (session 21) is done - the
-folder's last 2 P1 bindings are in `window.cpp:124` and `mouse.cpp:82`, each for its own session; the user decided at the
-session-20 close that `mouse.cpp`'s 10 broken bindings get **no out-of-turn hotfix** - see the P1 entry).
+windowproperties, winqor_api_user (module glue). `message.cpp` is next (session 23; 184 lines, 24 wrappers, the last 4 P2
+bindings at `:124`, `:145`, `:152`, `:159` - the whole remaining P2 list); the folder's last 2 P1 bindings are in
+`window.cpp:124` and `mouse.cpp:82`, each for its own session; the user decided at the session-20 close that
+`mouse.cpp`'s 10 broken bindings get **no out-of-turn hotfix** - see the P1 entry).
 
 
 

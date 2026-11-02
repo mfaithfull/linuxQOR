@@ -1,13 +1,25 @@
 # Active Context
 
-Last updated: 1 Nov 2026 (session 21 `mdi.cpp` CLOSED - **code uncommitted**, record in this pass; session 22 `menu.cpp`
-is next, and `archive/session-log.md` must be sliced before it grows further).
+Last updated: 2 Nov 2026 (session 22 `menu.cpp` CLOSED - **code uncommitted**, record complete; session 23
+`message.cpp` is next, with its pre-flags already in `status.md`).
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
+- **Session 22 (`menu.cpp`) closed 2 Nov 2026**: 39 wrappers (the whole `//Menu functions` section), **2 fixes** - the
+  `GetMenuString`/`InsertMenuItem` P2 pair converted to explicit `qor_pp_useswinapiAW`, behaviour-neutral by `cl /EP`;
+  the other 30 bare bindings proven correct per stem by a new four-way classifier. **0 return-type divergences** (first
+  time that half of the method was measurable - the SDK return type sits on its own line, so a declaration-line
+  instrument cannot see it), 3 parameter-type divergences recorded not fixed, **12 of 39** SDK prototypes
+  version-guarded (U16's largest single-TU count), U21's fourth instance (plus `ChangeMenuA/W` and
+  `CalculatePopupWindowPosition`, SDK menu entries declared nowhere in this library), 4 of 39 wrappers unreachable,
+  0 bypass sites in built code. `archive/session-log.md` was sliced twice (rows 1-8, rows 9-16, both rejoin-hash
+  verified) **before** its row was written, so it is back under its ~40 KB ceiling.
+- **Next: `message.cpp`** (session 23, 184 lines, 24 wrappers) - it holds the whole remaining P2 list
+  (`RegisterWindowMessage`, `SendMessage`, `SendMessageTimeout`, `SendNotifyMessage`), the U14(c) `InSendMessageEx`
+  `()` survivor, the U26 `Message`/`::MSG` mirror repair handed over by session 21, and P6/U27.
 - The running record was **split on 1 Nov 2026**: `status.md` had reached 1,222 lines / 145 KB (open items 709 lines =
   52%) and no session could hold it, which is what caused the repeated context failures and compaction cycles. Boot on
   `src/platform/os/windows/api_layer/user/status.md` - a **~175-line brief** (live state, queue, the two convention

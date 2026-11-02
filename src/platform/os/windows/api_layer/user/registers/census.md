@@ -67,3 +67,18 @@
   measurement of the review (`tmp/_tmp_msg_mirror_s21.cpp`/`.bat`), and the first family with **0 U19 bypass** (the MDI
   family has no host code anywhere in the tree). Gate: `tmp/_tmp_cl_all_s21c.log`, 38/38 at `/W4`, exit 0, 0 diagnostics.
 
+- **Folder-wide measures after session 22 (`menu.cpp`, 2 Nov 2026).** 23 of 38 TUs reviewed. `menu.cpp`: 39 wrappers, 39
+  bindings, **2 fixed** (the P2 pair `GetMenuString` `:225`, `InsertMenuItem` `:260` -> `qor_pp_useswinapiAW`,
+  behaviour-neutral by `/EP`) and **0 binding defects of the P1/P5 class** - the other 30 bare bindings are proven
+  correct by the four-way classification (`tmp/_tmp_menu_class_s22.ps1`), which is the folder's first per-stem proof that
+  a large bare block is legal rather than merely unchecked. **0 return-type divergences** (new instrument
+  `tmp/_tmp_menu_ret_s22.ps1`), **3 parameter-type divergences recorded not changed** (`TrackPopupMenu` `HWND prcRect`;
+  `InsertMenuT`/`ModifyMenuT` `void* uIDNewItem`), 0 U4/U13/U17, 0 signature flags, 6 parameter-name drifts. Folder
+  totals: 428 bindings, **15 unresolvable** (was 17 - `message.cpp` 4, `mouse.cpp` 10, `window.cpp` 1); wrong-stem scan 3
+  flags, unchanged; U14(b) 424 explicit / 4 deducing; U14(c) 37 defs `(void)` / 1 `()`; T-suffix census unchanged; U4 491
+  parsed / 426 defined / 65 undefined; `user32.h` untouched at 695 lines. New register content: U18 (return vs parameter
+  types), U16 **12 guarded** (largest single TU), U15 **4 of 39** unreachable, U19 **40/10/18/6** with 0 bypass in built
+  code, U21 **fourth instance** (+ `ChangeMenuA/W` and `CalculatePopupWindowPosition` declared nowhere), T4 both halves
+  re-measured as real exports. Hygiene: `archive/session-log.md` split twice by hash-verified slices (45,673 -> 30,334
+  bytes, 34,136 with its row). Gate: `tmp/_tmp_cl_all_s22final.log`, **38/38** at `/W4`, exit 0, 0 diagnostics, 38 fresh objects.
+
