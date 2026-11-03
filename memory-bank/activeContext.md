@@ -1,10 +1,10 @@
 # Active Context
 
-Last updated: 2 Nov 2026 (session 25 `mouse.cpp` CLOSED - **10 P1 binding fixes**, the review's largest single-TU binding
-defect: all ten wrappers asked `GetProcAddress` for a `*W` that `user32.dll` has never exported). Session 24 is **committed**
-as `3a66dc25` (2 Nov 21:40, which also reorganised this memory bank); session 25's working tree is **13 modified + 2 new**
-per `git status`. **Next:
-session 26 `painting.cpp`** (25 wrappers, `user32.h:262`-`:287`), pre-flags measured and in `status.md`. Record hygiene:
+Last updated: 3 Nov 2026 (session 26 `painting.cpp` CLOSED - the review's second fully clean binding TU: 25 wrappers,
+**0 binding/signature/idiom fixes**, only 2 whitespace nits; new register material U16 first 0x0501 gate, U19 two real
+bypass sites, U26 width-invisible pair). Session 25 is committed (`1c66ce20` + `17f39829`); session 26's working tree is
+**11 modified + 1 new** per `git status`. **Next:
+session 27 `processthread.cpp`** (5 wrappers, `user32.h:255`-`:260`), pre-flags measured and in `status.md`. Record hygiene:
 `status.md` sits just under its line ceiling, so rewrite there rather than adding; the record file that **was** over its
 size ceiling - `method.md` - was **split on 2 Nov 2026** into `method.md` (the numbered steps), `tooling.md` (the
 instrument index) and `gotchas.md` (the caveats it points at). Completed-session records stay in `memory-bank/archive/`,

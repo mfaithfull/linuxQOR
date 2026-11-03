@@ -149,3 +149,26 @@
   edit: **167 lines** (86 before), 0 tabs, 0 trailing-space lines, 0 non-ASCII bytes, longest line 144. `user32.h`
   untouched at 695 lines. Close-out verifier: `tmp/_tmp_s25_verify.ps1` -> `tmp/_tmp_s25_verify.txt`.
 
+
+- **Session 26 (`painting.cpp`) folder-wide measures, 3 Nov 2026.** 27 of 38 TUs reviewed. `painting.cpp`: 25 wrappers,
+  the whole `//Painting functions` section, **2 fixes, both whitespace** (`:153` had unspaced `Call<>` arguments, `:244`
+  a space before `)`); 191 -> **261 lines**, `user32.h` untouched at 695. Binding census **428 / 1 unresolvable**
+  unchanged (`tmp/_tmp_p1census_pre_s26.txt` == `tmp/_tmp_p1census_post_s26.txt`; survivor `window.cpp:124`).
+  Wrong-stem scan **3** rows unchanged (`cursor.cpp:64`, `resource.cpp:19`, `:26`). U14(b) **425/3** unchanged; this TU
+  25 explicit / 0 deducing, all 25 tight `Call<`, intra-TU argument spacing now uniform. Per-stem classifier
+  (`tmp/_tmp_paint_class_s26.ps1` over `tmp/_tmp_paint_pp_pre_s26.txt`): 25 stems, winuser.h macro only for
+  `DrawState`/`GrayString`, all 25 `/EP` literals in the export table, **0 P2, 0 P6**. Name compare
+  (`tmp/_tmp_paint_pre_s26.ps1`): 25/25 defs pair, **0 hdr-vs-def divergences**, 2 def-vs-sdk parameter renames
+  (`DrawCaption`, `DrawStateT`); return types all agree via `tmp/_tmp_paint_ret_s26.txt` (0 U18). Live probe x64+x86:
+  25 spellings resolve at the table RVAs, bare `DrawState`/`GrayString` and both `*T` names MISSING (gle=127).
+  Registers: U16 +7 guarded members (first `_WIN32_WINNT >= 0x0501`, `GetWindowRgnBox`), U19 +2 real BYPASS sites
+  (`paintsession.cpp:41`/`:47`, first layer-vs-thunk side-by-side in this section), U26 width-invisible pair (A/W
+  DrawState/GrayString differ in what they draw with identical arguments - 7797 vs 357 px etc, both arches).
+  **Instrument bug found**: PS `-replace 'T$'` is case-INsensitive and ate the trailing `t` of six painting stems
+  (BeginPaint, EndPaint, DrawFocusRect, GetUpdateRect, InvalidateRect, ValidateRect), which read as sdk=0 rows until
+  switched to `-creplace` - same family as the `-ne` case trap at `tooling.md:39`; `_tmp_sdk_param_name_scan.ps1:238-244`
+  had already documented and avoided it. Gate: **`tmp/_tmp_cl_all_s26.log`** - 38/38 echoes at `/W4`, exit 0, 0
+  `Cnnnn:` diagnostics, run 3 Nov after the final `painting.cpp` edit at **01:03:33**. `cl /EP` neutrality:
+  `tmp/_tmp_paint_pp_pre_s26.txt` 453,426 -> `tmp/_tmp_paint_pp_final_s26.txt` 453,496 lines, non-blank multiset
+  differs by exactly the two edited `Call<>` lines and by nothing else, and the 25 binding literals are byte-identical.
+  TU hygiene: 0 tabs, 0 trailing-space lines, 0 non-ASCII, longest line 173.

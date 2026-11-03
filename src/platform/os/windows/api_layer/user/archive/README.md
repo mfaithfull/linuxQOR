@@ -12,7 +12,7 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/session-log-17-19.md` | 11 | - |
 | `archive/session-log-20-22.md` | 11 | - |
 | `archive/session-log-9-16.md` | 17 | - |
-| `archive/session-log.md` | 259 | 1217-1333 |
+| `archive/session-log.md` | 264 | 1217-1333 |
 | `archive/tu/accelerator.md` | 31 | 50-78 |
 | `archive/tu/accessibility-timer.md` | 46 | 6-49 |
 | `archive/tu/brush.md` | 53 | 79-129 |
@@ -33,3 +33,4 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/tu/message.md` | 58 | - |
 | `archive/tu/monitor.md` | 111 | - |
 | `archive/tu/mouse.md` | 78 | - |
+| `archive/tu/painting.md` | 41 | - |

@@ -219,3 +219,19 @@ wrong - measure, do not bucket), `_tmp_mon_guards_s24.ps1`, `_tmp_mon_bypass_s24
 **`_tmp_s24_closeout.ps1`** - the record close-out audit, seven checks (gate log dated by its own redirect and compared
 against the last source edit; record ceilings; every locator pointer resolving to the named line; the generated locator
 matching the spliced block; `archive/` + `registers/` index coverage; TU hygiene; `/EP` multiset neutrality).
+
+Session 26 (`painting.cpp`, 3 Nov 2026) instruments: `_tmp_paint_pp_s26.bat` (own `/EP` output files), `_tmp_paint_ret_s26.ps1`
+(multi-line winuser.h return+params dump for the 25 stems), `_tmp_paint_class_s26.ps1` (per-stem bare/AW/P6 classifier),
+`_tmp_paint_pre_s26.ps1` (header/def/SDK three-way name compare for the section), `_tmp_paint_guards_s26.ps1` (innermost-guard
+walk), `_tmp_paint_probe_s26.cpp` + `_tmp_paint_probe_s26.bat` (x64 + x86 GetProcAddress probe AND a runtime A/W mirror: it
+measures what `DrawStateA` vs `DrawStateW` / `GrayStringA` vs `GrayStringW` actually draw with identical opaque arguments),
+`_tmp_s26_pre.ps1` (one wrapper that re-runs the four folder-wide scans; remember `pwsh -File x.ps1 -Stems A,B` delivers ONE
+string, not an array - call the scans from a wrapper script instead). **New PowerShell gotcha, same family as the `-ne` case
+trap above:** `-replace 'T$'` is **case-insensitive**, so stripping the folder's `T` suffix from a name ending in a lowercase
+`t` eats the wrong character - `BeginPaint` became `BeginPain` and six stems silently fell out of the SDK-side compare until
+switched to `-creplace`. `_tmp_sdk_param_name_scan.ps1:238-244` had already documented this trap and avoided it by trying the
+exact spelling first; any new instrument that strips `T` MUST use `-creplace`. Two more for the close-out:
+`_tmp_paint_lines_s26.ps1` (prints the current def/binding/call-site line numbers of the TU - the only safe way to
+re-point a contract block's self-citations after an insertion) and `_tmp_s26_closecheck.ps1` (block self-citations +
+spot-checks + record sizes). It improves on `_tmp_s25_verify.ps1`: external pointers are classified by an explicit
+`-ExternalZones` line-range list rather than flagged as stale, so the run ends at **0 out of range** instead of 4.

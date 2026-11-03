@@ -139,3 +139,12 @@ run - both confirmed for the session-11 run.
   stems emitted spurious bare `A`/`W` rows and dropped `DrawStateA`/`DrawStateW` (which the export table has, `D9`/`DA`);
   `Select-String` over `tmp/_tmp_user32_exports.txt` gave the truth. Cross-check any generated name list against a direct
   grep before it feeds a conclusion.
+- **PowerShell `-replace` is case-INsensitive: `-replace 'T$'` eats a trailing `t`, not only the folder's `T` suffix**
+  (session 26). `_tmp_paint_pre_s26.ps1` stripped the "SDK stem" with `$name -replace 'T$',''`, which silently produced
+  `BeginPain`, `EndPain`, `GetUpdateRec`, `DrawFocusRec`, `InvalidateRec`, `ValidateRec` - six prototypes that exist
+  nowhere - and the TU looked like it had 6 SDK names unmatched (`sdk=0` rows) plus 6 phantom parameter-name
+  divergences. Use `-creplace 'T$',''` (or an explicit `-cmatch 'T$'` guard) whenever a suffix strip is case-significant,
+  and treat an unexpected `0`/`not found` count as a bug in the instrument until a direct grep proves otherwise. The same
+  pattern in `_tmp_sdk_param_name_scan.ps1:242` is harmless only because that script tries the unstripped stem first and
+  keeps the stripped arm last (`:238`-`:241`), so a false strip just adds candidates.
+

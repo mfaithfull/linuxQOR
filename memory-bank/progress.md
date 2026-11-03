@@ -1,12 +1,25 @@
 # Progress
 
-Last updated: 2 Nov 2026 (session 25 `mouse.cpp` CLOSED with **10 P1 binding fixes** - the review's largest single-TU binding
-defect; **26 of 38 TUs reviewed**. Session 24 is committed as `3a66dc25` (2 Nov 21:40, which also reorganised this memory
-bank); session 25's working tree is **13 modified + 2 new** per `git status`. Next session 26 is `painting.cpp`, 25 wrappers, pre-flags already measured
-into `status.md`, which is near its line ceiling - rewrite there rather than adding. `method.md` was **split on 2 Nov 2026**
-into `method.md` (the numbered steps), `tooling.md` (the instrument index) and `gotchas.md` (the caveats it points at).)
+Last updated: 3 Nov 2026 (session 26 `painting.cpp` CLOSED with **0 binding, signature, return or idiom defects and 2
+whitespace fixes** - the review's second fully clean binding TU; **27 of 38 TUs reviewed**. Session 25 is committed as
+`1c66ce20` + `17f39829`; session 26's working tree is **11 modified + 1 new** per `git status`. Next is session 27
+`processthread.cpp`, 5 wrappers, pre-flags already measured into `status.md`, which sits just under its line ceiling -
+rewrite there rather than adding. `method.md` was **split on 2 Nov 2026** into `method.md` (the numbered steps),
+`tooling.md` (the instrument index) and `gotchas.md` (the caveats it points at).)
 
 Current:
+- **Session 26 (`painting.cpp`) closed 3 Nov 2026 - 0 binding, signature, return or idiom defects; 2 whitespace fixes**
+  (27 of 38 TUs reviewed). The whole `user32.h:262 //Painting functions` section, 25 wrappers: 23 bare single-export
+  bindings plus `qor_pp_useswinapiAW` on exactly the two A/W families (`DrawState` `D9`/`DA`, `GrayString` `1FD`/`1FE`), so
+  all 25 `/EP` literals resolve - 0 P1/P2/P5/P6 from this TU. Registers: **U16** 8 of 27 prototypes version-guarded, its
+  first `_WIN32_WINNT >= 0x0501` gate (`GetWindowRgnBox`); **U19** 2 new real bypass sites
+  (`src/platform/os/windows/ui/gui/painting/paintsession.cpp:41`/`:47`) beside the layer's own calls; **U26** the
+  width-invisible pair - `DrawStateA` vs `DrawStateW` with identical opaque arguments drew 7797 vs 357 px, measured on
+  x64 and x86. **Instrument bug found and fixed:** PowerShell `-replace 'T$'` is case-INsensitive and ate the trailing
+  `t` of six stems -> `-creplace` (caveat in `gotchas.md`). Narrative `archive/tu/painting.md`, row 26; gate
+  `tmp/_tmp_cl_all_s26.log` 38/38 at `/W4` exit 0, dated after the last edit (01:03:33).
+
+
 - **Session 25 (`mouse.cpp`) closed 2 Nov 2026 - 10 P1 binding fixes + P5's second instance + 1 U14(b) site** (26 of 38 TUs
   reviewed). The whole `user32.h:555 //Mouse functions` section, 10 wrappers: **all ten `qor_pp_useswinapiAW` over stems with
   no A/W family** - the inverse of the P2 class. `winuser.h` declares each once with **no `#define <stem>` macro** and
