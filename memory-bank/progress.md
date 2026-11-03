@@ -3,8 +3,8 @@
 Last updated: 2 Nov 2026 (session 25 `mouse.cpp` CLOSED with **10 P1 binding fixes** - the review's largest single-TU binding
 defect; **26 of 38 TUs reviewed**. Session 24 is committed as `3a66dc25` (2 Nov 21:40, which also reorganised this memory
 bank); session 25's working tree is **13 modified + 2 new** per `git status`. Next session 26 is `painting.cpp`, 25 wrappers, pre-flags already measured
-into `status.md`, which is near its line ceiling (174/180) - rewrite there rather than adding. `method.md` is now **over its
-40 KB ceiling at 405 lines / 41,466 B**, so slice it before adding caveats to it.)
+into `status.md`, which is near its line ceiling - rewrite there rather than adding. `method.md` was **split on 2 Nov 2026**
+into `method.md` (the numbered steps), `tooling.md` (the instrument index) and `gotchas.md` (the caveats it points at).)
 
 Current:
 - **Session 25 (`mouse.cpp`) closed 2 Nov 2026 - 10 P1 binding fixes + P5's second instance + 1 U14(b) site** (26 of 38 TUs
@@ -81,7 +81,8 @@ Current:
   record, review method, ground rules G1-G6 and the `tmp/` instrument list are split across the files in
   `src/platform/os/windows/api_layer/user` — `status.md` (a **~175-line per-session brief**, read that first),
   `registers/` (verbatim G/P/U/T, **one register entry per file**, 33 slices, index `registers/README.md`),
-  `method.md` (review method, tooling, instrument caveats) and `archive/` (per-TU narratives — **one file per TU** — plus
+  `method.md` (the numbered steps), `tooling.md` (the instrument index) and `gotchas.md` (the caveats that index points at)
+  and `archive/` (per-TU narratives — **one file per TU** — plus
   the full session-log table; 19 slices, index `archive/README.md`). `status.md` had reached 1,222 lines / 145 KB
   and could no longer be held by one session, which is what caused the context cycling; it was split mechanically on
   1 Nov 2026 (verified: 1,209 of 1,222 lines moved verbatim, every register id re-located by line number, P6/U27 promoted

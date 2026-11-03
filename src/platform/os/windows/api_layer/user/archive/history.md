@@ -61,3 +61,30 @@ the record was sliced by section - `tmp/_tmp_status_split.ps1` then `tmp/_tmp_st
 at `tmp/_tmp_status_presplit_backup.md`. 1,209 of 1,222 lines moved verbatim (the 13-line gap is this header); all 41
 standalone register entries are indexed above; P6 and U27 had no standalone entry (they lived only inside the session-log
 row-17 cell), so the split promoted their text verbatim into the "P6 and U27" section of `registers.md`.
+
+
+## How `method.md` was split (2 Nov 2026) - the procedure stays, tooling and caveats move out
+
+`method.md` held the review method, the growing `tmp/` tooling index and every instrument caveat, and it was the first
+record file to pass the ~40 KB ceiling. The split is size hygiene only - the method itself is unchanged.
+
+- **`method.md`** keeps the numbered review steps and a pointer to the other two files.
+- **`tooling.md`** (new) is the instrument index: the standing tooling the steps run, the compile-gate history, then the
+  instruments as each session added them (13-16, 17-20, the U6 gate rule and its two probes, 21, 22, the U15 closure pass,
+  23, 24).
+- **`gotchas.md`** (new, referenced from `tooling.md`) carries the caveats, grouped by kind instead of by session:
+  instrument blind spots, evidence integrity (gate logs, `/EP` captures, verifier output) and the PowerShell traps hit while
+  editing these records.
+
+Mechanics, same as the 1 Nov splits: the pre-split file is kept at `tmp/_tmp_s26_presplit_method.md`, the sections moved by
+exact line range under `tmp/_tmp_s26_method_split.ps1`, and `tmp/_tmp_s26_method_verify.ps1` asserts that **every non-blank
+line of the pre-split file appears verbatim in the union** of the three files. What it reports as restated is deliberate:
+two caveats measured twice (the `-like` backtick trap, the concurrent-batch race) are one entry each now, and exact record
+file sizes and line numbers were dropped where they were illustration rather than measurement.
+
+Re-pointed: the `status.md` index table and its routing rule, the U6-instruments pointer in
+`archive/session-log.md`, and the two memory-bank pointers. Rows that record a caveat as "written into `method.md`" (the
+session-21/22/24/25 close-out notes, `registers/u26.md`) are left as written - that content now lives in `gotchas.md`.
+Any close-out audit that enumerates record files for the ceiling check must now include `tooling.md` and `gotchas.md`;
+`tmp/_tmp_s25_verify.ps1` still names only `method.md`.
+

@@ -4,9 +4,11 @@ Last updated: 2 Nov 2026 (session 25 `mouse.cpp` CLOSED - **10 P1 binding fixes*
 defect: all ten wrappers asked `GetProcAddress` for a `*W` that `user32.dll` has never exported). Session 24 is **committed**
 as `3a66dc25` (2 Nov 21:40, which also reorganised this memory bank); session 25's working tree is **13 modified + 2 new**
 per `git status`. **Next:
-session 26 `painting.cpp`** (25 wrappers, `user32.h:262`-`:287`), pre-flags measured and in `status.md`. Record sizes:
-`status.md` 174 lines / ~16.6 KB of its 180-line ceiling; **`method.md` 405 lines / 41,466 B is OVER its 40 KB ceiling -
-slice it before adding to it.** Completed-session records stay in `memory-bank/archive/`, never here.
+session 26 `painting.cpp`** (25 wrappers, `user32.h:262`-`:287`), pre-flags measured and in `status.md`. Record hygiene:
+`status.md` sits just under its line ceiling, so rewrite there rather than adding; the record file that **was** over its
+size ceiling - `method.md` - was **split on 2 Nov 2026** into `method.md` (the numbered steps), `tooling.md` (the
+instrument index) and `gotchas.md` (the caveats it points at). Completed-session records stay in `memory-bank/archive/`,
+never here.
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
@@ -41,7 +43,8 @@ slice it before adding to it.** Completed-session records stay in `memory-bank/a
 1. `src/platform/os/windows/api_layer/user/status.md` - the review boot file: live state, TU queue, register locator,
    verification gate and the current TU's pre-flags.
 2. `src/platform/os/windows/api_layer/user/registers/` - one file per open item; open at the locator line, never the
-   whole tree. `../method.md` holds the procedure and the instrument caveats.
+   whole tree. `../method.md` holds the procedure, `../tooling.md` the instrument index and `../gotchas.md` the caveats
+   that index points at.
 3. `src/platform/os/windows/api_layer/user/archive/` - per-TU narratives (`tu/<name>.md`) and the row index
    (`session-log.md`). This is the authoritative session history; the memory bank keeps no per-session narrative.
 4. `memory-bank/archive/` - session records moved out of this file (index: `memory-bank/archive/README.md`; **not boot

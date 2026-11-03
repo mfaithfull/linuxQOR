@@ -13,18 +13,21 @@ that changes library-wide behaviour or needs a decision goes in the register and
 
 | File | Contents | Open it when |
 |---|---|---|
-| `status.md` (this file; **stay under 180 lines / 18 KB** - **174 lines / 16,656 B after session 25's close-out, ceiling 180 lines / 18,432 B**) | live state, queue, the three convention decisions, register locator, verification gate, current TU pre-flags | every session, first |
+| `status.md` (this file; **stay under 180 lines / 18 KB**) | live state, queue, the three convention decisions, register locator, verification gate, current TU pre-flags | every session, first |
 | `registers/<file>.md` - **one register entry per file**, index in `registers/README.md` | verbatim register text: P1-P5 `prescan.md`, P6+U27 `p6-u27.md`, G1-G6 `ground-rules.md`, U1-U26 `u<n>.md`, T1-T5 `tasks.md`, totals `census.md` | only the ids named by the locator below or by the current TU's pre-flags |
-| `method.md` | the per-TU review method, tooling index, **instrument caveats** (**405 lines / 41,466 B - now OVER the 40 KB ceiling: session 26 must slice it before adding to it**) | before running an instrument or the gate |
+| `method.md` | the per-TU review method: the numbered steps one session runs | every session, before it starts |
+| `tooling.md` | the `tmp/` instrument index - what each scan prints, when it was added, for which TU | before running an instrument or the gate |
+| `gotchas.md` | the caveats those instruments carry and the traps in editing these records (indexed from `tooling.md`) | before acting on any instrument flag |
 | `archive/tu/<tu>.md` - **one narrative per TU**, index in `archive/README.md` | that TU's narrative + verdict detail | only the TU you just reviewed |
 | `archive/session-log.md` | the session-log table (rows 23-25) + closure notes; rows 1-22 in the four `archive/session-log-<range>.md` slices | only while writing the row for the TU you just reviewed |
 | `archive/history.md`, `archive/prescan-help.md` | consolidation/split history, consumed `help.cpp` pre-flags | never, unless auditing the record itself |
 
 The rule: **findings, narratives and register text never go in this file.** New finding -> the register file the locator
-names; new TU narrative -> `archive/tu/<tu>.md`; new row -> `archive/session-log.md`; new instrument or caveat ->
-`method.md`; folder-wide measures -> append to the **end** of `registers/census.md` (append-only). Hard rule: **no record
-file over ~40 KB**, this file under 180 lines / 18 KB. When one outgrows its context, slice by exact line range, hash-verify
-the rejoin, re-point the indexes, re-run the locator generator + `_tmp_s23_locsplice.ps1`.
+names; new TU narrative -> `archive/tu/<tu>.md`; new row -> `archive/session-log.md`; new instrument -> `tooling.md`, new
+caveat -> `gotchas.md`; folder-wide measures -> append to the **end** of `registers/census.md` (append-only). Hard rule:
+**no record file over ~40 KB**, this file under 180 lines / 18 KB. When one outgrows its context, slice by exact line range,
+hash-verify the rejoin, re-point the indexes, re-run the locator generator + `_tmp_s23_locsplice.ps1` (2 Nov 2026:
+`method.md` -> `tooling.md` + `gotchas.md`). Prefer naming a thing over citing its size or line count.
 
 ## Live state (2 Nov 2026)
 
@@ -134,7 +137,7 @@ A locator, not a finding: open the file at the line given before you act on, ext
 ## Verification gate (identical every session)
 Edited TU compiles standalone at `/W4` exit 0; the whole library compiles **38/38 at `/W4`, exit 0, no diagnostics**
 (`tmp/_tmp_cl_all.bat` -> the shared `tmp/_tmp_cl_all.log`, snapshotted under a session name - never copy an old log as
-proof, see `method.md`; only the TU-name echoes may appear); `cl /EP` re-run after the last edit still yields the expected
+proof, see `gotchas.md`; only the TU-name echoes may appear); `cl /EP` re-run after the last edit still yields the expected
 binding literals; `user32.h` untouched unless the row says otherwise. The gate also carries the folder-wide **binding
 census** (latest `tmp/_tmp_p1census_post_s25b.txt`: 428 bindings, **1** unresolvable - `window.cpp:124`) and the per-stem
 bare-vs-AW classifier (`tmp/_tmp_mouse_class_s25.ps1`). **Session 25's authoritative gate is `tmp/_tmp_cl_all_s25c.log`** -

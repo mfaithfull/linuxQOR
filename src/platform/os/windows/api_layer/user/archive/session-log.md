@@ -101,7 +101,7 @@ line numbers in those entries shifted by the 13 lines added above `Call` - **re-
 `cursor.cpp:34` is the only TU comment in the folder that cited U6 as live risk and was updated to past tense.
 Gate: user folder **38/38** at `/W4`, exit 0, 0 diagnostics (`tmp/_tmp_cl_all_u6post.log`), plus the new all-libraries
 extended gate over **106** api_layer sources, whose pre-fix and post-fix logs are byte-identical
-(`tmp/_tmp_cl_all_apiall_u6_pre.log` / `..._post.log`) - see "Off-protocol item fix (U6)" in `method.md` §1 for the
+(`tmp/_tmp_cl_all_apiall_u6_pre.log` / `..._post.log`) - see "Off-protocol item fix (U6)" in `tooling.md` for the
 instruments and the caveat that the extended gate already exits non-zero on HEAD because of `opengl/wgl.cpp:31`.
 
 **Next session: `menu.cpp` (session 22) - and split rows 1-8 out of this file first; it is over the ~40 KB ceiling recorded in `status.md`.**
