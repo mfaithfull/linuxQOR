@@ -1,4 +1,4 @@
-# T1-T4 deferred tasks, each needs a decision (verbatim)
+# T1-T7 deferred tasks, each needs a decision (verbatim)
 
 ### Deferred tasks (opened by session 10; T3 added by session 12) - each needs a decision, so none was touched
 
@@ -71,16 +71,16 @@
   `GetMenuContextHelpId`'s `DWORD` return makes failure indistinguishable from a legitimate 0 - the same reason the
   window pair gets no `CheckReturn`.
 
-Remaining queue (12 TUs, alphabetical; sessions 1-25 = the 24 listed above plus `monitor` and `mouse` done): painting,
-processthread, `winqor_api_user` (module glue), rectangle, resource, scrollbar, systemshutdown, text, window,
-windowclass, windowprocedure, windowproperties. `painting.cpp` is next (session 26; 191 lines) and 806 of the folder's
-remaining **1,392** lines sit in two TUs (`window` 615, `painting` 191), so measure its pre-flags before deciding
-whether it fits one session - decide before starting it, never mid-session. What is left of the binding census is
-**one site, `window.cpp:124 CreateWindow`**: `mouse.cpp`'s ten went in session 25 (2 Nov 2026), and the user's
-session-20 ruling that they get **no out-of-turn hotfix** was honoured - they were fixed in `mouse.cpp`'s own session,
-where the pre-scan predicted them. Hand-offs the queue must not lose: `window.cpp` (34) takes the version-guarded MDI
-members `CascadeWindows`/`TileWindows` (**U16**), the 17 DPI / `*Info` / WinEvent-hook heads that share the monitor SDK
-region (`tmp/_tmp_mon_region_s24.txt`) and U14's last 3 deducing sites; **T6** carries the ownerless list-box section.
+Remaining queue (10 TUs, alphabetical; sessions 1-27 = the 24 listed above plus `monitor`, `mouse`, `painting` and
+`processthread` done): `winqor_api_user` (module glue), rectangle, resource, scrollbar, systemshutdown, text, window,
+windowclass, windowprocedure, windowproperties. `rectangle.cpp` is next (session 28; 93 lines) and **1,144** lines remain
+in the queue, **615 of them in `window.cpp` alone** - measure its pre-flags before deciding whether it fits one session,
+never mid-session. What is left of the binding census is **one site, `window.cpp:124 CreateWindow`**: `mouse.cpp`'s ten
+went in session 25 (2 Nov 2026), and the user's session-20 ruling that they get **no out-of-turn hotfix** was honoured -
+they were fixed in `mouse.cpp`'s own session, where the pre-scan predicted them. Hand-offs the queue must not lose:
+`window.cpp` (33) takes the version-guarded MDI members `CascadeWindows`/`TileWindows` (**U16**), the 17 DPI / `*Info` /
+WinEvent-hook heads that share the monitor SDK region (`tmp/_tmp_mon_region_s24.txt`), U14's last 3 deducing sites and
+P3's `CreateWindowT`; **T6** carries the ownerless list-box section.
 
 
 
@@ -116,4 +116,27 @@ region (`tmp/_tmp_mon_region_s24.txt`) and U14's last 3 deducing sites; **T6** c
   `DWORD` and 0 on error (U7-shaped: a legitimate 0 and a swallowed SEH fault are indistinguishable). Deciding T6 means
   either writing the TU (a three-wrapper file) or deleting the three declarations; both move the published surface, so
   it belongs with the `U4`/`U13` sweep and the T1/T3/T4/T5 decision set, not with a TU review.
+
+
+- **T7 - 35 of the 38 `user` sources `#include "../returncheck.h"` and use nothing from it.** Opened 3 Nov 2026 at the
+  session-27 (`processthread.cpp`) close-out, while pre-flagging `rectangle.cpp`, and registered as a **deferred task** by
+  user decision the same day: the fix is mechanical, only the go-ahead is missing. Measured with the instrument written
+  for it, `tmp/_tmp_rcinclude_scan.ps1` (output `tmp/_tmp_rcinclude_s27.txt`): **37 of 38** sources include the header -
+  every source except the glue `winqor_api_user.cpp` - and only **2** contain a code hit for any of the 14 names
+  `returncheck.h` declares (`:15 CheckReturn`, `:65 AutoErrorCheck`, `:94 BoolCheck`, `:112 HandleCheck`,
+  `:124 HandleNullCheck`, `:137 CheckNonZeroHandle`, `:149 SuccessCheck`, `:161 LongSuccessCheck`, `:174 TSuccessCheck`,
+  `:187 CheckNonZero`, `:200 CheckFailureInt`, `:213 TCheckFailureValue`, `:232 TRangeCheck`, `:251 TCheckNotLess`):
+  `processthread.cpp:85`, `:94`, `:110` and `errorhandling.cpp:81`. `devicecontext.cpp`'s single match (`:29`) is inside a
+  comment, which is why the scan skips `//`-leading lines. So **35 includes are dead**, `rectangle.cpp` among them.
+  Removing one cannot break a hit-free TU: `library.h:7-8` includes only `<excpt.h>` and `src/qor/flyers/error/error.h`,
+  so nothing pulls `returncheck.h` in transitively, and the header is include-guarded (`QOR_PP_H_..._RETURNCHECK`) so a
+  needed include stays a single line.
+  The comparison that shows this is a folder habit rather than a layer convention: the same scan over
+  `api_layer/kernel` (output `tmp/_tmp_rcinclude_kernel_s27.txt`) gives **22 includes, 20 TUs with hits** - there the
+  include is load-bearing. Nothing in the settled U1/U2 return-check policy (29 Oct 2026, "no `CheckReturn` in this
+  library, sessions record only") is changed by deleting an unused include, but the two are related: if that policy is
+  ever revisited, these 35 lines become wanted again, which is why the deletion waits for a decision instead of being
+  applied TU by TU as sessions pass through. Whoever executes it: one line per TU, no ABI and no published-surface
+  change, gate = the folder compile **38/38 at `/W4`, exit 0, no diagnostics** plus a re-run of
+  `tmp/_tmp_rcinclude_scan.ps1` (expect `includes ../returncheck.h: 2`, `include-without-use: 0`).
 

@@ -148,3 +148,42 @@ run - both confirmed for the session-11 run.
   pattern in `_tmp_sdk_param_name_scan.ps1:242` is harmless only because that script tries the unstripped stem first and
   keeps the stripped arm last (`:238`-`:241`), so a false strip just adds candidates.
 
+- **A coverage superlative must be measured before it is written down** (session 27). The `processthread.cpp` contract
+  block originally asserted "the only two `user32` exports with no wrapper anywhere", invented from two remembered
+  ordinals. `_tmp_pt_coverage_s27.ps1` then measured the real figure: of 1,018 export names, **370** have no member
+  declaration in `user32.h` at all (114 of them declared in the installed `winuser.h`, 256 not declared there), and one of
+  the two names the sentence cited - `DdeSetUserHandle` - is in fact declared, at `user32.h:528`, inside U4's 34-member
+  DDE block. Rule: "the only", "none left", "all wrapped" and every similar phrase needs an instrument behind it **before**
+  it enters the block, and if the measurement disagrees, rewrite the paragraph before the gate rather than after.
+- **Bare `:NNN` citations inherit the last file named in the paragraph, and they drift when the block grows** (session 27).
+  A contract block cites its own lines and other files' lines in the same breath, so `:12417` means `winuser.h` only
+  because that file was named earlier in the paragraph - a verifier has to carry that marker to resolve it, and any edit
+  that changes the block's line count invalidates the block's **own** self-citations. `_tmp_pt_cite_s27.ps1` does the
+  resolution mechanically (28 citations here, plus an assertion that each def/binding self-citation lands on the right
+  construct) and found both a wrong path (`gui/CMakeLists.txt` vs `ui/gui/CMakeLists.txt`) and three self-citations that
+  had drifted 6 lines when a paragraph grew. Run it **after** the block settles, never mid-edit.
+- **`_tmp_sigcmp.ps1`'s call-site check reads one source line, so a wrapped call is a silent no-op** (session 27, fixed).
+  Its pattern needed `Library::Call<...>(pFunc, ...);` complete on a single line; every multi-line call printed
+  `CALL NOT PARSED` and the arity/type comparison never ran. `CALL NOT PARSED` therefore means *"the instrument could not
+  read this site"*, not *"this site is wrong"* - read it as unverified, and check the template list against the
+  definition by hand or fix the scanner (it now joins lines to the terminating `;`). Records from sessions 12-26 that
+  quote `CALL NOT PARSED` never had that half of the check.
+- **Empty preprocessor guard pairs fool a backward guard scan** (session 27). `winuser.h:4121`-`:4122` is
+  `#if (_WIN32_WINNT >= 0x602)` immediately followed by its `#endif` - it guards nothing - and it sits between
+  `AttachThreadInput` and `WaitForInputIdle`, so a scan that walks backwards to the first `#if` reports **0x0602** as
+  `WaitForInputIdle`'s version gate. A U16 guard answer is only trustworthy if the scanner keeps an `#if`/`#endif` depth
+  counter (`_tmp_pt_guards_s27.ps1`, `_tmp_sdk_guard_scan.ps1`, `_tmp_mon_region_s24.ps1` all do).
+- **`[string]::Replace` overload resolution can hand `WriteAllText` a `$null` and truncate a record to 0 bytes**
+  (session 27, measured). `($t -replace ...)` style tidying was written as `$t.Replace($a, $b)` where one argument was a
+  **one-character** string, so PowerShell bound the `Replace(char, char)` overload, threw, and left `$t` `$null`; the very
+  next statement was `[IO.File]::WriteAllText($path, $t)`, which happily wrote an empty file. `archive/session-log.md` was
+  rebuilt the same session from the pre-slice snapshot by replaying the slice transformation -
+  `tmp/_tmp_s27_logrestore.ps1` prints the proof (both sliced rows sha256-matched, every other snapshot line reproduced
+  byte-identically). Rules: never write a record file from a variable produced by a statement that can throw - assert
+  `if($null -eq $t) { throw }` and `if($out.Length -lt 1) { throw }` immediately before the write; snapshot the file first;
+  and prefer the `editor` tool for record prose, since it cannot truncate.
+- **Parse instrument tables, do not eyeball their columns.** Summing the per-file `Spaced` column of
+  `tmp/_tmp_u14_post_s27.txt` by hand gave 186 against the script's `TOTAL spaced=174`; parsing the same rows with a regex
+  reproduces the TOTAL exactly (425 / 3 / 174 / 254). The script strips comments before counting, so a quoted `Call<`
+  inside a contract block is not a site - when a total disagrees with a table, suspect the reading before the scanner.
+

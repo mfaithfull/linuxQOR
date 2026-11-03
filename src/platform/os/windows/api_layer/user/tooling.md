@@ -235,3 +235,67 @@ exact spelling first; any new instrument that strips `T` MUST use `-creplace`. T
 re-point a contract block's self-citations after an insertion) and `_tmp_s26_closecheck.ps1` (block self-citations +
 spot-checks + record sizes). It improves on `_tmp_s25_verify.ps1`: external pointers are classified by an explicit
 `-ExternalZones` line-range list rather than flagged as stale, so the run ends at **0 out of range** instead of 4.
+
+## Tooling added in session 27 (`processthread.cpp`, 3 Nov 2026)
+
+Session-scoped names in `tmp/`. **`_tmp_pt_ret_s27.ps1`** - the multi-line `winuser.h` return-type + parameter dump for
+the 5 stems (the SDK puts the return type on its own line above the stem, so a declaration-line scan cannot see it).
+**`_tmp_pt_class_s27.ps1`** - the per-stem bare/AW/P6 classifier over a `/EP` capture (`-PpFile`, so pre and post run
+through the same code). **`_tmp_pt_pre_s27.ps1`** - header / TU-definition / SDK three-way parameter-name compare for one
+section (hdr-vs-def is exact, def-vs-sdk advisory because of the SAL prefixes and the multi-line prototypes).
+**`_tmp_pt_guards_s27.ps1`** - the innermost-guard walk with an `#if`/`#endif` depth counter (session 25's crossed
+`#endif` comment caveat, now also the guard against **empty** guard pairs - see `gotchas.md`).
+**`_tmp_pt_pp_s27.bat`** - own `/EP` output pair (the shared `_tmp_pp_one.bat` writes `_tmp_pp_out.txt`, easy to read
+stale). **`_tmp_pt_lines_s27.ps1`** - the TU's def/binding/call-site line numbers plus hygiene counts (tabs, trailing
+space, non-ASCII, longest line) and the per-site spaced/tight `Call<` split: the only safe way to re-point a contract
+block's self-citations after an insertion. **`_tmp_pt_edit_s27.ps1`** - the whitespace pass itself: substring-scoped
+replacements, each asserted to match **exactly once**, refusing to write otherwise.
+**`_tmp_pt_coverage_s27.ps1`** - the coverage instrument the review had never run: which exported names have **no**
+member declaration in `user32.h`, splitting them into declared-in-`winuser.h` (SDK-visible gap) vs not declared there at
+all (unreachable, not a gap). First run: 1,018 exports -> 370 unwrapped, 114 SDK-visible, 256 undeclared.
+**`_tmp_pt_cite_s27.ps1`** - the contract-block citation verifier: resolves **every** `:NNN` in the block against the
+file it belongs to (a bare citation inherits the last file marker in that paragraph, and "(in this TU: ...)" marks a
+self-citation), asserts each def/binding self-citation lands on the right construct, and reports unresolved targets. It
+caught a wrong path (`gui/CMakeLists.txt` -> `ui/gui/CMakeLists.txt`) and three citations that had drifted 6 lines when a
+paragraph grew. **`_tmp_pt_neutral_s27.ps1`** - the `/EP` pre-vs-final neutrality diff (line counts, non-blank multiset,
+per-literal byte counts). **`_tmp_s27_pre.ps1`** - one wrapper re-running the four folder-wide scans (P1 census, wrong-stem
+scan, U14 census, U19 bypass scan over every suffix variant). **`_tmp_s27_logslice.ps1`** - the session-log slice with
+per-row sha256 verification against the pre-slice snapshot.
+
+**Standing-instrument fix (session 27): `_tmp_sigcmp.ps1` could not see wrapped call sites.** Its call-site pattern
+matched `Library::Call<...>(pFunc, ...);` on **one** line, so every multi-line call printed `CALL NOT PARSED` and the
+arity/type half of the check silently never ran - 3 of `processthread.cpp`'s 5 sites are wrapped, and `painting.cpp`,
+`monitor.cpp` and `mouse.cpp` have the same shape. It now joins lines to the terminating `;` before matching, which is why
+the TU record can claim 5/5 call sites "ok". Any earlier session record that quotes `CALL NOT PARSED` for a multi-line
+site did **not** have that check.
+
+
+**Two more instruments from the same close-out pass (3 Nov 2026).** **`_tmp_rcinclude_scan.ps1`** - the
+`returncheck.h` include census written for **T7**: `-Dir` any api_layer folder, it lists the sources that include
+`"../returncheck.h"`, the ones with a code hit for any of that header's 14 declared names (with the line numbers) and the
+**include-without-use** set. It skips `//`-leading lines on purpose - `devicecontext.cpp:29` quotes `CheckReturn<>` in a
+comment and would otherwise read as a user. user 37/2/35, kernel 22/20/2. **`_tmp_rect_pre_s28.ps1`** - the pre-flag
+sweep for the next TU (`rectangle.cpp`): the SDK guard stack for the 11 `//Rectangle functions` prototypes (all in the
+Desktop sub-block from `winuser.h:9717`, **no** version guard on any of them), the SDK parameter spellings, the
+bare/A/W + macro table for the 11 stems (all bare, no family, no macro) and the include census for the folder. It reads
+only; its output is `tmp/_tmp_rect_pre_s28.txt`.
+
+**Self-fix to a session instrument (same pass).** `_tmp_pt_neutral_s27.ps1` compared the non-blank multiset over
+`_tmp_pt_pp_pre_s27.txt` vs `_tmp_pt_pp_final_s27.txt` but counted binding literals over `..._post_s27.txt` - a different
+capture. Both are post-edit here so the result stands, but the pair mismatch is exactly how a neutrality claim can go
+wrong quietly, so the script now uses `final` for both halves.
+
+**Close-out instruments (session 27).** **`_tmp_s27_verify.ps1`** - the one-run verifier, output
+`tmp/_tmp_s27_verify.txt`: gate log newer than the newest `user/*.cpp` edit plus 38/38 echoes and 0 diagnostics, the `/EP`
+neutrality pair (both halves over ONE capture), TU state (defs, bindings, tabs, trailing space, spaced/tight `Call<>`)
+counted over **code lines only** - the contract block quotes `qor_pp_useswinapi` and `Call<` in prose, which is how a
+first version reported 6 bindings for a 5-wrapper TU, and that reading error is exactly the kind this check exists to
+catch; the three folder measures, the citation-verifier tail, every record file against its size/line ceiling,
+session-log integrity (row 27 present verbatim, rows 23-24 present only in the slice, placeholder advanced, no stray
+`|` lines, file not 0 bytes), the `archive/README.md` index rows and `user32.h` still 695 lines.
+**`_tmp_s27_logrestore.ps1`** - the recovery script written after the 0-byte incident (`gotchas.md`): rebuilds
+`archive/session-log.md` from `tmp/_tmp_s27_preslice_sessionlog.md` by replaying `_tmp_s27_logslice.ps1`'s exact
+transformation, then re-inserts row 27 and the close-out note; it verifies the sliced rows' sha256 and that every snapshot
+line except the sliced pair is reproduced **before** it writes, and refuses to write an empty document.
+
+

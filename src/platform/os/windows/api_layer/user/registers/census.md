@@ -172,3 +172,42 @@
   `tmp/_tmp_paint_pp_pre_s26.txt` 453,426 -> `tmp/_tmp_paint_pp_final_s26.txt` 453,496 lines, non-blank multiset
   differs by exactly the two edited `Call<>` lines and by nothing else, and the 25 binding literals are byte-identical.
   TU hygiene: 0 tabs, 0 trailing-space lines, 0 non-ASCII, longest line 173.
+- **Session 27 (`processthread.cpp`) folder-wide measures, 3 Nov 2026.** 28 of 38 TUs reviewed. `processthread.cpp`: 5
+  wrappers, the whole `//Process and Thread functions` section, **0 binding/signature/return/idiom defects - every source
+  change was whitespace** (one TAB line, three spaces before an argument list's `)`, and the TU's five `Call<>` sites
+  normalised to the folder's tight spelling); 57 -> **122 lines** (65-line contract block at `:16`-`:79`), `user32.h`
+  untouched at 695. Binding census **428 / 1 unresolvable** unchanged - `tmp/_tmp_p1census_pre_s27.txt` and
+  `tmp/_tmp_p1census_post_s27.txt` compare **identical**, survivor still `window.cpp:124`. Wrong-stem scan **3** rows
+  unchanged (`cursor.cpp:64`, `resource.cpp:19`, `:26`); no `processthread.cpp` row. U14(b) **425 explicit / 3 deducing**
+  unchanged, and all 5 sites here explicit. **U14(a) 178 spaced / 250 tight -> 174 / 254** (`tmp/_tmp_u14_post_s27.txt`;
+  this TU 4 spaced + 1 tight -> 0 / 5) - the first time (a) has been moved deliberately rather than opportunistically,
+  on the user's decision. Per-stem classifier (`tmp/_tmp_pt_class_s27.ps1` over `tmp/_tmp_pt_pp_pre_s27.txt`): 5 stems,
+  **0 winuser.h macros**, all 5 `/EP` literals in the export table, **0 P2, 0 P6**. Name compare
+  (`tmp/_tmp_pt_pre_s27.ps1`): 5/5 definitions pair with the header, **0 hdr-vs-def and 0 def-vs-sdk** parameter renames;
+  return types all agree via `tmp/_tmp_pt_ret_s27.txt` (0 U18). `_tmp_sigcmp.ps1` reports 5/5 "decl==def ok" **and** 5/5
+  call-site "ok" - the first TU apart from `message.cpp` where its call-site half actually parsed anything (it read one
+  line, so wrapped calls printed `CALL NOT PARSED`; fixed this session). U16: 3 of 5 prototypes version-guarded, 5 of 5
+  DESKTOP-only (`tmp/_tmp_pt_guards_s27.txt`). U19 over the 5 stems plus their A/W/T spellings: **1 LAYER / 0 INDIRECT /
+  0 BYPASS / 0 MEMBER** (`tmp/_tmp_pt_bypass_s27.txt`). New coverage instrument `tmp/_tmp_pt_coverage_s27.ps1`: of 1,018
+  export names **370** have no `user32.h` member at all - 114 declared in the installed `winuser.h`, 256 not. Live probe
+  not needed here (no `AW` site and no name to disprove). TU hygiene: 0 tabs, 0 trailing-space lines, 0 non-ASCII, longest
+  line 124. Gate: **`tmp/_tmp_cl_all_s27.log`** - 38/38 echoes at `/W4`, exit 0, 0 `Cnnnn:` diagnostics, run 3 Nov after
+  the final `processthread.cpp` edit at **08:00:59**. `cl /EP` neutrality: `tmp/_tmp_pt_pp_pre_s27.txt` 453,292 ->
+  `tmp/_tmp_pt_pp_final_s27.txt` 453,357 lines, non-blank multiset identical except exactly the **7** whitespace-touched
+  lines, and the 5 binding literals byte-identical (`tmp/_tmp_pt_neutral_s27.txt`).
+
+
+- **Session 27 addendum (3 Nov 2026) - two folder measures that came from the record pass, not from the TU.**
+  (a) **Coverage:** `tmp/_tmp_pt_coverage_s27.ps1` compares the 1,018 export names in `tmp/_tmp_user32_exports.txt`
+  against the member declarations parsed from `user32.h`: **370 exports have no member at all**, of which **114 are
+  declared in the installed `winuser.h`** (SDK-visible and simply unwrapped - DPI-awareness, pointer-input, touch/pen and
+  display-config families) and **256 are not declared there**. No `//Process and Thread functions` member is in either
+  class. (b) **`returncheck.h` include census:** `tmp/_tmp_rcinclude_scan.ps1` (`tmp/_tmp_rcinclude_s27.txt`) - **37 of 38**
+  sources include `../returncheck.h`, only **2** use any name it declares, so **35 includes are dead**; the same scan over
+  `api_layer/kernel` gives **22 includes / 20 TUs with hits** (`tmp/_tmp_rcinclude_kernel_s27.txt`), which is why this is a
+  `user`-folder habit and not a layer convention. Registered as **T7** (`registers/tasks.md:121`) by user decision - the
+  deletion is mechanical, the go-ahead is what was missing. Folder-wide U14(a) after this session's normalisation:
+  **174 spaced / 254 tight** (`tmp/_tmp_u14_final_s27.txt`), 428 bindings / **1** unresolvable, wrong-stem scan **3** rows /
+  **0** live. Pre-flags for the next TU (`rectangle.cpp`, 11 wrappers in `user32.h:446`-`:457`, all single exports, **no**
+  version guard on any of the 11 prototypes) are in `tmp/_tmp_rect_pre_s28.txt`.
+

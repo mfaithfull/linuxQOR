@@ -1,23 +1,26 @@
 # Progress
 
-Last updated: 3 Nov 2026 (session 26 `painting.cpp` CLOSED with **0 binding, signature, return or idiom defects and 2
-whitespace fixes** - the review's second fully clean binding TU; **27 of 38 TUs reviewed**. Session 25 is committed as
-`1c66ce20` + `17f39829`; session 26's working tree is **11 modified + 1 new** per `git status`. Next is session 27
-`processthread.cpp`, 5 wrappers, pre-flags already measured into `status.md`, which sits just under its line ceiling -
-rewrite there rather than adding. `method.md` was **split on 2 Nov 2026** into `method.md` (the numbered steps),
-`tooling.md` (the instrument index) and `gotchas.md` (the caveats it points at).)
+Last updated: 3 Nov 2026 (session 27 `processthread.cpp` CLOSED with **0 binding, signature, return or idiom defects** -
+the review's cleanest TU; fixes were whitespace only, plus the user-decided `Call<>` tight normalisation; **28 of 38 TUs
+reviewed**. Session 26 is committed as `7ed35348`; session 27's working tree is **13 modified + 2 new** per `git status`.
+Next is session 28 `rectangle.cpp`, 11 wrappers, pre-flags already measured into `status.md`, which sits just under its
+line ceiling - rewrite there rather than adding. `method.md` was **split on 2 Nov 2026** into `method.md` (the numbered
+steps), `tooling.md` (the instrument index) and `gotchas.md` (the caveats it points at).)
 
 Current:
-- **Session 26 (`painting.cpp`) closed 3 Nov 2026 - 0 binding, signature, return or idiom defects; 2 whitespace fixes**
-  (27 of 38 TUs reviewed). The whole `user32.h:262 //Painting functions` section, 25 wrappers: 23 bare single-export
-  bindings plus `qor_pp_useswinapiAW` on exactly the two A/W families (`DrawState` `D9`/`DA`, `GrayString` `1FD`/`1FE`), so
-  all 25 `/EP` literals resolve - 0 P1/P2/P5/P6 from this TU. Registers: **U16** 8 of 27 prototypes version-guarded, its
-  first `_WIN32_WINNT >= 0x0501` gate (`GetWindowRgnBox`); **U19** 2 new real bypass sites
-  (`src/platform/os/windows/ui/gui/painting/paintsession.cpp:41`/`:47`) beside the layer's own calls; **U26** the
-  width-invisible pair - `DrawStateA` vs `DrawStateW` with identical opaque arguments drew 7797 vs 357 px, measured on
-  x64 and x86. **Instrument bug found and fixed:** PowerShell `-replace 'T$'` is case-INsensitive and ate the trailing
-  `t` of six stems -> `-creplace` (caveat in `gotchas.md`). Narrative `archive/tu/painting.md`, row 26; gate
-  `tmp/_tmp_cl_all_s26.log` 38/38 at `/W4` exit 0, dated after the last edit (01:03:33).
+- **Session 27 (`processthread.cpp`) closed 3 Nov 2026 - 0 binding, signature, return or idiom defects** (28 of 38 TUs
+  reviewed). The whole `user32.h:255 //Process and Thread functions` section, 5 wrappers: all five stems are single exports
+  with no A/W family and no `winuser.h` macro, so the bare `qor_pp_useswinapi` it already had is the only spelling that can
+  bind them - 0 P1/P2/P5/P6, and header/definition/SDK parameter names identical 5/5. Source changes were whitespace (the
+  folder's last TAB line, three stray spaces) plus the user's decision to normalise this TU's 5 `Call<>` sites to the
+  folder's tight majority, the first deliberate U14(a) move (folder now **174 spaced / 254 tight**). New record material:
+  **U16**'s second `_WIN32_WINNT >= 0x0501` gate and the **empty** `#if (_WIN32_WINNT >= 0x0602)`/`#endif` pair at
+  `winuser.h:4121-4122` that a guard scan without a depth counter reports as a real guard; **U2**'s inverse case
+  (`WaitForInputIdle` returns 0 for success, so the neighbour's `CheckNonZero` would invert it); a **coverage** measure
+  (370 of 1,018 exports unwrapped, 114 of them SDK-declared) and **T7** - 35 dead `../returncheck.h` includes, registered
+  by user decision. Narrative `archive/tu/processthread.md`, row 27; gate `tmp/_tmp_cl_all_s27.log` 38/38 at `/W4` exit 0,
+  dated after the last edit (08:00:59). Sessions 24-26 (`monitor`, `mouse`, `painting`) are closed and committed; their
+  detail is `archive/tu/monitor.md`, `mouse.md`, `painting.md` and rows 24-26, not here.
 
 
 - **Session 25 (`mouse.cpp`) closed 2 Nov 2026 - 10 P1 binding fixes + P5's second instance + 1 U14(b) site** (26 of 38 TUs
@@ -52,7 +55,7 @@ Current:
   `archive/session-log.md` (+ the session-23 closure note), narratives `archive/tu/menu.md` and `archive/tu/message.md`,
   folder totals in `registers/census.md`.
 - **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **22 of 38 TUs
-  reviewed** through session 21 (26 now - bullets above) (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
+  reviewed** through session 21 (28 now - bullets above) (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
   `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`,
   `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi` - **session 21 `mdi.cpp` closed 1 Nov 2026**: 4 wrappers, **0 binding /
   correctness / UB / convention-surface defects** - all four bindings were already D13-correct (`/EP` literals, export

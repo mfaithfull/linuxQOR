@@ -1,30 +1,35 @@
 # Active Context
 
-Last updated: 3 Nov 2026 (session 26 `painting.cpp` CLOSED - the review's second fully clean binding TU: 25 wrappers,
-**0 binding/signature/idiom fixes**, only 2 whitespace nits; new register material U16 first 0x0501 gate, U19 two real
-bypass sites, U26 width-invisible pair). Session 25 is committed (`1c66ce20` + `17f39829`); session 26's working tree is
-**11 modified + 1 new** per `git status`. **Next:
-session 27 `processthread.cpp`** (5 wrappers, `user32.h:255`-`:260`), pre-flags measured and in `status.md`. Record hygiene:
-`status.md` sits just under its line ceiling, so rewrite there rather than adding; the record file that **was** over its
-size ceiling - `method.md` - was **split on 2 Nov 2026** into `method.md` (the numbered steps), `tooling.md` (the
-instrument index) and `gotchas.md` (the caveats it points at). Completed-session records stay in `memory-bank/archive/`,
-never here.
+Last updated: 3 Nov 2026 (session 27 `processthread.cpp` CLOSED - the review's **cleanest TU**: 5 wrappers, 0 binding,
+signature, return or idiom defects; fixes were the folder's last TAB line, three stray spaces and (user decision) the TU's
+5 `Call<>` sites normalised to tight, moving folder U14(a) to **174 spaced / 254 tight**; new material U16's second 0x0501
+gate, a coverage measure and **T7** - 35 dead `returncheck.h` includes). Session 26 is committed (`7ed35348`, which carries
+sessions 1-26); session 27's working tree is **17 paths** per `git status` (15 modified, 2 new -
+`archive/tu/processthread.md`, `archive/session-log-23-24.md`). **Next: session 28 `rectangle.cpp`** (11
+wrappers, `user32.h:446`-`:457`), pre-flags measured and in `status.md`. Record hygiene: `status.md` sits just under its
+line ceiling and its register locator is the part that grows, so rewrite the prose there rather than adding; `method.md` was
+**split on 2 Nov 2026** into `method.md` (the numbered steps), `tooling.md` (the instrument index) and `gotchas.md` (the
+caveats it points at). Completed-session records stay in `memory-bank/archive/`, never here.
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
-- **Session 25 (`mouse.cpp`) closed 2 Nov 2026 - 10 P1 + 1 P5 + 1 U14(b) fixed; 26 of 38 TUs reviewed.** All ten bindings
-  were `qor_pp_useswinapiAW` over stems with **no A/W family at all** (the inverse of the P2 class): `winuser.h` defines no
-  `#define <stem>` for any of them and `user32.dll` exports only the bare name, so `##W` asked for `DragDetectW` ...
-  `LPTRACKMOUSEEVENTW` and every call threw from `library.h:50`. Proven by the `/EP` literals plus a live `GetProcAddress`
-  probe (all 10 `MISSING`, all 10 bare stems `RESOLVED` at the export-table RVAs), so bare `qor_pp_useswinapi` is **D13's
-  other half**, not a style call. The old `:82` also bound the parameter *type* - **P5's second instance** - so folder
-  unresolvable bindings went **11 -> 1** of 428 and live wrong-stem sites **1 -> 0**; U14(b) **425 explicit / 3 deducing**.
-  Narrative `archive/tu/mouse.md`, row 25; gate `tmp/_tmp_cl_all_s25c.log` (38/38 `/W4`, exit 0, dated after the last edit).
-- Session 24 (`monitor.cpp`, 0 fixes - the first clean TU) is committed in `3a66dc25`; its detail is `archive/tu/monitor.md`
-  + row 24 of `archive/session-log.md`, not here.
+- **Session 27 (`processthread.cpp`) closed 3 Nov 2026 - 0 defects found; 28 of 38 TUs reviewed.** All 5 bindings resolve
+  (bare stems, no A/W family, no `winuser.h` macro, so P2/P6 cannot arise), header/definition/SDK parameter names are
+  identical 5/5 and every `Call<>` template list restates the definition exactly. Fixes: TAB + stray-space whitespace and
+  the user-decided `Call<>` tight normalisation. What the session added to the record: `registers/u2.md` (3 of this
+  library's 4 `CheckReturn` sites; `WaitForInputIdle` correctly unchecked because **0 is its success value**),
+  `registers/u16.md` (`IsWow64Message` under `_WIN32_WINNT >= 0x0501`, plus the **empty** `#if (_WIN32_WINNT >= 0x0602)` /
+  `#endif` pair at `winuser.h:4121-4122` that a guard walk without an `#endif` depth counter reports as a real guard),
+  `registers/u19.md` (1 LAYER caller - `messagehandler.cpp:246` - 0 bypass) and a new **coverage** measure
+  (`tmp/_tmp_pt_coverage_s27.txt`: 370 of 1,018 exports have no wrapper, 114 of them SDK-declared). Narrative
+  `archive/tu/processthread.md`, row 27; gate `tmp/_tmp_cl_all_s27.log` (38/38 `/W4`, exit 0, dated after the last edit).
+- Sessions 24-26 (`monitor`, `mouse`, `painting`) are closed and committed; their detail is `archive/tu/monitor.md`,
+  `archive/tu/mouse.md`, `archive/tu/painting.md` and rows 24-26 of the session log, not here. The load-bearing result of
+  session 25 stays in force: `AW` over a stem with **no A/W family** throws at run time on every call, so bare
+  `qor_pp_useswinapi` is **D13's other half**, not a style call.
 
 ## Decisions in force (pointer only - not restated here)
 
