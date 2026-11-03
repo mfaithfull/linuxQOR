@@ -187,3 +187,46 @@ run - both confirmed for the session-11 run.
   reproduces the TOTAL exactly (425 / 3 / 174 / 254). The script strips comments before counting, so a quoted `Call<`
   inside a contract block is not a site - when a total disagrees with a table, suspect the reading before the scanner.
 
+## Session 28 (`rectangle.cpp`, 3 Nov 2026)
+
+- **A normalisation pass that names its target lines is unsafe in a file that also gets a contract block** (session 28,
+  caught before it wrote). `_tmp_rect_edit_s28.ps1` started as `$targets = @(20, 27, 34, ...)`; the block inserted above
+  the definitions moved those 11 call sites to `:101`-`:170`, so the script would have rewritten 11 lines of **prose** and
+  left the real sites untouched - and its own guard (`if($old -notmatch 'Library::Call') { throw }`) only fires if the
+  prose line happens not to mention `Library::Call`, which a contract block paragraph does. Fix: **self-locate** (start at
+  the first `^\s*BOOL User32::` line, take every `Library::Call` line after it) and assert the expected count of changed
+  lines. The related trap: two definitions with **identical** call lines (`InflateRect` and `OffsetRect` both
+  `Call< BOOL, ::LPRECT, int, int >(pFunc, lprc, dx, dy);`) defeat the `_tmp_pt_edit_s27.ps1` "substring must match
+  exactly once" guard, so a pass over such a TU must be line-scoped, not substring-scoped.
+- **Order-dependent steps must never go in one parallel tool batch** (session 28, hit twice). A batch holding
+  `git checkout -- rectangle.cpp`, the edit script and the block splice ran them concurrently, so the splice read the file
+  the checkout had just restored; a batch holding the register index generator, the `status.md` locator splice and the
+  locator verifier made the splice read the **previous** session's `_tmp_status_index_s22.md` (59 lines instead of 63).
+  Both were silent - the wrong input simply produced plausible output. Sequence any chain where step B consumes step A's
+  output, and re-run the consumer when in doubt (`_tmp_u15_locator_verify.ps1` after every `status.md` locator change is
+  what caught the second one).
+- **A coverage scan that matches the export name verbatim reports `*A`/`*W` SDK names as unwrapped** (session 28).
+  `_tmp_rect_region_s28.ps1` flagged `GetWindowLongA`/`GetWindowLongW` as having no `user32.h` member; the layer wraps
+  the family as `GetWindowLongT` (`user32.h:625`), so the rows are artifacts. Resolve `stem -> stemT` (and
+  `stemA/W -> stem -> stemT`) before claiming a gap - `_tmp_rect_family_s28.ps1` does. Cross-check any "no member" claim
+  with a plain `Select-String user32.h -Pattern <Stem>` before it enters a register.
+- **A same-named member *definition* reads as an indirect call in the U19 scan** (session 28). The scan reported 2
+  `INDIRECT SetRect via EditController / via Region` rows; both are definitions of methods that merely *share* the SDK
+  name - `EditController::SetRect` (`ui/gui/controllers/a_h/editcontroller.cpp:220`) sends `EM_SETRECT` through
+  `SendMessageT`, `Region::SetRect` (`ui/gui/gdiobjects/region.cpp:48`) calls `GDI32::SetRectRgn`. Neither touches
+  `SetRect` in `user32.dll`. An INDIRECT row is only a reachability fact if the line is a **call** into the layer or the
+  SDK, so always read the row's source line before counting it.
+- **In a file that is 57% comment, every grep hit needs a comment-state check before it is recorded as a call site**
+  (session 28, this time the filter worked). `ui/gl/windowimpl.cpp:1470` has a live-looking
+  `OffsetRect(&rect, ...);` that sits inside the `/* */` block opening at `:1303` and closing at `:1507`.
+  `tmp/_tmp_comment_state.ps1` (character-level, handles `/*` inside string literals) is the instrument; the 3 real
+  BYPASS sites in that file are `:516`, `:521` and `:1756`.
+- **A TU line scanner must count constructs over the code region, not the whole file, once the TU has a contract
+  block** (session 28, caught on the final capture). `_tmp_rect_lines_s28.ps1` reported `qor_pp_fcontext sites: 12`
+  and 10/10/3 `CONST` lines because the block quotes all three spellings and the macro in prose; the narrative said
+  11 and 7/7/2 and was right. Fix: hygiene counts (TAB, trailing space, non-ASCII, longest line) stay whole-file - a
+  trailing space in a comment is still a defect - but definition, binding, `Call<>` spacing and type-spelling counts
+  start at the first `^\s*BOOL User32::` line. `tmp/_tmp_rect_lines_final2_s28.txt` is the trustworthy capture;
+  `_tmp_rect_lines_final_s28.txt` (11:27) is the polluted one and must not be cited. Same class as the session-27 note
+  above: **when a scanner total disagrees with the record, suspect the scanner's scope before the reading.**
+

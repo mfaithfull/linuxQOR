@@ -1,15 +1,11 @@
 # winqor_api_user - source review: STATUS (per-session boot brief)
 
-Last updated 3 Nov 2026 - **session 27 (`processthread.cpp`) CLOSED**. HEAD `7ed35348` (3 Nov, "Ongoing review of
-winqor_api_user. painting.cpp reviewed") carries **sessions 1-26**; **session 27 is uncommitted** - `git status` shows
-**17 paths**: modified `processthread.cpp`, `status.md`, `tooling.md`, `gotchas.md`, seven registers (`README`, `census`,
-`tasks`, `u2`, `u14`, `u16`, `u19`), `archive/README.md`, `archive/session-log.md`, `memory-bank/activeContext.md`,
-`memory-bank/progress.md`; new `archive/tu/processthread.md`, `archive/session-log-23-24.md`. `user32.h` untouched at 695
-lines. Review of
-`src/platform/os/windows/api_layer/user` (the `User32` wrapper class over `user32.dll`) for correctness, consistency,
-safety, undefined behaviour and conformance to the api_layer conventions. Protocol: **one translation unit per session** -
-the whole point is not to lose findings between sessions. Small, unambiguous defects get fixed as they are found; anything
-that changes library-wide behaviour or needs a decision goes in the register and is *not* touched.
+Last updated 3 Nov 2026 - **session 28 (`rectangle.cpp`) CLOSED**. HEAD `7ed35348` carries **sessions 1-26**; 27-28 are
+uncommitted (each is one source file plus the records named in `archive/README.md`); `user32.h` untouched at 695 lines
+throughout. Review of `src/platform/os/windows/api_layer/user` (the `User32` wrapper class over `user32.dll`) for
+correctness, consistency, safety, UB and conformance to the api_layer conventions. Protocol: **one translation unit per
+session** - the whole point is not to lose findings between sessions. Small, unambiguous defects get fixed as they are
+found; anything that changes library-wide behaviour or needs a decision goes in the register and is *not* touched.
 
 ## Where the record lives - start here, then open only what the step needs
 
@@ -21,56 +17,51 @@ that changes library-wide behaviour or needs a decision goes in the register and
 | `tooling.md` | the `tmp/` instrument index - what each scan prints, when it was added, for which TU | before running an instrument or the gate |
 | `gotchas.md` | the caveats those instruments carry and the traps in editing these records (indexed from `tooling.md`) | before acting on any instrument flag |
 | `archive/tu/<tu>.md` - **one narrative per TU**, index in `archive/README.md` | that TU's narrative + verdict detail | only the TU you just reviewed |
-| `archive/session-log.md` | the session-log table (rows 25-27) + closure notes; older rows in the five `archive/session-log-<range>.md` slices | only while writing the row for the TU you just reviewed |
+| `archive/session-log.md` | the session-log table (rows 27-28) + closure notes; older rows in the six `archive/session-log-<range>.md` slices | only while writing the row for the TU you just reviewed |
 | `archive/history.md`, `archive/prescan-help.md` | consolidation/split history, consumed `help.cpp` pre-flags | never, unless auditing the record itself |
 
 The rule: **findings, narratives and register text never go in this file.** New finding -> the register file the locator
 names; new TU narrative -> `archive/tu/<tu>.md`; new row -> `archive/session-log.md`; new instrument -> `tooling.md`, new
 caveat -> `gotchas.md`; folder-wide measures -> append to the **end** of `registers/census.md` (append-only). Hard rule:
-**no record file over ~40 KB**, this file under 200 lines / 20 KB (the locator below is the part that grows - trim the
-prose above it, never the locator). When a file outgrows its context, slice by exact line range, hash-verify the rejoin,
-re-point the indexes, re-run the locator generator + the current splice script (`_tmp_s27_locsplice.ps1`, 3 Nov 2026).
-Prefer naming a thing over citing its size or line count.
+**no record file over ~40 KB**, this file under 200 lines / 20 KB - trim the prose above the locator, never the locator.
+Slice by exact line range, hash-verify the rejoin, re-point the indexes, then re-run the locator generator + the splice.
 
 ## Live state (3 Nov 2026)
+- **29 of 38 TUs reviewed** (sessions 1-28); the 9 left are the Queue table below. **Session 28 (`rectangle.cpp`) CLOSED
+  3 Nov 2026** - 11 wrappers, the whole `//Rectangle functions` section, the review's first TU with **0 defects of any
+  class**: 11/11 bare single exports (no A/W family, no `winuser.h` macro) so P1/P2/P6 cannot arise, header + definition +
+  SDK parameter names identical 11/11, all 11 `Call<>` template lists restate the definition's types. Its 11 edits are
+  whitespace (`:20` space before `)`, `:69` `int , int`) plus the user-authorised `Call<>` normalisation; header and
+  behaviour untouched (`/EP` neutrality). New material: **D15 closes U14**, U25's **fourth** spelling (three inside one
+  template list), U1/U2's answer-shaped-`BOOL` analysis (of 11: 5 success-or-failure, 3 answers, 3 documented zeros), two
+  U19 false-positive classes. **`archive/session-log.md` is at 39 KB - slice rows 27-28 out next session.**
+- **Session 27 (`processthread.cpp`) CLOSED 3 Nov 2026** - 5 wrappers, 0 binding/signature/return/idiom defects; fixes were
+  the folder's last TAB line, three spaces before `)`, its 5 `Call<>` sites -> tight. New: U16's second 0x0501 gate + the
+  **empty** `#if`/`#endif` at `winuser.h:4121`, U2's live evidence, the coverage measure, **T7**.
+- **Sessions 23-26 CLOSED 2-3 Nov 2026** - `message.cpp` (**P2 CLOSED**), `monitor.cpp` (**0 fixes**, first all-clean TU),
+  `mouse.cpp` (**10 P1 binding fixes**, folder unresolvable 11 -> 1), `painting.cpp` (25 wrappers, 2 whitespace nits).
+- `archive/tu/` narratives cover sessions 1-15 and 21-28; sessions 16-20 have their narrative in the row only.
 
-- **28 of 38 TUs reviewed** (sessions 1-27); the 10 left are the Queue table below. **Session 27 (`processthread.cpp`)
-  CLOSED 3 Nov 2026** - 5 wrappers, the whole `//Process and Thread functions` section: the **cleanest TU of the review**,
-  0 binding / signature / return / idiom defects (5/5 `/EP` literals resolve, all bare single exports, 0 `winuser.h` macros
-  so P2/P6 cannot arise; header, definition and SDK parameter names identical 5/5). Fixes: the folder's last TAB line, three
-  stray spaces before `)`, and (user decision) the TU's 5 `Call<>` sites -> tight, folder U14(a) **174/254**. New material:
-  U16's second 0x0501 gate (`IsWow64Message`) + the **empty** `#if (_WIN32_WINNT >= 0x0602)`/`#endif` at `winuser.h:4121`;
-  U2's live evidence (3 of this library's 4 `CheckReturn` sites; `WaitForInputIdle` correctly unchecked - 0 means success);
-  a **coverage measure** (370 exports with no member, 114 SDK-declared); **T7** (35 dead `returncheck.h` includes).
-- **Session 26 (`painting.cpp`) CLOSED 3 Nov 2026** - 25 wrappers: 0 binding / signature / return defects, 2 whitespace
-  nits; U16's first 0x0501 gate, U19's 2 real BYPASS sites, U26's width-invisible pair. Row 26.
-- **Sessions 23-25 CLOSED 2 Nov 2026** - `message.cpp` (the remaining **P2** list -> explicit `AW`, **P2 CLOSED**; U14(c)
-  CLOSED), `monitor.cpp` (**0 fixes** - first all-clean TU; U16 6/6, U19's first bypass in built code, a **U4 hand-off** ->
-  `GetListBoxInfo`) and `mouse.cpp` (**10 P1 binding fixes**, `AW` over stems with **no A/W family**; folder unresolvable
-  bindings **11 -> 1**, live wrong-stem sites **1 -> 0**).
-- `archive/tu/` narratives cover sessions 1-15 and 21-27; sessions 16-20 (`help`, `hook`, `icon`, `ime`, `keyboard`) have
-  their narrative in the session-log row only.
-
-## Queue - 10 TUs left, alphabetical (lines = on-disk physical lines, measured 3 Nov 2026)
+## Queue - 9 TUs left, alphabetical (lines = on-disk physical lines, measured 3 Nov 2026)
 
 | # | TU | lines | # | TU | lines |
 |--:|---|--:|--:|---|--:|
-| 28 | `rectangle.cpp` | 93 | 33 | `windowclass.cpp` | 114 |
 | 29 | `resource.cpp` | 30 | 34 | `windowprocedure.cpp` | 30 |
 | 30 | `scrollbar.cpp` | 102 | 35 | `windowproperties.cpp` | 51 |
 | 31 | `systemshutdown.cpp` | 51 | 36 | `winqor_api_user.cpp` (glue) | 14 |
 | 32 | `text.cpp` | 44 | 37 | `window.cpp` | **615** |
+| 33 | `windowclass.cpp` | 114 | | | |
 
-1,144 lines remain, **615 of them in one TU** (`window.cpp`, last in the queue). What is left of the binding census is
-`window.cpp:124 CreateWindow` (`tmp/_tmp_p1census_final_s27.txt`: 428 bindings, **1** unresolvable) - **P2 and P5 are
-closed**. `window.cpp` (85 bindings, P3 `CreateWindowT`, U18's `void` converters, U14(b)'s last 3 deducing sites) may not fit
-one session - decide how to split it before starting it, never mid-session. Hand-offs it must not lose: the version-guarded
-MDI members `CascadeWindows`/`TileWindows` (**U16**), the 17 DPI / `*Info` / WinEvent-hook heads from the monitor SDK region
+1,051 lines remain, **615 of them in one TU** (`window.cpp`, last in the queue). What is left of the binding census is
+`window.cpp:124 CreateWindow` (`tmp/_tmp_p1census_post_s28.txt`: 428 bindings, **1** unresolvable); **P2, P5 and U14 are
+closed** - U14's frozen number is **163 spaced / 265 tight** and the spaced sites must not be re-touched (D15).
+`window.cpp` (85 bindings, P3 `CreateWindowT`, U18's `void` converters, U14(b)'s last 3 deducing sites at `:118`, `:254`,
+`:317`) may not fit one session - decide the split before starting it, never mid-session. Hand-offs it must not lose: the
+version-guarded MDI members `CascadeWindows`/`TileWindows` (**U16**), the 17 DPI / `*Info` / WinEvent-hook heads
 (`tmp/_tmp_mon_region_s24.txt`), **T6**'s ownerless `//List Box functions` section and **T7**'s 35 dead `returncheck.h`
-includes (`rectangle.cpp` among them).
+includes.
 
 ## Convention decision
-
 - **D13 (adopted 29 Oct 2026, user decision; `docs/agent/DECISIONS.md`).** Explicit `qor_pp_useswinapiAW(<mod>, Stem)`
   wherever the SDK has an A/W family; bare `qor_pp_useswinapi` only for a single export with no A/W variants. Never rely on
   the SDK's `Stem -> StemW` macro surviving into the binding expression (G1); apply as each TU is reviewed.
@@ -81,9 +72,14 @@ includes (`rectangle.cpp` among them).
 - **D14 (adopted 2 Nov 2026, user decision; `docs/agent/DECISIONS.md`) - U15 CLOSED.** An exported wrapper with no
   reachable in-tree caller is published surface, **not a finding**: record none, `registers/u15.md` is frozen. Measure
   reachability only where another item needs it (P1/P5 latent-vs-live, U18's `TrackPopupMenu`, U19's LAYER-vs-BYPASS split).
+- **D15 (adopted 3 Nov 2026, user decision; `docs/agent/DECISIONS.md`) - U14 CLOSED.** `rectangle.cpp` was the last reviewed
+  TU with spaced `Library::Call< T, ... >` sites, so the item ran out of TUs to accumulate on; its tally is frozen at
+  **163 spaced / 265 tight, 425 explicit / 3 deducing** and nothing is appended to `registers/u14.md` any more. Sessions stop
+  reporting a spaced/tight tally; settling the residue would be a folder-wide mechanical pass, which would be a new
+  `registers/tasks.md` entry, not a reopened U14. **Not** closed by it: **U25** (the `const` spellings) and U14(b)'s three
+  deducing sites, which travel to `window.cpp`'s session as a hand-off.
 
 ## Register locator - id -> which `registers/` file and line holds its text
-
 A locator, not a finding: open the file at the line given before you act on, extend or close an id - never open the whole
 `registers/` tree. Generated by `tmp/_tmp_status_index_gen_s22.ps1` (descriptions capped at 60 chars); never hand-edit it.
 
@@ -102,8 +98,9 @@ A locator, not a finding: open the file at the line given before you act on, ext
 - **G5** `registers/ground-rules.md:33` the "already loaded image" assumption is not universal. In a...
 - **G6** `registers/ground-rules.md:36` return checking is silently always on. `returncheck.h:19` te...
 - **U1** `registers/u1.md:3` no call-site error handler anywhere in this library. Policy...
-- **U2** `registers/u2.md:3` return-check policy is absent. Policy settled 29 Oct 2026 (u...
+- **U2** `registers/u2.md:19` measured 3 Nov 2026 (session 28, `rectangle.cpp`) - the answ...
 - **U2** `registers/u2.md:8` measured 3 Nov 2026 (session 27, `processthread.cpp`) - and...
+- **U2** `registers/u2.md:3` return-check policy is absent. Policy settled 29 Oct 2026 (u...
 - **U3** `registers/u3.md:3` `hook.cpp` build-list status: RESOLVED (user commit `05d3ca2...
 - **U4** `registers/u4.md:3` `user32.h` declares about 101 non-static members that no `.c...
 - **U5** `registers/u5.md:3` the binding is cached for the process lifetime including fai...
@@ -115,15 +112,17 @@ A locator, not a finding: open the file at the line given before you act on, ext
 - **U11** `registers/u11.md:3` `resource.cpp` defines both Resource members without the `Us...
 - **U12** `registers/u12.md:3` `accessibility.cpp` and `timer.cpp` held each other's wrappe...
 - **U13** `registers/u13.md:3` one member was defined through `User32::` but declared non-s...
-- **U14** `registers/u14.md:74` (a) moved deliberately 3 Nov 2026 (session 27, `processthrea...
-- **U14** `registers/u14.md:55` (c) CLOSED 2 Nov 2026 (session 23, `message.cpp`). The last...
-- **U14** `registers/u14.md:31` re-measure 1 Nov 2026 (session 20, `keyboard.cpp`). (b) `tmp...
 - **U14** `registers/u14.md:3` `Library::Call`/`voidCall` template-argument style is split...
+- **U14** `registers/u14.md:55` (c) CLOSED 2 Nov 2026 (session 23, `message.cpp`). The last...
 - **U14** `registers/u14.md:66` (b) re-measured 2 Nov 2026 (session 25, `mouse.cpp`): 425 ex...
+- **U14** `registers/u14.md:74` (a) moved deliberately 3 Nov 2026 (session 27, `processthrea...
+- **U14** `registers/u14.md:87` CLOSED 3 Nov 2026 (session 28, `rectangle.cpp`) by user deci...
+- **U14** `registers/u14.md:31` re-measure 1 Nov 2026 (session 20, `keyboard.cpp`). (b) `tmp...
 - **U15** `registers/u15.md:3` wrappers that are exported through `QOR_WINAPIUSER` but have...
-- **U16** `registers/u16.md:3` the wrappers pair with SDK declarations that the SDK only em...
-- **U16** `registers/u16.md:203` (`mouse.cpp`, 2 Nov 2026, session 25): 3 of the 10 prototype...
+- **U16** `registers/u16.md:243` (`rectangle.cpp`, 3 Nov 2026, session 28): 0 of 11 - the pla...
 - **U16** `registers/u16.md:220` (`painting.cpp`, 3 Nov 2026, session 26): 8 of this TU's 27...
+- **U16** `registers/u16.md:203` (`mouse.cpp`, 2 Nov 2026, session 25): 3 of the 10 prototype...
+- **U16** `registers/u16.md:3` the wrappers pair with SDK declarations that the SDK only em...
 - **U16** `registers/u16.md:230` measured 3 Nov 2026 (session 27, `processthread.cpp`): 5 pro...
 - **U17** `registers/u17.md:3` A/W wrappers declared without the folder's `T` suffix. Opene...
 - **U18** `registers/u18.md:3` a wrapper pair whose return type contradicts the SDK: `void`...
@@ -131,6 +130,7 @@ A locator, not a finding: open the file at the line given before you act on, ext
 - **U19** `registers/u19.md:198` (`mouse.cpp`, 2 Nov 2026, session 25): 9 LAYER / 7 INDIRECT...
 - **U19** `registers/u19.md:210` (`painting.cpp`, 3 Nov 2026, session 26): 17 LAYER / 11 INDI...
 - **U19** `registers/u19.md:222` measured 3 Nov 2026 (session 27, `processthread.cpp`): 1 LAY...
+- **U19** `registers/u19.md:231` (`rectangle.cpp`, 3 Nov 2026, session 28): 11 LAYER / 2 "IND...
 - **U20** `registers/u20.md:3` the caller-side `Cursor`/`Icon` ownership model is wrong at...
 - **U21** `registers/u21.md:3` the "DC functions" section is not the SDK's DC family, and t...
 - **U22** `registers/u22.md:3` the `DeviceContext` release path this layer feeds calls `Rel...
@@ -152,32 +152,39 @@ Edited TU compiles standalone at `/W4` exit 0; the whole library compiles **38/3
 (`tmp/_tmp_cl_all.bat` -> the shared `tmp/_tmp_cl_all.log`, snapshotted under a session name - never copy an old log as
 proof, see `gotchas.md`; only the TU-name echoes may appear); `cl /EP` re-run after the last edit still yields the expected
 binding literals; `user32.h` untouched unless the row says otherwise. The gate also carries the folder-wide **binding
-census** (latest `tmp/_tmp_p1census_final_s27.txt`: 428 bindings, **1** unresolvable - `window.cpp:124`) and the per-stem
-bare-vs-AW classifier (`tmp/_tmp_pt_class_s27.ps1`). **Session 27's authoritative gate is `tmp/_tmp_cl_all_s27.log`** - run
-3 Nov after `processthread.cpp`'s last edit (08:00:59): 38 echoes, 0 diagnostics, with the `/EP` capture re-run afterwards
-(08:14:26). The older lesson stands: session 24's `_s24.log` and 25's `_s25b.log` were pre-edit runs and must not be cited.
-Library-header edits
-must additionally pass the **all-libraries gate** `tmp/_tmp_cl_all_apiall_u6.bat` (106 sources), meaningful only as a diff
-against a pre-fix run (pre-existing `C1083` at `opengl/wgl.cpp:31` plus 165 warnings on HEAD).
+census** (latest `tmp/_tmp_p1census_post_s28.txt`: 428 bindings, **1** unresolvable - `window.cpp:124`) and the per-stem
+bare-vs-AW classifier (`tmp/_tmp_rect_class_s28.ps1`). **Session 28's authoritative gate is `tmp/_tmp_cl_all_s28b.log`** -
+run 3 Nov after `rectangle.cpp`'s last edit (11:19:45): 38 echoes, 0 diagnostics, single-TU `cl_exit=0` in
+`tmp/_tmp_rect_cl_s28.log`, with the `/EP` capture re-run afterwards (`tmp/_tmp_rect_pp_final2_s28.txt`) and neutrality
+proved over that pair by `tmp/_tmp_rect_neutral_s28.txt` (non-blank multiset identical at 154,338, only the 11 intended call
+lines differ, 11/11 binding literals byte-identical). The older lesson stands: session 24's `_s24.log` and 25's `_s25b.log`
+were pre-edit runs and must not be cited. Library-header edits must additionally pass the **all-libraries gate** `tmp/_tmp_cl_all_apiall_u6.bat` (106 sources), meaningful only as a diff against a pre-fix run (pre-existing `C1083` at `opengl/wgl.cpp:31` plus 165 warnings on HEAD).
 
 ## Pre-flags for the current TU (rolling - keep this under ~40 lines)
 
-**Consumed:** session 27's pre-flags are superseded by its row + `archive/tu/processthread.md`. Pre-flags are leads, never
-facts - session 24's U21 hand-off ("`window.cpp` (34)") was a guess; measured, it is 6 / 17 / 22.
+**Consumed:** session 28's pre-flags are superseded by its row + `archive/tu/rectangle.md` - every one of them held
+(0 P1/P2/P6, 0 U16, the three `CONST` spellings, the two hygiene nits). Pre-flags are leads, never facts - session 24's
+U21 hand-off ("`window.cpp` (34)") was a guess; measured, it is 6 / 17 / 22.
 
-**Session 28 `rectangle.cpp`** (93 lines; 11 wrappers = the whole `user32.h:446`-`:457` "//Rectangle functions" section; all
-11 declarations `static`, definitions `:16`-`:86` **in header order**, every member `BOOL`). SDK halves measured 3 Nov with
-`tmp/_tmp_rect_pre_s28.ps1` -> `tmp/_tmp_rect_pre_s28.txt`; TU halves read directly the same day.
-- **Binding: 0 P1 expected** - all 11 stems are **bare single exports**, no `A`/`W` row and no `winuser.h` macro (artefact
-  section C), so the bare `qor_pp_useswinapi` at `:19`-`:89` is the only spelling that can bind them and P2/P6 cannot arise.
-- **U16: expect nothing** - all 11 prototypes sit in the Desktop sub-block opened `winuser.h:9717` with **no version guard on
-  any of them** (innermost non-partition guard is the file-wide `#ifndef NOUSER`, `:64`). Run the guard instrument anyway.
-- **Hygiene leads:** `Call<>` **11/11 spaced**, 0 tight, 0 deducing, 0 `voidCall` - normalising here (session 27's decision)
-  moves the folder to **163/265**, so **ask first**; `:20` has a space before the argument list's `)`; `:69` has a space
-  **before a comma** (`int , int`) - a shape not recorded anywhere yet; `:27` and `:90` write `CONST RECT*` where the file
-  elsewhere writes `CONST ::RECT*`, and header + definitions use `CONST::RECT*` with no space (**U25**, three spellings).
-- **U1/U2:** 0 `CheckReturn` sites; all 11 SDK prototypes return `FALSE` on failure, so 11 silent-failure wrappers - record.
-- **T7 lead:** `:11` includes `../returncheck.h` and uses none of it - **do not remove it**, T7 is a deferred folder task.
-- Measure first: TU hygiene counts (tabs / trailing space / non-ASCII / longest line - not checked yet), the binding census,
-  the wrong-stem scan, U19 over the 11 stems with their `A`/`W`/`T` spellings, the `/EP` literals, and the three-way
-  parameter-name compare (`SetRect`'s SDK spelling puts 5 parameters over 6 lines).
+**Session 29 `resource.cpp`** (30 lines; 2 wrappers, declared `user32.h:443` `CopyImage` / `:444` `LoadImageT` under the
+`:442` `//Resource functions` label). SDK halves + TU hygiene measured 3 Nov with `tmp/_tmp_res_pre_s29.ps1` ->
+`tmp/_tmp_res_pre_s29.txt`.
+- **The folder's only U11 pair, and it is the whole point of this TU:** `:16 HANDLE CopyImage(...)` and `:23 HANDLE
+  LoadImageT(...)` both lack the `User32::` qualifier, so they define two free functions in `qor::win::api` and the two
+  `static` members at `user32.h:443`/`:444` have **no definition anywhere** (U4 x2). This is why the wrong-stem scan
+  reports `resource.cpp:19` and `:26` as "BINDING OUTSIDE A User32:: DEFINITION" (2 of its 3 folder rows) - the scan is
+  reading the shape correctly, it is not a false positive here. Adding the qualifier changes which symbol the TU emits, so
+  measure, then ask before editing (`user32.h` itself must not move).
+- **Binding:** `CopyImage` is a bare single export (`A`/`W` absent, no macro) so `:19`'s bare `qor_pp_useswinapi` is the
+  D13 spelling; `LoadImage` is the textbook **P6/D13 shape** - bare **not** exported, `LoadImageA`/`LoadImageW` exported,
+  `#define LoadImage LoadImageW` - and `:26` already uses `qor_pp_useswinapiAW`, so expect 0 P1/P2 and verify the `/EP`
+  literal is `"LoadImageW"`.
+- **U16: first `0x0400` lead** - `LoadImageA` `winuser.h:10906`, `LoadImageW` `:10916`, `CopyImage` `:10932`, all inside
+  `#if(WINVER >= 0x0400)` at `:10883` (innermost otherwise the Desktop partition at `:10901`).
+- **U19: 0 hits over the 8 spellings** - no in-tree caller of either wrapper and no live bypass. Under D14 "no caller" is not a finding, but the U11/U4 pair above makes these wrappers unreachable in a second, sharper way.
+- **Hygiene leads:** `:20` has a space before a comma (`int , UINT`) plus a spaced `Call<>`; `:27` has a spaced `Call<>`
+  **and** a space after the call's `(` (`>( pFunc`). **U14 is CLOSED (D15) - record the spacing, change nothing**; the
+  ` ,` and `( ` shapes are separate nits. TU otherwise clean: 0 TAB / trailing space / non-ASCII, longest line 143.
+- **Section-label lead:** `help.cpp:27`-`:32` already logged these two as SDK "Shell Support Functions" sitting under the
+  folder's `//Resource functions` label (U12/U21-shaped, nothing moved there).
+- **T7 lead:** `:11` includes `../returncheck.h` and uses none of it - **do not remove it**.

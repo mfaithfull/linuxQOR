@@ -7,13 +7,14 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/history.md` | 90 | 1334-1394 |
 | `archive/preamble.md` | 7 | 1-5 |
 | `archive/prescan-help.md` | 121 | 1098-1216 |
-| `archive/README.md` | 38 | - |
+| `archive/README.md` | 39 | - |
 | `archive/session-log-1-8.md` | 19 | - |
 | `archive/session-log-17-19.md` | 11 | - |
 | `archive/session-log-20-22.md` | 11 | - |
 | `archive/session-log-23-24.md` | 10 | - |
+| `archive/session-log-25-26.md` | 10 | - |
 | `archive/session-log-9-16.md` | 17 | - |
-| `archive/session-log.md` | 337 | 1217-1333 |
+| `archive/session-log.md` | 366 | 1217-1333 |
 | `archive/tu/accelerator.md` | 31 | 50-78 |
 | `archive/tu/accessibility-timer.md` | 46 | 6-49 |
 | `archive/tu/brush.md` | 53 | 79-129 |
@@ -36,3 +37,4 @@ Open only the TU you are writing about. New TU: create archive/tu/<name>.md and 
 | `archive/tu/mouse.md` | 78 | - |
 | `archive/tu/painting.md` | 41 | - |
 | `archive/tu/processthread.md` | 52 | - |
+| `archive/tu/rectangle.md` | 99 | - |

@@ -298,4 +298,42 @@ session-log integrity (row 27 present verbatim, rows 23-24 present only in the s
 transformation, then re-inserts row 27 and the close-out note; it verifies the sliced rows' sha256 and that every snapshot
 line except the sliced pair is reproduced **before** it writes, and refuses to write an empty document.
 
+## Tooling added in session 28 (`rectangle.cpp`, 3 Nov 2026)
+
+Session-scoped names in `tmp/`. **`_tmp_rect_ret_s28.ps1`** - the multi-line `winuser.h` return-type + parameter dump
+for the 11 stems (session 22's walk-back-off-the-stem pattern, cloned from `_tmp_pt_ret_s27.ps1`); it is what lets the
+record say "every return is `BOOL`" rather than "unmeasured". **`_tmp_rect_class_s28.ps1`** - the per-stem
+bare/AW/P6 classifier over a `/EP` capture; for this TU it also proved the *negative*: 0 macros and 0 A/W families,
+so P2/P6 are unrepresentable and **no live probe is needed** (a probe only matters when some spelling is being asked
+for that the DLL might lack). **`_tmp_rect_pair_s28.ps1`** - header/TU/SDK three-way parameter-name compare.
+**`_tmp_rect_lines_s28.ps1`** - the def/binding/call-site line map plus hygiene counts, extended with two censuses
+this TU needed: the space-before-comma sites (`int , int` at old `:69`, a shape no earlier TU had) and the three
+`CONST` spellings counted **per line** (`CONST::` on the definition lines, `CONST ::` on the call lines, bare
+`CONST X*` inside two template lists) so a U25 claim can be attributed to a construct. **It counts constructs over the
+code region only** (from the first `^\s*BOOL User32::` line) while hygiene stays whole-file - the final capture of the
+first version read `fcontext: 12` and `CONST` on three block lines, see `gotchas.md`. **`_tmp_rect_edit_s28.ps1`** -
+the whitespace/`Call<>`-spacing pass, **self-locating**: it takes every `Library::Call` line from the first
+`BOOL User32::` definition on and asserts exactly 11 changed (see `gotchas.md` for why the first, line-number-based
+version was wrong). **`_tmp_rect_neutral_s28.ps1`** - `/EP` pre-vs-final neutrality (both halves over ONE capture
+pair, the session-27 self-fix applied from the start). **`_tmp_rect_cite_s28.ps1`** - session 27's citation verifier
+cloned for this TU. **`_tmp_s28_pre.ps1` / `_tmp_s28_post.ps1`** - the four folder-wide scans in one wrapper (P1
+census, wrong-stem, U14 census, U19 bypass over all 44 suffix variants). **`_tmp_rect_pp_s28.bat`** and
+**`_tmp_rect_cl_s28.bat`** - own `/EP` and compile captures (never the shared `_tmp_pp_out.txt`).
+
+**Two new coverage instruments, worth cloning for the remaining TUs.** `_tmp_rect_region_s28.ps1` lists every
+prototype head in a `winuser.h` line range and says whether `user32.h` has a member for it - which is how
+`GetWindowWord`/`SetWindowWord` (no member at all) and `SetSysColors` (declared at `user32.h:651`, defined nowhere)
+surfaced from a TU that wraps none of them. Its blind spot is recorded in `gotchas.md`: `GetWindowLongA`/`W` read as
+"no member" because the layer declares `GetWindowLongT`. `_tmp_rect_family_s28.ps1` fixes that by resolving
+`stem -> stemT` (and `stemA/W -> stem -> stemT`) before deciding, and works from the export table rather than a line
+range: 51 export names containing `Rect`, 41 SDK-declared, 39 wrapped. Use the **family** form for claims and the
+**region** form to spot neighbours.
+
+**`_tmp_s28_logslice.ps1`** - the session-log slice for rows 25-26 (clone of `_tmp_s27_logslice.ps1`): snapshot, hash
+the two rows, write the slice, re-read and hash-verify **before** rewriting the source, and refuse to write an empty
+document. Its final line ("non-slice lines that changed, expect 1") reported 3 - the two blank lines the inserted
+paragraph contributes are not in its exclusion filter, so that count is a soft signal, not a proof; the hard proof is
+the `Compare-Object` against the snapshot, which shows exactly 2 rows removed and 6 lines added.
+
+
 

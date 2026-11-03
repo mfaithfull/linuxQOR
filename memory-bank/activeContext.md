@@ -1,40 +1,42 @@
 # Active Context
 
-Last updated: 3 Nov 2026 (session 27 `processthread.cpp` CLOSED - the review's **cleanest TU**: 5 wrappers, 0 binding,
-signature, return or idiom defects; fixes were the folder's last TAB line, three stray spaces and (user decision) the TU's
-5 `Call<>` sites normalised to tight, moving folder U14(a) to **174 spaced / 254 tight**; new material U16's second 0x0501
-gate, a coverage measure and **T7** - 35 dead `returncheck.h` includes). Session 26 is committed (`7ed35348`, which carries
-sessions 1-26); session 27's working tree is **17 paths** per `git status` (15 modified, 2 new -
-`archive/tu/processthread.md`, `archive/session-log-23-24.md`). **Next: session 28 `rectangle.cpp`** (11
-wrappers, `user32.h:446`-`:457`), pre-flags measured and in `status.md`. Record hygiene: `status.md` sits just under its
-line ceiling and its register locator is the part that grows, so rewrite the prose there rather than adding; `method.md` was
-**split on 2 Nov 2026** into `method.md` (the numbered steps), `tooling.md` (the instrument index) and `gotchas.md` (the
-caveats it points at). Completed-session records stay in `memory-bank/archive/`, never here.
+Last updated: 3 Nov 2026 (session 28 `rectangle.cpp` CLOSED - the review's **first TU with 0 defects of any class**: 11
+wrappers, the whole `user32.h:446`-`:457` `//Rectangle functions` section, 11/11 bare single exports (no A/W family, no
+`winuser.h` macro) so P1/P2/P6 cannot arise, parameter names identical header/definition/SDK, all 11 `Call<>` template lists
+correct. Fixes: two whitespace nits plus (user decision) normalising the TU's 11 `Call<>` sites to tight, which **closes
+U14** - new policy **D15**, tally frozen at 163 spaced / 265 tight. Session 26 is committed (`7ed35348`, which carries
+sessions 1-26); sessions 27-28 are uncommitted. **Next: session 29 `resource.cpp`** (30 lines, 2 wrappers), pre-flags
+measured and in `status.md` - it holds the folder's only **U11/U4** pair (both definitions lack the `User32::` qualifier).
+Record hygiene: `archive/session-log.md` is at 39 KB, so rows 27-28 must be sliced out at the next close; `status.md` sits
+under its 200-line / 20 KB ceiling; `method.md` was **split on 2 Nov 2026** into `method.md` (the numbered steps),
+`tooling.md` (the instrument index) and `gotchas.md` (the caveats it points at). Completed-session records stay in
+`memory-bank/archive/`, never here.
 
 ## Current focus: winqor_api_user source review (one TU per session)
 
 - Reviewing `src/platform/os/windows/api_layer/user` (class `qor::win::api::User32` over `user32.dll`) for
   correctness, consistency, safety, UB and convention conformance. **Protocol: exactly one translation unit
   per session**; small unambiguous defects fixed in place, everything behavioural recorded as an open item.
-- **Session 27 (`processthread.cpp`) closed 3 Nov 2026 - 0 defects found; 28 of 38 TUs reviewed.** All 5 bindings resolve
-  (bare stems, no A/W family, no `winuser.h` macro, so P2/P6 cannot arise), header/definition/SDK parameter names are
-  identical 5/5 and every `Call<>` template list restates the definition exactly. Fixes: TAB + stray-space whitespace and
-  the user-decided `Call<>` tight normalisation. What the session added to the record: `registers/u2.md` (3 of this
-  library's 4 `CheckReturn` sites; `WaitForInputIdle` correctly unchecked because **0 is its success value**),
-  `registers/u16.md` (`IsWow64Message` under `_WIN32_WINNT >= 0x0501`, plus the **empty** `#if (_WIN32_WINNT >= 0x0602)` /
-  `#endif` pair at `winuser.h:4121-4122` that a guard walk without an `#endif` depth counter reports as a real guard),
-  `registers/u19.md` (1 LAYER caller - `messagehandler.cpp:246` - 0 bypass) and a new **coverage** measure
-  (`tmp/_tmp_pt_coverage_s27.txt`: 370 of 1,018 exports have no wrapper, 114 of them SDK-declared). Narrative
-  `archive/tu/processthread.md`, row 27; gate `tmp/_tmp_cl_all_s27.log` (38/38 `/W4`, exit 0, dated after the last edit).
-- Sessions 24-26 (`monitor`, `mouse`, `painting`) are closed and committed; their detail is `archive/tu/monitor.md`,
-  `archive/tu/mouse.md`, `archive/tu/painting.md` and rows 24-26 of the session log, not here. The load-bearing result of
+- **Session 28 (`rectangle.cpp`) closed 3 Nov 2026 - 0 defects found; 29 of 38 TUs reviewed.** All 11 stems are bare
+  single exports (no A/W family, no `winuser.h` macro), so P1/P2/P6 cannot arise, and header/definition/SDK parameter names
+  are identical 11/11 with every `Call<>` template list restating the definition exactly. What the session added to the
+  record: **D15** (U14 CLOSED, tally frozen at 163 spaced / 265 tight), `registers/u25.md`'s **fourth** `const` spelling (a
+  single template list held `CONST::RECT*`, `CONST ::RECT*` and bare `CONST RECT*`), `registers/u2.md`'s answer-shaped-`BOOL`
+  analysis (of the 11 rectangle wrappers only 5 are success-or-failure, so `BoolCheck` would report a legitimate `FALSE` as
+  an error for the rest) and two U19 false-positive classes (a same-named member *definition* reads as INDIRECT; a
+  `/* */`-commented call reads as a live BYPASS - `tmp/_tmp_comment_state.ps1` is the filter). Narrative
+  `archive/tu/rectangle.md`, row 28; gate `tmp/_tmp_cl_all_s28b.log` (38/38 `/W4`, exit 0, dated after the last edit).
+- Session 27 (`processthread.cpp` - 0 defects, the coverage measure, **T7**) and sessions 24-26 (`monitor`, `mouse`,
+  `painting`) are closed; their detail is `archive/tu/<tu>.md` and the session log, not here. The load-bearing result of
   session 25 stays in force: `AW` over a stem with **no A/W family** throws at run time on every call, so bare
   `qor_pp_useswinapi` is **D13's other half**, not a style call.
 
 ## Decisions in force (pointer only - not restated here)
 
 - **D13** (explicit `qor_pp_useswinapiAW` for A/W families, bare only for single exports), **D14** (U15 CLOSED - an
-  exported wrapper with no in-tree caller is published surface, not a finding) and the **U1/U2** return-check policy
+  exported wrapper with no in-tree caller is published surface, not a finding), **D15** (U14 CLOSED 3 Nov 2026 - the
+  spaced/tight `Library::Call<>` split is frozen at 163 / 265, no more appends, and a folder-wide re-spacing would be a new
+  `registers/tasks.md` entry rather than a reopened U14) and the **U1/U2** return-check policy
   (no `Win32ErrorHandler`, no `CheckReturn` in these wrappers) are recorded once in
   `src/platform/os/windows/api_layer/user/status.md` "Convention decision" and decided in `docs/agent/DECISIONS.md`.
   They govern every TU session; the memory bank deliberately does not duplicate their text.

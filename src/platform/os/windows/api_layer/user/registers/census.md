@@ -211,3 +211,25 @@
   **0** live. Pre-flags for the next TU (`rectangle.cpp`, 11 wrappers in `user32.h:446`-`:457`, all single exports, **no**
   version guard on any of the 11 prototypes) are in `tmp/_tmp_rect_pre_s28.txt`.
 
+- **Session 28 (`rectangle.cpp`) folder-wide measures, 3 Nov 2026.** 11 of 38 sources touched, 11 wrappers, **0 defects of
+  any class** and **0 header lines moved** - the 11 edits are whitespace plus the user-authorised `Call<>` normalisation.
+  Binding census (`tmp/_tmp_p1census_post_s28.txt`): 428 bindings, **1** unresolvable (`window.cpp:124 CreateWindow`) -
+  unchanged. Wrong-stem scan (`tmp/_tmp_wrongstem_post_s28.txt`): 38 files, 426 definitions, 428 bindings, **3** rows,
+  **0** live (the known `cursor.cpp:64` + two `resource.cpp` binding-outside-a-definition rows) - unchanged, and no
+  `rectangle.cpp` row. U14 after this TU (`tmp/_tmp_u14_post_s28.txt`): 425 explicit / 3 deducing (`window.cpp:118`,
+  `:254`, `:317`), **163 spaced / 265 tight**; 30 of the spaced sites are in unreviewed TUs (`windowclass.cpp` 14,
+  `systemshutdown.cpp` 5, `windowproperties.cpp` 5, `text.cpp` 4, `resource.cpp` 2), the other 133 in reviewed TUs whose
+  sessions did not normalise. **U14 is CLOSED by this session - see decision D15 and `registers/u14.md`.** New folder
+  measures from this TU: the `CONST` spelling census (`tmp/_tmp_rect_const_s28.txt`: 17 / 18 / 10 lines in the sources,
+  17 / 0 / 4 in `user32.h`, `/EP` literals 31 / 16 / 49) and the rectangle-family coverage measure
+  (`tmp/_tmp_rect_family_s28.txt`: 51 exports containing `Rect`, 41 declared in `winuser.h`, 39 with a member;
+  SDK-visible gaps `EvaluateProximityToRect`, `GetPointerDeviceRects`, and from the region scan `GetWindowWord` +
+  `SetWindowWord`, which have no member at all; `SetSysColors` is declared at `user32.h:651` and undefined anywhere =
+  U4). Gate: `tmp/_tmp_rect_cl_s28.log` single TU `cl_exit=0`, library `tmp/_tmp_cl_all_s28b.log` 38 echoes /
+  0 diagnostics (run 11:28, after the last edit at 11:19:45), `/EP` neutrality `tmp/_tmp_rect_neutral_s28.txt`
+  (non-blank 154,338 both, only the 11 intended call lines differ, 11/11 binding literals identical). T7 re-counted:
+  37 of 38 sources include `../returncheck.h`, only 2 (`errorhandling.cpp`, `processthread.cpp`) use it - **35 dead**.
+  Pre-flags for the next TU (`resource.cpp`, 2 wrappers declared at `user32.h:443`-`:444` in the `//Resource functions`
+  section at `:442`) are in `tmp/_tmp_res_pre_s29.txt`; the U19 scan already flags both of its bindings as outside a
+  `User32::` definition (U11), and `LoadImage` is a textbook **P6/D13 shape** - bare not exported, `A`/`W` exported,
+  `#define LoadImage LoadImageW` - where this file already uses `qor_pp_useswinapiAW`.

@@ -1,26 +1,30 @@
 # Progress
 
-Last updated: 3 Nov 2026 (session 27 `processthread.cpp` CLOSED with **0 binding, signature, return or idiom defects** -
-the review's cleanest TU; fixes were whitespace only, plus the user-decided `Call<>` tight normalisation; **28 of 38 TUs
-reviewed**. Session 26 is committed as `7ed35348`; session 27's working tree is **13 modified + 2 new** per `git status`.
-Next is session 28 `rectangle.cpp`, 11 wrappers, pre-flags already measured into `status.md`, which sits just under its
-line ceiling - rewrite there rather than adding. `method.md` was **split on 2 Nov 2026** into `method.md` (the numbered
-steps), `tooling.md` (the instrument index) and `gotchas.md` (the caveats it points at).)
+Last updated: 3 Nov 2026 (session 28 `rectangle.cpp` CLOSED with **0 defects of any class** - the review's first all-clean
+TU; fixes were two whitespace nits plus the user-decided `Call<>` tight normalisation, which **closed U14** as policy
+**D15** (tally frozen at 163 spaced / 265 tight); **29 of 38 TUs reviewed**. Session 26 is committed as `7ed35348`;
+sessions 27-28 are uncommitted. Next is session 29 `resource.cpp` (30 lines, 2 wrappers), pre-flags already measured into
+`status.md` - it holds the folder's only **U11/U4** pair, both definitions lacking the `User32::` qualifier.
+`archive/session-log.md` is at 39 KB and must have rows 27-28 sliced out at the next close.)
 
 Current:
-- **Session 27 (`processthread.cpp`) closed 3 Nov 2026 - 0 binding, signature, return or idiom defects** (28 of 38 TUs
-  reviewed). The whole `user32.h:255 //Process and Thread functions` section, 5 wrappers: all five stems are single exports
-  with no A/W family and no `winuser.h` macro, so the bare `qor_pp_useswinapi` it already had is the only spelling that can
-  bind them - 0 P1/P2/P5/P6, and header/definition/SDK parameter names identical 5/5. Source changes were whitespace (the
-  folder's last TAB line, three stray spaces) plus the user's decision to normalise this TU's 5 `Call<>` sites to the
-  folder's tight majority, the first deliberate U14(a) move (folder now **174 spaced / 254 tight**). New record material:
-  **U16**'s second `_WIN32_WINNT >= 0x0501` gate and the **empty** `#if (_WIN32_WINNT >= 0x0602)`/`#endif` pair at
-  `winuser.h:4121-4122` that a guard scan without a depth counter reports as a real guard; **U2**'s inverse case
-  (`WaitForInputIdle` returns 0 for success, so the neighbour's `CheckNonZero` would invert it); a **coverage** measure
-  (370 of 1,018 exports unwrapped, 114 of them SDK-declared) and **T7** - 35 dead `../returncheck.h` includes, registered
-  by user decision. Narrative `archive/tu/processthread.md`, row 27; gate `tmp/_tmp_cl_all_s27.log` 38/38 at `/W4` exit 0,
-  dated after the last edit (08:00:59). Sessions 24-26 (`monitor`, `mouse`, `painting`) are closed and committed; their
-  detail is `archive/tu/monitor.md`, `mouse.md`, `painting.md` and rows 24-26, not here.
+- **Session 28 (`rectangle.cpp`) closed 3 Nov 2026 - 0 binding, signature, return or idiom defects** (29 of 38 TUs
+  reviewed). The whole `user32.h:446 //Rectangle functions` section, 11 wrappers: every stem is a bare single export with no
+  A/W family and no `winuser.h` macro, so P1/P2/P6 cannot arise at all; header/definition/SDK parameter names are identical
+  11/11 and all 11 `Call<>` template lists restate the definition's types. Source changes: `:20` a space before `)`, `:69` a
+  space before `,`, and (user decision) the 11 `Call<>` sites -> tight. New record material: **D15 closes U14**; **U25**'s
+  fourth spelling - one template list carried `CONST::RECT*`, `CONST ::RECT*` and bare `CONST RECT*`; **U1/U2**'s
+  answer-shaped-`BOOL` analysis (only 5 of the 11 are success-or-failure - `IntersectRect`/`UnionRect`/`SubtractRect` return
+  zero for a documented outcome and `EqualRect`/`IsRectEmpty`/`PtInRect` return an answer, so `BoolCheck` would misreport 6
+  of them); **U16** 0 of 11 version-guarded; **U19** 11 LAYER callers (all `ui/gui/view/drawing/rect.cpp`) plus 3 live
+  bypasses in `ui/gl` and two new false-positive classes. Family coverage: 51 user32 exports contain "Rect", 41 declared in
+  `winuser.h`, 39 wrapped. Narrative `archive/tu/rectangle.md`, row 28; gate `tmp/_tmp_cl_all_s28b.log` 38/38 at `/W4`
+  exit 0, dated after the last edit.
+- Session 27 (`processthread.cpp`, 5 wrappers, 0 defects) is closed - its material was U16's second `_WIN32_WINNT >= 0x0501`
+  gate plus the **empty** `#if`/`#endif` pair at `winuser.h:4121-4122`, U2's inverse case (`WaitForInputIdle` returns 0 for
+  success), the coverage measure (370 of 1,018 exports unwrapped, 114 SDK-declared) and **T7** - 35 dead
+  `../returncheck.h` includes. Narrative `archive/tu/processthread.md`, row 27. Sessions 24-26 (`monitor`, `mouse`,
+  `painting`): `archive/tu/<tu>.md` and rows 24-26, not here.
 
 
 - **Session 25 (`mouse.cpp`) closed 2 Nov 2026 - 10 P1 binding fixes + P5's second instance + 1 U14(b) site** (26 of 38 TUs
@@ -55,7 +59,7 @@ Current:
   `archive/session-log.md` (+ the session-23 closure note), narratives `archive/tu/menu.md` and `archive/tu/message.md`,
   folder totals in `registers/census.md`.
 - **`winqor_api_user` source review** (`src/platform/os/windows/api_layer/user`, one TU per session): **22 of 38 TUs
-  reviewed** through session 21 (28 now - bullets above) (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
+  reviewed** through session 21 (29 now - bullets above) (`accelerator`, `accessibility`, `timer`, `brush`, `caret`, `clipboard`, `combobox`, `console`,
   `coordtransform`, `cursor`, `desktop`, `devicecontext`, `devicemanagement`, `dialog`, `errorhandling`, `filledshapes`,
   `help`, `hook`, `icon`, `ime`, `keyboard`, `mdi` - **session 21 `mdi.cpp` closed 1 Nov 2026**: 4 wrappers, **0 binding /
   correctness / UB / convention-surface defects** - all four bindings were already D13-correct (`/EP` literals, export
