@@ -1,16 +1,21 @@
 # Active Context
 
-Last updated: 3 Nov 2026 (session 28 `rectangle.cpp` CLOSED - the review's **first TU with 0 defects of any class**: 11
-wrappers, the whole `user32.h:446`-`:457` `//Rectangle functions` section, 11/11 bare single exports (no A/W family, no
-`winuser.h` macro) so P1/P2/P6 cannot arise, parameter names identical header/definition/SDK, all 11 `Call<>` template lists
-correct. Fixes: two whitespace nits plus (user decision) normalising the TU's 11 `Call<>` sites to tight, which **closes
-U14** - new policy **D15**, tally frozen at 163 spaced / 265 tight. Session 26 is committed (`7ed35348`, which carries
-sessions 1-26); sessions 27-28 are uncommitted. **Next: session 29 `resource.cpp`** (30 lines, 2 wrappers), pre-flags
-measured and in `status.md` - it holds the folder's only **U11/U4** pair (both definitions lack the `User32::` qualifier).
-Record hygiene: `archive/session-log.md` is at 39 KB, so rows 27-28 must be sliced out at the next close; `status.md` sits
-under its 200-line / 20 KB ceiling; `method.md` was **split on 2 Nov 2026** into `method.md` (the numbered steps),
-`tooling.md` (the instrument index) and `gotchas.md` (the caveats it points at). Completed-session records stay in
-`memory-bank/archive/`, never here.
+Last updated: 3 Nov 2026 (session 29 `resource.cpp` CLOSED - **30 of 38 TUs reviewed**. It carried the folder's only
+**U11** pair and it was a real defect: both definitions were free functions, so the two `static` members declared at
+`user32.h:443`-`:444` had no definition anywhere (U4) while the two free functions were published by nothing (the built DLL
+exports 439 names and the import library 854 member symbols, neither name among them). Fixed by qualifying both with
+`User32::`, proven before/after with `dumpbin /symbols` (`YA` -> `SA`) and by a consumer-side link probe that now resolves
+both members. **U11 CLOSED, and `static` declarations with no definition are now 0 folder-wide**; bindings and signatures
+were already correct. HEAD `ed4eaf8c` carries sessions 1-28; **session 29's work is uncommitted**. **Next: session 30
+`scrollbar.cpp`**
+(102 lines, 12 wrappers, `user32.h:574`-`:585`) - pre-flags in `status.md`, all 12 stems are bare single exports so
+P1/P2/P6 cannot arise there. Record hygiene: `status.md` is at 196 lines / 19.5 KB against a 200-line / 20 KB ceiling, and
+`tooling.md` (37.1 KB - slice it at the start of session 30) and `archive/session-log.md` (28.5 KB) are the files to
+watch; `archive/tooling-13-20.md` and `archive/session-log-27-28.md` are this close's slices. Close every session with
+`tmp/_tmp_s29_cite_audit.ps1` - it checks that every `tmp/` artefact the records cite actually exists (it caught one
+mis-cited census instrument). `method.md` was **split on 2 Nov 2026** into `method.md` (the
+numbered steps), `tooling.md` (the instrument index) and `gotchas.md` (the caveats it points at). Completed-session records
+stay in `memory-bank/archive/`, never here.
 
 ## Current focus: winqor_api_user source review (one TU per session)
 

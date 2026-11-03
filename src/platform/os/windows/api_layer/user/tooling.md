@@ -62,67 +62,13 @@ last citation fixes: `exit=0 loglines=43`, and the `cl` log `tmp/_tmp_cl_all.log
 Two traps in reading the gate's own output (the wrapper's exit code, and which file is actually the `cl` log) are entries
 in `gotchas.md`.
 
-## Tooling added after the review-method index (sessions 13-16)
-`_tmp_pp_dialog.bat`, `_tmp_pp_errh.bat`, `_tmp_pp_fs.bat`, `_tmp_pp_help.bat` (per-TU `cl /EP`, each writing its own
-`_tmp_*_pp.txt`); `_tmp_binding_names.ps1` (reads binding literals out of a `/EP` dump in definition order - the only
-practical way to audit a 453k-line preprocessed file); `_tmp_decl_no_def_scan.ps1` / `_tmp_decl_no_def_repo_scan.ps1`
-(declared-but-never-defined census, 64 names in `_tmp_decl_no_def_s13.txt`, reconciled with U4's 97);
-`_tmp_guard_stack_scan.ps1` (generalised U16 guard-stack scan, `-Pattern <regex>` over `winuser.h`, replacing the
-hard-coded `_tmp_sdk_guard_scan.ps1`); `_tmp_fs_bypass.txt`, `_tmp_errh_bypass.txt`, `_tmp_help_bypass.txt`;
-`_tmp_dump_help.bat` -> `_tmp_help_linkermember.txt` (first `dumpbin /linkermember:1` use - the tool for confirming a U4
-"declared but undefined" claim at the binary level); `_tmp_tchar_probe.cpp` + `_tmp_run_tchar_probe.bat`;
-`_tmp_ascii_check.ps1` (non-ASCII byte counter); `_tmp_returncheck_usage.ps1` (feeds U2/U26);
-`_tmp_hook_pre.bat`, `_tmp_hook_guards.ps1`/`.bat` (staged for session 17); `_tmp_name_resolve_probe.cpp` extended by
-+24 dialog spellings (+7 exported-but-undeclared), +16 error-family, +12 filled-shape and +5 help spellings;
-`_tmp_status_HEAD_backup.md` (a copy of `status.md` as of the session-15 commit, kept beside the archive).
+## Sessions 13-20 + the U6 off-protocol fix - sliced out
 
-## Tooling added in sessions 17-20
-- `tmp/_tmp_kb_p1census_s20.ps1` (session 20) - **the binding census to run in every session.** For each of the 428
-  `qor_pp_useswinapi`/`...AW` bindings it asks whether the literal the macro produces is in the export table and prints
-  `FAIL <tu>:<line> <bare|AW>(user32, Stem) bare=? A=? W=?`. Post-fix run: **17 FAILs of 428**, decoding as 11 genuinely
-  broken (`mouse.cpp` x10, `window.cpp:124`) + 6 P2 (`menu.cpp:159,194`, `message.cpp:124,145,152,159`). Companion
-  `tmp/_tmp_kb_awchecklist_post_s20.txt` prints the same per TU as `bare= AW= single-ok=`; `single-ok=0` means the TU has
-  no correctly-spelled bare-single-export binding at all (`mouse.cpp` reads `bare=0 AW=10 single-ok=0`).
-- **New defect class (session 20): `qor_pp_useswinapiAW` over a stem with no A/W pair.** The macro pastes `W`
-  unconditionally (`kernel32.h:52`), so the call asks for a name that does not exist and `pFunc` caches NULL (G5). P5
-  cannot see it (stem == member) and neither can the compile (`Library::Call` has no prototype); only the export-table
-  comparison does. `tmp/_tmp_kb_awpair_s20.ps1` is the per-stem `bare / <stem>A / <stem>W` check to run before choosing
-  bare vs AW.
-- The export table's parsed count differs from the names it lists, and the gap is not a missing export - see `gotchas.md`.
-- `tmp/_tmp_kb_bypass_s20.ps1` - wrapper that passes the 55 A/W/`T` suffix variants of a TU's stems to
-  `_tmp_bypass_scan.ps1`, because `pwsh -File script.ps1 -Stems A,B` delivers **one string**, not an array: the scan then
-  silently sees one 100-character stem and reports 0 sites everywhere. Never record a 0-site U19 result without it.
-- `tmp/_tmp_kb_u18_s20.ps1` compares each member's return type with the SDK prototype and prints the `winuser.h` line -
-  the instrument behind U18's per-TU counts. It finds **return** divergences only; parameter divergences (e.g.
-  `keybd_event`'s `void*` vs `ULONG_PTR`) still need a manual pass over the prototype block.
-- `tmp/_tmp_comment_state.ps1 -Path <file> -Lines a,b,c` answers "is this bypass live code or a comment?" - the U19 tally
-  is meaningless without it (`ui/gl/windowimpl.cpp` is 57% comment lines).
-
-## Off-protocol item fix (U6, 1 Nov 2026) - the gate rule it established and the two instruments it needed
-The U6 closure was not a TU session, so it is logged here rather than as a session row. It produced one gate rule and two
-instruments that no `/W4` compile can replace:
-
-- **Rule: a change to a header shared across api_layer libraries must be gated across all of them, not just the reviewed
-  folder.** `library.h` is included by all 12 libraries, so the standing 38/38 user-folder gate proves nothing about the
-  other 68 sources. New gate: `tmp/_tmp_cl_all_apiall_u6.bat`, which compiles all **106** api_layer `.cpp` files
-  standalone at `/W4` from the response file `tmp/_tmp_u6_apiall_sources.rsp` (a `cl @file.rsp` source list is the only
-  way to pass that many paths under cmd's 8 KB command-line limit). Its pre-fix and post-fix logs
-  (`tmp/_tmp_cl_all_apiall_u6_pre.log`, `..._post.log`) are byte-identical, which is the form of evidence to quote for
-  "no regression outside the reviewed folder". **Baseline it carries:** 165 `/W4` warnings (`gdi` C4995 on the deprecated
-  `UpdateICMRegKeyW`, `uxtheme` C4100) plus one pre-existing `fatal error C1083` at `opengl/wgl.cpp:31` (cannot open
-  `gdi32.h` with this cl line) - so the extended gate exits non-zero on HEAD too, and its exit code alone is meaningless;
-  always diff it against a pre-fix run.
-- **Calling-convention evidence needs an x86 build plus the disassembly, never a compile.** On x64 there is one calling
-  convention, so every existing check is structurally blind to this defect class. `tmp/_tmp_u6_cc_probe.cpp` calls a
-  `WINAPI` callee through `Library::Call`/`voidCall`; `tmp/_tmp_u6_cc_x86.bat` compiles it with
-  `vcvarsamd64_x86.bat` (host x64, target x86) and dumps the object with `dumpbin /disasm` into
-  `tmp/_tmp_u6_cc_x86_<pre|post>.asm`. The fact to read is the instruction after the indirect `call`: caller-side cleanup
-  (`add esp,0Ch`) is `__cdecl`, no adjustment is `__stdcall`. The object dump must be written from inside the batch file -
-  `cmd /c 'foo.bat > log 2>&1'` intermittently produced no file through this shell.
-- **Census worth reusing:** `Select-String -Pattern 'qor_pp_useswinapi(AW)?\(\s*([A-Za-z0-9_]+)'` over
-  `api_layer\*\*.cpp` grouped by module gives the blast radius of anything in the binding/call path - 1,638 bindings
-  across 12 modules (user32 429, kernel32 330, gdi32 324, ole32 201, ws2_32 135, shell32 60, comctl32 53, uxtheme 48,
-  opengl32 27, dwmapi 23, Xinput1_4 7, shcore 1).
+Those three sections (the sessions 13-16 tooling index, the sessions 17-20 additions and the U6 off-protocol item
+fix with the gate rule it established) moved **verbatim** to `archive/tooling-13-20.md` on 3 Nov 2026 when this file
+crossed 40 KB; they are the history of how the current standing instruments were built, and no live session needs
+them unless it re-derives one. `tmp/_tmp_tooling_preslice_s29.md` is the pre-slice file if the rejoin ever has to be
+checked. Everything from session 21 onward stays here.
 
 ## Tooling added in session 21 (`mdi.cpp`)
 - `tmp/_tmp_int_sites_s21.ps1` - the **`Call<>`/`voidCall<>` template-argument correctness** scan. It extracts every
@@ -143,13 +89,13 @@ instruments that no `/W4` compile can replace:
   `offsetof` on a member that the SDK guards with `#ifdef _MAC` (`MSG::lPrivate`) is a hard C2039/C2618 error, so print
   only fields both sides have; and launching a freshly-built exe from inside the batch failed
   (`'..._x64.exe' is not recognized` while cmd had already created the `.txt` redirect file), so **run the two exes from
-  a separate invocation** and keep the batch for the builds. Same lesson as the U6 disassembly probe above: x64-only
-  evidence is structurally blind to this defect class.
+  a separate invocation** and keep the batch for the builds. Same lesson as the U6 disassembly probe
+  (`archive/tooling-13-20.md`): x64-only evidence is structurally blind to this defect class.
 - Per-TU instrument naming settled this session: `<family>_{prescan,bypass,guards,pp,probe}_s<N>` plus the shared
   censuses re-run with an `_s<N>` output suffix (`_tmp_p1census_s21.txt`, `_tmp_tsuffix_s21_full.txt`,
   `_tmp_cl_all_s21.log`). The `_tmp_mdi_guards_s21.ps1` wrapper exists only because `tmp/_tmp_sdk_guard_scan.ps1` takes a
   `-Names` **array** and `pwsh -File script.ps1 -Names A,B` delivers one string - the same trap as the U19 stem wrapper
-  recorded above. A probe that resolves names must also record that it had to `LoadLibraryW` first:
+  recorded in `archive/tooling-13-20.md`. A probe that resolves names must also record that it had to `LoadLibraryW` first:
   `GetModuleHandleW(L"user32")` fails with gle=126 in a bare console process (G5), and a probe that reports every name
   MISSING is measuring the loader, not the export table.
 
@@ -336,4 +282,75 @@ paragraph contributes are not in its exclusion filter, so that count is a soft s
 the `Compare-Object` against the snapshot, which shows exactly 2 rows removed and 6 lines added.
 
 
+
+
+## Session 29 (`resource.cpp`, 3 Nov 2026) - all `_tmp_res_*`
+
+- **`_tmp_res_pre_s29.ps1` -> `_tmp_res_pre_s29.txt`** - the pre-flag capture (SDK halves of the two members, the guard
+  stack, header/definition shape, TU hygiene). Its findings are the pre-flag block that was in `status.md`.
+- **`_tmp_res_scan_s29.ps1` -> `_tmp_res_scan_final_s29.txt`** - the per-TU step set in one script: `sigcmp` over
+  `user32.h:443-444` vs the TU, the U4 reverse census (`static` declarations with no definition), the wrong-stem scan
+  over all 38 files, the T-suffix census, the U19 bypass over the 8 spellings of the TU's stems, and the `Call<>`
+  bracket/paren census. Re-runnable per session; the `4b` section is what U4's folder count reads from.
+- **`_tmp_res_syms_s29.bat` -> `_tmp_res_exports_s29.txt` / `_tmp_res_lnkimp_s29.txt`** - the *published-symbol* census:
+  `dumpbin /exports` of the built DLL and `dumpbin /linkermember:1` of the built import library, filtered for the TU's
+  names. The instrument for "can anyone link this wrapper at all", and the one that proved U11's two free functions were
+  never published (439 exports / 854 member symbols, neither name present). Needs the artefact dates checked first
+  (`gotchas.md`).
+- **`_tmp_res_ver_s29.cpp`** - a 6-line TU that references both spellings, compiled standalone so `dumpbin /symbols`
+  shows exactly what the definitions emit (free `YA` vs member `SA`).
+- **`_tmp_res_post_s29.bat`, `_tmp_res_final_s29.bat` -> `_tmp_res_final_s29.log`** - the gate wrapper: single-TU `/W4`,
+  `/EP` capture, `dumpbin /symbols` of the fresh object, then the consumer probe compile **and link**.
+- **`_tmp_res_ref_s29.cpp`** - the **consumer-side link probe**: takes the address of both members and links against the
+  TU's own object. This is the clean way to prove a declaration/definition pair really closes, and it is worth cloning
+  for every U4 / T1-T6 session: expect **0 unresolved externals for the tested members**, with the cross-module noise
+  (`ThisModule`, `qor::FunctionContext`, `qor::When/Where/What/Serious`, `Kernel32::GetModuleHandleW/GetProcAddress`)
+  allowed. Count with the gotchas.md predicate, not a bare grep.
+- **`_tmp_res_evid_s29.ps1`** - extracts a clean evidence summary (exit markers, emitted `External` member symbols,
+  unresolved-name list) out of the mixed dumpbin/link log.
+- **`_tmp_res_neutral_s29b.ps1`** (pre-fix vs post-fix `/EP`, positional + hash-multiset, finds the 4 differing lines by
+  number) and **`_tmp_res_neutral_final_s29.ps1`** (adds the contract-block leg: +11 lines, all blank, non-blank
+  identical) - both hash-based; the `-notcontains` originals are kept as the failed first attempts.
+- **`_tmp_res_lines_s29.ps1` / `_tmp_res_finalchk_s29.txt`** - TU shape and hygiene with the session-28 scope rule
+  applied, plus the gate dating proof (source vs object mtimes) and the blank/non-blank census of the three `/EP` captures.
+- **`_tmp_res_blockchk_s29.ps1`** - which sources carry a TU contract block (the census's "every reviewed TU" claim);
+  prints lines / comment lines / longest comment run per file, and is what showed `resource.cpp` was the only reviewed TU
+  without one.
+- Logs: `_tmp_res_cl_s29.log` (single TU), `_tmp_cl_all_s29b.log` (**this session's authoritative 38-TU gate**),
+  `_tmp_res_link_final_s29.txt`, `_tmp_res_pp_final_s29.txt`, `_tmp_res_syms_final_s29.txt`.
+- **`_tmp_status_locator_s29.ps1`** - splices the generated locator (`tmp/_tmp_status_index_s22.md`) into `status.md`
+  mechanically: it finds the contiguous run of `- **<id>**` bullets, replaces exactly that run, and prints the before/after
+  line counts. Use it instead of hand-editing the locator, because the generator re-points every pointer when a register
+  file grows (this session: `P1 :107 -> :113`, `P5 :117 -> :123`, plus the new `P5 :98` row). Run
+  `_tmp_status_index_gen_s22.ps1` **after** the register edits and **before** the splice.
+- **`_tmp_s29_cite_audit.ps1` -> `_tmp_s29_cite_audit.txt`** - the **record-integrity** instrument: regex-harvests every
+  `tmp/_tmp_*.ps1|bat|cpp|txt|log|csv|md|obj` citation out of the live record files (`status.md`, `tooling.md`,
+  `gotchas.md`, `archive/session-log.md`, the current TU narrative, the register files touched this session,
+  `memory-bank/activeContext.md`) and reports MISSING against the filesystem. Run it **at session close**, after the
+  records are written: it is how a mis-cited instrument gets caught while it is still cheap to fix. Session 29's run:
+  194 cited artefacts, **1 missing** - `census.md:132` named the census instrument `_tmp_p1census_s20.ps1` under a `tmp/`
+  path, a file that never existed; the real instrument is `tmp/_tmp_kb_p1census_s20.ps1` (`tooling.md`'s "binding census
+  to run in every session"), and the census line is now corrected. Note the self-reference trap: writing the bad path in
+  the fix's own record makes the next run report it again, because the audit scans this file too - name the bad path
+  **without** its `tmp/` prefix. Output is sorted, so the MISSING lines are one grep away.
+- **Record size after this session:** `tooling.md` **was sliced in-session** - it reached 41,067 B, so the three oldest
+  post-index sections (was `:65-126`, sessions 13-16 + 17-20 + the U6 off-protocol fix) moved verbatim to
+  `archive/tooling-13-20.md` by `tmp/_tmp_tooling_slice_s29.ps1` (hash-verified rejoin against
+  `tmp/_tmp_tooling_preslice_s29.md`); this file sits just inside the 40 KB cap at close (`tmp/_tmp_s29_sizes.txt` has
+  every live record file's size). Two internal "as ... above" references that the slice orphaned were re-pointed at the
+  archive file (`:92`, `:98`). **This file is the one to slice at the start of session 30**, before adding that session's
+  instruments; `status.md` also needs its session bullets trimmed against its 200-line / 20 KB cap. Do not write this
+  file's own size here - the sentence changes it.
+- **`_tmp_scroll_pre_s30.ps1` -> `_tmp_scroll_pre_s30.txt`** (185 lines) - the session-30 pre-flag capture for
+  `scrollbar.cpp`: TU shape/hygiene (102 lines, 4,079 B, 12 definitions at `:16,23,30,37,44,51,59,66,74,81,88,95`, longest
+  line 154 at `:66`), their `user32.h:574-585` declarations under the `//ScrollBar functions` label at `:573`, the bare/A/W
+  export shape per stem (all 12 bare single exports - no A/W family, so the bare `qor_pp_useswinapi` at all 12 sites is the
+  correct D13 spelling and P1/P2/P6 cannot arise), the SDK guard stack per name (**four** groups: `ScrollWindow` `:8766`,
+  `ScrollDC` `:8776`, `ScrollWindowEx` `:8788` under the Desktop partition only (`:8751`); `SetScrollPos` `:8816`,
+  `GetScrollPos` `:8825`, `SetScrollRange`, `GetScrollRange` `:8842`, `ShowScrollBar` `:8851`, `EnableScrollBar` `:8859`
+  under `#ifndef NOSCROLL` (`:8811`); `SetScrollInfo` `:12052`, `GetScrollInfo` `:12061` under `#if(WINVER >= 0x0400)`
+  (`:12026`) + `NOCTLMGR`/`NOWINMESSAGES`; `GetScrollBarInfo` `:14763` under `#if(WINVER >= 0x0500)` (`:13594`) +
+  `NOWINABLE` - a **U16** candidate), and the U19 tally (8 LAYER / 8 INDIRECT in
+  `ui/gui/controllers/s_s/scrollbarcontroller.cpp`, **0** bypass). Clone its structure for the remaining TUs; note it must
+  call the helper scripts with `& $script -Names $array`, not `powershell -File ... -Names ($array -join ',')`.
 

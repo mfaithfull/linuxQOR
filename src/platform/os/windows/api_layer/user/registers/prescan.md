@@ -95,6 +95,12 @@ TUs still to be reviewed:
   case and the two `resource.cpp` flags are the script failing to see an enclosing member because both `Resource`
   definitions are unqualified free functions - i.e. the script also reproduces U11 mechanically. Re-run it in every session
   and treat a new flag as a P1-class finding until disproved.
+- **P5** re-measured 3 Nov 2026 (session 29, `resource.cpp`): 428 bindings over 38 TUs, **3 flags -> 1**. The two
+  `resource.cpp` flags the paragraph above describes disappeared with the `User32::` qualifier (U11), which confirms the
+  script's mechanical reading of U11: qualifying the definitions made the enclosing member visible to the scan, and the
+  two stems then matched their own members. The single surviving flag is `cursor.cpp:64` `CopyCursorT` binding `CopyIcon`
+  - the P3 correct-binding/odd-name case (the row has moved from the `:26` cited above as `cursor.cpp` grew). `window.cpp`
+  is the largest surface (85 bindings, 75 bare) and will need the most care.
 - Everything else in the folder already either uses `qor_pp_useswinapiAW` (e.g. `ime.cpp`, `mouse.cpp`,
   `text.cpp`, `windowprocedure.cpp`, `windowproperties.cpp`, `windowclass.cpp`) or binds a genuine single
   export. `window.cpp` is the largest surface (85 bindings, 75 bare) and will need the most care.

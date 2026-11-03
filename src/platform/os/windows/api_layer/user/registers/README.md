@@ -7,17 +7,17 @@ NOTHING is appended to them.
 
 | File | Lines | Register ids | Was registers.md |
 |---|--:|---|---|
-| `census.md` | 235 | - | 1032-1063 |
+| `census.md` | 258 | - | 1032-1063 |
 | `ground-rules.md` | 43 | G1, G2, G3, G4, G5, G6 | 86-126 |
 | `open-items.md` | 4 | - | 127-128 |
 | `p6-u27.md` | 19 | P6, U27 | 77-85 |
 | `preamble.md` | 9 | - | 1-7 |
-| `prescan.md` | 123 | P1, P2, P3, P4, P5, P1, P5 | 8-76 |
+| `prescan.md` | 129 | P1, P2, P3, P4, P5, P5, P1, P5 | 8-76 |
 | `README.md` | 43 | - | - |
 | `tasks.md` | 142 | T1, T2, T3, T4, T5, T6, T7 | 958-1031 |
 | `u1.md` | 10 | U1 | 129-136 |
 | `u10.md` | 20 | U10 | 209-226 |
-| `u11.md` | 12 | U11 | 227-236 |
+| `u11.md` | 42 | U11, U11 | 227-236 |
 | `u12.md` | 15 | U12 | 237-249 |
 | `u13.md` | 17 | U13 | 250-264 |
 | `u14.md` | 100 | U14, U14, U14, U14, U14, U14 | 265-291 |
@@ -35,7 +35,7 @@ NOTHING is appended to them.
 | `u25.md` | 66 | U25 | 889-916 |
 | `u26.md` | 129 | U26 | 917-957 |
 | `u3.md` | 9 | U3 | 143-149 |
-| `u4.md` | 64 | U4 | 150-186 |
+| `u4.md` | 78 | U4 | 150-186 |
 | `u5.md` | 5 | U5 | 187-189 |
 | `u6.md` | 36 | U6 | 190-199 |
 | `u7.md` | 7 | U7 | 200-202 |

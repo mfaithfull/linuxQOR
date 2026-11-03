@@ -230,3 +230,61 @@ run - both confirmed for the session-11 run.
   `_tmp_rect_lines_final_s28.txt` (11:27) is the polluted one and must not be cited. Same class as the session-27 note
   above: **when a scanner total disagrees with the record, suspect the scanner's scope before the reading.**
 
+## Session 29 (`resource.cpp`, 3 Nov 2026)
+
+- **A link log quotes the tested symbol twice, so a plain grep of it over-counts.** `_tmp_res_ref_s29.cpp`'s link emitted
+  11 `LNK2019` rows in which `?CopyImage@User32@api@win@qor@@SA...` appears **as the *referencing* function** of the
+  cross-module noise; a grep for the member name therefore claimed 10 "unresolved members" when the truth is **0**. The
+  correct predicate matches the name inside the quoted unresolved part only:
+  `unresolved external symbol "..." \((\?)(CopyImage|LoadImageT)@User32@` (`tmp/_tmp_res_link_final_s29.txt`, 0 rows).
+- **A clean 38-TU gate log is byte-identical across runs, so for a clean run the "hash must differ" dating test is void.**
+  `_tmp_cl_all_s28b.log` (3 Nov 11:28) and `_tmp_cl_all_s29b.log` (3 Nov 15:00) have the same SHA256
+  (`7EB28546A9062CBCC...`) because a passing log contains nothing but the 38 TU-name echoes. Date such a run by the
+  objects instead: `tmp/obj/resource.obj` 15:00:28 vs `resource.cpp` 14:58:40, and all 38 TU objects newer than the
+  source (`tmp/_tmp_res_finalchk_s29.txt`). The session-23 rule still holds against *copies* - it just cannot prove a
+  fresh clean run on its own.
+- **Any multiset diff over a `/EP` capture must be `Group-Object`/hashtable based.** Two instances in one session: the
+  first `_tmp_res_neutral_s29.ps1` (`Where-Object { $arr -notcontains $_ }` over 154,284 non-blank lines) did not finish
+  inside the 300 s tool timeout - it completed **about 2 h later**, and its output agrees with the rewrite line for line,
+  so the reading is corroborated but the instrument must not be waited on. The first
+  `_tmp_res_neutral_final_s29.ps1` reintroduced the same shape and had to be rewritten. At 453k lines also use
+  `[IO.File]::ReadAllLines` plus index loops rather than `Get-Content` pipelines. The fixed `_tmp_res_neutral_s29b.ps1`
+  ran in about a minute and located all 4 differing lines by position.
+- **`dumpbin | findstr` is the wrong tool for a symbol question.** The member-vs-free distinction lives in the mangled
+  middle letters (`SA` static member vs `YA` free) and in the demangled text, and `findstr`'s pattern list splits on
+  spaces - `_tmp_res_syms_s29.bat`'s `"| ?CopyImage ?LoadImageT"` filter matched noise. Dump to a file, then match in
+  PowerShell (`-match '\?CopyImage@User32@'`, filter on the `External` column): that is how `_tmp_res_evid_s29.ps1`
+  reads both the `/symbols` and the link logs.
+- **"What the library publishes today" needs the build artefacts dated first.** `cmakebuild`'s Debug DLL is 29 Oct and
+  `cmakebuild_rel` is 22 Oct, both older than session 29; the export/import-library counts (439 names, 854 member
+  symbols) are only usable as the U11 "before" evidence because `resource.cpp` was untouched between 29 Oct and this
+  session. Say that in the record - `registers/u11.md` now does.
+- **Do not verify a generated index in the same parallel batch that regenerates it.** A re-run of
+  `_tmp_status_index_gen_s22.ps1` and the `Select-String` that checked `archive/README.md` were issued in one batch, so the
+  grep read the pre-write file and reported `session-log.md` at 305 lines when the regenerated row says **307**. The
+  numbers were never wrong - the check was. Re-read generated files in a later call.
+- **The installed SDK has no `// Shell Support Functions` label.** `help.cpp:27`-`:32` groups `CopyImage`/`LoadImage`
+  under the *classic* SDK's "Shell Support Functions"; measured, that string occurs **0** times in any `um` header of
+  10.0.26100.0, where grouping is by `#pragma region` (`Desktop or Games Family` `winuser.h:10865`, `Desktop Family`
+  `:10900` - the latter contains `LoadImageA` `:10906`, `LoadImageW` `:10916`, `CopyImage` `:10932`, all under
+  `#if(WINVER >= 0x0400)` at `:10883`). Cite the pragma region + guard, not the label.
+- **A TU contract block must not cite its own file's line numbers** (the session-22 rule, tripped again immediately):
+  the first draft of `resource.cpp`'s block said the wrong-stem scan "used to flag `:26` and `:33`", which the block
+  itself shifts. It now says "both of its bindings"; the numbers live in the records, which are written after the final
+  line layout is fixed.
+- **A record file must not state its own size or line count** - the sentence that states it changes it. `tooling.md` and
+  the session-29 close-out note both said "the file is now 355 lines / 37,053 B", which was stale the moment they were
+  written. They now point at `tmp/_tmp_s29_sizes.txt` (from `tmp/_tmp_s29_sizes.ps1`, a snapshot of every live record file
+  taken once at close). Same shape as the session-22 "no line numbers inside a TU contract block" rule, one level up.
+- **The citation audit is self-scanning.** `_tmp_s29_cite_audit.ps1` checks `tooling.md` too, so naming a missing artefact
+  inside the fix's own description makes the next run report it again. Name the bad path without its `tmp/` prefix (the
+  regex needs the prefix). Run 1: 194 cited / 1 missing (a real five-session-old typo in `registers/census.md:132`);
+  run 2: 195 / 1 (the fix's own text); after the wording fix: **194 / 0**.
+- **This session's shared terminal is not a reliable evidence channel.** Three failures in one stretch: a
+  `pwsh -NoProfile -Command "[string[]]@('a','b')"` argument arrived at the shell as a literal string (printed in quotes,
+  not executed), a `cmd /c '"<path with spaces>" ... '` invocation collapsed its quoting, and after each failure the
+  terminal replayed **stale scrollback** that looked like the new command's output - including a 40 k-character
+  `dumpbin /symbols` dump that had nothing to do with the query asked. Rule: for anything that matters, write the
+  instrument's output to a `tmp/` file and read that file (`read_files`), never trust the echoed terminal; keep
+  multi-step work in a `.bat`/`.ps1` **file** rather than in a `-Command` string, and re-run rather than re-read.
+

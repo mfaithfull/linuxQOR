@@ -129,7 +129,7 @@
   lines, 111 added, all of them blank, 0 removed, 0 non-blank added**, so the emitted code is provably unchanged.
   `_tmp_mon_pp_final_s24.txt` (18:22) predates the 18:55 edit and is not the post state.
 
-- **Session 25 (`mouse.cpp`) folder-wide measures, 2 Nov 2026.** Binding census (`tmp/_tmp_p1census_s20.ps1`): **428
+- **Session 25 (`mouse.cpp`) folder-wide measures, 2 Nov 2026.** Binding census (`tmp/_tmp_kb_p1census_s20.ps1`): **428
   bindings, 11 unresolvable -> 1** (`tmp/_tmp_p1census_pre_s25.txt` -> `tmp/_tmp_p1census_post_s25b.txt`); all 10 rows
   that left were this TU's `*W` names and the sole survivor is `window.cpp:124 CreateWindow`. Wrong-stem scan
   (`tmp/_tmp_wrong_stem_scan.ps1`): **4 -> 3 rows, 0 live** (survivors `cursor.cpp:64` = P3, `resource.cpp:19`/`:26` =
@@ -233,3 +233,26 @@
   section at `:442`) are in `tmp/_tmp_res_pre_s29.txt`; the U19 scan already flags both of its bindings as outside a
   `User32::` definition (U11), and `LoadImage` is a textbook **P6/D13 shape** - bare not exported, `A`/`W` exported,
   `#define LoadImage LoadImageW` - where this file already uses `qor_pp_useswinapiAW`.
+
+- **Session 29 (`resource.cpp`) folder-wide measures, 3 Nov 2026.** 30 of 38 sources reviewed. 2 wrappers, **1 real defect
+  fixed**: the folder's only U11 pair, which was simultaneously **U4 x2** - `User32::CopyImage`/`User32::LoadImageT`
+  declared `static` at `user32.h:443`-`:444` with no definition anywhere - plus 2 whitespace nits. `user32.h` did not
+  move; both bindings were already D13-correct. Emitted symbols went `?CopyImage@api@win@qor@@YAPEAXPEAXIHHI@Z` ->
+  `?CopyImage@User32@api@win@qor@@SAPEAXPEAXIHHI@Z` (same for `LoadImageT`), and **neither form appeared in the built
+  DLL's 439 exports or the import library's 854 member symbols** - the members were uncallable, the free functions
+  unpublished. Folder instruments after the fix (`tmp/_tmp_res_scan_final_s29.txt`): binding census **428 bindings, 1
+  unresolvable** (`window.cpp:124 CreateWindow`) - unchanged; wrong-stem scan **3 rows -> 1** (only `cursor.cpp:64`
+  `CopyCursorT` binding `CopyIcon`, P3); `_tmp_undefined_static.ps1` now **0** `static` declarations with no definition
+  folder-wide, so **U4 loses 2 of its ~97**; parameter-name divergence **0 over 428 definitions**; U19 over the 8
+  spellings of both stems: **0 LAYER / 0 INDIRECT / 0 BYPASS / 0 MEMBER**; `Call<>` paren census **421 tight / 0 spaced**
+  (this TU held the folder's last `>( pFunc` site); bracket census unchanged at **265 tight / 163 spaced** (U14 CLOSED,
+  D15 - the TU's 2 spaced `Call< ` sites left alone). `resource.cpp` now carries a 10-line contract block, which closes
+  the last gap in the census's "every reviewed TU has a block" claim: `_tmp_res_blockchk_s29.ps1` finds the only remaining
+  block-less sources are the 7 unreviewed TUs (`scrollbar` 102, `systemshutdown` 51, `text` 44, `windowclass` 114,
+  `windowprocedure` 30, `windowproperties` 51, `window` 615) plus the 14-line glue TU. Gate: `tmp/_tmp_res_cl_s29.log`
+  single-TU `cl_exit=0`; library `tmp/_tmp_cl_all_s29b.log` 38 echoes / 0 diagnostics, run 15:00:28 with all 38 TU objects
+  newer than the edited 14:58:40 source (its hash is identical to session 28's clean log - see `gotchas.md`); `/EP`
+  neutrality `tmp/_tmp_res_neutral_final_s29.txt` (453,265 -> 453,276 lines, non-blank identical at 154,284, only the 4
+  intended lines differ each way, `"CopyImage"`/`"LoadImageW"` byte-identical); consumer probe `tmp/_tmp_res_ref_s29.cpp`
+  links both members with **0** unresolved for either.
+
