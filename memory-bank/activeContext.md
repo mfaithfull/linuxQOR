@@ -38,18 +38,10 @@ never here.
   **D13's other half**, not a style call.
 
 ## Decisions in force (pointer only - not restated here)
-
-- **D13** (explicit `qor_pp_useswinapiAW` for A/W families, bare only for single exports), **D14** (U15 CLOSED - an
-  exported wrapper with no in-tree caller is published surface, not a finding), **D15** (U14 CLOSED 3 Nov 2026 - the
-  spaced/tight `Library::Call<>` split is frozen at 163 / 265, no more appends, and a folder-wide re-spacing would be a new
-  `registers/tasks.md` entry rather than a reopened U14) and the **U1/U2** return-check policy
-  (no `Win32ErrorHandler`, no `CheckReturn` in these wrappers) are recorded once in
-  `src/platform/os/windows/api_layer/user/status.md` "Convention decision" and decided in `docs/agent/DECISIONS.md`.
-  They govern every TU session; the memory bank deliberately does not duplicate their text.
-- **Session-20 deferral, still in force:** the 10 broken `mouse.cpp` bindings get no out-of-turn hotfix - they are
-  fixed in `mouse.cpp's` own session (session 25), keeping the one-TU-per-session rule.
-- Superseded audit assumptions (the G1-G6 corrections and the old P1/P2 tallies) are archived, not restated here;
-  the live tallies are in `status.md`.
+ - Project wide decisions are recorded in `docs/agent/DECISIONS.md`. The memory bank deliberately does not duplicate their text.
+- **Rule adopted 2 Nov 2026 (user):** this file carries the current focus, and pointers **never a per-session narrative**. At each session close, the outgoing "recent changes" entry is either reduced to the two or three
+lines a new session needs to start, or moved to `memory-bank/archive/`. Session detail belongs in the project record tree
+(item 3), not here.
 
 ## Where the record lives (boot order)
 
@@ -63,29 +55,4 @@ never here.
 4. `memory-bank/archive/` - session records moved out of this file (index: `memory-bank/archive/README.md`; **not boot
    material** - do not read it at session start).
 
-**Rule adopted 2 Nov 2026 (user):** this file carries the current focus, the decisions in force and pointers - **never a
-per-session narrative**. At each session close, the outgoing "recent changes" entry is either reduced to the two or three
-lines a new session needs to start, or moved to `memory-bank/archive/`. Session detail belongs in the project record tree
-(item 3), not here. The file was 455 lines / 81 KB before this rule and must stay near this size.
-
-## Current focus: Windows api_layer
-
-- `winqor_api_shell` is complete: 60 modern `shellapi.h` entry points are wrapped as stateless `qor::win::api::Shell` functions in `src/platform/os/windows/api_layer/shell`. The build and audit are green; the DLL does not import `SHELL32.DLL` because entry points bind at call time.
-- Open shell decisions: decide whether to wrap the four live but out-of-scope entry points `SHEnumerateUnreadMailAccountsW`, `SHGetUnreadMailCountW`, `SHSetUnreadMailCountW`, and `SHGetDriveMedia`; decide whether REFIID wrappers should use the SDK `::REFIID` GUID spelling; decide whether DESKTOP-partition-only entry points should be guarded out for non-DESKTOP WINAPI_FAMILY builds.
-
-- `winqor_api_kernel` D11 is implemented: the six threadpool callback-environ functions (`InitializeThreadpoolEnvironment`, `DestroyThreadpoolEnvironment`, and four `SetThreadpoolCallback*` functions) are wrapped with header-inline API calls using `Library::inlineCall` / `Library::voidInlineCall`, explicit template arguments, `::` SDK names, and the `qor_pp_usesinlineapi` marker.
-- Two threadpool callback names are declared but deliberately unwrapped: `SetThreadpoolCallbackPriority` and `SetThreadpoolCallbackPersistent`. The SDK exposes them only under `_WIN32_WINNT >= _WIN32_WINNT_WIN7` and `WINAPI_PARTITION_DESKTOP`, respectively, so wiring them into a multi-configuration library is an open decision.
-
-Next actions:
-- Review the two unwrapped threadpool names and the four shell entry points above.
-- Extend export-bound/header-inline audit classification to other api_layer DLL libraries.
-
-## winqor_gui documentation (docs/ui/windows)
-
-- Incremental documentation of `winqor_gui` (`src/platform/os/windows/ui/gui`, 215 files, no unit tests — exercised only through `examples/experimental/osspecific/windows/mainwindow`) lives in `docs/ui/windows`: one page per area, grown one part per session, every claim cited to file and line. `docs/ui/windows/README.md` carries the part index, the ground rules, and the session protocol.
-- Detailed so far: 10 core root, 20 factories, 30 controllers (levels 1–4), 40 window types, 50 view handlers (**root + `parts/` + `interactive/` + `rendered/` — all 74 files complete**), 90 mainwindow example, 60 gdiobjects (**60a+60b+60c — all 32 files complete**), and 70 painting (**all 8 `gui/painting/` files, 747 lines**), and 80 geometry/layout (**all 12 files, 1,111 lines**). Still summary: 00 overview only (kept high level by design) — the library walk is complete.
-- Open next actions on that page set: no `summary` part remains except 00 (kept high level by design), so the
-  remaining work is the per-part cross-questions on the pages - e.g. part 50's `StyleHandler::ProcessMessage`
-  comparing `wParam == gwlExStyle` (a field index used as a message discriminator) and part 30's
-  `SetPos(insertAfter = nullptr)` as the layout sink. The 26-27 Oct 2026 per-part walk narratives are in
-  `memory-bank/archive/winqor-gui-doc-increments.md`.
+**If previous activities need to be researched they are in the git history**
